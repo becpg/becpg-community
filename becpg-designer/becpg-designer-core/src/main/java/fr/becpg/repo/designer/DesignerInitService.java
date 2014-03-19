@@ -26,9 +26,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
  */
 public interface DesignerInitService {
 	
-
-	public static final String PATH_CONFIGS = "configs";
-
 	
 	/**
 	 * Designer common folders 
@@ -39,12 +36,6 @@ public interface DesignerInitService {
 
 	public NodeRef getConfigsNodeRef();
 
-	/**
-	 * Add a Readonly model to designer 
-	 * @param pattern
-	 */
-	public void addReadOnlyDesignerFiles(String pattern);
-	
 
 
 }

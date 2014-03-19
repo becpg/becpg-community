@@ -191,4 +191,8 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 		ruleService.saveRule(nodeRef, rule);
 
 	}
+	
+
+	
+
 }

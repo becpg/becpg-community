@@ -57,5 +57,7 @@ public interface DesignerService {
 
 	public NodeRef findOrCreateConfig(String configName, String modelTemplate, Map<String,Object> templateContext);
 
+	public void unpublish(NodeRef parentNodeRef);
+
 	
 }

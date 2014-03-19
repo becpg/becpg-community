@@ -32,7 +32,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.repo.dictionary.M2Model;
+import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
@@ -66,6 +68,7 @@ import freemarker.template.TemplateException;
  * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
  * 
  */
+
 public class DesignerServiceImpl implements DesignerService {
 
 	private NodeService nodeService;
@@ -85,6 +88,10 @@ public class DesignerServiceImpl implements DesignerService {
 
 	private MimetypeService mimetypeService;
 
+	private BehaviourFilter policyBehaviourFilter;
+
+	private DictionaryDAO dictionaryDAO;
+
 	/**
 	 * Path where config files are stored when published
 	 */
@@ -103,10 +110,13 @@ public class DesignerServiceImpl implements DesignerService {
 		this.mimetypeService = mimetypeService;
 	}
 
-	/**
-	 * @param dictionaryService
-	 *            the dictionaryService to set
-	 */
+	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
+		this.policyBehaviourFilter = policyBehaviourFilter;
+	}
+	public void setDictionaryDAO(DictionaryDAO dictionaryDAO) {
+		this.dictionaryDAO = dictionaryDAO;
+	}
+
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
 	}
@@ -203,7 +213,8 @@ public class DesignerServiceImpl implements DesignerService {
 			m2Model = M2Model.createModel((String) nodeService.getProperty(parentNode, ContentModel.PROP_NAME));
 		}
 
-		NodeRef modelNodeRef = nodeService.createNode(parentNode, DesignerModel.ASSOC_MODEL, DesignerModel.ASSOC_MODEL, DesignerModel.TYPE_M2_MODEL).getChildRef();
+		NodeRef modelNodeRef = nodeService.createNode(parentNode, DesignerModel.ASSOC_MODEL, DesignerModel.ASSOC_MODEL, DesignerModel.TYPE_M2_MODEL)
+				.getChildRef();
 
 		try {
 			metaModelVisitor.visitModelNodeRef(modelNodeRef, m2Model);
@@ -338,7 +349,8 @@ public class DesignerServiceImpl implements DesignerService {
 			if (logger.isWarnEnabled() && treeNodeRef == null) {
 				logger.warn("No assoc config found for this nodeRef");
 			}
-		} else if (nodeService.getType(nodeRef).getNamespaceURI().equals(DesignerModel.M2_URI) || nodeService.getType(nodeRef).getNamespaceURI().equals(DesignerModel.DESIGNER_URI)) {
+		} else if (nodeService.getType(nodeRef).getNamespaceURI().equals(DesignerModel.M2_URI)
+				|| nodeService.getType(nodeRef).getNamespaceURI().equals(DesignerModel.DESIGNER_URI)) {
 			treeNodeRef = nodeRef;
 		} else {
 			logger.info("Node has not mandatory aspect : model aspect. Creating ...");
@@ -382,8 +394,8 @@ public class DesignerServiceImpl implements DesignerService {
 
 	public NodeRef createConfigAspectNode(NodeRef parentNodeRef) {
 		ContentReader reader = contentService.getReader(parentNodeRef, ContentModel.PROP_CONTENT);
-		ChildAssociationRef childAssociationRef = nodeService.createNode(parentNodeRef, DesignerModel.ASSOC_DSG_CONFIG, DesignerModel.ASSOC_DSG_CONFIG,
-				DesignerModel.TYPE_DSG_CONFIG);
+		ChildAssociationRef childAssociationRef = nodeService.createNode(parentNodeRef, DesignerModel.ASSOC_DSG_CONFIG,
+				DesignerModel.ASSOC_DSG_CONFIG, DesignerModel.TYPE_DSG_CONFIG);
 		NodeRef configNodeRef = childAssociationRef.getChildRef();
 		nodeService.setProperty(configNodeRef, DesignerModel.PROP_DSG_ID, nodeService.getProperty(parentNodeRef, ContentModel.PROP_NAME));
 		InputStream in = null;
@@ -406,7 +418,8 @@ public class DesignerServiceImpl implements DesignerService {
 	}
 
 	@Override
-	public NodeRef createModelElement(NodeRef parentNodeRef, QName nodeTypeQname, QName assocQname, Map<QName, Serializable> props, String modelTemplate) {
+	public NodeRef createModelElement(NodeRef parentNodeRef, QName nodeTypeQname, QName assocQname, Map<QName, Serializable> props,
+			String modelTemplate) {
 
 		AssociationDefinition assocDef = dictionaryService.getAssociation(assocQname);
 		if (!assocDef.isTargetMany()) {
@@ -514,10 +527,11 @@ public class DesignerServiceImpl implements DesignerService {
 
 	@Override
 	public List<FormControl> getFormControls() {
-		//Allow to init designer if not (TODO Move that to get configs webscript)
-		if(designerInitService.getConfigsNodeRef()!=null){
+		// Allow to init designer if not (TODO Move that to get configs
+		// webscript)
+		if (designerInitService.getConfigsNodeRef() != null) {
 			return controls;
-		} 
+		}
 		return new ArrayList<FormControl>();
 	}
 
@@ -536,27 +550,31 @@ public class DesignerServiceImpl implements DesignerService {
 			logger.debug("Try to move node from type :" + typeFrom + " to :" + typeTo);
 		}
 
-		if (DesignerModel.TYPE_M2_PROPERTY.equals(typeFrom) || DesignerModel.TYPE_M2_ASSOCIATION.equals(typeFrom) || DesignerModel.TYPE_M2_CHILD_ASSOCIATION.equals(typeFrom)
-				|| DesignerModel.TYPE_M2_PROPERTY_OVERRIDE.equals(typeFrom)) {
+		if (DesignerModel.TYPE_M2_PROPERTY.equals(typeFrom) || DesignerModel.TYPE_M2_ASSOCIATION.equals(typeFrom)
+				|| DesignerModel.TYPE_M2_CHILD_ASSOCIATION.equals(typeFrom) || DesignerModel.TYPE_M2_PROPERTY_OVERRIDE.equals(typeFrom)) {
 			logger.debug("Node is a property");
 			if (DesignerModel.TYPE_M2_TYPE.equals(typeTo) || DesignerModel.TYPE_M2_ASPECT.equals(typeTo)) {
 				logger.debug("Move to type or aspect");
 
 				if (DesignerModel.TYPE_M2_ASSOCIATION.equals(typeFrom) || DesignerModel.TYPE_M2_CHILD_ASSOCIATION.equals(typeFrom)) {
-					ChildAssociationRef assocRef = nodeService.moveNode(from, to, DesignerModel.ASSOC_M2_ASSOCIATIONS, DesignerModel.ASSOC_M2_ASSOCIATIONS);
+					ChildAssociationRef assocRef = nodeService.moveNode(from, to, DesignerModel.ASSOC_M2_ASSOCIATIONS,
+							DesignerModel.ASSOC_M2_ASSOCIATIONS);
 					ret = assocRef.getChildRef();
 				} else if (DesignerModel.TYPE_M2_PROPERTY_OVERRIDE.equals(typeFrom)) {
-					ChildAssociationRef assocRef = nodeService.moveNode(from, to, DesignerModel.ASSOC_M2_PROPERTY_OVERRIDES, DesignerModel.ASSOC_M2_PROPERTY_OVERRIDES);
+					ChildAssociationRef assocRef = nodeService.moveNode(from, to, DesignerModel.ASSOC_M2_PROPERTY_OVERRIDES,
+							DesignerModel.ASSOC_M2_PROPERTY_OVERRIDES);
 					ret = assocRef.getChildRef();
 				} else {
-					ChildAssociationRef assocRef = nodeService.moveNode(from, to, DesignerModel.ASSOC_M2_PROPERTIES, DesignerModel.ASSOC_M2_PROPERTIES);
+					ChildAssociationRef assocRef = nodeService.moveNode(from, to, DesignerModel.ASSOC_M2_PROPERTIES,
+							DesignerModel.ASSOC_M2_PROPERTIES);
 					ret = assocRef.getChildRef();
 				}
 			}
 			if (DesignerModel.TYPE_DSG_FORM.equals(typeTo) || DesignerModel.TYPE_DSG_FORMSET.equals(typeTo)) {
 				logger.debug("Create field");
 
-				ChildAssociationRef assocRef = nodeService.createNode(to, DesignerModel.ASSOC_DSG_FIELDS, DesignerModel.ASSOC_DSG_FIELDS, DesignerModel.TYPE_DSG_FORMFIELD);
+				ChildAssociationRef assocRef = nodeService.createNode(to, DesignerModel.ASSOC_DSG_FIELDS, DesignerModel.ASSOC_DSG_FIELDS,
+						DesignerModel.TYPE_DSG_FORMFIELD);
 				ret = assocRef.getChildRef();
 
 				// Copy prop name to field ID
@@ -638,8 +656,8 @@ public class DesignerServiceImpl implements DesignerService {
 		return ret;
 	}
 
-	private NodeRef findOrCreateModelFile(NodeRef parentNodeRef, String modelName, String modelTemplate, Map<String, Object> templateContext, boolean isConfig) throws IOException,
-			TemplateException {
+	private NodeRef findOrCreateModelFile(NodeRef parentNodeRef, String modelName, String modelTemplate, Map<String, Object> templateContext,
+			boolean isConfig) throws IOException, TemplateException {
 		NodeRef modelNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, modelName);
 		Writer out = null;
 		if (modelNodeRef == null) {
@@ -676,6 +694,34 @@ public class DesignerServiceImpl implements DesignerService {
 
 		}
 		return modelNodeRef;
+
+	}
+
+	@Override
+	public void unpublish(NodeRef nodeRef) {
+		policyBehaviourFilter.disableBehaviour(nodeRef);
+		if (nodeService.hasAspect(nodeRef, DesignerModel.ASPECT_MODEL)) {
+			try {
+				logger.debug("Publish model");
+				nodeService.setProperty(nodeRef, ContentModel.PROP_MODEL_ACTIVE, false);
+			} finally {
+				policyBehaviourFilter.enableBehaviour(nodeRef);
+			}
+			dictionaryDAO.reset();
+		} else if (nodeService.hasAspect(nodeRef, DesignerModel.ASPECT_CONFIG)) {
+			String name = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
+			File configDir = new File(configPath);
+			if (!configDir.exists()) {
+				configDir.mkdirs();
+			}
+			String path = configPath + System.getProperty("file.separator") + name;
+
+			File file = new File(path);
+			if (file.exists()) {
+				file.delete();
+			}
+
+		}
 
 	}
 
