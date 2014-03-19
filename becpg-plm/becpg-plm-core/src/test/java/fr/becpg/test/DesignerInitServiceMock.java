@@ -47,10 +47,5 @@ public class DesignerInitServiceMock implements DesignerInitService {
 		return null;
 	}
 
-	@Override
-	public void addReadOnlyDesignerFiles(String pattern) {
-		// TODO Auto-generated method stub
-
-	}
 
 }

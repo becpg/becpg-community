@@ -66,23 +66,15 @@
 		<property name="contentService" ref="contentService" />
 		<property name="formModelVisitor" ref="formModelVisitor" />
 		<property name="designerTreeVisitor" ref="designerTreeVisitor" />
-		<property name="configPath" value="${beCPG.designer.configPath}"/>
+		<property name="configPath" value="${beCPG.designer.configPath}" />
 		<property name="dictionaryService" ref="dictionaryService" />
-		<property name="designerInitService" ref="designerInitService"/>
-		<property name="mimetypeService" ref="mimetypeService"/>
-	</bean>
-
-
-	<bean id="designerInitService" class="fr.becpg.repo.designer.impl.DesignerInitServiceImpl">
-		<property name="nodeService" ref="nodeService" />
-		<property name="contentService" ref="contentService" />
-		<property name="actionService" ref="actionService" />
-		<property name="ruleService" ref="ruleService" />
+		<property name="designerInitService" ref="designerInitService" />
 		<property name="mimetypeService" ref="mimetypeService" />
-		<property name="searchService" ref="searchService" />
-		<property name="namespaceService" ref="namespaceService"/>
-		<property name="repository" ref="repositoryHelper"/>
+		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
+		<property name="dictionaryDAO" ref="dictionaryDAO" />
 	</bean>
+
+
 	
 	<bean id="designerWorkflowDeployer" class="fr.becpg.repo.designer.workflow.DesignerWorkflowDeployer">
 		<property name="nodeService" ref="nodeService" />
@@ -101,7 +93,6 @@
 
 
 	<!-- Webscripts -->
-
 
 	<bean id="webscript.fr.becpg.designer.formControls.get"
 		class="fr.becpg.repo.designer.web.scripts.FormControlsWebScript"
@@ -125,6 +116,11 @@
 
 
 	<bean id="webscript.fr.becpg.designer.publish.post" class="fr.becpg.repo.designer.web.scripts.PublishWebScript"
+		parent="webscript">
+		<property name="designerService" ref="designerService" />
+	</bean>
+	
+	<bean id="webscript.fr.becpg.designer.unpublish.post" class="fr.becpg.repo.designer.web.scripts.UnPublishWebScript"
 		parent="webscript">
 		<property name="designerService" ref="designerService" />
 	</bean>

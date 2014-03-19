@@ -1,6 +1,7 @@
 <#include "include/alfresco-template.ftl" />
 <@templateHeader>
 	<@link rel="stylesheet" type="text/css" href="${url.context}/res/templates/designer/designer.css" group="model-designer" />
+	<@script type="text/javascript" src="${url.context}/res/modules/data-lists/datalist-actions.js" group="model-designer" ></@script>
 	<@script type="text/javascript" src="${url.context}/res/templates/designer/designer.js" group="model-designer"></@script>
   
    <@markup id="resizer">

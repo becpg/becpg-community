@@ -86,6 +86,13 @@
 		                        disabled : true,
 		                        value : "publish"
 		                     });
+		               
+		               this.widgets.unPublishButton = Alfresco.util.createYUIButton(this, "unPublishButton", this.onUnPublish,
+			                     {
+			                        disabled : true,
+			                        value : "unPublish"
+			                     });
+		               
 
 		               this.widgets.previewButton = Alfresco.util.createYUIButton(this, "previewButton", this.onPreview,
 		                     {
@@ -97,16 +104,6 @@
 							// artifacts on YUI button decoration
 		               Dom.setStyle(this.id + "-body", "visibility", "visible");
 	               },
-	               /**
-						 * New Row button click handler
-						 * 
-						 * @method onPublish
-						 * @param e
-						 *           {object} DomEvent
-						 * @param p_obj
-						 *           {object} Object passed back from addListener
-						 *           method
-						 */
 	               onPublish : function DesignerToolbar_onPublish(e, p_obj) {
 		               var templateUrl = Alfresco.constants.PROXY_URI + "becpg/designer/model/publish?nodeRef="
 		                     + this.tree.modelNodeRef;
@@ -129,6 +126,49 @@
 		                  scope : this,
 		                  execScripts : false
 		               });
+
+	               },
+	               onUnPublish : function DesignerToolbar_onUnPublish(e, p_obj) {
+	            	   var me = this;
+	            	   Alfresco.util.PopupManager.displayPrompt({
+			                  title : me.msg("actions.unpublish"),
+			                  text : me.msg("message.confirm.unpublish", me.currentNode.name),
+			                  buttons : [ {
+			                     text : me.msg("button.unpublish"),
+			                     handler : function DesignerToolbar_onUnPublish_Confirmed() {
+			                    	 var templateUrl = Alfresco.constants.PROXY_URI + "becpg/designer/model/unpublish?nodeRef="
+				                     + me.tree.modelNodeRef;
+						               Alfresco.util.Ajax.request({
+						                  method : Alfresco.util.Ajax.POST,
+						                  url : templateUrl,
+						                  successCallback : {
+							                     fn : function() {
+								                     Alfresco.util.Ajax.request({
+								                        url : Alfresco.constants.URL_SERVICECONTEXT + "components/console/config/reload",
+								                        method : Alfresco.util.Ajax.GET,
+								                        responseContentType : Alfresco.util.Ajax.JSON,
+								                        successMessage : me.msg("message.unpublish.success"),
+								                        failureMessage : me.msg("message.unpublish.failure"),
+								                     });
+							                     },
+							                     scope : this
+							                  },
+						                  failureMessage : me.msg("message.unpublish.failure"),
+						                  scope : this,
+						                  execScripts : false
+						               });
+						               this.destroy();
+			                     }
+			                  }, {
+			                     text : this.msg("button.cancel"),
+			                     handler : function DesignerToolbar_onUnPublish_cancel() {
+				                     this.destroy();
+			                     },
+			                     isDefault : true
+			                  } ]
+			               });
+	            	   
+		              
 
 	               },
 	               /**
@@ -484,8 +524,10 @@
 			               }
 			               if (node.itemType == "m2:model" || node.itemType == "dsg:config") {
 				               this.widgets.publishButton.set("disabled", this.readOnly || false);
+				               this.widgets.unPublishButton.set("disabled", this.readOnly || false);
 			               } else {
 				               this.widgets.publishButton.set("disabled", true);
+				               this.widgets.unPublishButton.set("disabled", true);
 			               }
 		               } else {
 			               this.widgets.newRowButton.set("disabled", true);

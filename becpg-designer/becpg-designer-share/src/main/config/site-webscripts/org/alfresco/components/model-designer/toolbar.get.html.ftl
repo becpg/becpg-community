@@ -42,6 +42,13 @@
 		               </span>
 		            </span>
 		         </div>
+		         <div class="unpublish">
+		            <span id="${el}-unPublishButton" class="yui-button yui-push-button">
+		               <span class="first-child">
+		                  <button type="button">${msg('button.unpublish')}</button>
+		               </span>
+		            </span>
+		         </div>
 		          <div class="preview">
 		            <span id="${el}-previewButton" class="yui-button yui-push-button">
 		               <span class="first-child">

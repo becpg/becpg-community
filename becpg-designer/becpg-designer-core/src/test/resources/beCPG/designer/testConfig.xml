@@ -99,7 +99,7 @@
 					<show id="dsg:forMode" />
 				</field-visibility>
 				<appearance>
-					<set id="mainInfo" appearance="panel" label="Information" />
+					<set id="mainInfo" appearance="panel" label="Information" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="appearanceInfo" appearance="panel" label="Apparance" />
 					<set id="visibilityInfo" appearance="panel" label="Visibilité" />
 					<field id="dsg:hide" set="visibilityInfo"  />
