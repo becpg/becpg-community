@@ -169,6 +169,12 @@
 		</types>
 	</config>
 	
+	<config evaluator="string-compare" condition="bulk-edit">
+		<itemTypes>
+			<itemType name="ext1:customType" />
+		</itemTypes>
+	</config>
+	
 	
 	<config evaluator="string-compare" condition="DocumentLibrary" >
 		<aspects>
@@ -177,6 +183,7 @@
             <!-- designer -->
             <aspect name="dsg:modelAspect" />
 				<aspect name="dsg:configAspect" />
+				<aspect name="ext1:customAspect" />
 			</visible>
 
 			<!-- Aspects that a user can add. Same as "visible" if left empty -->
@@ -194,6 +201,8 @@
 				<subtype name="dsg:config" />
 				<subtype name="cm:dictionaryModel" />
 				<subtype name="bpm:workflowDefinition" />
+				<subtype name="ext1:customType" />
+				
 			</type>
 			
 		</types>

@@ -59,7 +59,6 @@
 	<config evaluator="string-compare" condition="bulk-edit">
 		<itemTypes>
 			<itemType name="cm:content" />
-			<!-- <itemType name="ext1:customType" />  -->
 		</itemTypes>
 	</config>
 	
@@ -68,7 +67,6 @@
 			<visible>
 				<aspect name="bcpg:permissionsTpl" />
 				<aspect name="rep:reportTplsAspect" />
-			    <!-- <aspect name="ext1:customAspect" />  -->
 				<aspect name="bp:cataloguable" />
 				<aspect name="bcpg:entityTplAspect" />
 				<aspect name="bcpg:docLinkedEntitiesAspect" />
@@ -88,7 +86,6 @@
 
 				<subtype name="bcpg:linkedValue" />
 				<subtype name="bcpg:listValue" />
-				<!-- <subtype name="ext1:customType" /> -->
 			</type>
 
 		</types>

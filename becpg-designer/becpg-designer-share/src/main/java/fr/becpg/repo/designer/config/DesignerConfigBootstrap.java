@@ -113,6 +113,8 @@ public class DesignerConfigBootstrap  implements BeanNameAware, ConfigDeployer
 		return ret;
 	}
 
+    //file:${dir.root}/designer/*.xml
+    
 	private List<String> processWidlCards(String sourceString) {
 		String separator = System.getProperty("file.separator");
 		

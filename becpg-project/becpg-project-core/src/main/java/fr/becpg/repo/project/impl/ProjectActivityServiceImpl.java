@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
@@ -122,6 +123,12 @@ public class ProjectActivityServiceImpl implements ProjectActivityService {
 					data.put("entityNodeRef", projectNodeRef);
 					data.put("entityTitle", nodeService.getProperty(projectNodeRef, ContentModel.PROP_NAME));
 				}
+				
+				if(nodeService.hasAspect(projectNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)){
+					logger.info("No activity on project template");
+					return ; 
+				}
+				
 				data.put(PostLookup.JSON_NODEREF, itemNodeRef);
 				data.put(PROP_TITLE, title);
 				data.put("beforeState", beforeState);
@@ -205,6 +212,12 @@ public class ProjectActivityServiceImpl implements ProjectActivityService {
 				}else{
 					return;					
 				}
+				
+				if(nodeService.hasAspect(projectNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)){
+					logger.info("No activity on project template");
+					return ; 
+				}
+				
 				activityListDataItem.setActivityType(ActivityType.Comment);
 				activityListDataItem.setActivityData(data.toString());
 				activityListDataItem.setParentNodeRef(getActivityList(projectNodeRef));
@@ -234,6 +247,11 @@ public class ProjectActivityServiceImpl implements ProjectActivityService {
 				data.put(PROP_ACTIVITY_EVENT, activityEvent.toString());
 				
 				NodeRef projectNodeRef = getProjectNodeRefFromContent(contentNodeRef);
+				
+				if(nodeService.hasAspect(projectNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)){
+					logger.info("No activity on project template");
+					return ; 
+				}
 				
 				data.put(PROP_TITLE, (String) nodeService.getProperty(contentNodeRef, ContentModel.PROP_NAME));
 
