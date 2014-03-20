@@ -19,6 +19,8 @@ package fr.becpg.repo.project;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.project.data.projectList.ActivityEvent;
+
 /**
  * Class used to manage notification
  * @author quere
@@ -26,6 +28,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
  */
 public interface ProjectNotificationService {
 
-	public void sendTaskStateChanged(NodeRef taskNodeRef, String beforeState, String afterState);	
+	public void notifyTaskStateChanged(NodeRef projectNodeRef, NodeRef taskNodeRef, String beforeState, String afterState);	
+	public void notifyComment(NodeRef commentNodeRef, ActivityEvent activityEvent, NodeRef projectNodeRef, NodeRef taskNodeRef, NodeRef deliverableNodeRef);
 	
 }
