@@ -132,7 +132,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		}
 		
 		ftsQuery += " AND -TYPE:\"cm:thumbnail\" " + "AND -TYPE:\"cm:failedThumbnail\" " + "AND -TYPE:\"cm:rating\" " + "AND -TYPE:\"bcpg:entityListItem\" "
-				+ "AND -TYPE:\"systemfolder\" " + "AND -TYPE:\"rep:report\" AND -TYPE:\"fm:forum\" AND -TYPE:\"fm:forums\" ";
+				+ "AND -TYPE:\"systemfolder\" " + "AND -TYPE:\"rep:report\" AND -TYPE:\"fm:forum\" AND -TYPE:\"fm:forums\" AND -TYPE:\"app:filelink\" ";
 
 		// extract data type for this search - advanced search query is type
 		// specific
