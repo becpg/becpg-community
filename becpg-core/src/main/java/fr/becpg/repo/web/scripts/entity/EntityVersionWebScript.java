@@ -12,6 +12,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.InvalidNodeRefException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.security.NoSuchPersonException;
 import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.logging.Log;
@@ -120,11 +121,18 @@ public class EntityVersionWebScript extends AbstractWebScript  {
 	}
 	
 	private JSONObject getPerson(String frozenModifier) throws InvalidNodeRefException, JSONException{
-		NodeRef creatorNodeRef = personService.getPerson(frozenModifier);
 		JSONObject jsonCreator = new JSONObject();
-		jsonCreator.put("userName", (String)nodeService.getProperty(creatorNodeRef, ContentModel.PROP_USERNAME));
-		jsonCreator.put("firstName", (String)nodeService.getProperty(creatorNodeRef, ContentModel.PROP_FIRSTNAME));
-		jsonCreator.put("lastName", (String)nodeService.getProperty(creatorNodeRef, ContentModel.PROP_LASTNAME));
+		try {
+			NodeRef creatorNodeRef = personService.getPerson(frozenModifier);
+			jsonCreator.put("userName", (String)nodeService.getProperty(creatorNodeRef, ContentModel.PROP_USERNAME));
+			jsonCreator.put("firstName", (String)nodeService.getProperty(creatorNodeRef, ContentModel.PROP_FIRSTNAME));
+			jsonCreator.put("lastName", (String)nodeService.getProperty(creatorNodeRef, ContentModel.PROP_LASTNAME));
+		} catch (NoSuchPersonException e){
+			logger.info("Person doesn't exist : "+frozenModifier);
+			jsonCreator.put("userName", frozenModifier);
+			jsonCreator.put("firstName", frozenModifier);
+			jsonCreator.put("lastName", frozenModifier);
+		}
 		return jsonCreator;
 	}	
 }

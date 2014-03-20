@@ -117,7 +117,7 @@ public abstract class AbstractSearchWebScript extends AbstractWebScript {
 		String nodeRef = req.getParameter(PARAM_NODEREF);
 		if(nodeRef!=null && !nodeRef.isEmpty()){
 			searchQuery += LuceneHelper.DEFAULT_IGNORE_QUERY
-					+ " -TYPE:\"bcpg:entityListItem\"";
+					+ " -TYPE:\"bcpg:entityListItem\" -TYPE:\"app:filelink\" ";
 			searchQuery += " +PATH:\"" + getPath(nodeRef) + "//*\"";
 			if (itemType != null && !itemType.isEmpty()) {
 				searchQuery += " +TYPE:\"" + itemType + "\"";
