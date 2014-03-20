@@ -1,7 +1,7 @@
 MAPPING;Default;
 PATH;/System/ProductHierarchy/bcpg:entityLists/finishedProduct_Hierarchy;
 TYPE;bcpg:linkedValue;
-COLUMNS;bcpg:parentLevel;bcpg:lkvValue
+COLUMNS;parentLevel;bcpg:lkvValue
 VALUES;Bakery-pastry;Breads
 VALUES;Bakery-pastry;Crackers and breads unsurveyed
 VALUES;Bakery-pastry;Pastries and buns
@@ -29,17 +29,17 @@ VALUES;Quiches;Family quiches
 ;;
 PATH;/System/ProductHierarchy/bcpg:entityLists/localSemiFinishedProduct_Hierarchy;
 TYPE;bcpg:linkedValue;
-COLUMNS;bcpg:parentLevel;bcpg:lkvValue
+COLUMNS;parentLevel;bcpg:lkvValue
 VALUES;Mixture - packing;Mixture - packing
 VALUES;Pastry;Pastry
 ;;
 PATH;/System/ProductHierarchy/bcpg:entityLists/semiFinishedProduct_Hierarchy;
 TYPE;bcpg:linkedValue;
-COLUMNS;bcpg:parentLevel;bcpg:lkvValue
+COLUMNS;parentLevel;bcpg:lkvValue
 VALUES;Mixture - packing;Mixture - packing
 VALUES;Pastry;Pastry
 ;;
 PATH;/System/ProductHierarchy/bcpg:entityLists/rawMaterial_Hierarchy;
 TYPE;bcpg:linkedValue;
-COLUMNS;bcpg:parentLevel;bcpg:lkvValue
+COLUMNS;parentLevel;bcpg:lkvValue
 VALUES;Grocery;Alcohols, water
