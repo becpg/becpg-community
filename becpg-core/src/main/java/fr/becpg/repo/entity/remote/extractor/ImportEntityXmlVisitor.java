@@ -377,7 +377,7 @@ public class ImportEntityXmlVisitor {
 		}
 		
 		if(inBD){
-			beCPGQueryBuilder.inDB();
+			beCPGQueryBuilder.inDB().ftsLanguage();
 		}
 		
 		beCPGQueryBuilder.maxResults(RepoConsts.MAX_RESULTS_256);

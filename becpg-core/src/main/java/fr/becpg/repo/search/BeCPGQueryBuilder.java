@@ -34,9 +34,11 @@ import org.alfresco.query.PagingRequest;
 import org.alfresco.query.PagingResults;
 import org.alfresco.repo.search.impl.parsers.FTSQueryException;
 import org.alfresco.repo.search.impl.querymodel.QueryModelException;
+import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.search.LimitBy;
 import org.alfresco.service.cmr.search.QueryConsistency;
 import org.alfresco.service.cmr.search.ResultSet;
@@ -84,9 +86,15 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	@Autowired
 	@Qualifier("FileFolderService")
 	private FileFolderService fileFolderService;
+	
+	@Autowired
+	private DictionaryService dictionaryService;
 
 	@Value("${beCPG.defaultSearchTemplate}")
 	private String defaultSearchTemplate;
+
+	@Autowired
+	private NodeService nodeService;
 
 	private Integer maxResults = RepoConsts.MAX_RESULTS_256;
 	private NodeRef parentNodeRef;
@@ -100,6 +108,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	private Set<QName> notNullProps = new HashSet<>();
 	private Set<QName> nullProps = new HashSet<>();
 	private Map<QName, String> propQueriesMap = new HashMap<QName, String>();
+	private Map<QName, Pair<String, String>> propBetweenQueriesMap = new HashMap<QName, Pair<String, String>>();
 	private Map<QName, String> propQueriesEqualMap = new HashMap<QName, String>();
 	private Set<String> ftsQueries = new HashSet<>();
 	private Set<QName> excludedAspects = new HashSet<>();
@@ -125,6 +134,8 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			builder.namespaceService = INSTANCE.namespaceService;
 			builder.defaultSearchTemplate = INSTANCE.defaultSearchTemplate;
 			builder.fileFolderService = INSTANCE.fileFolderService;
+			builder.nodeService = INSTANCE.nodeService;
+			builder.dictionaryService = INSTANCE.dictionaryService;
 		}
 		return builder;
 	}
@@ -182,7 +193,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 	public BeCPGQueryBuilder inDB() {
 		queryConsistancy = QueryConsistency.TRANSACTIONAL;
-		//ftsLanguage();
+		cmisLanguage();
+		return this;
+	}
+
+	private BeCPGQueryBuilder cmisLanguage() {
+		this.language = SearchService.LANGUAGE_CMIS_ALFRESCO;
 		return this;
 	}
 
@@ -242,11 +258,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	public BeCPGQueryBuilder andFTSQuery(String ftsQuery) {
-		if (!QueryConsistency.TRANSACTIONAL.equals(queryConsistancy)) {
-			ftsQueries.add(ftsQuery);
-		} else {
-			logger.error("FTS not supported for transactionnal query");
-		}
+		ftsQueries.add(ftsQuery);
 		return this;
 	}
 
@@ -254,16 +266,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		if (value == null) {
 			isNull(propQName);
 		} else {
-			propQueriesEqualMap.put(propQName, "\"" + value + "\"");
+			propQueriesEqualMap.put(propQName, value );
 		}
 		return this;
 	}
 
 	public BeCPGQueryBuilder andPropQuery(QName propQName, String propQuery) {
-		if (QueryConsistency.TRANSACTIONAL.equals(queryConsistancy)) {
-			logger.error("Prop contains not supported for transactionnal query");
-		}
-		
 		if (propQuery == null) {
 			isNull(propQName);
 		} else {
@@ -273,7 +281,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	public BeCPGQueryBuilder andBetween(QName propQName, String start, String end) {
-		propQueriesMap.put(propQName, String.format("[%s TO %s]", start, end));
+		propBetweenQueriesMap.put(propQName, new Pair<String, String>(start, end));
 		return this;
 	}
 
@@ -311,7 +319,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		excludeAspect(BeCPGModel.ASPECT_ENTITY_TPL);
 		excludeAspect(BeCPGModel.ASPECT_HIDDEN_FOLDER);
 		excludeType(BeCPGModel.TYPE_SYSTEM_ENTITY);
-		//Todo look for remove
+		// Todo look for remove
 		excludeProp(ContentModel.PROP_LOCK_TYPE, "\"READ_ONLY_LOCK\"");
 		return this;
 	}
@@ -350,13 +358,19 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 				logger.warn("Slow query [" + xPath + "] executed in  " + watch.getTotalTimeSeconds() + " seconds - size results " + ret.size());
 			}
 
-			if (logger.isDebugEnabled()) {
-				int tmpIndex = (RepoConsts.MAX_RESULTS_SINGLE_VALUE == maxResults ? 4 : 3);
-
-				logger.debug("[" + Thread.currentThread().getStackTrace()[tmpIndex].getClassName() + " "
-						+ Thread.currentThread().getStackTrace()[tmpIndex].getLineNumber() + "] " + xPath + " executed in  "
-						+ watch.getTotalTimeSeconds() + " seconds - size results " + ret.size());
-			}
+			// if (logger.isDebugEnabled()) {
+			// int tmpIndex = (RepoConsts.MAX_RESULTS_SINGLE_VALUE == maxResults
+			// ? 4 : 3);
+			// logger.debug("[" +
+			// Thread.currentThread().getStackTrace()[tmpIndex].getClassName() +
+			// " "
+			// +
+			// Thread.currentThread().getStackTrace()[tmpIndex].getLineNumber()
+			// + "] " + xPath + " executed in  "
+			// + watch.getTotalTimeSeconds() + " seconds - size results " +
+			// ret.size());
+			//
+			// }
 
 		}
 
@@ -448,6 +462,10 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		StringBuilder runnedQuery = new StringBuilder();
 
+		if (isCmis()) {
+			return buildCmisQuery();
+		}
+
 		if (parentNodeRef != null) {
 			runnedQuery.append(mandatory(getCondParent(parentNodeRef)));
 		} else if (membersPath != null) {
@@ -519,18 +537,22 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 				runnedQuery.append(mandatory(getCondContainsValue(propQueryEntry.getKey(), propQueryEntry.getValue())));
 			}
 		}
-		
+
 		if (!propQueriesEqualMap.isEmpty()) {
 			for (Map.Entry<QName, String> propQueryEntry : propQueriesEqualMap.entrySet()) {
-				runnedQuery.append(equalsQuery(getCondContainsValue(propQueryEntry.getKey(), propQueryEntry.getValue())));
+				runnedQuery.append(equalsQuery(getCondContainsValue(propQueryEntry.getKey(), "\"" + propQueryEntry.getValue()+ "\"")));
 			}
 		}
-		
 
 		if (!excludedPropQueriesMap.isEmpty()) {
 			for (Map.Entry<QName, String> propQueryEntry : excludedPropQueriesMap.entrySet()) {
 				runnedQuery.append(prohibided(getCondContainsValue(propQueryEntry.getKey(), propQueryEntry.getValue())));
 			}
+		}
+
+		for (Map.Entry<QName, Pair<String, String>> propQueryEntry : propBetweenQueriesMap.entrySet()) {
+			runnedQuery.append(mandatory(getCondContainsValue(propQueryEntry.getKey(),
+					String.format("[%s TO %s]", propQueryEntry.getValue().getFirst(), propQueryEntry.getValue().getSecond()))));
 		}
 
 		if (!ftsQueries.isEmpty()) {
@@ -552,7 +574,138 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		return ret;
 	}
 
+	private String buildCmisQuery() {
+		StringBuilder runnedQuery = new StringBuilder();
+		runnedQuery.append("SELECT  * FROM ");
+		if (type == null) {
+			runnedQuery.append("cmis:document as D");
+		} else {
+			runnedQuery.append(type.toPrefixString(namespaceService)+" as D");
+		}
+		
+		
 
+		StringBuilder whereClause = new StringBuilder();
+
+		if (parentNodeRef != null) {
+			whereClause.append(" AND IN_FOLDER( D,'" + parentNodeRef + "')");
+		} else if (membersPath != null) {
+			throw new IllegalStateException("members not supported for CMIS search");
+		} else if (path != null) {
+			throw new IllegalStateException("path not supported for CMIS search");
+		}
+
+		if (!types.isEmpty()) {
+			throw new IllegalStateException("only one type supported for CMIS search");
+		}
+
+		if (!excludedTypes.isEmpty()) {
+			throw new IllegalStateException("only one type supported for CMIS search");
+		}
+
+		
+
+		if (!excludedAspects.isEmpty()) {
+			throw new IllegalStateException("excludedAspects supported not for CMIS search");
+		}
+
+		if (!notNullProps.isEmpty()) {
+			for (QName tmpQName : notNullProps) {
+				whereClause.append(" AND " + getCmisPrefix(tmpQName) + " IS NOT NULL");
+			}
+
+		}
+
+		if (!nullProps.isEmpty()) {
+			for (QName tmpQName : nullProps) {
+				whereClause.append(" AND " + getCmisPrefix(tmpQName) + " IS NULL");
+			}
+		}
+
+		if (!ids.isEmpty()) {
+			for (NodeRef tmpNodeRef : ids) {
+				whereClause.append(" AND D.cmis:objectId = '" + tmpNodeRef + "'");
+			}
+		}
+
+		if (!notIds.isEmpty()) {
+			for (NodeRef tmpNodeRef : notIds) {
+				whereClause.append(" AND D.cmis:objectId <> '" + tmpNodeRef + "'");
+			}
+		}
+
+		if (!propQueriesMap.isEmpty()) {
+			throw new IllegalStateException("property contains not supported yet");
+		}
+
+		if (!propQueriesEqualMap.isEmpty()) {
+			for (Map.Entry<QName, String> propQueryEntry : propQueriesEqualMap.entrySet()) {
+				whereClause.append(" AND " + getCmisPrefix(propQueryEntry.getKey()) + " = '" + propQueryEntry.getValue() + "'");
+			}
+		}
+
+		if (!excludedPropQueriesMap.isEmpty()) {
+			for (Map.Entry<QName, String> propQueryEntry : excludedPropQueriesMap.entrySet()) {
+				whereClause.append(" AND " + getCmisPrefix(propQueryEntry.getKey()) + " <> '" + propQueryEntry.getValue() + "'");
+			}
+		}
+
+		for (Map.Entry<QName, Pair<String, String>> propQueryEntry : propBetweenQueriesMap.entrySet()) {
+
+			String first = propQueryEntry.getValue().getFirst();
+			String second = propQueryEntry.getValue().getSecond();
+			if (!"MIN".equals(first)) {
+				whereClause.append(" AND " + getCmisPrefix(propQueryEntry.getKey()) + " > " + first + "");
+			}
+			if (!"MAX".equals(second)) {
+				whereClause.append(" AND " + getCmisPrefix(propQueryEntry.getKey()) + " < " + second + "");
+			}
+		}
+
+		if (!ftsQueries.isEmpty()) {
+			throw new IllegalStateException("fts contains not supported yet");
+		}
+
+		
+		
+		String ret = whereClause.toString();
+
+		if (ret.startsWith(" AND")) {
+			ret = ret.replaceFirst(" AND", "");
+		}
+		
+		if(ret.length()>0){
+			ret = " WHERE "+ret;
+		}
+		
+		if (!aspects.isEmpty()) {
+			for (QName tmpQName : aspects) {
+				runnedQuery.append(" JOIN "+ tmpQName.toPrefixString(namespaceService) + " as "+
+						tmpQName.getLocalName()+" on D.cmis:objectId = "+tmpQName.getLocalName()+".cmis:objectId");
+			}
+		}
+		
+		
+		return runnedQuery.toString() +ret;
+
+	}
+
+	private String getCmisPrefix(QName tmpQName) {
+		String ret = tmpQName.toPrefixString(namespaceService);
+		if(dictionaryService.getProperty(tmpQName).getContainerClass().isAspect()){
+			QName aspect = dictionaryService.getProperty(tmpQName).getContainerClass().getName();
+			this.aspects.add(aspect);
+			ret = aspect.getLocalName()+"."+ret;
+		} else {
+			ret = "D."+ret;
+		}
+		
+		return ret;
+	}
+
+	private boolean isCmis() {
+		return SearchService.LANGUAGE_CMIS_ALFRESCO.equals(language);
+	}
 
 	public BeCPGQueryBuilder ftsLanguage() {
 		this.language = SearchService.LANGUAGE_FTS_ALFRESCO;
@@ -591,6 +744,9 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		if (maxResults == RepoConsts.MAX_RESULTS_UNLIMITED) {
 			sp.setLimitBy(LimitBy.UNLIMITED);
 		} else {
+			// if (isDBSearch() && notIds.size() > 0) {
+			// maxResults = maxResults + notIds.size();
+			// }
 			sp.setLimit(maxResults);
 			sp.setMaxItems(maxResults);
 			sp.setLimitBy(LimitBy.FINAL_SIZE);
@@ -626,6 +782,59 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 				result.close();
 			}
 		}
+		//
+		// if (isDBSearch() && notIds.size() > 0) {
+		// logger.trace("Exclude notIds from results");
+		// nodes.removeAll(notIds);
+		// if (maxResults != RepoConsts.MAX_RESULTS_UNLIMITED) {
+		// return nodes.subList(0, Math.min(nodes.size(), maxResults -
+		// notIds.size()));
+		// }
+		//
+		// if (!propBetweenQueriesMap.isEmpty()) {
+		// logger.trace("Exclude between query from search");
+		// for (Iterator<NodeRef> iterator = nodes.iterator();
+		// iterator.hasNext();) {
+		// NodeRef nodeRef = (NodeRef) iterator.next();
+		// boolean toRemove = false;
+		// for (Map.Entry<QName, Pair<String, String>> propQueryEntry :
+		// propBetweenQueriesMap.entrySet()) {
+		// Object prop = nodeService.getProperty(nodeRef,
+		// propQueryEntry.getKey());
+		//
+		// toRemove = true;
+		// if (prop != null) {
+		// if (prop instanceof Integer) {
+		// String first = propQueryEntry.getValue().getFirst();
+		// String second = propQueryEntry.getValue().getSecond();
+		// if (("MIN".equals(first) || Integer.parseInt(first) < (Integer) prop)
+		// && ("MAX".equals(second) || Integer.parseInt(second) > (Integer)
+		// prop)) {
+		// toRemove = false;
+		// } else {
+		// logger.debug("Prop " + prop + " not match range " +
+		// String.format("[%s TO %s]", first, second));
+		// }
+		// } else {
+		// logger.info("Not supported between type :" +
+		// prop.getClass().getSimpleName());
+		// toRemove = false;
+		// }
+		//
+		// } else if ("MIN".equals(propQueryEntry.getValue().getFirst())) {
+		// toRemove = false;
+		// }
+		//
+		// }
+		// if (toRemove) {
+		// iterator.remove();
+		// }
+		// }
+		//
+		// }
+		//
+		// }
+
 		return nodes;
 	}
 

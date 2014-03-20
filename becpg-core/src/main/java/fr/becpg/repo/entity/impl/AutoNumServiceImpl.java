@@ -259,7 +259,7 @@ public class AutoNumServiceImpl implements AutoNumService {
 					public NodeRef getData() {
 						return BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_AUTO_NUM)
 								.andPropEquals(BeCPGModel.PROP_AUTO_NUM_CLASS_NAME, className.toString())
-								.andPropEquals(BeCPGModel.PROP_AUTO_NUM_PROPERTY_NAME, propertyName.toString()).inDB().singleValue();
+								.andPropEquals(BeCPGModel.PROP_AUTO_NUM_PROPERTY_NAME, propertyName.toString()).inDB().ftsLanguage().singleValue();
 					}
 
 				});

@@ -164,7 +164,7 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 						.excludeAspect(BeCPGModel.ASPECT_ENTITY_TPL);
 
 				// products
-				List<NodeRef> productNodeRefs = queryBuilder.inDB().list();
+				List<NodeRef> productNodeRefs = queryBuilder.inDB().ftsLanguage().list();
 
 				for (NodeRef productNodeRef : productNodeRefs) {
 					if (nodeService.exists(productNodeRef)) {
