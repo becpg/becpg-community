@@ -73,7 +73,7 @@
 		<app.log.root.level>WARN</app.log.root.level>
 
 		<!-- By default the H2 embedded database datafile is created under the alfresco.data.location folder -->
-		<alfresco.db.params>MODE=MySQL;AUTO_SERVER=TRUE;DB_CLOSE_ON_EXIT=FALSE;LOCK_TIMEOUT=10000;MVCC=TRUE</alfresco.db.params>
+		<alfresco.db.params>MODE=MySQL;AUTO_SERVER=TRUE;DB_CLOSE_ON_EXIT=FALSE;LOCK_TIMEOUT=10000;MVCC=TRUE;TRACE_LEVEL_FILE=2</alfresco.db.params>
 		<alfresco.db.url>jdbc:h2:${alfresco.data.location}/h2_data/${alfresco.db.name};${alfresco.db.params}</alfresco.db.url>
 		<!-- <alfresco.db.url>jdbc:h2:mem:alfrescoTest;${alfresco.db.params}</alfresco.db.url> -->
 		<alfresco.db.datasource.class>org.h2.jdbcx.JdbcDataSource</alfresco.db.datasource.class>

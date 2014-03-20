@@ -576,6 +576,9 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 	private String buildCmisQuery() {
 		StringBuilder runnedQuery = new StringBuilder();
+		StringBuilder orderBy = new StringBuilder();
+		StringBuilder whereClause = new StringBuilder();
+		
 		runnedQuery.append("SELECT  * FROM ");
 		if (type == null) {
 			runnedQuery.append("cmis:document as D");
@@ -583,7 +586,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			runnedQuery.append(type.toPrefixString(namespaceService) + " as D");
 		}
 
-		StringBuilder whereClause = new StringBuilder();
+		
 
 		if (parentNodeRef != null) {
 			whereClause.append(" AND IN_FOLDER( D,'" + parentNodeRef + "')");
@@ -651,10 +654,10 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			String first = propQueryEntry.getValue().getFirst();
 			String second = propQueryEntry.getValue().getSecond();
 			if (!"MIN".equals(first)) {
-				whereClause.append(" AND " + getCmisPrefix(propQueryEntry.getKey()) + " > " + first + "");
+				whereClause.append(" AND " + getCmisPrefix(propQueryEntry.getKey()) + " >= " + first + "");
 			}
 			if (!"MAX".equals(second)) {
-				whereClause.append(" AND " + getCmisPrefix(propQueryEntry.getKey()) + " < " + second + "");
+				whereClause.append(" AND " + getCmisPrefix(propQueryEntry.getKey()) + " <= " + second + "");
 			}
 		}
 
@@ -662,6 +665,16 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			throw new IllegalStateException("fts contains not supported yet");
 		}
 
+		if (sortProps != null && ! sortProps.isEmpty()) {
+			orderBy.append(" ORDER BY");
+			for (Map.Entry<String, Boolean> kv : sortProps.entrySet()) {
+				if (logger.isTraceEnabled()) {
+					logger.trace("Add sort :" + kv.getKey() + " " + kv.getValue());
+				}
+				orderBy.append(" "+getCmisPrefix(QName.createQName(kv.getKey().replaceFirst("@", ""))) +(kv.getValue()?" ASC": " DESC"));
+			}
+		}
+		
 		String ret = whereClause.toString();
 
 		if (ret.startsWith(" AND")) {
@@ -678,8 +691,10 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 						+ tmpQName.getLocalName() + ".cmis:objectId");
 			}
 		}
-
-		return runnedQuery.toString() + ret;
+		
+	
+		
+		return runnedQuery.toString() + ret+ orderBy.toString();
 
 	}
 
@@ -750,7 +765,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			sp.setMaxPermissionChecks(page * 1000);
 		}
 
-		if (sort != null) {
+		if (sort != null && !isCmis()) {
 			for (Map.Entry<String, Boolean> kv : sort.entrySet()) {
 				if (logger.isTraceEnabled()) {
 					logger.trace("Add sort :" + kv.getKey() + " " + kv.getValue());
