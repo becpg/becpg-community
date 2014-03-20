@@ -86,7 +86,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	@Autowired
 	@Qualifier("FileFolderService")
 	private FileFolderService fileFolderService;
-	
+
 	@Autowired
 	private DictionaryService dictionaryService;
 
@@ -266,7 +266,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		if (value == null) {
 			isNull(propQName);
 		} else {
-			propQueriesEqualMap.put(propQName, value );
+			propQueriesEqualMap.put(propQName, value);
 		}
 		return this;
 	}
@@ -540,7 +540,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		if (!propQueriesEqualMap.isEmpty()) {
 			for (Map.Entry<QName, String> propQueryEntry : propQueriesEqualMap.entrySet()) {
-				runnedQuery.append(equalsQuery(getCondContainsValue(propQueryEntry.getKey(), "\"" + propQueryEntry.getValue()+ "\"")));
+				runnedQuery.append(equalsQuery(getCondContainsValue(propQueryEntry.getKey(), "\"" + propQueryEntry.getValue() + "\"")));
 			}
 		}
 
@@ -580,10 +580,8 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		if (type == null) {
 			runnedQuery.append("cmis:document as D");
 		} else {
-			runnedQuery.append(type.toPrefixString(namespaceService)+" as D");
+			runnedQuery.append(type.toPrefixString(namespaceService) + " as D");
 		}
-		
-		
 
 		StringBuilder whereClause = new StringBuilder();
 
@@ -602,8 +600,6 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		if (!excludedTypes.isEmpty()) {
 			throw new IllegalStateException("only one type supported for CMIS search");
 		}
-
-		
 
 		if (!excludedAspects.isEmpty()) {
 			throw new IllegalStateException("excludedAspects supported not for CMIS search");
@@ -666,40 +662,37 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			throw new IllegalStateException("fts contains not supported yet");
 		}
 
-		
-		
 		String ret = whereClause.toString();
 
 		if (ret.startsWith(" AND")) {
 			ret = ret.replaceFirst(" AND", "");
 		}
-		
-		if(ret.length()>0){
-			ret = " WHERE "+ret;
+
+		if (ret.length() > 0) {
+			ret = " WHERE " + ret;
 		}
-		
+
 		if (!aspects.isEmpty()) {
 			for (QName tmpQName : aspects) {
-				runnedQuery.append(" JOIN "+ tmpQName.toPrefixString(namespaceService) + " as "+
-						tmpQName.getLocalName()+" on D.cmis:objectId = "+tmpQName.getLocalName()+".cmis:objectId");
+				runnedQuery.append(" JOIN " + tmpQName.toPrefixString(namespaceService) + " as " + tmpQName.getLocalName() + " on D.cmis:objectId = "
+						+ tmpQName.getLocalName() + ".cmis:objectId");
 			}
 		}
-		
-		
-		return runnedQuery.toString() +ret;
+
+		return runnedQuery.toString() + ret;
 
 	}
 
 	private String getCmisPrefix(QName tmpQName) {
 		String ret = tmpQName.toPrefixString(namespaceService);
-		if(dictionaryService.getProperty(tmpQName).getContainerClass().isAspect()){
+		if (dictionaryService.getProperty(tmpQName).getContainerClass().isAspect()) {
 			QName aspect = dictionaryService.getProperty(tmpQName).getContainerClass().getName();
 			this.aspects.add(aspect);
-			ret = aspect.getLocalName()+"."+ret;
+			ret = aspect.getLocalName() + "." + ret;
 		} else {
-			ret = "D."+ret;
+			ret = "D." + ret;
 		}
-		
+
 		return ret;
 	}
 

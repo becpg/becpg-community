@@ -675,12 +675,20 @@
 					
 				</appearance>
 			</form>
+			<!-- Data Grid view -->
+			<form id="filter">
+				<field-visibility>
+					<show id="pjt:tlIsMilestone" />
+					<show force="true" id="pjt:tlResources" />
+					<show id="pjt:tlTaskLegend" />					
+					<show id="pjt:tlState" />
+				</field-visibility>				
+			</form>
 			<form id="datagrid">
 				<field-visibility>
 					<show id="pjt:tlTaskName" />					
 					<show id="pjt:tlIsMilestone" />
 					<show id="pjt:tlDuration" />
-					<show id="pjt:tlPrevTasks" />
 					<show id="pjt:tlResources" />
 					<show id="pjt:tlTaskLegend" />					
 					<show id="pjt:tlState" />

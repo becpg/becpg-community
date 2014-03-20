@@ -31,7 +31,6 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.project.ProjectActivityService;
-import fr.becpg.repo.project.ProjectNotificationService;
 import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.ProjectWorkflowService;
 import fr.becpg.repo.project.data.ProjectData;
@@ -72,8 +71,6 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 	
 	private ProjectWorkflowService projectWorkflowService;
 	
-	private ProjectNotificationService projectNotificationService;
-	
 	public void setProjectService(ProjectService projectService) {
 		this.projectService = projectService;
 	}
@@ -100,10 +97,6 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 
 	public void setProjectWorkflowService(ProjectWorkflowService projectWorkflowService) {
 		this.projectWorkflowService = projectWorkflowService;
-	}
-
-	public void setProjectNotificationService(ProjectNotificationService projectNotificationService) {
-		this.projectNotificationService = projectNotificationService;
 	}
 
 	/**
@@ -208,9 +201,6 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		if (beforeState != null && afterState != null && !beforeState.equals(afterState)) {
 			
 			projectActivityService.postTaskStateChangeActivity(nodeRef, beforeState, afterState);
-			if(!afterState.equals(TaskState.InProgress.toString())){
-				projectNotificationService.sendTaskStateChanged(nodeRef, beforeState, afterState);
-			}			
 			formulateProject = true;
 			
 			if (beforeState.equals(DeliverableState.Completed.toString())
