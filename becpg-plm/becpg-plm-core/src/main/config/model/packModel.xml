@@ -240,7 +240,7 @@
 				</property>
 			</properties>
 			<associations>			
-				<association name="pack:labelingTemplate">
+				<association name="pack:labelingLabelingTemplate">
 					<title>Marquage</title>
 					<source>
 						<mandatory>false</mandatory>
