@@ -1,9 +1,15 @@
 
-function sendMail(user, from, subject, message, templatePath, workflowDocuments) {
+function sendMail(authority, from, subject, message, templatePath, workflowDocuments) {
 	try {
+		
 		var mail = actions.create("mail");
 		mail.parameters.template_model = templateModel;
-		mail.parameters.to = user.properties.email;
+		if(authority.typeShort == "cm:authorityContainer"){
+			mail.parameters.to_many = new Array(authority.properties["cm:authorityName"]);
+		}
+		else{
+			mail.parameters.to_many = new Array(authority.properties["cm:userName"]);
+		}
 		mail.parameters.subject = subject;
 		if(from != null){
 			mail.parameters.from = from.properties.email;
