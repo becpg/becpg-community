@@ -528,8 +528,8 @@
 		
 		
 		<Dimension  name="Historique" >
-			<Hierarchy name="Version courrante" hasAll="false" defaultMember="[Historique.Version courrante].[true]">
-				<Level name="Version courrante" column="isLastVersion"  type="Boolean"    />
+			<Hierarchy name="Version courante" hasAll="false" defaultMember="[Historique.Version courante].[true]">
+				<Level name="Version courante" column="isLastVersion"  type="Boolean"    />
 			</Hierarchy>
 		</Dimension>
 		
@@ -861,8 +861,8 @@
 		</Dimension>
 		
 	  <Dimension  name="Historique" >
-			<Hierarchy name="Version courrante" hasAll="false" defaultMember="[Historique.Version courrante].[true]">
-				<Level name="Version courrante" column="isLastVersion"  type="Boolean"    />
+			<Hierarchy name="Version courante" hasAll="false" defaultMember="[Historique.Version courante].[true]">
+				<Level name="Version courante" column="isLastVersion"  type="Boolean"    />
 			</Hierarchy>
 		</Dimension>
 		
