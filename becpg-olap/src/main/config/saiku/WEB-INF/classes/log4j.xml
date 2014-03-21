@@ -83,14 +83,14 @@
     <category name="fr.becpg">
      <priority value="INFO"/>
    </category>
-   <!-- 
+   
 	 <category name="mondrian.sql">
       <priority value="DEBUG"/>
    </category>
    
     <category name="mondrian.mdx">
       <priority value="DEBUG"/>
-   </category>  -->
+   </category>  
       
    <!-- ======================= -->
    <!-- Setup the Root category -->
