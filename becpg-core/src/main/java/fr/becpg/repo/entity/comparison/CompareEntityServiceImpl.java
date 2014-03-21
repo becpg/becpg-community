@@ -122,26 +122,22 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 			QName dataListType = getDataListQName(dataList1);
 			
 			// structural comparison
-			if(entityDictionaryService.isMultiLevelDataList(dataListType)){
-				compareStructDatalist(entity1NodeRef, entity2NodeRef, dataListType, structCompareResults);
-			}
-			else{
-				String dataListName1 = (String) nodeService.getProperty(dataList1, ContentModel.PROP_NAME);
-				comparedDataLists.add(dataListName1);
-
-				// look for dataList2
-				NodeRef dataList2NodeRef = null;
-				if (dataLists2 != null) {
-					for (NodeRef d : dataLists2) {
-						String dataListName2 = (String) nodeService.getProperty(d, ContentModel.PROP_NAME);					
-						if (dataListName1.equals(dataListName2)) {
-							dataList2NodeRef = d;
-							break;
-						}
+			compareStructDatalist(entity1NodeRef, entity2NodeRef, dataListType, structCompareResults);
+			
+			// flat comparaison
+			String dataListName1 = (String) nodeService.getProperty(dataList1, ContentModel.PROP_NAME);
+			comparedDataLists.add(dataListName1);
+			NodeRef dataList2NodeRef = null;
+			if (dataLists2 != null) {
+				for (NodeRef d : dataLists2) {
+					String dataListName2 = (String) nodeService.getProperty(d, ContentModel.PROP_NAME);					
+					if (dataListName1.equals(dataListName2)) {
+						dataList2NodeRef = d;
+						break;
 					}
 				}
-				compareDataLists(dataListType, dataList1, dataList2NodeRef, nbEntities, comparisonPosition, comparisonMap);
 			}
+			compareDataLists(dataListType, dataList1, dataList2NodeRef, nbEntities, comparisonPosition, comparisonMap);
 		}
 
 		// compare dataLists2 that have not been compared
@@ -284,7 +280,6 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		DataListFilter dataListFilter = new DataListFilter();
 		dataListFilter.setDataType(datalistType);
 		Map<String, String>criteriaMap = new HashMap<>();
-		criteriaMap.put(DataListFilter.PROP_DEPTH_LEVEL, MAX_LEVEL);
 		dataListFilter.setCriteriaMap(criteriaMap);
 		dataListFilter.setEntityNodeRefs(Arrays.asList(entityNodeRef));
 		return multiLevelDataListService.getMultiLevelListData(dataListFilter);
