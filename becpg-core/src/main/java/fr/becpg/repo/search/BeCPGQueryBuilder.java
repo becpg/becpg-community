@@ -213,6 +213,8 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		if (containerId != null && containerId.length() > 0) {
 			path += "/cm:" + ISO9075.encode(containerId);
 		}
+		// recursive //*
+		path += "/";
 		inPath(path);
 
 		return this;
