@@ -811,7 +811,7 @@
 										and prop_datalist.prop_name="bcpg:compoListProduct"
 										and (prop.prop_name = "bcpg:productHierarchy1" or prop.prop_name = "bcpg:productHierarchy2")
 										and datalist.instance_id = ${instanceId}
-							group by id
+							group by datalist.id
 							]]>
 						</SQL>
 					</View>		
@@ -847,7 +847,7 @@
 										and prop_datalist.prop_name="bcpg:packagingListProduct"
 										and (prop.prop_name = "bcpg:productHierarchy1" or prop.prop_name = "bcpg:productHierarchy2")
 										and datalist.instance_id = ${instanceId}
-							group by id
+							group by datalist.id
 							]]>
 						</SQL>
 					</View>	
