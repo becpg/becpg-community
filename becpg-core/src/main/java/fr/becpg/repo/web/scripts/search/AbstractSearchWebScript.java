@@ -135,7 +135,7 @@ public abstract class AbstractSearchWebScript extends AbstractWebScript {
 		if(nodeRef!=null && !nodeRef.isEmpty()){
 			queryBuilder = BeCPGQueryBuilder.createQuery()
 			 .inPath(getPath(nodeRef))
-			 .excludeDefaults()
+			 .excludeSearch()
 			 .excludeType(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 			if (itemType != null && !itemType.isEmpty()) {
 				queryBuilder.ofType(QName.createQName(itemType,namespaceService));
