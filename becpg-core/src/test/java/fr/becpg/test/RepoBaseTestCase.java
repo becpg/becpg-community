@@ -23,6 +23,7 @@ import junit.framework.TestCase;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.dictionary.DictionaryDAO;
+import org.alfresco.repo.domain.qname.QNameDAO;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.security.authentication.AuthenticationComponent;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -44,6 +45,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
@@ -53,6 +55,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.subethamail.wiser.Wiser;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.admin.InitVisitorService;
 import fr.becpg.repo.cache.BeCPGCacheService;
@@ -150,6 +153,9 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 	
 	@Resource
 	protected BeCPGCacheService beCPGCacheService;
+	
+	@Resource
+	protected QNameDAO qNameDAO;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -180,6 +186,10 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 	@Before
 	public void setUp() throws Exception {
 
+		super.setUp();
+
+	
+		
 		testFolderNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 				// As system user
@@ -191,6 +201,8 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 		}, false, true);
 
 		boolean shouldInit = shouldInit();
+		
+		
 
 		if (shouldInit) {
 			transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {

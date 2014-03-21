@@ -73,13 +73,15 @@
 		<app.log.root.level>WARN</app.log.root.level>
 
 		<!-- By default the H2 embedded database datafile is created under the alfresco.data.location folder -->
-		<alfresco.db.params>MODE=MySQL;AUTO_SERVER=TRUE;DB_CLOSE_ON_EXIT=FALSE;LOCK_TIMEOUT=10000;MVCC=TRUE;TRACE_LEVEL_FILE=2</alfresco.db.params>
-		<alfresco.db.url>jdbc:h2:${alfresco.data.location}/h2_data/${alfresco.db.name};${alfresco.db.params}</alfresco.db.url>
-		<!-- <alfresco.db.url>jdbc:h2:mem:alfrescoTest;${alfresco.db.params}</alfresco.db.url> -->
-		<alfresco.db.datasource.class>org.h2.jdbcx.JdbcDataSource</alfresco.db.datasource.class>
+		<alfresco.db.params>MODE=PostgreSQL;AUTO_SERVER=TRUE;DB_CLOSE_ON_EXIT=FALSE;LOCK_TIMEOUT=100000;MVCC=TRUE</alfresco.db.params>
+		<alfresco.db.url>jdbc:h2:${alfresco.data.location}/h2_data/${alfresco.db.name};${alfresco.db.params}</alfresco.db.url> 
+		 <alfresco.db.datasource.class>org.h2.jdbcx.JdbcDataSource</alfresco.db.datasource.class> 
 		<alfresco.db.name>becpg_test_contribs</alfresco.db.name>
-		<!-- <alfresco.db.url>jdbc:mysql://localhost/${alfresco.db.name}</alfresco.db.url> <alfresco.db.datasource.class>org.gjt.mm.mysql.Driver</alfresco.db.datasource.class> <alfresco.db.host>localhost</alfresco.db.host> 
-			<alfresco.db.username>becpg</alfresco.db.username> <alfresco.db.password>becpg</alfresco.db.password> -->
+		<!-- <alfresco.db.url>jdbc:mysql://localhost/${alfresco.db.name}</alfresco.db.url> 
+		<alfresco.db.datasource.class>org.gjt.mm.mysql.Driver</alfresco.db.datasource.class> 
+		<alfresco.db.host>localhost</alfresco.db.host>  -->
+		<alfresco.db.username>becpg</alfresco.db.username>
+		<alfresco.db.password>becpg</alfresco.db.password>
 
 		<!-- AMP config dir -->
 		<alfresco.amp.config.dir>alfresco/module/${project.artifactId}</alfresco.amp.config.dir>
@@ -295,12 +297,20 @@
 			<version>1.3.175</version>
 			<scope>test</scope>
 		</dependency>
+		
 		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.29</version>
+			<scope>test</scope>
+		</dependency>
+		
+	 	<dependency>
 			<groupId>tk.skuro.alfresco</groupId>
 			<artifactId>h2-support</artifactId>
 			<version>1.5</version>
 			<scope>test</scope>
-		</dependency>
+		</dependency> 
 
 		<dependency>
 			<groupId>org.alfresco.maven</groupId>
