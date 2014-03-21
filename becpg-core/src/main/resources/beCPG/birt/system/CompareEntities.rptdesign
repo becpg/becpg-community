@@ -132,6 +132,21 @@
                         <value>"sys:locale"</value>
                     </simple-property-list>
                 </structure>
+                <structure>
+                    <property name="operator">is-true</property>
+                    <expression name="expr" type="javascript">(row["entityList"] != "Composition" &amp;&amp; row["entityList"] != "Emballages")</expression>
+                </structure>
+                <structure>
+                    <property name="operator">ne</property>
+                    <expression name="expr" type="javascript">row["propertyQName"]</expression>
+                    <simple-property-list name="value1">
+                        <value>"fm:commentCount"</value>
+                    </simple-property-list>
+                </structure>
+                <structure>
+                    <property name="operator">is-not-null</property>
+                    <expression name="expr" type="javascript">row["property"]</expression>
+                </structure>
             </list-property>
             <list-property name="parameters"/>
             <structure name="cachedMetaData">
@@ -484,6 +499,10 @@
                     <simple-property-list name="value1">
                         <value>"Equal"</value>
                     </simple-property-list>
+                </structure>
+                <structure>
+                    <property name="operator">is-true</property>
+                    <expression name="expr" type="javascript">(row["entityList"] == "Composition" || row["entityList"] == "Emballages")</expression>
                 </structure>
             </list-property>
             <list-property name="parameters"/>
