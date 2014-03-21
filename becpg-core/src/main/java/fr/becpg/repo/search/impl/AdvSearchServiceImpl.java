@@ -110,6 +110,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 			beCPGQueryBuilder.ofType(datatype);
 		}
 
+
 		beCPGQueryBuilder.excludeSearch();
 
 		return beCPGQueryBuilder;

@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.alfresco.model.ApplicationModel;
 import org.alfresco.model.ContentModel;
 import org.alfresco.model.ForumModel;
 import org.alfresco.query.PagingRequest;
@@ -336,6 +337,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		excludeType(ReportModel.TYPE_REPORT);
 		excludeType(ForumModel.TYPE_FORUM);
 		excludeType(ForumModel.TYPE_FORUMS);
+		excludeType(ApplicationModel.TYPE_FILELINK);
 		excludeAspect(ContentModel.ASPECT_HIDDEN);
 
 		return this;

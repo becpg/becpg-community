@@ -528,8 +528,8 @@
 		
 		
 		<Dimension  name="Historique" >
-			<Hierarchy name="Version courrante" hasAll="false" defaultMember="[Historique.Version courrante].[true]">
-				<Level name="Version courrante" column="isLastVersion"  type="Boolean"    />
+			<Hierarchy name="Version courante" hasAll="false" defaultMember="[Historique.Version courante].[true]">
+				<Level name="Version courante" column="isLastVersion"  type="Boolean"    />
 			</Hierarchy>
 		</Dimension>
 		
@@ -811,7 +811,7 @@
 										and prop_datalist.prop_name="bcpg:compoListProduct"
 										and (prop.prop_name = "bcpg:productHierarchy1" or prop.prop_name = "bcpg:productHierarchy2")
 										and datalist.instance_id = ${instanceId}
-							group by id
+							group by datalist.id
 							]]>
 						</SQL>
 					</View>		
@@ -847,7 +847,7 @@
 										and prop_datalist.prop_name="bcpg:packagingListProduct"
 										and (prop.prop_name = "bcpg:productHierarchy1" or prop.prop_name = "bcpg:productHierarchy2")
 										and datalist.instance_id = ${instanceId}
-							group by id
+							group by datalist.id
 							]]>
 						</SQL>
 					</View>	
@@ -861,8 +861,8 @@
 		</Dimension>
 		
 	  <Dimension  name="Historique" >
-			<Hierarchy name="Version courrante" hasAll="false" defaultMember="[Historique.Version courrante].[true]">
-				<Level name="Version courrante" column="isLastVersion"  type="Boolean"    />
+			<Hierarchy name="Version courante" hasAll="false" defaultMember="[Historique.Version courante].[true]">
+				<Level name="Version courante" column="isLastVersion"  type="Boolean"    />
 			</Hierarchy>
 		</Dimension>
 		
