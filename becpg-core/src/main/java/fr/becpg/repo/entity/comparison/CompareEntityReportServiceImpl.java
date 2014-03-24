@@ -198,14 +198,17 @@ public class CompareEntityReportServiceImpl  implements CompareEntityReportServi
 			
 			// do structural comparison
 			Boolean hideStructComparison = true;
-			Map<String, List<StructCompareResultDataItem>> structCompareResults = new HashMap<String, List<StructCompareResultDataItem>>();
+			Map<String, List<StructCompareResultDataItem>> compoCompareResults = new HashMap<String, List<StructCompareResultDataItem>>();
+			Map<String, List<StructCompareResultDataItem>> packCompareResults = new HashMap<String, List<StructCompareResultDataItem>>();
 			for(NodeRef entityNodeRef : entities){
 				String comparison = (String)nodeService.getProperty(entity1, ContentModel.PROP_NAME) + COMPARISON_SEPARATOR + (String)nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
-				List<StructCompareResultDataItem> scr = compareEntityService.compareStructDatalist(entity1, entityNodeRef, BeCPGModel.TYPE_COMPOLIST, BeCPGModel.ASSOC_COMPOLIST_PRODUCT);				
-				structCompareResults.put(comparison, scr);
+				List<StructCompareResultDataItem> scrCompo = compareEntityService.compareStructDatalist(entity1, entityNodeRef, BeCPGModel.TYPE_COMPOLIST, BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
+				compoCompareResults.put(comparison, scrCompo);
+				List<StructCompareResultDataItem> scrPack = compareEntityService.compareStructDatalist(entity1, entityNodeRef, BeCPGModel.TYPE_PACKAGINGLIST, BeCPGModel.ASSOC_PACKAGINGLIST_PRODUCT);
+				packCompareResults.put(comparison, scrPack);
 				
 				// display struct comparison if there is smth to show
-				if(hideStructComparison && !scr.isEmpty()){
+				if(hideStructComparison && !scrCompo.isEmpty()){
 					hideStructComparison = false;
 				}
 			}
@@ -214,7 +217,8 @@ public class CompareEntityReportServiceImpl  implements CompareEntityReportServi
 			Document document = DocumentHelper.createDocument();
 			Element entitiesCmpElt = document.addElement(TAG_ENTITIES_COMPARISON);
 			entitiesCmpElt.add(renderComparisonAsXmlData(entity1, entities, compareResult));
-			entitiesCmpElt.add(renderStructComparisonAsXmlData(structCompareResults, BeCPGModel.ASSOC_COMPOLIST_PRODUCT));		
+			entitiesCmpElt.add(renderStructComparisonAsXmlData(compoCompareResults, BeCPGModel.ASSOC_COMPOLIST_PRODUCT));
+			entitiesCmpElt.add(renderStructComparisonAsXmlData(packCompareResults, BeCPGModel.ASSOC_PACKAGINGLIST_PRODUCT));
 			
 			if(logger.isDebugEnabled()){
 				logger.debug("comparison XML " + entitiesCmpElt);
