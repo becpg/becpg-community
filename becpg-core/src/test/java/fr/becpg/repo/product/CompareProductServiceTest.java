@@ -31,13 +31,18 @@ import fr.becpg.repo.entity.comparison.StructCompareResultDataItem;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
+import fr.becpg.repo.product.data.PackagingMaterialData;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.RawMaterialData;
+import fr.becpg.repo.product.data.TareUnit;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.DeclarationType;
+import fr.becpg.repo.product.data.productList.PackagingLevel;
+import fr.becpg.repo.product.data.productList.PackagingListDataItem;
+import fr.becpg.repo.product.data.productList.PackagingListUnit;
 import fr.becpg.test.RepoBaseTestCase;
 
 /**
@@ -74,6 +79,10 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 	private NodeRef fp1NodeRef;
 
 	private NodeRef fp2NodeRef;
+	
+	private NodeRef packagingMaterial1NodeRef;
+	private NodeRef packagingMaterial2NodeRef;
+	private NodeRef packagingMaterial3NodeRef;
 
 	/** The costs. */
 	private List<NodeRef> costs = new ArrayList<NodeRef>();
@@ -172,6 +181,27 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 				localSF2.setLegalName("Legal Local semi finished 2");
 				localSF2NodeRef = alfrescoRepository.create(testFolderNodeRef, localSF2).getNodeRef();
 
+				/*-- Packaging material 1 --*/					
+				PackagingMaterialData packagingMaterial1 = new PackagingMaterialData();
+				packagingMaterial1.setName("Packaging material 1");
+				packagingMaterial1.setLegalName("Legal Packaging material 1");
+				packagingMaterial1.setTare(0.015d);
+				packagingMaterial1.setTareUnit(TareUnit.kg);					
+				packagingMaterial1NodeRef = alfrescoRepository.create(testFolderNodeRef, packagingMaterial1).getNodeRef();
+				
+				/*-- Packaging material 2 --*/					
+				PackagingMaterialData packagingMaterial2 = new PackagingMaterialData();
+				packagingMaterial2.setName("Packaging material 2");
+				packagingMaterial2.setLegalName("Legal Packaging material 2");
+				packagingMaterial2.setTare(5d);
+				packagingMaterial2.setTareUnit(TareUnit.g);					
+				packagingMaterial2NodeRef = alfrescoRepository.create(testFolderNodeRef, packagingMaterial2).getNodeRef();
+				
+				/*-- Packaging material 1 --*/					
+				PackagingMaterialData packagingMaterial3 = new PackagingMaterialData();
+				packagingMaterial3.setName("Packaging material 3");
+				packagingMaterial3.setLegalName("Legal Packaging material 3");				
+				packagingMaterial3NodeRef = alfrescoRepository.create(testFolderNodeRef, packagingMaterial3).getNodeRef();
 				return null;
 
 			}
@@ -615,6 +645,107 @@ public class CompareProductServiceTest extends RepoBaseTestCase {
 						"Raw material 4",
 						"{}",
 						"{{http://www.bcpg.fr/model/becpg/1.0}compoListQty=3, {http://www.bcpg.fr/model/becpg/1.0}compoListProduct=Raw material 4, {http://www.alfresco.org/model/system/1.0}locale=fr_FR, {http://www.bcpg.fr/model/becpg/1.0}compoListQtySubFormula=0, {http://www.bcpg.fr/model/becpg/1.0}compoListDeclType=Détailler, {http://www.bcpg.fr/model/becpg/1.0}compoListLossPerc=0, {http://www.bcpg.fr/model/becpg/1.0}depthLevel=2, {http://www.bcpg.fr/model/becpg/1.0}compoListUnit=kg}"));
+
+				return null;
+
+			}
+		}, false, true);
+	}
+	
+	/**
+	 * Test struct comparison.
+	 */
+	@Test
+	public void testPackagingStructComparison() {
+
+		fp1NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+
+				FinishedProductData fp1 = new FinishedProductData();
+				fp1.setName("FP 1");
+
+				List<PackagingListDataItem> packagingList = new ArrayList<PackagingListDataItem>();
+				packagingList.add(new PackagingListDataItem(null, 1d, PackagingListUnit.P, PackagingLevel.Primary, true, packagingMaterial1NodeRef));
+				packagingList.add(new PackagingListDataItem(null, 2d, PackagingListUnit.kg, PackagingLevel.Primary, false, packagingMaterial2NodeRef));
+				packagingList.add(new PackagingListDataItem(null, 3d, PackagingListUnit.P, PackagingLevel.Primary, false, packagingMaterial3NodeRef));
+				fp1.getPackagingListView().setPackagingList(packagingList);
+
+				return alfrescoRepository.create(testFolderNodeRef, fp1).getNodeRef();
+				
+			}
+		}, false, true);
+		
+		fp2NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+
+				FinishedProductData fp2 = new FinishedProductData();
+				fp2.setName("FP 2");
+
+				List<PackagingListDataItem> packagingList = new ArrayList<PackagingListDataItem>();
+				packagingList.add(new PackagingListDataItem(null, 1d, PackagingListUnit.P, PackagingLevel.Primary, true, packagingMaterial1NodeRef));
+				packagingList.add(new PackagingListDataItem(null, 3d, PackagingListUnit.kg, PackagingLevel.Secondary, false, packagingMaterial2NodeRef));
+				packagingList.add(new PackagingListDataItem(null, 5d, PackagingListUnit.P, PackagingLevel.Primary, false, packagingMaterial3NodeRef));
+				fp2.getPackagingListView().setPackagingList(packagingList);
+
+				return alfrescoRepository.create(testFolderNodeRef, fp2).getNodeRef();
+
+				
+			}
+		}, false, true);
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+		
+				List<NodeRef> productsNodeRef = new ArrayList<NodeRef>();
+				productsNodeRef.add(fp2NodeRef);
+
+				List<StructCompareResultDataItem> structCompareResult = compareEntityService.compareStructDatalist(fp1NodeRef, fp2NodeRef, BeCPGModel.TYPE_PACKAGINGLIST,
+						BeCPGModel.ASSOC_PACKAGINGLIST_PRODUCT);
+
+				 for(StructCompareResultDataItem c :
+				 structCompareResult){
+				
+				 String product1Name = "";
+				 if(c.getCharacteristic1() != null){
+				 List<AssociationRef> compoAssocRefs =
+				 nodeService.getTargetAssocs(c.getCharacteristic1(),
+				 BeCPGModel.ASSOC_PACKAGINGLIST_PRODUCT);
+				 NodeRef productNodeRef = ((AssociationRef)
+				 compoAssocRefs.get(0)).getTargetRef();
+				 product1Name =
+				 (String)nodeService.getProperty(productNodeRef,
+				 ContentModel.PROP_NAME);
+				 }
+				
+				 String product2Name = "";
+				 if(c.getCharacteristic2() != null){
+				 List<AssociationRef> compoAssocRefs =
+				 nodeService.getTargetAssocs(c.getCharacteristic2(),
+				 BeCPGModel.ASSOC_PACKAGINGLIST_PRODUCT);
+				 NodeRef productNodeRef = ((AssociationRef)
+				 compoAssocRefs.get(0)).getTargetRef();
+				 product2Name =
+				 (String)nodeService.getProperty(productNodeRef,
+				 ContentModel.PROP_NAME);
+				 }
+				
+				 logger.debug(c.getEntityList()+ " - " +
+				 c.getDepthLevel() + " - " + c.getOperator() + " - " +
+				 product1Name + " - " + product2Name + " - " +
+				 c.getProperties1() + " - " + c.getProperties2());
+				
+				 //Output for method checkCompareRow
+				 //Uncomment debug line, copy/paste in spreadsheet =>
+				 //you will get the test lines
+				 String productList = c.getEntityList() == null ? ""
+				 : c.getEntityList().toString();
+				 logger.info("-assertTrue(checkStructCompareRow(structCompareResult, \""
+				 + productList + "\", " + c.getDepthLevel() +
+				 ", StructCompareOperator." + c.getOperator() + ", \""
+				 + product1Name + "\", \"" + product2Name + "\", \"" +
+				 c.getProperties1() + "\", \"" + c.getProperties2() +
+				 "\"));");
+				 }
 
 				return null;
 
