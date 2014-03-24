@@ -21,7 +21,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.alfresco.email.server.EmailServerModel;
-import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -33,7 +32,6 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
-import fr.becpg.repo.ProjectRepoConsts;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.AssociationService;
@@ -130,7 +128,7 @@ public class ProjectServiceImpl implements ProjectService {
 	@Override
 	public void formulate(NodeRef projectNodeRef) throws  FormulateException {
 		
-		if(!nodeService.hasAspect(projectNodeRef, EmailServerModel.ASPECT_ALIASABLE)){
+		if(!nodeService.hasAspect(projectNodeRef, EmailServerModel.ASPECT_ALIASABLE)){			
 			nodeService.setProperty(projectNodeRef, EmailServerModel.PROP_ALIAS, nodeService.getProperty(projectNodeRef, BeCPGModel.PROP_CODE));			
 		}
 		
