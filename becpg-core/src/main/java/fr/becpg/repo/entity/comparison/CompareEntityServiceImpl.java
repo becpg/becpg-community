@@ -392,7 +392,10 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		while(cnt < dataListItems.size()){
 			
 			NodeRef nodeRef = dataListItems.get(cnt);
-			Integer l = (Integer)nodeService.getProperty(nodeRef, BeCPGModel.PROP_DEPTH_LEVEL);						
+			Integer l = (Integer)nodeService.getProperty(nodeRef, BeCPGModel.PROP_DEPTH_LEVEL);		
+			
+			//workaround for packaging
+			l = l == null ? 1 : l;
 			
 			if(l!=null && depthLevel == l){					
 				
@@ -409,6 +412,9 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 					
 					NodeRef nextNodeRef = dataListItems.get(cnt + 1);
 					Integer nextDepthLevel = (Integer)nodeService.getProperty(nextNodeRef, BeCPGModel.PROP_DEPTH_LEVEL);
+					
+					//workaround for packaging
+					nextDepthLevel = nextDepthLevel == null ? 1 : nextDepthLevel;
 					
 					if(depthLevel < nextDepthLevel)						
 						isComposite = true;
