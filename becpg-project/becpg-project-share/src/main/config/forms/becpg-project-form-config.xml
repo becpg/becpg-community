@@ -863,21 +863,6 @@
 		</forms>
 	</config>
 	
-	<config evaluator="aspect" condition="pjt:projectAspect">
-		<forms>
-			<form>
-				<field-visibility>
-					<show id="pjt:project" />
-				</field-visibility>
-				<appearance>
-					<set id="project" appearance="bordered-panel" label-id="becpg.forms.set.project.label"
-						template="/org/alfresco/components/form/2-column-set.ftl" />
-					<field id="pjt:project" set="project" />
-				</appearance>
-			</form>
-		</forms>
-	</config>
-	
    <!-- pjt:requestList type create form config-->
    <config evaluator="model-type" condition="pjt:requestList">
       <forms>
