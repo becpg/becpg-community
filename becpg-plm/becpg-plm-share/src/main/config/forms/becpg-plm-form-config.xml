@@ -208,10 +208,7 @@
 					<show id="bcpg:storageConditions" force="true" />
 					<show id="bcpg:precautionOfUse" force="true" />
 					<show id="bcpg:preparationTips" force="true" />
-					<show id="bcpg:productMicrobioCriteria" />
-					
-					<!-- Project -->
-					<show id="pjt:project" />
+					<show id="bcpg:productMicrobioCriteria" />					
 					
 					<!-- formulation -->
 					<show id="bcpg:productQty" />
@@ -287,10 +284,7 @@
 					<set id="mainTab" label-id="becpg.forms.set.characteristics.label" />
 					<set id="mainInfo" appearance="bordered-panel"
 						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl"
-						parent="mainTab" />
-					<set id="project" appearance="bordered-panel"
-						label-id="becpg.forms.set.project.label" template="/org/alfresco/components/form/2-column-set.ftl"
-						parent="mainTab" />
+						parent="mainTab" />					
 					<set id="formulation" appearance="bordered-panel"
 						label-id="becpg.forms.set.formulation.label" template="/org/alfresco/components/form/3-column-set.ftl"
 						parent="mainTab" />
@@ -410,8 +404,6 @@
 							<control-param name="style">null</control-param>
 						</control>
 					</field>								
-										
-					<field id="pjt:project" set="project"/>
 
 					<!-- formulation -->
 					<field id="bcpg:productQty" set="formulation" mandatory="true" />

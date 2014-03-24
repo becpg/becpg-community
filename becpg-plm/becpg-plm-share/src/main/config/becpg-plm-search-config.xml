@@ -29,7 +29,6 @@
 			<show id="bcpg:eanCode" />
 			<show id="bcpg:suppliers"  />
 			<show id="bcpg:clients" />
-			<show id="pjt:project" />
       </metadata>
    </config>
 

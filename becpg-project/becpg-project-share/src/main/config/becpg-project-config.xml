@@ -20,10 +20,6 @@
 	<config>
 		<forms>
 			<default-controls>
-				<type name="association:pjt:project" template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-					<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
-					<control-param name="ds">becpg/autocomplete/targetassoc/associations/pjt:project?excludeClassNames=bcpg:entityTplAspect</control-param>
-				</type>
 				<type name="association:pjt:taskList" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 				<type name="association:pjt:taskLegend" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 			</default-controls>
