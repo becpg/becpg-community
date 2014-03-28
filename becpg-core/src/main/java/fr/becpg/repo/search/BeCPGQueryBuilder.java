@@ -313,20 +313,19 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	public BeCPGQueryBuilder excludeVersions() {
-		excludeAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION);
+		excludeAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION);				
 		return this;
 	}
 
-	public BeCPGQueryBuilder excludeDefaults() {
+	public BeCPGQueryBuilder excludeDefaults() {		
 		excludeVersions();
 		excludeAspect(BeCPGModel.ASPECT_ENTITY_TPL);
 		excludeAspect(BeCPGModel.ASPECT_HIDDEN_FOLDER);
-		excludeType(BeCPGModel.TYPE_SYSTEM_ENTITY);
-		// Todo look for remove
-		excludeProp(ContentModel.PROP_LOCK_TYPE, "\"READ_ONLY_LOCK\"");
+		excludeType(BeCPGModel.TYPE_SYSTEM_ENTITY);			
+		excludeAspect(ContentModel.ASPECT_CHECKED_OUT);
 		return this;
 	}
-
+	
 	public BeCPGQueryBuilder excludeSearch() {
 
 		excludeDefaults();
@@ -709,6 +708,17 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			this.aspects.add(aspect);
 			ret = aspect.getLocalName() + "." + ret;
 		} else {
+			if(tmpQName.equals(ContentModel.PROP_NAME)){
+				ret = "cmis:name";
+			} else if(tmpQName.equals(ContentModel.PROP_CREATED)){
+				ret = "cmis:createdDate";
+			} else if(tmpQName.equals(ContentModel.PROP_CREATOR)){
+				ret = "cmis:createdBy";
+			} else if(tmpQName.equals(ContentModel.PROP_MODIFIED)){
+				ret = "cmis:lastModifiedDate";
+			} else if(tmpQName.equals(ContentModel.PROP_MODIFIER)){
+				ret = "cmis:lastModifiedBy";
+			}
 			ret = "D." + ret;
 		}
 

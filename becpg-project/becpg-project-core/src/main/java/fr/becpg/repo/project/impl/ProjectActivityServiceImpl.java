@@ -124,8 +124,9 @@ public class ProjectActivityServiceImpl implements ProjectActivityService {
 					data.put("entityTitle", nodeService.getProperty(projectNodeRef, ContentModel.PROP_NAME));
 				}
 				
-				if(nodeService.hasAspect(projectNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)){
-					logger.info("No activity on project template");
+				if(nodeService.hasAspect(projectNodeRef, BeCPGModel.ASPECT_ENTITY_TPL) || 
+						nodeService.hasAspect(projectNodeRef, ContentModel.ASPECT_PENDING_DELETE)){
+					logger.debug("No activity on project template or pending node");
 					return ; 
 				}
 				
@@ -213,8 +214,9 @@ public class ProjectActivityServiceImpl implements ProjectActivityService {
 					return;					
 				}
 				
-				if(nodeService.hasAspect(projectNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)){
-					logger.info("No activity on project template");
+				if(nodeService.hasAspect(projectNodeRef, BeCPGModel.ASPECT_ENTITY_TPL) || 
+						nodeService.hasAspect(projectNodeRef, ContentModel.ASPECT_PENDING_DELETE)){
+					logger.debug("No activity on project template or pending node");
 					return ; 
 				}
 				
@@ -248,8 +250,10 @@ public class ProjectActivityServiceImpl implements ProjectActivityService {
 				
 				NodeRef projectNodeRef = getProjectNodeRefFromContent(contentNodeRef);
 				
-				if(nodeService.hasAspect(projectNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)){
-					logger.info("No activity on project template");
+				
+				if(nodeService.hasAspect(projectNodeRef, BeCPGModel.ASPECT_ENTITY_TPL) || 
+						nodeService.hasAspect(projectNodeRef, ContentModel.ASPECT_PENDING_DELETE)){
+					logger.debug("No activity on project template or pending node");
 					return ; 
 				}
 				

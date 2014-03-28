@@ -57,7 +57,9 @@
 		<property name="entityListDAO" ref="entityListDAO"/>
 	</bean>
 	
-	
+	<bean id="productPolicy" class="fr.becpg.repo.product.policy.ProductPolicy"
+		parent="abstractBeCPGPolicy" depends-on="bcpg.plm.dictionaryBootstrap">
+	</bean>
 
 	
 </beans>

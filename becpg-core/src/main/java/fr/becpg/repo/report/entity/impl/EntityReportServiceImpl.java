@@ -54,6 +54,7 @@ import org.springframework.util.StopWatch;
 
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
@@ -102,6 +103,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	private Map<String, EntityReportExtractor> entityExtractors = new HashMap<String, EntityReportExtractor>();
 
+	private EntityService entityService;
+	
 	//private Striped<Lock> stripedLocs = Striped.lazyWeakLock(20);
 
 	@Override
@@ -156,6 +159,10 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
+	}
+
+	public void setEntityService(EntityService entityService) {
+		this.entityService = entityService;
 	}
 
 	@Override
@@ -268,18 +275,9 @@ public class EntityReportServiceImpl implements EntityReportService {
 		return documentName;
 	}
 
-	@Deprecated //Use entityService instead
 	private NodeRef getReportDocumenNodeRef(NodeRef entityNodeRef, NodeRef tplNodeRef, String documentName) {
 		
-		String documentsFolderName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_DOCUMENTS);
-		NodeRef documentsFolderNodeRef = nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS, documentsFolderName);
-		if (documentsFolderNodeRef == null) {
-			logger.warn("No folder: " + documentsFolderName + " found ");
-			return null;
-			// documentsFolderNodeRef = fileFolderService.create(entityNodeRef,
-			// documentsFolderName, ContentModel.TYPE_FOLDER).getNodeRef();
-		}
-
+		NodeRef documentsFolderNodeRef = entityService.getOrCreateDocumentsFolder(entityNodeRef);		
 		NodeRef documentNodeRef = nodeService.getChildByName(documentsFolderNodeRef, ContentModel.ASSOC_CONTAINS, documentName);
 		if (documentNodeRef == null) {
 			documentNodeRef = fileFolderService.create(documentsFolderNodeRef, documentName, ReportModel.TYPE_REPORT).getNodeRef();

@@ -409,8 +409,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 		// create product tpls
 		visitProductTpls(entityTplsNodeRef);
 
-		Set<String> subFolders = new HashSet<String>();		
-		subFolders.add(RepoConsts.PATH_DOCUMENTS);
+		Set<String> subFolders = new HashSet<String>();
 		subFolders.add(RepoConsts.PATH_IMAGES);
 
 		// visit supplier
@@ -546,7 +545,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 
 		Set<String> subFolders = new HashSet<String>();
 		subFolders.add(RepoConsts.PATH_IMAGES);
-		subFolders.add(RepoConsts.PATH_DOCUMENTS);
 		subFolders.add(RepoConsts.PATH_BRIEF);
 
 		for (QName productType : productTypes) {
@@ -654,7 +652,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 
 		// visit controlPlan
 		Set<String> subFolders = new HashSet<String>();
-		subFolders.add(RepoConsts.PATH_DOCUMENTS);
 		dataLists.clear();
 		dataLists.add(QualityModel.TYPE_SAMPLINGDEF_LIST);
 		entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_CONTROL_PLAN, true, dataLists, subFolders);
@@ -675,8 +672,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 		entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_WORK_ITEM_ANALYSIS, true, dataLists, null);
 		
 		// visit NC
-		subFolders = new HashSet<String>();		
-		subFolders.add(RepoConsts.PATH_DOCUMENTS);
+		subFolders = new HashSet<String>();
 		dataLists.clear();
 		dataLists.add(QualityModel.TYPE_WORK_LOG);
 		entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_NC, true, dataLists, subFolders);

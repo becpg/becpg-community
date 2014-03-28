@@ -41,6 +41,7 @@
 		<property name="transactionService" ref="transactionService" />
 		<property name="preferenceService" ref="preferenceService"/>
 		<property name="namespaceService" ref="namespaceService"/>
+		<property name="entityService" ref="entityService"/>
 	</bean>
 	
 	<!-- Thread pool for reports async generation -->

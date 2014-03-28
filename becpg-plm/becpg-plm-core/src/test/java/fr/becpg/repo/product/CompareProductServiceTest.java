@@ -681,24 +681,6 @@ public class CompareProductServiceTest extends PLMBaseTestCase {
 						"SF 2",
 						"{}",
 						"{{http://www.bcpg.fr/model/becpg/1.0}compoListQty=3, {http://www.bcpg.fr/model/becpg/1.0}compoListProduct=SF 2, {http://www.alfresco.org/model/system/1.0}locale=fr_FR, {http://www.bcpg.fr/model/becpg/1.0}compoListQtySubFormula=0, {http://www.bcpg.fr/model/becpg/1.0}compoListDeclType=Détailler, {http://www.bcpg.fr/model/becpg/1.0}compoListLossPerc=0, {http://www.bcpg.fr/model/becpg/1.0}depthLevel=1, {http://www.bcpg.fr/model/becpg/1.0}compoListUnit=kg}"));
-				assertTrue(checkStructCompareRow(
-						structCompareResult,
-						"{http://www.bcpg.fr/model/becpg/1.0}compoList",
-						2,
-						StructCompareOperator.Added,
-						"",
-						"Raw material 1",
-						"{}",
-						"{{http://www.bcpg.fr/model/becpg/1.0}compoListQty=2, {http://www.bcpg.fr/model/becpg/1.0}compoListProduct=Raw material 1, {http://www.alfresco.org/model/system/1.0}locale=fr_FR, {http://www.bcpg.fr/model/becpg/1.0}compoListQtySubFormula=0, {http://www.bcpg.fr/model/becpg/1.0}compoListDeclType=Déclarer, {http://www.bcpg.fr/model/becpg/1.0}compoListLossPerc=0, {http://www.bcpg.fr/model/becpg/1.0}depthLevel=1, {http://www.bcpg.fr/model/becpg/1.0}compoListUnit=kg}"));
-				assertTrue(checkStructCompareRow(
-						structCompareResult,
-						"{http://www.bcpg.fr/model/becpg/1.0}compoList",
-						2,
-						StructCompareOperator.Added,
-						"",
-						"Raw material 2",
-						"{}",
-						"{{http://www.bcpg.fr/model/becpg/1.0}compoListQty=2, {http://www.bcpg.fr/model/becpg/1.0}compoListProduct=Raw material 2, {http://www.alfresco.org/model/system/1.0}locale=fr_FR, {http://www.bcpg.fr/model/becpg/1.0}compoListQtySubFormula=0, {http://www.bcpg.fr/model/becpg/1.0}compoListDeclType=Détailler, {http://www.bcpg.fr/model/becpg/1.0}compoListLossPerc=0, {http://www.bcpg.fr/model/becpg/1.0}depthLevel=1, {http://www.bcpg.fr/model/becpg/1.0}compoListUnit=kg}"));
 
 				return null;
 

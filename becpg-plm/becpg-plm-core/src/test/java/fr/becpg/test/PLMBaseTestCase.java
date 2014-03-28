@@ -160,14 +160,11 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
 			public Boolean execute() throws Throwable {
 
-				BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(PLMModel.TYPE_PRODUCT)
-						.excludeAspect(BeCPGModel.ASPECT_ENTITY_TPL);
-
 				// products
-				List<NodeRef> productNodeRefs = queryBuilder.inDB().ftsLanguage().list();
+				List<NodeRef> productNodeRefs = BeCPGQueryBuilder.createQuery().ofType(PLMModel.TYPE_PRODUCT).inDB().ftsLanguage().list();
 
 				for (NodeRef productNodeRef : productNodeRefs) {
-					if (nodeService.exists(productNodeRef)) {
+					if (nodeService.exists(productNodeRef) && !nodeService.hasAspect(productNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)) {
 
 						String path = nodeService.getPath(productNodeRef).toDisplayPath(nodeService, permissionService);
 						// if(!path.contains(BeCPGTestHelper.PATH_TESTFOLDER)){

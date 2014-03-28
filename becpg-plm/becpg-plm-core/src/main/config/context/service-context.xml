@@ -83,6 +83,7 @@
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="autoNumService" ref="autoNumService" />
 		<property name="hierarchyService" ref="hierarchyService" />
+		<property name="repositoryHelper" ref="repositoryHelper" />
 	</bean>
 
 	<bean id="importNodeVisitor" class="fr.becpg.repo.importer.impl.ImportNodeVisitor" parent="parentImportVisitor" />

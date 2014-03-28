@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.content.encoding.ContentCharsetFinder;
+import org.alfresco.repo.model.Repository;
 import org.alfresco.service.cmr.dictionary.AspectDefinition;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
@@ -59,7 +60,6 @@ import fr.becpg.config.mapping.FormulaMapping;
 import fr.becpg.config.mapping.HierarchyMapping;
 import fr.becpg.config.mapping.MappingException;
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.PLMModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.entity.EntityListDAO;
@@ -71,7 +71,6 @@ import fr.becpg.repo.importer.ImportContext;
 import fr.becpg.repo.importer.ImportVisitor;
 import fr.becpg.repo.importer.ImporterException;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
-import fr.becpg.repo.search.impl.AbstractBeCPGQueryBuilder;
 
 /**
  * Abstract class used to import a node with its attributes and files.
@@ -179,6 +178,8 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	protected AutoNumService autoNumService;
 
 	protected HierarchyService hierarchyService;
+	
+	protected Repository repositoryHelper;
 
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
@@ -218,6 +219,10 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 	public void setHierarchyService(HierarchyService hierarchyService) {
 		this.hierarchyService = hierarchyService;
+	}
+
+	public void setRepositoryHelper(Repository repositoryHelper) {
+		this.repositoryHelper = repositoryHelper;
 	}
 
 	@Override
@@ -951,7 +956,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	 */
 	protected NodeRef findNode(ImportContext importContext, QName type, Map<QName, Serializable> properties) throws ImporterException {
 
-		NodeRef nodeRef = findNodeByKeyOrCode(importContext, type, BeCPGModel.PROP_CODE, properties);
+		NodeRef nodeRef = findNodeByKeyOrCode(importContext, type, properties);
 
 		if (nodeRef == null) {
 
@@ -981,19 +986,9 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	 * @param properties
 	 *            the properties
 	 * @return the node ref
+	 * @throws ImporterException 
 	 */
-	protected NodeRef findNodeByKeyOrCode(ImportContext importContext, QName type, QName codeQName, Map<QName, Serializable> properties) {
-
-		// // we don't know where is the node ? product may be in the Products
-		// folder
-		// // or in the sites or somewhere else !
-		// protected static final String QUERY_NODE_BY_TYPE = " +TYPE:\"%s\"";
-		//
-		// // we want to be able so update -ASPECT:\"bcpg:entityTplAspect\" so
-		// we don't
-		// // use LuceneHelper.DEFAULT_IGNORE_QUERY
-		// protected static final String DEFAULT_IGNORE_QUERY =
-		//
+	protected NodeRef findNodeByKeyOrCode(ImportContext importContext, QName type, Map<QName, Serializable> properties) throws ImporterException {
 
 		NodeRef nodeRef = null;
 
@@ -1010,19 +1005,22 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 				if (ContentModel.ASSOC_CONTAINS.isMatch(attribute)) {
 					// query by path
-					queryBuilder.inPath(importContext.getPath());
-
+					NodeRef folderNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(), importContext.getPath());
+					queryBuilder.parent(folderNodeRef);
 					doQuery = true;
 				} else if (properties.get(attribute) != null) {
-
 					if (ImportHelper.NULL_VALUE.equals(properties.get(attribute))) {
-
-						queryBuilder.isNull(attribute);
-
+						
+						// TODO : unsupported in db-afts right now so workaround
+						//queryBuilder.isNull(attribute);
+						if(attribute.equals(BeCPGModel.PROP_PARENT_LEVEL)){
+							queryBuilder.andPropEquals(BeCPGModel.PROP_DEPTH_LEVEL, Integer.toString(RepoConsts.DEFAULT_LEVEL));
+						}
+						else{
+							throw new ImporterException("NodeColumnKey cannot be null. NodeColumnKey: " + attribute);
+						}
 					} else {
-
-						queryBuilder.andPropQuery(attribute, properties.get(attribute) != null ? properties.get(attribute).toString() : null);
-						// +@cm\\:localName:%s
+						queryBuilder.andPropEquals(attribute, properties.get(attribute) != null ? properties.get(attribute).toString() : null);
 					}
 					doQuery = true;
 				} else {
@@ -1030,32 +1028,32 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 				}
 			}
 		}
-		// code
-		else if (properties.get(codeQName) != null) {
-			// +@cm\\:localName:%s
-			queryBuilder.andPropQuery(codeQName, (String) properties.get(codeQName));
-			doQuery = true;
-		} else {
-			if (logger.isDebugEnabled()) {
-				logger.debug("No keys defined in mapping, neither code property. codeQName: " + codeQName + " Properties: " + properties);
+		else{
+			// look for codeAspect
+			if (dictionaryService.getType(type).getDefaultAspects() != null) {
+				for (AspectDefinition aspectDef : dictionaryService.getType(type).getDefaultAspects()) {
+					if (aspectDef.getName().equals(BeCPGModel.ASPECT_CODE)) {
+						queryBuilder.andPropEquals(BeCPGModel.PROP_CODE, (String)properties.get(BeCPGModel.PROP_CODE));
+						doQuery = true;
+						break;
+					}
+				}
+			}			
+			
+			// look by name
+			if(!doQuery && !dictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITY_V2)){
+				queryBuilder.andPropEquals(RemoteHelper.getPropName(type), (String)properties.get(ContentModel.PROP_NAME));
+				doQuery = true;
+			}
+			
+			if(!doQuery){
+				logger.warn("No keys defined in mapping, neither code property. Properties: " + properties);
 			}
 		}
-
+		
 		if (doQuery) {
 			logger.debug("findNodeByKeyOrCode: " + queryBuilder.toString());
-
-			queryBuilder.excludeDefaults();
-
-			nodeRef = queryBuilder.singleValue();
-
-			if (nodeRef != null) {
-				// check node exist
-				if (!nodeService.exists(nodeRef)) {
-					nodeRef = null;
-					logger.warn("Node found by lucene query but it doesn't exist. NodeRef: " + nodeRef);
-				}
-			}
-
+			nodeRef = queryBuilder.excludeDefaults().inDB().ftsLanguage().singleValue();
 		}
 
 		return nodeRef;
@@ -1142,8 +1140,9 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	}
 
 	/**
-	 * find the node by value, according to : - nodeColumnKey, take the first -
-	 * code - name if it is a listValue.
+	 * find the node by value, according to : 
+	 * - nodeColumnKey, take the first -
+	 * - code
 	 * 
 	 * @param importContext
 	 *            the import context
@@ -1156,24 +1155,10 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	 * @throws ImporterException
 	 */
 	protected NodeRef findTargetNodeByValue(ImportContext importContext, QName type, String value) throws ImporterException {
-		return findTargetNodeByValue(importContext, type, value, false);
-	}
-
-	protected NodeRef findTargetNodeByValue(ImportContext importContext, QName type, String value, boolean searchByName) throws ImporterException {
 
 		NodeRef nodeRef = null;
 
-		// Try value is a nodeRef
-		try {
-			nodeRef = new NodeRef(value);
-			if (nodeService.exists(nodeRef)) {
-				return nodeRef;
-			}
-		} catch (Exception e) {
-			logger.debug("Value is not a nodeRef");
-		}
-
-		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(type);
+		Map<QName, Serializable> properties = new HashMap<>();
 
 		ClassMapping classMapping = importContext.getClassMappings().get(type);
 		boolean doQuery = false;
@@ -1189,123 +1174,45 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			if (classMapping != null && classMapping.getNodeColumnKeys() != null && !classMapping.getNodeColumnKeys().isEmpty()) {
 
 				for (QName attribute : classMapping.getNodeColumnKeys()) {
-					queryBuilder.andPropQuery(attribute, value);
-
-					// +@cm\\:localName:%s
+					properties.put(attribute, value);
 					doQuery = true;
 					break;
 				}
 			}
-			// productCode or code
 			else {
 
-				// is it a product
-				if (!searchByName && dictionaryService.isSubClass(type, PLMModel.TYPE_PRODUCT)) {
-					// +@cm\\:localName:%s
-					// TODO Remove that CRAP
-
-					String ftsQuery = "+( " + BeCPGQueryBuilder.createQuery().getCondEqualValue(BeCPGModel.PROP_CODE, value) + " "
-							+ BeCPGQueryBuilder.createQuery().getCondEqualValue(PLMModel.PROP_ERP_CODE, value) + ")";
-					queryBuilder.andFTSQuery(ftsQuery);
-
-					doQuery = true;
-				}
-				// code
-				else {
-
-					// look for codeAspect
-					if (!searchByName && dictionaryService.getType(type).getDefaultAspects() != null) {
-						for (AspectDefinition aspectDef : dictionaryService.getType(type).getDefaultAspects()) {
-							if (aspectDef.getName().equals(BeCPGModel.ASPECT_CODE)) {
-								// +@cm\\:localName:%s
-								queryBuilder.andPropQuery(BeCPGModel.PROP_CODE, value);
-
-								doQuery = true;
-								break;
-							}
+				// look for codeAspect
+				if (dictionaryService.getType(type).getDefaultAspects() != null) {
+					for (AspectDefinition aspectDef : dictionaryService.getType(type).getDefaultAspects()) {
+						if (aspectDef.getName().equals(BeCPGModel.ASPECT_CODE)) {
+							properties.put(BeCPGModel.PROP_CODE, value);
+							doQuery = true;
+							break;
 						}
 					}
+				}
 
-					// we try with the name, if several results, we iterate and
-					// test the name
-					if (doQuery == false) {
-						// +@cm\\:localName:%s
-						queryBuilder.andPropQuery(RemoteHelper.getPropName(type), value);
-						doQuery = true;
-						searchByName = true;
-					}
+				// we try with the name
+				if (doQuery == false) {
+					properties.put(RemoteHelper.getPropName(type), value);
+					doQuery = true;
 				}
 			}
 
 			if (doQuery) {
 
-				queryBuilder.excludeDefaults();
-
-				logger.debug("findTargetNodeByValue: " + queryBuilder.toString());
-
-				List<NodeRef> resultSet = queryBuilder.list();
-
-				logger.debug("resultSet.length() : " + resultSet.size());
-				if (resultSet.isEmpty()) {
-
-					if (searchByName) {
-
-						String typeTitle = type.toString();
-						TypeDefinition typeDef = dictionaryService.getType(type);
-						if (typeDef != null && typeDef.getTitle(dictionaryService) != null && !typeDef.getTitle(dictionaryService).isEmpty()) {
-							typeTitle = typeDef.getTitle(dictionaryService);
-						}
-
-						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_TARGET_ASSOC_NOT_FOUND, typeTitle, value));
-					} else {
-						return findTargetNodeByValue(importContext, type, value, true);
+				nodeRef = findNodeByKeyOrCode(importContext, type, properties);
+				
+				if(nodeRef == null){					
+					String typeTitle = type.toString();
+					TypeDefinition typeDef = dictionaryService.getType(type);
+					if (typeDef != null && typeDef.getTitle(dictionaryService) != null && !typeDef.getTitle(dictionaryService).isEmpty()) {
+						typeTitle = typeDef.getTitle(dictionaryService);
 					}
 
-				} else if (resultSet.size() == 1) {
-					nodeRef = resultSet.get(0);
-				} else {
-					if (searchByName) {
-						boolean found = false;
-
-						for (NodeRef n : resultSet) {
-							if (value.equals(nodeService.getProperty(n, RemoteHelper.getPropName(type)))) {
-
-								// we found, but we continue to iterate to check
-								// how many match
-								if (!found) {
-									found = true;
-									nodeRef = n;
-								} else {
-
-									String typeTitle = type.toString();
-									TypeDefinition typeDef = dictionaryService.getType(type);
-									if (typeDef != null && typeDef.getTitle(dictionaryService) != null && !typeDef.getTitle(dictionaryService).isEmpty()) {
-										typeTitle = typeDef.getTitle(dictionaryService);
-									}
-
-									throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_TARGET_ASSOC_SEVERAL, typeTitle, value));
-								}
-							}
-						}
-
-						// not found
-						if (!found) {
-
-							String typeTitle = type.toString();
-							TypeDefinition typeDef = dictionaryService.getType(type);
-							if (typeDef != null && typeDef.getTitle(dictionaryService) != null && !typeDef.getTitle(dictionaryService).isEmpty()) {
-								typeTitle = typeDef.getTitle(dictionaryService);
-							}
-
-							throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_TARGET_ASSOC_NOT_FOUND, typeTitle, value));
-						}
-					}
+					logger.error(I18NUtil.getMessage(MSG_ERROR_TARGET_ASSOC_NOT_FOUND, typeTitle, value));
+					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_TARGET_ASSOC_NOT_FOUND, typeTitle, value));
 				}
-
-			}
-			// list value => by name
-			else if (dictionaryService.isSubClass(type, BeCPGModel.TYPE_LIST_VALUE)) {
-				nodeRef = getItemByTypeAndProp(type, BeCPGModel.PROP_LV_VALUE, value);
 			}
 
 			// add in the cache
@@ -1316,9 +1223,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	}
 
 	private NodeRef getItemByTypeAndProp(QName type, QName prop, String value) {
-
-		return BeCPGQueryBuilder.createQuery().ofType(type).andPropEquals(prop,value).excludeDefaults().singleValue();
-
+		return BeCPGQueryBuilder.createQuery().ofType(type).excludeDefaults().andPropEquals(prop,value).inDB().ftsLanguage().singleValue();
 	}
 
 }

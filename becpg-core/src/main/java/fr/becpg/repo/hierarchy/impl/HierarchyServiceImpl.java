@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
@@ -68,10 +69,11 @@ public class HierarchyServiceImpl implements HierarchyService {
 	private RepoService repoService;
 	@Autowired
 	private DictionaryService dictionaryService;
-
 	@Autowired
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
-
+	@Autowired
+	private Repository repositoryHelper;
+	
 	@Override
 	public NodeRef getHierarchyByPath(String path, NodeRef parentNodeRef, String value) {
 
@@ -140,11 +142,12 @@ public class HierarchyServiceImpl implements HierarchyService {
 
 	private BeCPGQueryBuilder getLuceneQuery(String path, NodeRef parentNodeRef, QName property, String value, boolean all) {
 
+		NodeRef listContainerNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(), path);
 		
 		BeCPGQueryBuilder ret = BeCPGQueryBuilder.createQuery()
 				.ofType(BeCPGModel.TYPE_LINKED_VALUE).maxResults( RepoConsts.MAX_SUGGESTIONS)
-				.inPath(path)
-				.ftsLanguage();
+				.parent(listContainerNodeRef)
+				.inDB();
 		
 		if (parentNodeRef != null) {
 			ret.andPropEquals(BeCPGModel.PROP_PARENT_LEVEL, parentNodeRef.toString());

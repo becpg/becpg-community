@@ -153,7 +153,7 @@ public class ImportEntityListAspectVisitor extends AbstractImportVisitor impleme
 	@Override
 	protected NodeRef findNode(ImportContext importContext, QName type, Map<QName, Serializable> properties) throws ImporterException {
 
-		NodeRef nodeRef = findNodeByKeyOrCode(importContext, type, BeCPGModel.PROP_CODE, properties);
+		NodeRef nodeRef = findNodeByKeyOrCode(importContext, type, properties);
 
 		return nodeRef;
 	}

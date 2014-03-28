@@ -84,7 +84,7 @@ public class ReportTplServiceImpl implements ReportTplService{
 			return new ArrayList<NodeRef>();
 		}		
 				
-		return getQueryReportTpl(reportType, nodeType, true).maxResults(RepoConsts.MAX_RESULTS_256).list();
+		return getReportTpls(reportType, nodeType, true, null);
 	}
 	
 	/**
@@ -93,13 +93,8 @@ public class ReportTplServiceImpl implements ReportTplService{
 	@Override
 	public NodeRef getSystemReportTemplate(ReportType reportType, QName nodeType, String tplName) {    	  
     	
-		BeCPGQueryBuilder queryBuilder = getQueryReportTpl(reportType, nodeType, true);
-		if(tplName!=null && tplName!="*"){
-			queryBuilder.andPropQuery(ContentModel.PROP_NAME, tplName);
-		}
-		
-		return queryBuilder.singleValue();
-		
+		List<NodeRef> ret = getReportTpls(reportType, nodeType, true, tplName);		
+		return ret.isEmpty() ? null : ret.get(0);
 	}
 	
 	/**
@@ -119,14 +114,7 @@ public class ReportTplServiceImpl implements ReportTplService{
 			return new ArrayList<NodeRef>();
 		}		
 		
-		BeCPGQueryBuilder queryBuilder = getQueryReportTpl(reportType, nodeType, false);
-		if(tplName!=null && tplName!="*"){
-			queryBuilder.andPropQuery(ContentModel.PROP_NAME, tplName);
-		}
-		
-		return queryBuilder.maxResults(RepoConsts.MAX_RESULTS_256).list();
-		
-		
+		return getReportTpls(reportType, nodeType, false, tplName);		
 	}
 	
 	/**
@@ -145,12 +133,8 @@ public class ReportTplServiceImpl implements ReportTplService{
 			return null;
 		}		
     	
-		BeCPGQueryBuilder queryBuilder = getQueryReportTpl(reportType, nodeType, false);
-		if(tplName!=null && tplName!="*"){
-			queryBuilder.andPropQuery(ContentModel.PROP_NAME, tplName);
-		}
-		
-		return queryBuilder.singleValue();
+		List<NodeRef> ret = getReportTpls(reportType, nodeType, false, tplName);		
+		return ret.isEmpty() ? null : ret.get(0);
 	}
 	
 	/**
@@ -343,14 +327,33 @@ public class ReportTplServiceImpl implements ReportTplService{
 		return reportFormat;
 	}	
 	
-	private BeCPGQueryBuilder getQueryReportTpl(ReportType reportType, QName nodeType, boolean isSystem){
+	private List<NodeRef> getReportTpls(ReportType reportType, QName nodeType, boolean isSystem, String tplName){
 					
-		return BeCPGQueryBuilder.createQuery().ofType(ReportModel.TYPE_REPORT_TPL)
-				.andPropEquals(ReportModel.PROP_REPORT_TPL_TYPE, reportType.toString())
-				.andPropQuery(ReportModel.PROP_REPORT_TPL_IS_SYSTEM, Boolean.valueOf(isSystem).toString())
-				.excludeProp(ReportModel.PROP_REPORT_TPL_IS_DISABLED, Boolean.TRUE.toString())
-				.andPropEquals(ReportModel.PROP_REPORT_TPL_CLASS_NAME, nodeType!=null? nodeType.toString(): null);
+		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(ReportModel.TYPE_REPORT_TPL)
+						.andPropEquals(ReportModel.PROP_REPORT_TPL_TYPE, reportType.toString())
+						// unsupported in db
+//						.andPropQuery(ReportModel.PROP_REPORT_TPL_IS_SYSTEM, Boolean.valueOf(isSystem).toString())
+//						.excludeProp(ReportModel.PROP_REPORT_TPL_IS_DISABLED, Boolean.TRUE.toString())
+						.andPropEquals(ReportModel.PROP_REPORT_TPL_CLASS_NAME, nodeType!=null? nodeType.toString(): null)
+						.maxResults(RepoConsts.MAX_RESULTS_256)
+						.inDB()
+						.ftsLanguage();
 		
+		if(tplName!=null && tplName!="*"){
+			queryBuilder.andPropEquals(ContentModel.PROP_NAME, tplName);
+		}
+		
+		List<NodeRef> ret = new ArrayList<>();
+		
+		for(NodeRef n : queryBuilder.list()){
+			Boolean isSystemValue = (Boolean)nodeService.getProperty(n, ReportModel.PROP_REPORT_TPL_IS_SYSTEM);
+			Boolean isDisabledValue = (Boolean)nodeService.getProperty(n, ReportModel.PROP_REPORT_TPL_IS_DISABLED);
+			if((isSystemValue == null && !isSystem) || (isSystemValue != null && isSystemValue.equals(isSystem)) && 
+					(isDisabledValue == null || isDisabledValue.equals(false))){
+				ret.add(n);
+			}
+		}
+		return ret;
 	}
 
 	@Override

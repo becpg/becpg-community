@@ -24,14 +24,14 @@
 
 	<mapping name="bcpg:client">
 		<nodeColumnKeys>
-			<nodeColumnKey attribute="bcpg:code" />
+			<nodeColumnKey attribute="bcpg:erpCode" />
 		</nodeColumnKeys>
 		<columns />
 	</mapping>
 
 	<mapping name="bcpg:supplier">
 		<nodeColumnKeys>
-			<nodeColumnKey attribute="bcpg:code" />
+			<nodeColumnKey attribute="bcpg:erpCode" />
 		</nodeColumnKeys>
 		<columns />
 	</mapping>
