@@ -62,7 +62,6 @@
 	<config evaluator="string-compare" condition="DocumentLibrary">
 		<aspects>
 			<visible>
-				<aspect name="pjt:projectAspect" />
 			</visible>
 
 			<!-- Aspects that a user can add. Same as "visible" if left empty -->

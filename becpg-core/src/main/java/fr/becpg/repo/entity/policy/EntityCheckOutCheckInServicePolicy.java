@@ -52,9 +52,14 @@ import fr.becpg.repo.report.entity.EntityReportAsyncGenerator;
  * @author quere
  * 
  */
-public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy implements CheckOutCheckInServicePolicies.OnCheckOut, CheckOutCheckInServicePolicies.BeforeCheckIn,
-		CheckOutCheckInServicePolicies.OnCheckIn, CheckOutCheckInServicePolicies.BeforeCancelCheckOut, NodeServicePolicies.OnAddAspectPolicy,
-		NodeServicePolicies.OnRemoveAspectPolicy, NodeServicePolicies.OnDeleteNodePolicy {
+public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy implements 
+		CheckOutCheckInServicePolicies.OnCheckOut, 
+		CheckOutCheckInServicePolicies.BeforeCheckIn,
+		CheckOutCheckInServicePolicies.OnCheckIn, 
+		CheckOutCheckInServicePolicies.BeforeCancelCheckOut, 
+		NodeServicePolicies.OnAddAspectPolicy,
+		NodeServicePolicies.OnRemoveAspectPolicy, 
+		NodeServicePolicies.OnDeleteNodePolicy {
 
 	private static final String MSG_INITIAL_VERSION = "create_version.initial_version";
 
@@ -64,18 +69,13 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 	
 	private EntityReportAsyncGenerator entityReportAsyncGenerator;
 	
-	
 	public void setEntityVersionService(EntityVersionService entityVersionService) {
 		this.entityVersionService = entityVersionService;
 	}
-	
-	
 
 	public void setEntityReportAsyncGenerator(EntityReportAsyncGenerator entityReportAsyncGenerator) {
 		this.entityReportAsyncGenerator = entityReportAsyncGenerator;
 	}
-
-
 
 	/**
 	 * Inits the.
@@ -101,19 +101,14 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 
 	@Override
 	public void onCheckOut(final NodeRef workingCopyNodeRef) {
-		NodeRef origNodeRef = getCheckedOut(workingCopyNodeRef);
-		
+		NodeRef origNodeRef = getCheckedOut(workingCopyNodeRef);		
 		entityVersionService.checkOutDataListAndFiles(origNodeRef, workingCopyNodeRef);
-
 	}
 
 	@Override
 	public void beforeCheckIn(NodeRef workingCopyNodeRef, Map<String, Serializable> versionProperties, String contentUrl, boolean keepCheckedOut) {
-
-		NodeRef origNodeRef = getCheckedOut(workingCopyNodeRef);
-
+		NodeRef origNodeRef = getCheckedOut(workingCopyNodeRef);			
 		queueNode(entityVersionService.createVersionAndCheckin(origNodeRef, workingCopyNodeRef, versionProperties));
-
 	}
 
 	@Override
@@ -123,21 +118,13 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 			nodeService.setProperty(nodeRef, BeCPGModel.PROP_START_EFFECTIVITY, new Date());
 			nodeService.removeProperty(nodeRef, BeCPGModel.PROP_END_EFFECTIVITY);
 		}
-//A refaire
-//		if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_PRODUCT)) {
-//			nodeService.setProperty(nodeRef, BeCPGModel.PROP_PRODUCT_STATE, SystemState.ToValidate);
-//		}
-		queueNode(nodeRef);
-		
+		queueNode(nodeRef);	
 	}
 
 	@Override
 	public void beforeCancelCheckOut(final NodeRef workingCopyNodeRef) {
-
 		final NodeRef origNodeRef = getCheckedOut(workingCopyNodeRef);
-
 		entityVersionService.cancelCheckOut(origNodeRef, workingCopyNodeRef);
-
 	}
 
 	@Override
@@ -209,5 +196,4 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 		entityReportAsyncGenerator.queueNodes(new ArrayList<NodeRef>(pendingNodes));
 		
 	}
-
 }

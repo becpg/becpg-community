@@ -24,13 +24,19 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.rule.RuntimeRuleService;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
+import org.alfresco.repo.webservice.action.Rule;
 import org.alfresco.service.cmr.coci.CheckOutCheckInService;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.rule.RuleService;
 import org.alfresco.service.cmr.version.Version;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
+import fr.becpg.repo.entity.policy.EntityTplRefAspectPolicy;
 import fr.becpg.repo.project.data.ProjectData;
 
 /**
@@ -40,8 +46,13 @@ import fr.becpg.repo.project.data.ProjectData;
  */
 public class ProjectCOCITest extends AbstractProjectTestCase {
 
+	private static Log logger = LogFactory.getLog(ProjectCOCITest.class);
+	
 	@Resource
 	private CheckOutCheckInService checkOutCheckInService;
+	
+	@Resource
+	private RuntimeRuleService ruleService;
 
 	@Test
 	public void testCheckOutCheckIn(){
@@ -56,6 +67,7 @@ public class ProjectCOCITest extends AbstractProjectTestCase {
 				nodeService.addAspect(projectTplNodeRef, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
 
 				// Check out
+				logger.info("Check out project " + projectTplNodeRef + ruleService.getSavedRuleFolderAssoc(projectTplNodeRef));
 				NodeRef workingCopyNodeRef = checkOutCheckInService.checkout(projectTplNodeRef);
 				
 				ProjectData workingCopyData = (ProjectData)alfrescoRepository.findOne(workingCopyNodeRef);								
@@ -65,11 +77,14 @@ public class ProjectCOCITest extends AbstractProjectTestCase {
 				assertTrue(workingCopyData.getDeliverableList().get(3).getTask().equals(workingCopyData.getTaskList().get(2).getNodeRef()));
 				
 				// Check in
+				logger.info("Check in project " + workingCopyNodeRef  + ruleService.getSavedRuleFolderAssoc(workingCopyNodeRef));
 				Map<String, Serializable> versionProperties = new HashMap<String, Serializable>();
 				versionProperties.put(Version.PROP_DESCRIPTION, "This is a test version");
-				NodeRef newRawMaterialNodeRef = checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
+				NodeRef newProjectNodeRef = checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
 				
-				assertNotNull(newRawMaterialNodeRef);
+				logger.info("Check in project done " + newProjectNodeRef  + ruleService.getSavedRuleFolderAssoc(newProjectNodeRef));
+				
+				assertNotNull(newProjectNodeRef);
 				
 				return null;
 			}

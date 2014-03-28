@@ -50,12 +50,16 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.subethamail.wiser.Wiser;
+
+import com.google.gdata.client.GDataProtocol.Method;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
@@ -82,6 +86,8 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 	private static Log logger = LogFactory.getLog(RepoBaseTestCase.class);
 
+	@Rule 
+	public TestName testName = new TestName();
 	
 	protected NodeRef testFolderNodeRef;
 	protected NodeRef systemFolderNodeRef;
@@ -258,8 +264,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
 			public Boolean execute() throws Throwable {
 
-			
-				logger.debug("   - Deleting :" + nodeService.getProperty(testFolderNodeRef, ContentModel.PROP_NAME));
+				logger.debug(testName.getMethodName() + " Deleting :" + nodeService.getProperty(testFolderNodeRef, ContentModel.PROP_NAME) + " " + testFolderNodeRef);
 				nodeService.deleteNode(testFolderNodeRef);
 				return true;
 

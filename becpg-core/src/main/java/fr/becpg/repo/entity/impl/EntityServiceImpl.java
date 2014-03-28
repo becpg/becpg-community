@@ -277,11 +277,10 @@ public class EntityServiceImpl implements EntityService {
 
 	
 	@Override
-	public NodeRef getOrCreateDocumentFolder(NodeRef entityNodeRef) {
+	public NodeRef getOrCreateDocumentsFolder(NodeRef entityNodeRef) {
 		String documentsFolderName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_DOCUMENTS);
 		NodeRef documentsFolderNodeRef = nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS, documentsFolderName);
 		if (documentsFolderNodeRef == null) {
-			logger.warn("No folder: " + documentsFolderName + " found ");
 			 documentsFolderNodeRef = fileFolderService.create(entityNodeRef,
 			 documentsFolderName, ContentModel.TYPE_FOLDER).getNodeRef();
 		}

@@ -89,7 +89,7 @@ public class DocLinkedEntitiesPolicy extends AbstractBeCPGPolicy implements Node
 	@Override
 	public void onDeleteAssociation(AssociationRef associationRef) {
 		if (BeCPGModel.ASSOC_DOC_LINKED_ENTITIES.equals(associationRef.getTypeQName())) {
-			NodeRef destRef = entityService.getOrCreateDocumentFolder(associationRef.getTargetRef());
+			NodeRef destRef = entityService.getOrCreateDocumentsFolder(associationRef.getTargetRef());
 
 			deleteLink(associationRef.getSourceRef(), destRef);
 		}
@@ -99,7 +99,7 @@ public class DocLinkedEntitiesPolicy extends AbstractBeCPGPolicy implements Node
 	@Override
 	public void onCreateAssociation(AssociationRef associationRef) {
 		if (BeCPGModel.ASSOC_DOC_LINKED_ENTITIES.equals(associationRef.getTypeQName())) {
-			NodeRef destRef = entityService.getOrCreateDocumentFolder(associationRef.getTargetRef());
+			NodeRef destRef = entityService.getOrCreateDocumentsFolder(associationRef.getTargetRef());
 
 			createLink(associationRef.getSourceRef(), destRef);
 		}

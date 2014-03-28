@@ -108,7 +108,6 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 		NodeRef entityTplsNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_ENTITY_TEMPLATES);
 
 		Set<String> subFolders = new HashSet<String>();
-		subFolders.add(RepoConsts.PATH_DOCUMENTS);
 		subFolders.add(RepoConsts.PATH_IMAGES);
 
 		// visit supplier

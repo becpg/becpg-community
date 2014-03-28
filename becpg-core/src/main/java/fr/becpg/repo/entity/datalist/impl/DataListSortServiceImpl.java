@@ -45,9 +45,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 @Service("dataListSortService")
 public class DataListSortServiceImpl implements DataListSortService {
 
-	private static Log logger = LogFactory.getLog(DataListSortServiceImpl.class);
-
-	private static int DEFAULT_LEVEL = 1;
+	private static Log logger = LogFactory.getLog(DataListSortServiceImpl.class);	
 
 	@Autowired
 	private NodeService nodeService;
@@ -62,7 +60,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 
 		NodeRef prevListContainer = null;
 		int sort = RepoConsts.SORT_DEFAULT_STEP - RepoConsts.SORT_INSERTING_STEP;
-		int level = DEFAULT_LEVEL;
+		int level = RepoConsts.DEFAULT_LEVEL;
 
 		HashSet<NodeRef> pendingNodeRefs = new HashSet<NodeRef>(nodeRefs);
 
@@ -152,12 +150,12 @@ public class DataListSortServiceImpl implements DataListSortService {
 
 				level = (Integer) nodeService.getProperty(parentLevel, BeCPGModel.PROP_DEPTH_LEVEL);
 				if (level == null) {
-					level = DEFAULT_LEVEL + 1;
+					level = RepoConsts.DEFAULT_LEVEL + 1;
 				} else {
 					level++;
 				}
 			} else {
-				level = DEFAULT_LEVEL;
+				level = RepoConsts.DEFAULT_LEVEL;
 			}
 		}
 

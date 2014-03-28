@@ -12,6 +12,7 @@ import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.rule.RuleModel;
 import org.alfresco.repo.rule.RuntimeRuleService;
 import org.alfresco.service.cmr.repository.AssociationRef;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.rule.Rule;
 import org.alfresco.service.cmr.rule.RuleService;
@@ -111,7 +112,7 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy implements Nod
 				if (nodeService.hasAspect(entityTplNodeRef, RuleModel.ASPECT_RULES) == true
 						&& !((RuleService) ruleService).getRules(entityTplNodeRef, false).isEmpty()) {
 
-					boolean error = false;
+					boolean hasRule = false;
 					if (nodeService.hasAspect(entityNodeRef, RuleModel.ASPECT_RULES) == true) {
 						// Check for a linked to node
 						NodeRef linkedToNode = ((RuleService) ruleService).getLinkedToRuleNode(entityNodeRef);
@@ -119,9 +120,9 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy implements Nod
 							// if the node has no rules we can delete the folder
 							// ready to link
 							List<Rule> rules = ((RuleService) ruleService).getRules(entityNodeRef, false);
-							if (rules.isEmpty() == false) {
+							if (rules.isEmpty() != false) {
 								// Can't link a node if it already has rules
-								error = true;
+								hasRule = true;
 							} else {
 								// Delete the rules system folder
 								NodeRef ruleFolder = ruleService.getSavedRuleFolderAssoc(entityNodeRef).getChildRef();
@@ -134,17 +135,18 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy implements Nod
 						}
 
 					}
-					if (!error) {
-
+					if (!hasRule) {
 						// Create the destination folder as a secondary child of
 						// the first
-						NodeRef ruleSetNodeRef = ruleService.getSavedRuleFolderAssoc(entityTplNodeRef).getChildRef();
-						// The required aspect will automatically be added to
-						// the node
-						nodeService.addChild(entityNodeRef, ruleSetNodeRef, RuleModel.ASSOC_RULE_FOLDER, RuleModel.ASSOC_RULE_FOLDER);
-
+						ChildAssociationRef childAssocRef = ruleService.getSavedRuleFolderAssoc(entityTplNodeRef);
+						if(childAssocRef != null){
+							NodeRef ruleSetNodeRef = childAssocRef.getChildRef();
+							// The required aspect will automatically be added to
+							// the node
+							nodeService.addChild(entityNodeRef, ruleSetNodeRef, RuleModel.ASSOC_RULE_FOLDER, RuleModel.ASSOC_RULE_FOLDER);
+						}						
 					} else {
-						logger.error("The current folder has rules and can not be linked to another folder.");
+						logger.warn("The current folder has rules and can not be linked to another folder.");
 					}
 
 				}

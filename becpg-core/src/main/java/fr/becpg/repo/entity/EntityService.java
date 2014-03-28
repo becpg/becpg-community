@@ -60,7 +60,7 @@ public interface EntityService {
 
 	void deleteDataLists(NodeRef entityNodeRef, boolean deleteArchivedNodes);
 
-	NodeRef getOrCreateDocumentFolder(NodeRef entityNodeRef);
+	NodeRef getOrCreateDocumentsFolder(NodeRef entityNodeRef);
 
 	
 

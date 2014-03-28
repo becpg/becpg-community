@@ -220,21 +220,10 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 
 		NodeRef entityTplsNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_ENTITY_TEMPLATES);
 		
-		
 		// visit acls
 		Set<QName> dataLists = new LinkedHashSet<QName>();
 		dataLists.add(SecurityModel.TYPE_ACL_ENTRY);
 		entityTplService.createEntityTpl(entityTplsNodeRef, SecurityModel.TYPE_ACL_GROUP, true, dataLists, null);
-		
-
-//
-//		Set<String> subFolders = new HashSet<String>();		
-//		subFolders.add(RepoConsts.PATH_DOCUMENTS);
-//		subFolders.add(RepoConsts.PATH_IMAGES);
-//
-//		Set<QName> dataLists = new LinkedHashSet<QName>();
-//		entityTplService.createEntityTpl(entityTplsNodeRef, BeCPGModel.TYPE_ENTITY_V2, true, dataLists, subFolders);
-
 	}
 	
 }

@@ -28,6 +28,7 @@ import org.apache.commons.logging.LogFactory;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.QualityModel;
 import fr.becpg.repo.entity.AutoNumService;
+import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.quality.NonConformityService;
 import fr.becpg.repo.workflow.activiti.nc.NCWorkflowUtils.NCWorkflowUtilsTask;
 
@@ -42,23 +43,18 @@ public class CreateNC extends BaseJavaDelegate {
 	private static Log logger = LogFactory.getLog(CreateNC.class);
 
 	private NodeService nodeService;
-
 	private ServiceRegistry serviceRegistry;
-
 	private NonConformityService nonConformityService;
 	private AutoNumService autoNumService;
+	private EntityService entityService;
 
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
-
-	
 	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
 		this.serviceRegistry = serviceRegistry;
 	}
-
-
 
 	public void setNonConformityService(NonConformityService nonConformityService) {
 		this.nonConformityService = nonConformityService;
@@ -66,6 +62,10 @@ public class CreateNC extends BaseJavaDelegate {
 
 	public void setAutoNumService(AutoNumService autoNumService) {
 		this.autoNumService = autoNumService;
+	}
+
+	public void setEntityService(EntityService entityService) {
+		this.entityService = entityService;
 	}
 
 	@Override
@@ -121,7 +121,7 @@ public class CreateNC extends BaseJavaDelegate {
 			public NodeRef doWork() throws Exception {
 				try {
 
-					NodeRef briefNodeRef = NCWorkflowUtils.getDocumentsFolder(ncNodeRef, serviceRegistry);
+					NodeRef briefNodeRef = entityService.getOrCreateDocumentsFolder(ncNodeRef);
 					
 					String ncName = (String) nodeService.getProperty(ncNodeRef, ContentModel.PROP_NAME);
 					

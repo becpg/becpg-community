@@ -43,6 +43,7 @@ import org.apache.commons.logging.LogFactory;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.QualityModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.util.ApplicationContextHelper;
@@ -77,6 +78,7 @@ public class NCWorkflowUtils {
 	public static void updateNC(NodeRef ncNodeRef, NCWorkflowUtilsTask task, ServiceRegistry serviceRegistry) throws FileExistsException, FileNotFoundException {
 
 		AssociationService associationService = ApplicationContextHelper.getApplicationContext().getBean(fr.becpg.repo.helper.AssociationService.class);
+		EntityService entityService = ApplicationContextHelper.getApplicationContext().getBean(fr.becpg.repo.entity.EntityService.class);
 		
 		Map<QName, Serializable> properties = new HashMap<QName, Serializable>(2);
 		if (task.getVariable("ncwf_ncState") != null) {
@@ -128,8 +130,7 @@ public class NCWorkflowUtils {
 		serviceRegistry.getNodeService().addProperties(ncNodeRef, properties);
 
 		// Move documents from pkgNodeRef
-		NodeRef briefNodeRef = getDocumentsFolder(ncNodeRef, serviceRegistry);
-
+		NodeRef briefNodeRef = entityService.getOrCreateDocumentsFolder(ncNodeRef);
 		
 		NodeRef pkgNodeRef = ((ActivitiScriptNode) task.getVariable("bpm_package")).getNodeRef();
 
@@ -153,19 +154,4 @@ public class NCWorkflowUtils {
 		
 		return ret;
 	}
-
-	@Deprecated //Use entityService instead
-	public static NodeRef getDocumentsFolder(NodeRef entityNodeRef, ServiceRegistry serviceRegistry) {
-
-		String documentsFolderName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_DOCUMENTS);
-		NodeRef documentsFolderNodeRef = serviceRegistry.getNodeService().getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS, documentsFolderName);
-		if (documentsFolderNodeRef == null) {
-
-			documentsFolderNodeRef = serviceRegistry.getFileFolderService().create(entityNodeRef, documentsFolderName, ContentModel.TYPE_FOLDER).getNodeRef();
-		}
-		
-
-		return documentsFolderNodeRef;
-	}
-
 }

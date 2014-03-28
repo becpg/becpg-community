@@ -97,13 +97,8 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 			entityProperties.put(qName, propValues.get(qName));
 		}
 
-		QName entityType = importContext.getEntityType() != null ? importContext.getEntityType() : PLMModel.TYPE_PRODUCT;
-		QName entityCode = BeCPGModel.PROP_CODE;
-		if (!classMapping.getNodeColumnKeys().isEmpty()) {
-			entityCode = classMapping.getNodeColumnKeys().get(0);
-		}
-
-		NodeRef entityNodeRef = findNodeByKeyOrCode(importContext, entityType, entityCode, entityProperties);
+		QName entityType = importContext.getEntityType() != null ? importContext.getEntityType() : PLMModel.TYPE_PRODUCT;		
+		NodeRef entityNodeRef = findNodeByKeyOrCode(importContext, entityType, entityProperties);
 
 		if (entityNodeRef == null) {
 			throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_FIND_ENTITY, values));

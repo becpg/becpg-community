@@ -62,6 +62,7 @@ import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListUnit;
 import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.report.template.ReportTplService;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.test.BeCPGPLMTestHelper;
 import fr.becpg.test.PLMBaseTestCase;
 
@@ -208,7 +209,7 @@ public class ProductServiceTest extends PLMBaseTestCase {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
-
+				
 				NodeRef entityTplNodeRef = entityTplService.getEntityTpl(PLMModel.TYPE_FINISHEDPRODUCT);
 				NodeRef imagesFolder = nodeService.getChildByName(entityTplNodeRef, ContentModel.ASSOC_CONTAINS,
 						TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
@@ -278,16 +279,7 @@ public class ProductServiceTest extends PLMBaseTestCase {
 
 		// Check
 		logger.debug("//Check finished product");
-		assertNotNull("Image product must be not null", entityService.getEntityDefaultImage(finishedProductNodeRef));
-		
-		/*-- init repo --*/
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			public NodeRef execute() throws Throwable {
-
-				initRepoVisitorService.run(repositoryHelper.getCompanyHome());
-				return null;
-			}
-		}, false, true);
+		assertNotNull("Image product must be not null", entityService.getEntityDefaultImage(finishedProductNodeRef));		
 	}
 
 	/**

@@ -12,6 +12,7 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
+import org.alfresco.repo.rule.RuntimeRuleService;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.version.Version2Model;
 import org.alfresco.repo.version.VersionBaseModel;
@@ -34,6 +35,7 @@ import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
@@ -96,6 +98,10 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	
 	@Autowired
 	private AssociationService associationService;
+	
+	@Autowired
+	@Qualifier("ruleService")
+	private RuntimeRuleService ruleService;
 
 	@Override
 	public NodeRef createVersion(final NodeRef nodeRef, Map<String, Serializable> versionProperties) {
@@ -196,6 +202,11 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 						entityListDAO.moveDataLists(workingCopyNodeRef, origNodeRef);
 						// Move files to origNodeRef
 						entityService.deleteFiles(origNodeRef, true);
+						// Remove rules
+						ChildAssociationRef ruleChildAssocRef = ruleService.getSavedRuleFolderAssoc(origNodeRef);
+						if(ruleChildAssocRef != null){
+							nodeService.deleteNode(ruleChildAssocRef.getChildRef());
+						}						
 						entityService.moveFiles(workingCopyNodeRef, origNodeRef);
 						// delete files that are not moved (ie: Documents)
 						// otherwise

@@ -33,11 +33,9 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.model.SystemState;
-import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.AssociationService;
-import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
@@ -293,6 +291,7 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 
+				entityReportService.generateReport(rawMaterialNodeRef);
 				return checkOutCheckInService.checkout(rawMaterialNodeRef);				
 
 			}
@@ -394,6 +393,8 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 
 				// Check out
 				NodeRef workingCopyNodeRef = checkOutCheckInService.checkout(rawMaterialNodeRef);
+				logger.info("state " +  rawMaterialNodeRef + " - " + nodeService.getProperty(workingCopyNodeRef, PLMModel.PROP_PRODUCT_STATE));
+				assertEquals("Check state new version", SystemState.Simulation.toString(), nodeService.getProperty(workingCopyNodeRef, PLMModel.PROP_PRODUCT_STATE));
 
 				// Check in
 				NodeRef newRawMaterialNodeRef = null;

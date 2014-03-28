@@ -62,5 +62,6 @@
     	<property name="serviceRegistry" ref="ServiceRegistry"/>
     	<property name="nonConformityService" ref="nonConformityService"/>
     	<property name="autoNumService" ref="autoNumService" />
+    	<property name="entityService" ref="entityService"/>
     </bean>    
 </beans>
