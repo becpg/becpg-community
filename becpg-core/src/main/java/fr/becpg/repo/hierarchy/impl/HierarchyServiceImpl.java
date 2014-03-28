@@ -142,7 +142,9 @@ public class HierarchyServiceImpl implements HierarchyService {
 
 	private BeCPGQueryBuilder getLuceneQuery(String path, NodeRef parentNodeRef, QName property, String value, boolean all) {
 
-		NodeRef listContainerNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(), path);
+		NodeRef listContainerNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(), BeCPGQueryBuilder.encodePath(path));
+		logger.info("path " + BeCPGQueryBuilder.encodePath(path));
+		logger.info("listContainerNodeRef " + listContainerNodeRef);
 		
 		BeCPGQueryBuilder ret = BeCPGQueryBuilder.createQuery()
 				.ofType(BeCPGModel.TYPE_LINKED_VALUE).maxResults( RepoConsts.MAX_SUGGESTIONS)
