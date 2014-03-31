@@ -56,6 +56,7 @@ public class EntityReportServiceTest extends PLMBaseTestCase {
 	
 	NodeRef defaultReportTplNodeRef = null;
 	NodeRef otherReportTplNodeRef = null;
+	NodeRef productReportTplFolder = null;
 	
 	private void initReports(){
 		
@@ -72,7 +73,7 @@ public class EntityReportServiceTest extends PLMBaseTestCase {
 				NodeRef systemFolder = repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM,
 						TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
 				NodeRef reportsFolder = repoService.getOrCreateFolderByPath(systemFolder, RepoConsts.PATH_REPORTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS));
-				NodeRef productReportTplFolder = repoService.getOrCreateFolderByPath(reportsFolder, PlmRepoConsts.PATH_PRODUCT_REPORTTEMPLATES,
+				productReportTplFolder = repoService.getOrCreateFolderByPath(reportsFolder, PlmRepoConsts.PATH_PRODUCT_REPORTTEMPLATES,
 						TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_PRODUCT_REPORTTEMPLATES));
 
 				reportTplService.createTplRptDesign(productReportTplFolder, "report PF 2", "beCPG/birt/document/product/default/ProductReport.rptdesign", ReportType.Document,
@@ -218,7 +219,15 @@ public class EntityReportServiceTest extends PLMBaseTestCase {
 				
 				logger.info("Delete report Tpl");
 				nodeService.setProperty(otherReportTplNodeRef, ReportModel.PROP_REPORT_TPL_IS_DISABLED, true);				
-				
+				return null;
+
+			}
+		});
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
+		
 				entityReportService.generateReport(pfNodeRef);
 				
 				// check report Tpl
@@ -292,7 +301,7 @@ public class EntityReportServiceTest extends PLMBaseTestCase {
 				NodeRef systemFolder = repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM,
 						TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
 				NodeRef reportsFolder = repoService.getOrCreateFolderByPath(systemFolder, RepoConsts.PATH_REPORTS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS));
-				NodeRef productReportTplFolder = repoService.getOrCreateFolderByPath(reportsFolder, PlmRepoConsts.PATH_PRODUCT_REPORTTEMPLATES,
+				productReportTplFolder = repoService.getOrCreateFolderByPath(reportsFolder, PlmRepoConsts.PATH_PRODUCT_REPORTTEMPLATES,
 						TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_PRODUCT_REPORTTEMPLATES));
 
 				// create PF
@@ -316,12 +325,28 @@ public class EntityReportServiceTest extends PLMBaseTestCase {
 				reportTplService.createTplRptDesign(productReportTplFolder, "user tpl", "beCPG/birt/document/product/default/ProductReport.rptdesign", ReportType.Document,
 						ReportFormat.PDF, PLMModel.TYPE_FINISHEDPRODUCT, false, true, true);
 
+				return null;
+
+			}
+		}, false, true);
+		
+		final NodeRef userTpl2NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
+		
 				assertEquals("check user templates", 1, reportTplService.suggestUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "user").size());
 
 				// add a user template
-				NodeRef userTpl2NodeRef = reportTplService.createTplRptDesign(productReportTplFolder, "user tpl 2", "beCPG/birt/document/product/default/ProductReport.rptdesign",
+				return reportTplService.createTplRptDesign(productReportTplFolder, "user tpl 2", "beCPG/birt/document/product/default/ProductReport.rptdesign",
 						ReportType.Document, ReportFormat.PDF, PLMModel.TYPE_FINISHEDPRODUCT, false, false, true);
 
+			}
+		}, false, true);
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
+		
 				assertEquals("check user templates", 2, reportTplService.suggestUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "u*").size());
 				assertEquals("check user templates", 2, reportTplService.suggestUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "user*").size());
 				assertEquals("check user templates", 2, reportTplService.suggestUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "user tpl 2").size());
