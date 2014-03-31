@@ -62,7 +62,6 @@ import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListUnit;
 import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.report.template.ReportTplService;
-import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.test.BeCPGPLMTestHelper;
 import fr.becpg.test.PLMBaseTestCase;
 
