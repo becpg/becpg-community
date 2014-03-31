@@ -84,7 +84,7 @@ public class ReportTplServiceImpl implements ReportTplService{
 			return new ArrayList<NodeRef>();
 		}		
 				
-		return getReportTpls(reportType, nodeType, true, null);
+		return getReportTpls(reportType, nodeType, true, null).list();
 	}
 	
 	/**
@@ -92,9 +92,8 @@ public class ReportTplServiceImpl implements ReportTplService{
 	 */
 	@Override
 	public NodeRef getSystemReportTemplate(ReportType reportType, QName nodeType, String tplName) {    	  
-    	
-		List<NodeRef> ret = getReportTpls(reportType, nodeType, true, tplName);		
-		return ret.isEmpty() ? null : ret.get(0);
+    			
+		return getReportTpls(reportType, nodeType, true, tplName).singleValue();
 	}
 	
 	/**
@@ -114,7 +113,7 @@ public class ReportTplServiceImpl implements ReportTplService{
 			return new ArrayList<NodeRef>();
 		}		
 		
-		return getReportTpls(reportType, nodeType, false, tplName);		
+		return getReportTpls(reportType, nodeType, false, tplName).list();		
 	}
 	
 	/**
@@ -132,9 +131,8 @@ public class ReportTplServiceImpl implements ReportTplService{
 		if(nodeType == null){
 			return null;
 		}		
-    	
-		List<NodeRef> ret = getReportTpls(reportType, nodeType, false, tplName);		
-		return ret.isEmpty() ? null : ret.get(0);
+    			
+		return getReportTpls(reportType, nodeType, false, tplName).singleValue();
 	}
 	
 	/**
@@ -327,33 +325,18 @@ public class ReportTplServiceImpl implements ReportTplService{
 		return reportFormat;
 	}	
 	
-	private List<NodeRef> getReportTpls(ReportType reportType, QName nodeType, boolean isSystem, String tplName){
+	private BeCPGQueryBuilder getReportTpls(ReportType reportType, QName nodeType, boolean isSystem, String tplName){
 					
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(ReportModel.TYPE_REPORT_TPL)
 						.andPropEquals(ReportModel.PROP_REPORT_TPL_TYPE, reportType.toString())
-						// unsupported in db
-//						.andPropQuery(ReportModel.PROP_REPORT_TPL_IS_SYSTEM, Boolean.valueOf(isSystem).toString())
-//						.excludeProp(ReportModel.PROP_REPORT_TPL_IS_DISABLED, Boolean.TRUE.toString())
-						.andPropEquals(ReportModel.PROP_REPORT_TPL_CLASS_NAME, nodeType!=null? nodeType.toString(): null)
-						.maxResults(RepoConsts.MAX_RESULTS_256)
-						.inDB()
-						.ftsLanguage();
+						.andPropQuery(ReportModel.PROP_REPORT_TPL_IS_SYSTEM, Boolean.valueOf(isSystem).toString())
+						.excludeProp(ReportModel.PROP_REPORT_TPL_IS_DISABLED, Boolean.TRUE.toString())
+						.andPropEquals(ReportModel.PROP_REPORT_TPL_CLASS_NAME, nodeType!=null? nodeType.toString(): null);
 		
 		if(tplName!=null && tplName!="*"){
-			queryBuilder.andPropEquals(ContentModel.PROP_NAME, tplName);
-		}
-		
-		List<NodeRef> ret = new ArrayList<>();
-		
-		for(NodeRef n : queryBuilder.list()){
-			Boolean isSystemValue = (Boolean)nodeService.getProperty(n, ReportModel.PROP_REPORT_TPL_IS_SYSTEM);
-			Boolean isDisabledValue = (Boolean)nodeService.getProperty(n, ReportModel.PROP_REPORT_TPL_IS_DISABLED);
-			if((isSystemValue == null && !isSystem) || (isSystemValue != null && isSystemValue.equals(isSystem)) && 
-					(isDisabledValue == null || isDisabledValue.equals(false))){
-				ret.add(n);
-			}
-		}
-		return ret;
+			queryBuilder.andPropQuery(ContentModel.PROP_NAME, tplName);
+		}		
+		return queryBuilder;
 	}
 
 	@Override

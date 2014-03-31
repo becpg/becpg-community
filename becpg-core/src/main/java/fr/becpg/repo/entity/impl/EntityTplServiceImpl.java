@@ -193,27 +193,13 @@ public class EntityTplServiceImpl implements EntityTplService {
 			return null;
 		}
 		
-		List<NodeRef> ret = BeCPGQueryBuilder.createQuery()
+		return BeCPGQueryBuilder.createQuery()
 		.ofType(nodeType)
 		.withAspect(BeCPGModel.ASPECT_ENTITY_TPL)
-		//unsupported in DB
-//		.andPropEquals(BeCPGModel.PROP_ENTITY_TPL_ENABLED, Boolean.TRUE.toString())
-//		.andPropEquals(BeCPGModel.PROP_ENTITY_TPL_IS_DEFAULT, Boolean.TRUE.toString())
-//		.excludeVersions()
-		.inDB()
-		.list();	
-				
-		//TODO manage it with db-cmis when ready for boolean 
-		for(NodeRef n : ret){
-			if(!nodeService.hasAspect(n, BeCPGModel.ASPECT_COMPOSITE_VERSION)){
-				Boolean isEnabled = (Boolean)nodeService.getProperty(n, BeCPGModel.PROP_ENTITY_TPL_ENABLED);
-				Boolean isDefault = (Boolean)nodeService.getProperty(n, BeCPGModel.PROP_ENTITY_TPL_IS_DEFAULT);
-				if(isEnabled != null && isDefault != null && isDefault.equals(Boolean.TRUE) && isDefault.equals(Boolean.TRUE)){
-					return n;
-				}	
-			}			
-		}
-		return null;
+		.andPropEquals(BeCPGModel.PROP_ENTITY_TPL_ENABLED, Boolean.TRUE.toString())
+		.andPropEquals(BeCPGModel.PROP_ENTITY_TPL_IS_DEFAULT, Boolean.TRUE.toString())
+		.excludeVersions()
+		.singleValue();	
 	}
 
 
