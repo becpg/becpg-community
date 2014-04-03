@@ -34,27 +34,6 @@ public class BeCPGTestHelper {
 	
 	private static Log logger = LogFactory.getLog(BeCPGTestHelper.class);
 	
-	/** The PAT h_ testfolder. */
-	public static String PATH_TESTFOLDER = "TestFolder";
-	
-	
-	public static NodeRef createTestFolder() {
-		return createTestFolder( PATH_TESTFOLDER);
-	}
-
-
-	public static NodeRef createTestFolder( String folderName) {
-
-		NodeRef folderNodeRef = RepoBaseTestCase.INSTANCE.nodeService.getChildByName(
-				RepoBaseTestCase.INSTANCE.repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, folderName);
-		
-		if(folderNodeRef == null){
-			folderNodeRef = RepoBaseTestCase.INSTANCE.fileFolderService.create(RepoBaseTestCase.INSTANCE.repositoryHelper.getCompanyHome(),
-					folderName, ContentModel.TYPE_FOLDER).getNodeRef();
-		}
-		
-		return folderNodeRef;
-	}
 	
 	
 	

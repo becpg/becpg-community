@@ -198,7 +198,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		return this;
 	}
 
-	private BeCPGQueryBuilder cmisLanguage() {
+	public BeCPGQueryBuilder cmisLanguage() {
 		this.language = SearchService.LANGUAGE_CMIS_ALFRESCO;
 		return this;
 	}

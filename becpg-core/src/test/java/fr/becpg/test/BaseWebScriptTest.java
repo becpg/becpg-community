@@ -56,6 +56,7 @@ import org.springframework.extensions.webscripts.servlet.ServletAuthenticatorFac
  * 
  * @author Matthieu
  */
+
 public abstract class BaseWebScriptTest extends RepoBaseTestCase {
 	// Test Listener
 	private WebScriptTestListener listener = null;

@@ -34,10 +34,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
@@ -58,10 +55,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * @author querephi
  */
 
-@RunWith(SpringJUnit4ClassRunner.class)
-// @ContextConfiguration("classpath:alfresco/application-context.xml")
-@ContextConfiguration(locations = { "classpath:alfresco/application-context.xml", "classpath:alfresco/web-scripts-application-context.xml",
-		"classpath:alfresco/web-scripts-application-context-test.xml" })
+
 public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 
 	public static PLMBaseTestCase INSTANCE2;
@@ -262,7 +256,7 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 		NodeRef qualityListsFolder = entitySystemService.getSystemEntity(systemFolderNodeRef, PlmRepoConsts.PATH_QUALITY_LISTS);
 
 		NodeRef controlUnitsFolder = entitySystemService.getSystemEntityDataList(qualityListsFolder, PlmRepoConsts.PATH_CONTROL_UNITS);
-		String[] controlUnits = { "kcal/100g", "mg/100g", "µg/100g", "g/100g" };
+		String[] controlUnits = { "kcal/100g", "mg/100g", "µg/100g", "g/100g","-/100g","kJ/100g" };
 		for (String controlUnit : controlUnits) {
 			properties = new HashMap<QName, Serializable>();
 			properties.put(BeCPGModel.PROP_LV_VALUE, controlUnit);

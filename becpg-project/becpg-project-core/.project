@@ -5,7 +5,6 @@
 	<projects>
 		<project>becpg-core</project>
 		<project>becpg-report</project>
-		<project>spring-webscripts</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
