@@ -86,7 +86,7 @@
 				<configuration>
 					<argLine>${app.testing.jvm.args}</argLine>
 					<excludes>
-						<exclude>fr/becpg/repo/olap/OlapServiceTest.java</exclude>
+						<exclude>fr/becpg/test/repo/olap/OlapServiceTest.java</exclude>
 					</excludes>
 				</configuration>
 			</plugin>

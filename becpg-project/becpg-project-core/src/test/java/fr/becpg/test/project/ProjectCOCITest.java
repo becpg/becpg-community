@@ -26,17 +26,14 @@ import javax.annotation.Resource;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.rule.RuntimeRuleService;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
-import org.alfresco.repo.webservice.action.Rule;
 import org.alfresco.service.cmr.coci.CheckOutCheckInService;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.rule.RuleService;
 import org.alfresco.service.cmr.version.Version;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
-import fr.becpg.repo.entity.policy.EntityTplRefAspectPolicy;
 import fr.becpg.repo.project.data.ProjectData;
 
 /**

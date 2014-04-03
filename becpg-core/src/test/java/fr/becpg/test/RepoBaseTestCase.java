@@ -17,6 +17,8 @@
  ******************************************************************************/
 package fr.becpg.test;
 
+import java.util.UUID;
+
 import javax.annotation.Resource;
 
 import junit.framework.TestCase;
@@ -45,13 +47,9 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,9 +57,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.subethamail.wiser.Wiser;
 
-import com.google.gdata.client.GDataProtocol.Method;
-
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.admin.InitVisitorService;
 import fr.becpg.repo.cache.BeCPGCacheService;
@@ -80,14 +75,11 @@ import fr.becpg.repo.repository.RepositoryEntity;
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:alfresco/application-context.xml", "classpath:alfresco/web-scripts-application-context.xml",
-		"classpath:alfresco/web-scripts-application-context-test.xml" })
+@ContextConfiguration({"classpath:alfresco/application-context.xml","classpath:alfresco/web-scripts-application-context.xml","classpath:alfresco/web-scripts-application-context-test.xml"})
 public abstract class RepoBaseTestCase extends TestCase implements InitializingBean {
 
 	private static Log logger = LogFactory.getLog(RepoBaseTestCase.class);
-
-	@Rule 
-	public TestName testName = new TestName();
+	
 	
 	protected NodeRef testFolderNodeRef;
 	protected NodeRef systemFolderNodeRef;
@@ -196,15 +188,25 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 		super.setUp();
 
-	
-		
 		testFolderNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 				// As system user
 				AuthenticationUtil.setFullyAuthenticatedUser(AuthenticationUtil.getAdminUserName());
 
-				// test folder
-				return BeCPGTestHelper.createTestFolder();
+				/** The PAT h_ testfolder. */
+				String testFolderName = "TestFolder-"+UUID.randomUUID();
+				
+				NodeRef folderNodeRef = RepoBaseTestCase.INSTANCE.nodeService.getChildByName(
+							repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, testFolderName);
+					
+				if(folderNodeRef != null){
+						nodeService.deleteNode(folderNodeRef);	
+				}
+				folderNodeRef = RepoBaseTestCase.INSTANCE.fileFolderService.create(repositoryHelper.getCompanyHome(),
+						testFolderName, ContentModel.TYPE_FOLDER).getNodeRef();
+					
+				return folderNodeRef;
+				
 			}
 		}, false, true);
 
@@ -259,16 +261,4 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 		}		
 	}
 	
-	@After
-	public void tearDown() throws Exception {
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
-			public Boolean execute() throws Throwable {
-
-				logger.debug(testName.getMethodName() + " Deleting :" + nodeService.getProperty(testFolderNodeRef, ContentModel.PROP_NAME) + " " + testFolderNodeRef);
-				nodeService.deleteNode(testFolderNodeRef);
-				return true;
-
-			}
-		}, false, true);
-	}
 }

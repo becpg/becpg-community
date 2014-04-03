@@ -28,6 +28,7 @@ import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.workflow.WorkflowDefinition;
+import org.alfresco.service.cmr.workflow.WorkflowException;
 import org.alfresco.service.cmr.workflow.WorkflowInstance;
 import org.alfresco.service.cmr.workflow.WorkflowPath;
 import org.alfresco.service.cmr.workflow.WorkflowService;
@@ -136,7 +137,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService{
 			// end task
 			try {
 				workflowService.endTask(startTask.getId(), null);
-			} catch (RuntimeException err) {
+			} catch(WorkflowException err){
 				if (logger.isDebugEnabled())
 					logger.debug("Failed - caught error during project adhoc workflow transition: " + err.getMessage());
 				throw err;

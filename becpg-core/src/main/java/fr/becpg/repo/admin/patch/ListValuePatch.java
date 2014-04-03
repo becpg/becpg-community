@@ -27,7 +27,7 @@ public class ListValuePatch extends AbstractBeCPGPatch {
 	protected String applyInternal() throws Exception {
 		
 		List<NodeRef> dataListNodeRefs = BeCPGQueryBuilder.createQuery()
-				.ofType(BeCPGModel.TYPE_LIST_VALUE).inDB()
+				.ofType(BeCPGModel.TYPE_LIST_VALUE).cmisLanguage()
 				.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list();
 		logger.info("ListValuePatch migrator, size: " + dataListNodeRefs.size());
 		
