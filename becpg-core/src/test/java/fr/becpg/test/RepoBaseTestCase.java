@@ -33,7 +33,6 @@ import org.alfresco.repo.security.authentication.MutableAuthenticationDao;
 import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.ServiceRegistry;
-import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.MimetypeService;
@@ -43,7 +42,6 @@ import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.MutableAuthenticationService;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.security.PersonService;
-import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -218,8 +216,6 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 			transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
 				public Boolean execute() throws Throwable {
 									
-					initQNames();
-					
 					// Init repo for test
 					initRepoVisitorService.run(repositoryHelper.getCompanyHome());
 
@@ -248,17 +244,6 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 	
 	protected  void doInitRepo(boolean shouldInit) {		
 	}	
-	
-	/**
-	 * We need to do this in order QName exists (required for CMIS), they are added in DB when we create node
-	 */
-	protected void initQNames(){
-//		qNameDAO.getOrCreateQName(BeCPGModel.PROP_SORT);
-		for(QName model : dictionaryDAO.getModels()){
-			for(PropertyDefinition propertyDef : dictionaryDAO.getProperties(model)){
-				qNameDAO.getOrCreateQName(propertyDef.getName());
-			}
-		}		
-	}
+
 	
 }
