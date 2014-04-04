@@ -25,7 +25,6 @@ import javax.annotation.Resource;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.PermissionService;
-import org.junit.Before;
 
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
@@ -38,7 +37,6 @@ import fr.becpg.test.PLMBaseTestCase;
 
 public abstract class AbstractListValuePluginTest extends PLMBaseTestCase {
 
-
 	protected NodeRef rawMaterial1NodeRef;
 	protected NodeRef rawMaterial2NodeRef;
 	protected NodeRef rawMaterial3NodeRef;
@@ -46,27 +44,21 @@ public abstract class AbstractListValuePluginTest extends PLMBaseTestCase {
 	protected NodeRef localSF2NodeRef;
 	protected NodeRef finishedProductNodeRef;
 
-
 	@Resource
 	private PermissionService permissionService;
-	
-	@Before
-	public void setUp() throws Exception {
-		super.setUp();
+
+	@Override
+	protected void doInitRepo(boolean shouldInit) {
+
+		super.doInitRepo(shouldInit);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				try {
-				
 				BeCPGPLMTestHelper.createUsers();
 				initProducts();
-				} catch(Exception e){
-					e.printStackTrace();
-					throw e;
-				}
-				
+
 				return null;
 
 			}
@@ -88,8 +80,7 @@ public abstract class AbstractListValuePluginTest extends PLMBaseTestCase {
 
 		permissionService.setInheritParentPermissions(localSF1NodeRef, false);
 		permissionService.clearPermission(localSF1NodeRef, null);
-		
-		
+
 		authenticationComponent.setCurrentUser(BeCPGPLMTestHelper.USER_TWO);
 		/*-- Local semi finished product 2 --*/
 		LocalSemiFinishedProductData localSF2 = new LocalSemiFinishedProductData();
@@ -101,7 +92,7 @@ public abstract class AbstractListValuePluginTest extends PLMBaseTestCase {
 		permissionService.clearPermission(localSF2NodeRef, null);
 
 		authenticationComponent.setSystemUserAsCurrentUser();
-		
+
 		FinishedProductData finishedProduct = new FinishedProductData();
 		finishedProduct.setName("Produit fini 1");
 		finishedProduct.setLegalName("Legal Produit fini 1");
@@ -109,7 +100,8 @@ public abstract class AbstractListValuePluginTest extends PLMBaseTestCase {
 		finishedProduct.setQty(2d);
 		finishedProduct.setUnitPrice(12.4d);
 		List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-		CompoListDataItem item = new CompoListDataItem(null, (CompoListDataItem) null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef);
+		CompoListDataItem item = new CompoListDataItem(null, (CompoListDataItem) null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail,
+				localSF1NodeRef);
 
 		compoList.add(item);
 		compoList.add(new CompoListDataItem(null, item, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
@@ -122,5 +114,5 @@ public abstract class AbstractListValuePluginTest extends PLMBaseTestCase {
 
 		finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
 	}
-	
+
 }

@@ -29,9 +29,12 @@ import org.alfresco.repo.action.evaluator.ComparePropertyValueEvaluator;
 import org.alfresco.repo.action.evaluator.IsSubTypeEvaluator;
 import org.alfresco.repo.action.evaluator.compare.ComparePropertyValueOperation;
 import org.alfresco.repo.action.executer.SpecialiseTypeActionExecuter;
+import org.alfresco.repo.dictionary.DictionaryDAO;
+import org.alfresco.repo.domain.qname.QNameDAO;
 import org.alfresco.service.cmr.action.Action;
 import org.alfresco.service.cmr.action.ActionCondition;
 import org.alfresco.service.cmr.action.CompositeAction;
+import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.rule.Rule;
 import org.alfresco.service.cmr.rule.RuleType;
@@ -56,6 +59,12 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 	private static final String COMPARE_ENTITIES_REPORT_PATH = "beCPG/birt/system/CompareEntities.rptdesign";
 	
 	@Autowired
+	private DictionaryDAO dictionaryDAO;
+	
+	@Autowired
+	private QNameDAO qNameDAO;
+	
+	@Autowired
 	private ContentHelper contentHelper;
 	
 	@Autowired
@@ -69,6 +78,13 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 	public void visitContainer(NodeRef companyHome) {
 		logger.info("Run CoreInitVisitor");
 
+		//Init QNames for dbQueries
+		for(QName model : dictionaryDAO.getModels()){
+			for(PropertyDefinition propertyDef : dictionaryDAO.getProperties(model)){
+				qNameDAO.getOrCreateQName(propertyDef.getName());
+			}
+		}		
+		
 		// System
 		logger.debug("Visit folders");
 		NodeRef systemNodeRef = visitFolder(companyHome, RepoConsts.PATH_SYSTEM);
