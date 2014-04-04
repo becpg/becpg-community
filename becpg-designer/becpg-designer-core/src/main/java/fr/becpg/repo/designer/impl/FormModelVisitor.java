@@ -22,6 +22,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -43,6 +45,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import fr.becpg.common.dom.DOMUtils;
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.designer.DesignerModel;
 import fr.becpg.repo.designer.data.FormControl;
 
@@ -127,8 +130,6 @@ public class FormModelVisitor {
 	}
 
 	/**
-	 * 
-	 * 
 	 * @param nodeRef
 	 * @param out
 	 * @throws FactoryConfigurationError
@@ -140,6 +141,8 @@ public class FormModelVisitor {
 		Element config = DOMUtils.createDoc("alfresco-config");
 
 		List<ChildAssociationRef> configEls = nodeService.getChildAssocs(nodeRef);
+		
+		DesignerHelper.sort(configEls,nodeService);
 		for (ChildAssociationRef assoc : configEls) {
 			if (assoc.getTypeQName().equals(DesignerModel.ASSOC_DSG_CONFIG_ELEMENTS)) {
 				visitConfigElXml(assoc.getChildRef(), config);
@@ -154,7 +157,7 @@ public class FormModelVisitor {
 		Element configEl = DOMUtils.createElement(parent, "config");
 
 		List<ChildAssociationRef> forms = nodeService.getChildAssocs(configElNodeRef);
-
+		DesignerHelper.sort(forms,nodeService);
 		appendAtt(configEl, "evaluator", configElNodeRef, DesignerModel.PROP_DSG_CONFIGEVALUATOR);
 		appendAtt(configEl, "condition", configElNodeRef, DesignerModel.PROP_DSG_ID);
 
@@ -164,6 +167,7 @@ public class FormModelVisitor {
 		}
 
 		Element formsEl = DOMUtils.createElement(configEl, "forms");
+		
 		for (ChildAssociationRef assoc : forms) {
 			if (assoc.getTypeQName().equals(DesignerModel.ASSOC_DSG_FORMS)) {
 				visitFormXml(assoc.getChildRef(), formsEl);
@@ -171,6 +175,7 @@ public class FormModelVisitor {
 		}
 
 	}
+	
 
 	private void visitFormXml(NodeRef formNodeRef, Element parent) {
 		Element formEl = DOMUtils.createElement(parent, "form");
@@ -178,6 +183,8 @@ public class FormModelVisitor {
 		Element appearance = DOMUtils.createElement(formEl, "appearance");
 
 		List<ChildAssociationRef> assocs = nodeService.getChildAssocs(formNodeRef);
+		DesignerHelper.sort(assocs,nodeService);
+		
 		String id = (String) nodeService.getProperty(formNodeRef, DesignerModel.PROP_DSG_ID);
 		if (id != null && id.length() > 0 && !"default".equals(id) && !"-".equals(id)) {
 			formEl.setAttribute("id", id);
@@ -250,7 +257,6 @@ public class FormModelVisitor {
 			if (assoc.getTypeQName().equals(DesignerModel.ASSOC_DSG_CONTROLS)) {
 				visitControlXml(assoc.getChildRef(), field);
 			}
-
 		}
 
 	}
@@ -357,6 +363,7 @@ public class FormModelVisitor {
 				nodeService.setProperty(configElNodeRef, DesignerModel.PROP_DSG_CONFIGEVALUATOR, elem.getAttribute("evaluator"));
 				nodeService.setProperty(configElNodeRef, DesignerModel.PROP_DSG_CONFIGREPLACE, elem.getAttribute("replace"));
 				nodeService.setProperty(configElNodeRef, DesignerModel.PROP_DSG_ID, elem.getAttribute("condition"));
+				nodeService.setProperty(configElNodeRef,BeCPGModel.PROP_SORT,i*100);
 				visitFormElement(configElNodeRef, elem);
 			}
 		}
@@ -373,16 +380,18 @@ public class FormModelVisitor {
 			NodeRef formNodeRef = childAssociationRef.getChildRef();
 			nodeService.setProperty(formNodeRef, DesignerModel.PROP_DSG_ID, elem.getAttribute("id"));
 			nodeService.setProperty(formNodeRef, DesignerModel.PROP_DSG_SUBMISSION_URL, elem.getAttribute("submission-url"));
-			visitFormSets(formNodeRef, elem, "");
-			visitFormFields(formNodeRef, elem, "");
+			nodeService.setProperty(formNodeRef,BeCPGModel.PROP_SORT,i*100);
+			int sortOrder = visitFormSets(formNodeRef, elem, "");
+			visitFormFields(formNodeRef, elem, "",sortOrder);
 
 		}
 
 	}
 
-	private void visitFormSets(NodeRef nodeRef, Element parentEl, String parent) {
+	private int visitFormSets(NodeRef nodeRef, Element parentEl, String parent) {
 		logger.debug("visitFormSets with parent : " + parent);
 		NodeList list = parentEl.getElementsByTagName("set");
+		int sortOrder = 0;
 		for (int i = 0; i < list.getLength(); i++) {
 			Element elem = (Element) list.item(i);
 			String parentId = elem.getAttribute("parent");
@@ -397,30 +406,34 @@ public class FormModelVisitor {
 				nodeService.setProperty(setNodeRef, DesignerModel.PROP_DSG_TEMPLATEPATH, elem.getAttribute("template"));
 				nodeService.setProperty(setNodeRef, DesignerModel.PROP_DSG_LABEL, elem.getAttribute("label"));
 				nodeService.setProperty(setNodeRef, DesignerModel.PROP_DSG_LABELID, elem.getAttribute("label-id"));
+				nodeService.setProperty(setNodeRef,BeCPGModel.PROP_SORT,sortOrder);
 				if (setId != parentId) {
 					visitFormSets(setNodeRef, parentEl, setId);
 				}
-				visitFormFields(setNodeRef, parentEl, setId);
+				visitFormFields(setNodeRef, parentEl, setId, 0);
 			}
+			sortOrder = i*100;
 		}
-
+		return sortOrder;
 	}
 
-	private void visitFormFields(NodeRef nodeRef, Element parentEl, String setId) {
+	private void visitFormFields(NodeRef nodeRef, Element parentEl, String setId, int sortOrder) {
 		logger.debug("visitFormFields for set : " + setId);
 		NodeList fields = parentEl.getElementsByTagName("field");
 		NodeList hides = parentEl.getElementsByTagName("hide");
 		NodeList shows = parentEl.getElementsByTagName("show");
 
-		visitFormFields(nodeRef, fields, shows, true, setId);
+		sortOrder  = visitFormFields(nodeRef, fields, shows, true, setId, sortOrder);
 
-		visitFormFields(nodeRef, fields, hides, false, setId);
+		visitFormFields(nodeRef, fields, hides, false, setId, sortOrder);
 
 	}
 
-	private void visitFormFields(NodeRef nodeRef, NodeList fields, NodeList shows, boolean show, String setId) {
+	private int visitFormFields(NodeRef nodeRef, NodeList fields, NodeList shows, boolean show, String setId, int sortOrder) {
 
 		for (int i = 0; i < shows.getLength(); i++) {
+
+			
 			Element elem = (Element) shows.item(i);
 			String fieldId = elem.getAttribute("id");
 			logger.debug("Try to add " + fieldId);
@@ -431,26 +444,28 @@ public class FormModelVisitor {
 				if (fieldId.equals(field.getAttribute("id"))) {
 					added = true;
 					if (setId.equals(field.getAttribute("set"))) {
-						createField(nodeRef, elem, field, show);
+						createField(nodeRef, elem, field, show, sortOrder);
 
 						break;
 					}
 				}
 			}
 			if (setId == "" && !added) {
-				createField(nodeRef, elem, null, show);
+				createField(nodeRef, elem, null, show, sortOrder);
 			}
-
+			sortOrder+=i*100;
 		}
-
+		return sortOrder;
 	}
 
-	private void createField(NodeRef parent, Element elem, Element field, boolean show) {
+	private void createField(NodeRef parent, Element elem, Element field, boolean show, int sortOrder) {
 		logger.debug("Create field with id :" + elem.getAttribute("id"));
 		ChildAssociationRef childAssociationRef = nodeService.createNode(parent, DesignerModel.ASSOC_DSG_FIELDS, DesignerModel.ASSOC_DSG_FIELDS, DesignerModel.TYPE_DSG_FORMFIELD);
 		NodeRef fieldNodeRef = childAssociationRef.getChildRef();
 		nodeService.setProperty(fieldNodeRef, DesignerModel.PROP_DSG_ID, elem.getAttribute("id"));
 		nodeService.setProperty(fieldNodeRef, DesignerModel.PROP_DSG_HIDE, !show);
+		nodeService.setProperty(fieldNodeRef,BeCPGModel.PROP_SORT,sortOrder);
+		
 		if (!StringUtils.isEmpty(elem.getAttribute("for-mode"))) {
 			nodeService.setProperty(fieldNodeRef, DesignerModel.PROP_DSG_FORMODE, (Serializable) Arrays.asList(elem.getAttribute("for-mode").split(",")));
 		}
