@@ -57,6 +57,8 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * 
  */
 public class ImportEntityXmlVisitor {
+	
+	private static final String FULL_PATH_IMPORT_TO_DO = "/app:company_home/cm:Exchange/cm:Import/cm:ImportToDo";
 
 	private NodeService nodeService;
 
@@ -339,7 +341,7 @@ public class ImportEntityXmlVisitor {
 		NodeRef ret = BeCPGQueryBuilder.createQuery().selectNodeByPath(rootNode,parentPath);  
 		
 		if (ret ==null) {
-			ret = BeCPGQueryBuilder.createQuery().selectNodeByPath( rootNode ,"/app:company_home"+RepoConsts.FULL_PATH_IMPORT_TO_DO);
+			ret = BeCPGQueryBuilder.createQuery().selectNodeByPath(rootNode, FULL_PATH_IMPORT_TO_DO);
 		}
 
 		return ret;

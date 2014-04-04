@@ -22,6 +22,12 @@
 		<!-- <setting id="decimalPattern" value="#0.00"/> -->
 	</settings>
 
+	<mapping name="bcpg:product">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:erpCode" />
+		</nodeColumnKeys>
+	</mapping>
+		
 	<mapping name="bcpg:packagingMaterial">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="bcpg:erpCode" />

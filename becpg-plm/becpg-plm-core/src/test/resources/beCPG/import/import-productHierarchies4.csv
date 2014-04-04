@@ -1,0 +1,7 @@
+MAPPING;Default;;;;;
+;;;;;;
+PATH;/Temp/Products;;;;;
+TYPE;bcpg:rawMaterial;;;;;
+MAPPING;TestMultiHierarchy;;;;;
+COLUMNS;bcpg:code;cm:name;hierarchy0;hierarchy1;hierarchy2;bcpg:productState
+VALUES;51515;Test Multi Level;USDA;Dairy and Egg Products;Dairy;ToValidate
