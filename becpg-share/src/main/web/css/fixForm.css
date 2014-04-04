@@ -33,6 +33,7 @@
 	width: 13em !important;
 }
 
+
 .yui-dialog .form-container .form-field input[type="text"], 
 .yui-dialog .form-container .form-field input[type="file"],
 .yui-dialog .form-container .form-field input[type="password"],
@@ -42,6 +43,7 @@
 .yui-dialog .form-container .yui-ac .ac-body {
 	width: 30em !important;
 }
+
 
 .yui-dialog .form-container .yui-g .yui-ac .ac-body .yui-ac-input {
 	width: 80% !important;
@@ -58,6 +60,7 @@
 	width: 27em !important;
 }
 
+
 .yui-dialog .large-dialog .form-container .yui-gb .form-field input[type="text"], 
 .yui-dialog .large-dialog .form-container .yui-gb .form-field input[type="file"],
 .yui-dialog .large-dialog .form-container .yui-gb .form-field input[type="password"],
@@ -70,4 +73,11 @@
 
 .yui-dialog .large-dialog .form-container .yui-g .yui-ac .ac-body .yui-ac-input {
 	width: 90% !important;
+}
+
+.yui-dialog .form-container .yui-g  input[type="checkbox"],
+.yui-dialog .form-container .form-field  input[type="checkbox"],
+.yui-dialog .large-dialog  .form-container .yui-g .form-field input[type="checkbox"],
+.yui-dialog .large-dialog .form-container .yui-gb .form-field input[type="checkbox"] {
+    width: auto !important;
 }
