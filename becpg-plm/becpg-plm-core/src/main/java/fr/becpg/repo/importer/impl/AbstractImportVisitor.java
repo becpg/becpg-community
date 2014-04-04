@@ -996,7 +996,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(type);
 
-		boolean doQuery = false;
+		boolean doQuery = false;		
 
 		// nodeColumnKeys
 		if (classMapping != null && !classMapping.getNodeColumnKeys().isEmpty()) {
@@ -1032,7 +1032,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			// look for codeAspect
 			if (dictionaryService.getType(type).getDefaultAspects() != null) {
 				for (AspectDefinition aspectDef : dictionaryService.getType(type).getDefaultAspects()) {
-					if (aspectDef.getName().equals(BeCPGModel.ASPECT_CODE)) {
+					if (aspectDef.getName().equals(BeCPGModel.ASPECT_CODE) && properties.get(BeCPGModel.PROP_CODE) != null) {
 						queryBuilder.andPropEquals(BeCPGModel.PROP_CODE, (String)properties.get(BeCPGModel.PROP_CODE));
 						doQuery = true;
 						break;

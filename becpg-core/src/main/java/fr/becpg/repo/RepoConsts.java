@@ -14,20 +14,7 @@ import org.alfresco.service.cmr.repository.StoreRef;
 public class RepoConsts {
 
 	
-	public static final String FULL_PATH_THUMBNAIL = "/cm:System/cm:Icons";
-	public static final String FULL_PATH_IMPORT_MAPPING = "/cm:System/cm:Exchange/cm:Import/cm:Mapping";
-	public static final String FULL_PATH_IMPORT_TO_DO = "/cm:Exchange/cm:Import/cm:ImportToDo";
-	public static final String FULL_PATH_IMPORT_FAILED_FOLDER = "/cm:Exchange/cm:Import/cm:ImportFailed";
-	public static final String FULL_PATH_IMPORT_LOG_FOLDER = "/cm:Exchange/cm:Import/cm:ImportLog";
-	public static final String FULL_PATH_IMPORT_SUCCEEDED_FOLDER = "/cm:Exchange/cm:Import/cm:ImportSucceeded";	
-//	public static final String PATH_QUERY_REPORT_COMPARE_ENTITIES = "+PATH:\"/app:company_home/cm:System/cm:Reports/cm:CompareProducts/*\" +@cm\\:name:\"CompareProducts*rptdesign\"";	
-//
-//	
-//
-//	public static final String QUERY_FILTER_PRODUCT_STATE = " -@bcpg\\:productState:%s -@bcpg\\:productState:%s";
-//	
-
-	
+	public static final String FULL_PATH_THUMBNAIL = "/cm:System/cm:Icons";	
     
 	/*-- Path --*/	
 	public static final String PATH_SEPARATOR 	= "/";

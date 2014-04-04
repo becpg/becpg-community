@@ -146,8 +146,7 @@ public class HierarchyServiceImpl implements HierarchyService {
 		
 		BeCPGQueryBuilder ret = BeCPGQueryBuilder.createQuery()
 				.ofType(BeCPGModel.TYPE_LINKED_VALUE).maxResults( RepoConsts.MAX_SUGGESTIONS)
-				.parent(listContainerNodeRef)
-				.inDB();
+				.parent(listContainerNodeRef);
 		
 		if (parentNodeRef != null) {
 			ret.andPropEquals(BeCPGModel.PROP_PARENT_LEVEL, parentNodeRef.toString());

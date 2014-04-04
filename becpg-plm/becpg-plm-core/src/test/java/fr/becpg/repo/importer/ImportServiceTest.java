@@ -635,9 +635,8 @@ public class ImportServiceTest extends PLMBaseTestCase {
 		// search by code
 		assertNotNull(hierarchyService.getHierarchyByPath(HIERARCHY_RAWMATERIAL_PATH, parentNodeRef, (String) nodeService.getProperty(ret.get(0), BeCPGModel.PROP_CODE)));
 	}
-
-	private void importHierarchies() {
-
+	
+	private void importHierarchiesFile(final int i){
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
 			public NodeRef execute() throws Throwable {
@@ -645,7 +644,7 @@ public class ImportServiceTest extends PLMBaseTestCase {
 				/*-- Create file to import --*/
 				logger.debug("create file to import");
 				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-				properties.put(ContentModel.PROP_NAME, "import-productHierarchies.csv");
+				properties.put(ContentModel.PROP_NAME, "import-productHierarchies" + i + ".csv");
 
 				NodeRef nodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, (String) properties.get(ContentModel.PROP_NAME));
 				if (nodeRef != null) {
@@ -657,7 +656,7 @@ public class ImportServiceTest extends PLMBaseTestCase {
 
 				ContentWriter writer = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
 				logger.debug("Load import.csv");
-				InputStream in = ClassLoader.getSystemResourceAsStream("beCPG/import/import-productHierarchies.csv");
+				InputStream in = ClassLoader.getSystemResourceAsStream("beCPG/import/import-productHierarchies" + i + ".csv");
 				logger.debug("import.csv loaded");
 				writer.putContent(in);
 
@@ -668,6 +667,14 @@ public class ImportServiceTest extends PLMBaseTestCase {
 
 			}
 		}, false, true);
+	}
+
+	private void importHierarchies() {
+
+		importHierarchiesFile(1);
+		importHierarchiesFile(2);
+		importHierarchiesFile(3);
+		importHierarchiesFile(4);
 
 		/*-- Check hierarchies --*/
 		logger.debug("Check hierarchies");

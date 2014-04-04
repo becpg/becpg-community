@@ -62,9 +62,10 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 public class ImportServiceImpl implements ImportService {
 
-	
-	
-//	private static final String PATH_QUERY_THUMBNAIL = " +PATH:\"/app:company_home/cm:System/cm:Icons/*\" +@cm\\:name:\"%s\"";
+	private static final String FULL_PATH_IMPORT_MAPPING = "/cm:System/cm:Exchange/cm:Import/cm:Mapping";
+	private static final String FULL_PATH_IMPORT_FAILED_FOLDER = "/app:company_home/cm:Exchange/cm:Import/cm:ImportFailed";
+	private static final String FULL_PATH_IMPORT_LOG_FOLDER = "/app:company_home/cm:Exchange/cm:Import/cm:ImportLog";
+	private static final String FULL_PATH_IMPORT_SUCCEEDED_FOLDER = "/app:company_home/cm:Exchange/cm:Import/cm:ImportSucceeded";	
 	
 	/** The Constant PFX_COMMENT. */
 	private static final String PFX_COMMENT = "#";
@@ -273,7 +274,7 @@ public class ImportServiceImpl implements ImportService {
 					String csvFileName = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
 					
 					// failed
-					NodeRef failedFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(), RepoConsts.FULL_PATH_IMPORT_FAILED_FOLDER);
+					NodeRef failedFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(), FULL_PATH_IMPORT_FAILED_FOLDER);
 
 					if (failedFolder != null) {											
 						NodeRef csvNodeRef = nodeService.getChildByName(failedFolder, ContentModel.ASSOC_CONTAINS,
@@ -284,7 +285,7 @@ public class ImportServiceImpl implements ImportService {
 					}
 					
 					// succeeded
-					NodeRef succeededFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(), RepoConsts.FULL_PATH_IMPORT_SUCCEEDED_FOLDER);
+					NodeRef succeededFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(), FULL_PATH_IMPORT_SUCCEEDED_FOLDER);
 
 					if (succeededFolder != null) {
 						NodeRef targetNodeRef = nodeService.getChildByName(succeededFolder, ContentModel.ASSOC_CONTAINS,
@@ -296,7 +297,7 @@ public class ImportServiceImpl implements ImportService {
 					
 					// log					
 					if(fileLog != null && !fileLog.isEmpty()){
-						NodeRef logFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(), RepoConsts.FULL_PATH_IMPORT_LOG_FOLDER);
+						NodeRef logFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(), FULL_PATH_IMPORT_LOG_FOLDER);
 						if(logFolder != null){
 							String logFileName = csvFileName.substring(0, csvFileName.length()-4) + RepoConsts.EXTENSION_LOG;
 							createLogFile(logFolder, logFileName, fileLog);
@@ -643,7 +644,7 @@ public class ImportServiceImpl implements ImportService {
 
 		
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery()
-				.inPath(RepoConsts.FULL_PATH_IMPORT_MAPPING)
+				.inPath(FULL_PATH_IMPORT_MAPPING)
 				.andPropEquals(ContentModel.PROP_NAME, name+".xml");
 
 		logger.debug(queryBuilder.toString());
