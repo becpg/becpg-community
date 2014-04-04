@@ -25,15 +25,16 @@
 		<property name="repository" ref="repositoryHelper"/>
 		<property name="contentHelper" ref="contentHelper"/>	
 		<property name="entitySystemService" ref="entitySystemService"/>
-		<property name="repoService" ref="repoService"/>	
+		<property name="repoService" ref="repoService"/>
+		<property name="beCPGVersion" value="${becpg.schema}" />
 	</bean>
 
 	<bean id="patch.bcpg.listValuePatch" class="fr.becpg.repo.admin.patch.ListValuePatch" parent="beCPGBasePatch" >
         <property name="id"><value>patch.bcpg.patch.bcpg.listValuePatch</value></property>
         <property name="description"><value>patch.bcpg.patch.bcpg.listValuePatch.description</value></property>
-        <property name="fixesFromSchema"><value>0</value></property>
-        <property name="fixesToSchema"><value>${version.schema}</value></property>
-        <property name="targetSchema"><value>10100</value></property>
+        <property name="fixesFromSchema" value="6022"/>
+        <property name="fixesToSchema" value="6033" />
+        <property name="targetSchema" value="10100 "/>
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
 	</bean>

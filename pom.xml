@@ -79,15 +79,15 @@
 		<alfresco.db.name>becpg_test_contribs</alfresco.db.name>
 		<!-- <alfresco.db.url>jdbc:mysql://localhost/${alfresco.db.name}</alfresco.db.url> 
 		<alfresco.db.datasource.class>org.gjt.mm.mysql.Driver</alfresco.db.datasource.class> 
-		<alfresco.db.host>localhost</alfresco.db.host>  -->
+		<alfresco.db.host>localhost</alfresco.db.host>  
 		<alfresco.db.username>becpg</alfresco.db.username>
-		<alfresco.db.password>becpg</alfresco.db.password>
+		<alfresco.db.password>becpg</alfresco.db.password> -->
 
 		<!-- AMP config dir -->
 		<alfresco.amp.config.dir>alfresco/module/${project.artifactId}</alfresco.amp.config.dir>
 		<!-- build -->
 		<alfresco.groupId>org.alfresco</alfresco.groupId>
-		<alfresco.version>4.2.e</alfresco.version>
+		<alfresco.version>4.2.f</alfresco.version>
 		<birt.version>4.3.1</birt.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -238,7 +238,7 @@
 	<dependencies>
 
 		<!-- Test -->
-
+	
 		<dependency>
 			<groupId>${alfresco.groupId}</groupId>
 			<artifactId>alfresco-repository</artifactId>

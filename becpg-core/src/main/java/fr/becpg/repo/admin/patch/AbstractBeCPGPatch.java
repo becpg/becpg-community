@@ -44,6 +44,13 @@ public abstract class AbstractBeCPGPatch extends AbstractPatch {
 	protected EntitySystemService entitySystemService;
 
 	protected ContentHelper contentHelper;
+	
+	protected int beCPGVersion = -1;
+	
+
+	public void setBeCPGVersion(int beCPGVersion) {
+		this.beCPGVersion = beCPGVersion;
+	}
 
 	public void setRepository(Repository repository) {
 		this.repository = repository;
@@ -57,7 +64,6 @@ public abstract class AbstractBeCPGPatch extends AbstractPatch {
 		this.entitySystemService = entitySystemService;
 	}
 
-	
 	public void setRepoService(RepoService repoService) {
 		this.repoService = repoService;
 	}
@@ -108,8 +114,6 @@ public abstract class AbstractBeCPGPatch extends AbstractPatch {
 	public NodeRef getCharactDataList(NodeRef systemEntityNodeRef, String dataListPath) {
 		return entitySystemService.getSystemEntityDataList(systemEntityNodeRef, dataListPath);
 	}
-
-	
 
 
 }

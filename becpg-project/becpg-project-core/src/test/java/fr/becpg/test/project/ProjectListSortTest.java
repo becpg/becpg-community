@@ -86,6 +86,7 @@ public class ProjectListSortTest extends AbstractProjectTestCase {
 				BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery()
 						.ofType(ProjectModel.TYPE_PROJECT)
 						.excludeVersions()
+						.parent(testFolderNodeRef)
 						.addSort(ProjectModel.PROP_PROJECT_HIERARCHY2,true);
 				
 				
@@ -127,7 +128,7 @@ public class ProjectListSortTest extends AbstractProjectTestCase {
 					logger.info("project sorted " + projectName + " - "
 							+ projectHierarchy2);
 					
-					if(i<20){
+					if(i<21){
 						assertEquals("Crustacean", projectHierarchy2);
 					}
 					else{

@@ -25,11 +25,8 @@
            http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
 
-
-  
-
-	<import resource="classpath:alfresco/module/${artifactId}/context/model-context.xml" />   
-	<import resource="classpath:alfresco/module/${artifactId}/context/core-context.xml" />
+   <import resource="classpath:alfresco/module/${artifactId}/context/model-context.xml" />   
+   <import resource="classpath:alfresco/module/${artifactId}/context/core-context.xml" />
    <import resource="classpath:alfresco/module/${artifactId}/context/action-context.xml" />
    <import resource="classpath:alfresco/module/${artifactId}/context/policy-context.xml" />
    <import resource="classpath:alfresco/module/${artifactId}/context/formulation-context.xml" />

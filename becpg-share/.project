@@ -3,7 +3,6 @@
 	<name>becpg-share</name>
 	<comment>beCPG Share designer ui. NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
 	<projects>
-		<project>spring-webscripts</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
