@@ -338,22 +338,24 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 		String value = VALUE_NULL;
 		
 		// property
-		if(attribute instanceof PropertyDefinition){
-			
-			Serializable serializable = nodeService.getProperty(nodeRef, attribute.getName());								
-			value = attributeExtractorService.extractPropertyForReport((PropertyDefinition)attribute, serializable, exportSearchCtx.getPropertyFormats(), false);
-    		
-		}
-		else if(attribute instanceof AssociationDefinition){// associations
-			    			
-			List<AssociationRef> assocRefs =  nodeService.getTargetAssocs(nodeRef, attribute.getName());
-			
-			for(AssociationRef assocRef : assocRefs){
+		if(nodeService.exists(nodeRef)){
+			if(attribute instanceof PropertyDefinition){
 				
-				if(!value.isEmpty()){
-					value += RepoConsts.LABEL_SEPARATOR;
-				}									
-				value += attributeExtractorService.extractAssociationForReport(assocRef);
+				Serializable serializable = nodeService.getProperty(nodeRef, attribute.getName());								
+				value = attributeExtractorService.extractPropertyForReport((PropertyDefinition)attribute, serializable, exportSearchCtx.getPropertyFormats(), false);
+	    		
+			}
+			else if(attribute instanceof AssociationDefinition){// associations
+				    			
+				List<AssociationRef> assocRefs =  nodeService.getTargetAssocs(nodeRef, attribute.getName());
+				
+				for(AssociationRef assocRef : assocRefs){
+					
+					if(!value.isEmpty()){
+						value += RepoConsts.LABEL_SEPARATOR;
+					}									
+					value += attributeExtractorService.extractAssociationForReport(assocRef);
+				}
 			}
 		}
 		
