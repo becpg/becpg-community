@@ -133,7 +133,7 @@ public class DesignerInitVisitor extends AbstractInitVisitorImpl  {
 		rule.setAction(compositeAction);
 		rule.applyToChildren(true);
 		rule.setTitle(ruleName);
-		rule.setExecuteAsynchronously(true);
+		rule.setExecuteAsynchronously(false);
 		rule.setDescription(ruleDescription);
 		ruleService.saveRule(nodeRef, rule);
 

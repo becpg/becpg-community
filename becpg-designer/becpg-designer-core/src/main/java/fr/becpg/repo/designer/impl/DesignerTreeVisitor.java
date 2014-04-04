@@ -17,6 +17,8 @@
  ******************************************************************************/
 package fr.becpg.repo.designer.impl;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,16 +30,17 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.extensions.surf.util.I18NUtil;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.designer.DesignerModel;
 import fr.becpg.repo.designer.data.DesignerTree;
 
 /**
  * 
  * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
- *
+ * 
  */
 public class DesignerTreeVisitor {
-	
+
 	private NodeService nodeService;
 
 	private NamespaceService namespaceService;
@@ -72,10 +75,10 @@ public class DesignerTreeVisitor {
 		this.namespaceService = namespaceService;
 	}
 
-
 	public DesignerTree visitModelTreeNodeRef(NodeRef modelNodeRef) {
 		DesignerTree ret = extractModelTreeNode(modelNodeRef);
 		List<ChildAssociationRef> assocs = nodeService.getChildAssocs(modelNodeRef);
+		DesignerHelper.sort(assocs,nodeService);
 		Map<String, DesignerTree> assocRoots = new HashMap<String, DesignerTree>();
 		for (ChildAssociationRef assoc : assocs) {
 			String assocName = assoc.getQName().getLocalName();
@@ -87,14 +90,14 @@ public class DesignerTreeVisitor {
 				tmp.setName(assocName);
 				tmp.setType(assoc.getTypeQName().toPrefixString(namespaceService));
 				String title = "";
-				if(DesignerModel.M2_URI.equals(assoc.getTypeQName().getNamespaceURI())){
-					title = I18NUtil.getMessage("m2_m2model.association.m2_" + assocName+".title");
+				if (DesignerModel.M2_URI.equals(assoc.getTypeQName().getNamespaceURI())) {
+					title = I18NUtil.getMessage("m2_m2model.association.m2_" + assocName + ".title");
 				} else {
-					title = I18NUtil.getMessage("dsg_designerModel.association.dsg_" + assocName+".title");
+					title = I18NUtil.getMessage("dsg_designerModel.association.dsg_" + assocName + ".title");
 				}
-				
+
 				tmp.setTitle(title);
-				
+
 				tmp.setFormId("assoc");
 				tmp.setSubType(nodeService.getType(assoc.getChildRef()).toPrefixString(namespaceService));
 
@@ -115,14 +118,14 @@ public class DesignerTreeVisitor {
 		String title = (String) nodeService.getProperty(modelNodeRef, DesignerModel.PROP_M2_TITLE);
 		String description = (String) nodeService.getProperty(modelNodeRef, DesignerModel.PROP_M2_DESCRIPTION);
 
-		if("dsg:configElement".equals(type)){
-			name = (String) nodeService.getProperty(modelNodeRef, DesignerModel.PROP_DSG_ID); 
-			String evaluator  =  (String)nodeService.getProperty(modelNodeRef, DesignerModel.PROP_DSG_CONFIGEVALUATOR);
-			if(!StringUtils.isEmpty(evaluator)){
-				name += " ("+evaluator+")";
+		if ("dsg:configElement".equals(type)) {
+			name = (String) nodeService.getProperty(modelNodeRef, DesignerModel.PROP_DSG_ID);
+			String evaluator = (String) nodeService.getProperty(modelNodeRef, DesignerModel.PROP_DSG_CONFIGEVALUATOR);
+			if (!StringUtils.isEmpty(evaluator)) {
+				name += " (" + evaluator + ")";
 			}
 		}
-		
+
 		if (name == null) {
 			name = (String) nodeService.getProperty(modelNodeRef, DesignerModel.PROP_M2_URI);
 		}
@@ -130,17 +133,16 @@ public class DesignerTreeVisitor {
 		if (name == null || name.isEmpty()) {
 			name = (String) nodeService.getProperty(modelNodeRef, DesignerModel.PROP_M2_REF);
 		}
-		
+
 		if (name == null || name.isEmpty()) {
 			name = (String) nodeService.getProperty(modelNodeRef, DesignerModel.PROP_DSG_ID);
 		}
-		
-		
+
 		if (name == null || name.isEmpty()) {
-			name = "-";	
+			name = "-";
 		}
-		
-		if("dsg:form".equals(type) && "-".equals(name)){
+
+		if ("dsg:form".equals(type) && "-".equals(name)) {
 			name = "default";
 		}
 
@@ -148,13 +150,14 @@ public class DesignerTreeVisitor {
 		tmp.setTitle(title);
 		tmp.setDescription(description);
 		tmp.setType(type);
-		
-		if("dsg:form".equals(type)){
-			String formType = (String) nodeService.getProperty(nodeService.getPrimaryParent(modelNodeRef).getParentRef(), DesignerModel.PROP_DSG_ID); 
-			tmp.setFormType(formType);
-			String evaluator  = (String) nodeService.getProperty(nodeService.getPrimaryParent(modelNodeRef).getParentRef(), DesignerModel.PROP_DSG_CONFIGEVALUATOR); 
 
-			if(evaluator!=null){
+		if ("dsg:form".equals(type)) {
+			String formType = (String) nodeService.getProperty(nodeService.getPrimaryParent(modelNodeRef).getParentRef(), DesignerModel.PROP_DSG_ID);
+			tmp.setFormType(formType);
+			String evaluator = (String) nodeService.getProperty(nodeService.getPrimaryParent(modelNodeRef).getParentRef(),
+					DesignerModel.PROP_DSG_CONFIGEVALUATOR);
+
+			if (evaluator != null) {
 				switch (evaluator) {
 				case "string-compare":
 					tmp.setFormKind("workflow");
@@ -173,17 +176,14 @@ public class DesignerTreeVisitor {
 				}
 
 			}
-			
-			
+
 		}
-		
-		if(nodeService.hasAspect(modelNodeRef, DesignerModel.ASPECT_MODEL_ERROR)){
+
+		if (nodeService.hasAspect(modelNodeRef, DesignerModel.ASPECT_MODEL_ERROR)) {
 			tmp.setHasError(true);
 		}
-		
+
 		return tmp;
 	}
-
-
 
 }

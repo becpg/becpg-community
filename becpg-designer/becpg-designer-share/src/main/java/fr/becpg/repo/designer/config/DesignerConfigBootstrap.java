@@ -113,18 +113,16 @@ public class DesignerConfigBootstrap implements BeanNameAware, ConfigDeployer {
 	}
 
 	// file:${dir.root}/designer/*.xml
+	// file:C:\Alfresco\alf_data\*.xml
 
 	private List<String> processWidlCards(String sourceString) {
 		List<String> ret = new ArrayList<String>();
 		if (sourceString != null && sourceString.startsWith(PREFIX_FILE) && sourceString.indexOf(WILDCARD) != -1) {
+			char separator = guessSeparator(sourceString);
 			logger.debug("processWildCards: " + sourceString);
-			if (File.separatorChar != '/') {
-				sourceString = sourceString.replace('/', File.separatorChar);
-			}
-
-			File dir = new File(sourceString.substring(PREFIX_FILE.length(), sourceString.lastIndexOf(File.separatorChar)));
+			File dir = new File(sourceString.substring(PREFIX_FILE.length(), sourceString.lastIndexOf(separator)));
 			if (dir != null && dir.exists()) {
-				FileFilter fileFilter = new WildcardFileFilter(sourceString.substring(sourceString.lastIndexOf(File.separatorChar) + 1));
+				FileFilter fileFilter = new WildcardFileFilter(sourceString.substring(sourceString.lastIndexOf(separator) + 1));
 				File[] files = dir.listFiles(fileFilter);
 				if (files != null) {
 					for (int i = 0; i < files.length; i++) {
@@ -133,12 +131,15 @@ public class DesignerConfigBootstrap implements BeanNameAware, ConfigDeployer {
 					}
 				}
 			}
-
 		} else {
 			logger.debug("Add config file : " + sourceString);
 			ret.add(sourceString);
 		}
 		return ret;
+	}
+
+	private char guessSeparator(String sourceString) {
+		return sourceString.lastIndexOf('\\') > -1 ? '\\' : '/';
 	}
 
 	/**
