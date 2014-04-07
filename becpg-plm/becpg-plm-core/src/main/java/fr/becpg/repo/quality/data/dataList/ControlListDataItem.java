@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.quality.data.QualityControlState;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -40,7 +41,7 @@ public class ControlListDataItem extends BeCPGDataObject{
 	Double value;
 	Double target;
 	String unit;
-	String state;		
+	QualityControlState state;		
 	NodeRef method;
 	List<NodeRef> characts = new ArrayList<NodeRef>();
 	
@@ -126,11 +127,11 @@ public class ControlListDataItem extends BeCPGDataObject{
 
 	@AlfProp
 	@AlfQname(qname = "qa:clState")
-	public String getState() {
+	public QualityControlState getState() {
 		return state;
 	}
 
-	public void setState(String state) {
+	public void setState(QualityControlState state) {
 		this.state = state;
 	}
 
@@ -164,7 +165,7 @@ public class ControlListDataItem extends BeCPGDataObject{
 		super(nodeRef, name);
 	}
 
-	public ControlListDataItem(NodeRef nodeRef, String type, Double mini, Double maxi, Boolean required, String sampleId, Double value, Double target, String unit, String state,  NodeRef method, List<NodeRef> characts){
+	public ControlListDataItem(NodeRef nodeRef, String type, Double mini, Double maxi, Boolean required, String sampleId, Double value, Double target, String unit, QualityControlState state,  NodeRef method, List<NodeRef> characts){
 		
 		setNodeRef(nodeRef);
 		setType(type);
@@ -180,7 +181,7 @@ public class ControlListDataItem extends BeCPGDataObject{
 		setCharacts(characts);
 	}
 	
-	public ControlListDataItem(NodeRef nodeRef, String sampleId, Double value, Double target, String unit, String state, ControlDefListDataItem controlDefListDataItem){
+	public ControlListDataItem(NodeRef nodeRef, String sampleId, Double value, Double target, String unit, QualityControlState state, ControlDefListDataItem controlDefListDataItem){
 		
 		setNodeRef(nodeRef);
 		setSampleId(sampleId);

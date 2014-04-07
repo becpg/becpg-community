@@ -1074,14 +1074,14 @@
 			<!-- Data List pop-up edit form -->
 			<form>
 				<field-visibility>
-					<show id="qa:sdlControlPoint" />
+					<show id="qa:slControlPoint" />
 					<show id="qa:sdlQty" />
 					<show id="qa:sdlFreq" />
 					<show id="qa:sdlFreqUnit" />
-					<show id="qa:sdlControlStep" />
-					<show id="qa:sdlSamplingGroup" />
-					<show id="qa:sdlControlingGroup" />
-					<show id="qa:sdlFixingGroup" />
+					<show id="qa:slControlStep" />
+					<show id="qa:slSamplingGroup" />
+					<show id="qa:slControlingGroup" />
+					<show id="qa:slFixingGroup" />
 				</field-visibility>
 
 				<appearance>
@@ -1095,14 +1095,14 @@
 			<!-- Create item form -->
 			<form>
 				<field-visibility>
-					<show id="qa:sdlControlPoint" />
+					<show id="qa:slControlPoint" />
 					<show id="qa:sdlQty" />
 					<show id="qa:sdlFreq" />
 					<show id="qa:sdlFreqUnit" />
-					<show id="qa:sdlControlStep" />
-					<show id="qa:sdlSamplingGroup" />
-					<show id="qa:sdlControlingGroup" />
-					<show id="qa:sdlFixingGroup" />
+					<show id="qa:slControlStep" />
+					<show id="qa:slSamplingGroup" />
+					<show id="qa:slControlingGroup" />
+					<show id="qa:slFixingGroup" />
 				</field-visibility>
 
 				<appearance>
@@ -1111,14 +1111,14 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
-					<show id="qa:sdlControlPoint" />
+					<show id="qa:slControlPoint" />
 					<show id="qa:sdlQty" />
 					<show id="qa:sdlFreq" />
 					<show id="qa:sdlFreqUnit" />
-					<show id="qa:sdlControlStep" />
-					<show id="qa:sdlSamplingGroup" />
-					<show id="qa:sdlControlingGroup" />
-					<show id="qa:sdlFixingGroup" />
+					<show id="qa:slControlStep" />
+					<show id="qa:slSamplingGroup" />
+					<show id="qa:slControlingGroup" />
+					<show id="qa:slFixingGroup" />
 				</field-visibility>
 			</form>
 		</forms>
@@ -1180,6 +1180,9 @@
 				<field-visibility>
 					<show id="qa:slControlPoint" />
 					<show id="qa:slControlStep" />
+					<show id="qa:slSamplingGroup" />
+					<show id="qa:slControlingGroup" />
+					<show id="qa:slFixingGroup" />
 					<show id="qa:slSampleId" />
 					<show id="qa:slDateTime" />
 					<show id="qa:slSampleState" />
@@ -1198,6 +1201,9 @@
 				<field-visibility>
 					<show id="qa:slControlPoint" />
 					<show id="qa:slControlStep" />
+					<show id="qa:slSamplingGroup" />
+					<show id="qa:slControlingGroup" />
+					<show id="qa:slFixingGroup" />
 					<show id="qa:slSampleId" />
 					<show id="qa:slDateTime" />
 					<show id="qa:slSampleState" />
@@ -1211,6 +1217,9 @@
 				<field-visibility>
 					<show id="qa:slControlPoint" />
 					<show id="qa:slControlStep" />
+					<show id="qa:slSamplingGroup" />
+					<show id="qa:slControlingGroup" />
+					<show id="qa:slFixingGroup" />
 					<show id="qa:slSampleId" />
 					<show id="qa:slDateTime" />
 					<show id="qa:slSampleState" />
@@ -1329,14 +1338,24 @@
 					<show id="qa:clSampleId" />
 					<show id="qa:clType" />
 					<show id="qa:clMethod" />
-					<show id="qa:clCharacts" />
-					<show id="qa:clValue" />
+					<show id="qa:clCharacts" />					
 					<show id="qa:clMini" />
 					<show id="qa:clMaxi" />
 					<show id="qa:clUnit" />
+					<show id="qa:clValue" />
 					<show id="qa:clState" />
 					<show id="qa:clRequired" />
 				</field-visibility>
+				<appearance>
+					<field id="qa:clSampleId" read-only="true" />
+					<field id="qa:clType" read-only="true" />
+					<field id="qa:clMethod" read-only="true" />
+					<field id="qa:clCharacts" read-only="true" />					
+					<field id="qa:clMini" read-only="true" />
+					<field id="qa:clMaxi" read-only="true" />
+					<field id="qa:clUnit" read-only="true" />
+					<field id="qa:clRequired" read-only="true" />
+				</appearance>
 			</form>
 		</forms>
 	</config>
