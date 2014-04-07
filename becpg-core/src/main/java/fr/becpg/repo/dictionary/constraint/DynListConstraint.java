@@ -11,13 +11,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.repo.dictionary.constraint.ListOfValuesConstraint;
-import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.TenantUtil;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.dictionary.ConstraintException;
 import org.alfresco.service.cmr.dictionary.DictionaryException;
+import org.alfresco.service.cmr.i18n.MessageLookup;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.datatype.DefaultTypeConverter;
 import org.alfresco.service.cmr.repository.datatype.TypeConversionException;
@@ -36,6 +36,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 public class DynListConstraint extends ListOfValuesConstraint {
 
+	
 	public static final String UNDIFINED_CONSTRAINT_VALUE = "-";
 	private static final String ERR_NO_VALUES = "d_dictionary.constraint.list_of_values.no_values";
 	private static final String ERR_NON_STRING = "d_dictionary.constraint.string_length.non_string";
@@ -112,8 +113,6 @@ public class DynListConstraint extends ListOfValuesConstraint {
 	 */
 	@Override
 	public List<String> getAllowedValues() {
-		
-		
 		if(allowedValues.get(TenantUtil.getCurrentDomain())==null) {
 			allowedValues.put(TenantUtil.getCurrentDomain(),   serviceRegistry.getTransactionService().getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<List<String>>() {
 				@Override
@@ -140,9 +139,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 				allowedValues.get(TenantUtil.getCurrentDomain()).add(UNDIFINED_CONSTRAINT_VALUE);
 			}
 		}
-
 		return allowedValues.get(TenantUtil.getCurrentDomain());
-
 	}
 
 	/**
@@ -172,18 +169,10 @@ public class DynListConstraint extends ListOfValuesConstraint {
 			public List<String> doWork() throws Exception {
 				List<String> allowedValues = new ArrayList<String>();
 				
-				
 				List<NodeRef> nodeRefs = BeCPGQueryBuilder.createQuery()
 						.selectNodesByPath(serviceRegistry.getNodeService().getRootNode(RepoConsts.SPACES_STORE),
 								"/app:company_home/"+BeCPGQueryBuilder.encodePath(path)+"/*");
 						
-						
-						/*
-						BeCPGQueryBuilder.createQuery()
-						.ofType(constraintType)
-						.inPath(path)
-						.addSort(BeCPGModel.PROP_SORT, true).inDB().list();*/
-
 						for (NodeRef nodeRef : nodeRefs) {
 							if (serviceRegistry.getNodeService().exists(nodeRef) && serviceRegistry.getNodeService().getType(nodeRef).equals(constraintType)) {
 								String value = (String) serviceRegistry.getNodeService().getProperty(nodeRef, constraintProp);
@@ -230,6 +219,12 @@ public class DynListConstraint extends ListOfValuesConstraint {
 				return 0;
 			}
 		}, AuthenticationUtil.getSystemUserName());
+	}
+	
+	@Override
+	public String getDisplayLabel(String constraintAllowableValue, MessageLookup messageLookup) {
+		//No I18N needed --> Can be done with ML Text
+		return constraintAllowableValue;
 	}
 
 }
