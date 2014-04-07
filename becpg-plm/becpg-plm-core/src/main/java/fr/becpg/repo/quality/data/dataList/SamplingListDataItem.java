@@ -21,21 +21,18 @@ import java.util.Date;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.quality.data.QualityControlState;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
-import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
-import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 @AlfType
 @AlfQname(qname = "qa:samplingList")
-public class SamplingListDataItem extends BeCPGDataObject {
+public class SamplingListDataItem extends AbstractSamplingListDataItem {
 
 	private Date dateTime;
 	private String sampleId;
-	private String sampleState;
-	private NodeRef controlPoint;
-	private NodeRef controlStep;
+	private QualityControlState sampleState;
 
 	@AlfProp
 	@AlfQname(qname = "qa:slDateTime")
@@ -59,50 +56,28 @@ public class SamplingListDataItem extends BeCPGDataObject {
 
 	@AlfProp
 	@AlfQname(qname = "qa:slSampleState")
-	public String getSampleState() {
+	public QualityControlState getSampleState() {
 		return sampleState;
 	}
 
-	public void setSampleState(String sampleState) {
+	public void setSampleState(QualityControlState sampleState) {
 		this.sampleState = sampleState;
-	}
-
-	@AlfSingleAssoc
-	@AlfQname(qname = "qa:slControlPoint")
-	public NodeRef getControlPoint() {
-		return controlPoint;
-	}
-
-	public void setControlPoint(NodeRef controlPoint) {
-		this.controlPoint = controlPoint;
-	}
-
-	@AlfSingleAssoc
-	@AlfQname(qname = "qa:slControlStep")
-	public NodeRef getControlStep() {
-		return controlStep;
-	}
-
-	public void setControlStep(NodeRef controlStep) {
-		this.controlStep = controlStep;
 	}
 
 	public SamplingListDataItem() {
 		super();
 	}
 
-	public SamplingListDataItem(NodeRef nodeRef, String name) {
-		super(nodeRef, name);
-	}
-
-	
-	public SamplingListDataItem(Date dateTime, String sampleId, String sampleState, NodeRef controlPoint, NodeRef controlStep) {
+	public SamplingListDataItem(Date dateTime, String sampleId, QualityControlState sampleState, NodeRef controlPoint, NodeRef controlStep, NodeRef samplingGroup, NodeRef controlingGroup, NodeRef fixingGroup) {
 		super();
 		this.dateTime = dateTime;
 		this.sampleId = sampleId;
 		this.sampleState = sampleState;
 		this.controlPoint = controlPoint;
 		this.controlStep = controlStep;
+		this.samplingGroup = samplingGroup;
+		this.controlingGroup = controlingGroup;
+		this.fixingGroup = fixingGroup;
 	}
 
 	@Override
