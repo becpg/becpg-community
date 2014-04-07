@@ -17,8 +17,6 @@
  ******************************************************************************/
 package fr.becpg.repo.designer.impl;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +28,6 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.extensions.surf.util.I18NUtil;
 
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.designer.DesignerModel;
 import fr.becpg.repo.designer.data.DesignerTree;
 
