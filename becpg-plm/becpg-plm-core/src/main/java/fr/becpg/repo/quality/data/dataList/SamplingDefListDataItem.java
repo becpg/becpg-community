@@ -65,7 +65,7 @@ public class SamplingDefListDataItem extends AbstractSamplingListDataItem {
 		super();
 	}
 
-	public SamplingDefListDataItem(Integer qty, Integer freq, String freqUnit, NodeRef controlPoint, NodeRef controlStep, NodeRef samplingGroup, NodeRef controlingGroup, NodeRef fixingGroup) {
+	public SamplingDefListDataItem(Integer qty, Integer freq, String freqUnit, NodeRef controlPoint, NodeRef controlStep, NodeRef samplingGroup, NodeRef controlingGroup, NodeRef fixingGroup, String reaction) {
 		super();
 		this.qty = qty;
 		this.freq = freq;
@@ -75,6 +75,7 @@ public class SamplingDefListDataItem extends AbstractSamplingListDataItem {
 		this.samplingGroup = samplingGroup;
 		this.controlingGroup = controlingGroup;
 		this.fixingGroup = fixingGroup;
+		this.reaction = reaction;
 	}
 
 	@Override

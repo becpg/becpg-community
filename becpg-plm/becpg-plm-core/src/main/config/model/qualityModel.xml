@@ -659,6 +659,12 @@
 			</mandatory-aspects>
 		</aspect>
 		<aspect name="qa:sampleListAspect">
+			<properties>
+				<property name="qa:slReaction">
+					<type>d:text</type>
+					<index enabled="false"/>
+				</property>
+			</properties>
 			<associations>
 				<association name="qa:slControlPoint">
 					<source>

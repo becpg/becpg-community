@@ -68,7 +68,7 @@ public class SamplingListDataItem extends AbstractSamplingListDataItem {
 		super();
 	}
 
-	public SamplingListDataItem(Date dateTime, String sampleId, QualityControlState sampleState, NodeRef controlPoint, NodeRef controlStep, NodeRef samplingGroup, NodeRef controlingGroup, NodeRef fixingGroup) {
+	public SamplingListDataItem(Date dateTime, String sampleId, QualityControlState sampleState, NodeRef controlPoint, NodeRef controlStep, NodeRef samplingGroup, NodeRef controlingGroup, NodeRef fixingGroup, String reaction) {
 		super();
 		this.dateTime = dateTime;
 		this.sampleId = sampleId;
@@ -78,6 +78,7 @@ public class SamplingListDataItem extends AbstractSamplingListDataItem {
 		this.samplingGroup = samplingGroup;
 		this.controlingGroup = controlingGroup;
 		this.fixingGroup = fixingGroup;
+		this.reaction = reaction;
 	}
 
 	@Override
