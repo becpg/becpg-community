@@ -633,8 +633,7 @@
 													} else {
 														html += $links($html(data.displayValue));
 													}
-												} else if (datalistColumn.name == "qa:sdlControlPoint"
-														|| datalistColumn.name == "qa:slControlPoint") {
+												} else if (datalistColumn.name == "qa:slControlPoint") {
 													html += '<span class="sample"><a href="'
 															+ Alfresco.util.siteURL('entity-details?nodeRef='
 																	+ data.value) + '">' + $html(data.displayValue)

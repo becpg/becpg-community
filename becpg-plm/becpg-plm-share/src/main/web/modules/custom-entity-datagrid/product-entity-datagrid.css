@@ -269,13 +269,7 @@
 }
 
 .datagrid .controlPoint {
-	background: url("../../components/images/quality/sample-16.png")
-		no-repeat;
-	padding-left: 20px;
-}
-
-.datagrid .control {
-	background: url("../../components/images/quality/control-16.png")
+	background: url("../../components/images/filetypes/generic-controlPoint-16.png")
 		no-repeat;
 	padding-left: 20px;
 }

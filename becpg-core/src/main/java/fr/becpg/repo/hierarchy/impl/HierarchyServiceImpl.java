@@ -32,7 +32,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.ISO9075;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -230,15 +229,6 @@ public class HierarchyServiceImpl implements HierarchyService {
 		}
 
 		return destinationNodeRef;
-	}
-
-	private void appendNamePath(StringBuilder path, NodeRef hierarchyNodeRef) {
-		NodeRef parent = HierarchyHelper.getParentHierachy(hierarchyNodeRef, nodeService);
-		if (parent != null) {
-			appendNamePath(path, parent);
-		}
-		path.append("/cm:");
-		path.append(ISO9075.encode(HierarchyHelper.getHierachyName(hierarchyNodeRef, nodeService)));
 	}
 
 	protected boolean isAllQuery(String query) {
