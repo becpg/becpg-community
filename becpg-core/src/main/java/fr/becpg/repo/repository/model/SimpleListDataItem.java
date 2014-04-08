@@ -33,4 +33,8 @@ public interface SimpleListDataItem extends IManualDataItem, SimpleCharactDataIt
 	public Integer getSort();
 	
 	public void setSort(Integer sort);
+	
+	public void setUnit(String unit);
+	
+	public String getUnit();
 }

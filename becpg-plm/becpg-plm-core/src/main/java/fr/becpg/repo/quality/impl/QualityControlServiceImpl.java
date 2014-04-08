@@ -29,6 +29,8 @@ import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.namespace.NamespaceService;
+import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -38,7 +40,6 @@ import fr.becpg.model.QualityModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.MicrobioListDataItem;
-import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.quality.QualityControlService;
 import fr.becpg.repo.quality.data.ControlPlanData;
 import fr.becpg.repo.quality.data.ControlPointData;
@@ -51,6 +52,9 @@ import fr.becpg.repo.quality.data.dataList.SamplingDefListDataItem;
 import fr.becpg.repo.quality.data.dataList.SamplingListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
+import fr.becpg.repo.repository.RepositoryEntityDefReader;
+import fr.becpg.repo.repository.model.BeCPGDataObject;
+import fr.becpg.repo.repository.model.SimpleListDataItem;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 public class QualityControlServiceImpl implements QualityControlService {
@@ -64,6 +68,8 @@ public class QualityControlServiceImpl implements QualityControlService {
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 	private EntityListDAO entityListDAO;
 	private BehaviourFilter policyBehaviourFilter;
+	private RepositoryEntityDefReader<RepositoryEntity> repositoryEntityDefReader;
+	private NamespaceService namespaceService;
 
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
@@ -79,6 +85,14 @@ public class QualityControlServiceImpl implements QualityControlService {
 
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 		this.policyBehaviourFilter = policyBehaviourFilter;
+	}
+
+	public void setRepositoryEntityDefReader(RepositoryEntityDefReader<RepositoryEntity> repositoryEntityDefReader) {
+		this.repositoryEntityDefReader = repositoryEntityDefReader;
+	}
+
+	public void setNamespaceService(NamespaceService namespaceService) {
+		this.namespaceService = namespaceService;
 	}
 
 	@Override
@@ -154,7 +168,8 @@ public class QualityControlServiceImpl implements QualityControlService {
 										sdl.getControlStep(),
 										sdl.getSamplingGroup(),
 										sdl.getControlingGroup(),
-										sdl.getFixingGroup()));
+										sdl.getFixingGroup(),
+										sdl.getReaction()));
 					}			
 					
 					// calculate next time
@@ -222,6 +237,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 				String unit = null;
 				
 				if(productData != null){
+					
 					// TODO : générique			
 					if(cdl.getType().equals("bcpg_microbioList")){
 					
@@ -238,21 +254,31 @@ public class QualityControlServiceImpl implements QualityControlService {
 							}
 						}						
 					}
-					else if(cdl.getType().equals("bcpg_nutList")){
+					else{
+						QName dataListQName = null;
+						if(cdl.getType().contains("_")){
+							dataListQName = QName.createQName(cdl.getType().replace("_", ":"), namespaceService);
+						}
 						
-						if(productData.getNutList() != null){
+						if(dataListQName != null){
+							Map<QName, List<? extends RepositoryEntity>> datalists = repositoryEntityDefReader.getDataLists(productData);
+							@SuppressWarnings("unchecked")
+							List<BeCPGDataObject> dataListItems = (List<BeCPGDataObject>) datalists.get(dataListQName);
 							
-							for(NutListDataItem nl : productData.getNutList()){
-								if(n.equals(nl.getNut())){
-									
-									target = nl.getValue();
-									unit = nl.getUnit();
-									mini = nl.getMini();
-									maxi = nl.getMaxi();
-									break;
+							for (RepositoryEntity dataListItem : dataListItems) {
+								
+								if(dataListItem instanceof SimpleListDataItem){
+									SimpleListDataItem simpleListDataItem = (SimpleListDataItem)dataListItem;
+									if(n.equals(simpleListDataItem.getCharactNodeRef())){
+										
+										target = simpleListDataItem.getValue();
+										unit = simpleListDataItem.getUnit();
+										mini = simpleListDataItem.getMini();
+										maxi = simpleListDataItem.getMaxi();
+									}
 								}
 							}
-						}					
+						}						
 					}
 				}
 				
@@ -327,24 +353,32 @@ public class QualityControlServiceImpl implements QualityControlService {
 			if(isSampleControled(parentNodeRef, sampleId)){
 				NodeRef entityNodeRef = entityListDAO.getEntity(controlListNodeRef);
 				QualityControlData qualityControlData = (QualityControlData)alfrescoRepository.findOne(entityNodeRef);
-				QualityControlState qcState = QualityControlState.Compliant;
+				boolean isQCControled = true;
+				boolean isQCCompliant = true;
 				
 				for(SamplingListDataItem sl : qualityControlData.getSamplingList()){
 					if(sampleId.equals(sl.getSampleId())){
 						sl.setSampleState(calculateSampleState(parentNodeRef, sampleId));
 					}
-					
+										
 					if(sl.getSampleState() == null || sl.getSampleState().equals("")){
-						qcState = sl.getSampleState();
-						break;
+						isQCControled = false;
 					}
 					else if(sl.getSampleState().equals(QualityControlState.NonCompliant)){						
-						qcState = sl.getSampleState();
+						isQCCompliant = false;
 					}					
 				}				
 				
-				logger.debug("QC state : " + qcState);
-				qualityControlData.setState(qcState);
+				logger.debug("QC isQCControled : " + isQCControled + " isQCCompliant " + isQCCompliant);
+				qualityControlData.setState(null);
+				if(isQCControled){
+					if(isQCCompliant){
+						qualityControlData.setState(QualityControlState.Compliant);
+					}
+					else{
+						qualityControlData.setState(QualityControlState.NonCompliant);
+					}
+				}
 				alfrescoRepository.save(qualityControlData);
 			}
 		}

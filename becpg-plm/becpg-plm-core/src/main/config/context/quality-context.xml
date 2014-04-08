@@ -27,6 +27,8 @@
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
+		<property name="repositoryEntityDefReader" ref="repositoryEntityDefReader" />
+		<property name="namespaceService" ref="namespaceService" />
     </bean>    
     <bean id="qualityControlPolicies" class="fr.becpg.repo.quality.policy.QualityControlPolicies" parent="abstractBeCPGPolicy">
 		<property name="qualityControlService" ref="qualityControlService" />		

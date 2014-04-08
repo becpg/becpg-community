@@ -98,7 +98,7 @@ public class QualityControlTest extends PLMBaseTestCase {
 		ControlPlanData controlPlanData = new ControlPlanData();
 		controlPlanData.setName("Control plan");
 		List<SamplingDefListDataItem> samplingDefList = new ArrayList<SamplingDefListDataItem>();
-		samplingDefList.add(new SamplingDefListDataItem(2, 1, "/4hours", controlPointNodeRef, controlStepNodeRef, null, null, null));
+		samplingDefList.add(new SamplingDefListDataItem(2, 1, "/4hours", controlPointNodeRef, controlStepNodeRef, null, null, null, "Reaction"));
 		controlPlanData.setSamplingDefList(samplingDefList);
 		controlPlanNodeRef = alfrescoRepository.create(testFolderNodeRef, controlPlanData).getNodeRef();
 	}

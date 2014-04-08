@@ -1082,9 +1082,15 @@
 					<show id="qa:slSamplingGroup" />
 					<show id="qa:slControlingGroup" />
 					<show id="qa:slFixingGroup" />
+					<show id="qa:slReaction" />
 				</field-visibility>
 
 				<appearance>
+					<field id="qa:slReaction">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">3</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 		</forms>
@@ -1103,9 +1109,15 @@
 					<show id="qa:slSamplingGroup" />
 					<show id="qa:slControlingGroup" />
 					<show id="qa:slFixingGroup" />
+					<show id="qa:slReaction" />
 				</field-visibility>
 
 				<appearance>
+					<field id="qa:slReaction">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">3</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 			<!-- Data Grid view -->
@@ -1186,9 +1198,15 @@
 					<show id="qa:slSampleId" />
 					<show id="qa:slDateTime" />
 					<show id="qa:slSampleState" />
+					<show id="qa:slReaction" />
 				</field-visibility>
 
 				<appearance>
+					<field id="qa:slReaction">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">3</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 		</forms>
@@ -1207,9 +1225,15 @@
 					<show id="qa:slSampleId" />
 					<show id="qa:slDateTime" />
 					<show id="qa:slSampleState" />
+					<show id="qa:slReaction" />
 				</field-visibility>
 
 				<appearance>
+					<field id="qa:slReaction">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">3</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 			<!-- Data Grid view -->

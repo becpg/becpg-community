@@ -19,6 +19,7 @@ package fr.becpg.repo.quality.data.dataList;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
@@ -30,6 +31,7 @@ public abstract class AbstractSamplingListDataItem extends BeCPGDataObject {
 	protected NodeRef samplingGroup;
 	protected NodeRef controlingGroup;
 	protected NodeRef fixingGroup;
+	protected String reaction;
 	
 	@AlfSingleAssoc
 	@AlfQname(qname = "qa:slControlPoint")
@@ -81,6 +83,16 @@ public abstract class AbstractSamplingListDataItem extends BeCPGDataObject {
 		this.fixingGroup = fixingGroup;
 	}
 
+	@AlfProp
+	@AlfQname(qname = "qa:slReaction")
+	public String getReaction() {
+		return reaction;
+	}
+
+	public void setReaction(String reaction) {
+		this.reaction = reaction;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -89,6 +101,7 @@ public abstract class AbstractSamplingListDataItem extends BeCPGDataObject {
 		result = prime * result + ((controlStep == null) ? 0 : controlStep.hashCode());
 		result = prime * result + ((controlingGroup == null) ? 0 : controlingGroup.hashCode());
 		result = prime * result + ((fixingGroup == null) ? 0 : fixingGroup.hashCode());
+		result = prime * result + ((reaction == null) ? 0 : reaction.hashCode());
 		result = prime * result + ((samplingGroup == null) ? 0 : samplingGroup.hashCode());
 		return result;
 	}
@@ -121,6 +134,11 @@ public abstract class AbstractSamplingListDataItem extends BeCPGDataObject {
 			if (other.fixingGroup != null)
 				return false;
 		} else if (!fixingGroup.equals(other.fixingGroup))
+			return false;
+		if (reaction == null) {
+			if (other.reaction != null)
+				return false;
+		} else if (!reaction.equals(other.reaction))
 			return false;
 		if (samplingGroup == null) {
 			if (other.samplingGroup != null)
