@@ -150,7 +150,8 @@ public class EntityServiceImpl implements EntityService {
 	@Override
 	public NodeRef getImageFolder(NodeRef nodeRef) throws BeCPGException {
 
-		NodeRef imagesFolderNodeRef = nodeService.getChildByName(nodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
+		NodeRef imagesFolderNodeRef = nodeService.getChildByName(nodeRef, ContentModel.ASSOC_CONTAINS,
+				TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
 		if (imagesFolderNodeRef == null) {
 			throw new BeCPGException("Folder 'Images' doesn't exist.");
 		}
@@ -191,7 +192,6 @@ public class EntityServiceImpl implements EntityService {
 		return imageBytes;
 	}
 
-
 	@Override
 	public void writeImages(NodeRef nodeRef, Map<String, byte[]> images) throws BeCPGException {
 
@@ -207,7 +207,8 @@ public class EntityServiceImpl implements EntityService {
 				Map<QName, Serializable> fileProperties = new HashMap<QName, Serializable>();
 				fileProperties.put(ContentModel.PROP_NAME, filename);
 				fileNodeRef = nodeService.createNode(imagesFolderNodeRef, ContentModel.ASSOC_CONTAINS,
-						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(filename)), ContentModel.TYPE_CONTENT, fileProperties).getChildRef();
+						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(filename)), ContentModel.TYPE_CONTENT,
+						fileProperties).getChildRef();
 			}
 
 			String mimetype = mimetypeService.guessMimetype(filename);
@@ -248,45 +249,50 @@ public class EntityServiceImpl implements EntityService {
 		} catch (BeCPGException e) {
 			logger.debug("No image found for cm:name");
 		}
-		
 
 		return getImage(entityNodeRef, getDefaultImageName(nodeService.getType(entityNodeRef)));
 	}
-	
-	
-	@Override 
+
+	@Override
 	public String getDefaultImageName(QName entityTypeQName) {
-		String imgName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_LOGO_IMAGE+"."+entityTypeQName.getLocalName());
-		if(imgName==null || imgName.isEmpty()) {
+		String imgName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_LOGO_IMAGE + "." + entityTypeQName.getLocalName());
+		if (imgName == null || imgName.isEmpty()) {
 			imgName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_LOGO_IMAGE);
 		}
-		if(imgName!=null) {
+		if (imgName != null) {
 			imgName = imgName.toLowerCase();
 		}
-		
+
 		return imgName;
 	}
 
+	@Override
+	public NodeRef createDefaultImage(NodeRef entityNodeRef) throws BeCPGException {
+		NodeRef imagesFolderNodeRef = getImageFolder(entityNodeRef);
+		String name = getDefaultImageName(nodeService.getType(entityNodeRef));
+		Map<QName, Serializable> props = new HashMap<QName, Serializable>();
+		props.put(ContentModel.PROP_NAME, name);
+		return nodeService.createNode(imagesFolderNodeRef, ContentModel.ASSOC_CONTAINS,
+				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name)), ContentModel.TYPE_CONTENT, props)
+				.getChildRef();
+	}
 
-	
-	//TODO Supprimer
+	// TODO Supprimer
 	@Override
 	public boolean hasAssociatedImages(QName type) {
 		return dictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITY_V2);
 	}
 
-	
 	@Override
 	public NodeRef getOrCreateDocumentsFolder(NodeRef entityNodeRef) {
 		String documentsFolderName = TranslateHelper.getTranslatedPath(RepoConsts.PATH_DOCUMENTS);
 		NodeRef documentsFolderNodeRef = nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS, documentsFolderName);
 		if (documentsFolderNodeRef == null) {
-			 documentsFolderNodeRef = fileFolderService.create(entityNodeRef,
-			 documentsFolderName, ContentModel.TYPE_FOLDER).getNodeRef();
+			documentsFolderNodeRef = fileFolderService.create(entityNodeRef, documentsFolderName, ContentModel.TYPE_FOLDER).getNodeRef();
 		}
 		return documentsFolderNodeRef;
 	}
-	
+
 	@Override
 	public NodeRef createOrCopyFrom(final NodeRef sourceNodeRef, final NodeRef parentNodeRef, final QName entityType, final String entityName) {
 		NodeRef ret = null;
@@ -299,7 +305,8 @@ public class EntityServiceImpl implements EntityService {
 			ret = AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<NodeRef>() {
 				@Override
 				public NodeRef doWork() throws Exception {
-					NodeRef ret = copyService.copyAndRename(sourceNodeRef, parentNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
+					NodeRef ret = copyService.copyAndRename(sourceNodeRef, parentNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN,
+							true);
 					nodeService.setProperty(ret, ContentModel.PROP_NAME, entityName);
 					return ret;
 				}
@@ -308,16 +315,17 @@ public class EntityServiceImpl implements EntityService {
 		} else {
 			logger.debug("Create new entity with name " + entityName);
 			ret = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(entityName)), entityType, props).getChildRef();
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(entityName)), entityType, props)
+					.getChildRef();
 		}
-		
-		if(nodeService.hasAspect(ret, ContentModel.ASPECT_VERSIONABLE)){
+
+		if (nodeService.hasAspect(ret, ContentModel.ASPECT_VERSIONABLE)) {
 			nodeService.removeAspect(ret, ContentModel.ASPECT_VERSIONABLE);
 		}
-		
+
 		return ret;
 	}
-	
+
 	/**
 	 * Get original name from the working copy name and the cm:workingCopyLabel
 	 * that was used to create it.
@@ -367,7 +375,7 @@ public class EntityServiceImpl implements EntityService {
 						if (!ReportModel.TYPE_REPORT.equals(file2.getType())) {
 							copyOrMoveFile(file2, documentsFolderNodeRef, isCopy);
 						} else {
-							logger.debug("Ignore "+file2.getName()+" for copy");
+							logger.debug("Ignore " + file2.getName() + " for copy");
 						}
 					}
 				} else {
@@ -384,10 +392,12 @@ public class EntityServiceImpl implements EntityService {
 
 			logger.debug("copy or move file in Documents: " + file.getName() + " parentNodeRef: " + parentNodeRef);
 			if (isCopy) {
-				NodeRef subFolderNodeRef = copyService.copy(file.getNodeRef(), parentNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
+				NodeRef subFolderNodeRef = copyService.copy(file.getNodeRef(), parentNodeRef, ContentModel.ASSOC_CONTAINS,
+						ContentModel.ASSOC_CHILDREN, true);
 				nodeService.setProperty(subFolderNodeRef, ContentModel.PROP_NAME, file.getName());
 			} else {
-				nodeService.moveNode(file.getNodeRef(), parentNodeRef, ContentModel.ASSOC_CONTAINS, nodeService.getPrimaryParent(file.getNodeRef()).getQName());
+				nodeService.moveNode(file.getNodeRef(), parentNodeRef, ContentModel.ASSOC_CONTAINS, nodeService.getPrimaryParent(file.getNodeRef())
+						.getQName());
 			}
 		} else {
 			logger.debug("file already exists so no copy, neither move file: " + file.getName() + " in parentNodeRef: " + parentNodeRef);
@@ -423,7 +433,5 @@ public class EntityServiceImpl implements EntityService {
 			deleteNode(listContainerNodeRef, deleteArchivedNodes);
 		}
 	}
-
-	
 
 }

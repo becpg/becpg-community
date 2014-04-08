@@ -32,6 +32,7 @@ function main()
       model.showOnlyLocation = model.showOnlyLocation.toString();
       var count = nodeDetails.item.node.properties["fm:commentCount"];
       model.commentCount = (count != undefined ? count : null);
+      model.thumbnailUrl= "/share/proxy/alfresco/api/node/" + model.nodeRef.replace(':/','') + "/content/thumbnails/doclib?c=queue&ph=true";
       model.defaultReport = null;
     
       if(model.pathMode != "true" && nodeDetails.item.node.associations &&  nodeDetails.item.node.associations["rep:reports"]){
