@@ -167,6 +167,21 @@
 				<value>bcpg:lvValue</value>
 			</parameter>
 		</constraint>
+		
+		<constraint name="qa:claimDistributionNetworks" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/QualityLists/bcpg:entityLists/ClaimDistributionNetworks</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>bcpg:lvValue</value>
+			</parameter>
+		</constraint>
+		
 		<constraint name="qa:controlUnits" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
@@ -619,8 +634,6 @@
 					<mandatory>false</mandatory>
 					<index enabled="true" />
 				</property>
-				<!-- <property name="qa:productType"> <title>Type produit</title> <type>d:text</type> <mandatory>false</mandatory> <index enabled="true"/> <constraints> <constraint ref="qa:productTypes"/> </constraints> 
-					</property> -->
 				<property name="qa:productUseByDate">
 					<title>DLC produit</title>
 					<type>d:date</type>
@@ -677,12 +690,6 @@
 						<tokenised>TRUE</tokenised>
 					</index>
 				</property>
-				<property name="qa:claimTradeContactCheck">
-					<title>Le produit a-t-il été vu par le commercial?</title>
-					<type>d:boolean</type>
-					<mandatory>false</mandatory>
-					<index enabled="true" />
-				</property>
 				<property name="qa:claimTracking">
 					<title>Suivi demandé</title>
 					<type>d:text</type>
@@ -719,8 +726,40 @@
 					<type>d:noderef</type>
 					<mandatory>false</mandatory>
 				</property>
-				<!-- <property name="qa:claimDistributionNetwork"> <title>Réseau de distribution</title> <type>d:text</type> <mandatory>false</mandatory> <index enabled="true"> <atomic>false</atomic> <stored>false</stored> 
-					<tokenised>TRUE</tokenised> </index> <constraints> <constraint ref="qa:claimDistributionNetworks"/> </constraints> </property> -->
+				<property name="qa:claimDistributionNetwork">
+					<title>Réseau de distribution</title>
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+					<constraints>
+						<constraint ref="qa:claimDistributionNetworks" />
+					</constraints>
+				</property>
+				<!-- Comments -->
+			     <property name="qa:claimOrientationComment">
+					<title>Commentaires étape orientation</title>
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="qa:claimClassificationComment">
+					<title>Commentaires étape classification</title>
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<!-- Deprecated -->
+				<property name="qa:claimTradeContactCheck">
+					<title>Le produit a-t-il été vu par le commercial?</title>
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="true" />
+				</property>
+			
 			</properties>
 			<associations>
 				<association name="qa:claimTradeContact">
@@ -835,7 +874,7 @@
 					</index>
 				</property>
 				<property name="qa:claimTreatementPrevActions">
-					<title>Actions préventives éventuellement lancé</title>
+					<title>Actions préventives éventuellement lancées</title>
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
@@ -843,6 +882,12 @@
 						<stored>false</stored>
 						<tokenised>TRUE</tokenised>
 					</index>
+				</property>
+				<property name="qa:claimTreatementComment">
+					<title>Commentaires étape traitement</title>
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
 				</property>
 			</properties>
 			<associations>
@@ -900,6 +945,12 @@
 						<tokenised>TRUE</tokenised>
 					</index>
 				</property>
+				<property name="qa:claimResponseComment">
+					<title>Commentaires étape réponse</title>
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 			</properties>
 			<associations>
 				<association name="qa:claimResponseActor">
@@ -931,6 +982,12 @@
 						<stored>false</stored>
 						<tokenised>TRUE</tokenised>
 					</index>
+				</property>
+				<property name="qa:claimClosingComment">
+					<title>Commentaires étape clôture</title>
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
 				</property>
 			</properties>
 			<associations />
