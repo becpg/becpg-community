@@ -62,6 +62,8 @@ public interface EntityService {
 
 	NodeRef getOrCreateDocumentsFolder(NodeRef entityNodeRef);
 
+	NodeRef createDefaultImage(NodeRef nodeRef) throws BeCPGException;
+
 	
 
 }

@@ -60,7 +60,6 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 		this.entityService = entityService;
 	}
 
-
 	public void setBeCPGCacheService(BeCPGCacheService beCPGCacheService) {
 		this.beCPGCacheService = beCPGCacheService;
 	}
@@ -98,13 +97,36 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 
 	}
 
+	public ScriptNode getOrCreateImageNode(ScriptNode sourceNode) {
+		QName type = nodeService.getType(sourceNode.getNodeRef());
+		// Try to find a logo for the specific type
+
+		NodeRef img = null;
+		try {
+			if (entityService.hasAssociatedImages(type)) {
+				img = entityService.getEntityDefaultImage(sourceNode.getNodeRef());
+			}
+
+			if (img == null) {
+				img = entityService.createDefaultImage(sourceNode.getNodeRef());
+			}
+
+		} catch (BeCPGException e) {
+			logger.debug(e, e);
+		}
+
+		return img != null ? new ScriptNode(img, serviceRegistry, getScope()) : sourceNode;
+
+	}
+
 	public ScriptNode getReportNode(ScriptNode sourceNode) {
 		NodeRef reportNodeRef = null;
 		if (entityReportService.shouldGenerateReport(sourceNode.getNodeRef())) {
 			logger.debug("Entity report is not up to date for " + sourceNode.getNodeRef());
 			reportNodeRef = entityReportService.getSelectedReport(sourceNode.getNodeRef());
 			if (reportNodeRef != null) {
-				NodeRef thumbNodeRef = serviceRegistry.getThumbnailService().getThumbnailByName(reportNodeRef, ContentModel.PROP_CONTENT, "webpreview");
+				NodeRef thumbNodeRef = serviceRegistry.getThumbnailService().getThumbnailByName(reportNodeRef, ContentModel.PROP_CONTENT,
+						"webpreview");
 				if (thumbNodeRef != null) {
 					// Ensure thumbnail is regenerated before preview
 					nodeService.deleteNode(thumbNodeRef);
@@ -113,9 +135,8 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 			entityReportService.generateReport(sourceNode.getNodeRef());
 
 		}
-		
+
 		reportNodeRef = entityReportService.getSelectedReport(sourceNode.getNodeRef());
-		
 
 		return reportNodeRef != null ? new ScriptNode(reportNodeRef, serviceRegistry, getScope()) : sourceNode;
 
@@ -123,24 +144,23 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 
 	private NodeRef getImage(final String imgName) {
 
-		return beCPGCacheService.getFromCache(Thumbnail.class.getName(), THUMB_CACHE_KEY_PREFIX + imgName, new BeCPGCacheDataProviderCallBack<NodeRef>() {
+		return beCPGCacheService.getFromCache(Thumbnail.class.getName(), THUMB_CACHE_KEY_PREFIX + imgName,
+				new BeCPGCacheDataProviderCallBack<NodeRef>() {
 
-			@Override
-			public NodeRef getData() {
-				
-				NodeRef imageNodeRef = BeCPGQueryBuilder.createQuery()
-						.selectNodeByPath(nodeService.getRootNode(RepoConsts.SPACES_STORE)
-								,"/app:company_home"+RepoConsts.FULL_PATH_THUMBNAIL+"/cm:"+imgName);
-				
-			
-				if (imageNodeRef==null) {
-					logger.debug("image not found. imgName: " + imgName);
-				}
-					
-				return imageNodeRef;
-			}
+					@Override
+					public NodeRef getData() {
 
-		});
+						NodeRef imageNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(nodeService.getRootNode(RepoConsts.SPACES_STORE),
+								"/app:company_home" + RepoConsts.FULL_PATH_THUMBNAIL + "/cm:" + imgName);
+
+						if (imageNodeRef == null) {
+							logger.debug("image not found. imgName: " + imgName);
+						}
+
+						return imageNodeRef;
+					}
+
+				});
 
 	}
 
