@@ -24,9 +24,9 @@
           * {+7d} -  resolves to a iso8601 date respresentation of the current day rolled the given number of days forward
       -->
       <filter id="ncs"           data="*"      		  parameters="fts(+@qa\:ncType:&quot;{data}&quot;)"/>
-      <filter id="started"       data="last7Days"    parameters="fts(+@cm\:created:[{-7d} TO MAX])"/>
-      <filter id="started"       data="last14Days"   parameters="fts(+@cm\:created:[{-14d} TO MAX])"/>
-      <filter id="started"       data="last28Days"   parameters="fts(+@cm\:created:[{-28d} TO MAX])"/>
-      <filter id="priority"      data="*"            parameters="fts(+@qa\:ncPriority:{data})"/>
+      <filter id="started"       data="last7Days"    parameters="fts(+@cm\:created:['{-7d}' TO MAX])"/>
+      <filter id="started"       data="last14Days"   parameters="fts(+@cm\:created:['{-14d}' TO MAX])"/>
+      <filter id="started"       data="last28Days"   parameters="fts(+@cm\:created:['{-28d}' TO MAX])"/>
+      <filter id="priority"      data="*"            parameters="fts(=qa\:ncPriority:{data})"/>
    </filters-parameters>
 </config>
