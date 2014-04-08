@@ -700,7 +700,9 @@
 					</field>
 					
 					<set id="response" appearance="title" label-id="workflow.claim.set.response" />
-					<field id="qa:claimResponseState" mandatory="true" set="response"  read-only="true" />
+					<field id="qa:claimResponseState" mandatory="true" set="response"   read-only="true" >
+						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					</field>
 					<field id="qa:claimResponseDetails" mandatory="true" set="response" read-only="true" >
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
@@ -871,7 +873,9 @@
 					</field>
 					
 					<set id="response" appearance="title" label-id="workflow.claim.set.response" />
-					<field id="qa:claimResponseState" mandatory="true" set="response"  read-only="true" />
+					<field id="qa:claimResponseState" mandatory="true" set="response"  read-only="true" >
+						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					</field>
 					<field id="qa:claimResponseDetails" mandatory="true" set="response" read-only="true" >
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
@@ -881,9 +885,22 @@
 					
 					<set id="classification" appearance="title"  label-id="workflow.claim.set.classification" />
 					<set id="classification1" parent="classification" appearance="" template="/org/alfresco/components/form/2-column-set.ftl"  />
-					<field id="qa:claimType" set="classification" mandatory="true" read-only="true" />
-					<field id="qa:claimOriginHierarchy1" set="classification1" read-only="true" />
-					<field id="qa:claimOriginHierarchy2" set="classification1" read-only="true" />
+					<field id="qa:claimType" set="classification" mandatory="true" read-only="true" >
+						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					</field>
+					<field id="qa:claimOriginHierarchy1" set="classification1" read-only="true">
+						 <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/QualityLists/bcpg:entityLists/claimOrigin_Hierarchy
+							</control-param>
+						</control>
+					</field>
+					<field id="qa:claimOriginHierarchy2" set="classification1" read-only="true">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/QualityLists/bcpg:entityLists/claimOrigin_Hierarchy
+							</control-param>
+							<control-param name="parent">qa_claimOriginHierarchy1</control-param>
+						</control>
+					</field>
 					<set id="classification2" parent="classification" appearance="" />
 					<field id="qa:claimClassificationComment" set="classification2" read-only="true" >
 						<control template="/org/alfresco/components/form/controls/info.ftl" />

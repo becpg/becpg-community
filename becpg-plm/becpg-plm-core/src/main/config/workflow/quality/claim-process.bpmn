@@ -8,7 +8,7 @@
         <activiti:executionListener event="start" class="org.alfresco.repo.workflow.activiti.listener.ScriptExecutionListener">
           <activiti:field name="script">
             <activiti:string>
-            		//execution.setVariable('bpm_workflowPriority','2');
+            		execution.setVariable('bpm_workflowPriority','2');
             		execution.setVariable('ncwf_claimRejectedState','none');
 	                execution.setVariable('ncwf_ncType',"Claim");
 	                if(execution.getVariable('bcpgwf_notifyUsers')==null){
