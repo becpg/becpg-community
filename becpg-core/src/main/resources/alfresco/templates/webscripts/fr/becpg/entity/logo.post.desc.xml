@@ -1,0 +1,9 @@
+<webscript>
+  <shortname>Entity Logo Upload</shortname>
+  <description>Upload logo file content</description>
+  <format default="json" />
+  <authentication>user</authentication>
+  <transaction>required</transaction>
+  <url>/becpg/entity/uploadlogo?nodeRef={entityNodeRef}</url>
+  <lifecycle>internal</lifecycle>
+</webscript>

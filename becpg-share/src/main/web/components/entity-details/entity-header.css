@@ -133,6 +133,16 @@
     background-image: url(../documentlibrary/actions/entity-view-datalists-16.png);
  
  }
+ 
+.node-header a.upload-logo-action:hover  span.upload-logo-span {
+   background-image: url(../images/edit-16.png);
+   background-color: transparent;
+   background-position: 6px 4px;
+   background-repeat: no-repeat ;
+   padding-left: 20px;
+}
+
+
     
 .node-header .node-action .entity-view-datalist span.first-child ,
 .node-header .node-action .entity-view-documents span.first-child 
