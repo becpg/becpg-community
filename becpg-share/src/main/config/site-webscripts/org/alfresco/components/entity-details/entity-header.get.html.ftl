@@ -77,10 +77,11 @@
                   </div>
                </#if>
                <#if showOnlyLocation == "false">
-               
-                	<#assign idx=node.type?index_of(":")+1 />
-               	<img src="${url.context}/components/images/filetypes/generic-${node.type?substring(idx)}-48.png"
-                       title="${displayName}" class="node-thumbnail" width="48" />
+                  <#assign idx=node.type?index_of(":")+1 />
+                  <a id="${el}-uploadLogo-button" class="upload-logo-action" title="${msg("actions.entity.upload-logo")}" href="#">
+               	  	<img src="${thumbnailUrl}"  title="${displayName}" class="node-thumbnail" width="48" />
+               	  	<span class="upload-logo-span" >&nbsp;</span>
+               	  </a>
                   <h1 class="thin dark">
                      ${displayName}<span id="document-version" class="document-version">${item.version}</span>
                   </h1>

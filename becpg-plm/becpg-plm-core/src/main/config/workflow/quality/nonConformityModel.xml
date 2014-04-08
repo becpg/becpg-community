@@ -202,29 +202,6 @@
         <type name="ncwf:claimAnalysisTask">
             <title>Orientation réclamation</title>
             <parent>bpm:workflowTask</parent>
-            <properties>
-                <property name="ncwf:claimTreatmentDueDate">
-                    <title>Délai maximum demandé pour le Traitement</title>
-                    <type>d:date</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="true">
-                        <atomic>false</atomic>
-                        <stored>false</stored>
-                        <tokenised>TRUE</tokenised>
-                    </index>
-                </property>
-                <property name="ncwf:claimResponseDueDate">
-                    <title>Délai maximum demandé pour la Réponse</title>
-                    <type>d:date</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="true">
-                        <atomic>false</atomic>
-                        <stored>false</stored>
-                        <tokenised>TRUE</tokenised>
-                    </index>
-                </property>
-            </properties>
-            <associations/>
            <overrides>
                 <property name="bpm:packageActionGroup">
                     <mandatory>false</mandatory>
@@ -259,6 +236,7 @@
             	<aspect>qa:claimTreatementAspect</aspect>
             	<aspect>qa:claimResponseAspect</aspect>
             	<aspect>ncwf:claimRejectedAspect</aspect>
+            	<aspect>ncwf:claimDueDateAspect</aspect>
             	<aspect>bcpgwf:notificationAspect</aspect>
             </mandatory-aspects>
         </type>
@@ -280,6 +258,7 @@
             	<aspect>qa:claimTreatementAspect</aspect>
             	<aspect>qa:claimResponseAspect</aspect>
             	<aspect>ncwf:claimRejectedAspect</aspect>
+            	<aspect>ncwf:claimDueDateAspect</aspect>
             	<aspect>bcpgwf:notificationAspect</aspect>
             </mandatory-aspects>
         </type>
@@ -302,6 +281,7 @@
             	<aspect>qa:claimResponseAspect</aspect>
             	<aspect>qa:claimClosingAspect</aspect>
             	<aspect>ncwf:claimRejectedAspect</aspect>
+            	<aspect>ncwf:claimDueDateAspect</aspect>
             	<aspect>bcpgwf:notificationAspect</aspect>
             </mandatory-aspects>
         </type>
@@ -319,6 +299,9 @@
             </overrides>
              <mandatory-aspects>
              	<aspect>qa:claimAspect</aspect>
+             	<aspect>qa:claimTreatementAspect</aspect>
+            	<aspect>qa:claimResponseAspect</aspect>
+            	<aspect>ncwf:claimDueDateAspect</aspect>
              	<aspect>qa:batchAspect</aspect>
              	<aspect>bcpgwf:notificationAspect</aspect>
             </mandatory-aspects>
@@ -340,10 +323,35 @@
             <overrides/>
             <mandatory-aspects/>
         </aspect>
+       <aspect name="ncwf:claimDueDateAspect">
+			<properties>
+                <property name="ncwf:claimTreatmentDueDate">
+                    <title>Délai maximum demandé pour le Traitement</title>
+                    <type>d:date</type>
+                    <mandatory>false</mandatory>
+                    <index enabled="true">
+                        <atomic>false</atomic>
+                        <stored>false</stored>
+                        <tokenised>TRUE</tokenised>
+                    </index>
+                </property>
+                <property name="ncwf:claimResponseDueDate">
+                    <title>Délai maximum demandé pour la Réponse</title>
+                    <type>d:date</type>
+                    <mandatory>false</mandatory>
+                    <index enabled="true">
+                        <atomic>false</atomic>
+                        <stored>false</stored>
+                        <tokenised>TRUE</tokenised>
+                    </index>
+                </property>
+            </properties>       
+       </aspect>
+        
         <aspect name="ncwf:claimRejectedAspect">
             <properties>
                 <property name="ncwf:claimRejectedState">
-                    <title>Refus ou demande complémentaire</title>
+                    <title>Refus</title>
                     <type>d:text</type>
                     <mandatory>true</mandatory>
                     <default>none</default>
@@ -357,7 +365,7 @@
                     </constraints>
                 </property>
                 <property name="ncwf:claimRejectedCause">
-                    <title>Motif de refus ou demande complémentaire</title>
+                    <title>Motif de refus</title>
                     <type>d:text</type>
                     <mandatory>false</mandatory>
                     <index enabled="true">
