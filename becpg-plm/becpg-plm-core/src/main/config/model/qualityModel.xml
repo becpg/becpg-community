@@ -78,15 +78,14 @@
 		<constraint name="qa:freqUnits" type="LIST">
 			<parameter name="allowedValues">
 				<list>
-					<value>heure</value>
-					<value>/heure</value>
-					<value>/4heures</value>
-					<value>/8heures</value>
-					<value>/jour</value>
-					<value>/semaine</value>
-					<value>/mois</value>
-					<value>/an</value>
-					<value>/lot</value>
+					<value>/hour</value>
+					<value>/4hours</value>
+					<value>/8hours</value>
+					<value>/day</value>
+					<value>/week</value>
+					<value>/month</value>
+					<value>/year</value>
+					<value>/batch</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -94,15 +93,15 @@
 			<parameter name="allowedValues">
 				<list>
 					<value />
-					<value>Allergène</value>
-					<value>Microbiologie</value>
-					<value>Nutritionnelle</value>
-					<value>Physico-chimie</value>
-					<value>Sensorielle</value>
-					<value>Dimension</value>
-					<value>Poids</value>
-					<value>Composition</value>
-					<value>Conditionnement</value>
+					<value>bcpg_allergenList</value>
+					<value>bcpg_microbioList</value>
+					<value>bcpg_nutList</value>
+					<value>bcpg_physicoChemList</value>
+					<value>bcpg_organoList</value>
+					<value>dimension</value>
+					<value>weight</value>
+					<value>composition</value>
+					<value>packaging</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -110,8 +109,8 @@
 			<parameter name="allowedValues">
 				<list>
 					<value />
-					<value>Conforme</value>
-					<value>Non conforme</value>
+					<value>Compliant</value>
+					<value>NonCompliant</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -421,8 +420,7 @@
 			<properties>
 				<property name="qa:wlState">
 					<type>d:text</type>
-					<mandatory>false</mandatory>
-					<index enabled="false" />
+					<mandatory>false</mandatory>					
 					<constraints>
 						<constraint ref="qa:ncStates" />
 					</constraints>
@@ -447,8 +445,7 @@
 				</property>
 				<property name="qa:sdlFreq">
 					<type>d:int</type>
-					<mandatory>true</mandatory>
-					<index enabled="false" />
+					<mandatory>true</mandatory>					
 				</property>
 				<property name="qa:sdlFreqUnit">
 					<type>d:text</type>
@@ -458,66 +455,11 @@
 						<constraint ref="qa:freqUnits" />
 					</constraints>
 				</property>
-			</properties>
-			<associations>
-				<association name="qa:sdlControlPoint">
-					<source>
-						<mandatory>false</mandatory>
-						<many>true</many>
-					</source>
-					<target>
-						<class>qa:controlPoint</class>
-						<mandatory enforced="false">false</mandatory>
-						<many>false</many>
-					</target>
-				</association>
-				<association name="qa:sdlControlStep">
-					<source>
-						<mandatory>false</mandatory>
-						<many>true</many>
-					</source>
-					<target>
-						<class>qa:controlStep</class>
-						<mandatory enforced="false">false</mandatory>
-						<many>false</many>
-					</target>
-				</association>
-				<association name="qa:sdlSamplingGroup">
-					<source>
-						<mandatory>false</mandatory>
-						<many>true</many>
-					</source>
-					<target>
-						<class>cm:authorityContainer</class>
-						<mandatory enforced="false">false</mandatory>
-						<many>false</many>
-					</target>
-				</association>
-				<association name="qa:sdlControlingGroup">
-					<source>
-						<mandatory>false</mandatory>
-						<many>true</many>
-					</source>
-					<target>
-						<class>cm:authorityContainer</class>
-						<mandatory enforced="false">false</mandatory>
-						<many>false</many>
-					</target>
-				</association>
-				<association name="qa:sdlFixingGroup">
-					<source>
-						<mandatory>false</mandatory>
-						<many>true</many>
-					</source>
-					<target>
-						<class>cm:authorityContainer</class>
-						<mandatory enforced="false">false</mandatory>
-						<many>false</many>
-					</target>
-				</association>
-			</associations>
+			</properties>			
 			<overrides />
-			<mandatory-aspects />
+			<mandatory-aspects>
+				<aspect>qa:sampleListAspect</aspect>
+			</mandatory-aspects>
 		</type>
 		<type name="qa:samplingList">
 			<parent>qa:qualityListItem</parent>
@@ -534,39 +476,16 @@
 				</property>
 				<property name="qa:slSampleState">
 					<type>d:text</type>
-					<mandatory>false</mandatory>
-					<index enabled="false" />
+					<mandatory>false</mandatory>					
 					<constraints>
 						<constraint ref="qa:states" />
 					</constraints>
 				</property>
-			</properties>
-			<associations>
-				<association name="qa:slControlPoint">
-					<source>
-						<mandatory>false</mandatory>
-						<many>true</many>
-					</source>
-					<target>
-						<class>qa:controlPoint</class>
-						<mandatory enforced="false">false</mandatory>
-						<many>false</many>
-					</target>
-				</association>
-				<association name="qa:slControlStep">
-					<source>
-						<mandatory>false</mandatory>
-						<many>true</many>
-					</source>
-					<target>
-						<class>qa:controlStep</class>
-						<mandatory enforced="false">false</mandatory>
-						<many>false</many>
-					</target>
-				</association>
-			</associations>
+			</properties>			
 			<overrides />
-			<mandatory-aspects />
+			<mandatory-aspects>
+				<aspect>qa:sampleListAspect</aspect>
+			</mandatory-aspects>
 		</type>
 		<type name="qa:controlDefList">
 			<parent>qa:qualityListItem</parent>
@@ -583,7 +502,6 @@
 				<property name="qa:clSampleId">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
-					<index enabled="false" />
 				</property>
 				<property name="qa:clValue">
 					<type>d:double</type>
@@ -592,8 +510,7 @@
 				</property>				
 				<property name="qa:clState">
 					<type>d:text</type>
-					<mandatory>false</mandatory>
-					<index enabled="false" />
+					<mandatory>false</mandatory>					
 					<constraints>
 						<constraint ref="qa:states" />
 					</constraints>
@@ -780,6 +697,65 @@
 				<aspect>bcpg:clientsAspect</aspect>
 			</mandatory-aspects>
 		</aspect>
+		<aspect name="qa:sampleListAspect">
+			<associations>
+				<association name="qa:slControlPoint">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>qa:controlPoint</class>
+						<mandatory enforced="false">false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="qa:slControlStep">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>qa:controlStep</class>
+						<mandatory enforced="false">false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="qa:slSamplingGroup">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>cm:authorityContainer</class>
+						<mandatory enforced="false">false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="qa:slControlingGroup">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>cm:authorityContainer</class>
+						<mandatory enforced="false">false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="qa:slFixingGroup">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>cm:authorityContainer</class>
+						<mandatory enforced="false">false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+		</aspect>
 		<aspect name="qa:controlListAspect">
 			<properties>
 				<property name="qa:clType">
@@ -819,10 +795,9 @@
 				</property>
 				<property name="qa:clRequired">
 					<type>d:boolean</type>
-					<mandatory>false</mandatory>
-					<index enabled="false" />
+					<mandatory>false</mandatory>					
 				</property>
-			</properties>
+			</properties>			
 			<associations>
 				<association name="qa:clMethod">
 					<source>

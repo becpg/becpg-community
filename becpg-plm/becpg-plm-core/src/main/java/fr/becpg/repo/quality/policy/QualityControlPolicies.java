@@ -17,50 +17,73 @@
  ******************************************************************************/
 package fr.becpg.repo.quality.policy;
 
+import java.io.Serializable;
+import java.util.Map;
+
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.Behaviour.NotificationFrequency;
 import org.alfresco.repo.policy.JavaBehaviour;
-import org.alfresco.repo.policy.PolicyComponent;
 import org.alfresco.service.cmr.repository.AssociationRef;
+import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.QualityModel;
+import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.quality.QualityControlService;
 
-public class QualityControlPolicies implements NodeServicePolicies.OnCreateAssociationPolicy {
+public class QualityControlPolicies extends AbstractBeCPGPolicy implements NodeServicePolicies.OnCreateAssociationPolicy,
+				NodeServicePolicies.OnUpdatePropertiesPolicy{
 
 	private static Log logger = LogFactory.getLog(QualityControlPolicies.class);
 	
-	private PolicyComponent policyComponent;
 	private QualityControlService qualityControlService;
-		
-	public void setPolicyComponent(PolicyComponent policyComponent) {
-		this.policyComponent = policyComponent;
-	}
-
+	
 	public void setQualityControlService(QualityControlService qualityControlService) {
 		this.qualityControlService = qualityControlService;
 	}
 
-	public void init() {				
+	@Override
+	public void doInit() {				
 		
 		logger.debug("Init QualityControlPolicies...");
 		
 		policyComponent.bindAssociationBehaviour(
 				NodeServicePolicies.OnCreateAssociationPolicy.QNAME,
-				QualityModel.TYPE_QUALITY_CONTROL, new JavaBehaviour(this,
-						"onCreateAssociation", NotificationFrequency.TRANSACTION_COMMIT));		
+				QualityModel.TYPE_QUALITY_CONTROL, QualityModel.ASSOC_QC_CONTROL_PLANS,
+				new JavaBehaviour(this, "onCreateAssociation", NotificationFrequency.TRANSACTION_COMMIT));
+		
+		policyComponent.bindAssociationBehaviour(
+				NodeServicePolicies.OnCreateAssociationPolicy.QNAME,
+				QualityModel.TYPE_SAMPLING_LIST, QualityModel.ASSOC_SL_CONTROL_POINT, 
+				new JavaBehaviour(this, "onCreateAssociation", NotificationFrequency.TRANSACTION_COMMIT));
+		
+		policyComponent.bindClassBehaviour(
+				NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME,
+				QualityModel.TYPE_CONTROL_LIST, new JavaBehaviour(this,
+						"onUpdateProperties", NotificationFrequency.TRANSACTION_COMMIT));	
 	}
 
 	@Override
 	public void onCreateAssociation(AssociationRef assocRef) {
 		
-		logger.debug("QualityControlPolicies onCreateAssociation");
-		
+		logger.debug("QualityControlPolicies onCreateAssociation");		
 		if(assocRef.getTypeQName().equals(QualityModel.ASSOC_QC_CONTROL_PLANS)){
 			qualityControlService.createSamplingList(assocRef.getSourceRef(), assocRef.getTargetRef());
-		}		
+		}
+		else if(assocRef.getTypeQName().equals(QualityModel.ASSOC_SL_CONTROL_POINT)){
+			qualityControlService.createControlList(assocRef.getSourceRef());			
+		}
 	}
 
+	@Override
+	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {						
+		
+		logger.debug("QualityControlPolicies onUpdateProperties.");
+		if (isPropChanged(before, after, QualityModel.PROP_CL_VALUE) ||
+				isPropChanged(before, after, QualityModel.PROP_CL_STATE)) {
+			qualityControlService.updateControlListState(nodeRef);
+		}		
+	}
 }

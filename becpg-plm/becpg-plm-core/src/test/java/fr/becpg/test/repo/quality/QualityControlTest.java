@@ -25,19 +25,26 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.swing.plaf.metal.MetalIconFactory.FileIcon16;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
+import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
 import fr.becpg.model.QualityModel;
+import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.quality.data.ControlPlanData;
 import fr.becpg.repo.quality.data.ControlPointData;
 import fr.becpg.repo.quality.data.QualityControlData;
+import fr.becpg.repo.quality.data.QualityControlState;
 import fr.becpg.repo.quality.data.dataList.ControlDefListDataItem;
+import fr.becpg.repo.quality.data.dataList.ControlListDataItem;
 import fr.becpg.repo.quality.data.dataList.SamplingDefListDataItem;
 import fr.becpg.repo.quality.data.dataList.SamplingListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -46,12 +53,15 @@ import fr.becpg.test.BeCPGPLMTestHelper;
 import fr.becpg.test.PLMBaseTestCase;
 
 public class QualityControlTest extends PLMBaseTestCase {
+	
+	private static Log logger = LogFactory.getLog(QualityControlTest.class);
 
 	private static final long HOUR = 3600 * 1000; // in milli-seconds.
 
 	@Resource
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
-	
+	@Resource
+	private EntityListDAO entityListDAO;
 
 	private NodeRef controlStepNodeRef;
 	private NodeRef methodNodeRef;
@@ -80,7 +90,7 @@ public class QualityControlTest extends PLMBaseTestCase {
 		ControlPointData controlPointData = new ControlPointData();
 		controlPointData.setName("Control point");
 		List<ControlDefListDataItem> controlDefList = new ArrayList<ControlDefListDataItem>();
-		controlDefList.add(new ControlDefListDataItem(null, "Nutritionnelle", null, null, true, methodNodeRef, nuts));
+		controlDefList.add(new ControlDefListDataItem(null, "bcpg_nutList", null, null, true, methodNodeRef, nuts));
 		controlPointData.setControlDefList(controlDefList);
 		controlPointNodeRef = alfrescoRepository.create(testFolderNodeRef, controlPointData).getNodeRef();
 
@@ -88,7 +98,7 @@ public class QualityControlTest extends PLMBaseTestCase {
 		ControlPlanData controlPlanData = new ControlPlanData();
 		controlPlanData.setName("Control plan");
 		List<SamplingDefListDataItem> samplingDefList = new ArrayList<SamplingDefListDataItem>();
-		samplingDefList.add(new SamplingDefListDataItem(2, 1, "/4heures", controlPointNodeRef, controlStepNodeRef, null));
+		samplingDefList.add(new SamplingDefListDataItem(2, 1, "/4hours", controlPointNodeRef, controlStepNodeRef, null, null, null));
 		controlPlanData.setSamplingDefList(samplingDefList);
 		controlPlanNodeRef = alfrescoRepository.create(testFolderNodeRef, controlPlanData).getNodeRef();
 	}
@@ -112,6 +122,7 @@ public class QualityControlTest extends PLMBaseTestCase {
 
 	}
 
+	@SuppressWarnings("unused")
 	@Test
 	public void testCreateQualityControl() {
 
@@ -131,44 +142,120 @@ public class QualityControlTest extends PLMBaseTestCase {
 
 			}
 		}, false, true);
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			
+			public NodeRef execute() throws Throwable {
 
-		// checks
-		QualityControlData qualityControlData = (QualityControlData) alfrescoRepository.findOne(qualityControlNodeRef);
-		assertNotNull("Check QC exists", qualityControlData);
-		assertNotNull("Check Sample list", qualityControlData.getSamplingList());
-		assertEquals("6 samples", 6, qualityControlData.getSamplingList().size());
-		assertSame("6 samples", 6, qualityControlData.getSamplesCounter());
-		int checks = 0;
+				// check samples
+				QualityControlData qualityControlData = (QualityControlData) alfrescoRepository.findOne(qualityControlNodeRef);
+				assertNotNull("Check QC exists", qualityControlData);
+				assertNotNull("Check Sample list", qualityControlData.getSamplingList());
+				assertEquals("6 samples", 6, qualityControlData.getSamplingList().size());
+				assertSame("6 samples", 6, qualityControlData.getSamplesCounter());
+				int checks = 0;
 
-		for (SamplingListDataItem sl : qualityControlData.getSamplingList()) {
+				for (SamplingListDataItem sl : qualityControlData.getSamplingList()) {
 
-			if (sl.getSampleId().equals("12247904/1")) {
-				assertEquals("check control point", controlPointNodeRef, sl.getControlPoint());
-				assertEquals("check control step", controlStepNodeRef, sl.getControlStep());
-				assertEquals("check state", null, sl.getSampleState());
-				assertEquals("check date", qualityControlData.getBatchStart(), sl.getDateTime());
-				checks++;
-			} else if (sl.getSampleId().equals("12247904/2")) {
-				assertEquals("check control point", controlPointNodeRef, sl.getControlPoint());
-				assertEquals("check control step", controlStepNodeRef, sl.getControlStep());
-				assertEquals("check state", null, sl.getSampleState());
-				assertEquals("check date", qualityControlData.getBatchStart(), sl.getDateTime());
-				checks++;
-			} else if (sl.getSampleId().equals("12247904/3")) {
-				assertEquals("check control point", controlPointNodeRef, sl.getControlPoint());
-				assertEquals("check control step", controlStepNodeRef, sl.getControlStep());
-				assertEquals("check state", null, sl.getSampleState());
-				assertEquals("check date", new Date(qualityControlData.getBatchStart().getTime() + 4 * HOUR), sl.getDateTime());
-				checks++;
-			} else if (sl.getSampleId().equals("12247904/4")) {
-				assertEquals("check control point", controlPointNodeRef, sl.getControlPoint());
-				assertEquals("check control step", controlStepNodeRef, sl.getControlStep());
-				assertEquals("check state", null, sl.getSampleState());
-				assertEquals("check date", new Date(qualityControlData.getBatchStart().getTime() + 4 * HOUR), sl.getDateTime());
-				checks++;
+					if (sl.getSampleId().equals("12247904/1")) {
+						assertEquals("check control point", controlPointNodeRef, sl.getControlPoint());
+						assertEquals("check control step", controlStepNodeRef, sl.getControlStep());
+						assertEquals("check state", null, sl.getSampleState());
+						assertEquals("check date", qualityControlData.getBatchStart(), sl.getDateTime());
+						checks++;
+					} else if (sl.getSampleId().equals("12247904/2")) {
+						assertEquals("check control point", controlPointNodeRef, sl.getControlPoint());
+						assertEquals("check control step", controlStepNodeRef, sl.getControlStep());
+						assertEquals("check state", null, sl.getSampleState());
+						assertEquals("check date", qualityControlData.getBatchStart(), sl.getDateTime());
+						checks++;
+					} else if (sl.getSampleId().equals("12247904/3")) {
+						assertEquals("check control point", controlPointNodeRef, sl.getControlPoint());
+						assertEquals("check control step", controlStepNodeRef, sl.getControlStep());
+						assertEquals("check state", null, sl.getSampleState());
+						assertEquals("check date", new Date(qualityControlData.getBatchStart().getTime() + 4 * HOUR), sl.getDateTime());
+						checks++;
+					} else if (sl.getSampleId().equals("12247904/4")) {
+						assertEquals("check control point", controlPointNodeRef, sl.getControlPoint());
+						assertEquals("check control step", controlStepNodeRef, sl.getControlStep());
+						assertEquals("check state", null, sl.getSampleState());
+						assertEquals("check date", new Date(qualityControlData.getBatchStart().getTime() + 4 * HOUR), sl.getDateTime());
+						checks++;
+					}
+				}
+
+				assertEquals(4, checks);
+				
+				// check controlList
+				//List<ControlListDataItem> controlList = (List)alfrescoRepository.loadDataList(qualityControlNodeRef, QualityModel.TYPE_CONTROL_LIST, QualityModel.TYPE_CONTROL_LIST);
+				NodeRef controlListNodeRef = entityListDAO.getList(entityListDAO.getListContainer(qualityControlNodeRef), "Analyses");
+				List<FileInfo> fileInfos = fileFolderService.listFiles(controlListNodeRef);
+				logger.info("fileInfos.size() " + fileInfos.size());
+				assertEquals(6*10, fileInfos.size());
+				boolean isFirstCLOfSample3 = true;
+
+				// fill controlList (sample1)
+				logger.info("fill controlList");
+				for(FileInfo fileInfo : fileInfos){
+					ControlListDataItem cl = (ControlListDataItem)alfrescoRepository.findOne(fileInfo.getNodeRef());
+					if(cl.getSampleId().equals("12247904/1")){
+						cl.setState(QualityControlState.Compliant);
+						alfrescoRepository.save(cl);
+					}
+					else if(cl.getSampleId().equals("12247904/2")){
+						cl.setState(QualityControlState.NonCompliant);
+						alfrescoRepository.save(cl);
+					}
+					else if(cl.getSampleId().equals("12247904/3")){
+						if(isFirstCLOfSample3){
+							cl.setState(QualityControlState.NonCompliant);
+						}
+						else{
+							cl.setState(QualityControlState.Compliant);
+						}
+						alfrescoRepository.save(cl);
+					}					
+				}
+				
+				return null;
+
 			}
-		}
+		}, false, true);
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
 
-		assertEquals(4, checks);
+				// check samples
+				QualityControlData qualityControlData = (QualityControlData) alfrescoRepository.findOne(qualityControlNodeRef);
+				int checks = 0;
+
+				for (SamplingListDataItem sl : qualityControlData.getSamplingList()) {
+					if (sl.getSampleId().equals("12247904/1")) {						
+						assertEquals("check state", QualityControlState.Compliant, sl.getSampleState());
+						checks++;
+					} else if (sl.getSampleId().equals("12247904/2")) {
+						assertEquals("check state", QualityControlState.NonCompliant, sl.getSampleState());
+						checks++;
+					} else if (sl.getSampleId().equals("12247904/3")) {
+						assertEquals("check state", QualityControlState.NonCompliant, sl.getSampleState());
+						checks++;
+					}
+					else if (sl.getSampleId().equals("12247904/4")) {						
+						assertEquals("check state", null, sl.getSampleState());
+						checks++;
+					}
+				}
+
+				assertEquals(4, checks);
+				
+				
+				return null;
+
+			}
+		}, false, true);
+		
+		
 	}
 }

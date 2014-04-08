@@ -39,7 +39,7 @@ public class QualityControlData extends BeCPGDataObject {
 
 	List<NodeRef> controlPlans = new ArrayList<NodeRef>();
 	Integer samplesCounter;
-	String state;
+	QualityControlState state;
 
 	// batchAspect
 	String batchId;
@@ -74,11 +74,11 @@ public class QualityControlData extends BeCPGDataObject {
 
 	@AlfProp
 	@AlfQname(qname = "qa:qcState")
-	public String getState() {
+	public QualityControlState getState() {
 		return state;
 	}
 
-	public void setState(String state) {
+	public void setState(QualityControlState state) {
 		this.state = state;
 	}
 

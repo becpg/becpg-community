@@ -5078,6 +5078,7 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden" ></field>
+					<field id="bcpg:ingListVolumeQtyPerc" label="hidden" ></field>
 					<field id="bcpg:depthLevel" label="hidden" ></field>
 					<field id="fm:commentCount" label="hidden" read-only="true"/>
 				</appearance>

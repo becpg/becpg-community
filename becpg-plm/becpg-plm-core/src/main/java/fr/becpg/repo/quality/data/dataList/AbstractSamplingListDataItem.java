@@ -19,61 +19,65 @@ package fr.becpg.repo.quality.data.dataList;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
-import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
+import fr.becpg.repo.repository.model.BeCPGDataObject;
 
-@AlfType
-@AlfQname(qname = "qa:samplingDefList")
-public class SamplingDefListDataItem extends AbstractSamplingListDataItem {
+public abstract class AbstractSamplingListDataItem extends BeCPGDataObject {
 
-	private Integer qty;
-	private Integer freq;
-	private String freqUnit;
-
-	@AlfProp
-	@AlfQname(qname = "qa:sdlQty")
-	public Integer getQty() {
-		return qty;
+	protected NodeRef controlPoint;
+	protected NodeRef controlStep;
+	protected NodeRef samplingGroup;
+	protected NodeRef controlingGroup;
+	protected NodeRef fixingGroup;
+	
+	@AlfSingleAssoc
+	@AlfQname(qname = "qa:slControlPoint")
+	public NodeRef getControlPoint() {
+		return controlPoint;
 	}
 
-	public void setQty(Integer qty) {
-		this.qty = qty;
-	}
-
-	@AlfProp
-	@AlfQname(qname = "qa:sdlFreq")
-	public Integer getFreq() {
-		return freq;
-	}
-
-	public void setFreq(Integer freq) {
-		this.freq = freq;
-	}
-
-	@AlfProp
-	@AlfQname(qname = "qa:sdlFreqUnit")
-	public String getFreqUnit() {
-		return freqUnit;
-	}
-
-	public void setFreqUnit(String freqUnit) {
-		this.freqUnit = freqUnit;
-	}
-
-	public SamplingDefListDataItem() {
-		super();
-	}
-
-	public SamplingDefListDataItem(Integer qty, Integer freq, String freqUnit, NodeRef controlPoint, NodeRef controlStep, NodeRef samplingGroup, NodeRef controlingGroup, NodeRef fixingGroup) {
-		super();
-		this.qty = qty;
-		this.freq = freq;
-		this.freqUnit = freqUnit;
+	public void setControlPoint(NodeRef controlPoint) {
 		this.controlPoint = controlPoint;
+	}
+
+	@AlfSingleAssoc
+	@AlfQname(qname = "qa:slControlStep")
+	public NodeRef getControlStep() {
+		return controlStep;
+	}
+
+	public void setControlStep(NodeRef controlStep) {
 		this.controlStep = controlStep;
-		this.samplingGroup = samplingGroup;
+	}
+
+	@AlfSingleAssoc
+	@AlfQname(qname = "qa:slControlingGroup")
+	public NodeRef getControlingGroup() {
+		return controlingGroup;
+	}
+
+	public void setControlingGroup(NodeRef controlingGroup) {
 		this.controlingGroup = controlingGroup;
+	}
+
+	@AlfSingleAssoc
+	@AlfQname(qname = "qa:slSamplingGroup")
+	public NodeRef getSamplingGroup() {
+		return samplingGroup;
+	}
+
+	public void setSamplingGroup(NodeRef samplingGroup) {
+		this.samplingGroup = samplingGroup;
+	}
+
+	@AlfSingleAssoc
+	@AlfQname(qname = "qa:slFixingGroup")
+	public NodeRef getFixingGroup() {
+		return fixingGroup;
+	}
+
+	public void setFixingGroup(NodeRef fixingGroup) {
 		this.fixingGroup = fixingGroup;
 	}
 
@@ -84,9 +88,8 @@ public class SamplingDefListDataItem extends AbstractSamplingListDataItem {
 		result = prime * result + ((controlPoint == null) ? 0 : controlPoint.hashCode());
 		result = prime * result + ((controlStep == null) ? 0 : controlStep.hashCode());
 		result = prime * result + ((controlingGroup == null) ? 0 : controlingGroup.hashCode());
-		result = prime * result + ((freq == null) ? 0 : freq.hashCode());
-		result = prime * result + ((freqUnit == null) ? 0 : freqUnit.hashCode());
-		result = prime * result + ((qty == null) ? 0 : qty.hashCode());
+		result = prime * result + ((fixingGroup == null) ? 0 : fixingGroup.hashCode());
+		result = prime * result + ((samplingGroup == null) ? 0 : samplingGroup.hashCode());
 		return result;
 	}
 
@@ -98,7 +101,7 @@ public class SamplingDefListDataItem extends AbstractSamplingListDataItem {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		SamplingDefListDataItem other = (SamplingDefListDataItem) obj;
+		AbstractSamplingListDataItem other = (AbstractSamplingListDataItem) obj;
 		if (controlPoint == null) {
 			if (other.controlPoint != null)
 				return false;
@@ -114,28 +117,17 @@ public class SamplingDefListDataItem extends AbstractSamplingListDataItem {
 				return false;
 		} else if (!controlingGroup.equals(other.controlingGroup))
 			return false;
-		if (freq == null) {
-			if (other.freq != null)
+		if (fixingGroup == null) {
+			if (other.fixingGroup != null)
 				return false;
-		} else if (!freq.equals(other.freq))
+		} else if (!fixingGroup.equals(other.fixingGroup))
 			return false;
-		if (freqUnit == null) {
-			if (other.freqUnit != null)
+		if (samplingGroup == null) {
+			if (other.samplingGroup != null)
 				return false;
-		} else if (!freqUnit.equals(other.freqUnit))
-			return false;
-		if (qty == null) {
-			if (other.qty != null)
-				return false;
-		} else if (!qty.equals(other.qty))
+		} else if (!samplingGroup.equals(other.samplingGroup))
 			return false;
 		return true;
-	}
-
-	@Override
-	public String toString() {
-		return "SamplingDefListDataItem [qty=" + qty + ", freq=" + freq + ", freqUnit=" + freqUnit + ", controlPoint=" + controlPoint + ", controlStep=" + controlStep
-				+ ", controlingGroup=" + controlingGroup + "]";
 	}
 
 }

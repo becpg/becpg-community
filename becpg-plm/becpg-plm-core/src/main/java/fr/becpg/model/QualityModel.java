@@ -102,10 +102,7 @@ public interface QualityModel {
 	static final QName TYPE_SAMPLINGDEF_LIST = QName.createQName(QUALITY_URI, "samplingDefList");
 	static final QName PROP_SDL_QTY = QName.createQName(QUALITY_URI, "sdlQty");
 	static final QName PROP_SDL_FREQ = QName.createQName(QUALITY_URI, "sdlFreq");
-	static final QName PROP_SDL_FREQUNIT = QName.createQName(QUALITY_URI, "sdlFreqUnit");
-	static final QName ASSOC_SDL_CONTROL_POINT = QName.createQName(QUALITY_URI, "sdlControlPoint");
-	static final QName ASSOC_SDL_CONTROL_STEP = QName.createQName(QUALITY_URI, "sdlControlStep");
-	static final QName ASSOC_SDL_CONTROLING_GROUP = QName.createQName(QUALITY_URI, "sdlControlingGroup");
+	static final QName PROP_SDL_FREQUNIT = QName.createQName(QUALITY_URI, "sdlFreqUnit");	
 
 	/** sampling list **/
 	static final QName TYPE_SAMPLING_LIST = QName.createQName(QUALITY_URI, "samplingList");
