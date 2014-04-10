@@ -40,6 +40,13 @@ function main()
       logoNode = bThumbnail.getOrCreateImageNode(entityNode);
       logoNode.properties.content.write(content);
       logoNode.properties.content.guessMimetype(filename);
+      var extension = filename.substring(filename.lastIndexOf(".")+1, filename.length());
+      var name = logoNode.properties["cm:name"];
+      if(name.indexOf(".")>0){
+    	  logoNode.properties["cm:name"] = name.substring(0,name.lastIndexOf("."))+"."+extension;
+      } else {
+    	  logoNode.properties["cm:name"] = name+"."+extension;
+      }
       logoNode.save();
       
       // save ref to be returned

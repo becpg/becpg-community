@@ -157,6 +157,16 @@ public class EntityServiceImpl implements EntityService {
 		}
 		return imagesFolderNodeRef;
 	}
+	//TODO Refactor and avoid duplicate
+	private NodeRef getOrCreateImageFolder(NodeRef entityNodeRef) {
+		NodeRef imagesFolderNodeRef = nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS,
+				TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
+		if (imagesFolderNodeRef == null) {
+			imagesFolderNodeRef = fileFolderService.create(entityNodeRef, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES),
+					ContentModel.TYPE_FOLDER).getNodeRef();
+		}
+		return imagesFolderNodeRef;
+	}
 
 	/**
 	 * Load the image associated to the node.
@@ -267,11 +277,13 @@ public class EntityServiceImpl implements EntityService {
 	}
 
 	@Override
-	public NodeRef createDefaultImage(NodeRef entityNodeRef) throws BeCPGException {
-		NodeRef imagesFolderNodeRef = getImageFolder(entityNodeRef);
+	public NodeRef createDefaultImage(NodeRef entityNodeRef) {
+		NodeRef imagesFolderNodeRef = getOrCreateImageFolder(entityNodeRef);
 		String name = getDefaultImageName(nodeService.getType(entityNodeRef));
 		Map<QName, Serializable> props = new HashMap<QName, Serializable>();
 		props.put(ContentModel.PROP_NAME, name);
+
+		logger.info("Create new Image node: " + name + " under " + imagesFolderNodeRef);
 		return nodeService.createNode(imagesFolderNodeRef, ContentModel.ASSOC_CONTAINS,
 				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name)), ContentModel.TYPE_CONTENT, props)
 				.getChildRef();
