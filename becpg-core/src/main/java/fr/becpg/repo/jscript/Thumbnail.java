@@ -105,15 +105,16 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 		try {
 			if (entityService.hasAssociatedImages(type)) {
 				img = entityService.getEntityDefaultImage(sourceNode.getNodeRef());
-			}
-
-			if (img == null) {
-				img = entityService.createDefaultImage(sourceNode.getNodeRef());
-			}
-
+			}	
 		} catch (BeCPGException e) {
 			logger.debug(e, e);
 		}
+
+		if (img == null) {
+			img = entityService.createDefaultImage(sourceNode.getNodeRef());
+		}
+
+		
 
 		return img != null ? new ScriptNode(img, serviceRegistry, getScope()) : sourceNode;
 
