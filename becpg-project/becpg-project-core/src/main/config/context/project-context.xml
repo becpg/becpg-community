@@ -140,10 +140,9 @@
 		<property name="preferenceService" ref="preferenceService" />
 	</bean>
 
-
-
 	<bean id="activityListExtractor" class="fr.becpg.repo.project.extractor.ActivityListExtractor" parent="simpleExtractor">
 		<property name="projectActivityService" ref="projectActivityService"/>
+		<property name="defaultExtractor" value="false"/>
 	</bean>
 
 
