@@ -515,6 +515,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 		Map<String,QName> entityLists = new LinkedHashMap<String,QName>();
 		entityLists.put(PlmRepoConsts.PATH_CLAIM_ORIGIN_HIERARCHY, BeCPGModel.TYPE_LINKED_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_CLAIM_SOURCES,BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(PlmRepoConsts.PATH_CLAIM_DISTRIBUTION_NETWORKS,BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_CLAIM_TRACKING_VALUES,BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_CLAIM_TYPES,BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_CLAIM_RESPONSES_STATES,BeCPGModel.TYPE_LIST_VALUE);

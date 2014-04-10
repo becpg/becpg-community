@@ -78,7 +78,7 @@ public class PlmRepoConsts {
 	public static final String PATH_CONTROL_METHODS = "ControlMethods";
 	public static final String PATH_CONTROL_CHARACTS = "ControlCharacts";
 	public static final String PATH_CONTROL_UNITS = "ControlUnits";
-	
+	public static final String PATH_CLAIM_DISTRIBUTION_NETWORKS = "ClaimDistributionNetworks";
 	
 
 
@@ -97,5 +97,6 @@ public class PlmRepoConsts {
 	public static final String PATH_ECO = "ECO";
 	
 	public static final String PATH_PRODUCT_HIERARCHY = "/app:company_home/cm:System/cm:ProductHierarchy/bcpg:entityLists/";
+	
 	
 }

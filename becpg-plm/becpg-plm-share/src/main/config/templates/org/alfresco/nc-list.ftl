@@ -20,9 +20,11 @@
          </div>
          <div class="yui-b" id="alf-filters">
             <@region id="all-filter" scope="template" />
-            <@region id="due-filter" scope="template" />
+            <@region id="state-filter" scope="template" />
+            <#-- <@region id="due-filter" scope="template" /> -->
             <@region id="started-filter" scope="template" />
-            <@region id="priority-filter" scope="template" />
+            <@region id="assoc-filter" scope="template" />
+            <#-- <@region id="priority-filter" scope="template" /> -->
             <@region id="tags" scope="template" />
          </div>
       </div>

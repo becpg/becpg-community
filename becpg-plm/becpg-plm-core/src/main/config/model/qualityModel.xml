@@ -657,7 +657,13 @@
 					</constraints>
 				</property>
 				<!-- Comments -->
-			     <property name="qa:claimOrientationComment">
+				 <property name="qa:claimStartComment">
+					<title>Commentaires étape saisie</title>
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+			     <property name="qa:claimAnalysisComment">
 					<title>Commentaires étape orientation</title>
 					<type>d:text</type>
 					<mandatory>false</mandatory>

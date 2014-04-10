@@ -1,14 +1,17 @@
 
 <@markup id="css" >
-   <#include "../../modules/entity-datagrid/include/entity-datagrid.css.ftl"/>
+    <#include "../../modules/entity-datagrid/include/entity-datagrid.css.ftl"/>
+    <@link href="${url.context}/res/modules/custom-entity-datagrid/product-entity-datagrid.css" group="entity-datagrid" />
+   
 	<@link href="${url.context}/res/components/quality/nc-list.css" group="nc-list" />
 	<@link href="${url.context}/res/components/comments/comments-list.css" group="comments"/>
 </@>
 
 <@markup id="js">
-   <#include "../../modules/entity-datagrid/include/entity-datagrid.js.ftl"/>
-   
-	<@script type="text/javascript" src="${url.context}/res/components/quality/nc-list.js" group="nc-list"></@script>
+    <#include "../../modules/entity-datagrid/include/entity-datagrid.js.ftl"/>
+    <@script src="${url.context}/res/modules/custom-entity-datagrid/product-columnRenderers.js" group="entity-datagrid" />
+    <@script src="${url.context}/res/components/form/date-range.js" group="nc-list"/>
+	<@script src="${url.context}/res/components/quality/nc-list.js" group="nc-list"/>
 	<@script src="${url.context}/res/components/comments/comments-list.js" group="comments"/>
 </@>
 

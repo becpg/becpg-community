@@ -213,6 +213,7 @@
             	<aspect>qa:claimAspect</aspect>
             	<aspect>qa:batchAspect</aspect>
             	<aspect>qa:claimTreatementAspect</aspect>
+            	<aspect>ncwf:claimDueDateAspect</aspect>
             	<aspect>qa:claimResponseAspect</aspect>
             	<aspect>ncwf:claimRejectedAspect</aspect>
             	<aspect>bcpgwf:notificationAspect</aspect>
