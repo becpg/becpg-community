@@ -24,7 +24,7 @@
             <#-- <@region id="due-filter" scope="template" /> -->
             <@region id="started-filter" scope="template" />
             <@region id="assoc-filter" scope="template" />
-            <#-- <@region id="priority-filter" scope="template" /> -->
+            <@region id="priority-filter" scope="template" />
             <@region id="tags" scope="template" />
          </div>
       </div>

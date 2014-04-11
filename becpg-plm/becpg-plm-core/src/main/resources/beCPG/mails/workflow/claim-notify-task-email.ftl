@@ -54,18 +54,6 @@
                                              
                                              <p>
                                                 <#if (args.workflowDueDate)??>Due:&nbsp;&nbsp;<b>${args.workflowDueDate?date?string.full}</b><br></#if>
-                                                <#if (args.workflowPriority)??>
-                                                   Priorité :&nbsp;&nbsp;
-                                                   <b>
-                                                   <#if args.workflowPriority == 3>
-                                                      Basse
-                                                   <#elseif args.workflowPriority == 2>
-                                                      Moyenne
-                                                   <#else>
-                                                      Élevée
-                                                   </#if>
-                                                   </b>
-                                                </#if>
                                              </p>
                                              
                                             <p>Cliquez sur ce lien pour voir la tâche :</p>
