@@ -1,6 +1,13 @@
 <config>
-   <filters>
-      <filter id="ncs" data="Claim"    label="link.ncs.claim"/>
-      <filter id="ncs" data="NonConformity" label="link.ncs.nonconformity"/>
-   </filters>
+	<filters>
+		<filter id="ncs" data="Claim" label="link.ncs.claim" />
+		<filter id="ncs" data="NonConformity" label="link.ncs.nonconformity" />
+		<filter id="state" data="new" label="link.state.new" />
+		<filter id="state" data="analysis" label="link.state.analysis" />
+		<filter id="state" data="treatment" label="link.state.treatment" />
+		<filter id="state" data="response" label="link.state.response" />
+		<filter id="state" data="classification" label="link.state.classification" />
+		<filter id="state" data="closing" label="link.state.closing" />
+		<filter id="state" data="closed" label="link.state.closed" />
+	</filters>
 </config>
