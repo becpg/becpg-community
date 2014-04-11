@@ -58,20 +58,37 @@
             <mode>ncs</mode>
          </properties>
       </component>
-
+      
+       <component>
+         <region-id>state-filter</region-id>
+         <url>/components/quality/filter/all</url>
+         <properties>
+            <mode>state</mode>
+         </properties>
+      </component>
 
       <!-- Started Filter -->
       <component>
          <region-id>started-filter</region-id>
          <url>/components/workflow/filter/started</url>
       </component>
+      
+      <component>
+         <region-id>assoc-filter</region-id>
+         <url>/components/quality/filter/assoc</url>
+         <properties>
+            <assoc>bcpg:plants</assoc>
+            <type>bcpg:plant</type>
+         </properties>
+      </component>
+      
 
-      <!-- Priority Filter -->
+      <!-- Priority Filter  -->
       <component>
          <region-id>priority-filter</region-id>
          <url>/components/workflow/filter/priority</url>
       </component>
-      
+     
       
       <!-- Tags Filter -->
       <component>
@@ -81,6 +98,7 @@
          	<container>ncs</container>
          </properties>
       </component>
+		
 		
 
       <component>

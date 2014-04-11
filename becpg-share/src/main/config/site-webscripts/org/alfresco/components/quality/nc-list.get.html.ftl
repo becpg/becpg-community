@@ -9,7 +9,7 @@
 
 <@markup id="js">
    <#include "../entity-charact-views/include/entity-datagrid.js.ftl"/>
-   
+     <@script src="${url.context}/res/components/form/date-range.js" group="nc-list"/>
 	<@script type="text/javascript" src="${url.context}/res/components/quality/nc-list.js" group="nc-list"></@script>
 	<@script src="${url.context}/res/components/comments/comments-list.js" group="comments"/>
 </@>

@@ -1,3 +1,20 @@
+<!--
+  Copyright (C) 2010-2014 beCPG. 
+   
+  This file is part of beCPG 
+   
+  beCPG is free software: you can redistribute it and/or modify 
+  it under the terms of the GNU Lesser General Public License as published by 
+  the Free Software Foundation, either version 3 of the License, or 
+  (at your option) any later version. 
+   
+  beCPG is distributed in the hope that it will be useful, 
+  but WITHOUT ANY WARRANTY; without even the implied warranty of 
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+  GNU Lesser General Public License for more details. 
+   
+  You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
+-->
 <alfresco-config>
 
 	<!-- ______________________________________________ Non conformity_________________________________________ -->
@@ -12,55 +29,23 @@
 					<show id="bcpg:code" />
 					<show id="qa:ncType" />
 					<show id="qa:ncPriority" />
-					<show id="cm:description" />
-					<show id="qa:ncCost" />
 					<show id="qa:ncQuantityNc" />
 					<show id="qa:ncQuantityNcUnit" />
 					<show id="qa:ncCreationStep" />
 					<show id="qa:ncDetectionStep" />
 					<show id="qa:ncState" />
-					<show id="qa:ncComment" />
 
 					<!-- batch -->
 					<show id="qa:batchId" force="true" />
 					<show id="qa:orderId" force="true" />
 					<show id="bcpg:clients" force="true" />
 					<show id="bcpg:suppliers" force="true" />
-					<show id="qa:batchComment" force="true" />
 
 					<!-- Product -->
-				<!-- 	<show id="qa:productType" force="true" /> -->
 				
 					<show id="qa:product" force="true" />
-					<show id="bcpg:plants"/>
-					<show id="qa:productUseByDate" />
-					
-					<!-- Claim -->
-					<show  id="qa:claimSource" />
-					<!-- <show  id="qa:claimDistributionNetwork" /> -->
-					<show  id="qa:claimCustomerInformation" />
-
-					<show id="qa:claimTradeContact" />
-					<show id="qa:claimTradeContactCheck" />
-					<show id="qa:claimTracking" />
-					<show id="qa:claimDescription" />
-
-					<show id="qa:claimType" />
-					<show id="qa:claimOriginHierarchy1" />
-					<show id="qa:claimOriginHierarchy2" />
-
-					<show id="qa:claimTreatementDate" />
-					<show id="qa:claimTreatmentActor" />
-					<show id="qa:claimTreatementDetails" />
-					<show id="qa:claimTreatementPrevActions"/>
-					
-
-					<show id="qa:claimResponseDate" />
-					<show id="qa:claimResponseActor" />
-					<show id="qa:claimResponseState" />
-					<show id="qa:claimResponseDetails" />
-					
-					<show id="qa:claimClosingDate" />
+					<show id="bcpg:plants" force="true" />
+				
 
 					<!-- auditable -->
 					<show id="cm:created" />
@@ -82,23 +67,10 @@
 					<field id="qa:ncDetectionStep" set="mainInfo" />
 					<field id="qa:ncQuantityNc" set="mainInfo" />
 					<field id="qa:ncQuantityNcUnit" set="mainInfo" />
-					<field id="qa:ncCost" set="mainInfo" />
-					<field id="cm:description" set="mainInfo">
-						<control template="/org/alfresco/components/form/controls/textarea.ftl">
-							<control-param name="rows">3</control-param>
-						</control>
-					</field>
-					<field id="qa:ncComment" set="mainInfo">
-						<control template="/org/alfresco/components/form/controls/textarea.ftl">
-							<control-param name="rows">3</control-param>
-						</control>
-					</field>
 
 					<set id="product-info" appearance="bordered-panel" label-id="becpg.forms.set.product-info.label" />
-					<!-- <field id="qa:productType" set="product-info" /> -->
 					<field id="qa:product" set="product-info" />
 					<field id="bcpg:plants" set="product-info" label="Site de fabrication"/>
-					<field id="qa:productUseByDate" set="product-info" />
 					
 
 					<set id="batch-info" template="/org/alfresco/components/form/2-column-set.ftl" appearance="bordered-panel" label-id="becpg.forms.set.batch-info.label" />
@@ -106,56 +78,9 @@
 					<field id="qa:orderId" set="batch-info" />
 					<field id="bcpg:clients" force="true" set="batch-info" />
 					<field id="bcpg:suppliers" force="true" set="batch-info" />
-					<field id="qa:batchComment" set="batch-info">
-						<control template="/org/alfresco/components/form/controls/textarea.ftl">
-							<control-param name="rows">3</control-param>
-						</control>
-					</field>
-					
-					<set id="claim-info" template="/org/alfresco/components/form/2-column-set.ftl" appearance="bordered-panel" label-id="becpg.forms.set.claim-info.label" />
 
-					<field id="qa:claimSource"  set="claim-info"/>
-					<!-- <field id="qa:claimDistributionNetwork" set="claim-info"/> -->
-					<field id="qa:claimCustomerInformation" set="claim-info">
-						<control template="/org/alfresco/components/form/controls/textarea.ftl">
-							<control-param name="rows">3</control-param>
-						</control>
-					</field>
 
-					<field id="qa:claimTradeContact" set="claim-info"/>
-					<field id="qa:claimTradeContactCheck" set="claim-info"/>
-					<field id="qa:claimTracking" set="claim-info"/>
-					<field id="qa:claimDescription" set="claim-info"/>
-
-					<field id="qa:claimType" set="claim-info"/>
-					<field id="qa:claimOriginHierarchy1" set="claim-info" >
-						 <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/QualityLists/bcpg:entityLists/claimOrigin_Hierarchy
-							</control-param>
-						</control>
-					</field>
-					<field id="qa:claimOriginHierarchy2" set="claim-info">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/QualityLists/bcpg:entityLists/claimOrigin_Hierarchy
-							</control-param>
-							<control-param name="parent">qa_claimOriginHierarchy1
-							</control-param>
-						</control>
-					</field>
-
-					<field id="qa:claimTreatementDate" set="claim-info"/>
-					<field id="qa:claimTreatmentActor" set="claim-info"/>
-					<field id="qa:claimTreatementDetails" set="claim-info"/>
-					<field id="qa:claimTreatementPrevActions" set="claim-info"/>
-
-					<field id="qa:claimResponseDate" set="claim-info"/>
-					<field id="qa:claimResponseActor" set="claim-info"/>
-					<field id="qa:claimResponseState" set="claim-info"/>
-					<field id="qa:claimResponseDetails" set="claim-info"/>
-					
-					<field id="qa:claimClosingDate" set="claim-info"/>
-
-					<!-- audit -->
+				<!-- audit -->
 					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label" />
 					<field id="cm:created" set="audit">
 						<control template="/org/alfresco/components/form/controls/daterange.ftl" />
@@ -163,13 +88,11 @@
 					<field id="cm:modified" set="audit">
 						<control template="/org/alfresco/components/form/controls/daterange.ftl" />
 					</field>
-
 				</appearance>
 			</form>
 
 			<form id="create">
 				<field-visibility>
-
 					<!-- mainInfo -->
 					<show id="cm:name" />
 					<show id="bcpg:code" />
@@ -184,51 +107,17 @@
 					<show id="qa:ncState" />
 					<show id="qa:ncComment" />
 
-					<!-- batch -->
-					<show id="qa:batchId" force="true" />
-					<show id="qa:orderId" force="true" />
+					<!-- Start -->
 					<show id="bcpg:clients" force="true" />
+					<show id="qa:product" force="true" />
+					<show id="qa:batchId" force="true"/>
+					<show id="qa:productUseByDate" force="true"/>
+					<show id="qa:orderId" force="true" />
 					<show id="bcpg:suppliers" force="true" />
 					<show id="qa:batchComment" force="true" />
-
-					<!-- Product -->
-					<!-- <show id="qa:productType" force="true" /> -->
-					<show id="qa:product" force="true" />
-					<show id="bcpg:plants"/>
-					<show id="qa:productUseByDate" />
 					
-					<!-- Claim -->
-					<show  id="qa:claimSource" />
-					<!-- <show  id="qa:claimDistributionNetwork" /> -->
-					<show  id="qa:claimCustomerInformation" />
-
-					<show id="qa:claimTradeContact" />
-					<show id="qa:claimTradeContactCheck" />
-					<show id="qa:claimTracking" />
-					<show id="qa:claimDescription" />
-
-					<show id="qa:claimType" />
-   			   <show id="qa:claimOriginHierarchy1" />
-					<show id="qa:claimOriginHierarchy2" />
-
-					<show id="qa:claimTreatementDate" />
-					<show id="qa:claimTreatmentActor" />
-					<show id="qa:claimTreatementDetails" />
-					<show id="qa:claimTreatementPrevActions"/>
-
-					<show id="qa:claimResponseDate" />
-					<show id="qa:claimResponseActor" />
-					<show id="qa:claimResponseState" />
-					<show id="qa:claimResponseDetails" />
-					
-					<show id="qa:claimClosingDate" />
-					
-					<!-- auditable -->
-					<show id="cm:creator" for-mode="view" />
-					<show id="cm:created" for-mode="view" />
-					<show id="cm:modifier" for-mode="view" />
-					<show id="cm:modified" for-mode="view" />
-
+					<!-- Orientation -->
+					<show  id="bcpg:plants" force="true"/>
 				</field-visibility>
 				<appearance>
 					<set id="mainInfo" template="/org/alfresco/components/form/2-column-set.ftl" appearance="bordered-panel" label-id="becpg.forms.set.nc-info.label" />
@@ -255,74 +144,26 @@
 						</control>
 					</field>
 
-					<set id="product-info" appearance="bordered-panel" label-id="becpg.forms.set.product-info.label" />
-					<!-- <field id="qa:productType" set="product-info" /> -->
-					<field id="qa:product" set="product-info" />
-					<field id="bcpg:plants" set="product-info" />
-					<field id="qa:productUseByDate" set="product-info" />
+					<set id="info"  appearance="bordered-panel" label-id="workflow.claim.set.start"  />
+					<set id="info1" parent="info" appearance="" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="bcpg:clients" label="Client" mandatory="false" read-only="false" set="info1">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="qa:product" mandatory="false" read-only="false" set="info1" />	
+					<field id="qa:batchId" mandatory="false" read-only="false" set="info1" />
+					<field id="qa:productUseByDate" mandatory="false" read-only="false" set="info1" />
+					<field id="bcpg:suppliers"  set="info1" />
+					<field id="qa:orderId" set="info1" />
 
-					<set id="batch-info" template="/org/alfresco/components/form/2-column-set.ftl" appearance="bordered-panel" label-id="becpg.forms.set.batch-info.label" />
-					<field id="qa:batchId" set="batch-info" />
-					<field id="qa:orderId" set="batch-info" />
-					<field id="bcpg:clients" force="true" set="batch-info" />
-					<field id="bcpg:suppliers" force="true" set="batch-info" />
-					<field id="qa:batchComment" set="batch-info">
+					<set id="info4" parent="info" appearance="" />
+					<field id="qa:batchComment" set="info4">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">3</control-param>
 						</control>
 					</field>
 					
-					<set id="claim-info" template="/org/alfresco/components/form/2-column-set.ftl" appearance="bordered-panel" label-id="becpg.forms.set.claim-info.label" />
-
-					<field id="qa:claimSource"  set="claim-info"/>
-					<!-- <field id="qa:claimDistributionNetwork" set="claim-info"/> -->
-					<field id="qa:claimCustomerInformation" set="claim-info">
-						<control template="/org/alfresco/components/form/controls/textarea.ftl">
-							<control-param name="rows">3</control-param>
-						</control>
-					</field>
-
-					<field id="qa:claimTradeContact" set="claim-info"/>
-					<field id="qa:claimTradeContactCheck" set="claim-info"/>
-					<field id="qa:claimTracking" set="claim-info"/>
-					<field id="qa:claimDescription" set="claim-info"/>
-
-					<field id="qa:claimType" set="claim-info"/>
-					<field id="qa:claimOriginHierarchy1" set="claim-info" >
-						 <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/QualityLists/bcpg:entityLists/claimOrigin_Hierarchy
-							</control-param>
-						</control>
-					</field>
-					<field id="qa:claimOriginHierarchy2" set="claim-info">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/QualityLists/bcpg:entityLists/claimOrigin_Hierarchy
-							</control-param>
-							<control-param name="parent">qa_claimOriginHierarchy1
-							</control-param>
-						</control>
-					</field>
-
-					<field id="qa:claimTreatementDate" set="claim-info"/>
-					<field id="qa:claimTreatmentActor" set="claim-info"/>
-					<field id="qa:claimTreatementDetails" set="claim-info"/>
-					<field id="qa:claimTreatementDetails" set="claim-info"/>
-					<field id="qa:claimTreatementPrevActions" set="claim-info"/>
-
-					<field id="qa:claimResponseDate" set="claim-info"/>
-					<field id="qa:claimResponseActor" set="claim-info"/>
-					<field id="qa:claimResponseState" set="claim-info"/>
-					<field id="qa:claimResponseDetails" set="claim-info"/>
-					
-					<field id="qa:claimClosingDate" set="claim-info"/>
-
-					<!-- audit -->
-					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label" template="/org/alfresco/components/form/2-column-set.ftl" />
-					<field id="cm:creator" set="audit" />
-					<field id="cm:created" set="audit" />
-					<field id="cm:modifier" set="audit" />
-					<field id="cm:modified" set="audit" />
-
+					<set id="analysis" appearance="bordered-panel" label-id="workflow.claim.set.orientation"  />
+					<field id="bcpg:plants" set="analysis" mandatory="false" read-only="false" label="Site de fabrication"/>
 				</appearance>
 			</form>
 			<form id="datagrid">
@@ -332,39 +173,43 @@
 					<show id="qa:ncPriority" />
 					<show id="cm:name" />
 					<show id="qa:ncType" />
-					<show id="qa:ncState" />
 					
-					<!-- batch -->
-					<show id="qa:batchId" force="true"/>
-					<show id="qa:product" force="true"/>
-					<show id="bcpg:clients" force="true" />
+					
 					<show id="bcpg:plants" force="true" />
+					<!-- Code produit ? -->
+					<show id="qa:product" force="true"/>
+					<show id="qa:claimType" force="true"/>
+					<show id="qa:claimDistributionNetwork" force="true"/>
+					<show id="bcpg:clients" force="true" />
+					<show id="qa:claimDescription" force="true"/>
 					
 					<!-- Claim -->
 
-					<show id="qa:claimType" force="true"/>
-
-
-					<!-- <show id="cm:creator"   />
-					<show id="qa:claimResponseActor" force="true"/> -->
+					<!-- 
+					<show id="qa:ncState" />
+					<show id="cm:creator"   />
+					<show id="qa:claimResponseActor" force="true"/> 
 					<show id="cm:created"  />
-					<show id="qa:claimResponseDate" force="true"/>
-					<!-- <show id="qa:claimClosingDate" force="true"/> -->
+					<show id="qa:claimResponseDate" force="true"/> 
+					<show id="qa:claimClosingDate" force="true"/> -->
 
 				</field-visibility>
             <appearance>
-            	<field id="cm:creator" label="Emetteur" />
-            	<field id="cm:created" label="Date saisie" />
+            	<field id="cm:name" label="Numéro incident" />
+            	<field id="bcpg:plants" label="Site de fabrication" />
+            	<!-- <field id="cm:creator" label="Emetteur" />
+            	<field id="cm:created" label="Date saisie" /> -->
+            	
             </appearance>
 			</form>
 			<form id="export">
 				<field-visibility>
 
 					<!-- mainInfo -->
-					<show id="qa:ncPriority" />
-					<show id="bcpg:code" />
+					<!-- <show id="qa:ncPriority" />
+					<show id="bcpg:code" /> -->
 					<show id="cm:name" />
-					<show id="qa:ncType" />
+					
 					<show id="qa:ncState" />
 					<!-- <show id="qa:claimDescription" force="true" /> -->
 					
@@ -385,7 +230,7 @@
 					<show id="qa:claimType" force="true"/>
 					
 					
-   			   <show id="qa:claimOriginHierarchy1" force="true"/>
+   			         <show id="qa:claimOriginHierarchy1" force="true"/>
 					<show id="qa:claimOriginHierarchy2" force="true"/>
 
 					<show id="cm:creator"   />
@@ -400,12 +245,15 @@
 					<show id="qa:claimResponseState" force="true"/>
 					
 					<show id="qa:claimClosingDate" force="true"/>
-
+					<show id="qa:ncType" />
 
 				</field-visibility>
             <appearance>
+            	<field id="cm:name"    label="Numéro incident" />
+            	<field id="bcpg:plants" label="Site de fabrication" />
             	<field id="cm:creator" label="Emetteur" />
             	<field id="cm:created" label="Date saisie" />
+            	<field id="qa:ncState" label="Etat dernière étape validée"/>
             </appearance>
 			</form>
 			<form id="filter">
@@ -415,31 +263,52 @@
 					<show id="qa:ncType" />
 					<show id="qa:ncPriority" />
 					<show id="cm:name" />
-					
-					<show id="qa:ncState" />
+				    <show id="bcpg:plants" force="true" />
+					<show id="qa:product" force="true"/>
 					<show id="qa:claimType" force="true"/>
+					<show id="qa:claimDistributionNetwork" force="true"/>
+					<show id="bcpg:clients" force="true" />
+					<show id="qa:ncState" />
+					<show id="cm:created"  />
 					
-					<!-- batch -->
+					<!-- batch 
 					<show id="qa:batchId" force="true" />
+					-->
 					
 				</field-visibility>
 				<appearance>
-					<field id="qa:ncType" >
+					<set id="mainInfo" template="/org/alfresco/components/form/2-column-set.ftl"  />
+				    <field id="qa:ncType"  set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
-					<field id="qa:ncPriority" >
+					<field id="qa:ncPriority" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">1|priority.high,2|priority.medium,3|priority.low</control-param>
 							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
-					<field id="qa:claimType" >
+					<field id="qa:ncState" label="Etat dernière étape validée"  set="mainInfo"/>
+					<field id="cm:name" label="Numéro incident" set="mainInfo"/>
+				    <field id="bcpg:plants" label="Site de fabrication"  set="mainInfo"/>
+					<field id="qa:product"   set="mainInfo"/>
+					<field id="qa:claimDistributionNetwork"  set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
+					<field id="bcpg:clients"  set="mainInfo"/>
+					<field id="qa:claimType" set="mainInfo" >
+						<control template="/org/alfresco/components/form/controls/selectmany.ftl">
+							<control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
+					<set id="mainInfo2"   />
+					<field id="cm:created" label="Période de saisie des réclamations"  set="mainInfo2">
+						<control template="/org/alfresco/components/form/controls/daterange.ftl" />
+					</field>
+		
 				</appearance>
 			</form>
 		</forms>
@@ -517,45 +386,52 @@
 					<show id="qa:ncDetectionStep" />
 					<show id="qa:ncState" />
 					<show id="qa:ncComment" />
-
-					<!-- batch -->
-					<show id="qa:batchId" force="true" />
-					<show id="qa:orderId" force="true" />
-					<show id="bcpg:clients" force="true" />
-					<show id="bcpg:suppliers" force="true" />
-					<show id="qa:batchComment" force="true" />
-
-					<!-- Product -->
-					<!-- <show id="qa:productType" force="true" /> -->
-					<show id="qa:product" force="true" />
-					<show id="bcpg:plants"/>
-					<show id="qa:productUseByDate" />
 					
-					<!-- Claim -->
-					<show  id="qa:claimSource" />
-					<!-- <show  id="qa:claimDistributionNetwork" /> -->
+					<!-- Start -->
+				    <show  id="qa:claimSource" />
+					<show  id="qa:claimTradeContact" />
+					<show  id="bcpg:clients" />
+					<show  id="qa:claimDistributionNetwork" />
 					<show  id="qa:claimCustomerInformation" />
+					<show  id="qa:claimTracking" />
+					<show  id="qa:product" />
+					<show  id="qa:batchId" />
+					<show  id="qa:productUseByDate" />
+					<show  id="qa:orderId"  />
+					<show  id="qa:batchComment" />
+					<show id="bcpg:suppliers" />
+					
+					
+					<show  id="qa:claimDescription" />
+					<show  id="qa:claimStartComment" />
 
-					<show id="qa:claimTradeContact" />
-					<show id="qa:claimTradeContactCheck" />
-					<show id="qa:claimTracking" />
-					<show id="qa:claimDescription" />
-
-					<show id="qa:claimType" />
-   			   <show id="qa:claimOriginHierarchy1" />
-					<show id="qa:claimOriginHierarchy2" />
-
+					<!-- Orientation -->
+					<show  id="bcpg:plants" />
+					<show  id="qa:claimTreatmentActor" />
+					<show  id="qa:claimResponseActor" />
+					<show  id="qa:claimAnalysisComment" />
+					
+					<!-- Treatement -->
 					<show id="qa:claimTreatementDate" />
-					<show id="qa:claimTreatmentActor" />
-					<show id="qa:claimTreatementDetails" />
-					<show id="qa:claimTreatementPrevActions"/>
-
+				    <show id="qa:claimTreatementDetails" />
+					<show id="qa:claimTreatementPrevActions" />
+					<show id="qa:claimTreatementComment" />
+					
+					<!-- Response -->
 					<show id="qa:claimResponseDate" />
-					<show id="qa:claimResponseActor" />
 					<show id="qa:claimResponseState" />
 					<show id="qa:claimResponseDetails" />
+					<show id="qa:claimResponseComment" />
 					
+					<!-- Classification -->
+				    <show id="qa:claimType" />
+					<show id="qa:claimOriginHierarchy1" />
+					<show id="qa:claimOriginHierarchy2" />
+					<show id="qa:claimClassificationComment" />
+					
+					<!-- Closing -->
 					<show id="qa:claimClosingDate" />
+					<show id="qa:claimClosingComment" />
 					
 					<!-- auditable -->
 					<show id="cm:creator" for-mode="view" />
@@ -589,66 +465,113 @@
 						</control>
 					</field>
 
-					<set id="product-info" appearance="bordered-panel" label-id="becpg.forms.set.product-info.label" />
-					<!-- <field id="qa:productType" set="product-info" /> -->
-					<field id="qa:product" set="product-info" />
-					<field id="bcpg:plants" set="product-info" />
-					<field id="qa:productUseByDate" set="product-info" />
-
-					<set id="batch-info" template="/org/alfresco/components/form/2-column-set.ftl" appearance="bordered-panel" label-id="becpg.forms.set.batch-info.label" />
-					<field id="qa:batchId" set="batch-info" />
-					<field id="qa:orderId" set="batch-info" />
-					<field id="bcpg:clients" force="true" set="batch-info" />
-					<field id="bcpg:suppliers" force="true" set="batch-info" />
-					<field id="qa:batchComment" set="batch-info">
+				    <set id="info"  appearance="bordered-panel" label-id="workflow.claim.set.start"  />
+					<set id="info1" parent="info" appearance="" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="qa:claimSource" mandatory="true" read-only="false" set="info1" />
+					<field id="qa:claimTradeContact" mandatory="false" read-only="false" set="info1" />
+					<field id="bcpg:clients" label="Client" mandatory="false" read-only="false" set="info1">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="qa:claimDistributionNetwork" mandatory="false" read-only="false" set="info1" />
+					<field id="qa:claimCustomerInformation" mandatory="false" read-only="false" set="info1">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="qa:claimTracking" mandatory="true" read-only="false" set="info1" />
+					
+					<set id="info2" parent="info" appearance="" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="qa:product" mandatory="false" read-only="false" set="info2" />
+					
+					<set id="info3" parent="info" appearance="" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="qa:batchId" mandatory="false" read-only="false" set="info3" />
+					<field id="qa:productUseByDate" mandatory="false" read-only="false" set="info3" />
+					<field id="bcpg:suppliers" force="true" set="info3" />
+					<field id="qa:orderId" set="info3" />
+					
+					
+					
+					<set id="info4" parent="info" appearance="" />
+					<field id="qa:batchComment" set="info4">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">3</control-param>
+						</control>
+					</field>
+					<field id="qa:claimDescription" mandatory="true" read-only="false" set="info4">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="qa:claimStartComment"  set="info4">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl"/>
+					</field>
+					
+					<set id="analysis" appearance="bordered-panel" label-id="workflow.claim.set.orientation"  />
+					<field id="bcpg:plants" set="analysis" mandatory="false" read-only="false" label="Site de fabrication"/>
+					
+					<set id="analysis2" parent="analysis" appearance="" template="/org/alfresco/components/form/2-column-set.ftl"/>
+					<field id="qa:claimTreatmentActor" set="analysis2" mandatory="false" read-only="false" >
+						<control template="/org/alfresco/components/form/controls/authority.ftl">
+							<control-param name="extraParams">group=GROUP_ClaimTreatment</control-param>
+						</control>
+					</field>
+					<field id="qa:claimResponseActor" set="analysis2" mandatory="false" read-only="false" >
+						<control template="/org/alfresco/components/form/controls/authority.ftl">
+							<control-param name="extraParams">group=GROUP_ClaimResponse</control-param>
 						</control>
 					</field>
 					
-					<set id="claim-info" template="/org/alfresco/components/form/2-column-set.ftl" appearance="bordered-panel" label-id="becpg.forms.set.claim-info.label" />
-
-					<field id="qa:claimSource"  set="claim-info"/>
-					<!-- <field id="qa:claimDistributionNetwork" set="claim-info"/> -->
-					<field id="qa:claimCustomerInformation" set="claim-info">
-						<control template="/org/alfresco/components/form/controls/textarea.ftl">
-							<control-param name="rows">3</control-param>
-						</control>
+					<set id="analysis3" appearance="" parent="analysis" />
+					<field id="qa:claimAnalysisComment"  set="analysis3">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
-
-					<field id="qa:claimTradeContact" set="claim-info"/>
-					<field id="qa:claimTradeContactCheck" set="claim-info"/>
-					<field id="qa:claimTracking" set="claim-info"/>
-					<field id="qa:claimDescription" set="claim-info"/>
-
-					<field id="qa:claimType" set="claim-info"/>
-					<field id="qa:claimOriginHierarchy1" set="claim-info" >
+					
+					<set id="treatment" appearance="bordered-panel" label-id="workflow.claim.set.treatment" />
+					<field id="qa:claimTreatementDate" set="treatment"/>
+					<field id="qa:claimTreatementDetails" set="treatment" mandatory="true" read-only="false">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="qa:claimTreatementPrevActions" set="treatment" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="qa:claimTreatementComment"  set="treatment">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					
+					<set id="response" appearance="bordered-panel" label-id="workflow.claim.set.response" />
+					<field id="qa:claimResponseDate" set="response"/>
+					<field id="qa:claimResponseState" mandatory="true" set="response" />
+					<field id="qa:claimResponseDetails" mandatory="true" set="response">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="qa:claimResponseComment" set="response">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					
+					<set id="classification" appearance="bordered-panel"  label-id="workflow.claim.set.classification" />
+					<set id="classification1" parent="classification" appearance="" template="/org/alfresco/components/form/2-column-set.ftl"  />
+					<field id="qa:claimType" set="classification" mandatory="true"  />
+					<field id="qa:claimOriginHierarchy1" set="classification1" >
 						 <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/QualityLists/bcpg:entityLists/claimOrigin_Hierarchy
 							</control-param>
 						</control>
 					</field>
-					<field id="qa:claimOriginHierarchy2" set="claim-info">
+					<field id="qa:claimOriginHierarchy2" set="classification1">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/QualityLists/bcpg:entityLists/claimOrigin_Hierarchy
 							</control-param>
-							<control-param name="parent">qa_claimOriginHierarchy1
-							</control-param>
+							<control-param name="parent">qa_claimOriginHierarchy1</control-param>
 						</control>
 					</field>
-
-					<field id="qa:claimTreatementDate" set="claim-info"/>
-					<field id="qa:claimTreatmentActor" set="claim-info"/>
-					<field id="qa:claimTreatementDetails" set="claim-info"/>
-					<field id="qa:claimTreatementDetails" set="claim-info"/>
-					<field id="qa:claimTreatementPrevActions" set="claim-info"/>
-
-					<field id="qa:claimResponseDate" set="claim-info"/>
-					<field id="qa:claimResponseActor" set="claim-info"/>
-					<field id="qa:claimResponseState" set="claim-info"/>
-					<field id="qa:claimResponseDetails" set="claim-info"/>
+					<set id="classification2" parent="classification" appearance="" />
+					<field id="qa:claimClassificationComment" set="classification2">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
 					
-					<field id="qa:claimClosingDate" set="claim-info"/>
+					
+					
+					<set id="closing" appearance="bordered-panel" label-id="workflow.claim.set.closing" />
+					<field id="qa:claimClosingDate" set="closing"/>
+					<field id="qa:claimClosingComment"  set="closing">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
 
 					<!-- audit -->
 					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label" template="/org/alfresco/components/form/2-column-set.ftl" />
@@ -1057,17 +980,23 @@
 			<!-- Data List pop-up edit form -->
 			<form>
 				<field-visibility>
-					<show id="qa:sdlControlPoint" />
+					<show id="qa:slControlPoint" />
 					<show id="qa:sdlQty" />
 					<show id="qa:sdlFreq" />
 					<show id="qa:sdlFreqUnit" />
-					<show id="qa:sdlControlStep" />
-					<show id="qa:sdlSamplingGroup" />
-					<show id="qa:sdlControlingGroup" />
-					<show id="qa:sdlFixingGroup" />
+					<show id="qa:slControlStep" />
+					<show id="qa:slSamplingGroup" />
+					<show id="qa:slControlingGroup" />
+					<show id="qa:slFixingGroup" />
+					<show id="qa:slReaction" />
 				</field-visibility>
 
 				<appearance>
+					<field id="qa:slReaction">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">3</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 		</forms>
@@ -1078,30 +1007,36 @@
 			<!-- Create item form -->
 			<form>
 				<field-visibility>
-					<show id="qa:sdlControlPoint" />
+					<show id="qa:slControlPoint" />
 					<show id="qa:sdlQty" />
 					<show id="qa:sdlFreq" />
 					<show id="qa:sdlFreqUnit" />
-					<show id="qa:sdlControlStep" />
-					<show id="qa:sdlSamplingGroup" />
-					<show id="qa:sdlControlingGroup" />
-					<show id="qa:sdlFixingGroup" />
+					<show id="qa:slControlStep" />
+					<show id="qa:slSamplingGroup" />
+					<show id="qa:slControlingGroup" />
+					<show id="qa:slFixingGroup" />
+					<show id="qa:slReaction" />
 				</field-visibility>
 
 				<appearance>
+					<field id="qa:slReaction">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">3</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
-					<show id="qa:sdlControlPoint" />
+					<show id="qa:slControlPoint" />
 					<show id="qa:sdlQty" />
 					<show id="qa:sdlFreq" />
 					<show id="qa:sdlFreqUnit" />
-					<show id="qa:sdlControlStep" />
-					<show id="qa:sdlSamplingGroup" />
-					<show id="qa:sdlControlingGroup" />
-					<show id="qa:sdlFixingGroup" />
+					<show id="qa:slControlStep" />
+					<show id="qa:slSamplingGroup" />
+					<show id="qa:slControlingGroup" />
+					<show id="qa:slFixingGroup" />
 				</field-visibility>
 			</form>
 		</forms>
@@ -1163,12 +1098,21 @@
 				<field-visibility>
 					<show id="qa:slControlPoint" />
 					<show id="qa:slControlStep" />
+					<show id="qa:slSamplingGroup" />
+					<show id="qa:slControlingGroup" />
+					<show id="qa:slFixingGroup" />
 					<show id="qa:slSampleId" />
 					<show id="qa:slDateTime" />
 					<show id="qa:slSampleState" />
+					<show id="qa:slReaction" />
 				</field-visibility>
 
 				<appearance>
+					<field id="qa:slReaction">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">3</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 		</forms>
@@ -1181,12 +1125,21 @@
 				<field-visibility>
 					<show id="qa:slControlPoint" />
 					<show id="qa:slControlStep" />
+					<show id="qa:slSamplingGroup" />
+					<show id="qa:slControlingGroup" />
+					<show id="qa:slFixingGroup" />
 					<show id="qa:slSampleId" />
 					<show id="qa:slDateTime" />
 					<show id="qa:slSampleState" />
+					<show id="qa:slReaction" />
 				</field-visibility>
 
 				<appearance>
+					<field id="qa:slReaction">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">3</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 			<!-- Data Grid view -->
@@ -1194,6 +1147,9 @@
 				<field-visibility>
 					<show id="qa:slControlPoint" />
 					<show id="qa:slControlStep" />
+					<show id="qa:slSamplingGroup" />
+					<show id="qa:slControlingGroup" />
+					<show id="qa:slFixingGroup" />
 					<show id="qa:slSampleId" />
 					<show id="qa:slDateTime" />
 					<show id="qa:slSampleState" />
@@ -1312,14 +1268,24 @@
 					<show id="qa:clSampleId" />
 					<show id="qa:clType" />
 					<show id="qa:clMethod" />
-					<show id="qa:clCharacts" />
-					<show id="qa:clValue" />
+					<show id="qa:clCharacts" />					
 					<show id="qa:clMini" />
 					<show id="qa:clMaxi" />
 					<show id="qa:clUnit" />
+					<show id="qa:clValue" />
 					<show id="qa:clState" />
 					<show id="qa:clRequired" />
 				</field-visibility>
+				<appearance>
+					<field id="qa:clSampleId" read-only="true" />
+					<field id="qa:clType" read-only="true" />
+					<field id="qa:clMethod" read-only="true" />
+					<field id="qa:clCharacts" read-only="true" />					
+					<field id="qa:clMini" read-only="true" />
+					<field id="qa:clMaxi" read-only="true" />
+					<field id="qa:clUnit" read-only="true" />
+					<field id="qa:clRequired" read-only="true" />
+				</appearance>
 			</form>
 		</forms>
 	</config>
