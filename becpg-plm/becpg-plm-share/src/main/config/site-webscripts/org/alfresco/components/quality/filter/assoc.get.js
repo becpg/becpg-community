@@ -23,8 +23,7 @@ function getAssocTypes()
    }
 
    return models;
-	
-	
+
 }
 
 

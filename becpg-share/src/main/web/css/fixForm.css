@@ -39,9 +39,12 @@
 .yui-dialog .form-container .form-field input[type="password"],
 .yui-dialog .form-container .form-field input,
 .yui-dialog .form-container .form-field select,
-.yui-dialog .form-container .form-field textarea,
 .yui-dialog .form-container .yui-ac .ac-body {
 	width: 30em !important;
+}
+
+.yui-dialog .form-container .form-field textarea {
+	width: 95% !important;
 }
 
 

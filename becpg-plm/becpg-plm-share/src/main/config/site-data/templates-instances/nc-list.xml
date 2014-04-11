@@ -67,12 +67,12 @@
       </component>
       
 
-      <!-- Priority Filter 
+      <!-- Priority Filter  -->
       <component>
          <region-id>priority-filter</region-id>
          <url>/components/workflow/filter/priority</url>
       </component>
-      -->
+     
       
       <!-- Tags Filter -->
       <component>

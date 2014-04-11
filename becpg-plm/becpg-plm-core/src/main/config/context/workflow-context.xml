@@ -51,7 +51,7 @@
 					<prop key="engineId">activiti</prop>
 					<prop key="location">alfresco/module/${pom.artifactId}/workflow/quality/claim-process.bpmn</prop>
 					<prop key="mimetype">text/xml</prop>
-					<prop key="redeploy">true</prop>
+					<prop key="redeploy">false</prop>
 				</props>
 				<props>
 					<prop key="engineId">activiti</prop>
