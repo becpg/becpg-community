@@ -277,39 +277,38 @@
 					
 				</field-visibility>
 				<appearance>
-					
-				    <field id="qa:ncType"  >
+					<set id="mainInfo" template="/org/alfresco/components/form/2-column-set.ftl"  />
+				    <field id="qa:ncType"  set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
-					<field id="qa:ncPriority" >
+					<field id="qa:ncPriority" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">1|priority.high,2|priority.medium,3|priority.low</control-param>
 							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
-					<field id="cm:name" label="Numéro incident" />
-				    <field id="bcpg:plants" label="Site de fabrication"  />
-					<field id="qa:product"   />
-					<field id="qa:claimType"  >
-						<control template="/org/alfresco/components/form/controls/selectmany.ftl">
-							<control-param name="insertBlank">true</control-param>
-						</control>
-					</field>
-					
-					<field id="qa:claimDistributionNetwork"  >
+					<field id="qa:ncState" label="Etat dernière étape validée"  set="mainInfo"/>
+					<field id="cm:name" label="Numéro incident" set="mainInfo"/>
+				    <field id="bcpg:plants" label="Site de fabrication"  set="mainInfo"/>
+					<field id="qa:product"   set="mainInfo"/>
+					<field id="qa:claimDistributionNetwork"  set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
-					<field id="bcpg:clients"  />
-					<field id="qa:ncState" label="Etat dernière étape validée"  />
-					<field id="cm:created" label="Période de saisie des réclamations"  >
+					<field id="bcpg:clients"  set="mainInfo"/>
+					<field id="qa:claimType" set="mainInfo" >
+						<control template="/org/alfresco/components/form/controls/selectmany.ftl">
+							<control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
+					<set id="mainInfo2"   />
+					<field id="cm:created" label="Période de saisie des réclamations"  set="mainInfo2">
 						<control template="/org/alfresco/components/form/controls/daterange.ftl" />
 					</field>
-				
-					
+		
 				</appearance>
 			</form>
 		</forms>

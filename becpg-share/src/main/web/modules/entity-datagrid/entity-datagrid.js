@@ -602,7 +602,7 @@
                               filterObj = {
                                  filterOwner : window.unescape(filters[0] || ""),
                                  filterId : window.unescape(filters[1] || ""),
-                                 filterData : window.unescape(filters[2] || ""),
+                                 filterData : window.unescape(filters[2].replace("$ML$","|") || ""),
                                  filterDisplay : window.unescape(filters[3] || "")
                               };
                               Alfresco.logger.debug("DL_fnChangeFilterHandler", "changeFilter =>", filterObj);
@@ -791,9 +791,9 @@
                            fn : this.onFilterFormTemplateLoaded,
                            scope : this
                         },
-                        failureMessage : "Could not load dialog template from '" + this.options.templateUrl + "'.",
-                        scope : this,
-                        execScripts : true
+                        failureMessage: "Could not load form component '" + filterFormUrl + "'.",
+                        scope: this,
+                        execScripts: true
                      });
                   },
                   /**
@@ -814,7 +814,7 @@
                      Bubbling.fire(this.scopeId + "changeFilter", {
                         filterOwner : this.id,
                         filterId : "filterform",
-                        filterData : YAHOO.lang.JSON.stringify(this.formsFilterRuntime.getFormData())
+                        filterData : YAHOO.lang.JSON.stringify(this.formsFilterRuntime.getFormData()).replace("|","$ML$")
                      });
 
                   },
@@ -844,6 +844,7 @@
 
                      if (this.formsFilterRuntime == null && args[1].eventGroup == this.id + "-form") {
                         this.formsFilterRuntime = args[1].runtime;
+                        this.formsFilterRuntime.validations = [];
                      }
 
                   },
@@ -896,7 +897,7 @@
                      var fnDecodeBookmarkedFilter = function EntityDataGrid_fnDecodeBookmarkedFilter(strFilter) {
                         var filters = strFilter.split("|"), filterObj = {
                            filterId : window.unescape(filters[0] || ""),
-                           filterData : window.unescape(filters[1] || "")
+                           filterData : window.unescape((filters[1] || "").replace("$ML$","|"))
                         };
 
                         filterObj.filterOwner = Alfresco.util.FilterManager.getOwner(filterObj.filterId);

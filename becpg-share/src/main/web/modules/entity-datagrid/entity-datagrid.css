@@ -264,6 +264,21 @@ div.filterform {
 	width: 33em;
 }
 
+
+.yui-ge .filterform .yui-g {
+    width: inherit;
+    float:none;
+}
+
+.yui-ge .filterform .yui-g div.first{
+	float: left;
+}
+
+.yui-ge .filterform .yui-g .yui-u {
+	width: 49.1% ;
+	float:right;
+}
+
 .filterform  .form-container .form-buttons {
 	padding-top: 0;
 }
