@@ -43,11 +43,9 @@ import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorPlugin;
 @Service
 public class ProductAttributeExtractorPlugin implements AttributeExtractorPlugin, InitializingBean {
 
-	private Matcher patternMatcher = null;
-
 	@Value("${beCPG.product.name.format}")
 	private String productNameFormat;
-	
+
 	@Autowired
 	private NodeService nodeService;
 
@@ -64,32 +62,28 @@ public class ProductAttributeExtractorPlugin implements AttributeExtractorPlugin
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		patternMatcher = Pattern.compile("\\{([^}]+)\\}").matcher(productNameFormat);
 	}
 
 	@Override
 	public String extractPropName(QName type, NodeRef nodeRef) {
-		 
-		patternMatcher.reset();
-	     StringBuffer sb = new StringBuffer();
-	     while (patternMatcher.find())
-	     {
-	    	
-	    	 String propQname = patternMatcher.group(1);
-	    	 String replacement = (String) nodeService.getProperty(nodeRef, QName.createQName(propQname,namespaceService));
-	    	 
-	    	 patternMatcher.appendReplacement(sb, replacement!=null? replacement:"" );
-	        
-	     }
-	     patternMatcher.appendTail(sb);
-	     return sb.toString();       
-		
+		Matcher patternMatcher = Pattern.compile("\\{([^}]+)\\}").matcher(productNameFormat);
+		// patternMatcher.reset();
+		StringBuffer sb = new StringBuffer();
+		while (patternMatcher.find()) {
+			String propQname = patternMatcher.group(1);
+			String replacement = (String) nodeService.getProperty(nodeRef,
+					QName.createQName(propQname, namespaceService));
+			patternMatcher.appendReplacement(sb, replacement != null ? replacement : "");
+		}
+		patternMatcher.appendTail(sb);
+		return sb.toString();
 	}
 
 	@Override
 	public String extractMetadata(QName type, NodeRef nodeRef) {
 		// TODO task state
-		return type.toPrefixString(namespaceService).split(":")[1] + "-" + nodeService.getProperty(nodeRef, PLMModel.PROP_PRODUCT_STATE);
+		return type.toPrefixString(namespaceService).split(":")[1] + "-"
+				+ nodeService.getProperty(nodeRef, PLMModel.PROP_PRODUCT_STATE);
 	}
 
 }
