@@ -63,23 +63,10 @@
                                              <#if (args.workflowDescription)??>                                             
                                              	<p>${args.workflowDescription}</p>                                             
                                              </#if>
-                                             
+                                            
                                              <p>
-                                                <#if (args.workflowDueDate)??>Due:&nbsp;&nbsp;<b>${args.workflowDueDate?date?string.full}</b><br></#if>
-                                                <#if (args.workflowPriority)??>
-                                                   Priorité :&nbsp;&nbsp;
-                                                   <b>
-                                                   <#if args.workflowPriority == 3>
-                                                      Basse
-                                                   <#elseif args.workflowPriority == 2>
-                                                      Moyenne
-                                                   <#else>
-                                                      Élevée
-                                                   </#if>
-                                                   </b>
-                                                </#if>
+                                                <#if (args.workflowDueDate)??>Due:&nbsp;&nbsp;<b>${args.workflowDueDate?date?string.full}</b><br></#if>               
                                              </p>
-                                             
                                              <#if (args.workflowDocuments)??>
                                                 <table cellpadding="0" callspacing="0" border="0" bgcolor="#eeeeee" style="padding:10px; border: 1px solid #aaaaaa;">
                                                    <#list args.workflowDocuments as doc>

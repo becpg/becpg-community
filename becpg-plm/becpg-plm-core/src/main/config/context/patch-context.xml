@@ -20,29 +20,34 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"   >
 
-	<!-- Abstract bean -->
-	<bean id="beCPGBasePatch" abstract="true" class="fr.becpg.repo.admin.patch.AbstractBeCPGPatch" parent="basePatch">
-		<property name="repository" ref="repositoryHelper"/>
-		<property name="contentHelper" ref="contentHelper"/>	
-		<property name="entitySystemService" ref="entitySystemService"/>
-		<property name="repoService" ref="repoService"/>	
-	</bean>
 		
-<!-- 	<bean id="patch.bcpg.redeployWfProjectProcess3" class="org.alfresco.repo.admin.patch.impl.GenericWorkflowPatch" parent="baseWorkflowPatch" > -->
-<!--         <property name="id"><value>patch.bcpg.redeployWfProjectProcess3</value></property> -->
-<!--         <property name="description"><value>patch.bcpg.redeployWfProjectProcess.description</value></property> -->
-<!--         <property name="fixesFromSchema"><value>0</value></property> -->
-<!--         <property name="fixesToSchema"><value>${version.schema}</value></property> -->
-<!--         <property name="targetSchema"><value>10101</value></property> -->
-<!--         <property name="workflowDefinitions"> -->
-<!--             <list>		 -->
-<!-- 					<props> -->
-<!-- 						<prop key="engineId">activiti</prop> -->
-<!-- 						<prop key="location">alfresco/module/${pom.artifactId}/workflow/project/project-newProduct.bpmn</prop> -->
-<!-- 						<prop key="mimetype">text/xml</prop> -->
-<!-- 					</props> -->
-<!--             </list> -->
-<!--         </property> -->
-<!--     </bean> -->
+	<bean id="patch.bcpg.plm.redeployWfClaimProcess" class="fr.becpg.repo.admin.patch.PLMWorkflowPatch" parent="basePatch" >
+        <property name="id"><value>patch.bcpg.plm.redeployWfClaimProcess</value></property>
+        <property name="description"><value>patch.bcpg.plm.redeployWfClaimProcess.description</value></property>
+       <property name="fixesFromSchema" value="6022"/>
+        <property name="fixesToSchema" value="6033" />
+        <property name="targetSchema" value="10110"/>
+        <property name="workflowDefinitions">
+            <list>		
+					<props>
+						<prop key="engineId">activiti</prop>
+						<prop key="location">alfresco/module/${pom.artifactId}/workflow/quality/claim-process.bpmn</prop>
+						<prop key="mimetype">text/xml</prop>
+					</props>
+            </list>
+        </property>
+    </bean>
+
+    
+     <bean id="patch.bcpg.plm.claimEmailTemplatesPatch" class="fr.becpg.repo.admin.patch.ClaimEmailTemplatesPatch" parent="beCPGBasePatch" >
+			<property name="id"><value>patch.bcpg.plm.claimEmailTemplatesPatch</value></property>
+			<property name="description"><value>patch.bcpg.plm.claimEmailTemplatesPatch.description</value></property>
+			<property name="fixesFromSchema" value="6022"/>
+	        <property name="fixesToSchema" value="6033" />
+	        <property name="targetSchema" value="10110"/>  
+			<property name="requiresTransaction"><value>true</value></property>
+			<property name="applyToTenants"><value>true</value></property>
+	 </bean>
+    
 
 </beans>
