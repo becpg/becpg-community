@@ -86,6 +86,8 @@ var g; // gantt var
                    * @method onReady
                    */
                   onReady : function PL_onReady() {
+                	  
+                	  JSGantt.register(this);
                 
                      var url = Alfresco.constants.PROXY_URI + "becpg/project/info" + (this.options.siteId != null && this.options.siteId.length > 0 ? "?site=" + this.options.siteId
                            : "");
@@ -154,6 +156,7 @@ var g; // gantt var
                            g.setDateInputFormat("shortDate");
                            g.setDateDisplayFormat("shortDate");
                            g.setCaptionType('Resource');
+                           
 
                            for ( var i = 0; i < recordSet.getLength(); i++) {
 
