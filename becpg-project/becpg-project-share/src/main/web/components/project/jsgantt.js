@@ -29,6 +29,15 @@ if (!JSGantt) {
 
 (function() {
 
+	
+	JSGantt.register =  function(parentComponent){
+		JSGantt.msg = function (key){
+			return Alfresco.util.message.call(parentComponent, key, parentComponent.name, Array.prototype.slice.call(arguments).slice(1));
+		}
+	}
+	
+	
+	
    /**
     * Creates a task (one row) in gantt object
     * 
@@ -68,10 +77,13 @@ if (!JSGantt) {
     *            {String} Caption to be used instead of default caption (Resource). note : you should use
     *            setCaption("Caption") in order to display the caption
     * @return void
-    */
+    */	
    JSGantt.TaskItem = function(pID, pName, pStart, pEnd, pColor, pLink, pMile, pRes, pComp, pGroup, pParent, pOpen,
                                pDepend, pCaption) {
 
+	   
+	 
+	   
       /**
        * The name of the attribute.
        * 
@@ -220,6 +232,8 @@ if (!JSGantt) {
 
       var x1 = 0, y1 = 0, x2 = 0, y2 = 0;
 
+      
+   
       /**
        * Returns task ID
        * 
@@ -372,7 +386,7 @@ if (!JSGantt) {
             if (tmpPer === 1) {
                vDuration = '1 Hour';
             } else {
-               vDuration = tmpPer + ' Hours';
+               vDuration = tmpPer + ' '+JSGantt.msg("jsgantt.hours");
             }
          }
 
@@ -381,7 +395,7 @@ if (!JSGantt) {
             if (tmpPer === 1) {
                vDuration = '1 Minute';
             } else {
-               vDuration = tmpPer + ' Minutes';
+               vDuration = tmpPer + ' '+JSGantt.msg("jsgantt.minutes");
             }
          }
 
@@ -390,7 +404,7 @@ if (!JSGantt) {
             if (tmpPer === 1) {
                vDuration = '1 Jour';
             } else {
-               vDuration = tmpPer + ' Jours';
+               vDuration = tmpPer + ' '+JSGantt.msg("jsgantt.days");
             }
          }
 
@@ -786,6 +800,10 @@ if (!JSGantt) {
       var vMonthDaysArr = [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ];
       var vMonthArr = [ "January", "February", "March", "April", "May", "June", "July", "August", "September",
             "October", "November", "December" ];
+      
+ 
+      
+      
       /**
        * Set current display format (minute/hour/day/week/month/quarter) Only the first 4 arguments are used, for
        * example: <code>
@@ -1274,48 +1292,48 @@ if (!JSGantt) {
             // DRAW the Left-side of the chart (names, resources, comp%)
             vLeftTable = '<DIV class="yui-u first" id="leftside"><TABLE cellSpacing="0" cellPadding="0" border="0"><THEAD>';
 
-            vLeftTable += '<TR class="gheader"><TH  colspan="3">Format:&nbsp;';
+            vLeftTable += '<TR class="gheader"><TH  colspan="3">'+JSGantt.msg("jsgantt.format")+':&nbsp;';
 
             if (vFormatArr.join().indexOf("minute") != -1) {
                if (vFormat == 'minute')
-                  vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" VALUE="minute" checked>Minute';
+                  vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" VALUE="minute" checked>'+JSGantt.msg("jsgantt.minute");
                else
-                  vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" onclick=JSGantt.changeFormat("minute",' + vGanttVar + '); VALUE="minute">Minute';
+                  vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" onclick=JSGantt.changeFormat("minute",' + vGanttVar + '); VALUE="minute">'+JSGantt.msg("jsgantt.minute");
             }
 
             if (vFormatArr.join().indexOf("hour") != -1) {
                if (vFormat == 'hour')
-                  vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" VALUE="hour" checked>Hour';
+                  vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" VALUE="hour" checked>'+JSGantt.msg("jsgantt.hour");
                else
-                  vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" onclick=JSGantt.changeFormat("hour",' + vGanttVar + '); VALUE="hour">Heure';
+                  vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" onclick=JSGantt.changeFormat("hour",' + vGanttVar + '); VALUE="hour">'+JSGantt.msg("jsgantt.hour");
             }
 
             if (vFormatArr.join().indexOf("day") != -1) {
                if (vFormat == 'day')
-                  vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" VALUE="day" checked>Jour';
+                  vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" VALUE="day" checked>'+JSGantt.msg("jsgantt.day");
                else
-                  vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" onclick=JSGantt.changeFormat("day",' + vGanttVar + '); VALUE="day">Jour';
+                  vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" onclick=JSGantt.changeFormat("day",' + vGanttVar + '); VALUE="day">'+JSGantt.msg("jsgantt.day");
             }
 
             if (vFormatArr.join().indexOf("week") != -1) {
                if (vFormat == 'week')
-                  vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" VALUE="week" checked>Semaine';
+                  vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" VALUE="week" checked>'+JSGantt.msg("jsgantt.week");
                else
-                  vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" onclick=JSGantt.changeFormat("week",' + vGanttVar + ') VALUE="week">Semaine';
+                  vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" onclick=JSGantt.changeFormat("week",' + vGanttVar + ') VALUE="week">'+JSGantt.msg("jsgantt.week");
             }
 
             if (vFormatArr.join().indexOf("month") != -1) {
                if (vFormat == 'month')
-                  vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" VALUE="month" checked>Mois';
+                  vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" VALUE="month" checked>'+JSGantt.msg("jsgantt.month");
                else
-                  vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" onclick=JSGantt.changeFormat("month",' + vGanttVar + ') VALUE="month">Mois';
+                  vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" onclick=JSGantt.changeFormat("month",' + vGanttVar + ') VALUE="month">'+JSGantt.msg("jsgantt.month");
             }
 
             if (vFormatArr.join().indexOf("quarter") != -1) {
                if (vFormat == 'quarter')
-                  vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" VALUE="quarter" checked>Trimestre';
+                  vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" VALUE="quarter" checked>'+JSGantt.msg("jsgantt.quarter");
                else
-                  vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" onclick=JSGantt.changeFormat("quarter",' + vGanttVar + ') VALUE="quarter">Trimestre';
+                  vLeftTable += '<INPUT TYPE=RADIO NAME="radFormat" onclick=JSGantt.changeFormat("quarter",' + vGanttVar + ') VALUE="quarter">'+JSGantt.msg("jsgantt.quarter");
             }
 
             // vLeftTable += '<INPUT TYPE=RADIO NAME="other" VALUE="other"
@@ -1326,15 +1344,15 @@ if (!JSGantt) {
             vLeftTable += '<TR class="gheader">' + '  <TH ><NOBR></NOBR></TH>';
 
             if (vShowRes === 1)
-               vLeftTable += '  <TH   nowrap >Resource</TH>';
+               vLeftTable += '  <TH   nowrap >'+JSGantt.msg("jsgantt.resource")+'</TH>';
             if (vShowDur === 1)
-               vLeftTable += '  <TH    nowrap >Durée</TH>';
+               vLeftTable += '  <TH    nowrap >'+JSGantt.msg("jsgantt.duration")+'</TH>';
             if (vShowComp === 1)
-               vLeftTable += '  <TH    nowrap >% Réal.</TH>';
+               vLeftTable += '  <TH    nowrap >'+JSGantt.msg("jsgantt.percomp")+'</TH>';
             if (vShowStartDate === 1)
-               vLeftTable += '  <TH   nowrap >Début</TH>';
+               vLeftTable += '  <TH   nowrap >'+JSGantt.msg("jsgantt.begin")+'</TH>';
             if (vShowEndDate === 1)
-               vLeftTable += '  <TH     >Fin</TH>';
+               vLeftTable += '  <TH     >'+JSGantt.msg("jsgantt.end")+'</TH>';
 
             vLeftTable += '</TR></THEAD><TBODY class="yui-dt-data">';
 
