@@ -204,49 +204,58 @@
 			</form>
 			<form id="export">
 				<field-visibility>
-
 					<!-- mainInfo -->
-					<!-- <show id="qa:ncPriority" />
-					<show id="bcpg:code" /> -->
-					<show id="cm:name" />
+					<show id="cm:name" force="true"/>
+					<show id="qa:ncState"  force="true"/>
 					
-					<show id="qa:ncState" />
-					<!-- <show id="qa:claimDescription" force="true" /> -->
+					<!-- Start -->
+				    <show  id="qa:claimSource" force="true" />
+					<show  id="qa:claimTradeContact" force="true" />
+					<show  id="entity_bcpg:clients_bcpg:client" force="true" />
+					<show  id="qa:claimDistributionNetwork" force="true" />
+					<show  id="qa:claimCustomerInformation" force="true" />
+					<show  id="qa:claimTracking" force="true" />
+					<show  id="entity_qa:product_bcpg:product" force="true" />
+					<show  id="qa:batchId" force="true" />
+					<show  id="qa:productUseByDate" force="true" />
 					
-					<!-- batch -->
-					<show id="qa:batchId" force="true"/>
-					<show id="entity_qa:product_bcpg:product" force="true"/>
-					
-					
-					<show id="qa:productUseByDate" />
-					
-					<show id="entity_bcpg:clients_bcpg:client" force="true" />
-					<show  id="qa:claimCustomerInformation" force="true"/>
-					
-					<show id="bcpg:plants" force="true" />
-					
-					<!-- Claim -->
-					<show  id="qa:claimSource" force="true"/>
-					<show id="qa:claimType" force="true"/>
-					
-					
-   			         <show id="qa:claimOriginHierarchy1" force="true"/>
-					<show id="qa:claimOriginHierarchy2" force="true"/>
+					<show  id="qa:claimDescription" force="true" />
+					<show  id="qa:claimStartComment" force="true" />
 
-					<show id="cm:creator"   />
-					<show id="cm:created"  />
-
-					<show id="qa:claimTreatementDate" force="true"/>
-					<show id="qa:claimTreatmentActor" force="true"/>
-
-					<show id="qa:claimResponseDate" force="true"/>
-					<show id="qa:claimResponseActor" force="true"/>
+					<!-- Orientation -->
+					<show  id="bcpg:plants" force="true" />
+					<show  id="qa:claimTreatmentActor" force="true" />
+					<show  id="qa:claimResponseActor" force="true" />
+					<show  id="qa:claimAnalysisComment" force="true" />
 					
-					<show id="qa:claimResponseState" force="true"/>
+					<!-- Treatement -->
+					<show id="qa:claimTreatementDate" force="true" />
+				    <show id="qa:claimTreatementDetails" force="true" />
+					<show id="qa:claimTreatementPrevActions" force="true" />
+					<show id="qa:claimTreatementComment" force="true" />
 					
-					<show id="qa:claimClosingDate" force="true"/>
-					<show id="qa:ncType" />
-
+					<!-- Response -->
+					<show id="qa:claimResponseDate" force="true" />
+					<show id="qa:claimResponseState" force="true" />
+					<show id="qa:claimResponseDetails" force="true" />
+					<show id="qa:claimResponseComment" force="true" />
+					
+					<!-- Classification -->
+				    <show id="qa:claimType" force="true" />
+					<show id="qa:claimOriginHierarchy1" force="true" />
+					<show id="qa:claimOriginHierarchy2" force="true" />
+					<show id="qa:claimClassificationComment" force="true" />
+					
+					<!-- Closing -->
+					<show id="qa:claimClosingDate" force="true" />
+					<show id="qa:claimClosingComment" force="true" />
+					
+					<!-- auditable -->
+					<show id="cm:creator" force="true"  />
+					<show id="cm:created" force="true" />
+				
+					<show id="qa:ncType" force="true" />
+			
 				</field-visibility>
             <appearance>
             	<field id="cm:name"    label="Numéro incident" />
