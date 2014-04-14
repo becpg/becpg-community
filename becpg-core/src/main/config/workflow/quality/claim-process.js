@@ -38,7 +38,7 @@ function onCompleteEnteringClaimTask() {
 	execution.setVariable('qa_batchId', task.getVariable('qa_batchId'));
 	execution.setVariable('qa_productUseByDate', task.getVariable('qa_productUseByDate'));
 	execution.setVariable('qa_claimDescription', task.getVariable('qa_claimDescription'));
-	execution.setVariable('qa_ncComment', task.getVariable('qa_ncComment'));
+	execution.setVariable('qa_claimStartComment', task.getVariable('qa_claimStartComment'));
 	execution.setVariable('bcpgwf_notifyUsers', task.getVariable('bcpgwf_notifyUsers'));
 	execution.setVariable('skipClassification', false);
 
