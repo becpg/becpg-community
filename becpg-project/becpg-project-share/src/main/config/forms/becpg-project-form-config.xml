@@ -408,16 +408,30 @@
 			<form id="filter">
 				<field-visibility>
 					<show id="cm:name" />
+					<show id="pjt:projectPriority"  />
+					<show id="pjt:projectState" />
 					<show id="pjt:projectHierarchy1" />
 					<show id="pjt:projectHierarchy2" />
-					<show id="pjt:projectPriority"  />
 					<show id="pjt:projectStartDate" />
 					<show id="pjt:projectCompletionDate" />
 					<show id="pjt:projectDueDate" />
-					<show id="pjt:projectState" />
 				</field-visibility>
 				<appearance>
-					<field id="pjt:projectHierarchy1">
+					<set id="main" />
+					<field id="cm:name"  set="main"/>
+					<set id="mainInfo" template="/org/alfresco/components/form/2-column-set.ftl"  />
+					<field id="pjt:projectPriority" set="mainInfo" >
+						<control template="/org/alfresco/components/form/controls/selectone.ftl" >
+							<control-param name="options">1|priority.high,2|priority.medium,3|priority.low</control-param>
+							<control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
+					<field id="pjt:projectState" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
+					<field id="pjt:projectHierarchy1" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProjectLists/bcpg:entityLists/project_Hierarchy
 							</control-param>
@@ -431,18 +445,15 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="pjt:projectPriority" >
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">1|priority.high,2|priority.medium,3|priority.low</control-param>
-							<control-param name="insertBlank">true</control-param>
-						</control>
+					<set id="main2" />
+					<field id="pjt:projectStartDate" set="main2">
+						<control template="/org/alfresco/components/form/controls/daterange.ftl" />
 					</field>
-					<field id="pjt:projectState" >
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">Planned|data.taskstate.planned,InProgress|data.taskstate.inprogress,OnHold|data.taskstate.onhold,Cancelled|data.taskstate.cancelled,Completed|data.taskstate.completed
-							</control-param>
-							<control-param name="insertBlank">true</control-param>
-						</control>
+					<field id="pjt:projectCompletionDate" set="main2">
+						<control template="/org/alfresco/components/form/controls/daterange.ftl" />
+					</field>
+					<field id="pjt:projectDueDate" set="main2">
+						<control template="/org/alfresco/components/form/controls/daterange.ftl" />
 					</field>
 				</appearance>
 			</form>

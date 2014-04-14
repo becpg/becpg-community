@@ -57,6 +57,14 @@
 	margin-right: 0;
 }
 
+.project-list .project-list-bar div.filterform .yui-u {
+	text-align: left;
+}
+.project-list .project-list-bar div.filterform {
+    width: 60em;
+}
+
+
 /* Data Table */
 .project-list .projects table {
 	border: medium none;
