@@ -27,7 +27,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -41,9 +40,7 @@ import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorPlugin;
  * 
  */
 @Service
-public class ProductAttributeExtractorPlugin implements AttributeExtractorPlugin, InitializingBean {
-
-	private Matcher patternMatcher = null;
+public class ProductAttributeExtractorPlugin implements AttributeExtractorPlugin {
 
 	@Value("${beCPG.product.name.format}")
 	private String productNameFormat;
@@ -63,14 +60,9 @@ public class ProductAttributeExtractorPlugin implements AttributeExtractorPlugin
 	}
 
 	@Override
-	public void afterPropertiesSet() throws Exception {
-		patternMatcher = Pattern.compile("\\{([^}]+)\\}").matcher(productNameFormat);
-	}
-
-	@Override
 	public String extractPropName(QName type, NodeRef nodeRef) {
 		 
-		patternMatcher.reset();
+		 Matcher patternMatcher =  Pattern.compile("\\{([^}]+)\\}").matcher(productNameFormat);
 	     StringBuffer sb = new StringBuffer();
 	     while (patternMatcher.find())
 	     {
