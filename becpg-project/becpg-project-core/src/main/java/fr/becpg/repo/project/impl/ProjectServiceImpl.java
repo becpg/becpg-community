@@ -20,8 +20,6 @@ package fr.becpg.repo.project.impl;
 import java.util.Date;
 import java.util.List;
 
-import org.alfresco.email.server.EmailServerModel;
-import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;

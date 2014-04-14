@@ -12,7 +12,7 @@
 	<@script src="${url.context}/res/components/project/columnRenderers.js" group="project-list" />
 	<@script src="${url.context}/res/modules/entity-datagrid/entity-actions.js" group="project-list" />
 	<@script src="${url.context}/res/modules/custom-entity-datagrid/custom-entity-actions.js" group="project-list"></@script>
-	
+	<@script src="${url.context}/res/components/form/date-range.js" group="nc-list"/>
 	<@script src="${url.context}/res/modules/entity-datagrid/groupeddatatable.js" group="project-list" />
 	<@script src="${url.context}/res/modules/entity-datagrid/entity-datagrid.js" group="project-list" />
 	
