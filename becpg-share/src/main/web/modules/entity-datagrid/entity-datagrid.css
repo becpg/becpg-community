@@ -265,16 +265,19 @@ div.filterform {
 }
 
 
-.yui-ge .filterform .yui-g {
+.yui-ge .filterform .yui-g,
+.yui-gf .filterform .yui-g {
     width: inherit;
     float:none;
 }
 
-.yui-ge .filterform .yui-g div.first{
+.yui-ge .filterform .yui-g div.first,
+.yui-gf .filterform .yui-g div.first{
 	float: left;
 }
 
-.yui-ge .filterform .yui-g .yui-u {
+.yui-ge .filterform .yui-g .yui-u,
+.yui-gf .filterform .yui-g .yui-u {
 	width: 49.1% ;
 	float:right;
 }
