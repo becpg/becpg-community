@@ -112,10 +112,10 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 
 		// visit supplier
 		Set<QName> dataLists = new LinkedHashSet<QName>();
-		dataLists.add(ProjectModel.TYPE_ACTIVITY_LIST);
 		dataLists.add(ProjectModel.TYPE_TASK_LIST);
 		dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
 		dataLists.add(ProjectModel.TYPE_SCORE_LIST);
+		dataLists.add(ProjectModel.TYPE_ACTIVITY_LIST);
 		NodeRef entityTplNodeRef = entityTplService.createEntityTpl(entityTplsNodeRef, ProjectModel.TYPE_PROJECT, true, dataLists, null);
 
 		if (ruleService.getRules(entityTplNodeRef).isEmpty()) {
