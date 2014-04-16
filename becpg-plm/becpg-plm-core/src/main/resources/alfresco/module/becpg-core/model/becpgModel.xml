@@ -600,7 +600,6 @@
 					<constraints>
 						<constraint ref="bcpg:currency" />
 					</constraints>
-
 				</property>
 				<property name="bcpg:costFixed">
 					<type>d:boolean</type>
@@ -2142,7 +2141,7 @@
 
 		<aspect name="bcpg:manufacturingAspect">
 			<associations>
-				<association name="bcpg:subsidiary">
+				<association name="bcpg:subsidiaryRef">
 					<source>
 						<mandatory>false</mandatory>
 						<many>true</many>
@@ -2164,7 +2163,7 @@
 						<many>true</many>
 					</target>
 				</association>
-				<association name="bcpg:trademark">
+				<association name="bcpg:trademarkRef">
 					<source>
 						<mandatory>false</mandatory>
 						<many>true</many>
@@ -2227,7 +2226,7 @@
 				</property>
 			</properties>
 			<associations>
-				<association name="bcpg:storageConditions">
+				<association name="bcpg:storageConditionsRef">
 					<title>Conditions de conservation</title>
 					<source>
 						<mandatory>true</mandatory>
@@ -2239,7 +2238,7 @@
 						<many>false</many>
 					</target>
 				</association>
-				<association name="bcpg:precautionOfUse">
+				<association name="bcpg:precautionOfUseRef">
 					<title>Précautions d’emploi</title>
 					<source>
 						<mandatory>true</mandatory>
@@ -2288,7 +2287,7 @@
 
 		<aspect name="bcpg:productMicrobioCriteriaAspect">
 			<associations>
-				<association name="bcpg:productMicrobioCriteria">
+				<association name="bcpg:productMicrobioCriteriaRef">
 					<source>
 						<mandatory>false</mandatory>
 						<many>true</many>
