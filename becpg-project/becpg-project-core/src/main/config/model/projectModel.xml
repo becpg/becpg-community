@@ -291,6 +291,7 @@
 			<properties>
 				<property name="pjt:tlTaskName">
 					<type>d:text</type>
+					<mandatory>true</mandatory>
 				</property>
 				<property name="pjt:tlIsMilestone">
 					<type>d:boolean</type>
@@ -388,6 +389,7 @@
 			<properties>
 				<property name="pjt:dlDescription">
 					<type>d:text</type>
+					<mandatory>true</mandatory>
 				</property>
 				<property name="pjt:dlState">
 					<type>d:text</type>
