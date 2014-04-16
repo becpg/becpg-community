@@ -539,6 +539,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 		Set<QName> productTypes = new HashSet<QName>();
 		productTypes.add(PLMModel.TYPE_RAWMATERIAL);
 		productTypes.add(PLMModel.TYPE_SEMIFINISHEDPRODUCT);
+		productTypes.add(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT);
 		productTypes.add(PLMModel.TYPE_FINISHEDPRODUCT);
 		productTypes.add(PLMModel.TYPE_PACKAGINGMATERIAL);
 		productTypes.add(PLMModel.TYPE_PACKAGINGKIT);
@@ -596,6 +597,10 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 				dataLists.add(PLMModel.TYPE_INGLIST);
 				dataLists.add(PLMModel.TYPE_ORGANOLIST);
 				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
+				
+				wusedQName = PLMModel.TYPE_COMPOLIST;
+
+			} else if (productType.equals(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT)) {
 				
 				wusedQName = PLMModel.TYPE_COMPOLIST;
 
