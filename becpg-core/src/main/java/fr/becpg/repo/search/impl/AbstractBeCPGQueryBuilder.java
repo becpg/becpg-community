@@ -109,7 +109,7 @@ public abstract class AbstractBeCPGQueryBuilder {
 	}
 
 	protected String prohibided(String condType) {		
-		return (SearchService.LANGUAGE_LUCENE.equals(language) ? " -" : SearchService.LANGUAGE_FTS_ALFRESCO.equals(language) ? " AND NOT =" : " AND -") + condType;
+		return (SearchService.LANGUAGE_LUCENE.equals(language) ? " -" : /*SearchService.LANGUAGE_FTS_ALFRESCO.equals(language) ? " AND NOT =" :*/ " AND -") + condType;
 	}
 
 	protected String optional(String condType) {

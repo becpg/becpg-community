@@ -32,7 +32,7 @@
 	/**
 	 * Alfresco Slingshot aliases
 	 */
-	var $html = Alfresco.util.encodeHTML, $combine = Alfresco.util.combinePaths, $userProfile = Alfresco.util.userProfileLink,$links = Alfresco.util.activateLinks;
+	var $html = Alfresco.util.encodeHTML, $combine = Alfresco.util.combinePaths, $userProfile = Alfresco.util.userProfileLink, $links = Alfresco.util.activateLinks;
 	/**
 	 * BulkEdit constructor.
 	 * 
@@ -42,9 +42,10 @@
 	 * @constructor
 	 */
 	beCPG.component.BulkEdit = function(htmlId) {
-		beCPG.component.BulkEdit.superclass.constructor.call(this, "beCPG.component.BulkEdit", htmlId, [ "button",
-				"container", "datasource", "datatable", "calendar", "paginator", "animation", "history" ]);
+		beCPG.component.BulkEdit.superclass.constructor.call(this, "beCPG.component.BulkEdit", htmlId, [ "button", "container", "datasource",
+				"datatable", "calendar", "paginator", "animation", "history" ]);
 
+		this.rendererHelper = beCPG.module.EntityDataRendererHelper;
 		// Initialise prototype properties
 		this.datalistColumns = {};
 		this.dataTableColumn = [];
@@ -52,11 +53,6 @@
 		this.dataRequestFields = [];
 		this.dataResponseFields = [];
 		this.currentPage = 1;
-		this.totalRecords = 0;
-		this.currentFilter = {
-			filterId : "all",
-			filterData : ""
-		};
 		this.selectedItems = {};
 		this.afterBulkEditUpdate = [];
 
@@ -199,14 +195,6 @@
 							pageSize : 50,
 
 							/**
-							 * Initial filter to show on load.
-							 * 
-							 * @property initialFilter
-							 * @type object
-							 */
-							initialFilter : {},
-
-							/**
 							 * Delay before showing "loading" message for slow
 							 * data requests
 							 * 
@@ -245,12 +233,20 @@
 							 * Parent nodeRef
 							 */
 							nodeRef : null,
-							
+
 							/**
 							 * Display thumbnail column
 							 */
 							showThumbnails : false,
 						},
+
+						/**
+						 * Registered metadata renderer helper
+						 * 
+						 * @property rendererHelper
+						 * @type object
+						 */
+						rendererHelper : null,
 
 						/**
 						 * Current page being browsed.
@@ -270,14 +266,6 @@
 						 * @default 0
 						 */
 						totalRecords : null,
-
-						/**
-						 * Current filter to filter document list.
-						 * 
-						 * @property currentFilter
-						 * @type object
-						 */
-						currentFilter : null,
 
 						/**
 						 * Object literal of selected states for visible items
@@ -341,6 +329,21 @@
 						 */
 						widgets : {},
 
+						dataUrl : Alfresco.constants.PROXY_URI_RELATIVE + "becpg/entity/datalists/data/node",
+						// dataUrl : Alfresco.constants.PROXY_URI_RELATIVE+
+						// "becpg/bulkedit/data",
+
+						// Alfresco.constants.PROXY_URI_RELATIVE
+						// + "becpg/bulkedit/data
+
+						itemUrl : Alfresco.constants.PROXY_URI_RELATIVE + "becpg/entity/datalists/item/node/",
+
+						columnsUrl : Alfresco.constants.URL_SERVICECONTEXT + "components/entity-data-lists/config/columns",
+
+						saveFieldUrl : Alfresco.constants.PROXY_URI_RELATIVE + "/becpg/bulkedit/save",
+
+						// Alfresco.constants.URL_SERVICECONTEXT,"components/bulk-edit/config/columns
+
 						/**
 						 * DataTable Cell Renderers
 						 */
@@ -373,54 +376,52 @@
 									Dom.setStyle(elCell, "width", oColumn.width + "px");
 									Dom.setStyle(elCell.parentNode, "width", oColumn.width + "px");
 
-									elCell.innerHTML = '<input id="checkbox-' + oRecord.getId()
-											+ '" type="checkbox" name="fileChecked" value="' + oData + '"'
-											+ (scope.selectedItems[oData] ? ' checked="checked">' : '>');
+									elCell.innerHTML = '<input id="checkbox-' + oRecord.getId() + '" type="checkbox" name="fileChecked" value="'
+											+ oData + '"' + (scope.selectedItems[oData] ? ' checked="checked">' : '>');
 								}
 							};
 						},
 						/**
-                         * Returns selector custom datacell formatter
-                         * 
-                         * @method fnRenderCellSelected
-                         */
-                        fnRenderCellThumbnail : function BulkEdit_fnRenderCellThumbnail() {
-                 
-                            /**
-                             * Selector custom datacell formatter
-                             * 
-                             * @method renderCellSelected
-                             * @param elCell
-                             *            {object}
-                             * @param oRecord
-                             *            {object}
-                             * @param oColumn
-                             *            {object}
-                             * @param oData
-                             *            {object|string}
-                             */
-                            return function BulkEdit_function_renderCellThumbnail(elCell, oRecord, oColumn, oData) {
-                               var columnWidth = 100, record = oRecord.getData(), desc = "";
+						 * Returns selector custom datacell formatter
+						 * 
+						 * @method fnRenderCellSelected
+						 */
+						fnRenderCellThumbnail : function BulkEdit_fnRenderCellThumbnail() {
 
-                               record.jsNode = {};
-                               record.jsNode.type = record.nodeType;
+							/**
+							 * Selector custom datacell formatter
+							 * 
+							 * @method renderCellSelected
+							 * @param elCell
+							 *            {object}
+							 * @param oRecord
+							 *            {object}
+							 * @param oColumn
+							 *            {object}
+							 * @param oData
+							 *            {object|string}
+							 */
+							return function BulkEdit_function_renderCellThumbnail(elCell, oRecord, oColumn, oData) {
+								var columnWidth = 100, record = oRecord.getData(), desc = "";
 
-                               var thumbName = record.itemData["prop_cm_name"].value, nodeRef = new Alfresco.util.NodeRef(
-                                        record.nodeRef), extn = thumbName.substring(thumbName.lastIndexOf("."));
+								record.jsNode = {};
+								record.jsNode.type = record.nodeType;
 
-                                desc = '<span class="thumbnail"><img src="' + Alfresco.constants.PROXY_URI + 'api/node/' + nodeRef.uri + '/content/thumbnails/doclib?c=queue&ph=true" alt="' + extn + '" title="' + $html(thumbName) + '" /></span>';
-                               
-                               
+								var thumbName = record.itemData["prop_cm_name"].value, nodeRef = new Alfresco.util.NodeRef(record.nodeRef), extn = thumbName
+										.substring(thumbName.lastIndexOf("."));
 
-                               oColumn.width = columnWidth;
+								desc = '<span class="thumbnail"><img src="' + Alfresco.constants.PROXY_URI + 'api/node/' + nodeRef.uri
+										+ '/content/thumbnails/doclib?c=queue&ph=true" alt="' + extn + '" title="' + $html(thumbName) + '" /></span>';
 
-                               Dom.setStyle(elCell, "width", oColumn.width + "px");
-                               Dom.setStyle(elCell.parentNode, "width", oColumn.width + "px");
+								oColumn.width = columnWidth;
 
-                               elCell.innerHTML = desc;
-                            };
-                        },
-						
+								Dom.setStyle(elCell, "width", oColumn.width + "px");
+								Dom.setStyle(elCell.parentNode, "width", oColumn.width + "px");
+
+								elCell.innerHTML = desc;
+							};
+						},
+
 						/**
 						 * Returns actions custom datacell formatter
 						 * 
@@ -449,12 +450,9 @@
 								if (editPermission) {
 									Dom.setStyle(elCell, "width", oColumn.width + "px");
 									Dom.setStyle(elCell.parentNode, "width", oColumn.width + "px");
-									elCell.innerHTML = '<div id="'
-											+ scope.id
-											+ '-actions-'
-											+ oRecord.getId()
-											+ '" class="action-set simple" >'
-											+ '<div class="onActionEdit"><a title="'+scope.msg("action.modify")+'"  class="action-link" href="" rel="edit"><span>'+scope.msg("action.modify")+'</span></a></div>'
+									elCell.innerHTML = '<div id="' + scope.id + '-actions-' + oRecord.getId() + '" class="action-set simple" >'
+											+ '<div class="onActionEdit"><a title="' + scope.msg("action.modify")
+											+ '"  class="action-link" href="" rel="edit"><span>' + scope.msg("action.modify") + '</span></a></div>'
 											+ '</div>';
 								}
 							};
@@ -481,560 +479,6 @@
 						},
 
 						/**
-						 * Return data type-specific formatter
-						 * 
-						 * @method getCellFormatter
-						 * @return {function} Function to render read-only value
-						 */
-						getCellFormatter : function BulkEdit_getCellFormatter(datalistColumn) {
-							var scope = this;
-
-							/**
-							 * Data Type custom formatter
-							 * 
-							 * @method renderCellDataType
-							 * @param elCell
-							 *            {object}
-							 * @param oRecord
-							 *            {object}
-							 * @param oColumn
-							 *            {object}
-							 * @param oData
-							 *            {object|string}
-							 */
-							return function BulkEdit_renderCellDataType(elCell, oRecord, oColumn, oData) {
-								var html = "", booleanValueTrue = scope.msg("data.boolean.true"), booleanValueFalse = scope
-										.msg("data.boolean.false");
-
-								// Populate potentially missing parameters
-								if (!oRecord) {
-									oRecord = this.getRecord(elCell);
-								}
-								if (!oColumn) {
-									oColumn = this.getColumn(elCell.parentNode.cellIndex);
-								}
-
-								if (oRecord && oColumn) {
-									if (!oData) {
-										oData = oRecord.getData("itemData")[oColumn.field];
-									}
-
-									if (oData) {
-
-										oData = YAHOO.lang.isArray(oData) ? oData : [ oData ];
-										for ( var i = 0, ii = oData.length, data; i < ii; i++) {
-											data = oData[i];
-
-											var dataType = datalistColumn.dataType, url = "";
-											if (dataType == null) {
-												dataType = datalistColumn.endpointType;
-											}
-
-											switch (dataType.toLowerCase()) {
-											case "cm:person":
-												html += '<span class="person">'
-														+ $userProfile(data.metadata, data.displayValue) + '</span>';
-												break;
-											case "category":
-												if (datalistColumn.name == "cm:taggable") {
-													html += '<img width="16" title="category" alt="" src="/share/res/components/images/filetypes/generic-tag-16.png">&nbsp;'
-															+ oRecord.getData("tags");
-												} else {
-													html += $html(data.displayValue);
-												}
-												break;
-											case "datetime":
-												html += Alfresco.util.formatDate(Alfresco.util.fromISO8601(data.value),
-														scope.msg("date-format.default"));
-												break;
-
-											case "date":
-												html += Alfresco.util.formatDate(Alfresco.util.fromISO8601(data.value),
-														scope.msg("date-format.defaultDateOnly"));
-												break;
-											case "bcpg:product":
-												url = scope._buildCellUrl(data);
-												if (datalistColumn.name == "bcpg:compoListProduct") {
-													var padding = 10 + oRecord.getData("itemData")["prop_bcpg_depthLevel"].value * 10;
-													html += '<span class="'
-															+ data.metadata
-															+ '" style="padding-left:'
-															+ padding
-															+ 'px;"><a href="'
-															+ Alfresco.util.siteURL('entity-details?nodeRef='
-																	+ data.value) + '">' + $html(data.displayValue)
-															+ '</a></span>';
-												} else if (datalistColumn.name == "bcpg:packagingListProduct") {
-													html += '<span class="' + data.metadata + '"><a href="' + url
-															+ '">' + $html(data.displayValue) + '</a></span>';
-												} else {
-													html += '<a href="' + url + '">' + $html(data.displayValue)
-															+ '</a>';
-												}
-												break;
-											case "boolean":
-												// color in red present
-												// allergens
-												if ((datalistColumn.name == "bcpg:allergenListVoluntary" || datalistColumn.name == "bcpg:allergenListInVoluntary")
-														&& data.displayValue == true) {
-													html += '<span class="presentAllergen">'
-															+ $html(data.displayValue == true ? booleanValueTrue
-																	: booleanValueFalse) + '</span>';
-												} else {
-													html += $html(data.displayValue == true
-															|| data.displayValue == "true" ? booleanValueTrue
-															: booleanValueFalse);
-												}
-												break;
-											case "cm:authoritycontainer":
-												html += '<span class="userGroup">' + $html(data.displayValue)
-														+ '</span>';
-												break;
-											case "subtype":
-												url = scope._buildCellUrl(data);
-												html += '<a href="' + url + '">';
-												html += '<img src="'
-														+ Alfresco.constants.URL_RESCONTEXT
-														+ 'components/images/filetypes/'
-														+ Alfresco.util
-																.getFileIcon(data.displayValue,
-																		(data.metadata == "container" ? 'cm:folder'
-																				: null), 16) + '" width="16" alt="'
-														+ $html(data.displayValue) + '" title="'
-														+ $html(data.displayValue) + '" />';
-												html += ' ' + $html(data.displayValue) + '</a>';
-												break;
-
-											default:/**
-													 * Actions custom datacell
-													 * formatter
-													 * 
-													 * @method renderCellActions
-													 * @param elCell
-													 *            {object}
-													 * @param oRecord
-													 *            {object}
-													 * @param oColumn
-													 *            {object}
-													 * @param oData
-													 *            {object|string}
-													 */
-												if (datalistColumn.name == "bcpg:rclReqType"
-														|| datalistColumn.name == "bcpg:filReqType") {
-													if (data.displayValue == reqTypeForbidden) {
-														html += '<span class="reqTypeForbidden">'
-																+ $links($html(data.displayValue)) + '</span>';
-													} else if (data.displayValue == reqTypeTolerated) {
-														html += '<span class="reqTypeTolerated">'
-																+ $links($html(data.displayValue)) + '</span>';
-													} else if (data.displayValue == reqTypeInfo) {
-														html += '<span class="reqTypeInfo">' + $links($html(data.displayValue))
-																+ '</span>';
-													} else {
-														html += $links($html(data.displayValue));
-													}
-												} else if (datalistColumn.name == "qa:slControlPoint") {
-													html += '<span class="sample"><a href="'
-															+ Alfresco.util.siteURL('entity-details?nodeRef='
-																	+ data.value) + '">' + $html(data.displayValue)
-															+ '</a></span>';
-												} else if (datalistColumn.name == "qa:clCharacts") {
-													html += '<span class="control">' +$links($html(data.displayValue))
-															+ '</span>';
-												} else if (datalistColumn.name == "bcpg:code"
-														|| datalistColumn.name == "cm:name") {
-													html += '<a href="'
-															+ Alfresco.util.siteURL('entity-details?nodeRef='
-																	+ oRecord.getData("nodeRef")) + '">'
-															+ $html(data.displayValue) + '</a>';
-												} else if(datalistColumn.name == "bcpg:productState" && data.value!=null){
-													html += $links($html(scope.msg("status.entity-"+data.value.toLowerCase())));
-												}
-
-												else {
-													html += $links($html(data.displayValue));
-												}
-
-												break;
-											}
-											if (i < ii - 1) {
-												html += "<br />";
-											}
-										}
-									}
-								}
-
-								elCell.innerHTML = html;
-							};
-						},
-
-						_buildCellUrl : function EntityDataGrid__buildCellUrl(data) {
-
-							var containerType = "document", url = null;
-							if (data.metadata != null && data.metadata.length) {
-								containerType = (data.metadata == "container" ? 'folder' : 'document');
-							}
-
-							if (data.siteId) {
-								url = Alfresco.constants.URL_PAGECONTEXT + "site/" + data.siteId + "/" + containerType
-										+ '-details?nodeRef=' + data.value;
-							} else {
-								url = Alfresco.constants.URL_PAGECONTEXT + containerType + '-details?nodeRef='
-										+ data.value;
-							}
-							return url;
-
-						},
-
-						/**
-						 * Return data type-specific formatter
-						 * 
-						 * @method getCellFormatter
-						 * @return {function} Function to render read-only value
-						 */
-						getCellEditor : function BulkEdit_getCellEditor(column) {
-							var editor = null, scope = this, regexp = null;
-
-							if ("prop_cm_name" == this._buildFormsName(column)
-									|| "prop_bcpg_code" == this._buildFormsName(column)) {
-								return null;
-							}
-
-							// Test permission
-							if ((column.protectedField != null && column.protectedField)) {
-								return null;
-							}
-
-							var repeating = column.repeating ? true : false;
-
-							if (column.constraints != null) {
-								for ( var i in column.constraints) {
-
-									switch (column.constraints[i].type) {
-									case "REGEXP":
-										regexp = column.constraints[i].parameters.expressions;
-										break;
-									case "LIST":
-										var dropdownOptions = [];
-										for(var j in column.constraints[i].parameters.allowedValues){
-											var val = column.constraints[i].parameters.allowedValues[j].split("|");
-											if(val.length>1){
-											  dropdownOptions.push({label:val[1],value:val[0]});
-											} else {
-											  dropdownOptions.push(val[0]);
-											}
-										 }
-										if (column.repeating) {
-											editor = new YAHOO.widget.CheckboxCellEditor({
-												checkboxOptions : dropdownOptions
-											});
-										} else {
-											editor = new YAHOO.widget.DropdownCellEditor({
-												dropdownOptions : dropdownOptions
-											});
-										}
-										break;
-									}
-								}
-
-							}
-
-							var dataType = column.dataType;
-							if (dataType == null) {
-								dataType = column.endpointType;
-							}
-
-							if (editor == null) {
-
-								switch (dataType.toLowerCase()) {
-								case "datetime":
-								case "date":
-									editor = new YAHOO.widget.DateCellEditor();
-									break;
-								case "boolean":
-									editor = new YAHOO.widget.RadioCellEditor({
-										radioOptions : [ {
-											label : scope.msg("data.boolean.true"),
-											value : "true"
-										}, {
-											label : scope.msg("data.boolean.false"),
-											value : "false"
-										} ]
-									});
-									break;
-								case "float":
-								case "int":
-								case "long":
-								case "double":
-									editor = new YAHOO.widget.TextboxCellEditor({
-										validator : YAHOO.widget.DataTable.validateNumber
-									});
-									break;
-								case "text":
-								case "mltext":
-									if (regexp == null) {
-										editor = new YAHOO.widget.TextareaCellEditor();
-									} else {
-										editor = new YAHOO.widget.TextboxCellEditor({
-											validator : function(oData) {
-												if (oData.match(regexp)) {
-													return oData;
-												}
-												return undefined;
-
-											}
-										});
-									}
-									break;
-								default:
-									return null;
-								}
-
-							}
-							// Overide attach method
-							/**
-							 * Attach CellEditor for a new interaction.
-							 * 
-							 * @method attach
-							 * @param oDataTable
-							 *            {YAHOO.widget.DataTable} Associated
-							 *            DataTable instance.
-							 * @param elCell
-							 *            {HTMLElement} Cell to edit.
-							 */
-							editor.attach = function(oDataTable, elCell) {
-								var oColumn, oRecord, oData = null;
-
-								// Validate
-								if (oDataTable instanceof YAHOO.widget.DataTable) {
-
-									editor._oDataTable = oDataTable;
-
-									// Validate cell
-									elCell = oDataTable.getTdEl(elCell);
-									if (elCell) {
-										editor._elTd = elCell;
-
-										// Validate Column
-										oColumn = oDataTable.getColumn(elCell);
-										if (oColumn) {
-											editor._oColumn = oColumn;
-
-											// Validate Record
-											oRecord = oDataTable.getRecord(elCell);
-											editPermission = oRecord.getData().permissions.userAccess.edit;
-
-											if (oRecord && editPermission) {
-												editor._oRecord = oRecord;
-												if (oData == null) {
-													oData = oRecord.getData("itemData")[editor.getColumn().getField()];
-												}
-												var value = undefined;
-
-												if (oRecord.getData(this.getColumn().getField()) != null) {
-													oData = oRecord.getData(this.getColumn().getField());
-												}
-												oData = YAHOO.lang.isArray(oData) ? oData : [ oData ];
-												if (oData[0]) {
-													switch (dataType.toLowerCase()) {
-													case "datetime":
-														value = Alfresco.util.fromISO8601(oData[0].value);
-														break;
-													case "date":
-														value = Alfresco.util.fromISO8601(oData[0].value);
-														break;
-													case "boolean":
-														value = "" + oData[0].displayValue;
-														break;
-													default:
-														value = oData[0].displayValue;
-														break;
-													}
-													if (repeating) {
-														value = value.split(",");
-													}
-												}
-												editor.value = (value !== undefined) ? value : editor.defaultValue;
-												return true;
-											}
-										}
-									}
-								}
-							};
-
-							/**
-							 * Saves value of CellEditor and hides UI.
-							 * 
-							 * @method save
-							 */
-							editor.save = function() {
-								// Get new value
-								var inputValue = this.getInputValue(), validValue = inputValue, oSelf = this, tmp = "";
-
-								// Validate new value
-								if (this.validator) {
-									validValue = this.validator.call(this.getDataTable(), inputValue, this.value, this);
-									if (validValue === undefined) {
-										if (this.resetInvalidData) {
-											this.resetForm();
-										}
-										this.fireEvent("invalidDataEvent", {
-											editor : this,
-											oldData : this.value,
-											newData : inputValue
-										});
-										YAHOO.log("Could not save Cell Editor input due to invalid data "
-												+ lang.dump(inputValue), "warn", this.toString());
-										return;
-									}
-								}
-
-								if (oSelf instanceof YAHOO.widget.CheckboxCellEditor) {
-									for (var i in validValue) {
-										if (tmp.length > 0) {
-											tmp += ",";
-										}
-										tmp += validValue[i];
-									}
-									validValue = tmp;
-								}
-
-								var finishSave = function(bSuccess, oNewValue) {
-									var oOrigValue = oSelf.value, oDisplayValue;
-									if (bSuccess) {
-										// Update new value
-										oDisplayValue = oNewValue;
-										oSelf.value = oNewValue;
-
-										if (oSelf instanceof YAHOO.widget.DateCellEditor) {
-											oDisplayValue = Alfresco.util.formatDate(oNewValue, scope
-													.msg("date-format.defaultDateOnly"));
-											oNewValue = Alfresco.util.formatDate(oNewValue, "yyyy-mm-dd'T'HH:MM:ss");
-										}
-
-										oSelf.getDataTable().updateCell(oSelf.getRecord(), oSelf.getColumn(), {
-											value : oNewValue,
-											displayValue : oDisplayValue
-										});
-
-										// Hide CellEditor
-										oSelf.hide();
-
-										oSelf.fireEvent("saveEvent", {
-											editor : oSelf,
-											oldData : oOrigValue,
-											newData : oSelf.value
-										});
-									} else {
-										oSelf.resetForm();
-										oSelf.fireEvent("revertEvent", {
-											editor : oSelf,
-											oldData : oOrigValue,
-											newData : oNewValue
-										});
-									}
-									oSelf.unblock();
-								};
-
-								this.block();
-
-								var record = this.getRecord(), column = this.getColumn();
-
-								Alfresco.util.Ajax.jsonPost({
-									url : Alfresco.constants.PROXY_URI_RELATIVE + "becpg/bulkedit/save",
-									dataObj : {
-										value : validValue,
-										field : column.getField(),
-										isMultiple : repeating,
-										nodeRef : record.getData("nodeRef")
-									},
-									successCallback : {
-										fn : function(response) {
-											finishSave(true, validValue);
-										},
-										scope : this
-									},
-									failureCallback : {
-										fn : function(response) {
-											Alfresco.util.PopupManager.displayMessage({
-												text : scope.msg("message.details.failure")
-											});
-											finishSave(false);
-										},
-										scope : this
-									}
-								});
-
-							};
-							/**
-							 * Hides CellEditor UI at end of interaction.
-							 * 
-							 * @method _hide
-							 */
-							editor.hide = function() {
-								this.getContainerEl().style.display = "none";
-								if (this._elIFrame) {
-									this._elIFrame.style.display = "none";
-								}
-								this.isActive = false;
-								this.getDataTable()._oCellEditor = null;
-							};
-
-							editor.LABEL_CANCEL = this.msg("button.cancel");
-							editor.LABEL_SAVE = this.msg("button.save");
-							
-							return editor;
-						},
-
-						/**
-						 * Return data type-specific sorter
-						 * 
-						 * @method getSortFunction
-						 * @return {function} Function to sort column by
-						 */
-						getSortFunction : function BulkEdit_getSortFunction() {
-							/**
-							 * Data Type custom sorter
-							 * 
-							 * @method sortFunction
-							 * @param a
-							 *            {object} Sort record a
-							 * @param b
-							 *            {object} Sort record b
-							 * @param desc
-							 *            {boolean} Ascending/descending flag
-							 * @param field
-							 *            {String} Field to sort by
-							 */
-							return function BulkEdit_sortFunction(a, b, desc, field) {
-								var fieldA = a.getData().itemData[field], fieldB = b.getData().itemData[field];
-
-								if (YAHOO.lang.isArray(fieldA)) {
-									fieldA = fieldA[0];
-								}
-								if (YAHOO.lang.isArray(fieldB)) {
-									fieldB = fieldB[0];
-								}
-
-								// Deal with empty values
-								if (!YAHOO.lang.isValue(fieldA)) {
-									return (!YAHOO.lang.isValue(fieldB)) ? 0 : 1;
-								} else if (!YAHOO.lang.isValue(fieldB)) {
-									return -1;
-								}
-
-								var valA = fieldA.value, valB = fieldB.value;
-
-								if (valA.indexOf && valA.indexOf("workspace://SpacesStore") == 0) {
-									valA = fieldA.displayValue;
-									valB = fieldB.displayValue;
-								}
-
-								return YAHOO.util.Sort.compare(valA, valB, desc);
-							};
-						},
-
-						/**
 						 * Fired by YUI when parent element is available for
 						 * scripting
 						 * 
@@ -1045,12 +489,11 @@
 
 							// Select type widget
 
-							this.widgets.typeSelect = Alfresco.util.createYUIButton(this, "itemTypeSelect-button",
-									this.onTypeSelect, {
-										type : "menu",
-										menu : "itemTypeSelect-menu",
-										lazyloadmenu : false
-									});
+							this.widgets.typeSelect = Alfresco.util.createYUIButton(this, "itemTypeSelect-button", this.onTypeSelect, {
+								type : "menu",
+								menu : "itemTypeSelect-menu",
+								lazyloadmenu : false
+							});
 
 							this.widgets.typeSelect.getMenu().subscribe("click", function(p_sType, p_aArgs) {
 								var menuItem = p_aArgs[1];
@@ -1060,12 +503,11 @@
 							});
 
 							// Item Select menu button
-							this.widgets.itemSelect = Alfresco.util.createYUIButton(this, "itemSelect-button",
-									this.onItemSelect, {
-										type : "menu",
-										menu : "itemSelect-menu",
-										disabled : true
-									});
+							this.widgets.itemSelect = Alfresco.util.createYUIButton(this, "itemSelect-button", this.onItemSelect, {
+								type : "menu",
+								menu : "itemSelect-menu",
+								disabled : true
+							});
 
 							// select first
 							var typeSelected = this.widgets.typeSelect.getMenu().getItem(0);
@@ -1083,8 +525,7 @@
 								if (owner !== null) {
 									if (typeof me[owner.className] == "function") {
 										args[1].stop = true;
-										var asset = me.widgets.dataTable.getRecord(args[1].target.offsetParent)
-												.getData();
+										var asset = me.widgets.dataTable.getRecord(args[1].target.offsetParent).getData();
 										me[owner.className].call(me, asset, owner);
 									}
 								}
@@ -1092,28 +533,24 @@
 							};
 							Bubbling.addDefaultAction("action-link", fnActionHandler);
 
-							this.widgets.showButton = Alfresco.util.createYUIButton(this, "show-button",
-									this.onBulkEditShow, {
-										disabled : false
-									});
+							this.widgets.showButton = Alfresco.util.createYUIButton(this, "show-button", this.onBulkEditShow, {
+								disabled : false
+							});
 
-							this.widgets.editSelected = Alfresco.util.createYUIButton(this, "edit-selected",
-									this.onEditSelected, {
-										disabled : true
-									});
+							this.widgets.editSelected = Alfresco.util.createYUIButton(this, "edit-selected", this.onEditSelected, {
+								disabled : true
+							});
 
-							this.widgets.exportCSVButton = Alfresco.util.createYUIButton(this, "export-csv",
-									this.onExportCSV, {
-										disabled : true,
-										value : "export"
-									});
-							
-							this.widgets.showThumbnailsButton = Alfresco.util.createYUIButton(this, "show-thumbnails",
-                                  this.onShowThumbnails, {
-   							         type:"checkbox",  
-   							         value:this.options.showThumbnails,  
-   							         checked:this.options.showThumbnails 
-                                  });
+							this.widgets.exportCSVButton = Alfresco.util.createYUIButton(this, "export-csv", this.onExportCSV, {
+								disabled : true,
+								value : "export"
+							});
+
+							this.widgets.showThumbnailsButton = Alfresco.util.createYUIButton(this, "show-thumbnails", this.onShowThumbnails, {
+								type : "checkbox",
+								value : this.options.showThumbnails,
+								checked : this.options.showThumbnails
+							});
 
 							// Assume no list chosen for now
 							Dom.removeClass(this.id + "-selectTypeMessage", "hidden");
@@ -1168,10 +605,8 @@
 								// Query the visible columns for this list's
 								// item type
 								Alfresco.util.Ajax.jsonGet({
-									url : $combine(Alfresco.constants.URL_SERVICECONTEXT,
-											"components/bulk-edit/config/columns?itemType="
-													+ encodeURIComponent(this.options.itemType) + "&formId="
-													+ encodeURIComponent(this.options.formId)),
+									url : $combine(this.columnsUrl + "?mode=bulk-edit&itemType=" + encodeURIComponent(this.options.itemType)
+											+ "&formId=" + encodeURIComponent(this.options.formId)),
 									successCallback : {
 										fn : this.onDatalistColumns,
 										scope : this
@@ -1197,70 +632,32 @@
 						 *            {Object} Ajax data structure
 						 */
 						onDatalistColumns : function BulkEdit_onDatalistColumns(response) {
-							this.datalistColumns = response.json.data.definition.fields;
+							this.datalistColumns = response.json.columns;
 							// Set-up the bulk edit props picker
 							this._setupPropsPicker();
 							// Hide "no list" message
 							Dom.addClass(this.id + "-selectTypeMessage", "hidden");
 						},
 
-						/**
-						 * History Manager set-up and event registration
-						 * 
-						 * @method _setupHistoryManagers
-						 */
-						_setupHistoryManagers : function BulkEdit__setupHistoryManagers() {
+					
 
-							/**
-							 * YUI History - page
-							 */
-							var me = this;
-
-							if (me.options.usePagination) {
-
-								me.currentPage = parseInt(me.options.initialPage, 10);
-
-								// YUI Paginator definition
-								this.widgets.paginator = new YAHOO.widget.Paginator({
-									containers : [ me.id + "-paginatorTop", me.id + "-paginatorBottom" ],
-									rowsPerPage : me.options.pageSize,
-									initialPage : me.currentPage,
-									template : me.msg("pagination.template"),
-									pageReportTemplate : me.msg("pagination.template.page-report"),
-									previousPageLinkLabel : me.msg("pagination.previousPageLinkLabel"),
-									nextPageLinkLabel : me.msg("pagination.nextPageLinkLabel")
-								});
-
-								// Display the bottom paginator bar
-								Dom.setStyle(me.id + "-bulk-editBarBottom", "display", "block");
-							}
-
-						},
-
-						_buildDataParamsUrl : function BulkEdit__buildDataParamsUrl() {
+						_buildDataParamsUrl : function BulkEdit__buildDataParamsUrl(pageSize) {
 
 							var site = this.options.initialSearchAllSites ? "" : this.options.siteId;
-							var params = YAHOO.lang
-									.substitute(
-											"site={site}&term={term}&tag={tag}&sort={sort}&query={query}&repo={repo}&nodeRef={nodeRef}&itemType={itemType}",
-											{
-												site : encodeURIComponent(site),
-												repo : (this.options.initialSearchRepository || this.options.searchQuery.length !== 0)
-														.toString(), // always
-																		// search
-																		// entire
-																		// repo
-																		// with
-																		// advanced
-																		// query
-												term : encodeURIComponent(this.options.initialSearchTerm),
-												tag : encodeURIComponent(this.options.initialSearchTag),
-												sort : encodeURIComponent(this.options.initialSort),
-												query : encodeURIComponent(this.options.searchQuery),
-												nodeRef : encodeURIComponent(this.options.nodeRef),
-												itemType : encodeURIComponent(this.options.itemType)
+							var params = YAHOO.lang.substitute("dataListName=bulk-edit&site={site}&repo={repo}&itemType={itemType}&sort={sort}&pageSize={pageSize}", {
+								site : encodeURIComponent(site),
+								repo : (this.options.initialSearchRepository || this.options.searchQuery.length !== 0).toString(), // always
+								// search
+								// entire
+								// repo
+								// with
+								// advanced
+								// query
 
-											});
+								sort : encodeURIComponent(this.options.initialSort),
+								itemType : encodeURIComponent(this.options.itemType),
+								pageSize : pageSize? pageSize : this.options.pageSize
+							});
 
 							return params;
 						},
@@ -1274,7 +671,7 @@
 						 */
 						_setupDataSource : function BulkEdit__setupDataSource() {
 
-							for ( var i = 0, ii = this.datalistColumns.length; i < ii; i++) {
+							for (var i = 0, ii = this.datalistColumns.length; i < ii; i++) {
 								var column = this.datalistColumns[i], columnName = column.name.replace(":", "_"), fieldLookup = this
 										._buildFormsName(column);
 
@@ -1288,15 +685,15 @@
 							}
 
 							// DataSource definition
-							this.widgets.dataSource = new YAHOO.util.DataSource(Alfresco.constants.PROXY_URI_RELATIVE
-									+ "becpg/bulkedit/data?" + this._buildDataParamsUrl(), {
+							this.widgets.dataSource = new YAHOO.util.DataSource(this.dataUrl + "?" + this._buildDataParamsUrl(), {
 								connMethodPost : true,
 								responseType : YAHOO.util.DataSource.TYPE_JSON,
 								responseSchema : {
 									resultsList : "items",
 									metaFields : {
-										paginationRecordOffset : "startIndex",
-										totalRecords : "totalRecords"
+										startIndex : "startIndex",
+										totalRecords : "totalRecords",
+										queryExecutionId : "queryExecutionId"
 									}
 								}
 							});
@@ -1328,12 +725,11 @@
 						 * @protected
 						 */
 						_setupPropsPicker : function BulkEdit__setupDataTable(columns) {
-							var containerEl = Dom.get(this.id + "-itemProps-container"),
-							     html = "";
+							var containerEl = Dom.get(this.id + "-itemProps-container"), html = "";
 							if (containerEl != null) {
 								var inc = 0;
 								var colCount = 0;
-								for ( var i = 0, ii = this.datalistColumns.length; i < ii; i++) {
+								for (var i = 0, ii = this.datalistColumns.length; i < ii; i++) {
 
 									var column = this.datalistColumns[i];
 
@@ -1348,16 +744,14 @@
 										colCount = Math.floor(inc / 5);
 										className += "column-" + colCount;
 
-										html += '<li class="' + className
-												+ '"><input id="propSelected-' + i
-												+ '" type="checkbox" name="propChecked" value="' + propName
-												+ '" /><label for="propSelected-' + i + '" >' + propLabel
-												+ '</label></li>';
+										html += '<li class="' + className + '"><input id="propSelected-' + i
+												+ '" type="checkbox" name="propChecked" value="' + propName + '" /><label for="propSelected-' + i
+												+ '" >' + propLabel + '</label></li>';
 										inc++;
 									}
 								}
-								 
-								 containerEl.innerHTML = "<ul style=\"width:"+((colCount+1)*20)+"em;\">"+html+"</ul>";
+
+								containerEl.innerHTML = "<ul style=\"width:" + ((colCount + 1) * 20) + "em;\">" + html + "</ul>";
 
 								this.selectedFields = Selector.query('input[type="checkbox"]', containerEl);
 							}
@@ -1379,20 +773,21 @@
 								formatter : this.fnRenderCellSelected(),
 								width : 16
 							} ];
-							
-							if(this.options.showThumbnails){
-							   columnDefinitions.push({
-							         key : "thumbnail",
-		                             label : "",
-		                             sortable : false,
-		                             formatter : this.fnRenderCellThumbnail(),
-		                             width : 100  } 
-							   
-							   );
+
+							if (this.options.showThumbnails) {
+								columnDefinitions.push({
+									key : "thumbnail",
+									label : "",
+									sortable : false,
+									formatter : this.fnRenderCellThumbnail(),
+									width : 100
+								}
+
+								);
 							}
 
 							var column;
-							for ( var i = 0, ii = this.dataTableColumn.length; i < ii; i++) {
+							for (var i = 0, ii = this.dataTableColumn.length; i < ii; i++) {
 								column = this.dataTableColumn[i];
 								if (this._isSelectedProp(this._buildFormsName(column))) {
 
@@ -1403,11 +798,11 @@
 										sortable : true,
 										sortOptions : {
 											field : this.dataResponseFields[i],
-											sortFunction : this.getSortFunction()
+											sortFunction : this.rendererHelper.getSortFunction()
 										},
 
-										formatter : this.getCellFormatter(column),
-										editor : this.getCellEditor(column)
+										formatter : this.rendererHelper.getCellFormatter(this),
+										editor : this.rendererHelper.getCellEditor(this, column, this.saveFieldUrl)
 									});
 								}
 							}
@@ -1421,12 +816,12 @@
 								} else if (keyB == "nodeRef") {
 									return 1;
 								}
-								
+
 								if (keyA == "thumbnail") {
-                                   return -1;
-                                } else if (keyB == "thumbnail") {
-                                   return 1;
-                                }
+									return -1;
+								} else if (keyB == "thumbnail") {
+									return 1;
+								}
 
 								if (keyA == "prop_cm_name" && keyB != "prop_bcpg_code") {
 									return -1;
@@ -1454,31 +849,30 @@
 							// DataTable definition
 							var me = this;
 
-							this.widgets.dataTable = new YAHOO.widget.DataTable(this.id + "-grid", columnDefinitions,
-									this.widgets.dataSource, {
-										renderLoopSize : this.options.usePagination ? 16 : 32,
-										initialLoad : false,
-										dynamicData : false,
-										"MSG_EMPTY" : this.msg("message.empty"),
-										"MSG_ERROR" : this.msg("message.error"),
-										paginator : this.widgets.paginator
-									});
+							this.widgets.dataTable = new YAHOO.widget.DataTable(this.id + "-grid", columnDefinitions, this.widgets.dataSource, {
+								renderLoopSize : this.options.usePagination ? 16 : 32,
+								initialLoad : false,
+								dynamicData : false,
+								"MSG_EMPTY" : this.msg("message.empty"),
+								"MSG_ERROR" : this.msg("message.error"),
+								paginator : null,
+								
+							});
 
-							// Update totalRecords with value from server
-							this.widgets.dataTable.handleDataReturnPayload = function BulkEdit_handleDataReturnPayload(
-									oRequest, oResponse, oPayload) {
-								me.totalRecords = oResponse.meta.totalRecords;
-								oResponse.meta.pagination = {
-									rowsPerPage : me.options.pageSize,
-									recordOffset : (me.currentPage - 1) * me.options.pageSize
-								};
+							this.widgets.dataTable.handleDataReturnPayload = function EntityDataGrid_handleDataReturnPayload(oRequest, oResponse,
+									oPayload) {
+								if (me.widgets.paginator) {
+									me.widgets.paginator.set('totalRecords', oResponse.meta.totalRecords);
+									me.widgets.paginator.setPage(oResponse.meta.startIndex, true);
+								}
+								me.queryExecutionId = oResponse.meta.queryExecutionId;
 								return oResponse.meta;
 							};
 
+
 							// Override abstract function within DataTable to
 							// set custom error message
-							this.widgets.dataTable.doBeforeLoadData = function BulkEdit_doBeforeLoadData(sRequest,
-									oResponse, oPayload) {
+							this.widgets.dataTable.doBeforeLoadData = function BulkEdit_doBeforeLoadData(sRequest, oResponse, oPayload) {
 								if (oResponse.error) {
 									try {
 										var response = YAHOO.lang.JSON.parse(oResponse.responseText);
@@ -1503,8 +897,7 @@
 
 							// Override default function so the "Loading..."
 							// message is suppressed
-							this.widgets.dataTable.doBeforeSortColumn = function BulkEdit_doBeforeSortColumn(oColumn,
-									sSortDir) {
+							this.widgets.dataTable.doBeforeSortColumn = function BulkEdit_doBeforeSortColumn(oColumn, sSortDir) {
 								return true;
 							};
 
@@ -1521,14 +914,47 @@
 									this.highlightCell(elCell);
 								}
 							});
-							this.widgets.dataTable.subscribe("cellMouseoutEvent",
-									this.widgets.dataTable.onEventUnhighlightCell);
-							this.widgets.dataTable.subscribe("cellClickEvent",
-									this.widgets.dataTable.onEventShowCellEditor);
+							this.widgets.dataTable.subscribe("cellMouseoutEvent", this.widgets.dataTable.onEventUnhighlightCell);
+							this.widgets.dataTable.subscribe("cellClickEvent", this.widgets.dataTable.onEventShowCellEditor);
 							this.widgets.dataTable.subscribe("cellUpdateEvent", this.onCellChanged);
 
 							// To save onEventSaveCellEditor
 
+							
+							var me = this;
+
+							if (me.options.usePagination) {
+
+								me.currentPage = parseInt(me.options.initialPage, 10);
+
+								// YUI Paginator definition
+								this.widgets.paginator = new YAHOO.widget.Paginator({
+									containers : [ me.id + "-paginatorTop", me.id + "-paginatorBottom" ],
+									rowsPerPage : me.options.pageSize,
+									initialPage : this.options.initialPage,
+									template : me.msg("pagination.template"),
+									pageReportTemplate : me.msg("pagination.template.page-report"),
+									previousPageLinkLabel : me.msg("pagination.previousPageLinkLabel"),
+									nextPageLinkLabel : me.msg("pagination.nextPageLinkLabel")
+								});
+
+								var handlePagination = function EntityDataGrid_handlePagination(state, me) {
+									me.currentPage = state.page;
+									me._updateBulkEdit.call(me);
+								};
+
+								this.widgets.paginator.subscribe("changeRequest", handlePagination, this);
+
+								// Display the bottom paginator bar
+								Dom.setStyle(me.id + "-bulk-editBarBottom", "display", "block");
+								
+								if (!this.widgets.paginator.getContainerNodes().length) {
+			                           this.widgets.paginator.set('containers', this.widgets.dataTable
+			                                 ._defaultPaginatorContainers(true));
+			                    }
+
+			                   this.widgets.paginator.render();
+							}
 						},
 
 						/**
@@ -1567,7 +993,7 @@
 						 *            method
 						 */
 						onTypeSelect : function BulkEdit_onItemTypeSelect(sType, aArgs, p_obj) {
-							var  eventTarget = aArgs[1];
+							var eventTarget = aArgs[1];
 
 							// Select based upon the className of the clicked
 							// item
@@ -1592,10 +1018,9 @@
 						 * @return {Array} Currently selected items
 						 */
 						getSelectedItems : function BulkEdit_getSelectedItems() {
-							var items = [], recordSet = this.widgets.dataTable.getRecordSet(), aPageRecords = this.widgets.paginator
-									.getPageRecords(), startRecord = aPageRecords[0], endRecord = aPageRecords[1], record;
+							var items = [], recordSet = this.widgets.dataTable.getRecordSet(), aPageRecords = this.widgets.paginator.getPageRecords(), startRecord = aPageRecords[0], endRecord = aPageRecords[1], record;
 
-							for ( var i = startRecord; i <= endRecord; i++) {
+							for (var i = startRecord; i <= endRecord; i++) {
 								record = recordSet.getRecord(i);
 								if (this.selectedItems[record.getData("nodeRef")]) {
 									items.push(record.getData());
@@ -1619,9 +1044,8 @@
 						 * </pre>
 						 */
 						selectItems : function BulkEdit_selectItems(p_selectType) {
-							var recordSet = this.widgets.dataTable.getRecordSet(), checks = Selector.query(
-									'input[type="checkbox"]', this.widgets.dataTable.getTbodyEl()), aPageRecords = this.widgets.paginator
-									.getPageRecords(), startRecord = aPageRecords[0], len = checks.length, record, i, fnCheck;
+							var recordSet = this.widgets.dataTable.getRecordSet(), checks = Selector.query('input[type="checkbox"]',
+									this.widgets.dataTable.getTbodyEl()), aPageRecords = this.widgets.paginator.getPageRecords(), startRecord = aPageRecords[0], len = checks.length, record, i, fnCheck;
 
 							switch (p_selectType) {
 							case "selectAll":
@@ -1650,8 +1074,7 @@
 
 							for (i = 0; i < len; i++) {
 								record = recordSet.getRecord(i + startRecord);
-								this.selectedItems[record.getData("nodeRef")] = checks[i].checked = fnCheck(record
-										.getData("type"), checks[i].checked);
+								this.selectedItems[record.getData("nodeRef")] = checks[i].checked = fnCheck(record.getData("type"), checks[i].checked);
 							}
 							Bubbling.fire("selectedItemsChanged");
 						},
@@ -1680,8 +1103,6 @@
 							this.dataResponseFields = [];
 							this.dataTableColumn = [];
 
-							// Set-up YUI History Managers and Paginator
-							this._setupHistoryManagers();
 							// DataSource set-up and event registration
 							this._setupDataSource();
 							// DataTable set-up and event registration
@@ -1718,16 +1139,10 @@
 						 * webscript with current list details
 						 * 
 						 * @method _updateBulkEdit
-						 * @private
-						 * @param p_obj.filter
-						 *            {object} Optional filter to navigate with
 						 */
 						_updateBulkEdit : function BulkEdit__updateBulkEdit(p_obj) {
 							p_obj = p_obj || {};
-							var successFilter = YAHOO.lang.merge({}, p_obj.filter !== undefined ? p_obj.filter
-									: this.currentFilter), loadingMessage = null, timerShowLoadingMessage = null, me = this, params = {
-								filter : successFilter
-							};
+							var loadingMessage = null, timerShowLoadingMessage = null, me = this;
 
 							// Clear the current document list if the data
 							// webscript is taking too long
@@ -1757,11 +1172,10 @@
 
 							// Slow data webscript message
 							this.loadingMessageShowing = false;
-							timerShowLoadingMessage = YAHOO.lang.later(this.options.loadingMessageDelay, this,
-									fnShowLoadingMessage);
-							
+							timerShowLoadingMessage = YAHOO.lang.later(this.options.loadingMessageDelay, this, fnShowLoadingMessage);
+
 							var destroyLoaderMessage = null;
-							 destroyLoaderMessage = function BulkEdit__uDG_destroyLoaderMessage() {
+							destroyLoaderMessage = function BulkEdit__uDG_destroyLoaderMessage() {
 								if (timerShowLoadingMessage) {
 									// Stop the "slow loading" timed function
 									timerShowLoadingMessage.cancel();
@@ -1776,7 +1190,7 @@
 									} else {
 										// Wait and try again later. Scope
 										// doesn't get set correctly with "this"
-										if(destroyLoaderMessage!=null){
+										if (destroyLoaderMessage != null) {
 											YAHOO.lang.later(100, me, destroyLoaderMessage);
 										}
 									}
@@ -1786,10 +1200,8 @@
 							var successHandler = function BulkEdit__uDG_successHandler(sRequest, oResponse, oPayload) {
 								destroyLoaderMessage();
 
-								this.currentFilter = successFilter;
 								this.currentPage = p_obj.page || 1;
-								this.widgets.dataTable.onDataReturnInitializeTable.call(this.widgets.dataTable,
-										sRequest, oResponse, oPayload);
+								this.widgets.dataTable.onDataReturnInitializeTable.call(this.widgets.dataTable, sRequest, oResponse, oPayload);
 							};
 
 							var failureHandler = function BulkEdit__uDG_failureHandler(sRequest, oResponse) {
@@ -1805,8 +1217,7 @@
 									try {
 										var response = YAHOO.lang.JSON.parse(oResponse.responseText);
 										this.widgets.dataTable.set("MSG_ERROR", response.message);
-										this.widgets.dataTable.showTableMessage(response.message,
-												YAHOO.widget.DataTable.CLASS_ERROR);
+										this.widgets.dataTable.showTableMessage(response.message, YAHOO.widget.DataTable.CLASS_ERROR);
 										if (oResponse.status == 404) {
 											// Site or container not found -
 											// deactivate controls
@@ -1819,16 +1230,17 @@
 							};
 
 							// Update the DataSource
-							var requestParams = this._buildBulkEditParams(params);
+							var requestParams = this._buildBulkEditParams();
 							Alfresco.logger.debug("DataSource requestParams: ", requestParams);
 
 							// TODO: No-cache? - add to URL retrieved from
 							// DataSource
 							// "&noCache=" + new Date().getTime();
-							
-							 if (Alfresco.util.CSRFPolicy.isFilterEnabled()){
-		                           me.widgets.dataSource.connMgr.initHeader(Alfresco.util.CSRFPolicy.getHeader(), Alfresco.util.CSRFPolicy.getToken(), false);
-		                     }
+
+							if (Alfresco.util.CSRFPolicy.isFilterEnabled()) {
+								me.widgets.dataSource.connMgr.initHeader(Alfresco.util.CSRFPolicy.getHeader(), Alfresco.util.CSRFPolicy.getToken(),
+										false);
+							}
 
 							this.widgets.dataSource.sendRequest(YAHOO.lang.JSON.stringify(requestParams), {
 								success : successHandler,
@@ -1848,15 +1260,32 @@
 						 *         directly to Alfresco.util.Ajax, but must be
 						 *         JSON.stringified elsewhere.
 						 */
-						_buildBulkEditParams : function BulkEdit__buildBulkEditParams(p_obj) {
+						_buildBulkEditParams : function BulkEdit__buildBulkEditParams(page) {
 							var request = {
-								fields : this.dataRequestFields
+								fields : this.dataRequestFields,
+								page :  page ? page : this.currentPage,
+				                queryExecutionId : this.queryExecutionId
 							};
 
-							if (p_obj && p_obj.filter) {
+							if (this.options.nodeRef != null && this.options.nodeRef.length > 0) {
 								request.filter = {
-									filterId : p_obj.filter.filterId,
-									filterData : p_obj.filter.filterData
+									filterId : "nodePath",
+									filterData : this.options.nodeRef
+								};
+							} else if (this.options.searchQuery != null && this.options.searchQuery.length > 0) {
+								request.filter = {
+									filterId : "filterform",
+									filterData : this.options.searchQuery
+								};
+							} else if (this.options.initialSearchTerm != null && this.options.initialSearchTerm.length > 0) {
+								request.filter = {
+									filterId : "fts",
+									filterData : this.options.initialSearchTerm
+								};
+							} else if (this.options.initialSearchTag != null && this.options.initialSearchTag.length > 0) {
+								request.filter = {
+									filterId : "tag",
+									filterData : this.options.initialSearchTag
 								};
 							}
 
@@ -1878,29 +1307,35 @@
 
 						},
 						onExportCSV : function BulkEdit_onExportCSV() {
-							var  fields = "";
-							for (var i in this.dataRequestFields) {
+							var fields = "";
+							for ( var i in this.dataRequestFields) {
 								if (fields.length > 0) {
 									fields += "$";
 								}
 								fields += this.dataRequestFields[i];
 
 							}
-							window.location = Alfresco.constants.PROXY_URI_RELATIVE + "becpg/bulkedit/export.csv?"
-									+ this._buildDataParamsUrl() + "&fields=" + fields;
+							
+
+							var PAGE_SIZE = 5000;
+							var CURRENT_PAGE = 1;
+							window.location = this.dataUrl + "?" + this._buildDataParamsUrl(PAGE_SIZE)
+									+ "&format=csv&metadata=" + encodeURIComponent(YAHOO.lang.JSON
+		                           .stringify(this._buildBulkEditParams(CURRENT_PAGE)));
+							
+							
 						},
 						onShowThumbnails : function BulkEdit_onShowThumbnails() {
-						  this.options.showThumbnails = ! this.options.showThumbnails;
-                          this.onBulkEditShow.call(this);
-                       },
+							this.options.showThumbnails = !this.options.showThumbnails;
+							this.onBulkEditShow.call(this);
+						},
 
 						onEditSelected : function BulkEdit_onEditSelected() {
 
 							// Intercept before dialog show
 							var doBeforeDialogShow = function BulkEdit_onNewRow_doBeforeDialogShow(p_form, p_dialog) {
-								Alfresco.util.populateHTML([ p_dialog.id + "-dialogTitle",
-										this.msg("label.edit-selected.title") ], [ p_dialog.id + "-dialogHeader",
-										this.msg("label.edit-selected.header") ]);
+								Alfresco.util.populateHTML([ p_dialog.id + "-dialogTitle", this.msg("label.edit-selected.title") ], [
+										p_dialog.id + "-dialogHeader", this.msg("label.edit-selected.header") ]);
 
 								if (Dom.get(p_dialog.id + "-form-bulkAction")) {
 									Dom.setStyle(p_dialog.id + "-form-bulkAction", 'display', 'none');
@@ -1940,8 +1375,7 @@
 												itemId : this.options.itemType,
 												mode : "create",
 												submitType : "json",
-												submissionUrl : "/becpg/bulkedit/type/"
-														+ this.options.itemType.replace(":", "_")
+												submissionUrl : "/becpg/bulkedit/type/" + this.options.itemType.replace(":", "_")
 														+ "/bulksave?nodeRefs=" + submissionParams,
 												fields : displayFields
 											});
@@ -1998,14 +1432,12 @@
 
 							// Intercept before dialog show
 							var doBeforeDialogShow = function DataGrid_onActionEdit_doBeforeDialogShow(p_form, p_dialog) {
-								Alfresco.util.populateHTML([ p_dialog.id + "-dialogTitle",
-										this.msg("label.edit-row.title") ]);
+								Alfresco.util.populateHTML([ p_dialog.id + "-dialogTitle", this.msg("label.edit-row.title") ]);
 
 								// Is it a bulk action?
 								if (Dom.get(p_dialog.id + "-form-bulkAction")) {
 									Dom.get(p_dialog.id + "-form-bulkAction").checked = true;
-									Dom.get(p_dialog.id + "-form-bulkAction-msg").innerHTML = this
-											.msg("button.bulk-action-edit");
+									Dom.get(p_dialog.id + "-form-bulkAction-msg").innerHTML = this.msg("button.bulk-action-edit");
 								}
 
 							};
@@ -2024,77 +1456,72 @@
 							// Using Forms Service, so always create new
 							// instance
 							var editDetails = new Alfresco.module.SimpleDialog(this.id + "-editDetails");
-							editDetails.setOptions(
-									{
-										width : "850px",
-										templateUrl : templateUrl,
-										actionUrl : null,
-										destroyOnHide : false,
-										doBeforeDialogShow : {
-											fn : doBeforeDialogShow,
-											scope : this
-										},
-										onSuccess : {
-											fn : function DataGrid_onActionEdit_success(response) {
-												// Reload the node's metadata
-												Alfresco.util.Ajax.jsonPost({
-													url : Alfresco.constants.PROXY_URI
-															+ "slingshot/datalists/item/node/"
-															+ new Alfresco.util.NodeRef(item.nodeRef).uri,
-													dataObj : this._buildBulkEditParams(),
-													successCallback : {
-														fn : function DataGrid_onActionEdit_refreshSuccess(resp) {
+							editDetails.setOptions({
+								width : "850px",
+								templateUrl : templateUrl,
+								actionUrl : null,
+								destroyOnHide : false,
+								doBeforeDialogShow : {
+									fn : doBeforeDialogShow,
+									scope : this
+								},
+								onSuccess : {
+									fn : function DataGrid_onActionEdit_success(response) {
+										// Reload the node's metadata
+										Alfresco.util.Ajax.jsonPost({
+											url : this.itemUrl + new Alfresco.util.NodeRef(item.nodeRef).uri,
+											dataObj : this._buildBulkEditParams(),
+											successCallback : {
+												fn : function DataGrid_onActionEdit_refreshSuccess(resp) {
 
-															// Fire
-															// "itemUpdated"
-															// event
-															Bubbling.fire("dataItemUpdated", {
-																item : resp.json.item
-															});
+													// Fire
+													// "itemUpdated"
+													// event
+													Bubbling.fire("dataItemUpdated", {
+														item : resp.json.item
+													});
 
-															// recall edit for
-															// next item
-															var checkBoxEl = Dom.get(this.id + "-editDetails"
-																	+ "-form-bulkAction");
+													// recall edit for
+													// next item
+													var checkBoxEl = Dom.get(this.id + "-editDetails" + "-form-bulkAction");
 
-															if (checkBoxEl && checkBoxEl.checked) {
-																var recordFound = scope._findNextItemByParameter(
-																      resp.json.item.nodeRef, "nodeRef");
-																if (recordFound != null) {
-																	scope.onActionEdit(recordFound);
-																}
-															}
-
-															// Display success
-															// message
-															Alfresco.util.PopupManager.displayMessage({
-																text : this.msg("message.details.success")
-															});
-
-														},
-														scope : this
-													},
-													failureCallback : {
-														fn : function DataGrid_onActionEdit_refreshFailure(resp) {
-															Alfresco.util.PopupManager.displayMessage({
-																text : this.msg("message.details.failure")
-															});
-														},
-														scope : this
+													if (checkBoxEl && checkBoxEl.checked) {
+														var recordFound = scope._findNextItemByParameter(resp.json.item.nodeRef, "nodeRef");
+														if (recordFound != null) {
+															scope.onActionEdit(recordFound);
+														}
 													}
-												});
+
+													// Display success
+													// message
+													Alfresco.util.PopupManager.displayMessage({
+														text : this.msg("message.details.success")
+													});
+
+												},
+												scope : this
 											},
-											scope : this
-										},
-										onFailure : {
-											fn : function DataGrid_onActionEdit_failure(resp) {
-												Alfresco.util.PopupManager.displayMessage({
-													text : this.msg("message.details.failure")
-												});
-											},
-											scope : this
-										}
-									}).show();
+											failureCallback : {
+												fn : function DataGrid_onActionEdit_refreshFailure(resp) {
+													Alfresco.util.PopupManager.displayMessage({
+														text : this.msg("message.details.failure")
+													});
+												},
+												scope : this
+											}
+										});
+									},
+									scope : this
+								},
+								onFailure : {
+									fn : function DataGrid_onActionEdit_failure(resp) {
+										Alfresco.util.PopupManager.displayMessage({
+											text : this.msg("message.details.failure")
+										});
+									},
+									scope : this
+								}
+							}).show();
 
 						},
 						/**
@@ -2112,7 +1539,7 @@
 						 */
 						_findNextItemByParameter : function DataGrid__findNextItemByParameter(p_value, p_parameter) {
 							var recordSet = this.widgets.dataTable.getRecordSet();
-							for ( var i = 0, j = recordSet.getLength(); i < j; i++) {
+							for (var i = 0, j = recordSet.getLength(); i < j; i++) {
 								if (recordSet.getRecord(i).getData(p_parameter) == p_value) {
 									if ((i + 1) != j) {
 										return recordSet.getRecord(i + 1).getData();
@@ -2158,7 +1585,7 @@
 						 */
 						_findRecordByParameter : function BulkEdit__findRecordByParameter(p_value, p_parameter) {
 							var recordSet = this.widgets.dataTable.getRecordSet();
-							for ( var i = 0, j = recordSet.getLength(); i < j; i++) {
+							for (var i = 0, j = recordSet.getLength(); i < j; i++) {
 								if (recordSet.getRecord(i).getData(p_parameter) == p_value) {
 									return recordSet.getRecord(i);
 								}

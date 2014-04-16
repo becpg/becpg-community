@@ -1,21 +1,21 @@
-/**
- * Copyright (C) 2005-2010 Alfresco Software Limited.
- *
- * This file is part of Alfresco
- *
- * Alfresco is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Alfresco is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with Alfresco. If not, see <http://www.gnu.org/licenses/>.
- */
+/*******************************************************************************
+ *  Copyright (C) 2010-2014 beCPG. 
+ *   
+ *  This file is part of beCPG 
+ *   
+ *  beCPG is free software: you can redistribute it and/or modify 
+ *  it under the terms of the GNU Lesser General Public License as published by 
+ *  the Free Software Foundation, either version 3 of the License, or 
+ *  (at your option) any later version. 
+ *   
+ *  beCPG is distributed in the hope that it will be useful, 
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ *  GNU Lesser General Public License for more details. 
+ *   
+ *  You should have received a copy of the GNU Lesser General Public License along with beCPG.
+ *   If not, see <http://www.gnu.org/licenses/>.
+ ******************************************************************************/
 
 /**
  * Retrieves the value of the given named argument from the URL arguments
@@ -51,7 +51,7 @@ function getArgument(argName, defValue) {
  *            form
  * @return Object representing the configuration or null
  */
-function getFormConfig(itemId, formId) {
+function getFormConfig(itemId, formId, mode) {
 	var formConfig = null;
 
 	// query for configuration for item
@@ -67,16 +67,16 @@ function getFormConfig(itemId, formId) {
 				formConfig = formsConfig.getForm(formId);
 			}
 
-			if (formConfig === null) {
+			if (mode == "bulk-edit" && formConfig === null) {
 				// look up the specific form
 				formConfig = formsConfig.getForm("create");
 			}
-
+			
+			// drop back to default form if formId config missing
 			if (formConfig === null) {
 				// look up the default form
 				formConfig = formsConfig.defaultForm;
 			}
-
 		}
 	}
 
@@ -157,9 +157,11 @@ function createPostBody(itemKind, itemId, visibleFields, formConfig) {
 		var fieldId = null;
 		for (var f = 0; f < visibleFields.length; f++) {
 			fieldId = visibleFields[f];
-			postBodyFields.push(fieldId);
-			if (formConfig.isFieldForced(fieldId)) {
-				postBodyForcedFields.push(fieldId);
+			if (fieldId.indexOf("dataList_") < 0 && fieldId.indexOf("entity_") < 0) {
+				postBodyFields.push(fieldId);
+				if (formConfig.isFieldForced(fieldId)) {
+					postBodyForcedFields.push(fieldId);
+				}
 			}
 		}
 
@@ -182,16 +184,34 @@ function createPostBody(itemKind, itemId, visibleFields, formConfig) {
  * @method main
  */
 function main() {
-	var itemType = getArgument("itemType"), formId = getArgument("formId"), columns = [];
+	var itemType = getArgument("itemType"), list = getArgument("list"), formId = getArgument("formId");// beCPG
+		mode = getArgument("mode")
+	cache.maxAge = 3600; // in seconds
 
-	if (itemType !== null && itemType.length > 0) {
+	// pass form ui model to FTL
+	model.columns = getColumns(itemType, list, formId, mode);
+}
 
-		formId = formId ? formId : "bulk-edit";
+function getColumns(itemType, list, formIdArgs, mode) {
+	var columns = [], ret = [];
 
-		var formConfig = getFormConfig(itemType, formId);
+	if (itemType != null && itemType.length > 0) {
+		// get the config for the form
+		// beCPG : WUsed
+		var formId = mode == "bulk-edit" ? "bulk-edit" :"datagrid";
+		if (formIdArgs == null) {
+			if (list == "WUsed") {
+				formId = "datagridWUsed";
+			} else if (list == "sub-datagrid") {
+				formId = "sub-datagrid";
+			}
+		} else {
+			formId = formIdArgs;
+		}
+		var formConfig = getFormConfig(itemType, formId, mode);
 
 		// get the configured visible fields
-		var visibleFields = getVisibleFields("edit", formConfig);
+		var visibleFields = getVisibleFields(mode == "bulk-edit" ? "edit" : "view", formConfig);
 
 		// build the JSON object to send to the server
 		var postBody = createPostBody("type", itemType, visibleFields, formConfig);
@@ -207,18 +227,73 @@ function main() {
 		if (json.status == 401) {
 			status.setCode(json.status, "Not authenticated");
 			return;
-		} else {
-			var formModel = json;
-
-			// if we got a successful response attempt to render the form
-			if (json.status != 200) {
-				model.error = formModel.message;
-			}
 		}
+
+		var formModel = eval('(' + json + ')');
+
+		// if we got a successful response attempt to render the form
+		if (json.status == 200) {
+			columns = formModel.data.definition.fields;
+		} else {
+			if (logger.isLoggingEnabled()) {
+				logger.log("error = " + formModel.message);
+			}
+			columns = [];
+		}
+
+		for ( var i in visibleFields) {
+
+			var fieldId = visibleFields[i];
+
+			if (fieldId.indexOf("dataList_") == 0) {
+
+				var name = fieldId.replace("dataList_", ""), column = {
+					type : "dataList",
+					name : name,
+					label : (formConfig.fields[fieldId].labelId != null ? formConfig.fields[fieldId].labelId : formConfig.fields[fieldId].label),
+					"dataType" : "nested"
+				};
+				column.columns = getColumns(name + "", "sub-datagrid");
+
+				ret.push(column);
+
+			} else if (fieldId.indexOf("entity_") == 0) {
+				var splitted = fieldId.replace("entity_", "").split("_");
+				var name = splitted[0], column = {
+					type : "entity",
+					name : name,
+					label : (formConfig.fields[fieldId].labelId != null ? formConfig.fields[fieldId].labelId : formConfig.fields[fieldId].label),
+					"dataType" : "nested"
+				};
+				if (formId != null) {
+					column.columns = getColumns(splitted[1] + "", "sub-datagrid", "sub-datagrid-" + formId);
+				} else {
+					column.columns = getColumns(splitted[1] + "", "sub-datagrid");
+				}
+
+				ret.push(column);
+
+			} else {
+
+				for ( var j in columns) {
+					if (columns[j].name == fieldId) {
+						if (formConfig.fields[fieldId].label != null || formConfig.fields[fieldId].labelId != null) {
+							columns[j].label = formConfig.fields[fieldId].labelId != null ? formConfig.fields[fieldId].labelId
+									: formConfig.fields[fieldId].label;
+						}
+
+						columns[j].readOnly = formConfig.fields[fieldId].isReadOnly();
+
+						ret.push(columns[j]);
+					}
+				}
+			}
+
+		}
+
 	}
 
-	// pass form ui model to FTL
-	model.formModel = formModel;
+	return ret;
 }
 
 main();

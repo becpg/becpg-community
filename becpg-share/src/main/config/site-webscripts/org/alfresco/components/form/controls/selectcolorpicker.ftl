@@ -17,19 +17,18 @@
          <span class="viewmode-value"><#if fieldValue == "">${msg("form.control.novalue")}<#else>${fieldValue}</#if></span>
       </div>
    <#else>
-   	<script>
-   	  function onChangeColorPicker(selectInstance){
+   	
+	 <script type="text/javascript">
+		 function onChangeColorPicker(selectInstance){
    	  		selectInstance.style.background='#'+selectInstance.options[selectInstance.selectedIndex].value;
    	  }
-   	  
-   	</script>
-   
+   	 </script>
+	
       <label for="${fieldHtmlId}">${field.label?html}:<#if field.mandatory><span class="mandatory-indicator">${msg("form.required.fields.marker")}</span></#if></label>
       <select id="${fieldHtmlId}" name="${field.name}" style=" width: 100px;background-color:#${field.value?html};"
              <#if field.value?is_number>value="${field.value?c}"<#else>value="${field.value?html}"</#if>
              <#if field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true")>disabled="true"</#if>
-             onchange="javascript:onChangeColorPicker(this);" 
-              >
+             onchange="javascript:onChangeColorPicker(this);"  >
              <option value="${field.value?html}" style="background-color:#${field.value?html};" selected></option>
 				 <option value="FFFFFF" style="border:1px solid;background-color:#FFFFFF;"></option>
 				 <option value="FFDFDF" style="border:1px solid;background-color:#FFDFDF;"></option>
@@ -68,6 +67,26 @@
 				<option value="00001b" style="border:1px solid;background-color:#00001b;"></option>
 				<option value="000000" style="border:1px solid;background-color:#000000;"></option>
       </select>
+      <#--
+      <link rel="stylesheet" href="/share/res/js/alfresco/beCPG/form/css/ColorTextBox.css" />
+      
+      <label for="${fieldHtmlId}">${field.label?html}:<#if field.mandatory><span class="mandatory-indicator">${msg("form.required.fields.marker")}</span></#if></label>
+      <div id="${fieldHtmlId}-picker"></div>
+   	  <script type="text/javascript">
+		require(["alfresco/beCPG/form/ColorTextBox"], function(ColorTextBox){
+		
+	    	var widget =  new ColorTextBox({
+		       label: "${field.label?html}",
+		       name : "${field.name}",
+		      },"${fieldHtmlId}-picker");
+		      
+		      widget.startup();
+		      widget.setValue("${field.value?html}");
+		      
+		 });
+   	  
+   	  </script>
+      -->
       <@formLib.renderFieldHelp field=field />
    </#if>
 </div>

@@ -115,8 +115,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	private Set<QName> excludedAspects = new HashSet<>();
 	private Set<QName> excludedTypes = new HashSet<>();
 	private Map<QName, String> excludedPropQueriesMap = new HashMap<QName, String>();
-	private QueryConsistency queryConsistancy = QueryConsistency.TRANSACTIONAL_IF_POSSIBLE;
-
+	private QueryConsistency queryConsistancy = QueryConsistency.EVENTUAL;
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		INSTANCE = this;
