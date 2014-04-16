@@ -384,7 +384,7 @@
          this.currentForm.runtime = args[1].runtime;
          
          // remove Forms Runtime validators on the advanced search form
- 	 	 	this.currentForm.runtime.validations = {};
+ 	 	 	this.currentForm.runtime.validations = [];
          
          // Repopulate current form from url query data?
          if (this.currentForm.repopulate)
