@@ -26,7 +26,7 @@ public interface PLMModel {
 
 	// productMicrobioCriteria
 	QName TYPE_PRODUCT_MICROBIO_CRITERIA = QName.createQName(BeCPGModel.BECPG_URI, "productMicrobioCriteria");
-	QName ASSOC_PRODUCT_MICROBIO_CRITERIA = QName.createQName(BeCPGModel.BECPG_URI, "productMicrobioCriteria");
+	QName ASSOC_PRODUCT_MICROBIO_CRITERIA = QName.createQName(BeCPGModel.BECPG_URI, "productMicrobioCriteriaRef");
 	QName ASPECT_PRODUCT_MICROBIO_CRITERIA = QName.createQName(BeCPGModel.BECPG_URI, "productMicrobioCriteriaAspect");
 
 	QName TYPE_PRODUCTLIST_ITEM = QName.createQName(BeCPGModel.BECPG_URI, "productListItem");
@@ -260,9 +260,9 @@ public interface PLMModel {
 
 	// manufacturingAspect
 	QName ASPECT_MANUFACTURING = QName.createQName(BeCPGModel.BECPG_URI, "manufacturingAspect");
-	QName ASSOC_SUBSIDIARY = QName.createQName(BeCPGModel.BECPG_URI, "subsidiary");
+	QName ASSOC_SUBSIDIARY = QName.createQName(BeCPGModel.BECPG_URI, "subsidiaryRef");
 	QName ASSOC_PLANTS = QName.createQName(BeCPGModel.BECPG_URI, "plants");
-	QName ASSOC_TRADEMARK = QName.createQName(BeCPGModel.BECPG_URI, "trademark");
+	QName ASSOC_TRADEMARK = QName.createQName(BeCPGModel.BECPG_URI, "trademarkRef");
 
 	// subsidiary
 	QName TYPE_SUBSIDIARY = QName.createQName(BeCPGModel.BECPG_URI, "subsidiary");
@@ -288,11 +288,11 @@ public interface PLMModel {
 
 	// storageConditions
 	QName TYPE_STORAGE_CONDITIONS = QName.createQName(BeCPGModel.BECPG_URI, "storageConditions");
-	QName ASSOC_STORAGE_CONDITIONS = QName.createQName(BeCPGModel.BECPG_URI, "storageConditions");
+	QName ASSOC_STORAGE_CONDITIONS = QName.createQName(BeCPGModel.BECPG_URI, "storageConditionsRef");
 	
 	// precautionOfUse
 	QName TYPE_PRECAUTION_OF_USE = QName.createQName(BeCPGModel.BECPG_URI, "precautionOfUse");
-	QName ASSOC_PRECAUTION_OF_USE = QName.createQName(BeCPGModel.BECPG_URI, "precautionOfUse");
+	QName ASSOC_PRECAUTION_OF_USE = QName.createQName(BeCPGModel.BECPG_URI, "precautionOfUseRef");
 
 	// instruction
 	QName ASPECT_INSTRUCTION = QName.createQName(BeCPGModel.BECPG_URI, "instruction");
