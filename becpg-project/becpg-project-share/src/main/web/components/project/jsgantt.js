@@ -384,7 +384,7 @@ if (!JSGantt) {
          } else if (vFormat === 'hour') {
             tmpPer = Math.ceil((this.getEnd() - this.getStart()) / (60 * 60 * 1000));
             if (tmpPer === 1) {
-               vDuration = '1 Hour';
+               vDuration = '1 '+JSGantt.msg("jsgantt.hour");
             } else {
                vDuration = tmpPer + ' '+JSGantt.msg("jsgantt.hours");
             }
@@ -393,7 +393,7 @@ if (!JSGantt) {
          else if (vFormat === 'minute') {
             tmpPer = Math.ceil((this.getEnd() - this.getStart()) / (60 * 1000));
             if (tmpPer === 1) {
-               vDuration = '1 Minute';
+               vDuration = '1 '+JSGantt.msg("jsgantt.minute");
             } else {
                vDuration = tmpPer + ' '+JSGantt.msg("jsgantt.minutes");
             }
@@ -402,7 +402,7 @@ if (!JSGantt) {
          else { // if(vFormat == 'day') {
             tmpPer = Math.ceil((this.getEnd() - this.getStart()) / (24 * 60 * 60 * 1000) + 1);
             if (tmpPer === 1) {
-               vDuration = '1 Jour';
+               vDuration = '1 '+JSGantt.msg("jsgantt.day");
             } else {
                vDuration = tmpPer + ' '+JSGantt.msg("jsgantt.days");
             }
