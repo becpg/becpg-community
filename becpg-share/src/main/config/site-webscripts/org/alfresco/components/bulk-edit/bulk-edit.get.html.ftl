@@ -8,31 +8,19 @@
 <@markup id="js">
    <#-- JavaScript Dependencies -->
    <#include "../form/form.js.ftl"/>
-	<@script type="text/javascript" src="${url.context}/res/components/bulk-edit/bulk-edit.js" group="bulk-edit"></@script>
+   <@script src="${url.context}/res/modules/entity-datagrid/entity-columnRenderer.js" group="bulk-edit"></@script>
+   <@script src="${url.context}/res/components/bulk-edit/bulk-edit.js" group="bulk-edit"></@script>
+   <@script src="${url.context}/res/modules/custom-entity-datagrid/custom-columnRenderers.js" group="bulk-edit"></@script>
 </@>
 
+<@markup id="widgets">
+   <@createWidgets group="bulk-edit"/>
+</@>
 
 <@markup id="html">
    <@uniqueIdDiv>
 		<#assign el = args.htmlid?html>
 		<#assign formId=args.htmlid?js_string + "-form">
-		<input id="yui-history-field" type="hidden" />
-		<script type="text/javascript">//<![CDATA[
-		   new  beCPG.component.BulkEdit("${el}").setOptions(
-		   {
-		      siteId: "${siteId}",
-		      siteTitle: "${siteTitle?js_string}",
-		      initialSearchTerm: "${searchTerm?js_string}",
-		      initialSearchTag: "${searchTag?js_string}",
-		      initialSearchAllSites: ${searchAllSites?string},
-		      initialSearchRepository: ${searchRepo?string},
-		      initialSort: "${searchSort?js_string}",
-		      searchQuery: "${searchQuery?js_string}",
-		      nodeRef: <#if nodeRef??>"${nodeRef?js_string}"<#else>""</#if>,
-		      usePagination: true
-		   }).setMessages(${messages});
-		   
-		//]]></script>
 		<#if error?exists>
 		   <div class="error">${error}</div>
 		</#if>

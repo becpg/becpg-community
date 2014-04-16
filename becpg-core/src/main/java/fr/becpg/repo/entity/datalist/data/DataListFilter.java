@@ -35,6 +35,8 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 public class DataListFilter {
 
+	public static final String NODE_PATH_FILTER = "nodePath";
+	
 	public static final String NODE_FILTER = "node";
 	
 	public static final String ALL_FILTER = "all";
@@ -239,7 +241,7 @@ public class DataListFilter {
 		
 		if(!isSimpleItem()){
 			if(parentNodeRef!=null) {
-				queryBuilder.parent(parentNodeRef);
+				queryBuilder.parent(parentNodeRef);	
 			} else if(!isRepo) {
 				queryBuilder.inSite(siteId, containerId);
 			}
@@ -249,9 +251,7 @@ public class DataListFilter {
 			//Force DB Mode
 			queryBuilder.inDB();
 		}
-		
-		
-		
+
 		return queryBuilder;
 	}
 	
@@ -302,13 +302,15 @@ public class DataListFilter {
 				queryBuilder.andPropEquals(ContentModel.PROP_CREATOR, getUserName());
 			} else if (filterId.equals(NODE_FILTER)) {
 				queryBuilder.andID(nodeRef);
-			} else if (filterId.equals("tag")) {
+			}  else if (filterId.equals("tag")) {
 				String fData = filterData;
 				// Remove any trailing "/" character
 				if (fData.charAt(fData.length() - 1) == '/') {
 					fData = fData.substring(0, fData.length() - 2);
 				}
 				queryBuilder.members("/cm:taggable/cm:" + ISO9075.encode(fData));
+				
+				//beCPGQueryBuilder.andFTSQuery("TAG:" + tag);
 				
 			}  else if(filterId.equals(FTS_FILTER)){
 				queryBuilder.andFTSQuery(filterData);

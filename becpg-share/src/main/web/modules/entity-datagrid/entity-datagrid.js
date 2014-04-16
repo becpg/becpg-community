@@ -265,7 +265,7 @@
                       * Column Info Url
                       */
 
-                     columnsUrl : Alfresco.constants.URL_SERVICECONTEXT + "components/data-lists/config/columns",
+                     columnsUrl : Alfresco.constants.URL_SERVICECONTEXT + "components/entity-data-lists/config/columns",
 
                      /**
                       * Save field Url
@@ -785,7 +785,7 @@
                      Alfresco.util.Ajax.request({
                         url : filterFormUrl,
                         dataObj : {
-                           htmlid : this.id
+                           htmlid : this.id+"-filterForm"
                         },
                         successCallback : {
                            fn : this.onFilterFormTemplateLoaded,
@@ -842,7 +842,7 @@
                   onBeforeFormRuntimeInit : function ExtDataGrid_onBeforeFormRuntimeInit(layer, args) {
                      // Get filter form runtime
 
-                     if (this.formsFilterRuntime == null && args[1].eventGroup == this.id + "-form") {
+                     if (this.formsFilterRuntime == null && args[1].eventGroup == this.id + "-filterForm-form") {
                         this.formsFilterRuntime = args[1].runtime;
                         this.formsFilterRuntime.validations = [];
                      }

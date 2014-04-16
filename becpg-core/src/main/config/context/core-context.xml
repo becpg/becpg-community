@@ -155,6 +155,11 @@
 	</bean>
 
 
+
+	<bean id="bulkEditExtractor" class="fr.becpg.repo.entity.datalist.impl.BulkEditExtractor" parent="simpleExtractor">
+		<property name="defaultExtractor" value="false"/>
+		<property name="namespaceService" ref="namespaceService" />
+	</bean>
 	
 	<bean id="dataListSortRegistry" class="fr.becpg.repo.entity.datalist.impl.DataListSortRegistryImpl"/>	
 	<bean id="baseDataListSortPlugin" abstract="true"  class="fr.becpg.repo.entity.datalist.AbstractDataListSortPlugin" init-method="init">

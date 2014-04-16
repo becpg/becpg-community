@@ -195,7 +195,6 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 								}
 							} else if (!propName.contains("llPosition")) {
-
 								// beCPG - bug fix : pb with operator -,
 								// AND, OR
 								// poivre AND -noir
