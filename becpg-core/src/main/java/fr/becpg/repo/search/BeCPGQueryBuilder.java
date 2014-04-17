@@ -116,6 +116,9 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	private Set<QName> excludedTypes = new HashSet<>();
 	private Map<QName, String> excludedPropQueriesMap = new HashMap<QName, String>();
 	private QueryConsistency queryConsistancy = QueryConsistency.EVENTUAL;
+	private boolean isExactType = false;
+	
+	
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		INSTANCE = this;
@@ -148,6 +151,13 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		return this;
 	}
+	
+
+	public BeCPGQueryBuilder ofExactType(QName typeQname) {
+		this.isExactType = true;
+		return ofType(typeQname);
+	}
+	
 
 	public BeCPGQueryBuilder inType(QName typeQname) {
 		types.add(typeQname);
@@ -478,7 +488,11 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		}
 
 		if (type != null) {
-			runnedQuery.append(mandatory(getCondType(type)));
+			if(isExactType){
+				runnedQuery.append(mandatory(getCondExactType(type)));
+			} else {
+				runnedQuery.append(mandatory(getCondType(type)));
+			}
 		}
 
 		if (!types.isEmpty()) {
@@ -904,5 +918,6 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	public String toString() {
 		return buildQuery();
 	}
+
 
 }

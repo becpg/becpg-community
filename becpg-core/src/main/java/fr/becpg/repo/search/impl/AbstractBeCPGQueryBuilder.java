@@ -45,6 +45,7 @@ public abstract class AbstractBeCPGQueryBuilder {
 
 	private final String QUERY_COND_PARENT = "PARENT:\"%s\"";
 	private final String QUERY_COND_TYPE = "TYPE:\"%s\"";
+	private final String QUERY_COND_EXACT_TYPE = "EXACTTYPE:\"%s\"";
 	private final String QUERY_COND_ASPECT = "ASPECT:\"%s\"";
 	private final String QUERY_COND = " %s %s";
 
@@ -90,6 +91,10 @@ public abstract class AbstractBeCPGQueryBuilder {
 
 	protected String getCondType(QName type) {
 		return String.format(QUERY_COND_TYPE, type);
+	}
+	
+	protected String getCondExactType(QName type) {
+		return String.format(QUERY_COND_EXACT_TYPE, type);
 	}
 
 	protected String getCondAspect(QName aspect) {

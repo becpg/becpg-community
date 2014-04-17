@@ -275,10 +275,10 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 				};
 				AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getAdminUserName());
 
-				listContainerNodeRef = entityListDAO.getListContainer(nodeRef);
+				
 			}
 
-
+			listContainerNodeRef = entityListDAO.getListContainer(nodeRef);
 		}
 
 		if (listContainerNodeRef != null) {

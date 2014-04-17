@@ -67,7 +67,7 @@
 
 			<itemType name="cm:content" />
 
-			<itemType name="ext1:customType" />
+			<itemType name="ext1:customType" /> 
 		</itemTypes>
 	</config>
 

@@ -194,7 +194,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 		}
 		
 		return BeCPGQueryBuilder.createQuery()
-		.ofType(nodeType)
+		.ofExactType(nodeType)
 		.withAspect(BeCPGModel.ASPECT_ENTITY_TPL)
 		.andPropEquals(BeCPGModel.PROP_ENTITY_TPL_ENABLED, Boolean.TRUE.toString())
 		.andPropEquals(BeCPGModel.PROP_ENTITY_TPL_IS_DEFAULT, Boolean.TRUE.toString())

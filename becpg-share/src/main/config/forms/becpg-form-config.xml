@@ -16,8 +16,27 @@
   You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 -->
 <alfresco-config>
-	<!-- cm:folder type (creating nodes) for entity -->
-   <config evaluator="model-type" condition="cm:folder">
+	<!--  (creating nodes) for entityV2 -->
+   
+    <config evaluator="model-type" condition="bcpg:entityV2">
+      <forms>
+         <!-- Document Library Common form -->
+         <form>
+            <field-visibility>
+               <show id="cm:name" />
+               <show id="cm:title" force="true" />
+               <show id="cm:description" force="true" />
+            </field-visibility>
+            <appearance>
+               <field id="cm:title">
+                  <control template="/org/alfresco/components/form/controls/textfield.ftl" />
+               </field>
+            </appearance>
+         </form>
+      </forms>
+   </config>
+   
+   <config evaluator="node-type" condition="bcpg:entityV2">
       <forms>
          <!-- Document Library Common form -->
          <form>

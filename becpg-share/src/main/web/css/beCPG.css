@@ -60,6 +60,12 @@
 }
 
 
+.form-container .yui-g .form-field input[type="checkbox"], 
+.form-container .yui-navset .form-field input[type="checkbox"], 
+.form-container .yui-gb .form-field input[type="checkbox"] {
+	 width: auto !important;
+}
+
 
 /* Auto complete */
 
@@ -138,15 +144,22 @@
 /** ##########################   header ######################  */
 
 
+.alfresco-share .dijitIcon.dijitMenuItemIcon.entity {
+	background: url(../../components/images/filetypes/generic-entity-16.png);
+   background-repeat: no-repeat;
+   height: 20px;
+   width: 20px;
+}
 
-.alfresco-share .dijitIcon.dijitMenuItemIcon.project-list-header {
+
+.alfresco-share .dijitIcon.dijitMenuItemIcon.entity.project-list-header {
    background: url("../components/images/header/project-list.png");
    background-repeat: no-repeat;
    height: 20px;
    width: 20px;
 }
 
-.alfresco-share .dijitIcon.dijitMenuItemIcon.nc-list-header {
+.alfresco-share .dijitIcon.dijitMenuItemIcon.entity.nc-list-header {
    background: url("../components/images/header/nc-list.png");
    background-repeat: no-repeat;
    height: 20px;
@@ -154,7 +167,7 @@
 }
 
 
-.alfresco-share .dijitIcon.dijitMenuItemIcon.becpg-admin-header {
+.alfresco-share .dijitIcon.dijitMenuItemIcon.entity.becpg-admin-header {
    background: url("../components/images/header/becpg-admin.png");
    background-repeat: no-repeat;
    height: 20px;
@@ -162,7 +175,7 @@
 }
 
 
-.alfresco-share .dijitIcon.dijitMenuItemIcon.model-designer-header {
+.alfresco-share .dijitIcon.dijitMenuItemIcon.entity.model-designer-header {
    background: url("../components/images/header/model-designer.png");
    background-repeat: no-repeat;
    height: 20px;
@@ -170,21 +183,21 @@
 }
 
 
-.alfresco-share .dijitIcon.dijitMenuItemIcon.nc {
+.alfresco-share .dijitIcon.dijitMenuItemIcon.entity.nc {
 	background: url(../../components/images/filetypes/generic-nc-16.png);
    background-repeat: no-repeat;
    height: 20px;
    width: 20px;
 }
 
-.alfresco-share .dijitIcon.dijitMenuItemIcon.finishedProduct {
+.alfresco-share .dijitIcon.dijitMenuItemIcon.entity.finishedProduct {
 	background: url(../../components/images/filetypes/generic-finishedProduct-16.png);
    background-repeat: no-repeat;
    height: 20px;
    width: 20px;
 }
 
-.alfresco-share .dijitIcon.dijitMenuItemIcon.localSemiFinishedProduct {
+.alfresco-share .dijitIcon.dijitMenuItemIcon.entity.localSemiFinishedProduct {
 	background: url(../../components/images/filetypes/generic-localSemiFinishedProduct-16.png);
    background-repeat: no-repeat;
    height: 20px;
@@ -192,14 +205,14 @@
 }
 
 
-.alfresco-share .dijitIcon.dijitMenuItemIcon.rawMaterial {
+.alfresco-share .dijitIcon.dijitMenuItemIcon.entity.rawMaterial {
 	background: url(../../components/images/filetypes/generic-rawMaterial-16.png);
    background-repeat: no-repeat;
    height: 20px;
    width: 20px;
 }
 
-.alfresco-share .dijitIcon.dijitMenuItemIcon.semiFinishedProduct {
+.alfresco-share .dijitIcon.dijitMenuItemIcon.entity.semiFinishedProduct {
 	background: url(../../components/images/filetypes/generic-semiFinishedProduct-16.png);
    background-repeat: no-repeat;
    height: 20px;
@@ -207,21 +220,21 @@
 }
 
 
-.alfresco-share .dijitIcon.dijitMenuItemIcon.packagingKit {
+.alfresco-share .dijitIcon.dijitMenuItemIcon.entity.packagingKit {
 	background: url(../../components/images/filetypes/generic-packagingKit-16.png);
    background-repeat: no-repeat;
    height: 20px;
    width: 20px;
 }
 
-.alfresco-share .dijitIcon.dijitMenuItemIcon.packagingMaterial {
+.alfresco-share .dijitIcon.dijitMenuItemIcon.entity.packagingMaterial {
 	background: url(../../components/images/filetypes/generic-packagingMaterial-16.png) no-repeat;
    background-repeat: no-repeat;
    height: 20px;
    width: 20px;
 }
 
-.alfresco-share .dijitIcon.dijitMenuItemIcon.resourceProduct {
+.alfresco-share .dijitIcon.dijitMenuItemIcon.entity.resourceProduct {
 	background: url(../../components/images/filetypes/generic-resourceProduct-16.png) no-repeat;
    background-repeat: no-repeat;
    height: 20px;
@@ -229,56 +242,56 @@
 }
 
 
-.alfresco-share .dijitIcon.dijitMenuItemIcon.project {
+.alfresco-share .dijitIcon.dijitMenuItemIcon.entity.project {
 	background: url(../../components/images/filetypes/generic-project-16.png);
    background-repeat: no-repeat;
    height: 20px;
    width: 20px;
 }
 
-.alfresco-share .dijitIcon.dijitMenuItemIcon.changeOrder {
+.alfresco-share .dijitIcon.dijitMenuItemIcon.entity.changeOrder {
 	background: url(../../components/images/filetypes/generic-changeOrder-16.png);
    background-repeat: no-repeat;
    height: 20px;
    width: 20px;
 }
 
-.alfresco-share .dijitIcon.dijitMenuItemIcon.aclGroup {
+.alfresco-share .dijitIcon.dijitMenuItemIcon.entity.aclGroup {
 	background: url(../../components/images/filetypes/generic-aclGroup-16.png);
    background-repeat: no-repeat;
    height: 20px;
    width: 20px;
 }
 
-.alfresco-share .dijitIcon.dijitMenuItemIcon.aclGroup {
+.alfresco-share .dijitIcon.dijitMenuItemIcon.entity.aclGroup {
 	background: url(../../components/images/filetypes/generic-aclGroup-16.png);
    background-repeat: no-repeat;
    height: 20px;
    width: 20px;
 }
 
-.alfresco-share .dijitIcon.dijitMenuItemIcon.controlPlan {
+.alfresco-share .dijitIcon.dijitMenuItemIcon.entity.controlPlan {
 	background: url(../../components/images/filetypes/generic-controlPlan-16.png);
    background-repeat: no-repeat;
    height: 20px;
    width: 20px;
 }
 
-.alfresco-share .dijitIcon.dijitMenuItemIcon.controlPoint {
+.alfresco-share .dijitIcon.dijitMenuItemIcon.entity.controlPoint {
 	background: url(../../components/images/filetypes/generic-controlPoint-16.png);
    background-repeat: no-repeat;
    height: 20px;
    width: 20px;
 }
 
-.alfresco-share .dijitIcon.dijitMenuItemIcon.qualityControl {
+.alfresco-share .dijitIcon.dijitMenuItemIcon.entity.qualityControl {
 	background: url(../../components/images/filetypes/generic-qualityControl-16.png);
    background-repeat: no-repeat;
    height: 20px;
    width: 20px;
 }
 
-.alfresco-share .dijitIcon.dijitMenuItemIcon.productMicrobioCriteria {
+.alfresco-share .dijitIcon.dijitMenuItemIcon.entity.productMicrobioCriteria {
 	background: url(../../components/images/filetypes/generic-productMicrobioCriteria-16.png);
    background-repeat: no-repeat;
    height: 20px;

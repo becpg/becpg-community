@@ -1,5 +1,9 @@
 /* Path icons */
 
+.node-header .node-path .entity {
+	background-image:  url(../images/filetypes/generic-entity-16.png);
+}
+
 .node-header .node-path .folder-pjt_project {
 	background-image:  url(../images/filetypes/generic-project-16.png);
 }

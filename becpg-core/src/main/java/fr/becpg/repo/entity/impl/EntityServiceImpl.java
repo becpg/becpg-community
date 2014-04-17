@@ -157,7 +157,8 @@ public class EntityServiceImpl implements EntityService {
 		}
 		return imagesFolderNodeRef;
 	}
-	//TODO Refactor and avoid duplicate
+
+	// TODO Refactor and avoid duplicate
 	private NodeRef getOrCreateImageFolder(NodeRef entityNodeRef) {
 		NodeRef imagesFolderNodeRef = nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS,
 				TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
@@ -397,20 +398,25 @@ public class EntityServiceImpl implements EntityService {
 		}
 	}
 
+
 	private void copyOrMoveFile(FileInfo file, NodeRef parentNodeRef, boolean isCopy) {
 
 		NodeRef documentNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, file.getName());
 		if (documentNodeRef == null) {
 
 			logger.debug("copy or move file in Documents: " + file.getName() + " parentNodeRef: " + parentNodeRef);
-			if (isCopy) {
-				NodeRef subFolderNodeRef = copyService.copy(file.getNodeRef(), parentNodeRef, ContentModel.ASSOC_CONTAINS,
-						ContentModel.ASSOC_CHILDREN, true);
-				nodeService.setProperty(subFolderNodeRef, ContentModel.PROP_NAME, file.getName());
-			} else {
-				nodeService.moveNode(file.getNodeRef(), parentNodeRef, ContentModel.ASSOC_CONTAINS, nodeService.getPrimaryParent(file.getNodeRef())
-						.getQName());
-			}
+	
+				if (isCopy) {
+					NodeRef subFolderNodeRef = copyService.copy(file.getNodeRef(), parentNodeRef, ContentModel.ASSOC_CONTAINS,
+							ContentModel.ASSOC_CHILDREN, true);
+					nodeService.setProperty(subFolderNodeRef, ContentModel.PROP_NAME, file.getName());
+				} else {
+
+					nodeService.moveNode(file.getNodeRef(), parentNodeRef, ContentModel.ASSOC_CONTAINS,
+							nodeService.getPrimaryParent(file.getNodeRef()).getQName());
+
+				}
+
 		} else {
 			logger.debug("file already exists so no copy, neither move file: " + file.getName() + " in parentNodeRef: " + parentNodeRef);
 		}

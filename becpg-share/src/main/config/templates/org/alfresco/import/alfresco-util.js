@@ -648,7 +648,7 @@ var AlfrescoUtil =
                {
                   href: targetPage + (y - x == 2 ? "?file=" + encodeURIComponent(item.fileName) + "&path=" : "?path=") + encodeURIComponent(pathUrl).replace(/%25/g,"%2525"),
                   label: folders[x],
-                  cssClass: "folder-link " + (y - x == 1 ?   (isEntity?  "folder-close folder-"+ item.node.type.replace(":","_") : "folder-closed") : "folder-open")
+                  cssClass: "folder-link " + (y - x == 1 ?   (isEntity?  "folder-close entity folder-"+ item.node.type.replace(":","_") : "folder-closed") : "folder-open")
                });
             }
          }

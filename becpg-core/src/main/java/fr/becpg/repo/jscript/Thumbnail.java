@@ -87,10 +87,15 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 			} catch (BeCPGException e) {
 				logger.debug(e, e);
 			}
-		}
+		
 
-		if (img == null) {
-			img = getImage(String.format(ICON_THUMBNAIL_NAME, type.getLocalName()));
+			if (img == null) {
+				img = getImage(String.format(ICON_THUMBNAIL_NAME, type.getLocalName()));
+			}
+			
+			if (img == null) {
+				img = getImage(String.format(ICON_THUMBNAIL_NAME, "entity"));
+			}
 		}
 
 		return img != null ? new ScriptNode(img, serviceRegistry, getScope()) : sourceNode;

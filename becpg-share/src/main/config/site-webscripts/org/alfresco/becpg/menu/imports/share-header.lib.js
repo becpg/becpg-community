@@ -116,7 +116,7 @@ function createDockBar(beCPGMenu){
                      name : "alfresco/header/AlfMenuItem",
                      config : {
                         label : item.displayName,
-                        iconClass : item.itemType.split(":")[1],
+                        iconClass : "entity "+item.itemType.split(":")[1],
                         targetUrl : targetUrl
                      }
                   });

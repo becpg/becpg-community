@@ -128,7 +128,7 @@ public class ProjectListSortTest extends AbstractProjectTestCase {
 					logger.info("project sorted " + projectName + " - "
 							+ projectHierarchy2);
 					
-					if(i<21){
+					if(i<20){
 						assertEquals("Crustacean", projectHierarchy2);
 					}
 					else{
