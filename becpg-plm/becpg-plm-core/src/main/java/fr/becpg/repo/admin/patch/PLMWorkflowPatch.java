@@ -70,13 +70,17 @@ public class PLMWorkflowPatch extends AbstractPatch implements ApplicationContex
     @Override
     protected String applyInternal() throws Exception
     {
-        WorkflowDeployer deployer = (WorkflowDeployer)applicationContext.getBean("bcpg.plm.workflowDeployer");        
+        WorkflowDeployer deployer = (WorkflowDeployer)applicationContext.getBean("bcpg.plm.workflowDeployer"); 
+        
+        List<Properties> oldWorkflowDefinitions = deployer.getWorkflowDefinitions();
         for (Properties props : workflowDefinitions)
         {
             props.put(WorkflowDeployer.REDEPLOY, "true");
         }
         deployer.setWorkflowDefinitions(workflowDefinitions);
         deployer.init();
+        
+        deployer.setWorkflowDefinitions(oldWorkflowDefinitions);
         
         // done
         return I18NUtil.getMessage(MSG_DEPLOYED, workflowDefinitions.size());

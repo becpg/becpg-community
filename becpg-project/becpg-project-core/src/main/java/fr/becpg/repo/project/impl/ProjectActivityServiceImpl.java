@@ -123,9 +123,11 @@ public class ProjectActivityServiceImpl implements ProjectActivityService {
 					data.put("entityNodeRef", projectNodeRef);
 					data.put("entityTitle", nodeService.getProperty(projectNodeRef, ContentModel.PROP_NAME));
 				}
+			
+				NodeRef activityListNodeRef = getActivityList(projectNodeRef);
 				
 				if(nodeService.hasAspect(projectNodeRef, BeCPGModel.ASPECT_ENTITY_TPL) || 
-						nodeService.hasAspect(projectNodeRef, ContentModel.ASPECT_PENDING_DELETE)){
+						nodeService.hasAspect(activityListNodeRef, ContentModel.ASPECT_PENDING_DELETE)){
 					logger.debug("No activity on project template or pending node");
 					return ; 
 				}
@@ -147,7 +149,7 @@ public class ProjectActivityServiceImpl implements ProjectActivityService {
 				ActivityListDataItem activityListDataItem = new ActivityListDataItem();
 
 				activityListDataItem.setActivityData(data.toString());
-				activityListDataItem.setParentNodeRef(getActivityList(projectNodeRef));
+				activityListDataItem.setParentNodeRef(activityListNodeRef);
 				activityListDataItem.setActivityType(ActivityType.State);
 				if (DELIVERABLE_STATE_ACTIVITY.equals(activityType)) {
 					activityListDataItem.setDeliverable(itemNodeRef);
@@ -214,15 +216,17 @@ public class ProjectActivityServiceImpl implements ProjectActivityService {
 					return;					
 				}
 				
+				NodeRef activityListNodeRef = getActivityList(projectNodeRef);
+				
 				if(nodeService.hasAspect(projectNodeRef, BeCPGModel.ASPECT_ENTITY_TPL) || 
-						nodeService.hasAspect(projectNodeRef, ContentModel.ASPECT_PENDING_DELETE)){
+						nodeService.hasAspect(activityListNodeRef, ContentModel.ASPECT_PENDING_DELETE)){
 					logger.debug("No activity on project template or pending node");
 					return ; 
 				}
 				
 				activityListDataItem.setActivityType(ActivityType.Comment);
 				activityListDataItem.setActivityData(data.toString());
-				activityListDataItem.setParentNodeRef(getActivityList(projectNodeRef));
+				activityListDataItem.setParentNodeRef(activityListNodeRef);
 
 				if (logger.isDebugEnabled()) {
 					logger.debug("Post Activity :" + activityListDataItem.toString());
@@ -251,17 +255,19 @@ public class ProjectActivityServiceImpl implements ProjectActivityService {
 				NodeRef projectNodeRef = getProjectNodeRefFromContent(contentNodeRef);
 				
 				
+				NodeRef activityListNodeRef = getActivityList(projectNodeRef);
+				
 				if(nodeService.hasAspect(projectNodeRef, BeCPGModel.ASPECT_ENTITY_TPL) || 
-						nodeService.hasAspect(projectNodeRef, ContentModel.ASPECT_PENDING_DELETE)){
+						nodeService.hasAspect(activityListNodeRef, ContentModel.ASPECT_PENDING_DELETE)){
 					logger.debug("No activity on project template or pending node");
 					return ; 
-				}
+				}	
 				
 				data.put(PROP_TITLE, (String) nodeService.getProperty(contentNodeRef, ContentModel.PROP_NAME));
 
 				activityListDataItem.setActivityType(ActivityType.Content);
 				activityListDataItem.setActivityData(data.toString());
-				activityListDataItem.setParentNodeRef(getActivityList(projectNodeRef));
+				activityListDataItem.setParentNodeRef(activityListNodeRef);
 
 				if (logger.isDebugEnabled()) {
 					logger.debug("Post Activity :" + activityListDataItem.toString());

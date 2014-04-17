@@ -34,6 +34,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.project.ProjectActivityService;
 import fr.becpg.repo.project.data.projectList.ActivityEvent;
 
@@ -70,7 +71,8 @@ public class ProjectActivityActionExecuter extends ActionExecuterAbstractBase {
 	 */
 	@Override
 	public void executeImpl(Action ruleAction, NodeRef actionedUponNodeRef) {
-		if (nodeService.exists(actionedUponNodeRef)) {
+		if (nodeService.exists(actionedUponNodeRef) && !nodeService.hasAspect(actionedUponNodeRef, ContentModel.ASPECT_WORKING_COPY)
+				&& !nodeService.hasAspect(actionedUponNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
 			QName type = nodeService.getType(actionedUponNodeRef);
 			String activityEvent = (String) ruleAction.getParameterValue(PARAM_ACTIVITY_EVENT);
 			if(activityEvent!=null){

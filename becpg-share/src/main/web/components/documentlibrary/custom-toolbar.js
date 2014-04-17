@@ -376,7 +376,8 @@
                            eIcon.on("click", fnBreadcrumbClick, newPath);
                            eIcon.addClass("icon");
                            if (j - i < 2 && this.entityLinkCustomClass != null) {
-                              eIcon.addClass(this.entityLinkCustomClass);
+                        	   eIcon.addClass("entity");
+                        	   eIcon.addClass(this.entityLinkCustomClass);
                            }
                            eIcon.addClass("filter-" + $html(this.currentFilter.filterId));
                            eCrumb.appendChild(eIcon);

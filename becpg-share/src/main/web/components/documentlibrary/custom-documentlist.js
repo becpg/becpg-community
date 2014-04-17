@@ -49,11 +49,16 @@
                         // same message for every product
                         if (entityClassName == "rawMaterial" || entityClassName == "finishedProduct" || entityClassName == "semiFinishedProduct" || entityClassName == "localSemiFinishedProduct" || entityClassName == "packagingKit" || entityClassName == "packagingMaterial" || entityClassName == "resourceProduct") {
                            instructionKey = "product";
-                        } else {
+                        } else if(entityClassName =="projet" || entityClassName =="systemEntity" ||  entityClassName =="aclGroup" ||  entityClassName =="entityTplFolder"
+                        		){
                            instructionKey = entityClassName;
+                        } else {
+                        	instructionKey = "entity";
                         }
-
-                        instructions = "<img  src='/share/res/components/images/filetypes/generic-" + entityClassName + "-32.png'>";
+                        
+                        
+                        instructions = "<img  src='"+Alfresco.constants.PROXY_URI +
+                        		"/api/node/" + metadata.parent.nodeRef.replace(':/','') + "/content/thumbnails/doclib?c=queue&ph=true' class='node-thumbnail' width='48'>";
                         instructions += "<span >" + Alfresco.util
                               .message("page.documentlibrary.instructions." + instructionKey) + "</span>";
 

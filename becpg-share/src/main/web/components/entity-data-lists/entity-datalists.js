@@ -122,7 +122,7 @@
                            this.renderDataLists();
 
                            // Select current list, if relevant
-                           if (this.options.listId.length > 0) {
+                           if (this.options.listId.length > 0 && this.dataLists[this.options.listId]) {
                               YAHOO.Bubbling.fire("activeDataListChanged", {
                                  list : this.options.listId,
                                  dataList : this.dataLists[this.options.listId],
@@ -174,7 +174,12 @@
                         }
 
                         this.dataLists = {};
-                        this.containerNodeRef = new Alfresco.util.NodeRef(response.json.container);
+                        
+                        if(response.json.container){
+                        	this.containerNodeRef = new Alfresco.util.NodeRef(response.json.container);
+                        } else {
+                        	this.containerNodeRef = new Alfresco.util.NodeRef(this.options.entityNodeRef);
+                        }
                         this.entity = response.json.entity;
                         this.widgets.newList.set("disabled", !response.json.permissions.create);
 
@@ -331,7 +336,8 @@
                                  el = document.createElement("li");
                                  el.onclick = fnOnClick();
                                  elEdit = document.createElement("span");
-                                 if (permissions.edit) {
+               				      if (permissions["edit"])
+                    			 {
                                     elEdit.className = "edit";
                                     elEdit.title = this.msg("label.edit-list");
                                     elEdit.onclick = fnEditOnClick(list.name, true);

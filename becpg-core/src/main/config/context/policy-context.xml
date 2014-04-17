@@ -56,6 +56,7 @@
 	<bean id="entityCheckOutCheckInServicePolicy" class="fr.becpg.repo.entity.policy.EntityCheckOutCheckInServicePolicy" parent="abstractBeCPGPolicy">
 		<property name="entityVersionService" ref="entityVersionService" />
 		<property name="entityReportAsyncGenerator" ref="entityReportAsyncGenerator" />
+		<property name="ruleService" ref="ruleService"/>
 	</bean>
 
 	<!-- Entity Datalist Policies -->

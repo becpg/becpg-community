@@ -47,7 +47,6 @@ public interface EntityService {
 
 	String getDefaultImageName(QName entityTypeQName);
 
-	@Deprecated
 	boolean hasAssociatedImages(QName type);
 
 	NodeRef createOrCopyFrom(NodeRef sourceNodeRef, NodeRef parentNodeRef, QName entityType, String entityName);
