@@ -305,13 +305,15 @@ if (beCPG.module.EntityDataGridRenderers) {
             return "<span  class='variant-common'>&nbsp;</span>";
          }
 
-         for ( var j in variants) {
-            for ( var i in scope.entity.variants) {
-               if (variants[j] == scope.entity.variants[i].nodeRef && scope.entity.variants[i].isDefaultVariant) {
-                  isInDefault = true;
-                  break;
-               }
-            }
+         if(scope.entity){
+	         for ( var j in variants) {
+	            for ( var i in scope.entity.variants) {
+	               if (variants[j] == scope.entity.variants[i].nodeRef && scope.entity.variants[i].isDefaultVariant) {
+	                  isInDefault = true;
+	                  break;
+	               }
+	            }
+	         }
          }
 
          if (isInDefault) {

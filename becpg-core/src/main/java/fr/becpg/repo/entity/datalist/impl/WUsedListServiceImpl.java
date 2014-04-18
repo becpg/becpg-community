@@ -17,10 +17,11 @@
  ******************************************************************************/
 package fr.becpg.repo.entity.datalist.impl;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -60,28 +61,29 @@ public class WUsedListServiceImpl implements WUsedListService {
 
 	@Override
 	public MultiLevelListData getWUsedEntity(NodeRef entityNodeRef, QName associationName, int maxDepthLevel) {
-		return getWUsedEntity(Arrays.asList(entityNodeRef), associationName, 0, maxDepthLevel);
+		return getWUsedEntity(Arrays.asList(entityNodeRef), WUsedOperator.AND, associationName, 0, maxDepthLevel);
 	}
 
 	@Override
-	public MultiLevelListData getWUsedEntity(List<NodeRef> entityNodeRefs, QName associationName, int maxDepthLevel) {
-		return getWUsedEntity(entityNodeRefs, associationName, 0, maxDepthLevel);
+	public MultiLevelListData getWUsedEntity(List<NodeRef> entityNodeRefs, WUsedOperator operator, QName associationName, int maxDepthLevel) {
+		return getWUsedEntity(entityNodeRefs,operator,  associationName, 0, maxDepthLevel);
 	}
 
-	private MultiLevelListData getWUsedEntity(List<NodeRef> entityNodeRefs, QName associationName, int depthLevel, int maxDepthLevel) {
+	private MultiLevelListData getWUsedEntity(List<NodeRef> entityNodeRefs,WUsedOperator operator, QName associationName, int depthLevel, int maxDepthLevel) {
 
 		MultiLevelListData ret = new MultiLevelListData(entityNodeRefs, depthLevel);
 
-		List<AssociationRef> associationRefs = new ArrayList<>();
+		Set<AssociationRef> associationRefs = new HashSet<>();
 		boolean first = true;
 		for (NodeRef entityNodeRef : entityNodeRefs) {
-			if (first) {
-				associationRefs = nodeService.getSourceAssocs(entityNodeRef, associationName);
+			if (first  || WUsedOperator.OR.equals(operator) ) {
+				associationRefs.addAll(nodeService.getSourceAssocs(entityNodeRef, associationName));
 				if(logger.isDebugEnabled()){
 					logger.debug("associationRefs size" + associationRefs.size()+ "  for entityNodeRef "+entityNodeRef+" and assocs"+associationName);
 				}
 				first = false;
 			} else {
+				
 				//Test for join
 				for (Iterator<AssociationRef> iterator = associationRefs.iterator(); iterator.hasNext();) {
 					AssociationRef associationRef = (AssociationRef) iterator.next();
@@ -116,7 +118,7 @@ public class WUsedListServiceImpl implements WUsedListService {
 					MultiLevelListData multiLevelListData = null;
 					// next level
 					if (maxDepthLevel < 0 || depthLevel + 1 < maxDepthLevel) {
-						multiLevelListData = getWUsedEntity(Arrays.asList(rootNodeRef), associationName, depthLevel + 1, maxDepthLevel);
+						multiLevelListData = getWUsedEntity(Arrays.asList(rootNodeRef),operator, associationName, depthLevel + 1, maxDepthLevel);
 					} else {
 						multiLevelListData = new MultiLevelListData(rootNodeRef, depthLevel + 1);
 					}

@@ -165,10 +165,10 @@ public class EntityTplServiceImpl implements EntityTplService {
 		
 		String name = RepoConsts.WUSED_PREFIX;
 		if(assocQName!=null) {
-			name+=RepoConsts.WUSED_SEPARATOR+assocQName.toPrefixString(namespaceService);
+			name+=RepoConsts.WUSED_SEPARATOR+assocQName.toPrefixString(namespaceService).replace(":", "_");
 		}
 		
-		NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef,name );
+		NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, name );
 		if (listNodeRef == null) {
 			
 			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
@@ -177,7 +177,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 			properties.put(ContentModel.PROP_DESCRIPTION, I18NUtil.getMessage("entity-datalist-wused-description"));
 			properties.put(DataListModel.PROP_DATALISTITEMTYPE, typeQName.toPrefixString(namespaceService));
 
-			listNodeRef =  nodeService.createNode(listContainerNodeRef, ContentModel.ASSOC_CONTAINS, typeQName, DataListModel.TYPE_DATALIST, properties).getChildRef();
+			listNodeRef =  nodeService.createNode(listContainerNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, DataListModel.TYPE_DATALIST, properties).getChildRef();
 			
 		}
 		return listNodeRef;

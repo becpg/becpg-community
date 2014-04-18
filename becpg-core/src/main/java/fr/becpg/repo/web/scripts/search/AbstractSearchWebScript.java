@@ -17,8 +17,6 @@
  ******************************************************************************/
 package fr.becpg.repo.web.scripts.search;
 
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +31,7 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.helper.JSONHelper;
 import fr.becpg.repo.search.AdvSearchService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.web.scripts.WebscriptHelper;
@@ -100,23 +99,7 @@ public abstract class AbstractSearchWebScript extends AbstractWebScript {
 
 	
 
-	@SuppressWarnings("unchecked")
-	protected Map<String, String> extractCriteria(JSONObject jsonObject) throws JSONException {
 
-		Map<String, String> criteriaMap = new HashMap<String, String>();
-
-		Iterator<String> iterator = jsonObject.keys();
-
-		while (iterator.hasNext()) {
-
-			String key = (String) iterator.next();
-			String value = jsonObject.getString(key);
-			criteriaMap.put(key, value);
-		}
-
-		return criteriaMap;
-
-	}
 
 	protected List<NodeRef> doSearch(WebScriptRequest req, Integer maxResults) throws JSONException {
 
@@ -153,7 +136,7 @@ public abstract class AbstractSearchWebScript extends AbstractWebScript {
 		if (query != null && !query.isEmpty()) {
 		
 			JSONObject jsonObject = new JSONObject(query);
-			criteriaMap = extractCriteria(jsonObject);
+			criteriaMap = JSONHelper.extractCriteria(jsonObject);
 			datatype =  QName.createQName(jsonObject.getString("datatype"), namespaceService);
 			
 		}

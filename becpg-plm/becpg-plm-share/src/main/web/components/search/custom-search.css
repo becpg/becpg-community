@@ -2,7 +2,14 @@
 
 .search .search-bar span.bulk-edit-button
 {
-   background: transparent url(../images/edit-inline-16.png) no-repeat 12px 4px;
+   background: transparent url("../images/edit-inline-16.png") no-repeat 12px 4px;
+   padding-left: 22px; 
+}
+
+
+.search .search-bar span.wused-button
+{
+   background: transparent url("../images/wused-16.png") no-repeat 12px 4px;
    padding-left: 22px; 
 }
 

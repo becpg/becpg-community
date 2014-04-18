@@ -18,6 +18,7 @@
 package fr.becpg.repo.web.scripts.entity;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
@@ -86,7 +87,14 @@ public class EntityDictionnaryWebScript extends AbstractWebScript {
 
 			JSONObject ret = new JSONObject();
 			JSONArray items = new JSONArray();
-			for (AssociationDefinition assocDef : entityDictionaryService.getPivotAssocDefs(dataType)) {
+			
+			List<AssociationDefinition> assocDefs = entityDictionaryService.getPivotAssocDefs(dataType);
+			if(assocDefs == null || assocDefs.isEmpty()){
+				//Try assocs on parent
+				assocDefs = entityDictionaryService.getPivotAssocDefs(dictionaryService.getClass(dataType).getParentName());
+			}
+			
+			for (AssociationDefinition assocDef : assocDefs) {
 				if (assocDef.getTitle(dictionaryService) != null && assocDef.getSourceClass().getTitle(dictionaryService) != null) {
 					JSONObject item = new JSONObject();
 					item.put("label", assocDef.getTitle(dictionaryService) + " - " + assocDef.getSourceClass().getTitle(dictionaryService));

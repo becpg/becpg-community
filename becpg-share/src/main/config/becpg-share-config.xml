@@ -126,6 +126,11 @@
 				<evaluator negate="true">evaluator.becpg.doclib.action.entityTpl</evaluator>
 			</action>
 
+			<action id="entity-wused" type="pagelink" label="actions.entity.wused">
+				<param name="page">wused?nodeRefs={node.nodeRef}&amp;type={node.type}</param>
+				<evaluator>evaluator.becpg.doclib.action.entity</evaluator>
+			</action>
+
 			<action id="entity-checkin" type="javascript" label="actions.document.checkin-entity">
 				<param name="function">onActionCheckInEntity</param>
 				<permissions>
@@ -252,6 +257,7 @@
 				<action index="130" id="document-copy-to" icon="folder-copy-to" label="actions.folder.copy-to" />
 				<action index="140" id="document-move-to" icon="folder-move-to" label="actions.folder.move-to" />
 				<action index="150" id="folder-manage-rules" />
+				<action index="151" id="entity-wused" />
 				<action index="160" id="document-delete" icon="folder-delete" label="actions.entity.delete" />
 				<action index="170" id="entity-manage-site-permissions" icon="folder-manage-permissions" label="actions.folder.manage-permissions" />
 				<action index="180" id="entity-manage-repo-permissions" icon="folder-manage-permissions" label="actions.folder.manage-permissions" />

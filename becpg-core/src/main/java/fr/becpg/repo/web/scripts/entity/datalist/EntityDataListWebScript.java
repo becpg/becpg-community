@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +42,7 @@ import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.DataListPagination;
 import fr.becpg.repo.entity.datalist.impl.AbstractDataListExtractor;
+import fr.becpg.repo.helper.JSONHelper;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.security.SecurityService;
 import fr.becpg.repo.web.scripts.AbstractCachingWebscript;
@@ -100,6 +100,8 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 	protected static final String PARAM_ENTITY_NODEREF = "entityNodeRef";
 
 	protected static final String PARAM_ITEMTYPE = "itemType";
+	
+	protected static final String PARAM_EXTRA_PARAMS =  "extraParams";
 
 	/** Pagination **/
 
@@ -235,6 +237,8 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 		String filterId = req.getParameter(PARAM_FILTER);
 		String filterData = req.getParameter(PARAM_FILTER_DATA);
 		String filterParams = req.getParameter(PARAM_FILTER_PARAMS);
+		String extraParams = req.getParameter(PARAM_EXTRA_PARAMS);
+		
 
 		try {
 
@@ -263,6 +267,12 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 					filterId = DataListFilter.ALL_FILTER;
 				}
 			}
+			
+			if(extraParams == null){
+				if (json != null && json.has(PARAM_EXTRA_PARAMS) && !json.isNull(PARAM_EXTRA_PARAMS)) {
+					extraParams = (String) json.get(PARAM_EXTRA_PARAMS);
+				}
+			}
 
 			if (dataListFilter.isSimpleItem()) {
 				filterId = DataListFilter.NODE_FILTER;
@@ -282,7 +292,7 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 
 			if (filterId.equals(DataListFilter.FORM_FILTER) && filterData != null) {
 				JSONObject jsonObject = new JSONObject(filterData);
-				dataListFilter.setCriteriaMap(extractCriteria(jsonObject));
+				dataListFilter.setCriteriaMap(JSONHelper.extractCriteria(jsonObject));
 			}
 
 			List<String> metadataFields = new LinkedList<String>();
@@ -298,6 +308,7 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 			dataListFilter.setFilterId(filterId);
 			dataListFilter.setFilterData(filterData);
 			dataListFilter.setFilterParams(filterParams);
+			dataListFilter.setExtraParams(extraParams);
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("Filter:" + dataListFilter.toString());
@@ -463,23 +474,6 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	protected Map<String, String> extractCriteria(JSONObject jsonObject) throws JSONException {
-
-		Map<String, String> criteriaMap = new HashMap<String, String>();
-
-		Iterator<String> iterator = jsonObject.keys();
-
-		while (iterator.hasNext()) {
-
-			String key = (String) iterator.next();
-			String value = jsonObject.getString(key);
-			criteriaMap.put(key, value);
-		}
-
-		return criteriaMap;
-
-	}
 
 	protected Integer getNumParameter(WebScriptRequest req, String paramName) {
 		String param = req.getParameter(paramName);

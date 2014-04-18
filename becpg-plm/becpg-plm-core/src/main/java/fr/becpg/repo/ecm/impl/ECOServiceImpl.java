@@ -57,6 +57,7 @@ import fr.becpg.repo.ecm.data.dataList.ReplacementListDataItem;
 import fr.becpg.repo.ecm.data.dataList.SimulationListDataItem;
 import fr.becpg.repo.ecm.data.dataList.WUsedListDataItem;
 import fr.becpg.repo.entity.datalist.WUsedListService;
+import fr.becpg.repo.entity.datalist.WUsedListService.WUsedOperator;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.ProductService;
@@ -232,7 +233,7 @@ public class ECOServiceImpl implements ECOService {
 
 						for (QName associationQName : associationQNames) {
 
-							MultiLevelListData wUsedData = wUsedListService.getWUsedEntity(sourceList, associationQName, RepoConsts.MAX_DEPTH_LEVEL);
+							MultiLevelListData wUsedData = wUsedListService.getWUsedEntity(sourceList,WUsedOperator.AND, associationQName, RepoConsts.MAX_DEPTH_LEVEL);
 
 							QName datalistQName = evaluateListFromAssociation(associationQName);
 							calculateWUsedList(ecoData, wUsedData, datalistQName, parent);

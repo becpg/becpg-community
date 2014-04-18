@@ -37,7 +37,7 @@
             </div>
          </div>
          
-         <div class="yui-gc search-bar theme-bg-color-3">
+         <div class="yui-gf search-bar theme-bg-color-3">
             <div class="yui-u first">
                <div id="${el}-search-info" class="search-info">${msg("search.info.searching")}</div>
                <div id="${el}-paginator-top" class="paginator hidden"></div>
@@ -69,6 +69,14 @@
 						<span>${msg("button.bulkEdit")}</span>
 				   </button>
 				</span>
+				
+				<#if showWused >
+				<span id="${el}-wused" class="yui-button yui-push-button wused-button">
+				   <button>
+						<span>${msg("button.wused")}</span>
+				   </button>
+				</span>
+				</#if>
             </div>
          </div>
          

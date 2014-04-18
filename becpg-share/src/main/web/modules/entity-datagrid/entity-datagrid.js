@@ -236,6 +236,11 @@
                       * @default ""
                       */
                      entityNodeRef : "",
+                     
+                     /**
+                      * Allow to provide extraParams to backend
+                      */
+                     extraParams : null,
 
                      /**
                       * can be used to replace dataList Parent
@@ -2455,7 +2460,8 @@
                      var request = {
                         fields : this.dataRequestFields,
                         page : p_obj && p_obj.page ? p_obj.page : this.currentPage,
-                        queryExecutionId : this.queryExecutionId
+                        queryExecutionId : this.queryExecutionId,
+                        extraParams : this.options.extraParams
                      };
 
                      if (p_obj && p_obj.filter) {
