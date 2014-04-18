@@ -122,7 +122,7 @@ public class RepoConsts {
 	
 	//WUsed
 	public static String WUSED_PREFIX = "WUsed";
-	public static String WUSED_SEPARATOR = "|";
+	public static String WUSED_SEPARATOR = "-";
 	
 	
 	//Version

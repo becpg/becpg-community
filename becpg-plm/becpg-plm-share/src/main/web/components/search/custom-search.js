@@ -244,6 +244,11 @@
 		               // bulk-edit YUI button
 		               this.widgets.bulkEditButton = Alfresco.util.createYUIButton(this, "bulk-edit",
 		                     this.onBulkEditClick);
+		               
+		               if (Dom.get(this.id + "-wused")) {
+			               this.widgets.wUsedButton = Alfresco.util.createYUIButton(this, "wused",
+				                     this.onWUsedClick);
+		               }
 
 		               /*
 							 * beCPG : export search in report
@@ -609,17 +614,8 @@
 
 		               window.location = url;
 	               },
-	               /**
-						 * Event handler that gets fired when user clicks the Search
-						 * button.
-						 * 
-						 * @method onSearchClick
-						 * @param e
-						 *           {object} DomEvent
-						 * @param obj
-						 *           {object} Object passed back from addListener
-						 *           method
-						 */
+	               
+	               
 	               onBulkEditClick : function Search_onBulkEditClick(e, obj) {
 
 		               // redirect back to the search page - with appropriate site
@@ -631,6 +627,19 @@
 
 		               window.location = url;
 	               },
+	               
+	               onWUsedClick :  function Search_onWUsedClick(e, obj) {
+
+		               // redirect back to the search page - with appropriate site
+		               // context
+		               var url = Alfresco.constants.URL_PAGECONTEXT;
+
+		               // add search data webscript arguments
+		               url += "wused" + location.search;
+
+		               window.location = url;
+	               },
+	               
 	               /**
 						 * Build URI parameter string for search JSON data webscript
 						 * 

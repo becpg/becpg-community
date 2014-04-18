@@ -30,15 +30,20 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.WUsedListService;
+import fr.becpg.repo.entity.datalist.WUsedListService.WUsedOperator;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.DataListPagination;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorMode;
+import fr.becpg.repo.helper.JSONHelper;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * 
@@ -47,7 +52,6 @@ import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtracto
  */
 public class WUsedExtractor extends MultiLevelExtractor {
 
-	
 	private static Log logger = LogFactory.getLog(WUsedExtractor.class);
 
 	private WUsedListService wUsedListService;
@@ -63,14 +67,15 @@ public class WUsedExtractor extends MultiLevelExtractor {
 	}
 
 	@Override
-	public PaginatedExtractedItems extract(DataListFilter dataListFilter, List<String> metadataFields, DataListPagination pagination, boolean hasWriteAccess) {
+	public PaginatedExtractedItems extract(DataListFilter dataListFilter, List<String> metadataFields, DataListPagination pagination,
+			boolean hasWriteAccess) {
 
 		PaginatedExtractedItems ret = new PaginatedExtractedItems(pagination.getPageSize());
 
 		QName associationName = null;
 
 		if (dataListFilter.getDataListName() != null && dataListFilter.getDataListName().indexOf(RepoConsts.WUSED_SEPARATOR) > 0) {
-			associationName = QName.createQName(dataListFilter.getDataListName().split("\\"+RepoConsts.WUSED_SEPARATOR)[1], namespaceService);
+			associationName = QName.createQName(dataListFilter.getDataListName().split(RepoConsts.WUSED_SEPARATOR)[1].replace("_", ":"), namespaceService);
 		} else {
 			associationName = entityDictionaryService.getDefaultPivotAssoc(dataListFilter.getDataType());
 		}
@@ -82,14 +87,15 @@ public class WUsedExtractor extends MultiLevelExtractor {
 
 		Map<String, Object> props = new HashMap<String, Object>();
 		String assocName = associationName.toPrefixString(namespaceService);
-		
+
 		props.put(PROP_ACCESSRIGHT, true); // TODO
-		props.put(PROP_REVERSE_ASSOC,assocName );
+		props.put(PROP_REVERSE_ASSOC, assocName);
 
 		int pageSize = pagination.getPageSize();
 		int startIndex = (pagination.getPage() - 1) * pagination.getPageSize();
 
-		MultiLevelListData wUsedData = wUsedListService.getWUsedEntity(dataListFilter.getEntityNodeRefs(), associationName, dataListFilter.getMaxDepth());
+		MultiLevelListData wUsedData = wUsedListService.getWUsedEntity(getWusedNodeRefs(dataListFilter), getWUsedOperator(dataListFilter),
+				associationName, dataListFilter.getMaxDepth());
 
 		if (dataListFilter.getFilterId().equals(DataListFilter.FORM_FILTER)) {
 			filter(dataListFilter, wUsedData);
@@ -98,10 +104,53 @@ public class WUsedExtractor extends MultiLevelExtractor {
 		appendNextLevel(ret, metadataFields, wUsedData, 0, startIndex, pageSize, props, dataListFilter.getFormat());
 
 		ret.setFullListSize(wUsedData.getSize());
-		
-		
+
 		return ret;
 
+	}
+
+	private WUsedOperator getWUsedOperator(DataListFilter dataListFilter) {
+		if (dataListFilter.getExtraParams() != null && dataListFilter.getExtraParams().length() > 0) {
+			try {
+				JSONObject jsonObject = new JSONObject(dataListFilter.getExtraParams());
+				if (jsonObject.has("operator")) {
+					return Enum.valueOf(WUsedOperator.class, (String) jsonObject.get("operator"));
+				}
+
+			} catch (JSONException e) {
+				logger.error(e);
+			}
+		}
+		return WUsedOperator.AND;
+	}
+
+	private List<NodeRef> getWusedNodeRefs(DataListFilter dataListFilter) {
+
+		List<NodeRef> ret = dataListFilter.getEntityNodeRefs();
+
+		if (ret == null || ret.isEmpty()) {
+			if (dataListFilter.getExtraParams() != null && dataListFilter.getExtraParams().length() > 0) {
+				try {
+					JSONObject jsonObject = new JSONObject(dataListFilter.getExtraParams());
+					if (jsonObject != null && jsonObject.has("searchQuery")) {
+						JSONObject searchQuery = (JSONObject) jsonObject.get("searchQuery");
+						if (searchQuery != null) {
+							Map<String, String> criteriaMap = JSONHelper.extractCriteria(searchQuery);
+							QName datatype = QName.createQName(searchQuery.getString("datatype"), namespaceService);
+
+							BeCPGQueryBuilder queryBuilder = advSearchService.createSearchQuery(datatype, null, null, true, null, null);
+
+							ret = advSearchService.queryAdvSearch(datatype, queryBuilder, criteriaMap, RepoConsts.MAX_RESULTS_256);
+						}
+					}
+
+				} catch (JSONException e) {
+					logger.error(e);
+				}
+			}
+
+		}
+		return ret;
 	}
 
 	private Map<String, String> cleanCriteria(Map<String, String> criteriaMap) {
@@ -130,8 +179,8 @@ public class WUsedExtractor extends MultiLevelExtractor {
 				Entry<NodeRef, MultiLevelListData> entry = iterator.next();
 				NodeRef nodeRef = entry.getKey();
 
-				Map<String, Object> comp = attributeExtractorService.extractNodeData(nodeRef, nodeService.getType(nodeRef), new ArrayList<>(criteriaMap.keySet()),
-						AttributeExtractorMode.JSON);
+				Map<String, Object> comp = attributeExtractorService.extractNodeData(nodeRef, nodeService.getType(nodeRef), new ArrayList<>(
+						criteriaMap.keySet()), AttributeExtractorMode.JSON);
 				for (String key : comp.keySet()) {
 					String critKey = key.replace("prop_", "").replace("assoc_", "").replace("_", ":");
 					Map<String, Object> data = (Map<String, Object>) comp.get(key);
@@ -143,12 +192,13 @@ public class WUsedExtractor extends MultiLevelExtractor {
 			}
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
-	public Map<String, Object> extractJSON(NodeRef nodeRef, List<AttributeExtractorStructure> metadataFields, Map<String, Object> props, Map<NodeRef, Map<String, Object>> cache) {
-	    Map<String, Object> ret = super.extractJSON(nodeRef, metadataFields, props, cache);
-		
+	public Map<String, Object> extractJSON(NodeRef nodeRef, List<AttributeExtractorStructure> metadataFields, Map<String, Object> props,
+			Map<NodeRef, Map<String, Object>> cache) {
+		Map<String, Object> ret = super.extractJSON(nodeRef, metadataFields, props, cache);
+
 		Map<String, Object> permissions = (Map<String, Object>) ret.get(PROP_PERMISSIONS);
 		Map<String, Boolean> userAccess = (Map<String, Boolean>) permissions.get("userAccess");
 
@@ -159,14 +209,14 @@ public class WUsedExtractor extends MultiLevelExtractor {
 		userAccess.put("details", false);
 
 		ret.put(PROP_PERMISSIONS, permissions);
-		
+
 		return ret;
 	}
-	
 
 	@Override
 	public boolean applyTo(DataListFilter dataListFilter) {
-		return !dataListFilter.isSimpleItem() && dataListFilter.getDataListName() != null && dataListFilter.getDataListName().startsWith(RepoConsts.WUSED_PREFIX);
+		return !dataListFilter.isSimpleItem() && dataListFilter.getDataListName() != null
+				&& dataListFilter.getDataListName().startsWith(RepoConsts.WUSED_PREFIX);
 	}
 
 	@Override

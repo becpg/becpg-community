@@ -38,6 +38,8 @@ function customSearchMain(){
 	
 	model.exportSearchTpls = getExportSearchTpls(datatype);
 	
+	model.showWused = datatype!=null;
+	
 	var metadatas = config.scoped["Search"]["metadata"].childrenMap["show"];
 	var metadataFields = "";
 	for (var i = 0, metadata; i < metadatas.size(); i++)

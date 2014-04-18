@@ -421,7 +421,7 @@
                      }
 
                      if (inputAdded) {
-                        inputAdded.value = inputAdded.value.replace("," + nodeRef, "").replace(nodeRef, "");
+                        inputAdded.value = inputAdded.value.replace("," + nodeRef, "").replace(nodeRef+",", "").replace(nodeRef,"");
                      }
                   },
 

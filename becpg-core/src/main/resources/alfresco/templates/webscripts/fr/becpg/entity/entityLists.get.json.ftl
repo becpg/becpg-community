@@ -14,7 +14,13 @@
        <#if classdef.name??>"name": "${classdef.name.toPrefixString()}",</#if>
       "title": "${classdef.title!""}",
       "description": "${classdef.description!""}"
-     }<#if classdef_has_next>,</#if></#list>],
+     },</#list>
+     {
+	     "name":"WUsedList",
+	     "title":"${msg('entity-datalist-wused-title')}",
+	     "description":"${msg('entity-datalist-wused-description')}"
+     }
+     ],
     </#if>
    "datalists":
    [

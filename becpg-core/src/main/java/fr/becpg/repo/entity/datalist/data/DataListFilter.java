@@ -75,6 +75,8 @@ public class DataListFilter {
 	
 	private String filterData = null;
 	
+	private String extraParams = null;
+	
 	private String sortId = null;
 	
 	private String format = null;
@@ -234,6 +236,16 @@ public class DataListFilter {
 	public void setNodeRef(NodeRef nodeRef) {
 		this.nodeRef = nodeRef;
 	}
+
+	public String getExtraParams() {
+		return extraParams;
+	}
+
+
+	public void setExtraParams(String extraParams) {
+		this.extraParams = extraParams;
+	}
+
 
 	public BeCPGQueryBuilder getSearchQuery(NodeRef parentNodeRef) {
 		

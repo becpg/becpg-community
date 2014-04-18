@@ -7,7 +7,20 @@ function main()
  AlfrescoUtil.param('nodeRefs', "");
  AlfrescoUtil.param('assocName', null);
  
+ model.searchQuery = (page.url.args["q"] != null) ? page.url.args["q"] : "";
  
+ var datatype = null;
+ if (model.searchQuery !== null && model.searchQuery.length !== 0)
+ {
+   var formJson = jsonUtils.toObject(model.searchQuery);
+	        
+    if(formJson.length !== 0)
+	 {
+		  datatype = formJson.datatype;
+	 }
+  } else {
+	  model.searchQuery = null;
+  }	
 
    model.itemTypes = [];
    
@@ -16,6 +29,8 @@ function main()
       url+="?itemType=" + model.type;
    } else if(model.assocName){
       url+="?assocName=" + model.assocName;
+   } else if(datatype){
+	   url+="?itemType=" + datatype.replace("_",":");
    }
    
      
@@ -40,7 +55,8 @@ function main()
     name : "beCPG.component.WUsedForm",
     options : {
        type: model.type,
-       nodeRefs : model.nodeRefs
+       nodeRefs : model.nodeRefs, 
+       searchQuery :  model.searchQuery
       }
    };
     

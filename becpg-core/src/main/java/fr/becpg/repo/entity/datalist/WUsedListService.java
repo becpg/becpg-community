@@ -25,6 +25,10 @@ import org.alfresco.service.namespace.QName;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 
 public interface WUsedListService {
+	
+	public enum WUsedOperator {
+		AND,OR
+	}
 
 	/**
      * Calculate the WUsed entities of the item
@@ -35,12 +39,12 @@ public interface WUsedListService {
     public MultiLevelListData getWUsedEntity(NodeRef entityNodeRef, QName associationName, int maxDepthLevel);
     
     /**
-     * Calculate the WUsed entities of the items (compute AND Operator)
+     * Calculate the WUsed entities of the items 
      * @param entityNodeRef item associated to datalists
      * @param associationName
      * @param maxDepthLevel
      */
-    public MultiLevelListData getWUsedEntity(List<NodeRef> entityNodeRefs, QName associationQName, int maxDepthLevel);
+    public MultiLevelListData getWUsedEntity(List<NodeRef> entityNodeRefs, WUsedOperator operator,  QName associationQName, int maxDepthLevel);
 
     
 }

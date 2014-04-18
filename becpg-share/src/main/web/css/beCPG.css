@@ -152,14 +152,14 @@
 }
 
 
-.alfresco-share .dijitIcon.dijitMenuItemIcon.entity.project-list-header {
+.alfresco-share .dijitIcon.dijitMenuItemIcon.project-list-header {
    background: url("../components/images/header/project-list.png");
    background-repeat: no-repeat;
    height: 20px;
    width: 20px;
 }
 
-.alfresco-share .dijitIcon.dijitMenuItemIcon.entity.nc-list-header {
+.alfresco-share .dijitIcon.dijitMenuItemIcon.nc-list-header {
    background: url("../components/images/header/nc-list.png");
    background-repeat: no-repeat;
    height: 20px;
@@ -167,7 +167,7 @@
 }
 
 
-.alfresco-share .dijitIcon.dijitMenuItemIcon.entity.becpg-admin-header {
+.alfresco-share .dijitIcon.dijitMenuItemIcon.becpg-admin-header {
    background: url("../components/images/header/becpg-admin.png");
    background-repeat: no-repeat;
    height: 20px;
@@ -175,7 +175,7 @@
 }
 
 
-.alfresco-share .dijitIcon.dijitMenuItemIcon.entity.model-designer-header {
+.alfresco-share .dijitIcon.dijitMenuItemIcon.model-designer-header {
    background: url("../components/images/header/model-designer.png");
    background-repeat: no-repeat;
    height: 20px;
@@ -211,6 +211,21 @@
    height: 20px;
    width: 20px;
 }
+
+.alfresco-share .dijitIcon.dijitMenuItemIcon.entity.supplier {
+	background: url(../../components/images/filetypes/generic-supplier-16.png);
+   background-repeat: no-repeat;
+   height: 20px;
+   width: 20px;
+}
+
+.alfresco-share .dijitIcon.dijitMenuItemIcon.entity.client {
+	background: url(../../components/images/filetypes/generic-client-16.png);
+   background-repeat: no-repeat;
+   height: 20px;
+   width: 20px;
+}
+
 
 .alfresco-share .dijitIcon.dijitMenuItemIcon.entity.semiFinishedProduct {
 	background: url(../../components/images/filetypes/generic-semiFinishedProduct-16.png);
