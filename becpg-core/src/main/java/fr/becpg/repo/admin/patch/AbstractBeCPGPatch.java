@@ -45,13 +45,6 @@ public abstract class AbstractBeCPGPatch extends AbstractPatch {
 
 	protected ContentHelper contentHelper;
 	
-	protected int beCPGVersion = -1;
-	
-
-	public void setBeCPGVersion(int beCPGVersion) {
-		this.beCPGVersion = beCPGVersion;
-	}
-
 	public void setRepository(Repository repository) {
 		this.repository = repository;
 	}
