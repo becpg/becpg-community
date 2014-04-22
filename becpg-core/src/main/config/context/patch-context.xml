@@ -27,7 +27,6 @@
 		<property name="contentHelper" ref="contentHelper"/>	
 		<property name="entitySystemService" ref="entitySystemService"/>
 		<property name="repoService" ref="repoService"/>
-		<property name="beCPGVersion" value="${becpg.schema}" />
 	</bean>
 
 	<bean id="patch.bcpg.listValuePatch" class="fr.becpg.repo.admin.patch.ListValuePatch" parent="beCPGBasePatch" >
@@ -49,8 +48,5 @@
         </property>
 	</bean>
 	
-	
-	                
-	
-	
+
 </beans>
