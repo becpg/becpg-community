@@ -40,6 +40,8 @@
 								<span class="info">${systemInfo.totalMemory?string("0")} Mo</span><br/>
 								<label>${msg("label.nonHeapMemory")}</label>
 								<span class="info">${systemInfo.nonHeapMemoryUsage?string("0")} Mo</span><br/>
+								<label>${msg("label.becpgSchema")}</label>
+								<span class="info">${systemInfo.becpgSchema}</span><br/>
 								<label>${msg("label.connectedUsers")}</label>
 								<span class="info">${systemInfo.connectedUsers}</span><br/>
 				 			</div>

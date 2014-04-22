@@ -52,6 +52,7 @@
 		<property name="authenticationService" ref="authenticationService" />
 		<property name="tenantAdminService" ref="tenantAdminService" />
 		<property name="initVisitorService" ref="initVisitorService"/>
+		<property name="becpgSchema" value="${becpg.schema}"/>
 	</bean>
 
 	<bean id="webscript.fr.becpg.admin.adminTenant.get" class="fr.becpg.repo.web.scripts.admin.AdminTenantWebScript" parent="webscript">

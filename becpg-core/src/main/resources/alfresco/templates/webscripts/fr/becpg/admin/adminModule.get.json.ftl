@@ -2,11 +2,12 @@
 {
    "status": "${status}",
    "systemInfo" : {
-   	"totalMemory": ${totalMemory?c},
+   		"totalMemory": ${totalMemory?c},
 		"freeMemory": ${freeMemory?c},
 		"maxMemory": ${maxMemory?c},
 		"connectedUsers": ${connectedUsers?c},
 		"nonHeapMemoryUsage": ${nonHeapMemoryUsage?c}
+		"becpgSchema":${becpgSchema?html}
    }
    <#if users?? >
 	,"users":

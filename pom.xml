@@ -91,6 +91,7 @@
 		<birt.version>4.3.1</birt.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
 
 		<app.testing.jvm.args>-Xms256m -Xmx1524m -XX:MaxPermSize=256m
 			-Duser.language=fr</app.testing.jvm.args>
@@ -172,6 +173,24 @@
 					</overlays>
 				</configuration>
 			</plugin>
+			<plugin>
+		         <groupId>org.codehaus.mojo</groupId>
+		         <artifactId>buildnumber-maven-plugin</artifactId>
+		         <version>1.2</version>
+		         <executions>
+		           <execution>
+		              <phase>validate</phase>
+		              <goals>
+		                <goal>create</goal>
+		              </goals>
+		           </execution>
+		         </executions>
+		         <configuration>
+		            <docheck>false</docheck>
+		            <doupdate>false</doupdate>
+		            <shortrevisionlength>5</shortrevisionlength>
+		         </configuration>
+		      </plugin>
 		</plugins>
 		<pluginManagement>
 			<plugins>
