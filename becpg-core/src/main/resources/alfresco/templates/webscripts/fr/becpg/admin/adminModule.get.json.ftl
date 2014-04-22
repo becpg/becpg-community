@@ -6,8 +6,8 @@
 		"freeMemory": ${freeMemory?c},
 		"maxMemory": ${maxMemory?c},
 		"connectedUsers": ${connectedUsers?c},
-		"nonHeapMemoryUsage": ${nonHeapMemoryUsage?c}
-		"becpgSchema":${becpgSchema?html}
+		"nonHeapMemoryUsage": ${nonHeapMemoryUsage?c},
+		"becpgSchema": "${becpgSchema?js_string}"
    }
    <#if users?? >
 	,"users":
