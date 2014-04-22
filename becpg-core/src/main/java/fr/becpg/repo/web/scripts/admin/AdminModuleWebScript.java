@@ -63,6 +63,12 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 	
 	private TenantAdminService tenantAdminService;
 	
+	private String becpgSchema
+	
+	public void setBecpgSchema(String becpgSchema){
+		this.becpgSchema = becpgSchema;
+	}
+	
 	public void setTenantAdminService(TenantAdminService tenantAdminService) {
 		this.tenantAdminService = tenantAdminService;
 	}
@@ -164,6 +170,7 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 		ret.put("maxMemory", runtime.maxMemory()/ 1000000d);
 		ret.put("nonHeapMemoryUsage",memoryMXBean.getNonHeapMemoryUsage().getUsed()/ 1000000d);
 		ret.put("connectedUsers", users.size());
+		ret.put("becpgSchema", becpgSchema);
 		
 		
 		
