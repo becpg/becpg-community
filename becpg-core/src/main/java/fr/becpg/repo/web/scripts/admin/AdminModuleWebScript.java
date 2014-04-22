@@ -63,7 +63,7 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 	
 	private TenantAdminService tenantAdminService;
 	
-	private String becpgSchema
+	private String becpgSchema;
 	
 	public void setBecpgSchema(String becpgSchema){
 		this.becpgSchema = becpgSchema;
