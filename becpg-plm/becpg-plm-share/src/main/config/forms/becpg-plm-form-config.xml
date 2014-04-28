@@ -193,8 +193,8 @@
 					<show id="bcpg:productState" />
 					<show id="bcpg:erpCode" force="true" />					
 					<show id="bcpg:eanCode" />
-					<show id="bcpg:subsidiary" force="true" />
-					<show id="bcpg:trademark" force="true" />
+					<show id="bcpg:subsidiaryRef" force="true" />
+					<show id="bcpg:trademarkRef" force="true" />
 					<show id="bcpg:plants" force="true" />					
 					<show id="bcpg:clients" />
 					<show id="bcpg:suppliers" />
@@ -205,10 +205,10 @@
 					<show id="bcpg:useByDate" force="true" />
 					<show id="bcpg:bestBeforeDate" force="true" />		
 					<show id="bcpg:periodAfterOpening" force="true" />																			
-					<show id="bcpg:storageConditions" force="true" />
-					<show id="bcpg:precautionOfUse" force="true" />
+					<show id="bcpg:storageConditionsRef" force="true" />
+					<show id="bcpg:precautionOfUseRef" force="true" />
 					<show id="bcpg:preparationTips" force="true" />
-					<show id="bcpg:productMicrobioCriteria" />					
+					<show id="bcpg:productMicrobioCriteriaRef" />					
 					
 					<!-- formulation -->
 					<show id="bcpg:productQty" />
@@ -363,9 +363,9 @@
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
 					<field id="bcpg:eanCode" set="mainInfo" />
-					<field id="bcpg:subsidiary" set="mainInfo" />
+					<field id="bcpg:subsidiaryRef" set="mainInfo" />
 					<field id="bcpg:plants" set="mainInfo" />
-					<field id="bcpg:trademark" set="mainInfo" />
+					<field id="bcpg:trademarkRef" set="mainInfo" />
 					<field id="bcpg:clients" set="mainInfo" />
 					<field id="bcpg:suppliers" set="mainInfo" />
 					<field id="bcpg:entityTplRef" set="mainInfo" >
@@ -381,13 +381,13 @@
 					<field id="bcpg:useByDate" set="consumer" />
 					<field id="bcpg:bestBeforeDate" set="consumer" />
 					<field id="bcpg:periodAfterOpening" set="consumer" />										
-					<field id="bcpg:storageConditions" set="consumer" >
+					<field id="bcpg:storageConditionsRef" set="consumer" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="style">null</control-param>
 						</control>
 					</field>
-					<field id="bcpg:precautionOfUse" set="consumer" >
+					<field id="bcpg:precautionOfUseRef" set="consumer" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="style">null</control-param>
@@ -398,7 +398,7 @@
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>			
-					<field id="bcpg:productMicrobioCriteria" set="consumer">
+					<field id="bcpg:productMicrobioCriteriaRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="style">null</control-param>
@@ -621,9 +621,9 @@
 					<show id="bcpg:productState" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:eanCode" />					
-					<show id="bcpg:subsidiary" force="true" />
+					<show id="bcpg:subsidiaryRef" force="true" />
 					<show id="bcpg:plants" force="true" />
-					<show id="bcpg:trademark" force="true" />
+					<show id="bcpg:trademarkRef" force="true" />
 					<show id="bcpg:clients" />	
 					<show id="bcpg:entityTplRef" force="true" />				
 					<show id="rep:reportTpls" />					
@@ -632,8 +632,8 @@
 					<show id="bcpg:useByDate" force="true" />					
 					<show id="bcpg:bestBeforeDate" force="true" />
 					<show id="bcpg:periodAfterOpening" force="true" />						
-					<show id="bcpg:storageConditions" force="true" />
-					<show id="bcpg:precautionOfUse" force="true" />
+					<show id="bcpg:storageConditionsRef" force="true" />
+					<show id="bcpg:precautionOfUseRef" force="true" />
 					<show id="bcpg:preparationTips" force="true" />									
 
 					<!-- formulation -->							
@@ -644,7 +644,7 @@
 					<show id="bcpg:servingSize" force="true" />
 					<show id="bcpg:numberOfServings" force="true" />
 					<show id="bcpg:productSpecifications" />
-					<show id="bcpg:productMicrobioCriteria" />					
+					<show id="bcpg:productMicrobioCriteriaRef" />					
 
 					<!-- Profitability -->
 					<show id="bcpg:unitPrice" force="true" />
@@ -712,8 +712,8 @@
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
 					<field id="bcpg:eanCode" set="mainInfo" />
-					<field id="bcpg:subsidiary" force="true" set="mainInfo" />
-					<field id="bcpg:trademark" force="true" set="mainInfo" />
+					<field id="bcpg:subsidiaryRef" force="true" set="mainInfo" />
+					<field id="bcpg:trademarkRef" force="true" set="mainInfo" />
 					<field id="bcpg:plants" force="true" set="mainInfo" />					
 					<field id="bcpg:clients" force="true" set="mainInfo" />
 					<field id="bcpg:entityTplRef" set="mainInfo" >
@@ -729,13 +729,13 @@
 					<field id="bcpg:useByDate" set="consumer" />
 					<field id="bcpg:bestBeforeDate" set="consumer" />
 					<field id="bcpg:periodAfterOpening" set="consumer" />										
-					<field id="bcpg:storageConditions" set="consumer" >
+					<field id="bcpg:storageConditionsRef" set="consumer" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="style">null</control-param>
 						</control>
 					</field>
-					<field id="bcpg:precautionOfUse" set="consumer" >
+					<field id="bcpg:precautionOfUseRef" set="consumer" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="style">null</control-param>
@@ -746,7 +746,7 @@
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productMicrobioCriteria" set="consumer">
+					<field id="bcpg:productMicrobioCriteriaRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="style">null</control-param>
@@ -1775,10 +1775,10 @@
 					<show id="bcpg:useByDate" force="true" />
 					<show id="bcpg:bestBeforeDate" force="true" />													
 					<show id="bcpg:periodAfterOpening" force="true" />					
-					<show id="bcpg:storageConditions" force="true" />
-					<show id="bcpg:precautionOfUse" force="true" />
+					<show id="bcpg:storageConditionsRef" force="true" />
+					<show id="bcpg:precautionOfUseRef" force="true" />
 					<show id="bcpg:preparationTips" force="true" />
-					<show id="bcpg:productMicrobioCriteria" />
+					<show id="bcpg:productMicrobioCriteriaRef" />
 					<show id="bcpg:certificateDate" force="true" />
 					
 					<!-- Tare -->
@@ -1868,13 +1868,13 @@
 					<field id="bcpg:bestBeforeDate" set="consumer" />				
 					<field id="bcpg:periodAfterOpening" set="consumer" />
 					<field id="bcpg:netWeight" set="consumer" />
-					<field id="bcpg:storageConditions" set="consumer" >
+					<field id="bcpg:storageConditionsRef" set="consumer" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="style">null</control-param>
 						</control>
 					</field>
-					<field id="bcpg:precautionOfUse" set="consumer" >
+					<field id="bcpg:precautionOfUseRef" set="consumer" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="style">null</control-param>
@@ -1885,7 +1885,7 @@
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productMicrobioCriteria" set="consumer">
+					<field id="bcpg:productMicrobioCriteriaRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 						</control>
@@ -2016,10 +2016,10 @@
 					<show id="bcpg:useByDate" force="true" />
 					<show id="bcpg:bestBeforeDate" force="true" />
 					<show id="bcpg:periodAfterOpening" force="true" />					
-					<show id="bcpg:storageConditions" force="true" />
-					<show id="bcpg:precautionOfUse" force="true" />
+					<show id="bcpg:storageConditionsRef" force="true" />
+					<show id="bcpg:precautionOfUseRef" force="true" />
 					<show id="bcpg:preparationTips" force="true" />
-					<show id="bcpg:productMicrobioCriteria" />
+					<show id="bcpg:productMicrobioCriteriaRef" />
 					<show id="bcpg:certificateDate" force="true" />
 					
 					<!-- tags and categories -->
@@ -2094,13 +2094,13 @@
 					<field id="bcpg:useByDate" set="consumer" />
 					<field id="bcpg:bestBeforeDate" set="consumer" />			
 					<field id="bcpg:periodAfterOpening" set="consumer" />					
-					<field id="bcpg:storageConditions" set="consumer" >
+					<field id="bcpg:storageConditionsRef" set="consumer" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="style">null</control-param>
 						</control>
 					</field>
-					<field id="bcpg:precautionOfUse" set="consumer" >
+					<field id="bcpg:precautionOfUseRef" set="consumer" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="style">null</control-param>
@@ -2111,7 +2111,7 @@
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productMicrobioCriteria" set="consumer"/>
+					<field id="bcpg:productMicrobioCriteriaRef" set="consumer"/>
 					<field id="bcpg:certificateDate" set="consumer" />
 
 					<!-- categories -->
@@ -2189,10 +2189,10 @@
 					<show id="bcpg:useByDate" force="true" />
 					<show id="bcpg:bestBeforeDate" force="true" />
 					<show id="bcpg:periodAfterOpening" force="true" />																
-					<show id="bcpg:storageConditions" force="true" />
-					<show id="bcpg:precautionOfUse" force="true" />
+					<show id="bcpg:storageConditionsRef" force="true" />
+					<show id="bcpg:precautionOfUseRef" force="true" />
 					<show id="bcpg:preparationTips" force="true" />
-					<show id="bcpg:productMicrobioCriteria" />
+					<show id="bcpg:productMicrobioCriteriaRef" />
 					
 					<!-- Dimension -->
 		         <show id="pack:length"   />
@@ -2300,13 +2300,13 @@
 					<field id="bcpg:useByDate" set="consumer" />
 					<field id="bcpg:bestBeforeDate" set="consumer" />				
 					<field id="bcpg:periodAfterOpening" set="consumer" />					
-					<field id="bcpg:storageConditions" set="consumer" >
+					<field id="bcpg:storageConditionsRef" set="consumer" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="style">null</control-param>
 						</control>
 					</field>
-					<field id="bcpg:precautionOfUse" set="consumer" >
+					<field id="bcpg:precautionOfUseRef" set="consumer" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="style">null</control-param>
@@ -2317,7 +2317,7 @@
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productMicrobioCriteria" set="consumer">
+					<field id="bcpg:productMicrobioCriteriaRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 						</control>
@@ -2468,10 +2468,10 @@
 					<show id="bcpg:useByDate" force="true" />
 					<show id="bcpg:bestBeforeDate" force="true" />											
 					<show id="bcpg:periodAfterOpening" force="true" />					
-					<show id="bcpg:storageConditions" force="true" />
-					<show id="bcpg:precautionOfUse" force="true" />
+					<show id="bcpg:storageConditionsRef" force="true" />
+					<show id="bcpg:precautionOfUseRef" force="true" />
 					<show id="bcpg:preparationTips" force="true" />
-					<show id="bcpg:productMicrobioCriteria" />
+					<show id="bcpg:productMicrobioCriteriaRef" />
 
 					<!-- formulation -->
 					<show id="bcpg:productQty" />
@@ -2548,13 +2548,13 @@
 					<field id="bcpg:useByDate" set="consumer" />
 					<field id="bcpg:bestBeforeDate" set="consumer" />				
 					<field id="bcpg:periodAfterOpening" set="consumer" />					
-					<field id="bcpg:storageConditions" set="consumer" >
+					<field id="bcpg:storageConditionsRef" set="consumer" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="style">null</control-param>
 						</control>
 					</field>
-					<field id="bcpg:precautionOfUse" set="consumer" >
+					<field id="bcpg:precautionOfUseRef" set="consumer" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="style">null</control-param>
@@ -2565,7 +2565,7 @@
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productMicrobioCriteria" set="consumer">
+					<field id="bcpg:productMicrobioCriteriaRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 						</control>
@@ -4474,7 +4474,7 @@
 					<show id="bcpg:packagingListIsMaster" />
 					<show id="bcpg:variantIds" force="true"/>
 					<show id="pack:labelingPosition"  />
-					<show id="pack:labelingTemplate"  />
+					<show id="pack:labelingLabelingTemplate"  />
 					<show id="bcpg:instruction" force="true"/>
 				</field-visibility>
 

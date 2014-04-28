@@ -25,7 +25,7 @@
 			</#if>
 		<#elseif provider.getChildValue("provider-id") == "beCPG">
 			<#if provider.getChildValue("provider-url")??>
-		  		<img src="${provider.getChildValue("provider-url")}" alt="becpg-community"></img>
+		  		<img src="${provider.getChildValue("provider-url")}" ></img>
 		   </#if>
 	   </#if>
    </#if>

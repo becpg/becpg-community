@@ -24,7 +24,7 @@
 	<bean id="patch.bcpg.plm.redeployWfClaimProcess" class="fr.becpg.repo.admin.patch.PLMWorkflowPatch" parent="basePatch" >
         <property name="id"><value>patch.bcpg.plm.redeployWfClaimProcess</value></property>
         <property name="description"><value>patch.bcpg.plm.redeployWfClaimProcess.description</value></property>
-        <property name="fixesFromSchema" value="6022"/>
+        <property name="fixesFromSchema" value="0"/>
         <property name="fixesToSchema" value="6033" />
         <property name="targetSchema" value="10110"/>
         <property name="workflowDefinitions">
@@ -42,12 +42,33 @@
      <bean id="patch.bcpg.plm.claimEmailTemplatesPatch" class="fr.becpg.repo.admin.patch.ClaimEmailTemplatesPatch" parent="beCPGBasePatch" >
 			<property name="id"><value>patch.bcpg.plm.claimEmailTemplatesPatch</value></property>
 			<property name="description"><value>patch.bcpg.plm.claimEmailTemplatesPatch.description</value></property>
-			<property name="fixesFromSchema" value="6022"/>
+			<property name="fixesFromSchema" value="0"/>
 	        <property name="fixesToSchema" value="6033" />
 	        <property name="targetSchema" value="10110"/>  
 			<property name="requiresTransaction"><value>true</value></property>
 			<property name="applyToTenants"><value>true</value></property>
 	 </bean>
+    
+    
+    <bean id="schema.upgrade.plm" class="org.alfresco.repo.domain.schema.SchemaBootstrapRegistration" init-method="register">
+        <property name="schemaBootstrap" ref="schemaBootstrap" />
+        <property name="postUpdateScriptPatches">
+            <list>
+                <ref bean="patch.bcpg.plm.db-V1.6-Rename-assoc" />
+            </list>
+        </property>
+    </bean>
+    
+    <bean id="patch.bcpg.plm.db-V1.6-Rename-assoc" class="org.alfresco.repo.admin.patch.impl.SchemaUpgradeScriptPatch" parent="basePatch">
+        <property name="id"><value>patch.bcpg.plm.db-V1.6-Rename-assoc</value></property>
+        <property name="description"><value>patch.schemaUpgradeScript.description</value></property>
+        <property name="fixesFromSchema" value="0"/>
+	     <property name="fixesToSchema" value="6033" />
+	    <property name="targetSchema" value="10120"/>  
+        <property name="scriptUrl">
+         	<value>classpath:alfresco/dbscripts/upgrade/4.2/${db.script.dialect}/rename-assocs.sql</value>
+        </property>
+    </bean>
     
 
 </beans>

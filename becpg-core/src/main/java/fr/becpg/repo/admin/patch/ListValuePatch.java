@@ -98,8 +98,10 @@ public class ListValuePatch extends AbstractBeCPGPatch {
 			public void process(NodeRef dataListNodeRef) throws Throwable {
 				if (nodeService.exists(dataListNodeRef)) {
 					String name = (String) nodeService.getProperty(dataListNodeRef, ContentModel.PROP_NAME);
+					Boolean isDeleted  = (Boolean) nodeService.getProperty(dataListNodeRef, BeCPGModel.PROP_IS_DELETED);
 					if (name != null) {
 						nodeService.setProperty(dataListNodeRef, BeCPGModel.PROP_LV_VALUE, name);
+						nodeService.setProperty(dataListNodeRef, BeCPGModel.PROP_IS_DELETED, isDeleted!=null ? isDeleted : false);
 					}
 				} else {
 					logger.warn("dataListNodeRef doesn't exist : " + dataListNodeRef);
