@@ -333,9 +333,9 @@
 					<show id="bcpg:productHierarchy2" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:eanCode" force="true" />
-					<show id="bcpg:subsidiary" force="true" />
+					<show id="bcpg:subsidiaryRef" force="true" />
 					<show id="bcpg:plants" force="true" />
-					<show id="bcpg:trademark" force="true" />
+					<show id="bcpg:trademarkRef" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="cm:name" label="Produit" />

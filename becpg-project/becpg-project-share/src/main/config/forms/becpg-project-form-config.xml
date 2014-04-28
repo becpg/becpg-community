@@ -49,15 +49,15 @@
 					<show id="bcpg:legalName" />	
 					<show id="bcpg:packagingDescription" />
 					<show id="bcpg:productComments" />											
-					<show id="bcpg:subsidiary" />
+					<show id="bcpg:subsidiaryRef" />
 					<show id="bcpg:plants" />
-					<show id="bcpg:trademark" />									
+					<show id="bcpg:trademarkRef" />									
 					
 					<!-- consumer aspect -->										
 					<show id="bcpg:useByDate" />	
 					<show id="bcpg:bestBeforeDate" />														
-					<show id="bcpg:storageConditions" />
-					<show id="bcpg:precautionOfUse" />
+					<show id="bcpg:storageConditionsRef" />
+					<show id="bcpg:precautionOfUseRef" />
 					<show id="bcpg:preparationTips" />									
 
 					<!-- formulation -->							
@@ -164,20 +164,20 @@
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>					
-					<field id="bcpg:subsidiary" force="true" set="product-mainInfo" />
-					<field id="bcpg:trademark" force="true" set="product-mainInfo" />
+					<field id="bcpg:subsidiaryRef" force="true" set="product-mainInfo" />
+					<field id="bcpg:trademarkRef" force="true" set="product-mainInfo" />
 					<field id="bcpg:plants" force="true" set="product-mainInfo" />																			
 					
 					<!-- consumer -->		
 					<field id="bcpg:useByDate" set="consumer" />
 					<field id="bcpg:bestBeforeDate" set="consumer" />
-					<field id="bcpg:storageConditions" set="consumer" >
+					<field id="bcpg:storageConditionsRef" set="consumer" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="style">null</control-param>
 						</control>
 					</field>
-					<field id="bcpg:precautionOfUse" set="consumer" >
+					<field id="bcpg:precautionOfUseRef" set="consumer" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="style">null</control-param>
