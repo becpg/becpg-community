@@ -44,33 +44,6 @@
 					<show id="pjt:projectOverdue" for-mode="view"/>
 					<show id="pjt:projectScore" for-mode="view"/>
 					
-					<!-- Product mainInfo -->
-					<show id="bcpg:clients" />  
-					<show id="bcpg:legalName" />	
-					<show id="bcpg:packagingDescription" />
-					<show id="bcpg:productComments" />											
-					<show id="bcpg:subsidiaryRef" />
-					<show id="bcpg:plants" />
-					<show id="bcpg:trademarkRef" />									
-					
-					<!-- consumer aspect -->										
-					<show id="bcpg:useByDate" />	
-					<show id="bcpg:bestBeforeDate" />														
-					<show id="bcpg:storageConditionsRef" />
-					<show id="bcpg:precautionOfUseRef" />
-					<show id="bcpg:preparationTips" />									
-
-					<!-- formulation -->							
-					<show id="bcpg:productQty" />
-					<show id="bcpg:productUnit" />
-					<show id="bcpg:netWeight" />
-					<show id="bcpg:numberOfServings" />		
-					<show id="bcpg:productSpecifications" />								
-
-					<!-- Profitability -->
-					<show id="bcpg:unitPrice" />
-					<show id="bcpg:priceCurrency" />
-					<show id="bcpg:projectedQty" />
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
@@ -92,14 +65,7 @@
 						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
 						template="/org/alfresco/components/form/2-column-set.ftl" />
-					<set id="product-mainInfo" appearance="bordered-panel" label-id="becpg.forms.set.product-info.label"
-						template="/org/alfresco/components/form/2-column-set.ftl" />					
-					<set id="formulation" appearance="bordered-panel"
-						label-id="becpg.forms.set.formulation.label" template="/org/alfresco/components/form/3-column-set.ftl" />
-					<set id="consumer" appearance="bordered-panel" label-id="becpg.forms.set.consumer.label"
-						template="/org/alfresco/components/form/2-column-set.ftl" />	
-					<set id="profitability" appearance="bordered-panel"
-						label-id="becpg.forms.set.rentability.label" template="/org/alfresco/components/form/3-column-set.ftl" />
+				
 						
 					<field id="cm:name" set="mainInfo" />
 					<field id="cm:title" set="mainInfo" />	
@@ -150,68 +116,7 @@
 					<field id="pjt:projectCompletionDate" set="planning" />
 					<field id="pjt:completionPercent" set="planning" />
 					<field id="pjt:projectOverdue" set="planning" />					
-																	
-					<!-- Product mainInfo -->
-					<field id="bcpg:clients" force="true" set="product-mainInfo" />
-					<field id="bcpg:legalName" set="product-mainInfo" />					
-					<field id="bcpg:packagingDescription" set="product-mainInfo">
-						<control template="/org/alfresco/components/form/controls/textarea.ftl">
-							<control-param name="rows">2</control-param>
-						</control>
-					</field>					
-					<field id="bcpg:productComments" set="product-mainInfo">
-						<control template="/org/alfresco/components/form/controls/textarea.ftl">
-							<control-param name="rows">2</control-param>
-						</control>
-					</field>					
-					<field id="bcpg:subsidiaryRef" force="true" set="product-mainInfo" />
-					<field id="bcpg:trademarkRef" force="true" set="product-mainInfo" />
-					<field id="bcpg:plants" force="true" set="product-mainInfo" />																			
-					
-					<!-- consumer -->		
-					<field id="bcpg:useByDate" set="consumer" />
-					<field id="bcpg:bestBeforeDate" set="consumer" />
-					<field id="bcpg:storageConditionsRef" set="consumer" >
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="style">null</control-param>
-						</control>
-					</field>
-					<field id="bcpg:precautionOfUseRef" set="consumer" >
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="style">null</control-param>
-						</control>
-					</field>
-					<field id="bcpg:preparationTips" set="consumer">
-						<control template="/org/alfresco/components/form/controls/textarea.ftl">
-							<control-param name="rows">2</control-param>
-						</control>
-					</field>
-					
-					<!-- formulation -->
-					<field id="bcpg:productQty" set="formulation" />
-					<field id="bcpg:productUnit" set="formulation" >
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">kg,g,L,mL,P
-							</control-param>
-						</control>
-					</field>
-					<field id="bcpg:netWeight" set="formulation" />					
-					<field id="bcpg:numberOfServings" set="formulation" />					
-					<field id="bcpg:productSpecifications" set="formulation">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
-							<control-param name="style">width:200px</control-param>
-						</control>
-					</field>								
-					
-					<!-- profitability -->
-					<field id="bcpg:unitPrice" set="profitability" />
-					<field id="bcpg:priceCurrency" set="profitability" />
-					<field id="bcpg:projectedQty" set="profitability" />	
-						
+
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
 						<control>
