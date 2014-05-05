@@ -386,7 +386,16 @@
         <property name="applyToTenants"><value>true</value></property>
 	</bean>
 	
-	
+	 <bean id="patch.bcpg.removeProjectAspectPatch" class="fr.becpg.repo.admin.patch.RemoveProjectAspectPatch" parent="basePatch" >
+        <property name="id"><value>patch.bcpg.removeProjectAspectPatch</value></property>
+        <property name="description"><value>patch.bcpg.removeProjectAspectPatch.description</value></property>
+        <property name="fixesFromSchema"><value>0</value></property>
+        <property name="fixesToSchema"><value>${version.schema}</value></property>
+        <property name="targetSchema"><value>10028</value></property>
+        <property name="beCPGSearchService" ref="beCPGSearchService"/>
+        <property name="requiresTransaction"><value>true</value></property>
+        <property name="applyToTenants"><value>true</value></property>
+	</bean>
 		
 	<bean id="patch.bcpg.plm.redeployWfClaimProcess" class="fr.becpg.repo.admin.patch.GenericWorkflowPatch" parent="basePatch" >
         <property name="id"><value>patch.bcpg.plm.redeployWfClaimProcess</value></property>
@@ -415,5 +424,7 @@
 			<property name="requiresTransaction"><value>true</value></property>
 			<property name="applyToTenants"><value>true</value></property>
 	 </bean>
+	 
+	 
     
 </beans>
