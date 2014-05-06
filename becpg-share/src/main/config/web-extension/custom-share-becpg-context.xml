@@ -43,7 +43,7 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 			</list>
 		</property>
 	</bean> 
-		<!-- Action group resolver -->
+    <!-- Action group resolver -->
 	<bean id="becpg.resolver.doclib.actionGroup" class="fr.becpg.web.resolver.doclib.BeCPGDoclistActionGroupResolver" />
 	<!-- evaluators -->
 	<bean id="evaluator.component.becpg.params.equal" class="fr.becpg.web.extensibility.UrlParamsEvaluator" />
@@ -91,4 +91,11 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 			</list>
 		</property>
 	</bean>
+	
+	
+	<!-- WebScripts -->
+	
+	<bean id="webscript.org.alfresco.modules.entity-datagrid.forms.filterForm.get" class="fr.becpg.web.scripts.forms.FilterFormUIGet" parent="webscript">
+      <property name="configService" ref="web.config" />
+   </bean>
 </beans>

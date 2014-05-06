@@ -338,10 +338,10 @@
 					<show id="bcpg:trademarkRef" force="true" />
 				</field-visibility>
 				<appearance>
-					<field id="cm:name" label="Produit" />
-					<field id="bcpg:productHierarchy1" label="Famille Produit"/>
-					<field id="bcpg:productHierarchy2" label="Sous Famille Produit"/>
-					<field id="bcpg:plants" label="Usine Produit"/>
+						<field id="cm:name" label-id="becpg.forms.field.product" />
+					<field id="bcpg:productHierarchy1" label="becpg.forms.field.productHierarchy1"/>
+					<field id="bcpg:productHierarchy2" label="becpg.forms.field.productHierarchy2"/>
+					<field id="bcpg:plants" label="becpg.forms.field.product.plants"/>
 				</appearance>
 			</form>
 		</forms>
