@@ -17,7 +17,6 @@
  ******************************************************************************/
 package fr.becpg.repo.entity.datalist.impl;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -25,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -40,10 +40,10 @@ import fr.becpg.repo.entity.datalist.WUsedListService.WUsedOperator;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.DataListPagination;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
-import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorMode;
 import fr.becpg.repo.helper.JSONHelper;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
+import fr.becpg.repo.search.impl.NestedAdvSearchPlugin;
 
 /**
  * 
@@ -58,12 +58,18 @@ public class WUsedExtractor extends MultiLevelExtractor {
 
 	private NamespaceService namespaceService;
 
+	private NestedAdvSearchPlugin nestedAdvSearchPlugin;
+
 	public void setwUsedListService(WUsedListService wUsedListService) {
 		this.wUsedListService = wUsedListService;
 	}
 
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
+	}
+
+	public void setNestedAdvSearchPlugin(NestedAdvSearchPlugin nestedAdvSearchPlugin) {
+		this.nestedAdvSearchPlugin = nestedAdvSearchPlugin;
 	}
 
 	@Override
@@ -75,7 +81,8 @@ public class WUsedExtractor extends MultiLevelExtractor {
 		QName associationName = null;
 
 		if (dataListFilter.getDataListName() != null && dataListFilter.getDataListName().indexOf(RepoConsts.WUSED_SEPARATOR) > 0) {
-			associationName = QName.createQName(dataListFilter.getDataListName().split(RepoConsts.WUSED_SEPARATOR)[1].replace("_", ":"), namespaceService);
+			associationName = QName.createQName(dataListFilter.getDataListName().split(RepoConsts.WUSED_SEPARATOR)[1].replace("_", ":"),
+					namespaceService);
 		} else {
 			associationName = entityDictionaryService.getDefaultPivotAssoc(dataListFilter.getDataType());
 		}
@@ -98,7 +105,7 @@ public class WUsedExtractor extends MultiLevelExtractor {
 				associationName, dataListFilter.getMaxDepth());
 
 		if (dataListFilter.getFilterId().equals(DataListFilter.FORM_FILTER)) {
-			filter(dataListFilter, wUsedData);
+			filter(dataListFilter, wUsedData, associationName);
 		}
 
 		appendNextLevel(ret, metadataFields, wUsedData, 0, startIndex, pageSize, props, dataListFilter.getFormat());
@@ -153,44 +160,57 @@ public class WUsedExtractor extends MultiLevelExtractor {
 		return ret;
 	}
 
-	private Map<String, String> cleanCriteria(Map<String, String> criteriaMap) {
-		Map<String, String> ret = new HashMap<>();
+	private void filter(DataListFilter dataListFilter, MultiLevelListData wUsedData, QName reverseAssociationName) {
+		Map<String, String> criteriaMap = nestedAdvSearchPlugin.cleanCriteria(dataListFilter.getCriteriaMap());
 
-		for (String key : criteriaMap.keySet()) {
-			if (criteriaMap.get(key) != null && !criteriaMap.get(key).isEmpty()) {
-				if (!key.equals(DataListFilter.PROP_DEPTH_LEVEL)) {
-					if (!key.startsWith("assoc_")) {
-						ret.put(key.replace("prop_", "").replace("_", ":"), criteriaMap.get(key));
-					} else if (key.endsWith("_added")) {
-						ret.put(key.replace("assoc_", "").replace("_added", "").replace("_", ":"), criteriaMap.get(key));
-					}
-				}
-			}
-		}
-
-		return ret;
-	}
-
-	@SuppressWarnings("unchecked")
-	private void filter(DataListFilter dataListFilter, MultiLevelListData wUsedData) {
-		Map<String, String> criteriaMap = cleanCriteria(dataListFilter.getCriteriaMap());
 		if (!criteriaMap.isEmpty()) {
 			for (Iterator<Entry<NodeRef, MultiLevelListData>> iterator = wUsedData.getTree().entrySet().iterator(); iterator.hasNext();) {
 				Entry<NodeRef, MultiLevelListData> entry = iterator.next();
 				NodeRef nodeRef = entry.getKey();
 
-				Map<String, Object> comp = attributeExtractorService.extractNodeData(nodeRef, nodeService.getType(nodeRef), new ArrayList<>(
-						criteriaMap.keySet()), AttributeExtractorMode.JSON);
-				for (String key : comp.keySet()) {
-					String critKey = key.replace("prop_", "").replace("assoc_", "").replace("_", ":");
-					Map<String, Object> data = (Map<String, Object>) comp.get(key);
-					if (data == null || data.get("value") == null || !data.get("value").toString().contains(criteriaMap.get(critKey))) {
-						iterator.remove();
-						break;
-					}
+				if (!nestedAdvSearchPlugin.match(nodeRef, criteriaMap)) {
+					iterator.remove();
 				}
 			}
 		}
+
+		Map<String, Map<String, String>> nested = nestedAdvSearchPlugin.extractNested(dataListFilter.getCriteriaMap());
+
+		if (!nested.isEmpty()) {
+
+			for (Map.Entry<String, Map<String, String>> nestedEntry : nested.entrySet()) {
+				String assocName = nestedEntry.getKey();
+				QName assocQName = QName.createQName(assocName, namespaceService);
+				criteriaMap = nestedAdvSearchPlugin.cleanCriteria(nestedEntry.getValue());
+
+				for (Iterator<Entry<NodeRef, MultiLevelListData>> iterator = wUsedData.getTree().entrySet().iterator(); iterator.hasNext();) {
+					Entry<NodeRef, MultiLevelListData> entry = iterator.next();
+					boolean foundMatch = false;
+
+					if (assocQName.equals(reverseAssociationName)) {
+						foundMatch = nestedAdvSearchPlugin.match(entry.getValue().getEntityNodeRef(), criteriaMap);
+					} else {
+
+						NodeRef nodeRef = entry.getKey();
+
+						List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, assocQName);
+
+						for (AssociationRef assocRef : assocRefs) {
+							if (nestedAdvSearchPlugin.match(assocRef.getTargetRef(), criteriaMap)) {
+								foundMatch = true;
+							}
+						}
+
+					}
+
+					if (!foundMatch) {
+						iterator.remove();
+					}
+				}
+			}
+
+		}
+
 	}
 
 	@SuppressWarnings("unchecked")

@@ -338,7 +338,7 @@
 
 						itemUrl : Alfresco.constants.PROXY_URI_RELATIVE + "becpg/entity/datalists/item/node/",
 
-						columnsUrl : Alfresco.constants.URL_SERVICECONTEXT + "components/entity-data-lists/config/columns",
+						columnsUrl : Alfresco.constants.URL_SERVICECONTEXT + "module/entity-datagrid/config/columns",
 
 						saveFieldUrl : Alfresco.constants.PROXY_URI_RELATIVE + "/becpg/bulkedit/save",
 

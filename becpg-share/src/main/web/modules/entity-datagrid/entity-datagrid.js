@@ -270,7 +270,7 @@
                       * Column Info Url
                       */
 
-                     columnsUrl : Alfresco.constants.URL_SERVICECONTEXT + "components/entity-data-lists/config/columns",
+                     columnsUrl : Alfresco.constants.URL_SERVICECONTEXT + "module/entity-datagrid/config/columns",
 
                      /**
                       * Save field Url
@@ -775,15 +775,18 @@
                    * Populate filter form
                    */
                   populateFilterForm : function EntityDataGrid_populateFilterForm() {
+                	 var listName = this.datalistMeta.name != null ? this.datalistMeta.name : this.options.list;
+                	 
+                	  
                      var filterFormUrl = YAHOO.lang
                            .substitute(
-                                 Alfresco.constants.URL_SERVICECONTEXT + "components/form?itemKind={itemKind}&itemId={itemId}&mode={mode}&formId={formId}&submitType=json&showCancelButton=false&showSubmitButton=false" + ((this.options.entityNodeRef != null && this.options.entityNodeRef.length > 0) ? "&entityNodeRef=" + this.options.entityNodeRef
+                                 Alfresco.constants.URL_SERVICECONTEXT + "module/entity-datagrid/filter/form?itemKind={itemKind}&list={list}&itemId={itemId}&formId={formId}&submitType=json&showCancelButton=false&showSubmitButton=false" + ((this.options.entityNodeRef != null && this.options.entityNodeRef.length > 0) ? "&entityNodeRef=" + this.options.entityNodeRef
                                        : ""), {
                                     itemKind : "type",
                                     itemId : this.options.itemType != null ? this.options.itemType
                                           : this.datalistMeta.itemType,
                                     formId : "filter",
-                                    mode : "create",
+                                    list : listName,
                                     submitType : "json"
                                  });
 

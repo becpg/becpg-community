@@ -123,9 +123,33 @@
 
 				</appearance>
 			</form>
-				
+
+			<form id="sub-datagrid-filter">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="bcpg:productHierarchy1" />
+					<show id="bcpg:productHierarchy2" />
+					<show id="bcpg:productState"  />
+				</field-visibility>
+				<appearance>
+					<field id="cm:name" label-id="becpg.forms.field.product" />
+					<field id="bcpg:productHierarchy1" label-id="becpg.forms.field.productHierarchy1">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:productHierarchy2" label-id="becpg.forms.field.productHierarchy2">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:productState" >
+						<control
+							template="/org/alfresco/components/form/controls/selectone.ftl" >
+							  <control-param name="isSearch">true</control-param>
+							  <control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
 		</forms>
-	</config>
+	</config>	
 
 	<config evaluator="node-type" condition="bcpg:productMicrobioCriteria">
 		<forms>
@@ -228,13 +252,13 @@
 					<show id="bcpg:profitability" force="true" />
 					
 					<!-- Dimension -->
-		         <show id="pack:length"   />
-		         <show id="pack:width"   />
-		         <show id="pack:height"   />
+			         <show id="pack:length"   />
+			         <show id="pack:width"   />
+			         <show id="pack:height"   />
 		         
-		         <!-- Tare -->
+		        	 <!-- Tare -->
 					<show id="pack:tare" />
-		         <show id="pack:tareUnit" />
+		         	<show id="pack:tareUnit" />
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
@@ -4157,6 +4181,15 @@
 		</forms>
 	</config>
 	
+	<!-- <config evaluator="aspect" condition="bcpg:clientsAspect">
+		<forms>
+			<form id="filter">
+			   <show id="entity_bcpg:clients_bcpg:product" for-mode="wused" />
+			</form>
+		</forms>
+	</config>	 -->
+	
+	
 	<!-- bcpg:compoList type -->
 	<config evaluator="model-type" condition="bcpg:compoList">
 		<forms>
@@ -4233,18 +4266,10 @@
 			<!-- Data Grid view -->
 			<form id="filter">
 				<field-visibility>
-					<show id="bcpg:compoListProduct" />
 					<show id="bcpg:depthLevel" />
+					<show id="entity_bcpg:compoListProduct_bcpg:product"/>
 				</field-visibility>
 				<appearance>
-						
-					<field id="bcpg:compoListProduct">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial,bcpg:finishedProduct,bcpg:localSemiFinishedProduct,bcpg:semiFinishedProduct&#38;excludeClassNames=bcpg:entityTplAspect
-							</control-param>
-						</control>
-					</field>
 					<field id="bcpg:depthLevel">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">1|1,2|2,3|3,4|4,All|data.level.all</control-param>
@@ -4444,6 +4469,7 @@
 			</form>
 			<form id="filter">
 				<field-visibility>
+					<show id="entity_bcpg:packagingListProduct_bcpg:product" for-mode="view" />
 					<show id="bcpg:packagingListPkgLevel" />
 					<show id="bcpg:packagingListIsMaster" />
 				</field-visibility>
@@ -4591,6 +4617,7 @@
 				<field-visibility>
 					<show id="bcpg:allergenListVoluntary" />
 					<show id="bcpg:allergenListInVoluntary" />
+					<show id="entity_bcpg:allergenListAllergen_bcpg:product" for-mode="view" />
 				</field-visibility>
 			</form>
 		</forms>

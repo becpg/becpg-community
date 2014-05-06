@@ -52,7 +52,7 @@
     
     <bean id="schema.upgrade.plm" class="org.alfresco.repo.domain.schema.SchemaBootstrapRegistration" init-method="register">
         <property name="schemaBootstrap" ref="schemaBootstrap" />
-        <property name="postUpdateScriptPatches">
+        <property name="preUpdateScriptPatches">
             <list>
                 <ref bean="patch.bcpg.plm.db-V1.6-Rename-assoc" />
             </list>
