@@ -35,7 +35,6 @@ import fr.becpg.repo.entity.datalist.MultiLevelDataListService;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.helper.AttributeExtractorService;
-import fr.becpg.repo.helper.CompareHelper;
 
 /**
  * Compare several entities (properties, datalists and composite datalists).
@@ -49,7 +48,6 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 	private static Log logger = LogFactory.getLog(CompareEntityServiceImpl.class);
 	
 	private static final String COMPARISON_SEPARATOR = " - ";
-	private static final String MAX_LEVEL = "10";
 
 	@Autowired
 	private NodeService nodeService;
