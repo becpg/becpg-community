@@ -20,6 +20,7 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
+import fr.becpg.repo.product.data.productList.LabelingListDataItem;
 import fr.becpg.repo.product.data.productList.MicrobioListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.OrganoListDataItem;
@@ -95,6 +96,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private List<PhysicoChemListDataItem> physicoChemList;
 	private List<LabelClaimListDataItem> labelClaimList;
 	private List<ControlDefListDataItem> controlDefList;
+	private List<LabelingListDataItem> labelingList;
 	
 	/*
 	 * View
@@ -138,9 +140,6 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	public void setVariants(List<VariantData> variants) {
 		this.variants = variants;
 	}
-	
-	
-	
 
 	@AlfProp
 	@AlfQname(qname = "bcpg:productHierarchy1")
@@ -161,8 +160,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	public void setHierarchy2(NodeRef hierarchy2) {
 		this.hierarchy2 = hierarchy2;
 	}
-	
-	
+		
 	@AlfProp
 	@AlfQname(qname = "bcpg:formulatedDate")
 	public Date getFormulatedDate() {
@@ -467,6 +465,16 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 
 	public void setControlDefList(List<ControlDefListDataItem> controlDefList) {
 		this.controlDefList = controlDefList;
+	}
+	
+	@DataList
+	@AlfQname(qname="pack:labelingList")
+	public List<LabelingListDataItem> getLabelingList() {
+		return labelingList;
+	}
+
+	public void setLabelingList(List<LabelingListDataItem> labelingList) {
+		this.labelingList = labelingList;
 	}
 
 	@DataListView
