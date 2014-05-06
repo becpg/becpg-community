@@ -4299,8 +4299,9 @@
 				<field-visibility>
 					<show id="bcpg:depthLevel" />
 					<show id="bcpg:compoListProduct" />
-					<show id="bcpg:compoListQty" />
+					<show id="bcpg:compoListQtySubFormula" />					
 					<show id="bcpg:compoListUnit" />
+					<show id="bcpg:compoListQty" />
 					<show id="bcpg:compoListYieldPerc" />
 					<show id="bcpg:compoListLossPerc" />
 					<show id="bcpg:compoListDeclType" />
