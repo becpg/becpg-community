@@ -16,8 +16,8 @@
   You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 -->
 <webscript>
-    <shortname>Bulk edit: Columns configuration</shortname>
-    <description>Bulk edit: Columns configuration webscript</description>
-    <url>/components/bulk-edit/config/columns</url>
-    <format default="json"></format>
+    <shortname>Filter form webscripts</shortname>
+    <description>Filter form webscripts</description>
+    <url>/module/entity-datagrid/filter/form</url>
+    <format default="html"></format> 
 </webscript>
