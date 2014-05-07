@@ -212,7 +212,7 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 	 */
 	private Map<String,Object>loadReportData(ExportSearchContext exportSearchCtx, Element exportElt, Map<String,Object> params, List<NodeRef> nodeRefList){
 		
-		logger.debug("start loadReportData");		
+		logger.debug("start loadReportData " + nodeRefList.size());		
 		Element nodesElt = exportElt.addElement(TAG_NODES);
 		Element filesElt = exportElt.addElement(TAG_FILES);
 		Integer z_idx = 1;
