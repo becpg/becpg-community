@@ -19,6 +19,7 @@ package fr.becpg.repo.search.impl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -202,7 +203,9 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 								// sushi AND (saumon OR thon) AND -dorade
 								// formQuery += (first ? "" : " AND ") +
 								// propName + ":\"" + propValue + "\"";
-								queryBuilder.andPropQuery(QName.createQName(propName, namespaceService), propValue);
+								
+								
+								queryBuilder.andPropQuery(QName.createQName(propName, namespaceService),  cleanValue(propValue));
 								// TODO
 							}  else {
 								// pseudo cm:content property - e.g.
@@ -219,6 +222,15 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 		}
 
+	}
+
+	private String cleanValue(String propValue) {
+		String cleanQuery =  propValue.replaceAll("\\.", "");
+		
+		if(cleanQuery.contains("\",\"")){
+			cleanQuery = cleanQuery.replaceAll("\",\"", "\" OR \"");
+		}
+		return cleanQuery;
 	}
 
 	private List<NodeRef> filterWithPermissions(List<NodeRef> nodes, BeCPGPermissionFilter filter, int maxResults) {

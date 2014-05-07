@@ -273,7 +273,11 @@
 					<show id="qa:ncPriority" />
 					<show id="cm:name" />
 				    <show id="bcpg:plants" force="true" />
-					<show id="qa:product" force="true"/>
+					<!--  <show id="qa:product" force="true"/> -->
+					
+					<show id="entity_qa:product_bcpg:product" />
+					
+					
 					<show id="qa:claimType" force="true"/>
 					<show id="qa:claimDistributionNetwork" force="true"/>
 					<show id="bcpg:clients" force="true" />
@@ -290,6 +294,7 @@
 				    <field id="qa:ncType"  set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
+							<control-param name="isSearch">true</control-param>
 						</control>
 					</field>
 					<field id="qa:ncPriority" set="mainInfo">
@@ -301,16 +306,20 @@
 					<field id="qa:ncState" label="Etat dernière étape validée"  set="mainInfo"/>
 					<field id="cm:name" label="Numéro incident" set="mainInfo"/>
 				    <field id="bcpg:plants" label="Site de fabrication"  set="mainInfo"/>
-					<field id="qa:product"   set="mainInfo"/>
+					<!--  <field id="qa:product"   set="mainInfo"/> -->
+					<field id="entity_qa:product_bcpg:product"   set="mainInfo"/>
+					
 					<field id="qa:claimDistributionNetwork"  set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
+							<control-param name="isSearch">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:clients"  set="mainInfo"/>
 					<field id="qa:claimType" set="mainInfo" >
 						<control template="/org/alfresco/components/form/controls/selectmany.ftl">
 							<control-param name="insertBlank">true</control-param>
+							<control-param name="isSearch">true</control-param>
 						</control>
 					</field>
 					<set id="mainInfo2"   />
@@ -338,7 +347,7 @@
 					<show id="bcpg:trademarkRef" force="true" />
 				</field-visibility>
 				<appearance>
-						<field id="cm:name" label-id="becpg.forms.field.product" />
+					<field id="cm:name" label-id="becpg.forms.field.product" />
 					<field id="bcpg:productHierarchy1" label="becpg.forms.field.productHierarchy1"/>
 					<field id="bcpg:productHierarchy2" label="becpg.forms.field.productHierarchy2"/>
 					<field id="bcpg:plants" label="becpg.forms.field.product.plants"/>
