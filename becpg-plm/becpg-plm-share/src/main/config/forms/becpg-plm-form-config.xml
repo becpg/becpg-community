@@ -139,7 +139,7 @@
 					<field id="bcpg:productHierarchy2" label-id="becpg.forms.field.productHierarchy2">
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
-					<field id="bcpg:productState" >
+					<field id="bcpg:productState" label-id="becpg.forms.field.productState">
 						<control
 							template="/org/alfresco/components/form/controls/selectone.ftl" >
 							  <control-param name="isSearch">true</control-param>

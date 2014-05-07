@@ -13,8 +13,7 @@ for (var i=0; i<model.widgets.length; i++)
 {
   if (model.widgets[i].id == "DocumentVersions")
   {
-	  
-	  
+
     model.widgets[i].name = "beCPG.custom.DocumentVersions";
     model.widgets[i].options.isEntity  = isEntity;
     model.allowNewVersionUpload  = (isEntity == false);
