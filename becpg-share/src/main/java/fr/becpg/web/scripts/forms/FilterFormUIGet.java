@@ -29,6 +29,7 @@ public class FilterFormUIGet extends FormUIGet {
 
 	private static Log logger = LogFactory.getLog(FilterFormUIGet.class);
 
+	@SuppressWarnings("unchecked")
 	protected Map<String, Object> generateModel(String itemKind, String itemId, WebScriptRequest request, Status status, Cache cache) {
 		Map<String, Object> model = null;
 
@@ -46,11 +47,11 @@ public class FilterFormUIGet extends FormUIGet {
 		// any)
 		FormConfigElement formConfig = getFormConfig(itemId, formId);
 		List<String> visibleFields = getVisibleFields(mode, formConfig);
-
+		
 		// get the form definition from the form service
 		Response formSvcResponse = retrieveFormDefinition(itemKind, itemId, visibleFields, formConfig);
 		if (formSvcResponse.getStatus().getCode() == Status.STATUS_OK) {
-			model = generateFormModel(request, Mode.CREATE, formSvcResponse, formConfig);
+			model = generateFormModel(request, mode, formSvcResponse, formConfig);
 		} else if (formSvcResponse.getStatus().getCode() == Status.STATUS_UNAUTHORIZED) {
 			// set status to 401 and return null model
 			status.setCode(Status.STATUS_UNAUTHORIZED);
@@ -61,6 +62,7 @@ public class FilterFormUIGet extends FormUIGet {
 		}
 
 		visibleFields = getVisibleFields(mode, formConfig);
+		
 		String prevFieldId = null;
 		for (String fieldId : visibleFields) {
 			if (fieldId.indexOf("entity_") == 0) {
@@ -81,6 +83,9 @@ public class FilterFormUIGet extends FormUIGet {
 				prevFieldId = fieldId;
 			}
 		}
+
+		Map<String, Object> form = (Map<String, Object>) model.get(MODEL_FORM);
+		form.put("mode", "create");
 
 		return model;
 	}
@@ -133,7 +138,8 @@ public class FilterFormUIGet extends FormUIGet {
 				logger.error("Cannot find set with id : " + fieldSet);
 			}
 		}
-
+		
+		
 	}
 
 	private Constraint createProxy(final Constraint constraint, final String name) {
@@ -152,14 +158,17 @@ public class FilterFormUIGet extends FormUIGet {
 
 	private void insertAfter(String prevFieldId, Set mainSet, FieldPointer fieldPointer) {
 		int idx = 0;
-		for (Iterator<Element> iterator = mainSet.getChildren().iterator(); iterator.hasNext();) {
-			Element el = (Element) iterator.next();
+		if (prevFieldId != null) {
+			prevFieldId = prevFieldId.replace(":", "_");
+			for (Iterator<Element> iterator = mainSet.getChildren().iterator(); iterator.hasNext();) {
+				Element el = (Element) iterator.next();
 
-			if (FIELD == el.getKind() && el.getId().contains(prevFieldId.replace(":", "_"))) {
-				mainSet.getChildren().add(idx + 1, fieldPointer);
-				return;
+				if (FIELD == el.getKind() && el.getId().contains(prevFieldId)) {
+					mainSet.getChildren().add(idx + 1, fieldPointer);
+					return;
+				}
+				idx++;
 			}
-			idx++;
 		}
 
 		mainSet.addChild(fieldPointer);

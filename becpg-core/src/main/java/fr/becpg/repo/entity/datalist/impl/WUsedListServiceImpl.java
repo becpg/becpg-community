@@ -38,6 +38,7 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.entity.datalist.WUsedFilter;
 import fr.becpg.repo.entity.datalist.WUsedListService;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 
@@ -54,71 +55,102 @@ public class WUsedListServiceImpl implements WUsedListService {
 
 	@Autowired
 	private PermissionService permissionService;
-	
+
 	@Autowired
 	private EntityDictionaryService entityDictionaryService;
 
-
 	@Override
 	public MultiLevelListData getWUsedEntity(NodeRef entityNodeRef, QName associationName, int maxDepthLevel) {
-		return getWUsedEntity(Arrays.asList(entityNodeRef), WUsedOperator.AND, associationName, 0, maxDepthLevel);
+		return getWUsedEntity(Arrays.asList(entityNodeRef), WUsedOperator.AND, null, associationName, 0, maxDepthLevel);
 	}
 
 	@Override
+	public MultiLevelListData getWUsedEntity(List<NodeRef> entityNodeRefs, WUsedOperator operator, WUsedFilter filter, QName associationName, int maxDepthLevel) {
+		return getWUsedEntity(entityNodeRefs, operator ,filter , associationName, 0, maxDepthLevel);
+	}
+	
+	@Override
 	public MultiLevelListData getWUsedEntity(List<NodeRef> entityNodeRefs, WUsedOperator operator, QName associationName, int maxDepthLevel) {
-		return getWUsedEntity(entityNodeRefs,operator,  associationName, 0, maxDepthLevel);
+		return getWUsedEntity(entityNodeRefs, operator ,null , associationName, 0, maxDepthLevel);
 	}
 
-	private MultiLevelListData getWUsedEntity(List<NodeRef> entityNodeRefs,WUsedOperator operator, QName associationName, int depthLevel, int maxDepthLevel) {
+	private MultiLevelListData getWUsedEntity(List<NodeRef> entityNodeRefs, WUsedOperator operator, WUsedFilter filter, QName associationName, int depthLevel,
+			int maxDepthLevel) {
+		
+		if(maxDepthLevel == -1){
+			//Avoid infinite loop
+			maxDepthLevel = 20;
+		}
 
 		MultiLevelListData ret = new MultiLevelListData(entityNodeRefs, depthLevel);
 
-		Set<AssociationRef> associationRefs = new HashSet<>();
-		boolean first = true;
-		for (NodeRef entityNodeRef : entityNodeRefs) {
-			if (first  || WUsedOperator.OR.equals(operator) ) {
-				associationRefs.addAll(nodeService.getSourceAssocs(entityNodeRef, associationName));
-				if(logger.isDebugEnabled()){
-					logger.debug("associationRefs size" + associationRefs.size()+ "  for entityNodeRef "+entityNodeRef+" and assocs"+associationName);
+		if (WUsedOperator.OR.equals(operator)) {
+			for (NodeRef entityNodeRef : entityNodeRefs) {
+				MultiLevelListData entityLevel = new MultiLevelListData(entityNodeRef, depthLevel+1);
+				appendAssocs(entityLevel, new HashSet<>(nodeService.getSourceAssocs(entityNodeRef, associationName)), depthLevel+1, maxDepthLevel,
+						associationName, filter);
+				if(!entityLevel.getTree().isEmpty()){
+					ret.getTree().put(entityNodeRef, entityLevel);
 				}
-				first = false;
-			} else {
 				
-				//Test for join
-				for (Iterator<AssociationRef> iterator = associationRefs.iterator(); iterator.hasNext();) {
-					AssociationRef associationRef = (AssociationRef) iterator.next();
-					boolean delete = true;
-					for (AssociationRef associationRef2 : nodeService.getSourceAssocs(entityNodeRef, associationName)) {
-						//Test that assoc is also include in product
-						if (getEntity(associationRef.getSourceRef()).equals(getEntity(associationRef2.getSourceRef()))) {
-							// TODO Test same parent
-				
-							delete = false;
-							break;
-						}
+			}
+		} else {
+			Set<AssociationRef> associationRefs = new HashSet<>();
+			for (NodeRef entityNodeRef : entityNodeRefs) {
+				if (associationRefs.isEmpty()) {
+
+					associationRefs.addAll(nodeService.getSourceAssocs(entityNodeRef, associationName));
+					if (logger.isDebugEnabled()) {
+						logger.debug("associationRefs size" + associationRefs.size() + "  for entityNodeRef " + entityNodeRef + " and assocs"
+								+ associationName);
 					}
-					if(delete){
-						iterator.remove();
+				} else {
+
+					// Test for join
+					for (Iterator<AssociationRef> iterator = associationRefs.iterator(); iterator.hasNext();) {
+						AssociationRef associationRef = (AssociationRef) iterator.next();
+						boolean delete = true;
+						for (AssociationRef associationRef2 : nodeService.getSourceAssocs(entityNodeRef, associationName)) {
+							// Test that assoc is also include in product
+							if (getEntity(associationRef.getSourceRef()).equals(getEntity(associationRef2.getSourceRef()))) {
+								// TODO Test same parent
+								delete = false;
+								break;
+							}
+						}
+						if (delete) {
+							iterator.remove();
+						}
 					}
 				}
 			}
+
+			appendAssocs(ret, associationRefs, depthLevel, maxDepthLevel, associationName, filter);
+			
 		}
 
+		return ret;
+	}
+
+	private void appendAssocs(MultiLevelListData ret, Set<AssociationRef> associationRefs, int depthLevel, int maxDepthLevel, QName associationName, WUsedFilter filter) {
 		for (AssociationRef associationRef : associationRefs) {
 
 			NodeRef nodeRef = associationRef.getSourceRef();
 
 			// we display nodes that are in workspace
-			if (nodeRef != null && nodeRef.getStoreRef().getProtocol().equals(StoreRef.PROTOCOL_WORKSPACE) && permissionService.hasReadPermission(nodeRef) == AccessStatus.ALLOWED) {
+			if (nodeRef != null && nodeRef.getStoreRef().getProtocol().equals(StoreRef.PROTOCOL_WORKSPACE)
+					&& permissionService.hasReadPermission(nodeRef) == AccessStatus.ALLOWED) {
 				NodeRef rootNodeRef = getEntity(nodeRef);
 
 				// we don't display history version and simulation entities
-				if (!nodeService.hasAspect(rootNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION) && permissionService.hasReadPermission(rootNodeRef) == AccessStatus.ALLOWED) {
+				if (!nodeService.hasAspect(rootNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)
+						&& permissionService.hasReadPermission(rootNodeRef) == AccessStatus.ALLOWED) {
 
 					MultiLevelListData multiLevelListData = null;
 					// next level
 					if (maxDepthLevel < 0 || depthLevel + 1 < maxDepthLevel) {
-						multiLevelListData = getWUsedEntity(Arrays.asList(rootNodeRef),operator, associationName, depthLevel + 1, maxDepthLevel);
+						multiLevelListData = getWUsedEntity(Arrays.asList(rootNodeRef), WUsedOperator.AND, filter, associationName, depthLevel + 1,
+								maxDepthLevel);
 					} else {
 						multiLevelListData = new MultiLevelListData(rootNodeRef, depthLevel + 1);
 					}
@@ -126,16 +158,22 @@ public class WUsedListServiceImpl implements WUsedListService {
 				}
 			}
 		}
-		return ret;
+		
+		if(filter!=null){
+			filter.filter(ret);
+		}
+		
+		
+
 	}
 
 	private NodeRef getEntity(NodeRef sourceRef) {
-		if(entityDictionaryService.isSubClass(nodeService.getType(sourceRef), BeCPGModel.TYPE_ENTITY_V2)){
+		if (entityDictionaryService.isSubClass(nodeService.getType(sourceRef), BeCPGModel.TYPE_ENTITY_V2)) {
 			return sourceRef;
-		} 
+		}
 		return entityListDAO.getEntity(sourceRef);
 	}
 
-
+	
 
 }
