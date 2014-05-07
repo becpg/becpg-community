@@ -1,21 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  Copyright (C) 2010-2014 beCPG. 
-   
-  This file is part of beCPG 
-   
-  beCPG is free software: you can redistribute it and/or modify 
-  it under the terms of the GNU Lesser General Public License as published by 
-  the Free Software Foundation, either version 3 of the License, or 
-  (at your option) any later version. 
-   
-  beCPG is distributed in the hope that it will be useful, 
-  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-  GNU Lesser General Public License for more details. 
-   
-  You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
--->
+<!-- Copyright (C) 2010-2014 beCPG. This file is part of beCPG beCPG is free 
+	software: you can redistribute it and/or modify it under the terms of the 
+	GNU Lesser General Public License as published by the Free Software Foundation, 
+	either version 3 of the License, or (at your option) any later version. beCPG 
+	is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+	without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+	PURPOSE. See the GNU Lesser General Public License for more details. You 
+	should have received a copy of the GNU Lesser General Public License along 
+	with beCPG. If not, see <http://www.gnu.org/licenses/>. -->
 <mappings>
 	<settings>
 		<!-- <setting id="dateFormat" value="dd/MM/yyyy"/> -->
@@ -27,25 +19,26 @@
 			<nodeColumnKey attribute="bcpg:code" />
 		</nodeColumnKeys>
 		<columns>
-			<column id="hierarchy1"  type="Hierarchy" attribute="bcpg:productHierarchy1"   />
-			<column id="hierarchy2"  type="Hierarchy" attribute="bcpg:productHierarchy2" parentLevel="bcpg:productHierarchy1" />
-	
+			<column id="hierarchy1" type="Hierarchy" attribute="bcpg:productHierarchy1" />
+			<column id="hierarchy2" type="Hierarchy" attribute="bcpg:productHierarchy2"
+				parentLevel="bcpg:productHierarchy1" />
+
 			<column id="img1Path" attribute="cm:content" path="Images/product.jpg"
-						type="File" />
+				type="File" />
 			<column id="img1Name" attribute="cm:name" path="Images/product.jpg"
-						type="File" />	
+				type="File" />
 		</columns>
-	</mapping>	
-	
-	
-	
+	</mapping>
+
+
+
 	<!-- Allergens -->
 	<mapping name="bcpg:allergen">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="bcpg:allergenCode" />
 		</nodeColumnKeys>
 		<columns>
-			
+
 		</columns>
 	</mapping>
 
@@ -55,11 +48,11 @@
 			<nodeColumnKey attribute="cm:name" />
 		</nodeColumnKeys>
 		<columns>
-	
-		<column id="img1Path" attribute="cm:content" path="Images/logo.jpg"
-					type="File" />
-		<column id="img1Title" attribute="cm:title" path="Images/logo.jpg"
-					type="File" />	
+
+			<column id="img1Path" attribute="cm:content" path="Images/logo.jpg"
+				type="File" />
+			<column id="img1Title" attribute="cm:title" path="Images/logo.jpg"
+				type="File" />
 		</columns>
 	</mapping>
 
@@ -69,86 +62,91 @@
 			<nodeColumnKey attribute="cm:name" />
 		</nodeColumnKeys>
 		<columns>
-	
-		<column id="img1Path" attribute="cm:content" path="Images/logo.jpg"
-					type="File" />
-		<column id="img1Title" attribute="cm:title" path="Images/logo.jpg"
-					type="File" />	
+
+			<column id="img1Path" attribute="cm:content" path="Images/logo.jpg"
+				type="File" />
+			<column id="img1Title" attribute="cm:title" path="Images/logo.jpg"
+				type="File" />
 		</columns>
 	</mapping>
-	
-	
-   <mapping name="bcpg:linkedValue">
+
+	<mapping name="bcpg:listValue">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:lvValue" />
+		</nodeColumnKeys>
+	</mapping>
+
+	<mapping name="bcpg:linkedValue">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="bcpg:parentLevel" />
-		   <nodeColumnKey attribute="bcpg:lkvValue" />
-		   <!-- to match by path -->
-		   <nodeColumnKey attribute="cm:contains" />
-		</nodeColumnKeys>
-		<columns >
-		   <!-- Allow up to six level -->
-			<column id="parentLevel"  type="Hierarchy" attribute="bcpg:parentLevel"  />
-			<column id="parentLevel1" type="Hierarchy" attribute="bcpg:parentLevel" parentLevel="bcpg:parentLevel" />
-			<column id="parentLevel2" type="Hierarchy" attribute="bcpg:parentLevel" parentLevel="bcpg:parentLevel" />
-			<column id="parentLevel3" type="Hierarchy" attribute="bcpg:parentLevel" parentLevel="bcpg:parentLevel" />
-			<column id="parentLevel4" type="Hierarchy" attribute="bcpg:parentLevel" parentLevel="bcpg:parentLevel" />
-			<column id="lkvValue"     type="Hierarchy" attribute="bcpg:lkvValue" parentLevel="bcpg:parentLevel" />
-		</columns>
-	</mapping>
-
-
-		<mapping name="bcpg:contactList">
-			<nodeColumnKeys>
-				<nodeColumnKey attribute="bcpg:erpCode" />
-			</nodeColumnKeys>
-			<dataListColumnKeys>
-				<dataListColumnKey attribute="bcpg:contactListJobTitle" />
-			</dataListColumnKeys>
-			<columns>
-			</columns>
-		</mapping>
-		
-		<mapping name="bcpg:labelClaim">
-			<nodeColumnKeys>
-				<nodeColumnKey attribute="cm:name" />
-			</nodeColumnKeys>
-			<columns>
-				<column id="labelClaimFormula" type="Formula"
-					attribute="bcpg:labelClaimFormula" />
-			</columns>
-		</mapping>
-		
-		<mapping name="bcpg:dynamicCharactList">
-			<nodeColumnKeys>
-				<nodeColumnKey attribute="cm:name" />
-			</nodeColumnKeys>
-			<columns>
-				<column id="bcpg:dynamicCharactFormula" type="Formula"
-					attribute="bcpg:dynamicCharactFormula" />
-			</columns>
-		</mapping>
-	
-	<!-- Sample for multi-hierarchy
-		
-	<mapping name="bcpg:finishedProduct">
-			<nodeColumnKeys>
-			<nodeColumnKey attribute="bcpg:code" />
+			<nodeColumnKey attribute="bcpg:lkvValue" />
+			<!-- to match by path -->
+			<nodeColumnKey attribute="cm:contains" />
 		</nodeColumnKeys>
 		<columns>
-			<column id="hierarchy1"  type="Hierarchy" attribute=""  />
-			<column id="hierarchy2"  type="Hierarchy" attribute="" parentLevel="hierarchy1" parentLevelAttribute="bcpg:parentLevel" />
-			<column id="hierarchy3"  type="Hierarchy" attribute="bcpg:productHierachy1" parentLevel="hierarchy2" parentLevelAttribute="bcpg:parentLevel" />
-			<column id="hierarchy4"  type="Hierarchy" attribute="bcpg:productHierachy2" parentLevel="hierarchy3" parentLevelAttribute="bcpg:parentLevel" />
+			<!-- Allow up to six level -->
+			<column id="parentLevel" type="Hierarchy" attribute="bcpg:parentLevel" />
+			<column id="parentLevel1" type="Hierarchy" attribute="bcpg:parentLevel"
+				parentLevel="bcpg:parentLevel" />
+			<column id="parentLevel2" type="Hierarchy" attribute="bcpg:parentLevel"
+				parentLevel="bcpg:parentLevel" />
+			<column id="parentLevel3" type="Hierarchy" attribute="bcpg:parentLevel"
+				parentLevel="bcpg:parentLevel" />
+			<column id="parentLevel4" type="Hierarchy" attribute="bcpg:parentLevel"
+				parentLevel="bcpg:parentLevel" />
+			<column id="lkvValue" type="Hierarchy" attribute="bcpg:lkvValue"
+				parentLevel="bcpg:parentLevel" />
 		</columns>
 	</mapping>
-   -->
-   <mapping name="qa:nc">
+
+
+	<mapping name="bcpg:contactList">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:erpCode" />
+		</nodeColumnKeys>
+		<dataListColumnKeys>
+			<dataListColumnKey attribute="bcpg:contactListJobTitle" />
+		</dataListColumnKeys>
+		<columns>
+		</columns>
+	</mapping>
+
+	<mapping name="bcpg:labelClaim">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="cm:name" />
+		</nodeColumnKeys>
+		<columns>
+			<column id="labelClaimFormula" type="Formula" attribute="bcpg:labelClaimFormula" />
+		</columns>
+	</mapping>
+
+	<mapping name="bcpg:dynamicCharactList">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="cm:name" />
+		</nodeColumnKeys>
+		<columns>
+			<column id="bcpg:dynamicCharactFormula" type="Formula"
+				attribute="bcpg:dynamicCharactFormula" />
+		</columns>
+	</mapping>
+
+	<!-- Sample for multi-hierarchy <mapping name="bcpg:finishedProduct"> <nodeColumnKeys> 
+		<nodeColumnKey attribute="bcpg:code" /> </nodeColumnKeys> <columns> <column 
+		id="hierarchy1" type="Hierarchy" attribute="" /> <column id="hierarchy2" 
+		type="Hierarchy" attribute="" parentLevel="hierarchy1" parentLevelAttribute="bcpg:parentLevel" 
+		/> <column id="hierarchy3" type="Hierarchy" attribute="bcpg:productHierachy1" 
+		parentLevel="hierarchy2" parentLevelAttribute="bcpg:parentLevel" /> <column 
+		id="hierarchy4" type="Hierarchy" attribute="bcpg:productHierachy2" parentLevel="hierarchy3" 
+		parentLevelAttribute="bcpg:parentLevel" /> </columns> </mapping> -->
+	<mapping name="qa:nc">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="bcpg:code" />
 		</nodeColumnKeys>
 		<columns>
-			<column id="qa:claimOriginHierarchy1"  type="Hierarchy" attribute="qa:claimOriginHierarchy1"   />
-			<column id="qa:claimOriginHierarchy2"  type="Hierarchy" attribute="qa:claimOriginHierarchy2" parentLevel="qa:claimOriginHierarchy1" />
+			<column id="qa:claimOriginHierarchy1" type="Hierarchy"
+				attribute="qa:claimOriginHierarchy1" />
+			<column id="qa:claimOriginHierarchy2" type="Hierarchy"
+				attribute="qa:claimOriginHierarchy2" parentLevel="qa:claimOriginHierarchy1" />
 		</columns>
 	</mapping>
 </mappings>

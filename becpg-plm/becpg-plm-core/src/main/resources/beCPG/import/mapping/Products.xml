@@ -96,6 +96,10 @@
 				attribute="bcpg:productHierarchy2" parentLevel="bcpg:productHierarchy1"
 				parentLevelAttribute="bcpg:parentLevel" />
 
+			<column id="img1Path" attribute="cm:content" path="Images/product.jpg"
+						type="File" />
+			<column id="img1Name" attribute="cm:name" path="Images/product.jpg"
+						type="File" />	
 		</columns>
 	</mapping>
 
@@ -193,6 +197,28 @@
 		</nodeColumnKeys>
 		<dataListColumnKeys>
 			<dataListColumnKey attribute="bcpg:ingListIng" />
+		</dataListColumnKeys>
+		<columns>
+		</columns>
+	</mapping>
+	
+	<mapping name="bcpg:labelClaimList">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:erpCode" />
+		</nodeColumnKeys>
+		<dataListColumnKeys>
+			<dataListColumnKey attribute="bcpg:lclLabelClaim" />
+		</dataListColumnKeys>
+		<columns>
+		</columns>
+	</mapping>
+	
+	<mapping name="pack:labelingList">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:erpCode" />
+		</nodeColumnKeys>
+		<dataListColumnKeys>
+			<dataListColumnKey attribute="pack:llLabel" />
 		</dataListColumnKeys>
 		<columns>
 		</columns>
