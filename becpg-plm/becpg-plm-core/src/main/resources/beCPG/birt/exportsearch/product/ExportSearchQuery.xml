@@ -32,7 +32,7 @@
 			<column id="productHierarchy1" attribute="bcpg:productHierarchy1" type="Attribute" />
 			<column id="productHierarchy2" attribute="bcpg:productHierarchy2" type="Attribute" />
 			<column id="eanCode" attribute="bcpg:eanCode" type="Attribute" />
-			<column id="trademark" attribute="bcpg:trademark" type="Attribute" />
+			<column id="trademark" attribute="bcpg:trademarkRef" type="Attribute" />
 			<column id="useByDate" attribute="bcpg:useByDate" type="Attribute" />
 			
 			<!-- characteristic properties -->
