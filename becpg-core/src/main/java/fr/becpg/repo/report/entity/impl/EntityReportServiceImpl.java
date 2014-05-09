@@ -344,7 +344,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 	
 							logger.debug("beCPGReportEngine createReport: " + entityNodeRef);
 							beCPGReportEngine.createReport(tplNodeRef, nodeElt, writer.getContentOutputStream(), params);
-	
+							
+							nodeService.setProperty(documentNodeRef, ContentModel.PROP_MODIFIED, new Date());
 						}
 					
 					} catch (ReportException e) {
