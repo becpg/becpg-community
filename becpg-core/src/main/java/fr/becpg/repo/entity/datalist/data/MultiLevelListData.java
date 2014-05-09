@@ -31,7 +31,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
  *
  */
 public class MultiLevelListData {
-
 	
 	private int depth = 0;
 	
@@ -82,8 +81,6 @@ public class MultiLevelListData {
 		}
 		return currSize;
 	}
-	
-	
 
 	@Override
 	public String toString() {

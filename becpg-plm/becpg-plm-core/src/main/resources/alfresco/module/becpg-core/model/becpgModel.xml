@@ -959,7 +959,6 @@
 				</property>
 				<property name="bcpg:packagingListPkgLevel">
 					<type>d:text</type>
-					<index enabled="false" />
 					<constraints>
 						<constraint ref="bcpg:packagingLevel" />
 					</constraints>
@@ -968,7 +967,6 @@
 					<type>d:boolean</type>
 					<mandatory enforced="true">true</mandatory>
 					<default>false</default>
-					<index enabled="false" />
 				</property>
 			</properties>
 			<associations>
