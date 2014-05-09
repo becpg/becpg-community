@@ -140,9 +140,10 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 	@Autowired
 	private EntityListDAO entityListDAO;
 	
-	
+	@Autowired
 	private EntityService entityService;				
 	
+	@Autowired
 	private AttributeExtractorService attributeExtractorService;
 	
 	
@@ -341,9 +342,9 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 		if(nodeService.exists(nodeRef)){
 			if(attribute instanceof PropertyDefinition){
 				
-				Serializable serializable = nodeService.getProperty(nodeRef, attribute.getName());								
+				Serializable serializable = nodeService.getProperty(nodeRef, attribute.getName());
 				value = attributeExtractorService.extractPropertyForReport((PropertyDefinition)attribute, serializable, exportSearchCtx.getPropertyFormats(), false);
-	    		
+				
 			}
 			else if(attribute instanceof AssociationDefinition){// associations
 				    			
