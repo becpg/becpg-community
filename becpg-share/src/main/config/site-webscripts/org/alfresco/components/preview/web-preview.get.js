@@ -88,7 +88,7 @@ function main()
          name : "Alfresco.WebPreview",
          options : {
             thumbnailModification : nodeMetadata.thumbnailModifications,
-            nodeRef : model.entityNodeRef? model.entityNodeRef :model.nodeRef,
+            nodeRef : model.nodeRef,
             name : nodeMetadata.name,
             mimeType : nodeMetadata.mimeType,
             size: nodeMetadata.size,
