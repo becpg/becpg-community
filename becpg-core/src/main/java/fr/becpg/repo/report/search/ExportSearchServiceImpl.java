@@ -343,12 +343,8 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 			if(attribute instanceof PropertyDefinition){
 				
 				Serializable serializable = nodeService.getProperty(nodeRef, attribute.getName());
-				logger.info("attributeExtractorService " + attributeExtractorService);
-				logger.info("attribute " + attribute);
-				logger.info("serializable " + serializable);
-				logger.info("exportSearchCtx " + exportSearchCtx);
 				value = attributeExtractorService.extractPropertyForReport((PropertyDefinition)attribute, serializable, exportSearchCtx.getPropertyFormats(), false);
-	    		
+				
 			}
 			else if(attribute instanceof AssociationDefinition){// associations
 				    			
