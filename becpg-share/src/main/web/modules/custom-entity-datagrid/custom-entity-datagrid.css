@@ -20,6 +20,10 @@
 	background-image: url("../../components/images/wused-16.png");
 }
 
+ .datagrid-bar  .onActionBulkEdit, .datagrid .onActionBulkEdit a {
+	background-image:  url("../../components/images/edit-inline-16.png");
+}
+
 .datagrid span.document-version {
 	margin-left: .8em;
 	position: relative;

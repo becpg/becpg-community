@@ -52,22 +52,122 @@
          this._showPanel(url, this.id);
 
       },
-      onActionBulkEdit : function EntityDataGrid_onActionShowDetails(p_items) {
-         var items = YAHOO.lang.isArray(p_items) ? p_items : [ p_items ];
+      
+      
+      
+//      onActionBulkEdit : function EntityDataGrid_onActionShowDetails(p_items) {
+//         var items = YAHOO.lang.isArray(p_items) ? p_items : [ p_items ];
+//
+//         var query = "";
+//         for ( var i = 0, ii = items.length; i < ii; i++) {
+//            if (query.length > 0) {
+//               query += " OR ";
+//            }
+//            if (items[i].itemData["assoc_bcpg_compoListProduct"] != null) {
+//               // TODO
+//               query += "ID:\"" + items[i].itemData["assoc_bcpg_compoListProduct"][0].value + "\"";
+//            }
+//         }
+//
+//         window.location = Alfresco.constants.URL_PAGECONTEXT + "bulk-edit?t=" + encodeURIComponent(query) + "&a=true&r=true";
+//      },
+      
+      onActionBulkEdit : function EntityDataGrid_onActionShowWused(p_items) {
+          var items = YAHOO.lang.isArray(p_items) ? p_items : [ p_items ];
 
-         var query = "";
-         for ( var i = 0, ii = items.length; i < ii; i++) {
-            if (query.length > 0) {
-               query += " OR ";
-            }
-            if (items[i].itemData["assoc_bcpg_compoListProduct"] != null) {
-               // TODO
-               query += "ID:\"" + items[i].itemData["assoc_bcpg_compoListProduct"][0].value + "\"";
-            }
-         }
+          function onActionBulkEdit_redirect(itemAssocName, assocName ){
+             var nodeRefs = [];
+             
+             for ( var i = 0, ii = items.length; i < ii; i++) {
+                if(!assocName){
+                   nodeRefs.push(items[i].nodeRef);
+                } else {
+                   if(items[i].itemData[itemAssocName].value){
+                      nodeRefs.push(items[i].itemData[itemAssocName].value);
+                   }else {
+                      for ( var j in items[i].itemData[itemAssocName]) {
+                         nodeRefs.push(items[i].itemData[itemAssocName][j].value);
+                      }
+                   }
+                }
+             }
+             
+             if(!assocName){
+                alert("Not yet supported!!");
+             } else {
+                window.location = Alfresco.constants.URL_PAGECONTEXT + "bulk-edit?nodeRefs=" + nodeRefs.join() + "&a=true&r=true";
+             }
+          }
+         
+          this._showWusedPopup("bulk-edit",items, onActionBulkEdit_redirect);
 
-         window.location = Alfresco.constants.URL_PAGECONTEXT + "bulk-edit?t=" + encodeURIComponent(query) + "&a=true&r=true";
-      },
+       },
+       
+       _showWusedPopup : function(popupKind, items, callBack) {
+    	   var showPopup = false;
+
+           
+           var html = '<div class="hd">' + this.msg("header."+popupKind+".picker") + '</div>';
+           html += '<div class="bd">';
+           html += '<form  class="form-container">';
+           html += '<div class="form-fields">';
+           html += '   <div class="set">';
+           html += '        <div class="form-field">';
+           html += '            <select  id="wused-selected-picker">';
+           html += '                  <option value="">' + this.msg(popupKind+".picker.choose") + '</option>';
+           html += '                  <option value="selectlines">' + this.msg(popupKind+".picker.selectedlines") + '</option>';
+           for ( var key in items[0].itemData) {
+              if (key.indexOf("assoc_")>-1) {
+                 showPopup = true;
+                 html += "<option value='" + key + "'>" + this.datalistColumns[key].label + "</option>";
+              }
+           }
+           html += '            </select>';
+           html += '          </div>';
+           html += '       </div>';
+           html += '    </div>';
+           html += '</form></div>';
+
+
+           if (showPopup && this.datalistMeta.name.indexOf("WUsed") != 0) {
+              var containerDiv = document.createElement("div");
+              containerDiv.innerHTML = html;
+
+              this.widgets.panel = Alfresco.util.createYUIPanel(containerDiv, {
+                 draggable : true,
+                 width : "25em"
+              });
+
+              this.widgets.panel.show();
+
+              YAHOO.util.Event
+                    .on(
+                          YAHOO.util.Dom.get("wused-selected-picker"),
+                          'change',
+                          function(e) {
+                             var val = this.value == "selectlines" ? null : this.value;
+                             callBack.call(this,val,val);
+                          });
+           } else {
+              if(this.datalistMeta.name.indexOf("WUsed") == 0){
+                 var val = null, val2 =  "assoc_bcpg_compoListProduct";
+                 if(this.datalistMeta.name.indexOf("|")>0){
+                    val ="assoc_"+this.datalistMeta.name.split("|")[1].replace(":","_");
+                 } else if(this.datalistMeta.itemType==="bcpg:packagingList"){
+                    val = "assoc_bcpg_packagingListProduct";
+                    val2 = val;
+                 } else if(this.datalistMeta.itemType==="mpm:processList"){
+                    val = "assoc_mpm_plResource";
+                    val2 = val;
+                 } else {
+                    val = "assoc_bcpg_compoListProduct";
+                 }
+                 callBack.call(this,val, val2);
+              } else {
+            	 callBack.call(this);
+              }
+           }
+       } ,
 
       onActionShowComments : function EntityDataGrid_onActionShowComments(item) {
 
@@ -106,69 +206,7 @@
                      .join();
             }
          }
-         var showPopup = false;
-
-         
-         var html = '<div class="hd">' + this.msg("header.wused.picker") + '</div>';
-         html += '<div class="bd">';
-         html += '<form  class="form-container">';
-         html += '<div class="form-fields">';
-         html += '   <div class="set">';
-         html += '        <div class="form-field">';
-         html += '            <select  id="wused-selected-picker">';
-         html += '                  <option value="">' + this.msg("wused.picker.choose") + '</option>';
-         html += '                  <option value="selectlines">' + this.msg("wused.picker.selectedlines") + '</option>';
-         for ( var key in items[0].itemData) {
-            if (key.indexOf("assoc_")>-1) {
-               showPopup = true;
-               html += "<option value='" + key + "'>" + this.datalistColumns[key].label + "</option>";
-            }
-         }
-         html += '            </select>';
-         html += '          </div>';
-         html += '       </div>';
-         html += '    </div>';
-         html += '</form></div>';
-
-
-         if (showPopup && this.datalistMeta.name.indexOf("WUsed") != 0) {
-            var containerDiv = document.createElement("div");
-            containerDiv.innerHTML = html;
-
-            this.widgets.panel = Alfresco.util.createYUIPanel(containerDiv, {
-               draggable : true,
-               width : "25em"
-            });
-
-            this.widgets.panel.show();
-
-            YAHOO.util.Event
-                  .on(
-                        YAHOO.util.Dom.get("wused-selected-picker"),
-                        'change',
-                        function(e) {
-                           var val = this.value == "selectlines" ? null : this.value;
-                           onActionShowWused_redirect(val,val);
-                        });
-         } else {
-            if(this.datalistMeta.name.indexOf("WUsed") == 0){
-               var val = null, val2 =  "assoc_bcpg_compoListProduct";
-               if(this.datalistMeta.name.indexOf("|")>0){
-                  val ="assoc_"+this.datalistMeta.name.split("|")[1].replace(":","_");
-               } else if(this.datalistMeta.itemType==="bcpg:packagingList"){
-                  val = "assoc_bcpg_packagingListProduct";
-                  val2 = val;
-               } else if(this.datalistMeta.itemType==="mpm:processList"){
-                  val = "assoc_mpm_plResource";
-                  val2 = val;
-               } else {
-                  val = "assoc_bcpg_compoListProduct";
-               }
-               onActionShowWused_redirect(val, val2);
-            } else {
-               onActionShowWused_redirect();
-            }
-         }
+         this._showWusedPopup("wused",items, onActionShowWused_redirect);
 
       },
 
