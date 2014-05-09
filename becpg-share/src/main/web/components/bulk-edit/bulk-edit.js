@@ -233,6 +233,11 @@
 							 * Parent nodeRef
 							 */
 							nodeRef : null,
+							
+							/**
+							 * EntityNodeRefs
+							 */
+							entityNodeRefs : null,
 
 							/**
 							 * Display thumbnail column
@@ -658,6 +663,11 @@
 								itemType : encodeURIComponent(this.options.itemType),
 								pageSize : pageSize? pageSize : this.options.pageSize
 							});
+							
+							if(this.options.entityNodeRefs!=null) {
+								params+="&entityNodeRef="+this.options.entityNodeRefs;
+							}
+							
 
 							return params;
 						},
@@ -1266,6 +1276,7 @@
 								page :  page ? page : this.currentPage,
 				                queryExecutionId : this.queryExecutionId
 							};
+							
 
 							if (this.options.nodeRef != null && this.options.nodeRef.length > 0) {
 								request.filter = {
