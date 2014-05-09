@@ -3,6 +3,7 @@ package fr.becpg.web.scripts.forms;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -28,6 +29,7 @@ public class FilterFormUIGet extends FormUIGet {
 
 	private static Log logger = LogFactory.getLog(FilterFormUIGet.class);
 
+	@SuppressWarnings("unchecked")
 	protected Map<String, Object> generateModel(String itemKind, String itemId, WebScriptRequest request, Status status, Cache cache) {
 		Map<String, Object> model = null;
 
@@ -45,11 +47,11 @@ public class FilterFormUIGet extends FormUIGet {
 		// any)
 		FormConfigElement formConfig = getFormConfig(itemId, formId);
 		List<String> visibleFields = getVisibleFields(mode, formConfig);
-
+		
 		// get the form definition from the form service
 		Response formSvcResponse = retrieveFormDefinition(itemKind, itemId, visibleFields, formConfig);
 		if (formSvcResponse.getStatus().getCode() == Status.STATUS_OK) {
-			model = generateFormModel(request, Mode.CREATE, formSvcResponse, formConfig);
+			model = generateFormModel(request, mode, formSvcResponse, formConfig);
 		} else if (formSvcResponse.getStatus().getCode() == Status.STATUS_UNAUTHORIZED) {
 			// set status to 401 and return null model
 			status.setCode(Status.STATUS_UNAUTHORIZED);
@@ -60,9 +62,12 @@ public class FilterFormUIGet extends FormUIGet {
 		}
 
 		visibleFields = getVisibleFields(mode, formConfig);
-
+		
+		String prevFieldId = null;
 		for (String fieldId : visibleFields) {
 			if (fieldId.indexOf("entity_") == 0) {
+
+				String fieldSet = formConfig.getFields().get(fieldId).getSet();
 
 				String[] splitted = fieldId.replace("entity_", "").split("_");
 				String name = splitted[0];
@@ -71,11 +76,16 @@ public class FilterFormUIGet extends FormUIGet {
 
 				formSvcResponse = retrieveFormDefinition(itemKind, splitted[1], subVisibleFields, subFormConfig);
 				if (formSvcResponse.getStatus().getCode() == Status.STATUS_OK) {
-					merge(model, name, generateFormModel(request, Mode.CREATE, formSvcResponse, subFormConfig));
+					merge(model, name, generateFormModel(request, Mode.CREATE, formSvcResponse, subFormConfig), fieldSet, prevFieldId);
 				}
 
+			} else {
+				prevFieldId = fieldId;
 			}
 		}
+
+		Map<String, Object> form = (Map<String, Object>) model.get(MODEL_FORM);
+		form.put("mode", "create");
 
 		return model;
 	}
@@ -88,7 +98,7 @@ public class FilterFormUIGet extends FormUIGet {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void merge(Map<String, Object> model, String name, Map<String, Object> subModel) {
+	private void merge(Map<String, Object> model, String name, Map<String, Object> subModel, String fieldSet, String prevFieldId) {
 
 		Map<String, Object> form = (Map<String, Object>) model.get(MODEL_FORM);
 		Map<String, Object> toMergeForm = (Map<String, Object>) subModel.get(MODEL_FORM);
@@ -97,31 +107,88 @@ public class FilterFormUIGet extends FormUIGet {
 
 			Map<String, Field> fields = (Map<String, Field>) form.get(MODEL_FIELDS);
 			List<Constraint> constraints = (List<Constraint>) form.get(MODEL_CONSTRAINTS);
-			Set mainSet = (Set) ((List<Element>) form.get(MODEL_STRUCTURE)).get(0);
-			Set toMergedSet = (Set) ((List<Element>) toMergeForm.get(MODEL_STRUCTURE)).get(0);
+			Set mainSet = findSet(((List<Element>) form.get(MODEL_STRUCTURE)), fieldSet);
+			if (mainSet != null) {
 
-			if (fields != null && toMergeForm.containsKey(MODEL_FIELDS)) {
-				for (Element el : toMergedSet.getChildren()) {
-					if(FIELD == el.getKind()){
-					
-						Field field = ((Map<String, Field>) toMergeForm.get(MODEL_FIELDS)).get(el.getId());
-						if (field != null) {
-							field.setName("nested_" + name.replace(":", "_") + "_" + field.getId());
-							fields.put(field.getId(), field);
-							mainSet.addChild(new FieldPointer(field.getId()));
+				Set toMergedSet = findSet((List<Element>) toMergeForm.get(MODEL_STRUCTURE), null);
+
+				if (fields != null && toMergeForm.containsKey(MODEL_FIELDS)) {
+					for (Element el : toMergedSet.getChildren()) {
+						if (FIELD == el.getKind()) {
+
+							Field field = ((Map<String, Field>) toMergeForm.get(MODEL_FIELDS)).get(el.getId());
+							if (field != null) {
+								String id = "nested_" + name.replace(":", "_") + "_" + field.getId();
+								field.setName(id);
+								fields.put(id, field);
+								insertAfter(prevFieldId, mainSet, new FieldPointer(id));
+								prevFieldId = id;
+							}
 						}
 					}
 				}
-			}
 
-			if (constraints != null && toMergeForm.containsKey(MODEL_CONSTRAINTS)) {
-				for (Constraint constraint : (List<Constraint>) toMergeForm.get(MODEL_CONSTRAINTS)) {
-					constraints.add(constraint);
+				if (constraints != null && toMergeForm.containsKey(MODEL_CONSTRAINTS)) {
+					for (Constraint constraint : (List<Constraint>) toMergeForm.get(MODEL_CONSTRAINTS)) {
+
+						constraints.add(createProxy(constraint, name));
+					}
 				}
+			} else {
+				logger.error("Cannot find set with id : " + fieldSet);
 			}
+		}
+		
+		
+	}
 
+	private Constraint createProxy(final Constraint constraint, final String name) {
+
+		try {
+			java.lang.reflect.Field f = constraint.getClass().getDeclaredField("fieldId");
+			f.setAccessible(true);
+			f.set(constraint, "nested_" + name.replace(":", "_") + "_" + f.get(constraint));
+		} catch (Exception e) {
+			logger.error(e, e);
 		}
 
+		return constraint;
+
+	}
+
+	private void insertAfter(String prevFieldId, Set mainSet, FieldPointer fieldPointer) {
+		int idx = 0;
+		if (prevFieldId != null) {
+			prevFieldId = prevFieldId.replace(":", "_");
+			for (Iterator<Element> iterator = mainSet.getChildren().iterator(); iterator.hasNext();) {
+				Element el = (Element) iterator.next();
+
+				if (FIELD == el.getKind() && el.getId().contains(prevFieldId)) {
+					mainSet.getChildren().add(idx + 1, fieldPointer);
+					return;
+				}
+				idx++;
+			}
+		}
+
+		mainSet.addChild(fieldPointer);
+	}
+
+	private Set findSet(List<Element> elements, String fieldSet) {
+
+		for (Element el : elements) {
+			if (SET == el.getKind()) {
+				if (fieldSet == null || el.getId().equals(fieldSet)) {
+					return (Set) el;
+				} else {
+					Set ret = findSet(((Set) el).getChildren(), fieldSet);
+					if (ret != null) {
+						return ret;
+					}
+				}
+			}
+		}
+		return null;
 	}
 
 	/**

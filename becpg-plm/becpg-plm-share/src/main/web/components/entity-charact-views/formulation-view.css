@@ -52,6 +52,14 @@
 	float: right;
 }
 
+
+
+.formulation-view .datagrid-bar .left  .filterform  div,
+.formulation-view .datagrid-bar .left  .filterform  {
+    float:none;
+}
+
+
 .formulation-view  .datagrid-bar .new-row span.first-child {
 	background: url(../images/add-row-16.png) no-repeat 12px 4px;
 	padding-left: 24px;

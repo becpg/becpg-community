@@ -35,6 +35,7 @@ import org.json.JSONObject;
 
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
+import fr.becpg.repo.entity.datalist.WUsedFilter;
 import fr.becpg.repo.entity.datalist.WUsedListService;
 import fr.becpg.repo.entity.datalist.WUsedListService.WUsedOperator;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
@@ -102,11 +103,7 @@ public class WUsedExtractor extends MultiLevelExtractor {
 		int startIndex = (pagination.getPage() - 1) * pagination.getPageSize();
 
 		MultiLevelListData wUsedData = wUsedListService.getWUsedEntity(getWusedNodeRefs(dataListFilter), getWUsedOperator(dataListFilter),
-				associationName, dataListFilter.getMaxDepth());
-
-		if (dataListFilter.getFilterId().equals(DataListFilter.FORM_FILTER)) {
-			filter(dataListFilter, wUsedData, associationName);
-		}
+				getWUsedFilter(dataListFilter, associationName), associationName, dataListFilter.getMaxDepth());
 
 		appendNextLevel(ret, metadataFields, wUsedData, 0, startIndex, pageSize, props, dataListFilter.getFormat());
 
@@ -114,6 +111,74 @@ public class WUsedExtractor extends MultiLevelExtractor {
 
 		return ret;
 
+	}
+
+	private WUsedFilter getWUsedFilter(final DataListFilter dataListFilter, final QName reverseAssociationName) {
+		return new WUsedFilter() {
+
+			@Override
+			public void filter(MultiLevelListData wUsedData) {
+				if (dataListFilter.getFilterId().equals(DataListFilter.FORM_FILTER)) {
+					Map<String, String> criteriaMap = nestedAdvSearchPlugin.cleanCriteria(dataListFilter.getCriteriaMap());
+
+					if (!criteriaMap.isEmpty()) {
+						for (Iterator<Entry<NodeRef, MultiLevelListData>> iterator = wUsedData.getTree().entrySet().iterator(); iterator.hasNext();) {
+							Entry<NodeRef, MultiLevelListData> entry = iterator.next();
+							NodeRef nodeRef = entry.getKey();
+
+							if (!nestedAdvSearchPlugin.match(nodeRef, criteriaMap)) {
+								iterator.remove();
+							}
+						}
+					}
+
+					Map<String, Map<String, String>> nested = nestedAdvSearchPlugin.extractNested(dataListFilter.getCriteriaMap());
+
+					if (!nested.isEmpty()) {
+
+						for (Map.Entry<String, Map<String, String>> nestedEntry : nested.entrySet()) {
+							String assocName = nestedEntry.getKey();
+							QName assocQName = QName.createQName(assocName, namespaceService);
+							criteriaMap = nestedAdvSearchPlugin.cleanCriteria(nestedEntry.getValue());
+
+							for (Iterator<Entry<NodeRef, MultiLevelListData>> iterator = wUsedData.getTree().entrySet().iterator(); iterator
+									.hasNext();) {
+								Entry<NodeRef, MultiLevelListData> entry = iterator.next();
+								boolean foundMatch = false;
+
+								if (assocQName.equals(reverseAssociationName)) {
+									foundMatch = nestedAdvSearchPlugin.match(entry.getValue().getEntityNodeRef(), criteriaMap);
+								} else {
+
+									NodeRef nodeRef = entry.getKey();
+
+									List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, assocQName);
+
+									for (AssociationRef assocRef : assocRefs) {
+										if (nestedAdvSearchPlugin.match(assocRef.getTargetRef(), criteriaMap)) {
+											foundMatch = true;
+										}
+									}
+
+								}
+
+								if (!foundMatch) {
+									iterator.remove();
+								}
+							}
+						}
+
+					}
+				}
+			}
+
+			@Override
+			public WUsedFilterKind getFilterKind() {
+
+				return WUsedFilterKind.STANDARD;
+			}
+
+		};
 	}
 
 	private WUsedOperator getWUsedOperator(DataListFilter dataListFilter) {
@@ -160,58 +225,7 @@ public class WUsedExtractor extends MultiLevelExtractor {
 		return ret;
 	}
 
-	private void filter(DataListFilter dataListFilter, MultiLevelListData wUsedData, QName reverseAssociationName) {
-		Map<String, String> criteriaMap = nestedAdvSearchPlugin.cleanCriteria(dataListFilter.getCriteriaMap());
-
-		if (!criteriaMap.isEmpty()) {
-			for (Iterator<Entry<NodeRef, MultiLevelListData>> iterator = wUsedData.getTree().entrySet().iterator(); iterator.hasNext();) {
-				Entry<NodeRef, MultiLevelListData> entry = iterator.next();
-				NodeRef nodeRef = entry.getKey();
-
-				if (!nestedAdvSearchPlugin.match(nodeRef, criteriaMap)) {
-					iterator.remove();
-				}
-			}
-		}
-
-		Map<String, Map<String, String>> nested = nestedAdvSearchPlugin.extractNested(dataListFilter.getCriteriaMap());
-
-		if (!nested.isEmpty()) {
-
-			for (Map.Entry<String, Map<String, String>> nestedEntry : nested.entrySet()) {
-				String assocName = nestedEntry.getKey();
-				QName assocQName = QName.createQName(assocName, namespaceService);
-				criteriaMap = nestedAdvSearchPlugin.cleanCriteria(nestedEntry.getValue());
-
-				for (Iterator<Entry<NodeRef, MultiLevelListData>> iterator = wUsedData.getTree().entrySet().iterator(); iterator.hasNext();) {
-					Entry<NodeRef, MultiLevelListData> entry = iterator.next();
-					boolean foundMatch = false;
-
-					if (assocQName.equals(reverseAssociationName)) {
-						foundMatch = nestedAdvSearchPlugin.match(entry.getValue().getEntityNodeRef(), criteriaMap);
-					} else {
-
-						NodeRef nodeRef = entry.getKey();
-
-						List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, assocQName);
-
-						for (AssociationRef assocRef : assocRefs) {
-							if (nestedAdvSearchPlugin.match(assocRef.getTargetRef(), criteriaMap)) {
-								foundMatch = true;
-							}
-						}
-
-					}
-
-					if (!foundMatch) {
-						iterator.remove();
-					}
-				}
-			}
-
-		}
-
-	}
+	
 
 	@SuppressWarnings("unchecked")
 	@Override

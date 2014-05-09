@@ -30,6 +30,7 @@ public interface WUsedListService {
 		AND,OR
 	}
 
+
 	/**
      * Calculate the WUsed entities of the item
      * @param entityNodeRef item associated to datalists
@@ -42,9 +43,17 @@ public interface WUsedListService {
      * Calculate the WUsed entities of the items 
      * @param entityNodeRef item associated to datalists
      * @param associationName
+     * @param filter
      * @param maxDepthLevel
      */
-    public MultiLevelListData getWUsedEntity(List<NodeRef> entityNodeRefs, WUsedOperator operator,  QName associationQName, int maxDepthLevel);
+    public MultiLevelListData getWUsedEntity(List<NodeRef> entityNodeRefs, WUsedOperator operator , WUsedFilter filter,  QName associationQName, int maxDepthLevel);
+    /**
+     * Calculate the WUsed entities of the items 
+     * @param entityNodeRef item associated to datalists
+     * @param associationName
+     * @param maxDepthLevel
+     */
+	public MultiLevelListData getWUsedEntity(List<NodeRef> entityNodeRefs, WUsedOperator operator, QName associationName, int maxDepthLevel);
 
     
 }

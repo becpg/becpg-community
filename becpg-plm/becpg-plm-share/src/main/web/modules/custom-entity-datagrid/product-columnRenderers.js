@@ -46,13 +46,13 @@ if (beCPG.module.EntityDataGridRenderers) {
                            version = '<span class="document-version">' + data.version + '</span>';
                         }
                      }
-
-                     if (label == "bcpg:compoListProduct" || label == "ecm:wulSourceItems") {
-
-                        var padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 15;
-                        return '<span class="' + data.metadata + '" style="margin-left:' + padding + 'px;"><a href="' + url + '">' + Alfresco.util
-                              .encodeHTML(data.displayValue) + '</a></span>' + version;
+                     
+                     if(oRecord.getData("itemData")["prop_bcpg_depthLevel"] && oRecord.getData("itemData")["prop_bcpg_depthLevel"].value){
+                    	 var padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 15;
+                    	 return '<span class="' + data.metadata + '" style="margin-left:' + padding + 'px;"><a href="' + url + '">' + Alfresco.util
+                         .encodeHTML(data.displayValue) + '</a></span>' + version;
                      }
+                     
                      return '<span class="' + data.metadata + '" ><a href="' + url + '">' + Alfresco.util
                            .encodeHTML(data.displayValue) + '</a></span>' + version;
                   }
