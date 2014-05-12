@@ -97,3 +97,7 @@
 .datalist-toolbar .onActionShowWused {
 	background-image: url(../images/wused-16.png);
 }
+
+.datalist-toolbar .onActionBulkEdit {
+	background-image:  url("../../components/images/edit-inline-16.png");
+}
