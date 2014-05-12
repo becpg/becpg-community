@@ -20,3 +20,322 @@
 }
 
 
+/**  Icons **/
+
+.search h3.project {
+	background: url("../images/filetypes/generic-project-16.png")
+		no-repeat;
+	padding-left: 20px;
+	background-position: 0 5px;
+}
+
+.search h3.nc {
+	background: url("../images/filetypes/generic-nc-16.png")
+		no-repeat;
+	padding-left: 20px;
+	background-position: 0 5px;
+}
+
+.search h3.finishedProduct-Valid {
+	background: url("../images/states/valid-10.png"),
+		url("../images/filetypes/generic-finishedProduct-16.png");
+	background-repeat: no-repeat;
+	background-position: 8px 7px, 0 5px;
+	padding-left: 20px;
+}
+
+.search h3.localSemiFinishedProduct-Valid {
+	background: url("../images/states/valid-10.png"),
+		url("../images/filetypes/generic-localSemiFinishedProduct-16.png");
+	background-repeat: no-repeat;
+	background-position: 8px 7px, 0 5px;
+	padding-left: 20px;
+}
+
+.search h3.packagingKit-Valid {
+	background: url("../images/states/valid-10.png"),
+		url("../images/filetypes/generic-packagingKit-16.png");
+	background-repeat: no-repeat;
+	background-position: 8px 7px, 0 5px;
+	padding-left: 20px;
+}
+
+.search h3.packagingMaterial-Valid {
+	background: url("../images/states/valid-10.png"),
+		url("../images/filetypes/generic-packagingMaterial-16.png");
+	background-repeat: no-repeat;
+	background-position: 8px 7px, 0 5px;
+	padding-left: 20px;
+}
+
+.search h3.rawMaterial-Valid {
+	background: url("../images/states/valid-10.png"),
+		url("../images/filetypes/generic-rawMaterial-16.png");
+	background-repeat: no-repeat;
+	background-position: 8px 7px, 0 5px;
+	padding-left: 20px;
+}
+
+.search h3.semiFinishedProduct-Valid {
+	background: url("../images/states/valid-10.png"),
+		url("../images/filetypes/generic-semiFinishedProduct-16.png");
+	background-repeat: no-repeat;
+	background-position: 8px 7px, 0 5px;
+	padding-left: 20px;
+}
+
+.search h3.resourceProduct-Valid {
+	background: url("../images/states/valid-10.png"),
+		url("../images/filetypes/generic-resourceProduct-16.png");
+	background-repeat: no-repeat;
+	background-position: 8px 7px, 0 5px;
+	padding-left: 20px;
+}
+
+.search h3.finishedProduct-Simulation {
+	background: url("../images/states/simulation-10.png"),
+		url("../images/filetypes/generic-finishedProduct-16.png");
+	background-repeat: no-repeat;
+	background-position: 8px 7px, 0 5px;
+	padding-left: 20px;
+}
+
+.search h3.localSemiFinishedProduct-Simulation {
+	background: url("../images/states/simulation-10.png"),
+		url("../images/filetypes/generic-localSemiFinishedProduct-16.png");
+	background-repeat: no-repeat;
+	background-position: 8px 7px, 0 5px;
+	padding-left: 20px;
+}
+
+.search h3.packagingKit-Simulation {
+	background: url("../images/states/simulation-10.png"),
+		url("../images/filetypes/generic-packagingKit-16.png");
+	background-repeat: no-repeat;
+	background-position: 8px 7px, 0 5px;
+	padding-left: 20px;
+}
+
+.search h3.packagingMaterial-Simulation {
+	background: url("../images/states/simulation-10.png"),
+		url("../images/filetypes/generic-packagingMaterial-16.png");
+	background-repeat: no-repeat;
+	background-position: 8px 7px, 0 5px;
+	padding-left: 20px;
+}
+
+.search h3.rawMaterial-Simulation {
+	background: url("../images/states/simulation-10.png"),
+		url("../images/filetypes/generic-rawMaterial-16.png");
+	background-repeat: no-repeat;
+	background-position: 8px 7px, 0 5px;
+	padding-left: 20px;
+}
+
+.search h3.semiFinishedProduct-Simulation {
+	background: url("../images/states/simulation-10.png"),
+		url("../images/filetypes/generic-semiFinishedProduct-16.png");
+	background-repeat: no-repeat;
+	background-position: 8px 7px, 0 5px;
+	padding-left: 20px;
+}
+
+.search h3.resourceProduct-Simulation {
+	background: url("../images/states/simulation-10.png"),
+		url("../images/filetypes/generic-resourceProduct-16.png");
+	background-repeat: no-repeat;
+	background-position: 8px 7px, 0 5px;
+	padding-left: 20px;
+}
+
+.search h3.finishedProduct-Archived {
+	background: url("../images/states/archived-10.png"),
+		url("../images/filetypes/generic-finishedProduct-16.png");
+	background-repeat: no-repeat;
+	background-position: 8px 7px, 0 5px;
+	padding-left: 20px;
+}
+
+.search h3.localSemiFinishedProduct-Archived {
+	background: url("../images/states/archived-10.png"),
+		url("../images/filetypes/generic-localSemiFinishedProduct-16.png");
+	background-repeat: no-repeat;
+	background-position: 8px 7px, 0 5px;
+	padding-left: 20px;
+}
+
+.search h3.packagingKit-Archived {
+	background: url("../images/states/archived-10.png"),
+		url("../images/filetypes/generic-packagingKit-16.png");
+	background-repeat: no-repeat;
+	background-position: 8px 7px, 0 5px;
+	padding-left: 20px;
+}
+
+.search h3.packagingMaterial-Archived {
+	background: url("../images/states/archived-10.png"),
+		url("../images/filetypes/generic-packagingMaterial-16.png");
+	background-repeat: no-repeat;
+	background-position: 8px 7px, 0 5px;
+	padding-left: 20px;
+}
+
+.search h3.rawMaterial-Archived {
+	background: url("../images/states/archived-10.png"),
+		url("../images/filetypes/generic-rawMaterial-16.png");
+	background-repeat: no-repeat;
+	background-position: 8px 7px, 0 5px;
+	padding-left: 20px;
+}
+
+.search h3.semiFinishedProduct-Archived {
+	background: url("../images/states/archived-10.png"),
+		url("../images/filetypes/generic-semiFinishedProduct-16.png");
+	background-repeat: no-repeat;
+	background-position: 8px 7px, 0 5px;
+	padding-left: 20px;
+}
+
+.search h3.resourceProduct-Archived {
+	background: url("../images/states/archived-10.png"),
+		url("../images/filetypes/generic-resourceProduct-16.png");
+	background-repeat: no-repeat;
+	background-position: 8px 7px, 0 5px;
+	padding-left: 20px;
+}
+
+.search h3.finishedProduct-Refused {
+	background: url("../images/states/refused-10.png"),
+		url("../images/filetypes/generic-finishedProduct-16.png");
+	background-repeat: no-repeat;
+	background-position: 8px 7px, 0 5px;
+	padding-left: 20px;
+}
+
+.search h3.localSemiFinishedProduct-Refused {
+	background: url("../images/states/refused-10.png"),
+		url("../images/filetypes/generic-localSemiFinishedProduct-16.png");
+	background-repeat: no-repeat;
+	background-position: 8px 7px, 0 5px;
+	padding-left: 20px;
+}
+
+.search h3.packagingKit-Refused {
+	background: url("../images/states/refused-10.png"),
+		url("../images/filetypes/generic-packagingKit-16.png");
+	background-repeat: no-repeat;
+	background-position: 8px 7px, 0 5px;
+	padding-left: 20px;
+}
+
+.search h3.packagingMaterial-Refused {
+	background: url("../images/states/refused-10.png"),
+		url("../images/filetypes/generic-packagingMaterial-16.png");
+	background-repeat: no-repeat;
+	background-position: 8px 7px, 0 5px;
+	padding-left: 20px;
+}
+
+.search h3.rawMaterial-Refused {
+	background: url("../images/states/refused-10.png"),
+		url("../images/filetypes/generic-rawMaterial-16.png");
+	background-repeat: no-repeat;
+	background-position: 8px 7px, 0 5px;
+	padding-left: 20px;
+}
+
+.search h3.semiFinishedProduct-Refused {
+	background: url("../images/states/refused-10.png"),
+		url("../images/filetypes/generic-semiFinishedProduct-16.png");
+	background-repeat: no-repeat;
+	background-position: 8px 7px, 0 5px;
+	padding-left: 20px;
+}
+
+.search h3.resourceProduct-Refused {
+	background: url("../images/states/refused-10.png"),
+		url("../images/filetypes/generic-resourceProduct-16.png");
+	background-repeat: no-repeat;
+	background-position: 8px 7px, 0 5px;
+	padding-left: 20px;
+}
+
+
+.search h3.client {
+	background:
+		url("../images/filetypes/generic-client-16.png")
+		no-repeat;
+	padding-left: 20px;
+	background-position: 0 5px;
+}
+
+.search h3.supplier {
+	background:
+		url("../images/filetypes/generic-supplier-16.png")
+		no-repeat;
+	padding-left: 20px;
+	background-position: 0 5px;
+}
+
+
+.search h3.finishedProduct,.search h3.finishedProduct-ToValidate
+	{
+	background:
+		url("../images/filetypes/generic-finishedProduct-16.png")
+		no-repeat;
+	padding-left: 20px;
+	background-position: 0 5px;
+}
+
+.search h3.localSemiFinishedProduct,.search h3.localSemiFinishedProduct-ToValidate
+	{
+	background:
+		url("../images/filetypes/generic-localSemiFinishedProduct-16.png")
+		no-repeat;
+	padding-left: 20px;
+	background-position: 0 5px;
+}
+
+.search h3.packagingKit,.search h3.packagingKit-ToValidate {
+	background:
+		url("../images/filetypes/generic-packagingKit-16.png")
+		no-repeat;
+	padding-left: 20px;
+	background-position: 0 5px;
+}
+
+.search h3.packagingMaterial,.search h3.packagingMaterial-ToValidate
+	{
+	background:
+		url("../images/filetypes/generic-packagingMaterial-16.png")
+		no-repeat;
+	padding-left: 20px;
+	background-position: 0 5px;
+}
+
+.search h3.rawMaterial,.search h3.rawMaterial-ToValidate {
+	background:
+		url("../images/filetypes/generic-rawMaterial-16.png")
+		no-repeat;
+	padding-left: 20px;
+	background-position: 0 5px;
+}
+
+.search h3.semiFinishedProduct,.search h3.semiFinishedProduct-ToValidate
+	{
+	background:
+		url("../images/filetypes/generic-semiFinishedProduct-16.png")
+		no-repeat;
+	padding-left: 20px;
+	background-position: 0 5px;
+}
+
+.search h3.resourceProduct,.search h3.resourceProduct-ToValidate
+	{
+	background:
+		url("../images/filetypes/generic-resourceProduct-16.png")
+		no-repeat;
+	padding-left: 20px;
+	background-position: 0 5px;
+}
+
