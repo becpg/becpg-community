@@ -298,7 +298,7 @@
 				</property>
 				<property name="pjt:tlDuration">
 					<type>d:int</type>
-					<mandatory>false</mandatory>
+					<mandatory>true</mandatory>
 					<index enabled="false" />
 				</property>
 				<property name="pjt:tlWorkflowName">
