@@ -118,7 +118,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		if (term != null && term.length() != 0) {
 			ftsQuery = term + " ";
 		} else if (tag != null && tag.length() != 0) {
-			ftsQuery = "TAG:" + tag;
+			ftsQuery = "TAG:\"" + tag+"\"";
 		}
 
 		// we processed the search terms, so suffix the PATH query
