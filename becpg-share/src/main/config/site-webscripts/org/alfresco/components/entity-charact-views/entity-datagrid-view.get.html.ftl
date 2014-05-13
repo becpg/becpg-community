@@ -36,6 +36,6 @@
 			<@dataGridToolbar  toolbarId=el />
 		</div>
 		<@entityDataGrid/>
-		</@>
+	</@>
 </@>
 

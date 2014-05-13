@@ -49,6 +49,7 @@ function main() {
 	model.itemTypes = itemTypes;
 
 	model.nodeRef = (page.url.args["nodeRef"] !== null) ? page.url.args["nodeRef"] : null;
+	model.entityNodeRefs =(page.url.args["nodeRefs"] != null) ? page.url.args["nodeRefs"] : null;
 
 	// fetch the request params required by the search component template
 	var siteId = (page.url.templateArgs["site"] != null) ? page.url.templateArgs["site"] : "";
@@ -96,6 +97,7 @@ function main() {
 			initialSort : model.searchSort,
 			searchQuery : model.searchQuery,
 			nodeRef : model.nodeRef ,
+			entityNodeRefs : model.entityNodeRefs,
 			usePagination : true
 		}
 	}

@@ -46,6 +46,9 @@
         <property name="qnameDAO">
             <ref bean="qnameDAO"/>
         </property>
+         <property name="policyBehaviourFilter">
+            <ref bean="policyBehaviourFilter"/>
+        </property>
 	</bean>
 	
 

@@ -40,6 +40,7 @@ public class ContentDataExtractor extends AbstractNodeDataExtractor  {
 
 	
 	
+
 	private List<String> metadataFields = new ArrayList<String>();
 	
 
@@ -82,6 +83,7 @@ public class ContentDataExtractor extends AbstractNodeDataExtractor  {
 		 if ( dd.isSubClass(itemType, BeCPGModel.TYPE_ENTITY_V2) )
 	      {
 			 ret.put(PROP_TYPE, "entity");
+			 ret.put(PROP_METADATA, attributeExtractorService.extractMetadata(itemType, nodeRef));
 	         ret.put(PROP_SIZE, -1);
 	      } else if ( dd.isSubClass(itemType, ContentModel.TYPE_FOLDER) &&
                   !dd.isSubClass(itemType, ContentModel.TYPE_SYSTEM_FOLDER))

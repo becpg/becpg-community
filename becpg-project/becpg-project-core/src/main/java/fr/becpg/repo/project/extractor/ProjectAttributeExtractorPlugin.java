@@ -63,6 +63,7 @@ public class ProjectAttributeExtractorPlugin implements AttributeExtractorPlugin
 	@Override
 	public String extractMetadata(QName type, NodeRef nodeRef) {
 		//TODO task state
+		//TODO Handle also project state (search results)
 		return type.toPrefixString(namespaceService).split(":")[1];
 	}
 
