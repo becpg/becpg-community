@@ -509,6 +509,7 @@
 			</associations>
 		</aspect>
 		
+		<!-- Depecated -->
 		<aspect name="pjt:projectAspect">
 			<associations>
 				<association name="pjt:project">

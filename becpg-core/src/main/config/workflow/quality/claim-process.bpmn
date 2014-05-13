@@ -7,16 +7,10 @@
       <extensionElements>
         <activiti:executionListener event="start" class="org.alfresco.repo.workflow.activiti.listener.ScriptExecutionListener">
           <activiti:field name="script">
-            <activiti:string>execution.setVariable('ncwf_claimRejectedState','none');
-	                execution.setVariable('ncwf_ncType',"Claim");
-	                if(execution.getVariable('bcpgwf_notifyUsers')==null){
-	                	execution.setVariable('bcpgwf_notifyUsers',null);
-	                }
-	                execution.setVariable('ncwf_ncState',"analysis");
-	                if(execution.getVariable('ncwf_claimStartAsDraft')==null){
-	                 	 execution.setVariable('ncwf_claimStartAsDraft',false);
-	                }
-	                execution.setVariable('skipClassification',false);</activiti:string>
+            <activiti:string>&lt;import resource="classpath:alfresco/module/${pom.artifactId}/workflow/quality/claim-process.js"&gt;
+            
+            startEvent();
+            </activiti:string>
           </activiti:field>
         </activiti:executionListener>
       </extensionElements>
@@ -27,50 +21,18 @@
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
             <activiti:string>&lt;import resource="classpath:alfresco/module/${pom.artifactId}/workflow/quality/claim-process.js"&gt;
-            task.setVariable('ncwf_claimRejectedCause',  execution.getVariable('ncwf_claimRejectedCause'));
-            task.setVariable('bpm_workflowDueDate',  execution.getVariable('bpm_workflowDueDate'));
-            task.setVariable('bpm_workflowPriority',  execution.getVariable('bpm_workflowPriority'));
-            		for (var i = 0; i &lt; bpm_package.children.length; i++)
-						{
-							var nc = bpm_package.children[i];
-							if(nc.isSubType("qa:nc")){
-							   bpm_workflowDescription = extractName(nc);
-								task.setVariable('bpm_workflowDescription',bpm_workflowDescription);
-							}
-						}</activiti:string>
+            
+           	onCreateEnteringClaimTask(); 
+           </activiti:string>
           </activiti:field>
         </activiti:taskListener>
         <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
-            <activiti:string>execution.setVariable('ncwf_claimRejectedState','none');
-                  execution.setVariable('ncwf_claimRejectedCause','');
-                  
-                  execution.setVariable('qa_claimSource', task.getVariable('qa_claimSource'));
-	             
-	               execution.setVariable('bcpg_clients', task.getVariable('bcpg_clients'));
-						execution.setVariable('qa_claimCustomerInformation', task.getVariable('qa_claimCustomerInformation'));
-						
-						execution.setVariable('qa_product', task.getVariable('qa_product'));
-						
-						execution.setVariable('qa_batchId', task.getVariable('qa_batchId'));
-						execution.setVariable('qa_productUseByDate', task.getVariable('qa_productUseByDate'));
-						execution.setVariable('qa_claimTradeContact', task.getVariable('qa_claimTradeContact'));
-						execution.setVariable('qa_claimTradeContactCheck', task.getVariable('qa_claimTradeContactCheck'));
-						execution.setVariable('qa_claimTracking', task.getVariable('qa_claimTracking'));
-						execution.setVariable('qa_claimDescription', task.getVariable('qa_claimDescription'));
-			
-                  execution.setVariable('bcpgwf_notifyAssignee', task.getVariable('bcpgwf_notifyAssignee'));
-        			   execution.setVariable('bcpgwf_notifyUsers', task.getVariable('bcpgwf_notifyUsers'));
-        			   execution.setVariable('bcpgwf_notifyMe', task.getVariable('bcpgwf_notifyMe'));
-        			   
-        			   execution.setVariable('bpm_workflowDueDate', task.getVariable('bpm_workflowDueDate'));
-        			   execution.setVariable('bpm_workflowPriority', task.getVariable('bpm_workflowPriority'));
-        			   
-        			   
-                  
-                  execution.setVariable('skipClassification',false);
-                  
-            	   task.setVariable('ncwf_ncState',"analysis");</activiti:string>
+            <activiti:string>
+            &lt;import resource="classpath:alfresco/module/${pom.artifactId}/workflow/quality/claim-process.js"&gt;
+            
+           	onCompleteEnteringClaimTask(); 
+           </activiti:string>
           </activiti:field>
         </activiti:taskListener>
         <activiti:taskListener event="complete" class="fr.becpg.repo.workflow.activiti.nc.UpdateNC"></activiti:taskListener>
@@ -81,101 +43,23 @@
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
             <activiti:string>&lt;import resource="classpath:alfresco/module/${pom.artifactId}/workflow/quality/claim-process.js"&gt;
-							
-	               if (typeof bpm_workflowDueDate != 'undefined') task.dueDate = bpm_workflowDueDate;
-	               if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority;
-	               task.setVariable('bpm_comment', '');
-				
-	               for (var i = 0; i &lt; bpm_package.children.length; i++)
-						{
-							var nc = bpm_package.children[i];
-							if(nc.isSubType("qa:nc")){
-							   bpm_workflowDescription = extractName(nc);
-								task.setVariable('bpm_workflowDescription',bpm_workflowDescription);
-							}
-						}
-						
-	               var tDate = new  java.util.Date();
-		            	tDate.setDate(tDate.getDate()+5);
-	               var rDate = new  java.util.Date();
-		            	rDate.setDate(rDate.getDate()+9);
-	            
-	               task.setVariable('ncwf_claimTreatmentDueDate', tDate);
-	               task.setVariable('ncwf_claimResponseDueDate',  rDate); 
-	               
-	               task.setVariable('ncwf_claimRejectedCause',  execution.getVariable('ncwf_claimRejectedCause'));
-	               task.setVariable('ncwf_claimRejectedState', 'none');
-	               
-	              if (bcpgwf_notifyUsers != null)  {
-				           	for (var i = 0; i &lt; bcpgwf_notifyUsers.size(); i++){
-									sendMail(bcpgwf_notifyUsers.get(i),	initiator,bcpg.getMessage('claimProcess.mail.notify.analysis.subject',bpm_workflowDescription), bcpg.getMessage('claimProcess.mail.notify.analysis.message'));
-								}
-				      }</activiti:string>
+					
+			onCreateAnalysisTask();			
+	        </activiti:string>
           </activiti:field>
         </activiti:taskListener>
         <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
             <activiti:string>&lt;import resource="classpath:alfresco/module/${pom.artifactId}/workflow/quality/claim-process.js"&gt;
-               execution.setVariable('ncwf_claimTreatmentDueDate', task.getVariable('ncwf_claimTreatmentDueDate'));
-               execution.setVariable('ncwf_claimResponseDueDate',  task.getVariable('ncwf_claimResponseDueDate'));
-               
-               task.setVariable('ncwf_ncState', 'classification');
-               
-               if(task.getVariable('qa_claimResponseActor')!=null ){
-	                execution.setVariable('qa_claimResponseActor',task.getVariable('qa_claimResponseActor'));
-	                task.setVariable('ncwf_ncState','response');
-	            } else {
-	                execution.setVariable('qa_claimResponseActor',null);
-	            }
-               
-               if(task.getVariable('qa_claimTreatmentActor')!=null ){
-                  execution.setVariable('qa_claimTreatmentActor',task.getVariable('qa_claimTreatmentActor'));
-                  task.setVariable('ncwf_ncState','treatment');
-               } else {
-                  execution.setVariable('qa_claimTreatmentActor',null);
-               }
-	            
-               
-               if(task.getVariable('ncwf_claimRejectedState')!='none'){
-                 task.setVariable('ncwf_ncState',"new");
-                 execution.setVariable('ncwf_claimRejectedCause',  task.getVariable('ncwf_claimRejectedCause'));
-               } else {
-                 execution.setVariable('ncwf_claimRejectedCause',  '');
-                 
-                 
-                 if (bcpgwf_notifyUsers != null)  {
-				          for (var i = 0; i &lt; bcpgwf_notifyUsers.size(); i++){
-								sendMail(bcpgwf_notifyUsers.get(i),initiator, bcpg.getMessage('claimProcess.mail.notify.analysis.end.subject',bpm_workflowDescription), bcpg.getMessage('claimProcess.mail.notify.analysis.end.message'));
-			          	}
-			          }
-			          if(bcpgwf_notifyMe){
-			             sendMail(initiator,initiator,  bcpg.getMessage('claimProcess.mail.notify.analysis.end.subject',bpm_workflowDescription),	 bcpg.getMessage('claimProcess.mail.notify.analysis.end.message'));
-			          }
-                 
-               }
-               
-               execution.setVariable('bcpg_plants', task.getVariable('bcpg_plants'));
-               
-               execution.setVariable('bcpgwf_notifyAssignee', task.getVariable('bcpgwf_notifyAssignee'));
-        			execution.setVariable('bcpgwf_notifyUsers', task.getVariable('bcpgwf_notifyUsers'));
-               execution.setVariable('ncwf_claimRejectedState',  task.getVariable('ncwf_claimRejectedState'));</activiti:string>
+            
+              onCompleteAnalysisTask();
+             </activiti:string>
           </activiti:field>
         </activiti:taskListener>
         <activiti:taskListener event="complete" class="fr.becpg.repo.workflow.activiti.nc.UpdateNC"></activiti:taskListener>
       </extensionElements>
     </userTask>
     <sequenceFlow id="toDispatchTreatmentGateway" sourceRef="endOrientationGateway" targetRef="subprocess1">
-      <extensionElements>
-        <activiti:executionListener event="take" class="org.alfresco.repo.workflow.activiti.listener.ScriptExecutionListener">
-          <activiti:field name="script">
-            <activiti:string>logger.info("Go To Dispatch Treatment Gateway ");
-            			logger.info("State :  "+ncwf_claimRejectedState);
-            			logger.info("Treatment Actor: "+(qa_claimTreatmentActor!=null));
-            			logger.info("Response Actor: "+(qa_claimResponseActor!=null));
-            			logger.info("Skip classification: "+skipClassification);</activiti:string>
-          </activiti:field>
-        </activiti:executionListener>
-      </extensionElements>
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ncwf_claimRejectedState != 'entry' && ncwf_claimRejectedState != 'analysis'}]]></conditionExpression>
     </sequenceFlow>
     <userTask id="claimClosingTask" name="Clôture réclamation" activiti:candidateGroups="GROUP_ClaimClosing" activiti:formKey="ncwf:claimClosingTask">
@@ -183,80 +67,23 @@
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
             <activiti:string>&lt;import resource="classpath:alfresco/module/${pom.artifactId}/workflow/quality/claim-process.js"&gt;
-						
-           		if (typeof bpm_workflowDueDate != 'undefined') task.dueDate = bpm_workflowDueDate;
-               if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority;
 					
-					task.setVariable('bpm_comment', '');
-					
-		           if (bcpgwf_notifyUsers != null)  {
-					       for (var i = 0; i &lt; bcpgwf_notifyUsers.size(); i++){
-										sendMail(initiator,initiator, 
-						    		   bcpg.getMessage('claimProcess.mail.notify.closing.subject',bpm_workflowDescription),
-								    	bcpg.getMessage('claimProcess.mail.notify.closing.message'));  
-									}	
-				      }
-				      if(bcpgwf_notifyMe){
-				             sendMail(initiator,initiator, 
-						      bcpg.getMessage('claimProcess.mail.notify.closing.subject',bpm_workflowDescription),
-						      bcpg.getMessage('claimProcess.mail.notify.closing.message'));  
-						 }
-	   
-               task.setVariable('qa_claimResponseState', execution.getVariable('qa_claimResponseState'));
-			   	task.setVariable('qa_claimResponseDetails', execution.getVariable('qa_claimResponseDetails'));
-			   	task.setVariable('qa_claimTreatementDetails', execution.getVariable('qa_claimTreatementDetails'));
-			   	task.setVariable('qa_claimTreatementPrevActions', execution.getVariable('qa_claimTreatementPrevActions'));
-			   	task.setVariable('qa_claimType', execution.getVariable('qa_claimType'));
-          
-               task.setVariable('ncwf_claimRejectedCause',  execution.getVariable('ncwf_claimRejectedCause'));
-               task.setVariable('ncwf_claimRejectedState', 'none');</activiti:string>
+			  onCreateClaimClosingTask();	
+		      </activiti:string>
           </activiti:field>
         </activiti:taskListener>
         <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
             <activiti:string>&lt;import resource="classpath:alfresco/module/${pom.artifactId}/workflow/quality/claim-process.js"&gt;
-						
-             if(task.getVariable('ncwf_claimRejectedState') == 'none'){
-	              task.setVariable('qa_claimClosingDate', new  java.util.Date());
-	              task.setVariable('ncwf_ncState','closed');
-	              execution.setVariable('ncwf_claimRejectedCause',  '');
-	              
-	                  if (bcpgwf_notifyUsers != null)  {
-					          for (var i = 0; i &lt; bcpgwf_notifyUsers.size(); i++){
-										sendMail(bcpgwf_notifyUsers.get(i),initiator,
-										  bcpg.getMessage('claimProcess.mail.notify.closing.end.subject',bpm_workflowDescription),
-										  bcpg.getMessage('claimProcess.mail.notify.closing.end.message'));  
-									}	
-				          	}
-				           if(bcpgwf_notifyMe){
-				               sendMail(initiator,initiator,
-										  bcpg.getMessage('claimProcess.mail.notify.closing.end.subject',bpm_workflowDescription),
-										  bcpg.getMessage('claimProcess.mail.notify.closing.end.message'));
-							  }
-	              
-	            } else {
-	              task.setVariable('ncwf_ncState',task.getVariable('ncwf_claimRejectedState'));
-	              execution.setVariable('ncwf_claimRejectedCause',  task.getVariable('ncwf_claimRejectedCause'));
-	            }
-	            
-	            
-	            execution.setVariable('bcpgwf_notifyAssignee', task.getVariable('bcpgwf_notifyAssignee'));
-        			execution.setVariable('bcpgwf_notifyUsers', task.getVariable('bcpgwf_notifyUsers'));
-        			
-               execution.setVariable('ncwf_claimRejectedState',  task.getVariable('ncwf_claimRejectedState'));</activiti:string>
+			
+			 onCompleteClaimClosingTask();			
+             </activiti:string>
           </activiti:field>
         </activiti:taskListener>
         <activiti:taskListener event="complete" class="fr.becpg.repo.workflow.activiti.nc.UpdateNC"></activiti:taskListener>
       </extensionElements>
     </userTask>
     <sequenceFlow id="backToAnalysisFlow1" name="Refus ou demande complémentaire" sourceRef="boundaryerror1" targetRef="analysisTask">
-      <extensionElements>
-        <activiti:executionListener event="take" class="org.alfresco.repo.workflow.activiti.listener.ScriptExecutionListener">
-          <activiti:field name="script">
-            <activiti:string>logger.info("Go to analysis");</activiti:string>
-          </activiti:field>
-        </activiti:executionListener>
-      </extensionElements>
     </sequenceFlow>
     <sequenceFlow id="toAnalysisFlow2" sourceRef="enteringClaimTask" targetRef="analysisTask"></sequenceFlow>
     <exclusiveGateway id="endOrientationGateway" name="Exclusive Gateway"></exclusiveGateway>
@@ -267,13 +94,6 @@
     <exclusiveGateway id="validateClosingGateway" name="Exclusive Gateway"></exclusiveGateway>
     <sequenceFlow id="toValidateClosingGateway" sourceRef="claimClosingTask" targetRef="validateClosingGateway"></sequenceFlow>
     <sequenceFlow id="backToTreatementFlow1" name="Refus ou demande complémentaire" sourceRef="validateClosingGateway" targetRef="endOrientationGateway">
-      <extensionElements>
-        <activiti:executionListener event="take" class="org.alfresco.repo.workflow.activiti.listener.ScriptExecutionListener">
-          <activiti:field name="script">
-            <activiti:string>logger.info("Go to analysis");</activiti:string>
-          </activiti:field>
-        </activiti:executionListener>
-      </extensionElements>
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ncwf_claimRejectedState != 'none' }]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="toEndFlow" sourceRef="validateClosingGateway" targetRef="endevent1">
@@ -296,27 +116,18 @@
         <extensionElements>
           <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
             <activiti:field name="script">
-              <activiti:string>if (typeof bpm_workflowDueDate != 'undefined') task.dueDate = bpm_workflowDueDate;
-              if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority;
-					
-					task.setVariable('bpm_comment', '');
-
-					task.setVariable('ncwf_ncState','classification');</activiti:string>
+              <activiti:string>&lt;import resource="classpath:alfresco/module/${pom.artifactId}/workflow/quality/claim-process.js"&gt;
+			
+				onCreateClassificationTask();
+              	</activiti:string>
             </activiti:field>
           </activiti:taskListener>
           <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
             <activiti:field name="script">
-              <activiti:string>execution.setVariable('qa_claimType', task.getVariable('qa_claimType'));
-            			execution.setVariable('qa_claimOriginHierarchy1', task.getVariable('qa_claimOriginHierarchy1'));
-        		  	      execution.setVariable('qa_claimOriginHierarchy2', task.getVariable('qa_claimOriginHierarchy2'));
-            			
-		              execution.setVariable('bcpgwf_notifyAssignee', task.getVariable('bcpgwf_notifyAssignee'));
-        		  	     execution.setVariable('bcpgwf_notifyUsers', task.getVariable('bcpgwf_notifyUsers'));
-        		  	     if(execution.getVariable('ncwf_claimRejectedState') == 'classification'){
-        		  	     	execution.setVariable('ncwf_claimRejectedState', 'none');
-        		  	     }
-        		  	     execution.setVariable('skipClassification',true);
-        		  	     </activiti:string>
+              <activiti:string>&lt;import resource="classpath:alfresco/module/${pom.artifactId}/workflow/quality/claim-process.js"&gt;
+			
+				onCompleteClassificationTask();
+              </activiti:string>
             </activiti:field>
           </activiti:taskListener>
           <activiti:taskListener event="complete" class="fr.becpg.repo.workflow.activiti.nc.UpdateNC"></activiti:taskListener>
@@ -353,62 +164,18 @@
           <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
             <activiti:field name="script">
               <activiti:string>&lt;import resource="classpath:alfresco/module/${pom.artifactId}/workflow/quality/claim-process.js"&gt;
-            if (typeof ncwf_claimTreatmentDueDate != 'undefined') task.dueDate = ncwf_claimTreatmentDueDate;
-            if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority;
-					
-					task.setVariable('bpm_comment', '');
-
-               task.setVariable('ncwf_claimRejectedCause',  execution.getVariable('ncwf_claimRejectedCause'));
-            	task.setVariable('ncwf_claimRejectedState', 'none');
-            	
-            	if (bcpgwf_notifyAssignee) {
-						sendMail(qa_claimTreatmentActor,initiator,  
-								 bcpg.getMessage('claimProcess.mail.action.treatment.subject',bpm_workflowDescription),
-								 bcpg.getMessage('claimProcess.mail.action.treatment.message'),
-								 true);	
-		          }</activiti:string>
+              
+              onCreateClaimTreatmentTask();
+              </activiti:string>
             </activiti:field>
           </activiti:taskListener>
           <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
             <activiti:field name="script">
               <activiti:string>&lt;import resource="classpath:alfresco/module/${pom.artifactId}/workflow/quality/claim-process.js"&gt;
               
-               task.setVariable('ncwf_ncState',task.getVariable('ncwf_claimRejectedState'));
-            
-	            if(task.getVariable('ncwf_claimRejectedState') == 'none'){
-	              task.setVariable('qa_claimTreatementDate', new  java.util.Date());
-	              if(execution.getVariable('qa_claimResponseActor')!=null){
-	               task.setVariable('ncwf_ncState','response');
-	              } else {
-	               task.setVariable('ncwf_ncState','closing');
-	              }
-	               execution.setVariable('ncwf_claimRejectedCause',  '');
-	               
-	              if (bcpgwf_notifyUsers != null)  {
-			          for (var i = 0; i &lt; bcpgwf_notifyUsers.size(); i++){
-							 sendMail(bcpgwf_notifyUsers.get(i),initiator,  
-		             		 bcpg.getMessage('claimProcess.mail.notify.treatment.end.subject',bpm_workflowDescription),
-								 bcpg.getMessage('claimProcess.mail.notify.treatment.end.message')
-								); 
-						}
-		          }
-		          
-		          if(bcpgwf_notifyMe){
-		               sendMail(initiator,initiator, 
-		                   bcpg.getMessage('claimProcess.mail.notify.treatment.end.subject',bpm_workflowDescription),
-								 bcpg.getMessage('claimProcess.mail.notify.treatment.end.message')); 
-					  }
-	               
-               } else {
-                 execution.setVariable('ncwf_claimRejectedCause',  task.getVariable('ncwf_claimRejectedCause'));
-               }
               
-	          	execution.setVariable('ncwf_claimRejectedState',  task.getVariable('ncwf_claimRejectedState'));
-	          	execution.setVariable('qa_claimTreatementDetails', task.getVariable('qa_claimTreatementDetails'));
-	          	execution.setVariable('qa_claimTreatementPrevActions', task.getVariable('qa_claimTreatementPrevActions'));
-        
-        			execution.setVariable('bcpgwf_notifyAssignee', task.getVariable('bcpgwf_notifyAssignee'));
-        			execution.setVariable('bcpgwf_notifyUsers', task.getVariable('bcpgwf_notifyUsers'));</activiti:string>
+              	onCompleteClaimTreatmentTask();
+                </activiti:string>
             </activiti:field>
           </activiti:taskListener>
           <activiti:taskListener event="complete" class="fr.becpg.repo.workflow.activiti.nc.UpdateNC"></activiti:taskListener>
@@ -427,58 +194,17 @@
           <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
             <activiti:field name="script">
               <activiti:string>&lt;import resource="classpath:alfresco/module/${pom.artifactId}/workflow/quality/claim-process.js"&gt;
-            if (typeof ncwf_claimResponseDueDate != 'undefined') task.dueDate = ncwf_claimResponseDueDate;
-            if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority;
-					
-					task.setVariable('bpm_comment', '');
-					
-               task.setVariable('ncwf_claimRejectedCause',  execution.getVariable('ncwf_claimRejectedCause'));
-               task.setVariable('ncwf_claimRejectedState', 'none');
-              
-               task.setVariable('qa_claimTreatementDetails', execution.getVariable('qa_claimTreatementDetails'));
-            	
-            	if (bcpgwf_notifyAssignee) {
-						sendMail(qa_claimResponseActor,initiator, 
-						       bcpg.getMessage('claimProcess.mail.action.response.subject',bpm_workflowDescription),
-								 bcpg.getMessage('claimProcess.mail.action.response.message'),
-								 true);  
-		          }</activiti:string>
+            
+            	onCreateClaimResponseTask();
+            </activiti:string>
             </activiti:field>
           </activiti:taskListener>
           <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
             <activiti:field name="script">
               <activiti:string>&lt;import resource="classpath:alfresco/module/${pom.artifactId}/workflow/quality/claim-process.js"&gt;
-						
-            	if(task.getVariable('ncwf_claimRejectedState') == 'none'){
-	              task.setVariable('qa_claimResponseDate', new  java.util.Date());
-	              task.setVariable('ncwf_ncState','closing');
-	              execution.setVariable('ncwf_claimRejectedCause',  '');
-	                
-	                
-			              if (bcpgwf_notifyUsers != null)  {
-					          for (var i = 0; i &lt; bcpgwf_notifyUsers.size(); i++){
-										sendMail(bcpgwf_notifyUsers.get(i),initiator,
-										  bcpg.getMessage('claimProcess.mail.notify.response.end.subject',bpm_workflowDescription),
-										  bcpg.getMessage('claimProcess.mail.notify.response.end.message'));  
-									}	
-				          	}
-				           if(bcpgwf_notifyMe){
-				               sendMail(initiator,initiator,
-										  bcpg.getMessage('claimProcess.mail.notify.response.end.subject',bpm_workflowDescription),
-										  bcpg.getMessage('claimProcess.mail.notify.response.end.message'));
-							  }
-	             
-	            } else {
-	               task.setVariable('ncwf_ncState',task.getVariable('ncwf_claimRejectedState'));
-	               execution.setVariable('ncwf_claimRejectedCause',  task.getVariable('ncwf_claimRejectedCause'));
-	            }
-	            
-	            execution.setVariable('bcpgwf_notifyAssignee', task.getVariable('bcpgwf_notifyAssignee'));
-        			execution.setVariable('bcpgwf_notifyUsers', task.getVariable('bcpgwf_notifyUsers'));
-        			
-	            execution.setVariable('ncwf_claimRejectedState',  task.getVariable('ncwf_claimRejectedState'));
-           		execution.setVariable('qa_claimResponseState', task.getVariable('qa_claimResponseState'));
-			      execution.setVariable('qa_claimResponseDetails', task.getVariable('qa_claimResponseDetails'));</activiti:string>
+              
+              	onCompleteClaimResponseTask();
+            	</activiti:string>
             </activiti:field>
           </activiti:taskListener>
           <activiti:taskListener event="complete" class="fr.becpg.repo.workflow.activiti.nc.UpdateNC"></activiti:taskListener>

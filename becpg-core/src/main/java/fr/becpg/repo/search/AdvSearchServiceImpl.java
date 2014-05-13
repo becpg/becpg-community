@@ -118,7 +118,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		if (term != null && term.length() != 0) {
 			ftsQuery = term + " ";
 		} else if (tag != null && tag.length() != 0) {
-			ftsQuery = "TAG:" + tag;
+			ftsQuery = "TAG:\"" + tag+"\"";
 		}
 
 		// we processed the search terms, so suffix the PATH query
@@ -240,7 +240,11 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 										from = (sepindex == 0 ? "MIN" : propValue.substring(0, sepindex));
 										to = (sepindex == propValue.length() - 1 ? "MAX" : propValue.substring(sepindex + 1));
 									}
-									formQuery += operator + propName + ":\"" + from + "\"..\"" + to + "\"";
+									if (language == SearchService.LANGUAGE_FTS_ALFRESCO) {
+										formQuery += operator + propName + ":\"" + from + "\"..\"" + to + "\"";
+									} else {
+										formQuery += operator + propName + ":[\"" + from + "\" TO \"" + to + "\"]";
+									}
 								}
 							} else if (propName.contains("productHierarchy")) {
 								String hierarchyQuery = getHierarchyQuery(propName, propValue);
