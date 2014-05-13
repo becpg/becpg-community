@@ -46,6 +46,8 @@ import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 public class WUsedListServiceImpl implements WUsedListService {
 
 	private static Log logger = LogFactory.getLog(WUsedListServiceImpl.class);
+	
+	private static int  MAX_LEVEL = 20;
 
 	@Autowired
 	private NodeService nodeService;
@@ -79,7 +81,7 @@ public class WUsedListServiceImpl implements WUsedListService {
 		
 		if(maxDepthLevel == -1){
 			//Avoid infinite loop
-			maxDepthLevel = 20;
+			maxDepthLevel = MAX_LEVEL;
 		}
 
 		MultiLevelListData ret = new MultiLevelListData(entityNodeRefs, depthLevel);

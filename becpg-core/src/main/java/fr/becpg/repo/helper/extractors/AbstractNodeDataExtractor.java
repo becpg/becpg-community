@@ -64,6 +64,8 @@ public abstract class AbstractNodeDataExtractor implements NodeDataExtractor {
 	protected static final String PROP_CONTAINER = "container";
 	protected static final String PROP_SITE = "site";
 	protected static final String PROP_ASPECTS = "aspects";
+	protected static final String PROP_METADATA = "metadata";
+	
 
 	public AbstractNodeDataExtractor(ServiceRegistry services,AttributeExtractorService attributeExtractorService) {
 		super();

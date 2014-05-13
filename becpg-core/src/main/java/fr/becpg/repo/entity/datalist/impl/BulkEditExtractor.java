@@ -71,6 +71,11 @@ public class BulkEditExtractor extends SimpleExtractor {
 	@Override
 	protected List<NodeRef> getListNodeRef(DataListFilter dataListFilter, DataListPagination pagination) {
 
+		if(dataListFilter.getEntityNodeRefs()!=null &&
+				dataListFilter.getEntityNodeRefs().size()>1){
+			return dataListFilter.getEntityNodeRefs();
+		}
+		
 		List<NodeRef> results = new ArrayList<NodeRef>();
 
 		if(logger.isDebugEnabled()){

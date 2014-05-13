@@ -11,6 +11,7 @@ import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
 import org.alfresco.repo.domain.node.NodeDAO;
 import org.alfresco.repo.domain.patch.PatchDAO;
 import org.alfresco.repo.domain.qname.QNameDAO;
+import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.Pair;
@@ -19,6 +20,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.RepoConsts;
 
 /**
  * Copy prop value of cm:name in bcpg:lvValue to support all char
@@ -34,7 +36,9 @@ public class ListValuePatch extends AbstractBeCPGPatch {
 	private NodeDAO nodeDAO;
 	private PatchDAO patchDAO;
 	private QNameDAO qnameDAO;
-
+	private BehaviourFilter policyBehaviourFilter;
+	
+	
 	private final int batchThreads = 3;
 	private final int batchSize = 40;
 	private final long count = batchThreads * batchSize;
@@ -97,11 +101,17 @@ public class ListValuePatch extends AbstractBeCPGPatch {
 
 			public void process(NodeRef dataListNodeRef) throws Throwable {
 				if (nodeService.exists(dataListNodeRef)) {
-					String name = (String) nodeService.getProperty(dataListNodeRef, ContentModel.PROP_NAME);
-					Boolean isDeleted  = (Boolean) nodeService.getProperty(dataListNodeRef, BeCPGModel.PROP_IS_DELETED);
-					if (name != null) {
-						nodeService.setProperty(dataListNodeRef, BeCPGModel.PROP_LV_VALUE, name);
-						nodeService.setProperty(dataListNodeRef, BeCPGModel.PROP_IS_DELETED, isDeleted!=null ? isDeleted : false);
+					try {
+						policyBehaviourFilter.disableBehaviour(dataListNodeRef);
+						String name = (String) nodeService.getProperty(dataListNodeRef, ContentModel.PROP_NAME);
+						Boolean isDeleted  = (Boolean) nodeService.getProperty(dataListNodeRef, BeCPGModel.PROP_IS_DELETED);
+						if (name != null) {
+							nodeService.setProperty(dataListNodeRef, ContentModel.PROP_NAME, name.replaceAll("\\?", ""));
+							nodeService.setProperty(dataListNodeRef, BeCPGModel.PROP_LV_VALUE, name);
+							nodeService.setProperty(dataListNodeRef, BeCPGModel.PROP_IS_DELETED, isDeleted!=null ? isDeleted : false);
+						}
+					} finally {
+						policyBehaviourFilter.enableBehaviour(dataListNodeRef);
 					}
 				} else {
 					logger.warn("dataListNodeRef doesn't exist : " + dataListNodeRef);
@@ -141,5 +151,11 @@ public class ListValuePatch extends AbstractBeCPGPatch {
 	public void setQnameDAO(QNameDAO qnameDAO) {
 		this.qnameDAO = qnameDAO;
 	}
+
+	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
+		this.policyBehaviourFilter = policyBehaviourFilter;
+	}
+	
+	
 
 }

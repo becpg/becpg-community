@@ -79,7 +79,14 @@ public class InstanceImporter {
 			String nodeRef = null;
 			while ((nodeRef = (String) xpath.evaluate("//*[" + count + "]/@nodeRef", doc, XPathConstants.STRING)) != null && nodeRef.length() > 0) {
 				count++;
-				loadEntity(client, nodeRef);
+				try {
+					loadEntity(client, nodeRef);
+				} catch(Exception e){
+					logger.error("Invalid Xml for "+nodeRef+" skipping node");
+					if(logger.isDebugEnabled()){
+						logger.debug(e,e);
+					}
+				}
 			}
 
 		}
@@ -109,8 +116,7 @@ public class InstanceImporter {
 
 		logger.info("Import from :[ " + dateRange + " TO MAX ]");
 
-
-		String query = " AND (@cm\\:created:[%s TO MAX] OR @cm\\:modified:[%s TO MAX])";
+		String query = "@cm\\:created:[%s TO MAX] OR @cm\\:modified:[%s TO MAX]";
 		
 		return	String.format(query, dateRange, dateRange);
 		 

@@ -364,7 +364,11 @@
 
 			               // displayname and link to details page
 			               var displayName = oRecord.getData("displayName");
-			               var desc = '<h3 class="itemname"><a href="' + url + '" class="theme-color-1">'
+			               
+			               var metadata =  oRecord.getData("metadata");
+			           
+			               
+			               var desc = '<h3 class="itemname'+(metadata?(' '+metadata):'')+'"><a href="' + url + '" class="theme-color-1">'
 			                     + $html(displayName) + '</a>';
 			               // add title (if any) to displayname area
 			               var title = oRecord.getData("title");

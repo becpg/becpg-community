@@ -31,41 +31,42 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 public class ProjectFormulationJob implements Job {
-	
+
 	private static final String KEY_PROJECT_FORMULATION_WORKER = "projectFormulationWorker";
 	private static final String KEY_TENANT_ADMIN_SERVICE = "tenantAdminService";
-	
+
 	private static Log logger = LogFactory.getLog(ProjectFormulationJob.class);
-	
+
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-		
+
 		logger.info("Start of Project Formulation Job.");
-		
+
 		JobDataMap jobData = context.getJobDetail().getJobDataMap();
-		
-		final ProjectFormulationWorker projectFormulationWorker = (ProjectFormulationWorker)jobData.get(KEY_PROJECT_FORMULATION_WORKER);
-		final TenantAdminService tenantAdminService = (TenantAdminService)jobData.get(KEY_TENANT_ADMIN_SERVICE);
-		
-		projectFormulationWorker.executeFormulation();
-        
-        if ((tenantAdminService != null) && tenantAdminService.isEnabled())
-        {
-            List<Tenant> tenants = tenantAdminService.getAllTenants();
-            for (Tenant tenant : tenants)
-            {
-                String tenantDomain = tenant.getTenantDomain();
-                AuthenticationUtil.runAs(new RunAsWork<Object>()
-                {
-                    public Object doWork() throws Exception
-                    {
-                    	projectFormulationWorker.executeFormulation();
-                        return null;
-                    }
-                }, tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenantDomain));
-            }
-        }
-		
+
+		final ProjectFormulationWorker projectFormulationWorker = (ProjectFormulationWorker) jobData.get(KEY_PROJECT_FORMULATION_WORKER);
+		final TenantAdminService tenantAdminService = (TenantAdminService) jobData.get(KEY_TENANT_ADMIN_SERVICE);
+
+		if ((tenantAdminService != null) && tenantAdminService.isEnabled()) {
+			List<Tenant> tenants = tenantAdminService.getAllTenants();
+			for (Tenant tenant : tenants) {
+				String tenantDomain = tenant.getTenantDomain();
+				AuthenticationUtil.runAs(new RunAsWork<Object>() {
+					public Object doWork() throws Exception {
+						projectFormulationWorker.executeFormulation();
+						return null;
+					}
+				}, tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenantDomain));
+			}
+		} else {
+			AuthenticationUtil.runAs(new RunAsWork<Object>() {
+				public Object doWork() throws Exception {
+					projectFormulationWorker.executeFormulation();
+					return null;
+				}
+			}, AuthenticationUtil.getSystemUserName());
+		}
+
 		logger.info("End of Project Formulation Job.");
 	}
 }

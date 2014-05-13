@@ -19,7 +19,6 @@ package fr.becpg.repo.search.impl;
 
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -98,7 +97,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		if (term != null && term.length() != 0) {
 			beCPGQueryBuilder.andFTSQuery(term);
 		} else if (tag != null && tag.length() != 0) {
-			beCPGQueryBuilder.andFTSQuery("TAG:" + tag);
+			beCPGQueryBuilder.andFTSQuery("TAG:\"" + tag +"\"");
 		}
 
 		// we processed the search terms, so suffix the PATH query
