@@ -179,10 +179,11 @@ var Filters =
             filterQuery += " +@cm\\:lockType:\"WRITE_LOCK\"))";
             filterParams.query = filterQuery;
             break;
-         case "Valid":
-         case "ToValidate":
-         case "Archived":
+         case "Simulation":
+ 			case "ToValidate":
+ 			case "Valid":         
          case "Refused":
+         case "Archived":
          	filterQuery += this.constructPathQuery(parsedArgs);
          	filterQuery += " +@bcpg\\:productState:\""+filter+"\"";
             filterParams.query = filterQuery + filterQueryDefaults;

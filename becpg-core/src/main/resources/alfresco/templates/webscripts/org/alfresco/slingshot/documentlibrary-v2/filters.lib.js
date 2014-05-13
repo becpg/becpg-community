@@ -179,11 +179,12 @@ var Filters =
             filterQuery += " OR (-@cm\\:lockOwner:\"" + person.properties.userName + '"';
             filterQuery += " +@cm\\:lockType:\"WRITE_LOCK\"))";
             filterParams.query = filterQuery;
-            break;
- 			case "Valid":
-         case "ToValidate":
-         case "Archived":
+            break; 			
+ 			case "Simulation":
+ 			case "ToValidate":
+ 			case "Valid":         
          case "Refused":
+         case "Archived":
          	filterQuery += this.constructPathQuery(parsedArgs);
          	filterQuery += " +@bcpg\\:productState:\""+filter+"\"";
             filterParams.query = filterQuery + filterQueryDefaults;
