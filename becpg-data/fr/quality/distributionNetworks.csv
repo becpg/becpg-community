@@ -1,0 +1,13 @@
+PATH;/System/QualityLists/bcpg:entityLists/;
+DISABLED_POLICIES;dl:dataList;
+TYPE;dl:dataList;
+COLUMNS;cm:name;dl:dataListItemType
+VALUES;ClaimDistributionNetworks;bcpg:listValue
+;;
+PATH;/System/QualityLists/bcpg:entityLists/ClaimDistributionNetworks;
+TYPE;bcpg:listValue;
+COLUMNS;cm:name;
+VALUES;Enseignes GMS;
+VALUES;RHD pétrolier et autres;
+VALUES;Consommateurs en direct;
+VALUES;Interne;
