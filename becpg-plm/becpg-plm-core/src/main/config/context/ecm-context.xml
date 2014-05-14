@@ -49,5 +49,40 @@
   <bean id="webscript.fr.becpg.ecm.changeOrder.get" class="fr.becpg.repo.web.scripts.ecm.ChangeOrderWebScript" parent="webscript">
       	<property name="ecoService" ref="ecoService" />
    	</bean>
+   	
+   	<!--  Policies -->
+   	<bean id="automaticECOPolicy" class="fr.becpg.repo.ecm.policy.AutomaticECOPolicy"
+		parent="abstractBeCPGPolicy" >
+		<property name="automaticECOService" ref="automaticECOService"/>
+	</bean>
+	
+	<!-- Cron -->
+	 <bean id="automaticECOJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="jobClass">
+            <value>fr.becpg.repo.ecm.AutomaticECOJob</value>
+        </property>
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="automaticECOService">
+                    <ref bean="automaticECOService" />
+                </entry>
+                <entry key="tenantAdminService">
+                    <ref bean="tenantAdminService" />
+                </entry>
+            </map>
+        </property>
+    </bean>
+    
+    <bean id="automaticECOJobTrigger" class="org.alfresco.util.CronTriggerBean"  >
+        <property name="jobDetail">
+            <ref bean="automaticECOJob"/>
+        </property>
+        <property name="scheduler">
+            <ref bean="schedulerFactory"/>
+        </property>
+        <property name="cronExpression">
+            <value>${beCPG.eco.automatic.cron}</value>
+        </property>
+    </bean>
    
 </beans>

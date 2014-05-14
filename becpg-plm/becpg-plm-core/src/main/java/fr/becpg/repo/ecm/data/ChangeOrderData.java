@@ -157,10 +157,8 @@ public class ChangeOrderData extends BeCPGDataObject {
 		super();
 	}
 
-	public ChangeOrderData(NodeRef nodeRef, String name, String code, ECOState ecoState, ChangeOrderType ecoType, List<NodeRef> calculatedCharacts) {
-		this.nodeRef = nodeRef;
+	public ChangeOrderData( String name, ECOState ecoState, ChangeOrderType ecoType, List<NodeRef> calculatedCharacts) {
 		this.name = name;
-		this.code = code;
 		this.ecoState = ecoState;
 		this.ecoType = ecoType;
 		this.calculatedCharacts = calculatedCharacts;

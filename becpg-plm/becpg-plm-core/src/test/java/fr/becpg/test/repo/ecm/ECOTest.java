@@ -373,7 +373,7 @@ public class ECOTest extends PLMBaseTestCase {
 				calculatedCharacts.add(cost2);
 				calculatedCharacts.add(nut1);
 				calculatedCharacts.add(nut2);
-				ChangeOrderData changeOrderData = new ChangeOrderData(null, "ECO", null, ECOState.ToValidate, ChangeOrderType.Simulation, calculatedCharacts);
+				ChangeOrderData changeOrderData = new ChangeOrderData( "ECO", ECOState.ToValidate, ChangeOrderType.Simulation, calculatedCharacts);
 
 				List<ReplacementListDataItem> replacementList = new ArrayList<ReplacementListDataItem>();
 
@@ -383,7 +383,7 @@ public class ECOTest extends PLMBaseTestCase {
 				NodeRef ecoNodeRef = alfrescoRepository.create(testFolderNodeRef, changeOrderData).getNodeRef();
 
 				// calculate WUsed
-				ecoService.calculateWUsedList(ecoNodeRef);
+				ecoService.calculateWUsedList(ecoNodeRef,false);
 
 				// verify WUsed
 				int checks = 0;
@@ -629,7 +629,7 @@ public class ECOTest extends PLMBaseTestCase {
 				calculatedCharacts.add(cost2);
 				calculatedCharacts.add(nut1);
 				calculatedCharacts.add(nut2);
-				ChangeOrderData changeOrderData = new ChangeOrderData(null, "ECO", null, ECOState.ToValidate, ChangeOrderType.Simulation, calculatedCharacts);
+				ChangeOrderData changeOrderData = new ChangeOrderData( "ECO", ECOState.ToValidate, ChangeOrderType.Simulation, calculatedCharacts);
 
 				List<ReplacementListDataItem> replacementList = new ArrayList<ReplacementListDataItem>();
 				replacementList.add(new ReplacementListDataItem(RevisionType.Major, Arrays.asList(rawMaterial4NodeRef), rawMaterial5NodeRef, 100));
@@ -638,7 +638,7 @@ public class ECOTest extends PLMBaseTestCase {
 				NodeRef ecoNodeRef = alfrescoRepository.create(testFolderNodeRef, changeOrderData).getNodeRef();
 
 				// calculate WUsed
-				ecoService.calculateWUsedList(ecoNodeRef);
+				ecoService.calculateWUsedList(ecoNodeRef,false);
 
 				// verify WUsed
 				int checks = 0;

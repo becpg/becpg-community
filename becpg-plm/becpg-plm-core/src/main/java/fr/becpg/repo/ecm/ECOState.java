@@ -19,6 +19,7 @@ package fr.becpg.repo.ecm;
 
 public enum ECOState {
 
+	Automatic,
 	ToCalculateWUsed,
 	WUsedCalculated,
 	ToValidate,
@@ -28,4 +29,5 @@ public enum ECOState {
 	Simulated,
 	ToApply,
 	Applied			
+	
 }

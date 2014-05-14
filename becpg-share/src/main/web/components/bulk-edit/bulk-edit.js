@@ -345,7 +345,7 @@
 
 						columnsUrl : Alfresco.constants.URL_SERVICECONTEXT + "module/entity-datagrid/config/columns",
 
-						saveFieldUrl : Alfresco.constants.PROXY_URI_RELATIVE + "/becpg/bulkedit/save",
+						saveFieldUrl : Alfresco.constants.PROXY_URI_RELATIVE + "becpg/bulkedit/save",
 
 						// Alfresco.constants.URL_SERVICECONTEXT,"components/bulk-edit/config/columns
 

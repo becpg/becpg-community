@@ -67,7 +67,7 @@ public class ChangeOrderWebScript extends AbstractWebScript {
 		NodeRef ecoNodeRef = new NodeRef(storeType, storeId, nodeId);
 
 		if (ACTION_CALCULATE_WUSED.equals(action)) {
-			ecoService.calculateWUsedList(ecoNodeRef);
+			ecoService.calculateWUsedList(ecoNodeRef,false);
 		} else if (ACTION_DO_SIMULATION.equals(action)) {
 			ecoService.doSimulation(ecoNodeRef);
 		} else if (ACTION_APPLY.equals(action)) {

@@ -26,9 +26,15 @@ import org.alfresco.service.cmr.repository.NodeRef;
  */
 public interface ECOService {	
 	
-	public void calculateWUsedList(NodeRef ecoNodeRef);
+	
+	
+	public void calculateWUsedList(NodeRef ecoNodeRef, boolean selectToApply);
 	
 	public void apply(NodeRef ecoNodeRef);
 	
 	public void doSimulation(NodeRef ecoNodeRef);
+
+	
+	
+	//public NodeRef getOrCreateAutomaticECO();
 }

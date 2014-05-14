@@ -41,6 +41,7 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.model.MPMModel;
@@ -80,7 +81,6 @@ import fr.becpg.repo.repository.RepositoryEntity;
  */
 public class ECOServiceImpl implements ECOService {
 
-	private static final String VERSION_DESCRIPTION = "Applied by ECO %s";
 	private static Log logger = LogFactory.getLog(ECOServiceImpl.class);
 
 	private WUsedListService wUsedListService;
@@ -201,7 +201,7 @@ public class ECOServiceImpl implements ECOService {
 	}
 
 	@Override
-	public void calculateWUsedList(NodeRef ecoNodeRef) {
+	public void calculateWUsedList(NodeRef ecoNodeRef, boolean isWUsedImpacted) {
 
 		logger.debug("calculateWUsedList");
 
@@ -236,7 +236,7 @@ public class ECOServiceImpl implements ECOService {
 							MultiLevelListData wUsedData = wUsedListService.getWUsedEntity(sourceList,WUsedOperator.AND, associationQName, RepoConsts.MAX_DEPTH_LEVEL);
 
 							QName datalistQName = evaluateListFromAssociation(associationQName);
-							calculateWUsedList(ecoData, wUsedData, datalistQName, parent);
+							calculateWUsedList(ecoData, wUsedData, datalistQName, parent, isWUsedImpacted);
 						}
 					}
 				}
@@ -265,7 +265,7 @@ public class ECOServiceImpl implements ECOService {
 		return assocQNames;
 	}
 
-	private void calculateWUsedList(ChangeOrderData ecoData, MultiLevelListData wUsedData, QName dataListQName, WUsedListDataItem parent) {
+	private void calculateWUsedList(ChangeOrderData ecoData, MultiLevelListData wUsedData, QName dataListQName, WUsedListDataItem parent, boolean isWUsedImpacted) {
 
 		for (Map.Entry<NodeRef, MultiLevelListData> kv : wUsedData.getTree().entrySet()) {
 
@@ -279,13 +279,13 @@ public class ECOServiceImpl implements ECOService {
 			WUsedListDataItem wUsedListDataItem = new WUsedListDataItem();
 			wUsedListDataItem.setParent(parent);
 			wUsedListDataItem.setImpactedDataList(dataListQName);
-			wUsedListDataItem.setIsWUsedImpacted(false);
+			wUsedListDataItem.setIsWUsedImpacted(isWUsedImpacted);
 			wUsedListDataItem.setSourceItems(kv.getValue().getEntityNodeRefs());
 
 			ecoData.getWUsedList().add(wUsedListDataItem);
 
 			// recursive
-			calculateWUsedList(ecoData, kv.getValue(), dataListQName, wUsedListDataItem);
+			calculateWUsedList(ecoData, kv.getValue(), dataListQName, wUsedListDataItem, isWUsedImpacted);
 		}
 	}
 
@@ -630,7 +630,7 @@ public class ECOServiceImpl implements ECOService {
 					// checkin
 					Map<String, Serializable> properties = new HashMap<String, Serializable>();
 					properties.put(VersionModel.PROP_VERSION_TYPE, versionType);
-					properties.put(Version.PROP_DESCRIPTION, String.format(VERSION_DESCRIPTION, ecoData.getCode()));
+					properties.put(Version.PROP_DESCRIPTION, I18NUtil.getMessage("plm.ecm.apply.version.label", ecoData.getCode()));
 
 					return checkOutCheckInService.checkin(workingCopyNodeRef, properties);
 				}
@@ -746,5 +746,7 @@ public class ECOServiceImpl implements ECOService {
 
 		return listQName;
 	}
+
+	
 
 }

@@ -47,6 +47,14 @@ public class ProjectFormulationJob implements Job {
 		final ProjectFormulationWorker projectFormulationWorker = (ProjectFormulationWorker) jobData.get(KEY_PROJECT_FORMULATION_WORKER);
 		final TenantAdminService tenantAdminService = (TenantAdminService) jobData.get(KEY_TENANT_ADMIN_SERVICE);
 
+		AuthenticationUtil.runAs(new RunAsWork<Object>() {
+			public Object doWork() throws Exception {
+				projectFormulationWorker.executeFormulation();
+				return null;
+			}
+		}, AuthenticationUtil.getSystemUserName());
+		
+		
 		if ((tenantAdminService != null) && tenantAdminService.isEnabled()) {
 			List<Tenant> tenants = tenantAdminService.getAllTenants();
 			for (Tenant tenant : tenants) {
@@ -58,14 +66,7 @@ public class ProjectFormulationJob implements Job {
 					}
 				}, tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenantDomain));
 			}
-		} else {
-			AuthenticationUtil.runAs(new RunAsWork<Object>() {
-				public Object doWork() throws Exception {
-					projectFormulationWorker.executeFormulation();
-					return null;
-				}
-			}, AuthenticationUtil.getSystemUserName());
-		}
+		} 
 
 		logger.info("End of Project Formulation Job.");
 	}

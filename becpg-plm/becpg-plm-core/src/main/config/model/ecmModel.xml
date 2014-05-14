@@ -34,6 +34,7 @@
 		<constraint name="ecm:ecoStates" type="LIST">
 			<parameter name="allowedValues">
 				<list>
+					<value>Automatic</value>
 					<value>ToValidate</value>					
 					<value>Valid</value>
 					<value>Refused</value>
