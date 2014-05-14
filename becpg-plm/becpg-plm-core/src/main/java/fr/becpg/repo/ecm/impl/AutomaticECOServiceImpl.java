@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.transaction.TransactionService;
@@ -33,9 +34,8 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 @Service("automaticECOService")
 public class AutomaticECOServiceImpl implements AutomaticECOService {
 
-	
 	private static Log logger = LogFactory.getLog(AutomaticECOService.class);
-	
+
 	@Autowired
 	private RepoService repoService;
 
@@ -59,13 +59,12 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 		NodeRef parentNodeRef = getChangeOrderFolder();
 		ChangeOrderData changeOrderData = new ChangeOrderData(generateEcoName(), ECOState.Automatic, ChangeOrderType.Simulation, null);
 
-		
 		NodeRef ret = getAutomaticECONoderef(parentNodeRef);
 
 		if (ret != null) {
 			changeOrderData = (ChangeOrderData) alfrescoRepository.findOne(ret);
 		} else {
-			if(logger.isDebugEnabled()){
+			if (logger.isDebugEnabled()) {
 				logger.debug("Creating new automatic change order");
 			}
 			changeOrderData = (ChangeOrderData) alfrescoRepository.create(parentNodeRef, changeOrderData);
@@ -80,8 +79,8 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 		// avoid recreate same entry
 		for (ReplacementListDataItem item : replacementList) {
 			if (entityNodeRef.equals(item.getTargetItem())) {
-				if(logger.isDebugEnabled()){
-					logger.debug("NodeRef "+entityNodeRef+" already present in automatic change order :"+changeOrderData.getName());
+				if (logger.isDebugEnabled()) {
+					logger.debug("NodeRef " + entityNodeRef + " already present in automatic change order :" + changeOrderData.getName());
 				}
 				return changeOrderData;
 			}
@@ -89,17 +88,13 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 
 		replacementList.add(new ReplacementListDataItem(shouldCreateNewVersion ? RevisionType.Major : RevisionType.Minor, Arrays
 				.asList(entityNodeRef), entityNodeRef, 100));
-		
-		if(logger.isDebugEnabled()){
-			logger.debug("Adding nodeRef "+entityNodeRef+" to automatic change order :"+changeOrderData.getName());
-			logger.debug("Revision type : "+(shouldCreateNewVersion ? RevisionType.Major : RevisionType.Minor));
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("Adding nodeRef " + entityNodeRef + " to automatic change order :" + changeOrderData.getName());
+			logger.debug("Revision type : " + (shouldCreateNewVersion ? RevisionType.Major : RevisionType.Minor));
 		}
-		
+
 		changeOrderData.setReplacementList(replacementList);
-		
-		
-		
-		
 
 		alfrescoRepository.save(changeOrderData);
 
@@ -122,20 +117,25 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 	@Override
 	public boolean applyAutomaticEco() {
 		if (shouldApplyAutomaticECO) {
-			if(logger.isDebugEnabled()){
+			if (logger.isDebugEnabled()) {
 				logger.debug("Try to apply automatic change order");
 			}
-			
-			return transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
+			final RetryingTransactionHelper txHelper = transactionService.getRetryingTransactionHelper();
+			txHelper.setMaxRetries(1);
+			return txHelper.doInTransaction(new RetryingTransactionCallback<Boolean>() {
 				public Boolean execute() throws Throwable {
 					NodeRef parentNodeRef = getChangeOrderFolder();
 					NodeRef ecoNodeRef = getAutomaticECONoderef(parentNodeRef);
 					if (ecoNodeRef != null) {
-						if(logger.isDebugEnabled()){
-							logger.debug("Found automatic change order to apply :"+ecoNodeRef);
+						if (logger.isDebugEnabled()) {
+							logger.debug("Found automatic change order to apply :" + ecoNodeRef);
 						}
-						ecoService.calculateWUsedList(ecoNodeRef, true);
-						ecoService.apply(ecoNodeRef);
+						try {
+							ecoService.calculateWUsedList(ecoNodeRef, true);
+							ecoService.apply(ecoNodeRef);
+						} catch(Exception e){
+							logger.error(e,e);
+						}
 						return true;
 					}
 					return false;

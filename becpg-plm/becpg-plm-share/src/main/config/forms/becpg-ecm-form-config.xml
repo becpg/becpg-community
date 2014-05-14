@@ -41,7 +41,6 @@
 					<field id="ecm:ecoType" read-only="true">
 						<control
 							template="/org/alfresco/components/form/controls/selectone.ftl" >
-							 <control-param name="options">Replacement|Remplacement,Simulation|Simulation,Variant|Variante</control-param>
 						</control>
 					</field>					
 				</appearance>
@@ -79,14 +78,12 @@
 					<field id="ecm:ecoState">
 						<control
 							template="/org/alfresco/components/form/controls/selectone.ftl" >
-							 <control-param name="options">ToValidate|A valider,Valid|Validé,Refused|Refusé,ToCalculateWUsed|Calculer les cas d'emploi,WUsedCalculated|Cas d'emploi calculés,ToSimulate|Simuler,Simulated|Simulé,ToApply|Appliquer,Applied|Appliqué</control-param>
-						</control>
+									</control>
 					</field>
 					<field id="ecm:ecoType">
 						<control
 							template="/org/alfresco/components/form/controls/selectone.ftl" >
-							 <control-param name="options">Replacement|Remplacement,Simulation|Simulation,Variant|Variante</control-param>
-						</control>
+							 </control>
 					</field>					
 				</appearance>
 			</form>
@@ -109,7 +106,6 @@
 					<field id="ecm:rlRevisionType">
 						<control
 							template="/org/alfresco/components/form/controls/selectone.ftl" >
-							 <control-param name="options">NoRevision|Sans révision,Minor|Mineure,Major|Majeure</control-param>
 						</control>
 					</field>						
 					<field id="ecm:rlSourceItems">
@@ -149,7 +145,6 @@
 					<field id="ecm:rlRevisionType">
 						<control
 							template="/org/alfresco/components/form/controls/selectone.ftl" >
-							 <control-param name="options">NoRevision|Sans révision,Minor|Mineure,Major|Majeure</control-param>
 						</control>
 					</field>
 					<field id="ecm:rlSourceItems">
@@ -227,6 +222,7 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
+					<show id="ecm:culReqError" />
 					<show id="ecm:culRevision" />
 					<show id="ecm:culSourceItem" />
 					<!-- <show id="ecm:culTargetItem" /> -->	

@@ -66,7 +66,60 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 		</property>
 	</bean>
 	
-
+	<!-- ecm:ecoState  -->
+	<bean id="evaluator.becpg.doclib.indicator.ecm.automatic" parent="evaluator.doclib.action.value">
+		<property name="accessor" value="node.properties.ecm:ecoState" />
+		<property name="comparator">
+			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+				<property name="value" value="Automatic" />
+			</bean>
+		</property>
+	</bean>
+	<bean id="evaluator.becpg.doclib.indicator.ecm.applied" parent="evaluator.doclib.action.value">
+		<property name="accessor" value="node.properties.ecm:ecoState" />
+		<property name="comparator">
+			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+				<property name="value" value="Applied" />
+			</bean>
+		</property>
+	</bean>
+	<bean id="evaluator.becpg.doclib.indicator.ecm.wUsedCalculated" parent="evaluator.doclib.action.value">
+		<property name="accessor" value="node.properties.ecm:ecoState" />
+		<property name="comparator">
+			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+				<property name="value" value="WUsedCalculated" />
+			</bean>
+		</property>
+	</bean>
+	
+	
+	<bean id="evaluator.becpg.doclib.indicator.ecm.simulated" parent="evaluator.doclib.action.value">
+		<property name="accessor" value="node.properties.ecm:ecoState" />
+		<property name="comparator">
+			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+				<property name="value" value="Simulated" />
+			</bean>
+		</property>
+	</bean>
+	<bean id="evaluator.becpg.doclib.indicator.ecm.toCalculateWUsed" parent="evaluator.doclib.action.value">
+		<property name="accessor" value="node.properties.ecm:ecoState" />
+		<property name="comparator">
+			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+				<property name="value" value="ToCalculateWUsed" />
+			</bean>
+		</property>
+	</bean>
+	
+	<bean id="evaluator.becpg.doclib.indicator.ecm.inError" parent="evaluator.doclib.action.value">
+		<property name="accessor" value="node.properties.ecm:ecoState" />
+		<property name="comparator">
+			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+				<property name="value" value="InError" />
+			</bean>
+		</property>
+	</bean>
+	
+	
     <!-- bcpg:productState -->
 	<bean id="evaluator.becpg.doclib.indicator.entity.simulation" parent="evaluator.doclib.action.value">
 		<property name="accessor" value="node.properties.bcpg:productState" />

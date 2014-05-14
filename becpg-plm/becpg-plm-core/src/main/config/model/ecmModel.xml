@@ -35,15 +35,11 @@
 			<parameter name="allowedValues">
 				<list>
 					<value>Automatic</value>
-					<value>ToValidate</value>					
-					<value>Valid</value>
-					<value>Refused</value>
 					<value>ToCalculateWUsed</value>
-					<value>WUsedCalculated</value>					
-					<value>ToSimulate</value>
+					<value>WUsedCalculated</value>	
 					<value>Simulated</value>
-					<value>ToApply</value>
-					<value>Applied</value>					
+					<value>Applied</value>	
+					<value>InError</value>				
 				</list>
 			</parameter>
 		</constraint>
@@ -248,6 +244,10 @@
 					<type>d:text</type>				
 					<index enabled="false"/>	
 				</property>	
+				<property name="ecm:culReqError">
+					<type>d:text</type>				
+					<index enabled="false"/>	
+				</property>
 				<property name="ecm:culTreated">
 					<type>d:boolean</type>
 					<default>false</default>				

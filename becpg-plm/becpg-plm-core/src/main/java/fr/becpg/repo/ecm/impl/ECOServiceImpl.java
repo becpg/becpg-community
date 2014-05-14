@@ -133,7 +133,7 @@ public class ECOServiceImpl implements ECOService {
 		final ChangeOrderData ecoData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
 
 		// Do not run if already applied
-		if (!ECOState.Applied.equals(ecoData.getEcoState()) && !(ECOState.ToApply.equals(ecoData.getEcoState()) && ECOState.Simulated.equals(state))) {
+		if (!ECOState.Applied.equals(ecoData.getEcoState()) && !(ECOState.InError.equals(ecoData.getEcoState()) && ECOState.Simulated.equals(state))) {
 
 			L2CacheSupport.doInCacheContext(new Action() {
 
@@ -151,11 +151,11 @@ public class ECOServiceImpl implements ECOService {
 							toRemove.add(cul);
 						}
 					}
-					
-					if(logger.isDebugEnabled()) {
-						logger.debug("Remove "+toRemove.size()+ " previous changeUnit");
+
+					if (logger.isDebugEnabled()) {
+						logger.debug("Remove " + toRemove.size() + " previous changeUnit");
 					}
-					
+
 					ecoData.getChangeUnitList().removeAll(toRemove);
 
 					// Reset simulation item
@@ -178,7 +178,7 @@ public class ECOServiceImpl implements ECOService {
 						}
 						ecoData.setEcoState(state);
 					} else if (hasError) {
-						ecoData.setEcoState(ECOState.ToApply);
+						ecoData.setEcoState(ECOState.InError);
 					} else {
 						ecoData.setEffectiveDate(new Date());
 						ecoData.setEcoState(ECOState.Applied);
@@ -208,7 +208,7 @@ public class ECOServiceImpl implements ECOService {
 		ChangeOrderData ecoData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
 
 		// Do not run if already applied
-		if (!ECOState.Applied.equals(ecoData.getEcoState())) {
+		if (!ECOState.Applied.equals(ecoData.getEcoState()) && !ECOState.InError.equals(ecoData.getEcoState())) {
 
 			// clear WUsedList
 			ecoData.getWUsedList().clear();
@@ -233,7 +233,8 @@ public class ECOServiceImpl implements ECOService {
 
 						for (QName associationQName : associationQNames) {
 
-							MultiLevelListData wUsedData = wUsedListService.getWUsedEntity(sourceList,WUsedOperator.AND, associationQName, RepoConsts.MAX_DEPTH_LEVEL);
+							MultiLevelListData wUsedData = wUsedListService.getWUsedEntity(sourceList, WUsedOperator.AND, associationQName,
+									RepoConsts.MAX_DEPTH_LEVEL);
 
 							QName datalistQName = evaluateListFromAssociation(associationQName);
 							calculateWUsedList(ecoData, wUsedData, datalistQName, parent, isWUsedImpacted);
@@ -265,7 +266,8 @@ public class ECOServiceImpl implements ECOService {
 		return assocQNames;
 	}
 
-	private void calculateWUsedList(ChangeOrderData ecoData, MultiLevelListData wUsedData, QName dataListQName, WUsedListDataItem parent, boolean isWUsedImpacted) {
+	private void calculateWUsedList(ChangeOrderData ecoData, MultiLevelListData wUsedData, QName dataListQName, WUsedListDataItem parent,
+			boolean isWUsedImpacted) {
 
 		for (Map.Entry<NodeRef, MultiLevelListData> kv : wUsedData.getTree().entrySet()) {
 
@@ -318,7 +320,8 @@ public class ECOServiceImpl implements ECOService {
 			ecoData.getChangeUnitList().add(changeUnitDataItem);
 
 		} else {
-			if (RevisionType.Major.equals(revisionType) || (RevisionType.Minor.equals(revisionType) && RevisionType.NoRevision.equals(changeUnitDataItem.getRevision()))) {
+			if (RevisionType.Major.equals(revisionType)
+					|| (RevisionType.Minor.equals(revisionType) && RevisionType.NoRevision.equals(changeUnitDataItem.getRevision()))) {
 				changeUnitDataItem.setRevision(revisionType);
 			}
 		}
@@ -327,7 +330,6 @@ public class ECOServiceImpl implements ECOService {
 	}
 
 	private boolean visitChildrens(Composite<WUsedListDataItem> composite, final ChangeOrderData ecoData, final boolean isSimulation) {
-
 
 		for (final Composite<WUsedListDataItem> component : composite.getChildren()) {
 
@@ -344,7 +346,8 @@ public class ECOServiceImpl implements ECOService {
 					// to branch
 					if (component.getData().getDepthLevel() > 2 && shouldSkipCurrentBranch(ecoData, changeUnitDataItem)) {
 						if (logger.isDebugEnabled()) {
-							logger.debug("Skip current branch at " + nodeService.getProperty(changeUnitDataItem.getSourceItem(), ContentModel.PROP_NAME));
+							logger.debug("Skip current branch at "
+									+ nodeService.getProperty(changeUnitDataItem.getSourceItem(), ContentModel.PROP_NAME));
 						}
 						break;
 					}
@@ -359,11 +362,12 @@ public class ECOServiceImpl implements ECOService {
 
 								ProductData productToFormulateData = (ProductData) alfrescoRepository.findOne(productNodeRef);
 
-								if(isSimulation) {
-									// Before formulate we create simulation List
+								if (isSimulation) {
+									// Before formulate we create simulation
+									// List
 									createCalculatedCharactValues(ecoData, productToFormulateData);
 								}
-								
+
 								// Level 2
 								if (component.getData().getDepthLevel() == 2) {
 									applyReplacementList(ecoData, productToFormulateData);
@@ -380,7 +384,7 @@ public class ECOServiceImpl implements ECOService {
 									logger.warn("Failed to formulate product. NodeRef: " + productToFormulateData.getNodeRef(), e);
 								}
 
-								if(isSimulation) {
+								if (isSimulation) {
 									// update simulation List
 									updateCalculatedCharactValues(ecoData, productToFormulateData);
 								}
@@ -395,13 +399,14 @@ public class ECOServiceImpl implements ECOService {
 							}
 
 							changeUnitDataItem.setTreated(Boolean.TRUE);
+							changeUnitDataItem.setErrorMsg(null);
 
 							if (!isSimulation) {
 								if (logger.isDebugEnabled()) {
-									logger.debug("Applied Treated to item " + nodeService.getProperty(changeUnitDataItem.getSourceItem(), ContentModel.PROP_NAME));
+									logger.debug("Applied Treated to item "
+											+ nodeService.getProperty(changeUnitDataItem.getSourceItem(), ContentModel.PROP_NAME));
 								}
 							}
-							
 
 							return null;
 
@@ -418,11 +423,12 @@ public class ECOServiceImpl implements ECOService {
 						};
 						AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getSystemUserName());
 					} catch (Throwable e) {
-						
+
 						changeUnitDataItem.setTreated(false);
-						//Todo log better error
-						logger.error("Error applying for "+nodeService.getProperty(changeUnitDataItem.getSourceItem(), ContentModel.PROP_NAME),e);
-						
+						changeUnitDataItem.setErrorMsg(e.getMessage());
+						// Todo log better error
+						logger.error("Error applying for " + nodeService.getProperty(changeUnitDataItem.getSourceItem(), ContentModel.PROP_NAME), e);
+
 						return false;
 					}
 
@@ -431,7 +437,7 @@ public class ECOServiceImpl implements ECOService {
 			}
 
 			if (!component.isLeaf()) {
-				if(!visitChildrens((Composite<WUsedListDataItem>) component, ecoData, isSimulation)) {
+				if (!visitChildrens((Composite<WUsedListDataItem>) component, ecoData, isSimulation)) {
 					return false;
 				}
 			}
@@ -445,7 +451,8 @@ public class ECOServiceImpl implements ECOService {
 
 		boolean skip = false;
 		for (WUsedListDataItem wulDataItem : ecoData.getWUsedList()) {
-			if (wulDataItem.getParent() != null && wulDataItem.getParent().getIsWUsedImpacted() && wulDataItem.getSourceItems().contains(changeUnitDataItem.getSourceItem())) {
+			if (wulDataItem.getParent() != null && wulDataItem.getParent().getIsWUsedImpacted()
+					&& wulDataItem.getSourceItems().contains(changeUnitDataItem.getSourceItem())) {
 				if (ecoData.getChangeUnitMap().get(wulDataItem.getParent().getSourceItems().get(0)) == null
 						|| !ecoData.getChangeUnitMap().get(wulDataItem.getParent().getSourceItems().get(0)).getTreated()) {
 					skip = true;
@@ -483,15 +490,17 @@ public class ECOServiceImpl implements ECOService {
 	//
 	// }
 
-//	private <T extends CompositionDataItem> void applyToList(List<T> items, NodeRef sourceNodeRef, NodeRef targetNodeRef) {
-//		for (T item : items) {
-//			if (item.getProduct() != null && item.getProduct().equals(sourceNodeRef)) {
-//				item.setProduct(targetNodeRef);
-//				break;
-//			}
-//		}
-//
-//	}
+	// private <T extends CompositionDataItem> void applyToList(List<T> items,
+	// NodeRef sourceNodeRef, NodeRef targetNodeRef) {
+	// for (T item : items) {
+	// if (item.getProduct() != null && item.getProduct().equals(sourceNodeRef))
+	// {
+	// item.setProduct(targetNodeRef);
+	// break;
+	// }
+	// }
+	//
+	// }
 
 	private void applyReplacementList(ChangeOrderData ecoData, ProductData product) {
 
@@ -592,36 +601,31 @@ public class ECOServiceImpl implements ECOService {
 				 */
 				if (!changeUnitDataItem.getRevision().equals(RevisionType.NoRevision)) {
 
+					if (!nodeService.hasAspect(productToImpact, ContentModel.ASPECT_VERSIONABLE)) {
+						transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 
-					if(!nodeService.hasAspect(productToImpact, ContentModel.ASPECT_VERSIONABLE)) {
-						RunAsWork<Object> actionRunAs = new RunAsWork<Object>() {
 							@Override
-							public Object doWork() throws Exception {
-								return transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-
-									@Override
-									public NodeRef execute() throws Throwable {
-										logger.debug("Add ASPECT_VERSIONABLE");
-										Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>();
-										aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
-										nodeService.addAspect(productToImpact, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
-										return productToImpact;
-									}
-									
-								}, false, true);
+							public NodeRef execute() throws Throwable {
+								try {
+									logger.debug("Add ASPECT_VERSIONABLE");
+									Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>();
+									aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
+									nodeService.addAspect(productToImpact, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
+									return productToImpact;
+								} catch (Throwable e) {
+									logger.error(e, e);
+									throw e;
+								}
 							}
-						};
-						AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getSystemUserName());
-						
-						
-						
-						
+
+						}, false, true);
+
 					}
-					
+
 					VersionType versionType = changeUnitDataItem.getRevision().equals(RevisionType.Major) ? VersionType.MAJOR : VersionType.MINOR;
-					
+
 					logger.debug("Create new version :" + versionType);
-					
+
 					logger.debug("Checkout");
 					// checkout
 					NodeRef workingCopyNodeRef = checkOutCheckInService.checkout(productToImpact);
@@ -647,8 +651,8 @@ public class ECOServiceImpl implements ECOService {
 			QName charactType = nodeService.getType(charactNodeRef);
 			Double sourceValue = CharactHelper.getCharactValue(charactNodeRef, charactType, sourceData);
 			if (logger.isDebugEnabled()) {
-				logger.debug("create calculated charact: " + nodeService.getProperty(sourceData.getNodeRef(), ContentModel.PROP_NAME) + " - " + charactNodeRef + " - sourceValue: "
-						+ sourceValue);
+				logger.debug("create calculated charact: " + nodeService.getProperty(sourceData.getNodeRef(), ContentModel.PROP_NAME) + " - "
+						+ charactNodeRef + " - sourceValue: " + sourceValue);
 			}
 			ecoData.getSimulationList().add(new SimulationListDataItem(null, sourceData.getNodeRef(), charactNodeRef, sourceValue, null));
 		}
@@ -661,11 +665,12 @@ public class ECOServiceImpl implements ECOService {
 			QName charactType = nodeService.getType(charactNodeRef);
 			Double targetValue = CharactHelper.getCharactValue(charactNodeRef, charactType, targetData);
 			for (SimulationListDataItem simulationListDataItem : ecoData.getSimulationList()) {
-				if (simulationListDataItem.getCharact().equals(charactNodeRef) && simulationListDataItem.getSourceItem().equals(targetData.getNodeRef())) {
+				if (simulationListDataItem.getCharact().equals(charactNodeRef)
+						&& simulationListDataItem.getSourceItem().equals(targetData.getNodeRef())) {
 					simulationListDataItem.setTargetValue(targetValue);
 					if (logger.isDebugEnabled()) {
-						logger.debug("calculated charact: " + nodeService.getProperty(targetData.getNodeRef(), ContentModel.PROP_NAME) + " - " + charactNodeRef
-								+ " - sourceValue: " + simulationListDataItem.getSourceValue() + " - targetValue: " + targetValue);
+						logger.debug("calculated charact: " + nodeService.getProperty(targetData.getNodeRef(), ContentModel.PROP_NAME) + " - "
+								+ charactNodeRef + " - sourceValue: " + simulationListDataItem.getSourceValue() + " - targetValue: " + targetValue);
 					}
 				}
 
@@ -710,19 +715,19 @@ public class ECOServiceImpl implements ECOService {
 		changeUnitDataItem.setReqType(reqType);
 		changeUnitDataItem.setReqDetails(reqDetails);
 	}
-	
+
 	@Deprecated
 	private List<QName> evaluateWUsedAssociations(NodeRef targetAssocNodeRef) {
 		List<QName> wUsedAssociations = new ArrayList<QName>();
 
 		QName nodeType = nodeService.getType(targetAssocNodeRef);
 
-		if (nodeType.isMatch(PLMModel.TYPE_RAWMATERIAL) || nodeType.isMatch(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT) || nodeType.isMatch(PLMModel.TYPE_SEMIFINISHEDPRODUCT)
-				|| nodeType.isMatch(PLMModel.TYPE_FINISHEDPRODUCT)) {
+		if (nodeType.isMatch(PLMModel.TYPE_RAWMATERIAL) || nodeType.isMatch(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT)
+				|| nodeType.isMatch(PLMModel.TYPE_SEMIFINISHEDPRODUCT) || nodeType.isMatch(PLMModel.TYPE_FINISHEDPRODUCT)) {
 
 			wUsedAssociations.add(PLMModel.ASSOC_COMPOLIST_PRODUCT);
 		} else if (nodeType.isMatch(PLMModel.TYPE_PACKAGINGMATERIAL) || nodeType.isMatch(PLMModel.TYPE_PACKAGINGKIT)) {
-			wUsedAssociations.add(PLMModel.ASSOC_PACKAGINGLIST_PRODUCT); 
+			wUsedAssociations.add(PLMModel.ASSOC_PACKAGINGLIST_PRODUCT);
 		} else if (nodeType.isMatch(PLMModel.TYPE_RESOURCEPRODUCT)) {
 			wUsedAssociations.add(MPMModel.ASSOC_PL_RESOURCE);
 		}
@@ -730,7 +735,6 @@ public class ECOServiceImpl implements ECOService {
 		return wUsedAssociations;
 	}
 
-	
 	@Deprecated
 	private QName evaluateListFromAssociation(QName associationName) {
 
@@ -739,14 +743,12 @@ public class ECOServiceImpl implements ECOService {
 		if (associationName.equals(PLMModel.ASSOC_COMPOLIST_PRODUCT)) {
 			listQName = PLMModel.TYPE_COMPOLIST;
 		} else if (associationName.equals(PLMModel.ASSOC_PACKAGINGLIST_PRODUCT)) {
-			listQName = PLMModel.TYPE_PACKAGINGLIST; 
+			listQName = PLMModel.TYPE_PACKAGINGLIST;
 		} else if (associationName.equals(MPMModel.ASSOC_PL_RESOURCE)) {
 			listQName = MPMModel.TYPE_PROCESSLIST;
 		}
 
 		return listQName;
 	}
-
-	
 
 }
