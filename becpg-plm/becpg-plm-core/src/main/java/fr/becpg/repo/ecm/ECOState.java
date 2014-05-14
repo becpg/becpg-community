@@ -22,12 +22,8 @@ public enum ECOState {
 	Automatic,
 	ToCalculateWUsed,
 	WUsedCalculated,
-	ToValidate,
-	Valid,
-	Refused,
-	ToSimulate,
 	Simulated,
-	ToApply,
-	Applied			
+	Applied, 
+	InError			
 	
 }

@@ -43,7 +43,9 @@ public class ChangeUnitDataItem extends BeCPGDataObject {
 	private Boolean treated;
 	private NodeRef sourceItem;
 	private NodeRef targetItem;
-
+	private String errorMsg;
+	
+	
 	@AlfProp
 	@AlfQname(qname = "ecm:culRevision")
 	public RevisionType getRevision() {
@@ -99,10 +101,20 @@ public class ChangeUnitDataItem extends BeCPGDataObject {
 	public NodeRef getTargetItem() {
 		return targetItem;
 	}
-
+	
 	@Deprecated
 	public void setTargetItem(NodeRef targetItem) {
 		this.targetItem = targetItem;
+	}
+	
+	@AlfProp
+	@AlfQname(qname = "ecm:culReqError")
+	public String getErrorMsg() {
+		return errorMsg;
+	}
+
+	public void setErrorMsg(String errorMsg) {
+		this.errorMsg = errorMsg;
 	}
 
 	public ChangeUnitDataItem() {
@@ -117,6 +129,7 @@ public class ChangeUnitDataItem extends BeCPGDataObject {
 		this.treated = treated;
 		this.sourceItem = sourceItem;
 		this.targetItem = targetItem;
+		this.errorMsg = null;
 	}
 
 
@@ -124,6 +137,7 @@ public class ChangeUnitDataItem extends BeCPGDataObject {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
+		result = prime * result + ((errorMsg == null) ? 0 : errorMsg.hashCode());
 		result = prime * result + ((reqDetails == null) ? 0 : reqDetails.hashCode());
 		result = prime * result + ((reqType == null) ? 0 : reqType.hashCode());
 		result = prime * result + ((revision == null) ? 0 : revision.hashCode());
@@ -142,6 +156,11 @@ public class ChangeUnitDataItem extends BeCPGDataObject {
 		if (getClass() != obj.getClass())
 			return false;
 		ChangeUnitDataItem other = (ChangeUnitDataItem) obj;
+		if (errorMsg == null) {
+			if (other.errorMsg != null)
+				return false;
+		} else if (!errorMsg.equals(other.errorMsg))
+			return false;
 		if (reqDetails == null) {
 			if (other.reqDetails != null)
 				return false;
@@ -171,8 +190,8 @@ public class ChangeUnitDataItem extends BeCPGDataObject {
 
 	@Override
 	public String toString() {
-		return "ChangeUnitDataItem [revision=" + revision + ", reqType=" + reqType + ", reqDetails=" + reqDetails + ", treated=" + treated + ", sourceItem=" + sourceItem
-				+ ", targetItem=" + targetItem + "]";
+		return "ChangeUnitDataItem [revision=" + revision + ", reqType=" + reqType + ", reqDetails=" + reqDetails + ", treated=" + treated
+				+ ", sourceItem=" + sourceItem + ", targetItem=" + targetItem + ", errorMsg=" + errorMsg + "]";
 	}
 
 }

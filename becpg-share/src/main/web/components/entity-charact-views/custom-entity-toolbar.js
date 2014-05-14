@@ -71,7 +71,7 @@
                   {
                      actionName : "eco-do-simulation",
                      evaluate : function(asset, entity) {
-                        return asset.name !== null && (asset.name === "replacementList" || asset.name === "calculatedCharactList") && entity != null && entity.userAccess.edit;
+                        return asset.name !== null && (asset.name === "replacementList" || asset.name === "changeUnitList" || asset.name === "calculatedCharactList") && entity != null && entity.userAccess.edit;
                      },
                      fn : function(instance) {
 
@@ -117,7 +117,7 @@
                   {
                      actionName : "eco-apply",
                      evaluate : function(asset, entity) {
-                        return asset.name !== null && (asset.name === "replacementList") && entity != null && entity.userAccess.edit;
+                        return asset.name !== null && (asset.name === "replacementList" || asset.name === "changeUnitList" ) && entity != null && entity.userAccess.edit;
                      },
                      fn : function(instance) {
 

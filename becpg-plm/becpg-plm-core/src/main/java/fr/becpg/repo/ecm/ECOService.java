@@ -35,6 +35,4 @@ public interface ECOService {
 	public void doSimulation(NodeRef ecoNodeRef);
 
 	
-	
-	//public NodeRef getOrCreateAutomaticECO();
 }

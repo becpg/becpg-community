@@ -80,6 +80,34 @@
 			<indicator id="entity-archived" index="10">
 				<evaluator>evaluator.becpg.doclib.indicator.entity.archived</evaluator>
 			</indicator>
+			
+			<!-- ECM -->
+			<indicator id="ecm-automatic"  index="15">
+				<evaluator>evaluator.becpg.doclib.indicator.ecm.automatic</evaluator>
+			</indicator>
+			
+			<indicator id="ecm-tocalculatewused" index="15">
+				<evaluator>evaluator.becpg.doclib.indicator.ecm.toCalculateWUsed
+				</evaluator>
+			</indicator>
+			
+			<indicator id="ecm-wusedcalculated" index="15">
+				<evaluator>evaluator.becpg.doclib.indicator.ecm.wUsedCalculated
+				</evaluator>
+			</indicator>
+			
+			<indicator id="ecm-simulated" index="15">
+				<evaluator>evaluator.becpg.doclib.indicator.ecm.simulated</evaluator>
+			</indicator>
+			<indicator id="ecm-applied"    index="15">
+				<evaluator>evaluator.becpg.doclib.indicator.ecm.applied</evaluator>
+			</indicator>
+			
+			<indicator id="ecm-inerror"    index="15">
+				<evaluator>evaluator.becpg.doclib.indicator.ecm.inError</evaluator>
+			</indicator>	
+				
+			
 		</indicators>
 		<!-- File upload configuration -->
 		<file-upload>
