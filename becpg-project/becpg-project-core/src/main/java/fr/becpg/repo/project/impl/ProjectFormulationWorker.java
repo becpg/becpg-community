@@ -39,66 +39,60 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 public class ProjectFormulationWorker {
 
 	private static Log logger = LogFactory.getLog(ProjectFormulationWorker.class);
-	
+
 	private ProjectService projectService;
 	private BehaviourFilter policyBehaviourFilter;
 	private TransactionService transactionService;
-	
+
 	public void setProjectService(ProjectService projectService) {
 		this.projectService = projectService;
 	}
+
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
-	
+
 	public void setTransactionService(TransactionService transactionService) {
 		this.transactionService = transactionService;
 	}
-	
-	public void executeFormulation(){
-		
-		final RetryingTransactionHelper txHelper = transactionService.getRetryingTransactionHelper();
-        txHelper.setMaxRetries(1);
-        txHelper.doInTransaction(new RetryingTransactionCallback<Object>(){
-        	
-        	public Object execute() throws Throwable{
-        		
-        		
-        		
-        		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery()
-        				.ofType(ProjectModel.TYPE_PROJECT)
-        				.andPropEquals(ProjectModel.PROP_PROJECT_STATE, ProjectState.InProgress.toString());
-        		
-        		List<NodeRef> projectNodeRefs = queryBuilder.list();
-        		
-        		// query
-        		 queryBuilder = BeCPGQueryBuilder.createQuery()
-         				.ofType(ProjectModel.TYPE_PROJECT)
-         				.andPropEquals(ProjectModel.PROP_PROJECT_STATE, ProjectState.Planned.toString())
-         				.andBetween(ProjectModel.PROP_PROJECT_START_DATE, "MIN", ISO8601DateFormat.format(new Date()));
-        		
-        		 projectNodeRefs.addAll(queryBuilder.list());
-        		 
-        		try{
-        			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
-        			
-        			for(NodeRef projectNodeRef : projectNodeRefs){
-        				try {
-        					if(logger.isDebugEnabled()){
-        						logger.debug("Formulate project " + projectNodeRef);
-        					}
-        					projectService.formulate(projectNodeRef);
-        				} catch (FormulateException e) {
-        					logger.error("Failed to formulate project " + projectNodeRef, e);
-        				}
-        			}
-        		}
-        		finally{
-        			
-        			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
-        		}
-        		return null;
-            }
-        }, false, true);		
+
+	public void executeFormulation() {
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Object>() {
+
+			public Object execute() throws Throwable {
+
+				BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_PROJECT)
+						.andPropEquals(ProjectModel.PROP_PROJECT_STATE, ProjectState.InProgress.toString());
+
+				List<NodeRef> projectNodeRefs = queryBuilder.list();
+
+				// query
+				queryBuilder = BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_PROJECT)
+						.andPropEquals(ProjectModel.PROP_PROJECT_STATE, ProjectState.Planned.toString())
+						.andBetween(ProjectModel.PROP_PROJECT_START_DATE, "MIN", ISO8601DateFormat.format(new Date()));
+
+				projectNodeRefs.addAll(queryBuilder.list());
+
+				try {
+					policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+
+					for (NodeRef projectNodeRef : projectNodeRefs) {
+						try {
+							if (logger.isDebugEnabled()) {
+								logger.debug("Formulate project " + projectNodeRef);
+							}
+							projectService.formulate(projectNodeRef);
+						} catch (FormulateException e) {
+							logger.error("Failed to formulate project " + projectNodeRef, e);
+						}
+					}
+				} finally {
+
+					policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+				}
+				return null;
+			}
+		}, false, true);
 	}
 }
