@@ -134,7 +134,7 @@ if (beCPG.module.EntityDataGridRenderers) {
       renderer : function(oRecord, data, label, scope) {
 
          if (data.displayValue != null) {
-            return scope.msg("data.revisiontype." + data.displayValue.toLowerCase());
+            return scope.msg("data.revisiontype." + data.value.toLowerCase());
          }
          return Alfresco.util.encodeHTML(data.displayValue);
 

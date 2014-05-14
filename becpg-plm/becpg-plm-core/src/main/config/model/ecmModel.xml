@@ -67,7 +67,7 @@
 				<property name="ecm:ecoState">
 					<type>d:text</type>
 					<multiple>false</multiple>
-					<default>ToValidate</default>
+					<default>ToCalculateWUsed</default>
 					<constraints>
 						<constraint ref="ecm:ecoStates" />
 					</constraints>
