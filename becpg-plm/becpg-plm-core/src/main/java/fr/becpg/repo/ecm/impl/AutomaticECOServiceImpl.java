@@ -160,8 +160,6 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 				if (ret) {
 					return transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
 						public Boolean execute() throws Throwable {
-							NodeRef parentNodeRef = getChangeOrderFolder();
-							NodeRef ecoNodeRef = getAutomaticECONoderef(parentNodeRef);
 							if (logger.isDebugEnabled()) {
 								logger.debug("Found automatic change order to apply :" + ecoNodeRef);
 							}

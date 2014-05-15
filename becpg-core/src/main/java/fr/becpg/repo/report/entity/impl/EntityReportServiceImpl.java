@@ -56,13 +56,14 @@ import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AssociationService;
-import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
 import fr.becpg.repo.report.entity.EntityReportData;
 import fr.becpg.repo.report.entity.EntityReportExtractor;
 import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
+import fr.becpg.repo.repository.L2CacheSupport;
+import fr.becpg.repo.repository.L2CacheSupport.Action;
 import fr.becpg.report.client.ReportException;
 import fr.becpg.report.client.ReportFormat;
 import fr.becpg.report.client.ReportParams;
@@ -104,8 +105,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 	private Map<String, EntityReportExtractor> entityExtractors = new HashMap<String, EntityReportExtractor>();
 
 	private EntityService entityService;
-	
-	//private Striped<Lock> stripedLocs = Striped.lazyWeakLock(20);
+
+	// private Striped<Lock> stripedLocs = Striped.lazyWeakLock(20);
 
 	@Override
 	public void registerExtractor(String typeName, EntityReportExtractor extractor) {
@@ -167,49 +168,45 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	@Override
 	public void generateReport(final NodeRef entityNodeRef) {
-//		Lock lock = stripedLocs.get(entityNodeRef);
-//		if (logger.isDebugEnabled()) {
-//			logger.debug("Acquire lock for: " + entityNodeRef + " - " + Thread.currentThread().getName());
-//		}
-//		lock.lock();
-//		try {
-			RunAsWork<Object> actionRunAs = new RunAsWork<Object>() {
-				@Override
-				public Object doWork() throws Exception {
-					RetryingTransactionCallback<Object> actionCallback = new RetryingTransactionCallback<Object>() {
-						@Override
-						public Object execute() {
-							if (nodeService.exists(entityNodeRef)) {
-								try {
-									policyBehaviourFilter.disableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
-									policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
-									policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
+		RunAsWork<Object> actionRunAs = new RunAsWork<Object>() {
+			@Override
+			public Object doWork() throws Exception {
+				RetryingTransactionCallback<Object> actionCallback = new RetryingTransactionCallback<Object>() {
+					@Override
+					public Object execute() {
+						if (nodeService.exists(entityNodeRef)) {
+							try {
+								policyBehaviourFilter.disableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
+								policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
+								policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
 
-									if (logger.isDebugEnabled()) {
-										logger.debug("Generate report: " + entityNodeRef + " - " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
-									}
-
-									generateReportImpl(entityNodeRef);
-
-								} finally {
-									policyBehaviourFilter.enableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
-									policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
-									policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
+								if (logger.isDebugEnabled()) {
+									logger.debug("Generate report: " + entityNodeRef + " - "
+											+ nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
 								}
+
+								L2CacheSupport.doInCacheContext(new Action() {
+
+									public void run() {
+										generateReportImpl(entityNodeRef);
+
+									}
+								}, false, true);
+
+							} finally {
+								policyBehaviourFilter.enableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
+								policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
+								policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
 							}
-							return null;
 						}
-					};
-					return transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, false, false);
-				}
-			};
-			AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getSystemUserName());
-//		} finally {
-//			lock.unlock();
-//			if (logger.isDebugEnabled()) {
-//				logger.debug("Release lock for: " + entityNodeRef + " - " + Thread.currentThread().getName());
-//			}
-//		}
+						return null;
+					}
+				};
+				return transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, false, true);
+			}
+		};
+		AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getSystemUserName());
+
 	}
 
 	private void generateReportImpl(NodeRef entityNodeRef) {
@@ -276,8 +273,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 	}
 
 	private NodeRef getReportDocumenNodeRef(NodeRef entityNodeRef, NodeRef tplNodeRef, String documentName) {
-		
-		NodeRef documentsFolderNodeRef = entityService.getOrCreateDocumentsFolder(entityNodeRef);		
+
+		NodeRef documentsFolderNodeRef = entityService.getOrCreateDocumentsFolder(entityNodeRef);
 		NodeRef documentNodeRef = nodeService.getChildByName(documentsFolderNodeRef, ContentModel.ASSOC_CONTAINS, documentName);
 		if (documentNodeRef == null) {
 			documentNodeRef = fileFolderService.create(documentsFolderNodeRef, documentName, ReportModel.TYPE_REPORT).getNodeRef();
@@ -327,37 +324,37 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 			NodeRef documentNodeRef = getReportDocumenNodeRef(entityNodeRef, tplNodeRef, documentName);
 
-				if (documentNodeRef != null) {
-					// Run report
-					try {
-						policyBehaviourFilter.disableBehaviour(documentNodeRef, ContentModel.ASPECT_AUDITABLE);
-						
-						ContentWriter writer = contentService.getWriter(documentNodeRef, ContentModel.PROP_CONTENT, true);
-	
-						if (writer != null) {
-							String mimetype = mimetypeService.guessMimetype(documentName);
-							writer.setMimetype(mimetype);
-							Map<String, Object> params = new HashMap<String, Object>();
-	
-							params.put(ReportParams.PARAM_IMAGES, images);
-							params.put(ReportParams.PARAM_FORMAT, ReportFormat.valueOf(reportFormat));
-	
-							logger.debug("beCPGReportEngine createReport: " + entityNodeRef);
-							beCPGReportEngine.createReport(tplNodeRef, nodeElt, writer.getContentOutputStream(), params);
-							
-							nodeService.setProperty(documentNodeRef, ContentModel.PROP_MODIFIED, new Date());
-						}
-					
-					} catch (ReportException e) {
-						logger.error("Failed to execute report for template : " + tplNodeRef, e);
-					} finally {
-						policyBehaviourFilter.enableBehaviour(documentNodeRef, ContentModel.ASPECT_AUDITABLE);
+			if (documentNodeRef != null) {
+				// Run report
+				try {
+					policyBehaviourFilter.disableBehaviour(documentNodeRef, ContentModel.ASPECT_AUDITABLE);
+
+					ContentWriter writer = contentService.getWriter(documentNodeRef, ContentModel.PROP_CONTENT, true);
+
+					if (writer != null) {
+						String mimetype = mimetypeService.guessMimetype(documentName);
+						writer.setMimetype(mimetype);
+						Map<String, Object> params = new HashMap<String, Object>();
+
+						params.put(ReportParams.PARAM_IMAGES, images);
+						params.put(ReportParams.PARAM_FORMAT, ReportFormat.valueOf(reportFormat));
+
+						logger.debug("beCPGReportEngine createReport: " + entityNodeRef);
+						beCPGReportEngine.createReport(tplNodeRef, nodeElt, writer.getContentOutputStream(), params);
+
+						nodeService.setProperty(documentNodeRef, ContentModel.PROP_MODIFIED, new Date());
 					}
-	
-					// Set Assoc
-					newReports.add(documentNodeRef);
+
+				} catch (ReportException e) {
+					logger.error("Failed to execute report for template : " + tplNodeRef, e);
+				} finally {
+					policyBehaviourFilter.enableBehaviour(documentNodeRef, ContentModel.ASPECT_AUDITABLE);
 				}
-			
+
+				// Set Assoc
+				newReports.add(documentNodeRef);
+			}
+
 		}
 
 		updateReportsAssoc(entityNodeRef, newReports);
@@ -367,7 +364,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 		// #417 : refresh reports assoc (delete obsolete reports if we rename
 		// entity)
-		if(!nodeService.hasAspect(entityNodeRef,ContentModel.ASPECT_WORKING_COPY)) {
+		if (!nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_WORKING_COPY)) {
 			List<NodeRef> dbReports = associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS, false);
 			for (NodeRef dbReport : dbReports) {
 				if (!newReports.contains(dbReport)) {

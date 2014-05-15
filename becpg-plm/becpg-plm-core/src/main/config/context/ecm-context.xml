@@ -48,6 +48,7 @@
   <!-- ChangeOrder Webscript -->
   <bean id="webscript.fr.becpg.ecm.changeOrder.get" class="fr.becpg.repo.web.scripts.ecm.ChangeOrderWebScript" parent="webscript">
       	<property name="ecoService" ref="ecoService" />
+      	<property name="asyncECOService" ref="asyncECOService"/>
    	</bean>
    	
    	<!--  Policies -->
@@ -57,6 +58,22 @@
 	</bean>
 	
 	<!-- Cron -->
+	<bean id="ecoAsyncThreadPool" class="org.alfresco.util.ThreadPoolExecutorFactoryBean">
+        <property name="poolName">
+            <value>ecoAsyncThreadPool</value>
+        </property>
+        <property name="corePoolSize">
+            <value>1</value>
+        </property>
+        <property name="maximumPoolSize">
+            <value>5</value>
+        </property>
+        <property name="threadPriority">
+            <value>1</value>
+        </property>
+    </bean>
+	
+	
 	 <bean id="automaticECOJob" class="org.springframework.scheduling.quartz.JobDetailBean">
         <property name="jobClass">
             <value>fr.becpg.repo.ecm.AutomaticECOJob</value>

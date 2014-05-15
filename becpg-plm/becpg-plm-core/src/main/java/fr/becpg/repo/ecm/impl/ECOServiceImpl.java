@@ -44,8 +44,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.util.StopWatch;
 
-import com.hazelcast.util.ConcurrentHashSet;
-
 import fr.becpg.model.MPMModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.RepoConsts;
@@ -93,7 +91,6 @@ public class ECOServiceImpl implements ECOService {
 
 	private ProductService productService;
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
-
 
 	public void setTransactionService(TransactionService transactionService) {
 		this.transactionService = transactionService;
@@ -296,40 +293,48 @@ public class ECOServiceImpl implements ECOService {
 
 	private ChangeUnitDataItem getOrCreateChangeUnitDataItem(ChangeOrderData ecoData, WUsedListDataItem data) {
 
-		ChangeUnitDataItem changeUnitDataItem = ecoData.getChangeUnitMap().get(data.getSourceItems().get(0));
-
-		if (logger.isDebugEnabled()) {
-			logger.debug("Get ChangeUnit for " + nodeService.getProperty(data.getSourceItems().get(0), ContentModel.PROP_NAME));
-		}
-
-		RevisionType revisionType = RevisionType.NoRevision;
-
-		for (ReplacementListDataItem replacementListDataItem : ecoData.getReplacementList()) {
-			if (replacementListDataItem.getSourceItems().equals(data.getRoot().getSourceItems())) {
-				if (RevisionType.Major.equals(replacementListDataItem.getRevision())) {
-					revisionType = RevisionType.Major;
-					break;
-				} else if (RevisionType.Minor.equals(replacementListDataItem.getRevision())) {
-					revisionType = RevisionType.Minor;
+		if(data.getSourceItems().size()>0){
+		
+			ChangeUnitDataItem changeUnitDataItem = ecoData.getChangeUnitMap().get(data.getSourceItems().get(0));
+	
+			if (logger.isDebugEnabled()) {
+				logger.debug("Get ChangeUnit for " + nodeService.getProperty(data.getSourceItems().get(0), ContentModel.PROP_NAME));
+			}
+	
+			RevisionType revisionType = RevisionType.NoRevision;
+	
+			for (ReplacementListDataItem replacementListDataItem : ecoData.getReplacementList()) {
+				if (replacementListDataItem.getSourceItems().equals(data.getRoot().getSourceItems())) {
+					if (RevisionType.Major.equals(replacementListDataItem.getRevision())) {
+						revisionType = RevisionType.Major;
+						break;
+					} else if (RevisionType.Minor.equals(replacementListDataItem.getRevision())) {
+						revisionType = RevisionType.Minor;
+					}
 				}
 			}
-		}
-
-		if (changeUnitDataItem == null) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Not found creating changeUnit");
+	
+			if (changeUnitDataItem == null) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Not found creating changeUnit");
+				}
+				changeUnitDataItem = new ChangeUnitDataItem(revisionType, null, null, Boolean.FALSE, data.getSourceItems().get(0), null);
+				ecoData.getChangeUnitList().add(changeUnitDataItem);
+	
+			} else {
+				if (RevisionType.Major.equals(revisionType)
+						|| (RevisionType.Minor.equals(revisionType) && RevisionType.NoRevision.equals(changeUnitDataItem.getRevision()))) {
+					changeUnitDataItem.setRevision(revisionType);
+				}
 			}
-			changeUnitDataItem = new ChangeUnitDataItem(revisionType, null, null, Boolean.FALSE, data.getSourceItems().get(0), null);
-			ecoData.getChangeUnitList().add(changeUnitDataItem);
+			return changeUnitDataItem;
+		} 
+		
+		logger.error("Wused data has no source item :"+data.toString());
+		
+		return null;
 
-		} else {
-			if (RevisionType.Major.equals(revisionType)
-					|| (RevisionType.Minor.equals(revisionType) && RevisionType.NoRevision.equals(changeUnitDataItem.getRevision()))) {
-				changeUnitDataItem.setRevision(revisionType);
-			}
-		}
-
-		return changeUnitDataItem;
+	
 	}
 
 	private boolean visitChildrens(Composite<WUsedListDataItem> composite, final ChangeOrderData ecoData, final boolean isSimulation) {
@@ -363,41 +368,41 @@ public class ECOServiceImpl implements ECOService {
 
 							if (productNodeRef != null) {
 
-									ProductData productToFormulateData = (ProductData) alfrescoRepository.findOne(productNodeRef);
+								ProductData productToFormulateData = (ProductData) alfrescoRepository.findOne(productNodeRef);
 
-									if (isSimulation) {
-										// Before formulate we create simulation
-										// List
-										createCalculatedCharactValues(ecoData, productToFormulateData);
-									}
+								if (isSimulation) {
+									// Before formulate we create simulation
+									// List
+									createCalculatedCharactValues(ecoData, productToFormulateData);
+								}
 
-									// Level 2
-									if (component.getData().getDepthLevel() == 2) {
-										applyReplacementList(ecoData, productToFormulateData);
-									}
-									// } else {
-									// // Level 3 OR more
-									// applyImpactedProductsData(ecoData,
-									// changeUnitDataItem,
-									// productToFormulateData);
-									// }
+								// Level 2
+								if (component.getData().getDepthLevel() == 2) {
+									applyReplacementList(ecoData, productToFormulateData);
+								}
+								// } else {
+								// // Level 3 OR more
+								// applyImpactedProductsData(ecoData,
+								// changeUnitDataItem,
+								// productToFormulateData);
+								// }
 
-									try {
-										productService.formulate(productToFormulateData);
-									} catch (FormulateException e) {
-										logger.warn("Failed to formulate product. NodeRef: " + productToFormulateData.getNodeRef(), e);
-									}
+								try {
+									productService.formulate(productToFormulateData);
+								} catch (FormulateException e) {
+									logger.warn("Failed to formulate product. NodeRef: " + productToFormulateData.getNodeRef(), e);
+								}
 
-									if (isSimulation) {
-										// update simulation List
-										updateCalculatedCharactValues(ecoData, productToFormulateData);
-									}
+								if (isSimulation) {
+									// update simulation List
+									updateCalculatedCharactValues(ecoData, productToFormulateData);
+								}
 
-									// check req
-									checkRequirements(changeUnitDataItem, productToFormulateData);
+								// check req
+								checkRequirements(changeUnitDataItem, productToFormulateData);
 
-									alfrescoRepository.save(productToFormulateData);
-								
+								alfrescoRepository.save(productToFormulateData);
+
 							} else {
 								logger.warn("Product to impact is empty");
 							}
@@ -450,7 +455,6 @@ public class ECOServiceImpl implements ECOService {
 
 		return true;
 	}
-
 
 	private boolean shouldSkipCurrentBranch(ChangeOrderData ecoData, ChangeUnitDataItem changeUnitDataItem) {
 
@@ -601,48 +605,43 @@ public class ECOServiceImpl implements ECOService {
 			// Create a new revision if apply else use
 			if (!isSimulation) {
 
-					/*
-					 * manage revision
-					 */
-					if (!changeUnitDataItem.getRevision().equals(RevisionType.NoRevision)) {
+				/*
+				 * manage revision
+				 */
+				if (!changeUnitDataItem.getRevision().equals(RevisionType.NoRevision)) {
 
-						if (!nodeService.hasAspect(productToImpact, ContentModel.ASPECT_VERSIONABLE)) {
-							transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+					if (!nodeService.hasAspect(productToImpact, ContentModel.ASPECT_VERSIONABLE)) {
+						transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 
-								@Override
-								public NodeRef execute() throws Throwable {
-									try {
-										logger.debug("Add ASPECT_VERSIONABLE");
-										Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>();
-										aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
-										nodeService.addAspect(productToImpact, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
-										return productToImpact;
-									} catch (Throwable e) {
-										logger.error(e, e);
-										throw e;
-									}
-								}
+							@Override
+							public NodeRef execute() throws Throwable {
+									logger.debug("Add versionnable aspect");
+									Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>();
+									aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
+									nodeService.addAspect(productToImpact, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
+									return productToImpact;
+							}
 
-							}, false, true);
+						}, false, true);
 
-						}
-
-						VersionType versionType = changeUnitDataItem.getRevision().equals(RevisionType.Major) ? VersionType.MAJOR : VersionType.MINOR;
-
-						logger.debug("Create new version :" + versionType);
-
-						logger.debug("Checkout");
-						// checkout
-						NodeRef workingCopyNodeRef = checkOutCheckInService.checkout(productToImpact);
-
-						logger.debug("Checkin");
-						// checkin
-						Map<String, Serializable> properties = new HashMap<String, Serializable>();
-						properties.put(VersionModel.PROP_VERSION_TYPE, versionType);
-						properties.put(Version.PROP_DESCRIPTION, I18NUtil.getMessage("plm.ecm.apply.version.label", ecoData.getCode()));
-
-						return checkOutCheckInService.checkin(workingCopyNodeRef, properties);
 					}
+
+					VersionType versionType = changeUnitDataItem.getRevision().equals(RevisionType.Major) ? VersionType.MAJOR : VersionType.MINOR;
+
+					logger.debug("Create new version :" + versionType);
+
+					logger.debug("Checkout");
+					// checkout
+					NodeRef workingCopyNodeRef = checkOutCheckInService.checkout(productToImpact);
+
+					logger.debug("Checkin");
+					// checkin
+					Map<String, Serializable> properties = new HashMap<String, Serializable>();
+					properties.put(VersionModel.PROP_VERSION_TYPE, versionType);
+					properties.put(Version.PROP_DESCRIPTION, I18NUtil.getMessage("plm.ecm.apply.version.label", ecoData.getCode()));
+
+					return checkOutCheckInService.checkin(workingCopyNodeRef, properties);
+				}
 			}
 
 			// TODO mettre à jour les wUsedLink
@@ -758,10 +757,15 @@ public class ECOServiceImpl implements ECOService {
 	}
 
 	@Override
-	public void setInProgress(NodeRef ecoNodeRef) {
+	public Boolean setInProgress(NodeRef ecoNodeRef) {
 		ChangeOrderData om = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
-		om.setEcoState(ECOState.InProgress);
-		alfrescoRepository.save(om);
+		if (!ECOState.InProgress.equals(om.getEcoState())) {
+			om.setEcoState(ECOState.InProgress);
+			alfrescoRepository.save(om);
+			return true;
+		}
+
+		return false;
 	}
 
 }

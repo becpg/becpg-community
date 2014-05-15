@@ -99,15 +99,20 @@
 			<indicator id="ecm-simulated" index="15">
 				<evaluator>evaluator.becpg.doclib.indicator.ecm.simulated</evaluator>
 			</indicator>
-			<indicator id="ecm-applied"    index="15">
+			
+			<indicator id="ecm-applied"  index="15">
 				<evaluator>evaluator.becpg.doclib.indicator.ecm.applied</evaluator>
 			</indicator>
 			
-			<indicator id="ecm-inerror"    index="15">
+			<indicator id="ecm-inerror"  index="15">
 				<evaluator>evaluator.becpg.doclib.indicator.ecm.inError</evaluator>
 			</indicator>	
 				
-			
+			<indicator id="ecm-inprogress"   index="15">
+				<evaluator>evaluator.becpg.doclib.indicator.ecm.inProgress</evaluator>
+			</indicator>	
+				
+
 		</indicators>
 		<!-- File upload configuration -->
 		<file-upload>
