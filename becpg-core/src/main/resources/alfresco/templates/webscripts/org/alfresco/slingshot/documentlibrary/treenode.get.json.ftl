@@ -16,7 +16,7 @@
    "items":
    [
    <#list treenode.items as item>
-   	<#if item.node.hasAspect('cm:checkedOut') == false && item_index &lt; 25 >
+   	<#if item.node.hasAspect('cm:checkedOut') == false >
 	      <#assign t = item.node>
 	      {
 	         "nodeRef": "${t.nodeRef}",
@@ -36,7 +36,7 @@
 	         </#list>
 	         ],
 	         "type":"${shortQName(t.type)}"
-	      }<#if item_has_next && item_index &lt; 24 >,</#if>
+	      }<#if item_has_next>,</#if>
       </#if>
    </#list>
    ]
