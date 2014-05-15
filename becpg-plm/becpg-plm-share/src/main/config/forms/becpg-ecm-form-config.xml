@@ -58,9 +58,9 @@
 					<show id="cm:description" />
 					<show id="cm:titled" />
 					<show id="bcpg:code" />
-					<show id="ecm:ecoState" read-only="true"/>
-					<show id="ecm:effectiveDate" read-only="true"/>
-					<show id="ecm:ecoType" read-only="true"/>
+					<show id="ecm:ecoState" />
+					<show id="ecm:effectiveDate" />
+					<show id="ecm:ecoType" />
 					<show id="ecm:calculatedCharacts" />							
 					
 					<!-- auditable -->
@@ -179,6 +179,24 @@
 					<show id="ecm:isWUsedImpacted" />
 					<show id="ecm:impactedDataList" />		
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:depthLevel" read-only="true"/>
+					<field id="ecm:wulSourceItems" read-only="true"/>
+					<field id="ecm:impactedDataList" read-only="true"/>	
+				</appearance>
+			</form>
+			<form id="filter">
+				<field-visibility>
+					<show id="bcpg:depthLevel" />
+					<show id="ecm:isWUsedImpacted" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:depthLevel">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">1|1,2|2,3|3,4|4,All|data.level.all</control-param>
+						</control>
+					</field>
+				</appearance>
 			</form>
 		</forms>
 	</config>
@@ -188,11 +206,16 @@
 			<!-- Data List pop-up edit form -->
 			<form>
 				<field-visibility>
-					<show id="ecm:impactedDataList" />
-					<show id="ecm:isWUsedImpacted" />
-					<show id="ecm:wulSourceItems" />				
+				    <show id="ecm:isWUsedImpacted" />
+					<show id="ecm:wulSourceItems" />
+					<show id="ecm:impactedDataList" />			
 				</field-visibility>
-				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
+				<appearance>
+					<field id="ecm:wulSourceItems" read-only="true"/>
+					<field id="ecm:impactedDataList" read-only="true">
+						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					</field>	
+				</appearance>
 			</form>
 		</forms>
 	</config>
@@ -229,7 +252,10 @@
 					<show id="ecm:culTreated" />
 					<show id="ecm:culReqType" />
 					<show id="ecm:culReqDetails" />		
-				</field-visibility>				
+				</field-visibility>
+				<appearance>
+					<field id="ecm:culReqError" label="hidden" />
+				</appearance>				
 			</form>
 		</forms>
 	</config>

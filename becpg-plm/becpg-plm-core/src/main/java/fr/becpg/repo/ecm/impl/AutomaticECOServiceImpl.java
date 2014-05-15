@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.transaction.TransactionService;
@@ -56,6 +55,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 
 	@Override
 	public ChangeOrderData addAutomaticChangeEntry(NodeRef entityNodeRef) {
+	
 		NodeRef parentNodeRef = getChangeOrderFolder();
 		ChangeOrderData changeOrderData = new ChangeOrderData(generateEcoName(), ECOState.Automatic, ChangeOrderType.Simulation, null);
 
@@ -116,31 +116,66 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 
 	@Override
 	public boolean applyAutomaticEco() {
+
+		boolean ret = false;
+
 		if (shouldApplyAutomaticECO) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Try to apply automatic change order");
 			}
-			final RetryingTransactionHelper txHelper = transactionService.getRetryingTransactionHelper();
-			txHelper.setMaxRetries(1);
-			return txHelper.doInTransaction(new RetryingTransactionCallback<Boolean>() {
-				public Boolean execute() throws Throwable {
+
+			final NodeRef ecoNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+				public NodeRef execute() throws Throwable {
 					NodeRef parentNodeRef = getChangeOrderFolder();
-					NodeRef ecoNodeRef = getAutomaticECONoderef(parentNodeRef);
-					if (ecoNodeRef != null) {
+					return getAutomaticECONoderef(parentNodeRef);
+				}
+			}, false, true);
+
+			if (ecoNodeRef != null) {
+
+				transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
+					public Boolean execute() throws Throwable {
+						ecoService.setInProgress(ecoNodeRef);
+						return true;
+					}
+				}, false, true);
+
+				ret = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
+					public Boolean execute() throws Throwable {
+
 						if (logger.isDebugEnabled()) {
-							logger.debug("Found automatic change order to apply :" + ecoNodeRef);
+							logger.debug("Found automatic change order to calculate WUsed :" + ecoNodeRef);
 						}
 						try {
 							ecoService.calculateWUsedList(ecoNodeRef, true);
-							ecoService.apply(ecoNodeRef);
-						} catch(Exception e){
-							logger.error(e,e);
+						} catch (Exception e) {
+							logger.error(e, e);
+							return false;
 						}
 						return true;
+
 					}
-					return false;
+				}, false, true);
+
+				if (ret) {
+					return transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
+						public Boolean execute() throws Throwable {
+							NodeRef parentNodeRef = getChangeOrderFolder();
+							NodeRef ecoNodeRef = getAutomaticECONoderef(parentNodeRef);
+							if (logger.isDebugEnabled()) {
+								logger.debug("Found automatic change order to apply :" + ecoNodeRef);
+							}
+							try {
+								ecoService.apply(ecoNodeRef);
+							} catch (Exception e) {
+								logger.error(e, e);
+								return false;
+							}
+							return true;
+						}
+					}, false, true);
 				}
-			}, false, true);
+			}
 		}
 		return false;
 	}

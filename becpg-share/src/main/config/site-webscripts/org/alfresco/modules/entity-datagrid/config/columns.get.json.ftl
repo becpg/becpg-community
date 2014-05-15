@@ -11,10 +11,16 @@
          <#else>
          "label": "",
          </#if>
-      <#if col.dataType??>
-       	 <#if col.protectedField??>
+         <#if col.mandatory??>
+         "mandatory": ${col.mandatory?string},
+         </#if>
+         <#if col.readOnly??>
+        	"readOnly": ${col.readOnly?string},
+         </#if>
+         	 <#if col.protectedField??>
          "protectedField": ${col.protectedField?string},
       	 </#if>
+      <#if col.dataType??>
           <#if col.constraints??>
           "constraints": [
                 <#list col.constraints as cnstrnt>
@@ -24,12 +30,6 @@
                   </#if>}<#if cnstrnt_has_next>,</#if>
               </#list>],
           </#if>
-         <#if col.mandatory??>
-         "mandatory": ${col.mandatory?string},
-         </#if>
-         <#if col.readOnly??>
-        	"readOnly": ${col.readOnly?string},
-         </#if>
          <#if col.repeating??>
          "repeating": ${col.repeating?string},
           </#if>

@@ -132,9 +132,18 @@ if (beCPG.module.EntityDataGridRenderers) {
    YAHOO.Bubbling.fire("registerDataGridRenderer", {
       propertyName : [ "ecm:rlRevisionType", "ecm:culRevision" ],
       renderer : function(oRecord, data, label, scope) {
+    	  
+    	  if (data.value != null) {
+    		  if(oRecord.getData("itemData")["prop_ecm_culReqError"]){
+	              var error = oRecord.getData("itemData")["prop_ecm_culReqError"].value;
+	              if (error == null) {
+	            	  return scope.msg("data.revisiontype." + data.value.toLowerCase());
+	              }
+    		  }
 
-         if (data.displayValue != null) {
-            return scope.msg("data.revisiontype." + data.value.toLowerCase());
+              return '<span class="lcl-formulated-error" title="' + Alfresco.util
+                    .encodeHTML(error) + '">' + scope.msg("data.revisiontype." + data.value.toLowerCase()) + '</span>';
+       
          }
          return Alfresco.util.encodeHTML(data.displayValue);
 
@@ -183,6 +192,8 @@ if (beCPG.module.EntityDataGridRenderers) {
       }
 
    });
+   
+   
 
    YAHOO.Bubbling
          .fire(

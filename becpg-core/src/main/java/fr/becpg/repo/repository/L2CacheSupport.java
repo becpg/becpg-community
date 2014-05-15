@@ -30,7 +30,7 @@ public class L2CacheSupport {
 
 	private static ThreadLocal<L2CacheThreadInfo> threadLocalCache = new ThreadLocal<L2CacheThreadInfo>() {
 		protected L2CacheThreadInfo initialValue() {
-			return new L2CacheThreadInfo(false,false);
+			return new L2CacheThreadInfo(false,false, false);
 		}
 	};
 
@@ -44,12 +44,14 @@ public class L2CacheSupport {
 
 		boolean isCacheOnlyEnable = false;
 		boolean isThreadCacheEnable = false;
+		boolean isThreadLockEnable = false;
 		Map<NodeRef, RepositoryEntity> cache = new HashMap<NodeRef, RepositoryEntity>();
 		
-		public L2CacheThreadInfo(boolean isCacheOnlyEnable, boolean isThreadCacheEnable) {
+		public L2CacheThreadInfo(boolean isCacheOnlyEnable, boolean isThreadCacheEnable, boolean isThreadLockEnable ) {
 			super();
 			this.isCacheOnlyEnable = isCacheOnlyEnable;
 			this.isThreadCacheEnable = isThreadCacheEnable;
+			this.isThreadLockEnable = isThreadLockEnable;
 		}
 
 	}
@@ -72,17 +74,30 @@ public class L2CacheSupport {
 	public static boolean isThreadCacheEnable() {
 		return threadLocalCache.get().isThreadCacheEnable;
 	}
+	
+	public static boolean isThreadLockEnable() {
+		return threadLocalCache.get().isThreadLockEnable;
+	}
 
 	public static void doInCacheContext(Action action, boolean isCacheOnlyEnable) {
 		try {
-			threadLocalCache.set(new L2CacheThreadInfo(isCacheOnlyEnable, true));
+			threadLocalCache.set(new L2CacheThreadInfo(isCacheOnlyEnable, true, false));
 			action.run();
 		}
 		finally {
 			threadLocalCache.remove();
 		}
-		
-		
 	}
+	
+	public static void doInCacheContext(Action action, boolean isCacheOnlyEnable,  boolean isThreadLockEnable ) {
+		try {
+			threadLocalCache.set(new L2CacheThreadInfo(isCacheOnlyEnable, true, isThreadLockEnable));
+			action.run();
+		}
+		finally {
+			threadLocalCache.remove();
+		}
+	}
+	
 
 }

@@ -734,7 +734,7 @@
 						 * @method _setupDataTable
 						 * @protected
 						 */
-						_setupPropsPicker : function BulkEdit__setupDataTable(columns) {
+						_setupPropsPicker : function BulkEdit__setupPropsPicker() {
 							var containerEl = Dom.get(this.id + "-itemProps-container"), html = "";
 							if (containerEl != null) {
 								var inc = 0;
