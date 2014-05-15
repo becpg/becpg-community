@@ -35,6 +35,7 @@
 			<parameter name="allowedValues">
 				<list>
 					<value>Automatic</value>
+					<value>InProgress</value>
 					<value>ToCalculateWUsed</value>
 					<value>WUsedCalculated</value>	
 					<value>Simulated</value>

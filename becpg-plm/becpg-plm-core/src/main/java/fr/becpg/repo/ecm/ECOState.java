@@ -24,6 +24,7 @@ public enum ECOState {
 	WUsedCalculated,
 	Simulated,
 	Applied, 
-	InError			
+	InError,
+	InProgress			
 	
 }

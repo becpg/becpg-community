@@ -34,5 +34,8 @@ public interface ECOService {
 	
 	public void doSimulation(NodeRef ecoNodeRef);
 
+	public void setInProgress(NodeRef ecoNodeRef);
+
+
 	
 }
