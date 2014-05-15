@@ -136,13 +136,13 @@ if (beCPG.module.EntityDataGridRenderers) {
     	  if (data.value != null) {
     		  if(oRecord.getData("itemData")["prop_ecm_culReqError"]){
 	              var error = oRecord.getData("itemData")["prop_ecm_culReqError"].value;
-	              if (error == null) {
-	            	  return scope.msg("data.revisiontype." + data.value.toLowerCase());
+	              if (error != null) {
+	            	  return '<span class="lcl-formulated-error" title="' + Alfresco.util
+	                    .encodeHTML(error) + '">' + scope.msg("data.revisiontype." + data.value.toLowerCase()) + '</span>';
 	              }
     		  }
-
-              return '<span class="lcl-formulated-error" title="' + Alfresco.util
-                    .encodeHTML(error) + '">' + scope.msg("data.revisiontype." + data.value.toLowerCase()) + '</span>';
+    		  return scope.msg("data.revisiontype." + data.value.toLowerCase());
+             
        
          }
          return Alfresco.util.encodeHTML(data.displayValue);

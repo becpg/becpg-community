@@ -13,6 +13,7 @@ import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
+import fr.becpg.repo.ecm.AsyncECOService;
 import fr.becpg.repo.ecm.ECOService;
 
 // TODO: Auto-generated Javadoc
@@ -43,6 +44,14 @@ public class ChangeOrderWebScript extends AbstractWebScript {
 	private static final String ACTION_APPLY = "apply";
 
 	private ECOService ecoService;
+	
+	private AsyncECOService asyncECOService;
+	
+	
+
+	public void setAsyncECOService(AsyncECOService asyncECOService) {
+		this.asyncECOService = asyncECOService;
+	}
 
 	public void setEcoService(ECOService ecoService) {
 		this.ecoService = ecoService;
@@ -69,9 +78,9 @@ public class ChangeOrderWebScript extends AbstractWebScript {
 		if (ACTION_CALCULATE_WUSED.equals(action)) {
 			ecoService.calculateWUsedList(ecoNodeRef,false);
 		} else if (ACTION_DO_SIMULATION.equals(action)) {
-			ecoService.doSimulation(ecoNodeRef);
+			asyncECOService.doSimulationAsync(ecoNodeRef);
 		} else if (ACTION_APPLY.equals(action)) {
-			ecoService.apply(ecoNodeRef);
+			asyncECOService.applyAsync(ecoNodeRef);
 		} else {
 			logger.error("Unknown action '" + action + "'.");
 		}

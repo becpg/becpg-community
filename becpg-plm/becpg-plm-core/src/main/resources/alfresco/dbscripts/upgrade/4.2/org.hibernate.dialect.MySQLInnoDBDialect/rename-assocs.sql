@@ -3,7 +3,7 @@
 -- Database:   MySQL
 -- Author:    matthieu
 
-INSERT IGNORE INTO alf_qname (ns_id,version,local_name) SELECT id,0, 'labelingLabelingTemplate' FROM alf_namespace WHERE uri = 'http://www.bcpg.fr/model/quality/1.0' ;
+INSERT IGNORE INTO alf_qname (ns_id,version,local_name) SELECT id,0, 'labelingLabelingTemplate' FROM alf_namespace WHERE uri = 'http://www.bcpg.fr/model/pack/1.0' ;
 INSERT IGNORE INTO alf_qname (ns_id,version,local_name) SELECT id,0, 'productMicrobioCriteriaRef' FROM alf_namespace WHERE uri = 'http://www.bcpg.fr/model/becpg/1.0';
 INSERT IGNORE INTO alf_qname (ns_id,version,local_name) SELECT id,0, 'precautionOfUseRef' FROM alf_namespace WHERE uri = 'http://www.bcpg.fr/model/becpg/1.0';
 INSERT IGNORE INTO alf_qname (ns_id,version,local_name) SELECT id,0, 'subsidiaryRef' FROM alf_namespace WHERE uri = 'http://www.bcpg.fr/model/becpg/1.0';
@@ -11,8 +11,8 @@ INSERT IGNORE INTO alf_qname (ns_id,version,local_name) SELECT id,0, 'trademarkR
 INSERT IGNORE INTO alf_qname (ns_id,version,local_name) SELECT id,0, 'storageConditionsRef' FROM alf_namespace WHERE uri = 'http://www.bcpg.fr/model/becpg/1.0';
 
 UPDATE alf_node_assoc
-   SET type_qname_id = (SELECT id  FROM alf_qname    WHERE  ns_id =  (SELECT id FROM alf_namespace WHERE uri = 'http://www.bcpg.fr/model/quality/1.0') and local_name = 'labelingLabelingTemplate')
-   WHERE  type_qname_id = (SELECT id  FROM alf_qname   WHERE  ns_id =  (SELECT id FROM alf_namespace WHERE uri = 'http://www.bcpg.fr/model/quality/1.0') and local_name = 'labelingTemplate');
+   SET type_qname_id = (SELECT id  FROM alf_qname    WHERE  ns_id =  (SELECT id FROM alf_namespace WHERE uri = 'http://www.bcpg.fr/model/pack/1.0') and local_name = 'labelingLabelingTemplate')
+   WHERE  type_qname_id = (SELECT id  FROM alf_qname   WHERE  ns_id =  (SELECT id FROM alf_namespace WHERE uri = 'http://www.bcpg.fr/model/pack/1.0') and local_name = 'labelingTemplate');
 
 UPDATE alf_node_assoc
    SET type_qname_id = (SELECT id  FROM alf_qname  WHERE  ns_id =  (SELECT id FROM alf_namespace WHERE uri = 'http://www.bcpg.fr/model/becpg/1.0') and local_name = 'productMicrobioCriteriaRef')

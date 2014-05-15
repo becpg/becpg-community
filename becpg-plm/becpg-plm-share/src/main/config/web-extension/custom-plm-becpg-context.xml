@@ -120,6 +120,15 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 	</bean>
 	
 	
+	<bean id="evaluator.becpg.doclib.indicator.ecm.inProgress" parent="evaluator.doclib.action.value">
+		<property name="accessor" value="node.properties.ecm:ecoState" />
+		<property name="comparator">
+			<bean class="org.alfresco.web.evaluator.StringEqualsComparator">
+				<property name="value" value="InProgress" />
+			</bean>
+		</property>
+	</bean>
+	
     <!-- bcpg:productState -->
 	<bean id="evaluator.becpg.doclib.indicator.entity.simulation" parent="evaluator.doclib.action.value">
 		<property name="accessor" value="node.properties.bcpg:productState" />
