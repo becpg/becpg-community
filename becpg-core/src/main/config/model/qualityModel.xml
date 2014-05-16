@@ -103,6 +103,7 @@
 					<value>Poids</value>
 					<value>Composition</value>
 					<value>Conditionnement</value>
+					<value>Volume</value>
 				</list>
 			</parameter>
 		</constraint>
