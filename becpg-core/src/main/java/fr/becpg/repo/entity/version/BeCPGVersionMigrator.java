@@ -1,11 +1,9 @@
 package fr.becpg.repo.entity.version;
 
 import java.io.Serializable;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,8 +29,6 @@ import org.alfresco.service.transaction.TransactionService;
 import org.alfresco.util.VersionNumber;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import com.google.common.collect.Lists;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
@@ -112,10 +108,14 @@ public class BeCPGVersionMigrator {
 		
 		// look for versionHistory of entity
 		List<ChildAssociationRef> folderChilAssocs = nodeService.getChildAssocs(versionHistoryNodeRef);
-		
+		int i=0;
 		logger.info("entity to migrate size: " + folderChilAssocs.size());
 				
 		for(ChildAssociationRef folderChildAssoc : folderChilAssocs){
+			
+			if(i>20){
+				break;
+			}
 			
 			VersionNumber prevVersionNumber = new VersionNumber("0.0");
 			NodeRef folderNodeRef = folderChildAssoc.getChildRef();
@@ -153,7 +153,7 @@ public class BeCPGVersionMigrator {
 							
 							// create version
 							if(version == null){
-							
+								i++;
 								version = createVersion(entityNodeRef, evNodeRef, prevVersionNumber, versionLabel);
 								prevVersionNumber = new VersionNumber(version.getVersionLabel());
 								
@@ -249,6 +249,42 @@ public class BeCPGVersionMigrator {
 //						}, false, true);
 //			}
 //		}
+	}
+	
+	public void deleteEntityVersionFromVersionStore(){
+				
+		logger.debug("deleteEntityVersionFromVersionStore");
+		NodeRef versionHistoryNodeRef = entityVersionService.getEntitiesHistoryFolder();
+		
+		if (versionHistoryNodeRef == null) {
+			logger.info("No version to delete, since versionHistoryNodeRef is null");
+			return;
+		}
+		
+		// look for versionHistory of entity
+		List<ChildAssociationRef> folderChilAssocs = nodeService.getChildAssocs(versionHistoryNodeRef);
+		
+		logger.info("size: " + folderChilAssocs.size());
+				
+		for(ChildAssociationRef folderChildAssoc : folderChilAssocs){
+			
+			NodeRef folderNodeRef = folderChildAssoc.getChildRef();
+			logger.info("folder: " + folderNodeRef);
+			
+			// folders for versions
+			NodeRef entityNodeRef = new NodeRef(RepoConsts.SPACES_STORE, (String)nodeService.getProperty(folderNodeRef, ContentModel.PROP_NAME));
+			if(nodeService.exists(entityNodeRef)){
+				logger.info("entityNodeRef: " + entityNodeRef);
+				
+				// has already a version ?							
+				VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
+				
+				if(versionHistory != null){
+					logger.info("delete version history");
+					versionService.deleteVersionHistory(entityNodeRef);
+				}						
+			}			
+		}		
 	}
 	
 	private Version createVersion(final NodeRef entityNodeRef, NodeRef evNodeRef, VersionNumber prevVersionNumber, String versionLabel){

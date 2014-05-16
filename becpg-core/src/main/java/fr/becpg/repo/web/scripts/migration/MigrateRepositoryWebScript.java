@@ -72,6 +72,7 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 	private static final String ACTION_MIGRATE_SYSTEM_FOLDER = "systemFolder";
 	private static final String ACTION_MIGRATE_FIX_PRODUCT_HIERARCHY = "fixProductHierarchy";
 	private static final String ACTION_MIGRATE_VERSION = "version";
+	private static final String ACTION_MIGRATE_DELETE_VERSION = "deleteVersion";
 	private static final String ACTION_DELETE_MODEL = "deleteModel";
 	private static final String ACTION_RENAME_USER = "renameUser";
 	private static final String ACTION_MIGRATE_ENTITY_FOLDER = "entityFolder";
@@ -249,6 +250,9 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 		if (ACTION_MIGRATE_VERSION.equals(action)) {
 
 			migrationVersion();
+		} else if (ACTION_MIGRATE_DELETE_VERSION.equals(action)) {
+
+			beCPGVersionMigrator.deleteEntityVersionFromVersionStore();
 		} else if (ACTION_DELETE_MODEL.equals(action)) {
 			NodeRef modelNodeRef = new NodeRef(req.getParameter(PARAM_NODEREF));
 			deleteModel(modelNodeRef);
