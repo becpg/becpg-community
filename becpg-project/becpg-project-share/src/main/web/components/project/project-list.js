@@ -109,7 +109,7 @@ var g; // gantt var
                                        var taskLegend = {
                                           id : data[i].nodeRef,
                                           label : data[i].label,
-                                          color : data[i].color
+                                          color : data[i].color.replace('#','')
                                        };
 
                                        this.taskLegends.push(taskLegend);

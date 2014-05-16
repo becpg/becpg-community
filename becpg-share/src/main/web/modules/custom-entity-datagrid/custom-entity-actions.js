@@ -54,6 +54,20 @@
 			this._showPanel(url, this.id);
 
 		},
+		
+		
+		onActionSelectColor : function EntityDataGrid_onActionShowDetails(p_items) {
+			var items = YAHOO.lang.isArray(p_items) ? p_items : [ p_items ], nodeRefs = [];
+
+			for (var i = 0, ii = items.length; i < ii; i++) {
+				nodeRefs.push(items[i].nodeRef);
+			}
+
+			beCPG.module.getColorPickerInstance().show({
+				nodeRefs : nodeRefs
+             });
+
+		},
 
 		onActionBulkEdit : function EntityDataGrid_onActionShowWused(p_items) {
 			var items = YAHOO.lang.isArray(p_items) ? p_items : [ p_items ], me = this;

@@ -224,7 +224,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	}
 
 	private String cleanValue(String propValue) {
-		String cleanQuery =  propValue.replaceAll("\\.", "");
+		String cleanQuery =  propValue.replaceAll("\\.", "").replaceAll("#", "");
 		
 		if(cleanQuery.contains("\",\"")){
 			cleanQuery = cleanQuery.replaceAll("\",\"", "\" OR \"");

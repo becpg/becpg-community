@@ -16,11 +16,7 @@
   You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 -->
 <webscript>
-	<shortname>Import Entities</shortname>
-	<description>Import a list of entities from a configured server</description>	
-	<url>/becpg/remote/import</url>
-	<format default="json">argument</format>
-	<authentication>user</authentication>
-	<transaction allow="readwrite" buffersize="0">required</transaction>
-	<lifecycle>public_api</lifecycle>
+  <shortname>Color picker component</shortname>
+  <description>Displays color picker</description>
+  <url>/modules/color-picker/color-picker</url>
 </webscript>

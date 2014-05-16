@@ -7,6 +7,7 @@
       <action type="action-link" id="onActionDown" permission="sort" label="menu.selected-items.down" />
       <action type="action-link" id="onActionShowWused" list="!activityList" label="actions.wused" />
       <action type="action-link" id="onActionBulkEdit"  permission="edit" label="actions.bulk-edit" />
+      <action type="action-link" id="onActionSelectColor"  permission="edit" label="actions.select-color" />
    </actionSetToolbar>
    <actionSetDataGrid>
       <action type="action-link" id="onActionEdit" permission="edit" label="actions.edit" />
@@ -15,5 +16,6 @@
       <action type="action-link" id="onActionDelete" permission="delete" label="actions.delete-row" />
       <action type="action-link" id="onActionShowComments" permission="edit" label="actions.comment" />
       <action type="action-link" id="onActionShowWused"  list="!activityList" label="actions.wused" />
+      <action type="action-link" id="onActionSelectColor"  permission="edit" label="actions.select-color" />
    </actionSetDataGrid>
 </datagrid-view>
