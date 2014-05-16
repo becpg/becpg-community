@@ -208,6 +208,10 @@ if (beCPG.module.EntityDataGridRenderers) {
                            if (!color) {
                               color = "000000";
                            }
+                           //backward compatibility
+                           if(color.indexOf("#")<0){
+                        	   color = '#' + color;
+                           }
                            
                            if(data.value.indexOf && data.value.indexOf("\"comp\":")>-1){
                               var json = JSON.parse(data.value);
@@ -217,7 +221,7 @@ if (beCPG.module.EntityDataGridRenderers) {
                                     if(json.comp[i].value){
                                        if(i==0){
                                           refValue = parseFloat(json.comp[i].value);
-                                          ret +='<span style="color:#' + color + ';">' + Alfresco.util.encodeHTML(json.comp[i].displayValue) + '</span>';
+                                          ret +='<span style="color:' + color + ';">' + Alfresco.util.encodeHTML(json.comp[i].displayValue) + '</span>';
                                        } else {
                                           currValue = parseFloat(json.comp[i].value);
                                           if(currValue != Number.NaN && refValue != Number.NaN){
@@ -233,7 +237,7 @@ if (beCPG.module.EntityDataGridRenderers) {
                               }
                            }
 
-                           return '<span style="color:#' + color + ';">' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+                           return '<span style="color:' + color + ';">' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
                         }
 
                     
@@ -277,7 +281,11 @@ if (beCPG.module.EntityDataGridRenderers) {
                      if (!color) {
                         color = "000000";
                      }
-                     return '<div style="background-color:#' + color + ';width:15px;height:15px;border: 1px solid; border-radius: 5px;margin-left:15px;"></div></div>';
+                     //backward compatibility
+                     if(color.indexOf("#")<0){
+                  	   color = '#' + color;
+                     }
+                     return '<div style="background-color:' + color + ';width:15px;height:15px;border: 1px solid; border-radius: 5px;margin-left:15px;"></div></div>';
                   }
                });
 

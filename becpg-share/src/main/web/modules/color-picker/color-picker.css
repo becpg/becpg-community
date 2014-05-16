@@ -1,0 +1,36 @@
+
+
+span.select-color-picker {
+	background:  url("../../components/images/select-color-16.png") no-repeat;
+	padding-left: 20px;
+}
+
+.jfk-palette-table {
+	empty-cells: show;
+	padding: 10px;
+}
+
+.yui-skin-lightTheme #becpg-color-picker-instance-dialog.yui-panel  {
+	min-width:15em;
+}
+
+
+.jfk-palette-cell {
+	border: 1px solid rgba(0, 0, 0, 0);
+	cursor: pointer;
+	margin: 0;
+	position: relative;
+}
+
+.jfk-palette-cell-hover {
+	border: 1px solid rgb(0, 0, 0);
+}
+
+.jfk-palette-cell-selected {
+	outline: 1px solid rgb(0, 0, 0);
+}
+
+.jfk-palette-colorswatch {
+	height: 16px;
+	width: 16px;
+}

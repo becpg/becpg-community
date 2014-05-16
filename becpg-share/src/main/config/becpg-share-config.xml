@@ -33,11 +33,13 @@
 		<forms>
 			<dependencies>
 				<css src="/components/autocomplete/autocomplete.css" />
+				<css src="/modules/color-picker/color-picker.css" />
 				<js src="/yui/tabview/tabview.js" />
 				<js src="/yui/autocomplete/autocomplete.js" />
 				<!-- <js src="/yui/event-delegate/event-delegate.js" /> -->
 				<js src="/components/autocomplete/autocomplete-picker.js" />
 				<js src="/modules/simple-dialog.js" />
+				<js src="/modules/color-picker/color-picker.js" />
 			</dependencies>
 
 			<default-controls>
