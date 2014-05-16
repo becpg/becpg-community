@@ -181,7 +181,7 @@
                               YAHOO.Bubbling.fire("changeFilter", {
                                  filterOwner : this.id,
                                  filterId : "fts",
-                                 filterData : "AND (ISNULL:bcpg\\:variantIds OR ISUNSET:bcpg\\:variantIds)"
+                                 filterData : "ISNULL:bcpg\\:variantIds OR ISUNSET:bcpg\\:variantIds"
                               });
                            }
                         } else {
@@ -191,7 +191,7 @@
                                        {
                                           filterOwner : this.id,
                                           filterId : "fts",
-                                          filterData : "AND (@bcpg\\:variantIds:\"" + p_oItem.value + "\" OR ISNULL:bcpg\\:variantIds OR ISUNSET:bcpg\\:variantIds)"
+                                          filterData : "@bcpg\\:variantIds:\"" + p_oItem.value + "\" OR ISNULL:bcpg\\:variantIds OR ISUNSET:bcpg\\:variantIds"
                                        });
 
                            this.currentVariantNodeRef = p_oItem.value;

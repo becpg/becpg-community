@@ -71,6 +71,12 @@
 	padding-left: 22px;
 }
 
+.formulation-view  .datagrid-bar  .onActionSelectColor a {
+	background-image:  url("../../components/images/select-color-16.png") no-repeat 12px
+		4px;
+	padding-left: 22px;
+}
+
 .formulation-view  .datagrid-bar  .onActionSimulate,.datagrid .onActionSimulate a
 	{
 	background: transparent url(../documentlibrary/actions/folder-copy-to-16.png)
