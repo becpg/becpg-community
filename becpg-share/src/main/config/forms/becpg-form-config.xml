@@ -1368,7 +1368,22 @@
 					<show id="cm:taggable" force="true" />
 					<show id="cm:categories" force="true" />
 
-				</field-visibility>				
+				</field-visibility>	
+				<appearance>
+					<field id="cm:taggable">
+		                  <control>
+		                     <control-param name="compactMode">true</control-param>
+		                     <control-param name="params">aspect=cm:taggable</control-param>
+		                     <control-param name="createNewItemUri">/api/tag/workspace/SpacesStore</control-param>
+		                     <control-param name="createNewItemIcon">tag</control-param>
+		                  </control>
+		               </field>
+		               <field id="cm:categories">
+		                  <control>
+		                     <control-param name="compactMode">true</control-param>
+		                  </control>
+		               </field>
+				</appearance>			
 			</form>
 		</forms>
 	</config>
