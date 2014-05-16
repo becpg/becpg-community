@@ -277,7 +277,8 @@
 			html += '</form></div>';
 			
 
-			if (showPopup && this.datalistMeta.name.indexOf("WUsed") != 0) {
+		
+			if (popupKind == "bulk-edit" || (showPopup && this.datalistMeta.name.indexOf("WUsed") != 0)) {
 				var containerDiv = document.createElement("div");
 				containerDiv.innerHTML = html;
 
@@ -288,10 +289,14 @@
 
 				this.widgets.wUsedPanel.show();
 
-				YAHOO.util.Event.on(YAHOO.util.Dom.get(this.id+'-wused-selected-picker'), 'change', function(e) {
-					var val = this.value == "selectlines" ? null : this.value;
-					callBack.call(this, val, val);
-				});
+				if(showPopup){
+					YAHOO.util.Event.on(YAHOO.util.Dom.get(this.id+'-wused-selected-picker'), 'change', function(e) {
+						var val = this.value == "selectlines" ? null : this.value;
+						callBack.call(this, val, val);
+					});
+				} else {
+					callBack.call(this);
+				}
 			} else {
 				if (this.datalistMeta.name.indexOf("WUsed") == 0) {
 					var val = null, val2 = "assoc_bcpg_compoListProduct";
@@ -308,9 +313,12 @@
 					}
 					callBack.call(this, val, val2);
 				} else {
+					
+					
 					callBack.call(this);
 				}
 			}
+			
 		},
 		
 		
