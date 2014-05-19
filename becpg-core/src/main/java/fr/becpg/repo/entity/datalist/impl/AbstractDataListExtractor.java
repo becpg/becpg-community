@@ -112,6 +112,7 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 	public static final String PROP_CONTAINER = "container";
 	public static final String PROP_TYPE = "itemType";
 	public static final String PROP_VERSION = "version";
+	public static final String PROP_COLOR = "color";
 
 	private static Log logger = LogFactory.getLog(AbstractNodeDataExtractor.class);
 	
@@ -152,6 +153,10 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 			ret.put(PROP_CREATOR_DISPLAY, extractPerson( (String) properties.get(ContentModel.PROP_CREATOR)));
 			ret.put(PROP_MODIFIED, attributeExtractorService.convertDateValue(properties.get( ContentModel.PROP_MODIFIED)));
 			ret.put(PROP_MODIFIER_DISPLAY, extractPerson( (String) properties.get(ContentModel.PROP_MODIFIER)));
+			
+			if(properties.get(BeCPGModel.PROP_COLOR)!=null){
+				ret.put(PROP_COLOR,properties.get(BeCPGModel.PROP_COLOR));
+			}
 
 
 			Map<String, Object> permissions = new HashMap<String, Object>(1);

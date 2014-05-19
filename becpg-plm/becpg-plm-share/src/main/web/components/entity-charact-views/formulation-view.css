@@ -71,7 +71,7 @@
 	padding-left: 22px;
 }
 
-.formulation-view  .datagrid-bar  .onActionSelectColor a {
+.formulation-view  .datagrid-bar  .onActionSelectColor  {
 	background-image:  url("../../components/images/select-color-16.png") no-repeat 12px
 		4px;
 	padding-left: 22px;

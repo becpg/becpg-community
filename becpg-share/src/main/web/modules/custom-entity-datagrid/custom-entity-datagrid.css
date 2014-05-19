@@ -28,6 +28,9 @@
 	background-image:  url("../../components/images/select-color-16.png");
 }
 
+.form-container  .bulk-edit label {
+    display: inline;
+}
 
 .datagrid span.document-version {
 	margin-left: .8em;

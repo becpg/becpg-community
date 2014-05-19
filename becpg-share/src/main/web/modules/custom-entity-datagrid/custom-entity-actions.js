@@ -62,9 +62,11 @@
 			for (var i = 0, ii = items.length; i < ii; i++) {
 				nodeRefs.push(items[i].nodeRef);
 			}
-
+			var itemType =  this.options.itemType != null ? this.options.itemType : this.datalistMeta.itemType
+			
 			beCPG.module.getColorPickerInstance().show({
-				nodeRefs : nodeRefs
+				nodeRefs : nodeRefs,
+				itemType : itemType
              });
 
 		},
