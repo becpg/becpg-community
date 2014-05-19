@@ -101,3 +101,8 @@
 .datalist-toolbar .onActionBulkEdit {
 	background-image:  url("../../components/images/edit-inline-16.png");
 }
+
+.datalist-toolbar .onActionSelectColor  {
+	background-image:  url("../../components/images/select-color-16.png") ;
+}
+

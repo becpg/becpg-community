@@ -59,6 +59,7 @@
 		defaultShowConfig : {
 			fieldId : null,
 			nodeRefs : null,
+			itemType : null,
 			selectedColor : null
 		},
 
@@ -223,7 +224,24 @@
 			if (this.showConfig.fieldId) {
 				YAHOO.util.Dom.get(this.showConfig.fieldId).value = YAHOO.util.Dom.get(this.id + "-hexValue").value;
 			} else if (this.showConfig.nodeRefs) {
-				alert("Not yet supported");
+				var me = this;
+				Alfresco.util.Ajax.request({
+					method : Alfresco.util.Ajax.POST,
+					url : Alfresco.constants.PROXY_URI + "becpg/bulkedit/type/" + this.showConfig.itemType.replace(":", "_")
+										+ "/bulksave?nodeRefs=" + this.showConfig.nodeRefs.join(),
+					dataObj : {"prop_bcpg_color": YAHOO.util.Dom.get(this.id + "-hexValue").value},
+					requestContentType: Alfresco.util.Ajax.JSON,
+					successCallback : {
+						fn : function(resp) {
+							if (resp.json) {
+								YAHOO.Bubbling.fire( "refreshDataGrids");
+							}
+						},
+						scope : this
+					},
+					failureMessage : "Cannot update color",
+				});
+				
 			}
 
 			this.onCancelButtonClick();

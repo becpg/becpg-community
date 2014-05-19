@@ -528,7 +528,17 @@
                         elCell.innerHTML = '<div id="' + scope.id + '-actions-' + oRecord.getId() + '" class="hidden"></div>';
                      };
                   },
-
+                  /**
+                   * Add color to row
+                   */
+                  rowFormatter : function  EntityDataGrid_rowFormatter(elTr,oRecord){
+                	  
+                      if(oRecord.getData("color")){
+                      	Dom.setStyle(elTr, 'background-color',oRecord.getData("color"));
+                      }
+                      return true; 
+                  },
+                  
                   /**
                    * Build the cell Url
                    */
@@ -1110,7 +1120,8 @@
                            "MSG_ERROR" : this.msg("message.error"),
                            paginator : null,
                            groupBy : this.options.groupBy,
-                           groupFormater : this.options.groupFormater
+                           groupFormater : this.options.groupFormater,
+                           formatRow : this.rowFormatter
                         };
                      
                      if(this.options.saveFieldUrl != null){
