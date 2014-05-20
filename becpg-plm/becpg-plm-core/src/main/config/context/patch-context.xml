@@ -69,14 +69,14 @@
         </property>
     </bean>
     
-     <bean id="patch.bcpg.plm.undeployWorkflowPatch" class="fr.becpg.repo.admin.patch.PLMUndeployWorkflowPatch" parent="basePatch"  >
+  <!--    <bean id="patch.bcpg.plm.undeployWorkflowPatch" class="fr.becpg.repo.admin.patch.PLMUndeployWorkflowPatch" parent="basePatch"  >
 			<property name="id"><value> patch.bcpg.plm.undeployWorkflowPatch</value></property>
 			<property name="description"><value> patch.bcpg.plm.undeployWorkflowPatch.description</value></property>
 			<property name="fixesFromSchema" value="0"/>
 	        <property name="fixesToSchema" value="6033" />
 	        <property name="targetSchema" value="10130"/>  
 			<property name="workflowService" ref="WorkflowService"/>
-	 </bean>
+	 </bean> -->
     
 
    <bean id="patch.bcpg.plm.redeployNPD" class="fr.becpg.repo.admin.patch.PLMWorkflowPatch" parent="basePatch" >
