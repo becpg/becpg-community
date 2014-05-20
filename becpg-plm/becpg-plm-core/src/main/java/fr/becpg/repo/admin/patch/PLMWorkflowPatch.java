@@ -71,7 +71,7 @@ public class PLMWorkflowPatch extends AbstractPatch implements ApplicationContex
     protected String applyInternal() throws Exception
     {
         WorkflowDeployer deployer = (WorkflowDeployer)applicationContext.getBean("bcpg.plm.workflowDeployer"); 
-        
+
         List<Properties> oldWorkflowDefinitions = deployer.getWorkflowDefinitions();
         for (Properties props : workflowDefinitions)
         {

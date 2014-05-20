@@ -28,7 +28,7 @@
 	</imports>
 
 	<namespaces>
-		<namespace uri="http://www.alfresco.org/model/npd-workflow/1.0"
+		<namespace uri="http://www.bcpg.fr/model/npd-workflow/1.0"
 			prefix="npdwf" />
 	</namespaces>
     

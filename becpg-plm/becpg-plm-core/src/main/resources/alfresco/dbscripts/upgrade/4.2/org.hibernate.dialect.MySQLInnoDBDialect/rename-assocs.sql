@@ -34,6 +34,15 @@ UPDATE alf_node_assoc
    SET type_qname_id = (SELECT id FROM alf_qname  WHERE  ns_id =  (SELECT id FROM alf_namespace WHERE uri = 'http://www.bcpg.fr/model/becpg/1.0') and local_name = 'trademarkRef')
    WHERE  type_qname_id = (SELECT id  FROM alf_qname  WHERE  ns_id =  (SELECT id FROM alf_namespace WHERE uri = 'http://www.bcpg.fr/model/becpg/1.0') and local_name = 'trademark') ;
 
+      
+UPDATE alf_namespace SET uri = 'http://www.becpg.fr/model/npd-workflow/1.0'
+   		where uri = 'http://www.alfresco.org/model/npd-workflow/1.0';
+
+UPDATE alf_namespace SET uri = 'http://www.becpg.fr/model/project-workflow/1.0'
+   		where uri = 'http://www.alfresco.org/model/project-workflow/1.0';
+
+
+   
 --
 -- Record script finish
 --

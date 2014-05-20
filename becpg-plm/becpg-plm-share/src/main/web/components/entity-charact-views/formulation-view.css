@@ -29,8 +29,53 @@
 	height: 28px;
 	margin: 0px;
 	padding: 0x;
+	border-bottom: none;
 }
 
+ .yui-skin-lightTheme .formulation-view .yui-dt table,
+  .formulation-view .yui-dt-col-actions{
+	border-collapse: collapse;
+	border-right:none;
+}
+
+.formulation-view .datagrid .yui-dt-col-actions  {
+    border-right:none;
+}
+
+
+/**
+  New Theme
+**/
+
+/* .formulation-view  .yui-g .yui-u {
+	width: 50%;
+}
+
+.formulation-view  .yui-resize .yui-resize-handle-b {
+   background-color: rgb(238, 238, 238) !important;
+}
+
+.formulation-view  .yui-g {
+	margin-top:5px;
+}
+
+div.formulation-view{
+	margin: 0 -10px;
+} 
+
+
+ .formulation-view .dashlet {
+	border-top: medium none;
+	border-left: medium none;
+    border-radius: 0;
+	margin: 0px;
+    padding: 0;
+} 
+
+ .formulation-view .dashlet .title {
+    display: none;
+}
+ */
 /**
  Bar
 */

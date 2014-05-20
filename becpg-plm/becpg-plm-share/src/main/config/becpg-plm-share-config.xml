@@ -30,10 +30,11 @@
 <!-- 			<workflow name="activiti$activitiParallelReview" /> -->
 			<workflow name="activiti$nonConformityAdhoc" />
 			<workflow name="activiti$nonConformityProcess" />
-			<workflow name="activiti$activitiAdhoc" />
+			<!-- <workflow name="activiti$activitiAdhoc" /> -->
 			<workflow name="activiti$activitiReview" />
 			<workflow name="activiti$projectAdhoc" />
 			<workflow name="activiti$projectNewProduct" />
+			<workflow name="jbpm$bcpgwf:adhoc" />
 			<workflow name="jbpm$wf:adhoc" />
 			<workflow name="jbpm$wf:reviewpooled" />
 			<workflow name="jbpm$wf:parallelgroupreview" />
