@@ -50,35 +50,46 @@ public class PLMUndeployWorkflowPatch extends AbstractPatch implements Applicati
 	@Override
 	protected String applyInternal() throws Exception {
 
-		//NamespaceDAO namespaceDAO = (NamespaceDAO) applicationContext.getBean("namespaceDAO");
+		// NamespaceDAO namespaceDAO = (NamespaceDAO)
+		// applicationContext.getBean("namespaceDAO");
 
-		QNameDAO qNameDAO = (QNameDAO) applicationContext.getBean("qnameDAO");
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Object>() {
 
-		if (qNameDAO.getNamespace(PROJECT_WF_URI) == null) {
+			@Override
+			public Object execute() throws Throwable {
 
-			qNameDAO.getOrCreateNamespace(PROJECT_OLD_WF_URI);
-			qNameDAO.updateNamespace(PROJECT_OLD_WF_URI, PROJECT_WF_URI);
+				QNameDAO qNameDAO = (QNameDAO) applicationContext.getBean("qnameDAO");
 
-		}
+				if (qNameDAO.getNamespace(PROJECT_WF_URI) == null) {
 
-		// if (namespaceDAO.getPrefixes(PROJECT_WF_URI)==null ||
-		// namespaceDAO.getPrefixes(PROJECT_WF_URI).isEmpty()){
-		// namespaceDAO.addURI(PROJECT_WF_URI);
-		// namespaceDAO.removePrefix("pjtwf");
-		// namespaceDAO.addPrefix("pjtwf", PROJECT_WF_URI);
-		// }
+					qNameDAO.getOrCreateNamespace(PROJECT_OLD_WF_URI);
+					qNameDAO.updateNamespace(PROJECT_OLD_WF_URI, PROJECT_WF_URI);
 
-		if (qNameDAO.getNamespace(PROJECT_NPD_URI) == null) {
-			qNameDAO.getOrCreateNamespace(PROJECT_OLD_NPD_URI);
-			qNameDAO.updateNamespace(PROJECT_OLD_NPD_URI, PROJECT_NPD_URI);
-		}
+				}
 
-		// if (namespaceDAO.getPrefixes(PROJECT_NPD_URI)==null ||
-		// namespaceDAO.getPrefixes(PROJECT_NPD_URI).isEmpty()){
-		// namespaceDAO.addURI(PROJECT_NPD_URI);
-		// namespaceDAO.removePrefix("npdwf");
-		// namespaceDAO.addPrefix("npdwf", PROJECT_NPD_URI);
-		// }
+				// if (namespaceDAO.getPrefixes(PROJECT_WF_URI)==null ||
+				// namespaceDAO.getPrefixes(PROJECT_WF_URI).isEmpty()){
+				// namespaceDAO.addURI(PROJECT_WF_URI);
+				// namespaceDAO.removePrefix("pjtwf");
+				// namespaceDAO.addPrefix("pjtwf", PROJECT_WF_URI);
+				// }
+
+				if (qNameDAO.getNamespace(PROJECT_NPD_URI) == null) {
+					qNameDAO.getOrCreateNamespace(PROJECT_OLD_NPD_URI);
+					qNameDAO.updateNamespace(PROJECT_OLD_NPD_URI, PROJECT_NPD_URI);
+				}
+
+				// if (namespaceDAO.getPrefixes(PROJECT_NPD_URI)==null ||
+				// namespaceDAO.getPrefixes(PROJECT_NPD_URI).isEmpty()){
+				// namespaceDAO.addURI(PROJECT_NPD_URI);
+				// namespaceDAO.removePrefix("npdwf");
+				// namespaceDAO.addPrefix("npdwf", PROJECT_NPD_URI);
+				// }
+
+				return null;
+			}
+
+		}, false, false);
 
 		try {
 			transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Object>() {
@@ -124,26 +135,28 @@ public class PLMUndeployWorkflowPatch extends AbstractPatch implements Applicati
 			}
 		}
 
-//		try {
-//			transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Object>() {
-//
-//				@Override
-//				public Object execute() throws Throwable {
-//
-//					for (WorkflowDefinition def : workflowService.getAllDefinitions()) {
-//						if (def.getId().contains("projectNewProduct")) {
-//							logger.info("Undeploy : " + def.getId() + " " + def.getName() + " " + def.getTitle());
-//							workflowService.undeployDefinition(def.getId());
-//						}
-//					}
-//					return null;
-//				}
-//
-//			}, false, false);
-//
-//		} catch (Throwable e) {
-//			logger.error(e, e);
-//		}
+		// try {
+		// transactionService.getRetryingTransactionHelper().doInTransaction(new
+		// RetryingTransactionCallback<Object>() {
+		//
+		// @Override
+		// public Object execute() throws Throwable {
+		//
+		// for (WorkflowDefinition def : workflowService.getAllDefinitions()) {
+		// if (def.getId().contains("projectNewProduct")) {
+		// logger.info("Undeploy : " + def.getId() + " " + def.getName() + " " +
+		// def.getTitle());
+		// workflowService.undeployDefinition(def.getId());
+		// }
+		// }
+		// return null;
+		// }
+		//
+		// }, false, false);
+		//
+		// } catch (Throwable e) {
+		// logger.error(e, e);
+		// }
 
 		// namespaceDAO.removeURI(PROJECT_NPD_URI);
 		// namespaceDAO.removeURI(PROJECT_WF_URI);
@@ -162,7 +175,7 @@ public class PLMUndeployWorkflowPatch extends AbstractPatch implements Applicati
 		logger.warn("PLEASE SET UNDER alfresco-global.properties");
 		logger.warn("system.workflow.engine.jbpm.definitions.visible=false");
 		logger.warn("system.workflow.engine.jbpm.enabled=false");
-		
+
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}
 
