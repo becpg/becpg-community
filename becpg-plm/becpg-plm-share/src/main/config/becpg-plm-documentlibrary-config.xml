@@ -3,6 +3,8 @@
 		<aspects>
 			<visible>
 
+				<aspect name="cm:workingcopy" />
+				
 				<!-- beCPG -->
 				<aspect name="bcpg:clientsAspect" />
 				<aspect name="bcpg:suppliersAspect" />
