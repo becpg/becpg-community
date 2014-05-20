@@ -122,7 +122,6 @@
 	</bean>
 
 
-	
 
 	<!-- Sort plugin -->
 	<bean id="ProjectListSortPlugin" parent="baseDataListSortPlugin" class="fr.becpg.repo.project.impl.ProjectListSortPlugin">
