@@ -259,7 +259,7 @@ if (beCPG.module.EntityDataGridRenderers) {
                      if (isFormulated) {
                         var error = oRecord.getData("itemData")["prop_bcpg_lclFormulaErrorLog"].value;
                         if (error == null) {
-                           return '<span class="lcl-formulated"  title="' + scope.msg("data.formulated") + '">' + Alfresco.util
+                           return '<span class="lcl-formulated"  title="' + Alfresco.util.encodeHTML(data.metadata) + '">' + Alfresco.util
                                  .encodeHTML(data.displayValue) + '</span>';
                         }
 
