@@ -22,7 +22,16 @@ function getOrCreateBeCPGMenu() {
          }
       };
 
-      createDockBar(beCPGMenu);
+      //createDockBar(beCPGMenu);
+      beCPGMenu.config.widgets.push({
+          name : "alfresco/header/BeCPGRecentMenu",
+          config : {
+             label : "header.becpg.recents",
+             entityNodeRef : page.url.args.nodeRef,
+             pageUri : page.url.uri
+          }
+       }); 
+      
       
       beCPGMenu.config.widgets.push( {
          id : "HEADER_TOOLS_BECPG",
@@ -81,6 +90,9 @@ function createDockBar(beCPGMenu){
             results = eval('(' + result + ')');
       
             if(results.items.length>0){
+            	
+
+            	
               var recentsMenu = {
                     name : "alfresco/menus/AlfMenuGroup",
                     config : {
