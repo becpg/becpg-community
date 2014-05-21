@@ -174,7 +174,7 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 					Date startDate = ProjectHelper.calculateStartDate(prevTask.getEnd(), prevTask.getDuration());
 					ProjectHelper.setTaskStartDate(prevTask, startDate);
 				}				
-				if (projectData.getStartDate().after(prevTask.getStart())) {
+				if (prevTask.getStart()==null || projectData.getStartDate().after(prevTask.getStart())) {
 					projectData.setStartDate(prevTask.getStart());
 				}
 
