@@ -58,11 +58,10 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 @Service("entityVersionService")
 public class EntityVersionServiceImpl implements EntityVersionService {
 
-	private static final String ENTITIES_HISTORY_NAME = "entitiesHistory";
+	
 
-	private static final QName QNAME_ENTITIES_HISTORY = QName.createQName(BeCPGModel.BECPG_URI, ENTITIES_HISTORY_NAME);
+	private static final QName QNAME_ENTITIES_HISTORY = QName.createQName(BeCPGModel.BECPG_URI, RepoConsts.ENTITIES_HISTORY_NAME);
 
-	private static final String ENTITIES_HISTORY_XPATH = "/bcpg:entitiesHistory";
 	private static final String KEY_ENTITIES_HISTORY = "EntitiesHistory";
 
 	private static final String MSG_ERR_NOT_AUTHENTICATED = "coci_service.err_not_authenticated";
@@ -339,7 +338,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 					public NodeRef getData() {
 
 						NodeRef entitiesHistoryNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(
-								nodeService.getRootNode(RepoConsts.SPACES_STORE), ENTITIES_HISTORY_XPATH);
+								nodeService.getRootNode(RepoConsts.SPACES_STORE), RepoConsts.ENTITIES_HISTORY_XPATH);
 						try {
 							if (entitiesHistoryNodeRef == null) {
 
@@ -350,7 +349,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 									@Override
 									public NodeRef doWork() throws Exception {
 										HashMap<QName, Serializable> props = new HashMap<QName, Serializable>();
-										props.put(ContentModel.PROP_NAME, ENTITIES_HISTORY_NAME);
+										props.put(ContentModel.PROP_NAME, RepoConsts.ENTITIES_HISTORY_NAME);
 										NodeRef n = nodeService.createNode(storeNodeRef, ContentModel.ASSOC_CHILDREN, QNAME_ENTITIES_HISTORY,
 												ContentModel.TYPE_FOLDER, props).getChildRef();
 
