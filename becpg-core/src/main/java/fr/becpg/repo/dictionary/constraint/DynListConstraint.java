@@ -103,6 +103,9 @@ public class DynListConstraint extends ListOfValuesConstraint {
 		if (level != null) {
 			checkPropertyNotNull("levelProp", levelProp);
 		}
+		logger.debug("Initialize DynListConstraint for "+paths+" "+constraintType);
+		
+		
 	}
 
 	/*
@@ -113,7 +116,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 	 */
 	@Override
 	public List<String> getAllowedValues() {
-		if(allowedValues.get(TenantUtil.getCurrentDomain())==null) {
+		if(MTDictionnarySupport.shouldCleanConstraint() || allowedValues.get(TenantUtil.getCurrentDomain())==null) {
 			allowedValues.put(TenantUtil.getCurrentDomain(),   serviceRegistry.getTransactionService().getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<List<String>>() {
 				@Override
 				public List<String> execute() throws Throwable {
@@ -138,6 +141,10 @@ public class DynListConstraint extends ListOfValuesConstraint {
 			if (allowedValues.get(TenantUtil.getCurrentDomain()).isEmpty()) {
 				allowedValues.get(TenantUtil.getCurrentDomain()).add(UNDIFINED_CONSTRAINT_VALUE);
 			}
+			
+			logger.debug("Fill allowedValues  for :"+TenantUtil.getCurrentDomain());
+		} else {
+			logger.debug("AllowedValues exist for :"+TenantUtil.getCurrentDomain());
 		}
 		return allowedValues.get(TenantUtil.getCurrentDomain());
 	}

@@ -27,6 +27,8 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 
 import fr.becpg.repo.admin.InitVisitorService;
 import fr.becpg.repo.cache.BeCPGCacheService;
+import fr.becpg.repo.dictionary.constraint.MTDictionnarySupport;
+import fr.becpg.repo.dictionary.constraint.MTDictionnarySupport.Action;
 import fr.becpg.repo.entity.EntitySystemService;
 import fr.becpg.repo.security.SecurityService;
 
@@ -58,17 +60,17 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 	private DictionaryDAO dictionaryDAO;
 
 	private EntitySystemService entitySystemService;
-	
+
 	private AbstractAuthenticationService authenticationService;
-	
+
 	private TenantAdminService tenantAdminService;
-	
+
 	private String becpgSchema;
-	
-	public void setBecpgSchema(String becpgSchema){
+
+	public void setBecpgSchema(String becpgSchema) {
 		this.becpgSchema = becpgSchema;
 	}
-	
+
 	public void setTenantAdminService(TenantAdminService tenantAdminService) {
 		this.tenantAdminService = tenantAdminService;
 	}
@@ -89,7 +91,6 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 		this.beCPGCacheService = beCPGCacheService;
 	}
 
-
 	public void setInitVisitorService(InitVisitorService initVisitorService) {
 		this.initVisitorService = initVisitorService;
 	}
@@ -109,25 +110,23 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 
 		String action = templateArgs.get(PARAM_ACTION);
 		Map<String, Object> ret = new HashMap<String, Object>();
-		
 
 		// Check arg
 		if (action == null || action.isEmpty()) {
 			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "'action' argument cannot be null or empty");
 		}
-		
+
 		Set<String> users = new HashSet<>(authenticationService.getUsersWithTickets(true));
 		for (Iterator<String> iterator = users.iterator(); iterator.hasNext();) {
 			String user = (String) iterator.next();
-			if("guest".equals(user)){
+			if ("guest".equals(user)) {
 				iterator.remove();
-			} else if(tenantAdminService.isEnabled() && !tenantAdminService.getCurrentUserDomain().equals(tenantAdminService.getUserDomain(user))){
+			} else if (tenantAdminService.isEnabled() && !tenantAdminService.getCurrentUserDomain().equals(tenantAdminService.getUserDomain(user))) {
 				iterator.remove();
 			}
 		}
-		
-		
-		// #378 : force to use server locale 
+
+		// #378 : force to use server locale
 		I18NUtil.setLocale(Locale.getDefault());
 
 		if (action.equals(ACTION_INIT_REPO)) {
@@ -142,7 +141,12 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 			securityService.refreshAcls();
 		} else if (action.equals(ACTION_RELOAD_MODEL)) {
 			logger.debug("Reload models");
-			dictionaryDAO.reset();
+			MTDictionnarySupport.doInResetContext(new Action() {
+				@Override
+				public void run() {
+					dictionaryDAO.reset();
+				}
+			});
 		} else if (action.equals(ACTION_GET_SYSTEM_ENTITIES)) {
 			logger.debug("Get system entities");
 			ret.put("systemEntities", entitySystemService.getSystemEntities());
@@ -154,29 +158,25 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Unsupported argument 'action'. action = " + action);
 		}
 
-		
-		//Add status
-		
+		// Add status
+
 		ret.put("status", "SUCCESS");
-		
-		//Add system infos
-		
-		MemoryMXBean memoryMXBean=ManagementFactory.getMemoryMXBean();
-		
+
+		// Add system infos
+
+		MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
+
 		Runtime runtime = Runtime.getRuntime();
-		
-		ret.put("totalMemory", runtime.totalMemory()/ 1000000d);
-		ret.put("freeMemory", runtime.freeMemory()/ 1000000d);
-		ret.put("maxMemory", runtime.maxMemory()/ 1000000d);
-		ret.put("nonHeapMemoryUsage",memoryMXBean.getNonHeapMemoryUsage().getUsed()/ 1000000d);
+
+		ret.put("totalMemory", runtime.totalMemory() / 1000000d);
+		ret.put("freeMemory", runtime.freeMemory() / 1000000d);
+		ret.put("maxMemory", runtime.maxMemory() / 1000000d);
+		ret.put("nonHeapMemoryUsage", memoryMXBean.getNonHeapMemoryUsage().getUsed() / 1000000d);
 		ret.put("connectedUsers", users.size());
 		ret.put("becpgSchema", becpgSchema);
-		
-		
-		
+
 		return ret;
 
 	}
-	
 
 }
