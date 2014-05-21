@@ -33,6 +33,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.model.ForumModel;
 import org.alfresco.query.PagingRequest;
 import org.alfresco.query.PagingResults;
+import org.alfresco.repo.rule.RuleModel;
 import org.alfresco.repo.search.impl.parsers.FTSQueryException;
 import org.alfresco.repo.search.impl.querymodel.QueryModelException;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
@@ -103,6 +104,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	private Set<QName> types = new HashSet<>();
 	private Set<QName> aspects = new HashSet<>();
 	private String path = null;
+	private String excludePath = null;
 	private String membersPath = null;
 	private Set<NodeRef> ids = new HashSet<>();
 	private Set<NodeRef> notIds = new HashSet<>();
@@ -200,6 +202,19 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		return this;
 	}
+	
+	public BeCPGQueryBuilder excludePath(String excludePath) {
+		if (this.path != null) {
+			logger.warn("Path is already set for this query.( old:" + this.path + " -  new: " + path + ")");
+		}
+		if (this.excludePath != null) {
+			logger.warn("Exclude Path is already set for this query.( old:" + this.excludePath + " -  new: " + excludePath + ")");
+		}
+		this.excludePath = excludePath;
+
+		return this;
+	}
+
 
 	public BeCPGQueryBuilder inDB() {
 		queryConsistancy = QueryConsistency.TRANSACTIONAL;
@@ -345,6 +360,8 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		excludeType(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 		excludeType(ReportModel.TYPE_REPORT);
 		excludeType(ForumModel.TYPE_FORUM);
+		excludeType(RuleModel.TYPE_RULE);
+		excludeType(ForumModel.TYPE_POST);
 		excludeType(ForumModel.TYPE_FORUMS);
 		excludeType(ApplicationModel.TYPE_FILELINK);
 		excludeAspect(ContentModel.ASPECT_HIDDEN);
@@ -371,19 +388,6 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 				logger.warn("Slow query [" + xPath + "] executed in  " + watch.getTotalTimeSeconds() + " seconds - size results " + ret.size());
 			}
 
-			// if (logger.isDebugEnabled()) {
-			// int tmpIndex = (RepoConsts.MAX_RESULTS_SINGLE_VALUE == maxResults
-			// ? 4 : 3);
-			// logger.debug("[" +
-			// Thread.currentThread().getStackTrace()[tmpIndex].getClassName() +
-			// " "
-			// +
-			// Thread.currentThread().getStackTrace()[tmpIndex].getLineNumber()
-			// + "] " + xPath + " executed in  "
-			// + watch.getTotalTimeSeconds() + " seconds - size results " +
-			// ret.size());
-			//
-			// }
 
 		}
 
@@ -485,6 +489,8 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			runnedQuery.append(mandatory(getCondMembers(membersPath)));
 		} else if (path != null) {
 			runnedQuery.append(mandatory(getCondPath(path)));
+		} else if (excludePath != null) {
+			runnedQuery.append(prohibided(getCondExactPath(excludePath)));
 		}
 
 		if (type != null) {
@@ -508,7 +514,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		}
 
 		if (!excludedTypes.isEmpty()) {
-			for (QName tmpQName : types) {
+			for (QName tmpQName : excludedTypes) {
 				runnedQuery.append(prohibided(getCondType(tmpQName)));
 			}
 		}
@@ -919,5 +925,6 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		return buildQuery();
 	}
 
+	
 
 }
