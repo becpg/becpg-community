@@ -128,8 +128,7 @@
 
                            this.widgets.downloadEntityReport = Alfresco.util.createYUIButton(me,
                                  "downloadEntityReport-button", function(sType, aArgs, p_obj) {
-                                    window.location.href = Alfresco.constants.PROXY_URI + me.options.report.contentURL;
-
+                                    window.location.href = Alfresco.constants.PROXY_URI + me.options.report.contentURL+"&a=true";
                                  });
                         }
 
