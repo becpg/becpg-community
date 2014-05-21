@@ -55,6 +55,7 @@
    	<bean id="automaticECOPolicy" class="fr.becpg.repo.ecm.policy.AutomaticECOPolicy"
 		parent="abstractBeCPGPolicy" >
 		<property name="automaticECOService" ref="automaticECOService"/>
+		<property name="enable" value="${beCPG.eco.automatic.enable}"/>
 	</bean>
 	
 	<!-- Cron -->

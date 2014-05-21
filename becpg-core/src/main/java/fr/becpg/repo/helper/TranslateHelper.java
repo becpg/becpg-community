@@ -43,8 +43,8 @@ public class TranslateHelper {
 	public static String getTranslatedPath(String name) {
 		
 		String translation = I18NUtil.getMessage(PATH_MSG_PFX + name.toLowerCase(), Locale.getDefault());
-		if(translation == null){
-			logger.error("Failed to translate path. path: " + name);
+		if(logger.isDebugEnabled() && translation == null){
+			logger.debug("Failed to translate path. path: " + name);
 		}
 		
 		return translation;

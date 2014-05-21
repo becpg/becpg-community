@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -16,6 +17,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.ECMModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.ecm.AutomaticECOService;
@@ -46,15 +48,32 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 
 	@Value("${beCPG.eco.automatic.version}")
 	private Boolean shouldCreateNewVersion = false;
+	
+	@Value("${beCPG.eco.automatic.states}")
+	private String statesToRegister  = "";
 
 	@Autowired
 	private TransactionService transactionService;
 
 	@Autowired
 	private ECOService ecoService;
+	
+	@Autowired
+	private NodeService nodeService;
 
 	@Override
 	public ChangeOrderData addAutomaticChangeEntry(NodeRef entityNodeRef) {
+		
+		String productState = (String) nodeService.getProperty(entityNodeRef, PLMModel.PROP_PRODUCT_STATE);
+		
+		if(productState == null || productState.isEmpty() || !statesToRegister.contains(productState)){
+			if (logger.isDebugEnabled()) {
+				logger.debug("Skipping product state : "+productState);
+			}
+			
+			return null;
+		}
+		
 	
 		NodeRef parentNodeRef = getChangeOrderFolder();
 		ChangeOrderData changeOrderData = new ChangeOrderData(generateEcoName(), ECOState.Automatic, ChangeOrderType.Simulation, null);
