@@ -129,4 +129,10 @@ public class RepoConsts {
 	public static final String VERSION_NAME_DELIMITER = " v";
 	public static final String INITIAL_VERSION = "1.0";
 	public static final String VERSION_DELIMITER = ".";
+	
+	//History
+	public static final String ENTITIES_HISTORY_NAME = "entitiesHistory";
+	public static final String ENTITIES_HISTORY_XPATH = "/bcpg:entitiesHistory";
+
+	
 }

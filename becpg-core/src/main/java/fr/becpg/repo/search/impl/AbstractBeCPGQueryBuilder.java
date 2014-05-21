@@ -40,6 +40,7 @@ public abstract class AbstractBeCPGQueryBuilder {
 	private final String QUERY_COND_PROP_CONTAINS_VALUE = "%s:%s";
 	private final String QUERY_COND_PROP_ISNULL_VALUE = "ISNULL:\"%s\"";
 	private final String QUERY_COND_PATH = "PATH:\"/app:company_home/%s/*\"";
+	private final String QUERY_COND_EXACT_PATH = "PATH:\"%s\"";
 	private final String QUERY_COND_MEMBERS = "PATH:\"/app:company_home/%s/member\"";
 	private final String QUERY_COND_ID = "ID:\"%s\"";
 
@@ -75,6 +76,10 @@ public abstract class AbstractBeCPGQueryBuilder {
 
 	protected String getCondIsNullValue(QName property) {
 		return String.format(QUERY_COND_PROP_ISNULL_VALUE, property);
+	}
+	
+	protected String getCondExactPath(String path) {
+		return String.format(QUERY_COND_EXACT_PATH,path);
 	}
 
 	protected String getCondPath(String path) {
