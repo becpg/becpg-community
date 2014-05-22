@@ -50,6 +50,8 @@ public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerato
 
 	@Override
 	public void queueNodes(List<NodeRef> pendingNodes) {
+		logger.debug("Queue nodes for async report generation");
+		
 		for(NodeRef entityNodeRef : pendingNodes){
 			
 			Runnable command = new ProductReportGenerator(entityNodeRef);

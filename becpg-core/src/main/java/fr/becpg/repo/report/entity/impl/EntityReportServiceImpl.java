@@ -176,9 +176,11 @@ public class EntityReportServiceImpl implements EntityReportService {
 					public Object execute() {
 						if (nodeService.exists(entityNodeRef)) {
 							try {
-								policyBehaviourFilter.disableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
-								policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
-								policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
+								policyBehaviourFilter.disableBehaviour(entityNodeRef);
+								
+//								policyBehaviourFilter.disableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
+//								policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
+//								policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
 
 								if (logger.isDebugEnabled()) {
 									logger.debug("Generate report: " + entityNodeRef + " - "
@@ -194,15 +196,17 @@ public class EntityReportServiceImpl implements EntityReportService {
 								}, false, true);
 
 							} finally {
-								policyBehaviourFilter.enableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
-								policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
-								policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
+								policyBehaviourFilter.enableBehaviour(entityNodeRef);
+								
+//								policyBehaviourFilter.enableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
+//								policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
+//								policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
 							}
 						}
 						return null;
 					}
 				};
-				return transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, false, true);
+				return transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, false, false);
 			}
 		};
 		AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getSystemUserName());
