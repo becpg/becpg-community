@@ -1,5 +1,7 @@
 function main()
 {
+	
+	
    // Indicate whether or not the thumbnail can be cached by the browser. Caching is allowed if the lastModified
    // argument is provided as this is an indication of request uniqueness and therefore the browser will have
    // the latest thumbnail image.
@@ -46,6 +48,7 @@ function main()
     if(node.isSubType("bcpg:entityV2")){
 	  if(thumbnailName == "webpreview" && node.assocs && node.assocs["rep:reports"] ) {
 	     node = bThumbnail.getReportNode(node);
+	     model.allowBrowserToCache = "false";
 	  } else {
 	     node = bThumbnail.getThumbnailNode(node);
 	  }
