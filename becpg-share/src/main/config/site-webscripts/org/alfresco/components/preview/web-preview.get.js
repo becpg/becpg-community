@@ -88,14 +88,15 @@ function main()
          name : "Alfresco.WebPreview",
          options : {
             thumbnailModification : nodeMetadata.thumbnailModifications,
-            nodeRef : model.nodeRef,
+            nodeRef : model.entityNodeRef? model.entityNodeRef :model.nodeRef,
             name : nodeMetadata.name,
             mimeType : nodeMetadata.mimeType,
             size: nodeMetadata.size,
             thumbnails : nodeMetadata.thumbnails,
             pluginConditions : pluginConditionsJSON,
             api:  model.api,
-            proxy: model.proxy
+            proxy: model.proxy,
+            avoidCachedThumbnail : true
          }
       };
       model.widgets = [webPreview];
