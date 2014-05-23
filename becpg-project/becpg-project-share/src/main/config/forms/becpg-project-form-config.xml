@@ -190,10 +190,10 @@
 				   <show id="cm:name" />
 				   <show id="bcpg:code" />				   
 				   <show id="cm:title" force="true" />
-               <show id="cm:description" force="true" />
-					<show id="pjt:projectHierarchy1" />
-					<show id="pjt:projectHierarchy2" />
-					<show id="pjt:projectOrigin" />
+                   <show id="cm:description" force="true" />
+				   <show id="pjt:projectHierarchy1" />
+				   <show id="pjt:projectHierarchy2" />
+				   <show id="pjt:projectOrigin" />
 					<show id="pjt:projectSponsor" />
 					<show id="pjt:projectManager" />
 					<show id="pjt:projectObservers" />		
@@ -308,6 +308,27 @@
 				</appearance>
 
 			</form>
+			<form id="export">
+				<field-visibility>
+				    <show id="cm:name" />
+				    <show id="bcpg:code" />				   
+				    <show id="cm:title" force="true" />
+                    <show id="cm:description" force="true" />
+				    <show id="pjt:projectHierarchy1" />
+				    <show id="pjt:projectHierarchy2" />
+				    <show id="pjt:projectOrigin" />
+					<show id="pjt:projectSponsor" />
+					<show id="pjt:projectManager" />
+					<show id="pjt:projectObservers" />		
+					<show id="bcpg:entityTplRef" />			
+					<show id="pjt:projectEntity" />
+					<show id="pjt:projectPriority" />
+					<show id="pjt:projectState" />														
+					<show id="pjt:projectStartDate" />
+					<show id="pjt:projectDueDate" />					
+				</field-visibility>
+			</form>	
+				
 
 			<form id="filter">
 				<field-visibility>
