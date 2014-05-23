@@ -20,7 +20,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.RepoConsts;
 
 /**
  * Copy prop value of cm:name in bcpg:lvValue to support all char
