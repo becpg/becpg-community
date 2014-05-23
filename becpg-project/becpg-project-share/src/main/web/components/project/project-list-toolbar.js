@@ -139,13 +139,45 @@
                      var dt = Alfresco.util.ComponentManager.find({
                         name : "beCPG.module.EntityDataGrid"
                      })[0];
+                     
+                     
+                     Alfresco.util.Ajax
+                     .jsonGet({
+                        url : dt._getColumnUrl("export"),
+                        successCallback : {
+                           fn : function(response) {
+                              
 
-                     var PAGE_SIZE = 5000;
+                              var requestParams = {
+                                 fields : [],
+                                 filter : dt.currentFilter,
+                                 page : 1
+                              };
+                              
+                              requestParams.filter.filterParams = dt._createFilterURLParameters(dt.currentFilter, dt.options.filterParameters);
 
-                     document.location.href = dt._getDataUrl(PAGE_SIZE) + "&format=csv&metadata=" + encodeURIComponent(YAHOO.lang.JSON
-                           .stringify(dt._buildDataGridParams({
-                              filter : dt.currentFilter
-                           })));
+                              for ( var i = 0, ii = response.json.columns.length; i < ii; i++) {
+                                 var column = response.json.columns[i], columnName = column.name.replace(":", "_");
+                                 if (column.dataType == "nested" && column.columns) {
+                                    for ( var j = 0; j < column.columns.length; j++) {                                             
+                                       var col = column.columns[j];                                            
+                                       columnName += "|" + col.name.replace(":", "_");                                             
+                                    }
+                                 }
+
+                                 requestParams.fields.push(columnName);
+                              }
+
+                              var PAGE_SIZE = 5000;
+                 
+                              document.location.href = dt._getDataUrl(PAGE_SIZE).replace("/node?","/node.csv?") + "&format=csv&metadata=" + encodeURIComponent(YAHOO.lang.JSON
+                                    .stringify(requestParams));
+
+                           },
+                           scope : this
+                        }
+                     });
+                     
                   }
 
                });
