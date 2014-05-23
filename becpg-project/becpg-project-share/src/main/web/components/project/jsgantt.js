@@ -1957,7 +1957,7 @@ if (!JSGantt) {
          pList[pRow].setStart(vMinDate);
          pList[pRow].setEnd(vMaxDate);
          pList[pRow].setNumKid(vNumKid);
-         pList[pRow].setCompVal(Math.ceil(vCompSum / vNumKid));
+        // pList[pRow].setCompVal(Math.ceil(vCompSum / vNumKid));
       }
 
    };
