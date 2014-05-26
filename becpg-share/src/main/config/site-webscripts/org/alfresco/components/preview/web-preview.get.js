@@ -96,7 +96,7 @@ function main()
             pluginConditions : pluginConditionsJSON,
             api:  model.api,
             proxy: model.proxy,
-            avoidCachedThumbnail : true
+            avoidCachedThumbnail : model.entityNodeRef? true : false
          }
       };
       model.widgets = [webPreview];
