@@ -90,7 +90,7 @@ public class ReportAssociationDecorator extends fr.becpg.repo.jscript.app.BaseAs
 
 						try {
 							String contentURL = MessageFormat.format(CONTENT_DOWNLOAD_API_URL, new Object[] { obj.getStoreRef().getProtocol(), obj.getStoreRef().getIdentifier(),
-									obj.getId(), URLEncoder.encode(name, "UTF-8"), nodeRef.toString() });
+									obj.getId(), URLEncoder.encode(name, "UTF-8").replaceAll("\\+", "%20"), nodeRef.toString() });
 
 							jsonObj.put("contentURL", contentURL);
 						} catch (UnsupportedEncodingException e) {
