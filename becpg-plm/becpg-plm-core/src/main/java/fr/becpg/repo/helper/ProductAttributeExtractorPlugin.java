@@ -67,8 +67,20 @@ public class ProductAttributeExtractorPlugin implements AttributeExtractorPlugin
 		while (patternMatcher.find()) {
 
 			String propQname = patternMatcher.group(1);
-			String replacement = (String) nodeService.getProperty(nodeRef,
-					QName.createQName(propQname, namespaceService));
+			String replacement = "";
+			if(propQname.contains("|")){
+			 for(String propQnameAlt : propQname.split("|")){
+				 replacement = (String) nodeService.getProperty(nodeRef,
+							QName.createQName(propQnameAlt, namespaceService));
+				 if(replacement!=null && !replacement.isEmpty()){
+					 break;
+				 }
+			 }
+				
+			} else {
+				replacement = (String) nodeService.getProperty(nodeRef,
+						QName.createQName(propQname, namespaceService));
+			}
 
 			patternMatcher.appendReplacement(sb, replacement != null ? replacement : "");
 
