@@ -81,19 +81,21 @@
                               "semiFinishedProduct" ];
                      }
 
-                     createList.forEach(function(type) {
-                        rapidLinkPickerMenu.push({
-                           text : '<span class="' + type + '" title="' + instance
-                                 .msg("action.rapid-link.create." + type + ".description") + '" >' + instance
-                                 .msg("action.rapid-link.create." + type) + '</span>',
-                           onclick : {
-                              fn : instance.onMenuCreateTypeClick(type),
-                              scope : instance
-                           }
-                        });
-
-                     });
-
+                     
+                     for(key in createList){
+                    	 var type = createList[key];
+                    	 rapidLinkPickerMenu.push({
+                             text : '<span class="' + type + '" title="' + instance
+                                   .msg("action.rapid-link.create." + type + ".description") + '" >' + instance
+                                   .msg("action.rapid-link.create." + type) + '</span>',
+                             onclick : {
+                                fn : instance.onMenuCreateTypeClick(type),
+                                scope : instance
+                             }
+                          });
+                    	 
+                     }
+                     
                      if ("compoList" == this.options.list) {
 
                         rapidLinkPickerMenu

@@ -69,7 +69,7 @@ public class ProductAttributeExtractorPlugin implements AttributeExtractorPlugin
 			String propQname = patternMatcher.group(1);
 			String replacement = "";
 			if(propQname.contains("|")){
-			 for(String propQnameAlt : propQname.split("|")){
+			 for(String propQnameAlt : propQname.split("\\|")){
 				 replacement = (String) nodeService.getProperty(nodeRef,
 							QName.createQName(propQnameAlt, namespaceService));
 				 if(replacement!=null && !replacement.isEmpty()){
