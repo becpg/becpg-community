@@ -257,12 +257,12 @@ public class ProjectHelper {
 	public static Integer calculateTaskDuration(Date startDate, Date endDate) {
 
 		if (startDate == null || endDate == null) {
-			logger.error("startDate or endDate is null. startDate: " + startDate + " - endDate: " + endDate);
+			logger.debug("startDate or endDate is null. startDate: " + startDate + " - endDate: " + endDate);
 			return null;
 		}
 
 		if (startDate.after(endDate)) {
-			logger.error("startDate is after endDate");
+			logger.warn("startDate is after endDate");
 			return null;
 		}
 
