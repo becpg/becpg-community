@@ -1047,7 +1047,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			}
 			
 			if(!doQuery){
-				logger.warn("No keys defined in mapping, neither code property. Properties: " + properties);
+				logger.warn("No keys defined in mapping, neither code property. Type: " + type + " Properties: " + properties);
 			}
 		}
 		

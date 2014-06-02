@@ -133,8 +133,9 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 			if(hasPlannedDuration(nextTask)){
 				Date endDate = ProjectHelper.calculateEndDate(nextTask.getStart(), nextTask.getDuration());
 				ProjectHelper.setTaskEndDate(nextTask, endDate);
-			}			
-			if (projectData.getCompletionDate().before(nextTask.getEnd())) {
+			}	
+			
+			if (nextTask.getEnd() != null && projectData.getCompletionDate().before(nextTask.getEnd())) {
 				projectData.setCompletionDate(nextTask.getEnd());
 			}
 

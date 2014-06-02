@@ -312,15 +312,15 @@
                                        label : instance.msg("form.control.spel-editor.editor.choose"),
                                        value : 'variable',
                                        menu : [ {
-                                          text : 'entity'
+                                          text : 'entity', value: 'entity.'
                                        }, {
-                                          text : 'dataListItem'
+                                          text : 'dataListItem', value: 'dataListItem.'
                                        }, {
-                                          text : 'dataListItemEntity'
+                                          text : 'dataListItemEntity', value: 'dataListItemEntity.'
                                        }, {
-                                          text : '#this'
+                                          text : '#this', value: '#this.'
                                        }, {
-                                          text : '#root'
+                                          text : '#root', value: '#root.'
                                        } ]
                                     }
 
