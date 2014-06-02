@@ -25,7 +25,7 @@
         <property name="id"><value>patch.bcpg.plm.redeployWfClaimProcess</value></property>
         <property name="description"><value>patch.bcpg.plm.redeployWfClaimProcess.description</value></property>
         <property name="fixesFromSchema" value="0"/>
-        <property name="fixesToSchema" value="6033" />
+        <property name="fixesToSchema" value="6032" />
         <property name="targetSchema" value="10110"/>
         <property name="workflowDefinitions">
             <list>		
@@ -42,7 +42,7 @@
 			<property name="id"><value>patch.bcpg.plm.claimEmailTemplatesPatch</value></property>
 			<property name="description"><value>patch.bcpg.plm.claimEmailTemplatesPatch.description</value></property>
 			<property name="fixesFromSchema" value="0"/>
-	        <property name="fixesToSchema" value="6033" />
+	        <property name="fixesToSchema" value="6032" />
 	        <property name="targetSchema" value="10110"/>  
 			<property name="requiresTransaction"><value>true</value></property>
 			<property name="applyToTenants"><value>true</value></property>
@@ -62,7 +62,7 @@
         <property name="id"><value>patch.bcpg.plm.db-V1.6-Rename-assoc</value></property>
         <property name="description"><value>patch.schemaUpgradeScript.description</value></property>
         <property name="fixesFromSchema" value="0" />
-	    <property name="fixesToSchema" value="6033" />
+	    <property name="fixesToSchema" value="6032" />
 	    <property name="targetSchema" value="10120"/>  
         <property name="scriptUrl">
          	<value>classpath:alfresco/dbscripts/upgrade/4.2/${db.script.dialect}/rename-assocs.sql</value>
@@ -83,7 +83,7 @@
         <property name="id"><value>patch.bcpg.plm.redeployNPD</value></property>
         <property name="description"><value>patch.bcpg.plm.redeployNPD.description</value></property>
         <property name="fixesFromSchema" value="0"/>
-        <property name="fixesToSchema" value="6033" />
+        <property name="fixesToSchema" value="6032" />
         <property name="targetSchema" value="10130"/>
         <property name="workflowDefinitions">
             <list>		
@@ -100,7 +100,7 @@
 			<property name="id"><value>patch.bcpg.plm.wusedListPatch</value></property>
 			<property name="description"><value>patch.bcpg.plm.wusedListPatch.description</value></property>
 			<property name="fixesFromSchema" value="0"/>
-	        <property name="fixesToSchema" value="6033" />
+	        <property name="fixesToSchema" value="6032" />
 	        <property name="targetSchema" value="10140"/>  
 			<property name="requiresTransaction"><value>true</value></property>
 			<property name="applyToTenants"><value>true</value></property>

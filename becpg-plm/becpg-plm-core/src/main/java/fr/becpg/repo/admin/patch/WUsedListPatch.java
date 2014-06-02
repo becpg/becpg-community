@@ -62,59 +62,62 @@ public class WUsedListPatch extends AbstractBeCPGPatch {
 
 		Pair<Long, QName> val = qnameDAO.getQName(BeCPGModel.ASPECT_ENTITY_TPL);
 
-		for (QName productType : productTypes) {
-
-			// datalists
-
-			QName wusedQName = null;
-
-			if (productType.equals(PLMModel.TYPE_RAWMATERIAL)) {
-
-				wusedQName = PLMModel.TYPE_COMPOLIST;
-
-			} else if (productType.equals(PLMModel.TYPE_PACKAGINGMATERIAL)) {
-
-				wusedQName = PLMModel.TYPE_PACKAGINGLIST;
-
-			} else if (productType.equals(PLMModel.TYPE_RESOURCEPRODUCT)) {
-
-				wusedQName = MPMModel.TYPE_PROCESSLIST;
-
-			} else if (productType.equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT)) {
-
-				wusedQName = PLMModel.TYPE_COMPOLIST;
-
-			} else if (productType.equals(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT)) {
-
-				wusedQName = PLMModel.TYPE_COMPOLIST;
-
-			} else if (productType.equals(PLMModel.TYPE_FINISHEDPRODUCT)) {
-
-				wusedQName = PLMModel.TYPE_COMPOLIST;
-
-			} else if (productType.equals(PLMModel.TYPE_PACKAGINGKIT)) {
-
-				wusedQName = PLMModel.TYPE_PACKAGINGLIST;
-
-			}
-
-			List<Long> nodeids = patchDAO.getNodesByAspectQNameId(val.getFirst(), 1L, patchDAO.getMaxAdmNodeID());
-
-			for (Long nodeid : nodeids) {
-				NodeRef.Status status = nodeDAO.getNodeIdStatus(nodeid);
-				if (!status.isDeleted()) {
-					NodeRef entityTplNodeRef = status.getNodeRef();
-					if (!nodeService.hasAspect(entityTplNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)
-							&& productType.equals(nodeService.getType(entityTplNodeRef))) {
-
-						logger.info("Adding wusedList : " + wusedQName.toPrefixString() + " to "
-								+ nodeService.getProperty(entityTplNodeRef, ContentModel.PROP_NAME));
-
-						entityTplService.createWUsedList(entityTplNodeRef, wusedQName, null);
+		if(val!=null){
+		
+			for (QName productType : productTypes) {
+	
+				// datalists
+	
+				QName wusedQName = null;
+	
+				if (productType.equals(PLMModel.TYPE_RAWMATERIAL)) {
+	
+					wusedQName = PLMModel.TYPE_COMPOLIST;
+	
+				} else if (productType.equals(PLMModel.TYPE_PACKAGINGMATERIAL)) {
+	
+					wusedQName = PLMModel.TYPE_PACKAGINGLIST;
+	
+				} else if (productType.equals(PLMModel.TYPE_RESOURCEPRODUCT)) {
+	
+					wusedQName = MPMModel.TYPE_PROCESSLIST;
+	
+				} else if (productType.equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT)) {
+	
+					wusedQName = PLMModel.TYPE_COMPOLIST;
+	
+				} else if (productType.equals(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT)) {
+	
+					wusedQName = PLMModel.TYPE_COMPOLIST;
+	
+				} else if (productType.equals(PLMModel.TYPE_FINISHEDPRODUCT)) {
+	
+					wusedQName = PLMModel.TYPE_COMPOLIST;
+	
+				} else if (productType.equals(PLMModel.TYPE_PACKAGINGKIT)) {
+	
+					wusedQName = PLMModel.TYPE_PACKAGINGLIST;
+	
+				}
+	
+				List<Long> nodeids = patchDAO.getNodesByAspectQNameId(val.getFirst(), 1L, patchDAO.getMaxAdmNodeID());
+	
+				for (Long nodeid : nodeids) {
+					NodeRef.Status status = nodeDAO.getNodeIdStatus(nodeid);
+					if (!status.isDeleted()) {
+						NodeRef entityTplNodeRef = status.getNodeRef();
+						if (!nodeService.hasAspect(entityTplNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)
+								&& productType.equals(nodeService.getType(entityTplNodeRef))) {
+	
+							logger.info("Adding wusedList : " + wusedQName.toPrefixString() + " to "
+									+ nodeService.getProperty(entityTplNodeRef, ContentModel.PROP_NAME));
+	
+							entityTplService.createWUsedList(entityTplNodeRef, wusedQName, null);
+						}
 					}
 				}
+	
 			}
-
 		}
 
 		return I18NUtil.getMessage(MSG_SUCCESS);
