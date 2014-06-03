@@ -215,6 +215,8 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 						
 						try {
 							logger.debug("Try getting nodeRef  from : " +url); 
+							logger.debug("User : " +user);
+							logger.debug("Password : " +password);
 							
 							HttpResponse httpResponse = httpClient.execute(entityUrl);
 							HttpEntity responseEntity = httpResponse.getEntity();
