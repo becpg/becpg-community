@@ -222,14 +222,8 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 					BeCPGModel.TYPE_LIST_VALUE, properties);
 		}
 
-		// allergenTypes
-		NodeRef allergenTypesFolder = entitySystemService.getSystemEntityDataList(listsFolder, PlmRepoConsts.PATH_ALLERGEN_TYPES);
 		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-		properties.put(BeCPGModel.PROP_LV_VALUE, AllergenType.Major.toString());
-		nodeService.createNode(allergenTypesFolder, ContentModel.ASSOC_CONTAINS,
-				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)),
-				BeCPGModel.TYPE_LIST_VALUE, properties);
-
+		
 		// labelingPosition
 		NodeRef labelingPositionFolder = entitySystemService.getSystemEntityDataList(listsFolder, PlmRepoConsts.PATH_LABELING_POSITIONS);
 		String[] labelingPositions = { "Côté de la boîte", "Dessus de la boite" };
