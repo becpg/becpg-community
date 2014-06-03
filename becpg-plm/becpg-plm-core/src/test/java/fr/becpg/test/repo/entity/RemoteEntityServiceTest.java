@@ -40,25 +40,26 @@ public class RemoteEntityServiceTest extends PLMBaseTestCase {
 	private RemoteEntityService remoteEntityService;
 	
 
-	/** The sf node ref. */
-	private NodeRef sfNodeRef;
-
 	@Test
 	public void testRemoteEntity() throws FileNotFoundException {
 		
 		// create product
-		sfNodeRef  = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+	   final NodeRef	sfNodeRef  = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
 				return BeCPGPLMTestHelper.createMultiLevelProduct(testFolderNodeRef);
 			}
 		}, false, true);
-
+		
+		
+	
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
 			public NodeRef execute() throws Throwable {
 				try {
+					
+					
 					
 					File tempFile = File.createTempFile("remoteEntity", "xml");
 					File tempFile2 = File.createTempFile("remoteEntity2", "xml");
@@ -70,19 +71,21 @@ public class RemoteEntityServiceTest extends PLMBaseTestCase {
 					
 					remoteEntityService.getEntity(sfNodeRef, new FileOutputStream(tempFile), RemoteEntityFormat.xml);
 
-//					nodeService.deleteNode(sfNodeRef);
+					nodeService.deleteNode(sfNodeRef);
 					
-					sfNodeRef = remoteEntityService.createOrUpdateEntity(sfNodeRef, new FileInputStream(tempFile), RemoteEntityFormat.xml,null);
+					NodeRef tmpNodeRef = remoteEntityService.createOrUpdateEntity(sfNodeRef, new FileInputStream(tempFile), RemoteEntityFormat.xml,null);
 					
-					remoteEntityService.getEntity(sfNodeRef, new FileOutputStream(tempFile2), RemoteEntityFormat.xml);
+					remoteEntityService.getEntity(tmpNodeRef, new FileOutputStream(tempFile2), RemoteEntityFormat.xml);
 					
-					remoteEntityService.getEntityData(sfNodeRef, new FileOutputStream(tempFile2), RemoteEntityFormat.xml);
+					remoteEntityService.getEntityData(tmpNodeRef, new FileOutputStream(tempFile2), RemoteEntityFormat.xml);
 					
-					remoteEntityService.getEntityData(sfNodeRef, new FileOutputStream(tempFile), RemoteEntityFormat.xml);
+					remoteEntityService.getEntityData(tmpNodeRef, new FileOutputStream(tempFile), RemoteEntityFormat.xml);
 					
-					remoteEntityService.addOrUpdateEntityData(sfNodeRef,  new FileInputStream(tempFile), RemoteEntityFormat.xml);
+					remoteEntityService.addOrUpdateEntityData(tmpNodeRef,  new FileInputStream(tempFile), RemoteEntityFormat.xml);
 					
 					tempFile.delete();
+					tempFile2.delete();
+
 					
 				} catch (BeCPGException e) {
 					logger.error(e,e);
