@@ -106,7 +106,7 @@ public class WUsedListPatch extends AbstractBeCPGPatch {
 					NodeRef.Status status = nodeDAO.getNodeIdStatus(nodeid);
 					if (!status.isDeleted()) {
 						NodeRef entityTplNodeRef = status.getNodeRef();
-						if (!nodeService.hasAspect(entityTplNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)
+						if (nodeService.exists(entityTplNodeRef) && !nodeService.hasAspect(entityTplNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)
 								&& productType.equals(nodeService.getType(entityTplNodeRef))) {
 	
 							logger.info("Adding wusedList : " + wusedQName.toPrefixString() + " to "

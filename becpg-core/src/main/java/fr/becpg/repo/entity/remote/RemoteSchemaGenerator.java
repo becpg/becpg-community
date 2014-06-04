@@ -57,8 +57,8 @@ public class RemoteSchemaGenerator {
 
 		xmlw.writeAttribute("targetNamespace", BeCPGModel.BECPG_URI);
 		xmlw.writeNamespace(BeCPGModel.BECPG_PREFIX, BeCPGModel.BECPG_URI);
-		xmlw.writeNamespace("sys", "http://www.alfresco.org/model/system/1.0");
-		xmlw.writeNamespace("cm", "http://www.alfresco.org/model/content/1.0");
+//		xmlw.writeNamespace("sys", "http://www.alfresco.org/model/system/1.0");
+//		xmlw.writeNamespace("cm", "http://www.alfresco.org/model/content/1.0");
 		//xmlns:sys=""
 		createBecpgBase(xmlw);
 
@@ -93,17 +93,11 @@ public class RemoteSchemaGenerator {
 
 					logger.error("Create type :" + type.toPrefixString());
 					xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema", "complexType");
-					if (BeCPGModel.BECPG_URI.equals(type.getNamespaceURI())) {
-						xmlw.writeAttribute("name", type.getLocalName());
-					} else {
-						xmlw.writeAttribute("name", type.getPrefixString());
-						xmlw.writeNamespace(type.getPrefixString().split(":")[0], type.getNamespaceURI());
-					}
-					
+					xmlw.writeAttribute("name", type.getPrefixString().replace(":", "_"));
 					xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema", "complexContent");
 					xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema", "extension");
 					if (parent != null) {
-						xmlw.writeAttribute("base", parent.toPrefixString());
+						xmlw.writeAttribute("base", parent.toPrefixString().replace(":", "_"));
 					} else {
 						xmlw.writeAttribute("base", "bcpg:xmlType");
 					}
@@ -145,7 +139,7 @@ public class RemoteSchemaGenerator {
 			AssociationDefinition assocDef = dictionaryService.getAssociation(assocQName);
 			if (dictionaryService.isSubClass(assocDef.getSourceClass().getName(), dataType)) {
 				xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema", "element");
-				xmlw.writeAttribute("name", assocDef.getName().getLocalName());
+				xmlw.writeAttribute("name", assocDef.getName().getPrefixString().replace(":", "_"));
 				xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema", "complexType");
 				xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema", "complexContent");
 				xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema", "extension");
@@ -153,7 +147,7 @@ public class RemoteSchemaGenerator {
 
 				xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema", "sequence");
 				xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema", "element");
-				xmlw.writeAttribute("ref", assocDef.getTargetClass().getName().getPrefixString());
+				xmlw.writeAttribute("ref", assocDef.getTargetClass().getName().getPrefixString().replace(":", "_"));
 				xmlw.writeEndElement();
 				xmlw.writeEndElement();
 				xmlw.writeEndElement();
@@ -169,14 +163,14 @@ public class RemoteSchemaGenerator {
 			AssociationDefinition assocDef = dictionaryService.getAssociation(assocQName);
 			if (dictionaryService.isSubClass(assocDef.getSourceClass().getName(), dataType)) {
 				xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema", "element");
-				xmlw.writeAttribute("name", assocDef.getName().getPrefixString());
+				xmlw.writeAttribute("name", assocDef.getName().getPrefixString().replace(":", "_"));
 				xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema", "complexType");
 				xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema", "sequence");
 				xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema", "extension");
 				xmlw.writeAttribute("base", "bcpg:xmlBase");
 
 				xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema", "element");
-				xmlw.writeAttribute("ref", assocDef.getTargetClass().getName().getPrefixString());
+				xmlw.writeAttribute("ref", assocDef.getTargetClass().getName().getPrefixString().replace(":", "_"));
 				xmlw.writeEndElement();
 
 				xmlw.writeEndElement();
@@ -195,7 +189,7 @@ public class RemoteSchemaGenerator {
 			PropertyDefinition propertyDefinition = dictionaryService.getProperty(type);
 			if ( propertyDefinition.getContainerClass().getName().equals(dataType)) {
 				xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema", "element");
-				xmlw.writeAttribute("name", propertyDefinition.getName().getLocalName());
+				xmlw.writeAttribute("name", propertyDefinition.getName().getPrefixString().replace(":", "_"));
 				if (propertyDefinition.isMandatoryEnforced()) {
 					xmlw.writeAttribute("minOccurs", "1");
 				}

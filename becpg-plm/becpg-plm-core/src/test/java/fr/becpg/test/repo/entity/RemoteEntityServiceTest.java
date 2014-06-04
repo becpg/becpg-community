@@ -84,7 +84,6 @@ public class RemoteEntityServiceTest extends PLMBaseTestCase {
 					remoteEntityService.addOrUpdateEntityData(tmpNodeRef,  new FileInputStream(tempFile), RemoteEntityFormat.xml);
 					
 					tempFile.delete();
-					tempFile2.delete();
 
 					
 				} catch (BeCPGException e) {
