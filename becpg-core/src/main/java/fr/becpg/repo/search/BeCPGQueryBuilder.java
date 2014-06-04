@@ -603,7 +603,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		StringBuilder whereClause = new StringBuilder();
 		
 		runnedQuery.append("SELECT  * FROM ");
-		if (type == null) {
+		if (type == null || ContentModel.TYPE_CONTENT.equals(type)) {
 			runnedQuery.append("cmis:document as D");
 		} else {
 			runnedQuery.append(type.toPrefixString(namespaceService) + " as D");

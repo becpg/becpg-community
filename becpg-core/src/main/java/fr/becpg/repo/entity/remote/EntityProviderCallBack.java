@@ -25,4 +25,6 @@ public interface EntityProviderCallBack {
 
 	public NodeRef provideNode(NodeRef nodeRef) throws BeCPGException;
 
+	public void provideContent(NodeRef origNodeRef, NodeRef destNodeRef) throws BeCPGException;
+
 }

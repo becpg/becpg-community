@@ -18,36 +18,25 @@
 package fr.becpg.repo.web.scripts.remote;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.auth.BasicScheme;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
-import fr.becpg.common.BeCPGException;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.remote.EntityProviderCallBack;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
+import fr.becpg.repo.entity.remote.impl.HttpEntityProviderCallback;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
@@ -185,80 +174,12 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 
 	protected EntityProviderCallBack getEntityProviderCallback(WebScriptRequest req) {
 	
-		final String callBack = req.getParameter(PARAM_CALLBACK);
-		final String user = req.getParameter(PARAM_CALLBACK_USER)!=null ?  req.getParameter(PARAM_CALLBACK_USER) : "admin";
-		final String password = req.getParameter(PARAM_CALLBACK_PASSWORD)!=null ?  req.getParameter(PARAM_CALLBACK_PASSWORD) : "becpg";
+		String callBack = req.getParameter(PARAM_CALLBACK);
+		String user = req.getParameter(PARAM_CALLBACK_USER)!=null ?  req.getParameter(PARAM_CALLBACK_USER) : "admin";
+		String password = req.getParameter(PARAM_CALLBACK_PASSWORD)!=null ?  req.getParameter(PARAM_CALLBACK_PASSWORD) : "becpg";
 		
 		if (callBack != null && callBack.length() > 0) {
-			return new EntityProviderCallBack() {
-
-				@Override
-				public NodeRef provideNode(NodeRef nodeRef) throws BeCPGException {
-					try {
-						
-
-						String url = callBack + "?nodeRef=" + nodeRef.toString();
-						
-						HttpClient httpClient = new DefaultHttpClient();
-						
-						Header authHeader  = BasicScheme.authenticate(
-									 new UsernamePasswordCredentials(user, password),
-									 "UTF-8", false);
-
-						HttpGet entityUrl = new HttpGet(url);
-						
-						entityUrl.addHeader(authHeader);
-			
-						
-						InputStream entityStream = null;
-						InputStream dataStream = null;
-						
-						try {
-							logger.debug("Try getting nodeRef  from : " +url); 
-							logger.debug("User : " +user);
-							logger.debug("Password : " +password);
-							
-							HttpResponse httpResponse = httpClient.execute(entityUrl);
-							HttpEntity responseEntity = httpResponse.getEntity();
-							
-							
-							entityStream = responseEntity.getContent();
-							 
-							NodeRef entityNodeRef =  remoteEntityService.createOrUpdateEntity(nodeRef, entityStream, RemoteEntityFormat.xml, this);
-							
-							if(remoteEntityService.containsData(entityNodeRef)){
-							
-								
-								HttpGet dataUrl = new HttpGet(callBack + "/data?nodeRef=" + nodeRef.toString());
-								dataUrl.addHeader(authHeader);
-								httpResponse = httpClient.execute(dataUrl);
-								responseEntity = httpResponse.getEntity();
-								dataStream = responseEntity.getContent();
-								remoteEntityService.addOrUpdateEntityData(entityNodeRef, dataStream, RemoteEntityFormat.xml);
-							
-							}
-							
-							logger.debug("Getting node success for :"+url);
-							
-							return entityNodeRef;
-							
-						} finally {
-							IOUtils.closeQuietly(entityStream);
-							IOUtils.closeQuietly(dataStream);
-						}
-					
-						
-					} catch (MalformedURLException e) {
-						throw new BeCPGException(e);
-					} catch (IOException e) {
-						throw new BeCPGException(e);
-					}catch (Exception e) {
-						logger.error("Cannot import nodeRef: "+nodeRef,e);
-						throw e;
-					}	
-
-				}
-			};
+			return new HttpEntityProviderCallback(callBack, user, password, remoteEntityService);
 		}
 		logger.debug("No callback param provided");
 		return null;
