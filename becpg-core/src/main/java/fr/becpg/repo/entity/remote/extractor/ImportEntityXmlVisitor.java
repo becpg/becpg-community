@@ -20,7 +20,9 @@ package fr.becpg.repo.entity.remote.extractor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Serializable;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,17 +34,16 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.model.ForumModel;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.codec.binary.Base64OutputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.commons.net.util.Base64;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -69,9 +70,8 @@ public class ImportEntityXmlVisitor {
 	private NamespaceService namespaceService;
 
 	private EntityProviderCallBack entityProviderCallBack;
-	
+
 	private EntityDictionaryService entityDictionaryService;
-	
 
 	public void setEntityProviderCallBack(EntityProviderCallBack entityProviderCallBack) {
 		this.entityProviderCallBack = entityProviderCallBack;
@@ -79,7 +79,7 @@ public class ImportEntityXmlVisitor {
 
 	private static Log logger = LogFactory.getLog(ImportEntityXmlVisitor.class);
 
-	public ImportEntityXmlVisitor(NodeService nodeService, NamespaceService namespaceService,EntityDictionaryService entityDictionaryService) {
+	public ImportEntityXmlVisitor(NodeService nodeService, NamespaceService namespaceService, EntityDictionaryService entityDictionaryService) {
 		super();
 		this.nodeService = nodeService;
 		this.namespaceService = namespaceService;
@@ -117,18 +117,18 @@ public class ImportEntityXmlVisitor {
 
 	private class EntityDataXmlHandler extends DefaultHandler {
 
-		OutputStream out;
+		private final Writer writer;
 
 		boolean isData = false;
 
 		public EntityDataXmlHandler(OutputStream out) {
-			this.out = out;
+			writer = new OutputStreamWriter(new Base64OutputStream(out, false));
 		}
 
 		@Override
 		public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 			isData = false;
-			if (localName.equals(RemoteEntityService.ELEM_DATA)) {
+			if (qName.equals("bcpg:" + RemoteEntityService.ELEM_DATA)) {
 				isData = true;
 			}
 		}
@@ -137,12 +137,20 @@ public class ImportEntityXmlVisitor {
 		public void characters(char[] ch, int start, int length) throws SAXException {
 			if (isData) {
 				try {
-					out.write(Base64.decodeBase64(String.valueOf(ch)), start, length);
+					writer.write(ch, start, length);
 				} catch (IOException e) {
-					new SAXException("Cannot wrirte outputStream");
+					new SAXException("Cannot write outputStream");
 				}
 			}
 
+		}
+
+		public void endDocument() throws SAXException {
+			try {
+				writer.flush();
+			} catch (IOException e) {
+				throw new SAXException("Error flushing character output", e);
+			}
 		}
 
 	}
@@ -166,7 +174,7 @@ public class ImportEntityXmlVisitor {
 		private ArrayList<Serializable> multipleValues = null;
 
 		private boolean isNodeRefAssoc = false;
-		
+
 		private QName currProp = null;
 
 		private QName nodeType = null;
@@ -217,9 +225,9 @@ public class ImportEntityXmlVisitor {
 				} else {
 
 					if (!currAssocType.isEmpty() && currAssocType.peek().equals(RemoteEntityService.CHILD_ASSOC_TYPE) && !isNodeRefAssoc) {
-						
-						if(cache.containsKey(new NodeRef(nodeRef))){
-							logger.debug("Cache contains :"+cache.get(new NodeRef(nodeRef))+" of nodeRef "+nodeRef+" "+name);
+
+						if (cache.containsKey(new NodeRef(nodeRef))) {
+							logger.debug("Cache contains :" + cache.get(new NodeRef(nodeRef)) + " of nodeRef " + nodeRef + " " + name);
 						}
 						NodeRef childNode = createChildAssocNode(curNodeRef.peek(), nodeType, currAssoc.peek(), name, cache.get(new NodeRef(nodeRef)));
 						curNodeRef.push(childNode);
@@ -290,8 +298,8 @@ public class ImportEntityXmlVisitor {
 		}
 
 		private void retrieveNodeContent(NodeRef origNodeRef, NodeRef destNodeRef) throws BeCPGException {
-			if(entityProviderCallBack!=null && !entityDictionaryService.isSubClass(nodeService.getType(destNodeRef),BeCPGModel.TYPE_ENTITY_V2)
-					&& !entityDictionaryService.isSubClass( nodeService.getType(destNodeRef),BeCPGModel.TYPE_ENTITYLIST_ITEM)){
+			if (entityProviderCallBack != null && !entityDictionaryService.isSubClass(nodeService.getType(destNodeRef), BeCPGModel.TYPE_ENTITY_V2)
+					&& !entityDictionaryService.isSubClass(nodeService.getType(destNodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
 				entityProviderCallBack.provideContent(origNodeRef, destNodeRef);
 			}
 		}
@@ -309,7 +317,7 @@ public class ImportEntityXmlVisitor {
 				currAssoc.pop();
 				currAssocType.pop();
 			} else if (type != null && type.length() > 0 && (!type.equals(RemoteEntityService.NODEREF_TYPE) || multipleValues != null)) {
-				if(!shouldIgnoreProperty(currProp)){
+				if (!shouldIgnoreProperty(currProp)) {
 					if (logger.isDebugEnabled()) {
 						logger.debug("Set property : " + currProp.toPrefixString() + " value " + currValue + " for type " + type);
 					}
@@ -333,24 +341,17 @@ public class ImportEntityXmlVisitor {
 			}
 		}
 
-		
-
 		public NodeRef getCurNodeRef() {
 			return entityNodeRef;
 		}
 
 	};
-	
+
 	private boolean shouldIgnoreProperty(QName currProp) {
-		if(ContentModel.PROP_VERSION_LABEL.equals(currProp)
-				|| ContentModel.PROP_VERSION_TYPE.equals(currProp)
-				|| ContentModel.PROP_AUTO_VERSION.equals(currProp)
-				|| ContentModel.PROP_AUTO_VERSION_PROPS.equals(currProp)
-				|| ForumModel.PROP_COMMENT_COUNT.equals(currProp)
-				|| ContentModel.PROP_MODIFIED.equals(currProp)
-				|| ContentModel.PROP_MODIFIER.equals(currProp)
-				|| ContentModel.PROP_CREATED.equals(currProp)
-				|| ContentModel.PROP_CREATOR.equals(currProp)){
+		if (ContentModel.PROP_VERSION_LABEL.equals(currProp) || ContentModel.PROP_VERSION_TYPE.equals(currProp)
+				|| ContentModel.PROP_AUTO_VERSION.equals(currProp) || ContentModel.PROP_AUTO_VERSION_PROPS.equals(currProp)
+				|| ContentModel.PROP_MODIFIED.equals(currProp) || ContentModel.PROP_MODIFIER.equals(currProp)
+				|| ContentModel.PROP_CREATED.equals(currProp) || ContentModel.PROP_CREATOR.equals(currProp)) {
 			return true;
 		}
 		return false;
@@ -408,7 +409,7 @@ public class ImportEntityXmlVisitor {
 				return ret;
 			}
 		} else {
-			if(!nodeService.getPrimaryParent(existingNodeRef).getParentRef().equals(parentNodeRef)) {
+			if (!nodeService.getPrimaryParent(existingNodeRef).getParentRef().equals(parentNodeRef)) {
 				nodeService.moveNode(existingNodeRef, parentNodeRef, ContentModel.ASSOC_CONTAINS, assocName);
 			}
 			return existingNodeRef;
@@ -490,9 +491,9 @@ public class ImportEntityXmlVisitor {
 
 		return null;
 	}
-	
+
 	private String cleanName(String propValue) {
-		return propValue.replaceAll("'","");
+		return propValue.replaceAll("'", "");
 	}
 
 }
