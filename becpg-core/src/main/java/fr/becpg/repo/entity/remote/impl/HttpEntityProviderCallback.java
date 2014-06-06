@@ -44,13 +44,16 @@ public class HttpEntityProviderCallback implements EntityProviderCallBack {
 	@Override
 	public NodeRef provideNode(NodeRef nodeRef) throws BeCPGException {
 		try {
-			String url = remoteServer + "/service/becpg/remote/entity?nodeRef=" + nodeRef.toString();
+			String url = remoteServer + "?nodeRef=" + nodeRef.toString();
+			logger.debug("Try getting nodeRef  from : " + url);
+			logger.debug("User : " + remoteUser);
+			logger.debug("Password : " + remotePwd);
 
 			HttpClient httpClient = new DefaultHttpClient();
 
 			Header authHeader = BasicScheme.authenticate(new UsernamePasswordCredentials(remoteUser, remotePwd), "UTF-8", false);
 
-			HttpGet entityUrl = new HttpGet();
+			HttpGet entityUrl = new HttpGet(url);
 
 			entityUrl.addHeader(authHeader);
 
@@ -58,9 +61,7 @@ public class HttpEntityProviderCallback implements EntityProviderCallBack {
 			HttpEntity responseEntity = httpResponse.getEntity();
 
 
-			logger.debug("Try getting nodeRef  from : " + url);
-			logger.debug("User : " + remoteUser);
-			logger.debug("Password : " + remotePwd);
+			
 
 			try (InputStream entityStream = responseEntity.getContent()){
 				return remoteEntityService.createOrUpdateEntity(nodeRef, entityStream, RemoteEntityFormat.xml, this);
@@ -77,22 +78,23 @@ public class HttpEntityProviderCallback implements EntityProviderCallBack {
 	public void provideContent(NodeRef origNodeRef, NodeRef destNodeRef) throws BeCPGException {
 		
 		try {
-			String url = remoteServer + "/service/becpg/remote/entity/data?nodeRef=" + origNodeRef.toString();
+			String url = remoteServer + "/data?nodeRef=" + origNodeRef.toString();
+			logger.debug("Try getting data  from : " + url);
+			logger.debug("User : " + remoteUser);
+			logger.debug("Password : " + remotePwd);
 
 			HttpClient httpClient = new DefaultHttpClient();
 
 			Header authHeader = BasicScheme.authenticate(new UsernamePasswordCredentials(remoteUser, remotePwd), "UTF-8", false);
 
-			HttpGet entityUrl = new HttpGet();
+			HttpGet entityUrl = new HttpGet(url);
 
 			entityUrl.addHeader(authHeader);
 
 			HttpResponse httpResponse = httpClient.execute(entityUrl);
 			HttpEntity responseEntity = httpResponse.getEntity();
 
-			logger.debug("Try getting data  from : " + url);
-			logger.debug("User : " + remoteUser);
-			logger.debug("Password : " + remotePwd);
+			
 
 			try (InputStream dataStream = responseEntity.getContent()){
 

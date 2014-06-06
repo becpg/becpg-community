@@ -64,7 +64,7 @@ public class ImportEntityWebScript extends AbstractEntityWebScript implements In
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		entityProviderCallBack = new HttpEntityProviderCallback(remoteServer, remoteUser, remotePwd, remoteEntityService);
+		entityProviderCallBack = new HttpEntityProviderCallback(remoteServer+"/service/becpg/remote/entity", remoteUser, remotePwd, remoteEntityService);
 
 	}
 

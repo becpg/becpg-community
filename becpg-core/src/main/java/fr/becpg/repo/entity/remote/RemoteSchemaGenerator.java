@@ -55,8 +55,8 @@ public class RemoteSchemaGenerator {
 
 		xmlw.writeStartElement("xs", "schema", "http://www.w3.org/2001/XMLSchema");
 
-		xmlw.writeAttribute("targetNamespace", BeCPGModel.BECPG_URI);
-		xmlw.writeNamespace(BeCPGModel.BECPG_PREFIX, BeCPGModel.BECPG_URI);
+//		xmlw.writeAttribute("targetNamespace", BeCPGModel.BECPG_URI);
+//		xmlw.writeNamespace(BeCPGModel.BECPG_PREFIX, BeCPGModel.BECPG_URI);
 //		xmlw.writeNamespace("sys", "http://www.alfresco.org/model/system/1.0");
 //		xmlw.writeNamespace("cm", "http://www.alfresco.org/model/content/1.0");
 		//xmlns:sys=""
@@ -85,7 +85,7 @@ public class RemoteSchemaGenerator {
 
 			if (dictionaryService.getClass(type) != null) {
 
-				if (BeCPGModel.BECPG_URI.equals(type.getNamespaceURI())) {
+				//if (BeCPGModel.BECPG_URI.equals(type.getNamespaceURI())) {
 					QName parent = dictionaryService.getClass(type).getParentName();
 					if (parent != null) {
 						createType(parent, cache, xmlw);
@@ -99,7 +99,7 @@ public class RemoteSchemaGenerator {
 					if (parent != null) {
 						xmlw.writeAttribute("base", parent.toPrefixString().replace(":", "_"));
 					} else {
-						xmlw.writeAttribute("base", "bcpg:xmlType");
+						xmlw.writeAttribute("base", "xmlType");
 					}
 					xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema", "sequence");
 
@@ -113,7 +113,7 @@ public class RemoteSchemaGenerator {
 					xmlw.writeEndElement();
 					xmlw.writeEndElement();
 				}
-			}
+			//}
 
 			createAspects(type, xmlw, cache);
 		}
@@ -143,7 +143,7 @@ public class RemoteSchemaGenerator {
 				xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema", "complexType");
 				xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema", "complexContent");
 				xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema", "extension");
-				xmlw.writeAttribute("base", "bcpg:xmlBase");
+				xmlw.writeAttribute("base", "xmlBase");
 
 				xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema", "sequence");
 				xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema", "element");
@@ -167,7 +167,7 @@ public class RemoteSchemaGenerator {
 				xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema", "complexType");
 				xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema", "sequence");
 				xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema", "extension");
-				xmlw.writeAttribute("base", "bcpg:xmlBase");
+				xmlw.writeAttribute("base", "xmlBase");
 
 				xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema", "element");
 				xmlw.writeAttribute("ref", assocDef.getTargetClass().getName().getPrefixString().replace(":", "_"));
@@ -196,7 +196,7 @@ public class RemoteSchemaGenerator {
 				xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema", "complexType");
 				xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema", "simpleContent");
 				xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema", "extension");
-				xmlw.writeAttribute("base", "bcpg:xmlBase");
+				xmlw.writeAttribute("base", "xmlBase");
 				xmlw.writeEndElement();
 				xmlw.writeEndElement();
 				xmlw.writeEndElement();
@@ -226,7 +226,7 @@ public class RemoteSchemaGenerator {
 		xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema", "simpleContent");
 		xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema", "extension");
 
-		xmlw.writeAttribute("base", "bcpg:xmlBase");
+		xmlw.writeAttribute("base", "xmlBase");
 
 		addAttribute(RemoteEntityService.ATTR_PATH, xmlw);
 		addAttribute(RemoteEntityService.ATTR_NAME, xmlw);

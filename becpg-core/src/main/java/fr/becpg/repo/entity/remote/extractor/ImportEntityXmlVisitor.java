@@ -32,6 +32,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.model.ForumModel;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -49,6 +50,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import fr.becpg.common.BeCPGException;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.remote.EntityProviderCallBack;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -68,6 +70,8 @@ public class ImportEntityXmlVisitor {
 
 	private EntityProviderCallBack entityProviderCallBack;
 	
+	private EntityDictionaryService entityDictionaryService;
+	
 
 	public void setEntityProviderCallBack(EntityProviderCallBack entityProviderCallBack) {
 		this.entityProviderCallBack = entityProviderCallBack;
@@ -75,10 +79,11 @@ public class ImportEntityXmlVisitor {
 
 	private static Log logger = LogFactory.getLog(ImportEntityXmlVisitor.class);
 
-	public ImportEntityXmlVisitor(NodeService nodeService, NamespaceService namespaceService) {
+	public ImportEntityXmlVisitor(NodeService nodeService, NamespaceService namespaceService,EntityDictionaryService entityDictionaryService) {
 		super();
 		this.nodeService = nodeService;
 		this.namespaceService = namespaceService;
+		this.entityDictionaryService = entityDictionaryService;
 	}
 
 	public NodeRef visit(NodeRef entityNodeRef, InputStream in) throws IOException, SAXException, ParserConfigurationException {
@@ -161,7 +166,7 @@ public class ImportEntityXmlVisitor {
 		private ArrayList<Serializable> multipleValues = null;
 
 		private boolean isNodeRefAssoc = false;
-
+		
 		private QName currProp = null;
 
 		private QName nodeType = null;
@@ -214,7 +219,7 @@ public class ImportEntityXmlVisitor {
 					if (!currAssocType.isEmpty() && currAssocType.peek().equals(RemoteEntityService.CHILD_ASSOC_TYPE) && !isNodeRefAssoc) {
 						
 						if(cache.containsKey(new NodeRef(nodeRef))){
-							logger.info("Cache contains :"+cache.get(new NodeRef(nodeRef))+" of nodeRef "+nodeRef+" "+name);
+							logger.debug("Cache contains :"+cache.get(new NodeRef(nodeRef))+" of nodeRef "+nodeRef+" "+name);
 						}
 						NodeRef childNode = createChildAssocNode(curNodeRef.peek(), nodeType, currAssoc.peek(), name, cache.get(new NodeRef(nodeRef)));
 						curNodeRef.push(childNode);
@@ -285,7 +290,8 @@ public class ImportEntityXmlVisitor {
 		}
 
 		private void retrieveNodeContent(NodeRef origNodeRef, NodeRef destNodeRef) throws BeCPGException {
-			if(entityProviderCallBack!=null){
+			if(entityProviderCallBack!=null && !entityDictionaryService.isSubClass(nodeService.getType(destNodeRef),BeCPGModel.TYPE_ENTITY_V2)
+					&& !entityDictionaryService.isSubClass( nodeService.getType(destNodeRef),BeCPGModel.TYPE_ENTITYLIST_ITEM)){
 				entityProviderCallBack.provideContent(origNodeRef, destNodeRef);
 			}
 		}
@@ -303,18 +309,19 @@ public class ImportEntityXmlVisitor {
 				currAssoc.pop();
 				currAssocType.pop();
 			} else if (type != null && type.length() > 0 && (!type.equals(RemoteEntityService.NODEREF_TYPE) || multipleValues != null)) {
-				if (logger.isDebugEnabled()) {
-					logger.debug("Set property : " + currProp.toPrefixString() + " value " + currValue + " for type " + type);
-				}
-
-				if (multipleValues != null) {
-					nodeService.setProperty(curNodeRef.peek(), currProp, multipleValues);
-					multipleValues = null;
-				} else {
-					if (currValue.length() > 0) {
-						nodeService.setProperty(curNodeRef.peek(), currProp, currValue.toString());
+				if(!shouldIgnoreProperty(currProp)){
+					if (logger.isDebugEnabled()) {
+						logger.debug("Set property : " + currProp.toPrefixString() + " value " + currValue + " for type " + type);
+					}
+					if (multipleValues != null) {
+						nodeService.setProperty(curNodeRef.peek(), currProp, multipleValues);
+						multipleValues = null;
 					} else {
-						nodeService.setProperty(curNodeRef.peek(), currProp, null);
+						if (currValue.length() > 0) {
+							nodeService.setProperty(curNodeRef.peek(), currProp, currValue.toString());
+						} else {
+							nodeService.setProperty(curNodeRef.peek(), currProp, null);
+						}
 					}
 				}
 			} else if (RemoteEntityService.ELEM_LIST_VALUE.equals(localName)) {
@@ -326,11 +333,28 @@ public class ImportEntityXmlVisitor {
 			}
 		}
 
+		
+
 		public NodeRef getCurNodeRef() {
 			return entityNodeRef;
 		}
 
 	};
+	
+	private boolean shouldIgnoreProperty(QName currProp) {
+		if(ContentModel.PROP_VERSION_LABEL.equals(currProp)
+				|| ContentModel.PROP_VERSION_TYPE.equals(currProp)
+				|| ContentModel.PROP_AUTO_VERSION.equals(currProp)
+				|| ContentModel.PROP_AUTO_VERSION_PROPS.equals(currProp)
+				|| ForumModel.PROP_COMMENT_COUNT.equals(currProp)
+				|| ContentModel.PROP_MODIFIED.equals(currProp)
+				|| ContentModel.PROP_MODIFIER.equals(currProp)
+				|| ContentModel.PROP_CREATED.equals(currProp)
+				|| ContentModel.PROP_CREATOR.equals(currProp)){
+			return true;
+		}
+		return false;
+	}
 
 	private void removeAllExistingAssoc(NodeRef nodeRef, QName assocName, String type) {
 		if (type.equals(RemoteEntityService.CHILD_ASSOC_TYPE)) {
@@ -416,8 +440,6 @@ public class ImportEntityXmlVisitor {
 		}
 
 		if (cache != null && cache.containsKey(new NodeRef(nodeRef))) {
-			// TODO update path
-
 			return cache.get(new NodeRef(nodeRef));
 		}
 
@@ -437,7 +459,7 @@ public class ImportEntityXmlVisitor {
 		if (code != null && code.length() > 0) {
 			beCPGQueryBuilder.andPropEquals(BeCPGModel.PROP_CODE, code);
 		} else if (name != null && name.length() > 0) {
-			beCPGQueryBuilder.andPropEquals(RemoteHelper.getPropName(type), name);
+			beCPGQueryBuilder.andPropEquals(RemoteHelper.getPropName(type), cleanName(name));
 		}
 
 		if (inBD) {
@@ -467,6 +489,10 @@ public class ImportEntityXmlVisitor {
 		}
 
 		return null;
+	}
+	
+	private String cleanName(String propValue) {
+		return propValue.replaceAll("'","");
 	}
 
 }
