@@ -40,6 +40,7 @@ import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
 
 import fr.becpg.common.BeCPGException;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.remote.EntityProviderCallBack;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
@@ -68,6 +69,9 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 
 	@Autowired
 	private MimetypeService mimetypeService;
+	
+	@Autowired
+	private EntityDictionaryService entityDictionaryService;
 
 	private static Log logger = LogFactory.getLog(RemoteEntityServiceImpl.class);
 
@@ -89,7 +93,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	public NodeRef createOrUpdateEntity(NodeRef entityNodeRef, InputStream in, RemoteEntityFormat format,
 			EntityProviderCallBack entityProviderCallBack) throws BeCPGException {
 		if (format.equals(RemoteEntityFormat.xml)) {
-			ImportEntityXmlVisitor xmlEntityVisitor = new ImportEntityXmlVisitor(nodeService, namespaceService);
+			ImportEntityXmlVisitor xmlEntityVisitor = new ImportEntityXmlVisitor(nodeService, namespaceService, entityDictionaryService);
 			xmlEntityVisitor.setEntityProviderCallBack(entityProviderCallBack);
 			NodeRef ret = null;
 			try {
@@ -144,7 +148,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	@Override
 	public void addOrUpdateEntityData(NodeRef entityNodeRef, InputStream in, RemoteEntityFormat format) throws BeCPGException {
 		if (RemoteEntityFormat.xml.equals(format)) {
-			ImportEntityXmlVisitor xmlEntityVisitor = new ImportEntityXmlVisitor(nodeService, namespaceService);
+			ImportEntityXmlVisitor xmlEntityVisitor = new ImportEntityXmlVisitor(nodeService, namespaceService, entityDictionaryService);
 			
 
 			String fileName = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
