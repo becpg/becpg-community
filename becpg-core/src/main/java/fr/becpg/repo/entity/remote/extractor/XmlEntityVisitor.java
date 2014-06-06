@@ -19,7 +19,9 @@ package fr.becpg.repo.entity.remote.extractor;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
@@ -45,7 +47,7 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.Path;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.Base64InputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.ISO8601DateFormat;
@@ -201,15 +203,16 @@ public class XmlEntityVisitor {
 		xmlw.writeStartElement(BeCPGModel.BECPG_PREFIX, RemoteEntityService.ELEM_DATA, BeCPGModel.BECPG_URI);
 
 		ContentReader contentReader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
-		if(contentReader!=null){
-			try (InputStream in = contentReader.getContentInputStream()) {
-	
-				byte[] buffer = new byte[1024];
-				while (-1 != in.read(buffer)) {
-					System.out.print("#");
-					xmlw.writeCharacters(Base64.encodeBase64String(buffer));
+		if (contentReader != null) {
+			try (InputStream in = contentReader.getContentInputStream();
+					Reader reader = new InputStreamReader(new Base64InputStream(in, true, -1, null))) {
+
+				char[] buf = new char[4096];
+				int n;
+				while ((n = reader.read(buf)) >= 0) {
+					xmlw.writeCharacters(buf, 0, n);
 				}
-	
+
 			} catch (ContentIOException | IOException e) {
 				throw new XMLStreamException("Cannot serialyze data");
 			}
