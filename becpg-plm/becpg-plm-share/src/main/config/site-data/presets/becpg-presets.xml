@@ -14,67 +14,11 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
   GNU Lesser General Public License for more details. 
    
-  You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU Lesser General Public License along with beCPG.
+   If not, see <http://www.gnu.org/licenses/>.
 -->
 <presets>
    
-   <!-- Well known preset used to generate the default User dashboard -->
-   <preset id="user-dashboard">
-      <components>
-         <!-- title -->
-         <component>
-            <scope>page</scope>
-            <region-id>title</region-id>
-            <source-id>user/${userid}/dashboard</source-id>
-            <url>/components/title/user-dashboard-title</url>
-         </component>
-         <!-- dashboard components -->
-         <component>
-            <scope>page</scope>
-            <region-id>full-width-dashlet</region-id>
-            <source-id>user/${userid}/dashboard</source-id>
-            <url>/components/dashlets/dynamic-welcome</url>
-            <properties>
-               <dashboardType>user</dashboardType>
-            </properties>
-         </component>
-         <component>
-            <scope>page</scope>
-            <region-id>component-1-1</region-id>
-            <source-id>user/${userid}/dashboard</source-id>
-            <url>/components/dashlets/my-tasks</url>
-         </component>
-          <component>
-             <scope>page</scope>
-             <region-id>component-1-2</region-id>
-             <source-id>user/${userid}/dashboard</source-id>
-             <url>/components/dashlets/product-catalog</url>
-         </component>
-         <component>
-             <scope>page</scope>
-             <region-id>component-2-1</region-id>
-             <source-id>user/${userid}/dashboard</source-id>
-             <url>/components/dashlets/project-list</url>
-         </component>
-         <component>
-             <scope>page</scope>
-             <region-id>component-2-2</region-id>
-             <source-id>user/${userid}/dashboard</source-id>
-             <url>/components/dashlets/my-activities</url>
-         </component>   
-      </components>              
-      <pages>
-         <page id="user/${userid}/dashboard">
-            <title>User Dashboard</title>
-            <title-id>page.userDashboard.title</title-id>
-            <description>Users dashboard page</description>
-            <description-id>page.userDashboard.description</description-id>
-            <template-instance>dashboard-2-columns-wide-right</template-instance>
-            <authentication>user</authentication>
-         </page>
-      </pages>
-   </preset>
-
    <!-- Well known preset used to generate the default Product Site dashboard -->
    <preset id="product-site-dashboard">
       <components>
