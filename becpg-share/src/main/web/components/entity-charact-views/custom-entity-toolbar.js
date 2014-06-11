@@ -351,6 +351,7 @@
                         Alfresco.util.Ajax
                               .request({
                                  method : Alfresco.util.Ajax.GET,
+                                 responseContentType: Alfresco.util.Ajax.JSON,
                                  url : Alfresco.constants.PROXY_URI + "becpg/product/formulate/node/" + this.options.entityNodeRef
                                        .replace(":/", ""),
                                  successCallback : {
@@ -366,9 +367,10 @@
                                  },
                                  failureCallback : {
                                     fn : function(response) {
-                                       if (response.message !== null) {
+                                       if (response.json && response.json.message) {
                                           Alfresco.util.PopupManager.displayPrompt({
-                                             text : response.message
+                                        	 title : this.msg("message.formulate.failure"),
+                                             text : response.json.message
                                           });
                                        } else {
                                           Alfresco.util.PopupManager.displayMessage({
