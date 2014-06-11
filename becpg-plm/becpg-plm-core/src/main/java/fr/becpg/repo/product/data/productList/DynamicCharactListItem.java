@@ -21,10 +21,11 @@ import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.model.AbstractManualDataItem;
+import fr.becpg.repo.repository.model.Synchronisable;
 
 @AlfType
 @AlfQname(qname = "bcpg:dynamicCharactList")
-public class DynamicCharactListItem extends AbstractManualDataItem {
+public class DynamicCharactListItem extends AbstractManualDataItem implements Synchronisable {
 
 	private String title;
 
@@ -97,6 +98,12 @@ public class DynamicCharactListItem extends AbstractManualDataItem {
 
 	public void setColumnName(String columnName) {
 		this.columnName = columnName;
+	}
+	
+	
+	@Override
+	public boolean isSynchronisable() {
+		return Boolean.TRUE.equals(getIsManual());
 	}
 
 	public DynamicCharactListItem() {
