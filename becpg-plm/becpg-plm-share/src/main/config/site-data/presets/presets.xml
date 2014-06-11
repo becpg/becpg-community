@@ -111,7 +111,7 @@
                 <height>240</height>
              </properties>
          </component> -->
-            <component>
+         <component>
             <scope>page</scope>
             <region-id>component-1-1</region-id>
             <source-id>user/${userid}/dashboard</source-id>
