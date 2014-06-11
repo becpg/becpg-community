@@ -5,7 +5,7 @@
    <#local documentLinkResolver>
 		function(item)
 		{
-			if(item.aspects !=null && item.aspects.indexOf("bcpg:entityListsAspect") > 0){
+			if(item.aspects !=null && beCPG.util.contains(item.aspects, "bcpg:entityListsAspect")){
 			  return Alfresco.util.siteURL("entity-details?nodeRef=" + item.nodeRef, { site: item.site })
 			}
 
