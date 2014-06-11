@@ -94,7 +94,6 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 		this.nodeService = nodeService;
 	}
 
-	
 	@Override
 	public boolean process(ProductData productData) throws FormulateException {
 
@@ -102,21 +101,26 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 		ExpressionParser parser = new SpelExpressionParser();
 		StandardEvaluationContext context = new StandardEvaluationContext(createSecurityProxy(productData));
-		
+
 		registerCustomFunctions(context);
-		
-		
 
 		for (AbstractProductDataView view : productData.getViews()) {
 			computeFormula(productData, parser, context, view);
 		}
 
+		computeClaimList(productData, parser, context);
+
+		return true;
+	}
+
+	private void computeClaimList(ProductData productData, ExpressionParser parser, StandardEvaluationContext context) {
 		// ClaimLabel list
 		if (productData.getLabelClaimList() != null) {
 			for (LabelClaimListDataItem labelClaimListDataItem : productData.getLabelClaimList()) {
 				labelClaimListDataItem.setIsFormulated(false);
 				labelClaimListDataItem.setErrorLog(null);
-				if ((labelClaimListDataItem.getIsManual() == null || !labelClaimListDataItem.getIsManual()) && labelClaimListDataItem.getLabelClaim() != null) {
+				if ((labelClaimListDataItem.getIsManual() == null || !labelClaimListDataItem.getIsManual())
+						&& labelClaimListDataItem.getLabelClaim() != null) {
 
 					String formula = (String) nodeService.getProperty(labelClaimListDataItem.getLabelClaim(), PLMModel.PROP_LABEL_CLAIM_FORMULA);
 					if (formula != null && formula.length() > 0) {
@@ -127,7 +131,8 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 							if (ret instanceof Boolean) {
 								labelClaimListDataItem.setIsClaimed((Boolean) ret);
 							} else {
-								labelClaimListDataItem.setErrorLog(I18NUtil.getMessage("message.formulate.formula.incorrect.type.boolean", Locale.getDefault()));
+								labelClaimListDataItem.setErrorLog(I18NUtil.getMessage("message.formulate.formula.incorrect.type.boolean",
+										Locale.getDefault()));
 							}
 
 						} catch (Exception e) {
@@ -142,35 +147,38 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 				if (labelClaimListDataItem.getErrorLog() != null) {
 
 					String message = I18NUtil.getMessage("message.formulate.labelCLaim.error", Locale.getDefault(),
-							nodeService.getProperty(labelClaimListDataItem.getLabelClaim(), ContentModel.PROP_NAME), labelClaimListDataItem.getErrorLog());
-					productData.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, new ArrayList<NodeRef>()));
+							nodeService.getProperty(labelClaimListDataItem.getLabelClaim(), ContentModel.PROP_NAME),
+							labelClaimListDataItem.getErrorLog());
+					productData.getCompoListView().getReqCtrlList()
+							.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, new ArrayList<NodeRef>()));
 				}
 
 			}
 		}
 
-		return true;
 	}
-	
-	
+
 	public class SpelHelperFonctions {
 		public ProductData findOne(NodeRef nodeRef) {
 			return createSecurityProxy(alfrescoRepository.findOne(nodeRef));
 		}
+		
+		public Serializable propValue(NodeRef nodeRef, String qname) {
+			return nodeService.getProperty(nodeRef, QName.createQName(qname, namespaceService));
+		}
 	}
-	
 
 	/**
 	 * @param context
 	 */
 	private void registerCustomFunctions(StandardEvaluationContext context) {
 		context.setBeanResolver(new BeanResolver() {
-			
+
 			SpelHelperFonctions spelHelperFonctions = new SpelHelperFonctions();
-			
+
 			@Override
 			public Object resolve(EvaluationContext context, String beanName) throws AccessException {
-				if(beanName.equals("beCPG")) {
+				if (beanName.equals("beCPG")) {
 					return spelHelperFonctions;
 				}
 				return null;
@@ -207,7 +215,8 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 							nullDynColumnNames.remove(columnName);
 						}
 						for (CompositionDataItem dataListItem : view.getMainDataList()) {
-							EvaluationContext dataContext = new StandardEvaluationContext(new FormulaFormulationContext(alfrescoRepository,productData, dataListItem));
+							EvaluationContext dataContext = new StandardEvaluationContext(new FormulaFormulationContext(alfrescoRepository,
+									productData, dataListItem));
 							Object value = exp.getValue(dataContext);
 							dataListItem.getExtraProperties().put(columnName, (Serializable) value);
 							logger.debug("Value :" + value);
@@ -259,9 +268,12 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 		if (formulatedProduct.getEntityTpl() != null) {
 			ProductData templateProductData = formulatedProduct.getEntityTpl();
 
-			copyTemplateDynamicCharactList(templateProductData.getCompoListView().getDynamicCharactList(), formulatedProduct.getCompoListView().getDynamicCharactList());
-			copyTemplateDynamicCharactList(templateProductData.getPackagingListView().getDynamicCharactList(), formulatedProduct.getPackagingListView().getDynamicCharactList());
-			copyTemplateDynamicCharactList(templateProductData.getProcessListView().getDynamicCharactList(), formulatedProduct.getProcessListView().getDynamicCharactList());
+			copyTemplateDynamicCharactList(templateProductData.getCompoListView().getDynamicCharactList(), formulatedProduct.getCompoListView()
+					.getDynamicCharactList());
+			copyTemplateDynamicCharactList(templateProductData.getPackagingListView().getDynamicCharactList(), formulatedProduct
+					.getPackagingListView().getDynamicCharactList());
+			copyTemplateDynamicCharactList(templateProductData.getProcessListView().getDynamicCharactList(), formulatedProduct.getProcessListView()
+					.getDynamicCharactList());
 		}
 	}
 
@@ -269,31 +281,37 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 		for (DynamicCharactListItem sourceItem : sourceList) {
 			if (sourceItem.getTitle() != null) {
-				boolean isFound = false;
-				for (DynamicCharactListItem targetItem : targetList) {
-					// charact renamed
-					if (sourceItem.getName().equals(targetItem.getName()) && !sourceItem.getTitle().equals(targetItem.getTitle())) {
-						targetItem.setTitle(sourceItem.getTitle());
-					}
-					// update formula
-					if (sourceItem.getTitle().equals(targetItem.getTitle())) {
-						if (targetItem.getIsManual() == null || targetItem.getIsManual() == false) {
-							targetItem.setFormula(sourceItem.getFormula());
-							targetItem.setColumnName(sourceItem.getColumnName());
-							targetItem.setGroupColor(sourceItem.getGroupColor());
-							targetItem.setIsManual(sourceItem.getIsManual());
+				if (sourceItem.isSynchronisable()) {
+					boolean isFound = false;
+					for (DynamicCharactListItem targetItem : targetList) {
+						// charact renamed
+						if (sourceItem.getName().equals(targetItem.getName()) && !sourceItem.getTitle().equals(targetItem.getTitle())) {
+							targetItem.setTitle(sourceItem.getTitle());
 						}
-						isFound = true;
-						break;
+						// update formula
+						if (sourceItem.getTitle().equals(targetItem.getTitle())) {
+							if (targetItem.getIsManual() == null || targetItem.getIsManual() == false) {
+								targetItem.setFormula(sourceItem.getFormula());
+								targetItem.setColumnName(sourceItem.getColumnName());
+								targetItem.setGroupColor(sourceItem.getGroupColor());
+								targetItem.setIsManual(sourceItem.getIsManual());
+							}
+							isFound = true;
+							break;
+						}
 					}
-				}
-				if (!isFound) {
+					if (!isFound) {
+						sourceItem.setNodeRef(null);
+						sourceItem.setParentNodeRef(null);
+						targetList.add(sourceItem);
+					}
+				} else {
 					sourceItem.setNodeRef(null);
 					sourceItem.setParentNodeRef(null);
+					sourceItem.setTransient(true);
 					targetList.add(sourceItem);
 				}
 			}
-
 		}
 	}
 }
