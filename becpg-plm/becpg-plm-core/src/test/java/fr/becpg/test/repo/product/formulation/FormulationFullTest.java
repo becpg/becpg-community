@@ -465,6 +465,7 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 				.getMessage(AbstractSimpleListFormulationHandler.MESSAGE_MISSING_MANDATORY_CHARACT, nodeService.getProperty(nut2, ContentModel.PROP_NAME));
 		logger.info(message1);
 		logger.info(message2);
+		logger.info(formulatedProduct.getCompoListView().getReqCtrlList().size());
 		for (ReqCtrlListDataItem r : formulatedProduct.getCompoListView().getReqCtrlList()) {
 
 			logger.info("reqCtrl " + r.getReqMessage() + r.getReqType() + r.getSources());
