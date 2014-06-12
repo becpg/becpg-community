@@ -20,12 +20,13 @@ package fr.becpg.repo.product.data.productList;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
-import fr.becpg.repo.repository.model.AbstractManualDataItem;
+import fr.becpg.repo.repository.model.BeCPGDataObject;
+import fr.becpg.repo.repository.model.IManualDataItem;
 import fr.becpg.repo.repository.model.Synchronisable;
 
 @AlfType
 @AlfQname(qname = "bcpg:dynamicCharactList")
-public class DynamicCharactListItem extends AbstractManualDataItem implements Synchronisable {
+public class DynamicCharactListItem extends BeCPGDataObject implements Synchronisable,IManualDataItem {
 
 	private String title;
 
@@ -38,6 +39,8 @@ public class DynamicCharactListItem extends AbstractManualDataItem implements Sy
 	private String columnName;
 	
 	private String errorLog;
+	
+	private DynamicCharactSynchronisableState dynamicCharactSynchronisableState = DynamicCharactSynchronisableState.Synchronized;
 
 	@AlfProp
 	@AlfQname(qname = "bcpg:dynamicCharactTitle")
@@ -100,12 +103,37 @@ public class DynamicCharactListItem extends AbstractManualDataItem implements Sy
 		this.columnName = columnName;
 	}
 	
-	
-	@Override
-	public boolean isSynchronisable() {
-		return Boolean.TRUE.equals(getIsManual());
+
+	@AlfProp
+	@AlfQname(qname = "bcpg:dynamicCharactSynchronisableState")
+	public DynamicCharactSynchronisableState getDynamicCharactSynchronisableState() {
+		return dynamicCharactSynchronisableState;
 	}
 
+	public void setDynamicCharactSynchronisableState(DynamicCharactSynchronisableState dynamicCharactSynchronisableState) {
+		this.dynamicCharactSynchronisableState = dynamicCharactSynchronisableState;
+	}
+
+	@Override
+	public boolean isSynchronisable() {
+		return !DynamicCharactSynchronisableState.Model.equals(dynamicCharactSynchronisableState);
+	}
+
+	@Override
+	public Boolean getIsManual() {
+		return DynamicCharactSynchronisableState.Manual.equals(dynamicCharactSynchronisableState);
+	}
+
+	@Override
+	public void setIsManual(Boolean isManual) {
+		if(Boolean.TRUE.equals(isManual)){
+			this.dynamicCharactSynchronisableState = DynamicCharactSynchronisableState.Manual;
+		} else {
+			this.dynamicCharactSynchronisableState = DynamicCharactSynchronisableState.Synchronized;
+		}
+		
+	}
+	
 	public DynamicCharactListItem() {
 		super();
 	}
@@ -178,5 +206,7 @@ public class DynamicCharactListItem extends AbstractManualDataItem implements Sy
 		return "DynamicCharactListItem [title=" + title + ", formula=" + formula + ", value=" + value + ", groupColor=" + groupColor + ", columnName=" + columnName + ", errorLog="
 				+ errorLog + "]";
 	}
+
+	
 
 }

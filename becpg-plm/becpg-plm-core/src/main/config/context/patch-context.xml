@@ -97,7 +97,7 @@
         </property>
     </bean>
 
- <bean id="patch.bcpg.plm.wusedListPatch" class="fr.becpg.repo.admin.patch.WUsedListPatch" parent="beCPGBasePatch" >
+   <bean id="patch.bcpg.plm.wusedListPatch" class="fr.becpg.repo.admin.patch.WUsedListPatch" parent="beCPGBasePatch" >
 			<property name="id"><value>patch.bcpg.plm.wusedListPatch</value></property>
 			<property name="description"><value>patch.bcpg.plm.wusedListPatch.description</value></property>
 			<property name="fixesFromSchema" value="0"/>
@@ -116,5 +116,31 @@
 	            <ref bean="qnameDAO"/>
 	        </property>
 	 </bean>
+	 
+	 
+	 <bean id="patch.bcpg.plm.dynCharactPatch" class="fr.becpg.repo.admin.patch.DynCharactPatch" parent="beCPGBasePatch" >
+        <property name="id"><value>patch.bcpg.plm.dynCharactPatch</value></property>
+        <property name="description"><value>patch.bcpg.plm.dynCharactPatch.description</value></property>
+        <property name="fixesFromSchema" value="0"/>
+        <property name="fixesToSchema" value="6032" />
+        <property name="targetSchema" value="10150 "/>
+        <property name="requiresTransaction"><value>true</value></property>
+        <property name="applyToTenants"><value>true</value></property>
+        <property name="ruleService" ref="ruleService"/>
+         <property name="patchDAO">
+            <ref bean="patchDAO"/>
+        </property>
+        <property name="nodeDAO">
+            <ref bean="nodeDAO"/>
+        </property>
+        <property name="qnameDAO">
+            <ref bean="qnameDAO"/>
+        </property>
+         <property name="policyBehaviourFilter">
+            <ref bean="policyBehaviourFilter"/>
+        </property>
+	</bean>
+	 
+	 
 
 </beans>

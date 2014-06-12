@@ -294,7 +294,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 								targetItem.setFormula(sourceItem.getFormula());
 								targetItem.setColumnName(sourceItem.getColumnName());
 								targetItem.setGroupColor(sourceItem.getGroupColor());
-								targetItem.setIsManual(sourceItem.getIsManual());
+								targetItem.setDynamicCharactSynchronisableState(sourceItem.getDynamicCharactSynchronisableState());
 							}
 							isFound = true;
 							break;
