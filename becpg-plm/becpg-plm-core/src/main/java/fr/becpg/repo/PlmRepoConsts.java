@@ -14,7 +14,6 @@ public class PlmRepoConsts {
 	/*-- Path query --*/			
 
 	public static final String PATH_ING_TYPES = "ingTypeItem";
-	public static final String PATH_ALLERGEN_TYPES = "AllergenTypes";
 	public static final String PATH_NUT_GROUPS = "NutGroups";
 	public static final String PATH_NUT_TYPES = "NutTypes";
 	public static final String PATH_NUT_FACTS_METHODS = "NutFactsMethods";

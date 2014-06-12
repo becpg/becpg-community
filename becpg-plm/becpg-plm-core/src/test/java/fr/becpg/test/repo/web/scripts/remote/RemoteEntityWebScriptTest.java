@@ -12,6 +12,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
@@ -26,6 +27,7 @@ import org.springframework.extensions.webscripts.TestWebScriptServer.PutRequest;
 import org.springframework.extensions.webscripts.TestWebScriptServer.Response;
 
 import fr.becpg.repo.entity.EntityService;
+import fr.becpg.test.BeCPGPLMTestHelper;
 
 /**
  * The Class RemoteEntityWebScriptTest.
@@ -51,7 +53,7 @@ public class RemoteEntityWebScriptTest extends fr.becpg.test.BaseWebScriptTest {
 		Response response = sendRequest(new PutRequest(url, convertStreamToString(res.getInputStream()), "application/xml"), 200, "admin");
 		logger.info("Resp : " + response.getContentAsString());
 
-		 NodeRef nodeRef = parseNodeRef(response.getContentAsString());
+		 final NodeRef nodeRef = parseNodeRef(response.getContentAsString());
 		
 		logger.info("Name : " + nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
 		logger.info("Path : " + nodeService.getPath(nodeRef).toPrefixString(serviceRegistry.getNamespaceService()));
@@ -63,7 +65,17 @@ public class RemoteEntityWebScriptTest extends fr.becpg.test.BaseWebScriptTest {
 		Assert.assertNotNull(imageNodeRef);
 		Assert.assertEquals(0, fileFolderService.list(imageNodeRef).size());
 		
-		response = sendRequest(new PostRequest(url + "/data?nodeRef=" + nodeRef.toString(), convertStreamToString(data.getInputStream()), "application/xml"), 200, "admin");
+		
+		// create product
+		   final NodeRef	sfNodeRef  = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+				public NodeRef execute() throws Throwable {
+
+					return entityService.createDefaultImage(nodeRef);
+				}
+			}, false, true);
+
+		
+		response = sendRequest(new PostRequest(url + "/data?nodeRef=" + sfNodeRef.toString(), convertStreamToString(data.getInputStream()), "application/xml"), 200, "admin");
 		logger.info("Resp : " + response.getContentAsString());
 		
 		for(FileInfo file : fileFolderService.list(nodeRef)){

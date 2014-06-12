@@ -31,6 +31,7 @@ public interface RemoteEntityService {
 	static final String CHILD_ASSOC_TYPE = "childAssoc";
 	static final String ASSOC_TYPE = "assoc";
 	static final String NODEREF_TYPE = "d:noderef";
+	static final String CATEGORY_TYPE = "d:category";
 	static final String NODE_TYPE = "node";
 	static final String ATTR_TYPE = "type";
 	static final String ATTR_PATH = "path";
@@ -39,7 +40,8 @@ public interface RemoteEntityService {
 	static final String ATTR_CODE = "code";
 	static final String ELEM_ENTITIES = "entities";
 	static final String ELEM_DATA = "data";
-	static final String ELEM_IMAGE = "image";
+	static final String ELEM_LIST = "values";
+	static final String ELEM_LIST_VALUE = "value";
 
 	/**
 	 * Get entity at provided format
@@ -87,13 +89,6 @@ public interface RemoteEntityService {
 	 */
 	void addOrUpdateEntityData(NodeRef entityNodeRef, InputStream inputStream, RemoteEntityFormat format) throws BeCPGException;
 
-
-	/**
-	 * Is entity has templateFolder
-	 * @param entityNodeRef
-	 * @return
-	 */
-	boolean containsData(NodeRef entityNodeRef);
 	
 	
 }

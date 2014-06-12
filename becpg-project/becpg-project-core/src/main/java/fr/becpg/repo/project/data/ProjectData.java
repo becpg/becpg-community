@@ -72,6 +72,7 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	 * Formulation
 	 */
 	private Date formulatedDate;
+	private Integer reformulateCount;
 	
 	private List<TaskListDataItem> taskList;
 	private List<DeliverableListDataItem> deliverableList;
@@ -135,6 +136,15 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 
 	public void setFormulatedDate(Date formulatedDate) {
 		this.formulatedDate = formulatedDate;
+	}
+
+
+	public Integer getReformulateCount() {
+		return reformulateCount;
+	}
+
+	public void setReformulateCount(Integer reformulateCount) {
+		this.reformulateCount = reformulateCount;
 	}
 
 	@AlfProp

@@ -20,19 +20,19 @@ package fr.becpg.repo.entity.remote.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
+import org.alfresco.service.cmr.repository.ContentService;
+import org.alfresco.service.cmr.repository.ContentWriter;
+import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
-import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +40,7 @@ import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
 
 import fr.becpg.common.BeCPGException;
-import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.remote.EntityProviderCallBack;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
@@ -65,14 +65,20 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	private DictionaryService dictionaryService;
 
 	@Autowired
-	private EntityService entityService;
+	private ContentService contentService;
+
+	@Autowired
+	private MimetypeService mimetypeService;
+	
+	@Autowired
+	private EntityDictionaryService entityDictionaryService;
 
 	private static Log logger = LogFactory.getLog(RemoteEntityServiceImpl.class);
 
 	@Override
 	public void getEntity(NodeRef entityNodeRef, OutputStream out, RemoteEntityFormat format) throws BeCPGException {
 		if (format.equals(RemoteEntityFormat.xml)) {
-			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(nodeService, namespaceService, dictionaryService);
+			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(nodeService, namespaceService, dictionaryService,contentService);
 			try {
 				xmlEntityVisitor.visit(entityNodeRef, out);
 			} catch (XMLStreamException e) {
@@ -84,9 +90,10 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	}
 
 	@Override
-	public NodeRef createOrUpdateEntity(NodeRef entityNodeRef, InputStream in, RemoteEntityFormat format, EntityProviderCallBack entityProviderCallBack) throws BeCPGException {
+	public NodeRef createOrUpdateEntity(NodeRef entityNodeRef, InputStream in, RemoteEntityFormat format,
+			EntityProviderCallBack entityProviderCallBack) throws BeCPGException {
 		if (format.equals(RemoteEntityFormat.xml)) {
-			ImportEntityXmlVisitor xmlEntityVisitor = new ImportEntityXmlVisitor(nodeService, namespaceService);
+			ImportEntityXmlVisitor xmlEntityVisitor = new ImportEntityXmlVisitor(nodeService, namespaceService, entityDictionaryService);
 			xmlEntityVisitor.setEntityProviderCallBack(entityProviderCallBack);
 			NodeRef ret = null;
 			try {
@@ -111,7 +118,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	@Override
 	public void listEntities(List<NodeRef> entities, OutputStream result, RemoteEntityFormat format) throws BeCPGException {
 		if (format.equals(RemoteEntityFormat.xml)) {
-			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(nodeService, namespaceService, dictionaryService);
+			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(nodeService, namespaceService, dictionaryService,contentService);
 			try {
 				xmlEntityVisitor.visit(entities, result);
 			} catch (XMLStreamException e) {
@@ -126,9 +133,9 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	@Override
 	public void getEntityData(NodeRef entityNodeRef, OutputStream result, RemoteEntityFormat format) throws BeCPGException {
 		if (RemoteEntityFormat.xml.equals(format)) {
-			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(nodeService, namespaceService, dictionaryService);
+			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(nodeService, namespaceService, dictionaryService,contentService);
 			try {
-				xmlEntityVisitor.visit(entityNodeRef, extractData(entityNodeRef), result);
+				xmlEntityVisitor.visitData(entityNodeRef, result);
 			} catch (XMLStreamException e) {
 				throw new BeCPGException("Cannot get entity data at format " + format, e);
 			}
@@ -141,43 +148,27 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	@Override
 	public void addOrUpdateEntityData(NodeRef entityNodeRef, InputStream in, RemoteEntityFormat format) throws BeCPGException {
 		if (RemoteEntityFormat.xml.equals(format)) {
-			ImportEntityXmlVisitor xmlEntityVisitor = new ImportEntityXmlVisitor(nodeService, namespaceService);
-			try {
-				Map<String, byte[]> images = xmlEntityVisitor.visitData(in);
-				entityService.writeImages(entityNodeRef, images);
+			ImportEntityXmlVisitor xmlEntityVisitor = new ImportEntityXmlVisitor(nodeService, namespaceService, entityDictionaryService);
+			
+
+			String fileName = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
+
+			String mimetype = mimetypeService.guessMimetype(fileName);
+			ContentWriter writer = contentService.getWriter(entityNodeRef, ContentModel.PROP_CONTENT, true);
+			writer.setMimetype(mimetype);
+			try (OutputStream out =  writer.getContentOutputStream()) {
+				xmlEntityVisitor.visitData(in,out);
 			} catch (IOException e) {
 				throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
 			} catch (SAXException e) {
 				throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
 			} catch (ParserConfigurationException e) {
 				throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
-			} catch (BeCPGException e) {
-				logger.warn(e.getMessage());
-			}
+			} 
 		} else {
 			throw new BeCPGException("Unknow format " + format.toString());
 		}
 
-	}
-
-	private Map<String, byte[]> extractData(NodeRef entityNodeRef) {
-		Map<String, byte[]> images = new HashMap<String, byte[]>();
-		try {
-			for (NodeRef imageNodeRef : entityService.getImages(entityNodeRef)) {
-
-				images.put((String) nodeService.getProperty(imageNodeRef, ContentModel.PROP_NAME), entityService.getImage(imageNodeRef));
-			}
-		} catch (BeCPGException e) {
-			logger.warn(e.getMessage());
-		}
-
-		return images;
-	}
-
-	@Override
-	public boolean containsData(NodeRef entityNodeRef) {
-		QName type = nodeService.getType(entityNodeRef);
-		return entityService.hasAssociatedImages(type);
 	}
 
 }

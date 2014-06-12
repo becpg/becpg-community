@@ -18,17 +18,10 @@
 package fr.becpg.repo.web.scripts.remote;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.Authenticator;
-import java.net.MalformedURLException;
-import java.net.PasswordAuthentication;
-import java.net.URL;
-import java.util.Arrays;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,7 +32,7 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.common.BeCPGException;
 import fr.becpg.repo.entity.remote.EntityProviderCallBack;
-import fr.becpg.repo.entity.remote.RemoteEntityFormat;
+import fr.becpg.repo.entity.remote.impl.HttpEntityProviderCallback;
 
 /**
  * Import nodeRef List from default remote
@@ -53,7 +46,7 @@ public class ImportEntityWebScript extends AbstractEntityWebScript implements In
 
 	private String remoteUser;
 
-	private char[] remotePwd;
+	private String remotePwd;
 
 	private EntityProviderCallBack entityProviderCallBack;
 
@@ -65,54 +58,13 @@ public class ImportEntityWebScript extends AbstractEntityWebScript implements In
 		this.remoteUser = remoteUser;
 	}
 
-	public void setRemotePwd(char[] remotePwd) {
-		if (remotePwd != null) {
-			this.remotePwd = Arrays.copyOf(remotePwd, remotePwd.length);
-		}
+	public void setRemotePwd(String remotePwd) {
+		this.remotePwd = remotePwd;
 	}
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		entityProviderCallBack = new EntityProviderCallBack() {
-
-			@Override
-			public NodeRef provideNode(NodeRef nodeRef) throws BeCPGException {
-
-				Authenticator.setDefault(new Authenticator() {
-					protected PasswordAuthentication getPasswordAuthentication() {
-						return new PasswordAuthentication(remoteUser, remotePwd);
-					}
-				});
-
-				try {
-					URL entityUrl = new URL(remoteServer + "/service/becpg/remote/entity?nodeRef=" + nodeRef.toString());
-					URL dataUrl = new URL(remoteServer + "/service/becpg/remote/entity/data?nodeRef=" + nodeRef.toString());
-					InputStream entityStream = null;
-					InputStream dataStream = null;
-
-					try {
-						entityStream = entityUrl.openStream();
-
-						NodeRef entityNodeRef = remoteEntityService.createOrUpdateEntity(nodeRef, entityStream, RemoteEntityFormat.xml, this);
-
-						dataStream = dataUrl.openStream();
-
-						remoteEntityService.addOrUpdateEntityData(entityNodeRef, dataStream, RemoteEntityFormat.xml);
-
-						return entityNodeRef;
-
-					} finally {
-						IOUtils.closeQuietly(entityStream);
-						IOUtils.closeQuietly(dataStream);
-					}
-				} catch (MalformedURLException e) {
-					throw new BeCPGException(e);
-				} catch (IOException e) {
-					throw new BeCPGException(e);
-				}
-
-			}
-		};
+		entityProviderCallBack = new HttpEntityProviderCallback(remoteServer+"/service/becpg/remote/entity", remoteUser, remotePwd, remoteEntityService);
 
 	}
 

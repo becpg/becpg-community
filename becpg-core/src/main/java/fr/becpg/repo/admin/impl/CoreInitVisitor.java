@@ -13,7 +13,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
  * GNU Lesser General Public License for more details. 
  *  
- * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License along with beCPG.
+ *  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.admin.impl;
 
@@ -40,6 +41,7 @@ import org.alfresco.service.cmr.rule.Rule;
 import org.alfresco.service.cmr.rule.RuleType;
 import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
@@ -62,6 +64,7 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 	private DictionaryDAO dictionaryDAO;
 	
 	@Autowired
+	@Qualifier("qnameDAO")
 	private QNameDAO qNameDAO;
 	
 	@Autowired
