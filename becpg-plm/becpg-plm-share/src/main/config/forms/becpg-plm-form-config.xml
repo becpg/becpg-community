@@ -6236,5 +6236,41 @@
 			</form>
 		</forms>
 	</config>
+	
+	<!-- cm:content type (creating nodes) -->
+   <config evaluator="model-type" condition="cm:content" replace="true">
+      <forms>        
+         <!-- Search form -->
+         <form id="search">
+            <field-visibility>
+               <show id="cm:name" />
+               <show id="cm:title" force="true" />
+               <show id="cm:description" force="true" />
+               <show id="mimetype" />
+               <show id="cm:modified" />
+               <show id="cm:modifier" />
+               <show id="cm:to" />
+            </field-visibility>
+            <appearance>
+               <field id="mimetype">
+                  <control template="/org/alfresco/components/form/controls/mimetype.ftl" />
+               </field>
+               <field id="cm:modifier">
+                  <control>
+                     <control-param name="forceEditable">true</control-param>
+                  </control>
+               </field>
+               <field id="cm:modified">
+                  <control template="/org/alfresco/components/form/controls/daterange.ftl" />
+               </field>
+               <field id="cm:to">
+                  <control template="/org/alfresco/components/form/controls/daterange.ftl" />
+               </field>
+            </appearance>
+         </form>
+      </forms>
+   </config>
+	
+	
 
 </alfresco-config>
