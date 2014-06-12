@@ -20,6 +20,7 @@ package fr.becpg.repo.product.formulation;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -85,6 +86,24 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 	@Override
 	public boolean process(ProductData productData) throws FormulateException {
 
+		if ((productData.hasCompoListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT))
+				|| (productData.hasPackagingListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT))
+				|| (productData.hasProcessListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT))) {
+
+			clearReqCltrlList(productData.getCompoListView().getReqCtrlList());
+			clearReqCltrlList(productData.getPackagingListView().getReqCtrlList());
+			clearReqCltrlList(productData.getProcessListView().getReqCtrlList());
+			
+			if (formulateChildren) {
+				checkShouldFormulateComponents(true, productData, new HashSet<NodeRef>());
+			}
+
+			checkMissingProperties(productData);
+
+			// Continue
+			return true;
+		}
+
 		// Reset
 		if (productData.getCompoListView() != null && productData.getCompoListView().getReqCtrlList() != null) {
 			productData.getCompoListView().getReqCtrlList().clear();
@@ -96,22 +115,18 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 			productData.getProcessListView().getReqCtrlList().clear();
 		}
 
-		if ((productData.hasCompoListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT))
-				|| (productData.hasPackagingListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT))
-				|| (productData.hasProcessListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT))) {
-
-			if (formulateChildren) {
-				checkShouldFormulateComponents(true, productData, new HashSet<NodeRef>());
-			}
-
-			checkMissingProperties(productData);
-
-			// Continue
-			return true;
-		}
-
 		// Skip formulation
 		return false;
+	}
+
+	private void clearReqCltrlList(List<ReqCtrlListDataItem> reqCtrlList) {
+		for (Iterator<ReqCtrlListDataItem> iterator = reqCtrlList.iterator(); iterator.hasNext();) {
+			ReqCtrlListDataItem reqCtrlListDataItem = (ReqCtrlListDataItem) iterator.next();
+			if(reqCtrlListDataItem.getNodeRef()==null){
+				iterator.remove();
+			}
+		}
+		
 	}
 
 	private boolean checkShouldFormulateComponents(boolean isRoot, ProductData productData, Set<NodeRef> checkedProducts) throws FormulateException {

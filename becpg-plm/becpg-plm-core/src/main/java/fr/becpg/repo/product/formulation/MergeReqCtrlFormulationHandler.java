@@ -17,6 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.product.formulation;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -55,16 +56,31 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 		
 		Map<String, ReqCtrlListDataItem> dbReqCtrlList = new HashMap<>();
 		Map<String, ReqCtrlListDataItem> newReqCtrlList = new HashMap<>();
+		List<ReqCtrlListDataItem> duplicates = new ArrayList<>();
+		
 		
 		for(ReqCtrlListDataItem r : reqCtrlList){
 			if(r.getNodeRef() != null){
-				dbReqCtrlList.put(r.getReqMessage(), r);
+				if(dbReqCtrlList.containsKey(r.getReqMessage())){
+					duplicates.add(r);
+				} else {
+					dbReqCtrlList.put(r.getReqMessage(), r);
+				}
 			}
 			else{
-				newReqCtrlList.put(r.getReqMessage(), r);
+				if(newReqCtrlList.containsKey(r.getReqMessage())){
+					duplicates.add(r);
+				} else {
+					newReqCtrlList.put(r.getReqMessage(), r);
+				}
 			}
 		}		
 
+		for(ReqCtrlListDataItem dup : duplicates){
+			reqCtrlList.remove(dup);
+		}
+		
+		
 		for(Map.Entry<String, ReqCtrlListDataItem> dbKV : dbReqCtrlList.entrySet()){
 			if(!newReqCtrlList.containsKey(dbKV.getKey())){
 				// remove

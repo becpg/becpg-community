@@ -151,6 +151,7 @@ public interface PLMModel {
 	QName PROP_DYNAMICCHARACT_FORMULA = QName.createQName(BeCPGModel.BECPG_URI, "dynamicCharactFormula");
 	QName PROP_DYNAMICCHARACT_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "dynamicCharactValue");
 	QName PROP_DYNAMICCHARACT_GROUP_COLOR = QName.createQName(BeCPGModel.BECPG_URI, "dynamicCharactGroupColor");
+	QName PROP_DYNAMICCHARACT_SYNCHRONIZABLE_STATE = QName.createQName(BeCPGModel.BECPG_URI, "dynamicCharactSynchronisableState");
 
 	// contactList
 	QName TYPE_CONTACTLIST = QName.createQName(BeCPGModel.BECPG_URI, "contactList");
