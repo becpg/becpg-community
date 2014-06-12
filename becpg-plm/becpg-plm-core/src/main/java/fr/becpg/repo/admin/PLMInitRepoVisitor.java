@@ -498,7 +498,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 		Map<String,QName> entityLists = new LinkedHashMap<String,QName>();
 		
 		entityLists.put(PlmRepoConsts.PATH_ING_TYPES,PLMModel.TYPE_ING_TYPE_ITEM);
-		entityLists.put(PlmRepoConsts.PATH_ALLERGEN_TYPES,BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_NUT_GROUPS,BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_NUT_TYPES,BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_NUT_FACTS_METHODS,BeCPGModel.TYPE_LIST_VALUE);

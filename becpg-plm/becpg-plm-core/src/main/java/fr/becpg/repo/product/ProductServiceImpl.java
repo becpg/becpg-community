@@ -87,6 +87,7 @@ public class ProductServiceImpl implements ProductService {
 			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 
+			
 			if(fast){
 				formulationService.formulate(productNodeRef,"fastProductFormulationChain");
 			}  else {

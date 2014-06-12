@@ -42,8 +42,7 @@ import fr.becpg.repo.repository.model.AbstractEffectiveDataItem;
 import fr.becpg.repo.repository.model.StateableEntity;
 import fr.becpg.repo.variant.model.VariantData;
 
-
-public class ProductData extends AbstractEffectiveDataItem implements FormulatedEntity,HierarchicalEntity, StateableEntity {
+public class ProductData extends AbstractEffectiveDataItem implements FormulatedEntity, HierarchicalEntity, StateableEntity {
 
 	private NodeRef hierarchy1;
 	private NodeRef hierarchy2;
@@ -64,7 +63,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private Double netWeight;
 	private Double servingSize;
 	private Double recipeQtyUsed;
-	
+
 	private Double tare;
 	private TareUnit tareUnit;
 
@@ -76,13 +75,12 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private Double profitability;
 	private Long breakEven;
 
-	
 	/*
 	 * Formulation
 	 */
 	private Date formulatedDate;
-	
-	
+	private Integer reformulateCount;
+
 	/*
 	 * DataList
 	 */
@@ -97,7 +95,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private List<LabelClaimListDataItem> labelClaimList;
 	private List<ControlDefListDataItem> controlDefList;
 	private List<LabelingListDataItem> labelingList;
-	
+
 	/*
 	 * View
 	 */
@@ -105,22 +103,21 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private ProcessListView processListView = new ProcessListView();
 	private PackagingListView packagingListView = new PackagingListView();
 	private LabelingListView labelingListView = new LabelingListView();
-	
+
 	/*
 	 * Variants
 	 */
-	
+
 	private List<VariantData> variants;
-	
+
 	/*
 	 * Product specifications
 	 */
-	
+
 	private List<ProductSpecificationData> productSpecifications;
-	
-	
-	@AlfMultiAssoc(isEntity=true)
-	@AlfQname(qname="bcpg:productSpecifications")
+
+	@AlfMultiAssoc(isEntity = true)
+	@AlfQname(qname = "bcpg:productSpecifications")
 	@AlfReadOnly
 	public List<ProductSpecificationData> getProductSpecifications() {
 		return productSpecifications;
@@ -130,8 +127,8 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		this.productSpecifications = productSpecifications;
 	}
 
-	@AlfMultiAssoc(isChildAssoc=true, isEntity=true)
-	@AlfQname(qname="bcpg:variants")
+	@AlfMultiAssoc(isChildAssoc = true, isEntity = true)
+	@AlfQname(qname = "bcpg:variants")
 	@AlfReadOnly
 	public List<VariantData> getVariants() {
 		return variants;
@@ -160,7 +157,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	public void setHierarchy2(NodeRef hierarchy2) {
 		this.hierarchy2 = hierarchy2;
 	}
-		
+
 	@AlfProp
 	@AlfQname(qname = "bcpg:formulatedDate")
 	public Date getFormulatedDate() {
@@ -227,7 +224,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	}
 
 	@AlfSingleAssoc(isEntity = true)
-	@AlfQname(qname="bcpg:entityTplRef")
+	@AlfQname(qname = "bcpg:entityTplRef")
 	public ProductData getEntityTpl() {
 		return entityTpl;
 	}
@@ -242,12 +239,9 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		return qty;
 	}
 
-	
-
 	public void setQty(Double qty) {
 		this.qty = qty;
 	}
-
 
 	@AlfProp
 	@AlfQname(qname = "bcpg:productDensity")
@@ -259,7 +253,6 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		this.density = density;
 	}
 
-
 	public Double getYield() {
 		return yield;
 	}
@@ -267,15 +260,14 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	public void setYield(Double yield) {
 		this.yield = yield;
 	}
-	
+
 	public Double getYieldVolume() {
 		return yieldVolume;
 	}
 
 	public void setYieldVolume(Double yieldVolume) {
 		this.yieldVolume = yieldVolume;
-	}	
-	
+	}
 
 	public Double getRecipeQtyUsed() {
 		return recipeQtyUsed;
@@ -284,7 +276,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	public void setRecipeQtyUsed(Double recipeQtyUsed) {
 		this.recipeQtyUsed = recipeQtyUsed;
 	}
-	
+
 	@AlfProp
 	@AlfQname(qname = "bcpg:netWeight")
 	public Double getNetWeight() {
@@ -314,7 +306,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	public void setTare(Double tare) {
 		this.tare = tare;
 	}
-	
+
 	@AlfProp
 	@AlfQname(qname = "pack:tareUnit")
 	public TareUnit getTareUnit() {
@@ -425,8 +417,6 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		this.organoList = organoList;
 	}
 
-
-
 	@DataList
 	@AlfQname(qname = "bcpg:microbioList")
 	public List<MicrobioListDataItem> getMicrobioList() {
@@ -448,7 +438,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	}
 
 	@DataList
-	@AlfQname(qname="bcpg:labelClaimList")
+	@AlfQname(qname = "bcpg:labelClaimList")
 	public List<LabelClaimListDataItem> getLabelClaimList() {
 		return labelClaimList;
 	}
@@ -456,9 +446,9 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	public void setLabelClaimList(List<LabelClaimListDataItem> labelClaimList) {
 		this.labelClaimList = labelClaimList;
 	}
-	
+
 	@DataList
-	@AlfQname(qname="qa:controlDefList")
+	@AlfQname(qname = "qa:controlDefList")
 	public List<ControlDefListDataItem> getControlDefList() {
 		return controlDefList;
 	}
@@ -466,9 +456,9 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	public void setControlDefList(List<ControlDefListDataItem> controlDefList) {
 		this.controlDefList = controlDefList;
 	}
-	
+
 	@DataList
-	@AlfQname(qname="pack:labelingList")
+	@AlfQname(qname = "pack:labelingList")
 	public List<LabelingListDataItem> getLabelingList() {
 		return labelingList;
 	}
@@ -493,9 +483,8 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		return compoListView;
 	}
 
-	
 	@SuppressWarnings("unchecked")
-	public  List<CompoListDataItem> getCompoList( DataListFilter<ProductData>... filters) {
+	public List<CompoListDataItem> getCompoList(DataListFilter<ProductData>... filters) {
 		if (compoListView != null && compoListView.getCompoList() != null) {
 			List<CompoListDataItem> ret = new ArrayList<CompoListDataItem>(compoListView.getCompoList());
 			if (filters != null) {
@@ -509,7 +498,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	}
 
 	@SuppressWarnings("unchecked")
-	public  boolean hasCompoListEl(DataListFilter<ProductData>... filters) {
+	public boolean hasCompoListEl(DataListFilter<ProductData>... filters) {
 		return compoListView != null && compoListView.getCompoList() != null && !getCompoList(filters).isEmpty();
 	}
 
@@ -553,7 +542,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	}
 
 	@SuppressWarnings("unchecked")
-	public  List<PackagingListDataItem> getPackagingList(DataListFilter<ProductData>... filters) {
+	public List<PackagingListDataItem> getPackagingList(DataListFilter<ProductData>... filters) {
 		if (packagingListView != null && packagingListView.getPackagingList() != null) {
 			List<PackagingListDataItem> ret = new ArrayList<PackagingListDataItem>(packagingListView.getPackagingList());
 			if (filters != null) {
@@ -565,7 +554,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		}
 		return null;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public boolean hasPackagingListEl(DataListFilter<ProductData>... filters) {
 		return packagingListView != null && packagingListView.getPackagingList() != null && !getPackagingList(filters).isEmpty();
@@ -575,23 +564,31 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		this.packagingListView = packagingListView;
 	}
 
-	
-
 	public List<AbstractProductDataView> getViews() {
 		return Arrays.asList(compoListView, packagingListView, processListView);
 	}
-	
-	public boolean isLiquid(){
-		return unit!=null && (unit == ProductUnit.L || unit == ProductUnit.mL);
-	}
-	
-	
+
 	@Override
 	public String getEntityState() {
-		return state!=null ? state.toString() : null;
+		return state != null ? state.toString() : null;
+	}
+	
+	// Formula helpers
+
+	public boolean isLiquid() {
+		return unit != null && (unit == ProductUnit.L || unit == ProductUnit.mL);
+	}
+
+	public Integer getReformulateCount() {
+		return reformulateCount;
+	}
+
+	public void setReformulateCount(Integer reformulateCount) {
+		this.reformulateCount = reformulateCount;
 	}
 
 	
+
 	/**
 	 * Instantiates a new product data.
 	 */
@@ -601,10 +598,11 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 
 	@Override
 	public String toString() {
-		return "ProductData [hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", legalName=" + legalName + ", title=" + title + ", erpCode=" + erpCode + ", state="
-				+ state + ", unit=" + unit + ", qty=" + qty + ", density=" + density + ", yield=" + yield + ", yieldVolume=" + yieldVolume + ", netWeight=" + netWeight
-				+ ", servingSize=" + servingSize + ", recipeQtyUsed=" + recipeQtyUsed + ", tare=" + tare + ", tareUnit=" + tareUnit + ", unitTotalCost=" + unitTotalCost
-				+ ", unitPrice=" + unitPrice + ", profitability=" + profitability + ", breakEven=" + breakEven + ", allergenList=" + allergenList + "]";
+		return "ProductData [hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", legalName=" + legalName + ", title=" + title
+				+ ", erpCode=" + erpCode + ", state=" + state + ", unit=" + unit + ", qty=" + qty + ", density=" + density + ", yield=" + yield
+				+ ", yieldVolume=" + yieldVolume + ", netWeight=" + netWeight + ", servingSize=" + servingSize + ", recipeQtyUsed=" + recipeQtyUsed
+				+ ", tare=" + tare + ", tareUnit=" + tareUnit + ", unitTotalCost=" + unitTotalCost + ", unitPrice=" + unitPrice + ", profitability="
+				+ profitability + ", breakEven=" + breakEven + ", allergenList=" + allergenList + "]";
 	}
 
 	@Override
@@ -754,7 +752,5 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 			return false;
 		return true;
 	}
-
-
 
 }

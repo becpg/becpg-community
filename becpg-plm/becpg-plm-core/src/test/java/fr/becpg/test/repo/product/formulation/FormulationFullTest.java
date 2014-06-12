@@ -138,7 +138,12 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 				
 				//Spel method
 				dynamicCharactListItems.add(new DynamicCharactListItem(" beCPG findOne","@beCPG.findOne(nodeRef).qty"));
+				
+				dynamicCharactListItems.add(new DynamicCharactListItem(" beCPG propValue","@beCPG.propValue(nodeRef,'bcpg:productQty')"));
 
+				//Formulate twice
+				dynamicCharactListItems.add(new DynamicCharactListItem("Formulate twice","reformulateCount=1"));
+				
 				// DynamicColumn
 
 				DynamicCharactListItem dynCol = new DynamicCharactListItem("Col Dyn 1", "entity.costList[0].value + dataListItem.qty");

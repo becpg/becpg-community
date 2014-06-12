@@ -1041,7 +1041,8 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			}			
 			
 			// look by name
-			if(!doQuery && !dictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITY_V2)){
+			if(!doQuery && !dictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITY_V2)
+					&& (String)properties.get(ContentModel.PROP_NAME)!=null){
 				queryBuilder.andPropEquals(RemoteHelper.getPropName(type), (String)properties.get(ContentModel.PROP_NAME));
 				doQuery = true;
 			}
