@@ -5889,12 +5889,18 @@
 			<form id="filter">
 				<field-visibility>
 					<show id="bcpg:dynamicCharactGroupColor" />
-					<show id="bcpg:isManualListItem" />
+					<show id="bcpg:dynamicCharactSynchronisableState" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:dynamicCharactGroupColor">
 						<control
 							template="/org/alfresco/components/form/controls/selectcolorpicker.ftl" />
+					</field>
+					<field id="bcpg:dynamicCharactSynchronisableState">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="insertBlank">true</control-param>
+						</control>
 					</field>
 				</appearance>
 			</form>
@@ -5911,7 +5917,7 @@
 					<show id="bcpg:dynamicCharactColumn" />
 					<show id="bcpg:dynamicCharactFormula" />
 					<show id="bcpg:dynamicCharactGroupColor" />
-					<show id="bcpg:isManualListItem" force="true" />
+					<show id="bcpg:dynamicCharactSynchronisableState" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:dynamicCharactFormula">

@@ -392,7 +392,15 @@
 				</list>
 			</parameter>
 		</constraint>
-
+		<constraint name="bcpg:dynamicCharactSynchronisableStates" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>Model</value>
+					<value>Synchronized</value>
+					<value>Manual</value>
+				</list>
+			</parameter>
+		</constraint>
 	</constraints>
 
 	<types>
@@ -1730,6 +1738,12 @@
 				<property name="bcpg:dynamicCharactGroupColor">
 					<type>d:text</type>
 					<default>000000</default>
+				</property>
+				<property name="bcpg:dynamicCharactSynchronisableState">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="bcpg:dynamicCharactSynchronisableStates" />
+					</constraints>
 				</property>
 			</properties>
 		</type>
