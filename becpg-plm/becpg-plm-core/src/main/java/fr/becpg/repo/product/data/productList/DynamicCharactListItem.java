@@ -116,7 +116,7 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 
 	@Override
 	public boolean isSynchronisable() {
-		return !DynamicCharactSynchronisableState.Model.equals(dynamicCharactSynchronisableState);
+		return !DynamicCharactSynchronisableState.Template.equals(dynamicCharactSynchronisableState);
 	}
 
 	@Override

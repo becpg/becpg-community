@@ -215,8 +215,9 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 							nullDynColumnNames.remove(columnName);
 						}
 						for (CompositionDataItem dataListItem : view.getMainDataList()) {
-							EvaluationContext dataContext = new StandardEvaluationContext(new FormulaFormulationContext(alfrescoRepository,
+							StandardEvaluationContext dataContext = new StandardEvaluationContext(new FormulaFormulationContext(alfrescoRepository,
 									productData, dataListItem));
+							registerCustomFunctions(dataContext);
 							Object value = exp.getValue(dataContext);
 							dataListItem.getExtraProperties().put(columnName, (Serializable) value);
 							logger.debug("Value :" + value);
