@@ -47,6 +47,7 @@ import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.AbstractProductDataView;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.CompositionDataItem;
+import fr.becpg.repo.product.data.productList.DynamicCharactExecOrder;
 import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
@@ -78,6 +79,12 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 	private SecurityMethodBeforeAdvice securityMethodBeforeAdvice;
 
+	private DynamicCharactExecOrder execOrder = DynamicCharactExecOrder.Post;
+
+	public void setExecOrder(DynamicCharactExecOrder execOrder) {
+		this.execOrder = execOrder;
+	}
+
 	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
@@ -97,7 +104,9 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 	@Override
 	public boolean process(ProductData productData) throws FormulateException {
 
-		copyTemplateDynamicCharactLists(productData);
+		if (DynamicCharactExecOrder.Pre.equals(execOrder)) {
+			copyTemplateDynamicCharactLists(productData);
+		}
 
 		ExpressionParser parser = new SpelExpressionParser();
 		StandardEvaluationContext context = new StandardEvaluationContext(createSecurityProxy(productData));
@@ -108,7 +117,9 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 			computeFormula(productData, parser, context, view);
 		}
 
-		computeClaimList(productData, parser, context);
+		if (DynamicCharactExecOrder.Post.equals(execOrder)) {
+			computeClaimList(productData, parser, context);
+		}
 
 		return true;
 	}
@@ -162,7 +173,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 		public ProductData findOne(NodeRef nodeRef) {
 			return createSecurityProxy(alfrescoRepository.findOne(nodeRef));
 		}
-		
+
 		public Serializable propValue(NodeRef nodeRef, String qname) {
 			return nodeService.getProperty(nodeRef, QName.createQName(qname, namespaceService));
 		}
@@ -204,48 +215,58 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 			}
 
 			for (DynamicCharactListItem dynamicCharactListItem : view.getDynamicCharactList()) {
-				try {
-					String formula = SpelHelper.formatFormula(dynamicCharactListItem.getFormula());
-					logger.debug("Parse formula : " + formula + " (" + dynamicCharactListItem.getName() + ")");
-					Expression exp = parser.parseExpression(formula);
+				if (execOrder.equals(dynamicCharactListItem.getExecOrder())) {
+					try {
+						String formula = SpelHelper.formatFormula(dynamicCharactListItem.getFormula());
+						logger.debug("Parse formula : " + formula + " (" + dynamicCharactListItem.getName() + ")");
+						Expression exp = parser.parseExpression(formula);
 
+						if (dynamicCharactListItem.getColumnName() != null && !dynamicCharactListItem.getColumnName().isEmpty()) {
+							QName columnName = QName.createQName(dynamicCharactListItem.getColumnName().replaceFirst("_", ":"), namespaceService);
+							if (nullDynColumnNames.contains(columnName)) {
+								nullDynColumnNames.remove(columnName);
+							}
+							for (CompositionDataItem dataListItem : view.getMainDataList()) {
+								StandardEvaluationContext dataContext = new StandardEvaluationContext(new FormulaFormulationContext(
+										alfrescoRepository, productData, dataListItem));
+								registerCustomFunctions(dataContext);
+								Object value = exp.getValue(dataContext);
+								dataListItem.getExtraProperties().put(columnName, (Serializable) value);
+								logger.debug("Value :" + value);
+							}
+							dynamicCharactListItem.setValue(null);
+						} else {
+							dynamicCharactListItem.setValue(exp.getValue(context));
+							logger.debug("Value :" + dynamicCharactListItem.getValue());
+						}
+						dynamicCharactListItem.setErrorLog(null);
+					} catch (Exception e) {
+						if (e.getCause() != null && e.getCause().getCause() instanceof BeCPGAccessDeniedException) {
+							dynamicCharactListItem.setValue("#AccessDenied");
+						} else {
+							dynamicCharactListItem.setValue("#Error");
+						}
+						dynamicCharactListItem.setErrorLog(e.getLocalizedMessage());
+
+						if (logger.isDebugEnabled()) {
+							logger.debug("Error in formula :" + dynamicCharactListItem.getFormula() + " (" + dynamicCharactListItem.getName() + ")",
+									e);
+						}
+					}
+				} else {
 					if (dynamicCharactListItem.getColumnName() != null && !dynamicCharactListItem.getColumnName().isEmpty()) {
 						QName columnName = QName.createQName(dynamicCharactListItem.getColumnName().replaceFirst("_", ":"), namespaceService);
 						if (nullDynColumnNames.contains(columnName)) {
 							nullDynColumnNames.remove(columnName);
 						}
-						for (CompositionDataItem dataListItem : view.getMainDataList()) {
-							StandardEvaluationContext dataContext = new StandardEvaluationContext(new FormulaFormulationContext(alfrescoRepository,
-									productData, dataListItem));
-							registerCustomFunctions(dataContext);
-							Object value = exp.getValue(dataContext);
-							dataListItem.getExtraProperties().put(columnName, (Serializable) value);
-							logger.debug("Value :" + value);
-						}
-						dynamicCharactListItem.setValue(null);
-					} else {
-						dynamicCharactListItem.setValue(exp.getValue(context));
-						logger.debug("Value :" + dynamicCharactListItem.getValue());
-					}
-					dynamicCharactListItem.setErrorLog(null);
-				} catch (Exception e) {
-					if (e.getCause() != null && e.getCause().getCause() instanceof BeCPGAccessDeniedException) {
-						dynamicCharactListItem.setValue("#AccessDenied");
-					} else {
-						dynamicCharactListItem.setValue("#Error");
-					}
-					dynamicCharactListItem.setErrorLog(e.getLocalizedMessage());
-
-					if (logger.isDebugEnabled()) {
-						logger.debug("Error in formula :" + dynamicCharactListItem.getFormula() + " (" + dynamicCharactListItem.getName() + ")", e);
 					}
 				}
-			}
 
-			// remove null columns
-			for (QName nullDynColumnName : nullDynColumnNames) {
-				for (CompositionDataItem dataListItem : view.getMainDataList()) {
-					dataListItem.getExtraProperties().put(nullDynColumnName, null);
+				// remove null columns
+				for (QName nullDynColumnName : nullDynColumnNames) {
+					for (CompositionDataItem dataListItem : view.getMainDataList()) {
+						dataListItem.getExtraProperties().put(nullDynColumnName, null);
+					}
 				}
 			}
 		}
@@ -295,7 +316,8 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 								targetItem.setFormula(sourceItem.getFormula());
 								targetItem.setColumnName(sourceItem.getColumnName());
 								targetItem.setGroupColor(sourceItem.getGroupColor());
-								targetItem.setDynamicCharactSynchronisableState(sourceItem.getDynamicCharactSynchronisableState());
+								targetItem.setSynchronisableState(sourceItem.getSynchronisableState());
+								targetItem.setExecOrder(sourceItem.getExecOrder());
 							}
 							isFound = true;
 							break;
