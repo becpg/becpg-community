@@ -20,7 +20,6 @@ package fr.becpg.test.repo.product.formulation;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
@@ -33,7 +32,6 @@ import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.product.data.productList.DeclarationType;
-import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
 public class FormulationMultiLevelILTest extends AbstractFinishedProductTest {
@@ -47,11 +45,6 @@ public class FormulationMultiLevelILTest extends AbstractFinishedProductTest {
 		initParts();
 	}
 
-	/**
-	 * Calculate the ingList when a component has yield -> don't add water to ingList (#685)
-	 * RM2 has 200% Yield so water is added in a sub process but not displayed
-	 * @throws Exception
-	 */
 	@Test
 	public void testFormulationMultiLevelILTest() throws Exception{
 		

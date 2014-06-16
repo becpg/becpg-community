@@ -577,11 +577,18 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			public int compare(IngListDataItem i1, IngListDataItem i2) {
 
 				// increase
-				if(i1.getDepthLevel().equals(i2.getDepthLevel())){
+				if((i1.getParent() == null && i2.getParent() == null) || (i1.getParent() != null && i1.getParent().equals(i2.getParent()))){
 					return i2.getQtyPerc().compareTo(i1.getQtyPerc());
 				}
 				else{
-					return 0;
+					IngListDataItem root1 = findRoot(i1);
+					IngListDataItem root2 = findRoot(i2);
+					if(root1.equals(root2)){
+						return i1.getDepthLevel().compareTo(i2.getDepthLevel());
+					}
+					else{
+						return root2.getQtyPerc().compareTo(root1.getQtyPerc());
+					}
 				}
 			}
 
@@ -592,5 +599,12 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			il.setSort(i);
 			i++;
 		}
+	}
+	
+	private IngListDataItem findRoot(IngListDataItem ingList){
+		while(ingList.getParent() != null){
+			ingList = ingList.getParent();
+		}
+		return ingList;
 	}
 }
