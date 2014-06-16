@@ -401,6 +401,14 @@
 				</list>
 			</parameter>
 		</constraint>
+		<constraint name="bcpg:dynamicCharactExecOrders" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>Pre</value>
+					<value>Post</value>
+				</list>
+			</parameter>
+		</constraint>
 	</constraints>
 
 	<types>
@@ -1745,6 +1753,14 @@
 						<constraint ref="bcpg:dynamicCharactSynchronisableStates" />
 					</constraints>
 				</property>
+				<property name="bcpg:dynamicCharactExecOrder">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<default>Post</default>
+					<constraints>
+						<constraint ref="bcpg:dynamicCharactExecOrders" />
+					</constraints>
+				</property>		
 			</properties>
 		</type>
 	
@@ -2520,6 +2536,15 @@
 					</target>
 				</association>
 			</associations>
+		</aspect>
+		
+		<aspect name="bcpg:compareWithDynColumnAspect">
+			<properties>
+				<property name="bcpg:compareWithDynColumn">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
+			</properties>
 		</aspect>
 		
 		<aspect name="bcpg:entityBranchAspect">

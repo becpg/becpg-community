@@ -886,6 +886,8 @@
                      Dom.addClass(this.id + "-selectListMessage", "hidden");
                      // Enable item select menu
                      this.widgets.itemSelect.set("disabled", false);
+                     
+                     Bubbling.fire(this.scopeId + "onDatalistColumnsReady",{entityDatagrid:this});
 
                      // Continue only when History Manager fires its onReady
                      // event

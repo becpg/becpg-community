@@ -80,6 +80,13 @@
 					<property name="nodeService" ref="nodeService" />
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 				</bean>
+				<bean class="fr.becpg.repo.product.formulation.FormulaFormulationHandler" >
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+					<property name="namespaceService" ref="namespaceService"/>
+					<property name="securityMethodBeforeAdvice" ref="securityMethodBeforeAdvice"/>
+					<property name="nodeService" ref="nodeService" />
+					<property name="execOrder" value="Pre"/>
+				</bean>
 				<bean class="fr.becpg.repo.product.formulation.ProcessCalculatingFormulationHandler">
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.AllergensCalculatingFormulationHandler">
@@ -113,6 +120,7 @@
 					<property name="namespaceService" ref="namespaceService"/>
 					<property name="securityMethodBeforeAdvice" ref="securityMethodBeforeAdvice"/>
 					<property name="nodeService" ref="nodeService" />
+					<property name="execOrder" value="Post"/>
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.MergeReqCtrlFormulationHandler" />
 				<bean class="fr.becpg.repo.product.formulation.CompareFormulationHandler" >
@@ -144,6 +152,13 @@
 					<property name="nodeService" ref="nodeService" />
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 				</bean>
+				<bean class="fr.becpg.repo.product.formulation.FormulaFormulationHandler" >
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+					<property name="namespaceService" ref="namespaceService"/>
+					<property name="securityMethodBeforeAdvice" ref="securityMethodBeforeAdvice"/>
+					<property name="nodeService" ref="nodeService" />
+					<property name="execOrder" value="Pre"/>
+				</bean>
 				<bean parent="abstractSimpleFormulationHandler"
 					class="fr.becpg.repo.product.formulation.NutsCalculatingFormulationHandler">
 				</bean>
@@ -156,6 +171,7 @@
 					<property name="namespaceService" ref="namespaceService"/>
 					<property name="securityMethodBeforeAdvice" ref="securityMethodBeforeAdvice"/>
 					<property name="nodeService" ref="nodeService" />
+					<property name="execOrder" value="Post"/>
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.MergeReqCtrlFormulationHandler" />
 			</list>

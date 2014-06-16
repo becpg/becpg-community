@@ -73,6 +73,15 @@
          	 	}
          		<#if variant_has_next>,</#if></#list>]
          </#if>
+         <#if entity.hasAspect("bcpg:compareWithAspect") && entity.assocs["bcpg:compareWithEntities"]??>
+         ,"compareWithEntities" : [
+            <#list entity.assocs["bcpg:compareWithEntities"] as compareWithEntity>
+         	{
+         	 "nodeRef" : "${compareWithEntity.nodeRef}",
+         	 "name": "${compareWithEntity.name}"
+         	}
+         		<#if compareWithEntity_has_next>,</#if></#list>]
+         </#if>
  
     }
 }

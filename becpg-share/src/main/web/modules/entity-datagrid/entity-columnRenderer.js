@@ -578,15 +578,22 @@
 
                this.block();
 
-               var record = this.getRecord(), column = this.getColumn();
+               var record = this.getRecord(), curCol = this.getColumn(), nodeRef = record.getData("nodeRef"), field = curCol.getField() ;
+               
+               if (record.getData(field) != null && record.getData(field).itemNodeRef!=null) {
+            	   nodeRef = record.getData(field).itemNodeRef;
+            	   field = column.fieldRef
+               }
+               
+               
 
                Alfresco.util.Ajax.jsonPost({
                    url : saveFieldUrl,
                    dataObj : {
                        value : validValue,
-                       field : column.getField(),
+                       field : field,
                        isMultiple : repeating,
-                       nodeRef : record.getData("nodeRef")
+                       nodeRef : nodeRef
                    },
                    successCallback : {
                        fn : function(response) {

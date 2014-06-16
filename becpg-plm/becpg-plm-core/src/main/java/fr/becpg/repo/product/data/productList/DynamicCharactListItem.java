@@ -40,8 +40,11 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 	
 	private String errorLog;
 	
-	private DynamicCharactSynchronisableState dynamicCharactSynchronisableState = DynamicCharactSynchronisableState.Synchronized;
+	private DynamicCharactSynchronisableState synchronisableState = DynamicCharactSynchronisableState.Synchronized;
 
+	private DynamicCharactExecOrder execOrder = DynamicCharactExecOrder.Post;
+	
+	
 	@AlfProp
 	@AlfQname(qname = "bcpg:dynamicCharactTitle")
 	public String getTitle() {
@@ -106,30 +109,47 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 
 	@AlfProp
 	@AlfQname(qname = "bcpg:dynamicCharactSynchronisableState")
-	public DynamicCharactSynchronisableState getDynamicCharactSynchronisableState() {
-		return dynamicCharactSynchronisableState;
+	public DynamicCharactSynchronisableState getSynchronisableState() {
+		return synchronisableState;
 	}
 
-	public void setDynamicCharactSynchronisableState(DynamicCharactSynchronisableState dynamicCharactSynchronisableState) {
-		this.dynamicCharactSynchronisableState = dynamicCharactSynchronisableState;
+	public void setSynchronisableState(DynamicCharactSynchronisableState synchronisableState) {
+		this.synchronisableState = synchronisableState;
+	}
+
+
+	@AlfProp
+	@AlfQname(qname = "bcpg:dynamicCharactExecOrder")
+	public DynamicCharactExecOrder getExecOrder() {
+		return execOrder;
+	}
+
+	public void setExecOrder(DynamicCharactExecOrder execOrder) {
+		if(execOrder == null){
+			this.execOrder = DynamicCharactExecOrder.Post;
+		} else {
+			this.execOrder = execOrder;
+		}
 	}
 
 	@Override
 	public boolean isSynchronisable() {
-		return !DynamicCharactSynchronisableState.Template.equals(dynamicCharactSynchronisableState);
+		return !DynamicCharactSynchronisableState.Template.equals(synchronisableState);
 	}
+
+	
 
 	@Override
 	public Boolean getIsManual() {
-		return DynamicCharactSynchronisableState.Manual.equals(dynamicCharactSynchronisableState);
+		return DynamicCharactSynchronisableState.Manual.equals(synchronisableState);
 	}
 
 	@Override
 	public void setIsManual(Boolean isManual) {
 		if(Boolean.TRUE.equals(isManual)){
-			this.dynamicCharactSynchronisableState = DynamicCharactSynchronisableState.Manual;
+			this.synchronisableState = DynamicCharactSynchronisableState.Manual;
 		} else {
-			this.dynamicCharactSynchronisableState = DynamicCharactSynchronisableState.Synchronized;
+			this.synchronisableState = DynamicCharactSynchronisableState.Synchronized;
 		}
 		
 	}
@@ -152,8 +172,10 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 		int result = super.hashCode();
 		result = prime * result + ((columnName == null) ? 0 : columnName.hashCode());
 		result = prime * result + ((errorLog == null) ? 0 : errorLog.hashCode());
+		result = prime * result + ((execOrder == null) ? 0 : execOrder.hashCode());
 		result = prime * result + ((formula == null) ? 0 : formula.hashCode());
 		result = prime * result + ((groupColor == null) ? 0 : groupColor.hashCode());
+		result = prime * result + ((synchronisableState == null) ? 0 : synchronisableState.hashCode());
 		result = prime * result + ((title == null) ? 0 : title.hashCode());
 		result = prime * result + ((value == null) ? 0 : value.hashCode());
 		return result;
@@ -178,6 +200,8 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 				return false;
 		} else if (!errorLog.equals(other.errorLog))
 			return false;
+		if (execOrder != other.execOrder)
+			return false;
 		if (formula == null) {
 			if (other.formula != null)
 				return false;
@@ -187,6 +211,8 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 			if (other.groupColor != null)
 				return false;
 		} else if (!groupColor.equals(other.groupColor))
+			return false;
+		if (synchronisableState != other.synchronisableState)
 			return false;
 		if (title == null) {
 			if (other.title != null)
@@ -203,8 +229,9 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 
 	@Override
 	public String toString() {
-		return "DynamicCharactListItem [title=" + title + ", formula=" + formula + ", value=" + value + ", groupColor=" + groupColor + ", columnName=" + columnName + ", errorLog="
-				+ errorLog + "]";
+		return "DynamicCharactListItem [title=" + title + ", formula=" + formula + ", value=" + value + ", groupColor=" + groupColor
+				+ ", columnName=" + columnName + ", errorLog=" + errorLog + ", synchronisableState=" + synchronisableState + ", execOrder="
+				+ execOrder + "]";
 	}
 
 	

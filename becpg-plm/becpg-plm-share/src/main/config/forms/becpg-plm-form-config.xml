@@ -4365,6 +4365,7 @@
 					<show id="bcpg:depthLevel" />
 					<show id="bcpg:compoListProduct" />
 					<show id="bcpg:compoListQtySubFormula" />
+					<show id="bcpg:compareWithDynColumn" force="true" />
 					<show id="bcpg:compoListUnit" />
 					<show id="bcpg:compoListQty" />
 					<show id="bcpg:compoListYieldPerc" />
@@ -4385,6 +4386,7 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden"></field>
+					<field id="bcpg:compareWithDynColumn" label="hidden" read-only="true"/>
 					<field id="bcpg:compoListQty" read-only="true"></field>
 					<field id="bcpg:compoListVolume" read-only="true"></field>
 					<field id="bcpg:dynamicCharactColumn1" label="hidden"></field>
@@ -5855,7 +5857,8 @@
 					<show id="bcpg:dynamicCharactColumn" />
 					<show id="bcpg:dynamicCharactFormula" />
 					<show id="bcpg:dynamicCharactGroupColor" />
-					<show id="bcpg:isManualListItem" force="true" />
+					<show id="bcpg:dynamicCharactSynchronisableState"/>
+					<show id="bcpg:dynamicCharactExecOrder" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:dynamicCharactFormula">
@@ -5890,6 +5893,7 @@
 				<field-visibility>
 					<show id="bcpg:dynamicCharactGroupColor" />
 					<show id="bcpg:dynamicCharactSynchronisableState" />
+					<show id="bcpg:dynamicCharactExecOrder" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:dynamicCharactGroupColor">
@@ -5897,6 +5901,12 @@
 							template="/org/alfresco/components/form/controls/selectcolorpicker.ftl" />
 					</field>
 					<field id="bcpg:dynamicCharactSynchronisableState">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:dynamicCharactExecOrder">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="isSearch">true</control-param>
 							<control-param name="insertBlank">true</control-param>
@@ -5918,6 +5928,7 @@
 					<show id="bcpg:dynamicCharactFormula" />
 					<show id="bcpg:dynamicCharactGroupColor" />
 					<show id="bcpg:dynamicCharactSynchronisableState" />
+					<show id="bcpg:dynamicCharactExecOrder" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:dynamicCharactFormula">
