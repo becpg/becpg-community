@@ -150,7 +150,6 @@ public class HierarchyServiceImpl implements HierarchyService {
 		if (parentNodeRef != null) {
 			ret.andPropEquals(BeCPGModel.PROP_PARENT_LEVEL, parentNodeRef.toString());
 		} else if (!all) {
-			ret.andPropEquals(BeCPGModel.PROP_PARENT_LEVEL, null);
 			ret.andPropEquals(BeCPGModel.PROP_DEPTH_LEVEL, "1");
 		} 
 

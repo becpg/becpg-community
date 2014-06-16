@@ -70,14 +70,17 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 	@Override
 	public List<NodeRef> queryAdvSearch(QName datatype, BeCPGQueryBuilder beCPGQueryBuilder, Map<String, String> criteria, int maxResults) {
-
-		if (maxResults <= 0) {
-			maxResults = RepoConsts.MAX_RESULTS_1000;
+		
+		if(isAssocSearch(criteria)){
+			maxResults = RepoConsts.MAX_RESULTS_UNLIMITED;
 		}
+		else if (maxResults <= 0) {
+			maxResults = RepoConsts.MAX_RESULTS_1000;
+		}		
 
 		addCriteriaMap(beCPGQueryBuilder, criteria);
-
-		List<NodeRef> nodes = beCPGQueryBuilder.ftsLanguage().list();
+		
+		List<NodeRef> nodes = beCPGQueryBuilder.maxResults(maxResults).inType(datatype).ftsLanguage().list();
 
 		if (advSearchPlugins != null) {
 			for (AdvSearchPlugin advSearchPlugin : advSearchPlugins) {
@@ -283,4 +286,17 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		return ret;
 	}
 
+	private boolean isAssocSearch(Map<String, String> criteria) {
+		if (criteria != null) {
+			for (Map.Entry<String, String> criterion : criteria.entrySet()) {
+				String key = criterion.getKey();
+				String value = criterion.getValue();
+				// association
+				if (key.startsWith("assoc_") && value != null && !value.isEmpty()) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 }
