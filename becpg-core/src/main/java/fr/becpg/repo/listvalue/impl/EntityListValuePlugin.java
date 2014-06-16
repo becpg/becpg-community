@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
@@ -85,6 +84,9 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	private static final String SOURCE_TYPE_LIST_VALUE = "listvalue";
 
 
+	private static final String searchTemplate = "%(cm:name cm:title bcpg:erpCode bcpg:code bcpg:eanCode cm:description  TAG)";
+	
+	
 	protected static final String PARAM_VALUES_SEPARATOR = ",";
 
 	/** The node service. */
@@ -189,24 +191,33 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery();
 		queryBuilder.ofType(type);
 		queryBuilder.excludeVersions();
+		queryBuilder.inSearchTemplate(searchTemplate);
+		queryBuilder.ftsLanguage();
 		
 		// Is code or name search
-		if (isQueryCode(query, type, arrClassNames)) {
-			String codeQuery = prepareQueryCode(query, type, arrClassNames);
-			
-			//TODO erpCOde and eanCode not in COre
-			queryBuilder.andFTSQuery(String.format("@bcpg\\:code:%s OR @bcpg\\:erpCode:%s OR @bcpg\\:eanCode:%s", codeQuery,codeQuery,codeQuery));
-			
-			
-		} else if (!isAllQuery(query)) { 
-			queryBuilder.andPropQuery(ContentModel.PROP_NAME, query);
+//		if (isQueryCode(query, type, arrClassNames)) {
+//			String codeQuery = prepareQueryCode(query, type, arrClassNames);
+//			
+//			//TODO erpCOde and eanCode not in COre
+//			queryBuilder.andFTSQuery(String.format("@bcpg\\:code:%s OR @bcpg\\:erpCode:%s OR @bcpg\\:eanCode:%s", codeQuery,codeQuery,codeQuery));
+//			
+//			
+//		} else if (!isAllQuery(query)) { 
+//			queryBuilder.andPropQuery(ContentModel.PROP_NAME, query);
+//		}
+		
+		if (!isAllQuery(query)) {
+			if(query.length()>2){
+				queryBuilder.andFTSQuery(prepareQuery(query.trim()+SUFFIX_ALL));
+			}
+			queryBuilder.andFTSQuery(query);		
 		}
-
+		
 		// filter by classNames
 		filterByClass(queryBuilder, arrClassNames);
 
 		// filter product state
-		//TODO queryPath += String.format(RepoConsts.QUERY_FILTER_PRODUCT_STATE, SystemState.Archived, SystemState.Refused);
+		//queryPath += String.format(RepoConsts.QUERY_FILTER_PRODUCT_STATE, SystemState.Archived, SystemState.Refused);
 
 		List<NodeRef> ret = null;
 
@@ -335,8 +346,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 		queryBuilder.ofType(BeCPGModel.TYPE_LIST_VALUE);
 		
 		if (!isAllQuery(query)) {
-			//TODO merge with philippe use value !!!
-			queryBuilder.andPropQuery(ContentModel.PROP_NAME, prepareQuery(query));
+			queryBuilder.andPropQuery(BeCPGModel.PROP_LV_VALUE, prepareQuery(query));
 			
 		}
 
@@ -347,7 +357,8 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 
 	}
 
-	protected String prepareQueryCode(String query, QName type, String[] arrClassNames) {
+	@Deprecated
+	private String prepareQueryCode(String query, QName type, String[] arrClassNames) {
 		if (Pattern.matches(RepoConsts.REGEX_NON_NEGATIVE_INTEGER_FIELD, query)) {
 			Long codeNumber = null;
 			try {
@@ -380,7 +391,8 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 		return query;
 	}
 
-	protected boolean isQueryCode(String query, QName type, String[] arrClassNames) {
+	@Deprecated
+	private boolean isQueryCode(String query, QName type, String[] arrClassNames) {
 		boolean ret = Pattern.matches(RepoConsts.REGEX_NON_NEGATIVE_INTEGER_FIELD, query);
 		if (arrClassNames != null) {
 			for (int i = 0; i < arrClassNames.length; i++) {
@@ -425,7 +437,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 			Reader reader = null;
 			try {
 
-				reader = new StringReader(query);
+				reader = new StringReader(query.trim());
 
 				if (analyzer instanceof FrenchSnowballAnalyserThatRemovesAccents) {
 					source = ((FrenchSnowballAnalyserThatRemovesAccents) analyzer).tokenStream(null, reader, true);
@@ -442,7 +454,6 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 					buff.append(reusableToken.term());
 				}
 				source.reset();
-
 				buff.append(SUFFIX_ALL);
 				query = buff.toString();
 			} catch (Exception e) {

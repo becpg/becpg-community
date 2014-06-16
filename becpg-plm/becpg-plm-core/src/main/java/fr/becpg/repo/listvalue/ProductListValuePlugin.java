@@ -89,8 +89,8 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 	}
 
 	
-
-	protected String prepareQueryCode(String query, QName type, String[] arrClassNames) {
+	@Deprecated
+	private String prepareQueryCode(String query, QName type, String[] arrClassNames) {
 		if (Pattern.matches(RepoConsts.REGEX_NON_NEGATIVE_INTEGER_FIELD, query)) {
 			Long codeNumber = null;
 			try {

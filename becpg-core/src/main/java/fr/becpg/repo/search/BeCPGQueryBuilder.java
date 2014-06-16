@@ -119,6 +119,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	private Map<QName, String> excludedPropQueriesMap = new HashMap<QName, String>();
 	private QueryConsistency queryConsistancy = QueryConsistency.EVENTUAL;
 	private boolean isExactType = false;
+	private String searchTemplate = null;
 	
 	
 	@Override
@@ -221,6 +222,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		cmisLanguage();
 		return this;
 	}
+	
 
 	public BeCPGQueryBuilder cmisLanguage() {
 		this.language = SearchService.LANGUAGE_CMIS_ALFRESCO;
@@ -749,6 +751,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		return SearchService.LANGUAGE_CMIS_ALFRESCO.equals(language);
 	}
 
+
+	public BeCPGQueryBuilder inSearchTemplate(String searchTemplate) {
+		this.searchTemplate = searchTemplate;
+		return this;
+	}
+	
 	public BeCPGQueryBuilder ftsLanguage() {
 		this.language = SearchService.LANGUAGE_FTS_ALFRESCO;
 		return this;
@@ -769,7 +777,11 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		if (SearchService.LANGUAGE_FTS_ALFRESCO.equals(language)) {
 			sp.setDefaultFieldName(DEFAULT_FIELD_NAME);
-			sp.addQueryTemplate(DEFAULT_FIELD_NAME, defaultSearchTemplate);
+			if(searchTemplate!=null){
+				sp.addQueryTemplate(DEFAULT_FIELD_NAME, searchTemplate);
+			} else {
+				sp.addQueryTemplate(DEFAULT_FIELD_NAME, defaultSearchTemplate);
+			}
 		}
 
 		// Force the database use if possible
