@@ -395,7 +395,7 @@
 		<constraint name="bcpg:dynamicCharactSynchronisableStates" type="LIST">
 			<parameter name="allowedValues">
 				<list>
-					<value>Model</value>
+					<value>Template</value>
 					<value>Synchronized</value>
 					<value>Manual</value>
 				</list>
