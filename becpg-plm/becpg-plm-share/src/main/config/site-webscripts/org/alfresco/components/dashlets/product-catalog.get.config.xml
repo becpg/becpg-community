@@ -11,8 +11,10 @@
    </filters>
    <types>
    	<type name="finishedProduct" />
+   	<type name="semiFinishedProduct" />
    	<type name="rawMaterial" />
    	<type name="packagingMaterial" />
+   	<type name="packagingKit" />
    	<type name="product" />
    </types>
 </config>
