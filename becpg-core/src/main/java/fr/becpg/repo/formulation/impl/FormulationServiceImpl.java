@@ -137,8 +137,9 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 					}
 					chain.executeChain(repositoryEntity);
 				} while(repositoryEntity.getReformulateCount() != null && i++ < repositoryEntity.getReformulateCount()) ;
-				
-				repositoryEntity.setFormulatedDate(Calendar.getInstance().getTime());
+				if(chain.shouldUpdateFormulatedDate()){
+					repositoryEntity.setFormulatedDate(Calendar.getInstance().getTime());
+				}
 			} else {
 				logger.error("No formulation chain define for :"+repositoryEntity.getClass().getName());
 			}
