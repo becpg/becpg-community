@@ -70,11 +70,8 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 	@Override
 	public List<NodeRef> queryAdvSearch(QName datatype, BeCPGQueryBuilder beCPGQueryBuilder, Map<String, String> criteria, int maxResults) {
-		
-		if(isAssocSearch(criteria)){
-			maxResults = RepoConsts.MAX_RESULTS_UNLIMITED;
-		}
-		else if (maxResults <= 0) {
+				
+		if (maxResults <= 0 || isAssocSearch(criteria)) {
 			maxResults = RepoConsts.MAX_RESULTS_1000;
 		}		
 
