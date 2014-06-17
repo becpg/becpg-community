@@ -58,6 +58,12 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 	protected NodeService nodeService;
 
+	protected boolean transientFormulation = false;
+	
+
+	public void setTransientFormulation(boolean transientFormulation) {
+		this.transientFormulation = transientFormulation;
+	}
 
 	public void setAlfrescoRepository(AlfrescoRepository<T> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;

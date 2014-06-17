@@ -70,6 +70,10 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 				if(isCharactFormulated(n)){
 					n.setMethod(NUT_FORMULATED);
 				}
+				
+				if(transientFormulation){
+					n.setTransient(true);
+				}
 			}		
 		
 		}
