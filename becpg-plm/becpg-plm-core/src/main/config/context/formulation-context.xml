@@ -161,10 +161,12 @@
 				</bean>
 				<bean parent="abstractSimpleFormulationHandler"
 					class="fr.becpg.repo.product.formulation.NutsCalculatingFormulationHandler">
+					<property name="transientFormulation" value="true"/>
 				</bean>
 				<bean parent="abstractSimpleFormulationHandler"
 					class="fr.becpg.repo.product.formulation.CostsCalculatingFormulationHandler">
 					<property name="entityTplService" ref="entityTplService" />
+					<property name="transientFormulation" value="true"/>
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.FormulaFormulationHandler" >
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
@@ -187,8 +189,7 @@
 		<property name="formulationService" ref="formulationService" />
 		<property name="chainId" value="fastProductFormulationChain"/>
 		<property name="contextClass" value="fr.becpg.repo.product.data.ProductData" />
+		<property name="updateFormulatedDate" value="false"/>
 	</bean>
-
-
 
 </beans>
