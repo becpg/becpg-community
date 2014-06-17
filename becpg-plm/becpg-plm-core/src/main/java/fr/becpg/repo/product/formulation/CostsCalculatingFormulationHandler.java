@@ -64,7 +64,11 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				if(isCharactFormulated(c)){
 					String unit = calculateUnit(formulatedProduct.getUnit(), (String)nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTCURRENCY));
 					c.setUnit(unit);
-				}							
+				}
+				
+				if(transientFormulation){
+					c.setTransient(true);
+				}
 			}			
 		}						
 		
@@ -161,7 +165,6 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	
 	@Override
 	protected QName getDataListVisited(){
-		
 		return PLMModel.TYPE_COSTLIST;
 	}
 	
