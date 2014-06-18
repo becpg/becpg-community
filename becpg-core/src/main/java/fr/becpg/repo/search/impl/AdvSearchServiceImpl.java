@@ -80,7 +80,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 			
 		List<NodeRef> nodes = beCPGQueryBuilder
 								.maxResults(maxResults)
-								.inType(datatype == null ? ContentModel.TYPE_CONTENT : datatype)
+								.ofType(datatype)
 								.ftsLanguage()
 								.list();
 
