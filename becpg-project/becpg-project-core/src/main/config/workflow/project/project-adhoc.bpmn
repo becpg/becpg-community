@@ -6,16 +6,16 @@
       <extensionElements>
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
-            <activiti:string>if (typeof bpm_workflowDueDate != 'undefined') task.dueDate = bpm_workflowDueDate
+            <activiti:string>
+                   if (typeof bpm_workflowDueDate != 'undefined') task.dueDate = bpm_workflowDueDate;
 	               if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority;
+	               if (typeof bpm_workflowDescription != 'undefined') task.setDescription(bpm_workflowDescription);       
 	                      
 	            	if (bpm_assignees != null){
-		            		
 							for (var i = 0; i &lt; bpm_assignees.size(); i++){
 		
 								var assignee = bpm_assignees.get(i);									
 						
-	                  	/*workaround en fonction de si on valide directement ou si on envoie a un relecteur, svawf_notifyUsers.get(i) est de type person ou nodeRef*/
 								if(assignee.properties==null){
 									assignee = utils.getNodeFromString(assignee); 
 								}					
