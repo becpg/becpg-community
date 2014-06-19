@@ -20,6 +20,7 @@ package fr.becpg.repo.search.impl;
 import java.util.List;
 import java.util.Map;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.PermissionService;
@@ -76,8 +77,12 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		}		
 
 		addCriteriaMap(beCPGQueryBuilder, criteria);
-		
-		List<NodeRef> nodes = beCPGQueryBuilder.maxResults(maxResults).inType(datatype).ftsLanguage().list();
+			
+		List<NodeRef> nodes = beCPGQueryBuilder
+								.maxResults(maxResults)
+								.ofType(datatype)
+								.ftsLanguage()
+								.list();
 
 		if (advSearchPlugins != null) {
 			for (AdvSearchPlugin advSearchPlugin : advSearchPlugins) {
