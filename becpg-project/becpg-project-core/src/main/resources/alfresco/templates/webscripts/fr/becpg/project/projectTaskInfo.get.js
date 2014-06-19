@@ -6,7 +6,9 @@ function calculatePrevDeliverables(task, prevDeliverables){
       var prevTask = prevTasks[i];
       var deliverables = prevTask.sourceAssocs["pjt:dlTask"];
       for(var j in deliverables){
-        prevDeliverables.unshift(deliverables[j]);
+    	 if(!prevDeliverables.contains(deliverables[j])){
+    		 prevDeliverables.unshift(deliverables[j]);
+    	 }
       }
 		calculatePrevDeliverables(prevTask, prevDeliverables);
 	}

@@ -42,7 +42,7 @@
                                              	<#if args.activityType == 'State'>
                                              		The state of the task has been changed from <b>${args.beforeState}</b> to <b>${args.afterState}</b>.
                                              	<#elseif args.activityType == 'Comment'>                                             		
-                                             		A comment has been <#if args.activityEvent = 'Create'>created<#elseif args.activityEvent = 'Update'>updated<#else>deleted<#if> on <#if (args.deliverableDescription)??>le livrable <b>"${args.deliverableDescription}"</b> <#elseif (args.taskTitle)??>la tâche <b>"${args.taskTitle}"</b> <#else>le projet</#if> :                                              		
+                                             		A comment has been <#if args.activityEvent == 'Create'>created<#elseif args.activityEvent == 'Update'>updated<#else>deleted</#if> on <#if (args.deliverableDescription)??>le livrable <b>"${args.deliverableDescription}"</b> <#elseif (args.taskTitle)??>la tâche <b>"${args.taskTitle}"</b> <#else>le projet</#if> :                                              		
                                              		<i>${args.comment.content}</i>
                                              	</#if>                                             	
                                              </p>

@@ -303,7 +303,6 @@ function sendMail(userOrGroup, from, subject, message, isAction) {
 	if (userOrGroup != null && userOrGroup.exists()) {
 		try {
 			var mail = actions.create("mail");
-			mail.parameters.template_model = templateModel;
 			if (userOrGroup.typeShort == "cm:authorityContainer") {
 				mail.parameters.to_many = new Array(userOrGroup.properties["cm:authorityName"]);
 			} else {

@@ -44,8 +44,6 @@ public class DynCharactPatch extends AbstractBeCPGPatch {
 	private final int batchSize = 40;
 	private final long count = batchThreads * batchSize;
 
-	
-	
 	@Override
 	protected String applyInternal() throws Exception {
 
@@ -104,30 +102,32 @@ public class DynCharactPatch extends AbstractBeCPGPatch {
 
 			public void process(NodeRef dataListNodeRef) throws Throwable {
 				if (nodeService.exists(dataListNodeRef)) {
-					try {
-						policyBehaviourFilter.disableBehaviour(dataListNodeRef);
-						ruleService.disableRules();
-						Boolean isManual = (Boolean) nodeService.getProperty(dataListNodeRef, BeCPGModel.PROP_IS_MANUAL_LISTITEM);
-						if (Boolean.TRUE.equals(isManual)) {
-							nodeService.setProperty(dataListNodeRef, PLMModel.PROP_DYNAMICCHARACT_SYNCHRONIZABLE_STATE,
-									DynamicCharactSynchronisableState.Manual);
-						} else {
-							nodeService.setProperty(dataListNodeRef, PLMModel.PROP_DYNAMICCHARACT_SYNCHRONIZABLE_STATE,
-									DynamicCharactSynchronisableState.Synchronized);
-						}
-						nodeService.removeAspect(dataListNodeRef, BeCPGModel.ASPECT_IS_MANUAL_LISTITEM);
-					} finally {
-						policyBehaviourFilter.enableBehaviour(dataListNodeRef);
-						ruleService.enableRules();
+
+					Boolean isManual = (Boolean) nodeService.getProperty(dataListNodeRef, BeCPGModel.PROP_IS_MANUAL_LISTITEM);
+					if (Boolean.TRUE.equals(isManual)) {
+						nodeService.setProperty(dataListNodeRef, PLMModel.PROP_DYNAMICCHARACT_SYNCHRONIZABLE_STATE,
+								DynamicCharactSynchronisableState.Manual);
+					} else {
+						nodeService.setProperty(dataListNodeRef, PLMModel.PROP_DYNAMICCHARACT_SYNCHRONIZABLE_STATE,
+								DynamicCharactSynchronisableState.Synchronized);
 					}
+					nodeService.removeAspect(dataListNodeRef, BeCPGModel.ASPECT_IS_MANUAL_LISTITEM);
+
 				} else {
 					logger.warn("dataListNodeRef doesn't exist : " + dataListNodeRef);
 				}
 			}
 
 		};
-
-		batchProcessor.process(worker, true);
+		
+		try {
+			policyBehaviourFilter.disableBehaviour();
+			ruleService.disableRules();
+			batchProcessor.process(worker, true);
+		} finally {
+			policyBehaviourFilter.enableBehaviour();
+			ruleService.enableRules();
+		}
 
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}
@@ -167,7 +167,5 @@ public class DynCharactPatch extends AbstractBeCPGPatch {
 	public void setRuleService(RuleService ruleService) {
 		this.ruleService = ruleService;
 	}
-	
-	
 
 }
