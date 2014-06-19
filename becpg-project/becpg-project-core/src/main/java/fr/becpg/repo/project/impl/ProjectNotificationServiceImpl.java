@@ -9,6 +9,7 @@ import java.util.Map;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.action.executer.MailActionExecuter;
 import org.alfresco.repo.model.Repository;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.action.Action;
 import org.alfresco.service.cmr.action.ActionService;
 import org.alfresco.service.cmr.model.FileFolderService;
@@ -149,11 +150,12 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 					if (logger.isDebugEnabled()) {
 						logger.debug("authorityName : " + authorityName);
 					}
-					authorities.add(authorityName);
+					if(!authorityName.equals(AuthenticationUtil.getFullyAuthenticatedUser())){
+						authorities.add(authorityName);
+					}
 				}
 
 				try {
-
 					Action mailAction = actionService.createAction(MailActionExecuter.NAME);
 					mailAction.setParameterValue(MailActionExecuter.PARAM_SUBJECT, subject);
 					mailAction.setParameterValue(MailActionExecuter.PARAM_TO_MANY, (Serializable) authorities);

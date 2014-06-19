@@ -90,10 +90,10 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy implements No
 					listNodeRefs.add(listNodeRef);					
 					NodeRef listContainerNodeRef = nodeService.getPrimaryParent(listNodeRef).getParentRef();
 					
-					if(!listContainerNodeRefs.contains(listContainerNodeRef)){
+					if(listContainerNodeRef!=null && !listContainerNodeRefs.contains(listContainerNodeRef) && nodeService.exists(listContainerNodeRef)){
 						listContainerNodeRefs.add(listContainerNodeRef);
 						NodeRef entityNodeRef = nodeService.getPrimaryParent(listContainerNodeRef).getParentRef();
-						if (!isVersionNode(entityNodeRef)) {
+						if (entityNodeRef!=null && !isVersionNode(entityNodeRef)) {
 							try {
 								policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
 								nodeService.setProperty(entityNodeRef, ContentModel.PROP_MODIFIED, Calendar.getInstance().getTime());
