@@ -17,7 +17,7 @@
  * along with Alfresco. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package fr.becpg.repo.project.admin.patch;
+package fr.becpg.repo.admin.patch;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
