@@ -1,3 +1,13 @@
+function contains(a, obj) {
+    for (var i = 0; i < a.length; i++) {
+        if (a[i] === obj) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
 function calculatePrevDeliverables(task, prevDeliverables){
   
   	var prevTasks = task.assocs["pjt:tlPrevTasks"];
@@ -6,7 +16,7 @@ function calculatePrevDeliverables(task, prevDeliverables){
       var prevTask = prevTasks[i];
       var deliverables = prevTask.sourceAssocs["pjt:dlTask"];
       for(var j in deliverables){
-    	 if(prevDeliverables.indexOf(deliverables[j])<0){
+    	 if(!contains(prevDeliverables,deliverables[j])){
     		 prevDeliverables.unshift(deliverables[j]);
     	 }
       }
