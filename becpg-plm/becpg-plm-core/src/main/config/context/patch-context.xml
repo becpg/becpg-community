@@ -151,9 +151,9 @@
 			<property name="applyToTenants"><value>true</value></property>
 	 </bean>
 	 
-	 <bean id="patch.bcpg.project.redeployWfProjectProcess" class="fr.becpg.repo.admin.patch.PLMWorkflowPatch" parent="basePatch" >
-        <property name="id"><value>patch.bcpg.project.redeployWfProjectProcess</value></property>
-        <property name="description"><value>patch.bcpg.project.redeployWfProjectProcess.description</value></property>
+	 <bean id="patch.bcpg.plm.redeployWfPLMProcess" class="fr.becpg.repo.admin.patch.PLMWorkflowPatch" parent="basePatch" >
+        <property name="id"><value>patch.bcpg.plm.redeployWfPLMProcess</value></property>
+        <property name="description"><value>patch.bcpg.plm.redeployWfPLMProcess.description</value></property>
         <property name="fixesFromSchema" value="0"/>
         <property name="fixesToSchema" value="6033" />
         <property name="targetSchema" value="10150"/>
@@ -162,6 +162,16 @@
 					<props>
 						<prop key="engineId">activiti</prop>
 						<prop key="location">alfresco/module/becpg-project-core/workflow/project/project-adhoc.bpmn</prop>
+						<prop key="mimetype">text/xml</prop>
+					</props>
+					<props>
+						<prop key="engineId">activiti</prop>
+						<prop key="location">alfresco/module/${pom.artifactId}/workflow/project/project-newProduct.bpmn</prop>
+						<prop key="mimetype">text/xml</prop>
+					</props>
+					<props>
+						<prop key="engineId">activiti</prop>
+						<prop key="location">alfresco/module/${pom.artifactId}/workflow/product-validation.bpmn</prop>
 						<prop key="mimetype">text/xml</prop>
 					</props>
             </list>
