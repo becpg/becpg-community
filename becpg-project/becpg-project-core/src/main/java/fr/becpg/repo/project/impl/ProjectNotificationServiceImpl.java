@@ -156,16 +156,18 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 				}
 
 				try {
-					Action mailAction = actionService.createAction(MailActionExecuter.NAME);
-					mailAction.setParameterValue(MailActionExecuter.PARAM_SUBJECT, subject);
-					mailAction.setParameterValue(MailActionExecuter.PARAM_TO_MANY, (Serializable) authorities);
-					mailAction.setParameterValue(MailActionExecuter.PARAM_TEMPLATE, fileFolderService.getLocalizedSibling(templateNodeRef));
-
-					Map<String, Serializable> templateModel = new HashMap<String, Serializable>();
-					templateModel.put("args", (Serializable) templateArgs);
-					mailAction.setParameterValue(MailActionExecuter.PARAM_TEMPLATE_MODEL, (Serializable) templateModel);
-
-					actionService.executeAction(mailAction, null);
+					if(!authorities.isEmpty()){
+						Action mailAction = actionService.createAction(MailActionExecuter.NAME);
+						mailAction.setParameterValue(MailActionExecuter.PARAM_SUBJECT, subject);
+						mailAction.setParameterValue(MailActionExecuter.PARAM_TO_MANY, (Serializable) authorities);
+						mailAction.setParameterValue(MailActionExecuter.PARAM_TEMPLATE, fileFolderService.getLocalizedSibling(templateNodeRef));
+	
+						Map<String, Serializable> templateModel = new HashMap<String, Serializable>();
+						templateModel.put("args", (Serializable) templateArgs);
+						mailAction.setParameterValue(MailActionExecuter.PARAM_TEMPLATE_MODEL, (Serializable) templateModel);
+	
+						actionService.executeAction(mailAction, null);
+					}
 				} catch (Exception e) {
 					logger.error("Cannot send email project notify email :" + e.getMessage(), e);
 				}
