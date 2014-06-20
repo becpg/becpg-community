@@ -43,7 +43,14 @@ public interface RepositoryEntity {
 	public Map<QName, Serializable> getExtraProperties();
 	public void setExtraProperties(Map<QName, Serializable> extraProperties);
 
+	/**
+	 * Test if the entity is transiant
+	 */
 	public boolean isTransient();
 	
-	
+	/**
+	 * Use to determine if changes has applied
+	 */
+	public void setDbHashCode(int hashCode);
+	public int getDbHashCode();
 }

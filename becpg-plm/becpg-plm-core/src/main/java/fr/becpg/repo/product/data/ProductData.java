@@ -483,8 +483,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		return compoListView;
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<CompoListDataItem> getCompoList(DataListFilter<ProductData>... filters) {
+	public List<CompoListDataItem> getCompoList(@SuppressWarnings("unchecked") DataListFilter<ProductData>... filters) {
 		if (compoListView != null && compoListView.getCompoList() != null) {
 			List<CompoListDataItem> ret = new ArrayList<CompoListDataItem>(compoListView.getCompoList());
 			if (filters != null) {
@@ -497,8 +496,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
-	public boolean hasCompoListEl(DataListFilter<ProductData>... filters) {
+	public boolean hasCompoListEl(@SuppressWarnings("unchecked") DataListFilter<ProductData>... filters) {
 		return compoListView != null && compoListView.getCompoList() != null && !getCompoList(filters).isEmpty();
 	}
 
@@ -512,8 +510,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		return processListView;
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<ProcessListDataItem> getProcessList(DataListFilter<ProductData>... filters) {
+	public  List<ProcessListDataItem> getProcessList(@SuppressWarnings("unchecked") DataListFilter<ProductData>... filters) {
 		if (processListView != null && processListView.getProcessList() != null) {
 			List<ProcessListDataItem> ret = new ArrayList<ProcessListDataItem>(processListView.getProcessList());
 			if (filters != null) {
@@ -526,8 +523,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
-	public boolean hasProcessListEl(DataListFilter<ProductData>... filters) {
+	public  boolean hasProcessListEl(@SuppressWarnings("unchecked") DataListFilter<ProductData>... filters) {
 		return processListView != null && processListView.getProcessList() != null && !getProcessList(filters).isEmpty();
 	}
 
@@ -541,8 +537,8 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		return packagingListView;
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<PackagingListDataItem> getPackagingList(DataListFilter<ProductData>... filters) {
+	
+	public  List<PackagingListDataItem> getPackagingList(@SuppressWarnings("unchecked") DataListFilter<ProductData>... filters) {
 		if (packagingListView != null && packagingListView.getPackagingList() != null) {
 			List<PackagingListDataItem> ret = new ArrayList<PackagingListDataItem>(packagingListView.getPackagingList());
 			if (filters != null) {
@@ -555,8 +551,8 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
-	public boolean hasPackagingListEl(DataListFilter<ProductData>... filters) {
+	
+	public  boolean hasPackagingListEl(@SuppressWarnings("unchecked") DataListFilter<ProductData>... filters) {
 		return packagingListView != null && packagingListView.getPackagingList() != null && !getPackagingList(filters).isEmpty();
 	}
 

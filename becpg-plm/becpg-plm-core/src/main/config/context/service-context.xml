@@ -166,6 +166,10 @@
 		<property name="productService" ref="productService" />
 	</bean>
 
+   <bean id="webscript.fr.becpg.product.recipeFormulation.post" class="fr.becpg.repo.web.scripts.product.FormulateRecipeWebScript" parent="webscript">
+		<property name="productService" ref="productService" />
+	</bean>
+
 	<bean id="webscript.fr.becpg.product.charactDetailsFormulation.get" class="fr.becpg.repo.web.scripts.product.FormulateCharactDetailsWebScript" parent="webscript">
 		<property name="productService" ref="productService" />
 		<property name="nodeService" ref="NodeService" />

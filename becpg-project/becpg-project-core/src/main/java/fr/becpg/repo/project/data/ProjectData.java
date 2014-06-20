@@ -339,13 +339,23 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 		int result = super.hashCode();
 		result = prime * result + ((completionDate == null) ? 0 : completionDate.hashCode());
 		result = prime * result + ((completionPercent == null) ? 0 : completionPercent.hashCode());
+		result = prime * result + ((created == null) ? 0 : created.hashCode());
+		result = prime * result + ((creator == null) ? 0 : creator.hashCode());
 		result = prime * result + ((dueDate == null) ? 0 : dueDate.hashCode());
 		result = prime * result + ((entities == null) ? 0 : entities.hashCode());
+		result = prime * result + ((formulatedDate == null) ? 0 : formulatedDate.hashCode());
 		result = prime * result + ((hierarchy1 == null) ? 0 : hierarchy1.hashCode());
+		result = prime * result + ((hierarchy2 == null) ? 0 : hierarchy2.hashCode());
 		result = prime * result + ((legends == null) ? 0 : legends.hashCode());
+		result = prime * result + ((modified == null) ? 0 : modified.hashCode());
+		result = prime * result + ((modifier == null) ? 0 : modifier.hashCode());
+		result = prime * result + ((overdue == null) ? 0 : overdue.hashCode());
 		result = prime * result + ((priority == null) ? 0 : priority.hashCode());
+		result = prime * result + ((projectManager == null) ? 0 : projectManager.hashCode());
 		result = prime * result + ((projectState == null) ? 0 : projectState.hashCode());
 		result = prime * result + ((projectTpl == null) ? 0 : projectTpl.hashCode());
+		result = prime * result + ((reformulateCount == null) ? 0 : reformulateCount.hashCode());
+		result = prime * result + ((score == null) ? 0 : score.hashCode());
 		result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());
 		return result;
 	}
@@ -369,6 +379,16 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 				return false;
 		} else if (!completionPercent.equals(other.completionPercent))
 			return false;
+		if (created == null) {
+			if (other.created != null)
+				return false;
+		} else if (!created.equals(other.created))
+			return false;
+		if (creator == null) {
+			if (other.creator != null)
+				return false;
+		} else if (!creator.equals(other.creator))
+			return false;
 		if (dueDate == null) {
 			if (other.dueDate != null)
 				return false;
@@ -379,20 +399,50 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 				return false;
 		} else if (!entities.equals(other.entities))
 			return false;
+		if (formulatedDate == null) {
+			if (other.formulatedDate != null)
+				return false;
+		} else if (!formulatedDate.equals(other.formulatedDate))
+			return false;
 		if (hierarchy1 == null) {
 			if (other.hierarchy1 != null)
 				return false;
 		} else if (!hierarchy1.equals(other.hierarchy1))
+			return false;
+		if (hierarchy2 == null) {
+			if (other.hierarchy2 != null)
+				return false;
+		} else if (!hierarchy2.equals(other.hierarchy2))
 			return false;
 		if (legends == null) {
 			if (other.legends != null)
 				return false;
 		} else if (!legends.equals(other.legends))
 			return false;
+		if (modified == null) {
+			if (other.modified != null)
+				return false;
+		} else if (!modified.equals(other.modified))
+			return false;
+		if (modifier == null) {
+			if (other.modifier != null)
+				return false;
+		} else if (!modifier.equals(other.modifier))
+			return false;
+		if (overdue == null) {
+			if (other.overdue != null)
+				return false;
+		} else if (!overdue.equals(other.overdue))
+			return false;
 		if (priority == null) {
 			if (other.priority != null)
 				return false;
 		} else if (!priority.equals(other.priority))
+			return false;
+		if (projectManager == null) {
+			if (other.projectManager != null)
+				return false;
+		} else if (!projectManager.equals(other.projectManager))
 			return false;
 		if (projectState != other.projectState)
 			return false;
@@ -400,6 +450,16 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 			if (other.projectTpl != null)
 				return false;
 		} else if (!projectTpl.equals(other.projectTpl))
+			return false;
+		if (reformulateCount == null) {
+			if (other.reformulateCount != null)
+				return false;
+		} else if (!reformulateCount.equals(other.reformulateCount))
+			return false;
+		if (score == null) {
+			if (other.score != null)
+				return false;
+		} else if (!score.equals(other.score))
 			return false;
 		if (startDate == null) {
 			if (other.startDate != null)

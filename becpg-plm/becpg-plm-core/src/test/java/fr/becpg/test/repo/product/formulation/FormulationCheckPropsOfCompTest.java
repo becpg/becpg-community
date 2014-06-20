@@ -25,6 +25,7 @@ import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransacti
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Assert;
 import org.junit.Test;
 
 import fr.becpg.repo.product.data.FinishedProductData;
@@ -84,28 +85,31 @@ public class FormulationCheckPropsOfCompTest extends AbstractFinishedProductTest
 					logger.info("Product: " + nodeService.getProperty(r.getSources().get(0), ContentModel.PROP_NAME));
 					logger.info("Msg: " + r.getReqMessage());
 					if (!r.getReqMessage().startsWith("Impossible")) {
-						if (r.getSources().get(0).equals(finishedProductNodeRef1)) {
-							assertEquals("Le poids net du produit n'est pas renseigné.", r.getReqMessage());
-							checks++;
-						} else if (r.getSources().get(0).equals(rawMaterial1NodeRef)) {
-
-							assertEquals("Le poids net du produit n'est pas renseigné.", r.getReqMessage());
-
-							checks++;
-						} else if (r.getSources().get(0).equals(rawMaterial5NodeRef)) {
-							assertEquals("L'unité utilisée n'est pas la bonne.", r.getReqMessage());
-							checks++;
-						} else if (r.getSources().get(0).equals(rawMaterial6NodeRef)) {
-							assertEquals("L'unité utilisée n'est pas la bonne.", r.getReqMessage());
-							checks++;
-						} else {
-							// should not occur
-							assertTrue(false);
+						for(NodeRef source : r.getSources()){
+						
+							if (source.equals(finishedProductNodeRef1)) {
+								assertEquals("Le poids net du produit n'est pas renseigné.", r.getReqMessage());
+								checks++;
+							} else if (source.equals(rawMaterial1NodeRef)) {
+	
+								assertEquals("Le poids net du produit n'est pas renseigné.", r.getReqMessage());
+	
+								checks++;
+							} else if (source.equals(rawMaterial5NodeRef)) {
+								assertEquals("L'unité utilisée n'est pas la bonne.", r.getReqMessage());
+								checks++;
+							} else if (source.equals(rawMaterial6NodeRef)) {
+								assertEquals("L'unité utilisée n'est pas la bonne.", r.getReqMessage());
+								checks++;
+							} else {
+								// should not occur
+								assertTrue(false);
+							}
 						}
 					}
 				}
 
-				assertEquals(4, checks);
+				Assert.assertEquals(4, checks);
 
 				return null;
 

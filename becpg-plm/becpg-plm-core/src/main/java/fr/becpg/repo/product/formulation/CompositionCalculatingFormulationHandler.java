@@ -55,7 +55,6 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 
@@ -93,7 +92,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		}
 		
 		// Volume
-		Double netVolume = FormulationHelper.getNetVolume(formulatedProduct.getNodeRef(), nodeService);
+		Double netVolume = FormulationHelper.getNetVolume(formulatedProduct);
 		if(netVolume != null){
 			Double calculatedVolume = calculateVolumeFromChildren(compositeDefaultVariant);
 			if(calculatedVolume != 0d){

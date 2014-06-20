@@ -13,15 +13,15 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
   GNU Lesser General Public License for more details. 
    
-  You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
+  You should have received a copy of the GNU Lesser General Public License along with beCPG.
+   If not, see <http://www.gnu.org/licenses/>.
 -->
 <webscript>
-	<shortname>Formulate</shortname>
-	<description>Formulate provided composition or entity</description>	
-	<url>/becpg/remote/entity/formulate?nodeRef={nodeRef}</url>
-	<url>/becpg/remote/formulate</url>
-	<format default="xml">argument</format>
+	<shortname>Recipe formulation</shortname>
+	<description>In memory recipe formulation</description>	
+	<url>/becpg/product/formulate/recipe</url>
+	<format default="json">argument</format>
 	<authentication>user</authentication>
-	<transaction allow="readwrite" buffersize="0">required</transaction>
+	<transaction allow="read" buffersize="0">required</transaction>
 	<lifecycle>public_api</lifecycle>
 </webscript>

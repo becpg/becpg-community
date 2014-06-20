@@ -45,7 +45,7 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 	public CharactDetails visit(ProductData productData, List<NodeRef> dataListItems) throws FormulateException {
 
 		CharactDetails ret = new CharactDetails(extractCharacts(dataListItems));
-		Double netQty = FormulationHelper.getNetQtyInLorKg(productData.getNodeRef(), nodeService,FormulationHelper.DEFAULT_NET_WEIGHT);
+		Double netQty = FormulationHelper.getNetQtyInLorKg(productData,FormulationHelper.DEFAULT_NET_WEIGHT);
 
 		/*
 		 * Calculate cost details

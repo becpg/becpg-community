@@ -52,6 +52,12 @@ public interface ProductService {
 
 	public boolean shouldFormulate(NodeRef product);
 
+	
+	/**
+	 * Formulate a text recipe in Memory
+	 */
+	ProductData formulateText(String recipe, ProductData productData) throws FormulateException;
+
 
    
 }

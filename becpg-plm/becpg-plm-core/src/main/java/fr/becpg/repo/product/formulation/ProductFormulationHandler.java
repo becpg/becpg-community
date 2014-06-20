@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -37,6 +38,7 @@ import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.EffectiveFilters;
+import fr.becpg.repo.product.data.PackagingKitData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -90,9 +92,23 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 				|| (productData.hasPackagingListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT))
 				|| (productData.hasProcessListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT))) {
 
-			clearReqCltrlList(productData.getCompoListView().getReqCtrlList());
-			clearReqCltrlList(productData.getPackagingListView().getReqCtrlList());
-			clearReqCltrlList(productData.getProcessListView().getReqCtrlList());
+			
+			if(productData.getCompoListView().getReqCtrlList()!=null){
+				clearReqCltrlList(productData.getCompoListView().getReqCtrlList());
+			} else {
+				productData.getCompoListView().setReqCtrlList(new LinkedList<ReqCtrlListDataItem>());
+			}
+			if(productData.getPackagingListView().getReqCtrlList()!=null){
+				clearReqCltrlList(productData.getPackagingListView().getReqCtrlList());
+			} else {
+				productData.getPackagingListView().setReqCtrlList(new LinkedList<ReqCtrlListDataItem>());
+			}
+			if(productData.getProcessListView().getReqCtrlList()!=null){
+				clearReqCltrlList(productData.getProcessListView().getReqCtrlList());
+			} else {
+				productData.getProcessListView().setReqCtrlList(new LinkedList<ReqCtrlListDataItem>());
+			}
+			
 			
 			if (formulateChildren) {
 				checkShouldFormulateComponents(true, productData, new HashSet<NodeRef>());
@@ -120,10 +136,12 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 	}
 
 	private void clearReqCltrlList(List<ReqCtrlListDataItem> reqCtrlList) {
-		for (Iterator<ReqCtrlListDataItem> iterator = reqCtrlList.iterator(); iterator.hasNext();) {
-			ReqCtrlListDataItem reqCtrlListDataItem = (ReqCtrlListDataItem) iterator.next();
-			if(reqCtrlListDataItem.getNodeRef()==null){
-				iterator.remove();
+		if(reqCtrlList!=null){
+			for (Iterator<ReqCtrlListDataItem> iterator = reqCtrlList.iterator(); iterator.hasNext();) {
+				ReqCtrlListDataItem reqCtrlListDataItem = (ReqCtrlListDataItem) iterator.next();
+				if(reqCtrlListDataItem.getNodeRef()==null){
+					iterator.remove();
+				}
 			}
 		}
 		
@@ -203,18 +221,24 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 
 		NodeRef productNodeRef = formulatedProduct.getNodeRef();
 		List<ReqCtrlListDataItem> reqCtrlList = null;
-		if (PLMModel.TYPE_PACKAGINGKIT.isMatch(nodeService.getType(productNodeRef))) {
+		if (formulatedProduct instanceof PackagingKitData) {
 			reqCtrlList = formulatedProduct.getPackagingListView().getReqCtrlList();
+			
 		} else {
-			Double qty = FormulationHelper.getProductQty(productNodeRef, nodeService);
+			Double qty = formulatedProduct.getQty();
 			if (qty == null || qty.equals(0d)) {
 				addMessingReq(formulatedProduct.getCompoListView().getReqCtrlList(), productNodeRef, MESSAGE_MISSING_QTY);
 			}
-			checkNetWeight(formulatedProduct.getCompoListView().getReqCtrlList(), productNodeRef);
+			Double netWeight = FormulationHelper.getNetWeight(formulatedProduct, null);
+			if (netWeight == null || netWeight.equals(0d)) {
+				addMessingReq(formulatedProduct.getCompoListView().getReqCtrlList(), productNodeRef, MESSAGE_MISSING_NET_WEIGHT);
+			}
+			
 			reqCtrlList = formulatedProduct.getCompoListView().getReqCtrlList();
+			
 		}
 
-		ProductUnit productUnit = FormulationHelper.getProductUnit(productNodeRef, nodeService);
+		ProductUnit productUnit = formulatedProduct.getUnit();
 		if (productUnit == null) {
 			addMessingReq(reqCtrlList, productNodeRef, MESSAGE_MISSING_UNIT);
 		}
@@ -287,11 +311,11 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 	}
 
 	private void addMessingReq(List<ReqCtrlListDataItem> reqCtrlListDataItem, NodeRef sourceNodeRef, String reqMsg) {
-		String message = I18NUtil.getMessage(reqMsg);
-		ArrayList<NodeRef> sources = new ArrayList<NodeRef>(1);
-		if (sourceNodeRef != null) {
-			sources.add(sourceNodeRef);
+			String message = I18NUtil.getMessage(reqMsg);
+			ArrayList<NodeRef> sources = new ArrayList<NodeRef>(1);
+			if (sourceNodeRef != null) {
+				sources.add(sourceNodeRef);
+			}
+			reqCtrlListDataItem.add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, sources));
 		}
-		reqCtrlListDataItem.add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, sources));
-	}
 }
