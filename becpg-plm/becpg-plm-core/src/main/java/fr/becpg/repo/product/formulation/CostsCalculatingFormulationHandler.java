@@ -5,6 +5,7 @@ package fr.becpg.repo.product.formulation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -56,6 +57,10 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 		logger.debug("Cost calculating visitor");
 		
+		if(formulatedProduct.getCostList() == null){
+			formulatedProduct.setCostList(new LinkedList<CostListDataItem>());
+		}
+		
 		formulateSimpleList(formulatedProduct, formulatedProduct.getCostList());
 		
 		if(formulatedProduct.getCostList() != null){
@@ -78,6 +83,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		return true;
 	}
 	
+	
 	@Override
 	protected void visitChildren(ProductData formulatedProduct, List<CostListDataItem> costList) throws FormulateException{				
 		
@@ -86,7 +92,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			netQty = FormulationHelper.QTY_FOR_PIECE;
 		}
 		else{
-			netQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct.getNodeRef(), nodeService,FormulationHelper.DEFAULT_NET_WEIGHT);
+			netQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct,FormulationHelper.DEFAULT_NET_WEIGHT);
 		}		
 		
 		/*
@@ -198,7 +204,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	
 	private ProductData calculateProfitability(ProductData formulatedProduct){
 		
-		Double netQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct.getNodeRef(), nodeService,FormulationHelper.DEFAULT_NET_WEIGHT);
+		Double netQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct,FormulationHelper.DEFAULT_NET_WEIGHT);
 		Double unitTotalVariableCost = 0d;
 		Double unitTotalFixedCost = 0d;
 		

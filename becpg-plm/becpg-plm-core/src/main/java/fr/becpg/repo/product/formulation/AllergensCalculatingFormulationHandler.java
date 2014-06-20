@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -79,6 +80,8 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 					a.getInVoluntarySources().clear();
 				}
 			}
+		} else {
+			formulatedProduct.setAllergenList(new LinkedList<AllergenListDataItem>());
 		}
 		
 		

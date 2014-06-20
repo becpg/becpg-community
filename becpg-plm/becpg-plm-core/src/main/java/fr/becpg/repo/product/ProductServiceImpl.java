@@ -17,6 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.product;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -32,6 +33,8 @@ import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.product.data.CharactDetails;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.productList.PackagingListDataItem;
+import fr.becpg.repo.product.lexer.CompositionLexer;
 import fr.becpg.repo.repository.AlfrescoRepository;
 
 /**
@@ -130,6 +133,15 @@ public class ProductServiceImpl implements ProductService {
 		}
 		return false;
 	}
+	
+	@Override
+    public ProductData formulateText(String recipe, ProductData productData) throws FormulateException {
+    
+		productData.getCompoListView().setCompoList(CompositionLexer.lexMultiLine(recipe));
+		productData.getPackagingListView().setPackagingList(new ArrayList<PackagingListDataItem>());
+		
+		return formulationService.formulate(productData);    	
+    } 
   
 
 }

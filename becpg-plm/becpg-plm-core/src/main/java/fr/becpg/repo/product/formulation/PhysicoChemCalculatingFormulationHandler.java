@@ -3,6 +3,7 @@
  */
 package fr.becpg.repo.product.formulation;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -35,6 +36,10 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {	
 		logger.debug("Physico chemical calculating visitor");
+		
+		if(formulatedProduct.getPhysicoChemList()==null){
+			formulatedProduct.setPhysicoChemList(new LinkedList<PhysicoChemListDataItem>());
+		}
 		
 		formulateSimpleList(formulatedProduct, formulatedProduct.getPhysicoChemList());
 

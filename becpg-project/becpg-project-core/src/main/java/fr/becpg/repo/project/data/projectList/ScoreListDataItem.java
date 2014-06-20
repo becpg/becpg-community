@@ -103,8 +103,8 @@ public class ScoreListDataItem extends BeCPGDataObject {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + ((criterion == null) ? 0 : criterion.hashCode());
-		result = prime * result + score;
-		result = prime * result + weight;
+		result = prime * result + ((score == null) ? 0 : score.hashCode());
+		result = prime * result + ((weight == null) ? 0 : weight.hashCode());
 		return result;
 	}
 
@@ -116,15 +116,21 @@ public class ScoreListDataItem extends BeCPGDataObject {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ScoreListDataItem other = (ScoreListDataItem) obj;		
+		ScoreListDataItem other = (ScoreListDataItem) obj;
 		if (criterion == null) {
 			if (other.criterion != null)
 				return false;
 		} else if (!criterion.equals(other.criterion))
 			return false;
-		if (score != other.score)
+		if (score == null) {
+			if (other.score != null)
+				return false;
+		} else if (!score.equals(other.score))
 			return false;
-		if (weight != other.weight)
+		if (weight == null) {
+			if (other.weight != null)
+				return false;
+		} else if (!weight.equals(other.weight))
 			return false;
 		return true;
 	}

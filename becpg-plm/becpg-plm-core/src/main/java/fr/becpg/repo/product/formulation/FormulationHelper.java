@@ -11,6 +11,7 @@ import org.apache.commons.logging.LogFactory;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
 import fr.becpg.repo.formulation.FormulateException;
+import fr.becpg.repo.product.data.PackagingKitData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.TareUnit;
@@ -265,16 +266,41 @@ public class FormulationHelper {
 		return defaultValue;
 	}
 	
-	/**
-	 * 
-	 * @param productData
-	 * @return
-	 */
-	public static Double getNetQtyInLorKg(NodeRef nodeRef, NodeService nodeService, Double defaultValue) {
-				
-		ProductUnit productUnit = getProductUnit(nodeRef, nodeService);
+ public static Double getNetWeight(ProductData productData, Double defaultValue) {
+		
+		Double netWeight = productData.getNetWeight();
+		if(netWeight != null){	
+			return netWeight;
+		}
+		else{			
+			ProductUnit productUnit = productData.getUnit();
+			if(productUnit != null){
+				Double qty = productData.getQty();
+				if(qty != null){
+					if(FormulationHelper.isProductUnitKg(productUnit) || FormulationHelper.isProductUnitLiter(productUnit)){					
+						if(productUnit.equals(ProductUnit.g) || productUnit.equals(ProductUnit.mL)){
+							qty = qty / 1000;
+						}
+						if(FormulationHelper.isProductUnitLiter(productUnit)){
+							Double density = productData.getDensity();
+							qty = qty * density;
+						}
+						return qty;
+					}
+				}							
+			}
+		}	
+		
+		return defaultValue;
+	}
+	
+	
+	
+
+	public static Double getNetQtyInLorKg(ProductData formulatedProduct, Double defaultValue) {
+		ProductUnit productUnit = formulatedProduct.getUnit();
 		if(productUnit != null){
-			Double qty = getProductQty(nodeRef, nodeService);
+			Double qty = formulatedProduct.getQty();
 			if(qty == null){
 				qty = defaultValue;
 			}
@@ -286,15 +312,16 @@ public class FormulationHelper {
 				return qty;
 			}
 			else if(FormulationHelper.isProductUnitP(productUnit)){
-				return FormulationHelper.getNetWeight(nodeRef, nodeService, defaultValue);					
+				return FormulationHelper.getNetWeight(formulatedProduct, defaultValue);					
 			}
-			else if(PLMModel.TYPE_PACKAGINGKIT.equals(nodeService.getType(nodeRef))){
+			else if(formulatedProduct instanceof PackagingKitData){
 				return qty;
 			}								
 		}
 		
 		return defaultValue;
 	}
+
 		
 	public static Double getNetVolume(NodeRef nodeRef, NodeService nodeService) {
 		
@@ -315,6 +342,26 @@ public class FormulationHelper {
 			return null;
 		}		
 	}
+	
+	public static Double getNetVolume(ProductData formulatedProduct) {
+		Double qty = formulatedProduct.getQty();
+		if(qty == null){
+			return null;
+		}
+		else{
+			ProductUnit productUnit = formulatedProduct.getUnit();					
+			if(productUnit != null && (productUnit.equals(ProductUnit.mL) || productUnit.equals(ProductUnit.L))){
+				if(productUnit.equals(ProductUnit.mL)){
+					return qty / 1000;
+				}
+				else if(productUnit.equals(ProductUnit.L)){
+					return  qty;
+				}				
+			}				
+			return null;
+		}		
+	}
+
 	
 	public static Double getNetVolume(CompoListDataItem compoListDataItem, NodeService nodeService) throws FormulateException {
 							
@@ -443,5 +490,6 @@ public class FormulationHelper {
 		return null;
 	}
 
+	
 
 }

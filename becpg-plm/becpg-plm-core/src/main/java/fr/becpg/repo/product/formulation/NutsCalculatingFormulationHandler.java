@@ -3,6 +3,7 @@
  */
 package fr.becpg.repo.product.formulation;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -25,10 +26,8 @@ import fr.becpg.repo.product.data.productList.NutListDataItem;
  */
 public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormulationHandler<NutListDataItem> {
 	
-	/** The Constant UNIT_PER100G. */
 	public static final String UNIT_PER100G = "/100g";
 	
-	/** The Constant UNIT_PER100ML. */
 	public static final String UNIT_PER100ML = "/100mL";
 	
 	public static final String NUT_FORMULATED = I18NUtil.getMessage("message.formulate.nut.formulated");
@@ -44,6 +43,10 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 		logger.debug("Nuts calculating visitor");
+		if(formulatedProduct.getNutList() == null){
+			formulatedProduct.setNutList(new LinkedList<NutListDataItem>());
+		}
+		
 		
 		formulateSimpleList(formulatedProduct, formulatedProduct.getNutList());
 

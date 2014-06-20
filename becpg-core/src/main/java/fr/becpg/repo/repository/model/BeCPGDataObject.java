@@ -44,8 +44,16 @@ public  abstract class  BeCPGDataObject  extends BaseObject implements Repositor
 	
 	protected boolean isTransient = false;
 	
+	private int dbHashCode;
 	
 
+	public int getDbHashCode() {
+		return dbHashCode;
+	}
+
+	public void setDbHashCode(int dbHashCode) {
+		this.dbHashCode = dbHashCode;
+	}
 
 	public BeCPGDataObject() {
 		super();
