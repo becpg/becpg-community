@@ -173,7 +173,7 @@
 					<type>d:int</type>
 				</property>
 				<property name="pack:palletHeight">
-					<title>Hauteur pallette (mm)</title>
+					<title>Hauteur palette (mm)</title>
 					<type>d:int</type>
 				</property>
 				
