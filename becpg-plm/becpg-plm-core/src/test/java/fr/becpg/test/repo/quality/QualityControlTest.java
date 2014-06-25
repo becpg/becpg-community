@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.swing.plaf.metal.MetalIconFactory.FileIcon16;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
@@ -122,7 +121,7 @@ public class QualityControlTest extends PLMBaseTestCase {
 
 	}
 
-	@SuppressWarnings("unused")
+	
 	@Test
 	public void testCreateQualityControl() {
 

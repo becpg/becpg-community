@@ -33,10 +33,7 @@ public class CompoListValuePluginTest extends AbstractListValuePluginTest {
 	@Resource
 	private CompoListValuePlugin compoListValuePlugin;
 
-
 	private static Log logger = LogFactory.getLog(CompoListValuePluginTest.class);
-
-
 
 	/**
 	 * Test suggest supplier.
@@ -55,7 +52,8 @@ public class CompoListValuePluginTest extends AbstractListValuePluginTest {
 
 				authenticationComponent.setCurrentUser(BeCPGPLMTestHelper.USER_ONE);
 
-				ListValuePage listValuePage = compoListValuePlugin.suggest("compoListParentLevel", "", null,ListValueService.SUGGEST_PAGE_SIZE, props);
+				ListValuePage listValuePage = compoListValuePlugin.suggest("compoListParentLevel", "", null, ListValueService.SUGGEST_PAGE_SIZE,
+						props);
 
 				for (ListValueEntry listValueEntry : listValuePage.getResults()) {
 					logger.info("listValueEntry: " + listValueEntry.getName() + " - " + listValueEntry.getValue());
@@ -65,7 +63,7 @@ public class CompoListValuePluginTest extends AbstractListValuePluginTest {
 
 				authenticationComponent.setSystemUserAsCurrentUser();
 
-				listValuePage = compoListValuePlugin.suggest("compoListParentLevel", "", null,ListValueService.SUGGEST_PAGE_SIZE, props);
+				listValuePage = compoListValuePlugin.suggest("compoListParentLevel", "", null, ListValueService.SUGGEST_PAGE_SIZE, props);
 
 				for (ListValueEntry listValueEntry : listValuePage.getResults()) {
 					logger.info("listValueEntry: " + listValueEntry.getName() + " - " + listValueEntry.getValue());
@@ -73,7 +71,8 @@ public class CompoListValuePluginTest extends AbstractListValuePluginTest {
 
 				assertEquals(2, listValuePage.getResults().size());
 
-				listValuePage = compoListValuePlugin.suggest("compoListParentLevel", "Local semi finished 2", null, ListValueService.SUGGEST_PAGE_SIZE, props);
+				listValuePage = compoListValuePlugin.suggest("compoListParentLevel", "Local semi finished 2", null,
+						ListValueService.SUGGEST_PAGE_SIZE, props);
 
 				assertEquals(1, listValuePage.getResults().size());
 
@@ -96,18 +95,23 @@ public class CompoListValuePluginTest extends AbstractListValuePluginTest {
 
 	@Test
 	public void testIsQueryMatch() {
-		assertTrue(compoListValuePlugin.isQueryMatch("*", "Pâte de riz"));
-		assertTrue(compoListValuePlugin.isQueryMatch("Pâte*", "Pâte de riz"));
-		assertTrue(compoListValuePlugin.isQueryMatch("Pâte", "Pâte de riz"));
-		assertTrue(compoListValuePlugin.isQueryMatch("Pâte*", "Pate de riz"));
-		assertTrue(compoListValuePlugin.isQueryMatch("Pâte*", "Pates de riz"));
-		assertTrue(compoListValuePlugin.isQueryMatch("Pâte*", "pate de riz"));
-		assertTrue(compoListValuePlugin.isQueryMatch("Pat*", "Patisserie de riz"));
-		assertTrue(compoListValuePlugin.isQueryMatch("Riz*", "Pâte de riz"));
-		assertTrue(compoListValuePlugin.isQueryMatch("Riz*", "Riz au lait"));
-		assertFalse(compoListValuePlugin.isQueryMatch("Pâto*", "Patisserie"));
-		assertFalse(compoListValuePlugin.isQueryMatch("Pâte*", "DesPates"));
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
+				assertTrue(compoListValuePlugin.isQueryMatch("*", "Pâte de riz"));
+				assertTrue(compoListValuePlugin.isQueryMatch("Pâte*", "Pâte de riz"));
+				assertTrue(compoListValuePlugin.isQueryMatch("Pâte", "Pâte de riz"));
+				assertTrue(compoListValuePlugin.isQueryMatch("Pâte*", "Pate de riz"));
+				assertTrue(compoListValuePlugin.isQueryMatch("Pâte*", "Pates de riz"));
+				assertTrue(compoListValuePlugin.isQueryMatch("Pâte*", "pate de riz"));
+				assertTrue(compoListValuePlugin.isQueryMatch("Pat*", "Patisserie de riz"));
+				assertTrue(compoListValuePlugin.isQueryMatch("Riz*", "Pâte de riz"));
+				assertTrue(compoListValuePlugin.isQueryMatch("Riz*", "Riz au lait"));
+				assertFalse(compoListValuePlugin.isQueryMatch("Pâto*", "Patisserie"));
+				assertFalse(compoListValuePlugin.isQueryMatch("Pâte*", "DesPates"));
+				return null;
+			}
+		}, false, true);
 
 	}
-
 }
