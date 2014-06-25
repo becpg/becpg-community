@@ -190,7 +190,7 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery();
 		queryBuilder.ofType(type);
-		queryBuilder.excludeVersions();
+		queryBuilder.excludeDefaults();
 		queryBuilder.inSearchTemplate(searchTemplate);
 		queryBuilder.ftsLanguage();
 		

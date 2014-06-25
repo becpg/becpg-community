@@ -147,7 +147,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	public BeCPGQueryBuilder ofType(QName typeQname) {
-		if (this.type != null) {
+		if (this.type != null && !type.equals(typeQname)) {
 			logger.warn("Type is already set for this query.( old:" + type + " -  new: " + typeQname + ")");
 		}
 		this.type = typeQname;
@@ -168,6 +168,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	public BeCPGQueryBuilder withAspect(QName aspect) {
+		excludedAspects.remove(aspect);
 		aspects.add(aspect);
 		return this;
 	}
