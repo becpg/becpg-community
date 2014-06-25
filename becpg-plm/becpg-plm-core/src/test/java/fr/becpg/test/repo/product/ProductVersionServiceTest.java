@@ -70,146 +70,156 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 
 	@Resource
 	private NamespaceService namespaceService;
-	
+
 	@Resource
 	private EntityVersionService entityVersionService;
-	
+
 	@Resource
 	private AssociationService associationService;
-	
+
 	@Resource
 	private EntityReportService entityReportService;
-	
+
 	@Resource
 	private EntityService entityService;
-	
+
 	@Resource
 	private HierarchyService hierarchyService;
-	
 
 	private NodeRef rawMaterialNodeRef;
 	private NodeRef finishedProductNodeRef;
 
-
 	/**
 	 * Test check out check in.
-	 * @throws InterruptedException 
+	 * 
+	 * @throws InterruptedException
 	 */
 	@Test
 	public void testCheckOutCheckIn() throws InterruptedException {
-		
+
 		final ProductUnit productUnit = ProductUnit.L;
 		final int valueAdded = 1;
 
-		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
+		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(
+				new RetryingTransactionCallback<NodeRef>() {
+					@Override
+					public NodeRef execute() throws Throwable {
 
-				/*-- Create raw material --*/
-				NodeRef r = BeCPGPLMTestHelper.createRawMaterial(testFolderNodeRef, "MP test report");
-				
-				Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>();
-				aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
-				nodeService.addAspect(r, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
-				
-				
-				return r;
-			}
-		}, false, true);	
-		
-		 transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+						/*-- Create raw material --*/
+						NodeRef r = BeCPGPLMTestHelper.createRawMaterial(testFolderNodeRef, "MP test report");
+
+						return r;
+					}
+				}, false, true);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
 			public NodeRef execute() throws Throwable {
 				entityReportService.generateReport(rawMaterialNodeRef);
 				return null;
 			}
-		}, false, true);	
-		
-		final NodeRef workingCopyNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
-								
-				List<NodeRef> dbReports = associationService.getTargetAssocs(rawMaterialNodeRef, ReportModel.ASSOC_REPORTS);
-				assertEquals(1, dbReports.size());
-				
-				// Check out
-				logger.debug("checkout nodeRef: " + rawMaterialNodeRef);
-				return checkOutCheckInService.checkout(rawMaterialNodeRef);
-				
-			}
 		}, false, true);
-		
-		final ProductData rawMaterial = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<ProductData>() {
-			@Override
-			public ProductData execute() throws Throwable {
-								
-				assertNotNull("Check working copy exists", workingCopyNodeRef);
-				List<NodeRef> dbReports = associationService.getTargetAssocs(workingCopyNodeRef, ReportModel.ASSOC_REPORTS);
-				assertEquals(1, dbReports.size());
-				
-				// Documents is moved on working copy
-				assertNotNull(getFolderDocuments(rawMaterialNodeRef));
-				assertNotNull(getFolderDocuments(workingCopyNodeRef));
-				
-				// Check productCode
-				assertEquals("productCode should be the same after checkout", nodeService.getProperty(rawMaterialNodeRef, BeCPGModel.PROP_CODE),
-						nodeService.getProperty(workingCopyNodeRef, BeCPGModel.PROP_CODE));
 
-				// Check costs on working copy				
-				ProductData rawMaterial = alfrescoRepository.findOne(rawMaterialNodeRef);
-				ProductData workingCopyRawMaterial = alfrescoRepository.findOne(workingCopyNodeRef);
-				assertEquals("Check costs size", rawMaterial.getCostList().size(), workingCopyRawMaterial.getCostList().size());
-
-				for (int i = 0; i < rawMaterial.getCostList().size(); i++) {
-					CostListDataItem costListDataItem = rawMaterial.getCostList().get(i);
-					CostListDataItem vCostListDataItem = workingCopyRawMaterial.getCostList().get(i);
-
-					assertEquals("Check cost", costListDataItem.getCost(), vCostListDataItem.getCost());
-					assertEquals("Check cost unit", costListDataItem.getUnit(), vCostListDataItem.getUnit());
-					assertEquals("Check cost value", costListDataItem.getValue(), vCostListDataItem.getValue());
-					assertNotSame("Check cost noderef", costListDataItem.getNodeRef(), vCostListDataItem.getNodeRef());
-				}
-
-				// Modify working copy							
-				workingCopyRawMaterial.setUnit(productUnit);
-				for (CostListDataItem c : workingCopyRawMaterial.getCostList()) {
-					c.setValue(c.getValue() + valueAdded);
-				}
-				alfrescoRepository.save( workingCopyRawMaterial);				
-			
-				return rawMaterial;
-			}
-		}, false, true);
-		
-		final NodeRef newRawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
-
-				// Check in
-				Map<String, Serializable> versionProperties = new HashMap<String, Serializable>();
-				versionProperties.put(Version.PROP_DESCRIPTION, "This is a test version");
-				versionProperties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
-				return checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
-			}
-				
-		}, false, true);
-	
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
 			public NodeRef execute() throws Throwable {
-				
+				Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>();
+				aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
+				nodeService.addAspect(rawMaterialNodeRef, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
+
+				return null;
+			}
+		}, false, true);
+
+		final NodeRef workingCopyNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(
+				new RetryingTransactionCallback<NodeRef>() {
+					@Override
+					public NodeRef execute() throws Throwable {
+
+						List<NodeRef> dbReports = associationService.getTargetAssocs(rawMaterialNodeRef, ReportModel.ASSOC_REPORTS);
+						assertEquals(1, dbReports.size());
+
+						// Check out
+						logger.debug("checkout nodeRef: " + rawMaterialNodeRef);
+						return checkOutCheckInService.checkout(rawMaterialNodeRef);
+
+					}
+				}, false, true);
+
+		final ProductData rawMaterial = transactionService.getRetryingTransactionHelper().doInTransaction(
+				new RetryingTransactionCallback<ProductData>() {
+					@Override
+					public ProductData execute() throws Throwable {
+
+						assertNotNull("Check working copy exists", workingCopyNodeRef);
+						List<NodeRef> dbReports = associationService.getTargetAssocs(workingCopyNodeRef, ReportModel.ASSOC_REPORTS);
+						assertEquals(1, dbReports.size());
+
+						// Documents is moved on working copy
+						assertNotNull(getFolderDocuments(rawMaterialNodeRef));
+						assertNotNull(getFolderDocuments(workingCopyNodeRef));
+
+						// Check productCode
+						assertEquals("productCode should be the same after checkout",
+								nodeService.getProperty(rawMaterialNodeRef, BeCPGModel.PROP_CODE),
+								nodeService.getProperty(workingCopyNodeRef, BeCPGModel.PROP_CODE));
+
+						// Check costs on working copy
+						ProductData rawMaterial = alfrescoRepository.findOne(rawMaterialNodeRef);
+						ProductData workingCopyRawMaterial = alfrescoRepository.findOne(workingCopyNodeRef);
+						assertEquals("Check costs size", rawMaterial.getCostList().size(), workingCopyRawMaterial.getCostList().size());
+
+						for (int i = 0; i < rawMaterial.getCostList().size(); i++) {
+							CostListDataItem costListDataItem = rawMaterial.getCostList().get(i);
+							CostListDataItem vCostListDataItem = workingCopyRawMaterial.getCostList().get(i);
+
+							assertEquals("Check cost", costListDataItem.getCost(), vCostListDataItem.getCost());
+							assertEquals("Check cost unit", costListDataItem.getUnit(), vCostListDataItem.getUnit());
+							assertEquals("Check cost value", costListDataItem.getValue(), vCostListDataItem.getValue());
+							assertNotSame("Check cost noderef", costListDataItem.getNodeRef(), vCostListDataItem.getNodeRef());
+						}
+
+						// Modify working copy
+						workingCopyRawMaterial.setUnit(productUnit);
+						for (CostListDataItem c : workingCopyRawMaterial.getCostList()) {
+							c.setValue(c.getValue() + valueAdded);
+						}
+						alfrescoRepository.save(workingCopyRawMaterial);
+
+						return rawMaterial;
+					}
+				}, false, true);
+
+		final NodeRef newRawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(
+				new RetryingTransactionCallback<NodeRef>() {
+					@Override
+					public NodeRef execute() throws Throwable {
+
+						// Check in
+						Map<String, Serializable> versionProperties = new HashMap<String, Serializable>();
+						versionProperties.put(Version.PROP_DESCRIPTION, "This is a test version");
+						versionProperties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
+						return checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
+					}
+
+				}, false, true);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
+
 				assertNotNull("Check new version exists", newRawMaterialNodeRef);
 				ProductData newRawMaterial = alfrescoRepository.findOne(newRawMaterialNodeRef);
 				assertEquals("Check version", "2.0", getVersionLabel(newRawMaterial));
 				assertEquals("Check unit", productUnit, newRawMaterial.getUnit());
-				
+
 				// checkVersion
 				VersionHistory versionHistory = versionService.getVersionHistory(newRawMaterialNodeRef);
-				Version version = versionHistory.getVersion("1.0");				
+				Version version = versionHistory.getVersion("1.0");
 				assertNotNull(version);
-				NodeRef entityVersionNodeRef = entityVersionService.getEntityVersion(version);								
+				NodeRef entityVersionNodeRef = entityVersionService.getEntityVersion(version);
 				assertNotNull(entityVersionNodeRef);
-				assertNotNull(getFolderDocuments(entityVersionNodeRef));				
+				assertNotNull(getFolderDocuments(entityVersionNodeRef));
 
 				// Check productCode
 				assertEquals("productCode should be the same after checkin", nodeService.getProperty(rawMaterialNodeRef, BeCPGModel.PROP_CODE),
@@ -235,84 +245,85 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 				Map<String, Serializable> versionProperties = new HashMap<String, Serializable>();
 				versionProperties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
 				versionProperties.put(Version.PROP_DESCRIPTION, "description");
-				return checkOutCheckInService.checkin(workingCopy2NodeRef, versionProperties);				
+				return checkOutCheckInService.checkin(workingCopy2NodeRef, versionProperties);
 
 			}
 		}, false, true);
-				
+
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
 			public NodeRef execute() throws Throwable {
 
 				ProductData newRawMaterial = alfrescoRepository.findOne(newRawMaterialNodeRef);
-				assertEquals("Check version", "3.0",  getVersionLabel(newRawMaterial));
+				assertEquals("Check version", "3.0", getVersionLabel(newRawMaterial));
 
 				// Check cost Unit has changed after transaction
 				for (int i = 0; i < newRawMaterial.getCostList().size(); i++) {
 					CostListDataItem vCostListDataItem = newRawMaterial.getCostList().get(i);
-					Boolean fixedCost = (Boolean)nodeService.getProperty(vCostListDataItem.getCost(), PLMModel.PROP_COSTFIXED);
-					if(fixedCost==null || fixedCost.equals(Boolean.FALSE)){
+					Boolean fixedCost = (Boolean) nodeService.getProperty(vCostListDataItem.getCost(), PLMModel.PROP_COSTFIXED);
+					if (fixedCost == null || fixedCost.equals(Boolean.FALSE)) {
 						assertTrue("Check cost unit", vCostListDataItem.getUnit().endsWith("/L"));
-					}					
+					}
 				}
-				
+
 				// documents are restored under orig node
 				assertNotNull(getFolderDocuments(rawMaterialNodeRef));
-				
+
 				return null;
 
 			}
 
-			
 		}, false, true);
 
 	}
 
 	private String getVersionLabel(ProductData newRawMaterial) {
-		return (String)nodeService.getProperty(newRawMaterial.getNodeRef(),ContentModel.PROP_VERSION_LABEL);
+		return (String) nodeService.getProperty(newRawMaterial.getNodeRef(), ContentModel.PROP_VERSION_LABEL);
 	}
-	
+
 	/**
 	 * Test cancel check out.
 	 */
 	@Test
 	public void testCancelCheckOut() {
 
-		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
+		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(
+				new RetryingTransactionCallback<NodeRef>() {
+					@Override
+					public NodeRef execute() throws Throwable {
 
-				/*-- Create raw material --*/
-				return BeCPGPLMTestHelper.createRawMaterial(testFolderNodeRef, "MP test report");				
+						/*-- Create raw material --*/
+						return BeCPGPLMTestHelper.createRawMaterial(testFolderNodeRef, "MP test report");
 
-			}
-		}, false, true);
-		
-		final NodeRef workingCopyNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
+					}
+				}, false, true);
 
-				entityReportService.generateReport(rawMaterialNodeRef);
-				return checkOutCheckInService.checkout(rawMaterialNodeRef);				
+		final NodeRef workingCopyNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(
+				new RetryingTransactionCallback<NodeRef>() {
+					@Override
+					public NodeRef execute() throws Throwable {
 
-			}
-		}, false, true);
-		
+						entityReportService.generateReport(rawMaterialNodeRef);
+						return checkOutCheckInService.checkout(rawMaterialNodeRef);
+
+					}
+				}, false, true);
+
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
 			public NodeRef execute() throws Throwable {
 
 				assertNotNull("Check working copy exists", workingCopyNodeRef);
-				
+
 				// Documents is moved on working copy
 				assertNotNull(getFolderDocuments(rawMaterialNodeRef));
 				assertNotNull(getFolderDocuments(workingCopyNodeRef));
-				
+
 				// modify
 				ProductUnit productUnit2 = ProductUnit.m;
 				ProductData workingCopyRawMaterial = alfrescoRepository.findOne(workingCopyNodeRef);
 				workingCopyRawMaterial.setUnit(productUnit2);
-				alfrescoRepository.save( workingCopyRawMaterial);
+				alfrescoRepository.save(workingCopyRawMaterial);
 				workingCopyRawMaterial = alfrescoRepository.findOne(workingCopyNodeRef);
 
 				ProductData rawMaterial = alfrescoRepository.findOne(rawMaterialNodeRef);
@@ -324,7 +335,7 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 
 				// documents are restored under orig node
 				assertNotNull(getFolderDocuments(rawMaterialNodeRef));
-				
+
 				// Check
 				rawMaterial = alfrescoRepository.findOne(rawMaterialNodeRef);
 				assertEquals("Check unit", ProductUnit.kg, rawMaterial.getUnit());
@@ -376,7 +387,7 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 	public void testCheckOutCheckInValidProduct() {
 
 		logger.info("testCheckOutCheckInValidProduct");
-		
+
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
 			public NodeRef execute() throws Throwable {
@@ -386,7 +397,7 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 				// Valid it
 				nodeService.setProperty(rawMaterialNodeRef, PLMModel.PROP_PRODUCT_STATE, SystemState.Valid);
 				// products
-    			hierarchyService.classifyByHierarchy(repositoryHelper.getCompanyHome(), rawMaterialNodeRef);
+				hierarchyService.classifyByHierarchy(repositoryHelper.getCompanyHome(), rawMaterialNodeRef);
 
 				String path = nodeService.getPath(rawMaterialNodeRef).toPrefixString(namespaceService);
 				String expected = "/app:company_home/cm:rawMaterial/cm:Sea_x0020_food/cm:Fish/";
@@ -394,8 +405,9 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 
 				// Check out
 				NodeRef workingCopyNodeRef = checkOutCheckInService.checkout(rawMaterialNodeRef);
-				logger.info("state " +  rawMaterialNodeRef + " - " + nodeService.getProperty(workingCopyNodeRef, PLMModel.PROP_PRODUCT_STATE));
-				assertEquals("Check state new version", SystemState.Simulation.toString(), nodeService.getProperty(workingCopyNodeRef, PLMModel.PROP_PRODUCT_STATE));
+				logger.info("state " + rawMaterialNodeRef + " - " + nodeService.getProperty(workingCopyNodeRef, PLMModel.PROP_PRODUCT_STATE));
+				assertEquals("Check state new version", SystemState.Simulation.toString(),
+						nodeService.getProperty(workingCopyNodeRef, PLMModel.PROP_PRODUCT_STATE));
 
 				// Check in
 				NodeRef newRawMaterialNodeRef = null;
@@ -406,7 +418,8 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 				newRawMaterialNodeRef = checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
 
 				assertNotNull("Check new version exists", newRawMaterialNodeRef);
-				assertEquals("Check state new version", SystemState.Simulation.toString(), nodeService.getProperty(newRawMaterialNodeRef, PLMModel.PROP_PRODUCT_STATE));
+				assertEquals("Check state new version", SystemState.Simulation.toString(),
+						nodeService.getProperty(newRawMaterialNodeRef, PLMModel.PROP_PRODUCT_STATE));
 
 				path = nodeService.getPath(rawMaterialNodeRef).toPrefixString(namespaceService);
 				expected = "/app:company_home/cm:rawMaterial/cm:Sea_x0020_food/cm:Fish/";
@@ -417,13 +430,13 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 			}
 		}, false, true);
 	}
-	
+
 	/**
 	 * Test variants are not lost with checkOut/checkIn
 	 */
 	@Test
 	public void testCheckOutCheckInVariant() {
-		
+
 		logger.info("testVariant");
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
@@ -431,18 +444,18 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 			public NodeRef execute() throws Throwable {
 
 				finishedProductNodeRef = BeCPGPLMTestHelper.createMultiLevelProduct(testFolderNodeRef);
-				
+
 				// create variant
-				Map<QName,Serializable> props = new HashMap<>();
+				Map<QName, Serializable> props = new HashMap<>();
 				props.put(ContentModel.PROP_NAME, "variant");
-				props.put(PLMModel.PROP_IS_DEFAULT_VARIANT, true);				
-				NodeRef variantNodeRef = nodeService.createNode(finishedProductNodeRef, PLMModel.ASSOC_VARIANTS, PLMModel.ASSOC_VARIANTS, PLMModel.TYPE_VARIANT,
-						props).getChildRef();
+				props.put(PLMModel.PROP_IS_DEFAULT_VARIANT, true);
+				NodeRef variantNodeRef = nodeService.createNode(finishedProductNodeRef, PLMModel.ASSOC_VARIANTS, PLMModel.ASSOC_VARIANTS,
+						PLMModel.TYPE_VARIANT, props).getChildRef();
 
 				ProductData productData = alfrescoRepository.findOne(finishedProductNodeRef);
 				productData.getCompoListView().getCompoList().get(2).setVariants(Arrays.asList(variantNodeRef));
 				alfrescoRepository.save(productData);
-				
+
 				// check variant before checkOut
 				productData = alfrescoRepository.findOne(finishedProductNodeRef);
 				assertEquals(1, productData.getCompoListView().getCompoList().get(2).getVariants().size());
@@ -451,17 +464,18 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 				return null;
 			}
 		}, false, true);
-		
-		final NodeRef workingCopyNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {				
-				
-				// Check out
-				return checkOutCheckInService.checkout(finishedProductNodeRef);
-				
-			}
-		}, false, true);
-		
+
+		final NodeRef workingCopyNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(
+				new RetryingTransactionCallback<NodeRef>() {
+					@Override
+					public NodeRef execute() throws Throwable {
+
+						// Check out
+						return checkOutCheckInService.checkout(finishedProductNodeRef);
+
+					}
+				}, false, true);
+
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
 			public NodeRef execute() throws Throwable {
@@ -471,43 +485,43 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 				assertEquals(1, productData.getCompoListView().getCompoList().get(2).getVariants().size());
 				logger.info("workingCopyNodeRef compoList is " + productData.getCompoListView().getCompoList().get(2).getNodeRef());
 				logger.info("workingCopyNodeRef variant is " + productData.getCompoListView().getCompoList().get(2).getVariants());
-				
+
 				// Check in
 				Map<String, Serializable> versionProperties = new HashMap<String, Serializable>(1);
 				versionProperties.put(Version.PROP_DESCRIPTION, "This is a test version");
 				versionProperties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
 				finishedProductNodeRef = checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
-				
+
 				return null;
 
 			}
 		}, false, true);
-		
+
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
 			public NodeRef execute() throws Throwable {
 
 				assertNotNull("Check new version exists", finishedProductNodeRef);
-				
+
 				ProductData productData = alfrescoRepository.findOne(finishedProductNodeRef);
 				assertEquals(1, nodeService.getChildAssocs(finishedProductNodeRef, PLMModel.ASSOC_VARIANTS, RegexQNamePattern.MATCH_ALL).size());
 				logger.info("finishedProductNodeRef compoList is " + productData.getCompoListView().getCompoList().get(2).getNodeRef());
-				logger.info("finishedProductNodeRef variant is " + productData.getCompoListView().getCompoList().get(2).getVariants());				
+				logger.info("finishedProductNodeRef variant is " + productData.getCompoListView().getCompoList().get(2).getVariants());
 				assertEquals(1, productData.getCompoListView().getCompoList().get(2).getVariants().size());
-				assertEquals(nodeService.getChildAssocs(finishedProductNodeRef, PLMModel.ASSOC_VARIANTS, RegexQNamePattern.MATCH_ALL).get(0).getChildRef(), 
-						productData.getCompoListView().getCompoList().get(2).getVariants().get(0));
-				
+				assertEquals(nodeService.getChildAssocs(finishedProductNodeRef, PLMModel.ASSOC_VARIANTS, RegexQNamePattern.MATCH_ALL).get(0)
+						.getChildRef(), productData.getCompoListView().getCompoList().get(2).getVariants().get(0));
+
 				return null;
 
 			}
 		}, false, true);
 	}
-	
+
 	/**
 	 * Test some lists are version sensitive
 	 */
 	public void xxcommentedtestVersionSensitiveList() {
-		
+
 		logger.info("testVersionSensitiveList");
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
@@ -521,7 +535,8 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 				fpData.setHierarchy1(HIERARCHY1_FROZEN_REF);
 				fpData.setHierarchy2(HIERARCHY2_PIZZA_REF);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 2d, null, CompoListUnit.kg, null, DeclarationType.Declare, rawMaterialNodeRef));
+				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, 2d, null, CompoListUnit.kg, null, DeclarationType.Declare,
+						rawMaterialNodeRef));
 				fpData.getCompoListView().setCompoList(compoList);
 				finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, fpData).getNodeRef();
 
@@ -529,7 +544,7 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 				Map<QName, Serializable> props = new HashMap<QName, Serializable>(1);
 				props.put(ContentModel.PROP_VERSION_LABEL, "0.1");
 				nodeService.addAspect(rawMaterialNodeRef, ContentModel.ASPECT_VERSIONABLE, props);
-				
+
 				// Check out
 				NodeRef workingCopyNodeRef = checkOutCheckInService.checkout(rawMaterialNodeRef);
 
@@ -542,111 +557,107 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 				newRawMaterialNodeRef = checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
 
 				assertNotNull("Check new version exists", newRawMaterialNodeRef);
-				
+
 				return null;
 
 			}
 		}, false, true);
-		
+
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				
-				//check version sensitive
+				// check version sensitive
 				VersionHistory versionHistory = versionService.getVersionHistory(rawMaterialNodeRef);
 				Version version = versionHistory.getVersion("1.0");
 				assertNotNull(version);
-				
+
 				NodeRef entityVersionRef = entityVersionService.getEntityVersion(version);
 				ProductData fpData = alfrescoRepository.findOne(finishedProductNodeRef);
 
 				assertEquals(entityVersionRef, fpData.getCompoListView().getCompoList().get(0).getProduct());
-				
+
 				return null;
 
 			}
 		}, false, true);
 	}
-	
-	private NodeRef getFolderDocuments(NodeRef nodeRef){
+
+	private NodeRef getFolderDocuments(NodeRef nodeRef) {
 		return nodeService.getChildByName(nodeRef, ContentModel.ASSOC_CONTAINS, "Documents");
 	}
-	
+
 	/**
 	 * Test check out check in.
 	 */
 	@Test
-	public void testCheckOutCheckInAssociations(){
-		
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
+	public void testCheckOutCheckInAssociations() {
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
 			public NodeRef execute() throws Throwable {
-				
+
 				NodeRef rawMaterialNodeRef = BeCPGPLMTestHelper.createRawMaterial(testFolderNodeRef, "MP test report");
-				
+
 				// suppliers
-				String []supplierNames = {"Supplier1", "Supplier2", "Supplier3"};
+				String[] supplierNames = { "Supplier1", "Supplier2", "Supplier3" };
 				List<NodeRef> supplierNodeRefs = new LinkedList<NodeRef>();
-				for(String supplierName : supplierNames){
+				for (String supplierName : supplierNames) {
 					NodeRef supplierNodeRef = null;
-					NodeRef entityFolder = nodeService.getChildByName(testFolderNodeRef,
-							ContentModel.ASSOC_CONTAINS, supplierName);
-					if(entityFolder != null){
-						supplierNodeRef = nodeService.getChildByName(entityFolder,
-								ContentModel.ASSOC_CONTAINS, supplierName);
+					NodeRef entityFolder = nodeService.getChildByName(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, supplierName);
+					if (entityFolder != null) {
+						supplierNodeRef = nodeService.getChildByName(entityFolder, ContentModel.ASSOC_CONTAINS, supplierName);
 					}
-					
-					if(supplierNodeRef == null){
+
+					if (supplierNodeRef == null) {
 						Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 						properties.put(ContentModel.PROP_NAME, supplierName);
-						supplierNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName((String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_SUPPLIER, properties).getChildRef();
+						supplierNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS,
+								QName.createQName((String) properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_SUPPLIER, properties).getChildRef();
 					}
-					
+
 					supplierNodeRefs.add(supplierNodeRef);
 				}
-				
-				
+
 				associationService.update(rawMaterialNodeRef, PLMModel.ASSOC_SUPPLIERS, supplierNodeRefs.get(0));
-				
+
 				// check
 				List<NodeRef> targetNodeRefs = associationService.getTargetAssocs(rawMaterialNodeRef, PLMModel.ASSOC_SUPPLIERS);
 				assertEquals("", 1, targetNodeRefs.size());
-				
-				//Check out
-				NodeRef workingCopyNodeRef = checkOutCheckInService.checkout(rawMaterialNodeRef);			
-				
+
+				// Check out
+				NodeRef workingCopyNodeRef = checkOutCheckInService.checkout(rawMaterialNodeRef);
+
 				// add new Supplier
 				associationService.update(workingCopyNodeRef, PLMModel.ASSOC_SUPPLIERS, supplierNodeRefs);
-				
+
 				// check-in
 				Map<String, Serializable> versionProperties = new HashMap<String, Serializable>();
 				versionProperties.put(Version.PROP_DESCRIPTION, "This is a test version");
 				checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
-				
-				
-				
+
 				// check
 				targetNodeRefs = associationService.getTargetAssocs(rawMaterialNodeRef, PLMModel.ASSOC_SUPPLIERS);
-				
+
 				assertEquals("Assert 3", 3, targetNodeRefs.size());
-				
-				//Check out
-				workingCopyNodeRef = checkOutCheckInService.checkout(rawMaterialNodeRef);			
-				
+
+				// Check out
+				workingCopyNodeRef = checkOutCheckInService.checkout(rawMaterialNodeRef);
+
 				// remove Suppliers
 				associationService.update(workingCopyNodeRef, PLMModel.ASSOC_SUPPLIERS, new ArrayList<NodeRef>());
-				
+
 				// check-in
 				checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
-				
+
 				// check
 				targetNodeRefs = associationService.getTargetAssocs(rawMaterialNodeRef, PLMModel.ASSOC_SUPPLIERS);
 				assertEquals(0, targetNodeRefs.size());
-				
-			return null;
-			
-			}},false,true);
+
+				return null;
+
+			}
+		}, false, true);
 	}
 
 	// /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

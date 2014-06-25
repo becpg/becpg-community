@@ -192,7 +192,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 				AuthenticationUtil.setFullyAuthenticatedUser(AuthenticationUtil.getAdminUserName());
 
 				/** The PAT h_ testfolder. */
-				String testFolderName = "TestFolder-"+UUID.randomUUID();
+				String testFolderName = "TestFolder";
 				
 				NodeRef folderNodeRef = RepoBaseTestCase.INSTANCE.nodeService.getChildByName(
 							repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, testFolderName);
