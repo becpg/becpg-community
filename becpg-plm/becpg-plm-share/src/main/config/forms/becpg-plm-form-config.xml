@@ -119,6 +119,7 @@
 			<form id="sub-datagrid-filter">
 				<field-visibility>
 					<show id="cm:name" />
+					<show id="bcpg:erpCode" force="true"/>
 					<show id="bcpg:productHierarchy1" />
 					<show id="bcpg:productHierarchy2" />
 					<show id="bcpg:productState" />

@@ -835,6 +835,8 @@
                         filterData : YAHOO.lang.JSON.stringify(this.formsFilterRuntime.getFormData()).replace("|","$ML$")
                      });
 
+                     this.widgets.filterForm.getMenu().hide();
+                     
                   },
 
                   onFilterFormClear : function EntityDataGrid_onFilterFormClear() {
@@ -842,6 +844,9 @@
                         filterOwner : this.id,
                         filterId : "all"
                      });
+                    
+                     this.formsFilterRuntime.reset();
+                     this.widgets.filterForm.getMenu().hide();
                   },
 
                   /**

@@ -136,6 +136,22 @@
                               Event.preventDefault(e);
                               Event.stopPropagation(e);
                            }, "span.ac-closebutton");
+                           
+                           
+                           Event.on(Dom.get(me.fieldHtmlId).form, "reset",function(e){
+                           	oAC._clearSelection();
+                           	Dom.get(me.controlId + "-basket").innerHTML = "";
+                           	var inputOrig = Dom.get(me.controlId + "-orig"), inputAdded = Dom
+                            .get(me.controlId + "-added"), inputRemoved = Dom
+                            .get(me.controlId + "-removed");
+		                      if (inputOrig != null) {
+		                    	  inputAdded.value = inputOrig.value;
+		                      } else {
+		                    	  inputAdded.value = "";
+		                      }
+		                      inputRemoved.value="";
+                           })
+                           
                         }
 
                         // The webservice needs additional parameters
@@ -221,6 +237,8 @@
                            }
 
                         });
+                        
+                        
 
                         Event.on(bToggler, "click", function(e) {
                            if (oAC.isContainerOpen()) {
