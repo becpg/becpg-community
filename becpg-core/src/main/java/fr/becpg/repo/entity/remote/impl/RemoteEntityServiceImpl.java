@@ -44,6 +44,7 @@ import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.remote.EntityProviderCallBack;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
+import fr.becpg.repo.entity.remote.extractor.ExcelXmlEntityVisitor;
 import fr.becpg.repo.entity.remote.extractor.ImportEntityXmlVisitor;
 import fr.becpg.repo.entity.remote.extractor.XmlEntityVisitor;
 
@@ -79,6 +80,13 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	public void getEntity(NodeRef entityNodeRef, OutputStream out, RemoteEntityFormat format) throws BeCPGException {
 		if (format.equals(RemoteEntityFormat.xml)) {
 			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(nodeService, namespaceService, dictionaryService,contentService);
+			try {
+				xmlEntityVisitor.visit(entityNodeRef, out);
+			} catch (XMLStreamException e) {
+				throw new BeCPGException("Cannot export entity :" + entityNodeRef + " at format " + format, e);
+			}
+		} else if (format.equals(RemoteEntityFormat.xml_excel)) {
+			ExcelXmlEntityVisitor xmlEntityVisitor = new ExcelXmlEntityVisitor(nodeService, namespaceService, dictionaryService,contentService);
 			try {
 				xmlEntityVisitor.visit(entityNodeRef, out);
 			} catch (XMLStreamException e) {
