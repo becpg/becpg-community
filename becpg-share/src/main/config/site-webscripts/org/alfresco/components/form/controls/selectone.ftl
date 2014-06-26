@@ -22,8 +22,7 @@
    </#if>
 </#if>
 
-
-<#if field.control.params.isSearch?? && form.mode == "edit">
+<#if field.control.params.isSearch?? && form.mode == "edit" || form.mode == "create" >
 	<#if field.control.params.defaultValue ??>
 		<#assign fieldValue=field.control.params.defaultValue>
 	<#else>
@@ -72,7 +71,7 @@
                <#if field.control.params.style??>style="${field.control.params.style}"</#if>
                <#if field.disabled  && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true")>disabled="true"</#if>>
                	<#if field.control.params.insertBlank??>
-               		 <option value="" <#if fieldValue?string == "" >selected="selected"</#if> ></option>
+               		 <option value="" <#if fieldValue?length &lt; 1 >selected="selected"</#if> ></option>
                	</#if>
                <#list field.control.params.options?split(optionSeparator) as nameValue>
                   <#if nameValue?index_of(labelSeparator) == -1>
