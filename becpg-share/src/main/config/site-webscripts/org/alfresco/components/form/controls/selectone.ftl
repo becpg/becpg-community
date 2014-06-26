@@ -22,8 +22,13 @@
    </#if>
 </#if>
 
-<#if field.control.params.insertBlank?? && form.mode == "edit">
-	<#assign fieldValue="">
+
+<#if field.control.params.isSearch?? && form.mode == "edit">
+	<#if field.control.params.defaultValue ??>
+		<#assign fieldValue=field.control.params.defaultValue>
+	<#else>
+		<#assign fieldValue="" />
+	</#if>
 </#if>
 
 
@@ -67,14 +72,14 @@
                <#if field.control.params.style??>style="${field.control.params.style}"</#if>
                <#if field.disabled  && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true")>disabled="true"</#if>>
                	<#if field.control.params.insertBlank??>
-               		 <option value="" <#if field.control.params.isSearch?? >selected="selected"</#if> ></option>
+               		 <option value="" <#if fieldValue?string == "" >selected="selected"</#if> ></option>
                	</#if>
                <#list field.control.params.options?split(optionSeparator) as nameValue>
                   <#if nameValue?index_of(labelSeparator) == -1>
-                     <option value="<#if field.control.params.isSearch?? >&#34;</#if>${nameValue?html}<#if field.control.params.isSearch?? >&#34;</#if>"<#if (nameValue == fieldValue?string || (fieldValue?is_number && fieldValue?c == nameValue)) && !field.control.params.isSearch??> selected="selected"</#if>>${nameValue?html}</option>
+                     <option value="<#if field.control.params.isSearch?? && nameValue?length &gt; 0 >&#34;</#if>${nameValue?html}<#if field.control.params.isSearch?? && nameValue?length &gt; 0 >&#34;</#if>"<#if (nameValue == fieldValue?string || (fieldValue?is_number && fieldValue?c == nameValue)) > selected="selected"</#if>>${nameValue?html}</option>
                   <#else>
                      <#assign choice=nameValue?split(labelSeparator)>
-                     <option value="<#if field.control.params.isSearch?? >&#34;</#if>${choice[0]?html}<#if field.control.params.isSearch?? >&#34;</#if>"<#if (choice[0] == fieldValue?string || (fieldValue?is_number && fieldValue?c == choice[0])) && !field.control.params.isSearch??> selected="selected"</#if>>${msg(choice[1])?html}</option>
+                     <option value="<#if field.control.params.isSearch?? && choice[0]?length &gt; 0 >&#34;</#if>${choice[0]?html}<#if field.control.params.isSearch?? && choice[0]?length &gt; 0>&#34;</#if>"<#if (choice[0] == fieldValue?string || (fieldValue?is_number && fieldValue?c == choice[0])) > selected="selected"</#if>>${msg(choice[1])?html}</option>
                   </#if>
                </#list>
          </select>
