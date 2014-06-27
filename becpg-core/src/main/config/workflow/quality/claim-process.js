@@ -14,6 +14,7 @@ function startEvent() {
 
 function onCreateEnteringClaimTask() {
 	task.setVariable('ncwf_claimRejectedCause', execution.getVariable('ncwf_claimRejectedCause'));
+
 	for (var i = 0; i < bpm_package.children.length; i++) {
 		var nc = bpm_package.children[i];
 		if (nc.isSubType("qa:nc")) {
@@ -26,7 +27,6 @@ function onCreateEnteringClaimTask() {
 function onCompleteEnteringClaimTask() {
 	execution.setVariable('ncwf_claimRejectedState', 'none');
 	execution.setVariable('ncwf_claimRejectedCause', '');
-	execution.setVariable('bpm_comment','');
 	
 	execution.setVariable('qa_claimSource', task.getVariable('qa_claimSource'));
 	execution.setVariable('qa_claimTradeContact', task.getVariable('qa_claimTradeContact'));
@@ -101,10 +101,10 @@ function onCompleteAnalysisTask() {
 	if (task.getVariable('ncwf_claimRejectedState') != 'none') {
 		task.setVariable('ncwf_ncState', "new");
 		execution.setVariable('ncwf_claimRejectedCause', task.getVariable('ncwf_claimRejectedCause'));
-		execution.setVariable('bpm_comment',task.getVariable('ncwf_claimRejectedCause'));
+		
 	} else {
 		execution.setVariable('ncwf_claimRejectedCause', '');
-		execution.setVariable('bpm_comment','');
+		
 
 		if (bcpgwf_notifyUsers != null) {
 			for (var i = 0; i < bcpgwf_notifyUsers.size(); i++) {
@@ -120,6 +120,7 @@ function onCompleteAnalysisTask() {
 	execution.setVariable('bcpgwf_notifyAssignee', task.getVariable('bcpgwf_notifyAssignee'));
 	execution.setVariable('qa_claimAnalysisComment', task.getVariable('qa_claimAnalysisComment'));
 	execution.setVariable('ncwf_claimRejectedState', task.getVariable('ncwf_claimRejectedState'));
+	task.setVariableLocal('bpm_comment', execution.getVariable('ncwf_claimRejectedCause'));
 }
 
 function onCreateClaimClosingTask() {
@@ -150,7 +151,7 @@ function onCompleteClaimClosingTask() {
 		task.setVariable('qa_claimClosingDate', new java.util.Date());
 		task.setVariable('ncwf_ncState', 'closed');
 		execution.setVariable('ncwf_claimRejectedCause', '');
-		execution.setVariable('bpm_comment','');
+		
 
 		if (bcpgwf_notifyUsers != null) {
 			for (var i = 0; i < bcpgwf_notifyUsers.size(); i++) {
@@ -164,12 +165,13 @@ function onCompleteClaimClosingTask() {
 	} else {
 		task.setVariable('ncwf_ncState', task.getVariable('ncwf_claimRejectedState'));
 		execution.setVariable('ncwf_claimRejectedCause', task.getVariable('ncwf_claimRejectedCause'));
-		execution.setVariable('bpm_comment',task.getVariable('ncwf_claimRejectedCause'));
+		
 	}
 
 	execution.setVariable('qa_claimClosingComment', task.getVariable('qa_claimClosingComment'));
 	execution.setVariable('bcpgwf_notifyUsers', task.getVariable('bcpgwf_notifyUsers'));
 	execution.setVariable('ncwf_claimRejectedState', task.getVariable('ncwf_claimRejectedState'));
+	task.setVariableLocal('bpm_comment', execution.getVariable('ncwf_claimRejectedCause'));
 }
 
 function onCreateClassificationTask() {
@@ -217,7 +219,6 @@ function onCompleteClaimTreatmentTask() {
 			task.setVariable('ncwf_ncState', 'closing');
 		}
 		execution.setVariable('ncwf_claimRejectedCause', '');
-		execution.setVariable('bpm_comment','');
 
 		if (bcpgwf_notifyUsers != null) {
 			for (var i = 0; i < bcpgwf_notifyUsers.size(); i++) {
@@ -230,7 +231,6 @@ function onCompleteClaimTreatmentTask() {
 
 	} else {
 		execution.setVariable('ncwf_claimRejectedCause', task.getVariable('ncwf_claimRejectedCause'));
-		execution.setVariable('bpm_comment',task.getVariable('ncwf_claimRejectedCause'));
 	}
 
 	execution.setVariable('ncwf_claimRejectedState', task.getVariable('ncwf_claimRejectedState'));
@@ -238,6 +238,7 @@ function onCompleteClaimTreatmentTask() {
 	execution.setVariable('qa_claimTreatementPrevActions', task.getVariable('qa_claimTreatementPrevActions'));
 	execution.setVariable('qa_claimTreatementComment', task.getVariable('qa_claimTreatementComment'));
 	execution.setVariable('bcpgwf_notifyUsers', task.getVariable('bcpgwf_notifyUsers'));
+	task.setVariableLocal('bpm_comment', execution.getVariable('ncwf_claimRejectedCause'));
 }
 
 function onCreateClaimResponseTask() {
@@ -259,7 +260,6 @@ function onCompleteClaimResponseTask() {
 		task.setVariable('qa_claimResponseDate', new java.util.Date());
 		task.setVariable('ncwf_ncState', 'closing');
 		execution.setVariable('ncwf_claimRejectedCause', '');
-		execution.setVariable('bpm_comment','');
 
 		if (bcpgwf_notifyUsers != null) {
 			for (var i = 0; i < bcpgwf_notifyUsers.size(); i++) {
@@ -273,7 +273,6 @@ function onCompleteClaimResponseTask() {
 	} else {
 		task.setVariable('ncwf_ncState', task.getVariable('ncwf_claimRejectedState'));
 		execution.setVariable('ncwf_claimRejectedCause', task.getVariable('ncwf_claimRejectedCause'));
-		execution.setVariable('bpm_comment',task.getVariable('ncwf_claimRejectedCause'));
 	}
 
 	execution.setVariable('bcpgwf_notifyAssignee', task.getVariable('bcpgwf_notifyAssignee'));
@@ -282,6 +281,7 @@ function onCompleteClaimResponseTask() {
 	execution.setVariable('ncwf_claimRejectedState', task.getVariable('ncwf_claimRejectedState'));
 	execution.setVariable('qa_claimResponseState', task.getVariable('qa_claimResponseState'));
 	execution.setVariable('qa_claimResponseDetails', task.getVariable('qa_claimResponseDetails'));
+	task.setVariableLocal('bpm_comment', execution.getVariable('ncwf_claimRejectedCause'));
 }
 
 // #################### Utils ######################
