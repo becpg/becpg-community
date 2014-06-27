@@ -104,9 +104,15 @@
                                     }
 
                                     var PAGE_SIZE = 5000;
-                                  
-                                    document.location.href = dt._getDataUrl(PAGE_SIZE).replace("/node?","/node.csv?") + "&format=csv&metadata=" + encodeURIComponent(YAHOO.lang.JSON
-                                          .stringify(requestParams));
+                                    
+                                    var url = dt._getDataUrl(PAGE_SIZE).replace("/node?","/node.csv?") + "&format=csv&metadata=" + encodeURIComponent(YAHOO.lang.JSON
+                                            .stringify(requestParams));
+                                    
+                                    if (YAHOO.env.ua.ie > 0 && url.length > 2048) {
+                                    	alert("GET URL size to large for IE. Try with firefox or chrome");
+                                    } else {
+                                    	document.location.href = url;
+                                    }
 
                                  },
                                  scope : this
