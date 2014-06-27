@@ -85,7 +85,8 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	}
 
 	@Override
-	public List<NodeRef> queryAdvSearch(String searchQuery, String language, QName datatype, Map<String, String> criteria, Map<String, Boolean> sortMap, int maxResults) {
+	public List<NodeRef> queryAdvSearch(String searchQuery, String language, QName datatype, Map<String, String> criteria,
+			Map<String, Boolean> sortMap, int maxResults) {
 
 		if (maxResults <= 0) {
 			maxResults = RepoConsts.MAX_RESULTS_1000;
@@ -95,7 +96,8 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 		boolean isAssocSearch = isAssocSearch(criteria);
 
-		List<NodeRef> nodes = beCPGSearchService.search(searchQuery, sortMap, isAssocSearch ? RepoConsts.MAX_RESULTS_UNLIMITED : maxResults, language);
+		List<NodeRef> nodes = beCPGSearchService
+				.search(searchQuery, sortMap, isAssocSearch ? RepoConsts.MAX_RESULTS_UNLIMITED : maxResults, language);
 
 		if (isAssocSearch) {
 			nodes = filterByAssociations(nodes, criteria);
@@ -118,7 +120,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		if (term != null && term.length() != 0) {
 			ftsQuery = term + " ";
 		} else if (tag != null && tag.length() != 0) {
-			ftsQuery = "TAG:\"" + tag+"\"";
+			ftsQuery = "TAG:\"" + tag + "\"";
 		}
 
 		// we processed the search terms, so suffix the PATH query
@@ -130,9 +132,10 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		if (datatype != null) {
 			ftsQuery = "+TYPE:\"" + datatype + "\"" + (ftsQuery.length() > 0 ? " AND (" + ftsQuery + ")" : "");
 		}
-		
-		ftsQuery += " AND -TYPE:\"cm:thumbnail\" " + "AND -TYPE:\"cm:failedThumbnail\" " + "AND -TYPE:\"cm:rating\" " + "AND -TYPE:\"bcpg:entityListItem\" "
-				+ "AND -TYPE:\"systemfolder\" " + "AND -TYPE:\"rep:report\" AND -TYPE:\"fm:forum\" AND -TYPE:\"fm:forums\" AND -TYPE:\"app:filelink\" ";
+
+		ftsQuery += " AND -TYPE:\"cm:thumbnail\" " + "AND -TYPE:\"cm:failedThumbnail\" " + "AND -TYPE:\"cm:rating\" "
+				+ "AND -TYPE:\"bcpg:entityListItem\" " + "AND -TYPE:\"systemfolder\" "
+				+ "AND -TYPE:\"rep:report\" AND -TYPE:\"fm:forum\" AND -TYPE:\"fm:forums\" AND -TYPE:\"app:filelink\" ";
 
 		// extract data type for this search - advanced search query is type
 		// specific
@@ -266,7 +269,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 								if (maxLevel != null) {
 									formQuery += operator + propName + ":[0 TO " + propValue + "]";
 								}
-							} else if (!propName.contains("llPosition") ){
+							} else if (!propName.contains("llPosition")) {
 
 								// beCPG - bug fix : pb with operator -, AND, OR
 								// poivre AND -noir
@@ -276,9 +279,20 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 								// propName + ":\"" + propValue + "\"";
 
 								if (language == SearchService.LANGUAGE_FTS_ALFRESCO) {
-									formQuery += operator + propName + ":(" + propValue + ")";
+									formQuery += operator + propName + ":(" + cleanValue(propValue) + ")";
 								} else {
-									formQuery += operator + propName + ":\"" + propValue + "\"";
+									
+									String value = cleanValue(propValue);
+									
+									if(value.contains(",")){
+										formQuery += operator+"(";
+										for(String val : value.split(",")){
+											formQuery += " "+propName + ":\"" + val + "\"";
+										}
+										formQuery += ")";
+									} else {
+										formQuery += operator + propName + ":\"" + value + "\"";
+									}
 								}
 							}
 						} else {
@@ -301,16 +315,20 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		return query;
 	}
 
+	private String cleanValue(String propValue) {
+		return propValue.replaceAll("\\.", "").replaceAll("#", "");
+	}
+
 	private String getHierarchyQuery(String propName, String hierachyName) {
 		List<NodeRef> nodes = null;
 
 		if (!NodeRef.isNodeRef(hierachyName)) {
 
 			// TODO use HierarchyService, not generic
-			String searchQuery = String
-					.format(RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE_BY_NAME,
-							LuceneHelper.encodePath(RepoConsts.PATH_SYSTEM + "/" + RepoConsts.PATH_PRODUCT_HIERARCHY + "/"
-									+ BeCPGModel.ASSOC_ENTITYLISTS.toPrefixString(namespaceService)), hierachyName);
+			String searchQuery = String.format(
+					RepoConsts.PATH_QUERY_SUGGEST_LKV_VALUE_BY_NAME,
+					LuceneHelper.encodePath(RepoConsts.PATH_SYSTEM + "/" + RepoConsts.PATH_PRODUCT_HIERARCHY + "/"
+							+ BeCPGModel.ASSOC_ENTITYLISTS.toPrefixString(namespaceService)), hierachyName);
 
 			if (propName.endsWith("productHierarchy1")) {
 				searchQuery += " +@bcpg\\:depthLevel:1";
@@ -354,7 +372,8 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 				String assocName = key.substring(6);
 				if (assocName.endsWith("_added")) {
 					// TODO : should be generic
-					if (!key.equals(CRITERIA_ING) && !key.equals(CRITERIA_GEO_ORIGIN) && !key.equals(CRITERIA_BIO_ORIGIN) && !key.equals(CRITERIA_PACK_LABEL)) {
+					if (!key.equals(CRITERIA_ING) && !key.equals(CRITERIA_GEO_ORIGIN) && !key.equals(CRITERIA_BIO_ORIGIN)
+							&& !key.equals(CRITERIA_PACK_LABEL)) {
 
 						assocName = assocName.substring(0, assocName.length() - 6);
 						assocName = assocName.replace("_", ":");
@@ -543,7 +562,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 			watch.start();
 		}
 
-		if(criteria.containsKey(CRITERIA_PACK_LABEL)) {
+		if (criteria.containsKey(CRITERIA_PACK_LABEL)) {
 
 			String propValue = criteria.get(CRITERIA_PACK_LABEL);
 
@@ -557,21 +576,19 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 					List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, PackModel.ASSOC_LL_LABEL);
 					labelingListItems = new ArrayList<NodeRef>(assocRefs.size());
 
-					
 					for (AssociationRef assocRef : assocRefs) {
 
 						NodeRef n = assocRef.getSourceRef();
 						if (isWorkSpaceProtocol(n)) {
 
-							if(criteria.containsKey(CRITERIA_PACK_LABEL_POSITION)
-									&& !criteria.get(CRITERIA_PACK_LABEL_POSITION).isEmpty()) {
+							if (criteria.containsKey(CRITERIA_PACK_LABEL_POSITION) && !criteria.get(CRITERIA_PACK_LABEL_POSITION).isEmpty()) {
 
-								
-								if(criteria.get(CRITERIA_PACK_LABEL_POSITION).equals("\""+nodeService.getProperty(n, PackModel.PROP_LL_POSITION)+"\"")) {	
+								if (criteria.get(CRITERIA_PACK_LABEL_POSITION).equals(
+										"\"" + nodeService.getProperty(n, PackModel.PROP_LL_POSITION) + "\"")) {
 									labelingListItems.add(n);
 								}
 							} else {
-							
+
 								labelingListItems.add(n);
 							}
 						}
