@@ -7,7 +7,7 @@
         <activiti:executionListener event="start" class="org.alfresco.repo.workflow.activiti.listener.ScriptExecutionListener">
           <activiti:field name="script">
             <activiti:string>
-                  execution.setVariable('bpm_comment',bcpgwf_pvTransmitterComment);
+                   execution.setVariable('bpm_comment',bcpgwf_pvTransmitterComment);
 	               execution.setVariable('bcpgwf_reviewRDApproval',null);
 	               execution.setVariable('bcpgwf_reviewProductionApproval',null);
 	               execution.setVariable('bcpgwf_reviewQualityApproval',null);
@@ -62,7 +62,7 @@
         </activiti:taskListener>
         <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
-            <activiti:string>execution.setVariable('bpm_comment',task.getVariable('bcpgwf_reviewQualityComment'));
+            <activiti:string>task.setVariableLocal('bpm_comment',task.getVariable('bcpgwf_reviewQualityComment'));
                execution.setVariable('bcpgwf_reviewQualityComment',task.getVariable('bcpgwf_reviewQualityComment'));
             	execution.setVariable('bcpgwf_reviewQualityApproval',task.getVariable('bcpgwf_reviewQualityApproval'));</activiti:string>
           </activiti:field>
@@ -89,7 +89,7 @@
         </activiti:taskListener>
         <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
-            <activiti:string>execution.setVariable('bpm_comment',task.getVariable('bcpgwf_reviewProductionComment'));
+            <activiti:string>task.setVariableLocal('bpm_comment',task.getVariable('bcpgwf_reviewProductionComment'));
             				execution.setVariable('bcpgwf_reviewProductionComment',task.getVariable('bcpgwf_reviewProductionComment'));
             				execution.setVariable('bcpgwf_reviewProductionApproval',task.getVariable('bcpgwf_reviewProductionApproval'));</activiti:string>
           </activiti:field>
@@ -116,7 +116,7 @@
         <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
             <activiti:string>
-             execution.setVariable('bpm_comment',task.getVariable('bcpgwf_reviewRDComment'));
+             task.setVariableLocal('bpm_comment',task.getVariable('bcpgwf_reviewRDComment'));
              execution.setVariable('bcpgwf_reviewRDComment',task.getVariable('bcpgwf_reviewRDComment'));
              execution.setVariable('bcpgwf_reviewRDApproval',task.getVariable('bcpgwf_reviewRDApproval'));
            </activiti:string>
@@ -155,6 +155,7 @@
         <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
             <activiti:string>
+             		task.setVariableLocal('bpm_comment',task.getVariable('bcpgwf_reviewCallerComment'));
             		execution.setVariable('bcpgwf_reviewCallerComment',task.getVariable('bcpgwf_reviewCallerComment'));
             		execution.setVariable('bcpgwf_reviewRDComment',task.getVariable('bcpgwf_reviewRDComment'));
             		execution.setVariable('bcpgwf_reviewCallerApproval',task.getVariable('bcpgwf_reviewCallerApproval'));</activiti:string>
@@ -186,7 +187,7 @@
         </activiti:taskListener>
         <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
-            <activiti:string>execution.setVariable('bpm_comment',task.getVariable('bcpgwf_pvTransmitterComment'));</activiti:string>
+            <activiti:string>task.setVariableLocal('bpm_comment',task.getVariable('bcpgwf_pvTransmitterComment'));</activiti:string>
           </activiti:field>
         </activiti:taskListener>
       </extensionElements>
@@ -262,7 +263,7 @@
         </activiti:taskListener>
         <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
-            <activiti:string>execution.setVariable('bpm_comment',task.getVariable('bcpgwf_pvTransmitterComment'));</activiti:string>
+            <activiti:string>task.setVariableLocal('bpm_comment',task.getVariable('bcpgwf_pvTransmitterComment'));</activiti:string>
           </activiti:field>
         </activiti:taskListener>
       </extensionElements>
