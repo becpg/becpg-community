@@ -49,6 +49,7 @@
          <property name="policyBehaviourFilter">
             <ref bean="policyBehaviourFilter"/>
         </property>
+        <property name="ruleService" ref="ruleService"/>
 	</bean>
 	
 
