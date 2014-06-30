@@ -36,6 +36,8 @@ public class FormulateRecipeWebScript extends AbstractProductWebscript {
 
 	protected static final String PARAM_RECIPE = "recipe";
 
+	private static final String PARAM_METADATA = "metadata";
+
 	private static Log logger = LogFactory.getLog(FormulateRecipeWebScript.class);
 
 	@Override
@@ -45,9 +47,17 @@ public class FormulateRecipeWebScript extends AbstractProductWebscript {
 		
 		ProductData productData = new FinishedProductData();
 
-		try {
+		try 
+		{
 			
-			JSONObject json = (JSONObject) req.parseContent();
+			JSONObject json = null;
+
+			if (req.getParameter(PARAM_METADATA) != null) {
+				json = new JSONObject(req.getParameter(PARAM_METADATA));
+			} else {
+				json = (JSONObject) req.parseContent();
+			}
+			
 			String recipe = "";
 			if (json != null && json.has("PARAM_RECIPE")) {
 				recipe = (String) json.get("PARAM_RECIPE");
