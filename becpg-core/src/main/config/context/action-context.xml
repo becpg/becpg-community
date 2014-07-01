@@ -34,6 +34,7 @@
     	<property name="ruleService" ref="ruleService"/>
     	<property name="versionService" ref="versionService"/>
     	<property name="nodeService" ref="nodeService" />
+    	<property name="ignoreLock" value="false" />
     </bean>
     
     <!-- I18N -->
