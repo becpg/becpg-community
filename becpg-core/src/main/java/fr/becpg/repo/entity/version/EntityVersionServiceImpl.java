@@ -15,6 +15,9 @@ import java.util.Map;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.version.VersionBaseModel;
+import org.alfresco.repo.version.VersionModel;
+import org.alfresco.repo.version.common.VersionImpl;
 import org.alfresco.repo.version.common.versionlabel.SerialVersionLabelPolicy;
 import org.alfresco.service.cmr.coci.CheckOutCheckInServiceException;
 import org.alfresco.service.cmr.repository.AssociationRef;
@@ -28,11 +31,13 @@ import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.version.Version;
 import org.alfresco.service.cmr.version.VersionHistory;
 import org.alfresco.service.cmr.version.VersionService;
+import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
@@ -50,6 +55,7 @@ import fr.becpg.repo.search.BeCPGSearchService;
  * 
  * @author querephi
  */
+
 @Service
 public class EntityVersionServiceImpl implements EntityVersionService {
 	private static final String ENTITIES_HISTORY_NAME = "entitiesHistory";
@@ -60,6 +66,9 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	private static final String KEY_ENTITIES_HISTORY = "EntitiesHistory";
 
 	private static final String MSG_ERR_NOT_AUTHENTICATED = "coci_service.err_not_authenticated";
+	
+
+	private static final String MSG_INITIAL_VERSION = "create_version.initial_version";
 
 	/** The Constant VERSION_NAME_DELIMITER. */
 	private static final String VERSION_NAME_DELIMITER = " v";
@@ -146,6 +155,22 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	@Override
 	public NodeRef checkOutDataListAndFiles(final NodeRef origNodeRef, final NodeRef workingCopyNodeRef) {
 		
+		logger.debug("checkOutDataListAndFiles");
+		//Create initialVersion 
+
+		if( getVersionHistoryNodeRef(origNodeRef) == null){
+			// Create the initial-version
+			Map<String, Serializable> versionProperties = new HashMap<String, Serializable>(1);
+			versionProperties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
+
+			if (logger.isDebugEnabled()) {
+				logger.debug("Create initial version : " + I18NUtil.getMessage(MSG_INITIAL_VERSION));
+			}
+
+			versionProperties.put(Version.PROP_DESCRIPTION, I18NUtil.getMessage(MSG_INITIAL_VERSION));
+			internalCreateVersionAndCheckin(origNodeRef, null, versionProperties);
+
+		}
 
 		
 		// Copy entity datalists (rights are checked by copyService during
@@ -187,6 +212,13 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 			}
 		}, AuthenticationUtil.getSystemUserName());
+		
+		//Delete initialversion
+		if(versionService.getVersionHistory(origNodeRef) == null || versionService.getVersionHistory(origNodeRef).getAllVersions().size() == 1){
+			logger.debug("Deleting initial version");
+			deleteVersionHistory(origNodeRef);
+		}
+
 
 	}
 
@@ -485,6 +517,15 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 		String versionLabel = INITIAL_VERSION;
 		if (!isInitialVersion) {
+			if(preceedingVersion == null){
+
+				Map<String, Serializable> propsMap = new HashMap<String, Serializable>();
+				propsMap.put(VersionBaseModel.PROP_VERSION_LABEL, INITIAL_VERSION);
+				propsMap.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
+				preceedingVersion = new VersionImpl(propsMap, origNodeRef);
+
+			} 
+
 			// Default the version label to the SerialVersionLabelPolicy
 			SerialVersionLabelPolicy defaultVersionLabelPolicy = new SerialVersionLabelPolicy();
 			versionLabel = defaultVersionLabelPolicy.calculateVersionLabel(classRef, preceedingVersion, versionProperties);
