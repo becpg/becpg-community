@@ -27,6 +27,9 @@ import javax.annotation.Resource;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.version.Version;
+import org.alfresco.service.cmr.version.VersionHistory;
+import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,7 +37,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import fr.becpg.model.PLMModel;
-import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.ecm.ECOService;
 import fr.becpg.repo.ecm.ECOState;
 import fr.becpg.repo.ecm.data.ChangeOrderData;
@@ -44,7 +46,7 @@ import fr.becpg.repo.ecm.data.dataList.ChangeUnitDataItem;
 import fr.becpg.repo.ecm.data.dataList.ReplacementListDataItem;
 import fr.becpg.repo.ecm.data.dataList.SimulationListDataItem;
 import fr.becpg.repo.ecm.data.dataList.WUsedListDataItem;
-import fr.becpg.repo.helper.TranslateHelper;
+import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
@@ -80,6 +82,12 @@ public class ECOTest extends PLMBaseTestCase {
 
 	@Resource
 	private ECOService ecoService;
+	
+	@Resource
+	private VersionService versionService;
+	
+	@Resource
+	private EntityVersionService entityVersionService;
 
 	public static final String Double_FORMAT = "0.0000";
 
@@ -513,6 +521,11 @@ public class ECOTest extends PLMBaseTestCase {
 				logger.info("Version After : "+getVersionLabel(finishedProduct1NodeRef));
 				
 				assertEquals("Check version", "1.1", getVersionLabel(finishedProduct1NodeRef));
+				
+				VersionHistory versionHistory = versionService.getVersionHistory(finishedProduct1NodeRef);
+				Version version = versionHistory.getVersion("1.1");
+				assertNotNull(version);
+				assertNotNull(entityVersionService.getEntityVersion(version));
 
 				return null;
 
