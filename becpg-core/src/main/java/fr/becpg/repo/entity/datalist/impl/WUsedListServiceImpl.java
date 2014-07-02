@@ -106,6 +106,10 @@ public class WUsedListServiceImpl implements WUsedListService {
 						logger.debug("associationRefs size" + associationRefs.size() + "  for entityNodeRef " + entityNodeRef + " and assocs"
 								+ associationName);
 					}
+					if (associationRefs.isEmpty()) {
+						break;
+					}
+					
 				} else {
 
 					// Test for join
