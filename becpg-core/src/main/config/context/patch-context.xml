@@ -33,7 +33,7 @@
         <property name="id"><value>patch.bcpg.patch.bcpg.listValuePatch</value></property>
         <property name="description"><value>patch.bcpg.patch.bcpg.listValuePatch.description</value></property>
         <property name="fixesFromSchema" value="0"/>
-        <property name="fixesToSchema" value="6033" />
+        <property name="fixesToSchema" value="6032" />
         <property name="targetSchema" value="10100 "/>
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
@@ -49,6 +49,7 @@
          <property name="policyBehaviourFilter">
             <ref bean="policyBehaviourFilter"/>
         </property>
+        <property name="ruleService" ref="ruleService"/>
 	</bean>
 	
 

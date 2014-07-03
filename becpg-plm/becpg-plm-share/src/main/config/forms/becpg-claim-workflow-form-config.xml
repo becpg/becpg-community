@@ -54,7 +54,7 @@
 					</field>
 					<field id="qa:claimTracking" mandatory="true" read-only="false" set="info1" />
 					<set id="info2" parent="info" appearance="" template="/org/alfresco/components/form/2-column-set.ftl" />
-					<field id="qa:product" mandatory="false" read-only="false" set="info2" />
+					<field id="qa:product" mandatory="true" read-only="false" set="info2" />
 					<set id="info3" parent="info" appearance="" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<field id="qa:batchId" mandatory="false" read-only="false" set="info3" />
 					<field id="qa:productUseByDate" mandatory="false" read-only="false" set="info3" />
@@ -129,7 +129,7 @@
 					<field id="qa:claimTracking" mandatory="true" read-only="false" set="info1" />
 					
 					<set id="info2" parent="info" appearance="" template="/org/alfresco/components/form/2-column-set.ftl" />
-					<field id="qa:product" mandatory="false" read-only="false" set="info2" />
+					<field id="qa:product" mandatory="true" read-only="false" set="info2" />
 					
 					<set id="info3" parent="info" appearance="" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<field id="qa:batchId" mandatory="false" read-only="false" set="info3" />

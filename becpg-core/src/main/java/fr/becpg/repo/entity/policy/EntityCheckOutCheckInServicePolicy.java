@@ -20,7 +20,6 @@ package fr.becpg.repo.entity.policy;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -30,18 +29,14 @@ import org.alfresco.repo.coci.CheckOutCheckInServicePolicies;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.Behaviour;
 import org.alfresco.repo.policy.JavaBehaviour;
-import org.alfresco.repo.version.VersionModel;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.rule.RuleService;
-import org.alfresco.service.cmr.version.Version;
-import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.version.EntityVersionService;
@@ -54,10 +49,8 @@ import fr.becpg.repo.report.entity.EntityReportAsyncGenerator;
  * 
  */
 public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy implements CheckOutCheckInServicePolicies.OnCheckOut,
-		CheckOutCheckInServicePolicies.BeforeCheckIn, CheckOutCheckInServicePolicies.OnCheckIn, CheckOutCheckInServicePolicies.BeforeCancelCheckOut,
-		NodeServicePolicies.OnAddAspectPolicy, NodeServicePolicies.OnRemoveAspectPolicy, NodeServicePolicies.OnDeleteNodePolicy {
-
-	private static final String MSG_INITIAL_VERSION = "create_version.initial_version";
+		CheckOutCheckInServicePolicies.BeforeCheckIn, CheckOutCheckInServicePolicies.OnCheckIn,
+		CheckOutCheckInServicePolicies.BeforeCancelCheckOut, NodeServicePolicies.OnRemoveAspectPolicy, NodeServicePolicies.OnDeleteNodePolicy {
 
 	private static Log logger = LogFactory.getLog(EntityCheckOutCheckInServicePolicy.class);
 
@@ -66,6 +59,8 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 	private EntityReportAsyncGenerator entityReportAsyncGenerator;
 
 	private RuleService ruleService;
+	
+	
 
 	public void setRuleService(RuleService ruleService) {
 		this.ruleService = ruleService;
@@ -93,9 +88,11 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 				"onCheckIn"));
 		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.BeforeCancelCheckOut.QNAME, BeCPGModel.ASPECT_ENTITYLISTS,
 				new JavaBehaviour(this, "beforeCancelCheckOut"));
-
-		this.policyComponent.bindClassBehaviour(QName.createQName(NamespaceService.ALFRESCO_URI, "onAddAspect"), ContentModel.ASPECT_VERSIONABLE,
-				new JavaBehaviour(this, "onAddAspect", Behaviour.NotificationFrequency.TRANSACTION_COMMIT));
+		//
+		// this.policyComponent.bindClassBehaviour(QName.createQName(NamespaceService.ALFRESCO_URI,
+		// "onAddAspect"), ContentModel.ASPECT_VERSIONABLE,
+		// new JavaBehaviour(this, "onAddAspect",
+		// Behaviour.NotificationFrequency.TRANSACTION_COMMIT));
 
 		this.policyComponent.bindClassBehaviour(QName.createQName(NamespaceService.ALFRESCO_URI, "onRemoveAspect"), ContentModel.ASPECT_VERSIONABLE,
 				new JavaBehaviour(this, "onRemoveAspect", Behaviour.NotificationFrequency.TRANSACTION_COMMIT));
@@ -109,7 +106,7 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 		ruleService.disableRules();
 		try {
 			NodeRef origNodeRef = getCheckedOut(workingCopyNodeRef);
-			entityVersionService.checkOutDataListAndFiles(origNodeRef, workingCopyNodeRef);
+			entityVersionService.doCheckOut(origNodeRef, workingCopyNodeRef);
 		} finally {
 			ruleService.enableRules();
 		}
@@ -177,34 +174,40 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 		}
 	}
 
-	@Override
-	public void onAddAspect(NodeRef nodeRef, QName aspectTypeQName) {
-
-		if (nodeService.exists(nodeRef) == true && nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITYLISTS) && !isBeCPGVersion(nodeRef)) {
-			ruleService.disableRules();
-			try {
-				// Create the initial-version
-				Map<String, Serializable> versionProperties = new HashMap<String, Serializable>(1);
-
-				// If a major version is requested, indicate it in the
-				// versionProperties map
-				String versionType = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_VERSION_TYPE);
-				if (versionType == null || !versionType.equals(VersionType.MINOR.toString())) {
-					versionProperties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
-				}
-
-				if (logger.isDebugEnabled()) {
-					logger.debug("Create initial version : " + I18NUtil.getMessage(MSG_INITIAL_VERSION));
-				}
-
-				versionProperties.put(Version.PROP_DESCRIPTION, I18NUtil.getMessage(MSG_INITIAL_VERSION));
-				entityVersionService.createVersion(nodeRef, versionProperties);
-			} finally {
-				ruleService.enableRules();
-			}
-		}
-
-	}
+	// @Override
+	// public void onAddAspect(NodeRef nodeRef, QName aspectTypeQName) {
+	//
+	// if (nodeService.exists(nodeRef) == true && nodeService.hasAspect(nodeRef,
+	// BeCPGModel.ASPECT_ENTITYLISTS) && !isBeCPGVersion(nodeRef)) {
+	// ruleService.disableRules();
+	// try {
+	// // Create the initial-version
+	// Map<String, Serializable> versionProperties = new HashMap<String,
+	// Serializable>(1);
+	//
+	// // If a major version is requested, indicate it in the
+	// // versionProperties map
+	// String versionType = (String) nodeService.getProperty(nodeRef,
+	// ContentModel.PROP_VERSION_TYPE);
+	// if (versionType == null ||
+	// !versionType.equals(VersionType.MINOR.toString())) {
+	// versionProperties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
+	// }
+	//
+	// if (logger.isDebugEnabled()) {
+	// logger.debug("Create initial version : " +
+	// I18NUtil.getMessage(MSG_INITIAL_VERSION));
+	// }
+	//
+	// versionProperties.put(Version.PROP_DESCRIPTION,
+	// I18NUtil.getMessage(MSG_INITIAL_VERSION));
+	// entityVersionService.createVersion(nodeRef, versionProperties);
+	// } finally {
+	// ruleService.enableRules();
+	// }
+	// }
+	//
+	// }
 
 	private NodeRef getCheckedOut(NodeRef nodeRef) {
 		NodeRef original = null;
@@ -229,4 +232,5 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 		entityReportAsyncGenerator.queueNodes(new ArrayList<NodeRef>(pendingNodes));
 
 	}
+
 }
