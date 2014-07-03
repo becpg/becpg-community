@@ -102,6 +102,7 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 				List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
 				nutList.add(new NutListDataItem(null, null, null, null, null, null, nut1, null));
 				nutList.add(new NutListDataItem(null, null, null, null, null, null, nut2, null));
+				nutList.add(new NutListDataItem(null, null, null, null, null, null, nut3, null));
 				finishedProduct.setNutList(nutList);
 
 				List<DynamicCharactListItem> dynamicCharactListItems = new ArrayList<DynamicCharactListItem>();
@@ -297,9 +298,14 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 				assertEquals(100 * nutListDataItem.getValuePerServing() / 2000d, nutListDataItem.getGdaPerc());
 				checks++;
 			}
+			if (nutListDataItem.getNut().equals(nut3)) {
+				assertEquals("nut3.getValue() == 6, actual values: " + trace, null, nutListDataItem.getValue());
+			
+				checks++;
+			}
 			assertEquals(NutsCalculatingFormulationHandler.NUT_FORMULATED, nutListDataItem.getMethod());
 		}
-		assertEquals(2, checks);
+		assertEquals(3, checks);
 
 		// allergens
 		checks = 0;
@@ -460,23 +466,20 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 
 		// ReqCtrlList
 		checks = 0;
-		String message1 = I18NUtil.getMessage(AbstractSimpleListFormulationHandler.MESSAGE_MISSING_MANDATORY_CHARACT, nodeService.getProperty(nut1, ContentModel.PROP_NAME));
-		String message2 = I18NUtil
-				.getMessage(AbstractSimpleListFormulationHandler.MESSAGE_MISSING_MANDATORY_CHARACT, nodeService.getProperty(nut2, ContentModel.PROP_NAME));
+		String message1 = I18NUtil.getMessage(AbstractSimpleListFormulationHandler.MESSAGE_MISSING_MANDATORY_CHARACT, nodeService.getProperty(nut3, ContentModel.PROP_NAME));
 		logger.info(message1);
-		logger.info(message2);
 		logger.info(formulatedProduct.getCompoListView().getReqCtrlList().size());
 		for (ReqCtrlListDataItem r : formulatedProduct.getCompoListView().getReqCtrlList()) {
 
 			logger.info("reqCtrl " + r.getReqMessage() + r.getReqType() + r.getSources());
 
-			if (message1.equals(r.getReqMessage()) || message2.equals(r.getReqMessage())) {
+			if (message1.equals(r.getReqMessage()) ) {
 				assertEquals(1, r.getSources().size());
 				assertEquals(rawMaterial4NodeRef, r.getSources().get(0));
 				checks++;
 			}
 		}
-		assertEquals(2, checks);
+		assertEquals(1, checks);
 
 		// Claim label list
 		checks = 0;

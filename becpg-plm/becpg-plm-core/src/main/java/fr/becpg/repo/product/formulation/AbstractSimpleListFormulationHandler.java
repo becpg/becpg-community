@@ -124,6 +124,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	//	sort(simpleListDataList);
 	}
 	
+	@SuppressWarnings("unchecked")
 	protected void visitChildren(ProductData formulatedProduct, List<T> simpleListDataList) throws FormulateException{
 		
 		Double netQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
@@ -198,10 +199,17 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 						//is it a mandatory charact ?
 						if(slDataItem == null || (slDataItem.getValue() == null && slDataItem.getMaxi() == null && slDataItem.getMini() == null)){					
 							addMissingMandatoryCharact(mandatoryCharacts, newSimpleListDataItem.getCharactNodeRef(), componentNodeRef);
+							if(mandatoryCharacts.containsKey(newSimpleListDataItem.getCharactNodeRef())){
+								newSimpleListDataItem.setValue(null);
+								newSimpleListDataItem.setMini(null);
+								newSimpleListDataItem.setMaxi(null);
+							}
 						}
 						
 						//Calculate values			
-						if(slDataItem != null && qtyUsed != null){
+						if(slDataItem != null && qtyUsed != null && (
+								!mandatoryCharacts.containsKey(newSimpleListDataItem.getCharactNodeRef())
+								|| mandatoryCharacts.get(newSimpleListDataItem.getCharactNodeRef()).isEmpty())){
 												
 							Double origValue = newSimpleListDataItem.getValue() != null ? newSimpleListDataItem.getValue() : 0d;
 							Double value = slDataItem.getValue();
@@ -248,6 +256,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 			if(!sources.contains(componentNodeRef)){
 				sources.add(componentNodeRef);
 			}
+			
 		}
 	}
 	

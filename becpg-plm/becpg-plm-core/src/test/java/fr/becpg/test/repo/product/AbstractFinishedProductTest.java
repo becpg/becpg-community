@@ -139,6 +139,9 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
     /** The nut2. */
     protected NodeRef nut2;
     
+    /** The nut3. */
+    protected NodeRef nut3;
+    
     /** The allergen1. */
     protected NodeRef allergen1;
     
@@ -246,6 +249,13 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					properties.put(PLMModel.PROP_NUTGROUP, GROUP2);
 					properties.put(PLMModel.PROP_NUTGDA, 2000d);
 					nut2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_NUT, properties).getChildRef();			
+					properties.clear();
+					properties.put(ContentModel.PROP_NAME, "nut3");
+					properties.put(PLMModel.PROP_NUTUNIT, "kcal");
+					properties.put(PLMModel.PROP_NUTGROUP, GROUP2);
+					properties.put(PLMModel.PROP_NUTGDA, 2000d);
+					nut3 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_NUT, properties).getChildRef();			
+					
 					//Allergens
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "allergen1");	
@@ -371,6 +381,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
 					nutList.add(new NutListDataItem(null, 1d, "g/100g", 0.8d, 2.1d, "Groupe 1", nut1, false));
 					nutList.add(new NutListDataItem(null, 2d, "g/100g", 1.5d, 2.2d, "Groupe 1", nut2, false));
+					nutList.add(new NutListDataItem(null, 4d, "g/100g", 0.8d, 2.1d, "Groupe 1", nut3, false));
 					rawMaterial1.setNutList(nutList);
 					//allergenList
 					List<AllergenListDataItem> allergenList = new ArrayList<AllergenListDataItem>();
@@ -419,6 +430,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					nutList = new ArrayList<NutListDataItem>();
 					nutList.add(new NutListDataItem(null, 1d, "g/100g", 0.8d, 1.1d, "Groupe 1", nut1, false));
 					nutList.add(new NutListDataItem(null, 2d, "g/100g", 0.8d, 2.1d, "Groupe 1", nut2, false));
+					nutList.add(new NutListDataItem(null, 6d, "g/100g", 0.8d, 2.1d, "Groupe 1", nut3, false));
 					rawMaterial2.setNutList(nutList);
 					//allergenList
 					allergenList = new ArrayList<AllergenListDataItem>();
@@ -467,6 +479,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					nutList = new ArrayList<NutListDataItem>();
 					nutList.add(new NutListDataItem(null, 1d, "g/100g", null, null, "Groupe 1", nut1, false));
 					nutList.add(new NutListDataItem(null, 2d, "g/100g", null, null, "Groupe 1", nut2, false));
+					nutList.add(new NutListDataItem(null, 4d, "g/100g", 0.8d, 2.1d, "Groupe 1", nut3, false));
 					rawMaterial3.setNutList(nutList);
 					//allergenList
 					allergenList = new ArrayList<AllergenListDataItem>();
@@ -512,6 +525,10 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					rawMaterial4.setIngList(ingList);		
 					rawMaterial4.setCostList(new LinkedList<CostListDataItem>());
 					rawMaterial4.setNutList(new LinkedList<NutListDataItem>());
+					nutList = new ArrayList<NutListDataItem>();
+					nutList.add(new NutListDataItem(null, 0d, "g/100g", 0d,  0d, "Groupe 1", nut1, false));
+					nutList.add(new NutListDataItem(null, 0d, "g/100g", 0d,  0d, "Groupe 1", nut2, false));
+					rawMaterial4.setNutList(nutList);		
 					rawMaterial4NodeRef = alfrescoRepository.create(folderNodeRef, rawMaterial4).getNodeRef();
 					
 					/*-- Raw material 5 --*/

@@ -886,7 +886,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 					assertNotNull("check costList", rmData1.getCostList());
 					assertEquals("check costList", 2, rmData1.getCostList().size());
 					assertNotNull("check nutList", rmData1.getNutList());
-					assertEquals("check nutList", 2, rmData1.getNutList().size());
+					assertEquals("check nutList", 3, rmData1.getNutList().size());
 					assertNotNull("check allergenList", rmData1.getAllergenList());
 					assertEquals("check allergenList", 4, rmData1.getAllergenList().size());
 					assertNotNull("check ingList", rmData1.getIngList());
@@ -901,7 +901,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 					assertNotNull("check costList", rmData1.getCostList());
 					assertEquals("check costList", 2, rmData1.getCostList().size());
 					assertNotNull("check nutList", rmData1.getNutList());
-					assertEquals("check nutList", 2, rmData1.getNutList().size());
+					assertEquals("check nutList", 3, rmData1.getNutList().size());
 					assertNotNull("check allergenList", rmData1.getAllergenList());
 					assertEquals("check allergenList", 4, rmData1.getAllergenList().size());
 					assertNotNull("check ingList", rmData1.getIngList());
