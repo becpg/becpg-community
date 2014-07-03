@@ -8,7 +8,7 @@
    <@renderPickerJS field "picker" />
    picker.setOptions(
    {
-      itemType: "${field.endpointType}",
+      itemType: "${field.endpointType!""}",
       multipleSelectMode: ${field.endpointMany?string},
       itemFamily: "authority",
       <#if field.control.params.extraParams??>

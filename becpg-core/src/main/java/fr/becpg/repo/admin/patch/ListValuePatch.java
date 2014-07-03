@@ -12,7 +12,9 @@ import org.alfresco.repo.domain.node.NodeDAO;
 import org.alfresco.repo.domain.patch.PatchDAO;
 import org.alfresco.repo.domain.qname.QNameDAO;
 import org.alfresco.repo.policy.BehaviourFilter;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.rule.RuleService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.Pair;
 import org.apache.commons.logging.Log;
@@ -36,11 +38,19 @@ public class ListValuePatch extends AbstractBeCPGPatch {
 	private PatchDAO patchDAO;
 	private QNameDAO qnameDAO;
 	private BehaviourFilter policyBehaviourFilter;
+	private RuleService ruleService;
 	
 	
+
 	private final int batchThreads = 3;
 	private final int batchSize = 40;
 	private final long count = batchThreads * batchSize;
+	
+	
+
+	public void setRuleService(RuleService ruleService) {
+		this.ruleService = ruleService;
+	}
 
 	@Override
 	protected String applyInternal() throws Exception {
@@ -83,15 +93,18 @@ public class ListValuePatch extends AbstractBeCPGPatch {
 			}
 		};
 
-		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<NodeRef>("ListValuePatch",
-				transactionService.getRetryingTransactionHelper(), workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 1000);
+		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<NodeRef>("ListValuePatch", transactionService.getRetryingTransactionHelper(),
+				workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 1000);
 
 		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
 
 			public void afterProcess() throws Throwable {
+				ruleService.enableRules();
+				
 			}
 
 			public void beforeProcess() throws Throwable {
+				ruleService.disableRules();
 			}
 
 			public String getIdentifier(NodeRef entry) {
@@ -100,18 +113,16 @@ public class ListValuePatch extends AbstractBeCPGPatch {
 
 			public void process(NodeRef dataListNodeRef) throws Throwable {
 				if (nodeService.exists(dataListNodeRef)) {
-					try {
-						policyBehaviourFilter.disableBehaviour(dataListNodeRef);
-						String name = (String) nodeService.getProperty(dataListNodeRef, ContentModel.PROP_NAME);
-						Boolean isDeleted  = (Boolean) nodeService.getProperty(dataListNodeRef, BeCPGModel.PROP_IS_DELETED);
-						if (name != null) {
-							nodeService.setProperty(dataListNodeRef, ContentModel.PROP_NAME, name.replaceAll("\\?", ""));
-							nodeService.setProperty(dataListNodeRef, BeCPGModel.PROP_LV_VALUE, name);
-							nodeService.setProperty(dataListNodeRef, BeCPGModel.PROP_IS_DELETED, isDeleted!=null ? isDeleted : false);
-						}
-					} finally {
-						policyBehaviourFilter.enableBehaviour(dataListNodeRef);
+					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
+					policyBehaviourFilter.disableBehaviour();
+					String name = (String) nodeService.getProperty(dataListNodeRef, ContentModel.PROP_NAME);
+					Boolean isDeleted = (Boolean) nodeService.getProperty(dataListNodeRef, BeCPGModel.PROP_IS_DELETED);
+					if (name != null) {
+						nodeService.setProperty(dataListNodeRef, ContentModel.PROP_NAME, name.replaceAll("\\?", ""));
+						nodeService.setProperty(dataListNodeRef, BeCPGModel.PROP_LV_VALUE, name);
+						nodeService.setProperty(dataListNodeRef, BeCPGModel.PROP_IS_DELETED, isDeleted != null ? isDeleted : false);
 					}
+
 				} else {
 					logger.warn("dataListNodeRef doesn't exist : " + dataListNodeRef);
 				}
@@ -119,11 +130,10 @@ public class ListValuePatch extends AbstractBeCPGPatch {
 
 		};
 
-    // Now set the batch processor to work
-        
-        batchProcessor.process(worker, true);
-        
-        
+		// Now set the batch processor to work
+
+		batchProcessor.process(worker, true);
+
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}
 
@@ -154,7 +164,5 @@ public class ListValuePatch extends AbstractBeCPGPatch {
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
-	
-	
 
 }

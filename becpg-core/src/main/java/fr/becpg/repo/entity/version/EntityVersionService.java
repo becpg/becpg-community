@@ -29,17 +29,16 @@ public interface EntityVersionService {
 	
 	public NodeRef getVersionHistoryNodeRef(NodeRef entityNodeRef);
 	
-	public NodeRef createVersion(NodeRef nodeRef, Map<String,Serializable> versionProperties);
-	
 	public List<NodeRef> buildVersionHistory(NodeRef versionHistoryRef, NodeRef nodeRef);
 
-	public NodeRef checkOutDataListAndFiles(NodeRef origNodeRef, NodeRef workingCopyNodeRef);
+	public NodeRef doCheckOut(NodeRef origNodeRef, NodeRef workingCopyNodeRef);
 
 	public void cancelCheckOut(NodeRef origNodeRef, NodeRef workingCopyNodeRef);
 	
 	public List<EntityVersion> getAllVersionAndBranches(NodeRef entityNodeRef);
 	
 	public List<NodeRef> getAllVersionBranches(NodeRef entityNodeRef);
+
 
 	
 }

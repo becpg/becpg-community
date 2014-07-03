@@ -189,6 +189,8 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		String format = req.getParameter(PARAM_FORMAT);
 		if (format != null && RemoteEntityFormat.csv.toString().equals(format)) {
 			return RemoteEntityFormat.csv;
+		} else if( format != null && RemoteEntityFormat.xml_excel.toString().equals(format)){
+			return RemoteEntityFormat.xml_excel;
 		}
 		return RemoteEntityFormat.xml;
 	}

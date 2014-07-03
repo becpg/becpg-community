@@ -38,6 +38,7 @@ import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.rule.RuleService;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.MutableAuthenticationService;
 import org.alfresco.service.cmr.security.PermissionService;
@@ -73,12 +74,12 @@ import fr.becpg.repo.repository.RepositoryEntity;
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"classpath:alfresco/application-context.xml","classpath:alfresco/web-scripts-application-context.xml","classpath:alfresco/web-scripts-application-context-test.xml"})
+@ContextConfiguration({ "classpath:alfresco/application-context.xml", "classpath:alfresco/web-scripts-application-context.xml",
+		"classpath:alfresco/web-scripts-application-context-test.xml" })
 public abstract class RepoBaseTestCase extends TestCase implements InitializingBean {
 
 	private static Log logger = LogFactory.getLog(RepoBaseTestCase.class);
-	
-	
+
 	protected NodeRef testFolderNodeRef;
 	protected NodeRef systemFolderNodeRef;
 
@@ -145,13 +146,16 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 	@Resource
 	protected PermissionService permissionService;
-	
+
 	@Resource
 	protected AlfrescoRepository<RepositoryEntity> alfrescoRepository;
-	
+
 	@Resource
 	protected BeCPGCacheService beCPGCacheService;
-	
+
+	@Resource
+	protected RuleService ruleService;
+
 	@Resource
 	protected QNameDAO qNameDAO;
 
@@ -193,29 +197,32 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 				/** The PAT h_ testfolder. */
 				String testFolderName = "TestFolder";
-				
-				NodeRef folderNodeRef = RepoBaseTestCase.INSTANCE.nodeService.getChildByName(
-							repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, testFolderName);
-					
-				if(folderNodeRef != null){
-						nodeService.deleteNode(folderNodeRef);	
+
+				ruleService.disableRules();
+				try {
+
+					NodeRef folderNodeRef = RepoBaseTestCase.INSTANCE.nodeService.getChildByName(repositoryHelper.getCompanyHome(),
+							ContentModel.ASSOC_CONTAINS, testFolderName);
+
+					if (folderNodeRef != null) {
+						nodeService.deleteNode(folderNodeRef);
+					}
+					folderNodeRef = RepoBaseTestCase.INSTANCE.fileFolderService.create(repositoryHelper.getCompanyHome(), testFolderName,
+							ContentModel.TYPE_FOLDER).getNodeRef();
+					return folderNodeRef;
+				} finally {
+					ruleService.enableRules();
 				}
-				folderNodeRef = RepoBaseTestCase.INSTANCE.fileFolderService.create(repositoryHelper.getCompanyHome(),
-						testFolderName, ContentModel.TYPE_FOLDER).getNodeRef();
-					
-				return folderNodeRef;
-				
+
 			}
 		}, false, true);
 
 		boolean shouldInit = shouldInit();
-		
-		
 
 		if (shouldInit) {
 			transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
 				public Boolean execute() throws Throwable {
-									
+
 					// Init repo for test
 					initRepoVisitorService.run(repositoryHelper.getCompanyHome());
 
@@ -229,7 +236,8 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 		systemFolderNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
-				return repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
+				return repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM,
+						TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
 
 			}
 		}, false, true);
@@ -238,12 +246,12 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 	}
 
-	protected boolean shouldInit(){
-		return nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM)) == null;
+	protected boolean shouldInit() {
+		return nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
+				TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM)) == null;
 	}
-	
-	protected  void doInitRepo(boolean shouldInit) {		
-	}	
 
-	
+	protected void doInitRepo(boolean shouldInit) {
+	}
+
 }

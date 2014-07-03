@@ -22,6 +22,6 @@
 	<url>/becpg/product/formulate/recipe</url>
 	<format default="json">argument</format>
 	<authentication>user</authentication>
-	<transaction allow="read" buffersize="0">required</transaction>
+	<transaction allow="readonly" buffersize="0">required</transaction>
 	<lifecycle>public_api</lifecycle>
 </webscript>

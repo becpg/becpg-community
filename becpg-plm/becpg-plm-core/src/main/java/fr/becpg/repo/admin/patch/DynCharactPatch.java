@@ -11,6 +11,7 @@ import org.alfresco.repo.domain.node.NodeDAO;
 import org.alfresco.repo.domain.patch.PatchDAO;
 import org.alfresco.repo.domain.qname.QNameDAO;
 import org.alfresco.repo.policy.BehaviourFilter;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.rule.RuleService;
 import org.alfresco.service.namespace.QName;
@@ -47,87 +48,90 @@ public class DynCharactPatch extends AbstractBeCPGPatch {
 	@Override
 	protected String applyInternal() throws Exception {
 
-		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
-			final List<NodeRef> result = new ArrayList<NodeRef>();
+			AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
-			long maxNodeId = getPatchDAO().getMaxAdmNodeID();
+			BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
+				final List<NodeRef> result = new ArrayList<NodeRef>();
 
-			long minSearchNodeId = 1;
-			long maxSearchNodeId = count;
+				long maxNodeId = getPatchDAO().getMaxAdmNodeID();
 
-			Pair<Long, QName> val = getQnameDAO().getQName(PLMModel.TYPE_DYNAMICCHARACTLIST);
+				long minSearchNodeId = 1;
+				long maxSearchNodeId = count;
 
-			public int getTotalEstimatedWorkSize() {
-				return result.size();
-			}
+				Pair<Long, QName> val = getQnameDAO().getQName(PLMModel.TYPE_DYNAMICCHARACTLIST);
 
-			public Collection<NodeRef> getNextWork() {
-				if (val != null) {
-					Long typeQNameId = val.getFirst();
+				public int getTotalEstimatedWorkSize() {
+					return result.size();
+				}
 
-					result.clear();
+				public Collection<NodeRef> getNextWork() {
+					if (val != null) {
+						Long typeQNameId = val.getFirst();
 
-					while (result.isEmpty() && minSearchNodeId < maxNodeId) {
-						List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, maxSearchNodeId);
+						result.clear();
 
-						for (Long nodeid : nodeids) {
-							NodeRef.Status status = getNodeDAO().getNodeIdStatus(nodeid);
-							if (!status.isDeleted()) {
-								result.add(status.getNodeRef());
+						while (result.isEmpty() && minSearchNodeId < maxNodeId) {
+							List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, maxSearchNodeId);
+
+							for (Long nodeid : nodeids) {
+								NodeRef.Status status = getNodeDAO().getNodeIdStatus(nodeid);
+								if (!status.isDeleted()) {
+									result.add(status.getNodeRef());
+								}
 							}
+							minSearchNodeId = minSearchNodeId + count;
+							maxSearchNodeId = maxSearchNodeId + count;
 						}
-						minSearchNodeId = minSearchNodeId + count;
-						maxSearchNodeId = maxSearchNodeId + count;
 					}
+
+					return result;
+				}
+			};
+
+			BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<NodeRef>("DynCharactPatch",
+					transactionService.getRetryingTransactionHelper(), workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 1000);
+
+			BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
+
+				public void afterProcess() throws Throwable {
+					ruleService.disableRules();
 				}
 
-				return result;
-			}
-		};
+				public void beforeProcess() throws Throwable {
+					ruleService.enableRules();
+				}
 
-		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<NodeRef>("DynCharactPatch", transactionService.getRetryingTransactionHelper(),
-				workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 1000);
+				public String getIdentifier(NodeRef entry) {
+					return entry.toString();
+				}
 
-		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
+				public void process(NodeRef dataListNodeRef) throws Throwable {
+					
+					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
+					policyBehaviourFilter.disableBehaviour();
+					
+					if (nodeService.exists(dataListNodeRef)) {
+						AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
+						Boolean isManual = (Boolean) nodeService.getProperty(dataListNodeRef, BeCPGModel.PROP_IS_MANUAL_LISTITEM);
+						if (Boolean.TRUE.equals(isManual)) {
+							nodeService.setProperty(dataListNodeRef, PLMModel.PROP_DYNAMICCHARACT_SYNCHRONIZABLE_STATE,
+									DynamicCharactSynchronisableState.Manual);
+						} else {
+							nodeService.setProperty(dataListNodeRef, PLMModel.PROP_DYNAMICCHARACT_SYNCHRONIZABLE_STATE,
+									DynamicCharactSynchronisableState.Synchronized);
+						}
+						nodeService.removeAspect(dataListNodeRef, BeCPGModel.ASPECT_IS_MANUAL_LISTITEM);
 
-			public void afterProcess() throws Throwable {
-			}
-
-			public void beforeProcess() throws Throwable {
-			}
-
-			public String getIdentifier(NodeRef entry) {
-				return entry.toString();
-			}
-
-			public void process(NodeRef dataListNodeRef) throws Throwable {
-				if (nodeService.exists(dataListNodeRef)) {
-
-					Boolean isManual = (Boolean) nodeService.getProperty(dataListNodeRef, BeCPGModel.PROP_IS_MANUAL_LISTITEM);
-					if (Boolean.TRUE.equals(isManual)) {
-						nodeService.setProperty(dataListNodeRef, PLMModel.PROP_DYNAMICCHARACT_SYNCHRONIZABLE_STATE,
-								DynamicCharactSynchronisableState.Manual);
 					} else {
-						nodeService.setProperty(dataListNodeRef, PLMModel.PROP_DYNAMICCHARACT_SYNCHRONIZABLE_STATE,
-								DynamicCharactSynchronisableState.Synchronized);
+						logger.warn("dataListNodeRef doesn't exist : " + dataListNodeRef);
 					}
-					nodeService.removeAspect(dataListNodeRef, BeCPGModel.ASPECT_IS_MANUAL_LISTITEM);
 
-				} else {
-					logger.warn("dataListNodeRef doesn't exist : " + dataListNodeRef);
 				}
-			}
 
-		};
-		
-		try {
-			policyBehaviourFilter.disableBehaviour();
-			ruleService.disableRules();
+			};
+
 			batchProcessor.process(worker, true);
-		} finally {
-			policyBehaviourFilter.enableBehaviour();
-			ruleService.enableRules();
-		}
+		
 
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}

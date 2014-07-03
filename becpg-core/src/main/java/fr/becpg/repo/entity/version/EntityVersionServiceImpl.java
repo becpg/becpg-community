@@ -16,6 +16,7 @@ import org.alfresco.repo.rule.RuntimeRuleService;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.version.Version2Model;
 import org.alfresco.repo.version.VersionBaseModel;
+import org.alfresco.repo.version.VersionModel;
 import org.alfresco.repo.version.common.VersionImpl;
 import org.alfresco.repo.version.common.versionlabel.SerialVersionLabelPolicy;
 import org.alfresco.service.cmr.coci.CheckOutCheckInServiceException;
@@ -30,6 +31,7 @@ import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.version.Version;
 import org.alfresco.service.cmr.version.VersionHistory;
 import org.alfresco.service.cmr.version.VersionService;
+import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
@@ -37,6 +39,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
@@ -55,16 +58,30 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * 
  * @author querephi
  */
+/**
+ * 
+ * checkOut
+ *  - node is CP by versionService
+ *  - create 1rst version by coping oldNode 1.0
+ *  - mv file and datalist and variant
+ *  - manual modification
+ * checkIn
+ *  -  copy working copy to history 1.1
+ *  -  mv file and datalist to oldNode
+ *  -  versionService merge oldNode
+ * 
+ */
 @Service("entityVersionService")
 public class EntityVersionServiceImpl implements EntityVersionService {
 
 	
-
 	private static final QName QNAME_ENTITIES_HISTORY = QName.createQName(BeCPGModel.BECPG_URI, RepoConsts.ENTITIES_HISTORY_NAME);
 
 	private static final String KEY_ENTITIES_HISTORY = "EntitiesHistory";
 
 	private static final String MSG_ERR_NOT_AUTHENTICATED = "coci_service.err_not_authenticated";
+	
+	private static final String MSG_INITIAL_VERSION = "create_version.initial_version";
 
 	private static Log logger = LogFactory.getLog(EntityVersionServiceImpl.class);
 
@@ -101,11 +118,10 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	@Autowired
 	@Qualifier("ruleService")
 	private RuntimeRuleService ruleService;
-
-	@Override
-	public NodeRef createVersion(final NodeRef nodeRef, Map<String, Serializable> versionProperties) {
-			return internalCreateVersionAndCheckin(nodeRef, null, versionProperties);
-	}
+	
+	@Autowired(required=false)
+	private EntityVersionPlugin[] entityVersionPlugins;
+	
 
 	@Override
 	public NodeRef createVersionAndCheckin(final NodeRef origNodeRef, final NodeRef workingCopyNodeRef, Map<String, Serializable> versionProperties) {
@@ -113,8 +129,23 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	}
 
 	@Override
-	public NodeRef checkOutDataListAndFiles(final NodeRef origNodeRef, final NodeRef workingCopyNodeRef) {
+	public NodeRef doCheckOut(final NodeRef origNodeRef, final NodeRef workingCopyNodeRef) {
 
+		logger.debug("checkOutDataListAndFiles");
+		//Create initialVersion 
+		if( getVersionHistoryNodeRef(origNodeRef) == null){
+			// Create the initial-version
+			Map<String, Serializable> versionProperties = new HashMap<String, Serializable>(1);
+			versionProperties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
+			
+			if (logger.isDebugEnabled()) {
+				logger.debug("Create initial version : " + I18NUtil.getMessage(MSG_INITIAL_VERSION));
+			}
+
+			versionProperties.put(Version.PROP_DESCRIPTION, I18NUtil.getMessage(MSG_INITIAL_VERSION));
+			internalCreateVersionAndCheckin(origNodeRef, null, versionProperties);
+		}
+		
 		// Copy entity datalists (rights are checked by copyService during
 		// recursiveCopy)
 		AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<Void>() {
@@ -137,6 +168,13 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		// Set contributor permission for user to edit datalists
 		String userName = getUserName();
 		permissionService.setPermission(workingCopyNodeRef, userName, PermissionService.CONTRIBUTOR, true);
+		
+		if(entityVersionPlugins!=null){
+			for(EntityVersionPlugin entityVersionPlugin : entityVersionPlugins){
+				entityVersionPlugin.doAfterCheckout(origNodeRef, workingCopyNodeRef);
+			}
+		}
+		
 
 		return workingCopyNodeRef;
 	}
@@ -157,6 +195,12 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			}
 		}, AuthenticationUtil.getSystemUserName());
 
+		//Delete initialversion
+		if(versionService.getVersionHistory(origNodeRef) == null || versionService.getVersionHistory(origNodeRef).getAllVersions().size() == 1){
+			logger.debug("Deleting initial version");
+			deleteVersionHistory(origNodeRef);
+		}
+		
 	}
 
 	private NodeRef internalCreateVersionAndCheckin(final NodeRef origNodeRef, final NodeRef workingCopyNodeRef,
@@ -171,6 +215,14 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		try {
 			NodeRef versionHistoryRef = getVersionHistoryNodeRef(origNodeRef);
 			boolean isInitialVersion = versionHistoryRef == null ? true : false;
+			
+			if(!isInitialVersion && entityVersionPlugins!=null){
+				for(EntityVersionPlugin entityVersionPlugin : entityVersionPlugins){
+					entityVersionPlugin.doBeforeCheckin(origNodeRef, workingCopyNodeRef);
+				}
+			}
+			
+			
 			if (versionHistoryRef == null) {
 				versionHistoryRef = createVersionHistory(getEntitiesHistoryFolder(), origNodeRef);
 			}
@@ -562,9 +614,19 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 		String versionLabel = RepoConsts.INITIAL_VERSION;
 		if (!isInitialVersion) {
+			
+			if(preceedingVersion == null){
+				
+				Map<String, Serializable> propsMap = new HashMap<String, Serializable>();
+				propsMap.put(VersionBaseModel.PROP_VERSION_LABEL, RepoConsts.INITIAL_VERSION);
+				propsMap.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
+				
+				preceedingVersion = new VersionImpl(propsMap, origNodeRef);
+			} 
 			// Default the version label to the SerialVersionLabelPolicy
 			SerialVersionLabelPolicy defaultVersionLabelPolicy = new SerialVersionLabelPolicy();
 			versionLabel = defaultVersionLabelPolicy.calculateVersionLabel(classRef, preceedingVersion, versionProperties);
+			
 		}
 
 		if (logger.isDebugEnabled()) {
