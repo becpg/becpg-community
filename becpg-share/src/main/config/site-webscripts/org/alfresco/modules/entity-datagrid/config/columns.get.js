@@ -200,7 +200,7 @@ function getColumns(itemType, list, formIdArgs, mode) {
 		// beCPG : WUsed
 		var formId = mode == "bulk-edit" ? "bulk-edit" :"datagrid";
 		if (formIdArgs == null) {
-			if (list == "WUsed") {
+			if (list!=null && list.indexOf("WUsed") == 0) {
 				formId = "datagridWUsed";
 			} else if (list == "sub-datagrid") {
 				formId = "sub-datagrid";

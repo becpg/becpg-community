@@ -54,7 +54,8 @@
 			itemType : null,
 			assocType : null,
 			nodeRefs : null,
-			searchQuery : null
+			searchQuery : null,
+			searchTerm : null
 		},
 
 		/**
@@ -115,7 +116,8 @@
 				} else {
 					dt.options.extraParams = YAHOO.lang.JSON.stringify({
 						operator : me.widgets.operators.value,
-						searchQuery : YAHOO.lang.JSON.parse(me.options.searchQuery)
+						searchQuery : YAHOO.lang.JSON.parse(me.options.searchQuery),
+						searchTerm : me.options.searchTerm
 					});
 				}
 

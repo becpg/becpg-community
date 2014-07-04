@@ -8,6 +8,7 @@ function main()
  AlfrescoUtil.param('assocName', null);
  
  model.searchQuery = (page.url.args["q"] != null) ? page.url.args["q"] : "";
+ model.searchTerm = (page.url.args["t"] != null) ? page.url.args["t"] : "";
  
  var datatype = null;
  if (model.searchQuery !== null && model.searchQuery.length !== 0)
@@ -56,7 +57,8 @@ function main()
     options : {
        type: model.type,
        nodeRefs : model.nodeRefs, 
-       searchQuery :  model.searchQuery
+       searchQuery :  model.searchQuery,
+       searchTerm : model.searchTerm
       }
    };
     
