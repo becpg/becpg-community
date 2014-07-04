@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -63,6 +64,7 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 			if(r.getNodeRef() != null){
 				if(dbReqCtrlList.containsKey(r.getReqMessage())){
 					duplicates.add(r);
+					logger.warn("This should not happen!");
 				} else {
 					dbReqCtrlList.put(r.getReqMessage(), r);
 				}
@@ -70,6 +72,12 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 			else{
 				if(newReqCtrlList.containsKey(r.getReqMessage())){
 					duplicates.add(r);
+					//Merge sources
+					for(NodeRef tmpref : r.getSources()){
+						if(!newReqCtrlList.get(r.getReqMessage()).getSources().contains(tmpref)){
+							newReqCtrlList.get(r.getReqMessage()).getSources().add(tmpref);
+						}
+					}
 				} else {
 					newReqCtrlList.put(r.getReqMessage(), r);
 				}
