@@ -206,11 +206,12 @@ public class WUsedExtractor extends MultiLevelExtractor {
 					JSONObject jsonObject = new JSONObject(dataListFilter.getExtraParams());
 					if (jsonObject != null && jsonObject.has("searchQuery")) {
 						JSONObject searchQuery = (JSONObject) jsonObject.get("searchQuery");
+						String searchTerm = (String) jsonObject.get("searchTerm");
 						if (searchQuery != null) {
 							Map<String, String> criteriaMap = JSONHelper.extractCriteria(searchQuery);
 							QName datatype = QName.createQName(searchQuery.getString("datatype"), namespaceService);
 
-							BeCPGQueryBuilder queryBuilder = advSearchService.createSearchQuery(datatype, null, null, true, null, null);
+							BeCPGQueryBuilder queryBuilder = advSearchService.createSearchQuery(datatype, searchTerm, null, true, null, null);
 
 							ret = advSearchService.queryAdvSearch(datatype, queryBuilder, criteriaMap, RepoConsts.MAX_RESULTS_256);
 						}
