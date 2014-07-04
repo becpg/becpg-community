@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.annotation.Resource;
 
@@ -45,6 +46,9 @@ public class ListValueServiceTest extends AbstractListValuePluginTest {
 	@Test
 	public void testSuggestSupplier() {
 		
+		final String supplierName =  UUID.randomUUID().toString();
+		
+		
 		final NodeRef supplierNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
@@ -53,7 +57,7 @@ public class ListValueServiceTest extends AbstractListValuePluginTest {
 				// Create supplier 1 with allowed constraint
 				logger.debug("create temp supplier 1");
 				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-				properties.put(ContentModel.PROP_NAME, "Supplier 1");
+				properties.put(ContentModel.PROP_NAME, supplierName);
 				return nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS,
 						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_SUPPLIER, properties).getChildRef();
 			}
@@ -64,12 +68,12 @@ public class ListValueServiceTest extends AbstractListValuePluginTest {
 				
 				// suggest supplier 1
 				String[] arrClassNames = { "bcpg:supplier" };
-				List<ListValueEntry> suggestions = entityListValuePlugin.suggestTargetAssoc(PLMModel.TYPE_SUPPLIER, "Supplier 1", 0, 10,arrClassNames, null).getResults();
+				List<ListValueEntry> suggestions = entityListValuePlugin.suggestTargetAssoc(PLMModel.TYPE_SUPPLIER, supplierName, 0, 10,arrClassNames, null).getResults();
 
 				boolean containsSupplier = false;
 				for (ListValueEntry s : suggestions) {
 					logger.debug("supplier test 1: " + s.getName()+" "+s.getValue());
-					if (s.getValue().equals(supplierNodeRef.toString()) && s.getName().equals("Supplier 1")) {
+					if (s.getValue().equals(supplierNodeRef.toString()) && s.getName().equals(supplierName)) {
 						containsSupplier = true;
 					}
 				}
@@ -83,7 +87,7 @@ public class ListValueServiceTest extends AbstractListValuePluginTest {
 				containsSupplier = false;
 				for (ListValueEntry s : suggestions) {
 					logger.debug("supplier test 2: " + s.getName()+" "+s.getValue());
-					if (s.getValue().equals(supplierNodeRef.toString()) && s.getName().equals("Supplier 1")) {
+					if (s.getValue().equals(supplierNodeRef.toString()) && s.getName().equals(supplierName)) {
 						containsSupplier = true;
 					}
 				}
@@ -99,7 +103,7 @@ public class ListValueServiceTest extends AbstractListValuePluginTest {
 				containsSupplier = false;
 				for (ListValueEntry s : suggestions) {
 					logger.debug("supplier: " + s.getName());
-					if (s.getValue().equals(supplierNodeRef.toString()) && s.getName().equals("Supplier 1")) {
+					if (s.getValue().equals(supplierNodeRef.toString()) && s.getName().equals(supplierName)) {
 						containsSupplier = true;
 					}
 				}
@@ -109,7 +113,7 @@ public class ListValueServiceTest extends AbstractListValuePluginTest {
 
 				// filter by client : no results
 				String[] arrClassNames2 = { "bcpg:client" };
-				suggestions = entityListValuePlugin.suggestTargetAssoc(PLMModel.TYPE_SUPPLIER, "Supplier 1", 0, 10,arrClassNames2,null).getResults();
+				suggestions = entityListValuePlugin.suggestTargetAssoc(PLMModel.TYPE_SUPPLIER, supplierName, 0, 10,arrClassNames2,null).getResults();
 
 				assertEquals("0 suggestion", 0, suggestions.size());
 				

@@ -33,7 +33,6 @@ import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.junit.Before;
 import org.junit.Test;
 
 import fr.becpg.model.PLMModel;
@@ -49,10 +48,8 @@ import fr.becpg.repo.ecm.data.dataList.WUsedListDataItem;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.FinishedProductData;
-import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductUnit;
-import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
@@ -60,7 +57,7 @@ import fr.becpg.repo.product.data.productList.DeclarationType;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
-import fr.becpg.test.PLMBaseTestCase;
+import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
 /**
  * ECO test class
@@ -68,7 +65,7 @@ import fr.becpg.test.PLMBaseTestCase;
  * @author quere
  * 
  */
-public class ECOTest extends PLMBaseTestCase {
+public class ECOTest extends AbstractFinishedProductTest {
 
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ECOTest.class);
@@ -89,169 +86,14 @@ public class ECOTest extends PLMBaseTestCase {
 	@Resource
 	private EntityVersionService entityVersionService;
 
-	public static final String Double_FORMAT = "0.0000";
-
-	/** The local s f1 node ref. */
-	private NodeRef localSF1NodeRef;
-
-	/** The raw material1 node ref. */
-	private NodeRef rawMaterial1NodeRef;
-
-	/** The raw material2 node ref. */
-	private NodeRef rawMaterial2NodeRef;
-
-	/** The local s f2 node ref. */
-	private NodeRef localSF2NodeRef;
-
-	/** The raw material3 node ref. */
-	private NodeRef rawMaterial3NodeRef;
-
-	/** The raw material4 node ref. */
-	private NodeRef rawMaterial4NodeRef;
-
-	/** The raw material5 node ref. */
-	private NodeRef rawMaterial5NodeRef;
-
-	/** The cost1. */
-	private NodeRef cost1;
-
-	/** The cost2. */
-	private NodeRef cost2;
-
-	/** The nut1. */
-	private NodeRef nut1;
-
-	/** The nut2. */
-	private NodeRef nut2;
-
+	
 	@Override
-	@Before
 	public void setUp() throws Exception {
 		super.setUp();
-
-		cost1 = costs.get(0);
-		cost2 = costs.get(1);
-
-		nut1 = nuts.get(0);
-		nut2 = nuts.get(1);
-
 		// create RM and lSF
 		initParts();
-
 	}
 
-	/**
-	 * Inits the parts.
-	 */
-	private void initParts() {
-
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			public NodeRef execute() throws Throwable {
-
-				/*-- create raw materials --*/
-				logger.debug("/*-- create raw materials --*/");
-				/*-- Raw material 1 --*/
-				RawMaterialData rawMaterial1 = new RawMaterialData();
-				rawMaterial1.setName("Raw material 1");
-				rawMaterial1.setLegalName("Legal Raw material 1");
-				rawMaterial1.setHierarchy1(HIERARCHY1_SEA_FOOD_REF);
-				rawMaterial1.setHierarchy2(HIERARCHY2_CRUSTACEAN_REF);
-				// costList
-				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
-				costList.add(new CostListDataItem(null, 3d, "€/kg", null, cost1, false));
-				costList.add(new CostListDataItem(null, 2d, "€/kg", null, cost2, false));
-				rawMaterial1.setCostList(costList);
-				// nutList
-				List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
-				nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d, 0d, "Groupe 1", nut1, false));
-				nutList.add(new NutListDataItem(null, 2d, "g/100g", 0d, 0d, "Groupe 1", nut2, false));
-				rawMaterial1.setNutList(nutList);
-
-				rawMaterial1NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial1).getNodeRef();
-
-				/*-- Raw material 2 --*/
-				RawMaterialData rawMaterial2 = new RawMaterialData();
-				rawMaterial2.setName("Raw material 2");
-				rawMaterial2.setLegalName("Legal Raw material 2");
-				rawMaterial2.setHierarchy1(HIERARCHY1_SEA_FOOD_REF);
-				rawMaterial2.setHierarchy2(HIERARCHY2_CRUSTACEAN_REF);
-				// costList
-				costList = new ArrayList<CostListDataItem>();
-				costList.add(new CostListDataItem(null, 1d, "€/kg", null, cost1, false));
-				costList.add(new CostListDataItem(null, 2d, "€/kg", null, cost2, false));
-				rawMaterial2.setCostList(costList);
-				// nutList
-				nutList = new ArrayList<NutListDataItem>();
-				nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d, 0d, "Groupe 1", nut1, false));
-				nutList.add(new NutListDataItem(null, 2d, "g/100g", 0d, 0d, "Groupe 1", nut2, false));
-				rawMaterial2.setNutList(nutList);
-				rawMaterial2NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial2).getNodeRef();
-
-				/*-- Raw material 3 --*/
-				RawMaterialData rawMaterial3 = new RawMaterialData();
-				rawMaterial3.setName("Raw material 3");
-				rawMaterial3.setLegalName("Legal Raw material 3");
-				rawMaterial3.setHierarchy1(HIERARCHY1_SEA_FOOD_REF);
-				rawMaterial3.setHierarchy2(HIERARCHY2_CRUSTACEAN_REF);
-				// costList
-				costList = new ArrayList<CostListDataItem>();
-				costList.add(new CostListDataItem(null, 1d, "€/kg", null, cost1, false));
-				costList.add(new CostListDataItem(null, 2d, "€/kg", null, cost2, false));
-				rawMaterial3.setCostList(costList);
-				// nutList
-				nutList = new ArrayList<NutListDataItem>();
-				nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d, 0d, "Groupe 1", nut1, false));
-				nutList.add(new NutListDataItem(null, 2d, "g/100g", 0d, 0d, "Groupe 1", nut2, false));
-				rawMaterial3.setNutList(nutList);
-				rawMaterial3NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial3).getNodeRef();
-
-				/*-- Raw material 4 --*/
-				RawMaterialData rawMaterial4 = new RawMaterialData();
-				rawMaterial4.setName("Raw material 4");
-				rawMaterial4.setLegalName("Legal Raw material 4");
-				rawMaterial4.setHierarchy1(HIERARCHY1_SEA_FOOD_REF);
-				rawMaterial4.setHierarchy2(HIERARCHY2_CRUSTACEAN_REF);
-				rawMaterial4NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial4).getNodeRef();
-
-				/*-- Raw material 5 --*/
-				RawMaterialData rawMaterial5 = new RawMaterialData();
-				rawMaterial5.setName("Raw material 5");
-				rawMaterial5.setLegalName("Legal Raw material 5");
-				rawMaterial5.setHierarchy1(HIERARCHY1_SEA_FOOD_REF);
-				rawMaterial5.setHierarchy2(HIERARCHY2_CRUSTACEAN_REF);
-				// costList
-				costList = new ArrayList<CostListDataItem>();
-				costList.add(new CostListDataItem(null, 5d, "€/m", null, cost1, false));
-				costList.add(new CostListDataItem(null, 6d, "€/m", null, cost2, false));
-				rawMaterial5.setCostList(costList);
-				// nutList
-				nutList = new ArrayList<NutListDataItem>();
-				nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d, 0d, "Groupe 1", nut1, false));
-				nutList.add(new NutListDataItem(null, 3d, "g/100g", 0d, 0d, "Groupe 1", nut2, false));
-				rawMaterial5.setNutList(nutList);
-				rawMaterial5NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial5).getNodeRef();
-
-				/*-- Local semi finished product 1 --*/
-				LocalSemiFinishedProductData localSF1 = new LocalSemiFinishedProductData();
-				localSF1.setName("Local semi finished 1");
-				localSF1.setLegalName("Legal Local semi finished 1");
-				localSF1.setHierarchy1(HIERARCHY1_SEA_FOOD_REF);
-				localSF1.setHierarchy2(HIERARCHY2_CRUSTACEAN_REF);
-				localSF1NodeRef = alfrescoRepository.create(testFolderNodeRef, localSF1).getNodeRef();
-
-				/*-- Local semi finished product 2 --*/
-				LocalSemiFinishedProductData localSF2 = new LocalSemiFinishedProductData();
-				localSF2.setName("Local semi finished 2");
-				localSF2.setLegalName("Legal Local semi finished 2");
-				localSF2.setHierarchy1(HIERARCHY1_SEA_FOOD_REF);
-				localSF2.setHierarchy2(HIERARCHY2_CRUSTACEAN_REF);
-				localSF2NodeRef = alfrescoRepository.create(testFolderNodeRef, localSF2).getNodeRef();
-
-				return null;
-
-			}
-		}, false, true);
-	}
 
 	/**
 	 * create a finished product

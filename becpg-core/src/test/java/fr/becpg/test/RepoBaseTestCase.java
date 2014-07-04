@@ -17,8 +17,6 @@
  ******************************************************************************/
 package fr.becpg.test;
 
-import java.util.UUID;
-
 import javax.annotation.Resource;
 
 import junit.framework.TestCase;
