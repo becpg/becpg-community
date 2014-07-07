@@ -64,6 +64,13 @@
 		</itemTypes>
 	</config>
 	
+	<config evaluator="string-compare" condition="wused-search">
+		<itemTypes>
+			<!-- Sample use case -->
+			<!--  <itemType name="bcpg:entityV2" /> -->
+		</itemTypes>
+	</config>
+	
 	<config evaluator="string-compare" condition="DocumentLibrary">
 		<aspects>
 			<visible>

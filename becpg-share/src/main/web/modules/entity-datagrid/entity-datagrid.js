@@ -820,7 +820,12 @@
 									fn : this.onFilterFormTemplateLoaded,
 									scope : this
 								},
-								failureMessage : "Could not load form component '" + filterFormUrl + "'.",
+								failureCallback : {
+									fn : function (){
+										this.widgets.filterForm.set("disabled", true);
+									},
+									scope : this
+								},
 								scope : this,
 								execScripts : true
 							});

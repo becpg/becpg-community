@@ -186,13 +186,13 @@
 		               var queryInput = Dom.get(this.id + "-search-text");
 		               queryInput.value = this.options.initialSearchTerm;
 
-		               this.widgets.enterListener = new YAHOO.util.KeyListener(queryInput, {
-			               keys : YAHOO.util.KeyListener.KEY.ENTER
-		               }, {
-		                  fn : me._searchEnterHandler,
-		                  scope : this,
-		                  correctScope : true
-		               }, "keydown").enable();
+//		               this.widgets.enterListener = new YAHOO.util.KeyListener(queryInput, {
+//			               keys : YAHOO.util.KeyListener.KEY.ENTER
+//		               }, {
+//		                  fn : me._searchEnterHandler,
+//		                  scope : this,
+//		                  correctScope : true
+//		               }, "keydown").enable();
 
 		               // trigger the initial search
 		               YAHOO.Bubbling.fire("onSearch", {
@@ -211,9 +211,9 @@
 		               toggleLink = Dom.get(this.id + "-repo-link");
 		               Event.addListener(toggleLink, "click", this.onRepositorySearch, this, true);
 
-		               // search YUI button
-		               this.widgets.searchButton = Alfresco.util.createYUIButton(this, "search-button",
-		                     this.onSearchClick);
+//		               // search YUI button
+//		               this.widgets.searchButton = Alfresco.util.createYUIButton(this, "search-button",
+//		                     this.onSearchClick);
 
 		               // menu button for sort options
 		               this.widgets.sortButton = new YAHOO.widget.Button(this.id + "-sort-menubutton", {

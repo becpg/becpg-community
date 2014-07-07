@@ -1,15 +1,21 @@
 
 <@markup id="customSearch-css" target="css"  action="after">
    <#-- CSS Dependencies -->
+  <#include "../form/form.css.ftl"/>
   <@link href="${url.context}/res/components/search/custom-search.css" group="search"/>
 </@>
 
 <#-- BUG HERE Why should I use replace ? -->
 <@markup id="customSearch-js" target="js" action="replace">
    <#-- JavaScript Dependencies -->
+   <#include "../form/form.js.ftl"/>
    <@script src="${url.context}/res/components/search/search-lib.js" group="search"/>
    <@script src="${url.context}/res/components/search/search.js" group="search"/>
    <@script src="${url.context}/res/components/search/custom-search.js"  group="search" />
+    
+   <@script src="${url.context}/res/components/form/date-range.js" group="search"/>
+   <@script src="${url.context}/res/components/form/number-range.js" group="search"/>
+   <@script src="${url.context}/res/components/search/advsearch.js" group="search"/>
 </@>
 
 <@markup id="customSearch-html" target="html" action="replace">
@@ -24,18 +30,69 @@
             <span <#if (searchconfig.getChildValue('repository-search')!"context") == "none">class="hidden"</#if>>| <a id="${el}-repo-link" href="#" <#if searchRepo>class="bold"</#if>>${msg('message.repository')}</a></span>
          </div>
          </#if>
-         <div class="search-box">
+         <div class="search-box-adv">
             <div>
                <input type="text" class="terms" name="${el}-search-text" id="${el}-search-text" value="" maxlength="1024" />
             </div>
+            <div>  
+               <#-- component to show list of forms, displays current form -->
+               <span class="selected-form-button">
+                  <span id="${el}-selected-form-button" class="yui-button yui-menu-button">
+                     <span class="first-child">
+                        <button type="button" tabindex="0"></button>
+                     </span>
+                  </span>
+               </span>
+               <#-- menu list of available forms -->
+               <div id="${el}-selected-form-list"  style="visibility:hidden" class="yuimenu">
+                  <div class="bd">
+                     <ul>
+                        <#list searchForms as f>
+                        <li>
+                           <span class="form-type-name" tabindex="0">${f.label?html}</span>
+                           <span class="form-type-description">${f.description?html}</span>
+                        </li>
+                        </#list>
+                     </ul>
+                  </div>
+               </div>
+            </div>
             <div>
-               <span id="${el}-search-button" class="yui-button yui-push-button search-icon">
+         	  <span class="adv-search-button">
+                  <span id="${el}-adv-search-button" class="yui-button yui-menu-button">
+                     <span class="first-child">
+                        <button type="button" tabindex="0"></button>
+                     </span>
+                  </span>
+               </span>
+               <#-- menu list of available forms -->
+               <div id="${el}-adv-search-panel" style="visibility:hidden"  class="yuimenu"> 
+	                  <div class="bd">
+				         <div id="${el}-forms" class="forms-container form-fields"></div>        
+				         <div class="yui-gc form-row">
+				            <div class="yui-u first"></div>
+				            <#-- search button -->
+				            <div class="yui-u align-right">
+				               <span id="${el}-search-button-2" class="yui-button yui-push-button search-icon">
+				                  <span class="first-child">
+				                     <button type="button">${msg('button.search')}</button>
+				                  </span>
+				               </span>
+				            </div>
+				         </div>
+				      </div>
+		         </div>
+		     </div>
+            <div>
+               <span id="${el}-search-button-1" class="yui-button yui-push-button search-icon">
                   <span class="first-child">
                      <button type="button">${msg('button.search')}</button>
                   </span>
                </span>
             </div>
+
          </div>
+        
          
          <div class="yui-gf search-bar theme-bg-color-3">
             <div class="yui-u first">
