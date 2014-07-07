@@ -17,7 +17,7 @@
 	<Dimension type="TimeDimension"  name="Time dimension">
 		<Hierarchy name="Date" hasAll="true" allMemberName="All Periods" allMemberCaption="Toutes les périodes"  primaryKey="id" caption="Date">
 			<Table name="becpg_dimdate" alias="olapDate" />
-			<Level name="Année" column="Year" type="Numeric" uniqueMembers="true" levelType="TimeYears"  />
+			<Level name="Année" column="Year" type="Numeric"  levelType="TimeYears"  />
 			<Level name="Trimestre" column="Quarter" nameColumn="NQuarter" type="String"  levelType="TimeQuarters"  />
 			<Level name="Mois" column="Month" nameColumn="NMonth4L" ordinalColumn="Month" type="Numeric"  levelType="TimeMonths"  />
 			<Level name="Semaine" column="Week" nameColumn="NWeek" type="String"  levelType="TimeWeeks"  />
@@ -26,12 +26,12 @@
 		<#--
 		<Hierarchy name="Date par mois"  hasAll="true" allMemberName="All Periods" allMemberCaption="Toutes les périodes"  primaryKey="id" caption="Date par mois" visible="false">
 			<Table name="becpg_dimdate" alias="olapDate" />
-			<Level name="Année" column="Year" type="Numeric" uniqueMembers="true" levelType="TimeYears"  />
+			<Level name="Année" column="Year" type="Numeric"  levelType="TimeYears"  />
 			<Level name="Mois" column="Month" nameColumn="NMonth4L" ordinalColumn="Month" type="Numeric"  levelType="TimeMonths"  />
 		</Hierarchy>
 		<Hierarchy name="Date par semaine"  hasAll="true" allMemberName="All Periods" allMemberCaption="Toutes les périodes"  primaryKey="id" caption="Date par semaine" visible="false">
 			<Table name="becpg_dimdate" alias="olapDate" />
-			<Level name="Année" column="Year" type="Numeric" uniqueMembers="true" levelType="TimeYears"  />
+			<Level name="Année" column="Year" type="Numeric"  levelType="TimeYears"  />
 			<Level name="Semaine" column="Week" nameColumn="NWeek" type="String"  levelType="TimeWeeks"  />
 		</Hierarchy> -->
 	</Dimension>
@@ -45,6 +45,150 @@
 	NC internes regrouper par défauts
   -->
 
+
+	<Cube name="Exigences non respectées" cache="true" enabled="true" defaultMeasure="Nombre d'exigences">
+		<View alias="nc">
+			<SQL dialect="generic">
+			<![CDATA[
+				select
+					datalist.id as id,
+					datalist.datalist_id as noderef,
+					datalist.entity_fact_id as entity_fact_id,
+					datalist.is_last_version as isLastVersion,
+					MAX(IF(prop.prop_name = "bcpg:rclReqType",prop.string_value,NULL)) as rclReqType,
+					MAX(IF(prop.prop_name = "bcpg:rclReqMessage",prop.string_value,NULL)) as rclReqMessage,
+					MAX(IF(prop.prop_name = "bcpg:rclSources",prop.prop_id,NULL)) as rclSources,
+					datalist.instance_id as instance_id
+				from
+					becpg_datalist AS datalist LEFT JOIN becpg_property AS prop ON prop.datalist_id = datalist.id
+				where
+					datalist.item_type = "bcpg:reqCtrlList" and datalist.is_last_version = true and instance_id = ${instanceId}
+				group by 
+					id
+				]]>
+			</SQL>
+		</View>
+		
+		<Dimension  name="Message" >
+			<Hierarchy name="Message" hasAll="true" allMemberCaption="Tous les messages">
+				<Level name="Message" column="rclReqMessage"  type="String"    />
+			</Hierarchy>
+		</Dimension>
+		
+		<Dimension  name="Niveau d'exigence">
+			<Hierarchy name="Niveau d'exigence" hasAll="true" allMemberCaption="Toutes les niveaux d'exigences">
+				<Level name="Niveau d'exigence" column="rclReqType"  type="String"    >
+					 <NameExpression>
+					  <SQL dialect="generic" >
+					  <![CDATA[CASE WHEN rclReqType='Forbidden' THEN '${msg("listconstraint.bcpg_rclReqType.Forbidden")}'
+	                            WHEN rclReqType='Tolerated' THEN '${msg("listconstraint.bcpg_rclReqType.Tolerated")}'
+	                            WHEN rclReqType='Info' THEN '${msg("listconstraint.bcpg_rclReqType.Info")}'
+	                            ELSE 'Vide'
+	                           END]]></SQL>
+              		 </NameExpression>
+				</Level>
+			</Hierarchy>
+		</Dimension>
+		
+		<Dimension type="StandardDimension" foreignKey="entity_fact_id"  name="Produits cible">
+			<Hierarchy hasAll="true" allMemberCaption="Tous les produits cible" primaryKey="id">
+				<View alias="pr_target">
+						<SQL dialect="generic">
+							<![CDATA[
+							select
+								entity.entity_id as entity_noderef,
+								entity.entity_name as name,
+								entity.entity_type as entity_type,
+								type_name.entity_label as entity_label,
+								entity.is_last_version as isLastVersion,
+								MAX(IF(prop.prop_name = "bcpg:productHierarchy1",prop.string_value,NULL)) as productHierarchy1,
+								MAX(IF(prop.prop_name = "bcpg:productHierarchy2",prop.string_value,NULL)) as productHierarchy2,
+								MAX(IF(prop.prop_name = "bcpg:productState",prop.string_value,NULL)) as productState,
+								entity.id as id
+							from
+								 becpg_entity AS entity LEFT JOIN becpg_property AS prop ON prop.entity_id = entity.id
+								 						LEFT JOIN becpg_entity_type AS type_name ON type_name.entity_type = entity.entity_type
+							where
+								entity.is_last_version = true and entity.instance_id = ${instanceId}
+							group by id
+							]]>
+						</SQL>
+					</View>
+				<Level approxRowCount="5" name="État"  column="productState"  type="String"  >
+				  <NameExpression>
+					  <SQL dialect="generic" >
+					  <![CDATA[CASE WHEN productState='Simulation' THEN '${msg("listconstraint.bcpg_systemState.Simulation")}'
+	                            WHEN productState='ToValidate' THEN '${msg("listconstraint.bcpg_systemState.ToValidate")}'
+	                            WHEN productState='Valid' THEN '${msg("listconstraint.bcpg_systemState.Valid")}'
+	                            WHEN productState='Refused' THEN '${msg("listconstraint.bcpg_systemState.Refused")}'
+	                            WHEN productState='Archived' THEN '${msg("listconstraint.bcpg_systemState.Archived")}'
+	                            ELSE 'Vide'
+	                           END]]></SQL>
+             		 </NameExpression>
+				</Level>	
+				<Level approxRowCount="10" name="Type" column="entity_type" nameColumn="entity_label" type="String"   >
+				</Level>		
+				<Level name="Famille" column="productHierarchy1" type="String"   >
+				</Level>
+				<Level name="Sous famille" column="productHierarchy2" type="String"   >
+				</Level>
+				
+				<Level name="Produit" column="entity_noderef" nameColumn="name" type="String"   >
+				</Level>
+			</Hierarchy>
+		</Dimension>
+		
+		<Dimension type="StandardDimension" foreignKey="rclSources"  name="Produits source">
+			<Hierarchy hasAll="true" allMemberCaption="Tous les produits source" primaryKey="entity_noderef">
+				<View alias="pr_sources">
+						<SQL dialect="generic">
+							<![CDATA[
+							select
+								entity.entity_id as entity_noderef,
+								entity.entity_name as name,
+								entity.entity_type as entity_type,
+								type_name.entity_label as entity_label,
+								entity.is_last_version as isLastVersion,
+								MAX(IF(prop.prop_name = "bcpg:productHierarchy1",prop.string_value,NULL)) as productHierarchy1,
+								MAX(IF(prop.prop_name = "bcpg:productHierarchy2",prop.string_value,NULL)) as productHierarchy2,
+								MAX(IF(prop.prop_name = "bcpg:productState",prop.string_value,NULL)) as productState,
+								entity.id as id
+							from
+								 becpg_entity AS entity LEFT JOIN becpg_property AS prop ON prop.entity_id = entity.id
+								 LEFT JOIN becpg_entity_type AS type_name ON type_name.entity_type = entity.entity_type
+							where
+								 entity.is_last_version = true and entity.instance_id = ${instanceId}
+							group by id
+							]]>
+						</SQL>
+					</View>		
+				<Level approxRowCount="5" name="État"  column="productState"  type="String"   >
+				  <NameExpression>
+					  <SQL dialect="generic" >
+					  <![CDATA[CASE WHEN productState='Simulation' THEN '${msg("listconstraint.bcpg_systemState.Simulation")}'
+	                            WHEN productState='ToValidate' THEN '${msg("listconstraint.bcpg_systemState.ToValidate")}'
+	                            WHEN productState='Valid' THEN '${msg("listconstraint.bcpg_systemState.Valid")}'
+	                            WHEN productState='Refused' THEN '${msg("listconstraint.bcpg_systemState.Refused")}'
+	                            WHEN productState='Archived' THEN '${msg("listconstraint.bcpg_systemState.Archived")}'
+	                            ELSE 'Vide'
+	                           END]]></SQL>
+             		 </NameExpression>
+				</Level>
+				<Level approxRowCount="10" name="Type" column="entity_type" nameColumn="entity_label" type="String"   >
+				</Level>	
+				<Level name="Famille" column="productHierarchy1" type="String"   >
+				</Level>
+				<Level name="Sous famille" column="productHierarchy2" type="String"   >
+				</Level>
+				
+				<Level name="Produit" column="entity_noderef" nameColumn="name" type="String"   >
+				</Level>
+			</Hierarchy>
+		</Dimension>
+	
+		
+		<Measure name="Nombre d'exigences" column="noderef" datatype="Numeric" aggregator="distinct-count" visible="true" />
+    </Cube>
 
 
 	<Cube name="Incidents" cache="true" enabled="true" defaultMeasure="Nombre d'incidents">
@@ -110,7 +254,7 @@
 		
 		<Dimension  name="Priorité">
 			<Hierarchy name="Priorité" hasAll="true" allMemberCaption="Toutes les priorités">
-				<Level name="Priorité" column="ncPriority"  type="String" uniqueMembers="true"   >
+				<Level name="Priorité" column="ncPriority"  type="String"   >
 					 <NameExpression>
 					  <SQL dialect="generic" >
 					  <![CDATA[CASE WHEN ncPriority=1 THEN '${msg("listconstraint.qa_ncPriority.1")}'
@@ -125,7 +269,7 @@
 		
 		<Dimension  name="Type" >
 			<Hierarchy hasAll="true" allMemberCaption="Tous les types" >
-				<Level approxRowCount="2" name="Type"  column="ncType"  type="String" uniqueMembers="true"   >
+				<Level approxRowCount="2" name="Type"  column="ncType"  type="String"    >
 				<NameExpression>
 					  <SQL dialect="generic" >
 					  <![CDATA[CASE WHEN ncType='Claim' THEN '${msg("listconstraint.qa_ncTypes.Claim")}'
@@ -139,7 +283,7 @@
 		
 		<Dimension  name="État" >
 			<Hierarchy hasAll="true" allMemberCaption="Tous les états" >
-				<Level approxRowCount="7" name="État"  column="ncState"  type="String" uniqueMembers="true"   >
+				<Level approxRowCount="7" name="État"  column="ncState"  type="String"    >
 				<NameExpression>
 					  <SQL dialect="generic" >
 					  <![CDATA[CASE WHEN ncState='analysis' THEN '${msg("listconstraint.qa_ncStates.analysis")}'
@@ -268,7 +412,7 @@
 		
 		<Dimension  name="État" >
 			<Hierarchy hasAll="true" allMemberCaption="Tous les états" >
-				<Level approxRowCount="5" name="État"  column="tlState"  type="String" uniqueMembers="true"   >
+				<Level approxRowCount="5" name="État"  column="tlState"  type="String"    >
 				  <NameExpression>
 					  <SQL dialect="generic" >
 					  <![CDATA[CASE WHEN tlState='Planned' THEN 'Plannifié'
@@ -465,7 +609,7 @@
 		
 		<Dimension  name="Priorité">
 			<Hierarchy name="Priorité" hasAll="true" allMemberCaption="Toutes les priorités">
-				<Level name="Priorité" column="projectPriority"  type="String" uniqueMembers="true"   >
+				<Level name="Priorité" column="projectPriority"  type="String"    >
 				 <NameExpression>
 					  <SQL dialect="generic" >
 					  <![CDATA[CASE WHEN projectPriority=1 THEN 'Basse'
@@ -479,7 +623,7 @@
 		</Dimension>
 		<Dimension  name="État" >
 			<Hierarchy hasAll="true" allMemberCaption="Tous les états" >
-				<Level approxRowCount="5" name="État"  column="projectState"  type="String" uniqueMembers="true"   >
+				<Level approxRowCount="5" name="État"  column="projectState"  type="String"    >
 				  <NameExpression>
 					  <SQL dialect="generic" >
 					  <![CDATA[CASE WHEN projectState='Planned' THEN 'Plannifié'
@@ -658,7 +802,7 @@
 		<Dimension  name="État" foreignKey="productState">
 			<Hierarchy hasAll="true" allMemberCaption="Tous les états" primaryKey="product_state">
 				<Table name="becpg_product_state" />
-				<Level approxRowCount="5" name="État" table="becpg_product_state" column="product_state" nameColumn="product_label" type="String" uniqueMembers="true"   />
+				<Level approxRowCount="5" name="État" table="becpg_product_state" column="product_state" nameColumn="product_label" type="String"    />
 			</Hierarchy>
 		</Dimension>
 		
@@ -684,7 +828,7 @@
 		<Dimension foreignKey="productType"  name="Type de produit">
 			<Hierarchy hasAll="true" allMemberCaption="Tous les types de produit" primaryKey="entity_type" defaultMember="[Type de produit].[Produit fini]">
 				<Table name="becpg_entity_type"></Table>
-				<Level approxRowCount="10" name="Type" column="entity_type" nameColumn="entity_label" type="String" uniqueMembers="true"  >
+				<Level approxRowCount="10" name="Type" column="entity_type" nameColumn="entity_label" type="String"   >
 				</Level>
 			</Hierarchy>
 		</Dimension>
@@ -740,7 +884,7 @@
 								group by datalist.id
 					</SQL>
 				</View>
-				<Level approxRowCount="3" name="Groupe de nutriment" column="nutGroup" type="String" uniqueMembers="true"  >
+				<Level approxRowCount="3" name="Groupe de nutriment" column="nutGroup" type="String"   >
 				</Level>
 				<Level approxRowCount="20" name="Nutriment" column="nutNodeRef"  nameColumn="nutName" type="String"   >
 				</Level>
