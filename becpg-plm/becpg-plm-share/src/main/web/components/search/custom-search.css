@@ -13,6 +13,40 @@
    padding-left: 22px; 
 }
 
+.search .selected-form-button span.yui-button {
+    background: none repeat scroll 0 0 white;
+    border-width: 1px;
+}
+
+
+.search .search-box-adv
+{
+   margin: 1.25em;
+   height: 2.1em;
+}
+
+.search .search-box-adv input
+{
+    padding: 3.666px;
+}
+
+.search .search-box-adv .terms
+{
+   width: 42em;
+}
+.search .search-box-adv > div {
+	float: left;
+}
+
+.search .search-box-adv .forms-container {
+    margin-right: 1.5em;
+}
+
+.search .search-box-adv .form-container .form-fields {
+    border: 0;
+    margin-left: 0;
+}
+
 /* fix ie chrome */
 
 .yui-skin-lightTheme #bd {

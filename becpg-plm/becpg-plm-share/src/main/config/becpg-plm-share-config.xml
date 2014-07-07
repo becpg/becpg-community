@@ -72,6 +72,20 @@
 		</itemTypes>
 	</config>
 
+    <config evaluator="string-compare" condition="wused-search">
+		<itemTypes>
+			<itemType name="bcpg:product" />
+			<itemType name="bcpg:supplier" />
+			<itemType name="bcpg:client" />
+			<itemType name="bcpg:nut" />
+			<itemType name="bcpg:allergen" />
+			<itemType name="bcpg:ing" />
+			<itemType name="bcpg:organo" />
+			<itemType name="bcpg:physicoChem" />
+		</itemTypes>
+	</config>
+
+
 
 	<config>
 		<forms>

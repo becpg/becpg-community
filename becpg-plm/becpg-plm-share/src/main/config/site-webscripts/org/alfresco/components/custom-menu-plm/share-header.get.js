@@ -14,4 +14,12 @@ if (beCPGMenu != null) {
       }
    });
   
+   
+   var searchLink = widgetUtils.findObject(model.jsonModel, "id", "HEADER_ADVANCED_SEARCH");
+	if(searchLink!=null){
+		searchLink.config.label = "header.wused.search.label";
+		searchLink.config.targetUrl= "wused";
+	}
 }
+
+	
