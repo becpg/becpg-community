@@ -79,9 +79,9 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 
 		String beforeStateMsg = I18NUtil.getMessage(PREFIX_LOCALIZATION_TASK_NAME + beforeState);
 		String afterStateMsg = I18NUtil.getMessage(PREFIX_LOCALIZATION_TASK_NAME + afterState);
-		String subject = "[" + nodeService.getProperty(projectNodeRef, ContentModel.PROP_NAME) + " - "
-				+ nodeService.getProperty(projectNodeRef, BeCPGModel.PROP_CODE) + "] "
-				+ nodeService.getProperty(taskNodeRef, ProjectModel.PROP_TL_TASK_NAME) + " (" + afterStateMsg + ")";
+		
+		
+		String subject = createSubject(projectNodeRef,taskNodeRef, afterStateMsg);
 
 		Map<String, Serializable> templateArgs = new HashMap<String, Serializable>(7);
 		templateArgs.put(ARG_ACTIVITY_TYPE, ActivityType.State);
@@ -94,13 +94,18 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 		notify(projectNodeRef, taskNodeRef, subject, templateArgs);
 	}
 
+	private String createSubject(NodeRef projectNodeRef, NodeRef taskNodeRef, String afterStateMsg) {
+		String code =  (String) nodeService.getProperty(projectNodeRef, BeCPGModel.PROP_CODE);
+		return  "[" + nodeService.getProperty(projectNodeRef, ContentModel.PROP_NAME) + (code!=null ? " - "
+				+ code  : "")+ "] "
+				+ nodeService.getProperty(taskNodeRef, ProjectModel.PROP_TL_TASK_NAME) + (afterStateMsg!=null? " (" + afterStateMsg + ")" : "");
+	}
+
 	@Override
 	public void notifyComment(NodeRef commentNodeRef, ActivityEvent activityEvent, NodeRef projectNodeRef, NodeRef taskNodeRef,
 			NodeRef deliverableNodeRef) {
 
-		String subject = "[" + nodeService.getProperty(projectNodeRef, ContentModel.PROP_NAME) + " - "
-				+ nodeService.getProperty(projectNodeRef, BeCPGModel.PROP_CODE) + "] "
-				+ nodeService.getProperty(taskNodeRef, ProjectModel.PROP_TL_TASK_NAME);
+		String subject = createSubject(projectNodeRef, taskNodeRef,null);
 
 		Map<String, Serializable> templateArgs = new HashMap<String, Serializable>(7);
 		templateArgs.put(ARG_ACTIVITY_TYPE, ActivityType.Comment);
