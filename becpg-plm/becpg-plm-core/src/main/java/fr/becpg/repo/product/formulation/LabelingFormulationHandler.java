@@ -792,7 +792,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 					} else {
 						String message = I18NUtil.getMessage("message.formulate.labelRule.error.nullIng", ingItem.getName());
-						ReqCtrlListDataItem error = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, Arrays.asList(productNodeRef));
+						List<NodeRef> sourceNodeRefs = new ArrayList<>();
+						sourceNodeRefs.add(productNodeRef);
+						ReqCtrlListDataItem error = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, sourceNodeRefs);
 						if (logger.isDebugEnabled()) {
 							logger.debug("Adding aggregate error " + error.toString());
 						}
