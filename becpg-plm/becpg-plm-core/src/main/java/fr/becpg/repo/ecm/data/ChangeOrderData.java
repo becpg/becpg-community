@@ -146,8 +146,10 @@ public class ChangeOrderData extends BeCPGDataObject {
 
 		Map<NodeRef, ChangeUnitDataItem> changeUnitMap = new LinkedHashMap<NodeRef, ChangeUnitDataItem>();
 
-		for (ChangeUnitDataItem dataItem : changeUnitList) {
-			changeUnitMap.put(dataItem.getSourceItem(), dataItem);
+		if(changeUnitList!=null){
+			for (ChangeUnitDataItem dataItem : changeUnitList) {
+				changeUnitMap.put(dataItem.getSourceItem(), dataItem);
+			}
 		}
 
 		return Collections.unmodifiableMap(changeUnitMap);

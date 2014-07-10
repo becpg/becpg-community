@@ -1,11 +1,16 @@
 package fr.becpg.repo.ecm.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
+import org.alfresco.service.cmr.preference.PreferenceService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.transaction.TransactionService;
@@ -35,6 +40,8 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 @Service("automaticECOService")
 public class AutomaticECOServiceImpl implements AutomaticECOService {
 
+	private static final String CURRENT_ECO_PREF = "fr.becpg.ecm.currentEcmNodeRef";
+
 	private static Log logger = LogFactory.getLog(AutomaticECOService.class);
 
 	@Autowired
@@ -48,76 +55,85 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 
 	@Value("${beCPG.eco.automatic.version}")
 	private Boolean shouldCreateNewVersion = false;
-	
+
 	@Value("${beCPG.eco.automatic.states}")
-	private String statesToRegister  = "";
+	private String statesToRegister = "";
 
 	@Autowired
 	private TransactionService transactionService;
 
 	@Autowired
 	private ECOService ecoService;
-	
+
 	@Autowired
 	private NodeService nodeService;
 
+	@Autowired
+	private PreferenceService preferenceService;
+
 	@Override
-	public ChangeOrderData addAutomaticChangeEntry(NodeRef entityNodeRef) {
-		
+	public ChangeOrderData addAutomaticChangeEntry(final NodeRef entityNodeRef) {
+
 		String productState = (String) nodeService.getProperty(entityNodeRef, PLMModel.PROP_PRODUCT_STATE);
-		
-		if(productState == null || productState.isEmpty() || !statesToRegister.contains(productState)){
+
+		if (productState == null || productState.isEmpty() || !statesToRegister.contains(productState)) {
 			if (logger.isDebugEnabled()) {
-				logger.debug("Skipping product state : "+productState);
+				logger.debug("Skipping product state : " + productState);
 			}
-			
 			return null;
 		}
-		
-	
-		NodeRef parentNodeRef = getChangeOrderFolder();
-		ChangeOrderData changeOrderData = new ChangeOrderData(generateEcoName(), ECOState.Automatic, ChangeOrderType.Simulation, null);
 
-		NodeRef ret = getAutomaticECONoderef(parentNodeRef);
+		final NodeRef currentUserEcoNoderef = getCurrentUserEcoNoderef();
 
-		if (ret != null) {
-			changeOrderData = (ChangeOrderData) alfrescoRepository.findOne(ret);
-		} else {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Creating new automatic change order");
-			}
-			changeOrderData = (ChangeOrderData) alfrescoRepository.create(parentNodeRef, changeOrderData);
-		}
+		return AuthenticationUtil.runAs(new RunAsWork<ChangeOrderData>() {
+			public ChangeOrderData doWork() throws Exception {
+				NodeRef parentNodeRef = getChangeOrderFolder();
 
-		List<ReplacementListDataItem> replacementList = changeOrderData.getReplacementList();
+				ChangeOrderData changeOrderData = new ChangeOrderData(generateEcoName(null), ECOState.Automatic, ChangeOrderType.Simulation, null);
 
-		if (replacementList == null) {
-			replacementList = new ArrayList<ReplacementListDataItem>();
-		}
+				NodeRef ret = currentUserEcoNoderef != null ? currentUserEcoNoderef : getAutomaticECONoderef(parentNodeRef);
 
-		// avoid recreate same entry
-		for (ReplacementListDataItem item : replacementList) {
-			if (entityNodeRef.equals(item.getTargetItem())) {
-				if (logger.isDebugEnabled()) {
-					logger.debug("NodeRef " + entityNodeRef + " already present in automatic change order :" + changeOrderData.getName());
+				if (ret != null) {
+					changeOrderData = (ChangeOrderData) alfrescoRepository.findOne(ret);
+				} else {
+					if (logger.isDebugEnabled()) {
+						logger.debug("Creating new automatic change order");
+					}
+					changeOrderData = (ChangeOrderData) alfrescoRepository.create(parentNodeRef, changeOrderData);
 				}
+
+				List<ReplacementListDataItem> replacementList = changeOrderData.getReplacementList();
+
+				if (replacementList == null) {
+					replacementList = new ArrayList<ReplacementListDataItem>();
+				}
+
+				// avoid recreate same entry
+				for (ReplacementListDataItem item : replacementList) {
+					if (entityNodeRef.equals(item.getTargetItem())) {
+						if (logger.isDebugEnabled()) {
+							logger.debug("NodeRef " + entityNodeRef + " already present in automatic change order :" + changeOrderData.getName());
+						}
+						return changeOrderData;
+					}
+				}
+
+				replacementList.add(new ReplacementListDataItem(shouldCreateNewVersion ? RevisionType.Major : RevisionType.Minor, Arrays
+						.asList(entityNodeRef), entityNodeRef, 100));
+
+				if (logger.isDebugEnabled()) {
+					logger.debug("Adding nodeRef " + entityNodeRef + " to automatic change order :" + changeOrderData.getName());
+					logger.debug("Revision type : " + (shouldCreateNewVersion ? RevisionType.Major : RevisionType.Minor));
+				}
+
+				changeOrderData.setReplacementList(replacementList);
+
+				alfrescoRepository.save(changeOrderData);
+
 				return changeOrderData;
 			}
-		}
+		}, AuthenticationUtil.getSystemUserName());
 
-		replacementList.add(new ReplacementListDataItem(shouldCreateNewVersion ? RevisionType.Major : RevisionType.Minor, Arrays
-				.asList(entityNodeRef), entityNodeRef, 100));
-
-		if (logger.isDebugEnabled()) {
-			logger.debug("Adding nodeRef " + entityNodeRef + " to automatic change order :" + changeOrderData.getName());
-			logger.debug("Revision type : " + (shouldCreateNewVersion ? RevisionType.Major : RevisionType.Minor));
-		}
-
-		changeOrderData.setReplacementList(replacementList);
-
-		alfrescoRepository.save(changeOrderData);
-
-		return changeOrderData;
 	}
 
 	private NodeRef getAutomaticECONoderef(NodeRef parentFolderNodeRef) {
@@ -125,7 +141,10 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 				.andPropEquals(ECMModel.PROP_ECO_STATE, ECOState.Automatic.toString()).inDB().singleValue();
 	}
 
-	private String generateEcoName() {
+	private String generateEcoName(String name) {
+		if (name != null) {
+			return name + "-" + I18NUtil.getMessage("plm.ecm.current.name", new Date());
+		}
 		return I18NUtil.getMessage("plm.ecm.automatic.name", new Date());
 	}
 
@@ -195,6 +214,47 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public ChangeOrderData createAutomaticEcoForUser(String name) {
+		NodeRef parentNodeRef = getChangeOrderFolder();
+
+		ChangeOrderData changeOrderData = new ChangeOrderData(generateEcoName(name), ECOState.ToCalculateWUsed, ChangeOrderType.Simulation, null);
+
+		changeOrderData = (ChangeOrderData) alfrescoRepository.create(parentNodeRef, changeOrderData);
+		String curUserName = AuthenticationUtil.getFullyAuthenticatedUser();
+		Map<String, Serializable> prefs = preferenceService.getPreferences(curUserName);
+		prefs.put(CURRENT_ECO_PREF, changeOrderData.getNodeRef().toString());
+		preferenceService.setPreferences(curUserName, prefs);
+
+		return changeOrderData;
+	}
+
+	private NodeRef getCurrentUserEcoNoderef() {
+		String curUserName = AuthenticationUtil.getFullyAuthenticatedUser();
+		Map<String, Serializable> prefs = preferenceService.getPreferences(curUserName);
+
+		String prefNodeRef = (String) prefs.get(CURRENT_ECO_PREF);
+		if (prefNodeRef != null) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Found pref nodeRef : " + prefNodeRef);
+			}
+			NodeRef currentUserNodeRef = new NodeRef(prefNodeRef);
+			if (nodeService.exists(currentUserNodeRef)
+					&& ECOState.ToCalculateWUsed.toString().equals(nodeService.getProperty(currentUserNodeRef, ECMModel.PROP_ECO_STATE))) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Found current automatic Eco for user :" + curUserName);
+				}
+				return currentUserNodeRef;
+			} else {
+				logger.info("Removing invalid eco automatic noderef from user prefs : " + curUserName);
+				logger.info("Node doesn't exist ? " + nodeService.exists(currentUserNodeRef));
+				prefs.put(CURRENT_ECO_PREF,null);
+				preferenceService.setPreferences(curUserName, prefs);
+			}
+		}
+		return null;
 	}
 
 }
