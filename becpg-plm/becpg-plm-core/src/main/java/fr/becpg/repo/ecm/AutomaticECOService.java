@@ -9,7 +9,8 @@ public interface AutomaticECOService {
 	public ChangeOrderData addAutomaticChangeEntry(NodeRef entityNodeRef);
 
 	public boolean applyAutomaticEco();
+
+	public ChangeOrderData createAutomaticEcoForUser(String ecoName);
 	
-	
-	
+
 }

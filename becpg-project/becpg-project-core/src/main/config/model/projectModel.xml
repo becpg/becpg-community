@@ -350,7 +350,7 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>cm:person</class>
+						<class>cm:authority</class>
 						<mandatory>false</mandatory>
 						<many>true</many>
 					</target>

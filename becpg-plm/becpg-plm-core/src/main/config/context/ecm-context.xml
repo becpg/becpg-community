@@ -49,7 +49,12 @@
   <bean id="webscript.fr.becpg.ecm.changeOrder.get" class="fr.becpg.repo.web.scripts.ecm.ChangeOrderWebScript" parent="webscript">
       	<property name="ecoService" ref="ecoService" />
       	<property name="asyncECOService" ref="asyncECOService"/>
+      	<property name="automaticECOService" ref="automaticECOService"/>
+      	<property name="alfrescoRepository" ref="alfrescoRepository"/>
+      	<property name="nodeService" ref="NodeService"/>
    	</bean>
+   	
+   	<alias alias="webscript.fr.becpg.ecm.changeOrder.post" name="webscript.fr.becpg.ecm.changeOrder.get"/>
    	
    	<!--  Policies -->
    	<bean id="automaticECOPolicy" class="fr.becpg.repo.ecm.policy.AutomaticECOPolicy"

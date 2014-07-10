@@ -1,0 +1,34 @@
+
+.ecm-warning-bar .warnings
+{
+   margin: 0 -10px;
+   padding: 0.5em 0;
+   color: black;
+   text-align: left;
+   padding-left : 20px;
+   background: none repeat scroll 0 0 #fefdca;
+   box-shadow: -2px 2px 2px rgb(200, 200, 200);
+   font-size: 108%;
+}
+
+.ecm-warning-bar .warnings a {
+	font-weight: bold;
+}
+
+.ecm-warning-bar .info1
+{
+   background: url("./images/warning-16.png") no-repeat scroll 0 0 transparent;
+   display: inline;
+   padding-left: 20px;
+}
+
+.ecm-warning-bar-toolbar {
+	float:right;
+	padding-right:20px;
+}
+
+.ecm-warning-bar-stop-recording {
+  background: url("./images/stop-16.png") no-repeat scroll 0 transparent;
+   display: inline;
+   padding-left: 20px;
+}
