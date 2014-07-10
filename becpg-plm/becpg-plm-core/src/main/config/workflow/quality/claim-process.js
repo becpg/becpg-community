@@ -67,15 +67,25 @@ function onCreateAnalysisTask() {
 	task.setVariable('ncwf_claimResponseDueDate', rDate);
 
 	task.setVariable('ncwf_claimRejectedCause', execution.getVariable('ncwf_claimRejectedCause'));
-	task.setVariable('ncwf_claimRejectedState', 'none');
+    task.setVariable('ncwf_claimRejectedState', 'none');
+	
 
 	if (bcpgwf_notifyUsers != null) {
 		for (var i = 0; i < bcpgwf_notifyUsers.size(); i++) {
-			sendMail(bcpgwf_notifyUsers.get(i), initiator, bcpg.getMessage('claimProcess.mail.notify.analysis.subject', bpm_workflowDescription),
+			sendMail(bcpgwf_notifyUsers.get(i), initiator, getMailPrefix() + bcpg.getMessage('claimProcess.mail.notify.analysis.subject', bpm_workflowDescription),
 					bcpg.getMessage('claimProcess.mail.notify.analysis.message'));
 		}
 	}
 
+}
+
+function getMailPrefix(){
+    if(execution.getVariable('ncwf_claimRejectedState') 
+            && execution.getVariable('ncwf_claimRejectedState')!=null 
+            && execution.getVariable('ncwf_claimRejectedState')!='none'){
+       return bcpg.getMessage('claimProcess.mail.rejected.prefix');
+    }
+    return "";
 }
 
 function onCompleteAnalysisTask() {
@@ -203,7 +213,7 @@ function onCreateClaimTreatmentTask() {
 	task.setVariable('ncwf_claimRejectedState', 'none');
 
 	if (bcpgwf_notifyAssignee) {
-		sendMail(qa_claimTreatmentActor, initiator, bcpg.getMessage('claimProcess.mail.action.treatment.subject', execution
+		sendMail(qa_claimTreatmentActor, initiator, getMailPrefix() + bcpg.getMessage('claimProcess.mail.action.treatment.subject', execution
 				.getVariable('bpm_workflowDescription')), bcpg.getMessage('claimProcess.mail.action.treatment.message'), true);
 	}
 }
@@ -251,7 +261,7 @@ function onCreateClaimResponseTask() {
 	task.setVariable('ncwf_claimRejectedState', 'none');
 
 	task.setVariable('qa_claimTreatementDetails', execution.getVariable('qa_claimTreatementDetails'));
-	sendMail(qa_claimResponseActor, initiator, bcpg.getMessage('claimProcess.mail.action.response.subject', execution
+	sendMail(qa_claimResponseActor, initiator, getMailPrefix() + bcpg.getMessage('claimProcess.mail.action.response.subject', execution
 			.getVariable('bpm_workflowDescription')), bcpg.getMessage('claimProcess.mail.action.response.message'), true);
 }
 
