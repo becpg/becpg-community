@@ -145,9 +145,9 @@
 					<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
 					<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:productSpecifications?excludeClassNames=bcpg:entityTplAspect</control-param>
 				</type>
-				<type name="association:bcpg:productMicrobioCriteria" template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+				<type name="association:bcpg:productMicrobioCriteriaRef" template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 					<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
-					<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:productMicrobioCriteriaRef?excludeClassNames=bcpg:entityTplAspect</control-param>
+					<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:productMicrobioCriteria?excludeClassNames=bcpg:entityTplAspect</control-param>
 				</type>
 				<type name="association:qa:controlPoint" template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 					<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
