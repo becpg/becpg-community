@@ -217,10 +217,12 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 		result = prime * result + ((declType == null) ? 0 : declType.hashCode());
 		result = prime * result + ((depthLevel == null) ? 0 : depthLevel.hashCode());
 		result = prime * result + ((lossPerc == null) ? 0 : lossPerc.hashCode());
+		result = prime * result + ((overrunPerc == null) ? 0 : overrunPerc.hashCode());
 		result = prime * result + ((parent == null) ? 0 : parent.hashCode());
 		result = prime * result + ((product == null) ? 0 : product.hashCode());
 		result = prime * result + ((qty == null) ? 0 : qty.hashCode());
 		result = prime * result + ((qtySubFormula == null) ? 0 : qtySubFormula.hashCode());
+		result = prime * result + ((volume == null) ? 0 : volume.hashCode());
 		result = prime * result + ((yieldPerc == null) ? 0 : yieldPerc.hashCode());
 		return result;
 	}
@@ -250,6 +252,11 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 				return false;
 		} else if (!lossPerc.equals(other.lossPerc))
 			return false;
+		if (overrunPerc == null) {
+			if (other.overrunPerc != null)
+				return false;
+		} else if (!overrunPerc.equals(other.overrunPerc))
+			return false;
 		if (parent == null) {
 			if (other.parent != null)
 				return false;
@@ -269,6 +276,11 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 			if (other.qtySubFormula != null)
 				return false;
 		} else if (!qtySubFormula.equals(other.qtySubFormula))
+			return false;
+		if (volume == null) {
+			if (other.volume != null)
+				return false;
+		} else if (!volume.equals(other.volume))
 			return false;
 		if (yieldPerc == null) {
 			if (other.yieldPerc != null)

@@ -184,8 +184,7 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((nodeRef == null) ? 0 : nodeRef.hashCode());
+		int result = super.hashCode();
 		result = prime * result + ((product == null) ? 0 : product.hashCode());
 		result = prime * result + ((qty == null) ? 0 : qty.hashCode());
 		result = prime * result + ((qtyResource == null) ? 0 : qtyResource.hashCode());
@@ -202,16 +201,11 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!super.equals(obj))
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
 		ProcessListDataItem other = (ProcessListDataItem) obj;
-		if (nodeRef == null) {
-			if (other.nodeRef != null)
-				return false;
-		} else if (!nodeRef.equals(other.nodeRef))
-			return false;
 		if (product == null) {
 			if (other.product != null)
 				return false;
