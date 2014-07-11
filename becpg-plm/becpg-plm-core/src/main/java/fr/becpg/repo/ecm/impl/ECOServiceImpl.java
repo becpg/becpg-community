@@ -609,38 +609,10 @@ public class ECOServiceImpl implements ECOService {
 				 * manage revision
 				 */
 				if (!changeUnitDataItem.getRevision().equals(RevisionType.NoRevision)) {
-
-					if (!nodeService.hasAspect(productToImpact, ContentModel.ASPECT_VERSIONABLE)) {
-						transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-
-							@Override
-							public NodeRef execute() throws Throwable {
-									logger.debug("Add versionnable aspect");
-									Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>();
-									aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
-									nodeService.addAspect(productToImpact, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
-									return productToImpact;
-							}
-
-						}, false, true);
-
-					}
-
-					VersionType versionType = changeUnitDataItem.getRevision().equals(RevisionType.Major) ? VersionType.MAJOR : VersionType.MINOR;
-
-					logger.debug("Create new version :" + versionType);
-
-					logger.debug("Checkout");
-					// checkout
-					NodeRef workingCopyNodeRef = checkOutCheckInService.checkout(productToImpact);
-
-					logger.debug("Checkin");
-					// checkin
-					Map<String, Serializable> properties = new HashMap<String, Serializable>();
-					properties.put(VersionModel.PROP_VERSION_TYPE, versionType);
-					properties.put(Version.PROP_DESCRIPTION, I18NUtil.getMessage("plm.ecm.apply.version.label", ecoData.getCode()));
-
-					return checkOutCheckInService.checkin(workingCopyNodeRef, properties);
+					return createNewProductVersion(productToImpact,
+							changeUnitDataItem.getRevision().equals(RevisionType.Major) ? VersionType.MAJOR : VersionType.MINOR,
+									ecoData);
+					
 				}
 			}
 
@@ -648,6 +620,47 @@ public class ECOServiceImpl implements ECOService {
 		}
 
 		return productToImpact;
+	}
+	
+	@Override
+	public NodeRef createNewProductVersion(final NodeRef productToImpact, VersionType versionType,
+			ChangeOrderData ecoData){
+		if (!nodeService.hasAspect(productToImpact, ContentModel.ASPECT_VERSIONABLE)) {
+			transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+
+				@Override
+				public NodeRef execute() throws Throwable {
+						logger.debug("Add versionnable aspect");
+						try {
+						Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>();
+						aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
+						nodeService.addAspect(productToImpact, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
+						return productToImpact;
+						} catch(Throwable e){
+							e.printStackTrace();
+							throw e;
+						}
+				}
+
+			}, false, true);
+
+		}
+
+
+		logger.debug("Create new version :" + versionType);
+
+		logger.debug("Checkout");
+		// checkout
+		NodeRef workingCopyNodeRef = checkOutCheckInService.checkout(productToImpact);
+
+		logger.debug("Checkin");
+		// checkin
+		Map<String, Serializable> properties = new HashMap<String, Serializable>();
+		properties.put(VersionModel.PROP_VERSION_TYPE, versionType);
+		properties.put(Version.PROP_DESCRIPTION, I18NUtil.getMessage("plm.ecm.apply.version.label", ecoData.getCode()));
+
+		return checkOutCheckInService.checkin(workingCopyNodeRef, properties);
+		
 	}
 
 	private void createCalculatedCharactValues(ChangeOrderData ecoData, ProductData sourceData) {

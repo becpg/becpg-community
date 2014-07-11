@@ -2,18 +2,21 @@ package fr.becpg.repo.ecm.policy;
 
 import java.io.Serializable;
 import java.util.Map;
-import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.NodeServicePolicies;
+import org.alfresco.repo.policy.Behaviour;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.ecm.AutomaticECOService;
+import fr.becpg.repo.ecm.ECOService;
+import fr.becpg.repo.ecm.data.ChangeOrderData;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.repository.L2CacheSupport;
 
@@ -25,10 +28,13 @@ public class AutomaticECOPolicy extends AbstractBeCPGPolicy implements NodeServi
 
 	private AutomaticECOService automaticECOService;
 
+	private ECOService ecoService;
+
 	private static Log logger = LogFactory.getLog(AutomaticECOPolicy.class);
-	
+
 	private boolean isEnable = true;
-	
+
+	JavaBehaviour onUpdatePropertiesBehaviour;
 
 	public void setEnable(boolean isEnable) {
 		this.isEnable = isEnable;
@@ -38,10 +44,14 @@ public class AutomaticECOPolicy extends AbstractBeCPGPolicy implements NodeServi
 		this.automaticECOService = automaticECOService;
 	}
 
+	public void setEcoService(ECOService ecoService) {
+		this.ecoService = ecoService;
+	}
+
 	@Override
 	public void doInit() {
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, PLMModel.TYPE_PRODUCT, new JavaBehaviour(this,
-				"onUpdateProperties"));
+		onUpdatePropertiesBehaviour = new JavaBehaviour(this, "onUpdateProperties", Behaviour.NotificationFrequency.TRANSACTION_COMMIT);
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, PLMModel.TYPE_PRODUCT, onUpdatePropertiesBehaviour);
 	}
 
 	@Override
@@ -53,17 +63,20 @@ public class AutomaticECOPolicy extends AbstractBeCPGPolicy implements NodeServi
 				logger.debug("Entity is locked by ECM :" + nodeRef);
 				return;
 			}
-			queueNode(nodeRef);
-		}
 
-	}
-
-	@Override
-	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
-		for (NodeRef nodeRef : pendingNodes) {
 			if (isNotLocked(nodeRef) && !isWorkingCopyOrVersion(nodeRef) && !isBeCPGVersion(nodeRef)) {
-				automaticECOService.addAutomaticChangeEntry(nodeRef);
+				onUpdatePropertiesBehaviour.disable();
+				try {
+					ChangeOrderData changeOrderData = automaticECOService.getCurrentUserChangeOrderData();
+					if (automaticECOService.addAutomaticChangeEntry(nodeRef, changeOrderData) && changeOrderData != null) {
+						logger.debug("Creating new version for nodeRef : " + nodeRef);
+						ecoService.createNewProductVersion(nodeRef, VersionType.MINOR, changeOrderData);
+					}
+				} finally {
+					onUpdatePropertiesBehaviour.enable();
+				}
 			}
+
 		}
 	}
 

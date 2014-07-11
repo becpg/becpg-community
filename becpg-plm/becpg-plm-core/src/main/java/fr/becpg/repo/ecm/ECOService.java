@@ -18,6 +18,9 @@
 package fr.becpg.repo.ecm;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.version.VersionType;
+
+import fr.becpg.repo.ecm.data.ChangeOrderData;
 
 /**
  * Engineering change order service
@@ -28,13 +31,15 @@ public interface ECOService {
 	
 	
 	
-	public void calculateWUsedList(NodeRef ecoNodeRef, boolean selectToApply);
+	void calculateWUsedList(NodeRef ecoNodeRef, boolean selectToApply);
 	
-	public void apply(NodeRef ecoNodeRef);
+	void apply(NodeRef ecoNodeRef);
 	
-	public void doSimulation(NodeRef ecoNodeRef);
+	void doSimulation(NodeRef ecoNodeRef);
 
-	public Boolean setInProgress(NodeRef ecoNodeRef);
+	Boolean setInProgress(NodeRef ecoNodeRef);
+
+	NodeRef createNewProductVersion(NodeRef productNodeRef, VersionType versionType, ChangeOrderData ecoData);
 
 
 	
