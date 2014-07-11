@@ -129,9 +129,9 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
+		int result = super.hashCode();
 		result = prime * result + ((isMaster == null) ? 0 : isMaster.hashCode());
-		result = prime * result + ((nodeRef == null) ? 0 : nodeRef.hashCode());
+		result = prime * result + ((lossPerc == null) ? 0 : lossPerc.hashCode());
 		result = prime * result + ((packagingListUnit == null) ? 0 : packagingListUnit.hashCode());
 		result = prime * result + ((pkgLevel == null) ? 0 : pkgLevel.hashCode());
 		result = prime * result + ((product == null) ? 0 : product.hashCode());
@@ -143,7 +143,7 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!super.equals(obj))
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
@@ -153,17 +153,14 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 				return false;
 		} else if (!isMaster.equals(other.isMaster))
 			return false;
-		if (nodeRef == null) {
-			if (other.nodeRef != null)
+		if (lossPerc == null) {
+			if (other.lossPerc != null)
 				return false;
-		} else if (!nodeRef.equals(other.nodeRef))
+		} else if (!lossPerc.equals(other.lossPerc))
 			return false;
 		if (packagingListUnit != other.packagingListUnit)
 			return false;
-		if (pkgLevel == null) {
-			if (other.pkgLevel != null)
-				return false;
-		} else if (!pkgLevel.equals(other.pkgLevel))
+		if (pkgLevel != other.pkgLevel)
 			return false;
 		if (product == null) {
 			if (other.product != null)
