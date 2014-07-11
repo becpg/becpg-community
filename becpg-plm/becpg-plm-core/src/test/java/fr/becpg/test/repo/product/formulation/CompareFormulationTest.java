@@ -25,10 +25,14 @@ import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransacti
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.CompareHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 
@@ -99,13 +103,23 @@ public class CompareFormulationTest extends FormulationFullTest {
 					assertFalse("#Error".equals(dynamicCharactListItem.getValue()));
 				}
 				
+//				assertEquals((String)formulatedProduct.getCompoListView().getDynamicCharactList().get(0).getValue(),
+//						"{\"comp\":[{\"itemType\":\"bcpg:finishedProduct\",\"name\":\"Produit fini 2\""
+//						+ ",\"value\":2,\"nodeRef\":\""+finishedProductNodeRef2.toString()+"\","
+//						+ "\"displayValue\":\"2\"},{\"itemType\":\"bcpg:finishedProduct\",\"name\":\"Produit fini 2\",\"value\":3,"
+//						+ "\"nodeRef\":\""+finishedProductNodeRef2.toString()+"\",\"displayValue\":\"3\"}]}");
 				
-				assertEquals((String)formulatedProduct.getCompoListView().getDynamicCharactList().get(0).getValue(),
-						"{\"comp\":[{\"itemType\":\"bcpg:finishedProduct\",\"name\":\"Produit fini 2\""
-						+ ",\"value\":2,\"nodeRef\":\""+finishedProductNodeRef2.toString()+"\","
-						+ "\"displayValue\":\"2\"},{\"itemType\":\"bcpg:finishedProduct\",\"name\":\"Produit fini 2\",\"value\":3,"
-						+ "\"nodeRef\":\""+finishedProductNodeRef2.toString()+"\",\"displayValue\":\"3\"}]}");
-																								
+				JSONTokener tokener = new JSONTokener((String)formulatedProduct.getCompoListView().getDynamicCharactList().get(0).getValue());
+				JSONObject jsonObject = new JSONObject(tokener);
+				JSONArray array = (JSONArray) jsonObject.get(CompareHelper.JSON_COMP_ITEMS);
+				assertEquals(2,array.length());
+				
+				assertEquals(2,((JSONObject)array.get(0)).get(CompareHelper.JSON_COMP_VALUE));
+				assertEquals(finishedProductNodeRef2.toString(),((JSONObject)array.get(0)).get(CompareHelper.JSON_COMP_ITEM_NODEREF));
+				
+				assertEquals(3,((JSONObject)array.get(1)).get(CompareHelper.JSON_COMP_VALUE));
+				assertEquals(finishedProductNodeRef2.toString(),((JSONObject)array.get(1)).get(CompareHelper.JSON_COMP_ITEM_NODEREF));
+				
 				return null;
 			}
 		}, false, true);

@@ -201,7 +201,7 @@ public class EntityVersionWebScript extends AbstractWebScript  {
 			jsonCreator.put("firstName", (String)nodeService.getProperty(creatorNodeRef, ContentModel.PROP_FIRSTNAME));
 			jsonCreator.put("lastName", (String)nodeService.getProperty(creatorNodeRef, ContentModel.PROP_LASTNAME));
 		} catch (NoSuchPersonException e){
-			logger.info("Person doesn't exist : "+frozenModifier);
+			logger.debug("Person doesn't exist : "+frozenModifier);
 			jsonCreator.put("userName", frozenModifier);
 			jsonCreator.put("firstName", frozenModifier);
 			jsonCreator.put("lastName", frozenModifier);
