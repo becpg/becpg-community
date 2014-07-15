@@ -132,7 +132,6 @@ public class ChangeOrderWebScript extends AbstractWebScript {
 				if (name != null && name.length() > 0) {
 					JSONObject ret = createJSONObject(automaticECOService.createAutomaticEcoForUser(name));
 					
-
 					res.setContentType("application/json");
 					res.setContentEncoding("UTF-8");
 					ret.write(res.getWriter());

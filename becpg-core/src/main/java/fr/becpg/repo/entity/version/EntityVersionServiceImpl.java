@@ -143,7 +143,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			}
 
 			versionProperties.put(Version.PROP_DESCRIPTION, I18NUtil.getMessage(MSG_INITIAL_VERSION));
-			internalCreateVersionAndCheckin(origNodeRef, null, versionProperties);
+			 createVersionAndCheckin(origNodeRef, null, versionProperties);
 		}
 		
 		// Copy entity datalists (rights are checked by copyService during
@@ -357,6 +357,27 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 	}
 	
+	
+	@Override
+	public void createInitialVersion(NodeRef entityNodeRef) {
+		if( getVersionHistoryNodeRef(entityNodeRef) == null){
+			// Create the initial-version
+			Map<String, Serializable> versionProperties = new HashMap<String, Serializable>(1);
+			versionProperties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
+			
+			if (logger.isDebugEnabled()) {
+				logger.debug("Create initial version : " + I18NUtil.getMessage(MSG_INITIAL_VERSION));
+			}
+			
+			Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>();
+			aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
+			nodeService.addAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
+
+			versionProperties.put(Version.PROP_DESCRIPTION, I18NUtil.getMessage(MSG_INITIAL_VERSION));
+			createVersion(entityNodeRef, versionProperties);
+		}
+	}
+	
 	@Override
 	public NodeRef createVersion(final NodeRef origNodeRef, Map<String, Serializable> versionProperties){
 		StopWatch watch = new StopWatch();
@@ -368,18 +389,16 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 		try {
 			
+			Version newVersion = versionService.createVersion(origNodeRef, versionProperties);
+			
 			NodeRef versionHistoryRef = getVersionHistoryNodeRef(origNodeRef);
 			
 			
 			if (versionHistoryRef == null) {
-				Map<String, Serializable> propsMap = new HashMap<String, Serializable>();
-				propsMap.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
-				versionService.createVersion(origNodeRef, propsMap);
 				versionHistoryRef = createVersionHistory(getEntitiesHistoryFolder(), origNodeRef);
 			}
 			
-			Version newVersion = versionService.createVersion(origNodeRef, versionProperties);
-			
+		
 			final NodeRef finalVersionHistoryRef = versionHistoryRef;
 			NodeRef versionNodeRef = null;
 
@@ -776,5 +795,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			throw new CheckOutCheckInServiceException(MSG_ERR_NOT_AUTHENTICATED);
 		}
 	}
+
+
 
 }

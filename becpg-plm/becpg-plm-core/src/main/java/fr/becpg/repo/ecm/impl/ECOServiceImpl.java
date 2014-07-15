@@ -92,9 +92,6 @@ public class ECOServiceImpl implements ECOService {
 	private ProductService productService;
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
-	
-	
-	
 	public void setEntityVersionService(EntityVersionService entityVersionService) {
 		this.entityVersionService = entityVersionService;
 	}
@@ -406,6 +403,18 @@ public class ECOServiceImpl implements ECOService {
 								checkRequirements(changeUnitDataItem, productToFormulateData);
 
 								alfrescoRepository.save(productToFormulateData);
+								
+								
+								//Create new version if needed
+								if (!isSimulation) {
+									if (!changeUnitDataItem.getRevision().equals(RevisionType.NoRevision)) {
+										 createNewProductVersion(productNodeRef,
+												changeUnitDataItem.getRevision().equals(RevisionType.Major) ? VersionType.MAJOR : VersionType.MINOR,
+														ecoData);
+										
+									}
+								}
+								
 
 							} else {
 								logger.warn("Product to impact is empty");
@@ -601,33 +610,23 @@ public class ECOServiceImpl implements ECOService {
 	}
 
 	private NodeRef getProductToImpact(ChangeOrderData ecoData, ChangeUnitDataItem changeUnitDataItem, boolean isSimulation) {
-
-		final NodeRef productToImpact = changeUnitDataItem.getSourceItem();
-
+	    NodeRef productToImpact = changeUnitDataItem.getSourceItem();
 		if (productToImpact != null) {
-
 			// Create a new revision if apply else use
 			if (!isSimulation) {
-
 				/*
-				 * manage revision
+				 * Create initial version if needed
 				 */
 				if (!changeUnitDataItem.getRevision().equals(RevisionType.NoRevision)) {
-					return createNewProductVersion(productToImpact,
-							changeUnitDataItem.getRevision().equals(RevisionType.Major) ? VersionType.MAJOR : VersionType.MINOR,
-									ecoData);
-					
+					entityVersionService.createInitialVersion(productToImpact);
 				}
 			}
-
-			// TODO mettre à jour les wUsedLink
 		}
 
 		return productToImpact;
 	}
 	
-	@Override
-	public NodeRef createNewProductVersion(final NodeRef productToImpact, VersionType versionType,
+	private NodeRef createNewProductVersion(final NodeRef productToImpact, VersionType versionType,
 			ChangeOrderData ecoData){
 
 		
