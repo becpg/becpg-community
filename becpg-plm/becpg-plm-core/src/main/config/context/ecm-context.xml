@@ -25,7 +25,7 @@
 	<bean id="ecoService" class="fr.becpg.repo.ecm.impl.ECOServiceImpl">
     	<property name="wUsedListService" ref="wUsedListService"/>
     	<property name="nodeService" ref="nodeService"/>
-    	<property name="checkOutCheckInService" ref="checkOutCheckInService"/>
+    	<property name="entityVersionService" ref="entityVersionService"/>
     	<property name="productService" ref="productService"/>
     	<property name="alfrescoRepository" ref="alfrescoRepository" />
     	<property name="transactionService" ref="transactionService" />

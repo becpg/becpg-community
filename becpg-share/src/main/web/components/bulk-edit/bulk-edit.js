@@ -1022,72 +1022,85 @@
 						 */
 
 						/**
-						 * Public function to get array of selected items
-						 * 
-						 * @method getSelectedItems
-						 * @return {Array} Currently selected items
-						 */
-						getSelectedItems : function BulkEdit_getSelectedItems() {
-							var items = [], recordSet = this.widgets.dataTable.getRecordSet(), aPageRecords = this.widgets.paginator.getPageRecords(), startRecord = aPageRecords[0], endRecord = aPageRecords[1], record;
+                         * Public function to get array of selected items
+                         * 
+                         * @method getSelectedItems
+                         * @return {Array} Currently selected items
+                         */
+                        getSelectedItems : function EntityDataGrid_getSelectedItems()
+                        {
+                            var items = [], recordSet = this.widgets.dataTable.getRecordSet(), startRecord = 0, endRecord = recordSet
+                                    .getLength(), record;
 
-							for (var i = startRecord; i <= endRecord; i++) {
-								record = recordSet.getRecord(i);
-								if (this.selectedItems[record.getData("nodeRef")]) {
-									items.push(record.getData());
-								}
-							}
+                            for (var i = startRecord; i <= endRecord; i++)
+                            {
+                                record = recordSet.getRecord(i);
+                                if (record != null && this.selectedItems[record.getData("nodeRef")])
+                                {
+                                    items.push(record.getData());
+                                }
+                            }
 
-							return items;
-						},
+                            return items;
+                        },
 
-						/**
-						 * Public function to select items by specified groups
-						 * 
-						 * @method selectItems
-						 * @param p_selectType
-						 *            {string} Can be one of the following:
-						 * 
-						 * <pre>
-						 * selectAll - all items
-						 * selectNone - deselect all
-						 * selectInvert - invert selection
-						 * </pre>
-						 */
-						selectItems : function BulkEdit_selectItems(p_selectType) {
-							var recordSet = this.widgets.dataTable.getRecordSet(), checks = Selector.query('input[type="checkbox"]',
-									this.widgets.dataTable.getTbodyEl()), aPageRecords = this.widgets.paginator.getPageRecords(), startRecord = aPageRecords[0], len = checks.length, record, i, fnCheck;
+                        /**
+                         * Public function to select items by specified groups
+                         * 
+                         * @method selectItems
+                         * @param p_selectType
+                         *            {string} Can be one of the following:
+                         * 
+                         * <pre>
+                         * selectAll - all items
+                         * selectNone - deselect all
+                         * selectInvert - invert selection
+                         * </pre>
+                         */
+                        selectItems : function EntityDataGrid_selectItems(p_selectType)
+                        {
+                            var recordSet = this.widgets.dataTable.getRecordSet(), checks = Selector.query(
+                                    'input[type="checkbox"]', this.widgets.dataTable.getTbodyEl()), startRecord = 0, len = checks.length, record, i, fnCheck;
 
-							switch (p_selectType) {
-							case "selectAll":
-								fnCheck = function(assetType, isChecked) {
-									return true;
-								};
-								break;
+                            switch (p_selectType)
+                            {
+                                case "selectAll":
+                                    fnCheck = function(assetType, isChecked)
+                                    {
+                                        return true;
+                                    };
+                                    break;
 
-							case "selectNone":
-								fnCheck = function(assetType, isChecked) {
-									return false;
-								};
-								break;
+                                case "selectNone":
+                                    fnCheck = function(assetType, isChecked)
+                                    {
+                                        return false;
+                                    };
+                                    break;
 
-							case "selectInvert":
-								fnCheck = function(assetType, isChecked) {
-									return !isChecked;
-								};
-								break;
+                                case "selectInvert":
+                                    fnCheck = function(assetType, isChecked)
+                                    {
+                                        return !isChecked;
+                                    };
+                                    break;
 
-							default:
-								fnCheck = function(assetType, isChecked) {
-									return isChecked;
-								};
-							}
+                                default:
+                                    fnCheck = function(assetType, isChecked)
+                                    {
+                                        return isChecked;
+                                    };
+                            }
 
-							for (i = 0; i < len; i++) {
-								record = recordSet.getRecord(i + startRecord);
-								this.selectedItems[record.getData("nodeRef")] = checks[i].checked = fnCheck(record.getData("type"), checks[i].checked);
-							}
-							Bubbling.fire("selectedItemsChanged");
-						},
+                            for (i = 0; i < len; i++)
+                            {
+                                record = recordSet.getRecord(i + startRecord);
+                                this.selectedItems[record.getData("nodeRef")] = checks[i].checked = fnCheck(record
+                                        .getData("type"), checks[i].checked);
+                            }
+
+                            Bubbling.fire("selectedItemsChanged");
+                        },
 						/**
 						 * Fired when cell content changed
 						 * 

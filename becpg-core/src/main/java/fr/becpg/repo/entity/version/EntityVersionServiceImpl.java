@@ -356,6 +356,66 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		}
 
 	}
+	
+	@Override
+	public NodeRef createVersion(final NodeRef origNodeRef, Map<String, Serializable> versionProperties){
+		StopWatch watch = new StopWatch();
+
+		if (logger.isDebugEnabled()) {
+			watch.start();
+			logger.debug("createVersion: " + origNodeRef + " versionProperties: " + versionProperties);
+		}
+
+		try {
+			
+			NodeRef versionHistoryRef = getVersionHistoryNodeRef(origNodeRef);
+			
+			
+			if (versionHistoryRef == null) {
+				Map<String, Serializable> propsMap = new HashMap<String, Serializable>();
+				propsMap.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
+				versionService.createVersion(origNodeRef, propsMap);
+				versionHistoryRef = createVersionHistory(getEntitiesHistoryFolder(), origNodeRef);
+			}
+			
+			Version newVersion = versionService.createVersion(origNodeRef, versionProperties);
+			
+			final NodeRef finalVersionHistoryRef = versionHistoryRef;
+			NodeRef versionNodeRef = null;
+
+			// Rights are checked by copyService during recursiveCopy
+			versionNodeRef = AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<NodeRef>() {
+				@Override
+				public NodeRef doWork() throws Exception {
+					
+						return copyService.copy(origNodeRef, finalVersionHistoryRef, ContentModel.ASSOC_CONTAINS,
+								ContentModel.ASSOC_CHILDREN, true);
+					
+				}
+			}, AuthenticationUtil.getSystemUserName());
+
+		
+
+			String name = nodeService.getProperty(origNodeRef, ContentModel.PROP_NAME) + RepoConsts.VERSION_NAME_DELIMITER + newVersion.getVersionLabel();
+			Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>(2);
+			aspectProperties.put(ContentModel.PROP_NAME, name);
+			aspectProperties.put(BeCPGModel.PROP_VERSION_LABEL, newVersion.getVersionLabel());
+			nodeService.addAspect(versionNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION, aspectProperties);
+
+			updateVersionEffectivity(origNodeRef, versionNodeRef);
+
+			return versionNodeRef;
+
+		} finally {
+			if (logger.isDebugEnabled()) {
+				watch.stop();
+				logger.debug("createVersion run in  " + watch.getTotalTimeSeconds() + " s");
+			}
+		}
+		
+		
+	}
+	
 
 	/**
 	 * Gets a reference to the version history node for a given 'real' node.

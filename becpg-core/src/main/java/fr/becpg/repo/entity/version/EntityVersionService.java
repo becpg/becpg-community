@@ -16,8 +16,13 @@ import org.alfresco.service.cmr.version.Version;
  * @author querephi
  */
 public interface EntityVersionService {			
-		
-	public NodeRef createVersionAndCheckin(NodeRef origNodeRef, NodeRef workingCopyNodeRef, Map<String,Serializable> versionProperties);
+	
+	/*
+	 * Private method 
+	 */
+	NodeRef createVersionAndCheckin(NodeRef origNodeRef, NodeRef workingCopyNodeRef, Map<String,Serializable> versionProperties);
+	NodeRef doCheckOut(NodeRef origNodeRef, NodeRef workingCopyNodeRef);
+	void cancelCheckOut(NodeRef origNodeRef, NodeRef workingCopyNodeRef);
 	
 	public NodeRef getEntityVersion(Version version);
 	
@@ -30,14 +35,12 @@ public interface EntityVersionService {
 	public NodeRef getVersionHistoryNodeRef(NodeRef entityNodeRef);
 	
 	public List<NodeRef> buildVersionHistory(NodeRef versionHistoryRef, NodeRef nodeRef);
-
-	public NodeRef doCheckOut(NodeRef origNodeRef, NodeRef workingCopyNodeRef);
-
-	public void cancelCheckOut(NodeRef origNodeRef, NodeRef workingCopyNodeRef);
 	
 	public List<EntityVersion> getAllVersionAndBranches(NodeRef entityNodeRef);
 	
 	public List<NodeRef> getAllVersionBranches(NodeRef entityNodeRef);
+	
+	public NodeRef createVersion(NodeRef entityNodeRef, Map<String, Serializable> versionProperties);
 
 
 	
