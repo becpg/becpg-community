@@ -32,7 +32,6 @@ import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.repo.version.VersionModel;
-import org.alfresco.service.cmr.coci.CheckOutCheckInService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.version.Version;
@@ -60,6 +59,7 @@ import fr.becpg.repo.ecm.data.dataList.WUsedListDataItem;
 import fr.becpg.repo.entity.datalist.WUsedListService;
 import fr.becpg.repo.entity.datalist.WUsedListService.WUsedOperator;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
+import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.ProductData;
@@ -84,13 +84,20 @@ public class ECOServiceImpl implements ECOService {
 	private static Log logger = LogFactory.getLog(ECOServiceImpl.class);
 
 	private WUsedListService wUsedListService;
+	private EntityVersionService entityVersionService;
 
 	private NodeService nodeService;
-	private CheckOutCheckInService checkOutCheckInService;
 	private TransactionService transactionService;
 
 	private ProductService productService;
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
+
+	
+	
+	
+	public void setEntityVersionService(EntityVersionService entityVersionService) {
+		this.entityVersionService = entityVersionService;
+	}
 
 	public void setTransactionService(TransactionService transactionService) {
 		this.transactionService = transactionService;
@@ -104,9 +111,6 @@ public class ECOServiceImpl implements ECOService {
 		this.nodeService = nodeService;
 	}
 
-	public void setCheckOutCheckInService(CheckOutCheckInService checkOutCheckInService) {
-		this.checkOutCheckInService = checkOutCheckInService;
-	}
 
 	public void setProductService(ProductService productService) {
 		this.productService = productService;
@@ -625,36 +629,13 @@ public class ECOServiceImpl implements ECOService {
 	@Override
 	public NodeRef createNewProductVersion(final NodeRef productToImpact, VersionType versionType,
 			ChangeOrderData ecoData){
-		if (!nodeService.hasAspect(productToImpact, ContentModel.ASPECT_VERSIONABLE)) {
-			transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 
-				@Override
-				public NodeRef execute() throws Throwable {
-						logger.debug("Add versionnable aspect");
-						Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>();
-						aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
-						nodeService.addAspect(productToImpact, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
-						return productToImpact;
-				}
-
-			}, false, true);
-
-		}
-
-
-		logger.debug("Create new version :" + versionType);
-
-		logger.debug("Checkout");
-		// checkout
-		NodeRef workingCopyNodeRef = checkOutCheckInService.checkout(productToImpact);
-
-		logger.debug("Checkin");
-		// checkin
+		
 		Map<String, Serializable> properties = new HashMap<String, Serializable>();
 		properties.put(VersionModel.PROP_VERSION_TYPE, versionType);
 		properties.put(Version.PROP_DESCRIPTION, I18NUtil.getMessage("plm.ecm.apply.version.label", ecoData.getCode()));
 
-		return checkOutCheckInService.checkin(workingCopyNodeRef, properties);
+		return entityVersionService.createVersion(productToImpact, properties);
 		
 	}
 
