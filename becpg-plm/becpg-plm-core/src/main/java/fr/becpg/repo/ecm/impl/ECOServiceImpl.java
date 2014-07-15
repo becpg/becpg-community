@@ -631,15 +631,10 @@ public class ECOServiceImpl implements ECOService {
 				@Override
 				public NodeRef execute() throws Throwable {
 						logger.debug("Add versionnable aspect");
-						try {
 						Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>();
 						aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
 						nodeService.addAspect(productToImpact, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
 						return productToImpact;
-						} catch(Throwable e){
-							e.printStackTrace();
-							throw e;
-						}
 				}
 
 			}, false, true);
