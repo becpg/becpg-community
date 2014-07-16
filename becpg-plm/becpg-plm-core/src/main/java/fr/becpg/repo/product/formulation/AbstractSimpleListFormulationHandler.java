@@ -199,17 +199,10 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 						//is it a mandatory charact ?
 						if(slDataItem == null || (slDataItem.getValue() == null && slDataItem.getMaxi() == null && slDataItem.getMini() == null)){					
 							addMissingMandatoryCharact(mandatoryCharacts, newSimpleListDataItem.getCharactNodeRef(), componentNodeRef);
-							if(mandatoryCharacts.containsKey(newSimpleListDataItem.getCharactNodeRef())){
-								newSimpleListDataItem.setValue(null);
-								newSimpleListDataItem.setMini(null);
-								newSimpleListDataItem.setMaxi(null);
-							}
 						}
 						
 						//Calculate values			
-						if(slDataItem != null && qtyUsed != null && (
-								!mandatoryCharacts.containsKey(newSimpleListDataItem.getCharactNodeRef())
-								|| mandatoryCharacts.get(newSimpleListDataItem.getCharactNodeRef()).isEmpty())){
+						if(slDataItem != null && qtyUsed != null ){
 												
 							Double origValue = newSimpleListDataItem.getValue() != null ? newSimpleListDataItem.getValue() : 0d;
 							Double value = slDataItem.getValue();

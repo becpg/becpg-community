@@ -30,9 +30,13 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
+import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.SemiFinishedProductData;
+import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.productList.RequirementType;
+import fr.becpg.repo.repository.AlfrescoRepository;
 
 /**
  * Merge ReqCtrlListDataItem to avoid duplication of items and sort them
@@ -42,15 +46,39 @@ import fr.becpg.repo.product.data.productList.RequirementType;
 public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<ProductData> {
 
 	protected static Log logger = LogFactory.getLog(MergeReqCtrlFormulationHandler.class);
+	
+	private AlfrescoRepository<ProductData> alfrescoRepository;
+	
+	
+
+	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
+		this.alfrescoRepository = alfrescoRepository;
+	}
 
 	@Override
 	public boolean process(ProductData productData) throws FormulateException {
+		
+		//Add child requirements
+		appendChildReq(productData.getCompoListView().getReqCtrlList(), productData.getCompoListView().getCompoList());
 		
 		mergeReqCtrlList(productData.getCompoListView().getReqCtrlList());
 		mergeReqCtrlList(productData.getPackagingListView().getReqCtrlList());
 		mergeReqCtrlList(productData.getProcessListView().getReqCtrlList());
 		
 		return true;
+	}
+
+	private void appendChildReq(List<ReqCtrlListDataItem> reqCtrlList, List<CompoListDataItem> compoList) {
+		for(CompoListDataItem compoListDataItem : compoList){
+			NodeRef productNodeRef =  compoListDataItem.getProduct();
+			ProductData productData = (ProductData) alfrescoRepository.findOne(productNodeRef);
+			if (productData instanceof SemiFinishedProductData || productData instanceof FinishedProductData) {
+				for(ReqCtrlListDataItem tmp : productData.getCompoListView().getReqCtrlList()){
+					reqCtrlList.add(new ReqCtrlListDataItem(null,  tmp.getReqType(), tmp.getReqMessage(), tmp.getSources()));
+				}
+			}	
+		}
+		
 	}
 
 	private void mergeReqCtrlList(List<ReqCtrlListDataItem> reqCtrlList){
@@ -64,7 +92,12 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 			if(r.getNodeRef() != null){
 				if(dbReqCtrlList.containsKey(r.getReqMessage())){
 					duplicates.add(r);
-					logger.warn("This should not happen!");
+					//Merge sources
+					for(NodeRef tmpref : r.getSources()){
+						if(!newReqCtrlList.get(r.getReqMessage()).getSources().contains(tmpref)){
+							newReqCtrlList.get(r.getReqMessage()).getSources().add(tmpref);
+						}
+					}
 				} else {
 					dbReqCtrlList.put(r.getReqMessage(), r);
 				}

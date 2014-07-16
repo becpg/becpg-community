@@ -299,7 +299,7 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 				checks++;
 			}
 			if (nutListDataItem.getNut().equals(nut3)) {
-				assertEquals("nut3.getValue() == 6, actual values: " + trace, null, nutListDataItem.getValue());
+				assertEquals("nut3.getValue() == 14, actual values: " + trace, 14d, nutListDataItem.getValue());
 			
 				checks++;
 			}
