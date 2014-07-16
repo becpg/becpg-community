@@ -122,7 +122,9 @@
 					<property name="nodeService" ref="nodeService" />
 					<property name="execOrder" value="Post"/>
 				</bean>
-				<bean class="fr.becpg.repo.product.formulation.MergeReqCtrlFormulationHandler" />
+				<bean class="fr.becpg.repo.product.formulation.MergeReqCtrlFormulationHandler" >
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+				</bean>
 				<bean class="fr.becpg.repo.product.formulation.CompareFormulationHandler" >
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="namespaceService" ref="namespaceService"/>
@@ -175,7 +177,9 @@
 					<property name="nodeService" ref="nodeService" />
 					<property name="execOrder" value="Post"/>
 				</bean>
-				<bean class="fr.becpg.repo.product.formulation.MergeReqCtrlFormulationHandler" />
+				<bean class="fr.becpg.repo.product.formulation.MergeReqCtrlFormulationHandler" >
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+				</bean>
 				<bean class="fr.becpg.repo.product.formulation.CompareFormulationHandler" >
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="namespaceService" ref="namespaceService"/>
