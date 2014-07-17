@@ -37,6 +37,7 @@ import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.productList.RequirementType;
@@ -127,6 +128,8 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	@SuppressWarnings("unchecked")
 	protected void visitChildren(ProductData formulatedProduct, List<T> simpleListDataList) throws FormulateException{
 		
+        Map<NodeRef, Double> totalQties = new HashMap<NodeRef, Double>();		
+		
 		Double netQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
 		
 		if(formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)){
@@ -137,14 +140,31 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 				Double qty = FormulationHelper.getQty(compoItem);
 				
 				if(qty != null){
-					visitPart(compoItem.getProduct(), simpleListDataList, qty, netQty, mandatoryCharacts);
+					visitPart(compoItem.getProduct(), simpleListDataList, qty, netQty, mandatoryCharacts, totalQties);
 				}			
 			}
 			
 			addReqCtrlList(formulatedProduct.getCompoListView().getReqCtrlList(), mandatoryCharacts);
 		}		
+		
+		//Case Generic MP
+		if( formulatedProduct instanceof RawMaterialData){
+			if(logger.isDebugEnabled()){
+				logger.debug("Case generic MP adjust value to total");
+			}
+			for(SimpleListDataItem newSimpleListDataItem : simpleListDataList){			
+				if(totalQties.containsKey(newSimpleListDataItem.getCharactNodeRef()) ){
+					Double totalQty = totalQties.get(newSimpleListDataItem.getCharactNodeRef());
+					if(newSimpleListDataItem.getValue()!=null){
+						newSimpleListDataItem.setValue(newSimpleListDataItem.getValue()*netQty/totalQty);
+					}
+				}
+			}
+		}
+		
 	}
 	
+
 	protected void addReqCtrlList(List<ReqCtrlListDataItem> reqCtrlList, Map<NodeRef, List<NodeRef>> mandatoryCharacts){
 		
 		//ReqCtrlList
@@ -160,13 +180,15 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	
 	/**
 	 * Visit part.
+	 * @param valueCount 
 	 *
 	 */
 	protected void visitPart(NodeRef componentNodeRef,  
 			List<T> simpleListDataList,
 			Double qtyUsed, 
 			Double netQty, 
-			Map<NodeRef, List<NodeRef>> mandatoryCharacts) throws FormulateException{								
+			Map<NodeRef, List<NodeRef>> mandatoryCharacts,
+			Map<NodeRef, Double> totalQties) throws FormulateException{								
 		
 		if(!PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.equals(nodeService.getType(componentNodeRef))){
 			
@@ -208,6 +230,15 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 							Double value = slDataItem.getValue();
 							if(value != null){
 								newSimpleListDataItem.setValue(FormulationHelper.calculateValue(newSimpleListDataItem.getValue(), qtyUsed, slDataItem.getValue(), netQty));
+								
+								if(totalQties!=null){
+									Double currentQty = totalQties.get(newSimpleListDataItem.getCharactNodeRef());
+									if(currentQty==null){
+										currentQty = 0d;
+									}
+									totalQties.put(newSimpleListDataItem.getCharactNodeRef(),currentQty+qtyUsed);
+								}
+								
 							}
 							else{
 								value = 0d;
@@ -232,7 +263,9 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 									logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), ContentModel.PROP_NAME) + " - newMini : " + newSimpleListDataItem.getMini());
 									logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), ContentModel.PROP_NAME) + " - newMaxi : " + newSimpleListDataItem.getMaxi());
 								}
-							}					
+							}
+							
+							
 						}		
 					}						
 				}	

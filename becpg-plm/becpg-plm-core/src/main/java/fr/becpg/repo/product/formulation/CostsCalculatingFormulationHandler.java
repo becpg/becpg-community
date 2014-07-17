@@ -87,6 +87,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	@Override
 	protected void visitChildren(ProductData formulatedProduct, List<CostListDataItem> costList) throws FormulateException{				
 		
+		
 		Double netQty = null;
 		if(formulatedProduct instanceof PackagingKitData){
 			netQty = FormulationHelper.QTY_FOR_PIECE;
@@ -115,7 +116,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		if(formulatedProduct.hasPackagingListEl(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)){
 			for(PackagingListDataItem packagingListDataItem : formulatedProduct.getPackagingList(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)){
 				Double qty = FormulationHelper.getQtyWithLost(packagingListDataItem);
-				visitPart(packagingListDataItem.getProduct(), costList, qty, netQty, mandatoryCharacts2);
+				visitPart(packagingListDataItem.getProduct(), costList, qty, netQty, mandatoryCharacts2,null);
 			}
 		}
 
@@ -131,7 +132,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				
 				Double qty = FormulationHelper.getQty(formulatedProduct, processListDataItem);
 				if(processListDataItem.getResource() != null && qty != null){
-					visitPart(processListDataItem.getResource(), costList, qty, netQty, mandatoryCharacts3);
+					visitPart(processListDataItem.getResource(), costList, qty, netQty, mandatoryCharacts3,null);
 				}																		
 			}
 		}
@@ -164,7 +165,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			else{
 				CompoListDataItem compoListDataItem = component.getData();
 				Double qty = FormulationHelper.getQtyWithLost(compoListDataItem, parentLossRatio);				
-				visitPart(compoListDataItem.getProduct(), costList, qty, netQty, mandatoryCharacts);
+				visitPart(compoListDataItem.getProduct(), costList, qty, netQty, mandatoryCharacts,null);
 			}			
 		}
 	}
