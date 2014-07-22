@@ -1,0 +1,18 @@
+<datagrid-view>
+   <actionSetToolbar>
+  	  <action type="action-link" id="onActionShowDetails"  permission="details" label="actions.show-details" />
+      <action type="action-link" id="onActionDuplicate" permission="create" label="menu.selected-items.duplicate" />
+      <action type="action-link" id="onActionDelete" permission="delete" label="menu.selected-items.delete" />
+      <action type="action-link" id="onActionUp" permission="sort" label="menu.selected-items.up" />
+      <action type="action-link" id="onActionDown" permission="sort" label="menu.selected-items.down" />
+      <action type="action-link" id="onActionSelectColor"  permission="edit" label="actions.select-color" />
+   </actionSetToolbar>
+   <actionSetDataGrid>
+      <action type="action-link" id="onActionEdit" permission="edit" label="actions.edit" />
+      <action type="action-link" id="onActionShowDetails" permission="details"  label="actions.show-details" />
+      <action type="action-link" id="onActionDuplicate" permission="create" label="actions.duplicate-row" />
+      <action type="action-link" id="onActionDelete" permission="delete" label="actions.delete-row" />
+      <action type="action-link" id="onActionShowComments" permission="edit" label="actions.comment" />
+      <action type="action-link" id="onActionSelectColor"  permission="edit" label="actions.select-color" />
+   </actionSetDataGrid>
+</datagrid-view>

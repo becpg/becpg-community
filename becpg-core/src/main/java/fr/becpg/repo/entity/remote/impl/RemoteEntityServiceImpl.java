@@ -26,6 +26,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
@@ -56,6 +57,9 @@ import fr.becpg.repo.entity.remote.extractor.XmlEntityVisitor;
 @Service("remoteEntityService")
 public class RemoteEntityServiceImpl implements RemoteEntityService {
 
+	@Autowired
+	private ServiceRegistry serviceRegistry;
+	
 	@Autowired
 	private NodeService nodeService;
 
@@ -101,7 +105,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	public NodeRef createOrUpdateEntity(NodeRef entityNodeRef, InputStream in, RemoteEntityFormat format,
 			EntityProviderCallBack entityProviderCallBack) throws BeCPGException {
 		if (format.equals(RemoteEntityFormat.xml)) {
-			ImportEntityXmlVisitor xmlEntityVisitor = new ImportEntityXmlVisitor(nodeService, namespaceService, entityDictionaryService);
+			ImportEntityXmlVisitor xmlEntityVisitor = new ImportEntityXmlVisitor(serviceRegistry, entityDictionaryService);
 			xmlEntityVisitor.setEntityProviderCallBack(entityProviderCallBack);
 			NodeRef ret = null;
 			try {
@@ -156,7 +160,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	@Override
 	public void addOrUpdateEntityData(NodeRef entityNodeRef, InputStream in, RemoteEntityFormat format) throws BeCPGException {
 		if (RemoteEntityFormat.xml.equals(format)) {
-			ImportEntityXmlVisitor xmlEntityVisitor = new ImportEntityXmlVisitor(nodeService, namespaceService, entityDictionaryService);
+			ImportEntityXmlVisitor xmlEntityVisitor = new ImportEntityXmlVisitor(serviceRegistry, entityDictionaryService);
 			
 
 			String fileName = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);

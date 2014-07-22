@@ -4,10 +4,24 @@ ALTER TABLE `becpg_datalist` ADD `is_last_version` BIT DEFAULT FALSE;
 UPDATE becpg_entity SET is_last_version = FALSE;
 UPDATE becpg_datalist SET is_last_version = FALSE;
 
-UPDATE becpg_entity  SET is_last_version = TRUE WHERE
- id IN (
- 	SELECT MAX(entity.id) as id  FROM  (SELECT * FROM becpg_entity) AS entity GROUP BY entity.entity_id
-);
+CREATE TEMPORARY TABLE `temp_becpg_entity` (
+  `id` BIGINT(20) NOT NULL,
+  `entity_id` VARCHAR(62) NOT NULL, 
+  PRIMARY KEY (`id`)
+  ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE utf8_unicode_ci;
+
+
+INSERT INTO `temp_becpg_entity` (id,entity_id) SELECT id,entity_id FROM becpg_entity;
+
+
+UPDATE becpg_entity as t1 INNER JOIN
+(
+  SELECT MAX(entity.id) as id  FROM  temp_becpg_entity AS entity 
+  GROUP BY entity.entity_id
+) as t2 
+ON  t1.id = t2.id
+SET t1.is_last_version = TRUE; 
+
 
 CREATE TEMPORARY TABLE `temp_becpg_datalist` (
   `id` BIGINT(20) NOT NULL,
@@ -28,3 +42,4 @@ SET t1.is_last_version = TRUE;
 
 
 DROP TABLE temp_becpg_datalist;
+DROP TABLE temp_becpg_entity;

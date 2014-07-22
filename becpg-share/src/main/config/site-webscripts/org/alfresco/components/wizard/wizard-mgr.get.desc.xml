@@ -1,0 +1,5 @@
+<webscript>
+  <shortname>wizard-mgr</shortname>
+  <description>Wizard Manager Component</description>
+  <url>/components/wizard/wizard-mgr</url>
+</webscript>

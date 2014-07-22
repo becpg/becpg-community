@@ -1,0 +1,368 @@
+
+.clearfix {
+}
+.clearfix:before, .clearfix:after {
+    content: "";
+    display: table;
+    line-height: 0;
+}
+.clearfix:after {
+    clear: both;
+}
+
+.wizard .form-container .form-buttons {
+	display:none;
+}
+
+.wizard, .tabcontrol {
+    display: block;
+    overflow: hidden;
+    width: 100%;
+}
+.wizard a, .tabcontrol a {
+    outline: 0 none;
+}
+.wizard ul, .tabcontrol ul {
+    list-style: none outside none !important;
+    margin: 0;
+    padding: 0;
+}
+.wizard ul > li, .tabcontrol ul > li {
+    display: block;
+    padding: 0;
+}
+.wizard > .steps .current-info, .tabcontrol > .steps .current-info {
+    left: -999em;
+    position: absolute;
+}
+.wizard > .content > .title, .tabcontrol > .content > .title {
+    left: -999em;
+    position: absolute;
+}
+.wizard > .steps {
+    display: block;
+    position: relative;
+    width: 100%;
+}
+.wizard.vertical > .steps {
+    display: inline;
+    float: left;
+    width: 20%;
+}
+.wizard > .steps .number {
+    font-size: 1.429em;
+}
+.wizard > .steps > ul > li {
+    width: 25%;
+}
+.wizard > .steps > ul > li, .wizard > .actions > ul > li {
+    float: left;
+}
+.wizard.vertical > .steps > ul > li {
+    float: none;
+    width: 100%;
+}
+.wizard > .steps a, .wizard > .steps a:hover, .wizard > .steps a:active {
+    border-radius: 5px;
+    display: block;
+    margin: 0 0.5em 0.5em;
+    padding: 1em;
+    text-decoration: none;
+    width: auto;
+}
+.wizard > .steps .disabled a, .wizard > .steps .disabled a:hover, .wizard > .steps .disabled a:active {
+    background: none repeat scroll 0 0 rgb(238, 238, 238);
+    color: rgb(170, 170, 170);
+    cursor: default;
+}
+.wizard > .steps .current a, .wizard > .steps .current a:hover, .wizard > .steps .current a:active {
+    background: none repeat scroll 0 0 rgb(33, 132, 190);
+    color: rgb(255, 255, 255);
+    cursor: default;
+}
+.wizard > .steps .done a, .wizard > .steps .done a:hover, .wizard > .steps .done a:active {
+    background: none repeat scroll 0 0 rgb(157, 200, 226);
+    color: rgb(255, 255, 255);
+}
+.wizard > .steps .error a, .wizard > .steps .error a:hover, .wizard > .steps .error a:active {
+    background: none repeat scroll 0 0 rgb(255, 49, 17);
+    color: rgb(255, 255, 255);
+}
+.wizard > .content {
+    background: none repeat scroll 0 0 rgb(238, 238, 238);
+    border-radius: 5px;
+    display: block;
+    margin: 0.5em;
+    min-height: 35em;
+    overflow: none;
+    position: relative;
+    width: auto;
+}
+.wizard.vertical > .content {
+    display: inline;
+    float: left;
+    margin: 0 2.5% 0.5em;
+    width: 75%;
+}
+.wizard > .content > .body {
+    float: left;
+    padding: 2.5%;
+    width: 95%;
+}
+.wizard > .content > .body ul {
+    list-style: disc outside none !important;
+}
+.wizard > .content > .body ul > li {
+    display: list-item;
+}
+.wizard > .content > .body > iframe {
+    border: 0 none;
+    height: 100%;
+    width: 100%;
+}
+/* .wizard > .content > .body input {
+    border: 1px solid rgb(204, 204, 204);
+    display: block;
+}
+.wizard > .content > .body input[type="checkbox"] {
+    display: inline-block;
+} 
+.wizard > .content > .body input.error {
+    background: none repeat scroll 0 0 rgb(251, 227, 228);
+    border: 1px solid rgb(251, 194, 196);
+    color: rgb(138, 31, 17);
+}
+.wizard > .content > .body label {
+    display: inline-block;
+    margin-bottom: 0.5em;
+}
+.wizard > .content > .body label.error {
+    color: rgb(138, 31, 17);
+    display: inline-block;
+    margin-left: 1.5em;
+}
+*/
+.wizard > .actions {
+    display: block;
+    position: relative;
+    text-align: right;
+    width: 100%;
+}
+.wizard.vertical > .actions {
+    display: inline;
+    float: right;
+    margin: 0 2.5%;
+    width: 95%;
+}
+.wizard > .actions > ul {
+    display: inline-block;
+    text-align: right;
+}
+.wizard > .actions > ul > li {
+    margin: 0 0.5em;
+}
+.wizard.vertical > .actions > ul > li {
+    margin: 0 0 0 1em;
+}
+.wizard > .actions a, .wizard > .actions a:hover, .wizard > .actions a:active {
+    background: none repeat scroll 0 0 rgb(33, 132, 190);
+    border-radius: 5px;
+    color: rgb(255, 255, 255);
+    display: block;
+    padding: 0.5em 1em;
+    text-decoration: none;
+}
+.wizard > .actions .disabled a, .wizard > .actions .disabled a:hover, .wizard > .actions .disabled a:active {
+    background: none repeat scroll 0 0 rgb(238, 238, 238);
+    color: rgb(170, 170, 170);
+}
+.wizard > .loading {
+}
+.wizard > .loading .spinner {
+}
+
+.tabcontrol > .steps {
+    display: block;
+    position: relative;
+    width: 100%;
+}
+.tabcontrol > .steps > ul {
+    margin: 6px 0 0;
+    position: relative;
+    top: 1px;
+    z-index: 1;
+}
+.tabcontrol > .steps > ul > li {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    float: left;
+    margin: 5px 2px 0 0;
+    padding: 1px;
+}
+.tabcontrol > .steps > ul > li:hover {
+    background: none repeat scroll 0 0 rgb(237, 236, 236);
+    border: 1px solid rgb(187, 187, 187);
+    padding: 0;
+}
+.tabcontrol > .steps > ul > li.current {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background: none repeat scroll 0 0 rgb(255, 255, 255);
+    border-color: rgb(187, 187, 187) rgb(187, 187, 187) -moz-use-text-color;
+    border-image: none;
+    border-style: solid solid none;
+    border-width: 1px 1px 0;
+    margin-top: 0;
+    padding: 0 0 1px;
+}
+.tabcontrol > .steps > ul > li > a {
+    border: 0 none;
+    color: rgb(95, 95, 95);
+    display: inline-block;
+    margin: 0;
+    padding: 10px 30px;
+    text-decoration: none;
+}
+.tabcontrol > .steps > ul > li > a:hover {
+    text-decoration: none;
+}
+.tabcontrol > .steps > ul > li.current > a {
+    padding: 15px 30px 10px;
+}
+.tabcontrol > .content {
+    border-top: 1px solid rgb(187, 187, 187);
+    display: inline-block;
+    height: 35em;
+    overflow: hidden;
+    padding-top: 20px;
+    position: relative;
+    width: 100%;
+}
+.tabcontrol > .content > .body {
+    float: left;
+    height: 95%;
+    padding: 2.5%;
+    position: absolute;
+    width: 95%;
+}
+.tabcontrol > .content > .body ul {
+    list-style: disc outside none !important;
+}
+.tabcontrol > .content > .body ul > li {
+    display: list-item;
+}
+@media (max-width: 600px) {
+.wizard > .steps > ul > li {
+    width: 50%;
+}
+.wizard > .steps a, .wizard > .steps a:hover, .wizard > .steps a:active {
+    margin-top: 0.5em;
+}
+.wizard.vertical > .steps, .wizard.vertical > .actions {
+    display: block;
+    float: none;
+    width: 100%;
+}
+.wizard.vertical > .content {
+    display: block;
+    float: none;
+    margin: 0 0.5em 0.5em;
+    width: auto;
+}
+}
+@media (max-width: 480px) {
+.wizard > .steps > ul > li {
+    width: 100%;
+}
+}
+
+
+/**
+ Dashlet
+**/
+.wizard  .datagrid .scrollableList {
+	padding: 0;
+	height: 350px;
+}
+
+.wizard  .datagrid {
+	padding: 0px;
+}
+
+.wizard  .dashlet {
+	margin: 10px 0 0;
+}
+
+.wizard  .dashlet  .toolbar {
+	height: 28px;
+	margin: 0px;
+	padding: 0x;
+	border-bottom: none;
+}
+
+ .yui-skin-lightTheme .wizard .yui-dt table,
+  .wizard .yui-dt-col-actions{
+	border-collapse: collapse;
+	border-right:none;
+}
+
+.wizard .datagrid .yui-dt-col-actions  {
+    border-right:none;
+}
+
+
+/**
+ Bar
+*/
+.wizard  .datagrid .datagrid-bar .item-select {
+	float: inherit;
+	width: inherit;
+}
+
+.wizard  .datagrid .datagrid-bar .paginator {
+	float: inherit;
+	width: inherit;
+}
+
+.wizard  .datagrid-bar .left,.datagrid-bar .left div {
+	float: left;
+}
+
+.wizard  .datagrid-bar .right {
+	float: right;
+}
+
+
+
+.wizard .datagrid-bar .left  .filterform  div,
+.wizard .datagrid-bar .left  .filterform  {
+    float:none;
+}
+
+
+.wizard  .datagrid-bar .new-row span.first-child {
+	background: url(../images/add-row-16.png) no-repeat 12px 4px;
+	padding-left: 24px;
+}
+
+.wizard  .datagrid-bar  .onActionBulkEdit {
+	background: transparent url(../images/edit-inline-16.png) no-repeat 12px
+		4px;
+	padding-left: 22px;
+}
+
+.wizard  .datagrid-bar  .onActionSelectColor  {
+	background-image:  url("../../components/images/select-color-16.png") no-repeat 12px
+		4px;
+	padding-left: 22px;
+}
+
+.wizard  .datagrid-bar  .onActionSimulate,.datagrid .onActionSimulate a
+	{
+	background: transparent url(../documentlibrary/actions/folder-copy-to-16.png)
+		no-repeat 12px 4px;
+	padding-left: 22px;
+}
+
