@@ -23,7 +23,7 @@
 			         </div>
 			         <@dataGridToolbarNewRow toolbarId=dashletId />
 			         <@dataGridToolbarSelectedItem toolbarId=dashletId />
-			         <div class="filter-form" >
+			      	<div class="filter-form" >
 							<button id="${dashletId}-filterform-button">${msg("filterform.header")}</button>
 							<div id="${dashletId}-filterform-panel"  class="yuimenu" >
 								 <div class="bd">

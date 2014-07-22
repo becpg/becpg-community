@@ -67,15 +67,15 @@
                            htmlForm += '<fieldset  id="'+this.id+'-question_'+question.id+'" class="hidden">';
                            htmlForm += '<legend title="'+this.msg("form.control.decision-tree."+this.options.prefix+"."+question.id+".description")+'">'
                                     +question.id.toUpperCase()+' - '
-                                    +this.msg("form.control.decision-tree."+this.options.prefix+"."+question.id+".label")
+                                    + (question.label ? question.label: this.msg("form.control.decision-tree."+this.options.prefix+"."+question.id+".label"))
                                     +'</legend>';
                            for(var j = 0; j< question.choices.length; j++){
                               var choice = question.choices[j];
                               var checked = this.getCurrentValueChecked(question.id, choice.id );
                               htmlForm +="<p>";
-                              htmlForm +='<input tabindex="0" id="'+this.id+'-choice_'+question.id+'_'+choice.id+'" class="'+QUESTION_EVENTCLASS+'" name="--group_'+question.id+'" type="radio"  '+(checked?"checked":"")+' />';
+                              htmlForm +='<input '+(this.options.disabled?'disabled':'')+' tabindex="0" id="'+this.id+'-choice_'+question.id+'_'+choice.id+'" class="'+QUESTION_EVENTCLASS+'" name="--group_'+question.id+'" type="radio"  '+(checked?"checked":"")+' />';
                               var msgKey  =  choice.id == "-" ? "form.control.decision-tree.empty" : "form.control.decision-tree."+this.options.prefix+"."+question.id+"."+choice.id;
-                              htmlForm +='<label for="'+this.id+'-choice_'+question.id+'_'+choice.id+'">'+this.msg(msgKey)+'</label>';
+                              htmlForm +='<label for="'+this.id+'-choice_'+question.id+'_'+choice.id+'">'+(choice.label ? choice.label:  this.msg(msgKey))+'</label>';
                               htmlForm +="</p>";   
                              
                               if(choice.comment){
@@ -86,7 +86,7 @@
                            if(showComment){
                               htmlForm +='<div id="'+this.id+'-comment_'+question.id+'" class="decision-tree-comments hidden" >';
                               htmlForm +='<label for="'+this.id+'-comment_'+question.id+'-input">'+this.msg("form.control.decision-tree."+this.options.prefix+"."+question.id+".comment")+':</label>';
-                              htmlForm +='<input tabindex="0" id="'+this.id+'-comment_'+question.id+'-input" class="'+COMMENT_EVENTCLASS+'"  type="textarea"  value="'+this.getCurrentValueComment(question.id)+'" name="--comment_'+question.id+'" />';
+                              htmlForm +='<input '+(this.options.disabled?'disabled':'')+' tabindex="0" id="'+this.id+'-comment_'+question.id+'-input" class="'+COMMENT_EVENTCLASS+'"  type="textarea"  value="'+this.getCurrentValueComment(question.id)+'" name="--comment_'+question.id+'" />';
                               htmlForm +='</div>';
                            }
                           
@@ -162,7 +162,13 @@
                                 ret.push({ qid : question.id, cid : choice.id});
                                 
                                 if(choice.cid){
-                                   visible.push(choice.cid);
+                                    if(choice.cid instanceof Array){
+                                        for(var z =0 ; z <choice.cid ; z++){
+                                            visible.push(choice.cid[z]);
+                                        }
+                                    } else {
+                                        visible.push(choice.cid);
+                                    }
                                 }
                                 
                                 if(choice.comment){
@@ -192,9 +198,10 @@
                         }
                      }
                      
-
-                     var hiddenInput = Dom.get(this.fieldId);
-                     hiddenInput.value = JSON.stringify(ret);
+                     if(!this.options.disabled){
+                         var hiddenInput = Dom.get(this.fieldId);
+                         hiddenInput.value = JSON.stringify(ret);
+                     }
                   }
                     
 
