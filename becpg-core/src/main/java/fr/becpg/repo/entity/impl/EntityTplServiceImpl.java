@@ -57,6 +57,8 @@ import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.L2CacheSupport;
+import fr.becpg.repo.repository.L2CacheSupport.Action;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.RepositoryEntityDefReader;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
@@ -65,7 +67,6 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 @Service("entityTplService")
 public class EntityTplServiceImpl implements EntityTplService {
-
 
 	private static Log logger = LogFactory.getLog(EntityTplServiceImpl.class);
 
@@ -77,7 +78,6 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 	@Autowired
 	private DictionaryService dictionaryService;
-
 
 	@Autowired
 	private FormulationService<FormulatedEntity> formulationService;
@@ -93,10 +93,9 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 	@Autowired
 	private BehaviourFilter policyBehaviourFilter;
-	
+
 	@Autowired
 	private NamespaceService namespaceService;
-
 
 	/**
 	 * Create the entityTpl
@@ -144,17 +143,19 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 				properties.clear();
 				properties.put(ContentModel.PROP_NAME, TranslateHelper.getTranslatedPath(subFolder));
-				NodeRef documentsFolderNodeRef = nodeService.getChildByName(entityTplNodeRef, ContentModel.ASSOC_CONTAINS, (String) properties.get(ContentModel.PROP_NAME));
+				NodeRef documentsFolderNodeRef = nodeService.getChildByName(entityTplNodeRef, ContentModel.ASSOC_CONTAINS,
+						(String) properties.get(ContentModel.PROP_NAME));
 				if (documentsFolderNodeRef == null) {
 					nodeService.createNode(entityTplNodeRef, ContentModel.ASSOC_CONTAINS,
-							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(subFolder)), ContentModel.TYPE_FOLDER, properties).getChildRef();
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(subFolder)),
+							ContentModel.TYPE_FOLDER, properties).getChildRef();
 				}
 			}
 		}
 
 		return entityTplNodeRef;
 	}
-	
+
 	@Override
 	public NodeRef createWUsedList(NodeRef entityTplNodeRef, QName typeQName, QName assocQName) {
 
@@ -162,23 +163,24 @@ public class EntityTplServiceImpl implements EntityTplService {
 		if (listContainerNodeRef == null) {
 			listContainerNodeRef = entityListDAO.createListContainer(entityTplNodeRef);
 		}
-		
+
 		String name = RepoConsts.WUSED_PREFIX;
-		if(assocQName!=null) {
-			name+=RepoConsts.WUSED_SEPARATOR+assocQName.toPrefixString(namespaceService).replace(":", "_");
+		if (assocQName != null) {
+			name += RepoConsts.WUSED_SEPARATOR + assocQName.toPrefixString(namespaceService).replace(":", "_");
 		}
-		
-		NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, name );
+
+		NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, name);
 		if (listNodeRef == null) {
-			
+
 			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 			properties.put(ContentModel.PROP_NAME, name);
 			properties.put(ContentModel.PROP_TITLE, I18NUtil.getMessage("entity-datalist-wused-title"));
 			properties.put(ContentModel.PROP_DESCRIPTION, I18NUtil.getMessage("entity-datalist-wused-description"));
 			properties.put(DataListModel.PROP_DATALISTITEMTYPE, typeQName.toPrefixString(namespaceService));
 
-			listNodeRef =  nodeService.createNode(listContainerNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, DataListModel.TYPE_DATALIST, properties).getChildRef();
-			
+			listNodeRef = nodeService.createNode(listContainerNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS,
+					DataListModel.TYPE_DATALIST, properties).getChildRef();
+
 		}
 		return listNodeRef;
 	}
@@ -192,25 +194,20 @@ public class EntityTplServiceImpl implements EntityTplService {
 		if (nodeType == null) {
 			return null;
 		}
-		
-		return BeCPGQueryBuilder.createQuery()
-		.ofExactType(nodeType)
-		.withAspect(BeCPGModel.ASPECT_ENTITY_TPL)
-		.andPropEquals(BeCPGModel.PROP_ENTITY_TPL_ENABLED, Boolean.TRUE.toString())
-		.andPropEquals(BeCPGModel.PROP_ENTITY_TPL_IS_DEFAULT, Boolean.TRUE.toString())
-		.excludeVersions()
-		.singleValue();	
-	}
 
+		return BeCPGQueryBuilder.createQuery().ofExactType(nodeType).withAspect(BeCPGModel.ASPECT_ENTITY_TPL)
+				.andPropEquals(BeCPGModel.PROP_ENTITY_TPL_ENABLED, Boolean.TRUE.toString())
+				.andPropEquals(BeCPGModel.PROP_ENTITY_TPL_IS_DEFAULT, Boolean.TRUE.toString()).excludeVersions().singleValue();
+	}
 
 	@Override
 	public void synchronizeEntities(NodeRef tplNodeRef) {
 
 		logger.debug("synchronizeEntities");
 		RepositoryEntity entityTpl = alfrescoRepository.findOne(tplNodeRef);
-		
-		logger.debug("entityTpl"+ entityTpl.toString());
-		
+
+		logger.debug("entityTpl" + entityTpl.toString());
+
 		final Map<QName, List<? extends RepositoryEntity>> datalistsTpl = repositoryEntityDefReader.getDataLists(entityTpl);
 
 		if (datalistsTpl != null && !datalistsTpl.isEmpty()) {
@@ -226,15 +223,13 @@ public class EntityTplServiceImpl implements EntityTplService {
 					NodeRef listContainerNodeRef = alfrescoRepository.getOrCreateDataListContainer(entity);
 
 					for (QName dataListQName : datalistsTpl.keySet()) {
-						
 
 						@SuppressWarnings("unchecked")
 						List<BeCPGDataObject> dataListItems = (List<BeCPGDataObject>) datalists.get(dataListQName);
-	
+
 						boolean update = false;
 
 						for (RepositoryEntity dataListItemTpl : datalistsTpl.get(dataListQName)) {
-							
 
 							Map<QName, Serializable> identAttrTpl = repositoryEntityDefReader.getIdentifierAttributes(dataListItemTpl);
 
@@ -252,7 +247,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 								}
 
 								if (!isFound) {
-									
+
 									dataListItemTpl.setNodeRef(null);
 									dataListItemTpl.setParentNodeRef(null);
 
@@ -304,46 +299,51 @@ public class EntityTplServiceImpl implements EntityTplService {
 		public void run(NodeRef entityNodeRef);
 	}
 
-	private void doInBatch(List<NodeRef> entityNodeRefs, int batchSize, final BatchCallBack batchCallBack) {
+	private void doInBatch(final List<NodeRef> entityNodeRefs, final int batchSize, final BatchCallBack batchCallBack) {
 
 		StopWatch watch = null;
 		if (logger.isInfoEnabled()) {
 			watch = new StopWatch();
 			watch.start();
 		}
+		L2CacheSupport.doInCacheContext(new Action() {
 
-		for (final List<NodeRef> subList : Lists.partition(entityNodeRefs, batchSize)) {
-			RunAsWork<Object> actionRunAs = new RunAsWork<Object>() {
-				@Override
-				public Object doWork() throws Exception {
-					RetryingTransactionCallback<Object> actionCallback = new RetryingTransactionCallback<Object>() {
+			public void run() {
+				for (final List<NodeRef> subList : Lists.partition(entityNodeRefs, batchSize)) {
+					RunAsWork<Object> actionRunAs = new RunAsWork<Object>() {
 						@Override
-						public Object execute() {
-							for (NodeRef entityNodeRef : subList) {
-									try {
-	
-										policyBehaviourFilter.disableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
-										policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
-										policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
-	
-										batchCallBack.run(entityNodeRef);
-	
-									} finally {
-										policyBehaviourFilter.enableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
-										policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
-										policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
-									}
-								}
-							return null;
+						public Object doWork() throws Exception {
+							RetryingTransactionCallback<Object> actionCallback = new RetryingTransactionCallback<Object>() {
+								@Override
+								public Object execute() {
+									for (final NodeRef entityNodeRef : subList) {
+										try {
 
+											policyBehaviourFilter.disableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
+											policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
+											policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
+
+											batchCallBack.run(entityNodeRef);
+
+										} finally {
+											policyBehaviourFilter.enableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
+											policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
+											policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
+										}
+									}
+									return null;
+
+								}
+							};
+							return transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, false, true);
 						}
 					};
-					return transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, false, true);
-				}
-			};
-			AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getSystemUserName());
+					AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getSystemUserName());
 
-		}
+				}
+
+			}
+		}, false, true);
 
 		if (logger.isInfoEnabled()) {
 			watch.stop();
