@@ -135,7 +135,12 @@
                                                     //If first step is a creation delete project
                                                     if(me.options.nodeRef == "" && 
                                                             me.options.wizardStruct[0].nodeRef ){
-                                                        alert("TODO delete :"+ me.options.wizardStruct[0].nodeRef)
+                                                          Alfresco.util.Ajax.request({
+                                                             method : Alfresco.util.Ajax.DELETE,
+                                                             url : Alfresco.constants.PROXY_URI + "slingshot/doclib/action/file/node/"+me.options.wizardStruct[0].nodeRef.replace("://", "/"),
+                                                             scope : this,
+                                                             execScripts : false
+                                                          });
                                                         
                                                     }
                                                     me._navigateForward();
