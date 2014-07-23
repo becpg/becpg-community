@@ -15,6 +15,7 @@ function main() {
                         type : step.attributes["type"],
                         formId : step.attributes["formId"],
                         itemId : step.attributes["itemId"],
+                        listId : step.attributes["listId"],
                         nextStepWebScript:  step.attributes["nextStepWebScript"]   
                 });
             }
