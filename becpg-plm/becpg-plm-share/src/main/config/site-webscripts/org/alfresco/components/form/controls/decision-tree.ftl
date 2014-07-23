@@ -39,7 +39,7 @@
          <div id="${controlId}-body" ></div>
       </div>
    <#else>
-      <label for="${controlId}">${field.label?html}:</label>
+      <label for="${controlId}">${field.label?html}:<#if field.mandatory><span class="mandatory-indicator">${msg("form.required.fields.marker")}</span></#if></label>
       <div id="${controlId}" class="decision-tree-control">
          <div id="${controlId}-body" ></div>
          <input type="hidden"  name="${field.name}" id="${fieldHtmlId}" value="${field.value?html}" />

@@ -20,7 +20,6 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.ecm.AutomaticECOService;
-import fr.becpg.repo.ecm.ECOService;
 import fr.becpg.repo.ecm.data.ChangeOrderData;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
@@ -39,8 +38,14 @@ public class AutomaticECOPolicy extends AbstractBeCPGPolicy implements NodeServi
 	private static Log logger = LogFactory.getLog(AutomaticECOPolicy.class);
 
 	private boolean isEnable = true;
+	
+	private String automaticRecordVersionType = VersionType.MAJOR.toString();
 
 	JavaBehaviour onUpdatePropertiesBehaviour;
+	
+	public void setAutomaticRecordVersionType(String automaticRecordVersionType) {
+		this.automaticRecordVersionType = automaticRecordVersionType;
+	}
 
 	public void setEnable(boolean isEnable) {
 		this.isEnable = isEnable;
@@ -96,7 +101,7 @@ public class AutomaticECOPolicy extends AbstractBeCPGPolicy implements NodeServi
 				try {
 					ChangeOrderData changeOrderData = automaticECOService.getCurrentUserChangeOrderData();
 					Map<String, Serializable> properties = new HashMap<String, Serializable>();
-					properties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MINOR);
+					properties.put(VersionModel.PROP_VERSION_TYPE, VersionType.valueOf(automaticRecordVersionType));
 					properties.put(Version.PROP_DESCRIPTION, I18NUtil.getMessage("plm.ecm.apply.version.label", changeOrderData.getCode()));
 
 					entityVersionService.createVersion(nodeRef, properties);

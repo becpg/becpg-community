@@ -62,6 +62,7 @@
 		<property name="automaticECOService" ref="automaticECOService"/>
 		<property name="entityVersionService" ref="entityVersionService"></property>
 		<property name="enable" value="${beCPG.eco.automatic.enable}"/>
+		<property name="automaticRecordVersionType" value="${beCPG.eco.automatic.record.version.type}"/>
 	</bean>
 	
 	<!-- Cron -->
