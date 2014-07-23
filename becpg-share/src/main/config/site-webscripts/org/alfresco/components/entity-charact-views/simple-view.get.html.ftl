@@ -30,7 +30,7 @@
 			   
 			//]]></script>
 			<@dataGridDashlet dashletName="simpleViewDashlet" dashletId="simpleView-${el}" dashletTitle="${args.title}"  
-								itemType="${args.itemType}" />	
+							 hideFilter=true itemType="${args.itemType}" />	
  	</@>
  </@>
  
