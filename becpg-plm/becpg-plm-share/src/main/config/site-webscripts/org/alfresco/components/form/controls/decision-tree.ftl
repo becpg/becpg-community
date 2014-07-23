@@ -1,15 +1,5 @@
 <#assign controlId = fieldHtmlId + "-cntrl">
 
-<#--
-<@markup id="css" >
-	<@link rel="stylesheet" type="text/css" href="${url.context}/res/components/form/controls/decision-tree.css" group="form" />
-</@>
-
-<@markup id="js">
-	<@script type="text/javascript" src="${url.context}/res/components/form/controls/decision-tree.js" group="form" />
-</@>
--->
-
 
 <@markup id="widgets">
    	<@inlineScript group="form">
@@ -36,7 +26,9 @@
             <span class="incomplete-warning"><img src="${url.context}/res/components/form/images/warning-16.png" title="${msg("form.field.incomplete")}" /><span>
          </#if>
          <span class="viewmode-label">${field.label?html}:</span>
-         <div id="${controlId}-body" ></div>
+          <div id="${controlId}" class="decision-tree-control">
+        	 <div id="${controlId}-body" ></div>
+         </div>
       </div>
    <#else>
       <label for="${controlId}">${field.label?html}:<#if field.mandatory><span class="mandatory-indicator">${msg("form.required.fields.marker")}</span></#if></label>

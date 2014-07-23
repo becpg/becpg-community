@@ -60,7 +60,7 @@
                     
                      var htmlForm = "";
                      for(var i = 0; i< this.options.data.length; i++){
-                        var question = this.options.data[i],showComment = false;
+                        var question = this.options.data[i],showComment = false, commentLabel = null;
                       
                         if(question.choices){
                         
@@ -80,12 +80,13 @@
                              
                               if(choice.comment){
                                  showComment = true;
+                                 commentLabel = choice.commentLabel;
                               }
                            }
                            
                            if(showComment){
                               htmlForm +='<div id="'+this.id+'-comment_'+question.id+'" class="decision-tree-comments hidden" >';
-                              htmlForm +='<label for="'+this.id+'-comment_'+question.id+'-input">'+this.msg("form.control.decision-tree."+this.options.prefix+"."+question.id+".comment")+':</label>';
+                              htmlForm +='<label for="'+this.id+'-comment_'+question.id+'-input">'+(commentLabel ? commentLabel: this.msg("form.control.decision-tree."+this.options.prefix+"."+question.id+".comment"))+':</label>';
                               htmlForm +='<input '+(this.options.disabled?'disabled':'')+' tabindex="0" id="'+this.id+'-comment_'+question.id+'-input" class="'+COMMENT_EVENTCLASS+'"  type="textarea"  value="'+this.getCurrentValueComment(question.id)+'" name="--comment_'+question.id+'" />';
                               htmlForm +='</div>';
                            }
@@ -93,7 +94,7 @@
                           htmlForm += '</fieldset>';
                         }  else {
                            htmlForm += '<div id="'+this.id+'-question_'+question.id+'" class="hidden decision-tree-message">';
-                           htmlForm += '<span>'+this.msg("form.control.decision-tree."+this.options.prefix+"."+question.id+".label")+'</span>';
+                           htmlForm += '<span>'+(question.label ? question.label:  this.msg("form.control.decision-tree."+this.options.prefix+"."+question.id+".label"))+'</span>';
                            htmlForm += '</div>';
                         }
                      }
@@ -114,11 +115,9 @@
                         }
                         return false;
                      };
-                     
-                     
-                     
+
                      Bubbling.addDefaultAction(QUESTION_EVENTCLASS, fnOnSelectChoice);
-                     
+                  
                   },
                   
                   getCurrentValueChecked: function (qid, cid){
@@ -163,7 +162,7 @@
                                 
                                 if(choice.cid){
                                     if(choice.cid instanceof Array){
-                                        for(var z =0 ; z <choice.cid ; z++){
+                                        for(var z=0 ; z<choice.cid.length ; z++){
                                             visible.push(choice.cid[z]);
                                         }
                                     } else {
