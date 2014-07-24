@@ -25,6 +25,8 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
@@ -85,6 +87,7 @@ public class BulkEditExtractor extends SimpleExtractor {
 		BeCPGQueryBuilder queryBuilder = dataListFilter.getSearchQuery();
 		
 		queryBuilder.maxResults(RepoConsts.MAX_RESULTS_1000);
+		
 
 		// Look for path
 		if (dataListFilter.getFilterId().equals(DataListFilter.NODE_PATH_FILTER)) {
@@ -94,6 +97,21 @@ public class BulkEditExtractor extends SimpleExtractor {
 			}
 			
 			queryBuilder.inPath(path+"/");
+		}
+		
+		
+		try {
+			if (dataListFilter.getExtraParams() != null && dataListFilter.getCriteriaMap() != null) {
+				JSONObject jsonObject = new JSONObject(dataListFilter.getExtraParams());
+				if (jsonObject != null && jsonObject.has("searchTerm")) {
+					String searchTerm = (String) jsonObject.get("searchTerm");
+					if(searchTerm!=null && searchTerm.length()>0){
+						queryBuilder.andFTSQuery(searchTerm);
+					}
+				}
+			}
+		} catch (JSONException e) {
+			logger.error(e);
 		}
 
 		results = advSearchService.queryAdvSearch(dataListFilter.getDataType(), queryBuilder, dataListFilter.getCriteriaMap(),
