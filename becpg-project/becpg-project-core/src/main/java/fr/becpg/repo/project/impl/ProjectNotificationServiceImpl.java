@@ -27,6 +27,7 @@ import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.project.ProjectNotificationService;
+import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.data.projectList.ActivityEvent;
 import fr.becpg.repo.project.data.projectList.ActivityType;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -56,6 +57,9 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 
 	private static final String PREFIX_LOCALIZATION_TASK_NAME = "listconstraint.pjt_taskStates.";
 
+	@Autowired
+	private ProjectService projectService;
+	
 	@Autowired
 	private NodeService nodeService;
 
@@ -143,6 +147,9 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 				observerNodeRefs.addAll(associationService.getTargetAssocs(projectNodeRef, ProjectModel.ASSOC_PROJECT_OBSERVERS));
 			}
 			if (!observerNodeRefs.isEmpty()) {
+				
+				
+				observerNodeRefs  = projectService.updateTaskResources(projectNodeRef, taskNodeRef, observerNodeRefs, false);
 
 				for (NodeRef observerNodeRef : observerNodeRefs) {
 					String authorityName = null;
