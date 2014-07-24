@@ -17,13 +17,21 @@
  ******************************************************************************/
 package fr.becpg.repo.project.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.alfresco.repo.security.authority.AuthorityDAO;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.security.AccessStatus;
+import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.site.SiteService;
+import org.alfresco.service.namespace.NamespaceService;
+import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +39,7 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
+import fr.becpg.repo.ProjectRepoConsts;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.AssociationService;
@@ -38,6 +47,7 @@ import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.ProjectWorkflowService;
 import fr.becpg.repo.project.data.ProjectData;
+import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 import fr.becpg.repo.project.data.projectList.DeliverableState;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskState;
@@ -70,8 +80,13 @@ public class ProjectServiceImpl implements ProjectService {
 	private FormulationService<ProjectData> formulationService;
 	@Autowired
 	private ProjectWorkflowService projectWorkflowService;
+	@Autowired
+	private AuthorityDAO authorityDAO;
+	@Autowired
+	private PermissionService permissionService;
+	@Autowired
+	private NamespaceService namespaceService;
 	
-
 	@Override
 	public void openDeliverable(NodeRef deliverableNodeRef) {
 
@@ -175,6 +190,147 @@ public class ProjectServiceImpl implements ProjectService {
 				(startDate == null || startDate.after(endDate))){
 			nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_START, endDate);
 		}		
+	}
+	
+	@Override
+	public void updateTaskResources(NodeRef projectNodeRef, NodeRef taskRef, List<NodeRef> resources, boolean updatePermissions) {
+		List<NodeRef> toRemove = new ArrayList<NodeRef>();
+		List<NodeRef> toAdd = new ArrayList<NodeRef>();
+		for(NodeRef resourceNodeRef : resources) {
+			String authorityName = authorityDAO.getAuthorityName(resourceNodeRef);
+			if(isRoleAuhtority(authorityName)){
+				logger.debug("Found project role : "+ authorityName);
+				toRemove.add(resourceNodeRef);
+				QName propName = extractRolePropName(authorityName);
+				if(propName!=null){
+					Object user = nodeService.getProperty(projectNodeRef, propName);
+					logger.debug("Try getting : "+ propName +" : "+user);
+					
+					if(user!=null){
+						if(user instanceof String){
+							NodeRef userNodeRef  = authorityDAO.getAuthorityNodeRefOrNull((String)user);
+							if(userNodeRef!=null){
+								if(logger.isDebugEnabled()){
+									logger.debug("Adding user :"+authorityDAO.getAuthorityName(userNodeRef));
+								}
+								toAdd.add(userNodeRef);
+							} 
+						} else if(user instanceof NodeRef){
+							if(logger.isDebugEnabled()){
+								logger.debug("Adding user :"+authorityDAO.getAuthorityName((NodeRef)user));
+							}
+							toAdd.add((NodeRef)user);
+						}
+					} else {
+						logger.debug("Try getting assoc: "+ propName );
+						List<AssociationRef> assocs = nodeService.getTargetAssocs(projectNodeRef, propName);
+						if(assocs !=null){
+							for(AssociationRef assoc : assocs){
+								if(logger.isDebugEnabled()){
+									logger.debug("Adding user :"+authorityDAO.getAuthorityName(assoc.getTargetRef()));
+								}
+								toAdd.add(assoc.getTargetRef());
+							}
+						}
+					}
+				}
+				
+			}
+		}
+		
+		
+		for(NodeRef resourceNodeRef : toAdd){
+			resources.add(resourceNodeRef);
+			if(updatePermissions){
+				updateProjectPermission(projectNodeRef, taskRef, resourceNodeRef, true);
+			}
+		}
+		
+		resources.removeAll(toRemove);
+		
+	}
+
+	@Override
+	public String getDeliverableUrl(NodeRef projectNodeRef, String url) {
+		if(url!=null && url.contains("{")){
+			Matcher patternMatcher = Pattern.compile("\\{([^}]+)\\}").matcher(url);
+			StringBuffer sb = new StringBuffer();
+			while (patternMatcher.find()) {
+
+				String assocQname = patternMatcher.group(1);
+				String replacement = "";
+				if("nodeRef".equals(assocQname)){
+					 replacement += projectNodeRef;
+				 
+				} else {
+					
+					List<AssociationRef> assocs = nodeService.getTargetAssocs(projectNodeRef, QName.createQName(assocQname,namespaceService));
+					if(assocs !=null){
+						for(AssociationRef assoc : assocs){
+							if(replacement.length()>0){
+								replacement+=",";
+							}
+							replacement+=assoc.getTargetRef();
+						}
+					}
+					
+				}
+
+				patternMatcher.appendReplacement(sb, replacement != null ? replacement : "");
+
+			}
+			patternMatcher.appendTail(sb);
+			return sb.toString();
+			
+		}
+		return url;
+	}
+
+	
+	
+	private QName extractRolePropName(String authorityName) {
+		String propName = authorityName
+				.substring((PermissionService.GROUP_PREFIX+ProjectRepoConsts.PROJECT_GROUP_PREFIX).length(), authorityName.length())
+				.replace("_", ":");
+		
+		return QName.createQName(propName, namespaceService);
+	}
+
+	private boolean isRoleAuhtority(String authorityName) {
+		return authorityName!=null && authorityName.startsWith(PermissionService.GROUP_PREFIX+ProjectRepoConsts.PROJECT_GROUP_PREFIX);
+	}
+
+	@Override
+	public void updateProjectPermission(NodeRef projectNodeRef, NodeRef taskListNodeRef, NodeRef resourceNodeRef, boolean allow) {
+		if (ProjectModel.TYPE_PROJECT.equals(nodeService.getType(projectNodeRef))
+				&& permissionService.hasReadPermission(projectNodeRef) == AccessStatus.ALLOWED) {
+			
+			List<NodeRef> nodeRefs = new ArrayList<NodeRef>(1);
+			nodeRefs.add(taskListNodeRef);
+			
+			String authorityName = authorityDAO.getAuthorityName(resourceNodeRef);
+
+			if (!isRoleAuhtority(authorityName)) {
+				logger.debug("Set permission for authority: "+authorityName+" allow :"+allow);
+				ProjectData projectData = alfrescoRepository.findOne(projectNodeRef);
+				List<DeliverableListDataItem> deliverableList = ProjectHelper.getDeliverables(projectData, taskListNodeRef);
+				for (DeliverableListDataItem dl : deliverableList) {
+					nodeRefs.add(dl.getNodeRef());
+				}
+
+				for (NodeRef n : nodeRefs) {
+					if (allow) {
+						permissionService.setPermission(n, authorityName, PermissionService.EDITOR, allow);
+					} else {
+						// permissionService.deletePermission(n, userName,
+						// PermissionService.EDITOR);
+						permissionService.clearPermission(n, authorityName);
+					}
+
+				}
+			}
+		}
+		
 	}
 	
 }

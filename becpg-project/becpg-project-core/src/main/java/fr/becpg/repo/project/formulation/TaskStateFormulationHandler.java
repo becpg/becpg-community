@@ -28,6 +28,7 @@ import org.apache.commons.logging.LogFactory;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
+import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.ProjectWorkflowService;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.ProjectState;
@@ -45,10 +46,17 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 
 	private ProjectWorkflowService projectWorkflowService;
 
+	private ProjectService projectService;
 
 	public void setProjectWorkflowService(ProjectWorkflowService projectWorkflowService) {
 		this.projectWorkflowService = projectWorkflowService;
 	}
+	
+	
+	public void setProjectService(ProjectService projectService) {
+		this.projectService = projectService;
+	}
+
 
 	@Override
 	public boolean process(ProjectData projectData) throws FormulateException {
@@ -179,7 +187,8 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 						
 						// set Planned dl InProgress
 						if (DeliverableState.Planned.equals(nextDeliverable.getState())) {
-							nextDeliverable.setState(DeliverableState.InProgress);								
+							nextDeliverable.setState(DeliverableState.InProgress);	
+							nextDeliverable.setUrl(projectService.getDeliverableUrl(projectData.getNodeRef(),nextDeliverable.getUrl()));
 						}
 					}
 
@@ -195,8 +204,14 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 							nextTask.getWorkflowName() != null && !nextTask.getWorkflowName().isEmpty() &&
 							nextTask.getResources() != null && !nextTask.getResources().isEmpty()) {					
 						
-						// start workflow
-						projectWorkflowService.startWorkflow(projectData, nextTask, nextDeliverables);
+						projectService.updateTaskResources(projectData.getNodeRef(),nextTask.getNodeRef(), nextTask.getResources(),true);
+						projectService.updateTaskResources(projectData.getNodeRef(),nextTask.getNodeRef(), nextTask.getObservers(),false);
+
+						
+						if(!nextTask.getResources().isEmpty()){
+							// start workflow
+							projectWorkflowService.startWorkflow(projectData, nextTask, nextDeliverables);
+						}
 					}
 				}										
 					
@@ -206,6 +221,7 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 		}
 	}
 	
+
 	
 
 	private void calculateProjectLegends(ProjectData projectData){

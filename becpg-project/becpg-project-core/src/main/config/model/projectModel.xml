@@ -397,6 +397,9 @@
 						<constraint ref="pjt:deliverableStates" />
 					</constraints>
 				</property>
+				<property name="pjt:dlUrl">
+					<type>d:text</type>
+				</property>
 			</properties>
 			<associations>
 				<association name="pjt:dlTask">
