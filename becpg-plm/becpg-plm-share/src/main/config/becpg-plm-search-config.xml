@@ -45,6 +45,7 @@
 					= I18N message id of description text to display -->
 				<form labelId="search.form.label.bcpg_product" descriptionId="search.form.desc.bcpg_product">bcpg:product</form>
 				<form labelId="search.form.label.bcpg_packagingMaterial" descriptionId="search.form.desc.bcpg_packagingMaterial">bcpg:packagingMaterial</form>
+				<form labelId="search.form.label.bcpg_rawMaterial" descriptionId="search.form.desc.bcpg_rawMaterial">bcpg:rawMaterial</form>
 				<form labelId="search.form.label.qa_nc" descriptionId="search.form.desc.qa_nc">qa:nc</form>
 			</forms>
 		</advanced-search>
