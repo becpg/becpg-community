@@ -99,8 +99,9 @@ public interface ProjectService {
 	 * @param taskNodeRefs
 	 * @param resources
 	 * @param updatePermissions
+	 * @return 
 	 */
-	public void updateTaskResources(NodeRef projectNodeRef, NodeRef taskNodeRefs, List<NodeRef> resources, boolean updatePermissions);
+	public List<NodeRef> updateTaskResources(NodeRef projectNodeRef, NodeRef taskNodeRefs, List<NodeRef> resources, boolean updatePermissions);
 
 	/**
 	 * 

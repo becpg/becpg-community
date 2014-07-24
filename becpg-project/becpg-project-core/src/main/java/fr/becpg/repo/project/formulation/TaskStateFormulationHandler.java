@@ -204,8 +204,7 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 							nextTask.getWorkflowName() != null && !nextTask.getWorkflowName().isEmpty() &&
 							nextTask.getResources() != null && !nextTask.getResources().isEmpty()) {					
 						
-						projectService.updateTaskResources(projectData.getNodeRef(),nextTask.getNodeRef(), nextTask.getResources(),true);
-						projectService.updateTaskResources(projectData.getNodeRef(),nextTask.getNodeRef(), nextTask.getObservers(),false);
+						nextTask.setResources(projectService.updateTaskResources(projectData.getNodeRef(),nextTask.getNodeRef(), nextTask.getResources(),true));
 
 						
 						if(!nextTask.getResources().isEmpty()){

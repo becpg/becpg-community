@@ -193,7 +193,7 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 	
 	@Override
-	public void updateTaskResources(NodeRef projectNodeRef, NodeRef taskRef, List<NodeRef> resources, boolean updatePermissions) {
+	public  List<NodeRef> updateTaskResources(NodeRef projectNodeRef, NodeRef taskRef, List<NodeRef> resources, boolean updatePermissions) {
 		List<NodeRef> toRemove = new ArrayList<NodeRef>();
 		List<NodeRef> toAdd = new ArrayList<NodeRef>();
 		for(NodeRef resourceNodeRef : resources) {
@@ -247,6 +247,8 @@ public class ProjectServiceImpl implements ProjectService {
 		}
 		
 		resources.removeAll(toRemove);
+		
+		return resources;
 		
 	}
 

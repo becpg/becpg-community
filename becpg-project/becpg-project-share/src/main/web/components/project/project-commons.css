@@ -111,6 +111,13 @@
 	cursor: pointer;
 }
 
+.project-list span.doc-url {
+	padding-right: 4px;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+
 .project-list span.task-status {
 	background-repeat: no-repeat;
 	padding-left: 20px;
