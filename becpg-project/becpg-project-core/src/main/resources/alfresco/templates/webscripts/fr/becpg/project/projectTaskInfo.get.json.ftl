@@ -5,6 +5,7 @@
 				"name": "${deliverable.properties["pjt:dlDescription"]!""}",
 				"nodeRef": "${deliverable.nodeRef}",
 				"state": "${deliverable.properties["pjt:dlState"]!""}",
+				"url": "${deliverable.properties["pjt:dlUrl"]!""}",
 		   		"completionPercent": "${deliverable.properties["pjt:completionPercent"]!""}",
 		   		"commentCount":"${deliverable.properties["fm:commentCount"]!""}",
 		   		"contents": [

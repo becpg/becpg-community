@@ -38,6 +38,7 @@ public class DeliverableListDataItem extends BeCPGDataObject {
 	private NodeRef task;
 	private DeliverableState state = DeliverableState.Planned;
 	private String description;
+	private String url;
 	private Integer completionPercent = 0;
 	private NodeRef content;
 
@@ -49,6 +50,17 @@ public class DeliverableListDataItem extends BeCPGDataObject {
 
 	public void setTask(NodeRef task) {
 		this.task = task;
+	}
+
+	
+	@AlfProp
+	@AlfQname(qname = "pjt:dlUrl")
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
 	}
 
 	@AlfProp

@@ -73,8 +73,42 @@ public interface ProjectService {
 	 * @throws FormulateException 
 	 */
 	public void formulate(NodeRef projectNodeRef) throws FormulateException;
-
+	/**
+	 * 
+	 * @param taskListNodeRef
+	 */
 	public void deleteTask(NodeRef taskListNodeRef);
-	
+	/**
+	 * 
+	 * @param taskListNodeRef
+	 */
 	public void submitTask(NodeRef taskListNodeRef);
+	
+	/**
+	 * @param projectNodeRef
+	 * @param taskListNodeRef
+	 * @param resourceNodeRef
+	 * @param allow
+	 */
+	public void updateProjectPermission(NodeRef projectNodeRef, NodeRef taskListNodeRef, NodeRef resourceNodeRef, boolean allow);
+	
+	
+	/**
+	 * 
+	 * @param projectNodeRef
+	 * @param taskNodeRefs
+	 * @param resources
+	 * @param updatePermissions
+	 * @return 
+	 */
+	public List<NodeRef> updateTaskResources(NodeRef projectNodeRef, NodeRef taskNodeRefs, List<NodeRef> resources, boolean updatePermissions);
+
+	/**
+	 * 
+	 * @param projectNodeRef
+	 * @param url
+	 * @return
+	 */
+	public String getDeliverableUrl(NodeRef projectNodeRef, String url);
+
 }
