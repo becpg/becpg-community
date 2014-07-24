@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<page>
+   <title>Wizard</title>
+   <title-id>page.wizard.title</title-id>
+   <description>Display custom wizard</description>
+   <description-id>page.wizard.description</description-id>
+   <template-instance>wizard</template-instance>
+   <authentication>user</authentication>
+</page>

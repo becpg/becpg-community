@@ -168,49 +168,38 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	@Override
 	public void generateReport(final NodeRef entityNodeRef) {
-		RunAsWork<Object> actionRunAs = new RunAsWork<Object>() {
-			@Override
-			public Object doWork() throws Exception {
-				RetryingTransactionCallback<Object> actionCallback = new RetryingTransactionCallback<Object>() {
+		L2CacheSupport.doInCacheContext(new Action() {
+			public void run() {
+
+				RunAsWork<Object> actionRunAs = new RunAsWork<Object>() {
 					@Override
-					public Object execute() {
-						if (nodeService.exists(entityNodeRef)) {
-							try {
-								policyBehaviourFilter.disableBehaviour(entityNodeRef);
-								
-//								policyBehaviourFilter.disableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
-//								policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
-//								policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
+					public Object doWork() throws Exception {
+						RetryingTransactionCallback<Object> actionCallback = new RetryingTransactionCallback<Object>() {
+							@Override
+							public Object execute() {
+								if (nodeService.exists(entityNodeRef)) {
+									try {
+										policyBehaviourFilter.disableBehaviour(entityNodeRef);
+										if (logger.isDebugEnabled()) {
+											logger.debug("Generate report: " + entityNodeRef + " - "
+													+ nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
+										}
 
-								if (logger.isDebugEnabled()) {
-									logger.debug("Generate report: " + entityNodeRef + " - "
-											+ nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
-								}
-
-								L2CacheSupport.doInCacheContext(new Action() {
-
-									public void run() {
 										generateReportImpl(entityNodeRef);
 
+									} finally {
+										policyBehaviourFilter.enableBehaviour(entityNodeRef);
 									}
-								}, false, true);
-
-							} finally {
-								policyBehaviourFilter.enableBehaviour(entityNodeRef);
-								
-//								policyBehaviourFilter.enableBehaviour(entityNodeRef, ReportModel.ASPECT_REPORT_ENTITY);
-//								policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
-//								policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
+								}
+								return null;
 							}
-						}
-						return null;
+						};
+						return transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, false, false);
 					}
 				};
-				return transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, false, false);
+				AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getSystemUserName());
 			}
-		};
-		AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getSystemUserName());
-
+		}, false, true);
 	}
 
 	private void generateReportImpl(NodeRef entityNodeRef) {

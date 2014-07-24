@@ -53,9 +53,9 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 	@Value("${beCPG.eco.automatic.apply}")
 	private Boolean shouldApplyAutomaticECO = false;
 
-	@Value("${beCPG.eco.automatic.version}")
-	private Boolean shouldCreateNewVersion = false;
-
+	@Value("${beCPG.eco.automatic.revision.type}")
+	private String automaticRevisionType = RevisionType.NoRevision.toString();
+	
 	@Value("${beCPG.eco.automatic.states}")
 	private String statesToRegister = "";
 
@@ -120,12 +120,12 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 					}
 				}
 
-				replacementList.add(new ReplacementListDataItem(shouldCreateNewVersion ? RevisionType.Major : RevisionType.Minor, Arrays
+				replacementList.add(new ReplacementListDataItem(RevisionType.valueOf(automaticRevisionType), Arrays
 						.asList(entityNodeRef), entityNodeRef, 100));
 
 				if (logger.isDebugEnabled()) {
 					logger.debug("Adding nodeRef " + entityNodeRef + " to automatic change order :" + changeOrderData.getName());
-					logger.debug("Revision type : " + (shouldCreateNewVersion ? RevisionType.Major : RevisionType.Minor));
+					logger.debug("Revision type : " + automaticRevisionType );
 				}
 
 				changeOrderData.setReplacementList(replacementList);

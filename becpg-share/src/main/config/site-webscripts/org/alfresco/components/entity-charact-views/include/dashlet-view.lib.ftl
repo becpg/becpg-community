@@ -2,7 +2,6 @@
 
 <#macro dataGridDashlet dashletId dashletName extra...>
 
-	
 <div id="${dashletId}">
 <@uniqueIdDiv>
 	<div class="dashlet datagrid" id="${dashletId}-body" >
@@ -23,7 +22,8 @@
 			         </div>
 			         <@dataGridToolbarNewRow toolbarId=dashletId />
 			         <@dataGridToolbarSelectedItem toolbarId=dashletId />
-			         <div class="filter-form" >
+			        <#if !extra["hideFilter"]?? >
+			      		<div class="filter-form" >
 							<button id="${dashletId}-filterform-button">${msg("filterform.header")}</button>
 							<div id="${dashletId}-filterform-panel"  class="yuimenu" >
 								 <div class="bd">
@@ -35,7 +35,8 @@
 								  </div>
 							</div>
 						</div>
-					</div>
+					</#if>	
+					</div>			
 					 <div class="right">
 			         <div id="${dashletId}-paginator" class="paginator"></div>
 			         <div class="items-per-page" style="display:none;">

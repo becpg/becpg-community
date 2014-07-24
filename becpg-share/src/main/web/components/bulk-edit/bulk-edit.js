@@ -426,7 +426,38 @@
 								elCell.innerHTML = desc;
 							};
 						},
+                        
+						fnRenderCellCode : function BulkEdit_fnRenderCellCode(datalistColumn)
+                        {
+                            var scope = this;
 
+                            return function BulkEdit_renderCellCode(elCell, oRecord, oColumn, oData)
+                            {
+                                var html = "";
+                                if (oRecord && oColumn)
+                                {
+                                    if (!oData)
+                                    {
+                                        oData = oRecord.getData("itemData")[oColumn.field];
+                                    }
+                                    if (oData)
+                                    {
+                                        oData = YAHOO.lang.isArray(oData) ? oData : [ oData ];
+                                        for (var i = 0, ii = oData.length, data; i < ii; i++)
+                                        {
+                                            data = oData[i];
+                                            html+= '<a href="' + Alfresco.util
+                                                    .siteURL('entity-details?nodeRef=' + oRecord.getData("nodeRef"),{
+                                                        site : oRecord.getData("site")!=null ? oRecord.getData("site").shortName :null
+                                                    }) + '">' + $html(data.displayValue) + '</a>';
+                                        }
+                                    }
+                                }
+                                elCell.innerHTML = html;
+                            };
+
+                        },
+						
 						/**
 						 * Returns actions custom datacell formatter
 						 * 
@@ -796,10 +827,12 @@
 								);
 							}
 
-							var column;
+							var column, colName;
 							for (var i = 0, ii = this.dataTableColumn.length; i < ii; i++) {
 								column = this.dataTableColumn[i];
-								if (this._isSelectedProp(this._buildFormsName(column))) {
+								colName = this._buildFormsName(column);
+								
+								if (this._isSelectedProp(colName)) {
 
 									columnDefinitions.push({
 										key : this.dataResponseFields[i],
@@ -811,8 +844,8 @@
 											sortFunction : this.rendererHelper.getSortFunction()
 										},
 
-										formatter : this.rendererHelper.getCellFormatter(this),
-										editor : this.rendererHelper.getCellEditor(this, column, this.saveFieldUrl)
+										formatter : colName == "prop_bcpg_code"? this.fnRenderCellCode(column) :  this.rendererHelper.getCellFormatter(this),
+										editor : colName == "prop_bcpg_code"? null : this.rendererHelper.getCellEditor(this, column, this.saveFieldUrl)
 									});
 								}
 							}

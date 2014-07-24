@@ -94,8 +94,8 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 					duplicates.add(r);
 					//Merge sources
 					for(NodeRef tmpref : r.getSources()){
-						if(!newReqCtrlList.get(r.getReqMessage()).getSources().contains(tmpref)){
-							newReqCtrlList.get(r.getReqMessage()).getSources().add(tmpref);
+						if(!dbReqCtrlList.get(r.getReqMessage()).getSources().contains(tmpref)){
+							dbReqCtrlList.get(r.getReqMessage()).getSources().add(tmpref);
 						}
 					}
 				} else {
