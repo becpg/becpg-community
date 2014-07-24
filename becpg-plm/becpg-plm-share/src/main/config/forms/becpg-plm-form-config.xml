@@ -1131,6 +1131,10 @@
 					<show id="pack:palletNbOfIntercropping" />
 					<show id="pack:palletHeight" />
 					<show id="pack:palletNbOfBoxes" />
+			
+					<!-- Tare -->
+					<show id="pack:tare" force="true" />
+					<show id="pack:tareUnit" force="true" />
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
@@ -1147,6 +1151,8 @@
 					<set id="mainInfo" appearance="bordered-panel"
 						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="pallet" appearance="bordered-panel" label-id="becpg.forms.set.pallet.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="tare" appearance="bordered-panel" label-id="becpg.forms.set.tare.label"
 						template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="categories" appearance="bordered-panel"
 						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
@@ -1208,6 +1214,9 @@
 					<field id="pack:palletHeight" set="pallet" />
 					<field id="pack:palletNbOfBoxes" set="pallet" />
 
+					<!-- tare -->
+					<field id="pack:tare" set="tare" />
+					<field id="pack:tareUnit" set="tare" />
 
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
