@@ -3,9 +3,11 @@
  */
 package fr.becpg.repo.dictionary.constraint;
 
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,6 +28,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
@@ -36,7 +39,6 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 public class DynListConstraint extends ListOfValuesConstraint {
 
-	
 	public static final String UNDIFINED_CONSTRAINT_VALUE = "-";
 	private static final String ERR_NO_VALUES = "d_dictionary.constraint.list_of_values.no_values";
 	private static final String ERR_NON_STRING = "d_dictionary.constraint.string_length.non_string";
@@ -45,7 +47,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 	private static Log logger = LogFactory.getLog(DynListConstraint.class);
 
 	private static ServiceRegistry serviceRegistry;
-	
+
 	private List<String> paths = null;
 
 	private String constraintType = null;
@@ -56,7 +58,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 
 	private Boolean addEmptyValue = null;
 
-	private Map<String,List<String>> allowedValues = new HashMap<>();
+	private Map<String, List<String>> allowedValues = new HashMap<>();
 
 	public void setPath(List<String> paths) {
 
@@ -73,7 +75,6 @@ public class DynListConstraint extends ListOfValuesConstraint {
 	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
 		DynListConstraint.serviceRegistry = serviceRegistry;
 	}
-	
 
 	public void setConstraintType(String constraintType) {
 		this.constraintType = constraintType;
@@ -103,9 +104,8 @@ public class DynListConstraint extends ListOfValuesConstraint {
 		if (level != null) {
 			checkPropertyNotNull("levelProp", levelProp);
 		}
-		logger.debug("Initialize DynListConstraint for "+paths+" "+constraintType);
-		
-		
+		logger.debug("Initialize DynListConstraint for " + paths + " " + constraintType);
+
 	}
 
 	/*
@@ -116,35 +116,39 @@ public class DynListConstraint extends ListOfValuesConstraint {
 	 */
 	@Override
 	public List<String> getAllowedValues() {
-		if(MTDictionnarySupport.shouldCleanConstraint() || allowedValues.get(TenantUtil.getCurrentDomain())==null) {
-			allowedValues.put(TenantUtil.getCurrentDomain(),   serviceRegistry.getTransactionService().getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<List<String>>() {
-				@Override
-				public List<String> execute() throws Throwable {
-	
-					List<String> allowedValues = new ArrayList<String>();
-	
-					for (String path : paths) {
-						NamespaceService namespaceService = serviceRegistry.getNamespaceService();
-						List<String> values = getAllowedValues(path, QName.createQName(constraintType, namespaceService), QName.createQName(constraintProp, namespaceService));
-						allowedValues.addAll(values);
-					}
-					
-					if (addEmptyValue != null && addEmptyValue && !allowedValues.contains("")) {
-						allowedValues.add("");
-					}
-	
-					return allowedValues;
-	
-				}
-			}, true, false));
-	
+		if (MTDictionnarySupport.shouldCleanConstraint() || allowedValues.get(TenantUtil.getCurrentDomain()) == null) {
+			allowedValues.put(
+					TenantUtil.getCurrentDomain(),
+					serviceRegistry.getTransactionService().getRetryingTransactionHelper()
+							.doInTransaction(new RetryingTransactionCallback<List<String>>() {
+								@Override
+								public List<String> execute() throws Throwable {
+
+									List<String> allowedValues = new LinkedList<String>();
+
+									if (addEmptyValue != null && addEmptyValue) {
+										allowedValues.add("");
+									}
+									
+									for (String path : paths) {
+										NamespaceService namespaceService = serviceRegistry.getNamespaceService();
+										List<String> values = getAllowedValues(path, QName.createQName(constraintType, namespaceService),
+												QName.createQName(constraintProp, namespaceService));
+										allowedValues.addAll(values);
+									}
+
+									return allowedValues;
+
+								}
+							}, true, false));
+
 			if (allowedValues.get(TenantUtil.getCurrentDomain()).isEmpty()) {
 				allowedValues.get(TenantUtil.getCurrentDomain()).add(UNDIFINED_CONSTRAINT_VALUE);
 			}
-			
-			logger.debug("Fill allowedValues  for :"+TenantUtil.getCurrentDomain());
+
+			logger.debug("Fill allowedValues  for :" + TenantUtil.getCurrentDomain());
 		} else {
-			logger.debug("AllowedValues exist for :"+TenantUtil.getCurrentDomain());
+			logger.debug("AllowedValues exist for :" + TenantUtil.getCurrentDomain());
 		}
 		return allowedValues.get(TenantUtil.getCurrentDomain());
 	}
@@ -162,7 +166,6 @@ public class DynListConstraint extends ListOfValuesConstraint {
 			throw new ConstraintException(ERR_NON_STRING, value);
 		}
 
-
 		if (!getAllowedValues().contains(valueStr)) {
 			throw new ConstraintException(ERR_INVALID_VALUE, value);
 		}
@@ -174,29 +177,50 @@ public class DynListConstraint extends ListOfValuesConstraint {
 		return AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<List<String>>() {
 			@Override
 			public List<String> doWork() throws Exception {
-				List<String> allowedValues = new ArrayList<String>();
-				
-				List<NodeRef> nodeRefs = BeCPGQueryBuilder.createQuery()
-						.selectNodesByPath(serviceRegistry.getNodeService().getRootNode(RepoConsts.SPACES_STORE),
-								"/app:company_home/"+BeCPGQueryBuilder.encodePath(path)+"/*");
-						
-						for (NodeRef nodeRef : nodeRefs) {
-							if (serviceRegistry.getNodeService().exists(nodeRef) && serviceRegistry.getNodeService().getType(nodeRef).equals(constraintType)) {
-								String value = (String) serviceRegistry.getNodeService().getProperty(nodeRef, constraintProp);
-								if (!allowedValues.contains(value) && value != null && checkLevel(nodeRef)) {
-									allowedValues.add(value);
-								}
-							} else {
-								logger.warn("Node doesn't exist : " + nodeRef);
-							}
+				List<String> allowedValues = new LinkedList<String>();
+
+				List<NodeRef> nodeRefs = BeCPGQueryBuilder.createQuery().selectNodesByPath(
+						serviceRegistry.getNodeService().getRootNode(RepoConsts.SPACES_STORE),
+						"/app:company_home/" + BeCPGQueryBuilder.encodePath(path) + "/*");
+
+				Collections.sort(nodeRefs, new Comparator<NodeRef>() {
+
+					@Override
+					public int compare(NodeRef o1, NodeRef o2) {
+						Integer sort1 = (Integer) serviceRegistry.getNodeService().getProperty(o1, BeCPGModel.PROP_SORT);
+						Integer sort2 = (Integer) serviceRegistry.getNodeService().getProperty(o2, BeCPGModel.PROP_SORT);
+						if (sort1 == null && sort2 == null) {
+							return 0;
 						}
-				
-					if (logger.isDebugEnabled()) {
-						logger.debug("allowedValues.size() : " + allowedValues.size());
-						logger.debug("allowed values: " + allowedValues.toString());
+						if (sort1 == null) {
+							return -1;
+						}
+						if (sort2 == null) {
+							return 1;
+						}
+
+						return sort1.compareTo(sort2);
 					}
-					return allowedValues;
-				
+
+				});
+
+				for (NodeRef nodeRef : nodeRefs) {
+					if (serviceRegistry.getNodeService().exists(nodeRef) && serviceRegistry.getNodeService().getType(nodeRef).equals(constraintType)) {
+						String value = (String) serviceRegistry.getNodeService().getProperty(nodeRef, constraintProp);
+						if (!allowedValues.contains(value) && value != null && checkLevel(nodeRef)) {
+							allowedValues.add(value);
+						}
+					} else {
+						logger.warn("Node doesn't exist : " + nodeRef);
+					}
+				}
+
+				if (logger.isDebugEnabled()) {
+					logger.debug("allowedValues.size() : " + allowedValues.size());
+					logger.debug("allowed values: " + allowedValues.toString());
+				}
+				return allowedValues;
+
 			}
 
 			private boolean checkLevel(NodeRef nodeRef) {
@@ -227,10 +251,10 @@ public class DynListConstraint extends ListOfValuesConstraint {
 			}
 		}, AuthenticationUtil.getSystemUserName());
 	}
-	
+
 	@Override
 	public String getDisplayLabel(String constraintAllowableValue, MessageLookup messageLookup) {
-		//No I18N needed --> Can be done with ML Text
+		// No I18N needed --> Can be done with ML Text
 		return constraintAllowableValue;
 	}
 

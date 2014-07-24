@@ -85,6 +85,7 @@
         Bubbling.on(this.scopeId + "columnRenamed", this.onColumnRenamed, this);
 
         // Local Events
+        Bubbling.on(this.scopeId + "activeDataListChanged", this.onActiveDataListChanged, this);
         Bubbling.on(this.scopeId + "userAccess", this.onUserAccess, this);
         Bubbling.on(this.scopeId + "filterChanged", this.onFilterChanged, this);
         Bubbling.on(this.scopeId + "changeFilter", this.onChangeFilter, this);
@@ -257,11 +258,6 @@
                             extraParams : null,
 
                             /**
-                             * can be used to replace dataList Parent
-                             */
-                            parentNodeRef : "",
-
-                            /**
                              * Current list.
                              * 
                              * @property list
@@ -332,6 +328,10 @@
                              */
                             initHistoryManager : true,
 
+                            /**
+                             * Should use historyManager
+                             */
+                            useHistoryManager : true,
                             /**
                              * Load data when ready
                              */
@@ -1006,10 +1006,15 @@
                                 entityDatagrid : this
                             });
 
-                            // Continue only when History Manager fires its
-                            // onReady
-                            // event
-                            YAHOO.util.History.onReady(this.onHistoryManagerReady, this, true);
+                            
+                            if(this.options.useHistoryManager){
+                                // Continue only when History Manager fires its
+                                // onReady
+                                // event
+                                YAHOO.util.History.onReady(this.onHistoryManagerReady, this, true);
+                            } else {
+                                this.onHistoryManagerReady.call(this);
+                            }
                         },
 
                         /**
@@ -1070,7 +1075,7 @@
                                         });
                                     }, null, this);
 
-                            if (this.options.initHistoryManager)
+                            if (this.options.initHistoryManager && this.options.useHistoryManager)
                             {
                                 try
                                 {
@@ -2443,7 +2448,7 @@
 
                                 // Initial navigation won't fire the History
                                 // event
-                                if (obj.datagridFirstTimeNav)
+                                if (obj.datagridFirstTimeNav || !this.options.useHistoryManager)
                                 {
                                     this._updateDataGrid.call(this,
                                     {

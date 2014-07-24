@@ -110,7 +110,6 @@
 					<field id="pjt:projectScore" set="mainInfo" />		
 					
 					<field id="pjt:projectStartDate" set="planning" />
-					<field id="pjt:projectDueDate" set="planning" />	
 					<field id="pjt:projectDueDate" set="planning" />
 					<field id="pjt:projectCompletionDate" set="planning" />
 					<field id="pjt:completionPercent" set="planning" />

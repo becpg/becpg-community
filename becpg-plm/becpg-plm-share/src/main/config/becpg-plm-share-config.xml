@@ -86,6 +86,21 @@
 	</config>
 
 
+   <config evaluator="string-compare" condition="wizard">
+		<wizards>
+			<wizard id="supplier-mp">
+				<step id="step1" label="Informations matière première" type="form" formId="supplier-mp"
+					itemId="bcpg:rawMaterial" ></step>
+				<step id="step2" label="Ingrédients" type="entityDataList"
+					listId="ingList" itemId="bcpg:ingList"></step>
+			    <step id="step3" label="Nutriments" type="entityDataList"
+					listId="nutList" itemId="bcpg:nutList"></step>
+				<step id="step4" label="Allergènes" type="entityDataList"
+					listId="allergenList" itemId="bcpg:allergenList"></step>
+			</wizard>
+		</wizards>	
+	</config>	
+
 
 	<config>
 		<forms>
