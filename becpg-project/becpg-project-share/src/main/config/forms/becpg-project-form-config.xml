@@ -664,6 +664,7 @@
 					<show id="pjt:dlDescription" />
 					<show id="pjt:dlTask" />
 					<show id="pjt:dlContent" />
+					<show id="pjt:dlUrl" />
 					<show id="pjt:dlState" />
 					<show id="pjt:completionPercent" />
 				</field-visibility>
@@ -699,6 +700,7 @@
 					<show id="pjt:dlDescription" />
 					<show id="pjt:dlTask" />
 					<show id="pjt:dlContent" />
+					<show id="pjt:dlUrl" />
 					<show id="pjt:dlState" />
 					<show id="pjt:completionPercent" />
 				</field-visibility>
@@ -729,11 +731,13 @@
 					<show id="pjt:dlDescription" />
 					<show id="pjt:dlTask" />
 					<show id="pjt:dlContent" />
+					<show id="pjt:dlUrl" />
 					<show id="pjt:dlState" />
 					<show id="pjt:completionPercent" />
 					<show id="fm:commentCount" force="true"/>
 				</field-visibility>
 				<appearance>
+				    <field id="pjt:dlUrl" label="hidden" read-only="true"/>
 					<field id="fm:commentCount" label="hidden" read-only="true"/>
 				</appearance>
 			</form>
@@ -742,6 +746,7 @@
 					<show id="pjt:dlDescription" />
 					<show id="pjt:dlTask" />
 					<show id="pjt:dlContent" />
+					<show id="pjt:dlUrl" />
 					<show id="pjt:dlState" />
 					<show id="fm:commentCount" force="true"/>
 				</field-visibility>

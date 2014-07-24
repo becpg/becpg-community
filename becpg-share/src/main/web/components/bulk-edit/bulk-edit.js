@@ -1334,6 +1334,10 @@
 									filterId : "filterform",
 									filterData : this.options.searchQuery
 								};
+								if (this.options.initialSearchTerm != null && this.options.initialSearchTerm.length > 0) {
+								    request.extraParams = YAHOO.lang.JSON.stringify({ searchTerm : this.options.initialSearchTerm  });
+    							}
+								
 							} else if (this.options.initialSearchTerm != null && this.options.initialSearchTerm.length > 0) {
 								request.filter = {
 									filterId : "fts",

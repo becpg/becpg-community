@@ -88,6 +88,7 @@
 				<bean class="fr.becpg.repo.project.formulation.ScoreFormulationHandler" />
 				<bean class="fr.becpg.repo.project.formulation.TaskStateFormulationHandler">
 					<property name="projectWorkflowService" ref="projectWorkflowService" />
+					<property name="projectService" ref="projectService"/>
 				</bean>
 			</list>
 		</property>
@@ -99,8 +100,6 @@
 	<bean id="projectListPolicy" class="fr.becpg.repo.project.policy.ProjectListPolicy" parent="abstractBeCPGPolicy" depends-on="bcpg.project.dictionaryBootstrap">
 		<property name="projectService" ref="projectService" />
 		<property name="entityListDAO" ref="entityListDAO" />
-		<property name="permissionService" ref="permissionService" />
-		<property name="alfrescoRepository" ref="alfrescoRepository" />
 		<property name="projectActivityService" ref="projectActivityService" />
 		<property name="nodeArchiveService" ref="nodeArchiveService" />
 		<property name="projectWorkflowService" ref="projectWorkflowService" />

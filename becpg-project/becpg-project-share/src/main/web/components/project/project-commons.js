@@ -234,6 +234,12 @@
             ret += '<span class="doc-file"><a title="' + this.msg("link.title.open-document") + '" href="' +  beCPG.util.entityDetailsURL(contents[0].siteId,contents[0].value, "document") + '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' + Alfresco.util
                   .getFileIcon(contents[0].displayValue, "cm:content", 16) + '" /></a></span>';
          }
+         
+         var url =  deliverable["itemData"]["prop_pjt_dlUrl"]!=null ? deliverable["itemData"]["prop_pjt_dlUrl"].value : null;
+         if(url!=null && url.length>0){
+             ret += '<span class="doc-url"><a title="' + this.msg("link.title.open-link") + '" href="' + url  + '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/link-16.png" /></a></span>';
+         }
+         
 
          ret += '<span class="node-' + deliverable.nodeRef + '|' + entityNodeRef + '"><a class="theme-color-1 ' + TASK_EVENTCLASS + '" title="' + this
                .msg("link.title.deliverable-edit") + '" >' + deliverable["itemData"]["prop_pjt_dlDescription"].displayValue + '</a></span>';

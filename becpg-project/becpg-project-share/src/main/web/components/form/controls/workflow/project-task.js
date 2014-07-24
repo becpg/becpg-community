@@ -157,6 +157,13 @@
                               + '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' + Alfresco.util
                               .getFileIcon(contents[0].name, "cm:content", 16) + '" /></a></span>';
                      }
+                     
+                     
+                     var url =  deliverable.url;
+                     if(url!=null && url.length>0){
+                         ret += '<span class="doc-url"><a title="' + this.msg("form.control.project-task.link.title.open-link") + '" href="' + url  + '">'
+                         +'<img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/link-16.png" /></a></span>';
+                     }
 
                      ret += '<span class="node-' + deliverable.nodeRef + '|' + entityNodeRef + '">';
                      if (!this.options.readOnly) {
