@@ -17,8 +17,14 @@
  ******************************************************************************/
 package fr.becpg.test;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.security.AuthorityService;
+import org.alfresco.service.cmr.security.AuthorityType;
+import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.util.PropertyMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -71,6 +77,23 @@ public class BeCPGTestHelper {
 		}
 
 	}
+	
+	public static NodeRef createGroup(String groupName, String user){
+		
+		Set<String> zones = new HashSet<String>();
+		zones.add(AuthorityService.ZONE_APP_DEFAULT);
+		zones.add(AuthorityService.ZONE_APP_SHARE);
+		zones.add(AuthorityService.ZONE_AUTH_ALFRESCO);
+		
+		if (!RepoBaseTestCase.INSTANCE.authorityService.authorityExists(PermissionService.GROUP_PREFIX + groupName)) {
+			logger.debug("create group: " + groupName);
+			RepoBaseTestCase.INSTANCE.authorityService.createAuthority(AuthorityType.GROUP, groupName, groupName, zones);
+			
+			RepoBaseTestCase.INSTANCE.authorityService.addAuthority(PermissionService.GROUP_PREFIX + groupName, user);
+		}
+		return RepoBaseTestCase.INSTANCE.authorityService.getAuthorityNodeRef(PermissionService.GROUP_PREFIX + groupName);
+	}
+	
 
 	public static NodeRef createUser(String userName) {
 		if (RepoBaseTestCase.INSTANCE.authenticationService.authenticationExists(userName) == false) {
@@ -88,6 +111,7 @@ public class BeCPGTestHelper {
 			return RepoBaseTestCase.INSTANCE.personService.getPerson(userName);
 		}
 	}
+
 	
 
 

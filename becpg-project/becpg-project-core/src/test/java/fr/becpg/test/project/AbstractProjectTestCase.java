@@ -76,6 +76,9 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 
 	protected NodeRef userOne;
 	protected NodeRef userTwo;
+	protected NodeRef groupOne;
+	
+
 	protected List<NodeRef> assigneesOne;
 	protected List<NodeRef> assigneesTwo;
 	protected NodeRef projectTplNodeRef;
@@ -166,11 +169,14 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 
 				userOne = BeCPGTestHelper.createUser(BeCPGTestHelper.USER_ONE);
 				userTwo = BeCPGTestHelper.createUser(BeCPGTestHelper.USER_TWO);
+				
+				groupOne = BeCPGTestHelper.createGroup("groupOne",BeCPGTestHelper.USER_TWO);
+				
 
 				assigneesOne = new ArrayList<NodeRef>();
 				assigneesOne.add(userOne);
 				assigneesTwo = new ArrayList<NodeRef>();
-				assigneesTwo.add(userTwo);
+				assigneesTwo.add(groupOne);
 
 				// create project Tpl
 				ProjectData projectTplData = new ProjectData(null, "Pjt Tpl", PROJECT_HIERARCHY1_SEA_FOOD_REF, PROJECT_HIERARCHY2_CRUSTACEAN_REF, null, null, null, null, null,
