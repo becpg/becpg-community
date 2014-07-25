@@ -284,6 +284,9 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 			public void run(NodeRef entityNodeRef) {
 				try {
+					if(logger.isDebugEnabled()){
+						logger.debug("Formulate : "+entityNodeRef);
+					}
 					formulationService.formulate(entityNodeRef);
 				} catch (FormulateException e) {
 					logger.error(e, e);

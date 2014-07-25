@@ -18,6 +18,7 @@
 package fr.becpg.repo.project.impl;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -93,7 +94,17 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService{
 			workflowProps.put(WorkflowModel.PROP_WORKFLOW_PRIORITY, projectData.getPriority());
 		}		
 		workflowProps.put(WorkflowModel.PROP_WORKFLOW_DESCRIPTION, workflowDescription);
-		workflowProps.put(WorkflowModel.ASSOC_ASSIGNEES, (Serializable)taskListDataItem.getResources());
+		List<NodeRef> assignees = getAssignees(taskListDataItem.getResources(),false);
+		List<NodeRef> groupAssignees = getAssignees(taskListDataItem.getResources(),true);
+		if(!assignees.isEmpty()){
+			logger.debug("Add assignees to workflow : "+assignees.size());
+			workflowProps.put(WorkflowModel.ASSOC_ASSIGNEES, (Serializable)assignees );
+		}
+		if(!groupAssignees.isEmpty()){
+			logger.debug("Add group assignees to workflow : "+groupAssignees.size());
+			workflowProps.put(WorkflowModel.ASSOC_GROUP_ASSIGNEES, (Serializable)groupAssignees );
+		}
+		
 		workflowProps.put(WorkflowModel.PROP_SEND_EMAIL_NOTIFICATIONS, true);
 		workflowProps.put(ProjectModel.ASSOC_WORKFLOW_TASK, taskListDataItem.getNodeRef());		
 		
@@ -145,6 +156,24 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService{
 		}
 	}
 	
+	private List<NodeRef> getAssignees(List<NodeRef> resources, boolean group) {
+		List<NodeRef> ret = new ArrayList<NodeRef>();
+		
+		for (NodeRef resource : resources) {
+			QName type = nodeService.getType(resource);
+			if (type.equals(ContentModel.TYPE_AUTHORITY_CONTAINER)) {
+				if(group){
+					ret.add(resource);
+				}
+			} else {
+				if(!group){
+					ret.add(resource);
+				}
+			}
+		}
+		return ret;
+	}
+
 	private String calculateWorkflowDescription(ProjectData projectData, TaskListDataItem taskListDataItem, List<DeliverableListDataItem> nextDeliverables){
 		
 		String workflowDescription = String.format(WORKFLOW_DESCRIPTION, projectData.getName(), taskListDataItem.getTaskName());		
