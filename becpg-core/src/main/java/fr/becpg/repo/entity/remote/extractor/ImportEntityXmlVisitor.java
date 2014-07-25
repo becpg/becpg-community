@@ -447,6 +447,12 @@ public class ImportEntityXmlVisitor {
 		}
 		
 		
+		if(ContentModel.TYPE_AUTHORITY_CONTAINER.equals(type)){
+			logger.debug("try to get authority : "+name);
+			return serviceRegistry.getAuthorityService().getAuthorityNodeRef(name);
+		}
+		
+		
 		BeCPGQueryBuilder beCPGQueryBuilder = BeCPGQueryBuilder.createQuery();
 
 		boolean inBD = true;
