@@ -172,7 +172,7 @@ public class XmlEntityVisitor {
 		xmlw.writeAttribute(RemoteEntityService.ATTR_PATH, path.toPrefixString(namespaceService));
 		xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE, RemoteEntityService.NODE_TYPE);
 
-		String name = (String) nodeService.getProperty(nodeRef, RemoteHelper.getPropName(nodeType));
+		String name =(String) nodeService.getProperty(nodeRef, RemoteHelper.getPropName(nodeType));
 
 		xmlw.writeAttribute(RemoteEntityService.ATTR_NAME, name);
 		xmlw.writeAttribute(RemoteEntityService.ATTR_NODEREF, nodeRef.toString());

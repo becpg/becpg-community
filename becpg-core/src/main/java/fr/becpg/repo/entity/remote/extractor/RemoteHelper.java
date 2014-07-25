@@ -31,6 +31,8 @@ public class RemoteHelper {
 		}
 		else if(ContentModel.TYPE_PERSON.equals(type)){
 			return ContentModel.PROP_USERNAME;
+		} else if(ContentModel.TYPE_AUTHORITY_CONTAINER.equals(type)){
+			return ContentModel.PROP_AUTHORITY_NAME;
 		}
 		return ContentModel.PROP_NAME;
 	}
