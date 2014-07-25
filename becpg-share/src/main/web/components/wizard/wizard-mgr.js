@@ -129,6 +129,21 @@
 
                                                 },
                                                 onFinished : function (event, currentIndex) { 
+                                                    
+                                                    var step = me.options.wizardStruct[currentIndex];
+                                                    if (step != null)
+                                                    {
+                                                        if (step.type == "form")
+                                                        {
+                                                            if (step.form != null)
+                                                            {
+                                                                Dom.get(me.id + "-step-" + step.id + "-form-submit")
+                                                                        .click();
+                                                            }
+                                                        }
+                                                    }
+                                                    
+                                                    
                                                     me._navigateForward(me.options.wizardStruct[0].nodeRef);
                                                 },
                                                 onCanceled : function (event, currentIndex) { 
