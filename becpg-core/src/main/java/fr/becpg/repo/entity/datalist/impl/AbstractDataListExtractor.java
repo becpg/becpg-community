@@ -93,7 +93,6 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 		this.permissionService = permissionService;
 	}
 	
-	public static final String FORMAT_CSV = "csv";
 
 	public static final String PROP_NODE = "nodeRef";
 	public static final String PROP_TITLE = "title";

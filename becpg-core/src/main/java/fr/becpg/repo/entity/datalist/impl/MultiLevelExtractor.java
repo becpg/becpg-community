@@ -89,7 +89,8 @@ public class MultiLevelExtractor extends SimpleExtractor {
 					ret.setComputedFields(attributeExtractorService.readExtractStructure(nodeService.getType(nodeRef), metadataFields));
 				}
 
-				if (FORMAT_CSV.equals(format)) {
+				if (RepoConsts.FORMAT_CSV.equals(format)
+						|| RepoConsts.FORMAT_XLS.equals(format)) {
 					ret.addItem(extractCSV(nodeRef, ret.getComputedFields(), props, cache));
 				} else {
 					ret.addItem(extractJSON(nodeRef, ret.getComputedFields(), props, cache));

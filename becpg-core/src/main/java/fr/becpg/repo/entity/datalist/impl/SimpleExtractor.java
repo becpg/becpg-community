@@ -95,7 +95,8 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 				if (ret.getComputedFields() == null) {
 					ret.setComputedFields(attributeExtractorService.readExtractStructure(nodeService.getType(nodeRef), metadataFields));
 				}
-				if (FORMAT_CSV.equals(dataListFilter.getFormat())) {
+				if (RepoConsts.FORMAT_CSV.equals(dataListFilter.getFormat())
+						|| RepoConsts.FORMAT_XLS.equals(dataListFilter.getFormat())) {
 					ret.addItem(extractCSV(nodeRef, ret.getComputedFields(), props, cache));
 				} else {
 					ret.addItem(extractJSON(nodeRef, ret.getComputedFields(), props, cache));

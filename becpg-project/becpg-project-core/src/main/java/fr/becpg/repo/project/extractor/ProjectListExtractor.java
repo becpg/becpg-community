@@ -36,6 +36,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.ProjectModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.datalist.DataListSortPlugin;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
@@ -106,7 +107,8 @@ public class ProjectListExtractor extends SimpleExtractor {
 					if (ret.getComputedFields() == null) {
 						ret.setComputedFields(attributeExtractorService.readExtractStructure(nodeService.getType(nodeRef), metadataFields));
 					}
-					if (FORMAT_CSV.equals(dataListFilter.getFormat())) {
+					if (RepoConsts.FORMAT_CSV.equals(dataListFilter.getFormat())
+							|| RepoConsts.FORMAT_XLS.equals(dataListFilter.getFormat())) {
 						ret.addItem(extractCSV(nodeRef, ret.getComputedFields(), props, cache));
 					} else {
 						Map<String, Object> extracted = extractJSON(nodeRef, ret.getComputedFields(), props, cache);

@@ -133,6 +133,9 @@ public class RepoConsts {
 	//History
 	public static final String ENTITIES_HISTORY_NAME = "entitiesHistory";
 	public static final String ENTITIES_HISTORY_XPATH = "/bcpg:entitiesHistory";
-
+	
+	//Formats
+	public static final String FORMAT_CSV = "csv";
+	public static final String FORMAT_XLS = "xls";
 	
 }
