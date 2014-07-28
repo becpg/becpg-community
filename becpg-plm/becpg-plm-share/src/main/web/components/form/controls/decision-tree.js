@@ -73,7 +73,7 @@
                               var choice = question.choices[j];
                               var checked = this.getCurrentValueChecked(question.id, choice.id );
                               htmlForm +="<p>";
-                              htmlForm +='<input '+(this.options.disabled?'disabled':'')+' tabindex="0" id="'+this.id+'-choice_'+question.id+'_'+choice.id+'" class="'+QUESTION_EVENTCLASS+'" name="--group_'+question.id+'" type="radio"  '+(checked?"checked":"")+' />';
+                              htmlForm +='<input '+(this.options.disabled?'disabled':'')+' tabindex="0" id="'+this.id+'-choice_'+question.id+'_'+choice.id+'" class="'+QUESTION_EVENTCLASS+'" name="--group_'+this.id+question.id+'" type="radio"  '+(checked?'checked="checked"':"")+' />';
                               var msgKey  =  choice.id == "-" ? "form.control.decision-tree.empty" : "form.control.decision-tree."+this.options.prefix+"."+question.id+"."+choice.id;
                               htmlForm +='<label for="'+this.id+'-choice_'+question.id+'_'+choice.id+'">'+(choice.label ? choice.label:  this.msg(msgKey))+'</label>';
                               htmlForm +="</p>";   
@@ -87,7 +87,7 @@
                            if(showComment){
                               htmlForm +='<div id="'+this.id+'-comment_'+question.id+'" class="decision-tree-comments hidden" >';
                               htmlForm +='<label for="'+this.id+'-comment_'+question.id+'-input">'+(commentLabel ? commentLabel: this.msg("form.control.decision-tree."+this.options.prefix+"."+question.id+".comment"))+':</label>';
-                              htmlForm +='<input '+(this.options.disabled?'disabled':'')+' tabindex="0" id="'+this.id+'-comment_'+question.id+'-input" class="'+COMMENT_EVENTCLASS+'"  type="textarea"  value="'+this.getCurrentValueComment(question.id)+'" name="--comment_'+question.id+'" />';
+                              htmlForm +='<input '+(this.options.disabled?'disabled':'')+' tabindex="0" id="'+this.id+'-comment_'+question.id+'-input" class="'+COMMENT_EVENTCLASS+'"  type="textarea"  value="'+this.getCurrentValueComment(question.id)+'" name="--comment_'+this.id+question.id+'" />';
                               htmlForm +='</div>';
                            }
                           
@@ -149,7 +149,7 @@
                      
                      for(var i = 0; i< this.options.data.length; i++){
                         var question = this.options.data[i];
-                        if(i == 0){
+                        if(i == 0 && (!this.options.disabled || this.options.currentValue.length>0)){
                            visible.push(question.id);
                         }
                         if(visible.indexOf(question.id) > -1 && question.choices){

@@ -6,7 +6,6 @@ package fr.becpg.repo.web.scripts.entity.datalist;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -21,9 +20,6 @@ import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.apache.commons.csv.writer.CSVConfig;
-import org.apache.commons.csv.writer.CSVField;
-import org.apache.commons.csv.writer.CSVWriter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
@@ -35,15 +31,18 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 import org.springframework.util.StopWatch;
 
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.datalist.DataListExtractor;
 import fr.becpg.repo.entity.datalist.DataListExtractorFactory;
+import fr.becpg.repo.entity.datalist.DataListOutputWriter;
 import fr.becpg.repo.entity.datalist.DataListSortService;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.DataListPagination;
 import fr.becpg.repo.entity.datalist.impl.AbstractDataListExtractor;
+import fr.becpg.repo.entity.datalist.impl.CSVDataListOutputWriter;
+import fr.becpg.repo.entity.datalist.impl.ExcelDataListOutputWriter;
 import fr.becpg.repo.helper.JSONHelper;
-import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.security.SecurityService;
 import fr.becpg.repo.web.scripts.AbstractCachingWebscript;
 import fr.becpg.repo.web.scripts.WebscriptHelper;
@@ -346,30 +345,18 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 
 			PaginatedExtractedItems extractedItems = extractor.extract(dataListFilter, metadataFields, pagination, hasWriteAccess);
 
-			if ("csv".equals(dataListFilter.getFormat())) {
-				res.setContentType("application/vnd.ms-excel");
-				res.setContentEncoding("ISO-8859-1");
-
-				CSVConfig csvConfig = new CSVConfig();
-
-				csvConfig.setDelimiter(';');
-				csvConfig.setValueDelimiter('"');
-				csvConfig.setIgnoreValueDelimiter(false);
-
-				appendCSVField(csvConfig, extractedItems.getComputedFields(), null);
-
-				CSVWriter csvWriter = new CSVWriter(csvConfig);
-
-				csvWriter.setWriter(res.getWriter());
-
-				Map<String, String> headers = new HashMap<>();
-				appendCSVHeader(headers, extractedItems.getComputedFields(), null, null);
-				csvWriter.writeRecord(headers);
-
-				writeToCSV(extractedItems, csvWriter);
-
-				res.setHeader("Content-disposition", "attachment; filename=export.csv");
+			if (RepoConsts.FORMAT_CSV.equals(dataListFilter.getFormat())) {
+				
+				DataListOutputWriter outputWriter = new CSVDataListOutputWriter(dictionaryService);
+				outputWriter.write(res,extractedItems);
+				
+				
+			} else if (RepoConsts.FORMAT_XLS.equals(dataListFilter.getFormat())) {
+				DataListOutputWriter outputWriter = new ExcelDataListOutputWriter(dictionaryService,dataListFilter);
+				outputWriter.write(res, extractedItems);
 			} else {
+			
+			
 
 				JSONObject ret = new JSONObject();
 				if (!dataListFilter.isSimpleItem()) {
@@ -426,35 +413,7 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 
 	}
 
-	private void appendCSVField(CSVConfig csvConfig, List<AttributeExtractorStructure> fields, String prefix) {
-		if (fields != null) {
-			for (AttributeExtractorStructure field : fields) {
-				if (field.isNested()) {
-					appendCSVField(csvConfig, field.getChildrens(), field.getFieldName());
-				} else {
-					if (prefix != null) {
-						csvConfig.addField(new CSVField(prefix + "_" + field.getFieldName()));
-					} else {
-						csvConfig.addField(new CSVField(field.getFieldName()));
-					}
-				}
-			}
-		}
-	}
-
-	private void appendCSVHeader(Map<String, String> headers, List<AttributeExtractorStructure> fields, String fieldNamePrefix, String titlePrefix) {
-		if (fields != null) {
-			for (AttributeExtractorStructure field : fields) {
-				if (field.isNested()) {
-					appendCSVHeader(headers, field.getChildrens(), field.getFieldName(), field.getFieldDef() != null ? field.getFieldDef().getTitle(dictionaryService) : null);
-				} else {
-					String fieldName = fieldNamePrefix != null ? fieldNamePrefix + "_" + field.getFieldName() : field.getFieldName();
-					String fullTitle = titlePrefix != null ? titlePrefix + " - " + field.getFieldDef().getTitle(dictionaryService) : field.getFieldDef().getTitle(dictionaryService);
-					headers.put(fieldName, fullTitle);
-				}
-			}
-		}
-	}
+	
 
 	private JSONArray processResults(PaginatedExtractedItems extractedItems) {
 
@@ -466,12 +425,6 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 
 		return items;
 
-	}
-
-	private void writeToCSV(PaginatedExtractedItems extractedItems, CSVWriter csvWriter) {
-		for (Map<String, Object> item : extractedItems.getPageItems()) {
-			csvWriter.writeRecord(item);
-		}
 	}
 
 
