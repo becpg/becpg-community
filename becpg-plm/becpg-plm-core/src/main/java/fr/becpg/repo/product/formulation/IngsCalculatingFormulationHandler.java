@@ -84,6 +84,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 					// reset
 					il.setQtyPerc(null);
 					il.setIsGMO(false);
+					il.setIsProcessingAid(true);
 					il.setIsIonized(false);
 					il.getGeoOrigin().clear();
 					il.getBioOrigin().clear();
@@ -279,8 +280,11 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				newIngListDataItem.setIng(ingNodeRef);
 				newIngListDataItem.setParent(parentIngListDataItem);
 				newIngListDataItem.setDepthLevel(parentIngListDataItem == null ? 1 : parentIngListDataItem.getDepthLevel() + 1);
+				newIngListDataItem.setIsProcessingAid(true);
 				ingList.add(newIngListDataItem);
 			}
+			
+			
 
 			if (!retainNodes.contains(newIngListDataItem)) {
 				retainNodes.add(newIngListDataItem);
@@ -352,6 +356,12 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				}
 			}
 
+
+			//Processing Aid 
+			if (!ingListDataItem.getIsProcessingAid()) {
+				newIngListDataItem.setIsProcessingAid(false);
+			}
+			
 			// GMO
 			if (ingListDataItem.getIsGMO() && !newIngListDataItem.getIsGMO()) {
 				newIngListDataItem.setIsGMO(true);
