@@ -102,7 +102,7 @@ public class AutomaticECOPolicy extends AbstractBeCPGPolicy implements NodeServi
 					ChangeOrderData changeOrderData = automaticECOService.getCurrentUserChangeOrderData();
 					Map<String, Serializable> properties = new HashMap<String, Serializable>();
 					properties.put(VersionModel.PROP_VERSION_TYPE, VersionType.valueOf(automaticRecordVersionType));
-					properties.put(Version.PROP_DESCRIPTION, I18NUtil.getMessage("plm.ecm.apply.version.label", changeOrderData.getCode()));
+					properties.put(Version.PROP_DESCRIPTION, I18NUtil.getMessage("plm.ecm.apply.version.label", changeOrderData.getCode()+" - "+changeOrderData.getName()));
 
 					entityVersionService.createVersion(nodeRef, properties);
 				} finally {
