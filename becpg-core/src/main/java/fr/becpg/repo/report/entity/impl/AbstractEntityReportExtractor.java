@@ -312,6 +312,8 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 
 		VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
 		Element versionsElt = entityElt.addElement(TAG_VERSIONS);
+		
+		PropertyFormats propertyFormats = new PropertyFormats(false);
 
 		if (versionHistory != null && versionHistory.getAllVersions() != null) {
 
@@ -321,7 +323,7 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 				versionElt.addAttribute(Version2Model.PROP_QNAME_VERSION_DESCRIPTION.getLocalName(), version.getDescription());
 				versionElt.addAttribute(ContentModel.PROP_CREATOR.getLocalName(), attributeExtractorService.getPersonDisplayName(version.getFrozenModifier()));
 				versionElt.addAttribute(ContentModel.PROP_CREATED.getLocalName(),
-						attributeExtractorService.getPropertyFormats().getDateFormat().format(version.getFrozenModifiedDate()));
+						propertyFormats.getDateFormat().format(version.getFrozenModifiedDate()));
 			}
 		}
 	}
