@@ -25,7 +25,6 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="cm:description"  force="true"  />
-					<show id="cm:titled"  force="true"  />
 					
 					<!-- <show id="ecm:effectiveDate" /> -->
 					<show id="ecm:ecoType"/>
@@ -56,7 +55,6 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="cm:description"  force="true"  />
-					<show id="cm:titled" force="true" />
 					<show id="bcpg:code" />
 					<show id="ecm:ecoState" />
 					<show id="ecm:effectiveDate" />
