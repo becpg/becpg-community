@@ -24,12 +24,16 @@ import java.util.Collection;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.tenant.TenantDomainMismatchException;
+import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.NoSuchPersonException;
 import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -56,6 +60,11 @@ public class PersonAttributeExtractorPlugin implements AttributeExtractorPlugin 
 	
 	@Autowired
 	NamespaceService namespaceService;
+	
+	@Autowired
+	TenantService tenantService;
+	
+	private static Log logger = LogFactory.getLog(PersonAttributeExtractorPlugin.class);
 	 
 	
 	@Override
@@ -83,24 +92,38 @@ public class PersonAttributeExtractorPlugin implements AttributeExtractorPlugin 
 	}
 
 	
-	public String getPersonDisplayName(final String userId) {
+	public String getPersonDisplayName(String userId) {
 		if (userId == null) {
 			return "";
 		}
-		if (userId.equalsIgnoreCase(AuthenticationUtil.getSystemUserName())) {
+		if (userId.equalsIgnoreCase(AuthenticationUtil.getSystemUserName())
+				|| (AuthenticationUtil.isMtEnabled() && 
+						userId.equalsIgnoreCase(tenantService.getDomainUser(AuthenticationUtil.getSystemUserName(),tenantService.getCurrentUserDomain())))) {
 			return userId;
 		}
+		
+		
+		if(AuthenticationUtil.isMtEnabled()){
+			if(userId.indexOf(TenantService.SEPARATOR)<1){
+				userId = tenantService.getDomainUser(userId, tenantService.getCurrentUserDomain());
+			}
+		}
+		
+		final String finalUserId = userId;
+		
 		return beCPGCacheService.getFromCache(AttributeExtractorService.class.getName(), userId + ".person", new BeCPGCacheDataProviderCallBack<String>() {
 			public String getData() {
 				String displayName = "";
 				try {
-					NodeRef personNodeRef = personService.getPerson(userId);
+					
+					NodeRef personNodeRef = personService.getPerson(finalUserId);
 					if (personNodeRef != null) {
 						displayName = nodeService.getProperty(personNodeRef, ContentModel.PROP_FIRSTNAME) + " " + nodeService.getProperty(personNodeRef, ContentModel.PROP_LASTNAME);
 					}
-				} catch (NoSuchPersonException e){
+				} catch (NoSuchPersonException | TenantDomainMismatchException e){
+					logger.debug("Cannot find user : "+finalUserId, e);
 					//Case person was deleted
-					return userId;
+					return finalUserId;
 				}
 				return displayName;
 			}
