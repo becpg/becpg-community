@@ -199,19 +199,18 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 					// check workflow instance (task may be reopened) and workflow properties
 					projectWorkflowService.checkWorkflowInstance(projectData, nextTask, nextDeliverables);
 										
-					// workflow (task may have been set as InProgress with UI)
-					if ((nextTask.getWorkflowInstance() == null ||  nextTask.getWorkflowInstance().isEmpty()) &&
-							nextTask.getWorkflowName() != null && !nextTask.getWorkflowName().isEmpty() &&
-							nextTask.getResources() != null && !nextTask.getResources().isEmpty()) {					
+					if(nextTask.getResources() != null && !nextTask.getResources().isEmpty()){
 						
 						nextTask.setResources(projectService.updateTaskResources(projectData.getNodeRef(),nextTask.getNodeRef(), nextTask.getResources(),true));
-
 						
-						if(!nextTask.getResources().isEmpty()){
+						// workflow (task may have been set as InProgress with UI)
+						if ((nextTask.getWorkflowInstance() == null ||  nextTask.getWorkflowInstance().isEmpty()) &&
+								nextTask.getWorkflowName() != null && !nextTask.getWorkflowName().isEmpty()) {					
+							
 							// start workflow
 							projectWorkflowService.startWorkflow(projectData, nextTask, nextDeliverables);
 						}
-					}
+					}					
 				}										
 					
 				// we visit every task since user can have started a task in the middle of the project even if previous are not started
