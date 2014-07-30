@@ -632,7 +632,7 @@ public class ECOServiceImpl implements ECOService {
 		
 		Map<String, Serializable> properties = new HashMap<String, Serializable>();
 		properties.put(VersionModel.PROP_VERSION_TYPE, versionType);
-		properties.put(Version.PROP_DESCRIPTION, I18NUtil.getMessage("plm.ecm.apply.version.label", ecoData.getCode()));
+		properties.put(Version.PROP_DESCRIPTION, I18NUtil.getMessage("plm.ecm.apply.version.label", ecoData.getCode()+" - "+ecoData.getName()));
 
 		return entityVersionService.createVersion(productToImpact, properties);
 		
