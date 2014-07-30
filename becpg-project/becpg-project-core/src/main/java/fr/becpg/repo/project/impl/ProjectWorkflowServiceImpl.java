@@ -227,11 +227,18 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService{
 				taskListDataItem.setWorkflowInstance("");
 			}
 			else{
+				
+			    if(taskListDataItem.getResources().size() == 0){
+			    	workflowService.cancelWorkflow(taskListDataItem.getWorkflowInstance());
+					return;
+			    }
+				
 				//check workflow properties
 				WorkflowTaskQuery taskQuery = new WorkflowTaskQuery();
 				taskQuery.setProcessId(taskListDataItem.getWorkflowInstance());
 				taskQuery.setTaskState(WorkflowTaskState.IN_PROGRESS);
 
+		
 				List<WorkflowTask> workflowTasks = workflowService.queryTasks(taskQuery, false);
 				
 				if(!workflowTasks.isEmpty()){
@@ -251,11 +258,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService{
 							properties = getWorkflowTaskNewProperties(WorkflowModel.PROP_DUE_DATE, taskListDataItem.getEnd(), workflowTask.getProperties(), properties);
 							properties = getWorkflowTaskNewProperties(WorkflowModel.PROP_WORKFLOW_PRIORITY, projectData.getPriority(), workflowTask.getProperties(), properties);
 							//properties = getWorkflowTaskNewProperties(WorkflowModel.ASSOC_ASSIGNEES, (Serializable)taskListDataItem.getResources(), workflowTask.getProperties(), properties);							
-														
-							if(taskListDataItem.getResources().size() == 0){
-								workflowService.cancelWorkflow(workflowTask.getId());
-								return;
-							}
+					
 							if(taskListDataItem.getResources().size() == 1){
 								String userName = (String)nodeService.getProperty(taskListDataItem.getResources().get(0), ContentModel.PROP_USERNAME);
 								properties = getWorkflowTaskNewProperties(ContentModel.PROP_OWNER, userName, workflowTask.getProperties(), properties);
