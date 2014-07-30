@@ -31,14 +31,18 @@ public abstract class AbstractCachingWebscript extends AbstractWebScript {
 
 	private static Log logger = LogFactory.getLog(AbstractCachingWebscript.class);
 	
-	/**
-	 * format definied by RFC 822, see
-	 * http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.3
-	 */
-	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("EEE', 'dd' 'MMM' 'yyyy' 'HH:mm:ss' 'Z", Locale.US);
+
+
 	
 	
 	protected boolean shouldReturnNotModified(WebScriptRequest req, Date lastModified) {
+		
+		/**
+		 * format definied by RFC 822, see
+		 * http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.3
+		 */
+		SimpleDateFormat dateFormat = new SimpleDateFormat("EEE', 'dd' 'MMM' 'yyyy' 'HH:mm:ss' 'Z", Locale.US);
+		
 		// May be null - if so treat as just changed 
 				if(lastModified == null)
 		        {

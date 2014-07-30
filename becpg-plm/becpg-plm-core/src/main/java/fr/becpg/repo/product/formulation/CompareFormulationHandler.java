@@ -221,7 +221,7 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 		return true;
 	}
 
-	PropertyFormats propertyFormats = new PropertyFormats(true);
+
 
 	private JSONObject getJSONValue(ProductData toCompareWith, CompositionDataItem dataListItem, QName columnName, boolean isQty)
 			throws JSONException {
@@ -270,6 +270,8 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 	}
 
 	private Object formatValue(Object v) {
+		PropertyFormats propertyFormats = new PropertyFormats(true);
+		
 		if (v != null && (v instanceof Double || v instanceof Float)) {
 
 			if (propertyFormats.getDecimalFormat() != null) {
