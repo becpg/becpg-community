@@ -36,6 +36,8 @@ import org.alfresco.query.PagingResults;
 import org.alfresco.repo.rule.RuleModel;
 import org.alfresco.repo.search.impl.parsers.FTSQueryException;
 import org.alfresco.repo.search.impl.querymodel.QueryModelException;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
@@ -91,6 +93,9 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 	@Autowired
 	private DictionaryService dictionaryService;
+	
+	@Autowired
+	private TenantService tenantService;
 
 	@Value("${beCPG.defaultSearchTemplate}")
 	private String defaultSearchTemplate;
@@ -142,6 +147,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			builder.fileFolderService = INSTANCE.fileFolderService;
 			builder.nodeService = INSTANCE.nodeService;
 			builder.dictionaryService = INSTANCE.dictionaryService;
+			builder.tenantService = INSTANCE.tenantService;
 		}
 		return builder;
 	}
@@ -825,7 +831,15 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		try {
 			result = searchService.query(sp);
 			if (result != null) {
-				nodes = new LinkedList<NodeRef>(result.getNodeRefs());
+				
+				if(AuthenticationUtil.isMtEnabled()){
+					nodes = new LinkedList<NodeRef>();
+					for(NodeRef node :  result.getNodeRefs()){
+						nodes.add(tenantService.getBaseName(node));
+					}
+				} else {
+					nodes = new LinkedList<NodeRef>(result.getNodeRefs());
+				}
 			}
 		} catch (FTSQueryException e) {
 			logger.error("Incorrect query :" + runnedQuery, e);

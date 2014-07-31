@@ -92,7 +92,7 @@ public class IngParentLevelPatchV2 extends AbstractBeCPGPatch {
 				}
 			};
 
-			BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<NodeRef>("RemoveQtyAfterProcessPatch",
+			BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<NodeRef>("IngParentLevelPatchV2",
 					transactionService.getRetryingTransactionHelper(), workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 1000);
 
 			BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {

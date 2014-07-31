@@ -22,8 +22,6 @@ import java.util.regex.Pattern;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.content.encoding.ContentCharsetFinder;
 import org.alfresco.repo.model.Repository;
-import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.service.cmr.dictionary.AspectDefinition;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
@@ -183,15 +181,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	
 	protected Repository repositoryHelper;
 	
-	protected TenantService tenantService;
 	
-	
-	
-
-	public void setTenantService(TenantService tenantService) {
-		this.tenantService = tenantService;
-	}
-
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
 	}
@@ -406,10 +396,6 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			return null;
 		}
 		
-		if(AuthenticationUtil.isMtEnabled()){
-			return tenantService.getBaseName(ret).toString();
-		}
-		
 		return ret.toString();
 
 	}
@@ -522,7 +508,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 					File docsFolder = new File(importContext.getDocsBasePath());
 
 					if (importContext.getDocsBasePath() != null && docsFolder.isDirectory()) {
-						@SuppressWarnings("unchecked")
+		
 						Collection<File> files = FileUtils.listFiles(docsFolder, null, true);
 
 						for (File file : files) {

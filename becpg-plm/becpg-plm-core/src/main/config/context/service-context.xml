@@ -98,7 +98,6 @@
 		<property name="autoNumService" ref="autoNumService" />
 		<property name="hierarchyService" ref="hierarchyService" />
 		<property name="repositoryHelper" ref="repositoryHelper" />
-		<property name="tenantService" ref="tenantService"/>
 	</bean>
 
 	<bean id="importNodeVisitor" class="fr.becpg.repo.importer.impl.ImportNodeVisitor" parent="parentImportVisitor" />
