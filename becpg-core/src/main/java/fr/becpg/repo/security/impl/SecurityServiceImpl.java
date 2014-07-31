@@ -24,13 +24,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.dictionary.AspectDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AuthorityService;
-import org.alfresco.service.namespace.NamespacePrefixResolver;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -182,7 +182,7 @@ public class SecurityServiceImpl implements SecurityService {
 	}
 
 	private boolean isAdmin() {
-		return authorityService.hasAdminAuthority();
+		return authorityService.hasAdminAuthority() || AuthenticationUtil.isRunAsUserTheSystemUser();
 	}
 
 	/**
