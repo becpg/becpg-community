@@ -575,5 +575,22 @@
 			</associations>
 		</aspect>
 
+		<!-- Depecated -->
+		<aspect name="pjt:projectAspect">
+			<associations>
+				<association name="pjt:project">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>pjt:project</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+		</aspect>
+		
 	</aspects>
 </model>

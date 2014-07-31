@@ -224,5 +224,51 @@
             <ref bean="policyBehaviourFilter"/>
         </property>
 	</bean>
+	
+	<bean id="patch.bcpg.plm.removePalletNbOfBoxesPatch" class="fr.becpg.repo.admin.patch.RemovePalletNbOfBoxesPatch" parent="beCPGBasePatch" >
+        <property name="id"><value>patch.bcpg.plm.removePalletNbOfBoxesPatch</value></property>
+        <property name="description"><value>patch.bcpg.plm.removePalletNbOfBoxesPatch.description</value></property>
+        <property name="fixesFromSchema" value="0"/>
+        <property name="fixesToSchema" value="6032" />
+        <property name="targetSchema" value="10150 "/>
+        <property name="requiresTransaction"><value>true</value></property>
+        <property name="applyToTenants"><value>true</value></property>
+        <property name="ruleService" ref="ruleService"/>
+         <property name="patchDAO">
+            <ref bean="patchDAO"/>
+        </property>
+        <property name="nodeDAO">
+            <ref bean="nodeDAO"/>
+        </property>
+        <property name="qnameDAO">
+            <ref bean="qnameDAO"/>
+        </property>
+         <property name="policyBehaviourFilter">
+            <ref bean="policyBehaviourFilter"/>
+        </property>
+	</bean>
+	
+	<bean id="patch.bcpg.plm.ingParentLevelPatchV2" class="fr.becpg.repo.admin.patch.IngParentLevelPatchV2" parent="beCPGBasePatch" >
+        <property name="id"><value>patch.bcpg.plm.ingParentLevelPatchV2</value></property>
+        <property name="description"><value>patch.bcpg.plm.ingParentLevelPatchV2.description</value></property>
+        <property name="fixesFromSchema" value="0"/>
+        <property name="fixesToSchema" value="6032" />
+        <property name="targetSchema" value="10150 "/>
+        <property name="requiresTransaction"><value>true</value></property>
+        <property name="applyToTenants"><value>true</value></property>
+        <property name="ruleService" ref="ruleService"/>
+         <property name="patchDAO">
+            <ref bean="patchDAO"/>
+        </property>
+        <property name="nodeDAO">
+            <ref bean="nodeDAO"/>
+        </property>
+        <property name="qnameDAO">
+            <ref bean="qnameDAO"/>
+        </property>
+         <property name="policyBehaviourFilter">
+            <ref bean="policyBehaviourFilter"/>
+        </property>
+	</bean>
 
 </beans>
