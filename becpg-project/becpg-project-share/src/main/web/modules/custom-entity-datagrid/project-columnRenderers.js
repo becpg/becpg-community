@@ -22,8 +22,13 @@ if (beCPG.module.EntityDataGridRenderers) {
    YAHOO.Bubbling.fire("registerDataGridRenderer", {
       propertyName : [ "pjt:tlTaskName" ],
       renderer : function(oRecord, data, label, scope) {
-         var className = oRecord.getData("itemData")["prop_pjt_tlIsMilestone"].value ? "task-milestone" : "task";
-         return '<span class="' + className + '" >' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+      	
+      	var padding = 0, className = oRecord.getData("itemData")["prop_pjt_tlIsMilestone"].value ? "task-milestone" : "task";
+      	if (oRecord.getData("itemData")["prop_bcpg_depthLevel"] && oRecord.getData("itemData")["prop_bcpg_depthLevel"].value) {
+				padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 15;
+			}      	
+         
+         return '<span class="' + className + '" style="margin-left:' + padding + 'px;" >' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
       }
 
    });

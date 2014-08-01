@@ -301,6 +301,16 @@
 					<mandatory>true</mandatory>
 					<index enabled="false" />
 				</property>
+				<property name="pjt:tlCapacity">
+					<type>d:int</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="pjt:tlWork">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>				
 				<property name="pjt:tlWorkflowName">
 					<type>d:text</type>
 					<default>activiti$projectAdhoc</default>
@@ -381,6 +391,7 @@
 			<mandatory-aspects>
 				<aspect>bcpg:sortableListAspect</aspect>
 				<aspect>pjt:completionAspect</aspect>
+				<aspect>bcpg:depthLevelAspect</aspect>
 			</mandatory-aspects>
 		</type>
 
