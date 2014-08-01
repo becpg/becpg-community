@@ -180,7 +180,8 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	protected HierarchyService hierarchyService;
 	
 	protected Repository repositoryHelper;
-
+	
+	
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
 	}
@@ -394,6 +395,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			logger.error("Cannot find ("+type+","+name+")");
 			return null;
 		}
+		
 		return ret.toString();
 
 	}
@@ -506,7 +508,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 					File docsFolder = new File(importContext.getDocsBasePath());
 
 					if (importContext.getDocsBasePath() != null && docsFolder.isDirectory()) {
-						@SuppressWarnings("unchecked")
+		
 						Collection<File> files = FileUtils.listFiles(docsFolder, null, true);
 
 						for (File file : files) {

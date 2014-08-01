@@ -124,14 +124,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 				pluginsCache.put(type, plugin);
 			}
 		} 
-		
 	}
-
-	
-
-	private PropertyFormats propertyFormats = new PropertyFormats(false);
-	
-	private PropertyFormats csvPropertyFormats = new CSVPropertyFormats(false);
 
 
 	public class AttributeExtractorStructure {
@@ -242,10 +235,6 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 	}
 	
 	
-	@Override
-	public PropertyFormats getPropertyFormats() {
-		return propertyFormats;
-	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -478,7 +467,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 		if (attribute instanceof PropertyDefinition) {
 
 			value = properties.get(attribute.getName());
-			displayName = getStringValue((PropertyDefinition) attribute, value,AttributeExtractorMode.CSV.equals(mode)? csvPropertyFormats :  propertyFormats);
+			displayName = getStringValue((PropertyDefinition) attribute, value,AttributeExtractorMode.CSV.equals(mode)?  new CSVPropertyFormats(false) :  new PropertyFormats(false));
 
 			if (AttributeExtractorMode.CSV.equals(mode)) {
 				return displayName;
@@ -650,6 +639,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 
 	@Override
 	public String formatDate(Date date) {
+		PropertyFormats propertyFormats = new PropertyFormats(false);
 		return propertyFormats.getDateFormat().format(date);
 	}
 
