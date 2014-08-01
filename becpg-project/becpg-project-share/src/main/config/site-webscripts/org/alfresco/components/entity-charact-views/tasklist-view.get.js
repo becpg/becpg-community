@@ -12,7 +12,7 @@ function main()
    //Widget instantiation metadata...
    var entityDataGrid = {
     id : "entityDataGrid", 
-    name : "beCPG.module.EntityDataGrid",
+    name : "beCPG.component.TaskListView",
     options : {
        siteId : (page.url.templateArgs.site != null) ? page.url.templateArgs.site : "",
        usePagination: args.pagination!=null ? args.pagination!="false" : false,
