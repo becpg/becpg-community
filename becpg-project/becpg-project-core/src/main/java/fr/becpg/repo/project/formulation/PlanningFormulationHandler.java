@@ -112,6 +112,9 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 						!TaskManualDate.End.equals(tl.getManualDate())){
 					tl.setEnd(null);
 				}
+				if(tl.getWork() != null && tl.getDuration() != 0){
+					tl.setCapacity((int)(tl.getWork() / tl.getDuration()));
+				}
 			}			
 		}
 	}
