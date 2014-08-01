@@ -1212,6 +1212,8 @@ if (!JSGantt) {
             if (vList[i].getID() == pId)
                return i;
          }
+         
+         alert("pID not found : "+pId)
       };
 
       /**

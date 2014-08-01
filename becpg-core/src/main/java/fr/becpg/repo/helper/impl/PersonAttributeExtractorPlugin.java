@@ -76,19 +76,19 @@ public class PersonAttributeExtractorPlugin implements AttributeExtractorPlugin 
 
 	@Override
 	public String extractPropName(QName type, NodeRef nodeRef) {
-    	if (type.equals(ContentModel.TYPE_AUTHORITY_CONTAINER)) {
-			return (String) nodeService.getProperty(nodeRef, ContentModel.PROP_AUTHORITY_NAME);
+		if (type.equals(ContentModel.TYPE_AUTHORITY_CONTAINER)) {
+			return (String) nodeService.getProperty(nodeRef, ContentModel.PROP_AUTHORITY_DISPLAY_NAME);
 		} 
-		return (String) nodeService.getProperty(nodeRef, ContentModel.PROP_USERNAME);
+		return getPersonDisplayName((String) nodeService.getProperty(nodeRef, ContentModel.PROP_USERNAME));
 	}
 
 	
 	@Override
 	public String extractMetadata(QName type, NodeRef nodeRef) {
 		if (type.equals(ContentModel.TYPE_AUTHORITY_CONTAINER)) {
-			return (String) nodeService.getProperty(nodeRef, ContentModel.PROP_AUTHORITY_DISPLAY_NAME);
+			return (String) nodeService.getProperty(nodeRef, ContentModel.PROP_AUTHORITY_NAME);
 		} 
-		return getPersonDisplayName((String) nodeService.getProperty(nodeRef, ContentModel.PROP_USERNAME));
+		return (String) nodeService.getProperty(nodeRef, ContentModel.PROP_USERNAME);
 	}
 
 	
