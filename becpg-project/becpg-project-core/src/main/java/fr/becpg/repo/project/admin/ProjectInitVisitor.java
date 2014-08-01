@@ -133,6 +133,7 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 		dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
 		dataLists.add(ProjectModel.TYPE_SCORE_LIST);
 		dataLists.add(ProjectModel.TYPE_ACTIVITY_LIST);
+		dataLists.add(ProjectModel.TYPE_LOG_TIME_LIST);
 		NodeRef entityTplNodeRef = entityTplService.createEntityTpl(entityTplsNodeRef, ProjectModel.TYPE_PROJECT, true, dataLists, null);
 
 		if (ruleService.getRules(entityTplNodeRef).isEmpty()) {

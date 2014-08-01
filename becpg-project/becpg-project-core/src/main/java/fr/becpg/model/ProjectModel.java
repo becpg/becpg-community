@@ -49,6 +49,8 @@ public interface ProjectModel {
 	public static final QName PROP_TL_TASK_NAME = QName.createQName(PROJECT_URI, "tlTaskName");
 	public static final QName PROP_TL_IS_MILESTONE = QName.createQName(PROJECT_URI, "tlIsMilestone");
 	public static final QName PROP_TL_DURATION = QName.createQName(PROJECT_URI, "tlDuration");
+	public static final QName PROP_TL_CAPACITY = QName.createQName(PROJECT_URI, "tlCapacity");
+	public static final QName PROP_TL_Work = QName.createQName(PROJECT_URI, "tlWork");
 	public static final QName PROP_TL_WORKFLOW_NAME = QName.createQName(PROJECT_URI, "tlWorkflowName");
 	public static final QName PROP_TL_START = QName.createQName(PROJECT_URI, "tlStart");
 	public static final QName PROP_TL_END = QName.createQName(PROJECT_URI, "tlEnd");
@@ -76,7 +78,7 @@ public interface ProjectModel {
 	public static final QName ASPECT_WORKFLOW_ASPECT = QName.createQName(PROJECT_URI, "workflowAspect");
 	public static final QName ASSOC_WORKFLOW_TASK = QName.createQName(PROJECT_URI, "workflowTask");	
 
-	public static final QName TYPE_ACTIVITY_LIST  = QName.createQName(PROJECT_URI, "activityList");
+	public static final QName TYPE_ACTIVITY_LIST  = QName.createQName(PROJECT_URI, "activityList");	
 
 	public static final QName PROP_ACTIVITYLIST_USERID = QName.createQName(PROJECT_URI, "alUserId");
 
@@ -84,5 +86,7 @@ public interface ProjectModel {
 	
 	public static final QName PROP_ACTIVITYLIST_DATA = QName.createQName(PROJECT_URI, "alData");
 
-	public static final QName ASSOC_PROJECT_MANAGER = QName.createQName(PROJECT_URI, "projectManager");;
+	public static final QName ASSOC_PROJECT_MANAGER = QName.createQName(PROJECT_URI, "projectManager");
+	
+	public static final QName TYPE_LOG_TIME_LIST  = QName.createQName(PROJECT_URI, "logTimeList");
 }

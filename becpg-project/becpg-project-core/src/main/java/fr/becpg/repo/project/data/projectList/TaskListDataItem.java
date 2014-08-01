@@ -43,6 +43,8 @@ public class TaskListDataItem extends BeCPGDataObject {
 	private String taskName;
 	private Boolean isMilestone;
 	private Integer duration;
+	private Integer capacity;
+	private Double work;
 	private Date start;
 	private Date end;
 	private TaskState state = TaskState.Planned;
@@ -83,6 +85,26 @@ public class TaskListDataItem extends BeCPGDataObject {
 
 	public void setDuration(Integer duration) {
 		this.duration = duration;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "pjt:tlCapacity")
+	public Integer getCapacity() {
+		return capacity;
+	}
+
+	public void setCapacity(Integer capacity) {
+		this.capacity = capacity;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "pjt:tlWork")
+	public Double getWork() {
+		return work;
+	}
+
+	public void setWork(Double work) {
+		this.work = work;
 	}
 
 	@AlfProp
