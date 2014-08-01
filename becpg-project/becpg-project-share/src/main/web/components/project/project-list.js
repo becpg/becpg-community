@@ -167,7 +167,7 @@ var g; // gantt var
                               var title = '<span class="' + this.getOverdueClass(oData) + '">' + this
                                     .getProjectTitle(oData) + '</span>';
 
-                              var initiator = oRecord.getData("itemData")["assoc_pjt_projectManager"].metadata;
+                              var initiator = oRecord.getData("itemData")["assoc_pjt_projectManager"].displayValue;
                                  
                               if( initiator && initiator!=null && initiator.length>0) {
                                  initiator = '<span class="resource-title">' + initiator + '</span>';
@@ -205,7 +205,7 @@ var g; // gantt var
                                  var tlIsMilestone = task["itemData"]["prop_pjt_tlIsMilestone"].value;
                                  var tlPercent = task["itemData"]["prop_pjt_completionPercent"].value;
 
-                                 var taskOwner = task["itemData"]["assoc_pjt_tlResources"].length > 0 ? ('<span class="resource-title">' + task["itemData"]["assoc_pjt_tlResources"][0].metadata + '</span>')
+                                 var taskOwner = task["itemData"]["assoc_pjt_tlResources"].length > 0 ? ('<span class="resource-title">' + task["itemData"]["assoc_pjt_tlResources"][0].displayValue + '</span>')
                                        : null;
 
                                  var tdates = this.cache[taskId];

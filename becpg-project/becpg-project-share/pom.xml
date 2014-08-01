@@ -52,6 +52,7 @@
 						<exclude>**/entity-data-lists.js</exclude>
 						<exclude>**/*.get.js</exclude>
 						<exclude>**/*.lib.js</exclude>
+						<exclude>**/entity-charact-views/*.js</exclude>
 					</excludes>
 				</configuration>
 			</plugin>	

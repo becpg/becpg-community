@@ -657,9 +657,12 @@
 					<show id="pjt:completionPercent" />
 					<show id="pjt:tlStart" />
 					<show id="pjt:tlEnd" />
+					<show id="pjt:tlPrevTasks" />
 					<show id="fm:commentCount" force="true"/>
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:depthLevel" label="hidden"/>
+					<field id="pjt:tlPrevTasks" label="hidden"/>
 					<field id="fm:commentCount" label="hidden" read-only="true"/>
 					<field id="pjt:tlIsMilestone" label="hidden" ></field>
 				</appearance>

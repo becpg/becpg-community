@@ -40,7 +40,7 @@
    </#if>
    <div id="${el}-datagridBar" class="yui-ge datagrid-bar flat-button">
       <div class="yui-u first align-center">
-         <div class="item-select">
+         <div id="${el}-itemSelect-div" class="item-select">
             <button id="${el}-itemSelect-button" name="datagrid-itemSelect-button">${msg("menu.select")}</button>
             <div id="${el}-itemSelect-menu" class="yuimenu">
                <div class="bd">

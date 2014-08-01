@@ -40,6 +40,19 @@
 }
 
 
+.datalist-toolbar div.flat-button .ganttCkeckbox  span.yui-checkbox-button button
+{
+   background: url("../project/images/gantt-16.png") no-repeat 4px 4px;
+}
+
+
+.datalist-toolbar div.flat-button  .ganttCkeckbox span.yui-checkbox-button.yui-checkbox-button-checked button
+{
+   background: url("../project/images/planning-16.png") no-repeat 4px 4px;
+}
+
+
+
 
 .datalist-toolbar .formulate span.first-child
 {
