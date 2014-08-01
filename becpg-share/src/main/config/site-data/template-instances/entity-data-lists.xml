@@ -206,6 +206,22 @@
 							</evaluators>
 							<url>/components/entity-charact-views/formulation-view</url>
 						</evaluation>
+						<evaluation id="tasklist">
+							<evaluators>
+								<evaluator type="evaluator.component.becpg.params.equal">
+									<params>
+										<list>taskList</list>
+									</params>
+								</evaluator>
+							</evaluators>
+							<url>/components/entity-charact-views/tasklist-view</url>
+							<properties>
+								<pagination>true</pagination>
+								<filter>true</filter>
+								<dataUrl>becpg/entity/datalists/data/node/</dataUrl>
+								<itemUrl>becpg/entity/datalists/item/node/</itemUrl>
+							</properties>
+						</evaluation>
 						<evaluation id="labeling">
 							<evaluators>
 								<evaluator type="evaluator.component.becpg.params.equal">
