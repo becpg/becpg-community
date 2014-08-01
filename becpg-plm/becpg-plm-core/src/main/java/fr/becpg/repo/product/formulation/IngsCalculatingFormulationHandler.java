@@ -358,7 +358,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 
 			//Processing Aid 
-			if (!ingListDataItem.getIsProcessingAid()) {
+			if (ingListDataItem.getIsProcessingAid()==null || !ingListDataItem.getIsProcessingAid()) {
 				newIngListDataItem.setIsProcessingAid(false);
 			}
 			

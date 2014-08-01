@@ -34,7 +34,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 				} else if (data.metadata.indexOf("packagingKit") != -1) {
 					url += "&list=packagingList";
 				} else if (data.metadata.indexOf("localSemiFinishedProduct") != -1) {
-					url = scope._buildCellUrl(data);
+					url = beCPG.util.entityDetailsURL(data.siteId, data.value);
 				}
 				if (data.version && data.version !== "") {
 					version = '<span class="document-version">' + data.version + '</span>';

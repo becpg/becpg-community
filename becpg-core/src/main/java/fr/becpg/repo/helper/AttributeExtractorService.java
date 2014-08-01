@@ -76,8 +76,6 @@ public interface AttributeExtractorService {
 
 	public String formatDate(Date date);
 
-	public PropertyFormats getPropertyFormats();
-
 	public String extractSiteId(NodeRef entityNodeRef);
 
 	public String extractPropertyForReport(PropertyDefinition propertyDef, Serializable value, PropertyFormats propertyFormats, boolean formatData);
