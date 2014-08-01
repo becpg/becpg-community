@@ -469,6 +469,7 @@
 					<show id="pjt:tlTaskName" />
 					<show id="cm:description" force="true" />
 					<show id="pjt:tlPrevTasks" />
+					<show id="bcpg:parentLevel" force="true" />
 					<show id="pjt:tlResources" />
 					<show id="pjt:tlObservers" />
 					<show id="pjt:tlTaskLegend" />					
@@ -476,6 +477,8 @@
 					
 					<show id="pjt:tlIsMilestone" />
 					<show id="pjt:tlDuration" />
+					<show id="pjt:tlCapacity" />
+					<show id="pjt:tlWork" />					
 					<show id="pjt:tlState" />
 					
 					<show id="pjt:tlManualDate" />
@@ -497,7 +500,13 @@
 							</control-param>
 							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
-					</field>		
+					</field>	
+					<field id="bcpg:parentLevel" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/TaskValue?className=pjt:taskList
+							</control-param>
+						</control>
+					</field>	
 					<field id="pjt:tlResources" set="mainInfo"/>
 					<field id="pjt:tlObservers" set="mainInfo"/>
 					
@@ -520,6 +529,8 @@
 				
 					<field id="pjt:tlIsMilestone" set="planning"/>
 					<field id="pjt:tlDuration" set="planning"/>
+					<field id="pjt:tlCapacity" set="planning"/>
+					<field id="pjt:tlWork" set="planning"/>					
 					<field id="pjt:tlState" set="planning">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">Planned|data.taskstate.planned,InProgress|data.taskstate.inprogress,OnHold|data.taskstate.onhold,Cancelled|data.taskstate.cancelled,Completed|data.taskstate.completed
@@ -547,13 +558,16 @@
 					<show id="pjt:tlTaskName" />
 					<show id="cm:description" force="true" />
 					<show id="pjt:tlPrevTasks" />
+					<show id="bcpg:parentLevel" force="true" />
 					<show id="pjt:tlResources" />
 					<show id="pjt:tlObservers" />
 					<show id="pjt:tlTaskLegend" />					
 					<show id="pjt:tlWorkflowName" />
 					
 					<show id="pjt:tlIsMilestone" />
-					<show id="pjt:tlDuration" />									
+					<show id="pjt:tlDuration" />
+					<show id="pjt:tlCapacity" />
+					<show id="pjt:tlWork" />													
 					<show id="pjt:tlState" />
 					<show id="pjt:tlManualDate" />	
 					<show id="pjt:tlStart" read-only="true" />
@@ -574,6 +588,12 @@
 							</control-param>
 						</control>
 					</field>		
+					<field id="bcpg:parentLevel" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/TaskValue?className=pjt:taskList
+							</control-param>
+						</control>
+					</field>
 					<field id="pjt:tlResources" set="mainInfo"/>
 					<field id="pjt:tlObservers" set="mainInfo"/>
 					
@@ -595,6 +615,8 @@
 						label-id="becpg.forms.set.planning.label" template="/org/alfresco/components/form/2-column-set.ftl" />		
 					<field id="pjt:tlIsMilestone" set="planning"/>
 					<field id="pjt:tlDuration" set="planning"/>
+					<field id="pjt:tlCapacity" set="planning"/>
+					<field id="pjt:tlWork" set="planning"/>					
 					<field id="pjt:tlState" set="planning">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">Planned|data.taskstate.planned,InProgress|data.taskstate.inprogress,OnHold|data.taskstate.onhold,Cancelled|data.taskstate.cancelled,Completed|data.taskstate.completed
@@ -623,9 +645,12 @@
 			</form>
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:depthLevel" />
 					<show id="pjt:tlTaskName" />					
 					<show id="pjt:tlIsMilestone" />
 					<show id="pjt:tlDuration" />
+					<show id="pjt:tlWork" />
+					<show id="pjt:tlCapacity" />
 					<show id="pjt:tlResources" />
 					<show id="pjt:tlTaskLegend" />					
 					<show id="pjt:tlState" />
