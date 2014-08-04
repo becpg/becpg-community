@@ -614,6 +614,8 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		runnedQuery.append("SELECT  * FROM ");
 		if (type == null || ContentModel.TYPE_CONTENT.equals(type)) {
 			runnedQuery.append("cmis:document as D");
+		} else if ( ContentModel.TYPE_FOLDER.equals(type)) {
+			runnedQuery.append("cmis:folder as D");
 		} else {
 			runnedQuery.append(type.toPrefixString(namespaceService) + " as D");
 		}
