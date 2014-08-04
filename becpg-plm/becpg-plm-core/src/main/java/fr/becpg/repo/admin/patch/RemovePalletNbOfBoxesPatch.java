@@ -135,8 +135,6 @@ public class RemovePalletNbOfBoxesPatch extends AbstractBeCPGPatch {
 
 		batchProcessor.process(worker, true);
 	
-
-		
 	}
 
 	public NodeDAO getNodeDAO() {
