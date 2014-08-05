@@ -39,6 +39,7 @@
 										
 					<show id="pjt:projectStartDate" />
 					<show id="pjt:projectDueDate" />
+					<show id="pjt:projectPlanningMode" />	
 					<show id="pjt:projectCompletionDate" for-mode="view" />					
 					<show id="pjt:completionPercent" for-mode="view"/>
 					<show id="pjt:projectOverdue" for-mode="view"/>
@@ -111,6 +112,7 @@
 					
 					<field id="pjt:projectStartDate" set="planning" />
 					<field id="pjt:projectDueDate" set="planning" />
+					<field id="pjt:projectPlanningMode" set="planning" />
 					<field id="pjt:projectCompletionDate" set="planning" />
 					<field id="pjt:completionPercent" set="planning" />
 					<field id="pjt:projectOverdue" set="planning" />					
@@ -202,7 +204,8 @@
 					<show id="pjt:projectState" />										
 										
 					<show id="pjt:projectStartDate" />
-					<show id="pjt:projectDueDate" />					
+					<show id="pjt:projectDueDate" />
+					<show id="pjt:projectPlanningMode" />					
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
@@ -261,6 +264,7 @@
 					
 					<field id="pjt:projectStartDate" set="planning" />
 					<field id="pjt:projectDueDate" set="planning" />
+					<field id="pjt:projectPlanningMode" set="planning" />
 						
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">

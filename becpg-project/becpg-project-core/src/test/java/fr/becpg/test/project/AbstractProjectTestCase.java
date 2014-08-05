@@ -42,6 +42,7 @@ import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.hierarchy.HierarchyHelper;
 import fr.becpg.repo.project.ProjectService;
+import fr.becpg.repo.project.data.PlanningMode;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.ProjectState;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
@@ -179,7 +180,9 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 				assigneesTwo.add(groupOne);
 
 				// create project Tpl
-				ProjectData projectTplData = new ProjectData(null, "Pjt Tpl", PROJECT_HIERARCHY1_SEA_FOOD_REF, PROJECT_HIERARCHY2_CRUSTACEAN_REF, null, null, null, null, null,
+				ProjectData projectTplData = new ProjectData(null, "Pjt Tpl", 
+						PROJECT_HIERARCHY1_SEA_FOOD_REF, PROJECT_HIERARCHY2_CRUSTACEAN_REF, 
+						null, null, null, null, null, null,
 						null, 0, null);
 				projectTplData.setParentNodeRef(testFolderNodeRef);
 				projectTplData = (ProjectData) alfrescoRepository.save(projectTplData);
@@ -278,6 +281,10 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 	}
 
 	protected void createProject(final ProjectState projectState, final Date startDate, final Date endDate) {
+		createProject(projectState, startDate, endDate, endDate != null ? PlanningMode.RetroPlanning : PlanningMode.Planning);
+	}
+	
+	protected void createProject(final ProjectState projectState, final Date startDate, final Date endDate, final PlanningMode planningMode) {
 
 		projectNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
@@ -291,8 +298,9 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 
 				List<NodeRef> productNodeRefs = new ArrayList<>(1);
 				productNodeRefs.add(entityTestData.getNodeRef());
-				ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_SEA_FOOD_REF, PROJECT_HIERARCHY2_CRUSTACEAN_REF, startDate, endDate, null, 2,
-						projectState, projectTplNodeRef, 0, productNodeRefs);
+				ProjectData projectData = new ProjectData(null, "Pjt 1", 
+						PROJECT_HIERARCHY1_SEA_FOOD_REF, PROJECT_HIERARCHY2_CRUSTACEAN_REF, startDate, endDate, null, 
+						planningMode, 2, projectState, projectTplNodeRef, 0, productNodeRefs);
 
 				projectData.setParentNodeRef(testFolderNodeRef);
 

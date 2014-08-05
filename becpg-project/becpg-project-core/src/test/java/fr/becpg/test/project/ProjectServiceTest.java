@@ -30,6 +30,7 @@ import org.junit.Test;
 
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.project.ProjectWorkflowService;
+import fr.becpg.repo.project.data.PlanningMode;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.ProjectState;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
@@ -332,8 +333,8 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 					public NodeRef execute() throws Throwable {
 						
 						// create project Tpl
-						ProjectData projectData = new ProjectData(null, "Pjt", PROJECT_HIERARCHY1_SEA_FOOD_REF, PROJECT_HIERARCHY2_CRUSTACEAN_REF, null,
-										null, null, null, null, null, 0, null);
+						ProjectData projectData = new ProjectData(null, "Pjt", PROJECT_HIERARCHY1_SEA_FOOD_REF, PROJECT_HIERARCHY2_CRUSTACEAN_REF, 
+								null, null, null, PlanningMode.Planning, null, null, null, 0, null);
 						
 						// create datalists
 						List<TaskListDataItem> taskList = new LinkedList<TaskListDataItem>();
@@ -442,7 +443,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 						List<NodeRef> productNodeRefs = new ArrayList<>(1);
 						productNodeRefs.add(entityTestData.getNodeRef());
 						ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_SEA_FOOD_REF, PROJECT_HIERARCHY2_CRUSTACEAN_REF, new Date(),
-								null, null, 2, ProjectState.InProgress, null, 0, productNodeRefs);
+								null, null, PlanningMode.Planning, 2, ProjectState.InProgress, null, 0, productNodeRefs);
 
 						projectData.setParentNodeRef(testFolderNodeRef);
 						

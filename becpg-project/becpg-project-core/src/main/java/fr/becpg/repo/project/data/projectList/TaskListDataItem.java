@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -37,11 +38,12 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
  */
 @AlfType
 @AlfQname(qname = "pjt:taskList")
-public class TaskListDataItem extends BeCPGDataObject {
+public class TaskListDataItem extends BeCPGDataObject implements CompositeDataItem<TaskListDataItem> {
 	
 	
 	private String taskName;
 	private Boolean isMilestone;
+	private Boolean isGroup;
 	private Integer duration;
 	private Integer capacity;
 	private Double work;
@@ -56,6 +58,8 @@ public class TaskListDataItem extends BeCPGDataObject {
 	private String workflowName;
 	private String workflowInstance;
 	private TaskManualDate manualDate;
+	private Integer depthLevel;
+	private TaskListDataItem parent;
 
 	@AlfProp
 	@AlfQname(qname = "pjt:tlTaskName")
@@ -75,6 +79,16 @@ public class TaskListDataItem extends BeCPGDataObject {
 
 	public void setIsMilestone(Boolean isMilestone) {
 		this.isMilestone = isMilestone;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "pjt:tlIsGroup")
+	public Boolean getIsGroup() {
+		return isGroup;
+	}
+
+	public void setIsGroup(Boolean isGroup) {
+		this.isGroup = isGroup;
 	}
 
 	@AlfProp
@@ -219,6 +233,29 @@ public class TaskListDataItem extends BeCPGDataObject {
 		this.manualDate = manualDate;
 	}
 
+	@Override
+	@AlfProp
+	@AlfQname(qname="bcpg:depthLevel")
+	public Integer getDepthLevel() {
+		return depthLevel;
+	}
+
+	public void setDepthLevel(Integer depthLevel) {
+		this.depthLevel = depthLevel;
+	}
+
+	@Override
+	@AlfProp
+	@AlfQname(qname="bcpg:parentLevel")
+	public TaskListDataItem getParent() {
+		return this.parent;
+	}
+
+	@Override
+	public void setParent(TaskListDataItem parent) {
+		this.parent = parent;		
+	}
+	
 	public TaskListDataItem() {
 		super();
 	}
@@ -354,9 +391,12 @@ public class TaskListDataItem extends BeCPGDataObject {
 
 	@Override
 	public String toString() {
-		return "TaskListDataItem [nodeRef=" + nodeRef + ", taskName=" + taskName + ", isMilestone=" + isMilestone + ", duration=" + duration + ", start=" + start + ", end=" + end
-				+ ", state=" + state + ", completionPercent=" + completionPercent + ", prevTasks=" + prevTasks + ", resources=" + resources + ", taskLegend=" + taskLegend
-				+ ", workflowName=" + workflowName + ", workflowInstance=" + workflowInstance + "]";
+		return "TaskListDataItem [taskName=" + taskName + ", isMilestone=" + isMilestone + ", isGroup=" + isGroup
+				+ ", duration=" + duration + ", capacity=" + capacity + ", work=" + work + ", start=" + start
+				+ ", end=" + end + ", state=" + state + ", completionPercent=" + completionPercent + ", prevTasks="
+				+ prevTasks + ", resources=" + resources + ", observers=" + observers + ", taskLegend=" + taskLegend
+				+ ", workflowName=" + workflowName + ", workflowInstance=" + workflowInstance + ", manualDate="
+				+ manualDate + ", depthLevel=" + depthLevel + ", parent=" + parent + "]";
 	}
 
 }

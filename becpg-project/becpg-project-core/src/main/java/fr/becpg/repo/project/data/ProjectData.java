@@ -54,6 +54,7 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	private Date startDate;
 	private Date dueDate;
 	private Date completionDate;
+	private PlanningMode planningMode = PlanningMode.Planning;
 	private Integer priority = 2;
 	private ProjectState projectState;
 	private NodeRef projectTpl;
@@ -82,7 +83,8 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 		super();
 	}
 
-	public ProjectData(NodeRef nodeRef, String name, NodeRef hierarchy1, NodeRef hierarchy2, Date startDate, Date dueDate, Date completionDate, Integer priority,ProjectState projectState,
+	public ProjectData(NodeRef nodeRef, String name, NodeRef hierarchy1, NodeRef hierarchy2, Date startDate, Date dueDate, Date completionDate, 
+			PlanningMode planningMode, Integer priority,ProjectState projectState,
 			NodeRef projectTpl, Integer completionPercent, List<NodeRef> entities) {
 		super(nodeRef, name);
 		this.hierarchy1 = hierarchy1;
@@ -90,6 +92,7 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 		this.startDate = startDate;
 		this.dueDate = dueDate;
 		this.completionDate = completionDate;
+		this.planningMode = planningMode;
 		this.priority = priority;
 		this.projectState = projectState;
 		this.projectTpl = projectTpl;
@@ -168,10 +171,20 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	}
 
 	@AlfProp
+	@AlfQname(qname = "pjt:projectPlanningMode")	
+	public PlanningMode getPlanningMode() {
+		return planningMode;
+	}
+
+	public void setPlanningMode(PlanningMode planningMode) {
+		this.planningMode = planningMode;
+	}
+
+	@AlfProp
 	@AlfQname(qname = "pjt:projectPriority")
 	public Integer getPriority() {
 		return priority;
-	}
+	}	
 
 	public void setPriority(Integer priority) {
 		this.priority = priority;
