@@ -60,6 +60,7 @@ import fr.becpg.config.mapping.FormulaMapping;
 import fr.becpg.config.mapping.HierarchyMapping;
 import fr.becpg.config.mapping.MappingException;
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.entity.EntityListDAO;
@@ -997,7 +998,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		ClassMapping classMapping = importContext.getClassMappings().get(type);
 
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(type);
-
+		
 		boolean doQuery = false;		
 
 		// nodeColumnKeys
@@ -1049,6 +1050,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 				doQuery = true;
 			}
 			
+		
 			if(!doQuery){
 				logger.warn("No keys defined in mapping, neither code property. Type: " + type + " Properties: " + properties);
 			}
@@ -1056,7 +1058,18 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		
 		if (doQuery) {
 			logger.debug("findNodeByKeyOrCode: " + queryBuilder.toString());
-			nodeRef = queryBuilder.excludeDefaults().inDB().ftsLanguage().singleValue();
+			
+			
+			if(dictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM) && !dictionaryService.isSubClass(type, PLMModel.TYPE_CHARACT) ){
+				for(NodeRef tmpNodeRef : queryBuilder.excludeDefaults().inDB().ftsLanguage().list()){
+					if(nodeService.getPrimaryParent(tmpNodeRef).equals(importContext.getParentNodeRef())){
+						return tmpNodeRef;
+					}
+				}
+			} else {
+				nodeRef = queryBuilder.excludeDefaults().inDB().ftsLanguage().singleValue();
+			}
+			
 		}
 
 		return nodeRef;
