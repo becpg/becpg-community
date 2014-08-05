@@ -25,9 +25,11 @@ import java.io.Reader;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -69,6 +71,15 @@ public class XmlEntityVisitor {
 	private NamespaceService namespaceService;
 	private DictionaryService dictionaryService;
 	private ContentService contentService;
+
+	private boolean dumpAll = false;
+	
+	private Set<NodeRef> cacheList = new HashSet<NodeRef>();
+	
+	
+	public void setDumpAll(boolean dumpAll) {
+		this.dumpAll = dumpAll;
+	}
 
 	private static Log logger = LogFactory.getLog(XmlEntityVisitor.class);
 
@@ -161,6 +172,8 @@ public class XmlEntityVisitor {
 
 	private void visitNode(NodeRef nodeRef, XMLStreamWriter xmlw, boolean assocs, boolean props, boolean content) throws XMLStreamException {
 
+		cacheList.add(nodeRef);
+		
 		QName nodeType = nodeService.getType(nodeRef).getPrefixedQName(namespaceService);
 		String prefix = nodeType.getPrefixString().split(":")[0];
 		xmlw.writeStartElement(prefix, nodeType.getLocalName(), nodeType.getNamespaceURI());
@@ -265,7 +278,7 @@ public class XmlEntityVisitor {
 				List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, assocDef.getName());
 				for (AssociationRef assocRef : assocRefs) {
 					NodeRef childRef = assocRef.getTargetRef();
-					visitNode(childRef, xmlw, false, false, false);
+					visitNode(childRef, xmlw, shouldDumpAll(childRef), shouldDumpAll(childRef), false);
 				}
 				xmlw.writeEndElement();
 			}
@@ -314,13 +327,17 @@ public class XmlEntityVisitor {
 			}
 			xmlw.writeEndElement();
 		} else if (value instanceof NodeRef) {
-			visitNode((NodeRef) value, xmlw, false, false, false);
+			visitNode((NodeRef) value, xmlw, shouldDumpAll((NodeRef) value), shouldDumpAll((NodeRef) value), false);
 		} else if (value instanceof Date) {
 			xmlw.writeCharacters(ISO8601DateFormat.format((Date) value));
 		} else {
 			// xmlw.writeCharacters(cleanInvalidXmlChars(value.toString(),""));
 			xmlw.writeCData(value.toString());
 		}
+	}
+
+	private boolean shouldDumpAll(NodeRef value) {
+		return dumpAll && !cacheList.contains(value);
 	}
 
 	//
