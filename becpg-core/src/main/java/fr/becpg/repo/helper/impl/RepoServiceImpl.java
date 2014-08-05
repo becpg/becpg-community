@@ -47,6 +47,9 @@ public class RepoServiceImpl implements RepoService {
 	@Autowired
 	private Repository repository;
 
+	
+	@Autowired
+	private NamespaceService namespaceService;
 
 
 	/* (non-Javadoc)
@@ -73,13 +76,16 @@ public class RepoServiceImpl implements RepoService {
 		NodeRef folderNodeRef = getFolderByPath(parentNodeRef, path);
 		
 		if(folderNodeRef == null){
-			logger.debug("Create folder : " + name);
+			logger.debug("Create folder : " + name + "  ");
 			
 			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+			
+			
+			
 	    	properties.put(ContentModel.PROP_NAME, PropertiesHelper.cleanFolderName(name));	    		    	
 	    	
 	    	folderNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS, 
-	    											QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(path)), 
+	    											QName.resolveToQName(namespaceService, path), 
 	    											ContentModel.TYPE_FOLDER, properties).getChildRef();	    		 
 		}		
 

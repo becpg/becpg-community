@@ -17,6 +17,8 @@
  ******************************************************************************/
 package fr.becpg.repo.helper;
 
+import org.alfresco.service.namespace.QName;
+
 public class PropertiesHelper {
 
 	/**
@@ -31,6 +33,12 @@ public class PropertiesHelper {
 	}	
 	
 	public static String cleanFolderName(String name) {
+		
+		//Case name is a qName
+		if(name!=null && QName.splitPrefixedQName(name).length>1){
+			name = QName.splitPrefixedQName(name)[1];
+		}
+		
 		String ret = cleanName(name);
 		return ret!=null ? ret.replaceAll("\\.","-"): null;
 	}	

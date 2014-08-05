@@ -390,6 +390,11 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		watch.start();
 
 		try {
+			
+			if(logger.isDebugEnabled()){
+				logger.debug("selectNodesByPath, parent: "+parentNodeRef+" xpath: "+xPath);
+			}
+			
 			ret = searchService.selectNodes(parentNodeRef, xPath, null, namespaceService, false);
 		} finally {
 			watch.stop();
