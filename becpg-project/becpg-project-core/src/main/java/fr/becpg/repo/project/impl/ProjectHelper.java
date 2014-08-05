@@ -92,6 +92,41 @@ public class ProjectHelper {
 		}
 		return taskList;
 	}
+	
+	public static List<TaskListDataItem> getChildrenTasks(ProjectData projectData, TaskListDataItem taskListDataItem) {
+
+		List<TaskListDataItem> taskList = new ArrayList<TaskListDataItem>();
+		for (TaskListDataItem t : projectData.getTaskList()) {
+			if (t.getParent() != null && t.getParent().equals(taskListDataItem)) {
+				taskList.add(t);
+			}
+		}
+		return taskList;
+	}
+	
+	public static List<TaskListDataItem> getSourceTasks(ProjectData projectData) {
+
+		List<TaskListDataItem> taskList = new ArrayList<TaskListDataItem>();
+		for (TaskListDataItem t : projectData.getTaskList()) {
+			//has parent with prevTask ?
+			boolean hasPrevTaskInParent = false;
+			TaskListDataItem parent = t.getParent();
+			if(parent != null){
+				if(parent.getPrevTasks().isEmpty()){
+					parent = parent.getParent();
+				}
+				else{
+					hasPrevTaskInParent = true;
+					break;
+				}
+			}
+			boolean hasChildren = !ProjectHelper.getChildrenTasks(projectData, t).isEmpty();
+			if(hasChildren == false && hasPrevTaskInParent == false){
+				taskList.add(t);
+			}
+		}
+		return taskList;
+	}
 
 	public static List<DeliverableListDataItem> getDeliverables(ProjectData projectData, NodeRef taskListNodeRef) {
 

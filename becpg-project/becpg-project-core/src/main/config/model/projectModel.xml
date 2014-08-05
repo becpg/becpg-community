@@ -91,6 +91,15 @@
 				</list>
 			</parameter>
 		</constraint>
+		
+		<constraint name="pjt:planningModes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>Planning</value>
+					<value>RetroPlanning</value>
+				</list>
+			</parameter>
+		</constraint>
 
 		<constraint name="pjt:allowedPriority" type="LIST">
 			<parameter name="allowedValues">
@@ -222,6 +231,14 @@
 				<property name="pjt:projectDueDate">
 					<type>d:date</type>
 				</property>
+				<property name="pjt:projectPlanningMode">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<default>Planning</default>
+					<constraints>
+						<constraint ref="pjt:planningModes" />
+					</constraints>
+				</property>
 				<property name="pjt:projectPriority">
 					<type>d:int</type>
 					<mandatory>true</mandatory>
@@ -309,6 +326,9 @@
 					<mandatory>true</mandatory>
 				</property>
 				<property name="pjt:tlIsMilestone">
+					<type>d:boolean</type>
+				</property>
+				<property name="pjt:tlIsGroup">
 					<type>d:boolean</type>
 				</property>
 				<property name="pjt:tlDuration">
