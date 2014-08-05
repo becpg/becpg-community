@@ -390,6 +390,11 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		watch.start();
 
 		try {
+			
+			if(logger.isDebugEnabled()){
+				logger.debug("selectNodesByPath, parent: "+parentNodeRef+" xpath: "+xPath);
+			}
+			
 			ret = searchService.selectNodes(parentNodeRef, xPath, null, namespaceService, false);
 		} finally {
 			watch.stop();
@@ -614,6 +619,8 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		runnedQuery.append("SELECT  * FROM ");
 		if (type == null || ContentModel.TYPE_CONTENT.equals(type)) {
 			runnedQuery.append("cmis:document as D");
+		} else if ( ContentModel.TYPE_FOLDER.equals(type)) {
+			runnedQuery.append("cmis:folder as D");
 		} else {
 			runnedQuery.append(type.toPrefixString(namespaceService) + " as D");
 		}

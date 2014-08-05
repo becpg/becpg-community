@@ -41,6 +41,8 @@
          redirect += "&list=compoList";
       } else if (type == "bcpg:packagingKit") {
          redirect += "&list=packagingList";
+      } else if(type == "pjt:project"){
+          redirect += "&list=taskList";
       }
 
       return redirect;

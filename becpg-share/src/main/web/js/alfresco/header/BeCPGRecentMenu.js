@@ -70,7 +70,9 @@ define([ "dojo/_base/declare", "alfresco/core/CoreXhr", "dojo/_base/lang", "dojo
 							targetUrl += "&list=compoList";
 						} else if (item.itemType == "bcpg:packagingKit") {
 							targetUrl += "&list=packagingList";
-						}
+						} else if(item.itemType == "pjt:project"){
+	                         targetUrl += "&list=taskList";
+	                     }
 
 					}
 
