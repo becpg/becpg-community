@@ -115,6 +115,8 @@ function createDockBar(beCPGMenu){
                         targetUrl += "&list=compoList";
                      } else if (item.itemType == "bcpg:packagingKit") {
                         targetUrl += "&list=packagingList";
+                     } else if(item.itemType == "pjt:project"){
+                         targetUrl += "&list=taskList";
                      }
                      
                   }

@@ -929,6 +929,10 @@ if (!JSGantt) {
          vFormat = ppFormat;
          this.Draw();
       };
+      
+      this.getFormat = function() {
+         return  vFormat;
+       };
       /**
        * Returns whether resource column is shown
        * 
@@ -1191,9 +1195,10 @@ if (!JSGantt) {
                for ( var k = 0; k < n; k++) {
                   var vTask = this.getArrayLocationByID(vDepList[k]);
 
-                  if (vList[vTask].getVisible() == 1)
+                  if (vTask!=null && vList[vTask].getVisible() == 1){
                      this.drawDependency(vList[vTask].getEndX(), vList[vTask].getEndY(), vList[i].getStartX() - 1,
                            vList[i].getStartY());
+                  }
                }
             }
          }
@@ -1213,7 +1218,7 @@ if (!JSGantt) {
                return i;
          }
          
-         alert("pID not found : "+pId)
+         return null;
       };
 
       /**

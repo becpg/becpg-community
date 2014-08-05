@@ -12,7 +12,6 @@ import org.alfresco.repo.domain.patch.PatchDAO;
 import org.alfresco.repo.domain.qname.QNameDAO;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.rule.RuleService;
 import org.alfresco.service.namespace.QName;
@@ -23,7 +22,6 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
-import fr.becpg.model.ProjectModel;
 
 /**
  * Remove compoListQtyAfterProcess
@@ -127,14 +125,6 @@ public class RemovePalletNbOfBoxesPatch extends AbstractBeCPGPatch {
 				if (nodeService.exists(productNodeRef)) {
 					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 					nodeService.removeProperty(productNodeRef, QName.createQName(PackModel.PACK_URI, "palletNbOfBoxes"));
-					List<AssociationRef> assocRefs = nodeService.getTargetAssocs(productNodeRef, QName.createQName(ProjectModel.PROJECT_URI, "project"));
-					if(assocRefs!=null){
-						for(AssociationRef assoc : assocRefs){
-						   logger.info("Removing all association pjt:project");
-						   nodeService.removeAssociation(assoc.getSourceRef(), assoc.getTargetRef(),assoc.getTypeQName());
-						}
-					}
-					
 				} else {
 					logger.warn("productNodeRef doesn't exist : " + productNodeRef);
 				}
@@ -145,8 +135,6 @@ public class RemovePalletNbOfBoxesPatch extends AbstractBeCPGPatch {
 
 		batchProcessor.process(worker, true);
 	
-
-		
 	}
 
 	public NodeDAO getNodeDAO() {

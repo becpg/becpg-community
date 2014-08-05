@@ -38,6 +38,7 @@ import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.codec.binary.Base64OutputStream;
 import org.apache.commons.io.IOUtils;
@@ -182,6 +183,10 @@ public class ImportEntityXmlVisitor {
 
 		public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 
+			if(logger.isTraceEnabled()){
+				logger.trace("Enter : "+qName);
+			}
+			
 			String type = attributes.getValue(RemoteEntityService.ATTR_TYPE);
 			typeStack.push(type);
 
@@ -268,6 +273,10 @@ public class ImportEntityXmlVisitor {
 							}
 
 							if (multipleValues != null) {
+								if(logger.isDebugEnabled()){
+									logger.debug("Multiple value for d:nodeRef");
+								}
+								
 								multipleValues.add(node);
 							} else {
 								serviceRegistry.getNodeService().setProperty(curNodeRef.peek(), currProp, node);
@@ -283,10 +292,12 @@ public class ImportEntityXmlVisitor {
 				removeAllExistingAssoc(curNodeRef.peek(), currAssoc.peek(), type);
 			} else if (type != null && type.length() > 0) {
 				if (type.equals(RemoteEntityService.NODEREF_TYPE)) {
+					logger.trace("Set isNodeRefAssoc");
 					isNodeRefAssoc = true;
 				}
 				currProp = QName.createQName(qName, serviceRegistry.getNamespaceService());
-			} else if (RemoteEntityService.ELEM_LIST.equals(localName)) {
+			} else if (RemoteEntityService.ELEM_LIST.equals(qName)) {
+				logger.trace("init multipleValues");
 				multipleValues = new ArrayList<>();
 			}
 
@@ -305,18 +316,43 @@ public class ImportEntityXmlVisitor {
 		public void characters(char[] ch, int start, int length) throws SAXException {
 			currValue.append(ch, start, length);
 		}
+		
+		
+//		<pjt:projectLegends type="d:noderef">
+//		<values>
+//			<value>
+//				<pjt:taskLegend
+//					path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends"
+//					type="node" name="Lancement produit"
+//					nodeRef="workspace://SpacesStore/2d0ecc02-a290-443a-bce8-b4501c517682" />
+//			</value>
+//			<value>
+//				<pjt:taskLegend
+//					path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends"
+//					type="node" name="Marketing"
+//					nodeRef="workspace://SpacesStore/2544b6e8-7b57-4b96-bddf-ad1ecc571a19" />
+//			</value>
+//		</values>
+//		</pjt:projectLegends>
 
 		public void endElement(String uri, String localName, String qName) throws SAXException {
+			
+			if(logger.isTraceEnabled()){
+				logger.trace("End : "+qName);
+			}
+			
 			String type = typeStack.pop();
 			if (type != null && type.equals(RemoteEntityService.NODE_TYPE)) {
+				logger.trace("Pop node");
 				entityNodeRef = curNodeRef.pop();
 			} else if (type != null && (type.equals(RemoteEntityService.ASSOC_TYPE) || type.equals(RemoteEntityService.CHILD_ASSOC_TYPE))) {
 				currAssoc.pop();
 				currAssocType.pop();
-			} else if (type != null && type.length() > 0 && (!type.equals(RemoteEntityService.NODEREF_TYPE) || multipleValues != null)) {
-				if (!shouldIgnoreProperty(currProp)) {
+			} else if (type != null && type.length() > 0 ) {
+				if (!shouldIgnoreProperty(currProp)) {	
 					if (logger.isDebugEnabled()) {
 						logger.debug("Set property : " + currProp.toPrefixString() + " value " + currValue + " for type " + type);
+						logger.debug("Is multiple  : " + (multipleValues!=null));
 					}
 					if (multipleValues != null) {
 						serviceRegistry.getNodeService().setProperty(curNodeRef.peek(), currProp, multipleValues);
@@ -329,12 +365,16 @@ public class ImportEntityXmlVisitor {
 						}
 					}
 				}
-			} else if (RemoteEntityService.ELEM_LIST_VALUE.equals(localName)) {
-				if (currValue.length() > 0) {
+			} else if (RemoteEntityService.ELEM_LIST_VALUE.equals(qName) ) {
+				if(!isNodeRefAssoc && currValue.length() > 0) {
+					if(logger.isTraceEnabled()){
+						logger.trace("Add "+currValue.toString()+" to multipleValues ");
+					}
 					multipleValues.add(currValue.toString());
 				}
-			} else {
-				isNodeRefAssoc = false;
+			} else if(!isNodeRefAssoc) {
+					logger.trace("Reset isNodeRefAssoc");
+					isNodeRefAssoc = false;
 			}
 		}
 
@@ -379,7 +419,8 @@ public class ImportEntityXmlVisitor {
 				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 				properties.put(ContentModel.PROP_NAME, name);
 				logger.debug("Creating missing node :" + name + " at path :" + parentPath);
-				ret = serviceRegistry.getNodeService().createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, type, properties).getChildRef();
+				ret = serviceRegistry.getNodeService().createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
+						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name)), type, properties).getChildRef();
 			} else {
 				if (!serviceRegistry.getNodeService().getType(ret).equals(type)) {
 					logger.error("Found node with same name: " + name + " but incorrect type :" + serviceRegistry.getNodeService().getType(ret) + "/" + type + " under: "
@@ -394,20 +435,22 @@ public class ImportEntityXmlVisitor {
 	}
 
 	private NodeRef createChildAssocNode(NodeRef parentNodeRef, QName type, QName assocName, String name, NodeRef existingNodeRef) {
-		logger.debug("Creating child assoc: " + assocName + " add type :" + type);
+		logger.debug("Creating child assoc: " + assocName + " add type :" + type+" name :"+name);
 
 		if (existingNodeRef == null) {
-			NodeRef ret = serviceRegistry.getNodeService().getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, name);
+			NodeRef ret = serviceRegistry.getNodeService().getChildByName(parentNodeRef, assocName, name);
 			if (ret == null) {
 				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 				properties.put(ContentModel.PROP_NAME, name);
-				return serviceRegistry.getNodeService().createNode(parentNodeRef, assocName, assocName, type, properties).getChildRef();
+				return serviceRegistry.getNodeService().createNode(parentNodeRef, assocName, 
+						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name)), type, properties).getChildRef();
 			} else {
 				return ret;
 			}
 		} else {
 			if (!serviceRegistry.getNodeService().getPrimaryParent(existingNodeRef).getParentRef().equals(parentNodeRef)) {
-				serviceRegistry.getNodeService().moveNode(existingNodeRef, parentNodeRef, ContentModel.ASSOC_CONTAINS, assocName);
+				serviceRegistry.getNodeService().moveNode(existingNodeRef, parentNodeRef, assocName, 
+						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name)));
 			}
 			return existingNodeRef;
 		}
