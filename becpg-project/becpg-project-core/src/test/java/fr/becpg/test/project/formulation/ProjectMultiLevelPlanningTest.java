@@ -196,7 +196,7 @@ public class ProjectMultiLevelPlanningTest extends AbstractProjectTestCase {
 				assertEquals(nextStartDate, projectData.getTaskList().get(2).getStart());
 
 				// submit task
-				logger.debug("submit task");
+				logger.debug("submit task 3");
 				projectService.submitTask(projectData.getTaskList().get(2).getNodeRef());
 
 				return null;
@@ -211,6 +211,7 @@ public class ProjectMultiLevelPlanningTest extends AbstractProjectTestCase {
 
 				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 
+				logger.info("###projectData.getTaskList().get(0).getEnd() " + projectData.getTaskList().get(0).getEnd());
 				// check
 				assertEquals(today, projectData.getTaskList().get(2).getStart());
 				assertEquals(today, projectData.getTaskList().get(2).getEnd());
