@@ -191,6 +191,8 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 			return RemoteEntityFormat.csv;
 		} else if( format != null && RemoteEntityFormat.xml_excel.toString().equals(format)){
 			return RemoteEntityFormat.xml_excel;
+		} else if( format != null && RemoteEntityFormat.xml_all.toString().equals(format)){
+			return RemoteEntityFormat.xml_all;
 		}
 		return RemoteEntityFormat.xml;
 	}
