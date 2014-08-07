@@ -126,7 +126,7 @@ public class LabelingFormulaContext {
 
 	private String ingDefaultFormat = "{0}";
 	private String groupDefaultFormat = "<b>{0} ({1,number,0.#%}):</b> {2}";
-	private String detailsDefaultFormat = "{0} {1,number,0.#%} ({2})";
+	private String detailsDefaultFormat = "{0} ({2})";
 	private String ingTypeDefaultFormat = "{0}: {2}";
 	private String subIngsDefaultFormat = "{0} ({2})";
 	private boolean useVolume = false;

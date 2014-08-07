@@ -130,7 +130,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		// Compute composite
 		Composite<CompoListDataItem> compositeDefaultVariant = CompositeHelper.getHierarchicalCompoList(compoList);
 
-		CompositeLabeling compositeLabeling = calculateILLV2(new CompositeLabeling(), compositeDefaultVariant, labelingFormulaContext);
+		CompositeLabeling compositeLabeling = calculateILLV2(new CompositeLabeling(), compositeDefaultVariant, labelingFormulaContext, 1d);
 
 		if (logger.isTraceEnabled()) {
 			logger.trace(" Before aggrate \n " + compositeLabeling.toString());
@@ -528,7 +528,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	}
 
 	private CompositeLabeling calculateILLV2(CompositeLabeling ret, Composite<CompoListDataItem> composite,
-			LabelingFormulaContext labelingFormulaContext) throws FormulateException {
+			LabelingFormulaContext labelingFormulaContext, Double ratio) throws FormulateException {
 
 		// Compute vTotal
 		Double totalVolumeUsed = 0d;
@@ -573,7 +573,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					logger.trace("Aggregate rule " + aggregateRules.toString() + " match ");
 				}
 
-				calculateILLV2(ret, component, labelingFormulaContext, aggregateRules, declarationType, totalVolumeUsed);
+				calculateILLV2(ret, component, labelingFormulaContext, aggregateRules, declarationType, totalVolumeUsed, ratio);
 
 			}
 
@@ -597,7 +597,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	}
 
 	private CompositeLabeling calculateILLV2(CompositeLabeling parent, Composite<CompoListDataItem> composite,
-			LabelingFormulaContext labelingFormulaContext, List<AggregateRule> aggregateRules, DeclarationType declarationType, Double totalVolumeUsed)
+			LabelingFormulaContext labelingFormulaContext, List<AggregateRule> aggregateRules,
+			DeclarationType declarationType,
+			Double totalVolumeUsed,
+			Double ratio
+			)
 			throws FormulateException {
 		CompoListDataItem compoListDataItem = composite.getData();
 
@@ -610,6 +614,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			qty *= FormulationHelper.getYield(compoListDataItem) / 100;
 		}
 
+		qty = qty * ratio;
+		
 		Double volumeReconstitution = FormulationHelper.getVolumeReconstitution(compoListDataItem, nodeService);
 		Double volumePerc = null;
 		if (volumeReconstitution != null) {
@@ -633,7 +639,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		CompositeLabeling compositeLabeling = parent;
 
 		if (DeclarationType.Detail.equals(declarationType) || DeclarationType.Group.equals(declarationType)
-				|| DeclarationType.DoNotDetails.equals(declarationType) || !aggregateRules.isEmpty()) {
+				|| DeclarationType.DoNotDetails.equals(declarationType) || DeclarationType.Declare.equals(declarationType)  || !aggregateRules.isEmpty()) {
 
 			// MultiLevel only if detail or group
 			if (!DeclarationType.DoNotDetails.equals(declarationType)
@@ -648,39 +654,42 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				isMultiLevel = true;
 			}
 
-			AbstractLabelingComponent lc = parent.get(productData.getNodeRef());
-			if (lc != null && lc instanceof CompositeLabeling) {
-				compositeLabeling = (CompositeLabeling) lc;
-				if (qty != null) {
-
-					if (compositeLabeling.getQty() != null) {
-						compositeLabeling.setQty(qty + compositeLabeling.getQty());
+			if(!DeclarationType.Declare.equals(declarationType) || !aggregateRules.isEmpty()){
+				AbstractLabelingComponent lc = parent.get(productData.getNodeRef());
+				if (lc != null && lc instanceof CompositeLabeling) {
+					compositeLabeling = (CompositeLabeling) lc;
+					if (qty != null) {
+	
+						if (compositeLabeling.getQty() != null) {
+							compositeLabeling.setQty(qty + compositeLabeling.getQty());
+						}
+	
+						if (composite.isLeaf() && compositeLabeling.getQtyRMUsed() != null) {
+							compositeLabeling.setQtyRMUsed(qty + compositeLabeling.getQtyRMUsed());
+						}
+	
 					}
-
-					if (composite.isLeaf() && compositeLabeling.getQtyRMUsed() != null) {
-						compositeLabeling.setQtyRMUsed(qty + compositeLabeling.getQtyRMUsed());
+	
+					if (volumeReconstitution != null && compositeLabeling.getVolumeQtyPerc() != null) {
+						compositeLabeling.setVolumeQtyPerc(volumePerc + compositeLabeling.getVolumeQtyPerc());
 					}
-
+				} else {
+					compositeLabeling = new CompositeLabeling(productData);
+					compositeLabeling.setQty(qty);
+					compositeLabeling.setVolumeQtyPerc(volumePerc);
+					compositeLabeling.setDeclarationType(declarationType);
+					if (composite.isLeaf()) {
+						compositeLabeling.setQtyRMUsed(qty);
+					}
+	
+					parent.add(compositeLabeling);
+	
+					if (logger.isTraceEnabled()) {
+						logger.trace(" - Add detailed labeling component : " + compositeLabeling.getName() + " qty: " + qty);
+					}
 				}
-
-				if (volumeReconstitution != null && compositeLabeling.getVolumeQtyPerc() != null) {
-					compositeLabeling.setVolumeQtyPerc(volumePerc + compositeLabeling.getVolumeQtyPerc());
-				}
-			} else {
-				compositeLabeling = new CompositeLabeling(productData);
-				compositeLabeling.setQty(qty);
-				compositeLabeling.setVolumeQtyPerc(volumePerc);
-				compositeLabeling.setDeclarationType(declarationType);
-				if (composite.isLeaf()) {
-					compositeLabeling.setQtyRMUsed(qty);
-				}
-
-				parent.add(compositeLabeling);
-
-				if (logger.isTraceEnabled()) {
-					logger.trace(" - Add detailed labeling component : " + compositeLabeling.getName() + " qty: " + qty);
-				}
-			}
+			} 
+			
 
 		} else if (DeclarationType.Omit.equals(declarationType)) {
 			return parent;
@@ -689,19 +698,28 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		if (!DeclarationType.DoNotDetails.equals(declarationType) && !DeclarationType.DoNotDeclare.equals(declarationType)) {
 
 			if (!isMultiLevel && productData.getIngList() != null && !productData.getIngList().isEmpty()) {
-
+				
 				Composite<IngListDataItem> compositeIngList = CompositeHelper.getHierarchicalCompoList(productData.getIngList());
 				loadIngList(productData.getNodeRef(), compositeIngList, qty, volumePerc, labelingFormulaContext, compoListDataItem, compositeLabeling);
 
 			}
 
+			Double computedRatio = 1d;
+			if(DeclarationType.Declare.equals(declarationType) && isMultiLevel && qty!=null){
+				computedRatio =  qty /  computeQtyRMUsed(composite,labelingFormulaContext);
+				if(logger.isTraceEnabled()){
+					logger.trace("Declare ratio for :"+productData.getName()+ " "+ computedRatio+ " rMUsed:" + computeQtyRMUsed(composite,labelingFormulaContext)+" qty:"+qty);
+				}
+				
+			}
+			
 			// Recur
 			if (!composite.isLeaf()) {
-				calculateILLV2(compositeLabeling, composite, labelingFormulaContext);
+				calculateILLV2(compositeLabeling, composite, labelingFormulaContext, computedRatio);
 			}
 		}
 
-		if (!(DeclarationType.Declare.equals(declarationType) && productData instanceof LocalSemiFinishedProductData)) {
+		if (!(DeclarationType.Declare.equals(declarationType) && (productData instanceof LocalSemiFinishedProductData || isMultiLevel))) {
 			// Update parent qty
 			if (qty != null) {
 				parent.setQtyRMUsed(parent.getQtyRMUsed() + qty);
@@ -710,6 +728,33 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 		return parent;
 
+	}
+
+	private Double computeQtyRMUsed(Composite<CompoListDataItem> composite, LabelingFormulaContext labelingFormulaContext) {
+		Double qtyRMUsed = 0d;
+		
+		for (Composite<CompoListDataItem> component : composite.getChildren()) {
+
+			DeclarationType declarationType = getDeclarationType(component.getData(), null, labelingFormulaContext);
+
+			if (!DeclarationType.Omit.equals(declarationType)) {
+
+				CompoListDataItem compoListDataItem = component.getData();
+
+				NodeRef productNodeRef = compoListDataItem.getProduct();
+				ProductData productData = (ProductData) alfrescoRepository.findOne(productNodeRef);
+				
+				Double qty = FormulationHelper.getQtyInKg(compoListDataItem);
+				if (qty != null && !(productData instanceof LocalSemiFinishedProductData)) {
+					qty *= FormulationHelper.getYield(compoListDataItem) / 100;
+				}
+				
+				
+				qtyRMUsed+=qty;
+			}
+
+		}
+		return qtyRMUsed;
 	}
 
 	private void loadIngList(NodeRef productNodeRef, Composite<IngListDataItem> compositeIngList, Double qty, Double volumePerc,
