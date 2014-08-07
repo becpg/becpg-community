@@ -17,6 +17,7 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
 import fr.becpg.repo.project.ProjectWorkflowService;
+import fr.becpg.repo.project.data.PlanningMode;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.ProjectState;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
@@ -54,7 +55,7 @@ public class NPDServiceTest extends AbstractProjectTestCase {
 						
 						// create project Tpl
 						ProjectData projectData = new ProjectData(null, "Pjt", PROJECT_HIERARCHY1_SEA_FOOD_REF, PROJECT_HIERARCHY2_CRUSTACEAN_REF, null,
-										null, null, null, null, null, 0, null);
+										null, null, PlanningMode.Planning, null, null, null, 0, null);
 						
 						// create datalists
 						List<TaskListDataItem> taskList = new LinkedList<TaskListDataItem>();

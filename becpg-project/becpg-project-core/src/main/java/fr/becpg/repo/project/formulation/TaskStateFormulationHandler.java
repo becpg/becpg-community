@@ -215,12 +215,39 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 					
 				// we visit every task since user can have started a task in the middle of the project even if previous are not started
 				visitTask(projectData, nextTask);
+				//children first
+				//visitGroup(projectData, nextTask);
+				//parent second
+				visitGroup(projectData, nextTask.getParent());				
 			}
 		}
 	}
 	
-
-	
+	private void visitGroup(ProjectData projectData, TaskListDataItem parent){
+		
+		// close Group ?
+		if(parent != null){
+			boolean hasTaskInProgress = false;
+			boolean allTasksPlanned = true;
+			for(TaskListDataItem c : ProjectHelper.getChildrenTasks(projectData, parent)){
+				if(TaskState.InProgress.equals(c.getState())){
+					hasTaskInProgress = true;
+				}
+				else if(!TaskState.Planned.equals(c.getState())){
+					allTasksPlanned = false;
+				}
+			}
+			if(hasTaskInProgress){
+				parent.setState(TaskState.InProgress);
+			}
+			else if(allTasksPlanned){
+				parent.setState(TaskState.Planned);
+			}
+			else{
+				parent.setState(TaskState.Completed);
+			}
+		}
+	}
 
 	private void calculateProjectLegends(ProjectData projectData){
 		
