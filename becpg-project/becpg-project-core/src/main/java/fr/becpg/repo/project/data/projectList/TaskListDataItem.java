@@ -298,18 +298,24 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
+		int result = super.hashCode();
+		result = prime * result + ((capacity == null) ? 0 : capacity.hashCode());
 		result = prime * result + ((completionPercent == null) ? 0 : completionPercent.hashCode());
+		result = prime * result + ((depthLevel == null) ? 0 : depthLevel.hashCode());
 		result = prime * result + ((duration == null) ? 0 : duration.hashCode());
 		result = prime * result + ((end == null) ? 0 : end.hashCode());
+		result = prime * result + ((isGroup == null) ? 0 : isGroup.hashCode());
 		result = prime * result + ((isMilestone == null) ? 0 : isMilestone.hashCode());
-		result = prime * result + ((nodeRef == null) ? 0 : nodeRef.hashCode());
+		result = prime * result + ((manualDate == null) ? 0 : manualDate.hashCode());
+		result = prime * result + ((observers == null) ? 0 : observers.hashCode());
+		result = prime * result + ((parent == null) ? 0 : parent.hashCode());
 		result = prime * result + ((prevTasks == null) ? 0 : prevTasks.hashCode());
 		result = prime * result + ((resources == null) ? 0 : resources.hashCode());
 		result = prime * result + ((start == null) ? 0 : start.hashCode());
 		result = prime * result + ((state == null) ? 0 : state.hashCode());
 		result = prime * result + ((taskLegend == null) ? 0 : taskLegend.hashCode());
 		result = prime * result + ((taskName == null) ? 0 : taskName.hashCode());
+		result = prime * result + ((work == null) ? 0 : work.hashCode());
 		result = prime * result + ((workflowInstance == null) ? 0 : workflowInstance.hashCode());
 		result = prime * result + ((workflowName == null) ? 0 : workflowName.hashCode());
 		return result;
@@ -319,15 +325,25 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!super.equals(obj))
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
 		TaskListDataItem other = (TaskListDataItem) obj;
+		if (capacity == null) {
+			if (other.capacity != null)
+				return false;
+		} else if (!capacity.equals(other.capacity))
+			return false;
 		if (completionPercent == null) {
 			if (other.completionPercent != null)
 				return false;
 		} else if (!completionPercent.equals(other.completionPercent))
+			return false;
+		if (depthLevel == null) {
+			if (other.depthLevel != null)
+				return false;
+		} else if (!depthLevel.equals(other.depthLevel))
 			return false;
 		if (duration == null) {
 			if (other.duration != null)
@@ -339,15 +355,27 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 				return false;
 		} else if (!end.equals(other.end))
 			return false;
+		if (isGroup == null) {
+			if (other.isGroup != null)
+				return false;
+		} else if (!isGroup.equals(other.isGroup))
+			return false;
 		if (isMilestone == null) {
 			if (other.isMilestone != null)
 				return false;
 		} else if (!isMilestone.equals(other.isMilestone))
 			return false;
-		if (nodeRef == null) {
-			if (other.nodeRef != null)
+		if (manualDate != other.manualDate)
+			return false;
+		if (observers == null) {
+			if (other.observers != null)
 				return false;
-		} else if (!nodeRef.equals(other.nodeRef))
+		} else if (!observers.equals(other.observers))
+			return false;
+		if (parent == null) {
+			if (other.parent != null)
+				return false;
+		} else if (!parent.equals(other.parent))
 			return false;
 		if (prevTasks == null) {
 			if (other.prevTasks != null)
@@ -375,6 +403,11 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 			if (other.taskName != null)
 				return false;
 		} else if (!taskName.equals(other.taskName))
+			return false;
+		if (work == null) {
+			if (other.work != null)
+				return false;
+		} else if (!work.equals(other.work))
 			return false;
 		if (workflowInstance == null) {
 			if (other.workflowInstance != null)
