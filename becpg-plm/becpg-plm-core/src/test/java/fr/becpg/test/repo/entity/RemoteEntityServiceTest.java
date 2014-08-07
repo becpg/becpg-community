@@ -18,6 +18,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.core.io.ClassPathResource;
 
 import fr.becpg.common.BeCPGException;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
@@ -50,9 +51,6 @@ public class RemoteEntityServiceTest extends PLMBaseTestCase {
 				return BeCPGPLMTestHelper.createMultiLevelProduct(testFolderNodeRef);
 			}
 		}, false, true);
-		
-		
-	
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
@@ -95,4 +93,29 @@ public class RemoteEntityServiceTest extends PLMBaseTestCase {
 			}
 		}, false, true);	
 	}
+	
+	@Test
+	public void testRemoteFullXmlEntity() throws FileNotFoundException {
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
+				try {
+					
+					ClassPathResource res = new ClassPathResource("beCPG/remote/entity_fullxml.xml");
+					
+					NodeRef tmpNodeRef = remoteEntityService.createOrUpdateEntity(null, res.getInputStream(), RemoteEntityFormat.xml,null);
+					Assert.assertNotNull(tmpNodeRef);
+					
+					
+				} catch (BeCPGException e) {
+					logger.error(e,e);
+					Assert.fail(e.getMessage());
+				}
+
+				return null;
+			}
+		}, false, true);	
+	}
+	
 }

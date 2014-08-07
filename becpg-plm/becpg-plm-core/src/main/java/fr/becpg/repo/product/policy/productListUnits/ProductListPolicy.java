@@ -47,7 +47,8 @@ import fr.becpg.repo.product.formulation.AbstractSimpleListFormulationHandler;
 import fr.becpg.repo.product.formulation.CostsCalculatingFormulationHandler;
 import fr.becpg.repo.product.formulation.NutsCalculatingFormulationHandler;
 
-public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnUpdatePropertiesPolicy {
+public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnCreateAssociationPolicy,
+		NodeServicePolicies.OnUpdatePropertiesPolicy {
 
 	private static final String KEY_PRODUCT_LISTITEMS = "ProductListPolicy.productListItems";
 	private static final String KEY_PRODUCTS = "ProductListPolicy.products";
@@ -59,9 +60,9 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 	private EntityListDAO entityListDAO;
 
 	private FileFolderService fileFolderService;
-	
+
 	private AssociationService associationService;
-	
+
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
@@ -77,22 +78,23 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 	@Override
 	public void doInit() {
 		logger.debug("Init productListUnits.ProductListPolicy...");
-		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, PLMModel.TYPE_COSTLIST, PLMModel.ASSOC_COSTLIST_COST, new JavaBehaviour(
-				this, "onCreateAssociation"));
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, PLMModel.TYPE_COSTLIST,
+				PLMModel.ASSOC_COSTLIST_COST, new JavaBehaviour(this, "onCreateAssociation"));
 
-		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, PLMModel.TYPE_NUTLIST, PLMModel.ASSOC_NUTLIST_NUT, new JavaBehaviour(
-				this, "onCreateAssociation"));
-		
-		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, PLMModel.TYPE_PHYSICOCHEMLIST, 
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, PLMModel.TYPE_NUTLIST,
+				PLMModel.ASSOC_NUTLIST_NUT, new JavaBehaviour(this, "onCreateAssociation"));
+
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, PLMModel.TYPE_PHYSICOCHEMLIST,
 				PLMModel.ASSOC_PHYSICOCHEMLIST_PHYSICOCHEM, new JavaBehaviour(this, "onCreateAssociation"));
-		
-		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, 
-				PLMModel.TYPE_LABELCLAIMLIST, PLMModel.ASSOC_LCL_LABELCLAIM, new JavaBehaviour(this, "onCreateAssociation"));
 
-		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, 
-				PackModel.TYPE_LABELING_LIST, PackModel.ASSOC_LL_LABEL, new JavaBehaviour(this, "onCreateAssociation"));
-		
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, PLMModel.TYPE_PRODUCT, new JavaBehaviour(this, "onUpdateProperties"));
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, PLMModel.TYPE_LABELCLAIMLIST,
+				PLMModel.ASSOC_LCL_LABELCLAIM, new JavaBehaviour(this, "onCreateAssociation"));
+
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, PackModel.TYPE_LABELING_LIST,
+				PackModel.ASSOC_LL_LABEL, new JavaBehaviour(this, "onCreateAssociation"));
+
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, PLMModel.TYPE_PRODUCT, new JavaBehaviour(this,
+				"onUpdateProperties"));
 
 		super.disableOnCopyBehaviour(PLMModel.TYPE_COSTLIST);
 		super.disableOnCopyBehaviour(PLMModel.TYPE_NUTLIST);
@@ -184,16 +186,20 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 									NodeRef productListItemNodeRef = node.getNodeRef();
 
 									NodeRef costNodeRef = associationService.getTargetAssoc(productListItemNodeRef, PLMModel.ASSOC_COSTLIST_COST);
-									Boolean costFixed = (Boolean) nodeService.getProperty(costNodeRef, PLMModel.PROP_COSTFIXED);
+									if (costNodeRef != null) {
+										Boolean costFixed = (Boolean) nodeService.getProperty(costNodeRef, PLMModel.PROP_COSTFIXED);
 
-									if (costFixed == null || !costFixed) {
+										if (costFixed == null || !costFixed) {
 
-										String costCurrency = (String) nodeService.getProperty(costNodeRef, PLMModel.PROP_COSTCURRENCY);
-										String costListUnit = (String) nodeService.getProperty(productListItemNodeRef, PLMModel.PROP_COSTLIST_UNIT);
-										
-										if (!(costListUnit != null && !costListUnit.isEmpty() && costListUnit.endsWith(CostsCalculatingFormulationHandler.calculateSuffixUnit(productUnit)))) {
-											nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_COSTLIST_UNIT,
-													CostsCalculatingFormulationHandler.calculateUnit(productUnit, costCurrency));
+											String costCurrency = (String) nodeService.getProperty(costNodeRef, PLMModel.PROP_COSTCURRENCY);
+											String costListUnit = (String) nodeService.getProperty(productListItemNodeRef,
+													PLMModel.PROP_COSTLIST_UNIT);
+
+											if (!(costListUnit != null && !costListUnit.isEmpty() && costListUnit
+													.endsWith(CostsCalculatingFormulationHandler.calculateSuffixUnit(productUnit)))) {
+												nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_COSTLIST_UNIT,
+														CostsCalculatingFormulationHandler.calculateUnit(productUnit, costCurrency));
+											}
 										}
 									}
 								}
@@ -210,12 +216,16 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 									NodeRef productListItemNodeRef = node.getNodeRef();
 									String nutListUnit = (String) nodeService.getProperty(productListItemNodeRef, PLMModel.PROP_NUTLIST_UNIT);
 
-									NodeRef nutNodeRef =  associationService.getTargetAssoc(productListItemNodeRef, PLMModel.ASSOC_NUTLIST_NUT);
-									String nutUnit = (String) nodeService.getProperty(nutNodeRef, PLMModel.PROP_NUTUNIT);
+									NodeRef nutNodeRef = associationService.getTargetAssoc(productListItemNodeRef, PLMModel.ASSOC_NUTLIST_NUT);
+									if (nutNodeRef != null) {
+										String nutUnit = (String) nodeService.getProperty(nutNodeRef, PLMModel.PROP_NUTUNIT);
 
-									if (!(nutListUnit != null && !nutListUnit.isEmpty() && nutListUnit.endsWith(NutsCalculatingFormulationHandler.calculateSuffixUnit(productUnit)))) {
+										if (!(nutListUnit != null && !nutListUnit.isEmpty() && nutListUnit.endsWith(NutsCalculatingFormulationHandler
+												.calculateSuffixUnit(productUnit)))) {
 
-										nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_NUTLIST_UNIT, NutsCalculatingFormulationHandler.calculateUnit(productUnit, nutUnit));
+											nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_NUTLIST_UNIT,
+													NutsCalculatingFormulationHandler.calculateUnit(productUnit, nutUnit));
+										}
 									}
 								}
 							}
@@ -254,7 +264,8 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 								}
 							} else {
 
-								if (!(costListUnit != null && !costListUnit.isEmpty() && costListUnit.startsWith(costCurrency + AbstractSimpleListFormulationHandler.UNIT_SEPARATOR))) {
+								if (!(costListUnit != null && !costListUnit.isEmpty() && costListUnit.startsWith(costCurrency
+										+ AbstractSimpleListFormulationHandler.UNIT_SEPARATOR))) {
 
 									NodeRef listNodeRef = nodeService.getPrimaryParent(productListItemNodeRef).getParentRef();
 
@@ -270,7 +281,8 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 							String nutListUnit = (String) nodeService.getProperty(productListItemNodeRef, PLMModel.PROP_NUTLIST_UNIT);
 
 							// nutListUnit
-							if (!(nutListUnit != null && !nutListUnit.isEmpty() && nutListUnit.startsWith(nutUnit + AbstractSimpleListFormulationHandler.UNIT_SEPARATOR))) {
+							if (!(nutListUnit != null && !nutListUnit.isEmpty() && nutListUnit.startsWith(nutUnit
+									+ AbstractSimpleListFormulationHandler.UNIT_SEPARATOR))) {
 
 								NodeRef listNodeRef = nodeService.getPrimaryParent(productListItemNodeRef).getParentRef();
 
@@ -284,16 +296,16 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 							// nutListGroup
 							String nutGroup = (String) nodeService.getProperty(targetNodeRef, PLMModel.PROP_NUTGROUP);
 							nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_NUTLIST_GROUP, nutGroup);
-						} else if (type.equals(PLMModel.TYPE_PHYSICOCHEMLIST)){
+						} else if (type.equals(PLMModel.TYPE_PHYSICOCHEMLIST)) {
 							String physicoChemUnit = (String) nodeService.getProperty(targetNodeRef, PLMModel.PROP_PHYSICO_CHEM_UNIT);
 							nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_PHYSICOCHEMLIST_UNIT, physicoChemUnit);
-						} else if(type.equals(PLMModel.TYPE_LABELCLAIMLIST)){
+						} else if (type.equals(PLMModel.TYPE_LABELCLAIMLIST)) {
 							// labelClaimType
-							String labelClaimType = (String)nodeService.getProperty(targetNodeRef, PLMModel.PROP_LABEL_CLAIM_TYPE);
+							String labelClaimType = (String) nodeService.getProperty(targetNodeRef, PLMModel.PROP_LABEL_CLAIM_TYPE);
 							nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_LCL_TYPE, labelClaimType);
-						} else if(type.equals(PackModel.TYPE_LABELING_LIST)){								
+						} else if (type.equals(PackModel.TYPE_LABELING_LIST)) {
 							// labelingList
-							String labelType = (String)nodeService.getProperty(targetNodeRef, PackModel.PROP_LABEL_TYPE);
+							String labelType = (String) nodeService.getProperty(targetNodeRef, PackModel.PROP_LABEL_TYPE);
 							nodeService.setProperty(productListItemNodeRef, PackModel.PROP_LL_TYPE, labelType);
 						}
 					}
