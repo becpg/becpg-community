@@ -50,11 +50,6 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 
 		calculateGroup(projectData);
 		clearDates(projectData);		
-		Composite<TaskListDataItem> composite = CompositeHelper.getHierarchicalCompoList(projectData.getTaskList());
-		if(logger.isDebugEnabled()){
-			logger.debug(composite);
-		}
-		calculateWork(composite);
 		
 		if(projectData.getPlanningMode() == null || projectData.getPlanningMode().equals(PlanningMode.Planning)){
 			// planning
@@ -89,8 +84,15 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 			calculateRetroPlanningOfPrevTasks(projectData, null, projectData.getStartDate());
 		}
 		
+		Composite<TaskListDataItem> composite = CompositeHelper.getHierarchicalCompoList(projectData.getTaskList());		
+		calculateDurationAndWork(composite);
+		
 		Integer projectOverdue = calculateOverdue(projectData, null);
 		projectData.setOverdue(projectOverdue);
+		
+		if(logger.isDebugEnabled()){
+			logger.debug(composite);
+		}
 		
 		return true;
 	}
@@ -120,11 +122,8 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 				if((TaskState.Planned.equals(tl.getState()) || (TaskState.InProgress.equals(tl.getState()))) &&
 						!TaskManualDate.End.equals(tl.getManualDate())){
 					tl.setEnd(null);
-				}
-				if(tl.getWork() != null && tl.getDuration() != 0){
-					tl.setCapacity((int)(tl.getWork() / tl.getDuration() * 100));
-				}
-			}			
+				}				
+			}				
 		}
 	}
 	
@@ -140,26 +139,29 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 		}
 	}
 	
-	private void calculateWork(Composite<TaskListDataItem> composite){
+	private void calculateCapacity(TaskListDataItem tl){
+		if(tl.getWork() != null && tl.getDuration() != null && tl.getDuration() != 0){				
+			tl.setCapacity((int)(100 * tl.getWork() / tl.getDuration()));
+		}
+	}
+	private void calculateDurationAndWork(Composite<TaskListDataItem> composite){
 		
 		Integer duration = 0;
 		Double work = 0d;
 		for(Composite<TaskListDataItem> component : composite.getChildren()){
-			if(component.isLeaf()){
-				if(component.getData().getWork() != null){
-					work += component.getData().getWork();
-					duration += component.getData().getDuration();
-				}
-			}
-			else{
-				calculateWork(component);
-			}
+			calculateDurationAndWork(component);
+			TaskListDataItem taskListDataItem = component.getData();
+			if(taskListDataItem.getWork() != null && taskListDataItem.getDuration() != null){
+				work += taskListDataItem.getWork();
+				duration += taskListDataItem.getDuration();					
+			}						
 		}
 		if(!composite.isRoot()){
-			composite.getData().setWork(work);
-			if(duration != 0d){
-				composite.getData().setCapacity((int)(work/duration));	
-			}
+			if(!composite.isLeaf()){
+				composite.getData().setDuration(ProjectHelper.calculateTaskDuration(composite.getData().getStart(), composite.getData().getEnd()));
+				composite.getData().setWork(work);
+			}			
+			calculateCapacity(composite.getData());
 		}			
 	}
 	
@@ -230,8 +232,7 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 				endDate = c.getEnd();
 			}
 		}
-		ProjectHelper.setTaskEndDate(taskListDataItem, endDate);
-		taskListDataItem.setDuration(ProjectHelper.calculateTaskDuration(taskListDataItem.getStart(), taskListDataItem.getEnd()));
+		ProjectHelper.setTaskEndDate(taskListDataItem, endDate);		
 	}
 	
 	private void calculateRetroPlanningOfPrevTasks(ProjectData projectData, TaskListDataItem task, Date endDate) throws FormulateException {
@@ -304,7 +305,6 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 			}
 		}
 		ProjectHelper.setTaskStartDate(taskListDataItem, startDate);
-		taskListDataItem.setDuration(ProjectHelper.calculateTaskDuration(taskListDataItem.getStart(), taskListDataItem.getEnd()));
 	}
 	
 	private Integer calculateOverdue(ProjectData projectData, NodeRef taskNodeRef) throws FormulateException {

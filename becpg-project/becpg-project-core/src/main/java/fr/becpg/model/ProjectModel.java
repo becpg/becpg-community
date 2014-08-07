@@ -51,7 +51,7 @@ public interface ProjectModel {
 	public static final QName PROP_TL_IS_MILESTONE = QName.createQName(PROJECT_URI, "tlIsMilestone");
 	public static final QName PROP_TL_DURATION = QName.createQName(PROJECT_URI, "tlDuration");
 	public static final QName PROP_TL_CAPACITY = QName.createQName(PROJECT_URI, "tlCapacity");
-	public static final QName PROP_TL_Work = QName.createQName(PROJECT_URI, "tlWork");
+	public static final QName PROP_TL_WORK = QName.createQName(PROJECT_URI, "tlWork");
 	public static final QName PROP_TL_WORKFLOW_NAME = QName.createQName(PROJECT_URI, "tlWorkflowName");
 	public static final QName PROP_TL_START = QName.createQName(PROJECT_URI, "tlStart");
 	public static final QName PROP_TL_END = QName.createQName(PROJECT_URI, "tlEnd");
