@@ -3,7 +3,10 @@
  */
 package fr.becpg.repo.product.data.productList;
 
+import java.util.Arrays;
+
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.annotation.AlfProp;
@@ -212,16 +215,17 @@ public class NutListDataItem extends AbstractManualDataItem  implements SimpleLi
 	@Override
 	public int hashCode() {
 		final int prime = 31;
+		final int primeNull = 19;
 		int result = super.hashCode();
-		result = prime * result + ((gdaPerc == null) ? 0 : gdaPerc.hashCode());
-		result = prime * result + ((group == null) ? 0 : group.hashCode());
-		result = prime * result + ((maxi == null) ? 0 : maxi.hashCode());
-		result = prime * result + ((method == null) ? 0 : method.hashCode());
-		result = prime * result + ((mini == null) ? 0 : mini.hashCode());
-		result = prime * result + ((nut == null) ? 0 : nut.hashCode());
-		result = prime * result + ((unit == null) ? 0 : unit.hashCode());
-		result = prime * result + ((value == null) ? 0 : value.hashCode());
-		result = prime * result + ((valuePerServing == null) ? 0 : valuePerServing.hashCode());
+		result = ((gdaPerc == null) ? primeNull : prime) * result + ((gdaPerc == null) ? 0 : gdaPerc.hashCode());
+		result = ((group == null) ? primeNull : prime) * result + ((group == null) ? 0 : group.hashCode());
+		result = ((maxi == null) ? primeNull : prime) * result + ((maxi == null) ? 0 : maxi.hashCode());
+		result = ((method == null) ? primeNull : prime) * result + ((method == null) ? 0 : method.hashCode());
+		result = ((mini == null) ? primeNull : prime) * result + ((mini == null) ? 0 : mini.hashCode());
+		result = ((nut == null) ? primeNull : prime) * result + ((nut == null) ? 0 : nut.hashCode());
+		result = ((unit == null) ? primeNull : prime) * result + ((unit == null) ? 0 : unit.hashCode());
+		result = ((value == null) ? primeNull : prime) * result + ((value == null) ? 0 : value.hashCode());
+		result = ((valuePerServing == null) ? primeNull : prime) * result + ((valuePerServing == null) ? 0 : valuePerServing.hashCode());
 		return result;
 	}
 
