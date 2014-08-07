@@ -91,6 +91,15 @@
 				</list>
 			</parameter>
 		</constraint>
+		
+		<constraint name="pjt:planningModes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>Planning</value>
+					<value>RetroPlanning</value>
+				</list>
+			</parameter>
+		</constraint>
 
 		<constraint name="pjt:allowedPriority" type="LIST">
 			<parameter name="allowedValues">
@@ -170,6 +179,21 @@
 				<value>bcpg:lvValue</value>
 			</parameter>
 		</constraint>
+		
+		<constraint name="pjt:timeTypes"
+			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/ProjectLists/bcpg:entityLists/TimeTypes</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>bcpg:lvValue</value>
+			</parameter>
+		</constraint>
 
 	</constraints>
 
@@ -206,6 +230,14 @@
 				</property>
 				<property name="pjt:projectDueDate">
 					<type>d:date</type>
+				</property>
+				<property name="pjt:projectPlanningMode">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<default>Planning</default>
+					<constraints>
+						<constraint ref="pjt:planningModes" />
+					</constraints>
 				</property>
 				<property name="pjt:projectPriority">
 					<type>d:int</type>
@@ -294,6 +326,9 @@
 					<mandatory>true</mandatory>
 				</property>
 				<property name="pjt:tlIsMilestone">
+					<type>d:boolean</type>
+				</property>
+				<property name="pjt:tlIsGroup">
 					<type>d:boolean</type>
 				</property>
 				<property name="pjt:tlDuration">
@@ -554,6 +589,68 @@
 				</property>
 			</properties>
 		</type>
+		
+		<type name="pjt:logTimeList">
+            <title>Log time</title>
+            <parent>bcpg:entityListItem</parent>
+            <properties>
+                <property name="pjt:ltlDate">
+                    <title>Date</title>
+                    <type>d:date</type>
+                    <mandatory>true</mandatory>
+                    <index enabled="true">
+                        <atomic>false</atomic>
+                        <stored>false</stored>
+                        <tokenised>TRUE</tokenised>
+                    </index>
+                </property>
+                <property name="pjt:ltlTime">
+                    <title>Time (h)</title>
+                    <type>d:double</type>
+                    <mandatory>true</mandatory>
+                    <index enabled="true">
+                        <atomic>false</atomic>
+                        <stored>false</stored>
+                        <tokenised>TRUE</tokenised>
+                    </index>
+                </property>
+                <property name="pjt:ltlComment">
+                    <title>Comment</title>
+                    <type>d:text</type>
+                    <mandatory>false</mandatory>
+                    <index enabled="false"/>                        
+                </property>
+                <property name="pjt:ltlType">
+                    <title>Activity type</title>
+                    <type>d:text</type>
+                    <mandatory>true</mandatory>
+                    <index enabled="true">
+                        <atomic>false</atomic>
+                        <stored>false</stored>
+                        <tokenised>FALSE</tokenised>
+                    </index>
+                    <constraints>
+							<constraint ref="pjt:timeTypes" />
+						</constraints>
+                </property>
+            </properties>
+            <associations>
+                <association name="pjt:ltlTask">
+                    <title>Task</title>
+                    <source>
+                        <mandatory>false</mandatory>
+                        <many>true</many>
+                    </source>
+                    <target>
+                        <class>bcpg:entityListItem</class>
+                        <mandatory enforced="false">true</mandatory>
+                        <many>false</many>
+                    </target>
+                </association>
+            </associations>
+            <overrides/>
+            <mandatory-aspects/>
+        </type>
 	</types>
 
 	<aspects>

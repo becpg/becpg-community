@@ -133,6 +133,7 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 		dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
 		dataLists.add(ProjectModel.TYPE_SCORE_LIST);
 		dataLists.add(ProjectModel.TYPE_ACTIVITY_LIST);
+		dataLists.add(ProjectModel.TYPE_LOG_TIME_LIST);
 		NodeRef entityTplNodeRef = entityTplService.createEntityTpl(entityTplsNodeRef, ProjectModel.TYPE_PROJECT, true, dataLists, null);
 
 		if (ruleService.getRules(entityTplNodeRef).isEmpty()) {
@@ -220,6 +221,7 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(ProjectRepoConsts.PATH_REQUEST_ORIGINS, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(ProjectRepoConsts.PATH_SCORE_CRITERIA, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(ProjectRepoConsts.PATH_SPONSORS, BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(ProjectRepoConsts.PATH_TIME_TYPES, BeCPGModel.TYPE_LIST_VALUE);
 
 		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
 	}

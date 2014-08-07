@@ -94,9 +94,10 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		// Volume
 		Double netVolume = FormulationHelper.getNetVolume(formulatedProduct);
 		if(netVolume != null){
-			Double calculatedVolume = calculateVolumeFromChildren(compositeDefaultVariant);
-			if(calculatedVolume != 0d){
-				formulatedProduct.setYieldVolume(100 * netVolume / calculatedVolume);
+			Double volumeUsed = calculateVolumeFromChildren(compositeDefaultVariant);
+			formulatedProduct.setRecipeVolumeUsed(volumeUsed);
+			if(volumeUsed != 0d){
+				formulatedProduct.setYieldVolume(100 * netVolume / volumeUsed);
 			}			
 		}
 		

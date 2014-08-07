@@ -39,6 +39,7 @@
 										
 					<show id="pjt:projectStartDate" />
 					<show id="pjt:projectDueDate" />
+					<show id="pjt:projectPlanningMode" />	
 					<show id="pjt:projectCompletionDate" for-mode="view" />					
 					<show id="pjt:completionPercent" for-mode="view"/>
 					<show id="pjt:projectOverdue" for-mode="view"/>
@@ -111,6 +112,7 @@
 					
 					<field id="pjt:projectStartDate" set="planning" />
 					<field id="pjt:projectDueDate" set="planning" />
+					<field id="pjt:projectPlanningMode" set="planning" />
 					<field id="pjt:projectCompletionDate" set="planning" />
 					<field id="pjt:completionPercent" set="planning" />
 					<field id="pjt:projectOverdue" set="planning" />					
@@ -202,7 +204,8 @@
 					<show id="pjt:projectState" />										
 										
 					<show id="pjt:projectStartDate" />
-					<show id="pjt:projectDueDate" />					
+					<show id="pjt:projectDueDate" />
+					<show id="pjt:projectPlanningMode" />					
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
@@ -261,6 +264,7 @@
 					
 					<field id="pjt:projectStartDate" set="planning" />
 					<field id="pjt:projectDueDate" set="planning" />
+					<field id="pjt:projectPlanningMode" set="planning" />
 						
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
@@ -476,9 +480,9 @@
 					<show id="pjt:tlWorkflowName" />
 					
 					<show id="pjt:tlIsMilestone" />
-					<show id="pjt:tlDuration" />
-					<show id="pjt:tlCapacity" />
-					<show id="pjt:tlWork" />					
+					<show id="pjt:tlDuration" />					
+					<show id="pjt:tlWork" />			
+					<show id="pjt:tlCapacity" read-only="true" />		
 					<show id="pjt:tlState" />
 					
 					<show id="pjt:tlManualDate" />
@@ -528,9 +532,9 @@
 						label-id="becpg.forms.set.planning.label" template="/org/alfresco/components/form/2-column-set.ftl" />	
 				
 					<field id="pjt:tlIsMilestone" set="planning"/>
-					<field id="pjt:tlDuration" set="planning"/>
-					<field id="pjt:tlCapacity" set="planning"/>
-					<field id="pjt:tlWork" set="planning"/>					
+					<field id="pjt:tlDuration" set="planning"/>					
+					<field id="pjt:tlWork" set="planning"/>		
+					<field id="pjt:tlCapacity" set="planning"/>			
 					<field id="pjt:tlState" set="planning">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">Planned|data.taskstate.planned,InProgress|data.taskstate.inprogress,OnHold|data.taskstate.onhold,Cancelled|data.taskstate.cancelled,Completed|data.taskstate.completed
@@ -565,9 +569,9 @@
 					<show id="pjt:tlWorkflowName" />
 					
 					<show id="pjt:tlIsMilestone" />
-					<show id="pjt:tlDuration" />
-					<show id="pjt:tlCapacity" />
-					<show id="pjt:tlWork" />													
+					<show id="pjt:tlDuration" />					
+					<show id="pjt:tlWork" />			
+					<show id="pjt:tlCapacity" read-only="true" />										
 					<show id="pjt:tlState" />
 					<show id="pjt:tlManualDate" />	
 					<show id="pjt:tlStart" read-only="true" />
@@ -614,9 +618,9 @@
 					<set id="planning" appearance="bordered-panel"
 						label-id="becpg.forms.set.planning.label" template="/org/alfresco/components/form/2-column-set.ftl" />		
 					<field id="pjt:tlIsMilestone" set="planning"/>
-					<field id="pjt:tlDuration" set="planning"/>
-					<field id="pjt:tlCapacity" set="planning"/>
-					<field id="pjt:tlWork" set="planning"/>					
+					<field id="pjt:tlDuration" set="planning"/>					
+					<field id="pjt:tlWork" set="planning"/>		
+					<field id="pjt:tlCapacity" set="planning"/>			
 					<field id="pjt:tlState" set="planning">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">Planned|data.taskstate.planned,InProgress|data.taskstate.inprogress,OnHold|data.taskstate.onhold,Cancelled|data.taskstate.cancelled,Completed|data.taskstate.completed
@@ -665,6 +669,7 @@
 					<field id="pjt:tlPrevTasks" label="hidden"/>
 					<field id="fm:commentCount" label="hidden" read-only="true"/>
 					<field id="pjt:tlIsMilestone" label="hidden" ></field>
+					<field id="pjt:tlCapacity" read-only="true"/>
 				</appearance>
 			</form>
 			<form id="sub-datagrid">
@@ -980,6 +985,57 @@
 					</field>
 				</appearance>
 			</form>
+			
+			<config condition="pjt:logTimeList" evaluator="node-type" replace="true">
+		    <forms>
+		      <form>
+		        <field-visibility>
+		          <show force="false" id="pjt:ltlDate"/>
+		          <show force="false" id="pjt:ltlTime"/>
+		          <show force="false" id="pjt:ltlComment"/>
+		          <show force="false" id="pjt:ltlType"/>
+		          <show force="false" id="pjt:ltlTask"/>
+		        </field-visibility>
+		        <appearance>
+		          <field id="pjt:ltlDate" mandatory="false" read-only="false"/>
+		          <field id="pjt:ltlTime" mandatory="false" read-only="false"/>
+		          <field id="pjt:ltlComment" mandatory="false" read-only="false"/>
+		          <field id="pjt:ltlType" mandatory="false" read-only="false"/>
+		          <field id="pjt:ltlTask" mandatory="false" read-only="false">
+		            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+		              <control-param name="ds">becpg/autocomplete/TaskValue?className=pjt:taskList</control-param>
+		            </control>
+		          </field>
+		        </appearance>
+		      </form>
+		    </forms>
+		  </config>
+		  <config condition="pjt:timeEntryList" evaluator="model-type" replace="true">
+		    <forms>
+		      <form>
+		        <field-visibility>
+		          <show force="false" id="pjt:ltlTask"/>
+		          <show force="false" id="pjt:ltlDate"/>
+		          <show force="false" id="cm:creator"/>
+		          <show force="false" id="pjt:ltlTime"/>
+		          <show force="false" id="pjt:ltlComment"/>
+		          <show force="false" id="pjt:ltlType"/>
+		        </field-visibility>
+		        <appearance>
+		          <field id="pjt:ltlTask" mandatory="false" read-only="false">
+		            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+		              <control-param name="ds">becpg/autocomplete/TaskValue?className=pjt:taskList</control-param>
+		            </control>
+		          </field>
+		          <field id="pjt:ltlDate" mandatory="false" read-only="false"/>
+		          <field id="cm:creator" mandatory="false" read-only="true"/>
+		          <field id="pjt:ltlTime" mandatory="false" read-only="false"/>
+		          <field id="pjt:ltlComment" mandatory="false" read-only="false"/>
+		          <field id="pjt:ltlType" mandatory="false" read-only="false"/>
+		        </appearance>
+		      </form>
+		    </forms>
+		  </config>
 		</forms>
 	</config>
 

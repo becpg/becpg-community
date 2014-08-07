@@ -63,6 +63,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private Double netWeight;
 	private Double servingSize;
 	private Double recipeQtyUsed;
+	private Double recipeVolumeUsed;
 
 	private Double tare;
 	private TareUnit tareUnit;
@@ -275,6 +276,14 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 
 	public void setRecipeQtyUsed(Double recipeQtyUsed) {
 		this.recipeQtyUsed = recipeQtyUsed;
+	}
+
+	public Double getRecipeVolumeUsed() {
+		return recipeVolumeUsed;
+	}
+
+	public void setRecipeVolumeUsed(Double recipeVolumeUsed) {
+		this.recipeVolumeUsed = recipeVolumeUsed;
 	}
 
 	@AlfProp
