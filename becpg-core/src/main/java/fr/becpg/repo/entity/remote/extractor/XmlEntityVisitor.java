@@ -336,8 +336,10 @@ public class XmlEntityVisitor {
 		}
 	}
 
-	private boolean shouldDumpAll(NodeRef value) {
-		return dumpAll && !cacheList.contains(value);
+	private boolean shouldDumpAll(NodeRef nodeRef) {
+		QName nodeType = nodeService.getType(nodeRef).getPrefixedQName(namespaceService);
+		
+		return dumpAll && !cacheList.contains(nodeRef) && ! (ContentModel.TYPE_AUTHORITY.equals(nodeType) || ContentModel.TYPE_PERSON.equals(nodeType) || ContentModel.TYPE_AUTHORITY_CONTAINER.equals(nodeType) );
 	}
 
 	//
