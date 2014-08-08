@@ -184,9 +184,10 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 				labelingRuleList.add(new LabelingRuleListDataItem("Test", "render()", LabelingRuleType.Render));
 
 				LabelingRuleListDataItem percRule = new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format);
-
 				percRule.setComponents(Arrays.asList(ing2, ing3, ing4));
 				labelingRuleList.add(percRule);
+				labelingRuleList.add(new LabelingRuleListDataItem("Param1", "detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
+				
 
 				labelingRuleList.add(new LabelingRuleListDataItem("Langue", "fr,en", LabelingRuleType.Locale));
 				

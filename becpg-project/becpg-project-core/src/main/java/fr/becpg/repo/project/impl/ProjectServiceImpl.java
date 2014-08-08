@@ -312,7 +312,7 @@ public class ProjectServiceImpl implements ProjectService {
 			
 			String authorityName = authorityDAO.getAuthorityName(resourceNodeRef);
 
-			if (!isRoleAuhtority(authorityName)) {
+			if (authorityName!=null && !isRoleAuhtority(authorityName)) {
 				logger.debug("Set permission for authority: "+authorityName+" allow :"+allow);
 				ProjectData projectData = alfrescoRepository.findOne(projectNodeRef);
 				List<DeliverableListDataItem> deliverableList = ProjectHelper.getDeliverables(projectData, taskListNodeRef);
