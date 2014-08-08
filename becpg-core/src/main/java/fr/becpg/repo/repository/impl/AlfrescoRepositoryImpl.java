@@ -173,12 +173,6 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		return entity;
 	}
 	
-//	private byte[] getCheckSum(T entity){
-//		MessageDigest digest = java.security.MessageDigest.getInstance("MD5");
-//		digest.update(entity);
-//		return digest.digest();
-//	}
-
 	// For now only add aspect
 	private void saveAspects(T entity) {
 		if (entity instanceof AspectAwareDataItem) {
