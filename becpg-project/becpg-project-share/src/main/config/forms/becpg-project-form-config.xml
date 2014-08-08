@@ -650,6 +650,8 @@
 			<form id="datagrid">
 				<field-visibility>
 					<show id="bcpg:depthLevel" />
+					<show id="bcpg:parentLevel"  />
+					<show id="pjt:tlIsGroup" />
 					<show id="pjt:tlTaskName" />					
 					<show id="pjt:tlIsMilestone" />
 					<show id="pjt:tlDuration" />
@@ -666,6 +668,8 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:depthLevel" label="hidden"/>
+					<field id="bcpg:parentLevel" label="hidden"/>
+					<field id="pjt:tlIsGroup" label="hidden"/>
 					<field id="pjt:tlPrevTasks" label="hidden"/>
 					<field id="fm:commentCount" label="hidden" read-only="true"/>
 					<field id="pjt:tlIsMilestone" label="hidden" ></field>

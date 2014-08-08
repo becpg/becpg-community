@@ -1364,7 +1364,7 @@ if (!JSGantt) {
             vLeftTable += '</TR></THEAD><TBODY class="yui-dt-data">';
 
             for ( var i = 0; i < vTaskList.length; i++) {
-
+                
                if (vTaskList[i].getGroup()) {
                   vRowType = "group";
                } else {
