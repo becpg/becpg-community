@@ -146,11 +146,13 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			for(IngListDataItem ingListDataItem : formulatedProduct.getIngList()){
 				// qtyPerc
 				Double totalQtyIng = totalQtyIngMap.get(ingListDataItem.getIng());
-				ingListDataItem.setQtyPerc(totalQtyIng / totalQtyUsed);
+				if(totalQtyIng!=null){
+					ingListDataItem.setQtyPerc(totalQtyIng / totalQtyUsed);
 				
-				// add detailable aspect
-				if(!ingListDataItem.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM)){
-					ingListDataItem.getAspects().add(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
+					// add detailable aspect
+					if(!ingListDataItem.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM)){
+						ingListDataItem.getAspects().add(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
+					}
 				}
 			}
 		}
