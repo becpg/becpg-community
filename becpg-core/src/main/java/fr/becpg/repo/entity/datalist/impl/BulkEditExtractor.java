@@ -84,6 +84,7 @@ public class BulkEditExtractor extends SimpleExtractor {
 			logger.debug("Getting bulk-edit results for :"+dataListFilter.toString());
 		}
 		
+		
 		BeCPGQueryBuilder queryBuilder = dataListFilter.getSearchQuery();
 		
 		queryBuilder.maxResults(RepoConsts.MAX_RESULTS_1000);
