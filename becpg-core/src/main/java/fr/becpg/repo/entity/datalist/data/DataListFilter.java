@@ -254,7 +254,7 @@ public class DataListFilter {
 		if(!isSimpleItem()){
 			if(parentNodeRef!=null) {
 				queryBuilder.parent(parentNodeRef);	
-			} else if(!isRepo) {
+			} else if(!isRepo && !DataListFilter.NODE_PATH_FILTER.equals(filterId)) {
 				queryBuilder.inSite(siteId, containerId);
 			}
 			queryBuilder.excludeDefaults();
@@ -363,9 +363,6 @@ public class DataListFilter {
 				+ ", parentNodeRef=" + parentNodeRef + ", nodeRef=" + nodeRef + ", criteriaMap=" + criteriaMap + ", sortMap=" + sortMap + ", dataType=" + dataType + ", isRepo="
 				+ isRepo + ", siteId=" + siteId + ", containerId=" + containerId + ", filterData=" + filterData + ", sortId=" + sortId + ", format=" + format + "]";
 	}
-
-
-	
 
 
 	
