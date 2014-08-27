@@ -85,7 +85,7 @@
         Bubbling.on(this.scopeId + "columnRenamed", this.onColumnRenamed, this);
 
         // Local Events
-        Bubbling.on(this.scopeId + "activeDataListChanged", this.onActiveDataListChanged, this);
+        Bubbling.on(this.scopeId + "scopedActiveDataListChanged", this.onActiveDataListChanged, this);
         Bubbling.on(this.scopeId + "userAccess", this.onUserAccess, this);
         Bubbling.on(this.scopeId + "filterChanged", this.onFilterChanged, this);
         Bubbling.on(this.scopeId + "changeFilter", this.onChangeFilter, this);
@@ -682,10 +682,8 @@
                             // Assume no list chosen for now
                             Dom.removeClass(this.id + "-selectListMessage", "hidden");
 
-                            this.deferredListPopulation.fulfil("onReady");
-
+                           
                             // Filter forms
-
                             if (this.options.useFilter)
                             {
 
@@ -715,10 +713,12 @@
                                     }
                                 }
                             }
+                            
+                            this.deferredListPopulation.fulfil("onReady");
 
-                            if (this.options.forceLoad)
+                            if(this.options.forceLoad)
                             {
-                                this.populateDataGrid();
+                               this.populateDataGrid();
                             }
 
                             // Finally show the component body here to prevent
@@ -808,6 +808,7 @@
                          */
                         populateDataGrid : function EntityDataGrid_populateDataGrid()
                         {
+                            
                             if (!YAHOO.lang.isObject(this.datalistMeta))
                             {
                                 return;
