@@ -335,7 +335,7 @@
                                             list = lists[i];
                                             if(list.name == step.listId){
                                                 
-                                             YAHOO.Bubbling.fire("simpleView-"+me.id + "-step-" + step.id+"activeDataListChanged", {
+                                             YAHOO.Bubbling.fire("simpleView-"+me.id + "-step-" + step.id+"scopedActiveDataListChanged", {
                                                          list : list.name,
                                                           dataList : list
                                                  });
