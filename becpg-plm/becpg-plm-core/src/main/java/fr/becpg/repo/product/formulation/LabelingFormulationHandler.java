@@ -443,6 +443,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			if (current != null) {
 				current.setQty(null);
 				String message = I18NUtil.getMessage("message.formulate.labelRule.error.nullIng", current.getName());
+				
+				
+				
 				return new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, new ArrayList<NodeRef>());
 			}
 		}
@@ -560,6 +563,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			}
 
 		}
+		
+		Map<String,ReqCtrlListDataItem> errors = new HashMap<String, ReqCtrlListDataItem>();
 
 		for (Composite<CompoListDataItem> component : composite.getChildren()) {
 
@@ -573,7 +578,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					logger.trace("Aggregate rule " + aggregateRules.toString() + " match ");
 				}
 
-				calculateILLV2(ret, component, labelingFormulaContext, aggregateRules, declarationType, totalVolumeUsed, ratio);
+				calculateILLV2(ret, component, labelingFormulaContext, aggregateRules, declarationType, totalVolumeUsed, ratio, errors);
 
 			}
 
@@ -600,7 +605,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			LabelingFormulaContext labelingFormulaContext, List<AggregateRule> aggregateRules,
 			DeclarationType declarationType,
 			Double totalVolumeUsed,
-			Double ratio
+			Double ratio,
+			 Map<String,ReqCtrlListDataItem> errors
 			)
 			throws FormulateException {
 		CompoListDataItem compoListDataItem = composite.getData();
@@ -700,7 +706,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			if (!isMultiLevel && productData.getIngList() != null && !productData.getIngList().isEmpty()) {
 				
 				Composite<IngListDataItem> compositeIngList = CompositeHelper.getHierarchicalCompoList(productData.getIngList());
-				loadIngList(productData.getNodeRef(), compositeIngList, qty, volumePerc, labelingFormulaContext, compoListDataItem, compositeLabeling);
+				loadIngList(productData.getNodeRef(), compositeIngList, qty, volumePerc, labelingFormulaContext, compoListDataItem, compositeLabeling, errors);
 
 			}
 
@@ -758,76 +764,100 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	}
 
 	private void loadIngList(NodeRef productNodeRef, Composite<IngListDataItem> compositeIngList, Double qty, Double volumePerc,
-			LabelingFormulaContext labelingFormulaContext, CompoListDataItem compoListDataItem, CompositeLabeling compositeLabeling) {
+			LabelingFormulaContext labelingFormulaContext, CompoListDataItem compoListDataItem, CompositeLabeling compositeLabeling, Map<String,ReqCtrlListDataItem> errors) {
 
-		for (Composite<IngListDataItem> component : compositeIngList.getChildren()) {
+		 
+		for (Composite<IngListDataItem> ingListItem : compositeIngList.getChildren()) {
 
-			DeclarationType ingDeclarationType = getDeclarationType(compoListDataItem, component.getData(), labelingFormulaContext);
+			DeclarationType ingDeclarationType = getDeclarationType(compoListDataItem, ingListItem.getData(), labelingFormulaContext);
 
 			if (!DeclarationType.Omit.equals(ingDeclarationType) && !DeclarationType.DoNotDeclare.equals(ingDeclarationType)) {
 
-				NodeRef ingNodeRef = component.getData().getIng();
-				IngItem ingItem = (compositeLabeling.get(ingNodeRef) instanceof IngItem) ? (IngItem) compositeLabeling.get(ingNodeRef) : null;
+				NodeRef ingNodeRef = ingListItem.getData().getIng();
+				IngItem ingLabelItem = (compositeLabeling.get(ingNodeRef) instanceof IngItem) ? (IngItem) compositeLabeling.get(ingNodeRef) : null;
+				boolean isNew = true;
 
-				if (ingItem == null) {
-					ingItem = (IngItem) alfrescoRepository.findOne(ingNodeRef);
+				if (ingLabelItem == null) {
+					ingLabelItem = (IngItem) alfrescoRepository.findOne(ingNodeRef);
 
-					if (!component.isLeaf()) {
+					if (!ingListItem.isLeaf()) {
 
-						if (qty != null && component.getData().getQtyPerc() != null) {
-							qty *= component.getData().getQtyPerc() / 100;
+						if (qty != null && ingListItem.getData().getQtyPerc() != null) {
+							qty *= ingListItem.getData().getQtyPerc() / 100;
 						} else {
 							qty = null;
 						}
 						CompositeLabeling c = new CompositeLabeling();
 
-						if (component.getData().getVolumeQtyPerc() != null) {
-							c.setVolumeQtyPerc(component.getData().getVolumeQtyPerc() / 100);
-						} else if (volumePerc != null && component.getData().getQtyPerc() != null) {
-							c.setVolumeQtyPerc(volumePerc * component.getData().getQtyPerc() / 100);
+						if (ingListItem.getData().getVolumeQtyPerc() != null) {
+							c.setVolumeQtyPerc(ingListItem.getData().getVolumeQtyPerc() / 100);
+						} else if (volumePerc != null && ingListItem.getData().getQtyPerc() != null) {
+							c.setVolumeQtyPerc(volumePerc * ingListItem.getData().getQtyPerc() / 100);
 						} else {
 							c.setVolumeQtyPerc(volumePerc);
 						}
-						c.setNodeRef(ingItem.getNodeRef());
-						c.setName(ingItem.getName());
-						c.setLegalName(ingItem.getLegalName());
+						c.setNodeRef(ingLabelItem.getNodeRef());
+						c.setName(ingLabelItem.getName());
+						c.setLegalName(ingLabelItem.getLegalName());
 						c.setDeclarationType(DeclarationType.Detail);
 						c.setQty(qty);
 						compositeLabeling.add(c);
-						loadIngList(productNodeRef, component, qty, volumePerc, labelingFormulaContext, compoListDataItem, c);
+						loadIngList(productNodeRef, ingListItem, qty, volumePerc, labelingFormulaContext, compoListDataItem, c, new HashMap<String, ReqCtrlListDataItem>());
 					} else {
-						compositeLabeling.add(ingItem);
+						compositeLabeling.add(ingLabelItem);
 					}
 
 					if (logger.isTraceEnabled()) {
-						logger.trace("- Add new ing to current Label: " + ingItem.getLegalName(I18NUtil.getContentLocaleLang()));
+						logger.trace("- Add new ing to current Label: " + ingLabelItem.getLegalName(I18NUtil.getContentLocaleLang()));
 					}
+					
+					
 				} else if (logger.isDebugEnabled()) {
-					logger.trace("- Update ing value: " + ingItem.getLegalName(I18NUtil.getContentLocaleLang()));
+					logger.trace("- Update ing value: " + ingLabelItem.getLegalName(I18NUtil.getContentLocaleLang()));
+					isNew = false;
 				}
 
-				Double qtyPerc = component.getData().getQtyPerc();
-
+				Double qtyPerc = ingListItem.getData().getQtyPerc();
+				
 				if (qtyPerc == null) {
-					ingItem.setQty(null);
-					ingItem.setVolumeQtyPerc(null);
+					
+					String message = I18NUtil.getMessage("message.formulate.labelRule.error.nullIng", ingLabelItem.getName());
+					ReqCtrlListDataItem error = errors.get(message);
+					if(error !=null){
+						error.getSources().add(productNodeRef);
+					} else {
+						if (logger.isDebugEnabled()) {
+							logger.debug("Store error for future qtyPerc is null "+ingLabelItem.getName());
+						}
+						error =  createError(ingLabelItem, productNodeRef);
+						errors.put(message, error);
+					}
+					if(ingLabelItem.getQty()!=null && ! isNew){
+						if (logger.isDebugEnabled()) {
+							logger.debug("Adding aggregate error " + error.toString());
+						}
+						labelingFormulaContext.getErrors().add(error);
+					}
+					
+					ingLabelItem.setQty(null);
+					ingLabelItem.setVolumeQtyPerc(null);
 				} else {
 					// if one ingItem has null perc -> must be null
-					if (ingItem.getQty() != null && qty != null) {
+					if (ingLabelItem.getQty() != null && qty != null) {
 
-						Double totalQtyIng = ingItem.getQty();
+						Double totalQtyIng = ingLabelItem.getQty();
 
 						Double valueToAdd = qty * qtyPerc / 100;
 
 						totalQtyIng += valueToAdd;
-						ingItem.setQty(totalQtyIng);
+						ingLabelItem.setQty(totalQtyIng);
 
-						if (component.getData().getVolumeQtyPerc() != null) {
-							ingItem.setVolumeQtyPerc(component.getData().getVolumeQtyPerc() / 100);
-						} else if (ingItem.getVolumeQtyPerc() != null && volumePerc != null) {
-							ingItem.setVolumeQtyPerc(volumePerc + ingItem.getVolumeQtyPerc());
+						if (ingListItem.getData().getVolumeQtyPerc() != null) {
+							ingLabelItem.setVolumeQtyPerc(ingListItem.getData().getVolumeQtyPerc() / 100);
+						} else if (ingLabelItem.getVolumeQtyPerc() != null && volumePerc != null) {
+							ingLabelItem.setVolumeQtyPerc(volumePerc + ingLabelItem.getVolumeQtyPerc());
 						} else {
-							ingItem.setVolumeQtyPerc(volumePerc);
+							ingLabelItem.setVolumeQtyPerc(volumePerc);
 						}
 
 						if (logger.isTraceEnabled()) {
@@ -836,20 +866,51 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						}
 
 					} else {
-						String message = I18NUtil.getMessage("message.formulate.labelRule.error.nullIng", ingItem.getName());
-						List<NodeRef> sourceNodeRefs = new ArrayList<>();
-						sourceNodeRefs.add(productNodeRef);
-						ReqCtrlListDataItem error = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, sourceNodeRefs);
-						if (logger.isDebugEnabled()) {
-							logger.debug("Adding aggregate error " + error.toString());
+						
+						
+						String message = I18NUtil.getMessage("message.formulate.labelRule.error.nullIng", ingLabelItem.getName());
+						ReqCtrlListDataItem error = errors.get(message);
+						if(error !=null){
+							if(qty==null){
+								error.getSources().add(productNodeRef);
+							}
+							if(ingLabelItem.getQty() != qty){
+								if (logger.isDebugEnabled()) {
+									logger.debug("Adding aggregate error " + error.toString());
+								}
+								labelingFormulaContext.getErrors().add(error);
+							}
+						} else {
+							if (logger.isDebugEnabled()) {
+								logger.debug("Store error for future");
+							}
+							errors.put(message, createError(ingLabelItem, productNodeRef));
 						}
-						labelingFormulaContext.getErrors().add(error);
+						
+						
+						
+						if(qty==null){
+							ingLabelItem.setQty(null);
+							ingLabelItem.setVolumeQtyPerc(null);
+						}
+						
 					}
 
 				}
+				
 			}
 
 		}
+	}
+
+	private ReqCtrlListDataItem createError(IngItem ingItem, NodeRef productNodeRef) {
+		String message = I18NUtil.getMessage("message.formulate.labelRule.error.nullIng", ingItem.getName());
+		List<NodeRef> sourceNodeRefs =  new ArrayList<NodeRef>();
+		if(productNodeRef!=null){
+			sourceNodeRefs.add(productNodeRef);
+		}
+		return new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, sourceNodeRefs);
+		
 	}
 
 	private void updateDiluentQty(CompositeLabeling compositeLabeling, Double diluentVolume) {
