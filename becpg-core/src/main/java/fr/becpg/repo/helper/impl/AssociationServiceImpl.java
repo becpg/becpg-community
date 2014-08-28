@@ -19,6 +19,7 @@ package fr.becpg.repo.helper.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.alfresco.model.ContentModel;
@@ -163,7 +164,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 	@Override
 	public List<NodeRef> getTargetAssocs(NodeRef nodeRef, QName qName, boolean fromCache) {
 		List<AssociationRef> assocRefs = getTargetAssocsImpl(nodeRef, qName, fromCache);
-		List<NodeRef> listItems = new ArrayList<NodeRef>(assocRefs.size());
+		List<NodeRef> listItems = new LinkedList<NodeRef>();
 		for (AssociationRef assocRef : assocRefs) {
 			listItems.add(assocRef.getTargetRef());
 		}
@@ -179,7 +180,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 	@Override
 	public List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QName qName) {
 		List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, qName);
-		List<NodeRef> listItems = new ArrayList<NodeRef>(assocRefs.size());
+		List<NodeRef> listItems = new LinkedList<NodeRef>();
 		for (AssociationRef assocRef : assocRefs) {
 			listItems.add(assocRef.getSourceRef());
 		}
@@ -196,7 +197,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 	@Override
 	public List<NodeRef> getChildAssocs(NodeRef nodeRef, QName qName) {
 		List<ChildAssociationRef> assocRefs = getChildAssocsImpl(nodeRef, qName);
-		List<NodeRef> listItems = new ArrayList<NodeRef>(assocRefs.size());
+		List<NodeRef> listItems = new LinkedList<NodeRef>();
 		for (ChildAssociationRef assocRef : assocRefs) {
 			listItems.add(assocRef.getChildRef());
 		}
