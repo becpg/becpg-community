@@ -594,15 +594,15 @@
 
 		               // call webscript
 		               var url = Alfresco.constants.PROXY_URI + "becpg/report/exportsearch/"
-		                     + args.reportTpl.replace("://", "/") + "/" + args.reportFileName;
+		                     + args.reportTpl.replace("://", "/") + "/" + encodeURI(args.reportFileName);
 
 		               // add search data webscript arguments
 		               url += "?term=" + encodeURIComponent(searchTerm);
 		               if (searchSort.length !== 0) {
-			               url += "&sort=" + searchSort;
+			               url += "&sort=" + encodeURIComponent(searchSort);
 		               }
 		               if (searchQuery.length !== 0) {
-			               url += "&query=" + encodeURI(searchQuery);
+			               url += "&query=" + encodeURIComponent(searchQuery);
 		               } else {
 			               if (searchTag.length !== 0) {
 				               url += "&tag=" + encodeURIComponent(searchTag);
