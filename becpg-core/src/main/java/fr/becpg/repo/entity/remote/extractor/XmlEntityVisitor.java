@@ -73,10 +73,9 @@ public class XmlEntityVisitor {
 	private ContentService contentService;
 
 	private boolean dumpAll = false;
-	
+
 	private Set<NodeRef> cacheList = new HashSet<NodeRef>();
-	
-	
+
 	public void setDumpAll(boolean dumpAll) {
 		this.dumpAll = dumpAll;
 	}
@@ -173,19 +172,26 @@ public class XmlEntityVisitor {
 	private void visitNode(NodeRef nodeRef, XMLStreamWriter xmlw, boolean assocs, boolean props, boolean content) throws XMLStreamException {
 
 		cacheList.add(nodeRef);
-		
+
 		QName nodeType = nodeService.getType(nodeRef).getPrefixedQName(namespaceService);
 		String prefix = nodeType.getPrefixString().split(":")[0];
 		xmlw.writeStartElement(prefix, nodeType.getLocalName(), nodeType.getNamespaceURI());
 
-		NodeRef parentRef = nodeService.getPrimaryParent(nodeRef).getParentRef();
+		if (nodeService.getPrimaryParent(nodeRef) != null) {
+			NodeRef parentRef = nodeService.getPrimaryParent(nodeRef).getParentRef();
+			if (parentRef != null) {
+				Path path = nodeService.getPath(parentRef);
 
-		Path path = nodeService.getPath(parentRef);
-
-		xmlw.writeAttribute(RemoteEntityService.ATTR_PATH, path.toPrefixString(namespaceService));
+				xmlw.writeAttribute(RemoteEntityService.ATTR_PATH, path.toPrefixString(namespaceService));
+			}
+		} else {
+			logger.warn("Node : "+nodeRef+ " has no primary parent");
+		}
+		
+		
 		xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE, RemoteEntityService.NODE_TYPE);
 
-		String name =(String) nodeService.getProperty(nodeRef, RemoteHelper.getPropName(nodeType));
+		String name = (String) nodeService.getProperty(nodeRef, RemoteHelper.getPropName(nodeType));
 
 		xmlw.writeAttribute(RemoteEntityService.ATTR_NAME, name);
 		xmlw.writeAttribute(RemoteEntityService.ATTR_NODEREF, nodeRef.toString());
@@ -338,8 +344,11 @@ public class XmlEntityVisitor {
 
 	private boolean shouldDumpAll(NodeRef nodeRef) {
 		QName nodeType = nodeService.getType(nodeRef).getPrefixedQName(namespaceService);
-		
-		return dumpAll && !cacheList.contains(nodeRef) && ! (ContentModel.TYPE_AUTHORITY.equals(nodeType) || ContentModel.TYPE_PERSON.equals(nodeType) || ContentModel.TYPE_AUTHORITY_CONTAINER.equals(nodeType) );
+
+		return dumpAll
+				&& !cacheList.contains(nodeRef)
+				&& !(ContentModel.TYPE_AUTHORITY.equals(nodeType) || ContentModel.TYPE_PERSON.equals(nodeType) || ContentModel.TYPE_AUTHORITY_CONTAINER
+						.equals(nodeType));
 	}
 
 	//
