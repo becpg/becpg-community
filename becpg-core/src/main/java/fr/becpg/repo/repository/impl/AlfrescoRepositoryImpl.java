@@ -95,11 +95,10 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 			return entity;
 		}
 
-		int hashCode = entity.hashCode();
-
 		if (!L2CacheSupport.isCacheOnlyEnable()) {
 
-			if (entity.getNodeRef()==null || hashCode != entity.getDbHashCode()) {
+			
+			if (entity.getNodeRef() == null || createCollisionSafeHashCode(entity) != entity.getDbHashCode()) {
 
 				Map<QName, Serializable> properties = extractProperties(entity);
 
@@ -130,6 +129,10 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 				} else {
 					logger.debug("Update instanceOf :" + entity.getClass().getName());
+					if(logger.isTraceEnabled()){
+						logger.trace(" HashDiff :" +BeCPGHashCodeBuilder.printDiff(entity, findOne(entity.getNodeRef(), new HashMap<NodeRef, RepositoryEntity>())));
+					}
+				
 
 					for (Iterator<Map.Entry<QName, Serializable>> iterator = properties.entrySet().iterator(); iterator.hasNext();) {
 						Map.Entry<QName, Serializable> prop = iterator.next();
@@ -145,6 +148,9 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 				saveAssociations(entity);
 				saveAspects(entity);
+
+				entity.setDbHashCode(createCollisionSafeHashCode(entity));
+
 			} else {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Entity " + entity.getName() + " has no change to save (same hashCode)");
@@ -164,15 +170,13 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 			}
 		}
 
-		entity.setDbHashCode(hashCode);
-
 		if (L2CacheSupport.isThreadCacheEnable()) {
 			L2CacheSupport.getCurrentThreadCache().put(entity.getNodeRef(), entity);
 		}
 
 		return entity;
 	}
-	
+
 	// For now only add aspect
 	private void saveAspects(T entity) {
 		if (entity instanceof AspectAwareDataItem) {
@@ -202,6 +206,14 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 		return properties;
 
+	}
+
+	private int createCollisionSafeHashCode(T entity) {
+
+		return BeCPGHashCodeBuilder.reflectionHashCode(entity);
+		
+		//return entity.hashCode();
+		
 	}
 
 	private void saveAssociations(T entity) {
@@ -415,8 +427,8 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 			}
 
 			loadAspects(entity);
-			
-			entity.setDbHashCode(entity.hashCode());
+
+			entity.setDbHashCode(createCollisionSafeHashCode(entity));
 
 			return entity;
 

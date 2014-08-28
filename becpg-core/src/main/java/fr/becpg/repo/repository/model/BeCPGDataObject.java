@@ -42,9 +42,9 @@ public  abstract class  BeCPGDataObject  extends BaseObject implements Repositor
 	
 	protected Map<QName,Serializable> extraProperties = new HashMap<QName,Serializable>();
 	
-	protected boolean isTransient = false;
+	protected transient boolean isTransient = false;
 	
-	private int dbHashCode;
+	private transient int dbHashCode;
 	
 
 	public int getDbHashCode() {
