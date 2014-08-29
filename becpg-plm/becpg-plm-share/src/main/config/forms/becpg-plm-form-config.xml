@@ -42,6 +42,9 @@
 					<show id="bcpg:ingListIng" force="true" />
 					<show id="bcpg:ingListGeoOrigin" force="true" />
 					<show id="bcpg:ingListBioOrigin" force="true" />
+					
+					<!-- Claim -->
+					<show id="bcpg:lclLabelClaim" force="true" />
 
 				</field-visibility>
 				<appearance>
@@ -53,6 +56,8 @@
 						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="ings-criteria" appearance="bordered-panel"
 						label-id="becpg.forms.set.ings-criteria.label" />
+					<set id="labelClaim-criteria" appearance="bordered-panel"
+						label-id="becpg.forms.set.claim.label" />		
 
 					<field id="cm:name" set="product-criteria" />
 					<field id="cm:description" set="product-criteria" />
@@ -113,6 +118,10 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 
+					<field id="bcpg:lclLabelClaim" set="labelClaim-criteria">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
 				</appearance>
 			</form>
 
@@ -1781,12 +1790,17 @@
 					<!-- Mentions -->
 					<show id="pack:llLabel" force="true" />
 					<show id="pack:llPosition" force="true" />
+					
+					<!-- Claim -->
+					<show id="bcpg:lclLabelClaim" force="true" />
 				</field-visibility>
 				<appearance>
 					<set id="product-criteria" appearance="bordered-panel"
 						label-id="becpg.forms.set.product-criteria.label" />
 					<set id="labeling-criteria" appearance="bordered-panel"
 						label-id="becpg.forms.set.mentions.label" />
+					<set id="labelClaim-criteria" appearance="bordered-panel"
+						label-id="becpg.forms.set.claim.label" />	
 
 					<field id="bcpg:productHierarchy1" set="product-criteria">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
@@ -1824,6 +1838,11 @@
 							<control-param name="isSearch">true</control-param>
 							<control-param name="insertBlank">true</control-param>
 						</control>
+					</field>
+					
+					<field id="bcpg:lclLabelClaim" set="labelClaim-criteria">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 				</appearance>
 			</form>
@@ -2278,6 +2297,7 @@
 					<show id="bcpg:ingListIng" force="true" />
 					<show id="bcpg:ingListGeoOrigin" force="true" />
 					<show id="bcpg:ingListBioOrigin" force="true" />
+					
 
 				</field-visibility>
 				<appearance>

@@ -65,6 +65,8 @@ public class RepoConsts {
 	
 	public static final int MAX_RESULTS_1000 = 1000;
 	
+	public static final int MAX_RESULTS_5000 = 5000;
+	
 	public static final int MAX_RESULTS_UNLIMITED = -1;
 	
 	public static final int MAX_SUGGESTIONS = 100;
@@ -137,5 +139,6 @@ public class RepoConsts {
 	//Formats
 	public static final String FORMAT_CSV = "csv";
 	public static final String FORMAT_XLS = "xls";
+
 	
 }
