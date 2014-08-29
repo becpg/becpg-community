@@ -48,6 +48,8 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin{
 	private static final String CRITERIA_BIO_ORIGIN = "assoc_bcpg_ingListBioOrigin_added";
 
 	private static final String CRITERIA_PACK_LABEL = "assoc_pack_llLabel_added";
+	
+	private static final String CRITERIA_LABEL_CLAIM = "assoc_bcpg_lclLabelClaim_added";
 
 	private static final String CRITERIA_PACK_LABEL_POSITION = "prop_pack_llPosition";
 	
@@ -64,6 +66,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin{
 			if (datatype != null && dictionaryService.isSubClass(datatype, PLMModel.TYPE_PRODUCT)) {
 				nodes = getSearchNodesByIngListCriteria(nodes, criteria);
 				nodes = getSearchNodesByLabelingCriteria(nodes, criteria);
+				nodes = getSearchNodesByLabelClaim(nodes,criteria);
 			}
 		}
 		
@@ -95,7 +98,8 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin{
 				String assocName = key.substring(6);
 				if (assocName.endsWith("_added")) {
 					// TODO : should be generic
-					if (!key.equals(CRITERIA_ING) && !key.equals(CRITERIA_GEO_ORIGIN) && !key.equals(CRITERIA_BIO_ORIGIN) && !key.equals(CRITERIA_PACK_LABEL)) {
+					if (!key.equals(CRITERIA_ING) && !key.equals(CRITERIA_GEO_ORIGIN) && !key.equals(CRITERIA_BIO_ORIGIN) && !key.equals(CRITERIA_PACK_LABEL)
+							&& !key.equals(CRITERIA_LABEL_CLAIM)) {
 
 						assocName = assocName.substring(0, assocName.length() - 6);
 						assocName = assocName.replace("_", ":");
@@ -322,9 +326,8 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin{
 
 		}
 
-		// determine the product WUsed of the ing list items
 		if (labelingListItems != null) {
-
+			
 			List<NodeRef> productNodeRefs = new ArrayList<NodeRef>();
 			for (NodeRef labelingListItem : labelingListItems) {
 
@@ -339,10 +342,13 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin{
 
 				}
 			}
+			
+		
 
 			if (productNodeRefs != null) {
 				nodes.retainAll(productNodeRefs);
 			}
+			
 		}
 
 		if (logger.isDebugEnabled()) {
@@ -352,6 +358,83 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin{
 
 		return nodes;
 	}
+	
+	
+	/**
+	 * Take in account criteria on label claim list criteria
+	 * 
+	 * @return
+	 */
+	private List<NodeRef> getSearchNodesByLabelClaim(List<NodeRef> nodes, Map<String, String> criteria) {
+
+		List<NodeRef> labelClaimListItems = null;
+
+		StopWatch watch = null;
+		if (logger.isDebugEnabled()) {
+			watch = new StopWatch();
+			watch.start();
+		}
+
+		if(criteria.containsKey(CRITERIA_LABEL_CLAIM)) {
+
+			String propValue = criteria.get(CRITERIA_LABEL_CLAIM);
+
+			// criteria on label
+			if (!propValue.isEmpty()) {
+
+				NodeRef nodeRef = new NodeRef(propValue);
+
+				if (nodeService.exists(nodeRef)) {
+
+					List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, PLMModel.ASSOC_LCL_LABELCLAIM);
+					labelClaimListItems = new ArrayList<NodeRef>(assocRefs.size());
+
+					
+					for (AssociationRef assocRef : assocRefs) {
+
+						NodeRef n = assocRef.getSourceRef();
+						if (isWorkSpaceProtocol(n)) {
+
+							Boolean isClaimed = (Boolean) nodeService.getProperty(n,PLMModel.PROP_LCL_IS_CLAIMED);
+							if(isClaimed){
+								labelClaimListItems.add(n);
+							}
+						}
+					}
+				}
+			}
+
+		}
+
+		// determine the product WUsed of the ing list items
+		if (labelClaimListItems != null) {
+			List<NodeRef> productNodeRefs = new ArrayList<NodeRef>();
+			for (NodeRef labelClaimListItem : labelClaimListItems) {
+
+				if (isWorkSpaceProtocol(labelClaimListItem)) {
+
+					NodeRef rootNodeRef = entityListDAO.getEntity(labelClaimListItem);
+
+					// we don't display history version
+					if (rootNodeRef != null && !nodeService.hasAspect(rootNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
+						productNodeRefs.add(rootNodeRef);
+					}
+
+				}
+			}
+			if (productNodeRefs != null) {
+				nodes.retainAll(productNodeRefs);
+			}
+		}
+
+		if (logger.isDebugEnabled()) {
+			watch.stop();
+			logger.debug("getSearchNodesByLabelClaim executed in  " + watch.getTotalTimeSeconds() + " seconds ");
+		}
+
+		return nodes;
+	}
+	
 	
 	private boolean isWorkSpaceProtocol(NodeRef nodeRef) {
 
