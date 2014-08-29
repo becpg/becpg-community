@@ -134,7 +134,7 @@ public class ImportHelper{
 						value = null;
 					}
 					else{												
-						value = importContext.getPropertyFormats().getDateFormat().parse(values.get(pos));																		
+						value = importContext.getPropertyFormats().parseDate(values.get(pos));																		
 					}										
 				}
 				// int, long
@@ -154,7 +154,7 @@ public class ImportHelper{
 						value = null;
 					}
 					else{
-						Number n = importContext.getPropertyFormats().getDecimalFormat().parse(values.get(pos));
+						Number n = importContext.getPropertyFormats().parseDecimal(values.get(pos));
 						value = n.doubleValue();
 					}	
 				}
@@ -165,7 +165,7 @@ public class ImportHelper{
 						value = null;
 					}
 					else{
-						Number n = importContext.getPropertyFormats().getDecimalFormat().parse(values.get(pos));
+						Number n = importContext.getPropertyFormats().parseDecimal(values.get(pos));
 						value = n.floatValue();
 					}	
 				}			

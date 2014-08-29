@@ -17,9 +17,10 @@
  ******************************************************************************/
 package fr.becpg.config.format;
 
-import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 
 import org.springframework.extensions.surf.util.I18NUtil;
@@ -35,13 +36,42 @@ public class PropertyFormats {
 
 	private static final String FORMAT_DECIMAL_VALUE = "0.####";
 	
+    private  ThreadLocal<SimpleDateFormat> s_localDateFormat = new ThreadLocal<SimpleDateFormat>(){
+    	protected SimpleDateFormat initialValue() {
+    		if(useDefaultLocale){
+    			return new SimpleDateFormat(dateFormat,Locale.getDefault());
+    		} else {
+    			return new SimpleDateFormat(dateFormat, I18NUtil.getLocale());
+    		}
+    	};
+    	
+    };
+    
+    private  ThreadLocal<SimpleDateFormat> s_localDateTimeFormat = new ThreadLocal<SimpleDateFormat>(){
+    	protected SimpleDateFormat initialValue() {
+    		if(useDefaultLocale){
+    			return new SimpleDateFormat(datetimeFormat,Locale.getDefault());
+    		} else {
+    			return new SimpleDateFormat(datetimeFormat, I18NUtil.getLocale());
+    		}
+    	};
+    	
+    };
+    
+    private  ThreadLocal<DecimalFormat> s_localDecimalFormat = new ThreadLocal<DecimalFormat>(){
+    	protected DecimalFormat initialValue() {
+    		return new DecimalFormat(decimalFormat);
+    	};
+    	
+    };
+	
 	private boolean useDefaultLocale = true;
 	
-	protected DateFormat dateFormat;
+	protected String dateFormat;
 	
-	protected DateFormat datetimeFormat;
+	protected String datetimeFormat;
 	
-	protected DecimalFormat decimalFormat;
+	protected String decimalFormat;
 
 	
 	public boolean isUseDefaultLocale() {
@@ -49,50 +79,71 @@ public class PropertyFormats {
 	}
 
 	public void setUseDefaultLocale(boolean useDefaultLocale) {
+		s_localDateFormat.remove();
+		s_localDateTimeFormat.remove();
 		this.useDefaultLocale = useDefaultLocale;
 	}
 
-	public DateFormat getDateFormat() {
-		return dateFormat;
-	}
-
-	public void setDateFormat(DateFormat dateFormat) {
+	
+	public void setDateFormat(String dateFormat) {
+		s_localDateFormat.remove();
 		this.dateFormat = dateFormat;
 	}
 
-	public DateFormat getDatetimeFormat() {
-		return datetimeFormat;
-	}
-
-	public void setDatetimeFormat(DateFormat datetimeFormat) {
+	public void setDatetimeFormat(String datetimeFormat) {
+		s_localDateTimeFormat.remove();
 		this.datetimeFormat = datetimeFormat;
 	}
 
-	public DecimalFormat getDecimalFormat() {
-		return decimalFormat;
-	}
-
-	public void setDecimalFormat(DecimalFormat decimalFormat) {
+	public void setDecimalFormat(String decimalFormat) {
+		s_localDecimalFormat.remove();
 		this.decimalFormat = decimalFormat;
 	}
-	
+
 	public PropertyFormats(boolean useDefaultLocal){
 		
 		this.useDefaultLocale = useDefaultLocal;
 		
 		if(useDefaultLocal){
 		
-			dateFormat = new SimpleDateFormat(RepoConsts.FORMAT_DATE, Locale.getDefault());
-			datetimeFormat = new SimpleDateFormat(RepoConsts.FORMAT_DATETIME, Locale.getDefault());
+			dateFormat = RepoConsts.FORMAT_DATE;
+			datetimeFormat = RepoConsts.FORMAT_DATETIME;
 			
 		}
 		else{
 		
-			dateFormat = new SimpleDateFormat(RepoConsts.FORMAT_DATE,I18NUtil.getLocale());
-			datetimeFormat = new SimpleDateFormat(RepoConsts.FORMAT_DATETIME,I18NUtil.getLocale());
+			dateFormat = RepoConsts.FORMAT_DATE;
+			datetimeFormat = RepoConsts.FORMAT_DATETIME;
 		}
 		
-		decimalFormat = new DecimalFormat(FORMAT_DECIMAL_VALUE);
+		decimalFormat = FORMAT_DECIMAL_VALUE;
+		
+	
 	}
+
+	public String formatDate(Object o) {
+		return s_localDateFormat.get().format(o);
+	}
+
+	public String formatDecimal(Object o) {
+		return s_localDecimalFormat.get().format(o);
+	}
+
+	public String formatDateTime(Object o) {
+		return s_localDateTimeFormat.get().format(o);
+	}
+
+	public Date parseDate(String dateString) throws ParseException {
+		return s_localDateFormat.get().parse(dateString);
+	}
+
+	public Number parseDecimal(String decimalString) throws ParseException {
+		return s_localDecimalFormat.get().parse(decimalString);
+	}
+
+//	public void setDecimalFormatPattern(String stringValue) {
+//		// TODO Auto-generated method stub
+//		(DecimalFormat) NumberFormat.getNumberInstance(Locale.getDefault())
+//	}
 
 }

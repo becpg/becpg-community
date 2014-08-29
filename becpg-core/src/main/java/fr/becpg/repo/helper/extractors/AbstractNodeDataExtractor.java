@@ -17,6 +17,8 @@
  ******************************************************************************/
 package fr.becpg.repo.helper.extractors;
 
+import java.io.Serializable;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,6 +35,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorMode;
 import fr.becpg.repo.helper.SiteHelper;
 
 public abstract class AbstractNodeDataExtractor implements NodeDataExtractor {
@@ -153,4 +156,19 @@ public abstract class AbstractNodeDataExtractor implements NodeDataExtractor {
 		return contentData.getSize();
 	}
 	
+
+	protected String convertDateValue(Serializable value) {
+		if (value instanceof Date) {
+			return formatDate((Date) value);
+		}
+		return null;
+	}
+	
+	
+	protected String formatDate(Date date) {
+		if(date!=null){
+			return attributeExtractorService.getPropertyFormats(AttributeExtractorMode.SEARCH).formatDate(date);
+		}
+		return null;
+	}
 }

@@ -108,8 +108,19 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 	
 	private Map<QName, AttributeExtractorPlugin> pluginsCache = new HashMap<>();
 	
-
 	
+	private PropertyFormats csvPropertyFormats =  new CSVPropertyFormats(false);
+
+	private PropertyFormats propertyFormats =  new PropertyFormats(false);
+
+
+	@Override
+	public PropertyFormats getPropertyFormats(AttributeExtractorMode mode) {
+		return AttributeExtractorMode.CSV.equals(mode) ? csvPropertyFormats : propertyFormats;
+	}
+
+
+
 	private AttributeExtractorPlugin getAttributeExtractorPlugin(QName type, NodeRef nodeRef) {
 		
 		return pluginsCache.get(type);
@@ -302,9 +313,9 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 			}
 
 		} else if (dataType.equals(DataTypeDefinition.DATE.toString())) {
-			value = propertyFormats.getDateFormat().format(v);
+			value = propertyFormats.formatDate(v);
 		} else if (dataType.equals(DataTypeDefinition.DATETIME.toString())) {
-			value = propertyFormats.getDatetimeFormat().format(v);
+			value = propertyFormats.formatDateTime(v);
 		} else if (dataType.equals(DataTypeDefinition.NODE_REF.toString())) {
 			if (!propertyDef.isMultiValued()) {
 				value = extractPropName((NodeRef) v);
@@ -328,11 +339,8 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 		} else if (dataType.equals(DataTypeDefinition.DOUBLE.toString()) || dataType.equals(DataTypeDefinition.FLOAT.toString())
 				|| (dataType.equals(DataTypeDefinition.ANY.toString()) && (v instanceof Double || v instanceof Float))) {
 
-			if (propertyFormats.getDecimalFormat() != null) {
-				value = propertyFormats.getDecimalFormat().format(v);
-			} else {
-				value = v.toString();
-			}
+			value = propertyFormats.formatDecimal(v);
+			
 		} else if (dataType.equals(DataTypeDefinition.QNAME.toString())) {
 			
 			if (v!=null) {
@@ -455,7 +463,6 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 		return propDef instanceof AssociationDefinition;
 	}
 
-	
 
 	private Object extractNodeData(NodeRef nodeRef, Map<QName, Serializable> properties, ClassAttributeDefinition attribute, AttributeExtractorMode mode, int order) {
 
@@ -467,7 +474,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 		if (attribute instanceof PropertyDefinition) {
 
 			value = properties.get(attribute.getName());
-			displayName = getStringValue((PropertyDefinition) attribute, value,AttributeExtractorMode.CSV.equals(mode)?  new CSVPropertyFormats(false) :  new PropertyFormats(false));
+			displayName = getStringValue((PropertyDefinition) attribute, value, getPropertyFormats(mode));
 
 			if (AttributeExtractorMode.CSV.equals(mode)) {
 				return displayName;
@@ -563,8 +570,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 		return null;
 	}
 
-	@Override
-	public  Object formatValue(Object value) {
+	private  Object formatValue(Object value) {
 		if (value != null) {
 			if (value instanceof Date) {
 				return ISO8601DateFormat.format((Date) value);
@@ -626,22 +632,22 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 	
 	
 
-
-	
-
-	@Override
-	public String convertDateValue(Serializable value) {
-		if (value instanceof Date) {
-			return formatDate((Date) value);
-		}
-		return null;
-	}
-
-	@Override
-	public String formatDate(Date date) {
-		PropertyFormats propertyFormats = new PropertyFormats(false);
-		return propertyFormats.getDateFormat().format(date);
-	}
+//
+//	
+//
+//	@Override
+//	public String convertDateValue(Serializable value) {
+//		if (value instanceof Date) {
+//			return formatDate((Date) value);
+//		}
+//		return null;
+//	}
+//
+//	@Override
+//	public String formatDate(Date date) {
+//		PropertyFormats propertyFormats = new PropertyFormats(false);
+//		return propertyFormats.formatDate(date);
+//	}
 
 	
 

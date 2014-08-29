@@ -147,7 +147,7 @@ public class CharactDetailsHelper {
 			tmp.put(getYAxisLabel(),(String)nodeService.getProperty(compoEl, ContentModel.PROP_NAME));
 			for (Map.Entry<NodeRef, Map<NodeRef, Double>> entry : charactDetails.getData().entrySet()) {
 				if (entry.getValue().containsKey(compoEl)) {
-						tmp.put((String) nodeService.getProperty(entry.getKey(), ContentModel.PROP_NAME), propertyFormats.getDecimalFormat().format(entry.getValue().get(compoEl)));
+						tmp.put((String) nodeService.getProperty(entry.getKey(), ContentModel.PROP_NAME), propertyFormats.formatDecimal(entry.getValue().get(compoEl)));
 					} else {
 						tmp.put((String) nodeService.getProperty(entry.getKey(), ContentModel.PROP_NAME),"0");
 					}

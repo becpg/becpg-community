@@ -11,7 +11,6 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -664,17 +663,17 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 		Node dateFormat = mappingsElt.selectSingleNode(QUERY_XPATH_DATE_FORMAT);
 		if (dateFormat != null) {
-			importContext.getPropertyFormats().setDateFormat(new SimpleDateFormat(dateFormat.getStringValue()));
+			importContext.getPropertyFormats().setDateFormat(dateFormat.getStringValue());
 		}
 
 		Node datetimeFormat = mappingsElt.selectSingleNode(QUERY_XPATH_DATETIME_FORMAT);
 		if (datetimeFormat != null) {
-			importContext.getPropertyFormats().setDateFormat(new SimpleDateFormat(datetimeFormat.getStringValue()));
+			importContext.getPropertyFormats().setDateFormat(datetimeFormat.getStringValue());
 		}
 
 		Node decimalFormatPattern = mappingsElt.selectSingleNode(QUERY_XPATH_DECIMAL_PATTERN);
 		if (decimalFormatPattern != null) {
-			importContext.getPropertyFormats().getDecimalFormat().applyPattern(decimalFormatPattern.getStringValue());
+			importContext.getPropertyFormats().setDecimalFormat(decimalFormatPattern.getStringValue());
 		}
 
 		for (Node mappingNode : mappingNodes) {

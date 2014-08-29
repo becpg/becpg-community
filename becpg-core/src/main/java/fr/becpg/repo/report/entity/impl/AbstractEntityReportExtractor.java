@@ -323,7 +323,7 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 				versionElt.addAttribute(Version2Model.PROP_QNAME_VERSION_DESCRIPTION.getLocalName(), version.getDescription());
 				versionElt.addAttribute(ContentModel.PROP_CREATOR.getLocalName(), attributeExtractorService.getPersonDisplayName(version.getFrozenModifier()));
 				versionElt.addAttribute(ContentModel.PROP_CREATED.getLocalName(),
-						propertyFormats.getDateFormat().format(version.getFrozenModifiedDate()));
+						propertyFormats.formatDate(version.getFrozenModifiedDate()));
 			}
 		}
 	}
