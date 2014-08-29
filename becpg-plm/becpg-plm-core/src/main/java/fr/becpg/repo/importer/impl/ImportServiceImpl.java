@@ -250,8 +250,7 @@ public class ImportServiceImpl implements ImportService {
 
 		importContext.setStopOnFirstError(true);
 		String dateFormat = (Locale.getDefault().equals(Locale.FRENCH) || Locale.getDefault().equals(Locale.FRANCE)) ? FORMAT_DATE_FRENCH : FORMAT_DATE_ENGLISH;
-		importContext.getPropertyFormats().setDateFormat(new SimpleDateFormat(dateFormat));
-		importContext.getPropertyFormats().setDecimalFormat((DecimalFormat) NumberFormat.getNumberInstance(Locale.getDefault()));
+		importContext.getPropertyFormats().setDateFormat(dateFormat);
 		importContext.setDoUpdate(doUpdate);
 		importContext.setRequiresNewTransaction(requiresNewTransaction);
 

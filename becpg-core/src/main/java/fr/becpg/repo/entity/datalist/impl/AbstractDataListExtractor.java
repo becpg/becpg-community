@@ -18,6 +18,7 @@
 package fr.becpg.repo.entity.datalist.impl;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -148,9 +149,9 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 			}
 			
 			ret.put(PROP_TYPE, itemType.toPrefixString(services.getNamespaceService()));
-			ret.put(PROP_CREATED, attributeExtractorService.convertDateValue(properties.get(ContentModel.PROP_CREATED)));
+			ret.put(PROP_CREATED, convertDateValue(properties.get(ContentModel.PROP_CREATED),AttributeExtractorMode.JSON));
 			ret.put(PROP_CREATOR_DISPLAY, extractPerson( (String) properties.get(ContentModel.PROP_CREATOR)));
-			ret.put(PROP_MODIFIED, attributeExtractorService.convertDateValue(properties.get( ContentModel.PROP_MODIFIED)));
+			ret.put(PROP_MODIFIED, convertDateValue(properties.get( ContentModel.PROP_MODIFIED),AttributeExtractorMode.JSON));
 			ret.put(PROP_MODIFIER_DISPLAY, extractPerson( (String) properties.get(ContentModel.PROP_MODIFIER)));
 			
 			if(properties.get(BeCPGModel.PROP_COLOR)!=null){
@@ -252,11 +253,28 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 		ret.put("displayValue", attributeExtractorService.getPersonDisplayName(person));
 		return ret;
 	}
+	
+	protected String convertDateValue(Serializable value ,AttributeExtractorMode mode) {
+		if (value instanceof Date) {
+			return formatDate((Date) value,mode);
+		}
+		return null;
+	}
+	
+	
+	protected String formatDate(Date date,AttributeExtractorMode mode) {
+		if(date!=null){
+			return attributeExtractorService.getPropertyFormats(mode).formatDate(date);
+		}
+		return null;
+	}
 
 	private boolean isDetaillable(NodeRef nodeRef) {
 		return nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
 	}
 
 	protected abstract Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields, AttributeExtractorMode mode, Map<QName,Serializable> properties, Map<String, Object> extraProps, Map<NodeRef, Map<String, Object>> cache);
+	
+	
 	
 }

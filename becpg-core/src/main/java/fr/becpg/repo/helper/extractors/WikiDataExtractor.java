@@ -58,9 +58,9 @@ public class WikiDataExtractor extends AbstractNodeDataExtractor  {
 		 ret.put(PROP_DESCRIPTION, nodeService.getProperty(nodeRef,ContentModel.PROP_DESCRIPTION));
 		
 		 ret.put(PROP_MODIFIER,  nodeService.getProperty(nodeRef, ContentModel.PROP_MODIFIER));
-		 ret.put(PROP_MODIFIED,  attributeExtractorService.convertDateValue(nodeService.getProperty(nodeRef, ContentModel.PROP_MODIFIED)));
+		 ret.put(PROP_MODIFIED,  convertDateValue(nodeService.getProperty(nodeRef, ContentModel.PROP_MODIFIED)));
 		
-		 ret.put(PROP_CREATED,  attributeExtractorService.convertDateValue(nodeService.getProperty(nodeRef, ContentModel.PROP_CREATED)));
+		 ret.put(PROP_CREATED,  convertDateValue(nodeService.getProperty(nodeRef, ContentModel.PROP_CREATED)));
 		 ret.put(PROP_CREATOR,  nodeService.getProperty(nodeRef, ContentModel.PROP_CREATOR));
 	
 		 ret.put(PROP_TYPE, "wikipage");

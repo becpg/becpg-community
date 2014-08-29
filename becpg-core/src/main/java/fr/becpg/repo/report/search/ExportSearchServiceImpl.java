@@ -405,19 +405,19 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 		// date format
 		Node dateFormat = queryElt.selectSingleNode(QUERY_XPATH_DATE_FORMAT);
 		if(dateFormat != null){
-			exportSearchCtx.getPropertyFormats().setDateFormat(new SimpleDateFormat(dateFormat.getStringValue()));
+			exportSearchCtx.getPropertyFormats().setDateFormat(dateFormat.getStringValue());
 		}
 		
 		// datetime format
 		Node datetimeFormat = queryElt.selectSingleNode(QUERY_XPATH_DATETIME_FORMAT);
 		if(datetimeFormat != null){			
-			exportSearchCtx.getPropertyFormats().setDatetimeFormat(new SimpleDateFormat(datetimeFormat.getStringValue()));
+			exportSearchCtx.getPropertyFormats().setDatetimeFormat(datetimeFormat.getStringValue());
 		}
 		
 		// decimal format
 		Node decimalFormatPattern = queryElt.selectSingleNode(QUERY_XPATH_DECIMAL_PATTERN);
 		if(decimalFormatPattern != null){
-			exportSearchCtx.getPropertyFormats().getDecimalFormat().applyPattern(decimalFormatPattern.getStringValue());			
+			exportSearchCtx.getPropertyFormats().setDecimalFormat(decimalFormatPattern.getStringValue());			
 		}
 		
 		// attributes

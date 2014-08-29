@@ -19,7 +19,6 @@ package fr.becpg.repo.helper;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -64,17 +63,12 @@ public interface AttributeExtractorService {
 	public Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, List<String> metadataFields, AttributeExtractorMode mode );
 	
 	public Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, Map<QName, Serializable> properties,  List<AttributeExtractorStructure> metadataFields, AttributeExtractorMode mode, DataListCallBack dataListCallBack);
-
 	
     public String getStringValue(PropertyDefinition propertyDef, Serializable value, PropertyFormats propertyFormats);
 	
-	public String convertDateValue(Serializable value);
-
 	public String getDisplayPath(NodeRef nodeRef);
 
 	public String[] getTags(NodeRef nodeRef);
-
-	public String formatDate(Date date);
 
 	public String extractSiteId(NodeRef entityNodeRef);
 
@@ -88,7 +82,10 @@ public interface AttributeExtractorService {
 	public String getPersonDisplayName(String userId);
 
 
-	public Object formatValue(Object value);
+	PropertyFormats getPropertyFormats(AttributeExtractorMode mode);
+	
+
+	
 
 
 }

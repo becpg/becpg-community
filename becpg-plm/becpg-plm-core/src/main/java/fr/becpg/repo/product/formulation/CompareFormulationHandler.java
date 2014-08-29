@@ -273,12 +273,7 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 		PropertyFormats propertyFormats = new PropertyFormats(true);
 		
 		if (v != null && (v instanceof Double || v instanceof Float)) {
-
-			if (propertyFormats.getDecimalFormat() != null) {
-				return propertyFormats.getDecimalFormat().format(v);
-			} else {
-				return v.toString();
-			}
+			return propertyFormats.formatDecimal(v);
 		}
 		return v;
 	}

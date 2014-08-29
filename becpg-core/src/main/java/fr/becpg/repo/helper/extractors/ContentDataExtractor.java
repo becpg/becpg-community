@@ -110,12 +110,7 @@ public class ContentDataExtractor extends AbstractNodeDataExtractor  {
 	}
 
 
-	private String formatDate(Date date) {
-		if(date!=null){
-			return attributeExtractorService.formatDate(date);
-		}
-		return null;
-	}
+
 
 
 
