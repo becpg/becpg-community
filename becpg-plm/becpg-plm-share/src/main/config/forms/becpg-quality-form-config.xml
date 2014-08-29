@@ -70,7 +70,7 @@
 
 					<set id="product-info" appearance="bordered-panel" label-id="becpg.forms.set.product-info.label" />
 					<field id="qa:product" set="product-info" />
-					<field id="bcpg:plants" set="product-info" label="Site de fabrication"/>
+					<field id="bcpg:plants" set="product-info" label-id="becpg.forms.field.claim.plants"/>
 					
 
 					<set id="batch-info" template="/org/alfresco/components/form/2-column-set.ftl" appearance="bordered-panel" label-id="becpg.forms.set.batch-info.label" />
@@ -146,7 +146,7 @@
 
 					<set id="info"  appearance="bordered-panel" label-id="workflow.claim.set.start"  />
 					<set id="info1" parent="info" appearance="" template="/org/alfresco/components/form/2-column-set.ftl" />
-					<field id="bcpg:clients" label="Client" mandatory="false" read-only="false" set="info1">
+					<field id="bcpg:clients" label-id="becpg.forms.field.claim.client" mandatory="false" read-only="false" set="info1">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 					<field id="qa:product" mandatory="false" read-only="false" set="info1" />	
@@ -163,7 +163,7 @@
 					</field>
 					
 					<set id="analysis" appearance="bordered-panel" label-id="workflow.claim.set.orientation"  />
-					<field id="bcpg:plants" set="analysis" mandatory="false" read-only="false" label="Site de fabrication"/>
+					<field id="bcpg:plants" set="analysis" mandatory="false" read-only="false" label-id="becpg.forms.field.claim.plants"/>
 				</appearance>
 			</form>
 			<form id="datagrid">
@@ -195,10 +195,10 @@
 
 				</field-visibility>
             <appearance>
-            	<field id="cm:name" label="Numéro incident" />
-            	<field id="bcpg:plants" label="Site de fabrication" />
-            	<!-- <field id="cm:creator" label="Emetteur" />
-            	<field id="cm:created" label="Date saisie" /> -->
+            	<field id="cm:name" label-id="becpg.forms.field.claim.name" />
+            	<field id="bcpg:plants" label-id="becpg.forms.field.claim.plants" />
+            	<!-- <field id="cm:creator" label-id="becpg.forms.field.claim.creator" />
+            	<field id="cm:created" label-id="Date becpg.forms.field.claim.created" /> -->
             	
             </appearance>
 			</form>
@@ -258,11 +258,11 @@
 			
 				</field-visibility>
             <appearance>
-            	<field id="cm:name"    label="Numéro incident" />
-            	<field id="bcpg:plants" label="Site de fabrication" />
-            	<field id="cm:creator" label="Emetteur" />
-            	<field id="cm:created" label="Date saisie" />
-            	<field id="qa:ncState" label="Etat dernière étape validée"/>
+            	<field id="cm:name" label-id="becpg.forms.field.claim.name" />
+            	<field id="bcpg:plants" label-id="becpg.forms.field.claim.plants" />
+            	<field id="cm:creator" label-id="becpg.forms.field.claim.creator" />
+            	<field id="cm:created" label-id="becpg.forms.field.claim.created" />
+            	<field id="qa:ncState" label-id="becpg.forms.field.claim.state"/>
             </appearance>
 			</form>
 			<form id="filter">
@@ -303,9 +303,9 @@
 							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
-					<field id="qa:ncState" label="Etat dernière étape validée"  set="mainInfo"/>
-					<field id="cm:name" label="Numéro incident" set="mainInfo"/>
-				    <field id="bcpg:plants" label="Site de fabrication"  set="mainInfo"/>
+					<field id="qa:ncState" label-id="becpg.forms.field.claim.state"  set="mainInfo"/>
+					<field id="cm:name" label-id="becpg.forms.field.claim.name" set="mainInfo"/>
+				    <field id="bcpg:plants" label-id="becpg.forms.field.claim.plants"  set="mainInfo"/>
 					<!--  <field id="qa:product"   set="mainInfo"/> -->
 					<field id="entity_qa:product_bcpg:product"   set="mainInfo"/>
 					
@@ -323,7 +323,7 @@
 						</control>
 					</field>
 					<set id="mainInfo2"   />
-					<field id="cm:created" label="Période de saisie des réclamations"  set="mainInfo2">
+					<field id="cm:created" label-id="becpg.forms.field.claim.created.range"  set="mainInfo2">
 						<control template="/org/alfresco/components/form/controls/daterange.ftl" />
 					</field>
 		
@@ -348,9 +348,9 @@
 				</field-visibility>
 				<appearance>
 					<field id="cm:name" label-id="becpg.forms.field.product" />
-					<field id="bcpg:productHierarchy1" label="becpg.forms.field.productHierarchy1"/>
-					<field id="bcpg:productHierarchy2" label="becpg.forms.field.productHierarchy2"/>
-					<field id="bcpg:plants" label="becpg.forms.field.product.plants"/>
+					<field id="bcpg:productHierarchy1" label-id="becpg.forms.field.productHierarchy1"/>
+					<field id="bcpg:productHierarchy2" label-id="becpg.forms.field.productHierarchy2"/>
+					<field id="bcpg:plants" label-id="becpg.forms.field.product.plants"/>
 				</appearance>
 			</form>
 		</forms>
@@ -379,7 +379,7 @@
 
 				</field-visibility>
 				<appearance>
-					<field id="cm:name" label="Client" />
+					<field id="cm:name" label-id="becpg.forms.field.claim.client" />
 				</appearance>
 			</form>
 		</forms>
@@ -487,7 +487,7 @@
 					<set id="info1" parent="info" appearance="" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<field id="qa:claimSource" mandatory="true" read-only="false" set="info1" />
 					<field id="qa:claimTradeContact" mandatory="false" read-only="false" set="info1" />
-					<field id="bcpg:clients" label="Client" mandatory="false" read-only="false" set="info1">
+					<field id="bcpg:clients" label-id="becpg.forms.field.claim.client" mandatory="false" read-only="false" set="info1">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 					<field id="qa:claimDistributionNetwork" mandatory="false" read-only="false" set="info1" />
@@ -521,7 +521,7 @@
 					</field>
 					
 					<set id="analysis" appearance="bordered-panel" label-id="workflow.claim.set.orientation"  />
-					<field id="bcpg:plants" set="analysis" mandatory="false" read-only="false" label="Site de fabrication"/>
+					<field id="bcpg:plants" set="analysis" mandatory="false" read-only="false" label-id="becpg.forms.field.claim.plants"/>
 					
 					<set id="analysis2" parent="analysis" appearance="" template="/org/alfresco/components/form/2-column-set.ftl"/>
 					<field id="qa:claimTreatmentActor" set="analysis2" mandatory="false" read-only="false" >
