@@ -47,7 +47,6 @@
 				<value>alfresco/module/${pom.artifactId}/messages/becpg-messages</value>
 				<value>alfresco/module/${pom.artifactId}/messages/groups</value>
 				<value>alfresco/module/${pom.artifactId}/messages/demo</value>
-				<value>alfresco/module/${pom.artifactId}/messages/import-service</value>
 				<value>alfresco/module/${pom.artifactId}/messages/patch</value>
 			</list>
 		</property>

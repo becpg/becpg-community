@@ -36,7 +36,8 @@
 		<property name="resourceBundles">
 			<list>
 				<value>alfresco/module/${pom.artifactId}/messages/paths</value>
-				<value>alfresco/module/${pom.artifactId}/messages/plm</value>					
+				<value>alfresco/module/${pom.artifactId}/messages/plm</value>
+				<value>alfresco/module/${pom.artifactId}/messages/import-service</value>					
 			</list>
 		</property>
 	</bean>
