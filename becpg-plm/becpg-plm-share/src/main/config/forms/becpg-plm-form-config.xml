@@ -1133,13 +1133,10 @@
 
 					<!-- pallet -->
 					<show id="pack:palletLayers" />
-					<show id="pack:palletDimensions" />
 					<show id="pack:palletBoxesPerLayer" />
 					<show id="pack:palletBoxesPerLastLayer" />
 					<show id="pack:palletBoxesPerPallet" />
-					<show id="pack:palletNbOfIntercropping" />
 					<show id="pack:palletHeight" />
-					<show id="pack:palletNbOfBoxes" />
 			
 					<!-- Tare -->
 					<show id="pack:tare" force="true" />
@@ -1215,13 +1212,10 @@
 
 					<!-- pallet -->
 					<field id="pack:palletLayers" set="pallet" />
-					<field id="pack:palletDimensions" set="pallet" />
 					<field id="pack:palletBoxesPerLayer" set="pallet" />
 					<field id="pack:palletBoxesPerPallet" set="pallet" />
 					<field id="pack:palletBoxesPerLastLayer" set="pallet" />
-					<field id="pack:palletNbOfIntercropping" set="pallet" />
 					<field id="pack:palletHeight" set="pallet" />
-					<field id="pack:palletNbOfBoxes" set="pallet" />
 
 					<!-- tare -->
 					<field id="pack:tare" set="tare" />
@@ -1419,13 +1413,10 @@
 
 					<!-- pallet -->
 					<show id="pack:palletLayers" force="true" />
-					<show id="pack:palletDimensions" force="true" />
 					<show id="pack:palletBoxesPerLayer" force="true" />
 					<show id="pack:palletBoxesPerLastLayer" force="true" />
 					<show id="pack:palletBoxesPerPallet" force="true" />
-					<show id="pack:palletNbOfIntercropping" />
 					<show id="pack:palletHeight" force="true" />
-					<show id="pack:palletNbOfBoxes" force="true" />
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
@@ -1888,6 +1879,13 @@
 					<show id="bcpg:productMicrobioCriteriaRef" />
 					<show id="bcpg:certificateDate" force="true" />
 
+					<!-- pallet -->
+					<show id="pack:palletLayers" />
+					<show id="pack:palletBoxesPerLayer" />
+					<show id="pack:palletBoxesPerLastLayer" />
+					<show id="pack:palletBoxesPerPallet" />
+					<show id="pack:palletHeight" />
+
 					<!-- Tare -->
 					<show id="pack:tare" />
 					<show id="pack:tareUnit" />
@@ -1907,6 +1905,8 @@
 					<set id="mainInfo" appearance="bordered-panel"
 						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="consumer" appearance="bordered-panel" label-id="becpg.forms.set.consumer.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="pallet" appearance="bordered-panel" label-id="becpg.forms.set.pallet.label"
 						template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="tare" appearance="bordered-panel" label-id="becpg.forms.set.tare.label"
 						template="/org/alfresco/components/form/2-column-set.ftl" />
@@ -2001,10 +2001,19 @@
 					</field>
 					<field id="bcpg:certificateDate" set="consumer" />
 
+					<!-- pallet -->
+					<field id="pack:palletLayers" set="pallet" />
+					<field id="pack:palletBoxesPerLayer" set="pallet" />
+					<field id="pack:palletBoxesPerPallet" set="pallet" />
+					<field id="pack:palletBoxesPerLastLayer" set="pallet" />
+					<field id="pack:palletHeight" set="pallet" />
+					
+
 					<!-- tare -->
 					<field id="pack:tare" set="tare" />
 					<field id="pack:tareUnit" set="tare" />
 
+					
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
 						<control>

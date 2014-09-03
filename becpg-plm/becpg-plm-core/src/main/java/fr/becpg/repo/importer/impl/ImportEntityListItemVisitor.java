@@ -47,6 +47,8 @@ import fr.becpg.repo.importer.ImporterException;
 public class ImportEntityListItemVisitor extends AbstractImportVisitor implements ImportVisitor {
 
 	protected static final String MSG_ERROR_FIND_ENTITY = "import_service.error.err_find_entity";
+	
+	protected static final String  MSG_ERROR_NO_MAPPING_FOR = "import_service.error.no_mapping_for";
 
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(ImportEntityListItemVisitor.class);
@@ -82,6 +84,12 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 
 		ClassMapping classMapping = importContext.getClassMappings().get(importContext.getType());
 
+		if(classMapping == null ){
+			throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_NO_MAPPING_FOR, importContext.getType()));
+			
+		}
+		
+		
 		importContext.setEntityNodeRef(null);
 		
 		/*
