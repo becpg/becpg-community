@@ -428,7 +428,7 @@
 					<field id="bcpg:productMicrobioCriteriaRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="style">null</control-param>
+							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
 						</control>
 					</field>
 
@@ -786,7 +786,7 @@
 					<field id="bcpg:productMicrobioCriteriaRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="style">null</control-param>
+							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
 						</control>
 					</field>
 
@@ -1997,6 +1997,7 @@
 					<field id="bcpg:productMicrobioCriteriaRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
 						</control>
 					</field>
 					<field id="bcpg:certificateDate" set="consumer" />
@@ -2235,7 +2236,13 @@
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productMicrobioCriteriaRef" set="consumer" />
+					<field id="bcpg:productMicrobioCriteriaRef" set="consumer" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+						</control>
+					</field>
+					
 					<field id="bcpg:certificateDate" set="consumer" />
 
 					<!-- categories -->
@@ -2546,6 +2553,7 @@
 					<field id="bcpg:productMicrobioCriteriaRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
 						</control>
 					</field>
 
@@ -2803,6 +2811,7 @@
 					<field id="bcpg:productMicrobioCriteriaRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
 						</control>
 					</field>
 
