@@ -98,7 +98,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		if (!L2CacheSupport.isCacheOnlyEnable()) {
 
 			
-			if (entity.getNodeRef() == null || /*createCollisionSafeHashCode(entity) != entity.getDbHashCode()*/ true) {
+			if (entity.getNodeRef() == null || createCollisionSafeHashCode(entity) != entity.getDbHashCode()) {
 
 				Map<QName, Serializable> properties = extractProperties(entity);
 
