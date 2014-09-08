@@ -81,6 +81,14 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	 */
 	private Date formulatedDate;
 	private Integer reformulateCount;
+	
+	
+	/*
+	 * Nutrient Score
+	 */
+	
+	private Double nutrientScore;
+	private String nutrientClass;
 
 	/*
 	 * DataList
@@ -249,6 +257,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	public Double getDensity() {
 		return density;
 	}
+	
 
 	public void setDensity(Double density) {
 		this.density = density;
@@ -354,6 +363,26 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 
 	public void setProfitability(Double profitability) {
 		this.profitability = profitability;
+	}
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:nutrientProfilingScore")
+	public Double getNutrientScore() {
+		return nutrientScore;
+	}
+
+	public void setNutrientScore(Double nutrientScore) {
+		this.nutrientScore = nutrientScore;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "bcpg:nutrientProfilingClass")
+	public String getNutrientClass() {
+		return nutrientClass;
+	}
+
+	public void setNutrientClass(String nutrientClass) {
+		this.nutrientClass = nutrientClass;
 	}
 
 	@AlfProp

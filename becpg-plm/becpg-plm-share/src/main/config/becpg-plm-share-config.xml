@@ -113,6 +113,8 @@
 				<js src="/modules/spel-editor/spel-editor.js" />
 				<js src="/modules/spel-editor/shCore.js" />
 				<js src="/modules/spel-editor/shBrushJScript.js" />
+				<!-- Nutrient score -->
+				<css src="/components/form/controls/nutrient-class.css" />
 				<!-- Decision tree -->
 				<css src="/components/form/controls/decision-tree.css" />
 				<js src="/components/form/controls/decision-tree.js" />
