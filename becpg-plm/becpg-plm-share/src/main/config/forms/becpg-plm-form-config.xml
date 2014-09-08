@@ -260,6 +260,10 @@
 					<!-- Tare -->
 					<show id="pack:tare" />
 					<show id="pack:tareUnit" />
+					
+					<!-- Nutrient profiling score -->
+					<show id="bcpg:nutrientProfilingScore"  for-mode="view"/>
+					<show id="bcpg:nutrientProfilingClass"  for-mode="view"/>
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
@@ -325,7 +329,11 @@
 						parent="mainTab" />
 					<set id="tare" appearance="bordered-panel" label-id="becpg.forms.set.tare.label"
 						template="/org/alfresco/components/form/2-column-set.ftl" parent="mainTab" />
+					<set id="score" appearance="bordered-panel" label-id="becpg.forms.set.nutrient.score.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" parent="mainTab" />
+				
 					<set id="categories" appearance="bordered-panel"
+					
 						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl"
 						parent="mainTab" />
 					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
@@ -469,6 +477,12 @@
 					<!-- tare -->
 					<field id="pack:tare" set="tare" />
 					<field id="pack:tareUnit" set="tare" />
+					
+					<!-- Nutrient profiling score -->
+					<field id="bcpg:nutrientProfilingScore"  set="score"/>
+					<field id="bcpg:nutrientProfilingClass"  set="score">
+						<control template="/org/alfresco/components/form/controls/nutrient-class.ftl" />
+					</field>
 
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">

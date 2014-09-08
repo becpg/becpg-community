@@ -310,6 +310,7 @@ public class ProjectServiceImpl implements ProjectService {
 			List<NodeRef> nodeRefs = new ArrayList<NodeRef>(1);
 			nodeRefs.add(taskListNodeRef);
 			
+			if(resourceNodeRef!=null){
 			String authorityName = authorityDAO.getAuthorityName(resourceNodeRef);
 
 			if (authorityName!=null && !isRoleAuhtority(authorityName)) {
@@ -322,7 +323,7 @@ public class ProjectServiceImpl implements ProjectService {
 
 				for (NodeRef n : nodeRefs) {
 					if (allow) {
-						permissionService.setPermission(n, authorityName, PermissionService.EDITOR, allow);
+							permissionService.setPermission(n, authorityName, PermissionService.EDITOR, allow);
 					} else {
 						// permissionService.deletePermission(n, userName,
 						// PermissionService.EDITOR);
@@ -331,6 +332,7 @@ public class ProjectServiceImpl implements ProjectService {
 
 				}
 			}
+		}
 		}
 		
 	}
