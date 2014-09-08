@@ -482,14 +482,14 @@
 					<show id="pjt:tlIsMilestone" />
 					<show id="pjt:tlDuration" />					
 					<show id="pjt:tlWork" />			
-					<show id="pjt:tlCapacity" read-only="true" />		
+					<show id="pjt:tlCapacity" />		
 					<show id="pjt:tlState" />
 					
 					<show id="pjt:tlManualDate" />
-					<show id="pjt:tlStart" read-only="true" />
-					<show id="pjt:tlEnd"   read-only="true" />
+					<show id="pjt:tlStart" />
+					<show id="pjt:tlEnd"   />
 									
-					<show id="pjt:completionPercent" read-only="true" />
+					<show id="pjt:completionPercent" />
 				</field-visibility>
 				<appearance>
 				
@@ -534,7 +534,7 @@
 					<field id="pjt:tlIsMilestone" set="planning"/>
 					<field id="pjt:tlDuration" set="planning"/>					
 					<field id="pjt:tlWork" set="planning"/>		
-					<field id="pjt:tlCapacity" set="planning"/>			
+					<field id="pjt:tlCapacity" read-only="true" set="planning"/>			
 					<field id="pjt:tlState" set="planning">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">Planned|data.taskstate.planned,InProgress|data.taskstate.inprogress,OnHold|data.taskstate.onhold,Cancelled|data.taskstate.cancelled,Completed|data.taskstate.completed
@@ -571,13 +571,13 @@
 					<show id="pjt:tlIsMilestone" />
 					<show id="pjt:tlDuration" />					
 					<show id="pjt:tlWork" />			
-					<show id="pjt:tlCapacity" read-only="true" />										
+					<show id="pjt:tlCapacity" />										
 					<show id="pjt:tlState" />
 					<show id="pjt:tlManualDate" />	
-					<show id="pjt:tlStart" read-only="true" />
-					<show id="pjt:tlEnd"   read-only="true" />
+					<show id="pjt:tlStart" />
+					<show id="pjt:tlEnd" />
 									
-					<show id="pjt:completionPercent" read-only="true" />
+					<show id="pjt:completionPercent" />
 				</field-visibility>
 				<appearance>
 					
@@ -620,7 +620,7 @@
 					<field id="pjt:tlIsMilestone" set="planning"/>
 					<field id="pjt:tlDuration" set="planning"/>					
 					<field id="pjt:tlWork" set="planning"/>		
-					<field id="pjt:tlCapacity" set="planning"/>			
+					<field id="pjt:tlCapacity" read-only="true" set="planning"/>			
 					<field id="pjt:tlState" set="planning">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">Planned|data.taskstate.planned,InProgress|data.taskstate.inprogress,OnHold|data.taskstate.onhold,Cancelled|data.taskstate.cancelled,Completed|data.taskstate.completed
