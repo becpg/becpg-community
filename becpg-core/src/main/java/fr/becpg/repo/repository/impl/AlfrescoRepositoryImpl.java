@@ -28,6 +28,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 import java.util.UUID;
 
 import org.alfresco.model.ContentModel;
@@ -98,7 +99,8 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		if (!L2CacheSupport.isCacheOnlyEnable()) {
 
 			
-			if (entity.getNodeRef() == null || createCollisionSafeHashCode(entity) != entity.getDbHashCode()) {
+			if (entity.getNodeRef() == null || (entity.getExtraProperties()!=null && 
+					entity.getExtraProperties().size()>0)  || createCollisionSafeHashCode(entity) != entity.getDbHashCode()) {
 
 				Map<QName, Serializable> properties = extractProperties(entity);
 
@@ -211,8 +213,6 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 	private int createCollisionSafeHashCode(T entity) {
 
 		return BeCPGHashCodeBuilder.reflectionHashCode(entity);
-		
-		//return entity.hashCode();
 		
 	}
 
@@ -441,7 +441,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 	private void loadAspects(T entity) {
 		if (entity instanceof AspectAwareDataItem) {
-			((AspectAwareDataItem) entity).setAspects(nodeService.getAspects(entity.getNodeRef()));
+			((AspectAwareDataItem) entity).setAspects(new TreeSet<QName>(nodeService.getAspects(entity.getNodeRef())));
 		}
 
 	}
