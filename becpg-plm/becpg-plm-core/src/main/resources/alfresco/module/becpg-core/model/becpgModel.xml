@@ -2586,6 +2586,20 @@
 				</property>
 			</properties>
 		</aspect>
+		
+		
+		<aspect name="bcpg:nutrientProfilingScoreAspect">
+			<properties>
+				<property name="bcpg:nutrientProfilingScore">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="bcpg:nutrientProfilingClass">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+				</property>
+			</properties>
+		</aspect>
 
 	</aspects>
 </model>

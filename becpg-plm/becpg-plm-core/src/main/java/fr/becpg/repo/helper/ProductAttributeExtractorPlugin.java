@@ -68,18 +68,16 @@ public class ProductAttributeExtractorPlugin implements AttributeExtractorPlugin
 
 			String propQname = patternMatcher.group(1);
 			String replacement = "";
-			if(propQname.contains("|")){
-			 for(String propQnameAlt : propQname.split("\\|")){
-				 replacement = (String) nodeService.getProperty(nodeRef,
-							QName.createQName(propQnameAlt, namespaceService));
-				 if(replacement!=null && !replacement.isEmpty()){
-					 break;
-				 }
-			 }
-				
+			if (propQname.contains("|")) {
+				for (String propQnameAlt : propQname.split("\\|")) {
+					replacement = (String) nodeService.getProperty(nodeRef, QName.createQName(propQnameAlt, namespaceService));
+					if (replacement != null && !replacement.isEmpty()) {
+						break;
+					}
+				}
+
 			} else {
-				replacement = (String) nodeService.getProperty(nodeRef,
-						QName.createQName(propQname, namespaceService));
+				replacement = (String) nodeService.getProperty(nodeRef, QName.createQName(propQname, namespaceService));
 			}
 
 			patternMatcher.appendReplacement(sb, replacement != null ? replacement : "");
@@ -92,9 +90,16 @@ public class ProductAttributeExtractorPlugin implements AttributeExtractorPlugin
 
 	@Override
 	public String extractMetadata(QName type, NodeRef nodeRef) {
+		String ret = type.toPrefixString(namespaceService).split(":")[1] + "-" + nodeService.getProperty(nodeRef, PLMModel.PROP_PRODUCT_STATE);
+		if (nodeService.hasAspect(nodeRef, PLMModel.ASPECT_NUTRIENT_PROFILING_SCORE)) {
+			String nutClass = (String) nodeService.getProperty(nodeRef, PLMModel.PROP_NUTRIENT_PROFILING_CLASS);
+			if (nutClass != null && nutClass.length() > 0) {
+				ret += " nutrientClass-" + nutClass;
+			}
+		}
+
 		// TODO task state
-		return type.toPrefixString(namespaceService).split(":")[1] + "-"
-				+ nodeService.getProperty(nodeRef, PLMModel.PROP_PRODUCT_STATE);
+		return ret;
 	}
 
 }

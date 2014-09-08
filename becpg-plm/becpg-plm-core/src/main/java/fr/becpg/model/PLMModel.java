@@ -307,5 +307,13 @@ public interface PLMModel {
 	//Compare
 	QName ASPECT_COMPARE_WITH_DYN_COLUMN = QName.createQName(BeCPGModel.BECPG_URI, "compareWithDynColumnAspect");
 	QName PROP_COMPARE_WITH_DYN_COLUMN =  QName.createQName(BeCPGModel.BECPG_URI, "compareWithDynColumn");
+
+	//
+	QName ASPECT_NUTRIENT_PROFILING_SCORE = QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfilingScoreAspect");
+	QName PROP_NUTRIENT_PROFILING_SCORE =  QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfilingScore");
+	QName PROP_NUTRIENT_PROFILING_CLASS =  QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfilingClass");
+	
+
+	
 	
 }

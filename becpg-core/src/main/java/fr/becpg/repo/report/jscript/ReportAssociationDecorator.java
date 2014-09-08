@@ -72,7 +72,7 @@ public class ReportAssociationDecorator extends fr.becpg.repo.jscript.app.BaseAs
 
 						jsonObj.put("name", name);
 						NodeRef reportTemplateNodeRef = reportTplService.getAssociatedReportTemplate(obj);
-						if (reportTemplateNodeRef != null) {
+						if (reportTemplateNodeRef != null  && permissionService.hasPermission(reportTemplateNodeRef, "Read") == AccessStatus.ALLOWED ) {
 							String templateName = (String) this.nodeService.getProperty(reportTemplateNodeRef, ContentModel.PROP_NAME);
 							if (templateName.endsWith(RepoConsts.REPORT_EXTENSION_BIRT)) {
 								templateName = templateName.replace("." + RepoConsts.REPORT_EXTENSION_BIRT, "");
