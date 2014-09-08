@@ -22,6 +22,7 @@ import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.alfresco.service.namespace.QName;
 import org.apache.axis.utils.IDKey;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
@@ -30,6 +31,7 @@ import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
+import fr.becpg.repo.repository.model.AspectAwareDataItem;
 
 /**
  * <p>
@@ -198,6 +200,15 @@ public class BeCPGHashCodeBuilder {
 				}
 				
 				builder.append(object.getNodeRef());
+				
+				if (object instanceof AspectAwareDataItem) {
+					if (((AspectAwareDataItem) object).getAspects() != null) {
+						for (QName aspect : ((AspectAwareDataItem) object).getAspects()) {
+							builder.append(aspect);
+						}
+					}
+				}
+				
 			
 		} finally {
 			unregister(object);
