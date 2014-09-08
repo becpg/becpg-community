@@ -19,6 +19,7 @@ package fr.becpg.repo.product.formulation;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -55,6 +56,7 @@ import fr.becpg.repo.product.data.productList.RequirementType;
 import fr.becpg.repo.product.data.spel.FormulaFormulationContext;
 import fr.becpg.repo.product.data.spel.SpelHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 import fr.becpg.repo.security.BeCPGAccessDeniedException;
 import fr.becpg.repo.security.aop.SecurityMethodBeforeAdvice;
 
@@ -177,6 +179,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 		public Serializable propValue(NodeRef nodeRef, String qname) {
 			return nodeService.getProperty(nodeRef, QName.createQName(qname, namespaceService));
 		}
+		
 	}
 
 	/**

@@ -4,6 +4,32 @@
 	padding-left: 20px;
 }
 
+
+.datagrid span.nutrientClass-A:hover {
+	background: url("../../components/images/states/nutrient-class-A-16.png")
+		no-repeat;
+}
+
+.datagrid span.nutrientClass-B:hover {
+	background: url("../../components/images/states/nutrient-class-B-16.png")
+		no-repeat;
+}
+
+.datagrid span.nutrientClass-C:hover {
+	background: url("../../components/images/states/nutrient-class-C-16.png")
+		no-repeat;
+}
+
+.datagrid span.nutrientClass-D:hover {
+	background: url("../../components/images/states/nutrient-class-D-16.png")
+		no-repeat;
+}
+
+.datagrid span.nutrientClass-E:hover {
+	background: url("../../components/images/states/nutrient-class-E-16.png")
+		no-repeat;
+}
+
 .datagrid span.finishedProduct-Valid {
 	background: url("../../components/images/states/valid-10.png"),
 		url("../../components/images/filetypes/generic-finishedProduct-16.png");
