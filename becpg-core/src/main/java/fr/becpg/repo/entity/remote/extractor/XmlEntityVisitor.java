@@ -197,7 +197,11 @@ public class XmlEntityVisitor {
 		xmlw.writeAttribute(RemoteEntityService.ATTR_NODEREF, nodeRef.toString());
 
 		if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_CODE)) {
-			xmlw.writeAttribute(RemoteEntityService.ATTR_CODE, (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE));
+			if(nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE)!=null){
+				xmlw.writeAttribute(RemoteEntityService.ATTR_CODE, (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE));
+			} else {
+				logger.warn("Node : "+nodeRef+ " has null becpg code");
+			}
 		}
 
 		// Assoc first
@@ -245,7 +249,11 @@ public class XmlEntityVisitor {
 		Map<QName, AssociationDefinition> assocs = new HashMap<QName, AssociationDefinition>(dictionaryService.getType(nodeService.getType(nodeRef))
 				.getAssociations());
 		for (QName aspect : nodeService.getAspects(nodeRef)) {
-			assocs.putAll(dictionaryService.getAspect(aspect).getAssociations());
+			if(dictionaryService.getAspect(aspect)!=null){
+				assocs.putAll(dictionaryService.getAspect(aspect).getAssociations());
+			} else {
+				logger.warn("No definition for :"+aspect);
+			}
 		}
 		// First childs
 		for (Map.Entry<QName, AssociationDefinition> entry : assocs.entrySet()) {
