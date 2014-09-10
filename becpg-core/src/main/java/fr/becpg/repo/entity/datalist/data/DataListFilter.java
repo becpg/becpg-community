@@ -91,6 +91,14 @@ public class DataListFilter {
 	public List<NodeRef> getEntityNodeRefs() {
 		return entityNodeRefs;
 	}
+	
+	public NodeRef getEntityNodeRef() {
+		if(entityNodeRefs!=null && ! entityNodeRefs.isEmpty()){
+			return entityNodeRefs.get(0);
+		}
+		return null;
+	}
+
 
 	public String getFilterId() {
 		return filterId;
@@ -472,6 +480,8 @@ public class DataListFilter {
 		return true;
 	}
 
+
+	
 	
 
 

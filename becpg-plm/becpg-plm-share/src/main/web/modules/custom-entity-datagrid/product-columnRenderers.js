@@ -174,6 +174,37 @@ if (beCPG.module.EntityDataGridRenderers) {
 		}
 
 	});
+	
+	
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName : "bcpg:nut",
+        renderer : function(oRecord, data, label, scope) {
+            
+            var title = Alfresco.util.encodeHTML(data.metadata);
+            var cssClass = data.metadata;
+            var isFormulated = oRecord.getData("itemData")["prop_bcpg_nutListIsFormulated"].value;
+            if (isFormulated) {
+                var error = oRecord.getData("itemData")["prop_bcpg_nutListFormulaErrorLog"].value;
+                if (error == null) {
+                    cssClass= "lcl-formulated";
+                } else {
+                    cssClass= "lcl-formulated-error";
+                    title = Alfresco.util.encodeHTML(error);
+                }
+            }
+            
+            if (oRecord.getData("itemData")["prop_bcpg_depthLevel"] != null) {
+                var padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 15;
+                return '<span class="' + cssClass + '" style="margin-left:' + padding + 'px;" title="'+title+'">' 
+                + Alfresco.util.encodeHTML(data.displayValue)
+                        + '</span>';
+            }
+
+            return '<span class="' + cssClass + '" title="'+title+'">' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+        }
+
+    });
+	
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : "bcpg:dynamicCharactValue",
@@ -411,11 +442,11 @@ if (beCPG.module.EntityDataGridRenderers) {
 				"bcpg:dynamicCharactColumn9", "bcpg:dynamicCharactColumn10" ],
 		renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
 			if (data.value != null) {
-				if (oColumn.hidden) {
-					scope.widgets.dataTable.showColumn(oColumn);
-					Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
-				}
-
+				
+			    if(oRecord.getData("itemData")["isMultiLevel"]){
+			        return "";
+			    } 
+			    
 				if (data.value.indexOf && data.value.indexOf("\"comp\":") > -1) {
 					var json = JSON.parse(data.value);
 					if (json) {

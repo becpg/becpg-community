@@ -2646,6 +2646,11 @@
                                 var oColumn = this.widgets.dataTable.getColumn(obj.columnId);
                                 if (oColumn)
                                 {
+                                    if (oColumn.hidden  ) {
+                                        this.widgets.dataTable.showColumn(oColumn);
+                                       // Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
+                                    }
+                                    
                                     oColumn.label = obj.label;
                                     this.widgets.dataTable.formatTheadCell(oColumn._elThLabel, oColumn,
                                             this.widgets.dataTable.get("sortedBy"));
