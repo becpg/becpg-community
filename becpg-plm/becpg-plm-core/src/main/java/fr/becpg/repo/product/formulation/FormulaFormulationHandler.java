@@ -19,7 +19,6 @@ package fr.becpg.repo.product.formulation;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -51,12 +50,12 @@ import fr.becpg.repo.product.data.productList.CompositionDataItem;
 import fr.becpg.repo.product.data.productList.DynamicCharactExecOrder;
 import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
+import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.productList.RequirementType;
 import fr.becpg.repo.product.data.spel.FormulaFormulationContext;
 import fr.becpg.repo.product.data.spel.SpelHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
-import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 import fr.becpg.repo.security.BeCPGAccessDeniedException;
 import fr.becpg.repo.security.aop.SecurityMethodBeforeAdvice;
 
@@ -121,11 +120,77 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 		if (DynamicCharactExecOrder.Post.equals(execOrder)) {
 			computeClaimList(productData, parser, context);
+			computeNutList(productData, parser, context);
 		}
 
 		return true;
 	}
 
+	private void computeNutList(ProductData productData, ExpressionParser parser, StandardEvaluationContext context) {
+		// ClaimLabel list
+		if (productData.getNutList() != null) {
+			for (NutListDataItem nutListDataItem : productData.getNutList()) {
+				nutListDataItem.setIsFormulated(false);
+				nutListDataItem.setErrorLog(null);
+				if ((nutListDataItem.getIsManual() == null || !nutListDataItem.getIsManual())
+						&& nutListDataItem.getNut() != null) {
+					
+					String formula = (String) nodeService.getProperty(nutListDataItem.getNut(), PLMModel.PROP_NUT_FORMULA);
+					if (formula != null && formula.length() > 0) {
+						try {
+							nutListDataItem.setIsFormulated(true);
+							nutListDataItem.setMaxi(null);
+							nutListDataItem.setMini(null);
+							nutListDataItem.setValue(null);
+							formula = SpelHelper.formatFormula(formula);
+							
+							Expression exp = parser.parseExpression(formula);
+							Object ret = exp.getValue(context);
+							if (ret instanceof Double) {
+								nutListDataItem.setValue((Double) ret);
+								
+								if(formula.contains(".value")){
+									try {
+										exp = parser.parseExpression(formula.replace(".value", ".mini"));
+										nutListDataItem.setMini((Double)exp.getValue(context));
+										exp = parser.parseExpression(formula.replace(".value", ".maxi"));
+										nutListDataItem.setMaxi((Double)exp.getValue(context));
+									} catch(Exception e){
+										if (logger.isDebugEnabled()) {
+											logger.debug("Error in formula :" +formula, e);
+										}
+									}
+								}
+								
+								
+							} else {
+								nutListDataItem.setErrorLog(I18NUtil.getMessage("message.formulate.formula.incorrect.type.double",
+										Locale.getDefault()));
+							}
+
+						} catch (Exception e) {
+							nutListDataItem.setErrorLog(e.getLocalizedMessage());
+							if (logger.isDebugEnabled()) {
+								logger.debug("Error in formula :" + SpelHelper.formatFormula(formula), e);
+							}
+						}
+					}
+				}
+
+				if (nutListDataItem.getErrorLog() != null) {
+
+					String message = I18NUtil.getMessage("message.formulate.nutList.error", Locale.getDefault(),
+							nodeService.getProperty(nutListDataItem.getNut(), ContentModel.PROP_NAME),
+							nutListDataItem.getErrorLog());
+					productData.getCompoListView().getReqCtrlList()
+							.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, new ArrayList<NodeRef>()));
+				}
+
+			}
+		}
+
+	}
+	
 	private void computeClaimList(ProductData productData, ExpressionParser parser, StandardEvaluationContext context) {
 		// ClaimLabel list
 		if (productData.getLabelClaimList() != null) {
@@ -151,7 +216,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 						} catch (Exception e) {
 							labelClaimListDataItem.setErrorLog(e.getLocalizedMessage());
 							if (logger.isDebugEnabled()) {
-								logger.info("Error in formula :" + SpelHelper.formatFormula(formula), e);
+								logger.debug("Error in formula :" + SpelHelper.formatFormula(formula), e);
 							}
 						}
 					}
@@ -257,6 +322,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 						}
 					}
 				} else {
+					
 					if (dynamicCharactListItem.getColumnName() != null && !dynamicCharactListItem.getColumnName().isEmpty()) {
 						QName columnName = QName.createQName(dynamicCharactListItem.getColumnName().replaceFirst("_", ":"), namespaceService);
 						if (nullDynColumnNames.contains(columnName)) {
@@ -264,12 +330,13 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 						}
 					}
 				}
-
-				// remove null columns
-				for (QName nullDynColumnName : nullDynColumnNames) {
-					for (CompositionDataItem dataListItem : view.getMainDataList()) {
-						dataListItem.getExtraProperties().put(nullDynColumnName, null);
-					}
+				
+			}
+			
+			// remove null columns
+			for (QName nullDynColumnName : nullDynColumnNames) {
+				for (CompositionDataItem dataListItem : view.getMainDataList()) {
+					dataListItem.getExtraProperties().put(nullDynColumnName, null);
 				}
 			}
 		}

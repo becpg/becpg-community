@@ -40,6 +40,9 @@ public class NutListDataItem extends AbstractManualDataItem  implements SimpleLi
 	
 	private NodeRef nut;
 	
+	private Boolean isFormulated;
+	
+	private String errorLog;
 			
 		
 	@AlfProp
@@ -155,6 +158,30 @@ public class NutListDataItem extends AbstractManualDataItem  implements SimpleLi
 	}	
 
 	
+	
+	@AlfProp
+	@AlfQname(qname="bcpg:nutListIsFormulated")
+	public Boolean getIsFormulated() {
+		return isFormulated;
+	}
+
+
+	public void setIsFormulated(Boolean isFormulated) {
+		this.isFormulated = isFormulated;
+	}
+
+	@AlfProp
+	@AlfQname(qname="bcpg:nutListFormulaErrorLog")
+	public String getErrorLog() {
+		return errorLog;
+	}
+
+
+	public void setErrorLog(String errorLog) {
+		this.errorLog = errorLog;
+	}
+
+
 	/**
 	 * Instantiates a new nut list data item.
 	 */

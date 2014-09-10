@@ -195,6 +195,7 @@ public interface PLMModel {
 	QName PROP_NUTTYPE = QName.createQName(BeCPGModel.BECPG_URI, "nutType");
 	QName PROP_NUTUNIT = QName.createQName(BeCPGModel.BECPG_URI, "nutUnit");
 	QName PROP_NUTGDA = QName.createQName(BeCPGModel.BECPG_URI, "nutGDA");
+	QName PROP_NUT_FORMULA = QName.createQName(BeCPGModel.BECPG_URI, "nutFormula");
 
 	// organo
 	QName TYPE_ORGANO = QName.createQName(BeCPGModel.BECPG_URI, "organo");
@@ -312,6 +313,7 @@ public interface PLMModel {
 	QName ASPECT_NUTRIENT_PROFILING_SCORE = QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfilingScoreAspect");
 	QName PROP_NUTRIENT_PROFILING_SCORE =  QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfilingScore");
 	QName PROP_NUTRIENT_PROFILING_CLASS =  QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfilingClass");
+	
 	
 
 	
