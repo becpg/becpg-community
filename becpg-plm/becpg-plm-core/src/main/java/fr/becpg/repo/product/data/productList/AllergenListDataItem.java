@@ -20,13 +20,29 @@ import fr.becpg.repo.repository.annotation.AlfType;
 @AlfQname(qname = "bcpg:allergenList")
 public class AllergenListDataItem extends AbstractManualVariantListDataItem {
 
-	
+	private Double qty;
 	private Boolean voluntary = false;
 	private Boolean inVoluntary = false;
 	private List<NodeRef> voluntarySources = new ArrayList<NodeRef>();
 	private List<NodeRef> inVoluntarySources = new ArrayList<NodeRef>();
 	private NodeRef allergen;
 	
+	
+	
+	@AlfProp
+	@AlfQname(qname="bcpg:allergenListQtyPerc")
+	public Double getQty() {
+		return qty;
+	}
+
+
+
+	public void setQty(Double qty) {
+		this.qty = qty;
+	}
+
+
+
 	@AlfProp
 	@AlfQname(qname="bcpg:allergenListVoluntary")
 	@AlfEnforced
@@ -114,6 +130,7 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem {
 		result = prime * result + ((allergen == null) ? 0 : allergen.hashCode());
 		result = prime * result + ((inVoluntary == null) ? 0 : inVoluntary.hashCode());
 		result = prime * result + ((inVoluntarySources == null) ? 0 : inVoluntarySources.hashCode());
+		result = prime * result + ((qty == null) ? 0 : qty.hashCode());
 		result = prime * result + ((voluntary == null) ? 0 : voluntary.hashCode());
 		result = prime * result + ((voluntarySources == null) ? 0 : voluntarySources.hashCode());
 		return result;
@@ -142,6 +159,11 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem {
 			if (other.inVoluntarySources != null)
 				return false;
 		} else if (!inVoluntarySources.equals(other.inVoluntarySources))
+			return false;
+		if (qty == null) {
+			if (other.qty != null)
+				return false;
+		} else if (!qty.equals(other.qty))
 			return false;
 		if (voluntary == null) {
 			if (other.voluntary != null)

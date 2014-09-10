@@ -40,7 +40,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 	private static Log logger = LogFactory.getLog(AllergensCalculatingFormulationHandler.class);
 
 	protected AlfrescoRepository<AllergenListDataItem> alfrescoRepository;
-	
+
 	protected NodeService nodeService;
 
 	public void setAlfrescoRepository(AlfrescoRepository<AllergenListDataItem> alfrescoRepository) {
@@ -61,19 +61,17 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 			logger.debug("no compo => no formulation");
 			return true;
 		}
-		
 
 		Set<NodeRef> visitedProducts = new HashSet<NodeRef>();
 		List<AllergenListDataItem> retainNodes = new ArrayList<AllergenListDataItem>();
-				
-		if(formulatedProduct.getAllergenList()!=null){
-			for(AllergenListDataItem a : formulatedProduct.getAllergenList()){
-				if(a.getIsManual()!= null && a.getIsManual()){
-					//manuel
+
+		if (formulatedProduct.getAllergenList() != null) {
+			for (AllergenListDataItem a : formulatedProduct.getAllergenList()) {
+				if (a.getIsManual() != null && a.getIsManual()) {
+					// manuel
 					retainNodes.add(a);
-				}
-				else{
-					//reset
+				} else {
+					// reset
 					a.setVoluntary(false);
 					a.setInVoluntary(false);
 					a.getVoluntarySources().clear();
@@ -83,9 +81,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 		} else {
 			formulatedProduct.setAllergenList(new LinkedList<AllergenListDataItem>());
 		}
-		
-		
-		
+
 		// compoList
 		for (CompoListDataItem compoItem : formulatedProduct.getCompoList(EffectiveFilters.EFFECTIVE)) {
 
@@ -96,8 +92,6 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 			}
 		}
 
-		
-		
 		// process
 		if (formulatedProduct.hasProcessListEl(EffectiveFilters.EFFECTIVE)) {
 			for (ProcessListDataItem processItem : formulatedProduct.getProcessList(EffectiveFilters.EFFECTIVE)) {
@@ -111,14 +105,12 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 				}
 			}
 		}
-		
-		
+
 		formulatedProduct.getAllergenList().retainAll(retainNodes);
-		
-		
-		//sort
+
+		// sort
 		sort(formulatedProduct.getAllergenList());
-		
+
 		return true;
 	}
 
@@ -130,19 +122,18 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 	 * @param allergenMap
 	 *            the allergen map
 	 */
-	private void visitPart(VariantDataItem variantDataItem, NodeRef part, List<AllergenListDataItem> allergenList, List<AllergenListDataItem> retainNodes) {
+	private void visitPart(VariantDataItem variantDataItem, NodeRef part, List<AllergenListDataItem> allergenList,
+			List<AllergenListDataItem> retainNodes) {
 
-	
-		List<AllergenListDataItem> allergenListDataItems = alfrescoRepository.loadDataList(part, PLMModel.TYPE_ALLERGENLIST, PLMModel.TYPE_ALLERGENLIST);
+		List<AllergenListDataItem> allergenListDataItems = alfrescoRepository.loadDataList(part, PLMModel.TYPE_ALLERGENLIST,
+				PLMModel.TYPE_ALLERGENLIST);
 
-		
 		for (AllergenListDataItem allergenListDataItem : allergenListDataItems) {
-			
-			
+
 			// Look for alllergen
 			NodeRef allergenNodeRef = allergenListDataItem.getAllergen();
 			if (allergenNodeRef != null) {
-				
+
 				AllergenListDataItem newAllergenListDataItem = findAllergenListDataItem(allergenList, allergenNodeRef);
 
 				if (newAllergenListDataItem == null) {
@@ -151,13 +142,13 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 					allergenList.add(newAllergenListDataItem);
 				}
 
-				if(!retainNodes.contains(newAllergenListDataItem)){
-					//Reset existing variants
+				if (!retainNodes.contains(newAllergenListDataItem)) {
+					// Reset existing variants
 					newAllergenListDataItem.setVariants(null);
 					retainNodes.add(newAllergenListDataItem);
-				}				
+				}
 
-				if(newAllergenListDataItem.getIsManual() == null || !newAllergenListDataItem.getIsManual()){
+				if (newAllergenListDataItem.getIsManual() == null || !newAllergenListDataItem.getIsManual()) {
 					// Define voluntary presence
 					if (allergenListDataItem.getVoluntary()) {
 						newAllergenListDataItem.setVoluntary(true);
@@ -199,92 +190,88 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 							}
 						}
 					}
-					
-					
-					//Add variants if it adds an allergen
-					if(variantDataItem.getVariants()!=null && (allergenListDataItem.getVoluntary() || allergenListDataItem.getInVoluntary())){
-						if(newAllergenListDataItem.getVariants()==null){
+
+					// Add variants if it adds an allergen
+					if (variantDataItem.getVariants() != null && (allergenListDataItem.getVoluntary() || allergenListDataItem.getInVoluntary())) {
+						if (newAllergenListDataItem.getVariants() == null) {
 							newAllergenListDataItem.setVariants(new ArrayList<NodeRef>());
 						}
-						
-						for(NodeRef variant : variantDataItem.getVariants()){
-							if(!newAllergenListDataItem.getVariants().contains(variant)){
+
+						for (NodeRef variant : variantDataItem.getVariants()) {
+							if (!newAllergenListDataItem.getVariants().contains(variant)) {
 								newAllergenListDataItem.getVariants().add(variant);
 							}
-						}						
+						}
 					}
-				}				
+				}
 			}
 		}
 	}
-	
-	private AllergenListDataItem findAllergenListDataItem(List<AllergenListDataItem> allergenList, NodeRef allergenNodeRef){
-		if(allergenNodeRef != null && allergenList!=null){
-			for(AllergenListDataItem a : allergenList){
-				if(allergenNodeRef.equals(a.getAllergen())){
+
+	private AllergenListDataItem findAllergenListDataItem(List<AllergenListDataItem> allergenList, NodeRef allergenNodeRef) {
+		if (allergenNodeRef != null && allergenList != null) {
+			for (AllergenListDataItem a : allergenList) {
+				if (allergenNodeRef.equals(a.getAllergen())) {
 					return a;
 				}
 			}
 		}
-		return null;		
+		return null;
 	}
-	
+
 	/**
 	 * Sort allergens by type and name.
 	 *
-	 * @param costList the cost list
+	 * @param costList
+	 *            the cost list
 	 * @return the list
 	 */
-	protected void sort(List<AllergenListDataItem> allergenList){
-			
-		Collections.sort(allergenList, new Comparator<AllergenListDataItem>(){
-			
-			final int BEFORE = -1;
-    	    final int EQUAL = 0;
-    	    final int AFTER = 1;	
-        	
-            @Override
-			public int compare(AllergenListDataItem a1, AllergenListDataItem a2){
-            	
-            	int comp = EQUAL;
-            	String type1 = (String)nodeService.getProperty(a1.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE);
-            	String type2 = (String)nodeService.getProperty(a2.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE);
-            	
-            	if(type1 == null){
-            		logger.warn("AllergenType is null for " + a1.getAllergen());            		
-            	}
-            	else if(type2 == null){
-            		logger.warn("AllergenType is null for " + a2.getAllergen());            		
-            	}
-            	else{
-            		
-            		comp = type1.compareTo(type2);
-            		
-            		if(EQUAL == comp){
-            			
-            			String allergenName1 = (String)nodeService.getProperty(a1.getAllergen(), ContentModel.PROP_NAME);
-                    	String allergenName2 = (String)nodeService.getProperty(a2.getAllergen(), ContentModel.PROP_NAME);
-                    	
-                    	comp = allergenName1.compareTo(allergenName2);  
-            		}
-            		else{
-            			
-            			if(AllergenType.Major.toString().equals(type1)){
-            				comp = BEFORE;
-            			}
-            			else{
-            				comp = AFTER;
-            			}
-            		}
-            	}            	
-            	
-            	return comp;
-            }
+	protected void sort(List<AllergenListDataItem> allergenList) {
 
-        });  
-		
-		int i=1;
-		for(AllergenListDataItem al : allergenList){
+		Collections.sort(allergenList, new Comparator<AllergenListDataItem>() {
+
+			final int BEFORE = -1;
+			final int EQUAL = 0;
+			final int AFTER = 1;
+
+			@Override
+			public int compare(AllergenListDataItem a1, AllergenListDataItem a2) {
+
+				int comp = EQUAL;
+				String type1 = (String) nodeService.getProperty(a1.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE);
+				String type2 = (String) nodeService.getProperty(a2.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE);
+
+				if (type1 == null) {
+					logger.warn("AllergenType is null for " + a1.getAllergen());
+				} else if (type2 == null) {
+					logger.warn("AllergenType is null for " + a2.getAllergen());
+				} else {
+
+					comp = type1.compareTo(type2);
+
+					if (EQUAL == comp) {
+
+						String allergenName1 = (String) nodeService.getProperty(a1.getAllergen(), ContentModel.PROP_NAME);
+						String allergenName2 = (String) nodeService.getProperty(a2.getAllergen(), ContentModel.PROP_NAME);
+
+						comp = allergenName1.compareTo(allergenName2);
+					} else {
+
+						if (AllergenType.Major.toString().equals(type1)) {
+							comp = BEFORE;
+						} else {
+							comp = AFTER;
+						}
+					}
+				}
+
+				return comp;
+			}
+
+		});
+
+		int i = 1;
+		for (AllergenListDataItem al : allergenList) {
 			al.setSort(i);
 			i++;
 		}

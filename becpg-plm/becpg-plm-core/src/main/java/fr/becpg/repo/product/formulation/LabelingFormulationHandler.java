@@ -712,9 +712,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 			Double computedRatio = 1d;
 			if(DeclarationType.Declare.equals(declarationType) && isMultiLevel && qty!=null){
-				computedRatio =  qty /  computeQtyRMUsed(composite,labelingFormulaContext);
+				Double qtyRmUsed = computeQtyRMUsed(composite,labelingFormulaContext);
+				if(qtyRmUsed!=null){
+					computedRatio =  qty /  qtyRmUsed;
+				}
 				if(logger.isTraceEnabled()){
-					logger.trace("Declare ratio for :"+productData.getName()+ " "+ computedRatio+ " rMUsed:" + computeQtyRMUsed(composite,labelingFormulaContext)+" qty:"+qty);
+					logger.trace("Declare ratio for :"+productData.getName()+ " "+ computedRatio+ " rMUsed:" + qtyRmUsed+" qty:"+qty);
 				}
 				
 			}
@@ -755,8 +758,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					qty *= FormulationHelper.getYield(compoListDataItem) / 100;
 				}
 				
-				
-				qtyRMUsed+=qty;
+				if(qtyRMUsed!=null && qty!=null){
+					qtyRMUsed+=qty;
+				} else {
+					qtyRMUsed = null;
+				}
 			}
 
 		}

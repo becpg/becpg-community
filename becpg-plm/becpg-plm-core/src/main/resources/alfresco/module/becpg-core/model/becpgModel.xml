@@ -711,6 +711,10 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
+				<property name="bcpg:nutFormula">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
 			</properties>
 		</type>
 
@@ -1007,6 +1011,11 @@
 		<type name="bcpg:allergenList">
 			<parent>bcpg:productListItem</parent>
 			<properties>
+				<property name="bcpg:allergenListQtyPerc">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 				<property name="bcpg:allergenListVoluntary">
 					<type>d:boolean</type>
 					<mandatory enforced="true">true</mandatory>
@@ -1247,6 +1256,16 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
+				<property name="bcpg:ingListQtyMini">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:ingListQtyMaxi">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 				<property name="bcpg:ingListVolumeQtyPerc"> 
 					<type>d:double</type>
 					<mandatory>false</mandatory>
@@ -1414,6 +1433,14 @@
 					<constraints>
 						<constraint ref="bcpg:nutListMethods" />
 					</constraints>
+				</property>
+				<property name="bcpg:nutListIsFormulated">
+					<type>d:boolean</type>
+					<default>false</default>
+				</property>
+				<property name="bcpg:nutListFormulaErrorLog">
+					<type>d:text</type>
+					<index enabled="false" />
 				</property>
 			</properties>
 			<associations>
@@ -1749,6 +1776,7 @@
 				</property>
 				<property name="bcpg:dynamicCharactSynchronisableState">
 					<type>d:text</type>
+					<default>Manual</default>
 					<constraints>
 						<constraint ref="bcpg:dynamicCharactSynchronisableStates" />
 					</constraints>

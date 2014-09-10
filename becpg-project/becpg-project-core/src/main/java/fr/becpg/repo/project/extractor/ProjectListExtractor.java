@@ -163,7 +163,7 @@ public class ProjectListExtractor extends SimpleExtractor {
 		BeCPGQueryBuilder beCPGQueryBuilder = dataListFilter.getSearchQuery();
 
 		if (VIEW_ENTITY_PROJECTS.equals(dataListFilter.getFilterId())) {
-			results = associationService.getSourcesAssocs(dataListFilter.getEntityNodeRefs().get(0), ProjectModel.ASSOC_PROJECT_ENTITY);
+			results = associationService.getSourcesAssocs(dataListFilter.getEntityNodeRef(), ProjectModel.ASSOC_PROJECT_ENTITY);
 		} else {
 
 			if (dataListFilter.isSimpleItem()) {
