@@ -77,7 +77,7 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 			watch.start();
 		}
 		try {
-			return getMultiLevelListData(dataListFilter, dataListFilter.getEntityNodeRefs().get(0), 0, dataListFilter.getMaxDepth());
+			return getMultiLevelListData(dataListFilter, dataListFilter.getEntityNodeRef(), 0, dataListFilter.getMaxDepth());
 		} finally {
 			if (logger.isDebugEnabled()) {
 				watch.stop();

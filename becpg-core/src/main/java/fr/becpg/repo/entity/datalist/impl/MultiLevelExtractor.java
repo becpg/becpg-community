@@ -44,6 +44,8 @@ public class MultiLevelExtractor extends SimpleExtractor {
 	public static final String PROP_ENTITYNODEREF = "entityNodeRef";
 
 	public static final String PROP_REVERSE_ASSOC = "reverseAssoc";
+	
+	public static final String PROP_ROOT_ENTITYNODEREF = "rootEntityNodeRef";
 
 	MultiLevelDataListService multiLevelDataListService;
 
@@ -67,6 +69,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 
 		Map<String, Object> props = new HashMap<String, Object>();
 		props.put(PROP_ACCESSRIGHT, true); //TODO
+		props.put(PROP_ROOT_ENTITYNODEREF, dataListFilter.getEntityNodeRef());
 
 		appendNextLevel(ret, metadataFields, listData, 0, startIndex, pageSize, props, dataListFilter.getFormat());
 
@@ -122,6 +125,12 @@ public class MultiLevelExtractor extends SimpleExtractor {
 				depth.put("displayValue", value);
 
 				tmp.put("prop_bcpg_depthLevel", depth);
+			}
+			
+			if(extraProps.get(PROP_ROOT_ENTITYNODEREF)!=null){
+				if(!extraProps.get(PROP_ROOT_ENTITYNODEREF).equals(entityListDAO.getEntity(nodeRef))){
+					tmp.put("isMultiLevel",true); 
+				}				
 			}
 
 			if (extraProps.get(PROP_ENTITYNODEREF) != null && extraProps.get(PROP_REVERSE_ASSOC) != null) {
