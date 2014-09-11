@@ -119,6 +119,25 @@
 			<column id="labelClaimFormula" type="Formula" attribute="bcpg:labelClaimFormula" />
 		</columns>
 	</mapping>
+	
+	<mapping name="bcpg:nut">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="cm:name" />
+		</nodeColumnKeys>
+		<columns>
+			<column id="nutFormula" type="Formula" attribute="bcpg:nutFormula" />
+		</columns>
+	</mapping>
+	
+	<mapping name="bcpg:nutrientProfile">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="cm:name" />
+		</nodeColumnKeys>
+		<columns>
+			<column id="nutrientProfileScoreFormula" type="Formula" attribute="bcpg:nutrientProfileScoreFormula" />
+			<column id="nutrientProfileClassFormula" type="Formula" attribute="bcpg:nutrientProfileClassFormula" />
+		</columns>
+	</mapping>
 
 	<mapping name="bcpg:dynamicCharactList">
 		<nodeColumnKeys>

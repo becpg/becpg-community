@@ -121,20 +121,54 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 		if (DynamicCharactExecOrder.Post.equals(execOrder)) {
 			computeClaimList(productData, parser, context);
 			computeNutList(productData, parser, context);
+			computeNutrientProfile(productData, parser, context);
 		}
 
 		return true;
 	}
 
+	private void computeNutrientProfile(ProductData productData, ExpressionParser parser, StandardEvaluationContext context) {
+		if (productData.getNutrientProfile() != null) {
+			String scoreformula = (String) nodeService.getProperty(productData.getNutrientProfile(), PLMModel.PROP_NUTRIENT_PROFILE_SCORE_FORMULA);
+			if (scoreformula != null && scoreformula.length() > 0) {
+				try {
+					productData.setNutrientScore(null);
+					productData.setNutrientClass(null);
+					Expression exp = parser.parseExpression(SpelHelper.formatFormula(scoreformula));
+					Object ret = exp.getValue(context);
+					if (ret instanceof Number) {
+						productData.setNutrientScore(Double.valueOf(ret.toString()));
+						String classformula = (String) nodeService.getProperty(productData.getNutrientProfile(), PLMModel.PROP_NUTRIENT_PROFILE_CLASS_FORMULA);
+						if (classformula != null && classformula.length() > 0) {
+							exp = parser.parseExpression(SpelHelper.formatFormula(classformula));
+							productData.setNutrientClass((String) exp.getValue(context));
+						}
+					} else {
+						productData.setNutrientClass(I18NUtil.getMessage("message.formulate.formula.incorrect.nutrientProfile",
+										I18NUtil.getMessage("message.formulate.formula.incorrect.type.double", Locale.getDefault()),
+										Locale.getDefault()));
+					}
+				} catch (Exception e) {
+					productData.setNutrientClass(
+							I18NUtil.getMessage("message.formulate.formula.incorrect.nutrientProfile", e.getLocalizedMessage(), Locale.getDefault()));
+					if (logger.isDebugEnabled()) {
+						logger.debug("Error in formula :" + SpelHelper.formatFormula(scoreformula), e);
+					}
+				}
+			}
+			
+
+		}
+
+	}
+
 	private void computeNutList(ProductData productData, ExpressionParser parser, StandardEvaluationContext context) {
-		// ClaimLabel list
 		if (productData.getNutList() != null) {
 			for (NutListDataItem nutListDataItem : productData.getNutList()) {
 				nutListDataItem.setIsFormulated(false);
 				nutListDataItem.setErrorLog(null);
-				if ((nutListDataItem.getIsManual() == null || !nutListDataItem.getIsManual())
-						&& nutListDataItem.getNut() != null) {
-					
+				if ((nutListDataItem.getIsManual() == null || !nutListDataItem.getIsManual()) && nutListDataItem.getNut() != null) {
+
 					String formula = (String) nodeService.getProperty(nutListDataItem.getNut(), PLMModel.PROP_NUT_FORMULA);
 					if (formula != null && formula.length() > 0) {
 						try {
@@ -143,26 +177,25 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 							nutListDataItem.setMini(null);
 							nutListDataItem.setValue(null);
 							formula = SpelHelper.formatFormula(formula);
-							
+
 							Expression exp = parser.parseExpression(formula);
 							Object ret = exp.getValue(context);
 							if (ret instanceof Double) {
 								nutListDataItem.setValue((Double) ret);
-								
-								if(formula.contains(".value")){
+
+								if (formula.contains(".value")) {
 									try {
 										exp = parser.parseExpression(formula.replace(".value", ".mini"));
-										nutListDataItem.setMini((Double)exp.getValue(context));
+										nutListDataItem.setMini((Double) exp.getValue(context));
 										exp = parser.parseExpression(formula.replace(".value", ".maxi"));
-										nutListDataItem.setMaxi((Double)exp.getValue(context));
-									} catch(Exception e){
+										nutListDataItem.setMaxi((Double) exp.getValue(context));
+									} catch (Exception e) {
 										if (logger.isDebugEnabled()) {
-											logger.debug("Error in formula :" +formula, e);
+											logger.debug("Error in formula :" + formula, e);
 										}
 									}
 								}
-								
-								
+
 							} else {
 								nutListDataItem.setErrorLog(I18NUtil.getMessage("message.formulate.formula.incorrect.type.double",
 										Locale.getDefault()));
@@ -180,8 +213,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 				if (nutListDataItem.getErrorLog() != null) {
 
 					String message = I18NUtil.getMessage("message.formulate.nutList.error", Locale.getDefault(),
-							nodeService.getProperty(nutListDataItem.getNut(), ContentModel.PROP_NAME),
-							nutListDataItem.getErrorLog());
+							nodeService.getProperty(nutListDataItem.getNut(), ContentModel.PROP_NAME), nutListDataItem.getErrorLog());
 					productData.getCompoListView().getReqCtrlList()
 							.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, new ArrayList<NodeRef>()));
 				}
@@ -190,7 +222,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 		}
 
 	}
-	
+
 	private void computeClaimList(ProductData productData, ExpressionParser parser, StandardEvaluationContext context) {
 		// ClaimLabel list
 		if (productData.getLabelClaimList() != null) {
@@ -244,7 +276,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 		public Serializable propValue(NodeRef nodeRef, String qname) {
 			return nodeService.getProperty(nodeRef, QName.createQName(qname, namespaceService));
 		}
-		
+
 	}
 
 	/**
@@ -322,7 +354,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 						}
 					}
 				} else {
-					
+
 					if (dynamicCharactListItem.getColumnName() != null && !dynamicCharactListItem.getColumnName().isEmpty()) {
 						QName columnName = QName.createQName(dynamicCharactListItem.getColumnName().replaceFirst("_", ":"), namespaceService);
 						if (nullDynColumnNames.contains(columnName)) {
@@ -330,9 +362,9 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 						}
 					}
 				}
-				
+
 			}
-			
+
 			// remove null columns
 			for (QName nullDynColumnName : nullDynColumnNames) {
 				for (CompositionDataItem dataListItem : view.getMainDataList()) {
@@ -342,13 +374,6 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 		}
 
 	}
-
-	// Formule.Si("Mon tableau de compoList", "Ma formule de calcul",
-	// "MonOperateur") par ex:
-	//
-	// Je veux la somme des poids net (g) des enfants de "Légumes" qui est
-	// "2631,58" (cf. copie d'écran)
-	//
 
 	/**
 	 * Copy missing item from template

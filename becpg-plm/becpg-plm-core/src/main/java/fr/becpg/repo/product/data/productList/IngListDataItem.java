@@ -24,12 +24,12 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
 import fr.becpg.repo.repository.annotation.AlfEnforced;
-import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.model.AbstractManualDataItem;
 import fr.becpg.repo.repository.model.AspectAwareDataItem;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
@@ -61,6 +61,10 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	
 	private IngListDataItem parent;
 	
+    private Double mini;
+	
+	private Double maxi;
+	
 	
 	@AlfProp
 	@AlfQname(qname="bcpg:ingListQtyPerc")
@@ -68,13 +72,31 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 		return qtyPerc;
 	}
 	
-	
 	public void setQtyPerc(Double qtyPerc) {
 		this.qtyPerc = qtyPerc;
 	}
 	
 	
+	@AlfProp
+	@AlfQname(qname="bcpg:ingListQtyMini")
+	public Double getMini() {
+		return mini;
+	}
 	
+	public void setMini(Double mini) {
+		this.mini = mini;
+	}
+	
+	@AlfProp
+	@AlfQname(qname="bcpg:ingListQtyMaxi")
+	public Double getMaxi() {
+		return maxi;
+	}
+
+	public void setMaxi(Double maxi) {
+		this.maxi = maxi;
+	}
+
 	@AlfProp
 	@AlfQname(qname="bcpg:ingListVolumeQtyPerc")
 	public Double getVolumeQtyPerc() {
@@ -275,6 +297,8 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 		result = prime * result + ((isIonized == null) ? 0 : isIonized.hashCode());
 		result = prime * result + ((isManual == null) ? 0 : isManual.hashCode());
 		result = prime * result + ((isProcessingAid == null) ? 0 : isProcessingAid.hashCode());
+		result = prime * result + ((maxi == null) ? 0 : maxi.hashCode());
+		result = prime * result + ((mini == null) ? 0 : mini.hashCode());
 		result = prime * result + ((parent == null) ? 0 : parent.hashCode());
 		result = prime * result + ((qtyPerc == null) ? 0 : qtyPerc.hashCode());
 		result = prime * result + ((volumeQtyPerc == null) ? 0 : volumeQtyPerc.hashCode());
@@ -330,6 +354,16 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 				return false;
 		} else if (!isProcessingAid.equals(other.isProcessingAid))
 			return false;
+		if (maxi == null) {
+			if (other.maxi != null)
+				return false;
+		} else if (!maxi.equals(other.maxi))
+			return false;
+		if (mini == null) {
+			if (other.mini != null)
+				return false;
+		} else if (!mini.equals(other.mini))
+			return false;
 		if (parent == null) {
 			if (other.parent != null)
 				return false;
@@ -352,6 +386,6 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	public String toString() {
 		return "IngListDataItem [qtyPerc=" + qtyPerc + ", volumeQtyPerc=" + volumeQtyPerc + ", geoOrigin=" + geoOrigin + ", bioOrigin=" + bioOrigin
 				+ ", isGMO=" + isGMO + ", isIonized=" + isIonized + ", ing=" + ing + ", isManual=" + isManual + ", isProcessingAid="
-				+ isProcessingAid + ", depthLevel=" + depthLevel + ", parent=" + parent + "]";
+				+ isProcessingAid + ", depthLevel=" + depthLevel + ", parent=" + parent + ", mini=" + mini + ", maxi=" + maxi + "]";
 	}
 }

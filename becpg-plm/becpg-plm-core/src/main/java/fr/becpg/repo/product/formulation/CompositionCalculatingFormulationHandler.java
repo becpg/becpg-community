@@ -55,6 +55,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 

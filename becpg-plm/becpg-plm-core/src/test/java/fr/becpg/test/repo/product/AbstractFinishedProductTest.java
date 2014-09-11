@@ -385,10 +385,10 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					rawMaterial1.setNutList(nutList);
 					//allergenList
 					List<AllergenListDataItem> allergenList = new ArrayList<AllergenListDataItem>();
-					allergenList.add(new AllergenListDataItem(null, true, false, null, null, allergen1, false));
-					allergenList.add(new AllergenListDataItem(null, false, false, null, null, allergen2, false));
-					allergenList.add(new AllergenListDataItem(null, false, false, null, null, allergen3, false));
-					allergenList.add(new AllergenListDataItem(null, false, false, null, null, allergen4, false));
+					allergenList.add(new AllergenListDataItem(null, 20d, true, false, null, null, allergen1, false));
+					allergenList.add(new AllergenListDataItem(null,100d, false, false, null, null, allergen2, false));
+					allergenList.add(new AllergenListDataItem(null,null, false, false, null, null, allergen3, false));
+					allergenList.add(new AllergenListDataItem(null,null, false, false, null, null, allergen4, false));
 					rawMaterial1.setAllergenList(allergenList);
 					//ingList : 1 ing1 ; bio1 ; geo1 // 2 ing2 ; bio1 ; geo1|geo2 
 					List<IngListDataItem> ingList = new ArrayList<IngListDataItem>();
@@ -434,10 +434,10 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					rawMaterial2.setNutList(nutList);
 					//allergenList
 					allergenList = new ArrayList<AllergenListDataItem>();
-					allergenList.add(new AllergenListDataItem(null, true, false, null, null, allergen1, false));
-					allergenList.add(new AllergenListDataItem(null, false, true, null, null, allergen2, false));
-					allergenList.add(new AllergenListDataItem(null, false, false, null, null, allergen3, false));
-					allergenList.add(new AllergenListDataItem(null, false, false, null, null, allergen4, false));
+					allergenList.add(new AllergenListDataItem(null, 10d, true, false, null, null, allergen1, false));
+					allergenList.add(new AllergenListDataItem(null, 50d, false, true, null, null, allergen2, false));
+					allergenList.add(new AllergenListDataItem(null,null ,false, false, null, null, allergen3, false));
+					allergenList.add(new AllergenListDataItem(null,null ,false, false, null, null, allergen4, false));
 					rawMaterial2.setAllergenList(allergenList);
 					//ingList : 1 ing1 ; bio1 ; geo1 // 3 ing2 ; bio2 ; geo1|geo2
 					ingList = new ArrayList<IngListDataItem>();
@@ -483,10 +483,10 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					rawMaterial3.setNutList(nutList);
 					//allergenList
 					allergenList = new ArrayList<AllergenListDataItem>();
-					allergenList.add(new AllergenListDataItem(null, false, false, null, null, allergen1, false));
-					allergenList.add(new AllergenListDataItem(null, false, false, null, null, allergen2, false));
-					allergenList.add(new AllergenListDataItem(null, true, true, null, null, allergen3, false));
-					allergenList.add(new AllergenListDataItem(null, false, false, null, null, allergen4, false));
+					allergenList.add(new AllergenListDataItem(null,100d, false, false, null, null, allergen1, false));
+					allergenList.add(new AllergenListDataItem(null,100d, false, false, null, null, allergen2, false));
+					allergenList.add(new AllergenListDataItem(null,null, true, true, null, null, allergen3, false));
+					allergenList.add(new AllergenListDataItem(null,null, false, false, null, null, allergen4, false));
 					rawMaterial3.setAllergenList(allergenList);
 					//ingList : 4 ing3 ; bio1|bio2 ; geo2
 					ingList = new ArrayList<IngListDataItem>();
@@ -581,10 +581,10 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					rawMaterial6.setNutList(nutList);
 					//allergenList
 					allergenList = new ArrayList<AllergenListDataItem>();
-					allergenList.add(new AllergenListDataItem(null, true, false, null, null, allergen1, false));
-					allergenList.add(new AllergenListDataItem(null, false, true, null, null, allergen2, false));
-					allergenList.add(new AllergenListDataItem(null, false, false, null, null, allergen3, false));
-					allergenList.add(new AllergenListDataItem(null, false, false, null, null, allergen4, false));
+					allergenList.add(new AllergenListDataItem(null,100d, true, false, null, null, allergen1, false));
+					allergenList.add(new AllergenListDataItem(null,100d, false, true, null, null, allergen2, false));
+					allergenList.add(new AllergenListDataItem(null,null, false, false, null, null, allergen3, false));
+					allergenList.add(new AllergenListDataItem(null,null, false, false, null, null, allergen4, false));
 					rawMaterial6.setAllergenList(allergenList);
 					//ingList : 1 ing1 ; bio1 ; geo1 // 3 ing2 ; bio2 ; geo1|geo2
 					ingList = new ArrayList<IngListDataItem>();

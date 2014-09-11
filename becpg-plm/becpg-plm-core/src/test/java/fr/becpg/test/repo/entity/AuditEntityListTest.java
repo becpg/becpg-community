@@ -58,10 +58,10 @@ public class AuditEntityListTest extends PLMBaseTestCase {
 				SemiFinishedProductData sfData = new SemiFinishedProductData();
 				sfData.setName("SF");
 				List<AllergenListDataItem> allergenList = new ArrayList<AllergenListDataItem>();
-				allergenList.add(new AllergenListDataItem(null, true, true, null, null, allergens.get(0), false));
-				allergenList.add(new AllergenListDataItem(null, false, true, null, null, allergens.get(1), false));
-				allergenList.add(new AllergenListDataItem(null, true, false, null, null, allergens.get(2), false));
-				allergenList.add(new AllergenListDataItem(null, false, false, null, null, allergens.get(3), false));
+				allergenList.add(new AllergenListDataItem(null,null, true, true, null, null, allergens.get(0), false));
+				allergenList.add(new AllergenListDataItem(null,null, false, true, null, null, allergens.get(1), false));
+				allergenList.add(new AllergenListDataItem(null,null, true, false, null, null, allergens.get(2), false));
+				allergenList.add(new AllergenListDataItem(null,null, false, false, null, null, allergens.get(3), false));
 				sfData.setAllergenList(allergenList);
 
 
