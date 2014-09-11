@@ -21,6 +21,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.MPMModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
@@ -182,7 +183,11 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 
 				for (AllergenListDataItem dataItem : allergenList) {
 
-					String allergen = (String) nodeService.getProperty(dataItem.getAllergen(), ContentModel.PROP_NAME);
+					String allergen = (String) nodeService.getProperty(dataItem.getAllergen(), BeCPGModel.PROP_LEGAL_NAME);
+					
+					if(allergen == null || allergen.isEmpty()){
+						allergen = (String) nodeService.getProperty(dataItem.getAllergen(), ContentModel.PROP_NAME);
+					}
 
 					// concat allergens
 					if (dataItem.getVoluntary()) {
