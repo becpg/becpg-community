@@ -72,10 +72,10 @@ public class AlfrescoRepositoryTest extends PLMBaseTestCase {
 				List<NodeRef> allSources = new ArrayList<NodeRef>();
 				allSources.add(rmNodeRef);
 				List<AllergenListDataItem> allergenList = new ArrayList<AllergenListDataItem>();
-				allergenList.add(new AllergenListDataItem(null, true, true, allSources, null, allergens.get(0), false));
-				allergenList.add(new AllergenListDataItem(null, false, true, null, allSources, allergens.get(1), false));
-				allergenList.add(new AllergenListDataItem(null, true, false, null, allSources, allergens.get(2), false));
-				allergenList.add(new AllergenListDataItem(null, false, false, allSources, null, allergens.get(3), false));
+				allergenList.add(new AllergenListDataItem(null,null, true, true, allSources, null, allergens.get(0), false));
+				allergenList.add(new AllergenListDataItem(null,null, false, true, null, allSources, allergens.get(1), false));
+				allergenList.add(new AllergenListDataItem(null,null, true, false, null, allSources, allergens.get(2), false));
+				allergenList.add(new AllergenListDataItem(null,null, false, false, allSources, null, allergens.get(3), false));
 				sfData.setAllergenList(allergenList);
 
 				NodeRef sfNodeRef = alfrescoRepository.create(testFolderNodeRef, sfData).getNodeRef();

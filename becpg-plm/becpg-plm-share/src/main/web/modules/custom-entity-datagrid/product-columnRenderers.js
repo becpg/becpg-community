@@ -186,9 +186,9 @@ if (beCPG.module.EntityDataGridRenderers) {
             if (isFormulated) {
                 var error = oRecord.getData("itemData")["prop_bcpg_nutListFormulaErrorLog"].value;
                 if (error == null) {
-                    cssClass= "lcl-formulated";
+                    cssClass= "nut-formulated";
                 } else {
-                    cssClass= "lcl-formulated-error";
+                    cssClass= "nut-formulated-error";
                     title = Alfresco.util.encodeHTML(error);
                 }
             }

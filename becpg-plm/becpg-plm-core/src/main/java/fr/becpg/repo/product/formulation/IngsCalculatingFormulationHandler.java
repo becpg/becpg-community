@@ -83,6 +83,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				if (il.getIsManual() == null || !il.getIsManual()) {
 					// reset
 					il.setQtyPerc(null);
+					il.setMini(null);
+					il.setMaxi(null);
 					il.setIsGMO(false);
 					il.setIsProcessingAid(true);
 					il.setIsIonized(false);
@@ -189,6 +191,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				} else {
 					ingListDataItem.setQtyPerc(null);
 				}
+				
 
 				// qtyVolumePerc
 				if (totalQtyVolMap.get(ingListDataItem.getIng()) != null) {

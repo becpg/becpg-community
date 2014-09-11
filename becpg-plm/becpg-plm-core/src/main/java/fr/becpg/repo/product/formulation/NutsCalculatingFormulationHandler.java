@@ -15,6 +15,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulateException;
+import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
@@ -25,98 +26,104 @@ import fr.becpg.repo.product.data.productList.NutListDataItem;
  * @author querephi
  */
 public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormulationHandler<NutListDataItem> {
-	
+
 	public static final String UNIT_PER100G = "/100g";
-	
+
 	public static final String UNIT_PER100ML = "/100mL";
-	
+
 	public static final String NUT_FORMULATED = I18NUtil.getMessage("message.formulate.nut.formulated");
-	
+
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(NutsCalculatingFormulationHandler.class);
-	
+
 	@Override
 	protected Class<NutListDataItem> getInstanceClass() {
 		return NutListDataItem.class;
 	}
-	
+
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 		logger.debug("Nuts calculating visitor");
-		if(formulatedProduct.getNutList() == null){
+
+		// no compo => no formulation
+		if (!formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE)) {
+			logger.debug("no compo => no formulation");
+			return true;
+		}
+
+		if (formulatedProduct.getNutList() == null) {
 			formulatedProduct.setNutList(new LinkedList<NutListDataItem>());
 		}
-		
-		
+
 		formulateSimpleList(formulatedProduct, formulatedProduct.getNutList());
 
-		if(formulatedProduct.getNutList() != null){
-		
-			for(NutListDataItem n : formulatedProduct.getNutList()){
-				
-				n.setGroup((String)nodeService.getProperty(n.getNut(), PLMModel.PROP_NUTGROUP));				
-				n.setUnit(calculateUnit(formulatedProduct.getUnit(), (String)nodeService.getProperty(n.getNut(), PLMModel.PROP_NUTUNIT)));
-				
-				if(formulatedProduct.getServingSize() != null && n.getValue() != null){
+		if (formulatedProduct.getNutList() != null) {
+
+			for (NutListDataItem n : formulatedProduct.getNutList()) {
+
+				n.setGroup((String) nodeService.getProperty(n.getNut(), PLMModel.PROP_NUTGROUP));
+				n.setUnit(calculateUnit(formulatedProduct.getUnit(), (String) nodeService.getProperty(n.getNut(), PLMModel.PROP_NUTUNIT)));
+
+				if (formulatedProduct.getServingSize() != null && n.getValue() != null) {
 					double valuePerserving = n.getValue() * formulatedProduct.getServingSize() / 100;
 					n.setValuePerServing(valuePerserving);
-					Double gda = (Double)nodeService.getProperty(n.getNut(), PLMModel.PROP_NUTGDA);
-					if(gda != null && gda != 0d){
-						n.setGdaPerc(100 * n.getValuePerServing()/gda);
+					Double gda = (Double) nodeService.getProperty(n.getNut(), PLMModel.PROP_NUTGDA);
+					if (gda != null && gda != 0d) {
+						n.setGdaPerc(100 * n.getValuePerServing() / gda);
 					}
-				}
-				else{
+				} else {
 					n.setValuePerServing(null);
 					n.setGdaPerc(null);
 				}
-				
-				if(isCharactFormulated(n)){
+
+				if (isCharactFormulated(n)) {
 					n.setMethod(NUT_FORMULATED);
 				}
-				
-				if(transientFormulation){
+
+				if (transientFormulation) {
 					n.setTransient(true);
 				}
-			}		
-		
+			}
+
 		}
-		
+
 		return true;
 	}
 
 	/**
 	 * Calculate the nutListUnit
+	 * 
 	 * @param productUnit
 	 * @param nutUnit
 	 * @return
 	 */
-	public static String calculateUnit(ProductUnit productUnit, String nutUnit){
-		
+	public static String calculateUnit(ProductUnit productUnit, String nutUnit) {
+
 		return nutUnit += calculateSuffixUnit(productUnit);
 	}
-	
+
 	/**
 	 * Calculate the suffix of nutListUnit
+	 * 
 	 * @param productUnit
 	 * @return
 	 */
-	public static String calculateSuffixUnit(ProductUnit productUnit){
-		
-		if(ProductUnit.L.equals(productUnit) || ProductUnit.mL.equals(productUnit)){
+	public static String calculateSuffixUnit(ProductUnit productUnit) {
+
+		if (ProductUnit.L.equals(productUnit) || ProductUnit.mL.equals(productUnit)) {
 			return UNIT_PER100ML;
-		}				
-		else{
+		} else {
 			return UNIT_PER100G;
-		}		
-	}	
-	
+		}
+	}
+
 	@Override
-	protected QName getDataListVisited(){
-		
+	protected QName getDataListVisited() {
+
 		return PLMModel.TYPE_NUTLIST;
 	}
 
-	protected Map<NodeRef, List<NodeRef>> getMandatoryCharacts(ProductData formulatedProduct, QName componentType){		
+	protected Map<NodeRef, List<NodeRef>> getMandatoryCharacts(ProductData formulatedProduct, QName componentType) {
 		return getMandatoryCharactsFromList(formulatedProduct.getNutList());
 	}
 }

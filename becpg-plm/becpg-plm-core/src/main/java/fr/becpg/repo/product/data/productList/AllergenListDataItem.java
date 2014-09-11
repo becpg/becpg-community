@@ -20,7 +20,7 @@ import fr.becpg.repo.repository.annotation.AlfType;
 @AlfQname(qname = "bcpg:allergenList")
 public class AllergenListDataItem extends AbstractManualVariantListDataItem {
 
-	private Double qty;
+	private Double qtyPerc;
 	private Boolean voluntary = false;
 	private Boolean inVoluntary = false;
 	private List<NodeRef> voluntarySources = new ArrayList<NodeRef>();
@@ -31,16 +31,13 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem {
 	
 	@AlfProp
 	@AlfQname(qname="bcpg:allergenListQtyPerc")
-	public Double getQty() {
-		return qty;
+	public Double getQtyPerc() {
+		return qtyPerc;
 	}
 
-
-
-	public void setQty(Double qty) {
-		this.qty = qty;
+	public void setQtyPerc(Double qtyPerc) {
+		this.qtyPerc = qtyPerc;
 	}
-
 
 
 	@AlfProp
@@ -50,8 +47,7 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem {
 		return voluntary;
 	}
 	
-	
-	
+
 	public void setVoluntary(Boolean voluntary) {
 		this.voluntary = voluntary;
 	}
@@ -112,9 +108,10 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem {
 		super();
 	}
 	
-	public AllergenListDataItem(NodeRef nodeRef, Boolean voluntary, Boolean inVoluntary, List<NodeRef> voluntarySources, List<NodeRef> inVoluntarySources, NodeRef allergen, Boolean isManual){
+	public AllergenListDataItem(NodeRef nodeRef,Double qtyPerc, Boolean voluntary, Boolean inVoluntary, List<NodeRef> voluntarySources, List<NodeRef> inVoluntarySources, NodeRef allergen, Boolean isManual){
 		super();
 		this.nodeRef = nodeRef;
+		this.qtyPerc = qtyPerc;
 		this.voluntary  = voluntary;
 		this.inVoluntary = inVoluntary;
 		this.voluntarySources = voluntarySources;	
@@ -130,7 +127,7 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem {
 		result = prime * result + ((allergen == null) ? 0 : allergen.hashCode());
 		result = prime * result + ((inVoluntary == null) ? 0 : inVoluntary.hashCode());
 		result = prime * result + ((inVoluntarySources == null) ? 0 : inVoluntarySources.hashCode());
-		result = prime * result + ((qty == null) ? 0 : qty.hashCode());
+		result = prime * result + ((qtyPerc == null) ? 0 : qtyPerc.hashCode());
 		result = prime * result + ((voluntary == null) ? 0 : voluntary.hashCode());
 		result = prime * result + ((voluntarySources == null) ? 0 : voluntarySources.hashCode());
 		return result;
@@ -160,10 +157,10 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem {
 				return false;
 		} else if (!inVoluntarySources.equals(other.inVoluntarySources))
 			return false;
-		if (qty == null) {
-			if (other.qty != null)
+		if (qtyPerc == null) {
+			if (other.qtyPerc != null)
 				return false;
-		} else if (!qty.equals(other.qty))
+		} else if (!qtyPerc.equals(other.qtyPerc))
 			return false;
 		if (voluntary == null) {
 			if (other.voluntary != null)

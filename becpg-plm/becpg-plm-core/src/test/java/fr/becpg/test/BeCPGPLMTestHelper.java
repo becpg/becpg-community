@@ -225,7 +225,7 @@ public class BeCPGPLMTestHelper  {
 		// Allergens
 		List<AllergenListDataItem> allergenList = new ArrayList<AllergenListDataItem>();
 		for (int j = 0; j < PLMBaseTestCase.INSTANCE2.allergens.size(); j++) {
-			AllergenListDataItem allergenListItemData = new AllergenListDataItem(null, false, false, null, null, PLMBaseTestCase.INSTANCE2.allergens.get(j), false);
+			AllergenListDataItem allergenListItemData = new AllergenListDataItem(null,null, false, false, null, null, PLMBaseTestCase.INSTANCE2.allergens.get(j), false);
 			allergenList.add(allergenListItemData);
 		}
 		rawMaterial.setAllergenList(allergenList);

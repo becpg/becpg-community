@@ -110,10 +110,10 @@ public class EntityReportServiceTest extends PLMBaseTestCase {
 				FinishedProductData pfData = new FinishedProductData();
 				pfData.setName("PF");
 				List<AllergenListDataItem> allergenList = new ArrayList<AllergenListDataItem>();
-				allergenList.add(new AllergenListDataItem(null, true, true, null, null, allergens.get(0), false));
-				allergenList.add(new AllergenListDataItem(null, false, true, null, null, allergens.get(1), false));
-				allergenList.add(new AllergenListDataItem(null, true, false, null, null, allergens.get(2), false));
-				allergenList.add(new AllergenListDataItem(null, false, false, null, null, allergens.get(3), false));
+				allergenList.add(new AllergenListDataItem(null,null, true, true, null, null, allergens.get(0), false));
+				allergenList.add(new AllergenListDataItem(null,null, false, true, null, null, allergens.get(1), false));
+				allergenList.add(new AllergenListDataItem(null,null, true, false, null, null, allergens.get(2), false));
+				allergenList.add(new AllergenListDataItem(null,null, false, false, null, null, allergens.get(3), false));
 				pfData.setAllergenList(allergenList);
 
 				pfNodeRef = alfrescoRepository.create(testFolderNodeRef, pfData).getNodeRef();				
@@ -309,10 +309,10 @@ public class EntityReportServiceTest extends PLMBaseTestCase {
 				FinishedProductData pfData = new FinishedProductData();
 				pfData.setName("PF");
 				List<AllergenListDataItem> allergenList = new ArrayList<AllergenListDataItem>();
-				allergenList.add(new AllergenListDataItem(null, true, true, null, null, allergens.get(0), false));
-				allergenList.add(new AllergenListDataItem(null, false, true, null, null, allergens.get(1), false));
-				allergenList.add(new AllergenListDataItem(null, true, false, null, null, allergens.get(2), false));
-				allergenList.add(new AllergenListDataItem(null, false, false, null, null, allergens.get(3), false));
+				allergenList.add(new AllergenListDataItem(null,null, true, true, null, null, allergens.get(0), false));
+				allergenList.add(new AllergenListDataItem(null,null, false, true, null, null, allergens.get(1), false));
+				allergenList.add(new AllergenListDataItem(null,null, true, false, null, null, allergens.get(2), false));
+				allergenList.add(new AllergenListDataItem(null,null, false, false, null, null, allergens.get(3), false));
 				pfData.setAllergenList(allergenList);
 
 				pfNodeRef = alfrescoRepository.create(testFolderNodeRef, pfData).getNodeRef();

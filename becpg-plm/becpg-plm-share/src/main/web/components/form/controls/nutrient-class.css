@@ -47,3 +47,9 @@
 .nutrient-class-e{	
 	background: red;
 }
+
+.nutrient-class-error
+{
+	background: url("../../images/states/warning-16.png") no-repeat;
+	padding-left: 20px;
+}

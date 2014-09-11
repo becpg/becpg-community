@@ -109,6 +109,8 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 	@Override
 	public boolean process(final ProductData productData) throws FormulateException {
 
+		
+		
 		if (!L2CacheSupport.isCacheOnlyEnable()
 				&& (productData.getAspects().contains(BeCPGModel.ASPECT_COMPARE_WITH) ||( productData.getNodeRef()!=null && nodeService.hasAspect(productData.getNodeRef(),
 						BeCPGModel.ASPECT_COMPARE_WITH)))) {

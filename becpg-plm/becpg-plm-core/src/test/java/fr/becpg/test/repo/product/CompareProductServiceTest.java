@@ -324,7 +324,7 @@ public class CompareProductServiceTest extends PLMBaseTestCase {
 					List<NodeRef> volontarySources = new ArrayList<NodeRef>();
 					volontarySources.add(allergenRawMaterialNodeRef);
 
-					AllergenListDataItem allergenListItemData = new AllergenListDataItem(null, true, false,
+					AllergenListDataItem allergenListItemData = new AllergenListDataItem(null,null, true, false,
 							volontarySources, null, allergens.get(j), false);
 					allergenList.add(allergenListItemData);
 				}
@@ -375,10 +375,10 @@ public class CompareProductServiceTest extends PLMBaseTestCase {
 					AllergenListDataItem allergenListItemData = null;
 
 					if (j < 5) {
-						allergenListItemData = new AllergenListDataItem(null, true, false, allSources, null, allergens
+						allergenListItemData = new AllergenListDataItem(null,null, true, false, allSources, null, allergens
 								.get(j), false);
 					} else {
-						allergenListItemData = new AllergenListDataItem(null, false, true, null, allSources, allergens
+						allergenListItemData = new AllergenListDataItem(null,null, false, true, null, allSources, allergens
 								.get(j), false);
 					}
 

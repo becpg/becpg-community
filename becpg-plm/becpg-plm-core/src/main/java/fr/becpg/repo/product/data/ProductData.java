@@ -89,6 +89,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	
 	private Double nutrientScore;
 	private String nutrientClass;
+	private NodeRef nutrientProfile;
 
 	/*
 	 * DataList
@@ -241,7 +242,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	public void setEntityTpl(ProductData entityTpl) {
 		this.entityTpl = entityTpl;
 	}
-
+	
 	@AlfProp
 	@AlfQname(qname = "bcpg:productQty")
 	public Double getQty() {
@@ -383,6 +384,16 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 
 	public void setNutrientClass(String nutrientClass) {
 		this.nutrientClass = nutrientClass;
+	}
+	
+	@AlfSingleAssoc
+	@AlfQname(qname = "bcpg:nutrientProfileRef")
+	public NodeRef getNutrientProfile() {
+		return nutrientProfile;
+	}
+
+	public void setNutrientProfile(NodeRef nutrientProfile) {
+		this.nutrientProfile = nutrientProfile;
 	}
 
 	@AlfProp

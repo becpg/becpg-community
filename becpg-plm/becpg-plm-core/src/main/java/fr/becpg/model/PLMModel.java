@@ -165,6 +165,7 @@ public interface PLMModel {
 	// allergen
 	QName TYPE_ALLERGEN = QName.createQName(BeCPGModel.BECPG_URI, "allergen");
 	QName PROP_ALLERGEN_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "allergenType");
+	QName PROP_ALLERGEN_REGULATORY_THRESHOLD = QName.createQName(BeCPGModel.BECPG_URI, "allergenRegulatoryThreshold");
 
 	// cost
 	QName TYPE_COST = QName.createQName(BeCPGModel.BECPG_URI, "cost");
@@ -309,13 +310,13 @@ public interface PLMModel {
 	QName ASPECT_COMPARE_WITH_DYN_COLUMN = QName.createQName(BeCPGModel.BECPG_URI, "compareWithDynColumnAspect");
 	QName PROP_COMPARE_WITH_DYN_COLUMN =  QName.createQName(BeCPGModel.BECPG_URI, "compareWithDynColumn");
 
-	//
+	//Nutrient profile
 	QName ASPECT_NUTRIENT_PROFILING_SCORE = QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfilingScoreAspect");
 	QName PROP_NUTRIENT_PROFILING_SCORE =  QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfilingScore");
 	QName PROP_NUTRIENT_PROFILING_CLASS =  QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfilingClass");
-	
-	
-
+	QName PROP_NUTRIENT_PROFILE_SCORE_FORMULA =  QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfileScoreFormula");
+	QName PROP_NUTRIENT_PROFILE_CLASS_FORMULA =  QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfileClassFormula");
+	QName TYPE_NUTRIENT_PROFILE = QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfile");
 	
 	
 }

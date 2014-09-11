@@ -21,7 +21,9 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-public interface VariantDataItem {
+import fr.becpg.repo.repository.RepositoryEntity;
+
+public interface VariantDataItem extends RepositoryEntity {
 
 	public List<NodeRef> getVariants();
 

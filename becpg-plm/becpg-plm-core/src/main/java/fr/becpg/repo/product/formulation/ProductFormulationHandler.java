@@ -132,7 +132,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		}
 
 		// Skip formulation
-		return false;
+		return true;
 	}
 
 	private void clearReqCltrlList(List<ReqCtrlListDataItem> reqCtrlList) {

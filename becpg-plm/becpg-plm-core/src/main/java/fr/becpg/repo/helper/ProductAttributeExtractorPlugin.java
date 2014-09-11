@@ -93,7 +93,7 @@ public class ProductAttributeExtractorPlugin implements AttributeExtractorPlugin
 		String ret = type.toPrefixString(namespaceService).split(":")[1] + "-" + nodeService.getProperty(nodeRef, PLMModel.PROP_PRODUCT_STATE);
 		if (nodeService.hasAspect(nodeRef, PLMModel.ASPECT_NUTRIENT_PROFILING_SCORE)) {
 			String nutClass = (String) nodeService.getProperty(nodeRef, PLMModel.PROP_NUTRIENT_PROFILING_CLASS);
-			if (nutClass != null && nutClass.length() > 0) {
+			if (nutClass != null && !nutClass.isEmpty() && nutClass.length() < 5) {
 				ret += " nutrientClass-" + nutClass;
 			}
 		}

@@ -261,7 +261,7 @@ private void initObjects(){
 						List<NodeRef> voluntarySources = new ArrayList<NodeRef>();
 						voluntarySources.add(allergenRawMaterialNodeRef);
 						
-						AllergenListDataItem allergenListItemData = new AllergenListDataItem(null, true, false, voluntarySources, null, allergens.get(j), false);
+						AllergenListDataItem allergenListItemData = new AllergenListDataItem(null,null, true, false, voluntarySources, null, allergens.get(j), false);
 						allergenList.add(allergenListItemData);
 					}		
 					fp1.setAllergenList(allergenList);
@@ -312,10 +312,10 @@ private void initObjects(){
 						AllergenListDataItem allergenListItemData = null;
 						
 						if(j < 5){
-							allergenListItemData = new AllergenListDataItem(null, true, false, allSources, null, allergens.get(j), false);
+							allergenListItemData = new AllergenListDataItem(null,null, true, false, allSources, null, allergens.get(j), false);
 						}
 						else{
-							allergenListItemData = new AllergenListDataItem(null, false, true, null, allSources, allergens.get(j), false);
+							allergenListItemData = new AllergenListDataItem(null,null, false, true, null, allSources, allergens.get(j), false);
 						}						
 						
 						allergenList.add(allergenListItemData);

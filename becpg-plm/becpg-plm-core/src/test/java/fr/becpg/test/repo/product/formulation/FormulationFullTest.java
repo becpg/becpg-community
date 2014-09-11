@@ -320,10 +320,11 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 			for (NodeRef part : allergenListDataItem.getInVoluntarySources())
 				inVoluntarySources += nodeService.getProperty(part, ContentModel.PROP_NAME) + ", ";
 
-			String trace = "allergen: " + nodeService.getProperty(allergenListDataItem.getAllergen(), ContentModel.PROP_NAME) + " - voluntary: "
+			String trace = "allergen: " + nodeService.getProperty(allergenListDataItem.getAllergen(), ContentModel.PROP_NAME) +" qty Perc:  "+ allergenListDataItem.getQtyPerc()
+					+" - voluntary: "
 					+ allergenListDataItem.getVoluntary().booleanValue() + " - involuntary: " + allergenListDataItem.getInVoluntary().booleanValue()
 					+ " - voluntary sources:" + voluntarySources + " - involuntary sources:" + inVoluntarySources;
-			logger.debug(trace);
+			logger.info(trace);
 
 			// allergen1 - voluntary: true - involuntary: false -
 			// voluntary sources:Raw material 1, Raw material 2 -
@@ -336,6 +337,7 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 				assertEquals("allergen1.getVoluntarySources() contains Raw material 2, actual values: " + trace, true,
 						allergenListDataItem.getVoluntarySources().contains(rawMaterial2NodeRef));
 				assertEquals("allergen1.getInVoluntarySources() is empty, actual values: " + trace, 0, allergenListDataItem.getInVoluntarySources().size());
+				assertEquals(allergenListDataItem.getQtyPerc() , 4.2105263157894735d);
 				checks++;
 			}
 			// allergen2 - voluntary: false - involuntary: true -
@@ -346,6 +348,7 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 				assertEquals("allergen2.getInVoluntarySources() contains Raw material 2, actual values: " + trace, true, allergenListDataItem.getInVoluntarySources()
 						.contains(rawMaterial2NodeRef));
 				assertEquals("allergen2.getVoluntarySources() is empty, actual values: " + trace, 0, allergenListDataItem.getVoluntarySources().size());
+				assertEquals(allergenListDataItem.getQtyPerc() , 10.526315789473683d);
 				checks++;
 			}
 			// allergen: allergen3 - voluntary: true - involuntary: true
@@ -358,6 +361,7 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 						allergenListDataItem.getVoluntarySources().contains(rawMaterial3NodeRef));
 				assertEquals("allergen3.getInVoluntarySources() contains Raw material 3, actual values: " + trace, true, allergenListDataItem.getInVoluntarySources()
 						.contains(rawMaterial3NodeRef));
+				assertEquals(allergenListDataItem.getQtyPerc() ,null);
 				checks++;
 			}
 			// allergen4 - voluntary: false - involuntary: false -
@@ -367,6 +371,7 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 				assertEquals("allergen4.getInVoluntary().booleanValue() == false, actual values: " + trace, false, allergenListDataItem.getInVoluntary().booleanValue());
 				assertEquals("allergen4.getVoluntarySources() is empty, actual values: " + trace, 0, allergenListDataItem.getVoluntarySources().size());
 				assertEquals("allergen4.getInVoluntarySources() is empty, actual values: " + trace, 0, allergenListDataItem.getInVoluntarySources().size());
+				assertEquals(allergenListDataItem.getQtyPerc() ,null);
 				checks++;
 			}
 		}

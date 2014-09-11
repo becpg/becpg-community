@@ -14,6 +14,7 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulateException;
+import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
@@ -29,39 +30,45 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 
 	@Override
 	protected Class<PhysicoChemListDataItem> getInstanceClass() {
-		
+
 		return PhysicoChemListDataItem.class;
 	}
-	
+
 	@Override
-	public boolean process(ProductData formulatedProduct) throws FormulateException {	
+	public boolean process(ProductData formulatedProduct) throws FormulateException {
 		logger.debug("Physico chemical calculating visitor");
-		
-		if(formulatedProduct.getPhysicoChemList()==null){
+
+		// no compo => no formulation
+		if (!formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE)) {
+			logger.debug("no compo => no formulation");
+			return true;
+		}
+
+		if (formulatedProduct.getPhysicoChemList() == null) {
 			formulatedProduct.setPhysicoChemList(new LinkedList<PhysicoChemListDataItem>());
 		}
-		
+
 		formulateSimpleList(formulatedProduct, formulatedProduct.getPhysicoChemList());
 
 		return true;
 	}
 
 	@Override
-	protected QName getDataListVisited(){
-		
+	protected QName getDataListVisited() {
+
 		return PLMModel.TYPE_PHYSICOCHEMLIST;
 	}
 
 	@Override
-	protected boolean isCharactFormulated(SimpleListDataItem sl ){
-		if(!super.isCharactFormulated(sl)){
+	protected boolean isCharactFormulated(SimpleListDataItem sl) {
+		if (!super.isCharactFormulated(sl)) {
 			return false;
 		}
-		Boolean isFormulated = (Boolean)nodeService.getProperty(sl.getCharactNodeRef(), PLMModel.PROP_PHYSICO_CHEM_FORMULATED); 
+		Boolean isFormulated = (Boolean) nodeService.getProperty(sl.getCharactNodeRef(), PLMModel.PROP_PHYSICO_CHEM_FORMULATED);
 		return isFormulated != null ? isFormulated.booleanValue() : false;
 	}
-	
-	protected Map<NodeRef, List<NodeRef>> getMandatoryCharacts(ProductData formulatedProduct, QName componentType){
+
+	protected Map<NodeRef, List<NodeRef>> getMandatoryCharacts(ProductData formulatedProduct, QName componentType) {
 		return getMandatoryCharactsFromList(formulatedProduct.getPhysicoChemList());
 	}
 }
