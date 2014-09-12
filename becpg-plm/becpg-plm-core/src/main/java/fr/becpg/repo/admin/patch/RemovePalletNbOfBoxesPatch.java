@@ -20,6 +20,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
 
@@ -125,6 +126,7 @@ public class RemovePalletNbOfBoxesPatch extends AbstractBeCPGPatch {
 				if (nodeService.exists(productNodeRef)) {
 					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 					nodeService.removeProperty(productNodeRef, QName.createQName(PackModel.PACK_URI, "palletNbOfBoxes"));
+					nodeService.removeProperty(productNodeRef,  QName.createQName(BeCPGModel.BECPG_URI, "productYield"));
 				} else {
 					logger.warn("productNodeRef doesn't exist : " + productNodeRef);
 				}

@@ -762,6 +762,7 @@
 					MAX(IF(prop.prop_name = "bcpg:productHierarchy2",prop.string_value,NULL)) as productHierarchy2,
 					MAX(IF(prop.prop_name = "bcpg:code",prop.string_value,NULL)) as code,
 					MAX(IF(prop.prop_name = "bcpg:legalName",prop.string_value,NULL)) as legalName,
+					MAX(IF(prop.prop_name = "bcpg:nutrientProfilingClass",prop.string_value,NULL)) as nutrientProfilingClass,
 					MAX(IF(prop.prop_name = "cm:created",prop.date_value,NULL)) as productDateCreated,
 					MAX(IF(prop.prop_name = "cm:modified",prop.date_value,NULL)) as productDateModified,
 					MAX(IF(prop.prop_name = "bcpg:startEffectivity",prop.date_value,NULL)) as startEffectivity,
@@ -888,10 +889,13 @@
 				</Level>
 				<Level approxRowCount="20" name="Nutriment" column="nutNodeRef"  nameColumn="nutName" type="String"   >
 				</Level>
-			</Hierarchy>
-			
+			</Hierarchy>	
 		</Dimension>
-	
+	    <Dimension name="Echelle nutritionnelle">
+			<Hierarchy hasAll="true" allMemberCaption="Toutes les classes nutritionnelles" >
+				<Level name="Classe nutritionnelle" column="nutrientProfilingClass"  type="String"    />
+			</Hierarchy>
+		</Dimension>
 		<Dimension type="StandardDimension" foreignKey="id"  name="Allergène">
 			<Hierarchy hasAll="true" allMemberCaption="Tous les allergènes" primaryKey="entity_fact_id">
 				<View alias="allergenList">
