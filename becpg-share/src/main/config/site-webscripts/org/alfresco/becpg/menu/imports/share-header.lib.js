@@ -42,7 +42,7 @@ function getOrCreateBeCPGMenu() {
          }
       });
    
-      if (user.isAdmin)
+      if (user.isAdmin || isSystemMgr(user))
       {
       
          beCPGMenu.config.widgets.push( {
@@ -56,7 +56,7 @@ function getOrCreateBeCPGMenu() {
                      config : {
                         label : "header.becpg-admin.label",
                         iconClass : "becpg-admin-header",
-                        targetUrl : "console/admin-console/becpg-admin"
+                        targetUrl : user.isAdmin? "console/admin-console/becpg-admin" : "becpg-admin"
                      }
                   }
                 ]
@@ -74,6 +74,10 @@ function getOrCreateBeCPGMenu() {
    }
 
    return beCPGMenu;
+}
+
+function isSystemMgr(user){
+    return user.capabilities["isbeCPGSystemManager"] !=null && user.capabilities["isbeCPGSystemManager"] == true;
 }
 
 
