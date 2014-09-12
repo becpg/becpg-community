@@ -1774,7 +1774,7 @@ if (!JSGantt) {
                   // indicators
                   if (vTaskList[i].getGroup()) {
                      vRightTable += '<DIV><TABLE style=" width: ' + vChartWidth + 'px;" cellSpacing="0" cellPadding="0" border="0"><TBODY class="yui-dt-data">' + '<TR id="childrow_' + vcurrDivID + '" class="yesdisplay ggroup"   onMouseover=g.mouseOver(this,"' + vcurrDivID + '","right","group") onMouseout=g.mouseOut(this,"' + vcurrDivID + '","right","group")>' + vItemRowStr + '</TR></TBODY></TABLE></DIV>';
-                     vRightTable += '<div id=bardiv_"' + vcurrDivID + '" style="position:absolute; top:5px; left:' + Math
+                     vRightTable += '<div id="bardiv_' + vcurrDivID + '" style="position:absolute; top:5px; left:' + Math
                            .ceil(vTaskLeft * (vDayWidth) + 1) + 'px; height: 7px; width:' + Math
                            .ceil((vTaskRight) * (vDayWidth) - 1) + 'px">' + '<div id="taskbar_' + vcurrDivID + '" title="' + vDateRowStr + '" class="ggtask" style="width:' + Math
                            .ceil((vTaskRight) * (vDayWidth) - 1) + 'px;">' + '<div class="ggcomplete" style="width:' + vTaskList[i]

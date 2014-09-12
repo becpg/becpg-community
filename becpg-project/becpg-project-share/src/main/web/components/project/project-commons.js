@@ -279,7 +279,7 @@
          overdue = '', ret = "";
 
          detailsUrl = beCPG.util.entityDetailsURL(record.siteId, record.nodeRef);
-         url = beCPG.util.entityCharactURL(record.siteId, record.nodeRef);
+         url = beCPG.util.entityCharactURL(record.siteId, record.nodeRef,"pjt:project");
          urlFolder = beCPG.util.entityDocumentsURL(record.siteId, record.path, title);
 
          if (record.version && record.version !== "") {
