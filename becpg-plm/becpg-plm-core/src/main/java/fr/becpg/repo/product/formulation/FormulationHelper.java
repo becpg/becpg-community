@@ -283,7 +283,9 @@ public class FormulationHelper {
 						}
 						if(FormulationHelper.isProductUnitLiter(productUnit)){
 							Double density = productData.getDensity();
-							qty = qty * density;
+							if(density!=null){
+								qty = qty * density;
+							}
 						}
 						return qty;
 					}
