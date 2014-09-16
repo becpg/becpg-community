@@ -716,8 +716,7 @@
 								var column = this.datalistColumns[i], columnName = column.name.replace(":", "_"), fieldLookup = this
 										._buildFormsName(column);
 
-								if (this._isSelectedProp(this._buildFormsName(column))) {
-									Alfresco.logger.debug("Select prop " + this._buildFormsName(column));
+								if (this._isSelectedProp(fieldLookup)) {
 									this.dataRequestFields.push(columnName);
 									this.dataResponseFields.push(fieldLookup);
 									this.dataTableColumn.push(column);
