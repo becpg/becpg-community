@@ -988,58 +988,59 @@
 						</control>
 					</field>
 				</appearance>
+			</form>					
+		</forms>
+	</config>
+
+	<config condition="pjt:logTimeList" evaluator="node-type">
+		<forms>
+			<form>
+				<field-visibility>
+					<show force="false" id="pjt:ltlTask" />
+					<show force="false" id="pjt:ltlDate" />
+					<show force="false" id="pjt:ltlTime" />
+					<show force="false" id="pjt:ltlComment" />
+					<show force="false" id="pjt:ltlType" />					
+				</field-visibility>
+				<appearance>														
+					<field id="pjt:ltlTask" mandatory="false" read-only="false">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/TaskValue?className=pjt:taskList
+							</control-param>
+						</control>
+					</field>
+					<field id="pjt:ltlComment" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+				</appearance>
 			</form>
-			
-			<config condition="pjt:logTimeList" evaluator="node-type" replace="true">
-		    <forms>
-		      <form>
-		        <field-visibility>
-		          <show force="false" id="pjt:ltlDate"/>
-		          <show force="false" id="pjt:ltlTime"/>
-		          <show force="false" id="pjt:ltlComment"/>
-		          <show force="false" id="pjt:ltlType"/>
-		          <show force="false" id="pjt:ltlTask"/>
-		        </field-visibility>
-		        <appearance>
-		          <field id="pjt:ltlDate" mandatory="false" read-only="false"/>
-		          <field id="pjt:ltlTime" mandatory="false" read-only="false"/>
-		          <field id="pjt:ltlComment" mandatory="false" read-only="false"/>
-		          <field id="pjt:ltlType" mandatory="false" read-only="false"/>
-		          <field id="pjt:ltlTask" mandatory="false" read-only="false">
-		            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-		              <control-param name="ds">becpg/autocomplete/TaskValue?className=pjt:taskList</control-param>
-		            </control>
-		          </field>
-		        </appearance>
-		      </form>
-		    </forms>
-		  </config>
-		  <config condition="pjt:timeEntryList" evaluator="model-type" replace="true">
-		    <forms>
-		      <form>
-		        <field-visibility>
-		          <show force="false" id="pjt:ltlTask"/>
-		          <show force="false" id="pjt:ltlDate"/>
-		          <show force="false" id="cm:creator"/>
-		          <show force="false" id="pjt:ltlTime"/>
-		          <show force="false" id="pjt:ltlComment"/>
-		          <show force="false" id="pjt:ltlType"/>
-		        </field-visibility>
-		        <appearance>
-		          <field id="pjt:ltlTask" mandatory="false" read-only="false">
-		            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-		              <control-param name="ds">becpg/autocomplete/TaskValue?className=pjt:taskList</control-param>
-		            </control>
-		          </field>
-		          <field id="pjt:ltlDate" mandatory="false" read-only="false"/>
-		          <field id="cm:creator" mandatory="false" read-only="true"/>
-		          <field id="pjt:ltlTime" mandatory="false" read-only="false"/>
-		          <field id="pjt:ltlComment" mandatory="false" read-only="false"/>
-		          <field id="pjt:ltlType" mandatory="false" read-only="false"/>
-		        </appearance>
-		      </form>
-		    </forms>
-		  </config>
+		</forms>
+	</config>
+	<config condition="pjt:logTimeList" evaluator="model-type">
+		<forms>
+			<form>
+				<field-visibility>
+					<show force="false" id="pjt:ltlTask" />
+					<show force="false" id="pjt:ltlDate" />
+					<show force="false" id="cm:creator" for-mode="view" />
+					<show force="false" id="pjt:ltlTime" />
+					<show force="false" id="pjt:ltlComment" />
+					<show force="false" id="pjt:ltlType" />
+				</field-visibility>
+				<appearance>
+					<field id="pjt:ltlTask" mandatory="false" read-only="false">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/TaskValue?className=pjt:taskList
+							</control-param>
+						</control>
+					</field>					
+					<field id="pjt:ltlComment" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+				</appearance>
+			</form>		
 		</forms>
 	</config>
 
