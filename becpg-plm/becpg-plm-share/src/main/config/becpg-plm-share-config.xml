@@ -185,7 +185,7 @@
 					<control-param name="showLink">false</control-param>
 				</type>
 				<type name="association:pack:labelingLabelingTemplate" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
-				<type name="association:pack:label" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+				<type name="association:pack:labelingTemplate" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 			</default-controls>
 		</forms>
 	</config>
