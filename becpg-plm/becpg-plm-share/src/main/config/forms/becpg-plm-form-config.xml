@@ -674,6 +674,7 @@
 					<show id="cm:description" force="true" />
 					<show id="bcpg:packagingDescription" force="true" />
 					<show id="bcpg:entityTplRef" force="true" />
+					<show id="bcpg:code" force="true" />
 					<show id="bcpg:productState" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:eanCode" />
@@ -1057,6 +1058,7 @@
 					<show id="bcpg:productHierarchy1" />
 					<show id="bcpg:productHierarchy2" />
 					<show id="bcpg:productState" />
+					<show id="bcpg:code" force="true" />
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />
@@ -1377,7 +1379,6 @@
 					</field>
 					<field id="bcpg:productState" set="mainInfo" />
 					<field id="bcpg:productUnit" set="mainInfo" />
-					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
 					<field id="bcpg:entityTplRef" set="mainInfo">
 						<control
@@ -1418,16 +1419,16 @@
 				<field-visibility>
 
 					<!-- mainInfo -->
-					<show id="cm:name" />
+					<show id="cm:name" force="true"/>
 					<show id="cm:title" force="true" />
-					<show id="bcpg:legalName" />
+					<show id="bcpg:legalName" force="true"/>
 					<show id="cm:description" force="true" />
-					<show id="bcpg:productComments" />
-					<show id="bcpg:productHierarchy1" />
-					<show id="bcpg:productHierarchy2" />
-					<show id="bcpg:productState" />
-					<show id="bcpg:productUnit" />
-					<show id="bcpg:code" />
+					<show id="bcpg:productComments" force="true"/>
+					<show id="bcpg:productHierarchy1" force="true"/>
+					<show id="bcpg:productHierarchy2" force="true"/>
+					<show id="bcpg:productState" force="true"/>
+					<show id="bcpg:productUnit" force="true"/>
+					<show id="bcpg:code" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:entityTplRef" force="true" />
 					<show id="rep:reportTpls" />
@@ -1685,6 +1686,7 @@
 					<show id="bcpg:entityTplRef" force="true" />
 					<show id="bcpg:productState" />
 					<show id="bcpg:productUnit" />
+					<show id="bcpg:code" force="true" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:eanCode" />
 					<show id="bcpg:suppliers" />
@@ -1704,10 +1706,11 @@
 				<appearance>
 					<set id="mainInfo" appearance="bordered-panel"
 						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+				   <set id="tare" appearance="bordered-panel" label-id="becpg.forms.set.tare.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="categories" appearance="bordered-panel"
 						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
-					<set id="tare" appearance="bordered-panel" label-id="becpg.forms.set.tare.label"
-						template="/org/alfresco/components/form/2-column-set.ftl" />
+					
 
 					<!-- Main info -->
 					<field id="cm:name" set="mainInfo" />
@@ -2162,6 +2165,7 @@
 					<show id="bcpg:productComments" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:packagingDescription" force="true" />
+					<show id="bcpg:code" force="true" />
 					<show id="bcpg:entityTplRef" force="true" />
 					<show id="bcpg:productState" />
 					<show id="bcpg:erpCode" force="true" />
@@ -2761,6 +2765,7 @@
 					<show id="bcpg:packagingDescription" force="true" />
 					<show id="bcpg:entityTplRef" force="true" />
 					<show id="bcpg:productState" />
+					<show id="bcpg:code" force="true" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="rep:reportTpls" />
 
@@ -3129,6 +3134,7 @@
 					<show id="bcpg:productHierarchy2" />
 					<show id="bcpg:productState" />
 					<show id="bcpg:productUnit" />
+					<show id="bcpg:code" force="true" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:eanCode" />
 					<show id="bcpg:suppliers" />
