@@ -25,6 +25,6 @@ import java.util.Map;
 public interface BeCPGReportService {
 
 	void generateReport(String templateId, String format,
-			InputStream dataSource, OutputStream out, Map<String, byte[]> images) throws IOException;
+			String lang, InputStream dataSource, OutputStream out, Map<String, byte[]> images) throws IOException;
 
 }

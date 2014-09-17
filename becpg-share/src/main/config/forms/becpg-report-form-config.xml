@@ -32,6 +32,9 @@
 					<show id="rep:reportTplIsDefault" />
 					<show id="rep:reportTplFormat" />					
 					<show id="rep:reportTplIsDisabled" />
+					<show id="rep:reportTplAssociatedFiles" />
+					
+					<show id="rep:reportLocales" force="true"/>
 					
 					<!-- auditable -->
 					<show id="cm:creator" for-mode="view" />

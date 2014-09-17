@@ -159,17 +159,11 @@ public abstract class AbstractBeCPGReportClient {
 	    	throw new ReportException("Error sending image");
 	    }
 	    
-	    
-	    
-		
 	}
 	
 	
-	protected void generateReport(ReportSession reportSession, String format,
-			InputStream in, OutputStream out) throws ClientProtocolException, IOException{
+	protected void generateReport(ReportSession reportSession, InputStream in, OutputStream out) throws ClientProtocolException, IOException{
 
-		
-		reportSession.setFormat(format);
 		
 		String reportUrl = reportSession.getReportUrl();
 		
@@ -207,7 +201,6 @@ public abstract class AbstractBeCPGReportClient {
 	 * 
 	 */
 	
-	
 	protected void executeInSession(ReportSessionCallBack callBack) throws ReportException{
 		HttpClient httpClient = getHttpClient();
 		
@@ -239,6 +232,8 @@ public abstract class AbstractBeCPGReportClient {
 		
 		String format;
 		
+		String lang; 
+		
 		HttpClient httpClient;
 
 		public ReportSession(HttpClient httpClient) {
@@ -251,7 +246,7 @@ public abstract class AbstractBeCPGReportClient {
 		}
 
 		public String getReportUrl() {
-			return  reportServerUrl+"/report?"+ReportParams.TEMPLATE_ID_PARAM+"="+templateId+"&"+ReportParams.PARAM_FORMAT+"="+format;
+			return  reportServerUrl+"/report?"+ReportParams.TEMPLATE_ID_PARAM+"="+templateId+"&"+ReportParams.PARAM_FORMAT+"="+format+"&"+ReportParams.PARAM_LANG+"="+lang;
 		}
 
 		public String getSaveTemplateUrl() {
@@ -281,10 +276,12 @@ public abstract class AbstractBeCPGReportClient {
 		public void setFormat(String format) {
 			this.format = format;
 		}
+
+		public void setLang(String lang) {
+			this.lang = lang;
+		}
 		
-		
-		
-		
+
 	}
 	
 }

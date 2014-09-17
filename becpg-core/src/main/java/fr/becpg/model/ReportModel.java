@@ -57,6 +57,11 @@ public class ReportModel {
 	public static final QName ASSOC_REPORT_TPL = QName.createQName(REPORT_URI,
 			"reportTplAssoc");
 	
+	public static final QName ASSOC_REPORT_ASSOCIATED_TPL_FILES= QName.createQName(REPORT_URI,
+			"reportTplAssociatedFiles");
+	
+	public static final QName PROP_REPORT_LOCALES= QName.createQName(REPORT_URI,
+				"reportLocales");
 	
 	// reportTpls
 	public static final QName ASPECT_REPORT_TEMPLATES = QName.createQName(REPORT_URI,

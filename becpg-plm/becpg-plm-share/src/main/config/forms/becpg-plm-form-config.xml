@@ -225,6 +225,7 @@
 					<show id="bcpg:suppliers" />
 					<show id="bcpg:entityTplRef" force="true" />
 					<show id="rep:reportTpls" />
+					<show id="rep:reportLocales" />
 
 					<!-- Consumer -->
 					<show id="bcpg:useByDate" force="true" />
@@ -412,7 +413,7 @@
 						</control>
 					</field>
 					<field id="rep:reportTpls" set="mainInfo" />
-
+					<field id="rep:reportLocales" set="mainInfo" />
 					<!-- consumer -->
 					<field id="bcpg:useByDate" set="consumer" />
 					<field id="bcpg:bestBeforeDate" set="consumer" />

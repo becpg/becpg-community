@@ -13,14 +13,17 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
  * GNU Lesser General Public License for more details. 
  *  
- * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License along with beCPG.
+ *  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.report.engine.impl;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
@@ -29,7 +32,6 @@ import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.http.client.ClientProtocolException;
-import org.dom4j.Element;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
@@ -44,8 +46,7 @@ import fr.becpg.report.client.ReportParams;
  * @author matthieu
  * 
  */
-public class BeCPGReportServerClient extends AbstractBeCPGReportClient
-		implements BeCPGReportEngine {
+public class BeCPGReportServerClient extends AbstractBeCPGReportClient implements BeCPGReportEngine {
 
 	private NodeService nodeService;
 
@@ -60,72 +61,90 @@ public class BeCPGReportServerClient extends AbstractBeCPGReportClient
 	}
 
 	@Override
-	public void createReport(final NodeRef tplNodeRef, final Element nodeElt,
-			final OutputStream out, final Map<String, Object> params) throws ReportException {
-		final ReportFormat format = (ReportFormat) params
-				.get(ReportParams.PARAM_FORMAT);
+	public void createReport(final NodeRef tplNodeRef, final InputStream in, final OutputStream out, final Map<String, Object> params)
+			throws ReportException {
 		
-		@SuppressWarnings("unchecked")
-		final Map<String,byte[]> images 
-			= (Map<String, byte[]>) params.get(ReportParams.PARAM_IMAGES);
-		
-		if (format == null) {
-			throw new IllegalArgumentException("Format is a mandatory param");
-		}
-
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
 			watch = new StopWatch();
 			watch.start();
 		}
-	
-	
+
+		final ReportFormat format = (ReportFormat) params.get(ReportParams.PARAM_FORMAT);
+		
+		if (format == null) {
+			throw new IllegalArgumentException("Format is a mandatory param");
+		}
+		
 		executeInSession(new ReportSessionCallBack() {
 
 			@Override
-			public void doInReportSession(ReportSession reportSession)
-					throws ReportException, ClientProtocolException, IOException {
+			public void doInReportSession(ReportSession reportSession) throws ReportException, ClientProtocolException, IOException {
 
 				String templateId = tplNodeRef.toString();
 
-				Date dateModified = (Date) nodeService.getProperty(tplNodeRef,
-						ContentModel.PROP_MODIFIED);
-				// Timestamp or -1
-				Long timeStamp = getTemplateTimeStamp(reportSession, templateId);
 				
-				if(timeStamp == null){
-					logger.error("Error accessing report server timeStamp is null");
-					return;
-				}
 				
-				logger.debug("Received timeStamp :"+timeStamp);
-				
-				if (timeStamp < 0 || timeStamp < dateModified.getTime()) {
-					ContentReader reader = contentService.getReader(tplNodeRef,
-							ContentModel.PROP_CONTENT);
-					saveTemplate(reportSession, reader.getContentInputStream());
+				sendTplFile(reportSession, templateId, tplNodeRef);
 
-				}
-
-				if(images!=null){
-					for(Map.Entry<String, byte[]> entry : images.entrySet()){
-						sendImage( reportSession,entry.getKey(), new ByteArrayInputStream(entry.getValue()));
+				@SuppressWarnings("unchecked")
+				List<NodeRef> associatedTplFiles = (List<NodeRef>) params.get(ReportParams.PARAM_ASSOCIATED_TPL_FILES);
+				
+				if(associatedTplFiles!=null){
+					for (NodeRef nodeRef : associatedTplFiles) {
+						String assocFileId = getAssociatedTplFileId(templateId, (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
+						sendTplFile(reportSession, assocFileId, nodeRef);
 					}
 				}
 				
-				generateReport(
-						reportSession,
-						format.toString(),
-						new ByteArrayInputStream(nodeElt.asXML().getBytes()),
-						out);
+				reportSession.setTemplateId(templateId);
+
+				@SuppressWarnings("unchecked")
+				final Map<String, byte[]> images = (Map<String, byte[]>) params.get(ReportParams.PARAM_IMAGES);
+				
+				if (images != null) {
+					for (Map.Entry<String, byte[]> entry : images.entrySet()) {
+						sendImage(reportSession, entry.getKey(), new ByteArrayInputStream(entry.getValue()));
+					}
+				}
+				
+				reportSession.setFormat(format.toString());
+				reportSession.setLang((String) params.get(ReportParams.PARAM_LANG));
+
+				generateReport(reportSession, in, out);
 			}
 
 		});
-		
+
 		if (logger.isDebugEnabled()) {
 			watch.stop();
-			logger.debug( " Report generated by server in  "
-					+ watch.getTotalTimeSeconds() + " seconds ");
+			logger.debug(" Report generated by server in  " + watch.getTotalTimeSeconds() + " seconds ");
+		}
+
+	}
+
+
+	private String getAssociatedTplFileId(String templateId, String name) {
+		return templateId + "-" + name;
+	}
+
+	private void sendTplFile(ReportSession reportSession, String templateId, NodeRef tplNodeRef) throws ReportException, ClientProtocolException,
+			IOException {
+
+		Date dateModified = (Date) nodeService.getProperty(tplNodeRef, ContentModel.PROP_MODIFIED);
+		// Timestamp or -1
+		Long timeStamp = getTemplateTimeStamp(reportSession, templateId);
+
+		if (timeStamp == null) {
+			logger.error("Error accessing report server timeStamp is null");
+			return;
+		}
+
+		logger.debug("Received timeStamp :" + timeStamp);
+
+		if (timeStamp < 0 || timeStamp < dateModified.getTime()) {
+			ContentReader reader = contentService.getReader(tplNodeRef, ContentModel.PROP_CONTENT);
+			saveTemplate(reportSession, reader.getContentInputStream());
 		}
 
 	}

@@ -1,5 +1,6 @@
 package fr.becpg.repo.entity.comparison;
 
+import java.io.ByteArrayInputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -136,7 +137,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 			try {
 				Map<String, Object> params = new HashMap<String, Object>();
 				params.put(ReportParams.PARAM_FORMAT, ReportFormat.PDF);
-				beCPGReportEngine.createReport(templateNodeRef, entitiesCmpElt, out, params);
+				beCPGReportEngine.createReport(templateNodeRef,new ByteArrayInputStream(entitiesCmpElt.asXML().getBytes()) , out, params);
 
 			} catch (Exception e) {
 				logger.error("Failed to run comparison report: ", e);

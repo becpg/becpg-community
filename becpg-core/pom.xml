@@ -40,7 +40,7 @@
 		<dependency>
 			<groupId>fr.becpg</groupId>
 			<artifactId>becpg-report</artifactId>
-			<version>${project.version}</version>
+			<version>1.6.1</version>
 			<classifier>client</classifier>
 			<type>jar</type>
 			<exclusions>

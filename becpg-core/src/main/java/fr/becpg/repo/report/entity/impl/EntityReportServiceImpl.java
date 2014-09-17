@@ -17,6 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.report.entity.impl;
 
+import java.io.ByteArrayInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -48,7 +49,6 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.dom4j.Element;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.util.StopWatch;
 
@@ -204,14 +204,9 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	private void generateReportImpl(NodeRef entityNodeRef) {
 
-		// #366 : force to use server locale for mlText fields
-		I18NUtil.setLocale(Locale.getDefault());
-
 		List<NodeRef> tplsNodeRef = getReportTplsToGenerate(entityNodeRef);
-		// TODO here plug a template filter base on entityNodeRef
+		
 		tplsNodeRef = reportTplService.cleanDefaultTpls(tplsNodeRef);
-		EntityReportData reportData = null;
-
 		if (!tplsNodeRef.isEmpty()) {
 			StopWatch watch = null;
 			if (logger.isDebugEnabled()) {
@@ -219,9 +214,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 				watch.start();
 			}
 
-			reportData = retrieveExtractor(entityNodeRef).extract(entityNodeRef);
-
-			generateReports(entityNodeRef, tplsNodeRef, reportData.getXmlDataSource(), reportData.getDataObjects());
+			generateReports(entityNodeRef, tplsNodeRef);
 			if (logger.isDebugEnabled()) {
 				watch.stop();
 				logger.debug("Reports generated in  " + watch.getTotalTimeSeconds() + " seconds for node " + entityNodeRef);
@@ -254,14 +247,24 @@ public class EntityReportServiceImpl implements EntityReportService {
 		return ret;
 	}
 
-	private String getReportDocumentName(NodeRef entityNodeRef, NodeRef tplNodeRef, String reportFormat) {
+	private String getReportDocumentName(NodeRef entityNodeRef, NodeRef tplNodeRef, String reportFormat, Locale locale) {
 
 		String documentName = String.format(REPORT_NAME, (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME),
 				(String) nodeService.getProperty(tplNodeRef, ContentModel.PROP_NAME));
+		
+		
+		
 		String extension = (String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
 		if (documentName.endsWith(RepoConsts.REPORT_EXTENSION_BIRT) && extension != null) {
 			documentName = documentName.replace(RepoConsts.REPORT_EXTENSION_BIRT, extension.toLowerCase());
 		}
+		
+		if( !Locale.getDefault().equals(locale)){
+			documentName = documentName.substring(0, documentName.lastIndexOf("."))+" - "+locale.getLanguage()
+					+documentName.substring(documentName.lastIndexOf("."),documentName.length());
+		}
+		
+		
 		return documentName;
 	}
 
@@ -292,7 +295,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 	 * @param images
 	 *            the images
 	 */
-	public void generateReports(final NodeRef entityNodeRef, List<NodeRef> tplsNodeRef, final Element nodeElt, final Map<String, byte[]> images) {
+	public void generateReports(final NodeRef entityNodeRef, List<NodeRef> tplsNodeRef) {
 
 		if (entityNodeRef == null) {
 			throw new IllegalArgumentException("nodeRef is null");
@@ -304,53 +307,95 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 		List<NodeRef> newReports = new ArrayList<NodeRef>();
 
-		// generate reports
-		for (final NodeRef tplNodeRef : tplsNodeRef) {
+		for (Locale locale : getEntityReportLocales(entityNodeRef)) {
 
-			if (nodeElt == null) {
-				throw new IllegalArgumentException("nodeElt is null");
-			}
+			I18NUtil.setLocale(locale);
 
-			// prepare
-			String reportFormat = (String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
-			String documentName = getReportDocumentName(entityNodeRef, tplNodeRef, reportFormat);
+			EntityReportData reportData = retrieveExtractor(entityNodeRef).extract(entityNodeRef);
 
-			NodeRef documentNodeRef = getReportDocumenNodeRef(entityNodeRef, tplNodeRef, documentName);
+			// generate reports
+			for (final NodeRef tplNodeRef : tplsNodeRef) {
 
-			if (documentNodeRef != null) {
-				// Run report
-				try {
-					policyBehaviourFilter.disableBehaviour(documentNodeRef, ContentModel.ASPECT_AUDITABLE);
+				if (reportData.getXmlDataSource() == null) {
+					throw new IllegalArgumentException("nodeElt is null");
+				}
+				if (isLocaleEnableOnTemplate(tplNodeRef, locale)) {
+					// prepare
+					String reportFormat = (String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
+					String documentName = getReportDocumentName(entityNodeRef, tplNodeRef, reportFormat, locale);
 
-					ContentWriter writer = contentService.getWriter(documentNodeRef, ContentModel.PROP_CONTENT, true);
+					NodeRef documentNodeRef = getReportDocumenNodeRef(entityNodeRef, tplNodeRef, documentName);
 
-					if (writer != null) {
-						String mimetype = mimetypeService.guessMimetype(documentName);
-						writer.setMimetype(mimetype);
-						Map<String, Object> params = new HashMap<String, Object>();
+					if (documentNodeRef != null) {
+						// Run report
+						try {
+							policyBehaviourFilter.disableBehaviour(documentNodeRef, ContentModel.ASPECT_AUDITABLE);
 
-						params.put(ReportParams.PARAM_IMAGES, images);
-						params.put(ReportParams.PARAM_FORMAT, ReportFormat.valueOf(reportFormat));
+							ContentWriter writer = contentService.getWriter(documentNodeRef, ContentModel.PROP_CONTENT, true);
 
-						logger.debug("beCPGReportEngine createReport: " + entityNodeRef);
-						beCPGReportEngine.createReport(tplNodeRef, nodeElt, writer.getContentOutputStream(), params);
+							if (writer != null) {
+								String mimetype = mimetypeService.guessMimetype(documentName);
+								writer.setMimetype(mimetype);
+								Map<String, Object> params = new HashMap<String, Object>();
 
-						nodeService.setProperty(documentNodeRef, ContentModel.PROP_MODIFIED, new Date());
+								params.put(ReportParams.PARAM_IMAGES, reportData.getDataObjects());
+								params.put(ReportParams.PARAM_FORMAT, ReportFormat.valueOf(reportFormat));
+								params.put(ReportParams.PARAM_LANG, locale.getLanguage());
+								params.put(ReportParams.PARAM_ASSOCIATED_TPL_FILES, 
+										associationService.getTargetAssocs(tplNodeRef, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES));
+								
+								logger.debug("beCPGReportEngine createReport: " + entityNodeRef);
+								
+								beCPGReportEngine.createReport(tplNodeRef,new ByteArrayInputStream(reportData.getXmlDataSource().asXML().getBytes())
+								, writer.getContentOutputStream(), params);
+
+								nodeService.setProperty(documentNodeRef, ContentModel.PROP_MODIFIED, new Date());
+							}
+
+						} catch (ReportException e) {
+							logger.error("Failed to execute report for template : " + tplNodeRef, e);
+						} finally {
+							policyBehaviourFilter.enableBehaviour(documentNodeRef, ContentModel.ASPECT_AUDITABLE);
+						}
+
+						// Set Assoc
+						newReports.add(documentNodeRef);
 					}
-
-				} catch (ReportException e) {
-					logger.error("Failed to execute report for template : " + tplNodeRef, e);
-				} finally {
-					policyBehaviourFilter.enableBehaviour(documentNodeRef, ContentModel.ASPECT_AUDITABLE);
 				}
 
-				// Set Assoc
-				newReports.add(documentNodeRef);
 			}
-
 		}
 
 		updateReportsAssoc(entityNodeRef, newReports);
+	}
+
+	@SuppressWarnings("unchecked")
+	private boolean isLocaleEnableOnTemplate(NodeRef tplNodeRef, Locale locale) {
+		
+		List<String> langs = (List<String>) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_LOCALES);
+		if(langs!=null){
+			for(String lang : langs){
+				if(locale.equals(new Locale(lang))){
+					return true;
+				}
+			}
+		}
+		
+		return Locale.getDefault().equals(locale);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<Locale> getEntityReportLocales(NodeRef entityNodeRef) {
+		List<Locale> ret = new ArrayList<Locale>();	
+		List<String> langs = (List<String>) nodeService.getProperty(entityNodeRef, ReportModel.PROP_REPORT_LOCALES);
+		if(langs!=null){
+			for(String lang : langs){
+				ret.add(new Locale(lang));
+			}
+		} else {
+			ret.add(Locale.getDefault());
+		}
+		return ret;
 	}
 
 	private void updateReportsAssoc(NodeRef entityNodeRef, List<NodeRef> newReports) {
