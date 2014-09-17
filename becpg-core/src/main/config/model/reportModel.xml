@@ -79,6 +79,19 @@
 					<type>d:boolean</type>
 				</property>
 			</properties>
+			<associations>
+				<association name="rep:reportTplAssociatedFiles">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>cm:content</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>
 		</type>
 		
 		
@@ -123,6 +136,15 @@
 					</target>
 				</association>
 			</associations>
+		</aspect>
+		
+		<aspect name="rep:reportLocalesAspect">
+			<properties>
+				<property name="rep:reportLocales">
+					<type>d:text</type>
+					<multiple>true</multiple>					
+				</property>
+			</properties>
 		</aspect>
 		
 		<!-- applied to a node when a user can select reports to generate -->

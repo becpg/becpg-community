@@ -17,10 +17,13 @@
  ******************************************************************************/
 package fr.becpg.report.services.impl;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -46,52 +49,39 @@ public class TemplateCacheServiceImpl implements TemplateCacheService {
 	
     private static final Map<String, TemplateCacheEl> cache = new ConcurrentHashMap<String, TemplateCacheServiceImpl.TemplateCacheEl>();
 	
+    
 
 	private class TemplateCacheEl {
 		
-		private final static int BUFFER_SIZE = 2048;
+		Path backedFile;
 		
-		private int MAX_SIZE = 5 * 1000 * BUFFER_SIZE; //10 Mo 
-		
+		public TemplateCacheEl(String templateId) throws IOException  {
+			super();
+			backedFile = Files.createTempFile(templateId.replace(":/", "-").replace("/", ""), ".bcpg");
+		}
+
 		private long timeStamp = Calendar.getInstance().getTimeInMillis();
-		private byte[] content;
-		
-		
 		public long getTimeStamp() {
 			return timeStamp;
 		}
 		
-		public InputStream getContent(){
-			return new ByteArrayInputStream(content);
+		public InputStream getContent() throws IOException{
+			return Files.newInputStream(backedFile);
 		}
 
 		public void writeContent(InputStream in) throws IOException, ReportException {
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			
-			try {
-				byte[] buffer = new byte[BUFFER_SIZE];
-				int l,i = 0;
-				// consume until EOF
-				while ((l = in.read(buffer)) != -1) {
-					if(i>MAX_SIZE/BUFFER_SIZE){
-						throw new ReportException("Template file to big!");
-					}
-					out.write(buffer, 0, l);
-					i++;
-				}
-				content  = out.toByteArray();
-				
-				
-			} finally {
-				in.close();
-				out.close();
-			}
-			
-			
+			Files.copy(in, backedFile, StandardCopyOption.REPLACE_EXISTING);
 		}
-		
-		
-		
+
+		public URL getURL() throws MalformedURLException {
+			return backedFile.toUri().toURL();
+		}
+
+		@Override
+		protected void finalize() throws Throwable {
+			super.finalize();
+			Files.deleteIfExists(backedFile);
+		}
 	}
 	
 	@Override
@@ -110,7 +100,7 @@ public class TemplateCacheServiceImpl implements TemplateCacheService {
 		 if(cache.size()>NUMBER_IN_MEMORY){
 				throw new ReportException("Max cache entries reached");
 		 }
-		 TemplateCacheEl el = new TemplateCacheEl();
+		 TemplateCacheEl el = new TemplateCacheEl(templateId);
 			
 		 el.writeContent(in);
 		 cache.put(templateId, el);
@@ -121,7 +111,7 @@ public class TemplateCacheServiceImpl implements TemplateCacheService {
 	}
 
 	@Override
-	public InputStream getTemplate(String templateId) throws ReportException {
+	public InputStream getTemplate(String templateId) throws ReportException, IOException {
 		logger.debug("getTemplate for "+templateId);
 		TemplateCacheEl el = cache.get(templateId);
 		if(el!=null){
@@ -129,6 +119,15 @@ public class TemplateCacheServiceImpl implements TemplateCacheService {
 		}
 		
 		throw new ReportException("No template found in cache for: " +templateId);
+	}
+
+	@Override
+	public URL getTemplateURL(String templateId) throws ReportException, MalformedURLException {
+		TemplateCacheEl el = cache.get(templateId);
+		if(el!=null){
+			return el.getURL();
+		}
+		throw new ReportException("No template URL found in cache for: " +templateId);
 	}
 
 }

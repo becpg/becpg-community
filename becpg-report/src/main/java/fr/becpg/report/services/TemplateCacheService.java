@@ -19,6 +19,7 @@ package fr.becpg.report.services;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 
 import fr.becpg.report.client.ReportException;
 
@@ -28,6 +29,8 @@ public interface TemplateCacheService {
 
 	Long saveTemplate(String templateId, InputStream in) throws ReportException, IOException;
 
-	InputStream getTemplate(String templateId) throws ReportException;
+	InputStream getTemplate(String templateId) throws ReportException, IOException;
+
+	URL getTemplateURL(String templateId) throws ReportException, IOException;
 
 }

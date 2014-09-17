@@ -3,10 +3,10 @@
  */
 package fr.becpg.repo.report.search;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -194,7 +194,7 @@ public class ExportSearchServiceImpl implements ExportSearchService{
 				logger.debug("Xml data: " + exportElt.asXML());
 			}			
 			
-			beCPGReportEngine.createReport(templateNodeRef, exportElt, outputStream, params);
+			beCPGReportEngine.createReport(templateNodeRef, new ByteArrayInputStream(exportElt.asXML().getBytes()), outputStream, params);
 				
 		}
 		catch(Exception e){

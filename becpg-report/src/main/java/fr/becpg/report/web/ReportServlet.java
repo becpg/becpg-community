@@ -52,6 +52,7 @@ public class ReportServlet extends AbstractReportServlet {
 	
 		String templateId = req.getParameter(ReportParams.TEMPLATE_ID_PARAM);
 		String format = req.getParameter(ReportParams.PARAM_FORMAT);
+		String lang = req.getParameter(ReportParams.PARAM_FORMAT);
 		HttpSession session = req.getSession();
 		
 		@SuppressWarnings("unchecked")
@@ -89,7 +90,7 @@ public class ReportServlet extends AbstractReportServlet {
 			OutputStream out =  resp.getOutputStream();
 	
 			
-			beCPGReportService.generateReport(templateId, format , req.getInputStream(), out, images);
+			beCPGReportService.generateReport(templateId, format , lang , req.getInputStream(), out, images);
 			
 			//Invalidate session to avoid keeping inMemory images
 			session.invalidate();

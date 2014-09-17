@@ -17,9 +17,12 @@
  ******************************************************************************/
 package fr.becpg.report.services.impl;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URL;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -30,6 +33,8 @@ import org.eclipse.birt.report.engine.api.IReportEngine;
 import org.eclipse.birt.report.engine.api.IReportRunnable;
 import org.eclipse.birt.report.engine.api.IRunAndRenderTask;
 import org.eclipse.birt.report.engine.api.RenderOption;
+import org.eclipse.birt.report.model.api.IResourceLocator;
+import org.eclipse.birt.report.model.api.ModuleHandle;
 
 import fr.becpg.report.client.ReportFormat;
 import fr.becpg.report.services.BeCPGReportService;
@@ -51,7 +56,7 @@ public class BeCPGReportServiceImpl implements BeCPGReportService {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void generateReport(String templateId, String format,
+	public void generateReport(String templateId, String format, String lang,
 			InputStream dataSource, OutputStream out, Map<String, byte[]> images ) throws IOException {
 		
 		IRunAndRenderTask task = null;
@@ -60,8 +65,9 @@ public class BeCPGReportServiceImpl implements BeCPGReportService {
 		try {
 			in = templateCacheService.getTemplate(templateId);
 		
-			IReportRunnable design = reportEngine.openReportDesign(in);							
-			
+			IResourceLocator iResourceLocator = createRessourceLocator(templateId);
+		
+			IReportRunnable design = reportEngine.openReportDesign(templateId, in ,iResourceLocator);							
 			
 			// Create task to run and render the report,
 			task  = reportEngine.createRunAndRenderTask(design);
@@ -88,6 +94,11 @@ public class BeCPGReportServiceImpl implements BeCPGReportService {
 			options.setOutputStream(out);							
 			task.setRenderOption(options);
 			
+			//Set the provided locale
+			if(lang!=null && !lang.isEmpty()){
+				task.setLocale(new Locale(lang));
+			}
+			
 			// xml data
 			task.getAppContext().put(KEY_XML_INPUTSTREAM, dataSource);
 			
@@ -98,19 +109,6 @@ public class BeCPGReportServiceImpl implements BeCPGReportService {
 				}
 			}					
 			
-	//		IGetParameterDefinitionTask paramTask = reportEngine.createGetParameterDefinitionTask(design);											
-	//		
-	//		 hide all datalists and display visible ones
-	//		for(Object key : paramTask.getDefaultValues().keySet()){
-	//			if(((String)key).endsWith(PARAM_VALUE_HIDE_CHAPTER_SUFFIX)){
-	//				task.setParameterValue((String)key, Boolean.TRUE);
-	//			}
-	//		}							
-	//		
-	//		for(QName existingList : existingLists){
-	//			task.setParameterValue(existingList.getLocalName() + PARAM_VALUE_HIDE_CHAPTER_SUFFIX, Boolean.FALSE);
-	//		}
-	
 			
 			task.run();
 		} catch (Exception e) {
@@ -131,9 +129,38 @@ public class BeCPGReportServiceImpl implements BeCPGReportService {
 		}
 		
 		
-		
-		
-		
+	}
+
+
+	private IResourceLocator createRessourceLocator(final String templateId) {
+		return new IResourceLocator() {
+			
+			@Override
+			@SuppressWarnings("rawtypes")
+			public URL findResource(ModuleHandle moduleHandle, String fileName, int type, Map appContext) {
+				return findResource(fileName);
+			}
+			
+			private URL findResource(String fileName) {
+				try {
+					return templateCacheService.getTemplateURL(buildFileName(templateId,fileName));
+				} catch (Exception e) {
+					logger.error(e,e);
+				}
+				return null;
+			}
+
+			private String buildFileName(String templateId, String fileName) {
+				logger.debug("Build fileName for : "+templateId+" "+fileName);
+				
+				return templateId + "-" + (new File(fileName)).getName();
+			}
+
+			@Override
+			public URL findResource(ModuleHandle moduleHandle, String fileName, int type) {
+				return findResource(fileName);
+			}
+		};
 	}
 	
 	
