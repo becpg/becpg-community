@@ -20,6 +20,7 @@
 	<description>Entity Data Lists Component - retrieve data within a given list</description>
    <url>/becpg/entity/datalists/data/node/{store_type}/{store_id}/{id}</url>
    <url>/becpg/entity/datalists/data/node</url>
+   <url>/becpg/entity/datalists/data/node/export</url>
    <url>/becpg/entity/datalists/item/node/{store_type}/{store_id}/{id}?entityNodeRef={entityNodeRef}</url>
    <format default="json">any</format>
    <authentication>user</authentication>
