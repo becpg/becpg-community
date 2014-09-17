@@ -192,7 +192,12 @@
 							 * @property pageSize
 							 * @type int
 							 */
-							pageSize : 50,
+							pageSize : 100,
+							
+							/**
+							 * Max search results
+							 */
+							maxResults : 1000,
 
 							/**
 							 * Delay before showing "loading" message for slow
@@ -677,19 +682,13 @@
 
 					
 
-						_buildDataParamsUrl : function BulkEdit__buildDataParamsUrl(pageSize) {
+						_buildDataParamsUrl : function BulkEdit__buildDataParamsUrl(pageSize,maxResults) {
 
 							var site = this.options.initialSearchAllSites ? "" : this.options.siteId;
-							var params = YAHOO.lang.substitute("dataListName=bulk-edit&site={site}&repo={repo}&itemType={itemType}&sort={sort}&pageSize={pageSize}", {
+							var params = YAHOO.lang.substitute("dataListName=bulk-edit&site={site}&repo={repo}&itemType={itemType}&sort={sort}&pageSize={pageSize}&maxResults={maxResults}", {
 								site : encodeURIComponent(site),
 								repo : (this.options.initialSearchRepository || this.options.searchQuery.length !== 0).toString(), // always
-								// search
-								// entire
-								// repo
-								// with
-								// advanced
-								// query
-
+								maxResults : maxResults? maxResults : this.options.maxResults,
 								sort : encodeURIComponent(this.options.initialSort),
 								itemType : encodeURIComponent(this.options.itemType),
 								pageSize : pageSize? pageSize : this.options.pageSize
@@ -1318,11 +1317,9 @@
 						_buildBulkEditParams : function BulkEdit__buildBulkEditParams(page) {
 							var request = {
 								fields : this.dataRequestFields,
-								page :  page ? page : this.currentPage,
-				                queryExecutionId : this.queryExecutionId
+								page :  page ? page : this.currentPage
 							};
 							
-
 							if (this.options.nodeRef != null && this.options.nodeRef.length > 0) {
 								request.filter = {
 									filterId : "nodePath",
@@ -1379,10 +1376,9 @@
 
 							var PAGE_SIZE = 5000;
 							var CURRENT_PAGE = 1;
-							window.location = this.dataUrl + "?" + this._buildDataParamsUrl(PAGE_SIZE)
-									+ "&format=csv&metadata=" + encodeURIComponent(YAHOO.lang.JSON
+							window.location = this.dataUrl + "/export.xls?format=xls&" + this._buildDataParamsUrl(PAGE_SIZE, PAGE_SIZE)
+									+ "&metadata=" + encodeURIComponent(YAHOO.lang.JSON
 		                           .stringify(this._buildBulkEditParams(CURRENT_PAGE)));
-							
 							
 						},
 						onShowThumbnails : function BulkEdit_onShowThumbnails() {

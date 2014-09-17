@@ -37,8 +37,6 @@ import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.search.AdvSearchPlugin;
 import fr.becpg.repo.search.AdvSearchService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
-import fr.becpg.repo.search.permission.BeCPGPermissionFilter;
-import fr.becpg.repo.search.permission.impl.ReadPermissionFilter;
 
 /**
  * This class do a search on the repository (association, properties and
@@ -70,26 +68,33 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 	@Override
 	public List<NodeRef> queryAdvSearch(QName datatype, BeCPGQueryBuilder beCPGQueryBuilder, Map<String, String> criteria, int maxResults) {
-				
-		if (maxResults <= 0 || isAssocSearch(criteria)) {
+
+		if (maxResults <= 0 || (isAssocSearch(criteria) && maxResults < RepoConsts.MAX_RESULTS_1000)) {
 			maxResults = RepoConsts.MAX_RESULTS_1000;
-		}		
+		} else if (maxResults > RepoConsts.MAX_RESULTS_1000) {
+			maxResults = RepoConsts.MAX_RESULTS_UNLIMITED;
+		}
 
 		addCriteriaMap(beCPGQueryBuilder, criteria);
-			
-		List<NodeRef> nodes = beCPGQueryBuilder
-								.maxResults(maxResults)
-								.ofType(datatype)
-								.ftsLanguage()
-								.list();
+
+		List<NodeRef> nodes = beCPGQueryBuilder.maxResults(maxResults).ofType(datatype).ftsLanguage().list();
 
 		if (advSearchPlugins != null) {
+			StopWatch watch = null;
 			for (AdvSearchPlugin advSearchPlugin : advSearchPlugins) {
+				if (logger.isDebugEnabled()) {
+					watch = new StopWatch();
+					watch.start();
+				}
 				nodes = advSearchPlugin.filter(nodes, datatype, criteria);
+				if (logger.isDebugEnabled()) {
+					watch.stop();
+					logger.debug("query filter " + advSearchPlugin.getClass().getName() + " executed in  " + watch.getTotalTimeSeconds()
+							+ " seconds ");
+				}
 			}
 		}
 
-		nodes = filterWithPermissions(nodes, new ReadPermissionFilter(), maxResults);
 
 		return nodes;
 	}
@@ -101,7 +106,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		if (term != null && term.length() != 0) {
 			beCPGQueryBuilder.andFTSQuery(term);
 		} else if (tag != null && tag.length() != 0) {
-			beCPGQueryBuilder.andFTSQuery("TAG:\"" + tag +"\"");
+			beCPGQueryBuilder.andFTSQuery("TAG:\"" + tag + "\"");
 		}
 
 		// we processed the search terms, so suffix the PATH query
@@ -109,13 +114,12 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		if (!isRepo) {
 			beCPGQueryBuilder.inSite(siteId, containerId);
 		} else {
-			beCPGQueryBuilder.excludePath(RepoConsts.ENTITIES_HISTORY_XPATH+"//*");
+			beCPGQueryBuilder.excludePath(RepoConsts.ENTITIES_HISTORY_XPATH + "//*");
 		}
 
 		if (datatype != null) {
 			beCPGQueryBuilder.ofType(datatype);
 		}
-
 
 		beCPGQueryBuilder.excludeSearch();
 
@@ -208,11 +212,10 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 								// sushi AND (saumon OR thon) AND -dorade
 								// formQuery += (first ? "" : " AND ") +
 								// propName + ":\"" + propValue + "\"";
-								
-								
-								queryBuilder.andPropQuery(QName.createQName(propName, namespaceService),  cleanValue(propValue));
+
+								queryBuilder.andPropQuery(QName.createQName(propName, namespaceService), cleanValue(propValue));
 								// TODO
-							}  else {
+							} else {
 								// pseudo cm:content property - e.g.
 								// mimetype,size
 								// or encoding
@@ -230,34 +233,22 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	}
 
 	private String cleanValue(String propValue) {
-		String cleanQuery =  propValue.replaceAll("\\.", "").replaceAll("#", "");
-		
-		if(cleanQuery.contains("\",\"")){
+		String cleanQuery = propValue.replaceAll("\\.", "").replaceAll("#", "");
+
+		if (cleanQuery.contains("\",\"")) {
 			cleanQuery = cleanQuery.replaceAll("\",\"", "\" OR \"");
 		}
 		return cleanQuery;
 	}
 
-	private List<NodeRef> filterWithPermissions(List<NodeRef> nodes, BeCPGPermissionFilter filter, int maxResults) {
+	private String getHierarchyQuery(String propName, String hierachyName) {
+		List<NodeRef> nodes = null;
 
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
 			watch = new StopWatch();
 			watch.start();
 		}
-
-		nodes = filter.filter(nodes, permissionService, maxResults);
-
-		if (logger.isDebugEnabled()) {
-			watch.stop();
-			logger.debug("filterWithPermissions executed in  " + watch.getTotalTimeSeconds() + " seconds ");
-		}
-
-		return nodes;
-	}
-
-	private String getHierarchyQuery(String propName, String hierachyName) {
-		List<NodeRef> nodes = null;
 
 		if (!NodeRef.isNodeRef(hierachyName)) {
 
@@ -284,6 +275,10 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 			ret += "\"" + hierachyName + "\"";
 		}
 
+		if (logger.isDebugEnabled()) {
+			watch.stop();
+			logger.debug("getHierarchyQuery executed in  " + watch.getTotalTimeSeconds() + " seconds ");
+		}
 		return ret;
 	}
 
