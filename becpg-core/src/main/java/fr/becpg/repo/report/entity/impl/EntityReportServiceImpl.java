@@ -259,7 +259,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 			documentName = documentName.replace(RepoConsts.REPORT_EXTENSION_BIRT, extension.toLowerCase());
 		}
 		
-		if( !Locale.getDefault().equals(locale)){
+		if( !Locale.getDefault().getLanguage().equals(locale.getLanguage())){
 			documentName = documentName.substring(0, documentName.lastIndexOf("."))+" - "+locale.getLanguage()
 					+documentName.substring(documentName.lastIndexOf("."),documentName.length());
 		}
@@ -350,6 +350,11 @@ public class EntityReportServiceImpl implements EntityReportService {
 								, writer.getContentOutputStream(), params);
 
 								nodeService.setProperty(documentNodeRef, ContentModel.PROP_MODIFIED, new Date());
+								
+								if(!Locale.getDefault().getLanguage().equals(locale.getLanguage())){
+									nodeService.setProperty(documentNodeRef,ReportModel.PROP_REPORT_LOCALES,locale.getLanguage());
+								}
+								
 							}
 
 						} catch (ReportException e) {
@@ -381,7 +386,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 			}
 		}
 		
-		return Locale.getDefault().equals(locale);
+		return Locale.getDefault().getLanguage().equals(locale.getLanguage());
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -524,9 +529,14 @@ public class EntityReportServiceImpl implements EntityReportService {
 						templateName = templateName.replace("." + RepoConsts.REPORT_EXTENSION_BIRT, "");
 					}
 
-					if ((Boolean) this.nodeService.getProperty(reportTemplateNodeRef, ReportModel.PROP_REPORT_TPL_IS_DEFAULT)) {
+					if ((Boolean) this.nodeService.getProperty(reportTemplateNodeRef, ReportModel.PROP_REPORT_TPL_IS_DEFAULT) && ret == null) {
 						ret = reportNodeRef;
 					}
+					
+					if(reportName.startsWith(templateName)){
+						ret = reportNodeRef;
+					}
+					
 					if (templateName.equalsIgnoreCase(reportName)) {
 						return reportNodeRef;
 					}

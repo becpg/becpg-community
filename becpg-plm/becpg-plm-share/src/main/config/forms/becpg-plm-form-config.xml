@@ -413,7 +413,10 @@
 						</control>
 					</field>
 					<field id="rep:reportTpls" set="mainInfo" />
-					<field id="rep:reportLocales" set="mainInfo" />
+					<field id="rep:reportLocales" set="mainInfo" >
+						<control template="/org/alfresco/components/form/controls/mtlangue.ftl"/>
+					</field>
+					
 					<!-- consumer -->
 					<field id="bcpg:useByDate" set="consumer" />
 					<field id="bcpg:bestBeforeDate" set="consumer" />

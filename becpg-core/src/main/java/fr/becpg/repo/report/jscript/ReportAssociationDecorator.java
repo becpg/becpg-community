@@ -61,36 +61,46 @@ public class ReportAssociationDecorator extends fr.becpg.repo.jscript.app.BaseAs
 
 		if (assocs != null && !assocs.isEmpty()) {
 
-			String reportName = entityReportService.getSelectedReportName(nodeRef);
+			String prefsReportName = entityReportService.getSelectedReportName(nodeRef);
 
-			for (NodeRef obj : assocs) {
-				if (permissionService.hasPermission(obj, "Read") == AccessStatus.ALLOWED) {
+			for (NodeRef reportNodeRef : assocs) {
+				if (permissionService.hasPermission(reportNodeRef, "Read") == AccessStatus.ALLOWED) {
 					try {
 						JSONObject jsonObj = new JSONObject();
 
-						String name = (String) this.nodeService.getProperty(obj, ContentModel.PROP_NAME);
+						String name = (String) this.nodeService.getProperty(reportNodeRef, ContentModel.PROP_NAME);
 
 						jsonObj.put("name", name);
-						NodeRef reportTemplateNodeRef = reportTplService.getAssociatedReportTemplate(obj);
+						NodeRef reportTemplateNodeRef = reportTplService.getAssociatedReportTemplate(reportNodeRef);
 						if (reportTemplateNodeRef != null  && permissionService.hasPermission(reportTemplateNodeRef, "Read") == AccessStatus.ALLOWED ) {
 							String templateName = (String) this.nodeService.getProperty(reportTemplateNodeRef, ContentModel.PROP_NAME);
+							
 							if (templateName.endsWith(RepoConsts.REPORT_EXTENSION_BIRT)) {
 								templateName = templateName.replace("." + RepoConsts.REPORT_EXTENSION_BIRT, "");
 							}
+							
+							if(nodeService.hasAspect(reportNodeRef, ReportModel.ASPECT_REPORT_LOCALES)){
+								List<String> langs =  (List<String>) nodeService.getProperty(reportNodeRef, ReportModel.PROP_REPORT_LOCALES);
+								if(langs!=null && !langs.isEmpty()){
+									templateName += " - "+langs.get(0);
+								}
+							}
+							
 							jsonObj.put("templateName", templateName);
 							jsonObj.put("isDefault", this.nodeService.getProperty(reportTemplateNodeRef, ReportModel.PROP_REPORT_TPL_IS_DEFAULT));
-							if (templateName.equalsIgnoreCase(reportName)) {
+							
+							if (templateName.equalsIgnoreCase(prefsReportName)) {
 								jsonObj.put("isSelected", true);
 							} else {
 								jsonObj.put("isSelected", false);
 							}
 						}
 
-						jsonObj.put("nodeRef", obj.toString());
+						jsonObj.put("nodeRef", reportNodeRef.toString());
 
 						try {
-							String contentURL = MessageFormat.format(CONTENT_DOWNLOAD_API_URL, new Object[] { obj.getStoreRef().getProtocol(), obj.getStoreRef().getIdentifier(),
-									obj.getId(), URLEncoder.encode(name, "UTF-8").replaceAll("\\+", "%20"), nodeRef.toString() });
+							String contentURL = MessageFormat.format(CONTENT_DOWNLOAD_API_URL, new Object[] { reportNodeRef.getStoreRef().getProtocol(), reportNodeRef.getStoreRef().getIdentifier(),
+									reportNodeRef.getId(), URLEncoder.encode(name, "UTF-8").replaceAll("\\+", "%20"), nodeRef.toString() });
 
 							jsonObj.put("contentURL", contentURL);
 						} catch (UnsupportedEncodingException e) {
@@ -99,7 +109,7 @@ public class ReportAssociationDecorator extends fr.becpg.repo.jscript.app.BaseAs
 
 						array.add(jsonObj);
 					} catch (InvalidNodeRefException e) {
-						logger.warn("Report with nodeRef " + obj.toString() + " does not exist.");
+						logger.warn("Report with nodeRef " + reportNodeRef.toString() + " does not exist.");
 					}
 				}
 			}

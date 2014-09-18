@@ -24,7 +24,8 @@
 	<bean parent="webscripts.formatmap">
 		<property name="formats">
 			<props>
-				<prop key="csv">application/vnd.ms-excel</prop>
+				<prop key="csv">text/css</prop>
+				<prop key="xls">application/vnd.ms-excel</prop>
 			</props>
 		</property>
 	</bean>
