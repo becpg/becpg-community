@@ -63,11 +63,15 @@ public class ReportModel {
 	public static final QName PROP_REPORT_LOCALES= QName.createQName(REPORT_URI,
 				"reportLocales");
 	
+
+	public static final QName ASPECT_REPORT_LOCALES =QName.createQName(REPORT_URI,"reportLocalesAspect");
+	
 	// reportTpls
 	public static final QName ASPECT_REPORT_TEMPLATES = QName.createQName(REPORT_URI,
 			"reportTplsAspect");
 	public static final QName ASSOC_REPORT_TEMPLATES = QName.createQName(REPORT_URI,
 			"reportTpls");
+
 	
 	
 }

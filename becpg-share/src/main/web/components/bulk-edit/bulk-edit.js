@@ -1373,10 +1373,9 @@
 
 							}
 							
-
 							var PAGE_SIZE = 5000;
 							var CURRENT_PAGE = 1;
-							window.location = this.dataUrl + "/export.xls?format=xls&" + this._buildDataParamsUrl(PAGE_SIZE, PAGE_SIZE)
+							window.location = this.dataUrl + "/export?format=xls&" + this._buildDataParamsUrl(PAGE_SIZE, PAGE_SIZE)
 									+ "&metadata=" + encodeURIComponent(YAHOO.lang.JSON
 		                           .stringify(this._buildBulkEditParams(CURRENT_PAGE)));
 							

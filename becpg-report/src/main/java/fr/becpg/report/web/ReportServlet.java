@@ -52,7 +52,7 @@ public class ReportServlet extends AbstractReportServlet {
 	
 		String templateId = req.getParameter(ReportParams.TEMPLATE_ID_PARAM);
 		String format = req.getParameter(ReportParams.PARAM_FORMAT);
-		String lang = req.getParameter(ReportParams.PARAM_FORMAT);
+		String lang = req.getParameter(ReportParams.PARAM_LANG);
 		HttpSession session = req.getSession();
 		
 		@SuppressWarnings("unchecked")

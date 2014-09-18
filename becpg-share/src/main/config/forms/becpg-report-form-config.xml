@@ -53,7 +53,10 @@
 						</control>
 					</field>	
 					<field id="rep:reportTplType" sorted="true"/>
-					<field id="rep:reportTplFormat" sorted="true"/>								
+					<field id="rep:reportTplFormat" sorted="true"/>	
+					<field id="rep:reportLocales" >
+						<control template="/org/alfresco/components/form/controls/mtlangue.ftl"/>
+					</field>							
 				</appearance>
 			</form>
 		</forms>
