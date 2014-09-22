@@ -31,9 +31,6 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.aop.framework.ProxyFactory;
-import org.springframework.expression.AccessException;
-import org.springframework.expression.BeanResolver;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
@@ -50,14 +47,12 @@ import fr.becpg.repo.product.data.productList.CompositionDataItem;
 import fr.becpg.repo.product.data.productList.DynamicCharactExecOrder;
 import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
-import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.productList.RequirementType;
 import fr.becpg.repo.product.data.spel.FormulaFormulationContext;
 import fr.becpg.repo.product.data.spel.SpelHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.security.BeCPGAccessDeniedException;
-import fr.becpg.repo.security.aop.SecurityMethodBeforeAdvice;
 
 /**
  * Use Spring EL to parse formula and compute value
@@ -77,8 +72,8 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 	private NodeService nodeService;
 
 	private NamespaceService namespaceService;
-
-	private SecurityMethodBeforeAdvice securityMethodBeforeAdvice;
+	
+	private FormulaService formulaService;
 
 	private DynamicCharactExecOrder execOrder = DynamicCharactExecOrder.Post;
 
@@ -94,12 +89,14 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 		this.namespaceService = namespaceService;
 	}
 
-	public void setSecurityMethodBeforeAdvice(SecurityMethodBeforeAdvice securityMethodBeforeAdvice) {
-		this.securityMethodBeforeAdvice = securityMethodBeforeAdvice;
-	}
 
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
+	}
+
+	
+	public void setFormulaService(FormulaService formulaService) {
+		this.formulaService = formulaService;
 	}
 
 	@Override
@@ -110,9 +107,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 		}
 
 		ExpressionParser parser = new SpelExpressionParser();
-		StandardEvaluationContext context = new StandardEvaluationContext(createSecurityProxy(productData));
-
-		registerCustomFunctions(context);
+		StandardEvaluationContext context = formulaService.createEvaluationContext(productData);
 
 		for (AbstractProductDataView view : productData.getViews()) {
 			computeFormula(productData, parser, context, view);
@@ -120,7 +115,6 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 		if (DynamicCharactExecOrder.Post.equals(execOrder)) {
 			computeClaimList(productData, parser, context);
-			computeNutList(productData, parser, context);
 			computeNutrientProfile(productData, parser, context);
 		}
 
@@ -158,67 +152,6 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 			}
 			
 
-		}
-
-	}
-
-	private void computeNutList(ProductData productData, ExpressionParser parser, StandardEvaluationContext context) {
-		if (productData.getNutList() != null) {
-			for (NutListDataItem nutListDataItem : productData.getNutList()) {
-				nutListDataItem.setIsFormulated(false);
-				nutListDataItem.setErrorLog(null);
-				if ((nutListDataItem.getIsManual() == null || !nutListDataItem.getIsManual()) && nutListDataItem.getNut() != null) {
-
-					String formula = (String) nodeService.getProperty(nutListDataItem.getNut(), PLMModel.PROP_NUT_FORMULA);
-					if (formula != null && formula.length() > 0) {
-						try {
-							nutListDataItem.setIsFormulated(true);
-							nutListDataItem.setMaxi(null);
-							nutListDataItem.setMini(null);
-							nutListDataItem.setValue(null);
-							formula = SpelHelper.formatFormula(formula);
-
-							Expression exp = parser.parseExpression(formula);
-							Object ret = exp.getValue(context);
-							if (ret instanceof Double) {
-								nutListDataItem.setValue((Double) ret);
-
-								if (formula.contains(".value")) {
-									try {
-										exp = parser.parseExpression(formula.replace(".value", ".mini"));
-										nutListDataItem.setMini((Double) exp.getValue(context));
-										exp = parser.parseExpression(formula.replace(".value", ".maxi"));
-										nutListDataItem.setMaxi((Double) exp.getValue(context));
-									} catch (Exception e) {
-										if (logger.isDebugEnabled()) {
-											logger.debug("Error in formula :" + formula, e);
-										}
-									}
-								}
-
-							} else {
-								nutListDataItem.setErrorLog(I18NUtil.getMessage("message.formulate.formula.incorrect.type.double",
-										Locale.getDefault()));
-							}
-
-						} catch (Exception e) {
-							nutListDataItem.setErrorLog(e.getLocalizedMessage());
-							if (logger.isDebugEnabled()) {
-								logger.debug("Error in formula :" + SpelHelper.formatFormula(formula), e);
-							}
-						}
-					}
-				}
-
-				if (nutListDataItem.getErrorLog() != null) {
-
-					String message = I18NUtil.getMessage("message.formulate.nutList.error", Locale.getDefault(),
-							nodeService.getProperty(nutListDataItem.getNut(), ContentModel.PROP_NAME), nutListDataItem.getErrorLog());
-					productData.getCompoListView().getReqCtrlList()
-							.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, new ArrayList<NodeRef>()));
-				}
-
-			}
 		}
 
 	}
@@ -268,42 +201,8 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 	}
 
-	public class SpelHelperFonctions {
-		public ProductData findOne(NodeRef nodeRef) {
-			return createSecurityProxy(alfrescoRepository.findOne(nodeRef));
-		}
 
-		public Serializable propValue(NodeRef nodeRef, String qname) {
-			return nodeService.getProperty(nodeRef, QName.createQName(qname, namespaceService));
-		}
 
-	}
-
-	/**
-	 * @param context
-	 */
-	private void registerCustomFunctions(StandardEvaluationContext context) {
-		context.setBeanResolver(new BeanResolver() {
-
-			SpelHelperFonctions spelHelperFonctions = new SpelHelperFonctions();
-
-			@Override
-			public Object resolve(EvaluationContext context, String beanName) throws AccessException {
-				if (beanName.equals("beCPG")) {
-					return spelHelperFonctions;
-				}
-				return null;
-			}
-		});
-	}
-
-	private ProductData createSecurityProxy(ProductData productData) {
-		ProxyFactory factory = new ProxyFactory();
-		factory.setTarget(productData);
-		factory.addAdvice(securityMethodBeforeAdvice);
-		return (ProductData) factory.getProxy();
-
-	}
 
 	private void computeFormula(ProductData productData, ExpressionParser parser, EvaluationContext context, AbstractProductDataView view) {
 
@@ -329,7 +228,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 							for (CompositionDataItem dataListItem : view.getMainDataList()) {
 								StandardEvaluationContext dataContext = new StandardEvaluationContext(new FormulaFormulationContext(
 										alfrescoRepository, productData, dataListItem));
-								registerCustomFunctions(dataContext);
+								formulaService.registerCustomFunctions(dataContext);
 								Object value = exp.getValue(dataContext);
 								dataListItem.getExtraProperties().put(columnName, (Serializable) value);
 								logger.debug("Value :" + value);
