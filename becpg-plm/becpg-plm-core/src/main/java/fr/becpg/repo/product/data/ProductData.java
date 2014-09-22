@@ -545,7 +545,8 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		return null;
 	}
 
-	public boolean hasCompoListEl(@SuppressWarnings("unchecked") DataListFilter<ProductData>... filters) {
+   @SuppressWarnings("unchecked")
+	public boolean hasCompoListEl( DataListFilter<ProductData>... filters) {
 		return compoListView != null && compoListView.getCompoList() != null && !getCompoList(filters).isEmpty();
 	}
 

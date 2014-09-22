@@ -603,11 +603,11 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				}
 			} else {
 				Map<String, Serializable> propsMap = new HashMap<String, Serializable>();
-
 				propsMap.put(Version2Model.PROP_FROZEN_MODIFIED, nodeService.getProperty(branchNodeRef, ContentModel.PROP_CREATED));
 				propsMap.put(Version2Model.PROP_FROZEN_MODIFIER, nodeService.getProperty(branchNodeRef, ContentModel.PROP_CREATOR));
 				propsMap.put(VersionBaseModel.PROP_VERSION_LABEL, RepoConsts.INITIAL_VERSION);
-
+				propsMap.put(Version.PROP_DESCRIPTION, nodeService.getProperty(branchNodeRef, ContentModel.PROP_DESCRIPTION));
+								
 				EntityVersion initialVersion = new EntityVersion(new VersionImpl(propsMap, branchNodeRef), branchNodeRef, branchNodeRef,
 						getBranchFromNodeRef(branchNodeRef));
 				ret.add(initialVersion);

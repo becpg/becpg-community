@@ -85,6 +85,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		this.formulateChildren = formulateChildren;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean process(ProductData productData) throws FormulateException {
 
@@ -147,6 +148,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		
 	}
 
+	@SuppressWarnings("unchecked")
 	private boolean checkShouldFormulateComponents(boolean isRoot, ProductData productData, Set<NodeRef> checkedProducts) throws FormulateException {
 		boolean isFormulated = false;
 
@@ -250,18 +252,16 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 
 			ProductUnit productUnit = FormulationHelper.getProductUnit(productNodeRef, nodeService);
 			if (c != null) {
-
 				if (FormulationHelper.isCompoUnitP(c.getCompoListUnit())) {
 					checkNetWeight(reqCtrlListDataItem, productNodeRef);
+				} else {
+					boolean shouldUseLiter = FormulationHelper.isProductUnitLiter(productUnit);
+					boolean useLiter = FormulationHelper.isCompoUnitLiter(c.getCompoListUnit());
+	
+					if (shouldUseLiter && !useLiter || !shouldUseLiter && useLiter) {
+						addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_WRONG_UNIT);
+					}
 				}
-
-				boolean shouldUseLiter = FormulationHelper.isProductUnitLiter(productUnit);
-				boolean useLiter = FormulationHelper.isCompoUnitLiter(c.getCompoListUnit());
-
-				if (shouldUseLiter && !useLiter || !shouldUseLiter && useLiter) {
-					addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_WRONG_UNIT);
-				}
-
 				Double overrunPerc = c.getOverrunPerc();
 				if (FormulationHelper.isProductUnitLiter(productUnit) || overrunPerc != null) {
 					Double density = FormulationHelper.getDensity(productNodeRef, nodeService);
