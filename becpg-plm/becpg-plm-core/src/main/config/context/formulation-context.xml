@@ -57,6 +57,13 @@
 
 	<!-- Formulation visitors -->
 
+	<bean id="formulaService" class="fr.becpg.repo.product.formulation.FormulaService">
+		<property name="alfrescoRepository" ref="alfrescoRepository" />
+		<property name="namespaceService" ref="namespaceService"/>
+		<property name="securityMethodBeforeAdvice" ref="securityMethodBeforeAdvice"/>
+		<property name="nodeService" ref="nodeService" />
+	</bean>
+
 
 	<bean id="abstractSimpleFormulationHandler"
 		class="fr.becpg.repo.product.formulation.AbstractSimpleListFormulationHandler" abstract="true">
@@ -83,7 +90,7 @@
 				<bean class="fr.becpg.repo.product.formulation.FormulaFormulationHandler" >
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="namespaceService" ref="namespaceService"/>
-					<property name="securityMethodBeforeAdvice" ref="securityMethodBeforeAdvice"/>
+					<property name="formulaService" ref="formulaService"/>
 					<property name="nodeService" ref="nodeService" />
 					<property name="execOrder" value="Pre"/>
 				</bean>
@@ -95,6 +102,7 @@
 				</bean>
 				<bean parent="abstractSimpleFormulationHandler"
 					class="fr.becpg.repo.product.formulation.NutsCalculatingFormulationHandler">
+					<property name="formulaService" ref="formulaService"/>
 				</bean>
 				<bean parent="abstractSimpleFormulationHandler"
 					class="fr.becpg.repo.product.formulation.CostsCalculatingFormulationHandler">
@@ -118,7 +126,7 @@
 				<bean class="fr.becpg.repo.product.formulation.FormulaFormulationHandler" >
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="namespaceService" ref="namespaceService"/>
-					<property name="securityMethodBeforeAdvice" ref="securityMethodBeforeAdvice"/>
+					<property name="formulaService" ref="formulaService"/>
 					<property name="nodeService" ref="nodeService" />
 					<property name="execOrder" value="Post"/>
 				</bean>
@@ -157,13 +165,14 @@
 				<bean class="fr.becpg.repo.product.formulation.FormulaFormulationHandler" >
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="namespaceService" ref="namespaceService"/>
-					<property name="securityMethodBeforeAdvice" ref="securityMethodBeforeAdvice"/>
+					<property name="formulaService" ref="formulaService"/>
 					<property name="nodeService" ref="nodeService" />
 					<property name="execOrder" value="Pre"/>
 				</bean>
 				<bean parent="abstractSimpleFormulationHandler"
 					class="fr.becpg.repo.product.formulation.NutsCalculatingFormulationHandler">
 					<property name="transientFormulation" value="true"/>
+					<property name="formulaService" ref="formulaService"/>
 				</bean>
 				<bean parent="abstractSimpleFormulationHandler"
 					class="fr.becpg.repo.product.formulation.CostsCalculatingFormulationHandler">
@@ -173,7 +182,7 @@
 				<bean class="fr.becpg.repo.product.formulation.FormulaFormulationHandler" >
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="namespaceService" ref="namespaceService"/>
-					<property name="securityMethodBeforeAdvice" ref="securityMethodBeforeAdvice"/>
+					<property name="formulaService" ref="formulaService"/>
 					<property name="nodeService" ref="nodeService" />
 					<property name="execOrder" value="Post"/>
 				</bean>
