@@ -5825,12 +5825,16 @@
 					<show id="bcpg:pclValue" />
 					<show id="bcpg:pclMini" />
 					<show id="bcpg:pclMaxi" />
+					<show id="bcpg:pclTextCriteria" />
 				</field-visibility>
 
 				<appearance>
 					<field id="bcpg:pclPhysicoChem">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:pclTextCriteria">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
 				</appearance>
 			</form>
@@ -5844,6 +5848,7 @@
 					<show id="bcpg:pclUnit" />
 					<show id="bcpg:pclMini" />
 					<show id="bcpg:pclMaxi" />
+					<show id="bcpg:pclTextCriteria" />
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
@@ -5863,12 +5868,16 @@
 					<show id="bcpg:pclValue" />
 					<show id="bcpg:pclMini" />
 					<show id="bcpg:pclMaxi" />
+					<show id="bcpg:pclTextCriteria" />
 				</field-visibility>
 
 				<appearance>
 					<field id="bcpg:pclPhysicoChem">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:pclTextCriteria">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
 				</appearance>
 			</form>

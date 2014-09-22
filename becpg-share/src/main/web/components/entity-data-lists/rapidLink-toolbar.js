@@ -254,7 +254,8 @@
                   },
                   addToDataList : function RapidLinkToolbar_addToDataList(nodeRef, msgKey) {
 
-                     var instance = this, dataObj = null;
+                     var instance = this, dataObj = null,
+                         listType = "bcpg:"+this.options.list;
                      
                      if ("packagingList" == this.options.list) {
                         dataObj = {
@@ -268,6 +269,7 @@
                               "alf_destination" : instance.options.dataListNodeRef,
                               "assoc_mpm_plResource_added" : nodeRef
                            };
+                        listType = "mpm:processList";
                      } else {
                         dataObj = {
                               "alf_destination" : instance.options.dataListNodeRef,
@@ -279,7 +281,7 @@
                      
                         Alfresco.util.Ajax.jsonRequest({
                            method : Alfresco.util.Ajax.POST,
-                           url : Alfresco.constants.PROXY_URI + "api/type/bcpg:"+this.options.list+"/formprocessor",
+                           url : Alfresco.constants.PROXY_URI + "api/type/"+listType+"/formprocessor",
                            dataObj : dataObj,
                            successCallback : {
                               fn : function(resp) {
