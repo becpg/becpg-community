@@ -519,6 +519,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 		NodeRef ret = null;
 
+		
 		for (NodeRef reportNodeRef : dbReports) {
 			if (permissionService.hasPermission(reportNodeRef, "Read") == AccessStatus.ALLOWED) {
 
@@ -533,7 +534,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 						ret = reportNodeRef;
 					}
 					
-					if(reportName.startsWith(templateName)){
+					if(reportName!=null && reportName.startsWith(templateName)){
 						ret = reportNodeRef;
 					}
 					
