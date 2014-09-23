@@ -110,6 +110,9 @@ public class ImportProductVisitor extends ImportEntityListAspectVisitor implemen
 				if (parentHierachyNodeRef != null) {
 					hierarchyNodeRef = hierarchyService.getHierarchyByPath(path, parentHierachyNodeRef, value);
 				} else {
+					if(logger.isDebugEnabled()){
+						logger.debug("No parent for column "+attributeMapping.getAttribute().getName()+ " prop "+((HierarchyMapping) attributeMapping).getParentLevelColumn());
+					}
 					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_PRODUCTHIERARCHY1_EMPTY, properties));
 				}
 			} else {

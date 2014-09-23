@@ -51,5 +51,11 @@ public class MPMModel {
 	public static final QName ASSOC_PL_PRODUCT = QName.createQName(MPM_URI,
 			"plProduct");
 	public static final QName ASSOC_PL_RESOURCE = QName.createQName(MPM_URI,
-			"plResource");	
+			"plResource");
+
+	public static final QName TYPE_RESOURCEPARAMLIST = QName.createQName(MPM_URI,
+			"resourceParamList");
+
+	public static final QName TYPE_RESOURCEPARAM = QName.createQName(MPM_URI,
+			"resourceParam");
 }

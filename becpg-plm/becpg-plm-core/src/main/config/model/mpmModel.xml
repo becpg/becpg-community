@@ -37,7 +37,7 @@
 	<types>
 		
 		<type name="mpm:processStep">
-			<parent>bcpg:entityListItem</parent>					
+			<parent>bcpg:charact</parent>					
 			<mandatory-aspects>
 				<aspect>cm:titled</aspect>
 				<aspect>bcpg:codeAspect</aspect>
@@ -112,6 +112,49 @@
 				<aspect>bcpg:sortableListAspect</aspect>
 			</mandatory-aspects>
 		</type>
+	
+	
+		<type name="mpm:resourceParam">
+			<parent>bcpg:charact</parent>					
+			<mandatory-aspects>
+				<aspect>cm:titled</aspect>
+			</mandatory-aspects>
+		</type>
+	
+	
+		<type name="mpm:resourceParamList">
+			<parent>bcpg:productListItem</parent>
+			<properties>
+				<property name="mpm:rplParamValue">
+					<type>d:text</type>
+					<index enabled="false"/>
+				</property>	
+			</properties>
+			<associations>
+				<association name="mpm:rplResourceRef">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:resourceProduct</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="mpm:rplParamRef">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>mpm:resourceParam</class>
+						<mandatory>true</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+		</type>	
 	
 		
 	</types>

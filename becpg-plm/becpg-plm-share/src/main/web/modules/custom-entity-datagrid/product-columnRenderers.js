@@ -22,7 +22,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 		propertyName : [ "bcpg:product", "bcpg:supplier", "bcpg:client", "bcpg:entity", "bcpg:resourceProduct",
 				"cm:content_bcpg:costDetailsListSource", "bcpg:product_bcpg:packagingListProduct", "bcpg:product_bcpg:compoListProduct",
 				"ecm:wulSourceItems", "ecm:rlSourceItems", "ecm:rlTargetItem", "ecm:culSourceItem", "ecm:culTargetItem", "ecm:cclSourceItem" ],
-		renderer : function(oRecord, data, label, scope) {
+		renderer : function(oRecord, data, label, scope, z, zz, elCell, oColumn) {
 
 			var url = beCPG.util.entityCharactURL(data.siteId, data.value), version = "";
 
@@ -40,6 +40,14 @@ if (beCPG.module.EntityDataGridRenderers) {
 					version = '<span class="document-version">' + data.version + '</span>';
 				}
 			}
+			
+			if(label == "mpm:rplResourceRef"){
+			    url = beCPG.util.entityDetailsURL(data.siteId, data.value);
+			    if (oColumn.hidden) {
+                    scope.widgets.dataTable.showColumn(oColumn);
+                    Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
+                }
+			}
 
 			if (oRecord.getData("itemData")["prop_bcpg_depthLevel"] && oRecord.getData("itemData")["prop_bcpg_depthLevel"].value) {
 				var padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 15;
@@ -52,6 +60,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 		}
 
 	});
+	
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : [ "boolean_bcpg:allergenListVoluntary", "boolean_bcpg:allergenListInVoluntary", "boolean_bcpg:lclIsClaimed",
@@ -435,6 +444,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 		}
 
 	});
+	
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : [ "bcpg:dynamicCharactColumn1", "bcpg:dynamicCharactColumn2", "bcpg:dynamicCharactColumn3", "bcpg:dynamicCharactColumn4",
