@@ -1133,6 +1133,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			Map<QName, Serializable> properties) throws ImporterException {
 
 		if (attributeMapping instanceof HierarchyMapping) {
+			logger.debug("Case hierarchy mapping");
 			NodeRef hierarchyNodeRef = null;
 			if (((HierarchyMapping) attributeMapping).getParentLevelColumn() != null && !((HierarchyMapping) attributeMapping).getParentLevelColumn().isEmpty()) {
 				NodeRef parentHierachyNodeRef = (NodeRef) properties.get(QName.createQName(((HierarchyMapping) attributeMapping).getParentLevelColumn(), namespaceService));
@@ -1199,7 +1200,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			else {
 
 				// look for codeAspect
-				if (dictionaryService.getType(type).getDefaultAspects() != null) {
+				if (dictionaryService.getType(type)!=null && dictionaryService.getType(type).getDefaultAspects() != null) {
 					for (AspectDefinition aspectDef : dictionaryService.getType(type).getDefaultAspects()) {
 						if (aspectDef.getName().equals(BeCPGModel.ASPECT_CODE)) {
 							properties.put(BeCPGModel.PROP_CODE, value);

@@ -462,6 +462,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 		entityLists.put(PlmRepoConsts.PATH_LABELCLAIMS,PLMModel.TYPE_LABEL_CLAIM);
 		entityLists.put(PlmRepoConsts.PATH_NUTRIENTPROFILES,PLMModel.TYPE_NUTRIENT_PROFILE);
 		entityLists.put(PlmRepoConsts.PATH_PROCESSSTEPS,MPMModel.TYPE_PROCESSSTEP);
+		entityLists.put(PlmRepoConsts.PATH_RESOURCEPARAMS,MPMModel.TYPE_RESOURCEPARAM);
 		entityLists.put(PlmRepoConsts.PATH_VARIANT_CHARACTS,VariantModel.TYPE_CHARACT);		
 		entityLists.put(PlmRepoConsts.PATH_STORAGE_CONDITIONS,PLMModel.TYPE_STORAGE_CONDITIONS);
 		entityLists.put(PlmRepoConsts.PATH_PRECAUTION_OF_USE,PLMModel.TYPE_PRECAUTION_OF_USE);
@@ -584,7 +585,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 				dataLists.add(PLMModel.TYPE_COSTLIST);
 				dataLists.add(PLMModel.TYPE_PRICELIST);
 				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
-				
+				dataLists.add(MPMModel.TYPE_RESOURCEPARAMLIST);
 				wusedQName = MPMModel.TYPE_PROCESSLIST;
 
 			} else if (productType.equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT)) {

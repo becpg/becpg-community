@@ -33,6 +33,7 @@ public class PlmRepoConsts {
 	public static final String PATH_CERTIFICATIONS = "Certifications";
 	public static final String PATH_APPROVALNUMBERS = "ApprovalNumbers";
 	public static final String PATH_PROCESSSTEPS = "ProcessSteps";
+	public static final String PATH_RESOURCEPARAMS = "ResourceParams";
 	public static final String PATH_LABELCLAIMS = "LabelClaims";	
 	public static final String PATH_LABELCLAIMS_TYPES = "LabelClaimTypes";
 	public static final String PATH_STORAGE_CONDITIONS = "StorageConditions";
@@ -97,6 +98,7 @@ public class PlmRepoConsts {
 	public static final String PATH_ECO = "ECO";
 	
 	public static final String PATH_PRODUCT_HIERARCHY = "/app:company_home/cm:System/cm:ProductHierarchy/bcpg:entityLists/";
+	
 	
 	
 	

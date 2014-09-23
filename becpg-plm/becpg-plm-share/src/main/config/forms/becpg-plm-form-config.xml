@@ -4789,7 +4789,6 @@
 					<field id="bcpg:packagingListProduct">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							ingList
 							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:packagingMaterial,bcpg:packagingKit&#38;excludeClassNames=bcpg:entityTplAspect
 							</control-param>
 						</control>

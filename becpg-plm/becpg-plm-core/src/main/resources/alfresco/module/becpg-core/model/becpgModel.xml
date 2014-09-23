@@ -565,6 +565,11 @@
 		</type>
 		<type name="bcpg:resourceProduct">
 			<parent>bcpg:product</parent>
+			<overrides>
+			   <property name="bcpg:productUnit">
+				  <default>h</default>
+			    </property>
+			</overrides>
 			<mandatory-aspects>
 				<aspect>bcpg:eanAspect</aspect>
 				<aspect>bcpg:suppliersAspect</aspect>
