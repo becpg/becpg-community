@@ -197,7 +197,7 @@
 					<show id="mpm:plQtyResource" />
 					<show id="mpm:plRateResource" />
 					<show id="mpm:plRateProduct" />		
-				   <show id="bcpg:dynamicCharactColumn1" force="true" />
+				    <show id="bcpg:dynamicCharactColumn1" force="true" />
 					<show id="bcpg:dynamicCharactColumn2" force="true" />
 					<show id="bcpg:dynamicCharactColumn3" force="true" />
 					<show id="bcpg:dynamicCharactColumn4" force="true" />
@@ -206,6 +206,7 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden" ></field>
+					<field id="mpm:plRateProduct" read-only="true" ></field>
 					<field id="bcpg:dynamicCharactColumn1" label="hidden" ></field>
 					<field id="bcpg:dynamicCharactColumn2" label="hidden" ></field>
 					<field id="bcpg:dynamicCharactColumn3" label="hidden" ></field>
@@ -263,6 +264,7 @@
 					<show id="mpm:rplParamRef" />	
 					<show id="mpm:rplParamValue" />										
 					<show id="mpm:rplResourceRef" />
+					<show id="mpm:rplStepRef" />
 				</field-visibility>
 				<appearance>					
 					<field id="mpm:rplParamRef">
@@ -275,18 +277,21 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 						</control>
 					</field>
+					<field id="mpm:rplStepRef">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+						</control>
+					</field>
 				</appearance>
 			</form>
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
+					<show id="mpm:rplStepRef" />
 					<show id="mpm:rplResourceRef" />
 					<show id="mpm:rplParamRef" />	
 					<show id="mpm:rplParamValue" />		
 				</field-visibility>
-				<appearance>
-					<field id="mpm:rplResourceRef" label="hidden"/>
-				</appearance>
 			</form>
 		</forms>
 	</config>
@@ -298,6 +303,7 @@
 					<show id="mpm:rplParamRef" />	
 					<show id="mpm:rplParamValue" />										
 					<show id="mpm:rplResourceRef" />
+					<show id="mpm:rplStepRef" />
 				</field-visibility>
 				<appearance>					
 					<field id="mpm:rplParamRef">
@@ -306,6 +312,11 @@
 						</control>
 					</field>
 					<field id="mpm:rplResourceRef">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+						</control>
+					</field>
+					<field id="mpm:rplStepRef">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 						</control>
