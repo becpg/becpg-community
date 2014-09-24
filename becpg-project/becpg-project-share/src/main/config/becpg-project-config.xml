@@ -59,6 +59,17 @@
 	</config>
 
 
+	<config evaluator="string-compare" condition="EntityDataLists">
+		<lists>
+		   <list id="taskList" index="10" view="true" />
+		   <list id="deliverableList" index="20" />
+		   <list id="scoreList" index="20" />
+		   <list id="activityList" index="30" view="true" />
+		   <list id="logTimeList" index="40" />
+		</lists>
+	</config>
+	
+
 	<config evaluator="string-compare" condition="DocumentLibrary">
 		<aspects>
 			<visible>

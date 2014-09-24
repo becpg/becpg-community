@@ -66,8 +66,6 @@
 						 * @type object
 						 */
 						options : {
-							// ### beCPG : replace containerId, siteId by
-							// entityNodeRef
 							/**
 							 * Current entityNodeRef.
 							 * 
@@ -91,7 +89,14 @@
 							 * @property listTypes
 							 * @type Array
 							 */
-							listTypes : []
+							listTypes : [],
+							
+							
+							/**
+							 * Sort options
+							 */
+							
+							sortOptions : []
 						},
 
 						/**
@@ -174,11 +179,12 @@
 							var fnSuccess = function DataLists_pDL_fnSuccess(response, p_obj) {
 								this.showLoadingAjaxSpinner(false);
 
-								var lists = response.json.datalists, list;
+								var lists = response.json.datalists, list,me = this;
 
 								if (response.json.listTypes) {
 									this.options.listTypes = response.json.listTypes;
 								}
+								
 
 								this.dataLists = {};
 
@@ -190,6 +196,22 @@
 								this.entity = response.json.entity;
 								this.widgets.newList.set("disabled", !response.json.permissions.create);
 
+							    if(this.options.sortOptions!=null && this.options.sortOptions.length>0){
+							        
+                                    lists.sort(function (listId1, listId2){
+                                        var val1=500, val2 = 500;
+                                        for(var z in me.options.sortOptions){
+                                            if(listId1.name.indexOf(me.options.sortOptions[z].id)>-1){
+                                                val1 = me.options.sortOptions[z].sortIndex;
+                                            }
+                                            if(listId2.name.indexOf(me.options.sortOptions[z].id)>-1){
+                                                val2 = me.options.sortOptions[z].sortIndex;
+                                            }
+                                        }
+                                        return val1 - val2;
+                                    });
+                                }
+								
 								for (var i = 0, ii = lists.length; i < ii; i++) {
 									list = lists[i];
 									this.dataLists[list.name] = list;
@@ -337,6 +359,18 @@
 
 											if (this.options.listId === null || this.options.listId.length < 1) {
 												this.options.listId = list.name;
+												if(this.options.sortOptions!=null && this.options.sortOptions.length>0){
+												    for(var z in this.options.sortOptions){
+			                                            if(list.name.indexOf(this.options.sortOptions[z].id)>-1){
+			                                                if(this.options.sortOptions[z].isView){
+			                                                    window.location.href = "entity-data-lists?list=" + $html(list.name) + "&nodeRef="
+			                                                    + $html(this.options.entityNodeRef);
+			                                                }
+			                                                break;
+			                                            }
+												    }
+												    
+												}
 											}
 
 											permissions = list.permissions;
