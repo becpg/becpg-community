@@ -53,6 +53,12 @@ function main()
 	     node = bThumbnail.getThumbnailNode(node);
 	  }
     }
+    
+    if(thumbnailName == "webpreview" && node.isSubType("rep:report")){
+        bThumbnail.refreshReport(node);
+        model.allowBrowserToCache = "false";
+    }
+    
    
    // Get the queue/force create setting
    var qc = false;

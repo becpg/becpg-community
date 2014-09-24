@@ -31,6 +31,7 @@
 		<property name="beCPGCacheService" ref="beCPGCacheService" />
 		<property name="serviceRegistry" ref="ServiceRegistry" />
 		<property name="entityReportService" ref="entityReportService" />
+		<property name="associationService" ref="associationService" />
 	</bean>
 
 
