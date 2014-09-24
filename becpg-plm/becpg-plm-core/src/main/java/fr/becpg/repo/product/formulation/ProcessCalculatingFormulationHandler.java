@@ -31,6 +31,7 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 
 	private static Log logger = LogFactory.getLog(ProcessCalculatingFormulationHandler.class);	
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 
@@ -44,9 +45,7 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 		
 		// visit resources and steps from the end to the beginning
 		Double minRateProcess = null;
-		for(int z_idx=formulatedProduct.getProcessList(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT).size()-1 ; z_idx>=0 ; z_idx--){
-			
-			ProcessListDataItem p = formulatedProduct.getProcessList(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT).get(z_idx);
+		for(ProcessListDataItem p : formulatedProduct.getProcessList(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT)){
 			
 			if(p.getRateResource() != null && p.getQtyResource() != null){
 				
