@@ -170,7 +170,7 @@
 
                               var PAGE_SIZE = 5000;
                  
-                              document.location.href = dt._getDataUrl(PAGE_SIZE).replace("/node?","/node.csv?") + "&format=csv&metadata=" + encodeURIComponent(YAHOO.lang.JSON
+                              document.location.href = dt._getDataUrl(PAGE_SIZE) + "&format=xls&metadata=" + encodeURIComponent(YAHOO.lang.JSON
                                     .stringify(requestParams));
 
                            },
