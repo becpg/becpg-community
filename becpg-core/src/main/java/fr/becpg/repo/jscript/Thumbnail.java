@@ -17,6 +17,8 @@
  ******************************************************************************/
 package fr.becpg.repo.jscript;
 
+import java.util.List;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.jscript.BaseScopableProcessorExtension;
 import org.alfresco.repo.jscript.ScriptNode;
@@ -28,10 +30,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.common.BeCPGException;
+import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
@@ -51,6 +55,8 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 	private BeCPGCacheService beCPGCacheService;
 
 	private ServiceRegistry serviceRegistry;
+
+	private AssociationService associationService;
 
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
@@ -72,6 +78,10 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 		this.serviceRegistry = serviceRegistry;
 	}
 
+	public void setAssociationService(AssociationService associationService) {
+		this.associationService = associationService;
+	}
+
 	public ScriptNode getThumbnailNode(ScriptNode sourceNode) {
 
 		QName type = nodeService.getType(sourceNode.getNodeRef());
@@ -87,12 +97,11 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 			} catch (BeCPGException e) {
 				logger.debug(e, e);
 			}
-		
 
 			if (img == null) {
 				img = getImage(String.format(ICON_THUMBNAIL_NAME, type.getLocalName()));
 			}
-			
+
 			if (img == null) {
 				img = getImage(String.format(ICON_THUMBNAIL_NAME, "entity"));
 			}
@@ -110,7 +119,7 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 		try {
 			if (entityService.hasAssociatedImages(type)) {
 				img = entityService.getEntityDefaultImage(sourceNode.getNodeRef());
-			}	
+			}
 		} catch (BeCPGException e) {
 			logger.debug(e, e);
 		}
@@ -118,8 +127,6 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 		if (img == null) {
 			img = entityService.createDefaultImage(sourceNode.getNodeRef());
 		}
-
-		
 
 		return img != null ? new ScriptNode(img, serviceRegistry, getScope()) : sourceNode;
 
@@ -145,6 +152,26 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 		reportNodeRef = entityReportService.getSelectedReport(sourceNode.getNodeRef());
 
 		return reportNodeRef != null ? new ScriptNode(reportNodeRef, serviceRegistry, getScope()) : sourceNode;
+
+	}
+
+	public void refreshReport(ScriptNode reportNode) {
+		NodeRef reportNodeRef = reportNode.getNodeRef();
+
+		List<NodeRef> entityNodeRefs = associationService.getSourcesAssocs(reportNodeRef, ReportModel.ASSOC_REPORTS);
+		if (entityNodeRefs != null) {
+			for (NodeRef entityNodeRef : entityNodeRefs) {
+				if (entityReportService.shouldGenerateReport(entityNodeRef)) {
+					NodeRef thumbNodeRef = serviceRegistry.getThumbnailService().getThumbnailByName(reportNodeRef, ContentModel.PROP_CONTENT,
+							"webpreview");
+					if (thumbNodeRef != null) {
+						// Ensure thumbnail is regenerated before preview
+						nodeService.deleteNode(thumbNodeRef);
+					}
+					entityReportService.generateReport(entityNodeRef);
+				}
+			}
+		}
 
 	}
 
