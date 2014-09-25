@@ -38,32 +38,24 @@ import fr.becpg.repo.web.scripts.WebscriptHelper;
 
 public abstract class AbstractSearchWebScript extends AbstractWebScript {
 
-	/** The Constant PARAM_QUERY. */
 	protected static final String PARAM_QUERY = "query";
 
-	/** The Constant PARAM_SORT. */
 	protected static final String PARAM_SORT = "sort";
 
-	/** The Constant PARAM_TERM. */
 	protected static final String PARAM_TERM = "term";
 
-	/** The Constant PARAM_TAG. */
 	protected static final String PARAM_TAG = "tag";
 
-	/** The Constant PARAM_CONTAINER. */
 	protected static final String PARAM_CONTAINER = "container";
 
-	/** The Constant PARAM_SITE. */
 	protected static final String PARAM_SITE = "site";
 
-	/** The Constant PARAM_REPOSITORY. */
 	protected static final String PARAM_REPOSITORY = "repo";
-	
-	/** The Constant PARAM_NODEREF. */
+
 	protected static final String PARAM_NODEREF = "nodeRef";
 
 	protected static final String PARAM_ITEMTYPE = "itemType";
-	
+
 	/** Pagination **/
 
 	protected static final String PARAM_PAGE = "page";
@@ -72,40 +64,31 @@ public abstract class AbstractSearchWebScript extends AbstractWebScript {
 
 	protected static final String PARAM_MAX_RESULTS = "maxResults";
 
-
-
 	/** Services **/
 
 	protected NodeService nodeService;
-	
+
 	protected AdvSearchService advSearchService;
+
+	protected NamespaceService namespaceService;
 
 	public void setAdvSearchService(AdvSearchService advSearchService) {
 		this.advSearchService = advSearchService;
 	}
 
-	protected NamespaceService namespaceService;
-
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
-	
 
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
-
-
-	
-
-
-
 	protected List<NodeRef> doSearch(WebScriptRequest req, Integer maxResults) throws JSONException {
 
 		String query = req.getParameter(PARAM_QUERY);
 		String sort = req.getParameter(PARAM_SORT);
-		Map<String, Boolean> sortMap = WebscriptHelper.extractSortMap(sort,namespaceService);
+		Map<String, Boolean> sortMap = WebscriptHelper.extractSortMap(sort, namespaceService);
 		String term = req.getParameter(PARAM_TERM);
 		String tag = req.getParameter(PARAM_TAG);
 		String siteId = req.getParameter(PARAM_SITE);
@@ -113,45 +96,40 @@ public abstract class AbstractSearchWebScript extends AbstractWebScript {
 		String repo = req.getParameter(PARAM_REPOSITORY);
 		String itemType = req.getParameter(PARAM_ITEMTYPE);
 		BeCPGQueryBuilder queryBuilder = null;
-		
+
 		String nodeRef = req.getParameter(PARAM_NODEREF);
-		if(nodeRef!=null && !nodeRef.isEmpty()){
-			queryBuilder = BeCPGQueryBuilder.createQuery()
-			 .inPath(getPath(nodeRef))
-			 .excludeSearch()
-			 .excludeType(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+		if (nodeRef != null && !nodeRef.isEmpty()) {
+			queryBuilder = BeCPGQueryBuilder.createQuery().inPath(getPath(nodeRef)).excludeSearch().excludeType(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 			if (itemType != null && !itemType.isEmpty()) {
-				queryBuilder.ofType(QName.createQName(itemType,namespaceService));
-			} 
+				queryBuilder.ofType(QName.createQName(itemType, namespaceService));
+			}
 		}
-		
+
 		QName datatype = null;
 		Map<String, String> criteriaMap = null;
-		
+
 		boolean isRepo = false;
 		if (repo != null && repo.equals("true")) {
 			isRepo = true;
 		}
 
 		if (query != null && !query.isEmpty()) {
-		
+
 			JSONObject jsonObject = new JSONObject(query);
 			criteriaMap = JSONHelper.extractCriteria(jsonObject);
-			datatype =  QName.createQName(jsonObject.getString("datatype"), namespaceService);
-			
+			datatype = QName.createQName(jsonObject.getString("datatype"), namespaceService);
+
 		}
-		
-		if(queryBuilder==null){
+
+		if (queryBuilder == null) {
 			queryBuilder = advSearchService.createSearchQuery(datatype, term, tag, isRepo, siteId, containerId);
-		} 
+		}
 
 		queryBuilder.addSort(sortMap);
-		
-		return advSearchService.queryAdvSearch(datatype, queryBuilder, criteriaMap, RepoConsts.MAX_RESULTS_256);
+
+		return advSearchService.queryAdvSearch(datatype, queryBuilder, criteriaMap, maxResults != null ? maxResults : RepoConsts.MAX_RESULTS_256);
 
 	}
-
-	
 
 	private String getPath(String nodeRef) {
 		return nodeService.getPath(new NodeRef(nodeRef)).toPrefixString(namespaceService);

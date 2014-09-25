@@ -1,8 +1,6 @@
 package fr.becpg.repo.entity.datalist.impl;
 
 import java.io.IOException;
-import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 import org.alfresco.service.cmr.dictionary.DictionaryService;
@@ -18,6 +16,8 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 import fr.becpg.repo.entity.datalist.DataListOutputWriter;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
+import fr.becpg.repo.helper.ExcelHelper;
+import fr.becpg.repo.helper.ExcelHelper.ExcelFieldTitleProvider;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 
 public class ExcelDataListOutputWriter implements DataListOutputWriter {
@@ -63,7 +63,13 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 		cell = labelRow.createCell(cellnum++);
 		cell.setCellValue("#");
 
-		appendExcelHeader(extractedItems.getComputedFields(), null, null, headerRow, labelRow, style, cellnum);
+		ExcelHelper.appendExcelHeader(extractedItems.getComputedFields(), null, null, headerRow, labelRow, style, cellnum, new ExcelFieldTitleProvider() {
+			
+			@Override
+			public String getTitle(AttributeExtractorStructure field) {
+				return field.getFieldDef().getTitle(dictionaryService);
+			}
+		});
 
 		for (Map<String, Object> item : extractedItems.getPageItems()) {
 			Row row = sheet.createRow(rownum++);
@@ -71,7 +77,7 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 			cell = row.createCell(0);
 			cell.setCellValue("VALUES");
 
-			appendExcelField(extractedItems.getComputedFields(), null, item, row, 1);
+			ExcelHelper.appendExcelField(extractedItems.getComputedFields(), null, item, row, 1);
 
 		}
 
@@ -79,63 +85,8 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 
 	}
 
-	private int appendExcelField(List<AttributeExtractorStructure> computedFields, String prefix, Map<String, Object> item, Row row, int cellnum) {
-		for (AttributeExtractorStructure field : computedFields) {
-			if (field.isNested()) {
-			cellnum = appendExcelField(field.getChildrens(), field.getFieldName(), item, row, cellnum);
-			} else {
-				Cell cell = row.createCell(cellnum++);
+	
 
-				Object obj = null;
-				if (prefix != null) {
-					obj = item.get(prefix + "_" + field.getFieldName());
-				} else {
-					obj = item.get(field.getFieldName());
-				}
-				if (obj instanceof Date)
-					cell.setCellValue((Date) obj);
-				else if (obj instanceof Boolean)
-					cell.setCellValue((Boolean) obj);
-				else if (obj instanceof String)
-					cell.setCellValue((String) obj);
-				else if (obj instanceof Double)
-					cell.setCellValue((Double) obj);
-			}
-		}
-		return cellnum;
-	}
-
-	private int appendExcelHeader(List<AttributeExtractorStructure> fields, String prefix, String titlePrefix, Row headerRow, Row labelRow,
-			XSSFCellStyle style, int cellnum) {
-		for (AttributeExtractorStructure field : fields) {
-
-			if (field.isNested()) {
-
-				cellnum = appendExcelHeader(field.getChildrens(), field.getFieldName(), getTitle(field), headerRow, labelRow, style, cellnum);
-			} else {
-				Cell cell = headerRow.createCell(cellnum);
-
-				if (prefix != null) {
-					cell.setCellValue(prefix + "_" + field.getFieldDef().getName().toPrefixString());
-				} else {
-					cell.setCellValue(field.getFieldDef().getName().toPrefixString());
-				}
-
-				cell = labelRow.createCell(cellnum++);
-				if (titlePrefix != null) {
-					cell.setCellValue(titlePrefix + " - " + getTitle(field));
-				} else {
-					cell.setCellValue(getTitle(field));
-				}
-				cell.setCellStyle(style);
-			}
-		}
-		return cellnum;
-	}
-
-	private String getTitle(AttributeExtractorStructure field) {
-		return field.getFieldDef().getTitle(dictionaryService);
-	}
 
 	// private void setNamedRangeCellDataValidation(HSSFSheet sheet, int
 	// firstRow, int firstColumn, int lastRow, int lastColumn, String rangeName)

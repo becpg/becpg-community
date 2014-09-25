@@ -92,7 +92,6 @@ public class ReportTplServiceImpl implements ReportTplService{
 	 */
 	@Override
 	public NodeRef getSystemReportTemplate(ReportType reportType, QName nodeType, String tplName) {    	  
-    			
 		return getReportTpls(reportType, nodeType, true, tplName).singleValue();
 	}
 	

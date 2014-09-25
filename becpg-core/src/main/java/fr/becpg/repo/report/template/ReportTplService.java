@@ -28,6 +28,7 @@ import fr.becpg.report.client.ReportFormat;
 public interface ReportTplService {
 
 	public static final String PARAM_VALUE_DESIGN_EXTENSION = ".rptdesign";
+	public static final String PARAM_VALUE_XLSREPORT_EXTENSION = ".xls";
 	
 	/**
 	 * Gets the system report templates.
