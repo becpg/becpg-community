@@ -478,8 +478,8 @@ public class FormModelVisitor {
 			nodeService.setProperty(fieldNodeRef, DesignerModel.PROP_DSG_DESCRIPTIONID, field.getAttribute("description-id"));
 			nodeService.setProperty(fieldNodeRef, DesignerModel.PROP_DSG_HELP, field.getAttribute("help"));
 			nodeService.setProperty(fieldNodeRef, DesignerModel.PROP_DSG_HELPID, field.getAttribute("help-id"));
-			if (!StringUtils.isEmpty(field.getAttribute("readOnly"))) {
-				nodeService.setProperty(fieldNodeRef, DesignerModel.PROP_DSG_READONLY, field.getAttribute("readOnly"));
+			if (!StringUtils.isEmpty(field.getAttribute("read-only"))) {
+				nodeService.setProperty(fieldNodeRef, DesignerModel.PROP_DSG_READONLY, field.getAttribute("read-only"));
 			}
 			if (!StringUtils.isEmpty(field.getAttribute("mandatory"))) {
 				nodeService.setProperty(fieldNodeRef, DesignerModel.PROP_DSG_MANDATORY, field.getAttribute("mandatory"));
