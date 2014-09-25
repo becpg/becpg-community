@@ -29,58 +29,55 @@ import fr.becpg.repo.variant.filters.VariantFilters;
 
 public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler<ProductData> {
 
-	private static Log logger = LogFactory.getLog(ProcessCalculatingFormulationHandler.class);	
-	
+	private static Log logger = LogFactory.getLog(ProcessCalculatingFormulationHandler.class);
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 
 		logger.debug("process calculating visitor");
-		
+
 		// no compo => no formulation
-		if(!formulatedProduct.hasProcessListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT)){			
+		if (!formulatedProduct.hasProcessListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT)) {
 			logger.debug("no process => no formulation");
 			return true;
 		}
-		
+
 		// visit resources and steps from the end to the beginning
 		Double minRateProcess = null;
-		for(ProcessListDataItem p : formulatedProduct.getProcessList(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT)){
-			
-			if(p.getRateResource() != null && p.getQtyResource() != null){
-				
+		for (ProcessListDataItem p : formulatedProduct.getProcessList(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT)) {
+
+			if (p.getRateResource() != null && p.getQtyResource() != null) {
+
 				// rateProcess
-				Double rateProcess = p.getQtyResource() * p.getRateResource(); 
+				Double rateProcess = p.getQtyResource() * p.getRateResource();
 				p.setRateProcess(rateProcess);
-				
+
 				// minRateProcess
-				if(minRateProcess==null){
+				if (minRateProcess == null) {
 					minRateProcess = rateProcess;
-				}
-				else if(rateProcess < minRateProcess){
+				} else if (rateProcess < minRateProcess) {
 					minRateProcess = rateProcess;
 				}
 			}
-			
-			if(p.getStep() != null){
-				
-				p.setRateProcess(minRateProcess);					
-				Double productQtyToTransform = p.getQty() != null ? p.getQty() : formulatedProduct.getQty();
-				
+
+			p.setRateProcess(minRateProcess);
+			Double productQtyToTransform = p.getQty() != null ? p.getQty() : formulatedProduct.getQty();
+
+			if (productQtyToTransform != null) {
 				// rateProduct
-				if(minRateProcess != null && minRateProcess != 0d && productQtyToTransform != null){
+				if (minRateProcess != null && minRateProcess != 0d && productQtyToTransform != null) {
 					p.setRateProduct(minRateProcess / productQtyToTransform);
-				}
-				else{
+				} else {
 					p.setRateProduct(null);
 				}
-				
-				// reset
-				minRateProcess = null;
 			}
+
+			// reset
+			minRateProcess = null;
 		}
-		
+
 		return true;
-	}	
-	
+	}
+
 }
