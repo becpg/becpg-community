@@ -13,9 +13,10 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
  * GNU Lesser General Public License for more details. 
  *  
- * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License along with beCPG. 
+ * If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package fr.becpg.repo.report.search;
+package fr.becpg.repo.report.search.impl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,7 @@ import fr.becpg.config.mapping.AttributeMapping;
 import fr.becpg.config.mapping.CharacteristicMapping;
 import fr.becpg.config.mapping.FileMapping;
 
-public class ExportSearchContext {
+public class ReportServerSearchContext {
 
 	private PropertyFormats propertyFormats;
 	
@@ -68,7 +69,7 @@ public class ExportSearchContext {
 		this.fileColumns = fileColumns;
 	}
 	
-	public ExportSearchContext(){
+	public ReportServerSearchContext(){
 		propertyFormats = new PropertyFormats(false);
 	}
 }
