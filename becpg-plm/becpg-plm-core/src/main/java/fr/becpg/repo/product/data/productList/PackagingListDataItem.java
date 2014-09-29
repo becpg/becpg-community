@@ -6,14 +6,16 @@ package fr.becpg.repo.product.data.productList;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.repository.annotation.AlfEnforced;
-import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
+import fr.becpg.repo.repository.annotation.MultiLevelDataList;
 
 @AlfType
 @AlfQname(qname = "bcpg:packagingList")
+@MultiLevelDataList
 public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem implements CompositionDataItem {
 
 	private Double qty = 0d;

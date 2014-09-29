@@ -1,5 +1,6 @@
 package fr.becpg.repo.helper;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +52,13 @@ public class ExcelHelper {
 		return cellnum;
 	}
 
+	
+
+	public static boolean isExcelType(Serializable value) {		
+		return value instanceof Date || value instanceof Boolean || value instanceof Double;
+	}
+	
+	
 	public static int appendExcelHeader(List<AttributeExtractorStructure> fields, String prefix, String titlePrefix, Row headerRow, Row labelRow,
 			XSSFCellStyle style, int cellnum, ExcelFieldTitleProvider titleProvider) {
 		for (AttributeExtractorStructure field : fields) {
@@ -79,5 +87,10 @@ public class ExcelHelper {
 		}
 		return cellnum;
 	}
+
+
+
+
+
 
 }
