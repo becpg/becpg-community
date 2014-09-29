@@ -94,7 +94,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 
 				if (RepoConsts.FORMAT_CSV.equals(format)
 						|| RepoConsts.FORMAT_XLS.equals(format)) {
-					ret.addItem(extractCSV(nodeRef, ret.getComputedFields(), props, cache));
+					ret.addItem(extractExport( RepoConsts.FORMAT_XLS.equals(format)? AttributeExtractorMode.XLS: AttributeExtractorMode.CSV , nodeRef, ret.getComputedFields(), props, cache));
 				} else {
 					ret.addItem(extractJSON(nodeRef, ret.getComputedFields(), props, cache));
 				}
@@ -148,7 +148,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 
 				tmp.put("assoc_" + assocName.replaceFirst(":", "_"), entity);
 			}
-		} else if (AttributeExtractorMode.CSV.equals(mode)) {
+		} else if (AttributeExtractorMode.CSV.equals(mode) || AttributeExtractorMode.XLS.equals(mode)) {
 			if (extraProps.get(PROP_DEPTH) != null) {
 				tmp.put("prop_bcpg_depthLevel", ((Integer) extraProps.get(PROP_DEPTH)).toString());
 			}

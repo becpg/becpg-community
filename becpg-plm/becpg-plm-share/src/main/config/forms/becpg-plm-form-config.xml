@@ -4856,16 +4856,15 @@
 			</form>
 			<form id="filter">
 				<field-visibility>
-					<show id="bcpg:depthLevel" for-mode="view" force="true" />
-					<show id="entity_bcpg:packagingListProduct_bcpg:product"
-						for-mode="view" />
+					<show id="bcpg:depthLevel" force="true" />
+					<show id="entity_bcpg:packagingListProduct_bcpg:product" force="true" />
 					<show id="bcpg:packagingListPkgLevel" />
 					<show id="bcpg:packagingListIsMaster" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:depthLevel">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">1|1,2|2,3|3,4|4,All|data.level.all
+							<control-param name="options">,All|data.level.all
 							</control-param>
 						</control>
 					</field>

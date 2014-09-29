@@ -55,7 +55,7 @@ public interface AttributeExtractorService {
 	
 	
 	public enum AttributeExtractorMode {
-		SEARCH,JSON,CSV;
+		SEARCH,JSON,XLS,CSV;
 	}
 
 	public List<AttributeExtractorStructure> readExtractStructure(QName itemType, List<String> metadataFields);

@@ -224,7 +224,7 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 	private Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields,
 			Map<QName, Serializable> properties, final Map<NodeRef, Map<String, Object>> cache) {
 
-		return attributeExtractorService.extractNodeData(nodeRef, itemType, properties, metadataFields, AttributeExtractorMode.CSV,
+		return attributeExtractorService.extractNodeData(nodeRef, itemType, properties, metadataFields, AttributeExtractorMode.XLS,
 				new AttributeExtractorService.DataListCallBack() {
 
 					@Override
