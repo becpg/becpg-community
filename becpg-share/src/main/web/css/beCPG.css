@@ -257,7 +257,7 @@
 }
 
 .alfresco-share .dijitIcon.dijitMenuItemIcon.entity.resourceProduct {
-	background: url(../../components/images/filetypes/generic-resourceProduct-16.png) no-repeat;
+   background: url(../../components/images/filetypes/generic-resourceProduct-16.png) no-repeat;
    background-repeat: no-repeat;
    height: 20px;
    width: 20px;

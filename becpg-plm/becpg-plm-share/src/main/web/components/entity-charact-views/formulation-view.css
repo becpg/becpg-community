@@ -23,6 +23,7 @@
 
 .formulation-view  .dashlet {
 	margin: 10px 0 0;
+	z-index: auto;
 }
 
 .formulation-view  .dashlet  .toolbar {
