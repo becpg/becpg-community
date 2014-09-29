@@ -163,6 +163,7 @@
 					<show id="mpm:plResource" />
 					<show id="mpm:plQtyResource" />
 					<show id="mpm:plRateResource" />	
+					<show id="bcpg:variantIds" force="true" />
 					<show id="bcpg:instruction" force="true"/>
 				</field-visibility>
 				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
@@ -178,6 +179,12 @@
 					<field id="mpm:plResource">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:variantIds">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/variantList
+							</control-param>
+						</control>
 					</field>
 					<field id="bcpg:instruction">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
@@ -229,6 +236,7 @@
 					<show id="mpm:plResource" />
 					<show id="mpm:plQtyResource" />
 					<show id="mpm:plRateResource" />
+					<show id="bcpg:variantIds" force="true" />
 					<show id="bcpg:instruction" force="true"/>
 				</field-visibility>
 				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
@@ -244,6 +252,12 @@
 					<field id="mpm:plResource">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:variantIds">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/variantList
+							</control-param>
+						</control>
 					</field>
 					<field id="bcpg:instruction">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
