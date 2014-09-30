@@ -107,8 +107,11 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	private HierarchyService hierarchyService;
 	
 	private TargetAssocValueExtractor targetAssocValueExtractor;
-
 	
+	public void setLuceneAnaLyzer(Analyzer luceneAnaLyzer) {
+		this.luceneAnaLyzer = luceneAnaLyzer;
+	}
+
 	public void setTargetAssocValueExtractor(TargetAssocValueExtractor targetAssocValueExtractor) {
 		this.targetAssocValueExtractor = targetAssocValueExtractor;
 	}

@@ -46,7 +46,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(CompareEntityServiceImpl.class);
-	
+
 	private static final String COMPARISON_SEPARATOR = " - ";
 
 	@Autowired
@@ -66,13 +66,12 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 	@Autowired
 	private EntityListDAO entityListDAO;
-	
+
 	@Autowired
 	private MultiLevelDataListService multiLevelDataListService;
 
 	@Override
-	public List<CompareResultDataItem> compare(NodeRef entity1, List<NodeRef> entities,
-			List<CompareResultDataItem> compareResult, 
+	public List<CompareResultDataItem> compare(NodeRef entity1, List<NodeRef> entities, List<CompareResultDataItem> compareResult,
 			Map<String, List<StructCompareResultDataItem>> structCompareResults) {
 
 		Map<String, CompareResultDataItem> comparisonMap = new HashMap<String, CompareResultDataItem>();
@@ -84,20 +83,19 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 			compareEntities(entity1, entity, nbEntities, pos, comparisonMap, structCompareResults);
 			pos++;
 		}
-		
-		for (CompareResultDataItem c : comparisonMap.values()){
+
+		for (CompareResultDataItem c : comparisonMap.values()) {
 			compareResult.add(c);
-		}			
+		}
 
 		return compareResult;
-	}	
+	}
 
-	private void compareEntities(NodeRef entity1NodeRef, NodeRef entity2NodeRef, int nbEntities, int comparisonPosition, 
-			Map<String, CompareResultDataItem> comparisonMap,
-			Map<String, List<StructCompareResultDataItem>> structCompareResults) {
+	private void compareEntities(NodeRef entity1NodeRef, NodeRef entity2NodeRef, int nbEntities, int comparisonPosition,
+			Map<String, CompareResultDataItem> comparisonMap, Map<String, List<StructCompareResultDataItem>> structCompareResults) {
 
 		logger.debug("compare entity1NodeRef " + entity1NodeRef + " with " + entity2NodeRef);
-		
+
 		// compare entity properties
 		compareNode(null, null, null, entity1NodeRef, entity2NodeRef, nbEntities, comparisonPosition, false, comparisonMap);
 
@@ -112,23 +110,23 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		List<NodeRef> dataLists2 = new ArrayList<NodeRef>();
 		NodeRef listsContainer2NodeRef = entityListDAO.getListContainer(entity2NodeRef);
 		if (listsContainer2NodeRef != null) {
-			dataLists2 = entityListDAO.getExistingListsNodeRef(listsContainer2NodeRef);			
+			dataLists2 = entityListDAO.getExistingListsNodeRef(listsContainer2NodeRef);
 		}
-		
+
 		for (NodeRef dataList1 : dataLists1) {
 
 			QName dataListType = getDataListQName(dataList1);
-			
+
 			// structural comparison
 			compareStructDatalist(entity1NodeRef, entity2NodeRef, dataListType, structCompareResults);
-			
+
 			// flat comparaison
 			String dataListName1 = (String) nodeService.getProperty(dataList1, ContentModel.PROP_NAME);
 			comparedDataLists.add(dataListName1);
 			NodeRef dataList2NodeRef = null;
 			if (dataLists2 != null) {
 				for (NodeRef d : dataLists2) {
-					String dataListName2 = (String) nodeService.getProperty(d, ContentModel.PROP_NAME);					
+					String dataListName2 = (String) nodeService.getProperty(d, ContentModel.PROP_NAME);
 					if (dataListName1.equals(dataListName2)) {
 						dataList2NodeRef = d;
 						break;
@@ -139,30 +137,31 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		}
 
 		// compare dataLists2 that have not been compared
-		for (NodeRef dataList2 : dataLists2) {
+		if (dataLists2 != null) {
+			for (NodeRef dataList2 : dataLists2) {
 
-			String dataListName2 = (String) nodeService.getProperty(dataList2, ContentModel.PROP_NAME);
+				String dataListName2 = (String) nodeService.getProperty(dataList2, ContentModel.PROP_NAME);
 
-			if (!comparedDataLists.contains(dataListName2)) {				
+				if (!comparedDataLists.contains(dataListName2)) {
 
-				QName dataListType = getDataListQName(dataList2);				
-				
-				// structural comparison
-				if(entityDictionaryService.isMultiLevelDataList(dataListType)){
-					compareStructDatalist(entity1NodeRef, entity2NodeRef, dataListType, structCompareResults);
-				}
-				else{
-					comparedDataLists.add(dataListName2);
-					compareDataLists(dataListType, null, dataList2, nbEntities, comparisonPosition, comparisonMap);
+					QName dataListType = getDataListQName(dataList2);
+
+					// structural comparison
+					if (entityDictionaryService.isMultiLevelDataList(dataListType)) {
+						compareStructDatalist(entity1NodeRef, entity2NodeRef, dataListType, structCompareResults);
+					} else {
+						comparedDataLists.add(dataListName2);
+						compareDataLists(dataListType, null, dataList2, nbEntities, comparisonPosition, comparisonMap);
+					}
 				}
 			}
 		}
 	}
 
-	private QName getDataListQName(NodeRef listNodeRef){
+	private QName getDataListQName(NodeRef listNodeRef) {
 		return QName.createQName((String) nodeService.getProperty(listNodeRef, DataListModel.PROP_DATALISTITEMTYPE), namespaceService);
 	}
-	
+
 	private void compareDataLists(QName dataListType, NodeRef dataList1NodeRef, NodeRef dataList2NodeRef, int nbEntities, int comparisonPosition,
 			Map<String, CompareResultDataItem> comparisonMap) {
 
@@ -189,7 +188,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 			List<NodeRef> comparedCharact = new ArrayList<NodeRef>();
 
 			// composite datalist
-			if (!isCompositeDL) {								
+			if (!isCompositeDL) {
 
 				for (NodeRef dataListItem1 : dataListItems1) {
 
@@ -218,7 +217,8 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 						}
 					}
 
-					CharacteristicToCompare characteristicToCmp = new CharacteristicToCompare(null, characteristicNodeRef, dataListItem1, dataListItem2NodeRef);
+					CharacteristicToCompare characteristicToCmp = new CharacteristicToCompare(null, characteristicNodeRef, dataListItem1,
+							dataListItem2NodeRef);
 					characteristicsToCmp.add(characteristicToCmp);
 				}
 
@@ -242,23 +242,23 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 			// compare properties of characteristics
 			for (CharacteristicToCompare c : characteristicsToCmp) {
-				compareNode(dataListType, c.getCharactPath(), c.getCharacteristic(), c.getNodeRef1(), c.getNodeRef2(), nbEntities, comparisonPosition, true, comparisonMap);
+				compareNode(dataListType, c.getCharactPath(), c.getCharacteristic(), c.getNodeRef1(), c.getNodeRef2(), nbEntities,
+						comparisonPosition, true, comparisonMap);
 			}
 		}
 	}
-	
+
 	@Override
-	public void compareStructDatalist(NodeRef entity1NodeRef, 
-			NodeRef entity2NodeRef, QName datalistType, 
+	public void compareStructDatalist(NodeRef entity1NodeRef, NodeRef entity2NodeRef, QName datalistType,
 			Map<String, List<StructCompareResultDataItem>> structCompareResults) {
 
-		// load the 2 datalists				
+		// load the 2 datalists
 		QName pivotProperty = entityDictionaryService.getDefaultPivotAssoc(datalistType);
-		
+
 		MultiLevelListData listData1 = loadCompositeDataList(entity1NodeRef, datalistType);
-		MultiLevelListData listData2 = loadCompositeDataList(entity2NodeRef, datalistType);			
-		
-		CompositeComparableItem compositeItem1 = new CompositeComparableItem(0, null, null);		
+		MultiLevelListData listData2 = loadCompositeDataList(entity2NodeRef, datalistType);
+
+		CompositeComparableItem compositeItem1 = new CompositeComparableItem(0, null, null);
 		loadComparableItems(compositeItem1, listData1);
 
 		CompositeComparableItem compositeItem2 = new CompositeComparableItem(0, null, null);
@@ -270,36 +270,37 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		String comparison = (String) nodeService.getProperty(entity1NodeRef, ContentModel.PROP_NAME) + COMPARISON_SEPARATOR
 				+ (String) nodeService.getProperty(entity2NodeRef, ContentModel.PROP_NAME) + COMPARISON_SEPARATOR
 				+ dictionaryService.getType(datalistType).getTitle(dictionaryService);
-		
+
 		structCompareResults.put(comparison, structComparisonList);
 	}
-	
-	private MultiLevelListData loadCompositeDataList(NodeRef entityNodeRef, QName datalistType){
+
+	private MultiLevelListData loadCompositeDataList(NodeRef entityNodeRef, QName datalistType) {
 		DataListFilter dataListFilter = new DataListFilter();
 		dataListFilter.setDataType(datalistType);
-		Map<String, String>criteriaMap = new HashMap<>();
+		Map<String, String> criteriaMap = new HashMap<>();
 		dataListFilter.setCriteriaMap(criteriaMap);
 		dataListFilter.setEntityNodeRefs(Arrays.asList(entityNodeRef));
 		return multiLevelDataListService.getMultiLevelListData(dataListFilter);
 	}
-	
-	private void loadComparableItems(CompositeComparableItem compositeItem, MultiLevelListData listData) {		
+
+	private void loadComparableItems(CompositeComparableItem compositeItem, MultiLevelListData listData) {
 
 		for (Entry<NodeRef, MultiLevelListData> entry : listData.getTree().entrySet()) {
 			NodeRef nodeRef = entry.getKey();
-			
-			//TODO generic should be able to combine several properties (ie: EAN, Funtion,...)
-			String pivot = (String)nodeService.getProperty(entry.getValue().getEntityNodeRef(), BeCPGModel.PROP_LEGAL_NAME);
-			if(pivot == null){
+
+			// TODO generic should be able to combine several properties (ie:
+			// EAN, Funtion,...)
+			String pivot = (String) nodeService.getProperty(entry.getValue().getEntityNodeRef(), BeCPGModel.PROP_LEGAL_NAME);
+			if (pivot == null) {
 				pivot = entry.getValue().getEntityNodeRef().toString();
-			}			
+			}
 			CompositeComparableItem c = new CompositeComparableItem(entry.getValue().getDepth(), pivot, nodeRef);
 			addComparableItem(compositeItem, pivot, c);
 			loadComparableItems(c, entry.getValue());
 		}
 	}
-	
-	private void addComparableItem(CompositeComparableItem compositeItem, String pivot, AbstractComparableItem c){
+
+	private void addComparableItem(CompositeComparableItem compositeItem, String pivot, AbstractComparableItem c) {
 		String key = pivot;
 		if (compositeItem.get(pivot) != null) {
 			int keyCnt = 1;
@@ -310,7 +311,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		}
 		compositeItem.add(key, c);
 	}
-	
+
 	private void structCompareCompositeDataLists(QName entityListType, QName pivotProperty, List<StructCompareResultDataItem> strucComparisonList,
 			CompositeComparableItem compositeItem1, CompositeComparableItem compositeItem2) {
 
@@ -328,9 +329,10 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				compareNode(entityListType, null, null, nodeRef1, nodeRef2, 2, 1, true, comparisonMap);
 
 				if (logger.isDebugEnabled()) {
-					logger.debug("structCompareCompositeDataLists: nodeRef1: " + nodeRef1 + " - nodeRef2: " + nodeRef2 + " comparisonMap: " + comparisonMap);
+					logger.debug("structCompareCompositeDataLists: nodeRef1: " + nodeRef1 + " - nodeRef2: " + nodeRef2 + " comparisonMap: "
+							+ comparisonMap);
 				}
-				
+
 				if (comparisonMap.size() > 0) {
 					operator = StructCompareOperator.Modified;
 				}
@@ -356,10 +358,10 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				}
 
 				// we display only changes
-				if(!StructCompareOperator.Equal.equals(operator)){
-					
-					StructCompareResultDataItem structComparison = new StructCompareResultDataItem(entityListType, c1.getDepthLevel(), operator, pivotProperty, nodeRef1, nodeRef2, properties1,
-							properties2);
+				if (!StructCompareOperator.Equal.equals(operator)) {
+
+					StructCompareResultDataItem structComparison = new StructCompareResultDataItem(entityListType, c1.getDepthLevel(), operator,
+							pivotProperty, nodeRef1, nodeRef2, properties1, properties2);
 					strucComparisonList.add(structComparison);
 
 					CompositeComparableItem tempCompositeItem1 = null;
@@ -373,7 +375,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 					structCompareCompositeDataLists(entityListType, pivotProperty, strucComparisonList, tempCompositeItem1, tempCompositeItem2);
 				}
-				
+
 			}
 		}
 
@@ -387,7 +389,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 					// get Properties
 					Map<String, CompareResultDataItem> comparisonMap = new HashMap<String, CompareResultDataItem>();
 					compareNode(entityListType, null, null, null, c2.getNodeRef(), 2, 1, true, comparisonMap);
-					
+
 					Map<QName, String> properties1 = new HashMap<QName, String>();
 					Map<QName, String> properties2 = new HashMap<QName, String>();
 					for (String key2 : comparisonMap.keySet()) {
@@ -399,9 +401,9 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 					if (logger.isDebugEnabled()) {
 						logger.debug("structCompareCompositeDataLists: c2.getNodeRef(): " + c2.getNodeRef() + " comparisonMap: " + comparisonMap);
 					}
-					
-					StructCompareResultDataItem structComparison = new StructCompareResultDataItem(entityListType, c2.getDepthLevel(), StructCompareOperator.Added, pivotProperty, null,
-							c2.getNodeRef(), properties1, properties2);
+
+					StructCompareResultDataItem structComparison = new StructCompareResultDataItem(entityListType, c2.getDepthLevel(),
+							StructCompareOperator.Added, pivotProperty, null, c2.getNodeRef(), properties1, properties2);
 					strucComparisonList.add(structComparison);
 
 					if (c2 instanceof CompositeComparableItem) {
@@ -413,8 +415,8 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 	}
 
-	private void compareNode(QName dataListType, List<NodeRef> charactPath, NodeRef characteristic, NodeRef nodeRef1, NodeRef nodeRef2, int nbEntities, int comparisonPosition,
-			boolean isDataList, Map<String, CompareResultDataItem> comparisonMap) {
+	private void compareNode(QName dataListType, List<NodeRef> charactPath, NodeRef characteristic, NodeRef nodeRef1, NodeRef nodeRef2,
+			int nbEntities, int comparisonPosition, boolean isDataList, Map<String, CompareResultDataItem> comparisonMap) {
 
 		/*
 		 * Compare properites
@@ -435,7 +437,8 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 					oValue2 = properties2.get(propertyQName);
 				}
 
-				compareValues(dataListType, charactPath, characteristic, propertyQName, oValue1, oValue2, nbEntities, comparisonPosition, comparisonMap, propertyFormats);
+				compareValues(dataListType, charactPath, characteristic, propertyQName, oValue1, oValue2, nbEntities, comparisonPosition,
+						comparisonMap, propertyFormats);
 			}
 		}
 
@@ -443,8 +446,8 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		for (QName propertyQName : properties2.keySet()) {
 
 			if (!properties1.containsKey(propertyQName) && isCompareableProperty(propertyQName, isDataList)) {
-				compareValues(dataListType, charactPath, characteristic, propertyQName, null, properties2.get(propertyQName), nbEntities, comparisonPosition, comparisonMap,
-						propertyFormats);
+				compareValues(dataListType, charactPath, characteristic, propertyQName, null, properties2.get(propertyQName), nbEntities,
+						comparisonPosition, comparisonMap, propertyFormats);
 			}
 		}
 
@@ -452,8 +455,10 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		 * Compare associations
 		 */
 
-		List<AssociationRef> associations1 = nodeRef1 == null ? new ArrayList<AssociationRef>() : nodeService.getTargetAssocs(nodeRef1, RegexQNamePattern.MATCH_ALL);
-		List<AssociationRef> associations2 = nodeRef2 == null ? new ArrayList<AssociationRef>() : nodeService.getTargetAssocs(nodeRef2, RegexQNamePattern.MATCH_ALL);
+		List<AssociationRef> associations1 = nodeRef1 == null ? new ArrayList<AssociationRef>() : nodeService.getTargetAssocs(nodeRef1,
+				RegexQNamePattern.MATCH_ALL);
+		List<AssociationRef> associations2 = nodeRef2 == null ? new ArrayList<AssociationRef>() : nodeService.getTargetAssocs(nodeRef2,
+				RegexQNamePattern.MATCH_ALL);
 
 		Map<QName, List<NodeRef>> associations1Sorted = new HashMap<QName, List<NodeRef>>();
 		Map<QName, List<NodeRef>> associations2Sorted = new HashMap<QName, List<NodeRef>>();
@@ -521,7 +526,8 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				}
 
 				if (isDifferent) {
-					compareAssocs(dataListType, charactPath, characteristic, propertyQName, nodeRefs1, nodeRefs2, nbEntities, comparisonPosition, comparisonMap);
+					compareAssocs(dataListType, charactPath, characteristic, propertyQName, nodeRefs1, nodeRefs2, nbEntities, comparisonPosition,
+							comparisonMap);
 				}
 			}
 		}
@@ -530,14 +536,15 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		for (QName propertyQName : associations2Sorted.keySet()) {
 
 			if (!associations1Sorted.containsKey(propertyQName) && isCompareableProperty(propertyQName, isDataList)) {
-				compareAssocs(dataListType, charactPath, characteristic, propertyQName, null, associations2Sorted.get(propertyQName), nbEntities, comparisonPosition, comparisonMap);
+				compareAssocs(dataListType, charactPath, characteristic, propertyQName, null, associations2Sorted.get(propertyQName), nbEntities,
+						comparisonPosition, comparisonMap);
 			}
 		}
 
 	}
 
-	private void compareAssocs(QName dataListType, List<NodeRef> charactPath, NodeRef characteristic, QName propertyQName, List<NodeRef> nodeRefs1, List<NodeRef> nodeRefs2,
-			int nbEntities, int comparisonPosition, Map<String, CompareResultDataItem> comparisonMap) {
+	private void compareAssocs(QName dataListType, List<NodeRef> charactPath, NodeRef characteristic, QName propertyQName, List<NodeRef> nodeRefs1,
+			List<NodeRef> nodeRefs2, int nbEntities, int comparisonPosition, Map<String, CompareResultDataItem> comparisonMap) {
 
 		String strValue1 = null;
 		String strValue2 = null;
@@ -579,8 +586,9 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 	}
 
-	private void compareValues(QName dataListType, List<NodeRef> charactPath, NodeRef characteristic, QName propertyQName, Serializable oValue1, Serializable oValue2,
-			int nbEntities, int comparisonPosition, Map<String, CompareResultDataItem> comparisonMap, PropertyFormats propertyFormats) {
+	private void compareValues(QName dataListType, List<NodeRef> charactPath, NodeRef characteristic, QName propertyQName, Serializable oValue1,
+			Serializable oValue2, int nbEntities, int comparisonPosition, Map<String, CompareResultDataItem> comparisonMap,
+			PropertyFormats propertyFormats) {
 
 		PropertyDefinition propertyDef = dictionaryService.getProperty(propertyQName);
 
@@ -615,8 +623,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 		String strValue1 = attributeExtractorService.extractPropertyForReport(propertyDef, oValue1, propertyFormats, true);
 		String strValue2 = attributeExtractorService.extractPropertyForReport(propertyDef, oValue2, propertyFormats, true);
-		
-				
+
 		String key = String.format("%s-%s-%s", dataListType, characteristic, propertyDef.getName());
 		CompareResultDataItem comparisonDataItem = comparisonMap.get(key);
 
@@ -631,19 +638,21 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		}
 	}
 
-	
 	private boolean isCompareableProperty(QName qName, boolean isDataList) {
 
 		boolean isCompareable = true;
 
 		if (qName.equals(ContentModel.PROP_NODE_REF) || qName.equals(ContentModel.PROP_NODE_DBID) || qName.equals(ContentModel.PROP_NODE_UUID)
-				|| qName.equals(ContentModel.PROP_STORE_IDENTIFIER) || qName.equals(ContentModel.PROP_STORE_NAME) || qName.equals(ContentModel.PROP_STORE_PROTOCOL)
-				|| qName.equals(ContentModel.PROP_CONTENT) || qName.equals(ContentModel.PROP_VERSION_LABEL) || qName.equals(ContentModel.PROP_AUTO_VERSION)
-				|| qName.equals(ContentModel.PROP_AUTO_VERSION_PROPS) || qName.equals(ContentModel.ASSOC_ORIGINAL)
+				|| qName.equals(ContentModel.PROP_STORE_IDENTIFIER) || qName.equals(ContentModel.PROP_STORE_NAME)
+				|| qName.equals(ContentModel.PROP_STORE_PROTOCOL) || qName.equals(ContentModel.PROP_CONTENT)
+				|| qName.equals(ContentModel.PROP_VERSION_LABEL) || qName.equals(ContentModel.PROP_AUTO_VERSION)
+				|| qName.equals(ContentModel.PROP_AUTO_VERSION_PROPS)
+				|| qName.equals(ContentModel.ASSOC_ORIGINAL)
 				||
 				// system properties
-				qName.equals(BeCPGModel.PROP_PARENT_LEVEL) || qName.equals(BeCPGModel.PROP_START_EFFECTIVITY) || qName.equals(BeCPGModel.PROP_END_EFFECTIVITY)
-				|| qName.equals(ReportModel.PROP_REPORT_ENTITY_GENERATED) || qName.equals(ReportModel.ASSOC_REPORTS) || qName.equals(BeCPGModel.PROP_VERSION_LABEL)
+				qName.equals(BeCPGModel.PROP_PARENT_LEVEL) || qName.equals(BeCPGModel.PROP_START_EFFECTIVITY)
+				|| qName.equals(BeCPGModel.PROP_END_EFFECTIVITY) || qName.equals(ReportModel.PROP_REPORT_ENTITY_GENERATED)
+				|| qName.equals(ReportModel.ASSOC_REPORTS) || qName.equals(BeCPGModel.PROP_VERSION_LABEL)
 				// TODO plugin
 				|| qName.getLocalName().contains("dynamicCharactColumn")) {
 

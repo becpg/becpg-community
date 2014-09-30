@@ -54,8 +54,10 @@ import fr.becpg.repo.helper.ContentHelper;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.hierarchy.HierarchyHelper;
 import fr.becpg.repo.mail.BeCPGMailService;
+import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
+import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.report.client.ReportFormat;
 
 /**
@@ -112,6 +114,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 	
 	@Autowired
 	private EntitySystemService entitySystemService;
+	
+	@Autowired
+	protected AlfrescoRepository<ProductData> alfrescoRepository;
 
 	/**
 	 * Initialize the repository with system folders.

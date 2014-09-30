@@ -83,6 +83,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		this.mlNodeService = mlNodeService;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 
@@ -620,7 +621,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			qty *= FormulationHelper.getYield(compoListDataItem) / 100;
 		}
 
-		qty = qty * ratio;
+		if(qty!=null && ratio!=null){
+			qty *= ratio;
+		}
 		
 		Double volumeReconstitution = FormulationHelper.getVolumeReconstitution(compoListDataItem, nodeService);
 		Double volumePerc = null;

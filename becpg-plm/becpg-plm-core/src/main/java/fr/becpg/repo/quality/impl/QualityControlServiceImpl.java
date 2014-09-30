@@ -361,7 +361,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 						sl.setSampleState(calculateSampleState(parentNodeRef, sampleId));
 					}
 										
-					if(sl.getSampleState() == null || sl.getSampleState().equals("")){
+					if(sl.getSampleState() == null ){
 						isQCControled = false;
 					}
 					else if(sl.getSampleState().equals(QualityControlState.NonCompliant)){						

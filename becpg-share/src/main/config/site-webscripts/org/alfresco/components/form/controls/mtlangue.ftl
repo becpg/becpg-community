@@ -7,6 +7,7 @@
    <#assign values=[]>
 </#if>
 
+<#if field.label?replace(":","_") != field.name >
 
 <div class="form-field">
    <#if form.mode == "view">
@@ -40,6 +41,7 @@
          <@formLib.renderFieldHelp field=field />
 	</#if>
 </div>
+</#if>
 
 <#function isSelected optionValue>
    <#list values as value>

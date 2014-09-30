@@ -68,6 +68,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 		logger.debug("Calculate ingredient list");
@@ -118,6 +119,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	 */
 	private void calculateIL(ProductData formulatedProduct) throws FormulateException {
 
+		@SuppressWarnings("unchecked")
 		List<CompoListDataItem> compoList = formulatedProduct.getCompoList(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT);
 
 		Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap = new HashMap<NodeRef, ReqCtrlListDataItem>();
@@ -194,8 +196,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				
 
 				// qtyVolumePerc
-				if (totalQtyVolMap.get(ingListDataItem.getIng()) != null) {
-					ingListDataItem.setVolumeQtyPerc(totalQtyVolMap.get(ingListDataItem.getIng()) / totalVolumeUsed);
+				if (totalQtyVolMap.get(ingListDataItem.getName()) != null) {
+					ingListDataItem.setVolumeQtyPerc(totalQtyVolMap.get(ingListDataItem.getName()) / totalVolumeUsed);
 				}
 
 				// add detailable aspect
@@ -534,6 +536,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		}
 	}
 
+	//TODO refactor this method
+	@Deprecated
 	private IngListDataItem findIngListDataItem(List<IngListDataItem> ingLists, IngListDataItem ingList) {
 
 		if (ingList != null && ingList.getIng() != null) {

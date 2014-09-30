@@ -106,7 +106,9 @@ public class EntityDictionnaryWebScript extends AbstractWebScript {
 					items.put(item);
 				}
 			}
-			ret.put("type", dataType.toPrefixString());
+			if(dataType!=null){
+				ret.put("type", dataType.toPrefixString());
+			}
 			ret.put("items", items);
 
 			res.setContentType("application/json");
