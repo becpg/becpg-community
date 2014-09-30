@@ -5,7 +5,7 @@
 	<artifactId>becpg-parent</artifactId>
 	<packaging>pom</packaging>
 	<name>beCPG</name>
-	<version>1.6.0</version>
+	<version>1.6.3</version>
 	<description>BeCPG Parent Project</description>
 	<organization>
 		<name>BeCPG</name>
