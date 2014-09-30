@@ -125,10 +125,10 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 	@Override
 	protected void visitFiles(NodeRef folderNodeRef, String folderName) {
 
-		if (folderName == RepoConsts.PATH_ICON) {
+		if (RepoConsts.PATH_ICON.equals(folderName) ) {
 			contentHelper.addFilesResources(folderNodeRef, "classpath:beCPG/images/*.png");
 		}
-		if (folderName == RepoConsts.PATH_OLAP_QUERIES) {
+		if (RepoConsts.PATH_OLAP_QUERIES.equals(folderName) ) {
 			contentHelper.addFilesResources(folderNodeRef, "classpath:beCPG/olap/*.saiku");
 		}
 
@@ -148,9 +148,9 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 		QName specialiseType = null;
 		boolean applyToChildren = false;
 
-		if (folderName == RepoConsts.PATH_ENTITY_TEMPLATES) {
+		if (RepoConsts.PATH_ENTITY_TEMPLATES.equals(folderName) ) {
 			specialiseType = BeCPGModel.TYPE_ENTITY_V2;
-		} else if (folderName == RepoConsts.PATH_REPORTS) {
+		} else if (RepoConsts.PATH_REPORTS.equals(folderName)) {
 
 			// Action : apply type
 			Map<String, Serializable> params = new HashMap<String, Serializable>();
@@ -188,7 +188,7 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 			
 			
 		
-		}  else if (folderName == RepoConsts.PATH_SECURITY) {
+		}  else if (RepoConsts.PATH_SECURITY.equals(folderName) ) {
 			specialiseType = SecurityModel.TYPE_ACL_GROUP;
 		} 
 		

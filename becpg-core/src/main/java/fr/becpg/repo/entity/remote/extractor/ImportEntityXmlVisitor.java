@@ -137,7 +137,7 @@ public class ImportEntityXmlVisitor {
 				try {
 					writer.write(ch, start, length);
 				} catch (IOException e) {
-					new SAXException("Cannot write outputStream");
+					throw new SAXException("Cannot write outputStream");
 				}
 			}
 

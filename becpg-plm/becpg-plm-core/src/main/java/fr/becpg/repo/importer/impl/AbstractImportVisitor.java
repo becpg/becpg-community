@@ -963,7 +963,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		if (nodeRef == null) {
 
 			String name = (String) properties.get(ContentModel.PROP_NAME);
-			if (name != null && name != "") {
+			if (name != null && !name.isEmpty()) {
 
 				// look in import folder
 				nodeRef = nodeService.getChildByName(importContext.getParentNodeRef(), ContentModel.ASSOC_CONTAINS, name);
@@ -1063,7 +1063,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 					&& !dictionaryService.isSubClass(type, BeCPGModel.TYPE_LINKED_VALUE)
 					&& !dictionaryService.isSubClass(type, BeCPGModel.TYPE_LIST_VALUE)){
 				for(NodeRef tmpNodeRef : queryBuilder.excludeDefaults().inDB().ftsLanguage().list()){
-					if(nodeService.getPrimaryParent(tmpNodeRef).equals(importContext.getParentNodeRef())){
+					if(nodeService.getPrimaryParent(tmpNodeRef).getParentRef().equals(importContext.getParentNodeRef())){
 						return tmpNodeRef;
 					}
 				}

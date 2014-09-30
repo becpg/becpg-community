@@ -53,6 +53,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		return CostListDataItem.class;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 		logger.debug("Cost calculating visitor");
@@ -85,11 +86,12 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		}
 
 		// profitability
-		formulatedProduct = calculateProfitability(formulatedProduct);
+		calculateProfitability(formulatedProduct);
 
 		return true;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void visitChildren(ProductData formulatedProduct, List<CostListDataItem> costList) throws FormulateException {
 
@@ -205,7 +207,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		}
 	}
 
-	private ProductData calculateProfitability(ProductData formulatedProduct) {
+	private void calculateProfitability(ProductData formulatedProduct) {
 
 		Double netQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
 		Double unitTotalVariableCost = 0d;
@@ -247,7 +249,6 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			formulatedProduct.setProfitability(null);
 		}
 
-		return formulatedProduct;
 	}
 
 	protected Map<NodeRef, List<NodeRef>> getMandatoryCharacts(ProductData formulatedProduct, QName componentType) {

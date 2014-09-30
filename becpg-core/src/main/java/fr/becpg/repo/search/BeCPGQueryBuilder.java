@@ -398,11 +398,9 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			ret = searchService.selectNodes(parentNodeRef, xPath, null, namespaceService, false);
 		} finally {
 			watch.stop();
-			if (watch.getTotalTimeSeconds() > 1) {
+			if (ret!=null && watch.getTotalTimeSeconds() > 1) {
 				logger.warn("Slow query [" + xPath + "] executed in  " + watch.getTotalTimeSeconds() + " seconds - size results " + ret.size());
 			}
-
-
 		}
 
 		return ret;
