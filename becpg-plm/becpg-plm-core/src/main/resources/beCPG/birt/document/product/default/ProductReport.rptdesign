@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
     <property name="author">beCPG</property>
-    <property name="createdBy">Eclipse BIRT Designer Version 4.2.2.v201301221637 Build &lt;4.2.2.v20130206-1509></property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.3.2.v20140211-1400 Build &lt;4.3.2.v20140225-1404></property>
     <list-property name="userProperties">
         <structure>
             <property name="name">Data Cube.OrganoList.x</property>
@@ -749,7 +749,7 @@
                 <structure>
                     <property name="name">GDA</property>
                     <expression name="expression">if(row["nutListGDAPerc"] != null &amp;&amp; row["nutListGDAPerc"] != 0){
-	100 * row["nutListValue"] / row["nutListGDAPerc"]
+	100 * row["nutListValuePerServing"] / row["nutListGDAPerc"]
 }</expression>
                     <property name="dataType">integer</property>
                 </structure>
@@ -806,6 +806,7 @@
                 <structure>
                     <property name="columnName">nutListMini</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">nutListMini</text-property>
                 </structure>
             </list-property>
@@ -6842,8 +6843,8 @@ else{
                             <property name="width">20%</property>
                         </column>
                         <column id="2653">
-                            <property name="width">60%</property>
                             <property name="style">becpg-col-border</property>
+                            <property name="width">60%</property>
                         </column>
                         <column id="2654">
                             <property name="style">becpg-col-border</property>
@@ -7020,24 +7021,24 @@ else if(dataSetRow["nutListMini"] != null){
                             <property name="width">1.8854166666666667in</property>
                         </column>
                         <column id="3356">
-                            <property name="width">0.8645833333333334in</property>
                             <property name="style">becpg-col-border</property>
+                            <property name="width">0.8645833333333334in</property>
                         </column>
                         <column id="3384">
-                            <property name="width">0.90625in</property>
                             <property name="style">becpg-col-border</property>
+                            <property name="width">0.90625in</property>
                         </column>
                         <column id="3357">
-                            <property name="width">1.0104166666666667in</property>
                             <property name="style">becpg-col-border</property>
+                            <property name="width">1.0104166666666667in</property>
                         </column>
                         <column id="3358">
-                            <property name="width">0.84375in</property>
                             <property name="style">becpg-col-border</property>
+                            <property name="width">0.84375in</property>
                         </column>
                         <column id="3390">
-                            <property name="width">1.3020833333333333in</property>
                             <property name="style">becpg-col-border</property>
+                            <property name="width">1.3020833333333333in</property>
                         </column>
                         <header>
                             <row id="3340">
@@ -7852,20 +7853,20 @@ dataSetRow["mblMaxi"]
                             <property name="width">2.892857142857143in</property>
                         </column>
                         <column id="1035">
-                            <property name="width">0.9464285714285714in</property>
                             <property name="style">becpg-col-border</property>
+                            <property name="width">0.9464285714285714in</property>
                         </column>
                         <column id="1036">
-                            <property name="width">1.0089285714285714in</property>
                             <property name="style">becpg-col-border</property>
+                            <property name="width">1.0089285714285714in</property>
                         </column>
                         <column id="1037">
-                            <property name="width">1.0357142857142858in</property>
                             <property name="style">becpg-col-border</property>
+                            <property name="width">1.0357142857142858in</property>
                         </column>
                         <column id="1042">
-                            <property name="width">0.9732142857142857in</property>
                             <property name="style">becpg-col-border</property>
+                            <property name="width">0.9732142857142857in</property>
                         </column>
                         <header>
                             <row id="2670">
@@ -8931,7 +8932,7 @@ en m</text-property>
                 quVuumQmWXUH953Cn7IAZwI/z+cVPX+fOoULrF1rypyi8y/r1h2bvGwgLd1QsmoVPcoCA+oCivXoCOVS
                 EBABASHKID9w+/O48c5I8bjoX9WLH0opAeRJHVgRwfv3rGG5/POuCLEYmCT1YcXjoZQeRLFSrRyA/fvS
                 INz+eedOOOOdurHTjjjho1//2Q==
-            </property>
+</property>
         </structure>
     </list-property>
 </report>
