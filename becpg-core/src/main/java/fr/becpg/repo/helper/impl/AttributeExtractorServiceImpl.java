@@ -61,6 +61,7 @@ import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.CompareHelper;
+import fr.becpg.repo.helper.ExcelHelper;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.security.SecurityService;
@@ -167,10 +168,6 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 
 		public String getFieldName() {
 			return fieldName;
-		}
-
-		public DataListCallBack getCallback() {
-			return callback;
 		}
 
 		public boolean isEntityField() {
@@ -434,7 +431,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 			if (field.isNested()) {
 				List<Map<String, Object>> extracted = callback.extractNestedField(nodeRef, field);
 
-				if (AttributeExtractorMode.CSV.equals(mode) && !extracted.isEmpty()) {
+				if ((AttributeExtractorMode.CSV.equals(mode) || AttributeExtractorMode.XLS.equals(mode)) && !extracted.isEmpty()) {
 					for (Map.Entry<String, Object> entry : extracted.get(0).entrySet()) {
 						// Prefix with field name for CSV
 						ret.put(field.getFieldName() + "_" + entry.getKey(), entry.getValue());
@@ -478,6 +475,13 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 
 			if (AttributeExtractorMode.CSV.equals(mode)) {
 				return displayName;
+			} else if(AttributeExtractorMode.XLS.equals(mode) ){ 
+			   if(ExcelHelper.isExcelType(value)){
+				   return value;
+			   } else {
+				   return displayName;
+			   }
+			
 			} else {
 				HashMap<String, Object> tmp = new HashMap<String, Object>(6);
 
@@ -532,7 +536,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 				tmp.put("value", nodeRefs);
 				return tmp;
 
-			} else if (AttributeExtractorMode.CSV.equals(mode)) {
+			} else if (AttributeExtractorMode.CSV.equals(mode) || AttributeExtractorMode.XLS.equals(mode)) {
 				String ret = "";
 				for (NodeRef assocNodeRef : assocRefs) {
 					type = nodeService.getType(assocNodeRef);

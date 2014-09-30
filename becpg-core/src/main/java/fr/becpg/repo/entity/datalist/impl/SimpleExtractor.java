@@ -97,7 +97,7 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 				}
 				if (RepoConsts.FORMAT_CSV.equals(dataListFilter.getFormat())
 						|| RepoConsts.FORMAT_XLS.equals(dataListFilter.getFormat())) {
-					ret.addItem(extractCSV(nodeRef, ret.getComputedFields(), props, cache));
+					ret.addItem(extractExport( RepoConsts.FORMAT_XLS.equals(dataListFilter.getFormat())? AttributeExtractorMode.XLS: AttributeExtractorMode.CSV ,nodeRef, ret.getComputedFields(), props, cache));
 				} else {
 					ret.addItem(extractJSON(nodeRef, ret.getComputedFields(), props, cache));
 				}
@@ -237,8 +237,8 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 							ret.add(cache.get(itemNodeRef));
 						} else {
 							if (permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED) {
-								if (AttributeExtractorMode.CSV.equals(mode)) {
-									ret.add(extractCSV(itemNodeRef, field.getChildrens(), props, cache));
+								if (AttributeExtractorMode.CSV.equals(mode) ||AttributeExtractorMode.XLS.equals(mode) ) {
+									ret.add(extractExport(mode, itemNodeRef, field.getChildrens(), props, cache));
 								} else {
 									ret.add(extractJSON(itemNodeRef, field.getChildrens(), props, cache));
 								}

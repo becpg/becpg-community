@@ -218,7 +218,7 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 		}
 	}
 	
-	protected Map<String, Object> extractCSV(NodeRef nodeRef, List<AttributeExtractorStructure> metadataFields, Map<String, Object> props, Map<NodeRef, Map<String, Object>> cache) {
+	protected Map<String, Object> extractExport(AttributeExtractorMode mode, NodeRef nodeRef, List<AttributeExtractorStructure> metadataFields, Map<String, Object> props, Map<NodeRef, Map<String, Object>> cache) {
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
 			watch = new StopWatch();
@@ -233,7 +233,7 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 			QName itemType = nodeService.getType(nodeRef);
 			Map<QName,Serializable> properties = nodeService.getProperties(nodeRef);
 			
-			Map<String, Object>  ret = 	doExtract(nodeRef, itemType, metadataFields,AttributeExtractorMode.CSV, properties, props, cache);
+			Map<String, Object>  ret = 	doExtract(nodeRef, itemType, metadataFields,mode, properties, props, cache);
 
 			cache.put(nodeRef, ret);
 			

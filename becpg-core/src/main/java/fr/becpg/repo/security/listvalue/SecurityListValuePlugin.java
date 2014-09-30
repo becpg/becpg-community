@@ -45,7 +45,6 @@ public class SecurityListValuePlugin extends AbstractBaseListValuePlugin {
 	private static String SEPARATOR = "|";
 
 	private ServiceRegistry serviceRegistry;
-	
 
 	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
 		this.serviceRegistry = serviceRegistry;
@@ -94,23 +93,28 @@ public class SecurityListValuePlugin extends AbstractBaseListValuePlugin {
 	private ListValuePage getAvailableEntityTypeNames(String query, Integer pageNum, Integer pageSize) {
 
 		List<String> suggestions = new ArrayList<String>();
-		Collection<QName> types = serviceRegistry.getDictionaryService().getSubTypes(BeCPGModel.TYPE_ENTITY_V2, true);
-		types.addAll(serviceRegistry.getDictionaryService().getSubTypes(BeCPGModel.TYPE_ENTITYLIST_ITEM, true));
 
+		addSuggestions(serviceRegistry.getDictionaryService().getSubTypes(BeCPGModel.TYPE_ENTITY_V2, true), suggestions, query);
+		addSuggestions(serviceRegistry.getDictionaryService().getSubTypes(BeCPGModel.TYPE_ENTITYLIST_ITEM, true), suggestions, query);
+
+		return new ListValuePage(suggestions, pageNum, pageSize, new StringValueExtractor("modelType"));
+	}
+
+	private void addSuggestions(Collection<QName> types, List<String> suggestions, String query) {
 		if (types != null) {
 			for (QName type : types) {
 				TypeDefinition typeDef = serviceRegistry.getDictionaryService().getType(type);
 				String suggestion = type.toPrefixString(serviceRegistry.getNamespaceService())
 						+ SEPARATOR
-						+ (typeDef != null && typeDef.getTitle(serviceRegistry.getDictionaryService()) != null && typeDef.getTitle(serviceRegistry.getDictionaryService()).length() > 0 ? typeDef.getTitle(serviceRegistry.getDictionaryService()) : type.toPrefixString(serviceRegistry
-								.getNamespaceService()));
+						+ (typeDef != null && typeDef.getTitle(serviceRegistry.getDictionaryService()) != null
+								&& typeDef.getTitle(serviceRegistry.getDictionaryService()).length() > 0 ? typeDef.getTitle(serviceRegistry
+								.getDictionaryService()) : type.toPrefixString(serviceRegistry.getNamespaceService()));
 				if (filter(suggestion, query)) {
 					suggestions.add(suggestion);
 				}
 			}
 		}
 
-		return new ListValuePage(suggestions, pageNum, pageSize, new StringValueExtractor("modelType"));
 	}
 
 }

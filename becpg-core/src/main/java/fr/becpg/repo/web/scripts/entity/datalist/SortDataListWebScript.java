@@ -52,6 +52,8 @@ public class SortDataListWebScript extends DeclarativeWebScript {
 	private static final String PARAM_SELECTED_NODEREFS = "selectedNodeRefs";
 
 	private static final String PARAM_DIR = "dir";
+	
+	private static final String SORT_DIR_UP = "up";
 
 	private DataListSortService dataListSortService;
 
@@ -89,12 +91,12 @@ public class SortDataListWebScript extends DeclarativeWebScript {
 
 				if (dir != null || selectedNodeRefs.length > 1) {
 					
-					if (!dir.equals("up")) {
+					if (!SORT_DIR_UP.equals(dir)) {
 						ArrayUtils.reverse(selectedNodeRefs);
 					}
 					
 					for (int i = 0; i < selectedNodeRefs.length; i++) {
-						dataListSortService.move(new NodeRef(selectedNodeRefs[i]), dir.equals("up"));
+						dataListSortService.move(new NodeRef(selectedNodeRefs[i]), SORT_DIR_UP.equals(dir));
 					}
 
 				} else if (selectedNodeRefs.length == 1) {

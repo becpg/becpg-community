@@ -208,6 +208,10 @@
 		<control-param name="size" optional="true" type="int"/>
 		<control-param name="parent" optional="true" type="string"/>
 	</control>
-
-
+	<control id="mtlangue" template="/org/alfresco/components/form/controls/mtlangue.ftl">
+	
+	</control>
+	<control id="selectcolorpicker" template="/org/alfresco/components/form/controls/selectcolorpicker.ftl">
+	
+	</control>
 </controls>
