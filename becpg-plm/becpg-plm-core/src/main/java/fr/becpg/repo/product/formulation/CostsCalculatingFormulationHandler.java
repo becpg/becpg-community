@@ -59,7 +59,9 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		logger.debug("Cost calculating visitor");
 
 		// no compo => no formulation
-		if (!formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE)) {
+		if (!formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE)
+				&& !formulatedProduct.hasPackagingListEl(EffectiveFilters.EFFECTIVE)
+				&& !formulatedProduct.hasProcessListEl(EffectiveFilters.EFFECTIVE)) {
 			logger.debug("no compo => no formulation");
 			return true;
 		}

@@ -2034,7 +2034,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				assertNotNull("CostList is null", formulatedProduct.getCostList());
 				for(CostListDataItem costListDataItem : formulatedProduct.getCostList()){
 					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
-					logger.error(trace);
+					logger.trace(trace);
 					//Transfo
 					if(costListDataItem.getCost().equals(costTransfoNodeRef)){
 						assertEquals(df.format(0.156d), df.format(costListDataItem.getValue()));
