@@ -65,14 +65,12 @@
 			<groupId>org.alfresco</groupId>
 			<artifactId>alfresco-repository</artifactId>
 			<scope>provided</scope>
-			<version>${alfresco.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.alfresco</groupId>
 			<artifactId>alfresco-remote-api</artifactId>
 			<scope>provided</scope>
-			<version>${alfresco.version}</version>
 		</dependency>
 
 

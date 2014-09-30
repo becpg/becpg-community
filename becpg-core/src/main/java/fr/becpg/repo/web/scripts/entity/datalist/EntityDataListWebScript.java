@@ -379,7 +379,9 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 
 				userAccess
 						.put("create",
-								((dataListFilter.getSiteId() != "" || dataListFilter.getParentNodeRef() != null) && extractor.hasWriteAccess() && hasWriteAccess && permissionService.hasPermission(dataListFilter.getParentNodeRef(), "CreateChildren") == AccessStatus.ALLOWED));
+								(((dataListFilter.getSiteId()!=null && !dataListFilter.getSiteId().isEmpty()) || dataListFilter.getParentNodeRef() != null) 
+										&& extractor.hasWriteAccess() && hasWriteAccess 
+										&& permissionService.hasPermission(dataListFilter.getParentNodeRef(), "CreateChildren") == AccessStatus.ALLOWED));
 
 				permissions.put("userAccess", userAccess);
 

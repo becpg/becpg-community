@@ -136,10 +136,10 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 		}
 
 	}
-	
+
 	@Override
 	public boolean isApplicable(NodeRef templateNodeRef, ReportFormat reportFormat) {
-		return ((String)nodeService.getProperty(templateNodeRef, ContentModel.PROP_NAME)).endsWith(ReportTplService.PARAM_VALUE_DESIGN_EXTENSION);
+		return ((String) nodeService.getProperty(templateNodeRef, ContentModel.PROP_NAME)).endsWith(ReportTplService.PARAM_VALUE_DESIGN_EXTENSION);
 	}
 
 	/**
@@ -348,98 +348,99 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 			is = reader.getContentInputStream();
 			Document doc = saxReader.read(is);
 			queryElt = doc.getRootElement();
+
+			// date format
+			Node dateFormat = queryElt.selectSingleNode(QUERY_XPATH_DATE_FORMAT);
+			if (dateFormat != null) {
+				exportSearchCtx.getPropertyFormats().setDateFormat(dateFormat.getStringValue());
+			}
+
+			// datetime format
+			Node datetimeFormat = queryElt.selectSingleNode(QUERY_XPATH_DATETIME_FORMAT);
+			if (datetimeFormat != null) {
+				exportSearchCtx.getPropertyFormats().setDatetimeFormat(datetimeFormat.getStringValue());
+			}
+
+			// decimal format
+			Node decimalFormatPattern = queryElt.selectSingleNode(QUERY_XPATH_DECIMAL_PATTERN);
+			if (decimalFormatPattern != null) {
+				exportSearchCtx.getPropertyFormats().setDecimalFormat(decimalFormatPattern.getStringValue());
+			}
+
+			// attributes
+			List<Node> columnNodes = queryElt.selectNodes(QUERY_XPATH_COLUMNS_ATTRIBUTE);
+			for (Node columnNode : columnNodes) {
+				QName attribute = QName.createQName(columnNode.valueOf(QUERY_ATTR_GET_ATTRIBUTE), namespaceService);
+
+				ClassAttributeDefinition attributeDef = dictionaryService.getProperty(attribute);
+				if (attributeDef == null) {
+
+					attributeDef = dictionaryService.getAssociation(attribute);
+					if (attributeDef == null) {
+						throw new MappingException("Failed to map the following attribute. TemplateNodeRef: " + templateNodeRef + " - Attribute: "
+								+ attribute);
+					}
+				}
+
+				AttributeMapping attributeMapping = new AttributeMapping(columnNode.valueOf(QUERY_ATTR_GET_ID), attributeDef);
+				exportSearchCtx.getAttributeColumns().add(attributeMapping);
+			}
+
+			// characteristics
+			columnNodes = queryElt.selectNodes(QUERY_XPATH_COLUMNS_DATALIST);
+			for (Node columnNode : columnNodes) {
+				QName qName = QName.createQName(columnNode.valueOf(QUERY_ATTR_GET_ATTRIBUTE), namespaceService);
+				QName dataListQName = QName.createQName(columnNode.valueOf(QUERY_ATTR_GET_DATALIST_QNAME), namespaceService);
+				NodeRef charactNodeRef = null;
+				String charactNodeRefString = columnNode.valueOf(QUERY_ATTR_GET_CHARACT_NODE_REF);
+				String charactName = columnNode.valueOf(QUERY_ATTR_GET_CHARACT_NAME);
+				QName charactQName = QName.createQName(columnNode.valueOf(QUERY_ATTR_GET_CHARACT_QNAME), namespaceService);
+
+				// get characteristic nodeRef
+				if (charactNodeRefString != null && !charactNodeRefString.isEmpty() && NodeRef.isNodeRef(charactNodeRefString)) {
+					charactNodeRef = new NodeRef(charactNodeRefString);
+				} else if (!charactName.isEmpty()) {
+					AssociationDefinition assocDef = dictionaryService.getAssociation(charactQName);
+					charactNodeRef = getItemByTypeAndName(assocDef.getTargetClass().getName(), charactName);
+
+					if (charactNodeRef == null) {
+						throw new MappingException(String.format("ERROR : Failed to get the nodeRef of the characteristic. Type:%s - Name:%s",
+								assocDef.getTargetClass().getName(), charactName));
+					}
+				} else {
+					throw new MappingException("ERROR : Missing Characteristic nodeRef or name. trace: " + columnNode.asXML());
+				}
+
+				ClassAttributeDefinition attributeDef = dictionaryService.getProperty(qName);
+				if (attributeDef == null) {
+					attributeDef = dictionaryService.getAssociation(qName);
+				}
+
+				CharacteristicMapping attributeMapping = new CharacteristicMapping(columnNode.valueOf(QUERY_ATTR_GET_ID), attributeDef,
+						dataListQName, charactQName, charactNodeRef);
+				exportSearchCtx.getCharacteristicsColumns().add(attributeMapping);
+			}
+
+			// file import
+			columnNodes = queryElt.selectNodes(QUERY_XPATH_COLUMNS_FILE);
+			for (Node columnNode : columnNodes) {
+				QName qName = QName.createQName(columnNode.valueOf(QUERY_ATTR_GET_ATTRIBUTE), namespaceService);
+
+				String path = columnNode.valueOf(QUERY_ATTR_GET_PATH);
+				List<String> paths = new ArrayList<String>();
+				String[] arrPath = path.split(RepoConsts.PATH_SEPARATOR);
+				for (String p : arrPath)
+					paths.add(p);
+
+				PropertyDefinition propertyDefinition = dictionaryService.getProperty(qName);
+				FileMapping attributeMapping = new FileMapping(columnNode.valueOf(QUERY_ATTR_GET_ID), propertyDefinition, paths);
+				exportSearchCtx.getFileColumns().add(attributeMapping);
+			}
+
 		} catch (DocumentException e) {
 			logger.error("Failed to read the query file", e);
 		} finally {
 			IOUtils.closeQuietly(is);
-		}
-
-		// date format
-		Node dateFormat = queryElt.selectSingleNode(QUERY_XPATH_DATE_FORMAT);
-		if (dateFormat != null) {
-			exportSearchCtx.getPropertyFormats().setDateFormat(dateFormat.getStringValue());
-		}
-
-		// datetime format
-		Node datetimeFormat = queryElt.selectSingleNode(QUERY_XPATH_DATETIME_FORMAT);
-		if (datetimeFormat != null) {
-			exportSearchCtx.getPropertyFormats().setDatetimeFormat(datetimeFormat.getStringValue());
-		}
-
-		// decimal format
-		Node decimalFormatPattern = queryElt.selectSingleNode(QUERY_XPATH_DECIMAL_PATTERN);
-		if (decimalFormatPattern != null) {
-			exportSearchCtx.getPropertyFormats().setDecimalFormat(decimalFormatPattern.getStringValue());
-		}
-
-		// attributes
-		List<Node> columnNodes = queryElt.selectNodes(QUERY_XPATH_COLUMNS_ATTRIBUTE);
-		for (Node columnNode : columnNodes) {
-			QName attribute = QName.createQName(columnNode.valueOf(QUERY_ATTR_GET_ATTRIBUTE), namespaceService);
-
-			ClassAttributeDefinition attributeDef = dictionaryService.getProperty(attribute);
-			if (attributeDef == null) {
-
-				attributeDef = dictionaryService.getAssociation(attribute);
-				if (attributeDef == null) {
-					throw new MappingException("Failed to map the following attribute. TemplateNodeRef: " + templateNodeRef + " - Attribute: "
-							+ attribute);
-				}
-			}
-
-			AttributeMapping attributeMapping = new AttributeMapping(columnNode.valueOf(QUERY_ATTR_GET_ID), attributeDef);
-			exportSearchCtx.getAttributeColumns().add(attributeMapping);
-		}
-
-		// characteristics
-		columnNodes = queryElt.selectNodes(QUERY_XPATH_COLUMNS_DATALIST);
-		for (Node columnNode : columnNodes) {
-			QName qName = QName.createQName(columnNode.valueOf(QUERY_ATTR_GET_ATTRIBUTE), namespaceService);
-			QName dataListQName = QName.createQName(columnNode.valueOf(QUERY_ATTR_GET_DATALIST_QNAME), namespaceService);
-			NodeRef charactNodeRef = null;
-			String charactNodeRefString = columnNode.valueOf(QUERY_ATTR_GET_CHARACT_NODE_REF);
-			String charactName = columnNode.valueOf(QUERY_ATTR_GET_CHARACT_NAME);
-			QName charactQName = QName.createQName(columnNode.valueOf(QUERY_ATTR_GET_CHARACT_QNAME), namespaceService);
-
-			// get characteristic nodeRef
-			if (charactNodeRefString != null && !charactNodeRefString.isEmpty() && NodeRef.isNodeRef(charactNodeRefString)) {
-				charactNodeRef = new NodeRef(charactNodeRefString);
-			} else if (!charactName.isEmpty()) {
-				AssociationDefinition assocDef = dictionaryService.getAssociation(charactQName);
-				charactNodeRef = getItemByTypeAndName(assocDef.getTargetClass().getName(), charactName);
-
-				if (charactNodeRef == null) {
-					throw new MappingException(String.format("ERROR : Failed to get the nodeRef of the characteristic. Type:%s - Name:%s", assocDef
-							.getTargetClass().getName(), charactName));
-				}
-			} else {
-				throw new MappingException("ERROR : Missing Characteristic nodeRef or name. trace: " + columnNode.asXML());
-			}
-
-			ClassAttributeDefinition attributeDef = dictionaryService.getProperty(qName);
-			if (attributeDef == null) {
-				attributeDef = dictionaryService.getAssociation(qName);
-			}
-
-			CharacteristicMapping attributeMapping = new CharacteristicMapping(columnNode.valueOf(QUERY_ATTR_GET_ID), attributeDef, dataListQName,
-					charactQName, charactNodeRef);
-			exportSearchCtx.getCharacteristicsColumns().add(attributeMapping);
-		}
-
-		// file import
-		columnNodes = queryElt.selectNodes(QUERY_XPATH_COLUMNS_FILE);
-		for (Node columnNode : columnNodes) {
-			QName qName = QName.createQName(columnNode.valueOf(QUERY_ATTR_GET_ATTRIBUTE), namespaceService);
-
-			String path = columnNode.valueOf(QUERY_ATTR_GET_PATH);
-			List<String> paths = new ArrayList<String>();
-			String[] arrPath = path.split(RepoConsts.PATH_SEPARATOR);
-			for (String p : arrPath)
-				paths.add(p);
-
-			PropertyDefinition propertyDefinition = dictionaryService.getProperty(qName);
-			FileMapping attributeMapping = new FileMapping(columnNode.valueOf(QUERY_ATTR_GET_ID), propertyDefinition, paths);
-			exportSearchCtx.getFileColumns().add(attributeMapping);
 		}
 
 		return exportSearchCtx;
@@ -448,7 +449,5 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 	private NodeRef getItemByTypeAndName(QName type, String name) {
 		return BeCPGQueryBuilder.createQuery().ofType(type).andPropQuery(ContentModel.PROP_NAME, name).singleValue();
 	}
-
-	
 
 }

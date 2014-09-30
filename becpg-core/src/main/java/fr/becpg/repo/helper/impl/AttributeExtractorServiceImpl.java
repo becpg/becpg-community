@@ -170,10 +170,6 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 			return fieldName;
 		}
 
-		public DataListCallBack getCallback() {
-			return callback;
-		}
-
 		public boolean isEntityField() {
 			return isEntityField;
 		}
