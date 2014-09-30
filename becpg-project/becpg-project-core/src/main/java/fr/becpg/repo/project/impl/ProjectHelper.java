@@ -205,7 +205,7 @@ public class ProjectHelper {
 	public static Date getLastEndDate(ProjectData projectData) {
 		Date endDate = null;
 		for (TaskListDataItem task : projectData.getTaskList()) {
-			if (endDate == null || (task.getEnd() != null && task.getEnd().after(endDate))) {
+			if (!task.getIsGroup() && (endDate == null || (task.getEnd() != null && task.getEnd().after(endDate)))) {
 				endDate = task.getEnd();
 			}
 		}
@@ -216,7 +216,7 @@ public class ProjectHelper {
 		List<TaskListDataItem> tasks = getNextTasks(projectData, null);
 		Date startDate = null;
 		for (TaskListDataItem task : tasks) {
-			if (startDate == null || (task.getStart() != null && task.getStart().before(startDate))) {
+			if (!task.getIsGroup() && (startDate == null || (task.getStart() != null && task.getStart().before(startDate)))) {
 				startDate = task.getStart();
 			}
 		}

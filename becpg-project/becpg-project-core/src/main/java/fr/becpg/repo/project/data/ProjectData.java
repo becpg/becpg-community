@@ -26,6 +26,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.hierarchy.HierarchicalEntity;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
+import fr.becpg.repo.project.data.projectList.LogTimeListDataItem;
 import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
@@ -68,6 +69,9 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	private String creator;
 	private String modifier;
 	private NodeRef projectManager;
+	private Double budgetedCost = 0d;
+	private Double work = 0d;
+	private Double loggedTime = 0d;
 	
 	/*
 	 * Formulation
@@ -78,6 +82,7 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	private List<TaskListDataItem> taskList;
 	private List<DeliverableListDataItem> deliverableList;
 	private List<ScoreListDataItem> scoreList;
+	private List<LogTimeListDataItem> logTimeList;
 
 	public ProjectData() {
 		super();
@@ -310,6 +315,36 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 		this.modifier = modifier;
 	}
 
+	@AlfProp
+	@AlfQname(qname = "pjt:projectBudgetedCost")
+	public Double getBudgetedCost() {
+		return budgetedCost;
+	}
+
+	public void setBudgetedCost(Double budgetedCost) {
+		this.budgetedCost = budgetedCost;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "pjt:projectWork")
+	public Double getWork() {
+		return work;
+	}
+
+	public void setWork(Double work) {
+		this.work = work;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "pjt:projectLoggedTime")
+	public Double getLoggedTime() {
+		return loggedTime;
+	}
+
+	public void setLoggedTime(Double loggedTime) {
+		this.loggedTime = loggedTime;
+	}
+
 	@DataList
 	@AlfQname(qname="pjt:taskList")
 	public List<TaskListDataItem> getTaskList() {
@@ -340,6 +375,16 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 		this.scoreList = scoreList;
 	}
 	
+	@DataList
+	@AlfQname(qname="pjt:logTimeList")
+	public List<LogTimeListDataItem> getLogTimeList() {
+		return logTimeList;
+	}
+
+	public void setLogTimeList(List<LogTimeListDataItem> logTimeList) {
+		this.logTimeList = logTimeList;
+	}
+
 	@Override
 	public String getEntityState() {
 		return projectState!=null ? projectState.toString() : null;

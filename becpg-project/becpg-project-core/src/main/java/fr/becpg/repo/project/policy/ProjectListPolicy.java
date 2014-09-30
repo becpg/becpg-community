@@ -85,6 +85,8 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 				this, "onUpdateProperties"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, ProjectModel.TYPE_SCORE_LIST, new JavaBehaviour(this,
 				"onUpdateProperties"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, ProjectModel.TYPE_LOG_TIME_LIST, new JavaBehaviour(this,
+				"onUpdateProperties"));
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, ProjectModel.TYPE_TASK_LIST,
 				ProjectModel.ASSOC_TL_RESOURCES, new JavaBehaviour(this, "onCreateAssociation"));
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME, ProjectModel.TYPE_TASK_LIST,
@@ -93,8 +95,16 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 				ProjectModel.ASSOC_TL_PREV_TASKS, new JavaBehaviour(this, "onCreateAssociation"));
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME, ProjectModel.TYPE_TASK_LIST,
 				ProjectModel.ASSOC_TL_PREV_TASKS, new JavaBehaviour(this, "onDeleteAssociation"));
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, ProjectModel.TYPE_TASK_LIST,
+				ProjectModel.ASSOC_TL_RESOURCE_COST, new JavaBehaviour(this, "onCreateAssociation"));
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME, ProjectModel.TYPE_TASK_LIST,
+				ProjectModel.ASSOC_TL_RESOURCE_COST, new JavaBehaviour(this, "onDeleteAssociation"));
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, ProjectModel.TYPE_DELIVERABLE_LIST,
 				ProjectModel.ASSOC_DL_TASK, new JavaBehaviour(this, "onCreateAssociation"));
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, ProjectModel.TYPE_LOG_TIME_LIST,
+				ProjectModel.ASSOC_LTL_TASK, new JavaBehaviour(this, "onCreateAssociation"));
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME, ProjectModel.TYPE_LOG_TIME_LIST,
+				ProjectModel.ASSOC_LTL_TASK, new JavaBehaviour(this, "onDeleteAssociation"));
 		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyNodePolicy.QNAME, ProjectModel.TYPE_DELIVERABLE_LIST, new JavaBehaviour(this,
 				"getCopyCallback"));
 		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyNodePolicy.QNAME, ProjectModel.TYPE_TASK_LIST, new JavaBehaviour(this,
@@ -157,6 +167,8 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 			onUpdatePropertiesDeliverableList(nodeRef, before, after);
 		} else if (nodeService.getType(nodeRef).equals(ProjectModel.TYPE_SCORE_LIST)) {
 			onUpdatePropertiesScoreList(nodeRef, before, after);
+		} else if (nodeService.getType(nodeRef).equals(ProjectModel.TYPE_LOG_TIME_LIST)) {
+			onUpdatePropertiesLogTimeList(nodeRef, before, after);
 		}
 	}
 
@@ -181,7 +193,7 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 
 		if (isPropChanged(before, after, ProjectModel.PROP_TL_DURATION) || isPropChanged(before, after, ProjectModel.PROP_TL_START)
 				|| isPropChanged(before, after, ProjectModel.PROP_TL_END) || isPropChanged(before, after, ProjectModel.PROP_TL_TASK_NAME)
-				|| isPropChanged(before, after, ProjectModel.PROP_TL_WORK)) {
+				|| isPropChanged(before, after, ProjectModel.PROP_TL_WORK) || isPropChanged(before, after, ProjectModel.PROP_TL_FIXED_COST)) {
 
 			logger.debug("update task list start, duration or end: " + nodeRef);
 			formulateProject = true;
@@ -233,6 +245,15 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		if (isPropChanged(before, after, ProjectModel.PROP_SL_SCORE) || isPropChanged(before, after, ProjectModel.PROP_SL_WEIGHT)) {
 
 			logger.debug("update score list : " + nodeRef);
+			queueListItem(nodeRef);
+		}
+	}
+	
+	public void onUpdatePropertiesLogTimeList(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
+
+		if (isPropChanged(before, after, ProjectModel.PROP_LTL_TIME)) {
+
+			logger.debug("update log time list : " + nodeRef);
 			queueListItem(nodeRef);
 		}
 	}

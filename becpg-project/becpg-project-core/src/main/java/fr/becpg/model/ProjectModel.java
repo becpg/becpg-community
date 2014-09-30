@@ -61,7 +61,9 @@ public interface ProjectModel {
 	public static final QName ASSOC_TL_TASKLEGEND = QName.createQName(PROJECT_URI, "tlTaskLegend");
 	public static final QName ASSOC_TL_OBSERVERS = QName.createQName(PROJECT_URI, "tlObservers");
 	public static final QName PROP_TL_WORKFLOW_INSTANCE = QName.createQName(PROJECT_URI, "tlWorkflowInstance");
-	
+	public static final QName PROP_TL_FIXED_COST = QName.createQName(PROJECT_URI, "tlFixedCost");
+	public static final QName ASSOC_TL_RESOURCE_COST = QName.createQName(PROJECT_URI, "tlResourceCost");
+		
 	public static final QName TYPE_DELIVERABLE_LIST = QName.createQName(PROJECT_URI, "deliverableList");
 	public static final QName PROP_DL_STATE = QName.createQName(PROJECT_URI, "dlState");
 	public static final QName PROP_DL_URL = QName.createQName(PROJECT_URI, "dlURL");
@@ -90,4 +92,9 @@ public interface ProjectModel {
 	public static final QName ASSOC_PROJECT_MANAGER = QName.createQName(PROJECT_URI, "projectManager");
 	
 	public static final QName TYPE_LOG_TIME_LIST  = QName.createQName(PROJECT_URI, "logTimeList");
+	public static final QName PROP_LTL_TIME  = QName.createQName(PROJECT_URI, "ltlTime");
+	public static final QName ASSOC_LTL_TASK  = QName.createQName(PROJECT_URI, "ltlTask");
+	
+	public static final QName TYPE_RESOURCE_COST = QName.createQName(PROJECT_URI, "resourceCost");
+	public static final QName PROP_RESOURCE_COST_VALUE = QName.createQName(PROJECT_URI, "resourceCostValue");
 }

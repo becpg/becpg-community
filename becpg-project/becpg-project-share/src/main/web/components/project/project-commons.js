@@ -306,14 +306,16 @@
       },
 
       getTaskColor : function PL_getTaskColor(task) {
-         var id = task["itemData"]["assoc_pjt_tlTaskLegend"][0].value;
+      	if(task["itemData"]["assoc_pjt_tlTaskLegend"][0] != null){
+      		var id = task["itemData"]["assoc_pjt_tlTaskLegend"][0].value;
 
-         for (i in this.taskLegends) {
-            if (this.taskLegends[i].id == id) {
-               return this.taskLegends[i].color.replace('#','');;
+            for (i in this.taskLegends) {
+               if (this.taskLegends[i].id == id) {
+                  return this.taskLegends[i].color.replace('#','');;
+               }
             }
-         }
-
+      	}
+         return '006600';
       },
       initTaskHandlers : function PL_initGantt() {
          var me = this;

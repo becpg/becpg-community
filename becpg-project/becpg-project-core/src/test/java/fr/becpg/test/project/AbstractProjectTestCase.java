@@ -46,6 +46,7 @@ import fr.becpg.repo.project.data.PlanningMode;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.ProjectState;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
+import fr.becpg.repo.project.data.projectList.ResourceCost;
 import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -59,7 +60,8 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 	protected static final String HIERARCHY2_FISH = "Fish";
 	protected static final String HIERARCHY2_CRUSTACEAN = "Crustacean";
 	protected static final String HIERARCHY_PROJECT_PATH = "/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:project_Hierarchy";
-
+	protected static final Double RESOURCE_COST_VALUE = 100d;
+	
 	protected NodeRef PROJECT_HIERARCHY1_SEA_FOOD_REF;
 	protected NodeRef PROJECT_HIERARCHY2_FISH_REF;
 	protected NodeRef PROJECT_HIERARCHY2_CRUSTACEAN_REF;
@@ -85,6 +87,7 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 	protected NodeRef projectTplNodeRef;
 	protected NodeRef rawMaterialNodeRef;
 	protected NodeRef projectNodeRef;
+	protected ResourceCost resourceCost;
 
 	private void initTasks() {
 
@@ -111,6 +114,14 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 					.getChildRef();
 		}
 
+		// resourceCost
+		NodeRef resourceCostsFolder = entitySystemService.getSystemEntityDataList(listsFolder, ProjectRepoConsts.PATH_RESOURCE_COSTS);
+		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+		properties.put(ContentModel.PROP_NAME, "ResourceCost");
+		properties.put(ProjectModel.PROP_RESOURCE_COST_VALUE, RESOURCE_COST_VALUE);
+		nodeService.createNode(resourceCostsFolder, ContentModel.ASSOC_CONTAINS,
+				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), ProjectModel.TYPE_RESOURCE_COST, properties)
+				.getChildRef();		
 	}
 	
 	@Override
@@ -167,6 +178,11 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 				for (FileInfo fileInfo : taskLegendsFileInfo) {
 					taskLegends.add(fileInfo.getNodeRef());
 				}
+				
+				// resourceCost
+				NodeRef resourceCostFolder = entitySystemService.getSystemEntityDataList(npdListsFolder, ProjectRepoConsts.PATH_RESOURCE_COSTS);
+				List<FileInfo> resourceCostsFileInfo = fileFolderService.listFiles(resourceCostFolder);
+				resourceCost = (ResourceCost)alfrescoRepository.findOne(resourceCostsFileInfo.get(0).getNodeRef());
 
 				userOne = BeCPGTestHelper.createUser(BeCPGTestHelper.USER_ONE);
 				userTwo = BeCPGTestHelper.createUser(BeCPGTestHelper.USER_TWO);
@@ -306,6 +322,58 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 
 				projectData = (ProjectData) alfrescoRepository.save(projectData);
 				return projectData.getNodeRef();
+			}
+		}, false, true);
+	}
+	
+	protected void createMultiLevelProject(final ProjectState projectState, final Date startDate, final Date endDate, final PlanningMode planningMode) {
+
+		projectNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
+				
+				ProjectData projectData = new ProjectData(null, "Pjt", PROJECT_HIERARCHY1_SEA_FOOD_REF, PROJECT_HIERARCHY2_CRUSTACEAN_REF, 
+						startDate, endDate, null, planningMode, null, null,
+						null, 0, null);
+				projectData.setParentNodeRef(testFolderNodeRef);				
+				
+				//multi level tasks
+				List<TaskListDataItem> taskList = new LinkedList<TaskListDataItem>();
+				taskList.add(new TaskListDataItem(null, "task1", false, 2, null, assigneesOne, taskLegends.get(0), "activiti$projectAdhoc"));				
+				taskList.add(new TaskListDataItem(null, "task2", false, 2, null, assigneesOne, taskLegends.get(0), "activiti$projectAdhoc"));
+				taskList.get(1).setParent(taskList.get(0));
+				taskList.add(new TaskListDataItem(null, "task3", false, 2, null, assigneesOne, taskLegends.get(1), "activiti$projectAdhoc"));
+				taskList.get(2).setParent(taskList.get(0));
+				taskList.add(new TaskListDataItem(null, "task4", false, 2, null, assigneesTwo, taskLegends.get(1), "activiti$projectAdhoc"));
+				taskList.add(new TaskListDataItem(null, "task5", false, 2, null, assigneesTwo, taskLegends.get(1), "activiti$projectAdhoc"));
+				taskList.get(4).setParent(taskList.get(3));
+				taskList.add(new TaskListDataItem(null, "task6", false, 2, null, assigneesTwo, taskLegends.get(2), "activiti$projectAdhoc"));
+				taskList.get(5).setParent(taskList.get(3));
+				projectData.setTaskList(taskList);
+					
+				projectData = (ProjectData) alfrescoRepository.save(projectData);
+				projectNodeRef = projectData.getNodeRef();
+				
+				// update a second time to manage prevTask
+				// TODO : should avoid to save twice
+				projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+				List<NodeRef> prevTasks = new ArrayList<NodeRef>();
+
+				prevTasks = new ArrayList<NodeRef>();
+				prevTasks.add(projectData.getTaskList().get(1).getNodeRef());
+				projectData.getTaskList().get(2).setPrevTasks(prevTasks);
+
+				prevTasks = new ArrayList<NodeRef>();
+				prevTasks.add(projectData.getTaskList().get(2).getNodeRef());
+				projectData.getTaskList().get(4).setPrevTasks(prevTasks);
+
+				prevTasks = new ArrayList<NodeRef>();
+				prevTasks.add(projectData.getTaskList().get(4).getNodeRef());
+				projectData.getTaskList().get(5).setPrevTasks(prevTasks);
+
+				alfrescoRepository.save(projectData);
+				
+				return projectNodeRef;
 			}
 		}, false, true);
 	}
