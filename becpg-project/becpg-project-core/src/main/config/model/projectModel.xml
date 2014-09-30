@@ -204,11 +204,11 @@
 			<properties>
 				<property name="pjt:projectHierarchy1">
 					<type>d:noderef</type>
-					<mandatory>true</mandatory>
+					<mandatory>false</mandatory>
 				</property>
 				<property name="pjt:projectHierarchy2">
 					<type>d:noderef</type>
-					<mandatory>true</mandatory>
+					<mandatory>false</mandatory>
 				</property>
 				<property name="pjt:projectOrigin">
 					<type>d:text</type>
@@ -266,6 +266,21 @@
 					<constraints>
 						<constraint ref="pjt:percentage" />
 					</constraints>
+				</property>			
+				<property name="pjt:projectBudgetedCost">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="pjt:projectWork">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="pjt:projectLoggedTime">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
 				</property>
 			</properties>
 			<associations>
@@ -345,7 +360,12 @@
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="false" />
-				</property>				
+				</property>
+				<property name="pjt:tlLoggedTime">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 				<property name="pjt:tlWorkflowName">
 					<type>d:text</type>
 					<default>activiti$projectAdhoc</default>
@@ -366,6 +386,7 @@
 				</property>
 				<property name="pjt:tlState">
 					<type>d:text</type>
+					<default>Planned</default>
 					<constraints>
 						<constraint ref="pjt:taskStates" />
 					</constraints>
@@ -375,6 +396,16 @@
 					<constraints>
 						<constraint ref="pjt:manualDate" />
 					</constraints>
+				</property>				
+				<property name="pjt:tlFixedCost">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="pjt:tlBudgetedCost">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
 				</property>
 			</properties>
 			<associations>
@@ -407,7 +438,7 @@
 					</source>
 					<target>
 						<class>pjt:taskLegend</class>
-						<mandatory>true</mandatory>
+						<mandatory>false</mandatory>
 						<many>false</many>
 					</target>
 				</association>
@@ -420,6 +451,17 @@
 						<class>cm:authority</class>
 						<mandatory>false</mandatory>
 						<many>true</many>
+					</target>
+				</association>
+				<association name="pjt:tlResourceCost">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>pjt:resourceCost</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
 					</target>
 				</association>
 			</associations>
@@ -651,6 +693,22 @@
             <overrides/>
             <mandatory-aspects/>
         </type>
+        
+        <type name="pjt:resourceCost">
+			<parent>bcpg:charact</parent>
+			<properties>
+				<property name="pjt:resourceCostValue">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="pjt:resourceCostHoursPerDay">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+			</properties>			
+		</type>
 	</types>
 
 	<aspects>
@@ -658,7 +716,7 @@
 			<properties>
 				<property name="pjt:completionPercent">
 					<type>d:int</type>
-					<mandatory>true</mandatory>
+					<mandatory>false</mandatory>
 					<default>0</default>
 					<constraints>
 						<constraint ref="pjt:percentage" />

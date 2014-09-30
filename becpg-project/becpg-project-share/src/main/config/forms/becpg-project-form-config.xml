@@ -44,6 +44,9 @@
 					<show id="pjt:completionPercent" for-mode="view"/>
 					<show id="pjt:projectOverdue" for-mode="view"/>
 					<show id="pjt:projectScore" for-mode="view"/>
+					<show id="pjt:projectWork" for-mode="view"/>
+					<show id="pjt:projectBudgetedCost" for-mode="view"/>
+					<show id="pjt:projectLoggedTime" for-mode="view"/>
 					
 
 					<!-- tags and categories -->
@@ -115,7 +118,10 @@
 					<field id="pjt:projectPlanningMode" set="planning" />
 					<field id="pjt:projectCompletionDate" set="planning" />
 					<field id="pjt:completionPercent" set="planning" />
-					<field id="pjt:projectOverdue" set="planning" />					
+					<field id="pjt:projectOverdue" set="planning" />
+					<field id="pjt:projectWork" set="planning" />
+					<field id="pjt:projectBudgetedCost" set="planning" />
+					<field id="pjt:projectLoggedTime" set="planning" />					
 
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
@@ -191,7 +197,7 @@
 				   <show id="cm:name" />
 				   <show id="bcpg:code" />				   
 				   <show id="cm:title" force="true" />
-                   <show id="cm:description" force="true" />
+               <show id="cm:description" force="true" />
 				   <show id="pjt:projectHierarchy1" />
 				   <show id="pjt:projectHierarchy2" />
 				   <show id="pjt:projectOrigin" />
@@ -481,15 +487,14 @@
 					
 					<show id="pjt:tlIsMilestone" />
 					<show id="pjt:tlDuration" />					
-					<show id="pjt:tlWork" />			
-					<show id="pjt:tlCapacity" />		
-					<show id="pjt:tlState" />
-					
+					<show id="pjt:tlWork" />
+					<show id="pjt:completionPercent" />			
+					<show id="pjt:tlState" />											
 					<show id="pjt:tlManualDate" />
 					<show id="pjt:tlStart" />
-					<show id="pjt:tlEnd"   />
-									
-					<show id="pjt:completionPercent" />
+					<show id="pjt:tlEnd"   />					
+					<show id="pjt:tlFixedCost" />	
+					<show id="pjt:tlResourceCost" />										
 				</field-visibility>
 				<appearance>
 				
@@ -547,9 +552,13 @@
 						</control>
 					</field>
 					<field id="pjt:tlStart" set="planning"/>
-					<field id="pjt:tlEnd" set="planning"/>
-				
-					
+					<field id="pjt:tlEnd" set="planning"/>				
+					<field id="pjt:tlFixedCost" set="planning"/>
+					<field id="pjt:tlResourceCost" set="planning">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+						</control>
+					</field>										
 					<field id="pjt:completionPercent" set="planning"/>
 				</appearance>
 			</form>
@@ -564,20 +573,12 @@
 					<show id="pjt:tlPrevTasks" />
 					<show id="bcpg:parentLevel" force="true" />
 					<show id="pjt:tlResources" />
-					<show id="pjt:tlObservers" />
-					<show id="pjt:tlTaskLegend" />					
-					<show id="pjt:tlWorkflowName" />
 					
 					<show id="pjt:tlIsMilestone" />
 					<show id="pjt:tlDuration" />					
-					<show id="pjt:tlWork" />			
-					<show id="pjt:tlCapacity" />										
-					<show id="pjt:tlState" />
-					<show id="pjt:tlManualDate" />	
-					<show id="pjt:tlStart" />
-					<show id="pjt:tlEnd" />
-									
-					<show id="pjt:completionPercent" />
+					<show id="pjt:tlWork" />	
+					<show id="pjt:tlFixedCost" />	
+					<show id="pjt:tlResourceCost" />							
 				</field-visibility>
 				<appearance>
 					
@@ -598,44 +599,19 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="pjt:tlResources" set="mainInfo"/>
-					<field id="pjt:tlObservers" set="mainInfo"/>
-					
-					<set id="mainInfo2" parent="mainInfo"
-					template="/org/alfresco/components/form/2-column-set.ftl" />
-					<field id="pjt:tlTaskLegend" set="mainInfo2">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="style">width:180px</control-param>
-						</control>
-					</field>						
-					<field id="pjt:tlWorkflowName" set="mainInfo2" >
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">,activiti$projectAdhoc|data.workflow.projectadhoc,activiti$projectNewProduct|data.workflow.projectnewproduct</control-param>
-						</control>
-					</field>
+					<field id="pjt:tlResources" set="mainInfo"/>					
 					
 					<set id="planning" appearance="bordered-panel"
 						label-id="becpg.forms.set.planning.label" template="/org/alfresco/components/form/2-column-set.ftl" />		
 					<field id="pjt:tlIsMilestone" set="planning"/>
 					<field id="pjt:tlDuration" set="planning"/>					
-					<field id="pjt:tlWork" set="planning"/>		
-					<field id="pjt:tlCapacity" read-only="true" set="planning"/>			
-					<field id="pjt:tlState" set="planning">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">Planned|data.taskstate.planned,InProgress|data.taskstate.inprogress,OnHold|data.taskstate.onhold,Cancelled|data.taskstate.cancelled,Completed|data.taskstate.completed
-							</control-param>
+					<field id="pjt:tlWork" set="planning"/>							
+					<field id="pjt:tlFixedCost" set="planning"/>
+					<field id="pjt:tlResourceCost" set="planning">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 						</control>
-					</field>
-					<field id="pjt:tlManualDate" set="planning">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">,Start|data.manualdate.start,End|data.manualdate.end</control-param>
-						</control>
-					</field>
-					<field id="pjt:tlStart" set="planning"/>
-					<field id="pjt:tlEnd" set="planning"/>
-					
-					<field id="pjt:completionPercent" set="planning"/>
+					</field>					
 				</appearance>
 			</form>
 			<!-- Data Grid view -->
@@ -652,18 +628,20 @@
 					<show id="bcpg:depthLevel" />
 					<show id="bcpg:parentLevel"  />
 					<show id="pjt:tlIsGroup" />
-					<show id="pjt:tlTaskName" />					
-					<show id="pjt:tlIsMilestone" />
+					<show id="pjt:tlTaskName" />		
+					<show id="pjt:tlStart" />
+					<show id="pjt:tlEnd" />			
+					<show id="pjt:tlIsMilestone" />					
+					<show id="pjt:tlState" />
 					<show id="pjt:tlDuration" />
 					<show id="pjt:tlWork" />
 					<show id="pjt:tlCapacity" />
 					<show id="pjt:tlResources" />
-					<show id="pjt:tlTaskLegend" />					
-					<show id="pjt:tlState" />
-					<show id="pjt:completionPercent" />
-					<show id="pjt:tlStart" />
-					<show id="pjt:tlEnd" />
-					<show id="pjt:tlPrevTasks" />
+					<show id="pjt:tlBudgetedCost" />
+					<show id="pjt:tlLoggedTime" />
+					<show id="pjt:completionPercent" />					
+					<show id="pjt:tlTaskLegend" />																		
+					<show id="pjt:tlPrevTasks" />										
 					<show id="fm:commentCount" force="true"/>
 				</field-visibility>
 				<appearance>
@@ -673,7 +651,12 @@
 					<field id="pjt:tlPrevTasks" label="hidden"/>
 					<field id="fm:commentCount" label="hidden" read-only="true"/>
 					<field id="pjt:tlIsMilestone" label="hidden" ></field>
+					<field id="pjt:tlStart" read-only="true"/>
+					<field id="pjt:tlEnd" read-only="true"/>
 					<field id="pjt:tlCapacity" read-only="true"/>
+					<field id="pjt:tlBudgetedCost" read-only="true"/>
+					<field id="pjt:tlLoggedTime" read-only="true"/>
+					<field id="pjt:tlTaskLegend" label="hidden" ></field>
 				</appearance>
 			</form>
 			<form id="sub-datagrid">
@@ -1043,5 +1026,26 @@
 			</form>		
 		</forms>
 	</config>
-
+	<config condition="pjt:resourceCost" evaluator="node-type">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="pjt:resourceCostValue" />
+					<show id="bcpg:isDeleted" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	<config condition="pjt:resourceCost" evaluator="model-type">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="pjt:resourceCostValue" />
+					<show id="bcpg:isDeleted" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
 </alfresco-config>

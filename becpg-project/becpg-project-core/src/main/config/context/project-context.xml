@@ -85,6 +85,7 @@
 		<property name="handlers">
 			<list>
 				<bean class="fr.becpg.repo.project.formulation.PlanningFormulationHandler" />
+				<bean class="fr.becpg.repo.project.formulation.BudgetFormulationHandler" />
 				<bean class="fr.becpg.repo.project.formulation.ScoreFormulationHandler" />
 				<bean class="fr.becpg.repo.project.formulation.TaskStateFormulationHandler">
 					<property name="projectWorkflowService" ref="projectWorkflowService" />

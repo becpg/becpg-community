@@ -47,6 +47,7 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	private Integer duration;
 	private Integer capacity;
 	private Double work;
+	private Double loggedTime;
 	private Date start;
 	private Date end;
 	private TaskState state = TaskState.Planned;
@@ -60,6 +61,9 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	private TaskManualDate manualDate;
 	private Integer depthLevel;
 	private TaskListDataItem parent;
+	private Double fixedCost;
+	private Double budgetedCost;
+	private ResourceCost resourceCost; 
 
 	@AlfProp
 	@AlfQname(qname = "pjt:tlTaskName")
@@ -119,6 +123,15 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 
 	public void setWork(Double work) {
 		this.work = work;
+	}
+	@AlfProp
+	@AlfQname(qname = "pjt:tlLoggedTime")
+	public Double getLoggedTime() {
+		return loggedTime;
+	}
+
+	public void setLoggedTime(Double loggedTime) {
+		this.loggedTime = loggedTime;
 	}
 
 	@AlfProp
@@ -256,6 +269,36 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 		this.parent = parent;		
 	}
 	
+	@AlfProp
+	@AlfQname(qname = "pjt:tlFixedCost")
+	public Double getFixedCost() {
+		return fixedCost;
+	}
+
+	public void setFixedCost(Double fixedCost) {
+		this.fixedCost = fixedCost;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "pjt:tlBudgetedCost")
+	public Double getBudgetedCost() {
+		return budgetedCost;
+	}
+
+	public void setBudgetedCost(Double budgetedCost) {
+		this.budgetedCost = budgetedCost;
+	}
+
+	@AlfSingleAssoc
+	@AlfQname(qname = "pjt:tlResourceCost")
+	public ResourceCost getResourceCost() {
+		return resourceCost;
+	}
+
+	public void setResourceCost(ResourceCost resourceCost) {
+		this.resourceCost = resourceCost;
+	}
+
 	public TaskListDataItem() {
 		super();
 	}
@@ -304,12 +347,15 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 		result = prime * result + ((depthLevel == null) ? 0 : depthLevel.hashCode());
 		result = prime * result + ((duration == null) ? 0 : duration.hashCode());
 		result = prime * result + ((end == null) ? 0 : end.hashCode());
+		result = prime * result + ((fixedCost == null) ? 0 : fixedCost.hashCode());
 		result = prime * result + ((isGroup == null) ? 0 : isGroup.hashCode());
 		result = prime * result + ((isMilestone == null) ? 0 : isMilestone.hashCode());
 		result = prime * result + ((manualDate == null) ? 0 : manualDate.hashCode());
 		result = prime * result + ((observers == null) ? 0 : observers.hashCode());
 		result = prime * result + ((parent == null) ? 0 : parent.hashCode());
+		result = prime * result + ((budgetedCost == null) ? 0 : budgetedCost.hashCode());
 		result = prime * result + ((prevTasks == null) ? 0 : prevTasks.hashCode());
+		result = prime * result + ((resourceCost == null) ? 0 : resourceCost.hashCode());
 		result = prime * result + ((resources == null) ? 0 : resources.hashCode());
 		result = prime * result + ((start == null) ? 0 : start.hashCode());
 		result = prime * result + ((state == null) ? 0 : state.hashCode());
@@ -355,6 +401,11 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 				return false;
 		} else if (!end.equals(other.end))
 			return false;
+		if (fixedCost == null) {
+			if (other.fixedCost != null)
+				return false;
+		} else if (!fixedCost.equals(other.fixedCost))
+			return false;
 		if (isGroup == null) {
 			if (other.isGroup != null)
 				return false;
@@ -377,10 +428,20 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 				return false;
 		} else if (!parent.equals(other.parent))
 			return false;
+		if (budgetedCost == null) {
+			if (other.budgetedCost != null)
+				return false;
+		} else if (!budgetedCost.equals(other.budgetedCost))
+			return false;
 		if (prevTasks == null) {
 			if (other.prevTasks != null)
 				return false;
 		} else if (!prevTasks.equals(other.prevTasks))
+			return false;
+		if (resourceCost == null) {
+			if (other.resourceCost != null)
+				return false;
+		} else if (!resourceCost.equals(other.resourceCost))
 			return false;
 		if (resources == null) {
 			if (other.resources != null)
@@ -429,7 +490,8 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 				+ ", end=" + end + ", state=" + state + ", completionPercent=" + completionPercent + ", prevTasks="
 				+ prevTasks + ", resources=" + resources + ", observers=" + observers + ", taskLegend=" + taskLegend
 				+ ", workflowName=" + workflowName + ", workflowInstance=" + workflowInstance + ", manualDate="
-				+ manualDate + ", depthLevel=" + depthLevel + ", parent=" + parent + "]";
+				+ manualDate + ", depthLevel=" + depthLevel + ", parent=" + parent + ", fixedCost=" + fixedCost
+				+ ", budgetedCost=" + budgetedCost + ", resourceCost=" + resourceCost + "]";
 	}
 
 }

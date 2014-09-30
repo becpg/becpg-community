@@ -194,7 +194,7 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 
 					logger.debug("set completion percent to value " + taskCompletionPercent + " - nodref: "
 							+ nextTask.getNodeRef());
-					nextTask.setCompletionPercent(taskCompletionPercent);
+					nextTask.setCompletionPercent(taskCompletionPercent == 0 ? null : taskCompletionPercent);
 					
 					// check workflow instance (task may be reopened) and workflow properties
 					projectWorkflowService.checkWorkflowInstance(projectData, nextTask, nextDeliverables);
