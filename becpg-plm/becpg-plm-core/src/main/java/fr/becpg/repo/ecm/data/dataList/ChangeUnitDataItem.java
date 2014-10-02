@@ -20,7 +20,7 @@ package fr.becpg.repo.ecm.data.dataList;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.ecm.data.RevisionType;
-import fr.becpg.repo.product.data.productList.RequirementType;
+import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;

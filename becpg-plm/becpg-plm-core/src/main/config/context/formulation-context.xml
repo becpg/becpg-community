@@ -95,6 +95,7 @@
 					<property name="execOrder" value="Pre"/>
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.ProcessCalculatingFormulationHandler">
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.AllergensCalculatingFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />

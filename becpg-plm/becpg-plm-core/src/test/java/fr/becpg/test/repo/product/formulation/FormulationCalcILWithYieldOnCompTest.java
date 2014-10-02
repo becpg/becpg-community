@@ -29,10 +29,10 @@ import org.junit.Test;
 
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.ProductUnit;
+import fr.becpg.repo.product.data.constraints.CompoListUnit;
+import fr.becpg.repo.product.data.constraints.DeclarationType;
+import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
-import fr.becpg.repo.product.data.productList.CompoListUnit;
-import fr.becpg.repo.product.data.productList.DeclarationType;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
 public class FormulationCalcILWithYieldOnCompTest extends AbstractFinishedProductTest {

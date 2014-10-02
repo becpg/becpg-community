@@ -1,7 +1,7 @@
 /*
  * 
  */
-package fr.becpg.repo.product.data;
+package fr.becpg.repo.product.data.constraints;
 
 /**
  * The Enum ProductUnit.

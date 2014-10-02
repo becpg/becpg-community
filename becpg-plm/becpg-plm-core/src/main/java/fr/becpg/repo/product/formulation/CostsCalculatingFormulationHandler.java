@@ -22,7 +22,8 @@ import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.PackagingKitData;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.ProductUnit;
+import fr.becpg.repo.product.data.ResourceProductData;
+import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
@@ -100,44 +101,58 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		Double netQty = null;
 		if (formulatedProduct instanceof PackagingKitData) {
 			netQty = FormulationHelper.QTY_FOR_PIECE;
-		} else {
+		} else if (formulatedProduct instanceof ResourceProductData) {
+			netQty = FormulationHelper.QTY_FOR_PIECE;
+		}	else {
 			netQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
 		}
 
-		/*
-		 * Composition
-		 */
-		Map<NodeRef, List<NodeRef>> mandatoryCharacts1 = getMandatoryCharacts(formulatedProduct, PLMModel.TYPE_RAWMATERIAL);
 
 		if (formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)) {
+			
+			/*
+			 * Composition
+			 */
+			Map<NodeRef, List<NodeRef>> mandatoryCharacts1 = getMandatoryCharacts(formulatedProduct, PLMModel.TYPE_RAWMATERIAL);
+			
 			Composite<CompoListDataItem> composite = CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList(
 					EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT));
 			visitCompoListChildren(formulatedProduct, composite, costList, DEFAULT_LOSS_RATIO, netQty, mandatoryCharacts1);
+			
+			addReqCtrlList(formulatedProduct.getCompoListView().getReqCtrlList(), mandatoryCharacts1);
+		
 		}
 
-		addReqCtrlList(formulatedProduct.getCompoListView().getReqCtrlList(), mandatoryCharacts1);
+		
 
-		/*
-		 * PackagingList
-		 */
-		Map<NodeRef, List<NodeRef>> mandatoryCharacts2 = getMandatoryCharacts(formulatedProduct, PLMModel.TYPE_PACKAGINGMATERIAL);
+	
 
 		if (formulatedProduct.hasPackagingListEl(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)) {
+			
+			/*
+			 * PackagingList
+			 */
+			Map<NodeRef, List<NodeRef>> mandatoryCharacts2 = getMandatoryCharacts(formulatedProduct, PLMModel.TYPE_PACKAGINGMATERIAL);
+			
 			for (PackagingListDataItem packagingListDataItem : formulatedProduct.getPackagingList(EffectiveFilters.EFFECTIVE,
 					VariantFilters.DEFAULT_VARIANT)) {
 				Double qty = FormulationHelper.getQtyWithLost(packagingListDataItem);
 				visitPart(packagingListDataItem.getProduct(), costList, qty, netQty, mandatoryCharacts2, null);
 			}
+			
+			addReqCtrlList(formulatedProduct.getPackagingListView().getReqCtrlList(), mandatoryCharacts2);
 		}
 
-		addReqCtrlList(formulatedProduct.getPackagingListView().getReqCtrlList(), mandatoryCharacts2);
+		
 
-		/*
-		 * ProcessList
-		 */
-		Map<NodeRef, List<NodeRef>> mandatoryCharacts3 = getMandatoryCharacts(formulatedProduct, PLMModel.TYPE_RESOURCEPRODUCT);
-
+		
 		if (formulatedProduct.hasProcessListEl(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)) {
+			/*
+			 * ProcessList
+			 */
+			Map<NodeRef, List<NodeRef>> mandatoryCharacts3 = getMandatoryCharacts(formulatedProduct, PLMModel.TYPE_RESOURCEPRODUCT);
+
+			
 			for (ProcessListDataItem processListDataItem : formulatedProduct.getProcessList(EffectiveFilters.EFFECTIVE,
 					VariantFilters.DEFAULT_VARIANT)) {
 
@@ -146,9 +161,11 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 					visitPart(processListDataItem.getResource(), costList, qty, netQty, mandatoryCharacts3, null);
 				}
 			}
+			
+			addReqCtrlList(formulatedProduct.getProcessListView().getReqCtrlList(), mandatoryCharacts3);
 		}
 
-		addReqCtrlList(formulatedProduct.getProcessListView().getReqCtrlList(), mandatoryCharacts3);
+		
 	}
 
 	private void visitCompoListChildren(ProductData formulatedProduct, Composite<CompoListDataItem> composite, List<CostListDataItem> costList,

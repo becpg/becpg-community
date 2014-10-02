@@ -5,6 +5,7 @@ package fr.becpg.repo.product.data.productList;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.product.data.constraints.ProcessListUnit;
 import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -19,8 +20,9 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 	private Double qtyResource = 0d;
 	private Double rateResource = 0d;
 	private Double yield = 0d;
-	private Double rateProcess = 0d;
 	private Double rateProduct = 0d;
+	
+	private ProcessListUnit unit = ProcessListUnit.P;
 	
 	private NodeRef step;	
 	private NodeRef product;
@@ -34,6 +36,17 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 
 	public void setQty(Double qty) {
 		this.qty = qty;
+	}
+
+	
+	@AlfProp
+	@AlfQname(qname="mpm:plUnit")
+	public ProcessListUnit getUnit() {
+		return unit;
+	}
+
+	public void setUnit(ProcessListUnit unit) {
+		this.unit = unit;
 	}
 
 	@AlfProp
@@ -66,15 +79,6 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 		this.yield = yield;
 	}
 	
-	@AlfProp
-	@AlfQname(qname="mpm:plRateProcess")
-	public Double getRateProcess() {
-		return rateProcess;
-	}
-
-	public void setRateProcess(Double rateProcess) {
-		this.rateProcess = rateProcess;
-	}
 	
 	@AlfProp
 	@AlfQname(qname="mpm:plRateProduct")
@@ -121,30 +125,18 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 	 * Instantiates a new process list data item.
 	 */
 	public ProcessListDataItem() {
-		
+		super();
 	}
 	
-	/**
-	 * Instantiates a new process list data item.
-	 * @param nodeRef
-	 * @param qty
-	 * @param qtyResource
-	 * @param rateResource
-	 * @param yield
-	 * @param rateProcess
-	 * @param rateProduct
-	 * @param step
-	 * @param product
-	 * @param resource
-	 */
-	public ProcessListDataItem(NodeRef nodeRef, Double qty, Double qtyResource, Double rateResource, Double yield, Double rateProcess, Double rateProduct, NodeRef step, NodeRef product, NodeRef resource){
+	
+	public ProcessListDataItem(NodeRef nodeRef, Double qty, Double qtyResource, Double rateResource, ProcessListUnit unit, Double yield, Double rateProduct, NodeRef step, NodeRef product, NodeRef resource){
 		
 		setNodeRef(nodeRef);
 		setQty(qty);
+		setUnit(unit);
 		setQtyResource(qtyResource);
 		setRateResource(rateResource);
 		setYield(yield);
-		setRateProcess(rateProcess);
 		setRateProduct(rateProduct);
 		setStep(step);
 		setProduct(product);
@@ -162,7 +154,6 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 		setQtyResource(p.getQtyResource());
 		setRateResource(p.getRateResource());
 		setYield(p.getYield());
-		setRateProcess(p.getRateProcess());
 		setRateProduct(p.getRateProduct());
 		setStep(p.getStep());
 		setProduct(p.getProduct());
@@ -177,8 +168,8 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 	
 	@Override
 	public String toString() {
-		return "ProcessListDataItem [nodeRef=" + nodeRef + ", qty=" + qty + ", qtyResource=" + qtyResource + ", rateResource=" + rateResource + ", yield=" + yield
-				+ ", rateProcess=" + rateProcess + ", rateProduct=" + rateProduct + ", step=" + step + ", product=" + product + ", resource=" + resource + "]";
+		return "ProcessListDataItem [qty=" + qty + ", qtyResource=" + qtyResource + ", rateResource=" + rateResource + ", yield=" + yield
+				+ ", rateProduct=" + rateProduct + ", unit=" + unit + ", step=" + step + ", product=" + product + ", resource=" + resource + "]";
 	}
 
 	@Override
@@ -188,11 +179,11 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 		result = prime * result + ((product == null) ? 0 : product.hashCode());
 		result = prime * result + ((qty == null) ? 0 : qty.hashCode());
 		result = prime * result + ((qtyResource == null) ? 0 : qtyResource.hashCode());
-		result = prime * result + ((rateProcess == null) ? 0 : rateProcess.hashCode());
 		result = prime * result + ((rateProduct == null) ? 0 : rateProduct.hashCode());
 		result = prime * result + ((rateResource == null) ? 0 : rateResource.hashCode());
 		result = prime * result + ((resource == null) ? 0 : resource.hashCode());
 		result = prime * result + ((step == null) ? 0 : step.hashCode());
+		result = prime * result + ((unit == null) ? 0 : unit.hashCode());
 		result = prime * result + ((yield == null) ? 0 : yield.hashCode());
 		return result;
 	}
@@ -221,11 +212,6 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 				return false;
 		} else if (!qtyResource.equals(other.qtyResource))
 			return false;
-		if (rateProcess == null) {
-			if (other.rateProcess != null)
-				return false;
-		} else if (!rateProcess.equals(other.rateProcess))
-			return false;
 		if (rateProduct == null) {
 			if (other.rateProduct != null)
 				return false;
@@ -245,6 +231,8 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 			if (other.step != null)
 				return false;
 		} else if (!step.equals(other.step))
+			return false;
+		if (unit != other.unit)
 			return false;
 		if (yield == null) {
 			if (other.yield != null)

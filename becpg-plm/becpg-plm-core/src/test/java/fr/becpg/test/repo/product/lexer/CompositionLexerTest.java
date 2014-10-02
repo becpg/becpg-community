@@ -26,8 +26,8 @@ import org.junit.Test;
 
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.constraints.CompoListUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
-import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.product.lexer.CompositionLexer;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 

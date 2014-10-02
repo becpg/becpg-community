@@ -17,7 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.product.data.ing;
 
-import fr.becpg.repo.product.data.productList.DeclarationType;
+import fr.becpg.repo.product.data.constraints.DeclarationType;
 
 /**
  * 

@@ -15,37 +15,10 @@
  *  
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package fr.becpg.repo.product.data.productList;
+package fr.becpg.repo.product.data.constraints;
 
-/**
- * 
- * @author matthieu
- *
- */
-public enum LabelingRuleType {
-	
-	Format,
-
-	Rename,
-	
-	Type,
-	
-	Locale,
-	
-	Render,
-	
-    Declare,
-	
-	Omit,
-	
-	Detail,
-	
-	DoNotDetails,
-	
-	Group,
-	
-	DoNotDeclare, 
-	
-	Prefs;
+public enum TareUnit{
+	g,
+	kg;
 
 }
