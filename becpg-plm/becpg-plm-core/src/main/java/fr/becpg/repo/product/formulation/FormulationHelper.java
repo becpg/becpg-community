@@ -196,7 +196,7 @@ public class FormulationHelper {
 			}
 		} else {
 
-			Double productQtyToTransform = 1d;
+			Double productQtyToTransform = FormulationHelper.QTY_FOR_PIECE;
 			if (!ProcessListUnit.P.equals(processListDataItem.getUnit())) {
 				productQtyToTransform = processListDataItem.getQty() != null ? processListDataItem.getQty() : FormulationHelper.getNetWeight(formulatedProduct, null);
 			}
