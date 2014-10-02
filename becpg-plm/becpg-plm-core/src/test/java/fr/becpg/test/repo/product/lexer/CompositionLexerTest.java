@@ -19,7 +19,6 @@ package fr.becpg.test.repo.product.lexer;
 
 import java.util.List;
 
-import org.alfresco.model.ContentModel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;

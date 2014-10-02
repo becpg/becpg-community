@@ -23,6 +23,7 @@ import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.PackagingKitData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ResourceProductData;
+import fr.becpg.repo.product.data.constraints.ProcessListUnit;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
@@ -158,6 +159,10 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 
 				Double qty = FormulationHelper.getQty(formulatedProduct, processListDataItem);
 				if (processListDataItem.getResource() != null && qty != null) {
+					if (ProcessListUnit.P.equals(processListDataItem.getUnit())) {
+						netQty = FormulationHelper.QTY_FOR_PIECE;
+					}
+					
 					visitPart(processListDataItem.getResource(), costList, qty, netQty, mandatoryCharacts3, null);
 				}
 			}

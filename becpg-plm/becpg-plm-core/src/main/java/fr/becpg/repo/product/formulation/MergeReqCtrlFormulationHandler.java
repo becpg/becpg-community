@@ -40,16 +40,15 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 
 /**
  * Merge ReqCtrlListDataItem to avoid duplication of items and sort them
+ * 
  * @author quere
  *
  */
 public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<ProductData> {
 
 	protected static Log logger = LogFactory.getLog(MergeReqCtrlFormulationHandler.class);
-	
+
 	private AlfrescoRepository<ProductData> alfrescoRepository;
-	
-	
 
 	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
@@ -57,134 +56,126 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 
 	@Override
 	public boolean process(ProductData productData) throws FormulateException {
-		
-		//Add child requirements
+
+		// Add child requirements
 		appendChildReq(productData.getCompoListView().getReqCtrlList(), productData.getCompoListView().getCompoList());
-		
+
 		mergeReqCtrlList(productData.getCompoListView().getReqCtrlList());
 		mergeReqCtrlList(productData.getPackagingListView().getReqCtrlList());
 		mergeReqCtrlList(productData.getProcessListView().getReqCtrlList());
-		
+
 		return true;
 	}
 
 	private void appendChildReq(List<ReqCtrlListDataItem> reqCtrlList, List<CompoListDataItem> compoList) {
-		for(CompoListDataItem compoListDataItem : compoList){
-			NodeRef productNodeRef =  compoListDataItem.getProduct();
+		for (CompoListDataItem compoListDataItem : compoList) {
+			NodeRef productNodeRef = compoListDataItem.getProduct();
 			ProductData productData = (ProductData) alfrescoRepository.findOne(productNodeRef);
 			if (productData instanceof SemiFinishedProductData || productData instanceof FinishedProductData) {
-				for(ReqCtrlListDataItem tmp : productData.getCompoListView().getReqCtrlList()){
-					reqCtrlList.add(new ReqCtrlListDataItem(null,  tmp.getReqType(), tmp.getReqMessage(), tmp.getSources()));
+				for (ReqCtrlListDataItem tmp : productData.getCompoListView().getReqCtrlList()) {
+					reqCtrlList.add(new ReqCtrlListDataItem(null, tmp.getReqType(), tmp.getReqMessage(), tmp.getSources()));
 				}
-			}	
+			}
 		}
-		
+
 	}
 
-	private void mergeReqCtrlList(List<ReqCtrlListDataItem> reqCtrlList){
-		
-		Map<String, ReqCtrlListDataItem> dbReqCtrlList = new HashMap<>();
-		Map<String, ReqCtrlListDataItem> newReqCtrlList = new HashMap<>();
-		List<ReqCtrlListDataItem> duplicates = new ArrayList<>();
-		
-		
-		for(ReqCtrlListDataItem r : reqCtrlList){
-			if(r.getNodeRef() != null){
-				if(dbReqCtrlList.containsKey(r.getReqMessage())){
-					duplicates.add(r);
-					//Merge sources
-					for(NodeRef tmpref : r.getSources()){
-						if(!dbReqCtrlList.get(r.getReqMessage()).getSources().contains(tmpref)){
-							dbReqCtrlList.get(r.getReqMessage()).getSources().add(tmpref);
-						}
-					}
-				} else {
-					dbReqCtrlList.put(r.getReqMessage(), r);
-				}
-			}
-			else{
-				if(newReqCtrlList.containsKey(r.getReqMessage())){
-					duplicates.add(r);
-					//Merge sources
-					for(NodeRef tmpref : r.getSources()){
-						if(!newReqCtrlList.get(r.getReqMessage()).getSources().contains(tmpref)){
-							newReqCtrlList.get(r.getReqMessage()).getSources().add(tmpref);
-						}
-					}
-				} else {
-					newReqCtrlList.put(r.getReqMessage(), r);
-				}
-			}
-		}		
+	private void mergeReqCtrlList(List<ReqCtrlListDataItem> reqCtrlList) {
 
-		for(ReqCtrlListDataItem dup : duplicates){
-			reqCtrlList.remove(dup);
-		}
-		
-		
-		for(Map.Entry<String, ReqCtrlListDataItem> dbKV : dbReqCtrlList.entrySet()){
-			if(!newReqCtrlList.containsKey(dbKV.getKey())){
-				// remove
-				reqCtrlList.remove(dbKV.getValue());
+		if (reqCtrlList != null) {
+			Map<String, ReqCtrlListDataItem> dbReqCtrlList = new HashMap<>();
+			Map<String, ReqCtrlListDataItem> newReqCtrlList = new HashMap<>();
+			List<ReqCtrlListDataItem> duplicates = new ArrayList<>();
+
+			for (ReqCtrlListDataItem r : reqCtrlList) {
+				if (r.getNodeRef() != null) {
+					if (dbReqCtrlList.containsKey(r.getReqMessage())) {
+						duplicates.add(r);
+						// Merge sources
+						for (NodeRef tmpref : r.getSources()) {
+							if (!dbReqCtrlList.get(r.getReqMessage()).getSources().contains(tmpref)) {
+								dbReqCtrlList.get(r.getReqMessage()).getSources().add(tmpref);
+							}
+						}
+					} else {
+						dbReqCtrlList.put(r.getReqMessage(), r);
+					}
+				} else {
+					if (newReqCtrlList.containsKey(r.getReqMessage())) {
+						duplicates.add(r);
+						// Merge sources
+						for (NodeRef tmpref : r.getSources()) {
+							if (!newReqCtrlList.get(r.getReqMessage()).getSources().contains(tmpref)) {
+								newReqCtrlList.get(r.getReqMessage()).getSources().add(tmpref);
+							}
+						}
+					} else {
+						newReqCtrlList.put(r.getReqMessage(), r);
+					}
+				}
 			}
-			else{
-				// update
-				ReqCtrlListDataItem newReqCtrlListDataItem = newReqCtrlList.get(dbKV.getKey());
-				dbKV.getValue().setReqType(newReqCtrlListDataItem.getReqType());
-				dbKV.getValue().setSources(newReqCtrlListDataItem.getSources());
-				reqCtrlList.remove(newReqCtrlListDataItem);		
+
+			for (ReqCtrlListDataItem dup : duplicates) {
+				reqCtrlList.remove(dup);
 			}
+
+			for (Map.Entry<String, ReqCtrlListDataItem> dbKV : dbReqCtrlList.entrySet()) {
+				if (!newReqCtrlList.containsKey(dbKV.getKey())) {
+					// remove
+					reqCtrlList.remove(dbKV.getValue());
+				} else {
+					// update
+					ReqCtrlListDataItem newReqCtrlListDataItem = newReqCtrlList.get(dbKV.getKey());
+					dbKV.getValue().setReqType(newReqCtrlListDataItem.getReqType());
+					dbKV.getValue().setSources(newReqCtrlListDataItem.getSources());
+					reqCtrlList.remove(newReqCtrlListDataItem);
+				}
+			}
+
+			// sort
+			sort(reqCtrlList);
 		}
-		
-		//sort
-		sort(reqCtrlList);
 	}
-	
+
 	/**
 	 * Sort by type
 	 *
 	 */
-	private void sort(List<ReqCtrlListDataItem> reqCtrlList){
-		
-		Collections.sort(reqCtrlList, new Comparator<ReqCtrlListDataItem>(){
-       	
-		final int BEFORE = -1;
-   	    final int EQUAL = 0;
-   	    final int AFTER = 1;	
-			
+	private void sort(List<ReqCtrlListDataItem> reqCtrlList) {
+
+		Collections.sort(reqCtrlList, new Comparator<ReqCtrlListDataItem>() {
+
+			final int BEFORE = -1;
+			final int EQUAL = 0;
+			final int AFTER = 1;
+
 			@Override
 			public int compare(ReqCtrlListDataItem r1, ReqCtrlListDataItem r2) {
-				
+
 				if (r1.getReqType() != null && r1.getReqType() != null) {
 					if (r1.getReqType().equals(r2.getReqType())) {
 						return EQUAL;
-					}
-					else if(r1.getReqType().equals(RequirementType.Forbidden)){
+					} else if (r1.getReqType().equals(RequirementType.Forbidden)) {
 						return BEFORE;
-					}
-					else if(r2.getReqType().equals(RequirementType.Forbidden)){
+					} else if (r2.getReqType().equals(RequirementType.Forbidden)) {
+						return AFTER;
+					} else if (r1.getReqType().equals(RequirementType.Tolerated)) {
+						return BEFORE;
+					} else {
 						return AFTER;
 					}
-					else if(r1.getReqType().equals(RequirementType.Tolerated)){
-						return BEFORE;
-					}
-					else{
-						return AFTER;
-					}
-				}
-				else if(r1.getReqType() != null){
+				} else if (r1.getReqType() != null) {
 					return BEFORE;
-				}
-				else if(r2.getReqType() != null){
+				} else if (r2.getReqType() != null) {
 					return AFTER;
 				}
-				
+
 				return EQUAL;
 			}
-       });  
-		
+		});
+
 		int i = 0;
-		for(ReqCtrlListDataItem r : reqCtrlList){
+		for (ReqCtrlListDataItem r : reqCtrlList) {
 			r.setSort(i);
 			i++;
 		}
