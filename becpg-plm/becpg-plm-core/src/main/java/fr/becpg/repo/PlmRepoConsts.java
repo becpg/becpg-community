@@ -57,6 +57,7 @@ public class PlmRepoConsts {
 	public static final String PATH_IMPORT_SAMPLES = "ImportSamples";
 	public static final String PATH_MAPPING = "Mapping";
 	public static final String PATH_NUTRIENTPROFILES = "NutrientProfiles";
+	public static final String PATH_RESOURCE_PARAM_TYPES = "ResourceParamTypes";
 	//Quality
 	public static final String PATH_QUALITY = "Quality";
 	public static final String PATH_REGULATIONS = "Regulations";	
@@ -98,8 +99,6 @@ public class PlmRepoConsts {
 	public static final String PATH_ECO = "ECO";
 	
 	public static final String PATH_PRODUCT_HIERARCHY = "/app:company_home/cm:System/cm:ProductHierarchy/bcpg:entityLists/";
-	
-	
 	
 	
 }

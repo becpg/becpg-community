@@ -10,8 +10,8 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.model.PLMModel;
+import fr.becpg.repo.product.data.constraints.CompoListUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
-import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 //200 gr de gruyère

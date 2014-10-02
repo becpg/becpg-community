@@ -1,7 +1,7 @@
 /*
  * 
  */
-package fr.becpg.repo.product.data.productList;
+package fr.becpg.repo.product.data.constraints;
 
 // TODO: Auto-generated Javadoc
 /**

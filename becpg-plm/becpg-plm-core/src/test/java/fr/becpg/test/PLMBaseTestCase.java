@@ -43,7 +43,7 @@ import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.hierarchy.HierarchyHelper;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.productList.AllergenType;
+import fr.becpg.repo.product.data.constraints.AllergenType;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;

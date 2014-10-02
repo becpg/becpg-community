@@ -15,11 +15,17 @@
  *  
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package fr.becpg.repo.product.data.productList;
+package fr.becpg.repo.product.data.constraints;
 
-public enum PackagingLevel {
-	Primary,
-	Secondary,
-	Tertiary
-
+/**
+ * author : querephi
+ */
+public enum DeclarationType {
+	
+	Declare,
+	Omit,
+	Detail,
+	Group,
+	DoNotDeclare, 
+	DoNotDetails;
 }

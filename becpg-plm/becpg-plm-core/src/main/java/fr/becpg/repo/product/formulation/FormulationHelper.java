@@ -13,12 +13,14 @@ import fr.becpg.model.PackModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.data.PackagingKitData;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.ProductUnit;
-import fr.becpg.repo.product.data.TareUnit;
+import fr.becpg.repo.product.data.ResourceProductData;
+import fr.becpg.repo.product.data.constraints.CompoListUnit;
+import fr.becpg.repo.product.data.constraints.PackagingListUnit;
+import fr.becpg.repo.product.data.constraints.ProcessListUnit;
+import fr.becpg.repo.product.data.constraints.ProductUnit;
+import fr.becpg.repo.product.data.constraints.TareUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
-import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
-import fr.becpg.repo.product.data.productList.PackagingListUnit;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 
 /**
@@ -187,18 +189,28 @@ public class FormulationHelper {
 	public static Double getQty(ProductData formulatedProduct, ProcessListDataItem processListDataItem) {
 
 		Double qty = 0d;
-		Double productQtyToTransform = processListDataItem.getQty() != null ? processListDataItem.getQty() : formulatedProduct.getQty();
 
-		if (productQtyToTransform != null) {
-
-			// process cost depends of rateProcess (€/h)
-			if (processListDataItem.getRateProcess() != null && processListDataItem.getRateProcess() != 0d
-					&& processListDataItem.getQtyResource() != null) {
-				qty = productQtyToTransform * processListDataItem.getQtyResource() / processListDataItem.getRateProcess();
+		if (formulatedProduct instanceof ResourceProductData) {
+			if (processListDataItem.getQtyResource() != null) {
+				qty = processListDataItem.getQtyResource();
 			}
-			// process cost doesn't depend of rateProcess (€/kg)
-			else {
-				qty = productQtyToTransform;
+		} else {
+
+			Double productQtyToTransform = 1d;
+			if (!ProcessListUnit.P.equals(processListDataItem.getUnit())) {
+				productQtyToTransform = processListDataItem.getQty() != null ? processListDataItem.getQty() : FormulationHelper.getNetWeight(formulatedProduct, null);
+			}
+
+			if (productQtyToTransform != null) {
+
+				// process cost depends of rateProcess (€/h)
+				if (processListDataItem.getRateResource() != null && processListDataItem.getRateResource() != 0d) {
+					qty = productQtyToTransform / processListDataItem.getRateResource();
+				}
+				// process cost doesn't depend of rateProcess (€/kg)
+				else {
+					qty = productQtyToTransform;
+				}
 			}
 		}
 

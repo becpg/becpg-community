@@ -29,25 +29,26 @@ import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
-import fr.becpg.repo.product.data.ProductUnit;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.ResourceProductData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
+import fr.becpg.repo.product.data.constraints.CompoListUnit;
+import fr.becpg.repo.product.data.constraints.DeclarationType;
+import fr.becpg.repo.product.data.constraints.PackagingLevel;
+import fr.becpg.repo.product.data.constraints.PackagingListUnit;
+import fr.becpg.repo.product.data.constraints.ProcessListUnit;
+import fr.becpg.repo.product.data.constraints.ProductUnit;
+import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
-import fr.becpg.repo.product.data.productList.CompoListUnit;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
-import fr.becpg.repo.product.data.productList.DeclarationType;
 import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
-import fr.becpg.repo.product.data.productList.PackagingLevel;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
-import fr.becpg.repo.product.data.productList.PackagingListUnit;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
-import fr.becpg.repo.product.data.productList.RequirementType;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
@@ -2000,15 +2001,15 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setDensity(1d);
 				List<ProcessListDataItem> processList = new ArrayList<ProcessListDataItem>();
 				//decoupe
-				processList.add(new ProcessListDataItem(null, 0.4d, 50d, 4d, null, null, null, decoupeNodeRef, null, boucherResourceNodeRef));
+				processList.add(new ProcessListDataItem(null, 0.4d, 50d, 4d, ProcessListUnit.kg, null, null, decoupeNodeRef, null, boucherResourceNodeRef));
 				//hachage
-				processList.add(new ProcessListDataItem(null, 0.4d, 1d, 200d, null, null, null, hachageNodeRef, null, hachoirResourceNodeRef));
+				processList.add(new ProcessListDataItem(null, 0.4d, 1d, 200d, ProcessListUnit.kg, null, null, hachageNodeRef, null, hachoirResourceNodeRef));
 				//cuisson
-				processList.add(new ProcessListDataItem(null, 0.4d, 1d, 200d, null, null, null, cuissonNodeRef, null, cuiseurResourceNodeRef));
+				processList.add(new ProcessListDataItem(null, 0.4d, 1d, 200d, ProcessListUnit.kg, null, null, cuissonNodeRef, null, cuiseurResourceNodeRef));
 				//mélange
-				processList.add(new ProcessListDataItem(null, 0.24d, 1d, 600d, null, null, null, melangeNodeRef, null, malaxeurResourceNodeRef));
+				processList.add(new ProcessListDataItem(null, 0.24d, 1d, 600d, ProcessListUnit.kg, null, null, melangeNodeRef, null, malaxeurResourceNodeRef));
 				//ligne
-				processList.add(new ProcessListDataItem(null, 1d, 1d, 500d, null, null, null, ligneStepNodeRef, null, ligneResourceNodeRef));				
+				processList.add(new ProcessListDataItem(null, 1d, 1d, 500d, ProcessListUnit.kg, null, null, ligneStepNodeRef, null, ligneResourceNodeRef));				
 				finishedProduct.getProcessListView().setProcessList(processList);
 				
 				costList = new ArrayList<CostListDataItem>();				
@@ -2067,8 +2068,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 						if(p.getStep().equals(decoupeNodeRef)){
 							assertEquals(0.4d, p.getQty());
 							assertEquals(50.0d, p.getQtyResource());
-							assertEquals(4.0d, p.getRateResource());						
-							assertEquals(200.0d, p.getRateProcess());
+							assertEquals(4.0d, p.getRateResource());		
 							assertEquals(500.0d, p.getRateProduct());						
 							checks++;
 						}
@@ -2077,8 +2077,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 						if(p.getStep().equals(hachageNodeRef)){
 							assertEquals(0.4d, p.getQty());
 							assertEquals(1.0d, p.getQtyResource());
-							assertEquals(200.0d, p.getRateResource());						
-							assertEquals(200.0d, p.getRateProcess());
+							assertEquals(200.0d, p.getRateResource());		
 							assertEquals(500.0d, p.getRateProduct());						
 							checks++;
 						}
@@ -2087,8 +2086,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 						if(p.getStep().equals(cuissonNodeRef)){
 							assertEquals(0.4d, p.getQty());
 							assertEquals(1.0d, p.getQtyResource());
-							assertEquals(200.0d, p.getRateResource());						
-							assertEquals(200.0d, p.getRateProcess());
+							assertEquals(200.0d, p.getRateResource());	
 							assertEquals(500.0d, p.getRateProduct());						
 							checks++;
 						}
@@ -2097,8 +2095,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 						if(p.getStep().equals(melangeNodeRef)){
 							assertEquals(0.24d, p.getQty());
 							assertEquals(1.0d, p.getQtyResource());
-							assertEquals(600.0d, p.getRateResource());						
-							assertEquals(600.0d, p.getRateProcess());
+							assertEquals(600.0d, p.getRateResource());	
 							assertEquals(2500.0d, p.getRateProduct());						
 							checks++;
 						}
@@ -2107,8 +2104,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 						if(p.getStep().equals(ligneStepNodeRef)){
 							assertEquals(1.0d, p.getQty());
 							assertEquals(1.0d, p.getQtyResource());
-							assertEquals(500.0d, p.getRateResource());						
-							assertEquals(500.0d, p.getRateProcess());
+							assertEquals(500.0d, p.getRateResource());	
 							assertEquals(500.0d, p.getRateProduct());						
 							checks++;
 						}

@@ -162,7 +162,8 @@
 					<show id="mpm:plQty" />										
 					<show id="mpm:plResource" />
 					<show id="mpm:plQtyResource" />
-					<show id="mpm:plRateResource" />	
+					<show id="mpm:plRateResource" />
+					<show id="mpm:plUnit" />	
 					<show id="bcpg:variantIds" force="true" />
 					<show id="bcpg:instruction" force="true"/>
 				</field-visibility>
@@ -203,6 +204,7 @@
 					<show id="mpm:plResource" />
 					<show id="mpm:plQtyResource" />
 					<show id="mpm:plRateResource" />
+					<show id="mpm:plUnit" />
 					<show id="mpm:plRateProduct" />		
 				    <show id="bcpg:dynamicCharactColumn1" force="true" />
 					<show id="bcpg:dynamicCharactColumn2" force="true" />
@@ -236,6 +238,7 @@
 					<show id="mpm:plResource" />
 					<show id="mpm:plQtyResource" />
 					<show id="mpm:plRateResource" />
+					<show id="mpm:plUnit" />
 					<show id="bcpg:variantIds" force="true" />
 					<show id="bcpg:instruction" force="true"/>
 				</field-visibility>
@@ -275,7 +278,8 @@
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="mpm:rplParamRef" />	
+					<show id="mpm:rplParamRef" />
+					<show id="mpm:rplParamType" />	
 					<show id="mpm:rplParamValue" />										
 					<show id="mpm:rplResourceRef" />
 					<show id="mpm:rplStepRef" />
@@ -303,7 +307,8 @@
 				<field-visibility>
 					<show id="mpm:rplStepRef" />
 					<show id="mpm:rplResourceRef" />
-					<show id="mpm:rplParamRef" />	
+					<show id="mpm:rplParamRef" />
+					<show id="mpm:rplParamType" />	
 					<show id="mpm:rplParamValue" />		
 				</field-visibility>
 			</form>
@@ -314,7 +319,8 @@
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="mpm:rplParamRef" />	
+					<show id="mpm:rplParamRef" />
+					<show id="mpm:rplParamType" />	
 					<show id="mpm:rplParamValue" />										
 					<show id="mpm:rplResourceRef" />
 					<show id="mpm:rplStepRef" />

@@ -32,6 +32,31 @@
 			</parameter>
 		</constraint>
 		
+		<constraint name="mpm:plUnits" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>P</value>
+					<value>kg</value>
+					<value>L</value>					
+				</list>
+			</parameter>
+		</constraint>
+		
+		<constraint name="mpm:resourceParamTypes"
+			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/Lists/bcpg:entityLists/ResourceParamTypes</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>bcpg:lvValue</value>
+			</parameter>
+		</constraint>
+		
 	</constraints>
 
 	<types>
@@ -51,6 +76,13 @@
 				<property name="mpm:plQty">
 					<type>d:double</type>
 					<index enabled="false"/>
+				</property>
+				<property name="mpm:plUnit">
+					<type>d:text</type>
+					<index enabled="false"/>
+					<constraints>
+					  <constraint ref="mpm:plUnits"/>
+					</constraints>
 				</property>				
 				<property name="mpm:plQtyResource">
 					<type>d:double</type>
@@ -64,11 +96,13 @@
 					<type>d:double</type>
 					<index enabled="false"/>
 				</property>
-				<property name="mpm:plRateProcess">
+				
+				<property name="mpm:plRateProduct">
 					<type>d:double</type>
 					<index enabled="false"/>
 				</property>
-				<property name="mpm:plRateProduct">
+				<!-- Deprecated -->
+				<property name="mpm:plRateProcess">
 					<type>d:double</type>
 					<index enabled="false"/>
 				</property>
@@ -125,10 +159,17 @@
 		<type name="mpm:resourceParamList">
 			<parent>bcpg:productListItem</parent>
 			<properties>
+				<property name="mpm:rplParamType">
+					<type>d:text</type>
+					<index enabled="false"/>
+					<constraints>
+						<constraint ref="mpm:resourceParamTypes" />
+					</constraints>
+				</property>	
 				<property name="mpm:rplParamValue">
 					<type>d:text</type>
 					<index enabled="false"/>
-				</property>	
+				</property>
 			</properties>
 			<associations>
 				<association name="mpm:rplStepRef">
@@ -166,8 +207,7 @@
 				</association>
 			</associations>
 		</type>	
-	
-		
+
 	</types>
 	
 	<aspects>	

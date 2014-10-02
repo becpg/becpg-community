@@ -11,7 +11,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.productList.DeclarationType;
+import fr.becpg.repo.product.data.constraints.DeclarationType;
 
 //TODO voir pour faire mieux avec les heritages Composite<LabelingComponent>
 public class CompositeLabeling extends AbstractLabelingComponent {

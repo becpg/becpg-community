@@ -40,13 +40,14 @@ import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.PackagingKitData;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.ProductUnit;
+import fr.becpg.repo.product.data.ResourceProductData;
+import fr.becpg.repo.product.data.constraints.PackagingListUnit;
+import fr.becpg.repo.product.data.constraints.ProductUnit;
+import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompositionDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
-import fr.becpg.repo.product.data.productList.PackagingListUnit;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
-import fr.becpg.repo.product.data.productList.RequirementType;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
@@ -93,24 +94,28 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 				|| (productData.hasPackagingListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT))
 				|| (productData.hasProcessListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT))) {
 
-			
-			if(productData.getCompoListView().getReqCtrlList()!=null){
-				clearReqCltrlList(productData.getCompoListView().getReqCtrlList());
-			} else {
-				productData.getCompoListView().setReqCtrlList(new LinkedList<ReqCtrlListDataItem>());
+			if (productData.hasCompoListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT)) {
+				if (productData.getCompoListView().getReqCtrlList() != null) {
+					clearReqCltrlList(productData.getCompoListView().getReqCtrlList());
+				} else {
+					productData.getCompoListView().setReqCtrlList(new LinkedList<ReqCtrlListDataItem>());
+				}
 			}
-			if(productData.getPackagingListView().getReqCtrlList()!=null){
-				clearReqCltrlList(productData.getPackagingListView().getReqCtrlList());
-			} else {
-				productData.getPackagingListView().setReqCtrlList(new LinkedList<ReqCtrlListDataItem>());
+			if (productData.hasPackagingListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT)) {
+				if (productData.getPackagingListView().getReqCtrlList() != null) {
+					clearReqCltrlList(productData.getPackagingListView().getReqCtrlList());
+				} else {
+					productData.getPackagingListView().setReqCtrlList(new LinkedList<ReqCtrlListDataItem>());
+				}
 			}
-			if(productData.getProcessListView().getReqCtrlList()!=null){
-				clearReqCltrlList(productData.getProcessListView().getReqCtrlList());
-			} else {
-				productData.getProcessListView().setReqCtrlList(new LinkedList<ReqCtrlListDataItem>());
+			if (productData.hasProcessListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT)) {
+				if (productData.getProcessListView().getReqCtrlList() != null) {
+					clearReqCltrlList(productData.getProcessListView().getReqCtrlList());
+				} else {
+					productData.getProcessListView().setReqCtrlList(new LinkedList<ReqCtrlListDataItem>());
+				}
 			}
-			
-			
+
 			if (formulateChildren) {
 				checkShouldFormulateComponents(true, productData, new HashSet<NodeRef>());
 			}
@@ -137,15 +142,15 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 	}
 
 	private void clearReqCltrlList(List<ReqCtrlListDataItem> reqCtrlList) {
-		if(reqCtrlList!=null){
+		if (reqCtrlList != null) {
 			for (Iterator<ReqCtrlListDataItem> iterator = reqCtrlList.iterator(); iterator.hasNext();) {
 				ReqCtrlListDataItem reqCtrlListDataItem = (ReqCtrlListDataItem) iterator.next();
-				if(reqCtrlListDataItem.getNodeRef()==null){
+				if (reqCtrlListDataItem.getNodeRef() == null) {
 					iterator.remove();
 				}
 			}
 		}
-		
+
 	}
 
 	@SuppressWarnings("unchecked")
@@ -201,21 +206,24 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 
 		checkFormulatedProduct(formulatedProduct);
 
-		for (CompoListDataItem c : formulatedProduct.getCompoList()) {
-			if (c.getCompoListUnit() == null) {
-				addMessingReq(formulatedProduct.getCompoListView().getReqCtrlList(), null, MESSAGE_WRONG_UNIT);
-			} else {
-				checkCompositionItem(formulatedProduct.getCompoListView().getReqCtrlList(), c.getProduct(), c);
+		if (formulatedProduct.hasCompoListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT)) {
+			for (CompoListDataItem c : formulatedProduct.getCompoList()) {
+				if (c.getCompoListUnit() == null) {
+					addMessingReq(formulatedProduct.getCompoListView().getReqCtrlList(), null, MESSAGE_WRONG_UNIT);
+				} else {
+					checkCompositionItem(formulatedProduct.getCompoListView().getReqCtrlList(), c.getProduct(), c);
+				}
 			}
 		}
+		if (formulatedProduct.hasPackagingListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT)) {
+			for (PackagingListDataItem p : formulatedProduct.getPackagingList()) {
+				if (p.getPackagingListUnit() == null) {
+					addMessingReq(formulatedProduct.getCompoListView().getReqCtrlList(), null, MESSAGE_WRONG_UNIT);
+				} else {
+					checkPackagingItem(formulatedProduct.getPackagingListView().getReqCtrlList(), p);
+				}
 
-		for (PackagingListDataItem p : formulatedProduct.getPackagingList()) {
-			if (p.getPackagingListUnit() == null) {
-				addMessingReq(formulatedProduct.getCompoListView().getReqCtrlList(), null, MESSAGE_WRONG_UNIT);
-			} else {
-				checkPackagingItem(formulatedProduct.getPackagingListView().getReqCtrlList(), p);
 			}
-
 		}
 	}
 
@@ -225,24 +233,27 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		List<ReqCtrlListDataItem> reqCtrlList = null;
 		if (formulatedProduct instanceof PackagingKitData) {
 			reqCtrlList = formulatedProduct.getPackagingListView().getReqCtrlList();
-			
-		} else {
-			Double qty = formulatedProduct.getQty();
-			if (qty == null || qty.equals(0d)) {
-				addMessingReq(formulatedProduct.getCompoListView().getReqCtrlList(), productNodeRef, MESSAGE_MISSING_QTY);
-			}
-			Double netWeight = FormulationHelper.getNetWeight(formulatedProduct, null);
-			if (netWeight == null || netWeight.equals(0d)) {
-				addMessingReq(formulatedProduct.getCompoListView().getReqCtrlList(), productNodeRef, MESSAGE_MISSING_NET_WEIGHT);
-			}
-			
-			reqCtrlList = formulatedProduct.getCompoListView().getReqCtrlList();
-			
-		}
 
-		ProductUnit productUnit = formulatedProduct.getUnit();
-		if (productUnit == null) {
-			addMessingReq(reqCtrlList, productNodeRef, MESSAGE_MISSING_UNIT);
+		} else {
+			if (!(formulatedProduct instanceof ResourceProductData)) {
+				Double qty = formulatedProduct.getQty();
+				if (qty == null || qty.equals(0d)) {
+					addMessingReq(formulatedProduct.getCompoListView().getReqCtrlList(), productNodeRef, MESSAGE_MISSING_QTY);
+				}
+				Double netWeight = FormulationHelper.getNetWeight(formulatedProduct, null);
+				if (netWeight == null || netWeight.equals(0d)) {
+					addMessingReq(formulatedProduct.getCompoListView().getReqCtrlList(), productNodeRef, MESSAGE_MISSING_NET_WEIGHT);
+				}
+			}
+
+			reqCtrlList = formulatedProduct.getCompoListView().getReqCtrlList();
+
+		}
+		if (!(formulatedProduct instanceof ResourceProductData)) {
+			ProductUnit productUnit = formulatedProduct.getUnit();
+			if (productUnit == null) {
+				addMessingReq(reqCtrlList, productNodeRef, MESSAGE_MISSING_UNIT);
+			}
 		}
 	}
 
@@ -257,7 +268,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 				} else {
 					boolean shouldUseLiter = FormulationHelper.isProductUnitLiter(productUnit);
 					boolean useLiter = FormulationHelper.isCompoUnitLiter(c.getCompoListUnit());
-	
+
 					if (shouldUseLiter && !useLiter || !shouldUseLiter && useLiter) {
 						addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_WRONG_UNIT);
 					}
@@ -311,11 +322,11 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 	}
 
 	private void addMessingReq(List<ReqCtrlListDataItem> reqCtrlListDataItem, NodeRef sourceNodeRef, String reqMsg) {
-			String message = I18NUtil.getMessage(reqMsg);
-			ArrayList<NodeRef> sources = new ArrayList<NodeRef>(1);
-			if (sourceNodeRef != null) {
-				sources.add(sourceNodeRef);
-			}
-			reqCtrlListDataItem.add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, sources));
+		String message = I18NUtil.getMessage(reqMsg);
+		ArrayList<NodeRef> sources = new ArrayList<NodeRef>(1);
+		if (sourceNodeRef != null) {
+			sources.add(sourceNodeRef);
 		}
+		reqCtrlListDataItem.add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, sources));
+	}
 }

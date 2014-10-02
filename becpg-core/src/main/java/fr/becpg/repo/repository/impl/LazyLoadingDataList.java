@@ -118,6 +118,7 @@ public class LazyLoadingDataList<E> implements List<E>  {
 
 	@Override
 	public boolean add(E e) {
+		deletedNodes.remove(e);
 		return getList().add(e);
 	}
 
@@ -138,12 +139,14 @@ public class LazyLoadingDataList<E> implements List<E>  {
 
 	@Override
 	public boolean addAll(Collection<? extends E> c) {
+		deletedNodes.removeAll(c);
 		return getList().addAll(c);
 	}
 
 
 	@Override
 	public boolean addAll(int index, Collection<? extends E> c) {
+		deletedNodes.removeAll(c);
 		return getList().addAll(index, c);
 	}
 
@@ -193,6 +196,7 @@ public class LazyLoadingDataList<E> implements List<E>  {
 
 	@Override
 	public void add(int index, E element) {
+		deletedNodes.remove(element);
 		getList().add(index, element);
 		
 	}
