@@ -2139,6 +2139,12 @@
 					<show id="bcpg:entityTplRef" force="true" />
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:productUnit">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">kg,g,L,mL,P
+							</control-param>
+						</control>
+					</field>
 					<field id="bcpg:entityTplRef" set="mainInfo">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -2150,6 +2156,7 @@
 					</field>
 				</appearance>
 			</form>
+			
 		</forms>
 	</config>
 
@@ -2322,6 +2329,12 @@
 					<show id="bcpg:entityTplRef" force="true" />
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:productUnit">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">kg,g,L,mL,P
+							</control-param>
+						</control>
+					</field>
 					<field id="bcpg:entityTplRef" set="mainInfo">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -3036,7 +3049,11 @@
 						</control>
 					</field>
 					<field id="bcpg:productState" set="mainInfo" />
-					<field id="bcpg:productUnit" set="mainInfo" />
+					<field id="bcpg:productUnit" set="mainInfo" >
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">h,P</control-param>
+						</control>
+					</field>
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
 					<field id="bcpg:eanCode" set="mainInfo" />
@@ -3188,7 +3205,11 @@
 						</control>
 					</field>
 					<field id="bcpg:productState" set="mainInfo" />
-					<field id="bcpg:productUnit" set="mainInfo" />
+					<field id="bcpg:productUnit" set="mainInfo" >
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">h,P</control-param>
+						</control>
+					</field>
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
 					<field id="bcpg:eanCode" set="mainInfo" />
@@ -5712,6 +5733,34 @@
 					<field id="bcpg:nutListFormulaErrorLog" label="hidden"/>
 				</appearance>
 			</form>
+			<form id="datagridWUsed">
+				<field-visibility>
+					<show id="bcpg:variantIds" force="true" />
+					<show id="bcpg:depthLevel" />
+					<show id="bcpg:nutListNut" />
+					<show id="bcpg:nutListValue" />
+					<show id="bcpg:nutListUnit" />
+					<show id="bcpg:nutListMini" />
+					<show id="bcpg:nutListMaxi" />
+					<show id="bcpg:nutListValuePerServing" force="true" />
+					<show id="bcpg:nutListGDAPerc" force="true" />
+					<show id="bcpg:nutListGroup" />
+					<show id="bcpg:nutListMethod" />
+					<show id="bcpg:isManualListItem" force="true" />
+					<show id="fm:commentCount" force="true" />
+					<show id="bcpg:nutListIsFormulated" />
+					<show id="bcpg:nutListFormulaErrorLog" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:variantIds" label="hidden"></field>
+					<field id="bcpg:depthLevel" label="hidden"></field>
+					<field id="bcpg:nutListUnit" read-only="true"></field>
+					<field id="fm:commentCount" label="hidden" read-only="true" />
+					<field id="bcpg:nutListIsFormulated" label="hidden"/>
+					<field id="bcpg:nutListFormulaErrorLog" label="hidden"/>
+				</appearance>
+			</form>
+			
 
 			<form id="filter">
 				<field-visibility>
