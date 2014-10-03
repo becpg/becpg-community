@@ -29,11 +29,17 @@
     */
    var $siteURL = Alfresco.util.siteURL;
 
-   beCPG.util.entityCharactURL = function(siteId, pNodeRef, type) {
+   beCPG.util.entityCharactURL = function(siteId, pNodeRef, type, context) {
 
       var nodeRef = new Alfresco.util.NodeRef(pNodeRef);
 
-      var redirect = $siteURL("entity-data-lists?nodeRef=" + nodeRef.toString(), {
+      var redirect = "entity-data-lists?nodeRef=" + nodeRef.toString();
+          
+      if(context && context!=null){
+         redirect = "context/"+context+"/"+redirect;
+      } 
+          
+      redirect = $siteURL(redirect , {
          site : siteId
       });
 
@@ -79,7 +85,7 @@
    };
    
 
-   beCPG.util.entityDetailsURL = function(siteId, pNodeRef, type) {
+   beCPG.util.entityDetailsURL = function(siteId, pNodeRef, type, context) {
       var nodeRef = new Alfresco.util.NodeRef(pNodeRef);
       
       var containerType = "entity";
@@ -87,7 +93,14 @@
          containerType=type;
       }
       
-      return $siteURL(containerType+"-details?nodeRef=" + nodeRef.toString(), {
+      var redirect = containerType+"-details?nodeRef=" + nodeRef.toString();
+      
+      if(context && context!=null){
+          redirect = "context/"+context+"/"+redirect;
+       } 
+      
+      
+      return $siteURL(redirect, {
          site : siteId
       });
 
