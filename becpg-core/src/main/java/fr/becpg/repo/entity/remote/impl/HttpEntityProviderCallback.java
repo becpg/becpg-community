@@ -2,9 +2,12 @@ package fr.becpg.repo.entity.remote.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.net.MalformedURLException;
+import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
@@ -41,8 +44,14 @@ public class HttpEntityProviderCallback implements EntityProviderCallBack {
 		this.remoteEntityService = remoteEntityService;
 	}
 
+	
 	@Override
 	public NodeRef provideNode(NodeRef nodeRef) throws BeCPGException {
+		return provideNode(nodeRef, null, null);
+	}
+	
+	@Override
+	public NodeRef provideNode(NodeRef nodeRef, NodeRef destNodeRef, Map<QName, Serializable> properties) throws BeCPGException {
 		try {
 			String url = remoteServer + "?nodeRef=" + nodeRef.toString();
 			logger.debug("Try getting nodeRef  from : " + url);
@@ -64,7 +73,7 @@ public class HttpEntityProviderCallback implements EntityProviderCallBack {
 			
 
 			try (InputStream entityStream = responseEntity.getContent()){
-				return remoteEntityService.createOrUpdateEntity(nodeRef, entityStream, RemoteEntityFormat.xml, this);
+				return remoteEntityService.createOrUpdateEntity(nodeRef, destNodeRef, properties ,  entityStream, RemoteEntityFormat.xml, this);
 			} 
 		} catch (MalformedURLException e) {
 			throw new BeCPGException(e);
@@ -108,5 +117,7 @@ public class HttpEntityProviderCallback implements EntityProviderCallBack {
 		}
 
 	}
+
+	
 
 }

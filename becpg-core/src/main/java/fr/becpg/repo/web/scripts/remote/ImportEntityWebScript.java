@@ -18,10 +18,12 @@
 package fr.becpg.repo.web.scripts.remote;
 
 import java.io.IOException;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,6 +33,7 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.common.BeCPGException;
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.remote.EntityProviderCallBack;
 import fr.becpg.repo.entity.remote.impl.HttpEntityProviderCallback;
 
@@ -64,7 +67,8 @@ public class ImportEntityWebScript extends AbstractEntityWebScript implements In
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		entityProviderCallBack = new HttpEntityProviderCallback(remoteServer+"/service/becpg/remote/entity", remoteUser, remotePwd, remoteEntityService);
+		entityProviderCallBack = new HttpEntityProviderCallback(remoteServer + "/service/becpg/remote/entity", remoteUser, remotePwd,
+				remoteEntityService);
 
 	}
 
@@ -78,20 +82,25 @@ public class ImportEntityWebScript extends AbstractEntityWebScript implements In
 			if (json != null && json.has("entities")) {
 				entities = (String) json.get("entities");
 			}
+			NodeRef destNodeRef = null;
+			String destination = req.getParameter("destination");
+			if (destination != null) {
+				destNodeRef = new NodeRef(destination);
+			}
+
+			Map<QName, Serializable> props = new HashMap<>();
+			props.put(BeCPGModel.PROP_CODE, null);
 
 			JSONArray ret = new JSONArray();
 			for (final String entity : entities.split(",")) {
-				NodeRef entityNodeRef = AuthenticationUtil.runAsSystem(new RunAsWork<NodeRef>() {
-					@Override
-					public NodeRef doWork() throws Exception {
-						try {
-							return entityProviderCallBack.provideNode(new NodeRef(entity));
-						} catch (BeCPGException e) {
-							logger.error("Cannot import entity ", e);
-							throw new WebScriptException(e.getMessage());
-						}
-					}
-				});
+				NodeRef entityNodeRef = null;
+				try {
+					entityNodeRef = entityProviderCallBack.provideNode(new NodeRef(entity), destNodeRef, props);
+				} catch (BeCPGException e) {
+					logger.error("Cannot import entity ", e);
+					throw new WebScriptException(e.getMessage());
+				}
+
 				ret.put(entityNodeRef);
 			}
 
@@ -103,5 +112,4 @@ public class ImportEntityWebScript extends AbstractEntityWebScript implements In
 		}
 
 	}
-
 }

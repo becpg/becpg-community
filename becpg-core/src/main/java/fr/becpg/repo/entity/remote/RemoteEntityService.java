@@ -19,9 +19,12 @@ package fr.becpg.repo.entity.remote;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
 
 import fr.becpg.common.BeCPGException;
 
@@ -45,6 +48,7 @@ public interface RemoteEntityService {
 
 	/**
 	 * Get entity at provided format
+	 * 
 	 * @param entityNodeRef
 	 * @param result
 	 * @param format
@@ -52,9 +56,9 @@ public interface RemoteEntityService {
 	 */
 	void getEntity(NodeRef entityNodeRef, OutputStream result, RemoteEntityFormat format) throws BeCPGException;
 
-
 	/**
 	 * create or update entity form corresponding format
+	 * 
 	 * @param entityNodeRef
 	 * @param in
 	 * @param format
@@ -62,11 +66,27 @@ public interface RemoteEntityService {
 	 * @return Create entity nodeRef
 	 * @throws BeCPGException
 	 */
-	NodeRef createOrUpdateEntity(NodeRef entityNodeRef, InputStream in, RemoteEntityFormat format, EntityProviderCallBack callback) throws BeCPGException;
-	
-	
+	NodeRef createOrUpdateEntity(NodeRef entityNodeRef, InputStream in, RemoteEntityFormat format, EntityProviderCallBack callback)
+			throws BeCPGException;
+
+	/**
+	 * create or update entity form corresponding format
+	 * override properties and set destination
+	 * @param entityNodeRef
+	 * @param destNodeRef
+	 * @param properties
+	 * @param in
+	 * @param format
+	 * @param callback
+	 * @return
+	 * @throws BeCPGException
+	 */
+	NodeRef createOrUpdateEntity(NodeRef entityNodeRef, NodeRef destNodeRef, Map<QName, Serializable> properties, InputStream in,
+			RemoteEntityFormat format, EntityProviderCallBack callback) throws BeCPGException;
+
 	/**
 	 * List entities at format
+	 * 
 	 * @param entities
 	 * @param out
 	 * @param format
@@ -75,6 +95,7 @@ public interface RemoteEntityService {
 
 	/**
 	 * Return entity data
+	 * 
 	 * @param entityNodeRef
 	 * @param outputStream
 	 * @param format
@@ -89,6 +110,4 @@ public interface RemoteEntityService {
 	 */
 	void addOrUpdateEntityData(NodeRef entityNodeRef, InputStream inputStream, RemoteEntityFormat format) throws BeCPGException;
 
-	
-	
 }
