@@ -29,9 +29,11 @@
                         createProduct : null,
                         createProject : null,
                         userHomeNodeRef : null,
-                        
-                        options : {
-                            userHomeNodeRef :null,
+
+                        options :
+                        {
+                            userHomeNodeRef : null,
+                            siteId : null
                         },
 
                         onReady : function DynamicWelcome_onReady()
@@ -44,12 +46,53 @@
                                     this, true);
 
                             // Custom
-                            Event.addListener(this.id + "-createProduct-button", "click",
-                                    this.onCreateProductLinkClick, this, true);
-                            Event.addListener(this.id + "-createProject-button", "click",
-                                    this.onCreateProjectLinkClick, this, true);
-                            Event.addListener(this.id + "-importMP-button", "click", this.onImportMPLinkClick, this,
-                                    true);
+
+                            if (this.options.siteId != null)
+                            {
+
+                                Alfresco.util.Ajax
+                                        .request(
+                                        {
+                                            url : Alfresco.constants.PROXY_URI + "slingshot/doclib/containers/" + this.options.siteId,
+                                            method : "GET",
+                                            successCallback :
+                                            {
+                                                fn : function(response)
+                                                {
+
+                                                    if (response.json)
+                                                    {
+                                                        for ( var i in response.json.containers)
+                                                        {
+                                                            if (response.json.containers[i].name === "documentLibrary")
+                                                            {
+                                                                this.options.userHomeNodeRef = response.json.containers[i].nodeRef;
+                                                                break;
+                                                            }
+                                                        }
+
+                                                        Event.addListener(this.id + "-createProduct-button", "click",
+                                                                this.onCreateProductLinkClick, this, true);
+                                                        Event.addListener(this.id + "-createProject-button", "click",
+                                                                this.onCreateProjectLinkClick, this, true);
+                                                        Event.addListener(this.id + "-importMP-button", "click",
+                                                                this.onImportMPLinkClick, this, true);
+                                                    }
+                                                },
+                                                scope : this
+                                            }
+                                        });
+                            }
+                            else
+                            {
+
+                                Event.addListener(this.id + "-createProduct-button", "click",
+                                        this.onCreateProductLinkClick, this, true);
+                                Event.addListener(this.id + "-createProject-button", "click",
+                                        this.onCreateProjectLinkClick, this, true);
+                                Event.addListener(this.id + "-importMP-button", "click", this.onImportMPLinkClick,
+                                        this, true);
+                            }
 
                         },
 
@@ -84,7 +127,7 @@
                         {
 
                             var instance = this;
-                            
+
                             var templateUrl = YAHOO.lang
                                     .substitute(
                                             Alfresco.constants.URL_SERVICECONTEXT + "components/form?formId=formulation&itemKind=type&itemId={itemId}&destination={destination}&mode=create&submitType=json&showCancelButton=true&popup=true",
@@ -95,58 +138,64 @@
 
                             var createRow = new Alfresco.module.SimpleDialog(instance.id + "-createType");
 
-                            createRow
-                                    .setOptions(
+                            createRow.setOptions(
+                            {
+                                width : "33em",
+                                templateUrl : templateUrl,
+                                actionUrl : null,
+                                destroyOnHide : true,
+                                doBeforeDialogShow :
+                                {
+                                    fn : function(p_form, p_dialog)
                                     {
-                                        width : "33em",
-                                        templateUrl : templateUrl,
-                                        actionUrl : null,
-                                        destroyOnHide : true,
-                                        doBeforeDialogShow :
+                                        Alfresco.util.populateHTML([ p_dialog.id + "-dialogTitle",
+                                                instance.msg("action.create." + type.replace(":", "_")) ]);
+                                    },
+                                    scope : this
+                                },
+                                doBeforeFormSubmit :
+                                {
+                                    fn : function(form)
+                                    {
+                                        Alfresco.util.PopupManager.displayMessage(
                                         {
-                                            fn : function(p_form, p_dialog)
-                                            {
-                                                Alfresco.util.populateHTML([ p_dialog.id + "-dialogTitle",
-                                                        instance.msg("action.create." + type.replace(":","_")) ]);
-                                            },
-                                            scope : this
-                                        },
-                                        doBeforeFormSubmit :
+                                            text : this.msg("message.create.please-wait")
+                                        });
+                                    },
+                                    scope : this
+                                },
+                                onSuccess :
+                                {
+                                    fn : function(response)
+                                    {
+                                        if (response.json)
                                         {
-                                            fn : function(form)
-                                            {
-                                                Alfresco.util.PopupManager.displayMessage(
-                                                {
-                                                    text : this.msg("message.create.please-wait")
-                                                });
-                                            },
-                                            scope : this
-                                        },
-                                        onSuccess :
-                                        {
-                                            fn : function(response)
-                                            {
-                                                if (response.json)
-                                                {
-                                                    window.location = beCPG.util.entityCharactURL(null,
-                                                            response.json.persistedObject, type,"mine");
+                                            var context = "mine";
 
-                                                }
-                                            },
-                                            scope : this
-                                        },
-                                        onFailure :
-                                        {
-                                            fn : function EntityDataGrid_onActionCreate_failure(response)
+                                            if (instance.options.siteId !== null)
                                             {
-                                                Alfresco.util.PopupManager.displayMessage(
-                                                {
-                                                    text : instance.msg("message.create.failure")
-                                                });
-                                            },
-                                            scope : this
+                                                context = null;
+                                            }
+
+                                            window.location = beCPG.util.entityCharactURL(instance.options.siteId,
+                                                    response.json.persistedObject, type, context);
+
                                         }
-                                    });
+                                    },
+                                    scope : this
+                                },
+                                onFailure :
+                                {
+                                    fn : function EntityDataGrid_onActionCreate_failure(response)
+                                    {
+                                        Alfresco.util.PopupManager.displayMessage(
+                                        {
+                                            text : instance.msg("message.create.failure")
+                                        });
+                                    },
+                                    scope : this
+                                }
+                            });
 
                             return createRow;
 
@@ -155,11 +204,12 @@
                         onImportMPLinkClick : function DynamicWelcome_onImportMPLinkClick(p_event)
                         {
 
+                            var instance = this;
+
                             // Create the Importer module if it doesn't exist
                             if (this.importEntity === null)
                             {
-                                this.importEntity = new Alfresco.module.SimpleDialog(
-                                        this.id + "-entityImporter")
+                                this.importEntity = new Alfresco.module.SimpleDialog(this.id + "-entityImporter")
                                         .setOptions(
                                         {
                                             width : this.options.formWidth,
@@ -185,8 +235,17 @@
                                                 {
                                                     if (response.json)
                                                     {
-                                                        window.location = beCPG.util.entityDetailsURL(null,
-                                                                response.json[0],null,"mine");
+
+                                                        var context = "mine";
+
+                                                        if (instance.options.siteId !== null)
+                                                        {
+                                                            context = null;
+                                                        }
+
+                                                        window.location = beCPG.util.entityDetailsURL(
+                                                                instance.options.siteId, response.json[0], null,
+                                                                context);
                                                     }
                                                 },
                                                 scope : this
