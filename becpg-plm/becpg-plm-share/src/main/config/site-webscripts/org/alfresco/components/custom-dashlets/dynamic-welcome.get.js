@@ -90,6 +90,55 @@ function override()
             }
         }
 
+    } else if (args.dashboardType == "site")  {
+        
+        var sitePreset = null,siteId = null;
+        try
+        {
+           // Call the repository for the site profile
+           var json = remote.call("/api/sites/" + page.url.templateArgs.site);
+          
+           if (json.status == 200)
+           {
+              // Create javascript objects from the repo response
+              var obj = eval('(' + json + ')');
+              if (obj)
+              {
+                  sitePreset = obj.sitePreset;
+                  siteId = obj.shortName;
+              }
+           }
+
+        }
+        catch (e)
+        {
+        }
+        
+        if(sitePreset === "product-site-dashboard"){
+            model.columns[2] = getCreatePFColumn();
+            model.columns[3] = getImportMPColumn();
+        } else if(sitePreset === "project-site-dashboard"){
+            model.columns[3] = getCreateProjectColumn();
+            
+            
+        } else {
+            model.columns[3] = getTutorialColumn();
+        }
+        
+        
+        for (var i = 0; i < model.widgets.length; i++)
+        {
+            if (model.widgets[i].id == "DynamicWelcome")
+            {
+                model.widgets[i].name = "beCPG.custom.DynamicWelcome";
+                model.widgets[i].options =
+                {
+                    siteId : siteId   
+                };
+
+            }
+        }
+        
     }
 
 }
