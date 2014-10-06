@@ -518,11 +518,13 @@ public class EntityReportServiceImpl implements EntityReportService {
 		List<NodeRef> dbReports = associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS, false);
 
 		NodeRef ret = null;
+		
 
 		
 		for (NodeRef reportNodeRef : dbReports) {
 			if (permissionService.hasPermission(reportNodeRef, "Read") == AccessStatus.ALLOWED) {
-
+				
+				
 				NodeRef reportTemplateNodeRef = reportTplService.getAssociatedReportTemplate(reportNodeRef);
 				if (reportTemplateNodeRef != null) {
 					String templateName = (String) this.nodeService.getProperty(reportTemplateNodeRef, ContentModel.PROP_NAME);
@@ -534,9 +536,16 @@ public class EntityReportServiceImpl implements EntityReportService {
 						ret = reportNodeRef;
 					}
 					
-					if(reportName!=null && reportName.startsWith(templateName)){
-						ret = reportNodeRef;
+					@SuppressWarnings("unchecked")
+					List<String> langs = (List<String>) nodeService.getProperty(reportNodeRef, ReportModel.PROP_REPORT_LOCALES);
+					if(langs!=null){
+						for(String lang : langs){
+							if ((templateName+" - "+lang).equalsIgnoreCase(reportName)) {
+								return reportNodeRef;
+							}
+						}
 					}
+					
 					
 					if (templateName.equalsIgnoreCase(reportName)) {
 						return reportNodeRef;
