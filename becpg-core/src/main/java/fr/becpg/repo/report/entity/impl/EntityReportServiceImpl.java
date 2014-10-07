@@ -19,6 +19,9 @@ package fr.becpg.repo.report.entity.impl;
 
 import java.io.ByteArrayInputStream;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -38,6 +41,7 @@ import org.alfresco.service.cmr.preference.PreferenceService;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
+import org.alfresco.service.cmr.repository.InvalidNodeRefException;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -49,6 +53,7 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.simple.JSONObject;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.util.StopWatch;
 
@@ -205,7 +210,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 	private void generateReportImpl(NodeRef entityNodeRef) {
 
 		List<NodeRef> tplsNodeRef = getReportTplsToGenerate(entityNodeRef);
-		
+
 		tplsNodeRef = reportTplService.cleanDefaultTpls(tplsNodeRef);
 		if (!tplsNodeRef.isEmpty()) {
 			StopWatch watch = null;
@@ -251,20 +256,17 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 		String documentName = String.format(REPORT_NAME, (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME),
 				(String) nodeService.getProperty(tplNodeRef, ContentModel.PROP_NAME));
-		
-		
-		
+
 		String extension = (String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
 		if (documentName.endsWith(RepoConsts.REPORT_EXTENSION_BIRT) && extension != null) {
 			documentName = documentName.replace(RepoConsts.REPORT_EXTENSION_BIRT, extension.toLowerCase());
 		}
-		
-		if( !Locale.getDefault().getLanguage().equals(locale.getLanguage())){
-			documentName = documentName.substring(0, documentName.lastIndexOf("."))+" - "+locale.getLanguage()
-					+documentName.substring(documentName.lastIndexOf("."),documentName.length());
+
+		if (!Locale.getDefault().getLanguage().equals(locale.getLanguage())) {
+			documentName = documentName.substring(0, documentName.lastIndexOf(".")) + " - " + locale.getLanguage()
+					+ documentName.substring(documentName.lastIndexOf("."), documentName.length());
 		}
-		
-		
+
 		return documentName;
 	}
 
@@ -341,20 +343,21 @@ public class EntityReportServiceImpl implements EntityReportService {
 								params.put(ReportParams.PARAM_IMAGES, reportData.getDataObjects());
 								params.put(ReportParams.PARAM_FORMAT, ReportFormat.valueOf(reportFormat));
 								params.put(ReportParams.PARAM_LANG, locale.getLanguage());
-								params.put(ReportParams.PARAM_ASSOCIATED_TPL_FILES, 
+								params.put(ReportParams.PARAM_ASSOCIATED_TPL_FILES,
 										associationService.getTargetAssocs(tplNodeRef, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES));
-								
+
 								logger.debug("beCPGReportEngine createReport: " + entityNodeRef);
-								
-								beCPGReportEngine.createReport(tplNodeRef,new ByteArrayInputStream(reportData.getXmlDataSource().asXML().getBytes())
-								, writer.getContentOutputStream(), params);
+
+								beCPGReportEngine.createReport(tplNodeRef,
+										new ByteArrayInputStream(reportData.getXmlDataSource().asXML().getBytes()), writer.getContentOutputStream(),
+										params);
 
 								nodeService.setProperty(documentNodeRef, ContentModel.PROP_MODIFIED, new Date());
-								
-								if(!Locale.getDefault().getLanguage().equals(locale.getLanguage())){
-									nodeService.setProperty(documentNodeRef,ReportModel.PROP_REPORT_LOCALES,locale.getLanguage());
+
+								if (!Locale.getDefault().getLanguage().equals(locale.getLanguage())) {
+									nodeService.setProperty(documentNodeRef, ReportModel.PROP_REPORT_LOCALES, locale.getLanguage());
 								}
-								
+
 							}
 
 						} catch (ReportException e) {
@@ -376,25 +379,25 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	@SuppressWarnings("unchecked")
 	private boolean isLocaleEnableOnTemplate(NodeRef tplNodeRef, Locale locale) {
-		
+
 		List<String> langs = (List<String>) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_LOCALES);
-		if(langs!=null){
-			for(String lang : langs){
-				if(locale.equals(new Locale(lang))){
+		if (langs != null) {
+			for (String lang : langs) {
+				if (locale.equals(new Locale(lang))) {
 					return true;
 				}
 			}
 		}
-		
+
 		return Locale.getDefault().getLanguage().equals(locale.getLanguage());
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private List<Locale> getEntityReportLocales(NodeRef entityNodeRef) {
-		List<Locale> ret = new ArrayList<Locale>();	
+		List<Locale> ret = new ArrayList<Locale>();
 		List<String> langs = (List<String>) nodeService.getProperty(entityNodeRef, ReportModel.PROP_REPORT_LOCALES);
-		if(langs!=null){
-			for(String lang : langs){
+		if (langs != null) {
+			for (String lang : langs) {
 				ret.add(new Locale(lang));
 			}
 		} else {
@@ -518,35 +521,32 @@ public class EntityReportServiceImpl implements EntityReportService {
 		List<NodeRef> dbReports = associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS, false);
 
 		NodeRef ret = null;
-		
 
-		
 		for (NodeRef reportNodeRef : dbReports) {
 			if (permissionService.hasPermission(reportNodeRef, "Read") == AccessStatus.ALLOWED) {
-				
-				
+
 				NodeRef reportTemplateNodeRef = reportTplService.getAssociatedReportTemplate(reportNodeRef);
-				if (reportTemplateNodeRef != null) {
+				if (reportTemplateNodeRef != null && permissionService.hasPermission(reportTemplateNodeRef, "Read") == AccessStatus.ALLOWED) {
 					String templateName = (String) this.nodeService.getProperty(reportTemplateNodeRef, ContentModel.PROP_NAME);
 					if (templateName.endsWith(RepoConsts.REPORT_EXTENSION_BIRT)) {
 						templateName = templateName.replace("." + RepoConsts.REPORT_EXTENSION_BIRT, "");
 					}
 
-					if ((Boolean) this.nodeService.getProperty(reportTemplateNodeRef, ReportModel.PROP_REPORT_TPL_IS_DEFAULT) && ret == null) {
-						ret = reportNodeRef;
-					}
-					
-					@SuppressWarnings("unchecked")
-					List<String> langs = (List<String>) nodeService.getProperty(reportNodeRef, ReportModel.PROP_REPORT_LOCALES);
-					if(langs!=null){
-						for(String lang : langs){
-							if ((templateName+" - "+lang).equalsIgnoreCase(reportName)) {
-								return reportNodeRef;
-							}
+					Boolean isDefault = (Boolean) this.nodeService.getProperty(reportTemplateNodeRef, ReportModel.PROP_REPORT_TPL_IS_DEFAULT);
+
+					if (nodeService.hasAspect(reportNodeRef, ReportModel.ASPECT_REPORT_LOCALES)) {
+						@SuppressWarnings("unchecked")
+						List<String> langs = (List<String>) nodeService.getProperty(reportNodeRef, ReportModel.PROP_REPORT_LOCALES);
+						if (langs != null && !langs.isEmpty()) {
+							templateName += " - " + langs.get(0);
+							isDefault = false;
 						}
 					}
-					
-					
+
+					if (isDefault) {
+						ret = reportNodeRef;
+					}
+
 					if (templateName.equalsIgnoreCase(reportName)) {
 						return reportNodeRef;
 					}
@@ -554,6 +554,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 			}
 		}
+
 		return ret;
 	}
 
