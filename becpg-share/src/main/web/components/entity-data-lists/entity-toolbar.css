@@ -2,13 +2,13 @@
 	float:left;
 }
 
-.datalist-toolbar .view-details span.first-child
+.datalist-toolbar .entity-view-details span.first-child
 {
    background: url(../documentlibrary/actions/entity-view-details-16.png) no-repeat 12px 4px;
    padding-left: 24px;
 }
 
-.datalist-toolbar .view-documents span.first-child
+.datalist-toolbar .entity-view-documents span.first-child
 {
    background: url(../documentlibrary/actions/entity-view-documents-16.png) no-repeat 12px 4px;
    padding-left: 24px;

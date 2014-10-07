@@ -21,7 +21,7 @@
 
   
       YAHOO.Bubbling.fire("registerToolbarButtonAction", {
-         actionName : "view-details",
+         actionName : "entity-view-details",
          right : true,
          evaluate : function(datalistMeta, entity) {
             return entity != null && entity.type != "bcpg:systemEntity";
@@ -37,7 +37,7 @@
       });
 
       YAHOO.Bubbling.fire("registerToolbarButtonAction", {
-         actionName : "view-documents",
+         actionName : "entity-view-documents",
          right : true,
          evaluate : function(datalistMeta, entity) {
             return entity != null && entity.type != "bcpg:systemEntity";
