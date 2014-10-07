@@ -64,7 +64,7 @@ Après décongélation, à conserver au réfrigérateur et à consommer dans la 
 	<productDensity prefix="bcpg"><![CDATA[0.5786752136752136]]></productDensity>
 	<created prefix="cm"><![CDATA[2014-02-07T16:38:08.476Z]]></created>
 	<productUnit prefix="bcpg"><![CDATA[mL]]></productUnit>
-	<servingSize prefix="bcpg"><![CDATA[100.0]]></servingSize>
+	<servingSize prefix="bcpg"><![CDATA[150.0]]></servingSize>
 	<productQty prefix="bcpg"><![CDATA[900.0]]></productQty>
 	<description prefix="cm"><![CDATA[Fleur de vanille, noix de pécan, caramel]]></description>
 	<entityTplRef prefix="bcpg"><![CDATA[Modèle Produit fini Glace]]></entityTplRef>
@@ -127,16 +127,16 @@ Après décongélation, à conserver au réfrigérateur et à consommer dans la 
 			<nutList isManualListItem="" sort="100" nutListGroup="Groupe 1"
 				depthLevel="1" nutListMethod="Formulation" nutListMaxi="500"  nutListMini="100"
 				nutListValuePerServing="476.16326604112476" nutListUnit="kJ/100mL"
-				locale="fr_FR" nutListNut="Energie kJ" legalName="Energie, N x facteur Jones, avec fibres" />
+				locale="fr_FR" nutListNut="Energie kJ" legalName="" />
 			<nutList nutListGDAPerc="5.696018496841323" isManualListItem=""
 				sort="101" nutListGroup="Groupe 1" depthLevel="1" nutListMethod="Formulation"
-				nutListValue="113.92036993682646" nutListValuePerServing="113.92036993682646"
+				nutListValue="113.92036993682646" nutListValuePerServing="50"
 				nutListUnit="kcal/100mL" locale="fr_FR" nutListNut="Energie kcal"
 				legalName="Energie, N x facteur Jones, avec fibres" />
 			<nutList nutListGDAPerc="9.90225329006742" isManualListItem=""
 				sort="102" nutListGroup="Groupe 1" depthLevel="1" nutListMethod="Formulation"
 				nutListValue="6.931577303047195" nutListValuePerServing="6.931577303047195"
-				nutListUnit="g/100mL" locale="fr_FR" nutListNut="Lipides" legalName="Lipides" />
+				nutListUnit="g/100mL" locale="fr_FR" nutListNut="Lipides" legalName="Matières grasses" />
 			<nutList nutListGDAPerc="3.972821820419918" isManualListItem="false"
 				parentLevel="Lipides" sort="103" nutListGroup="Groupe 2" depthLevel="2"
 				nutListMethod="Formulation" nutListValue="0.7945643640839837"
@@ -198,9 +198,9 @@ Après décongélation, à conserver au réfrigérateur et à consommer dans la 
 		<organoLists>
 			<organoList sort="100"
 				organoListValue="Présence de choupettes / Présence de sauce caramel et de noix de pécan en décor"
-				organoListOrgano="Aspect" locale="fr" />
+				organoListOrgano="Aspect" locale="fr"/>
 			<organoList sort="101" organoListValue=""
-				organoListOrgano="Couleur" locale="fr" />
+				organoListOrgano="Couleur" locale="fr"  legalName="Color"/>
 			<organoList sort="102"
 				organoListValue="Caractéristique de la vanille, du caramel et des noix de pécan, absence de notes parasites"
 				organoListOrgano="Goût" locale="fr" />
