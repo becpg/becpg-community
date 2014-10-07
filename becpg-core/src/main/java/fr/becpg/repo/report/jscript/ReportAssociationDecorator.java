@@ -70,6 +70,7 @@ public class ReportAssociationDecorator extends fr.becpg.repo.jscript.app.BaseAs
 
 						String name = (String) this.nodeService.getProperty(reportNodeRef, ContentModel.PROP_NAME);
 
+							
 						jsonObj.put("name", name);
 						NodeRef reportTemplateNodeRef = reportTplService.getAssociatedReportTemplate(reportNodeRef);
 						if (reportTemplateNodeRef != null  && permissionService.hasPermission(reportTemplateNodeRef, "Read") == AccessStatus.ALLOWED ) {
@@ -79,15 +80,19 @@ public class ReportAssociationDecorator extends fr.becpg.repo.jscript.app.BaseAs
 								templateName = templateName.replace("." + RepoConsts.REPORT_EXTENSION_BIRT, "");
 							}
 							
+							Boolean isDefault = (Boolean) this.nodeService.getProperty(reportTemplateNodeRef, ReportModel.PROP_REPORT_TPL_IS_DEFAULT);
+							
+							
 							if(nodeService.hasAspect(reportNodeRef, ReportModel.ASPECT_REPORT_LOCALES)){
 								List<String> langs =  (List<String>) nodeService.getProperty(reportNodeRef, ReportModel.PROP_REPORT_LOCALES);
 								if(langs!=null && !langs.isEmpty()){
 									templateName += " - "+langs.get(0);
+									isDefault = false;
 								}
 							}
 							
 							jsonObj.put("templateName", templateName);
-							jsonObj.put("isDefault", this.nodeService.getProperty(reportTemplateNodeRef, ReportModel.PROP_REPORT_TPL_IS_DEFAULT));
+							jsonObj.put("isDefault", isDefault);
 							
 							if (templateName.equalsIgnoreCase(prefsReportName)) {
 								jsonObj.put("isSelected", true);
