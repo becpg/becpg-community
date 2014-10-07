@@ -526,7 +526,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 			if (permissionService.hasPermission(reportNodeRef, "Read") == AccessStatus.ALLOWED) {
 
 				NodeRef reportTemplateNodeRef = reportTplService.getAssociatedReportTemplate(reportNodeRef);
-				if (reportTemplateNodeRef != null && permissionService.hasPermission(reportTemplateNodeRef, "Read") == AccessStatus.ALLOWED) {
+				if (reportTemplateNodeRef != null) {
 					String templateName = (String) this.nodeService.getProperty(reportTemplateNodeRef, ContentModel.PROP_NAME);
 					if (templateName.endsWith(RepoConsts.REPORT_EXTENSION_BIRT)) {
 						templateName = templateName.replace("." + RepoConsts.REPORT_EXTENSION_BIRT, "");
@@ -546,15 +546,15 @@ public class EntityReportServiceImpl implements EntityReportService {
 					if (isDefault) {
 						ret = reportNodeRef;
 					}
+					
 
-					if (templateName.equalsIgnoreCase(reportName)) {
+					if (templateName.equalsIgnoreCase(reportName)) {	
 						return reportNodeRef;
 					}
 				}
 
 			}
 		}
-
 		return ret;
 	}
 
