@@ -34,82 +34,130 @@
          */
         onReady : function ContextualHelp_onReady()
         {
+            //
+            // Event.onAvailable('', function()
+            // {
+            // });
 //
-//            Event.onAvailable('HEADER_MY_FILES', function()
+//            var node = YAHOO.util.Selector.query('#HEADER_MY_FILES', null, true)
+//            if (node != null)
 //            {
-//                var balloon = Alfresco.util.createBalloon("HEADER_MY_FILES",
-//                {
-//                    text : "Pweet"
-//                });
-//                balloon.show();
-//            });
+//                this.createBalloon(node, "help.button.myFiles")
+//            }
+//
+//            
             
+            var instance = this;
             
-           var node =  YAHOO.util.Selector.query('.DocListTree div.create-content',null, true)
-           if(node!=null){
-               this.createBalloon(node,"help.button.create")
-           }
+            setTimeout( function(){
+                var node = YAHOO.util.Selector.query('.DocListTree div.create-content', null, true)
+                  if (node != null)
+                  {
+                      instance.createBalloon(node, "help.button.create",
+                              {
+                                  target : true,
+                                  tipJoint : "bottom left"
+                              });
+                  }
+
+                // Document view
+    
+                node = YAHOO.util.Selector.query(".entityFolderToolbar-buttons div.entity-view-details", null, true);
+                if (node != null && Alfresco.util.isVisible(node))
+                {
+                    instance.createBalloon(node, "help.button.entity-view-details",
+                    {
+                        target : true,
+                        tipJoint : "top right"
+                    })
+                }
+    
+                node = YAHOO.util.Selector.query(".entityFolderToolbar-buttons div.entity-view-datalist", null, true);
+                if (node != null && Alfresco.util.isVisible(node))
+                {
+                    instance.createBalloon(node, "help.button.entity-view-datalist",
+                    {
+                        target : true,
+                        tipJoint : "bottom left"
+                    })
+                }
+                // Charact view
+
+                 node  = YAHOO.util.Selector.query(".datalist-toolbar div.entity-view-details", null, true);
+                if (node != null)
+                {
+                    instance.createBalloon(node, "help.button.entity-view-details",
+                    {
+                        target : true,
+                        tipJoint : "bottom left"
+                    })
+                }
+
+                node = YAHOO.util.Selector.query(".datalist-toolbar div.entity-view-documents", null, true);
+                if (node != null)
+                {
+                    instance.createBalloon(node, "help.button.entity-view-documents",
+                    {
+                        target : true,
+                        tipJoint : "top left"
+                    })
+                }
+                
+                node = YAHOO.util.Selector.query(".datalist-toolbar div.rapidLink", null, true);
+                if (node != null)
+                {
+                    instance.createBalloon(node, "help.button.rapidLink",
+                    {
+                        target : true,
+                        tipJoint : "bottom left"
+                    })
+                }
+                
+
+                // View EntityDetails
+
+                node = YAHOO.util.Selector.query(".node-header div.entity-view-datalist", null, true);
+                if (node != null)
+                {
+                    instance.createBalloon(node, "help.button.entity-view-datalist",
+                    {
+                        target : true,
+                        tipJoint : "bottom left"
+                    })
+                }
+
+                node = YAHOO.util.Selector.query(".node-header div.entity-view-documents", null, true);
+                if (node != null)
+                {
+                    instance.createBalloon(node, "help.button.entity-view-documents",
+                    {
+                        target : true,
+                        tipJoint : "top left"
+                    })
+                }
+            },2000);
+
            
-           
-          //Document view
-           
-           node =  YAHOO.util.Selector.query(".node-header div.entity-view-details",null,true);
-           if(node!=null){
-               this.createBalloon(node,"help.button.entity-view-details",{target:true,showOn:"creation",tipJoint:"top left" })
-           }
-           
-          
-           
-           //Charact view
-          
-           node =  YAHOO.util.Selector.query(".datalist-toolbar > div.entity-view-details",null,true);
-           if(node!=null){
-               this.createBalloon(node,"help.button.entity-view-details",{target:true,showOn:"creation",tipJoint:"top left" })
-           }
-           
-           node =  YAHOO.util.Selector.query(".datalist-toolbar > div.entity-view-documents",null,true);
-           if(node!=null){
-               this.createBalloon(node,"help.button.entity-view-documents",{target:true,showOn:"creation",tipJoint:"top left"})
-           }
-           
-           
-           //View EntityDetails
-           
-           node =  YAHOO.util.Selector.query(".node-header div.entity-view-datalist",null,true);
-           if(node!=null){
-               this.createBalloon(node,"help.button.entity-view-datalist",{target:true,showOn:"creation",tipJoint:"bottom left"})
-           }
-                   
-           node =  YAHOO.util.Selector.query(".node-header div.entity-view-documents",null,true);
-           if(node!=null){
-               this.createBalloon(node,"help.button.entity-view-documents",{target:true,showOn:"creation",tipJoint:"top left"})
-           }  
-           
-           
-           
-           
-           
-                   
-                   
-        }, 
-        createBalloon : function ContextualHelp_createBalloon(node, msg, options){
-           
-            var balloon =  new Opentip(node,options);
+
+        },
+        createBalloon : function ContextualHelp_createBalloon(node, msg, options)
+        {
+
+            var balloon = new Opentip(node, options);
             balloon.setContent(this.msg(msg));
             balloon.show();
-            
-//            
-//            
-//            var balloon = Alfresco.util.createBalloon(node,
-//                    {
-//                        text : this.msg(msg)
-//                    });
-//            
-//            balloon.hideOthers = function(){alert("PWET")};
-//            
-           // balloon.show();
-            
-            
+
+            //            
+            //            
+            // var balloon = Alfresco.util.createBalloon(node,
+            // {
+            // text : this.msg(msg)
+            // });
+            //            
+            // balloon.hideOthers = function(){alert("PWET")};
+            //            
+            // balloon.show();
+
         }
 
     });
