@@ -38,6 +38,13 @@ if (beCPGMenu != null) {
 		searchLink.config.label = "header.wused.search.label";
 		searchLink.config.targetUrl= "wused";
 	}
+	
+	
+  if(!user.isAdmin){
+    //  widgetUtils.deleteObjectFromArray(model.jsonModel, "id", "HEADER_PEOPLE"); 
+  }
+	
+	
 }
 
 	
