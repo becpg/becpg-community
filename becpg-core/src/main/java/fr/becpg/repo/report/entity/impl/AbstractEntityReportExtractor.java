@@ -59,8 +59,9 @@ import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.report.entity.EntityReportData;
 import fr.becpg.repo.report.entity.EntityReportExtractor;
+import fr.becpg.repo.repository.RepositoryEntity;
+import fr.becpg.repo.repository.RepositoryEntityDefReader;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
-import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 
 public abstract class AbstractEntityReportExtractor implements EntityReportExtractor {
 
@@ -111,6 +112,8 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 	protected FileFolderService fileFolderService;
 
 	protected AssociationService associationService;
+	
+	protected RepositoryEntityDefReader<RepositoryEntity> repositoryEntityDefReader;
 
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
@@ -142,6 +145,10 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
+	}
+
+	public void setRepositoryEntityDefReader(RepositoryEntityDefReader<RepositoryEntity> repositoryEntityDefReader) {
+		this.repositoryEntityDefReader = repositoryEntityDefReader;
 	}
 
 	@Override
@@ -225,10 +232,16 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 		hiddentAttributes.addAll(hiddenNodeAttributes);
 		hiddentAttributes.addAll(hiddenDataListItemAttributes);
 		loadAttributes(dataListItem.getNodeRef(), nodeElt, false, hiddentAttributes);
-		// extract charact properties (legalname,...)
-		if(dataListItem instanceof SimpleCharactDataItem){
-			nodeElt.addAttribute(BeCPGModel.PROP_LEGAL_NAME.getLocalName(), 
-					(String)nodeService.getProperty(((SimpleCharactDataItem) dataListItem).getCharactNodeRef(), BeCPGModel.PROP_LEGAL_NAME));
+		
+		//look for charact
+		Map<QName, Serializable> identAttr = repositoryEntityDefReader.getIdentifierAttributes(dataListItem);
+		for(Map.Entry<QName, Serializable> kv : identAttr.entrySet()){
+			if(kv.getValue() instanceof NodeRef && 
+					nodeService.hasAspect((NodeRef)kv.getValue(), BeCPGModel.ASPECT_LEGAL_NAME)){			
+				nodeElt.addAttribute(BeCPGModel.PROP_LEGAL_NAME.getLocalName(), 
+						(String)nodeService.getProperty((NodeRef)kv.getValue(), BeCPGModel.PROP_LEGAL_NAME));
+				break;
+			}
 		}
 	}
 

@@ -44,7 +44,6 @@ import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.report.entity.impl.AbstractEntityReportExtractor;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
-import fr.becpg.repo.repository.RepositoryEntityDefReader;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.variant.model.VariantData;
 
@@ -84,8 +83,6 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 
 	protected AlfrescoRepository<ProductData> alfrescoRepository;
 
-	private RepositoryEntityDefReader<RepositoryEntity> repositoryEntityDefReader;
-
 	/**
 	 * @param productDictionaryService
 	 *            the productDictionaryService to set
@@ -100,10 +97,6 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 
 	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
-	}
-
-	public void setRepositoryEntityDefReader(RepositoryEntityDefReader<RepositoryEntity> repositoryEntityDefReader) {
-		this.repositoryEntityDefReader = repositoryEntityDefReader;
 	}
 
 	/**
