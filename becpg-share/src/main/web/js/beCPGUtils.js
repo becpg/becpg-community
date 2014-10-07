@@ -87,9 +87,11 @@
         }
         else
         {
-            if (url.indexOf("repository") > 0)
+            if (url.indexOf("repository") > 0  || url.indexOf("sharedfiles")>0)
             {
                 url += '?path=' + encodeURIComponent('/' + path.split('/').slice(2).join('/') + '/' + name);
+            } else if( url.indexOf("myfiles")>0) {
+                url += '?path=' + encodeURIComponent('/' + path.split('/').slice(4).join('/') + '/' + name);
             }
             else
             {
