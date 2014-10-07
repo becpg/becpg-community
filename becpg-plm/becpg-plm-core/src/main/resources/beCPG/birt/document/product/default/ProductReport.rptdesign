@@ -16,6 +16,9 @@
     </list-property>
     <property name="Data Cube.OrganoList.x">135</property>
     <property name="Data Cube.OrganoList.y">80</property>
+    <simple-property-list name="includeResource">
+        <value>src/main/resources/beCPG/birt/document/product/default/ProductReport</value>
+    </simple-property-list>
     <property name="units">in</property>
     <property name="iconFile">/templates/dual_column_chart_listing.gif</property>
     <property name="cheatSheet">org.eclipse.birt.report.designer.ui.cheatsheet.dualchartlisting</property>
@@ -753,6 +756,11 @@
 }</expression>
                     <property name="dataType">integer</property>
                 </structure>
+                <structure>
+                    <property name="name">nutListGDAPercFor100g</property>
+                    <expression name="expression">row["nutListGDAPerc"] != null ? row["nutListGDAPerc"] * row["nutListValue"] / row["nutListValuePerServing"] : null</expression>
+                    <property name="dataType">float</property>
+                </structure>
             </list-property>
             <list-property name="columnHints">
                 <structure>
@@ -809,6 +817,12 @@
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">nutListMini</text-property>
                 </structure>
+                <structure>
+                    <property name="columnName">legalName</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">legalName</text-property>
+                </structure>
             </list-property>
             <list-property name="parameters"/>
             <structure name="cachedMetaData">
@@ -860,13 +874,23 @@
                     </structure>
                     <structure>
                         <property name="position">10</property>
+                        <property name="name">legalName</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
                         <property name="name">runningCount</property>
                         <property name="dataType">integer</property>
                     </structure>
                     <structure>
-                        <property name="position">11</property>
+                        <property name="position">12</property>
                         <property name="name">GDA</property>
                         <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">nutListGDAPercFor100g</property>
+                        <property name="dataType">float</property>
                     </structure>
                 </list-property>
             </structure>
@@ -935,8 +959,15 @@
                     <property name="dataType">float</property>
                     <property name="nativeDataType">8</property>
                 </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">legalName</property>
+                    <property name="nativeName">legalName</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/nutLists/nutList]#:#{nutListValue;DOUBLE;/@nutListValue},{nutListUnit;STRING;/@nutListUnit},{nutListGroup;STRING;/@nutListGroup},{nutListNut;STRING;/@nutListNut},{nutListValuePerServing;DOUBLE;/@nutListValuePerServing},{nutListGDAPerc;DOUBLE;/@nutListGDAPerc},{depthLevel;INT;/@depthLevel},{nutListMaxi;DOUBLE;/@nutListMaxi},{nutListMini;DOUBLE;/@nutListMini}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/nutLists/nutList]#:#{nutListValue;DOUBLE;/@nutListValue},{nutListUnit;STRING;/@nutListUnit},{nutListGroup;STRING;/@nutListGroup},{nutListNut;STRING;/@nutListNut},{nutListValuePerServing;DOUBLE;/@nutListValuePerServing},{nutListGDAPerc;DOUBLE;/@nutListGDAPerc},{depthLevel;INT;/@depthLevel},{nutListMaxi;DOUBLE;/@nutListMaxi},{nutListMini;DOUBLE;/@nutListMini},{legalName;STRING;/@legalName}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -1006,6 +1037,11 @@
                     <text-property name="heading">organoListOrgano</text-property>
                     <property name="analysisColumn">organoListOrgano</property>
                 </structure>
+                <structure>
+                    <property name="columnName">legalName</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">legalName</text-property>
+                </structure>
             </list-property>
             <list-property name="parameters"/>
             <structure name="cachedMetaData">
@@ -1018,6 +1054,11 @@
                     <structure>
                         <property name="position">2</property>
                         <property name="name">organoListOrgano</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">legalName</property>
                         <property name="dataType">string</property>
                     </structure>
                 </list-property>
@@ -1038,8 +1079,15 @@
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">legalName</property>
+                    <property name="nativeName">legalName</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/organoLists/organoList]#:#{organoListValue;STRING;/@organoListValue},{organoListOrgano;STRING;/@organoListOrgano}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/organoLists/organoList]#:#{organoListValue;STRING;/@organoListValue},{organoListOrgano;STRING;/@organoListOrgano},{legalName;STRING;/@legalName}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -1530,6 +1578,11 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">mblTextCriteria</text-property>
                 </structure>
+                <structure>
+                    <property name="columnName">legalName</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">legalName</text-property>
+                </structure>
             </list-property>
             <list-property name="parameters"/>
             <structure name="cachedMetaData">
@@ -1561,11 +1614,16 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                     </structure>
                     <structure>
                         <property name="position">6</property>
+                        <property name="name">legalName</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
                         <property name="name">runningCount</property>
                         <property name="dataType">integer</property>
                     </structure>
                     <structure>
-                        <property name="position">7</property>
+                        <property name="position">8</property>
                         <property name="name">displayValue</property>
                         <property name="dataType">string</property>
                     </structure>
@@ -1608,8 +1666,15 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">legalName</property>
+                    <property name="nativeName">legalName</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/microbioLists/microbioList]#:#{mblMicrobio;STRING;/@mblMicrobio},{mblValue;STRING;/@mblValue},{mblUnit;STRING;/@mblUnit},{mblMaxi;STRING;/@mblMaxi},{mblTextCriteria;STRING;/@mblTextCriteria}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/microbioLists/microbioList]#:#{mblMicrobio;STRING;/@mblMicrobio},{mblValue;STRING;/@mblValue},{mblUnit;STRING;/@mblUnit},{mblMaxi;STRING;/@mblMaxi},{mblTextCriteria;STRING;/@mblTextCriteria},{legalName;STRING;/@legalName}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -1700,27 +1765,37 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                 <structure>
                     <property name="columnName">pclPhysicoChem</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">pclPhysicoChem</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">pclValue</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">pclValue</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">pclUnit</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">pclUnit</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">pclMaxi</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">pclMaxi</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">pclMini</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">pclMini</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">legalName</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">legalName</text-property>
                 </structure>
             </list-property>
             <list-property name="parameters"/>
@@ -1750,6 +1825,11 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                         <property name="position">5</property>
                         <property name="name">pclMini</property>
                         <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">legalName</property>
+                        <property name="dataType">string</property>
                     </structure>
                 </list-property>
             </structure>
@@ -1790,8 +1870,15 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                     <property name="dataType">float</property>
                     <property name="nativeDataType">8</property>
                 </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">legalName</property>
+                    <property name="nativeName">legalName</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/physicoChemLists/physicoChemList]#:#{pclPhysicoChem;STRING;/@pclPhysicoChem},{pclValue;DOUBLE;/@pclValue},{pclUnit;STRING;/@pclUnit},{pclMaxi;DOUBLE;/@pclMaxi},{pclMini;DOUBLE;/@pclMini}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/physicoChemLists/physicoChemList]#:#{pclPhysicoChem;STRING;/@pclPhysicoChem},{pclValue;DOUBLE;/@pclValue},{pclUnit;STRING;/@pclUnit},{pclMaxi;DOUBLE;/@pclMaxi},{pclMini;DOUBLE;/@pclMini},{legalName;STRING;/@legalName}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -6078,7 +6165,7 @@ row["illValue"]
                                 <property name="fontSize">14pt</property>
                                 <property name="fontWeight">bold</property>
                                 <property name="textAlign">center</property>
-                                <text-property name="text">Fiche Technique Client</text-property>
+                                <text-property name="text" key="documentName">Fiche Technique Client</text-property>
                             </label>
                             <data id="3333">
                                 <property name="dataSet">Product</property>
@@ -6114,7 +6201,7 @@ row["illValue"]
                                         <property name="borderRightColor">#FFFFFF</property>
                                         <property name="borderTopColor">#FFFFFF</property>
                                         <label id="3406">
-                                            <text-property name="text">Créé le :</text-property>
+                                            <text-property name="text" key="created">Créé le :</text-property>
                                         </label>
                                     </cell>
                                     <cell id="3405">
@@ -6147,7 +6234,7 @@ row["illValue"]
                                         <property name="borderRightColor">#FFFFFF</property>
                                         <property name="borderTopColor">#FFFFFF</property>
                                         <label id="1520">
-                                            <text-property name="text">Modifié le :</text-property>
+                                            <text-property name="text" key="modified">Modifié le :</text-property>
                                         </label>
                                     </cell>
                                     <cell id="1516">
@@ -6182,7 +6269,7 @@ row["illValue"]
                                         <property name="borderRightColor">#FFFFFF</property>
                                         <property name="borderTopColor">#FFFFFF</property>
                                         <label id="3013">
-                                            <text-property name="text">Validé le :</text-property>
+                                            <text-property name="text" key="approved">Validé le :</text-property>
                                         </label>
                                     </cell>
                                     <cell id="3012">
@@ -6216,7 +6303,7 @@ row["illValue"]
                                         <property name="borderRightColor">#FFFFFF</property>
                                         <property name="borderTopColor">#FFFFFF</property>
                                         <label id="1521">
-                                            <text-property name="text">Code beCPG :</text-property>
+                                            <text-property name="text" key="beCPGCode">Code beCPG :</text-property>
                                         </label>
                                     </cell>
                                     <cell id="1517">
@@ -6250,7 +6337,7 @@ row["illValue"]
                                         <label id="925">
                                             <property name="fontFamily">"arial"</property>
                                             <property name="display">inline</property>
-                                            <text-property name="text">Page : </text-property>
+                                            <text-property name="text" key="page">Page : </text-property>
                                         </label>
                                     </cell>
                                     <cell id="1518">
@@ -6300,35 +6387,35 @@ row["illValue"]
                             <label id="2306">
                                 <property name="fontWeight">normal</property>
                                 <property name="textAlign">center</property>
-                                <text-property name="text">Demandeur</text-property>
+                                <text-property name="text" key="pvCallerActor">Demandeur</text-property>
                             </label>
                         </cell>
                         <cell id="1952">
                             <label id="1960">
                                 <property name="fontWeight">normal</property>
                                 <property name="textAlign">center</property>
-                                <text-property name="text">Rédacteur</text-property>
+                                <text-property name="text" key="pvTransmitter">Rédacteur</text-property>
                             </label>
                         </cell>
                         <cell id="1953">
                             <label id="1961">
                                 <property name="fontWeight">normal</property>
                                 <property name="textAlign">center</property>
-                                <text-property name="text">Resp. production</text-property>
+                                <text-property name="text" key="mgrProduction">Resp. production</text-property>
                             </label>
                         </cell>
                         <cell id="1954">
                             <label id="1962">
                                 <property name="fontWeight">normal</property>
                                 <property name="textAlign">center</property>
-                                <text-property name="text">Resp. qualité</text-property>
+                                <text-property name="text" key="mgrQuality">Resp. qualité</text-property>
                             </label>
                         </cell>
                         <cell id="2695">
                             <label id="2699">
                                 <property name="fontWeight">normal</property>
                                 <property name="textAlign">center</property>
-                                <text-property name="text">Resp. R&amp;D</text-property>
+                                <text-property name="text" key="mgrQuality">Resp. R&amp;D</text-property>
                             </label>
                         </cell>
                     </row>
@@ -6441,15 +6528,15 @@ row["illValue"]
                         <column id="2482">
                             <property name="width">2.49618320610687in</property>
                         </column>
-                        <row id="3397">
-                            <cell id="3398">
-                                <label id="3400">
+                        <row id="3409">
+                            <cell id="3410">
+                                <label id="3412">
                                     <property name="style">becpg-row-header</property>
-                                    <text-property name="text">Nom</text-property>
+                                    <text-property name="text" key="name">Libellé commercial</text-property>
                                 </label>
                             </cell>
-                            <cell id="3399">
-                                <data id="3401">
+                            <cell id="3411">
+                                <data id="3413">
                                     <property name="dataSet">Product</property>
                                     <list-property name="boundDataColumns">
                                         <structure>
@@ -6467,7 +6554,7 @@ row["illValue"]
                             <cell id="3394">
                                 <label id="3396">
                                     <property name="style">becpg-row-header</property>
-                                    <text-property name="text">Libellé commercial</text-property>
+                                    <text-property name="text" key="tradeName">Libellé commercial</text-property>
                                 </label>
                             </cell>
                             <cell id="3395">
@@ -6489,7 +6576,7 @@ row["illValue"]
                             <cell id="3329">
                                 <label id="3331">
                                     <property name="style">becpg-row-header</property>
-                                    <text-property name="text">Libellé légal</text-property>
+                                    <text-property name="text" key="legalName">Libellé légal</text-property>
                                 </label>
                             </cell>
                             <cell id="3330">
@@ -6511,7 +6598,7 @@ row["illValue"]
                             <cell id="2540">
                                 <label id="2500">
                                     <property name="style">becpg-row-header</property>
-                                    <text-property name="text">Famille</text-property>
+                                    <text-property name="text" key="productHierarchy1">Famille</text-property>
                                 </label>
                             </cell>
                             <cell id="2541">
@@ -6533,7 +6620,7 @@ row["illValue"]
                             <cell id="2486">
                                 <label id="2501">
                                     <property name="style">becpg-row-header</property>
-                                    <text-property name="text">Sous-famille</text-property>
+                                    <text-property name="text" key="productHierarchy2">Sous-famille</text-property>
                                 </label>
                             </cell>
                             <cell id="2487">
@@ -6555,7 +6642,7 @@ row["illValue"]
                             <cell id="2491">
                                 <label id="2502">
                                     <property name="style">becpg-row-header</property>
-                                    <text-property name="text">Client</text-property>
+                                    <text-property name="text" key="clients">Client</text-property>
                                 </label>
                             </cell>
                             <cell id="2492">
@@ -6577,7 +6664,7 @@ row["illValue"]
                             <cell id="2496">
                                 <label id="2505">
                                     <property name="style">becpg-row-header</property>
-                                    <text-property name="text">Code EAN</text-property>
+                                    <text-property name="text" key="eanCode">Code EAN</text-property>
                                 </label>
                             </cell>
                             <cell id="2497">
@@ -6599,7 +6686,7 @@ row["illValue"]
                             <cell id="2551">
                                 <label id="2553">
                                     <property name="style">becpg-row-header</property>
-                                    <text-property name="text">DLC (J)</text-property>
+                                    <text-property name="text" key="useByDate">DLC (J)</text-property>
                                 </label>
                             </cell>
                             <cell id="2552">
@@ -6622,7 +6709,7 @@ row["illValue"]
                             <cell id="3324">
                                 <label id="3326">
                                     <property name="style">becpg-row-header</property>
-                                    <text-property name="text">DLUO (J)</text-property>
+                                    <text-property name="text" key="bestBeforeDate">DLUO (J)</text-property>
                                 </label>
                             </cell>
                             <cell id="3325">
@@ -6644,7 +6731,7 @@ row["illValue"]
                             <cell id="3206">
                                 <label id="3210">
                                     <property name="style">becpg-row-header</property>
-                                    <text-property name="text">Nombre de parts</text-property>
+                                    <text-property name="text" key="numberOfServing">Nombre de parts</text-property>
                                 </label>
                             </cell>
                             <cell id="3207">
@@ -6666,7 +6753,7 @@ row["illValue"]
                             <cell id="3212">
                                 <label id="3214">
                                     <property name="style">becpg-row-header</property>
-                                    <text-property name="text">Poids / Volume</text-property>
+                                    <text-property name="text" key="productQty">Poids / Volume</text-property>
                                 </label>
                             </cell>
                             <cell id="3213">
@@ -6691,7 +6778,7 @@ row["illValue"]
                                 <property name="rowSpan">1</property>
                                 <label id="2519">
                                     <property name="style">becpg-row-header</property>
-                                    <text-property name="text">Description</text-property>
+                                    <text-property name="text" key="description">Description</text-property>
                                 </label>
                             </cell>
                             <cell id="2774">
@@ -6855,19 +6942,19 @@ else{
                                 <cell id="2641">
                                     <label id="2660">
                                         <property name="style">becpg-data</property>
-                                        <text-property name="text">Site</text-property>
+                                        <text-property name="text" key="plant">Site</text-property>
                                     </label>
                                 </cell>
                                 <cell id="2642">
                                     <label id="2662">
                                         <property name="style">becpg-data</property>
-                                        <text-property name="text">Certifications</text-property>
+                                        <text-property name="text" key="plantCertifications">Certifications</text-property>
                                     </label>
                                 </cell>
                                 <cell id="2643">
                                     <label id="2664">
                                         <property name="style">becpg-data</property>
-                                        <text-property name="text">N° agrément atelier de découpe</text-property>
+                                        <text-property name="text" key="plantApprovalNumber">N° agrément atelier de découpe</text-property>
                                     </label>
                                 </cell>
                             </row>
@@ -6904,7 +6991,7 @@ else{
                         <property name="marginTop">0pt</property>
                         <property name="marginBottom">0pt</property>
                         <property name="paddingTop">1pt</property>
-                        <text-property name="text">CARACTÉRISTIQUES ORGANOLEPTIQUES</text-property>
+                        <text-property name="text" key="chapterOrgano">CARACTÉRISTIQUES ORGANOLEPTIQUES</text-property>
                     </label>
                     <label id="2557"/>
                     <table id="1526">
@@ -6920,8 +7007,9 @@ else{
                             <structure>
                                 <property name="name">organoListOrgano</property>
                                 <text-property name="displayName">organoListOrgano</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["organoListOrgano"]</expression>
+                                <expression name="expression" type="javascript">dataSetRow["legalName"] != null &amp;&amp; dataSetRow["legalName"] != "" ?dataSetRow["legalName"] : dataSetRow["organoListOrgano"]</expression>
                                 <property name="dataType">string</property>
+                                <property name="allowExport">true</property>
                             </structure>
                         </list-property>
                         <column id="1536">
@@ -6957,12 +7045,12 @@ else{
                         <property name="style">becpg-chapter-header</property>
                         <property name="marginTop">0pt</property>
                         <property name="marginBottom">0pt</property>
-                        <text-property name="text">CARACTÉRISTIQUES NUTRITIONNELLES</text-property>
+                        <text-property name="text" key="chapterNut">CARACTÉRISTIQUES NUTRITIONNELLES</text-property>
                     </label>
                     <label id="3375"/>
                     <table id="3339">
                         <property name="style">becpg-table</property>
-                        <property name="width">6.8125in</property>
+                        <property name="width">100%</property>
                         <property name="dataSet">NutList</property>
                         <list-property name="boundDataColumns">
                             <structure>
@@ -6997,6 +7085,7 @@ else if(dataSetRow["nutListMini"] != null){
                                 <text-property name="displayName">nutListGDAPerc</text-property>
                                 <expression name="expression" type="javascript">dataSetRow["nutListGDAPerc"]</expression>
                                 <property name="dataType">string</property>
+                                <property name="allowExport">true</property>
                             </structure>
                             <structure>
                                 <property name="name">depthLevel</property>
@@ -7016,6 +7105,18 @@ else if(dataSetRow["nutListMini"] != null){
                                 <expression name="expression" type="javascript">dataSetRow["GDA"]</expression>
                                 <property name="dataType">integer</property>
                             </structure>
+                            <structure>
+                                <property name="name">legalName</property>
+                                <text-property name="displayName">legalName</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["legalName"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">nutListGDAPercFor100g</property>
+                                <text-property name="displayName">nutListGDAPercFor100g</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["nutListGDAPercFor100g"]</expression>
+                                <property name="dataType">float</property>
+                            </structure>
                         </list-property>
                         <column id="3355">
                             <property name="width">1.8854166666666667in</property>
@@ -7024,21 +7125,24 @@ else if(dataSetRow["nutListMini"] != null){
                             <property name="style">becpg-col-border</property>
                             <property name="width">0.8645833333333334in</property>
                         </column>
+                        <column id="3423">
+                            <property name="style">becpg-col-border</property>
+                            <property name="width">0.8645833333333334in</property>
+                        </column>
                         <column id="3384">
                             <property name="style">becpg-col-border</property>
-                            <property name="width">0.90625in</property>
-                        </column>
-                        <column id="3357">
-                            <property name="style">becpg-col-border</property>
-                            <property name="width">1.0104166666666667in</property>
+                            <property name="width">0.7708333333333334in</property>
                         </column>
                         <column id="3358">
                             <property name="style">becpg-col-border</property>
-                            <property name="width">0.84375in</property>
+                            <property name="width">0.78125in</property>
+                        </column>
+                        <column id="3416">
+                            <property name="style">becpg-col-border</property>
+                            <property name="width">0.7291666666666666in</property>
                         </column>
                         <column id="3390">
                             <property name="style">becpg-col-border</property>
-                            <property name="width">1.3020833333333333in</property>
                         </column>
                         <header>
                             <row id="3340">
@@ -7046,22 +7150,20 @@ else if(dataSetRow["nutListMini"] != null){
                                 <cell id="3341"/>
                                 <cell id="3342">
                                     <label id="3387">
-                                        <text-property name="text">Valeur</text-property>
+                                        <text-property name="text" key="value">Valeur</text-property>
                                     </label>
                                 </cell>
-                                <cell id="3381">
-                                    <label id="3385">
-                                        <text-property name="text">Unité</text-property>
+                                <cell id="3421">
+                                    <label id="3408">
+                                        <text-property name="text" key="valueForOneShare">Valeur pour 1 part</text-property>
                                     </label>
-                                </cell>
-                                <cell id="3343">
                                     <data id="3377">
                                         <property name="dataSet">Product</property>
                                         <list-property name="boundDataColumns">
                                             <structure>
                                                 <property name="name">servingSize</property>
-                                                <text-property name="displayName">Pour 1 part</text-property>
-                                                <expression name="expression" type="javascript">"Pour 1 part (" + dataSetRow["servingSize"] + (dataSetRow["productUnit"] == "L" || dataSetRow["productUnit"] == " mL" ? "mL)" : " g)")</expression>
+                                                <text-property name="displayName">100g</text-property>
+                                                <expression name="expression" type="javascript">"(" + dataSetRow["servingSize"] + (dataSetRow["productUnit"] == "L" || dataSetRow["productUnit"] == " mL" ? "mL)" : " g)")</expression>
                                                 <property name="dataType">string</property>
                                                 <property name="allowExport">true</property>
                                             </structure>
@@ -7069,14 +7171,37 @@ else if(dataSetRow["nutListMini"] != null){
                                         <property name="resultSetColumn">servingSize</property>
                                     </data>
                                 </cell>
+                                <cell id="3381">
+                                    <label id="3385">
+                                        <text-property name="text" key="unit">Unité</text-property>
+                                    </label>
+                                </cell>
                                 <cell id="3344">
                                     <label id="3367">
-                                        <text-property name="text">% des AR</text-property>
+                                        <text-property name="text" key="gdaPerc">% des AR</text-property>
                                     </label>
+                                </cell>
+                                <cell id="3414">
+                                    <label id="3417">
+                                        <text-property name="text" key="gdaPercForOneShare">% des AR</text-property>
+                                    </label>
+                                    <data id="3425">
+                                        <property name="dataSet">Product</property>
+                                        <list-property name="boundDataColumns">
+                                            <structure>
+                                                <property name="name">servingSize</property>
+                                                <text-property name="displayName">100g</text-property>
+                                                <expression name="expression" type="javascript">"(" + dataSetRow["servingSize"] + (dataSetRow["productUnit"] == "L" || dataSetRow["productUnit"] == " mL" ? "mL)" : " g)")</expression>
+                                                <property name="dataType">string</property>
+                                                <property name="allowExport">true</property>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">servingSize</property>
+                                    </data>
                                 </cell>
                                 <cell id="3388">
                                     <label id="3391">
-                                        <text-property name="text">Apport de Référence* (Adultes)</text-property>
+                                        <text-property name="text" key="gda">Apport de Référence* (Adultes)</text-property>
                                     </label>
                                 </cell>
                             </row>
@@ -7088,7 +7213,7 @@ else if(dataSetRow["nutListMini"] != null){
                                     <text id="3300">
                                         <property name="style">becpg-row-header</property>
                                         <property name="contentType">html</property>
-                                        <text-property name="content"><![CDATA[<div style="font-size: 1px; display: inline; float: left; width: <VALUE-OF>(row["depthLevel"]-1)*20</VALUE-OF>px;">&amp;nbsp;</div><VALUE-OF>row["nutListNut"]</VALUE-OF>]]></text-property>
+                                        <text-property name="content"><![CDATA[<div style="font-size: 1px; display: inline; float: left; width: <VALUE-OF>(row["depthLevel"]-1)*20</VALUE-OF>px;">&amp;nbsp;</div><VALUE-OF>row["legalName"] != null &amp;&amp; row["legalName"] != "" ?row["legalName"] : row["nutListNut"]</VALUE-OF>]]></text-property>
                                     </text>
                                 </cell>
                                 <cell id="3347">
@@ -7101,13 +7226,7 @@ else if(dataSetRow["nutListMini"] != null){
                                         <property name="resultSetColumn">nutListValue</property>
                                     </data>
                                 </cell>
-                                <cell id="3382">
-                                    <data id="3386">
-                                        <property name="style">becpg-data</property>
-                                        <property name="resultSetColumn">nutListUnit</property>
-                                    </data>
-                                </cell>
-                                <cell id="3348">
+                                <cell id="3422">
                                     <data id="3366">
                                         <property name="style">becpg-data</property>
                                         <structure name="numberFormat">
@@ -7117,8 +7236,24 @@ else if(dataSetRow["nutListMini"] != null){
                                         <property name="resultSetColumn">nutListValuePerServing</property>
                                     </data>
                                 </cell>
+                                <cell id="3382">
+                                    <data id="3386">
+                                        <property name="style">becpg-data</property>
+                                        <property name="resultSetColumn">nutListUnit</property>
+                                    </data>
+                                </cell>
                                 <cell id="3349">
-                                    <data id="3368">
+                                    <data id="3426">
+                                        <property name="style">becpg-data</property>
+                                        <structure name="numberFormat">
+                                            <property name="category">General Number</property>
+                                            <property name="pattern">General Number</property>
+                                        </structure>
+                                        <property name="resultSetColumn">nutListGDAPercFor100g</property>
+                                    </data>
+                                </cell>
+                                <cell id="3415">
+                                    <data id="3424">
                                         <property name="style">becpg-data</property>
                                         <structure name="numberFormat">
                                             <property name="category">General Number</property>
@@ -7147,7 +7282,7 @@ else if(dataSetRow["nutListMini"] != null){
                         <property name="marginBottom">0pt</property>
                         <property name="textAlign">center</property>
                         <property name="display">block</property>
-                        <text-property name="text">LISTE DES INGRÉDIENTS</text-property>
+                        <text-property name="text" key="chapterIng">LISTE DES INGRÉDIENTS</text-property>
                     </label>
                     <label id="2565"/>
                     <grid id="2129">
@@ -7163,7 +7298,7 @@ else if(dataSetRow["nutListMini"] != null){
                                 <label id="2141">
                                     <property name="style">becpg-row-header</property>
                                     <property name="textUnderline">none</property>
-                                    <text-property name="text">Allergènes</text-property>
+                                    <text-property name="text" key="allergens">Allergènes</text-property>
                                 </label>
                             </cell>
                             <cell id="2134">
@@ -7184,7 +7319,7 @@ else if(dataSetRow["nutListMini"] != null){
                                         </structure>
                                     </list-property>
                                     <property name="contentType">html</property>
-                                    <text-property name="content"><![CDATA[<U>Contient :</U> <VALUE-OF >row["allergenListVoluntary"]</VALUE-OF>]]></text-property>
+                                    <text-property name="content"><![CDATA[<U><VALUE-OF >reportContext.getMessage("contains", reportContext.getLocale())</VALUE-OF></U> <VALUE-OF >row["allergenListVoluntary"]</VALUE-OF>]]></text-property>
                                 </text>
                                 <label id="3221"/>
                                 <text id="3220">
@@ -7204,7 +7339,7 @@ else if(dataSetRow["nutListMini"] != null){
                                         </structure>
                                     </list-property>
                                     <property name="contentType">html</property>
-                                    <text-property name="content"><![CDATA[<U>Peut Contenir :</U> <VALUE-OF >row["allergenListInVoluntary"]</VALUE-OF>]]></text-property>
+                                    <text-property name="content"><![CDATA[<U><VALUE-OF >reportContext.getMessage("canContains", reportContext.getLocale())</VALUE-OF></U> <VALUE-OF >row["allergenListInVoluntary"]</VALUE-OF>]]></text-property>
                                 </text>
                             </cell>
                         </row>
@@ -7213,7 +7348,7 @@ else if(dataSetRow["nutListMini"] != null){
                                 <label id="3184">
                                     <property name="style">becpg-row-header</property>
                                     <property name="textUnderline">none</property>
-                                    <text-property name="text">Titre alcoométrique</text-property>
+                                    <text-property name="text" key="alcohol">Titre alcoométrique</text-property>
                                 </label>
                             </cell>
                             <cell id="3183">
@@ -7239,12 +7374,12 @@ BirtMath.round(dataSetRow["alcooléthanol"], 1) + " %"
                                 <label id="2143">
                                     <property name="style">becpg-row-header</property>
                                     <property name="textUnderline">none</property>
-                                    <text-property name="text">OGM</text-property>
+                                    <text-property name="text" key="gmo">OGM</text-property>
                                 </label>
                             </cell>
                             <cell id="2137">
                                 <label id="2144">
-                                    <text-property name="text">Produit ne faisant pas l’objet d’une déclaration de présence OGM sur l’étiquetage en application des règlements (CE) 1829/2003 et 1830/2003</text-property>
+                                    <text-property name="text" key="noDeclGMO">Produit ne faisant pas l’objet d’une déclaration de présence OGM sur l’étiquetage en application des règlements (CE) 1829/2003 et 1830/2003</text-property>
                                 </label>
                             </cell>
                         </row>
@@ -7253,12 +7388,12 @@ BirtMath.round(dataSetRow["alcooléthanol"], 1) + " %"
                                 <label id="2658">
                                     <property name="style">becpg-row-header</property>
                                     <property name="textUnderline">none</property>
-                                    <text-property name="text">Ionisation</text-property>
+                                    <text-property name="text" key="ionization">Ionisation</text-property>
                                 </label>
                             </cell>
                             <cell id="2657">
                                 <label id="2659">
-                                    <text-property name="text">Produit non soumis aux obligations d'étiquetage de la directive 2000/13/CE</text-property>
+                                    <text-property name="text" key="noDeclIonizarion">Produit non soumis aux obligations d'étiquetage de la directive 2000/13/CE</text-property>
                                 </label>
                             </cell>
                         </row>
@@ -7267,7 +7402,7 @@ BirtMath.round(dataSetRow["alcooléthanol"], 1) + " %"
                                 <label id="3108">
                                     <property name="style">becpg-row-header</property>
                                     <property name="textUnderline">none</property>
-                                    <text-property name="text">Allégations</text-property>
+                                    <text-property name="text" key="labelClaims">Allégations</text-property>
                                 </label>
                             </cell>
                             <cell id="3107">
@@ -7324,7 +7459,7 @@ BirtMath.round(dataSetRow["alcooléthanol"], 1) + " %"
                                 <label id="3198">
                                     <property name="style">becpg-row-header</property>
                                     <property name="textUnderline">none</property>
-                                    <text-property name="text">Conditions de conservation</text-property>
+                                    <text-property name="text" key="storageConditions">Conditions de conservation</text-property>
                                 </label>
                             </cell>
                             <cell id="3191">
@@ -7347,7 +7482,7 @@ BirtMath.round(dataSetRow["alcooléthanol"], 1) + " %"
                                 <label id="3199">
                                     <property name="style">becpg-row-header</property>
                                     <property name="textUnderline">none</property>
-                                    <text-property name="text">Précautions d'emploi</text-property>
+                                    <text-property name="text" key="precautionOfUse">Précautions d'emploi</text-property>
                                 </label>
                             </cell>
                             <cell id="3194">
@@ -7370,7 +7505,7 @@ BirtMath.round(dataSetRow["alcooléthanol"], 1) + " %"
                                 <label id="3200">
                                     <property name="style">becpg-row-header</property>
                                     <property name="textUnderline">none</property>
-                                    <text-property name="text">Conseils de préparation</text-property>
+                                    <text-property name="text" key="preparationTips">Conseils de préparation</text-property>
                                 </label>
                             </cell>
                             <cell id="3197">
@@ -7622,7 +7757,7 @@ dataSetRow["illValue"]
                         <property name="marginBottom">0pt</property>
                         <property name="textAlign">center</property>
                         <property name="display">block</property>
-                        <text-property name="text">CARACTÉRISTIQUES MICROBIOLOGIQUES</text-property>
+                        <text-property name="text" key="chapterMicrobio">CARACTÉRISTIQUES MICROBIOLOGIQUES</text-property>
                     </label>
                     <label id="2568"/>
                     <grid id="2063">
@@ -7638,8 +7773,9 @@ dataSetRow["illValue"]
                                         <structure>
                                             <property name="name">mblMicrobio</property>
                                             <text-property name="displayName">mblMicrobio</text-property>
-                                            <expression name="expression" type="javascript">dataSetRow["mblMicrobio"]</expression>
+                                            <expression name="expression" type="javascript">dataSetRow["legalName"] != null &amp;&amp; dataSetRow["legalName"] != "" ? dataSetRow["legalName"] : dataSetRow["mblMicrobio"]</expression>
                                             <property name="dataType">string</property>
+                                            <property name="allowExport">true</property>
                                         </structure>
                                         <structure>
                                             <property name="name">mblValue</property>
@@ -7809,7 +7945,7 @@ dataSetRow["mblMaxi"]
                         <property name="marginBottom">0pt</property>
                         <property name="textAlign">center</property>
                         <property name="display">block</property>
-                        <text-property name="text">CARACTÉRISTIQUES PHYSICO-CHIMIQIUES</text-property>
+                        <text-property name="text" key="chapterPhysico">CARACTÉRISTIQUES PHYSICO-CHIMIQIUES</text-property>
                     </label>
                     <label id="2569"/>
                     <table id="1010">
@@ -7821,8 +7957,9 @@ dataSetRow["mblMaxi"]
                             <structure>
                                 <property name="name">pclPhysicoChem</property>
                                 <text-property name="displayName">pclPhysicoChem</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["pclPhysicoChem"]</expression>
+                                <expression name="expression" type="javascript">dataSetRow["legalName"] != null &amp;&amp; dataSetRow["legalName"] != "" ? dataSetRow["legalName"] : dataSetRow["pclPhysicoChem"]</expression>
                                 <property name="dataType">string</property>
+                                <property name="allowExport">true</property>
                             </structure>
                             <structure>
                                 <property name="name">pclValue</property>
@@ -7880,35 +8017,35 @@ dataSetRow["mblMaxi"]
                                     <label id="1013">
                                         <property name="style">becpg-col-header</property>
                                         <property name="paddingLeft">5pt</property>
-                                        <text-property name="text">Caractéristique</text-property>
+                                        <text-property name="text" key="charact">Caractéristique</text-property>
                                     </label>
                                 </cell>
                                 <cell id="1014">
                                     <label id="1015">
                                         <property name="style">becpg-col-header</property>
                                         <property name="paddingLeft">5pt</property>
-                                        <text-property name="text">Valeur</text-property>
+                                        <text-property name="text" key="value">Valeur</text-property>
                                     </label>
                                 </cell>
                                 <cell id="1016">
                                     <label id="1017">
                                         <property name="style">becpg-col-header</property>
                                         <property name="paddingLeft">5pt</property>
-                                        <text-property name="text">Unité</text-property>
+                                        <text-property name="text" key="unit">Unité</text-property>
                                     </label>
                                 </cell>
                                 <cell id="1018">
                                     <label id="1019">
                                         <property name="style">becpg-col-header</property>
                                         <property name="paddingLeft">5pt</property>
-                                        <text-property name="text">Mini</text-property>
+                                        <text-property name="text" key="mini">Mini</text-property>
                                     </label>
                                 </cell>
                                 <cell id="1039">
                                     <label id="1043">
                                         <property name="style">becpg-col-header</property>
                                         <property name="paddingLeft">5pt</property>
-                                        <text-property name="text">Maxi</text-property>
+                                        <text-property name="text" key="maxi">Maxi</text-property>
                                     </label>
                                 </cell>
                             </row>
@@ -8008,7 +8145,7 @@ dataSetRow["mblMaxi"]
                 <cell id="3056">
                     <label id="2678">
                         <property name="style">becpg-chapter-header</property>
-                        <text-property name="text">CONDITIONNEMENT</text-property>
+                        <text-property name="text" key="chapterPack">CONDITIONNEMENT</text-property>
                     </label>
                 </cell>
             </row>
@@ -8021,7 +8158,7 @@ dataSetRow["mblMaxi"]
                 <cell id="3060">
                     <label id="3216">
                         <property name="style">becpg-row-header</property>
-                        <text-property name="text">Description du conditionnement</text-property>
+                        <text-property name="text" key="descrPack">Description du conditionnement</text-property>
                     </label>
                     <data id="3217">
                         <property name="resultSetColumn">packagingDescription</property>
@@ -8063,7 +8200,7 @@ dataSetRow["mblMaxi"]
                                 <label id="2359">
                                     <property name="style">becpg-col-header</property>
                                     <property name="textAlign">center</property>
-                                    <text-property name="text">CONDITIONNEMENT UVC</text-property>
+                                    <text-property name="text" key="primaryPack">CONDITIONNEMENT UVC</text-property>
                                 </label>
                             </cell>
                             <cell id="2759">
@@ -8072,7 +8209,7 @@ dataSetRow["mblMaxi"]
                                 <label id="2360">
                                     <property name="style">becpg-col-header</property>
                                     <property name="textAlign">center</property>
-                                    <text-property name="text">COLIS</text-property>
+                                    <text-property name="text" key="secondaryPack">COLIS</text-property>
                                 </label>
                             </cell>
                         </row>
@@ -8298,7 +8435,7 @@ dataSetRow["packagingListProduct"]
                                 <property name="rowSpan">1</property>
                                 <label id="2488">
                                     <property name="fontStyle">italic</property>
-                                    <text-property name="text">(*) Agréé contact alimentaire</text-property>
+                                    <text-property name="text" key="approvedFoodContact">(*) Agréé contact alimentaire</text-property>
                                 </label>
                             </cell>
                         </row>
@@ -8308,44 +8445,44 @@ dataSetRow["packagingListProduct"]
                             <property name="textAlign">center</property>
                             <cell id="2755">
                                 <label id="2758">
-                                    <text-property name="text">SPCB (nb UV)</text-property>
+                                    <text-property name="text" key="spcb">SPCB (nb UV)</text-property>
                                 </label>
                             </cell>
                             <cell id="2372">
                                 <label id="2390">
-                                    <text-property name="text">Dimension (Lxlxh) en mm</text-property>
+                                    <text-property name="text" key="pmDim">Dimension (Lxlxh) en mm</text-property>
                                 </label>
                             </cell>
                             <cell id="2373">
                                 <label id="2391">
-                                    <text-property name="text">Tare en g</text-property>
+                                    <text-property name="text" key="tarePkgLevel1">Tare en g</text-property>
                                 </label>
                             </cell>
                             <cell id="2374">
                                 <label id="2392">
-                                    <text-property name="text">Poids net 
+                                    <text-property name="text" key="netWeight">Poids net 
 env en kg</text-property>
                                 </label>
                             </cell>
                             <cell id="2375">
                                 <label id="2393">
-                                    <text-property name="text">Poids brut 
+                                    <text-property name="text" key="grossWeightKg">Poids brut 
 env en kg</text-property>
                                 </label>
                             </cell>
                             <cell id="2761">
                                 <label id="2764">
-                                    <text-property name="text">PCB</text-property>
+                                    <text-property name="text" key="pcb">PCB</text-property>
                                 </label>
                             </cell>
                             <cell id="2377">
                                 <label id="2395">
-                                    <text-property name="text">Dimension (Lxlxh) en mm</text-property>
+                                    <text-property name="text" key="pmDim">Dimension (Lxlxh) en mm</text-property>
                                 </label>
                             </cell>
                             <cell id="2378">
                                 <label id="2396">
-                                    <text-property name="text">Poids brut
+                                    <text-property name="text" key="grossWeightKg">Poids brut
 env en kg</text-property>
                                 </label>
                             </cell>
@@ -8530,35 +8667,35 @@ else{
                             <property name="textAlign">center</property>
                             <cell id="2731">
                                 <label id="2446">
-                                    <text-property name="text">Nombre emb/couche</text-property>
+                                    <text-property name="text" key="palletBoxesPerLayer">Nombre emb/couche</text-property>
                                 </label>
                             </cell>
                             <cell id="2732">
                                 <label id="2447">
-                                    <text-property name="text">Nombre 
+                                    <text-property name="text" key="palletLayers">Nombre 
 couche/palette</text-property>
                                 </label>
                             </cell>
                             <cell id="2733">
                                 <label id="2448">
-                                    <text-property name="text">Nombre 
+                                    <text-property name="text" key="palletBoxesPerPallet">Nombre 
 emb/palette </text-property>
                                 </label>
                             </cell>
                             <cell id="2734">
                                 <label id="2449">
-                                    <text-property name="text">Nombre UVC/palette</text-property>
+                                    <text-property name="text" key="nbProductsPkgLevel3">Nombre UVC/palette</text-property>
                                 </label>
                             </cell>
                             <cell id="2735">
                                 <label id="2450">
-                                    <text-property name="text">Poids brut 
+                                    <text-property name="text" key="grossWeightKg">Poids brut 
 env en kg</text-property>
                                 </label>
                             </cell>
                             <cell id="2736">
                                 <label id="2451">
-                                    <text-property name="text">Hauteur maxi
+                                    <text-property name="text" key="palletHeight">Hauteur maxi
 en m</text-property>
                                 </label>
                             </cell>
@@ -8695,7 +8832,7 @@ en m</text-property>
                                 <property name="textAlign">center</property>
                                 <cell id="3140">
                                     <label id="3155">
-                                        <text-property name="text">Marquages</text-property>
+                                        <text-property name="text" key="labelingTemplates">Marquages</text-property>
                                     </label>
                                 </cell>
                             </row>
