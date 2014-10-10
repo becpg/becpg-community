@@ -105,7 +105,11 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		} else if (formulatedProduct instanceof ResourceProductData) {
 			netQty = FormulationHelper.QTY_FOR_PIECE;
 		}	else {
-			netQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
+			if(ProductUnit.P.equals(formulatedProduct.getUnit())){
+				netQty = formulatedProduct.getQty();
+			} else {	
+				netQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
+			}
 		}
 
 
@@ -125,8 +129,6 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		}
 
 		
-
-	
 
 		if (formulatedProduct.hasPackagingListEl(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)) {
 			

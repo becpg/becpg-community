@@ -50,6 +50,14 @@
             var instance = this;
             
             setTimeout( function(){
+                
+                var node = YAHOO.util.Selector.query('#HEADER_MY_FILES', null, true)
+              if (node != null)
+              {
+                  this.createBalloon(Dom.get("HEADER_MY_FILES"), "help.button.myFiles");
+              }
+                
+                
                 var node = YAHOO.util.Selector.query('.DocListTree div.create-content', null, true)
                   if (node != null)
                   {
