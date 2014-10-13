@@ -1,8 +1,9 @@
 
 <@markup  id="customDynamicWelcome-css" target="css" action="replace">
- 	
+ 	<#include "../form/form.css.ftl"/>
+	<@link href="${url.context}/res/css/fixForm.css" group="dashlets" />
 	<@link rel="stylesheet" type="text/css" href="${url.context}/res/components/dashlets/dynamic-welcome.css" group="dashlets" />
-	<#include "../form/form.css.ftl"/>
+	
 </@>
 
 
