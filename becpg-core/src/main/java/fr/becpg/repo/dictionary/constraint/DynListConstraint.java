@@ -20,6 +20,7 @@ import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.dictionary.ConstraintException;
 import org.alfresco.service.cmr.dictionary.DictionaryException;
 import org.alfresco.service.cmr.i18n.MessageLookup;
+import org.alfresco.service.cmr.repository.InvalidStoreRefException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.datatype.DefaultTypeConverter;
 import org.alfresco.service.cmr.repository.datatype.TypeConversionException;
@@ -129,7 +130,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 									if (addEmptyValue != null && addEmptyValue) {
 										allowedValues.add("");
 									}
-									
+
 									for (String path : paths) {
 										NamespaceService namespaceService = serviceRegistry.getNamespaceService();
 										List<String> values = getAllowedValues(path, QName.createQName(constraintType, namespaceService),
@@ -179,46 +180,52 @@ public class DynListConstraint extends ListOfValuesConstraint {
 			public List<String> doWork() throws Exception {
 				List<String> allowedValues = new LinkedList<String>();
 
-				List<NodeRef> nodeRefs = BeCPGQueryBuilder.createQuery().selectNodesByPath(
-						serviceRegistry.getNodeService().getRootNode(RepoConsts.SPACES_STORE),
-						"/app:company_home/" + BeCPGQueryBuilder.encodePath(path) + "/*");
+				try {
+					List<NodeRef> nodeRefs = BeCPGQueryBuilder.createQuery().selectNodesByPath(
+							serviceRegistry.getNodeService().getRootNode(RepoConsts.SPACES_STORE),
+							"/app:company_home/" + BeCPGQueryBuilder.encodePath(path) + "/*");
 
-				Collections.sort(nodeRefs, new Comparator<NodeRef>() {
+					Collections.sort(nodeRefs, new Comparator<NodeRef>() {
 
-					@Override
-					public int compare(NodeRef o1, NodeRef o2) {
-						Integer sort1 = (Integer) serviceRegistry.getNodeService().getProperty(o1, BeCPGModel.PROP_SORT);
-						Integer sort2 = (Integer) serviceRegistry.getNodeService().getProperty(o2, BeCPGModel.PROP_SORT);
-						if (sort1 == null && sort2 == null) {
-							return 0;
-						}
-						if (sort1 == null) {
-							return -1;
-						}
-						if (sort2 == null) {
-							return 1;
+						@Override
+						public int compare(NodeRef o1, NodeRef o2) {
+							Integer sort1 = (Integer) serviceRegistry.getNodeService().getProperty(o1, BeCPGModel.PROP_SORT);
+							Integer sort2 = (Integer) serviceRegistry.getNodeService().getProperty(o2, BeCPGModel.PROP_SORT);
+							if (sort1 == null && sort2 == null) {
+								return 0;
+							}
+							if (sort1 == null) {
+								return -1;
+							}
+							if (sort2 == null) {
+								return 1;
+							}
+
+							return sort1.compareTo(sort2);
 						}
 
-						return sort1.compareTo(sort2);
+					});
+
+					for (NodeRef nodeRef : nodeRefs) {
+						if (serviceRegistry.getNodeService().exists(nodeRef)
+								&& serviceRegistry.getNodeService().getType(nodeRef).equals(constraintType)) {
+							String value = (String) serviceRegistry.getNodeService().getProperty(nodeRef, constraintProp);
+							if (!allowedValues.contains(value) && value != null && checkLevel(nodeRef)) {
+								allowedValues.add(value);
+							}
+						} else {
+							logger.warn("Node doesn't exist : " + nodeRef);
+						}
 					}
 
-				});
-
-				for (NodeRef nodeRef : nodeRefs) {
-					if (serviceRegistry.getNodeService().exists(nodeRef) && serviceRegistry.getNodeService().getType(nodeRef).equals(constraintType)) {
-						String value = (String) serviceRegistry.getNodeService().getProperty(nodeRef, constraintProp);
-						if (!allowedValues.contains(value) && value != null && checkLevel(nodeRef)) {
-							allowedValues.add(value);
-						}
-					} else {
-						logger.warn("Node doesn't exist : " + nodeRef);
+					if (logger.isDebugEnabled()) {
+						logger.debug("allowedValues.size() : " + allowedValues.size());
+						logger.debug("allowed values: " + allowedValues.toString());
 					}
+				} catch (InvalidStoreRefException e) {
+					logger.warn("Please reload constraint once tenant created: "+e.getMessage());
 				}
 
-				if (logger.isDebugEnabled()) {
-					logger.debug("allowedValues.size() : " + allowedValues.size());
-					logger.debug("allowed values: " + allowedValues.toString());
-				}
 				return allowedValues;
 
 			}
