@@ -110,52 +110,56 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 		int rownum = 0;
 		Row headerRow = sheet.getRow(rownum++);
 
-		QName itemType = QName.createQName(headerRow.getCell(1).getStringCellValue(), namespaceService);
+		if ("TYPE".equals(headerRow.getCell(0).getStringCellValue())) {
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("Sheet type : " + itemType.toPrefixString());
-		}
+			QName itemType = QName.createQName(headerRow.getCell(1).getStringCellValue(), namespaceService);
 
-		headerRow.setZeroHeight(true);
-		headerRow = sheet.getRow(rownum++);
-		headerRow.setZeroHeight(true);
-		List<AttributeExtractorStructure> metadataFields = extractListStruct(itemType, headerRow);
-		AttributeExtractorStructure keyColumn = null;
-		if (entityDictionaryService.isSubClass(itemType, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
-			keyColumn = metadataFields.remove(0);
-			logger.debug("Datalist key column : " + keyColumn.getFieldDef().getName());
-		} else {
-			mainType = itemType;
-		}
+			if (logger.isDebugEnabled()) {
+				logger.debug("Sheet type : " + itemType.toPrefixString());
+			}
 
-		rownum++;
+			headerRow.setZeroHeight(true);
+			headerRow = sheet.getRow(rownum++);
+			headerRow.setZeroHeight(true);
+			List<AttributeExtractorStructure> metadataFields = extractListStruct(itemType, headerRow);
+			AttributeExtractorStructure keyColumn = null;
+			if (entityDictionaryService.isSubClass(itemType, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
+				keyColumn = metadataFields.remove(0);
+				logger.debug("Datalist key column : " + keyColumn.getFieldDef().getName());
+			} else {
+				mainType = itemType;
+			}
 
-		Map<NodeRef, Map<String, Object>> cache = new HashMap<NodeRef, Map<String, Object>>();
+			rownum++;
 
-		for (NodeRef entityNodeRef : searchResults) {
-			if (mainType.equals(nodeService.getType(entityNodeRef))) {
-				if (keyColumn != null) {
-					Serializable key = nodeService.getProperty(entityNodeRef, keyColumn.getFieldDef().getName());
+			Map<NodeRef, Map<String, Object>> cache = new HashMap<NodeRef, Map<String, Object>>();
 
-					NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
-					NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, itemType);
-					if (listNodeRef != null) {
-						List<NodeRef> results = entityListDAO.getListItems(listNodeRef, itemType);
-						for (NodeRef itemNodeRef : results) {
-							if (itemType.equals(nodeService.getType(itemNodeRef))) {
-								if (permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED) {
-									rownum = fillRow(sheet, itemNodeRef, itemType, metadataFields, cache, rownum, key);
+			for (NodeRef entityNodeRef : searchResults) {
+				if (mainType.equals(nodeService.getType(entityNodeRef))) {
+					if (keyColumn != null) {
+						Serializable key = nodeService.getProperty(entityNodeRef, keyColumn.getFieldDef().getName());
+
+						NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
+						NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, itemType);
+						if (listNodeRef != null) {
+							List<NodeRef> results = entityListDAO.getListItems(listNodeRef, itemType);
+							for (NodeRef itemNodeRef : results) {
+								if (itemType.equals(nodeService.getType(itemNodeRef))) {
+									if (permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED) {
+										rownum = fillRow(sheet, itemNodeRef, itemType, metadataFields, cache, rownum, key);
+									}
 								}
 							}
 						}
+					} else {
+						rownum = fillRow(sheet, entityNodeRef, itemType, metadataFields, cache, rownum, null);
 					}
-				} else {
-					rownum = fillRow(sheet, entityNodeRef, itemType, metadataFields, cache, rownum, null);
 				}
 			}
-		}
 
+		}
 		return mainType;
+
 	}
 
 	private int fillRow(XSSFSheet sheet, NodeRef itemNodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields,
