@@ -6415,7 +6415,7 @@ row["illValue"]
                             <label id="2699">
                                 <property name="fontWeight">normal</property>
                                 <property name="textAlign">center</property>
-                                <text-property name="text" key="mgrQuality">Resp. R&amp;D</text-property>
+                                <text-property name="text" key="mgrRD">Resp. R&amp;D</text-property>
                             </label>
                         </cell>
                     </row>
