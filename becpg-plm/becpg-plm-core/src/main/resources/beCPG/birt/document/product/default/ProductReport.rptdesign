@@ -5328,17 +5328,25 @@ row["illValue"]
                 <structure>
                     <property name="columnName">lclType</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">lclType</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">lclLabelClaim</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">lclLabelClaim</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">lclIsClaimed</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">lclIsClaimed</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">legalName</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">legalName</text-property>
                 </structure>
             </list-property>
             <list-property name="filter">
@@ -5350,6 +5358,7 @@ row["illValue"]
                     </simple-property-list>
                 </structure>
             </list-property>
+            <list-property name="parameters"/>
             <structure name="cachedMetaData">
                 <list-property name="resultSet">
                     <structure>
@@ -5365,6 +5374,11 @@ row["illValue"]
                     <structure>
                         <property name="position">3</property>
                         <property name="name">lclIsClaimed</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">legalName</property>
                         <property name="dataType">string</property>
                     </structure>
                 </list-property>
@@ -5392,8 +5406,15 @@ row["illValue"]
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">legalName</property>
+                    <property name="nativeName">legalName</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/labelClaimLists/labelClaimList]#:#{lclType;STRING;/@lclType},{lclLabelClaim;STRING;/@lclLabelClaim},{lclIsClaimed;STRING;/@lclIsClaimed}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/labelClaimLists/labelClaimList]#:#{lclType;STRING;/@lclType},{lclLabelClaim;STRING;/@lclLabelClaim},{lclIsClaimed;STRING;/@lclIsClaimed},{legalName;STRING;/@legalName}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -7419,8 +7440,9 @@ BirtMath.round(dataSetRow["alcooléthanol"], 1) + " %"
                                         <structure>
                                             <property name="name">lclLabelClaim</property>
                                             <text-property name="displayName">lclLabelClaim</text-property>
-                                            <expression name="expression" type="javascript">dataSetRow["lclLabelClaim"]</expression>
+                                            <expression name="expression" type="javascript">dataSetRow["legalName"] != null &amp;&amp; dataSetRow["legalName"] != "" ? dataSetRow["legalName"] : dataSetRow["lclLabelClaim"]</expression>
                                             <property name="dataType">string</property>
+                                            <property name="allowExport">true</property>
                                         </structure>
                                         <structure>
                                             <property name="name">lclIsClaimed</property>
