@@ -142,8 +142,8 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 					VariantFilters.DEFAULT_VARIANT)) {
 				Double qty = FormulationHelper.getQtyWithLost(packagingListDataItem);
 			
-				if(PLMModel.TYPE_PACKAGINGKIT.equals(nodeService.getType(packagingListDataItem.getNodeRef()))){
-					Double nbByPalet = (Double) nodeService.getProperty(packagingListDataItem.getNodeRef(), PackModel.PROP_PALLET_BOXES_PER_PALLET);
+				if(PLMModel.TYPE_PACKAGINGKIT.equals(nodeService.getType(packagingListDataItem.getProduct()))){
+					Integer nbByPalet = (Integer) nodeService.getProperty(packagingListDataItem.getProduct(), PackModel.PROP_PALLET_BOXES_PER_PALLET);
 					if(nbByPalet!=null && nbByPalet>0){
 						qty = qty/nbByPalet;
 					}
