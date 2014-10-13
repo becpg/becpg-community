@@ -59,11 +59,11 @@ var addFormFieldForLocale = function(form){
 	  		
 	  		if(YAHOO.util.Dom.get("${el}-"+lc) == null){
    
-	   	 varHtml +='<div class="form-field"><label for="${el}-'+lc+'">${label}:&nbsp;<span class="locale-icon"><img  tabindex="0" src="${url.context}/res/components/images/flags/'+lc+'.png"/></span></label>';
+	   	 varHtml +='<div class="form-field"><label for="${el}-'+lc+'">${label!""?html}:&nbsp;<span class="locale-icon"><img  tabindex="0" src="${url.context}/res/components/images/flags/'+lc+'.png"/></span></label>';
 	   	 <#if args.textarea??>
-	   	 	 varHtml+='<textarea rows="2" cols="60" title="${description}" tabindex="0"	 name="'+lc+'" id="${el}-'+lc+'"></textarea>';
+	   	 	 varHtml+='<textarea rows="2" cols="60" title="${description!""?html}" tabindex="0"	 name="'+lc+'" id="${el}-'+lc+'"></textarea>';
 	   	 <#else>
-	   		 varHtml+='<input type="text" title="${description}" tabindex="0"	 name="'+lc+'" id="${el}-'+lc+'"></input>';
+	   		 varHtml+='<input type="text" title="${description!""?html}" tabindex="0"	 name="'+lc+'" id="${el}-'+lc+'"></input>';
 	  		</#if>
 	  		 varHtml +='</div>';
 	  		 
