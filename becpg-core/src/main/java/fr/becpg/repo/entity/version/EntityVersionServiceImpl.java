@@ -203,6 +203,15 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		
 	}
 
+	@Override
+	public void afterCancelCheckOut(NodeRef entityNodeRef) {
+		if(versionService.getVersionHistory(entityNodeRef) == null || versionService.getVersionHistory(entityNodeRef).getAllVersions().size() == 1){
+			nodeService.removeAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
+		}
+		
+	}
+	
+	
 	private NodeRef internalCreateVersionAndCheckin(final NodeRef origNodeRef, final NodeRef workingCopyNodeRef,
 			Map<String, Serializable> versionProperties) {
 		StopWatch watch = new StopWatch();
@@ -795,6 +804,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			throw new CheckOutCheckInServiceException(MSG_ERR_NOT_AUTHENTICATED);
 		}
 	}
+
+	
 
 
 

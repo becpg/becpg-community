@@ -41,7 +41,10 @@ public interface EntityVersionService {
 	public List<NodeRef> getAllVersionBranches(NodeRef entityNodeRef);
 	
 	public NodeRef createVersion(NodeRef entityNodeRef, Map<String, Serializable> versionProperties);
+	
 	public void createInitialVersion(NodeRef entityNodeRef);
+	
+	void afterCancelCheckOut(NodeRef entityNodeRef);
 
 
 	

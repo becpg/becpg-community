@@ -50,7 +50,8 @@ import fr.becpg.repo.report.entity.EntityReportAsyncGenerator;
  */
 public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy implements CheckOutCheckInServicePolicies.OnCheckOut,
 		CheckOutCheckInServicePolicies.BeforeCheckIn, CheckOutCheckInServicePolicies.OnCheckIn,
-		CheckOutCheckInServicePolicies.BeforeCancelCheckOut, NodeServicePolicies.OnRemoveAspectPolicy, NodeServicePolicies.OnDeleteNodePolicy {
+		CheckOutCheckInServicePolicies.BeforeCancelCheckOut, NodeServicePolicies.OnRemoveAspectPolicy, NodeServicePolicies.OnDeleteNodePolicy, 
+		CheckOutCheckInServicePolicies.OnCancelCheckOut {
 
 	private static Log logger = LogFactory.getLog(EntityCheckOutCheckInServicePolicy.class);
 
@@ -88,6 +89,10 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 				"onCheckIn"));
 		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.BeforeCancelCheckOut.QNAME, BeCPGModel.ASPECT_ENTITYLISTS,
 				new JavaBehaviour(this, "beforeCancelCheckOut"));
+		
+		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.OnCancelCheckOut.QNAME, BeCPGModel.ASPECT_ENTITYLISTS,
+				new JavaBehaviour(this, "onCancelCheckOut"));
+		
 		//
 		// this.policyComponent.bindClassBehaviour(QName.createQName(NamespaceService.ALFRESCO_URI,
 		// "onAddAspect"), ContentModel.ASPECT_VERSIONABLE,
@@ -231,6 +236,18 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 	protected void doAfterCommit(String key, Set<NodeRef> pendingNodes) {
 		entityReportAsyncGenerator.queueNodes(new ArrayList<NodeRef>(pendingNodes));
 
+	}
+
+	@Override
+	public void onCancelCheckOut(NodeRef nodeRef) {
+		ruleService.disableRules();
+		try {
+			entityVersionService.afterCancelCheckOut(nodeRef);
+			
+		} finally {
+			ruleService.enableRules();
+		}
+		
 	}
 
 }
