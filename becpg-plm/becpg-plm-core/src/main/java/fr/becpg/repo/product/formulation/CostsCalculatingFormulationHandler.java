@@ -15,6 +15,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.PLMModel;
+import fr.becpg.model.PackModel;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.entity.EntityTplService;
@@ -140,6 +141,14 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			for (PackagingListDataItem packagingListDataItem : formulatedProduct.getPackagingList(EffectiveFilters.EFFECTIVE,
 					VariantFilters.DEFAULT_VARIANT)) {
 				Double qty = FormulationHelper.getQtyWithLost(packagingListDataItem);
+			
+				if(PLMModel.TYPE_PACKAGINGKIT.equals(nodeService.getType(packagingListDataItem.getNodeRef()))){
+					Double nbByPalet = (Double) nodeService.getProperty(packagingListDataItem.getNodeRef(), PackModel.PROP_PALLET_BOXES_PER_PALLET);
+					if(nbByPalet!=null && nbByPalet>0){
+						qty = qty/nbByPalet;
+					}
+				}
+				
 				visitPart(packagingListDataItem.getProduct(), costList, qty, netQty, mandatoryCharacts2, null);
 			}
 			
