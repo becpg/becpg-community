@@ -36,7 +36,9 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
  * The Class AdminTenantWebScript.
  * 
  * @author matthieu
+ * Deprected since 4.2 see TenantPost
  */
+@Deprecated 
 public class AdminTenantWebScript extends AbstractWebScript {
 
 	/** The logger. */
