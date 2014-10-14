@@ -34,7 +34,7 @@ import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorPlugin;
 
 /**
  * @author Philippe
- * 
+ * Used to extract title (MLText) by report
  */
 @Service
 public class CertificationExtractorPlugin implements AttributeExtractorPlugin {
@@ -54,7 +54,11 @@ public class CertificationExtractorPlugin implements AttributeExtractorPlugin {
 
 	@Override
 	public String extractPropName(QName type, NodeRef nodeRef) {
-		return (String) nodeService.getProperty(nodeRef, ContentModel.PROP_TITLE);
+		String name = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_TITLE);
+		if(name == null || name.isEmpty()){
+			name = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
+		}
+		return name;
 	}
 
 }
