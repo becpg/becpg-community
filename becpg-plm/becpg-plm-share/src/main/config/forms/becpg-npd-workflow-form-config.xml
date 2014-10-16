@@ -129,7 +129,10 @@
 					<show force="false" id="npdwf:npdProductName" />
 					<show force="false" id="npdwf:needDefinitionProduct" />
 					<show force="false" id="npdwf:needDefinitionPackagingKit" />
-					<show force="false" id="npdwf:needDefinitionRecipeProduct" />					
+					<show force="false" id="npdwf:needDefinitionRecipeProduct" />
+					
+					<show force="false" id="npdwf:npdSelectedProducts" />
+										
 					<show force="false" id="packageItems" />
 					<show force="false" id="npdwf:npdAction" />
 				</field-visibility>
@@ -176,9 +179,17 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 
+
 					<set appearance="title" id="items" label-id="workflow.set.items" />
 					<field id="packageItems" mandatory="false" read-only="false"
 						set="items" />
+						
+					<set appearance="title" id="selection" label-id="becpg.forms.set.selected-products.label" />	
+					<field id="npdwf:npdSelectedProducts" 
+						mandatory="false" read-only="false" set="selection">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>	
 					
 					<set appearance="title" id="response" label-id="workflow.set.response" />								
 					<field id="npdwf:npdAction" label-id="workflow.field.outcome" set="response" >
