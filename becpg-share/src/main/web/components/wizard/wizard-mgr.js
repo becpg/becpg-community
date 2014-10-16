@@ -260,6 +260,10 @@
                                 step.nodeRef = this.options.nodeRef;
                             }
                             
+                            if(step.nodeRefStepIndex!=null && step.nodeRefStepIndex!=""){
+                                step.nodeRef = this.options.wizardStruct[step.nodeRefStepIndex].nodeRef;
+                            }
+                            
                             var url = null;
                             
                             if(step.type == "form"){

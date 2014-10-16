@@ -169,7 +169,6 @@ public class CreateProduct extends BaseJavaDelegate {
 					logger.debug("Formulate product");
 					
 					try {
-
 						productService.formulate(productNodeRef);
 					} catch (Exception e) {
 						logger.debug(e,e); // newly created cannot be formulate

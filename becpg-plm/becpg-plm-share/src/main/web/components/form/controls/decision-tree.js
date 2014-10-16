@@ -55,6 +55,7 @@
                   onReady : function DecisionTree_onReady() {
                      
                      var QUESTION_EVENTCLASS = Alfresco.util.generateDomId(null, "question"),
+                         LIST_EVENTCLASS = Alfresco.util.generateDomId(null, "list"),
                          COMMENT_EVENTCLASS= Alfresco.util.generateDomId(null, "comment");
                      
                     
@@ -71,16 +72,40 @@
                                     +'</legend>';
                            for(var j = 0; j< question.choices.length; j++){
                               var choice = question.choices[j];
-                              var checked = this.getCurrentValueChecked(question.id, choice.id );
-                              htmlForm +="<p>";
-                              htmlForm +='<input '+(this.options.disabled?'disabled':'')+' tabindex="0" id="'+this.id+'-choice_'+question.id+'_'+choice.id+'" class="'+QUESTION_EVENTCLASS+'" name="--group_'+this.id+question.id+'" type="radio"  '+(checked?'checked="checked"':"")+' />';
-                              var msgKey  =  choice.id == "-" ? "form.control.decision-tree.empty" : "form.control.decision-tree."+this.options.prefix+"."+question.id+"."+choice.id;
-                              htmlForm +='<label for="'+this.id+'-choice_'+question.id+'_'+choice.id+'">'+(choice.label ? choice.label:  this.msg(msgKey))+'</label>';
-                              htmlForm +="</p>";   
-                             
-                              if(choice.comment){
-                                 showComment = true;
-                                 commentLabel = choice.commentLabel;
+
+                              if(choice.list!=null){
+                                  var listOption = this.getCurrentListOptions(question.id, choice.id );
+                                  htmlForm +="<p>";
+                                  var msgKey  =  choice.id == "-" ? "form.control.decision-tree.empty" : "form.control.decision-tree."+this.options.prefix+"."+question.id+"."+choice.id;
+                                  htmlForm +='<label for="'+this.id+'-choice_'+question.id+'_'+choice.id+'">'+(choice.label ? choice.label:  this.msg(msgKey))+'</label>';
+                                 
+                                  htmlForm +='<select '+(choice.multiple ? 'multiple="true"':"")+' '+(this.options.disabled?'disabled':'')+' tabindex="0" id="'+this.id+'-choice_'+question.id+'_'+choice.id+'" class="'+LIST_EVENTCLASS+'" name="--group_'+this.id+question.id+'"  >';
+                                  for(var z = 0; z< choice.list.length; z++){
+                                      if(choice.multiple){
+                                          
+                                      }
+                                      
+                                      htmlForm +='<option '+(listOption == choice.list[z]? "selected":"")+'>'+choice.list[z]+'</option>';
+                                  }
+                                  htmlForm +='</select>';
+                                  htmlForm +="</p>";   
+                                  
+                                  YAHOO.util.Event.addListener(this.id+'-choice_'+question.id+'_'+choice.id, "change", function(){
+                                      me.toogleVisible();
+                                  });
+                                  
+                              } else {
+                                  var checked = this.getCurrentValueChecked(question.id, choice.id );
+                                  htmlForm +="<p>";
+                                  htmlForm +='<input '+(this.options.disabled?'disabled':'')+' tabindex="0" id="'+this.id+'-choice_'+question.id+'_'+choice.id+'" class="'+QUESTION_EVENTCLASS+'" name="--group_'+this.id+question.id+'" type="radio"  '+(checked?'checked="checked"':"")+' />';
+                                  var msgKey  =  choice.id == "-" ? "form.control.decision-tree.empty" : "form.control.decision-tree."+this.options.prefix+"."+question.id+"."+choice.id;
+                                  htmlForm +='<label for="'+this.id+'-choice_'+question.id+'_'+choice.id+'">'+(choice.label ? choice.label:  this.msg(msgKey))+'</label>';
+                                  htmlForm +="</p>";   
+                                 
+                                  if(choice.comment){
+                                     showComment = true;
+                                     commentLabel = choice.commentLabel;
+                                  }
                               }
                            }
                            
@@ -112,8 +137,8 @@
                         if (owner !== null) {
                            owner.checked = true;
                            me.toogleVisible();
+                           return false;
                         }
-                        return false;
                      };
 
                      Bubbling.addDefaultAction(QUESTION_EVENTCLASS, fnOnSelectChoice);
@@ -130,6 +155,17 @@
                      }
                      return false;
                   },
+                  
+                  getCurrentListOptions: function (qid, cid){
+                      for(var i = 0; i< this.options.currentValue.length; i++){
+                         var question_id = this.options.currentValue[i].qid;
+                         var choice_id = this.options.currentValue[i].cid;
+                           if(qid  == question_id  && cid == choice_id ){
+                            return this.options.currentValue[i].listOptions;
+                           }
+                      }
+                      return "";
+                   },
                   
                   getCurrentValueComment: function (qid){
                      for(var i = 0; i< this.options.currentValue.length; i++){
@@ -157,9 +193,17 @@
                            var showComment = false;
                            for(var j = 0; j< question.choices.length; j++){
                              var choice = question.choices[j];
-                             if(Dom.get(this.id+"-choice_"+question.id+'_'+choice.id).checked){
-                                ret.push({ qid : question.id, cid : choice.id});
-                                
+                             if((choice.list!=null && Dom.get(this.id+"-choice_"+question.id+'_'+choice.id).value!=null)
+                                     ||  Dom.get(this.id+"-choice_"+question.id+'_'+choice.id).checked){
+                               
+                                 if(choice.list!=null){
+                                     ret.push({ qid : question.id, cid : choice.id, listOptions :
+                                         Dom.get(this.id+"-choice_"+question.id+'_'+choice.id).value });
+                                 } else {
+                                     ret.push({ qid : question.id, cid : choice.id});
+                                 }
+                                 
+                                 
                                 if(choice.cid){
                                     if(choice.cid instanceof Array){
                                         for(var z=0 ; z<choice.cid.length ; z++){
