@@ -214,7 +214,7 @@ Après décongélation, à conserver au réfrigérateur et à consommer dans la 
 		<labelClaimLists>
 			<labelClaimList lclLabelClaim="Sans BPA"
 				isManualListItem="" lclType="Santé" sort="100" lclIsClaimed="true"
-				lclIsFormulated="false" locale="fr" />
+				lclIsFormulated="false" locale="fr" legalName="legal name"/>
 			<labelClaimList lclLabelClaim="Sans huile de palme"
 				isManualListItem="" lclType="Santé" sort="101" lclIsClaimed="true"
 				lclIsFormulated="false" locale="fr" />
