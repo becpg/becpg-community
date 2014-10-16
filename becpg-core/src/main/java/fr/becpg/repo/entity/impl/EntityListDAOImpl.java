@@ -24,10 +24,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.query.PagingRequest;
+import org.alfresco.query.PagingResults;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.model.FileFolderService;
@@ -37,6 +41,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.util.Pair;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.logging.Log;
@@ -47,9 +52,11 @@ import org.springframework.stereotype.Repository;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.TranslateHelper;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * 
@@ -63,22 +70,24 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 	@Autowired
 	private NodeService nodeService;
-	
+
 	@Autowired
 	private DictionaryService dictionaryService;
-	
+
 	@Autowired
 	private FileFolderService fileFolderService;
-	
+
 	@Autowired
 	private NamespaceService namespaceService;
-	
+
 	@Autowired
 	private CopyService copyService;
-	
+
 	@Autowired
 	private AssociationService associationService;
 
+	@Autowired
+	private EntityDictionaryService entityDictionaryService;
 
 	@Override
 	public NodeRef getListContainer(NodeRef nodeRef) {
@@ -91,7 +100,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 		NodeRef listNodeRef = null;
 		if (listContainerNodeRef != null) {
-			listNodeRef = nodeService.getChildByName(listContainerNodeRef, ContentModel.ASSOC_CONTAINS, QName.createValidLocalName(name) );
+			listNodeRef = nodeService.getChildByName(listContainerNodeRef, ContentModel.ASSOC_CONTAINS, QName.createValidLocalName(name));
 		}
 		return listNodeRef;
 	}
@@ -110,7 +119,8 @@ public class EntityListDAOImpl implements EntityListDAO {
 		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 		properties.put(ContentModel.PROP_NAME, RepoConsts.CONTAINER_DATALISTS);
 		properties.put(ContentModel.PROP_TITLE, RepoConsts.CONTAINER_DATALISTS);
-		NodeRef ret = nodeService.createNode(nodeRef, BeCPGModel.ASSOC_ENTITYLISTS, BeCPGModel.ASSOC_ENTITYLISTS, ContentModel.TYPE_FOLDER, properties).getChildRef();
+		NodeRef ret = nodeService.createNode(nodeRef, BeCPGModel.ASSOC_ENTITYLISTS, BeCPGModel.ASSOC_ENTITYLISTS, ContentModel.TYPE_FOLDER,
+				properties).getChildRef();
 		nodeService.addAspect(ret, BeCPGModel.ASPECT_HIDDEN_FOLDER, new HashMap<QName, Serializable>());
 		return ret;
 	}
@@ -131,10 +141,10 @@ public class EntityListDAOImpl implements EntityListDAO {
 		properties.put(ContentModel.PROP_DESCRIPTION, classDef.getDescription(dictionaryService));
 		properties.put(DataListModel.PROP_DATALISTITEMTYPE, listQName.toPrefixString(namespaceService));
 
-		return nodeService.createNode(listContainerNodeRef, ContentModel.ASSOC_CONTAINS, listQName, DataListModel.TYPE_DATALIST, properties).getChildRef();
+		return nodeService.createNode(listContainerNodeRef, ContentModel.ASSOC_CONTAINS, listQName, DataListModel.TYPE_DATALIST, properties)
+				.getChildRef();
 
 	}
-	
 
 	@Override
 	public NodeRef createList(NodeRef listContainerNodeRef, String name, QName listQName) {
@@ -147,8 +157,8 @@ public class EntityListDAOImpl implements EntityListDAO {
 		QName assocQname = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name));
 
 		if (logger.isDebugEnabled()) {
-			logger.debug("Create data list with name:" + name + " of type " + listQName.getLocalName() + " title " + entityTitle + " with assocQname : "
-					+ assocQname.toPrefixString(namespaceService));
+			logger.debug("Create data list with name:" + name + " of type " + listQName.getLocalName() + " title " + entityTitle
+					+ " with assocQname : " + assocQname.toPrefixString(namespaceService));
 		}
 
 		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
@@ -156,7 +166,8 @@ public class EntityListDAOImpl implements EntityListDAO {
 		properties.put(ContentModel.PROP_TITLE, entityTitle);
 		properties.put(DataListModel.PROP_DATALISTITEMTYPE, listQName.toPrefixString(namespaceService));
 
-		return nodeService.createNode(listContainerNodeRef, ContentModel.ASSOC_CONTAINS, assocQname, DataListModel.TYPE_DATALIST, properties).getChildRef();
+		return nodeService.createNode(listContainerNodeRef, ContentModel.ASSOC_CONTAINS, assocQname, DataListModel.TYPE_DATALIST, properties)
+				.getChildRef();
 
 	}
 
@@ -181,7 +192,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 						existingLists.add(listNodeRef);
 					} else {
-						logger.warn("Existing "+dataListTypeQName+" list doesn't inheritate from 'bcpg:entityListItem'.");
+						logger.warn("Existing " + dataListTypeQName + " list doesn't inheritate from 'bcpg:entityListItem'.");
 					}
 				}
 
@@ -193,52 +204,54 @@ public class EntityListDAOImpl implements EntityListDAO {
 	@Override
 	public List<NodeRef> getListItems(final NodeRef listNodeRef, final QName listQNameFilter) {
 
-		List<NodeRef> ret = associationService.getChildAssocs(listNodeRef, ContentModel.ASSOC_CONTAINS);
+		Collection<QName> qnames = entityDictionaryService.getSubTypes(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 
-		if (listQNameFilter != null) {
-			CollectionUtils.filter(ret, new Predicate() {
+		Map<String, Boolean> sortMap = new LinkedHashMap<String, Boolean>();
+		sortMap.put("@bcpg:sort", true);
+		sortMap.put("@cm:created", true);
 
-				@Override
-				public boolean evaluate(Object object) {
-					
-					if(!nodeService.exists((NodeRef) object)){
-						logger.error("NodeRef doesn't exist ? "+((NodeRef) object).toString());
-						logger.error(" - Datalist  "+nodeService.getProperty(listNodeRef,ContentModel.PROP_NAME));
-						logger.error(" - Cache Key "+associationService.createCacheKey(listNodeRef,ContentModel.ASSOC_CONTAINS ));
-						return false;
-					}
-					
-					if (object != null && object instanceof NodeRef && nodeService.getType((NodeRef) object).equals(listQNameFilter)) {
-						return true;
-					}
+		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().addSort(sortMap).parent(listNodeRef);
 
-					return false;
+		
+		for (QName qname : qnames) {
+			if (!qname.equals(listQNameFilter)) {
+
+				if (logger.isDebugEnabled()) {
+					logger.debug("Add to ignore :" + qname);
 				}
-			});
+				queryBuilder.excludeType(qname);
+
+			}
 		}
 
-		Collections.sort(ret, new Comparator<NodeRef>() {
+		List<NodeRef> ret = new LinkedList<NodeRef>();
 
-			@Override
-			public int compare(NodeRef o1, NodeRef o2) {
-				Integer sort1 = (Integer) nodeService.getProperty(o1, BeCPGModel.PROP_SORT);
-				Integer sort2 = (Integer) nodeService.getProperty(o2, BeCPGModel.PROP_SORT);
-				if (sort1 == null && sort2 == null) {
-					return 0;
-				}
-				if (sort1 == null) {
-					return -1;
-				}
-				if (sort2 == null) {
-					return 1;
-				}
+		String queryExecutionId = null;
+		int page = 0;
+		boolean nextPage = true;
+		while (nextPage) {
+			int skipOffset = (page - 1) * RepoConsts.MAX_RESULTS_1000;
+			int requestTotalCountMax = skipOffset + RepoConsts.MAX_RESULTS_1000;
 
-				return sort1.compareTo(sort2);
+			PagingRequest pageRequest = new PagingRequest(skipOffset, RepoConsts.MAX_RESULTS_1000, queryExecutionId);
+			pageRequest.setRequestTotalCountMax(requestTotalCountMax);
+
+			PagingResults<FileInfo> pageOfNodeInfos = queryBuilder.childFileFolders(pageRequest);
+
+			List<FileInfo> nodeInfos = pageOfNodeInfos.getPage();
+			int size = nodeInfos.size();
+
+			for (int i = 0; i < size; i++) {
+				FileInfo nodeInfo = nodeInfos.get(i);
+				ret.add(nodeInfo.getNodeRef());
 			}
+			nextPage = pageOfNodeInfos.hasMoreItems();
+			queryExecutionId = pageOfNodeInfos.getQueryExecutionId();
 
-		});
+		}
 
 		return ret;
+
 	}
 
 	@Override
@@ -290,7 +303,8 @@ public class EntityListDAOImpl implements EntityListDAO {
 					// copy all datalist in order to have assoc references
 					// updated (ie: taskList is referenced in deliverableList,
 					// so when doing checkout assoc must be updated)
-					targetListContainerNodeRef = copyService.copy(sourceListContainerNodeRef, targetNodeRef, BeCPGModel.ASSOC_ENTITYLISTS, BeCPGModel.ASSOC_ENTITYLISTS, true);
+					targetListContainerNodeRef = copyService.copy(sourceListContainerNodeRef, targetNodeRef, BeCPGModel.ASSOC_ENTITYLISTS,
+							BeCPGModel.ASSOC_ENTITYLISTS, true);
 					nodeService.setProperty(targetListContainerNodeRef, ContentModel.PROP_NAME, RepoConsts.CONTAINER_DATALISTS);
 				} else {
 
@@ -304,13 +318,13 @@ public class EntityListDAOImpl implements EntityListDAO {
 						if (listQNames == null || listQNames.contains(listQName)) {
 
 							NodeRef existingListNodeRef = null;
-							
-							if(name.startsWith(RepoConsts.WUSED_PREFIX)) {
+
+							if (name.startsWith(RepoConsts.WUSED_PREFIX)) {
 								existingListNodeRef = getList(targetListContainerNodeRef, name);
 							} else {
 								existingListNodeRef = getList(targetListContainerNodeRef, listQName);
 							}
-							
+
 							boolean copy = true;
 							if (existingListNodeRef != null) {
 								if (override) {
@@ -322,8 +336,8 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 							if (copy) {
 								logger.debug("copy datalist " + listQName);
-								NodeRef newDLNodeRef = copyService.copy(sourceListNodeRef, targetListContainerNodeRef, ContentModel.ASSOC_CONTAINS, DataListModel.TYPE_DATALIST,
-										true);
+								NodeRef newDLNodeRef = copyService.copy(sourceListNodeRef, targetListContainerNodeRef, ContentModel.ASSOC_CONTAINS,
+										DataListModel.TYPE_DATALIST, true);
 								nodeService.setProperty(newDLNodeRef, ContentModel.PROP_NAME, name);
 							}
 						}
@@ -338,7 +352,8 @@ public class EntityListDAOImpl implements EntityListDAO {
 	public NodeRef createListItem(NodeRef listNodeRef, QName listType, Map<QName, Serializable> properties, Map<QName, List<NodeRef>> associations) {
 
 		// create
-		NodeRef nodeRef = nodeService.createNode(listNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, listType, properties).getChildRef();
+		NodeRef nodeRef = nodeService.createNode(listNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, listType, properties)
+				.getChildRef();
 
 		for (Map.Entry<QName, List<NodeRef>> kv : associations.entrySet()) {
 			associationService.update(nodeRef, kv.getKey(), kv.getValue());
