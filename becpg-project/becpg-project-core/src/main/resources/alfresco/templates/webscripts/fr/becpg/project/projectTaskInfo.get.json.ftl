@@ -42,6 +42,7 @@
 	   "completionPercent": "${task.properties["pjt:completionPercent"]!""}",
 	   "commentCount":"${task.properties["fm:commentCount"]!""}",
 	   "nodeRef": "${task.nodeRef}",
+	   "isRefusedEnabled": <#if task.assocs["pjt:tlRefusedTaskRef"]?? && task.assocs["pjt:tlRefusedTaskRef"].length &gt; 0 >true<#else>false</#if>,
 		"deliverables":
 		[
 		<#if deliverables??>

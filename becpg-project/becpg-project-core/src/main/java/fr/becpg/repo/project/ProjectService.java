@@ -111,4 +111,12 @@ public interface ProjectService {
 	 */
 	public String getDeliverableUrl(NodeRef projectNodeRef, String url);
 
+	
+	/**
+	 * Refused a project Task
+	 * @param taskNodeRef
+	 * @return 
+	 */
+	public NodeRef refusedTask(NodeRef taskNodeRef);
+
 }
