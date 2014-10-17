@@ -97,6 +97,11 @@
                                 Dom.get(this.id + "-currentTask").innerHTML = this.getTaskTitle(task,
                                         task.entityNodeRef);
                                 Dom.get(this.id + "-currentTask-description").innerHTML = '<span>' + task.description + '</span>';
+                                
+                                
+                                if(!task.isRefusedEnabled){
+                                    Dom.addClass(this.id.replace("assoc_pjt_workflowTask-cntrl","prop_pjt_worflowTransition") + "-refused", "hidden");
+                                }
 
                                 if (deliverables != null && deliverables.length > 0)
                                 {

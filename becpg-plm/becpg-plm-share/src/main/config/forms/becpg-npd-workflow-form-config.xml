@@ -194,7 +194,7 @@
 					<set appearance="title" id="response" label-id="workflow.set.response" />								
 					<field id="npdwf:npdAction" label-id="workflow.field.outcome" set="response" >
 							<control template="/org/alfresco/components/form/controls/workflow/activiti-transitions.ftl" />
-						</field>
+					</field>
 				</appearance>
 			</form>
 		</forms>

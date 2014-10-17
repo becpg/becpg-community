@@ -420,6 +420,17 @@
 						<many>true</many>
 					</target>
 				</association>
+				<association name="pjt:tlRefusedTaskRef">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>pjt:taskList</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
 				<association name="pjt:tlResources">
 					<source>
 						<mandatory>false</mandatory>
@@ -726,6 +737,22 @@
 		</aspect>
 
 		<aspect name="pjt:workflowAspect">
+			<properties>
+				<property name="pjt:worflowTransition">
+						<type>d:text</type>
+						<default>validate</default>
+						<constraints>
+							<constraint name="pjt:worflowTransitions" type="LIST">
+					            <parameter name="allowedValues">
+					                <list>
+					                	<value>refused</value>
+					                    <value>validate</value>                
+					                </list>
+					            </parameter>
+					        </constraint>
+						</constraints>
+				</property>
+			</properties>
 			<associations>
 				<association name="pjt:workflowTask">
 					<source>

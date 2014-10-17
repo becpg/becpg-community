@@ -73,7 +73,7 @@
 					<show force="false" id="pjt:workflowTask" />
 					<show force="false" id="bpm:comment" />
 					<show force="false" id="packageItems" />
-					<show force="false" id="transitions" />
+					<show force="false" id="pjt:worflowTransition" />
 				</field-visibility>
 				<appearance>					
 					<field id="message" mandatory="false" read-only="false">
@@ -108,8 +108,11 @@
 						set="project" />
 						
 					<set appearance="title" id="response" label-id="workflow.set.response" />
-					<field id="transitions" mandatory="false" read-only="false"
-						set="response" />
+					
+					<field id="pjt:worflowTransition" label-id="workflow.field.outcome" set="response" >
+							<control template="/org/alfresco/components/form/controls/workflow/activiti-transitions.ftl" />
+					</field>
+						
 				</appearance>
 			</form>
 		</forms>
