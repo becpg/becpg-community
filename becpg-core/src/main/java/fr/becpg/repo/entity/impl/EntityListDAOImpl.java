@@ -204,7 +204,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 	@Override
 	public List<NodeRef> getListItems(final NodeRef listNodeRef, final QName listQNameFilter) {
 
-		Collection<QName> qnames = entityDictionaryService.getSubTypes(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+		
 
 		Map<String, Boolean> sortMap = new LinkedHashMap<String, Boolean>();
 		sortMap.put("@bcpg:sort", true);
@@ -213,14 +213,17 @@ public class EntityListDAOImpl implements EntityListDAO {
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().addSort(sortMap).parent(listNodeRef);
 
 		
-		for (QName qname : qnames) {
-			if (!qname.equals(listQNameFilter)) {
-
-				if (logger.isDebugEnabled()) {
-					logger.debug("Add to ignore :" + qname);
+		if(listQNameFilter!=null){
+			Collection<QName> qnames = entityDictionaryService.getSubTypes(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+			for (QName qname : qnames) {
+				if (!qname.equals(listQNameFilter)) {
+	
+					if (logger.isDebugEnabled()) {
+						logger.debug("Add to ignore :" + qname);
+					}
+					queryBuilder.excludeType(qname);
+	
 				}
-				queryBuilder.excludeType(qname);
-
 			}
 		}
 
