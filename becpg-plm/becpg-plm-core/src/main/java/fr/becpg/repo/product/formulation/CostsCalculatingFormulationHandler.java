@@ -107,7 +107,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			netQty = FormulationHelper.QTY_FOR_PIECE;
 		}	else {
 			if(ProductUnit.P.equals(formulatedProduct.getUnit())){
-				netQty = formulatedProduct.getQty();
+				netQty = FormulationHelper.QTY_FOR_PIECE;
 			} else {	
 				netQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
 			}

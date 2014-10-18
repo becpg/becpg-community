@@ -14,7 +14,6 @@ import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
-import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -289,26 +288,15 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 	private String getColumnValue(ReportServerSearchContext exportSearchCtx, NodeRef nodeRef, ClassAttributeDefinition attribute) {
 
 		String value = VALUE_NULL;
-
-		// property
+		
 		if (nodeService.exists(nodeRef)) {
 			if (attribute instanceof PropertyDefinition) {
-
 				Serializable serializable = nodeService.getProperty(nodeRef, attribute.getName());
 				value = attributeExtractorService.extractPropertyForReport((PropertyDefinition) attribute, serializable,
 						exportSearchCtx.getPropertyFormats(), false);
 
-			} else if (attribute instanceof AssociationDefinition) {// associations
-
-				List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, attribute.getName());
-
-				for (AssociationRef assocRef : assocRefs) {
-
-					if (!value.isEmpty()) {
-						value += RepoConsts.LABEL_SEPARATOR;
-					}
-					value += attributeExtractorService.extractAssociationForReport(assocRef);
-				}
+			} else if (attribute instanceof AssociationDefinition) {
+				return attributeExtractorService.extractAssociationsForReport(nodeService.getTargetAssocs(nodeRef, attribute.getName()), ContentModel.PROP_NAME);
 			}
 		}
 

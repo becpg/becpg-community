@@ -1213,7 +1213,11 @@
 					<show id="qa:clTextCriteria" />			
 					<show id="qa:clRequired" />
 					<show id="qa:clMethod" />
+					<show id="fm:commentCount" force="true" />										
 				</field-visibility>
+				<appearance>
+					<field id="fm:commentCount" label="hidden" read-only="true" />
+				</appearance>
 			</form>
 		</forms>
 	</config>

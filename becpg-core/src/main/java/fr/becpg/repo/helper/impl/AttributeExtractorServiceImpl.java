@@ -247,7 +247,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 	@SuppressWarnings("unchecked")
 	@Override
 	public String getStringValue(PropertyDefinition propertyDef, Serializable v, PropertyFormats propertyFormats) {
-
+		
 		String value = null;
 		
 		if (v == null || propertyDef == null) {
@@ -698,8 +698,12 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 				if(DataTypeDefinition.ANY.toString().equals(propertyDef.getDataType().toString()) && value instanceof String) {
 					value = (Serializable) CompareHelper.cleanCompareJSON((String)value);
 				}
-				
-				return getStringValue(propertyDef, value, propertyFormats);
+				if(propertyDef.getConstraints().isEmpty()){
+					return getStringValue(propertyDef, value, propertyFormats);
+				}
+				else{
+					return value.toString();					
+				}				
 			}
 			else if (value instanceof Date) {
 				if(formatData){
@@ -724,8 +728,29 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 	}
 
 	@Override
-	public String extractAssociationForReport(AssociationRef assocRef) {
-		return extractPropName(assocRef.getTargetRef());
+	public String extractAssociationsForReport(List<AssociationRef> assocRefs, QName propertyName) {
+		String values = "";
+		for (AssociationRef assocRef : assocRefs) {
+			
+			if (!values.isEmpty()) {
+				values += RepoConsts.LABEL_SEPARATOR;
+			}
+			
+			NodeRef targetNodeRef = assocRef.getTargetRef();
+			QName targetQName = nodeService.getType(targetNodeRef);
+			
+			if (targetQName.equals(ContentModel.TYPE_PERSON)) {
+				values += extractPropName(targetNodeRef);
+			} else {				
+				String value = (String)nodeService.getProperty(targetNodeRef, propertyName);
+				//propertyName can be empty
+				if(value == null || value.isEmpty()){
+					value = (String)nodeService.getProperty(targetNodeRef, ContentModel.PROP_NAME);
+				}
+				values += value;
+			}
+		}
+		return values;
 	}
 
 

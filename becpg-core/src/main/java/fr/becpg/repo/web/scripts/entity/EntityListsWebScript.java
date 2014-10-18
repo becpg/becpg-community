@@ -229,10 +229,6 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 		else {
 
 			NodeRef entityTplNodeRef = associationService.getTargetAssoc(nodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
-			if(entityTplNodeRef == null){
-				entityTplNodeRef = entityTplService.getEntityTpl(nodeType);
-			}
-
 			if (entityTplNodeRef != null) {
 				
 				final NodeRef templateNodeRef = entityTplNodeRef;

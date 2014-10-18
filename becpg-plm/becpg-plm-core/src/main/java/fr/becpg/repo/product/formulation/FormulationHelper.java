@@ -87,18 +87,20 @@ public class FormulationHelper {
 			} else if (compoListUnit.equals(CompoListUnit.g)) {
 				return qty / 1000;
 			} else if (compoListUnit.equals(CompoListUnit.P)) {
-				Double productQty = null;
-				ProductUnit productUnit = FormulationHelper.getProductUnit(compoListDataItem.getProduct(), nodeService);
-				if (productUnit != null && productUnit.equals(ProductUnit.P)) {
-					productQty = FormulationHelper.getProductQty(compoListDataItem.getProduct(), nodeService);
-				}
+//				Double productQty = null;
+//				ProductUnit productUnit = FormulationHelper.getProductUnit(compoListDataItem.getProduct(), nodeService);
+//				if (productUnit != null && productUnit.equals(ProductUnit.P)) {
+//					productQty = FormulationHelper.getProductQty(compoListDataItem.getProduct(), nodeService);
+//				}
+//
+//				if (productQty == null) {
+//					productQty = 1d;
+//				}
 
-				if (productQty == null) {
-					productQty = 1d;
-				}
-
-				return FormulationHelper.getNetWeight(compoListDataItem.getProduct(), nodeService, FormulationHelper.DEFAULT_NET_WEIGHT) * qty
-						/ productQty;
+//				return FormulationHelper.getNetWeight(compoListDataItem.getProduct(), nodeService, FormulationHelper.DEFAULT_NET_WEIGHT) * qty
+//						/ productQty;
+				
+				return FormulationHelper.getNetWeight(compoListDataItem.getProduct(), nodeService, FormulationHelper.DEFAULT_NET_WEIGHT) * qty;
 			} else if (compoListUnit.equals(CompoListUnit.L) || compoListUnit.equals(CompoListUnit.mL)) {
 
 				if (compoListUnit.equals(CompoListUnit.mL)) {
