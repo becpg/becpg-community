@@ -719,4 +719,14 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 		}
 		return false;
 	}
+	
+	@Override
+	protected QName getPropNameOfType(QName type){
+		if(type != null && type.equals(PLMModel.TYPE_CERTIFICATION)){
+			return ContentModel.PROP_TITLE;
+		}
+		else{
+			return ContentModel.PROP_NAME;
+		}		
+	}
 }

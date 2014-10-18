@@ -271,51 +271,48 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 					logger.error("This property doesn't exist. Name: " + property.getKey());
 					continue;
 				}
-				values.put(propertyDef, attributeExtractorService.extractPropertyForReport(propertyDef, property.getValue(), propertyFormats, false));
+				addData(nodeElt, useCData, propertyDef.getName(), attributeExtractorService.extractPropertyForReport(propertyDef, property.getValue(), propertyFormats, false));
 			}
 		}
 
 		// associations
-		Map<QName, String> tempValues = new HashMap<QName, String>();
+		Map<QName, List<AssociationRef>> tempHashMap = new HashMap<QName, List<AssociationRef>>();
 		List<AssociationRef> associations = nodeService.getTargetAssocs(nodeRef, RegexQNamePattern.MATCH_ALL);
 
 		for (AssociationRef assocRef : associations) {
-
 			QName qName = assocRef.getTypeQName();
-			String name = attributeExtractorService.extractAssociationForReport(assocRef);
-
-			if (tempValues.containsKey(qName)) {
-				String names = tempValues.get(qName);
-				names += RepoConsts.LABEL_SEPARATOR;
-				names += name;
-				tempValues.put(qName, names);
-			} else {
-				tempValues.put(qName, name);
+			List<AssociationRef> assocRefs = tempHashMap.get(qName);
+			if (assocRefs == null) {
+				assocRefs = new ArrayList<AssociationRef>();
+				tempHashMap.put(qName, assocRefs);
 			}
+			assocRefs.add(assocRef);
 		}
 
-		for (Map.Entry<QName, String> tempValue : tempValues.entrySet()) {
+		for (Map.Entry<QName, List<AssociationRef>> tempValue : tempHashMap.entrySet()) {
 			AssociationDefinition associationDef = dictionaryService.getAssociation(tempValue.getKey());
 			if (associationDef == null) {
 				logger.error("This association doesn't exist. Name: " + tempValue.getKey());
 				continue;
-			}
-			values.put(associationDef, tempValue.getValue());
-		}
-
-		for (Map.Entry<ClassAttributeDefinition, String> attrKV : values.entrySet()) {
-
-			if (attrKV.getKey() instanceof PropertyDefinition || !loadTargetAssoc(nodeRef, (AssociationDefinition) attrKV.getKey(), nodeElt)) {
-
-				if (useCData || isMultiLinesAttribute(attrKV.getKey().getName())) {
-					addCDATA(nodeElt, attrKV.getKey().getName(), attrKV.getValue());
-				} else {
-					nodeElt.addAttribute(attrKV.getKey().getName().getLocalName(), attrKV.getValue());
-				}
+			}else if(!loadTargetAssoc(nodeRef, associationDef, nodeElt)){
+				addData(nodeElt, useCData, associationDef.getName(), 
+						attributeExtractorService.extractAssociationsForReport(tempValue.getValue(), getPropNameOfType(associationDef.getTargetClass().getName())));				
 			}
 		}
 	}
+	
+	protected void addData(Element nodeElt, boolean useCData, QName qName, String value){
+		if (useCData || isMultiLinesAttribute(qName)) {
+			addCDATA(nodeElt, qName, value);
+		} else {
+			nodeElt.addAttribute(qName.getLocalName(), value);
+		}
+	}
 
+	protected QName getPropNameOfType(QName type){
+		return ContentModel.PROP_NAME;
+	}
+	
 	protected String generateKeyAttribute(String attributeName) {
 
 		return attributeName.replaceAll(REGEX_REMOVE_CHAR, "").toLowerCase();

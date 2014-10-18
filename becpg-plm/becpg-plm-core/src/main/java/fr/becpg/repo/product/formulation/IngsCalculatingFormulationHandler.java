@@ -73,8 +73,10 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 		logger.debug("Calculate ingredient list");
 
-		// no compo => no formulation
-		if (!formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)) {
+		// no compo, nor ingList on formulated product => no formulation
+		if (!formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT) ||
+				(!alfrescoRepository.hasDataList(formulatedProduct.getNodeRef(), PLMModel.TYPE_INGLIST) &&
+				 !alfrescoRepository.hasDataList(formulatedProduct.getNodeRef(), PLMModel.TYPE_INGLABELINGLIST))) {
 			logger.debug("no compo => no formulation");
 			return true;
 		}

@@ -71,6 +71,7 @@ Après décongélation, à conserver au réfrigérateur et à consommer dans la 
 	<reportEntityGenerated prefix="rep"><![CDATA[2014-02-14T08:22:36.495Z]]></reportEntityGenerated>
 	<autoVersionOnUpdateProps prefix="cm"><![CDATA[false]]></autoVersionOnUpdateProps>
 	<code prefix="bcpg"><![CDATA[PF1551]]></code>
+	<height>220</height>
 	<precautionOfUse>
 		<created prefix="cm"><![CDATA[2013-07-25T13:57:17.715Z]]></created>
 		<sort prefix="bcpg"><![CDATA[117]]></sort>

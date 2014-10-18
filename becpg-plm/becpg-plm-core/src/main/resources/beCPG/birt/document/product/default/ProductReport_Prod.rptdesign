@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
-    <property name="createdBy">Eclipse BIRT Designer Version 4.2.2.v201301221637 Build &lt;4.2.2.v20130206-1509></property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.3.2.v20140211-1400 Build &lt;4.3.2.v20140225-1404></property>
     <list-property name="userProperties">
         <structure>
             <property name="name">Data Cube.OrganoList.x</property>
@@ -2781,7 +2781,7 @@ value = value + "x" + BirtMath.round(dataSetRow["height"],0);
             <list-property name="computedColumns">
                 <structure>
                     <property name="name">pmDimensions</property>
-                    <expression name="expression">(row["length"]!=""? BirtMath.round(row["length"],0) + "x" :  "") + (row["width"]!="" ? BirtMath.round(row["width"],0) + "x"  :  "") +(row["height"]!="" ?   BirtMath.round(row["height"],0)  :  "")</expression>
+                    <expression name="expression">(row["productLength"] != null ? BirtMath.round(row["productLength"],0) : row["length"]!= null ?   BirtMath.round(row["length"],0) :  "") + "x" + (row["productWidth"] != null ? BirtMath.round(row["productWidth"],0) : row["width"]!= null ? BirtMath.round(row["width"],0) :  "") + "x" + (row["productHeight"] != null ? BirtMath.round(row["productHeight"],0) : row["height"]!= null ?   BirtMath.round(row["height"],0)  :  "")</expression>
                     <property name="dataType">string</property>
                 </structure>
             </list-property>
@@ -2863,6 +2863,24 @@ value = value + "x" + BirtMath.round(dataSetRow["height"],0);
                     <text-property name="heading">height</text-property>
                     <property name="analysisColumn">height</property>
                 </structure>
+                <structure>
+                    <property name="columnName">productHeight</property>
+                    <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">productHeight</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">productWidth</property>
+                    <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">productWidth</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">productLength</property>
+                    <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">productLength</text-property>
+                </structure>
             </list-property>
             <list-property name="filter">
                 <structure>
@@ -2940,6 +2958,21 @@ value = value + "x" + BirtMath.round(dataSetRow["height"],0);
                     </structure>
                     <structure>
                         <property name="position">12</property>
+                        <property name="name">productHeight</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">productWidth</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">14</property>
+                        <property name="name">productLength</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">15</property>
                         <property name="name">pmDimensions</property>
                         <property name="dataType">string</property>
                     </structure>
@@ -3024,8 +3057,29 @@ value = value + "x" + BirtMath.round(dataSetRow["height"],0);
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">productHeight</property>
+                    <property name="nativeName">productHeight</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">productWidth</property>
+                    <property name="nativeName">productWidth</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">14</property>
+                    <property name="name">productLength</property>
+                    <property name="nativeName">productLength</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingLists//packagingList]#:#{itemType;STRING;/@itemType},{packagingListProduct;STRING;/@packagingListProduct},{legalName;STRING;/@legalName},{packagingListQty;STRING;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{tare;DOUBLE;/@tare},{packagingListIsMaster;STRING;/@packagingListIsMaster},{length;STRING;@length},{width;STRING;@width},{height;STRING;@height}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingLists//packagingList]#:#{itemType;STRING;/@itemType},{packagingListProduct;STRING;/@packagingListProduct},{legalName;STRING;/@legalName},{packagingListQty;STRING;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{tare;DOUBLE;/@tare},{packagingListIsMaster;STRING;/@packagingListIsMaster},{length;STRING;@length},{width;STRING;@width},{height;STRING;@height},{productHeight;DOUBLE;../../../height},{productWidth;DOUBLE;../../../width},{productLength;DOUBLE;../../../length}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -4702,6 +4756,287 @@ value = value + "x" + BirtMath.round(dataSetRow["height"],0);
                 </ex-property>
             </list-property>
         </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="controlDefList" id="3434">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">clCharacts</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">clCharacts</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">clUnit</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">clUnit</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">clTarget</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="heading">clTarget</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">clMini</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="heading">clMini</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">clMaxi</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="heading">clMaxi</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">clMethod</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">clMethod</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">clTextCriteria</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">clTextCriteria</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">clRequired</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">clRequired</text-property>
+                </structure>
+            </list-property>
+            <list-property name="parameters"/>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">clCharacts</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">clUnit</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">clTarget</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">clMini</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">clMaxi</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">clMethod</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">clTextCriteria</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">clRequired</property>
+                        <property name="dataType">boolean</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">DataXml</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">clCharacts</property>
+                    <property name="nativeName">clCharacts</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">clUnit</property>
+                    <property name="nativeName">clUnit</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">clTarget</property>
+                    <property name="nativeName">clTarget</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">clMini</property>
+                    <property name="nativeName">clMini</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">clMaxi</property>
+                    <property name="nativeName">clMaxi</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">clMethod</property>
+                    <property name="nativeName">clMethod</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">clTextCriteria</property>
+                    <property name="nativeName">clTextCriteria</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">clRequired</property>
+                    <property name="nativeName">clRequired</property>
+                    <property name="dataType">boolean</property>
+                    <property name="nativeDataType">16</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/controlDefLists/controlDefList]#:#{clCharacts;STRING;/@clCharacts},{clUnit;STRING;/@clUnit},{clTarget;DOUBLE;/@clTarget},{clMini;DOUBLE;/@clMini},{clMaxi;DOUBLE;/@clMaxi},{clMethod;STRING;/@clMethod},{clTextCriteria;STRING;/@clTextCriteria},{clRequired;BOOLEAN;/@clRequired}]]></xml-property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>2.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>clCharacts</design:name>
+              <design:position>1</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>clCharacts</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>clUnit</design:name>
+              <design:position>2</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>clUnit</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>clTarget</design:name>
+              <design:position>3</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>8</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>clTarget</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>clMini</design:name>
+              <design:position>4</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>8</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>clMini</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>clMaxi</design:name>
+              <design:position>5</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>8</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>clMaxi</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>clMethod</design:name>
+              <design:position>6</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>clMethod</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>clTextCriteria</design:name>
+              <design:position>7</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>clTextCriteria</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+      <design:criteria/>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>MAX_ROW</name>
+                    <value>-1</value>
+                </ex-property>
+                <ex-property>
+                    <name>XML_FILE</name>
+                </ex-property>
+            </list-property>
+        </oda-data-set>
     </data-sets>
     <styles>
         <style name="report" id="2">
@@ -4882,12 +5217,12 @@ value = value + "x" + BirtMath.round(dataSetRow["height"],0);
                         <property name="width">2.0972222222222223in</property>
                     </column>
                     <column id="767">
-                        <property name="width">2.4305555555555554in</property>
                         <property name="style">becpg-col-border</property>
+                        <property name="width">2.4305555555555554in</property>
                     </column>
                     <column id="768">
-                        <property name="width">2.2777777777777777in</property>
                         <property name="style">becpg-col-border</property>
+                        <property name="width">2.2777777777777777in</property>
                     </column>
                     <row id="769">
                         <cell id="770">
@@ -5503,7 +5838,7 @@ value = value + "x" + BirtMath.round(dataSetRow["height"],0);
         </grid>
         <label id="2700">
             <property name="style">becpg-chapter-header</property>
-            <text-property name="text">RECETTE</text-property>
+            <text-property name="text">COMPOSITION</text-property>
         </label>
         <label id="3462"/>
         <label id="2877">
@@ -5586,24 +5921,24 @@ BirtMath.round(dataSetRow["compoListQty"] * 1000000, 2)+ " mg";
                 </structure>
             </list-property>
             <column id="2910">
-                <property name="width">0.6946564885496184in</property>
                 <property name="style">becpg-col-border</property>
+                <property name="width">0.6946564885496184in</property>
             </column>
             <column id="2906">
-                <property name="width">4.125in</property>
                 <property name="style">becpg-col-border</property>
+                <property name="width">4.125in</property>
             </column>
             <column id="2979">
-                <property name="width">0.6979166666666666in</property>
                 <property name="style">becpg-col-border</property>
+                <property name="width">0.6979166666666666in</property>
             </column>
             <column id="2969">
-                <property name="width">0.6979166666666666in</property>
                 <property name="style">becpg-col-border</property>
+                <property name="width">0.6979166666666666in</property>
             </column>
             <column id="3001">
-                <property name="width">0.6106870229007634in</property>
                 <property name="style">becpg-col-border</property>
+                <property name="width">0.6106870229007634in</property>
             </column>
             <header>
                 <row id="2911">
@@ -5804,24 +6139,24 @@ value = value + " x " + dataSetRow["height"];
                 <property name="width">0.7633587786259542in</property>
             </column>
             <column id="2718">
-                <property name="width">2.8625954198473282in</property>
                 <property name="style">becpg-col-border</property>
+                <property name="width">2.8625954198473282in</property>
             </column>
             <column id="2720">
-                <property name="width">0.8473282442748091in</property>
                 <property name="style">becpg-col-border</property>
+                <property name="width">0.8473282442748091in</property>
             </column>
             <column id="2936">
-                <property name="width">1.0381679389312977in</property>
                 <property name="style">becpg-col-border</property>
+                <property name="width">1.0381679389312977in</property>
             </column>
             <column id="2721">
-                <property name="width">0.7480916030534351in</property>
                 <property name="style">becpg-col-border</property>
+                <property name="width">0.7480916030534351in</property>
             </column>
             <column id="2996">
-                <property name="width">0.6259541984732825in</property>
                 <property name="style">becpg-col-border</property>
+                <property name="width">0.6259541984732825in</property>
             </column>
             <header>
                 <row id="2703">
@@ -6564,8 +6899,8 @@ true
                 <property name="width">1.3358778625954197in</property>
             </column>
             <column id="3260">
-                <property name="width">5.4961832061068705in</property>
                 <property name="style">becpg-col-border</property>
+                <property name="width">5.4961832061068705in</property>
             </column>
             <detail>
                 <row id="3253">
@@ -6619,8 +6954,8 @@ true
                 <property name="width">1.3435114503816794in</property>
             </column>
             <column id="3355">
-                <property name="width">5.488549618320611in</property>
                 <property name="style">becpg-col-border</property>
+                <property name="width">5.488549618320611in</property>
             </column>
             <detail>
                 <row id="3348">
@@ -6639,6 +6974,151 @@ true
             </detail>
         </table>
         <label id="3450"/>
+        <label id="1009">
+            <property name="style">becpg-chapter-header</property>
+            <property name="marginTop">0pt</property>
+            <property name="marginBottom">0pt</property>
+            <property name="textAlign">center</property>
+            <property name="display">block</property>
+            <text-property name="text">PLAN DE CONTRÔLE</text-property>
+        </label>
+        <label id="2569"/>
+        <table id="3435">
+            <property name="style">becpg-table</property>
+            <property name="dataSet">controlDefList</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">clCharacts</property>
+                    <text-property name="displayName">clCharacts</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["clCharacts"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">clTarget</property>
+                    <text-property name="displayName">clTarget</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["clTarget"]</expression>
+                    <property name="dataType">float</property>
+                </structure>
+                <structure>
+                    <property name="name">clMaxi</property>
+                    <text-property name="displayName">clMaxi</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["clMaxi"]</expression>
+                    <property name="dataType">float</property>
+                </structure>
+                <structure>
+                    <property name="name">clMini</property>
+                    <text-property name="displayName">clMini</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["clMini"]</expression>
+                    <property name="dataType">float</property>
+                </structure>
+                <structure>
+                    <property name="name">clMethod</property>
+                    <text-property name="displayName">clMethod</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["clMethod"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">clUnit</property>
+                    <text-property name="displayName">clUnit</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["clUnit"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">clRequired</property>
+                    <text-property name="displayName">clRequired</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["clRequired"]</expression>
+                    <property name="dataType">boolean</property>
+                </structure>
+            </list-property>
+            <list-property name="filter">
+                <structure>
+                    <property name="operator">eq</property>
+                    <expression name="expr" type="javascript">row["clRequired"]</expression>
+                    <simple-property-list name="value1">
+                        <value>"true"</value>
+                    </simple-property-list>
+                    <property name="updateAggregation">true</property>
+                </structure>
+            </list-property>
+            <column id="3563"/>
+            <column id="3564">
+                <property name="style">becpg-col-border</property>
+            </column>
+            <column id="3565">
+                <property name="style">becpg-col-border</property>
+            </column>
+            <column id="3541">
+                <property name="style">becpg-col-border</property>
+            </column>
+            <column id="3566">
+                <property name="style">becpg-col-border</property>
+            </column>
+            <header>
+                <row id="3436">
+                    <property name="style">becpg-col-header</property>
+                    <cell id="3437">
+                        <label id="3522">
+                            <text-property name="text">Caractéristique</text-property>
+                        </label>
+                    </cell>
+                    <cell id="3438">
+                        <label id="3524">
+                            <text-property name="text">Cible</text-property>
+                        </label>
+                    </cell>
+                    <cell id="3439">
+                        <label id="3544">
+                            <text-property name="text">Unité</text-property>
+                        </label>
+                    </cell>
+                    <cell id="3538">
+                        <label id="3542">
+                            <text-property name="text">Mini</text-property>
+                        </label>
+                    </cell>
+                    <cell id="3440">
+                        <label id="3534">
+                            <text-property name="text">Maxi</text-property>
+                        </label>
+                    </cell>
+                </row>
+            </header>
+            <detail>
+                <row id="3442">
+                    <property name="style">becpg-row-border</property>
+                    <cell id="3443">
+                        <data id="3523">
+                            <property name="resultSetColumn">clCharacts</property>
+                        </data>
+                    </cell>
+                    <cell id="3444">
+                        <data id="3525">
+                            <property name="style">becpg-data</property>
+                            <property name="resultSetColumn">clTarget</property>
+                        </data>
+                    </cell>
+                    <cell id="3445">
+                        <data id="3545">
+                            <property name="style">becpg-data</property>
+                            <property name="resultSetColumn">clUnit</property>
+                        </data>
+                    </cell>
+                    <cell id="3539">
+                        <data id="3543">
+                            <property name="style">becpg-data</property>
+                            <property name="resultSetColumn">clMini</property>
+                        </data>
+                    </cell>
+                    <cell id="3446">
+                        <data id="3547">
+                            <property name="style">becpg-data</property>
+                            <property name="resultSetColumn">clMaxi</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+        </table>
+        <label id="3567"/>
         <label id="2853">
             <property name="style">becpg-chapter-header</property>
             <text-property name="text">PHOTOS DU PRODUIT</text-property>
@@ -7268,7 +7748,7 @@ true
                 quVuumQmWXUH953Cn7IAZwI/z+cVPX+fOoULrF1rypyi8y/r1h2bvGwgLd1QsmoVPcoCA+oCivXoCOVS
                 EBABASHKID9w+/O48c5I8bjoX9WLH0opAeRJHVgRwfv3rGG5/POuCLEYmCT1YcXjoZQeRLFSrRyA/fvS
                 INz+eedOOOOdurHTjjjho1//2Q==
-            </property>
+</property>
         </structure>
     </list-property>
 </report>
