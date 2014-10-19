@@ -14,6 +14,7 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.security.aop.SecurityMethodBeforeAdvice;
 
 public class FormulaService {
@@ -76,6 +77,9 @@ public class FormulaService {
 			return nodeService.getProperty(nodeRef, QName.createQName(qname, namespaceService));
 		}
 
+		public QName getQName(String qName){
+			return QName.createQName(qName, namespaceService);
+		}
 	}
 
 	public StandardEvaluationContext createEvaluationContext(ProductData productData) {
