@@ -569,12 +569,12 @@
 			<form id="formulation">
 				<field-visibility>
 					<show id="cm:name" />
+					<show id="bcpg:legalName" />
 					<show id="cm:description" />
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:netWeight" force="true" />
-					<show id="bcpg:productDensity" />
-					<show id="bcpg:productSpecifications" />
+					<show id="bcpg:servingSize" force="true" />
 					<show id="bcpg:compareWithEntities" force="true" />
 					<show id="bcpg:entityTplRef" force="true" />
 				</field-visibility>
@@ -587,14 +587,6 @@
 						</control>
 					</field>
 					<field id="bcpg:netWeight" />
-					<field id="bcpg:productDensity" />
-					<field id="bcpg:productSpecifications">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}
-							</control-param>
-						</control>
-					</field>
 					<field id="bcpg:compareWithEntities">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -867,12 +859,12 @@
 			<form id="formulation">
 				<field-visibility>
 					<show id="cm:name" />
-					<show id="cm:description" />
+					<show id="bcpg:legalName" />
+					<show id="cm:description" force="true" />
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:netWeight" force="true" />
-					<show id="bcpg:productDensity" />
-					<show id="bcpg:productSpecifications" />
+					<show id="bcpg:servingSize" force="true" />
 					<show id="bcpg:entityTplRef" force="true" />
 				</field-visibility>
 				<appearance>
@@ -884,14 +876,6 @@
 						</control>
 					</field>
 					<field id="bcpg:netWeight" />
-					<field id="bcpg:productDensity" />
-					<field id="bcpg:productSpecifications">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}
-							</control-param>
-						</control>
-					</field>
 					<field id="bcpg:entityTplRef">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -2131,11 +2115,11 @@
 			<form id="formulation">
 				<field-visibility>
 					<show id="cm:name" />
+					<show id="bcpg:legalName" />
 					<show id="cm:description" />
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:netWeight" force="true" />
-					<show id="bcpg:productDensity" />
 					<show id="bcpg:entityTplRef" force="true" />
 				</field-visibility>
 				<appearance>
@@ -2321,11 +2305,11 @@
 			<form id="formulation">
 				<field-visibility>
 					<show id="cm:name" />
+					<show id="bcpg:legalName" />
 					<show id="cm:description" />
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:netWeight" force="true" />
-					<show id="bcpg:productDensity" />
 					<show id="bcpg:entityTplRef" force="true" />
 				</field-visibility>
 				<appearance>
@@ -2677,8 +2661,6 @@
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:netWeight" force="true" />
-					<show id="bcpg:productDensity" />
-					<show id="bcpg:productSpecifications" />
 					<show id="bcpg:compareWithEntities" force="true" />
 					<show id="bcpg:entityTplRef" force="true" />
 				</field-visibility>
@@ -2942,8 +2924,6 @@
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:netWeight" force="true" />
-					<show id="bcpg:productDensity" />
-					<show id="bcpg:productSpecifications" />
 					<show id="bcpg:entityTplRef" force="true" />
 				</field-visibility>
 				<appearance>
