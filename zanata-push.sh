@@ -1,3 +1,4 @@
 #!/bin/bash
 
-mvn org.zanata:zanata-maven-plugin:3.3.2:push-module -Dzanata.deleteObsoleteModules=true -Dzanata.pushType=both  -Dzanata.excludes='**/becpg-config-*.properties,**/test/**/*.properties,becpg-enterprise/**/*.properties,becpg-olap/**/*.properties,becpg-report/**/*.properties,**/dataTypeAnalyzers.properties,**/bin/**/*.properties,**/log4j.properties,**/module.properties,**/file-mapping.properties **/*.metadata' -Dzanata.disableSSLCert 
+mvn clean
+mvn org.zanata:zanata-maven-plugin:3.3.2:push-module -Dzanata.deleteObsoleteModules=true -Dzanata.pushType=both  -Dzanata.excludes='**/becpg-config-*.properties,**/test/**/*.properties,becpg-enterprise/**/*.properties,becpg-olap/**/*.properties,becpg-report/**/*.properties,**/dataTypeAnalyzers.properties,**/bin/**/*.properties,**/log4j.properties,**/module.properties,**/*/file-mapping.properties,**/*.metadata,CompareEntities-messages.properties,**/target/**/*.properties ' -Dzanata.disableSSLCert 
