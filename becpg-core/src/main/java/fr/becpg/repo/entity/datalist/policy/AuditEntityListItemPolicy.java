@@ -10,6 +10,7 @@ import java.util.Set;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AuthenticationService;
@@ -22,8 +23,12 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 /**
  * @author querephi
  */
-public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnDeleteNodePolicy, NodeServicePolicies.OnUpdateNodePolicy,
-		NodeServicePolicies.OnCreateNodePolicy {
+public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy implements 
+				NodeServicePolicies.OnDeleteNodePolicy, 
+				NodeServicePolicies.OnUpdateNodePolicy,
+				NodeServicePolicies.OnCreateNodePolicy,
+				NodeServicePolicies.OnCreateAssociationPolicy,
+				NodeServicePolicies.OnDeleteAssociationPolicy{
 
 	private static String KEY_LIST_ITEM = "KeyListItem";
 	private static String KEY_LIST = "KeyList";
@@ -42,6 +47,8 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy implements No
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM, new JavaBehaviour(this, "onDeleteNode"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdateNodePolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM, new JavaBehaviour(this, "onUpdateNode"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM, new JavaBehaviour(this, "onCreateNode"));
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM, new JavaBehaviour(this, "onCreateAssociation"));
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM, new JavaBehaviour(this, "onDeleteAssociation"));
 	}
 
 	@Override
@@ -106,6 +113,16 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy implements No
 				}				
 			}			
 		}
+	}
+
+	@Override
+	public void onDeleteAssociation(AssociationRef assocRef) {
+		queueListNodeRef(KEY_LIST_ITEM, assocRef.getSourceRef());		
+	}
+
+	@Override
+	public void onCreateAssociation(AssociationRef assocRef) {
+		queueListNodeRef(KEY_LIST_ITEM, assocRef.getSourceRef());		
 	}
 
 }
