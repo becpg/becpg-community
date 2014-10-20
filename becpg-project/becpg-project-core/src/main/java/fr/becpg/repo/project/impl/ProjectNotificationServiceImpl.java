@@ -3,8 +3,10 @@ package fr.becpg.repo.project.impl;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.action.executer.MailActionExecuter;
@@ -15,6 +17,8 @@ import org.alfresco.service.cmr.action.ActionService;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.security.AuthorityService;
+import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -77,6 +81,9 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 
 	@Autowired
 	private Repository repositoryHelper;
+	
+	@Autowired
+	private AuthorityService authorityService;
 
 	@Override
 	public void notifyTaskStateChanged(NodeRef projectNodeRef, NodeRef taskNodeRef, String beforeState, String afterState) {
@@ -135,7 +142,7 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 			logger.warn("Template not found.");
 		} else {
 
-			List<String> authorities = new ArrayList<>();
+			Set<String> authorities = new HashSet<>();
 
 			// Set the notification recipients
 			List<NodeRef> observerNodeRefs = associationService.getTargetAssocs(taskNodeRef, ProjectModel.ASSOC_TL_OBSERVERS);
@@ -155,16 +162,22 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 					String authorityName = null;
 					QName type = nodeService.getType(observerNodeRef);
 					if (type.equals(ContentModel.TYPE_AUTHORITY_CONTAINER)) {
-						authorityName = (String) nodeService.getProperty(observerNodeRef, ContentModel.PROP_AUTHORITY_NAME);
+					    authorityName  = (String) nodeService.getProperty(observerNodeRef, ContentModel.PROP_AUTHORITY_NAME);
+						for( String userAuth : authorityService.getContainedAuthorities(AuthorityType.USER, authorityName, false)){
+							if(!userAuth.equals(AuthenticationUtil.getFullyAuthenticatedUser())){
+								authorities.add(userAuth);
+							}
+						}
 					} else {
 						authorityName = (String) nodeService.getProperty(observerNodeRef, ContentModel.PROP_USERNAME);
+						if (logger.isDebugEnabled()) {
+							logger.debug("authorityName : " + authorityName);
+						}
+						if(!authorityName.equals(AuthenticationUtil.getFullyAuthenticatedUser())){
+							authorities.add(authorityName);
+						}
 					}
-					if (logger.isDebugEnabled()) {
-						logger.debug("authorityName : " + authorityName);
-					}
-					if(!authorityName.equals(AuthenticationUtil.getFullyAuthenticatedUser())){
-						authorities.add(authorityName);
-					}
+					
 				}
 
 				try {

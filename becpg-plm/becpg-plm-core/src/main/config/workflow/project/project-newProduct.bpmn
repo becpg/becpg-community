@@ -18,6 +18,7 @@
 execution.setVariable('npdwf_needDefinitionProduct', task.getVariable('npdwf_needDefinitionProduct'));
 execution.setVariable('npdwf_needDefinitionRecipeProduct', task.getVariable('npdwf_needDefinitionRecipeProduct'));
 execution.setVariable('npdwf_needDefinitionPackagingKit', task.getVariable('npdwf_needDefinitionPackagingKit'));
+execution.setVariable('npdwf_npdSelectedProducts', task.getVariable('npdwf_npdSelectedProducts'));
 execution.setVariable('npdwf_npdAction', task.getVariable('npdwf_npdAction'));</activiti:string>
           </activiti:field>
         </activiti:taskListener>
