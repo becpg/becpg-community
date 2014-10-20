@@ -46,6 +46,8 @@ public class ExcelHelper {
 						cell.setCellValue((String) obj);
 					else if (obj instanceof Double)
 						cell.setCellValue((double) obj);
+					else if (obj instanceof Integer)
+						cell.setCellValue((int) obj);
 				}
 			}
 		}
