@@ -336,5 +336,25 @@ public class ProjectServiceImpl implements ProjectService {
 		}
 		
 	}
+
+	@Override
+	//TODO
+	public NodeRef refusedTask(NodeRef nodeRef) {
+		nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_STATE, TaskState.OnHold.toString());
+		
+		NodeRef nextTask = findRefusedTaskRef(nodeRef);
+		
+		if(nextTask!=null){
+			openTask(nextTask);
+		}
+		
+		return nextTask;
+		
+	}
+
+	private NodeRef findRefusedTaskRef(NodeRef nodeRef) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }

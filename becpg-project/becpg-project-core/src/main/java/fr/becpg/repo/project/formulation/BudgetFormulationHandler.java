@@ -22,7 +22,6 @@ import fr.becpg.repo.project.data.projectList.TaskListDataItem;
  */
 public class BudgetFormulationHandler extends FormulationBaseHandler<ProjectData> {
 
-	private static Log logger = LogFactory.getLog(BudgetFormulationHandler.class);
 
 	@Override
 	public boolean process(ProjectData projectData) throws FormulateException {

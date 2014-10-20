@@ -19,6 +19,7 @@ package fr.becpg.repo.helper.impl;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -290,9 +291,14 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 			}
 
 			if (propertyDef.isMultiValued()) {
-
-				List<String> values = (List<String>) v;
-
+				List<String> values = null;
+						
+				if(v instanceof String){
+					values = Arrays.asList((String)v);
+				} else {
+					values = (List<String>) v;
+				}
+				
 				for (String tempValue : values) {
 					if(tempValue!=null){
 						if (value != null) {
