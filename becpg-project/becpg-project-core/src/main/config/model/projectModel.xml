@@ -50,6 +50,8 @@
 		<constraint name="pjt:deliverableStates" type="LIST">
 			<parameter name="allowedValues">
 				<list>
+					<value>PreScript</value>
+					<value>PostScript</value>
 					<value>Planned</value>
 					<value>InProgress</value>
 					<value>Completed</value>
@@ -499,6 +501,9 @@
 				<property name="pjt:dlUrl">
 					<type>d:text</type>
 				</property>
+				<property name="pjt:dlScript">
+					<type>d:text</type>
+				</property>
 			</properties>
 			<associations>
 				<association name="pjt:dlTask">
@@ -509,7 +514,7 @@
 					<target>
 						<class>pjt:taskList</class>
 						<mandatory>true</mandatory>
-						<many>false</many>
+						<many>true</many>
 					</target>
 				</association>
 				<association name="pjt:dlContent">

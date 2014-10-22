@@ -141,7 +141,8 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 					if(nextTask.getPrevTasks().isEmpty()){						
 						if(nextTask.getStart().before(new Date())){							
 							logger.debug("Start first task.");
-							nextTask.setState(TaskState.InProgress);
+							openTask(projectData, nextTask);
+							
 						}
 					}
 					else{
@@ -149,24 +150,17 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 						if(ProjectHelper.areTasksDone(projectData, nextTask.getPrevTasks())){								
 							if(nextTask.getManualDate() == null){									
 								logger.debug("Start task since previous are done");
-								nextTask.setState(TaskState.InProgress);
+								openTask(projectData, nextTask);
 							}
 							// manual date -> we wait the date
 							else if(nextTask.getStart().before(new Date())){
 								logger.debug("Start task since we are after planned startDate. start planned: " + nextTask.getStart());
-								nextTask.setState(TaskState.InProgress);
+								openTask(projectData, nextTask);
 							}
 						}
 					}
 					
 				} else if (TaskState.Completed.equals(nextTask.getState())) {
-
-					List<DeliverableListDataItem> nextDeliverables = ProjectHelper.getDeliverables(projectData,
-							nextTask.getNodeRef());
-
-					for (DeliverableListDataItem nextDeliverable : nextDeliverables) {
-						nextDeliverable.setState(DeliverableState.Completed);
-					}
 
 					nextTask.setCompletionPercent(COMPLETED);											
 				}
@@ -223,6 +217,21 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 		}
 	}
 	
+	private void openTask(ProjectData projectData, TaskListDataItem nextTask) {
+		nextTask.setState(TaskState.InProgress);
+		List<DeliverableListDataItem> deliverables = ProjectHelper.getDeliverables(projectData,
+				nextTask.getNodeRef());
+		if(deliverables!=null){
+			for(DeliverableListDataItem deliverable : deliverables){
+				if(DeliverableState.PreScript.equals(deliverable.getState())){
+					projectService.runScript(projectData.getNodeRef(), nextTask.getNodeRef(), deliverable.getScript());
+				}
+			}
+		}
+		
+	}
+
+
 	private void visitGroup(ProjectData projectData, TaskListDataItem parent){
 		
 		// close Group ?

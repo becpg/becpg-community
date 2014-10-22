@@ -19,7 +19,9 @@ package fr.becpg.repo.project.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,6 +29,7 @@ import org.alfresco.repo.security.authority.AuthorityDAO;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.repository.ScriptService;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.site.SiteService;
@@ -40,6 +43,7 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.ProjectRepoConsts;
+import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.AssociationService;
@@ -67,12 +71,12 @@ public class ProjectServiceImpl implements ProjectService {
 	private static Log logger = LogFactory.getLog(ProjectServiceImpl.class);
 
 	@Autowired
-	private AlfrescoRepository<ProjectData> alfrescoRepository;	
+	private AlfrescoRepository<ProjectData> alfrescoRepository;
 	@Autowired
 	private AssociationService associationService;
 	@Autowired
 	private NodeService nodeService;
-	@Autowired	
+	@Autowired
 	private RepoService repoService;
 	@Autowired
 	private SiteService siteService;
@@ -86,7 +90,12 @@ public class ProjectServiceImpl implements ProjectService {
 	private PermissionService permissionService;
 	@Autowired
 	private NamespaceService namespaceService;
-	
+	@Autowired
+	private ScriptService scriptService;
+
+	@Autowired
+	private EntityListDAO entityListDAO;
+
 	@Override
 	public void openDeliverable(NodeRef deliverableNodeRef) {
 
@@ -101,14 +110,39 @@ public class ProjectServiceImpl implements ProjectService {
 
 	@Override
 	public void openTask(NodeRef taskNodeRef) {
-		
+
 		logger.debug("open Task " + taskNodeRef);
-		List<AssociationRef> sourceAssocs = nodeService.getSourceAssocs(taskNodeRef, ProjectModel.ASSOC_DL_TASK);		
-		for(AssociationRef sourceAssoc : sourceAssocs){
-			nodeService.setProperty(sourceAssoc.getSourceRef(), ProjectModel.PROP_DL_STATE, DeliverableState.InProgress.toString());
+
+		List<AssociationRef> sourceAssocs = nodeService.getSourceAssocs(taskNodeRef, ProjectModel.ASSOC_DL_TASK);
+		for (AssociationRef sourceAssoc : sourceAssocs) {
+			if (DeliverableState.PreScript.equals(nodeService.getProperty(sourceAssoc.getSourceRef(), ProjectModel.PROP_DL_STATE))) {
+				runScript(getProjectNodeRef(taskNodeRef), taskNodeRef,
+						(String) nodeService.getProperty(sourceAssoc.getSourceRef(), ProjectModel.PROP_DL_SCRIPT));
+			} else if (!DeliverableState.PostScript.equals(nodeService.getProperty(sourceAssoc.getSourceRef(), ProjectModel.PROP_DL_STATE))) {
+				nodeService.setProperty(sourceAssoc.getSourceRef(), ProjectModel.PROP_DL_STATE, DeliverableState.InProgress.toString());
+			}
 		}
+
 	}
-	
+
+	@Override
+	public void completeTask(NodeRef taskNodeRef) {
+		List<AssociationRef> sourceAssocs = nodeService.getSourceAssocs(taskNodeRef, ProjectModel.ASSOC_DL_TASK);
+		for (AssociationRef sourceAssoc : sourceAssocs) {
+			if (DeliverableState.PostScript.equals(nodeService.getProperty(sourceAssoc.getSourceRef(), ProjectModel.PROP_DL_STATE))) {
+				runScript(getProjectNodeRef(taskNodeRef), taskNodeRef,
+						(String) nodeService.getProperty(sourceAssoc.getSourceRef(), ProjectModel.PROP_DL_SCRIPT));
+			} else if (!DeliverableState.PreScript.equals(nodeService.getProperty(sourceAssoc.getSourceRef(), ProjectModel.PROP_DL_STATE))) {
+				nodeService.setProperty(sourceAssoc.getSourceRef(), ProjectModel.PROP_DL_STATE, DeliverableState.Completed.toString());
+			}
+		}
+
+	}
+
+	private NodeRef getProjectNodeRef(NodeRef taskNodeRef) {
+		return entityListDAO.getEntity(taskNodeRef);
+	}
+
 	@Override
 	public List<NodeRef> getTaskLegendList() {
 		return BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_TASK_LEGEND).addSort(BeCPGModel.PROP_SORT, true).list();
@@ -116,8 +150,8 @@ public class ProjectServiceImpl implements ProjectService {
 
 	@Override
 	public NodeRef getProjectsContainer(String siteId) {
-		if(siteId!=null && siteId.length()>0){
-			return siteService.getContainer(siteId,SiteService.DOCUMENT_LIBRARY);
+		if (siteId != null && siteId.length() > 0) {
+			return siteService.getContainer(siteId, SiteService.DOCUMENT_LIBRARY);
 		}
 		return null;
 	}
@@ -125,157 +159,160 @@ public class ProjectServiceImpl implements ProjectService {
 	@Override
 	public void cancel(NodeRef projectNodeRef) {
 
-		logger.debug("cancel project: " + projectNodeRef + " exists ? " + nodeService.exists(projectNodeRef));		
-		if(nodeService.exists(projectNodeRef)){
+		logger.debug("cancel project: " + projectNodeRef + " exists ? " + nodeService.exists(projectNodeRef));
+		if (nodeService.exists(projectNodeRef)) {
 			ProjectData projectData = alfrescoRepository.findOne(projectNodeRef);
-	         
-			for (TaskListDataItem taskListDataItem : projectData.getTaskList()) {				
-				if (projectWorkflowService.isWorkflowActive(taskListDataItem)){
-					projectWorkflowService.cancelWorkflow(taskListDataItem);					
-				}					
-			}    
-			
+
+			for (TaskListDataItem taskListDataItem : projectData.getTaskList()) {
+				if (projectWorkflowService.isWorkflowActive(taskListDataItem)) {
+					projectWorkflowService.cancelWorkflow(taskListDataItem);
+				}
+			}
+
 			alfrescoRepository.save(projectData);
-		}		
+		}
 	}
 
 	@Override
-	public void formulate(NodeRef projectNodeRef) throws  FormulateException {		
-		if (nodeService.getType(projectNodeRef).equals(ProjectModel.TYPE_PROJECT)) {			
-			formulationService.formulate(projectNodeRef);			
+	public void formulate(NodeRef projectNodeRef) throws FormulateException {
+		if (nodeService.getType(projectNodeRef).equals(ProjectModel.TYPE_PROJECT)) {
+			formulationService.formulate(projectNodeRef);
 		}
 	}
 
 	@Override
 	public void deleteTask(NodeRef taskListNodeRef) {
-		
-		// update prevTasks assoc of next tasks		
+
+		// update prevTasks assoc of next tasks
 		List<NodeRef> deleteTaskPrevTaskNodeRefs = associationService.getTargetAssocs(taskListNodeRef, ProjectModel.ASSOC_TL_PREV_TASKS);
 		List<AssociationRef> nextTaskAssociationRefs = nodeService.getSourceAssocs(taskListNodeRef, ProjectModel.ASSOC_TL_PREV_TASKS);
-		
-		for(AssociationRef nextTaskAssociationRef : nextTaskAssociationRefs){
-			
-			List<NodeRef> nextTaskPrevTaskNodeRefs = associationService.getTargetAssocs(nextTaskAssociationRef.getSourceRef(), ProjectModel.ASSOC_TL_PREV_TASKS);
-			if(nextTaskAssociationRefs.contains(taskListNodeRef)){
+
+		for (AssociationRef nextTaskAssociationRef : nextTaskAssociationRefs) {
+
+			List<NodeRef> nextTaskPrevTaskNodeRefs = associationService.getTargetAssocs(nextTaskAssociationRef.getSourceRef(),
+					ProjectModel.ASSOC_TL_PREV_TASKS);
+			if (nextTaskAssociationRefs.contains(taskListNodeRef)) {
 				nextTaskPrevTaskNodeRefs.remove(taskListNodeRef);
-			}			
-			
-			for(NodeRef deleteTaskPrevTaskNodeRef : deleteTaskPrevTaskNodeRefs){
+			}
+
+			for (NodeRef deleteTaskPrevTaskNodeRef : deleteTaskPrevTaskNodeRefs) {
 				nextTaskPrevTaskNodeRefs.add(deleteTaskPrevTaskNodeRef);
 			}
-			
+
 			associationService.update(nextTaskAssociationRef.getSourceRef(), nextTaskAssociationRef.getTypeQName(), nextTaskPrevTaskNodeRefs);
 		}
-		
-//		// delete dl (not the document associated to dl -> user must delete them)
-//		List<AssociationRef> dlAssociationRefs = nodeService.getSourceAssocs(taskListNodeRef, ProjectModel.ASSOC_DL_TASK);
-//		for(AssociationRef dlAssociationRef : dlAssociationRefs){
-//			logger.debug("###delete assoc dlAssociationRef.getSourceRef() : " + dlAssociationRef.getSourceRef());
-//			nodeService.deleteNode(dlAssociationRef.getSourceRef());
-//		}			
+
+		// // delete dl (not the document associated to dl -> user must delete
+		// them)
+		// List<AssociationRef> dlAssociationRefs =
+		// nodeService.getSourceAssocs(taskListNodeRef,
+		// ProjectModel.ASSOC_DL_TASK);
+		// for(AssociationRef dlAssociationRef : dlAssociationRefs){
+		// logger.debug("###delete assoc dlAssociationRef.getSourceRef() : " +
+		// dlAssociationRef.getSourceRef());
+		// nodeService.deleteNode(dlAssociationRef.getSourceRef());
+		// }
 	}
 
 	@Override
 	public void submitTask(NodeRef nodeRef) {
-		
-		Date startDate = (Date)nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_START);
+
+		Date startDate = (Date) nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_START);
 		Date endDate = ProjectHelper.removeTime(new Date());
-		
+
 		nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_STATE, TaskState.Completed.toString());
-		// we want to keep the planned duration to calculate overdue				
+		// we want to keep the planned duration to calculate overdue
 		nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_END, endDate);
-		//milestone duration is maximum 1 day or startDate is after endDate
-		Boolean isMileStone = (Boolean)nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_IS_MILESTONE);
-		if((isMileStone != null && isMileStone.booleanValue()) || 
-				(startDate == null || startDate.after(endDate))){
+		// milestone duration is maximum 1 day or startDate is after endDate
+		Boolean isMileStone = (Boolean) nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_IS_MILESTONE);
+		if ((isMileStone != null && isMileStone.booleanValue()) || (startDate == null || startDate.after(endDate))) {
 			nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_START, endDate);
-		}		
+		}
 	}
-	
+
 	@Override
-	public  List<NodeRef> updateTaskResources(NodeRef projectNodeRef, NodeRef taskRef, List<NodeRef> resources, boolean updatePermissions) {
+	public List<NodeRef> updateTaskResources(NodeRef projectNodeRef, NodeRef taskRef, List<NodeRef> resources, boolean updatePermissions) {
 		List<NodeRef> toRemove = new ArrayList<NodeRef>();
 		List<NodeRef> toAdd = new ArrayList<NodeRef>();
-		for(NodeRef resourceNodeRef : resources) {
+		for (NodeRef resourceNodeRef : resources) {
 			String authorityName = authorityDAO.getAuthorityName(resourceNodeRef);
-			if(isRoleAuhtority(authorityName)){
-				logger.debug("Found project role : "+ authorityName);
+			if (isRoleAuhtority(authorityName)) {
+				logger.debug("Found project role : " + authorityName);
 				toRemove.add(resourceNodeRef);
 				QName propName = extractRolePropName(authorityName);
-				if(propName!=null){
+				if (propName != null) {
 					Object user = nodeService.getProperty(projectNodeRef, propName);
-					logger.debug("Try getting : "+ propName +" : "+user);
-					
-					if(user!=null){
-						if(user instanceof String){
-							NodeRef userNodeRef  = authorityDAO.getAuthorityNodeRefOrNull((String)user);
-							if(userNodeRef!=null){
-								if(logger.isDebugEnabled()){
-									logger.debug("Adding user :"+authorityDAO.getAuthorityName(userNodeRef));
+					logger.debug("Try getting : " + propName + " : " + user);
+
+					if (user != null) {
+						if (user instanceof String) {
+							NodeRef userNodeRef = authorityDAO.getAuthorityNodeRefOrNull((String) user);
+							if (userNodeRef != null) {
+								if (logger.isDebugEnabled()) {
+									logger.debug("Adding user :" + authorityDAO.getAuthorityName(userNodeRef));
 								}
 								toAdd.add(userNodeRef);
-							} 
-						} else if(user instanceof NodeRef){
-							if(logger.isDebugEnabled()){
-								logger.debug("Adding user :"+authorityDAO.getAuthorityName((NodeRef)user));
 							}
-							toAdd.add((NodeRef)user);
+						} else if (user instanceof NodeRef) {
+							if (logger.isDebugEnabled()) {
+								logger.debug("Adding user :" + authorityDAO.getAuthorityName((NodeRef) user));
+							}
+							toAdd.add((NodeRef) user);
 						}
 					} else {
-						logger.debug("Try getting assoc: "+ propName );
+						logger.debug("Try getting assoc: " + propName);
 						List<AssociationRef> assocs = nodeService.getTargetAssocs(projectNodeRef, propName);
-						if(assocs !=null){
-							for(AssociationRef assoc : assocs){
-								if(logger.isDebugEnabled()){
-									logger.debug("Adding user :"+authorityDAO.getAuthorityName(assoc.getTargetRef()));
+						if (assocs != null) {
+							for (AssociationRef assoc : assocs) {
+								if (logger.isDebugEnabled()) {
+									logger.debug("Adding user :" + authorityDAO.getAuthorityName(assoc.getTargetRef()));
 								}
 								toAdd.add(assoc.getTargetRef());
 							}
 						}
 					}
 				}
-				
+
 			}
 		}
-		
-		
-		for(NodeRef resourceNodeRef : toAdd){
+
+		for (NodeRef resourceNodeRef : toAdd) {
 			resources.add(resourceNodeRef);
-			if(updatePermissions){
+			if (updatePermissions) {
 				updateProjectPermission(projectNodeRef, taskRef, resourceNodeRef, true);
 			}
 		}
-		
+
 		resources.removeAll(toRemove);
-		
+
 		return resources;
-		
+
 	}
 
 	@Override
 	public String getDeliverableUrl(NodeRef projectNodeRef, String url) {
-		if(url!=null && url.contains("{")){
+		if (url != null && url.contains("{")) {
 			Matcher patternMatcher = Pattern.compile("\\{([^}]+)\\}").matcher(url);
 			StringBuffer sb = new StringBuffer();
 			while (patternMatcher.find()) {
 
 				String assocQname = patternMatcher.group(1);
 				String replacement = "";
-				if("nodeRef".equals(assocQname)){
-					 replacement += projectNodeRef;
-				 
+				if ("nodeRef".equals(assocQname)) {
+					replacement += projectNodeRef;
+
 				} else {
-					
-					List<AssociationRef> assocs = nodeService.getTargetAssocs(projectNodeRef, QName.createQName(assocQname,namespaceService));
-					if(assocs !=null){
-						for(AssociationRef assoc : assocs){
-							if(replacement.length()>0){
-								replacement+=",";
+
+					List<AssociationRef> assocs = nodeService.getTargetAssocs(projectNodeRef, QName.createQName(assocQname, namespaceService));
+					if (assocs != null) {
+						for (AssociationRef assoc : assocs) {
+							if (replacement.length() > 0) {
+								replacement += ",";
 							}
-							replacement+=assoc.getTargetRef();
+							replacement += assoc.getTargetRef();
 						}
 					}
-					
+
 				}
 
 				patternMatcher.appendReplacement(sb, replacement != null ? replacement : "");
@@ -283,78 +320,89 @@ public class ProjectServiceImpl implements ProjectService {
 			}
 			patternMatcher.appendTail(sb);
 			return sb.toString();
-			
+
 		}
 		return url;
 	}
 
-	
-	
 	private QName extractRolePropName(String authorityName) {
-		String propName = authorityName
-				.substring((PermissionService.GROUP_PREFIX+ProjectRepoConsts.PROJECT_GROUP_PREFIX).length(), authorityName.length())
-				.replace("_", ":");
-		
+		String propName = authorityName.substring((PermissionService.GROUP_PREFIX + ProjectRepoConsts.PROJECT_GROUP_PREFIX).length(),
+				authorityName.length()).replace("_", ":");
+
 		return QName.createQName(propName, namespaceService);
 	}
 
 	private boolean isRoleAuhtority(String authorityName) {
-		return authorityName!=null && authorityName.startsWith(PermissionService.GROUP_PREFIX+ProjectRepoConsts.PROJECT_GROUP_PREFIX);
+		return authorityName != null && authorityName.startsWith(PermissionService.GROUP_PREFIX + ProjectRepoConsts.PROJECT_GROUP_PREFIX);
 	}
 
 	@Override
 	public void updateProjectPermission(NodeRef projectNodeRef, NodeRef taskListNodeRef, NodeRef resourceNodeRef, boolean allow) {
 		if (ProjectModel.TYPE_PROJECT.equals(nodeService.getType(projectNodeRef))
 				&& permissionService.hasReadPermission(projectNodeRef) == AccessStatus.ALLOWED) {
-			
+
 			List<NodeRef> nodeRefs = new ArrayList<NodeRef>(1);
 			nodeRefs.add(taskListNodeRef);
-			
-			if(resourceNodeRef!=null){
-			String authorityName = authorityDAO.getAuthorityName(resourceNodeRef);
 
-			if (authorityName!=null && !isRoleAuhtority(authorityName)) {
-				logger.debug("Set permission for authority: "+authorityName+" allow :"+allow);
-				ProjectData projectData = alfrescoRepository.findOne(projectNodeRef);
-				List<DeliverableListDataItem> deliverableList = ProjectHelper.getDeliverables(projectData, taskListNodeRef);
-				for (DeliverableListDataItem dl : deliverableList) {
-					nodeRefs.add(dl.getNodeRef());
-				}
+			if (resourceNodeRef != null) {
+				String authorityName = authorityDAO.getAuthorityName(resourceNodeRef);
 
-				for (NodeRef n : nodeRefs) {
-					if (allow) {
-							permissionService.setPermission(n, authorityName, PermissionService.EDITOR, allow);
-					} else {
-						// permissionService.deletePermission(n, userName,
-						// PermissionService.EDITOR);
-						permissionService.clearPermission(n, authorityName);
+				if (authorityName != null && !isRoleAuhtority(authorityName)) {
+					logger.debug("Set permission for authority: " + authorityName + " allow :" + allow);
+					ProjectData projectData = alfrescoRepository.findOne(projectNodeRef);
+					List<DeliverableListDataItem> deliverableList = ProjectHelper.getDeliverables(projectData, taskListNodeRef);
+					for (DeliverableListDataItem dl : deliverableList) {
+						nodeRefs.add(dl.getNodeRef());
 					}
 
+					for (NodeRef n : nodeRefs) {
+						if (allow) {
+							permissionService.setPermission(n, authorityName, PermissionService.EDITOR, allow);
+						} else {
+							// permissionService.deletePermission(n, userName,
+							// PermissionService.EDITOR);
+							permissionService.clearPermission(n, authorityName);
+						}
+
+					}
 				}
 			}
 		}
-		}
-		
+
 	}
 
 	@Override
-	//TODO
+	public void runScript(NodeRef projectNodeRef, NodeRef taskNodeRef, String scriptString) {
+
+		if (scriptString != null && !scriptString.isEmpty()) {
+			Map<String, Object> model = new HashMap<String, Object>();
+
+			model.put("task", taskNodeRef);
+			model.put("project", projectNodeRef);
+
+			scriptService.executeScriptString(scriptString, model);
+		}
+
+	}
+
+	@Override
+	// TODO
 	public NodeRef refusedTask(NodeRef nodeRef) {
 		nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_STATE, TaskState.OnHold.toString());
-		
+
 		NodeRef nextTask = findRefusedTaskRef(nodeRef);
-		
-		if(nextTask!=null){
-			openTask(nextTask);
+
+		if (nextTask != null) {
+
 		}
-		
+
 		return nextTask;
-		
+
 	}
 
 	private NodeRef findRefusedTaskRef(NodeRef nodeRef) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 }

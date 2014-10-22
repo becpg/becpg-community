@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.activiti.engine.delegate.DelegateTask;
+import org.alfresco.repo.forum.CommentService;
 import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.repo.workflow.activiti.ActivitiScriptNode;
 import org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener;
@@ -36,19 +37,14 @@ public class SubmitTask extends ScriptTaskListener {
 
 	private ProjectService projectService;
 
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
-
-	public void setProjectService(ProjectService projectService) {
-		this.projectService = projectService;
-	}
+	private CommentService commentService;
 
 	@Override
 	public void notify(final DelegateTask task) {
 
 		nodeService = getServiceRegistry().getNodeService();
 		projectService = (ProjectService) ApplicationContextHelper.getApplicationContext().getBean("projectService");
+		commentService = (CommentService) ApplicationContextHelper.getApplicationContext().getBean("commentService");
 
 		/**
 		 * update task
@@ -57,64 +53,78 @@ public class SubmitTask extends ScriptTaskListener {
 
 		// for compatibility with existing workflow (not the best) we need this
 		// for old instances, otherwise endDate is not filled
+
+		NodeRef taskNodeRef = null;
+
 		if (action == null || action.equals("submitTask")) {
 			ActivitiScriptNode taskNode = (ActivitiScriptNode) task.getVariable("pjt_workflowTask");
 			if (taskNode != null) {
 				logger.debug("taskNode exist " + taskNode.getNodeRef());
-				NodeRef taskNodeRef = taskNode.getNodeRef();
+				taskNodeRef = taskNode.getNodeRef();
 				if (nodeService.exists(taskNodeRef)) {
 					projectService.submitTask(taskNodeRef);
 				}
 			}
+
+			@SuppressWarnings("unchecked")
+			List<ActivitiScriptNode> selectedNodes = (List<ActivitiScriptNode>) task.getVariable("npdwf_npdSelectedProducts");
+			NodeRef pkgNodeRef = ((ActivitiScriptNode) task.getVariable("bpm_package")).getNodeRef();
+
+			if (selectedNodes != null) {
+				updateSelectedNodes(pkgNodeRef, selectedNodes);
+			}
+
+		} else if (action.equals("refused")) {
+
+			taskNodeRef = projectService.refusedTask(taskNodeRef);
 		}
 
-		@SuppressWarnings("unchecked")
-		List<ActivitiScriptNode> selectedNodes = (List<ActivitiScriptNode>) task.getVariable("npdwf_npdSelectedProducts");
-		NodeRef pkgNodeRef = ((ActivitiScriptNode) task.getVariable("bpm_package")).getNodeRef();
-
-		if (selectedNodes != null) {
-			updateSelectedNodes(pkgNodeRef, selectedNodes);
+		if (taskNodeRef != null) {
+			String taskComment = (String) task.getVariable("bpm_comment");
+			if (taskComment != null && !taskComment.isEmpty()) {
+				commentService.createComment(taskNodeRef, "", taskComment, false);
+			}
 		}
 
 	}
 
 	private void updateSelectedNodes(final NodeRef pkgNodeRef, final List<ActivitiScriptNode> selectedNodes) {
-			if (selectedNodes != null && !selectedNodes.isEmpty()) {
+		if (selectedNodes != null && !selectedNodes.isEmpty()) {
 
-				NodeRef projectNodeRef = null;
+			NodeRef projectNodeRef = null;
 
-				List<NodeRef> toRemoveNodes = new ArrayList<>();
-				List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(pkgNodeRef, WorkflowModel.ASSOC_PACKAGE_CONTAINS,
-						RegexQNamePattern.MATCH_ALL);
-				for (ChildAssociationRef childAssoc : childAssocs) {
-					if (nodeService.getType(childAssoc.getChildRef()).equals(ProjectModel.TYPE_PROJECT)) {
-						projectNodeRef = childAssoc.getChildRef();
-					} else if (nodeService.getType(childAssoc.getChildRef()).equals(PLMModel.TYPE_FINISHEDPRODUCT)) {
-						boolean toRemove = true;
-						for (ActivitiScriptNode selectedProduct : selectedNodes) {
-							if (selectedProduct.getNodeRef().equals(childAssoc.getChildRef())) {
-								toRemove = false;
-								break;
-							}
-						}
-						if (toRemove) {
-							toRemoveNodes.add(childAssoc.getChildRef());
-							nodeService.setProperty(childAssoc.getChildRef(), PLMModel.PROP_PRODUCT_STATE, SystemState.Refused);
-							nodeService.removeChildAssociation(childAssoc);
+			List<NodeRef> toRemoveNodes = new ArrayList<>();
+			List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(pkgNodeRef, WorkflowModel.ASSOC_PACKAGE_CONTAINS,
+					RegexQNamePattern.MATCH_ALL);
+			for (ChildAssociationRef childAssoc : childAssocs) {
+				if (nodeService.getType(childAssoc.getChildRef()).equals(ProjectModel.TYPE_PROJECT)) {
+					projectNodeRef = childAssoc.getChildRef();
+				} else if (nodeService.getType(childAssoc.getChildRef()).equals(PLMModel.TYPE_FINISHEDPRODUCT)) {
+					boolean toRemove = true;
+					for (ActivitiScriptNode selectedProduct : selectedNodes) {
+						if (selectedProduct.getNodeRef().equals(childAssoc.getChildRef())) {
+							toRemove = false;
+							break;
 						}
 					}
-				}
-
-				if (projectNodeRef != null) {
-					for (NodeRef toRemoveNodeRef : toRemoveNodes) {
-						nodeService.removeAssociation(projectNodeRef, toRemoveNodeRef, ProjectModel.ASSOC_PROJECT_ENTITY);
+					if (toRemove) {
+						toRemoveNodes.add(childAssoc.getChildRef());
+						nodeService.setProperty(childAssoc.getChildRef(), PLMModel.PROP_PRODUCT_STATE, SystemState.Refused);
+						nodeService.removeChildAssociation(childAssoc);
 					}
-				}
-
-				for (ActivitiScriptNode selectedProduct : selectedNodes) {
-					nodeService.setProperty(selectedProduct.getNodeRef(), PLMModel.PROP_PRODUCT_STATE, SystemState.ToValidate);
 				}
 			}
+
+			if (projectNodeRef != null) {
+				for (NodeRef toRemoveNodeRef : toRemoveNodes) {
+					nodeService.removeAssociation(projectNodeRef, toRemoveNodeRef, ProjectModel.ASSOC_PROJECT_ENTITY);
+				}
+			}
+
+			for (ActivitiScriptNode selectedProduct : selectedNodes) {
+				nodeService.setProperty(selectedProduct.getNodeRef(), PLMModel.PROP_PRODUCT_STATE, SystemState.ToValidate);
+			}
+		}
 
 	}
 }

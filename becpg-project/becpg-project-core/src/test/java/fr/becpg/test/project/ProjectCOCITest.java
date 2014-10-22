@@ -68,10 +68,10 @@ public class ProjectCOCITest extends AbstractProjectTestCase {
 				NodeRef workingCopyNodeRef = checkOutCheckInService.checkout(projectTplNodeRef);
 				
 				ProjectData workingCopyData = (ProjectData)alfrescoRepository.findOne(workingCopyNodeRef);								
-				assertTrue(workingCopyData.getDeliverableList().get(0).getTask().equals(workingCopyData.getTaskList().get(0).getNodeRef()));
-				assertTrue(workingCopyData.getDeliverableList().get(1).getTask().equals(workingCopyData.getTaskList().get(1).getNodeRef()));
-				assertTrue(workingCopyData.getDeliverableList().get(2).getTask().equals(workingCopyData.getTaskList().get(1).getNodeRef()));
-				assertTrue(workingCopyData.getDeliverableList().get(3).getTask().equals(workingCopyData.getTaskList().get(2).getNodeRef()));
+				assertTrue(workingCopyData.getDeliverableList().get(0).getTasks().get(0).equals(workingCopyData.getTaskList().get(0).getNodeRef()));
+				assertTrue(workingCopyData.getDeliverableList().get(1).getTasks().get(0).equals(workingCopyData.getTaskList().get(1).getNodeRef()));
+				assertTrue(workingCopyData.getDeliverableList().get(2).getTasks().get(0).equals(workingCopyData.getTaskList().get(1).getNodeRef()));
+				assertTrue(workingCopyData.getDeliverableList().get(3).getTasks().get(0).equals(workingCopyData.getTaskList().get(2).getNodeRef()));
 				
 				// Check in
 				logger.info("Check in project " + workingCopyNodeRef  + ruleService.getSavedRuleFolderAssoc(workingCopyNodeRef));

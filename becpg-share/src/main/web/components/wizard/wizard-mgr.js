@@ -255,6 +255,13 @@
                         loadStep :  function WizardMgr_loadStep(step)
                         {
 
+                            if(!step.title || step.title == null){
+                                Dom.get(this.id + "-wizardTitle" ).innerHTML ="";
+                            } else {
+                                Dom.get(this.id + "-wizardTitle" ).innerHTML = this.msg(step.title);
+                            }
+                            
+                            
                             if (!step.nodeRef || step.nodeRef == null || step.nodeRef.length < 1)
                             {
                                 step.nodeRef = this.options.nodeRef;

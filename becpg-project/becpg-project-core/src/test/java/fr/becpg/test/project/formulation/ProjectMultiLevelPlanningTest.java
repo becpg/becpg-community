@@ -21,7 +21,6 @@ import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.project.data.PlanningMode;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.ProjectState;
-import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.impl.ProjectHelper;
 import fr.becpg.test.project.AbstractProjectTestCase;
 

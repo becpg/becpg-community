@@ -17,6 +17,8 @@
       beCPG.component.DecisionTree.superclass.constructor.call(this, "beCPG.component.DecisionTree", htmlId, [ "button",
             "container" ]);
 
+      Bubbling.on("afterFormRuntimeInit", this.onAfterFormRuntimeInit, this);
+      
       this.fieldId = fieldId;
       
       return this;
@@ -34,6 +36,8 @@
          .augmentObject(
                beCPG.component.DecisionTree.prototype,
                {
+                   
+                  formRuntime : null, 
                   /**
                    * Object container for initialization options
                    * 
@@ -47,6 +51,8 @@
                       currentValue: []
                   },
 
+                  //Alfresco.forms.validation.mandatory
+                  
                   /**
                    * Fired by YUI when parent element is available for scripting.
                    * 
@@ -61,7 +67,7 @@
                     
                      var htmlForm = "";
                      for(var i = 0; i< this.options.data.length; i++){
-                        var question = this.options.data[i],showComment = false, commentLabel = null;
+                        var question = this.options.data[i],showComment = false, textarea = false , commentLabel = null;
                       
                         if(question.choices){
                         
@@ -79,18 +85,26 @@
                                   var msgKey  =  choice.id == "-" ? "form.control.decision-tree.empty" : "form.control.decision-tree."+this.options.prefix+"."+question.id+"."+choice.id;
                                   htmlForm +='<label for="'+this.id+'-choice_'+question.id+'_'+choice.id+'">'+(choice.label ? choice.label:  this.msg(msgKey))+'</label>';
                                  
-                                  htmlForm +='<select '+(choice.multiple ? 'multiple="true"':"")+' '+(this.options.disabled?'disabled':'')+' tabindex="0" id="'+this.id+'-choice_'+question.id+'_'+choice.id+'" class="'+LIST_EVENTCLASS+'" name="--group_'+this.id+question.id+'"  >';
+                                  htmlForm +='<select '+(choice.multiple ? 'multiple="true"':"")+' '+(this.options.disabled?'disabled':'')+' tabindex="0" id="'+this.id+'-select_'+question.id+'_'+choice.id+'" class="'+LIST_EVENTCLASS+'" name="--group_'+this.id+question.id+'"  >';
                                   for(var z = 0; z< choice.list.length; z++){
+                                      var selected = false;
                                       if(choice.multiple){
-                                          
+                                          var values = listOption.split(",");
+                                          for(var zz = 0; zz< values.length; zz++){
+                                              if(values[zz] == choice.list[z]){
+                                                  selected = true;
+                                                  break;
+                                              }
+                                          }
+                                      } else {
+                                          selected = listOption == choice.list[z];
                                       }
-                                      
-                                      htmlForm +='<option '+(listOption == choice.list[z]? "selected":"")+'>'+choice.list[z]+'</option>';
+                                      htmlForm +='<option '+( selected ? "selected":"")+'>'+choice.list[z]+'</option>';
                                   }
                                   htmlForm +='</select>';
                                   htmlForm +="</p>";   
                                   
-                                  YAHOO.util.Event.addListener(this.id+'-choice_'+question.id+'_'+choice.id, "change", function(){
+                                  YAHOO.util.Event.addListener(this.id+'-select_'+question.id+'_'+choice.id, "change", function(){
                                       me.toogleVisible();
                                   });
                                   
@@ -105,6 +119,10 @@
                                   if(choice.comment){
                                      showComment = true;
                                      commentLabel = choice.commentLabel;
+                                     
+                                     if(choice.textarea){
+                                         textarea = choice.textarea
+                                     }
                                   }
                               }
                            }
@@ -112,8 +130,12 @@
                            if(showComment){
                               htmlForm +='<div id="'+this.id+'-comment_'+question.id+'" class="decision-tree-comments hidden" >';
                               htmlForm +='<label for="'+this.id+'-comment_'+question.id+'-input">'+(commentLabel ? commentLabel: this.msg("form.control.decision-tree."+this.options.prefix+"."+question.id+".comment"))+':</label>';
-                              htmlForm +='<input '+(this.options.disabled?'disabled':'')+' tabindex="0" id="'+this.id+'-comment_'+question.id+'-input" class="'+COMMENT_EVENTCLASS+'"  type="textarea"  value="'+this.getCurrentValueComment(question.id)+'" name="--comment_'+this.id+question.id+'" />';
-                              htmlForm +='</div>';
+                              if(textarea){
+                                  htmlForm +='<textarea '+(this.options.disabled?'disabled':'')+' tabindex="0" id="'+this.id+'-comment_'+question.id+'-input" class="'+COMMENT_EVENTCLASS+'"  name="--comment_'+this.id+question.id+'" >'+this.getCurrentValueComment(question.id)+'</textarea>';
+                              } else {
+                                  htmlForm +='<input '+(this.options.disabled?'disabled':'')+' tabindex="0" id="'+this.id+'-comment_'+question.id+'-input" class="'+COMMENT_EVENTCLASS+'"  type="text"  value="'+this.getCurrentValueComment(question.id)+'" name="--comment_'+this.id+question.id+'" />';
+                              }
+                               htmlForm +='</div>';
                            }
                           
                           htmlForm += '</fieldset>';
@@ -177,6 +199,29 @@
                      return "";
                   },
                   
+                  
+                  onAfterFormRuntimeInit : function (layer, args) {
+                      if(!this.options.disable && this.formRuntime == null){
+                          this.formRuntime = args[1].runtime;
+                      
+                          this.formRuntime.removeValidation = function(fieldId){
+                              var foundIndex = -1;
+                              for(var j = 0; j<  this.validations.length; j++){
+                                  if(this.validations[j].fieldId == fieldId){
+                                      foundIndex = j;
+                                      break;
+                                  }
+                              }
+                              
+                              if(foundIndex>0){
+                                  this.validations.splice(foundIndex,1);
+                              }
+                          };
+                      }
+                      
+                  },
+                  
+                  
                   toogleVisible : function (){
                      
                      var ret = [],me = this;
@@ -193,12 +238,47 @@
                            var showComment = false;
                            for(var j = 0; j< question.choices.length; j++){
                              var choice = question.choices[j];
-                             if((choice.list!=null && Dom.get(this.id+"-choice_"+question.id+'_'+choice.id).value!=null)
+                             
+                             if(this.formRuntime!=null && question.mandatory){
+                                 if(choice.list!=null){
+                                     this.formRuntime.addValidation(this.id+'-select_'+question.id+'_'+choice.id, Alfresco.forms.validation.mandatory, null, "keyup");
+                                 } else {
+                                     this.formRuntime.addValidation(this.id+'-choice_'+question.id+'_'+choice.id, Alfresco.forms.validation.mandatory, null, "keyup");
+                                     if(choice.comment ){
+                                         if( Dom.get(this.id+"-choice_"+question.id+'_'+choice.id).checked){
+                                             this.formRuntime.addValidation(this.id+"-comment_"+question.id+"-input", Alfresco.forms.validation.mandatory, null, "keyup");
+                                         } else {
+                                             this.formRuntime.removeValidation(this.id+"-comment_"+question.id+"-input");
+                                         }
+                                     }
+                                     
+                                 }
+                             }
+                             
+                             if((choice.list!=null && Dom.get(this.id+"-select_"+question.id+'_'+choice.id).value!=null)
                                      ||  Dom.get(this.id+"-choice_"+question.id+'_'+choice.id).checked){
                                
                                  if(choice.list!=null){
+                                     var value = "", selectElem = Dom.get(this.id+"-select_"+question.id+'_'+choice.id);
+                                     
+                                     if(choice.multiple){
+                                         for (var j = 0, jj = selectElem.options.length; j < jj; j++)
+                                         {
+                                            if (selectElem.options[j].selected)
+                                            {
+                                               if(value.length>0){
+                                                   value+=",";
+                                               }
+                                               value += selectElem.options[j].value;
+                                            }
+                                         }
+                                     } else {
+                                          value = selectElem.value;
+                                        
+                                     }
                                      ret.push({ qid : question.id, cid : choice.id, listOptions :
-                                         Dom.get(this.id+"-choice_"+question.id+'_'+choice.id).value });
+                                         value });
+                                     
                                  } else {
                                      ret.push({ qid : question.id, cid : choice.id});
                                  }
@@ -231,7 +311,23 @@
                              
                            }
                            
-                        } 
+                        }  else if(question.choices && this.formRuntime!=null && question.mandatory){
+                            for(var j = 0; j< question.choices.length; j++){
+                                var choice = question.choices[j];
+                                
+                                if(this.formRuntime!=null && question.mandatory){
+                                    if(choice.list!=null){
+                                        this.formRuntime.removeValidation(this.id+'-select_'+question.id+'_'+choice.id);
+                                    } else {
+                                        this.formRuntime.removeValidation(this.id+'-choice_'+question.id+'_'+choice.id);
+                                        if(choice.comment ){
+                                            this.formRuntime.removeValidation(this.id+"-comment_"+question.id+"-input");
+                                        }
+                                    }
+                                }
+                            }
+                           
+                       }
                         
                         
                         if(visible.indexOf(question.id) > -1){
@@ -244,10 +340,13 @@
                      if(!this.options.disabled){
                          var hiddenInput = Dom.get(this.fieldId);
                          hiddenInput.value = JSON.stringify(ret);
+                         YAHOO.Bubbling.fire("mandatoryControlValueUpdated");
                      }
                   }
                     
 
                }, true);
-
+   
+   
+   
 })();

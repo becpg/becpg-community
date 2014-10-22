@@ -16,6 +16,7 @@ function main() {
                         formId : step.attributes["formId"],
                         itemId : step.attributes["itemId"],
                         listId : step.attributes["listId"],
+                        title :  step.attributes["title"],
                         nodeRefStepIndex : step.attributes["nodeRefStepIndex"],
                         nextStepWebScript:  step.attributes["nextStepWebScript"]   
                 });

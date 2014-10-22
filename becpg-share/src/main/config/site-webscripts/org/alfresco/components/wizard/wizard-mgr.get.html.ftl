@@ -27,6 +27,7 @@
    <@uniqueIdDiv>
 	   	<#assign el=args.htmlid?html>
 	    <div class="wizard-mgr">
+	          <h1 id="${el}-wizardTitle"></h1>
 	          <div id="${el}-wizard"></div>
 	     </div>
    </@>
