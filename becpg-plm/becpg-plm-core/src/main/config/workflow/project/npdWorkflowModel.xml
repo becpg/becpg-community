@@ -63,6 +63,7 @@
 						<constraint name="npdwf:npdActions" type="LIST">
 			            <parameter name="allowedValues">
 			                <list>
+			                	<value>refused</value>
 			                    <value>createNewProduct</value>
 			                    <value>submitTask</value>                    
 			                </list>

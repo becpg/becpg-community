@@ -26,7 +26,7 @@
 
          var templateUrl = YAHOO.lang
                .substitute(
-                     Alfresco.constants.URL_SERVICECONTEXT + "components/form?entityNodeRef={entityNodeRef}&itemKind={itemKind}&itemId={itemId}&mode={mode}&submitType={submitType}&showCancelButton=true&popup=true",
+                     Alfresco.constants.URL_SERVICECONTEXT + "components/form?formId=simple-form&entityNodeRef={entityNodeRef}&itemKind={itemKind}&itemId={itemId}&mode={mode}&submitType={submitType}&showCancelButton=true&popup=true",
                      {
                         itemKind : "node",
                         itemId : nodes[0],

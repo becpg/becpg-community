@@ -43,16 +43,10 @@
 	   "commentCount":"${task.properties["fm:commentCount"]!""}",
 	   "nodeRef": "${task.nodeRef}",
 	   "isRefusedEnabled": <#if task.assocs["pjt:tlRefusedTaskRef"]?? && task.assocs["pjt:tlRefusedTaskRef"]?size &gt; 0 >true<#else>false</#if>,
-		"deliverables":
+	   "deliverables":
 		[
 		<#if deliverables??>
 			<@renderDeliverables deliverables/>
-		</#if>
-		],
-		"prevDeliverables":
-		[
-		<#if prevDeliverables??>
-			<@renderDeliverables prevDeliverables/>
 		</#if>
 		]
 	}

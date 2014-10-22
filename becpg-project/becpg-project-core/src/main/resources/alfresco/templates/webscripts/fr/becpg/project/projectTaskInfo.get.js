@@ -8,22 +8,6 @@ function contains(a, obj) {
 }
 
 
-function calculatePrevDeliverables(task, prevDeliverables){
-  
-  	var prevTasks = task.assocs["pjt:tlPrevTasks"];
-	for(var i in prevTasks){
-      
-      var prevTask = prevTasks[i];
-      var deliverables = prevTask.sourceAssocs["pjt:dlTask"];
-      for(var j in deliverables){
-    	 if(!contains(prevDeliverables,deliverables[j])){
-    		 prevDeliverables.unshift(deliverables[j]);
-    	 }
-      }
-		calculatePrevDeliverables(prevTask, prevDeliverables);
-	}
-}
-
 function main()
 {
    
@@ -35,15 +19,12 @@ function main()
        return;
    }
    
-   var task = search.findNode(nodeRef), 
-   	prevDeliverables = new Array();
+   var task = search.findNode(nodeRef);
    
    model.task = task;
    
    if(task != null){
-   	calculatePrevDeliverables(task, prevDeliverables);         
       model.deliverables = model.task.sourceAssocs["pjt:dlTask"];   
-      model.prevDeliverables = prevDeliverables;
    }
    
 }

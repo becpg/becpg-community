@@ -17,8 +17,11 @@
  ******************************************************************************/
 package fr.becpg.repo.project.data.projectList;
 
+import java.util.List;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
@@ -35,21 +38,22 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfQname(qname = "pjt:deliverableList")
 public class DeliverableListDataItem extends BeCPGDataObject {
 
-	private NodeRef task;
+	private List<NodeRef> tasks;
 	private DeliverableState state = DeliverableState.Planned;
 	private String description;
 	private String url;
+	private String script;
 	private Integer completionPercent = 0;
 	private NodeRef content;
 
-	@AlfSingleAssoc
+	@AlfMultiAssoc
 	@AlfQname(qname = "pjt:dlTask")
-	public NodeRef getTask() {
-		return task;
+	public List<NodeRef> getTasks() {
+		return tasks;
 	}
 
-	public void setTask(NodeRef task) {
-		this.task = task;
+	public void setTasks(List<NodeRef> tasks) {
+		this.tasks = tasks;
 	}
 
 	
@@ -61,6 +65,18 @@ public class DeliverableListDataItem extends BeCPGDataObject {
 
 	public void setUrl(String url) {
 		this.url = url;
+	}
+
+	
+	
+	@AlfProp
+	@AlfQname(qname = "pjt:dlScript")
+	public String getScript() {
+		return script;
+	}
+
+	public void setScript(String script) {
+		this.script = script;
 	}
 
 	@AlfProp
@@ -112,9 +128,9 @@ public class DeliverableListDataItem extends BeCPGDataObject {
 		super(nodeRef, name);
 	}
 
-	public DeliverableListDataItem(NodeRef nodeRef, NodeRef task, DeliverableState state, String description, Integer completionPercent, NodeRef content) {
+	public DeliverableListDataItem(NodeRef nodeRef, List<NodeRef> tasks, DeliverableState state, String description, Integer completionPercent, NodeRef content) {
 		this.nodeRef = nodeRef;
-		this.task = task;
+		this.tasks = tasks;
 		this.state = state!=null ? state : DeliverableState.Planned;
 		this.description = description;
 		this.completionPercent = completionPercent;
@@ -124,7 +140,7 @@ public class DeliverableListDataItem extends BeCPGDataObject {
 	public DeliverableListDataItem(DeliverableListDataItem d) {
 		super();
 		this.nodeRef = d.getNodeRef();
-		this.task = d.getTask();
+		this.tasks = d.getTasks();
 		this.state = d.getState();
 		this.description = d.getDescription();
 		this.completionPercent = d.getCompletionPercent();
@@ -134,12 +150,14 @@ public class DeliverableListDataItem extends BeCPGDataObject {
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
+		int result = super.hashCode();
+		result = prime * result + ((completionPercent == null) ? 0 : completionPercent.hashCode());
 		result = prime * result + ((content == null) ? 0 : content.hashCode());
 		result = prime * result + ((description == null) ? 0 : description.hashCode());
-		result = prime * result + ((nodeRef == null) ? 0 : nodeRef.hashCode());
-		result = prime * result + ((task == null) ? 0 : task.hashCode());
+		result = prime * result + ((script == null) ? 0 : script.hashCode());
 		result = prime * result + ((state == null) ? 0 : state.hashCode());
+		result = prime * result + ((tasks == null) ? 0 : tasks.hashCode());
+		result = prime * result + ((url == null) ? 0 : url.hashCode());
 		return result;
 	}
 
@@ -147,11 +165,16 @@ public class DeliverableListDataItem extends BeCPGDataObject {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!super.equals(obj))
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
 		DeliverableListDataItem other = (DeliverableListDataItem) obj;
+		if (completionPercent == null) {
+			if (other.completionPercent != null)
+				return false;
+		} else if (!completionPercent.equals(other.completionPercent))
+			return false;
 		if (content == null) {
 			if (other.content != null)
 				return false;
@@ -162,23 +185,29 @@ public class DeliverableListDataItem extends BeCPGDataObject {
 				return false;
 		} else if (!description.equals(other.description))
 			return false;
-		if (nodeRef == null) {
-			if (other.nodeRef != null)
+		if (script == null) {
+			if (other.script != null)
 				return false;
-		} else if (!nodeRef.equals(other.nodeRef))
-			return false;
-		if (task == null) {
-			if (other.task != null)
-				return false;
-		} else if (!task.equals(other.task))
+		} else if (!script.equals(other.script))
 			return false;
 		if (state != other.state)
+			return false;
+		if (tasks == null) {
+			if (other.tasks != null)
+				return false;
+		} else if (!tasks.equals(other.tasks))
+			return false;
+		if (url == null) {
+			if (other.url != null)
+				return false;
+		} else if (!url.equals(other.url))
 			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "DeliverableListDataItem [nodeRef=" + nodeRef + ", task=" + task + ", state=" + state + ", description=" + description + ", content=" + content + "]";
+		return "DeliverableListDataItem [tasks=" + tasks + ", state=" + state + ", description=" + description + ", url=" + url + ", script="
+				+ script + ", completionPercent=" + completionPercent + ", content=" + content + "]";
 	}
 }

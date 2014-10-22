@@ -19,6 +19,7 @@ package fr.becpg.test.project;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -283,10 +284,10 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 				projectTplData.getTaskList().get(5).setPrevTasks(prevTasks);
 
 				List<DeliverableListDataItem> deliverableList = new LinkedList<DeliverableListDataItem>();
-				deliverableList.add(new DeliverableListDataItem(null, projectTplData.getTaskList().get(0).getNodeRef(), null, "Deliveray descr 1", 100, doc1NodeRef));
-				deliverableList.add(new DeliverableListDataItem(null, projectTplData.getTaskList().get(1).getNodeRef(), null, "Deliveray descr 2.1", 30, doc2NodeRef));
-				deliverableList.add(new DeliverableListDataItem(null, projectTplData.getTaskList().get(1).getNodeRef(), null, "Deliveray descr 2.2", 70, doc1NodeRef));
-				deliverableList.add(new DeliverableListDataItem(null, projectTplData.getTaskList().get(2).getNodeRef(), null, "Deliveray descr 3", 100, null));
+				deliverableList.add(new DeliverableListDataItem(null, Arrays.asList(projectTplData.getTaskList().get(0).getNodeRef()), null, "Deliveray descr 1", 100, doc1NodeRef));
+				deliverableList.add(new DeliverableListDataItem(null, Arrays.asList(projectTplData.getTaskList().get(1).getNodeRef()), null, "Deliveray descr 2.1", 30, doc2NodeRef));
+				deliverableList.add(new DeliverableListDataItem(null, Arrays.asList(projectTplData.getTaskList().get(1).getNodeRef()), null, "Deliveray descr 2.2", 70, doc1NodeRef));
+				deliverableList.add(new DeliverableListDataItem(null, Arrays.asList(projectTplData.getTaskList().get(2).getNodeRef()), null, "Deliveray descr 3", 100, null));
 				projectTplData.setDeliverableList(deliverableList);
 
 				alfrescoRepository.save(projectTplData);

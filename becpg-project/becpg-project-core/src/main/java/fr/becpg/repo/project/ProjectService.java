@@ -40,10 +40,17 @@ public interface ProjectService {
 	
 	/**
 	 * Open task in progress
-	 * @param deliverableNodeRef
+	 * @param taskNodeRef
 	 */
 	public void openTask(NodeRef taskNodeRef);
 
+	
+	/**
+	 * Complete task
+	 * @param taskNodeRef
+	 */
+	public void completeTask(NodeRef taskNodeRef);
+	
 	/**
 	 * Get the task legend list
 	 * 
@@ -118,5 +125,16 @@ public interface ProjectService {
 	 * @return 
 	 */
 	public NodeRef refusedTask(NodeRef taskNodeRef);
+
+	
+	/**
+	 * Run a deliverable script
+	 * @param projectNodeRef
+	 * @param taskNodeRef
+	 * @param stringScript
+	 */
+	public void runScript(NodeRef projectNodeRef, NodeRef taskNodeRef, String stringScript);
+
+	
 
 }

@@ -133,7 +133,7 @@ public class ProjectHelper {
 		List<DeliverableListDataItem> deliverableList = new ArrayList<DeliverableListDataItem>();
 		if (projectData.getDeliverableList() != null) {
 			for (DeliverableListDataItem d : projectData.getDeliverableList()) {
-				if (d.getTask() != null && d.getTask().equals(taskListNodeRef)) {
+				if (d.getTasks() != null && d.getTasks().contains(taskListNodeRef)) {
 					deliverableList.add(d);
 				}
 			}

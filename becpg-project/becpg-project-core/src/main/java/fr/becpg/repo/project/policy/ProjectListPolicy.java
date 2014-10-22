@@ -183,12 +183,17 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 			projectActivityService.postTaskStateChangeActivity(nodeRef, beforeState, afterState);
 			formulateProject = true;
 
-			if (beforeState.equals(DeliverableState.Completed.toString()) && afterState.equals(DeliverableState.InProgress.toString())) {
-
+			if (beforeState.equals(TaskState.Completed.toString()) && afterState.equals(TaskState.InProgress.toString())) {
 				// re-open task
 				logger.debug("re-open task: " + nodeRef);
 				projectService.openTask(nodeRef);
+				
 			}
+			
+			if(afterState.equals(TaskState.Completed.toString())){
+				projectService.completeTask(nodeRef);
+			}
+			
 		}
 
 		if (isPropChanged(before, after, ProjectModel.PROP_TL_DURATION) || isPropChanged(before, after, ProjectModel.PROP_TL_START)
