@@ -93,13 +93,11 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		}
 		
 		// Volume
+		Double volumeUsed = calculateVolumeFromChildren(compositeDefaultVariant);
+		formulatedProduct.setRecipeVolumeUsed(volumeUsed);
 		Double netVolume = FormulationHelper.getNetVolume(formulatedProduct);
-		if(netVolume != null){
-			Double volumeUsed = calculateVolumeFromChildren(compositeDefaultVariant);
-			formulatedProduct.setRecipeVolumeUsed(volumeUsed);
-			if(volumeUsed != 0d){
-				formulatedProduct.setYieldVolume(100 * netVolume / volumeUsed);
-			}			
+		if(netVolume != null && volumeUsed != 0d){
+			formulatedProduct.setYieldVolume(100 * netVolume / volumeUsed);
 		}
 		
 		// generic raw material
