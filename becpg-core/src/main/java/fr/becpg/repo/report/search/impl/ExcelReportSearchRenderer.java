@@ -18,6 +18,7 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -155,27 +156,29 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 		String currentNested = "";
 		for (int i = 1; i < headerRow.getLastCellNum(); i++) {
 			if (headerRow.getCell(i) != null) {
-				String cellValue = headerRow.getCell(i).getStringCellValue();
-				if (cellValue != null && !cellValue.isEmpty() && !cellValue.startsWith("#")) {
-					if (cellValue.contains("_")) {
-						if (!currentNested.isEmpty() && currentNested.startsWith(cellValue.split("_")[0])) {
-							currentNested += "|" + cellValue.split("_")[1];
+				if(headerRow.getCell(i).getCellType() == Cell.CELL_TYPE_STRING){
+					String cellValue = headerRow.getCell(i).getStringCellValue();
+					if (cellValue != null && !cellValue.isEmpty() && !cellValue.startsWith("#")) {
+						if (cellValue.contains("_")) {
+							if (!currentNested.isEmpty() && currentNested.startsWith(cellValue.split("_")[0])) {
+								currentNested += "|" + cellValue.split("_")[1];
+							} else {
+								if (!currentNested.isEmpty()) {
+									logger.debug("Add nested field : " + currentNested);
+									metadataFields.add(currentNested);
+								}
+								currentNested = cellValue.replace("_", "|");
+							}
+	
 						} else {
 							if (!currentNested.isEmpty()) {
 								logger.debug("Add nested field : " + currentNested);
 								metadataFields.add(currentNested);
+								currentNested = "";
 							}
-							currentNested = cellValue.replace("_", "|");
+							logger.debug("Add field : " + cellValue);
+							metadataFields.add(cellValue);
 						}
-
-					} else {
-						if (!currentNested.isEmpty()) {
-							logger.debug("Add nested field : " + currentNested);
-							metadataFields.add(currentNested);
-							currentNested = "";
-						}
-						logger.debug("Add field : " + cellValue);
-						metadataFields.add(cellValue);
 					}
 				}
 			}
