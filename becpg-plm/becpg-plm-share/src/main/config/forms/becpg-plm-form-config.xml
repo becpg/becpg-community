@@ -43,6 +43,9 @@
 					<show id="bcpg:ingListGeoOrigin" force="true" />
 					<show id="bcpg:ingListBioOrigin" force="true" />
 					
+					<!-- Packaging -->
+					<show id="bcpg:packagingListProduct" force="true" />
+					
 					<!-- Claim -->
 					<show id="bcpg:lclLabelClaim" force="true" />
 
@@ -56,6 +59,8 @@
 						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="ings-criteria" appearance="bordered-panel"
 						label-id="becpg.forms.set.ings-criteria.label" />
+					<set id="packaging-criteria" appearance="bordered-panel"
+						label-id="becpg.forms.set.packaging.label" />
 					<set id="labelClaim-criteria" appearance="bordered-panel"
 						label-id="becpg.forms.set.claim.label" />		
 
@@ -117,11 +122,21 @@
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
+					
+					<field id="bcpg:packagingListProduct" set="packaging-criteria">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:packagingMaterial,bcpg:packagingKit&#38;excludeClassNames=bcpg:entityTplAspect
+							</control-param>
+						</control>
+					</field>
 
 					<field id="bcpg:lclLabelClaim" set="labelClaim-criteria">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
+					
+					
 				</appearance>
 			</form>
 

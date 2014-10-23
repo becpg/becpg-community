@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.alfresco.repo.admin.SysAdminParams;
 import org.alfresco.repo.security.authority.AuthorityDAO;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -92,6 +93,9 @@ public class ProjectServiceImpl implements ProjectService {
 	private NamespaceService namespaceService;
 	@Autowired
 	private ScriptService scriptService;
+
+	@Autowired
+	SysAdminParams sysAdminParams;
 
 	@Autowired
 	private EntityListDAO entityListDAO;
@@ -379,6 +383,8 @@ public class ProjectServiceImpl implements ProjectService {
 
 			model.put("task", taskNodeRef);
 			model.put("project", projectNodeRef);
+			model.put("shareUrl", sysAdminParams.getShareProtocol() + "//" + sysAdminParams.getShareHost() + ":" + sysAdminParams.getSharePort()
+					+ "/" + sysAdminParams.getShareContext());
 
 			scriptService.executeScriptString(scriptString, model);
 		}
