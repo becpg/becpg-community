@@ -89,7 +89,7 @@
 </#macro>   
 
 <#macro renderField field>
-   <#if field.control?? && field.control.template??>
+   <#if field.control?? && field.control.template?? && field.transitory != true>
       <#assign fieldHtmlId=args.htmlid?js_string + "_" + field.id >
       <#include "${field.control.template}" />
    </#if>
@@ -227,7 +227,7 @@
 </#macro>
 
 <#macro renderLocaleImage field textarea=false>
-  <#if field.dataType == "mltext" && form.mode == "edit">
+  <#if field.transitory != true && field.dataType == "mltext" && form.mode == "edit">
     <#assign localeshort = locale?substring(0,2)?lower_case >
     <#if form.arguments.itemId??>
 	    <span class="locale-icon">
