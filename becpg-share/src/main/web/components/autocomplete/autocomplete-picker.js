@@ -35,7 +35,7 @@
         beCPG.component.AutoCompletePicker.superclass.constructor.call(this, "beCPG.component.AutoCompletePicker",
                 controlId, [ "button", "menu", "container" ]);
 
-        YAHOO.Bubbling.on("afterFormRuntimeInit", this.onAfterFormRuntimeInit, this);
+        YAHOO.Bubbling.on("beforeFormRuntimeInit", this.beforeFormRuntimeInit, this);
 
         this.controlId = controlId;
         this.fieldHtmlId = fieldHtmlId;
@@ -62,8 +62,6 @@
                         objectRenderer : new Alfresco.ObjectRenderer(this),
 
                         openOnce : false,
-
-                        formRuntime : null,
 
                         /**
                          * Object container for initialization options
@@ -709,14 +707,15 @@
                             return ret.join();
                         },
 
-                        onAfterFormRuntimeInit : function(layer, args)
+                        beforeFormRuntimeInit : function(layer, args)
                         {
-                            var me = this;
-                            if (this.options.multipleSelectMode && this.formRuntime == null)
+                            var me = this, formRuntime = args[1].runtime;
+                            if (this.options.multipleSelectMode && this.fieldHtmlId.indexOf(formRuntime.formId.replace("-form",""))>-1)
                             {
 
                                 for (var j = 0; j < args[1].runtime.validations.length; j++)
                                 {
+
                                     if (args[1].runtime.validations[j].fieldId == this.fieldHtmlId)
                                     {
                                         args[1].runtime.validations[j].handler = function mandatory(field, args, event,
@@ -726,8 +725,7 @@
                                            
                                             return YAHOO.lang.trim(values).length !== 0;
                                         };
-                                        this.formRuntime = args[1].runtime;
-                                        break;
+                                        
                                     }
                                 }
 
