@@ -9,5 +9,6 @@
     <locale>es</locale>
     <locale>fr</locale>
     <locale>en</locale>
+    <locale>ru</locale>
   </locales>
 </config>
