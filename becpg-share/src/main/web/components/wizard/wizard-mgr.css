@@ -366,3 +366,13 @@
 	padding-left: 22px;
 }
 
+
+
+.wizard-mgr > h1 {
+    background-color: #FFFFCC;
+    border: 1px solid #CACACA;
+    border-radius: 5px 5px 5px 5px;
+    margin: 0 1em 0.5em 0.3em;
+    padding: 0.6em;
+	display: block;
+}

@@ -257,8 +257,10 @@
 
                             if(!step.title || step.title == null){
                                 Dom.get(this.id + "-wizardTitle" ).innerHTML ="";
+                                Dom.addClass(this.id + "-wizardTitle", "hidden");
                             } else {
                                 Dom.get(this.id + "-wizardTitle" ).innerHTML = this.msg(step.title);
+                                Dom.removeClass(this.id + "-wizardTitle", "hidden");
                             }
                             
                             
