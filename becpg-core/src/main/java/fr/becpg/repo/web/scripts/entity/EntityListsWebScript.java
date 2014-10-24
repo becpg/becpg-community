@@ -227,8 +227,15 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 		}
 		// We get datalist for entity
 		else {
-
-			NodeRef entityTplNodeRef = associationService.getTargetAssoc(nodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
+			
+			NodeRef entityTplNodeRef = null;
+			if(nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_TPL_REF)){
+				entityTplNodeRef = associationService.getTargetAssoc(nodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
+			}
+			else{
+				entityTplNodeRef = entityTplService.getEntityTpl(nodeType);
+			}
+						
 			if (entityTplNodeRef != null) {
 				
 				final NodeRef templateNodeRef = entityTplNodeRef;
