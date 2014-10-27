@@ -205,6 +205,14 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 	}
 
 	protected Map<NodeRef, List<NodeRef>> getMandatoryCharacts(ProductData formulatedProduct, QName componentType) {
-		return getMandatoryCharactsFromList(formulatedProduct.getNutList());
+		Map<NodeRef, List<NodeRef>> mandatoryCharacts = getMandatoryCharactsFromList(formulatedProduct.getNutList());
+		for(NodeRef nutNodeRef : mandatoryCharacts.keySet()){
+			String formula = (String) nodeService.getProperty(nutNodeRef, PLMModel.PROP_NUT_FORMULA);
+			if (formula != null && formula.length() > 0) {
+				mandatoryCharacts.remove(nutNodeRef);
+			}
+		}
+		
+		return mandatoryCharacts;
 	}
 }
