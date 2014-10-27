@@ -45,6 +45,8 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	
 	private List<NodeRef> geoOrigin = new ArrayList<NodeRef>();
 	
+	private List<NodeRef> geoTransfo = new ArrayList<NodeRef>();
+	
 	private List<NodeRef> bioOrigin = new ArrayList<NodeRef>();
 	
 	private Boolean isGMO = false;
@@ -120,6 +122,16 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 		this.geoOrigin = geoOrigin;
 	}
 	
+	@AlfMultiAssoc
+	@AlfQname(qname="bcpg:ingListGeoTransfo")
+	public List<NodeRef> getGeoTransfo() {
+		return geoTransfo;
+	}
+
+	public void setGeoTransfo(List<NodeRef> geoTransfo) {
+		this.geoTransfo = geoTransfo;
+	}
+
 	@AlfMultiAssoc
 	@AlfQname(qname="bcpg:ingListBioOrigin")
 	public List<NodeRef> getBioOrigin() {
@@ -254,12 +266,13 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 		setIsProcessingAid(processingAid);
 	}
 	
-	public IngListDataItem(NodeRef nodeRef, IngListDataItem ingList, Double qtyPerc, List<NodeRef> geoOrigin, List<NodeRef> bioOrigin, Boolean isGMO, Boolean isIonized, Boolean processingAid, NodeRef ing, Boolean isManual)
+	public IngListDataItem(NodeRef nodeRef, IngListDataItem ingList, Double qtyPerc, List<NodeRef> geoOrigin, List<NodeRef> geoTransfo, List<NodeRef> bioOrigin, Boolean isGMO, Boolean isIonized, Boolean processingAid, NodeRef ing, Boolean isManual)
 	{
 		setNodeRef(nodeRef);
 		setParent(ingList);
 		setQtyPerc(qtyPerc);
 		setGeoOrigin(geoOrigin);
+		setGeoTransfo(geoTransfo);
 		setBioOrigin(bioOrigin);
 		setIsGMO(isGMO);
 		setIsIonized(isIonized);

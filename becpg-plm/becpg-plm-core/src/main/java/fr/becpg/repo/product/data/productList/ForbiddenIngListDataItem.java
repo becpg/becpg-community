@@ -41,6 +41,7 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject{
 	String isIonized;
 	private List<NodeRef> ings = new ArrayList<NodeRef>();
 	private List<NodeRef> geoOrigins = new ArrayList<NodeRef>();
+	private List<NodeRef> geoTransfo = new ArrayList<NodeRef>();
 	private List<NodeRef> bioOrigins = new ArrayList<NodeRef>();
 	
 
@@ -115,6 +116,7 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject{
 	public void setIngs(List<NodeRef> ings) {
 		this.ings = ings;
 	}
+	
 	@AlfMultiAssoc
 	@AlfQname(qname="bcpg:filGeoOrigins")
 	public List<NodeRef> getGeoOrigins() {
@@ -124,6 +126,17 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject{
 	public void setGeoOrigins(List<NodeRef> geoOrigins) {
 		this.geoOrigins = geoOrigins;
 	}
+	
+	@AlfMultiAssoc
+	@AlfQname(qname="bcpg:filGeoTransfo")
+	public List<NodeRef> getGeoTransfo() {
+		return geoTransfo;
+	}
+
+	public void setGeoTransfo(List<NodeRef> geoTransfo) {
+		this.geoTransfo = geoTransfo;
+	}
+	
 	@AlfMultiAssoc
 	@AlfQname(qname="bcpg:filBioOrigins")
 	public List<NodeRef> getBioOrigins() {
@@ -133,9 +146,7 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject{
 	public void setBioOrigins(List<NodeRef> bioOrigins) {
 		this.bioOrigins = bioOrigins;
 	}
-	
-	
-	
+		
 	public ForbiddenIngListDataItem() {
 		super();
 	}

@@ -165,12 +165,12 @@
 		<constraint name="bcpg:declarationTypes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
+					<value>DoNotDetails</value>
 					<value>Declare</value>
 					<value>Detail</value>
 					<value>Group</value>
 					<value>Omit</value>
-					<value>DoNotDeclare</value>
-					<value>DoNotDetails</value>
+					<value>DoNotDeclare</value>					
 				</list>
 			</parameter>
 		</constraint>
@@ -949,6 +949,7 @@
 				</property>
 				<property name="bcpg:compoListDeclType">
 					<type>d:text</type>
+					<default>DoNotDetails</default>
 					<index enabled="false" />
 					<constraints>
 						<constraint ref="bcpg:declarationTypes" />
