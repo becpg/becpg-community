@@ -400,7 +400,9 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					geoOrigins = new ArrayList<NodeRef>();
 					geoOrigins.add(geoOrigin1);
 					geoOrigins.add(geoOrigin2);
-					ingList.add(new IngListDataItem(null, 200/3d, geoOrigins, bioOrigins, false, false,false, ing2, false));
+					List<NodeRef> geoTransfo = new ArrayList<NodeRef>();
+					geoTransfo.add(geoOrigin2);
+					ingList.add(new IngListDataItem(null, null, 200/3d, geoOrigins, geoTransfo, bioOrigins, false, false,false, ing2, false));
 					rawMaterial1.setIngList(ingList);
 					//physicoChem
 					List<PhysicoChemListDataItem> physicoChemList = new ArrayList<PhysicoChemListDataItem>();
@@ -613,8 +615,8 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					//ingList : ing5
 					ingList = new ArrayList<IngListDataItem>();			
 					ingList.add(new IngListDataItem(null, 100d, null, null, false, false,false, ing5, false));
-					ingList.add(new IngListDataItem(null, ingList.get(0), 70d, null, null, false, false,false, ing1, false));
-					ingList.add(new IngListDataItem(null, ingList.get(0), 30d, null, null, false, false,false, ing4, false));
+					ingList.add(new IngListDataItem(null, ingList.get(0), 70d, null, null, null, false, false,false, ing1, false));
+					ingList.add(new IngListDataItem(null, ingList.get(0), 30d, null, null, null, false, false,false, ing4, false));
 					rawMaterial7.setIngList(ingList);
 					rawMaterial7NodeRef = alfrescoRepository.create(folderNodeRef, rawMaterial7).getNodeRef();
 					
