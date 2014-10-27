@@ -223,12 +223,11 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 				nextTask.getNodeRef());
 		if(deliverables!=null){
 			for(DeliverableListDataItem deliverable : deliverables){
-				if(DeliverableState.PreScript.equals(deliverable.getState())){
+				if(DeliverableState.PreScript.toString().equals(deliverable.getState())){
 					projectService.runScript(projectData.getNodeRef(), nextTask.getNodeRef(), deliverable.getScript());
 				}
 			}
 		}
-		
 	}
 
 

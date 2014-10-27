@@ -53,6 +53,13 @@
 	padding-left: 20px;
 }
 
+.datagrid span.task-prescript, .datagrid span.task-postscript {
+	background:
+		url("../../components/images/details-16.png")
+		no-repeat;
+	padding-left: 20px;
+}
+
 .datagrid span.task-completed {
 	background:
 		url("../../components/documentlibrary/indicators/project-completed-16.png")

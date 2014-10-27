@@ -119,10 +119,11 @@ public class ProjectServiceImpl implements ProjectService {
 
 		List<AssociationRef> sourceAssocs = nodeService.getSourceAssocs(taskNodeRef, ProjectModel.ASSOC_DL_TASK);
 		for (AssociationRef sourceAssoc : sourceAssocs) {
-			if (DeliverableState.PreScript.equals(nodeService.getProperty(sourceAssoc.getSourceRef(), ProjectModel.PROP_DL_STATE))) {
+			if (DeliverableState.PreScript.toString().equals(nodeService.getProperty(sourceAssoc.getSourceRef(), ProjectModel.PROP_DL_STATE))) {
 				runScript(getProjectNodeRef(taskNodeRef), taskNodeRef,
 						(String) nodeService.getProperty(sourceAssoc.getSourceRef(), ProjectModel.PROP_DL_SCRIPT));
-			} else if (!DeliverableState.PostScript.equals(nodeService.getProperty(sourceAssoc.getSourceRef(), ProjectModel.PROP_DL_STATE))) {
+			} else if (!DeliverableState.PostScript.toString()
+					.equals(nodeService.getProperty(sourceAssoc.getSourceRef(), ProjectModel.PROP_DL_STATE))) {
 				nodeService.setProperty(sourceAssoc.getSourceRef(), ProjectModel.PROP_DL_STATE, DeliverableState.InProgress.toString());
 			}
 		}
@@ -133,10 +134,10 @@ public class ProjectServiceImpl implements ProjectService {
 	public void completeTask(NodeRef taskNodeRef) {
 		List<AssociationRef> sourceAssocs = nodeService.getSourceAssocs(taskNodeRef, ProjectModel.ASSOC_DL_TASK);
 		for (AssociationRef sourceAssoc : sourceAssocs) {
-			if (DeliverableState.PostScript.equals(nodeService.getProperty(sourceAssoc.getSourceRef(), ProjectModel.PROP_DL_STATE))) {
+			if (DeliverableState.PostScript.toString().equals(nodeService.getProperty(sourceAssoc.getSourceRef(), ProjectModel.PROP_DL_STATE))) {
 				runScript(getProjectNodeRef(taskNodeRef), taskNodeRef,
 						(String) nodeService.getProperty(sourceAssoc.getSourceRef(), ProjectModel.PROP_DL_SCRIPT));
-			} else if (!DeliverableState.PreScript.equals(nodeService.getProperty(sourceAssoc.getSourceRef(), ProjectModel.PROP_DL_STATE))) {
+			} else if (!DeliverableState.PreScript.toString().equals(nodeService.getProperty(sourceAssoc.getSourceRef(), ProjectModel.PROP_DL_STATE))) {
 				nodeService.setProperty(sourceAssoc.getSourceRef(), ProjectModel.PROP_DL_STATE, DeliverableState.Completed.toString());
 			}
 		}
@@ -380,6 +381,8 @@ public class ProjectServiceImpl implements ProjectService {
 
 		if (scriptString != null && !scriptString.isEmpty()) {
 			Map<String, Object> model = new HashMap<String, Object>();
+
+			logger.debug("Run task script : " + scriptString);
 
 			model.put("task", taskNodeRef);
 			model.put("project", projectNodeRef);

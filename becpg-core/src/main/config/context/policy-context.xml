@@ -40,11 +40,8 @@
 
 
 	<bean id="entityTplRefAspectPolicy" class="fr.becpg.repo.entity.policy.EntityTplRefAspectPolicy" init-method="init" parent="abstractBeCPGPolicy">
-		<property name="entityService" ref="entityService" />
 		<property name="associationService" ref="associationService" />
 		<property name="entityTplService" ref="entityTplService" />
-		<property name="entityListDAO" ref="entityListDAO" />
-		<property name="ruleService" ref="ruleService"/>
 	</bean>
 
 	<bean id="effectivityAspectPolicy" class="fr.becpg.repo.entity.policy.EffectivityAspectPolicy" init-method="init" parent="abstractBeCPGPolicy">

@@ -26,14 +26,19 @@ import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
+import org.alfresco.repo.rule.RuleModel;
+import org.alfresco.repo.rule.RuntimeRuleService;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.cmr.repository.AssociationRef;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.rule.Rule;
+import org.alfresco.service.cmr.rule.RuleService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
@@ -51,10 +56,13 @@ import fr.becpg.model.DataListModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.entity.EntityTplPlugin;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationService;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
@@ -96,6 +104,18 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 	@Autowired
 	private NamespaceService namespaceService;
+
+	@Autowired
+	private EntityService entityService;
+
+	@Autowired
+	private RuntimeRuleService ruleService;
+
+	@Autowired
+	private AssociationService associationService;
+
+	@Autowired
+	private EntityTplPlugin[] entityTplPlugins;
 
 	/**
 	 * Create the entityTpl
@@ -284,8 +304,8 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 			public void run(NodeRef entityNodeRef) {
 				try {
-					if(logger.isDebugEnabled()){
-						logger.debug("Formulate : "+entityNodeRef);
+					if (logger.isDebugEnabled()) {
+						logger.debug("Formulate : " + entityNodeRef);
 					}
 					formulationService.formulate(entityNodeRef);
 				} catch (FormulateException e) {
@@ -367,5 +387,85 @@ public class EntityTplServiceImpl implements EntityTplService {
 		}
 
 		return entityNodeRefs;
+	}
+
+	@Override
+	public void synchronizeEntity(NodeRef entityNodeRef, NodeRef entityTplNodeRef) {
+		if (entityTplNodeRef != null) {
+
+			try {
+				((RuleService) ruleService).disableRules(entityNodeRef);
+
+				// copy files
+				entityService.copyFiles(entityTplNodeRef, entityNodeRef);
+
+				// copy datalists
+				entityListDAO.copyDataLists(entityTplNodeRef, entityNodeRef, false);
+
+				// copy rules
+				// Check whether the node already has rules or not
+				if (nodeService.hasAspect(entityTplNodeRef, RuleModel.ASPECT_RULES) == true
+						&& !((RuleService) ruleService).getRules(entityTplNodeRef, false).isEmpty()) {
+
+					boolean hasRule = false;
+					if (nodeService.hasAspect(entityNodeRef, RuleModel.ASPECT_RULES) == true) {
+						// Check for a linked to node
+						NodeRef linkedToNode = ((RuleService) ruleService).getLinkedToRuleNode(entityNodeRef);
+						if (linkedToNode == null) {
+							// if the node has no rules we can delete
+							// the folder
+							// ready to link
+							List<Rule> rules = ((RuleService) ruleService).getRules(entityNodeRef, false);
+							if (rules.isEmpty() != false) {
+								// Can't link a node if it already has
+								// rules
+								hasRule = true;
+							} else {
+								// Delete the rules system folder
+								NodeRef ruleFolder = ruleService.getSavedRuleFolderAssoc(entityNodeRef).getChildRef();
+								nodeService.deleteNode(ruleFolder);
+							}
+						} else {
+							// Just remove the aspect and have the
+							// associated
+							// data automatically removed
+							nodeService.removeAspect(entityNodeRef, RuleModel.ASPECT_RULES);
+						}
+
+					}
+					if (!hasRule) {
+						// Create the destination folder as a secondary
+						// child of
+						// the first
+						ChildAssociationRef childAssocRef = ruleService.getSavedRuleFolderAssoc(entityTplNodeRef);
+						if (childAssocRef != null) {
+							NodeRef ruleSetNodeRef = childAssocRef.getChildRef();
+							// The required aspect will automatically be
+							// added to
+							// the node
+							nodeService.addChild(entityNodeRef, ruleSetNodeRef, RuleModel.ASSOC_RULE_FOLDER, RuleModel.ASSOC_RULE_FOLDER);
+						}
+					} else {
+						logger.warn("The current folder has rules and can not be linked to another folder.");
+					}
+
+				}
+				// copy missing aspects
+				Set<QName> aspects = nodeService.getAspects(entityTplNodeRef);
+				for (QName aspect : aspects) {
+					if (!nodeService.hasAspect(entityNodeRef, aspect) && !BeCPGModel.ASPECT_ENTITY_TPL.isMatch(aspect)) {
+						nodeService.addAspect(entityNodeRef, aspect, null);
+					}
+				}
+
+				for (EntityTplPlugin entityTplPlugin : entityTplPlugins) {
+					entityTplPlugin.synchronizeEntity(entityNodeRef,entityTplNodeRef);
+				}
+
+			} finally {
+				((RuleService) ruleService).enableRules(entityNodeRef);
+			}
+		}
+
 	}
 }

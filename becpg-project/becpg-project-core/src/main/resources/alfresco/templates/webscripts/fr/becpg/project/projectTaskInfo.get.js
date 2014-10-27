@@ -22,9 +22,17 @@ function main()
    var task = search.findNode(nodeRef);
    
    model.task = task;
+   model.deliverables = [];
    
-   if(task != null){
-      model.deliverables = model.task.sourceAssocs["pjt:dlTask"];   
+   
+   if(task != null &&  task.sourceAssocs["pjt:dlTask"]!=null){
+      for(var i = 0; i < task.sourceAssocs["pjt:dlTask"].length; i++){
+          var deliverable = task.sourceAssocs["pjt:dlTask"][i];
+          if(deliverable.properties["pjt:dlState"]!= "PreScript"
+              && deliverable.properties["pjt:dlState"]!= "PostScript"){
+              model.deliverables.push(deliverable);
+          }
+      }
    }
    
 }
