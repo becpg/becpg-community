@@ -170,7 +170,7 @@ public class ProjectHelper {
 			for (int i = projectData.getTaskList().size() - 1; i >= 0; i--) {
 				TaskListDataItem t = projectData.getTaskList().get(i);
 
-				if (taskNodeRefs.contains(t.getNodeRef()) && TaskState.Completed.equals(t.getState())) {
+				if (taskNodeRefs.contains(t.getNodeRef()) && (TaskState.Completed.equals(t.getState()) || TaskState.Cancelled.equals(t.getState()))) {
 					inProgressTasks.remove(t.getNodeRef());
 				}
 			}

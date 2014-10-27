@@ -21,6 +21,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.formulation.FormulateException;
@@ -146,7 +147,9 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 					try {
 						policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
 						policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
-						projectService.formulate(projectNodeRef);
+						if(!nodeService.hasAspect(projectNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)){
+							projectService.formulate(projectNodeRef);
+						}
 					} catch (FormulateException e) {
 						logger.error(e, e);
 					} finally {
@@ -355,11 +358,15 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 			properties.remove(ProjectModel.PROP_TL_END);
 			properties.remove(ProjectModel.PROP_TL_WORKFLOW_INSTANCE);
 			properties.remove(ProjectModel.PROP_COMPLETION_PERCENT);
-			if (properties.containsKey(ProjectModel.PROP_TL_STATE)) {
+			if (properties.containsKey(ProjectModel.PROP_TL_STATE) 
+					&& !TaskState.OnHold.toString().equals(properties.get(ProjectModel.PROP_TL_STATE))
+					&& !TaskState.Cancelled.toString().equals(properties.get(ProjectModel.PROP_TL_STATE))) {
 				properties.put(ProjectModel.PROP_TL_STATE, TaskState.Planned);
 			}
 		} else if (ProjectModel.TYPE_DELIVERABLE_LIST.equals(classQName)) {
-			if (properties.containsKey(ProjectModel.PROP_DL_STATE)) {
+			if (properties.containsKey(ProjectModel.PROP_DL_STATE)
+					&& !DeliverableState.PreScript.toString().equals(properties.get(ProjectModel.PROP_DL_STATE))
+					&& !DeliverableState.PostScript.toString().equals(properties.get(ProjectModel.PROP_DL_STATE))) {
 				properties.put(ProjectModel.PROP_DL_STATE, DeliverableState.Planned);
 			}
 		}

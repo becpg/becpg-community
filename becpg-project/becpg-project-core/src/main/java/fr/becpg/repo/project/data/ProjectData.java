@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.hierarchy.HierarchicalEntity;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
@@ -57,7 +58,7 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	private Date completionDate;
 	private PlanningMode planningMode = PlanningMode.Planning;
 	private Integer priority = 2;
-	private ProjectState projectState;
+	private ProjectState projectState = ProjectState.Planned;
 	private NodeRef projectTpl;
 	private Integer completionPercent = 0;
 	private List<NodeRef> entities;
@@ -103,6 +104,8 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 		this.projectTpl = projectTpl;
 		this.completionPercent = completionPercent;
 		this.entities = entities;
+		
+		getAspects().add(BeCPGModel.ASPECT_ENTITY_TPL);
 	}
 
 	@AlfProp
