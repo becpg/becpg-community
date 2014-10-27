@@ -92,6 +92,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 					il.setIsProcessingAid(true);
 					il.setIsIonized(false);
 					il.getGeoOrigin().clear();
+					il.getGeoTransfo().clear();
 					il.getBioOrigin().clear();
 				}
 			}
@@ -355,6 +356,13 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 					newIngListDataItem.getGeoOrigin().add(geoOrigin);
 				}
 			}
+			
+			// Calculate geo transfo
+			for (NodeRef geoTransfo : ingListDataItem.getGeoTransfo()) {
+				if (!newIngListDataItem.getGeoTransfo().contains(geoTransfo)) {
+					newIngListDataItem.getGeoTransfo().add(geoTransfo);
+				}
+			}
 
 			// Calculate bio origins
 			for (NodeRef bioOrigin : ingListDataItem.getBioOrigin()) {
@@ -470,6 +478,20 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 								}
 
 								if (!hasGeoOrigin) {
+									continue; // check next rule
+								}
+							}
+							
+							// GeoTransfo
+							if (!fil.getGeoTransfo().isEmpty()) {
+								boolean hasGeoTransfo = false;
+								for (NodeRef n : ingListDataItem.getGeoTransfo()) {
+									if (fil.getGeoTransfo().contains(n)) {
+										hasGeoTransfo = true;
+									}
+								}
+
+								if (!hasGeoTransfo) {
 									continue; // check next rule
 								}
 							}
