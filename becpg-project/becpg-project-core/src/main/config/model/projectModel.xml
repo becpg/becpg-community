@@ -325,7 +325,7 @@
 				<aspect>bcpg:codeAspect</aspect>
 				<aspect>bcpg:entityListsAspect</aspect>
 				<aspect>pjt:completionAspect</aspect>
-				<aspect>bcpg:entityTplRefAspect</aspect>
+				<!-- <aspect>bcpg:entityTplRefAspect</aspect> -->
 			</mandatory-aspects>
 		</type>
 
