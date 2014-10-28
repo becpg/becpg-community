@@ -1,7 +1,5 @@
 package fr.becpg.repo.project.policy;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
@@ -9,7 +7,6 @@ import java.util.Stack;
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +16,6 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityTplPlugin;
-import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.project.ProjectService;
 
@@ -43,31 +39,12 @@ public class EntityTplProjectPlugin implements EntityTplPlugin {
 		
 		if (ProjectModel.TYPE_PROJECT.equals(nodeService.getType(projectNodeRef))) {
 
-			// copy folders
-			// already done by entity policy
-
-			// copy datalist from Tpl to project
-			Collection<QName> dataLists = new ArrayList<QName>();
-			dataLists.add(ProjectModel.TYPE_TASK_LIST);
-			dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
-			
 			if(logger.isDebugEnabled()){
 				logger.debug("Copy project template datalist '"+ nodeService.getProperty(projectTplNodeRef, ContentModel.PROP_NAME)
 					+ "' for entity "+nodeService.getProperty(projectNodeRef, ContentModel.PROP_NAME));
 			}
 			
-			entityListDAO.copyDataLists(projectTplNodeRef, projectNodeRef, dataLists, false);
-			
-			// we wait files are copied by entity policy
 			initializeNodeRefsAfterCopy(projectNodeRef);
-
-			// initialize
-			try {
-				logger.debug("Project policy formulate");
-				projectService.formulate(projectNodeRef);
-			} catch (FormulateException e) {
-				logger.error(e, e);
-			}
 
 		}
 

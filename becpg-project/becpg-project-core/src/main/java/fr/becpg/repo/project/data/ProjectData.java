@@ -105,7 +105,6 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 		this.completionPercent = completionPercent;
 		this.entities = entities;
 		
-		getAspects().add(BeCPGModel.ASPECT_ENTITY_TPL);
 	}
 
 	@AlfProp

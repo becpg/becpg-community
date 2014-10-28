@@ -57,6 +57,7 @@ public interface ProjectModel {
 	public static final QName PROP_TL_END = QName.createQName(PROJECT_URI, "tlEnd");
 	public static final QName PROP_TL_STATE = QName.createQName(PROJECT_URI, "tlState");	
 	public static final QName ASSOC_TL_PREV_TASKS = QName.createQName(PROJECT_URI, "tlPrevTasks");
+	public static final QName ASSOC_TL_REFUSED_TASK_REF = QName.createQName(PROJECT_URI, "tlRefusedTaskRef");
 	public static final QName ASSOC_TL_RESOURCES = QName.createQName(PROJECT_URI, "tlResources");
 	public static final QName ASSOC_TL_TASKLEGEND = QName.createQName(PROJECT_URI, "tlTaskLegend");
 	public static final QName ASSOC_TL_OBSERVERS = QName.createQName(PROJECT_URI, "tlObservers");
@@ -98,6 +99,8 @@ public interface ProjectModel {
 	
 	public static final QName TYPE_RESOURCE_COST = QName.createQName(PROJECT_URI, "resourceCost");
 	public static final QName PROP_RESOURCE_COST_VALUE = QName.createQName(PROJECT_URI, "resourceCostValue");
+
+	
 
 	
 }

@@ -46,7 +46,7 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy implements Nod
 	public void doInit() {
 		logger.debug("Init EntityTplPolicy...");
 
-		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, BeCPGModel.ASPECT_ENTITY_TPL_REF,
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2,
 				BeCPGModel.ASSOC_ENTITY_TPL_REF, new JavaBehaviour(this, "onCreateAssociation"));
 
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnAddAspectPolicy.QNAME, BeCPGModel.ASPECT_ENTITY_TPL_REF, new JavaBehaviour(this,

@@ -78,6 +78,7 @@ public class NPDServiceTest extends AbstractProjectTestCase {
 
 				projectData.setParentNodeRef(testFolderNodeRef);
 				projectData = (ProjectData) alfrescoRepository.save(projectData);
+				
 
 				// start
 				projectData.setProjectState(ProjectState.InProgress);
