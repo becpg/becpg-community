@@ -61,6 +61,7 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	private TaskManualDate manualDate;
 	private Integer depthLevel;
 	private TaskListDataItem parent;
+	private TaskListDataItem refusedTask;
 	private Double fixedCost;
 	private Double budgetedCost;
 	private ResourceCost resourceCost; 
@@ -262,6 +263,17 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	@AlfQname(qname="bcpg:parentLevel")
 	public TaskListDataItem getParent() {
 		return this.parent;
+	}
+
+	
+	@AlfProp
+	@AlfQname(qname="pjt:tlRefusedTaskRef")
+	public TaskListDataItem getRefusedTask() {
+		return refusedTask;
+	}
+
+	public void setRefusedTask(TaskListDataItem refusedTask) {
+		this.refusedTask = refusedTask;
 	}
 
 	@Override

@@ -393,6 +393,13 @@ public class EntityTplServiceImpl implements EntityTplService {
 	public void synchronizeEntity(NodeRef entityNodeRef, NodeRef entityTplNodeRef) {
 		if (entityTplNodeRef != null) {
 
+
+			StopWatch watch = null;
+			if (logger.isDebugEnabled()) {
+				watch = new StopWatch();
+				watch.start();
+			}
+			
 			try {
 				((RuleService) ruleService).disableRules(entityNodeRef);
 
@@ -464,7 +471,13 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 			} finally {
 				((RuleService) ruleService).enableRules(entityNodeRef);
+				if (logger.isDebugEnabled()) {
+					watch.stop();
+					logger.debug("Synchronize entity in " + watch.getTotalTimeSeconds() + " seconds");
+				}
 			}
+			
+			
 		}
 
 	}
