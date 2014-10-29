@@ -129,6 +129,33 @@
 		</columns>
 	</mapping>
 	
+	<mapping name="bcpg:ing">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="cm:name" />
+		</nodeColumnKeys>
+		<columns>
+			<column id="bcpg:ingTypeV2" attribute="bcpg:ingTypeV2" type="Attribute" targetClass="bcpg:ingTypeItem" />
+		</columns>
+	</mapping>
+	
+	<mapping name="bcpg:labelingRuleList">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:erpCode" />
+		</nodeColumnKeys>
+		<dataListColumnKeys>
+			<dataListColumnKey attribute="cm:name" />
+		</dataListColumnKeys>
+		<columns>
+			<column id="bcpg:lrComponents" type="Attribute" attribute="bcpg:lrComponents" targetClass="bcpg:ing" />
+		</columns>
+	</mapping>
+
+	<mapping name="bcpg:productSpecification">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:erpCode" />
+		</nodeColumnKeys>
+	</mapping>
+	
 	<mapping name="bcpg:nutrientProfile">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="cm:name" />
