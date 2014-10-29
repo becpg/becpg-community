@@ -2177,11 +2177,9 @@
 				</property>
 				<property name="bcpg:productHierarchy1">
 					<type>d:noderef</type>
-					<mandatory>true</mandatory>
 				</property>
 				<property name="bcpg:productHierarchy2">
 					<type>d:noderef</type>
-					<mandatory>true</mandatory>
 				</property>
 				<property name="bcpg:productQty">
 					<type>d:double</type>
