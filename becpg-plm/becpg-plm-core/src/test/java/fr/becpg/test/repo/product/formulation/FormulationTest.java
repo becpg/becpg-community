@@ -312,13 +312,24 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setQty(2d);
 				finishedProduct.setDensity(1d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(0), 1d, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(0), 2d, null, CompoListUnit.g, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(3), 3d, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(3), 3d, null, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
-				finishedProduct.getCompoListView().setCompoList(compoList);
+				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, CompoListUnit.g, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+				finishedProduct.getCompoListView().setCompoList(compoList);				
+
+				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
+				costList.add(new CostListDataItem(null, null, null, null, cost1, null));
+				costList.add(new CostListDataItem(null, null, null, null, cost2, null));
+				finishedProduct.setCostList(costList);
+
+				List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
+				nutList.add(new NutListDataItem(null, null, null, null, null, null, nut1, null));
+				nutList.add(new NutListDataItem(null, null, null, null, null, null, nut2, null));
+				finishedProduct.setNutList(nutList);
+								
 				NodeRef finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
 				
 				logger.debug("unit of product to formulate: " + finishedProduct.getUnit());
@@ -334,6 +345,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				logger.debug("unit of product formulated: " + finishedProduct.getUnit());
 				
 				//costs
+				int checks=0;
 				assertNotNull("CostList is null", formulatedProduct.getCostList());
 				for(CostListDataItem costListDataItem : formulatedProduct.getCostList()){
 					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
@@ -341,13 +353,17 @@ public class FormulationTest extends AbstractFinishedProductTest {
 					if(costListDataItem.getCost().equals(cost1)){
 						assertEquals("cost1.getValue() == 3.001, actual values: " + trace, 3.001d, costListDataItem.getValue());
 						assertEquals("cost1.getUnit() == €/kg, actual values: " + trace, "€/kg", costListDataItem.getUnit());
+						checks++;
 					}
 					if(costListDataItem.getCost().equals(cost2)){
 						assertEquals("cost1.getValue() == 4.002, actual values: " + trace, 4.002d, costListDataItem.getValue());
 						assertEquals("cost1.getUnit() == €/kg, actual values: " + trace, "€/kg", costListDataItem.getUnit());
+						checks++;
 					}
 				}
+				assertEquals(2, checks);
 				//nuts
+				checks=0;
 				assertNotNull("NutList is null", formulatedProduct.getNutList());
 				for(NutListDataItem nutListDataItem : 	formulatedProduct.getNutList()){
 					String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), ContentModel.PROP_NAME) + " - value: " + nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
@@ -356,13 +372,16 @@ public class FormulationTest extends AbstractFinishedProductTest {
 						assertEquals("nut1.getValue() == 2.001, actual values: " + trace, 2.001d, nutListDataItem.getValue());
 						assertEquals("nut1.getUnit() == kJ/100g, actual values: " + trace, "kJ/100g", nutListDataItem.getUnit());
 						assertEquals("must be group1", GROUP1, nutListDataItem.getGroup());
+						checks++;
 					}
 					if(nutListDataItem.getNut().equals(nut2)){
 						assertEquals("nut2.getValue() == 4.002, actual values: " + trace, 4.002d, nutListDataItem.getValue());
 						assertEquals("nut2.getUnit() == kcal/100g, actual values: " + trace, "kcal/100g", nutListDataItem.getUnit());
 						assertEquals("must be group2", GROUP2, nutListDataItem.getGroup());
+						checks++;
 					}
-				}				
+				}			
+				assertEquals(2, checks);
 				
 				return null;
 
@@ -389,7 +408,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setName("Produit fini 1");
 				finishedProduct.setLegalName("Legal Produit fini 1");
 				finishedProduct.setQty(20d);
-				finishedProduct.setNetWeight(2d);
+				finishedProduct.setNetWeight(0.1d);
 				finishedProduct.setUnit(ProductUnit.P);
 				finishedProduct.setDensity(0.1d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
@@ -399,7 +418,18 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 30d, CompoListUnit.g, 0d, DeclarationType.Detail, localSF2NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 30d, CompoListUnit.g, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 0.05d, CompoListUnit.P, 0d, DeclarationType.Omit, rawMaterial5NodeRef));
-				finishedProduct.getCompoListView().setCompoList(compoList);
+				finishedProduct.getCompoListView().setCompoList(compoList);				
+
+				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
+				costList.add(new CostListDataItem(null, null, null, null, cost1, null));
+				costList.add(new CostListDataItem(null, null, null, null, cost2, null));
+				finishedProduct.setCostList(costList);
+
+				List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
+				nutList.add(new NutListDataItem(null, null, null, null, null, null, nut1, null));
+				nutList.add(new NutListDataItem(null, null, null, null, null, null, nut2, null));
+				finishedProduct.setNutList(nutList);
+								
 				NodeRef finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
 				
 				logger.debug("unit of product to formulate: " + finishedProduct.getUnit());
@@ -414,32 +444,44 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				
 				logger.debug("unit of product formulated: " + finishedProduct.getUnit());
 				DecimalFormat df = new DecimalFormat("0.000");
+				int checks=0;
 				//costs
 				assertNotNull("CostList is null", formulatedProduct.getCostList());
 				for(CostListDataItem costListDataItem : formulatedProduct.getCostList()){
+					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
+					logger.debug(trace);
 					if(costListDataItem.getCost().equals(cost1)){
-						assertEquals("check cost", df.format(1.77d), df.format(costListDataItem.getValue()));
-						assertEquals("check cost unit", "€/kg", costListDataItem.getUnit());
+						assertEquals("check cost", df.format(0.177d), df.format(costListDataItem.getValue()));
+						assertEquals("check cost unit", "€/P", costListDataItem.getUnit());
+						checks++;
 					}
 					if(costListDataItem.getCost().equals(cost2)){
-						assertEquals("check cost", df.format(1.74d), df.format(costListDataItem.getValue()));
-						assertEquals("check cost unit", "€/kg", costListDataItem.getUnit());
+						assertEquals("check cost", df.format(0.174d), df.format(costListDataItem.getValue()));
+						assertEquals("check cost unit", "€/P", costListDataItem.getUnit());
+						checks++;
 					}
 				}
+				assertEquals(2, checks);
 				//nuts
+				checks=0;
 				assertNotNull("NutList is null", formulatedProduct.getNutList());
 				for(NutListDataItem nutListDataItem : 	formulatedProduct.getNutList()){
+					String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), ContentModel.PROP_NAME) + " - value: " + nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
+					logger.debug(trace);
 					if(nutListDataItem.getNut().equals(nut1)){
 						assertEquals("check nut", df.format(0.77d), df.format(nutListDataItem.getValue()));
 						assertEquals("check nut unit", "kJ/100g", nutListDataItem.getUnit());
 						assertEquals("must be group1", GROUP1, nutListDataItem.getGroup());
+						checks++;
 					}
 					if(nutListDataItem.getNut().equals(nut2)){
 						assertEquals("check nut", df.format(1.59d), df.format(nutListDataItem.getValue()));
 						assertEquals("check nut unit", "kcal/100g", nutListDataItem.getUnit());
 						assertEquals("must be group2", GROUP2, nutListDataItem.getGroup());
+						checks++;
 					}
-				}				
+				}
+				assertEquals(2, checks);
 				
 				return null;
 

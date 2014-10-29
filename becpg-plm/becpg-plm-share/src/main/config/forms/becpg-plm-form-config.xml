@@ -461,7 +461,7 @@
 					</field>
 
 					<!-- formulation -->
-					<field id="bcpg:productQty" set="formulation" mandatory="true" />
+					<field id="bcpg:productQty" set="formulation" />
 					<field id="bcpg:productUnit" set="formulation">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">kg,g,L,mL,P
@@ -594,7 +594,7 @@
 					<show id="bcpg:entityTplRef" force="true" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:productQty" mandatory="true" />
+					<field id="bcpg:productQty" />
 					<field id="bcpg:productUnit">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">kg,g,L,mL,P
@@ -824,7 +824,7 @@
 					</field>
 
 					<!-- formulation -->
-					<field id="bcpg:productQty" set="formulation" mandatory="true" />
+					<field id="bcpg:productQty" set="formulation" />
 					<field id="bcpg:productUnit" set="formulation">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">kg,g,L,mL,P
@@ -883,7 +883,7 @@
 					<show id="bcpg:entityTplRef" force="true" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:productQty" mandatory="true" />
+					<field id="bcpg:productQty" />
 					<field id="bcpg:productUnit">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">kg,g,L,mL,P
@@ -2577,7 +2577,7 @@
 					<field id="rep:reportTpls" set="mainInfo" />
 
 					<!-- formulation -->
-					<field id="bcpg:productQty" set="formulation" mandatory="true" />
+					<field id="bcpg:productQty" set="formulation" />
 					<field id="bcpg:productUnit" set="formulation">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">kg,g,L,mL,P
@@ -2680,7 +2680,7 @@
 					<show id="bcpg:entityTplRef" force="true" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:productQty" mandatory="true" />
+					<field id="bcpg:productQty" />
 					<field id="bcpg:productUnit">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">kg,g,L,mL,P
@@ -2894,7 +2894,7 @@
 					</field>
 
 					<!-- formulation -->
-					<field id="bcpg:productQty" set="formulation" mandatory="true" />
+					<field id="bcpg:productQty" set="formulation" />
 					<field id="bcpg:productUnit" set="formulation">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">kg,g,L,mL,P
@@ -2942,7 +2942,7 @@
 					<show id="bcpg:entityTplRef" force="true" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:productQty" mandatory="true" />
+					<field id="bcpg:productQty" />
 					<field id="bcpg:productUnit">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">kg,g,L,mL,P
