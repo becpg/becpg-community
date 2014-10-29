@@ -138,7 +138,7 @@
 	display: inline-table;
 }
 
-.project-list span.task-status-Cancelled {
+.project-list span.task-status-Cancelled, .project-list span.task-status-Refused {
 	background: url("../documentlibrary/indicators/project-cancelled-16.png") no-repeat;
 	display: inline-table;
 }

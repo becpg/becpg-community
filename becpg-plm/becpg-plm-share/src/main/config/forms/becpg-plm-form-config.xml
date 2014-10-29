@@ -1062,6 +1062,7 @@
 					<show id="bcpg:productHierarchy2" />
 					<show id="bcpg:productState" />
 					<show id="bcpg:code" force="true" />
+					<show id="bcpg:erpCode" force="true" />
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" force="true" />

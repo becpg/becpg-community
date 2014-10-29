@@ -106,9 +106,7 @@
 		<property name="projectWorkflowService" ref="projectWorkflowService" />
 	</bean>
 	<bean id="projectPolicy" class="fr.becpg.repo.project.policy.ProjectPolicy" parent="abstractBeCPGPolicy" depends-on="bcpg.project.dictionaryBootstrap">
-		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="projectService" ref="projectService" />
-		<property name="associationService" ref="associationService" />
 		<property name="projectActivityService" ref="projectActivityService" />
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
 	</bean>
