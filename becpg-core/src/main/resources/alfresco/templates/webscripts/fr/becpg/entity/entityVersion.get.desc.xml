@@ -22,4 +22,8 @@
   <format default="json" />
   <authentication>user</authentication>
   <transaction allow="readonly">required</transaction>
+  <cache>
+	  <never>false</never>
+	  <mustrevalidate>true</mustrevalidate>
+   </cache>
 </webscript>
