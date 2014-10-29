@@ -18,6 +18,7 @@
 package fr.becpg.config.mapping;
 
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
+import org.alfresco.service.namespace.QName;
 
 
 /**
@@ -30,8 +31,26 @@ import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
  */
 public class AttributeMapping extends AbstractAttributeMapping {
 
+	private QName targetClass;
+	
+	public QName getTargetClass() {
+		return targetClass;
+	}
+
+	public void setTargetClass(QName targetClass) {
+		this.targetClass = targetClass;
+	}
+
 	public AttributeMapping(String id, ClassAttributeDefinition attribute) {
 		super(id, attribute);
 	}
 
+	@Override
+	public String toString() {
+		return "AttributeMapping [targetClass=" + targetClass + ", getId()=" + getId() + ", getAttribute()="
+				+ getAttribute() + ", getClass()=" + getClass() + ", hashCode()=" + hashCode() + ", toString()="
+				+ super.toString() + "]";
+	}
+
+	
 }
