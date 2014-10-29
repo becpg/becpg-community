@@ -40,7 +40,7 @@ import fr.becpg.repo.project.impl.ProjectHelper;
 
 public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectData> {
 
-	private static final int COMPLETED = 100;	
+	private static final int COMPLETED = 100;
 
 	private static Log logger = LogFactory.getLog(TaskStateFormulationHandler.class);
 
@@ -51,125 +51,143 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 	public void setProjectWorkflowService(ProjectWorkflowService projectWorkflowService) {
 		this.projectWorkflowService = projectWorkflowService;
 	}
-	
-	
+
 	public void setProjectService(ProjectService projectService) {
 		this.projectService = projectService;
 	}
 
-
 	@Override
 	public boolean process(ProjectData projectData) throws FormulateException {
-		
+
 		logger.debug("Formulate project " + projectData.getNodeRef());
-		
+
 		// we don't want tasks of project template start
-		if(!projectData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)){
-			
-			// start project if startdate is before now and startdate != created otherwise ProjectMgr will start it manually
-			if(ProjectState.Planned.equals(projectData.getProjectState()) && 
-					projectData.getStartDate() != null &&
-					projectData.getStartDate().before(new Date())){
+		if (!projectData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
+
+			// start project if startdate is before now and startdate != created
+			// otherwise ProjectMgr will start it manually
+			if (ProjectState.Planned.equals(projectData.getProjectState()) && projectData.getStartDate() != null
+					&& projectData.getStartDate().before(new Date())) {
 				projectData.setProjectState(ProjectState.InProgress);
 			}
-			
-			// even if project is not in Progress, we visit it because a task can start the project (manual task or task that has startdate < NOW)
+
+			// even if project is not in Progress, we visit it because a task
+			// can start the project (manual task or task that has startdate <
+			// NOW)
 			visitTask(projectData, null);
-			
+
 			// check tasks to manage Project state
-//			if(ProjectState.Planned.equals(projectData.getProjectState())){
-//				List<TaskListDataItem> firstTasks = ProjectHelper.getNextTasks(projectData, null);
-//				if (!firstTasks.isEmpty()) {
-//					for (TaskListDataItem nextTask : firstTasks) {
-//						if(TaskState.InProgress.equals(nextTask.getState()) || TaskState.Completed.equals(nextTask.getState())){
-//							projectData.setProjectState(ProjectState.InProgress);
-//							break;
-//						}				
-//					}			
-//				}
-//			}			
+			// if(ProjectState.Planned.equals(projectData.getProjectState())){
+			// List<TaskListDataItem> firstTasks =
+			// ProjectHelper.getNextTasks(projectData, null);
+			// if (!firstTasks.isEmpty()) {
+			// for (TaskListDataItem nextTask : firstTasks) {
+			// if(TaskState.InProgress.equals(nextTask.getState()) ||
+			// TaskState.Completed.equals(nextTask.getState())){
+			// projectData.setProjectState(ProjectState.InProgress);
+			// break;
+			// }
+			// }
+			// }
+			// }
 			boolean allTaskPlanned = true;
 			for (TaskListDataItem task : projectData.getTaskList()) {
-				if(!TaskState.Planned.equals(task.getState())){
+				if (!TaskState.Planned.equals(task.getState())) {
 					allTaskPlanned = false;
 					break;
-				}				
+				}
 			}
-			if(!allTaskPlanned && ProjectState.Planned.equals(projectData.getProjectState())){
+			if (!allTaskPlanned && ProjectState.Planned.equals(projectData.getProjectState())) {
 				projectData.setProjectState(ProjectState.InProgress);
-			} 
-			else if(allTaskPlanned && ProjectState.InProgress.equals(projectData.getProjectState())){
+			} else if (allTaskPlanned && ProjectState.InProgress.equals(projectData.getProjectState())) {
 				projectData.setProjectState(ProjectState.Planned);
 			}
-					
+
 			// is project completed ?
-			if(ProjectHelper.areTasksDone(projectData)){
+			if (ProjectHelper.areTasksDone(projectData)) {
 				projectData.setCompletionDate(ProjectHelper.getLastEndDate(projectData));
 				projectData.setCompletionPercent(COMPLETED);
 				projectData.setProjectState(ProjectState.Completed);
 			}
-			
+
 			projectData.setCompletionPercent(ProjectHelper.geProjectCompletionPercent(projectData));
-			
+
 			calculateProjectLegends(projectData);
 		}
-				
+
 		return true;
 	}
-	
 
-	private void visitTask(ProjectData projectData, TaskListDataItem taskListDataItem) {		
+	private void visitTask(ProjectData projectData, TaskListDataItem taskListDataItem) {
 
 		NodeRef taskListNodeRef = taskListDataItem != null ? taskListDataItem.getNodeRef() : null;
 		logger.debug("visitTask taskListNodeRef: " + taskListNodeRef);
-		
-		// add next tasks		
+
+		// add next tasks
 		List<TaskListDataItem> nextTasks = ProjectHelper.getNextTasks(projectData, taskListNodeRef);
 		logger.debug("nextTasks size: " + nextTasks.size());
 		if (!nextTasks.isEmpty()) {
 			for (TaskListDataItem nextTask : nextTasks) {
-				
-				// cancel active workflow if task is not anymore InProgress								
-				if(!TaskState.InProgress.equals(nextTask.getState()) &&
-						projectWorkflowService.isWorkflowActive(nextTask)){
+
+				// cancel active workflow if task is not anymore InProgress
+				if (!TaskState.InProgress.equals(nextTask.getState()) && projectWorkflowService.isWorkflowActive(nextTask)) {
 					projectWorkflowService.cancelWorkflow(nextTask);
 				}
-				
-				if (TaskState.Planned.equals(nextTask.getState())) {					
-					
+
+				if (TaskState.Planned.equals(nextTask.getState())) {
+
 					// no previous task
-					if(nextTask.getPrevTasks().isEmpty()){						
-						if(nextTask.getStart().before(new Date())){							
+					if (nextTask.getPrevTasks().isEmpty()) {
+						if (nextTask.getStart().before(new Date())) {
 							logger.debug("Start first task.");
-							openTask(projectData, nextTask);
-							
+							nextTask.setState(TaskState.InProgress);
+
 						}
-					}
-					else{
+					} else {
 						// previous task are done
-						if(ProjectHelper.areTasksDone(projectData, nextTask.getPrevTasks())){								
-							if(nextTask.getManualDate() == null){									
+						if (ProjectHelper.areTasksDone(projectData, nextTask.getPrevTasks())) {
+							if (nextTask.getManualDate() == null) {
 								logger.debug("Start task since previous are done");
-								openTask(projectData, nextTask);
+								nextTask.setState(TaskState.InProgress);
 							}
 							// manual date -> we wait the date
-							else if(nextTask.getStart().before(new Date())){
+							else if (nextTask.getStart().before(new Date())) {
 								logger.debug("Start task since we are after planned startDate. start planned: " + nextTask.getStart());
-								openTask(projectData, nextTask);
+								nextTask.setState(TaskState.InProgress);
 							}
 						}
 					}
-					
+
 				} else if (TaskState.Completed.equals(nextTask.getState())) {
 
-					nextTask.setCompletionPercent(COMPLETED);											
+					nextTask.setCompletionPercent(COMPLETED);
+				} else if (TaskState.Refused.equals(nextTask.getState()) && nextTask.getRefusedTask() != null) {
+					boolean shouldRefused = true;
+
+					// Check if all brothers are closed
+					for (TaskListDataItem brotherTask : ProjectHelper.getBrethrenTask(projectData, nextTask)) {
+						if (nextTask.getRefusedTask().equals(brotherTask) && TaskState.InProgress.equals(nextTask.getState())) {
+							shouldRefused = false;
+							logger.info("Will not refused task as there is still some brother Open");
+						}
+					}
+
+					if (shouldRefused) {
+						logger.info("Reopen path : "+nextTask.getRefusedTask().getTaskName());
+						
+						ProjectHelper.reOpenPath(projectData, nextTask, nextTask.getRefusedTask());
+						
+						//Revisit task 
+						visitTask(projectData, nextTask.getRefusedTask());
+						return;
+					}
+
 				}
-				
+
 				if (TaskState.InProgress.equals(nextTask.getState())) {
 
 					Integer taskCompletionPercent = 0;
-					List<DeliverableListDataItem> nextDeliverables = ProjectHelper.getDeliverables(projectData,
-							nextTask.getNodeRef());
+					List<DeliverableListDataItem> nextDeliverables = ProjectHelper.getDeliverables(projectData, nextTask.getNodeRef());
 
 					for (DeliverableListDataItem nextDeliverable : nextDeliverables) {
 
@@ -178,106 +196,99 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 								|| DeliverableState.Closed.equals(nextDeliverable.getState())) {
 							taskCompletionPercent += nextDeliverable.getCompletionPercent();
 						}
-						
+
 						// set Planned dl InProgress
 						if (DeliverableState.Planned.equals(nextDeliverable.getState())) {
-							nextDeliverable.setState(DeliverableState.InProgress);	
-							nextDeliverable.setUrl(projectService.getDeliverableUrl(projectData.getNodeRef(),nextDeliverable.getUrl()));
+							nextDeliverable.setState(DeliverableState.InProgress);
+							nextDeliverable.setUrl(projectService.getDeliverableUrl(projectData.getNodeRef(), nextDeliverable.getUrl()));
 						}
 					}
 
-					logger.debug("set completion percent to value " + taskCompletionPercent + " - nodref: "
-							+ nextTask.getNodeRef());
+					logger.debug("set completion percent to value " + taskCompletionPercent + " - nodref: " + nextTask.getNodeRef());
 					nextTask.setCompletionPercent(taskCompletionPercent == 0 ? null : taskCompletionPercent);
-					
-					// check workflow instance (task may be reopened) and workflow properties
+
+					// check workflow instance (task may be reopened) and
+					// workflow properties
 					projectWorkflowService.checkWorkflowInstance(projectData, nextTask, nextDeliverables);
-										
-					if(nextTask.getResources() != null && !nextTask.getResources().isEmpty()){
-						
-						nextTask.setResources(projectService.updateTaskResources(projectData.getNodeRef(),nextTask.getNodeRef(), nextTask.getResources(),true));
-						
-						// workflow (task may have been set as InProgress with UI)
-						if ((nextTask.getWorkflowInstance() == null ||  nextTask.getWorkflowInstance().isEmpty()) &&
-								nextTask.getWorkflowName() != null && !nextTask.getWorkflowName().isEmpty()) {					
-							
+
+					if (nextTask.getResources() != null && !nextTask.getResources().isEmpty()) {
+
+						nextTask.setResources(projectService.updateTaskResources(projectData.getNodeRef(), nextTask.getNodeRef(),
+								nextTask.getResources(), true));
+
+						List<DeliverableListDataItem> deliverables = ProjectHelper.getDeliverables(projectData, nextTask.getNodeRef());
+						if (deliverables != null) {
+							for (DeliverableListDataItem deliverable : deliverables) {
+								if (DeliverableState.PreScript.equals(deliverable.getState())) {
+									projectService.runScript(projectData.getNodeRef(), nextTask.getNodeRef(), deliverable.getScript());
+								}
+							}
+						}
+
+						// workflow (task may have been set as InProgress with
+						// UI)
+						if ((nextTask.getWorkflowInstance() == null || nextTask.getWorkflowInstance().isEmpty())
+								&& nextTask.getWorkflowName() != null && !nextTask.getWorkflowName().isEmpty()) {
+
 							// start workflow
 							projectWorkflowService.startWorkflow(projectData, nextTask, nextDeliverables);
 						}
-					}					
-				}										
-					
-				// we visit every task since user can have started a task in the middle of the project even if previous are not started
-				visitTask(projectData, nextTask);
-				//children first
-				//visitGroup(projectData, nextTask);
-				//parent second
-				visitGroup(projectData, nextTask.getParent());				
-			}
-		}
-	}
-	
-	private void openTask(ProjectData projectData, TaskListDataItem nextTask) {
-		nextTask.setState(TaskState.InProgress);
-		List<DeliverableListDataItem> deliverables = ProjectHelper.getDeliverables(projectData,
-				nextTask.getNodeRef());
-		if(deliverables!=null){
-			for(DeliverableListDataItem deliverable : deliverables){
-				if(DeliverableState.PreScript.equals(deliverable.getState())){
-					projectService.runScript(projectData.getNodeRef(), nextTask.getNodeRef(), deliverable.getScript());
+					}
 				}
+
+				// we visit every task since user can have started a task in the
+				// middle of the project even if previous are not started
+				visitTask(projectData, nextTask);
+				// children first
+				// visitGroup(projectData, nextTask);
+				// parent second
+				visitGroup(projectData, nextTask.getParent());
 			}
 		}
-		
 	}
 
+	private void visitGroup(ProjectData projectData, TaskListDataItem parent) {
 
-	private void visitGroup(ProjectData projectData, TaskListDataItem parent){
-		
 		// close Group ?
-		if(parent != null){
+		if (parent != null) {
 			boolean hasTaskInProgress = false;
 			boolean allTasksPlanned = true;
-			for(TaskListDataItem c : ProjectHelper.getChildrenTasks(projectData, parent)){
-				if(TaskState.InProgress.equals(c.getState())){
+			for (TaskListDataItem c : ProjectHelper.getChildrenTasks(projectData, parent)) {
+				if (TaskState.InProgress.equals(c.getState())) {
 					hasTaskInProgress = true;
-				}
-				else if(!TaskState.Planned.equals(c.getState())){
+				} else if (!TaskState.Planned.equals(c.getState())) {
 					allTasksPlanned = false;
 				}
 			}
-			if(hasTaskInProgress){
+			if (hasTaskInProgress) {
 				parent.setState(TaskState.InProgress);
-			}
-			else if(allTasksPlanned){
+			} else if (allTasksPlanned) {
 				parent.setState(TaskState.Planned);
-			}
-			else{
+			} else {
 				parent.setState(TaskState.Completed);
 			}
 		}
 	}
 
-	private void calculateProjectLegends(ProjectData projectData){
-		
-		if(projectData.getLegends() == null){
+	private void calculateProjectLegends(ProjectData projectData) {
+
+		if (projectData.getLegends() == null) {
 			logger.debug("projectData.setLegends(new ArrayList<NodeRef>());");
 			projectData.setLegends(new ArrayList<NodeRef>());
 		}
-		
-		for(TaskListDataItem tl : projectData.getTaskList()){
-			
-			if(TaskState.InProgress.equals(tl.getState())){
-				if(!projectData.getLegends().contains(tl.getTaskLegend())){
+
+		for (TaskListDataItem tl : projectData.getTaskList()) {
+
+			if (TaskState.InProgress.equals(tl.getState())) {
+				if (!projectData.getLegends().contains(tl.getTaskLegend())) {
 					projectData.getLegends().add(tl.getTaskLegend());
 				}
-			}
-			else if(TaskState.Completed.equals(tl.getState())){
-				if(projectData.getLegends().contains(tl.getTaskLegend())){
+			} else if (TaskState.Completed.equals(tl.getState())) {
+				if (projectData.getLegends().contains(tl.getTaskLegend())) {
 					projectData.getLegends().remove(tl.getTaskLegend());
 				}
 			}
-					
-		}		
+
+		}
 	}
 }

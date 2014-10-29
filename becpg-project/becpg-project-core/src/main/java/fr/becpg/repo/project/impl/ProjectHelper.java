@@ -20,7 +20,9 @@ package fr.becpg.repo.project.impl;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
@@ -58,8 +60,7 @@ public class ProjectHelper {
 		if (projectData.getTaskList() != null) {
 			for (TaskListDataItem p : projectData.getTaskList()) {
 				// taskNodeRef is null when we start project
-				if (p.getPrevTasks().contains(taskListNodeRef)
-						|| (taskListNodeRef == null && p.getPrevTasks().isEmpty())) {
+				if (p.getPrevTasks().contains(taskListNodeRef) || (taskListNodeRef == null && p.getPrevTasks().isEmpty())) {
 					taskList.add(p);
 				}
 			}
@@ -79,20 +80,20 @@ public class ProjectHelper {
 		}
 		return taskList;
 	}
-	
+
 	public static List<TaskListDataItem> getLastTasks(ProjectData projectData) {
 
 		List<TaskListDataItem> taskList = new ArrayList<TaskListDataItem>();
 		if (projectData.getTaskList() != null) {
 			for (TaskListDataItem t : projectData.getTaskList()) {
-				if(getNextTasks(projectData, t.getNodeRef()).isEmpty()){
+				if (getNextTasks(projectData, t.getNodeRef()).isEmpty()) {
 					taskList.add(t);
-				}				
+				}
 			}
 		}
 		return taskList;
 	}
-	
+
 	public static List<TaskListDataItem> getChildrenTasks(ProjectData projectData, TaskListDataItem taskListDataItem) {
 
 		List<TaskListDataItem> taskList = new ArrayList<TaskListDataItem>();
@@ -103,25 +104,55 @@ public class ProjectHelper {
 		}
 		return taskList;
 	}
-	
+
+	public static List<TaskListDataItem> getBrethrenTask(ProjectData projectData, TaskListDataItem nextTask) {
+		Set<TaskListDataItem> taskList = new HashSet<TaskListDataItem>();
+		for (TaskListDataItem t : projectData.getTaskList()) {
+			for (NodeRef taskListNodeRef : t.getPrevTasks()) {
+				if (nextTask.getPrevTasks().contains(taskListNodeRef)
+						&& ((t.getParent() != null && t.getParent().equals(nextTask.getParent())) || (t.getParent() == null && nextTask.getParent() == null))) {
+					taskList.add(t);
+				}
+			}
+		}
+		return new ArrayList<>(taskList);
+	}
+
+	public static void reOpenPath(ProjectData projectData, TaskListDataItem nextTask, TaskListDataItem refusedTask) {
+		if(nextTask.equals(refusedTask)){
+			nextTask.setState(TaskState.InProgress);
+		} else {
+			nextTask.setState(TaskState.Planned);
+			//Reopen brethen
+			for(TaskListDataItem brotherTask : getBrethrenTask(projectData,nextTask )){
+				brotherTask.setState(TaskState.Planned);
+			}
+			
+			for(TaskListDataItem prevTask : getPrevTasks(projectData,nextTask )){
+				reOpenPath(projectData,prevTask, refusedTask);
+			}
+			
+		}
+
+	}
+
 	public static List<TaskListDataItem> getSourceTasks(ProjectData projectData) {
 
 		List<TaskListDataItem> taskList = new ArrayList<TaskListDataItem>();
 		for (TaskListDataItem t : projectData.getTaskList()) {
-			//has parent with prevTask ?
+			// has parent with prevTask ?
 			boolean hasPrevTaskInParent = false;
 			TaskListDataItem parent = t.getParent();
-			if(parent != null){
-				if(parent.getPrevTasks().isEmpty()){
+			if (parent != null) {
+				if (parent.getPrevTasks().isEmpty()) {
 					parent = parent.getParent();
-				}
-				else{
+				} else {
 					hasPrevTaskInParent = true;
 					break;
 				}
 			}
 			boolean hasChildren = !ProjectHelper.getChildrenTasks(projectData, t).isEmpty();
-			if(hasChildren == false && hasPrevTaskInParent == false){
+			if (hasChildren == false && hasPrevTaskInParent == false) {
 				taskList.add(t);
 			}
 		}
@@ -144,18 +175,17 @@ public class ProjectHelper {
 	public static boolean areTasksDone(ProjectData projectData) {
 
 		if (projectData.getTaskList() != null && !projectData.getTaskList().isEmpty()) {
-			for(TaskListDataItem t : projectData.getTaskList()){
-				if(!TaskState.Completed.equals(t.getState())){
+			for (TaskListDataItem t : projectData.getTaskList()) {
+				if (!TaskState.Completed.equals(t.getState())) {
 					return false;
 				}
 			}
-		}
-		else{
+		} else {
 			return false;
 		}
 		return true;
 	}
-	
+
 	public static boolean areTasksDone(ProjectData projectData, List<NodeRef> taskNodeRefs) {
 
 		// no task : they are done
@@ -170,7 +200,7 @@ public class ProjectHelper {
 			for (int i = projectData.getTaskList().size() - 1; i >= 0; i--) {
 				TaskListDataItem t = projectData.getTaskList().get(i);
 
-				if (taskNodeRefs.contains(t.getNodeRef()) && TaskState.Completed.equals(t.getState())) {
+				if (taskNodeRefs.contains(t.getNodeRef()) && (TaskState.Completed.equals(t.getState()) || TaskState.Cancelled.equals(t.getState()))) {
 					inProgressTasks.remove(t.getNodeRef());
 				}
 			}
@@ -211,7 +241,7 @@ public class ProjectHelper {
 		}
 		return endDate;
 	}
-	
+
 	public static Date getFirstStartDate(ProjectData projectData) {
 		List<TaskListDataItem> tasks = getNextTasks(projectData, null);
 		Date startDate = null;
@@ -225,15 +255,14 @@ public class ProjectHelper {
 
 	public static void setTaskStartDate(TaskListDataItem t, Date startDate) {
 		logger.debug("task: " + t.getTaskName() + " state: " + t.getState() + " start: " + startDate);
-		if ((t.getStart() == null || TaskState.Planned.equals(t.getState())) && !TaskManualDate.Start.equals(t.getManualDate())) {			
+		if ((t.getStart() == null || TaskState.Planned.equals(t.getState())) && !TaskManualDate.Start.equals(t.getManualDate())) {
 			t.setStart(removeTime(startDate));
 		}
 	}
 
 	public static void setTaskEndDate(TaskListDataItem t, Date endDate) {
 		logger.debug("task: " + t.getTaskName() + " state: " + t.getState() + " end: " + endDate);
-		if ((TaskState.Planned.equals(t.getState()) || TaskState.InProgress.equals(t.getState())) && 
-				!TaskManualDate.End.equals(t.getManualDate())) {
+		if ((TaskState.Planned.equals(t.getState()) || TaskState.InProgress.equals(t.getState())) && !TaskManualDate.End.equals(t.getManualDate())) {
 			t.setEnd(removeTime(endDate));
 		}
 	}
@@ -256,7 +285,7 @@ public class ProjectHelper {
 
 		logger.debug("startDate: " + startDate);
 		logger.debug("duration: " + duration);
-		
+
 		if (startDate == null) {
 			return null;
 		}
@@ -269,12 +298,11 @@ public class ProjectHelper {
 		calendar.setTime(startDate);
 		int i = 1;
 		while (i < duration) {
-			if(isPlanned){
+			if (isPlanned) {
 				calendar.add(Calendar.DATE, 1);
-			}
-			else{
+			} else {
 				calendar.add(Calendar.DATE, -1);
-			}			
+			}
 			if (isWorkingDate(calendar)) {
 				i++;
 			}
@@ -313,8 +341,7 @@ public class ProjectHelper {
 			startDateCal.add(Calendar.DAY_OF_MONTH, 1);
 		}
 
-		logger.debug("calculateTaskDuration startDate: " + startDate + " - endDate: " + endDate + " - duration: "
-				+ duration);
+		logger.debug("calculateTaskDuration startDate: " + startDate + " - endDate: " + endDate + " - duration: " + duration);
 		return duration;
 	}
 
@@ -325,39 +352,38 @@ public class ProjectHelper {
 	public static Date calculateNextStartDate(Date endDate) {
 		return calculateNextDate(endDate, DURATION_NEXT_DAY, true);
 	}
-	
+
 	public static Date calculateStartDate(Date endDate, Integer duration) {
 		return calculateNextDate(endDate, duration, false);
 	}
-	
+
 	public static Date calculatePrevEndDate(Date startDate) {
 		return calculateNextDate(startDate, DURATION_NEXT_DAY, false);
 	}
-	
-	public static Integer calculateOverdue(TaskListDataItem task){				
-		
+
+	public static Integer calculateOverdue(TaskListDataItem task) {
+
 		Date endDate;
-		
-		if(TaskState.InProgress.equals(task.getState())){
+
+		if (TaskState.InProgress.equals(task.getState())) {
 			endDate = ProjectHelper.removeTime(new Date());
-			
+
 			// we wait the overdue of the task to take it in account
-			if(task.getEnd() != null && endDate.before(task.getEnd())){
+			if (task.getEnd() != null && endDate.before(task.getEnd())) {
 				return null;
 			}
-		}
-		else if(TaskState.Completed.equals(task.getState())){
+		} else if (TaskState.Completed.equals(task.getState())) {
 			endDate = task.getEnd();
-		}
-		else{
+		} else {
 			return null;
 		}
 		Integer realDuration = calculateTaskDuration(task.getStart(), endDate);
 		Integer plannedDuration = task.getDuration() != null ? task.getDuration() : task.getIsMilestone() ? DURATION_DEFAULT : null;
-		if(realDuration != null &&  plannedDuration != null){
+		if (realDuration != null && plannedDuration != null) {
 			return realDuration - plannedDuration;
 		}
-		
+
 		return null;
 	}
+
 }

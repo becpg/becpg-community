@@ -28,5 +28,6 @@ public enum TaskState {
 	InProgress,
 	OnHold,
 	Cancelled,
-	Completed
+	Completed, 
+	Refused
 }

@@ -38,7 +38,7 @@ import fr.becpg.repo.project.data.projectList.DeliverableState;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskState;
 import fr.becpg.repo.project.impl.ProjectHelper;
-import fr.becpg.repo.project.policy.ProjectPolicy;
+import fr.becpg.repo.project.policy.EntityTplProjectPlugin;
 import fr.becpg.test.BeCPGTestHelper;
 import fr.becpg.test.data.EntityTestData;
 
@@ -52,7 +52,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	private static Log logger = LogFactory.getLog(ProjectServiceTest.class);
 	
 	@Resource
-	private ProjectPolicy projectPolicy;
+	private EntityTplProjectPlugin entityTplProjectPlugin;
 	
 	@Resource
 	private ProjectWorkflowService projectWorkflowService;
@@ -221,7 +221,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 				
-				projectPolicy.initializeNodeRefsAfterCopy(projectNodeRef);
+				entityTplProjectPlugin.initializeNodeRefsAfterCopy(projectNodeRef);
 
 				NodeRef subFolder = nodeService.getChildByName(projectNodeRef, ContentModel.ASSOC_CONTAINS,
 						"SubFolder");

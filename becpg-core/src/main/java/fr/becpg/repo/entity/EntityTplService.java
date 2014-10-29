@@ -37,4 +37,6 @@ public interface EntityTplService {
 	
 	void formulateEntities(NodeRef tplNodeRef) throws FormulateException;
 
+	void synchronizeEntity(NodeRef entityNodeRef, NodeRef entityTplNodeRef);
+
 }

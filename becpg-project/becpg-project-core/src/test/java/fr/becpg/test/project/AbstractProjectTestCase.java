@@ -201,6 +201,7 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 						PROJECT_HIERARCHY1_SEA_FOOD_REF, PROJECT_HIERARCHY2_CRUSTACEAN_REF, 
 						null, null, null, null, null, null,
 						null, 0, null);
+				
 				projectTplData.setParentNodeRef(testFolderNodeRef);
 				projectTplData = (ProjectData) alfrescoRepository.save(projectTplData);
 				projectTplNodeRef = projectTplData.getNodeRef();
@@ -322,6 +323,8 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 				projectData.setParentNodeRef(testFolderNodeRef);
 
 				projectData = (ProjectData) alfrescoRepository.save(projectData);
+				
+				
 				return projectData.getNodeRef();
 			}
 		}, false, true);
@@ -353,7 +356,10 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 				projectData.setTaskList(taskList);
 					
 				projectData = (ProjectData) alfrescoRepository.save(projectData);
+				// add aspect entityTpl
+				
 				projectNodeRef = projectData.getNodeRef();
+				
 				
 				// update a second time to manage prevTask
 				// TODO : should avoid to save twice

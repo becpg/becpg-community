@@ -233,7 +233,7 @@
                         if(i == 0 && (!this.options.disabled || this.options.currentValue.length>0)){
                            visible.push(question.id);
                         }
-                        if(visible.indexOf(question.id) > -1 && question.choices){
+                        if(beCPG.util.contains(visible,question.id) && question.choices){
                            
                            var showComment = false;
                            for(var j = 0; j< question.choices.length; j++){

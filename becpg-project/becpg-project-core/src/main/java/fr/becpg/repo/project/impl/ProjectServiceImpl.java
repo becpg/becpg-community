@@ -119,10 +119,9 @@ public class ProjectServiceImpl implements ProjectService {
 
 		List<AssociationRef> sourceAssocs = nodeService.getSourceAssocs(taskNodeRef, ProjectModel.ASSOC_DL_TASK);
 		for (AssociationRef sourceAssoc : sourceAssocs) {
-			if (DeliverableState.PreScript.equals(nodeService.getProperty(sourceAssoc.getSourceRef(), ProjectModel.PROP_DL_STATE))) {
-				runScript(getProjectNodeRef(taskNodeRef), taskNodeRef,
-						(String) nodeService.getProperty(sourceAssoc.getSourceRef(), ProjectModel.PROP_DL_SCRIPT));
-			} else if (!DeliverableState.PostScript.equals(nodeService.getProperty(sourceAssoc.getSourceRef(), ProjectModel.PROP_DL_STATE))) {
+			String dlState = (String) nodeService.getProperty(sourceAssoc.getSourceRef(), ProjectModel.PROP_DL_STATE);
+
+			if (DeliverableState.PreScript.toString().equals(dlState) && !DeliverableState.PostScript.toString().equals(dlState)) {
 				nodeService.setProperty(sourceAssoc.getSourceRef(), ProjectModel.PROP_DL_STATE, DeliverableState.InProgress.toString());
 			}
 		}
@@ -133,10 +132,11 @@ public class ProjectServiceImpl implements ProjectService {
 	public void completeTask(NodeRef taskNodeRef) {
 		List<AssociationRef> sourceAssocs = nodeService.getSourceAssocs(taskNodeRef, ProjectModel.ASSOC_DL_TASK);
 		for (AssociationRef sourceAssoc : sourceAssocs) {
-			if (DeliverableState.PostScript.equals(nodeService.getProperty(sourceAssoc.getSourceRef(), ProjectModel.PROP_DL_STATE))) {
+			String dlState = (String) nodeService.getProperty(sourceAssoc.getSourceRef(), ProjectModel.PROP_DL_STATE);
+			if (DeliverableState.PostScript.toString().equals(dlState)) {
 				runScript(getProjectNodeRef(taskNodeRef), taskNodeRef,
 						(String) nodeService.getProperty(sourceAssoc.getSourceRef(), ProjectModel.PROP_DL_SCRIPT));
-			} else if (!DeliverableState.PreScript.equals(nodeService.getProperty(sourceAssoc.getSourceRef(), ProjectModel.PROP_DL_STATE))) {
+			} else if (!DeliverableState.PreScript.toString().equals(dlState)) {
 				nodeService.setProperty(sourceAssoc.getSourceRef(), ProjectModel.PROP_DL_STATE, DeliverableState.Completed.toString());
 			}
 		}
@@ -381,6 +381,8 @@ public class ProjectServiceImpl implements ProjectService {
 		if (scriptString != null && !scriptString.isEmpty()) {
 			Map<String, Object> model = new HashMap<String, Object>();
 
+			logger.debug("Run task script : " + scriptString);
+
 			model.put("task", taskNodeRef);
 			model.put("project", projectNodeRef);
 			model.put("shareUrl", sysAdminParams.getShareProtocol() + "//" + sysAdminParams.getShareHost() + ":" + sysAdminParams.getSharePort()
@@ -392,23 +394,11 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
-	// TODO
 	public NodeRef refusedTask(NodeRef nodeRef) {
-		nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_STATE, TaskState.OnHold.toString());
+		nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_STATE, TaskState.Refused.toString());
 
-		NodeRef nextTask = findRefusedTaskRef(nodeRef);
+		return associationService.getTargetAssoc(nodeRef, ProjectModel.ASSOC_TL_REFUSED_TASK_REF);
 
-		if (nextTask != null) {
-
-		}
-
-		return nextTask;
-
-	}
-
-	private NodeRef findRefusedTaskRef(NodeRef nodeRef) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

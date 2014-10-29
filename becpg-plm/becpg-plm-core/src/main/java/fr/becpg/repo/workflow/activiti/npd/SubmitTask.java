@@ -55,12 +55,14 @@ public class SubmitTask extends ScriptTaskListener {
 		// for old instances, otherwise endDate is not filled
 
 		NodeRef taskNodeRef = null;
+		ActivitiScriptNode taskNode = (ActivitiScriptNode) task.getVariable("pjt_workflowTask");
+		if (taskNode != null) {
+			logger.debug("taskNode exist " + taskNode.getNodeRef());
+			taskNodeRef = taskNode.getNodeRef();
+		}
 
 		if (action == null || action.equals("submitTask")) {
-			ActivitiScriptNode taskNode = (ActivitiScriptNode) task.getVariable("pjt_workflowTask");
-			if (taskNode != null) {
-				logger.debug("taskNode exist " + taskNode.getNodeRef());
-				taskNodeRef = taskNode.getNodeRef();
+			if (taskNodeRef != null) {
 				if (nodeService.exists(taskNodeRef)) {
 					projectService.submitTask(taskNodeRef);
 				}
