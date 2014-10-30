@@ -52,9 +52,7 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
 public class ProductFormulationHandler extends FormulationBaseHandler<ProductData> {
-
-	private static final String MESSAGE_MISSING_NET_WEIGHT = "message.formulate.missing.netWeight";
-	private static final String MESSAGE_MISSING_QTY = "message.formulate.missing.qty";
+	
 	private static final String MESSAGE_MISSING_UNIT = "message.formulate.missing.unit";
 	private static final String MESSAGE_MISSING_DENSITY = "message.formulate.missing.density";
 	private static final String MESSAGE_WRONG_UNIT = "message.formulate.wrong.unit";
@@ -250,16 +248,12 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		if (!PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.isMatch(nodeService.getType(productNodeRef))) {
 
 			ProductUnit productUnit = FormulationHelper.getProductUnit(productNodeRef, nodeService);
-			if (c != null) {
-				if (FormulationHelper.isCompoUnitP(c.getCompoListUnit())) {
-					checkNetWeight(reqCtrlListDataItem, productNodeRef);
-				} else {
-					boolean shouldUseLiter = FormulationHelper.isProductUnitLiter(productUnit);
-					boolean useLiter = FormulationHelper.isCompoUnitLiter(c.getCompoListUnit());
+			if (c != null) {			
+				boolean shouldUseLiter = FormulationHelper.isProductUnitLiter(productUnit);
+				boolean useLiter = FormulationHelper.isCompoUnitLiter(c.getCompoListUnit());
 
-					if (shouldUseLiter && !useLiter || !shouldUseLiter && useLiter) {
-						addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_WRONG_UNIT);
-					}
+				if (shouldUseLiter && !useLiter || !shouldUseLiter && useLiter) {
+					addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_WRONG_UNIT);
 				}
 				Double overrunPerc = c.getOverrunPerc();
 				if (FormulationHelper.isProductUnitLiter(productUnit) || overrunPerc != null) {
@@ -269,13 +263,6 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 					}
 				}
 			}
-		}
-	}
-
-	private void checkNetWeight(List<ReqCtrlListDataItem> reqCtrlListDataItem, NodeRef productNodeRef) {
-		Double netWeight = FormulationHelper.getNetWeight(productNodeRef, nodeService, null);
-		if (netWeight == null || netWeight.equals(0d)) {
-			addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_MISSING_NET_WEIGHT);
 		}
 	}
 
