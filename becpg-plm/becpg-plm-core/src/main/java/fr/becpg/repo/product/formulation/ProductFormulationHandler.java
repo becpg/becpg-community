@@ -235,19 +235,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 			reqCtrlList = formulatedProduct.getPackagingListView().getReqCtrlList();
 
 		} else {
-			if (!(formulatedProduct instanceof ResourceProductData)) {
-				Double qty = formulatedProduct.getQty();
-				if (qty == null || qty.equals(0d)) {
-					addMessingReq(formulatedProduct.getCompoListView().getReqCtrlList(), productNodeRef, MESSAGE_MISSING_QTY);
-				}
-				Double netWeight = FormulationHelper.getNetWeight(formulatedProduct, null);
-				if (netWeight == null || netWeight.equals(0d)) {
-					addMessingReq(formulatedProduct.getCompoListView().getReqCtrlList(), productNodeRef, MESSAGE_MISSING_NET_WEIGHT);
-				}
-			}
-
 			reqCtrlList = formulatedProduct.getCompoListView().getReqCtrlList();
-
 		}
 		if (!(formulatedProduct instanceof ResourceProductData)) {
 			ProductUnit productUnit = formulatedProduct.getUnit();
