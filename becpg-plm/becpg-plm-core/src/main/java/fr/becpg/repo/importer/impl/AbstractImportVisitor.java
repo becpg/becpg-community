@@ -114,6 +114,8 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 	/** The Constant QUERY_ATTR_GET_ATTRIBUTE. */
 	protected static final String QUERY_ATTR_GET_ATTRIBUTE = "@attribute";
+	
+	protected static final String QUERY_ATTR_GET_TARGET_CLASS = "@targetClass";
 
 	/** The Constant QUERY_ATTR_GET_NAME. */
 	protected static final String QUERY_ATTR_GET_NAME = "@name";
@@ -415,14 +417,19 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 			AbstractAttributeMapping attributeMapping = importContext.getColumns().get(z_idx);
 
-			if (attributeMapping instanceof AbstractAttributeMapping) {
+			if (attributeMapping instanceof AttributeMapping) {
 				ClassAttributeDefinition column = attributeMapping.getAttribute();
 
 				if (column instanceof AssociationDefinition) {
 					AssociationDefinition assocDef = (AssociationDefinition) column;
 					String value = values.get(z_idx);
-
-					List<NodeRef> targetRefs = findTargetNodesByValue(importContext, assocDef, value);
+					
+					QName targetClass = ((AttributeMapping) attributeMapping).getTargetClass();
+					logger.debug("importAssociations targetClass" + targetClass);
+					List<NodeRef> targetRefs = findTargetNodesByValue(importContext, 
+													assocDef.isTargetMany(), 
+													targetClass != null ? targetClass : assocDef.getTargetClass().getName(), 
+													value);
 
 					// mandatory target not found
 					if (assocDef.isTargetMandatory() && targetRefs.isEmpty()) {
@@ -735,7 +742,12 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 					}
 				}
 
-				AbstractAttributeMapping attributeMapping = new AttributeMapping(columnNode.valueOf(QUERY_ATTR_GET_ID), attributeDef);
+				AttributeMapping attributeMapping = new AttributeMapping(columnNode.valueOf(QUERY_ATTR_GET_ID), attributeDef);
+				String targetClass = columnNode.valueOf(QUERY_ATTR_GET_TARGET_CLASS);
+				logger.debug("targetClass: " + targetClass);
+				if(targetClass != null && !targetClass.isEmpty()){					
+					attributeMapping.setTargetClass(QName.createQName(targetClass, namespaceService));
+				}
 				classMapping.getColumns().add(attributeMapping);
 			}
 
@@ -867,6 +879,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	public ImportContext loadMappingColumns(Element mappingElt, List<String> columns, ImportContext importContext) throws MappingException {
 
 		ClassMapping classMapping = importContext.getClassMappings().get(importContext.getType());
+		logger.debug("Type: " + importContext.getType() + "classMapping: " + classMapping);
 
 		// check COLUMNS respects the mapping and the class attributes
 		List<AbstractAttributeMapping> columnsAttributeMapping = new ArrayList<AbstractAttributeMapping>();
@@ -880,6 +893,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			if (classMapping != null) {
 				// columns
 				for (AbstractAttributeMapping attrMapping : classMapping.getColumns()) {
+					logger.debug("columnId : " + columnId  + " attrMapping.getId(): " + attrMapping.getId());
 					if (attrMapping.getId().equals(columnId)) {
 						columnsAttributeMapping.add(attrMapping);
 						isAttributeMapped = true;
@@ -942,6 +956,10 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 		importContext.setColumns(columnsAttributeMapping);
 
+		if(logger.isDebugEnabled()){
+			logger.debug("importContext.getColumns() " + importContext.getColumns());
+		}
+		
 		return importContext;
 	}
 
@@ -1005,6 +1023,9 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 			for (QName attribute : classMapping.getNodeColumnKeys()) {
 
+				if(logger.isDebugEnabled()){
+					logger.debug("attribute: " + attribute + " value: " + properties.get(attribute));
+				}
 				if (ContentModel.ASSOC_CONTAINS.isMatch(attribute)) {
 					// query by path
 					NodeRef folderNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(), importContext.getPath());
@@ -1031,6 +1052,8 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			}
 		}
 		else{
+			logger.debug("nodeColumnKeys is empty type: " + type);
+			
 			// look for codeAspect
 			if (dictionaryService.getType(type).getDefaultAspects() != null) {
 				for (AspectDefinition aspectDef : dictionaryService.getType(type).getDefaultAspects()) {
@@ -1086,25 +1109,25 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	 * @throws InvalidTargetNodeException
 	 * @throws ImporterException
 	 */
-	protected List<NodeRef> findTargetNodesByValue(ImportContext importContext, AssociationDefinition assocDef, String value) throws ImporterException {
+	protected List<NodeRef> findTargetNodesByValue(ImportContext importContext, boolean isTargetMany, QName targetClass, String value) throws ImporterException {
 
 		List<NodeRef> targetRefs = new ArrayList<NodeRef>();
 
 		if (!value.isEmpty()) {
 
-			if (assocDef.isTargetMany()) {
+			if (isTargetMany) {
 				String[] arrValue = value.split(RepoConsts.MULTI_VALUES_SEPARATOR);
 
 				for (String v : arrValue) {
 					if (!v.isEmpty()) {
-						NodeRef targetNodeRef = findTargetNodeByValue(importContext, assocDef.getTargetClass().getName(), v);
+						NodeRef targetNodeRef = findTargetNodeByValue(importContext, targetClass, v);
 						if (targetNodeRef != null) {
 							targetRefs.add(targetNodeRef);
 						}
 					}
 				}
 			} else {
-				NodeRef targetNodeRef = findTargetNodeByValue(importContext, assocDef.getTargetClass().getName(), value);
+				NodeRef targetNodeRef = findTargetNodeByValue(importContext, targetClass, value);
 				if (targetNodeRef != null) {
 					targetRefs.add(targetNodeRef);
 				}
@@ -1112,7 +1135,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		}
 
 		if (logger.isDebugEnabled())
-			logger.debug("assoc, name: " + assocDef.getName() + " - value: " + value + "- targetRefs: " + targetRefs);
+			logger.debug("assoc, targetClass: " + targetClass + " - value: " + value + "- targetRefs: " + targetRefs);
 		return targetRefs;
 	}
 
@@ -1152,8 +1175,12 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 				throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_GET_ASSOC_TARGET, propDef.getName(), value));
 			}
 		}
-
-		return findTargetNodeByValue(importContext, propDef.getDataType().getName(), value);
+		
+		QName targetClass = propDef.getDataType().getName();
+		if(attributeMapping instanceof AttributeMapping && ((AttributeMapping) attributeMapping).getTargetClass() != null){
+			targetClass = ((AttributeMapping) attributeMapping).getTargetClass();
+		}
+		return findTargetNodeByValue(importContext, targetClass, value);
 
 	}
 
