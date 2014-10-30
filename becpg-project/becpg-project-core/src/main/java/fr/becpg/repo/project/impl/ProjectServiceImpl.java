@@ -113,39 +113,20 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
-	public void openTask(NodeRef taskNodeRef) {
+	public void reopenTask(NodeRef taskNodeRef) {
 
 		logger.debug("open Task " + taskNodeRef);
 
 		List<AssociationRef> sourceAssocs = nodeService.getSourceAssocs(taskNodeRef, ProjectModel.ASSOC_DL_TASK);
 		for (AssociationRef sourceAssoc : sourceAssocs) {
 			String dlState = (String) nodeService.getProperty(sourceAssoc.getSourceRef(), ProjectModel.PROP_DL_STATE);
-
-			if (DeliverableState.PreScript.toString().equals(dlState) && !DeliverableState.PostScript.toString().equals(dlState)) {
+			if (DeliverableState.Completed.toString().equals(dlState)) {
 				nodeService.setProperty(sourceAssoc.getSourceRef(), ProjectModel.PROP_DL_STATE, DeliverableState.InProgress.toString());
 			}
 		}
 
 	}
 
-	@Override
-	public void completeTask(NodeRef taskNodeRef) {
-		List<AssociationRef> sourceAssocs = nodeService.getSourceAssocs(taskNodeRef, ProjectModel.ASSOC_DL_TASK);
-		for (AssociationRef sourceAssoc : sourceAssocs) {
-			String dlState = (String) nodeService.getProperty(sourceAssoc.getSourceRef(), ProjectModel.PROP_DL_STATE);
-			if (DeliverableState.PostScript.toString().equals(dlState)) {
-				runScript(getProjectNodeRef(taskNodeRef), taskNodeRef,
-						(String) nodeService.getProperty(sourceAssoc.getSourceRef(), ProjectModel.PROP_DL_SCRIPT));
-			} else if (!DeliverableState.PreScript.toString().equals(dlState)) {
-				nodeService.setProperty(sourceAssoc.getSourceRef(), ProjectModel.PROP_DL_STATE, DeliverableState.Completed.toString());
-			}
-		}
-
-	}
-
-	private NodeRef getProjectNodeRef(NodeRef taskNodeRef) {
-		return entityListDAO.getEntity(taskNodeRef);
-	}
 
 	@Override
 	public List<NodeRef> getTaskLegendList() {
@@ -180,6 +161,7 @@ public class ProjectServiceImpl implements ProjectService {
 	@Override
 	public void formulate(NodeRef projectNodeRef) throws FormulateException {
 		if (nodeService.getType(projectNodeRef).equals(ProjectModel.TYPE_PROJECT)) {
+			logger.debug("Formulate project : "+projectNodeRef);
 			formulationService.formulate(projectNodeRef);
 		}
 	}
@@ -376,16 +358,16 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
-	public void runScript(NodeRef projectNodeRef, NodeRef taskNodeRef, String scriptString) {
+	public void runScript(ProjectData project, TaskListDataItem task, String scriptString) {
 
 		if (scriptString != null && !scriptString.isEmpty()) {
 			Map<String, Object> model = new HashMap<String, Object>();
 
 			logger.debug("Run task script : " + scriptString);
 
-			model.put("task", taskNodeRef);
-			model.put("project", projectNodeRef);
-			model.put("shareUrl", sysAdminParams.getShareProtocol() + "//" + sysAdminParams.getShareHost() + ":" + sysAdminParams.getSharePort()
+			model.put("task", task);
+			model.put("project", project);
+			model.put("shareUrl", sysAdminParams.getShareProtocol() + "://" + sysAdminParams.getShareHost() + ":" + sysAdminParams.getSharePort()
 					+ "/" + sysAdminParams.getShareContext());
 
 			scriptService.executeScriptString(scriptString, model);

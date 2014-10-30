@@ -22,6 +22,8 @@ import java.util.List;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.formulation.FormulateException;
+import fr.becpg.repo.project.data.ProjectData;
+import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 
 /**
  * Class used to manage a project
@@ -39,17 +41,17 @@ public interface ProjectService {
 	public void openDeliverable(NodeRef deliverableNodeRef);
 	
 	/**
-	 * Open task in progress
+	 * Reopen a task in progress
 	 * @param taskNodeRef
 	 */
-	public void openTask(NodeRef taskNodeRef);
+	public void reopenTask(NodeRef taskNodeRef);
 
 	
-	/**
-	 * Complete task
-	 * @param taskNodeRef
-	 */
-	public void completeTask(NodeRef taskNodeRef);
+//	/**
+//	 * Complete task
+//	 * @param taskNodeRef
+//	 */
+//	public void completeTask(NodeRef taskNodeRef);
 	
 	/**
 	 * Get the task legend list
@@ -133,7 +135,7 @@ public interface ProjectService {
 	 * @param taskNodeRef
 	 * @param stringScript
 	 */
-	public void runScript(NodeRef projectNodeRef, NodeRef taskNodeRef, String stringScript);
+	public void runScript(ProjectData project, TaskListDataItem task, String scriptString);
 
 	
 

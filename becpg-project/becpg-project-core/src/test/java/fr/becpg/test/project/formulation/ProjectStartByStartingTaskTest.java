@@ -42,10 +42,10 @@ public class ProjectStartByStartingTaskTest extends AbstractProjectTestCase {
 				assertNotNull(projectData);
 				assertNotNull(projectData.getTaskList());
 				assertEquals(6, projectData.getTaskList().size());
-				assertEquals(TaskState.Planned, projectData.getTaskList().get(0).getState());
-				assertEquals(TaskState.Planned, projectData.getTaskList().get(1).getState());
+				assertEquals(TaskState.Planned, projectData.getTaskList().get(0).getTaskState());
+				assertEquals(TaskState.Planned, projectData.getTaskList().get(1).getTaskState());
 				
-				projectData.getTaskList().get(0).setState(TaskState.InProgress);
+				projectData.getTaskList().get(0).setTaskState(TaskState.InProgress);
 				alfrescoRepository.save(projectData);
 
 				return null;
@@ -61,8 +61,8 @@ public class ProjectStartByStartingTaskTest extends AbstractProjectTestCase {
 				assertNotNull(projectData);
 				assertNotNull(projectData.getTaskList());
 				assertEquals(6, projectData.getTaskList().size());
-				assertEquals(TaskState.InProgress, projectData.getTaskList().get(0).getState());
-				assertEquals(TaskState.Planned, projectData.getTaskList().get(1).getState());				
+				assertEquals(TaskState.InProgress, projectData.getTaskList().get(0).getTaskState());
+				assertEquals(TaskState.Planned, projectData.getTaskList().get(1).getTaskState());				
 				assertEquals(ProjectState.InProgress, projectData.getProjectState());				
 
 				return null;

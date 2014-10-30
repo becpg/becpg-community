@@ -23,7 +23,6 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.hierarchy.HierarchicalEntity;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
@@ -199,13 +198,22 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 
 	@AlfProp
 	@AlfQname(qname = "pjt:projectState")
-		public ProjectState getProjectState() {
+	public ProjectState getProjectState() {
 		return projectState;
 	}
 
 	public void setProjectState(ProjectState projectState) {
 		this.projectState = projectState;
 	}
+	
+	public String getState() {
+		return projectState!=null ? projectState.toString() : ProjectState.Planned.toString();
+	}
+
+	public void setState(String state) {
+		this.projectState = ProjectState.valueOf(state);
+	}
+	
 
 	@AlfSingleAssoc
 	@AlfQname(qname = "bcpg:entityTplRef")

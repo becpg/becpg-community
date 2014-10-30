@@ -43,7 +43,7 @@ public class ProjectOverdueTest extends AbstractProjectTestCase {
 				
 				PlanningFormulationHandler planningFormulationHandler = new PlanningFormulationHandler();					
 				
-				projectData.getTaskList().get(0).setState(TaskState.InProgress);				
+				projectData.getTaskList().get(0).setTaskState(TaskState.InProgress);				
 				planningFormulationHandler.process(projectData);				
 				assertEquals(0, projectData.getOverdue().intValue());
 				
@@ -62,10 +62,10 @@ public class ProjectOverdueTest extends AbstractProjectTestCase {
 				// set start date to simulate 3 days after start (task completed in time)
 				startDate = ProjectHelper.calculateNextDate(new Date(), 3, false);			
 				Date endDate = ProjectHelper.calculateEndDate(startDate, 2);
-				projectData.getTaskList().get(0).setState(TaskState.Completed);
+				projectData.getTaskList().get(0).setTaskState(TaskState.Completed);
 				projectData.getTaskList().get(0).setStart(startDate);	
 				projectData.getTaskList().get(0).setEnd(endDate);
-				projectData.getTaskList().get(1).setState(TaskState.InProgress);
+				projectData.getTaskList().get(1).setTaskState(TaskState.InProgress);
 				planningFormulationHandler.process(projectData);				
 				assertEquals(0, projectData.getOverdue().intValue());
 				
@@ -73,14 +73,14 @@ public class ProjectOverdueTest extends AbstractProjectTestCase {
 				startDate = ProjectHelper.calculateNextDate(new Date(), 6, false);			
 				projectData.setStartDate(startDate);
 				for(TaskListDataItem t : projectData.getTaskList()){
-					t.setState(TaskState.Planned);
+					t.setTaskState(TaskState.Planned);
 				}				
 				planningFormulationHandler.process(projectData);	
-				projectData.getTaskList().get(0).setState(TaskState.Completed);
-				projectData.getTaskList().get(1).setState(TaskState.Completed);
-				projectData.getTaskList().get(2).setState(TaskState.Completed);
-				projectData.getTaskList().get(3).setState(TaskState.InProgress);
-				projectData.getTaskList().get(4).setState(TaskState.InProgress);	
+				projectData.getTaskList().get(0).setTaskState(TaskState.Completed);
+				projectData.getTaskList().get(1).setTaskState(TaskState.Completed);
+				projectData.getTaskList().get(2).setTaskState(TaskState.Completed);
+				projectData.getTaskList().get(3).setTaskState(TaskState.InProgress);
+				projectData.getTaskList().get(4).setTaskState(TaskState.InProgress);	
 				planningFormulationHandler.process(projectData);
 				assertEquals(0, projectData.getOverdue().intValue());
 				
@@ -88,14 +88,14 @@ public class ProjectOverdueTest extends AbstractProjectTestCase {
 				startDate = ProjectHelper.calculateNextDate(new Date(), 9, false);			
 				projectData.getTaskList().get(0).setStart(startDate);
 				for(TaskListDataItem t : projectData.getTaskList()){
-					t.setState(TaskState.Planned);
+					t.setTaskState(TaskState.Planned);
 				}
 				planningFormulationHandler.process(projectData);	
-				projectData.getTaskList().get(0).setState(TaskState.Completed);
-				projectData.getTaskList().get(1).setState(TaskState.Completed);
-				projectData.getTaskList().get(2).setState(TaskState.Completed);
-				projectData.getTaskList().get(3).setState(TaskState.InProgress);
-				projectData.getTaskList().get(4).setState(TaskState.InProgress);
+				projectData.getTaskList().get(0).setTaskState(TaskState.Completed);
+				projectData.getTaskList().get(1).setTaskState(TaskState.Completed);
+				projectData.getTaskList().get(2).setTaskState(TaskState.Completed);
+				projectData.getTaskList().get(3).setTaskState(TaskState.InProgress);
+				projectData.getTaskList().get(4).setTaskState(TaskState.InProgress);
 				planningFormulationHandler.process(projectData);
 				assertEquals(1, projectData.getOverdue().intValue());
 

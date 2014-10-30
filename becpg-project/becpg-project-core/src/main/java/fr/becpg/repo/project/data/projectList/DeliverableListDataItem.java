@@ -43,6 +43,7 @@ public class DeliverableListDataItem extends BeCPGDataObject {
 	private String description;
 	private String url;
 	private String script;
+	private DeliverableScriptOrder scriptOrder = DeliverableScriptOrder.None;
 	private Integer completionPercent = 0;
 	private NodeRef content;
 
@@ -68,7 +69,16 @@ public class DeliverableListDataItem extends BeCPGDataObject {
 	}
 
 	
-	
+	@AlfProp
+	@AlfQname(qname = "pjt:dlScriptExecOrder")
+	public DeliverableScriptOrder getScriptOrder() {
+		return scriptOrder;
+	}
+
+	public void setScriptOrder(DeliverableScriptOrder scriptOrder) {
+		this.scriptOrder = scriptOrder;
+	}
+
 	@AlfProp
 	@AlfQname(qname = "pjt:dlScript")
 	public String getScript() {
