@@ -696,7 +696,6 @@
 					<show id="pjt:dlContent" />
 					<show id="pjt:dlUrl" />
 					<show id="pjt:dlScriptExecOrder" />
-					<show id="pjt:dlScript" />
 					<show id="pjt:dlState" />
 					<show id="pjt:completionPercent" />
 				</field-visibility>

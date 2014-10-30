@@ -135,7 +135,7 @@ public interface ProjectService {
 	 * @param taskNodeRef
 	 * @param stringScript
 	 */
-	public void runScript(ProjectData project, TaskListDataItem task, String scriptString);
+	public void runScript(ProjectData project, TaskListDataItem task, NodeRef scriptNode);
 
 	
 

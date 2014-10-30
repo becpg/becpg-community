@@ -160,7 +160,7 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 						// set Planned dl InProgress
 						if (DeliverableState.InProgress.equals(nextDeliverable.getState())) {
 							if(DeliverableScriptOrder.Post.equals(nextDeliverable.getScriptOrder())){
-								projectService.runScript(projectData, nextTask, nextDeliverable.getScript());
+								projectService.runScript(projectData, nextTask, nextDeliverable.getContent());
 							} 
 							nextDeliverable.setState(DeliverableState.Completed);
 						}
@@ -170,18 +170,18 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 					
 				} else if (TaskState.Refused.equals(nextTask.getTaskState()) && nextTask.getRefusedTask() != null) {
 					boolean shouldRefused = true;
-					logger.info("Enter refused task");
+					logger.debug("Enter refused task");
 					// Check if all brothers are closed
 					for (TaskListDataItem brotherTask : ProjectHelper.getBrethrenTask(projectData, nextTask)) {
 						if (!nextTask.getRefusedTask().equals(brotherTask) && TaskState.InProgress.equals(brotherTask.getTaskState())) {
 							shouldRefused = false;
-							logger.info("Will not refused task as there is still some brother Open");
+							logger.debug("Will not refused task as there is still some brother Open");
 							break;
 						}
 					}
 
 					if (shouldRefused) {
-						logger.info("Reopen path : "+nextTask.getRefusedTask().getTaskName());
+						logger.debug("Reopen path : "+nextTask.getRefusedTask().getTaskName());
 						
 						ProjectHelper.reOpenPath(projectData, nextTask, nextTask.getRefusedTask());
 						
@@ -209,7 +209,7 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 							nextDeliverable.setState(DeliverableState.InProgress);
 							nextDeliverable.setUrl(projectService.getDeliverableUrl(projectData.getNodeRef(), nextDeliverable.getUrl()));
 							if(DeliverableScriptOrder.Pre.equals(nextDeliverable.getScriptOrder())){
-								projectService.runScript(projectData, nextTask, nextDeliverable.getScript());
+								projectService.runScript(projectData, nextTask, nextDeliverable.getContent());
 								nextDeliverable.setState(DeliverableState.Completed);
 							} 
 						}
