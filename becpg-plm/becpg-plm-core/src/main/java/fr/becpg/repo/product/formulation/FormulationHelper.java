@@ -65,6 +65,7 @@ public class FormulationHelper {
 		} else {
 			qty = compoListDataItem.getQty();
 		}
+		
 		return qty != null ? qty : DEFAULT_COMPONANT_QUANTITY;
 	}
 
@@ -316,6 +317,9 @@ public class FormulationHelper {
 						return qty;
 					}
 				}
+				else{
+					return FormulationHelper.getQtyFromComposition(productData, productUnit, defaultValue);
+				}
 			}
 		}
 
@@ -327,7 +331,7 @@ public class FormulationHelper {
 		if (productUnit != null) {
 			Double qty = formulatedProduct.getQty();
 			if (qty == null) {
-				qty = defaultValue;
+				return FormulationHelper.getQtyFromComposition(formulatedProduct, productUnit, defaultValue);				
 			}
 
 			if (FormulationHelper.isProductUnitKg(productUnit) || FormulationHelper.isProductUnitLiter(productUnit)) {
@@ -343,6 +347,19 @@ public class FormulationHelper {
 		}
 
 		return defaultValue;
+	}
+	
+	private static Double getQtyFromComposition(ProductData formulatedProduct, ProductUnit productUnit, Double defaultValue){
+		Double qty = defaultValue;
+		if (productUnit != null && FormulationHelper.isProductUnitLiter(productUnit)) {
+			if(formulatedProduct.getRecipeVolumeUsed() != null){
+				qty = formulatedProduct.getRecipeVolumeUsed();
+			}
+		}
+		else if(formulatedProduct.getRecipeQtyUsed() != null){
+			qty = formulatedProduct.getRecipeQtyUsed();			
+		}		
+		return qty;
 	}
 
 	public static Double getNetVolume(NodeRef nodeRef, NodeService nodeService) {

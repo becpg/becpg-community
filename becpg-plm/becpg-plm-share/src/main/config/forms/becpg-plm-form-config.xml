@@ -283,8 +283,8 @@
 					<show id="bcpg:nutrientProfileRef"   />
 
 					<!-- tags and categories -->
-					<show id="cm:taggable" force="true" />
-					<show id="cm:categories" force="true" />
+					<show id="cm:taggable" />
+					<show id="cm:categories" />
 
 					<!-- Effectivity -->
 					<show id="bcpg:startEffectivity" />
@@ -461,7 +461,7 @@
 					</field>
 
 					<!-- formulation -->
-					<field id="bcpg:productQty" set="formulation" mandatory="true" />
+					<field id="bcpg:productQty" set="formulation" />
 					<field id="bcpg:productUnit" set="formulation">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">kg,g,L,mL,P
@@ -594,7 +594,7 @@
 					<show id="bcpg:entityTplRef" force="true" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:productQty" mandatory="true" />
+					<field id="bcpg:productQty" />
 					<field id="bcpg:productUnit">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">kg,g,L,mL,P
@@ -723,8 +723,8 @@
 					<show id="bcpg:profitability" force="true" />
 
 					<!-- tags and categories -->
-					<show id="cm:taggable" force="true" />
-					<show id="cm:categories" force="true" />
+					<show id="cm:taggable" />
+					<show id="cm:categories" />
 
 				</field-visibility>
 				<appearance>
@@ -824,7 +824,7 @@
 					</field>
 
 					<!-- formulation -->
-					<field id="bcpg:productQty" set="formulation" mandatory="true" />
+					<field id="bcpg:productQty" set="formulation" />
 					<field id="bcpg:productUnit" set="formulation">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">kg,g,L,mL,P
@@ -883,7 +883,7 @@
 					<show id="bcpg:entityTplRef" force="true" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:productQty" mandatory="true" />
+					<field id="bcpg:productQty" />
 					<field id="bcpg:productUnit">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">kg,g,L,mL,P
@@ -924,8 +924,8 @@
 					<show id="bcpg:erpCode" force="true" />
 
 					<!-- tags and categories -->
-					<show id="cm:taggable" force="true" />
-					<show id="cm:categories" force="true" />
+					<show id="cm:taggable" />
+					<show id="cm:categories" />
 
 					<!-- auditable -->
 					<show id="cm:creator" for-mode="view" />
@@ -1065,8 +1065,8 @@
 					<show id="bcpg:erpCode" force="true" />
 
 					<!-- tags and categories -->
-					<show id="cm:taggable" force="true" />
-					<show id="cm:categories" force="true" />
+					<show id="cm:taggable" />
+					<show id="cm:categories" />
 
 				</field-visibility>
 				<appearance>
@@ -1170,8 +1170,8 @@
 					<show id="pack:tareUnit" force="true" />
 
 					<!-- tags and categories -->
-					<show id="cm:taggable" force="true" />
-					<show id="cm:categories" force="true" />
+					<show id="cm:taggable" />
+					<show id="cm:categories" />
 
 					<!-- auditable -->
 					<show id="cm:creator" for-mode="view" />
@@ -1339,8 +1339,8 @@
 					<show id="rep:reportTpls" />
 
 					<!-- tags and categories -->
-					<show id="cm:taggable" force="true" />
-					<show id="cm:categories" force="true" />
+					<show id="cm:taggable" />
+					<show id="cm:categories" />
 
 				</field-visibility>
 				<appearance>
@@ -1445,8 +1445,8 @@
 					<show id="pack:palletHeight" force="true" />
 
 					<!-- tags and categories -->
-					<show id="cm:taggable" force="true" />
-					<show id="cm:categories" force="true" />
+					<show id="cm:taggable" />
+					<show id="cm:categories" />
 
 				</field-visibility>
 				<appearance>
@@ -1522,8 +1522,8 @@
 					<show id="pack:height" />
 
 					<!-- tags and categories -->
-					<show id="cm:taggable" force="true" />
-					<show id="cm:categories" force="true" />
+					<show id="cm:taggable" />
+					<show id="cm:categories" />
 
 					<!-- auditable -->
 					<show id="cm:creator" for-mode="view" />
@@ -1703,8 +1703,8 @@
 					<show id="pack:tareUnit" force="true" />
 
 					<!-- tags and categories -->
-					<show id="cm:taggable" force="true" />
-					<show id="cm:categories" force="true" />
+					<show id="cm:taggable" />
+					<show id="cm:categories" />
 
 				</field-visibility>
 				<appearance>
@@ -1924,8 +1924,8 @@
 					<show id="bcpg:nutrientProfileRef"   />
 
 					<!-- tags and categories -->
-					<show id="cm:taggable" force="true" />
-					<show id="cm:categories" force="true" />
+					<show id="cm:taggable" />
+					<show id="cm:categories" />
 
 					<!-- auditable -->
 					<show id="cm:creator" for-mode="view" />
@@ -2201,8 +2201,8 @@
 					<show id="bcpg:certificateDate" force="true" />
 
 					<!-- tags and categories -->
-					<show id="cm:taggable" force="true" />
-					<show id="cm:categories" force="true" />
+					<show id="cm:taggable" />
+					<show id="cm:categories" />
 
 				</field-visibility>
 				<appearance>
@@ -2500,8 +2500,8 @@
 					<show id="bcpg:nutrientProfileRef"   />
 
 					<!-- tags and categories -->
-					<show id="cm:taggable" force="true" />
-					<show id="cm:categories" force="true" />
+					<show id="cm:taggable" />
+					<show id="cm:categories" />
 
 					<!-- auditable -->
 					<show id="cm:creator" for-mode="view" />
@@ -2578,7 +2578,7 @@
 					<field id="rep:reportTpls" set="mainInfo" />
 
 					<!-- formulation -->
-					<field id="bcpg:productQty" set="formulation" mandatory="true" />
+					<field id="bcpg:productQty" set="formulation" />
 					<field id="bcpg:productUnit" set="formulation">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">kg,g,L,mL,P
@@ -2681,7 +2681,7 @@
 					<show id="bcpg:entityTplRef" force="true" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:productQty" mandatory="true" />
+					<field id="bcpg:productQty" />
 					<field id="bcpg:productUnit">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">kg,g,L,mL,P
@@ -2802,8 +2802,8 @@
 					<show id="bcpg:productSpecifications" />
 
 					<!-- tags and categories -->
-					<show id="cm:taggable" force="true" />
-					<show id="cm:categories" force="true" />
+					<show id="cm:taggable" />
+					<show id="cm:categories" />
 
 				</field-visibility>
 				<appearance>
@@ -2895,7 +2895,7 @@
 					</field>
 
 					<!-- formulation -->
-					<field id="bcpg:productQty" set="formulation" mandatory="true" />
+					<field id="bcpg:productQty" set="formulation" />
 					<field id="bcpg:productUnit" set="formulation">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">kg,g,L,mL,P
@@ -2943,7 +2943,7 @@
 					<show id="bcpg:entityTplRef" force="true" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:productQty" mandatory="true" />
+					<field id="bcpg:productQty" />
 					<field id="bcpg:productUnit">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">kg,g,L,mL,P
@@ -2996,8 +2996,8 @@
 					<show id="bcpg:entityTplRef" force="true" />
 
 					<!-- tags and categories -->
-					<show id="cm:taggable" force="true" />
-					<show id="cm:categories" force="true" />
+					<show id="cm:taggable" />
+					<show id="cm:categories" />
 
 					<!-- auditable -->
 					<show id="cm:creator" for-mode="view" />
@@ -3158,8 +3158,8 @@
 					<show id="bcpg:entityTplRef" force="true" />
 
 					<!-- tags and categories -->
-					<show id="cm:taggable" force="true" />
-					<show id="cm:categories" force="true" />
+					<show id="cm:taggable" />
+					<show id="cm:categories" />
 
 				</field-visibility>
 				<appearance>
