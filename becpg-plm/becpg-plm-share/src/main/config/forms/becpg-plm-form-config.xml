@@ -287,8 +287,8 @@
 					<show id="cm:categories" />
 
 					<!-- Effectivity -->
-					<show id="bcpg:startEffectivity" />
-					<show id="bcpg:endEffectivity" />
+					<show id="bcpg:startEffectivity" for-mode="view" />
+					<show id="bcpg:endEffectivity" for-mode="view" />
 
 					<!-- auditable -->
 					<show id="cm:creator" for-mode="view" />

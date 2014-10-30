@@ -4,6 +4,7 @@
 package fr.becpg.repo.product.formulation;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -205,14 +206,13 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 	}
 
 	protected Map<NodeRef, List<NodeRef>> getMandatoryCharacts(ProductData formulatedProduct, QName componentType) {
-		Map<NodeRef, List<NodeRef>> mandatoryCharacts = getMandatoryCharactsFromList(formulatedProduct.getNutList());
-		for(NodeRef nutNodeRef : mandatoryCharacts.keySet()){
-			String formula = (String) nodeService.getProperty(nutNodeRef, PLMModel.PROP_NUT_FORMULA);
-			if (formula != null && formula.length() > 0) {
-				mandatoryCharacts.remove(nutNodeRef);
+		Map<NodeRef, List<NodeRef>> mandatoryCharacts = new HashMap<NodeRef, List<NodeRef>>();
+		for(Map.Entry<NodeRef, List<NodeRef>> kv : getMandatoryCharactsFromList(formulatedProduct.getNutList()).entrySet()){
+			String formula = (String) nodeService.getProperty(kv.getKey(), PLMModel.PROP_NUT_FORMULA);
+			if (formula == null || formula.isEmpty()) {
+				mandatoryCharacts.put(kv.getKey(), kv.getValue());
 			}
-		}
-		
+		}		
 		return mandatoryCharacts;
 	}
 }
