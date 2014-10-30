@@ -51,24 +51,24 @@
 	<config evaluator="string-compare" condition="bulk-edit">
 		<itemTypes>
 			<itemType name="bcpg:finishedProduct" />
-			<itemType name="pjt:project" />
-			<!-- <itemType name="bcpg:finishedProduct" label="Produit fini avec aspect" -->
-			<!-- formId="bulk-edit-2" editSelectedFormId ="bulk-edit" /> -->
-			<!-- <itemType name="bcpg:allergenList" /> -->
-			<itemType name="sec:aclGroup" />
 			<itemType name="bcpg:semiFinishedProduct" />
 
 			<itemType name="bcpg:rawMaterial" />
 			<itemType name="bcpg:packagingMaterial" />
 			<itemType name="bcpg:packagingKit" />
 			<itemType name="bcpg:resourceProduct" />
-
+			<!-- <itemType name="pjt:project" /> -->
+			<!-- <itemType name="bcpg:finishedProduct" label="Produit fini avec aspect" -->
+			<!-- formId="bulk-edit-2" editSelectedFormId ="bulk-edit" /> -->
+			<!-- <itemType name="bcpg:allergenList" /> -->
+			
 			<itemType name="bcpg:supplier" />
 			<itemType name="bcpg:client" />
+			<itemType name="sec:aclGroup" />
 
-			<itemType name="cm:content" />
+			<!-- <itemType name="cm:content" />
 
-			<itemType name="ext1:customType" /> 
+			<itemType name="ext1:customType" />  -->
 		</itemTypes>
 	</config>
 

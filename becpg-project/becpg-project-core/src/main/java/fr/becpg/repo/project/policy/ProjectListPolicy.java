@@ -147,16 +147,14 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 					try {
 						policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
 						policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
-						if(!nodeService.hasAspect(projectNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)){
-							projectService.formulate(projectNodeRef);
-						}
+						projectService.formulate(projectNodeRef);
 					} catch (FormulateException e) {
 						logger.error(e, e);
 					} finally {
 						policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
 						policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
 					}
-				}
+				} 
 			}
 		}
 	}
@@ -189,14 +187,9 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 			if (beforeState.equals(TaskState.Completed.toString()) && afterState.equals(TaskState.InProgress.toString())) {
 				// re-open task
 				logger.debug("re-open task: " + nodeRef);
-				projectService.openTask(nodeRef);
+				projectService.reopenTask(nodeRef);
 				
 			}
-			
-			if(afterState.equals(TaskState.Completed.toString())){
-				projectService.completeTask(nodeRef);
-			}
-			
 		}
 
 		if (isPropChanged(before, after, ProjectModel.PROP_TL_DURATION) || isPropChanged(before, after, ProjectModel.PROP_TL_START)
@@ -364,9 +357,7 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 				properties.put(ProjectModel.PROP_TL_STATE, TaskState.Planned);
 			}
 		} else if (ProjectModel.TYPE_DELIVERABLE_LIST.equals(classQName)) {
-			if (properties.containsKey(ProjectModel.PROP_DL_STATE)
-					&& !DeliverableState.PreScript.toString().equals(properties.get(ProjectModel.PROP_DL_STATE))
-					&& !DeliverableState.PostScript.toString().equals(properties.get(ProjectModel.PROP_DL_STATE))) {
+			if (properties.containsKey(ProjectModel.PROP_DL_STATE)) {
 				properties.put(ProjectModel.PROP_DL_STATE, DeliverableState.Planned);
 			}
 		}
