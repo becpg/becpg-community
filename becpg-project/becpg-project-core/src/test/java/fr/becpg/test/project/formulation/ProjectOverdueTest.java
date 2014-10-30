@@ -38,6 +38,7 @@ public class ProjectOverdueTest extends AbstractProjectTestCase {
 
 				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 
+				
 				assertNotNull(projectData);
 				assertEquals(0, projectData.getOverdue().intValue());
 				
@@ -97,6 +98,7 @@ public class ProjectOverdueTest extends AbstractProjectTestCase {
 				projectData.getTaskList().get(3).setTaskState(TaskState.InProgress);
 				projectData.getTaskList().get(4).setTaskState(TaskState.InProgress);
 				planningFormulationHandler.process(projectData);
+				
 				assertEquals(1, projectData.getOverdue().intValue());
 
 				return null;

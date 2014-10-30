@@ -517,9 +517,6 @@
 				<property name="pjt:dlUrl">
 					<type>d:text</type>
 				</property>
-				<property name="pjt:dlScript">
-					<type>d:text</type>
-				</property>
 			</properties>
 			<associations>
 				<association name="pjt:dlTask">

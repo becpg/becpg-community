@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.admin.SysAdminParams;
 import org.alfresco.repo.security.authority.AuthorityDAO;
 import org.alfresco.service.cmr.repository.AssociationRef;
@@ -358,19 +359,19 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
-	public void runScript(ProjectData project, TaskListDataItem task, String scriptString) {
+	public void runScript(ProjectData project, TaskListDataItem task, NodeRef scriptNode) {
 
-		if (scriptString != null && !scriptString.isEmpty()) {
+		if (scriptNode != null && nodeService.exists(scriptNode)) {
 			Map<String, Object> model = new HashMap<String, Object>();
 
-			logger.debug("Run task script : " + scriptString);
+			logger.debug("Run task script " );
 
 			model.put("task", task);
 			model.put("project", project);
 			model.put("shareUrl", sysAdminParams.getShareProtocol() + "://" + sysAdminParams.getShareHost() + ":" + sysAdminParams.getSharePort()
 					+ "/" + sysAdminParams.getShareContext());
 
-			scriptService.executeScriptString(scriptString, model);
+			scriptService.executeScript(scriptNode, ContentModel.PROP_CONTENT, model);
 		}
 
 	}
