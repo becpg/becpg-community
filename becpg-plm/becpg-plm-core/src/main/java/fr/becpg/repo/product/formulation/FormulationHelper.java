@@ -290,6 +290,11 @@ public class FormulationHelper {
 				}
 			}
 		}
+		
+		netWeight = (Double) nodeService.getProperty(nodeRef, PLMModel.PROP_PRODUCT_COMPO_QTY_USED);
+		if(netWeight != null){
+			return netWeight;
+		}
 
 		return defaultValue;
 	}
@@ -303,19 +308,20 @@ public class FormulationHelper {
 			ProductUnit productUnit = productData.getUnit();
 			if (productUnit != null) {
 				Double qty = productData.getQty();
-				if (qty != null) {
-					if (FormulationHelper.isProductUnitKg(productUnit) || FormulationHelper.isProductUnitLiter(productUnit)) {
-						if (productUnit.equals(ProductUnit.g) || productUnit.equals(ProductUnit.mL)) {
-							qty = qty / 1000;
-						}
-						if (FormulationHelper.isProductUnitLiter(productUnit)) {
-							Double density = productData.getDensity();
-							if (density != null) {
-								qty = qty * density;
-							}
-						}
-						return qty;
+				if (qty != null && FormulationHelper.isProductUnitKg(productUnit) || FormulationHelper.isProductUnitLiter(productUnit)) {
+					if (productUnit.equals(ProductUnit.g) || productUnit.equals(ProductUnit.mL)) {
+						qty = qty / 1000;
 					}
+					if (FormulationHelper.isProductUnitLiter(productUnit)) {
+						Double density = productData.getDensity();
+						if (density != null) {
+							qty = qty * density;
+						}
+						else{
+							return FormulationHelper.getQtyFromComposition(productData, productUnit, defaultValue);
+						}
+					}
+					return qty;
 				}
 				else{
 					return FormulationHelper.getQtyFromComposition(productData, productUnit, defaultValue);

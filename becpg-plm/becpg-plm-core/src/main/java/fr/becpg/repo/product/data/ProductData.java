@@ -282,6 +282,8 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		this.yieldVolume = yieldVolume;
 	}
 
+	@AlfProp
+	@AlfQname(qname = "bcpg:productCompoQtyUsed")
 	public Double getRecipeQtyUsed() {
 		return recipeQtyUsed;
 	}
@@ -290,6 +292,8 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		this.recipeQtyUsed = recipeQtyUsed;
 	}
 
+	@AlfProp
+	@AlfQname(qname = "bcpg:productCompoVolumeUsed")
 	public Double getRecipeVolumeUsed() {
 		return recipeVolumeUsed;
 	}
