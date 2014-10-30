@@ -24,7 +24,7 @@
 					<show id="cm:name" />
 					<show id="bcpg:code" />
 					<show id="cm:title" force="true" />
-              		<show id="cm:description" force="true" />					
+              	<show id="cm:description" force="true" />					
 					<show id="pjt:projectHierarchy1" />
 					<show id="pjt:projectHierarchy2" />
 					<show id="pjt:projectOrigin" />
@@ -50,8 +50,8 @@
 					
 
 					<!-- tags and categories -->
-					<show id="cm:taggable" force="true" />
-					<show id="cm:categories" force="true" />
+					<show id="cm:taggable" />
+					<show id="cm:categories" />
 					
 					<!-- auditable -->
 					<show id="cm:creator" for-mode="view" />
@@ -204,7 +204,7 @@
 					<show id="pjt:projectSponsor" />
 					<show id="pjt:projectManager" />
 					<show id="pjt:projectObservers" />		
-					<show id="bcpg:entityTplRef" />			
+					<show id="bcpg:entityTplRef" force="true" />			
 					<show id="pjt:projectEntity" />
 					<show id="pjt:projectPriority" />
 					<show id="pjt:projectState" />										
@@ -214,8 +214,8 @@
 					<show id="pjt:projectPlanningMode" />					
 
 					<!-- tags and categories -->
-					<show id="cm:taggable" force="true" />
-					<show id="cm:categories" force="true" />
+					<show id="cm:taggable" />
+					<show id="cm:categories" />
 				</field-visibility>
 				<appearance>
 					<set id="mainInfo" appearance="bordered-panel"
