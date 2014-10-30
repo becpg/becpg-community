@@ -28,8 +28,8 @@ function main()
    if(task != null &&  task.sourceAssocs["pjt:dlTask"]!=null){
       for(var i = 0; i < task.sourceAssocs["pjt:dlTask"].length; i++){
           var deliverable = task.sourceAssocs["pjt:dlTask"][i];
-          if(deliverable.properties["pjt:dlState"]!= "PreScript"
-              && deliverable.properties["pjt:dlState"]!= "PostScript"){
+          if(deliverable.properties["pjt:dlScriptExecOrder"] == null || 
+                  deliverable.properties["pjt:dlScriptExecOrder"] == "None"){
               model.deliverables.push(deliverable);
           }
       }

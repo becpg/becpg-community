@@ -45,7 +45,6 @@ import fr.becpg.repo.project.ProjectNotificationService;
 import fr.becpg.repo.project.data.projectList.ActivityEvent;
 import fr.becpg.repo.project.data.projectList.ActivityListDataItem;
 import fr.becpg.repo.project.data.projectList.ActivityType;
-import fr.becpg.repo.project.data.projectList.DeliverableState;
 import fr.becpg.repo.repository.AlfrescoRepository;
 
 @Service("projectActivityService")
@@ -110,11 +109,8 @@ public class ProjectActivityServiceImpl implements ProjectActivityService {
 	@Override
 	public void postDeliverableStateChangeActivity(NodeRef deliverableNodeRef, String beforeState, String afterState) {
 		
-		if(!DeliverableState.PreScript.toString().equals(afterState) && !DeliverableState.PostScript.toString().equals(afterState)){
 			postStateChangeActivity(DELIVERABLE_STATE_ACTIVITY, (String) nodeService.getProperty(deliverableNodeRef, ProjectModel.PROP_DL_DESCRIPTION),
 					deliverableNodeRef, beforeState, afterState, true);
-		}
-
 	}
 
 	private void postStateChangeActivity(String activityType, String title, NodeRef itemNodeRef, String beforeState, String afterState, boolean isItem) {

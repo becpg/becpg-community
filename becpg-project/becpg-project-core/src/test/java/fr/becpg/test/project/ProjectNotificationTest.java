@@ -40,7 +40,7 @@ public class ProjectNotificationTest extends AbstractProjectTestCase {
 				observerNodeRefs.add(userOne);
 				observerNodeRefs.add(userTwo);
 				projectData.getTaskList().get(0).setObservers(observerNodeRefs);
-				projectData.getTaskList().get(0).setState(TaskState.InProgress);
+				projectData.getTaskList().get(0).setTaskState(TaskState.InProgress);
 				
 				alfrescoRepository.save(projectData);
 				

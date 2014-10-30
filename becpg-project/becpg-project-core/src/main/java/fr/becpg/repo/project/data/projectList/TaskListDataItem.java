@@ -50,7 +50,7 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	private Double loggedTime;
 	private Date start;
 	private Date end;
-	private TaskState state = TaskState.Planned;
+	private TaskState taskState = TaskState.Planned;
 	private Integer completionPercent = 0;
 	private List<NodeRef> prevTasks;
 	private List<NodeRef> resources;
@@ -157,13 +157,22 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 
 	@AlfProp
 	@AlfQname(qname = "pjt:tlState")
-	public TaskState getState() {
-		return state;
+	public TaskState getTaskState() {
+		return taskState;
 	}
 	
 	
-	public void setState(TaskState state) {
-		this.state = state;
+	public void setTaskState(TaskState state) {
+		this.taskState = state;
+	}
+	
+	
+	public String getState() {
+		return taskState!=null ? taskState.toString() : TaskState.Planned.toString();
+	}
+
+	public void setState(String state) {
+		this.taskState = TaskState.valueOf(state);
 	}
 
 	@AlfProp
@@ -266,7 +275,7 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	}
 
 	
-	@AlfProp
+	@AlfSingleAssoc
 	@AlfQname(qname="pjt:tlRefusedTaskRef")
 	public TaskListDataItem getRefusedTask() {
 		return refusedTask;
@@ -341,7 +350,7 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 		this.duration = duration;
 		this.start = start;
 		this.end = end;
-		this.state = state!=null ? state : TaskState.Planned;
+		this.taskState = state!=null ? state : TaskState.Planned;
 		this.completionPercent = completionPercent;
 		this.prevTasks = prevTasks;
 		this.resources = resources;
@@ -370,7 +379,7 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 		result = prime * result + ((resourceCost == null) ? 0 : resourceCost.hashCode());
 		result = prime * result + ((resources == null) ? 0 : resources.hashCode());
 		result = prime * result + ((start == null) ? 0 : start.hashCode());
-		result = prime * result + ((state == null) ? 0 : state.hashCode());
+		result = prime * result + ((taskState == null) ? 0 : taskState.hashCode());
 		result = prime * result + ((taskLegend == null) ? 0 : taskLegend.hashCode());
 		result = prime * result + ((taskName == null) ? 0 : taskName.hashCode());
 		result = prime * result + ((work == null) ? 0 : work.hashCode());
@@ -465,7 +474,7 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 				return false;
 		} else if (!start.equals(other.start))
 			return false;
-		if (state != other.state)
+		if (taskState != other.taskState)
 			return false;
 		if (taskLegend == null) {
 			if (other.taskLegend != null)
@@ -499,7 +508,7 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	public String toString() {
 		return "TaskListDataItem [taskName=" + taskName + ", isMilestone=" + isMilestone + ", isGroup=" + isGroup
 				+ ", duration=" + duration + ", capacity=" + capacity + ", work=" + work + ", start=" + start
-				+ ", end=" + end + ", state=" + state + ", completionPercent=" + completionPercent + ", prevTasks="
+				+ ", end=" + end + ", state=" + taskState + ", completionPercent=" + completionPercent + ", prevTasks="
 				+ prevTasks + ", resources=" + resources + ", observers=" + observers + ", taskLegend=" + taskLegend
 				+ ", workflowName=" + workflowName + ", workflowInstance=" + workflowInstance + ", manualDate="
 				+ manualDate + ", depthLevel=" + depthLevel + ", parent=" + parent + ", fixedCost=" + fixedCost

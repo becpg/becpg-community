@@ -79,9 +79,9 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 				assertNotNull(projectData);
 				assertNotNull(projectData.getTaskList());
 				assertEquals(6, projectData.getTaskList().size());
-				assertEquals(TaskState.InProgress, projectData.getTaskList().get(0).getState());
-				assertEquals(TaskState.Planned, projectData.getTaskList().get(1).getState());
-				assertEquals(TaskState.Planned, projectData.getTaskList().get(2).getState());
+				assertEquals(TaskState.InProgress, projectData.getTaskList().get(0).getTaskState());
+				assertEquals(TaskState.Planned, projectData.getTaskList().get(1).getTaskState());
+				assertEquals(TaskState.Planned, projectData.getTaskList().get(2).getTaskState());
 				assertNotNull(projectData.getDeliverableList());
 				assertEquals(4, projectData.getDeliverableList().size());
 				assertEquals(DeliverableState.InProgress, projectData.getDeliverableList().get(0).getState());
@@ -470,13 +470,13 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 				assertNotNull(projectData);
 				assertEquals(ProjectState.InProgress, projectData.getProjectState());					
 				
-				projectData.getTaskList().get(0).setState(TaskState.Completed);
+				projectData.getTaskList().get(0).setTaskState(TaskState.Completed);
 				alfrescoRepository.save(projectData); 
 				projectService.formulate(projectNodeRef);	
 				projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 				assertEquals(ProjectState.InProgress, projectData.getProjectState());
 				
-				projectData.getTaskList().get(1).setState(TaskState.Completed);
+				projectData.getTaskList().get(1).setTaskState(TaskState.Completed);
 				alfrescoRepository.save(projectData);
 				projectService.formulate(projectNodeRef);
 				projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
@@ -512,7 +512,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 				assertEquals(1, (assignedWorkflowTasks2.size() - assignedWorkflowTasks1.size()));
 				
 				// replan 1st task
-				projectData.getTaskList().get(0).setState(TaskState.OnHold);
+				projectData.getTaskList().get(0).setTaskState(TaskState.OnHold);
 				alfrescoRepository.save(projectData);
 				projectService.formulate(projectNodeRef);
 				
@@ -522,7 +522,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 				List<WorkflowTask> pooledWorkflowTasks1 = workflowService.getPooledTasks(BeCPGTestHelper.USER_TWO);
 
 				// start 1st task
-				projectData.getTaskList().get(0).setState(TaskState.InProgress);
+				projectData.getTaskList().get(0).setTaskState(TaskState.InProgress);
 				// test multiple assignments
 				projectData.getTaskList().get(0).getResources().add(personService.getPerson(BeCPGTestHelper.USER_TWO));
 				alfrescoRepository.save(projectData);
@@ -554,7 +554,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 				assertEquals(ProjectState.InProgress, projectData.getProjectState());
 				assertNotSame("", projectData.getTaskList().get(0).getWorkflowInstance());
 				assertTrue(projectWorkflowService.isWorkflowActive(projectData.getTaskList().get(0)));
-				assertEquals(TaskState.InProgress, projectData.getTaskList().get(0).getState());
+				assertEquals(TaskState.InProgress, projectData.getTaskList().get(0).getTaskState());
 				assertEquals(DeliverableState.InProgress, projectData.getDeliverableList().get(0).getState());
 
 				return null;
@@ -573,7 +573,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 				// check
 				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(copiedProjectNodeRef);
 				assertEquals(ProjectState.Planned, projectData.getProjectState());				
-				assertEquals(TaskState.Planned, projectData.getTaskList().get(0).getState());
+				assertEquals(TaskState.Planned, projectData.getTaskList().get(0).getTaskState());
 				assertNull(projectData.getTaskList().get(0).getWorkflowInstance());
 				assertEquals(DeliverableState.Planned, projectData.getDeliverableList().get(0).getState());
 				

@@ -50,12 +50,20 @@
 		<constraint name="pjt:deliverableStates" type="LIST">
 			<parameter name="allowedValues">
 				<list>
-					<value>PreScript</value>
-					<value>PostScript</value>
 					<value>Planned</value>
 					<value>InProgress</value>
 					<value>Completed</value>
 					<value>Closed</value>
+				</list>
+			</parameter>
+		</constraint>
+		
+		<constraint name="pjt:dlScriptExecOrders" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>None</value>
+					<value>Pre</value>
+					<value>Post</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -497,6 +505,13 @@
 					<type>d:text</type>
 					<constraints>
 						<constraint ref="pjt:deliverableStates" />
+					</constraints>
+				</property>
+				<property name="pjt:dlScriptExecOrder">
+					<type>d:text</type>
+					<default>None</default>
+					<constraints>
+						<constraint ref="pjt:dlScriptExecOrders" />
 					</constraints>
 				</property>
 				<property name="pjt:dlUrl">
