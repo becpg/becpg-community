@@ -203,11 +203,16 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 						null, 0, null);
 				
 				projectTplData.setParentNodeRef(testFolderNodeRef);
+				projectTplData.getAspects().add(BeCPGModel.ASPECT_ENTITY_TPL);
+				projectTplData.getAspects().add(BeCPGModel.ASPECT_ENTITY_TPL_REF);
+				
 				projectTplData = (ProjectData) alfrescoRepository.save(projectTplData);
 				projectTplNodeRef = projectTplData.getNodeRef();
 
+				
 				// add aspect entityTpl
 				nodeService.addAspect(projectTplNodeRef, BeCPGModel.ASPECT_ENTITY_TPL, null);
+				nodeService.addAspect(projectTplNodeRef, BeCPGModel.ASPECT_ENTITY_TPL_REF, null);
 
 				// create documents in tpl folder
 				assertNotNull(projectTplData.getNodeRef());
@@ -260,8 +265,7 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 				// -> Task4
 
 				// update a second time to manage prevTask
-				// TODO : should avoid to save twice
-				projectTplData = (ProjectData) alfrescoRepository.findOne(projectTplNodeRef);
+				
 				List<NodeRef> prevTasks = new ArrayList<NodeRef>();
 
 				prevTasks.add(projectTplData.getTaskList().get(0).getNodeRef());

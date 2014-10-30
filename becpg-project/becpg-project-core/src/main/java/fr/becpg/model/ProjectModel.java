@@ -68,7 +68,6 @@ public interface ProjectModel {
 	public static final QName TYPE_DELIVERABLE_LIST = QName.createQName(PROJECT_URI, "deliverableList");
 	public static final QName PROP_DL_STATE = QName.createQName(PROJECT_URI, "dlState");
 	public static final QName PROP_DL_URL = QName.createQName(PROJECT_URI, "dlURL");
-	public static final QName PROP_DL_SCRIPT = QName.createQName(PROJECT_URI, "dlScript");
 	public static final QName PROP_DL_DESCRIPTION = QName.createQName(PROJECT_URI, "dlDescription");
 	public static final QName ASSOC_DL_TASK = QName.createQName(PROJECT_URI, "dlTask");
 	public static final QName ASSOC_DL_CONTENT = QName.createQName(PROJECT_URI, "dlContent");

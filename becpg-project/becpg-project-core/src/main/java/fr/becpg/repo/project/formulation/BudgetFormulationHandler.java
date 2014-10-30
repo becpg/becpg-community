@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.formulation.FormulateException;
@@ -23,11 +24,12 @@ public class BudgetFormulationHandler extends FormulationBaseHandler<ProjectData
 
 	@Override
 	public boolean process(ProjectData projectData) throws FormulateException {
-		
-		Composite<TaskListDataItem> composite = CompositeHelper.getHierarchicalCompoList(projectData.getTaskList());
-		clearData(projectData);
-		calculateCost(projectData, composite);
-		calculateLogTime(projectData);
+		if (!projectData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
+			Composite<TaskListDataItem> composite = CompositeHelper.getHierarchicalCompoList(projectData.getTaskList());
+			clearData(projectData);
+			calculateCost(projectData, composite);
+			calculateLogTime(projectData);
+		}
 		return true;
 	}	
 

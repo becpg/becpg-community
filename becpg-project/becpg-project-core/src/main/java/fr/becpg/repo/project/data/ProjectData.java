@@ -23,7 +23,6 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.hierarchy.HierarchicalEntity;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
@@ -199,13 +198,22 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 
 	@AlfProp
 	@AlfQname(qname = "pjt:projectState")
-		public ProjectState getProjectState() {
+	public ProjectState getProjectState() {
 		return projectState;
 	}
 
 	public void setProjectState(ProjectState projectState) {
 		this.projectState = projectState;
 	}
+	
+	public String getState() {
+		return projectState!=null ? projectState.toString() : ProjectState.Planned.toString();
+	}
+
+	public void setState(String state) {
+		this.projectState = ProjectState.valueOf(state);
+	}
+	
 
 	@AlfSingleAssoc
 	@AlfQname(qname = "bcpg:entityTplRef")
@@ -397,26 +405,34 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
+		result = prime * result + ((budgetedCost == null) ? 0 : budgetedCost.hashCode());
 		result = prime * result + ((completionDate == null) ? 0 : completionDate.hashCode());
 		result = prime * result + ((completionPercent == null) ? 0 : completionPercent.hashCode());
 		result = prime * result + ((created == null) ? 0 : created.hashCode());
 		result = prime * result + ((creator == null) ? 0 : creator.hashCode());
+		result = prime * result + ((deliverableList == null) ? 0 : deliverableList.hashCode());
 		result = prime * result + ((dueDate == null) ? 0 : dueDate.hashCode());
 		result = prime * result + ((entities == null) ? 0 : entities.hashCode());
 		result = prime * result + ((formulatedDate == null) ? 0 : formulatedDate.hashCode());
 		result = prime * result + ((hierarchy1 == null) ? 0 : hierarchy1.hashCode());
 		result = prime * result + ((hierarchy2 == null) ? 0 : hierarchy2.hashCode());
 		result = prime * result + ((legends == null) ? 0 : legends.hashCode());
+		result = prime * result + ((logTimeList == null) ? 0 : logTimeList.hashCode());
+		result = prime * result + ((loggedTime == null) ? 0 : loggedTime.hashCode());
 		result = prime * result + ((modified == null) ? 0 : modified.hashCode());
 		result = prime * result + ((modifier == null) ? 0 : modifier.hashCode());
 		result = prime * result + ((overdue == null) ? 0 : overdue.hashCode());
+		result = prime * result + ((planningMode == null) ? 0 : planningMode.hashCode());
 		result = prime * result + ((priority == null) ? 0 : priority.hashCode());
 		result = prime * result + ((projectManager == null) ? 0 : projectManager.hashCode());
 		result = prime * result + ((projectState == null) ? 0 : projectState.hashCode());
 		result = prime * result + ((projectTpl == null) ? 0 : projectTpl.hashCode());
 		result = prime * result + ((reformulateCount == null) ? 0 : reformulateCount.hashCode());
 		result = prime * result + ((score == null) ? 0 : score.hashCode());
+		result = prime * result + ((scoreList == null) ? 0 : scoreList.hashCode());
 		result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());
+		result = prime * result + ((taskList == null) ? 0 : taskList.hashCode());
+		result = prime * result + ((work == null) ? 0 : work.hashCode());
 		return result;
 	}
 
@@ -429,6 +445,11 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 		if (getClass() != obj.getClass())
 			return false;
 		ProjectData other = (ProjectData) obj;
+		if (budgetedCost == null) {
+			if (other.budgetedCost != null)
+				return false;
+		} else if (!budgetedCost.equals(other.budgetedCost))
+			return false;
 		if (completionDate == null) {
 			if (other.completionDate != null)
 				return false;
@@ -448,6 +469,11 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 			if (other.creator != null)
 				return false;
 		} else if (!creator.equals(other.creator))
+			return false;
+		if (deliverableList == null) {
+			if (other.deliverableList != null)
+				return false;
+		} else if (!deliverableList.equals(other.deliverableList))
 			return false;
 		if (dueDate == null) {
 			if (other.dueDate != null)
@@ -479,6 +505,16 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 				return false;
 		} else if (!legends.equals(other.legends))
 			return false;
+		if (logTimeList == null) {
+			if (other.logTimeList != null)
+				return false;
+		} else if (!logTimeList.equals(other.logTimeList))
+			return false;
+		if (loggedTime == null) {
+			if (other.loggedTime != null)
+				return false;
+		} else if (!loggedTime.equals(other.loggedTime))
+			return false;
 		if (modified == null) {
 			if (other.modified != null)
 				return false;
@@ -493,6 +529,8 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 			if (other.overdue != null)
 				return false;
 		} else if (!overdue.equals(other.overdue))
+			return false;
+		if (planningMode != other.planningMode)
 			return false;
 		if (priority == null) {
 			if (other.priority != null)
@@ -521,20 +559,38 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 				return false;
 		} else if (!score.equals(other.score))
 			return false;
+		if (scoreList == null) {
+			if (other.scoreList != null)
+				return false;
+		} else if (!scoreList.equals(other.scoreList))
+			return false;
 		if (startDate == null) {
 			if (other.startDate != null)
 				return false;
 		} else if (!startDate.equals(other.startDate))
+			return false;
+		if (taskList == null) {
+			if (other.taskList != null)
+				return false;
+		} else if (!taskList.equals(other.taskList))
+			return false;
+		if (work == null) {
+			if (other.work != null)
+				return false;
+		} else if (!work.equals(other.work))
 			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "ProjectData [hierarchy1=" + hierarchy1 + ", startDate=" + startDate + ", dueDate=" + dueDate
-				+ ", completionDate=" + completionDate + ", priority=" + priority + ", projectState=" + projectState
-				+ ", projectTpl=" + projectTpl + ", completionPercent=" + completionPercent + ", entities=" + entities
-				+ ", legends=" + legends + "]";
+		return "ProjectData [hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", startDate=" + startDate + ", dueDate=" + dueDate
+				+ ", completionDate=" + completionDate + ", planningMode=" + planningMode + ", priority=" + priority + ", projectState="
+				+ projectState + ", projectTpl=" + projectTpl + ", completionPercent=" + completionPercent + ", entities=" + entities + ", legends="
+				+ legends + ", overdue=" + overdue + ", score=" + score + ", created=" + created + ", modified=" + modified + ", creator=" + creator
+				+ ", modifier=" + modifier + ", projectManager=" + projectManager + ", budgetedCost=" + budgetedCost + ", work=" + work
+				+ ", loggedTime=" + loggedTime + ", formulatedDate=" + formulatedDate + ", reformulateCount=" + reformulateCount + ", taskList="
+				+ taskList + ", deliverableList=" + deliverableList + ", scoreList=" + scoreList + ", logTimeList=" + logTimeList + "]";
 	}
 
 	

@@ -24,8 +24,6 @@ package fr.becpg.repo.project.data.projectList;
  */
 public enum DeliverableState {
 
-	PreScript,
-	PostScript,
 	Planned,
 	InProgress,
 	Completed,

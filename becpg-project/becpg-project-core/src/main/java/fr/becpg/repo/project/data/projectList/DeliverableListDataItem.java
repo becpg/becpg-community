@@ -42,7 +42,7 @@ public class DeliverableListDataItem extends BeCPGDataObject {
 	private DeliverableState state = DeliverableState.Planned;
 	private String description;
 	private String url;
-	private String script;
+	private DeliverableScriptOrder scriptOrder = DeliverableScriptOrder.None;
 	private Integer completionPercent = 0;
 	private NodeRef content;
 
@@ -68,16 +68,16 @@ public class DeliverableListDataItem extends BeCPGDataObject {
 	}
 
 	
-	
 	@AlfProp
-	@AlfQname(qname = "pjt:dlScript")
-	public String getScript() {
-		return script;
+	@AlfQname(qname = "pjt:dlScriptExecOrder")
+	public DeliverableScriptOrder getScriptOrder() {
+		return scriptOrder;
 	}
 
-	public void setScript(String script) {
-		this.script = script;
+	public void setScriptOrder(DeliverableScriptOrder scriptOrder) {
+		this.scriptOrder = scriptOrder;
 	}
+
 
 	@AlfProp
 	@AlfQname(qname = "pjt:dlState")
@@ -154,7 +154,7 @@ public class DeliverableListDataItem extends BeCPGDataObject {
 		result = prime * result + ((completionPercent == null) ? 0 : completionPercent.hashCode());
 		result = prime * result + ((content == null) ? 0 : content.hashCode());
 		result = prime * result + ((description == null) ? 0 : description.hashCode());
-		result = prime * result + ((script == null) ? 0 : script.hashCode());
+		result = prime * result + ((scriptOrder == null) ? 0 : scriptOrder.hashCode());
 		result = prime * result + ((state == null) ? 0 : state.hashCode());
 		result = prime * result + ((tasks == null) ? 0 : tasks.hashCode());
 		result = prime * result + ((url == null) ? 0 : url.hashCode());
@@ -185,10 +185,7 @@ public class DeliverableListDataItem extends BeCPGDataObject {
 				return false;
 		} else if (!description.equals(other.description))
 			return false;
-		if (script == null) {
-			if (other.script != null)
-				return false;
-		} else if (!script.equals(other.script))
+		if (scriptOrder != other.scriptOrder)
 			return false;
 		if (state != other.state)
 			return false;
@@ -207,7 +204,7 @@ public class DeliverableListDataItem extends BeCPGDataObject {
 
 	@Override
 	public String toString() {
-		return "DeliverableListDataItem [tasks=" + tasks + ", state=" + state + ", description=" + description + ", url=" + url + ", script="
-				+ script + ", completionPercent=" + completionPercent + ", content=" + content + "]";
+		return "DeliverableListDataItem [tasks=" + tasks + ", state=" + state + ", description=" + description + ", url=" + url + ", scriptOrder="
+				+ scriptOrder + ", completionPercent=" + completionPercent + ", content=" + content + "]";
 	}
 }

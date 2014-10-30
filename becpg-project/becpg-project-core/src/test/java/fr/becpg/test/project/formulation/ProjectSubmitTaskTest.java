@@ -62,9 +62,9 @@ public class ProjectSubmitTaskTest extends AbstractProjectTestCase {
 				assertTrue(projectData.getLegends().contains(taskLegends.get(0)));
 				assertNotNull(projectData.getTaskList());
 				assertEquals(6, projectData.getTaskList().size());
-				assertEquals(TaskState.InProgress, projectData.getTaskList().get(0).getState());
-				assertEquals(TaskState.Planned, projectData.getTaskList().get(1).getState());
-				assertEquals(TaskState.Planned, projectData.getTaskList().get(2).getState());
+				assertEquals(TaskState.InProgress, projectData.getTaskList().get(0).getTaskState());
+				assertEquals(TaskState.Planned, projectData.getTaskList().get(1).getTaskState());
+				assertEquals(TaskState.Planned, projectData.getTaskList().get(2).getTaskState());
 				assertNotNull(projectData.getDeliverableList());
 				assertEquals(4, projectData.getDeliverableList().size());
 				assertEquals(DeliverableState.InProgress, projectData.getDeliverableList().get(0).getState());
@@ -73,7 +73,7 @@ public class ProjectSubmitTaskTest extends AbstractProjectTestCase {
 
 				// submit task 1st task
 				projectData.getDeliverableList().get(0).setState(DeliverableState.Completed);
-				projectData.getTaskList().get(0).setState(TaskState.Completed);
+				projectData.getTaskList().get(0).setTaskState(TaskState.Completed);
 				alfrescoRepository.save(projectData);
 
 				return null;
@@ -93,9 +93,9 @@ public class ProjectSubmitTaskTest extends AbstractProjectTestCase {
 				assertTrue(projectData.getLegends().contains(taskLegends.get(0)));
 				assertNotNull(projectData.getTaskList());
 				assertEquals(6, projectData.getTaskList().size());
-				assertEquals(TaskState.Completed, projectData.getTaskList().get(0).getState());
-				assertEquals(TaskState.InProgress, projectData.getTaskList().get(1).getState());
-				assertEquals(TaskState.Planned, projectData.getTaskList().get(2).getState());
+				assertEquals(TaskState.Completed, projectData.getTaskList().get(0).getTaskState());
+				assertEquals(TaskState.InProgress, projectData.getTaskList().get(1).getTaskState());
+				assertEquals(TaskState.Planned, projectData.getTaskList().get(2).getTaskState());
 				assertNotNull(projectData.getDeliverableList());
 				assertEquals(4, projectData.getDeliverableList().size());
 				assertEquals(DeliverableState.Completed, projectData.getDeliverableList().get(0).getState());
@@ -123,7 +123,7 @@ public class ProjectSubmitTaskTest extends AbstractProjectTestCase {
 
 				// check completion percent of task 2 is 30%
 				assertEquals(30, projectData.getTaskList().get(1).getCompletionPercent().intValue());
-				assertEquals(TaskState.InProgress, projectData.getTaskList().get(1).getState());
+				assertEquals(TaskState.InProgress, projectData.getTaskList().get(1).getTaskState());
 				Date date = projectData.getTaskList().get(1).getEnd();
 
 				// submit by workflow
@@ -166,14 +166,14 @@ public class ProjectSubmitTaskTest extends AbstractProjectTestCase {
 				assertTrue(projectData.getLegends().contains(taskLegends.get(1)));
 
 				// check task 2 is Completed
-				assertEquals(TaskState.Completed, projectData.getTaskList().get(1).getState());
+				assertEquals(TaskState.Completed, projectData.getTaskList().get(1).getTaskState());
 				assertEquals(DeliverableState.Completed, projectData.getDeliverableList().get(1).getState());
 				assertEquals(DeliverableState.Completed, projectData.getDeliverableList().get(2).getState());
 				// check real end date is before estimated end date
 				assertTrue(projectData.getTaskList().get(1).getEnd().before(task2EndDate));				
 
 				// check task 3 is InProgress
-				assertEquals(TaskState.InProgress, projectData.getTaskList().get(2).getState());
+				assertEquals(TaskState.InProgress, projectData.getTaskList().get(2).getTaskState());
 				assertEquals(DeliverableState.InProgress, projectData.getDeliverableList().get(3).getState());
 
 				// reopen deliverables
@@ -197,17 +197,17 @@ public class ProjectSubmitTaskTest extends AbstractProjectTestCase {
 				assertTrue(projectData.getLegends().contains(taskLegends.get(1)));
 
 				// check task 2
-				assertEquals(TaskState.InProgress, projectData.getTaskList().get(1).getState());
+				assertEquals(TaskState.InProgress, projectData.getTaskList().get(1).getTaskState());
 				assertEquals(DeliverableState.InProgress, projectData.getDeliverableList().get(1).getState());
 				assertEquals(DeliverableState.Completed, projectData.getDeliverableList().get(2).getState());
 
 				// check task 3 is InProgress
-				assertEquals(TaskState.InProgress, projectData.getTaskList().get(2).getState());
+				assertEquals(TaskState.InProgress, projectData.getTaskList().get(2).getTaskState());
 				assertEquals(DeliverableState.InProgress, projectData.getDeliverableList().get(3).getState());
 
 				// submit deliverable 2
 				projectData.getDeliverableList().get(1).setState(DeliverableState.Completed);
-				projectData.getTaskList().get(1).setState(TaskState.Completed);
+				projectData.getTaskList().get(1).setTaskState(TaskState.Completed);
 				alfrescoRepository.save(projectData);
 				
 				return null;
@@ -221,16 +221,16 @@ public class ProjectSubmitTaskTest extends AbstractProjectTestCase {
 				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);								
 
 				// check task 2
-				assertEquals(TaskState.Completed, projectData.getTaskList().get(1).getState());
+				assertEquals(TaskState.Completed, projectData.getTaskList().get(1).getTaskState());
 				assertEquals(DeliverableState.Completed, projectData.getDeliverableList().get(1).getState());
 				assertEquals(DeliverableState.Completed, projectData.getDeliverableList().get(2).getState());
 
 				// check task 3 is InProgress
-				assertEquals(TaskState.InProgress, projectData.getTaskList().get(2).getState());
+				assertEquals(TaskState.InProgress, projectData.getTaskList().get(2).getTaskState());
 				assertEquals(DeliverableState.InProgress, projectData.getDeliverableList().get(3).getState());
 
 				// reopen task 2
-				projectData.getTaskList().get(1).setState(TaskState.InProgress);
+				projectData.getTaskList().get(1).setTaskState(TaskState.InProgress);
 				alfrescoRepository.save(projectData);
 				
 				return null;
@@ -244,12 +244,12 @@ public class ProjectSubmitTaskTest extends AbstractProjectTestCase {
 				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);								
 
 				// check task 2
-				assertEquals(TaskState.InProgress, projectData.getTaskList().get(1).getState());
+				assertEquals(TaskState.InProgress, projectData.getTaskList().get(1).getTaskState());
 				assertEquals(DeliverableState.InProgress, projectData.getDeliverableList().get(1).getState());
 				assertEquals(DeliverableState.InProgress, projectData.getDeliverableList().get(2).getState());
 
 				// check task 3 is InProgress
-				assertEquals(TaskState.InProgress, projectData.getTaskList().get(2).getState());
+				assertEquals(TaskState.InProgress, projectData.getTaskList().get(2).getTaskState());
 				assertEquals(DeliverableState.InProgress, projectData.getDeliverableList().get(3).getState());
 
 				return null;

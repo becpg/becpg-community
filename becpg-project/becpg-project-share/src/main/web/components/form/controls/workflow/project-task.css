@@ -60,4 +60,76 @@
 .project-list a.task-comments:hover {
 	text-decoration:none;
 }
+
+
+@-o-keyframes blink
+ {
+    0% {
+        opacity: 1;
+        color: red;
+        font-weight: bold;
+     }
+    49% {
+        opacity: 1;
+        color: red;
+        font-weight: bold;
+    }
+    50% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+@-moz-keyframes blink
+ {
+    0% {
+        opacity: 1;
+        color: red;
+        font-weight: bold;
+     }
+    49% {
+        opacity: 1;
+        color: red;
+        font-weight: bold;
+    }
+    50% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+@-webkit-keyframes blink
+ {
+    0% {
+        opacity: 1;
+        color: red;
+        font-weight: bold;
+     }
+    49% {
+        opacity: 1;
+        color: red;
+        font-weight: bold;
+    }
+    50% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+
+.project-list   a.active-comments {
+	-webkit-animation: blink 1s;
+    -webkit-animation-iteration-count: 3;
+    -moz-animation: blink 1s;
+    -moz-animation-iteration-count: 3;
+    -o-animation: blink 1s;
+    -o-animation-iteration-count: 3;
+   
+}
+
+
  
