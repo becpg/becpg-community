@@ -129,7 +129,7 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 
 					// no previous task
 					if (nextTask.getPrevTasks().isEmpty()) {
-						if (nextTask.getStart().before(new Date())) {
+						if (nextTask.getStart()!=null &&  nextTask.getStart().before(new Date())) {
 							logger.debug("Start first task.");
 							nextTask.setTaskState(TaskState.InProgress);
 
@@ -142,7 +142,7 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 								nextTask.setTaskState(TaskState.InProgress);
 							}
 							// manual date -> we wait the date
-							else if (nextTask.getStart().before(new Date())) {
+							else if (nextTask.getStart()!=null && nextTask.getStart().before(new Date())) {
 								logger.debug("Start task since we are after planned startDate. start planned: " + nextTask.getStart());
 								nextTask.setTaskState(TaskState.InProgress);
 							}
