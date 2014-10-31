@@ -62,7 +62,7 @@ public class TemplateCacheServiceImpl implements TemplateCacheService {
 
 		private long timeStamp = Calendar.getInstance().getTimeInMillis();
 		public long getTimeStamp() {
-			return timeStamp;
+			return Files.exists(backedFile)? timeStamp : -1L;
 		}
 		
 		public InputStream getContent() throws IOException{
