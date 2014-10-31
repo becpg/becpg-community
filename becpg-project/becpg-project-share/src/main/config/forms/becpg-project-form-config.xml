@@ -31,7 +31,7 @@
 					<show id="pjt:projectSponsor" />
 					<show id="pjt:projectManager" />
 					<show id="pjt:projectObservers" />					
-					<show id="bcpg:entityTplRef" />
+					<show id="bcpg:entityTplRef" force="true" />
 					<show id="pjt:projectEntity" />
 					<show id="pjt:projectPriority" />
 					<show id="pjt:projectState" />	
@@ -204,7 +204,7 @@
 					<show id="pjt:projectSponsor" />
 					<show id="pjt:projectManager" />
 					<show id="pjt:projectObservers" />		
-					<show id="bcpg:entityTplRef" />			
+					<show id="bcpg:entityTplRef" force="true" />			
 					<show id="pjt:projectEntity" />
 					<show id="pjt:projectPriority" />
 					<show id="pjt:projectState" />										
@@ -329,7 +329,7 @@
 					<show id="pjt:projectSponsor" />
 					<show id="pjt:projectManager" />
 					<show id="pjt:projectObservers" />		
-					<show id="bcpg:entityTplRef" />			
+					<show id="bcpg:entityTplRef" force="true"/>			
 					<show id="pjt:projectEntity" />
 					<show id="pjt:projectPriority" />
 					<show id="pjt:projectState" />														

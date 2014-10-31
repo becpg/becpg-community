@@ -784,6 +784,11 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		sp.setQuery(runnedQuery);
 		sp.addLocale(Locale.getDefault());
 		sp.excludeDataInTheCurrentTransaction(true);
+		
+		if(logger.isDebugEnabled()  && language!=null){
+			logger.debug("Use search language:" +language.toString());
+		}
+		
 
 		sp.setLanguage(language);
 
