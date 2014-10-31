@@ -330,7 +330,7 @@
                        }
                         
                         
-                        if(visible.indexOf(question.id) > -1){
+                        if(beCPG.util.contains(visible,question.id)){
                            Dom.removeClass(this.id+"-question_"+question.id,"hidden");
                         } else {
                            Dom.addClass(this.id+"-question_"+question.id,"hidden");
