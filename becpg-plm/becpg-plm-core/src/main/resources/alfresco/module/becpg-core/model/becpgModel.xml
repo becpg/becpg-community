@@ -2181,6 +2181,12 @@
 				<property name="bcpg:productHierarchy2">
 					<type>d:noderef</type>
 				</property>
+				<property name="bcpg:productCompoQtyUsed">
+					<type>d:double</type>
+				</property>
+				<property name="bcpg:productCompoVolumeUsed">
+					<type>d:double</type>
+				</property>
 				<property name="bcpg:productQty">
 					<type>d:double</type>
 				</property>
