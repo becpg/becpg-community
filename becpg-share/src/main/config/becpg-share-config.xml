@@ -85,10 +85,10 @@
 				<aspect name="bcpg:permissionsTpl" />
 				<aspect name="rep:reportTplsAspect" />
 				<aspect name="rep:reportLocalesAspect" />
+				<aspect name="rep:reportEntityAspect"/>
 				<aspect name="bp:cataloguable" />
 				<aspect name="bcpg:entityTplAspect" />
 				<aspect name="bcpg:docLinkedEntitiesAspect" />
-				
 			</visible>
 
 			<!-- Aspects that a user can add. Same as "visible" if left empty -->
