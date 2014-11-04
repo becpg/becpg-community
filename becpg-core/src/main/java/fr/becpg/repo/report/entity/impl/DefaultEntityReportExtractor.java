@@ -29,7 +29,6 @@ import java.util.Map;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.version.Version2Model;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
-import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.model.FileFolderService;
@@ -48,6 +47,8 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.BeCPGModel;
@@ -58,14 +59,15 @@ import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.report.entity.EntityReportData;
-import fr.becpg.repo.report.entity.EntityReportExtractor;
+import fr.becpg.repo.report.entity.EntityReportExtractorPlugin;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.RepositoryEntityDefReader;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
-public abstract class AbstractEntityReportExtractor implements EntityReportExtractor {
+@Service
+public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin {
 
-	private static Log logger = LogFactory.getLog(AbstractEntityReportExtractor.class);
+	private static Log logger = LogFactory.getLog(DefaultEntityReportExtractor.class);
 
 	/** The Constant TAG_ENTITY. */
 	protected static final String TAG_ENTITY = "entity";
@@ -97,59 +99,32 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 	protected static final ArrayList<QName> hiddenDataListItemAttributes = new ArrayList<QName>(Arrays.asList(ContentModel.PROP_NAME, ContentModel.PROP_CREATED,
 			ContentModel.PROP_CREATOR, ContentModel.PROP_MODIFIED, ContentModel.PROP_MODIFIER));
 
+	@Autowired
 	protected DictionaryService dictionaryService;
 
+	@Autowired
 	protected NamespaceService namespaceService;
 
+	@Autowired
 	protected AttributeExtractorService attributeExtractorService;
 
+	@Autowired
 	protected NodeService nodeService;
 
+	@Autowired
 	protected EntityService entityService;
 
+	@Autowired
 	protected VersionService versionService;
 
+	@Autowired
 	protected FileFolderService fileFolderService;
 
+	@Autowired
 	protected AssociationService associationService;
 	
+	@Autowired
 	protected RepositoryEntityDefReader<RepositoryEntity> repositoryEntityDefReader;
-
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
-
-	public void setDictionaryService(DictionaryService dictionaryService) {
-		this.dictionaryService = dictionaryService;
-	}
-
-	public void setNamespaceService(NamespaceService namespaceService) {
-		this.namespaceService = namespaceService;
-	}
-
-	public void setAttributeExtractorService(AttributeExtractorService attributeExtractorService) {
-		this.attributeExtractorService = attributeExtractorService;
-	}
-
-	public void setEntityService(EntityService entityService) {
-		this.entityService = entityService;
-	}
-
-	public void setVersionService(VersionService versionService) {
-		this.versionService = versionService;
-	}
-
-	public void setFileFolderService(FileFolderService fileFolderService) {
-		this.fileFolderService = fileFolderService;
-	}
-
-	public void setAssociationService(AssociationService associationService) {
-		this.associationService = associationService;
-	}
-
-	public void setRepositoryEntityDefReader(RepositoryEntityDefReader<RepositoryEntity> repositoryEntityDefReader) {
-		this.repositoryEntityDefReader = repositoryEntityDefReader;
-	}
 
 	@Override
 	public EntityReportData extract(NodeRef entityNodeRef) {
@@ -218,7 +193,9 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 		return false;
 	}
 	
-	protected abstract boolean isMultiLinesAttribute(QName attribute);
+	protected  boolean isMultiLinesAttribute(QName attribute){
+		return false;
+	}
 
 	protected void loadDataLists(NodeRef entityNodeRef, Element dataListsElt, Map<String, byte[]> images) {
 	}
@@ -257,8 +234,7 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 	protected void loadAttributes(NodeRef nodeRef, Element nodeElt, boolean useCData, List<QName> hiddenAttributes) {
 
 		PropertyFormats propertyFormats = new PropertyFormats(true);
-		Map<ClassAttributeDefinition, String> values = new HashMap<ClassAttributeDefinition, String>();
-
+	
 		// properties
 		Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
 		for (Map.Entry<QName, Serializable> property : properties.entrySet()) {
@@ -406,4 +382,12 @@ public abstract class AbstractEntityReportExtractor implements EntityReportExtra
 		}		
 		return false;
 	}
+
+	@Override
+	public EntityReportExtractorPriority getMatchPriority(QName type) {
+		return EntityReportExtractorPriority.LOW;
+	}
+
+
+
 }

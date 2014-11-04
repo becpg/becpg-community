@@ -32,7 +32,7 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
-import fr.becpg.repo.product.report.DefaultProductReportExtractor;
+import fr.becpg.repo.product.report.ProductReportExtractorPlugin;
 import fr.becpg.repo.report.entity.EntityReportData;
 
 /**
@@ -46,7 +46,7 @@ public class DefaultProductReportExtractorTest extends AbstractFinishedProductTe
 	private static Log logger = LogFactory.getLog(DefaultProductReportExtractorTest.class);
 
 	@Resource
-	private DefaultProductReportExtractor defaultProductReportExtractor; 
+	private ProductReportExtractorPlugin defaultProductReportExtractor; 
 
 	@Resource
 	private AssociationService associationService;

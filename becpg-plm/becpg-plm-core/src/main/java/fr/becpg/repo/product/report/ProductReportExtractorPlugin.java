@@ -20,6 +20,9 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.MPMModel;
@@ -41,7 +44,8 @@ import fr.becpg.repo.product.data.productList.MicrobioListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.formulation.FormulationHelper;
-import fr.becpg.repo.report.entity.impl.AbstractEntityReportExtractor;
+import fr.becpg.repo.report.entity.EntityReportExtractorPlugin.EntityReportExtractorPriority;
+import fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
@@ -49,7 +53,8 @@ import fr.becpg.repo.variant.model.VariantData;
 
 //TODO use annotation on product data instead
 @Deprecated
-public class DefaultProductReportExtractor extends AbstractEntityReportExtractor {
+@Service
+public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	/** The Constant KEY_PRODUCT_IMAGE. */
 	protected static final String KEY_PRODUCT_IMAGE = "productImage";
@@ -59,7 +64,7 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 
 	protected static final List<QName> RAWMATERIAL_DATALIST = Arrays.asList(PLMModel.TYPE_INGLIST, PLMModel.TYPE_ORGANOLIST);
 
-	private static Log logger = LogFactory.getLog(DefaultProductReportExtractor.class);
+	private static Log logger = LogFactory.getLog(ProductReportExtractorPlugin.class);
 
 	protected static final String ATTR_LANGUAGE = "language";
 
@@ -77,27 +82,16 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 	private static final String ATTR_VARIANT_ID = "variantId";
 	private static final String TAG_PACKAGING_LEVEL_MEASURES = "packagingLevelMeasures";
 
+	@Autowired
 	protected ProductDictionaryService productDictionaryService;
 
+	@Autowired
+	@Qualifier("mlAwareNodeService")
 	private NodeService mlNodeService;
 
+	@Autowired
 	protected AlfrescoRepository<ProductData> alfrescoRepository;
 
-	/**
-	 * @param productDictionaryService
-	 *            the productDictionaryService to set
-	 */
-	public void setProductDictionaryService(ProductDictionaryService productDictionaryService) {
-		this.productDictionaryService = productDictionaryService;
-	}
-
-	public void setMlNodeService(NodeService mlNodeService) {
-		this.mlNodeService = mlNodeService;
-	}
-
-	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
-		this.alfrescoRepository = alfrescoRepository;
-	}
 
 	/**
 	 * load the datalists of the product data.
@@ -729,4 +723,11 @@ public class DefaultProductReportExtractor extends AbstractEntityReportExtractor
 			return ContentModel.PROP_NAME;
 		}		
 	}
+	
+	
+	@Override
+	public EntityReportExtractorPriority getMatchPriority(QName type) {
+		return dictionaryService.isSubClass(type, PLMModel.TYPE_PRODUCT) ? EntityReportExtractorPriority.NORMAL: EntityReportExtractorPriority.NONE;
+	}
+	
 }
