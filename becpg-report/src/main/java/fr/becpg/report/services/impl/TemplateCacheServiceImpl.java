@@ -49,8 +49,6 @@ public class TemplateCacheServiceImpl implements TemplateCacheService {
 	
     private static final Map<String, TemplateCacheEl> cache = new ConcurrentHashMap<String, TemplateCacheServiceImpl.TemplateCacheEl>();
 	
-    
-
 	private class TemplateCacheEl {
 		
 		Path backedFile;
@@ -62,7 +60,7 @@ public class TemplateCacheServiceImpl implements TemplateCacheService {
 
 		private long timeStamp = Calendar.getInstance().getTimeInMillis();
 		public long getTimeStamp() {
-			return timeStamp;
+			return Files.exists(backedFile)? timeStamp : -1L;
 		}
 		
 		public InputStream getContent() throws IOException{

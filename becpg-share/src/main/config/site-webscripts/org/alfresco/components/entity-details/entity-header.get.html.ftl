@@ -2,7 +2,7 @@
    <@markup id="css" >
       <#-- CSS Dependencies -->
       <@link href="${url.context}/res/components/node-details/node-header.css" group="node-header"/>
-  	   <@link href="${url.context}/res/components/entity-details/entity-header.css" group="node-header"/>
+  	  <@link href="${url.context}/res/components/entity-details/entity-header.css" group="node-header"/>
    </@>
 
    <@markup id="js">
@@ -107,6 +107,9 @@
                      <#if showQuickShare == "true">
                      <span id="${el}-quickshare" class="item item-separator"></span>
                      </#if>
+					 <span class="item item-separator item-social">
+						<a  href="#"  id="${el}-print-button" class="item-print" rel="${item.nodeRef?html}" >${msg("print.label")}</a>
+					 </span>
                   </div>
                   </#if>
                </div>
