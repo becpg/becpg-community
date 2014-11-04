@@ -68,6 +68,14 @@
 	<bean id="variantListValuePlugin" parent="entityListValuePlugin" init-method="init" class="fr.becpg.repo.listvalue.VariantListValuePlugin">
 		<property name="associationService" ref="associationService" />
 	</bean>
+	
+	
+	<bean id="workflowPackageListValuePlugin" parent="baseListValuePlugin" init-method="init" class="fr.becpg.repo.listvalue.WorkflowPackageListValuePlugin">
+		<property name="namespaceService" ref="namespaceService" />
+		<property name="nodeService" ref="NodeService" />
+		<property name="workflowService" ref="WorkflowService" />
+	</bean>
+
 
 
 	<!-- Importer -->
