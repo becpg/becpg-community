@@ -26,8 +26,6 @@
 
 <#assign controlId = fieldHtmlId + "-cntrl">
 
-
-
 <div class="form-field">
    <#if form.mode == "view"  ||  field.disabled == true>
       <div id="${controlId}" class="viewmode-field">
@@ -71,8 +69,8 @@
 		 		currentValue: "${field.value}",
 		 		mode: "${form.mode}",
 		 		readOnly : ${field.disabled?string},
-		      multipleSelectMode: ${field.endpointMany?string}, 
-		      isMandatory : ${field.mandatory?string},
+		        multipleSelectMode: ${field.endpointMany?string}, 
+		        isMandatory : ${field.mandatory?string},
 		      <#if pageLinkTemplate?exists>
 		 		targetLinkTemplate: "${pageLinkTemplate}" ,
 		 		</#if>
@@ -85,18 +83,23 @@
 				 ,showToolTip:${field.control.params.showTooltip?string}
 				</#if>
 				<#if field.control.params.urlParamsToPass?exists>
-					<#assign firstLabel=true>			
-					<#assign urlParamsToPass="">
-					,<#list field.control.params.urlParamsToPass?split(',') as urlParam>
+				<#assign firstLabel=true>			
+				<#assign urlParamsToPass="">
+				,<#list field.control.params.urlParamsToPass?split(',') as urlParam>
+					<#assign arg="args." + urlParam >
+	                <#if !arg?eval?? >
+						<#assign arg="page.url.args." + urlParam >				
+					</#if>
+					<#if arg?eval?? >
 						<#if !firstLabel>
-		            	<#assign urlParamsToPass=urlParamsToPass+"&">
-		           	<#else>
-		              	<#assign firstLabel=false>
-		           	</#if>		
-						<#assign arg="args." + urlParam >
-		           	<#assign urlParamsToPass=urlParamsToPass + "extra." + urlParam + "=" + arg?eval>		
-		 			</#list>
-		 			urlParamsToPass:"${urlParamsToPass}"
-				</#if>
+				      	<#assign urlParamsToPass=urlParamsToPass+"&">
+				     	<#else>
+				        	<#assign firstLabel=false>
+				     	</#if>		
+			    	 	<#assign urlParamsToPass=urlParamsToPass + "extra." +urlParam + "=" + arg?eval>			
+					</#if>
+				</#list>
+				urlParamsToPass:"${urlParamsToPass}"
+			</#if>
   });
 </@>
