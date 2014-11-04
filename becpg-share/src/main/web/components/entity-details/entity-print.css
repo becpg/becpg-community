@@ -1,0 +1,18 @@
+@CHARSET "UTF-8";
+
+body {
+	font-family: Arial, helvetica, sans-serif;
+	border: 0;
+	margin: 0;
+	padding: 2.5em;
+}
+
+p {
+	font-size: 11pt;
+}
+
+li {
+	font-size: 11pt;
+}
+
+

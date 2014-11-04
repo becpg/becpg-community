@@ -172,3 +172,7 @@
 .node-header .node-action div {
   display:inline-block;
 }
+
+.node-header a.item-print  {
+	background-image:  url(../images/printer-16.png);
+}
