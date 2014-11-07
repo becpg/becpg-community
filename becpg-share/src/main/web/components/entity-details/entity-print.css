@@ -1,0 +1,457 @@
+@charset UTF-8;
+
+
+
+* {
+    margin: 0;
+    font-family:"times new roman",times,serif;
+ 	text-align:justify;
+ 	font-size: 8pt;
+}
+
+
+
+html, body {
+    height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+.clear {
+    clear: both;
+    display: block;
+    height: 1px;
+    margin: 0;
+    overflow: hidden;
+    padding: 0;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.form-container fieldset {
+	border: 1px solid #aaa;
+	margin-bottom: 1em;
+	padding: 1.2em 0 .5em 1.5em;
+}
+
+.form-container legend {
+	font-size: 116%;
+	color: #333;
+	padding: 0 .4em;
+}
+
+.form-container label {
+	clear: both;
+	display: block;
+}
+
+.form-container label.checkbox {
+	clear: both;
+	display: inline;
+	margin-left: .2em;
+	vertical-align: top;
+}
+
+.form-container .input, .form-container input[type="file"],
+	.form-container input[type="text"], .form-container input[type="password"],
+	.form-container textarea, .form-container .input input[type="file"],
+	.form-container .input input[type="text"], .form-container .input input[type="password"],
+	.form-container .input textarea {
+	background-color: #FFF;
+}
+
+.form-container input, .form-container input[type="file"],
+	.form-container input[type="text"], .form-container input[type="password"]
+	{
+	clear: both;
+	width: 30em;
+}
+
+.form-container textarea {
+	width: 30em;
+}
+
+.form-container input.number {
+	width: 8em;
+}
+
+.form-container .form-field, .form-fields .form-field {
+	margin: 0 1em 1em 0;
+}
+
+.form-container .debug {
+	border: 1px solid #ccc;
+	background-color: #efefef;
+	margin-bottom: .5em;
+	padding: .5em;
+}
+
+.form-container .missing-options {
+	font-style: italic;
+	margin: .6em 0 1em;
+}
+
+.form-container .form-fields {
+	border-bottom: medium none;
+	padding: 1em;
+}
+
+.form-container .form-fields .suggested-actions .yui-button .first-child
+	{
+	background: url(images/suggested-action-16.png) no-repeat scroll 12px
+		4px transparent;
+	padding-left: 22px;
+}
+
+.form-container .form-buttons {
+	padding-top: 1em;
+}
+
+.form-container .mandatory-indicator {
+	color: green;
+	margin-left: .4em;
+	margin-right: .4em;
+}
+
+.form-container .incomplete-warning {
+	margin-left: -26px;
+}
+
+.form-container .incomplete-warning img {
+	margin-right: 6px;
+	vertical-align: -2px;
+}
+
+.form-container .help-icon {
+	margin-left: .4em;
+	position: absolute;
+}
+
+.form-container .help-icon img {
+	vertical-align: -6px;
+}
+
+.form-container .help-text {
+	margin-top: .4em;
+	width: 37.5em;
+	background-color: #ffc;
+	border: 1px solid #cacaca;
+	display: none;
+	font-size: 77%;
+	border-radius: 5px;
+	padding: .6em;
+}
+
+.form-container .alf-textarea .help-icon {
+	float: right;
+	position: relative;
+}
+
+.form-container .alf-textarea .help-icon img {
+	vertical-align: 0;
+}
+
+.form-container .alf-textarea label {
+	float: left;
+}
+
+.form-container .alf-textarea .help-text {
+	margin-top: 0;
+	text-align: center;
+	top: -.4em;
+	position: relative;
+	float: right;
+}
+
+.form-container .viewmode-field {
+	margin-bottom: .7em;
+}
+
+.form-container .viewmode-label {
+	color: #606060;
+	margin-right: .4em;
+}
+
+.form-container .viewmode-value {
+	color: #333;
+	word-wrap: break-word;
+}
+
+form .mandatory, .form-fields .mandatory, .form-fields input[type=text].mandatory,
+	.form-fields .input.mandatory input[type=text], .form-fields .input .mandatory input[type=text]
+	{
+	background-color: #fafae6;
+}
+
+form .invalid, .form-fields .invalid, .form-fields input[type=text].invalid,
+	.form-fields .input.invalid input[type=text], .form-fields .input .invalid input[type=text]
+	{
+	background-color: #faecee;
+}
+
+.form-fields .invalid.suppress-validation, form .invalid.suppress-validation,
+	.form-fields input[type=text].invalid.suppress-validation, .form-fields .input.invalid.suppress-validation input[type=text],
+	.form-fields .input .invalid.suppress-validation input[type=text],
+	.form-fields .mandatory.suppress-validation, form .mandatory.suppress-validation,
+	.form-fields input[type=text].mandatory.suppress-validation,
+	.form-fields .input.mandatory.suppress-validation input[type=text],
+	.form-fields .input .mandatory.suppress-validation input[type=text] {
+	background-color: transparent !important;
+}
+
+form .error, .form-container .error label {
+	color: #f66;
+}
+
+.form-container .viewmode-field .current-values div {
+	display: inline;
+	padding: .5em;
+}
+
+.form-container .viewmode-field .current-values img {
+	position: relative;
+	top: 3px;
+}
+
+.form-container .object-finder {
+	margin-bottom: 1.3em;
+}
+
+.form-container .datepicker {
+	display: none;
+	position: absolute;
+	z-index: 1;
+	margin-left: 1.5em;
+}
+
+.form-container .datepicker-icon {
+	vertical-align: -.3em;
+	margin: 0 .4em;
+}
+
+.form-container input.date-entry {
+	width: 6em;
+	margin-bottom: .1em;
+}
+
+.form-container input.time-entry {
+	width: 3em;
+	margin-bottom: .1em;
+}
+
+.form-container .format-info {
+	margin-bottom: 0;
+}
+
+.form-container .date-format {
+	color: #aaa;
+	margin-left: .2em;
+}
+
+.form-container .time-format {
+	color: #aaa;
+	margin-left: 6.2em;
+}
+
+.form-container .time-format-disabled {
+	color: #aaa;
+	margin-left: 3em;
+}
+
+.yui-calcontainer .title {
+	position: relative;
+}
+
+.form-container .period {
+	margin-top: .6em;
+}
+
+.form-container .period select {
+	width: auto;
+	margin-left: .3em;
+	margin-right: .5em;
+}
+
+.form-container .period input {
+	width: 60px;
+	margin-left: .3em;
+}
+
+.form-container .subcats-option {
+	padding-top: .5em;
+	padding-left: .3em;
+}
+
+.set {
+	padding-bottom: .5em;
+}
+
+.set-panel {
+	margin-bottom: .6em;
+}
+
+.set-panel-heading {
+	background-color: #eee;
+	color: #515d6b;
+	padding: .3em .2em;
+}
+
+.set-panel-body {
+	margin-top: .8em;
+	padding-left: .2em;
+}
+
+.set-bordered-panel {
+	margin-bottom: .8em;
+}
+
+.set-bordered-panel-heading {
+	background-color: #eee;
+	color: #515d6b;
+	padding: .3em .6em;
+}
+
+.set-bordered-panel-body {
+	border: 1px solid #eee;
+	padding: 1em .2em 0 .6em;
+}
+
+.set-title {
+	font-size: 116%;
+	border-bottom: 1px solid #eee;
+	padding-bottom: .1em;
+	margin-bottom: .6em;
+	margin-top: .2em;
+}
+
+.set-whitespace {
+	padding: .4em;
+}
+
+.yui-calendar div.calheader a.calnav:hover {
+	color: #000;
+}
+
+.prevent-scrollbars {
+	overflow: visible;
+}
+
+.form-container .yui-navset .datepicker-icon, .form-container .form-field .datepicker-icon,
+	.form-container .yui-g .form-field .datepicker-icon, .form-container .yui-gb .form-field .datepicker-icon
+	{
+	margin: 0;
+}
+
+.form-container .yui-navset .set {
+	padding-bottom: 0;
+}
+
+.form-container .yui-navset .form-field input[type="text"],
+	.form-container .yui-navset .form-field input[type="file"],
+	.form-container .yui-navset .form-field input[type="password"],
+	.form-container .yui-navset .form-field input, .form-container .yui-navset .form-field select,
+	.form-container .yui-navset .form-field textarea, .form-container .yui-navset .yui-ac .ac-body
+	{
+	width: 26em !important;
+}
+
+.form-container .yui-gb .form-field input[type="text"], .form-container .yui-gb .form-field input[type="file"],
+	.form-container .yui-gb .form-field input[type="password"],
+	.form-container .yui-gb .form-field input, .form-container .yui-gb .form-field select,
+	.form-container .yui-gb .form-field textarea, .form-container .yui-gb .yui-ac .ac-body
+	{
+	width: 16em !important;
+}
+
+.form-container .yui-gb .yui-ac .ac-body .yui-ac-input {
+	width: 85% !important;
+}
+
+.form-container .edit-dataitem a {
+	background: transparent url(../components/images/edit-metadata-16.png)
+		no-repeat 12px 4px;
+	padding-left: 32px;
+}
+
+.form-container .yui-u {
+	margin-left: 0;
+}
+
+.alfresco-share .yui-panel .bd .form-container .yui-u.first {
+	text-align: left;
+}
+
+.yui-dialog .form-container .form-field input[type="text"], .yui-dialog .form-container .form-field input[type="file"],
+	.yui-dialog .form-container .form-field input[type="password"],
+	.yui-dialog .form-container .form-field input, .yui-dialog .form-container .form-field select,
+	.yui-dialog .form-container .yui-ac .ac-body {
+	width: 30em !important;
+}
+
+.yui-dialog .form-container .yui-g .yui-ac .ac-body .yui-ac-input {
+	width: 80% !important;
+}
+
+
+
+.form-container input[type="checkbox"], .form-container input[type="button"],
+	.form-container input[type="submit"], .form-container select {
+	width: auto;
+}
+
+.form-container .form-field textarea, .yui-dialog .form-container .form-field textarea
+	{
+	width: 95% !important;
+}
+
+.form-container .yui-g .form-field input[type="text"], .form-container .yui-g .form-field input[type="file"],
+	.form-container .yui-g .form-field input[type="password"],
+	.form-container .yui-g .form-field input, .form-container .yui-g .form-field select,
+	.form-container .yui-g .form-field textarea, .form-container .yui-g .yui-ac .ac-body,
+	.yui-dialog .large-dialog .form-container .yui-g .form-field input[type="text"],
+	.yui-dialog .large-dialog .form-container .yui-g .form-field input[type="file"],
+	.yui-dialog .large-dialog .form-container .yui-g .form-field input[type="password"],
+	.yui-dialog .large-dialog .form-container .yui-g .form-field input,
+	.yui-dialog .large-dialog .form-container .yui-g .form-field select,
+	.yui-dialog .large-dialog .form-container .yui-g .form-field textarea,
+	.yui-dialog .large-dialog .form-container .yui-g .yui-ac .ac-body {
+	width: 27em !important;
+}
+
+.form-container .yui-g .form-field input[type="checkbox"],
+	.form-container .yui-navset .form-field input[type="checkbox"],
+	.form-container .yui-gb .form-field input[type="checkbox"], .yui-dialog .form-container .yui-g input[type="checkbox"],
+	.yui-dialog .form-container .form-field input[type="checkbox"],
+	.yui-dialog .large-dialog .form-container .yui-g .form-field input[type="checkbox"],
+	.yui-dialog .large-dialog .form-container .yui-gb .form-field input[type="checkbox"]
+	{
+	width: auto !important;
+}
+
+.form-container .yui-navset .yui-ac .ac-body .yui-ac-input,
+	.form-container .yui-g .yui-ac .ac-body .yui-ac-input, .yui-dialog .form-container .yui-ac .ac-body .yui-ac-input,
+	.yui-dialog .large-dialog .form-container .yui-g .yui-ac .ac-body .yui-ac-input
+	{
+	width: 90% !important;
+}
+
+.yui-dialog .form-container .yui-g .form-field input[type="text"],
+	.yui-dialog .form-container .yui-g .form-field input[type="file"],
+	.yui-dialog .form-container .yui-g .form-field input[type="password"],
+	.yui-dialog .form-container .yui-g .form-field input, .yui-dialog .form-container .yui-g .form-field select,
+	.yui-dialog .form-container .yui-g .form-field textarea, .yui-dialog .form-container .yui-g .yui-ac .ac-body,
+	.yui-dialog .large-dialog .form-container .yui-gb .form-field input[type="text"],
+	.yui-dialog .large-dialog .form-container .yui-gb .form-field input[type="file"],
+	.yui-dialog .large-dialog .form-container .yui-gb .form-field input[type="password"],
+	.yui-dialog .large-dialog .form-container .yui-gb .form-field input,
+	.yui-dialog .large-dialog .form-container .yui-gb .form-field select,
+	.yui-dialog .large-dialog .form-container .yui-gb .form-field textarea,
+	.yui-dialog .large-dialog .form-container .yui-gb .yui-ac .ac-body {
+	width: 13em !important;
+}
+
+

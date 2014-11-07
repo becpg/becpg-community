@@ -160,15 +160,19 @@
 .node-header .node-info
 {
    float: left;
-   width: 58%;
+   width: 63%;
 }
 
 
 .node-header .node-action
 {
-   width: 40%;
+   width: 37%;
 }
 
 .node-header .node-action div {
   display:inline-block;
+}
+
+.node-header a.item-print  {
+	background-image:  url(../images/printer-16.png);
 }

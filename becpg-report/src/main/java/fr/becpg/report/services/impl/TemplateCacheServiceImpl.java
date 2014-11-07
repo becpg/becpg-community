@@ -49,8 +49,6 @@ public class TemplateCacheServiceImpl implements TemplateCacheService {
 	
     private static final Map<String, TemplateCacheEl> cache = new ConcurrentHashMap<String, TemplateCacheServiceImpl.TemplateCacheEl>();
 	
-    
-
 	private class TemplateCacheEl {
 		
 		Path backedFile;

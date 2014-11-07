@@ -22,6 +22,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.alfresco.model.ContentModel;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.json.JSONArray;
@@ -90,7 +92,7 @@ public class ImportEntityWebScript extends AbstractEntityWebScript implements In
 
 			Map<QName, Serializable> props = new HashMap<>();
 			props.put(BeCPGModel.PROP_CODE, null);
-
+			props.put(ContentModel.PROP_OWNER, AuthenticationUtil.getFullyAuthenticatedUser());
 			JSONArray ret = new JSONArray();
 			for (final String entity : entities.split(",")) {
 				NodeRef entityNodeRef = null;

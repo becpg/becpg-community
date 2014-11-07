@@ -1288,10 +1288,13 @@
                                 dynamicData : false,
                                 "MSG_EMPTY" : this.msg("message.empty"),
                                 "MSG_ERROR" : this.msg("message.error"),
+                                "MSG_NOGROUP" : this.msg("message.nogroup"),
                                 paginator : null,
                                 groupBy : this.options.groupBy,
                                 groupFormater : this.options.groupFormater,
                                 formatRow : this.rowFormatter
+                                
+                                
                             };
 
                             if (this.options.saveFieldUrl != null)

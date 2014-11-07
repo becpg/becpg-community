@@ -19,9 +19,6 @@ package fr.becpg.repo.report.entity.impl;
 
 import java.io.ByteArrayInputStream;
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -41,7 +38,6 @@ import org.alfresco.service.cmr.preference.PreferenceService;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
-import org.alfresco.service.cmr.repository.InvalidNodeRefException;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -53,8 +49,10 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.json.simple.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.extensions.surf.util.I18NUtil;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.model.ReportModel;
@@ -63,7 +61,8 @@ import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
 import fr.becpg.repo.report.entity.EntityReportData;
-import fr.becpg.repo.report.entity.EntityReportExtractor;
+import fr.becpg.repo.report.entity.EntityReportExtractorPlugin;
+import fr.becpg.repo.report.entity.EntityReportExtractorPlugin.EntityReportExtractorPriority;
 import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
@@ -73,9 +72,9 @@ import fr.becpg.report.client.ReportException;
 import fr.becpg.report.client.ReportFormat;
 import fr.becpg.report.client.ReportParams;
 
+@Service("entityReportService")
 public class EntityReportServiceImpl implements EntityReportService {
 
-	private static final String DEFAULT_EXTRACTOR = "default";
 	private static final String REPORT_NAME = "%s - %s";
 
 	private static final String PREF_REPORT_PREFIX = "fr.becpg.repo.report.";
@@ -83,93 +82,49 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	private static Log logger = LogFactory.getLog(EntityReportServiceImpl.class);
 
+	@Autowired
 	private NamespaceService namespaceService;
 
+	@Autowired
 	private PreferenceService preferenceService;
 
+	@Autowired
 	private NodeService nodeService;
 
+	@Autowired
 	private ContentService contentService;
 
+	@Autowired
 	private FileFolderService fileFolderService;
 
+	@Autowired
+	@Qualifier("policyBehaviourFilter")
 	private BehaviourFilter policyBehaviourFilter;
 
+	@Autowired
 	private ReportTplService reportTplService;
 
+	@Autowired
 	private BeCPGReportEngine beCPGReportEngine;
 
+	@Autowired
 	private MimetypeService mimetypeService;
 
+	@Autowired
 	private AssociationService associationService;
 
+	@Autowired
 	private PermissionService permissionService;
 
+	@Autowired
 	private TransactionService transactionService;
-
-	private Map<String, EntityReportExtractor> entityExtractors = new HashMap<String, EntityReportExtractor>();
-
+	
+	@Autowired
+	private EntityReportExtractorPlugin[] entityExtractors;
+	
+	@Autowired
 	private EntityService entityService;
 
-	// private Striped<Lock> stripedLocs = Striped.lazyWeakLock(20);
-
-	@Override
-	public void registerExtractor(String typeName, EntityReportExtractor extractor) {
-		logger.debug("Register report extractor :" + typeName + " - " + extractor.getClass().getSimpleName());
-		entityExtractors.put(typeName, extractor);
-	}
-
-	public void setTransactionService(TransactionService transactionService) {
-		this.transactionService = transactionService;
-	}
-
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
-
-	public void setContentService(ContentService contentService) {
-		this.contentService = contentService;
-	}
-
-	public void setMimetypeService(MimetypeService mimetypeService) {
-		this.mimetypeService = mimetypeService;
-	}
-
-	public void setFileFolderService(FileFolderService fileFolderService) {
-		this.fileFolderService = fileFolderService;
-	}
-
-	public void setBeCPGReportEngine(BeCPGReportEngine beCPGReportEngine) {
-		this.beCPGReportEngine = beCPGReportEngine;
-	}
-
-	public void setReportTplService(ReportTplService reportTplService) {
-		this.reportTplService = reportTplService;
-	}
-
-	public void setAssociationService(AssociationService associationService) {
-		this.associationService = associationService;
-	}
-
-	public void setPermissionService(PermissionService permissionService) {
-		this.permissionService = permissionService;
-	}
-
-	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
-		this.policyBehaviourFilter = policyBehaviourFilter;
-	}
-
-	public void setPreferenceService(PreferenceService preferenceService) {
-		this.preferenceService = preferenceService;
-	}
-
-	public void setNamespaceService(NamespaceService namespaceService) {
-		this.namespaceService = namespaceService;
-	}
-
-	public void setEntityService(EntityService entityService) {
-		this.entityService = entityService;
-	}
 
 	@Override
 	public void generateReport(final NodeRef entityNodeRef) {
@@ -240,13 +195,20 @@ public class EntityReportServiceImpl implements EntityReportService {
 		return reportData.getXmlDataSource().asXML();
 	}
 
-	private EntityReportExtractor retrieveExtractor(NodeRef entityNodeRef) {
+	private EntityReportExtractorPlugin retrieveExtractor(NodeRef entityNodeRef) {
 		QName type = nodeService.getType(entityNodeRef);
 
-		EntityReportExtractor ret = entityExtractors.get(type.getLocalName());
-		if (ret == null) {
-			logger.debug("extractor :" + type.getLocalName() + " not found returning " + DEFAULT_EXTRACTOR);
-			ret = entityExtractors.get(DEFAULT_EXTRACTOR);
+		EntityReportExtractorPlugin ret = null;
+		for(EntityReportExtractorPlugin entityReportExtractorPlugin : entityExtractors ){
+			EntityReportExtractorPriority priority = entityReportExtractorPlugin.getMatchPriority(type);
+			if(!EntityReportExtractorPriority.NONE.equals(priority)){
+				if(ret!=null 
+						&& priority.isHigherPriority(ret.getMatchPriority(type))){
+					ret = entityReportExtractorPlugin;
+				} else {
+					ret = entityReportExtractorPlugin;
+				}
+			}
 		}
 
 		return ret;
