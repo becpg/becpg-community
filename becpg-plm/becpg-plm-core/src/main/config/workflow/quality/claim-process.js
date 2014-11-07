@@ -1,10 +1,12 @@
 function startEvent() {
 	//execution.setVariable('bpm_workflowPriority',2);
+    execution.setVariable('bpm_sendEMailNotifications',false);
 	execution.setVariable('ncwf_claimRejectedState', 'none');
 	execution.setVariable('ncwf_ncType', "Claim");
 	if (execution.getVariable('bcpgwf_notifyUsers') == null) {
 		execution.setVariable('bcpgwf_notifyUsers', null);
 	}
+	
 	execution.setVariable('ncwf_ncState', "analysis");
 	if (execution.getVariable('ncwf_claimStartAsDraft') == null) {
 		execution.setVariable('ncwf_claimStartAsDraft', false);
@@ -70,9 +72,9 @@ function onCreateAnalysisTask() {
     task.setVariable('ncwf_claimRejectedState', 'none');
 	
 
-	if (bcpgwf_notifyUsers != null) {
-		for (var i = 0; i < bcpgwf_notifyUsers.size(); i++) {
-			sendMail(bcpgwf_notifyUsers.get(i), initiator, getMailPrefix() + bcpg.getMessage('claimProcess.mail.notify.analysis.subject', bpm_workflowDescription),
+	if (execution.getVariable('bcpgwf_notifyUsers') != null) {
+		for (var i = 0; i < execution.getVariable('bcpgwf_notifyUsers').size(); i++) {
+			sendMail(execution.getVariable('bcpgwf_notifyUsers').get(i), initiator, getMailPrefix() + bcpg.getMessage('claimProcess.mail.notify.analysis.subject', bpm_workflowDescription),
 					bcpg.getMessage('claimProcess.mail.notify.analysis.message'));
 		}
 	}
@@ -91,7 +93,8 @@ function getMailPrefix(){
 function onCompleteAnalysisTask() {
 	execution.setVariable('ncwf_claimTreatmentDueDate', task.getVariable('ncwf_claimTreatmentDueDate'));
 	execution.setVariable('ncwf_claimResponseDueDate', task.getVariable('ncwf_claimResponseDueDate'));
-
+	execution.setVariable('bcpgwf_notifyUsers', task.getVariable('bcpgwf_notifyUsers'));
+	
 	task.setVariable('ncwf_ncState', 'classification');
 
 	if (task.getVariable('qa_claimResponseActor') != null) {
@@ -116,9 +119,9 @@ function onCompleteAnalysisTask() {
 		execution.setVariable('ncwf_claimRejectedCause', '');
 		
 
-		if (bcpgwf_notifyUsers != null) {
-			for (var i = 0; i < bcpgwf_notifyUsers.size(); i++) {
-				sendMail(bcpgwf_notifyUsers.get(i), initiator, bcpg.getMessage('claimProcess.mail.notify.analysis.end.subject', execution
+		if (execution.getVariable('bcpgwf_notifyUsers') != null) {
+			for (var i = 0; i < execution.getVariable('bcpgwf_notifyUsers').size(); i++) {
+				sendMail(execution.getVariable('bcpgwf_notifyUsers').get(i), initiator, bcpg.getMessage('claimProcess.mail.notify.analysis.end.subject', execution
 						.getVariable('bpm_workflowDescription')), bcpg.getMessage('claimProcess.mail.notify.analysis.end.message'));
 			}
 		}
@@ -127,15 +130,14 @@ function onCompleteAnalysisTask() {
 	}
 
 	execution.setVariable('bcpg_plants', task.getVariable('bcpg_plants'));
-	execution.setVariable('bcpgwf_notifyAssignee', task.getVariable('bcpgwf_notifyAssignee'));
 	execution.setVariable('qa_claimAnalysisComment', task.getVariable('qa_claimAnalysisComment'));
 	execution.setVariable('ncwf_claimRejectedState', task.getVariable('ncwf_claimRejectedState'));
 	task.setVariableLocal('bpm_comment', execution.getVariable('ncwf_claimRejectedCause'));
 }
 
 function onCreateClaimClosingTask() {
-	if (bcpgwf_notifyUsers != null) {
-		for (var i = 0; i < bcpgwf_notifyUsers.size(); i++) {
+	if (execution.getVariable('bcpgwf_notifyUsers') != null) {
+		for (var i = 0; i < execution.getVariable('bcpgwf_notifyUsers').size(); i++) {
 			sendMail(initiator, initiator, bcpg.getMessage('claimProcess.mail.notify.closing.subject', execution
 					.getVariable('bpm_workflowDescription')), bcpg.getMessage('claimProcess.mail.notify.closing.message'));
 		}
@@ -163,9 +165,9 @@ function onCompleteClaimClosingTask() {
 		execution.setVariable('ncwf_claimRejectedCause', '');
 		
 
-		if (bcpgwf_notifyUsers != null) {
-			for (var i = 0; i < bcpgwf_notifyUsers.size(); i++) {
-				sendMail(bcpgwf_notifyUsers.get(i), initiator, bcpg.getMessage('claimProcess.mail.notify.closing.end.subject', execution
+		if (execution.getVariable('bcpgwf_notifyUsers') != null) {
+			for (var i = 0; i < execution.getVariable('bcpgwf_notifyUsers').size(); i++) {
+				sendMail(execution.getVariable('bcpgwf_notifyUsers').get(i), initiator, bcpg.getMessage('claimProcess.mail.notify.closing.end.subject', execution
 						.getVariable('bpm_workflowDescription')), bcpg.getMessage('claimProcess.mail.notify.closing.end.message'));
 			}
 		}
@@ -212,15 +214,17 @@ function onCreateClaimTreatmentTask() {
 	task.setVariable('ncwf_claimRejectedCause', execution.getVariable('ncwf_claimRejectedCause'));
 	task.setVariable('ncwf_claimRejectedState', 'none');
 
-	if (bcpgwf_notifyAssignee) {
-		sendMail(qa_claimTreatmentActor, initiator, getMailPrefix() + bcpg.getMessage('claimProcess.mail.action.treatment.subject', execution
-				.getVariable('bpm_workflowDescription')), bcpg.getMessage('claimProcess.mail.action.treatment.message'), true);
-	}
+//	if (bcpgwf_notifyAssignee) {
+//		sendMail(qa_claimTreatmentActor, initiator, getMailPrefix() + bcpg.getMessage('claimProcess.mail.action.treatment.subject', execution
+//				.getVariable('bpm_workflowDescription')), bcpg.getMessage('claimProcess.mail.action.treatment.message'), true);
+//	}
 }
 
 function onCompleteClaimTreatmentTask() {
 	task.setVariable('ncwf_ncState', task.getVariable('ncwf_claimRejectedState'));
-
+	
+	execution.setVariable('bcpgwf_notifyUsers', task.getVariable('bcpgwf_notifyUsers'));
+	
 	if (task.getVariable('ncwf_claimRejectedState') == 'none') {
 		task.setVariable('qa_claimTreatementDate', new java.util.Date());
 		if (execution.getVariable('qa_claimResponseActor') != null) {
@@ -230,9 +234,9 @@ function onCompleteClaimTreatmentTask() {
 		}
 		execution.setVariable('ncwf_claimRejectedCause', '');
 
-		if (bcpgwf_notifyUsers != null) {
-			for (var i = 0; i < bcpgwf_notifyUsers.size(); i++) {
-				sendMail(bcpgwf_notifyUsers.get(i), initiator, bcpg.getMessage('claimProcess.mail.notify.treatment.end.subject', execution
+		if (execution.getVariable('bcpgwf_notifyUsers') != null) {
+			for (var i = 0; i < execution.getVariable('bcpgwf_notifyUsers').size(); i++) {
+				sendMail(execution.getVariable('bcpgwf_notifyUsers').get(i), initiator, bcpg.getMessage('claimProcess.mail.notify.treatment.end.subject', execution
 						.getVariable('bpm_workflowDescription')), bcpg.getMessage('claimProcess.mail.notify.treatment.end.message'));
 			}
 		}
@@ -247,7 +251,7 @@ function onCompleteClaimTreatmentTask() {
 	execution.setVariable('qa_claimTreatementDetails', task.getVariable('qa_claimTreatementDetails'));
 	execution.setVariable('qa_claimTreatementPrevActions', task.getVariable('qa_claimTreatementPrevActions'));
 	execution.setVariable('qa_claimTreatementComment', task.getVariable('qa_claimTreatementComment'));
-	execution.setVariable('bcpgwf_notifyUsers', task.getVariable('bcpgwf_notifyUsers'));
+	
 	task.setVariableLocal('bpm_comment', execution.getVariable('ncwf_claimRejectedCause'));
 }
 
@@ -271,9 +275,9 @@ function onCompleteClaimResponseTask() {
 		task.setVariable('ncwf_ncState', 'closing');
 		execution.setVariable('ncwf_claimRejectedCause', '');
 
-		if (bcpgwf_notifyUsers != null) {
-			for (var i = 0; i < bcpgwf_notifyUsers.size(); i++) {
-				sendMail(bcpgwf_notifyUsers.get(i), initiator, bcpg.getMessage('claimProcess.mail.notify.response.end.subject', execution
+		if (execution.getVariable('bcpgwf_notifyUsers') != null) {
+			for (var i = 0; i < execution.getVariable('bcpgwf_notifyUsers').size(); i++) {
+				sendMail(execution.getVariable('bcpgwf_notifyUsers').get(i), initiator, bcpg.getMessage('claimProcess.mail.notify.response.end.subject', execution
 						.getVariable('bpm_workflowDescription')), bcpg.getMessage('claimProcess.mail.notify.response.end.message'));
 			}
 		}
