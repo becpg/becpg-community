@@ -23,29 +23,26 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.dom4j.Element;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.QualityModel;
 import fr.becpg.repo.quality.data.NonConformityData;
 import fr.becpg.repo.quality.data.dataList.WorkLogDataItem;
-import fr.becpg.repo.report.entity.impl.AbstractEntityReportExtractor;
+import fr.becpg.repo.report.entity.EntityReportExtractorPlugin.EntityReportExtractorPriority;
+import fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor;
 import fr.becpg.repo.repository.AlfrescoRepository;
 
-public class DefaultNonConformityReportExtractor extends AbstractEntityReportExtractor {
+@Service
+public class NonConformityReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	protected static final String TAG_WORKLOG = "workLog";
 	protected static final String TAG_WORK = "work";
 
+	@Autowired
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
-
-	
-	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
-		this.alfrescoRepository = alfrescoRepository;
-	}
-
-
-
 
 	/**
 	 * load the datalists of the product data.
@@ -72,9 +69,8 @@ public class DefaultNonConformityReportExtractor extends AbstractEntityReportExt
 				workElt.addAttribute(QualityModel.PROP_WL_STATE.getLocalName(), dataItem.getState());
 				workElt.addAttribute(QualityModel.PROP_WL_COMMENT.getLocalName(), dataItem.getComment());
 				workElt.addAttribute(ContentModel.PROP_CREATOR.getLocalName(), dataItem.getCreator());
-				workElt.addAttribute(ContentModel.PROP_CREATED.getLocalName(), attributeExtractorService
-						.getStringValue(dictionaryService.getProperty(ContentModel.PROP_CREATED),
-								dataItem.getCreated(), propertyFormats));
+				workElt.addAttribute(ContentModel.PROP_CREATED.getLocalName(), attributeExtractorService.getStringValue(
+						dictionaryService.getProperty(ContentModel.PROP_CREATED), dataItem.getCreated(), propertyFormats));
 			}
 		}
 	}
@@ -83,4 +79,10 @@ public class DefaultNonConformityReportExtractor extends AbstractEntityReportExt
 	protected boolean isMultiLinesAttribute(QName attribute) {
 		return false;
 	}
+	
+	@Override
+	public EntityReportExtractorPriority getMatchPriority(QName type) {
+		return QualityModel.TYPE_NC.equals(type) ? EntityReportExtractorPriority.NORMAL: EntityReportExtractorPriority.NONE;
+	}
+
 }

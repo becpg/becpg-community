@@ -43,21 +43,7 @@
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
 		<property name="nonConformityService" ref="nonConformityService" />					
 	</bean>	
-   <!-- Extractor -->
-	<bean id="defaultNonConformityReportExtractor" class="fr.becpg.repo.quality.report.DefaultNonConformityReportExtractor">
-		<property name="dictionaryService" ref="dictionaryService" />
-		<property name="namespaceService" ref="namespaceService" />		
-		<property name="attributeExtractorService" ref="attributeExtractorService" />
-		<property name="nodeService" ref="nodeService" />
-		<property name="entityService" ref="entityService"/>
-		<property name="alfrescoRepository" ref="alfrescoRepository" />	
-		<property name="versionService" ref="versionService"/>	
-	</bean>	
-	<bean id="defaultNonConformityExtractorPlugin" class="fr.becpg.repo.report.entity.ExtractorPlugin" init-method="init">
-		<property name="entityReportService" ref="entityReportService"/>
-		<property name="extractor" ref="defaultNonConformityReportExtractor"/>
-		<property name="typeName" value="nc"/>
-	</bean>
+
 	
 	<!-- Workflow -->
 	<bean id="CreateNC" parent="baseJavaDelegate" class="fr.becpg.repo.workflow.activiti.nc.CreateNC">

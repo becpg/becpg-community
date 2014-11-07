@@ -130,10 +130,14 @@
                            if(showComment){
                               htmlForm +='<div id="'+this.id+'-comment_'+question.id+'" class="decision-tree-comments hidden" >';
                               htmlForm +='<label for="'+this.id+'-comment_'+question.id+'-input">'+(commentLabel ? commentLabel: this.msg("form.control.decision-tree."+this.options.prefix+"."+question.id+".comment"))+':</label>';
-                              if(textarea){
-                                  htmlForm +='<textarea '+(this.options.disabled?'disabled':'')+' tabindex="0" id="'+this.id+'-comment_'+question.id+'-input" class="'+COMMENT_EVENTCLASS+'"  name="--comment_'+this.id+question.id+'" >'+this.getCurrentValueComment(question.id)+'</textarea>';
+                              if(this.options.disabled){
+                                  htmlForm +='<span id="'+this.id+'-comment_'+question.id+'-input" >'+this.getCurrentValueComment(question.id)+'</span>';
                               } else {
-                                  htmlForm +='<input '+(this.options.disabled?'disabled':'')+' tabindex="0" id="'+this.id+'-comment_'+question.id+'-input" class="'+COMMENT_EVENTCLASS+'"  type="text"  value="'+this.getCurrentValueComment(question.id)+'" name="--comment_'+this.id+question.id+'" />';
+                                  if(textarea){
+                                      htmlForm +='<textarea '+(this.options.disabled?'disabled':'')+' tabindex="0" id="'+this.id+'-comment_'+question.id+'-input" class="'+COMMENT_EVENTCLASS+'"  name="--comment_'+this.id+question.id+'" >'+this.getCurrentValueComment(question.id)+'</textarea>';
+                                  } else {
+                                      htmlForm +='<input '+(this.options.disabled?'disabled':'')+' tabindex="0" id="'+this.id+'-comment_'+question.id+'-input" class="'+COMMENT_EVENTCLASS+'"  type="text"  value="'+this.getCurrentValueComment(question.id)+'" name="--comment_'+this.id+question.id+'" />';
+                                  }
                               }
                                htmlForm +='</div>';
                            }
@@ -330,7 +334,7 @@
                        }
                         
                         
-                        if(visible.indexOf(question.id) > -1){
+                        if(beCPG.util.contains(visible,question.id)){
                            Dom.removeClass(this.id+"-question_"+question.id,"hidden");
                         } else {
                            Dom.addClass(this.id+"-question_"+question.id,"hidden");

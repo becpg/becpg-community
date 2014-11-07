@@ -506,7 +506,7 @@ public class FormModelVisitor {
 				childAssociationRef = nodeService.createNode(ret, DesignerModel.ASSOC_DSG_PARAMETERS, DesignerModel.ASSOC_DSG_PARAMETERS, DesignerModel.TYPE_DSG_CONTROLPARAMETER);
 				NodeRef paramRef = childAssociationRef.getChildRef();
 				nodeService.setProperty(paramRef, DesignerModel.PROP_DSG_ID, param.getAttribute("name"));
-				nodeService.setProperty(paramRef, DesignerModel.PROP_DSG_PARAMETERVALUE, DOMUtils.getElementText(param));
+				nodeService.setProperty(paramRef, DesignerModel.PROP_DSG_PARAMETERVALUE, param.getTextContent());
 
 			}
 		}

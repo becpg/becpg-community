@@ -243,7 +243,11 @@
 					<field id="dsg:parameterDescription"  set="mainInfo"  >
 						<control template="/org/alfresco/components/form/controls/info.ftl"/>
 					</field>
-					<field id="dsg:parameterValue" set="mainInfo"  />
+					<field id="dsg:parameterValue" set="mainInfo"  >
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">		
+		                     <control-param name="style">width: 95%</control-param>
+		                 </control>
+					</field>
 				</appearance>
 			</form>
 		</forms>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beansProjectDescription>
 	<version>1</version>
-	<pluginVersion><![CDATA[3.4.0.201310051539-RELEASE]]></pluginVersion>
+	<pluginVersion><![CDATA[3.5.1.201404300732-RELEASE]]></pluginVersion>
 	<configSuffixes>
 		<configSuffix><![CDATA[xml]]></configSuffix>
 	</configSuffixes>
@@ -17,10 +17,11 @@
 		<config>src/main/config/context/product-context.xml</config>
 		<config>src/main/config/context/publication-context.xml</config>
 		<config>src/main/config/context/quality-context.xml</config>
-		<config>src/main/config/context/report-context.xml</config>
 		<config>src/main/config/context/workflow-context.xml</config>
 		<config>src/main/config/module-context.xml</config>
 	</configs>
+	<autoconfigs>
+	</autoconfigs>
 	<configSets>
 	</configSets>
 </beansProjectDescription>

@@ -133,6 +133,15 @@
                            }).display(this.options.sharedId, this.options.sharedBy);
                         }
 
+                        Alfresco.util.useAsButton(this.id+"-print-button", function(e)
+                                {
+                                    var wnd = window.open(Alfresco.constants.URL_PAGECONTEXT+"print-details?nodeRef="+this.options.nodeRef);
+                                    setTimeout(function() {
+                                        wnd.print();
+                                    }, 3000);
+                                }, null, this);
+                        
+                        
                         // Parse the date
                         var dateEl = Dom.get(this.id + '-modifyDate');
                         dateEl.innerHTML = Alfresco.util.formatDate(Alfresco.util.fromISO8601(dateEl.innerHTML),

@@ -45,7 +45,21 @@ var g; // gantt var
          groupBy : "prop_pjt_projectHierarchy2",
          sortId : "ProjectList",
          groupFormater : function(args, record){
-          return record.getData("itemData")["prop_pjt_projectHierarchy1"].displayValue + " - " + record.getData("itemData")["prop_pjt_projectHierarchy2"].displayValue;
+             
+          var groupName = "";
+          if(record.getData("itemData")["prop_pjt_projectHierarchy1"]!=null && record.getData("itemData")["prop_pjt_projectHierarchy1"].displayValue!=null){
+              groupName +=record.getData("itemData")["prop_pjt_projectHierarchy1"].displayValue;
+          }
+          
+          if(groupName.length>0){
+              groupName+=" - ";
+          }
+          
+          if(record.getData("itemData")["prop_pjt_projectHierarchy2"]!=null && record.getData("itemData")["prop_pjt_projectHierarchy2"].displayValue!=null){
+              groupName +=record.getData("itemData")["prop_pjt_projectHierarchy2"].displayValue;
+          }
+             
+          return groupName;
          },
          hiddenColumns : ["prop_pjt_projectHierarchy1", "prop_pjt_projectHierarchy2", "prop_bcpg_code", "prop_pjt_projectCompletionDate","prop_pjt_projectDueDate","prop_pjt_projectState"],
          formWidth : "65em"

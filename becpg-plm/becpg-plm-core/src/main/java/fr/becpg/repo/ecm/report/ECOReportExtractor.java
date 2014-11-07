@@ -26,17 +26,21 @@ import org.alfresco.service.namespace.QName;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.ECMModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.ecm.data.ChangeOrderData;
 import fr.becpg.repo.ecm.data.dataList.SimulationListDataItem;
 import fr.becpg.repo.hierarchy.HierarchyHelper;
 import fr.becpg.repo.report.entity.EntityReportData;
-import fr.becpg.repo.report.entity.EntityReportExtractor;
+import fr.becpg.repo.report.entity.EntityReportExtractorPlugin;
 import fr.becpg.repo.repository.AlfrescoRepository;
 
-public class ECOReportExtractor implements EntityReportExtractor {
+@Service
+public class ECOReportExtractor implements EntityReportExtractorPlugin {
 
 	private static final String TAG_ECO = "eco";
 	private static final String TAG_CALCULATED_CHARACTS = "calculatedCharacts";
@@ -52,18 +56,13 @@ public class ECOReportExtractor implements EntityReportExtractor {
 
 	private static final Integer DEFAULT_PROJECTED_QTY = 1;
 
+	@Autowired
 	private NodeService nodeService;
 
+	@Autowired
 	private AlfrescoRepository<ChangeOrderData> alfrescoRepository;
 
-	public void setAlfrescoRepository(AlfrescoRepository<ChangeOrderData> alfrescoRepository) {
-		this.alfrescoRepository = alfrescoRepository;
-	}
-
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
-
+	
 	@Override
 	public EntityReportData extract(NodeRef entityNodeRef) {
 
@@ -123,5 +122,11 @@ public class ECOReportExtractor implements EntityReportExtractor {
 	@Override
 	public boolean shouldGenerateReport(NodeRef entityNodeRef) {
 		return false;
+	}
+
+
+	@Override
+	public EntityReportExtractorPriority getMatchPriority(QName type) {
+		return ECMModel.TYPE_ECO.equals(type) ? EntityReportExtractorPriority.NORMAL: EntityReportExtractorPriority.NONE;
 	}
 }
