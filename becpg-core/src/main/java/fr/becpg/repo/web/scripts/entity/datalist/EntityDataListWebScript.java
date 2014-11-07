@@ -455,7 +455,12 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 			Map<String,String> temp = new HashMap<>();
 			
 			for(Map.Entry<String, Object> it : item.entrySet()){
-				temp.put(it.getKey(),it.getValue().toString().replace("\"","\"\""));
+				if(it.getValue()!=null && it.getValue().toString()!=null){
+					temp.put(it.getKey(),it.getValue().toString().replace("\"","\"\""));
+				} else {
+					temp.put(it.getKey(),null);
+				}
+				
 			}
 			
 			csvWriter.writeRecord(temp);
