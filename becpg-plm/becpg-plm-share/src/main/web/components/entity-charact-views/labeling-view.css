@@ -34,10 +34,6 @@
 /**
  Bar
 */
-.labeling-view  .datagrid .datagrid-bar .item-select {
-	float: inherit;
-	width: inherit;
-}
 
 .labeling-view  .datagrid .datagrid-bar .paginator {
 	float: inherit;

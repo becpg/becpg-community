@@ -26,8 +26,8 @@
 
 
 <#macro dataGridToolbar toolbarId>
-  <@dataGridToolbarNewRow toolbarId=toolbarId />
-  <@dataGridToolbarSelectedItem toolbarId=toolbarId />
+   <@dataGridToolbarSelectedItem toolbarId=toolbarId />
+   <@dataGridToolbarNewRow toolbarId=toolbarId />
 </#macro>
 
 <#macro entityDataGrid showToolBar=false showDataListTitle=true>
@@ -40,35 +40,24 @@
    </#if>
    <div id="${el}-datagridBar" class="yui-ge datagrid-bar flat-button">
       <div class="yui-u first align-center">
-         <div id="${el}-itemSelect-div" class="item-select">
-            <button id="${el}-itemSelect-button" name="datagrid-itemSelect-button">${msg("menu.select")}</button>
-            <div id="${el}-itemSelect-menu" class="yuimenu">
-               <div class="bd">
-                  <ul>
-                     <li><a href="#"><span class="selectAll">${msg("menu.select.all")}</span></a></li>
-                     <li><a href="#"><span class="selectInvert">${msg("menu.select.invert")}</span></a></li>
-                     <li><a href="#"><span class="selectNone">${msg("menu.select.none")}</span></a></li>
-                  </ul>
-               </div>
-            </div>
-         </div>
-         <#if showToolBar><@dataGridToolbar  toolbarId=el /></#if>
          <#if args.filter?? && args.filter?starts_with("true") >
-         <div class="item-select" >
+         <div class="filter-form" >
 				<button id="${el}-filterform-button">${msg("filterform.header")}</button>
 				<div id="${el}-filterform-panel"  class="yuimenu" >
 					 <div class="bd">
 					 		<div id="${el}-filterform"  class="filterform" ></div>
 					 		<div class="filterButtonsBar">
 					 			<button id="${el}-filterform-clear"   >${msg("filterform.clear")}</button>
-					  			<button id="${el}-filterform-submit"   >${msg("filterform.submit")}</button>
+					  			<button id="${el}-filterform-submit"  >${msg("filterform.submit")}</button>
 					  		</div>
 					  </div>
 				</div>
 			</div>
          </#if>
+         <#if showToolBar><@dataGridToolbar  toolbarId=el /></#if>
+         
          <#if args.pagination?? && args.pagination?starts_with("true")>
-         <div id="${el}-paginator" class="paginator hidden"></div>
+        	 <div id="${el}-paginator" class="paginator hidden"></div>
          </#if>
       </div>
       <div class="yui-u align-right">

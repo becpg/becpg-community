@@ -8,21 +8,7 @@
 		  	<div  class="title"><#if extra["dashletTitle"]??>${extra["dashletTitle"]?string}<#else><span id="${dashletId}-title"></span>&nbsp;(<span id="${dashletId}-description"></span>)</#if></div>
 			 <div class="toolbar datagrid-bar flat-button">
 			      <div class="left">
-			         <div class="item-select">
-			            <button id="${dashletId}-itemSelect-button" name="datagrid-itemSelect-button">${msg("menu.select")}</button>
-			            <div id="${dashletId}-itemSelect-menu" class="yuimenu">
-			               <div class="bd">
-			                  <ul>
-			                     <li><a href="#"><span class="selectAll">${msg("menu.select.all")}</span></a></li>
-			                     <li><a href="#"><span class="selectInvert">${msg("menu.select.invert")}</span></a></li>
-			                     <li><a href="#"><span class="selectNone">${msg("menu.select.none")}</span></a></li>
-			                  </ul>
-			               </div>
-			            </div>
-			         </div>
-			         <@dataGridToolbarNewRow toolbarId=dashletId />
-			         <@dataGridToolbarSelectedItem toolbarId=dashletId />
-			        <#if !extra["hideFilter"]?? >
+			          <#if !extra["hideFilter"]?? >
 			      		<div class="filter-form" >
 							<button id="${dashletId}-filterform-button">${msg("filterform.header")}</button>
 							<div id="${dashletId}-filterform-panel"  class="yuimenu" >
@@ -36,6 +22,10 @@
 							</div>
 						</div>
 					</#if>	
+			         <@dataGridToolbarSelectedItem toolbarId=dashletId />
+			         <@dataGridToolbarNewRow toolbarId=dashletId />
+			         
+			       
 					</div>			
 					 <div class="right">
 			         <div id="${dashletId}-paginator" class="paginator hidden"></div>

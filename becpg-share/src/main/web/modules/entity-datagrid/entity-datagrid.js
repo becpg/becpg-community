@@ -521,6 +521,25 @@
                                         : '>');
                             };
                         },
+                        
+                        fnRenderCellSelectedHeader : function EntityDataGrid_fnRenderCellSelectedHeader()
+                        {
+                            var ret = "";
+                            ret+="<div id=\""+this.id+"-itemSelect-div\" class=\"item-select hidden\">";
+                            ret+="<button id=\""+this.id+"-itemSelect-button\" name=\"datagrid-itemSelect-button\">&nbsp;</button>";
+                            ret+="<div id=\""+this.id+"-itemSelect-menu\" class=\"yuimenu\">";
+                            ret+="   <div class=\"bd\">";
+                            ret+="      <ul>";
+                            ret+="         <li><a href=\"#\"><span class=\"selectAll\">"+this.msg("menu.select.all")+"</span></a></li>";
+                            ret+="         <li><a href=\"#\"><span class=\"selectInvert\">"+this.msg("menu.select.invert")+"</span></a></li>";
+                            ret+="         <li><a href=\"#\"><span class=\"selectNone\">"+this.msg("menu.select.none")+"</span></a></li>";
+                            ret+="      </ul>";
+                            ret+="   </div>";
+                            ret+=" </div>";
+                            ret+=" </div>";
+                            
+                            return ret;
+                        },
 
                         /**
                          * Returns actions custom datacell formatter
@@ -598,15 +617,6 @@
                         onReady : function EntityDataGrid_onReady()
                         {
                             var me = this;
-
-                            // Item Select menu button
-                            this.widgets.itemSelect = Alfresco.util.createYUIButton(this, "itemSelect-button",
-                                    this.onItemSelect,
-                                    {
-                                        type : "menu",
-                                        menu : "itemSelect-menu",
-                                        disabled : true
-                                    });
 
                             // new row button
                             this.widgets.newRowButton = Alfresco.util.createYUIButton(this, "newRowButton",
@@ -999,8 +1009,7 @@
                             this._setupDataTable();
                             // Hide "no list" message
                             Dom.addClass(this.id + "-selectListMessage", "hidden");
-                            // Enable item select menu
-                            this.widgets.itemSelect.set("disabled", false);
+                           
 
                             Bubbling.fire(this.scopeId + "onDatalistColumnsReady",
                             {
@@ -1234,7 +1243,7 @@
                             var columnDefinitions = [
                             {
                                 key : "nodeRef",
-                                label : "",
+                                label : this.fnRenderCellSelectedHeader(),
                                 sortable : false,
                                 formatter : this.fnRenderCellSelected(),
                                 width : 16
@@ -1521,6 +1530,20 @@
                             this.widgets.dataTable.subscribe("renderEvent", function()
                             {
                                 Alfresco.logger.debug("DataTable renderEvent");
+                                
+                                
+                             // Item Select menu button
+                                if(!this.widgets.itemSelect){
+                                    this.widgets.itemSelect = Alfresco.util.createYUIButton(this, "itemSelect-button",
+                                            this.onItemSelect,
+                                            {
+                                                type : "menu",
+                                                menu : "itemSelect-menu",
+                                                disabled : false
+                                            });
+//                                    // Enable item select menu
+                                    Dom.removeClass(me.id + "-itemSelect-div", "hidden");
+                                }
 
                                 // IE6 fix for long filename rendering issue
                                 if (YAHOO.env.ua.ie < 7)
