@@ -28,9 +28,7 @@
 .datagrid .datagrid-bar .paginator {
 	float: left;
 	margin: 0;
-	padding: 4px 0;
 	text-align: center;
-	width: 75%;
 }
 
 .datagrid .datagrid-bar .yui-pg-current {
@@ -288,17 +286,20 @@ div.filterform {
 
 
 .yui-ge .filterform .yui-g,
+.yui-gc .filterform .yui-g,
 .yui-gf .filterform .yui-g {
     width: inherit;
     float:none;
 }
 
 .yui-ge .filterform .yui-g div.first,
+.yui-gc .filterform .yui-g div.first,
 .yui-gf .filterform .yui-g div.first{
 	float: left;
 }
 
 .yui-ge .filterform .yui-g .yui-u,
+.yui-gc .filterform .yui-g .yui-u,
 .yui-gf .filterform .yui-g .yui-u {
 	width: 49.1% ;
 	float:right;
@@ -366,6 +367,7 @@ div.filterButtonsBar {
 	padding-left: 24px;
 }
 
+
 .datagrid-bar .filter-form > span > span.first-child {
 	background: url(../../components/images/search-16.png) no-repeat 12px
 		4px;
@@ -373,7 +375,8 @@ div.filterButtonsBar {
 }
 
 
-.datagrid-bar .selected-items span.first-child {
+.datagrid-bar .selected-items span.first-child,
+.datalist-toolbar .selected-items span.first-child {
 	background: url(../../components/images/checkbox-16.png) no-repeat 12px
 		4px;
 	padding-left: 24px;

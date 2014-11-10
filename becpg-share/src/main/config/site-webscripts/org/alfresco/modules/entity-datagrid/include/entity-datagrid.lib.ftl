@@ -24,7 +24,6 @@
    </div>
 </#macro>
 
-
 <#macro dataGridToolbar toolbarId>
    <@dataGridToolbarSelectedItem toolbarId=toolbarId />
    <@dataGridToolbarNewRow toolbarId=toolbarId />
@@ -38,7 +37,7 @@
       <div id="${el}-description" class="datagrid-description"></div>
    </div>
    </#if>
-   <div id="${el}-datagridBar" class="yui-ge datagrid-bar flat-button">
+   <div id="${el}-datagridBar" class="yui-gc datagrid-bar flat-button">
       <div class="yui-u first align-center">
          <#if args.filter?? && args.filter?starts_with("true") >
          <div class="filter-form" >
@@ -55,12 +54,11 @@
 			</div>
          </#if>
          <#if showToolBar><@dataGridToolbar  toolbarId=el /></#if>
-         
-         <#if args.pagination?? && args.pagination?starts_with("true")>
-        	 <div id="${el}-paginator" class="paginator hidden"></div>
-         </#if>
       </div>
       <div class="yui-u align-right">
+		<#if args.pagination?? && args.pagination?starts_with("true")>
+        	 <div id="${el}-paginator" class="paginator hidden"></div>
+         </#if>
          <div class="items-per-page" style="visibility: hidden;">
             <button id="${el}-itemsPerPage-button">${msg("menu.items-per-page")}</button>
          </div>
@@ -71,13 +69,15 @@
 
    <div id="${el}-selectListMessage" class="hidden select-list-message">${msg("message.select-list")}</div>
 
-   <div id="${el}-datagridBarBottom" class="yui-ge datagrid-bar datagrid-bar-bottom flat-button">
+   <div id="${el}-datagridBarBottom" class="yui-gc datagrid-bar datagrid-bar-bottom flat-button">
       <div class="yui-u first align-center">
          <div class="item-select">&nbsp;</div>
-         <#if args.pagination?? && args.pagination?starts_with("true")>
+      </div>
+     <div class="yui-u align-right">
+     	<#if args.pagination?? && args.pagination?starts_with("true")>
          <div id="${el}-paginatorBottom" class="paginator hidden"></div>
          </#if>
-      </div>
+     </div>
    </div>
 
    <!-- Action Sets -->
