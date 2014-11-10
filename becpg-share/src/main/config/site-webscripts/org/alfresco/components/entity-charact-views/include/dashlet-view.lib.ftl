@@ -24,8 +24,6 @@
 					</#if>	
 			         <@dataGridToolbarSelectedItem toolbarId=dashletId />
 			         <@dataGridToolbarNewRow toolbarId=dashletId />
-			         
-			       
 					</div>			
 					 <div class="right">
 			         <div id="${dashletId}-paginator" class="paginator hidden"></div>

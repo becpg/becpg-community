@@ -45,39 +45,6 @@
 
 
 /**
-  New Theme
-**/
-
-/* .formulation-view  .yui-g .yui-u {
-	width: 50%;
-}
-
-.formulation-view  .yui-resize .yui-resize-handle-b {
-   background-color: rgb(238, 238, 238) !important;
-}
-
-.formulation-view  .yui-g {
-	margin-top:5px;
-}
-
-div.formulation-view{
-	margin: 0 -10px;
-} 
-
-
- .formulation-view .dashlet {
-	border-top: medium none;
-	border-left: medium none;
-    border-radius: 0;
-	margin: 0px;
-    padding: 0;
-} 
-
- .formulation-view .dashlet .title {
-    display: none;
-}
- */
-/**
  Bar
 */
 
@@ -136,10 +103,132 @@ div.formulation-view{
 	padding-left: 14px;
 }
 
-/* Hide New Item */
-.constraintsList .datagrid .datagrid-bar .new-row {
+/* Constraints List */
+
+/* .formulation-bottom-panel  {
+	padding: 5px;
+	margin-top: 5px; 
+	background-color: rgb(238, 238, 238);
+	border: 1px solid #CCCCCC;
+}
+
+.formulation-bottom-panel .yui-u {
+	padding:0px;
+	margin:0px;
+	
+}
+
+.formulation-bottom-panel   .dashlet .title,
+.formulation-bottom-panel   .dashlet  {
+    background-color: white;
+    border: none;
+} */
+
+.dynamicCharactList .dashlet {
+	width:100%;
+	border-bottom: 0px;
+}
+
+ .dynamicCharactList-prop-panel {
+	padding: 5px 0;
+	border-radius: 0 0 5px 0;
+	background-color: rgb(238, 238, 238);
+	border: 1px solid #CCCCCC;
+	width:100%;
+}
+
+.formulation-view .dynamicCharactList .datagrid .scrollableList {
+	 height: 290px;
+}
+
+/* Constraints List */
+
+
+.constraintsList .dashlet .title {
+    background-color: transparent;
+    border: none;
+    color: rgb(51, 51, 51);
+    display: none;
+}
+
+
+.formulation-view .constraintsList .datagrid .scrollableList {
+    height: 346px;
+    padding: 0;
+}
+
+.constraintsList .datagrid .body .grid table {
+	border: none;
+}
+
+.constraintsList .datagrid .body  .yui-dt thead {
 	display: none;
 }
+
+.constraintsList .datagrid .body  .grid.yui-dt .yui-dt-data  td,.datagrid.activityList .yui-dt-data td	{
+	border: none !important;
+	cursor : default;
+}
+
+.constraintsList .datagrid .body  .yui-dt-data  tr,.datagrid.activityList .yui-dt-data tr.yui-dt-highlighted 	{
+	background-color: white;
+	border: none;
+	cursor : default;
+}
+
+.constraintsList .datagrid .body .rclReq-details  {
+	background-color: #fff;
+	border-radius: 3px;
+	box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
+	margin: 0px 0px 2px;
+	padding: 5px;
+	border: 1px solid #CCCCCC;
+}
+
+.constraintsList .datagrid .body  .icon {
+	float: left;
+	width: 5%;
+}
+
+
+.constraintsList .datagrid  .body  .rclReq-details .rclReq-title {
+	float: right;
+	width: 95%;
+	color: black;
+}
+
+.constraintsList .datagrid  .rclReq-details .rclReq-content {
+	clear: both;
+	list-style-type: disc;
+	margin-left: 6%;
+	padding:5px;
+}
+
+.constraintsList .datagrid .rclReq-details .rclReq-content ul li {
+	list-style-type: disc;
+}
+
+.constraintsList .datagrid  .rclReq-details .rclReq-content ol li {
+	list-style-type: decimal;
+}
+
+.constraintsList .datagrid .datagrid-bar .new-row,
+.constraintsList .datagrid .datagrid-bar .selected-items,
+.constraintsList .datagrid .yui-dt-first,
+.constraintsList .datagrid .yui-dt-last
+ {
+	display: none;
+}
+
+.constraintsList .datagrid  .yui-dt-message .yui-dt-last {
+	display: block;
+	border-top: 1px solid #CCCCCC;
+	border-right: 0px;
+}
+
+
+.constraintsList .datagrid 
+
 
 /** Full screen mode */
 .full-screen .sticky-footer,.full-screen  .sticky-push {
