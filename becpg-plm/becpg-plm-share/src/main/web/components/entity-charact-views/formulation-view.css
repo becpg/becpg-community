@@ -29,7 +29,7 @@
 .formulation-view  .dashlet  .toolbar {
 	height: 28px;
 	margin: 0px;
-	padding: 0x;
+	padding: 0px;
 	border-bottom: none;
 }
 
@@ -80,10 +80,6 @@ div.formulation-view{
 /**
  Bar
 */
-.formulation-view  .datagrid .datagrid-bar .item-select {
-	float: inherit;
-	width: inherit;
-}
 
 .formulation-view  .datagrid .datagrid-bar .paginator {
 	float: inherit;

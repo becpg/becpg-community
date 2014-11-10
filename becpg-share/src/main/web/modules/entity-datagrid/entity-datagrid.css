@@ -24,10 +24,6 @@
 }
 
 /* DataGrid bar Buttons and Paginator */
-.datagrid .datagrid-bar .item-select {
-	float: left;
-	width: 12%;
-}
 
 .datagrid .datagrid-bar .paginator {
 	float: left;
@@ -42,6 +38,32 @@
 }
 
 /* DataGrid bar Select menu */
+.datagrid .item-select span.first-child {
+	background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(155, 155, 155, 0.57);
+    border-radius: 2px;
+    font-size: 1px;
+    height: 11px;
+    margin: 0 10px 0 1px;
+    outline: 0 none;
+    vertical-align: text-bottom;
+    width: 11px;
+}
+
+.datagrid .item-select button {
+	width: 15px;
+	height:10px;
+}
+
+.datagrid .item-select button, .datagrid .item-select .yui-button {
+	border:none;
+	margin:0px;
+	padding:0px;
+	background-color: transparent;
+	background-position: 8px 100%;
+}
+
+
 .datagrid .item-select .yuimenuitemlabel span {
 	background-position: 2px 50%;
 	background-repeat: no-repeat;
@@ -340,6 +362,19 @@ div.filterButtonsBar {
 
 .datagrid-bar .new-row span.first-child {
 	background: url(../../components/images/add-row-16.png) no-repeat 12px
+		4px;
+	padding-left: 24px;
+}
+
+.datagrid-bar .filter-form > span > span.first-child {
+	background: url(../../components/images/search-16.png) no-repeat 12px
+		4px;
+	padding-left: 24px;
+}
+
+
+.datagrid-bar .selected-items span.first-child {
+	background: url(../../components/images/checkbox-16.png) no-repeat 12px
 		4px;
 	padding-left: 24px;
 }

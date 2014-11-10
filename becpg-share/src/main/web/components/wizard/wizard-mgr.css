@@ -316,11 +316,6 @@
 /**
  Bar
 */
-.wizard  .datagrid .datagrid-bar .item-select {
-	float: inherit;
-	width: inherit;
-}
-
 .wizard  .datagrid .datagrid-bar .paginator {
 	float: inherit;
 	width: inherit;
