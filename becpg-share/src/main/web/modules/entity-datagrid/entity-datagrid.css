@@ -35,6 +35,7 @@
 	margin-right: 0;
 }
 
+
 /* DataGrid bar Select menu */
 .datagrid .item-select span.first-child {
 	background-color: rgba(255, 255, 255, 0.05);
@@ -129,6 +130,24 @@
 
 .datagrid .yui-dt-col-actions .yui-dt-liner {
 	padding: 3px;
+}
+
+.scrollableList {
+	position: relative;
+}
+
+.datagrid .action-set {
+	position: absolute;
+	background-color: rgb(245, 245, 245);
+    width: 82px;
+}
+
+
+.datagrid td.yui-dt-col-actions{
+
+	vertical-align: top !important;
+	padding: 0px !important;
+	margin: 0px !important;
 }
 
 .datagrid .yui-dt-error {

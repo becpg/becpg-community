@@ -286,6 +286,20 @@ if (beCPG.module.EntityDataGridRenderers) {
 		}
 
 	});
+	
+	
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName : "bcpg:dynamicCharactTitle",
+        renderer : function(oRecord, data, label, scope) {
+            var group = oRecord.getData("itemData")["prop_bcpg_dynamicCharactColumn"].value;
+            
+            if (group !=null) {
+               return "<b>"+Alfresco.util.encodeHTML(data.displayValue)+"</b>";
+            }
+            
+            return Alfresco.util.encodeHTML(data.displayValue);
+        }
+    });
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : "bcpg:dynamicCharactGroupColor",
