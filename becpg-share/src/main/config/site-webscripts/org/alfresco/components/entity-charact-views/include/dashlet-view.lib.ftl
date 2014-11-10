@@ -16,7 +16,7 @@
 								 		<div id="${dashletId}-filterform"  class="filterform" ></div>
 								 		<div class="filterButtonsBar">
 								 			<button id="${dashletId}-filterform-clear"   >${msg("filterform.clear")}</button>
-								  			<button id="${dashletId}-filterform-submit"   >${msg("filterform.submit")}</button>
+								  			<button id="${dashletId}-filterform-submit"  >${msg("filterform.submit")}</button>
 								  		</div>
 								  </div>
 							</div>
