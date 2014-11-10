@@ -68,7 +68,7 @@
 			</div>
          </#if>
          <#if args.pagination?? && args.pagination?starts_with("true")>
-         <div id="${el}-paginator" class="paginator"></div>
+         <div id="${el}-paginator" class="paginator hidden"></div>
          </#if>
       </div>
       <div class="yui-u align-right">
@@ -86,7 +86,7 @@
       <div class="yui-u first align-center">
          <div class="item-select">&nbsp;</div>
          <#if args.pagination?? && args.pagination?starts_with("true")>
-         <div id="${el}-paginatorBottom" class="paginator"></div>
+         <div id="${el}-paginatorBottom" class="paginator hidden"></div>
          </#if>
       </div>
    </div>

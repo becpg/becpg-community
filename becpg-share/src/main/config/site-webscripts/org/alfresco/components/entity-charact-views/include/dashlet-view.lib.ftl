@@ -38,7 +38,7 @@
 					</#if>	
 					</div>			
 					 <div class="right">
-			         <div id="${dashletId}-paginator" class="paginator"></div>
+			         <div id="${dashletId}-paginator" class="paginator hidden"></div>
 			         <div class="items-per-page" style="display:none;">
 			            <button id="${dashletId}-itemsPerPage-button">${msg("menu.items-per-page")}</button>
 			         </div>
@@ -54,7 +54,7 @@
 			      <div class="yui-u first align-center">
 			         <div class="item-select">&nbsp;</div>
 			         
-			         <div id="${dashletId}-paginatorBottom" class="paginator"></div>
+			         <div id="${dashletId}-paginatorBottom" class="paginator hidden"></div>
 			      </div>
 			   </div>
 			   
