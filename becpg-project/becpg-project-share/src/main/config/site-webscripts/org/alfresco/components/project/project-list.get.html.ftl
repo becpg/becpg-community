@@ -80,7 +80,7 @@
 			      <div class="yui-u">
 			         <div id="${el}-legend" class="legend">&nbsp;</div>
 			          <div class="right">
-						         <div id="${el}-paginator" class="paginator"></div>
+						         <div id="${el}-paginator" class="paginator hidden"></div>
 						         <div class="items-per-page" style="display:none;">
 						            <button id="${el}-itemsPerPage-button">${msg("menu.items-per-page")}</button>
 						         </div>
@@ -97,7 +97,7 @@
 			      <div  class="yui-u">
 			        	<div class="item-select">&nbsp;</div>
 			      	 <div class="right">
-			         	<div id="${el}-paginatorBottom" class="paginator"></div>
+			         	<div id="${el}-paginatorBottom" class="paginator hidden"></div>
 			         </div>
 			      </div>
 			   </div>

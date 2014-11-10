@@ -1365,6 +1365,21 @@
                                 {
                                     me.widgets.paginator.set('totalRecords', oResponse.meta.totalRecords);
                                     me.widgets.paginator.setPage(oResponse.meta.startIndex, true);
+                                    
+                                    if(oResponse.meta.totalRecords > me.options.pageSize){
+                                        Dom.removeClass(me.id + "-paginator", "hidden");
+                                        if (me.options.displayBottomPagination)
+                                        {
+                                            Dom.removeClass(me.id + "-paginatorBottom", "hidden");
+                                        }
+                                    } else {
+                                        Dom.addClass(me.id + "-paginator", "hidden");
+                                        if (me.options.displayBottomPagination)
+                                        {
+                                            Dom.addClass(me.id + "-paginatorBottom", "hidden");
+                                        }
+                                    }
+                                    
                                 }
                                 me.queryExecutionId = oResponse.meta.queryExecutionId;
                                 return oResponse.meta;
