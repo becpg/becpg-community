@@ -22,8 +22,8 @@ var formulationView = {
 model.widgets = [formulationView];
 
 model.widgets = model.widgets.concat(createDashlet("compoList-"+args.htmlid, "compoListDashlet"));
-model.widgets = model.widgets.concat(createDashlet("dynamicCharactList-"+args.htmlid, "dynamicCharactListDashlet",msg.get("dashlet.dynamicCharactList.title"),"bcpg:dynamicCharactList"));
-model.widgets = model.widgets.concat(createDashlet("constraintsList-"+args.htmlid, "constraintsListDashlet",msg.get("dashlet.constraintsList.title"),"bcpg:reqCtrlList"));
+model.widgets = model.widgets.concat(createDashlet("dynamicCharactList-"+args.htmlid, "dynamicCharactListDashlet",msg.get("dashlet.dynamicCharactList.title"),"bcpg:dynamicCharactList",true));
+model.widgets = model.widgets.concat(createDashlet("constraintsList-"+args.htmlid, "constraintsListDashlet",msg.get("dashlet.constraintsList.title"),"bcpg:reqCtrlList",true));
 
 }
 

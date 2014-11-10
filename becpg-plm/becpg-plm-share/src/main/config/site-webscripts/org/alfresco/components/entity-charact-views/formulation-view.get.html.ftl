@@ -41,18 +41,24 @@
 			<div id="main-view-${el}" class="formulation-view">
 					<div id="full-screen-form" class=" hidden"></div>
 					<@dataGridDashlet dashletName="compoListDashlet" dashletId="compoList-${el}" />
-					<div class="yui-g">
+					<div class="yui-gc">
 						<div class="yui-u first dynamicCharactList">
 							<@dataGridDashlet  dashletName="dynamicCharactListDashlet"
 								dashletId="dynamicCharactList-${el}" 
-								dashletTitle=msg("dashlet.dynamicCharactList.title")  
+								dashletTitle=msg("dashlet.dynamicCharactList.title") 
 								itemType="bcpg:dynamicCharactList"  />
+							<div class="dynamicCharactList-prop-panel">
+  					   			<label  for="${el}-dynamicCharactList-colCheckbox">${msg("dashlet.dynamicCharactList.colCheckbox")}</label>
+					   			<input  id="${el}-dynamicCharactList-colCheckbox" type="checkbox"/>
+					   		</div>
 						</div>
-					   <div class="yui-u constraintsList">
-						   <@dataGridDashlet dashletName="constraintsListDashlet"
-						   	dashletId="constraintsList-${el}" 
-						   	dashletTitle=msg("dashlet.constraintsList.title")
-						   	itemType="bcpg:reqCtrlList"  />
+					   <div class="yui-u ">
+					   		<div class="constraintsList">
+							   <@dataGridDashlet dashletName="constraintsListDashlet"
+							   	dashletId="constraintsList-${el}" 
+							   	dashletTitle=msg("dashlet.constraintsList.title")
+							   	itemType="bcpg:reqCtrlList"  />
+							</div>
 					   </div>
 					</div>
 			</div>

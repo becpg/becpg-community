@@ -16,7 +16,7 @@
  *  You should have received a copy of the GNU Lesser General Public License along with beCPG.
  *   If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-function createDashlet(dashletId, dashletName, dashletTitle, itemType){
+function createDashlet(dashletId, dashletName, dashletTitle, itemType, disableResize){
 
    var entityDataGrid = {
          id : "entityDataGrid", 
@@ -40,25 +40,26 @@ function createDashlet(dashletId, dashletName, dashletTitle, itemType){
            }
         };
          
-
-      var dashletResizer = {
-         id : "DashletResizer",
-         name : "beCPG.widget.DashletResizer",
-         initArgs : ["\"" + dashletId + "\"", "\"" + dashletName + "\""],
-         useMessages: false
-      };
-      
-      
-      
-      var prefs = AlfrescoUtil.getPreferences("fr.becpg.formulation.dashlet."+dashletName);
-
-      if(prefs){
-         if(!model.dashletPrefs){
-            model.dashletPrefs = {};
-         }
-         model.dashletPrefs[dashletId] = prefs;
-      }
-      
+        if(!disableResize){
+              var dashletResizer = {
+                 id : "DashletResizer",
+                 name : "beCPG.widget.DashletResizer",
+                 initArgs : ["\"" + dashletId + "\"", "\"" + dashletName + "\""],
+                 useMessages: false
+              };
+              
+              
+              
+              var prefs = AlfrescoUtil.getPreferences("fr.becpg.formulation.dashlet."+dashletName);
+        
+              if(prefs){
+                 if(!model.dashletPrefs){
+                    model.dashletPrefs = {};
+                 }
+                 model.dashletPrefs[dashletId] = prefs;
+              }
+              
+        }
       
       var dashletTitleBarActions = {
          id : "DashletTitleBarActions",
@@ -80,7 +81,10 @@ function createDashlet(dashletId, dashletName, dashletTitle, itemType){
       };
       
     
+      if(!disableResize){
+          return [entityDataGrid, dashletResizer, dashletTitleBarActions];
+      }  
       
-      return [entityDataGrid, dashletResizer, dashletTitleBarActions];
+      return [entityDataGrid, dashletTitleBarActions];
    
 }

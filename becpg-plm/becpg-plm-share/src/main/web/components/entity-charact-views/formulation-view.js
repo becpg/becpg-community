@@ -98,7 +98,7 @@
        * @method onReady
        */
       onReady : function FormulationView_onReady() {
-
+          
       }
    }, true);
    
