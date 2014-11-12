@@ -199,7 +199,7 @@
 
 		               };
 
-		               var formId = "create", itemId = this.currentNode.name, itemKind ="type";
+		               var formId = "create", itemId = this.currentNode.name, itemKind ="type", formKind = "type";
 
 		               if (this.currentNode.itemType == "dsg:form") {
 			               formId = this.currentNode.name;
