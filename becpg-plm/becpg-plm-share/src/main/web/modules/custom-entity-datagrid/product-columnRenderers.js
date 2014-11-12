@@ -321,12 +321,16 @@ if (beCPG.module.EntityDataGridRenderers) {
 	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
         propertyName : "bcpg:dynamicCharactTitle",
-        renderer : function(oRecord, data, label, scope) {
+        renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
             var group = oRecord.getData("itemData")["prop_bcpg_dynamicCharactColumn"].value;
             
             if (group !=null) {
                 
                 //TODO -dynamicCharactList-colCheckbox
+                
+                if(!Dom.get(scope.id+"-colCheckbox").checked){
+                    Dom.addClass(elCell.parentNode.parentNode, "hidden");
+                }
                 
                return "<b>"+Alfresco.util.encodeHTML(data.displayValue)+"</b>";
             }

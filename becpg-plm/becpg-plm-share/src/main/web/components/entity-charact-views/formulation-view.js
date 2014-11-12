@@ -98,6 +98,10 @@
        * @method onReady
        */
       onReady : function FormulationView_onReady() {
+          var instance = this;
+          YAHOO.util.Event.addListener( "dynamicCharactList-"+this.id+"-colCheckbox", "click", function (e){
+              YAHOO.Bubbling.fire("dynamicCharactList-"+instance.id+"refreshDataGrid");
+          });
           
       }
    }, true);
