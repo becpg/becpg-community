@@ -48,8 +48,10 @@
 								dashletTitle=msg("dashlet.dynamicCharactList.title") 
 								itemType="bcpg:dynamicCharactList"  />
 							<div class="dynamicCharactList-prop-panel">
-  					   			<label  for="${el}-dynamicCharactList-colCheckbox">${msg("dashlet.dynamicCharactList.colCheckbox")}</label>
-					   			<input  id="${el}-dynamicCharactList-colCheckbox" type="checkbox"/>
+  					   			<span>
+  					   				<label  for="dynamicCharactList-${el}-colCheckbox">${msg("dashlet.dynamicCharactList.colCheckbox")}</label>
+					   				<input  id="dynamicCharactList-${el}-colCheckbox" type="checkbox"/>
+								</span>
 					   		</div>
 						</div>
 					   <div class="yui-u ">

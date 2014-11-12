@@ -130,11 +130,16 @@
 }
 
  .dynamicCharactList-prop-panel {
-	padding: 5px 0;
+	padding:  0;
 	border-radius: 0 0 5px 0;
 	background-color: rgb(238, 238, 238);
 	border: 1px solid #CCCCCC;
 	width:100%;
+}
+
+.dynamicCharactList-prop-panel span {
+	padding: 5px;
+	display: block;
 }
 
 .formulation-view .dynamicCharactList .datagrid .scrollableList {

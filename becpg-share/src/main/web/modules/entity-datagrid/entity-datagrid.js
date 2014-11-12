@@ -94,6 +94,7 @@
         Bubbling.on(this.scopeId + "dataItemUpdated", this.onDataItemUpdated, this);
         Bubbling.on(this.scopeId + "dataItemsDeleted", this.onDataItemsDeleted, this);
         Bubbling.on(this.scopeId + "dataItemsDuplicated", this.onDataGridRefresh, this);
+        Bubbling.on(this.scopeId + "refreshDataGrid", this.onDataGridRefresh, this);
         Bubbling.on(this.scopeId + "selectedItemsChanged", this.onSelectedItemsChanged, this);
 
         // Form filter
