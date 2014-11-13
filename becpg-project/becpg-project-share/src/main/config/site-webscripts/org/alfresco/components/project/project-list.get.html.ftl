@@ -52,18 +52,6 @@
 		         <h2 id="${el}-filterTitle" class="thin">
 		            &nbsp;
 		         </h2>
-					<div class="item-select" <#if view=="gantt" >style="display:none;"</#if>>
-		            <button id="${el}-itemSelect-button" name="datagrid-itemSelect-button">${msg("menu.select")}</button>
-		            <div id="${el}-itemSelect-menu" class="yuimenu">
-		               <div class="bd">
-		                  <ul>
-		                     <li><a href="#"><span class="selectAll">${msg("menu.select.all")}</span></a></li>
-		                     <li><a href="#"><span class="selectInvert">${msg("menu.select.invert")}</span></a></li>
-		                     <li><a href="#"><span class="selectNone">${msg("menu.select.none")}</span></a></li>
-		                  </ul>
-		               </div>
-		            </div>
-		         </div>
 		         <div class="filter-form" >
 						<button id="${el}-filterform-button">${msg("filterform.header")}</button>
 						<div id="${el}-filterform-panel"  class="yuimenu" >
@@ -80,7 +68,7 @@
 			      <div class="yui-u">
 			         <div id="${el}-legend" class="legend">&nbsp;</div>
 			          <div class="right">
-						         <div id="${el}-paginator" class="paginator"></div>
+						         <div id="${el}-paginator" class="paginator hidden"></div>
 						         <div class="items-per-page" style="display:none;">
 						            <button id="${el}-itemsPerPage-button">${msg("menu.items-per-page")}</button>
 						         </div>
@@ -97,7 +85,7 @@
 			      <div  class="yui-u">
 			        	<div class="item-select">&nbsp;</div>
 			      	 <div class="right">
-			         	<div id="${el}-paginatorBottom" class="paginator"></div>
+			         	<div id="${el}-paginatorBottom" class="paginator hidden"></div>
 			         </div>
 			      </div>
 			   </div>

@@ -296,7 +296,7 @@
                        } else {
                            editor = new YAHOO.widget.DropdownCellEditor({
                                dropdownOptions : dropdownOptions,
-                               disableBtns:true
+                               disableBtns: !(YAHOO.env.ua.ie > 0)
                            });
                        }
                        break;

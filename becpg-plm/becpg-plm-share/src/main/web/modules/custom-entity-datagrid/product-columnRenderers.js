@@ -110,19 +110,13 @@ if (beCPG.module.EntityDataGridRenderers) {
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : [ "bcpg:rclReqType", "bcpg:filReqType", "ecm:culReqType" ],
 		renderer : function(oRecord, data, label, scope) {
-			var reqTypeForbidden = scope.msg("data.reqtype.forbidden");
-			var reqTypeTolerated = scope.msg("data.reqtype.tolerated");
-			var reqTypeInfo = scope.msg("data.reqtype.info");
-			if (data.displayValue == "Forbidden") {
-				return '<span class="reqTypeForbidden">' + Alfresco.util.encodeHTML(reqTypeForbidden) + '</span>';
-			} else if (data.displayValue == "Tolerated") {
-				return '<span class="reqTypeTolerated">' + Alfresco.util.encodeHTML(reqTypeTolerated) + '</span>';
-			} else if (data.displayValue == "Info") {
-				return '<span class="reqTypeInfo">' + Alfresco.util.encodeHTML(reqTypeInfo) + '</span>';
-			} else {
-				return Alfresco.util.encodeHTML(data.displayValue);
-			}
 
+			if(data.value!=null){
+			    return '<span class="reqType'+data.value+'">' + Alfresco.util.encodeHTML( scope.msg("data.reqtype."+ data.value.toLowerCase())) + '</span>';
+			}
+			
+			return Alfresco.util.encodeHTML(data.displayValue);
+			
 		}
 
 	});
@@ -286,6 +280,64 @@ if (beCPG.module.EntityDataGridRenderers) {
 		}
 
 	});
+	
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName : "bcpg:rclReqMessage",
+        renderer : function(oRecord, data, label, scope) {
+            
+            var reqType = oRecord.getData("itemData")["prop_bcpg_rclReqType"].value;
+            var reqProducts = oRecord.getData("itemData")["assoc_bcpg_rclSources"];
+            var html = "";
+                html += '<div class="rclReq-details">';
+                if(reqType){
+                    html += '   <div class="icon" ><span class="reqType'+reqType+'" title="'+ 
+                    Alfresco.util.encodeHTML( scope.msg("data.reqtype."+ reqType.toLowerCase())) + '">&nbsp;</span></div>';
+                }
+                html += '      <div class="rclReq-title">' + Alfresco.util.encodeHTML(data.displayValue) + '</div>';
+                html += '      <div class="rclReq-content"><ul>';
+                
+                if(reqProducts){
+                    for(var i in reqProducts){
+                        var product = reqProducts[i];
+                        html +='<li><span class="' + product.metadata + '" ><a href="' +
+                        beCPG.util.entityDetailsURL(product.siteId, product.value) + '">' 
+                        + Alfresco.util.encodeHTML(product.displayValue) + '</a></span></li>';
+
+                    }
+                }  
+                  + '</ul></div>';
+                html += '   </div>';
+                html += '   <div class="clear"></div>';
+                html += '</div>';
+                
+            return html;
+        }
+
+    });
+	
+	
+	
+	
+	
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName : "bcpg:dynamicCharactTitle",
+        renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+            var group = oRecord.getData("itemData")["prop_bcpg_dynamicCharactColumn"].value;
+            
+            if (group !=null) {
+                
+                //TODO -dynamicCharactList-colCheckbox
+                
+                if(!Dom.get(scope.id+"-colCheckbox").checked){
+                    Dom.addClass(elCell.parentNode.parentNode, "hidden");
+                }
+                
+               return "<b>"+Alfresco.util.encodeHTML(data.displayValue)+"</b>";
+            }
+            
+            return Alfresco.util.encodeHTML(data.displayValue);
+        }
+    });
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : "bcpg:dynamicCharactGroupColor",

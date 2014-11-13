@@ -8,21 +8,7 @@
 		  	<div  class="title"><#if extra["dashletTitle"]??>${extra["dashletTitle"]?string}<#else><span id="${dashletId}-title"></span>&nbsp;(<span id="${dashletId}-description"></span>)</#if></div>
 			 <div class="toolbar datagrid-bar flat-button">
 			      <div class="left">
-			         <div class="item-select">
-			            <button id="${dashletId}-itemSelect-button" name="datagrid-itemSelect-button">${msg("menu.select")}</button>
-			            <div id="${dashletId}-itemSelect-menu" class="yuimenu">
-			               <div class="bd">
-			                  <ul>
-			                     <li><a href="#"><span class="selectAll">${msg("menu.select.all")}</span></a></li>
-			                     <li><a href="#"><span class="selectInvert">${msg("menu.select.invert")}</span></a></li>
-			                     <li><a href="#"><span class="selectNone">${msg("menu.select.none")}</span></a></li>
-			                  </ul>
-			               </div>
-			            </div>
-			         </div>
-			         <@dataGridToolbarNewRow toolbarId=dashletId />
-			         <@dataGridToolbarSelectedItem toolbarId=dashletId />
-			        <#if !extra["hideFilter"]?? >
+			          <#if !extra["hideFilter"]?? >
 			      		<div class="filter-form" >
 							<button id="${dashletId}-filterform-button">${msg("filterform.header")}</button>
 							<div id="${dashletId}-filterform-panel"  class="yuimenu" >
@@ -30,15 +16,17 @@
 								 		<div id="${dashletId}-filterform"  class="filterform" ></div>
 								 		<div class="filterButtonsBar">
 								 			<button id="${dashletId}-filterform-clear"   >${msg("filterform.clear")}</button>
-								  			<button id="${dashletId}-filterform-submit"   >${msg("filterform.submit")}</button>
+								  			<button id="${dashletId}-filterform-submit"  >${msg("filterform.submit")}</button>
 								  		</div>
 								  </div>
 							</div>
 						</div>
 					</#if>	
+			         <@dataGridToolbarSelectedItem toolbarId=dashletId />
+			         <@dataGridToolbarNewRow toolbarId=dashletId />
 					</div>			
 					 <div class="right">
-			         <div id="${dashletId}-paginator" class="paginator"></div>
+			         <div id="${dashletId}-paginator" class="paginator hidden"></div>
 			         <div class="items-per-page" style="display:none;">
 			            <button id="${dashletId}-itemsPerPage-button">${msg("menu.items-per-page")}</button>
 			         </div>
@@ -54,7 +42,7 @@
 			      <div class="yui-u first align-center">
 			         <div class="item-select">&nbsp;</div>
 			         
-			         <div id="${dashletId}-paginatorBottom" class="paginator"></div>
+			         <div id="${dashletId}-paginatorBottom" class="paginator hidden"></div>
 			      </div>
 			   </div>
 			   

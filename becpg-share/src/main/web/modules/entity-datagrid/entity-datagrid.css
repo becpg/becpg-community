@@ -24,24 +24,45 @@
 }
 
 /* DataGrid bar Buttons and Paginator */
-.datagrid .datagrid-bar .item-select {
-	float: left;
-	width: 12%;
-}
 
 .datagrid .datagrid-bar .paginator {
 	float: left;
 	margin: 0;
-	padding: 4px 0;
 	text-align: center;
-	width: 75%;
 }
 
 .datagrid .datagrid-bar .yui-pg-current {
 	margin-right: 0;
 }
 
+
 /* DataGrid bar Select menu */
+.datagrid .item-select span.first-child {
+	background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(155, 155, 155, 0.57);
+    border-radius: 2px;
+    font-size: 1px;
+    height: 11px;
+    margin: 0 10px 0 1px;
+    outline: 0 none;
+    vertical-align: text-bottom;
+    width: 11px;
+}
+
+.datagrid .item-select button {
+	width: 15px;
+	height:10px;
+}
+
+.datagrid .item-select button, .datagrid .item-select .yui-button {
+	border:none;
+	margin:0px;
+	padding:0px;
+	background-color: transparent;
+	background-position: 8px 100%;
+}
+
+
 .datagrid .item-select .yuimenuitemlabel span {
 	background-position: 2px 50%;
 	background-repeat: no-repeat;
@@ -109,6 +130,24 @@
 
 .datagrid .yui-dt-col-actions .yui-dt-liner {
 	padding: 3px;
+}
+
+.scrollableList {
+	position: relative;
+}
+
+.datagrid .action-set {
+	position: absolute;
+	background-color: rgb(245, 245, 245);
+    width: 82px;
+}
+
+
+.datagrid td.yui-dt-col-actions{
+
+	vertical-align: top !important;
+	padding: 0px !important;
+	margin: 0px !important;
 }
 
 .datagrid .yui-dt-error {
@@ -266,17 +305,20 @@ div.filterform {
 
 
 .yui-ge .filterform .yui-g,
+.yui-gc .filterform .yui-g,
 .yui-gf .filterform .yui-g {
     width: inherit;
     float:none;
 }
 
 .yui-ge .filterform .yui-g div.first,
+.yui-gc .filterform .yui-g div.first,
 .yui-gf .filterform .yui-g div.first{
 	float: left;
 }
 
 .yui-ge .filterform .yui-g .yui-u,
+.yui-gc .filterform .yui-g .yui-u,
 .yui-gf .filterform .yui-g .yui-u {
 	width: 49.1% ;
 	float:right;
@@ -340,6 +382,21 @@ div.filterButtonsBar {
 
 .datagrid-bar .new-row span.first-child {
 	background: url(../../components/images/add-row-16.png) no-repeat 12px
+		4px;
+	padding-left: 24px;
+}
+
+
+.datagrid-bar .filter-form > span > span.first-child {
+	background: url(../../components/images/search-16.png) no-repeat 12px
+		4px;
+	padding-left: 24px;
+}
+
+
+.datagrid-bar .selected-items span.first-child,
+.datalist-toolbar .selected-items span.first-child {
+	background: url(../../components/images/checkbox-16.png) no-repeat 12px
 		4px;
 	padding-left: 24px;
 }
