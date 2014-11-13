@@ -3509,7 +3509,7 @@
 	</config>
 
 	<!-- bcpg:microBio type (existing nodes) -->
-	<config evaluator="node-type" condition="bcpg:microBio">
+	<config evaluator="node-type" condition="bcpg:microbio">
 		<forms>
 			<form>
 
@@ -3531,7 +3531,7 @@
 		</forms>
 	</config>
 
-	<config evaluator="model-type" condition="bcpg:microBio">
+	<config evaluator="model-type" condition="bcpg:microbio">
 		<forms>
 			<!-- Create item form -->
 			<form>
