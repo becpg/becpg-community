@@ -125,8 +125,8 @@ function onCompleteAnalysisTask() {
                         .getVariable('bpm_workflowDescription')), bcpg.getMessage('claimProcess.mail.notify.analysis.end.message'));
             }
         }
-        sendMail(initiator, initiator, bcpg.getMessage('claimProcess.mail.notify.analysis.end.subject', execution
-                .getVariable('bpm_workflowDescription')), bcpg.getMessage('claimProcess.mail.notify.analysis.end.message'));
+//        sendMail(initiator, initiator, bcpg.getMessage('claimProcess.mail.notify.analysis.end.subject', execution
+//                .getVariable('bpm_workflowDescription')), bcpg.getMessage('claimProcess.mail.notify.analysis.end.message'));
     }
 
     execution.setVariable('bcpg_plants', task.getVariable('bcpg_plants'));
@@ -189,8 +189,8 @@ function onCompleteClaimTreatmentTask() {
                         .getVariable('bpm_workflowDescription')), bcpg.getMessage('claimProcess.mail.notify.treatment.end.message'));
             }
         }
-        sendMail(initiator, initiator, bcpg.getMessage('claimProcess.mail.notify.treatment.end.subject', execution
-                .getVariable('bpm_workflowDescription')), bcpg.getMessage('claimProcess.mail.notify.treatment.end.message'));
+//        sendMail(initiator, initiator, bcpg.getMessage('claimProcess.mail.notify.treatment.end.subject', execution
+//                .getVariable('bpm_workflowDescription')), bcpg.getMessage('claimProcess.mail.notify.treatment.end.message'));
 
     } else {
         execution.setVariable('ncwf_claimRejectedCause', task.getVariable('ncwf_claimRejectedCause'));
@@ -231,8 +231,8 @@ function onCompleteClaimResponseTask() {
                         .getVariable('bpm_workflowDescription')), bcpg.getMessage('claimProcess.mail.notify.response.end.message'));
             }
         }
-        sendMail(initiator, initiator, bcpg.getMessage('claimProcess.mail.notify.response.end.subject', execution
-                .getVariable('bpm_workflowDescription')), bcpg.getMessage('claimProcess.mail.notify.response.end.message'));
+//        sendMail(initiator, initiator, bcpg.getMessage('claimProcess.mail.notify.response.end.subject', execution
+//                .getVariable('bpm_workflowDescription')), bcpg.getMessage('claimProcess.mail.notify.response.end.message'));
 
     } else {
         task.setVariable('ncwf_ncState', task.getVariable('ncwf_claimRejectedState'));
@@ -256,8 +256,8 @@ function onCreateClaimClosingTask() {
                     .getVariable('bpm_workflowDescription')), bcpg.getMessage('claimProcess.mail.notify.closing.message'));
         }
     }
-    sendMail(initiator, initiator, bcpg.getMessage('claimProcess.mail.notify.closing.subject', execution.getVariable('bpm_workflowDescription')),
-            bcpg.getMessage('claimProcess.mail.notify.closing.message'));
+//    sendMail(initiator, initiator, bcpg.getMessage('claimProcess.mail.notify.closing.subject', execution.getVariable('bpm_workflowDescription')),
+//            bcpg.getMessage('claimProcess.mail.notify.closing.message'));
 
     task.setVariable('ncwf_claimTreatmentDueDate', execution.getVariable('ncwf_claimTreatmentDueDate'));
     task.setVariable('ncwf_claimResponseDueDate', execution.getVariable('ncwf_claimResponseDueDate'));
@@ -285,8 +285,8 @@ function onCompleteClaimClosingTask() {
                         .getVariable('bpm_workflowDescription')), bcpg.getMessage('claimProcess.mail.notify.closing.end.message'));
             }
         }
-        sendMail(initiator, initiator, bcpg.getMessage('claimProcess.mail.notify.closing.end.subject', execution
-                .getVariable('bpm_workflowDescription')), bcpg.getMessage('claimProcess.mail.notify.closing.end.message'));
+//        sendMail(initiator, initiator, bcpg.getMessage('claimProcess.mail.notify.closing.end.subject', execution
+//                .getVariable('bpm_workflowDescription')), bcpg.getMessage('claimProcess.mail.notify.closing.end.message'));
 
     } else {
         task.setVariable('ncwf_ncState', task.getVariable('ncwf_claimRejectedState'));
