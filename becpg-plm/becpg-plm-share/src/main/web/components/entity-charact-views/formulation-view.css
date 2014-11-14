@@ -219,8 +219,8 @@
 
 .constraintsList .datagrid .datagrid-bar .new-row,
 .constraintsList .datagrid .datagrid-bar .selected-items,
-.constraintsList .datagrid .yui-dt-first,
-.constraintsList .datagrid .yui-dt-last
+.constraintsList .datagrid td.yui-dt-first,
+.constraintsList .datagrid td.yui-dt-last
  {
 	display: none;
 }
