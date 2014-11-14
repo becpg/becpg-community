@@ -75,7 +75,7 @@ public class AutomaticECOPolicy extends AbstractBeCPGPolicy implements NodeServi
 				return;
 			}
 
-			if (isNotLocked(nodeRef) && !isWorkingCopyOrVersion(nodeRef) && !isBeCPGVersion(nodeRef)) {
+			if (isNotLocked(nodeRef) && !isWorkingCopyOrVersion(nodeRef) && !isBeCPGVersion(nodeRef) && !isEntityTemplate(nodeRef) ) {
 				onUpdatePropertiesBehaviour.disable();
 				try {
 					ChangeOrderData changeOrderData = automaticECOService.getCurrentUserChangeOrderData();
@@ -91,6 +91,8 @@ public class AutomaticECOPolicy extends AbstractBeCPGPolicy implements NodeServi
 
 		}
 	}
+
+
 
 	@Override
 	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
