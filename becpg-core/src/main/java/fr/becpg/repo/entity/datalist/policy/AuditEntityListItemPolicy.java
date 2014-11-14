@@ -108,7 +108,7 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy implements No
 
 		for (NodeRef listContainerNodeRef : listContainerNodeRefs) {
 			NodeRef entityNodeRef = nodeService.getPrimaryParent(listContainerNodeRef).getParentRef();
-			if (entityNodeRef != null && !isVersionNode(entityNodeRef)) {
+			if (entityNodeRef != null && !isVersionNode(entityNodeRef) && !isNotLocked(entityNodeRef)) {
 				try {
 					policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
 					nodeService.setProperty(entityNodeRef, ContentModel.PROP_MODIFIED, Calendar.getInstance().getTime());
