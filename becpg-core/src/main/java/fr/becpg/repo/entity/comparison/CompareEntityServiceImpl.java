@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.model.ForumModel;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
@@ -165,7 +166,13 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 	private void compareDataLists(QName dataListType, NodeRef dataList1NodeRef, NodeRef dataList2NodeRef, int nbEntities, int comparisonPosition,
 			Map<String, CompareResultDataItem> comparisonMap) {
 
-		QName pivotProperty = entityDictionaryService.getDefaultPivotAssoc(dataListType);
+		QName pivotProperty = null;
+		try{
+			pivotProperty = entityDictionaryService.getDefaultPivotAssoc(dataListType);
+		}
+		catch(IllegalArgumentException e){
+			logger.debug(e);
+		}
 
 		if (pivotProperty != null) {
 			boolean isCompositeDL = entityDictionaryService.isMultiLevelDataList(dataListType);
@@ -648,11 +655,13 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				|| qName.equals(ContentModel.PROP_VERSION_LABEL) || qName.equals(ContentModel.PROP_AUTO_VERSION)
 				|| qName.equals(ContentModel.PROP_AUTO_VERSION_PROPS)
 				|| qName.equals(ContentModel.ASSOC_ORIGINAL)
+				|| qName.equals(ForumModel.PROP_COMMENT_COUNT)
 				||
 				// system properties
 				qName.equals(BeCPGModel.PROP_PARENT_LEVEL) || qName.equals(BeCPGModel.PROP_START_EFFECTIVITY)
 				|| qName.equals(BeCPGModel.PROP_END_EFFECTIVITY) || qName.equals(ReportModel.PROP_REPORT_ENTITY_GENERATED)
 				|| qName.equals(ReportModel.ASSOC_REPORTS) || qName.equals(BeCPGModel.PROP_VERSION_LABEL)
+				|| qName.equals(BeCPGModel.PROP_COLOR)
 				// TODO plugin
 				|| qName.getLocalName().contains("dynamicCharactColumn")
 				|| qName.getLocalName().contains("compareWithDynColumn")) {
