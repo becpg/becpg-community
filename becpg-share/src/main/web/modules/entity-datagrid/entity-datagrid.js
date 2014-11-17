@@ -1542,9 +1542,10 @@
                                                 menu : "itemSelect-menu",
                                                 disabled : false
                                             });
-//                                    // Enable item select menu
-                                    Dom.removeClass(me.id + "-itemSelect-div", "hidden");
                                 }
+                                
+                             // Enable item select menu
+                                Dom.removeClass(me.id + "-itemSelect-div", "hidden");
 
                                 // IE6 fix for long filename rendering issue
                                 if (YAHOO.env.ua.ie < 7)

@@ -126,6 +126,10 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 		return nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION);
 	}
 	
+	protected boolean isEntityTemplate(NodeRef nodeRef) {
+		return nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_TPL);
+	}
+	
 	protected boolean isVersionStoreNode(NodeRef nodeRef) {
 		return nodeRef.getStoreRef().getIdentifier().equals(Version2Model.STORE_ID);
 	}
