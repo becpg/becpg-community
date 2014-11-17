@@ -9,7 +9,7 @@
 </#if>
 <#if field.control.params.style?exists><#assign style=field.control.params.style></#if>
 <#assign siteId=args.siteId!"">
-<#if !(field.control.params.showLink?exists && field.control.params.showLink??) >
+<#if field.control.params.showLink?exists && field.control.params.showLink?? >
 	<#if field.control.params.pageLinkTemplate?exists>
 		<#assign pageLinkTemplate='${field.control.params.pageLinkTemplate}'/>
 	<#else>
