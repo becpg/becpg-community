@@ -285,32 +285,36 @@ if (beCPG.module.EntityDataGridRenderers) {
         propertyName : "bcpg:rclReqMessage",
         renderer : function(oRecord, data, label, scope) {
             
-            var reqType = oRecord.getData("itemData")["prop_bcpg_rclReqType"].value;
-            var reqProducts = oRecord.getData("itemData")["assoc_bcpg_rclSources"];
-            var html = "";
-                html += '<div class="rclReq-details">';
-                if(reqType){
-                    html += '   <div class="icon" ><span class="reqType'+reqType+'" title="'+ 
-                    Alfresco.util.encodeHTML( scope.msg("data.reqtype."+ reqType.toLowerCase())) + '">&nbsp;</span></div>';
-                }
-                html += '      <div class="rclReq-title">' + Alfresco.util.encodeHTML(data.displayValue) + '</div>';
-                html += '      <div class="rclReq-content"><ul>';
-                
-                if(reqProducts){
-                    for(var i in reqProducts){
-                        var product = reqProducts[i];
-                        html +='<li><span class="' + product.metadata + '" ><a href="' +
-                        beCPG.util.entityDetailsURL(product.siteId, product.value) + '">' 
-                        + Alfresco.util.encodeHTML(product.displayValue) + '</a></span></li>';
-
+            if(scope.datalistMeta && scope.datalistMeta && scope.datalistMeta.name.indexOf("WUsed")>-1){
+                return data.displayValue;
+            } else {
+                var reqType = oRecord.getData("itemData")["prop_bcpg_rclReqType"].value;
+                var reqProducts = oRecord.getData("itemData")["assoc_bcpg_rclSources"];
+                var html = "";
+                    html += '<div class="rclReq-details">';
+                    if(reqType){
+                        html += '   <div class="icon" ><span class="reqType'+reqType+'" title="'+ 
+                        Alfresco.util.encodeHTML( scope.msg("data.reqtype."+ reqType.toLowerCase())) + '">&nbsp;</span></div>';
                     }
-                }  
-                  + '</ul></div>';
-                html += '   </div>';
-                html += '   <div class="clear"></div>';
-                html += '</div>';
-                
-            return html;
+                    html += '      <div class="rclReq-title">' + Alfresco.util.encodeHTML(data.displayValue) + '</div>';
+                    html += '      <div class="rclReq-content"><ul>';
+                    
+                    if(reqProducts){
+                        for(var i in reqProducts){
+                            var product = reqProducts[i];
+                            html +='<li><span class="' + product.metadata + '" ><a href="' +
+                            beCPG.util.entityDetailsURL(product.siteId, product.value) + '">' 
+                            + Alfresco.util.encodeHTML(product.displayValue) + '</a></span></li>';
+    
+                        }
+                    }  
+                      + '</ul></div>';
+                    html += '   </div>';
+                    html += '   <div class="clear"></div>';
+                    html += '</div>';
+                    
+                return html;
+            }
         }
 
     });

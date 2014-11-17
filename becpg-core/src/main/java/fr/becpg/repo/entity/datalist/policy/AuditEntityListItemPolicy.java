@@ -23,20 +23,16 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 /**
  * @author querephi
  */
-public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy implements 
-				NodeServicePolicies.OnDeleteNodePolicy, 
-				NodeServicePolicies.OnUpdateNodePolicy,
-				NodeServicePolicies.OnCreateNodePolicy,
-				NodeServicePolicies.OnCreateAssociationPolicy,
-				NodeServicePolicies.OnDeleteAssociationPolicy{
+public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnDeleteNodePolicy,
+		NodeServicePolicies.OnUpdateNodePolicy, NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnCreateAssociationPolicy,
+		NodeServicePolicies.OnDeleteAssociationPolicy {
 
-	private static String KEY_LIST_ITEM = "KeyListItem";
-	private static String KEY_LIST = "KeyList";
-	
+	private static String KEY_LIST_ITEM = "AuditEntityListItemPolicy.KeyListItem";
+	private static String KEY_LIST = "AuditEntityListItemPolicy.KeyList";
+
 	private static Log logger = LogFactory.getLog(AuditEntityListItemPolicy.class);
 
 	private AuthenticationService authenticationService;
-
 
 	public void setAuthenticationService(AuthenticationService authenticationService) {
 		this.authenticationService = authenticationService;
@@ -44,11 +40,16 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy implements
 
 	public void doInit() {
 		logger.debug("Init AuditEntityListItemPolicy...");
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM, new JavaBehaviour(this, "onDeleteNode"));
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdateNodePolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM, new JavaBehaviour(this, "onUpdateNode"));
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM, new JavaBehaviour(this, "onCreateNode"));
-		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM, new JavaBehaviour(this, "onCreateAssociation"));
-		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM, new JavaBehaviour(this, "onDeleteAssociation"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM, new JavaBehaviour(this,
+				"onDeleteNode"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdateNodePolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM, new JavaBehaviour(this,
+				"onUpdateNode"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM, new JavaBehaviour(this,
+				"onCreateNode"));
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM,
+				new JavaBehaviour(this, "onCreateAssociation"));
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM,
+				new JavaBehaviour(this, "onDeleteAssociation"));
 	}
 
 	@Override
@@ -62,12 +63,12 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy implements
 	}
 
 	@Override
-	public void onUpdateNode(NodeRef listItemNodeRef) {				
+	public void onUpdateNode(NodeRef listItemNodeRef) {
 		queueListNodeRef(KEY_LIST_ITEM, listItemNodeRef);
 	}
-	
-	private void queueListNodeRef(String key, NodeRef listNodeRef){		
-		if(policyBehaviourFilter.isEnabled(BeCPGModel.TYPE_ENTITYLIST_ITEM)){
+
+	private void queueListNodeRef(String key, NodeRef listNodeRef) {
+		if (policyBehaviourFilter.isEnabled(BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
 			queueNode(key, listNodeRef);
 		}
 	}
@@ -78,51 +79,56 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy implements
 	 */
 	@Override
 	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
-		
+
 		Set<NodeRef> listNodeRefs = new HashSet<>();
 		Set<NodeRef> listContainerNodeRefs = new HashSet<>();
-		
-		for(NodeRef pendingNode : pendingNodes){			
-			if(nodeService.exists(pendingNode)){
-				
-				NodeRef listNodeRef = null;			
-				if(key.equals(KEY_LIST_ITEM)){
+
+		for (NodeRef pendingNode : pendingNodes) {
+			if (nodeService.exists(pendingNode)) {
+
+				NodeRef listNodeRef = null;
+				if (key.equals(KEY_LIST_ITEM)) {
 					listNodeRef = nodeService.getPrimaryParent(pendingNode).getParentRef();
-				}
-				else{
+				} else {
 					listNodeRef = pendingNode;
 				}
-				
-				if(!listNodeRefs.contains(listNodeRef)){
-					listNodeRefs.add(listNodeRef);					
+
+				if (!listNodeRefs.contains(listNodeRef)) {
+					listNodeRefs.add(listNodeRef);
 					NodeRef listContainerNodeRef = nodeService.getPrimaryParent(listNodeRef).getParentRef();
-					
-					if(listContainerNodeRef!=null && !listContainerNodeRefs.contains(listContainerNodeRef) && nodeService.exists(listContainerNodeRef)){
+
+					if (listContainerNodeRef != null && !listContainerNodeRefs.contains(listContainerNodeRef)
+							&& nodeService.exists(listContainerNodeRef)) {
 						listContainerNodeRefs.add(listContainerNodeRef);
-						NodeRef entityNodeRef = nodeService.getPrimaryParent(listContainerNodeRef).getParentRef();
-						if (entityNodeRef!=null && !isVersionNode(entityNodeRef)) {
-							try {
-								policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
-								nodeService.setProperty(entityNodeRef, ContentModel.PROP_MODIFIED, Calendar.getInstance().getTime());
-								nodeService.setProperty(entityNodeRef, ContentModel.PROP_MODIFIER, authenticationService.getCurrentUserName());
-							} finally {
-								policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
-							}
-						}
-					}					
-				}				
-			}			
+
+					}
+				}
+			}
 		}
+
+		for (NodeRef listContainerNodeRef : listContainerNodeRefs) {
+			NodeRef entityNodeRef = nodeService.getPrimaryParent(listContainerNodeRef).getParentRef();
+			if (entityNodeRef != null && !isVersionNode(entityNodeRef) && !isNotLocked(entityNodeRef)) {
+				try {
+					policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
+					nodeService.setProperty(entityNodeRef, ContentModel.PROP_MODIFIED, Calendar.getInstance().getTime());
+					nodeService.setProperty(entityNodeRef, ContentModel.PROP_MODIFIER, authenticationService.getCurrentUserName());
+				} finally {
+					policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
+				}
+			}
+		}
+
 	}
 
 	@Override
 	public void onDeleteAssociation(AssociationRef assocRef) {
-		queueListNodeRef(KEY_LIST_ITEM, assocRef.getSourceRef());		
+		queueListNodeRef(KEY_LIST_ITEM, assocRef.getSourceRef());
 	}
 
 	@Override
 	public void onCreateAssociation(AssociationRef assocRef) {
-		queueListNodeRef(KEY_LIST_ITEM, assocRef.getSourceRef());		
+		queueListNodeRef(KEY_LIST_ITEM, assocRef.getSourceRef());
 	}
 
 }
