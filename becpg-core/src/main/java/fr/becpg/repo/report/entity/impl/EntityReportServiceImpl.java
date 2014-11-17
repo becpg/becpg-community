@@ -202,15 +202,12 @@ public class EntityReportServiceImpl implements EntityReportService {
 		for(EntityReportExtractorPlugin entityReportExtractorPlugin : entityExtractors ){
 			EntityReportExtractorPriority priority = entityReportExtractorPlugin.getMatchPriority(type);
 			if(!EntityReportExtractorPriority.NONE.equals(priority)){
-				if(ret!=null 
-						&& priority.isHigherPriority(ret.getMatchPriority(type))){
+				if(ret == null || priority.isHigherPriority(ret.getMatchPriority(type))){
 					ret = entityReportExtractorPlugin;
-				} else {
-					ret = entityReportExtractorPlugin;
-				}
+				}				
 			}
 		}
-
+		
 		return ret;
 	}
 

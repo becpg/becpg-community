@@ -18,10 +18,10 @@ public interface EntityReportExtractorPlugin {
 		HIGHT, NORMAL, LOW, NONE;
 
 		public boolean isHigherPriority(EntityReportExtractorPriority compareTo) {
-			if (LOW.equals(this) && (NORMAL.equals(compareTo) || HIGHT.equals(compareTo)))
+			if (LOW.equals(compareTo) && (NORMAL.equals(this) || HIGHT.equals(this)))
 				return true;
 
-			if (NORMAL.equals(this) && HIGHT.equals(compareTo))
+			if (NORMAL.equals(compareTo) && HIGHT.equals(this))
 				return true;
 
 			return false;
