@@ -50,6 +50,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 	private static final String ATTR_ENTITY = "entity";
 
 	private static final String ATTR_ENTITYLIST = "entityList";
+	private static final String ATTR_ENTITYLIST_QNAME = "entityListQName";
 
 	private static final String ATTR_CHARACTERISTIC = "characteristic";
 
@@ -176,10 +177,11 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 		// compareResult
 		for (CompareResultDataItem c : compareResult) {
 
-			String entityListTitle = "";
+			Element cmpRowElt = cmpRowsElt.addElement(TAG_COMPARISON_ROW);
 			if (c.getEntityList() != null) {
 				TypeDefinition typeDef = dictionaryService.getType(c.getEntityList());
-				entityListTitle = typeDef.getTitle(dictionaryService);
+				cmpRowElt.addAttribute(ATTR_ENTITYLIST, typeDef.getTitle(dictionaryService));
+				cmpRowElt.addAttribute(ATTR_ENTITYLIST_QNAME, c.getEntityList().toPrefixString(namespaceService));
 			}
 			String charactPath = "";
 			if (c.getCharactPath() != null) {
@@ -191,13 +193,9 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 						charactPath += CHARACT_PATH_SEPARATOR;
 				}
 			}
-			String charactName = c.getCharacteristic() == null ? "" : charactPath + (String) nodeService.getProperty(c.getCharacteristic(), ContentModel.PROP_NAME);
-			String propertyTitle = getClassAttributeTitle(c.getProperty());
 
-			Element cmpRowElt = cmpRowsElt.addElement(TAG_COMPARISON_ROW);
-			cmpRowElt.addAttribute(ATTR_ENTITYLIST, entityListTitle);
-			cmpRowElt.addAttribute(ATTR_CHARACTERISTIC, charactName);
-			cmpRowElt.addAttribute(ATTR_PROPERTY, propertyTitle);
+			cmpRowElt.addAttribute(ATTR_CHARACTERISTIC, c.getCharacteristic() == null ? "" : charactPath + (String) nodeService.getProperty(c.getCharacteristic(), ContentModel.PROP_NAME));
+			cmpRowElt.addAttribute(ATTR_PROPERTY, getClassAttributeTitle(c.getProperty()));
 			cmpRowElt.addAttribute(ATTR_PROPERTY_QNAME, c.getProperty().toPrefixString(namespaceService));
 
 			i = 1;
