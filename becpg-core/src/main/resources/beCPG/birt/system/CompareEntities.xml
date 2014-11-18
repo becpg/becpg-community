@@ -19,7 +19,7 @@
 <entitiesComparison>
 	<comparisonRows entity1="Quiche lorraine 200g Quiche lorraine 200g v1.2" entity2="Quiche lorraine 200g v1.1" entity3="" entity4="">
 		<comparisonRow entityList="Propriétés" characteristic="" property="Description" value1="Description modifiée" value2="" value3="" value4="" />
-		<comparisonRow entityList="Propriétés" characteristic="" property="Autre propriété" value1="valeur 1" value2="valeur 2" value3="" value4="" />
+		<comparisonRow entityList="Propriétés" characteristic="" property="Autre propriété" value1="valeur 1" value2="valeur 2" value3="" value4="" isDifferent="true"/>
 		<comparisonRow entityList="Nutriments" characteristic="kJoules" property="Valeur" value1="800" value2="850" value3="" value4="" />
 		<comparisonRow entityList="Nutriments" characteristic="Glucides" property="Valeur" value1="27" value2="30" value3="" value4="" />
 		<comparisonRow entityList="Composition" characteristic="Crème [Garniture]" property="Quantité" value1="13" value2="12" value3="" value4="" />

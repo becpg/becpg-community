@@ -30,6 +30,8 @@ public class CompareResultDataItem {
 	
 	/** The values. */
 	private List<String> values;
+	
+	private boolean isDifferent;
 
 	
 	/**
@@ -122,6 +124,14 @@ public class CompareResultDataItem {
 		this.values = values;
 	}
 	
+	public boolean isDifferent() {
+		return isDifferent;
+	}
+
+	public void setDifferent(boolean isDifferent) {
+		this.isDifferent = isDifferent;
+	}
+
 	/**
 	 * Instantiates a new compare result data item.
 	 *
@@ -142,7 +152,8 @@ public class CompareResultDataItem {
 	@Override
 	public String toString() {
 		return "CompareResultDataItem [entityList=" + entityList + ", charactPath=" + charactPath + ", characteristic="
-				+ characteristic + ", property=" + property + ", values=" + values + "]";
+				+ characteristic + ", property=" + property + ", values=" + values + ", isDifferent=" + isDifferent
+				+ "]";
 	}
 	
 }
