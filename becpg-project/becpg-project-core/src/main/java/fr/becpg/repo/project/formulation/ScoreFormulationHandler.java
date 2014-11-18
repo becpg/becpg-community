@@ -44,23 +44,21 @@ public class ScoreFormulationHandler extends FormulationBaseHandler<ProjectData>
 		int totalScore = 0;
 		int totalWeight = 0;
 		projectData.setScore(null);
-		if (!projectData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
-			for (ScoreListDataItem sl : projectData.getScoreList()) {
+		for (ScoreListDataItem sl : projectData.getScoreList()) {
 
-				if (sl.getWeight() != null && sl.getScore() != null) {
-					totalScore += sl.getWeight() * sl.getScore();
-					totalWeight += sl.getWeight();
-				}
-				logger.debug("totalScore: " + totalScore + " totalWeight: " + totalWeight);
+			if (sl.getWeight() != null && sl.getScore() != null) {
+				totalScore += sl.getWeight() * sl.getScore();
+				totalWeight += sl.getWeight();
 			}
+			logger.debug("totalScore: " + totalScore + " totalWeight: " + totalWeight);
+		}
 
-			if (totalWeight == 0) {
-				logger.debug("Total weight of project " + projectData.getNodeRef() + " is equal to 0.");
-			} else if (totalWeight != TOTAL_WEIGHT) {
-				logger.debug("Total weight of project " + projectData.getNodeRef() + " is different of 100. totalWeight: " + totalWeight);
-			} else {
-				projectData.setScore(totalScore / totalWeight);
-			}
+		if (totalWeight == 0) {
+			logger.debug("Total weight of project " + projectData.getNodeRef() + " is equal to 0.");
+		} else if (totalWeight != TOTAL_WEIGHT) {
+			logger.debug("Total weight of project " + projectData.getNodeRef() + " is different of 100. totalWeight: " + totalWeight);
+		} else {
+			projectData.setScore(totalScore / totalWeight);
 		}
 
 		return true;

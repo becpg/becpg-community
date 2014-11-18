@@ -53,52 +53,49 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 		calculateGroup(projectData);
 		clearDates(projectData);
 
-		if (!projectData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
+		Composite<TaskListDataItem> composite = CompositeHelper.getHierarchicalCompoList(projectData.getTaskList());
 
-			Composite<TaskListDataItem> composite = CompositeHelper.getHierarchicalCompoList(projectData.getTaskList());
+		if (logger.isDebugEnabled()) {
+			logger.debug("after clear " + composite);
+		}
 
-			if (logger.isDebugEnabled()) {
-				logger.debug("after clear " + composite);
-			}
-
-			if (projectData.getPlanningMode() == null || projectData.getPlanningMode().equals(PlanningMode.Planning)) {
-				// planning
-				Date startDate = ProjectHelper.getFirstStartDate(projectData);
-				if (startDate == null) {
-					if (projectData.getStartDate() == null) {
-						startDate = ProjectHelper.calculateNextStartDate(projectData.getCreated());
-						projectData.setStartDate(startDate);
-					} else {
-						startDate = projectData.getStartDate();
-					}
-				} else {
+		if (projectData.getPlanningMode() == null || projectData.getPlanningMode().equals(PlanningMode.Planning)) {
+			// planning
+			Date startDate = ProjectHelper.getFirstStartDate(projectData);
+			if (startDate == null) {
+				if (projectData.getStartDate() == null) {
+					startDate = ProjectHelper.calculateNextStartDate(projectData.getCreated());
 					projectData.setStartDate(startDate);
-				}
-				projectData.setCompletionDate(startDate);
-				calculatePlanningOfNextTasks(projectData, (NodeRef) null, startDate);
-			} else {
-				// retro-planning
-				Date endDate = ProjectHelper.getLastEndDate(projectData);
-				if (endDate == null) {
-					endDate = projectData.getDueDate();
-					if (endDate == null) {
-						endDate = ProjectHelper.calculatePrevEndDate(projectData.getCreated());
-					}
 				} else {
-					projectData.setDueDate(endDate);
+					startDate = projectData.getStartDate();
 				}
-				projectData.setStartDate(endDate);
-				calculateRetroPlanningOfPrevTasks(projectData, null, projectData.getStartDate());
+			} else {
+				projectData.setStartDate(startDate);
 			}
-
-			calculateDurationAndWork(projectData, composite);
-
-			Integer projectOverdue = calculateOverdue(projectData, null);
-			projectData.setOverdue(projectOverdue);
-
-			if (logger.isDebugEnabled()) {
-				logger.debug("End of formulation process " + composite);
+			projectData.setCompletionDate(startDate);
+			calculatePlanningOfNextTasks(projectData, (NodeRef) null, startDate);
+		} else {
+			// retro-planning
+			Date endDate = ProjectHelper.getLastEndDate(projectData);
+			if (endDate == null) {
+				endDate = projectData.getDueDate();
+				if (endDate == null) {
+					endDate = ProjectHelper.calculatePrevEndDate(projectData.getCreated());
+				}
+			} else {
+				projectData.setDueDate(endDate);
 			}
+			projectData.setStartDate(endDate);
+			calculateRetroPlanningOfPrevTasks(projectData, null, projectData.getStartDate());
+		}
+
+		calculateDurationAndWork(projectData, composite);
+
+		Integer projectOverdue = calculateOverdue(projectData, null);
+		projectData.setOverdue(projectOverdue);
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("End of formulation process " + composite);
 		}
 
 		return true;

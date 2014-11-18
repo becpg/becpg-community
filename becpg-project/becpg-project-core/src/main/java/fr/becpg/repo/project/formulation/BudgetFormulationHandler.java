@@ -24,12 +24,10 @@ public class BudgetFormulationHandler extends FormulationBaseHandler<ProjectData
 
 	@Override
 	public boolean process(ProjectData projectData) throws FormulateException {
-		if (!projectData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
-			Composite<TaskListDataItem> composite = CompositeHelper.getHierarchicalCompoList(projectData.getTaskList());
-			clearData(projectData);
-			calculateCost(projectData, composite);
-			calculateLogTime(projectData);
-		}
+		Composite<TaskListDataItem> composite = CompositeHelper.getHierarchicalCompoList(projectData.getTaskList());
+		clearData(projectData);
+		calculateCost(projectData, composite);
+		calculateLogTime(projectData);
 		return true;
 	}	
 
