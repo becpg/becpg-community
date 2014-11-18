@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
-    <property name="createdBy">Eclipse BIRT Designer Version 4.2.2.v201301221637 Build &lt;4.2.2.v20130206-1509></property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.3.2.v20140211-1400 Build &lt;4.3.2.v20140225-1404></property>
     <simple-property-list name="includeResource">
         <value>src/main/resources/beCPG/birt/CompareEntities-messages_fr</value>
         <value>src/main/resources/beCPG/birt/CompareEntities-messages</value>
@@ -116,6 +116,12 @@
                     <text-property name="heading">propertyQName</text-property>
                     <property name="analysisColumn">propertyQName</property>
                 </structure>
+                <structure>
+                    <property name="columnName">isDifferent</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">isDifferent</text-property>
+                </structure>
             </list-property>
             <list-property name="filter">
                 <structure>
@@ -146,6 +152,10 @@
                 <structure>
                     <property name="operator">is-not-null</property>
                     <expression name="expr" type="javascript">row["property"]</expression>
+                </structure>
+                <structure>
+                    <property name="operator">is-true</property>
+                    <expression name="expr" type="javascript">row["isDifferent"]</expression>
                 </structure>
             </list-property>
             <list-property name="parameters"/>
@@ -210,6 +220,11 @@
                         <property name="position">12</property>
                         <property name="name">propertyQName</property>
                         <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">isDifferent</property>
+                        <property name="dataType">boolean</property>
                     </structure>
                 </list-property>
             </structure>
@@ -299,8 +314,15 @@
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">isDifferent</property>
+                    <property name="nativeName">isDifferent</property>
+                    <property name="dataType">boolean</property>
+                    <property name="nativeDataType">16</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entitiesComparison/comparisonRows/comparisonRow]#:#{entityList;STRING;/@entityList},{characteristic;STRING;/@characteristic},{property;STRING;/@property},{value1;STRING;/@value1},{value2;STRING;/@value2},{value3;STRING;/@value3},{value4;STRING;/@value4},{entity1;STRING;../@entity1},{entity2;STRING;../@entity2},{entity3;STRING;../@entity3},{entity4;STRING;../@entity4},{propertyQName;STRING;/@propertyQName}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entitiesComparison/comparisonRows/comparisonRow]#:#{entityList;STRING;/@entityList},{characteristic;STRING;/@characteristic},{property;STRING;/@property},{value1;STRING;/@value1},{value2;STRING;/@value2},{value3;STRING;/@value3},{value4;STRING;/@value4},{entity1;STRING;../@entity1},{entity2;STRING;../@entity2},{entity3;STRING;../@entity3},{entity4;STRING;../@entity4},{propertyQName;STRING;/@propertyQName},{isDifferent;BOOLEAN;/@isDifferent}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -948,12 +970,12 @@ else{
                             <property name="width">0.2916666666666667in</property>
                         </column>
                         <column id="1699">
-                            <property name="width">5.053571428571429in</property>
                             <property name="style">beCPG-table-col</property>
+                            <property name="width">5.053571428571429in</property>
                         </column>
                         <column id="1700">
-                            <property name="width">4.857142857142857in</property>
                             <property name="style">beCPG-table-col</property>
+                            <property name="width">4.857142857142857in</property>
                         </column>
                         <group id="1721">
                             <property name="groupName">NewTableGroup1</property>
@@ -1570,7 +1592,7 @@ else{
                 quVuumQmWXUH953Cn7IAZwI/z+cVPX+fOoULrF1rypyi8y/r1h2bvGwgLd1QsmoVPcoCA+oCivXoCOVS
                 EBABASHKID9w+/O48c5I8bjoX9WLH0opAeRJHVgRwfv3rGG5/POuCLEYmCT1YcXjoZQeRLFSrRyA/fvS
                 INz+eedOOOOdurHTjjjho1//2Q==
-            </property>
+</property>
         </structure>
         <structure>
             <property name="name">Modified.png</property>
@@ -1581,7 +1603,7 @@ else{
                 ANUYD8LIhjCRqBkG4IYwkaGZ+DDAo3lhWlpaAl4DiNGM0wBiNWM1gBTNpEQjVs0gwIJkM0iBA0ghkM2A
                 5AqcmlEMAAKQInuQZiRDGPBpBgFGUF4AKlYAsu8T42RcYVCAJHYQiA8Qm8RhXggA4olAPAFo8wNSMhgj
                 pdkZIMAAdFRMXo75bNwAAAAASUVORK5CYII=
-            </property>
+</property>
         </structure>
         <structure>
             <property name="name">Removed.png</property>
@@ -1594,7 +1616,7 @@ else{
                 HKrTxn9xWsWErK5rVr8CU7Yt4g74l5BBV1sAB3As+R2YRZGO7s6VghlwEhayVeriIZHXUaMytc3JpBdg
                 LlwknBeWMXkMX56oJVmOxpVcZeskeWEV85oCyRvnLN2dV4JpUroiXKwUtVWdjYUqU227s9PkIJ+NvWPs
                 14v0m1X+yWP69Dk/BRgAYruwtxyR/i4AAAAASUVORK5CYII=
-            </property>
+</property>
         </structure>
         <structure>
             <property name="name">Added.png</property>
@@ -1603,7 +1625,7 @@ else{
                 iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAGXRF
                 WHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAD9JREFUeNpi/P//PwMlgImBQoDXgFmzZv0H
                 4YFzwdAwgBEWjYQCCx2kpaUxUtcFuKIR2bbRaCQjEOniAoAAAwCDPBmrCtjhPQAAAABJRU5ErkJggg==
-            </property>
+</property>
         </structure>
         <structure>
             <property name="name">Replaced.png</property>
@@ -1616,7 +1638,7 @@ else{
                 ziRtjBG4AbaArqRvB2VS0l5wMvOHiT7QAVrls1vNKWvANXABvFXIq8BsWBeSulb9TOFJ54D7/2risZUs
                 DpT3aojnIf4uH5N8BQ6BXhT7AAQsAE8DWAJ7sMR+uQQWB1AY9rijNnmKgIeXIRQE8qiZmuITW5/yvre5
                 3R7FvgCaCF3Ebd4rDwAAAABJRU5ErkJggg==
-            </property>
+</property>
         </structure>
         <structure>
             <property name="name">Equal.png</property>
@@ -1625,7 +1647,7 @@ else{
                 iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMA
                 AAsTAAALEwEAmpwYAAAAB3RJTUUH3gIKDxkqunpDCAAAACFJREFUOMtjYBhowDhz5sz/lBjARKkLBt6A
                 UTCaDgYHAAA8+gWjN0rv7AAAAABJRU5ErkJggg==
-            </property>
+</property>
         </structure>
     </list-property>
 </report>

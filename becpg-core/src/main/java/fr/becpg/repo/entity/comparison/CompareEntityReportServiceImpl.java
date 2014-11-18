@@ -57,6 +57,8 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 	private static final String ATTR_PROPERTY = "property";
 
 	private static final String ATTR_PROPERTY_QNAME = "propertyQName";
+	
+	private static final String ATTR_IS_DIFFERENT = "isDifferent";
 
 	private static final String ATTR_VALUE = "value";
 
@@ -197,6 +199,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 			cmpRowElt.addAttribute(ATTR_CHARACTERISTIC, c.getCharacteristic() == null ? "" : charactPath + (String) nodeService.getProperty(c.getCharacteristic(), ContentModel.PROP_NAME));
 			cmpRowElt.addAttribute(ATTR_PROPERTY, getClassAttributeTitle(c.getProperty()));
 			cmpRowElt.addAttribute(ATTR_PROPERTY_QNAME, c.getProperty().toPrefixString(namespaceService));
+			cmpRowElt.addAttribute(ATTR_IS_DIFFERENT, Boolean.toString(c.isDifferent()));
 
 			i = 1;
 			for (String value : c.getValues()) {
