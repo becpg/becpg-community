@@ -33,7 +33,6 @@
 		<constraint name="bcpgwf:approvalDecision" type="LIST">
 			<parameter name="allowedValues">
 				<list>
-					<value></value>
 					<value>Approved</value>
 					<value>Rejected</value>					
 				</list>
