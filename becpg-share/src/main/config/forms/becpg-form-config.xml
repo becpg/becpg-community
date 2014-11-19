@@ -166,5 +166,21 @@
 			</form>
 		</forms>
 	</config>
+	
+		<config evaluator="aspect" condition="bcpg:entityTplAspect">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="bcpg:entityTplEnabled" />
+					<show id="bcpg:entityTplIsDefault" />
+				</field-visibility>
+				<appearance>
+					<set id="template" label-id="becpg.forms.set.template.label" />
+					<field id="bcpg:entityTplEnabled" set="template" />
+					<field id="bcpg:entityTplIsDefault" set="template" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
    
 </alfresco-config>
