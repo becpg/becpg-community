@@ -525,10 +525,13 @@
                         
                         fnRenderCellSelectedHeader : function EntityDataGrid_fnRenderCellSelectedHeader()
                         {
+                        
+                            this.timeStampId = (new Date()).getTime();
+                            
                             var ret = "";
-                            ret+="<div id=\""+this.id+"-itemSelect-div\" class=\"item-select hidden\">";
-                            ret+="<button id=\""+this.id+"-itemSelect-button\" name=\"datagrid-itemSelect-button\">&nbsp;</button>";
-                            ret+="<div id=\""+this.id+"-itemSelect-menu\" class=\"yuimenu\">";
+                            ret+="<div id=\""+this.id+"-"+this.timeStampId+"itemSelect-div\" class=\"item-select hidden\">";
+                            ret+="<button id=\""+this.id+"-"+this.timeStampId+"itemSelect-button\" name=\"datagrid-itemSelect-button\">&nbsp;</button>";
+                            ret+="<div id=\""+this.id+"-"+this.timeStampId+"itemSelect-menu\" class=\"yuimenu\">";
                             ret+="   <div class=\"bd\">";
                             ret+="      <ul>";
                             ret+="         <li><a href=\"#\"><span class=\"selectAll\">"+this.msg("menu.select.all")+"</span></a></li>";
@@ -1249,7 +1252,9 @@
                                 formatter : this.fnRenderCellSelected(),
                                 width : 16
                             } ];
-
+                            
+                            delete me.widgets.itemSelect;
+                            
                             for (var i = 0, ii = this.datalistColumns.length; i < ii; i++)
                             {
                                 var column = this.datalistColumns[i];
@@ -1534,18 +1539,19 @@
                                 
                                 
                              // Item Select menu button
-                                if(!this.widgets.itemSelect){
-                                    this.widgets.itemSelect = Alfresco.util.createYUIButton(this, "itemSelect-button",
-                                            this.onItemSelect,
-                                            {
-                                                type : "menu",
-                                                menu : "itemSelect-menu",
-                                                disabled : false
-                                            });
+                                if( this.widgets.itemSelect ==null){
+                                   this.widgets.itemSelect = Alfresco.util.createYUIButton(this, me.timeStampId+"itemSelect-button",
+                                           this.onItemSelect,
+                                         {
+                                                    type : "menu",
+                                                    menu : me.timeStampId+"itemSelect-menu",
+                                                    disabled : false
+                                       });
+     
+                                    
+                                 // Enable item select menu
+                                    Dom.removeClass(me.id +"-"+me.timeStampId+"itemSelect-div", "hidden");
                                 }
-                                
-                             // Enable item select menu
-                                Dom.removeClass(me.id + "-itemSelect-div", "hidden");
 
                                 // IE6 fix for long filename rendering issue
                                 if (YAHOO.env.ua.ie < 7)
