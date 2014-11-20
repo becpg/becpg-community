@@ -117,8 +117,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 			if(qtySubFormula != null){
 									
 				// take in account percentage
-				if(component.getData().getCompoListUnit() != null && 
-						component.getData().getCompoListUnit().equals(CompoListUnit.Perc) &&
+				if(CompoListUnit.Perc.equals(component.getData().getCompoListUnit()) &&
 						parentQty != null && !parentQty.equals(0d)){
 					qtySubFormula = qtySubFormula * parentQty / 100;
 				}
@@ -142,22 +141,27 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 			if(!component.isLeaf()){
 				
 				// take in account percentage
-				if(component.getData().getCompoListUnit() != null && 
-						component.getData().getCompoListUnit().equals(CompoListUnit.Perc) &&
+				if(	CompoListUnit.Perc.equals(component.getData().getCompoListUnit()) &&
 						parentQty != null && !parentQty.equals(0d)){	
 					
 					visitQtyChildren(formulatedProduct, parentQty, component);
 					
 					// no yield but calculate % of composite
 					Double compositePerc = 0d;
+					boolean isUnitPerc = true;
 					for(Composite<CompoListDataItem> child : component.getChildren()){	
 						compositePerc += child.getData().getQtySubFormula();
+						isUnitPerc = isUnitPerc && CompoListUnit.Perc.equals(child.getData().getCompoListUnit());
+						if(!isUnitPerc){
+							break;
+						}
 					}
-					component.getData().setQtySubFormula(compositePerc);
-					component.getData().setQty(compositePerc * parentQty / 100);
+					if(isUnitPerc){
+						component.getData().setQtySubFormula(compositePerc);
+						component.getData().setQty(compositePerc * parentQty / 100);
+					}
 				}
 				else{
-					
 					visitQtyChildren(formulatedProduct, component.getData().getQty(),component);					
 				}				
 			}			
