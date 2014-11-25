@@ -64,8 +64,8 @@
 		   <list id="taskList" index="10" view="true" />
 		   <list id="deliverableList" index="20" />
 		   <list id="scoreList" index="20" />
-		   <list id="activityList" index="30" view="true" />
-		   <list id="logTimeList" index="40" />
+		   <list id="logTimeList" index="30" />
+		   <list id="activityList" index="40" view="true" />
 		</lists>
 	</config>
 	
