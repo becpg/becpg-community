@@ -118,16 +118,13 @@
 		<property name="checkOutCheckInService" ref="checkOutCheckInService" />
 	</bean>
 
-	<!-- Compare entity -->
-	<bean id="webscript.fr.becpg.entity.compareEntityVersionReport.get" class="fr.becpg.repo.web.scripts.entity.CompareEntityVersionReportWebScript" parent="webscript">
+
+	<bean id="webscript.fr.becpg.entity.compareEntityReport.get" class="fr.becpg.repo.web.scripts.entity.CompareEntityReportWebScript" parent="webscript">
 		<property name="compareEntityReportService" ref="compareEntityReportService" />
 		<property name="mimetypeService" ref="mimetypeService" />
 		<property name="versionService" ref="versionService" />
 		<property name="entityVersionService" ref="entityVersionService" />
-	</bean>
-	<bean id="webscript.fr.becpg.entity.compareEntityReport.get" class="fr.becpg.repo.web.scripts.entity.CompareEntityReportWebScript" parent="webscript">
-		<property name="compareEntityReportService" ref="compareEntityReportService" />
-		<property name="mimetypeService" ref="mimetypeService" />
+		<property name="reportTplService" ref="reportTplService"/>
 	</bean>
 
 	<bean id="webscript.fr.becpg.entity.entityVersion.get" class="fr.becpg.repo.web.scripts.entity.EntityVersionWebScript" parent="webscript">

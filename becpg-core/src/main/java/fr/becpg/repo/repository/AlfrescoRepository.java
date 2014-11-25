@@ -32,12 +32,15 @@ import org.alfresco.service.namespace.QName;
  */
 public interface AlfrescoRepository<T extends RepositoryEntity>  extends CrudRepository<T, NodeRef> {
 
+	boolean hasDataList(RepositoryEntity entity, QName datalistContainerQname);
 	boolean hasDataList(NodeRef entityNodeRef, QName datalistContainerQname);
+	
 	List<T> loadDataList(NodeRef entityNodeRef, QName datalistContainerQname, QName datalistQname);
 	
 	T create(NodeRef parentNodeRef, T entity);
 	NodeRef getOrCreateDataListContainer(T entity);
 	void saveDataList(NodeRef listContainerNodeRef, QName dataListContainerType, QName dataListType, List<? extends RepositoryEntity> dataList);
 	boolean isRegisteredType(QName type);
+	
 
 }

@@ -150,22 +150,35 @@ public class ImportHelper{
 				// double
 				else if(dataType.isMatch(DataTypeDefinition.DOUBLE)){
 										
-					if(values.get(pos).isEmpty()){
+					if(values.get(pos).trim().isEmpty()){
 						value = null;
 					}
 					else{
-						Number n = importContext.getPropertyFormats().parseDecimal(values.get(pos));
+						String val = values.get(pos);
+						if( importContext.getPropertyFormats().getDecimalFormat().getDecimalFormatSymbols().getDecimalSeparator() == ','){
+							val = val.replaceAll("\\.",",");
+						} else {
+							val = val.replaceAll(",",".");
+						}
+
+						Number n = importContext.getPropertyFormats().parseDecimal(val);						
 						value = n.doubleValue();
 					}	
 				}
 				// float
 				else if(dataType.isMatch(DataTypeDefinition.FLOAT)){
 					
-					if(values.get(pos).isEmpty()){
+					if(values.get(pos).trim().isEmpty()){
 						value = null;
 					}
 					else{
-						Number n = importContext.getPropertyFormats().parseDecimal(values.get(pos));
+						String val = values.get(pos);
+						if( importContext.getPropertyFormats().getDecimalFormat().getDecimalFormatSymbols().getDecimalSeparator() == ','){
+							val = val.replaceAll("\\.",",");
+						} else {
+							val = val.replaceAll(",",".");
+						}
+						Number n = importContext.getPropertyFormats().parseDecimal(val);
 						value = n.floatValue();
 					}	
 				}			

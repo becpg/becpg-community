@@ -19,5 +19,5 @@ public interface CompareEntityReportService {
 	 * @param entitys the entitys
 	 * @param out the output stream
 	 */
-	public void getComparisonReport(NodeRef entity1, List<NodeRef> entities, OutputStream out);
+	public void getComparisonReport(NodeRef entity1, List<NodeRef> entities, NodeRef templateNodeRef, OutputStream out);
 }

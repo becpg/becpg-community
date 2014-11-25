@@ -456,7 +456,7 @@ public class ExportSearchWebScriptTest extends fr.becpg.test.PLMBaseWebScriptTes
 				initTests();
 							
 				//List<NodeRef> reportTpls = exportSearchService.getReportTpls();
-				List<NodeRef> reportTpls = reportTplService.suggestUserReportTemplates(ReportType.ExportSearch, PLMModel.TYPE_PRODUCT, "*");
+				List<NodeRef> reportTpls = reportTplService.getUserReportTemplates(ReportType.ExportSearch, PLMModel.TYPE_PRODUCT, "*");
 				
 				for(NodeRef n : reportTpls){
 					logger.debug("report name: " + nodeService.getProperty(n, ContentModel.PROP_NAME));

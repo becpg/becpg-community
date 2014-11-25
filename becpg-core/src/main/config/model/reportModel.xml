@@ -26,7 +26,8 @@
 				<list>
 					<value>System</value>
 					<value>Document</value>
-					<value>ExportSearch</value>					
+					<value>ExportSearch</value>
+					<value>Compare</value>					
 				</list>
 			</parameter>
 		</constraint>		

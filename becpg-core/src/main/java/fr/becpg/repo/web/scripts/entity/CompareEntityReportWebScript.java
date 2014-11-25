@@ -1,6 +1,21 @@
-/*
- * 
- */
+/*******************************************************************************
+ * Copyright (C) 2010-2014 beCPG. 
+ *  
+ * This file is part of beCPG 
+ *  
+ * beCPG is free software: you can redistribute it and/or modify 
+ * it under the terms of the GNU Lesser General Public License as published by 
+ * the Free Software Foundation, either version 3 of the License, or 
+ * (at your option) any later version. 
+ *  
+ * beCPG is distributed in the hope that it will be useful, 
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ * GNU Lesser General Public License for more details. 
+ *  
+ * You should have received a copy of the GNU Lesser General Public License along with beCPG.
+ *  If not, see <http://www.gnu.org/licenses/>.
+ ******************************************************************************/
 package fr.becpg.repo.web.scripts.entity;
 
 import java.io.IOException;
@@ -12,6 +27,9 @@ import java.util.Map;
 import org.alfresco.service.cmr.repository.ContentIOException;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.version.Version;
+import org.alfresco.service.cmr.version.VersionHistory;
+import org.alfresco.service.cmr.version.VersionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.webscripts.AbstractWebScript;
@@ -22,11 +40,15 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.comparison.CompareEntityReportService;
+import fr.becpg.repo.entity.version.EntityVersionService;
+import fr.becpg.repo.helper.TranslateHelper;
+import fr.becpg.repo.report.template.ReportTplService;
+import fr.becpg.repo.report.template.ReportType;
 
 /**
  * The Class CompareEntityVersionReportWebScript.
  * 
- * @author querephi
+ * @author querephi, matthieu
  */
 public class CompareEntityReportWebScript extends AbstractWebScript {
 
@@ -39,49 +61,86 @@ public class CompareEntityReportWebScript extends AbstractWebScript {
 
 	private static final String PARAM_ENTITIES = "entities";
 
-	private static Log logger = LogFactory.getLog(CompareEntityVersionReportWebScript.class);
+	private static final String PARAM_VERSION_LABEL = "versionLabel";
+
+	private static final String PARAM_FILE_NAME = "fileName";
+
+	private static final String PARAM_TPL_NODEREF = "tplNodeRef";
+
+	private static Log logger = LogFactory.getLog(CompareEntityReportWebScript.class);
 
 	private CompareEntityReportService compareEntityReportService;
 
 	private MimetypeService mimetypeService;
-	
+
+	private VersionService versionService;
+
+	private EntityVersionService entityVersionService;
+
+	private ReportTplService reportTplService;
+
 	public void setCompareEntityReportService(CompareEntityReportService compareEntityReportService) {
 		this.compareEntityReportService = compareEntityReportService;
 	}
 
+
 	public void setMimetypeService(MimetypeService mimetypeService) {
 		this.mimetypeService = mimetypeService;
 	}
-	
 
-	/**
-	 * Compare entitys.
-	 * 
-	 * @param req
-	 *            the req
-	 * @param res
-	 *            the res
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 */
+	public void setVersionService(VersionService versionService) {
+		this.versionService = versionService;
+	}
+
+	public void setEntityVersionService(EntityVersionService entityVersionService) {
+		this.entityVersionService = entityVersionService;
+	}
+
+	public void setReportTplService(ReportTplService reportTplService) {
+		this.reportTplService = reportTplService;
+	}
+
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
-		logger.debug("CompareEntityVersionReportWebScript executeImpl()");
 		List<NodeRef> entityNodeRefs = new ArrayList<NodeRef>();
 
-		NodeRef entity1NodeRef = null;
+		NodeRef entityNodeRef = null;
+		NodeRef templateNodeRef = null;
+
 		Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();
 		if (templateArgs != null) {
 			String storeType = templateArgs.get(PARAM_STORE_TYPE);
 			String storeId = templateArgs.get(PARAM_STORE_ID);
 			String nodeId = templateArgs.get(PARAM_ID);
 			if (storeType != null && storeId != null && nodeId != null) {
-				entity1NodeRef = new NodeRef(storeType, storeId, nodeId);
+				entityNodeRef = new NodeRef(storeType, storeId, nodeId);
 			}
 		}
 
+		NodeRef entity1NodeRef = entityNodeRef;
+
+		String fileName = templateArgs.get(PARAM_FILE_NAME);
+		if (fileName == null) {
+			fileName = "compare.pdf";
+		}
+
+		String versionLabel = templateArgs.get(PARAM_VERSION_LABEL);
+		if (versionLabel != null) {
+			VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
+			Version version = versionHistory.getVersion(versionLabel);
+			entityNodeRef = entityVersionService.getEntityVersion(version);
+
+			if (logger.isDebugEnabled()) {
+				logger.debug("entityNodeRef: " + entityNodeRef + " - versionLabel: " + versionLabel + " - entityVersionNodeRef: " + entityNodeRef);
+			}
+
+			List<NodeRef> entities = new ArrayList<NodeRef>();
+			entities.add(entityNodeRef);
+
+		}
+
 		String entities = req.getParameter(PARAM_ENTITIES);
-		if (entities != null) {
+		if (entities != null && !entities.isEmpty()) {
 			for (String entity : entities.split(",")) {
 				entityNodeRefs.add(new NodeRef(entity));
 			}
@@ -104,21 +163,26 @@ public class CompareEntityReportWebScript extends AbstractWebScript {
 			logger.error("missing parameters. entity1= '' or entity2=''");
 			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "missing parameters. entity1= '' or entity2=''");
 		}
-		
-		
-		
 
 		// get the content and stream directly to the response output stream
 		// assuming the repository is capable of streaming in chunks, this
 		// should allow large files
 		// to be streamed directly to the browser response stream.
 		try {
-			compareEntityReportService.getComparisonReport(entity1NodeRef, entityNodeRefs, res.getOutputStream());
+
+			if (req.getParameter(PARAM_TPL_NODEREF) != null) {
+				templateNodeRef = new NodeRef(req.getParameter(PARAM_TPL_NODEREF));
+			} else {
+				templateNodeRef = reportTplService.getUserReportTemplate(ReportType.Compare, null,
+						TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_COMPARE_ENTITIES));
+			}
+
+			compareEntityReportService.getComparisonReport(entity1NodeRef, entityNodeRefs, templateNodeRef, res.getOutputStream());
 
 			// set mimetype for the content and the character encoding + length
 			// for the stream
-			res.setContentType(mimetypeService.guessMimetype(RepoConsts.REPORT_EXTENSION_PDF));
-			res.setHeader("Content-disposition", "attachment; filename=compare.pdf");
+			res.setContentType(mimetypeService.guessMimetype(fileName));
+			res.setHeader("Content-disposition", "attachment; filename=" + fileName);
 
 			// res.setContentEncoding(reader.getEncoding());
 			// res.setHeader("Content-Length", Long.toString(reader.getSize()));

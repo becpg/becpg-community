@@ -58,7 +58,7 @@
     </bean>
     
 	
-		<!-- Export search -->
+    <!-- Export search -->
 	<bean id="webscript.fr.becpg.report.exportSearch.get" class="fr.becpg.repo.web.scripts.report.ExportSearchWebScript" parent="webscript">
 		<property name="exportSearchService" ref="exportSearchService" />
 		<property name="mimetypeService" ref="MimetypeService" />
@@ -68,7 +68,7 @@
 	</bean>
 	
 	
-	<bean id="webscript.fr.becpg.report.exportSearchTpls.get" class="fr.becpg.repo.web.scripts.report.ExportSearchTplsWebScript" parent="webscript">
+	<bean id="webscript.fr.becpg.report.reportTpls.get" class="fr.becpg.repo.web.scripts.report.ReportTplsWebScript" parent="webscript">
 		<property name="namespaceService" ref="NamespaceService" />
 		<property name="reportTplService" ref="reportTplService" />
 	</bean>

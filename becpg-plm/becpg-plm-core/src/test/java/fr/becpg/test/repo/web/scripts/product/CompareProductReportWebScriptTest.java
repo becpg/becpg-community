@@ -344,7 +344,7 @@ private void initObjects(){
 				}},false,true);
 			
 			
-				String url = String.format("/becpg/entity/compare/%s/%s/Produit", fpNodeRef.toString().replace("://", "/"), "1.0");;
+				String url = String.format("/becpg/entity/compare/%s/%s/version.pdf", fpNodeRef.toString().replace("://", "/"), "1.0");;
 				Response response = sendRequest(new GetRequest(url), 200, "admin");
 				
 				logger.debug("response: " + response.getContentAsString());

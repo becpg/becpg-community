@@ -52,90 +52,77 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.report.client.ReportFormat;
 
 @Service("reportTplService")
-public class ReportTplServiceImpl implements ReportTplService{
+public class ReportTplServiceImpl implements ReportTplService {
 
-	
 	private static Log logger = LogFactory.getLog(ReportTplServiceImpl.class);
-	
+
 	@Autowired
 	private NodeService nodeService;
 	@Autowired
-	private ContentService contentService;	
+	private ContentService contentService;
 	@Autowired
 	private MimetypeService mimetypeService;
 	@Autowired
 	private AssociationService associationService;
-			
-	
-	
 
 	/**
 	 * Get the report templates of the product.
 	 *
-	 * @param productNodeRef the product node ref
+	 * @param productNodeRef
+	 *            the product node ref
 	 * @return the system report templates
 	 * @param:productNodeRef
 	 * @param:tplName the name of the template or starting by
 	 */
 	@Override
-	public List<NodeRef> getSystemReportTemplates(ReportType reportType, QName nodeType) {    	  
-    	
-		if(nodeType == null){
-			return new ArrayList<NodeRef>();
-		}		
-				
+	public List<NodeRef> getSystemReportTemplates(ReportType reportType, QName nodeType) {
 		return getReportTpls(reportType, nodeType, true, null).list();
 	}
-	
+
 	/**
 	 * Get the system report template
 	 */
 	@Override
-	public NodeRef getSystemReportTemplate(ReportType reportType, QName nodeType, String tplName) {    	  
+	public NodeRef getSystemReportTemplate(ReportType reportType, QName nodeType, String tplName) {
 		return getReportTpls(reportType, nodeType, true, tplName).singleValue();
 	}
-	
+
 	/**
-	 * Get the report templates of the product type that user can choose from UI.
+	 * Get the report templates of the product type that user can choose from
+	 * UI.
 	 *
-	 * @param nodeType the node type
-	 * @param tplName the tpl name
+	 * @param nodeType
+	 *            the node type
+	 * @param tplName
+	 *            the tpl name
 	 * @return the user report templates
 	 * @param:productType
 	 * @param:tplName the name of the template or starting by
 	 */
 	@Override
-	public List<NodeRef> suggestUserReportTemplates(ReportType reportType, QName nodeType, String tplName) {		
-		
-		if(nodeType == null){
-			logger.warn("suggestUserReportTemplates: nodeType is null, exit.");
-			return new ArrayList<NodeRef>();
-		}		
-		
-		return getReportTpls(reportType, nodeType, false, tplName).list();		
+	public List<NodeRef> getUserReportTemplates(ReportType reportType, QName nodeType, String tplName) {
+		return getReportTpls(reportType, nodeType, false, tplName).list();
 	}
-	
+
 	/**
 	 * Get the report template of the product type by name
 	 *
-	 * @param nodeType the node type
-	 * @param tplName the tpl name
+	 * @param nodeType
+	 *            the node type
+	 * @param tplName
+	 *            the tpl name
 	 * @return the user report templates
 	 * @param:productType
 	 * @param:tplName the name of the template or starting by
 	 */
 	@Override
 	public NodeRef getUserReportTemplate(ReportType reportType, QName nodeType, String tplName) {
-		
-		if(nodeType == null){
-			return null;
-		}		
-    			
 		return getReportTpls(reportType, nodeType, false, tplName).singleValue();
 	}
-	
+
 	/**
 	 * Create the rptdesign node for the report
+	 * 
 	 * @param parentNodeRef
 	 * @param tplName
 	 * @param tplFilePath
@@ -148,99 +135,86 @@ public class ReportTplServiceImpl implements ReportTplService{
 	 * @throws IOException
 	 */
 	@Override
-	public NodeRef createTplRptDesign(NodeRef parentNodeRef, 
-										String tplName, 
-										String tplFilePath, 
-										ReportType reportType, 
-										ReportFormat reportFormat,
-										QName nodeType, 
-										boolean isSystemTpl, 
-										boolean isDefaultTpl, 
-										boolean overrideTpl) throws IOException{
-		
+	public NodeRef createTplRptDesign(NodeRef parentNodeRef, String tplName, String tplFilePath, ReportType reportType, ReportFormat reportFormat,
+			QName nodeType, boolean isSystemTpl, boolean isDefaultTpl, boolean overrideTpl) throws IOException {
+
 		NodeRef reportTplNodeRef = null;
 		ClassPathResource resource = new ClassPathResource(tplFilePath);
 		InputStream in = null;
-		if(resource.exists()){
+		if (resource.exists()) {
 			try {
 				in = new BufferedInputStream(resource.getInputStream());
 				String tplFullName = tplName + "." + RepoConsts.REPORT_EXTENSION_BIRT;
-				reportTplNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS,  tplFullName);
-				
+				reportTplNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, tplFullName);
+
 				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-				properties.put(ContentModel.PROP_NAME, tplFullName);	    		
+				properties.put(ContentModel.PROP_NAME, tplFullName);
 				properties.put(ReportModel.PROP_REPORT_TPL_TYPE, reportType);
 				properties.put(ReportModel.PROP_REPORT_TPL_FORMAT, reportFormat);
 				properties.put(ReportModel.PROP_REPORT_TPL_CLASS_NAME, nodeType);
 				properties.put(ReportModel.PROP_REPORT_TPL_IS_SYSTEM, isSystemTpl);
-				properties.put(ReportModel.PROP_REPORT_TPL_IS_DEFAULT, isDefaultTpl);				
-				
-				if(reportTplNodeRef != null){
-					
-					if(overrideTpl){
+				properties.put(ReportModel.PROP_REPORT_TPL_IS_DEFAULT, isDefaultTpl);
+
+				if (reportTplNodeRef != null) {
+
+					if (overrideTpl) {
 						logger.debug("override report Tpl, name: " + tplFullName);
-						
+
 						nodeService.addProperties(reportTplNodeRef, properties);
-					}
-					else{
+					} else {
 						return reportTplNodeRef;
 					}
-				}
-				else{
+				} else {
 					logger.debug("Create report Tpl, name: " + tplFullName);
-					
-					reportTplNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS, 
-							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, 
-							(String)properties.get(ContentModel.PROP_NAME)), 
+
+					reportTplNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
 							ReportModel.TYPE_REPORT_TPL, properties).getChildRef();
 				}
-				
-		    	ContentWriter writer = contentService.getWriter(reportTplNodeRef, ContentModel.PROP_CONTENT, true);
-		    	
-		    	String mimetype = mimetypeService.guessMimetype(tplFilePath);
+
+				ContentWriter writer = contentService.getWriter(reportTplNodeRef, ContentModel.PROP_CONTENT, true);
+
+				String mimetype = mimetypeService.guessMimetype(tplFilePath);
 				ContentCharsetFinder charsetFinder = mimetypeService.getContentCharsetFinder();
-		        Charset charset = charsetFinder.getCharset(in, mimetype);
-		        String encoding = charset.name();
-	
-		    	writer.setMimetype(mimetype);
-		    	writer.setEncoding(encoding);
-		    	writer.putContent(in);	
+				Charset charset = charsetFinder.getCharset(in, mimetype);
+				String encoding = charset.name();
+
+				writer.setMimetype(mimetype);
+				writer.setEncoding(encoding);
+				writer.putContent(in);
 			} finally {
 				IOUtils.closeQuietly(in);
 			}
-		}		
-		
+		}
+
 		return reportTplNodeRef;
 	}
 
 	/**
 	 * Create a ressource for the report
+	 * 
 	 * @param parentNodeRef
 	 * @param xmlFilePath
 	 * @param overrideRessource
 	 * @throws IOException
 	 */
 	@Override
-	public void createTplRessource(NodeRef parentNodeRef, String xmlFilePath, boolean overrideRessource) throws IOException{
-		
+	public void createTplRessource(NodeRef parentNodeRef, String xmlFilePath, boolean overrideRessource) throws IOException {
+
 		ClassPathResource resource = new ClassPathResource(xmlFilePath);
 		InputStream in = null;
-		if(resource.exists()){
+		if (resource.exists()) {
 			try {
 				in = new BufferedInputStream(resource.getInputStream());
-				NodeRef xmlReportTplNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS,
-						resource.getFilename());
+				NodeRef xmlReportTplNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, resource.getFilename());
 
 				if (xmlReportTplNodeRef == null || overrideRessource) {
 
 					Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 					properties.put(ContentModel.PROP_NAME, resource.getFilename());
-					NodeRef fileNodeRef = nodeService.createNode(
-							parentNodeRef,
-							ContentModel.ASSOC_CONTAINS,
-							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
-									(String) properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_CONTENT,
-							properties).getChildRef();
+					NodeRef fileNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
+							ContentModel.TYPE_CONTENT, properties).getChildRef();
 
 					ContentWriter writer = contentService.getWriter(fileNodeRef, ContentModel.PROP_CONTENT, true);
 
@@ -248,8 +222,7 @@ public class ReportTplServiceImpl implements ReportTplService{
 					ContentCharsetFinder charsetFinder = mimetypeService.getContentCharsetFinder();
 					Charset charset = charsetFinder.getCharset(in, mimetype);
 					String encoding = charset.name();
-					
-					
+
 					writer.setMimetype(mimetype);
 					writer.setEncoding(encoding);
 					writer.putContent(in);
@@ -258,89 +231,85 @@ public class ReportTplServiceImpl implements ReportTplService{
 				IOUtils.closeQuietly(in);
 			}
 
-    	}
-    	else{
-    		logger.error("Resource not found. Path: " + xmlFilePath);
-    	}
+		} else {
+			logger.error("Resource not found. Path: " + xmlFilePath);
+		}
 	}
 
 	@Override
 	public List<NodeRef> cleanDefaultTpls(List<NodeRef> tplsNodeRef) {
-		
+
 		List<NodeRef> defaultTplsNodeRef = new ArrayList<NodeRef>();
 		NodeRef userDefaultTplNodeRef = null;
-		
-		for(NodeRef tplNodeRef : tplsNodeRef){
-			
-			Boolean isDefault = (Boolean)nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_IS_DEFAULT);
-			Boolean isSystem = (Boolean)nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_IS_SYSTEM);
-			
-			if(isDefault){
-				
-				if(!isSystem && userDefaultTplNodeRef == null){
+
+		for (NodeRef tplNodeRef : tplsNodeRef) {
+
+			Boolean isDefault = (Boolean) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_IS_DEFAULT);
+			Boolean isSystem = (Boolean) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_IS_SYSTEM);
+
+			if (isDefault) {
+
+				if (!isSystem && userDefaultTplNodeRef == null) {
 					userDefaultTplNodeRef = tplNodeRef;
-				}
-				else{
+				} else {
 					defaultTplsNodeRef.add(tplNodeRef);
-				}					
+				}
 			}
 		}
-		
+
 		// no user default tpl, take the first system default
-		if(userDefaultTplNodeRef == null && !defaultTplsNodeRef.isEmpty()){
+		if (userDefaultTplNodeRef == null && !defaultTplsNodeRef.isEmpty()) {
 			userDefaultTplNodeRef = defaultTplsNodeRef.get(0);
 			defaultTplsNodeRef.remove(0);
 		}
-		
+
 		// remove the other system default
-		for(NodeRef tplNodeRef : defaultTplsNodeRef){
-			
+		for (NodeRef tplNodeRef : defaultTplsNodeRef) {
+
 			tplsNodeRef.remove(tplNodeRef);
 		}
-		
+
 		return tplsNodeRef;
 	}
 
 	@Override
 	public ReportFormat getReportFormat(NodeRef tplNodeRef) {
-		
-		ReportType reportType = ReportType.parse((String)nodeService.getProperty(tplNodeRef,  ReportModel.PROP_REPORT_TPL_TYPE));
-		String format = (String)nodeService.getProperty(tplNodeRef,  ReportModel.PROP_REPORT_TPL_FORMAT);
+
+		ReportType reportType = ReportType.parse((String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_TYPE));
+		String format = (String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
 		ReportFormat reportFormat;
-		
-		String dbReportFormat = (String)nodeService.getProperty(tplNodeRef,  ReportModel.PROP_REPORT_TPL_FORMAT);
-		if(dbReportFormat == null){
-			if(ReportType.ExportSearch.equals(reportType)){
+
+		String dbReportFormat = (String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
+		if (dbReportFormat == null) {
+			if (ReportType.ExportSearch.equals(reportType)) {
 				reportFormat = ReportFormat.XLS;
-			}
-			else{
+			} else {
 				reportFormat = ReportFormat.PDF;
 			}
-		}
-		else{
+		} else {
 			reportFormat = ReportFormat.valueOf(format);
 		}
-				
+
 		return reportFormat;
-	}	
-	
-	private BeCPGQueryBuilder getReportTpls(ReportType reportType, QName nodeType, boolean isSystem, String tplName){
-					
+	}
+
+	private BeCPGQueryBuilder getReportTpls(ReportType reportType, QName nodeType, boolean isSystem, String tplName) {
+
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(ReportModel.TYPE_REPORT_TPL)
-						.andPropEquals(ReportModel.PROP_REPORT_TPL_TYPE, reportType.toString())
-						.andPropQuery(ReportModel.PROP_REPORT_TPL_IS_SYSTEM, Boolean.valueOf(isSystem).toString())
-						.excludeProp(ReportModel.PROP_REPORT_TPL_IS_DISABLED, Boolean.TRUE.toString())
-						.andPropEquals(ReportModel.PROP_REPORT_TPL_CLASS_NAME, nodeType!=null? nodeType.toString(): null);
-		
-		if(tplName!=null && tplName!="*"){
+				.andPropEquals(ReportModel.PROP_REPORT_TPL_TYPE, reportType.toString())
+				.andPropQuery(ReportModel.PROP_REPORT_TPL_IS_SYSTEM, Boolean.valueOf(isSystem).toString())
+				.excludeProp(ReportModel.PROP_REPORT_TPL_IS_DISABLED, Boolean.TRUE.toString())
+				.andPropEquals(ReportModel.PROP_REPORT_TPL_CLASS_NAME, nodeType != null ? nodeType.toString() : null);
+
+		if (tplName != null && tplName != "*") {
 			queryBuilder.andPropQuery(ContentModel.PROP_NAME, tplName);
-		}		
+		}
 		return queryBuilder;
 	}
 
 	@Override
 	public NodeRef getAssociatedReportTemplate(NodeRef nodeRef) {
-		return associationService.getTargetAssoc(nodeRef, ReportModel.ASSOC_REPORT_TPL,false);
-		
-	}	
+		return associationService.getTargetAssoc(nodeRef, ReportModel.ASSOC_REPORT_TPL, false);
+
+	}
 }

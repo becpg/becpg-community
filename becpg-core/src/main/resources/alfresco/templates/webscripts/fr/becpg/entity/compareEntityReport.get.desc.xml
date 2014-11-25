@@ -18,8 +18,9 @@
 <webscript>
 	<shortname>Compare entity</shortname>
 	<description>Compare entity service </description>	
-	<url>/becpg/entity/compare/{id}</url>
-	<url>/becpg/entity/compare/{store_type}/{store_id}/{id}/{filename}</url>
+	<url>/becpg/entity/compare/{fileName}?tplNodeRef={tplNodeRef}</url>
+	<url>/becpg/entity/compare/{store_type}/{store_id}/{id}/{fileName}?tplNodeRef={tplNodeRef}</url>
+	<url>/becpg/entity/compare/{store_type}/{store_id}/{id}/{versionLabel}/{fileName}</url>
 	<format default="json">argument</format>
 	<authentication>user</authentication>
 	<transaction allow="readonly" >required</transaction>

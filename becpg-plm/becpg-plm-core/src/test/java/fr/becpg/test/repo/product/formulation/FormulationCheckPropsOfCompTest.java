@@ -87,15 +87,7 @@ public class FormulationCheckPropsOfCompTest extends AbstractFinishedProductTest
 					if (!r.getReqMessage().startsWith("Impossible")) {
 						for(NodeRef source : r.getSources()){
 						
-							if (source.equals(finishedProductNodeRef1)) {
-								assertEquals("Le poids net du produit n'est pas renseigné.", r.getReqMessage());
-								checks++;
-							} else if (source.equals(rawMaterial1NodeRef)) {
-	
-								assertEquals("Le poids net du produit n'est pas renseigné.", r.getReqMessage());
-	
-								checks++;
-							} else if (source.equals(rawMaterial5NodeRef)) {
+							if (source.equals(rawMaterial5NodeRef)) {
 								assertEquals("L'unité utilisée n'est pas la bonne.", r.getReqMessage());
 								checks++;
 							} else if (source.equals(rawMaterial6NodeRef)) {
@@ -109,7 +101,7 @@ public class FormulationCheckPropsOfCompTest extends AbstractFinishedProductTest
 					}
 				}
 
-				Assert.assertEquals(4, checks);
+				Assert.assertEquals(2, checks);
 
 				return null;
 

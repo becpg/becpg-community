@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -49,6 +50,7 @@ import fr.becpg.model.ReportModel;
 import fr.becpg.model.SecurityModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityTplService;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.ContentHelper;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.report.template.ReportTplService;
@@ -76,6 +78,8 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 	@Autowired
 	private ReportTplService reportTplService;
 	
+	@Autowired
+	private AssociationService associationService;
 	
 	@Override
 	public void visitContainer(NodeRef companyHome) {
@@ -225,9 +229,13 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 		// compare report
 		try {
 			NodeRef compareProductFolderNodeRef = visitFolder(reportsNodeRef, RepoConsts.PATH_REPORTS_COMPARE_ENTITIES);
-			reportTplService.createTplRptDesign(compareProductFolderNodeRef,
+			NodeRef compareReportNodeRef = reportTplService.createTplRptDesign(compareProductFolderNodeRef,
 					TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_COMPARE_ENTITIES),
-					COMPARE_ENTITIES_REPORT_PATH, ReportType.System, ReportFormat.PDF, null, true, true, false);
+					COMPARE_ENTITIES_REPORT_PATH, ReportType.Compare, ReportFormat.PDF, null, false, true, false);
+			
+			List<NodeRef> resources = contentHelper.addFilesResources(compareProductFolderNodeRef, "classpath:beCPG/birt/system/*.properties",false);
+			associationService.update(compareReportNodeRef, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES, resources);
+			
 		} catch (IOException e) {
 			logger.error("Failed to create compare entity report tpl.", e);
 		}

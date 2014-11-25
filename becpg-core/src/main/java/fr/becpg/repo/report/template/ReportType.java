@@ -21,7 +21,8 @@ public enum ReportType {
 
 	System, //default
 	Document,
-	ExportSearch;
+	ExportSearch,
+	Compare;
 			
 	public static ReportType parse(String r){
 		

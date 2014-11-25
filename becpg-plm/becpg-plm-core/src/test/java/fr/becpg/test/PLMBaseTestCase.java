@@ -150,7 +150,7 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 
 	@After
 	public void tearDown() throws Exception {
-		logger.debug("TearDown :");
+		logger.trace("TearDown :");
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
 			public Boolean execute() throws Throwable {
 
@@ -162,13 +162,13 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 
 						String path = nodeService.getPath(productNodeRef).toDisplayPath(nodeService, permissionService);
 						// if(!path.contains(BeCPGTestHelper.PATH_TESTFOLDER)){
-						logger.debug("   - Deleting :" + nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME));
-						logger.debug("   - PATH :" + path);
+						logger.trace("   - Deleting :" + nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME));
+						logger.trace("   - PATH :" + path);
 						nodeService.deleteNode(productNodeRef);
 						// }
 					}
 				}
-				logger.debug("   - Deleting :" + nodeService.getProperty(testFolderNodeRef, ContentModel.PROP_NAME));
+				logger.trace("   - Deleting :" + nodeService.getProperty(testFolderNodeRef, ContentModel.PROP_NAME));
 				nodeService.deleteNode(testFolderNodeRef);
 				return true;
 
@@ -409,7 +409,7 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 	 */
 	private void getOrInitHierarchyLists() {
 
-		logger.debug("initHierarchyLists");
+		logger.trace("initHierarchyLists");
 
 		NodeRef productHierarchyNodeRef = entitySystemService.getSystemEntity(systemFolderNodeRef, RepoConsts.PATH_PRODUCT_HIERARCHY);
 

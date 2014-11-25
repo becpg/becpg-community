@@ -851,7 +851,8 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 				AbstractAttributeMapping attributeMapping = new HierarchyMapping(columnNode.valueOf(QUERY_ATTR_GET_ID), attributeDef,
 						columnNode.valueOf(QUERY_ATTR_GET_PARENT_LEVEL) != null && !columnNode.valueOf(QUERY_ATTR_GET_PARENT_LEVEL).isEmpty() ? columnNode
-								.valueOf(QUERY_ATTR_GET_PARENT_LEVEL) : null, parentLevelAttributeDef);
+								.valueOf(QUERY_ATTR_GET_PARENT_LEVEL) : null, 
+								 columnNode.valueOf(QUERY_ATTR_GET_PATH), parentLevelAttributeDef);
 				classMapping.getColumns().add(attributeMapping);
 			}
 

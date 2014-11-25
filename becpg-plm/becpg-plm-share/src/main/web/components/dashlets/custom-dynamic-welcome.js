@@ -80,7 +80,15 @@
                                                     }
                                                 },
                                                 scope : this
-                                            }
+                                            },
+                                            failureCallback :
+                                            {
+                                                fn : function(response)
+                                                {
+                                                    window.location.reload();
+                                                },
+                                                scope : this
+                                            },
                                         });
                             }
                             else

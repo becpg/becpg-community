@@ -98,9 +98,8 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 		if (!L2CacheSupport.isCacheOnlyEnable()) {
 
-			
-			if (entity.getNodeRef() == null || (entity.getExtraProperties()!=null && 
-					entity.getExtraProperties().size()>0)  || createCollisionSafeHashCode(entity) != entity.getDbHashCode()) {
+			if (entity.getNodeRef() == null || (entity.getExtraProperties() != null && entity.getExtraProperties().size() > 0)
+					|| createCollisionSafeHashCode(entity) != entity.getDbHashCode()) {
 
 				Map<QName, Serializable> properties = extractProperties(entity);
 
@@ -131,10 +130,10 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 				} else {
 					logger.debug("Update instanceOf :" + entity.getClass().getName());
-					if(logger.isTraceEnabled()){
-						logger.trace(" HashDiff :" +BeCPGHashCodeBuilder.printDiff(entity, findOne(entity.getNodeRef(), new HashMap<NodeRef, RepositoryEntity>())));
+					if (logger.isTraceEnabled()) {
+						logger.trace(" HashDiff :"
+								+ BeCPGHashCodeBuilder.printDiff(entity, findOne(entity.getNodeRef(), new HashMap<NodeRef, RepositoryEntity>())));
 					}
-				
 
 					for (Iterator<Map.Entry<QName, Serializable>> iterator = properties.entrySet().iterator(); iterator.hasNext();) {
 						Map.Entry<QName, Serializable> prop = iterator.next();
@@ -213,7 +212,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 	private int createCollisionSafeHashCode(T entity) {
 
 		return BeCPGHashCodeBuilder.reflectionHashCode(entity);
-		
+
 	}
 
 	private void saveAssociations(T entity) {
@@ -629,18 +628,43 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 	}
 
 	@Override
-	public boolean hasDataList(NodeRef entityNodeRef, QName datalistContainerQname) {
-		NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
+	public boolean hasDataList(RepositoryEntity entity, QName datalistContainerQname) {
 
-		if (listContainerNodeRef != null) {
-			NodeRef dataListNodeRef = entityListDAO.getList(listContainerNodeRef, datalistContainerQname);
-
-			if (dataListNodeRef != null) {
-				return true;
+		if (entity.getNodeRef() != null) {
+			return hasDataList(entity.getNodeRef(), datalistContainerQname);
+		} else {
+			Map<QName, List<? extends RepositoryEntity>> datalists = repositoryEntityDefReader.getDataLists(entity);
+			if (datalists != null && !datalists.isEmpty()) {
+				for (Map.Entry<QName, List<? extends RepositoryEntity>> dataListEntry : datalists.entrySet()) {
+					if (dataListEntry.getKey().equals(datalistContainerQname)) {
+						return dataListEntry.getValue() != null && !dataListEntry.getValue().isEmpty();
+					}
+				}
 			}
 		}
+
 		return false;
 	}
+	
+	
+	
+	@Override
+	public boolean hasDataList(NodeRef entityNodeRef, QName datalistContainerQname) {
+		if (entityNodeRef != null) {
+			NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
+
+			if (listContainerNodeRef != null) {
+				NodeRef dataListNodeRef = entityListDAO.getList(listContainerNodeRef, datalistContainerQname);
+
+				if (dataListNodeRef != null) {
+					return true;
+				}
+			}
+		} 
+		return false;
+	}
+	
+	
 
 	@Override
 	public boolean isRegisteredType(QName type) {

@@ -65,7 +65,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 		// no compo, nor allergenList on formulated product => no formulation
 		if (!formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE) && !formulatedProduct.hasProcessListEl(EffectiveFilters.EFFECTIVE) ||
-				!alfrescoRepository.hasDataList(formulatedProduct.getNodeRef(), PLMModel.TYPE_ALLERGENLIST)) {
+				!alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_ALLERGENLIST)) {
 			logger.debug("no compo => no formulation");
 			return true;
 		}
