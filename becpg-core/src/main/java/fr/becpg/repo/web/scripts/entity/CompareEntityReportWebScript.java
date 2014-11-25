@@ -134,8 +134,7 @@ public class CompareEntityReportWebScript extends AbstractWebScript {
 				logger.debug("entityNodeRef: " + entityNodeRef + " - versionLabel: " + versionLabel + " - entityVersionNodeRef: " + entityNodeRef);
 			}
 
-			List<NodeRef> entities = new ArrayList<NodeRef>();
-			entities.add(entityNodeRef);
+			entityNodeRefs.add(entityNodeRef);
 
 		}
 
