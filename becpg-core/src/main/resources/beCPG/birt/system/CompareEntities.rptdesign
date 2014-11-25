@@ -2,7 +2,6 @@
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
     <property name="createdBy">Eclipse BIRT Designer Version 4.3.2.v20140211-1400 Build &lt;4.3.2.v20140225-1404></property>
     <simple-property-list name="includeResource">
-        <value>src/main/resources/beCPG/birt/CompareEntities-messages_fr</value>
         <value>src/main/resources/beCPG/birt/CompareEntities-messages</value>
     </simple-property-list>
     <property name="units">in</property>

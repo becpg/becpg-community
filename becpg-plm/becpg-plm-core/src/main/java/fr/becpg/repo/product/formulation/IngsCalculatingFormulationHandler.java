@@ -75,8 +75,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 		// no compo, nor ingList on formulated product => no formulation
 		if (!formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT) ||
-				(!alfrescoRepository.hasDataList(formulatedProduct.getNodeRef(), PLMModel.TYPE_INGLIST) &&
-				 !alfrescoRepository.hasDataList(formulatedProduct.getNodeRef(), PLMModel.TYPE_INGLABELINGLIST))) {
+				(!alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_INGLIST) &&
+				 !alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_INGLABELINGLIST))) {
 			logger.debug("no compo => no formulation");
 			return true;
 		}

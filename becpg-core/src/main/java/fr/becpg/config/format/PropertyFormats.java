@@ -104,23 +104,16 @@ public class PropertyFormats {
 		
 		this.useDefaultLocale = useDefaultLocal;
 		
-		if(useDefaultLocal){
-		
-			dateFormat = RepoConsts.FORMAT_DATE;
-			datetimeFormat = RepoConsts.FORMAT_DATETIME;
-			
-		}
-		else{
-		
-			dateFormat = RepoConsts.FORMAT_DATE;
-			datetimeFormat = RepoConsts.FORMAT_DATETIME;
-		}
-		
+		dateFormat = RepoConsts.FORMAT_DATE;
+		datetimeFormat = RepoConsts.FORMAT_DATETIME;
 		decimalFormat = FORMAT_DECIMAL_VALUE;
 		
 	
 	}
 
+	
+	
+	
 	public String formatDate(Object o) {
 		return s_localDateFormat.get().format(o);
 	}
@@ -139,6 +132,10 @@ public class PropertyFormats {
 
 	public Number parseDecimal(String decimalString) throws ParseException {
 		return s_localDecimalFormat.get().parse(decimalString);
+	}
+
+	public DecimalFormat getDecimalFormat() {
+		return s_localDecimalFormat.get();
 	}
 
 //	public void setDecimalFormatPattern(String stringValue) {

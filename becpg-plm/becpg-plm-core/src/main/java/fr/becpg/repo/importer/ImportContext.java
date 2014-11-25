@@ -294,9 +294,7 @@ public class ImportContext {
 	 * @throws IOException
 	 */
 	public ImportContext() {
-
 		propertyFormats = new PropertyFormats(true);
-
 	}
 
 	/**

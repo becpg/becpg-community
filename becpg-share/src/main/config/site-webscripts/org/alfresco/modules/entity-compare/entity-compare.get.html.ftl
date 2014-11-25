@@ -24,6 +24,14 @@
 					   </div>
 					</div>
 				</div>
+				<div class="form-field">
+					<label for="${el}-reportTemplate">${msg("label.reportTemplates")}:<span class="mandatory-indicator">*</span></label>
+					<select id="${el}-reportTemplate" >
+				         <#list reportTpls as reportTemplate>
+				          <option value="${reportTemplate.nodeRef}" fileName="${reportTemplate.name}.${reportTemplate.format?lower_case}">${reportTemplate.name}</option>
+				        </#list>
+				    </select>
+				</div>
 			</div>
          <div class="bdft">
             <input type="button" id="${el}-ok" value="${msg("button.ok")}" tabindex="0" />

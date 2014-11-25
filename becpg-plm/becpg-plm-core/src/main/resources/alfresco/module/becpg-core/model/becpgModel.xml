@@ -251,6 +251,7 @@
 					<value>kg</value>
 					<value>g</value>
 					<value>m</value>
+					<value>cm</value>
 					<value>mm</value>
 					<value>m2</value>
 					<value>m3</value>
@@ -1852,7 +1853,7 @@
 		</type>
 
 		<type name="bcpg:storageConditions">
-			<parent>bcpg:entityListItem</parent>
+			<parent>bcpg:charact</parent>
 			<properties>
 				<property name="bcpg:storageConditionsMode">
 					<type>d:mltext</type>
@@ -1864,7 +1865,7 @@
 		</type>
 
 		<type name="bcpg:precautionOfUse">
-			<parent>bcpg:entityListItem</parent>
+			<parent>bcpg:charact</parent>
 		</type>
 
 	</types>

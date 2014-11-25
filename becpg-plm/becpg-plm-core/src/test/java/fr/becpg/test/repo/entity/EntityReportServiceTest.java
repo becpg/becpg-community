@@ -66,7 +66,7 @@ public class EntityReportServiceTest extends PLMBaseTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 				
-				for(NodeRef n : reportTplService.suggestUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "*")){
+				for(NodeRef n : reportTplService.getUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "*")){
 					nodeService.deleteNode(n);
 				}
 
@@ -320,7 +320,7 @@ public class EntityReportServiceTest extends PLMBaseTestCase {
 				QName typeQName = nodeService.getType(pfNodeRef);
 				assertEquals("check system templates", 3, reportTplService.getSystemReportTemplates(ReportType.Document, typeQName).size());
 
-				assertEquals("check user templates", 0, reportTplService.suggestUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "user").size());
+				assertEquals("check user templates", 0, reportTplService.getUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "user").size());
 
 				// add a user template
 				reportTplService.createTplRptDesign(productReportTplFolder, "user tpl", "beCPG/birt/document/product/default/ProductReport.rptdesign", ReportType.Document,
@@ -335,7 +335,7 @@ public class EntityReportServiceTest extends PLMBaseTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 		
-				assertEquals("check user templates", 1, reportTplService.suggestUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "user").size());
+				assertEquals("check user templates", 1, reportTplService.getUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "user").size());
 
 				// add a user template
 				return reportTplService.createTplRptDesign(productReportTplFolder, "user tpl 2", "beCPG/birt/document/product/default/ProductReport.rptdesign",
@@ -348,10 +348,10 @@ public class EntityReportServiceTest extends PLMBaseTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 		
-				assertEquals("check user templates", 2, reportTplService.suggestUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "u*").size());
-				assertEquals("check user templates", 2, reportTplService.suggestUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "user*").size());
-				assertEquals("check user templates", 2, reportTplService.suggestUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "user tpl 2").size());
-				assertEquals("check user templates", 1, reportTplService.suggestUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "\"user tpl 2\"")
+				assertEquals("check user templates", 2, reportTplService.getUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "u*").size());
+				assertEquals("check user templates", 2, reportTplService.getUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "user*").size());
+				assertEquals("check user templates", 2, reportTplService.getUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "user tpl 2").size());
+				assertEquals("check user templates", 1, reportTplService.getUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "\"user tpl 2\"")
 						.size());
 				assertEquals("check user templates", userTpl2NodeRef,
 						reportTplService.getUserReportTemplate(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, "user tpl 2"));

@@ -31,6 +31,8 @@ import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 public class HierarchyMapping extends AbstractAttributeMapping {
 
 	private String parentLevelColumn;
+	
+	private String path;
 
 	private ClassAttributeDefinition parentLevelAttribute;
 
@@ -42,6 +44,16 @@ public class HierarchyMapping extends AbstractAttributeMapping {
 		this.parentLevelColumn = parentLevelColumn;
 	}
 
+	
+	public String getPath() {
+		return path;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
+	}
+
+
 	public ClassAttributeDefinition getParentLevelAttribute() {
 		return parentLevelAttribute;
 	}
@@ -50,9 +62,11 @@ public class HierarchyMapping extends AbstractAttributeMapping {
 		this.parentLevelAttribute = parentLevelAttribute;
 	}
 
-	public HierarchyMapping(String id, ClassAttributeDefinition attribute, String parentLevelColumn, ClassAttributeDefinition parentLevelAttribute) {
+	public HierarchyMapping(String id, ClassAttributeDefinition attribute, String parentLevelColumn, String path,  ClassAttributeDefinition parentLevelAttribute) {
 		super(id, attribute);
 		this.parentLevelColumn = parentLevelColumn;
 		this.parentLevelAttribute = parentLevelAttribute;
+		this.path = path;
 	}
+
 }

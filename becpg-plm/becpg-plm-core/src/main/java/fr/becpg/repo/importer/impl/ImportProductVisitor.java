@@ -105,6 +105,11 @@ public class ImportProductVisitor extends ImportEntityListAspectVisitor implemen
 		if (attributeMapping instanceof HierarchyMapping) {
 			NodeRef hierarchyNodeRef = null;
 			String path = PlmRepoConsts.PATH_PRODUCT_HIERARCHY + "cm:" + HierarchyHelper.getHierarchyPathName(importContext.getType());
+			if(((HierarchyMapping) attributeMapping).getPath()!=null && 
+					!((HierarchyMapping) attributeMapping).getPath().isEmpty()){
+				path = ((HierarchyMapping) attributeMapping).getPath();
+			}
+			
 			if (((HierarchyMapping) attributeMapping).getParentLevelColumn() != null && !((HierarchyMapping) attributeMapping).getParentLevelColumn().isEmpty()) {
 				NodeRef parentHierachyNodeRef = (NodeRef) properties.get(QName.createQName(((HierarchyMapping) attributeMapping).getParentLevelColumn(), namespaceService));
 				if (parentHierachyNodeRef != null) {
@@ -116,6 +121,9 @@ public class ImportProductVisitor extends ImportEntityListAspectVisitor implemen
 					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_PRODUCTHIERARCHY1_EMPTY, properties));
 				}
 			} else {
+				if(logger.isDebugEnabled()){
+					logger.debug("Look for hierarchy : "+value+" at path "+path);
+				}
 				hierarchyNodeRef = hierarchyService.getHierarchyByPath(path, null, value);
 			}
 			if (hierarchyNodeRef == null) {

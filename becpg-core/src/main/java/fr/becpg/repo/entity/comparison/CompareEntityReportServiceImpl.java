@@ -23,15 +23,14 @@ import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
-import fr.becpg.repo.RepoConsts;
+import fr.becpg.model.ReportModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
-import fr.becpg.repo.helper.TranslateHelper;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
-import fr.becpg.repo.report.template.ReportTplService;
-import fr.becpg.repo.report.template.ReportType;
 import fr.becpg.report.client.ReportFormat;
 import fr.becpg.report.client.ReportParams;
 
@@ -95,9 +94,6 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 	private BeCPGReportEngine beCPGReportEngine;
 
 	@Autowired
-	private ReportTplService reportTplService;
-
-	@Autowired
 	private NodeService nodeService;
 
 	@Autowired
@@ -111,14 +107,14 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 
 	@Autowired
 	private NamespaceService namespaceService;
+	
+	@Autowired
+	private AssociationService associationService;
 
 	@Override
 	@Deprecated
 	// TOO manage multi list comparaison
-	public void getComparisonReport(NodeRef entity1, List<NodeRef> entities, OutputStream out) {
-
-		// look for template
-		NodeRef templateNodeRef = reportTplService.getSystemReportTemplate(ReportType.System, null, TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_COMPARE_ENTITIES));
+	public void getComparisonReport(NodeRef entity1, List<NodeRef> entities, NodeRef templateNodeRef,  OutputStream out) {
 
 		if (templateNodeRef != null) {
 
@@ -140,6 +136,9 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 			try {
 				Map<String, Object> params = new HashMap<String, Object>();
 				params.put(ReportParams.PARAM_FORMAT, ReportFormat.PDF);
+				params.put(ReportParams.PARAM_LANG, I18NUtil.getLocale().getLanguage());
+				params.put(ReportParams.PARAM_ASSOCIATED_TPL_FILES,
+						associationService.getTargetAssocs(templateNodeRef, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES));
 				beCPGReportEngine.createReport(templateNodeRef,new ByteArrayInputStream(entitiesCmpElt.asXML().getBytes()) , out, params);
 
 			} catch (Exception e) {

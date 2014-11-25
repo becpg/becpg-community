@@ -19,7 +19,9 @@ package fr.becpg.repo.helper;
 
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
@@ -59,13 +61,15 @@ public class ContentHelper {
 		this.nodeService = nodeService;
 	}
 
-	public void addFilesResources(NodeRef folderNodeRef, String pattern) {
-		addFilesResources(folderNodeRef, pattern, false);
+	public List<NodeRef> addFilesResources(NodeRef folderNodeRef, String pattern) {
+	   return	addFilesResources(folderNodeRef, pattern, false);
 	}
 
-	public void addFilesResources(NodeRef folderNodeRef, String pattern, boolean forceUpdate) {
+	public List<NodeRef> addFilesResources(NodeRef folderNodeRef, String pattern, boolean forceUpdate) {
+		List<NodeRef> ret = new ArrayList<>();
+		
 		try {
-
+			
 			PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 
 			for (Resource res : resolver.getResources(pattern)) {
@@ -82,8 +86,9 @@ public class ContentHelper {
 							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName((String) properties.get(ContentModel.PROP_NAME))),
 							ContentModel.TYPE_CONTENT, properties).getChildRef();
 					forceUpdate = true;
-
 				}
+				
+				ret.add(nodeRef);
 
 				if (forceUpdate) {
 					ContentWriter writer = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
@@ -101,6 +106,7 @@ public class ContentHelper {
 		} catch (Exception e) {
 			logger.error(e, e);
 		}
+		return ret;
 
 	}
 

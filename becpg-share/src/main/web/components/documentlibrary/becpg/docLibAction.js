@@ -197,7 +197,9 @@
 	                  fn : function(form) {
 	                     this.modules.entityCompare.form.setAJAXSubmit(false);
 	                     this.modules.entityCompare.hide();
-	                     window.location.href=actionUrl+"?entities="+YAHOO.util.Dom.get(this.id + "-entityCompare-entities-added").value;
+	                     var reportSelect = YAHOO.util.Dom.get(this.id + "-entityCompare-reportTemplate");
+	                     window.location.href=actionUrl+"?entities="+YAHOO.util.Dom.get(this.id + "-entityCompare-entities-added").value
+	                     +"&tplNodeRef="+reportSelect.value;
 	                  },
 	                  scope : this
 	               },
