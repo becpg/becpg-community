@@ -21,6 +21,10 @@
 					<targetPackageRoot>org.alfresco.components.entity-charact-views</targetPackageRoot>
 					<sourcePackageRoot>org.alfresco.components.custom-views-plm</sourcePackageRoot>
 				</customization>
+				<customization>
+					<targetPackageRoot>org.alfresco.components.wizard</targetPackageRoot>
+					<sourcePackageRoot>org.alfresco.components.custom-wizard</sourcePackageRoot>
+				</customization>
 			</customizations>
 		</module>
 		<module>

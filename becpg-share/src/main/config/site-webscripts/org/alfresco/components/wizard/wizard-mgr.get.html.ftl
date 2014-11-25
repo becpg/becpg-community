@@ -8,7 +8,7 @@
 <@markup id="js">
  	<@script type="text/javascript" src="${url.context}/res/modules/data-lists/datalist-actions.js"></@script>
 	<#include "../../modules/entity-datagrid/include/entity-datagrid.js.ftl"/>
-<@script type="text/javascript" src="${url.context}/res/components/entity-charact-views/dashlet-resizer.js" />
+	<@script type="text/javascript" src="${url.context}/res/components/entity-charact-views/dashlet-resizer.js" />
 
    <#-- JavaScript Dependencies -->
    <@script src="${url.context}/res/components/wizard/jquery.js" group="wizard"/>
