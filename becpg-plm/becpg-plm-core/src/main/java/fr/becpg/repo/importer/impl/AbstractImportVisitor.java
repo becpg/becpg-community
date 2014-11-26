@@ -1086,13 +1086,21 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			if(dictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM) && !dictionaryService.isSubClass(type, PLMModel.TYPE_CHARACT)
 					&& !dictionaryService.isSubClass(type, BeCPGModel.TYPE_LINKED_VALUE)
 					&& !dictionaryService.isSubClass(type, BeCPGModel.TYPE_LIST_VALUE)){
-				for(NodeRef tmpNodeRef : queryBuilder.excludeDefaults().inDB().ftsLanguage().list()){
-					if(nodeService.getPrimaryParent(tmpNodeRef).getParentRef().equals(importContext.getParentNodeRef())){
+				for(NodeRef tmpNodeRef : queryBuilder.inDB().ftsLanguage().list()){
+					if(nodeService.getPrimaryParent(tmpNodeRef).getParentRef().equals(importContext.getParentNodeRef())
+							&& !nodeService.hasAspect(tmpNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)
+							&& !nodeService.hasAspect(tmpNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)){
 						return tmpNodeRef;
 					}
 				}
 			} else {
-				nodeRef = queryBuilder.excludeDefaults().inDB().ftsLanguage().singleValue();
+				//TODO #ALF-21197 excludeDefault instead
+				for(NodeRef tmpNodeRef : queryBuilder.inDB().ftsLanguage().list()){
+					if( !nodeService.hasAspect(tmpNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)
+							&& !nodeService.hasAspect(tmpNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)){
+						return tmpNodeRef;
+					}
+				}
 			}
 			
 		}
@@ -1269,7 +1277,14 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	}
 
 	private NodeRef getItemByTypeAndProp(QName type, QName prop, String value) {
-		return BeCPGQueryBuilder.createQuery().ofType(type).excludeDefaults().andPropEquals(prop,value).inDB().ftsLanguage().singleValue();
+		//TODO #ALF-21197 excludeDefault instead
+		for(NodeRef tmpNodeRef : BeCPGQueryBuilder.createQuery().ofType(type).andPropEquals(prop,value).inDB().ftsLanguage().list()){
+			if( !nodeService.hasAspect(tmpNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)
+					&& !nodeService.hasAspect(tmpNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)){
+				return tmpNodeRef;
+			}
+		}
+		return null;
 	}
 
 }
