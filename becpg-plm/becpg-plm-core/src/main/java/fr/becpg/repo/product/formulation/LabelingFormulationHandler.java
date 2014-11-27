@@ -546,10 +546,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 				if (DeclarationType.Detail.equals(declarationType) || DeclarationType.Group.equals(declarationType)
 						|| DeclarationType.DoNotDetails.equals(declarationType)) {
-					createDiluentAggregateRule(labelingFormulaContext, productData.getNodeRef(), productData.getLegalName());
+					createDiluentAggregateRule(labelingFormulaContext, productData.getNodeRef());
 				} else if (!DeclarationType.Omit.equals(declarationType)) {
 					IngItem ingItem = (IngItem) alfrescoRepository.findOne(productData.getIngList().get(0).getIng());
-					createDiluentAggregateRule(labelingFormulaContext, productData.getIngList().get(0).getIng(), ingItem.getLegalName());
+					createDiluentAggregateRule(labelingFormulaContext, productData.getIngList().get(0).getIng());
 				}
 			}
 			QName type = nodeService.getType(component.getData().getProduct());
@@ -576,7 +576,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				List<AggregateRule> aggregateRules = getAggregateRules(component, composite.getChildren(), labelingFormulaContext);
 
 				if (aggregateRules != null && logger.isTraceEnabled()) {
-					logger.trace("Aggregate rule " + aggregateRules.toString() + " match ");
+					logger.trace( aggregateRules.toString() + " match ");
 				}
 
 				calculateILLV2(ret, component, labelingFormulaContext, aggregateRules, declarationType, totalVolumeUsed, ratio, errors);
@@ -941,9 +941,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	}
 
-	private void createDiluentAggregateRule(LabelingFormulaContext labelingFormulaContext, NodeRef diluentNodeRef, MLText name) {
+	private void createDiluentAggregateRule(LabelingFormulaContext labelingFormulaContext, NodeRef diluentNodeRef) {
 		if (!labelingFormulaContext.getAggregateRules().containsKey(diluentNodeRef)) {
-			labelingFormulaContext.addRule(diluentNodeRef, "diluentRule", Arrays.asList(diluentNodeRef, tmpDiluentNodeRef), null, name, null,
+			labelingFormulaContext.addRule(diluentNodeRef, "diluentRule", Arrays.asList(diluentNodeRef, tmpDiluentNodeRef),Arrays.asList(diluentNodeRef) , null, null,
 					LabelingRuleType.DoNotDetails);
 		}
 
