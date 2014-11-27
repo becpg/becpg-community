@@ -620,7 +620,11 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 				// increase
 				if ((i1.getParent() == null && i2.getParent() == null) || (i1.getParent() != null && i1.getParent().equals(i2.getParent()))) {
-					return i2.getQtyPerc().compareTo(i1.getQtyPerc());
+					if(i2.getQtyPerc()!=null){
+						return i2.getQtyPerc().compareTo(i1.getQtyPerc());
+					} else {
+						return i2.getQtyPerc() == i1.getQtyPerc() ? 0 : -1;
+					}
 				} else {
 					IngListDataItem root1 = findRoot(i1);
 					IngListDataItem root2 = findRoot(i2);
