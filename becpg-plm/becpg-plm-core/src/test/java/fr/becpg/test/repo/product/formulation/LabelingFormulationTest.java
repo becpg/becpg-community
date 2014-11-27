@@ -107,7 +107,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 	// private String detailsDefaultFormat = "{0} {1,number,0.#%} ({2})";
 	
-    @Test
+ //   @Test
 	public void testNullIng() throws Exception {
 		
         NodeRef finishedProductNodeRef1 =   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
@@ -208,7 +208,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		
 	}
 	
-	@Test
+//	@Test
 	public void testMultiLevelSFGroup() throws Exception {
 		
 
@@ -353,7 +353,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 					props.put(PLMModel.PROP_RECONSTITUTION_RATE,5d);
 					nodeService.addAspect(rawMaterial1NodeRef, PLMModel.ASPECT_RECONSTITUTABLE, props);
 					
-					compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 10d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial7NodeRef)); 
+					compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 10d, CompoListUnit.kg, 0d, DeclarationType.DoNotDetails, rawMaterial7NodeRef)); 
 
 					nodeService.addAspect(rawMaterial7NodeRef,PLMModel.ASPECT_DILUENT,null);
 					
@@ -377,7 +377,9 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 			labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format, null, null));
 			labelingRuleList.add(new LabelingRuleListDataItem("Juice", null, LabelingRuleType.Detail,Arrays.asList(ing1,ing2),null));
 
-			checkILL(finishedProductNodeRef1, labelingRuleList, "ing5 french, Juice 90,9% (ing2 french 45,5%, ing1 french 45,5%)", Locale.FRENCH);
+			checkILL(finishedProductNodeRef1, labelingRuleList, "Legal Raw material 7, Juice 90,9% (ing2 french 45,5%, ing1 french 45,5%)", Locale.FRENCH);
+			
+			
 			
 	}
 	
@@ -944,7 +946,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 	
 
 
-	@Test
+//	@Test
 	public void testMultiLingualLabelingFormulation() throws Exception {
 
 		logger.info("testLabelingFormulation");

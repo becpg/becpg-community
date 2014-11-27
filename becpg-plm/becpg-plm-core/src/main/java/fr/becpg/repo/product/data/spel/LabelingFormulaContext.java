@@ -318,6 +318,13 @@ public class LabelingFormulaContext {
 			return matchCount == 0;
 		}
 
+		@Override
+		public String toString() {
+			return "AggregateRule [name=" + name + ", labelingRuleType=" + labelingRuleType + "]";
+		}
+		
+		
+
 	}
 
 	private Map<NodeRef, List<AggregateRule>> aggregateRules = new HashMap<>();
