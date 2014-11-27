@@ -1,4 +1,4 @@
-<#if field.control.params.ds?exists>
+<#if field.control.params.ds??>
 	<#assign ds=field.control.params.ds>
 <#else>
 	<#if field.dataType??>
@@ -7,10 +7,11 @@
 		<#assign ds=''/>
 	</#if>
 </#if>
-<#if field.control.params.style?exists><#assign style=field.control.params.style></#if>
+<#if field.control.params.style??><#assign style=field.control.params.style></#if>
 <#assign siteId=args.siteId!"">
-<#if field.control.params.showLink?exists && field.control.params.showLink?? >
-	<#if field.control.params.pageLinkTemplate?exists>
+
+<#if !field.control.params.showLink?? || field.control.params.showLink !="false">
+	<#if field.control.params.pageLinkTemplate??>
 		<#assign pageLinkTemplate='${field.control.params.pageLinkTemplate}'/>
 	<#else>
 		<#assign pageLinkTemplate='document-details?nodeRef={nodeRef}'/>
@@ -45,9 +46,9 @@
 					  		<span id="${controlId}-basket" class="viewmode-value current-values"></span>										
 					  </#if>
 				      <input id="${fieldHtmlId}" type="text" name="-" tabindex="0"
-				             <#if field.description?exists>title="${field.description}"</#if>
-				             <#if field.control.params.maxLength?exists>maxlength="${field.control.params.maxLength}"</#if> 
-				             <#if field.control.params.size?exists>size="${field.control.params.size}"</#if> 
+				             <#if field.description??>title="${field.description}"</#if>
+				             <#if field.control.params.maxLength??>maxlength="${field.control.params.maxLength}"</#if> 
+				             <#if field.control.params.size??>size="${field.control.params.size}"</#if> 
 				             <#if field.disabled>disabled="true"</#if> 
 				             class="yui-ac-input<#if field.endpointMany> multi-assoc</#if>" <#if !field.endpointMany>value="${field.value}" </#if> />
 				       <span class="clear" ></span>
@@ -71,18 +72,18 @@
 		 		readOnly : ${field.disabled?string},
 		        multipleSelectMode: ${field.endpointMany?string}, 
 		        isMandatory : ${field.mandatory?string},
-		      <#if pageLinkTemplate?exists>
+		      <#if pageLinkTemplate??>
 		 		targetLinkTemplate: "${pageLinkTemplate}" ,
 		 		</#if>
 		 		dsStr:"${ds}"
-				<#if field.control.params.parent?exists>
+				<#if field.control.params.parent??>
 					<#assign parentFieldHtmlId=args.htmlid + "_prop_" + field.control.params.parent >
 		 		,parentFieldHtmlId:"${parentFieldHtmlId}"
 				</#if>
-				<#if field.control.params.showTooltip?exists>
+				<#if field.control.params.showTooltip??>
 				 ,showToolTip:${field.control.params.showTooltip?string}
 				</#if>
-				<#if field.control.params.urlParamsToPass?exists>
+				<#if field.control.params.urlParamsToPass??>
 				<#assign firstLabel=true>			
 				<#assign urlParamsToPass="">
 				,<#list field.control.params.urlParamsToPass?split(',') as urlParam>
