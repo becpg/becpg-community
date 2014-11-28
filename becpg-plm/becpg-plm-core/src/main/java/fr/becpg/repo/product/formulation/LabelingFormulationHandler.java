@@ -287,6 +287,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 								Double qty = component.getQty();
 								Double qtyVolumePerc = component.getVolumeQtyPerc();
+								
+								logger.trace("Adding :"+component.getName()+"  to aggregate rule");
 
 								boolean is100Perc = aggregateRule.getQty() == null || aggregateRule.getQty() == 100d;
 								// Add ing to group
@@ -307,9 +309,13 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 											current = (IngItem) replacement;
 											current.setQty(0d);
 											current.setVolumeQtyPerc(null);
-											toAdd.put(aggregateRuleNodeRef, current);
-										}
+											
+										} 				
 									}
+									if(!toAdd.containsKey(aggregateRuleNodeRef)){
+										toAdd.put(aggregateRuleNodeRef, current);
+									}
+									
 									if (qty != null) {
 										current.setQty(current.getQty() + qty);
 									}

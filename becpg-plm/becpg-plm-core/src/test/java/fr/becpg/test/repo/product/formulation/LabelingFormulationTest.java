@@ -107,7 +107,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 	// private String detailsDefaultFormat = "{0} {1,number,0.#%} ({2})";
 	
-    @Test
+   @Test
 	public void testNullIng() throws Exception {
 		
         NodeRef finishedProductNodeRef1 =   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
@@ -347,14 +347,12 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 					finishedProduct.setDensity(1d);
 					List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
 					
+					compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 10d, CompoListUnit.kg, 0d, DeclarationType.DoNotDetails, rawMaterial7NodeRef)); 
 					compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
 					
 					Map<QName,Serializable> props = new HashMap<>();
 					props.put(PLMModel.PROP_RECONSTITUTION_RATE,5d);
 					nodeService.addAspect(rawMaterial1NodeRef, PLMModel.ASPECT_RECONSTITUTABLE, props);
-					
-					compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 10d, CompoListUnit.kg, 0d, DeclarationType.DoNotDetails, rawMaterial7NodeRef)); 
-
 					nodeService.addAspect(rawMaterial7NodeRef,PLMModel.ASPECT_DILUENT,null);
 					
 					finishedProduct.getCompoListView().setCompoList(compoList);
