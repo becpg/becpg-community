@@ -107,7 +107,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 	// private String detailsDefaultFormat = "{0} {1,number,0.#%} ({2})";
 	
- //   @Test
+    @Test
 	public void testNullIng() throws Exception {
 		
         NodeRef finishedProductNodeRef1 =   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
@@ -208,7 +208,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		
 	}
 	
-//	@Test
+	@Test
 	public void testMultiLevelSFGroup() throws Exception {
 		
 
@@ -946,7 +946,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 	
 
 
-//	@Test
+	@Test
 	public void testMultiLingualLabelingFormulation() throws Exception {
 
 		logger.info("testLabelingFormulation");
