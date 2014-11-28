@@ -376,6 +376,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 								if (is100Perc) {
 									iterator.remove();
+									break;
 								} else if (qty != null) {
 									component.setQty(component.getQty() - qty);
 								}
@@ -554,7 +555,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						|| DeclarationType.DoNotDetails.equals(declarationType)) {
 					createDiluentAggregateRule(labelingFormulaContext, productData.getNodeRef());
 				} else if (!DeclarationType.Omit.equals(declarationType)) {
-					IngItem ingItem = (IngItem) alfrescoRepository.findOne(productData.getIngList().get(0).getIng());
 					createDiluentAggregateRule(labelingFormulaContext, productData.getIngList().get(0).getIng());
 				}
 			}
