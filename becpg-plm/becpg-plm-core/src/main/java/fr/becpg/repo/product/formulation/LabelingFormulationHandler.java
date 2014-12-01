@@ -288,14 +288,18 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 								Double qty = component.getQty();
 								Double qtyVolumePerc = component.getVolumeQtyPerc();
 								
-								logger.trace("Adding :"+component.getName()+"  to aggregate rule");
-
+							
 								boolean is100Perc = aggregateRule.getQty() == null || aggregateRule.getQty() == 100d;
 								// Add ing to group
 								if (qty != null && aggregateRule.getQty() != null) {
 									qty = qty * aggregateRule.getQty() / 100;
 								}
 
+								if (logger.isTraceEnabled()) {
+									logger.trace("Adding :"+component.getName()+"  to aggregate rule, qty "+ qty+" is100Perc "+is100Perc);
+								}
+
+								
 								// Replacement
 								if (aggregateRule.getReplacement() != null
 										&& LabelingRuleType.DoNotDetails.equals(aggregateRule.getLabelingRuleType())) {
@@ -309,19 +313,29 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 											current = (IngItem) replacement;
 											current.setQty(0d);
 											current.setVolumeQtyPerc(null);
-											
-										} 				
-									}
-									if(!toAdd.containsKey(aggregateRuleNodeRef)){
-										toAdd.put(aggregateRuleNodeRef, current);
+										
+											if (logger.isTraceEnabled()) {
+												logger.trace("Create new aggregate replacement :" + current.getName());
+											}
+										} 	else  {
+											logger.warn("Invalid replacement :"+aggregateRule.getReplacement()); 
+										}
 									}
 									
-									if (qty != null) {
-										current.setQty(current.getQty() + qty);
-									}
-
-									if (qtyVolumePerc != null && current.getVolumeQtyPerc() != null) {
-										current.setVolumeQtyPerc(current.getVolumeQtyPerc() + qtyVolumePerc);
+									if(current!=null){
+										if(!toAdd.containsKey(aggregateRuleNodeRef)){
+											current.setQty(0d);
+											current.setVolumeQtyPerc(null);
+											toAdd.put(aggregateRuleNodeRef, current);
+										}
+										
+										if (qty != null) {
+											current.setQty(current.getQty() + qty);
+										}
+	
+										if (qtyVolumePerc != null && current.getVolumeQtyPerc() != null) {
+											current.setVolumeQtyPerc(current.getVolumeQtyPerc() + qtyVolumePerc);
+										}
 									}
 
 								} else {
@@ -339,7 +353,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 											logger.trace("Create new aggregate group :" + compositeLabeling.getLegalName(Locale.getDefault()));
 										}
 
-										// Add to current list
+									}
+									
+									if(!toAdd.containsKey(aggregateRuleNodeRef)){
+										compositeLabeling.setQty(0d);
+										compositeLabeling.setVolumeQtyPerc(null);
 										toAdd.put(aggregateRuleNodeRef, compositeLabeling);
 									}
 
@@ -375,6 +393,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 								}
 
 								if (is100Perc) {
+									if (logger.isDebugEnabled()) {
+										logger.debug("Remove : " + component.getName());
+									}
 									iterator.remove();
 									break;
 								} else if (qty != null) {
