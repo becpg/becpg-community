@@ -192,7 +192,7 @@
 							 * @property pageSize
 							 * @type int
 							 */
-							pageSize : 100,
+							pageSize : 75,
 							
 							/**
 							 * Max search results
@@ -1417,7 +1417,7 @@
 								if (submissionParams.length > 0) {
 									submissionParams += ",";
 								}
-								submissionParams += encodeURIComponent(selectedNodeRef[i].nodeRef);
+								submissionParams += selectedNodeRef[i].nodeRef;
 							}
 
 							var templateUrl = YAHOO.lang
@@ -1430,8 +1430,8 @@
 												itemId : this.options.itemType,
 												mode : "create",
 												submitType : "json",
-												submissionUrl : "/becpg/bulkedit/type/" + this.options.itemType.replace(":", "_")
-														+ "/bulksave?nodeRefs=" + submissionParams,
+												submissionUrl : encodeURIComponent("/becpg/bulkedit/type/" + this.options.itemType.replace(":", "_")
+														+ "/bulksave?nodeRefs=" + submissionParams),
 												fields : displayFields
 											});
 
