@@ -1291,6 +1291,8 @@
 							// DataSource
 							// "&noCache=" + new Date().getTime();
 
+							 this.widgets.dataSource.connMgr.setDefaultPostHeader(Alfresco.util.Ajax.JSON);
+
 							if (Alfresco.util.CSRFPolicy.isFilterEnabled()) {
 								me.widgets.dataSource.connMgr.initHeader(Alfresco.util.CSRFPolicy.getHeader(), Alfresco.util.CSRFPolicy.getToken(),
 										false);
@@ -1437,7 +1439,7 @@
 
 							// Using Forms Service, so always create new
 							// instance
-							var createRow = new Alfresco.module.SimpleDialog(this.id + "-createRow");
+							var createRow = new Alfresco.module.SimpleDialog(this.id + "-bulk-createRow");
 
 							createRow.setOptions({
 								width : "36em",
@@ -1461,7 +1463,7 @@
 								onFailure : {
 									fn : function BulkEdit_onNewRow_failure(response) {
 										Alfresco.util.PopupManager.displayMessage({
-											text : this.msg("message.edit-selected.failure")
+											text : this.msg("message.edit-selected.failure", response.json.message)
 										});
 									},
 									scope : this
@@ -1510,7 +1512,7 @@
 
 							// Using Forms Service, so always create new
 							// instance
-							var editDetails = new Alfresco.module.SimpleDialog(this.id + "-editDetails");
+							var editDetails = new Alfresco.module.SimpleDialog(this.id + "bulk-editDetails");
 							editDetails.setOptions({
 								width : "850px",
 								templateUrl : templateUrl,
