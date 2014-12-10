@@ -521,16 +521,10 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 										hasBioOrigin = true;
 									}
 								}
-
-								if(FilReqOperator.DoNotContains.equals(fil.getOperator())){
-									if (hasBioOrigin) {
-										continue; // check next rule
-									}
-								} else {
-									if (!hasBioOrigin) {
-										continue; // check next rule
-									}
+								if (!hasBioOrigin) {
+									continue; // check next rule
 								}
+					
 								
 							}
 

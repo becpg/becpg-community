@@ -191,7 +191,7 @@
 				</param>
 			</content>
 			<content id="entity" label="menu.create-content.entity" type="pagelink" index="180" icon="entity">
-				<param name="page">create-content?destination={nodeRef}&amp;itemId=cm:folder&amp;formId=create-entity&amp;isEntity=true
+				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:entityV2&amp;formId=create-entity&amp;isEntity=true
 				</param>
 			</content>
 		</create-content>
