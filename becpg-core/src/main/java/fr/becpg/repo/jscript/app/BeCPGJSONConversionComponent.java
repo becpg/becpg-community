@@ -95,21 +95,22 @@ public class BeCPGJSONConversionComponent extends JSONConversionComponent {
 
 				// Get node info
 				FileInfo nodeInfo = fileFolderService.getFileInfo(nodeRef);
-
-				// Set root values
-				setRootValues(nodeInfo, json, useShortQNames);
-
-				// add permissions
-				json.put("permissions", permissionsToJSON(nodeRef));
-
-				// add properties
-				json.put("properties", propertiesToJSON(nodeRef, nodeInfo.getProperties(), useShortQNames));
-
-				// add associations
-				json.put("associations", associationsToJSON(nodeRef, useShortQNames));
-
-				// add aspects
-				json.put("aspects", apsectsToJSON(nodeRef, useShortQNames));
+				if( nodeInfo!=null ){
+					// Set root values
+					setRootValues(nodeInfo, json, useShortQNames);
+	
+					// add permissions
+					json.put("permissions", permissionsToJSON(nodeRef));
+	
+					// add properties
+					json.put("properties", propertiesToJSON(nodeRef, nodeInfo.getProperties(), useShortQNames));
+	
+					// add associations
+					json.put("associations", associationsToJSON(nodeRef, useShortQNames));
+	
+					// add aspects
+					json.put("aspects", apsectsToJSON(nodeRef, useShortQNames));
+				}
 			}
 		}
 

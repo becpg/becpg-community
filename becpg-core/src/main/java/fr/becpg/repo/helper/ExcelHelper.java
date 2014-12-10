@@ -37,8 +37,8 @@ public class ExcelHelper {
 				} else {
 					obj = item.get(field.getFieldName());
 				}
-				if(obj!=null){
-					if (obj instanceof Date) 
+				if (obj != null) {
+					if (obj instanceof Date)
 						cell.setCellValue((Date) obj);
 					else if (obj instanceof Boolean)
 						cell.setCellValue((boolean) obj);
@@ -54,45 +54,40 @@ public class ExcelHelper {
 		return cellnum;
 	}
 
-	
-
-	public static boolean isExcelType(Serializable value) {		
+	public static boolean isExcelType(Serializable value) {
 		return value instanceof Date || value instanceof Boolean || value instanceof Double;
 	}
-	
-	
+
 	public static int appendExcelHeader(List<AttributeExtractorStructure> fields, String prefix, String titlePrefix, Row headerRow, Row labelRow,
 			XSSFCellStyle style, int cellnum, ExcelFieldTitleProvider titleProvider) {
-		for (AttributeExtractorStructure field : fields) {
+		if (fields != null) {
+			for (AttributeExtractorStructure field : fields) {
 
-			if (field.isNested()) {
+				if (field.isNested()) {
 
-				cellnum = appendExcelHeader(field.getChildrens(), field.getFieldName(), titleProvider.getTitle(field), headerRow, labelRow, style,
-						cellnum, titleProvider);
-			} else {
-				Cell cell = headerRow.createCell(cellnum);
-
-				if (prefix != null) {
-					cell.setCellValue(prefix + "_" + field.getFieldDef().getName().toPrefixString());
+					cellnum = appendExcelHeader(field.getChildrens(), field.getFieldName(), titleProvider.getTitle(field), headerRow, labelRow,
+							style, cellnum, titleProvider);
 				} else {
-					cell.setCellValue(field.getFieldDef().getName().toPrefixString());
-				}
+					Cell cell = headerRow.createCell(cellnum);
 
-				cell = labelRow.createCell(cellnum++);
-				if (titlePrefix != null) {
-					cell.setCellValue(titlePrefix + " - " + titleProvider.getTitle(field));
-				} else {
-					cell.setCellValue(titleProvider.getTitle(field));
+					if (prefix != null) {
+						cell.setCellValue(prefix + "_" + field.getFieldDef().getName().toPrefixString());
+					} else {
+						cell.setCellValue(field.getFieldDef().getName().toPrefixString());
+					}
+
+					cell = labelRow.createCell(cellnum++);
+					if (titlePrefix != null) {
+						cell.setCellValue(titlePrefix + " - " + titleProvider.getTitle(field));
+					} else {
+						cell.setCellValue(titleProvider.getTitle(field));
+					}
+					cell.setCellStyle(style);
 				}
-				cell.setCellStyle(style);
 			}
 		}
 		return cellnum;
+
 	}
-
-
-
-
-
 
 }
