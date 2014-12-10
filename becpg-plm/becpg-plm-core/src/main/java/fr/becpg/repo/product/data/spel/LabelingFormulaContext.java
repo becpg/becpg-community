@@ -422,6 +422,15 @@ public class LabelingFormulaContext {
 
 		CompositeLabeling merged = new CompositeLabeling();
 		merged.setQtyRMUsed(lblCompositeContext.getQtyRMUsed());
+		
+		//Start adding all the components
+		for (AbstractLabelingComponent component : lblCompositeContext.getIngList().values()) {
+			if (!isGroup(component)) {
+				merged.add(component);
+			}
+		}
+		
+		//Then merge
 		for (AbstractLabelingComponent component : lblCompositeContext.getIngList().values()) {
 			if (isGroup(component)) {
 				CompositeLabeling compositeLabeling = (CompositeLabeling) component;
@@ -448,10 +457,9 @@ public class LabelingFormulaContext {
 						// TODO else add warning
 					}
 				}
-			} else {
-				merged.add(component);
-			}
+			} 
 		}
+		
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Merge labeling :" + merged.toString());
