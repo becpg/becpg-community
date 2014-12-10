@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.product.data.constraints.FilReqOperator;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
@@ -39,6 +40,7 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject{
 	Double qtyPercMaxi;
 	String isGMO;
 	String isIonized;
+	FilReqOperator operator = FilReqOperator.Contains;
 	private List<NodeRef> ings = new ArrayList<NodeRef>();
 	private List<NodeRef> geoOrigins = new ArrayList<NodeRef>();
 	private List<NodeRef> geoTransfo = new ArrayList<NodeRef>();
@@ -53,6 +55,17 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject{
 
 	public void setReqType(RequirementType reqType) {
 		this.reqType = reqType;
+	}
+	
+	
+	@AlfProp
+	@AlfQname(qname="bcpg:filReqOperator")
+	public FilReqOperator getOperator() {
+		return operator;
+	}
+
+	public void setOperator(FilReqOperator operator) {
+		this.operator = operator;
 	}
 
 	@AlfProp
@@ -167,13 +180,14 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject{
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
+		int result = super.hashCode();
 		result = prime * result + ((bioOrigins == null) ? 0 : bioOrigins.hashCode());
 		result = prime * result + ((geoOrigins == null) ? 0 : geoOrigins.hashCode());
+		result = prime * result + ((geoTransfo == null) ? 0 : geoTransfo.hashCode());
 		result = prime * result + ((ings == null) ? 0 : ings.hashCode());
 		result = prime * result + ((isGMO == null) ? 0 : isGMO.hashCode());
 		result = prime * result + ((isIonized == null) ? 0 : isIonized.hashCode());
-		result = prime * result + ((nodeRef == null) ? 0 : nodeRef.hashCode());
+		result = prime * result + ((operator == null) ? 0 : operator.hashCode());
 		result = prime * result + ((qtyPercMaxi == null) ? 0 : qtyPercMaxi.hashCode());
 		result = prime * result + ((reqMessage == null) ? 0 : reqMessage.hashCode());
 		result = prime * result + ((reqType == null) ? 0 : reqType.hashCode());
@@ -184,7 +198,7 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject{
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!super.equals(obj))
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
@@ -198,6 +212,11 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject{
 			if (other.geoOrigins != null)
 				return false;
 		} else if (!geoOrigins.equals(other.geoOrigins))
+			return false;
+		if (geoTransfo == null) {
+			if (other.geoTransfo != null)
+				return false;
+		} else if (!geoTransfo.equals(other.geoTransfo))
 			return false;
 		if (ings == null) {
 			if (other.ings != null)
@@ -214,10 +233,7 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject{
 				return false;
 		} else if (!isIonized.equals(other.isIonized))
 			return false;
-		if (nodeRef == null) {
-			if (other.nodeRef != null)
-				return false;
-		} else if (!nodeRef.equals(other.nodeRef))
+		if (operator != other.operator)
 			return false;
 		if (qtyPercMaxi == null) {
 			if (other.qtyPercMaxi != null)
@@ -236,8 +252,9 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject{
 
 	@Override
 	public String toString() {
-		return "ForbiddenIngListDataItem [nodeRef=" + nodeRef + ", reqType=" + reqType + ", reqMessage=" + reqMessage + ", qtyPercMaxi=" + qtyPercMaxi + ", isGMO=" + isGMO
-				+ ", isIonized=" + isIonized + ", ings=" + ings + ", geoOrigins=" + geoOrigins + ", bioOrigins=" + bioOrigins + "]";
+		return "ForbiddenIngListDataItem [reqType=" + reqType + ", reqMessage=" + reqMessage + ", qtyPercMaxi=" + qtyPercMaxi + ", isGMO=" + isGMO
+				+ ", isIonized=" + isIonized + ", operator=" + operator + ", ings=" + ings + ", geoOrigins=" + geoOrigins + ", geoTransfo="
+				+ geoTransfo + ", bioOrigins=" + bioOrigins + "]";
 	}	
 	
 	

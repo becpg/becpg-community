@@ -47,6 +47,8 @@
 			</parameter>
 		</constraint>
 		
+		
+		
 		<!-- PLM -->
 		<constraint name="bcpg:productUnit" type="LIST">
 			<parameter name="allowedValues">
@@ -410,6 +412,18 @@
 				</list>
 			</parameter>
 		</constraint>
+		
+		<constraint name="bcpg:filReqOperators" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>Contains</value>
+					<value>DoNotContains</value>
+				</list>
+			</parameter>
+		</constraint>
+		
+		
+		
 	</constraints>
 
 	<types>
@@ -1596,6 +1610,15 @@
 					<index enabled="false" />
 					<constraints>
 						<constraint ref="bcpg:nullableBoolean" />
+					</constraints>
+				</property>
+				<property name="bcpg:filReqOperator">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<default>Contains</default>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="bcpg:filReqOperators" />
 					</constraints>
 				</property>
 			</properties>
