@@ -6002,7 +6002,11 @@
 					<show id="bcpg:filIngs" />
 					<show id="bcpg:filGeoOrigins" />
 					<show id="bcpg:filBioOrigins" />
+					<show id="fm:commentCount" force="true" />
 				</field-visibility>
+				<appearance>
+					<field id="fm:commentCount" label="hidden" read-only="true" />
+				</appearance>
 			</form>
 		</forms>
 	</config>
