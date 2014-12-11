@@ -31,6 +31,7 @@ import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
+import fr.becpg.repo.product.data.constraints.FilReqOperator;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
@@ -459,6 +460,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 								continue; // check next rule
 							}
 
+							
 							// Ings
 							if (!fil.getIngs().isEmpty()) {
 								if (!fil.getIngs().contains(ingListDataItem.getIng())) {
@@ -479,9 +481,16 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 									}
 								}
 
-								if (!hasGeoOrigin) {
-									continue; // check next rule
+								if(FilReqOperator.DoNotContains.equals(fil.getOperator())){
+									if (hasGeoOrigin) {
+										continue; // check next rule
+									}
+								} else {
+									if (!hasGeoOrigin) {
+										continue; // check next rule
+									}
 								}
+								
 							}
 							
 							// GeoTransfo
@@ -493,8 +502,14 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 									}
 								}
 
-								if (!hasGeoTransfo) {
-									continue; // check next rule
+								if(FilReqOperator.DoNotContains.equals(fil.getOperator())){
+									if (hasGeoTransfo) {
+										continue; // check next rule
+									}
+								} else {
+									if (!hasGeoTransfo) {
+										continue; // check next rule
+									}
 								}
 							}
 
@@ -506,10 +521,11 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 										hasBioOrigin = true;
 									}
 								}
-
 								if (!hasBioOrigin) {
 									continue; // check next rule
 								}
+					
+								
 							}
 
 							logger.debug("Adding not respected for :" + fil.getReqMessage());
