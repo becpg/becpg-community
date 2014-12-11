@@ -208,8 +208,8 @@
                                 {
                                     ret += '<span class="doc-file"><a title="' + this
                                             .msg("form.control.project-task.link.title.open-document") + '" href="' + beCPG.util
-                                            .entityDetailsURL(contents[0].siteId, contents[0].nodeRef, "document") + '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' + Alfresco.util
-                                            .getFileIcon(contents[0].name, "cm:content", 16) + '" /></a></span>';
+                                            .entityDetailsURL(contents[0].siteId, contents[0].nodeRef, contents[0].type == "cm:folder" ? "folder" : "document") + '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' + Alfresco.util
+                                            .getFileIcon(contents[0].name, contents[0].type == "cm:folder" ? "cm:folder" : "cm:content", 16) + '" /></a></span>';
                                 }
 
                                 ret += '<span class="node-' + deliverable.nodeRef + '|' + entityNodeRef + '">';
