@@ -5950,6 +5950,7 @@
 					<show id="bcpg:filIsGMO" />
 					<show id="bcpg:filIsIonized" />
 					<show id="bcpg:filIngs" />
+					<show id="bcpg:filReqOperator" />
 					<show id="bcpg:filGeoOrigins" />
 					<show id="bcpg:filBioOrigins" />
 				</field-visibility>
@@ -6000,6 +6001,7 @@
 					<show id="bcpg:filIsGMO" />
 					<show id="bcpg:filIsIonized" />
 					<show id="bcpg:filIngs" />
+					<show id="bcpg:filReqOperator" />
 					<show id="bcpg:filGeoOrigins" />
 					<show id="bcpg:filBioOrigins" />
 					<show id="fm:commentCount" force="true" />
@@ -6022,6 +6024,7 @@
 					<show id="bcpg:filIsGMO" />
 					<show id="bcpg:filIsIonized" />
 					<show id="bcpg:filIngs" />
+					<show id="bcpg:filReqOperator" />
 					<show id="bcpg:filGeoOrigins" />
 					<show id="bcpg:filBioOrigins" />
 				</field-visibility>

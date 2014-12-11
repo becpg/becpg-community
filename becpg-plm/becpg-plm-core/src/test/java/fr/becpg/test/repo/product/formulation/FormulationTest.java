@@ -34,6 +34,7 @@ import fr.becpg.repo.product.data.ResourceProductData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.CompoListUnit;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
+import fr.becpg.repo.product.data.constraints.FilReqOperator;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.PackagingListUnit;
 import fr.becpg.repo.product.data.constraints.ProcessListUnit;
@@ -1388,6 +1389,16 @@ public class FormulationTest extends AbstractFinishedProductTest {
 							geoOrigins.clear();
 							forbiddenIngList1.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "Ing1 et ing4 interdits", null, null, null, ings, geoOrigins, bioOrigins));
 							
+							ings = new ArrayList<NodeRef>();
+							geoOrigins = new ArrayList<NodeRef>();
+							ings.add(ing3);				
+							geoOrigins.add(geoOrigin1);
+							
+							ForbiddenIngListDataItem forbiddenIngListDataItem = new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "Ing3 geoOrigin1 obligatoire", null, null, null, ings, geoOrigins, bioOrigins);
+							forbiddenIngListDataItem.setOperator(FilReqOperator.DoNotContains);
+							forbiddenIngList1.add(forbiddenIngListDataItem);
+							
+							
 							productSpecification1.setForbiddenIngList(forbiddenIngList1);
 							alfrescoRepository.save(productSpecification1);
 							
@@ -1454,7 +1465,10 @@ public class FormulationTest extends AbstractFinishedProductTest {
 						assertTrue(false);
 						assertEquals(RequirementType.Tolerated, reqCtrlList.getReqType());
 					}
-					else if(reqCtrlList.getReqMessage().equals("Ing3 < 40%")){
+					else if(reqCtrlList.getReqMessage().equals("Ing3 geoOrigin1 obligatoire")){
+						
+						assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
+					} else if(reqCtrlList.getReqMessage().equals("Ing3 < 40%")){
 						
 						assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
 						assertEquals(0, reqCtrlList.getSources().size());						
