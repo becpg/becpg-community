@@ -1467,6 +1467,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 					else if(reqCtrlList.getReqMessage().equals("Ing3 geoOrigin1 obligatoire")){
 						
 						assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
+						checks++;
 					} else if(reqCtrlList.getReqMessage().equals("Ing3 < 40%")){
 						
 						assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
@@ -1490,7 +1491,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 					}										
 				}				
 				
-				assertEquals(5, checks);
+				assertEquals(6, checks);
 				
 				/*
 				 *  #257: check reqCtrlList is clear if all req are respected (we remove specification to get everything OK)
