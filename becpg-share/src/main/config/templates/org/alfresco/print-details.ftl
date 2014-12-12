@@ -19,5 +19,43 @@
 	   <div id="bd">
 	     <@region id="document-metadata" scope="template"/>
 	   </div>
+	   <script type="text/javascript">
+	   	  setTimeout(function() {
+		   YAHOO.util.Dom.getElementsByClassName("viewmode-mltext", "span",null, function()
+	         { 
+				  var me = this;
+				  var fieldId = me.id.split("-")[this.id.split("-").length-1]; 
+                   Alfresco.util.Ajax.request(
+                            {
+                             url :  Alfresco.constants.PROXY_URI+"/becpg/form/multilingual/field/"+fieldId+"?nodeRef=${url.args.nodeRef}" ,           
+                                successCallback :
+                                {
+                                    fn : function(response){
+	                                    
+	                                    if(response.json){
+		                                    var ret="";
+		                                    for(var i in response.json.items){
+		                                      var field = response.json.items[i];
+		                                      if(ret.length>0){
+		                                       ret+=", ";
+		                                      }
+		                                      if(field.value && field.value.length>0){
+		                                   	      ret+= '<span class="locale-icon"><img  title="'+field.locale+'" tabindex="0" src="${url.context}/res/components/images/flags/'+field.locale+'.png"></span>';
+		                                          ret+= '<span  class="viewmode-value" >'+field.value+'</span>';
+												}
+		                                    }
+		                                    me.innerHTML = ret;
+	                                    }
+                                    },
+                                    scope : this
+                                },
+                                scope : this,
+                                execScripts : true
+                            });	
+
+	         })}, 2000);
+	   
+	   </script>
+	   
 	</@>
 </@>

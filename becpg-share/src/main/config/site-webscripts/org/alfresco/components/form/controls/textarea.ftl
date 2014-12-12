@@ -14,7 +14,7 @@
 	         <#else>
 	            <#assign fieldValue=field.value?html>
 	         </#if>
-	         <span class="viewmode-value"><#if fieldValue == "">${msg("form.control.novalue")}<#else>${fieldValue}</#if></span>
+	         <span  id="${fieldHtmlId}-${field.id?replace("prop_","")}" class="viewmode-value <#if field.dataType == "mltext">viewmode-mltext</#if>" ><#if fieldValue == "">${msg("form.control.novalue")}<#else>${fieldValue}</#if></span>
 	      </div>
 	   <#else>
       <label for="${fieldHtmlId}">${field.label?html}:<#if field.mandatory><span class="mandatory-indicator">${msg("form.required.fields.marker")}</span></#if> <@formLib.renderLocaleImage field=field textarea=true/></label>
