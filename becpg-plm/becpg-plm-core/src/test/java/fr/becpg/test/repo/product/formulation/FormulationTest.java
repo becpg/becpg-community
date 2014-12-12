@@ -34,7 +34,6 @@ import fr.becpg.repo.product.data.ResourceProductData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.CompoListUnit;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
-import fr.becpg.repo.product.data.constraints.FilReqOperator;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.PackagingListUnit;
 import fr.becpg.repo.product.data.constraints.ProcessListUnit;
@@ -1394,8 +1393,8 @@ public class FormulationTest extends AbstractFinishedProductTest {
 							ings.add(ing3);				
 							geoOrigins.add(geoOrigin1);
 							
-							ForbiddenIngListDataItem forbiddenIngListDataItem = new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "Ing3 geoOrigin1 obligatoire", null, null, null, ings, geoOrigins, bioOrigins);
-							forbiddenIngListDataItem.setOperator(FilReqOperator.DoNotContains);
+							ForbiddenIngListDataItem forbiddenIngListDataItem = new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "Ing3 geoOrigin1 obligatoire", null, null, null, ings, new ArrayList<NodeRef>(), bioOrigins);
+							forbiddenIngListDataItem.setRequiredGeoOrigins(geoOrigins);
 							forbiddenIngList1.add(forbiddenIngListDataItem);
 							
 							
