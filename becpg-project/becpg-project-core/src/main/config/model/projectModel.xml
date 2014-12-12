@@ -536,7 +536,7 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>cm:content</class>
+						<class>cm:cmobject</class>
 						<mandatory>false</mandatory>
 						<many>false</many>
 					</target>
