@@ -5950,8 +5950,8 @@
 					<show id="bcpg:filIsGMO" />
 					<show id="bcpg:filIsIonized" />
 					<show id="bcpg:filIngs" />
-					<show id="bcpg:filReqOperator" />
 					<show id="bcpg:filGeoOrigins" />
+					<show id="bcpg:filRequiredGeoOrigins" />
 					<show id="bcpg:filBioOrigins" />
 				</field-visibility>
 
@@ -5985,6 +5985,10 @@
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
+					<field id="bcpg:filRequiredGeoOrigins">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
 					<field id="bcpg:filBioOrigins">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
@@ -6001,8 +6005,8 @@
 					<show id="bcpg:filIsGMO" />
 					<show id="bcpg:filIsIonized" />
 					<show id="bcpg:filIngs" />
-					<show id="bcpg:filReqOperator" />
 					<show id="bcpg:filGeoOrigins" />
+					<show id="bcpg:filRequiredGeoOrigins" />
 					<show id="bcpg:filBioOrigins" />
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
@@ -6024,8 +6028,8 @@
 					<show id="bcpg:filIsGMO" />
 					<show id="bcpg:filIsIonized" />
 					<show id="bcpg:filIngs" />
-					<show id="bcpg:filReqOperator" />
 					<show id="bcpg:filGeoOrigins" />
+					<show id="bcpg:filRequiredGeoOrigins" />
 					<show id="bcpg:filBioOrigins" />
 				</field-visibility>
 
@@ -6056,6 +6060,10 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 					<field id="bcpg:filGeoOrigins">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:filRequiredGeoOrigins">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
