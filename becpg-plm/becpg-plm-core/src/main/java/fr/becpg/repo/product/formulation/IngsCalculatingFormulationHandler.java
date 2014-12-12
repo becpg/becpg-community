@@ -482,10 +482,10 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 							
 							// Required GeoOrigins
 							if (!fil.getRequiredGeoOrigins().isEmpty()) {
-								boolean hasGeoOrigin = false;
+								boolean hasGeoOrigin = true;
 								for (NodeRef n : ingListDataItem.getGeoOrigin()) {
-									if (fil.getGeoOrigins().contains(n)) {
-										hasGeoOrigin = true;
+									if (!fil.getRequiredGeoOrigins().contains(n)) {
+										hasGeoOrigin = false;
 									}
 								}
 
