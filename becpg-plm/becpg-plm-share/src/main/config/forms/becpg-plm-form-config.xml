@@ -5831,6 +5831,11 @@
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
+					<field id="bcpg:organoListValue">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 
@@ -5863,6 +5868,11 @@
 					<field id="bcpg:organoListOrgano">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:organoListValue">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
+						</control>
 					</field>
 				</appearance>
 			</form>
