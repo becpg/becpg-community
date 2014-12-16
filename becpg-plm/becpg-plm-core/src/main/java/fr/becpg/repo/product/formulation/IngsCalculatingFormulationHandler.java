@@ -143,11 +143,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		if (compoList != null) {
 			for (CompoListDataItem compoItem : compoList) {
 
-				@SuppressWarnings({ "unchecked", "rawtypes" })
-				List<IngListDataItem> componentIngList = (List) alfrescoRepository.loadDataList(compoItem.getProduct(), PLMModel.TYPE_INGLIST,
-						PLMModel.TYPE_INGLIST);
-
-				visitILOfPart(formulatedProduct, compoItem, componentIngList, retainNodes, totalQtyIngMap, totalQtyVolMap, reqCtrlMap);
+				ProductData componentProductData = (ProductData)alfrescoRepository.findOne(compoItem.getProduct());
+				visitILOfPart(formulatedProduct, compoItem, componentProductData, retainNodes, totalQtyIngMap, totalQtyVolMap, reqCtrlMap);
 
 				QName type = nodeService.getType(compoItem.getProduct());
 				if (type != null
@@ -164,8 +161,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 					}
 				}
 
-				if (nodeService.hasAspect(compoItem.getProduct(), PLMModel.ASPECT_DILUENT) && !componentIngList.isEmpty()) {
-					diluantIngNodeRef = componentIngList.get(0).getIng();
+				if (nodeService.hasAspect(compoItem.getProduct(), PLMModel.ASPECT_DILUENT) && !componentProductData.getIngList().isEmpty()) {
+					diluantIngNodeRef = componentProductData.getIngList().get(0).getIng();
 				}
 
 			}
@@ -231,15 +228,15 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	 * @param totalQtyVolMap
 	 * @throws FormulateException
 	 */
-	private void visitILOfPart(ProductData formulatedProduct, CompoListDataItem compoListDataItem, List<IngListDataItem> componentIngList,
+	private void visitILOfPart(ProductData formulatedProduct, CompoListDataItem compoListDataItem, ProductData componentProductData,
 			List<IngListDataItem> retainNodes, Map<String, Double> totalQtyIngMap, Map<String, Double> totalQtyVolMap,
 			Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap) throws FormulateException {
 
 		// check product respect specification
-		checkILOfPart(compoListDataItem.getProduct(), compoListDataItem.getDeclType(), componentIngList,
+		checkILOfPart(compoListDataItem.getProduct(), compoListDataItem.getDeclType(), componentProductData,
 				formulatedProduct.getProductSpecifications(), reqCtrlMap);
 
-		if (componentIngList == null) {
+		if (componentProductData.getIngList() == null) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("CompoItem: " + compoListDataItem.getProduct() + " - doesn't have ing ");
 			}
@@ -248,7 +245,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		}
 
 		// calculate ingList of formulated product
-		calculateILOfPart(compoListDataItem, CompositeHelper.getHierarchicalCompoList(componentIngList), formulatedProduct.getIngList(), retainNodes,
+		calculateILOfPart(compoListDataItem, CompositeHelper.getHierarchicalCompoList(componentProductData.getIngList()), formulatedProduct.getIngList(), retainNodes,
 				totalQtyIngMap, totalQtyVolMap, null);
 	}
 
@@ -405,13 +402,13 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	 * @param totalQtyIngMap
 	 *            the total qty ing map
 	 */
-	private void checkILOfPart(NodeRef productNodeRef, DeclarationType declType, List<IngListDataItem> ingList,
+	private void checkILOfPart(NodeRef productNodeRef, DeclarationType declType, ProductData componentProductData,
 			List<ProductSpecificationData> productSpecicationDataList, Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap) {
 
 		if (!PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.equals(nodeService.getType(productNodeRef))) {
 
 			// datalist ingList is null or empty
-			if ((!alfrescoRepository.hasDataList(productNodeRef, PLMModel.TYPE_INGLIST) || ingList.isEmpty())) {
+			if ((!alfrescoRepository.hasDataList(productNodeRef, PLMModel.TYPE_INGLIST) || componentProductData.getIngList().isEmpty())) {
 
 				if (declType == null || !declType.equals(DeclarationType.DoNotDetails)) {
 					// req not respected
@@ -437,7 +434,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			} else {
 				for (ProductSpecificationData productSpecificationData : productSpecicationDataList) {
 
-					for (IngListDataItem ingListDataItem : ingList) {
+					for (IngListDataItem ingListDataItem : componentProductData.getIngList()) {
 						if (logger.isDebugEnabled()) {
 							logger.debug("For " + productNodeRef + " testing ing :"
 									+ nodeService.getProperty(ingListDataItem.getCharactNodeRef(), ContentModel.PROP_NAME));
@@ -522,17 +519,30 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 							}
 
-							logger.debug("Adding not respected for :" + fil.getReqMessage());
 							// req not respected
-							ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(fil.getNodeRef());
-							if (reqCtrl == null) {
-								reqCtrl = new ReqCtrlListDataItem(null, fil.getReqType(), fil.getReqMessage(), new ArrayList<NodeRef>());
-								reqCtrlMap.put(fil.getNodeRef(), reqCtrl);
+							logger.debug("Adding not respected for :" + fil.getReqMessage());
+							// Look for raw material
+							if (componentProductData.getCompoListView().getCompoList() != null &&
+									!componentProductData.getCompoListView().getCompoList().isEmpty()) {
+								for(CompoListDataItem c : componentProductData.getCompoListView().getCompoList()){
+									checkILOfPart(c.getProduct(), 
+											declType, 
+											(ProductData)alfrescoRepository.findOne(c.getProduct()), 
+											productSpecicationDataList, 
+											reqCtrlMap);
+								}
 							}
+							else{
+								ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(fil.getNodeRef());
+								if (reqCtrl == null) {
+									reqCtrl = new ReqCtrlListDataItem(null, fil.getReqType(), fil.getReqMessage(), new ArrayList<NodeRef>());
+									reqCtrlMap.put(fil.getNodeRef(), reqCtrl);
+								}
 
-							if (!reqCtrl.getSources().contains(productNodeRef)) {
-								reqCtrl.getSources().add(productNodeRef);
-							}
+								if (!reqCtrl.getSources().contains(productNodeRef)) {
+									reqCtrl.getSources().add(productNodeRef);
+								}
+							}							
 						}
 					}
 				}
