@@ -6,11 +6,10 @@
 	<artifactId>becpg-parent</artifactId>
 	<packaging>pom</packaging>
 	<name>beCPG</name>
-	<version>2.0.0</version>
 	<parent>
 		<groupId>org.alfresco.maven</groupId>
 		<artifactId>alfresco-sdk-parent</artifactId>
-		<version>2.0.0-beta-3</version>
+		<version>2.0.0</version>
 	</parent>
 	<prerequisites>
 		<maven>3.2.2</maven>
@@ -76,7 +75,7 @@
 	</developers>
 
 	<properties>
-		<alfresco.version>5.0.b</alfresco.version>
+		<alfresco.version>5.0.c</alfresco.version>
 		<alfresco.data.location>${project.build.directory}/alf_data/</alfresco.data.location>
 		<alfresco.db.name>becpg_test_contribs</alfresco.db.name>
 		<app.testing.jvm.args>-Xms256m -Xmx1524m -Duser.language=fr</app.testing.jvm.args>
@@ -131,15 +130,6 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.alfresco.maven.plugin</groupId>
-				<artifactId>alfresco-maven-plugin</artifactId>
-				<version>${maven.alfresco.version}</version>
-				<extensions>true</extensions>
-				<configuration>
-					<snapshotToTimestamp>true</snapshotToTimestamp>
-				</configuration>
-			</plugin>
-			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>buildnumber-maven-plugin</artifactId>
 				<version>1.2</version>
@@ -185,9 +175,24 @@
 				</configuration>
 			</plugin>
 		</plugins>
-		<!-- <pluginManagement> <plugins> <plugin> <groupId>org.codehaus.mojo</groupId> 
-			<artifactId>sonar-maven-plugin</artifactId> <version>2.1</version> </plugin> 
-			</plugins> </pluginManagement> -->
+		      <!--  <resources>
+
+                        Copies and filters AMP config in the proper package 'alfresco/module/becpg.becpg-core'
+                         so to enforce full module naming single sourcing from POM properties
+                        <resource>
+                                <filtering>true</filtering>
+                                <directory>src/main/amp/config</directory>
+                        </resource>
+
+                        Copies web files
+                        <resource>
+                                <filtering>false</filtering>
+                                <directory>src/main/web</directory>
+                                <targetPath>alfresco/module/${project.artifactId}/web</targetPath>
+                        </resource>
+
+				</resources> -->
+		
 	</build>
 
 	<modules>
@@ -203,6 +208,80 @@
 		<module>becpg-designer/becpg-designer-share</module>
 		<module>becpg-plm/becpg-plm-share</module>
 	</modules>
+
+	<dependencies>
+
+		<!-- Test -->
+		<dependency>
+			<groupId>${alfresco.groupId}</groupId>
+			<artifactId>alfresco-repository</artifactId>
+			<version>${alfresco.version}</version>
+			<classifier>tests</classifier>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>${alfresco.groupId}</groupId>
+			<artifactId>alfresco-data-model</artifactId>
+			<version>${alfresco.version}</version>
+			<classifier>tests</classifier>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.alfresco</groupId>
+			<artifactId>alfresco-remote-api</artifactId>
+			<version>${alfresco.version}</version>
+			<scope>test</scope>
+			<classifier>tests</classifier>
+			<exclusions>
+				<exclusion>
+					<artifactId>mail</artifactId>
+					<groupId>javax.mail</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+
+		<!-- <dependency> <groupId>org.apache.chemistry</groupId> <artifactId>chemistry-tck-atompub</artifactId> 
+			<version>0.1-incubating-unreleased</version> <scope>test</scope> </dependency> -->
+
+
+		<dependency>
+			<groupId>org.springframework.extensions.surf</groupId>
+			<artifactId>spring-webscripts</artifactId>
+			<version>${alfresco.version}</version>
+			<classifier>tests</classifier>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>spring-surf-core-configservice</artifactId>
+					<groupId>org.springframework.extensions.surf</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>tk.skuro.alfresco</groupId>
+			<artifactId>h2-support</artifactId>
+			<version>1.6</version>
+			<scope>test</scope>
+		</dependency>
+
+
+		<!-- Requires this explicit test dependency, for a Spring 3.0.5 bug | See 
+			https://jira.springsource.org/browse/SPR-8527 <dependency> <groupId>org.springframework</groupId> 
+			<artifactId>spring-context</artifactId> <version>3.0.6.RELEASE</version> 
+			<scope>provided</scope> </dependency> -->
+
+	</dependencies>
 
 	<profiles>
 		<profile>

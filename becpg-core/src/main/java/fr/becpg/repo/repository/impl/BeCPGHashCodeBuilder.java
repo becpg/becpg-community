@@ -23,7 +23,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.alfresco.service.namespace.QName;
-import org.apache.axis.utils.IDKey;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
 
@@ -118,6 +117,9 @@ import fr.becpg.repo.repository.model.AspectAwareDataItem;
  *          as when egal 0
  */
 public class BeCPGHashCodeBuilder {
+
+	
+
 	/**
 	 * <p>
 	 * A registry of objects used by reflection methods to detect cyclical
@@ -177,7 +179,6 @@ public class BeCPGHashCodeBuilder {
 		return registry != null && registry.contains(new IDKey(value));
 	}
 
-
 	private static void reflectionAppend(RepositoryEntity object, BeCPGHashCodeBuilder builder) {
 		if (isRegistered(object)) {
 			return;
@@ -185,45 +186,44 @@ public class BeCPGHashCodeBuilder {
 		try {
 			register(object);
 
-				BeanWrapper beanWrapper = PropertyAccessorFactory.forBeanPropertyAccess(object);
+			BeanWrapper beanWrapper = PropertyAccessorFactory.forBeanPropertyAccess(object);
 
-				for (PropertyDescriptor pd : beanWrapper.getPropertyDescriptors()) {
-					Method readMethod = pd.getReadMethod();
-					if (readMethod != null) {
-						if (readMethod.isAnnotationPresent(AlfProp.class) || readMethod.isAnnotationPresent(AlfSingleAssoc.class)
-								|| readMethod.isAnnotationPresent(AlfMultiAssoc.class)) {
-							Object fieldValue = beanWrapper.getPropertyValue(pd.getName());
+			for (PropertyDescriptor pd : beanWrapper.getPropertyDescriptors()) {
+				Method readMethod = pd.getReadMethod();
+				if (readMethod != null) {
+					if (readMethod.isAnnotationPresent(AlfProp.class) || readMethod.isAnnotationPresent(AlfSingleAssoc.class)
+							|| readMethod.isAnnotationPresent(AlfMultiAssoc.class)) {
+						Object fieldValue = beanWrapper.getPropertyValue(pd.getName());
 
-							builder.append(fieldValue);
-						}
+						builder.append(fieldValue);
 					}
 				}
-				
-				builder.append(object.getNodeRef());
-				
-				if (object instanceof AspectAwareDataItem) {
-					if (((AspectAwareDataItem) object).getAspects() != null) {
-						for (QName aspect : ((AspectAwareDataItem) object).getAspects()) {
-							builder.append(aspect);
-						}
+			}
+
+			builder.append(object.getNodeRef());
+
+			if (object instanceof AspectAwareDataItem) {
+				if (((AspectAwareDataItem) object).getAspects() != null) {
+					for (QName aspect : ((AspectAwareDataItem) object).getAspects()) {
+						builder.append(aspect);
 					}
 				}
-				
-			
+			}
+
 		} finally {
 			unregister(object);
 		}
 	}
-	
-	public static String  printDiff(RepositoryEntity obj1, RepositoryEntity obj2){
+
+	public static String printDiff(RepositoryEntity obj1, RepositoryEntity obj2) {
 		String ret = new String();
-		
+
 		BeanWrapper beanWrapper1 = PropertyAccessorFactory.forBeanPropertyAccess(obj1);
 		BeanWrapper beanWrapper2 = PropertyAccessorFactory.forBeanPropertyAccess(obj2);
 
 		BeCPGHashCodeBuilder builder1 = new BeCPGHashCodeBuilder();
 		BeCPGHashCodeBuilder builder2 = new BeCPGHashCodeBuilder();
-		
+
 		for (PropertyDescriptor pd : beanWrapper1.getPropertyDescriptors()) {
 			Method readMethod = pd.getReadMethod();
 			if (readMethod != null) {
@@ -231,30 +231,27 @@ public class BeCPGHashCodeBuilder {
 						|| readMethod.isAnnotationPresent(AlfMultiAssoc.class)) {
 					Object fieldValue = beanWrapper1.getPropertyValue(pd.getName());
 					Object fieldValue2 = beanWrapper2.getPropertyValue(pd.getName());
-					
+
 					builder1.append(fieldValue);
 					builder2.append(fieldValue2);
-					
-					
-					
-					if(builder1.hashCode()!=builder2.hashCode()){
-						ret+= pd.getName()+" "+builder1.hashCode()+" "+builder2.hashCode()+"\n";
-						
-						if(fieldValue!=null){
-							ret+=" ----"+ fieldValue.toString()+" "+fieldValue.hashCode()+" "+fieldValue.getClass().getName()+"\n";
+
+					if (builder1.hashCode() != builder2.hashCode()) {
+						ret += pd.getName() + " " + builder1.hashCode() + " " + builder2.hashCode() + "\n";
+
+						if (fieldValue != null) {
+							ret += " ----" + fieldValue.toString() + " " + fieldValue.hashCode() + " " + fieldValue.getClass().getName() + "\n";
 						}
-						if(fieldValue2!=null){
-							ret+=" ----"+ fieldValue2.toString()+" "+fieldValue2.hashCode()+" "+fieldValue2.getClass().getName()+"\n";
+						if (fieldValue2 != null) {
+							ret += " ----" + fieldValue2.toString() + " " + fieldValue2.hashCode() + " " + fieldValue2.getClass().getName() + "\n";
 						}
 					}
-					
+
 				}
 			}
 		}
 		return ret;
 	}
-	
-	
+
 	/**
 	 * <p>
 	 * This method uses reflection to build a valid hash code.
@@ -293,10 +290,9 @@ public class BeCPGHashCodeBuilder {
 		}
 		BeCPGHashCodeBuilder builder = new BeCPGHashCodeBuilder();
 		reflectionAppend(object, builder);
-		
+
 		return builder.toHashCode();
 	}
-
 
 	/**
 	 * <p>
@@ -662,7 +658,7 @@ public class BeCPGHashCodeBuilder {
 					append((Object[]) object);
 				}
 			} else {
-				if(object instanceof RepositoryEntity){
+				if (object instanceof RepositoryEntity) {
 					iTotal = iTotal * iConstant + BeCPGHashCodeBuilder.reflectionHashCode((RepositoryEntity) object);
 				} else {
 					iTotal = iTotal * iConstant + object.hashCode();
