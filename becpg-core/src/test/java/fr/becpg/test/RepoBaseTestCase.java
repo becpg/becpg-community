@@ -50,6 +50,7 @@ import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.subethamail.wiser.Wiser;
@@ -155,6 +156,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 	protected RuleService ruleService;
 
 	@Resource
+	@Qualifier("qnameDAO")
 	protected QNameDAO qNameDAO;
 
 	@Override

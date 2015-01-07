@@ -86,7 +86,7 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 		logger.info("Run CoreInitVisitor");
 
 		//Init QNames for dbQueries
-		for(QName model : dictionaryDAO.getModels()){
+		for(QName model : dictionaryDAO.getModels(true)){
 			for(PropertyDefinition propertyDef : dictionaryDAO.getProperties(model)){
 				qNameDAO.getOrCreateQName(propertyDef.getName());
 			}

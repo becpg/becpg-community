@@ -18,7 +18,7 @@
 		<config>src/main/config/context/publication-context.xml</config>
 		<config>src/main/config/context/quality-context.xml</config>
 		<config>src/main/config/context/workflow-context.xml</config>
-		<config>src/main/config/module-context.xml</config>
+		<config>src/main/amp/config/alfresco/module/becpg-plm-core/module-context.xml</config>
 	</configs>
 	<autoconfigs>
 	</autoconfigs>

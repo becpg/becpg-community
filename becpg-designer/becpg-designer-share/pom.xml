@@ -34,65 +34,50 @@
 		<dependency>
             <groupId>org.alfresco</groupId>
             <artifactId>alfresco-repository</artifactId>
-            <version>${alfresco.version}</version>
              <scope>provided</scope>
         </dependency>
 	</dependencies>
 	<properties>
-        <alfresco.amp.config.dir>alfresco/module/${project.artifactId}/config</alfresco.amp.config.dir>
+        <alfresco.client.war>share</alfresco.client.war>
     </properties>
 	<build>
 		<plugins>		
-			<!-- YUI Compressor -->
+		<!-- YUI Compressor -->
 			<plugin>
-				<groupId>net.alchim31.maven</groupId>
-				<artifactId>yuicompressor-maven-plugin</artifactId>
-				<version>1.2</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>compress</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<jswarn>false</jswarn>
-					<excludes>
-						<exclude>**/entity-data-lists.js</exclude>
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>yuicompressor-maven-plugin</artifactId>
+                <version>1.4.0</version>
+                <executions>
+                    <execution>
+                        <id>minimize-slingshot-javascript</id>
+                        <goals>
+                            <goal>compress</goal>
+                        </goals>
+                        <phase>prepare-package</phase>
+                    </execution>
+                </executions>
+                <!-- ensure YUI Compressor 2.4.8-rhino-alfresco-patched is used - as 2.4.7 is the default -->
+                <dependencies>
+                    <dependency>
+                        <groupId>com.yahoo.platform.yui</groupId>
+                        <artifactId>yuicompressor</artifactId>
+                        <version>2.4.8-rhino-alfresco-patched</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <jswarn>false</jswarn>
+                    <encoding>UTF-8</encoding>
+                    <includes>
+                        <include>**/*.js</include>
+                    </includes>
+                    <!-- We don't need to re-minify YUI or 3rd party libs -->
+                    <excludes>
+                       <exclude>**/entity-data-lists.js</exclude>
 						<exclude>**/*.get.js</exclude>
 						<exclude>**/*.lib.js</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
+                    </excludes>
+                </configuration>
+            </plugin>
 		</plugins>
-		<pluginManagement>
-			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>net.alchim31.maven</groupId>
-										<artifactId>yuicompressor-maven-plugin</artifactId>
-										<versionRange>[1.2,)</versionRange>
-										<goals>
-											<goal>compress</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore></ignore>
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
 	</build>
 </project>
