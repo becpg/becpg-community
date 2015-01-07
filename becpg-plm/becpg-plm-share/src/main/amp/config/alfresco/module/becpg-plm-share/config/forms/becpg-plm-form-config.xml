@@ -5831,6 +5831,11 @@
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
+					<field id="bcpg:organoListValue">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 
@@ -5863,6 +5868,11 @@
 					<field id="bcpg:organoListOrgano">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:organoListValue">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
+						</control>
 					</field>
 				</appearance>
 			</form>
@@ -5951,6 +5961,7 @@
 					<show id="bcpg:filIsIonized" />
 					<show id="bcpg:filIngs" />
 					<show id="bcpg:filGeoOrigins" />
+					<show id="bcpg:filRequiredGeoOrigins" />
 					<show id="bcpg:filBioOrigins" />
 				</field-visibility>
 
@@ -5981,6 +5992,10 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 					<field id="bcpg:filGeoOrigins">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:filRequiredGeoOrigins">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
@@ -6001,8 +6016,13 @@
 					<show id="bcpg:filIsIonized" />
 					<show id="bcpg:filIngs" />
 					<show id="bcpg:filGeoOrigins" />
+					<show id="bcpg:filRequiredGeoOrigins" />
 					<show id="bcpg:filBioOrigins" />
+					<show id="fm:commentCount" force="true" />
 				</field-visibility>
+				<appearance>
+					<field id="fm:commentCount" label="hidden" read-only="true" />
+				</appearance>
 			</form>
 		</forms>
 	</config>
@@ -6019,6 +6039,7 @@
 					<show id="bcpg:filIsIonized" />
 					<show id="bcpg:filIngs" />
 					<show id="bcpg:filGeoOrigins" />
+					<show id="bcpg:filRequiredGeoOrigins" />
 					<show id="bcpg:filBioOrigins" />
 				</field-visibility>
 
@@ -6049,6 +6070,10 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 					<field id="bcpg:filGeoOrigins">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:filRequiredGeoOrigins">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>

@@ -90,7 +90,7 @@
 
 <#macro renderField field>
    <#if field.control?? && field.control.template?? && field.transitory != true>
-      <#assign fieldHtmlId=args.htmlid?js_string + "_" + field.id >
+      <#assign fieldHtmlId=args.htmlid?html + "_" + field.id?html >
       <#include "${field.control.template}" />
    </#if>
 </#macro>
@@ -222,7 +222,7 @@
       <span class="help-icon">
          <img id="${fieldHtmlId}-help-icon" src="${url.context}/res/components/form/images/help.png" title="${msg("form.field.help")}" tabindex="0"/>
       </span>
-      <div class="help-text" id="${fieldHtmlId}-help">${field.help?html}</div>
+      <div class="help-text" id="${fieldHtmlId}-help"><#if field.helpEncodeHtml>${field.help?html}<#else>${stringUtils.stripUnsafeHTML(field.help)}</#if></div>
    </#if>
 </#macro>
 
