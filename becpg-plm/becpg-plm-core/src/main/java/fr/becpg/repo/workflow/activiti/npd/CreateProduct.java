@@ -103,6 +103,7 @@ public class CreateProduct extends BaseJavaDelegate {
 					}
 					
 					NodeRef sourceNodeRef = null;
+					QName targetType = PLMModel.TYPE_FINISHEDPRODUCT;
 					NodeRef recipeNodeRef = null;
 					NodeRef packagingNodeRef = null;
 
@@ -118,6 +119,7 @@ public class CreateProduct extends BaseJavaDelegate {
 					if (productNode != null) {
 						logger.debug("Product node exist");
 						sourceNodeRef = productNode.getNodeRef();
+						targetType = nodeService.getType(sourceNodeRef);
 					}
 
 					ActivitiScriptNode recipeNode = (ActivitiScriptNode) task.getVariable(
@@ -135,7 +137,7 @@ public class CreateProduct extends BaseJavaDelegate {
 					}
 										
 					String productName = repoService.getAvailableName(projectNodeRef, entityName);
-					NodeRef productNodeRef = entityService.createOrCopyFrom(sourceNodeRef, projectNodeRef, PLMModel.TYPE_FINISHEDPRODUCT,
+					NodeRef productNodeRef = entityService.createOrCopyFrom(sourceNodeRef, projectNodeRef, targetType,
 							productName);
 					
 					// change state

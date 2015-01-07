@@ -74,9 +74,9 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		logger.debug("Calculate ingredient list");
 
 		// no compo, nor ingList on formulated product => no formulation
-		if (!formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT) ||
-				(!alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_INGLIST) &&
-				 !alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_INGLABELINGLIST))) {
+		if (!formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)
+				|| (!alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_INGLIST) && !alfrescoRepository.hasDataList(formulatedProduct,
+						PLMModel.TYPE_INGLABELINGLIST))) {
 			logger.debug("no compo => no formulation");
 			return true;
 		}
@@ -100,10 +100,10 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			formulatedProduct.setIngList(new LinkedList<IngListDataItem>());
 		}
 
-		if(formulatedProduct.getProductSpecifications()==null){
+		if (formulatedProduct.getProductSpecifications() == null) {
 			formulatedProduct.setProductSpecifications(new LinkedList<ProductSpecificationData>());
 		}
-		
+
 		// Load product specification
 
 		// IngList
@@ -143,11 +143,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		if (compoList != null) {
 			for (CompoListDataItem compoItem : compoList) {
 
-				@SuppressWarnings({ "unchecked", "rawtypes" })
-				List<IngListDataItem> componentIngList = (List) alfrescoRepository.loadDataList(compoItem.getProduct(), PLMModel.TYPE_INGLIST,
-						PLMModel.TYPE_INGLIST);
-
-				visitILOfPart(formulatedProduct, compoItem, componentIngList, retainNodes, totalQtyIngMap, totalQtyVolMap, reqCtrlMap);
+				ProductData componentProductData = (ProductData)alfrescoRepository.findOne(compoItem.getProduct());
+				visitILOfPart(formulatedProduct, compoItem, componentProductData, retainNodes, totalQtyIngMap, totalQtyVolMap, reqCtrlMap);
 
 				QName type = nodeService.getType(compoItem.getProduct());
 				if (type != null
@@ -164,8 +161,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 					}
 				}
 
-				if (nodeService.hasAspect(compoItem.getProduct(), PLMModel.ASPECT_DILUENT) && !componentIngList.isEmpty()) {
-					diluantIngNodeRef = componentIngList.get(0).getIng();
+				if (nodeService.hasAspect(compoItem.getProduct(), PLMModel.ASPECT_DILUENT) && !componentProductData.getIngList().isEmpty()) {
+					diluantIngNodeRef = componentProductData.getIngList().get(0).getIng();
 				}
 
 			}
@@ -196,7 +193,6 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				} else {
 					ingListDataItem.setQtyPerc(null);
 				}
-				
 
 				// qtyVolumePerc
 				if (totalQtyVolMap.get(ingListDataItem.getName()) != null) {
@@ -232,15 +228,15 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	 * @param totalQtyVolMap
 	 * @throws FormulateException
 	 */
-	private void visitILOfPart(ProductData formulatedProduct, CompoListDataItem compoListDataItem, List<IngListDataItem> componentIngList,
+	private void visitILOfPart(ProductData formulatedProduct, CompoListDataItem compoListDataItem, ProductData componentProductData,
 			List<IngListDataItem> retainNodes, Map<String, Double> totalQtyIngMap, Map<String, Double> totalQtyVolMap,
 			Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap) throws FormulateException {
 
 		// check product respect specification
-		checkILOfPart(compoListDataItem.getProduct(), compoListDataItem.getDeclType(), componentIngList,
-				formulatedProduct.getProductSpecifications() , reqCtrlMap);
+		checkILOfPart(compoListDataItem.getProduct(), compoListDataItem.getDeclType(), componentProductData,
+				formulatedProduct.getProductSpecifications(), reqCtrlMap);
 
-		if (componentIngList == null) {
+		if (componentProductData.getIngList() == null) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("CompoItem: " + compoListDataItem.getProduct() + " - doesn't have ing ");
 			}
@@ -249,7 +245,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		}
 
 		// calculate ingList of formulated product
-		calculateILOfPart(compoListDataItem, CompositeHelper.getHierarchicalCompoList(componentIngList), formulatedProduct.getIngList(), retainNodes,
+		calculateILOfPart(compoListDataItem, CompositeHelper.getHierarchicalCompoList(componentProductData.getIngList()), formulatedProduct.getIngList(), retainNodes,
 				totalQtyIngMap, totalQtyVolMap, null);
 	}
 
@@ -291,8 +287,6 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				newIngListDataItem.setIsProcessingAid(true);
 				ingList.add(newIngListDataItem);
 			}
-			
-			
 
 			if (!retainNodes.contains(newIngListDataItem)) {
 				retainNodes.add(newIngListDataItem);
@@ -356,7 +350,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 					newIngListDataItem.getGeoOrigin().add(geoOrigin);
 				}
 			}
-			
+
 			// Calculate geo transfo
 			for (NodeRef geoTransfo : ingListDataItem.getGeoTransfo()) {
 				if (!newIngListDataItem.getGeoTransfo().contains(geoTransfo)) {
@@ -371,12 +365,11 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				}
 			}
 
-
-			//Processing Aid 
-			if (ingListDataItem.getIsProcessingAid()==null || !ingListDataItem.getIsProcessingAid()) {
+			// Processing Aid
+			if (ingListDataItem.getIsProcessingAid() == null || !ingListDataItem.getIsProcessingAid()) {
 				newIngListDataItem.setIsProcessingAid(false);
 			}
-			
+
 			// GMO
 			if (ingListDataItem.getIsGMO() && !newIngListDataItem.getIsGMO()) {
 				newIngListDataItem.setIsGMO(true);
@@ -409,15 +402,15 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	 * @param totalQtyIngMap
 	 *            the total qty ing map
 	 */
-	private void checkILOfPart(NodeRef productNodeRef, DeclarationType declType, List<IngListDataItem> ingList, List<ProductSpecificationData> productSpecicationDataList,
-			Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap) {
+	private void checkILOfPart(NodeRef productNodeRef, DeclarationType declType, ProductData componentProductData,
+			List<ProductSpecificationData> productSpecicationDataList, Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap) {
 
 		if (!PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.equals(nodeService.getType(productNodeRef))) {
 
 			// datalist ingList is null or empty
-			if ((!alfrescoRepository.hasDataList(productNodeRef, PLMModel.TYPE_INGLIST) || ingList.isEmpty())) {
-				
-				if(declType ==  null || !declType.equals(DeclarationType.DoNotDetails)) {
+			if ((!alfrescoRepository.hasDataList(productNodeRef, PLMModel.TYPE_INGLIST) || componentProductData.getIngList().isEmpty())) {
+
+				if (declType == null || !declType.equals(DeclarationType.DoNotDetails)) {
 					// req not respected
 					String message = I18NUtil.getMessage(MESSAGE_MISSING_INGLIST);
 
@@ -437,11 +430,11 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 					if (!reqCtrl.getSources().contains(productNodeRef)) {
 						reqCtrl.getSources().add(productNodeRef);
 					}
-				}				
+				}
 			} else {
 				for (ProductSpecificationData productSpecificationData : productSpecicationDataList) {
 
-					for (IngListDataItem ingListDataItem : ingList) {
+					for (IngListDataItem ingListDataItem : componentProductData.getIngList()) {
 						if (logger.isDebugEnabled()) {
 							logger.debug("For " + productNodeRef + " testing ing :"
 									+ nodeService.getProperty(ingListDataItem.getCharactNodeRef(), ContentModel.PROP_NAME));
@@ -484,6 +477,20 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 								}
 							}
 							
+							// Required GeoOrigins
+							if (!fil.getRequiredGeoOrigins().isEmpty()) {
+								boolean hasGeoOrigin = true;
+								for (NodeRef n : ingListDataItem.getGeoOrigin()) {
+									if (!fil.getRequiredGeoOrigins().contains(n)) {
+										hasGeoOrigin = false;
+									}
+								}
+
+								if (hasGeoOrigin) {
+									continue; // check next rule
+								}
+							}
+
 							// GeoTransfo
 							if (!fil.getGeoTransfo().isEmpty()) {
 								boolean hasGeoTransfo = false;
@@ -506,23 +513,36 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 										hasBioOrigin = true;
 									}
 								}
-
 								if (!hasBioOrigin) {
 									continue; // check next rule
 								}
+
 							}
 
-							logger.debug("Adding not respected for :" + fil.getReqMessage());
 							// req not respected
-							ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(fil.getNodeRef());
-							if (reqCtrl == null) {
-								reqCtrl = new ReqCtrlListDataItem(null, fil.getReqType(), fil.getReqMessage(), new ArrayList<NodeRef>());
-								reqCtrlMap.put(fil.getNodeRef(), reqCtrl);
+							logger.debug("Adding not respected for :" + fil.getReqMessage());
+							// Look for raw material
+							if (componentProductData.getCompoListView().getCompoList() != null &&
+									!componentProductData.getCompoListView().getCompoList().isEmpty()) {
+								for(CompoListDataItem c : componentProductData.getCompoListView().getCompoList()){
+									checkILOfPart(c.getProduct(), 
+											declType, 
+											(ProductData)alfrescoRepository.findOne(c.getProduct()), 
+											productSpecicationDataList, 
+											reqCtrlMap);
+								}
 							}
+							else{
+								ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(fil.getNodeRef());
+								if (reqCtrl == null) {
+									reqCtrl = new ReqCtrlListDataItem(null, fil.getReqType(), fil.getReqMessage(), new ArrayList<NodeRef>());
+									reqCtrlMap.put(fil.getNodeRef(), reqCtrl);
+								}
 
-							if (!reqCtrl.getSources().contains(productNodeRef)) {
-								reqCtrl.getSources().add(productNodeRef);
-							}
+								if (!reqCtrl.getSources().contains(productNodeRef)) {
+									reqCtrl.getSources().add(productNodeRef);
+								}
+							}							
 						}
 					}
 				}
@@ -562,7 +582,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		}
 	}
 
-	//TODO refactor this method
+	// TODO refactor this method
 	@Deprecated
 	private IngListDataItem findIngListDataItem(List<IngListDataItem> ingLists, IngListDataItem ingList) {
 
@@ -620,7 +640,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 				// increase
 				if ((i1.getParent() == null && i2.getParent() == null) || (i1.getParent() != null && i1.getParent().equals(i2.getParent()))) {
-					if(i2.getQtyPerc()!=null){
+					if (i2.getQtyPerc() != null) {
 						return i2.getQtyPerc().compareTo(i1.getQtyPerc());
 					} else {
 						return i2.getQtyPerc() == i1.getQtyPerc() ? 0 : -1;
