@@ -123,15 +123,12 @@ public class EntitySystemServiceImpl implements EntitySystemService {
 
 	@Override
 	public List<NodeRef> getSystemEntities() {
-		
 		return BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_SYSTEM_ENTITY).excludeVersions().list();
 	}
 
 	@Override
 	public List<NodeRef> getSystemFolders() {
-		
-		return BeCPGQueryBuilder.createQuery().ofType(ContentModel.TYPE_FOLDER).withAspect(BeCPGModel.ASPECT_SYSTEM_FOLDER).list();
-		
+		return BeCPGQueryBuilder.createQuery().ofType(ContentModel.TYPE_FOLDER).withAspect(BeCPGModel.ASPECT_SYSTEM_FOLDER).inDB().list();
 	}
 
 }

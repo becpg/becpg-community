@@ -61,7 +61,7 @@
 
 	<bean id="jsonConversionComponent" class="fr.becpg.repo.jscript.app.BeCPGJSONConversionComponent" parent="baseJsonConversionComponent">
 		<property name="associationService" ref="associationService" />
-		<!--  Uncomment that for next release <property name="mimetypeService" ref="MimetypeService" /> -->
+		<property name="mimetypeService" ref="MimetypeService" />
 	</bean>
 
 	<bean id="baseAssocDecorator" abstract="true" init-method="init">

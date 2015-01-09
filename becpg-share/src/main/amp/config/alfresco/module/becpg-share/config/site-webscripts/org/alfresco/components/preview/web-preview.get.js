@@ -46,7 +46,7 @@ function getNodeMetadata(proxy, api, nodeRef)
       node;
    if (result.status == 200)
    {
-      var nodeMetadata = eval('(' + result + ')');
+      var nodeMetadata = JSON.parse(result);
       node = {};
       node.name = nodeMetadata.name || nodeMetadata.title;
       node.mimeType = nodeMetadata.mimetype;
@@ -87,6 +87,7 @@ function main()
          id : "WebPreview",
          name : "Alfresco.WebPreview",
          options : {
+            siteId: this.page ? page.url.templateArgs.site : (args.site != null ? args.site : ""),
             thumbnailModification : nodeMetadata.thumbnailModifications,
             nodeRef : model.entityNodeRef? model.entityNodeRef :model.nodeRef,
             name : nodeMetadata.name,

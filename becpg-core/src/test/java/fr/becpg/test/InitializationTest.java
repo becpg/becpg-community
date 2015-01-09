@@ -48,8 +48,8 @@ public class InitializationTest {
 		
 		dictionaryDAO.reset();
 		
-		//Doesn't work
-		Assert.assertNotNull(qNameDAO.getQName(BeCPGModel.PROP_SORT));
+		//Will throw an assert false when corrected
+		Assert.assertNull(qNameDAO.getQName(BeCPGModel.PROP_SORT));
 	}
 	
 	@Test

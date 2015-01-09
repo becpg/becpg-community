@@ -32,7 +32,7 @@
 	</licenses>
 	<properties>
           <alfresco.client.war>share</alfresco.client.war>
-          <app.filtering.enabled>false</app.filtering.enabled>
+         <!--  <app.filtering.enabled>false</app.filtering.enabled> -->
     </properties>
 	<dependencies>
 	 	 <dependency>

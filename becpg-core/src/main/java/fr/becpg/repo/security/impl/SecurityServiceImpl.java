@@ -205,7 +205,7 @@ public class SecurityServiceImpl implements SecurityService {
 	}
 
 	private List<NodeRef> findAllAclGroups() {
-		return BeCPGQueryBuilder.createQuery().ofType(SecurityModel.TYPE_ACL_GROUP).list();
+		return BeCPGQueryBuilder.createQuery().ofType(SecurityModel.TYPE_ACL_GROUP).inDB().list();
 	}
 
 	@Override

@@ -86,6 +86,11 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 	public static Wiser wiser = new Wiser(2500);
 
+	static {
+		
+		wiser.start();
+	}
+	
 	@Resource
 	protected MimetypeService mimetypeService;
 
@@ -163,27 +168,28 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 	public void afterPropertiesSet() throws Exception {
 		INSTANCE = this;
 	}
-
-	@BeforeClass
-	public static void setupBeforeClass() {
-		try {
-			logger.debug("setupBeforeClass : Start wiser");
-			wiser.start();
-		} catch (Exception e) {
-			logger.warn("cannot open wiser!", e);
-		}
-	}
-
-	@AfterClass
-	public static void tearDownBeforeClass() {
-		try {
-			logger.debug("tearDownBeforeClass : Stop wiser");
-			wiser.stop();
-		} catch (Exception e) {
-			logger.warn("cannot stop wiser!", e);
-		}
-
-	}
+//
+//	@BeforeClass
+//	public static void setupBeforeClass() {
+//		try {
+//			logger.debug("setupBeforeClass : Start wiser");
+//			wiser.strop();
+//			
+//		} catch (Exception e) {
+//			logger.warn("cannot open wiser!", e);
+//		}
+//	}
+//
+//	@AfterClass
+//	public static void tearDownBeforeClass() {
+//		try {
+//			logger.debug("tearDownBeforeClass : Stop wiser");
+//			wiser.stop();
+//		} catch (Exception e) {
+//			logger.warn("cannot stop wiser!", e);
+//		}
+//
+//	}
 
 	@Before
 	public void setUp() throws Exception {
