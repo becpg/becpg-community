@@ -131,7 +131,7 @@ public class ProjectServiceImpl implements ProjectService {
 
 	@Override
 	public List<NodeRef> getTaskLegendList() {
-		return BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_TASK_LEGEND).addSort(BeCPGModel.PROP_SORT, true).list();
+		return BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_TASK_LEGEND).addSort(BeCPGModel.PROP_SORT, true).inDB().list();
 	}
 
 	@Override

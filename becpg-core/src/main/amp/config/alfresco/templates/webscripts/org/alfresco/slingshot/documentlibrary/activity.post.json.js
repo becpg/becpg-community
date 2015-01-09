@@ -84,9 +84,9 @@ function postActivity()
       case "file-liked":
       case "entity-created":
       case "entity-liked":	
+      case "file-previewed":
+      case "file-downloaded":
       case "folder-liked":
-      case "google-docs-checkout":
-      case "google-docs-checkin":
       case "inline-edit":
          data.title = json.get("fileName");
          data.nodeRef = nodeRef;

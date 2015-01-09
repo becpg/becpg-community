@@ -165,8 +165,6 @@
       <property name="repository" ref="repositoryHelper" />
 	</bean>
 
-
-
 	<!-- beCPG Remote API -->
 
 	<bean id="abstractEntityWebScript" parent="webscript" abstract="true">

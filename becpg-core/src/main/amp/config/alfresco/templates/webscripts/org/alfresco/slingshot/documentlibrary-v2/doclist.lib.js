@@ -192,6 +192,11 @@ function doclist_main()
       nodes = documentNodes;
       totalRecords -= folderNodesCount;
    }
+   else if (parsedArgs.type === "folders")
+   {
+      nodes = folderNodes;
+      totalRecords -= documentNodesCount;
+   }
    else
    {
       // TODO: Sorting with folders at end -- swap order of concat()
@@ -230,7 +235,7 @@ function doclist_main()
    {
       // Get evaluated properties.
       item = Evaluator.run(node);
-      if (item !== null && !item.node.hasAspect("bcpg:hiddenFolder"))
+      if (item !== null &&  (filter!=="editingMe" && filter!=="editingOthers" || node.getIsLocked() || item.workingCopy.isWorkingCopy ) && !item.node.hasAspect("bcpg:hiddenFolder"))
       {
          item.isFavourite = (favourites[item.node.nodeRef] === true);
          item.likes = Common.getLikes(node);
@@ -239,9 +244,26 @@ function doclist_main()
          if (filterParams.variablePath || item.isLink)
          {
             locationNode = item.isLink ? item.linkedNode : item.node;
-            // Ensure we have Read permissions on the destination on the link object
-            if (!locationNode.hasPermission("Read")) continue;
-            location = Common.getLocation(locationNode, parsedArgs.libraryRoot);
+            if (locationNode.isTargetDeleted)
+            {
+                // take location of the link node
+                location =
+                {
+                   site: parsedArgs.location.site,
+                   siteTitle: parsedArgs.location.siteTitle,
+                   sitePreset: parsedArgs.location.sitePreset,
+                   container: parsedArgs.location.container,
+                   containerType: parsedArgs.location.containerType,
+                   path: parsedArgs.location.path,
+                   file: "<Broken Link>"
+                };
+            }
+            else
+            {
+                // Ensure we have Read permissions on the destination on the link object
+                if (!locationNode.hasPermission("Read")) continue;
+                location = Common.getLocation(locationNode, parsedArgs.libraryRoot);
+            }
             // Parent node
             if (node.parent != null && node.parent.isContainer && node.parent.hasPermission("Read"))
             {

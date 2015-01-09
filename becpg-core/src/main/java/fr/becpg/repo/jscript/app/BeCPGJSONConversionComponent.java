@@ -54,16 +54,7 @@ public class BeCPGJSONConversionComponent extends JSONConversionComponent {
 	/** Registered decorators */
 	protected Map<QName, AssociationDecorator> associationDecorators = new HashMap<QName, AssociationDecorator>(3);
 
-	/**
-	 * Thread local cache of namespace prefixes for long QName to short prefix
-	 * name conversions
-	 */
-	protected static ThreadLocal<Map<String, String>> namespacePrefixCache = new ThreadLocal<Map<String, String>>() {
-		@Override
-		protected Map<String, String> initialValue() {
-			return new HashMap<String, String>(8);
-		}
-	};
+	
 
 	/**
 	 * Register a property decorator;
@@ -94,8 +85,8 @@ public class BeCPGJSONConversionComponent extends JSONConversionComponent {
 				namespacePrefixCache.get().clear();
 
 				// Get node info
-				FileInfo nodeInfo = fileFolderService.getFileInfo(nodeRef);
-				if( nodeInfo!=null ){
+				FileInfo nodeInfo = this.fileFolderService.getFileInfo(nodeRef);
+
 					// Set root values
 					setRootValues(nodeInfo, json, useShortQNames);
 	
@@ -112,7 +103,7 @@ public class BeCPGJSONConversionComponent extends JSONConversionComponent {
 					json.put("aspects", apsectsToJSON(nodeRef, useShortQNames));
 				}
 			}
-		}
+		
 
 		return json.toJSONString();
 	}
@@ -177,77 +168,5 @@ public class BeCPGJSONConversionComponent extends JSONConversionComponent {
 		return result;
 	}
 
-	/**
-	 * Handles the work of converting values to JSON.
-	 * 
-	 * @param nodeRef
-	 * @param propertyName
-	 * @param key
-	 * @param value
-	 * @return the JSON value
-	 */
-	@SuppressWarnings({ "unchecked" })
-	protected Object propertyToJSON(final NodeRef nodeRef, final QName propertyName, final String key, final Serializable value) {
-		if (value != null) {
-			// Has a decorator has been registered for this property?
-			if (propertyDecorators.containsKey(propertyName)) {
-				JSONAware jsonAware = propertyDecorators.get(propertyName).decorate(propertyName, nodeRef, value);
-				if (jsonAware != null) {
-					return jsonAware;
-				}
-			} else {
-				// Built-in data type processing
-				if (value instanceof Date) {
-					JSONObject dateObj = new JSONObject();
-					dateObj.put("value", JSONObject.escape(value.toString()));
-					dateObj.put("iso8601", JSONObject.escape(ISO8601DateFormat.format((Date) value)));
-					return dateObj;
-				} else if (value instanceof List) {
-					// Convert the List to a JSON list by recursively calling
-					// propertyToJSON
-					List<Object> jsonList = new ArrayList<Object>(((List<Serializable>) value).size());
-					for (Serializable listItem : (List<Serializable>) value) {
-						jsonList.add(propertyToJSON(nodeRef, propertyName, key, listItem));
-					}
-					return jsonList;
-				} else if (value instanceof Double) {
-					return (Double.isInfinite((Double) value) || Double.isNaN((Double) value) ? null : value.toString());
-				} else if (value instanceof Float) {
-					return (Float.isInfinite((Float) value) || Float.isNaN((Float) value) ? null : value.toString());
-				} else {
-					return value.toString();
-				}
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * 
-	 * @param nodeRef
-	 * @param map
-	 * @param useShortQNames
-	 * @return
-	 * @throws JSONException
-	 */
-	@SuppressWarnings("unchecked")
-	protected JSONObject propertiesToJSON(NodeRef nodeRef, Map<QName, Serializable> properties, boolean useShortQNames) {
-		JSONObject propertiesJSON = new JSONObject();
-
-		for (QName propertyName : properties.keySet()) {
-			try {
-				String key = nameToString(propertyName, useShortQNames);
-				Serializable value = properties.get(propertyName);
-
-				propertiesJSON.put(key, propertyToJSON(nodeRef, propertyName, key, value));
-			} catch (NamespaceException ne) {
-				// ignore properties that do not have a registered namespace
-				if (logger.isDebugEnabled())
-					logger.debug("Ignoring property '" + propertyName + "' as its namespace is not registered");
-			}
-		}
-
-		return propertiesJSON;
-	}
 
 }

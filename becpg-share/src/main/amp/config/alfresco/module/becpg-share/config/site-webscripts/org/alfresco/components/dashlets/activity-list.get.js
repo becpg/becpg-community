@@ -13,11 +13,11 @@ function main()
       var mode = args.mode,
          site = (mode == "site") ? args.site : null;
       
-      for (var i = 0, ii = activityFeed.length; i < ii; i++)
+      for (var i=0; i<activityFeed.length; i++)
       {
          activity = activityFeed[i];
 
-            summary = eval("(" + activity.activitySummary + ")");
+         summary = JSON.parse(activity.activitySummary);
             fullName = trim(summary.firstName + " " + summary.lastName);
             date = AlfrescoUtil.fromISO8601(activity.postDate);
 
@@ -36,7 +36,7 @@ function main()
                {
                   isoDate: activity.postDate,
                },
-               title: summary.title || "title.generic",
+            title: summary.title || msg.get("title.generic"),
                userName: activity.postUserId,
                userAvatar: activity.postUserAvatar || "avatar",
                fullName: fullName,
@@ -45,16 +45,56 @@ function main()
                userProfile: userProfileUrl(activity.postUserId),
                custom0: summary.custom0 || "",
                custom1: summary.custom1 || "",
-               suppressSite: false
+               suppressSite: false,
+               grouped: false
             };
             
-            // Add to our list of unique sites
+         // Add to our set of unique sites
             sites[activity.siteNetwork] = true;
             
             // Run through specialize function for special cases
             activities.push(specialize(item, activity, summary));
       }
       
+      // group activities based same day/user/type if sequential
+      var groupActivity = null,
+          grouping = null;
+      for (var i=0; i<activities.length; i++)
+      {
+         activity = activities[i];
+         
+         // found an activity with same group as previous in list same user/day?
+         if (groupActivity !== null &&
+             groupActivity.type === activity.type &&
+             groupActivity.userName === activity.userName &&
+             groupActivity.date.isoDate.substring(8,10) === activity.date.isoDate.substring(8,10))
+         {
+            // same activity type+user+day - group it
+            grouping.push(activity);
+            // mark the activity as grouped i.e. not for top-level display itself
+            activity.grouped = true;
+         }
+         else
+         {
+            // set any existing group first before starting another
+            if (groupActivity !== null && grouping.length !== 0)
+            {
+               // we grouped at least one other activity with the processed group
+               groupActivity.group = grouping;
+            }
+            
+            // start new group
+            grouping = [];
+            groupActivity = activity;
+         }
+      }
+      // handle last item in list that may end a grouping
+      if (groupActivity !== null && grouping.length !== 0)
+      {
+         groupActivity.group = grouping;
+      }
+      
+      // resolve siteId to title string
       siteTitles = getSiteTitles(sites);
    }
 
@@ -202,7 +242,7 @@ function getActivities()
    if (result.status == 200)
    {
       // Create javascript objects from the server response
-      return eval("(" + result + ")");
+      return JSON.parse(result);
    }
    
    status.setCode(result.status, result.response);
@@ -250,7 +290,7 @@ function getSiteTitles(p_sites)
    
    if (result.status == 200)
    {
-      var sites = eval('(' + result + ')'), site;
+      var sites = JSON.parse(result), site;
 
       // Extract site titles
       for (var i = 0, ii = sites.length; i < ii; i++)
@@ -275,7 +315,21 @@ function userProfileUrl(userId)
  */
 function itemPageUrl(activity, summary)
 {
-   return url.context + "/page/site/" + encodeURI(activity.siteNetwork) + (summary.page !== undefined ? "/" + summary.page : "/dashboard");
+   if (summary.page !== undefined)
+   {
+      localPage = "/" + summary.page;
+      var splitter = "?path=";
+      var splitted = localPage.split(splitter, 2);
+      if (splitted.length == 2)
+      {
+         localPage = splitted[0] + splitter + encodeURIComponent(splitted[1]).replace(/%25/g, "%2525");
+      }
+   }
+   else
+   {
+      localPage = "/dashboard";
+   }
+   return url.context + "/page/site/" + encodeURI(activity.siteNetwork) + localPage;
 }
 
 /**

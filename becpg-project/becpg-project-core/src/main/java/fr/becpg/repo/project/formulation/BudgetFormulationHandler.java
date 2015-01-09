@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.formulation.FormulateException;

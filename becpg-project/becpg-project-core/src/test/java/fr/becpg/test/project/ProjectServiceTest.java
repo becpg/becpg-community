@@ -198,7 +198,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 		NodeRef legendNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(
 				new RetryingTransactionCallback<NodeRef>() {
 					@Override
-					public NodeRef execute() throws Throwable {
+					public NodeRef execute() throws Exception {
 
 						ChildAssociationRef assocRef = nodeService.createNode(testFolderNodeRef,
 								ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, ProjectModel.TYPE_TASK_LEGEND);

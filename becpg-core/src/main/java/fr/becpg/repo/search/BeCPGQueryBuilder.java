@@ -347,7 +347,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	public BeCPGQueryBuilder excludeVersions() {
-		excludeAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION);				
+		excludeAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION);			
 		return this;
 	}
 

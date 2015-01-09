@@ -126,13 +126,18 @@ function main()
             }
             else
             {
+               var qnamePaths = result.qnamePath.split("/"), container;
+               if ((qnamePaths.length > 4) && (qnamePaths[2] == "st:sites"))
+               {
+                  container = qnamePaths[4].substr(3);
+               }
                // wrap result and determine if it is selectable in the UI
                resultObj = 
                { 
                   item: result
                };
                resultObj.selectable = isItemSelectable(result, argsSelectableType);
-               
+               resultObj.container = container;
                contentResults.push(resultObj);
             }
          }
@@ -428,7 +433,7 @@ function resolveNode(reference)
       {
          node = companyhome.childrenByXPath("st:sites")[0];
       }
-      else if (reference == "alfresco://shared")
+      else if (reference == "alfresco://company/shared")
       {
          node = companyhome.childrenByXPath("app:shared")[0];
       }
