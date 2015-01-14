@@ -70,7 +70,6 @@ public class ClaimWorkflowTest extends AbstractWorkflowTest {
 	@Test
 	public void testWorkFlow() {
 
-		authenticationComponent.setSystemUserAsCurrentUser();
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
@@ -96,7 +95,7 @@ public class ClaimWorkflowTest extends AbstractWorkflowTest {
 			}
 		}, false, true);
 
-		authenticationComponent.setCurrentUser(BeCPGPLMTestHelper.USER_ONE);
+		
 		
 		executeClaimWF(true);
 
@@ -109,7 +108,7 @@ public class ClaimWorkflowTest extends AbstractWorkflowTest {
 	private void testDeleteNC() {
 		WorkflowTask task = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<WorkflowTask>() {
 			public WorkflowTask execute() throws Throwable {
-
+				authenticationComponent.setCurrentUser(BeCPGPLMTestHelper.USER_ONE);
 				WorkflowDefinition wfDef = workflowService.getDefinitionByName("activiti$claimProcess");
 				logger.debug("wfDefId found : " + wfDef.getId());
 

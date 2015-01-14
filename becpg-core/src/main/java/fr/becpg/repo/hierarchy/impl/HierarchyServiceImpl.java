@@ -158,7 +158,7 @@ public class HierarchyServiceImpl implements HierarchyService {
 			ret.andPropEquals(property, value);
 		}
 
-		return ret;
+		return ret.inDB();
 	}
 
 	/**

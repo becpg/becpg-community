@@ -7,7 +7,7 @@
           <cm:contains type="childAssoc">
             <pjt:taskList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="e2601047-ce2c-42b6-ab79-44bbd406020d" nodeRef="workspace://SpacesStore/cabc53bc-a21b-4f4d-94a8-4ba5672a701a">
               <pjt:tlResources type="assoc">
-                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_marketing" nodeRef="workspace://SpacesStore/a753e569-12f3-4b07-a936-3011adc981be"/>
+                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ALFRESCO_ADMINISTRATORS" nodeRef="workspace://SpacesStore/a753e569-12f3-4b07-a936-3011adc981be"/>
               </pjt:tlResources>
               <pjt:tlTaskLegend type="assoc">
                 <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Validation" nodeRef="workspace://SpacesStore/edf6091a-c689-4db1-9562-2f3e20110189">
@@ -21,8 +21,8 @@
                 </pjt:taskLegend>
               </pjt:tlTaskLegend>
               <pjt:tlObservers type="assoc">
-                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_PROJECT_cm_creator" nodeRef="workspace://SpacesStore/0e447eaa-f256-4e13-ad31-b0c6e938c417"/>
-                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_marketing" nodeRef="workspace://SpacesStore/a753e569-12f3-4b07-a936-3011adc981be"/>
+                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ALFRESCO_ADMINISTRATORS" nodeRef="workspace://SpacesStore/0e447eaa-f256-4e13-ad31-b0c6e938c417"/>
+                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ALFRESCO_ADMINISTRATORS" nodeRef="workspace://SpacesStore/a753e569-12f3-4b07-a936-3011adc981be"/>
               </pjt:tlObservers>
               <pjt:tlPrevTasks type="assoc"/>
               <cm:created type="d:datetime">2014-08-07T17:30:00.349+02:00</cm:created>
@@ -46,14 +46,14 @@
             </pjt:taskList>
             <pjt:taskList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="04a03b59-d547-4dc9-b481-b4c961d5b061" nodeRef="workspace://SpacesStore/79e9eb37-fecf-4f08-88d8-42bc14ea1315">
               <pjt:tlResources type="assoc">
-                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_responsable-industriel" nodeRef="workspace://SpacesStore/68f3929a-eaa8-4674-96bb-ed301df447f3"/>
+                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ALFRESCO_ADMINISTRATORS" nodeRef="workspace://SpacesStore/68f3929a-eaa8-4674-96bb-ed301df447f3"/>
               </pjt:tlResources>
               <pjt:tlTaskLegend type="assoc">
                 <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Validation" nodeRef="workspace://SpacesStore/edf6091a-c689-4db1-9562-2f3e20110189"/>
               </pjt:tlTaskLegend>
               <pjt:tlObservers type="assoc">
-                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_responsable-industriel" nodeRef="workspace://SpacesStore/68f3929a-eaa8-4674-96bb-ed301df447f3"/>
-                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_PROJECT_cm_creator" nodeRef="workspace://SpacesStore/0e447eaa-f256-4e13-ad31-b0c6e938c417"/>
+                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ALFRESCO_ADMINISTRATORS" nodeRef="workspace://SpacesStore/68f3929a-eaa8-4674-96bb-ed301df447f3"/>
+                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ALFRESCO_ADMINISTRATORS" nodeRef="workspace://SpacesStore/0e447eaa-f256-4e13-ad31-b0c6e938c417"/>
               </pjt:tlObservers>
               <pjt:tlPrevTasks type="assoc">
                 <pjt:taskList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="e2601047-ce2c-42b6-ab79-44bbd406020d" nodeRef="workspace://SpacesStore/cabc53bc-a21b-4f4d-94a8-4ba5672a701a"/>
@@ -77,7 +77,7 @@
             </pjt:taskList>
             <pjt:taskList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="90952497-dd20-4d51-9419-df9fb6edebaf" nodeRef="workspace://SpacesStore/ec93e8eb-5599-4bcb-bdc3-5b9c4b9b573c">
               <pjt:tlResources type="assoc">
-                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_responsable-industriel" nodeRef="workspace://SpacesStore/68f3929a-eaa8-4674-96bb-ed301df447f3"/>
+                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ALFRESCO_ADMINISTRATORS" nodeRef="workspace://SpacesStore/68f3929a-eaa8-4674-96bb-ed301df447f3"/>
               </pjt:tlResources>
               <pjt:tlTaskLegend type="assoc">
                 <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Réalisation" nodeRef="workspace://SpacesStore/b28f769a-121f-480e-a8eb-dba17d708bad">
@@ -113,7 +113,7 @@
             </pjt:taskList>
             <pjt:taskList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="18329cdf-a67d-47cf-a068-55b0b856ce68" nodeRef="workspace://SpacesStore/2b8c68d7-f64f-47a3-b93e-bf9e68afd059">
               <pjt:tlResources type="assoc">
-                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_marketing" nodeRef="workspace://SpacesStore/a753e569-12f3-4b07-a936-3011adc981be"/>
+                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ALFRESCO_ADMINISTRATORS" nodeRef="workspace://SpacesStore/a753e569-12f3-4b07-a936-3011adc981be"/>
               </pjt:tlResources>
               <pjt:tlTaskLegend type="assoc">
                 <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Réalisation" nodeRef="workspace://SpacesStore/b28f769a-121f-480e-a8eb-dba17d708bad"/>
@@ -141,14 +141,14 @@
             </pjt:taskList>
             <pjt:taskList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="c72ff1f4-12a8-43a6-93c1-53887b08cee7" nodeRef="workspace://SpacesStore/36a86ce2-a279-41de-bc40-86309c4c3933">
               <pjt:tlResources type="assoc">
-                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_Quality" nodeRef="workspace://SpacesStore/6a975b12-7d25-4718-95ec-1c1c71715ba3"/>
+                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ALFRESCO_ADMINISTRATORS" nodeRef="workspace://SpacesStore/6a975b12-7d25-4718-95ec-1c1c71715ba3"/>
               </pjt:tlResources>
               <pjt:tlTaskLegend type="assoc">
                 <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Validation" nodeRef="workspace://SpacesStore/edf6091a-c689-4db1-9562-2f3e20110189"/>
               </pjt:tlTaskLegend>
               <pjt:tlObservers type="assoc">
-                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_Quality" nodeRef="workspace://SpacesStore/6a975b12-7d25-4718-95ec-1c1c71715ba3"/>
-                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_marketing" nodeRef="workspace://SpacesStore/a753e569-12f3-4b07-a936-3011adc981be"/>
+                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ALFRESCO_ADMINISTRATORS" nodeRef="workspace://SpacesStore/6a975b12-7d25-4718-95ec-1c1c71715ba3"/>
+                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ALFRESCO_ADMINISTRATORS" nodeRef="workspace://SpacesStore/a753e569-12f3-4b07-a936-3011adc981be"/>
               </pjt:tlObservers>
               <pjt:tlPrevTasks type="assoc">
                 <pjt:taskList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="18329cdf-a67d-47cf-a068-55b0b856ce68" nodeRef="workspace://SpacesStore/2b8c68d7-f64f-47a3-b93e-bf9e68afd059"/>
@@ -172,7 +172,7 @@
             </pjt:taskList>
             <pjt:taskList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="c502e228-66a5-48d0-8976-975b52333b0f" nodeRef="workspace://SpacesStore/c96ab553-c119-465e-bd21-830274725acf">
               <pjt:tlResources type="assoc">
-                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ordonnancement" nodeRef="workspace://SpacesStore/b70329da-c533-4648-b375-c76615c1c4f6"/>
+                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ALFRESCO_ADMINISTRATORS" nodeRef="workspace://SpacesStore/b70329da-c533-4648-b375-c76615c1c4f6"/>
               </pjt:tlResources>
               <pjt:tlTaskLegend type="assoc">
                 <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Validation" nodeRef="workspace://SpacesStore/edf6091a-c689-4db1-9562-2f3e20110189"/>
@@ -200,7 +200,7 @@
             </pjt:taskList>
             <pjt:taskList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="6a88d40f-b1b3-4bf6-ad81-3bbaa3c9b05d" nodeRef="workspace://SpacesStore/d92e4467-e0b2-4ae3-becf-bf8f49c2a2cf">
               <pjt:tlResources type="assoc">
-                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_Quality" nodeRef="workspace://SpacesStore/6a975b12-7d25-4718-95ec-1c1c71715ba3"/>
+                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ALFRESCO_ADMINISTRATORS" nodeRef="workspace://SpacesStore/6a975b12-7d25-4718-95ec-1c1c71715ba3"/>
               </pjt:tlResources>
               <pjt:tlTaskLegend type="assoc">
                 <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Validation" nodeRef="workspace://SpacesStore/edf6091a-c689-4db1-9562-2f3e20110189"/>
@@ -228,7 +228,7 @@
             </pjt:taskList>
             <pjt:taskList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="f6b625ff-70ca-4976-b913-8cec5c93f7fb" nodeRef="workspace://SpacesStore/debeb440-416f-4dcd-992f-251a53848b76">
               <pjt:tlResources type="assoc">
-                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_parametrage" nodeRef="workspace://SpacesStore/b632da53-a78d-49a0-a832-4b0015c45614"/>
+                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ALFRESCO_ADMINISTRATORS" nodeRef="workspace://SpacesStore/b632da53-a78d-49a0-a832-4b0015c45614"/>
               </pjt:tlResources>
               <pjt:tlTaskLegend type="assoc">
                 <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Réalisation" nodeRef="workspace://SpacesStore/b28f769a-121f-480e-a8eb-dba17d708bad"/>
@@ -467,7 +467,7 @@
                 </pjt:taskList>
                 <pjt:taskList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="fdfacb92-826a-4677-bf3c-39eb4ef78fea" nodeRef="workspace://SpacesStore/5a90977b-0157-4532-9636-c97c8a2ada4d">
                   <pjt:tlResources type="assoc">
-                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_control-de-gestion" nodeRef="workspace://SpacesStore/e48cdf9b-78db-4e96-9e89-05d8d464f928"/>
+                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ALFRESCO_ADMINISTRATORS" nodeRef="workspace://SpacesStore/e48cdf9b-78db-4e96-9e89-05d8d464f928"/>
                   </pjt:tlResources>
                   <pjt:tlTaskLegend type="assoc">
                     <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Réalisation" nodeRef="workspace://SpacesStore/b28f769a-121f-480e-a8eb-dba17d708bad"/>
@@ -513,7 +513,7 @@
             </pjt:taskList>
             <pjt:taskList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="d204cbd6-a3ec-4b4d-b28c-2f8474a68c29" nodeRef="workspace://SpacesStore/4673d053-0876-4810-a9b0-4074775fdd10">
               <pjt:tlResources type="assoc">
-                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_PROJECT_cm_creator" nodeRef="workspace://SpacesStore/0e447eaa-f256-4e13-ad31-b0c6e938c417"/>
+                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ALFRESCO_ADMINISTRATORS" nodeRef="workspace://SpacesStore/0e447eaa-f256-4e13-ad31-b0c6e938c417"/>
               </pjt:tlResources>
               <pjt:tlTaskLegend type="assoc">
                 <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Validation" nodeRef="workspace://SpacesStore/edf6091a-c689-4db1-9562-2f3e20110189"/>
@@ -541,7 +541,7 @@
             </pjt:taskList>
             <pjt:taskList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="00d0f766-fb96-4fb3-862f-bbd1bca16f12" nodeRef="workspace://SpacesStore/965a564b-3c84-45df-90bb-c2239108a86e">
               <pjt:tlResources type="assoc">
-                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_control-de-gestion" nodeRef="workspace://SpacesStore/e48cdf9b-78db-4e96-9e89-05d8d464f928"/>
+                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ALFRESCO_ADMINISTRATORS" nodeRef="workspace://SpacesStore/e48cdf9b-78db-4e96-9e89-05d8d464f928"/>
               </pjt:tlResources>
               <pjt:tlTaskLegend type="assoc">
                 <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Réalisation" nodeRef="workspace://SpacesStore/b28f769a-121f-480e-a8eb-dba17d708bad"/>
@@ -569,7 +569,7 @@
             </pjt:taskList>
             <pjt:taskList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="4de4e369-3a20-422c-8fa4-a39141edf315" nodeRef="workspace://SpacesStore/825c126e-cf13-4d55-a381-4646be2c458e">
               <pjt:tlResources type="assoc">
-                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_PROJECT_cm_creator" nodeRef="workspace://SpacesStore/0e447eaa-f256-4e13-ad31-b0c6e938c417"/>
+                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ALFRESCO_ADMINISTRATORS" nodeRef="workspace://SpacesStore/0e447eaa-f256-4e13-ad31-b0c6e938c417"/>
               </pjt:tlResources>
               <pjt:tlTaskLegend type="assoc">
                 <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Réalisation" nodeRef="workspace://SpacesStore/b28f769a-121f-480e-a8eb-dba17d708bad"/>
@@ -597,14 +597,14 @@
             </pjt:taskList>
             <pjt:taskList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="a505c78c-23b9-481f-9326-81f31267468e" nodeRef="workspace://SpacesStore/1ec1698a-de0c-46b9-a7ce-90537ea5f62b">
               <pjt:tlResources type="assoc">
-                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_PROJECT_cm_creator" nodeRef="workspace://SpacesStore/0e447eaa-f256-4e13-ad31-b0c6e938c417"/>
+                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ALFRESCO_ADMINISTRATORS" nodeRef="workspace://SpacesStore/0e447eaa-f256-4e13-ad31-b0c6e938c417"/>
               </pjt:tlResources>
               <pjt:tlTaskLegend type="assoc">
                 <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Validation" nodeRef="workspace://SpacesStore/edf6091a-c689-4db1-9562-2f3e20110189"/>
               </pjt:tlTaskLegend>
               <pjt:tlObservers type="assoc">
-                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_marketing" nodeRef="workspace://SpacesStore/a753e569-12f3-4b07-a936-3011adc981be"/>
-                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_PROJECT_cm_creator" nodeRef="workspace://SpacesStore/0e447eaa-f256-4e13-ad31-b0c6e938c417"/>
+                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ALFRESCO_ADMINISTRATORS" nodeRef="workspace://SpacesStore/a753e569-12f3-4b07-a936-3011adc981be"/>
+                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ALFRESCO_ADMINISTRATORS" nodeRef="workspace://SpacesStore/0e447eaa-f256-4e13-ad31-b0c6e938c417"/>
               </pjt:tlObservers>
               <pjt:tlPrevTasks type="assoc">
                 <pjt:taskList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="c72ff1f4-12a8-43a6-93c1-53887b08cee7" nodeRef="workspace://SpacesStore/36a86ce2-a279-41de-bc40-86309c4c3933"/>
@@ -628,7 +628,7 @@
             </pjt:taskList>
             <pjt:taskList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="fdfacb92-826a-4677-bf3c-39eb4ef78fea" nodeRef="workspace://SpacesStore/5a90977b-0157-4532-9636-c97c8a2ada4d">
               <pjt:tlResources type="assoc">
-                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_control-de-gestion" nodeRef="workspace://SpacesStore/e48cdf9b-78db-4e96-9e89-05d8d464f928"/>
+                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ALFRESCO_ADMINISTRATORS" nodeRef="workspace://SpacesStore/e48cdf9b-78db-4e96-9e89-05d8d464f928"/>
               </pjt:tlResources>
               <pjt:tlTaskLegend type="assoc">
                 <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Réalisation" nodeRef="workspace://SpacesStore/b28f769a-121f-480e-a8eb-dba17d708bad"/>
@@ -1259,14 +1259,14 @@
               <cm:contains type="childAssoc">
                 <pjt:taskList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/bcpg:entityLists/cm:contains" type="node" name="e2601047-ce2c-42b6-ab79-44bbd406020d" nodeRef="workspace://SpacesStore/dcfac14e-3ff7-4d50-a9e8-968c4eff5dc4">
                   <pjt:tlResources type="assoc">
-                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_marketing" nodeRef="workspace://SpacesStore/a753e569-12f3-4b07-a936-3011adc981be"/>
+                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ALFRESCO_ADMINISTRATORS" nodeRef="workspace://SpacesStore/a753e569-12f3-4b07-a936-3011adc981be"/>
                   </pjt:tlResources>
                   <pjt:tlTaskLegend type="assoc">
                     <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Validation" nodeRef="workspace://SpacesStore/edf6091a-c689-4db1-9562-2f3e20110189"/>
                   </pjt:tlTaskLegend>
                   <pjt:tlObservers type="assoc">
-                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_PROJECT_cm_creator" nodeRef="workspace://SpacesStore/0e447eaa-f256-4e13-ad31-b0c6e938c417"/>
-                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_marketing" nodeRef="workspace://SpacesStore/a753e569-12f3-4b07-a936-3011adc981be"/>
+                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ALFRESCO_ADMINISTRATORS" nodeRef="workspace://SpacesStore/0e447eaa-f256-4e13-ad31-b0c6e938c417"/>
+                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ALFRESCO_ADMINISTRATORS" nodeRef="workspace://SpacesStore/a753e569-12f3-4b07-a936-3011adc981be"/>
                   </pjt:tlObservers>
                   <pjt:tlPrevTasks type="assoc"/>
                   <cm:created type="d:datetime">2014-07-17T17:25:48.574+02:00</cm:created>
@@ -1288,14 +1288,14 @@
                 </pjt:taskList>
                 <pjt:taskList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/bcpg:entityLists/cm:contains" type="node" name="04a03b59-d547-4dc9-b481-b4c961d5b061" nodeRef="workspace://SpacesStore/5c97825c-230c-40cd-9ca7-c922c5aa99cb">
                   <pjt:tlResources type="assoc">
-                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_responsable-industriel" nodeRef="workspace://SpacesStore/68f3929a-eaa8-4674-96bb-ed301df447f3"/>
+                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ALFRESCO_ADMINISTRATORS" nodeRef="workspace://SpacesStore/68f3929a-eaa8-4674-96bb-ed301df447f3"/>
                   </pjt:tlResources>
                   <pjt:tlTaskLegend type="assoc">
                     <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Validation" nodeRef="workspace://SpacesStore/edf6091a-c689-4db1-9562-2f3e20110189"/>
                   </pjt:tlTaskLegend>
                   <pjt:tlObservers type="assoc">
-                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_responsable-industriel" nodeRef="workspace://SpacesStore/68f3929a-eaa8-4674-96bb-ed301df447f3"/>
-                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_PROJECT_cm_creator" nodeRef="workspace://SpacesStore/0e447eaa-f256-4e13-ad31-b0c6e938c417"/>
+                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ALFRESCO_ADMINISTRATORS" nodeRef="workspace://SpacesStore/68f3929a-eaa8-4674-96bb-ed301df447f3"/>
+                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ALFRESCO_ADMINISTRATORS" nodeRef="workspace://SpacesStore/0e447eaa-f256-4e13-ad31-b0c6e938c417"/>
                   </pjt:tlObservers>
                   <pjt:tlPrevTasks type="assoc">
                     <pjt:taskList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/bcpg:entityLists/cm:contains" type="node" name="e2601047-ce2c-42b6-ab79-44bbd406020d" nodeRef="workspace://SpacesStore/dcfac14e-3ff7-4d50-a9e8-968c4eff5dc4"/>
@@ -1319,7 +1319,7 @@
                 </pjt:taskList>
                 <pjt:taskList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/bcpg:entityLists/cm:contains" type="node" name="90952497-dd20-4d51-9419-df9fb6edebaf" nodeRef="workspace://SpacesStore/a2999c26-79f2-4c93-a2f6-3d9d58a6f318">
                   <pjt:tlResources type="assoc">
-                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_responsable-industriel" nodeRef="workspace://SpacesStore/68f3929a-eaa8-4674-96bb-ed301df447f3"/>
+                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ALFRESCO_ADMINISTRATORS" nodeRef="workspace://SpacesStore/68f3929a-eaa8-4674-96bb-ed301df447f3"/>
                   </pjt:tlResources>
                   <pjt:tlTaskLegend type="assoc">
                     <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Réalisation" nodeRef="workspace://SpacesStore/b28f769a-121f-480e-a8eb-dba17d708bad"/>
@@ -1347,7 +1347,7 @@
                 </pjt:taskList>
                 <pjt:taskList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/bcpg:entityLists/cm:contains" type="node" name="18329cdf-a67d-47cf-a068-55b0b856ce68" nodeRef="workspace://SpacesStore/84ee89a7-7bde-42c2-95e8-a545ca7402a2">
                   <pjt:tlResources type="assoc">
-                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_marketing" nodeRef="workspace://SpacesStore/a753e569-12f3-4b07-a936-3011adc981be"/>
+                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ALFRESCO_ADMINISTRATORS" nodeRef="workspace://SpacesStore/a753e569-12f3-4b07-a936-3011adc981be"/>
                   </pjt:tlResources>
                   <pjt:tlTaskLegend type="assoc">
                     <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Réalisation" nodeRef="workspace://SpacesStore/b28f769a-121f-480e-a8eb-dba17d708bad"/>
@@ -1375,14 +1375,14 @@
                 </pjt:taskList>
                 <pjt:taskList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/bcpg:entityLists/cm:contains" type="node" name="c72ff1f4-12a8-43a6-93c1-53887b08cee7" nodeRef="workspace://SpacesStore/b11e04d7-73a0-4bb2-8a27-5597821be659">
                   <pjt:tlResources type="assoc">
-                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_Quality" nodeRef="workspace://SpacesStore/6a975b12-7d25-4718-95ec-1c1c71715ba3"/>
+                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ALFRESCO_ADMINISTRATORS" nodeRef="workspace://SpacesStore/6a975b12-7d25-4718-95ec-1c1c71715ba3"/>
                   </pjt:tlResources>
                   <pjt:tlTaskLegend type="assoc">
                     <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Validation" nodeRef="workspace://SpacesStore/edf6091a-c689-4db1-9562-2f3e20110189"/>
                   </pjt:tlTaskLegend>
                   <pjt:tlObservers type="assoc">
-                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_Quality" nodeRef="workspace://SpacesStore/6a975b12-7d25-4718-95ec-1c1c71715ba3"/>
-                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_marketing" nodeRef="workspace://SpacesStore/a753e569-12f3-4b07-a936-3011adc981be"/>
+                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ALFRESCO_ADMINISTRATORS" nodeRef="workspace://SpacesStore/6a975b12-7d25-4718-95ec-1c1c71715ba3"/>
+                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ALFRESCO_ADMINISTRATORS" nodeRef="workspace://SpacesStore/a753e569-12f3-4b07-a936-3011adc981be"/>
                   </pjt:tlObservers>
                   <pjt:tlPrevTasks type="assoc">
                     <pjt:taskList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/bcpg:entityLists/cm:contains" type="node" name="18329cdf-a67d-47cf-a068-55b0b856ce68" nodeRef="workspace://SpacesStore/84ee89a7-7bde-42c2-95e8-a545ca7402a2"/>
@@ -1406,7 +1406,7 @@
                 </pjt:taskList>
                 <pjt:taskList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/bcpg:entityLists/cm:contains" type="node" name="c502e228-66a5-48d0-8976-975b52333b0f" nodeRef="workspace://SpacesStore/b920ebdd-27ee-4699-bd51-9d34213b0b37">
                   <pjt:tlResources type="assoc">
-                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ordonnancement" nodeRef="workspace://SpacesStore/b70329da-c533-4648-b375-c76615c1c4f6"/>
+                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ALFRESCO_ADMINISTRATORS" nodeRef="workspace://SpacesStore/b70329da-c533-4648-b375-c76615c1c4f6"/>
                   </pjt:tlResources>
                   <pjt:tlTaskLegend type="assoc">
                     <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Validation" nodeRef="workspace://SpacesStore/edf6091a-c689-4db1-9562-2f3e20110189"/>
@@ -1434,7 +1434,7 @@
                 </pjt:taskList>
                 <pjt:taskList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/bcpg:entityLists/cm:contains" type="node" name="6a88d40f-b1b3-4bf6-ad81-3bbaa3c9b05d" nodeRef="workspace://SpacesStore/aca606e0-4c2d-4fe2-82e5-2f24e36d5e41">
                   <pjt:tlResources type="assoc">
-                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_Quality" nodeRef="workspace://SpacesStore/6a975b12-7d25-4718-95ec-1c1c71715ba3"/>
+                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ALFRESCO_ADMINISTRATORS" nodeRef="workspace://SpacesStore/6a975b12-7d25-4718-95ec-1c1c71715ba3"/>
                   </pjt:tlResources>
                   <pjt:tlTaskLegend type="assoc">
                     <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Validation" nodeRef="workspace://SpacesStore/edf6091a-c689-4db1-9562-2f3e20110189"/>
@@ -1462,7 +1462,7 @@
                 </pjt:taskList>
                 <pjt:taskList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/bcpg:entityLists/cm:contains" type="node" name="f6b625ff-70ca-4976-b913-8cec5c93f7fb" nodeRef="workspace://SpacesStore/f6cd68ff-6844-4978-b4b8-f2f8b8b8de1f">
                   <pjt:tlResources type="assoc">
-                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_parametrage" nodeRef="workspace://SpacesStore/b632da53-a78d-49a0-a832-4b0015c45614"/>
+                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ALFRESCO_ADMINISTRATORS" nodeRef="workspace://SpacesStore/b632da53-a78d-49a0-a832-4b0015c45614"/>
                   </pjt:tlResources>
                   <pjt:tlTaskLegend type="assoc">
                     <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Réalisation" nodeRef="workspace://SpacesStore/b28f769a-121f-480e-a8eb-dba17d708bad"/>
@@ -1474,7 +1474,7 @@
                     <pjt:taskList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:contains/bcpg:entityLists/cm:contains" type="node" name="a505c78c-23b9-481f-9326-81f31267468e" nodeRef="workspace://SpacesStore/3d4a1a63-0924-4e49-9e33-266820dc848f"/>
                     <pjt:taskList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/bcpg:entityLists/cm:contains" type="node" name="fdfacb92-826a-4677-bf3c-39eb4ef78fea" nodeRef="workspace://SpacesStore/c68c18b9-31b6-43af-ac85-8a6e6b905c1c">
                       <pjt:tlResources type="assoc">
-                        <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_control-de-gestion" nodeRef="workspace://SpacesStore/e48cdf9b-78db-4e96-9e89-05d8d464f928"/>
+                        <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ALFRESCO_ADMINISTRATORS" nodeRef="workspace://SpacesStore/e48cdf9b-78db-4e96-9e89-05d8d464f928"/>
                       </pjt:tlResources>
                       <pjt:tlTaskLegend type="assoc">
                         <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Réalisation" nodeRef="workspace://SpacesStore/b28f769a-121f-480e-a8eb-dba17d708bad"/>
@@ -1520,7 +1520,7 @@
                 </pjt:taskList>
                 <pjt:taskList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/bcpg:entityLists/cm:contains" type="node" name="d204cbd6-a3ec-4b4d-b28c-2f8474a68c29" nodeRef="workspace://SpacesStore/5b437d9a-3a83-4a8c-9217-df803d5b4d78">
                   <pjt:tlResources type="assoc">
-                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_PROJECT_cm_creator" nodeRef="workspace://SpacesStore/0e447eaa-f256-4e13-ad31-b0c6e938c417"/>
+                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ALFRESCO_ADMINISTRATORS" nodeRef="workspace://SpacesStore/0e447eaa-f256-4e13-ad31-b0c6e938c417"/>
                   </pjt:tlResources>
                   <pjt:tlTaskLegend type="assoc">
                     <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Validation" nodeRef="workspace://SpacesStore/edf6091a-c689-4db1-9562-2f3e20110189"/>
@@ -1548,7 +1548,7 @@
                 </pjt:taskList>
                 <pjt:taskList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/bcpg:entityLists/cm:contains" type="node" name="00d0f766-fb96-4fb3-862f-bbd1bca16f12" nodeRef="workspace://SpacesStore/52ff65ea-18be-4c55-b9ff-d0b152b07ddb">
                   <pjt:tlResources type="assoc">
-                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_control-de-gestion" nodeRef="workspace://SpacesStore/e48cdf9b-78db-4e96-9e89-05d8d464f928"/>
+                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ALFRESCO_ADMINISTRATORS" nodeRef="workspace://SpacesStore/e48cdf9b-78db-4e96-9e89-05d8d464f928"/>
                   </pjt:tlResources>
                   <pjt:tlTaskLegend type="assoc">
                     <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Réalisation" nodeRef="workspace://SpacesStore/b28f769a-121f-480e-a8eb-dba17d708bad"/>
@@ -1576,7 +1576,7 @@
                 </pjt:taskList>
                 <pjt:taskList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/bcpg:entityLists/cm:contains" type="node" name="4de4e369-3a20-422c-8fa4-a39141edf315" nodeRef="workspace://SpacesStore/282f75e3-579a-4387-bca1-cebc31e519e9">
                   <pjt:tlResources type="assoc">
-                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_PROJECT_cm_creator" nodeRef="workspace://SpacesStore/0e447eaa-f256-4e13-ad31-b0c6e938c417"/>
+                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ALFRESCO_ADMINISTRATORS" nodeRef="workspace://SpacesStore/0e447eaa-f256-4e13-ad31-b0c6e938c417"/>
                   </pjt:tlResources>
                   <pjt:tlTaskLegend type="assoc">
                     <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Réalisation" nodeRef="workspace://SpacesStore/b28f769a-121f-480e-a8eb-dba17d708bad"/>
@@ -1604,14 +1604,14 @@
                 </pjt:taskList>
                 <pjt:taskList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/bcpg:entityLists/cm:contains" type="node" name="a505c78c-23b9-481f-9326-81f31267468e" nodeRef="workspace://SpacesStore/7cb853ea-b0ff-4788-9c6a-bdea38d08cb8">
                   <pjt:tlResources type="assoc">
-                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_PROJECT_cm_creator" nodeRef="workspace://SpacesStore/0e447eaa-f256-4e13-ad31-b0c6e938c417"/>
+                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ALFRESCO_ADMINISTRATORS" nodeRef="workspace://SpacesStore/0e447eaa-f256-4e13-ad31-b0c6e938c417"/>
                   </pjt:tlResources>
                   <pjt:tlTaskLegend type="assoc">
                     <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Validation" nodeRef="workspace://SpacesStore/edf6091a-c689-4db1-9562-2f3e20110189"/>
                   </pjt:tlTaskLegend>
                   <pjt:tlObservers type="assoc">
-                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_marketing" nodeRef="workspace://SpacesStore/a753e569-12f3-4b07-a936-3011adc981be"/>
-                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_PROJECT_cm_creator" nodeRef="workspace://SpacesStore/0e447eaa-f256-4e13-ad31-b0c6e938c417"/>
+                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ALFRESCO_ADMINISTRATORS" nodeRef="workspace://SpacesStore/a753e569-12f3-4b07-a936-3011adc981be"/>
+                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ALFRESCO_ADMINISTRATORS" nodeRef="workspace://SpacesStore/0e447eaa-f256-4e13-ad31-b0c6e938c417"/>
                   </pjt:tlObservers>
                   <pjt:tlPrevTasks type="assoc">
                     <pjt:taskList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/bcpg:entityLists/cm:contains" type="node" name="c72ff1f4-12a8-43a6-93c1-53887b08cee7" nodeRef="workspace://SpacesStore/b11e04d7-73a0-4bb2-8a27-5597821be659"/>
@@ -1635,7 +1635,7 @@
                 </pjt:taskList>
                 <pjt:taskList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/bcpg:entityLists/cm:contains" type="node" name="fdfacb92-826a-4677-bf3c-39eb4ef78fea" nodeRef="workspace://SpacesStore/c68c18b9-31b6-43af-ac85-8a6e6b905c1c">
                   <pjt:tlResources type="assoc">
-                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_control-de-gestion" nodeRef="workspace://SpacesStore/e48cdf9b-78db-4e96-9e89-05d8d464f928"/>
+                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ALFRESCO_ADMINISTRATORS" nodeRef="workspace://SpacesStore/e48cdf9b-78db-4e96-9e89-05d8d464f928"/>
                   </pjt:tlResources>
                   <pjt:tlTaskLegend type="assoc">
                     <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Réalisation" nodeRef="workspace://SpacesStore/b28f769a-121f-480e-a8eb-dba17d708bad"/>

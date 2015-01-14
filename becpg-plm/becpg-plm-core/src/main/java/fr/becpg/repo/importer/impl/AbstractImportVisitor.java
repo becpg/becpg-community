@@ -607,6 +607,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 					Resource resource = applicationContext.getResource(value);
 					in = resource.getInputStream();
 				} catch (IOException e) {
+					logger.error("No resource found in path "+value);
 					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_LOAD_FILE, value));
 				}
 
@@ -1202,6 +1203,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			if (hierarchyNodeRef != null) {
 				return hierarchyNodeRef;
 			} else {
+				logger.error("No hierarchy found in path "+ importContext.getPath()+ " with value "+value);
 				throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_GET_ASSOC_TARGET, propDef.getName(), value));
 			}
 		}

@@ -50,7 +50,7 @@
         }, p_oParent, p_expanded);
         
         if(beCPG.util.isEntity(p_oData)){
-      	  treeNode.labelStyle = p_oData.type.replace(":", "-")+" ygtvlabel";
+      	  treeNode.labelStyle = "entity " + p_oData.type.replace(":", "-")+" ygtvlabel";
         }
         
         return treeNode;

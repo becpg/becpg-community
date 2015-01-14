@@ -639,17 +639,10 @@ public class ImportServiceImpl implements ImportService {
 	private Element loadMapping(String name) throws ImporterException {
 
 		Element mappingElt = null;
-		NodeRef mappingNodeRef = null;
-
 		
-		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery()
-				.inPath(FULL_PATH_IMPORT_MAPPING)
-				.andPropEquals(ContentModel.PROP_NAME, name+".xml");
+		NodeRef mappingNodeRef = BeCPGQueryBuilder.createQuery().parent( BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(), FULL_PATH_IMPORT_MAPPING))
+				.andPropEquals(ContentModel.PROP_NAME, name+".xml").inDB().singleValue();
 
-		logger.debug(queryBuilder.toString());
-
-		mappingNodeRef = queryBuilder.singleValue();
-	
 
 		if (mappingNodeRef == null) {
 			String msg = I18NUtil.getMessage(MSG_ERROR_MAPPING_NOT_FOUND, name);

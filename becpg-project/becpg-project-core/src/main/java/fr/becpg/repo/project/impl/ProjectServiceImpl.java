@@ -331,7 +331,7 @@ public class ProjectServiceImpl implements ProjectService {
 			List<NodeRef> nodeRefs = new ArrayList<NodeRef>(1);
 			nodeRefs.add(taskListNodeRef);
 
-			if (resourceNodeRef != null) {
+			if (resourceNodeRef != null && nodeService.exists(resourceNodeRef)) {
 				String authorityName = authorityDAO.getAuthorityName(resourceNodeRef);
 
 				if (authorityName != null && !isRoleAuhtority(authorityName)) {

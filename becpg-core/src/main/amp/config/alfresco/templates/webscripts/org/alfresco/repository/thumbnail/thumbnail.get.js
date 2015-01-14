@@ -96,7 +96,7 @@ function main()
       // Queue the creation of the thumbnail if appropriate
       if (fc)
       {
-        model.contentNode = node.createThumbnail(thumbnailName, false);
+        model.contentNode = node.createThumbnail(thumbnailName, false, true);
       }
       else
       {

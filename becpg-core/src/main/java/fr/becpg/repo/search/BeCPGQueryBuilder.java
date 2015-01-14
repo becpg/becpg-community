@@ -806,11 +806,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		// eventual consistency; or
 		sp.setQueryConsistency(queryConsistancy);
 
-		if (QueryConsistency.TRANSACTIONAL.equals(queryConsistancy)) {
-			logger.trace("Transactionnal Search");
-			// Will ensure coherency between solr and lucene
-			sp.excludeDataInTheCurrentTransaction(false);
-		}
+// No more lucene search		
+//		if (QueryConsistency.TRANSACTIONAL.equals(queryConsistancy)) {
+//			logger.trace("Transactionnal Search");
+//			// Will ensure coherency between solr and lucene
+//			sp.excludeDataInTheCurrentTransaction(false);
+//		}
 
 		if (maxResults == RepoConsts.MAX_RESULTS_UNLIMITED) {
 			sp.setLimitBy(LimitBy.UNLIMITED);

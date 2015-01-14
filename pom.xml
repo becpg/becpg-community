@@ -80,7 +80,7 @@
 
 		<alfresco.client.war>alfresco</alfresco.client.war>
 		<alfresco.client.war.groupId>org.alfresco</alfresco.client.war.groupId>
-
+		<alfresco.data.location>target/alf_data_dev</alfresco.data.location>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -166,7 +166,7 @@
 						<nonFilteredFileExtension>swf</nonFilteredFileExtension>
 						<nonFilteredFileExtension>zip</nonFilteredFileExtension>
 						<nonFilteredFileExtension>msg</nonFilteredFileExtension>
-						<nonFilteredFileExtension>csv</nonFilteredFileExtension>
+						<!-- <nonFilteredFileExtension>csv</nonFilteredFileExtension> -->
 					</nonFilteredFileExtensions>
 				</configuration>
 			</plugin>

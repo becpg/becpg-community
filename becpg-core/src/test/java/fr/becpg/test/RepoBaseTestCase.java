@@ -44,9 +44,7 @@ import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -168,28 +166,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 	public void afterPropertiesSet() throws Exception {
 		INSTANCE = this;
 	}
-//
-//	@BeforeClass
-//	public static void setupBeforeClass() {
-//		try {
-//			logger.debug("setupBeforeClass : Start wiser");
-//			wiser.strop();
-//			
-//		} catch (Exception e) {
-//			logger.warn("cannot open wiser!", e);
-//		}
-//	}
-//
-//	@AfterClass
-//	public static void tearDownBeforeClass() {
-//		try {
-//			logger.debug("tearDownBeforeClass : Stop wiser");
-//			wiser.stop();
-//		} catch (Exception e) {
-//			logger.warn("cannot stop wiser!", e);
-//		}
-//
-//	}
+
 
 	@Before
 	public void setUp() throws Exception {
