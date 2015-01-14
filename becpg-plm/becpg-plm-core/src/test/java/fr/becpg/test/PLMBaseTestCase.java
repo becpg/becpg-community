@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
@@ -153,9 +154,9 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 		logger.trace("TearDown :");
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
 			public Boolean execute() throws Throwable {
-
+				AuthenticationUtil.setFullyAuthenticatedUser(AuthenticationUtil.getAdminUserName());
 				// products
-				List<NodeRef> productNodeRefs = BeCPGQueryBuilder.createQuery().ofType(PLMModel.TYPE_PRODUCT).inDB().ftsLanguage().list();
+				List<NodeRef> productNodeRefs = BeCPGQueryBuilder.createQuery().ofType(PLMModel.TYPE_PRODUCT).inDB().list();
 
 				for (NodeRef productNodeRef : productNodeRefs) {
 					if (nodeService.exists(productNodeRef) && !nodeService.hasAspect(productNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)) {

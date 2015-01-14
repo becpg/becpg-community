@@ -57,7 +57,12 @@
 					</constraints>
 				</property>
 				<property name="rep:reportTplClassName">
-					<type>d:qname</type>					
+					<type>d:qname</type>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>FALSE</tokenised>
+					</index>					
 				</property>
 				<property name="rep:reportTplIsSystem">
 					<type>d:boolean</type>
@@ -72,6 +77,11 @@
 					<mandatory>true</mandatory>
 					<multiple>false</multiple>
 					<default>PDF</default>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>FALSE</tokenised>
+					</index>
 					<constraints>
 						<constraint ref="rep:reportTplFormats" />
 					</constraints>

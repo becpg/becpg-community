@@ -32,9 +32,11 @@ import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
+import org.alfresco.service.cmr.dictionary.InvalidAspectException;
 import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
+import org.alfresco.service.cmr.repository.InvalidNodeRefException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.rule.Rule;
@@ -214,10 +216,29 @@ public class EntityTplServiceImpl implements EntityTplService {
 		if (nodeType == null) {
 			return null;
 		}
+		
+		List<NodeRef> tplsNodeRef =  BeCPGQueryBuilder.createQuery().ofType(nodeType).withAspect(BeCPGModel.ASPECT_ENTITY_TPL).inDB().list();
+		
+		for(NodeRef tpl : tplsNodeRef){
+		
+				try {
+					if(!nodeService.hasAspect(tpl, BeCPGModel.ASPECT_COMPOSITE_VERSION)
+							&& (Boolean)nodeService.getProperty(tpl, BeCPGModel.PROP_ENTITY_TPL_ENABLED)
+							&& (Boolean)nodeService.getProperty(tpl, BeCPGModel.PROP_ENTITY_TPL_IS_DEFAULT)){
+						return tpl;
+					}
+				} catch (InvalidNodeRefException | InvalidAspectException e) {
+					logger.error(e,e);
+				}
+	
+					
+		}
+		return null ;
 
-		return BeCPGQueryBuilder.createQuery().ofExactType(nodeType).withAspect(BeCPGModel.ASPECT_ENTITY_TPL)
+		//TODO
+		/*return BeCPGQueryBuilder.createQuery().ofExactType(nodeType).withAspect(BeCPGModel.ASPECT_ENTITY_TPL)
 				.andPropEquals(BeCPGModel.PROP_ENTITY_TPL_ENABLED, Boolean.TRUE.toString())
-				.andPropEquals(BeCPGModel.PROP_ENTITY_TPL_IS_DEFAULT, Boolean.TRUE.toString()).excludeVersions().singleValue();
+				.andPropEquals(BeCPGModel.PROP_ENTITY_TPL_IS_DEFAULT, Boolean.TRUE.toString()).excludeVersions().singleValue();*/
 	}
 
 	@Override

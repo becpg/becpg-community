@@ -140,7 +140,7 @@
                      <url>/components/entity-details/entity-header</url>
                      <properties>
                         <nodeRef>{nodeRef}</nodeRef>
-                        <libraryRoot>alfresco://shared</libraryRoot>
+                        <libraryRoot>alfresco://company/shared</libraryRoot>
                         <rootPage>context/shared/sharedfiles</rootPage>
                         <rootLabelId>location.path.shared</rootLabelId>
                      </properties>
@@ -322,15 +322,6 @@
       <component>
          <region-id>document-versions</region-id>
          <url>/components/document-details/document-versions</url>
-         <properties>
-            <nodeRef>{nodeRef}</nodeRef>
-         </properties>
-      </component>
-
-      <!-- Document Publishing -->
-      <component>
-         <region-id>document-publishing</region-id>
-         <url>/components/document-details/document-publishing</url>
          <properties>
             <nodeRef>{nodeRef}</nodeRef>
          </properties>

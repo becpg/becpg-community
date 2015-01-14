@@ -123,7 +123,7 @@ public class EntitySystemServiceImpl implements EntitySystemService {
 
 	@Override
 	public List<NodeRef> getSystemEntities() {
-		return BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_SYSTEM_ENTITY).excludeVersions().list();
+		return BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_SYSTEM_ENTITY).inDB().list();
 	}
 
 	@Override

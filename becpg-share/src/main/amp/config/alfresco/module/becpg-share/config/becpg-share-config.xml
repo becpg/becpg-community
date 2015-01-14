@@ -284,7 +284,6 @@
 				<action index="210" id="view-in-explorer" />
 				<action index="220" id="document-view-in-source-repository" label="actions.folder.view-source-repository" />
 				<action index="270" id="document-assign-workflow" />
-				<action index="340" id="document-publish" />
 				<action index="360" id="document-cloud-sync" />
 				<action index="370" id="document-cloud-unsync" />
 				<action index="380" id="document-view-in-cloud" />

@@ -142,12 +142,12 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 					public NodeRef execute() throws Throwable {
 
 						List<NodeRef> dbReports = associationService.getTargetAssocs(rawMaterialNodeRef, ReportModel.ASSOC_REPORTS);
+						
 						assertEquals(1, dbReports.size());
-
 						// Check out
 						logger.debug("checkout nodeRef: " + rawMaterialNodeRef);
 						return checkOutCheckInService.checkout(rawMaterialNodeRef);
-
+						
 					}
 				}, false, true);
 

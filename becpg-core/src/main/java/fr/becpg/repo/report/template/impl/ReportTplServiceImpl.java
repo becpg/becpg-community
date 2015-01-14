@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -76,7 +77,7 @@ public class ReportTplServiceImpl implements ReportTplService {
 	 */
 	@Override
 	public List<NodeRef> getSystemReportTemplates(ReportType reportType, QName nodeType) {
-		return getReportTpls(reportType, nodeType, true, null).list();
+		return getReportTpls(reportType, nodeType, true, null);
 	}
 
 	/**
@@ -84,7 +85,9 @@ public class ReportTplServiceImpl implements ReportTplService {
 	 */
 	@Override
 	public NodeRef getSystemReportTemplate(ReportType reportType, QName nodeType, String tplName) {
-		return getReportTpls(reportType, nodeType, true, tplName).singleValue();
+		List<NodeRef> ret = getReportTpls(reportType, nodeType, true, tplName);
+		
+		return ret!=null && !ret.isEmpty() ? ret.get(0) : null;
 	}
 
 	/**
@@ -101,7 +104,7 @@ public class ReportTplServiceImpl implements ReportTplService {
 	 */
 	@Override
 	public List<NodeRef> getUserReportTemplates(ReportType reportType, QName nodeType, String tplName) {
-		return getReportTpls(reportType, nodeType, false, tplName).list();
+		return getReportTpls(reportType, nodeType, false, tplName);
 	}
 
 	/**
@@ -117,7 +120,10 @@ public class ReportTplServiceImpl implements ReportTplService {
 	 */
 	@Override
 	public NodeRef getUserReportTemplate(ReportType reportType, QName nodeType, String tplName) {
-		return getReportTpls(reportType, nodeType, false, tplName).singleValue();
+		List<NodeRef> ret =  getReportTpls(reportType, nodeType, false, tplName);
+		
+
+		return ret!=null && !ret.isEmpty() ? ret.get(0) : null;
 	}
 
 	/**
@@ -151,7 +157,7 @@ public class ReportTplServiceImpl implements ReportTplService {
 				properties.put(ContentModel.PROP_NAME, tplFullName);
 				properties.put(ReportModel.PROP_REPORT_TPL_TYPE, reportType);
 				properties.put(ReportModel.PROP_REPORT_TPL_FORMAT, reportFormat);
-				properties.put(ReportModel.PROP_REPORT_TPL_CLASS_NAME, nodeType);
+				properties.put(ReportModel.PROP_REPORT_TPL_CLASS_NAME, nodeType!=null ? nodeType.toString() : null);
 				properties.put(ReportModel.PROP_REPORT_TPL_IS_SYSTEM, isSystemTpl);
 				properties.put(ReportModel.PROP_REPORT_TPL_IS_DEFAULT, isDefaultTpl);
 
@@ -185,6 +191,8 @@ public class ReportTplServiceImpl implements ReportTplService {
 			} finally {
 				IOUtils.closeQuietly(in);
 			}
+		} else {
+			logger.error("Path doesn't exists: "+tplFilePath);
 		}
 
 		return reportTplNodeRef;
@@ -293,18 +301,29 @@ public class ReportTplServiceImpl implements ReportTplService {
 		return reportFormat;
 	}
 
-	private BeCPGQueryBuilder getReportTpls(ReportType reportType, QName nodeType, boolean isSystem, String tplName) {
+	private List<NodeRef> getReportTpls(ReportType reportType, QName nodeType, Boolean isSystem, String tplName) {
 
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(ReportModel.TYPE_REPORT_TPL)
 				.andPropEquals(ReportModel.PROP_REPORT_TPL_TYPE, reportType.toString())
-				.andPropQuery(ReportModel.PROP_REPORT_TPL_IS_SYSTEM, Boolean.valueOf(isSystem).toString())
-				.excludeProp(ReportModel.PROP_REPORT_TPL_IS_DISABLED, Boolean.TRUE.toString())
 				.andPropEquals(ReportModel.PROP_REPORT_TPL_CLASS_NAME, nodeType != null ? nodeType.toString() : null);
 
 		if (tplName != null && tplName != "*") {
 			queryBuilder.andPropQuery(ContentModel.PROP_NAME, tplName);
+		} else {
+			queryBuilder.inDB();
 		}
-		return queryBuilder;
+		
+		//TODO DB query not supporting boolean, CMIS not supporting qname
+		
+		List<NodeRef> ret = new LinkedList<>();
+		for(NodeRef rTplNodeRef : queryBuilder.ftsLanguage().list()){
+			if(isSystem.equals(nodeService.getProperty(rTplNodeRef, ReportModel.PROP_REPORT_TPL_IS_SYSTEM))
+					&& ! Boolean.TRUE.equals(nodeService.getProperty(rTplNodeRef, ReportModel.PROP_REPORT_TPL_IS_DISABLED)) ){
+				ret.add(rTplNodeRef);
+			}
+		}
+		
+		return ret;
 	}
 
 	@Override

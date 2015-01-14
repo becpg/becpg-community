@@ -138,7 +138,7 @@ public class RemoteSchemaGenerator {
 				
 				
 
-				logger.error("Create type :" + type.toPrefixString());
+				logger.debug("Create type :" + type.toPrefixString());
 				xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema", "complexType");
 				xmlw.writeAttribute("name", type.getPrefixString().replace(":", "_") + "_type");
 				xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema", "complexContent");

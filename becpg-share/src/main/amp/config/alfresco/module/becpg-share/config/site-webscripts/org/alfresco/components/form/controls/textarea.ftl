@@ -1,7 +1,7 @@
 <#if field.control.params.rows??><#assign rows=field.control.params.rows><#else><#assign rows=2></#if>
 <#if field.control.params.columns??><#assign columns=field.control.params.columns><#else><#assign columns=60></#if>
 
-<div class="form-field">
+<div class="form-field alf-textarea">
 	<#if field.dataKeyName?? && field.dataType??>
 	   <#if form.mode == "view">
 	      <div class="viewmode-field">
@@ -22,6 +22,7 @@
 	                <#if field.description??>title="${field.description}"</#if>
 	                <#if field.control.params.styleClass??>class="${field.control.params.styleClass}"</#if>
 	                <#if field.control.params.style??>style="${field.control.params.style}"</#if>
+                    <#if field.control.params.maxLength??>maxlength="${field.control.params.maxLength}"<#else>maxlength="1024"</#if>
 	                <#if field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true")>disabled="true"</#if>>${field.value?html}</textarea>
 	      <@formLib.renderFieldHelp field=field />
 	   </#if>
