@@ -111,6 +111,19 @@ var AlfrescoUtil =
       }
       return repositoryUrl;
    },
+   
+   getActivitiAdminUrl: function getActivitiAdminUrl()
+   {
+      // Repository Url
+      var activitiAdminUrl = null,
+      activitiAdminConfig = config.scoped["ActivitiAdmin"]["activiti-admin-url"];
+
+      if (activitiAdminConfig !== null)
+      {
+         activitiAdminUrl = activitiAdminConfig.value;
+      }
+      return activitiAdminUrl;
+   },
 
    getRootNode: function getRootNode()
    {
@@ -130,7 +143,7 @@ var AlfrescoUtil =
       result = remote.connect("alfresco").get(url);
       if (result.status == 200)
       {
-         return eval('(' + result + ')');
+         return JSON.parse(result);
       }
       return null;
    },
@@ -142,7 +155,7 @@ var AlfrescoUtil =
       if (result.status == 200)
       {
          var siteRoles = [];
-         var roles = eval('(' + result + ')').siteRoles;
+         var roles = JSON.parse(result).siteRoles;
          for (var i = 0; i < roles.length; i++)
          {
             if (roles[i] != "None")
@@ -169,7 +182,7 @@ var AlfrescoUtil =
       return null;
    },
 
-   processNodeDetails: function processNodeDetails(url, site, options, libraryRoot)
+   processNodeDetails: function processNodeDetails(url, site, options, libraryRoot, returnError)
    {
       if (!site)
       {
@@ -181,12 +194,16 @@ var AlfrescoUtil =
 
       if (result.status == 200)
       {
-         var details = eval('(' + result + ')');
+         var details = JSON.parse(result);
          if (details && (details.item || details.items))
          {
             DocList.processResult(details, options);
             return details;
          }
+      }
+      else if (returnError)
+      {
+         return {error: JSON.parse(result)};
       }
       return null;
    },
@@ -196,7 +213,7 @@ var AlfrescoUtil =
       if (remoteNodeRef)
       {
          var url = '/cloud/doclib2/node/' + remoteNodeRef.replace("://", "/") + "?network=" + remoteNetworkId,
-            details = AlfrescoUtil.processNodeDetails(url, true, options);
+            details = AlfrescoUtil.processNodeDetails(url, true, options, null, true);
          if (details)
          {
             return details;
@@ -217,7 +234,7 @@ var AlfrescoUtil =
          }
          AlfrescoUtil.error(result.status, 'Could not link details for link ' + link + ' in container ' + container + ' in site ' + site);
       }
-      return eval('(' + result + ')').item;
+      return JSON.parse(result).item;
    },
 
    getBlogPostDetails: function getBlogPostDetails(nodeRef, defaultValue)
@@ -232,7 +249,7 @@ var AlfrescoUtil =
          }
          AlfrescoUtil.error(result.status, 'Could not blog details for post ' + nodeRef);
       }
-      return eval('(' + result + ')').item;
+      return JSON.parse(result).item;
    },
 
    getBlogPostDetailsByPostId: function getBlogPostDetailsByPostId(site, container, post, defaultValue)
@@ -247,7 +264,7 @@ var AlfrescoUtil =
          }
          AlfrescoUtil.error(result.status, 'Could not blog details for post ' + post + ' in container ' + container + ' in site ' + site);
       }
-      return eval('(' + result + ')').item;
+      return JSON.parse(result).item;
    },
 
    getMetaData: function getMetaData(nodeRef, defaultValue)
@@ -261,7 +278,7 @@ var AlfrescoUtil =
          }
          AlfrescoUtil.error(result.status, 'Could not load meta data ' + nodeRef);
       }
-      result = eval('(' + result + ')');
+      result = JSON.parse(result);
       return result;
    },
 
@@ -276,7 +293,7 @@ var AlfrescoUtil =
          }
          AlfrescoUtil.error(result.status, 'Could not load thumbnail definitions for ' + nodeRef);
       }
-      return eval('(' + result + ')');
+      return JSON.parse(result);
    },
 
    /**
@@ -290,7 +307,7 @@ var AlfrescoUtil =
       var userprefs = {};
 
       // Retrieve the current user's preferences
-      var prefs = eval('(' + preferences.value + ')');
+      var prefs = jsonUtils.toObject(preferences.value);
 
       // If filter isn't set, then return all the preferences.
       if (typeof p_filter == "undefined" || p_filter.length == 0)
@@ -389,7 +406,7 @@ var AlfrescoUtil =
       var json = remote.call("/api/sites/" + encodeURIComponent(siteId) + "/memberships/" + encodeURIComponent(user.name));
       if (json.status == 200)
       {
-         response = eval('(' + json + ')');
+         response = JSON.parse(json);
          if (response)
          {
             obj =
@@ -439,11 +456,8 @@ var AlfrescoUtil =
             {
                try
                {
-                  // Parse json using Java to a org.json.simple.JSONArray (wrap in an object to keep toObject happy)
-                  sitePages = jsonUtils.toObject('{"tmp":' + dashboardPageData.properties.sitePages + '}').tmp;
-
-                  // Print array as json and use eval so we get a Rhino javascript array to execute as usual
-                  sitePages = eval("(" + sitePages.toString() + ")");
+                  // Print array as json and use JSON.parse so we get a Rhino javascript Array to execute as usual
+                  sitePages = JSON.parse('{"$":' + sitePages + '}').$;
                }
                catch(e)
                {
@@ -458,13 +472,11 @@ var AlfrescoUtil =
             {
                try
                {
-                  // Parse json using Java to a org.json.simple.JSONObject with an Arra
-                  pageMetadata = jsonUtils.toObject('{"tmp":[' + pageMetadata + ']}').tmp;
-
-                  // Print object as json and use eval so we get a Rhino javascript object to execute as usual
-                  pageMetadata = eval("(" + pageMetadata.toString() + ")")[0];
+                  // use JSON.parse so we get a Rhino javascript object to execute as usual
+                  pageMetadata = JSON.parse(pageMetadata);
                }
-               catch(e){
+               catch(e)
+               {
                   pageMetadata = {};
                }
             }
@@ -616,8 +628,6 @@ var AlfrescoUtil =
     */
    getPaths: function getPaths(itemDetails, targetPage, targetPageLabel)
    {
-      // NOTE: the %2525 double encoding madness is to cope with the fail of urlrewrite filter to correctly cope with encoded paths
-      // see urlrewrite.xml
       var item = itemDetails.item,
          isContainer = item.node.isContainer,
          path = item.location.path,
@@ -695,11 +705,11 @@ var AlfrescoUtil =
       var result = connector.get("/enterprise/sync/remotesyncednode?nodeRef="+encodeURIComponent(localNodeRef));
       if (result.status == 200)
       {
-         return eval('(' + result + ')');
+         return JSON.parse(result);
       } else if (result.status == 403)
       {
          // Node Not Synced.
-         return {error: eval('(' + result + ')')};
+         return {error: JSON.parse(result)};
       } else
       {
          return null;

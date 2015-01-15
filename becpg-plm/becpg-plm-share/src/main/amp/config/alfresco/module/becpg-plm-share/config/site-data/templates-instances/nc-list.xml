@@ -90,7 +90,7 @@
       </component>
 
 
-      <!-- project List -->
+      <!-- nc List -->
       <component>
          <region-id>list</region-id>
          <url>/components/quality/nc-list</url>

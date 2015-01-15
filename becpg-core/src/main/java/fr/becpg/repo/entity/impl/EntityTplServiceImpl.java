@@ -139,6 +139,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 		NodeRef entityTplNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, entityTplName);
 		if (entityTplNodeRef == null) {
+			logger.debug("Creating a new entity template: "+ entityTplName);
 			entityTplNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, entityType.getLocalName()), entityType, properties).getChildRef();
 		}

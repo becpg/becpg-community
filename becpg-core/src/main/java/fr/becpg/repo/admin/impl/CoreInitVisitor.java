@@ -130,10 +130,10 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 	protected void visitFiles(NodeRef folderNodeRef, String folderName) {
 
 		if (RepoConsts.PATH_ICON.equals(folderName) ) {
-			contentHelper.addFilesResources(folderNodeRef, "classpath:beCPG/images/*.png");
+			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/images/*.png");
 		}
 		if (RepoConsts.PATH_OLAP_QUERIES.equals(folderName) ) {
-			contentHelper.addFilesResources(folderNodeRef, "classpath:beCPG/olap/*.saiku");
+			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/olap/*.saiku");
 		}
 
 	}
@@ -233,7 +233,7 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 					TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_COMPARE_ENTITIES),
 					COMPARE_ENTITIES_REPORT_PATH, ReportType.Compare, ReportFormat.PDF, null, false, true, false);
 			
-			List<NodeRef> resources = contentHelper.addFilesResources(compareProductFolderNodeRef, "classpath:beCPG/birt/system/*.properties",false);
+			List<NodeRef> resources = contentHelper.addFilesResources(compareProductFolderNodeRef, "classpath*:beCPG/birt/system/*.properties",false);
 			associationService.update(compareReportNodeRef, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES, resources);
 			
 		} catch (IOException e) {
