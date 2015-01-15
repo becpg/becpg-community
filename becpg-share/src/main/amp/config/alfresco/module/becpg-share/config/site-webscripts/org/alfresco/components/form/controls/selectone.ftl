@@ -52,7 +52,7 @@
                   <#else>
                      <#assign choice=nameValue?split(labelSeparator)>
                      <#if choice[0] == fieldValue?string || (fieldValue?is_number && fieldValue?c == choice[0])>
-                        <#assign valueToShow=msgValue(choice[1])>
+                        <#assign valueToShow=msg(choice[1])>
                         <#break>
                      </#if>
                   </#if>

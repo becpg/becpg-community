@@ -112,7 +112,7 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 		// MailTemplates
 		NodeRef emailsProject = visitFolder(BeCPGQueryBuilder.createQuery().selectNodeByPath(companyHome, EMAIL_TEMPLATES),
 				ProjectRepoConsts.PATH_EMAILS_PROJECT);
-		contentHelper.addFilesResources(emailsProject, "classpath:beCPG/mails/project/*.ftl");
+		contentHelper.addFilesResources(emailsProject, "classpath*:beCPG/mails/project/*.ftl");
 	}
 
 	/**

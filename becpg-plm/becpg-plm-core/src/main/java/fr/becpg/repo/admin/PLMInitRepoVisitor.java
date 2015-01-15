@@ -189,8 +189,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 		visitEntityTpls(systemNodeRef);
 
 		// MailTemplates
-		contentHelper.addFilesResources(beCPGMailService.getEmailTemplatesFolder(), "classpath:beCPG/mails/*.ftl");	
-		contentHelper.addFilesResources(beCPGMailService.getEmailWorkflowTemplatesFolder(), "classpath:beCPG/mails/workflow/*.ftl");
+		contentHelper.addFilesResources(beCPGMailService.getEmailTemplatesFolder(), "classpath*:beCPG/mails/*.ftl");	
+		contentHelper.addFilesResources(beCPGMailService.getEmailWorkflowTemplatesFolder(), "classpath*:beCPG/mails/workflow/*.ftl");
 
 		// Companies
 		NodeRef companiesNodeRef = visitFolder(companyHome, PlmRepoConsts.PATH_COMPANIES);

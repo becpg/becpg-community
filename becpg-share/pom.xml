@@ -94,6 +94,7 @@
                     <encoding>UTF-8</encoding>
                     <includes>
                         <include>**/*.js</include>
+                        <!-- <include>**/*.css</include> -->
                     </includes>
                     <!-- We don't need to re-minify YUI or 3rd party libs -->
                     <excludes>

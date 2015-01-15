@@ -89,7 +89,7 @@ function main()
          options : {
             siteId: this.page ? page.url.templateArgs.site : (args.site != null ? args.site : ""),
             thumbnailModification : nodeMetadata.thumbnailModifications,
-            nodeRef : model.entityNodeRef? model.entityNodeRef :model.nodeRef,
+            nodeRef : model.nodeRef,
             name : nodeMetadata.name,
             mimeType : nodeMetadata.mimeType,
             size: nodeMetadata.size,

@@ -331,7 +331,7 @@
         else
         {
             var id = scope.id + '-preview-' + oRecord.getId();
-            var fileIcon = Alfresco.util.getFileIcon(name);
+            var fileIcon = Alfresco.util.getFileIcon(name,node.type);
             if (fileIcon == "generic-file-32.png")
             {
                 fileIcon = Alfresco.util.getFileIconByMimetype(node.mimetype);
