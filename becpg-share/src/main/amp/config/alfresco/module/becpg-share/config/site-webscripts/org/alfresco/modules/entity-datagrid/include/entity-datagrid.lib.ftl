@@ -10,7 +10,7 @@
 
 <#macro dataGridToolbarSelectedItem toolbarId>
 	<div class="selected-items">
-      <button class="no-access-check" id="${toolbarId}-selectedItems-button" name="doclist-selectedItems-button">${msg("menu.selected-items")}</button>
+      <button class="no-access-check" id="${toolbarId}-selectedItems-button" name="doclist-selectedItems-button">${msg("menu.selected-items")}&nbsp;&#9662;</button>
       <div id="${toolbarId}-selectedItems-menu" class="yuimenu" style="visibility:hidden">
          <div class="bd">
             <ul>
@@ -41,7 +41,7 @@
       <div class="yui-u first align-center">
          <#if args.filter?? && args.filter?starts_with("true") >
          <div class="filter-form" >
-				<button id="${el}-filterform-button">${msg("filterform.header")}</button>
+				<button id="${el}-filterform-button">${msg("filterform.header")}&nbsp;&#9662;</button>
 				<div id="${el}-filterform-panel"  class="yuimenu" >
 					 <div class="bd">
 					 		<div id="${el}-filterform"  class="filterform" ></div>

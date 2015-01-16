@@ -27,7 +27,7 @@
 		<div id="${el}-body" class="bulk-edit">
 			    <div class="bulk-edit-meta">
 			     <div class="item-type-select">
-			      <button id="${el}-itemTypeSelect-button" name="bulk-edit-itemSelect-button">${msg("menu.select.type")}</button>
+			      <button id="${el}-itemTypeSelect-button" name="bulk-edit-itemSelect-button">${msg("menu.select.type")}&nbsp;&#9662;</button>
 			   	   <div id="${el}-itemTypeSelect-menu" class="yuimenu" style="visibility:hidden;">
 			               <div class="bd">
 			                  <ul>
@@ -44,7 +44,7 @@
 			   <div id="${el}-bulk-editBar" class="yui-gc bulk-edit-bar flat-button theme-bg-color-3">
 			      <div class="yui-u first align-center">
 			         <div class="item-select">
-			            <button id="${el}-itemSelect-button" name="bulk-edit-itemSelect-button">${msg("menu.select")}</button>
+			            <button id="${el}-itemSelect-button" name="bulk-edit-itemSelect-button">${msg("menu.select")}&nbsp;&#9662;</button>
 			            <div id="${el}-itemSelect-menu" class="yuimenu" style="visibility:hidden;">
 			               <div class="bd">
 			                  <ul>

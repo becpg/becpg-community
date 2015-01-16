@@ -23,7 +23,7 @@
 		<div id="${el}-body" class="designerTree">
 		   <div id="${el}-headerBar" class="header-bar toolbar flat-button theme-bg-2">
 		      <div class="left">
-		      	  <button id="${el}-modelSelect-button" name="modelSelect-button">${msg("menu.select.model")}</button>
+		      	  <button id="${el}-modelSelect-button" name="modelSelect-button">${msg("menu.select.model")}&nbsp;&#9662;</button>
 			   	  <div id="${el}-modelSelect-menu" class="yuimenu" style="visibility:hidden;">
 			          <div class="bd">
 			               <ul>
@@ -33,7 +33,7 @@
 			                </ul>
 			          </div>
 			     </div>
-			      <button id="${el}-configSelect-button" name="configSelect-button">${msg("menu.select.config")}</button>
+			      <button id="${el}-configSelect-button" name="configSelect-button">${msg("menu.select.config")}&nbsp;&#9662;</button>
 			   	  <div id="${el}-configSelect-menu" class="yuimenu" style="visibility:hidden;">
 			          <div class="bd">
 			               <ul>
