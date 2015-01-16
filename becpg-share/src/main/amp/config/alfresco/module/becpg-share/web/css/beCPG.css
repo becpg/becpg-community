@@ -1,9 +1,22 @@
 /*************************************/
 /**            beCPG               **/
 /************************************/
+
+.footer-becpg .copyright {
+   display: inline-block;
+   line-height: 22px;
+   padding-top: 10px;
+}
+
+.footer-becpg .copyright img {
+   padding-right: 1em;
+   vertical-align: baseline;
+}
+
 .footer-becpg .copyright span {
 	display: none;
 }
+
 
 /* Share forms */
 
