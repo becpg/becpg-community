@@ -79,7 +79,7 @@
 
 					var menuItem = p_aArgs[1];
 					if (menuItem) {
-						this.widgets.operators.set("label", menuItem.cfg.getProperty("text"));
+						this.widgets.operators.set("label", menuItem.cfg.getProperty("text")+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
 						this.widgets.operators.value = menuItem.value;
 					}
 				}, {
@@ -90,7 +90,7 @@
 
 				this.widgets.operators.value = me.options.searchQuery ? "OR" : "AND";
 
-				this.widgets.operators.set("label", this.msg("operator." + this.widgets.operators.value.toLowerCase()));
+				this.widgets.operators.set("label", this.msg("operator." + this.widgets.operators.value.toLowerCase())+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
 
 				this.widgets.typeSelect = Alfresco.util.createYUIButton(this, "itemTypeSelect-button", this.onTypeSelect, {
 					type : "menu",
@@ -101,7 +101,7 @@
 				this.widgets.typeSelect.getMenu().subscribe("click", function(p_sType, p_aArgs) {
 					var menuItem = p_aArgs[1];
 					if (menuItem) {
-						me.widgets.typeSelect.set("label", menuItem.cfg.getProperty("text"));
+						me.widgets.typeSelect.set("label", menuItem.cfg.getProperty("text")+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
 					}
 				});
 
@@ -198,7 +198,7 @@
 				for ( var i in items) {
 					var typeSelected = items[i];
 					if (typeSelected) {
-						me.widgets.typeSelect.set("label", typeSelected.cfg.getProperty("text"));
+						me.widgets.typeSelect.set("label", typeSelected.cfg.getProperty("text")+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
 						var className = typeSelected._oAnchor.children[0].attributes[0].nodeValue;
 						this._extractValues(className);
 						if (className.indexOf("selected") > -1) {

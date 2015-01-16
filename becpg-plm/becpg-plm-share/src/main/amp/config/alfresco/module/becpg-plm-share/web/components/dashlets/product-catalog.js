@@ -63,7 +63,7 @@
                      var filter = this.options.filter;
                      filter = Alfresco.util.arrayContains(this.options.validFilters, filter) ? filter
                            : this.options.validFilters[0];
-                     this.widgets.filter.set("label", this.msg("filter." + filter));
+                     this.widgets.filter.set("label", this.msg("filter." + filter)+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
                      this.widgets.filter.value = filter;
 
                      this.widgets.type = Alfresco.util.createYUIButton(this, "types", this.onTypeChange, {
@@ -73,7 +73,7 @@
                      });
 
                      // Select the preferred type in the ui
-                     this.widgets.type.set("label", this.msg("type." + this.options.catalogType));
+                     this.widgets.type.set("label", this.msg("type." + this.options.catalogType)+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
                      this.widgets.type.value = this.options.catalogType;
 
                      // Detailed/Simple List button
@@ -224,7 +224,7 @@
                   onFilterChange : function BeCPGCatalog_onFilterChange(p_sType, p_aArgs) {
                      var menuItem = p_aArgs[1];
                      if (menuItem) {
-                        this.widgets.filter.set("label", menuItem.cfg.getProperty("text"));
+                        this.widgets.filter.set("label", menuItem.cfg.getProperty("text")+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
                         this.widgets.filter.value = menuItem.value;
                         
                         this.services.preferences.set(this.substitute(PREFERENCES_BECPGCATALOG_DASHLET_FILTER),
@@ -245,7 +245,7 @@
                   onTypeChange : function BeCPGCatalog_onTypeChange(p_sType, p_aArgs) {
                      var menuItem = p_aArgs[1];
                      if (menuItem) {
-                        this.widgets.type.set("label", menuItem.cfg.getProperty("text"));
+                        this.widgets.type.set("label", menuItem.cfg.getProperty("text")+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
                         this.widgets.type.value = menuItem.value;
 
                         this.services.preferences.set(this.substitute(PREFERENCES_BECPGCATALOG_DASHLET_TYPE),

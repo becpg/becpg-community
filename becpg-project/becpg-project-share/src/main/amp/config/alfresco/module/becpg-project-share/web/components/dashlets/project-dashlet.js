@@ -74,14 +74,14 @@
                      var filter = this.options.filter;
                      filter = Alfresco.util.arrayContains(this.options.validFilters, filter) ? filter
                            : this.options.validFilters[0];
-                     this.widgets.filter.set("label", this.msg("filter." + filter));
+                     this.widgets.filter.set("label", this.msg("filter." + filter)+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
                      this.widgets.filter.value = filter;
 
                      // Select the preferred view in the ui
                      var view = this.options.view;
                      view = Alfresco.util.arrayContains(this.options.validViews, view) ? view
                            : this.options.validViews[0];
-                     this.widgets.view.set("label", this.msg("view." + view));
+                     this.widgets.view.set("label", this.msg("view." + view)+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
                      this.widgets.view.value = view;
 
                      // Detailed/Simple List button
@@ -342,7 +342,7 @@
                   onFilterChange : function ProjectDashlet_onFilterChange(p_sType, p_aArgs) {
                      var menuItem = p_aArgs[1];
                      if (menuItem) {
-                        this.widgets.filter.set("label", menuItem.cfg.getProperty("text"));
+                        this.widgets.filter.set("label", menuItem.cfg.getProperty("text")+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
                         this.widgets.filter.value = menuItem.value;
                         this.currentPage = 1;
 
@@ -355,7 +355,7 @@
                   onViewChange : function ProjectDashlet_onViewChange(p_sType, p_aArgs) {
                      var menuItem = p_aArgs[1];
                      if (menuItem) {
-                        this.widgets.view.set("label", menuItem.cfg.getProperty("text"));
+                        this.widgets.view.set("label", menuItem.cfg.getProperty("text")+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
                         this.widgets.view.value = menuItem.value;
                         this.currentPage = 1;
 

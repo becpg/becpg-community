@@ -539,7 +539,7 @@
 							this.widgets.typeSelect.getMenu().subscribe("click", function(p_sType, p_aArgs) {
 								var menuItem = p_aArgs[1];
 								if (menuItem) {
-									me.widgets.typeSelect.set("label", menuItem.cfg.getProperty("text"));
+									me.widgets.typeSelect.set("label", menuItem.cfg.getProperty("text")+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
 								}
 							});
 
@@ -553,7 +553,7 @@
 							// select first
 							var typeSelected = this.widgets.typeSelect.getMenu().getItem(0);
 							if (typeSelected) {
-								me.widgets.typeSelect.set("label", typeSelected.cfg.getProperty("text"));
+								me.widgets.typeSelect.set("label", typeSelected.cfg.getProperty("text")+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
 								var className = typeSelected._oAnchor.children[0].attributes[0].nodeValue;
 								this.options.itemType = className.split("#")[0];
 								this.options.formId = className.split("#")[1];

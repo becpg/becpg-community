@@ -10,7 +10,7 @@
 			      <div class="left">
 			          <#if !extra["hideFilter"]?? >
 			      		<div class="filter-form" >
-							<button id="${dashletId}-filterform-button">${msg("filterform.header")}</button>
+							<button id="${dashletId}-filterform-button">${msg("filterform.header")}&nbsp;&#9662;</button>
 							<div id="${dashletId}-filterform-panel"  class="yuimenu" >
 								 <div class="bd">
 								 		<div id="${dashletId}-filterform"  class="filterform" ></div>

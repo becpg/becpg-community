@@ -58,7 +58,7 @@
 				  </div>
 				</#if>  
 			      <div class="form-fields item-type-select">
-				      <button id="${el}-itemTypeSelect-button" name="bulk-edit-itemSelect-button">${msg("menu.select.type")}</button>
+				      <button id="${el}-itemTypeSelect-button" name="bulk-edit-itemSelect-button">${msg("menu.select.type")}&nbsp;&#9662;</button>
 				   	   <div id="${el}-itemTypeSelect-menu" class="yuimenu" style="visibility:hidden;">
 				               <div class="bd">
 				                  <ul>
