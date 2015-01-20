@@ -6,18 +6,13 @@ package fr.becpg.repo.importer.impl;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.nio.charset.Charset;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
@@ -30,6 +25,7 @@ import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
+import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -41,14 +37,17 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.extensions.surf.util.I18NUtil;
+import org.springframework.stereotype.Service;
 
-import fr.becpg.common.csv.CSVReader;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.PropertiesHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.importer.ImportContext;
+import fr.becpg.repo.importer.ImportFileReader;
 import fr.becpg.repo.importer.ImportService;
 import fr.becpg.repo.importer.ImportType;
 import fr.becpg.repo.importer.ImportVisitor;
@@ -60,36 +59,31 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * 
  * @author querephi
  */
+
+@Service("importService")
 public class ImportServiceImpl implements ImportService {
 
 	private static final String FULL_PATH_IMPORT_MAPPING = "/cm:System/cm:Exchange/cm:Import/cm:Mapping";
 	private static final String FULL_PATH_IMPORT_FAILED_FOLDER = "/app:company_home/cm:Exchange/cm:Import/cm:ImportFailed";
 	private static final String FULL_PATH_IMPORT_LOG_FOLDER = "/app:company_home/cm:Exchange/cm:Import/cm:ImportLog";
-	private static final String FULL_PATH_IMPORT_SUCCEEDED_FOLDER = "/app:company_home/cm:Exchange/cm:Import/cm:ImportSucceeded";	
-	
-	/** The Constant PFX_COMMENT. */
+	private static final String FULL_PATH_IMPORT_SUCCEEDED_FOLDER = "/app:company_home/cm:Exchange/cm:Import/cm:ImportSucceeded";
+
 	private static final String PFX_COMMENT = "#";
 
-	/** The Constant PFX_MAPPING. */
 	private static final String PFX_MAPPING = "MAPPING";
 
-	/** The Constant PFX_PATH. */
 	private static final String PFX_PATH = "PATH";
 
-	/** The Constant PFX_TYPE. */
 	private static final String PFX_TYPE = "TYPE";
-	
+
 	private static final String PFX_ENTITY_TYPE = "ENTITY_TYPE";
 
 	private static final String PFX_STOP_ON_FIRST_ERROR = "STOP_ON_FIRST_ERROR";
-	
-	
+
 	private static final String PFX_DELETE_DATALIST = "DELETE_DATALIST";
 
-	/** The Constant PFX_COLUMS. */
 	private static final String PFX_COLUMS = "COLUMNS";
 
-	/** The Constant PFX_VALUES. */
 	private static final String PFX_VALUES = "VALUES";
 
 	private static final String PFX_IMPORT_TYPE = "IMPORT_TYPE";
@@ -100,21 +94,15 @@ public class ImportServiceImpl implements ImportService {
 
 	private static final String PATH_SITES = "st:sites";
 
-	private static final String FORMAT_DATE_FRENCH = "dd/MM/yyyy";
-	private static final String FORMAT_DATE_ENGLISH = "yyyy/MM/dd";
-
 	private static final String MSG_INFO_IMPORT_BATCH = "import_service.info.import_batch";
-	private static final String MSG_INFO_IMPORT_LINE = "import_service.info.import_line";
+	
 
-	private static final String MSG_ERROR_IMPORT_LINE = "import_service.error.err_import_line";
+	
 	private static final String MSG_ERROR_UNSUPPORTED_PREFIX = "import_service.error.err_unsupported_prefix";
 	private static final String MSG_ERROR_MAPPING_NOT_FOUND = "import_service.error.err_mapping_not_found";
 	private static final String MSG_ERROR_READING_MAPPING = "import_service.error.err_reading_mapping";
 	private static final String MSG_ERROR_UNDEFINED_LINE = "import_service.error.err_undefined_line";
-	// private static final String MSG_ERROR_UNKNOWN_TYPE =
-	// "import_service.error.err_unknown_type";
 
-	/** The Constant SEPARATOR. */
 	public static final char SEPARATOR = ';';
 
 	private static final int COLUMN_PREFIX = 0;
@@ -127,82 +115,42 @@ public class ImportServiceImpl implements ImportService {
 
 	private static final int BATCH_SIZE = 10;
 
-	/** The logger. */
 	private static Log logger = LogFactory.getLog(ImportServiceImpl.class);
 
-
-	private NodeService nodeService = null;
-
-	private ContentService contentService = null;
-
-	private ServiceRegistry serviceRegistry = null;
-
-	private RepoService repoService = null;
-
+	@Autowired
+	private NodeService nodeService;
+	@Autowired
+	private ContentService contentService;
+	@Autowired
+	@Qualifier("ServiceRegistry")
+	private ServiceRegistry serviceRegistry;
+	@Autowired
+	private RepoService repoService;
+	@Autowired
 	private Repository repositoryHelper;
-
-	private ImportVisitor importNodeVisitor;
-
-	private ImportVisitor importProductVisitor;
-
-	private ImportVisitor importEntityListAspectVisitor;
-
-	private ImportVisitor importEntityListItemVisitor;
-
-	private ImportVisitor importCommentsVisitor;
-
+	@Autowired
 	private DictionaryService dictionaryService;
-
+	@Autowired
 	private BehaviourFilter policyBehaviourFilter;
+	@Autowired
+	private MimetypeService mimetypeService;
 
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
-
-	public void setContentService(ContentService contentService) {
-		this.contentService = contentService;
-	}
-
-	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
-		this.serviceRegistry = serviceRegistry;
-	}
-
-	public void setRepoService(RepoService repoService) {
-		this.repoService = repoService;
-	}
-
-	public void setRepositoryHelper(Repository repositoryHelper) {
-		this.repositoryHelper = repositoryHelper;
-	}
-
-	public void setImportNodeVisitor(ImportVisitor importNodeVisitor) {
-		this.importNodeVisitor = importNodeVisitor;
-	}
-	
-	public void setImportCommentsVisitor(ImportVisitor importCommentsVisitor) {
-		this.importCommentsVisitor = importCommentsVisitor;
-	}
-
-	public void setImportProductVisitor(ImportVisitor importProductVisitor) {
-		this.importProductVisitor = importProductVisitor;
-	}
-
-	public void setImportEntityListItemVisitor(ImportVisitor importEntityListItemVisitor) {
-		this.importEntityListItemVisitor = importEntityListItemVisitor;
-	}
-
-	public void setImportEntityListAspectVisitor(ImportVisitor importEntityListAspectVisitor) {
-		this.importEntityListAspectVisitor = importEntityListAspectVisitor;
-	}
-
-	
-	public void setDictionaryService(DictionaryService dictionaryService) {
-		this.dictionaryService = dictionaryService;
-	}
-
-	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
-		this.policyBehaviourFilter = policyBehaviourFilter;
-	}
+	// TODO could be better with plugin
+	@Autowired
+	@Qualifier("importNodeVisitor")
+	private ImportVisitor importNodeVisitor;
+	@Autowired
+	@Qualifier("importProductVisitor")
+	private ImportVisitor importProductVisitor;
+	@Autowired
+	@Qualifier("importEntityListAspectVisitor")
+	private ImportVisitor importEntityListAspectVisitor;
+	@Autowired
+	@Qualifier("importEntityListItemVisitor")
+	private ImportVisitor importEntityListItemVisitor;
+	@Autowired
+	@Qualifier("importCommentsVisitor")
+	private ImportVisitor importCommentsVisitor;
 
 	/**
 	 * Import a text file
@@ -211,54 +159,105 @@ public class ImportServiceImpl implements ImportService {
 	 * @throws IOException
 	 */
 	@Override
-	public List<String> importText(final NodeRef nodeRef, boolean doUpdate, boolean requiresNewTransaction) throws ImporterException, IOException, ParseException, Exception {
+	public List<String> importText(final NodeRef nodeRef, boolean doUpdate, boolean requiresNewTransaction) throws ImporterException, IOException,
+			ParseException, Exception {
 
 		logger.debug("start import");
 
 		// prepare context
-		RetryingTransactionCallback<ImportContext> prepareContextCallback = new RetryingTransactionCallback<ImportContext>() {
+		ImportContext importContext = serviceRegistry.getTransactionService().getRetryingTransactionHelper()
+				.doInTransaction(new RetryingTransactionCallback<ImportContext>() {
 
-			@Override
-			public ImportContext execute() throws Exception {
+					@Override
+					public ImportContext execute() throws Exception {
 
-				ImportContext importContext = new ImportContext();
-				InputStream is = null;
-				try {
+						ImportContext importContext = new ImportContext();
+						InputStream is = null;
+						try {
 
-					ContentReader reader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
-					is = reader.getContentInputStream();
+							ContentReader reader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
+							is = reader.getContentInputStream();
 
-					if (logger.isDebugEnabled()) {
-						logger.debug("Reading Import File");
+							if (logger.isDebugEnabled()) {
+								logger.debug("Reading Import File");
+							}
+							Charset charset = ImportHelper.guestCharset(is, reader.getEncoding());
+							String fileName = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
+							String mimeType = mimetypeService.guessMimetype(fileName);
+
+							if (logger.isDebugEnabled()) {
+								logger.debug("reader.getEncoding() : " + reader.getEncoding());
+								logger.debug("finder.getEncoding() : " + charset);
+								logger.debug("MimeType :" + mimeType);
+							}
+
+							importContext.setImportFileName(fileName);
+
+							ImportFileReader imporFileReader;
+							if (MimetypeMap.MIMETYPE_EXCEL.equals(mimeType) || MimetypeMap.MIMETYPE_OPENXML_SPREADSHEET.equals(mimeType)) {
+								imporFileReader = new ImportExcelFileReader(is, importContext.getPropertyFormats());
+							} else {
+								imporFileReader = new ImportCSVFileReader(is, charset, SEPARATOR);
+							}
+
+							importContext.setImportFileReader(imporFileReader);
+
+						} finally {
+							IOUtils.closeQuietly(is);
+						}
+						return importContext;
 					}
-					Charset charset = ImportHelper.guestCharset(is, reader.getEncoding());
-					if (logger.isDebugEnabled()) {
-						logger.debug("reader.getEncoding() : " + reader.getEncoding());
-						logger.debug("finder.getEncoding() : " + charset);
-					}
+				}, true, requiresNewTransaction);
 
-					importContext.setImportFileName((String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
-					importContext.setCsvReader(new CSVReader(new InputStreamReader(is, charset), SEPARATOR));
-
-				} finally {
-					IOUtils.closeQuietly(is);
-				}
-				return importContext;
-			}
-		};
-		ImportContext importContext = serviceRegistry.getTransactionService().getRetryingTransactionHelper().doInTransaction(prepareContextCallback, true, requiresNewTransaction);
-
-		importContext.setStopOnFirstError(true);
-		String dateFormat = (Locale.getDefault().equals(Locale.FRENCH) || Locale.getDefault().equals(Locale.FRANCE)) ? FORMAT_DATE_FRENCH : FORMAT_DATE_ENGLISH;
-		importContext.getPropertyFormats().setDateFormat(dateFormat);
 		importContext.setDoUpdate(doUpdate);
-		importContext.setRequiresNewTransaction(requiresNewTransaction);
 
-		return importCSV(importContext);
+		logger.debug("Start batch import of size :" + BATCH_SIZE);
+
+		int lastIndex = importContext.getImportFileReader().getTotalLineCount();
+		int nbBatches = (lastIndex / BATCH_SIZE) + 1;
+
+		for (int z_idx = 0; z_idx < nbBatches; z_idx++) {
+
+			importContext.setImportIndex(z_idx * BATCH_SIZE);
+			int tempIndex = (z_idx + 1) * BATCH_SIZE;
+			final int finalLastIndex = tempIndex > lastIndex ? lastIndex : tempIndex;
+			final ImportContext finalImportContext = importContext;
+
+			// add info message in log and file import
+			if (logger.isInfoEnabled()) {
+
+				logger.info(I18NUtil.getMessage(MSG_INFO_IMPORT_BATCH, (z_idx + 1), nbBatches, importContext.getImportFileName(),
+						(importContext.getImportIndex() + 1), (finalLastIndex + 1)));
+
+			}
+
+			// use transaction
+			importContext = serviceRegistry.getTransactionService().getRetryingTransactionHelper()
+					.doInTransaction(new RetryingTransactionCallback<ImportContext>() {
+						public ImportContext execute() throws Exception {
+
+							return importInBatch(finalImportContext, finalLastIndex);
+						}
+					}, false, requiresNewTransaction);
+
+		}
+
+		if (importContext.getLog().size() > 0 && importContext.getImportFileReader() instanceof ImportExcelFileReader) {
+
+			final ImportContext finalImportContext = importContext;
+
+			importContext = serviceRegistry.getTransactionService().getRetryingTransactionHelper()
+					.doInTransaction(new RetryingTransactionCallback<ImportContext>() {
+						public ImportContext execute() throws Exception {
+							finalImportContext.getImportFileReader().writeErrorInFile(
+									contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true));
+							return finalImportContext;
+						}
+					}, false, requiresNewTransaction);
+		}
+
+		return importContext.getLog();
 	}
-	
-	
-
 
 	@Override
 	public void moveImportedFile(final NodeRef nodeRef, final boolean hasFailed, final String titleLog, final String fileLog) {
@@ -271,36 +270,37 @@ public class ImportServiceImpl implements ImportService {
 					// delete files that have the same name before moving it in
 					// the succeeded or failed folder
 					String csvFileName = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
-					
-					// failed
-					NodeRef failedFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(), FULL_PATH_IMPORT_FAILED_FOLDER);
 
-					if (failedFolder != null) {											
-						NodeRef csvNodeRef = nodeService.getChildByName(failedFolder, ContentModel.ASSOC_CONTAINS,
-								csvFileName);
+					// failed
+					NodeRef failedFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(),
+							FULL_PATH_IMPORT_FAILED_FOLDER);
+
+					if (failedFolder != null) {
+						NodeRef csvNodeRef = nodeService.getChildByName(failedFolder, ContentModel.ASSOC_CONTAINS, csvFileName);
 						if (csvNodeRef != null) {
 							nodeService.deleteNode(csvNodeRef);
-						}											
+						}
 					}
-					
+
 					// succeeded
-					NodeRef succeededFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(), FULL_PATH_IMPORT_SUCCEEDED_FOLDER);
+					NodeRef succeededFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(),
+							FULL_PATH_IMPORT_SUCCEEDED_FOLDER);
 
 					if (succeededFolder != null) {
-						NodeRef targetNodeRef = nodeService.getChildByName(succeededFolder, ContentModel.ASSOC_CONTAINS,
-								csvFileName);
+						NodeRef targetNodeRef = nodeService.getChildByName(succeededFolder, ContentModel.ASSOC_CONTAINS, csvFileName);
 						if (targetNodeRef != null) {
 							nodeService.deleteNode(targetNodeRef);
 						}
 					}
-					
-					// log					
-					if(fileLog != null && !fileLog.isEmpty()){
-						NodeRef logFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(), FULL_PATH_IMPORT_LOG_FOLDER);
-						if(logFolder != null){
-							String logFileName = csvFileName.substring(0, csvFileName.length()-4) + RepoConsts.EXTENSION_LOG;
+
+					// log
+					if (fileLog != null && !fileLog.isEmpty()) {
+						NodeRef logFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(),
+								FULL_PATH_IMPORT_LOG_FOLDER);
+						if (logFolder != null) {
+							String logFileName = csvFileName.substring(0, csvFileName.length() - 4) + RepoConsts.EXTENSION_LOG;
 							createLogFile(logFolder, logFileName, fileLog);
-						}				
+						}
 					}
 
 					// move nodeRef in the right folder
@@ -316,56 +316,6 @@ public class ImportServiceImpl implements ImportService {
 			}
 		};
 		serviceRegistry.getTransactionService().getRetryingTransactionHelper().doInTransaction(actionCallback, false, true);
-	}
-	
-	/**
-	 * Import text.
-	 * 
-	 * @param csvReader
-	 * 
-	 * @param CSVReader
-	 *            the csv reader
-	 * @param doUpdate
-	 *            the do update
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 * @throws ImporterException
-	 *             the be cpg exception
-	 * @throws ParseException
-	 *             the parse exception
-	 */
-	@Override
-	public List<String> importCSV(ImportContext importContext) throws IOException, ImporterException, ParseException, Exception {
-
-		logger.debug("importFile");
-
-		int lastIndex = importContext.getLines().size();
-		int nbBatches = (lastIndex / BATCH_SIZE) + 1;
-
-		for (int z_idx = 0; z_idx < nbBatches; z_idx++) {
-
-			importContext.setImportIndex(z_idx * BATCH_SIZE);
-			int tempIndex = (z_idx + 1) * BATCH_SIZE;
-			final int finalLastIndex = tempIndex > lastIndex ? lastIndex : tempIndex;
-			final ImportContext finalImportContext = importContext;
-
-			// add info message in log and file import
-			String info = I18NUtil.getMessage(MSG_INFO_IMPORT_BATCH, (z_idx + 1), nbBatches, importContext.getImportFileName(), (importContext.getImportIndex() + 1),
-					(finalLastIndex + 1));
-			logger.info(info);
-
-			// use transaction
-			importContext = serviceRegistry.getTransactionService().getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<ImportContext>() {
-				public ImportContext execute() throws Exception {
-
-					return importInBatch(finalImportContext, finalLastIndex);
-				}
-			}, false, // readonly
-					importContext.isRequiresNewTransaction()); // requires new
-																// txn flag
-		}
-
-		return importContext.getLog();
 	}
 
 	private String cleanPath(String pathValue) {
@@ -388,7 +338,7 @@ public class ImportServiceImpl implements ImportService {
 		Element mappingElt = null;
 		String[] arrStr = null;
 
-		while (importContext.getImportIndex() < lastIndex && (arrStr = importContext.readLine()) != null) {
+		while (importContext.getImportIndex() < lastIndex && (arrStr = importContext.nextLine()) != null) {
 
 			String prefix = PropertiesHelper.cleanValue(arrStr[COLUMN_PREFIX]);
 
@@ -400,7 +350,7 @@ public class ImportServiceImpl implements ImportService {
 				importContext.setPath(cleanPath(pathValue));
 
 				if (pathValue.isEmpty())
-					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_PATH, importContext.getCSVLine()));
+					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_PATH, importContext.getImportIndex()));
 
 				if (pathValue.startsWith(PATH_SITES) || pathValue.startsWith(RepoConsts.PATH_SEPARATOR + PATH_SITES)) {
 					importContext.setSiteDocLib(true);
@@ -428,7 +378,7 @@ public class ImportServiceImpl implements ImportService {
 
 				String importTypeValue = arrStr[COLUMN_IMPORT_TYPE];
 				if (importTypeValue.isEmpty()) {
-					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_IMPORT_TYPE, importContext.getCSVLine()));
+					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_IMPORT_TYPE, importContext.getImportIndex()));
 				}
 
 				ImportType importType = ImportType.valueOf(importTypeValue);
@@ -450,62 +400,22 @@ public class ImportServiceImpl implements ImportService {
 
 				String typeValue = arrStr[COLUMN_TYPE];
 				if (typeValue.isEmpty())
-					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_TYPE, importContext.getCSVLine()));
+					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_TYPE, importContext.getImportIndex()));
 
 				QName type = QName.createQName(typeValue, serviceRegistry.getNamespaceService());
 				importContext.setType(type);
 
-				// // detect or use ImportType defined in CSV file
-				// if(detectImportType){
-				// if(dictionaryService.isSubClass(type,
-				// BeCPGModel.TYPE_PRODUCT)){
-				// importContext.setImportType(ImportType.Product);
-				// }
-				// else if(dictionaryService.isSubClass(type,
-				// BeCPGModel.TYPE_ENTITYLIST_ITEM) &&
-				// importContext.getClassMappings().get(type)!=null){
-				// importContext.setImportType(ImportType.EntityListItem);
-				// }
-				// else{
-				//
-				// // look for entityListsAspect
-				// boolean entityListsAspect = false;
-				// TypeDefinition typeDef = dictionaryService.getType(type);
-				// if(typeDef == null){
-				// throw new
-				// ImporterException(I18NUtil.getMessage(MSG_ERROR_UNKNOWN_TYPE,
-				// type));
-				// }
-				// else{
-				// for(AspectDefinition aspectDef :
-				// typeDef.getDefaultAspects()){
-				// if(aspectDef.getName().equals(BeCPGModel.ASPECT_ENTITYLISTS)){
-				// entityListsAspect = true;
-				// break;
-				// }
-				// }
-				// }
-				//
-				//
-				// if(entityListsAspect){
-				// importContext.setImportType(ImportType.EntityListAspect);
-				// }
-				// else{
-				// importContext.setImportType(ImportType.Node);
-				// }
-				// }
-				// }
 			} else if (prefix.equals(PFX_ENTITY_TYPE)) {
 
 				importContext.setEntityType(null);
 
 				String typeValue = arrStr[COLUMN_ENTITY_TYPE];
 				if (typeValue.isEmpty())
-					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_ENTITY_TYPE, importContext.getCSVLine()));
+					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_ENTITY_TYPE, importContext.getImportIndex()));
 
 				QName entityType = QName.createQName(typeValue, serviceRegistry.getNamespaceService());
 				importContext.setEntityType(entityType);
-			}else if (prefix.equals(PFX_STOP_ON_FIRST_ERROR)) {
+			} else if (prefix.equals(PFX_STOP_ON_FIRST_ERROR)) {
 
 				String stopOnFirstErrorValue = arrStr[COLUMN_TYPE];
 				if (!stopOnFirstErrorValue.isEmpty()) {
@@ -513,12 +423,11 @@ public class ImportServiceImpl implements ImportService {
 				}
 			} else if (prefix.equals(PFX_DELETE_DATALIST)) {
 
-					String deleteDataList = arrStr[COLUMN_TYPE];
-					if (!deleteDataList.isEmpty()) {
-						importContext.setDeleteDataList(Boolean.valueOf(deleteDataList));
-					}
-	
-				
+				String deleteDataList = arrStr[COLUMN_TYPE];
+				if (!deleteDataList.isEmpty()) {
+					importContext.setDeleteDataList(Boolean.valueOf(deleteDataList));
+				}
+
 			} else if (prefix.equals(PFX_COLUMS)) {
 
 				boolean undefinedColumns = true;
@@ -531,7 +440,7 @@ public class ImportServiceImpl implements ImportService {
 				}
 
 				if (undefinedColumns) {
-					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_COLUMS, importContext.getCSVLine()));
+					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_COLUMS, importContext.getImportIndex()));
 				}
 
 				importContext = importNodeVisitor.loadMappingColumns(mappingElt, columns, importContext);
@@ -542,7 +451,7 @@ public class ImportServiceImpl implements ImportService {
 
 				String mappingValue = arrStr[COLUMN_MAPPING];
 				if (mappingValue.isEmpty())
-					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_MAPPING, importContext.getCSVLine()));
+					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_MAPPING, importContext.getImportIndex()));
 
 				mappingElt = loadMapping(mappingValue);
 				importContext = importNodeVisitor.loadClassMapping(mappingElt, importContext);
@@ -564,7 +473,7 @@ public class ImportServiceImpl implements ImportService {
 					}
 
 					if (undefinedValues) {
-						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_VALUES, importContext.getCSVLine()));
+						throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_VALUES, importContext.getImportIndex()));
 					}
 
 					// disable policy
@@ -573,31 +482,27 @@ public class ImportServiceImpl implements ImportService {
 						policyBehaviourFilter.disableBehaviour(disabledPolicy);
 					}
 
-					
-					//TODO Use factory or @annotation instead of if
-					if (ImportType.Comments.equals(importContext.getImportType())) { 
-					    importCommentsVisitor.importNode(importContext, values);
-					} else	if (dictionaryService.isSubClass(importContext.getType(), PLMModel.TYPE_PRODUCT)) {
+					// TODO Use factory or @annotation instead of if
+					if (ImportType.Comments.equals(importContext.getImportType())) {
+						importCommentsVisitor.importNode(importContext, values);
+					} else if (dictionaryService.isSubClass(importContext.getType(), PLMModel.TYPE_PRODUCT)) {
 						importProductVisitor.importNode(importContext, values);
 					} else if (ImportType.EntityListAspect.equals(importContext.getImportType())) {
 						importEntityListAspectVisitor.importNode(importContext, values);
 					} else if (ImportType.EntityListItem.equals(importContext.getImportType())) {
 						importEntityListItemVisitor.importNode(importContext, values);
-					} else  {
+					} else {
 						importNodeVisitor.importNode(importContext, values);
 					}
-
-					logger.info(I18NUtil.getMessage(MSG_INFO_IMPORT_LINE, importContext.getCSVLine()));
+					//Do not remove that
+					logger.info(importContext.markCurrLineSuccess());
 				} catch (ImporterException e) {
 
 					if (importContext.isStopOnFirstError()) {
 						throw e;
 					} else {
-						// store the exception and continue import...
-						String error = I18NUtil.getMessage(MSG_ERROR_IMPORT_LINE, importContext.getImportFileName(), importContext.getCSVLine(), new Date(), e.getMessage());
-						
-						logger.error(error);
-						importContext.getLog().add(error);
+						//Do not remove that
+						logger.error(importContext.markCurrLineError(e));
 					}
 				} catch (Exception e) {
 
@@ -606,10 +511,8 @@ public class ImportServiceImpl implements ImportService {
 					} else {
 						// store the exception and the printStack and continue
 						// import...
-						String error = I18NUtil.getMessage(MSG_ERROR_IMPORT_LINE, importContext.getImportFileName(), importContext.getCSVLine(), new Date(), e.getMessage());
-
-						logger.error(error, e);
-						importContext.getLog().add(error);
+						//Do not remove that
+						logger.error(importContext.markCurrLineError(e),e);
 					}
 				} finally {
 					// enable policy
@@ -618,9 +521,8 @@ public class ImportServiceImpl implements ImportService {
 					}
 				}
 			} else if (!(prefix.isEmpty() || prefix.equals(PFX_COMMENT))) {
-				throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNSUPPORTED_PREFIX, importContext.getCSVLine(), prefix));
+				throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNSUPPORTED_PREFIX, importContext.getImportIndex(), prefix));
 			}
-			importContext.goToNextLine();
 		}
 
 		return importContext;
@@ -634,22 +536,17 @@ public class ImportServiceImpl implements ImportService {
 	 * @return the element
 	 */
 
-
-	
 	private Element loadMapping(String name) throws ImporterException {
 
 		Element mappingElt = null;
 		NodeRef mappingNodeRef = null;
 
-		
-		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery()
-				.inPath(FULL_PATH_IMPORT_MAPPING)
-				.andPropEquals(ContentModel.PROP_NAME, name+".xml");
+		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().inPath(FULL_PATH_IMPORT_MAPPING)
+				.andPropEquals(ContentModel.PROP_NAME, name + ".xml");
 
 		logger.debug(queryBuilder.toString());
 
 		mappingNodeRef = queryBuilder.singleValue();
-	
 
 		if (mappingNodeRef == null) {
 			String msg = I18NUtil.getMessage(MSG_ERROR_MAPPING_NOT_FOUND, name);
@@ -675,28 +572,27 @@ public class ImportServiceImpl implements ImportService {
 		return mappingElt;
 	}
 
-	private void createLogFile(NodeRef parentNodeRef, String fileName, String content){
-		
-		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();		
-    	properties.put(ContentModel.PROP_NAME, fileName);
-    	
-    	NodeRef nodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, fileName);    	
-    	if(nodeRef == null){
-    		nodeRef = nodeService.createNode(parentNodeRef, 
-    				ContentModel.ASSOC_CONTAINS, 
-    				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), 
-    				ContentModel.TYPE_CONTENT, properties).getChildRef();   		
-    	}    	
-    	
-    	InputStream is = null;
-    	try{
-    		ContentWriter contentWriter = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
-    		contentWriter.setEncoding("UTF-8");
-            contentWriter.setMimetype(MimetypeMap.MIMETYPE_TEXT_PLAIN);
-        	is = new ByteArrayInputStream(content.getBytes());
-        	contentWriter.putContent(is);
-    	} finally {
+	private void createLogFile(NodeRef parentNodeRef, String fileName, String content) {
+
+		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+		properties.put(ContentModel.PROP_NAME, fileName);
+
+		NodeRef nodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, fileName);
+		if (nodeRef == null) {
+			nodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
+					ContentModel.TYPE_CONTENT, properties).getChildRef();
+		}
+
+		InputStream is = null;
+		try {
+			ContentWriter contentWriter = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
+			contentWriter.setEncoding("UTF-8");
+			contentWriter.setMimetype(MimetypeMap.MIMETYPE_TEXT_PLAIN);
+			is = new ByteArrayInputStream(content.getBytes());
+			contentWriter.putContent(is);
+		} finally {
 			IOUtils.closeQuietly(is);
-		}    	
+		}
 	}
 }

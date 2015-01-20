@@ -213,6 +213,7 @@
 				<excludes>
 					<exclude>**README-*</exclude>
 					<exclude>**/*.csv</exclude>
+					<exclude>**/*.xlsx</exclude>
 				</excludes>
 			</resource>
 			<resource>
@@ -220,6 +221,7 @@
 				<directory>src/main/resources</directory>
 				<includes>
 					<include>**/*.csv</include>
+					<include>**/*.xlsx</include>
 				</includes>
 			</resource>
 			<!-- Copies and filters AMP config in the proper package 'alfresco/module/becpg.becpg-core' so to enforce full module naming single sourcing from POM properties -->
@@ -252,10 +254,22 @@
 			</resource>
 		</resources>
 		<testResources>
+			
 			<testResource>
 				<filtering>true</filtering>
 				<directory>src/test/resources</directory>
+				<excludes>
+					<exclude>**/*.xlsx</exclude>
+				</excludes>
 			</testResource>
+			<testResource>
+				<filtering>false</filtering>
+				<directory>src/test/resources</directory>
+				<includes>
+					<include>**/*.xlsx</include>
+				</includes>
+			</testResource>
+			
 		</testResources>
 
 	</build>

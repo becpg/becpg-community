@@ -78,23 +78,7 @@
 
 
 
-	<!-- Importer -->
-	<bean id="importService" class="fr.becpg.repo.importer.impl.ImportServiceImpl">
-		<property name="nodeService" ref="nodeService" />
-		<property name="contentService" ref="contentService" />
-		<property name="serviceRegistry" ref="ServiceRegistry" />
-		<property name="repoService" ref="repoService" />
-		<property name="repositoryHelper" ref="repositoryHelper" />
-		<property name="importNodeVisitor" ref="importNodeVisitor" />
-		<property name="importProductVisitor" ref="importProductVisitor" />
-		<property name="importCommentsVisitor" ref="importCommentsVisitor" />
-		<property name="importEntityListAspectVisitor" ref="importEntityListAspectVisitor" />
-		<property name="importEntityListItemVisitor" ref="importEntityListItemVisitor" />
-		<property name="dictionaryService" ref="dictionaryService" />
-		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
-		
-	</bean>
-
+	
 	<!-- Abstract bean -->
 	<bean id="parentImportVisitor" abstract="true" class="fr.becpg.repo.importer.impl.AbstractImportVisitor">
 		<property name="nodeService" ref="nodeService" />
