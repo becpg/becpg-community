@@ -1103,7 +1103,9 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 			if (dictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM) && !dictionaryService.isSubClass(type, PLMModel.TYPE_CHARACT)
 					&& !dictionaryService.isSubClass(type, BeCPGModel.TYPE_LINKED_VALUE)
-					&& !dictionaryService.isSubClass(type, BeCPGModel.TYPE_LIST_VALUE)) {
+					&& !dictionaryService.isSubClass(type, BeCPGModel.TYPE_LIST_VALUE)
+					&& !dictionaryService.isSubClass(type, PLMModel.TYPE_PLANT)
+					) {
 				for (NodeRef tmpNodeRef : queryBuilder.inDB().ftsLanguage().list()) {
 					if (nodeService.getPrimaryParent(tmpNodeRef).getParentRef().equals(importContext.getParentNodeRef())
 							&& !nodeService.hasAspect(tmpNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)
