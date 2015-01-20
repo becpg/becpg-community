@@ -10,7 +10,6 @@ import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -95,9 +94,7 @@ public class ImportServiceImpl implements ImportService {
 	private static final String PATH_SITES = "st:sites";
 
 	private static final String MSG_INFO_IMPORT_BATCH = "import_service.info.import_batch";
-	
 
-	
 	private static final String MSG_ERROR_UNSUPPORTED_PREFIX = "import_service.error.err_unsupported_prefix";
 	private static final String MSG_ERROR_MAPPING_NOT_FOUND = "import_service.error.err_mapping_not_found";
 	private static final String MSG_ERROR_READING_MAPPING = "import_service.error.err_reading_mapping";
@@ -249,9 +246,15 @@ public class ImportServiceImpl implements ImportService {
 			importContext = serviceRegistry.getTransactionService().getRetryingTransactionHelper()
 					.doInTransaction(new RetryingTransactionCallback<ImportContext>() {
 						public ImportContext execute() throws Exception {
-							finalImportContext.getImportFileReader().writeErrorInFile(
-									contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true));
-							return finalImportContext;
+							serviceRegistry.getRuleService().disableRules();
+							try {
+
+								finalImportContext.getImportFileReader().writeErrorInFile(
+										contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true));
+								return finalImportContext;
+							} finally {
+								serviceRegistry.getRuleService().enableRules();
+							}
 						}
 					}, false, requiresNewTransaction);
 		}
@@ -494,14 +497,14 @@ public class ImportServiceImpl implements ImportService {
 					} else {
 						importNodeVisitor.importNode(importContext, values);
 					}
-					//Do not remove that
+					// Do not remove that
 					logger.info(importContext.markCurrLineSuccess());
 				} catch (ImporterException e) {
 
 					if (importContext.isStopOnFirstError()) {
 						throw e;
 					} else {
-						//Do not remove that
+						// Do not remove that
 						logger.error(importContext.markCurrLineError(e));
 					}
 				} catch (Exception e) {
@@ -511,8 +514,8 @@ public class ImportServiceImpl implements ImportService {
 					} else {
 						// store the exception and the printStack and continue
 						// import...
-						//Do not remove that
-						logger.error(importContext.markCurrLineError(e),e);
+						// Do not remove that
+						logger.error(importContext.markCurrLineError(e), e);
 					}
 				} finally {
 					// enable policy
@@ -594,5 +597,29 @@ public class ImportServiceImpl implements ImportService {
 		} finally {
 			IOUtils.closeQuietly(is);
 		}
+	}
+
+	@Override
+	public void writeLogInFileTitle(final NodeRef nodeRef, final String log, final boolean hasFailed) {
+
+		RetryingTransactionCallback<Object> actionCallback = new RetryingTransactionCallback<Object>() {
+			@Override
+			public Object execute() throws Exception {
+				if (nodeService.exists(nodeRef)) {
+					serviceRegistry.getRuleService().disableRules();
+					try {
+						if (hasFailed) {
+							nodeService.setProperty(nodeRef, ContentModel.PROP_TITLE, log);
+						} else {
+							nodeService.setProperty(nodeRef, ContentModel.PROP_TITLE, "");
+						}
+					} finally {
+						serviceRegistry.getRuleService().enableRules();
+					}
+				}
+				return null;
+			}
+		};
+		serviceRegistry.getTransactionService().getRetryingTransactionHelper().doInTransaction(actionCallback, false, true);
 	}
 }

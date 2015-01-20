@@ -23,13 +23,13 @@ public class ImportExcelFileReader implements ImportFileReader {
 
 	private XSSFWorkbook workbook;
 	private XSSFSheet sheet;
-	
+
 	private PropertyFormats propertyFormats;
 
-	public ImportExcelFileReader(InputStream is,PropertyFormats propertyFormats) throws IOException {
+	public ImportExcelFileReader(InputStream is, PropertyFormats propertyFormats) throws IOException {
 		workbook = new XSSFWorkbook(is);
 		if (workbook.getNumberOfSheets() > 0) {
-			sheet = workbook.getSheetAt(workbook.getNumberOfSheets()-1);
+			sheet = workbook.getSheetAt(workbook.getNumberOfSheets() - 1);
 		}
 		this.propertyFormats = propertyFormats;
 	}
@@ -39,7 +39,7 @@ public class ImportExcelFileReader implements ImportFileReader {
 		String[] line = null;
 		if (sheet != null && importIndex < getTotalLineCount()) {
 			Row row = sheet.getRow(importIndex);
-			if(row!=null){
+			if (row != null) {
 				line = extractRow(row);
 			} else {
 				line = new String[1];
@@ -51,21 +51,27 @@ public class ImportExcelFileReader implements ImportFileReader {
 
 	private String[] extractRow(Row row) {
 		List<String> line = new LinkedList<>();
-		for(int i=0; i< row.getLastCellNum(); i++){
-			Cell cell = row.getCell(i);		
-			if(cell==null){
+		for (int i = 0; i < row.getLastCellNum(); i++) {
+			Cell cell = row.getCell(i);
+			if (cell == null) {
 				line.add("");
 			} else {
-			    switch (cell.getCellType()) {
+				int cellType = cell.getCellType();
+				
+				if(cellType == Cell.CELL_TYPE_FORMULA){
+					cellType = cell.getCachedFormulaResultType();
+				}
+				
+				switch (cellType) {
 				case Cell.CELL_TYPE_BLANK:
 					line.add("");
 					break;
 				case Cell.CELL_TYPE_BOOLEAN:
-					line.add(""+cell.getBooleanCellValue());
+					line.add("" + cell.getBooleanCellValue());
 					break;
 				case Cell.CELL_TYPE_NUMERIC:
-					if(HSSFDateUtil.isCellDateFormatted(cell)){
-						line.add(propertyFormats.formatDateTime(cell.getDateCellValue()));
+					if (HSSFDateUtil.isCellDateFormatted(cell) || HSSFDateUtil.isCellInternalDateFormatted(cell)) {
+						line.add(propertyFormats.formatDate(cell.getDateCellValue()));
 					} else {
 						line.add(propertyFormats.formatDecimal(cell.getNumericCellValue()));
 					}
@@ -78,74 +84,75 @@ public class ImportExcelFileReader implements ImportFileReader {
 					break;
 				}
 			}
-			
+
 		}
 		return line.toArray(new String[line.size()]);
 	}
 
 	@Override
 	public int getTotalLineCount() {
-		return sheet.getLastRowNum()+1;
+		return sheet.getLastRowNum() + 1;
 	}
 
 	@Override
 	public void reportError(int importIndex, String errorMsg, int columnIdx) {
-		if (sheet != null && importIndex < sheet.getLastRowNum()) {
+		if (sheet != null && importIndex < sheet.getLastRowNum() + 1) {
 			Row row = sheet.getRow(importIndex);
-			XSSFCellStyle style = (XSSFCellStyle) workbook.createCellStyle();
+			if (row != null) {
+				XSSFCellStyle style = (XSSFCellStyle) workbook.createCellStyle();
 
-			XSSFColor green = new XSSFColor(new java.awt.Color(255, 0, 0));
+				XSSFColor green = new XSSFColor(new java.awt.Color(255, 0, 0));
 
-			style.setFillForegroundColor(green);
-			style.setFillPattern(CellStyle.SOLID_FOREGROUND);
-		
+				style.setFillForegroundColor(green);
+				style.setFillPattern(CellStyle.SOLID_FOREGROUND);
 
-			Cell cell = row.createCell(columnIdx+1);
-			cell.setCellValue(errorMsg);
-			
-			for(int i=0; i< row.getLastCellNum(); i++){
-				 cell = row.getCell(i);		
-				if(cell!=null){
-					cell.setCellStyle(style);
+				Cell cell = row.createCell(columnIdx + 1);
+				cell.setCellValue(errorMsg);
+
+				for (int i = 0; i < row.getLastCellNum(); i++) {
+					cell = row.getCell(i);
+					if (cell != null) {
+						cell.setCellStyle(style);
+					}
 				}
 			}
-			
+
 		}
 	}
-	
+
 	@Override
-	public void writeErrorInFile(ContentWriter writer) throws IOException{
-		if(workbook!=null){
-			
-			try(OutputStream out = writer.getContentOutputStream()){
+	public void writeErrorInFile(ContentWriter writer) throws IOException {
+		if (workbook != null) {
+
+			try (OutputStream out = writer.getContentOutputStream()) {
 				workbook.write(out);
 			}
-			
-		}	
+
+		}
 	}
 
 	@Override
 	public void reportSuccess(int index, int columnIdx) {
-		if (sheet != null && index < sheet.getLastRowNum()) {
+		if (sheet != null && index < sheet.getLastRowNum() + 1) {
 			Row row = sheet.getRow(index);
-			XSSFCellStyle style = (XSSFCellStyle) workbook.createCellStyle();
+			if (row != null) {
+				XSSFCellStyle style = (XSSFCellStyle) workbook.createCellStyle();
 
-			XSSFColor green = new XSSFColor(new java.awt.Color(0, 255, 0));
+				XSSFColor green = new XSSFColor(new java.awt.Color(0, 255, 0));
 
-			style.setFillForegroundColor(green);
-			style.setFillPattern(CellStyle.SOLID_FOREGROUND);
-		
-			for(int i=0; i< row.getLastCellNum(); i++){
-				Cell cell = row.getCell(i);		
-				if(cell!=null){
-					cell.setCellStyle(style);
+				style.setFillForegroundColor(green);
+				style.setFillPattern(CellStyle.SOLID_FOREGROUND);
+
+				for (int i = 0; i < row.getLastCellNum(); i++) {
+					Cell cell = row.getCell(i);
+					if (cell != null) {
+						cell.setCellStyle(style);
+					}
 				}
 			}
-			
+
 		}
-		
+
 	}
-	
-	
 
 }

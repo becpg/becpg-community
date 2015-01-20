@@ -32,4 +32,7 @@ public interface ImportService {
 	 * @param hasFailed
 	 */
 	public void moveImportedFile(NodeRef nodeRef, boolean hasFailed, String titleLog, String fileLog);
+
+	
+	public void writeLogInFileTitle( NodeRef nodeRef,String log, boolean hasFailed);
 }
