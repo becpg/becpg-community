@@ -110,9 +110,6 @@ public class PropertyFormats {
 		
 	
 	}
-
-	
-	
 	
 	public String formatDate(Object o) {
 		return s_localDateFormat.get().format(o);
@@ -138,9 +135,5 @@ public class PropertyFormats {
 		return s_localDecimalFormat.get();
 	}
 
-//	public void setDecimalFormatPattern(String stringValue) {
-//		// TODO Auto-generated method stub
-//		(DecimalFormat) NumberFormat.getNumberInstance(Locale.getDefault())
-//	}
 
 }

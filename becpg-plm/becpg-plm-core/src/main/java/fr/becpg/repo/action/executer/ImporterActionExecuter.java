@@ -160,21 +160,7 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase{
                 	
                 	try
                     {
-//                    	RetryingTransactionCallback<List<String>> actionCallback = new RetryingTransactionCallback<List<String>>()
-//                        {
-//                            @Override
-//            				public List<String> execute() throws Exception
-//                            {                
-//                            	if(nodeService.exists(nodeRef)){
-//                            		
-//                            		return importService.importText(nodeRef, true, true); // need a new transaction, otherwise impossible to do another action like create a content
-//                            	}
-//                                    			        
-//                                return null;
-//                            }
-//                        };
-//                        List<String> errors = transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, false, true);
-                        
+
                     	/*
                     	 * need a new transaction, otherwise impossible to do another action like create a content
                     	 * do it in several transaction to avoid timeout connection
