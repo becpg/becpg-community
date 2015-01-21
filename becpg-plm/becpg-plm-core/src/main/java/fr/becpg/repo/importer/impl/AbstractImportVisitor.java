@@ -60,11 +60,13 @@ import fr.becpg.config.mapping.HierarchyMapping;
 import fr.becpg.config.mapping.MappingException;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
+import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.remote.extractor.RemoteHelper;
 import fr.becpg.repo.helper.RepoService;
+import fr.becpg.repo.hierarchy.HierarchyHelper;
 import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.importer.ClassMapping;
 import fr.becpg.repo.importer.ImportContext;
@@ -1051,7 +1053,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 						} else {
 							throw new ImporterException("NodeColumnKey cannot be null. NodeColumnKey: " + attribute);
 						}
-					} else if (properties.get(attribute) != null && NodeRef.isNodeRef(properties.get(attribute).toString())) {
+					} else if (properties.get(attribute) != null && NodeRef.isNodeRef(properties.get(attribute).toString()) && classMapping.getNodeColumnKeys().size() == 1) {
 						return new NodeRef(properties.get(attribute).toString());
 					} else {
 						queryBuilder.andPropEquals(attribute, properties.get(attribute) != null ? properties.get(attribute).toString() : null);
@@ -1102,7 +1104,9 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 			if (dictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM) && !dictionaryService.isSubClass(type, PLMModel.TYPE_CHARACT)
 					&& !dictionaryService.isSubClass(type, BeCPGModel.TYPE_LINKED_VALUE)
-					&& !dictionaryService.isSubClass(type, BeCPGModel.TYPE_LIST_VALUE)) {
+					&& !dictionaryService.isSubClass(type, BeCPGModel.TYPE_LIST_VALUE)
+					&& !dictionaryService.isSubClass(type, PLMModel.TYPE_PLANT)
+					) {
 				for (NodeRef tmpNodeRef : queryBuilder.inDB().ftsLanguage().list()) {
 					if (nodeService.getPrimaryParent(tmpNodeRef).getParentRef().equals(importContext.getParentNodeRef())
 							&& !nodeService.hasAspect(tmpNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)
@@ -1185,6 +1189,18 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			AbstractAttributeMapping attributeMapping, String value, Map<QName, Serializable> properties) throws ImporterException {
 
 		if (attributeMapping instanceof HierarchyMapping) {
+			
+			
+//			String path = PlmRepoConsts.PATH_PRODUCT_HIERARCHY + "cm:" + HierarchyHelper.getHierarchyPathName(importContext.getType());
+
+			
+		
+			String path = importContext.getPath();
+			if(((HierarchyMapping) attributeMapping).getPath()!=null && 
+					!((HierarchyMapping) attributeMapping).getPath().isEmpty()){
+				path = ((HierarchyMapping) attributeMapping).getPath();
+			}
+			
 			logger.debug("Case hierarchy mapping");
 			NodeRef hierarchyNodeRef = null;
 			if (((HierarchyMapping) attributeMapping).getParentLevelColumn() != null
@@ -1192,15 +1208,23 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 				NodeRef parentHierachyNodeRef = (NodeRef) properties.get(QName.createQName(
 						((HierarchyMapping) attributeMapping).getParentLevelColumn(), namespaceService));
 				if (parentHierachyNodeRef != null) {
-					hierarchyNodeRef = hierarchyService.getHierarchyByPath(importContext.getPath(), parentHierachyNodeRef, value);
+					hierarchyNodeRef = hierarchyService.getHierarchyByPath(path, parentHierachyNodeRef, value);
 				} else {
-					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_GET_ASSOC_TARGET, properties));
+					if(logger.isDebugEnabled()){
+						logger.debug("No parent for column "+attributeMapping.getAttribute().getName()+ " prop "+((HierarchyMapping) attributeMapping).getParentLevelColumn());
+					}
+					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_GET_ASSOC_TARGET, propDef.getName(), value));
 				}
 			} else {
-				hierarchyNodeRef = hierarchyService.getHierarchyByPath(importContext.getPath(), null, value);
+				if(logger.isDebugEnabled()){
+					logger.debug("Look for hierarchy "+attributeMapping.getAttribute().getName()+": "+value+" at path "+path);
+				}
+				hierarchyNodeRef = hierarchyService.getHierarchyByPath(path, null, value);
 			}
 
 			if (hierarchyNodeRef != null) {
+				
+				
 				return hierarchyNodeRef;
 			} else {
 				logger.error("No hierarchy found in path "+ importContext.getPath()+ " with value "+value);

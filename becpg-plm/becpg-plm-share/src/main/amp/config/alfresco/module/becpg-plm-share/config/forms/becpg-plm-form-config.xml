@@ -5412,6 +5412,7 @@
 					<show id="bcpg:lrComponents" />
 					<show id="bcpg:lrReplacements" />
 					<show id="bcpg:lrType" />
+					<show id="bcpg:lrGroup" />
 					<show id="bcpg:lrIsActive" />
 					<show id="bcpg:isManualListItem" />
 				</field-visibility>
@@ -5443,6 +5444,7 @@
 					<show id="bcpg:lrComponents" />
 					<show id="bcpg:lrReplacements" />
 					<show id="bcpg:lrType" />
+					<show id="bcpg:lrGroup" />
 				</field-visibility>
 			</form>
 
@@ -5467,6 +5469,7 @@
 					<show id="bcpg:lrComponents" />
 					<show id="bcpg:lrReplacements" />
 					<show id="bcpg:lrType" />
+					<show id="bcpg:lrGroup" />
 					<show id="bcpg:lrIsActive" />
 					<show id="bcpg:isManualListItem" />
 				</field-visibility>
@@ -6367,6 +6370,7 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="bcpg:legalName" />
+					<show id="bcpg:ingTypeDecThreshold" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
@@ -6380,6 +6384,7 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="bcpg:legalName" />
+					<show id="bcpg:ingTypeDecThreshold" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
@@ -6388,6 +6393,7 @@
 			<form id="filter">
 				<field-visibility>
 					<show id="cm:name" />
+					<show id="bcpg:ingTypeDecThreshold" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
@@ -6396,6 +6402,7 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="bcpg:legalName" />
+					<show id="bcpg:ingTypeDecThreshold" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>

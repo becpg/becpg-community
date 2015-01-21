@@ -5,16 +5,18 @@ package fr.becpg.repo.importer;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
+import org.springframework.extensions.surf.util.I18NUtil;
 
-import fr.becpg.common.csv.CSVReader;
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.config.mapping.AbstractAttributeMapping;
 
@@ -25,44 +27,42 @@ import fr.becpg.config.mapping.AbstractAttributeMapping;
  * @author querephi
  */
 public class ImportContext {
+	
+	private ImportFileReader importFileReader;
+	
+	
+	private static final String FORMAT_DATE_FRENCH = "dd/MM/yyyy";
+	private static final String FORMAT_DATE_ENGLISH = "yyyy/MM/dd";
+	private static final String MSG_ERROR_IMPORT_LINE = "import_service.error.err_import_line";
+	private static final String MSG_INFO_IMPORT_LINE = "import_service.info.import_line";
 
-	/** The parent node ref. */
 	private NodeRef parentNodeRef;
 
 	private NodeRef entityNodeRef;
 
-	/** The type. */
 	private QName type;
 
 	private QName entityType;
 
-	/** The do update. */
 	private boolean doUpdate;
 
-	private boolean stopOnFirstError;
+	private boolean stopOnFirstError = true;
 
 	private boolean deleteDataList = false;
 
 	private String importFileName;
 
-	/** The import type. */
 	private ImportType importType = ImportType.Node;
 
 	private List<QName> disabledPolicies = new ArrayList<QName>();
 
 	private PropertyFormats propertyFormats;
 
-	/** The columns. */
 	private List<AbstractAttributeMapping> columns = new ArrayList<AbstractAttributeMapping>();
 
-	/** The class mappings. */
 	private Map<QName, ClassMapping> classMappings = new HashMap<QName, ClassMapping>();
 
 	private Map<String, NodeRef> cacheNodes = new HashMap<String, NodeRef>();
-
-	private List<String[]> lines = null;
-
-	private int importIndex = 0;
 
 	private List<String> log = new ArrayList<String>();
 
@@ -70,45 +70,22 @@ public class ImportContext {
 
 	private String docsBasePath;
 
-	private boolean requiresNewTransaction = false;
-
-	/** indicate the the import is in a site document library **/
 	private boolean isSiteDocLib = false;
 
-	/**
-	 * Gets the parent node ref.
-	 * 
-	 * @return the parent node ref
-	 */
+
 	public NodeRef getParentNodeRef() {
 		return parentNodeRef;
 	}
 
-	/**
-	 * Sets the parent node ref.
-	 * 
-	 * @param parentNodeRef
-	 *            the new parent node ref
-	 */
 	public void setParentNodeRef(NodeRef parentNodeRef) {
 		this.parentNodeRef = parentNodeRef;
 	}
 
-	/**
-	 * Gets the type.
-	 * 
-	 * @return the type
-	 */
+
 	public QName getType() {
 		return type;
 	}
 
-	/**
-	 * Sets the type.
-	 * 
-	 * @param type
-	 *            the new type
-	 */
 	public void setType(QName type) {
 		this.type = type;
 	}
@@ -121,21 +98,12 @@ public class ImportContext {
 		this.entityType = entityType;
 	}
 
-	/**
-	 * Checks if is do update.
-	 * 
-	 * @return true, if is do update
-	 */
+
 	public boolean isDoUpdate() {
 		return doUpdate;
 	}
 
-	/**
-	 * Sets the do update.
-	 * 
-	 * @param doUpdate
-	 *            the new do update
-	 */
+
 	public void setDoUpdate(boolean doUpdate) {
 		this.doUpdate = doUpdate;
 	}
@@ -156,21 +124,12 @@ public class ImportContext {
 		this.importFileName = importFileName;
 	}
 
-	/**
-	 * Gets the import type.
-	 * 
-	 * @return the import type
-	 */
+
 	public ImportType getImportType() {
 		return importType;
 	}
 
-	/**
-	 * Sets the import type.
-	 * 
-	 * @param importType
-	 *            the new import type
-	 */
+
 	public void setImportType(ImportType importType) {
 		this.importType = importType;
 	}
@@ -191,40 +150,22 @@ public class ImportContext {
 		this.propertyFormats = propertyFormats;
 	}
 
-	/**
-	 * Gets the columns.
-	 * 
-	 * @return the columns
-	 */
+
 	public List<AbstractAttributeMapping> getColumns() {
 		return columns;
 	}
 
-	/**
-	 * Sets the columns.
-	 * 
-	 * @param columns
-	 *            the new columns
-	 */
+	
 	public void setColumns(List<AbstractAttributeMapping> columns) {
 		this.columns = columns;
 	}
 
-	/**
-	 * Gets the class mappings.
-	 * 
-	 * @return the class mappings
-	 */
+
 	public Map<QName, ClassMapping> getClassMappings() {
 		return classMappings;
 	}
 
-	/**
-	 * Sets the class mappings.
-	 * 
-	 * @param classMappings
-	 *            the class mappings
-	 */
+	
 	public void setClassMappings(Map<QName, ClassMapping> classMappings) {
 		this.classMappings = classMappings;
 	}
@@ -237,19 +178,7 @@ public class ImportContext {
 		this.cacheNodes = cacheNodes;
 	}
 
-	public void setCsvReader(CSVReader csvReader) throws IOException {
-
-		if (csvReader != null)
-			lines = csvReader.readAll();
-	}
-
-	public int getImportIndex() {
-		return importIndex;
-	}
-
-	public void setImportIndex(int importIndex) {
-		this.importIndex = importIndex;
-	}
+	
 
 	public List<String> getLog() {
 		return log;
@@ -257,14 +186,7 @@ public class ImportContext {
 
 	public void setLog(List<String> log) {
 		this.log = log;
-	}
-
-	public boolean isRequiresNewTransaction() {
-		return requiresNewTransaction;
-	}
-
-	public void setRequiresNewTransaction(boolean requiresNewTransaction) {
-		this.requiresNewTransaction = requiresNewTransaction;
+	
 	}
 
 	public boolean isSiteDocLib() {
@@ -275,10 +197,6 @@ public class ImportContext {
 		this.isSiteDocLib = isSiteDocLib;
 	}
 
-	public List<String[]> getLines() {
-		return lines;
-	}
-
 	public NodeRef getEntityNodeRef() {
 		return entityNodeRef;
 	}
@@ -287,43 +205,6 @@ public class ImportContext {
 		this.entityNodeRef = entityNodeRef;
 	}
 
-	/**
-	 * Constructor
-	 * 
-	 * @param csvReader
-	 * @throws IOException
-	 */
-	public ImportContext() {
-		propertyFormats = new PropertyFormats(true);
-	}
-
-	/**
-	 * Read the current line
-	 * 
-	 * @return
-	 */
-	public String[] readLine() {
-
-		String[] line = null;
-
-		if (lines != null && importIndex < lines.size()) {
-			line = lines.get(importIndex);
-		}
-
-		return line;
-	}
-
-	public int getCSVLine() {
-		return importIndex + 1;
-	}
-
-	public int goToPreviousLine() {
-		return importIndex--;
-	}
-
-	public int goToNextLine() {
-		return importIndex++;
-	}
 
 	public String getPath() {
 		return path;
@@ -339,6 +220,54 @@ public class ImportContext {
 
 	public void setDocsBasePath(String docsBasePath) {
 		this.docsBasePath = docsBasePath;
+	}
+	
+	
+	/**
+	 * Constructor
+	 * 
+	 * @param csvReader
+	 * @throws IOException
+	 */
+	public ImportContext() {
+		propertyFormats = new PropertyFormats(true);
+		
+		String dateFormat = (Locale.getDefault().equals(Locale.FRENCH) || Locale.getDefault().equals(Locale.FRANCE)) ? FORMAT_DATE_FRENCH
+				: FORMAT_DATE_ENGLISH;
+		propertyFormats.setDateFormat(dateFormat);
+		
+	}
+
+	
+
+	public ImportFileReader getImportFileReader() {
+		return importFileReader;
+	}
+
+	public void setImportFileReader(ImportFileReader importFileReader) {
+		this.importFileReader = importFileReader;
+	}
+	
+	
+
+
+	private int importIndex = 0;
+
+
+	public int getImportIndex() {
+		return importIndex;
+	}
+
+	public void setImportIndex(int importIndex) {
+		this.importIndex = importIndex;
+	}
+	
+
+
+	public String[] nextLine() {
+		
+		return importFileReader.getLineAt(importIndex++);
+		
 	}
 
 	Set<NodeRef> deletedDataListEntityNodeRefs = new HashSet<>();
@@ -356,5 +285,26 @@ public class ImportContext {
 	public void setDeleteDataList(boolean deleteDataList) {
 		this.deleteDataList = deleteDataList;
 	}
+
+	public String markCurrLineError(Exception e) {
+		
+		// store the exception and continue import...
+		String error = I18NUtil.getMessage(MSG_ERROR_IMPORT_LINE, importFileName,importIndex,
+				new Date(), e.getMessage());
+
+		getLog().add(error);
+		importFileReader.reportError(importIndex-1, e.getMessage(), columns.size());
+		
+		return error;
+		
+	}
+
+	public String markCurrLineSuccess() {
+		importFileReader.reportSuccess(importIndex-1, columns.size());
+		
+		return I18NUtil.getMessage(MSG_INFO_IMPORT_LINE, importIndex);
+	}
+
+	
 
 }

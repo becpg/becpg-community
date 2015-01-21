@@ -7,18 +7,6 @@
 	</configSuffixes>
 	<enableImports><![CDATA[false]]></enableImports>
 	<configs>
-		<config>src/main/config/context/service-context.xml</config>
-		<config>src/main/config/context/action-context.xml</config>
-		<config>src/main/config/context/ecm-context.xml</config>
-		<config>src/main/config/context/formulation-context.xml</config>
-		<config>src/main/config/context/gs1-context.xml</config>
-		<config>src/main/config/context/model-context.xml</config>
-		<config>src/main/config/context/patch-context.xml</config>
-		<config>src/main/config/context/product-context.xml</config>
-		<config>src/main/config/context/publication-context.xml</config>
-		<config>src/main/config/context/quality-context.xml</config>
-		<config>src/main/config/context/workflow-context.xml</config>
-		<config>src/main/amp/config/alfresco/module/becpg-plm-core/module-context.xml</config>
 	</configs>
 	<autoconfigs>
 	</autoconfigs>

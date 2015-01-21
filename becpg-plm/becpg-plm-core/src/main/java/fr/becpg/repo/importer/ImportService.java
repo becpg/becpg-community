@@ -32,6 +32,7 @@ public interface ImportService {
 	 * @param hasFailed
 	 */
 	public void moveImportedFile(NodeRef nodeRef, boolean hasFailed, String titleLog, String fileLog);
+
 	
-	public List<String> importCSV(ImportContext importContext) throws IOException, ImporterException, ParseException, Exception;
+	public void writeLogInFileTitle( NodeRef nodeRef,String log, boolean hasFailed);
 }
