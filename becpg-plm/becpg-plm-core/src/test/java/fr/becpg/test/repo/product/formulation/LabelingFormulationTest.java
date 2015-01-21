@@ -107,7 +107,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 	// private String detailsDefaultFormat = "{0} {1,number,0.#%} ({2})";
 	
-    @Test
+   @Test
 	public void testNullIng() throws Exception {
 		
         NodeRef finishedProductNodeRef1 =   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
@@ -1037,4 +1037,43 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		}, false, true);
 	 }
 
+	
+	
+
+	@Test
+	public void testIncTypeThreshold() throws Exception {
+		
+		
+
+		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
+		//Aggregate
+		labelingRuleList = new ArrayList<>();
+		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
+		labelingRuleList.add(new LabelingRuleListDataItem("Aggregate 1", null, LabelingRuleType.DoNotDetails, Arrays.asList(ing1,ing2),Arrays.asList(ing3)));
+		labelingRuleList.add(new LabelingRuleListDataItem("Aggregate 2", null, LabelingRuleType.DoNotDetails, Arrays.asList(ing4),Arrays.asList(ing6)));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param1", "detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param1bis", "ingDefaultFormat = \"{0} {1,number,0.#%}\"", LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param2", "ingTypeDefaultFormat = \"{0} {1,number,0.#%}: ({2})\"", LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param3", "ingTypeDecThresholdFormat = \"{0} {1,number,0.#%} [{2}] \"", LabelingRuleType.Prefs, null, null));
+		
+		
+		
+		final NodeRef finishedProductNodeRef1 = createTestProduct(labelingRuleList);
+		
+	//	└──[root - 0.0 (2.0)]
+	//		    ├──[Pâte french - 1.0 (3.0)]
+	//		    │   ├──[ing3 french - 1.0]
+	//		    │   └──[Legal Raw material 12 - 2.0 (2.0)]
+	//		    │       └──[ing3 french - 2.0]
+	//		    └──[Garniture french - 1.0 (6.0)]
+	//		        ├──[ing3 french - 5.0]
+	//		        └──[ing5 french - 1.0]
+		
+		
+		checkILL(finishedProductNodeRef1, labelingRuleList, "Pâte french 50% (Legal Raw material 12 66,7% (ing3 french 100%), ing3 french 33,3%), Garniture french 50% (ing3 french 83,3%, Epices french 16,7% [ing6 french 16,7%])", Locale.FRENCH);
+
+		
+	
+		
+	}
 }
