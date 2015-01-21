@@ -285,7 +285,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 			conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_OPERATION,
 					ComparePropertyValueOperation.ENDS.toString());
 			conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_VALUE,
-					ImporterActionExecuter.PARAM_VALUE_EXTENSION);
+					ImporterActionExecuter.CSV_EXTENSION);
 			conditionOnName.setParameterValue(ComparePropertyValueEvaluator.PARAM_PROPERTY, ContentModel.PROP_NAME);
 			conditionOnName.setInvertCondition(false);
 			compositeAction.addActionCondition(conditionOnName);

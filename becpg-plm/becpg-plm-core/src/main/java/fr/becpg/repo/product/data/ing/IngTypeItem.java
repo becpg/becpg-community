@@ -17,6 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.product.data.ing;
 
+import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
 
@@ -25,5 +26,20 @@ import fr.becpg.repo.repository.annotation.AlfType;
 public class IngTypeItem extends AbstractLabelingComponent{
 
 	public static final IngTypeItem DEFAULT_GROUP = new IngTypeItem();
+	
+	
+	private Double decThreshold;
+	
+
+	@AlfProp
+	@AlfQname(qname = "bcpg:ingTypeDecThreshold")
+	public Double getDecThreshold() {
+		return decThreshold;
+	}
+
+	public void setDecThreshold(Double decThreshold) {
+		this.decThreshold = decThreshold;
+	}
+
 
 }

@@ -1,6 +1,3 @@
-/*
- * 
- */
 package fr.becpg.repo.importer.impl;
 
 import java.io.Serializable;
@@ -26,7 +23,6 @@ import fr.becpg.repo.importer.ImportContext;
 import fr.becpg.repo.importer.ImportVisitor;
 import fr.becpg.repo.importer.ImporterException;
 
-// TODO: Auto-generated Javadoc
 /**
  * Class used to import a product with its attributes, characteristics and
  * files.
@@ -35,8 +31,7 @@ import fr.becpg.repo.importer.ImporterException;
  */
 public class ImportProductVisitor extends ImportEntityListAspectVisitor implements ImportVisitor {
 
-	protected static final String MSG_ERROR_PRODUCTHIERARCHY1_EMPTY = "import_service.error.err_producthierarchy1_empty";
-	protected static final String MSG_ERROR_PRODUCTHIERARCHY2_EMPTY = "import_service.error.err_producthierarchy2_empty";
+	protected static final String MSG_ERROR_PRODUCTHIERARCHY_EMPTY = "import_service.error.err_producthierarchy_empty";
 	protected static final String MSG_ERROR_UNKNOWN_PRODUCTTYPE = "import_service.error.err_unknown_producttype";
 	protected static final String MSG_ERROR_OVERRIDE_EXISTING_ONE = "import_service.error.err_override_existing_one";
 
@@ -118,16 +113,16 @@ public class ImportProductVisitor extends ImportEntityListAspectVisitor implemen
 					if(logger.isDebugEnabled()){
 						logger.debug("No parent for column "+attributeMapping.getAttribute().getName()+ " prop "+((HierarchyMapping) attributeMapping).getParentLevelColumn());
 					}
-					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_PRODUCTHIERARCHY1_EMPTY, properties));
+					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_PRODUCTHIERARCHY_EMPTY, attributeMapping.getAttribute().getName(), value));
 				}
 			} else {
 				if(logger.isDebugEnabled()){
-					logger.debug("Look for hierarchy : "+value+" at path "+path);
+					logger.debug("Look for hierarchy "+attributeMapping.getAttribute().getName()+": "+value+" at path "+path);
 				}
 				hierarchyNodeRef = hierarchyService.getHierarchyByPath(path, null, value);
 			}
 			if (hierarchyNodeRef == null) {
-				throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_PRODUCTHIERARCHY2_EMPTY, properties));
+				throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_PRODUCTHIERARCHY_EMPTY, attributeMapping.getAttribute().getName(), value));
 			}
 			return hierarchyNodeRef;
 		}
@@ -135,4 +130,6 @@ public class ImportProductVisitor extends ImportEntityListAspectVisitor implemen
 		return super.findPropertyTargetNodeByValue(importContext, propDef, attributeMapping, value, properties);
 
 	}
+	
+	
 }

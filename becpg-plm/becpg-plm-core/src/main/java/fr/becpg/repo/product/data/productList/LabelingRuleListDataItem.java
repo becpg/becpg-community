@@ -37,15 +37,26 @@ import fr.becpg.repo.repository.model.Synchronisable;
 @AlfQname(qname = "bcpg:labelingRuleList")
 public class LabelingRuleListDataItem extends AbstractManualDataItem implements Synchronisable {
 	
+	public static final String DEFAULT_LABELING_GROUP = "default";
+	
 	private String formula;
 	private MLText label;
 	private LabelingRuleType labelingRuleType;
 	private List<NodeRef> components = new ArrayList<NodeRef>();
 	private List<NodeRef> replacements = new ArrayList<NodeRef>();
 	private Boolean isActive = true;
-	
-	
-	
+	private String group;
+
+	@AlfProp
+	@AlfQname(qname="bcpg:lrGroup")
+	public String getGroup() {
+		return group;
+	}
+
+	public void setGroup(String group) {
+		this.group = group;
+	}
+
 	@AlfProp
 	@AlfMlText
 	@AlfQname(qname="bcpg:lrLabel")
@@ -151,6 +162,8 @@ public class LabelingRuleListDataItem extends AbstractManualDataItem implements 
 		int result = super.hashCode();
 		result = prime * result + ((components == null) ? 0 : components.hashCode());
 		result = prime * result + ((formula == null) ? 0 : formula.hashCode());
+		result = prime * result + ((group == null) ? 0 : group.hashCode());
+		result = prime * result + ((isActive == null) ? 0 : isActive.hashCode());
 		result = prime * result + ((label == null) ? 0 : label.hashCode());
 		result = prime * result + ((labelingRuleType == null) ? 0 : labelingRuleType.hashCode());
 		result = prime * result + ((replacements == null) ? 0 : replacements.hashCode());
@@ -175,6 +188,16 @@ public class LabelingRuleListDataItem extends AbstractManualDataItem implements 
 			if (other.formula != null)
 				return false;
 		} else if (!formula.equals(other.formula))
+			return false;
+		if (group == null) {
+			if (other.group != null)
+				return false;
+		} else if (!group.equals(other.group))
+			return false;
+		if (isActive == null) {
+			if (other.isActive != null)
+				return false;
+		} else if (!isActive.equals(other.isActive))
 			return false;
 		if (label == null) {
 			if (other.label != null)
@@ -201,6 +224,7 @@ public class LabelingRuleListDataItem extends AbstractManualDataItem implements 
 	public boolean isSynchronisable() {
 		return Boolean.TRUE.equals(getIsManual());
 	}
+
 
 	
 

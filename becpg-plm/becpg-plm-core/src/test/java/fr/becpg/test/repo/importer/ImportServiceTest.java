@@ -120,7 +120,7 @@ public class ImportServiceTest extends PLMBaseTestCase {
 				/*-- Create file to import --*/
 				logger.debug("create file to import");
 				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-				properties.put(ContentModel.PROP_NAME, "import.csv");
+				properties.put(ContentModel.PROP_NAME, "import.xlsx");
 
 				NodeRef nodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, (String) properties.get(ContentModel.PROP_NAME));
 				if (nodeRef != null) {
@@ -131,12 +131,13 @@ public class ImportServiceTest extends PLMBaseTestCase {
 						.getChildRef();
 
 				ContentWriter writer = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
-				logger.debug("Load import.csv");
-				InputStream in = ClassLoader.getSystemResourceAsStream("beCPG/import/Import.csv");
-				logger.debug("import.csv loaded");
+				logger.debug("Load import.xlsx");
+				InputStream in = ClassLoader.getSystemResourceAsStream("beCPG/import/Import.xlsx");
+				logger.debug("import.xlsx loaded");
 				writer.putContent(in);
 
 				logger.debug("Start import");
+				
 				importService.importText(nodeRef, true, false);
 
 				return null;
@@ -672,27 +673,34 @@ public class ImportServiceTest extends PLMBaseTestCase {
 	}
 
 	private void importHierarchies() {
-
-		importHierarchiesFile(1);
-		importHierarchiesFile(2);
-		importHierarchiesFile(3);
-		importHierarchiesFile(4);
-
 		/*-- Check hierarchies --*/
 		logger.debug("Check hierarchies");
+		importHierarchiesFile(1);
+		
 		NodeRef hierarchy1USDA = hierarchyService.getHierarchyByPath(HIERARCHY_RAWMATERIAL_PATH, null, "USDA");
 		assertNotNull(hierarchy1USDA);
+		
+		importHierarchiesFile(2);
+		
 		NodeRef hierarchy2Dairy = hierarchyService.getHierarchyByPath(HIERARCHY_RAWMATERIAL_PATH, hierarchy1USDA, "Dairy and Egg Products");
 		assertNotNull(hierarchy2Dairy);
 		NodeRef hierarchy2Spices = hierarchyService.getHierarchyByPath(HIERARCHY_RAWMATERIAL_PATH, hierarchy1USDA, "Spices and Herbs");
 		assertNotNull(hierarchy2Spices);
+		
+		importHierarchiesFile(3);
+		
+		NodeRef hierarchy3Dairy = hierarchyService.getHierarchyByPath(HIERARCHY_RAWMATERIAL_PATH, hierarchy2Dairy, "Dairy");
+		assertNotNull(hierarchy3Dairy);
+		
+		importHierarchiesFile(4);
 
+	
 		// check unicity
-		List<NodeRef> listItems = BeCPGQueryBuilder.createQuery().andID(hierarchy1USDA).list();
+		List<NodeRef> listItems = BeCPGQueryBuilder.createQuery().andID(hierarchy1USDA).inDB().list();
 		assertEquals(1, listItems.size());
-		listItems =  BeCPGQueryBuilder.createQuery().andID(hierarchy2Dairy).list();
+		listItems =  BeCPGQueryBuilder.createQuery().andID(hierarchy2Dairy).inDB().list();
 		assertEquals(1, listItems.size());
-		listItems =  BeCPGQueryBuilder.createQuery().andID(hierarchy2Spices).list();
+		listItems =  BeCPGQueryBuilder.createQuery().andID(hierarchy2Spices).inDB().list();
 		assertEquals(1, listItems.size());
 	}
 
