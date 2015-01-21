@@ -168,7 +168,12 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
     
     protected NodeRef ing5;    
     
+    protected NodeRef ing6;   
+    
     protected NodeRef ingType1;
+    
+    protected NodeRef ingType2;
+    
     
     /** The bio origin1. */
     protected NodeRef bioOrigin1;
@@ -283,6 +288,15 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
 					ingType1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ING_TYPE_ITEM, properties).getChildRef();
 					properties.clear();
+					properties.put(ContentModel.PROP_NAME, "Epices");
+					mlName = new MLText();
+					mlName.addValue(I18NUtil.getContentLocaleLang(), "Epices default");
+					mlName.addValue(Locale.ENGLISH, "Epices english");
+					mlName.addValue(Locale.FRENCH, "Epices french");	
+					properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
+					properties.put(PLMModel.PROP_ING_TYPE_DEC_THRESHOLD, 2);
+					ingType2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ING_TYPE_ITEM, properties).getChildRef();
+					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "ing1");
 					mlName = new MLText();
 					mlName.addValue(I18NUtil.getContentLocaleLang(), "ing1 default");
@@ -324,6 +338,15 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					mlName.addValue(Locale.FRENCH, "ing5 french");	
 					properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
 					ing5 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ING, properties).getChildRef();
+					properties.clear();
+					properties.put(ContentModel.PROP_NAME, "ing6");
+					properties.put(PLMModel.PROP_ING_TYPE_V2, ingType2);
+					mlName = new MLText();
+					mlName.addValue(I18NUtil.getContentLocaleLang(), "ing6 default");
+					mlName.addValue(Locale.ENGLISH, "ing6 english");
+					mlName.addValue(Locale.FRENCH, "ing6 french");	
+					properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
+					ing6 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ING, properties).getChildRef();
 					//Geo origins
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "geoOrigin1");

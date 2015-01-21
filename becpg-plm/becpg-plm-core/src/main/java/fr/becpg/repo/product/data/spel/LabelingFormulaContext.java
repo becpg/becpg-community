@@ -128,6 +128,7 @@ public class LabelingFormulaContext {
 	private String groupDefaultFormat = "<b>{0} ({1,number,0.#%}):</b> {2}";
 	private String detailsDefaultFormat = "{0} ({2})";
 	private String ingTypeDefaultFormat = "{0}: {2}";
+	private String ingTypeDecThresholdFormat = "{0}";
 	private String subIngsDefaultFormat = "{0} ({2})";
 	private boolean useVolume = false;
 	
@@ -153,6 +154,11 @@ public class LabelingFormulaContext {
 
 	public void setSubIngsDefaultFormat(String subIngsDefaultFormat) {
 		this.subIngsDefaultFormat = subIngsDefaultFormat;
+	}
+	
+
+	public void setIngTypeDecThresholdFormat(String ingTypeDecThresholdFormat) {
+		this.ingTypeDecThresholdFormat = ingTypeDecThresholdFormat;
 	}
 
 	// Exemple <b>{1}</b> : {2}
@@ -180,6 +186,9 @@ public class LabelingFormulaContext {
 			}
 			return new MessageFormat(detailsDefaultFormat);
 		} else if (lblComponent instanceof IngTypeItem) {
+			if((((IngTypeItem) lblComponent)).getDecThreshold()!=null && (((IngTypeItem) lblComponent)).getQty() <= (((IngTypeItem) lblComponent)).getDecThreshold()){
+				return new MessageFormat(ingTypeDecThresholdFormat);
+			}
 			return new MessageFormat(ingTypeDefaultFormat);
 		} else if (lblComponent instanceof IngItem && ((IngItem) lblComponent).getSubIngs().size() > 0) {
 			return new MessageFormat(subIngsDefaultFormat);
@@ -526,8 +535,14 @@ public class LabelingFormulaContext {
 				appendEOF = false;
 			}
 
+			
+			
 			if (kv.getKey() != null && getIngName(kv.getKey()) != null) {
-				ret.append(getIngTextFormat(kv.getKey()).format(new Object[] { getIngName(kv.getKey()),null, renderLabelingComponent(compositeLabeling, kv.getValue()) }));
+				
+				Double qtyPerc = computeQty(compositeLabeling, kv.getKey());
+				kv.getKey().setQty(qtyPerc);
+				
+				ret.append(getIngTextFormat(kv.getKey()).format(new Object[] { getIngName(kv.getKey()),kv.getKey().getQty(), renderLabelingComponent(compositeLabeling, kv.getValue()) }));
 			} else {
 				ret.append(renderLabelingComponent(compositeLabeling, kv.getValue()));
 			}
@@ -676,12 +691,29 @@ public class LabelingFormulaContext {
 		}
 
 		keepOrder = DeclarationType.Detail.equals(compositeLabeling.getDeclarationType()) && keepOrder;
+		
+		List<Map.Entry<IngTypeItem, List<AbstractLabelingComponent>>> entries = new ArrayList<>(tmp.entrySet());
+		/*
+		 * Compute IngType Qty 
+		 */
+		
+		for (Map.Entry<IngTypeItem, List<AbstractLabelingComponent>> entry : entries) {
+			Double ret = 0d;
+			for (AbstractLabelingComponent lblComponent : entry.getValue()) {
+				if (lblComponent.getQty() != null) {
+					ret += lblComponent.getQty();
+				}
+			}
+			entry.getKey().setQty(ret);
+			
+		}
+		
 
 		/*
 		 * Sort by qty, default is always first
 		 */
 
-		List<Map.Entry<IngTypeItem, List<AbstractLabelingComponent>>> entries = new ArrayList<>(tmp.entrySet());
+		
 		if (!keepOrder) {
 			Collections.sort(entries, new Comparator<Map.Entry<IngTypeItem, List<AbstractLabelingComponent>>>() {
 				public int compare(Map.Entry<IngTypeItem, List<AbstractLabelingComponent>> a, Map.Entry<IngTypeItem, List<AbstractLabelingComponent>> b) {
@@ -694,19 +726,20 @@ public class LabelingFormulaContext {
 						return 1;
 					}
 
-					return getQty(b.getValue()).compareTo(getQty(a.getValue()));
+					return b.getKey().getQty().compareTo(a.getKey().getQty());
+					//return getQty(b.getValue()).compareTo(getQty(a.getValue()));
 				}
 
-				private Double getQty(List<AbstractLabelingComponent> lblComponents) {
-					Double ret = 0d;
-					for (AbstractLabelingComponent lblComponent : lblComponents) {
-						if (lblComponent.getQty() != null) {
-							ret += lblComponent.getQty();
-						}
-					}
-
-					return ret;
-				}
+//				private Double getQty(List<AbstractLabelingComponent> lblComponents) {
+//					Double ret = 0d;
+//					for (AbstractLabelingComponent lblComponent : lblComponents) {
+//						if (lblComponent.getQty() != null) {
+//							ret += lblComponent.getQty();
+//						}
+//					}
+//
+//					return ret;
+//				}
 			});
 		}
 		Map<IngTypeItem, List<AbstractLabelingComponent>> sortedIngListByType = new LinkedHashMap<IngTypeItem, List<AbstractLabelingComponent>>();

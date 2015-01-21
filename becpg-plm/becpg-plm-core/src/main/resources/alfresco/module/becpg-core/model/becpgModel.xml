@@ -194,6 +194,18 @@
 				</list>
 			</parameter>
 		</constraint>
+		
+		<constraint name="bcpg:lrGroups" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>Group1</value>
+					<value>Group2</value>
+					<value>Group3</value>
+					<value>Group5</value>
+				</list>
+			</parameter>
+		</constraint>
 		<constraint name="bcpg:currency" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -651,6 +663,13 @@
 
 		<type name="bcpg:ingTypeItem">
 			<parent>bcpg:listValue</parent>
+			<properties>
+				<property name="bcpg:ingTypeDecThreshold">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+			</properties>
 			<mandatory-aspects>
 				<aspect>bcpg:legalNameAspect</aspect>
 				<aspect>bcpg:sortableListAspect</aspect>
@@ -1224,6 +1243,12 @@
 				<property name="bcpg:lrLabel">
 					<type>d:mltext</type>
 					<index enabled="false" />
+				</property>
+				<property name="bcpg:lrGroup">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="bcpg:lrGroups" />
+					</constraints>
 				</property>
 				<property name="bcpg:lrFormula">
 					<type>d:text</type>
