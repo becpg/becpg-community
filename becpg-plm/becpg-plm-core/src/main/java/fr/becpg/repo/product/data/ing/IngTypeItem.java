@@ -25,6 +25,7 @@ import fr.becpg.repo.repository.annotation.AlfType;
 @AlfQname(qname = "bcpg:ingTypeItem")
 public class IngTypeItem extends AbstractLabelingComponent{
 
+
 	public static final IngTypeItem DEFAULT_GROUP = new IngTypeItem();
 	
 	
@@ -41,5 +42,40 @@ public class IngTypeItem extends AbstractLabelingComponent{
 		this.decThreshold = decThreshold;
 	}
 
+	
+	
+	@Override
+	public String toString() {
+		return "IngTypeItem [decThreshold=" + decThreshold + ", qty=" + qty + ", volumeQtyPerc=" + volumeQtyPerc + ", legalName=" + legalName
+				+ ", nodeRef=" + nodeRef + ", parentNodeRef=" + parentNodeRef + ", name=" + name + ", aspects=" + aspects + ", extraProperties="
+				+ extraProperties + ", isTransient=" + isTransient + ", hashCode()=" + hashCode() + "]";
+	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((decThreshold == null) ? 0 : decThreshold.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		IngTypeItem other = (IngTypeItem) obj;
+		if (decThreshold == null) {
+			if (other.decThreshold != null)
+				return false;
+		} else if (!decThreshold.equals(other.decThreshold))
+			return false;
+		return true;
+	}
+
+	
+	
 }

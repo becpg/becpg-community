@@ -13,7 +13,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
  * GNU Lesser General Public License for more details. 
  *  
- * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License along with beCPG.
+ *  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.hierarchy.impl;
 
@@ -72,7 +73,7 @@ public class HierarchyServiceImpl implements HierarchyService {
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 	@Autowired
 	private Repository repositoryHelper;
-	
+
 	@Override
 	public NodeRef getHierarchyByPath(String path, NodeRef parentNodeRef, String value) {
 
@@ -116,7 +117,8 @@ public class HierarchyServiceImpl implements HierarchyService {
 
 		if (entityNodeRef == null) {
 			entityNodeRef = nodeService.createNode(dataListNodeRef, ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(hierachy)), BeCPGModel.TYPE_LINKED_VALUE, properties).getChildRef();
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(hierachy)), BeCPGModel.TYPE_LINKED_VALUE,
+					properties).getChildRef();
 		}
 
 		return entityNodeRef;
@@ -141,17 +143,17 @@ public class HierarchyServiceImpl implements HierarchyService {
 
 	private BeCPGQueryBuilder getLuceneQuery(String path, NodeRef parentNodeRef, QName property, String value, boolean all) {
 
-		NodeRef listContainerNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(), BeCPGQueryBuilder.encodePath(path));
-		
-		BeCPGQueryBuilder ret = BeCPGQueryBuilder.createQuery()
-				.ofType(BeCPGModel.TYPE_LINKED_VALUE).maxResults( RepoConsts.MAX_SUGGESTIONS)
+		NodeRef listContainerNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(),
+				BeCPGQueryBuilder.encodePath(path));
+
+		BeCPGQueryBuilder ret = BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_LINKED_VALUE).maxResults(RepoConsts.MAX_SUGGESTIONS)
 				.parent(listContainerNodeRef);
-		
+
 		if (parentNodeRef != null) {
 			ret.andPropEquals(BeCPGModel.PROP_PARENT_LEVEL, parentNodeRef.toString());
 		} else if (!all) {
 			ret.andPropEquals(BeCPGModel.PROP_DEPTH_LEVEL, "1");
-		} 
+		}
 
 		// value == * -> return all
 		if (!isAllQuery(value)) {
@@ -186,21 +188,25 @@ public class HierarchyServiceImpl implements HierarchyService {
 						hierarchyNodeRef = ((HierarchicalEntity) entity).getHierarchy1();
 					}
 
-					if (hierarchyNodeRef != null) {
-						QName type = nodeService.getType(entityNodeRef);
-						ClassDefinition classDef = dictionaryService.getClass(type);
+					QName type = nodeService.getType(entityNodeRef);
+					ClassDefinition classDef = dictionaryService.getClass(type);
 
-						NodeRef classFolder = repoService.getOrCreateFolderByPath(containerNodeRef, type.getLocalName(), classDef.getTitle(dictionaryService));
-						NodeRef destinationNodeRef = getOrCreateHierachyFolder(hierarchyNodeRef, classFolder);
-						if (destinationNodeRef != null) {
-							// classify
-							repoService.moveNode(entityNodeRef, destinationNodeRef);
-						} else {
-							logger.warn("Failed to classify entity. entityNodeRef: " + entityNodeRef);
-						}
+					NodeRef destinationNodeRef = repoService.getOrCreateFolderByPath(containerNodeRef, type.getLocalName(),
+							classDef.getTitle(dictionaryService));
+
+					if (hierarchyNodeRef != null) {
+						destinationNodeRef = getOrCreateHierachyFolder(hierarchyNodeRef, destinationNodeRef);
 					} else {
 						logger.warn("Cannot classify entity since it doesn't have a hierarchy.");
 					}
+
+					if (destinationNodeRef != null) {
+						// classify
+						repoService.moveNode(entityNodeRef, destinationNodeRef);
+					} else {
+						logger.warn("Failed to classify entity. entityNodeRef: " + entityNodeRef);
+					}
+
 				} else {
 					logger.warn("Cannot classify entity since is not implemented HierarchicalEntity");
 				}

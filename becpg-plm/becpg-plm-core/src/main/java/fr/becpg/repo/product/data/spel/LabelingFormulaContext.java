@@ -679,6 +679,9 @@ public class LabelingFormulaContext {
 				ingType = new IngTypeItem();
 				ingType.setNodeRef(new NodeRef(RepoConsts.SPACES_STORE, "ingType-" + lblComponent.getNodeRef().hashCode()));
 			}
+			
+			//Reset qty for equality
+			ingType.setQty(0d);
 
 			List<AbstractLabelingComponent> subSortedList = tmp.get(ingType);
 

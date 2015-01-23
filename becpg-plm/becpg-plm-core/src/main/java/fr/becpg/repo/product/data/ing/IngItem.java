@@ -51,6 +51,39 @@ public class IngItem extends AbstractLabelingComponent {
 		this.subIngs = subIngs;
 	}
 
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((ingType == null) ? 0 : ingType.hashCode());
+		result = prime * result + ((subIngs == null) ? 0 : subIngs.hashCode());
+		return result;
+	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		IngItem other = (IngItem) obj;
+		if (ingType == null) {
+			if (other.ingType != null)
+				return false;
+		} else if (!ingType.equals(other.ingType))
+			return false;
+		if (subIngs == null) {
+			if (other.subIngs != null)
+				return false;
+		} else if (!subIngs.equals(other.subIngs))
+			return false;
+		return true;
+	}
+
 	
 
 }
