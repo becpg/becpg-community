@@ -1,4 +1,3 @@
-<!-- http://blogs.alfresco.com/wp/ddraper/category/alfresco-share-customization/ -->
 <extension>
 	<modules>
 		<module>
@@ -9,7 +8,11 @@
 		          <targetPackageRoot>org.alfresco.share.header</targetPackageRoot>
 		          <sourcePackageRoot>org.alfresco.components.custom-menu-designer</sourcePackageRoot>
 		        </customization>
-			</customizations>
+		   		<customization>
+		          <targetPackageRoot>org.alfresco.components.console</targetPackageRoot>
+		          <sourcePackageRoot>org.alfresco.components.custom-console</sourcePackageRoot>
+		        </customization>     
+		   </customizations>
 		</module>
 	</modules>
 </extension>  

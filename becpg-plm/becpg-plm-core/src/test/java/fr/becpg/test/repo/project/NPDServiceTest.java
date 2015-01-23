@@ -177,7 +177,7 @@ public class NPDServiceTest extends AbstractProjectTestCase {
 			}
 		}, false, true);
 
-		final WorkflowTask task3 = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<WorkflowTask>() {
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<WorkflowTask>() {
 			public WorkflowTask execute() throws Throwable {
 
 				logger.info("Set npd task information " + task2.getName());

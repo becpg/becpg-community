@@ -26,7 +26,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
@@ -359,60 +358,6 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 				nodeService));
 
 	}
-
-	@Deprecated
-	private String prepareQueryCode(String query, QName type, String[] arrClassNames) {
-		if (Pattern.matches(RepoConsts.REGEX_NON_NEGATIVE_INTEGER_FIELD, query)) {
-			Long codeNumber = null;
-			try {
-				codeNumber = Long.parseLong(query);
-			} catch (NumberFormatException e) {
-				logger.debug(e, e);
-			}
-
-			if (codeNumber != null) {
-				List<QName> types = new ArrayList<QName>();
-				if (arrClassNames != null && arrClassNames.length > 0) {
-					for (int i = 0; i < arrClassNames.length; i++) {
-						types.add(QName.createQName(arrClassNames[i], namespaceService));
-					}
-				} else {
-					types.add(type);
-				}
-
-				StringBuffer ret = new StringBuffer();
-				for (QName typeTmp : types) {
-					
-						if (ret.length() > 0) {
-							ret.append(" OR ");
-						}
-						ret.append(autoNumService.getPrefixedCode(typeTmp, BeCPGModel.PROP_CODE, codeNumber));
-				}
-				return "(" + ret.toString() + ")";
-			}
-		}
-		return query;
-	}
-
-	@Deprecated
-	private boolean isQueryCode(String query, QName type, String[] arrClassNames) {
-		boolean ret = Pattern.matches(RepoConsts.REGEX_NON_NEGATIVE_INTEGER_FIELD, query);
-		if (arrClassNames != null) {
-			for (int i = 0; i < arrClassNames.length; i++) {
-				QName filteredType = QName.createQName(arrClassNames[i], namespaceService);
-				ret = ret
-						|| Pattern.matches(autoNumService.getAutoNumMatchPattern(filteredType, BeCPGModel.PROP_CODE),
-								query);			
-			}
-		} else {
-			ret = ret || Pattern.matches(autoNumService.getAutoNumMatchPattern(type, BeCPGModel.PROP_CODE), query);
-		}
-
-		return ret;
-	}
-
-	
-
 
 
 	/**

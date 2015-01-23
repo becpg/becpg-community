@@ -42,10 +42,8 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.QualityModel;
-import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AssociationService;
-import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.util.ApplicationContextHelper;
 
 public class NCWorkflowUtils {
