@@ -8,17 +8,14 @@
 <@markup id="js">
    <#-- JavaScript Dependencies -->
    <@script type="text/javascript" src="${url.context}/res/components/console/consoletool.js" group="becpg-admin" ></@script>
-	<@script type="text/javascript" src="${url.context}/res/components/console/becpg-admin.js" group="becpg-admin" ></@script>
-	<@script type='text/javascript' src='https://www.google.com/jsapi' group="becpg-admin" ></@script>
-
+   <@script type="text/javascript" src="${url.context}/res/components/console/becpg-admin.js" group="becpg-admin" ></@script>
+   <@script type='text/javascript' src='https://www.google.com/jsapi' group="becpg-admin" ></@script>
 </@>
 
 
 <@markup id="widgets">
-		<@createWidgets group="becpg-admin"/> 		
+	<@createWidgets group="becpg-admin"/> 		
 </@>
-
-
 
 <@markup id="html">
  <@uniqueIdDiv>
@@ -65,14 +62,7 @@
 				         <div class="title">${msg("label.repository")}</div>
 				      </div>      
 				      <div class="section">
-							<div class="action">				
-								<button type="button" name="${el}-reload-model-button" id="${el}-reload-model-button">${msg("button.reload-model")}</button>
-					         <label for="${el}-reload-model-button">${msg("label.reload-model")}</label>              
-					    	</div>
-					    	<div class="action">				
-								<button type="button" name="${el}-reload-config-button" id="${el}-reload-config-button">${msg("button.reload-config")}</button>
-					         <label for="${el}-reload-config-button">${msg("label.reload-config")}</label>             
-					    	</div>
+				      <@markup id="actions">
 					    	<div class="action">
 					    		<button type="button" name="${el}-init-repo-button" id="${el}-init-repo-button">${msg("button.init-repo")}</button>
 					    		<label for="${el}-init-repo-button">${msg("label.init-repo")}</label>   		
@@ -82,6 +72,7 @@
 					    		 <label for="${el}-init-acl-button">${msg("label.init-acl")}</label>   	
 					    	</div>
 						</div>
+					 </@markup>	
 				    </div>
 			   </div>
 		   </#if>

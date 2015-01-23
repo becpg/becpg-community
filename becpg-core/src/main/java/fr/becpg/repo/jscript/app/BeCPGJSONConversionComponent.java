@@ -17,12 +17,8 @@
  ******************************************************************************/
 package fr.becpg.repo.jscript.app;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.alfresco.repo.jscript.app.JSONConversionComponent;
@@ -32,11 +28,9 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.namespace.NamespaceException;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
-import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
 
 import fr.becpg.repo.helper.AssociationService;
