@@ -186,7 +186,7 @@ public class LabelingFormulaContext {
 			}
 			return new MessageFormat(detailsDefaultFormat);
 		} else if (lblComponent instanceof IngTypeItem) {
-			if((((IngTypeItem) lblComponent)).getDecThreshold()!=null && (((IngTypeItem) lblComponent)).getQty() <= (((IngTypeItem) lblComponent)).getDecThreshold()){
+			if((((IngTypeItem) lblComponent)).getDecThreshold()!=null && (((IngTypeItem) lblComponent)).getQty() <= ((((IngTypeItem) lblComponent)).getDecThreshold()/100)){
 				return new MessageFormat(ingTypeDecThresholdFormat);
 			}
 			return new MessageFormat(ingTypeDefaultFormat);
