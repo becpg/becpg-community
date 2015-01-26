@@ -149,7 +149,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 					}
 				}
 				
-				visitPart(packagingListDataItem.getProduct(), costList, qty, netQty, mandatoryCharacts2, null);
+				visitPart(packagingListDataItem.getProduct(), costList, qty, null, netQty, mandatoryCharacts2, null);
 			}
 			
 			addReqCtrlList(formulatedProduct.getPackagingListView().getReqCtrlList(), mandatoryCharacts2);
@@ -174,7 +174,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 						netQty = FormulationHelper.QTY_FOR_PIECE;
 					}
 					
-					visitPart(processListDataItem.getResource(), costList, qty, netQty, mandatoryCharacts3, null);
+					visitPart(processListDataItem.getResource(), costList, qty, null, netQty, mandatoryCharacts3, null);
 				}
 			}
 			
@@ -204,7 +204,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			} else {
 				CompoListDataItem compoListDataItem = component.getData();
 				Double qty = FormulationHelper.getQtyWithLost(compoListDataItem, parentLossRatio);
-				visitPart(compoListDataItem.getProduct(), costList, qty, netQty, mandatoryCharacts, null);
+				visitPart(compoListDataItem.getProduct(), costList, qty, null, netQty, mandatoryCharacts, null);
 			}
 		}
 	}
