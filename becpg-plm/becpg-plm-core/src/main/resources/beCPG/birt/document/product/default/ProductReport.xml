@@ -418,7 +418,7 @@ Après décongélation, à conserver au réfrigérateur et à consommer dans la 
 				compoListProduct="Glace vanille" depthLevel="1"
 				compoListQtySubFormula="398.80769230769226" compoListVolume="0.7976153846153846"
 				dynamicCharactColumn2="7.976153846153846" compoListUnit="g"
-				variantIds="" isDefaultVariant="true" />
+				variantIds="" isDefaultVariant="true" compoListYieldPerc="100" />
 			<compoList eanCode="" packagingDescription="" productState="A valider"
 				code="MP25534" startEffectivity="2014-02-07T17:42:42.647Z"
 				preparationTips="" productComments="" title="" useByDate=""
@@ -434,7 +434,7 @@ Après décongélation, à conserver au réfrigérateur et à consommer dans la 
 				compoListQty="0.065" sort="102" compoListProduct="Sauce caramel"
 				depthLevel="1" compoListQtySubFormula="65.0" compoListVolume="0.05"
 				dynamicCharactColumn2="1.3" compoListUnit="g" variantIds=""
-				isDefaultVariant="true" />
+				isDefaultVariant="true" compoListYield="100"/>
 			<compoList eanCode="" suppliers="Table USDA"
 				packagingDescription="" productState="A valider" code="USDA12142"
 				startEffectivity="2012-09-03T16:32:23.849Z" preparationTips=""
