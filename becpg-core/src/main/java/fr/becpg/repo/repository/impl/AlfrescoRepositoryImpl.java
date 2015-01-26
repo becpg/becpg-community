@@ -299,10 +299,6 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 				if (logger.isDebugEnabled()) {
 					logger.debug("Create dataList of type : " + dataListContainerType);
 				}
-				// if (logger.isInfoEnabled() && dataList.isEmpty()) {
-				// logger.info("Creating empty datalist :" +
-				// dataListContainerType);
-				// }
 
 				dataListNodeRef = entityListDAO.createList(listContainerNodeRef, dataListContainerType);
 			}

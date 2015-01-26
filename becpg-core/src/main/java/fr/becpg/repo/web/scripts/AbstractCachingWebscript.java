@@ -17,6 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.web.scripts;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -29,7 +30,7 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 public abstract class AbstractCachingWebscript extends AbstractWebScript {
 
 
-	private static Log logger = LogFactory.getLog(AbstractCachingWebscript.class);
+	private static final Log logger = LogFactory.getLog(AbstractCachingWebscript.class);
 	
 
 
@@ -55,7 +56,7 @@ public abstract class AbstractCachingWebscript extends AbstractWebScript {
 				if (modifiedSinceStr != null && lastModified != null) {
 					try {
 						modifiedSince = dateFormat.parse(modifiedSinceStr).getTime();
-					} catch (Throwable e) {
+					} catch (ParseException e) {
 						if (logger.isWarnEnabled()) {
 							logger.warn("Browser sent badly-formatted If-Modified-Since header: " + modifiedSinceStr);
 						}

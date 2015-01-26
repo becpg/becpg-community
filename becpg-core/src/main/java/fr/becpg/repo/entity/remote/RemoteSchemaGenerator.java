@@ -279,44 +279,6 @@ public class RemoteSchemaGenerator {
 
 			}
 		}
-
-		// for (QName assocQName : keySet) {
-		// AssociationDefinition assocDef =
-		// dictionaryService.getAssociation(assocQName);
-		// if (dataType == null ||
-		// dictionaryService.isSubClass(assocDef.getSourceClass().getName(),
-		// dataType)) {
-		// if(first){
-		// xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema",
-		// "sequence");
-		// first = false ;
-		// }
-		// xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema",
-		// "element");
-		// xmlw.writeAttribute("name",
-		// assocDef.getName().getPrefixString().replace(":", "_"));
-		// xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema",
-		// "complexType");
-		// xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema",
-		// "sequence");
-		// xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema",
-		// "extension");
-		// xmlw.writeAttribute("base", "remoteProp");
-		//
-		// xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema",
-		// "element");
-		// xmlw.writeAttribute("ref",
-		// assocDef.getTargetClass().getName().getPrefixString().replace(":",
-		// "_"));
-		// xmlw.writeEndElement();
-		//
-		// xmlw.writeEndElement();
-		// xmlw.writeEndElement();
-		// xmlw.writeEndElement();
-		// xmlw.writeEndElement();
-		//
-		// }
-		// }
 		return first;
 	}
 

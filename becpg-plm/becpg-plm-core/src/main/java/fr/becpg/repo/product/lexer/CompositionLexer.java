@@ -106,8 +106,9 @@ public class CompositionLexer {
 	}
 
 	private static NodeRef extractProduct(String productName) {
-		return BeCPGQueryBuilder.createQuery().ofType(PLMModel.TYPE_PRODUCT).excludeDefaults().andPropEquals(ContentModel.PROP_NAME, productName)
-				.singleValue();
+		//TODO .excludeDefaults()
+		return BeCPGQueryBuilder.createQuery().ofType(PLMModel.TYPE_PRODUCT).andPropEquals(ContentModel.PROP_NAME, productName)
+				.inDB().singleValue();
 	}
 
 	private static CompoListUnit extractUnit(String unit) {

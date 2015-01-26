@@ -23,10 +23,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,7 +47,7 @@ public class OlapUtils {
 	
 	public static OlapContext createOlapContext(String userName){
 
-		DefaultHttpClient httpClient = new DefaultHttpClient();
+		HttpClient httpClient = HttpClientBuilder.create().build();
 		
 		return new OlapContext(httpClient, userName);
 	}

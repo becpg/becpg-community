@@ -394,15 +394,6 @@ public class DataListSortServiceImpl implements DataListSortService {
 			return null;
 		}
 
-		// List<AssociationRef> compoAssocRefs =
-		// nodeService.getTargetAssocs(nodeRef,
-		// BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
-		// NodeRef part = compoAssocRefs!=null && !compoAssocRefs.isEmpty() ?
-		// (compoAssocRefs.get(0)).getTargetRef() : null;
-		//
-		// return part != null ? (String) nodeService.getProperty(part,
-		// ContentModel.PROP_NAME) : (String) nodeService.getProperty(nodeRef,
-		// ContentModel.PROP_NAME);
 		return (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
 	}
 

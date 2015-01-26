@@ -633,22 +633,6 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 		return metadata;
 	}
 
-	//
-	//
-	//
-	// @Override
-	// public String convertDateValue(Serializable value) {
-	// if (value instanceof Date) {
-	// return formatDate((Date) value);
-	// }
-	// return null;
-	// }
-	//
-	// @Override
-	// public String formatDate(Date date) {
-	// PropertyFormats propertyFormats = new PropertyFormats(false);
-	// return propertyFormats.formatDate(date);
-	// }
 
 	@Override
 	public String getDisplayPath(NodeRef nodeRef) {

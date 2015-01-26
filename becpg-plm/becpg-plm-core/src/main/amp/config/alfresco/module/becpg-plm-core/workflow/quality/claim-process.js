@@ -328,8 +328,7 @@ function sendMail(userOrGroup, from, subject, message, isAction) {
     if (userOrGroup != null && userOrGroup.exists()) {
         try {
             var mail = actions.create("mail");
-            mail.parameters.template_model = templateModel;
-            if (userOrGroup.typeShort == "cm:authorityContainer") {
+            if (userOrGroup.typeShort && userOrGroup.typeShort == "cm:authorityContainer") {
                 mail.parameters.to_many = new Array(userOrGroup.properties["cm:authorityName"]);
             } else {
                 mail.parameters.to_many = new Array(userOrGroup.properties["cm:userName"]);
@@ -341,22 +340,30 @@ function sendMail(userOrGroup, from, subject, message, isAction) {
             // for Local
             // person.properties["{http://www.alfresco.org/model/system/1.0}locale"]
 
-            mail.parameters.template = search.xpathSearch("/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:claim-"
+            var template = search.xpathSearch("/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:claim-"
                     + (isAction ? "action" : "notify") + "-task-email.ftl")[0];
-            var templateArgs = new Array();
-            templateArgs['workflowTitle'] = message;
-            templateArgs['workflowPooled'] = false;
-            templateArgs['workflowDescription'] = execution.getVariable('bpm_workflowDescription');
-            templateArgs['workflowDueDate'] = task.dueDate;
-            templateArgs['workflowPriority'] = task.priority;
-            // templateArgs['workflowDocuments'] = [];
-            templateArgs['workflowId'] = "activiti$" + task.id;
-
-            var templateModel = new Array();
-            templateModel['args'] = templateArgs;
-            mail.parameters.template_model = templateModel;
-
-            mail.execute(bpm_package);
+            
+            if(template){
+                mail.parameters.template = template;
+                var templateArgs = new Array();
+                templateArgs['workflowTitle'] = message;
+                templateArgs['workflowPooled'] = false;
+                templateArgs['workflowDescription'] = execution.getVariable('bpm_workflowDescription');
+                templateArgs['workflowDueDate'] = task.dueDate;
+                templateArgs['workflowPriority'] = task.priority;
+                // templateArgs['workflowDocuments'] = [];
+                templateArgs['workflowId'] = "activiti$" + task.id;
+    
+                var templateModel = new Array();
+                templateModel['args'] = templateArgs;
+                mail.parameters.template_model = templateModel;
+                mail.execute(bpm_package);
+            } else {
+                logger.error("No template found for email : "+"/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:claim-"
+                        + (isAction ? "action" : "notify") + "-task-email.ftl");
+            }
+            
+          
         } catch (e) {
             logger.error("Cannot send mail :");
             // logger.error(" - user: "+user);

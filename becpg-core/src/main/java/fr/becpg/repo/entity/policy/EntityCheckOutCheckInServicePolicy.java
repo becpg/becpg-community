@@ -179,40 +179,6 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 		}
 	}
 
-	// @Override
-	// public void onAddAspect(NodeRef nodeRef, QName aspectTypeQName) {
-	//
-	// if (nodeService.exists(nodeRef) == true && nodeService.hasAspect(nodeRef,
-	// BeCPGModel.ASPECT_ENTITYLISTS) && !isBeCPGVersion(nodeRef)) {
-	// ruleService.disableRules();
-	// try {
-	// // Create the initial-version
-	// Map<String, Serializable> versionProperties = new HashMap<String,
-	// Serializable>(1);
-	//
-	// // If a major version is requested, indicate it in the
-	// // versionProperties map
-	// String versionType = (String) nodeService.getProperty(nodeRef,
-	// ContentModel.PROP_VERSION_TYPE);
-	// if (versionType == null ||
-	// !versionType.equals(VersionType.MINOR.toString())) {
-	// versionProperties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
-	// }
-	//
-	// if (logger.isDebugEnabled()) {
-	// logger.debug("Create initial version : " +
-	// I18NUtil.getMessage(MSG_INITIAL_VERSION));
-	// }
-	//
-	// versionProperties.put(Version.PROP_DESCRIPTION,
-	// I18NUtil.getMessage(MSG_INITIAL_VERSION));
-	// entityVersionService.createVersion(nodeRef, versionProperties);
-	// } finally {
-	// ruleService.enableRules();
-	// }
-	// }
-	//
-	// }
 
 	private NodeRef getCheckedOut(NodeRef nodeRef) {
 		NodeRef original = null;

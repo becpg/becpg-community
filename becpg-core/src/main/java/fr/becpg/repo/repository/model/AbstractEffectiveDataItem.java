@@ -31,20 +31,24 @@ public abstract class AbstractEffectiveDataItem extends BeCPGDataObject implemen
 	
 	@AlfProp
 	@AlfQname(qname="bcpg:startEffectivity")
+	@Override
 	public Date getStartEffectivity() {
 		return startEffectivity;
 	}
-
+	
+	@Override
 	public void setStartEffectivity(Date startEffectivity) {
 		this.startEffectivity = startEffectivity;
 	}
 
 	@AlfProp
 	@AlfQname(qname="bcpg:endEffectivity")
+	@Override
 	public Date getEndEffectivity() {
 		return endEffectivity;
 	}
-
+	
+	@Override
 	public void setEndEffectivity(Date endEffectivity) {
 		this.endEffectivity = endEffectivity;
 	}
