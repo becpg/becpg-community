@@ -99,16 +99,7 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 		}
 
 		cellNum = ExcelHelper.appendExcelField(metadataFields, null, item, row, cellNum);
-//		
-//		Row headerRow = sheet.getRow(1);
-//		if(cellNum < headerRow.getLastCellNum()){
-//			for (int i = cellNum; i < headerRow.getLastCellNum(); i++) {
-//				if(headerRow.getCell(i).getCellType() == Cell.CELL_TYPE_FORMULA){
-//					 cell = row.createCell(i);
-//					 cell.setCellFormula(headerRow.getCell(i).getCellFormula());
-//				}
-//			}
-//		}
+
 		
 		return rownum;
 	}

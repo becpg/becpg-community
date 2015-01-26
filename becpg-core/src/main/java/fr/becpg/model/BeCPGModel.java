@@ -101,7 +101,6 @@ public interface BeCPGModel {
 
 	// legalName aspect
 	QName ASPECT_LEGAL_NAME = QName.createQName(BeCPGModel.BECPG_URI, "legalNameAspect");
-	@Deprecated
 	QName PROP_LEGAL_NAME = QName.createQName(BeCPGModel.BECPG_URI, "legalName");
 
 	// isDeleted aspect

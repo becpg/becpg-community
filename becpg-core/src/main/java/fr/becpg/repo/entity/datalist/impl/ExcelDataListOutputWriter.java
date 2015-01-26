@@ -85,24 +85,4 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 
 	}
 
-	
-
-
-	// private void setNamedRangeCellDataValidation(HSSFSheet sheet, int
-	// firstRow, int firstColumn, int lastRow, int lastColumn, String rangeName)
-	// {
-	//
-	// CellRangeAddressList rangeList = new CellRangeAddressList();
-	// rangeList.addCellRangeAddress(new CellRangeAddress(firstRow, lastRow,
-	// firstColumn, lastColumn));
-	//
-	// DVConstraint dvconstraint =
-	// DVConstraint.createFormulaListConstraint(rangeName);
-	//
-	// HSSFDataValidation dataValidation = new HSSFDataValidation(rangeList,
-	// dvconstraint);
-	//
-	// sheet.addValidationData(dataValidation);
-	// }
-
 }

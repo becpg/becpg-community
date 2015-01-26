@@ -37,14 +37,17 @@ import fr.becpg.report.services.impl.BeCPGReportServiceImpl;
 
 public class ReportServlet extends AbstractReportServlet {
 
-	BeCPGReportService beCPGReportService = new BeCPGReportServiceImpl();
-
+	private BeCPGReportService beCPGReportService;
+	
 	private final static int BUFFER_SIZE = 2048;
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 609805146293149060L;
+	
+	
+	public ReportServlet() {
+		beCPGReportService = new BeCPGReportServiceImpl();
+	}
+	
 	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)

@@ -862,59 +862,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 				result.close();
 			}
 		}
-		//
-		// if (isDBSearch() && notIds.size() > 0) {
-		// logger.trace("Exclude notIds from results");
-		// nodes.removeAll(notIds);
-		// if (maxResults != RepoConsts.MAX_RESULTS_UNLIMITED) {
-		// return nodes.subList(0, Math.min(nodes.size(), maxResults -
-		// notIds.size()));
-		// }
-		//
-		// if (!propBetweenQueriesMap.isEmpty()) {
-		// logger.trace("Exclude between query from search");
-		// for (Iterator<NodeRef> iterator = nodes.iterator();
-		// iterator.hasNext();) {
-		// NodeRef nodeRef = (NodeRef) iterator.next();
-		// boolean toRemove = false;
-		// for (Map.Entry<QName, Pair<String, String>> propQueryEntry :
-		// propBetweenQueriesMap.entrySet()) {
-		// Object prop = nodeService.getProperty(nodeRef,
-		// propQueryEntry.getKey());
-		//
-		// toRemove = true;
-		// if (prop != null) {
-		// if (prop instanceof Integer) {
-		// String first = propQueryEntry.getValue().getFirst();
-		// String second = propQueryEntry.getValue().getSecond();
-		// if (("MIN".equals(first) || Integer.parseInt(first) < (Integer) prop)
-		// && ("MAX".equals(second) || Integer.parseInt(second) > (Integer)
-		// prop)) {
-		// toRemove = false;
-		// } else {
-		// logger.debug("Prop " + prop + " not match range " +
-		// String.format("[%s TO %s]", first, second));
-		// }
-		// } else {
-		// logger.info("Not supported between type :" +
-		// prop.getClass().getSimpleName());
-		// toRemove = false;
-		// }
-		//
-		// } else if ("MIN".equals(propQueryEntry.getValue().getFirst())) {
-		// toRemove = false;
-		// }
-		//
-		// }
-		// if (toRemove) {
-		// iterator.remove();
-		// }
-		// }
-		//
-		// }
-		//
-		// }
-
+	
 		return nodes;
 	}
 

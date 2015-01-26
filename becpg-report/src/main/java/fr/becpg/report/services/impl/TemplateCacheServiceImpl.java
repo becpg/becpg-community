@@ -34,36 +34,37 @@ import com.ibm.icu.util.Calendar;
 
 import fr.becpg.report.client.ReportException;
 import fr.becpg.report.services.TemplateCacheService;
+
 /**
- * Basic inMemoryTemplateCache
- * Limit Number of entry for security and size
+ * Basic inMemoryTemplateCache Limit Number of entry for security and size
+ * 
  * @author matthieu
  *
  */
 public class TemplateCacheServiceImpl implements TemplateCacheService {
 
 	private static int NUMBER_IN_MEMORY = 10000;
-	
-	private static Log logger = LogFactory.getLog(TemplateCacheServiceImpl.class);
-	
-	
-    private static final Map<String, TemplateCacheEl> cache = new ConcurrentHashMap<String, TemplateCacheServiceImpl.TemplateCacheEl>();
-	
+
+	private static final Log logger = LogFactory.getLog(TemplateCacheServiceImpl.class);
+
+	private Map<String, TemplateCacheEl> cache = new ConcurrentHashMap<String, TemplateCacheServiceImpl.TemplateCacheEl>();
+
 	private class TemplateCacheEl {
+
+		private Path backedFile;
 		
-		Path backedFile;
-		
-		public TemplateCacheEl(String templateId) throws IOException  {
+		private long timeStamp = Calendar.getInstance().getTimeInMillis();
+
+		public TemplateCacheEl(String templateId) throws IOException {
 			super();
 			backedFile = Files.createTempFile(templateId.replace(":/", "-").replace("/", ""), ".bcpg");
 		}
-
-		private long timeStamp = Calendar.getInstance().getTimeInMillis();
-		public long getTimeStamp() {
-			return Files.exists(backedFile)? timeStamp : -1L;
-		}
 		
-		public InputStream getContent() throws IOException{
+		public long getTimeStamp() {
+			return Files.exists(backedFile) ? timeStamp : -1L;
+		}
+
+		public InputStream getContent() throws IOException {
 			return Files.newInputStream(backedFile);
 		}
 
@@ -81,51 +82,51 @@ public class TemplateCacheServiceImpl implements TemplateCacheService {
 			Files.deleteIfExists(backedFile);
 		}
 	}
-	
+
 	@Override
 	public Long getTemplateTimeStamp(String templateId) {
-		logger.debug("getTemplateTimeStamp for "+templateId);
+		logger.debug("getTemplateTimeStamp for " + templateId);
 		TemplateCacheEl el = cache.get(templateId);
-		if(el!=null){
+		if (el != null) {
 			return el.getTimeStamp();
 		}
-		
+
 		return -1L;
 	}
 
 	@Override
 	public Long saveTemplate(String templateId, InputStream in) throws ReportException, IOException {
-		 if(cache.size()>NUMBER_IN_MEMORY){
-				throw new ReportException("Max cache entries reached");
-		 }
-		 TemplateCacheEl el = new TemplateCacheEl(templateId);
-			
-		 el.writeContent(in);
-		 cache.put(templateId, el);
+		if (cache.size() > NUMBER_IN_MEMORY) {
+			throw new ReportException("Max cache entries reached");
+		}
+		TemplateCacheEl el = new TemplateCacheEl(templateId);
 
-	     logger.debug("saveTemplate for "+templateId);
-		return  el.getTimeStamp();
-		
+		el.writeContent(in);
+		cache.put(templateId, el);
+
+		logger.debug("saveTemplate for " + templateId);
+		return el.getTimeStamp();
+
 	}
 
 	@Override
 	public InputStream getTemplate(String templateId) throws ReportException, IOException {
-		logger.debug("getTemplate for "+templateId);
+		logger.debug("getTemplate for " + templateId);
 		TemplateCacheEl el = cache.get(templateId);
-		if(el!=null){
+		if (el != null) {
 			return el.getContent();
 		}
-		
-		throw new ReportException("No template found in cache for: " +templateId);
+
+		throw new ReportException("No template found in cache for: " + templateId);
 	}
 
 	@Override
 	public URL getTemplateURL(String templateId) throws ReportException, MalformedURLException {
 		TemplateCacheEl el = cache.get(templateId);
-		if(el!=null){
+		if (el != null) {
 			return el.getURL();
 		}
-		throw new ReportException("No template URL found in cache for: " +templateId);
+		throw new ReportException("No template URL found in cache for: " + templateId);
 	}
 
 }
