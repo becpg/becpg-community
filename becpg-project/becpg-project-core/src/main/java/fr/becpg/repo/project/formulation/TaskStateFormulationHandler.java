@@ -75,7 +75,15 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 			// can start the project (manual task or task that has startdate <
 			// NOW)
 			 if(visitTask(projectData, null)){
-				 projectData.setReformulateCount(1);
+				 
+				 if(projectData.getReformulateCount()==null){
+					 projectData.setReformulateCount(1);
+				 } else {
+					 if( projectData.getReformulateCount()<3){
+						 projectData.setReformulateCount(projectData.getReformulateCount()+1);
+					 }
+				 }
+				 
 			 }
 
 			boolean allTaskPlanned = true;
@@ -108,6 +116,9 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 
 	private boolean visitTask(ProjectData projectData, TaskListDataItem taskListDataItem) {
 
+		
+		logger.debug("Enter visit task : " +(taskListDataItem!=null ? taskListDataItem.getTaskName() : "Project root"));
+		
 		boolean reformulate = false;
 		
 		NodeRef taskListNodeRef = taskListDataItem != null ? taskListDataItem.getNodeRef() : null;
@@ -167,6 +178,12 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 						
 					}
 					
+					// Status can change during script execution
+					if (!TaskState.Completed.equals(nextTask.getTaskState())) {
+						logger.debug("Task "+nextTask.getTaskName()+" reopen by script "+nextTask.getTaskState());
+						reformulate = true;
+					}
+					
 					
 				} else if (TaskState.Refused.equals(nextTask.getTaskState()) && nextTask.getRefusedTask() != null) {
 					boolean shouldRefused = true;
@@ -215,27 +232,35 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 						}
 						
 					}
-
-					logger.debug("set completion percent to value " + taskCompletionPercent + " - noderef: " + nextTask.getNodeRef());
-					nextTask.setCompletionPercent(taskCompletionPercent == 0 ? null : taskCompletionPercent);
-
-					// check workflow instance (task may be reopened) and
-					// workflow properties
-					projectWorkflowService.checkWorkflowInstance(projectData, nextTask, nextDeliverables);
-
-					if (nextTask.getResources() != null && !nextTask.getResources().isEmpty()) {
-
-						nextTask.setResources(projectService.updateTaskResources(projectData.getNodeRef(), nextTask.getNodeRef(),
-								nextTask.getResources(), true));
-
-						// workflow (task may have been set as InProgress with
-						// UI)
-						if ((nextTask.getWorkflowInstance() == null || nextTask.getWorkflowInstance().isEmpty())
-								&& nextTask.getWorkflowName() != null && !nextTask.getWorkflowName().isEmpty()) {
-
-							// start workflow
-							projectWorkflowService.startWorkflow(projectData, nextTask, nextDeliverables);
+					
+					//Status can change during script execution
+					if (TaskState.InProgress.equals(nextTask.getTaskState()) && !nextTask.getIsGroup()) {
+						
+						logger.debug("set completion percent to value " + taskCompletionPercent + " - noderef: " + nextTask.getNodeRef());
+						nextTask.setCompletionPercent(taskCompletionPercent == 0 ? null : taskCompletionPercent);
+						
+	
+						// check workflow instance (task may be reopened) and
+						// workflow properties
+						projectWorkflowService.checkWorkflowInstance(projectData, nextTask, nextDeliverables);
+	
+						if (nextTask.getResources() != null && !nextTask.getResources().isEmpty()) {
+	
+							nextTask.setResources(projectService.updateTaskResources(projectData.getNodeRef(), nextTask.getNodeRef(),
+									nextTask.getResources(), true));
+	
+							// workflow (task may have been set as InProgress with
+							// UI)
+							if ((nextTask.getWorkflowInstance() == null || nextTask.getWorkflowInstance().isEmpty())
+									&& nextTask.getWorkflowName() != null && !nextTask.getWorkflowName().isEmpty()) {
+	
+								// start workflow
+								projectWorkflowService.startWorkflow(projectData, nextTask, nextDeliverables);
+							}
 						}
+					} else {
+						logger.debug("Task "+nextTask.getTaskName()+" reopen by script "+nextTask.getTaskState());
+						reformulate = true;
 					}
 				}
 
@@ -258,10 +283,13 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 		if (parent != null) {
 			boolean hasTaskInProgress = false;
 			boolean allTasksPlanned = true;
-			for (TaskListDataItem c : ProjectHelper.getChildrenTasks(projectData, parent)) {
+			int completionPerc = 0;
+			List<TaskListDataItem> tasks = ProjectHelper.getChildrenTasks(projectData, parent);
+			for (TaskListDataItem c : tasks) {
+				completionPerc += (c.getCompletionPercent()!=null?c.getCompletionPercent():0);
 				if (TaskState.InProgress.equals(c.getTaskState())) {
 					hasTaskInProgress = true;
-				} else if (!TaskState.Planned.equals(c.getTaskState())) {
+				} else if (TaskState.Completed.equals(c.getTaskState())) {
 					allTasksPlanned = false;
 				}
 			}
@@ -272,6 +300,8 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 			} else {
 				parent.setTaskState(TaskState.Completed);
 			}
+			parent.setCompletionPercent(completionPerc/tasks.size());
+			
 		}
 	}
 
