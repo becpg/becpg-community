@@ -86,8 +86,8 @@ public class ReportTplServiceImpl implements ReportTplService {
 	@Override
 	public NodeRef getSystemReportTemplate(ReportType reportType, QName nodeType, String tplName) {
 		List<NodeRef> ret = getReportTpls(reportType, nodeType, true, tplName);
-		
-		return ret!=null && !ret.isEmpty() ? ret.get(0) : null;
+
+		return ret != null && !ret.isEmpty() ? ret.get(0) : null;
 	}
 
 	/**
@@ -120,10 +120,9 @@ public class ReportTplServiceImpl implements ReportTplService {
 	 */
 	@Override
 	public NodeRef getUserReportTemplate(ReportType reportType, QName nodeType, String tplName) {
-		List<NodeRef> ret =  getReportTpls(reportType, nodeType, false, tplName);
-		
+		List<NodeRef> ret = getReportTpls(reportType, nodeType, false, tplName);
 
-		return ret!=null && !ret.isEmpty() ? ret.get(0) : null;
+		return ret != null && !ret.isEmpty() ? ret.get(0) : null;
 	}
 
 	/**
@@ -157,7 +156,7 @@ public class ReportTplServiceImpl implements ReportTplService {
 				properties.put(ContentModel.PROP_NAME, tplFullName);
 				properties.put(ReportModel.PROP_REPORT_TPL_TYPE, reportType);
 				properties.put(ReportModel.PROP_REPORT_TPL_FORMAT, reportFormat);
-				properties.put(ReportModel.PROP_REPORT_TPL_CLASS_NAME, nodeType!=null ? nodeType.toString() : null);
+				properties.put(ReportModel.PROP_REPORT_TPL_CLASS_NAME, nodeType != null ? nodeType.toString() : null);
 				properties.put(ReportModel.PROP_REPORT_TPL_IS_SYSTEM, isSystemTpl);
 				properties.put(ReportModel.PROP_REPORT_TPL_IS_DEFAULT, isDefaultTpl);
 
@@ -192,7 +191,7 @@ public class ReportTplServiceImpl implements ReportTplService {
 				IOUtils.closeQuietly(in);
 			}
 		} else {
-			logger.error("Path doesn't exists: "+tplFilePath);
+			logger.error("Path doesn't exists: " + tplFilePath);
 		}
 
 		return reportTplNodeRef;
@@ -304,9 +303,10 @@ public class ReportTplServiceImpl implements ReportTplService {
 	private List<NodeRef> getReportTpls(ReportType reportType, QName nodeType, Boolean isSystem, String tplName) {
 
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(ReportModel.TYPE_REPORT_TPL)
-				.andPropEquals(ReportModel.PROP_REPORT_TPL_TYPE, reportType.toString())
-				.andPropEquals(ReportModel.PROP_REPORT_TPL_CLASS_NAME, nodeType != null ? nodeType.toString() : null);
+				.andPropEquals(ReportModel.PROP_REPORT_TPL_TYPE, reportType.toString());
 
+		
+		//Full text
 		if (tplName != null && tplName != "*") {
 			queryBuilder.andPropQuery(ContentModel.PROP_NAME, tplName);
 		} else {
@@ -316,8 +316,12 @@ public class ReportTplServiceImpl implements ReportTplService {
 		//TODO DB query not supporting boolean, CMIS not supporting qname
 		
 		List<NodeRef> ret = new LinkedList<>();
-		for(NodeRef rTplNodeRef : queryBuilder.ftsLanguage().list()){
-			if(isSystem.equals(nodeService.getProperty(rTplNodeRef, ReportModel.PROP_REPORT_TPL_IS_SYSTEM))
+		for(NodeRef rTplNodeRef : queryBuilder.list()){
+			
+			QName classType = (QName)nodeService.getProperty(rTplNodeRef, ReportModel.PROP_REPORT_TPL_CLASS_NAME);
+			
+			if(   ((classType == null &&  nodeType == null) || (classType!=null && classType.equals(nodeType)))
+					&& isSystem.equals(nodeService.getProperty(rTplNodeRef, ReportModel.PROP_REPORT_TPL_IS_SYSTEM))
 					&& ! Boolean.TRUE.equals(nodeService.getProperty(rTplNodeRef, ReportModel.PROP_REPORT_TPL_IS_DISABLED)) ){
 				ret.add(rTplNodeRef);
 			}
