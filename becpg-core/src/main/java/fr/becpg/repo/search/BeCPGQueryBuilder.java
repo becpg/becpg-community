@@ -312,7 +312,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		if (propQuery == null) {
 			isNull(propQName);
 		} else {
-			propQueriesMap.put(propQName, "(" + propQuery + ")");
+			propQueriesMap.put(propQName,  propQuery );
 		}
 		return this;
 	}
@@ -569,7 +569,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		if (!propQueriesMap.isEmpty()) {
 			for (Map.Entry<QName, String> propQueryEntry : propQueriesMap.entrySet()) {
-				runnedQuery.append(mandatory(getCondContainsValue(propQueryEntry.getKey(), propQueryEntry.getValue())));
+				runnedQuery.append(mandatory(getCondContainsValue(propQueryEntry.getKey(), "("+propQueryEntry.getValue()+")")));
 			}
 		}
 
@@ -671,7 +671,10 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		}
 
 		if (!propQueriesMap.isEmpty()) {
-			throw new IllegalStateException("property contains not supported yet");
+			
+			for (Map.Entry<QName, String> propQueryEntry : propQueriesMap.entrySet()) {
+				whereClause.append(" AND "+ getCmisPrefix(propQueryEntry.getKey()) + " LIKE '%" + propQueryEntry.getValue() + "%'");
+			}
 		}
 
 		if (!propQueriesEqualMap.isEmpty()) {
