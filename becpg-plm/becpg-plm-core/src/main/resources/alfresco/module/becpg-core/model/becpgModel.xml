@@ -166,9 +166,9 @@
 		</constraint>
 		<constraint name="bcpg:declarationTypes" type="LIST">
 			<parameter name="allowedValues">
-				<list>
-					<value>DoNotDetails</value>
+				<list>					
 					<value>Declare</value>
+					<value>DoNotDetails</value>
 					<value>Detail</value>
 					<value>Group</value>
 					<value>Omit</value>
@@ -788,6 +788,10 @@
 					<mandatory enforced="true">true</mandatory>
 					<default>false</default>
 				</property>
+				<property name="bcpg:physicoChemFormulatedFromVol">
+					<type>d:boolean</type>
+					<default>false</default>
+				</property>
 			</properties>
 		</type>
 
@@ -972,7 +976,7 @@
 				</property>
 				<property name="bcpg:compoListDeclType">
 					<type>d:text</type>
-					<default>DoNotDetails</default>
+					<default>Declare</default>
 					<index enabled="false" />
 					<constraints>
 						<constraint ref="bcpg:declarationTypes" />

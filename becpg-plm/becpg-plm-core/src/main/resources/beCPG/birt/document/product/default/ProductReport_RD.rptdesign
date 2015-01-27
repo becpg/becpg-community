@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
     <property name="author">beCPG</property>
-    <property name="createdBy">Eclipse BIRT Designer Version 4.2.2.v201301221637 Build &lt;4.2.2.v20130206-1509></property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.3.2.v20140211-1400 Build &lt;4.3.2.v20140225-1404></property>
     <list-property name="userProperties">
         <structure>
             <property name="name">Data Cube.OrganoList.x</property>
@@ -1045,14 +1045,12 @@
                 </structure>
                 <structure>
                     <property name="columnName">compoListYieldPerc</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
+                    <property name="analysis">measure</property>
                     <text-property name="heading">compoListYieldPerc</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">compoListLossPerc</property>
-                    <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
+                    <property name="analysis">measure</property>
                     <text-property name="heading">compoListLossPerc</text-property>
                 </structure>
                 <structure>
@@ -1119,12 +1117,12 @@
                     <structure>
                         <property name="position">10</property>
                         <property name="name">compoListYieldPerc</property>
-                        <property name="dataType">string</property>
+                        <property name="dataType">float</property>
                     </structure>
                     <structure>
                         <property name="position">11</property>
                         <property name="name">compoListLossPerc</property>
-                        <property name="dataType">string</property>
+                        <property name="dataType">float</property>
                     </structure>
                     <structure>
                         <property name="position">12</property>
@@ -1207,15 +1205,15 @@
                     <property name="position">10</property>
                     <property name="name">compoListYieldPerc</property>
                     <property name="nativeName">compoListYieldPerc</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
                 </structure>
                 <structure>
                     <property name="position">11</property>
                     <property name="name">compoListLossPerc</property>
                     <property name="nativeName">compoListLossPerc</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
                 </structure>
                 <structure>
                     <property name="position">12</property>
@@ -1232,7 +1230,7 @@
                     <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/compoLists/compoList]#:#{depthLevel;STRING;/@depthLevel},{compoListProduct;STRING;/@compoListProduct},{compoListQtySubFormula;DOUBLE;/@compoListQtySubFormula},{compoListQty;DOUBLE;/@compoListQty},{compoListUnit;STRING;/@compoListUnit},{compoListQtyAfterProcess;DOUBLE;/@compoListQtyAfterProcess},{itemType;STRING;/@itemType},{erpCode;STRING;/@erpCode},{variants;STRING;/@variants},{compoListYieldPerc;STRING;/@compoListYieldPerc},{compoListLossPerc;STRING;/@compoListLossPerc},{qtyRD;DOUBLE;/@dynamicCharactColumn5},{instruction;STRING;/instruction}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/compoLists/compoList]#:#{depthLevel;STRING;/@depthLevel},{compoListProduct;STRING;/@compoListProduct},{compoListQtySubFormula;DOUBLE;/@compoListQtySubFormula},{compoListQty;DOUBLE;/@compoListQty},{compoListUnit;STRING;/@compoListUnit},{compoListQtyAfterProcess;DOUBLE;/@compoListQtyAfterProcess},{itemType;STRING;/@itemType},{erpCode;STRING;/@erpCode},{variants;STRING;/@variants},{compoListYieldPerc;DOUBLE;/@compoListYieldPerc},{compoListLossPerc;DOUBLE;/@compoListLossPerc},{qtyRD;DOUBLE;/@dynamicCharactColumn2},{instruction;STRING;/instruction}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -2267,13 +2265,15 @@ BirtMath.round(dataSetRow["compoListQty"] * 1000000, 2)+ " mg";
                     <property name="name">compoListYieldPerc</property>
                     <text-property name="displayName">compoListYieldPerc</text-property>
                     <expression name="expression" type="javascript">dataSetRow["compoListYieldPerc"]</expression>
-                    <property name="dataType">string</property>
+                    <property name="dataType">float</property>
+                    <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">compoListLossPerc</property>
                     <text-property name="displayName">compoListLossPerc</text-property>
                     <expression name="expression" type="javascript">dataSetRow["compoListLossPerc"]</expression>
-                    <property name="dataType">string</property>
+                    <property name="dataType">float</property>
+                    <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">qtyRD</property>
@@ -2283,32 +2283,32 @@ BirtMath.round(dataSetRow["compoListQty"] * 1000000, 2)+ " mg";
                 </structure>
             </list-property>
             <column id="2910">
-                <property name="width">0.4732824427480916in</property>
                 <property name="style">becpg-col-border</property>
+                <property name="width">0.4732824427480916in</property>
             </column>
             <column id="2906">
-                <property name="width">2.6793893129770994in</property>
                 <property name="style">becpg-col-border</property>
+                <property name="width">2.6793893129770994in</property>
             </column>
             <column id="2969">
-                <property name="width">0.6259541984732825in</property>
                 <property name="style">becpg-col-border</property>
+                <property name="width">0.6259541984732825in</property>
             </column>
             <column id="3464">
-                <property name="width">0.6259541984732825in</property>
                 <property name="style">becpg-col-border</property>
+                <property name="width">0.6259541984732825in</property>
             </column>
             <column id="3287">
-                <property name="width">0.5190839694656488in</property>
                 <property name="style">becpg-col-border</property>
+                <property name="width">0.5190839694656488in</property>
             </column>
             <column id="3290">
-                <property name="width">0.48854961832061067in</property>
                 <property name="style">becpg-col-border</property>
+                <property name="width">0.48854961832061067in</property>
             </column>
             <column id="3323">
-                <property name="width">0.42748091603053434in</property>
                 <property name="style">becpg-col-border</property>
+                <property name="width">0.42748091603053434in</property>
             </column>
             <header>
                 <row id="2911">
@@ -2330,7 +2330,7 @@ BirtMath.round(dataSetRow["compoListQty"] * 1000000, 2)+ " mg";
                     </cell>
                     <cell id="3462">
                         <label id="3465">
-                            <text-property name="text">Qté</text-property>
+                            <text-property name="text">Poids</text-property>
                         </label>
                     </cell>
                     <cell id="3285">
@@ -2389,15 +2389,20 @@ BirtMath.round(dataSetRow["compoListQty"] * 1000000, 2)+ " mg";
                     <cell id="3286">
                         <data id="3467">
                             <structure name="numberFormat">
-                                <property name="category">Fixed</property>
-                                <property name="pattern">###0.00{RoundingMode=HALF_UP}</property>
+                                <property name="category">General Number</property>
+                                <property name="pattern">General Number</property>
                             </structure>
+                            <property name="textAlign">center</property>
                             <property name="resultSetColumn">qtyRD</property>
                         </data>
                     </cell>
                     <cell id="3289">
                         <data id="3292">
                             <property name="style">becpg-data</property>
+                            <structure name="numberFormat">
+                                <property name="category">General Number</property>
+                                <property name="pattern">General Number</property>
+                            </structure>
                             <property name="textAlign">center</property>
                             <property name="resultSetColumn">compoListYieldPerc</property>
                         </data>
@@ -2405,6 +2410,10 @@ BirtMath.round(dataSetRow["compoListQty"] * 1000000, 2)+ " mg";
                     <cell id="3322">
                         <data id="3294">
                             <property name="style">becpg-data</property>
+                            <structure name="numberFormat">
+                                <property name="category">General Number</property>
+                                <property name="pattern">General Number</property>
+                            </structure>
                             <property name="textAlign">center</property>
                             <property name="resultSetColumn">compoListLossPerc</property>
                         </data>
@@ -2472,8 +2481,8 @@ true
                             <property name="width">1.3358778625954197in</property>
                         </column>
                         <column id="3260">
-                            <property name="width">5.4961832061068705in</property>
                             <property name="style">becpg-col-border</property>
+                            <property name="width">5.4961832061068705in</property>
                         </column>
                         <detail>
                             <row id="3253">
@@ -2534,8 +2543,8 @@ true
                             <property name="width">50%</property>
                         </column>
                         <column id="3281">
-                            <property name="width">50%</property>
                             <property name="style">becpg-col-border</property>
+                            <property name="width">50%</property>
                         </column>
                         <header>
                             <row id="3268">
@@ -2623,8 +2632,8 @@ true
                             <property name="width">1.3435114503816794in</property>
                         </column>
                         <column id="3355">
-                            <property name="width">5.488549618320611in</property>
                             <property name="style">becpg-col-border</property>
+                            <property name="width">5.488549618320611in</property>
                         </column>
                         <detail>
                             <row id="3348">
@@ -2805,14 +2814,6 @@ true
             </row>
         </grid>
         <label id="3174"/>
-        <data id="2955">
-            <structure name="numberFormat">
-                <property name="category">Fixed</property>
-                <property name="pattern">###0.00{RoundingMode=HALF_UP}</property>
-            </structure>
-            <property name="textAlign">center</property>
-            <property name="resultSetColumn">compoListQtySubFormula</property>
-        </data>
     </body>
     <list-property name="images">
         <structure>
@@ -3006,7 +3007,7 @@ true
                 quVuumQmWXUH953Cn7IAZwI/z+cVPX+fOoULrF1rypyi8y/r1h2bvGwgLd1QsmoVPcoCA+oCivXoCOVS
                 EBABASHKID9w+/O48c5I8bjoX9WLH0opAeRJHVgRwfv3rGG5/POuCLEYmCT1YcXjoZQeRLFSrRyA/fvS
                 INz+eedOOOOdurHTjjjho1//2Q==
-            </property>
+</property>
         </structure>
     </list-property>
 </report>
