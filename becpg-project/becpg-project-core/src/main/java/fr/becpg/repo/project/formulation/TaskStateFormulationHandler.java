@@ -234,11 +234,12 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 					}
 					
 					//Status can change during script execution
-					if (TaskState.InProgress.equals(nextTask.getTaskState()) && !nextTask.getIsGroup()) {
+					if (TaskState.InProgress.equals(nextTask.getTaskState())) {
 						
-						logger.debug("set completion percent to value " + taskCompletionPercent + " - noderef: " + nextTask.getNodeRef());
-						nextTask.setCompletionPercent(taskCompletionPercent == 0 ? null : taskCompletionPercent);
-						
+						if( !nextTask.getIsGroup()){
+							logger.debug("set completion percent to value " + taskCompletionPercent + " - noderef: " + nextTask.getNodeRef());
+							nextTask.setCompletionPercent(taskCompletionPercent == 0 ? null : taskCompletionPercent);
+						}
 	
 						// check workflow instance (task may be reopened) and
 						// workflow properties
