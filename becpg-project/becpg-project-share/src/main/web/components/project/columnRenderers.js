@@ -50,8 +50,10 @@
 
 			   if (idx == 0) {
 				   for (j in deliverables) {
-					   var deliverable = deliverables[j], state = deliverable["itemData"]["prop_pjt_dlState"].value;
-					   if (state != "Planned") {
+					   var deliverable = deliverables[j], state = deliverable["itemData"]["prop_pjt_dlState"].value, 
+					   scriptOrder  = deliverable["itemData"]["prop_pjt_dlScriptExecOrder"].value;
+					 
+					   if (state != "Planned" && (scriptOrder==null || scriptOrder.length == 0  || scriptOrder=="None" )) {
 					   	if(state == "Closed"){
 					   		moreDeliverablesHtlm += "<li>" + scope.getDeliverableTitle(deliverable, oData.nodeRef) + "</li>";
 					   	} else {

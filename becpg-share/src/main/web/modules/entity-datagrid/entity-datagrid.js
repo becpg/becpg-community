@@ -204,7 +204,7 @@
                              * @property pageSize
                              * @type int
                              */
-                            pageSize : 25,
+                            pageSize : 50,
 
                             /**
                              * Initial filter to show on load.
