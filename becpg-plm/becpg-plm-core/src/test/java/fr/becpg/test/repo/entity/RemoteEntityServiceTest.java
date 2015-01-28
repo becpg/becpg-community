@@ -101,7 +101,7 @@ public class RemoteEntityServiceTest extends PLMBaseTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 				try {
-					
+					ruleService.disableRules();
 					ClassPathResource res = new ClassPathResource("beCPG/remote/entity_fullxml.xml");
 					
 					NodeRef tmpNodeRef = remoteEntityService.createOrUpdateEntity(null, res.getInputStream(), RemoteEntityFormat.xml,null);
@@ -111,6 +111,8 @@ public class RemoteEntityServiceTest extends PLMBaseTestCase {
 				} catch (BeCPGException e) {
 					logger.error(e,e);
 					Assert.fail(e.getMessage());
+				} finally {
+					ruleService.enableRules();
 				}
 
 				return null;

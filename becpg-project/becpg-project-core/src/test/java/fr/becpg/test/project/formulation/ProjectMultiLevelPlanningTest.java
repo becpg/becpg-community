@@ -32,11 +32,10 @@ import fr.becpg.test.project.AbstractProjectTestCase;
 public class ProjectMultiLevelPlanningTest extends AbstractProjectTestCase {	
 
 	private static Log logger = LogFactory.getLog(ProjectMultiLevelPlanningTest.class);
-	private final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");	
-	
+
 	@Test
 	public void testCalculatePlanningDates() throws ParseException {		
-
+		final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 		createMultiLevelProject(ProjectState.OnHold, dateFormat.parse("15/11/2012"), null, PlanningMode.Planning);		
 		final Date today = ProjectHelper.removeTime(new Date());
 		final Date nextStartDate = ProjectHelper.calculateNextStartDate(today);
@@ -215,7 +214,7 @@ public class ProjectMultiLevelPlanningTest extends AbstractProjectTestCase {
 	
 	@Test
 	public void testRetroCalculatePlanningDates() throws ParseException {
-
+		final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 		createMultiLevelProject(ProjectState.OnHold, null, dateFormat.parse("15/11/2012"), PlanningMode.RetroPlanning);		
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
@@ -223,7 +222,8 @@ public class ProjectMultiLevelPlanningTest extends AbstractProjectTestCase {
 			public NodeRef execute() throws Throwable {
 				
 				logger.info("testRetroCalculatePlanningDates");
-				projectService.formulate(projectNodeRef);
+				// Alfready done by policy 
+				//projectService.formulate(projectNodeRef);
 				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 
 				// check initialization

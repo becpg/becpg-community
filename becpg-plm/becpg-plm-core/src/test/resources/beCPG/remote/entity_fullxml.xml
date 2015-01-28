@@ -7,7 +7,7 @@
           <cm:contains type="childAssoc">
             <pjt:taskList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="e2601047-ce2c-42b6-ab79-44bbd406020d" nodeRef="workspace://SpacesStore/cabc53bc-a21b-4f4d-94a8-4ba5672a701a">
               <pjt:tlResources type="assoc">
-                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_marketing" nodeRef="workspace://SpacesStore/a753e569-12f3-4b07-a936-3011adc981be"/>
+                
               </pjt:tlResources>
               <pjt:tlTaskLegend type="assoc">
                 <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Validation" nodeRef="workspace://SpacesStore/edf6091a-c689-4db1-9562-2f3e20110189">
@@ -21,14 +21,14 @@
                 </pjt:taskLegend>
               </pjt:tlTaskLegend>
               <pjt:tlObservers type="assoc">
-                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_PROJECT_cm_creator" nodeRef="workspace://SpacesStore/0e447eaa-f256-4e13-ad31-b0c6e938c417"/>
-                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_marketing" nodeRef="workspace://SpacesStore/a753e569-12f3-4b07-a936-3011adc981be"/>
+                
+                
               </pjt:tlObservers>
               <pjt:tlPrevTasks type="assoc"/>
               <cm:created type="d:datetime">2014-08-07T17:30:00.349+02:00</cm:created>
               <pjt:tlWorkflowInstance type="d:text"><![CDATA[activiti$53087]]></pjt:tlWorkflowInstance>
               <cm:description type="d:mltext"><![CDATA[Analyse complète de la demande]]></cm:description>
-              <pjt:tlTaskName type="d:text"><![CDATA[Validation marketing]]></pjt:tlTaskName>
+              <pjt:tlTaskName type="d:text"><![CDATA[Validation ]]></pjt:tlTaskName>
               <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
               <cm:name type="d:text"><![CDATA[e2601047-ce2c-42b6-ab79-44bbd406020d]]></cm:name>
               <pjt:tlIsMilestone type="d:boolean"><![CDATA[true]]></pjt:tlIsMilestone>
@@ -46,14 +46,14 @@
             </pjt:taskList>
             <pjt:taskList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="04a03b59-d547-4dc9-b481-b4c961d5b061" nodeRef="workspace://SpacesStore/79e9eb37-fecf-4f08-88d8-42bc14ea1315">
               <pjt:tlResources type="assoc">
-                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_responsable-industriel" nodeRef="workspace://SpacesStore/68f3929a-eaa8-4674-96bb-ed301df447f3"/>
+                
               </pjt:tlResources>
               <pjt:tlTaskLegend type="assoc">
                 <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Validation" nodeRef="workspace://SpacesStore/edf6091a-c689-4db1-9562-2f3e20110189"/>
               </pjt:tlTaskLegend>
               <pjt:tlObservers type="assoc">
-                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_responsable-industriel" nodeRef="workspace://SpacesStore/68f3929a-eaa8-4674-96bb-ed301df447f3"/>
-                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_PROJECT_cm_creator" nodeRef="workspace://SpacesStore/0e447eaa-f256-4e13-ad31-b0c6e938c417"/>
+                
+                
               </pjt:tlObservers>
               <pjt:tlPrevTasks type="assoc">
                 <pjt:taskList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="e2601047-ce2c-42b6-ab79-44bbd406020d" nodeRef="workspace://SpacesStore/cabc53bc-a21b-4f4d-94a8-4ba5672a701a"/>
@@ -77,8 +77,7 @@
             </pjt:taskList>
             <pjt:taskList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="90952497-dd20-4d51-9419-df9fb6edebaf" nodeRef="workspace://SpacesStore/ec93e8eb-5599-4bcb-bdc3-5b9c4b9b573c">
               <pjt:tlResources type="assoc">
-                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_responsable-industriel" nodeRef="workspace://SpacesStore/68f3929a-eaa8-4674-96bb-ed301df447f3"/>
-              </pjt:tlResources>
+             </pjt:tlResources>
               <pjt:tlTaskLegend type="assoc">
                 <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Réalisation" nodeRef="workspace://SpacesStore/b28f769a-121f-480e-a8eb-dba17d708bad">
                   <bcpg:color type="d:text"><![CDATA[#cfe2f3]]></bcpg:color>
@@ -113,7 +112,7 @@
             </pjt:taskList>
             <pjt:taskList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="18329cdf-a67d-47cf-a068-55b0b856ce68" nodeRef="workspace://SpacesStore/2b8c68d7-f64f-47a3-b93e-bf9e68afd059">
               <pjt:tlResources type="assoc">
-                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_marketing" nodeRef="workspace://SpacesStore/a753e569-12f3-4b07-a936-3011adc981be"/>
+                
               </pjt:tlResources>
               <pjt:tlTaskLegend type="assoc">
                 <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Réalisation" nodeRef="workspace://SpacesStore/b28f769a-121f-480e-a8eb-dba17d708bad"/>
@@ -124,7 +123,7 @@
               </pjt:tlPrevTasks>
               <cm:created type="d:datetime">2014-08-07T17:30:00.448+02:00</cm:created>
               <cm:description type="d:mltext"><![CDATA[Analyse des éléments fourni et définition des libellés facture/colis et poids prix si besoin]]></cm:description>
-              <pjt:tlTaskName type="d:text"><![CDATA[Marketing]]></pjt:tlTaskName>
+              <pjt:tlTaskName type="d:text"><![CDATA[]]></pjt:tlTaskName>
               <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
               <cm:name type="d:text"><![CDATA[18329cdf-a67d-47cf-a068-55b0b856ce68]]></cm:name>
               <pjt:tlIsMilestone type="d:boolean"><![CDATA[false]]></pjt:tlIsMilestone>
@@ -141,14 +140,14 @@
             </pjt:taskList>
             <pjt:taskList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="c72ff1f4-12a8-43a6-93c1-53887b08cee7" nodeRef="workspace://SpacesStore/36a86ce2-a279-41de-bc40-86309c4c3933">
               <pjt:tlResources type="assoc">
-                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_Quality" nodeRef="workspace://SpacesStore/6a975b12-7d25-4718-95ec-1c1c71715ba3"/>
+                
               </pjt:tlResources>
               <pjt:tlTaskLegend type="assoc">
                 <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Validation" nodeRef="workspace://SpacesStore/edf6091a-c689-4db1-9562-2f3e20110189"/>
               </pjt:tlTaskLegend>
               <pjt:tlObservers type="assoc">
-                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_Quality" nodeRef="workspace://SpacesStore/6a975b12-7d25-4718-95ec-1c1c71715ba3"/>
-                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_marketing" nodeRef="workspace://SpacesStore/a753e569-12f3-4b07-a936-3011adc981be"/>
+                
+                
               </pjt:tlObservers>
               <pjt:tlPrevTasks type="assoc">
                 <pjt:taskList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="18329cdf-a67d-47cf-a068-55b0b856ce68" nodeRef="workspace://SpacesStore/2b8c68d7-f64f-47a3-b93e-bf9e68afd059"/>
@@ -172,7 +171,7 @@
             </pjt:taskList>
             <pjt:taskList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="c502e228-66a5-48d0-8976-975b52333b0f" nodeRef="workspace://SpacesStore/c96ab553-c119-465e-bd21-830274725acf">
               <pjt:tlResources type="assoc">
-                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ordonnancement" nodeRef="workspace://SpacesStore/b70329da-c533-4648-b375-c76615c1c4f6"/>
+                
               </pjt:tlResources>
               <pjt:tlTaskLegend type="assoc">
                 <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Validation" nodeRef="workspace://SpacesStore/edf6091a-c689-4db1-9562-2f3e20110189"/>
@@ -200,7 +199,7 @@
             </pjt:taskList>
             <pjt:taskList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="6a88d40f-b1b3-4bf6-ad81-3bbaa3c9b05d" nodeRef="workspace://SpacesStore/d92e4467-e0b2-4ae3-becf-bf8f49c2a2cf">
               <pjt:tlResources type="assoc">
-                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_Quality" nodeRef="workspace://SpacesStore/6a975b12-7d25-4718-95ec-1c1c71715ba3"/>
+                
               </pjt:tlResources>
               <pjt:tlTaskLegend type="assoc">
                 <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Validation" nodeRef="workspace://SpacesStore/edf6091a-c689-4db1-9562-2f3e20110189"/>
@@ -228,7 +227,7 @@
             </pjt:taskList>
             <pjt:taskList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="f6b625ff-70ca-4976-b913-8cec5c93f7fb" nodeRef="workspace://SpacesStore/debeb440-416f-4dcd-992f-251a53848b76">
               <pjt:tlResources type="assoc">
-                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_parametrage" nodeRef="workspace://SpacesStore/b632da53-a78d-49a0-a832-4b0015c45614"/>
+                
               </pjt:tlResources>
               <pjt:tlTaskLegend type="assoc">
                 <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Réalisation" nodeRef="workspace://SpacesStore/b28f769a-121f-480e-a8eb-dba17d708bad"/>
@@ -238,32 +237,24 @@
                 <pjt:taskList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="6a88d40f-b1b3-4bf6-ad81-3bbaa3c9b05d" nodeRef="workspace://SpacesStore/d92e4467-e0b2-4ae3-becf-bf8f49c2a2cf"/>
                 <pjt:taskList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="c502e228-66a5-48d0-8976-975b52333b0f" nodeRef="workspace://SpacesStore/c96ab553-c119-465e-bd21-830274725acf"/>
                 <pjt:taskList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:contains/bcpg:entityLists/cm:contains" type="node" name="a505c78c-23b9-481f-9326-81f31267468e" nodeRef="workspace://SpacesStore/3d4a1a63-0924-4e49-9e33-266820dc848f">
-                  <pjt:tlResources type="assoc">
-                    <cm:person path="/sys:system/sys:people" type="node" name="demandeur@loeul-et-piriot.com" nodeRef="workspace://SpacesStore/72cc491f-7dcd-4d97-9959-8d5a2a36579f"/>
-                  </pjt:tlResources>
+                  <pjt:tlResources type="assoc"></pjt:tlResources>
                   <pjt:tlTaskLegend type="assoc">
                     <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Validation" nodeRef="workspace://SpacesStore/edf6091a-c689-4db1-9562-2f3e20110189"/>
                   </pjt:tlTaskLegend>
-                  <pjt:tlObservers type="assoc">
-                    <cm:person path="/sys:system/sys:people" type="node" name="marketing@loeul-et-piriot.com" nodeRef="workspace://SpacesStore/dd985b63-6899-4591-8204-f84d52ae2672"/>
-                    <cm:person path="/sys:system/sys:people" type="node" name="demandeur@loeul-et-piriot.com" nodeRef="workspace://SpacesStore/72cc491f-7dcd-4d97-9959-8d5a2a36579f"/>
-                  </pjt:tlObservers>
+                  <pjt:tlObservers type="assoc"></pjt:tlObservers>
                   <pjt:tlPrevTasks type="assoc">
                     <pjt:taskList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:contains/bcpg:entityLists/cm:contains" type="node" name="c72ff1f4-12a8-43a6-93c1-53887b08cee7" nodeRef="workspace://SpacesStore/c0baa2de-1d7e-4334-a58e-b402416be1e9">
                       <pjt:tlResources type="assoc">
-                        <cm:person path="/sys:system/sys:people" type="node" name="qualite@loeul-et-piriot.com" nodeRef="workspace://SpacesStore/b436e929-41c4-49e7-9258-212cf4baa2ad"/>
+                        
                       </pjt:tlResources>
                       <pjt:tlTaskLegend type="assoc">
                         <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Validation" nodeRef="workspace://SpacesStore/edf6091a-c689-4db1-9562-2f3e20110189"/>
                       </pjt:tlTaskLegend>
-                      <pjt:tlObservers type="assoc">
-                        <cm:person path="/sys:system/sys:people" type="node" name="qualite@loeul-et-piriot.com" nodeRef="workspace://SpacesStore/b436e929-41c4-49e7-9258-212cf4baa2ad"/>
-                        <cm:person path="/sys:system/sys:people" type="node" name="marketing@loeul-et-piriot.com" nodeRef="workspace://SpacesStore/dd985b63-6899-4591-8204-f84d52ae2672"/>
-                      </pjt:tlObservers>
+                      <pjt:tlObservers type="assoc"></pjt:tlObservers>
                       <pjt:tlPrevTasks type="assoc">
                         <pjt:taskList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:contains/bcpg:entityLists/cm:contains" type="node" name="18329cdf-a67d-47cf-a068-55b0b856ce68" nodeRef="workspace://SpacesStore/bce89a0b-2b2c-41bb-bc2c-d7f9d9191d29">
                           <pjt:tlResources type="assoc">
-                            <cm:person path="/sys:system/sys:people" type="node" name="marketing@loeul-et-piriot.com" nodeRef="workspace://SpacesStore/dd985b63-6899-4591-8204-f84d52ae2672"/>
+                            
                           </pjt:tlResources>
                           <pjt:tlTaskLegend type="assoc">
                             <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Réalisation" nodeRef="workspace://SpacesStore/b28f769a-121f-480e-a8eb-dba17d708bad"/>
@@ -272,7 +263,7 @@
                           <pjt:tlPrevTasks type="assoc">
                             <pjt:taskList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:contains/bcpg:entityLists/cm:contains" type="node" name="90952497-dd20-4d51-9419-df9fb6edebaf" nodeRef="workspace://SpacesStore/41b904d3-f2b9-42c1-ac68-288e0b9f1897">
                               <pjt:tlResources type="assoc">
-                                <cm:person path="/sys:system/sys:people" type="node" name="rd@loeul-et-piriot.com" nodeRef="workspace://SpacesStore/5f94ac9a-3d0c-429a-8524-8993e62b5ddd"/>
+                                
                               </pjt:tlResources>
                               <pjt:tlTaskLegend type="assoc">
                                 <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Réalisation" nodeRef="workspace://SpacesStore/b28f769a-121f-480e-a8eb-dba17d708bad"/>
@@ -281,14 +272,14 @@
                               <pjt:tlPrevTasks type="assoc">
                                 <pjt:taskList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:contains/bcpg:entityLists/cm:contains" type="node" name="04a03b59-d547-4dc9-b481-b4c961d5b061" nodeRef="workspace://SpacesStore/5d10bb72-0a8e-4a5a-88fe-6d76aa52aef4">
                                   <pjt:tlResources type="assoc">
-                                    <cm:person path="/sys:system/sys:people" type="node" name="rd@loeul-et-piriot.com" nodeRef="workspace://SpacesStore/5f94ac9a-3d0c-429a-8524-8993e62b5ddd"/>
+                                    
                                   </pjt:tlResources>
                                   <pjt:tlTaskLegend type="assoc">
                                     <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Validation" nodeRef="workspace://SpacesStore/edf6091a-c689-4db1-9562-2f3e20110189"/>
                                   </pjt:tlTaskLegend>
                                   <pjt:tlObservers type="assoc">
-                                    <cm:person path="/sys:system/sys:people" type="node" name="rd@loeul-et-piriot.com" nodeRef="workspace://SpacesStore/5f94ac9a-3d0c-429a-8524-8993e62b5ddd"/>
-                                    <cm:person path="/sys:system/sys:people" type="node" name="demandeur@loeul-et-piriot.com" nodeRef="workspace://SpacesStore/72cc491f-7dcd-4d97-9959-8d5a2a36579f"/>
+                                    
+                                    
                                   </pjt:tlObservers>
                                   <pjt:tlPrevTasks type="assoc">
                                     <pjt:taskList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:contains/bcpg:entityLists/cm:contains" type="node" name="e2601047-ce2c-42b6-ab79-44bbd406020d" nodeRef="workspace://SpacesStore/5d3343db-c8b3-4472-b69e-3e105c097487">
@@ -321,19 +312,19 @@
                                         </fm:forum>
                                       </fm:discussion>
                                       <pjt:tlResources type="assoc">
-                                        <cm:person path="/sys:system/sys:people" type="node" name="marketing@loeul-et-piriot.com" nodeRef="workspace://SpacesStore/dd985b63-6899-4591-8204-f84d52ae2672"/>
+                                        
                                       </pjt:tlResources>
                                       <pjt:tlTaskLegend type="assoc">
                                         <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Validation" nodeRef="workspace://SpacesStore/edf6091a-c689-4db1-9562-2f3e20110189"/>
                                       </pjt:tlTaskLegend>
                                       <pjt:tlObservers type="assoc">
-                                        <cm:person path="/sys:system/sys:people" type="node" name="demandeur@loeul-et-piriot.com" nodeRef="workspace://SpacesStore/72cc491f-7dcd-4d97-9959-8d5a2a36579f"/>
-                                        <cm:person path="/sys:system/sys:people" type="node" name="marketing@loeul-et-piriot.com" nodeRef="workspace://SpacesStore/dd985b63-6899-4591-8204-f84d52ae2672"/>
+                                        
+                                        
                                       </pjt:tlObservers>
                                       <pjt:tlPrevTasks type="assoc">
                                         <pjt:taskList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:contains/bcpg:entityLists/cm:contains" type="node" name="51867c54-374e-4c3a-929b-1810b843d136" nodeRef="workspace://SpacesStore/a3bd82f1-2e7d-4d4b-b06f-a12a48a907c2">
                                           <pjt:tlResources type="assoc">
-                                            <cm:person path="/sys:system/sys:people" type="node" name="demandeur@loeul-et-piriot.com" nodeRef="workspace://SpacesStore/72cc491f-7dcd-4d97-9959-8d5a2a36579f"/>
+                                            
                                           </pjt:tlResources>
                                           <pjt:tlTaskLegend type="assoc">
                                             <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Réalisation" nodeRef="workspace://SpacesStore/b28f769a-121f-480e-a8eb-dba17d708bad"/>
@@ -361,7 +352,7 @@
                                       <cm:created type="d:datetime">2014-07-17T17:25:32.903+02:00</cm:created>
                                       <pjt:tlWorkflowInstance type="d:text"><![CDATA[activiti$21947]]></pjt:tlWorkflowInstance>
                                       <fm:commentCount xmlns:fm="http://www.alfresco.org/model/forum/1.0" type="d:int"><![CDATA[1]]></fm:commentCount>
-                                      <pjt:tlTaskName type="d:text"><![CDATA[Evaluation Marketing]]></pjt:tlTaskName>
+                                      <pjt:tlTaskName type="d:text"><![CDATA[Evaluation ]]></pjt:tlTaskName>
                                       <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
                                       <cm:name type="d:text"><![CDATA[e2601047-ce2c-42b6-ab79-44bbd406020d]]></cm:name>
                                       <pjt:tlIsMilestone type="d:boolean"><![CDATA[false]]></pjt:tlIsMilestone>
@@ -416,7 +407,7 @@
                           <cm:created type="d:datetime">2014-07-17T17:25:34.724+02:00</cm:created>
                           <pjt:tlWorkflowInstance type="d:text"><![CDATA[activiti$22307]]></pjt:tlWorkflowInstance>
                           <cm:description type="d:mltext"><![CDATA[Renseigner :  - Composition - Étiquetage - Libellé]]></cm:description>
-                          <pjt:tlTaskName type="d:text"><![CDATA[Marketing]]></pjt:tlTaskName>
+                          <pjt:tlTaskName type="d:text"><![CDATA[]]></pjt:tlTaskName>
                           <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
                           <cm:name type="d:text"><![CDATA[18329cdf-a67d-47cf-a068-55b0b856ce68]]></cm:name>
                           <pjt:tlIsMilestone type="d:boolean"><![CDATA[false]]></pjt:tlIsMilestone>
@@ -467,7 +458,7 @@
                 </pjt:taskList>
                 <pjt:taskList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="fdfacb92-826a-4677-bf3c-39eb4ef78fea" nodeRef="workspace://SpacesStore/5a90977b-0157-4532-9636-c97c8a2ada4d">
                   <pjt:tlResources type="assoc">
-                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_control-de-gestion" nodeRef="workspace://SpacesStore/e48cdf9b-78db-4e96-9e89-05d8d464f928"/>
+                    
                   </pjt:tlResources>
                   <pjt:tlTaskLegend type="assoc">
                     <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Réalisation" nodeRef="workspace://SpacesStore/b28f769a-121f-480e-a8eb-dba17d708bad"/>
@@ -513,7 +504,7 @@
             </pjt:taskList>
             <pjt:taskList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="d204cbd6-a3ec-4b4d-b28c-2f8474a68c29" nodeRef="workspace://SpacesStore/4673d053-0876-4810-a9b0-4074775fdd10">
               <pjt:tlResources type="assoc">
-                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_PROJECT_cm_creator" nodeRef="workspace://SpacesStore/0e447eaa-f256-4e13-ad31-b0c6e938c417"/>
+                
               </pjt:tlResources>
               <pjt:tlTaskLegend type="assoc">
                 <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Validation" nodeRef="workspace://SpacesStore/edf6091a-c689-4db1-9562-2f3e20110189"/>
@@ -541,7 +532,7 @@
             </pjt:taskList>
             <pjt:taskList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="00d0f766-fb96-4fb3-862f-bbd1bca16f12" nodeRef="workspace://SpacesStore/965a564b-3c84-45df-90bb-c2239108a86e">
               <pjt:tlResources type="assoc">
-                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_control-de-gestion" nodeRef="workspace://SpacesStore/e48cdf9b-78db-4e96-9e89-05d8d464f928"/>
+                
               </pjt:tlResources>
               <pjt:tlTaskLegend type="assoc">
                 <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Réalisation" nodeRef="workspace://SpacesStore/b28f769a-121f-480e-a8eb-dba17d708bad"/>
@@ -569,7 +560,7 @@
             </pjt:taskList>
             <pjt:taskList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="4de4e369-3a20-422c-8fa4-a39141edf315" nodeRef="workspace://SpacesStore/825c126e-cf13-4d55-a381-4646be2c458e">
               <pjt:tlResources type="assoc">
-                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_PROJECT_cm_creator" nodeRef="workspace://SpacesStore/0e447eaa-f256-4e13-ad31-b0c6e938c417"/>
+                
               </pjt:tlResources>
               <pjt:tlTaskLegend type="assoc">
                 <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Réalisation" nodeRef="workspace://SpacesStore/b28f769a-121f-480e-a8eb-dba17d708bad"/>
@@ -597,14 +588,14 @@
             </pjt:taskList>
             <pjt:taskList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="a505c78c-23b9-481f-9326-81f31267468e" nodeRef="workspace://SpacesStore/1ec1698a-de0c-46b9-a7ce-90537ea5f62b">
               <pjt:tlResources type="assoc">
-                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_PROJECT_cm_creator" nodeRef="workspace://SpacesStore/0e447eaa-f256-4e13-ad31-b0c6e938c417"/>
+                
               </pjt:tlResources>
               <pjt:tlTaskLegend type="assoc">
                 <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Validation" nodeRef="workspace://SpacesStore/edf6091a-c689-4db1-9562-2f3e20110189"/>
               </pjt:tlTaskLegend>
               <pjt:tlObservers type="assoc">
-                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_marketing" nodeRef="workspace://SpacesStore/a753e569-12f3-4b07-a936-3011adc981be"/>
-                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_PROJECT_cm_creator" nodeRef="workspace://SpacesStore/0e447eaa-f256-4e13-ad31-b0c6e938c417"/>
+                
+                
               </pjt:tlObservers>
               <pjt:tlPrevTasks type="assoc">
                 <pjt:taskList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="c72ff1f4-12a8-43a6-93c1-53887b08cee7" nodeRef="workspace://SpacesStore/36a86ce2-a279-41de-bc40-86309c4c3933"/>
@@ -628,7 +619,7 @@
             </pjt:taskList>
             <pjt:taskList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="fdfacb92-826a-4677-bf3c-39eb4ef78fea" nodeRef="workspace://SpacesStore/5a90977b-0157-4532-9636-c97c8a2ada4d">
               <pjt:tlResources type="assoc">
-                <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_control-de-gestion" nodeRef="workspace://SpacesStore/e48cdf9b-78db-4e96-9e89-05d8d464f928"/>
+                
               </pjt:tlResources>
               <pjt:tlTaskLegend type="assoc">
                 <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Réalisation" nodeRef="workspace://SpacesStore/b28f769a-121f-480e-a8eb-dba17d708bad"/>
@@ -674,7 +665,7 @@
               <pjt:completionPercent type="d:int"><![CDATA[0]]></pjt:completionPercent>
               <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
               <cm:name type="d:text"><![CDATA[3dc61aa3-aa54-4a12-ae9c-80b0dc05e5e9]]></cm:name>
-              <pjt:dlUrl type="d:text"><![CDATA[/share/page/wizard?id=loetp-essais&nodeRef={pjt:projectEntity}]]></pjt:dlUrl>
+              <pjt:dlUrl type="d:text"><![CDATA[/share/page/wizard?id=test-essais&nodeRef={pjt:projectEntity}]]></pjt:dlUrl>
               <pjt:dlState type="d:text"><![CDATA[Planned]]></pjt:dlState>
               <pjt:dlDescription type="d:text"><![CDATA[Fiche essais]]></pjt:dlDescription>
               <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
@@ -690,7 +681,7 @@
               <pjt:completionPercent type="d:int"><![CDATA[0]]></pjt:completionPercent>
               <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
               <cm:name type="d:text"><![CDATA[c2880fdb-d081-4125-839a-96808a4e6749]]></cm:name>
-              <pjt:dlUrl type="d:text"><![CDATA[/share/page/wizard?id=loetp-infos-qualite&nodeRef={nodeRef}]]></pjt:dlUrl>
+              <pjt:dlUrl type="d:text"><![CDATA[/share/page/wizard?id=test-infos-qualite&nodeRef={nodeRef}]]></pjt:dlUrl>
               <pjt:dlState type="d:text"><![CDATA[Planned]]></pjt:dlState>
               <pjt:dlDescription type="d:text"><![CDATA[Fiche qualité]]></pjt:dlDescription>
               <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
@@ -706,7 +697,7 @@
               <pjt:completionPercent type="d:int"><![CDATA[0]]></pjt:completionPercent>
               <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
               <cm:name type="d:text"><![CDATA[9f8b920c-f323-4519-ac24-6225bf8ea326]]></cm:name>
-              <pjt:dlUrl type="d:text"><![CDATA[/share/page/wizard?id=loetp-parametrage&nodeRef={pjt:projectEntity}]]></pjt:dlUrl>
+              <pjt:dlUrl type="d:text"><![CDATA[/share/page/wizard?id=test-parametrage&nodeRef={pjt:projectEntity}]]></pjt:dlUrl>
               <pjt:dlState type="d:text"><![CDATA[Planned]]></pjt:dlState>
               <pjt:dlDescription type="d:text"><![CDATA[Fiche paramétrage]]></pjt:dlDescription>
               <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
@@ -726,11 +717,11 @@
           <cm:contains type="childAssoc">
             <pjt:scoreList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="f4dfe51a-17c0-4db7-a88f-3e5731037c59" nodeRef="workspace://SpacesStore/28dcdd94-d308-4798-a7ba-daab357869bc">
               <cm:created type="d:datetime">2014-08-07T17:30:00.776+02:00</cm:created>
-              <pjt:slCriterion type="d:text"><![CDATA[Marché]]></pjt:slCriterion>
+              <pjt:slCriterion type="d:text"><![CDATA[]]></pjt:slCriterion>
               <pjt:completionPercent type="d:int"><![CDATA[0]]></pjt:completionPercent>
               <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
               <cm:name type="d:text"><![CDATA[f4dfe51a-17c0-4db7-a88f-3e5731037c59]]></cm:name>
-              <pjt:slScreening type="d:text"><![CDATA[<p><font color="#000000">Quels sont les besoins existants ou latents du client ou du consommateur sur ce produit ?<br /><br /><br />Quel est le produit de r&eacute;f&eacute;rence sur le march&eacute; ?<br /><br /><br />Quel est le prix du march&eacute; ?<br /><br />&nbsp;<br /><br />Le produit poss&eacute;dera-t-il un avantage, une sup&eacute;riorit&eacute; par rapport aux produits existants ?<br /><br />Quels seront les avantages perceptibles par le client ?<br /><br />Comment pourrons nous communiquer sur ces avantages ?<br /><br />Quel canal de distribution?<br /><br />En conclusion, existe-t-il un march&eacute; potentiel d'une taille suffisante pour le produit ?<br /><br /><br /><br /><br />---------------<br /><br />Rentabilit&eacute;<br /><br />Quel niveau de marge unitaire peut-on esp&eacute;rer r&eacute;aliser sur ce produit?<br /><br /><br />Pouvons nous estimer les co&ucirc;ts li&eacute;s au d&eacute;veloppement de ce nouveauproduit ?<br />-Humain<br />-Mat&eacute;riel<br /><br />En conclusion, le produit a-t-il des chances d'&ecirc;tre rentable pour l'entreprise ?</font></p>]]></pjt:slScreening>
+              <pjt:slScreening type="d:text"><![CDATA[<p><font color="#000000">Quels sont les besoins existants ou latents du  ou du consommateur sur ce produit ?<br /><br /><br />Quel est le produit de r&eacute;f&eacute;rence sur le march&eacute; ?<br /><br /><br />Quel est le prix du march&eacute; ?<br /><br />&nbsp;<br /><br />Le produit poss&eacute;dera-t-il un avantage, une sup&eacute;riorit&eacute; par rapport aux produits existants ?<br /><br />Quels seront les avantages perceptibles par le  ?<br /><br />Comment pourrons nous communiquer sur ces avantages ?<br /><br />Quel canal de distribution?<br /><br />En conclusion, existe-t-il un march&eacute; potentiel d'une taille suffisante pour le produit ?<br /><br /><br /><br /><br />---------------<br /><br />Rentabilit&eacute;<br /><br />Quel niveau de marge unitaire peut-on esp&eacute;rer r&eacute;aliser sur ce produit?<br /><br /><br />Pouvons nous estimer les co&ucirc;ts li&eacute;s au d&eacute;veloppement de ce nouveauproduit ?<br />-Humain<br />-Mat&eacute;riel<br /><br />En conclusion, le produit a-t-il des chances d'&ecirc;tre rentable pour l'entreprise ?</font></p>]]></pjt:slScreening>
               <pjt:slWeight type="d:int"><![CDATA[33]]></pjt:slWeight>
               <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
               <cm:modified type="d:datetime">2014-08-07T17:30:00.776+02:00</cm:modified>
@@ -738,7 +729,7 @@
             </pjt:scoreList>
             <pjt:scoreList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="78dafbf3-413d-4590-b79c-33075d284b86" nodeRef="workspace://SpacesStore/05bdc9cb-c3de-4d77-bbd9-7ab8c8b3d654">
               <cm:created type="d:datetime">2014-08-07T17:30:00.784+02:00</cm:created>
-              <pjt:slCriterion type="d:text"><![CDATA[Faisabilité]]></pjt:slCriterion>
+              <pjt:slCriterion type="d:text"><![CDATA[]]></pjt:slCriterion>
               <pjt:completionPercent type="d:int"><![CDATA[0]]></pjt:completionPercent>
               <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
               <cm:name type="d:text"><![CDATA[78dafbf3-413d-4590-b79c-33075d284b86]]></cm:name>
@@ -750,7 +741,7 @@
             </pjt:scoreList>
             <pjt:scoreList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="01d1fac8-7c46-46f6-b136-c814bcfa64a2" nodeRef="workspace://SpacesStore/9107165a-277d-4863-8966-c80b6cb00746">
               <cm:created type="d:datetime">2014-08-07T17:30:00.794+02:00</cm:created>
-              <pjt:slCriterion type="d:text"><![CDATA[Rentabilité]]></pjt:slCriterion>
+              <pjt:slCriterion type="d:text"><![CDATA[]]></pjt:slCriterion>
               <pjt:completionPercent type="d:int"><![CDATA[0]]></pjt:completionPercent>
               <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
               <cm:name type="d:text"><![CDATA[01d1fac8-7c46-46f6-b136-c814bcfa64a2]]></cm:name>
@@ -772,7 +763,7 @@
         <dl:dataList xmlns:dl="http://www.alfresco.org/model/datalist/1.0" path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists" type="node" name="activityList" nodeRef="workspace://SpacesStore/644f0265-6633-4548-8ced-db4d904dc4dd">
           <cm:contains type="childAssoc">
             <pjt:activityList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="75d64dda-4b19-44dd-8860-9ab98aeca168" nodeRef="workspace://SpacesStore/8133cd9a-3270-464f-b7c1-328702c07cd7">
-              <pjt:alUserId type="d:text"><![CDATA[admin@loeul-et-piriot.com]]></pjt:alUserId>
+              <pjt:alUserId type="d:text"><![CDATA[admin]]></pjt:alUserId>
               <pjt:alData type="d:text"><![CDATA[{"title":"Fiche essais.doc","contentNodeRef":"workspace://SpacesStore/efff552e-15df-4a40-9690-4c3c73651f2a","activityEvent":"Create"}]]></pjt:alData>
               <cm:created type="d:datetime">2014-08-07T17:30:00.841+02:00</cm:created>
               <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
@@ -784,7 +775,7 @@
             </pjt:activityList>
             <pjt:activityList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="d2d5a46e-4adf-44e9-81cc-4598d3dae706" nodeRef="workspace://SpacesStore/e5c79a09-e512-4b1f-9000-ea57d183c4d6">
               <pjt:alUserId type="d:text"><![CDATA[admin]]></pjt:alUserId>
-              <pjt:alData type="d:text"><![CDATA[{"afterState":"InProgress","beforeState":"Planned","title":"Validation marketing"}]]></pjt:alData>
+              <pjt:alData type="d:text"><![CDATA[{"afterState":"InProgress","beforeState":"Planned","title":"Validation "}]]></pjt:alData>
               <cm:created type="d:datetime">2014-08-07T17:31:12.846+02:00</cm:created>
               <pjt:alTaskId type="d:noderef">
                 <pjt:taskList path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test/bcpg:entityLists/cm:contains" type="node" name="e2601047-ce2c-42b6-ab79-44bbd406020d" nodeRef="workspace://SpacesStore/cabc53bc-a21b-4f4d-94a8-4ba5672a701a"/>
@@ -826,16 +817,7 @@
       <cm:modified type="d:datetime">2014-08-07T17:30:01.523+02:00</cm:modified>
     </cm:folder>
   </bcpg:entityLists>
-  <rule:ruleFolder xmlns:rule="http://www.alfresco.org/model/rule/1.0" type="childAssoc">
-    <cm:systemfolder xmlns:cm="http://www.alfresco.org/model/content/1.0" path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test" type="node" name="fb0a35fc-8bf1-4cc3-9590-e5818b17e31d" nodeRef="workspace://SpacesStore/fb0a35fc-8bf1-4cc3-9590-e5818b17e31d">
-      <cm:contains type="childAssoc"/>
-      <cm:created type="d:datetime">2014-08-07T17:30:01.021+02:00</cm:created>
-      <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
-      <cm:name type="d:text"><![CDATA[fb0a35fc-8bf1-4cc3-9590-e5818b17e31d]]></cm:name>
-      <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
-      <cm:modified type="d:datetime">2014-08-07T17:30:01.021+02:00</cm:modified>
-    </cm:systemfolder>
-  </rule:ruleFolder>
+  
   <cm:contains xmlns:cm="http://www.alfresco.org/model/content/1.0" type="childAssoc">
     <cm:content path="/app:company_home/st:sites/cm:medical/cm:documentLibrary/cm:Projet_x0020_HYDRO/cm:test" type="node" name="Fiche essais.doc" nodeRef="workspace://SpacesStore/d335ed60-bf09-4e45-9ba8-348083352417">
       <cm:created type="d:datetime">2014-08-07T17:30:00.975+02:00</cm:created>
@@ -912,251 +894,6 @@
                       <cm:modified type="d:datetime">2014-03-11T08:25:52.925+01:00</cm:modified>
                     </cm:folder>
                   </bcpg:entityLists>
-                  <rule:ruleFolder xmlns:rule="http://www.alfresco.org/model/rule/1.0" type="childAssoc">
-                    <cm:systemfolder path="/app:company_home/cm:System/cm:EntityTemplates/cm:project" type="node" name="65369502-1e89-4454-ab21-a8bc98ab1fa8" nodeRef="workspace://SpacesStore/65369502-1e89-4454-ab21-a8bc98ab1fa8">
-                      <cm:contains type="childAssoc">
-                        <rule:rule path="/app:company_home/cm:System/cm:EntityTemplates/cm:project/rule:ruleFolder" type="node" name="01005756-4392-49f2-8a83-da5d2e9b966b" nodeRef="workspace://SpacesStore/01005756-4392-49f2-8a83-da5d2e9b966b">
-                          <rule:action type="childAssoc">
-                            <act:compositeaction xmlns:act="http://www.alfresco.org/model/action/1.0" path="/app:company_home/cm:System/cm:EntityTemplates/cm:project/rule:ruleFolder/rule:rulesfc1799eb-e52f-4ac0-bc54-8003f8bf3905" type="node" name="cef2b466-bf16-4150-b977-126397c7af04" nodeRef="workspace://SpacesStore/cef2b466-bf16-4150-b977-126397c7af04">
-                              <act:compensatingAction type="childAssoc"/>
-                              <act:conditions type="childAssoc">
-                                <act:actioncondition path="/app:company_home/cm:System/cm:EntityTemplates/cm:project/rule:ruleFolder/rule:rulesfc1799eb-e52f-4ac0-bc54-8003f8bf3905/rule:action" type="node" name="ef96b193-0351-481d-ba18-a0cf56225072" nodeRef="workspace://SpacesStore/ef96b193-0351-481d-ba18-a0cf56225072">
-                                  <act:parameters type="childAssoc">
-                                    <act:actionparameter path="/app:company_home/cm:System/cm:EntityTemplates/cm:project/rule:ruleFolder/rule:rulesfc1799eb-e52f-4ac0-bc54-8003f8bf3905/rule:action/act:conditions" type="node" name="91f4157f-f48b-4f40-972c-d241976c4d11" nodeRef="workspace://SpacesStore/91f4157f-f48b-4f40-972c-d241976c4d11">
-                                      <cm:created type="d:datetime">2014-03-11T08:25:52.611+01:00</cm:created>
-                                      <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
-                                      <cm:name type="d:text"><![CDATA[91f4157f-f48b-4f40-972c-d241976c4d11]]></cm:name>
-                                      <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
-                                      <act:parameterName type="d:text"><![CDATA[type]]></act:parameterName>
-                                      <act:parameterValue type="d:any"><![CDATA[{http://www.bcpg.fr/model/becpg/1.0}entityListItem]]></act:parameterValue>
-                                      <cm:modified type="d:datetime">2014-03-11T08:25:52.611+01:00</cm:modified>
-                                    </act:actionparameter>
-                                  </act:parameters>
-                                  <cm:created type="d:datetime">2014-03-11T08:25:52.598+01:00</cm:created>
-                                  <act:invert type="d:boolean"><![CDATA[true]]></act:invert>
-                                  <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
-                                  <cm:name type="d:text"><![CDATA[ef96b193-0351-481d-ba18-a0cf56225072]]></cm:name>
-                                  <act:definitionName type="d:text"><![CDATA[is-subtype]]></act:definitionName>
-                                  <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
-                                  <cm:modified type="d:datetime">2014-03-11T08:25:52.598+01:00</cm:modified>
-                                </act:actioncondition>
-                              </act:conditions>
-                              <act:actions type="childAssoc">
-                                <act:action path="/app:company_home/cm:System/cm:EntityTemplates/cm:project/rule:ruleFolder/rule:rulesfc1799eb-e52f-4ac0-bc54-8003f8bf3905/rule:action" type="node" name="58141580-75b5-4c89-9587-2d3d3eed8dfe" nodeRef="workspace://SpacesStore/58141580-75b5-4c89-9587-2d3d3eed8dfe">
-                                  <act:compensatingAction type="childAssoc"/>
-                                  <act:conditions type="childAssoc"/>
-                                  <act:parameters type="childAssoc">
-                                    <act:actionparameter path="/app:company_home/cm:System/cm:EntityTemplates/cm:project/rule:ruleFolder/rule:rulesfc1799eb-e52f-4ac0-bc54-8003f8bf3905/rule:action/act:actions" type="node" name="cabb85f6-39b1-4611-9ad3-6342137a611e" nodeRef="workspace://SpacesStore/cabb85f6-39b1-4611-9ad3-6342137a611e">
-                                      <cm:created type="d:datetime">2014-03-11T08:25:52.644+01:00</cm:created>
-                                      <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
-                                      <cm:name type="d:text"><![CDATA[cabb85f6-39b1-4611-9ad3-6342137a611e]]></cm:name>
-                                      <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
-                                      <act:parameterName type="d:text"><![CDATA[activityEvent]]></act:parameterName>
-                                      <act:parameterValue type="d:any"><![CDATA[Create]]></act:parameterValue>
-                                      <cm:modified type="d:datetime">2014-03-11T08:25:52.644+01:00</cm:modified>
-                                    </act:actionparameter>
-                                  </act:parameters>
-                                  <act:executeAsynchronously type="d:boolean"><![CDATA[false]]></act:executeAsynchronously>
-                                  <cm:created type="d:datetime">2014-03-11T08:25:52.625+01:00</cm:created>
-                                  <act:executionActionStatus type="d:text"><![CDATA[New]]></act:executionActionStatus>
-                                  <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
-                                  <cm:name type="d:text"><![CDATA[58141580-75b5-4c89-9587-2d3d3eed8dfe]]></cm:name>
-                                  <act:definitionName type="d:text"><![CDATA[project-activity]]></act:definitionName>
-                                  <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
-                                  <cm:modified type="d:datetime">2014-03-11T08:25:52.625+01:00</cm:modified>
-                                </act:action>
-                              </act:actions>
-                              <act:parameters type="childAssoc"/>
-                              <act:executeAsynchronously type="d:boolean"><![CDATA[false]]></act:executeAsynchronously>
-                              <cm:created type="d:datetime">2014-03-11T08:25:52.575+01:00</cm:created>
-                              <act:executionActionStatus type="d:text"><![CDATA[New]]></act:executionActionStatus>
-                              <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
-                              <cm:name type="d:text"><![CDATA[cef2b466-bf16-4150-b977-126397c7af04]]></cm:name>
-                              <act:definitionName type="d:text"><![CDATA[composite-action]]></act:definitionName>
-                              <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
-                              <cm:modified type="d:datetime">2014-03-11T08:25:52.575+01:00</cm:modified>
-                            </act:compositeaction>
-                          </rule:action>
-                          <cm:created type="d:datetime">2014-03-11T08:25:52.550+01:00</cm:created>
-                          <cm:title type="d:mltext"><![CDATA[Activités projet (Entrant)]]></cm:title>
-                          <rule:disabled type="d:boolean"><![CDATA[false]]></rule:disabled>
-                          <cm:description type="d:mltext"><![CDATA[Activités projet (Entrant)]]></cm:description>
-                          <rule:executeAsynchronously type="d:boolean"><![CDATA[false]]></rule:executeAsynchronously>
-                          <rule:applyToChildren type="d:boolean"><![CDATA[true]]></rule:applyToChildren>
-                          <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
-                          <cm:name type="d:text"><![CDATA[01005756-4392-49f2-8a83-da5d2e9b966b]]></cm:name>
-                          <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
-                          <cm:modified type="d:datetime">2014-03-11T08:25:52.550+01:00</cm:modified>
-                          <rule:ruleType type="d:text">
-                            <values>
-                              <value><![CDATA[inbound]]></value>
-                            </values>
-                          </rule:ruleType>
-                        </rule:rule>
-                        <rule:rule path="/app:company_home/cm:System/cm:EntityTemplates/cm:project/rule:ruleFolder" type="node" name="5da51406-c9fe-48fe-8f06-d3be2d29b1b3" nodeRef="workspace://SpacesStore/5da51406-c9fe-48fe-8f06-d3be2d29b1b3">
-                          <rule:action type="childAssoc">
-                            <act:compositeaction xmlns:act="http://www.alfresco.org/model/action/1.0" path="/app:company_home/cm:System/cm:EntityTemplates/cm:project/rule:ruleFolder/rule:rulesfa8b4662-ac2e-4ec2-9278-b9fb7d47994f" type="node" name="0603bd07-c3b4-466f-be89-3ddb30fdb309" nodeRef="workspace://SpacesStore/0603bd07-c3b4-466f-be89-3ddb30fdb309">
-                              <act:compensatingAction type="childAssoc"/>
-                              <act:conditions type="childAssoc">
-                                <act:actioncondition path="/app:company_home/cm:System/cm:EntityTemplates/cm:project/rule:ruleFolder/rule:rulesfa8b4662-ac2e-4ec2-9278-b9fb7d47994f/rule:action" type="node" name="06c67540-7bae-4b4e-9d95-df407baf88dc" nodeRef="workspace://SpacesStore/06c67540-7bae-4b4e-9d95-df407baf88dc">
-                                  <act:parameters type="childAssoc">
-                                    <act:actionparameter path="/app:company_home/cm:System/cm:EntityTemplates/cm:project/rule:ruleFolder/rule:rulesfa8b4662-ac2e-4ec2-9278-b9fb7d47994f/rule:action/act:conditions" type="node" name="74c2f2cc-0ec8-4708-9542-dfb1debb7f6c" nodeRef="workspace://SpacesStore/74c2f2cc-0ec8-4708-9542-dfb1debb7f6c">
-                                      <cm:created type="d:datetime">2014-03-11T08:25:52.712+01:00</cm:created>
-                                      <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
-                                      <cm:name type="d:text"><![CDATA[74c2f2cc-0ec8-4708-9542-dfb1debb7f6c]]></cm:name>
-                                      <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
-                                      <act:parameterName type="d:text"><![CDATA[type]]></act:parameterName>
-                                      <act:parameterValue type="d:any"><![CDATA[{http://www.bcpg.fr/model/becpg/1.0}entityListItem]]></act:parameterValue>
-                                      <cm:modified type="d:datetime">2014-03-11T08:25:52.712+01:00</cm:modified>
-                                    </act:actionparameter>
-                                  </act:parameters>
-                                  <cm:created type="d:datetime">2014-03-11T08:25:52.701+01:00</cm:created>
-                                  <act:invert type="d:boolean"><![CDATA[true]]></act:invert>
-                                  <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
-                                  <cm:name type="d:text"><![CDATA[06c67540-7bae-4b4e-9d95-df407baf88dc]]></cm:name>
-                                  <act:definitionName type="d:text"><![CDATA[is-subtype]]></act:definitionName>
-                                  <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
-                                  <cm:modified type="d:datetime">2014-03-11T08:25:52.701+01:00</cm:modified>
-                                </act:actioncondition>
-                              </act:conditions>
-                              <act:actions type="childAssoc">
-                                <act:action path="/app:company_home/cm:System/cm:EntityTemplates/cm:project/rule:ruleFolder/rule:rulesfa8b4662-ac2e-4ec2-9278-b9fb7d47994f/rule:action" type="node" name="f59e3ed3-01ce-4a3d-aef3-f6bbe7cacaff" nodeRef="workspace://SpacesStore/f59e3ed3-01ce-4a3d-aef3-f6bbe7cacaff">
-                                  <act:compensatingAction type="childAssoc"/>
-                                  <act:conditions type="childAssoc"/>
-                                  <act:parameters type="childAssoc">
-                                    <act:actionparameter path="/app:company_home/cm:System/cm:EntityTemplates/cm:project/rule:ruleFolder/rule:rulesfa8b4662-ac2e-4ec2-9278-b9fb7d47994f/rule:action/act:actions" type="node" name="b85439d1-127e-429a-9ea9-a2033793a8c5" nodeRef="workspace://SpacesStore/b85439d1-127e-429a-9ea9-a2033793a8c5">
-                                      <cm:created type="d:datetime">2014-03-11T08:25:52.735+01:00</cm:created>
-                                      <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
-                                      <cm:name type="d:text"><![CDATA[b85439d1-127e-429a-9ea9-a2033793a8c5]]></cm:name>
-                                      <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
-                                      <act:parameterName type="d:text"><![CDATA[activityEvent]]></act:parameterName>
-                                      <act:parameterValue type="d:any"><![CDATA[Update]]></act:parameterValue>
-                                      <cm:modified type="d:datetime">2014-03-11T08:25:52.735+01:00</cm:modified>
-                                    </act:actionparameter>
-                                  </act:parameters>
-                                  <act:executeAsynchronously type="d:boolean"><![CDATA[false]]></act:executeAsynchronously>
-                                  <cm:created type="d:datetime">2014-03-11T08:25:52.719+01:00</cm:created>
-                                  <act:executionActionStatus type="d:text"><![CDATA[New]]></act:executionActionStatus>
-                                  <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
-                                  <cm:name type="d:text"><![CDATA[f59e3ed3-01ce-4a3d-aef3-f6bbe7cacaff]]></cm:name>
-                                  <act:definitionName type="d:text"><![CDATA[project-activity]]></act:definitionName>
-                                  <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
-                                  <cm:modified type="d:datetime">2014-03-11T08:25:52.719+01:00</cm:modified>
-                                </act:action>
-                              </act:actions>
-                              <act:parameters type="childAssoc"/>
-                              <act:executeAsynchronously type="d:boolean"><![CDATA[false]]></act:executeAsynchronously>
-                              <cm:created type="d:datetime">2014-03-11T08:25:52.682+01:00</cm:created>
-                              <act:executionActionStatus type="d:text"><![CDATA[New]]></act:executionActionStatus>
-                              <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
-                              <cm:name type="d:text"><![CDATA[0603bd07-c3b4-466f-be89-3ddb30fdb309]]></cm:name>
-                              <act:definitionName type="d:text"><![CDATA[composite-action]]></act:definitionName>
-                              <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
-                              <cm:modified type="d:datetime">2014-03-11T08:25:52.682+01:00</cm:modified>
-                            </act:compositeaction>
-                          </rule:action>
-                          <cm:created type="d:datetime">2014-03-11T08:25:52.658+01:00</cm:created>
-                          <cm:title type="d:mltext"><![CDATA[Activités projet (Mise à jour)]]></cm:title>
-                          <rule:disabled type="d:boolean"><![CDATA[false]]></rule:disabled>
-                          <cm:description type="d:mltext"><![CDATA[Activités projet (Mise à jour)]]></cm:description>
-                          <rule:executeAsynchronously type="d:boolean"><![CDATA[false]]></rule:executeAsynchronously>
-                          <rule:applyToChildren type="d:boolean"><![CDATA[true]]></rule:applyToChildren>
-                          <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
-                          <cm:name type="d:text"><![CDATA[5da51406-c9fe-48fe-8f06-d3be2d29b1b3]]></cm:name>
-                          <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
-                          <cm:modified type="d:datetime">2014-03-11T08:25:52.658+01:00</cm:modified>
-                          <rule:ruleType type="d:text">
-                            <values>
-                              <value><![CDATA[update]]></value>
-                            </values>
-                          </rule:ruleType>
-                        </rule:rule>
-                        <rule:rule path="/app:company_home/cm:System/cm:EntityTemplates/cm:project/rule:ruleFolder" type="node" name="2b48e820-c31a-4196-af81-26d743c970b7" nodeRef="workspace://SpacesStore/2b48e820-c31a-4196-af81-26d743c970b7">
-                          <rule:action type="childAssoc">
-                            <act:compositeaction xmlns:act="http://www.alfresco.org/model/action/1.0" path="/app:company_home/cm:System/cm:EntityTemplates/cm:project/rule:ruleFolder/rule:rules4b24f835-70f0-4add-9ad1-a27cc3e57aed" type="node" name="352341a6-51df-4e71-b137-c337fbd598ff" nodeRef="workspace://SpacesStore/352341a6-51df-4e71-b137-c337fbd598ff">
-                              <act:compensatingAction type="childAssoc"/>
-                              <act:conditions type="childAssoc">
-                                <act:actioncondition path="/app:company_home/cm:System/cm:EntityTemplates/cm:project/rule:ruleFolder/rule:rules4b24f835-70f0-4add-9ad1-a27cc3e57aed/rule:action" type="node" name="3f8ebadd-9ffa-43ca-8f38-fd277681e54b" nodeRef="workspace://SpacesStore/3f8ebadd-9ffa-43ca-8f38-fd277681e54b">
-                                  <act:parameters type="childAssoc">
-                                    <act:actionparameter path="/app:company_home/cm:System/cm:EntityTemplates/cm:project/rule:ruleFolder/rule:rules4b24f835-70f0-4add-9ad1-a27cc3e57aed/rule:action/act:conditions" type="node" name="d7c12eec-9530-4dd6-890a-8ab7b998a22a" nodeRef="workspace://SpacesStore/d7c12eec-9530-4dd6-890a-8ab7b998a22a">
-                                      <cm:created type="d:datetime">2014-03-11T08:25:52.824+01:00</cm:created>
-                                      <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
-                                      <cm:name type="d:text"><![CDATA[d7c12eec-9530-4dd6-890a-8ab7b998a22a]]></cm:name>
-                                      <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
-                                      <act:parameterName type="d:text"><![CDATA[type]]></act:parameterName>
-                                      <act:parameterValue type="d:any"><![CDATA[{http://www.bcpg.fr/model/becpg/1.0}entityListItem]]></act:parameterValue>
-                                      <cm:modified type="d:datetime">2014-03-11T08:25:52.824+01:00</cm:modified>
-                                    </act:actionparameter>
-                                  </act:parameters>
-                                  <cm:created type="d:datetime">2014-03-11T08:25:52.813+01:00</cm:created>
-                                  <act:invert type="d:boolean"><![CDATA[true]]></act:invert>
-                                  <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
-                                  <cm:name type="d:text"><![CDATA[3f8ebadd-9ffa-43ca-8f38-fd277681e54b]]></cm:name>
-                                  <act:definitionName type="d:text"><![CDATA[is-subtype]]></act:definitionName>
-                                  <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
-                                  <cm:modified type="d:datetime">2014-03-11T08:25:52.813+01:00</cm:modified>
-                                </act:actioncondition>
-                              </act:conditions>
-                              <act:actions type="childAssoc">
-                                <act:action path="/app:company_home/cm:System/cm:EntityTemplates/cm:project/rule:ruleFolder/rule:rules4b24f835-70f0-4add-9ad1-a27cc3e57aed/rule:action" type="node" name="92e530da-e11b-4df8-876a-7af384acc61d" nodeRef="workspace://SpacesStore/92e530da-e11b-4df8-876a-7af384acc61d">
-                                  <act:compensatingAction type="childAssoc"/>
-                                  <act:conditions type="childAssoc"/>
-                                  <act:parameters type="childAssoc">
-                                    <act:actionparameter path="/app:company_home/cm:System/cm:EntityTemplates/cm:project/rule:ruleFolder/rule:rules4b24f835-70f0-4add-9ad1-a27cc3e57aed/rule:action/act:actions" type="node" name="2ca31262-6121-41b2-995e-d46722857e07" nodeRef="workspace://SpacesStore/2ca31262-6121-41b2-995e-d46722857e07">
-                                      <cm:created type="d:datetime">2014-03-11T08:25:52.848+01:00</cm:created>
-                                      <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
-                                      <cm:name type="d:text"><![CDATA[2ca31262-6121-41b2-995e-d46722857e07]]></cm:name>
-                                      <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
-                                      <act:parameterName type="d:text"><![CDATA[activityEvent]]></act:parameterName>
-                                      <act:parameterValue type="d:any"><![CDATA[Delete]]></act:parameterValue>
-                                      <cm:modified type="d:datetime">2014-03-11T08:25:52.848+01:00</cm:modified>
-                                    </act:actionparameter>
-                                  </act:parameters>
-                                  <act:executeAsynchronously type="d:boolean"><![CDATA[false]]></act:executeAsynchronously>
-                                  <cm:created type="d:datetime">2014-03-11T08:25:52.832+01:00</cm:created>
-                                  <act:executionActionStatus type="d:text"><![CDATA[New]]></act:executionActionStatus>
-                                  <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
-                                  <cm:name type="d:text"><![CDATA[92e530da-e11b-4df8-876a-7af384acc61d]]></cm:name>
-                                  <act:definitionName type="d:text"><![CDATA[project-activity]]></act:definitionName>
-                                  <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
-                                  <cm:modified type="d:datetime">2014-03-11T08:25:52.832+01:00</cm:modified>
-                                </act:action>
-                              </act:actions>
-                              <act:parameters type="childAssoc"/>
-                              <act:executeAsynchronously type="d:boolean"><![CDATA[false]]></act:executeAsynchronously>
-                              <cm:created type="d:datetime">2014-03-11T08:25:52.792+01:00</cm:created>
-                              <act:executionActionStatus type="d:text"><![CDATA[New]]></act:executionActionStatus>
-                              <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
-                              <cm:name type="d:text"><![CDATA[352341a6-51df-4e71-b137-c337fbd598ff]]></cm:name>
-                              <act:definitionName type="d:text"><![CDATA[composite-action]]></act:definitionName>
-                              <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
-                              <cm:modified type="d:datetime">2014-03-11T08:25:52.792+01:00</cm:modified>
-                            </act:compositeaction>
-                          </rule:action>
-                          <cm:created type="d:datetime">2014-03-11T08:25:52.751+01:00</cm:created>
-                          <cm:title type="d:mltext"><![CDATA[Activités projet (Sortant)]]></cm:title>
-                          <rule:disabled type="d:boolean"><![CDATA[false]]></rule:disabled>
-                          <cm:description type="d:mltext"><![CDATA[Activités projet (Sortant)]]></cm:description>
-                          <rule:executeAsynchronously type="d:boolean"><![CDATA[false]]></rule:executeAsynchronously>
-                          <rule:applyToChildren type="d:boolean"><![CDATA[true]]></rule:applyToChildren>
-                          <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
-                          <cm:name type="d:text"><![CDATA[2b48e820-c31a-4196-af81-26d743c970b7]]></cm:name>
-                          <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
-                          <cm:modified type="d:datetime">2014-03-11T08:25:52.751+01:00</cm:modified>
-                          <rule:ruleType type="d:text">
-                            <values>
-                              <value><![CDATA[outbound]]></value>
-                            </values>
-                          </rule:ruleType>
-                        </rule:rule>
-                      </cm:contains>
-                      <cm:created type="d:datetime">2014-03-11T08:25:52.541+01:00</cm:created>
-                      <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
-                      <cm:name type="d:text"><![CDATA[65369502-1e89-4454-ab21-a8bc98ab1fa8]]></cm:name>
-                      <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
-                      <cm:modified type="d:datetime">2014-08-07T17:32:09.958+02:00</cm:modified>
-                    </cm:systemfolder>
-                  </rule:ruleFolder>
                   <cm:contains type="childAssoc">
                     <cm:folder path="/app:company_home/cm:System/cm:EntityTemplates/cm:project" type="node" name="Documents" nodeRef="workspace://SpacesStore/87968465-d53f-476f-8cb9-8df788bf3a03">
                       <cm:contains type="childAssoc">
@@ -1259,19 +996,16 @@
               <cm:contains type="childAssoc">
                 <pjt:taskList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/bcpg:entityLists/cm:contains" type="node" name="e2601047-ce2c-42b6-ab79-44bbd406020d" nodeRef="workspace://SpacesStore/dcfac14e-3ff7-4d50-a9e8-968c4eff5dc4">
                   <pjt:tlResources type="assoc">
-                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_marketing" nodeRef="workspace://SpacesStore/a753e569-12f3-4b07-a936-3011adc981be"/>
+                    
                   </pjt:tlResources>
                   <pjt:tlTaskLegend type="assoc">
                     <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Validation" nodeRef="workspace://SpacesStore/edf6091a-c689-4db1-9562-2f3e20110189"/>
                   </pjt:tlTaskLegend>
-                  <pjt:tlObservers type="assoc">
-                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_PROJECT_cm_creator" nodeRef="workspace://SpacesStore/0e447eaa-f256-4e13-ad31-b0c6e938c417"/>
-                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_marketing" nodeRef="workspace://SpacesStore/a753e569-12f3-4b07-a936-3011adc981be"/>
-                  </pjt:tlObservers>
+                  <pjt:tlObservers type="assoc"></pjt:tlObservers>
                   <pjt:tlPrevTasks type="assoc"/>
                   <cm:created type="d:datetime">2014-07-17T17:25:48.574+02:00</cm:created>
                   <cm:description type="d:mltext"><![CDATA[Analyse complète de la demande]]></cm:description>
-                  <pjt:tlTaskName type="d:text"><![CDATA[Validation marketing]]></pjt:tlTaskName>
+                  <pjt:tlTaskName type="d:text"><![CDATA[Validation ]]></pjt:tlTaskName>
                   <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
                   <cm:name type="d:text"><![CDATA[e2601047-ce2c-42b6-ab79-44bbd406020d]]></cm:name>
                   <pjt:tlIsMilestone type="d:boolean"><![CDATA[true]]></pjt:tlIsMilestone>
@@ -1288,15 +1022,12 @@
                 </pjt:taskList>
                 <pjt:taskList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/bcpg:entityLists/cm:contains" type="node" name="04a03b59-d547-4dc9-b481-b4c961d5b061" nodeRef="workspace://SpacesStore/5c97825c-230c-40cd-9ca7-c922c5aa99cb">
                   <pjt:tlResources type="assoc">
-                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_responsable-industriel" nodeRef="workspace://SpacesStore/68f3929a-eaa8-4674-96bb-ed301df447f3"/>
+                    
                   </pjt:tlResources>
                   <pjt:tlTaskLegend type="assoc">
                     <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Validation" nodeRef="workspace://SpacesStore/edf6091a-c689-4db1-9562-2f3e20110189"/>
                   </pjt:tlTaskLegend>
-                  <pjt:tlObservers type="assoc">
-                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_responsable-industriel" nodeRef="workspace://SpacesStore/68f3929a-eaa8-4674-96bb-ed301df447f3"/>
-                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_PROJECT_cm_creator" nodeRef="workspace://SpacesStore/0e447eaa-f256-4e13-ad31-b0c6e938c417"/>
-                  </pjt:tlObservers>
+                  <pjt:tlObservers type="assoc"></pjt:tlObservers>
                   <pjt:tlPrevTasks type="assoc">
                     <pjt:taskList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/bcpg:entityLists/cm:contains" type="node" name="e2601047-ce2c-42b6-ab79-44bbd406020d" nodeRef="workspace://SpacesStore/dcfac14e-3ff7-4d50-a9e8-968c4eff5dc4"/>
                   </pjt:tlPrevTasks>
@@ -1319,7 +1050,7 @@
                 </pjt:taskList>
                 <pjt:taskList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/bcpg:entityLists/cm:contains" type="node" name="90952497-dd20-4d51-9419-df9fb6edebaf" nodeRef="workspace://SpacesStore/a2999c26-79f2-4c93-a2f6-3d9d58a6f318">
                   <pjt:tlResources type="assoc">
-                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_responsable-industriel" nodeRef="workspace://SpacesStore/68f3929a-eaa8-4674-96bb-ed301df447f3"/>
+                    
                   </pjt:tlResources>
                   <pjt:tlTaskLegend type="assoc">
                     <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Réalisation" nodeRef="workspace://SpacesStore/b28f769a-121f-480e-a8eb-dba17d708bad"/>
@@ -1347,7 +1078,7 @@
                 </pjt:taskList>
                 <pjt:taskList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/bcpg:entityLists/cm:contains" type="node" name="18329cdf-a67d-47cf-a068-55b0b856ce68" nodeRef="workspace://SpacesStore/84ee89a7-7bde-42c2-95e8-a545ca7402a2">
                   <pjt:tlResources type="assoc">
-                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_marketing" nodeRef="workspace://SpacesStore/a753e569-12f3-4b07-a936-3011adc981be"/>
+                    
                   </pjt:tlResources>
                   <pjt:tlTaskLegend type="assoc">
                     <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Réalisation" nodeRef="workspace://SpacesStore/b28f769a-121f-480e-a8eb-dba17d708bad"/>
@@ -1358,7 +1089,7 @@
                   </pjt:tlPrevTasks>
                   <cm:created type="d:datetime">2014-07-17T17:25:48.962+02:00</cm:created>
                   <cm:description type="d:mltext"><![CDATA[Analyse des éléments fourni et définition des libellés facture/colis et poids prix si besoin]]></cm:description>
-                  <pjt:tlTaskName type="d:text"><![CDATA[Marketing]]></pjt:tlTaskName>
+                  <pjt:tlTaskName type="d:text"><![CDATA[]]></pjt:tlTaskName>
                   <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
                   <cm:name type="d:text"><![CDATA[18329cdf-a67d-47cf-a068-55b0b856ce68]]></cm:name>
                   <pjt:tlIsMilestone type="d:boolean"><![CDATA[false]]></pjt:tlIsMilestone>
@@ -1375,15 +1106,12 @@
                 </pjt:taskList>
                 <pjt:taskList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/bcpg:entityLists/cm:contains" type="node" name="c72ff1f4-12a8-43a6-93c1-53887b08cee7" nodeRef="workspace://SpacesStore/b11e04d7-73a0-4bb2-8a27-5597821be659">
                   <pjt:tlResources type="assoc">
-                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_Quality" nodeRef="workspace://SpacesStore/6a975b12-7d25-4718-95ec-1c1c71715ba3"/>
+                    
                   </pjt:tlResources>
                   <pjt:tlTaskLegend type="assoc">
                     <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Validation" nodeRef="workspace://SpacesStore/edf6091a-c689-4db1-9562-2f3e20110189"/>
                   </pjt:tlTaskLegend>
-                  <pjt:tlObservers type="assoc">
-                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_Quality" nodeRef="workspace://SpacesStore/6a975b12-7d25-4718-95ec-1c1c71715ba3"/>
-                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_marketing" nodeRef="workspace://SpacesStore/a753e569-12f3-4b07-a936-3011adc981be"/>
-                  </pjt:tlObservers>
+                  <pjt:tlObservers type="assoc"></pjt:tlObservers>
                   <pjt:tlPrevTasks type="assoc">
                     <pjt:taskList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/bcpg:entityLists/cm:contains" type="node" name="18329cdf-a67d-47cf-a068-55b0b856ce68" nodeRef="workspace://SpacesStore/84ee89a7-7bde-42c2-95e8-a545ca7402a2"/>
                   </pjt:tlPrevTasks>
@@ -1406,7 +1134,7 @@
                 </pjt:taskList>
                 <pjt:taskList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/bcpg:entityLists/cm:contains" type="node" name="c502e228-66a5-48d0-8976-975b52333b0f" nodeRef="workspace://SpacesStore/b920ebdd-27ee-4699-bd51-9d34213b0b37">
                   <pjt:tlResources type="assoc">
-                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_ordonnancement" nodeRef="workspace://SpacesStore/b70329da-c533-4648-b375-c76615c1c4f6"/>
+                    
                   </pjt:tlResources>
                   <pjt:tlTaskLegend type="assoc">
                     <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Validation" nodeRef="workspace://SpacesStore/edf6091a-c689-4db1-9562-2f3e20110189"/>
@@ -1434,7 +1162,7 @@
                 </pjt:taskList>
                 <pjt:taskList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/bcpg:entityLists/cm:contains" type="node" name="6a88d40f-b1b3-4bf6-ad81-3bbaa3c9b05d" nodeRef="workspace://SpacesStore/aca606e0-4c2d-4fe2-82e5-2f24e36d5e41">
                   <pjt:tlResources type="assoc">
-                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_Quality" nodeRef="workspace://SpacesStore/6a975b12-7d25-4718-95ec-1c1c71715ba3"/>
+                    
                   </pjt:tlResources>
                   <pjt:tlTaskLegend type="assoc">
                     <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Validation" nodeRef="workspace://SpacesStore/edf6091a-c689-4db1-9562-2f3e20110189"/>
@@ -1462,7 +1190,7 @@
                 </pjt:taskList>
                 <pjt:taskList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/bcpg:entityLists/cm:contains" type="node" name="f6b625ff-70ca-4976-b913-8cec5c93f7fb" nodeRef="workspace://SpacesStore/f6cd68ff-6844-4978-b4b8-f2f8b8b8de1f">
                   <pjt:tlResources type="assoc">
-                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_parametrage" nodeRef="workspace://SpacesStore/b632da53-a78d-49a0-a832-4b0015c45614"/>
+                    
                   </pjt:tlResources>
                   <pjt:tlTaskLegend type="assoc">
                     <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Réalisation" nodeRef="workspace://SpacesStore/b28f769a-121f-480e-a8eb-dba17d708bad"/>
@@ -1474,7 +1202,7 @@
                     <pjt:taskList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:contains/bcpg:entityLists/cm:contains" type="node" name="a505c78c-23b9-481f-9326-81f31267468e" nodeRef="workspace://SpacesStore/3d4a1a63-0924-4e49-9e33-266820dc848f"/>
                     <pjt:taskList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/bcpg:entityLists/cm:contains" type="node" name="fdfacb92-826a-4677-bf3c-39eb4ef78fea" nodeRef="workspace://SpacesStore/c68c18b9-31b6-43af-ac85-8a6e6b905c1c">
                       <pjt:tlResources type="assoc">
-                        <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_control-de-gestion" nodeRef="workspace://SpacesStore/e48cdf9b-78db-4e96-9e89-05d8d464f928"/>
+                        
                       </pjt:tlResources>
                       <pjt:tlTaskLegend type="assoc">
                         <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Réalisation" nodeRef="workspace://SpacesStore/b28f769a-121f-480e-a8eb-dba17d708bad"/>
@@ -1520,7 +1248,7 @@
                 </pjt:taskList>
                 <pjt:taskList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/bcpg:entityLists/cm:contains" type="node" name="d204cbd6-a3ec-4b4d-b28c-2f8474a68c29" nodeRef="workspace://SpacesStore/5b437d9a-3a83-4a8c-9217-df803d5b4d78">
                   <pjt:tlResources type="assoc">
-                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_PROJECT_cm_creator" nodeRef="workspace://SpacesStore/0e447eaa-f256-4e13-ad31-b0c6e938c417"/>
+                    
                   </pjt:tlResources>
                   <pjt:tlTaskLegend type="assoc">
                     <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Validation" nodeRef="workspace://SpacesStore/edf6091a-c689-4db1-9562-2f3e20110189"/>
@@ -1548,7 +1276,7 @@
                 </pjt:taskList>
                 <pjt:taskList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/bcpg:entityLists/cm:contains" type="node" name="00d0f766-fb96-4fb3-862f-bbd1bca16f12" nodeRef="workspace://SpacesStore/52ff65ea-18be-4c55-b9ff-d0b152b07ddb">
                   <pjt:tlResources type="assoc">
-                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_control-de-gestion" nodeRef="workspace://SpacesStore/e48cdf9b-78db-4e96-9e89-05d8d464f928"/>
+                    
                   </pjt:tlResources>
                   <pjt:tlTaskLegend type="assoc">
                     <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Réalisation" nodeRef="workspace://SpacesStore/b28f769a-121f-480e-a8eb-dba17d708bad"/>
@@ -1576,7 +1304,7 @@
                 </pjt:taskList>
                 <pjt:taskList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/bcpg:entityLists/cm:contains" type="node" name="4de4e369-3a20-422c-8fa4-a39141edf315" nodeRef="workspace://SpacesStore/282f75e3-579a-4387-bca1-cebc31e519e9">
                   <pjt:tlResources type="assoc">
-                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_PROJECT_cm_creator" nodeRef="workspace://SpacesStore/0e447eaa-f256-4e13-ad31-b0c6e938c417"/>
+                    
                   </pjt:tlResources>
                   <pjt:tlTaskLegend type="assoc">
                     <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Réalisation" nodeRef="workspace://SpacesStore/b28f769a-121f-480e-a8eb-dba17d708bad"/>
@@ -1604,15 +1332,12 @@
                 </pjt:taskList>
                 <pjt:taskList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/bcpg:entityLists/cm:contains" type="node" name="a505c78c-23b9-481f-9326-81f31267468e" nodeRef="workspace://SpacesStore/7cb853ea-b0ff-4788-9c6a-bdea38d08cb8">
                   <pjt:tlResources type="assoc">
-                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_PROJECT_cm_creator" nodeRef="workspace://SpacesStore/0e447eaa-f256-4e13-ad31-b0c6e938c417"/>
+                    
                   </pjt:tlResources>
                   <pjt:tlTaskLegend type="assoc">
                     <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Validation" nodeRef="workspace://SpacesStore/edf6091a-c689-4db1-9562-2f3e20110189"/>
                   </pjt:tlTaskLegend>
-                  <pjt:tlObservers type="assoc">
-                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_marketing" nodeRef="workspace://SpacesStore/a753e569-12f3-4b07-a936-3011adc981be"/>
-                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_PROJECT_cm_creator" nodeRef="workspace://SpacesStore/0e447eaa-f256-4e13-ad31-b0c6e938c417"/>
-                  </pjt:tlObservers>
+                  <pjt:tlObservers type="assoc"></pjt:tlObservers>
                   <pjt:tlPrevTasks type="assoc">
                     <pjt:taskList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/bcpg:entityLists/cm:contains" type="node" name="c72ff1f4-12a8-43a6-93c1-53887b08cee7" nodeRef="workspace://SpacesStore/b11e04d7-73a0-4bb2-8a27-5597821be659"/>
                   </pjt:tlPrevTasks>
@@ -1635,7 +1360,7 @@
                 </pjt:taskList>
                 <pjt:taskList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/bcpg:entityLists/cm:contains" type="node" name="fdfacb92-826a-4677-bf3c-39eb4ef78fea" nodeRef="workspace://SpacesStore/c68c18b9-31b6-43af-ac85-8a6e6b905c1c">
                   <pjt:tlResources type="assoc">
-                    <cm:authorityContainer path="/sys:system/sys:authorities" type="node" name="GROUP_control-de-gestion" nodeRef="workspace://SpacesStore/e48cdf9b-78db-4e96-9e89-05d8d464f928"/>
+                    
                   </pjt:tlResources>
                   <pjt:tlTaskLegend type="assoc">
                     <pjt:taskLegend path="/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:TaskLegends" type="node" name="Réalisation" nodeRef="workspace://SpacesStore/b28f769a-121f-480e-a8eb-dba17d708bad"/>
@@ -1681,7 +1406,7 @@
                   <pjt:completionPercent type="d:int"><![CDATA[0]]></pjt:completionPercent>
                   <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
                   <cm:name type="d:text"><![CDATA[3dc61aa3-aa54-4a12-ae9c-80b0dc05e5e9]]></cm:name>
-                  <pjt:dlUrl type="d:text"><![CDATA[/share/page/wizard?id=loetp-essais&nodeRef={pjt:projectEntity}]]></pjt:dlUrl>
+                  <pjt:dlUrl type="d:text"><![CDATA[/share/page/wizard?id=test-essais&nodeRef={pjt:projectEntity}]]></pjt:dlUrl>
                   <pjt:dlState type="d:text"><![CDATA[Planned]]></pjt:dlState>
                   <pjt:dlDescription type="d:text"><![CDATA[Fiche essais]]></pjt:dlDescription>
                   <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
@@ -1697,7 +1422,7 @@
                   <pjt:completionPercent type="d:int"><![CDATA[0]]></pjt:completionPercent>
                   <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
                   <cm:name type="d:text"><![CDATA[c2880fdb-d081-4125-839a-96808a4e6749]]></cm:name>
-                  <pjt:dlUrl type="d:text"><![CDATA[/share/page/wizard?id=loetp-infos-qualite&nodeRef={nodeRef}]]></pjt:dlUrl>
+                  <pjt:dlUrl type="d:text"><![CDATA[/share/page/wizard?id=test-infos-qualite&nodeRef={nodeRef}]]></pjt:dlUrl>
                   <pjt:dlState type="d:text"><![CDATA[Planned]]></pjt:dlState>
                   <pjt:dlDescription type="d:text"><![CDATA[Fiche qualité]]></pjt:dlDescription>
                   <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
@@ -1713,7 +1438,7 @@
                   <pjt:completionPercent type="d:int"><![CDATA[0]]></pjt:completionPercent>
                   <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
                   <cm:name type="d:text"><![CDATA[9f8b920c-f323-4519-ac24-6225bf8ea326]]></cm:name>
-                  <pjt:dlUrl type="d:text"><![CDATA[/share/page/wizard?id=loetp-parametrage&nodeRef={pjt:projectEntity}]]></pjt:dlUrl>
+                  <pjt:dlUrl type="d:text"><![CDATA[/share/page/wizard?id=test-parametrage&nodeRef={pjt:projectEntity}]]></pjt:dlUrl>
                   <pjt:dlState type="d:text"><![CDATA[Planned]]></pjt:dlState>
                   <pjt:dlDescription type="d:text"><![CDATA[Fiche paramétrage]]></pjt:dlDescription>
                   <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
@@ -1733,11 +1458,11 @@
               <cm:contains type="childAssoc">
                 <pjt:scoreList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/bcpg:entityLists/cm:contains" type="node" name="f4dfe51a-17c0-4db7-a88f-3e5731037c59" nodeRef="workspace://SpacesStore/cc7388c6-543f-48fc-ad9c-676b92f13cf9">
                   <cm:created type="d:datetime">2014-07-17T17:25:49.941+02:00</cm:created>
-                  <pjt:slCriterion type="d:text"><![CDATA[Marché]]></pjt:slCriterion>
+                  <pjt:slCriterion type="d:text"><![CDATA[]]></pjt:slCriterion>
                   <pjt:completionPercent type="d:int"><![CDATA[0]]></pjt:completionPercent>
                   <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
                   <cm:name type="d:text"><![CDATA[f4dfe51a-17c0-4db7-a88f-3e5731037c59]]></cm:name>
-                  <pjt:slScreening type="d:text"><![CDATA[<p><font color="#000000">Quels sont les besoins existants ou latents du client ou du consommateur sur ce produit ?<br /><br /><br />Quel est le produit de r&eacute;f&eacute;rence sur le march&eacute; ?<br /><br /><br />Quel est le prix du march&eacute; ?<br /><br />&nbsp;<br /><br />Le produit poss&eacute;dera-t-il un avantage, une sup&eacute;riorit&eacute; par rapport aux produits existants ?<br /><br />Quels seront les avantages perceptibles par le client ?<br /><br />Comment pourrons nous communiquer sur ces avantages ?<br /><br />Quel canal de distribution?<br /><br />En conclusion, existe-t-il un march&eacute; potentiel d'une taille suffisante pour le produit ?<br /><br /><br /><br /><br />---------------<br /><br />Rentabilit&eacute;<br /><br />Quel niveau de marge unitaire peut-on esp&eacute;rer r&eacute;aliser sur ce produit?<br /><br /><br />Pouvons nous estimer les co&ucirc;ts li&eacute;s au d&eacute;veloppement de ce nouveauproduit ?<br />-Humain<br />-Mat&eacute;riel<br /><br />En conclusion, le produit a-t-il des chances d'&ecirc;tre rentable pour l'entreprise ?</font></p>]]></pjt:slScreening>
+                  <pjt:slScreening type="d:text"><![CDATA[<p><font color="#000000">Quels sont les besoins existants ou latents du  ou du consommateur sur ce produit ?<br /><br /><br />Quel est le produit de r&eacute;f&eacute;rence sur le march&eacute; ?<br /><br /><br />Quel est le prix du march&eacute; ?<br /><br />&nbsp;<br /><br />Le produit poss&eacute;dera-t-il un avantage, une sup&eacute;riorit&eacute; par rapport aux produits existants ?<br /><br />Quels seront les avantages perceptibles par le  ?<br /><br />Comment pourrons nous communiquer sur ces avantages ?<br /><br />Quel canal de distribution?<br /><br />En conclusion, existe-t-il un march&eacute; potentiel d'une taille suffisante pour le produit ?<br /><br /><br /><br /><br />---------------<br /><br />Rentabilit&eacute;<br /><br />Quel niveau de marge unitaire peut-on esp&eacute;rer r&eacute;aliser sur ce produit?<br /><br /><br />Pouvons nous estimer les co&ucirc;ts li&eacute;s au d&eacute;veloppement de ce nouveauproduit ?<br />-Humain<br />-Mat&eacute;riel<br /><br />En conclusion, le produit a-t-il des chances d'&ecirc;tre rentable pour l'entreprise ?</font></p>]]></pjt:slScreening>
                   <pjt:slWeight type="d:int"><![CDATA[33]]></pjt:slWeight>
                   <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
                   <cm:modified type="d:datetime">2014-07-17T17:25:49.941+02:00</cm:modified>
@@ -1745,7 +1470,7 @@
                 </pjt:scoreList>
                 <pjt:scoreList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/bcpg:entityLists/cm:contains" type="node" name="78dafbf3-413d-4590-b79c-33075d284b86" nodeRef="workspace://SpacesStore/d59cb1a5-121f-4b61-bd29-413cadbba53f">
                   <cm:created type="d:datetime">2014-07-17T17:25:49.956+02:00</cm:created>
-                  <pjt:slCriterion type="d:text"><![CDATA[Faisabilité]]></pjt:slCriterion>
+                  <pjt:slCriterion type="d:text"><![CDATA[]]></pjt:slCriterion>
                   <pjt:completionPercent type="d:int"><![CDATA[0]]></pjt:completionPercent>
                   <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
                   <cm:name type="d:text"><![CDATA[78dafbf3-413d-4590-b79c-33075d284b86]]></cm:name>
@@ -1757,7 +1482,7 @@
                 </pjt:scoreList>
                 <pjt:scoreList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/bcpg:entityLists/cm:contains" type="node" name="01d1fac8-7c46-46f6-b136-c814bcfa64a2" nodeRef="workspace://SpacesStore/0db1ca6b-ae81-46a2-a2b0-0caa855cf543">
                   <cm:created type="d:datetime">2014-07-17T17:25:49.968+02:00</cm:created>
-                  <pjt:slCriterion type="d:text"><![CDATA[Rentabilité]]></pjt:slCriterion>
+                  <pjt:slCriterion type="d:text"><![CDATA[]]></pjt:slCriterion>
                   <pjt:completionPercent type="d:int"><![CDATA[0]]></pjt:completionPercent>
                   <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
                   <cm:name type="d:text"><![CDATA[01d1fac8-7c46-46f6-b136-c814bcfa64a2]]></cm:name>
@@ -1779,7 +1504,7 @@
             <dl:dataList xmlns:dl="http://www.alfresco.org/model/datalist/1.0" path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/bcpg:entityLists" type="node" name="activityList" nodeRef="workspace://SpacesStore/8a0d7260-696f-4ed3-b2e0-c520dec8e421">
               <cm:contains type="childAssoc">
                 <pjt:activityList path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/bcpg:entityLists/cm:contains" type="node" name="75d64dda-4b19-44dd-8860-9ab98aeca168" nodeRef="workspace://SpacesStore/19ab5f16-bca4-467f-ac64-65505db72131">
-                  <pjt:alUserId type="d:text"><![CDATA[admin@loeul-et-piriot.com]]></pjt:alUserId>
+                  <pjt:alUserId type="d:text"><![CDATA[admin]]></pjt:alUserId>
                   <pjt:alData type="d:text"><![CDATA[{"title":"Fiche essais.doc","contentNodeRef":"workspace://SpacesStore/efff552e-15df-4a40-9690-4c3c73651f2a","activityEvent":"Create"}]]></pjt:alData>
                   <cm:created type="d:datetime">2014-07-17T17:25:50.200+02:00</cm:created>
                   <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
@@ -1808,251 +1533,7 @@
           <cm:modified type="d:datetime">2014-07-17T17:25:52.722+02:00</cm:modified>
         </cm:folder>
       </bcpg:entityLists>
-      <rule:ruleFolder xmlns:rule="http://www.alfresco.org/model/rule/1.0" type="childAssoc">
-        <cm:systemfolder xmlns:cm="http://www.alfresco.org/model/content/1.0" path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains" type="node" name="60776d01-8436-4fa2-947c-075bf1307b39" nodeRef="workspace://SpacesStore/da6d885c-850c-42f8-92f9-995fed83be66">
-          <cm:contains type="childAssoc">
-            <rule:rule path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/rule:ruleFolder" type="node" name="2328a21c-9195-40fe-b81f-45fe87e105bd" nodeRef="workspace://SpacesStore/9de70ffe-e2e0-432b-8962-7b40de5bd9b9">
-              <rule:action type="childAssoc">
-                <act:compositeaction xmlns:act="http://www.alfresco.org/model/action/1.0" path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/rule:ruleFolder/cm:contains" type="node" name="7ca6e74e-80c5-450e-86f1-1c415cc43d31" nodeRef="workspace://SpacesStore/25eeb0bc-f458-4e51-8f68-fecb47941ed8">
-                  <act:compensatingAction type="childAssoc"/>
-                  <act:conditions type="childAssoc">
-                    <act:actioncondition path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/rule:ruleFolder/cm:contains/rule:action" type="node" name="83e5849c-403f-45b3-a3f9-489cb734ddd2" nodeRef="workspace://SpacesStore/11d24392-f08e-4aca-a603-032456a8247c">
-                      <act:parameters type="childAssoc">
-                        <act:actionparameter path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/rule:ruleFolder/cm:contains/rule:action/act:conditions" type="node" name="91abff5c-5b42-4aa0-a64c-64b1c092ce86" nodeRef="workspace://SpacesStore/9198652e-9c93-45fd-bff9-eeb137007951">
-                          <cm:created type="d:datetime">2014-07-17T17:25:45.170+02:00</cm:created>
-                          <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
-                          <cm:name type="d:text"><![CDATA[91abff5c-5b42-4aa0-a64c-64b1c092ce86]]></cm:name>
-                          <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
-                          <act:parameterName type="d:text"><![CDATA[type]]></act:parameterName>
-                          <act:parameterValue type="d:any"><![CDATA[{http://www.bcpg.fr/model/becpg/1.0}entityListItem]]></act:parameterValue>
-                          <cm:modified type="d:datetime">2014-07-17T17:25:45.170+02:00</cm:modified>
-                        </act:actionparameter>
-                      </act:parameters>
-                      <cm:created type="d:datetime">2014-07-17T17:25:44.957+02:00</cm:created>
-                      <act:invert type="d:boolean"><![CDATA[true]]></act:invert>
-                      <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
-                      <cm:name type="d:text"><![CDATA[83e5849c-403f-45b3-a3f9-489cb734ddd2]]></cm:name>
-                      <act:definitionName type="d:text"><![CDATA[is-subtype]]></act:definitionName>
-                      <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
-                      <cm:modified type="d:datetime">2014-07-17T17:25:44.957+02:00</cm:modified>
-                    </act:actioncondition>
-                  </act:conditions>
-                  <act:actions type="childAssoc">
-                    <act:action path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/rule:ruleFolder/cm:contains/rule:action" type="node" name="5d2bec41-390b-4030-88a2-cafdab6c522f" nodeRef="workspace://SpacesStore/7dd72ebf-af0c-4cfb-81a8-994790873063">
-                      <act:compensatingAction type="childAssoc"/>
-                      <act:conditions type="childAssoc"/>
-                      <act:parameters type="childAssoc">
-                        <act:actionparameter path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/rule:ruleFolder/cm:contains/rule:action/act:actions" type="node" name="a11a7659-bdcd-4061-aef8-ea58f0c306a8" nodeRef="workspace://SpacesStore/140e639d-5563-49a6-abd6-9e8add5c72dc">
-                          <cm:created type="d:datetime">2014-07-17T17:25:44.734+02:00</cm:created>
-                          <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
-                          <cm:name type="d:text"><![CDATA[a11a7659-bdcd-4061-aef8-ea58f0c306a8]]></cm:name>
-                          <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
-                          <act:parameterName type="d:text"><![CDATA[activityEvent]]></act:parameterName>
-                          <act:parameterValue type="d:any"><![CDATA[Create]]></act:parameterValue>
-                          <cm:modified type="d:datetime">2014-07-17T17:25:44.734+02:00</cm:modified>
-                        </act:actionparameter>
-                      </act:parameters>
-                      <act:executeAsynchronously type="d:boolean"><![CDATA[false]]></act:executeAsynchronously>
-                      <cm:created type="d:datetime">2014-07-17T17:25:44.513+02:00</cm:created>
-                      <act:executionActionStatus type="d:text"><![CDATA[New]]></act:executionActionStatus>
-                      <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
-                      <cm:name type="d:text"><![CDATA[5d2bec41-390b-4030-88a2-cafdab6c522f]]></cm:name>
-                      <act:definitionName type="d:text"><![CDATA[project-activity]]></act:definitionName>
-                      <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
-                      <cm:modified type="d:datetime">2014-07-17T17:25:44.513+02:00</cm:modified>
-                    </act:action>
-                  </act:actions>
-                  <act:parameters type="childAssoc"/>
-                  <act:executeAsynchronously type="d:boolean"><![CDATA[false]]></act:executeAsynchronously>
-                  <cm:created type="d:datetime">2014-07-17T17:25:44.294+02:00</cm:created>
-                  <act:executionActionStatus type="d:text"><![CDATA[New]]></act:executionActionStatus>
-                  <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
-                  <cm:name type="d:text"><![CDATA[7ca6e74e-80c5-450e-86f1-1c415cc43d31]]></cm:name>
-                  <act:definitionName type="d:text"><![CDATA[composite-action]]></act:definitionName>
-                  <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
-                  <cm:modified type="d:datetime">2014-07-17T17:25:45.400+02:00</cm:modified>
-                </act:compositeaction>
-              </rule:action>
-              <cm:created type="d:datetime">2014-07-17T17:25:44.078+02:00</cm:created>
-              <rule:disabled type="d:boolean"><![CDATA[false]]></rule:disabled>
-              <cm:description type="d:mltext"><![CDATA[Activités projet (Entrant)]]></cm:description>
-              <rule:executeAsynchronously type="d:boolean"><![CDATA[false]]></rule:executeAsynchronously>
-              <rule:applyToChildren type="d:boolean"><![CDATA[true]]></rule:applyToChildren>
-              <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
-              <cm:name type="d:text"><![CDATA[2328a21c-9195-40fe-b81f-45fe87e105bd]]></cm:name>
-              <rule:ruleType type="d:text">
-                <values>
-                  <value><![CDATA[inbound]]></value>
-                </values>
-              </rule:ruleType>
-              <cm:title type="d:mltext"><![CDATA[Activités projet (Entrant)]]></cm:title>
-              <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
-              <cm:modified type="d:datetime">2014-07-17T17:25:45.413+02:00</cm:modified>
-            </rule:rule>
-            <rule:rule path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/rule:ruleFolder" type="node" name="227c6275-fdeb-4ff5-a8b4-25f06bbf7a98" nodeRef="workspace://SpacesStore/d140da9e-eb17-4812-bc20-e8f635d4fd8e">
-              <rule:action type="childAssoc">
-                <act:compositeaction xmlns:act="http://www.alfresco.org/model/action/1.0" path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/rule:ruleFolder/cm:contains" type="node" name="0a9b4aa8-d76b-4fb8-9a30-e73f7685dc19" nodeRef="workspace://SpacesStore/c8490242-fef3-4c06-945c-e790cf43adcc">
-                  <act:compensatingAction type="childAssoc"/>
-                  <act:conditions type="childAssoc">
-                    <act:actioncondition path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/rule:ruleFolder/cm:contains/rule:action" type="node" name="7cb83f70-ff81-4a3f-b27f-a268a24a3508" nodeRef="workspace://SpacesStore/1e46cd6e-f57e-4a25-8489-30f17d861f31">
-                      <act:parameters type="childAssoc">
-                        <act:actionparameter path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/rule:ruleFolder/cm:contains/rule:action/act:conditions" type="node" name="c9c2c7d2-1704-4bfe-929b-da17e529fe67" nodeRef="workspace://SpacesStore/1c090282-5065-467c-a310-64796f66ccbb">
-                          <cm:created type="d:datetime">2014-07-17T17:25:46.511+02:00</cm:created>
-                          <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
-                          <cm:name type="d:text"><![CDATA[c9c2c7d2-1704-4bfe-929b-da17e529fe67]]></cm:name>
-                          <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
-                          <act:parameterName type="d:text"><![CDATA[type]]></act:parameterName>
-                          <act:parameterValue type="d:any"><![CDATA[{http://www.bcpg.fr/model/becpg/1.0}entityListItem]]></act:parameterValue>
-                          <cm:modified type="d:datetime">2014-07-17T17:25:46.511+02:00</cm:modified>
-                        </act:actionparameter>
-                      </act:parameters>
-                      <cm:created type="d:datetime">2014-07-17T17:25:46.297+02:00</cm:created>
-                      <act:invert type="d:boolean"><![CDATA[true]]></act:invert>
-                      <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
-                      <cm:name type="d:text"><![CDATA[7cb83f70-ff81-4a3f-b27f-a268a24a3508]]></cm:name>
-                      <act:definitionName type="d:text"><![CDATA[is-subtype]]></act:definitionName>
-                      <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
-                      <cm:modified type="d:datetime">2014-07-17T17:25:46.297+02:00</cm:modified>
-                    </act:actioncondition>
-                  </act:conditions>
-                  <act:actions type="childAssoc">
-                    <act:action path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/rule:ruleFolder/cm:contains/rule:action" type="node" name="a2e79aba-a974-42aa-8866-8893474a6b0d" nodeRef="workspace://SpacesStore/b95bdee2-9a37-4b01-b10a-0051dee940af">
-                      <act:compensatingAction type="childAssoc"/>
-                      <act:conditions type="childAssoc"/>
-                      <act:parameters type="childAssoc">
-                        <act:actionparameter path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/rule:ruleFolder/cm:contains/rule:action/act:actions" type="node" name="67ce9d2a-7fb6-40ac-9342-6bd844ccfcc3" nodeRef="workspace://SpacesStore/f16555df-aa55-4374-b331-ac71c6355e1b">
-                          <cm:created type="d:datetime">2014-07-17T17:25:46.073+02:00</cm:created>
-                          <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
-                          <cm:name type="d:text"><![CDATA[67ce9d2a-7fb6-40ac-9342-6bd844ccfcc3]]></cm:name>
-                          <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
-                          <act:parameterName type="d:text"><![CDATA[activityEvent]]></act:parameterName>
-                          <act:parameterValue type="d:any"><![CDATA[Update]]></act:parameterValue>
-                          <cm:modified type="d:datetime">2014-07-17T17:25:46.073+02:00</cm:modified>
-                        </act:actionparameter>
-                      </act:parameters>
-                      <act:executeAsynchronously type="d:boolean"><![CDATA[false]]></act:executeAsynchronously>
-                      <cm:created type="d:datetime">2014-07-17T17:25:45.855+02:00</cm:created>
-                      <act:executionActionStatus type="d:text"><![CDATA[New]]></act:executionActionStatus>
-                      <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
-                      <cm:name type="d:text"><![CDATA[a2e79aba-a974-42aa-8866-8893474a6b0d]]></cm:name>
-                      <act:definitionName type="d:text"><![CDATA[project-activity]]></act:definitionName>
-                      <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
-                      <cm:modified type="d:datetime">2014-07-17T17:25:45.855+02:00</cm:modified>
-                    </act:action>
-                  </act:actions>
-                  <act:parameters type="childAssoc"/>
-                  <act:executeAsynchronously type="d:boolean"><![CDATA[false]]></act:executeAsynchronously>
-                  <cm:created type="d:datetime">2014-07-17T17:25:45.639+02:00</cm:created>
-                  <act:executionActionStatus type="d:text"><![CDATA[New]]></act:executionActionStatus>
-                  <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
-                  <cm:name type="d:text"><![CDATA[0a9b4aa8-d76b-4fb8-9a30-e73f7685dc19]]></cm:name>
-                  <act:definitionName type="d:text"><![CDATA[composite-action]]></act:definitionName>
-                  <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
-                  <cm:modified type="d:datetime">2014-07-17T17:25:46.742+02:00</cm:modified>
-                </act:compositeaction>
-              </rule:action>
-              <cm:created type="d:datetime">2014-07-17T17:25:45.423+02:00</cm:created>
-              <rule:disabled type="d:boolean"><![CDATA[false]]></rule:disabled>
-              <cm:description type="d:mltext"><![CDATA[Activités projet (Mise à jour)]]></cm:description>
-              <rule:executeAsynchronously type="d:boolean"><![CDATA[false]]></rule:executeAsynchronously>
-              <rule:applyToChildren type="d:boolean"><![CDATA[true]]></rule:applyToChildren>
-              <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
-              <cm:name type="d:text"><![CDATA[227c6275-fdeb-4ff5-a8b4-25f06bbf7a98]]></cm:name>
-              <rule:ruleType type="d:text">
-                <values>
-                  <value><![CDATA[update]]></value>
-                </values>
-              </rule:ruleType>
-              <cm:title type="d:mltext"><![CDATA[Activités projet (Mise à jour)]]></cm:title>
-              <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
-              <cm:modified type="d:datetime">2014-07-17T17:25:46.756+02:00</cm:modified>
-            </rule:rule>
-            <rule:rule path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/rule:ruleFolder" type="node" name="a849def3-bad5-4d07-8b6f-b3dc4a629420" nodeRef="workspace://SpacesStore/92b08307-222f-4d55-890e-8c43669a9383">
-              <rule:action type="childAssoc">
-                <act:compositeaction xmlns:act="http://www.alfresco.org/model/action/1.0" path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/rule:ruleFolder/cm:contains" type="node" name="ccc14774-0ce3-4f27-a642-4a49129d0f60" nodeRef="workspace://SpacesStore/f4e06ff2-3c51-41b6-a414-1fa6f6e69958">
-                  <act:compensatingAction type="childAssoc"/>
-                  <act:conditions type="childAssoc">
-                    <act:actioncondition path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/rule:ruleFolder/cm:contains/rule:action" type="node" name="666547ff-688c-4f0f-ad72-5f6a92cdda05" nodeRef="workspace://SpacesStore/9d53f279-df5c-4b0b-be67-0d6cc9fd523a">
-                      <act:parameters type="childAssoc">
-                        <act:actionparameter path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/rule:ruleFolder/cm:contains/rule:action/act:conditions" type="node" name="2a2c8b10-1dc4-4746-af0d-e6195dcaf06c" nodeRef="workspace://SpacesStore/107ceafa-b251-4b76-9e78-a94aa77b5c07">
-                          <cm:created type="d:datetime">2014-07-17T17:25:47.870+02:00</cm:created>
-                          <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
-                          <cm:name type="d:text"><![CDATA[2a2c8b10-1dc4-4746-af0d-e6195dcaf06c]]></cm:name>
-                          <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
-                          <act:parameterName type="d:text"><![CDATA[type]]></act:parameterName>
-                          <act:parameterValue type="d:any"><![CDATA[{http://www.bcpg.fr/model/becpg/1.0}entityListItem]]></act:parameterValue>
-                          <cm:modified type="d:datetime">2014-07-17T17:25:47.870+02:00</cm:modified>
-                        </act:actionparameter>
-                      </act:parameters>
-                      <cm:created type="d:datetime">2014-07-17T17:25:47.650+02:00</cm:created>
-                      <act:invert type="d:boolean"><![CDATA[true]]></act:invert>
-                      <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
-                      <cm:name type="d:text"><![CDATA[666547ff-688c-4f0f-ad72-5f6a92cdda05]]></cm:name>
-                      <act:definitionName type="d:text"><![CDATA[is-subtype]]></act:definitionName>
-                      <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
-                      <cm:modified type="d:datetime">2014-07-17T17:25:47.650+02:00</cm:modified>
-                    </act:actioncondition>
-                  </act:conditions>
-                  <act:actions type="childAssoc">
-                    <act:action path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/rule:ruleFolder/cm:contains/rule:action" type="node" name="9cb99cbc-dd1f-4a1b-a643-d2d9b4c6fcff" nodeRef="workspace://SpacesStore/ec6d2e96-2382-4e27-81ce-2c7d64c2330f">
-                      <act:compensatingAction type="childAssoc"/>
-                      <act:conditions type="childAssoc"/>
-                      <act:parameters type="childAssoc">
-                        <act:actionparameter path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains/rule:ruleFolder/cm:contains/rule:action/act:actions" type="node" name="d988f61f-f428-4f5e-8908-c9e5277d6e1f" nodeRef="workspace://SpacesStore/6f48d69c-e8ea-4034-9ebb-936d2655f2c7">
-                          <cm:created type="d:datetime">2014-07-17T17:25:47.420+02:00</cm:created>
-                          <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
-                          <cm:name type="d:text"><![CDATA[d988f61f-f428-4f5e-8908-c9e5277d6e1f]]></cm:name>
-                          <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
-                          <act:parameterName type="d:text"><![CDATA[activityEvent]]></act:parameterName>
-                          <act:parameterValue type="d:any"><![CDATA[Delete]]></act:parameterValue>
-                          <cm:modified type="d:datetime">2014-07-17T17:25:47.420+02:00</cm:modified>
-                        </act:actionparameter>
-                      </act:parameters>
-                      <act:executeAsynchronously type="d:boolean"><![CDATA[false]]></act:executeAsynchronously>
-                      <cm:created type="d:datetime">2014-07-17T17:25:47.201+02:00</cm:created>
-                      <act:executionActionStatus type="d:text"><![CDATA[New]]></act:executionActionStatus>
-                      <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
-                      <cm:name type="d:text"><![CDATA[9cb99cbc-dd1f-4a1b-a643-d2d9b4c6fcff]]></cm:name>
-                      <act:definitionName type="d:text"><![CDATA[project-activity]]></act:definitionName>
-                      <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
-                      <cm:modified type="d:datetime">2014-07-17T17:25:47.201+02:00</cm:modified>
-                    </act:action>
-                  </act:actions>
-                  <act:parameters type="childAssoc"/>
-                  <act:executeAsynchronously type="d:boolean"><![CDATA[false]]></act:executeAsynchronously>
-                  <cm:created type="d:datetime">2014-07-17T17:25:46.983+02:00</cm:created>
-                  <act:executionActionStatus type="d:text"><![CDATA[New]]></act:executionActionStatus>
-                  <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
-                  <cm:name type="d:text"><![CDATA[ccc14774-0ce3-4f27-a642-4a49129d0f60]]></cm:name>
-                  <act:definitionName type="d:text"><![CDATA[composite-action]]></act:definitionName>
-                  <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
-                  <cm:modified type="d:datetime">2014-07-17T17:25:48.106+02:00</cm:modified>
-                </act:compositeaction>
-              </rule:action>
-              <cm:created type="d:datetime">2014-07-17T17:25:46.767+02:00</cm:created>
-              <rule:disabled type="d:boolean"><![CDATA[false]]></rule:disabled>
-              <cm:description type="d:mltext"><![CDATA[Activités projet (Sortant)]]></cm:description>
-              <rule:executeAsynchronously type="d:boolean"><![CDATA[false]]></rule:executeAsynchronously>
-              <rule:applyToChildren type="d:boolean"><![CDATA[true]]></rule:applyToChildren>
-              <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
-              <cm:name type="d:text"><![CDATA[a849def3-bad5-4d07-8b6f-b3dc4a629420]]></cm:name>
-              <rule:ruleType type="d:text">
-                <values>
-                  <value><![CDATA[outbound]]></value>
-                </values>
-              </rule:ruleType>
-              <cm:title type="d:mltext"><![CDATA[Activités projet (Sortant)]]></cm:title>
-              <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
-              <cm:modified type="d:datetime">2014-07-17T17:25:48.121+02:00</cm:modified>
-            </rule:rule>
-          </cm:contains>
-          <cm:created type="d:datetime">2014-07-17T17:25:43.855+02:00</cm:created>
-          <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
-          <cm:name type="d:text"><![CDATA[60776d01-8436-4fa2-947c-075bf1307b39]]></cm:name>
-          <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>
-          <cm:modified type="d:datetime">2014-07-17T17:25:52.722+02:00</cm:modified>
-        </cm:systemfolder>
-      </rule:ruleFolder>
+     
       <cm:contains xmlns:cm="http://www.alfresco.org/model/content/1.0" type="childAssoc">
         <cm:content path="/app:company_home/st:sites/cm:projets/cm:documentLibrary/cm:Modèle/cm:contains" type="node" name="Fiche essais.doc" nodeRef="workspace://SpacesStore/b81bc0fd-de87-4310-815e-026b2c03e257">
           <cm:created type="d:datetime">2014-07-17T17:25:50.230+02:00</cm:created>
@@ -2097,7 +1578,7 @@
       </bcpg:entityTplRef>
       <pjt:projectPlanningMode type="d:text"><![CDATA[RetroPlanning]]></pjt:projectPlanningMode>
       <cm:created xmlns:cm="http://www.alfresco.org/model/content/1.0" type="d:datetime">2014-07-17T17:25:43.847+02:00</cm:created>
-      <pjt:projectOrigin type="d:text"><![CDATA[Marketing]]></pjt:projectOrigin>
+      <pjt:projectOrigin type="d:text"><![CDATA[]]></pjt:projectOrigin>
       <pjt:projectStartDate type="d:date">2014-06-19T00:00:00.000+02:00</pjt:projectStartDate>
       <pjt:projectCompletionDate type="d:date">2014-07-18T00:00:00.000+02:00</pjt:projectCompletionDate>
       <cm:description xmlns:cm="http://www.alfresco.org/model/content/1.0" type="d:mltext"><![CDATA[]]></cm:description>
@@ -2146,7 +1627,7 @@
       <pjt:projectState type="d:text"><![CDATA[Planned]]></pjt:projectState>
       <cm:modifier xmlns:cm="http://www.alfresco.org/model/content/1.0" type="d:text"><![CDATA[admin]]></cm:modifier>
       <cm:modified xmlns:cm="http://www.alfresco.org/model/content/1.0" type="d:datetime">2014-07-25T10:00:18.840+02:00</cm:modified>
-      <pjt:projectSponsor type="d:text"><![CDATA[Client]]></pjt:projectSponsor>
+      <pjt:projectSponsor type="d:text"><![CDATA[]]></pjt:projectSponsor>
     </pjt:project>
   </bcpg:entityTplRef>
   <pjt:projectPlanningMode type="d:text"><![CDATA[Planning]]></pjt:projectPlanningMode>
@@ -2158,7 +1639,7 @@
     </values>
   </pjt:projectLegends>
   <cm:created xmlns:cm="http://www.alfresco.org/model/content/1.0" type="d:datetime">2014-08-07T17:30:00.234+02:00</cm:created>
-  <pjt:projectOrigin type="d:text"><![CDATA[Origine 1]]></pjt:projectOrigin>
+  <pjt:projectOrigin type="d:text"><![CDATA[]]></pjt:projectOrigin>
   <pjt:projectStartDate type="d:date">2014-08-07T00:00:00.000+02:00</pjt:projectStartDate>
   <pjt:projectCompletionDate type="d:date">2014-09-05T00:00:00.000+02:00</pjt:projectCompletionDate>
   <cm:description xmlns:cm="http://www.alfresco.org/model/content/1.0" type="d:mltext"><![CDATA[]]></cm:description>
@@ -2205,5 +1686,5 @@
   <pjt:projectState type="d:text"><![CDATA[InProgress]]></pjt:projectState>
   <cm:modifier xmlns:cm="http://www.alfresco.org/model/content/1.0" type="d:text"><![CDATA[admin]]></cm:modifier>
   <cm:modified xmlns:cm="http://www.alfresco.org/model/content/1.0" type="d:datetime">2014-08-07T17:31:28.263+02:00</cm:modified>
-  <pjt:projectSponsor type="d:text"><![CDATA[Sponsor 1]]></pjt:projectSponsor>
+  <pjt:projectSponsor type="d:text"><![CDATA[]]></pjt:projectSponsor>
 </pjt:project>

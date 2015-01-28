@@ -35,6 +35,8 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.workflow.WorkflowService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
@@ -89,6 +91,8 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 	protected NodeRef rawMaterialNodeRef;
 	protected NodeRef projectNodeRef;
 	protected ResourceCost resourceCost;
+	
+	private static Log logger = LogFactory.getLog(AbstractProjectTestCase.class);
 
 	private void initTasks() {
 
@@ -203,9 +207,6 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 						null, 0, null);
 				
 				projectTplData.setParentNodeRef(testFolderNodeRef);
-				projectTplData.getAspects().add(BeCPGModel.ASPECT_ENTITY_TPL);
-				projectTplData.getAspects().add(BeCPGModel.ASPECT_ENTITY_TPL_REF);
-				
 				projectTplData = (ProjectData) alfrescoRepository.save(projectTplData);
 				projectTplNodeRef = projectTplData.getNodeRef();
 
@@ -258,7 +259,7 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 				}
 				projectTplData.setScoreList(scoreList);
 
-				alfrescoRepository.save(projectTplData);
+				projectTplData = (ProjectData) alfrescoRepository.save(projectTplData);
 
 				// Project:
 				// Task1 -> Task2 -> Task3 -> Task5 -> Task6
@@ -336,6 +337,8 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 	
 	protected void createMultiLevelProject(final ProjectState projectState, final Date startDate, final Date endDate, final PlanningMode planningMode) {
 
+		logger.info("Create multiLevel project");
+		
 		projectNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
 			public NodeRef execute() throws Throwable {
@@ -362,12 +365,6 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 				projectData = (ProjectData) alfrescoRepository.save(projectData);
 				// add aspect entityTpl
 				
-				projectNodeRef = projectData.getNodeRef();
-				
-				
-				// update a second time to manage prevTask
-				// TODO : should avoid to save twice
-				projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 				List<NodeRef> prevTasks = new ArrayList<NodeRef>();
 
 				prevTasks = new ArrayList<NodeRef>();
@@ -384,7 +381,7 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 
 				alfrescoRepository.save(projectData);
 				
-				return projectNodeRef;
+				return projectData.getNodeRef();
 			}
 		}, false, true);
 	}

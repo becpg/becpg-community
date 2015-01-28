@@ -73,7 +73,7 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 				projectData.setStartDate(startDate);
 			}
 			projectData.setCompletionDate(startDate);
-			calculatePlanningOfNextTasks(projectData, (NodeRef) null, startDate);
+			calculatePlanningOfNextTasks(projectData, null, startDate);
 		} else {
 			// retro-planning
 			Date endDate = ProjectHelper.getLastEndDate(projectData);
@@ -236,13 +236,15 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 
 	private void calculatePlanningOfChildren(ProjectData projectData, TaskListDataItem taskListDataItem) throws FormulateException {
 
+		
+		
 		List<TaskListDataItem> children = ProjectHelper.getChildrenTasks(projectData, taskListDataItem);
 
-		for (TaskListDataItem c : children) {
-			if (c.getPrevTasks().isEmpty()) {
-				calculatePlanningOfTask(projectData, c, taskListDataItem.getStart());
-			}
-		}
+//		for (TaskListDataItem c : children) {
+//			if (c.getPrevTasks().isEmpty()) {
+//				calculatePlanningOfTask(projectData, c, taskListDataItem.getStart());
+//			}
+//		}
 
 		Date endDate = taskListDataItem.getStart();
 		for (TaskListDataItem c : children) {
@@ -265,67 +267,42 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 
 			// avoid cycle
 			checkCycle(prevTask.getNodeRef(), task);
+			
+			if (TaskState.InProgress.equals(prevTask.getTaskState())) {
 
-			calculateRetroPlanningOfTask(projectData, prevTask, endDate);
-		}
-	}
-
-	private void calculateRetroPlanningOfTask(ProjectData projectData, TaskListDataItem prevTask, Date endDate) throws FormulateException {
-
-		if (TaskState.InProgress.equals(prevTask.getTaskState())) {
-
-			// InProgress => calculate endDate from the startDate and we stop
-			// retro-planning
-			if (prevTask.getIsGroup()) {
-				calculatePlanningOfChildren(projectData, prevTask);
-			} else if (hasPlannedDuration(prevTask)) {
-				Date d = ProjectHelper.calculateEndDate(prevTask.getStart(), prevTask.getDuration());
-				ProjectHelper.setTaskEndDate(prevTask, d);
-			}
-		} else {
-			if (prevTask.getIsGroup()) {
-				calculateRetroPlanningOfChildren(projectData, prevTask);
+				// InProgress => calculate endDate from the startDate and we stop
+				// retro-planning
+				 if (hasPlannedDuration(prevTask)) {
+					Date d = ProjectHelper.calculateEndDate(prevTask.getStart(), prevTask.getDuration());
+					ProjectHelper.setTaskEndDate(prevTask, d);
+				}
 			} else {
-				// check new endDate is equals or before, otherwise we stop
-				// since a parallel branch is before
-				if (prevTask.getEnd() == null || prevTask.getEnd().equals(endDate) || prevTask.getEnd().after(endDate)) {
-					ProjectHelper.setTaskEndDate(prevTask, endDate);
+				
+					// check new endDate is equals or before, otherwise we stop
+					// since a parallel branch is before
+					if (prevTask.getEnd() == null || prevTask.getEnd().equals(endDate) || prevTask.getEnd().after(endDate)) {
+						ProjectHelper.setTaskEndDate(prevTask, endDate);
+					}
+
+					if (hasPlannedDuration(prevTask)) {
+						Date startDate = ProjectHelper.calculateStartDate(prevTask.getEnd(), prevTask.getDuration());
+						ProjectHelper.setTaskStartDate(prevTask, startDate);
+					}
+			
+
+				if (prevTask.getStart() != null && projectData.getStartDate().after(prevTask.getStart())) {
+					projectData.setStartDate(prevTask.getStart());
 				}
 
-				if (hasPlannedDuration(prevTask)) {
-					Date startDate = ProjectHelper.calculateStartDate(prevTask.getEnd(), prevTask.getDuration());
-					ProjectHelper.setTaskStartDate(prevTask, startDate);
-				}
 			}
-
-			if (prevTask.getStart() != null && projectData.getStartDate().after(prevTask.getStart())) {
-				projectData.setStartDate(prevTask.getStart());
-			}
-
+			
 			calculateRetroPlanningOfPrevTasks(projectData, prevTask, ProjectHelper.calculatePrevEndDate(prevTask.getStart()));
-		}
 
-		calculateDatesOfParent(prevTask.getParent(), prevTask);
+			calculateDatesOfParent(prevTask.getParent(), prevTask);
+		}
 	}
+	
 
-	private void calculateRetroPlanningOfChildren(ProjectData projectData, TaskListDataItem taskListDataItem) throws FormulateException {
-
-		List<TaskListDataItem> children = ProjectHelper.getChildrenTasks(projectData, taskListDataItem);
-
-		for (TaskListDataItem c : children) {
-			if (ProjectHelper.getNextTasks(projectData, c.getNodeRef()).isEmpty()) {
-				calculateRetroPlanningOfTask(projectData, c, taskListDataItem.getEnd());
-			}
-		}
-
-		Date startDate = taskListDataItem.getEnd();
-		for (TaskListDataItem c : children) {
-			if (c.getStart() != null && c.getStart().before(startDate)) {
-				startDate = c.getStart();
-			}
-		}
-		ProjectHelper.setTaskStartDate(taskListDataItem, startDate);
-	}
 
 	private Integer calculateOverdue(ProjectData projectData, NodeRef taskNodeRef) throws FormulateException {
 
