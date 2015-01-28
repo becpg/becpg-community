@@ -48,7 +48,8 @@ public class InitializationTest {
 		
 		dictionaryDAO.reset();
 		
-		//Will throw an assert false when corrected
+		//Doesn't work
+		//Will throw an error when fixed by alfresco
 		Assert.assertNull(qNameDAO.getQName(BeCPGModel.PROP_SORT));
 	}
 	

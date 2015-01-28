@@ -59,6 +59,12 @@ public class NPDServiceTest extends AbstractProjectTestCase {
 	private PersonService personService;
 
 	private static final String NPDWF_URI = "http://www.bcpg.fr/model/npd-workflow/1.0";
+	
+	@Override
+	protected boolean shouldInit() {
+		//Force reinit
+		return true;
+	}
 
 	@Test
 	public void testNPDProjectTask() {

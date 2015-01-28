@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.alfresco.error.AlfrescoRuntimeException;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.rule.RuleModel;
@@ -415,13 +416,12 @@ public class EntityTplServiceImpl implements EntityTplService {
 	public void synchronizeEntity(NodeRef entityNodeRef, NodeRef entityTplNodeRef) {
 		if (entityTplNodeRef != null) {
 
-
 			StopWatch watch = null;
 			if (logger.isDebugEnabled()) {
 				watch = new StopWatch();
 				watch.start();
 			}
-			
+
 			try {
 				((RuleService) ruleService).disableRules(entityNodeRef);
 
@@ -431,54 +431,6 @@ public class EntityTplServiceImpl implements EntityTplService {
 				// copy datalists
 				entityListDAO.copyDataLists(entityTplNodeRef, entityNodeRef, false);
 
-				// copy rules
-				// Check whether the node already has rules or not
-				if (nodeService.hasAspect(entityTplNodeRef, RuleModel.ASPECT_RULES) == true
-						&& !((RuleService) ruleService).getRules(entityTplNodeRef, false).isEmpty()) {
-
-					boolean hasRule = false;
-					if (nodeService.hasAspect(entityNodeRef, RuleModel.ASPECT_RULES) == true) {
-						// Check for a linked to node
-						NodeRef linkedToNode = ((RuleService) ruleService).getLinkedToRuleNode(entityNodeRef);
-						if (linkedToNode == null) {
-							// if the node has no rules we can delete
-							// the folder
-							// ready to link
-							List<Rule> rules = ((RuleService) ruleService).getRules(entityNodeRef, false);
-							if (rules.isEmpty() != false) {
-								// Can't link a node if it already has
-								// rules
-								hasRule = true;
-							} else {
-								// Delete the rules system folder
-								NodeRef ruleFolder = ruleService.getSavedRuleFolderAssoc(entityNodeRef).getChildRef();
-								nodeService.deleteNode(ruleFolder);
-							}
-						} else {
-							// Just remove the aspect and have the
-							// associated
-							// data automatically removed
-							nodeService.removeAspect(entityNodeRef, RuleModel.ASPECT_RULES);
-						}
-
-					}
-					if (!hasRule) {
-						// Create the destination folder as a secondary
-						// child of
-						// the first
-						ChildAssociationRef childAssocRef = ruleService.getSavedRuleFolderAssoc(entityTplNodeRef);
-						if (childAssocRef != null) {
-							NodeRef ruleSetNodeRef = childAssocRef.getChildRef();
-							// The required aspect will automatically be
-							// added to
-							// the node
-							nodeService.addChild(entityNodeRef, ruleSetNodeRef, RuleModel.ASSOC_RULE_FOLDER, RuleModel.ASSOC_RULE_FOLDER);
-						}
-					} else {
-						logger.warn("The current folder has rules and can not be linked to another folder.");
-					}
-
-				}
 				// copy missing aspects
 				Set<QName> aspects = nodeService.getAspects(entityTplNodeRef);
 				for (QName aspect : aspects) {
@@ -488,18 +440,62 @@ public class EntityTplServiceImpl implements EntityTplService {
 				}
 
 				for (EntityTplPlugin entityTplPlugin : entityTplPlugins) {
-					entityTplPlugin.synchronizeEntity(entityNodeRef,entityTplNodeRef);
+					entityTplPlugin.synchronizeEntity(entityNodeRef, entityTplNodeRef);
 				}
 
 			} finally {
 				((RuleService) ruleService).enableRules(entityNodeRef);
-				if (logger.isDebugEnabled()) {
-					watch.stop();
-					logger.debug("Synchronize entity in " + watch.getTotalTimeSeconds() + " seconds");
-				}
+
 			}
-			
-			
+
+			// Copy rules
+			if (nodeService.hasAspect(entityTplNodeRef, RuleModel.ASPECT_RULES) == true
+					&& !((RuleService) ruleService).getRules(entityTplNodeRef, false).isEmpty()) {
+				boolean hasRule = false;
+
+				// Check whether the node already has rules or not
+				if (nodeService.hasAspect(entityNodeRef, RuleModel.ASPECT_RULES) == true) {
+
+					// Check for a linked to node
+					NodeRef linkedToNode = ((RuleService) ruleService).getLinkedToRuleNode(entityNodeRef);
+					if (linkedToNode == null) {
+						// if the node has no rules we can delete the folder
+						// ready to link
+						List<Rule> rules = ((RuleService) ruleService).getRules(entityNodeRef, false);
+						if (rules.isEmpty() == false) {
+							hasRule = true;
+						} else {
+							// Delete the rules system folder
+							NodeRef ruleFolder = ruleService.getSavedRuleFolderAssoc(entityNodeRef).getChildRef();
+							nodeService.deleteNode(ruleFolder);
+						}
+					} else {
+						// Just remove the aspect and have the associated
+						// data automatically removed
+						nodeService.removeAspect(entityNodeRef, RuleModel.ASPECT_RULES);
+					}
+				}
+
+				if (!hasRule) {
+
+					// Create the destination folder as a secondary child of
+					// the first
+					NodeRef ruleSetNodeRef = ruleService.getSavedRuleFolderAssoc(entityTplNodeRef).getChildRef();
+					// The required aspect will automatically be added to
+					// the node
+					nodeService.addChild(entityNodeRef, ruleSetNodeRef, RuleModel.ASSOC_RULE_FOLDER, RuleModel.ASSOC_RULE_FOLDER);
+
+				} else {
+					logger.warn("The current folder has rules and can not be linked to another folder.");
+				}
+
+			}
+
+			if (logger.isDebugEnabled()) {
+				watch.stop();
+				logger.debug("Synchronize entity in " + watch.getTotalTimeSeconds() + " seconds");
+			}
+
 		}
 
 	}

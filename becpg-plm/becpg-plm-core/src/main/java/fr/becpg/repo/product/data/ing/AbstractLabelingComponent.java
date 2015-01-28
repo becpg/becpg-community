@@ -102,6 +102,7 @@ public abstract class AbstractLabelingComponent extends BeCPGDataObject implemen
 		int result = super.hashCode();
 		result = prime * result + ((legalName == null) ? 0 : legalName.hashCode());
 		result = prime * result + ((qty == null) ? 0 : qty.hashCode());
+		result = prime * result + ((volumeQtyPerc == null) ? 0 : volumeQtyPerc.hashCode());
 		return result;
 	}
 
@@ -124,12 +125,18 @@ public abstract class AbstractLabelingComponent extends BeCPGDataObject implemen
 				return false;
 		} else if (!qty.equals(other.qty))
 			return false;
+		if (volumeQtyPerc == null) {
+			if (other.volumeQtyPerc != null)
+				return false;
+		} else if (!volumeQtyPerc.equals(other.volumeQtyPerc))
+			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "AbstractIng [qty=" + qty + ", legalName=" + legalName + "]";
+		return "AbstractLabelingComponent [qty=" + qty + ", volumeQtyPerc=" + volumeQtyPerc + ", legalName=" + legalName + ", nodeRef=" + nodeRef
+				+ ", name=" + name + "]";
 	}
 
 	@Override

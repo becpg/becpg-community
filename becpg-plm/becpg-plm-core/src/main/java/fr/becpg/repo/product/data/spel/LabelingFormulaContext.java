@@ -186,7 +186,7 @@ public class LabelingFormulaContext {
 			}
 			return new MessageFormat(detailsDefaultFormat);
 		} else if (lblComponent instanceof IngTypeItem) {
-			if((((IngTypeItem) lblComponent)).getDecThreshold()!=null && (((IngTypeItem) lblComponent)).getQty() <= (((IngTypeItem) lblComponent)).getDecThreshold()){
+			if((((IngTypeItem) lblComponent)).getDecThreshold()!=null && (((IngTypeItem) lblComponent)).getQty() <= ((((IngTypeItem) lblComponent)).getDecThreshold()/100)){
 				return new MessageFormat(ingTypeDecThresholdFormat);
 			}
 			return new MessageFormat(ingTypeDefaultFormat);
@@ -679,6 +679,9 @@ public class LabelingFormulaContext {
 				ingType = new IngTypeItem();
 				ingType.setNodeRef(new NodeRef(RepoConsts.SPACES_STORE, "ingType-" + lblComponent.getNodeRef().hashCode()));
 			}
+			
+			//Reset qty for equality
+			ingType.setQty(0d);
 
 			List<AbstractLabelingComponent> subSortedList = tmp.get(ingType);
 

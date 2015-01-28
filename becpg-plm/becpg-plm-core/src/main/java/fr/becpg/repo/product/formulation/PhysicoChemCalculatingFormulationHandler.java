@@ -67,6 +67,12 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 		Boolean isFormulated = (Boolean) nodeService.getProperty(sl.getCharactNodeRef(), PLMModel.PROP_PHYSICO_CHEM_FORMULATED);
 		return isFormulated != null ? isFormulated.booleanValue() : false;
 	}
+	
+	@Override
+	protected boolean isCharactFormulatedFromVol(SimpleListDataItem sl) {
+		Boolean isFormulatedFromVol = (Boolean) nodeService.getProperty(sl.getCharactNodeRef(), PLMModel.PROP_PHYSICO_CHEM_FORMULATED_FROM_VOL);
+		return isFormulatedFromVol != null ? isFormulatedFromVol.booleanValue() : false;
+	}
 
 	protected Map<NodeRef, List<NodeRef>> getMandatoryCharacts(ProductData formulatedProduct, QName componentType) {
 		return getMandatoryCharactsFromList(formulatedProduct.getPhysicoChemList());
