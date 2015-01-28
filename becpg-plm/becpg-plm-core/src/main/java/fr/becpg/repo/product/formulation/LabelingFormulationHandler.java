@@ -256,7 +256,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	private void addLabelingRule(Map<String, List<LabelingRuleListDataItem>> ret, LabelingRuleListDataItem labelingRule) {
 		String group = labelingRule.getGroup();
-		if(group==null){
+		if(group==null || group.isEmpty()){
 			group  = LabelingRuleListDataItem.DEFAULT_LABELING_GROUP;
 		}
 		List<LabelingRuleListDataItem> tmp = ret.get(group);

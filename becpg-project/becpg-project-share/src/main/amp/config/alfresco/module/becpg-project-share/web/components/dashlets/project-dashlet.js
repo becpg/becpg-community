@@ -304,7 +304,7 @@
                               "bcpg_code",
                               "cm_name",
                               "pjt_taskList|pjt_tlTaskName|pjt_tlDuration|pjt_tlPrevTasks|pjt_tlState|pjt_completionPercent|pjt_tlStart|pjt_tlEnd|pjt_tlWorkflowInstance|fm_commentCount",
-                              "pjt_deliverableList|pjt_dlDescription|pjt_dlContent|pjt_dlState|fm_commentCount",
+                              "pjt_deliverableList|pjt_dlDescription|pjt_dlContent|pjt_dlState|pjt_dlScriptExecOrder|fm_commentCount",
                               "pjt_projectManager", "pjt_projectStartDate", "pjt_projectCompletionDate",
                               "pjt_projectDueDate", "pjt_projectState" ],
                        "project-simple" : [
@@ -671,8 +671,8 @@
                      var ret = '<ul class="hidden">';
 
                      for (j in deliverables) {
-                        var deliverable = deliverables[j];
-                        if (deliverable["itemData"]["prop_pjt_dlState"].value == this.widgets.filter.value) {
+                        var deliverable = deliverables[j],  scriptOrder  = deliverable["itemData"]["prop_pjt_dlScriptExecOrder"].value;
+                        if (deliverable["itemData"]["prop_pjt_dlState"].value == this.widgets.filter.value && ( scriptOrder==null || scriptOrder.length == 0  || scriptOrder=="None")) {
                            idx++;
                            ret += "<li>" + this.getDeliverableTitle(deliverable, oRecord.getData().nodeRef) + "</li>";
                         }

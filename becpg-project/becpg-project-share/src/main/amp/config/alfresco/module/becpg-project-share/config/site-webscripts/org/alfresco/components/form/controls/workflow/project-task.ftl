@@ -15,7 +15,7 @@
 
 <@markup id="widgets">
    	<@inlineScript group="form">
-  			new beCPG.component.ProjectTask("${controlId}").setOptions({taskNodeRef:"${field.value!""}"<#if form.mode == "view">,readOnly:true</#if> }).setMessages(${messages});
+  			new beCPG.component.ProjectTask("${controlId}").setOptions({taskNodeRef:"${field.value!""}"<#if form.mode == "view">,readOnly:true</#if><#if field.control.params.transitionField??>,transitionField:"${field.control.params.transitionField}"</#if>}).setMessages(${messages});
 		</@>
 </@>
 

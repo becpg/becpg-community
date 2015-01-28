@@ -108,6 +108,7 @@
 					<argLine>${app.testing.jvm.args}</argLine>
 					<excludes>
 						<exclude>fr/becpg/test/repo/importer/UserImportServiceTest.java</exclude>
+						<exclude>fr/becpg/test/repo/entity/RemoteSchemaGeneratorTest.java</exclude>
 					</excludes>
 				</configuration>
 			</plugin>

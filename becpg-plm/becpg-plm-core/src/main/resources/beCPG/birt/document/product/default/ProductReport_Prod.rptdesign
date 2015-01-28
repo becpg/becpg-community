@@ -5960,7 +5960,7 @@ BirtMath.round(dataSetRow["compoListQty"] * 1000000, 2)+ " mg";
                     </cell>
                     <cell id="2966">
                         <label id="2917">
-                            <text-property name="text">Qté</text-property>
+                            <text-property name="text">Poids</text-property>
                         </label>
                     </cell>
                     <cell id="2999">

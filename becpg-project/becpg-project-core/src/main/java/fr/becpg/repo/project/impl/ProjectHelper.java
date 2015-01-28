@@ -28,6 +28,7 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
+import fr.becpg.repo.project.data.projectList.DeliverableState;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskManualDate;
 import fr.becpg.repo.project.data.projectList.TaskState;
@@ -58,7 +59,7 @@ public class ProjectHelper {
 		if (projectData.getTaskList() != null) {
 			for (TaskListDataItem p : projectData.getTaskList()) {
 				// taskNodeRef is null when we start project
-				if (p.getPrevTasks().contains(taskListNodeRef) || (taskListNodeRef == null && p.getPrevTasks().isEmpty())) {
+				if (p.getPrevTasks().contains(taskListNodeRef) || (taskListNodeRef == null && (p.getIsGroup()==null || !p.getIsGroup()) && p.getPrevTasks().isEmpty())) {
 					taskList.add(p);
 				}
 			}
@@ -84,7 +85,7 @@ public class ProjectHelper {
 		List<TaskListDataItem> taskList = new ArrayList<TaskListDataItem>();
 		if (projectData.getTaskList() != null) {
 			for (TaskListDataItem t : projectData.getTaskList()) {
-				if (getNextTasks(projectData, t.getNodeRef()).isEmpty()) {
+				if (getNextTasks(projectData, t.getNodeRef()).isEmpty() && (t.getIsGroup()==null || !t.getIsGroup())) {
 					taskList.add(t);
 				}
 			}
@@ -118,13 +119,19 @@ public class ProjectHelper {
 	}
 
 	public static void reOpenPath(ProjectData projectData, TaskListDataItem nextTask, TaskListDataItem refusedTask) {
+		
 		if(nextTask.equals(refusedTask)){
 			nextTask.setTaskState(TaskState.InProgress);
+			
+			reOpenDeliverables(projectData,nextTask);
+			
 		} else {
 			nextTask.setTaskState(TaskState.Planned);
+			reOpenDeliverables(projectData,nextTask);
 			//Reopen brethen
 			for(TaskListDataItem brotherTask : getBrethrenTask(projectData,nextTask )){
 				brotherTask.setTaskState(TaskState.Planned);
+				reOpenDeliverables(projectData,nextTask);
 			}
 			
 			for(TaskListDataItem prevTask : getPrevTasks(projectData,nextTask )){
@@ -133,6 +140,16 @@ public class ProjectHelper {
 			
 		}
 
+	}
+
+	private static void reOpenDeliverables(ProjectData projectData, TaskListDataItem nextTask) {
+		List<DeliverableListDataItem> nextDeliverables = ProjectHelper.getDeliverables(projectData, nextTask.getNodeRef());
+		for(DeliverableListDataItem dl : nextDeliverables){
+			if(dl.getTasks().size() == 1){
+				dl.setState(DeliverableState.Planned);
+			}
+		}
+		
 	}
 
 	public static List<TaskListDataItem> getSourceTasks(ProjectData projectData) {

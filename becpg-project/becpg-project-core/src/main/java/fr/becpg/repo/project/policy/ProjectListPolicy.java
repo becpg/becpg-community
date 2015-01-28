@@ -142,16 +142,18 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 			}
 		} else {
 			for (NodeRef projectNodeRef : pendingNodes) {
-				if (nodeService.exists(projectNodeRef)) {
+				if (nodeService.exists(projectNodeRef) && isNotLocked(projectNodeRef)) {
 					try {
 						policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
 						policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
+						policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_PROJECT);
 						projectService.formulate(projectNodeRef);
 					} catch (FormulateException e) {
 						logger.error(e, e);
 					} finally {
+						policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
 						policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
-						policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
+						policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_PROJECT);
 					}
 				} 
 			}

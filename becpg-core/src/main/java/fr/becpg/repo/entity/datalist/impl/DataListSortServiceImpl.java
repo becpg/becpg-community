@@ -227,7 +227,9 @@ public class DataListSortServiceImpl implements DataListSortService {
 				NodeRef prevNode = nodeRef;
 
 				for (NodeRef tmp : listItems) {
-					logger.debug("start call insertAfter: " + tryGetName(tmp));
+					if(logger.isDebugEnabled()){
+						logger.debug("start call insertAfter: " + tryGetName(tmp));
+					}
 					if (!pendingNodeRefs.contains(tmp)) {
 						insertAfter(dataType, listContainer, prevNode, tmp, pendingNodeRefs);
 					}
@@ -281,7 +283,9 @@ public class DataListSortServiceImpl implements DataListSortService {
 
 		if (destNodeRef != null) {
 
-			logger.debug("getLastChild of " + tryGetName(destNodeRef));
+			if(logger.isDebugEnabled()){
+				logger.debug("getLastChild of " + tryGetName(destNodeRef));
+			}
 			startSort = (Integer) nodeService.getProperty(destNodeRef, BeCPGModel.PROP_SORT);
 			Integer level = (Integer) nodeService.getProperty(destNodeRef, BeCPGModel.PROP_DEPTH_LEVEL);
 
@@ -416,8 +420,10 @@ public class DataListSortServiceImpl implements DataListSortService {
 		NodeRef listContainer = nodeService.getPrimaryParent(nodeRef).getParentRef();
 		Integer sort = (Integer) nodeService.getProperty(nodeRef, BeCPGModel.PROP_SORT);
 
-		logger.debug("node: " + tryGetName(nodeRef));
-		logger.debug("moveUp: " + moveUp);
+		if(logger.isDebugEnabled()){
+			logger.debug("node: " + tryGetName(nodeRef));
+			logger.debug("moveUp: " + moveUp);
+		}
 
 		// look for the right destNode (before or after sibling)
 		NodeRef destNodeRef = getNextSiblingNode(dataType, listContainer, nodeRef, moveUp);

@@ -55,7 +55,8 @@
                         options :
                         {
                             taskNodeRef : null,
-                            readOnly : false
+                            readOnly : false,
+                            transitionField : "prop_pjt_worflowTransition"
                         },
 
                         /**
@@ -100,7 +101,7 @@
                                 
                                 
                                 if(!task.isRefusedEnabled){
-                                    Dom.addClass(this.id.replace("assoc_pjt_workflowTask-cntrl","prop_pjt_worflowTransition") + "-refused", "hidden");
+                                    Dom.addClass(this.id.replace("assoc_pjt_workflowTask-cntrl",this.options.transitionField) + "-refused", "hidden");
                                 }
 
                                 if (deliverables != null && deliverables.length > 0)

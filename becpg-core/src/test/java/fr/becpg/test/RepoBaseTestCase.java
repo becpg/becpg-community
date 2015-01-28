@@ -84,11 +84,18 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 	public static Wiser wiser = new Wiser(2500);
 
-	static {
-		
-		wiser.start();
-	}
 	
+	
+    static {
+    	try {
+			logger.debug("setupBeforeClass : Start wiser");
+			wiser.start();
+		} catch (Exception e) {
+			logger.debug("cannot open wiser!", e);
+		}
+    }
+
+
 	@Resource
 	protected MimetypeService mimetypeService;
 

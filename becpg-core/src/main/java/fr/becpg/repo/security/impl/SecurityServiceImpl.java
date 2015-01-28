@@ -61,7 +61,7 @@ public class SecurityServiceImpl implements SecurityService {
 
 	private static final String ACLS_CACHE_KEY = "ACLS_CACHE_KEY";
 
-	private static Log logger = LogFactory.getLog(SecurityServiceImpl.class);
+	private final static Log logger = LogFactory.getLog(SecurityServiceImpl.class);
 
 	@Autowired
 	private AlfrescoRepository<ACLGroupData> alfrescoRepository;

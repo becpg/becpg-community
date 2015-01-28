@@ -137,10 +137,11 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 			Map<NodeRef, List<NodeRef>> mandatoryCharacts = getMandatoryCharacts(formulatedProduct, PLMModel.TYPE_RAWMATERIAL);
 			
 			for(CompoListDataItem compoItem : formulatedProduct.getCompoList(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)){
-				Double qty = FormulationHelper.getQty(compoItem);
+				Double weight = FormulationHelper.getQty(compoItem);
+				Double vol = FormulationHelper.getNetVolume(compoItem, nodeService);
 				
-				if(qty != null){
-					visitPart(compoItem.getProduct(), simpleListDataList, qty, netQty, mandatoryCharacts, totalQties);
+				if(weight != null){
+					visitPart(compoItem.getProduct(), simpleListDataList, weight, vol, netQty, mandatoryCharacts, totalQties);
 				}			
 			}
 			
@@ -185,8 +186,9 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	 */
 	protected void visitPart(NodeRef componentNodeRef,  
 			List<T> simpleListDataList,
-			Double qtyUsed, 
-			Double netQty, 
+			Double weightUsed,
+			Double volUsed,
+			Double netQty,			
 			Map<NodeRef, List<NodeRef>> mandatoryCharacts,
 			Map<NodeRef, Double> totalQties) throws FormulateException{								
 		
@@ -207,6 +209,9 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 				
 				for(SimpleListDataItem newSimpleListDataItem : simpleListDataList){			
 					if(newSimpleListDataItem.getCharactNodeRef() != null && isCharactFormulated(newSimpleListDataItem)){
+						
+						// calculate charact from qty or vol ?
+						Double qtyUsed = isCharactFormulatedFromVol(newSimpleListDataItem) ? volUsed : weightUsed;
 						
 						// look for charact in component
 						SimpleListDataItem slDataItem = null;				
@@ -288,6 +293,10 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	
 	protected boolean isCharactFormulated(SimpleListDataItem sl){
 		return sl.getIsManual()==null || !sl.getIsManual().booleanValue();
+	}
+	
+	protected boolean isCharactFormulatedFromVol(SimpleListDataItem sl){
+		return false;
 	}
 	
 	protected T findSimpleListDataItem(List<T> simpleList, NodeRef charactNodeRef){
