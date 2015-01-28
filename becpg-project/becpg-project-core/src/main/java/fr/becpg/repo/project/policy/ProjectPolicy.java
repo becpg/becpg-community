@@ -115,15 +115,21 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements
 	@Override
 	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 
-			for (NodeRef nodeRef : pendingNodes) {
-				try {
-					if(nodeService.exists(nodeRef) && isNotLocked(nodeRef)){
-						logger.debug("Project policy formulate");
-						projectService.formulate(nodeRef);
+			for (NodeRef projectNodeRef : pendingNodes) {
+					if(nodeService.exists(projectNodeRef) && isNotLocked(projectNodeRef)){
+						try {
+							policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
+							policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
+							policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_PROJECT);
+							projectService.formulate(projectNodeRef);
+						} catch (FormulateException e) {
+							logger.error(e, e);
+						} finally {
+							policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
+							policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
+							policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_PROJECT);
+						}
 					}				
-				} catch (FormulateException e) {
-					logger.error(e,e);
-				}
 			}
 		
 	}

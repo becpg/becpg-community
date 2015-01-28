@@ -44,9 +44,7 @@ import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,6 +82,17 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 	public static RepoBaseTestCase INSTANCE;
 
 	public static Wiser wiser = new Wiser(2500);
+	
+	
+    static {
+    	try {
+			logger.debug("setupBeforeClass : Start wiser");
+			wiser.start();
+		} catch (Exception e) {
+			logger.debug("cannot open wiser!", e);
+		}
+    }
+
 
 	@Resource
 	protected MimetypeService mimetypeService;
@@ -162,26 +171,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 		INSTANCE = this;
 	}
 
-	@BeforeClass
-	public static void setupBeforeClass() {
-		try {
-			logger.debug("setupBeforeClass : Start wiser");
-			wiser.start();
-		} catch (Exception e) {
-			logger.warn("cannot open wiser!", e);
-		}
-	}
 
-	@AfterClass
-	public static void tearDownBeforeClass() {
-		try {
-			logger.debug("tearDownBeforeClass : Stop wiser");
-			wiser.stop();
-		} catch (Exception e) {
-			logger.warn("cannot stop wiser!", e);
-		}
-
-	}
 
 	@Before
 	public void setUp() throws Exception {

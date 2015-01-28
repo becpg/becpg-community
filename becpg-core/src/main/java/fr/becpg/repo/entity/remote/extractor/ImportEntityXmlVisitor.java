@@ -388,14 +388,23 @@ public class ImportEntityXmlVisitor {
 			} else if (type != null
 					&& (type.equals(RemoteEntityService.ASSOC_TYPE) || type.equals(RemoteEntityService.CHILD_ASSOC_TYPE) || type
 							.equals(RemoteEntityService.NODEREF_TYPE))) {
+				
+				if(multipleValues != null){
+					serviceRegistry.getNodeService().setProperty(curNodeRef.peek(), currAssoc.peek(), multipleValues);
+					multipleValues = null;
+				}
+				
 				currAssoc.pop();
 				currAssocType.pop();
+				
 			} else if (type != null && type.length() > 0) {
 				if (!shouldIgnoreProperty(currProp)) {
 					if (logger.isDebugEnabled()) {
 						logger.debug("Set property : " + currProp.toPrefixString() + " value " + currValue + " for type " + type);
 						logger.debug("Is multiple  : " + (multipleValues != null));
 					}
+					
+					
 					if (curNodeRef.size() == 1 && properties != null && properties.containsKey(currProp)) {
 						serviceRegistry.getNodeService().setProperty(curNodeRef.peek(), currProp, properties.get(currProp));
 					} else {

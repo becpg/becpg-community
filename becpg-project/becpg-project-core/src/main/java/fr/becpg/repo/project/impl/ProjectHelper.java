@@ -61,7 +61,7 @@ public class ProjectHelper {
 		if (projectData.getTaskList() != null) {
 			for (TaskListDataItem p : projectData.getTaskList()) {
 				// taskNodeRef is null when we start project
-				if (p.getPrevTasks().contains(taskListNodeRef) || (taskListNodeRef == null && p.getPrevTasks().isEmpty())) {
+				if (p.getPrevTasks().contains(taskListNodeRef) || (taskListNodeRef == null && (p.getIsGroup()==null || !p.getIsGroup()) && p.getPrevTasks().isEmpty())) {
 					taskList.add(p);
 				}
 			}
@@ -87,7 +87,7 @@ public class ProjectHelper {
 		List<TaskListDataItem> taskList = new ArrayList<TaskListDataItem>();
 		if (projectData.getTaskList() != null) {
 			for (TaskListDataItem t : projectData.getTaskList()) {
-				if (getNextTasks(projectData, t.getNodeRef()).isEmpty()) {
+				if (getNextTasks(projectData, t.getNodeRef()).isEmpty() && (t.getIsGroup()==null || !t.getIsGroup())) {
 					taskList.add(t);
 				}
 			}
