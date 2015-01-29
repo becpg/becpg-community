@@ -18,6 +18,15 @@
  ******************************************************************************/
 if (beCPG.module.EntityDataGridRenderers) {
 
+    YAHOO.Bubbling.on("dirtyDataTable",function(event,args) {
+        if (args && args.length >1) {
+            var field = args[1].column.field;
+            if(field == "prop_pjt_tlState") {
+                YAHOO.Bubbling.fire("refreshDataGrids", {updateOnly : true});
+            }
+        }    
+    }, this);
+
 
    YAHOO.Bubbling.fire("registerDataGridRenderer", {
       propertyName : [ "pjt:tlTaskName" ],
@@ -42,6 +51,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 
    });
    
+  
    
    YAHOO.Bubbling.fire("registerDataGridRenderer", {
 	      propertyName : [ "pjt:alData" ],

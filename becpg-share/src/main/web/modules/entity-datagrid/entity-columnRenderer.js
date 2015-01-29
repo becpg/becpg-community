@@ -555,7 +555,7 @@
                        // Hide CellEditor
                        oSelf._hide();
                        
-                       Bubbling.fire("dirtyDataTable");
+                       Bubbling.fire("dirtyDataTable",{"record":oSelf.getRecord(), "column":oSelf.getColumn()});
 
                        oSelf.fireEvent("saveEvent", {
                            editor : oSelf,
