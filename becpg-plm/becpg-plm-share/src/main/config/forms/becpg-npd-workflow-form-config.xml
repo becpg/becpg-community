@@ -157,7 +157,10 @@
 					<set id="project" />			
 					<field id="pjt:workflowTask" mandatory="false" read-only="true"
 						set="project" >
-						<control	template="/org/alfresco/components/form/controls/workflow/project-task.ftl" />
+						<control	template="/org/alfresco/components/form/controls/workflow/project-task.ftl" >
+						    <control-param name="transitionField">prop_npdwf_npdAction</control-param>
+						</control>
+						
 					</field>
 					
 					<field id="bpm:comment" label-id="workflow.field.comment" set="project">

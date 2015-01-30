@@ -204,7 +204,7 @@
                              * @property pageSize
                              * @type int
                              */
-                            pageSize : 25,
+                            pageSize : 50,
 
                             /**
                              * Initial filter to show on load.
@@ -1304,6 +1304,8 @@
                                 "MSG_EMPTY" : this.msg("message.empty"),
                                 "MSG_ERROR" : this.msg("message.error"),
                                 "MSG_NOGROUP" : this.msg("message.nogroup"),
+                                "MSG_SORTASC": this.msg("message.sortasc"),
+                                "MSG_SORTDESC": this.msg("message.sortdesc"),
                                 paginator : null,
                                 groupBy : this.options.groupBy,
                                 groupFormater : this.options.groupFormater,

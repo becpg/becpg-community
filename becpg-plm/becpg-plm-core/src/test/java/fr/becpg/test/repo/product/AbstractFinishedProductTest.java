@@ -294,7 +294,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					mlName.addValue(Locale.ENGLISH, "Epices english");
 					mlName.addValue(Locale.FRENCH, "Epices french");	
 					properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
-					properties.put(PLMModel.PROP_ING_TYPE_DEC_THRESHOLD, 2);
+					properties.put(PLMModel.PROP_ING_TYPE_DEC_THRESHOLD, 20);
 					ingType2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ING_TYPE_ITEM, properties).getChildRef();
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "ing1");

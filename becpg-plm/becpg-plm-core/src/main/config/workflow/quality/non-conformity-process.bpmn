@@ -92,10 +92,10 @@ task.setVariable('ncwf_ncState', nc.properties["qa:ncState"]);
     <sequenceFlow id="flow42" name="" sourceRef="exclusivegateway2" targetRef="parallelgateway2"></sequenceFlow>
     <sequenceFlow id="flow43" name="" sourceRef="checkTask" targetRef="exclusivegateway3"></sequenceFlow>
     <sequenceFlow id="flow44" name="" sourceRef="exclusivegateway3" targetRef="notificationTask">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ncwf_ncState == 'Résolu' || ncwf_ncState == 'Fermé' }]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ncwf_ncState == 'closing' || ncwf_ncState == 'closed' }]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="flow45" name="" sourceRef="exclusivegateway3" targetRef="corrActionTask">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ncwf_ncState != 'Résolu' && ncwf_ncState != 'Fermé' }]]></conditionExpression>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ncwf_ncState != 'closing' && ncwf_ncState != 'closed' }]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="flow46" name="" sourceRef="startevent1" targetRef="initialiseNCTask"></sequenceFlow>
     <sequenceFlow id="flow47" name="" sourceRef="initialiseNCTask" targetRef="analysisTask"></sequenceFlow>

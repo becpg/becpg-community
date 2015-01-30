@@ -85,7 +85,8 @@
                                             {
                                                 fn : function(response)
                                                 {
-                                                    window.location.reload();
+                                                   //Fix IE infinite loop : window.location.reload();
+                                                    Alfresco.logger.error("Error retrieving documentLibrary: ", response);
                                                 },
                                                 scope : this
                                             },
