@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>becpg-parent</artifactId>
 		<groupId>fr.becpg</groupId>
-		<version>1.6.4</version>
+		<version>1.6.5</version>
 		<relativePath>../</relativePath>
 	</parent>
 	<artifactId>becpg-tools</artifactId>

@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.model.ForumModel;
@@ -328,7 +329,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 				StructCompareOperator operator = StructCompareOperator.Equal;
 
-				Map<String, CompareResultDataItem> comparisonMap = new HashMap<String, CompareResultDataItem>();
+				Map<String, CompareResultDataItem> comparisonMap = new TreeMap<String, CompareResultDataItem>();
 				compareNode(entityListType, null, null, nodeRef1, nodeRef2, 2, 1, true, comparisonMap);
 
 				if (logger.isDebugEnabled()) {
@@ -337,8 +338,8 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				}
 
 				// get Properties
-				Map<QName, String> properties1 = new HashMap<QName, String>();
-				Map<QName, String> properties2 = new HashMap<QName, String>();
+				Map<QName, String> properties1 = new TreeMap<QName, String>();
+				Map<QName, String> properties2 = new TreeMap<QName, String>();
 				for (CompareResultDataItem c : comparisonMap.values()) {
 
 					if(c.isDifferent()){
@@ -426,8 +427,8 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		 */
 
 		PropertyFormats propertyFormats = new PropertyFormats(false);
-		Map<QName, Serializable> properties1 = nodeRef1 == null ? new HashMap<QName, Serializable>() : nodeService.getProperties(nodeRef1);
-		Map<QName, Serializable> properties2 = nodeRef2 == null ? new HashMap<QName, Serializable>() : nodeService.getProperties(nodeRef2);
+		Map<QName, Serializable> properties1 = nodeRef1 == null ? new TreeMap<QName, Serializable>() : nodeService.getProperties(nodeRef1);
+		Map<QName, Serializable> properties2 = nodeRef2 == null ? new TreeMap<QName, Serializable>() : nodeService.getProperties(nodeRef2);
 
 		for (QName propertyQName : properties1.keySet()) {
 

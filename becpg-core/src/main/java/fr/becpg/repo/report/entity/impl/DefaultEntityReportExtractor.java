@@ -90,14 +90,15 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	/** The Constant VALUE_NULL. */
 	protected static final String VALUE_NULL = "";
-	
+
 	private static final String REGEX_REMOVE_CHAR = "[^\\p{L}\\p{N}]";
 
-	protected static final ArrayList<QName> hiddenNodeAttributes = new ArrayList<QName>(Arrays.asList(ContentModel.PROP_NODE_REF, ContentModel.PROP_NODE_DBID,
-			ContentModel.PROP_NODE_UUID, ContentModel.PROP_STORE_IDENTIFIER, ContentModel.PROP_STORE_NAME, ContentModel.PROP_STORE_PROTOCOL, ContentModel.PROP_CONTENT));
+	protected static final ArrayList<QName> hiddenNodeAttributes = new ArrayList<QName>(Arrays.asList(ContentModel.PROP_NODE_REF,
+			ContentModel.PROP_NODE_DBID, ContentModel.PROP_NODE_UUID, ContentModel.PROP_STORE_IDENTIFIER, ContentModel.PROP_STORE_NAME,
+			ContentModel.PROP_STORE_PROTOCOL, ContentModel.PROP_CONTENT));
 
-	protected static final ArrayList<QName> hiddenDataListItemAttributes = new ArrayList<QName>(Arrays.asList(ContentModel.PROP_NAME, ContentModel.PROP_CREATED,
-			ContentModel.PROP_CREATOR, ContentModel.PROP_MODIFIED, ContentModel.PROP_MODIFIER));
+	protected static final ArrayList<QName> hiddenDataListItemAttributes = new ArrayList<QName>(Arrays.asList(ContentModel.PROP_NAME,
+			ContentModel.PROP_CREATED, ContentModel.PROP_CREATOR, ContentModel.PROP_MODIFIED, ContentModel.PROP_MODIFIER));
 
 	@Autowired
 	protected DictionaryService dictionaryService;
@@ -122,7 +123,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	@Autowired
 	protected AssociationService associationService;
-	
+
 	@Autowired
 	protected RepositoryEntityDefReader<RepositoryEntity> repositoryEntityDefReader;
 
@@ -164,18 +165,19 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	protected int extractEntityImages(NodeRef entityNodeRef, Element imgsElt, Map<String, byte[]> images) {
 
 		int cnt = imgsElt.selectNodes(TAG_IMAGE) != null ? imgsElt.selectNodes(TAG_IMAGE).size() : 1;
-		NodeRef imagesFolderNodeRef = nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
+		NodeRef imagesFolderNodeRef = nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS,
+				TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
 		if (imagesFolderNodeRef != null) {
 			for (FileInfo fileInfo : fileFolderService.listFiles(imagesFolderNodeRef)) {
 				extractImage(fileInfo.getNodeRef(), cnt, imgsElt, images);
 				cnt++;
 			}
 		}
-		
+
 		return cnt;
 	}
-	
-	protected void extractImage(NodeRef imgNodeRef, int cnt, Element imgsElt, Map<String, byte[]> images){
+
+	protected void extractImage(NodeRef imgNodeRef, int cnt, Element imgsElt, Map<String, byte[]> images) {
 		String imgId = String.format(PRODUCT_IMG_ID, cnt);
 		byte[] imageBytes = entityService.getImage(imgNodeRef);
 		if (imageBytes != null) {
@@ -192,8 +194,8 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	protected boolean loadTargetAssoc(NodeRef entityNodeRef, AssociationDefinition assocDef, Element entityElt) {
 		return false;
 	}
-	
-	protected  boolean isMultiLinesAttribute(QName attribute){
+
+	protected boolean isMultiLinesAttribute(QName attribute) {
 		return false;
 	}
 
@@ -209,14 +211,13 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		hiddentAttributes.addAll(hiddenNodeAttributes);
 		hiddentAttributes.addAll(hiddenDataListItemAttributes);
 		loadAttributes(dataListItem.getNodeRef(), nodeElt, false, hiddentAttributes);
-		
-		//look for charact
+
+		// look for charact
 		Map<QName, Serializable> identAttr = repositoryEntityDefReader.getIdentifierAttributes(dataListItem);
-		for(Map.Entry<QName, Serializable> kv : identAttr.entrySet()){
-			if(kv.getValue() instanceof NodeRef && 
-					nodeService.hasAspect((NodeRef)kv.getValue(), BeCPGModel.ASPECT_LEGAL_NAME)){			
-				nodeElt.addAttribute(BeCPGModel.PROP_LEGAL_NAME.getLocalName(), 
-						(String)nodeService.getProperty((NodeRef)kv.getValue(), BeCPGModel.PROP_LEGAL_NAME));
+		for (Map.Entry<QName, Serializable> kv : identAttr.entrySet()) {
+			if (kv.getValue() instanceof NodeRef && nodeService.hasAspect((NodeRef) kv.getValue(), BeCPGModel.ASPECT_LEGAL_NAME)) {
+				nodeElt.addAttribute(BeCPGModel.PROP_LEGAL_NAME.getLocalName(),
+						(String) nodeService.getProperty((NodeRef) kv.getValue(), BeCPGModel.PROP_LEGAL_NAME));
 				break;
 			}
 		}
@@ -234,50 +235,53 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	protected void loadAttributes(NodeRef nodeRef, Element nodeElt, boolean useCData, List<QName> hiddenAttributes) {
 
 		PropertyFormats propertyFormats = new PropertyFormats(true);
-	
-		// properties
-		Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
-		for (Map.Entry<QName, Serializable> property : properties.entrySet()) {
 
-			// do not display system properties
-			if (hiddenAttributes == null || !hiddenAttributes.contains(property.getKey())) {
+		if (nodeRef != null && nodeService.exists(nodeRef)) {
+			// properties
+			Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
+			for (Map.Entry<QName, Serializable> property : properties.entrySet()) {
 
-				PropertyDefinition propertyDef = dictionaryService.getProperty(property.getKey());
-				if (propertyDef == null) {
-					logger.error("This property doesn't exist. Name: " + property.getKey() + " nodeRef : " + nodeRef);
-					continue;
+				// do not display system properties
+				if (hiddenAttributes == null || !hiddenAttributes.contains(property.getKey())) {
+
+					PropertyDefinition propertyDef = dictionaryService.getProperty(property.getKey());
+					if (propertyDef == null) {
+						logger.error("This property doesn't exist. Name: " + property.getKey() + " nodeRef : " + nodeRef);
+						continue;
+					}
+					addData(nodeElt, useCData, propertyDef.getName(),
+							attributeExtractorService.extractPropertyForReport(propertyDef, property.getValue(), propertyFormats, false));
 				}
-				addData(nodeElt, useCData, propertyDef.getName(), attributeExtractorService.extractPropertyForReport(propertyDef, property.getValue(), propertyFormats, false));
 			}
-		}
 
-		// associations
-		Map<QName, List<AssociationRef>> tempHashMap = new HashMap<QName, List<AssociationRef>>();
-		List<AssociationRef> associations = nodeService.getTargetAssocs(nodeRef, RegexQNamePattern.MATCH_ALL);
+			// associations
+			Map<QName, List<AssociationRef>> tempHashMap = new HashMap<QName, List<AssociationRef>>();
+			List<AssociationRef> associations = nodeService.getTargetAssocs(nodeRef, RegexQNamePattern.MATCH_ALL);
 
-		for (AssociationRef assocRef : associations) {
-			QName qName = assocRef.getTypeQName();
-			List<AssociationRef> assocRefs = tempHashMap.get(qName);
-			if (assocRefs == null) {
-				assocRefs = new ArrayList<AssociationRef>();
-				tempHashMap.put(qName, assocRefs);
+			for (AssociationRef assocRef : associations) {
+				QName qName = assocRef.getTypeQName();
+				List<AssociationRef> assocRefs = tempHashMap.get(qName);
+				if (assocRefs == null) {
+					assocRefs = new ArrayList<AssociationRef>();
+					tempHashMap.put(qName, assocRefs);
+				}
+				assocRefs.add(assocRef);
 			}
-			assocRefs.add(assocRef);
-		}
 
-		for (Map.Entry<QName, List<AssociationRef>> tempValue : tempHashMap.entrySet()) {
-			AssociationDefinition associationDef = dictionaryService.getAssociation(tempValue.getKey());
-			if (associationDef == null) {
-				logger.error("This association doesn't exist. Name: " + tempValue.getKey());
-				continue;
-			}else if(!loadTargetAssoc(nodeRef, associationDef, nodeElt)){
-				addData(nodeElt, useCData, associationDef.getName(), 
-						attributeExtractorService.extractAssociationsForReport(tempValue.getValue(), getPropNameOfType(associationDef.getTargetClass().getName())));				
+			for (Map.Entry<QName, List<AssociationRef>> tempValue : tempHashMap.entrySet()) {
+				AssociationDefinition associationDef = dictionaryService.getAssociation(tempValue.getKey());
+				if (associationDef == null) {
+					logger.error("This association doesn't exist. Name: " + tempValue.getKey());
+					continue;
+				} else if (!loadTargetAssoc(nodeRef, associationDef, nodeElt)) {
+					addData(nodeElt, useCData, associationDef.getName(), attributeExtractorService.extractAssociationsForReport(tempValue.getValue(),
+							getPropNameOfType(associationDef.getTargetClass().getName())));
+				}
 			}
 		}
 	}
-	
-	protected void addData(Element nodeElt, boolean useCData, QName qName, String value){
+
+	protected void addData(Element nodeElt, boolean useCData, QName qName, String value) {
 		if (useCData || isMultiLinesAttribute(qName)) {
 			addCDATA(nodeElt, qName, value);
 		} else {
@@ -285,10 +289,10 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		}
 	}
 
-	protected QName getPropNameOfType(QName type){
+	protected QName getPropNameOfType(QName type) {
 		return ContentModel.PROP_NAME;
 	}
-	
+
 	protected String generateKeyAttribute(String attributeName) {
 
 		return attributeName.replaceAll(REGEX_REMOVE_CHAR, "").toLowerCase();
@@ -298,7 +302,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 		VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
 		Element versionsElt = entityElt.addElement(TAG_VERSIONS);
-		
+
 		PropertyFormats propertyFormats = new PropertyFormats(false);
 
 		if (versionHistory != null && versionHistory.getAllVersions() != null) {
@@ -307,9 +311,9 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				Element versionElt = versionsElt.addElement(TAG_VERSION);
 				versionElt.addAttribute(Version2Model.PROP_QNAME_VERSION_LABEL.getLocalName(), version.getVersionLabel());
 				versionElt.addAttribute(Version2Model.PROP_QNAME_VERSION_DESCRIPTION.getLocalName(), version.getDescription());
-				versionElt.addAttribute(ContentModel.PROP_CREATOR.getLocalName(), attributeExtractorService.getPersonDisplayName(version.getFrozenModifier()));
-				versionElt.addAttribute(ContentModel.PROP_CREATED.getLocalName(),
-						propertyFormats.formatDate(version.getFrozenModifiedDate()));
+				versionElt.addAttribute(ContentModel.PROP_CREATOR.getLocalName(),
+						attributeExtractorService.getPersonDisplayName(version.getFrozenModifier()));
+				versionElt.addAttribute(ContentModel.PROP_CREATED.getLocalName(), propertyFormats.formatDate(version.getFrozenModifiedDate()));
 			}
 		}
 	}
@@ -363,23 +367,24 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			cDATAElt.addAttribute("prefix", prefixes.iterator().next());
 		}
 	}
-	
-	//Check that images has not been update
+
+	// Check that images has not been update
 	public boolean shouldGenerateReport(NodeRef entityNodeRef) {
-		NodeRef imagesFolderNodeRef = nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
+		NodeRef imagesFolderNodeRef = nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS,
+				TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
 		if (imagesFolderNodeRef != null) {
 			Date modified = (Date) nodeService.getProperty(imagesFolderNodeRef, ContentModel.PROP_MODIFIED);
 			Date generatedReportDate = (Date) nodeService.getProperty(entityNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED);
-		    if (modified == null || generatedReportDate == null || modified.getTime() > generatedReportDate.getTime()) {
+			if (modified == null || generatedReportDate == null || modified.getTime() > generatedReportDate.getTime()) {
 				return true;
 			}
-		    for (FileInfo fileInfo : fileFolderService.listFiles(imagesFolderNodeRef)) {
-		    	modified = fileInfo.getModifiedDate();
-		    	if (modified == null || generatedReportDate == null || modified.getTime() > generatedReportDate.getTime()) {
+			for (FileInfo fileInfo : fileFolderService.listFiles(imagesFolderNodeRef)) {
+				modified = fileInfo.getModifiedDate();
+				if (modified == null || generatedReportDate == null || modified.getTime() > generatedReportDate.getTime()) {
 					return true;
-				}				    
-		    }		    
-		}		
+				}
+			}
+		}
 		return false;
 	}
 
@@ -387,7 +392,5 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	public EntityReportExtractorPriority getMatchPriority(QName type) {
 		return EntityReportExtractorPriority.LOW;
 	}
-
-
 
 }

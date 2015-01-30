@@ -167,9 +167,9 @@ public class ClaimWorkflowTest extends AbstractWorkflowTest {
 			}
 		}, false, true);
 		
-		if(workflowService.getWorkflowById(workflowInstanceId).isActive()){
-			logger.error("Workflow is still active "+workflowService.getWorkflowById(workflowInstanceId).isActive());
-		}
+		
+		assertNull(workflowService.getWorkflowById(workflowInstanceId));
+		
 		
 	}
 

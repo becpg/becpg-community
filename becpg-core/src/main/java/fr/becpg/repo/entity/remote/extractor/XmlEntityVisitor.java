@@ -36,6 +36,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.rule.RuleModel;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
@@ -261,7 +262,9 @@ public class XmlEntityVisitor {
 
 			if (!assocDef.getName().getNamespaceURI().equals(NamespaceService.RENDITION_MODEL_1_0_URI)
 					&& !assocDef.getName().getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
-					&& !assocDef.getName().equals(ContentModel.ASSOC_ORIGINAL) && assocDef.isChild()) {
+					&& !assocDef.getName().equals(ContentModel.ASSOC_ORIGINAL) 
+					&& !assocDef.getName().equals(RuleModel.ASSOC_RULE_FOLDER)
+					&& assocDef.isChild()) {
 				QName nodeType = assocDef.getName().getPrefixedQName(namespaceService);
 				String prefix = nodeType.getPrefixString().split(":")[0];
 				xmlw.writeStartElement(prefix, nodeType.getLocalName(), nodeType.getNamespaceURI());
@@ -283,6 +286,7 @@ public class XmlEntityVisitor {
 
 			if (!assocDef.getName().getNamespaceURI().equals(NamespaceService.RENDITION_MODEL_1_0_URI)
 					&& !assocDef.getName().getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
+					&& !assocDef.getName().equals(RuleModel.ASSOC_RULE_FOLDER)
 					&& !assocDef.getName().equals(ContentModel.ASSOC_ORIGINAL) && !assocDef.isChild()) {
 				QName nodeType = assocDef.getName().getPrefixedQName(namespaceService);
 				String prefix = nodeType.getPrefixString().split(":")[0];

@@ -197,7 +197,7 @@
 				   <show id="cm:name" />
 				   <show id="bcpg:code" />				   
 				   <show id="cm:title" force="true" />
-               <show id="cm:description" force="true" />
+                   <show id="cm:description" force="true" />
 				   <show id="pjt:projectHierarchy1" />
 				   <show id="pjt:projectHierarchy2" />
 				   <show id="pjt:projectOrigin" />
@@ -814,6 +814,7 @@
 					<show id="pjt:dlContent" />
 					<show id="pjt:dlUrl" />
 					<show id="pjt:dlState" />
+					<show id="pjt:dlScriptExecOrder" />
 					<show id="fm:commentCount" force="true"/>
 				</field-visibility>
 			</form>

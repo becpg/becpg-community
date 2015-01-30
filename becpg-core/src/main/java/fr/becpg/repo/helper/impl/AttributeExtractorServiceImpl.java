@@ -718,28 +718,32 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 
 	@Override
 	public String extractAssociationsForReport(List<AssociationRef> assocRefs, QName propertyName) {
-		String values = "";
+		StringBuilder values = new StringBuilder();
+
+		boolean first = true;
 		for (AssociationRef assocRef : assocRefs) {
 
-			if (!values.isEmpty()) {
-				values += RepoConsts.LABEL_SEPARATOR;
+			if (!first) {
+				values.append(RepoConsts.LABEL_SEPARATOR);
 			}
 
 			NodeRef targetNodeRef = assocRef.getTargetRef();
 			QName targetQName = nodeService.getType(targetNodeRef);
 
 			if (targetQName.equals(ContentModel.TYPE_PERSON)) {
-				values += extractPropName(targetNodeRef);
+				values.append(extractPropName(targetNodeRef));
 			} else {
 				String value = (String) nodeService.getProperty(targetNodeRef, propertyName);
 				// propertyName can be empty
 				if (value == null || value.isEmpty()) {
 					value = (String) nodeService.getProperty(targetNodeRef, ContentModel.PROP_NAME);
 				}
-				values += value;
+				values.append(value);
 			}
+
+			first = false;
 		}
-		return values;
+		return values.toString();
 	}
 
 	@Override
