@@ -72,15 +72,19 @@
 	</developers>
 
 	<properties>
+	    <app.log.root.level>WARN</app.log.root.level>
+        <alfresco.data.location>alf_data_dev</alfresco.data.location>
+        <env>local</env>
+	
 		<alfresco.version>5.0.c</alfresco.version>
 		<app.testing.jvm.args>-Xms256m -Xmx1524m -Duser.language=fr</app.testing.jvm.args>
 		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
 		<birt.version>4.4.1</birt.version>
 		<sonar.language>java</sonar.language>
 
-		<alfresco.client.war>alfresco</alfresco.client.war>
-		<alfresco.client.war.groupId>org.alfresco</alfresco.client.war.groupId>
-		<alfresco.data.location>target/alf_data_dev</alfresco.data.location>
+		<!-- <alfresco.client.war>alfresco</alfresco.client.war>
+		<alfresco.client.war.groupId>org.alfresco</alfresco.client.war.groupId> -->
+		<!-- <alfresco.data.location>target/alf_data_dev</alfresco.data.location> -->
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -93,35 +97,7 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-	<repositories>
-		<repository>
-			<id>alfresco-public</id>
-			<url>https://artifacts.alfresco.com/nexus/content/groups/public</url>
-		</repository>
-		<repository>
-			<id>alfresco-public-snapshots</id>
-			<url>https://artifacts.alfresco.com/nexus/content/groups/public-snapshots</url>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>daily</updatePolicy>
-			</snapshots>
-		</repository>
-	</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>alfresco-plugin-public</id>
-			<url>https://artifacts.alfresco.com/nexus/content/groups/public</url>
-		</pluginRepository>
-		<pluginRepository>
-			<id>alfresco-plugin-public-snapshots</id>
-			<url>https://artifacts.alfresco.com/nexus/content/groups/public-snapshots</url>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>daily</updatePolicy>
-			</snapshots>
-		</pluginRepository>
-	</pluginRepositories>
-
+	
 	<build>
 	   <pluginManagement>
 			<plugins>
@@ -159,25 +135,6 @@
 										<ignore></ignore>
 									</action>
 								</pluginExecution>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>
-											org.apache.maven.plugins
-										</groupId>
-										<artifactId>
-											maven-jar-plugin
-										</artifactId>
-										<versionRange>
-											[2.5,)
-										</versionRange>
-										<goals>
-											<goal>test-jar</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore></ignore>
-									</action>
-								</pluginExecution>
 							</pluginExecutions>
 						</lifecycleMappingMetadata>
 					</configuration>
@@ -206,7 +163,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.6</version><!--$NO-MVN-MAN-VER$-->
+				<version>2.6</version>
 				<configuration>
 					<encoding>UTF-8</encoding>
 					<nonFilteredFileExtensions>
@@ -227,30 +184,12 @@
 						<nonFilteredFileExtension>swf</nonFilteredFileExtension>
 						<nonFilteredFileExtension>zip</nonFilteredFileExtension>
 						<nonFilteredFileExtension>msg</nonFilteredFileExtension>
-						<!-- <nonFilteredFileExtension>csv</nonFilteredFileExtension> -->
+						<nonFilteredFileExtension>csv</nonFilteredFileExtension>
 					</nonFilteredFileExtensions>
 				</configuration>
 			</plugin>
 		</plugins>
-		      <!--  <resources>
-
-                        Copies and filters AMP config in the proper package 'alfresco/module/becpg.becpg-core'
-                         so to enforce full module naming single sourcing from POM properties
-                        <resource>
-                                <filtering>true</filtering>
-                                <directory>src/main/amp/config</directory>
-                        </resource>
-
-                        Copies web files
-                        <resource>
-                                <filtering>false</filtering>
-                                <directory>src/main/web</directory>
-                                <targetPath>alfresco/module/${project.artifactId}/web</targetPath>
-                        </resource>
-
-				</resources> -->
-		
-	</build>
+	</build> 
 
 	<modules>
 		<module>becpg-tools</module>
@@ -264,6 +203,10 @@
 		<module>becpg-project/becpg-project-share</module>
 		<module>becpg-designer/becpg-designer-share</module>
 		<module>becpg-plm/becpg-plm-share</module>
+		<module>repo</module>
+		<module>solr</module>
+	    <module>share</module> 
+	    <module>runner</module>
 	</modules>
 
 	<dependencies>
@@ -299,11 +242,6 @@
 			</exclusions>
 		</dependency>
 
-
-		<!-- <dependency> <groupId>org.apache.chemistry</groupId> <artifactId>chemistry-tck-atompub</artifactId> 
-			<version>0.1-incubating-unreleased</version> <scope>test</scope> </dependency> -->
-
-
 		<dependency>
 			<groupId>org.springframework.extensions.surf</groupId>
 			<artifactId>spring-webscripts</artifactId>
@@ -318,43 +256,37 @@
 			</exclusions>
 		</dependency>
 
-<!-- 
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<scope>test</scope>
-		</dependency>
- -->
- 
 		<dependency>
 			<groupId>tk.skuro.alfresco</groupId>
 			<artifactId>h2-support</artifactId>
 			<version>1.6</version>
 			<scope>test</scope>
 		</dependency>
-
-
-		<!-- Requires this explicit test dependency, for a Spring 3.0.5 bug | See 
-			https://jira.springsource.org/browse/SPR-8527 <dependency> <groupId>org.springframework</groupId> 
-			<artifactId>spring-context</artifactId> <version>3.0.6.RELEASE</version> 
-			<scope>provided</scope> </dependency> -->
-
+		
+		
 	</dependencies>
-<!-- 
-	<profiles>
-		<profile>
-			<id>dev-tours</id>
-			<properties>
-				Test
-				<alfresco.data.location>/dev/shm/alfresco</alfresco.data.location>
-			</properties>
-		</profile>
-		<profile>
-			<id>dev-montrouge</id>
-			<properties>
-				Test
-				<alfresco.data.location>/dev/shm/alfresco</alfresco.data.location>
-			</properties>
-		</profile>
-	</profiles> -->
+	<!-- Invoke your build with -Prun to run the multimodule project and enable rapid dev mode in your IDE. 
+         See 'run' profile in the sub modules pom.xml for further behavioral details.
+     -->
+    <profiles>
+        <profile>
+            <id>run</id>
+            <properties>
+                <!-- While running in rapid dev mode with -Prun, we don't want amp web resources 
+                    to be added to the war, so we can load them directly from the AMP project (see 
+                    runner/tomcat/context-*.xml for more details) -->
+                <maven.alfresco.includeWebResources>false</maven.alfresco.includeWebResources>
+            </properties>
+        </profile>
+         <!-- RM profile, manually activated, automatically adds support for RM development (dependencies) and install the RM amps in the WARs -->
+        <profile>
+            <id>rm</id>
+             <properties>
+                <alfresco.rm.version>2.3.a.1</alfresco.rm.version>
+                <app.rm.amps.location>${project.build.directory}/rm-amps</app.rm.amps.location>
+                <app.rm.war.location>${project.build.directory}/${project.build.finalName}.war</app.rm.war.location>
+                <app.rm.artifact>org.alfresco:${alfresco.rm.artifactId}:${alfresco.rm.version}:amp</app.rm.artifact>
+             </properties>
+        </profile>
+    </profiles>
 </project>

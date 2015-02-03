@@ -1,0 +1,5 @@
+eclipse.preferences.version=1
+extraProperties=sonar.language\=java
+projectKey=fr.becpg\:becpg-tools
+serverUrl=
+version=2

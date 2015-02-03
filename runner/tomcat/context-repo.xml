@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This context file is used only for rapid development, never installed 
+	released with the webapp -->
+<Context>
+
+ 	<Resources className="org.apache.naming.resources.VirtualDirContext"
+		extraResourcePaths="/=${project.parent.basedir}/becpg-core/target/becpg-core/web" />
+		
+		 <Loader className="org.apache.catalina.loader.VirtualWebappLoader"
+		searchVirtualFirst="true"
+		virtualClasspath="${project.parent.basedir}/becpg-designer/becpg-designer-core/target/classes;${project.parent.basedir}/becpg-designer/becpg-designer-core/target/test-classes;${project.parent.basedir}/becpg-designer/becpg-designer-core/target/becpg-designer-core/config;${project.parent.basedir}/becpg-project/becpg-project-core/target/classes;${project.parent.basedir}/becpg-project/becpg-project-core/target/test-classes;${project.parent.basedir}/becpg-project/becpg-project-core/target/becpg-project-core/config;${project.parent.basedir}/becpg-plm/becpg-plm-core/target/classes;${project.parent.basedir}/becpg-plm/becpg-plm-core/target/test-classes;${project.parent.basedir}/becpg-plm/becpg-plm-core/target/becpg-plm-core/config;${project.parent.basedir}/becpg-core/target/classes;${project.parent.basedir}/becpg-core/target/test-classes;${project.parent.basedir}/becpg-core/target/becpg-core/config" />
+
+
+<!-- 	This enables hot reloading of web resources from uncompressed jars 
+		(while in prod they would be loaded from WEB-INF/lib/{\*.jar}/META-INF/resources -->
+	<JarScanner scanAllDirectories="true" />
+</Context>
+    
+    
