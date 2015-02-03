@@ -6,6 +6,7 @@ common.sh
 
 syntax: regexp
 ^alf_data$
+^solr/solr_home$
 syntax: regexp
 ^logs$
 syntax: regexp

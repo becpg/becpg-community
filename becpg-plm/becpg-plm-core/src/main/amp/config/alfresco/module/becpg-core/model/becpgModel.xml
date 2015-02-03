@@ -687,11 +687,6 @@
 					<type>d:noderef</type>
 					<mandatory>true</mandatory>
 				</property>
-				<!-- deprecated -->
-				<property name="bcpg:ingType">
-					<type>d:text</type>
-					<mandatory>false</mandatory>
-				</property>
 			</properties>
 		</type>
 
