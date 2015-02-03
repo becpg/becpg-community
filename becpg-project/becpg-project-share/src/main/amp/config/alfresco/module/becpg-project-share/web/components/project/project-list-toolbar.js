@@ -130,10 +130,10 @@
 
                   onGanttButtonClick : function PTL_onGanttButtonClick(e, p_obj) {
                      document.location.href = Alfresco.util
-                           .siteURL("project-list?view=gantt#filter=projects|InProgress");
+                           .siteURL("project-list?view=gantt"+window.location.hash);
                   },
                   onPlanningButtonClick : function PTL_onPlanningButtonClick(e, p_obj) {
-                     document.location.href = Alfresco.util.siteURL("project-list#filter=projects|InProgress");
+                     document.location.href = Alfresco.util.siteURL("project-list"+window.location.hash);
                   },
                   onExportProjectList : function PTL_onExportProjectList(e, p_obj) {
                      var dt = Alfresco.util.ComponentManager.find({

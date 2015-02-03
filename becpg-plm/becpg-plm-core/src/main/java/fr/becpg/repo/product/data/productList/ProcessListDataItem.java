@@ -91,6 +91,7 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 	}
 	
 	@AlfSingleAssoc
+	@DataListIdentifierAttr
 	@AlfQname(qname="mpm:plStep")
 	public NodeRef getStep() {
 		return step;
@@ -101,6 +102,7 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 	}
 	
 	@AlfSingleAssoc
+	@DataListIdentifierAttr
 	@AlfQname(qname="mpm:plProduct")
 	public NodeRef getProduct() {
 		return product;
