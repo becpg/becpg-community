@@ -115,7 +115,7 @@
 
 					var propName = this._buildFormsName(column);
 					var propLabel = column.label;
-					if (!(column.protectedField || column.disabled || column.label=="hidden" || column.readOnly )) {
+					if (!column.protectedField && !column.disabled && propLabel!="hidden" && !column.readOnly ) {
 
 						var className = "";
 						if (colCount < Math.floor(inc / 5)) {
@@ -265,7 +265,7 @@
 			html += '                  <option value="">' + this.msg(popupKind + ".picker.choose") + '</option>';
 			html += '                  <option value="selectlines">' + this.msg(popupKind + ".picker.selectedlines") + '</option>';
 			for ( var key in items[0].itemData) {
-				if (key.indexOf("assoc_") > -1) {
+				if (key.indexOf("assoc_") > -1 && this.datalistColumns[key].label != "hidden") {
 					showPopup = true;
 					html += "<option value='" + key + "'>" + this.datalistColumns[key].label + "</option>";
 				}

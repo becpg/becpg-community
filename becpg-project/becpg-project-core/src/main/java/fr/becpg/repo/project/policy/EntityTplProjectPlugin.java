@@ -7,6 +7,7 @@ import java.util.Stack;
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityTplPlugin;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.project.ProjectService;
+import fr.becpg.repo.repository.RepositoryEntity;
 
 @Service
 public class EntityTplProjectPlugin implements EntityTplPlugin {
@@ -99,6 +101,18 @@ public class EntityTplProjectPlugin implements EntityTplPlugin {
 			}
 
 		}
+	}
+
+	@Override
+	public boolean shouldSynchronizeDataList(RepositoryEntity entity, QName dataListQName) {
+				return false;
+	}
+
+
+	@Override
+	public <T extends RepositoryEntity> void synchronizeDataList(RepositoryEntity entity, List<T> dataListItems,
+			List<T> tplDataListItems){
+		
 	}
 
 }

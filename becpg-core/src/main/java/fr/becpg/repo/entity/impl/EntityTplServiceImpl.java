@@ -244,6 +244,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public void synchronizeEntities(NodeRef tplNodeRef) {
 
 		logger.debug("synchronizeEntities");
@@ -253,6 +254,14 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 		final Map<QName, List<? extends RepositoryEntity>> datalistsTpl = repositoryEntityDefReader.getDataLists(entityTpl);
 
+		Map<QName, ?> datalistViews = repositoryEntityDefReader.getDataListViews(entityTpl);
+		for (Map.Entry<QName, ?> dataListViewEntry : datalistViews.entrySet()) {
+
+			Map<QName, List<? extends RepositoryEntity>> tmp = repositoryEntityDefReader.getDataLists(dataListViewEntry.getValue());
+			datalistsTpl.putAll(tmp);
+
+		}
+
 		if (datalistsTpl != null && !datalistsTpl.isEmpty()) {
 
 			List<NodeRef> entityNodeRefs = getEntitiesToUpdate(tplNodeRef);
@@ -261,57 +270,81 @@ public class EntityTplServiceImpl implements EntityTplService {
 			doInBatch(entityNodeRefs, 10, new BatchCallBack() {
 
 				public void run(NodeRef entityNodeRef) {
-					RepositoryEntity entity = alfrescoRepository.findOne(entityNodeRef);
-					Map<QName, List<? extends RepositoryEntity>> datalists = repositoryEntityDefReader.getDataLists(entity);
-					NodeRef listContainerNodeRef = alfrescoRepository.getOrCreateDataListContainer(entity);
 
-					for (QName dataListQName : datalistsTpl.keySet()) {
+						RepositoryEntity entity = alfrescoRepository.findOne(entityNodeRef);
+						Map<QName, List<? extends RepositoryEntity>> datalists = repositoryEntityDefReader.getDataLists(entity);
 
-						@SuppressWarnings("unchecked")
-						List<BeCPGDataObject> dataListItems = (List<BeCPGDataObject>) datalists.get(dataListQName);
+						Map<QName, ?> datalistViews = repositoryEntityDefReader.getDataListViews(entity);
+						for (Map.Entry<QName, ?> dataListViewEntry : datalistViews.entrySet()) {
+							Map<QName, List<? extends RepositoryEntity>> tmp = repositoryEntityDefReader.getDataLists(dataListViewEntry.getValue());
+							datalists.putAll(tmp);
+						}
 
-						boolean update = false;
+						NodeRef listContainerNodeRef = alfrescoRepository.getOrCreateDataListContainer(entity);
 
-						for (RepositoryEntity dataListItemTpl : datalistsTpl.get(dataListQName)) {
+						for (QName dataListQName : datalistsTpl.keySet()) {
 
-							Map<QName, Serializable> identAttrTpl = repositoryEntityDefReader.getIdentifierAttributes(dataListItemTpl);
+							List<BeCPGDataObject> dataListItems = (List<BeCPGDataObject>) datalists.get(dataListQName);
 
-							if (!identAttrTpl.isEmpty()) {
-								boolean isFound = false;
+							boolean update = false;
 
-								// look on instance
-								for (RepositoryEntity dataListItem : dataListItems) {
-
-									Map<QName, Serializable> identAttr = repositoryEntityDefReader.getIdentifierAttributes(dataListItem);
-									if (identAttrTpl.equals(identAttr)) {
-										isFound = true;
-										break;
-									}
+							for (EntityTplPlugin entityTplPlugin : entityTplPlugins) {
+								if (entityTplPlugin.shouldSynchronizeDataList(entity, dataListQName)) {
+									entityTplPlugin.synchronizeDataList(entity, dataListItems,
+											(List<BeCPGDataObject>) datalistsTpl.get(dataListQName));
+									update = true;
 								}
 
-								if (!isFound) {
-
-									dataListItemTpl.setNodeRef(null);
-									dataListItemTpl.setParentNodeRef(null);
-
-									if (dataListItemTpl instanceof Synchronisable) {
-										if (((Synchronisable) dataListItemTpl).isSynchronisable()) {
-											dataListItems.add((BeCPGDataObject) dataListItemTpl);
-											update = true;
-										}
-									} else {
-										// Synchronize always
-										dataListItems.add((BeCPGDataObject) dataListItemTpl);
-										update = true;
-									}
-
-								}
 							}
+							if (!update) {
+
+								for (RepositoryEntity dataListItemTpl : datalistsTpl.get(dataListQName)) {
+
+									Map<QName, Serializable> identAttrTpl = repositoryEntityDefReader.getIdentifierAttributes(dataListItemTpl);
+
+									if (!identAttrTpl.isEmpty()) {
+										boolean isFound = false;
+
+										// look on instance
+										for (RepositoryEntity dataListItem : dataListItems) {
+
+											Map<QName, Serializable> identAttr = repositoryEntityDefReader.getIdentifierAttributes(dataListItem);
+											if (identAttrTpl.equals(identAttr)) {
+												isFound = true;
+												break;
+											}
+										}
+
+										if (!isFound) {
+
+											dataListItemTpl.setNodeRef(null);
+											dataListItemTpl.setParentNodeRef(null);
+
+											if (dataListItemTpl instanceof Synchronisable) {
+												if (((Synchronisable) dataListItemTpl).isSynchronisable()) {
+													dataListItems.add((BeCPGDataObject) dataListItemTpl);
+													update = true;
+												}
+											} else {
+												// Synchronize always
+												dataListItems.add((BeCPGDataObject) dataListItemTpl);
+												update = true;
+											}
+
+										}
+									}
+
+								}
+
+							}
+
+							if (update) {
+								alfrescoRepository.saveDataList(listContainerNodeRef, dataListQName, dataListQName, dataListItems);
+							}
+
 						}
-						if (update) {
-							alfrescoRepository.saveDataList(listContainerNodeRef, dataListQName, dataListQName, dataListItems);
-						}
-					}
+			
+
 				}
 			});
 

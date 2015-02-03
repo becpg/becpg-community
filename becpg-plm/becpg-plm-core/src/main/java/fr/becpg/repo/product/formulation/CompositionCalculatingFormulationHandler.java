@@ -102,7 +102,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		
 		// generic raw material
 		if(formulatedProduct instanceof RawMaterialData){
-			((RawMaterialData) formulatedProduct).setSuppliers(calculateSuppliers(compositeAll));
+			calculateAttributesOfGenericRawMaterial((RawMaterialData) formulatedProduct, compositeAll);
 		}
 		
 		return true;
@@ -267,8 +267,9 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		return volume;
 	}
 	
-	private List<NodeRef> calculateSuppliers(Composite<CompoListDataItem> composite){
-		List<NodeRef> supplierNodeRefs = new ArrayList<>();		
+	private void calculateAttributesOfGenericRawMaterial(RawMaterialData rawMaterialData, Composite<CompoListDataItem> composite){
+		List<NodeRef> supplierNodeRefs = new ArrayList<>();
+		List<NodeRef> plantNodeRefs = new ArrayList<>();
 		for(Composite<CompoListDataItem> component : composite.getChildren()){			
 			ProductData productData = alfrescoRepository.findOne(component.getData().getProduct());
 			if(productData instanceof RawMaterialData){
@@ -277,8 +278,14 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 						supplierNodeRefs.add(supplierNodeRef);
 					}
 				}
+				for(NodeRef plantNodeRef : ((RawMaterialData)productData).getPlants()){
+					if(!plantNodeRefs.contains(plantNodeRef)){
+						plantNodeRefs.add(plantNodeRef);
+					}
+				}
 			}			
 		}
-		return supplierNodeRefs;
+		rawMaterialData.setSuppliers(supplierNodeRefs);
+		rawMaterialData.setPlants(plantNodeRefs);
 	}
 }
