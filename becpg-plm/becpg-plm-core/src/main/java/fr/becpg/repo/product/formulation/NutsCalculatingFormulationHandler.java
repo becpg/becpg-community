@@ -23,7 +23,6 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulateException;
-import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementType;
@@ -57,16 +56,17 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 		this.formulaService = formulaService;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 		logger.debug("Nuts calculating visitor");
 
 		// no compo => no formulation
-		if (!formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE)) {
+		if ((formulatedProduct.getNutList()==null)
+			 &&	!alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_NUTLIST)) {
 			logger.debug("no compo => no formulation");
 			return true;
 		}
+		
 
 		if (formulatedProduct.getNutList() == null) {
 			formulatedProduct.setNutList(new LinkedList<NutListDataItem>());
