@@ -59,29 +59,6 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 		}
 
 		if (formulatedProduct instanceof ResourceProductData) {
-			if (formulatedProduct.getEntityTpl() != null) {
-
-				List<ProcessListDataItem> templatePl = formulatedProduct.getEntityTpl().getProcessListView().getProcessList();
-				if (templatePl != null) {
-					for (ProcessListDataItem plLItem : templatePl) {
-						if (plLItem.getResource() != null) {
-							boolean isFound = false;
-							for (ProcessListDataItem sl : formulatedProduct.getProcessListView().getProcessList()) {
-								if (Objects.equals(sl.getProduct(), plLItem.getProduct()) && Objects.equals(sl.getResource(), plLItem.getResource())
-										&& Objects.equals(sl.getStep(), plLItem.getStep())) {
-									isFound = true;
-									break;
-								}
-							}
-							if (!isFound) {
-								plLItem.setNodeRef(null);
-								plLItem.setParentNodeRef(null);
-								formulatedProduct.getProcessListView().getProcessList().add(plLItem);
-							}
-						}
-					}
-				}
-			}
 
 			int sort = 0;
 
@@ -103,6 +80,7 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 							if (Objects.equals(param2.getParam(), param.getParam()) && Objects.equals(param2.getResource(), resource.getNodeRef())
 									&& Objects.equals(param2.getStep(), p.getStep()) && Objects.equals(param2.getParamType(), param.getParamType())) {
 								param2.setSort(sort++);
+
 								toAdd.add(param2);
 								isFound = true;
 							}
@@ -121,6 +99,24 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 
 			}
 
+			if (formulatedProduct.getEntityTpl() != null) {
+				// Set default params
+				List<ResourceParamListItem> templatePl = ((ResourceProductData) formulatedProduct.getEntityTpl()).getResourceParamList();
+				if (templatePl != null) {
+					for (ResourceParamListItem paramTpl : templatePl) {
+						for (ResourceParamListItem param : ((ResourceProductData) formulatedProduct).getResourceParamList()) {
+							if (Objects.equals(param.getParam(), paramTpl.getParam()) && Objects.equals(param.getResource(), paramTpl.getResource())
+									&& Objects.equals(param.getStep(), paramTpl.getStep())
+									&& Objects.equals(param.getParamType(), paramTpl.getParamType()) && paramTpl.getParamValue() != null
+									&& !paramTpl.getParamValue().isEmpty()) {
+								param.setParamValue(paramTpl.getParamValue());
+							}
+						}
+					}
+
+				}
+			}
+
 			((ResourceProductData) formulatedProduct).getResourceParamList().clear();
 			((ResourceProductData) formulatedProduct).getResourceParamList().addAll(toAdd);
 			formulatedProduct.setUnit(ProductUnit.h);
@@ -137,7 +133,6 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 				} else {
 					Double productQtyToTransform = p.getQty() != null ? p.getQty() : FormulationHelper.getNetWeight(formulatedProduct, null);
 					if (productQtyToTransform != null) {
-
 						p.setRateProduct(p.getQtyResource() * p.getRateResource() / productQtyToTransform);
 					} else {
 						p.setRateProduct(null);
@@ -150,4 +145,6 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 		return true;
 
 	}
+
+	
 }
