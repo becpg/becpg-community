@@ -32,6 +32,7 @@
             <version>${alfresco.version}</version>
             <type>war</type>
         </dependency>
+        
         <!-- Demonstrating the dependency / installation of the repo AMP developed in the 'repo-amp' module -->
        <dependency>
             <groupId>${project.groupId}</groupId>
@@ -117,6 +118,7 @@
                             <artifactId>becpg-plm-core</artifactId>
                             <type>amp</type>
                         </overlay>
+                        
                         <!--
                         <overlay>
                             <groupId>${alfresco.groupId}</groupId>

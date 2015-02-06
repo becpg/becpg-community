@@ -37,6 +37,7 @@ import org.alfresco.service.cmr.action.Action;
 import org.alfresco.service.cmr.action.ActionCondition;
 import org.alfresco.service.cmr.action.CompositeAction;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
+import org.alfresco.service.cmr.repository.AssociationExistsException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.rule.Rule;
 import org.alfresco.service.cmr.rule.RuleType;
@@ -238,6 +239,9 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 			
 		} catch (IOException e) {
 			logger.error("Failed to create compare entity report tpl.", e);
+		} catch (AssociationExistsException e) {
+			//TODO junit tests errors
+			logger.error(e,e);
 		}
 		
 	}

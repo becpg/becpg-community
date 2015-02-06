@@ -60,11 +60,6 @@ public class NPDServiceTest extends AbstractProjectTestCase {
 
 	private static final String NPDWF_URI = "http://www.bcpg.fr/model/npd-workflow/1.0";
 	
-	@Override
-	protected boolean shouldInit() {
-		//Force reinit
-		return true;
-	}
 
 	@Test
 	public void testNPDProjectTask() {
@@ -82,7 +77,7 @@ public class NPDServiceTest extends AbstractProjectTestCase {
 				taskList.add(new TaskListDataItem(null, "task1", false, 2, null, assigneesOne, taskLegends.get(0), "activiti$projectNewProduct"));
 				projectData.setTaskList(taskList);
 
-				projectData.setParentNodeRef(testFolderNodeRef);
+				projectData.setParentNodeRef(getTestFolderNodeRef());
 				projectData = (ProjectData) alfrescoRepository.save(projectData);
 				
 

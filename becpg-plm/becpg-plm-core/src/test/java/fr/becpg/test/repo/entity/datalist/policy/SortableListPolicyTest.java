@@ -72,7 +72,7 @@ public class SortableListPolicyTest extends PLMBaseTestCase {
 				costList.add(new CostListDataItem(null, 2d, "€/kg", null, costs.get(3), false));
 				sfData.setCostList(costList);
 
-				sfNodeRef = alfrescoRepository.create(testFolderNodeRef, sfData).getNodeRef();
+				sfNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), sfData).getNodeRef();
 
 				// simulate the UI
 				NodeRef listContainerNodeRef = entityListDAO.getListContainer(sfNodeRef);

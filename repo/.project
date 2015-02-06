@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+  <name>repo</name>
+  <comment>Alfresco Repository aggregator, installs your repository AMPs in the Alfresco WAR for aggregation and easy deployment purposes. NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
+  <projects>
+    <project>alfresco</project>
+    <project>becpg-core</project>
+    <project>becpg-designer-core</project>
+    <project>becpg-project-core</project>
+    <project>becpg-plm-core</project>
+    <project>alfresco-repository</project>
+    <project>alfresco-data-model</project>
+    <project>alfresco-core</project>
+    <project>alfresco-jlan-embed</project>
+    <project>alfresco-mbeans</project>
+    <project>alfresco-remote-api</project>
+  </projects>
+  <buildSpec>
+    <buildCommand>
+      <name>org.eclipse.jdt.core.javabuilder</name>
+    </buildCommand>
+  </buildSpec>
+  <natures>
+    <nature>org.eclipse.jdt.core.javanature</nature>
+  </natures>
+</projectDescription>

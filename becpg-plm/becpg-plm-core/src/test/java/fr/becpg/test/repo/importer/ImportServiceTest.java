@@ -29,6 +29,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
@@ -132,7 +133,8 @@ public class ImportServiceTest extends PLMBaseTestCase {
 
 				ContentWriter writer = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
 				logger.debug("Load import.xlsx");
-				InputStream in = ClassLoader.getSystemResourceAsStream("beCPG/import/Import.xlsx");
+				InputStream in = (new ClassPathResource("beCPG/import/Import.xlsx")).getInputStream();
+				
 				logger.debug("import.xlsx loaded");
 				writer.putContent(in);
 
@@ -254,7 +256,7 @@ public class ImportServiceTest extends PLMBaseTestCase {
 
 				ContentWriter writer = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
 				logger.debug("Load import.csv");
-				InputStream in = ClassLoader.getSystemResourceAsStream("beCPG/import/Import-Products.csv");
+				InputStream in = (new ClassPathResource("beCPG/import/Import-Products.csv")).getInputStream();
 				logger.debug("import.csv loaded");
 				writer.putContent(in);
 
@@ -481,7 +483,7 @@ public class ImportServiceTest extends PLMBaseTestCase {
 							.getChildRef();
 
 					ContentWriter writer = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
-					InputStream in = ClassLoader.getSystemResourceAsStream("beCPG/import/Import-with-IntegrityException.csv");
+					InputStream in = (new ClassPathResource("beCPG/import/Import-with-IntegrityException.csv")).getInputStream();
 					writer.putContent(in);
 
 					logger.debug("Start import");
@@ -542,7 +544,7 @@ public class ImportServiceTest extends PLMBaseTestCase {
 
 				ContentWriter writer = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
 				logger.debug("Load import.csv");
-				InputStream in = ClassLoader.getSystemResourceAsStream("beCPG/import/Import-ProductLists.csv");
+				InputStream in = (new ClassPathResource("beCPG/import/Import-ProductLists.csv")).getInputStream();
 				logger.debug("import.csv loaded");
 				writer.putContent(in);
 
@@ -659,7 +661,7 @@ public class ImportServiceTest extends PLMBaseTestCase {
 
 				ContentWriter writer = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
 				logger.debug("Load import.csv");
-				InputStream in = ClassLoader.getSystemResourceAsStream("beCPG/import/import-productHierarchies" + i + ".csv");
+				InputStream in = (new ClassPathResource("beCPG/import/import-productHierarchies" + i + ".csv")).getInputStream();
 				logger.debug("import.csv loaded");
 				writer.putContent(in);
 
@@ -718,13 +720,13 @@ public class ImportServiceTest extends PLMBaseTestCase {
 				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 				properties.put(ContentModel.PROP_NAME, "importClaim.csv");
 
-				NodeRef nodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS,
+				NodeRef nodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_CONTENT, properties)
 						.getChildRef();
 
 				ContentWriter writer = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
 				logger.debug("Load importClaim.csv");
-				InputStream in = ClassLoader.getSystemResourceAsStream("beCPG/import/LabelClaims.csv");
+				InputStream in = (new ClassPathResource("beCPG/import/LabelClaims.csv")).getInputStream();
 				logger.debug("import.csv loaded");
 				writer.putContent(in);
 

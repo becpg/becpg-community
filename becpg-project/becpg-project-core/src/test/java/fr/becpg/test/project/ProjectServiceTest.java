@@ -200,7 +200,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 					@Override
 					public NodeRef execute() throws Exception {
 
-						ChildAssociationRef assocRef = nodeService.createNode(testFolderNodeRef,
+						ChildAssociationRef assocRef = nodeService.createNode(getTestFolderNodeRef(),
 								ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, ProjectModel.TYPE_TASK_LEGEND);
 
 						return assocRef.getChildRef();
@@ -342,7 +342,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 								"activiti$projectAdhoc"));
 						projectData.setTaskList(taskList);
 						
-						projectData.setParentNodeRef(testFolderNodeRef);
+						projectData.setParentNodeRef(getTestFolderNodeRef());
 						projectData = (ProjectData) alfrescoRepository.save(projectData);
 						
 						// start
@@ -436,7 +436,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 
 
 						EntityTestData entityTestData = new EntityTestData();
-						entityTestData.setParentNodeRef(testFolderNodeRef);
+						entityTestData.setParentNodeRef(getTestFolderNodeRef());
 						entityTestData.setName("Entity 1");
 						
 						alfrescoRepository.save(entityTestData);
@@ -445,7 +445,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 						ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_SEA_FOOD_REF, PROJECT_HIERARCHY2_CRUSTACEAN_REF, new Date(),
 								null, null, PlanningMode.Planning, 2, ProjectState.InProgress, null, 0, productNodeRefs);
 
-						projectData.setParentNodeRef(testFolderNodeRef);
+						projectData.setParentNodeRef(getTestFolderNodeRef());
 						
 						// create datalists
 						List<TaskListDataItem> taskList = new LinkedList<TaskListDataItem>();
@@ -567,7 +567,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				NodeRef copiedProjectNodeRef = copyService.copy(projectNodeRef, testFolderNodeRef,
+				NodeRef copiedProjectNodeRef = copyService.copy(projectNodeRef, getTestFolderNodeRef(),
 						ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);				
 				
 				// check

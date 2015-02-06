@@ -89,7 +89,7 @@ public class ProductListAttributesPolicyTest extends PLMBaseTestCase {
 				nutList.add(new NutListDataItem(null, 12.5d, "", 0d, 0d, "Groupe 1", nut2, false));
 				rawMaterialData.setNutList(nutList);
 
-				return alfrescoRepository.create(testFolderNodeRef, rawMaterialData).getNodeRef();
+				return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterialData).getNodeRef();
 
 			}
 		}, false, true);

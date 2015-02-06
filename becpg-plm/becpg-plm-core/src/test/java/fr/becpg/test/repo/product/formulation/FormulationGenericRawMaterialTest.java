@@ -72,7 +72,7 @@ public class FormulationGenericRawMaterialTest extends AbstractFinishedProductTe
 				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, null, 2d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));				
 				genRawMaterial.getCompoListView().setCompoList(compoList);
 
-				return alfrescoRepository.create(testFolderNodeRef, genRawMaterial).getNodeRef();
+				return alfrescoRepository.create(getTestFolderNodeRef(), genRawMaterial).getNodeRef();
 
 			}
 		}, false, true);

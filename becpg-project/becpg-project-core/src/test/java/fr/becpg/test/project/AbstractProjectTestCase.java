@@ -29,6 +29,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -37,6 +38,7 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Before;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
@@ -64,7 +66,7 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 	protected static final String HIERARCHY2_CRUSTACEAN = "Crustacean";
 	protected static final String HIERARCHY_PROJECT_PATH = "/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:project_Hierarchy";
 	protected static final Double RESOURCE_COST_VALUE = 100d;
-	
+
 	protected NodeRef PROJECT_HIERARCHY1_SEA_FOOD_REF;
 	protected NodeRef PROJECT_HIERARCHY2_FISH_REF;
 	protected NodeRef PROJECT_HIERARCHY2_CRUSTACEAN_REF;
@@ -83,7 +85,6 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 	protected NodeRef userOne;
 	protected NodeRef userTwo;
 	protected NodeRef groupOne;
-	
 
 	protected List<NodeRef> assigneesOne;
 	protected List<NodeRef> assigneesTwo;
@@ -91,7 +92,7 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 	protected NodeRef rawMaterialNodeRef;
 	protected NodeRef projectNodeRef;
 	protected ResourceCost resourceCost;
-	
+
 	private static Log logger = LogFactory.getLog(AbstractProjectTestCase.class);
 
 	private void initTasks() {
@@ -102,74 +103,91 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 		NodeRef taskLegendsFolder = entitySystemService.getSystemEntityDataList(listsFolder, ProjectRepoConsts.PATH_TASK_LEGENDS);
 		String[] taskLegendNames = { "TaskLegend1", "TaskLegend2", "TaskLegend3" };
 		for (String taskLegendName : taskLegendNames) {
-			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-			properties.put(ContentModel.PROP_NAME, taskLegendName);
-			nodeService.createNode(taskLegendsFolder, ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), ProjectModel.TYPE_TASK_LEGEND, properties)
-					.getChildRef();
+			if (nodeService.getChildByName(taskLegendsFolder, ContentModel.ASSOC_CONTAINS, taskLegendName) == null) {
+				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				properties.put(ContentModel.PROP_NAME, taskLegendName);
+				nodeService.createNode(taskLegendsFolder, ContentModel.ASSOC_CONTAINS,
+						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
+						ProjectModel.TYPE_TASK_LEGEND, properties).getChildRef();
+			}
 		}
 
 		// score criteria
 		NodeRef criteriaFolder = entitySystemService.getSystemEntityDataList(listsFolder, ProjectRepoConsts.PATH_SCORE_CRITERIA);
 		for (int i = 0; i < 5; i++) {
-			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-			properties.put(BeCPGModel.PROP_LV_VALUE, "Criterion" + i);
-			nodeService.createNode(criteriaFolder, ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)), BeCPGModel.TYPE_LIST_VALUE, properties)
-					.getChildRef();
+			if (nodeService.getChildByName(criteriaFolder, ContentModel.ASSOC_CONTAINS, "Criterion" + i) == null) {
+				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				properties.put(BeCPGModel.PROP_LV_VALUE, "Criterion" + i);
+				properties.put(ContentModel.PROP_NAME, "Criterion" + i);
+				nodeService.createNode(criteriaFolder, ContentModel.ASSOC_CONTAINS,
+						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)),
+						BeCPGModel.TYPE_LIST_VALUE, properties).getChildRef();
+			}
 		}
 
 		// resourceCost
 		NodeRef resourceCostsFolder = entitySystemService.getSystemEntityDataList(listsFolder, ProjectRepoConsts.PATH_RESOURCE_COSTS);
-		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-		properties.put(ContentModel.PROP_NAME, "ResourceCost");
-		properties.put(ProjectModel.PROP_RESOURCE_COST_VALUE, RESOURCE_COST_VALUE);
-		nodeService.createNode(resourceCostsFolder, ContentModel.ASSOC_CONTAINS,
-				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), ProjectModel.TYPE_RESOURCE_COST, properties)
-				.getChildRef();		
+		if (nodeService.getChildByName(resourceCostsFolder, ContentModel.ASSOC_CONTAINS, "ResourceCost") == null) {
+			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+			properties.put(ContentModel.PROP_NAME, "ResourceCost");
+			properties.put(ProjectModel.PROP_RESOURCE_COST_VALUE, RESOURCE_COST_VALUE);
+			nodeService.createNode(resourceCostsFolder, ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
+					ProjectModel.TYPE_RESOURCE_COST, properties).getChildRef();
+		}
 	}
-	
+
 	@Override
-	protected boolean shouldInit(){		
-		if(super.shouldInit()){
+	protected boolean shouldInit() {
+		if (super.shouldInit()) {
 			return true;
-		}
-		else{
-			return BeCPGQueryBuilder.createQuery().inDB().selectNodeByPath(repositoryHelper.getCompanyHome(), HIERARCHY_PROJECT_PATH + "/*") == null;
+		} else {
+			return  hierarchyService.getHierarchyByPath(HIERARCHY_PROJECT_PATH, null, HIERARCHY1_SEA_FOOD) == null;
 		}
 	}
-	
+
 	@Override
-	protected void doInitRepo(boolean shouldInit) {
+	protected synchronized void doInitRepo(boolean shouldInit) {
 		if (shouldInit) {
 			transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
 				public Boolean execute() throws Throwable {
-					
+
 					// Project
 					NodeRef projectListsNodeRef = entitySystemService.getSystemEntity(systemFolderNodeRef, ProjectRepoConsts.PATH_PROJECT_LISTS);
-					NodeRef projectHierarchyNodeRef = entitySystemService.getSystemEntityDataList(projectListsNodeRef, HierarchyHelper.getHierarchyPathName(ProjectModel.TYPE_PROJECT));
+					NodeRef projectHierarchyNodeRef = entitySystemService.getSystemEntityDataList(projectListsNodeRef,
+							HierarchyHelper.getHierarchyPathName(ProjectModel.TYPE_PROJECT));
 					PROJECT_HIERARCHY1_SEA_FOOD_REF = hierarchyService.createRootHierarchy(projectHierarchyNodeRef, HIERARCHY1_SEA_FOOD);
-					PROJECT_HIERARCHY2_FISH_REF = hierarchyService.createHierarchy(projectHierarchyNodeRef, PROJECT_HIERARCHY1_SEA_FOOD_REF, HIERARCHY2_FISH);
-					PROJECT_HIERARCHY2_CRUSTACEAN_REF = hierarchyService.createHierarchy(projectHierarchyNodeRef, PROJECT_HIERARCHY1_SEA_FOOD_REF, HIERARCHY2_CRUSTACEAN);
-	
+					PROJECT_HIERARCHY2_FISH_REF = hierarchyService.createHierarchy(projectHierarchyNodeRef, PROJECT_HIERARCHY1_SEA_FOOD_REF,
+							HIERARCHY2_FISH);
+					PROJECT_HIERARCHY2_CRUSTACEAN_REF = hierarchyService.createHierarchy(projectHierarchyNodeRef, PROJECT_HIERARCHY1_SEA_FOOD_REF,
+							HIERARCHY2_CRUSTACEAN);
+
 					initTasks();
 					return false;
-	
+
 				}
 			}, false, true);
-	
+
 			transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 				public NodeRef execute() throws Throwable {
-	
+
 					dictionaryDAO.reset();
 					return null;
-	
+
 				}
 			}, false, true);
 		} else {
-			PROJECT_HIERARCHY1_SEA_FOOD_REF = hierarchyService.getHierarchyByPath(HIERARCHY_PROJECT_PATH, null, HIERARCHY1_SEA_FOOD);
-			PROJECT_HIERARCHY2_FISH_REF = hierarchyService.getHierarchyByPath(HIERARCHY_PROJECT_PATH, PROJECT_HIERARCHY1_SEA_FOOD_REF, HIERARCHY2_FISH);
-			PROJECT_HIERARCHY2_CRUSTACEAN_REF = hierarchyService.getHierarchyByPath(HIERARCHY_PROJECT_PATH, PROJECT_HIERARCHY1_SEA_FOOD_REF, HIERARCHY2_CRUSTACEAN);			
+			transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
+				public Boolean execute() throws Throwable {
+					PROJECT_HIERARCHY1_SEA_FOOD_REF = hierarchyService.getHierarchyByPath(HIERARCHY_PROJECT_PATH, null, HIERARCHY1_SEA_FOOD);
+					PROJECT_HIERARCHY2_FISH_REF = hierarchyService.getHierarchyByPath(HIERARCHY_PROJECT_PATH, PROJECT_HIERARCHY1_SEA_FOOD_REF,
+							HIERARCHY2_FISH);
+					PROJECT_HIERARCHY2_CRUSTACEAN_REF = hierarchyService.getHierarchyByPath(HIERARCHY_PROJECT_PATH, PROJECT_HIERARCHY1_SEA_FOOD_REF,
+							HIERARCHY2_CRUSTACEAN);
+					return false;
+				}
+			}, false, true);
+
 		}
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
@@ -183,34 +201,42 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 				for (FileInfo fileInfo : taskLegendsFileInfo) {
 					taskLegends.add(fileInfo.getNodeRef());
 				}
-				
+
 				// resourceCost
 				NodeRef resourceCostFolder = entitySystemService.getSystemEntityDataList(npdListsFolder, ProjectRepoConsts.PATH_RESOURCE_COSTS);
 				List<FileInfo> resourceCostsFileInfo = fileFolderService.listFiles(resourceCostFolder);
-				resourceCost = (ResourceCost)alfrescoRepository.findOne(resourceCostsFileInfo.get(0).getNodeRef());
+				resourceCost = (ResourceCost) alfrescoRepository.findOne(resourceCostsFileInfo.get(0).getNodeRef());
 
 				userOne = BeCPGTestHelper.createUser(BeCPGTestHelper.USER_ONE);
 				userTwo = BeCPGTestHelper.createUser(BeCPGTestHelper.USER_TWO);
-				
-				groupOne = BeCPGTestHelper.createGroup("groupOne",BeCPGTestHelper.USER_TWO);
-				
+
+				groupOne = BeCPGTestHelper.createGroup("groupOne", BeCPGTestHelper.USER_TWO);
 
 				assigneesOne = new ArrayList<NodeRef>();
 				assigneesOne.add(userOne);
 				assigneesTwo = new ArrayList<NodeRef>();
 				assigneesTwo.add(groupOne);
 
+				return null;
+			}
+		}, false, true);
+	}
+
+	@Before
+	public void setUp() throws Exception {
+		super.setUp();
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+				// As system user
+				AuthenticationUtil.setFullyAuthenticatedUser(AuthenticationUtil.getAdminUserName());
 				// create project Tpl
-				ProjectData projectTplData = new ProjectData(null, "Pjt Tpl", 
-						PROJECT_HIERARCHY1_SEA_FOOD_REF, PROJECT_HIERARCHY2_CRUSTACEAN_REF, 
-						null, null, null, null, null, null,
-						null, 0, null);
-				
-				projectTplData.setParentNodeRef(testFolderNodeRef);
+				ProjectData projectTplData = new ProjectData(null, "Pjt Tpl", PROJECT_HIERARCHY1_SEA_FOOD_REF, PROJECT_HIERARCHY2_CRUSTACEAN_REF,
+						null, null, null, null, null, null, null, 0, null);
+
+				projectTplData.setParentNodeRef(getTestFolderNodeRef());
 				projectTplData = (ProjectData) alfrescoRepository.save(projectTplData);
 				projectTplNodeRef = projectTplData.getNodeRef();
 
-				
 				// add aspect entityTpl
 				nodeService.addAspect(projectTplNodeRef, BeCPGModel.ASPECT_ENTITY_TPL, null);
 				nodeService.addAspect(projectTplNodeRef, BeCPGModel.ASPECT_ENTITY_TPL_REF, null);
@@ -221,24 +247,25 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 				if (subFolder == null) {
 					Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 					properties.put(ContentModel.PROP_NAME, "SubFolder");
-					subFolder = nodeService.createNode(projectTplNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "SubFolder"),
-							ContentModel.TYPE_FOLDER, properties).getChildRef();
+					subFolder = nodeService.createNode(projectTplNodeRef, ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "SubFolder"), ContentModel.TYPE_FOLDER, properties)
+							.getChildRef();
 				}
 
 				NodeRef doc1NodeRef = nodeService.getChildByName(subFolder, ContentModel.ASSOC_CONTAINS, "Doc1");
 				if (doc1NodeRef == null) {
 					Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 					properties.put(ContentModel.PROP_NAME, "Doc1");
-					doc1NodeRef = nodeService.createNode(subFolder, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "Doc1"),
-							ContentModel.TYPE_CONTENT, properties).getChildRef();
+					doc1NodeRef = nodeService.createNode(subFolder, ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "Doc1"), ContentModel.TYPE_CONTENT, properties).getChildRef();
 				}
 
 				NodeRef doc2NodeRef = nodeService.getChildByName(subFolder, ContentModel.ASSOC_CONTAINS, "Doc2");
 				if (doc2NodeRef == null) {
 					Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 					properties.put(ContentModel.PROP_NAME, "Doc2");
-					doc2NodeRef = nodeService.createNode(subFolder, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "Doc2"),
-							ContentModel.TYPE_CONTENT, properties).getChildRef();
+					doc2NodeRef = nodeService.createNode(subFolder, ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "Doc2"), ContentModel.TYPE_CONTENT, properties).getChildRef();
 				}
 
 				// create datalists
@@ -266,7 +293,7 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 				// -> Task4
 
 				// update a second time to manage prevTask
-				
+
 				List<NodeRef> prevTasks = new ArrayList<NodeRef>();
 
 				prevTasks.add(projectTplData.getTaskList().get(0).getNodeRef());
@@ -290,15 +317,19 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 				projectTplData.getTaskList().get(5).setPrevTasks(prevTasks);
 
 				List<DeliverableListDataItem> deliverableList = new LinkedList<DeliverableListDataItem>();
-				deliverableList.add(new DeliverableListDataItem(null, Arrays.asList(projectTplData.getTaskList().get(0).getNodeRef()), null, "Deliveray descr 1", 100, doc1NodeRef));
-				deliverableList.add(new DeliverableListDataItem(null, Arrays.asList(projectTplData.getTaskList().get(1).getNodeRef()), null, "Deliveray descr 2.1", 30, doc2NodeRef));
-				deliverableList.add(new DeliverableListDataItem(null, Arrays.asList(projectTplData.getTaskList().get(1).getNodeRef()), null, "Deliveray descr 2.2", 70, doc1NodeRef));
-				deliverableList.add(new DeliverableListDataItem(null, Arrays.asList(projectTplData.getTaskList().get(2).getNodeRef()), null, "Deliveray descr 3", 100, null));
+				deliverableList.add(new DeliverableListDataItem(null, Arrays.asList(projectTplData.getTaskList().get(0).getNodeRef()), null,
+						"Deliveray descr 1", 100, doc1NodeRef));
+				deliverableList.add(new DeliverableListDataItem(null, Arrays.asList(projectTplData.getTaskList().get(1).getNodeRef()), null,
+						"Deliveray descr 2.1", 30, doc2NodeRef));
+				deliverableList.add(new DeliverableListDataItem(null, Arrays.asList(projectTplData.getTaskList().get(1).getNodeRef()), null,
+						"Deliveray descr 2.2", 70, doc1NodeRef));
+				deliverableList.add(new DeliverableListDataItem(null, Arrays.asList(projectTplData.getTaskList().get(2).getNodeRef()), null,
+						"Deliveray descr 3", 100, null));
 				projectTplData.setDeliverableList(deliverableList);
 
 				alfrescoRepository.save(projectTplData);
-
 				return null;
+
 			}
 		}, false, true);
 	}
@@ -306,7 +337,7 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 	protected void createProject(final ProjectState projectState, final Date startDate, final Date endDate) {
 		createProject(projectState, startDate, endDate, endDate != null ? PlanningMode.RetroPlanning : PlanningMode.Planning);
 	}
-	
+
 	protected void createProject(final ProjectState projectState, final Date startDate, final Date endDate, final PlanningMode planningMode) {
 
 		projectNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
@@ -315,42 +346,39 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 
 				EntityTestData entityTestData = new EntityTestData();
 				entityTestData.setName("Entity 1");
-				entityTestData.setParentNodeRef(testFolderNodeRef);
+				entityTestData.setParentNodeRef(getTestFolderNodeRef());
 
 				alfrescoRepository.save(entityTestData);
 
 				List<NodeRef> productNodeRefs = new ArrayList<>(1);
 				productNodeRefs.add(entityTestData.getNodeRef());
-				ProjectData projectData = new ProjectData(null, "Pjt 1", 
-						PROJECT_HIERARCHY1_SEA_FOOD_REF, PROJECT_HIERARCHY2_CRUSTACEAN_REF, startDate, endDate, null, 
-						planningMode, 2, projectState, projectTplNodeRef, 0, productNodeRefs);
+				ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_SEA_FOOD_REF, PROJECT_HIERARCHY2_CRUSTACEAN_REF,
+						startDate, endDate, null, planningMode, 2, projectState, projectTplNodeRef, 0, productNodeRefs);
 
-				projectData.setParentNodeRef(testFolderNodeRef);
+				projectData.setParentNodeRef(getTestFolderNodeRef());
 
 				projectData = (ProjectData) alfrescoRepository.save(projectData);
-				
-				
+
 				return projectData.getNodeRef();
 			}
 		}, false, true);
 	}
-	
+
 	protected void createMultiLevelProject(final ProjectState projectState, final Date startDate, final Date endDate, final PlanningMode planningMode) {
 
 		logger.info("Create multiLevel project");
-		
+
 		projectNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
 			public NodeRef execute() throws Throwable {
-				
-				ProjectData projectData = new ProjectData(null, "Pjt", PROJECT_HIERARCHY1_SEA_FOOD_REF, PROJECT_HIERARCHY2_CRUSTACEAN_REF, 
-						startDate, endDate, null, planningMode, null, null,
-						null, 0, null);
-				projectData.setParentNodeRef(testFolderNodeRef);				
-				
-				//multi level tasks
+
+				ProjectData projectData = new ProjectData(null, "Pjt", PROJECT_HIERARCHY1_SEA_FOOD_REF, PROJECT_HIERARCHY2_CRUSTACEAN_REF, startDate,
+						endDate, null, planningMode, null, null, null, 0, null);
+				projectData.setParentNodeRef(getTestFolderNodeRef());
+
+				// multi level tasks
 				List<TaskListDataItem> taskList = new LinkedList<TaskListDataItem>();
-				taskList.add(new TaskListDataItem(null, "task1", false, 2, null, assigneesOne, taskLegends.get(0), "activiti$projectAdhoc"));				
+				taskList.add(new TaskListDataItem(null, "task1", false, 2, null, assigneesOne, taskLegends.get(0), "activiti$projectAdhoc"));
 				taskList.add(new TaskListDataItem(null, "task2", false, 2, null, assigneesOne, taskLegends.get(0), "activiti$projectAdhoc"));
 				taskList.get(1).setParent(taskList.get(0));
 				taskList.add(new TaskListDataItem(null, "task3", false, 2, null, assigneesOne, taskLegends.get(1), "activiti$projectAdhoc"));
@@ -361,10 +389,10 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 				taskList.add(new TaskListDataItem(null, "task6", false, 2, null, assigneesTwo, taskLegends.get(2), "activiti$projectAdhoc"));
 				taskList.get(5).setParent(taskList.get(3));
 				projectData.setTaskList(taskList);
-					
+
 				projectData = (ProjectData) alfrescoRepository.save(projectData);
 				// add aspect entityTpl
-				
+
 				List<NodeRef> prevTasks = new ArrayList<NodeRef>();
 
 				prevTasks = new ArrayList<NodeRef>();
@@ -380,7 +408,7 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 				projectData.getTaskList().get(5).setPrevTasks(prevTasks);
 
 				alfrescoRepository.save(projectData);
-				
+
 				return projectData.getNodeRef();
 			}
 		}, false, true);

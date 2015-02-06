@@ -72,7 +72,7 @@ public class PriceListPolicyTest extends PLMBaseTestCase {
 				priceList.add(new PriceListDataItem(null, 23d, "€/kg", 1000d, "kg", 2, null, null, cost1, null));
 				rawMaterialData.setPriceList(priceList);
 
-				NodeRef rawMaterialNodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterialData).getNodeRef();
+				NodeRef rawMaterialNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterialData).getNodeRef();
 
 				return rawMaterialNodeRef;
 

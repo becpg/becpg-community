@@ -193,7 +193,7 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 				
 				finishedProduct.getLabelingListView().setLabelingRuleList(labelingRuleList);
 
-				return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
+				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
 			}
 		}, false, true);

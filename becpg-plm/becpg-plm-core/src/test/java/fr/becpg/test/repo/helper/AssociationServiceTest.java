@@ -69,14 +69,14 @@ public class AssociationServiceTest extends PLMBaseTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 				
-				NodeRef rawMaterialNodeRef = BeCPGPLMTestHelper.createRawMaterial(testFolderNodeRef, "MP test report");
+				NodeRef rawMaterialNodeRef = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test report");
 				
 				// suppliers
 				String []supplierNames = {"Supplier1", "Supplier2", "Supplier3"};
 				List<NodeRef> supplierNodeRefs = new LinkedList<NodeRef>();
 				for(String supplierName : supplierNames){
 					NodeRef supplierNodeRef = null;
-					NodeRef entityFolder = nodeService.getChildByName(testFolderNodeRef,
+					NodeRef entityFolder = nodeService.getChildByName(getTestFolderNodeRef(),
 							ContentModel.ASSOC_CONTAINS, supplierName);
 					if(entityFolder != null){
 						supplierNodeRef = nodeService.getChildByName(entityFolder,
@@ -86,7 +86,7 @@ public class AssociationServiceTest extends PLMBaseTestCase {
 					if(supplierNodeRef == null){
 						Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 						properties.put(ContentModel.PROP_NAME, supplierName);
-						supplierNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName((String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_SUPPLIER, properties).getChildRef();
+						supplierNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName((String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_SUPPLIER, properties).getChildRef();
 					}
 					
 					supplierNodeRefs.add(supplierNodeRef);

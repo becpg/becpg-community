@@ -65,7 +65,7 @@ public class AuditEntityListTest extends PLMBaseTestCase {
 				sfData.setAllergenList(allergenList);
 
 
-				return alfrescoRepository.create(testFolderNodeRef, sfData).getNodeRef();
+				return alfrescoRepository.create(getTestFolderNodeRef(), sfData).getNodeRef();
 
 			}
 		}, false, true);

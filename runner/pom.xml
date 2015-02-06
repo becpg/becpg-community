@@ -17,6 +17,7 @@
         <profile>
             <id>run</id>
             <build>
+               
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -59,6 +60,7 @@
                             <systemProperties>
                                 <solr.solr.home>${project.parent.basedir}/solr/solr_home</solr.solr.home>
                             </systemProperties>
+                            
                             <webapps>
                              <webapp>
                                     <groupId>${project.groupId}</groupId>
@@ -95,7 +97,7 @@
                                     <contextPath>/share</contextPath>
                                     <contextFile>${project.build.directory}/contexts/context-share.xml</contextFile>
                                 </webapp>
-                            </webapps>
+                            </webapps>    
                         </configuration>
                     </plugin>
                 </plugins>

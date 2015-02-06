@@ -105,7 +105,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 			compoList1.add(new CompoListDataItem(null, compoList1.get(3), 3d, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial13NodeRef));
 			compoList1.add(new CompoListDataItem(null, compoList1.get(3), 3d, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial14NodeRef));
 			finishedProduct1.getCompoListView().setCompoList(compoList1);
-			NodeRef finishedProductNodeRef1 = alfrescoRepository.create(testFolderNodeRef, finishedProduct1).getNodeRef();
+			NodeRef finishedProductNodeRef1 = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
 			
 			/*-- Formulate product --*/
 			logger.debug("/*-- Formulate product --*/");
@@ -202,7 +202,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 			compoList2.add(new CompoListDataItem(null, compoList2.get(3), 3d, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial13NodeRef));
 			compoList2.add(new CompoListDataItem(null, compoList2.get(3), 3d, null, CompoListUnit.kg, 0d, DeclarationType.DoNotDeclare, rawMaterial14NodeRef));
 			finishedProduct2.getCompoListView().setCompoList(compoList2);
-			NodeRef finishedProductNodeRef2 = alfrescoRepository.create(testFolderNodeRef, finishedProduct2).getNodeRef();			
+			NodeRef finishedProductNodeRef2 = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct2).getNodeRef();			
 			
 			/*-- Formulate product --*/
 			logger.debug("/*-- Formulate product --*/");
@@ -326,7 +326,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				nutList.add(new NutListDataItem(null, null, null, null, null, null, nut2, null));
 				finishedProduct.setNutList(nutList);
 								
-				NodeRef finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
+				NodeRef finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 				
 				logger.debug("unit of product to formulate: " + finishedProduct.getUnit());
 				
@@ -426,7 +426,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				nutList.add(new NutListDataItem(null, null, null, null, null, null, nut2, null));
 				finishedProduct.setNutList(nutList);
 								
-				NodeRef finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
+				NodeRef finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 				
 				logger.debug("unit of product to formulate: " + finishedProduct.getUnit());
 				
@@ -510,7 +510,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));				
 				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 2d, CompoListUnit.L, 0d, DeclarationType.Declare, rawMaterial6NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
-				return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
+				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
 				}},false,true);
 		
@@ -568,49 +568,49 @@ public class FormulationTest extends AbstractFinishedProductTest {
 //					properties.put(ContentModel.PROP_NAME, "nut3");
 //					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
 //					properties.put(BeCPGModel.PROP_NUTGROUP, GROUP1);
-//					NodeRef nut3 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
+//					NodeRef nut3 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
 //					
 //					properties.clear();
 //					properties.put(ContentModel.PROP_NAME, "nut14");
 //					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
 //					properties.put(BeCPGModel.PROP_NUTGROUP, GROUP1);
-//					NodeRef nut14 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
+//					NodeRef nut14 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
 //					
 //					properties.clear();
 //					properties.put(ContentModel.PROP_NAME, "nut5");
 //					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
 //					properties.put(BeCPGModel.PROP_NUTGROUP, GROUP1);
-//					NodeRef nut5 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
+//					NodeRef nut5 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
 //					
 //					properties.clear();
 //					properties.put(ContentModel.PROP_NAME, "nut26");
 //					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
 //					properties.put(BeCPGModel.PROP_NUTGROUP, GROUP2);
-//					NodeRef nut26 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
+//					NodeRef nut26 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
 //					
 //					properties.clear();
 //					properties.put(ContentModel.PROP_NAME, "nut17");
 //					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
 //					properties.put(BeCPGModel.PROP_NUTGROUP, GROUP2);
-//					NodeRef nut17 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
+//					NodeRef nut17 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
 //					
 //					properties.clear();
 //					properties.put(ContentModel.PROP_NAME, "nut8");
 //					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
 //					properties.put(BeCPGModel.PROP_NUTGROUP, GROUPOTHER);
-//					NodeRef nut8 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
+//					NodeRef nut8 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
 //					
 //					properties.clear();		
 //					properties.put(ContentModel.PROP_NAME, "nut9");
 //					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
 //					properties.put(BeCPGModel.PROP_NUTGROUP, GROUPOTHER);
-//					NodeRef nut9 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
+//					NodeRef nut9 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
 //					
 //					properties.clear();
 //					properties.put(ContentModel.PROP_NAME, "nut10");
 //					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
 //					properties.put(BeCPGModel.PROP_NUTGROUP, GROUPOTHER);
-//					NodeRef nut10 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
+//					NodeRef nut10 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
 //					
 //					List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
 //					nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d,  0d, "Autre", nut10, false));
@@ -631,7 +631,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 //					SFProduct1.setUnit(ProductUnit.kg);
 //					SFProduct1.setQty(1d);
 //					SFProduct1.setNutList(nutList);					
-//					NodeRef SFProduct1NodeRef = alfrescoRepository.create(testFolderNodeRef, SFProduct1).getNodeRef();
+//					NodeRef SFProduct1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), SFProduct1).getNodeRef();
 //					
 //					alfrescoRepository.findOne(SFProduct1NodeRef).getNodeRef();					
 //					
@@ -652,7 +652,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 //					}
 //					SFProduct2.setNutList(nutList);
 //					
-//					NodeRef productNodeRef =  alfrescoRepository.create(testFolderNodeRef, SFProduct2).getNodeRef();
+//					NodeRef productNodeRef =  alfrescoRepository.create(getTestFolderNodeRef(), SFProduct2).getNodeRef();
 //
 //					productService.formulate(productNodeRef);
 //									
@@ -708,7 +708,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				compoList1.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
 				compoList1.add(new CompoListDataItem(null, (CompoListDataItem)null, 2d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));					
 				SFProduct1.getCompoListView().setCompoList(compoList1);
-				return alfrescoRepository.create(testFolderNodeRef, SFProduct1).getNodeRef();
+				return alfrescoRepository.create(getTestFolderNodeRef(), SFProduct1).getNodeRef();
 				
 			}},false,true);
 		
@@ -725,7 +725,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				compoList2.add(new CompoListDataItem(null, (CompoListDataItem)null, 3d, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 				compoList2.add(new CompoListDataItem(null, (CompoListDataItem)null, 3d, null, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));					
 				SFProduct2.getCompoListView().setCompoList(compoList2);
-				return alfrescoRepository.create(testFolderNodeRef, SFProduct2).getNodeRef();
+				return alfrescoRepository.create(getTestFolderNodeRef(), SFProduct2).getNodeRef();
 				
 			}},false,true);
 		
@@ -743,7 +743,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, SFProduct1NodeRef));
 				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, SFProduct2NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
-				return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();	
+				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();	
 				
 			}},false,true);
 				
@@ -982,7 +982,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
-				return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
+				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 				
 			}},false,true);
 		
@@ -1176,7 +1176,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				compoList.add(new CompoListDataItem(null, compoList.get(4), null, 0.40d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(4), null, 1d, CompoListUnit.P, 0d, DeclarationType.Declare, rawMaterial5NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
-				return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();				
+				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();				
 				
 			}},false,true);
 	   
@@ -1265,7 +1265,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 					packagingList.add(new PackagingListDataItem(null, 3d, PackagingListUnit.m, PackagingLevel.Primary, true, packagingMaterial2NodeRef));
 					packagingList.add(new PackagingListDataItem(null, 8d, PackagingListUnit.PP, PackagingLevel.Tertiary, true, packagingMaterial3NodeRef));
 					finishedProduct.getPackagingListView().setPackagingList(packagingList);
-					NodeRef finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();				
+					NodeRef finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();				
 					
 					/*-- Formulate product --*/
 					logger.debug("/*-- Formulate product --*/");
@@ -1339,7 +1339,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				nutList.add(new NutListDataItem(null, null, null, null, null, null, nut2, null));
 				finishedProduct.setNutList(nutList);
 				
-				return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();				
+				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();				
 				
 			}},false,true);
 	   
@@ -1434,7 +1434,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 //				compoList.add(new CompoListDataItem(null, compoList.get(3), 3d, null, CompoListUnit.kg, 0d, null, DeclarationType.Declare, rawMaterial3NodeRef));
 //				compoList.add(new CompoListDataItem(null, compoList.get(3), 3d, null, CompoListUnit.kg, 0d, null, DeclarationType.Omit, rawMaterial4NodeRef));
 //				finishedProduct.setCompoList(compoList);
-//				NodeRef finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();				
+//				NodeRef finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();				
 //				
 //				/*-- Formulate product --*/
 //				logger.debug("/*-- Formulate product --*/");
@@ -1571,7 +1571,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				compoList.add(temp); 
 				compoList.add(new CompoListDataItem(null, compoList.get(4), null, 1d, CompoListUnit.P, 0d, DeclarationType.Declare, rawMaterial5NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
-				return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();				
+				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();				
 				
 			}},false,true);
 	   
@@ -1660,7 +1660,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				costList.add(new CostListDataItem(null, null, null, null, cost2, null));
 				finishedProduct.setCostList(costList);				
 				
-				return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();				
+				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();				
 
 			}},false,true);
 	   
@@ -1757,37 +1757,37 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				//Costs
 				properties.put(ContentModel.PROP_NAME, "costTransfo");			 					 				
 				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
-				NodeRef costTransfoNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
+				NodeRef costTransfoNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
 				
 				properties.put(ContentModel.PROP_NAME, "costMOTransfo");			 					 				
 				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
-				NodeRef costMOTransfoNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
+				NodeRef costMOTransfoNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
 				
 				properties.put(ContentModel.PROP_NAME, "costMOMaintenance");			 					 				
 				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
-				NodeRef costMOMaintenanceNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
+				NodeRef costMOMaintenanceNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
 				
 				//Steps
 				logger.debug("Steps");
 				properties.put(ContentModel.PROP_NAME, "Découpe");			 					 				
 				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
-				NodeRef decoupeNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
+				NodeRef decoupeNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
 				
 				properties.put(ContentModel.PROP_NAME, "Hachage");			 					 				
 				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
-				NodeRef hachageNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
+				NodeRef hachageNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
 				
 				properties.put(ContentModel.PROP_NAME, "Cuisson");			 					 				
 				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
-				NodeRef cuissonNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
+				NodeRef cuissonNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
 				
 				properties.put(ContentModel.PROP_NAME, "Mélange");			 					 				
 				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
-				NodeRef melangeNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
+				NodeRef melangeNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
 				
 				properties.put(ContentModel.PROP_NAME, "Etape Ligne");			 					 				
 				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
-				NodeRef ligneStepNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
+				NodeRef ligneStepNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
 				
 				// resources
 				logger.debug("Resources");
@@ -1796,35 +1796,35 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
 				costList.add(new CostListDataItem(null, 8d, "€/h", null, costMOTransfoNodeRef, false));
 				boucherResourceData.setCostList(costList);
-				NodeRef boucherResourceNodeRef = alfrescoRepository.create(testFolderNodeRef, boucherResourceData).getNodeRef();
+				NodeRef boucherResourceNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), boucherResourceData).getNodeRef();
 				
 //				ResourceProductData operateurResourceData = new ResourceProductData();
 //				operateurResourceData.setName("Operateur");
 //				costList = new ArrayList<CostListDataItem>();
 //				costList.add(new CostListDataItem(null, 15d, "€/h", null, costMOTransfoNodeRef, false));
 //				operateurResourceData.setCostList(costList);
-//				NodeRef operateurResourceNodeRef = alfrescoRepository.create(testFolderNodeRef, operateurResourceData).getNodeRef();
+//				NodeRef operateurResourceNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), operateurResourceData).getNodeRef();
 				
 				ResourceProductData hachoirResourceData = new ResourceProductData();
 				hachoirResourceData.setName("Hachoir");
 				costList = new ArrayList<CostListDataItem>();
 				costList.add(new CostListDataItem(null, 10d, "€/h", null, costTransfoNodeRef, false));
 				hachoirResourceData.setCostList(costList);
-				NodeRef hachoirResourceNodeRef = alfrescoRepository.create(testFolderNodeRef, hachoirResourceData).getNodeRef();
+				NodeRef hachoirResourceNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), hachoirResourceData).getNodeRef();
 				
 				ResourceProductData cuiseurResourceData = new ResourceProductData();
 				cuiseurResourceData.setName("Cuiseur");
 				costList = new ArrayList<CostListDataItem>();
 				costList.add(new CostListDataItem(null, 30d, "€/h", null, costTransfoNodeRef, false));
 				cuiseurResourceData.setCostList(costList);
-				NodeRef cuiseurResourceNodeRef = alfrescoRepository.create(testFolderNodeRef, cuiseurResourceData).getNodeRef();
+				NodeRef cuiseurResourceNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), cuiseurResourceData).getNodeRef();
 				
 				ResourceProductData malaxeurResourceData = new ResourceProductData();
 				malaxeurResourceData.setName("Malaxeur");
 				costList = new ArrayList<CostListDataItem>();
 				costList.add(new CostListDataItem(null, 40d, "€/h", null, costTransfoNodeRef, false));
 				malaxeurResourceData.setCostList(costList);
-				NodeRef malaxeurResourceNodeRef = alfrescoRepository.create(testFolderNodeRef, malaxeurResourceData).getNodeRef();
+				NodeRef malaxeurResourceNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), malaxeurResourceData).getNodeRef();
 				
 				ResourceProductData ligneResourceData = new ResourceProductData();
 				ligneResourceData.setName("Ligne");
@@ -1833,7 +1833,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				costList.add(new CostListDataItem(null, 15d, "€/h", null, costMOTransfoNodeRef, false));
 				costList.add(new CostListDataItem(null, 5d, "€/h", null, costMOMaintenanceNodeRef, false));
 				ligneResourceData.setCostList(costList);
-				NodeRef ligneResourceNodeRef= alfrescoRepository.create(testFolderNodeRef, ligneResourceData).getNodeRef();
+				NodeRef ligneResourceNodeRef= alfrescoRepository.create(getTestFolderNodeRef(), ligneResourceData).getNodeRef();
 				
 				/*-- Create finished product --*/
 				dataLists.clear();
@@ -1864,7 +1864,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				costList.add(new CostListDataItem(null, null, null, null, costMOMaintenanceNodeRef, null));
 				finishedProduct.setCostList(costList);
 				
-				NodeRef finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
+				NodeRef finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 								
 				/*-- Formulate product --*/
 				logger.debug("/*-- Formulate product --*/");
@@ -1996,7 +1996,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				compoList.add(new CompoListDataItem(null, compoList.get(4), null, 25d, CompoListUnit.Perc, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(4), null, 20d, CompoListUnit.Perc, 0d, DeclarationType.Declare, rawMaterial5NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
-				return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();				
+				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();				
 				
 			}},false,true);
 		
@@ -2100,7 +2100,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				physicoChemList.add(new PhysicoChemListDataItem(null, null, null, null, null, physicoChem4));
 				finishedProduct.setPhysicoChemList(physicoChemList);		
 								
-				NodeRef finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
+				NodeRef finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 				
 				/*-- Formulate product --*/
 				logger.info("/*-- Formulate product --*/");
@@ -2179,7 +2179,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 			compoList.get(7).setOverrunPerc(70d);
 			
 			finishedProduct.getCompoListView().setCompoList(compoList);
-			NodeRef finishedProductNodeRef1 = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
+			NodeRef finishedProductNodeRef1 = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 			
 			/*-- Formulate product --*/
 			logger.debug("/*-- Formulate product --*/");

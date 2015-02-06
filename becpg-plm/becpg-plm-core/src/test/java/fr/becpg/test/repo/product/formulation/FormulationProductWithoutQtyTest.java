@@ -92,7 +92,7 @@ public class FormulationProductWithoutQtyTest extends AbstractFinishedProductTes
 				nutList.add(new NutListDataItem(null, null, null, null, null, null, nut2, null));
 				finishedProduct.setNutList(nutList);
 				
-				NodeRef finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
+				NodeRef finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 				
 				/*-- Formulate product --*/
 				ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
@@ -185,7 +185,7 @@ public class FormulationProductWithoutQtyTest extends AbstractFinishedProductTes
 				nutList.add(new NutListDataItem(null, null, null, null, null, null, nut2, null));
 				finishedProduct.setNutList(nutList);
 							
-				NodeRef finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
+				NodeRef finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 				
 				/*-- Formulate product --*/
 				ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);

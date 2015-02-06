@@ -207,39 +207,31 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
 			public NodeRef execute() throws Throwable {	
 				
-				NodeRef folderNodeRef = nodeService.getChildByName(
-						repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, "ContextProductFolder");				
-				
-				if(folderNodeRef != null){
-					nodeService.deleteNode(folderNodeRef);
-				}
-				
-				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(),
-						"ContextProductFolder", ContentModel.TYPE_FOLDER).getNodeRef();					
+					
 				
 					/*-- characteristics --*/
 					Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 					//Costs
 					properties.put(ContentModel.PROP_NAME, "cost1");			 					 				
 					properties.put(PLMModel.PROP_COSTCURRENCY, "€");
-					cost1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
+					cost1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "cost2");			 					 				
 					properties.put(PLMModel.PROP_COSTCURRENCY, "€");
-					cost2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
+					cost2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "pkgCost1");			 					 				
 					properties.put(PLMModel.PROP_COSTCURRENCY, "€");
-					pkgCost1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
+					pkgCost1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "pkgCost2");			 					 				
 					properties.put(PLMModel.PROP_COSTCURRENCY, "€");
-					pkgCost2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();						
+					pkgCost2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();						
 					properties.clear();				
 					properties.put(ContentModel.PROP_NAME, "fixedCost");			 					 				
 					properties.put(PLMModel.PROP_COSTCURRENCY, "€");
 					properties.put(PLMModel.PROP_COSTFIXED, true);
-					fixedCost = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
+					fixedCost = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
 					
 					//Nuts
 					properties.clear();
@@ -247,37 +239,37 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					properties.put(BeCPGModel.PROP_LEGAL_NAME, "Nut1 legalName");
 					properties.put(PLMModel.PROP_NUTUNIT, "kJ");
 					properties.put(PLMModel.PROP_NUTGROUP, GROUP1);
-					nut1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_NUT, properties).getChildRef();
+					nut1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_NUT, properties).getChildRef();
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "nut2");
 					properties.put(PLMModel.PROP_NUTUNIT, "kcal");
 					properties.put(PLMModel.PROP_NUTGROUP, GROUP2);
 					properties.put(PLMModel.PROP_NUTGDA, 2000d);
-					nut2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_NUT, properties).getChildRef();			
+					nut2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_NUT, properties).getChildRef();			
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "nut3");
 					properties.put(PLMModel.PROP_NUTUNIT, "kcal");
 					properties.put(PLMModel.PROP_NUTGROUP, GROUP2);
 					properties.put(PLMModel.PROP_NUTGDA, 2000d);
-					nut3 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_NUT, properties).getChildRef();			
+					nut3 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_NUT, properties).getChildRef();			
 					
 					//Allergens
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "allergen1");	
 					properties.put(PLMModel.PROP_ALLERGEN_TYPE, "Major");
-					allergen1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ALLERGEN, properties).getChildRef();
+					allergen1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ALLERGEN, properties).getChildRef();
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "allergen2");			 					 				
 					properties.put(PLMModel.PROP_ALLERGEN_TYPE, "Major");
-					allergen2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ALLERGEN, properties).getChildRef();
+					allergen2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ALLERGEN, properties).getChildRef();
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "allergen3");	
 					properties.put(PLMModel.PROP_ALLERGEN_TYPE, "Major");
-					allergen3 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ALLERGEN, properties).getChildRef();
+					allergen3 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ALLERGEN, properties).getChildRef();
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "allergen4");	
 					properties.put(PLMModel.PROP_ALLERGEN_TYPE, "Major");
-					allergen4 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ALLERGEN, properties).getChildRef();
+					allergen4 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ALLERGEN, properties).getChildRef();
 					//Ings
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "Epaississant");
@@ -286,7 +278,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					mlName.addValue(Locale.ENGLISH, "Epaississant english");
 					mlName.addValue(Locale.FRENCH, "Epaississant french");	
 					properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
-					ingType1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ING_TYPE_ITEM, properties).getChildRef();
+					ingType1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ING_TYPE_ITEM, properties).getChildRef();
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "Epices");
 					mlName = new MLText();
@@ -295,7 +287,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					mlName.addValue(Locale.FRENCH, "Epices french");	
 					properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
 					properties.put(PLMModel.PROP_ING_TYPE_DEC_THRESHOLD, 20);
-					ingType2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ING_TYPE_ITEM, properties).getChildRef();
+					ingType2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ING_TYPE_ITEM, properties).getChildRef();
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "ing1");
 					mlName = new MLText();
@@ -303,7 +295,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					mlName.addValue(Locale.ENGLISH, "ing1 english");
 					mlName.addValue(Locale.FRENCH, "ing1 french");	
 					properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
-					ing1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ING, properties).getChildRef();
+					ing1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ING, properties).getChildRef();
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "ing2");
 					mlName = new MLText();
@@ -312,7 +304,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					mlName.addValue(Locale.FRENCH, "ing2 french");	
 					properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
 					
-					ing2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ING, properties).getChildRef();
+					ing2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ING, properties).getChildRef();
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "ing3");
 					mlName = new MLText();
@@ -320,7 +312,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					mlName.addValue(Locale.ENGLISH, "ing3 english");
 					mlName.addValue(Locale.FRENCH, "ing3 french");	
 					properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
-					ing3 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ING, properties).getChildRef();
+					ing3 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ING, properties).getChildRef();
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "ing4");
 					mlName = new MLText();
@@ -328,7 +320,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					mlName.addValue(Locale.ENGLISH, "ing4 english");
 					mlName.addValue(Locale.FRENCH, "ing4 french");	
 					properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
-					ing4 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ING, properties).getChildRef();
+					ing4 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ING, properties).getChildRef();
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "ing5");
 					properties.put(PLMModel.PROP_ING_TYPE_V2, ingType1);
@@ -337,7 +329,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					mlName.addValue(Locale.ENGLISH, "ing5 english");
 					mlName.addValue(Locale.FRENCH, "ing5 french");	
 					properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
-					ing5 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ING, properties).getChildRef();
+					ing5 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ING, properties).getChildRef();
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "ing6");
 					properties.put(PLMModel.PROP_ING_TYPE_V2, ingType2);
@@ -346,43 +338,43 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					mlName.addValue(Locale.ENGLISH, "ing6 english");
 					mlName.addValue(Locale.FRENCH, "ing6 french");	
 					properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
-					ing6 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ING, properties).getChildRef();
+					ing6 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ING, properties).getChildRef();
 					//Geo origins
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "geoOrigin1");
-					geoOrigin1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_GEO_ORIGIN, properties).getChildRef();
+					geoOrigin1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_GEO_ORIGIN, properties).getChildRef();
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "geoOrigin2");
-					geoOrigin2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_GEO_ORIGIN, properties).getChildRef();
+					geoOrigin2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_GEO_ORIGIN, properties).getChildRef();
 					//Bio origins
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "bioOrigin1");
-					bioOrigin1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_BIO_ORIGIN, properties).getChildRef();
+					bioOrigin1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_BIO_ORIGIN, properties).getChildRef();
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "bioOrigin2");
-					bioOrigin2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_BIO_ORIGIN, properties).getChildRef();
+					bioOrigin2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_BIO_ORIGIN, properties).getChildRef();
 					//physicoChem
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "physicoChem1");			 					 				
-					physicoChem1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_PHYSICO_CHEM, properties).getChildRef();
+					physicoChem1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_PHYSICO_CHEM, properties).getChildRef();
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "physicoChem2");			 					 				
-					physicoChem2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_PHYSICO_CHEM, properties).getChildRef();
+					physicoChem2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_PHYSICO_CHEM, properties).getChildRef();
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "physicoChem3");
 					properties.put(PLMModel.PROP_PHYSICO_CHEM_FORMULATED, true);
-					physicoChem3 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_PHYSICO_CHEM, properties).getChildRef();
+					physicoChem3 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_PHYSICO_CHEM, properties).getChildRef();
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "physicoChem4");			 					 				
 					properties.put(PLMModel.PROP_PHYSICO_CHEM_FORMULATED, true);
-					physicoChem4 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_PHYSICO_CHEM, properties).getChildRef();			
+					physicoChem4 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_PHYSICO_CHEM, properties).getChildRef();			
 					
 					//Suppliers
 					properties.put(ContentModel.PROP_NAME, "supplier1");			 					 				
-					supplier1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_SUPPLIER, properties).getChildRef();
+					supplier1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_SUPPLIER, properties).getChildRef();
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "supplier2");			 					 				
-					supplier2 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_SUPPLIER, properties).getChildRef();
+					supplier2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_SUPPLIER, properties).getChildRef();
 					
 					/*-- Create raw materials --*/
 					logger.debug("/*-- Create raw materials --*/");
@@ -435,7 +427,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					physicoChemList.add(new PhysicoChemListDataItem(null, 1d, "-", 0.8d, 2.1d, physicoChem3));
 					physicoChemList.add(new PhysicoChemListDataItem(null, 2d, "-", 1.5d, 2.2d, physicoChem4));
 					rawMaterial1.setPhysicoChemList(physicoChemList);
-					rawMaterial1NodeRef = alfrescoRepository.create(folderNodeRef, rawMaterial1).getNodeRef();
+					rawMaterial1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial1).getNodeRef();
 					
 					/*-- Raw material 2 --*/
 					RawMaterialData rawMaterial2 = new RawMaterialData();
@@ -485,7 +477,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					rawMaterial2.setPhysicoChemList(physicoChemList);
 					rawMaterial2.setIngList(ingList);	
 					
-					rawMaterial2NodeRef = alfrescoRepository.create(folderNodeRef, rawMaterial2).getNodeRef();
+					rawMaterial2NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial2).getNodeRef();
 					
 					/*-- Raw material 3 --*/
 					RawMaterialData rawMaterial3 = new RawMaterialData();
@@ -529,7 +521,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					physicoChemList.add(new PhysicoChemListDataItem(null, 2d, "-", null, null, physicoChem4));
 					rawMaterial3.setPhysicoChemList(physicoChemList);
 					rawMaterial3.setIngList(ingList);		
-					rawMaterial3NodeRef = alfrescoRepository.create(folderNodeRef, rawMaterial3).getNodeRef();
+					rawMaterial3NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial3).getNodeRef();
 					
 					/*-- Raw material 4 --*/
 					RawMaterialData rawMaterial4 = new RawMaterialData();
@@ -554,7 +546,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					nutList.add(new NutListDataItem(null, 0d, "g/100g", 0d,  0d, "Groupe 1", nut1, false));
 					nutList.add(new NutListDataItem(null, 0d, "g/100g", 0d,  0d, "Groupe 1", nut2, false));
 					rawMaterial4.setNutList(nutList);		
-					rawMaterial4NodeRef = alfrescoRepository.create(folderNodeRef, rawMaterial4).getNodeRef();
+					rawMaterial4NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial4).getNodeRef();
 					
 					/*-- Raw material 5 --*/
 					ingList = new ArrayList<IngListDataItem>();
@@ -583,7 +575,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					nutList.add(new NutListDataItem(null, 3d, "g/100g", 0d,  0d, "Groupe 1", nut2, false));
 					rawMaterial5.setNutList(nutList);					
 					rawMaterial5.setIngList(ingList);		
-					rawMaterial5NodeRef = alfrescoRepository.create(folderNodeRef, rawMaterial5).getNodeRef();
+					rawMaterial5NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial5).getNodeRef();
 					
 					/*-- Raw material 6 --*/
 					RawMaterialData rawMaterial6 = new RawMaterialData();
@@ -624,7 +616,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					geoOrigins.add(geoOrigin2);
 					ingList.add(new IngListDataItem(null, 20d, geoOrigins, bioOrigins, false, false,false, ing2, false));
 					rawMaterial6.setIngList(ingList);
-					rawMaterial6NodeRef = alfrescoRepository.create(folderNodeRef, rawMaterial6).getNodeRef();
+					rawMaterial6NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial6).getNodeRef();
 					
 					/*-- Raw material 7 --*/
 					RawMaterialData rawMaterial7 = new RawMaterialData();
@@ -641,7 +633,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					ingList.add(new IngListDataItem(null, ingList.get(0), 70d, null, null, null, false, false,false, ing1, false));
 					ingList.add(new IngListDataItem(null, ingList.get(0), 30d, null, null, null, false, false,false, ing4, false));
 					rawMaterial7.setIngList(ingList);
-					rawMaterial7NodeRef = alfrescoRepository.create(folderNodeRef, rawMaterial7).getNodeRef();
+					rawMaterial7NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial7).getNodeRef();
 					
 					/*-- Local semi finished product 1 --*/
 					LocalSemiFinishedProductData localSF1 = new LocalSemiFinishedProductData();
@@ -651,7 +643,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					mlName.addValue(Locale.ENGLISH, "Pâte english");
 					mlName.addValue(Locale.FRENCH, "Pâte french");				
 					localSF1.setLegalName(mlName);
-					localSF1NodeRef = alfrescoRepository.create(folderNodeRef, localSF1).getNodeRef();
+					localSF1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), localSF1).getNodeRef();
 					
 					/*-- Local semi finished product 1 --*/
 					LocalSemiFinishedProductData localSF2 = new LocalSemiFinishedProductData();
@@ -661,12 +653,12 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					mlName.addValue(Locale.ENGLISH, "Garniture english");
 					mlName.addValue(Locale.FRENCH, "Garniture french");
 					localSF2.setLegalName(mlName);							
-					localSF2NodeRef = alfrescoRepository.create(folderNodeRef, localSF2).getNodeRef();
+					localSF2NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), localSF2).getNodeRef();
 					
 					LocalSemiFinishedProductData localSF3 = new LocalSemiFinishedProductData();
 					localSF3.setName("Local semi finished 3");
 					localSF3.setLegalName("Legal Local semi finished 3");							
-					localSF3NodeRef = alfrescoRepository.create(folderNodeRef, localSF3).getNodeRef();			
+					localSF3NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), localSF3).getNodeRef();			
 					
 					logger.debug("/*-- Create raw materials 11 => 14 with ingList only--*/");
 					/*-- Raw material 11 --*/
@@ -689,7 +681,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					geoOrigins.add(geoOrigin2);
 					ingList.add(new IngListDataItem(null, 200/3d, geoOrigins, bioOrigins, false, false,false, ing2, false));
 					rawMaterial11.setIngList(ingList);
-					rawMaterial11NodeRef = alfrescoRepository.create(folderNodeRef, rawMaterial11).getNodeRef();
+					rawMaterial11NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial11).getNodeRef();
 					
 					/*-- Raw material 12 --*/
 					RawMaterialData rawMaterial12 = new RawMaterialData();
@@ -712,7 +704,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					geoOrigins.add(geoOrigin2);
 					ingList.add(new IngListDataItem(null, 300/4d, geoOrigins, bioOrigins, false, false,true, ing2, false));
 					rawMaterial12.setIngList(ingList);			
-					rawMaterial12NodeRef = alfrescoRepository.create(folderNodeRef, rawMaterial12).getNodeRef();
+					rawMaterial12NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial12).getNodeRef();
 					
 					/*-- Raw material 13 --*/
 					RawMaterialData rawMaterial13 = new RawMaterialData();
@@ -731,7 +723,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					geoOrigins.add(geoOrigin2);			
 					ingList.add(new IngListDataItem(null, 100d, geoOrigins, bioOrigins, true, true,false, ing3, false));			
 					rawMaterial13.setIngList(ingList);		
-					rawMaterial13NodeRef = alfrescoRepository.create(folderNodeRef, rawMaterial13).getNodeRef();
+					rawMaterial13NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial13).getNodeRef();
 					
 					/*-- Raw material 14 --*/
 					RawMaterialData rawMaterial14 = new RawMaterialData();
@@ -751,7 +743,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					ingList.add(new IngListDataItem(null, 200/3d, geoOrigins, bioOrigins, true, true,false, ing3, false));
 					ingList.add(new IngListDataItem(null, 100/3d, geoOrigins, bioOrigins, true, true,false, ing4, false));
 					rawMaterial14.setIngList(ingList);		
-					rawMaterial14NodeRef = alfrescoRepository.create(folderNodeRef, rawMaterial14).getNodeRef();
+					rawMaterial14NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial14).getNodeRef();
 								
 					/*-- Local semi finished product 11 --*/
 					LocalSemiFinishedProductData localSF11 = new LocalSemiFinishedProductData();
@@ -761,7 +753,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					mlName.addValue(Locale.ENGLISH, "Pâte english");
 					mlName.addValue(Locale.FRENCH, "Pâte french");
 					localSF11.setLegalName(mlName);			
-					localSF11NodeRef = alfrescoRepository.create(folderNodeRef, localSF11).getNodeRef();
+					localSF11NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), localSF11).getNodeRef();
 					
 					/*-- Local semi finished product 12 --*/
 					LocalSemiFinishedProductData localSF12 = new LocalSemiFinishedProductData();
@@ -771,7 +763,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					mlName.addValue(Locale.ENGLISH, "Garniture english");
 					mlName.addValue(Locale.FRENCH, "Garniture french");
 					localSF12.setLegalName(mlName);					
-					localSF12NodeRef = alfrescoRepository.create(folderNodeRef, localSF12).getNodeRef();
+					localSF12NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), localSF12).getNodeRef();
 					
 					/*-- Raw material 15 --*/
 					RawMaterialData rawMaterial15 = new RawMaterialData();
@@ -784,7 +776,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					rawMaterial15.setQty(50d);
 					rawMaterial15.setUnit(ProductUnit.mL);
 					rawMaterial15.setNetWeight(2d);
-					rawMaterial15NodeRef = alfrescoRepository.create(folderNodeRef, rawMaterial15).getNodeRef();	
+					rawMaterial15NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial15).getNodeRef();	
 					
 					
 					/*-- Raw material 16 --*/
@@ -806,7 +798,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					ingList.add(new IngListDataItem(null, 55d, geoOrigins, bioOrigins, true, true,false, ing3, false));	
 					ingList.add(new IngListDataItem(null, null, geoOrigins, bioOrigins, true, true,false, ing2, false));
 					rawMaterial16.setIngList(ingList);		
-					rawMaterial16NodeRef = alfrescoRepository.create(folderNodeRef, rawMaterial16).getNodeRef();
+					rawMaterial16NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial16).getNodeRef();
 					
 					/*-- Packaging material 1 --*/					
 					PackagingMaterialData packagingMaterial1 = new PackagingMaterialData();
@@ -819,7 +811,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					costList.add(new CostListDataItem(null, 3d, "€/P", null, pkgCost1, false));
 					costList.add(new CostListDataItem(null, 2d, "€/P", null, pkgCost2, false));
 					packagingMaterial1.setCostList(costList);					
-					packagingMaterial1NodeRef = alfrescoRepository.create(testFolderNodeRef, packagingMaterial1).getNodeRef();
+					packagingMaterial1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial1).getNodeRef();
 					
 					/*-- Packaging material 2 --*/					
 					PackagingMaterialData packagingMaterial2 = new PackagingMaterialData();
@@ -832,7 +824,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					costList.add(new CostListDataItem(null, 1d, "€/m", null, pkgCost1, false));
 					costList.add(new CostListDataItem(null, 2d, "€/m", null, pkgCost2, false));
 					packagingMaterial2.setCostList(costList);					
-					packagingMaterial2NodeRef = alfrescoRepository.create(testFolderNodeRef, packagingMaterial2).getNodeRef();
+					packagingMaterial2NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial2).getNodeRef();
 					
 					/*-- Packaging material 1 --*/					
 					PackagingMaterialData packagingMaterial3 = new PackagingMaterialData();
@@ -843,62 +835,62 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					costList.add(new CostListDataItem(null, 1d, "€/P", null, pkgCost1, false));
 					costList.add(new CostListDataItem(null, 2d, "€/P", null, pkgCost2, false));
 					packagingMaterial3.setCostList(costList);					
-					packagingMaterial3NodeRef = alfrescoRepository.create(testFolderNodeRef, packagingMaterial3).getNodeRef();
+					packagingMaterial3NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial3).getNodeRef();
 					
 //				}
 //				else{
 //					
-//					localSF1NodeRef = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "Local semi finished 1");	
+//					localSF1NodeRef = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "Local semi finished 1");	
 //					assertNotNull(localSF1NodeRef);
-//					rawMaterial1NodeRef = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "Raw material 1");				    
-//					rawMaterial2NodeRef = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "Raw material 2");				   
-//					localSF2NodeRef = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "Local semi finished 2");				    
-//					localSF3NodeRef = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "Local semi finished 3");
-//				    rawMaterial3NodeRef = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "Raw material 3");
-//				    rawMaterial4NodeRef = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "Raw material 1");				    
-//				    rawMaterial5NodeRef = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "Raw material 5");				    
-//				    rawMaterial6NodeRef = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "Raw material 6");				    
-//				    rawMaterial7NodeRef = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "Raw material ");				   
-//				    localSF11NodeRef = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "Local semi finished 11");
-//				    rawMaterial11NodeRef = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "Raw material 11");
-//				    rawMaterial12NodeRef = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "Raw material 12");
-//				    localSF12NodeRef = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "Local semi finished 12");
-//				    rawMaterial13NodeRef = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "Raw material 13");
-//				    rawMaterial14NodeRef = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "Raw material 14");				    
-//				    packagingMaterial1NodeRef = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "");
-//				    packagingMaterial2NodeRef = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "");
-//				    packagingMaterial3NodeRef = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "");
+//					rawMaterial1NodeRef = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "Raw material 1");				    
+//					rawMaterial2NodeRef = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "Raw material 2");				   
+//					localSF2NodeRef = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "Local semi finished 2");				    
+//					localSF3NodeRef = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "Local semi finished 3");
+//				    rawMaterial3NodeRef = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "Raw material 3");
+//				    rawMaterial4NodeRef = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "Raw material 1");				    
+//				    rawMaterial5NodeRef = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "Raw material 5");				    
+//				    rawMaterial6NodeRef = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "Raw material 6");				    
+//				    rawMaterial7NodeRef = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "Raw material ");				   
+//				    localSF11NodeRef = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "Local semi finished 11");
+//				    rawMaterial11NodeRef = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "Raw material 11");
+//				    rawMaterial12NodeRef = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "Raw material 12");
+//				    localSF12NodeRef = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "Local semi finished 12");
+//				    rawMaterial13NodeRef = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "Raw material 13");
+//				    rawMaterial14NodeRef = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "Raw material 14");				    
+//				    packagingMaterial1NodeRef = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "");
+//				    packagingMaterial2NodeRef = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "");
+//				    packagingMaterial3NodeRef = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "");
 //				    
-//				    cost1 = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "cost1");
-//				    cost2 = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "cost2");
-//				    fixedCost = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "fixedCost");
-//				    pkgCost1 = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "pkgCost1");
-//				    pkgCost2 = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "pkgCost2");
+//				    cost1 = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "cost1");
+//				    cost2 = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "cost2");
+//				    fixedCost = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "fixedCost");
+//				    pkgCost1 = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "pkgCost1");
+//				    pkgCost2 = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "pkgCost2");
 //				    
-//				    nut1 = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "nut1");
-//				    nut2 = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "nut2");
+//				    nut1 = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "nut1");
+//				    nut2 = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "nut2");
 //				    
-//				    allergen1 = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "allergen1");
-//				    allergen2 = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "allergen2");
-//				    allergen3 = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "allergen3");
-//				    allergen4 = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "allergen4");
+//				    allergen1 = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "allergen1");
+//				    allergen2 = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "allergen2");
+//				    allergen3 = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "allergen3");
+//				    allergen4 = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "allergen4");
 //				    
-//				    ing1 = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "ing1");
-//				    ing2 = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "ing2");
-//				    ing3 = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "ing3");
-//				    ing4 = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "ing4");
-//				    ing5 = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "ing5");
+//				    ing1 = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "ing1");
+//				    ing2 = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "ing2");
+//				    ing3 = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "ing3");
+//				    ing4 = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "ing4");
+//				    ing5 = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "ing5");
 //				    
-//				    bioOrigin1 = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "bioOrigin1");
-//				    bioOrigin2 = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "bioOrigin2");
+//				    bioOrigin1 = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "bioOrigin1");
+//				    bioOrigin2 = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "bioOrigin2");
 //				    
-//				    geoOrigin1 = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "geoOrigin1");
-//				    geoOrigin2 = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "geoOrigin2");    
+//				    geoOrigin1 = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "geoOrigin1");
+//				    geoOrigin2 = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "geoOrigin2");    
 //				    
-//				    physicoChem1 = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "physicoChem1");
-//				    physicoChem2 = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "physicoChem2");
-//				    physicoChem3 = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "physicoChem3");
-//				    physicoChem4 = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, "physicoChem4");				
+//				    physicoChem1 = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "physicoChem1");
+//				    physicoChem2 = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "physicoChem2");
+//				    physicoChem3 = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "physicoChem3");
+//				    physicoChem4 = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, "physicoChem4");				
 //				}
 			
 			return null;

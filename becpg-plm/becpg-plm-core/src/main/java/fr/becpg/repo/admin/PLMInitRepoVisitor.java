@@ -243,13 +243,13 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl  {
 	protected void visitFiles(NodeRef folderNodeRef, String folderName) {
 
 		if (folderName == RepoConsts.PATH_ICON) {
-			contentHelper.addFilesResources(folderNodeRef, "classpath:beCPG/images/*.png");
+			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/images/*.png");
 		}
 		if (folderName == PlmRepoConsts.PATH_MAPPING) {
-			contentHelper.addFilesResources(folderNodeRef, "classpath:beCPG/import/mapping/*.xml");
+			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/import/mapping/*.xml");
 		}
 		if (folderName == RepoConsts.PATH_OLAP_QUERIES) {
-			contentHelper.addFilesResources(folderNodeRef, "classpath:beCPG/olap/*.saiku");
+			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/olap/*.saiku");
 		}
 	}
 

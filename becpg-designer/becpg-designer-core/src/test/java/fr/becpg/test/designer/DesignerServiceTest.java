@@ -33,6 +33,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 
 import fr.becpg.repo.designer.DesignerModel;
 import fr.becpg.repo.designer.DesignerService;
@@ -78,7 +79,7 @@ public class DesignerServiceTest extends RepoBaseTestCase{
 				}
 				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
 
-				InputStream in = ClassLoader.getSystemResourceAsStream("beCPG/designer/testModel.xml");
+				InputStream in = (new ClassPathResource("beCPG/designer/testModel.xml")).getInputStream();
 				assertNotNull(in);
 
 				M2Model m2Model = M2Model.createModel(in);
@@ -117,7 +118,7 @@ public class DesignerServiceTest extends RepoBaseTestCase{
 				}
 				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
 
-				InputStream in = ClassLoader.getSystemResourceAsStream("beCPG/designer/testConfig.xml");
+				InputStream in = (new ClassPathResource("beCPG/designer/testConfig.xml")).getInputStream();
 				assertNotNull(in);
 
 				NodeRef modelNodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, ContentModel.TYPE_CONTENT).getChildRef();
@@ -158,7 +159,9 @@ public class DesignerServiceTest extends RepoBaseTestCase{
 				assertNotNull(controls);
 				assertTrue(controls.size() > 0);
 
-				InputStream in = ClassLoader.getSystemResourceAsStream("beCPG/designer/testModel.xml");
+				
+				
+				InputStream in = (new ClassPathResource("beCPG/designer/testModel.xml")).getInputStream();
 				assertNotNull(in);
 
 				M2Model m2Model = M2Model.createModel(in);

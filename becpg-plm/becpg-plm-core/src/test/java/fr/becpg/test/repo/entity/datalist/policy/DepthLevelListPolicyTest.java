@@ -60,7 +60,7 @@ public class DepthLevelListPolicyTest extends PLMBaseTestCase {
 		NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
-				return BeCPGPLMTestHelper.createMultiLevelProduct(testFolderNodeRef);
+				return BeCPGPLMTestHelper.createMultiLevelProduct(getTestFolderNodeRef());
 			}
 		}, false, true);
 		
@@ -205,7 +205,7 @@ public class DepthLevelListPolicyTest extends PLMBaseTestCase {
 		NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 				
-				return BeCPGPLMTestHelper.createMultiLevelProduct(testFolderNodeRef);
+				return BeCPGPLMTestHelper.createMultiLevelProduct(getTestFolderNodeRef());
 			}
 		}, false, true);		
 		
@@ -255,7 +255,7 @@ public class DepthLevelListPolicyTest extends PLMBaseTestCase {
 		
 		NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
-				return BeCPGPLMTestHelper.createMultiLevelProduct(testFolderNodeRef);
+				return BeCPGPLMTestHelper.createMultiLevelProduct(getTestFolderNodeRef());
 			}
 		}, false, true);		
 		
@@ -405,7 +405,7 @@ public class DepthLevelListPolicyTest extends PLMBaseTestCase {
 		NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 				
-				return BeCPGPLMTestHelper.createMultiLevelProduct(testFolderNodeRef);
+				return BeCPGPLMTestHelper.createMultiLevelProduct(getTestFolderNodeRef());
 			}
 		}, false, true);		
 		
@@ -444,11 +444,11 @@ public class DepthLevelListPolicyTest extends PLMBaseTestCase {
 				
 				RawMaterialData rawMaterial1 = new RawMaterialData();
 				rawMaterial1.setName("Raw material 1");
-				NodeRef rawMaterial1NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial1).getNodeRef();
+				NodeRef rawMaterial1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial1).getNodeRef();
 				
 				LocalSemiFinishedProductData lSF1 = new LocalSemiFinishedProductData();
 				lSF1.setName("Local semi finished 1");
-				NodeRef lSF1NodeRef = alfrescoRepository.create(testFolderNodeRef, lSF1).getNodeRef();
+				NodeRef lSF1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), lSF1).getNodeRef();
 				
 				/*-- Create finished product --*/
 				logger.info("/*-- Create finished product --*/");
@@ -463,7 +463,7 @@ public class DepthLevelListPolicyTest extends PLMBaseTestCase {
 				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, lSF1NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
 				
-				return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();				
+				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();				
 			}
 		}, false, true);	
 		
@@ -483,7 +483,7 @@ public class DepthLevelListPolicyTest extends PLMBaseTestCase {
 			public NodeRef execute() throws Throwable {
 				
 				logger.debug("copy product");
-				return copyService.copy(finishedProductNodeRef, testFolderNodeRef,
+				return copyService.copy(finishedProductNodeRef, getTestFolderNodeRef(),
 						ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
 								
 			}
