@@ -82,7 +82,7 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
 				compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.L, null, null, rawMaterial6NodeRef));
 				semiFinishedProduct.getCompoListView().setCompoList(compoList);
-				NodeRef semiFinishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, semiFinishedProduct).getNodeRef();
+				NodeRef semiFinishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), semiFinishedProduct).getNodeRef();
 		
 				/*-- Create finished product --*/
 				logger.info("/*-- Create finished product --*/");				 
@@ -112,7 +112,7 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 				compoList.add(new CompoListDataItem(null, null, null, 2d, CompoListUnit.kg, null, null, semiFinishedProductNodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
 				
-				return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();	
+				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();	
 				
 				
 			}},false,true);
@@ -123,7 +123,7 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 							// specification1
 							Map<QName, Serializable> properties = new HashMap<QName, Serializable>();		
 							properties.put(ContentModel.PROP_NAME, "Spec1");
-							NodeRef productSpecificationNodeRef1 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, 
+							NodeRef productSpecificationNodeRef1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, 
 											QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, 
 											(String)properties.get(ContentModel.PROP_NAME)), 
 											PLMModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
@@ -172,7 +172,7 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 							// specification2
 							properties = new HashMap<QName, Serializable>();		
 							properties.put(ContentModel.PROP_NAME, "Spec2");
-							NodeRef productSpecificationNodeRef2 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, 
+							NodeRef productSpecificationNodeRef2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, 
 											QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, 
 											(String)properties.get(ContentModel.PROP_NAME)), 
 											PLMModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();

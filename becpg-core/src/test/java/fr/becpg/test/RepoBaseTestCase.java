@@ -17,7 +17,15 @@
  ******************************************************************************/
 package fr.becpg.test;
 
+import java.util.Date;
+import java.util.List;
+
 import javax.annotation.Resource;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
 
 import junit.framework.TestCase;
 
@@ -28,6 +36,8 @@ import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.security.authentication.AuthenticationComponent;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.MutableAuthenticationDao;
+import org.alfresco.repo.solr.SOLRTrackingComponent;
+import org.alfresco.repo.solr.Transaction;
 import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.ServiceRegistry;
@@ -44,6 +54,13 @@ import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClients;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.InitializingBean;
@@ -52,6 +69,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.subethamail.wiser.Wiser;
+import org.w3c.dom.Document;
+
+import com.tradeshift.test.remote.Remote;
+import com.tradeshift.test.remote.RemoteTestRunner;
 
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.admin.InitVisitorService;
@@ -70,31 +91,34 @@ import fr.becpg.repo.repository.RepositoryEntity;
  * @author matthieu
  */
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({ "classpath:alfresco/application-context.xml", "classpath:alfresco/web-scripts-application-context.xml",
-		"classpath:alfresco/web-scripts-application-context-test.xml" })
+@RunWith(RemoteTestRunner.class)
+@Remote(runnerClass = SpringJUnit4ClassRunner.class)
+@ContextConfiguration({ "classpath:alfresco/application-context.xml" })
 public abstract class RepoBaseTestCase extends TestCase implements InitializingBean {
 
 	private static Log logger = LogFactory.getLog(RepoBaseTestCase.class);
 
-	protected NodeRef testFolderNodeRef;
+	private ThreadLocal<NodeRef> threadSafeTestFolder = new ThreadLocal<>();
+	
+	
+	public NodeRef getTestFolderNodeRef() {
+		return threadSafeTestFolder.get();
+	}
+
 	protected NodeRef systemFolderNodeRef;
 
 	public static RepoBaseTestCase INSTANCE;
 
 	public static Wiser wiser = new Wiser(2500);
 
-	
-	
-    static {
-    	try {
+	static {
+		try {
 			logger.debug("setupBeforeClass : Start wiser");
 			wiser.start();
 		} catch (Exception e) {
 			logger.debug("cannot open wiser!", e);
 		}
-    }
-
+	}
 
 	@Resource
 	protected MimetypeService mimetypeService;
@@ -166,46 +190,17 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 	protected RuleService ruleService;
 
 	@Resource
+	private SOLRTrackingComponent solrTrackingComponent;
+
+	@Resource
 	@Qualifier("qnameDAO")
 	protected QNameDAO qNameDAO;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		INSTANCE = this;
-	}
 
-
-	@Before
-	public void setUp() throws Exception {
-
-		super.setUp();
-
-		testFolderNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			public NodeRef execute() throws Throwable {
-				// As system user
-				AuthenticationUtil.setFullyAuthenticatedUser(AuthenticationUtil.getAdminUserName());
-
-				/** The PAT h_ testfolder. */
-				String testFolderName = "TestFolder";
-
-				ruleService.disableRules();
-				try {
-
-					NodeRef folderNodeRef = RepoBaseTestCase.INSTANCE.nodeService.getChildByName(repositoryHelper.getCompanyHome(),
-							ContentModel.ASSOC_CONTAINS, testFolderName);
-
-					if (folderNodeRef != null) {
-						nodeService.deleteNode(folderNodeRef);
-					}
-					folderNodeRef = RepoBaseTestCase.INSTANCE.fileFolderService.create(repositoryHelper.getCompanyHome(), testFolderName,
-							ContentModel.TYPE_FOLDER).getNodeRef();
-					return folderNodeRef;
-				} finally {
-					ruleService.enableRules();
-				}
-
-			}
-		}, false, true);
+		AuthenticationUtil.setFullyAuthenticatedUser(AuthenticationUtil.getAdminUserName());
 
 		boolean shouldInit = shouldInit();
 
@@ -222,8 +217,6 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 			}, false, true);
 		}
 
-		logger.debug("setUp shouldInit :" + shouldInit);
-
 		systemFolderNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 				return repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM,
@@ -236,6 +229,91 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 	}
 
+	@Before
+	public void setUp() throws Exception {
+		threadSafeTestFolder.set(transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+				// As system user
+				AuthenticationUtil.setFullyAuthenticatedUser(AuthenticationUtil.getAdminUserName());
+
+				String testFolderName = "TestFolder" + (new Date()).getTime();
+
+				NodeRef folderNodeRef = RepoBaseTestCase.INSTANCE.fileFolderService.create(repositoryHelper.getCompanyHome(), testFolderName,
+						ContentModel.TYPE_FOLDER).getNodeRef();
+				return folderNodeRef;
+
+			}
+		}, false, true));
+	}
+
+	@After
+	public void tearDown() throws Exception {
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
+			public Boolean execute() throws Throwable {
+				ruleService.disableRules();
+				try {
+
+					nodeService.deleteNode(threadSafeTestFolder.get());
+
+				} finally {
+					ruleService.enableRules();
+				}
+
+				return true;
+
+			}
+		}, false, true);
+	}
+
+	public void waitForSolr(final Date startTime) {
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+
+				List<Transaction> transactions = solrTrackingComponent.getTransactions(null, startTime.getTime(), null, null, 100);
+
+				logger.info("Found " + transactions.size() + " new transactions");
+
+				Long lastIdxServer = transactions.get(transactions.size() - 1).getId();
+
+				Long lastIdxSolr = getLastSolrIndex();
+				int j = 0;
+				while (lastIdxSolr < lastIdxServer && j < 10) {
+					Thread.sleep(2000);
+					lastIdxSolr = getLastSolrIndex();
+					j++;
+					logger.info("Wait for solr (2s) : serverIdx " + lastIdxServer + " solrIdx " + lastIdxSolr + " retry *" + j);
+				}
+
+				return null;
+
+			}
+
+		}, false, true);
+	}
+
+	private Long getLastSolrIndex() throws Exception {
+
+		HttpClient httpclient = HttpClients.createDefault();
+		HttpGet httpget = new HttpGet("http://localhost:8080/solr/admin/cores?action=SUMMARY&wt=xml");
+		HttpResponse httpResponse = httpclient.execute(httpget);
+		assertEquals("HTTP Response Status is not OK(200)", HttpStatus.SC_OK, httpResponse.getStatusLine().getStatusCode());
+		HttpEntity entity = httpResponse.getEntity();
+		assertNotNull("Response from Web Script is null", entity);
+	
+		DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+		domFactory.setNamespaceAware(true); // never forget this!
+		DocumentBuilder builder = domFactory.newDocumentBuilder();
+		Document doc = builder.parse(entity.getContent());
+
+		XPathFactory factory = XPathFactory.newInstance();
+		XPath xpath = factory.newXPath();
+
+		// <long name="Id for last TX on server">1413</long><long
+		// name="Id for last TX in index">1413</long>
+
+		return Long.valueOf((String) xpath.evaluate("//long[@name='Id for last TX in index']", doc, XPathConstants.STRING));
+	}
+
 	protected boolean shouldInit() {
 		return nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
 				TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM)) == null;
@@ -243,5 +321,4 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 	protected void doInitRepo(boolean shouldInit) {
 	}
-
 }

@@ -17,6 +17,8 @@
  ******************************************************************************/
 package fr.becpg.repo.repository.model;
 
+import java.io.Serializable;
+
 
 
 /**
@@ -25,7 +27,7 @@ package fr.becpg.repo.repository.model;
  * 
  * @author matthieu
  */
-public abstract class BaseObject /* TODO implements Serializable */{    
+public abstract class BaseObject implements Serializable {    
 
 	public abstract String toString();
     public abstract boolean equals(Object o);

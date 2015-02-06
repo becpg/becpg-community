@@ -34,6 +34,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 
 import fr.becpg.repo.designer.DesignerService;
 import fr.becpg.repo.designer.impl.FormModelVisitor;
@@ -75,7 +76,7 @@ public class DesignerWorkflowDeployerTest extends RepoBaseTestCase {
 				}
 				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
 
-				InputStream in = ClassLoader.getSystemResourceAsStream("beCPG/designer/testWorkflow.xml");
+				InputStream in = (new ClassPathResource("beCPG/designer/testWorkflow.xml")).getInputStream();
 				assertNotNull(in);
 
 				String fileName = "testWorkflow.xml";

@@ -82,7 +82,7 @@ public class FormulationTareTest extends AbstractFinishedProductTest {
 				packList.add(new PackagingListDataItem(null, 3d, PackagingListUnit.g, PackagingLevel.Primary, true, packagingMaterial3NodeRef));
 				finishedProduct.getPackagingListView().setPackagingList(packList);
 				
-				return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
+				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
 			}
 		}, false, true);

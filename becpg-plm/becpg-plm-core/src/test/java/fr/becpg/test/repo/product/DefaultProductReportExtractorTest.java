@@ -95,7 +95,7 @@ public class DefaultProductReportExtractorTest extends AbstractFinishedProductTe
 				compoList.add(new CompoListDataItem(null, null, 0.5d, 0.5d, CompoListUnit.kg, 3d, DeclarationType.Declare, rawMaterial2NodeRef));
 				compoList.add(new CompoListDataItem(null, null, 0.5d, 0.5d, CompoListUnit.kg, 3d, DeclarationType.Declare, rawMaterial3NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
-				NodeRef finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();	
+				NodeRef finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();	
 				
 				// add labelingTemplate aspect
 				ProductData finishedProductData = alfrescoRepository.findOne(finishedProductNodeRef);

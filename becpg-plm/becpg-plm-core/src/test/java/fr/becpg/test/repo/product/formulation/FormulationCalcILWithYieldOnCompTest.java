@@ -73,7 +73,7 @@ public class FormulationCalcILWithYieldOnCompTest extends AbstractFinishedProduc
 				compoList.add(temp); 
 
 				finishedProduct.getCompoListView().setCompoList(compoList);
-				return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();				
+				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();				
 				
 			}},false,true);
 	   
@@ -128,7 +128,7 @@ public class FormulationCalcILWithYieldOnCompTest extends AbstractFinishedProduc
 				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 10d, CompoListUnit.Perc, null, DeclarationType.Declare, rawMaterial3NodeRef));				
 				
 				finishedProduct.getCompoListView().setCompoList(compoList);
-				return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();				
+				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();				
 				
 			}},false,true);
 	   

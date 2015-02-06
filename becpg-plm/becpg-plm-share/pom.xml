@@ -10,8 +10,8 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>becpg-plm-share</artifactId>
 	<packaging>amp</packaging>
-	<name>beCPG Plm Share</name>
-	<description>beCPG Share plm ui</description>
+	<name>beCPG PLM Share</name>
+	<description>beCPG Share PLM UI</description>
 	<licenses>
 		<license>
 			<name>GNU LESSER GENERAL PUBLIC LICENSE</name>

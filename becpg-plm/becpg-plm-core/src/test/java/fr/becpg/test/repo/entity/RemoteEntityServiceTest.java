@@ -48,7 +48,7 @@ public class RemoteEntityServiceTest extends PLMBaseTestCase {
 	   final NodeRef	sfNodeRef  = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
-				return BeCPGPLMTestHelper.createMultiLevelProduct(testFolderNodeRef);
+				return BeCPGPLMTestHelper.createMultiLevelProduct(getTestFolderNodeRef());
 			}
 		}, false, true);
 		

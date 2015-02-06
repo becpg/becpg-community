@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
@@ -44,8 +43,6 @@ import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.test.BeCPGTestHelper;
 
 public class ProductValidationWorkflowTest extends AbstractWorkflowTest {
-
-	private static String PATH_PRODUCTFOLDER = "TestProductFolder";
 
 	private static final String WF_URI = "http://www.bcpg.fr/model/workflow/1.0";
 
@@ -74,16 +71,10 @@ public class ProductValidationWorkflowTest extends AbstractWorkflowTest {
 
 				BeCPGTestHelper.createUsers();
 
-				NodeRef folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_PRODUCTFOLDER);
-				if (folderNodeRef != null) {
-					nodeService.deleteNode(folderNodeRef);
-				}
-				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_PRODUCTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
-
 				RawMaterialData rawMaterial1 = new RawMaterialData();
 				rawMaterial1.setName("Raw material 1");
 
-				return alfrescoRepository.create(folderNodeRef, rawMaterial1).getNodeRef();
+				return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial1).getNodeRef();
 
 			}
 		}, false, true);

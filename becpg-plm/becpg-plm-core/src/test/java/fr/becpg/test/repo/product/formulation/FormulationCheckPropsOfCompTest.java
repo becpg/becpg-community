@@ -68,7 +68,7 @@ public class FormulationCheckPropsOfCompTest extends AbstractFinishedProductTest
 				compoList.add(new CompoListDataItem(null, null, null, 10d, CompoListUnit.g, 10d, DeclarationType.Detail, rawMaterial7NodeRef));
 
 				finishedProduct.getCompoListView().setCompoList(compoList);
-				NodeRef finishedProductNodeRef1 = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
+				NodeRef finishedProductNodeRef1 = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
 				/*-- Formulate product --*/
 				logger.debug("/*-- Formulate product --*/");

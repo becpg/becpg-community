@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
@@ -33,7 +32,6 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.junit.After;
 import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -96,8 +94,8 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		INSTANCE = this;
 		INSTANCE2 = this;
+		super.afterPropertiesSet();
 	}
 
 	@Override
@@ -149,33 +147,36 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 
 	}
 
-	@After
-	public void tearDown() throws Exception {
-		logger.trace("TearDown :");
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
-			public Boolean execute() throws Throwable {
-				AuthenticationUtil.setFullyAuthenticatedUser(AuthenticationUtil.getAdminUserName());
-				// products
-				List<NodeRef> productNodeRefs = BeCPGQueryBuilder.createQuery().ofType(PLMModel.TYPE_PRODUCT).inDB().list();
-
-				for (NodeRef productNodeRef : productNodeRefs) {
-					if (nodeService.exists(productNodeRef) && !nodeService.hasAspect(productNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)) {
-
-						String path = nodeService.getPath(productNodeRef).toDisplayPath(nodeService, permissionService);
-						// if(!path.contains(BeCPGTestHelper.PATH_TESTFOLDER)){
-						logger.trace("   - Deleting :" + nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME));
-						logger.trace("   - PATH :" + path);
-						nodeService.deleteNode(productNodeRef);
-						// }
-					}
-				}
-				logger.trace("   - Deleting :" + nodeService.getProperty(testFolderNodeRef, ContentModel.PROP_NAME));
-				nodeService.deleteNode(testFolderNodeRef);
-				return true;
-
-			}
-		}, false, true);
-	}
+//	@After
+//	public void tearDown() throws Exception {
+//		logger.trace("TearDown :");
+//		super.tearDown();
+//		
+//		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
+//			public Boolean execute() throws Throwable {
+//				AuthenticationUtil.setFullyAuthenticatedUser(AuthenticationUtil.getAdminUserName());
+//				// products
+//				List<NodeRef> productNodeRefs = BeCPGQueryBuilder.createQuery().ofType(PLMModel.TYPE_PRODUCT).inDB().list();
+//
+//				for (NodeRef productNodeRef : productNodeRefs) {
+//					if (nodeService.exists(productNodeRef) && !nodeService.hasAspect(productNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)) {
+//                       try {
+//						String path = nodeService.getPath(productNodeRef).toDisplayPath(nodeService, permissionService);
+//						// if(!path.contains(BeCPGTestHelper.PATH_TESTFOLDER)){
+//						logger.trace("   - Deleting :" + nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME));
+//						logger.trace("   - PATH :" + path);
+//						nodeService.deleteNode(productNodeRef);
+//						// }
+//                       }catch(NodeLockedException e){
+//                    	   logger.warn("node is locked",e);
+//                       }
+//					}
+//				}
+//				return true;
+//
+//			}
+//		}, false, true);
+//	}
 
 	private void initConstraints() {
 

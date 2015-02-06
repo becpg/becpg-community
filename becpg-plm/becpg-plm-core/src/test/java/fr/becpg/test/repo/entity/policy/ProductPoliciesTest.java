@@ -45,7 +45,7 @@ public class ProductPoliciesTest extends PLMBaseTestCase {
 
 						RawMaterialData rawMaterial1 = new RawMaterialData();
 						rawMaterial1.setName("Raw material 1");
-						return alfrescoRepository.create(testFolderNodeRef, rawMaterial1).getNodeRef();
+						return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial1).getNodeRef();
 
 					}
 				}, false, true);
@@ -60,7 +60,7 @@ public class ProductPoliciesTest extends PLMBaseTestCase {
 
 						RawMaterialData rawMaterial2 = new RawMaterialData();
 						rawMaterial2.setName("Raw material 2");
-						return alfrescoRepository.create(testFolderNodeRef, rawMaterial2).getNodeRef();
+						return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial2).getNodeRef();
 
 					}
 				}, false, true);

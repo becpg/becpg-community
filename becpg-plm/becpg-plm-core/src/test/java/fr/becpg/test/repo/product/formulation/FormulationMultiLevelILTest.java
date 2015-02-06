@@ -64,7 +64,7 @@ public class FormulationMultiLevelILTest extends AbstractFinishedProductTest {
 				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 1d, CompoListUnit.kg, 1d, DeclarationType.Declare, rawMaterial6NodeRef)); 
 
 				finishedProduct.getCompoListView().setCompoList(compoList);
-				return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();				
+				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();				
 				
 			}},false,true);
 	   

@@ -137,7 +137,7 @@ public class ECOTest extends AbstractFinishedProductTest {
 				nutList.add(new NutListDataItem(null, null, null, null, null, null, nut2, null));
 				finishedProduct.setNutList(nutList);
 
-				return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
+				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
 			}
 		}, false, true);
@@ -230,7 +230,7 @@ public class ECOTest extends AbstractFinishedProductTest {
 				replacementList.add(new ReplacementListDataItem(RevisionType.Minor, Arrays.asList(rawMaterial4NodeRef), rawMaterial5NodeRef, 100));
 				changeOrderData.setReplacementList(replacementList);
 
-				NodeRef ecoNodeRef = alfrescoRepository.create(testFolderNodeRef, changeOrderData).getNodeRef();
+				NodeRef ecoNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), changeOrderData).getNodeRef();
 
 				// calculate WUsed
 				ecoService.calculateWUsedList(ecoNodeRef,false);
@@ -418,7 +418,7 @@ public class ECOTest extends AbstractFinishedProductTest {
 				nutList.add(new NutListDataItem(null, null, null, null, null, null, nut2, null));
 				finishedProduct3.setNutList(nutList);
 
-				return alfrescoRepository.create(testFolderNodeRef, finishedProduct3).getNodeRef();
+				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct3).getNodeRef();
 
 			}
 		}, false, true);
@@ -490,7 +490,7 @@ public class ECOTest extends AbstractFinishedProductTest {
 				replacementList.add(new ReplacementListDataItem(RevisionType.Major, Arrays.asList(rawMaterial4NodeRef), rawMaterial5NodeRef, 100));
 				changeOrderData.setReplacementList(replacementList);
 
-				NodeRef ecoNodeRef = alfrescoRepository.create(testFolderNodeRef, changeOrderData).getNodeRef();
+				NodeRef ecoNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), changeOrderData).getNodeRef();
 
 				// calculate WUsed
 				ecoService.calculateWUsedList(ecoNodeRef,false);

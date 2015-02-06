@@ -100,7 +100,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 				finishedProduct1.getLabelingListView().setLabelingRuleList(labelingRuleList);
 
 
-				return alfrescoRepository.create(testFolderNodeRef, finishedProduct1).getNodeRef();
+				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
 			}
 		}, false, true);
 	}
@@ -125,7 +125,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 
 
-				return alfrescoRepository.create(testFolderNodeRef, finishedProduct1).getNodeRef();
+				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
 			}
 		}, false, true);
         
@@ -182,7 +182,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 				finishedProduct1.getCompoListView().setCompoList(compoList1);
 				
-				return alfrescoRepository.create(testFolderNodeRef, finishedProduct1).getNodeRef();
+				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
 			}
 		}, false, true);
 		 
@@ -237,7 +237,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 				finishedProduct1.getCompoListView().setCompoList(compoList1);
 				
-				return alfrescoRepository.create(testFolderNodeRef, finishedProduct1).getNodeRef();
+				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
 			}
 		}, false, true);
 		
@@ -356,7 +356,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 					nodeService.addAspect(rawMaterial7NodeRef,PLMModel.ASPECT_DILUENT,null);
 					
 					finishedProduct.getCompoListView().setCompoList(compoList);
-					return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();				
+					return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();				
 				}
 			}, false, true);
 		
@@ -398,7 +398,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 					nodeService.addAspect(rawMaterial7NodeRef,PLMModel.ASPECT_DILUENT,null);
 					
 					finishedProduct.getCompoListView().setCompoList(compoList);
-					return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();				
+					return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();				
 				}
 			}, false, true);
 		

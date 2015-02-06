@@ -66,7 +66,7 @@ public class EffectivityPolicyTest extends PLMBaseTestCase {
 				// Costs
 				properties.put(ContentModel.PROP_NAME, "cost1");
 				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
-				NodeRef cost = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS,
+				NodeRef cost = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
 
 				PriceListDataItem priceListDataItem = new PriceListDataItem();
@@ -83,7 +83,7 @@ public class EffectivityPolicyTest extends PLMBaseTestCase {
 				priceList.add(priceListDataItem);
 				rawMaterial1.setPriceList(priceList);
 
-				NodeRef rawMaterialNodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial1).getNodeRef();
+				NodeRef rawMaterialNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial1).getNodeRef();
 
 				// load SF and test it
 				rawMaterial1 = (RawMaterialData) alfrescoRepository.findOne(rawMaterialNodeRef);
@@ -113,7 +113,7 @@ public class EffectivityPolicyTest extends PLMBaseTestCase {
 //				
 //				fp1.setCompoList(compoList);
 //
-//				return productDAO.create(testFolderNodeRef, fp1, dataListSf);
+//				return productDAO.create(getTestFolderNodeRef(), fp1, dataListSf);
 //
 //			}
 //		}, false, true);
@@ -139,7 +139,7 @@ public class EffectivityPolicyTest extends PLMBaseTestCase {
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
-				NodeRef rawMaterialNodeRef = copyService.copyAndRename(sfNodeRef, testFolderNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
+				NodeRef rawMaterialNodeRef = copyService.copyAndRename(sfNodeRef, getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
 
 				RawMaterialData rawMaterial1 = (RawMaterialData) alfrescoRepository.findOne(rawMaterialNodeRef);
 				assertNotNull("check priceList", rawMaterial1.getPriceList());

@@ -69,20 +69,20 @@ public class QualityControlTest extends PLMBaseTestCase {
 	private NodeRef controlPlanNodeRef;
 
 
-	private void createControlPlan(NodeRef testFolderNodeRef) {
+	private void createControlPlan() {
 
 		// create method
 		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 		String name = "Method";
 		properties.put(ContentModel.PROP_NAME, name);
-		methodNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name),
+		methodNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name),
 				QualityModel.TYPE_CONTROL_METHOD, properties).getChildRef();
 
 		// create control step
 		properties.clear();
 		name = "Step";
 		properties.put(ContentModel.PROP_NAME, name);
-		controlStepNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name),
+		controlStepNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name),
 				QualityModel.TYPE_CONTROL_STEP, properties).getChildRef();
 
 		// create control point
@@ -91,7 +91,7 @@ public class QualityControlTest extends PLMBaseTestCase {
 		List<ControlDefListDataItem> controlDefList = new ArrayList<ControlDefListDataItem>();
 		controlDefList.add(new ControlDefListDataItem(null, "bcpg_nutList", null, null, true, methodNodeRef, nuts));
 		controlPointData.setControlDefList(controlDefList);
-		controlPointNodeRef = alfrescoRepository.create(testFolderNodeRef, controlPointData).getNodeRef();
+		controlPointNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), controlPointData).getNodeRef();
 
 		// create control plan
 		ControlPlanData controlPlanData = new ControlPlanData();
@@ -99,10 +99,10 @@ public class QualityControlTest extends PLMBaseTestCase {
 		List<SamplingDefListDataItem> samplingDefList = new ArrayList<SamplingDefListDataItem>();
 		samplingDefList.add(new SamplingDefListDataItem(2, 1, "/4hours", controlPointNodeRef, controlStepNodeRef, null, null, null, "Reaction"));
 		controlPlanData.setSamplingDefList(samplingDefList);
-		controlPlanNodeRef = alfrescoRepository.create(testFolderNodeRef, controlPlanData).getNodeRef();
+		controlPlanNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), controlPlanData).getNodeRef();
 	}
 
-	private void createQualityControl(NodeRef testFolderNodeRef, List<NodeRef> controlPlansNodeRef, NodeRef productNodeRef) {
+	private void createQualityControl( List<NodeRef> controlPlansNodeRef, NodeRef productNodeRef) {
 
 		QualityControlData qualityControlData = new QualityControlData();
 		qualityControlData.setName("Quality control");
@@ -113,7 +113,7 @@ public class QualityControlTest extends PLMBaseTestCase {
 		qualityControlData.setProduct(productNodeRef);
 		qualityControlData.setControlPlans(controlPlansNodeRef);
 
-		qualityControlNodeRef = alfrescoRepository.create(testFolderNodeRef, qualityControlData).getNodeRef();
+		qualityControlNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), qualityControlData).getNodeRef();
 
 		// TODO : add a policy...
 		// qualityControlService.createSamplingList(qualityControlNodeRef,
@@ -129,13 +129,13 @@ public class QualityControlTest extends PLMBaseTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				createControlPlan(testFolderNodeRef);
+				createControlPlan();
 				List<NodeRef> controlPlansNodeRef = new ArrayList<NodeRef>();
 				controlPlansNodeRef.add(controlPlanNodeRef);
 
-				NodeRef productNodeRef = BeCPGPLMTestHelper.createRawMaterial(testFolderNodeRef, "Raw material");
+				NodeRef productNodeRef = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "Raw material");
 
-				createQualityControl(testFolderNodeRef, controlPlansNodeRef, productNodeRef);
+				createQualityControl(controlPlansNodeRef, productNodeRef);
 
 				return null;
 

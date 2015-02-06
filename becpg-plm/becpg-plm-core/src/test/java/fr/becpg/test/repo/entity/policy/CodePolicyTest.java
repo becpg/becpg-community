@@ -60,7 +60,7 @@ public class CodePolicyTest extends PLMBaseTestCase  {
 						Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 						String name = "Supplier 1";
 						properties.put(ContentModel.PROP_NAME, name);
-						return nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS,
+						return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name),
 								PLMModel.TYPE_SUPPLIER, properties).getChildRef();
 
@@ -79,7 +79,7 @@ public class CodePolicyTest extends PLMBaseTestCase  {
 						Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 						String name = "Supplier 2";
 						properties.put(ContentModel.PROP_NAME, name);
-						return nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS,
+						return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name),
 								PLMModel.TYPE_SUPPLIER, properties).getChildRef();
 
@@ -100,7 +100,7 @@ public class CodePolicyTest extends PLMBaseTestCase  {
 						String name = "Supplier 3";
 						properties.put(ContentModel.PROP_NAME, name);
 						properties.put(BeCPGModel.PROP_CODE, "F3");
-						return nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS,
+						return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name),
 								PLMModel.TYPE_SUPPLIER, properties).getChildRef();
 
@@ -121,7 +121,7 @@ public class CodePolicyTest extends PLMBaseTestCase  {
 						String name = "Supplier 4";
 						properties.put(ContentModel.PROP_NAME, name);
 						properties.put(BeCPGModel.PROP_CODE, "F3");
-						return nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS,
+						return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name),
 								PLMModel.TYPE_SUPPLIER, properties).getChildRef();
 

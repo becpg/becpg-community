@@ -89,7 +89,7 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 						rawMaterial4NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
 
-				NodeRef finishedProductNodeRef =  alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
+				NodeRef finishedProductNodeRef =  alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
 				/*-- Formulate product --*/
 				logger.debug("/*-- Formulate details --*/");
@@ -163,7 +163,7 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 				compoList.add(new CompoListDataItem(null,item, 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 				compoList.add(new CompoListDataItem(null, item, 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
-				return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();				
+				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();				
 				
 			}},false,true);
 	   

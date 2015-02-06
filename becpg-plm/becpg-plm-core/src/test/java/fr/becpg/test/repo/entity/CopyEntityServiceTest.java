@@ -40,7 +40,7 @@ public class CopyEntityServiceTest extends PLMBaseTestCase {
 		final NodeRef productNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
-				return BeCPGPLMTestHelper.createMultiLevelProduct(testFolderNodeRef);
+				return BeCPGPLMTestHelper.createMultiLevelProduct(getTestFolderNodeRef());
 			}
 		}, false, true);
 		
@@ -53,22 +53,22 @@ public class CopyEntityServiceTest extends PLMBaseTestCase {
 				assertTrue(startEffectivity.before(new Date()));
 				
 				// First copy
-				copyProduct(testFolderNodeRef, productNodeRef, "Test Copy");
+				copyProduct(productNodeRef, "Test Copy");
 				
 				// Second copy
-				copyProduct(testFolderNodeRef, productNodeRef, "Test Copy (1)");
+				copyProduct( productNodeRef, "Test Copy (1)");
 				
 				return null;
 			}
 		}, false, true);
 	}
 	
-	private void copyProduct(final NodeRef testFolderNodeRef, final NodeRef sourceNodeRef, final String givenName){
+	private void copyProduct(final NodeRef sourceNodeRef, final String givenName){
 		
 		NodeRef productNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
-				return entityService.createOrCopyFrom(sourceNodeRef, testFolderNodeRef, PLMModel.TYPE_FINISHEDPRODUCT, givenName);
+				return entityService.createOrCopyFrom(sourceNodeRef, getTestFolderNodeRef(), PLMModel.TYPE_FINISHEDPRODUCT, givenName);
 			}
 		}, false, true);
 		

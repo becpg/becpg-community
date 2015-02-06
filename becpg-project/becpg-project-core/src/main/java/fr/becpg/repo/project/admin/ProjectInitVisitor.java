@@ -136,70 +136,76 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 		dataLists.add(ProjectModel.TYPE_LOG_TIME_LIST);
 		NodeRef entityTplNodeRef = entityTplService.createEntityTpl(entityTplsNodeRef, ProjectModel.TYPE_PROJECT, true, dataLists, null);
 
-		if (ruleService.getRules(entityTplNodeRef).isEmpty()) {
+		try {
 
-			ActionCondition typeCondition = actionService.createActionCondition(IsSubTypeEvaluator.NAME);
-			typeCondition.setParameterValue(IsSubTypeEvaluator.PARAM_TYPE, BeCPGModel.TYPE_ENTITYLIST_ITEM);
-			typeCondition.setInvertCondition(true);
+			if (ruleService.getRules(entityTplNodeRef).isEmpty()) {
 
-			Map<String, Serializable> params = new HashMap<String, Serializable>();
-			params.put(ProjectActivityActionExecuter.PARAM_ACTIVITY_EVENT, ActivityEvent.Create.toString());
-			CompositeAction compositeAction = actionService.createCompositeAction();
-			Action myAction = actionService.createAction(ProjectActivityActionExecuter.NAME, params);
-			compositeAction.addAction(myAction);
-			compositeAction.addActionCondition(typeCondition);
+				ActionCondition typeCondition = actionService.createActionCondition(IsSubTypeEvaluator.NAME);
+				typeCondition.setParameterValue(IsSubTypeEvaluator.PARAM_TYPE, BeCPGModel.TYPE_ENTITYLIST_ITEM);
+				typeCondition.setInvertCondition(true);
 
-			// Create Rule
-			Rule rule = new Rule();
-			rule.setTitle(I18NUtil.getMessage("project.activity.rule.inbound.title"));
-			rule.setDescription(I18NUtil.getMessage("project.activity.rule.inbound.description"));
-			rule.applyToChildren(true);
-			rule.setExecuteAsynchronously(false);
-			rule.setRuleDisabled(false);
-			rule.setRuleType(RuleType.INBOUND);
-			rule.setAction(compositeAction);
-			ruleService.saveRule(entityTplNodeRef, rule);
+				Map<String, Serializable> params = new HashMap<String, Serializable>();
+				params.put(ProjectActivityActionExecuter.PARAM_ACTIVITY_EVENT, ActivityEvent.Create.toString());
+				CompositeAction compositeAction = actionService.createCompositeAction();
+				Action myAction = actionService.createAction(ProjectActivityActionExecuter.NAME, params);
+				compositeAction.addAction(myAction);
+				compositeAction.addActionCondition(typeCondition);
 
-			params.put(ProjectActivityActionExecuter.PARAM_ACTIVITY_EVENT, ActivityEvent.Update.toString());
-			compositeAction = actionService.createCompositeAction();
-			myAction = actionService.createAction(ProjectActivityActionExecuter.NAME, params);
-			typeCondition = actionService.createActionCondition(IsSubTypeEvaluator.NAME);
-			typeCondition.setParameterValue(IsSubTypeEvaluator.PARAM_TYPE, BeCPGModel.TYPE_ENTITYLIST_ITEM);
-			typeCondition.setInvertCondition(true);
-			compositeAction.addAction(myAction);
-			compositeAction.addActionCondition(typeCondition);
+				// Create Rule
+				Rule rule = new Rule();
+				rule.setTitle(I18NUtil.getMessage("project.activity.rule.inbound.title"));
+				rule.setDescription(I18NUtil.getMessage("project.activity.rule.inbound.description"));
+				rule.applyToChildren(true);
+				rule.setExecuteAsynchronously(false);
+				rule.setRuleDisabled(false);
+				rule.setRuleType(RuleType.INBOUND);
+				rule.setAction(compositeAction);
+				ruleService.saveRule(entityTplNodeRef, rule);
 
-			// Update Rule
-			rule = new Rule();
-			rule.setTitle(I18NUtil.getMessage("project.activity.rule.update.title"));
-			rule.setDescription(I18NUtil.getMessage("project.activity.rule.update.description"));
-			rule.applyToChildren(true);
-			rule.setExecuteAsynchronously(false);
-			rule.setRuleDisabled(false);
-			rule.setRuleType(RuleType.UPDATE);
-			rule.setAction(compositeAction);
-			ruleService.saveRule(entityTplNodeRef, rule);
+				params.put(ProjectActivityActionExecuter.PARAM_ACTIVITY_EVENT, ActivityEvent.Update.toString());
+				compositeAction = actionService.createCompositeAction();
+				myAction = actionService.createAction(ProjectActivityActionExecuter.NAME, params);
+				typeCondition = actionService.createActionCondition(IsSubTypeEvaluator.NAME);
+				typeCondition.setParameterValue(IsSubTypeEvaluator.PARAM_TYPE, BeCPGModel.TYPE_ENTITYLIST_ITEM);
+				typeCondition.setInvertCondition(true);
+				compositeAction.addAction(myAction);
+				compositeAction.addActionCondition(typeCondition);
 
-			params.put(ProjectActivityActionExecuter.PARAM_ACTIVITY_EVENT, ActivityEvent.Delete.toString());
-			compositeAction = actionService.createCompositeAction();
-			myAction = actionService.createAction(ProjectActivityActionExecuter.NAME, params);
-			typeCondition = actionService.createActionCondition(IsSubTypeEvaluator.NAME);
-			typeCondition.setParameterValue(IsSubTypeEvaluator.PARAM_TYPE, BeCPGModel.TYPE_ENTITYLIST_ITEM);
-			typeCondition.setInvertCondition(true);
-			compositeAction.addAction(myAction);
-			compositeAction.addActionCondition(typeCondition);
+				// Update Rule
+				rule = new Rule();
+				rule.setTitle(I18NUtil.getMessage("project.activity.rule.update.title"));
+				rule.setDescription(I18NUtil.getMessage("project.activity.rule.update.description"));
+				rule.applyToChildren(true);
+				rule.setExecuteAsynchronously(false);
+				rule.setRuleDisabled(false);
+				rule.setRuleType(RuleType.UPDATE);
+				rule.setAction(compositeAction);
+				ruleService.saveRule(entityTplNodeRef, rule);
 
-			// Delete Rule
-			rule = new Rule();
-			rule.setTitle(I18NUtil.getMessage("project.activity.rule.outbound.title"));
-			rule.setDescription(I18NUtil.getMessage("project.activity.rule.outbound.description"));
-			rule.applyToChildren(true);
-			rule.setExecuteAsynchronously(false);
-			rule.setRuleDisabled(false);
-			rule.setRuleType(RuleType.OUTBOUND);
-			rule.setAction(compositeAction);
-			ruleService.saveRule(entityTplNodeRef, rule);
+				params.put(ProjectActivityActionExecuter.PARAM_ACTIVITY_EVENT, ActivityEvent.Delete.toString());
+				compositeAction = actionService.createCompositeAction();
+				myAction = actionService.createAction(ProjectActivityActionExecuter.NAME, params);
+				typeCondition = actionService.createActionCondition(IsSubTypeEvaluator.NAME);
+				typeCondition.setParameterValue(IsSubTypeEvaluator.PARAM_TYPE, BeCPGModel.TYPE_ENTITYLIST_ITEM);
+				typeCondition.setInvertCondition(true);
+				compositeAction.addAction(myAction);
+				compositeAction.addActionCondition(typeCondition);
 
+				// Delete Rule
+				rule = new Rule();
+				rule.setTitle(I18NUtil.getMessage("project.activity.rule.outbound.title"));
+				rule.setDescription(I18NUtil.getMessage("project.activity.rule.outbound.description"));
+				rule.applyToChildren(true);
+				rule.setExecuteAsynchronously(false);
+				rule.setRuleDisabled(false);
+				rule.setRuleType(RuleType.OUTBOUND);
+				rule.setAction(compositeAction);
+				ruleService.saveRule(entityTplNodeRef, rule);
+
+			}
+		} catch (Exception e) {
+			// TODO unit tests
+			logger.error(e, e);
 		}
 
 	}

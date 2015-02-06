@@ -22,6 +22,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
+import org.springframework.core.io.ClassPathResource;
 
 import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.helper.TranslateHelper;
@@ -82,7 +83,7 @@ public class ImporterActionExecuterTest  extends PLMBaseTestCase {
  		    	
  		    	ContentWriter writer = contentService.getWriter(contentNodeRef, ContentModel.PROP_CONTENT, true);
  		    	logger.debug("import.csv");
- 		    	InputStream in = ClassLoader.getSystemResourceAsStream("beCPG/import/Import.csv");			
+ 		    	InputStream in = (new ClassPathResource("beCPG/import/Import.csv")).getInputStream();			
  		    	
  		    	String mimetype = mimetypeService.guessMimetype(FILENAME_IMPORT_CSV); 		    	
  		    	ContentCharsetFinder charsetFinder = mimetypeService.getContentCharsetFinder();
@@ -134,7 +135,7 @@ public class ImporterActionExecuterTest  extends PLMBaseTestCase {
  		    	
  		    	ContentWriter writer = contentService.getWriter(contentNodeRef, ContentModel.PROP_CONTENT, true);
  		    	logger.debug("Import-with-IntegrityException.csv");
- 		    	InputStream in = ClassLoader.getSystemResourceAsStream("beCPG/import/Import-with-IntegrityException.csv");
+ 		    	InputStream in = (new ClassPathResource("beCPG/import/Import-with-IntegrityException.csv")).getInputStream();
  		    	
  		    	String mimetype = mimetypeService.guessMimetype(FILENAME_IMPORT_CSV);
  		    	ContentCharsetFinder charsetFinder = mimetypeService.getContentCharsetFinder();

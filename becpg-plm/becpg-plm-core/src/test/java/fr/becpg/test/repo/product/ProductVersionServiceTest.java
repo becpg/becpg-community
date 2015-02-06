@@ -106,7 +106,7 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 					public NodeRef execute() throws Throwable {
 
 						/*-- Create raw material --*/
-						NodeRef r = BeCPGPLMTestHelper.createRawMaterial(testFolderNodeRef, "MP test report");
+						NodeRef r = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test report");
 
 						return r;
 					}
@@ -302,7 +302,7 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 					public NodeRef execute() throws Throwable {
 
 						/*-- Create raw material --*/
-						return BeCPGPLMTestHelper.createRawMaterial(testFolderNodeRef, "MP test report");
+						return BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test report");
 
 					}
 				}, false, true);
@@ -369,7 +369,7 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				NodeRef rawMaterialNodeRef = BeCPGPLMTestHelper.createRawMaterial(testFolderNodeRef, "MP test report");
+				NodeRef rawMaterialNodeRef = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test report");
 				Map<String, Serializable> properties = new HashMap<String, Serializable>();
 				properties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
 				Version vRawMaterialNodeRef = versionService.createVersion(rawMaterialNodeRef, properties);
@@ -408,7 +408,7 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 					@Override
 					public NodeRef execute() throws Throwable {
 
-						NodeRef rawMaterialNodeRef = BeCPGPLMTestHelper.createRawMaterial(testFolderNodeRef, "MP test report");
+						NodeRef rawMaterialNodeRef = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test report");
 
 						logger.debug("Add versionnable aspect");
 						Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>();
@@ -476,7 +476,7 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				finishedProductNodeRef = BeCPGPLMTestHelper.createMultiLevelProduct(testFolderNodeRef);
+				finishedProductNodeRef = BeCPGPLMTestHelper.createMultiLevelProduct(getTestFolderNodeRef());
 
 				// create variant
 				Map<QName, Serializable> props = new HashMap<>();
@@ -588,7 +588,7 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				rawMaterialNodeRef = BeCPGPLMTestHelper.createRawMaterial(testFolderNodeRef, "MP test report");
+				rawMaterialNodeRef = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test report");
 
 				ProductData fpData = new FinishedProductData();
 				fpData.setName("FP");
@@ -598,7 +598,7 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, 2d, null, CompoListUnit.kg, null, DeclarationType.Declare,
 						rawMaterialNodeRef));
 				fpData.getCompoListView().setCompoList(compoList);
-				finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, fpData).getNodeRef();
+				finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), fpData).getNodeRef();
 
 				// add Checkout aspect
 				Map<QName, Serializable> props = new HashMap<QName, Serializable>(1);
@@ -657,14 +657,14 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				NodeRef rawMaterialNodeRef = BeCPGPLMTestHelper.createRawMaterial(testFolderNodeRef, "MP test report");
+				NodeRef rawMaterialNodeRef = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test report");
 
 				// suppliers
 				String[] supplierNames = { "Supplier1", "Supplier2", "Supplier3" };
 				List<NodeRef> supplierNodeRefs = new LinkedList<NodeRef>();
 				for (String supplierName : supplierNames) {
 					NodeRef supplierNodeRef = null;
-					NodeRef entityFolder = nodeService.getChildByName(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, supplierName);
+					NodeRef entityFolder = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, supplierName);
 					if (entityFolder != null) {
 						supplierNodeRef = nodeService.getChildByName(entityFolder, ContentModel.ASSOC_CONTAINS, supplierName);
 					}
@@ -672,7 +672,7 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 					if (supplierNodeRef == null) {
 						Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 						properties.put(ContentModel.PROP_NAME, supplierName);
-						supplierNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS,
+						supplierNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 								QName.createQName((String) properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_SUPPLIER, properties).getChildRef();
 					}
 

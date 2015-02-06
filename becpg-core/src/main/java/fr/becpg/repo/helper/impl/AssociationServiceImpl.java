@@ -59,6 +59,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 
 		if (dbAssocNodeRefs != null) {
 			// remove from db
+			
 			for (AssociationRef assocRef : dbAssocNodeRefs) {
 				if (assocNodeRefs == null) {
 					nodeService.removeAssociation(nodeRef, assocRef.getTargetRef(), qName);
