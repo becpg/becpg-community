@@ -110,13 +110,13 @@
 
             case "blogpost":
             {
-               url = "blog-postview?postId=" + name;
+               url = "blog-postview?postId=" + encodeURIComponent(name);
                break;
             }
 
             case "forumpost":
             {
-               url = "discussions-topicview?topicId=" + name;
+               url = "discussions-topicview?topicId=" + encodeURIComponent(name);
                break;
             }
 
@@ -128,20 +128,20 @@
 
             case "wikipage":
             {
-               url = "wiki-page?title=" + name;
+               url = "wiki-page?title=" + encodeURIComponent(name);
                break;
             }
 
             case "link":
             {
-               url = "links-view?linkId=" + name;
+               url = "links-view?linkId=" + encodeURIComponent(name);
                break;
             }
 
             case "datalist":
             case "datalistitem":
             {
-               url = "data-lists?list=" + name;
+               url = "data-lists?list=" + encodeURIComponent(name);
                break;
             }
          }
@@ -291,6 +291,7 @@
 
       buildThumbnailHtml: function(record, height, width)
       {
+         var moddate = record.getData("lastThumbnailModification") ? "doclib:" + record.getData("lastThumbnailModification") : record.getData("modifiedOn");
          var config = {
             displayName: record.getData("displayName"),
             type: record.getData("type"),
@@ -299,7 +300,7 @@
             site: record.getData("site"),
             path: record.getData("path"),
             container: record.getData("container"),
-            modifiedOn: record.getData("modifiedOn"),
+            modifiedOn: moddate,
             mimetype: record.getData("mimetype"),
             width: width,
             height: height
@@ -352,7 +353,7 @@
          var imageUrl = this.buildThumbnailUrl(config.type, config.nodeRef, config.modifiedOn),
              htmlName = $html(config.displayName);
          
-         var html = '<span><a href="' + url + '"' + (isImage ? ' onclick="showLightbox(this);return false;"' : "") + '><img src="' + imageUrl + '" alt="' + htmlName + '" title="' + htmlName + '"' + (config.height && config.width ? ' width="' + config.width + '" height="' + config.height + '"' : "") + '/></a></span>';
+         var html = '<span><a href="' + url + '"' + (isImage ? ' onclick="Alfresco.Lightbox.show(this);return false;"' : "") + '><img src="' + imageUrl + '" alt="' + htmlName + '" title="' + htmlName + '"' + (config.height && config.width ? ' width="' + config.width + '" height="' + config.height + '"' : "") + '/></a></span>';
          
          return html;
       }

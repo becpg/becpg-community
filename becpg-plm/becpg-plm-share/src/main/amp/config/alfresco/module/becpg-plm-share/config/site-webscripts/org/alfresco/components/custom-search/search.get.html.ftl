@@ -5,14 +5,13 @@
   <@link href="${url.context}/res/components/search/custom-search.css" group="search"/>
 </@>
 
-<#-- BUG HERE Why should I use replace ? -->
 <@markup id="customSearch-js" target="js" action="replace">
    <#-- JavaScript Dependencies -->
    <#include "../form/form.js.ftl"/>
-   <@script src="${url.context}/res/components/search/search-lib.js" group="search"/>
+  <@script src="${url.context}/res/components/search/search-lib.js" group="search"/>
    <@script src="${url.context}/res/components/search/search.js" group="search"/>
+
    <@script src="${url.context}/res/components/search/custom-search.js"  group="search" />
-    
    <@script src="${url.context}/res/components/form/date-range.js" group="search"/>
    <@script src="${url.context}/res/components/form/number-range.js" group="search"/>
    <@script src="${url.context}/res/components/search/advsearch.js" group="search"/>
@@ -23,11 +22,14 @@
       <#assign el=args.htmlid>
       <#assign searchconfig=config.scoped['Search']['search']>
       <div id="${el}-body" class="search">
+         <#assign context=searchconfig.getChildValue('repository-search')!"context">
+         <#if searchQuery?length == 0 && context != "always">
          <div class="search-sites">
-            <#if siteId?length != 0><a id="${el}-site-link" href="#" <#if !searchAllSites && !searchRepo>class="bold"</#if>>${msg('message.singlesite', siteTitle)?html}</a> |</#if>
+            <span <#if context == "none">class="hidden"</#if>><a id="${el}-repo-link" href="#" <#if searchRepo>class="bold"</#if>>${msg('message.repository')}</a></span><#if context != "none"> |</#if>
             <a id="${el}-all-sites-link" href="#" <#if searchAllSites && !searchRepo>class="bold"</#if>>${msg('message.allsites')}</a>
-            <span <#if (searchconfig.getChildValue('repository-search')!"context") == "none">class="hidden"</#if>>| <a id="${el}-repo-link" href="#" <#if searchRepo>class="bold"</#if>>${msg('message.repository')}</a></span>
+            <#if siteId?length != 0>| <a id="${el}-site-link" href="#" <#if !searchAllSites && !searchRepo>class="bold"</#if>>${msg('message.singlesite', siteTitle)?html}</a></#if>
          </div>
+         </#if>
          <div class="search-box-adv">
             <div>
                <input type="text" class="terms" name="${el}-search-text" id="${el}-search-text" value="" maxlength="1024" />
