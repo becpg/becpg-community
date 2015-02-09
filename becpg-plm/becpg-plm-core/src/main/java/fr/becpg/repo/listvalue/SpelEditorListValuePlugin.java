@@ -27,16 +27,16 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.listvalue.impl.EntityListValuePlugin;
 
+@Service
 public class SpelEditorListValuePlugin extends EntityListValuePlugin {
 
-	/** The logger. */
-	private static Log logger = LogFactory.getLog(SpelEditorListValuePlugin.class);
+	private static final Log logger = LogFactory.getLog(SpelEditorListValuePlugin.class);
 
-	/** The Constant SOURCE_TYPE_TARGET_ASSOC. */
 	private static final String SOURCE_TYPE_SPELEDITOR = "speleditor";
 
 	public String[] getHandleSourceTypes() {

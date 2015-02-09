@@ -42,41 +42,6 @@
 		</property>
 	</bean>
 
-	<bean id="productListValuePlugin" parent="entityListValuePlugin" init-method="init" class="fr.becpg.repo.listvalue.ProductListValuePlugin">
-		<property name="dictionaryService" ref="dictionaryService" />
-		<property name="reportTplService" ref="reportTplService" />
-	</bean>
-
-
-	<bean id="spelEditorListValuePlugin" parent="entityListValuePlugin" init-method="init" class="fr.becpg.repo.listvalue.SpelEditorListValuePlugin">
-	</bean>
-
-	<bean id="compoListValuePlugin" parent="entityListValuePlugin" init-method="init" class="fr.becpg.repo.listvalue.CompoListValuePlugin">
-		<property name="multiLevelDataListService" ref="multiLevelDataListService" />
-	</bean>
-
-	<bean id="nutListValuePlugin" parent="entityListValuePlugin" init-method="init" class="fr.becpg.repo.listvalue.NutListValuePlugin">
-		<property name="entityListDAO" ref="entityListDAO" />
-		<property name="associationService" ref="associationService" />
-	</bean>
-
-	<bean id="ingListValuePlugin" parent="entityListValuePlugin" init-method="init" class="fr.becpg.repo.listvalue.IngListValuePlugin">
-		<property name="entityListDAO" ref="entityListDAO" />
-		<property name="associationService" ref="associationService" />
-	</bean>
-
-	<bean id="variantListValuePlugin" parent="entityListValuePlugin" init-method="init" class="fr.becpg.repo.listvalue.VariantListValuePlugin">
-		<property name="associationService" ref="associationService" />
-	</bean>
-	
-	
-	<bean id="workflowPackageListValuePlugin" parent="baseListValuePlugin" init-method="init" class="fr.becpg.repo.listvalue.WorkflowPackageListValuePlugin">
-		<property name="namespaceService" ref="namespaceService" />
-		<property name="nodeService" ref="NodeService" />
-		<property name="workflowService" ref="WorkflowService" />
-	</bean>
-
-
 
 	
 	<!-- Abstract bean -->

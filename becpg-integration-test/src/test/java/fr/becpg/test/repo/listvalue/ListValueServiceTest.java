@@ -45,6 +45,8 @@ public class ListValueServiceTest extends AbstractListValuePluginTest {
 
 		Date startTime = new Date();
 		
+		createFinishProductNodeRef();
+		
 		final String supplierName = UUID.randomUUID().toString();
 
 		// First delete all existing suppliers

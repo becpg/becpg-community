@@ -111,16 +111,6 @@
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
 	</bean>
 
-
-	<!-- List Value plugin -->
-	<bean id="taskValuePlugin" parent="baseListValuePlugin" init-method="init" class="fr.becpg.repo.project.listvalue.TaskValuePlugin">
-		<property name="namespaceService" ref="namespaceService" />
-		<property name="nodeService" ref="nodeService" />
-		<property name="dictionaryDAO" ref="dictionaryDAO" />
-	</bean>
-
-
-
 	<!-- Sort plugin -->
 	<bean id="ProjectListSortPlugin" parent="baseDataListSortPlugin" class="fr.becpg.repo.project.impl.ProjectListSortPlugin">
 		<property name="dataListSortRegistry" ref="dataListSortRegistry" />

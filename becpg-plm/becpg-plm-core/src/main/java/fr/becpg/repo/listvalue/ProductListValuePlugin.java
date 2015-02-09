@@ -24,6 +24,8 @@ import java.util.Map;
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.listvalue.impl.EntityListValuePlugin;
@@ -31,18 +33,15 @@ import fr.becpg.repo.listvalue.impl.NodeRefListValueExtractor;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
 
+@Service
 public class ProductListValuePlugin extends EntityListValuePlugin {
 
 	private static final String SOURCE_TYPE_PRODUCT = "product";
 
 	private static final String SOURCE_TYPE_PRODUCT_REPORT = "productreport";
 
+	@Autowired
 	private ReportTplService reportTplService;
-
-	public void setReportTplService(ReportTplService reportTplService) {
-		this.reportTplService = reportTplService;
-	}
-
 
 	public String[] getHandleSourceTypes() {
 		return new String[] { SOURCE_TYPE_PRODUCT, SOURCE_TYPE_PRODUCT_REPORT};

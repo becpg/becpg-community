@@ -42,46 +42,37 @@ import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.OrganoListDataItem;
 
-public class BeCPGPLMTestHelper  {
+public class BeCPGPLMTestHelper {
 
 	private static Log logger = LogFactory.getLog(BeCPGPLMTestHelper.class);
-	
-	
+
 	public static String PRODUCT_NAME = "Finished Product";
-	
+
 	public static final String USER_ONE = "matthieuWF";
 	public static final String USER_TWO = "philippeWF";
-	
 
 	protected static String[] groups = { SystemGroup.QualityUser.toString(), SystemGroup.QualityMgr.toString() };
 
-	
-	
 	/** The PAT h_ testfolder. */
 	public static String PATH_TESTFOLDER = "TestFolder";
-	
-	
+
 	public static NodeRef createTestFolder() {
-		return createTestFolder( PATH_TESTFOLDER);
+		return createTestFolder(PATH_TESTFOLDER);
 	}
 
+	public static NodeRef createTestFolder(String folderName) {
 
-	public static NodeRef createTestFolder( String folderName) {
+		NodeRef folderNodeRef = PLMBaseTestCase.INSTANCE2.nodeService.getChildByName(PLMBaseTestCase.INSTANCE2.repositoryHelper.getCompanyHome(),
+				ContentModel.ASSOC_CONTAINS, folderName);
 
-		NodeRef folderNodeRef = PLMBaseTestCase.INSTANCE2.nodeService.getChildByName(
-				PLMBaseTestCase.INSTANCE2.repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, folderName);
-		
-		if(folderNodeRef == null){
+		if (folderNodeRef == null) {
 			folderNodeRef = PLMBaseTestCase.INSTANCE2.fileFolderService.create(PLMBaseTestCase.INSTANCE2.repositoryHelper.getCompanyHome(),
 					folderName, ContentModel.TYPE_FOLDER).getNodeRef();
 		}
-		
+
 		return folderNodeRef;
 	}
-	
-	
-	
-	
+
 	public static void createUsers() {
 
 		/*
@@ -97,26 +88,11 @@ public class BeCPGPLMTestHelper  {
 		}
 
 		// USER_ONE
-		NodeRef userOne = PLMBaseTestCase.INSTANCE2.personService.getPerson(USER_ONE);
-		if (userOne != null) {
-			PLMBaseTestCase.INSTANCE2.personService.deletePerson(userOne);
-		}
-
-		if (!PLMBaseTestCase.INSTANCE2.authenticationDAO.userExists(USER_ONE)) {
-			createUser(USER_ONE);
-		}
-
-		// USER_TWO
-		NodeRef userTwo = PLMBaseTestCase.INSTANCE2.personService.getPerson(USER_TWO);
-		if (userTwo != null) {
-			PLMBaseTestCase.INSTANCE2.personService.deletePerson(userTwo);
-		}
-
-		if (!PLMBaseTestCase.INSTANCE2.authenticationDAO.userExists(USER_TWO)) {
-			createUser(USER_TWO);
-
-			PLMBaseTestCase.INSTANCE2.authorityService
-					.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.QualityUser.toString(), USER_TWO);
+		createUser(USER_ONE);
+		createUser(USER_TWO);
+		if(!PLMBaseTestCase.INSTANCE2.authorityService.getAuthoritiesForUser(USER_TWO).contains(PermissionService.GROUP_PREFIX + SystemGroup.QualityUser.toString())){
+		
+			PLMBaseTestCase.INSTANCE2.authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.QualityUser.toString(), USER_TWO);
 		}
 
 		for (String s : PLMBaseTestCase.INSTANCE2.authorityService.getAuthoritiesForUser(USER_ONE)) {
@@ -126,28 +102,31 @@ public class BeCPGPLMTestHelper  {
 	}
 
 	public static NodeRef createUser(String userName) {
+
 		if (PLMBaseTestCase.INSTANCE2.authenticationService.authenticationExists(userName) == false) {
 			PLMBaseTestCase.INSTANCE2.authenticationService.createAuthentication(userName, "PWD".toCharArray());
 
-			PropertyMap ppOne = new PropertyMap(4);
-			ppOne.put(ContentModel.PROP_USERNAME, userName);
-			ppOne.put(ContentModel.PROP_FIRSTNAME, "firstName");
-			ppOne.put(ContentModel.PROP_LASTNAME, "lastName");
-			ppOne.put(ContentModel.PROP_EMAIL, "email@email.com");
-			ppOne.put(ContentModel.PROP_JOBTITLE, "jobTitle");
-
-			return PLMBaseTestCase.INSTANCE2.personService.createPerson(ppOne);
+			NodeRef userOne = PLMBaseTestCase.INSTANCE2.personService.getPerson(userName);
+			if (userOne == null) {
+				PropertyMap ppOne = new PropertyMap(4);
+				ppOne.put(ContentModel.PROP_USERNAME, userName);
+				ppOne.put(ContentModel.PROP_FIRSTNAME, "firstName");
+				ppOne.put(ContentModel.PROP_LASTNAME, "lastName");
+				ppOne.put(ContentModel.PROP_EMAIL, "email@email.com");
+				ppOne.put(ContentModel.PROP_JOBTITLE, "jobTitle");
+				return PLMBaseTestCase.INSTANCE2.personService.createPerson(ppOne);
+			} else {
+				return userOne;
+			}
 		} else {
 			return PLMBaseTestCase.INSTANCE2.personService.getPerson(userName);
 		}
+
 	}
-	
 
-	
-	
-	public static NodeRef createMultiLevelProduct(NodeRef testFolder){
+	public static NodeRef createMultiLevelProduct(NodeRef testFolder) {
 
-		/*-- Create raw material --*/		
+		/*-- Create raw material --*/
 		logger.debug("/*-- Create raw material --*/");
 		RawMaterialData rawMaterial1 = new RawMaterialData();
 		rawMaterial1.setName("Raw material 1");
@@ -162,11 +141,11 @@ public class BeCPGPLMTestHelper  {
 		LocalSemiFinishedProductData lSF2 = new LocalSemiFinishedProductData();
 		lSF2.setName("Local semi finished 2");
 		NodeRef lSF2NodeRef = PLMBaseTestCase.INSTANCE2.alfrescoRepository.create(testFolder, lSF2).getNodeRef();
-		
+
 		LocalSemiFinishedProductData lSF3 = new LocalSemiFinishedProductData();
 		lSF3.setName("Local semi finished 3");
 		NodeRef lSF3NodeRef = PLMBaseTestCase.INSTANCE2.alfrescoRepository.create(testFolder, lSF3).getNodeRef();
-		
+
 		LocalSemiFinishedProductData lSF4 = new LocalSemiFinishedProductData();
 		lSF4.setName("Local semi finished 4");
 		NodeRef lSF4NodeRef = PLMBaseTestCase.INSTANCE2.alfrescoRepository.create(testFolder, lSF4).getNodeRef();
@@ -178,14 +157,17 @@ public class BeCPGPLMTestHelper  {
 		finishedProduct.setHierarchy1(PLMBaseTestCase.INSTANCE2.HIERARCHY1_FROZEN_REF);
 		finishedProduct.setHierarchy2(PLMBaseTestCase.INSTANCE2.HIERARCHY2_PIZZA_REF);
 		List<CompoListDataItem> compoList = new LinkedList<CompoListDataItem>();
-		CompoListDataItem parent1 = new CompoListDataItem(null, (CompoListDataItem)null, 1d, 1d, CompoListUnit.P, 0d, DeclarationType.Declare, lSF1NodeRef);
-		CompoListDataItem child1 =new CompoListDataItem(null,parent1, 1d, 4d, CompoListUnit.P, 0d, DeclarationType.Declare, lSF2NodeRef);
-		CompoListDataItem child12 =new CompoListDataItem(null,child1, 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial1NodeRef);
-		CompoListDataItem parent2 =new CompoListDataItem(null,(CompoListDataItem) null, 1d, 4d, CompoListUnit.P, 0d, DeclarationType.Declare, lSF3NodeRef);
-		CompoListDataItem child2 =new CompoListDataItem(null, parent2, 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial2NodeRef);
-		CompoListDataItem child21 =new CompoListDataItem(null, parent2, 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, lSF4NodeRef);
-		CompoListDataItem parent3 = new CompoListDataItem(null, (CompoListDataItem)null, 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial1NodeRef);
-		
+		CompoListDataItem parent1 = new CompoListDataItem(null, (CompoListDataItem) null, 1d, 1d, CompoListUnit.P, 0d, DeclarationType.Declare,
+				lSF1NodeRef);
+		CompoListDataItem child1 = new CompoListDataItem(null, parent1, 1d, 4d, CompoListUnit.P, 0d, DeclarationType.Declare, lSF2NodeRef);
+		CompoListDataItem child12 = new CompoListDataItem(null, child1, 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial1NodeRef);
+		CompoListDataItem parent2 = new CompoListDataItem(null, (CompoListDataItem) null, 1d, 4d, CompoListUnit.P, 0d, DeclarationType.Declare,
+				lSF3NodeRef);
+		CompoListDataItem child2 = new CompoListDataItem(null, parent2, 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial2NodeRef);
+		CompoListDataItem child21 = new CompoListDataItem(null, parent2, 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, lSF4NodeRef);
+		CompoListDataItem parent3 = new CompoListDataItem(null, (CompoListDataItem) null, 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit,
+				rawMaterial1NodeRef);
+
 		compoList.add(parent1);
 		compoList.add(child1);
 		compoList.add(child12);
@@ -193,15 +175,12 @@ public class BeCPGPLMTestHelper  {
 		compoList.add(child2);
 		compoList.add(child21);
 		compoList.add(parent3);
-		
 
 		finishedProduct.getCompoListView().setCompoList(compoList);
 		return PLMBaseTestCase.INSTANCE2.alfrescoRepository.create(testFolder, finishedProduct).getNodeRef();
-		
+
 	}
-	
-	
-	
+
 	/**
 	 * Create a raw material.
 	 * 
@@ -220,12 +199,12 @@ public class BeCPGPLMTestHelper  {
 		rawMaterial.setName(name);
 		rawMaterial.setHierarchy1(PLMBaseTestCase.INSTANCE2.HIERARCHY1_SEA_FOOD_REF);
 		rawMaterial.setHierarchy2(PLMBaseTestCase.INSTANCE2.HIERARCHY2_FISH_REF);
-		
 
 		// Allergens
 		List<AllergenListDataItem> allergenList = new ArrayList<AllergenListDataItem>();
 		for (int j = 0; j < PLMBaseTestCase.INSTANCE2.allergens.size(); j++) {
-			AllergenListDataItem allergenListItemData = new AllergenListDataItem(null,null, false, false, null, null, PLMBaseTestCase.INSTANCE2.allergens.get(j), false);
+			AllergenListDataItem allergenListItemData = new AllergenListDataItem(null, null, false, false, null, null,
+					PLMBaseTestCase.INSTANCE2.allergens.get(j), false);
 			allergenList.add(allergenListItemData);
 		}
 		rawMaterial.setAllergenList(allergenList);
@@ -241,7 +220,8 @@ public class BeCPGPLMTestHelper  {
 		// Ings
 		List<IngListDataItem> ingList = new ArrayList<IngListDataItem>();
 		for (int j = 0; j < PLMBaseTestCase.INSTANCE2.ings.size(); j++) {
-			IngListDataItem ingListItemData = new IngListDataItem(null, 12.2d, null, null, false, false,false, PLMBaseTestCase.INSTANCE2.ings.get(j), false);
+			IngListDataItem ingListItemData = new IngListDataItem(null, 12.2d, null, null, false, false, false,
+					PLMBaseTestCase.INSTANCE2.ings.get(j), false);
 			ingList.add(ingListItemData);
 		}
 		rawMaterial.setIngList(ingList);
@@ -249,7 +229,8 @@ public class BeCPGPLMTestHelper  {
 		// Nuts
 		List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
 		for (int j = 0; j < PLMBaseTestCase.INSTANCE2.nuts.size(); j++) {
-			NutListDataItem nutListItemData = new NutListDataItem(null, 2d, "kJ/100g", 0d, 0d, "Groupe 1", PLMBaseTestCase.INSTANCE2.nuts.get(j), false);
+			NutListDataItem nutListItemData = new NutListDataItem(null, 2d, "kJ/100g", 0d, 0d, "Groupe 1", PLMBaseTestCase.INSTANCE2.nuts.get(j),
+					false);
 			nutList.add(nutListItemData);
 		}
 		rawMaterial.setNutList(nutList);
@@ -269,7 +250,4 @@ public class BeCPGPLMTestHelper  {
 
 	}
 
-
-	
-	
 }

@@ -26,6 +26,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.RepoConsts;
@@ -35,9 +36,11 @@ import fr.becpg.repo.listvalue.impl.EntityListValuePlugin;
 import fr.becpg.repo.listvalue.impl.NodeRefListValueExtractor;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
+
+@Service
 public class TaskValuePlugin extends EntityListValuePlugin {
 
-	private static Log logger = LogFactory.getLog(TaskValuePlugin.class);
+	private static final Log logger = LogFactory.getLog(TaskValuePlugin.class);
 
 	private static final String SOURCE_TYPE_TASK_VALUE = "TaskValue";
 

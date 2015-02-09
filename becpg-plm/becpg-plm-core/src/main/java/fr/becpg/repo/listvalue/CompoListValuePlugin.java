@@ -28,6 +28,8 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.entity.datalist.MultiLevelDataListService;
@@ -35,12 +37,14 @@ import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.listvalue.impl.EntityListValuePlugin;
 
+@Service
 public class CompoListValuePlugin extends EntityListValuePlugin {
 
-	private static Log logger = LogFactory.getLog(CompoListValuePlugin.class);
+	private static final Log logger = LogFactory.getLog(CompoListValuePlugin.class);
 
 	private static final String SOURCE_TYPE_COMPOLIST_PARENT_LEVEL = "compoListParentLevel";
 
+	@Autowired
 	private MultiLevelDataListService multiLevelDataListService;
 
 	@Override

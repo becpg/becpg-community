@@ -126,14 +126,4 @@
 		<property name="designerService" ref="designerService" />
 	</bean>
 
-	<!-- List Values -->
-
-	<bean id="designerListValuePlugin" parent="baseListValuePlugin"
-		init-method="init" class="fr.becpg.repo.designer.listvalue.DesignerListValuePlugin">
-		<property name="serviceRegistry" ref="ServiceRegistry" />
-		<property name="designerService" ref="designerService" />
-	</bean>
-
-
-
 </beans>
