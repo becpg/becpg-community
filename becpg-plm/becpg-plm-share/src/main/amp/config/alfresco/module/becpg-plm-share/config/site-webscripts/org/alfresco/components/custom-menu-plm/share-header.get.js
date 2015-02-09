@@ -33,15 +33,25 @@ if (beCPGMenu != null) {
      warningBar.config = {};
    }
   
-   var searchLink = widgetUtils.findObject(model.jsonModel, "id", "HEADER_ADVANCED_SEARCH");
-	if(searchLink!=null){
-		searchLink.config.label = "header.wused.search.label";
-		searchLink.config.targetUrl= "wused";
-	}
-	
+   
+   if (page.id == "search")
+   {
+       var searchLink = widgetUtils.findObject(model.jsonModel, "id", "HEADER_ADVANCED_SEARCH");
+    	if(searchLink!=null){
+    		searchLink.config.label = "header.wused.search.label";
+    		searchLink.config.targetUrl= "wused";
+    	}
+   }
+   
+   var searchBox =  widgetUtils.findObject(model.jsonModel, "id","HEADER_SEARCH");
+     if(searchBox){
+         searchBox.name ="alfresco/header/BecpgSearchBox";
+     }
+   
 	
   if(!user.isAdmin){
-    //  widgetUtils.deleteObjectFromArray(model.jsonModel, "id", "HEADER_PEOPLE"); 
+    // widgetUtils.deleteObjectFromArray(model.jsonModel, "id",
+    // "HEADER_PEOPLE");
   }
 	
 	
