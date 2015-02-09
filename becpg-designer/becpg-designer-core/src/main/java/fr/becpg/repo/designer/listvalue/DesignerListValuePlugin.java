@@ -30,52 +30,43 @@ import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.designer.DesignerModel;
 import fr.becpg.repo.designer.DesignerService;
 import fr.becpg.repo.listvalue.ListValueEntry;
 import fr.becpg.repo.listvalue.ListValueExtractor;
 import fr.becpg.repo.listvalue.ListValuePage;
+import fr.becpg.repo.listvalue.ListValuePlugin;
 import fr.becpg.repo.listvalue.ListValueService;
-import fr.becpg.repo.listvalue.impl.AbstractBaseListValuePlugin;
 
 /**
  * 
  * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
  *
  */
-public class DesignerListValuePlugin extends AbstractBaseListValuePlugin {
+@Service
+public class DesignerListValuePlugin implements ListValuePlugin {
 
-	private static String TYPE_PARENT_NAME = "parentName";
-	private static String TYPE_MANDATORY_ASPECTS = "mandatoryAspects";
-	private static String TYPE_PROPERTY_TYPE = "propertyType";
-	private static String TYPE_TARGET_CLASS_NAME = "targetClassName";
-	private static String TYPE_CONSTRAINT_REF = "constraintRef";
+	private final static String TYPE_PARENT_NAME = "parentName";
+	private final static String TYPE_MANDATORY_ASPECTS = "mandatoryAspects";
+	private final static String TYPE_PROPERTY_TYPE = "propertyType";
+	private final static String TYPE_TARGET_CLASS_NAME = "targetClassName";
+	private final static String TYPE_CONSTRAINT_REF = "constraintRef";
 
-	private static String SEPARATOR = "|";
+	private final static String SEPARATOR = "|";
 
-	/** The service registry. */
+
+	private final static Log logger = LogFactory.getLog(ListValuePlugin.class);
+	
+	@Autowired
 	private ServiceRegistry serviceRegistry;
-
+	@Autowired
 	private DesignerService designerService;
 
-	
-	
-	/**
-	 * @param designerService
-	 *            the designerService to set
-	 */
-	public void setDesignerService(DesignerService designerService) {
-		this.designerService = designerService;
-	}
-
-	/**
-	 * @param serviceRegistry
-	 *            the serviceRegistry to set
-	 */
-	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
-		this.serviceRegistry = serviceRegistry;
-	}
 
 	@Override
 	public String[] getHandleSourceTypes() {

@@ -4,6 +4,7 @@
 package fr.becpg.test.repo.listvalue;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -15,6 +16,12 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.tradeshift.test.remote.Remote;
+import com.tradeshift.test.remote.RemoteTestRunner;
 
 import fr.becpg.repo.listvalue.CompoListValuePlugin;
 import fr.becpg.repo.listvalue.ListValueEntry;
@@ -28,10 +35,13 @@ import fr.becpg.test.BeCPGPLMTestHelper;
  * 
  * @author querephi
  */
+@RunWith(RemoteTestRunner.class)
+@Remote(runnerClass = SpringJUnit4ClassRunner.class)
+@ContextConfiguration({ "classpath:alfresco/application-context.xml" })
 public class CompoListValuePluginTest extends AbstractListValuePluginTest {
 
 	@Resource
-	private CompoListValuePlugin compoListValuePlugin;
+    CompoListValuePlugin compoListValuePlugin;
 
 	private static Log logger = LogFactory.getLog(CompoListValuePluginTest.class);
 
@@ -41,10 +51,17 @@ public class CompoListValuePluginTest extends AbstractListValuePluginTest {
 	@Test
 	public void testCompoListValuePlugin() {
 
+		Date startTime = new Date();
+		
+		final NodeRef finishedProductNodeRef = createFinishProductNodeRef();
+		
+		waitForSolr(startTime);
+		
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
 			public NodeRef execute() throws Throwable {
 
+				
 				Map<String, Serializable> props = new HashMap<String, Serializable>();
 				props.put(ListValueService.PROP_LOCALE, Locale.FRENCH);
 				props.put(ListValueService.PROP_NODEREF, finishedProductNodeRef.toString());

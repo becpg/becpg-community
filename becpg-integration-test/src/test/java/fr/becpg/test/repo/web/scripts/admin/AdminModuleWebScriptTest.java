@@ -32,10 +32,10 @@ public class AdminModuleWebScriptTest extends RepoBaseTestCase{
 	public void testInitRepo() throws Exception {				
 		
 		//Init-repo
-		logger.error("test init repo webscript ");
+		logger.debug("test init repo webscript ");
 		String url = "/becpg/admin/repository/init-repo";
 		Response response = TestWebscriptExecuters.sendRequest(new GetRequest(url), 200, "admin");
-		logger.error(response.getContentAsString());		
+		logger.debug(response.getContentAsString());		
 	}	
 	
 	/**

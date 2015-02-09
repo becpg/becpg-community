@@ -26,29 +26,29 @@ import java.util.Map;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.namespace.QName;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.listvalue.ListValueEntry;
 import fr.becpg.repo.listvalue.ListValueExtractor;
 import fr.becpg.repo.listvalue.ListValuePage;
-import fr.becpg.repo.listvalue.impl.AbstractBaseListValuePlugin;
+import fr.becpg.repo.listvalue.ListValuePlugin;
 
 /**
  * 
  * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
  * 
  */
-public class SecurityListValuePlugin extends AbstractBaseListValuePlugin {
+@Service
+public class SecurityListValuePlugin implements ListValuePlugin {
 
 	private static String TYPE_ACL_TYPE = "aclType";
 
 	private static String SEPARATOR = "|";
 
+	@Autowired
 	private ServiceRegistry serviceRegistry;
-
-	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
-		this.serviceRegistry = serviceRegistry;
-	}
 
 	@Override
 	public String[] getHandleSourceTypes() {

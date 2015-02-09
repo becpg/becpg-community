@@ -64,37 +64,6 @@
 		<property name="beCPGCacheService" ref="beCPGCacheService"/>
 	</bean>
 
-	<!-- ListValue -->
-
-	<!-- Plugin registry -->
-	<bean id="listValuePluginRegistry" class="fr.becpg.repo.listvalue.impl.ListValuePluginRegistryImpl" />
-
-	<bean id="baseListValuePlugin" abstract="true" class="fr.becpg.repo.listvalue.impl.AbstractBaseListValuePlugin" init-method="init">
-		<property name="listValuePluginRegistry" ref="listValuePluginRegistry" />
-	</bean>
-
-
-	<bean id="listValueService" class="fr.becpg.repo.listvalue.impl.ListValueServiceImpl">
-		<property name="listValuePluginRegistry" ref="listValuePluginRegistry" />
-	</bean>
-
-
-
-	<!-- List values plugins -->
-
-
-	<bean id="entityListValuePlugin" parent="baseListValuePlugin"
-		init-method="init" class="fr.becpg.repo.listvalue.impl.EntityListValuePlugin">
-		<property name="autoNumService" ref="autoNumService" />
-		<property name="dictionaryService" ref="dictionaryService" />
-		<property name="targetAssocValueExtractor" ref="targetAssocValueExtractor"/>
-		<property name="dictionaryDAO" ref="dictionaryDAO" />
-		<property name="namespaceService" ref="namespaceService" />
-		<property name="nodeService" ref="nodeService" />
-		<property name="hierarchyService" ref="hierarchyService" />
-	</bean>
-
-	
 
 	<!-- Mail service -->
 

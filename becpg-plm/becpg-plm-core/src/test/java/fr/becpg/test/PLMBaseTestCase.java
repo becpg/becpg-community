@@ -33,7 +33,13 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.tradeshift.test.remote.Remote;
+import com.tradeshift.test.remote.RemoteTestRunner;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
@@ -46,7 +52,6 @@ import fr.becpg.repo.product.data.constraints.AllergenType;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
-import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * base class of test cases for product classes.
@@ -54,7 +59,9 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * @author querephi
  */
 
-
+@RunWith(RemoteTestRunner.class)
+@Remote(runnerClass = SpringJUnit4ClassRunner.class)
+@ContextConfiguration({ "classpath:alfresco/application-context.xml" })
 public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 
 	public static PLMBaseTestCase INSTANCE2;
@@ -105,7 +112,7 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 			return true;
 		}
 		else{
-			return BeCPGQueryBuilder.createQuery().inDB().selectNodeByPath(repositoryHelper.getCompanyHome(), HIERARCHY_RAWMATERIAL_PATH + "/*") == null;
+			return hierarchyService.getHierarchyByPath(HIERARCHY_FINISHEDPRODUCT_PATH, null, HIERARCHY1_FROZEN) == null;
 		}
 	}
 	
