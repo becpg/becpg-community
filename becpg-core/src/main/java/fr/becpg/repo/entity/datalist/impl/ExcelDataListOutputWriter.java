@@ -35,7 +35,7 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 	@Override
 	public void write(WebScriptResponse res, PaginatedExtractedItems extractedItems) throws IOException {
 		res.setContentType("application/vnd.ms-excel");
-		res.setHeader("Content-disposition", "attachment; filename=export.xls");
+		res.setHeader("Content-disposition", "attachment; filename=export.xlsx");
 
 		XSSFWorkbook workbook = new XSSFWorkbook();
 		XSSFSheet sheet = workbook.createSheet(dataListFilter.getDataListName());
