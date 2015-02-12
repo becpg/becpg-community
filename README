@@ -2,7 +2,7 @@
 # 
 #  beCPG developers README
 #
-#  Copyright (C) 2010-2014 beCPG. 
+#  Copyright (C) 2010-2015 beCPG. 
 #   
 #  This file is part of beCPG 
 #   
@@ -33,6 +33,14 @@ $> mvn clean package -DskipTests=true
 
 Projects can be found in target dirs. 
 
+3 - Start embedded Tomcat for development
+------------------------------------------
+
+Start integrated server
+
+$> ./run.sh or mvn install -P run
+
+Refer also to Alfresco Maven SDK 2.0
 
 2 - Run Tests
 --------------
@@ -45,13 +53,11 @@ To run specific test
 
 $> mvn test -Dtest=MyTest.java -DfailIfNoTests=false
 
-Some tests require beCPG report server to be launch first.
+Integrations tests require beCPG server to be launch first.
+
 In other console:
 
-$> cd becpg-report
-$> mvn jetty:run
-or
-$> mvn tomcat:run
+$> ./run.sh or mvn install -P run
 
 3 - Deploy projects
 -------------------

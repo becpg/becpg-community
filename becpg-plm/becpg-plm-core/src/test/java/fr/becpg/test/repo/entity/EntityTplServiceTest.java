@@ -99,6 +99,11 @@ public class EntityTplServiceTest extends PLMBaseTestCase {
 			public NodeRef execute() throws Throwable {
 
 				RawMaterialData rm1Data = (RawMaterialData)alfrescoRepository.findOne(rm1NodeRef);
+				
+				for(CostListDataItem cost : rm1Data.getCostList()){
+					logger.debug(cost.toString());
+				}
+				
 				assertEquals(2, rm1Data.getCostList().size());
 				
 				return null;
