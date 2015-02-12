@@ -37,7 +37,7 @@
 		<license>
 			<name>GNU LESSER GENERAL PUBLIC LICENSE</name>
 			<url>http://www.gnu.org/licenses/lgpl-3.0.en.html</url>
-			<comments>Copyright (C) 2010-2014 beCPG. 
+			<comments>Copyright (C) 2010-2015 beCPG. 
   
 			  beCPG is free software: you can redistribute it and/or modify 
 			  it under the terms of the GNU Lesser General Public License as published by 
@@ -312,4 +312,5 @@
              </properties>
         </profile>
     </profiles>
+    <version>2.0.1</version>
 </project>

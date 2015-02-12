@@ -148,7 +148,7 @@
 
                                 this.widgets.formPanel = Alfresco.util.createYUIButton(this, "adv-search-button", null,
                                 {
-                                    label : this.msg("search.form.filter"),
+                                    label : this.msg("search.form.filter")+ " " + Alfresco.constants.MENU_ARROW_SYMBOL,
                                     title : this.msg("search.form.filter"),
                                     type : "menu",
                                     menu : "adv-search-panel",

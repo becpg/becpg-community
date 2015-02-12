@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2014 beCPG. 
+ * Copyright (C) 2010-2015 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -19,6 +19,7 @@ package fr.becpg.repo.entity.impl;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -123,7 +124,16 @@ public class EntitySystemServiceImpl implements EntitySystemService {
 
 	@Override
 	public List<NodeRef> getSystemEntities() {
-		return BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_SYSTEM_ENTITY).inDB().list();
+		
+	List<NodeRef> tplsNodeRef =  new LinkedList<NodeRef>();
+		
+		for(NodeRef tpl : BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_SYSTEM_ENTITY).inDB().list()){
+			if(!nodeService.hasAspect(tpl, BeCPGModel.ASPECT_COMPOSITE_VERSION)){
+				tplsNodeRef.add(tpl);
+			}
+		}
+		return tplsNodeRef ;
+		
 	}
 
 	@Override
