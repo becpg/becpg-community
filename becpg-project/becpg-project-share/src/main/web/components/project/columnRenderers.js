@@ -34,7 +34,9 @@
 		   propertyName : "pjt:taskList",
 		   renderer : function(oRecord, data, label, scope, idx, length) {
 			   var oData = oRecord.getData();
-			   return scope.getTaskTitle(data, oData.nodeRef);
+			   if(data["itemData"]){
+			       return scope.getTaskTitle(data, oData.nodeRef);
+			   }
 		   }
 		});
 
