@@ -428,7 +428,7 @@ YAHOO.Bubbling
          actionName : "rapid-link",
          right : false,
          evaluate : function(asset, entity) {
-            return asset.name !== null && (asset.name === "compoList" || asset.name === "processList" || asset.name === "packagingList" ) && entity != null && entity.userAccess.edit;
+            return asset.name !== null && (asset.name === "compoList" || asset.name === "processList" || asset.name === "packagingList" ) && entity != null;
          },
          createWidget : function(containerDiv, instance) {
 
