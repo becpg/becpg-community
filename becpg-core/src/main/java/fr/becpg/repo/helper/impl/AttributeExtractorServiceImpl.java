@@ -594,7 +594,8 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 		return value;
 	}
 
-	private String extractPropName(NodeRef v) {
+	@Override
+	public String extractPropName(NodeRef v) {
 		QName type = nodeService.getType((NodeRef) v);
 		return extractPropName(type, v);
 	}

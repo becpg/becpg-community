@@ -341,7 +341,12 @@
                             /**
                              * Use post method
                              */
-                            postMethod : true
+                            postMethod : true,
+                            
+                            /**
+                             * columnForm id
+                             */
+                            columnFormId : null
                         },
 
                         /**
@@ -840,7 +845,7 @@
                             // type
                             Alfresco.util.Ajax.jsonGet(
                             {
-                                url : this._getColumnUrl(),
+                                url : this._getColumnUrl(this.options.columnFormId),
                                 successCallback :
                                 {
                                     fn : this.onDatalistColumns,
