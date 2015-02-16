@@ -26,7 +26,7 @@ import fr.becpg.report.client.ReportFormat;
 public class ExportSearchServiceImpl implements ExportSearchService{		
 	
 	
-	private static Log logger = LogFactory.getLog(ExportSearchServiceImpl.class);	
+	private final static Log logger = LogFactory.getLog(ExportSearchServiceImpl.class);	
 	
 	@Autowired
 	SearchReportRenderer[] searchReportRenderers;
