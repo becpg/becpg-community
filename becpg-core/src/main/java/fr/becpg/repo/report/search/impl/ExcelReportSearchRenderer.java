@@ -39,7 +39,7 @@ import fr.becpg.report.client.ReportFormat;
 @Service
 public class ExcelReportSearchRenderer implements SearchReportRenderer {
 
-	private static Log logger = LogFactory.getLog(ExcelReportSearchRenderer.class);
+	private final static Log logger = LogFactory.getLog(ExcelReportSearchRenderer.class);
 
 	@Autowired
 	private NodeService nodeService;
