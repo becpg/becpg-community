@@ -113,6 +113,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	 * @param isExtractedProduct
 	 *            extracted product (more info)
 	 */
+	@SuppressWarnings("unchecked")
 	private void loadDataLists(NodeRef entityNodeRef, Element dataListsElt, Map<String, byte[]> images, boolean isExtractedProduct) {
 
 		RepositoryEntity entity = alfrescoRepository.findOne(entityNodeRef);
@@ -194,24 +195,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				allergenListElt.addAttribute(PLMModel.PROP_ALLERGENLIST_INVOLUNTARY.getLocalName(), inVolAllergens);
 			}
 
-			// compoList
-			if (productData.hasCompoListEl(EffectiveFilters.EFFECTIVE)) {
-				Element compoListElt = dataListsElt.addElement(PLMModel.TYPE_COMPOLIST.getLocalName() + "s");
-
-				for (CompoListDataItem dataItem : productData.getCompoList(EffectiveFilters.EFFECTIVE)) {
-
-					if (dataItem.getProduct() != null && nodeService.exists(dataItem.getProduct())) {
-
-						Element partElt = compoListElt.addElement(PLMModel.TYPE_COMPOLIST.getLocalName());
-						loadProductData(dataItem.getProduct(), partElt);
-						loadDataListItemAttributes(dataItem, partElt);
-						loadNutLists(dataItem.getProduct(), partElt);
-						extractVariants(dataItem.getVariants(), partElt, defaultVariantNodeRef);
-					}
-				}
-
-				loadDynamicCharactList(productData.getCompoListView().getDynamicCharactList(), compoListElt);
-			}
+			loadCompoList(productData, dataListsElt, defaultVariantNodeRef);
 
 			// extract RawMaterials
 			extractRawMaterials(productData, dataListsElt, images);
@@ -324,13 +308,13 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		}
 	}
 
-	private void loadNutLists(NodeRef entityNodeRef, Element partElt) {
-
+	private Element loadNutLists(NodeRef entityNodeRef, Element partElt) {
+		Element dataListsElt = null;
 		ProductData productData = (ProductData) alfrescoRepository.findOne(entityNodeRef);
 
 		if (productData.getNutList() != null && !productData.getNutList().isEmpty()) {
 
-			Element dataListsElt = partElt.addElement(TAG_DATALISTS);
+			dataListsElt = partElt.addElement(TAG_DATALISTS);
 			Element nutListsElt = dataListsElt.addElement(PLMModel.TYPE_NUTLIST.getLocalName() + "s");
 
 			for (BeCPGDataObject dataListItem : productData.getNutList()) {
@@ -347,6 +331,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			}
 		}
 
+		return dataListsElt;
 	}
 
 	private void extractRawMaterials(ProductData productData, Element dataListsElt, Map<String, byte[]> images) {
@@ -426,6 +411,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		return false;
 	}
 
+	@SuppressWarnings("unchecked")
 	private void loadPackagingList(ProductData productData, Element dataListsElt, NodeRef defaultVariantNodeRef, Map<String, byte[]> images) {
 
 		if (productData.hasPackagingListEl(EffectiveFilters.EFFECTIVE)) {
@@ -485,6 +471,53 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				}
 			}
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private void loadCompoList(ProductData productData, Element dataListsElt, NodeRef defaultVariantNodeRef) {
+		// compoList
+		if (productData.hasCompoListEl(EffectiveFilters.EFFECTIVE)) {
+			Element compoListElt = dataListsElt.addElement(PLMModel.TYPE_COMPOLIST.getLocalName() + "s");
+
+			for (CompoListDataItem dataItem : productData.getCompoList(EffectiveFilters.EFFECTIVE)) {
+				loadCompoListItem(dataItem, compoListElt, defaultVariantNodeRef, 1);
+			}
+
+			loadDynamicCharactList(productData.getCompoListView().getDynamicCharactList(), compoListElt);
+		}
+
+	}
+
+	@SuppressWarnings("unchecked")
+	private void loadCompoListItem(CompoListDataItem dataItem, Element compoListElt, NodeRef defaultVariantNodeRef, int level) {
+		if (dataItem.getProduct() != null && nodeService.exists(dataItem.getProduct())) {
+			Element dataListsElt = null;
+
+			Element partElt = compoListElt.addElement(PLMModel.TYPE_COMPOLIST.getLocalName());
+			loadProductData(dataItem.getProduct(), partElt);
+			loadDataListItemAttributes(dataItem, partElt);
+			if (level == 1) {
+				dataListsElt = loadNutLists(dataItem.getProduct(), partElt);
+				extractVariants(dataItem.getVariants(), partElt, defaultVariantNodeRef);
+			}
+			Integer depthLevel = dataItem.getDepthLevel();
+			if(depthLevel!=null){
+				partElt.addAttribute(BeCPGModel.PROP_DEPTH_LEVEL.getLocalName(), ""+(depthLevel * level));
+			}
+			
+			if (nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT)) {
+				ProductData productData = alfrescoRepository.findOne(dataItem.getProduct());
+				if(dataListsElt==null){
+					dataListsElt = partElt.addElement(TAG_DATALISTS);
+				}
+				Element subCompoListElt = dataListsElt.addElement(PLMModel.TYPE_COMPOLIST.getLocalName() + "s");
+				
+				for (CompoListDataItem subDataItem : productData.getCompoList(EffectiveFilters.EFFECTIVE)) {
+					loadCompoListItem(subDataItem, subCompoListElt, defaultVariantNodeRef, level + 1);
+				}
+			}
+		}
+
 	}
 
 	private void loadPackagingItem(PackagingListDataItem dataItem, Element packagingListElt, PackagingData packagingData,
