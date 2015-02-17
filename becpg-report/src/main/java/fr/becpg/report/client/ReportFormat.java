@@ -21,5 +21,6 @@ public enum ReportFormat {
 	
 	PDF,
 	XLS,
+	XLSX,
 	DOC
 }
