@@ -1196,8 +1196,16 @@ if (!JSGantt) {
                   var vTask = this.getArrayLocationByID(vDepList[k]);
 
                   if (vTask!=null && vList[vTask].getVisible() == 1){
-                     this.drawDependency(vList[vTask].getEndX(), vList[vTask].getEndY(), vList[i].getStartX() - 1,
-                           vList[i].getStartY());
+                      
+                      if(vList[vTask].getMile()) {
+                          this.drawDependency(vList[vTask].getEndX() - 250, vList[vTask].getEndY(), vList[i].getStartX() - 1,
+                                  vList[i].getStartY());
+                      } else {
+                          this.drawDependency(vList[vTask].getEndX(), vList[vTask].getEndY(), vList[i].getStartX() - 1,
+                                  vList[i].getStartY());
+                      }
+                      
+                   
                   }
                }
             }

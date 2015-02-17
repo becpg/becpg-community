@@ -190,7 +190,7 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 
 	@Override
 	public boolean isApplicable(NodeRef templateNodeRef, ReportFormat reportFormat) {
-		return ReportFormat.XLS.equals(reportFormat)
+		return ReportFormat.XLSX.equals(reportFormat)
 				&& ((String) nodeService.getProperty(templateNodeRef, ContentModel.PROP_NAME))
 						.endsWith(ReportTplService.PARAM_VALUE_XLSREPORT_EXTENSION);
 	}
