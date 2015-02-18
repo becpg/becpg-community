@@ -17,6 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.product.formulation;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -289,7 +290,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		}
 
 		if (!nodeService.hasAspect(p.getProduct(), PackModel.ASPECT_PALLET)) {
-			Double tare = FormulationHelper.getTareInKg(productNodeRef, nodeService);
+			BigDecimal tare = FormulationHelper.getTareInKg(productNodeRef, nodeService);
 			if (tare == null) {
 				addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_MISSING_TARE);
 			}

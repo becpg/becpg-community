@@ -3,6 +3,8 @@
  */
 package fr.becpg.repo.product.formulation;
 
+import java.math.BigDecimal;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
@@ -436,7 +438,7 @@ public class FormulationHelper {
 		return totalValue;
 	}
 
-	public static Double getTareInKg(CompoListDataItem compoList, NodeService nodeService) {
+	public static BigDecimal getTareInKg(CompoListDataItem compoList, NodeService nodeService) {
 
 		Double qty = compoList.getQty();
 		CompoListUnit unit = compoList.getCompoListUnit();
@@ -446,7 +448,7 @@ public class FormulationHelper {
 				productQty = 1d;
 			}
 			ProductUnit productUnit = FormulationHelper.getProductUnit(compoList.getProduct(), nodeService);
-			Double tare = FormulationHelper.getTareInKg(compoList.getProduct(), nodeService);
+			BigDecimal tare = FormulationHelper.getTareInKg(compoList.getProduct(), nodeService);
 
 			if (tare != null && productUnit != null) {
 
@@ -465,24 +467,24 @@ public class FormulationHelper {
 					}
 				}
 				logger.debug("compo tare: " + tare + " qty " + qty + " productQty " + productQty);
-				return tare * qty / productQty;
+				return tare.multiply(new BigDecimal(qty)).divide(new BigDecimal(productQty));
 			}
 		}
-		return 0d;
+		return new BigDecimal(0d);
 	}
 
-	public static Double getTareInKg(PackagingListDataItem packList, NodeService nodeService) {
+	public static BigDecimal getTareInKg(PackagingListDataItem packList, NodeService nodeService) {
 
-		Double tare = 0d;
+		BigDecimal tare = new BigDecimal(0d);
 		Double qty = FormulationHelper.getQty(packList);
 
 		if (qty != null) {
 			if (FormulationHelper.isPackagingListUnitKg(packList.getPackagingListUnit())) {
-				tare = qty;
+				tare = new BigDecimal(qty);
 			} else {
-				Double t = FormulationHelper.getTareInKg(packList.getProduct(), nodeService);
+				BigDecimal t = FormulationHelper.getTareInKg(packList.getProduct(), nodeService);
 				if (t != null) {
-					tare = qty * t;
+					tare =  t.multiply(new BigDecimal(qty));
 				}
 			}
 		}
@@ -490,7 +492,7 @@ public class FormulationHelper {
 		return tare;
 	}
 
-	public static Double getTareInKg(NodeRef productNodeRef, NodeService nodeService) {
+	public static BigDecimal getTareInKg(NodeRef productNodeRef, NodeService nodeService) {
 
 		Double tare = (Double) nodeService.getProperty(productNodeRef, PackModel.PROP_TARE);
 		String strTareUnit = (String) nodeService.getProperty(productNodeRef, PackModel.PROP_TARE_UNIT);
@@ -502,15 +504,15 @@ public class FormulationHelper {
 		}
 	}
 
-	public static Double getTareInKg(Double tare, TareUnit tareUnit) {
-
+	public static BigDecimal getTareInKg(Double tare, TareUnit tareUnit) {
+		BigDecimal ret = new BigDecimal(tare);
 		if (tare == null || tareUnit == null) {
 			return null;
 		} else {
 			if (tareUnit == TareUnit.g) {
-				tare = tare / 1000;
+				ret = ret.divide(new BigDecimal(1000d));
 			}
-			return tare;
+			return ret;
 		}
 	}
 
