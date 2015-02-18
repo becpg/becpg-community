@@ -62,6 +62,9 @@
 			<nodeColumnKey attribute="cm:name" />
 		</nodeColumnKeys>
 		<columns>
+			<column id="hierarchy1" type="Hierarchy" attribute="bcpg:supplierHierarchy1"  path="/System/ProductHierarchy/bcpg:entityLists/supplier_Hierarchy" />
+			<column id="hierarchy2" type="Hierarchy" attribute="bcpg:supplierHierarchy2" path="/System/ProductHierarchy/bcpg:entityLists/supplier_Hierarchy"
+				parentLevel="bcpg:supplierHierarchy1" />
 
 			<column id="img1Path" attribute="cm:content" path="Images/logo.jpg"
 				type="File" />

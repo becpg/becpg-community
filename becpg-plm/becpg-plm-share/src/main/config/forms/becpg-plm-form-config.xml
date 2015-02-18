@@ -1454,6 +1454,11 @@
 					<show id="pack:palletBoxesPerLastLayer" force="true" />
 					<show id="pack:palletBoxesPerPallet" force="true" />
 					<show id="pack:palletHeight" force="true" />
+					
+					<!-- Tare -->
+					<show id="pack:tare" force="true" />
+					<show id="pack:tareUnit" force="true" />
+					
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" />
@@ -1464,14 +1469,14 @@
 					<field id="bcpg:productHierarchy1" mandatory="false"
 						read-only="false">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingKit_Hierarchy
 							</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" mandatory="false"
 						read-only="false">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingKit_Hierarchy
 							</control-param>
 							<control-param name="parent">bcpg_productHierarchy1
 							</control-param>
