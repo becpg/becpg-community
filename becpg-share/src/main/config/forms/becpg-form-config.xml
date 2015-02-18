@@ -167,7 +167,7 @@
 		</forms>
 	</config>
 	
-		<config evaluator="aspect" condition="bcpg:entityTplAspect">
+	<config evaluator="aspect" condition="bcpg:entityTplAspect">
 		<forms>
 			<form>
 				<field-visibility>

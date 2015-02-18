@@ -33,6 +33,9 @@
                <#if field.control.params.style??>style="${field.control.params.style}"</#if>
                <#if field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true")>disabled="true"</#if>>
 			   <#assign h = config.scoped["Languages"]["languages"]>
+                <#if field.control.params.insertBlank??>
+               		 <option value="" <#if field.control.params.isSearch?? >selected="selected"</#if> ></option>
+               </#if>
 			   <#list  h.getChildren("language") as language>
 				    <#assign key = language.getAttribute("locale")>				
 					<option value=${key?split("_")[0]} <#if isSelected(key?split("_")[0])>selected="true"</#if> >${msg("locale.name.${key}")}</option>
