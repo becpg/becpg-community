@@ -1346,6 +1346,7 @@
 					<show id="bcpg:productHierarchy2" />
 					<show id="bcpg:productState" />
 					<show id="bcpg:productUnit" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:entityTplRef" force="true" />
 					<show id="rep:reportTpls" />
 

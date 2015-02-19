@@ -59,16 +59,15 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 		
 		// Tare
 		BigDecimal tare = calculateTareOfComposition(formulatedProduct);
-		tare =  tare.add(calculateTareOfPackaging(formulatedProduct));		
-		logger.debug("Calculating tare in kg: "+tare);
-		
-		tare = tare.multiply(new BigDecimal(1000d));
-		
-		logger.debug("Calculating tare in g: "+tare);
-
+		tare =  tare.add(calculateTareOfPackaging(formulatedProduct));
+		formulatedProduct.setTareUnit(TareUnit.kg);
+	
+		if(tare.doubleValue() < 1){
+			logger.debug("Calculating tare in g: "+tare);
+			tare = tare.multiply(new BigDecimal(1000d));
+			formulatedProduct.setTareUnit(TareUnit.g);
+		}
 		formulatedProduct.setTare(tare.doubleValue());
-		formulatedProduct.setTareUnit(TareUnit.g);
-		
 		return true;
 	}	
 	

@@ -4,6 +4,7 @@
 package fr.becpg.repo.product.formulation;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -467,7 +468,7 @@ public class FormulationHelper {
 					}
 				}
 				logger.debug("compo tare: " + tare + " qty " + qty + " productQty " + productQty);
-				return tare.multiply(new BigDecimal(qty)).divide(new BigDecimal(productQty));
+				return tare.multiply(new BigDecimal(qty)).divide(new BigDecimal(productQty), MathContext.DECIMAL64);
 			}
 		}
 		return new BigDecimal(0d);
@@ -505,10 +506,10 @@ public class FormulationHelper {
 	}
 
 	public static BigDecimal getTareInKg(Double tare, TareUnit tareUnit) {
-		BigDecimal ret = new BigDecimal(tare);
 		if (tare == null || tareUnit == null) {
 			return null;
 		} else {
+			BigDecimal ret = new BigDecimal(tare);
 			if (tareUnit == TareUnit.g) {
 				ret = ret.divide(new BigDecimal(1000d));
 			}
