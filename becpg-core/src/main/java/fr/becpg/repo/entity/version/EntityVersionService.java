@@ -15,37 +15,36 @@ import org.alfresco.service.cmr.version.Version;
  *
  * @author querephi
  */
-public interface EntityVersionService {			
-	
-	/*
-	 * Private method 
-	 */
-	NodeRef createVersionAndCheckin(NodeRef origNodeRef, NodeRef workingCopyNodeRef, Map<String,Serializable> versionProperties);
-	NodeRef doCheckOut(NodeRef origNodeRef, NodeRef workingCopyNodeRef);
-	void cancelCheckOut(NodeRef origNodeRef, NodeRef workingCopyNodeRef);
-	
-	public NodeRef getEntityVersion(Version version);
-	
-	public void deleteVersionHistory(NodeRef entityNodeRef);
+public interface EntityVersionService {
 
-	public NodeRef getEntitiesHistoryFolder();
-	
-	public List<EntityVersion> getAllVersions(NodeRef entityNodeRef);
-	
-	public NodeRef getVersionHistoryNodeRef(NodeRef entityNodeRef);
-	
-	public List<NodeRef> buildVersionHistory(NodeRef versionHistoryRef, NodeRef nodeRef);
-	
-	public List<EntityVersion> getAllVersionAndBranches(NodeRef entityNodeRef);
-	
-	public List<NodeRef> getAllVersionBranches(NodeRef entityNodeRef);
-	
-	public NodeRef createVersion(NodeRef entityNodeRef, Map<String, Serializable> versionProperties);
-	
-	public void createInitialVersion(NodeRef entityNodeRef);
-	
+	NodeRef createVersionAndCheckin(NodeRef origNodeRef, NodeRef workingCopyNodeRef, Map<String, Serializable> versionProperties);
+
+	NodeRef doCheckOut(NodeRef origNodeRef, NodeRef workingCopyNodeRef);
+
+	void cancelCheckOut(NodeRef origNodeRef, NodeRef workingCopyNodeRef);
+
+	NodeRef getEntityVersion(Version version);
+
+	void deleteVersionHistory(NodeRef entityNodeRef);
+
+	NodeRef getEntitiesHistoryFolder();
+
+	List<EntityVersion> getAllVersions(NodeRef entityNodeRef);
+
+	NodeRef getVersionHistoryNodeRef(NodeRef entityNodeRef);
+
+	List<NodeRef> buildVersionHistory(NodeRef versionHistoryRef, NodeRef nodeRef);
+
+	List<EntityVersion> getAllVersionAndBranches(NodeRef entityNodeRef);
+
+	List<NodeRef> getAllVersionBranches(NodeRef entityNodeRef);
+
+	void prepareBranchBeforeMerge(NodeRef nodeRef, NodeRef branchToNodeRef);
+
+	NodeRef createVersion(NodeRef entityNodeRef, Map<String, Serializable> versionProperties);
+
+	void createInitialVersion(NodeRef entityNodeRef);
+
 	void afterCancelCheckOut(NodeRef entityNodeRef);
 
-
-	
 }

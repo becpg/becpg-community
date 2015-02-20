@@ -93,6 +93,14 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 	</bean>
 	
 	
+	<bean id="evaluator.becpg.doclib.action.entity.isBranch" parent="evaluator.doclib.action.hasAspect">
+		<property name="aspects">
+			<list>
+				<value>bcpg:entityBranchAspect</value>
+			</list>
+		</property>
+	</bean>
+	
 	<!-- WebScripts -->
 	
 	<bean id="webscript.org.alfresco.modules.entity-datagrid.forms.filterForm.get" class="fr.becpg.web.scripts.forms.FilterFormUIGet" parent="webscript">
