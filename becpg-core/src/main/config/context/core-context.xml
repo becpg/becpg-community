@@ -94,6 +94,13 @@
 		<property name="hierarchyService" ref="hierarchyService" />
 	</bean>
 
+
+     <bean id="entityVersionsListValuePlugin" parent="baseListValuePlugin"
+		init-method="init" class="fr.becpg.repo.listvalue.impl.EntityVersionsListValuePlugin">
+		<property name="nodeService" ref="nodeService" />
+		<property name="entityVersionService" ref="entityVersionService" />
+		
+	</bean>	
 	
 
 	<!-- Mail service -->
