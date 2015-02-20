@@ -136,7 +136,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					if ((isExtractedProduct && !DATALIST_SPECIFIC_EXTRACTOR.contains(dataListQName)) || !isExtractedProduct
 							&& RAWMATERIAL_DATALIST.contains(dataListQName)) {
 
-						@SuppressWarnings({ "rawtypes"})
+						@SuppressWarnings({ "rawtypes" })
 						List<BeCPGDataObject> dataListItems = (List) datalists.get(dataListQName);
 
 						for (BeCPGDataObject dataListItem : dataListItems) {
@@ -315,11 +315,11 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	private void loadProcessListItem(ProcessListDataItem dataItem, Element processListElt, NodeRef defaultVariantNodeRef, int level) {
 
-		if (dataItem.getResource() != null && nodeService.exists(dataItem.getResource())) {
-			Element dataListsElt = null;
+		Element dataListsElt = null;
 
-			Element partElt = processListElt.addElement(MPMModel.TYPE_PROCESSLIST.getLocalName());
-			loadDataListItemAttributes(dataItem, partElt);
+		Element partElt = processListElt.addElement(MPMModel.TYPE_PROCESSLIST.getLocalName());
+		loadDataListItemAttributes(dataItem, partElt);
+		if (dataItem.getResource() != null && nodeService.exists(dataItem.getResource())) {
 			dataListsElt = loadResourceParams(dataItem.getResource(), partElt);
 
 			ProductData productData = alfrescoRepository.findOne(dataItem.getResource());
@@ -329,11 +329,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					loadProcessListItem(subDataItem, subProcessListElt, defaultVariantNodeRef, level + 1);
 				}
 			}
-
-			extractVariants(dataItem.getVariants(), partElt, defaultVariantNodeRef);
-			partElt.addAttribute(BeCPGModel.PROP_DEPTH_LEVEL.getLocalName(), "" + level);
-
 		}
+		extractVariants(dataItem.getVariants(), partElt, defaultVariantNodeRef);
+		partElt.addAttribute(BeCPGModel.PROP_DEPTH_LEVEL.getLocalName(), "" + level);
 
 	}
 
