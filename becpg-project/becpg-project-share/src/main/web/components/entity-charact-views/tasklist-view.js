@@ -38,6 +38,8 @@ var g; // uggly gantt var
         YAHOO.Bubbling.on("viewModeChange", this.onViewModeChange, this);
         
         YAHOO.Bubbling.on("dataItemUpdated", this.initGantt, this);
+        YAHOO.Bubbling.on("dataItemsDeleted", this.initGantt, this);
+        YAHOO.Bubbling.on("dataItemCreated", this.initGantt, this);
 
         return this;
     };

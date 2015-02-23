@@ -704,4 +704,43 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 			}
 		}, false, true);
 	}
+	
+	@Test
+	public void testDeleteTaskAndDependancies() {
+
+		createProject(ProjectState.InProgress, new Date(), null);
+			
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
+
+				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+				
+				List<NodeRef> prevTasks = associationService.getTargetAssocs(projectData.getTaskList().get(2).getNodeRef(), ProjectModel.ASSOC_TL_PREV_TASKS);
+				logger.info("prevTasks " + prevTasks);
+				assertEquals(1, prevTasks.size());
+				assertEquals(projectData.getTaskList().get(1).getNodeRef(), prevTasks.get(0));
+				
+				// delete task
+				logger.info("Delete task");
+				nodeService.deleteNode(projectData.getTaskList().get(1).getNodeRef());
+				
+				return null;
+			}
+		}, false, true);
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
+
+				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+				
+				List<NodeRef> prevTasks = associationService.getTargetAssocs(projectData.getTaskList().get(1).getNodeRef(), ProjectModel.ASSOC_TL_PREV_TASKS);				
+				assertEquals(1, prevTasks.size());
+				assertEquals(projectData.getTaskList().get(0).getNodeRef(), prevTasks.get(0));				
+				
+				return null;
+			}
+		}, false, true);
+	}
 }
