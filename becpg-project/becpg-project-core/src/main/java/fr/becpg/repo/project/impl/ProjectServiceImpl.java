@@ -173,32 +173,52 @@ public class ProjectServiceImpl implements ProjectService {
 		// update prevTasks assoc of next tasks
 		List<NodeRef> deleteTaskPrevTaskNodeRefs = associationService.getTargetAssocs(taskListNodeRef, ProjectModel.ASSOC_TL_PREV_TASKS);
 		List<AssociationRef> nextTaskAssociationRefs = nodeService.getSourceAssocs(taskListNodeRef, ProjectModel.ASSOC_TL_PREV_TASKS);
-
+		
 		for (AssociationRef nextTaskAssociationRef : nextTaskAssociationRefs) {
+			
+			if(!nodeService.hasAspect(nextTaskAssociationRef.getSourceRef(), ContentModel.ASPECT_PENDING_DELETE)){
+				
+				List<NodeRef> nextTaskPrevTaskNodeRefs = associationService.getTargetAssocs(nextTaskAssociationRef.getSourceRef(),
+						ProjectModel.ASSOC_TL_PREV_TASKS);
+				
+				if (nextTaskAssociationRefs.contains(taskListNodeRef)) {
+					nextTaskPrevTaskNodeRefs.remove(taskListNodeRef);
+				}
 
-			List<NodeRef> nextTaskPrevTaskNodeRefs = associationService.getTargetAssocs(nextTaskAssociationRef.getSourceRef(),
-					ProjectModel.ASSOC_TL_PREV_TASKS);
-			if (nextTaskAssociationRefs.contains(taskListNodeRef)) {
-				nextTaskPrevTaskNodeRefs.remove(taskListNodeRef);
-			}
+				for (NodeRef deleteTaskPrevTaskNodeRef : deleteTaskPrevTaskNodeRefs) {
+					nextTaskPrevTaskNodeRefs.add(deleteTaskPrevTaskNodeRef);
+				}
 
-			for (NodeRef deleteTaskPrevTaskNodeRef : deleteTaskPrevTaskNodeRefs) {
-				nextTaskPrevTaskNodeRefs.add(deleteTaskPrevTaskNodeRef);
-			}
-
-			associationService.update(nextTaskAssociationRef.getSourceRef(), nextTaskAssociationRef.getTypeQName(), nextTaskPrevTaskNodeRefs);
+				String prevTasks = "";
+				for(NodeRef n : nextTaskPrevTaskNodeRefs){
+					prevTasks += " " + nodeService.getProperty(n, ProjectModel.PROP_TL_TASK_NAME);
+				}
+				associationService.update(nextTaskAssociationRef.getSourceRef(), ProjectModel.ASSOC_TL_PREV_TASKS, nextTaskPrevTaskNodeRefs);
+			}			
 		}
-
-		// // delete dl (not the document associated to dl -> user must delete
-		// them)
-		// List<AssociationRef> dlAssociationRefs =
-		// nodeService.getSourceAssocs(taskListNodeRef,
-		// ProjectModel.ASSOC_DL_TASK);
-		// for(AssociationRef dlAssociationRef : dlAssociationRefs){
-		// logger.debug("###delete assoc dlAssociationRef.getSourceRef() : " +
-		// dlAssociationRef.getSourceRef());
-		// nodeService.deleteNode(dlAssociationRef.getSourceRef());
-		// }
+	}
+	
+	@Override
+	public void deleteDeliverables(NodeRef taskListNodeRef) {
+		
+		// delete dl (not the document associated to dl -> user must delete them)
+		List<AssociationRef> dlAssociationRefs = nodeService.getSourceAssocs(taskListNodeRef,
+				ProjectModel.ASSOC_DL_TASK);
+		for (AssociationRef dlAssociationRef : dlAssociationRefs) {
+						
+			if(!nodeService.hasAspect(dlAssociationRef.getSourceRef(), ContentModel.ASPECT_PENDING_DELETE)){
+				
+				List<AssociationRef> tlAssociationRefs = nodeService.getTargetAssocs(dlAssociationRef.getSourceRef(),
+						ProjectModel.ASSOC_DL_TASK);
+				if (tlAssociationRefs.size() == 1) {				
+					nodeService.deleteNode(dlAssociationRef.getSourceRef());			
+				} else {
+					nodeService.removeAssociation(dlAssociationRef.getSourceRef(), dlAssociationRef.getTargetRef(),
+							ProjectModel.ASSOC_DL_TASK);
+				}
+			}
+		}
+		
 	}
 
 	@Override

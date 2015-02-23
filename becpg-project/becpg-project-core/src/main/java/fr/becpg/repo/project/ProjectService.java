@@ -87,6 +87,8 @@ public interface ProjectService {
 	 * @param taskListNodeRef
 	 */
 	public void deleteTask(NodeRef taskListNodeRef);
+	
+	public void deleteDeliverables(NodeRef taskListNodeRef);
 	/**
 	 * 
 	 * @param taskListNodeRef

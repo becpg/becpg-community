@@ -126,11 +126,11 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 			} else {
 
 				if (hasPlannedDuration(tl)) {
-					if ((TaskState.Planned.equals(tl.getTaskState()) || (tl.getIsGroup() && TaskState.InProgress.equals(tl.getTaskState())))
+					if ((TaskState.Planned.equals(tl.getTaskState()) || TaskState.Cancelled.equals(tl.getTaskState()) || (tl.getIsGroup() && TaskState.InProgress.equals(tl.getTaskState())))
 							&& !TaskManualDate.Start.equals(tl.getManualDate())) {
 						tl.setStart(null);
 					}
-					if ((TaskState.Planned.equals(tl.getTaskState()) || (TaskState.InProgress.equals(tl.getTaskState())))
+					if ((TaskState.Planned.equals(tl.getTaskState()) || TaskState.Cancelled.equals(tl.getTaskState()) || (TaskState.InProgress.equals(tl.getTaskState())))
 							&& !TaskManualDate.End.equals(tl.getManualDate())) {
 						tl.setEnd(null);
 					}
@@ -231,7 +231,9 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 			projectData.setCompletionDate(nextTask.getEnd());
 		}
 
-		calculatePlanningOfNextTasks(projectData, nextTask.getNodeRef(), ProjectHelper.calculateNextStartDate(nextTask.getEnd()));
+		// end date is null if task is cancelled		
+		Date d = TaskState.Cancelled.equals(nextTask.getTaskState()) ? startDate : ProjectHelper.calculateNextStartDate(nextTask.getEnd());
+		calculatePlanningOfNextTasks(projectData, nextTask.getNodeRef(), d);
 	}
 
 	private void calculatePlanningOfChildren(ProjectData projectData, TaskListDataItem taskListDataItem) throws FormulateException {
@@ -296,7 +298,9 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 
 			}
 			
-			calculateRetroPlanningOfPrevTasks(projectData, prevTask, ProjectHelper.calculatePrevEndDate(prevTask.getStart()));
+			// start date is null if task is cancelled
+			Date d = TaskState.Cancelled.equals(prevTask.getTaskState()) ? endDate : ProjectHelper.calculatePrevEndDate(prevTask.getStart());
+			calculateRetroPlanningOfPrevTasks(projectData, prevTask, d);
 
 			calculateDatesOfParent(prevTask.getParent(), prevTask);
 		}
