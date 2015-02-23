@@ -1091,7 +1091,9 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 					queryBuilder.andPropEquals(RemoteHelper.getPropName(type), (String) properties.get(ContentModel.PROP_NAME));
 					doQuery = true;
 				}
-			}
+			} else  if(properties.get(ContentModel.PROP_NAME) !=null && NodeRef.isNodeRef(properties.get(ContentModel.PROP_NAME).toString())) {
+				return new NodeRef(properties.get(ContentModel.PROP_NAME).toString());
+			} 
 
 			if (!doQuery) {
 				logger.warn("No keys defined in mapping, neither code property. Type: " + type + " Properties: " + properties);

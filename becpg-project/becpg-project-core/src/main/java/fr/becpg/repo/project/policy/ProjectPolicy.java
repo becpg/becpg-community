@@ -88,11 +88,15 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements
 			
 			if (afterState.equals(ProjectState.InProgress.toString())) {
 				logger.debug("onUpdateProperties:start project");
-				Date startDate = ProjectHelper.removeTime(new Date());
-				nodeService.setProperty(nodeRef, ProjectModel.PROP_PROJECT_START_DATE, startDate);
-				ProjectData projectData = alfrescoRepository.findOne(nodeRef);
-				for(TaskListDataItem taskListDataItem : ProjectHelper.getNextTasks(projectData, null)){
-					nodeService.setProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_START, startDate);
+				
+				if(nodeService.getProperty(nodeRef, ProjectModel.PROP_PROJECT_START_DATE) == null){
+				
+					Date startDate = ProjectHelper.removeTime(new Date());
+					nodeService.setProperty(nodeRef, ProjectModel.PROP_PROJECT_START_DATE, startDate);
+					ProjectData projectData = alfrescoRepository.findOne(nodeRef);
+					for(TaskListDataItem taskListDataItem : ProjectHelper.getNextTasks(projectData, null)){
+						nodeService.setProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_START, startDate);
+					}
 				}
 				formulateProject = true;
 			} else if (afterState.equals(ProjectState.Cancelled.toString())) {
