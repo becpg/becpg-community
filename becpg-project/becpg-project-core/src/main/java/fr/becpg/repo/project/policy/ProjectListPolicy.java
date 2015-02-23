@@ -4,9 +4,11 @@
 package fr.becpg.repo.project.policy;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.copy.CopyBehaviourCallback;
 import org.alfresco.repo.copy.CopyDetails;
 import org.alfresco.repo.copy.CopyServicePolicies;
@@ -21,7 +23,6 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.formulation.FormulateException;
@@ -118,13 +119,8 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 
 		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME, ProjectModel.TYPE_TASK_LIST, new JavaBehaviour(this,
 				"beforeDeleteNode"));
-		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME, ProjectModel.TYPE_DELIVERABLE_LIST, new JavaBehaviour(
-				this, "beforeDeleteNode"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME, ProjectModel.TYPE_TASK_LIST, new JavaBehaviour(this,
 				"onDeleteNode"));
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME, ProjectModel.TYPE_DELIVERABLE_LIST, new JavaBehaviour(this,
-				"onDeleteNode"));
-
 	}
 
 	@Override
@@ -320,6 +316,11 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 	public void beforeDeleteNode(NodeRef nodeRef) {
 		// we need to queue item before delete in order to have WUsed
 		queueListItem(nodeRef);
+		
+		QName projectListType = nodeService.getType(nodeRef);
+		if (ProjectModel.TYPE_TASK_LIST.equals(projectListType)) {			
+			projectService.deleteTask(nodeRef);			
+		}
 	}
 
 	@Override
@@ -332,8 +333,8 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 
 			// we need to do it at the end
 			if (ProjectModel.TYPE_TASK_LIST.equals(projectListType)) {
-				projectService.deleteTask(nodeRef);
-				queueNode(KEY_DELETED_TASK_LIST_ITEM, nodeRef);
+				queueNode(KEY_DELETED_TASK_LIST_ITEM, nodeRef);				
+				projectService.deleteDeliverables(nodeRef);
 			}
 		}
 	}
