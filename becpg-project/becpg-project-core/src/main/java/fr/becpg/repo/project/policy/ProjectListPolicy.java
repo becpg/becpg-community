@@ -325,7 +325,6 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 
 	@Override
 	public void onDeleteNode(ChildAssociationRef childRef, boolean isArchived) {
-
 		if (isArchived) {
 			NodeRef nodeRef = nodeArchiveService.getArchivedNode(childRef.getChildRef());
 			QName projectListType = nodeService.getType(nodeRef);
@@ -333,8 +332,7 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 
 			// we need to do it at the end
 			if (ProjectModel.TYPE_TASK_LIST.equals(projectListType)) {
-				queueNode(KEY_DELETED_TASK_LIST_ITEM, nodeRef);				
-				projectService.deleteDeliverables(nodeRef);
+				queueNode(KEY_DELETED_TASK_LIST_ITEM, nodeRef);
 			}
 		}
 	}

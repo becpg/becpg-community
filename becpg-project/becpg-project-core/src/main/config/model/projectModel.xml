@@ -526,7 +526,7 @@
 					</source>
 					<target>
 						<class>pjt:taskList</class>
-						<mandatory>false</mandatory>
+						<mandatory>true</mandatory>
 						<many>true</many>
 					</target>
 				</association>
