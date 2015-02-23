@@ -158,6 +158,29 @@
 				<evaluator>evaluator.becpg.doclib.action.entity.isWorkingCopy
 				</evaluator>
 			</action>
+			
+			
+			<action id="entity-merge" type="javascript" label="actions.document.merge-entity">
+				<param name="function">onActionMergeEntity</param>
+				<permissions>
+					<permission allow="true">Write</permission>
+				</permissions>
+				<evaluator>evaluator.becpg.doclib.action.entity.isBranch</evaluator>
+				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isSystemEntity</evaluator>
+				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isWorkingCopy</evaluator>
+				<evaluator negate="true">evaluator.doclib.action.notEditable</evaluator>
+			</action>
+			
+			<action id="entity-branch" type="javascript" label="actions.document.branch-entity">
+				<param name="function">onActionBranchEntity</param>
+				<permissions>
+					<permission allow="true">Write</permission>
+				</permissions>
+				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isSystemEntity</evaluator>
+				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isWorkingCopy</evaluator>
+				<evaluator negate="true">evaluator.doclib.action.notEditable</evaluator>
+			</action>
+			
 			<action id="entity-checkout" type="javascript" label="actions.document.checkout-entity">
 				<param name="function">onActionCheckOutEntity</param>
 				<permissions>
@@ -191,7 +214,7 @@
 				<param name="page">entity-details?nodeRef={workingCopy.workingCopyNodeRef}</param>
 				<evaluator>evaluator.doclib.action.hasWorkingCopy</evaluator>
 			</action>
-
+			
 			<!-- Manage permissions (site roles) -->
 			<action id="entity-manage-site-permissions" type="javascript" icon="document-manage-permissions" label="actions.document.manage-permissions">
 				<param name="function">onActionManagePermissions</param>
@@ -267,10 +290,13 @@
 				<action index="100" id="document-edit-metadata" icon="folder-edit-metadata" label="actions.folder.edit-metadata" />
 				<action index="101" id="entity-checkin" />
 				<action index="102" id="entity-checkout" />
-				<action index="103" id="entity-cancel-editing" />
-				<action index="104" id="entity-view-original" />
-				<action index="105" id="entity-view-working-copy" />
-				<action index="107" id="entity-refresh-reports" />
+				<action index="103" id="entity-branch" />
+				<action index="104" id="entity-merge" />
+				<action index="105" id="entity-cancel-editing" />
+				<action index="106" id="entity-view-original" />
+				<action index="107" id="entity-view-working-copy" />
+				<action index="108" id="entity-refresh-reports" />
+				
 				<action index="111" id="document-approve" icon="folder-approve" />
 				<action index="120" id="document-reject" icon="folder-reject" />
 				<action index="130" id="document-copy-to" icon="folder-copy-to" label="actions.folder.copy-to" />

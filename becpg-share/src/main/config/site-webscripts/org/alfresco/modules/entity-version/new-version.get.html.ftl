@@ -6,10 +6,31 @@
    <div class="bd">
       <form id="${el}-NewEntityVersion-form" method="POST"
             action="${url.context}/proxy/alfresco/becpg/entity/form-checkin">
+
+    	  <input type="hidden" id="${el}-version-hidden" name="version" value=""/>
          <input type="hidden" id="${el}-nodeRef-hidden" name="nodeRef" value=""/>
-         <input type="hidden" id="${el}-version-hidden" name="version" value=""/>
 
          <div id="${el}-versionSection-div">
+            <#if args.merge?? && args.merge=="true">
+            <div class="yui-gd">
+            	 <div class="yui-u first">
+		     		<label for="${el}-branchToNodeRef">${msg("label.merge.entity")}:<span class="mandatory-indicator">*</span></label>     
+		     	</div>
+				<div class="yui-u">
+ 	                <div id="${el}-entities" class="object-finder">        
+						<div class="yui-ac" >
+							 <div id="${el}-entities-field-autocomplete" class="ac-body" >
+										 <span id="${el}-entities-field-toggle-autocomplete" class="ac-toogle"></span>					
+										 <input id="${el}-entities-field" type="text" name="-" tabindex="0"  class="yui-ac-input multi-assoc" />
+										 <span class="clear" ></span>
+							   </div>			
+							   <div id="${el}-entities-field-container"></div>
+							   <input type="hidden" id="${el}-entities-added" name="branchToNodeRef" />
+					   </div>
+					</div>
+              </div>
+			</div>
+         </#if>
             <div class="yui-gd">
                <div class="yui-u first">
                   <label for="${el}-minorVersion-radioButton">${msg("label.version")}</label>
@@ -48,5 +69,5 @@
 </div>
 
 <script type="text/javascript">//<![CDATA[
-Alfresco.util.addMessages(${messages}, "Alfresco.module.NewEntityVersion");
+ Alfresco.util.addMessages(${messages}, "Alfresco.module.NewEntityVersion");
 //]]></script>
