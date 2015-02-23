@@ -216,8 +216,16 @@ public class ProjectHelper {
 			for (int i = projectData.getTaskList().size() - 1; i >= 0; i--) {
 				TaskListDataItem t = projectData.getTaskList().get(i);
 
-				if (taskNodeRefs.contains(t.getNodeRef()) && (TaskState.Completed.equals(t.getTaskState()) || TaskState.Cancelled.equals(t.getTaskState()))) {
-					inProgressTasks.remove(t.getNodeRef());
+				if (taskNodeRefs.contains(t.getNodeRef())){
+					
+					if(TaskState.Completed.equals(t.getTaskState())) {
+						inProgressTasks.remove(t.getNodeRef());
+					}
+					else if(TaskState.Cancelled.equals(t.getTaskState())){
+						if(ProjectHelper.areTasksDone(projectData, t.getPrevTasks())){
+							inProgressTasks.remove(t.getNodeRef());
+						}
+					}					
 				}
 			}
 		}
@@ -271,7 +279,7 @@ public class ProjectHelper {
 
 	public static void setTaskStartDate(TaskListDataItem t, Date startDate) {
 		logger.debug("task: " + t.getTaskName() + " state: " + t.getTaskState() + " start: " + startDate);
-		if ((t.getStart() == null || TaskState.Planned.equals(t.getTaskState())) && !TaskManualDate.Start.equals(t.getManualDate())) {
+		if ((TaskState.Planned.equals(t.getTaskState())) && !TaskManualDate.Start.equals(t.getManualDate())) {
 			t.setStart(removeTime(startDate));
 		}
 	}

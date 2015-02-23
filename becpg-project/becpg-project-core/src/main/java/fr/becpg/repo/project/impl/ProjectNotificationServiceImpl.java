@@ -138,6 +138,7 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 
 		NodeRef templateNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(), MAIL_TEMPLATE);
 
+		
 		if (templateNodeRef == null) {
 			logger.warn("Template not found.");
 		} else {

@@ -21,7 +21,6 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.formulation.FormulateException;
@@ -86,8 +85,8 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 				this, "onUpdateProperties"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, ProjectModel.TYPE_SCORE_LIST, new JavaBehaviour(this,
 				"onUpdateProperties"));
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, ProjectModel.TYPE_LOG_TIME_LIST, new JavaBehaviour(this,
-				"onUpdateProperties"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, ProjectModel.TYPE_LOG_TIME_LIST, new JavaBehaviour(
+				this, "onUpdateProperties"));
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, ProjectModel.TYPE_TASK_LIST,
 				ProjectModel.ASSOC_TL_RESOURCES, new JavaBehaviour(this, "onCreateAssociation"));
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME, ProjectModel.TYPE_TASK_LIST,
@@ -115,16 +114,10 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 				"onCreateNode"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, ProjectModel.TYPE_TASK_LIST, new JavaBehaviour(this,
 				"onCreateNode"));
-
 		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME, ProjectModel.TYPE_TASK_LIST, new JavaBehaviour(this,
 				"beforeDeleteNode"));
-		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME, ProjectModel.TYPE_DELIVERABLE_LIST, new JavaBehaviour(
-				this, "beforeDeleteNode"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME, ProjectModel.TYPE_TASK_LIST, new JavaBehaviour(this,
 				"onDeleteNode"));
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME, ProjectModel.TYPE_DELIVERABLE_LIST, new JavaBehaviour(this,
-				"onDeleteNode"));
-
 	}
 
 	@Override
@@ -133,7 +126,6 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		if (logger.isDebugEnabled()) {
 			logger.debug("doBeforeCommit key: " + key + " size: " + pendingNodes.size());
 		}
-
 		if (KEY_DELETED_TASK_LIST_ITEM.equals(key)) {
 			for (NodeRef taskListItemNodeRef : pendingNodes) {
 				if (nodeService.exists(taskListItemNodeRef)) {
@@ -145,18 +137,22 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 			for (NodeRef projectNodeRef : pendingNodes) {
 				if (nodeService.exists(projectNodeRef) && isNotLocked(projectNodeRef)) {
 					try {
+						policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_LOG_TIME_LIST);
 						policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
 						policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
 						policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_PROJECT);
+						policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_SCORE_LIST);
 						projectService.formulate(projectNodeRef);
 					} catch (FormulateException e) {
 						logger.error(e, e);
 					} finally {
-						policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
+						policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_LOG_TIME_LIST);
+						policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
 						policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
 						policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_PROJECT);
+						policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_SCORE_LIST);
 					}
-				} 
+				}
 			}
 		}
 	}
@@ -190,7 +186,7 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 				// re-open task
 				logger.debug("re-open task: " + nodeRef);
 				projectService.reopenTask(nodeRef);
-				
+
 			}
 		}
 
@@ -251,7 +247,7 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 			queueListItem(nodeRef);
 		}
 	}
-	
+
 	public void onUpdatePropertiesLogTimeList(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 
 		if (isPropChanged(before, after, ProjectModel.PROP_LTL_TIME)) {
@@ -271,6 +267,7 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 	@Override
 	public void onDeleteAssociation(AssociationRef assocRef) {
 		if (assocRef.getTypeQName().equals(ProjectModel.ASSOC_TL_RESOURCES)) {
+
 			setPermission(assocRef, false);
 		}
 		queueListItem(assocRef.getSourceRef());
@@ -286,12 +283,11 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 	}
 
 	private void setPermission(AssociationRef assocRef, boolean allow) {
-			NodeRef taskListNodeRef = assocRef.getSourceRef();
-			NodeRef resourceNodeRef = assocRef.getTargetRef();
-			NodeRef projectNodeRef = entityListDAO.getEntity(taskListNodeRef);
-	
-			projectService.updateProjectPermission(projectNodeRef,taskListNodeRef, resourceNodeRef, allow);
-		
+		NodeRef taskListNodeRef = assocRef.getSourceRef();
+		NodeRef resourceNodeRef = assocRef.getTargetRef();
+		NodeRef projectNodeRef = entityListDAO.getEntity(taskListNodeRef);
+		projectService.updateProjectPermission(projectNodeRef, taskListNodeRef, resourceNodeRef, allow);
+
 	}
 
 	@Override
@@ -317,14 +313,7 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 	}
 
 	@Override
-	public void beforeDeleteNode(NodeRef nodeRef) {
-		// we need to queue item before delete in order to have WUsed
-		queueListItem(nodeRef);
-	}
-
-	@Override
 	public void onDeleteNode(ChildAssociationRef childRef, boolean isArchived) {
-
 		if (isArchived) {
 			NodeRef nodeRef = nodeArchiveService.getArchivedNode(childRef.getChildRef());
 			QName projectListType = nodeService.getType(nodeRef);
@@ -332,10 +321,37 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 
 			// we need to do it at the end
 			if (ProjectModel.TYPE_TASK_LIST.equals(projectListType)) {
-				projectService.deleteTask(nodeRef);
 				queueNode(KEY_DELETED_TASK_LIST_ITEM, nodeRef);
 			}
 		}
+	}
+
+	@Override
+	public void beforeDeleteNode(NodeRef nodeRef) {
+		// we need to queue item before delete in order to have WUsed
+
+		QName projectListType = nodeService.getType(nodeRef);
+		if (ProjectModel.TYPE_TASK_LIST.equals(projectListType)) {
+
+			try {
+				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_LOG_TIME_LIST);
+				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
+				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
+				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_PROJECT);
+				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_SCORE_LIST);
+
+				projectService.deleteTask(nodeRef);
+			} finally {
+				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_LOG_TIME_LIST);
+				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
+				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
+				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_PROJECT);
+				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_SCORE_LIST);
+			}
+
+			queueListItem(nodeRef);
+		}
+
 	}
 
 	@Override
@@ -353,8 +369,7 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 			properties.remove(ProjectModel.PROP_TL_END);
 			properties.remove(ProjectModel.PROP_TL_WORKFLOW_INSTANCE);
 			properties.remove(ProjectModel.PROP_COMPLETION_PERCENT);
-			if (properties.containsKey(ProjectModel.PROP_TL_STATE) 
-					&& !TaskState.OnHold.toString().equals(properties.get(ProjectModel.PROP_TL_STATE))
+			if (properties.containsKey(ProjectModel.PROP_TL_STATE) && !TaskState.OnHold.toString().equals(properties.get(ProjectModel.PROP_TL_STATE))
 					&& !TaskState.Cancelled.toString().equals(properties.get(ProjectModel.PROP_TL_STATE))) {
 				properties.put(ProjectModel.PROP_TL_STATE, TaskState.Planned);
 			}
