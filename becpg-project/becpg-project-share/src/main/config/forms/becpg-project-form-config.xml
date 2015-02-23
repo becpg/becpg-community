@@ -342,6 +342,7 @@
 			<form id="filter">
 				<field-visibility>
 					<show id="cm:name" />
+					<show id="pjt:projectManager" />
 					<show id="pjt:projectPriority"  />
 					<show id="pjt:projectState" />
 					<show id="pjt:projectHierarchy1" />
@@ -357,6 +358,7 @@
 				<appearance>
 					<set id="main" />
 					<field id="cm:name"  set="main"/>
+					<field id="pjt:projectManager"  set="main"/>
 					<set id="mainInfo" template="/org/alfresco/components/form/2-column-set.ftl"  />
 					<field id="pjt:projectPriority" set="mainInfo" >
 						<control template="/org/alfresco/components/form/controls/selectone.ftl" >
