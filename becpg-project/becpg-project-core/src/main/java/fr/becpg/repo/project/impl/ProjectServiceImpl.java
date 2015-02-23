@@ -188,14 +188,11 @@ public class ProjectServiceImpl implements ProjectService {
 				for (NodeRef deleteTaskPrevTaskNodeRef : deleteTaskPrevTaskNodeRefs) {
 					nextTaskPrevTaskNodeRefs.add(deleteTaskPrevTaskNodeRef);
 				}
-
-				String prevTasks = "";
-				for(NodeRef n : nextTaskPrevTaskNodeRefs){
-					prevTasks += " " + nodeService.getProperty(n, ProjectModel.PROP_TL_TASK_NAME);
-				}
 				associationService.update(nextTaskAssociationRef.getSourceRef(), ProjectModel.ASSOC_TL_PREV_TASKS, nextTaskPrevTaskNodeRefs);
-			}			
+			}
 		}
+		
+		deleteDeliverables(taskListNodeRef);
 	}
 	
 	@Override
@@ -210,7 +207,7 @@ public class ProjectServiceImpl implements ProjectService {
 				
 				List<AssociationRef> tlAssociationRefs = nodeService.getTargetAssocs(dlAssociationRef.getSourceRef(),
 						ProjectModel.ASSOC_DL_TASK);
-				if (tlAssociationRefs.size() == 1) {				
+				if (tlAssociationRefs.size() == 1) {
 					nodeService.deleteNode(dlAssociationRef.getSourceRef());			
 				} else {
 					nodeService.removeAssociation(dlAssociationRef.getSourceRef(), dlAssociationRef.getTargetRef(),
