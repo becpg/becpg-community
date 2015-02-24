@@ -713,7 +713,8 @@
 					<show id="bcpg:storageConditionsRef" force="true" />
 					<show id="bcpg:precautionOfUseRef" force="true" />
 					<show id="bcpg:preparationTips" force="true" />
-
+					<show id="bcpg:productMicrobioCriteriaRef" />
+					
 					<!-- formulation -->
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productUnit" />
@@ -722,7 +723,7 @@
 					<show id="bcpg:servingSize" force="true" />
 					<show id="bcpg:numberOfServings" force="true" />
 					<show id="bcpg:productSpecifications" />
-					<show id="bcpg:productMicrobioCriteriaRef" />
+					
 
 					<!-- Profitability -->
 					<show id="bcpg:unitPrice" force="true" />
