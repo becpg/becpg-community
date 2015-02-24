@@ -47,4 +47,6 @@ public interface EntityVersionService {
 
 	void afterCancelCheckOut(NodeRef entityNodeRef);
 
+	NodeRef createBranch(NodeRef entityNodeRef, NodeRef parentRef);
+
 }
