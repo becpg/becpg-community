@@ -65,11 +65,27 @@ public class AssociationServiceTest extends PLMBaseTestCase {
 	@Test
 	public void testUpdateCachedAssocs(){
 		
+		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(
+				new RetryingTransactionCallback<NodeRef>() {
+
+					@Override
+					public NodeRef execute() throws Throwable {
+
+						NodeRef rawMaterialNodeRef = BeCPGPLMTestHelper.createRawMaterial(testFolderNodeRef, "MP test report");
+						if (!nodeService.hasAspect(rawMaterialNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
+							Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>();
+							aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
+							nodeService.addAspect(rawMaterialNodeRef, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
+						}
+						return rawMaterialNodeRef;
+					}
+
+				}, false, true);
+		
+		
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
 			@Override
 			public NodeRef execute() throws Throwable {
-				
-				NodeRef rawMaterialNodeRef = BeCPGPLMTestHelper.createRawMaterial(testFolderNodeRef, "MP test report");
 				
 				// suppliers
 				String []supplierNames = {"Supplier1", "Supplier2", "Supplier3"};
