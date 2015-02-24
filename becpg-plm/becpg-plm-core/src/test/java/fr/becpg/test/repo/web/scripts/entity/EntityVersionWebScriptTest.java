@@ -3,11 +3,17 @@
  */
 package fr.becpg.test.repo.web.scripts.entity;
 
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.Resource;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.coci.CheckOutCheckInService;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
@@ -30,18 +36,32 @@ public class EntityVersionWebScriptTest extends PLMBaseWebScriptTest{
 	@Resource
     private CheckOutCheckInService checkOutCheckInService;
     
-	private NodeRef rawMaterialNodeRef = null;
-
 	@Test
 	public void testGetVersionHistory() throws Exception {
+		
+		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(
+				new RetryingTransactionCallback<NodeRef>() {
+
+					@Override
+					public NodeRef execute() throws Throwable {
+						logger.debug("Add versionnable aspect");
+
+						NodeRef rawMaterialNodeRef = BeCPGPLMTestHelper.createRawMaterial(testFolderNodeRef, "MP test report");
+						if (!nodeService.hasAspect(rawMaterialNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
+							Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>();
+							aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
+							nodeService.addAspect(rawMaterialNodeRef, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
+						}
+						return rawMaterialNodeRef;
+					}
+
+				}, false, true);
 		
 		
 		 transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
 				@Override
 				public NodeRef execute() throws Throwable {					   
 			
-				
-	 				rawMaterialNodeRef = BeCPGPLMTestHelper.createRawMaterial(testFolderNodeRef, "Test MP");	 					
 	 				
 	 				NodeRef checkedOutNodeRef = checkOutCheckInService.checkout(rawMaterialNodeRef);
 	 				NodeRef checkedInNodeRef = checkOutCheckInService.checkin(checkedOutNodeRef, null);
