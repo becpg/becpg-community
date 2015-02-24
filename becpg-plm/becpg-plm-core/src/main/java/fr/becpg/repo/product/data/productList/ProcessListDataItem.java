@@ -11,9 +11,11 @@ import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.annotation.MultiLevelDataList;
 
 @AlfType
 @AlfQname(qname = "mpm:processList")
+@MultiLevelDataList
 public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem implements CompositionDataItem {
 	
 	private Double qty = 0d;	
@@ -91,7 +93,7 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 	}
 	
 	@AlfSingleAssoc
-	@DataListIdentifierAttr
+	@DataListIdentifierAttr(isDefaultPivotAssoc=false)
 	@AlfQname(qname="mpm:plStep")
 	public NodeRef getStep() {
 		return step;
@@ -102,7 +104,7 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 	}
 	
 	@AlfSingleAssoc
-	@DataListIdentifierAttr
+	@DataListIdentifierAttr(isDefaultPivotAssoc=false)
 	@AlfQname(qname="mpm:plProduct")
 	public NodeRef getProduct() {
 		return product;
@@ -113,7 +115,7 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 	}
 	
 	@AlfSingleAssoc
-	@DataListIdentifierAttr
+	@DataListIdentifierAttr(isDefaultPivotAssoc=true)
 	@AlfQname(qname="mpm:plResource")
 	public NodeRef getResource() {
 		return resource;

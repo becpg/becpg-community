@@ -48,6 +48,9 @@
                            this.onGanttButtonClick);
                      this.widgets.showPlanningButton = Alfresco.util.createYUIButton(this, "show-planning-button",
                            this.onPlanningButtonClick);
+                     this.widgets.showResourcesButton = Alfresco.util.createYUIButton(this, "show-resources-button",
+                             this.onResourcesButtonClick);
+                     
                      this.widgets.exportProjectList = Alfresco.util.createYUIButton(this, "export-csv-button",
                            this.onExportProjectList);
 
@@ -98,6 +101,8 @@
 
                      if (this.options.view == "gantt") {
                         this.widgets.showGanttButton.set("disabled", true);
+                     }  else if (this.options.view == "resources") { 
+                         this.widgets.showResourcesButton.set("disabled", true);
                      } else {
                         this.widgets.showPlanningButton.set("disabled", true);
                      }
@@ -132,6 +137,10 @@
                      document.location.href = Alfresco.util
                            .siteURL("project-list?view=gantt"+window.location.hash);
                   },
+                  onResourcesButtonClick : function PTL_onGanttButtonClick(e, p_obj) {
+                      document.location.href = Alfresco.util
+                            .siteURL("project-list?view=resources"+window.location.hash);
+                   },
                   onPlanningButtonClick : function PTL_onPlanningButtonClick(e, p_obj) {
                      document.location.href = Alfresco.util.siteURL("project-list"+window.location.hash);
                   },

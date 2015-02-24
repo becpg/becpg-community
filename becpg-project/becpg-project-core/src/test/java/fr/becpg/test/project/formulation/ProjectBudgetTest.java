@@ -74,7 +74,7 @@ public class ProjectBudgetTest extends AbstractProjectTestCase {
 				projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 
 				for (TaskListDataItem tl : projectData.getTaskList()) {
-					logger.info("Task " + tl.getTaskName() + " planned cost : " + tl.getBudgetedCost());
+					logger.info("Task " + tl.getTaskName() + " planned cost : " + tl.getBudgetedCost() + " work " + tl.getWork());
 				}
 				
 				for (TaskListDataItem tl : projectData.getTaskList()) {				
@@ -100,7 +100,7 @@ public class ProjectBudgetTest extends AbstractProjectTestCase {
 					}
 				}
 				
-				assertEquals(12800d, projectData.getBudgetedCost());
+				assertEquals(12800d, projectData.getBudgetedCost());			
 				assertEquals(48d, projectData.getWork());
 				assertEquals(15d, projectData.getLoggedTime());
 

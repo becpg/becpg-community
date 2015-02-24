@@ -571,6 +571,14 @@ if (beCPG.module.EntityDataGridRenderers) {
 			return Alfresco.util.encodeHTML(qty);
 		}
 	});
+	
+	
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName : "bcpg:packagingListQty",
+        renderer : function(oRecord, data, label, scope) {
+            return data.value;
+        }
+    });
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : "bcpg:compoListVolume",

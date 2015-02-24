@@ -75,8 +75,8 @@
 						  </div>
 			      </div>
 				</div>
-			   <div id="${el}-grid"  class="projects grid" <#if view=="gantt" >style="display:none;"</#if>> </div>
-			   <div id="${el}-gantt" class="projects" <#if view!="gantt" >style="display:none;"</#if>> </div>
+			   <div id="${el}-grid"  class="projects grid" <#if view=="gantt" || view=="resources" >style="display:none;"</#if>> </div>
+			   <div id="${el}-gantt" class="projects ${view}" <#if view!="gantt" && view!="resources" >style="display:none;"</#if>> </div>
 						
 			   <div id="${el}-selectListMessage" class="hidden select-list-message">${msg("message.select-list")}</div>
 			

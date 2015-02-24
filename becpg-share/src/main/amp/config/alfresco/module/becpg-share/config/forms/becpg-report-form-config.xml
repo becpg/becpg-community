@@ -55,7 +55,9 @@
 					<field id="rep:reportTplType" sorted="true"/>
 					<field id="rep:reportTplFormat" sorted="true"/>	
 					<field id="rep:reportLocales" >
-						<control template="/org/alfresco/components/form/controls/mtlangue.ftl"/>
+						<control template="/org/alfresco/components/form/controls/mtlangue.ftl">
+        		 				 <control-param name="insertBlank">true</control-param>
+						</control>
 					</field>							
 				</appearance>
 			</form>

@@ -81,6 +81,7 @@
 		                  filename : displayName,
 		                  nodeRef : nodeRef,
 		                  version : version,
+		                  merge : false,
 		                  onNewEntityVersionComplete : {
 		                     fn : function EntityActions_oACI_success(data) {
 			                     this.recordData.jsNode.setNodeRef(data.successful[0].nodeRef);
@@ -93,6 +94,65 @@
 	               }
 	            });
 
+	
+	YAHOO.Bubbling
+    .fire(
+          "registerAction",
+          {
+             actionName : "onActionMergeEntity",
+             fn : function onActionMergeEntity(asset) {
+                 var displayName = asset.displayName, nodeRef = new Alfresco.util.NodeRef(asset.nodeRef), version = asset.version;
+
+                 if (!this.newEntityVersion) {
+                     this.newEntityVersion = Alfresco.module.getNewEntityVersionInstance();
+                 }
+
+                 this.newEntityVersion.show({
+                    filename : displayName,
+                    nodeRef : nodeRef,
+                    version : version,
+                    merge : true,
+                    onNewEntityVersionComplete : {
+                       fn : function EntityActions_oACI_success(data) {
+                           this.recordData.jsNode.setNodeRef(data.successful[0].nodeRef);
+                           window.location.href = this.getActionUrls(this.recordData).documentDetailsUrl.replace("document-details","entity-details");
+                       },
+                       scope : this
+                    }
+                 });
+
+             }
+          });
+	
+	YAHOO.Bubbling
+    .fire(
+          "registerAction",
+          {
+             actionName : "onActionBranchEntity",
+             fn : function onActionBranchEntity(p_record) {
+                 var  nodeRef = new Alfresco.util.NodeRef(p_record.nodeRef), recordSiteName = $isValueSet(p_record.location.site) ? p_record.location.site.name : null;
+                
+                 Alfresco.util.Ajax
+                 .request({
+                    method : Alfresco.util.Ajax.POST,
+                    url : Alfresco.constants.PROXY_URI + "becpg/entity/simulation/create?entityNodeRef=" + nodeRef,
+                    successCallback : {
+                       fn : function(resp) {
+                          if (resp.json) {
+                             window.location.href = beCPG.util.entityDetailsURL(recordSiteName,
+                                   resp.json.persistedObject, p_record.node.type);
+                          }
+                       },
+                       scope : this
+                    }
+                 });
+
+             }
+          });
+    
+	
+	
+	
 	YAHOO.Bubbling.fire("registerAction", {
 		   actionName : "onActionCancelCheckOutEntity",
 		   fn : function onActionCancelCheckOutEntity(asset) {

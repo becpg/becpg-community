@@ -167,14 +167,6 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	}
 	
 	
-	public String getState() {
-		return taskState!=null ? taskState.toString() : TaskState.Planned.toString();
-	}
-
-	public void setState(String state) {
-		this.taskState = TaskState.valueOf(state);
-	}
-
 	@AlfProp
 	@AlfQname(qname = "pjt:completionPercent")
 	public Integer getCompletionPercent() {

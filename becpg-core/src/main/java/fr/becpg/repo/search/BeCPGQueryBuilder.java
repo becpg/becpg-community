@@ -298,6 +298,11 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		ftsQueries.add(ftsQuery);
 		return this;
 	}
+	
+	public BeCPGQueryBuilder clearFTSQuery() {
+		ftsQueries.clear();
+		return this;
+	}
 
 	public BeCPGQueryBuilder andPropEquals(QName propQName, String value) {
 		if (value == null) {

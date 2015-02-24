@@ -36,6 +36,10 @@ var g; // uggly gantt var
         beCPG.component.TaskListView.superclass.constructor.call(this, htmlId);
 
         YAHOO.Bubbling.on("viewModeChange", this.onViewModeChange, this);
+        
+        YAHOO.Bubbling.on("dataItemUpdated", this.initGantt, this);
+        YAHOO.Bubbling.on("dataItemsDeleted", this.initGantt, this);
+        YAHOO.Bubbling.on("dataItemCreated", this.initGantt, this);
 
         return this;
     };
@@ -212,6 +216,7 @@ var g; // uggly gantt var
                         },
                         
                         refreshGantt : function TaskListView_refreshGantt(){
+
                             g.Draw();
                             g.DrawDependencies();
                         }

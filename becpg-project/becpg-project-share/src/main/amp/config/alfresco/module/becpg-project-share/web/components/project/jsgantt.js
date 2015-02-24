@@ -1196,8 +1196,16 @@ if (!JSGantt) {
                   var vTask = this.getArrayLocationByID(vDepList[k]);
 
                   if (vTask!=null && vList[vTask].getVisible() == 1){
-                     this.drawDependency(vList[vTask].getEndX(), vList[vTask].getEndY(), vList[i].getStartX() - 1,
-                           vList[i].getStartY());
+                      
+                      if(vList[vTask].getMile()) {
+                          this.drawDependency(vList[vTask].getEndX() - 250, vList[vTask].getEndY(), vList[i].getStartX() - 1,
+                                  vList[i].getStartY());
+                      } else {
+                          this.drawDependency(vList[vTask].getEndX(), vList[vTask].getEndY(), vList[i].getStartX() - 1,
+                                  vList[i].getStartY());
+                      }
+                      
+                   
                   }
                }
             }
@@ -1709,7 +1717,7 @@ if (!JSGantt) {
                   vTaskRight = 1;
 
                   vRightTable += '<div id="bardiv_' + vcurrDivID + '" style="position:absolute; top:3px; left:' + (Math
-                        .ceil((vTaskLeft * (vDayWidth) + 1)) + vDayWidth - 20) + 'px; height: 16px; width:16px; overflow:hidden;">' + '  <div id="taskbar_' + vcurrDivID + '" title="' + vDateRowStr + '"  class="milestone ' + (vTaskList[i]
+                        .ceil((vTaskLeft * (vDayWidth) + 1)) + vDayWidth - 20) + 'px; height: 16px; width:266px; overflow:hidden;">' + '  <div id="taskbar_' + vcurrDivID + '" title="' + vDateRowStr + '"  class="milestone ' + (vTaskList[i]
                         .getCompVal() < 100 ? "completed" : "") + '" >';
 
                   // if (vTaskList[i].getCompVal() < 100) {
@@ -1740,7 +1748,7 @@ if (!JSGantt) {
                      // position:absolute; left: 6px; top:1px;">' + vCaptionStr
                      // +
                      // '</div>';
-                     vRightTable += '<div style="FONT-SIZE:12px; position:absolute; top:2px; width:120px; left:12px">' + vCaptionStr + '</div>';
+                     vRightTable += '<div style="FONT-SIZE:12px; position:absolute; top:2px; width:250px; left:16px">' + vCaptionStr + '</div>';
                   }
 
                   vRightTable += '</div>';
@@ -1800,7 +1808,7 @@ if (!JSGantt) {
                         // position:absolute; left: 6px; top:1px;">' +
                         // vCaptionStr
                         // + '</div>';
-                        vRightTable += '<div style="FONT-SIZE:12px; position:absolute; top:-3px; width:120px; left:' + (Math
+                        vRightTable += '<div style="FONT-SIZE:12px; position:absolute; top:-3px; width:250px; left:' + (Math
                               .ceil((vTaskRight) * (vDayWidth) - 1) + 6) + 'px">' + vCaptionStr + '</div>';
                      }
 
@@ -1840,7 +1848,7 @@ if (!JSGantt) {
                         // position:absolute; left: 6px; top:-3px;">' +
                         // vCaptionStr
                         // + '</div>';
-                        vRightTable += '<div style="FONT-SIZE:12px; position:absolute; top:-3px; width:120px; left:' + (Math
+                        vRightTable += '<div style="FONT-SIZE:12px; position:absolute; top:-3px; width:250px; left:' + (Math
                               .ceil((vTaskRight) * (vDayWidth) - 1) + 6) + 'px">' + vCaptionStr + '</div>';
                      }
                      vRightTable += '</div>';

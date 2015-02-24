@@ -221,7 +221,11 @@ public class HierarchyServiceImpl implements HierarchyService {
 
 		NodeRef parent = HierarchyHelper.getParentHierachy(hierarchyNodeRef, nodeService);
 		if (parent != null) {
-			parentNodeRef = getOrCreateHierachyFolder(parent, parentNodeRef);
+			if(!parent.equals(hierarchyNodeRef)){
+				parentNodeRef = getOrCreateHierachyFolder(parent, parentNodeRef);
+			} else {
+				logger.warn("Warning hierarchy cycle for :"+HierarchyHelper.getHierachyName(hierarchyNodeRef, nodeService)+" "+hierarchyNodeRef);
+			}
 		}
 		String name = HierarchyHelper.getHierachyName(hierarchyNodeRef, nodeService);
 		if (name != null) {

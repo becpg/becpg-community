@@ -38,6 +38,7 @@
 }
 
 .project-list-toolbar .show-gantt,
+.project-list-toolbar .show-resources,
 .project-list-toolbar .show-planning,
 .project-list-toolbar .export-csv
 {
@@ -46,6 +47,7 @@
 
 
 .project-list-toolbar .show-gantt span.first-child,
+.project-list-toolbar .show-resources span.first-child,
 .project-list-toolbar .show-planning span.first-child,
 .project-list-toolbar .export-csv span.first-child
 {
@@ -63,6 +65,17 @@
 .project-list-toolbar .show-gantt .yui-button-disabled span.first-child
 {
    background-image: url("images/gantt-disabled-16.png");
+}
+
+
+.project-list-toolbar .show-resources span.first-child
+{
+   background-image: url("../images/filetypes/generic-user-16.png");
+}
+
+.project-list-toolbar .show-resources .yui-button-disabled span.first-child
+{
+   background-image: url("../images/filetypes/generic-user-16.png");
 }
 
 .project-list-toolbar .show-planning span.first-child

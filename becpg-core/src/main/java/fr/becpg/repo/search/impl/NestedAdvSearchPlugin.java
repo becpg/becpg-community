@@ -40,7 +40,7 @@ public class NestedAdvSearchPlugin implements AdvSearchPlugin {
 		Map<String, Map<String, String>> nested = new HashMap<>();
 
 		for (String key : criteriaMap.keySet()) {
-			if (key.startsWith("nested_")) {
+			if (key.startsWith("nested_") && !key.contains("dataList_")) {
 				String nestedPropName = null;
 				String nestedAssoc = null;
 

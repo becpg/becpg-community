@@ -447,7 +447,7 @@ public class ExportSearchWebScriptTest extends fr.becpg.test.PLMBaseTestCase {
 
 			String url = "/becpg/report/exportsearch/"
 					+ exportProductReportTpl.toString().replace("://", "/")
-					+ "/Excel.xls?repo=true&term=&query={\"prop_cm_name\"%3A\"FP\"%2C\"prop_cm_title\"%3A\"\"%2C\"prop_cm_description\"%3A\"\"%2C\"prop_mimetype\"%3A\"\"%2C\"prop_cm_modified-date-range\"%3A\"\"%2C\"prop_cm_modifier\"%3A\"\"%2C\"datatype\"%3A\"cm%3Acontent\"}";
+					+ "/Excel.xlsx?repo=true&term=&query={\"prop_cm_name\"%3A\"FP\"%2C\"prop_cm_title\"%3A\"\"%2C\"prop_cm_description\"%3A\"\"%2C\"prop_mimetype\"%3A\"\"%2C\"prop_cm_modified-date-range\"%3A\"\"%2C\"prop_cm_modifier\"%3A\"\"%2C\"datatype\"%3A\"cm%3Acontent\"}";
 
 			Response response = TestWebscriptExecuters.sendRequest(new GetRequest(url), 200, "admin");
 			logger.debug("Response: " + response.getContentAsString());
