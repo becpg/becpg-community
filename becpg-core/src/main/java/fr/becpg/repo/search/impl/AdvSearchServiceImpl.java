@@ -238,9 +238,24 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		if (cleanQuery.contains("\",\"")) {
 			cleanQuery = cleanQuery.replaceAll("\",\"", "\" OR \"");
 		}
-		return cleanQuery;
+
+		return escapeValue(cleanQuery);
 	}
 
+	
+	protected String escapeValue(String value) {
+		StringBuilder buf = new StringBuilder();
+		for (int i = 0; i < value.length(); i++) {
+			char c = value.charAt(i);
+			if ((c == '{') || (c == '}') || (c == ':') || (c == '-') || (c == '/')) {
+				buf.append('\\');
+			}
+			buf.append(c);
+		}
+		return buf.toString();
+	}
+	
+	
 	private String getHierarchyQuery(String propName, String hierachyName) {
 		List<NodeRef> nodes = null;
 
