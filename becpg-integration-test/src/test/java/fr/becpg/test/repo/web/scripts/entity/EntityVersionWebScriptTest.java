@@ -31,19 +31,33 @@ public class EntityVersionWebScriptTest extends PLMBaseTestCase{
 	@Resource
     private CheckOutCheckInService checkOutCheckInService;
     
-	private NodeRef rawMaterialNodeRef = null;
-
 	@Test
 	public void testGetVersionHistory() throws Exception {
+		
+		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(
+				new RetryingTransactionCallback<NodeRef>() {
+
+					@Override
+					public NodeRef execute() throws Throwable {
+						logger.debug("Add versionnable aspect");
+
+						NodeRef rawMaterialNodeRef = BeCPGPLMTestHelper.createRawMaterial(testFolderNodeRef, "MP test report");
+						if (!nodeService.hasAspect(rawMaterialNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
+							Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>();
+							aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
+							nodeService.addAspect(rawMaterialNodeRef, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
+						}
+						return rawMaterialNodeRef;
+					}
+
+				}, false, true);
 		
 		
 		 transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
 				@Override
 				public NodeRef execute() throws Throwable {					   
 			
-				
-	 				rawMaterialNodeRef = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "Test MP");	 					
-	 				
+					
 	 				NodeRef checkedOutNodeRef = checkOutCheckInService.checkout(rawMaterialNodeRef);
 	 				NodeRef checkedInNodeRef = checkOutCheckInService.checkin(checkedOutNodeRef, null);
 	 				

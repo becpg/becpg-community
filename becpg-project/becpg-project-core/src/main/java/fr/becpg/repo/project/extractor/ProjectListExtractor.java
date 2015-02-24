@@ -21,6 +21,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -59,6 +60,7 @@ public class ProjectListExtractor extends SimpleExtractor {
 	private static final String VIEW_FAVOURITES = "favourites";
 	private static final String VIEW_TASKS = "tasks";
 	private static final String VIEW_MY_TASKS = "my-tasks";
+	private static final String VIEW_RESOURCES = "resources";
 	private static final String VIEW_ENTITY_PROJECTS = "entity-projects";
 	private static final String PROJECT_LIST = "projectList";
 
@@ -173,11 +175,50 @@ public class ProjectListExtractor extends SimpleExtractor {
 				if (VIEW_MY_TASKS.equals(dataListFilter.getFilterId()) || VIEW_TASKS.equals(dataListFilter.getFilterId())) {
 					dataType = ProjectModel.TYPE_TASK_LIST;
 					beCPGQueryBuilder.ofType(dataType);
-
+				}
+				
+				if(VIEW_RESOURCES.equals(dataListFilter.getExtraParams())){
+					if("projects".equals(dataListFilter.getFilterId())){
+						beCPGQueryBuilder.clearFTSQuery();
+						
+						
+					} 
+					
+					if(dataListFilter.getCriteriaMap()!=null && !dataListFilter.getCriteriaMap().containsKey("prop_pjt_tlState")){
+						dataListFilter.getCriteriaMap().put("prop_pjt_tlState", "Planned,InProgress");
+					}
+					
+					
 				}
 
 				results = advSearchService.queryAdvSearch(dataType, beCPGQueryBuilder, dataListFilter.getCriteriaMap(), pagination.getMaxResults());
 
+				if(VIEW_RESOURCES.equals(dataListFilter.getExtraParams())){
+					
+					for (Iterator<NodeRef> iterator = results.iterator(); iterator.hasNext();) {
+						NodeRef nodeRef = (NodeRef) iterator.next();
+						if(associationService.getTargetAssoc(nodeRef, ProjectModel.ASSOC_TL_RESOURCES)==null){
+							iterator.remove();
+						}
+					}
+					
+					
+					if("projects".equals(dataListFilter.getFilterId())){
+						BeCPGQueryBuilder projectQueryBuilder = dataListFilter.getSearchQuery();
+						projectQueryBuilder.ofType(ProjectModel.TYPE_PROJECT);
+						List<NodeRef> projectList = projectQueryBuilder.ftsLanguage().list();
+						for (Iterator<NodeRef> iterator = results.iterator(); iterator.hasNext();) {
+							NodeRef nodeRef = (NodeRef) iterator.next();
+							NodeRef entityNodeRef = entityListDAO.getEntity(nodeRef);
+							if(!projectList.contains(entityNodeRef)){
+								iterator.remove();
+							}
+						}
+					}
+					
+				}
+				
+				
 				// Always should return project
 				if (VIEW_MY_TASKS.equals(dataListFilter.getFilterId()) || VIEW_TASKS.equals(dataListFilter.getFilterId())) {
 					if (VIEW_MY_TASKS.equals(dataListFilter.getFilterId())) {
@@ -189,6 +230,7 @@ public class ProjectListExtractor extends SimpleExtractor {
 						results.retainAll(associationService.getSourcesAssocs(currentUserNodeRef, ProjectModel.ASSOC_TL_RESOURCES));
 					}
 				}
+				
 
 				if (VIEW_FAVOURITES.equals(dataListFilter.getFilterId())) {
 					logger.debug("Keep only favorites");

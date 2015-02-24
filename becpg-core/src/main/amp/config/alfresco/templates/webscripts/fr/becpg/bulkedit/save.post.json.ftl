@@ -1,5 +1,5 @@
 <#escape x as jsonUtils.encodeJSONString(x)>
 {
-   "value": ${newValue?string},
+    <#if newValue?is_number>"value": ${newValue?c}"<#else>"value": ${newValue?string}</#if>
 }
 </#escape>

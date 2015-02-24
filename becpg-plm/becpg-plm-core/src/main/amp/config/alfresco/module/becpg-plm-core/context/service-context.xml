@@ -142,8 +142,7 @@
 		<property name="associationService" ref="associationService" />
 		<property name="nodeService" ref="NodeService" />		
 		<property name="entityListDAO" ref="entityListDAO" />
-		<property name="entityService" ref="entityService" />
-		<property name="repoService" ref="repoService" />
+		<property name="entityVersionService" ref="entityVersionService"/>
 	</bean>
 
 	<!-- Export search -->

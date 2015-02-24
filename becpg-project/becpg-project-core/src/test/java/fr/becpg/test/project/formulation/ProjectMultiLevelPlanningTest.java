@@ -73,7 +73,7 @@ public class ProjectMultiLevelPlanningTest extends AbstractProjectTestCase {
 				projectService.formulate(projectNodeRef);
 
 				// check
-				projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);				
+				projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 				assertEquals(dateFormat.parse("19/11/2012"), projectData.getTaskList().get(0).getStart());
 				assertEquals(dateFormat.parse("26/11/2012"), projectData.getTaskList().get(0).getEnd());
 				assertEquals(dateFormat.parse("19/11/2012"), projectData.getTaskList().get(1).getStart());

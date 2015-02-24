@@ -17,10 +17,13 @@
  ******************************************************************************/
 package fr.becpg.repo.product.formulation;
 
+import java.math.BigDecimal;
+
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.model.PackModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.EffectiveFilters;
@@ -55,33 +58,40 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 		}
 		
 		// Tare
-		Double tare = calculateTareOfComposition(formulatedProduct);
-		tare += calculateTareOfPackaging(formulatedProduct);		
-
-		formulatedProduct.setTare(tare * 1000);
-		formulatedProduct.setTareUnit(TareUnit.g);
-		
+		BigDecimal tare = calculateTareOfComposition(formulatedProduct);
+		tare =  tare.add(calculateTareOfPackaging(formulatedProduct));
+		formulatedProduct.setTareUnit(TareUnit.kg);
+	
+		if(tare.doubleValue() < 1){
+			logger.debug("Calculating tare in g: "+tare);
+			tare = tare.multiply(new BigDecimal(1000d));
+			formulatedProduct.setTareUnit(TareUnit.g);
+		}
+		formulatedProduct.setTare(tare.doubleValue());
 		return true;
 	}	
 	
 	@SuppressWarnings("unchecked")
-	private Double calculateTareOfComposition(ProductData formulatedProduct){
-		Double totalTare = 0d;
+	private BigDecimal calculateTareOfComposition(ProductData formulatedProduct){
+		BigDecimal totalTare = new BigDecimal(0d);
 		for(CompoListDataItem compoList : formulatedProduct.getCompoList(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)){			
-			totalTare += FormulationHelper.getTareInKg(compoList, nodeService);
+			totalTare = totalTare.add(FormulationHelper.getTareInKg(compoList, nodeService));
 		}			
 		return totalTare;
 	}
 	
 	@SuppressWarnings("unchecked")
-	private Double calculateTareOfPackaging(ProductData formulatedProduct){
-		Double totalTare = 0d;
+	private BigDecimal calculateTareOfPackaging(ProductData formulatedProduct){
+		BigDecimal totalTare  = new BigDecimal(0d);
 		for(PackagingListDataItem packList : formulatedProduct.getPackagingList(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)){
-			
 			// take in account only primary
-			if(packList.getPkgLevel() != null && packList.getPkgLevel().equals(PackagingLevel.Primary)){						
-				Double tare = FormulationHelper.getTareInKg(packList, nodeService);			
-				totalTare += tare;
+			PackagingLevel level = PackagingLevel.Primary;
+			if(nodeService.hasAspect(formulatedProduct.getNodeRef(), PackModel.ASPECT_PALLET)){
+			   level = PackagingLevel.Secondary;
+			}
+			
+			if(packList.getPkgLevel() != null && packList.getPkgLevel().equals(level)){			
+				totalTare = totalTare.add(FormulationHelper.getTareInKg(packList, nodeService));
 			}			
 		}			
 		return totalTare;

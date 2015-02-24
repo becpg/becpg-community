@@ -713,7 +713,8 @@
 					<show id="bcpg:storageConditionsRef" force="true" />
 					<show id="bcpg:precautionOfUseRef" force="true" />
 					<show id="bcpg:preparationTips" force="true" />
-
+					<show id="bcpg:productMicrobioCriteriaRef" />
+					
 					<!-- formulation -->
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productUnit" />
@@ -722,7 +723,7 @@
 					<show id="bcpg:servingSize" force="true" />
 					<show id="bcpg:numberOfServings" force="true" />
 					<show id="bcpg:productSpecifications" />
-					<show id="bcpg:productMicrobioCriteriaRef" />
+					
 
 					<!-- Profitability -->
 					<show id="bcpg:unitPrice" force="true" />
@@ -1346,6 +1347,7 @@
 					<show id="bcpg:productHierarchy2" />
 					<show id="bcpg:productState" />
 					<show id="bcpg:productUnit" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:entityTplRef" force="true" />
 					<show id="rep:reportTpls" />
 
@@ -1454,6 +1456,11 @@
 					<show id="pack:palletBoxesPerLastLayer" force="true" />
 					<show id="pack:palletBoxesPerPallet" force="true" />
 					<show id="pack:palletHeight" force="true" />
+					
+					<!-- Tare -->
+					<show id="pack:tare" force="true" />
+					<show id="pack:tareUnit" force="true" />
+					
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" />
@@ -1464,14 +1471,14 @@
 					<field id="bcpg:productHierarchy1" mandatory="false"
 						read-only="false">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingKit_Hierarchy
 							</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" mandatory="false"
 						read-only="false">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingKit_Hierarchy
 							</control-param>
 							<control-param name="parent">bcpg_productHierarchy1
 							</control-param>

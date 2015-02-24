@@ -89,15 +89,9 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 				"onCheckIn"));
 		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.BeforeCancelCheckOut.QNAME, BeCPGModel.ASPECT_ENTITYLISTS,
 				new JavaBehaviour(this, "beforeCancelCheckOut"));
-		
-		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.OnCancelCheckOut.QNAME, BeCPGModel.ASPECT_ENTITYLISTS,
-				new JavaBehaviour(this, "onCancelCheckOut"));
-		
-		//
-		// this.policyComponent.bindClassBehaviour(QName.createQName(NamespaceService.ALFRESCO_URI,
-		// "onAddAspect"), ContentModel.ASPECT_VERSIONABLE,
-		// new JavaBehaviour(this, "onAddAspect",
-		// Behaviour.NotificationFrequency.TRANSACTION_COMMIT));
+
+		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.OnCancelCheckOut.QNAME, BeCPGModel.ASPECT_ENTITYLISTS, new JavaBehaviour(
+				this, "onCancelCheckOut"));
 
 		this.policyComponent.bindClassBehaviour(QName.createQName(NamespaceService.ALFRESCO_URI, "onRemoveAspect"), ContentModel.ASPECT_VERSIONABLE,
 				new JavaBehaviour(this, "onRemoveAspect", Behaviour.NotificationFrequency.TRANSACTION_COMMIT));

@@ -22,6 +22,8 @@ import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 
+import fr.becpg.repo.entity.version.EntityVersionService;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class FormCheckInWebScript.
@@ -30,74 +32,73 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
  */
 public class FormCheckInWebScript extends DeclarativeWebScript {
 
-	// request parameter names
-	/** The Constant PARAM_NODEREF. */
 	private static final String PARAM_NODEREF = "nodeRef";
-
-	/** The Constant PARAM_MAJOR_VERSION. */
 	private static final String PARAM_MAJOR_VERSION = "majorVersion";
-	
-	/** The Constant PARAM_DESCRIPTION. */
-	private static final String PARAM_DESCRIPTION = "description";	
-	// model key names
-	/** The Constant MODEL_KEY_NAME_NODEREF. */
+	private static final String PARAM_DESCRIPTION = "description";
 	private static final String MODEL_KEY_NAME_NODEREF = "noderef";
-	// values
-	/** The Constant VALUE_TRUE. */
+	private static final String PARAM_BRANCH_TO_NODEREF = "branchToNodeRef";
+
 	private static final String VALUE_TRUE = "true";
-	
-	/** The logger. */
-	private static Log logger = LogFactory.getLog(FormCheckInWebScript.class);	
-	
-	/** The entity check out check in service. */
+
+	private static final Log logger = LogFactory.getLog(FormCheckInWebScript.class);
+
 	private CheckOutCheckInService checkOutCheckInService;
 	
+	
+	private EntityVersionService entityVersionService;
+	
+	
+	
+
+	public void setEntityVersionService(EntityVersionService entityVersionService) {
+		this.entityVersionService = entityVersionService;
+	}
+
+
 	public void setCheckOutCheckInService(CheckOutCheckInService checkOutCheckInService) {
 		this.checkOutCheckInService = checkOutCheckInService;
 	}
 
 
-
-	/**
-	 * Form checkin a entity.
-	 *
-	 * @param req the req
-	 * @param status the status
-	 * @param cache the cache
-	 * @return the map
-	 */
 	@Override
-	protected Map<String, Object> executeImpl(WebScriptRequest req, Status status, Cache cache){				
-		
-		logger.debug("FormCheckInWebScript executeImpl()");
-		
+	protected Map<String, Object> executeImpl(WebScriptRequest req, Status status, Cache cache) {
+
 		NodeRef nodeRef = null;
+		NodeRef branchToNodeRef = null;
 		String description = "";
 		VersionType versionType;
-		
-		JSONObject json = (JSONObject)req.parseContent();
-		try{
-			nodeRef = new NodeRef((String)json.get(PARAM_NODEREF));
-			description = (String)json.get(PARAM_DESCRIPTION);
-			versionType = ((String)json.get(PARAM_MAJOR_VERSION)).equals(VALUE_TRUE) ? VersionType.MAJOR : VersionType.MINOR;
+
+		JSONObject json = (JSONObject) req.parseContent();
+		try {
+			nodeRef = new NodeRef((String) json.get(PARAM_NODEREF));
+			description = (String) json.get(PARAM_DESCRIPTION);
+			versionType = ((String) json.get(PARAM_MAJOR_VERSION)).equals(VALUE_TRUE) ? VersionType.MAJOR : VersionType.MINOR;
 			
-			logger.debug("nodeRef: " + nodeRef);
-			logger.debug("description: " + description);
-			logger.debug("versionType: " + versionType);
-		}
-		catch(JSONException e){
+			if(json.has(PARAM_BRANCH_TO_NODEREF)){
+				branchToNodeRef = new NodeRef((String) json.get(PARAM_BRANCH_TO_NODEREF));
+				entityVersionService.prepareBranchBeforeMerge(nodeRef, branchToNodeRef);
+				
+			}
+			
+			if(logger.isDebugEnabled()){
+				logger.debug("branchToNodeRef: " + branchToNodeRef);
+				logger.debug("nodeRef: " + nodeRef);
+				logger.debug("description: " + description);
+				logger.debug("versionType: " + versionType);
+			}
+		} catch (JSONException e) {
 			logger.error("Failed to parse form fields", e);
 			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Failed to parse form fields ", e);
 		}
-		
-		//Calculate new version					
+
+		// Calculate new version
 		Map<String, Serializable> properties = new HashMap<String, Serializable>();
 		properties.put(VersionModel.PROP_VERSION_TYPE, versionType);
-		properties.put(Version.PROP_DESCRIPTION, description);		
+		properties.put(Version.PROP_DESCRIPTION, description);
 		NodeRef newEntityNodeRef = checkOutCheckInService.checkin(nodeRef, properties);
 
 		Map<String, Object> model = new HashMap<String, Object>();
-		model.put(MODEL_KEY_NAME_NODEREF, newEntityNodeRef);		
+		model.put(MODEL_KEY_NAME_NODEREF, newEntityNodeRef);
 		return model;
 	}
 }

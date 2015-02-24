@@ -116,6 +116,7 @@
 	<!-- Entity new version form -->
 	<bean id="webscript.fr.becpg.entity.form-checkin.post" class="fr.becpg.repo.web.scripts.entity.FormCheckInWebScript" parent="webscript">
 		<property name="checkOutCheckInService" ref="checkOutCheckInService" />
+		<property name="entityVersionService" ref="entityVersionService" />
 	</bean>
 
 

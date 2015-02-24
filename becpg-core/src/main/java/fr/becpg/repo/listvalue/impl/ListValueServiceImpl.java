@@ -24,17 +24,14 @@ import fr.becpg.repo.listvalue.ListValueService;
 @Service("listValueService")
 public class ListValueServiceImpl implements ListValueService {
 	
+
+	private final static Log logger = LogFactory.getLog(ListValueServiceImpl.class);
 	
 	private Map<String,ListValuePlugin> plugins;
 	
-
 	@Autowired
 	private ListValuePlugin[] listValuePlugins;
 	
-	
-	private static Log logger = LogFactory.getLog(ListValueServiceImpl.class);
-	
-
 
 	@Override
 	public ListValuePage suggestBySourceType(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String,Serializable> extraProps) {

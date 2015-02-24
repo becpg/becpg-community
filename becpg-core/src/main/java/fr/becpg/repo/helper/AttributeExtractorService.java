@@ -82,7 +82,9 @@ public interface AttributeExtractorService {
 	public String getPersonDisplayName(String userId);
 
 
-	PropertyFormats getPropertyFormats(AttributeExtractorMode mode);
+	public PropertyFormats getPropertyFormats(AttributeExtractorMode mode);
+
+	public String extractPropName(NodeRef v);
 	
 
 	

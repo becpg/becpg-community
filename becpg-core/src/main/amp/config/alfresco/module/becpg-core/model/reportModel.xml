@@ -36,6 +36,7 @@
 				<list>
 					<value>PDF</value>
 					<value>XLS</value>
+					<value>XLSX</value>
 					<value>DOC</value>
 				</list>
 			</parameter>
