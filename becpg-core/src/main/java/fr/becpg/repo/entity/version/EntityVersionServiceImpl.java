@@ -2,6 +2,7 @@ package fr.becpg.repo.entity.version;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -55,6 +56,7 @@ import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
@@ -83,10 +85,9 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	private static final String MSG_ERR_ALREADY_WORKING_COPY = "coci_service.err_workingcopy_checkout";
 	private static final String MSG_ALREADY_CHECKEDOUT = "coci_service.err_already_checkedout";
 
-    private static final String EXTENSION_CHARACTER = ".";
+	private static final String EXTENSION_CHARACTER = ".";
 
-
-	private static Log logger = LogFactory.getLog(EntityVersionServiceImpl.class);
+	private final static Log logger = LogFactory.getLog(EntityVersionServiceImpl.class);
 
 	@Autowired
 	private NodeService nodeService;
@@ -120,7 +121,10 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 	@Autowired
 	private LockService lockService;
-	
+
+	@Autowired
+	private RepoService repoService;
+
 	@Autowired
 	@Qualifier("ruleService")
 	private RuntimeRuleService ruleService;
@@ -130,7 +134,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 	@Override
 	public NodeRef createVersionAndCheckin(final NodeRef origNodeRef, final NodeRef workingCopyNodeRef, Map<String, Serializable> versionProperties) {
-		return internalCreateVersionAndCheckin(origNodeRef, workingCopyNodeRef, versionProperties);
+		return internalCreateVersionAndCheckin(origNodeRef, workingCopyNodeRef, versionProperties, false);
 	}
 
 	@Override
@@ -138,18 +142,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 		logger.debug("checkOutDataListAndFiles");
 		// Create initialVersion
-		if (getVersionHistoryNodeRef(origNodeRef) == null) {
-			// Create the initial-version
-			Map<String, Serializable> versionProperties = new HashMap<String, Serializable>(1);
-			versionProperties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
-
-			if (logger.isDebugEnabled()) {
-				logger.debug("Create initial version : " + I18NUtil.getMessage(MSG_INITIAL_VERSION));
-			}
-
-			versionProperties.put(Version.PROP_DESCRIPTION, I18NUtil.getMessage(MSG_INITIAL_VERSION));
-			createVersionAndCheckin(origNodeRef, null, versionProperties);
-		}
+		createInitialVersion(origNodeRef);
 
 		// Copy entity datalists (rights are checked by copyService during
 		// recursiveCopy)
@@ -213,8 +206,9 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 	}
 
+
 	private NodeRef internalCreateVersionAndCheckin(final NodeRef origNodeRef, final NodeRef workingCopyNodeRef,
-			Map<String, Serializable> versionProperties) {
+			Map<String, Serializable> versionProperties, boolean createAlfrescoVersion) {
 		StopWatch watch = new StopWatch();
 
 		if (logger.isDebugEnabled()) {
@@ -250,13 +244,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 					// Recursive copy
 					NodeRef versionNodeRef = copyService.copy(nodeToVersionNodeRef, finalVersionHistoryRef, ContentModel.ASSOC_CONTAINS,
 							ContentModel.ASSOC_CHILDREN, true);
-
-					// entityListDAO.copyDataLists(nodeToVersionNodeRef,
-					// nodeRef,
-					// false);
-					// entityService.copyFiles(nodeToVersionNodeRef,
-					// nodeRef);
-
+				
 					if (workingCopyNodeRef != null) {
 						((RuleService) ruleService).disableRules(workingCopyNodeRef);
 
@@ -288,7 +276,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 			// Map<QName, Serializable> versionProperties =
 			// nodeService.getProperties(versionNodeRef);
-			String versionLabel = getVersionLabel(origNodeRef, versionProperties, isInitialVersion);
+			String versionLabel = getVersionLabel(origNodeRef, versionProperties, isInitialVersion, createAlfrescoVersion);
 
 			String name = nodeService.getProperty(origNodeRef, ContentModel.PROP_NAME) + RepoConsts.VERSION_NAME_DELIMITER + versionLabel;
 			Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>(2);
@@ -375,64 +363,23 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				logger.debug("Create initial version : " + I18NUtil.getMessage(MSG_INITIAL_VERSION));
 			}
 
-			Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>();
-			aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
-			nodeService.addAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
-
 			versionProperties.put(Version.PROP_DESCRIPTION, I18NUtil.getMessage(MSG_INITIAL_VERSION));
-			createVersion(entityNodeRef, versionProperties);
+			
+			if(nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE)){	
+				createVersionAndCheckin(entityNodeRef, null, versionProperties);
+			} else {
+				Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>();
+				aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
+				nodeService.addAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
+				createVersion(entityNodeRef, versionProperties);
+			}
+			
 		}
 	}
 
 	@Override
 	public NodeRef createVersion(final NodeRef origNodeRef, Map<String, Serializable> versionProperties) {
-		StopWatch watch = new StopWatch();
-
-		if (logger.isDebugEnabled()) {
-			watch.start();
-			logger.debug("createVersion: " + origNodeRef + " versionProperties: " + versionProperties);
-		}
-
-		try {
-
-			Version newVersion = versionService.createVersion(origNodeRef, versionProperties);
-
-			NodeRef versionHistoryRef = getVersionHistoryNodeRef(origNodeRef);
-
-			if (versionHistoryRef == null) {
-				versionHistoryRef = createVersionHistory(getEntitiesHistoryFolder(), origNodeRef);
-			}
-
-			final NodeRef finalVersionHistoryRef = versionHistoryRef;
-			NodeRef versionNodeRef = null;
-
-			// Rights are checked by copyService during recursiveCopy
-			versionNodeRef = AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<NodeRef>() {
-				@Override
-				public NodeRef doWork() throws Exception {
-
-					return copyService.copy(origNodeRef, finalVersionHistoryRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);
-
-				}
-			}, AuthenticationUtil.getSystemUserName());
-
-			String name = nodeService.getProperty(origNodeRef, ContentModel.PROP_NAME) + RepoConsts.VERSION_NAME_DELIMITER
-					+ newVersion.getVersionLabel();
-			Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>(2);
-			aspectProperties.put(ContentModel.PROP_NAME, name);
-			aspectProperties.put(BeCPGModel.PROP_VERSION_LABEL, newVersion.getVersionLabel());
-			nodeService.addAspect(versionNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION, aspectProperties);
-
-			updateVersionEffectivity(origNodeRef, versionNodeRef);
-
-			return versionNodeRef;
-
-		} finally {
-			if (logger.isDebugEnabled()) {
-				watch.stop();
-				logger.debug("createVersion run in  " + watch.getTotalTimeSeconds() + " s");
-			}
-		}
+		return internalCreateVersionAndCheckin(origNodeRef, null, versionProperties, true);
 
 	}
 
@@ -686,30 +633,36 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		return ret;
 	}
 
-	private String getVersionLabel(NodeRef origNodeRef, Map<String, Serializable> versionProperties, boolean isInitialVersion) {
-
-		QName classRef = nodeService.getType(origNodeRef);
-		Version preceedingVersion = versionService.getCurrentVersion(origNodeRef);
-
+	private String getVersionLabel(NodeRef origNodeRef, Map<String, Serializable> versionProperties, boolean isInitialVersion,
+			boolean createNewVersion) {
 		String versionLabel = RepoConsts.INITIAL_VERSION;
-		if (!isInitialVersion) {
+		if (createNewVersion) {
+			Version newVersion = versionService.createVersion(origNodeRef, versionProperties);
+			versionLabel = newVersion.getVersionLabel();
+		} else {
 
-			if (preceedingVersion == null) {
+			QName classRef = nodeService.getType(origNodeRef);
+			Version preceedingVersion = versionService.getCurrentVersion(origNodeRef);
 
-				Map<String, Serializable> propsMap = new HashMap<String, Serializable>();
-				propsMap.put(VersionBaseModel.PROP_VERSION_LABEL, RepoConsts.INITIAL_VERSION);
-				propsMap.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
+			if (!isInitialVersion) {
 
-				preceedingVersion = new VersionImpl(propsMap, origNodeRef);
+				if (preceedingVersion == null) {
+
+					Map<String, Serializable> propsMap = new HashMap<String, Serializable>();
+					propsMap.put(VersionBaseModel.PROP_VERSION_LABEL, RepoConsts.INITIAL_VERSION);
+					propsMap.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
+
+					preceedingVersion = new VersionImpl(propsMap, origNodeRef);
+				}
+				// Default the version label to the SerialVersionLabelPolicy
+				SerialVersionLabelPolicy defaultVersionLabelPolicy = new SerialVersionLabelPolicy();
+				versionLabel = defaultVersionLabelPolicy.calculateVersionLabel(classRef, preceedingVersion, versionProperties);
+
 			}
-			// Default the version label to the SerialVersionLabelPolicy
-			SerialVersionLabelPolicy defaultVersionLabelPolicy = new SerialVersionLabelPolicy();
-			versionLabel = defaultVersionLabelPolicy.calculateVersionLabel(classRef, preceedingVersion, versionProperties);
 
-		}
-
-		if (logger.isDebugEnabled()) {
-			logger.debug("new versionLabel: " + versionLabel + " - preceedingVersion: " + preceedingVersion);
+			if (logger.isDebugEnabled()) {
+				logger.debug("new versionLabel: " + versionLabel + " - preceedingVersion: " + preceedingVersion);
+			}
 		}
 
 		return versionLabel;
@@ -806,7 +759,9 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		if (nodeService.hasAspect(branchNodeRef, ContentModel.ASPECT_WORKING_COPY)) {
 			throw new CheckOutCheckInServiceException(MSG_ERR_ALREADY_WORKING_COPY);
 		}
-		
+
+		// Create initialVersion if needed
+		createInitialVersion(branchToNodeRef);
 
 		// It is not enough to check LockUtils.isLockedOrReadOnly in case when
 		// the same user does offline and online edit (for instance in two open
@@ -820,10 +775,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 		policyBehaviourFilter.disableBehaviour(branchNodeRef, ContentModel.ASPECT_AUDITABLE);
 		try {
-			// Invoke before check out policy
-			// invokeBeforeCheckOut(nodeRef, destinationParentNodeRef,
-			// destinationAssocTypeQName, destinationAssocQName);
-
+	
 			// Apply the lock aspect if required
 			if (nodeService.hasAspect(branchToNodeRef, ContentModel.ASPECT_LOCKABLE) == false) {
 				nodeService.addAspect(branchToNodeRef, ContentModel.ASPECT_LOCKABLE, null);
@@ -834,28 +786,28 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 			((RuleService) ruleService).disableRuleType(RuleType.UPDATE);
 			try {
-				
-				 String copyName = (String)this.nodeService.getProperty(branchToNodeRef, ContentModel.PROP_NAME);
-		         String workingCopyLabel =  I18NUtil.getMessage(MSG_WORKING_COPY_LABEL);
-		         copyName = createWorkingCopyName(copyName, workingCopyLabel);        
-		            
+
+				String copyName = (String) this.nodeService.getProperty(branchToNodeRef, ContentModel.PROP_NAME);
+				String workingCopyLabel = I18NUtil.getMessage(MSG_WORKING_COPY_LABEL);
+				copyName = createWorkingCopyName(copyName, workingCopyLabel);
+
 				// Apply the working copy aspect to the working copy
 				Map<QName, Serializable> workingCopyProperties = new HashMap<QName, Serializable>(1);
 				workingCopyProperties.put(ContentModel.PROP_WORKING_COPY_OWNER, userName);
-				workingCopyProperties.put(ContentModel.PROP_WORKING_COPY_LABEL,workingCopyLabel);
+				workingCopyProperties.put(ContentModel.PROP_WORKING_COPY_LABEL, workingCopyLabel);
 				nodeService.addAspect(branchNodeRef, ContentModel.ASPECT_WORKING_COPY, workingCopyProperties);
 				nodeService.addAspect(branchNodeRef, ContentModel.ASPECT_LOCKABLE, null);
 				nodeService.addAspect(branchToNodeRef, ContentModel.ASPECT_CHECKED_OUT, null);
 				nodeService.createAssociation(branchToNodeRef, branchNodeRef, ContentModel.ASSOC_WORKING_COPY_LINK);
-				
-				//Set beCPG CODE
+
+				// Set beCPG CODE
 				nodeService.setProperty(branchNodeRef, BeCPGModel.PROP_CODE, nodeService.getProperty(branchToNodeRef, BeCPGModel.PROP_CODE));
 				nodeService.setProperty(branchNodeRef, ContentModel.PROP_NAME, copyName);
-				
-				//Remove branchForm as it's merge
+
+				// Remove branchForm as it's merge
 				nodeService.removeAspect(branchNodeRef, BeCPGModel.ASPECT_ENTITY_BRANCH);
-				
-				//Deattach other branches
+
+				// Deattach other branches
 				List<NodeRef> sources = associationService.getSourcesAssocs(branchNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY);
 				for (NodeRef sourceNodeRef : sources) {
 					policyBehaviourFilter.disableBehaviour(sourceNodeRef, ContentModel.ASPECT_AUDITABLE);
@@ -865,8 +817,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 						policyBehaviourFilter.enableBehaviour(sourceNodeRef, ContentModel.ASPECT_AUDITABLE);
 					}
 				}
-				
-				
+
 			} finally {
 				((RuleService) ruleService).enableRuleType(RuleType.UPDATE);
 			}
@@ -878,71 +829,62 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			policyBehaviourFilter.enableBehaviour(branchToNodeRef, ContentModel.ASPECT_AUDITABLE);
 		}
 
-		// Create initialVersion
-		if (getVersionHistoryNodeRef(branchToNodeRef) == null) {
-			// Create the initial-version
-			Map<String, Serializable> versionProperties = new HashMap<String, Serializable>(1);
-			versionProperties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
-
-			if (logger.isDebugEnabled()) {
-				logger.debug("Create initial version : " + I18NUtil.getMessage(MSG_INITIAL_VERSION));
-			}
-
-			versionProperties.put(Version.PROP_DESCRIPTION, I18NUtil.getMessage(MSG_INITIAL_VERSION));
-			createVersionAndCheckin(branchToNodeRef, null, versionProperties);
-		}
-		
-		
-
 	}
 
-	
-	 /**
-     * Create a working copy name using the given fileName and workingCopyLabel. The label will be inserted before
-     * the file extension (if present), or else appended to the name (in either case a space is prepended to the
-     * workingCopyLabel).
-     * <p>
-     * Examples, where workingCopyLabel is "wc":
-     * <p>
-     * "Myfile.txt" becomes "Myfile wc.txt", "Myfile" becomes "Myfile wc".
-     * <p>
-     * In the event that fileName is empty or null, the workingCopyLabel is used for the new working copy name
-     * <p>
-     * Example: "" becomes "wc".
-     * 
-     * @param name
-     * @param workingCopyLabel
-     * @return
-     */
-    public static String createWorkingCopyName(String name, final String workingCopyLabel)
-    {
-        if (workingCopyLabel != null && workingCopyLabel.length() != 0)
-        {
-            if (name != null && name.length() != 0)
-            {
-                int index = name.lastIndexOf(EXTENSION_CHARACTER);
-                if (index > 0)
-                {
-                    // Insert the working copy label before the file extension
-                    name = name.substring(0, index) + " " + workingCopyLabel + name.substring(index);
-                }
-                else
-                {
-                    // Simply append the working copy label onto the end of the existing name
-                    name = name + " " + workingCopyLabel;
-                }
-            }
-            else
-            {
-                name = workingCopyLabel;
-            }
-        }
-        else
-        {
-        	throw new IllegalArgumentException("workingCopyLabel is null or empty");
-        }
+	@Override
+	public NodeRef createBranch(NodeRef entityNodeRef, NodeRef parentRef) {
 
-        return name;
-    }
+		String newEntityName = repoService.getAvailableName(parentRef, (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
+		NodeRef branchNodeRef = entityService.createOrCopyFrom(entityNodeRef, parentRef, nodeService.getType(entityNodeRef), newEntityName);
+		if (nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
+			nodeService.setProperty(branchNodeRef, BeCPGModel.PROP_BRANCH_FROM_VERSION_LABEL,
+					nodeService.getProperty(entityNodeRef, ContentModel.PROP_VERSION_LABEL));
+		} else {
+			nodeService.setProperty(branchNodeRef, BeCPGModel.PROP_BRANCH_FROM_VERSION_LABEL, RepoConsts.INITIAL_VERSION);
+		}
+		nodeService.setAssociations(branchNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY, Arrays.asList(entityNodeRef));
+		return branchNodeRef;
+	}
+
+	/**
+	 * Create a working copy name using the given fileName and workingCopyLabel.
+	 * The label will be inserted before the file extension (if present), or
+	 * else appended to the name (in either case a space is prepended to the
+	 * workingCopyLabel).
+	 * <p>
+	 * Examples, where workingCopyLabel is "wc":
+	 * <p>
+	 * "Myfile.txt" becomes "Myfile wc.txt", "Myfile" becomes "Myfile wc".
+	 * <p>
+	 * In the event that fileName is empty or null, the workingCopyLabel is used
+	 * for the new working copy name
+	 * <p>
+	 * Example: "" becomes "wc".
+	 * 
+	 * @param name
+	 * @param workingCopyLabel
+	 * @return
+	 */
+	public static String createWorkingCopyName(String name, final String workingCopyLabel) {
+		if (workingCopyLabel != null && workingCopyLabel.length() != 0) {
+			if (name != null && name.length() != 0) {
+				int index = name.lastIndexOf(EXTENSION_CHARACTER);
+				if (index > 0) {
+					// Insert the working copy label before the file extension
+					name = name.substring(0, index) + " " + workingCopyLabel + name.substring(index);
+				} else {
+					// Simply append the working copy label onto the end of the
+					// existing name
+					name = name + " " + workingCopyLabel;
+				}
+			} else {
+				name = workingCopyLabel;
+			}
+		} else {
+			throw new IllegalArgumentException("workingCopyLabel is null or empty");
+		}
+
+		return name;
+	}
 
 }
