@@ -130,7 +130,7 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 			for (TaskListDataItem nextTask : nextTasks) {
 
 				// cancel active workflow if task is not anymore InProgress
-				logger.debug("Visit task : " + nextTask.getTaskName()+" - state - "+nextTask.getState());
+				logger.debug("Visit task : " + nextTask.getTaskName()+" - state - " + nextTask.getTaskState());
 				
 				if (!TaskState.InProgress.equals(nextTask.getTaskState()) && projectWorkflowService.isWorkflowActive(nextTask)) {
 					projectWorkflowService.cancelWorkflow(nextTask);

@@ -576,6 +576,9 @@
 					<show id="pjt:tlState" />
 					<show id="pjt:tlDuration" />
 					<show id="pjt:completionPercent" />
+					<show id="pjt:tlManualDate" />
+					<show id="pjt:tlStart" />
+					<show id="pjt:tlEnd"   />
 				</field-visibility>
 				<appearance>
 					<field id="pjt:tlPrevTasks">
@@ -604,7 +607,10 @@
 					<show id="pjt:tlDuration" />					
 					<show id="pjt:tlWork" />	
 					<show id="pjt:tlFixedCost" />	
-					<show id="pjt:tlResourceCost" />							
+					<show id="pjt:tlResourceCost" />
+					<show id="pjt:tlManualDate" />
+					<show id="pjt:tlStart" />
+					<show id="pjt:tlEnd"   />							
 				</field-visibility>
 				<appearance>
 					
@@ -637,7 +643,10 @@
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 						</control>
-					</field>					
+					</field>		
+					<field id="pjt:tlManualDate" set="planning"/>
+					<field id="pjt:tlStart" set="planning"/>
+					<field id="pjt:tlEnd" set="planning"/>			
 				</appearance>
 			</form>
 			<form id="create">
