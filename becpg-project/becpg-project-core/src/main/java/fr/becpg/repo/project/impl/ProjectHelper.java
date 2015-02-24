@@ -279,14 +279,14 @@ public class ProjectHelper {
 
 	public static void setTaskStartDate(TaskListDataItem t, Date startDate) {
 		logger.debug("task: " + t.getTaskName() + " state: " + t.getTaskState() + " start: " + startDate);
-		if ((TaskState.Planned.equals(t.getTaskState())) && !TaskManualDate.Start.equals(t.getManualDate())) {
+		if ((t.getIsGroup() || TaskState.Planned.equals(t.getTaskState()) || TaskState.Cancelled.equals(t.getTaskState()) || (TaskState.InProgress.equals(t.getTaskState()) && t.getStart() == null)) && !TaskManualDate.Start.equals(t.getManualDate())) {
 			t.setStart(removeTime(startDate));
 		}
 	}
 
 	public static void setTaskEndDate(TaskListDataItem t, Date endDate) {
 		logger.debug("task: " + t.getTaskName() + " state: " + t.getTaskState() + " end: " + endDate);
-		if ((TaskState.Planned.equals(t.getTaskState()) || TaskState.InProgress.equals(t.getTaskState())) && !TaskManualDate.End.equals(t.getManualDate())) {
+		if ((t.getIsGroup() || TaskState.Planned.equals(t.getTaskState()) || TaskState.Cancelled.equals(t.getTaskState()) || TaskState.InProgress.equals(t.getTaskState())) && !TaskManualDate.End.equals(t.getManualDate())) {
 			t.setEnd(removeTime(endDate));
 		}
 	}
