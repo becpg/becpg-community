@@ -34,13 +34,12 @@ import fr.becpg.test.RepoBaseTestCase;
  * @author matthieu
  * 
  */
-public class DesignerInitServiceTest extends RepoBaseTestCase{
+public class DesignerInitServiceTest extends AbstractDesignerServiceTest{
 
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(DesignerInitServiceTest.class);
 
-	@Autowired
-	private DesignerInitService designerInitService;
+
 
 
 

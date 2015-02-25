@@ -62,8 +62,6 @@ public class HierarchyServiceImpl implements HierarchyService {
 	private static final String SUFFIX_ALL = "*";
 
 	@Autowired
-	private NamespaceService namespaceService;
-	@Autowired
 	private NodeService nodeService;
 	@Autowired
 	private RepoService repoService;

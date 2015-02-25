@@ -49,9 +49,8 @@ import fr.becpg.repo.report.entity.EntityReportAsyncGenerator;
  * 
  */
 public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy implements CheckOutCheckInServicePolicies.OnCheckOut,
-		CheckOutCheckInServicePolicies.BeforeCheckIn, CheckOutCheckInServicePolicies.OnCheckIn,
-		CheckOutCheckInServicePolicies.BeforeCancelCheckOut, NodeServicePolicies.OnRemoveAspectPolicy, NodeServicePolicies.OnDeleteNodePolicy, 
-		CheckOutCheckInServicePolicies.OnCancelCheckOut {
+		CheckOutCheckInServicePolicies.BeforeCheckIn, CheckOutCheckInServicePolicies.OnCheckIn, CheckOutCheckInServicePolicies.BeforeCancelCheckOut,
+		NodeServicePolicies.OnRemoveAspectPolicy, NodeServicePolicies.OnDeleteNodePolicy, CheckOutCheckInServicePolicies.OnCancelCheckOut {
 
 	private static Log logger = LogFactory.getLog(EntityCheckOutCheckInServicePolicy.class);
 
@@ -60,8 +59,6 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 	private EntityReportAsyncGenerator entityReportAsyncGenerator;
 
 	private RuleService ruleService;
-	
-	
 
 	public void setRuleService(RuleService ruleService) {
 		this.ruleService = ruleService;
@@ -148,13 +145,13 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 		ruleService.disableRules();
 		try {
 			logger.debug("OnDeleteNode cm:versionable " + childAssocRef.getChildRef() + " isNodeArchived: " + isNodeArchived);
-
-			if (isNodeArchived == false) {
-				// If we are perminantly deleting the node then we need to
-				// remove
-				// the associated version history
-				entityVersionService.deleteVersionHistory(childAssocRef.getChildRef());
-			}
+			// if (isNodeArchived == false) { //Move history under archive store
+			// instead
+			// If we are perminantly deleting the node then we need to
+			// remove
+			// the associated version history
+			entityVersionService.deleteVersionHistory(childAssocRef.getChildRef());
+			// }
 		} finally {
 			ruleService.enableRules();
 		}
@@ -172,7 +169,6 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 			ruleService.enableRules();
 		}
 	}
-
 
 	private NodeRef getCheckedOut(NodeRef nodeRef) {
 		NodeRef original = null;
@@ -203,11 +199,11 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 		ruleService.disableRules();
 		try {
 			entityVersionService.afterCancelCheckOut(nodeRef);
-			
+
 		} finally {
 			ruleService.enableRules();
 		}
-		
+
 	}
 
 }

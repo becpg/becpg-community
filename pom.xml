@@ -5,6 +5,7 @@
 	<groupId>fr.becpg</groupId>
 	<artifactId>becpg-parent</artifactId>
 	<packaging>pom</packaging>
+	<version>2.0.1</version>
 	<name>beCPG</name>
 	<parent>
 		<groupId>org.alfresco.maven</groupId>
@@ -73,9 +74,8 @@
 
 	<properties>
 	    <app.log.root.level>WARN</app.log.root.level>
-        <alfresco.data.location>alf_data_dev</alfresco.data.location>
+        <alfresco.data.location>${project.basedir}/alf_data_dev</alfresco.data.location>
         <env>local</env>
-	
 		<alfresco.version>5.0.c</alfresco.version>
 		<app.testing.jvm.args>-Xms256m -Xmx1524m -Duser.language=fr</app.testing.jvm.args>
 		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
@@ -83,6 +83,7 @@
 		<sonar.language>java</sonar.language>
 		
 		<springloaded.version>1.2.1.RELEASE</springloaded.version>
+		<alfresco.db.url>jdbc:h2:${alfresco.data.location}/h2_data/${alfresco.db.name};${alfresco.db.params}</alfresco.db.url>
 
 		<!-- <alfresco.client.war>alfresco</alfresco.client.war>
 		<alfresco.client.war.groupId>org.alfresco</alfresco.client.war.groupId> -->
@@ -291,26 +292,69 @@
 	<!-- Invoke your build with -Prun to run the multimodule project and enable rapid dev mode in your IDE. 
          See 'run' profile in the sub modules pom.xml for further behavioral details.
      -->
-    <profiles>
-        <profile>
-            <id>run</id>
-            <properties>
-                <!-- While running in rapid dev mode with -Prun, we don't want amp web resources 
-                    to be added to the war, so we can load them directly from the AMP project (see 
-                    runner/tomcat/context-*.xml for more details) -->
-                <maven.alfresco.includeWebResources>false</maven.alfresco.includeWebResources>
-            </properties>
-        </profile>
-         <!-- RM profile, manually activated, automatically adds support for RM development (dependencies) and install the RM amps in the WARs -->
-        <profile>
-            <id>rm</id>
-             <properties>
-                <alfresco.rm.version>2.3.a.1</alfresco.rm.version>
-                <app.rm.amps.location>${project.build.directory}/rm-amps</app.rm.amps.location>
-                <app.rm.war.location>${project.build.directory}/${project.build.finalName}.war</app.rm.war.location>
-                <app.rm.artifact>org.alfresco:${alfresco.rm.artifactId}:${alfresco.rm.version}:amp</app.rm.artifact>
-             </properties>
-        </profile>
-    </profiles>
-    <version>2.0.1</version>
+	<profiles>
+		<profile>
+			<id>run</id>
+			<properties>
+				<!-- While running in rapid dev mode with -Prun, we don't want amp web 
+					resources to be added to the war, so we can load them directly from the AMP 
+					project (see runner/tomcat/context-*.xml for more details) -->
+				<maven.alfresco.includeWebResources>false</maven.alfresco.includeWebResources>
+			</properties>
+		</profile>
+		<!-- RM profile, manually activated, automatically adds support for RM 
+			development (dependencies) and install the RM amps in the WARs -->
+		<profile>
+			<id>rm</id>
+			<properties>
+				<alfresco.rm.version>2.3.a.1</alfresco.rm.version>
+				<app.rm.amps.location>${project.build.directory}/rm-amps</app.rm.amps.location>
+				<app.rm.war.location>${project.build.directory}/${project.build.finalName}.war</app.rm.war.location>
+				<app.rm.artifact>org.alfresco:${alfresco.rm.artifactId}:${alfresco.rm.version}:amp</app.rm.artifact>
+			</properties>
+		</profile>
+		<profile>
+			<id>dev-tours</id>
+			<properties>
+				<!-- Test -->
+				<alfresco.data.location>/dev/shm/alfresco</alfresco.data.location>
+			</properties>
+		</profile>
+		<profile>
+			<id>dev-montrouge</id>
+			<properties>
+				<!-- Test -->
+				<alfresco.data.location>/dev/shm/alfresco</alfresco.data.location>
+			</properties>
+		</profile>
+		<profile>
+			<id>purge</id>
+			<build>
+				<plugins>
+					<!-- Cleaning Alfresco Repository storage/log folders/files -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-clean-plugin</artifactId>
+						<configuration>
+							<filesets>
+								<fileset>
+									<directory>${alfresco.data.location}</directory>
+								</fileset>
+								<fileset>
+									<directory>${project.basedir}/solr_home</directory>
+								</fileset>
+								<fileset>
+									<directory>${project.basedir}</directory>
+									<includes>
+										<include>**/*.log</include>
+									</includes>
+								</fileset>
+							</filesets>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+    
 </project>

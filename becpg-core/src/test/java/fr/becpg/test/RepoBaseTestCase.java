@@ -252,9 +252,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 			public Boolean execute() throws Throwable {
 				ruleService.disableRules();
 				try {
-
 					nodeService.deleteNode(threadSafeTestFolder.get());
-
 				} finally {
 					ruleService.enableRules();
 				}

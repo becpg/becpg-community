@@ -368,7 +368,7 @@ public class ECOTest extends AbstractFinishedProductTest {
 				Version version = versionHistory.getVersion("1.1");
 				assertNotNull(version);
 				assertNotNull(entityVersionService.getEntityVersion(version));
-
+				
 				return null;
 
 			}

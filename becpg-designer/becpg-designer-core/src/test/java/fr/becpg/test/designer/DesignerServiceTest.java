@@ -42,9 +42,8 @@ import fr.becpg.repo.designer.data.FormControl;
 import fr.becpg.repo.designer.impl.DesignerTreeVisitor;
 import fr.becpg.repo.designer.impl.FormModelVisitor;
 import fr.becpg.repo.designer.impl.MetaModelVisitor;
-import fr.becpg.test.RepoBaseTestCase;
 
-public class DesignerServiceTest extends RepoBaseTestCase{ 
+public class DesignerServiceTest extends AbstractDesignerServiceTest {
 
 	private static Log logger = LogFactory.getLog(DesignerServiceTest.class);
 
@@ -60,10 +59,6 @@ public class DesignerServiceTest extends RepoBaseTestCase{
 	@Autowired
 	private DesignerService designerService;
 
-	private static String PATH_TESTFOLDER = "DesignerTestFolder";
-
-	
-
 	@Test
 	public void testMetaModelVisitor() {
 
@@ -72,19 +67,13 @@ public class DesignerServiceTest extends RepoBaseTestCase{
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				/*-- Create test folder --*/
-				NodeRef folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);
-				if (folderNodeRef != null) {
-					fileFolderService.delete(folderNodeRef);
-				}
-				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
-
 				InputStream in = (new ClassPathResource("beCPG/designer/testModel.xml")).getInputStream();
 				assertNotNull(in);
 
 				M2Model m2Model = M2Model.createModel(in);
 
-				NodeRef modelNodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, DesignerModel.TYPE_M2_MODEL).getChildRef();
+				NodeRef modelNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN,
+						DesignerModel.TYPE_M2_MODEL).getChildRef();
 
 				// Try to parse becpgModel
 				metaModelVisitor.visitModelNodeRef(modelNodeRef, m2Model);
@@ -111,21 +100,15 @@ public class DesignerServiceTest extends RepoBaseTestCase{
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				/*-- Create test folder --*/
-				NodeRef folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);
-				if (folderNodeRef != null) {
-					fileFolderService.delete(folderNodeRef);
-				}
-				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
-
 				InputStream in = (new ClassPathResource("beCPG/designer/testConfig.xml")).getInputStream();
 				assertNotNull(in);
 
-				NodeRef modelNodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, ContentModel.TYPE_CONTENT).getChildRef();
+				NodeRef modelNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN,
+						ContentModel.TYPE_CONTENT).getChildRef();
 				nodeService.addAspect(modelNodeRef, DesignerModel.ASPECT_CONFIG, new HashMap<QName, Serializable>());
 
-				ChildAssociationRef childAssociationRef = nodeService.createNode(modelNodeRef, DesignerModel.ASSOC_DSG_CONFIG, DesignerModel.ASSOC_DSG_CONFIG,
-						DesignerModel.TYPE_DSG_CONFIG);
+				ChildAssociationRef childAssociationRef = nodeService.createNode(modelNodeRef, DesignerModel.ASSOC_DSG_CONFIG,
+						DesignerModel.ASSOC_DSG_CONFIG, DesignerModel.TYPE_DSG_CONFIG);
 				NodeRef configNodeRef = childAssociationRef.getChildRef();
 
 				formModelVisitor.visitConfigNodeRef(configNodeRef, in);
@@ -147,26 +130,18 @@ public class DesignerServiceTest extends RepoBaseTestCase{
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				/*-- Create test folder --*/
-				NodeRef folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TESTFOLDER);
-				if (folderNodeRef != null) {
-					fileFolderService.delete(folderNodeRef);
-				}
-				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_TESTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
-
 				List<FormControl> controls = designerService.getFormControls();
 
 				assertNotNull(controls);
 				assertTrue(controls.size() > 0);
 
-				
-				
 				InputStream in = (new ClassPathResource("beCPG/designer/testModel.xml")).getInputStream();
 				assertNotNull(in);
 
 				M2Model m2Model = M2Model.createModel(in);
 
-				NodeRef modelNodeRef = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, DesignerModel.TYPE_M2_MODEL).getChildRef();
+				NodeRef modelNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN,
+						DesignerModel.TYPE_M2_MODEL).getChildRef();
 
 				// Try to parse becpgModel
 				metaModelVisitor.visitModelNodeRef(modelNodeRef, m2Model);
@@ -174,7 +149,8 @@ public class DesignerServiceTest extends RepoBaseTestCase{
 				Map<QName, Serializable> props = new HashMap<QName, Serializable>();
 				props.put(DesignerModel.PROP_M2_NAME, "bcpg:test");
 
-				NodeRef elNodeRef = designerService.createModelElement(modelNodeRef, DesignerModel.TYPE_M2_TYPE, DesignerModel.ASSOC_M2_TYPES, props, "templateModel_STARTTASK");
+				NodeRef elNodeRef = designerService.createModelElement(modelNodeRef, DesignerModel.TYPE_M2_TYPE, DesignerModel.ASSOC_M2_TYPES, props,
+						"templateModel_STARTTASK");
 
 				assertEquals("bcpg:test", (String) nodeService.getProperty(elNodeRef, DesignerModel.PROP_M2_NAME));
 				assertEquals("bpm:startTask", (String) nodeService.getProperty(elNodeRef, DesignerModel.PROP_M2_PARENT_NAME));
