@@ -3,11 +3,17 @@
  */
 package fr.becpg.test.repo.web.scripts.entity;
 
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.Resource;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.coci.CheckOutCheckInService;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
@@ -41,7 +47,7 @@ public class EntityVersionWebScriptTest extends PLMBaseTestCase{
 					public NodeRef execute() throws Throwable {
 						logger.debug("Add versionnable aspect");
 
-						NodeRef rawMaterialNodeRef = BeCPGPLMTestHelper.createRawMaterial(testFolderNodeRef, "MP test report");
+						NodeRef rawMaterialNodeRef = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test report");
 						if (!nodeService.hasAspect(rawMaterialNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
 							Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>();
 							aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);

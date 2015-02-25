@@ -15,7 +15,7 @@
  *  
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package fr.becpg.test.project;
+package fr.becpg.test.repo.project;
 
 import java.util.Date;
 import java.util.LinkedList;
@@ -41,6 +41,7 @@ import fr.becpg.repo.hierarchy.HierarchyHelper;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
+import fr.becpg.test.project.AbstractProjectTestCase;
 
 public class ProjectListSortTest extends AbstractProjectTestCase {
 

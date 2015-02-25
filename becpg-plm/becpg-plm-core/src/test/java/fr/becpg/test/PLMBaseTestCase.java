@@ -76,7 +76,7 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 	protected static final String HIERARCHY2_QUICHE = "Quiche";
 	protected static final String VALUE_COST_CURRENCY = "€";
 	protected static final String HIERARCHY_RAWMATERIAL_PATH = PlmRepoConsts.PATH_PRODUCT_HIERARCHY + "cm:" + HierarchyHelper.getHierarchyPathName(PLMModel.TYPE_RAWMATERIAL);
-	protected static final String HIERARCHY_FINISHEDPRODUCT_PATH = PlmRepoConsts.PATH_PRODUCT_HIERARCHY + "cm:" + HierarchyHelper.getHierarchyPathName(PLMModel.TYPE_RAWMATERIAL);
+	protected static final String HIERARCHY_FINISHEDPRODUCT_PATH = PlmRepoConsts.PATH_PRODUCT_HIERARCHY + "cm:" + HierarchyHelper.getHierarchyPathName(PLMModel.TYPE_FINISHEDPRODUCT);
 
 	protected NodeRef HIERARCHY1_SEA_FOOD_REF;
 	protected NodeRef HIERARCHY2_FISH_REF;
@@ -107,13 +107,7 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 
 	@Override
 	protected boolean shouldInit(){
-		if(super.shouldInit()){
-			
-			return true;
-		}
-		else{
-			return hierarchyService.getHierarchyByPath(HIERARCHY_FINISHEDPRODUCT_PATH, null, HIERARCHY1_FROZEN) == null;
-		}
+		return super.shouldInit() || hierarchyService.getHierarchyByPath(HIERARCHY_FINISHEDPRODUCT_PATH, null, HIERARCHY1_FROZEN) == null;
 	}
 	
 	@Override

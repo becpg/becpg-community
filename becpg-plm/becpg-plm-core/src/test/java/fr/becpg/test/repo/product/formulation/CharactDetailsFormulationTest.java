@@ -98,7 +98,7 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 
 				Assert.assertNotNull(ret);
 
-				System.out.println(CharactDetailsHelper.toJSONObject(ret, nodeService).toString(3));
+				logger.info(CharactDetailsHelper.toJSONObject(ret, nodeService).toString(3));
 				return finishedProductNodeRef;
 				
 
@@ -176,7 +176,7 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 						"costList", costNodeRefs);
 				
 				Assert.assertNotNull(ret);
-				System.out.println(CharactDetailsHelper.toJSONObject(ret, nodeService).toString(3));
+				logger.info(CharactDetailsHelper.toJSONObject(ret, nodeService).toString(3));
 				
 				//costs
 				int checks = 0;

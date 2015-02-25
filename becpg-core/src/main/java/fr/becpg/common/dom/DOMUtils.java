@@ -43,6 +43,8 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -57,6 +59,7 @@ import org.xml.sax.SAXException;
  */
 public class DOMUtils {
 
+	private static final Log logger = LogFactory.getLog(DOMUtils.class);
 	
 	public static String getElementText(Element root, String elementName) {
 		NodeList list = root.getElementsByTagName(elementName);
@@ -232,7 +235,7 @@ public class DOMUtils {
 		throws TransformerException {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		serialise(doc, out);
-		System.out.println(new String(out.toByteArray()));
+		logger.info(new String(out.toByteArray()));
 	}
 
 	public static Document parse(InputStream is)
