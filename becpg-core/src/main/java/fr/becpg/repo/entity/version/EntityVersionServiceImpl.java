@@ -151,11 +151,13 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			public Void doWork() throws Exception {
 
 				try {
+					policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 					policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
 					entityListDAO.copyDataLists(origNodeRef, workingCopyNodeRef, true);
 					entityService.moveFiles(origNodeRef, workingCopyNodeRef);
 				} finally {
 					policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
+					policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
 				}
 
 				return null;
@@ -184,7 +186,13 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			public NodeRef doWork() throws Exception {
 
 				// move files
-				entityService.moveFiles(workingCopyNodeRef, origNodeRef);
+				try {
+					policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+					entityService.moveFiles(workingCopyNodeRef, origNodeRef);
+				} finally {
+					policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+				}
+
 				return null;
 
 			}
@@ -205,7 +213,6 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		}
 
 	}
-
 
 	private NodeRef internalCreateVersionAndCheckin(final NodeRef origNodeRef, final NodeRef workingCopyNodeRef,
 			Map<String, Serializable> versionProperties, boolean createAlfrescoVersion) {
@@ -237,39 +244,46 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				@Override
 				public NodeRef doWork() throws Exception {
 
-					// version is a copy of working copy or orig for 1st
-					// version
-					NodeRef nodeToVersionNodeRef = workingCopyNodeRef != null ? workingCopyNodeRef : origNodeRef;
+					try {
+						policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 
-					// Recursive copy
-					NodeRef versionNodeRef = copyService.copy(nodeToVersionNodeRef, finalVersionHistoryRef, ContentModel.ASSOC_CONTAINS,
-							ContentModel.ASSOC_CHILDREN, true);
-				
-					if (workingCopyNodeRef != null) {
-						((RuleService) ruleService).disableRules(workingCopyNodeRef);
+						// version is a copy of working copy or orig for 1st
+						// version
+						NodeRef nodeToVersionNodeRef = workingCopyNodeRef != null ? workingCopyNodeRef : origNodeRef;
 
-						// remove assoc (copy used to checkin doesn't do it)
-						removeRemovedAssociation(workingCopyNodeRef, origNodeRef);
+						// Recursive copy
+						NodeRef versionNodeRef = copyService.copy(nodeToVersionNodeRef, finalVersionHistoryRef, ContentModel.ASSOC_CONTAINS,
+								ContentModel.ASSOC_CHILDREN, true);
 
-						// Move workingCopyNodeRef DataList to origNodeRef
-						entityService.deleteDataLists(origNodeRef, true);
-						entityListDAO.moveDataLists(workingCopyNodeRef, origNodeRef);
-						// Move files to origNodeRef
-						entityService.deleteFiles(origNodeRef, true);
-						// Remove rules
-						ChildAssociationRef ruleChildAssocRef = ruleService.getSavedRuleFolderAssoc(origNodeRef);
-						if (ruleChildAssocRef != null) {
-							nodeService.deleteNode(ruleChildAssocRef.getChildRef());
+						if (workingCopyNodeRef != null) {
+							((RuleService) ruleService).disableRules(workingCopyNodeRef);
+
+							// remove assoc (copy used to checkin doesn't do it)
+							removeRemovedAssociation(workingCopyNodeRef, origNodeRef);
+
+							// Move workingCopyNodeRef DataList to origNodeRef
+							entityService.deleteDataLists(origNodeRef, true);
+							entityListDAO.moveDataLists(workingCopyNodeRef, origNodeRef);
+							// Move files to origNodeRef
+							entityService.deleteFiles(origNodeRef, true);
+							// Remove rules
+							ChildAssociationRef ruleChildAssocRef = ruleService.getSavedRuleFolderAssoc(origNodeRef);
+							if (ruleChildAssocRef != null) {
+								nodeService.deleteNode(ruleChildAssocRef.getChildRef());
+							}
+							entityService.moveFiles(workingCopyNodeRef, origNodeRef);
+							// delete files that are not moved (ie: Documents)
+							// otherwise
+							// checkin copy them and fails since they already
+							// exits
+							entityService.deleteFiles(workingCopyNodeRef, true);
 						}
-						entityService.moveFiles(workingCopyNodeRef, origNodeRef);
-						// delete files that are not moved (ie: Documents)
-						// otherwise
-						// checkin copy them and fails since they already
-						// exits
-						entityService.deleteFiles(workingCopyNodeRef, true);
-					}
 
-					return versionNodeRef;
+						return versionNodeRef;
+
+					} finally {
+						policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+					}
 
 				}
 			}, AuthenticationUtil.getSystemUserName());
@@ -364,8 +378,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			}
 
 			versionProperties.put(Version.PROP_DESCRIPTION, I18NUtil.getMessage(MSG_INITIAL_VERSION));
-			
-			if(nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE)){	
+
+			if (nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
 				createVersionAndCheckin(entityNodeRef, null, versionProperties);
 			} else {
 				Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>();
@@ -373,7 +387,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				nodeService.addAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
 				createVersion(entityNodeRef, versionProperties);
 			}
-			
+
 		}
 	}
 
@@ -775,7 +789,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 		policyBehaviourFilter.disableBehaviour(branchNodeRef, ContentModel.ASPECT_AUDITABLE);
 		try {
-	
+
 			// Apply the lock aspect if required
 			if (nodeService.hasAspect(branchToNodeRef, ContentModel.ASPECT_LOCKABLE) == false) {
 				nodeService.addAspect(branchToNodeRef, ContentModel.ASPECT_LOCKABLE, null);
