@@ -145,7 +145,10 @@ public class BeCPGReportServiceImpl implements BeCPGReportService {
 				try {
 					return templateCacheService.getTemplateURL(buildFileName(templateId,fileName));
 				} catch (Exception e) {
-					logger.error(e,e);
+					logger.warn(e.getMessage());
+					if(logger.isDebugEnabled()){
+						logger.debug(e,e);
+					}
 				}
 				return null;
 			}
