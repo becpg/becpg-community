@@ -95,21 +95,19 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 		copyTemplateLabelingRuleList(formulatedProduct);
 
-
 		Map<String, List<LabelingRuleListDataItem>> labelingRuleListsByGroup = getLabelingRules(formulatedProduct);
 
 		List<IngLabelingListDataItem> retainNodes = new ArrayList<IngLabelingListDataItem>();
-		
+
 		for (Map.Entry<String, List<LabelingRuleListDataItem>> labelingRuleListsGroup : labelingRuleListsByGroup.entrySet()) {
 
 			logger.debug("Calculate Ingredient Labeling for group : " + labelingRuleListsGroup.getKey());
-
 
 			LabelingFormulaContext labelingFormulaContext = new LabelingFormulaContext(mlNodeService, alfrescoRepository);
 
 			ExpressionParser parser = new SpelExpressionParser();
 			StandardEvaluationContext dataContext = new StandardEvaluationContext(labelingFormulaContext);
-			
+
 			List<LabelingRuleListDataItem> labelingRuleLists = labelingRuleListsGroup.getValue();
 
 			// Apply before formula
@@ -145,7 +143,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				logger.trace(" Before aggrate \n " + compositeLabeling.toString());
 			}
 
-			applyAggregateRules(compositeLabeling, labelingFormulaContext);
+			applyAggregateRules(compositeLabeling, labelingFormulaContext, true);
 
 			if (logger.isTraceEnabled()) {
 				logger.trace(" Before reorder \n " + compositeLabeling.toString());
@@ -157,11 +155,14 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				logger.debug("\n" + compositeLabeling.toString());
 			}
 
-			
 			if (!compositeLabeling.getIngList().isEmpty()) {
+
+				CompositeLabeling mergeCompositeLabeling = mergeCompositeLabeling(compositeLabeling, labelingFormulaContext);
 
 				// Store results
 				labelingFormulaContext.setCompositeLabeling(compositeLabeling);
+
+				labelingFormulaContext.setMergedLblCompositeContext(mergeCompositeLabeling);
 
 				for (LabelingRuleListDataItem labelingRuleListDataItem : labelingRuleLists) {
 					if (LabelingRuleType.Render.equals(labelingRuleListDataItem.getLabelingRuleType())
@@ -221,14 +222,71 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		return true;
 	}
 
-	private Map<String, List<LabelingRuleListDataItem>> getLabelingRules(ProductData formulatedProduct) {
-		 Map<String, List<LabelingRuleListDataItem>> ret = new HashMap<>();
-		if (formulatedProduct.getLabelingListView().getLabelingRuleList() != null) {
+	private CompositeLabeling mergeCompositeLabeling(CompositeLabeling lblCompositeContext, LabelingFormulaContext labelingFormulaContext) {
+		CompositeLabeling merged = new CompositeLabeling();
+		merged.setQtyRMUsed(lblCompositeContext.getQtyRMUsed());
+
+		// Start adding all the components
+		for (AbstractLabelingComponent component : lblCompositeContext.getIngList().values()) {
+			if (!labelingFormulaContext.isGroup(component)) {
+				AbstractLabelingComponent clonedComponent = null;
+				if (component instanceof CompositeLabeling) {
+					clonedComponent = new CompositeLabeling((CompositeLabeling) component);
+				} else {
+					clonedComponent = new IngItem((IngItem) component);
+				}
 				
-			for(LabelingRuleListDataItem entityLabelingRulList : formulatedProduct.getLabelingListView().getLabelingRuleList()){
+				merged.add(clonedComponent);
+			}
+		}
+
+		// Then merge
+		for (AbstractLabelingComponent component : lblCompositeContext.getIngList().values()) {
+			if (labelingFormulaContext.isGroup(component)) {
+				CompositeLabeling compositeLabeling = (CompositeLabeling) component;
+				for (AbstractLabelingComponent subComponent : compositeLabeling.getIngList().values()) {
+					AbstractLabelingComponent toMerged = merged.get(subComponent.getNodeRef());
+					Double qtyPerc = labelingFormulaContext.computeQty(compositeLabeling, subComponent);
+					if (compositeLabeling.getQty() != null && qtyPerc != null) {
+						qtyPerc = qtyPerc * compositeLabeling.getQty();
+					}
+
+					if (toMerged == null) {
+						AbstractLabelingComponent clonedSubComponent = null;
+						if (subComponent instanceof CompositeLabeling) {
+							clonedSubComponent = new CompositeLabeling((CompositeLabeling) subComponent);
+						} else {
+							clonedSubComponent = new IngItem((IngItem) subComponent);
+						}
+						clonedSubComponent.setQty(qtyPerc);
+						merged.add(clonedSubComponent);
+					} else {
+						if (qtyPerc != null && toMerged.getQty() != null) {
+							toMerged.setQty(toMerged.getQty() + qtyPerc);
+						}
+						// TODO else add warning
+					}
+				}
+			}
+		}
+
+		//Level 1 only
+		applyAggregateRules(merged, labelingFormulaContext, false);
+		
+		//reorderCompositeLabeling(merged, true);
+
+		return merged;
+
+	}
+
+	private Map<String, List<LabelingRuleListDataItem>> getLabelingRules(ProductData formulatedProduct) {
+		Map<String, List<LabelingRuleListDataItem>> ret = new HashMap<>();
+		if (formulatedProduct.getLabelingListView().getLabelingRuleList() != null) {
+
+			for (LabelingRuleListDataItem entityLabelingRulList : formulatedProduct.getLabelingListView().getLabelingRuleList()) {
 				addLabelingRule(ret, entityLabelingRulList);
 			}
-			
+
 			if (formulatedProduct.getEntityTpl() != null && formulatedProduct.getEntityTpl().getLabelingListView().getLabelingRuleList() != null) {
 				for (LabelingRuleListDataItem modelLabelingRuleListDataItem : formulatedProduct.getEntityTpl().getLabelingListView()
 						.getLabelingRuleList()) {
@@ -250,17 +308,14 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 		return ret;
 	}
-	
-	
-	
 
 	private void addLabelingRule(Map<String, List<LabelingRuleListDataItem>> ret, LabelingRuleListDataItem labelingRule) {
 		String group = labelingRule.getGroup();
-		if(group==null || group.isEmpty()){
-			group  = LabelingRuleListDataItem.DEFAULT_LABELING_GROUP;
+		if (group == null || group.isEmpty()) {
+			group = LabelingRuleListDataItem.DEFAULT_LABELING_GROUP;
 		}
 		List<LabelingRuleListDataItem> tmp = ret.get(group);
-		if(tmp==null){
+		if (tmp == null) {
 			tmp = new ArrayList<>();
 		}
 		tmp.add(labelingRule);
@@ -291,7 +346,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	}
 
-	private void applyAggregateRules(CompositeLabeling parent, LabelingFormulaContext labelingFormulaContext) {
+	private void applyAggregateRules(CompositeLabeling parent, LabelingFormulaContext labelingFormulaContext , boolean recur) {
 		if (!labelingFormulaContext.getAggregateRules().isEmpty()) {
 
 			Map<NodeRef, AbstractLabelingComponent> toAdd = new HashMap<>();
@@ -300,8 +355,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				AbstractLabelingComponent component = (AbstractLabelingComponent) iterator.next().getValue();
 
 				// Recur
-				if (component instanceof CompositeLabeling) {
-					applyAggregateRules((CompositeLabeling) component, labelingFormulaContext);
+				if (recur && component instanceof CompositeLabeling) {
+					applyAggregateRules((CompositeLabeling) component, labelingFormulaContext, recur);
 				}
 
 				if (labelingFormulaContext.getAggregateRules().containsKey(component.getNodeRef())) {
@@ -337,7 +392,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 										RepositoryEntity replacement = alfrescoRepository.findOne(aggregateRule.getReplacement());
 										if (replacement instanceof IngItem) {
-											current = (IngItem) replacement;
+											current = (IngItem)replacement;
 											current.setQty(0d);
 											current.setVolumeQtyPerc(null);
 
@@ -505,7 +560,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 
 		return null;
-
 	}
 
 	// Move Group at top
