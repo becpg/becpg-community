@@ -6391,6 +6391,7 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="bcpg:legalName" />
+					<show id="bcpg:ingTypePluralLegalName"/>
 					<show id="bcpg:ingTypeDecThreshold" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
@@ -6405,6 +6406,7 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="bcpg:legalName" />
+					<show id="bcpg:ingTypePluralLegalName"/>
 					<show id="bcpg:ingTypeDecThreshold" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
@@ -6423,6 +6425,7 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="bcpg:legalName" />
+					<show id="bcpg:ingTypePluralLegalName"/>
 					<show id="bcpg:ingTypeDecThreshold" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>

@@ -38,6 +38,7 @@ import org.junit.Test;
 import com.ibm.icu.util.Calendar;
 
 import fr.becpg.model.PLMModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
@@ -192,7 +193,6 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format, null, null));
 		labelingRuleList.add(new LabelingRuleListDataItem("Param1", "detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
 		labelingRuleList.add(new LabelingRuleListDataItem("Aggr", null, LabelingRuleType.Group,Arrays.asList(rawMaterial13NodeRef,rawMaterial16NodeRef),null));
-		
 		
 		checkILL(finishedProductNodeRef1, labelingRuleList, "<b>Aggr (38,7%):</b> ing3 french 100%, ing1 french, ing2 french<br/><b>Legal Finished product 1 (33,3%):</b> Pâte french 50% (Legal Raw material 12 66,7% (ing2 french 75%, ing1 french 25%), ing2 french 22,2%, ing1 french 11,1%), Garniture french 50% (ing3 french 83,3%, ing4 french 16,7%)<br/><b>Legal Finished product 1 (16,7%):</b> Pâte french 50% (Legal Raw material 12 66,7% (ing2 french 75%, ing1 french 25%), ing2 french 22,2%, ing1 french 11,1%), Garniture french 50% (ing3 french 83,3%, ing4 french 16,7%)<br/>Garniture french 11,3%", Locale.FRENCH);
 		
@@ -375,6 +375,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 			labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format, null, null));
 			labelingRuleList.add(new LabelingRuleListDataItem("Juice", null, LabelingRuleType.Detail,Arrays.asList(ing1,ing2),null));
 
+			
 			checkILL(finishedProductNodeRef1, labelingRuleList, "Legal Raw material 7 54,5%, Juice 45,5% (ing2 french 66,7%, ing1 french 33,3%)", Locale.FRENCH);
 			
 			NodeRef finishedProductNodeRef2 =   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
@@ -630,6 +631,22 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		checkILL(finishedProductNodeRef1, labelingRuleList, "Pâte french 50% (Legal Raw material 12 66,7% (ing3 french), ing3 french), Garniture french 50% (ing3 french, Epaississant french: ing5 french)", Locale.FRENCH);
 		
 		
+		// Separator tests and plural
+		
+		labelingRuleList = new ArrayList<>();
+		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
+		labelingRuleList.add(new LabelingRuleListDataItem("Aggregate 1", null, LabelingRuleType.DoNotDetails, Arrays.asList(ing1,ing2),Arrays.asList(ing3)));
+		labelingRuleList.add(new LabelingRuleListDataItem("Aggregate 2", null, LabelingRuleType.DoNotDetails, Arrays.asList(ing4),Arrays.asList(ing5)));
+		labelingRuleList.add(new LabelingRuleListDataItem("Change type", null, LabelingRuleType.Type,Arrays.asList(ing3),Arrays.asList(ingType1)));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param1", "detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param2", "defaultSeparator = \"; \"", LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param3", "ingTypeDefaultSeparator = \"# \"", LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param4", "groupDefaultSeparator = \"! \"", LabelingRuleType.Prefs, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param5", "subIngsSeparator = \"@ \"", LabelingRuleType.Prefs, null, null));
+				
+		checkILL(finishedProductNodeRef1, labelingRuleList, "Pâte french 50% (Legal Raw material 12 66,7% (Epaississant french: ing3 french); Epaississant french: ing3 french); Garniture french 50% (Epaississants french: ing3 french# ing5 french)", Locale.FRENCH);
+
+		
 
 		//Combine
 					
@@ -657,9 +674,9 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 //			        └──[ing4 french - 1.0]
 
 		
-		
 		checkILL(finishedProductNodeRef1, labelingRuleList, "Pâte french 50% (Legal Raw material 12 66,7% (ing2 french 52,5%, Comb 1 27,5% (ing2 french 81,8%, ing1 french 18,2%), ing1 french 20%), ing2 french 15,6%, ing1 french 8,9%, Comb 1 8,9% (ing2 french 75%, ing1 french 25%)), Garniture french 50% (ing3 french 83,3%, ing4 french 16,7%)", Locale.FRENCH);
 	
+
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
 		labelingRuleList.add(new LabelingRuleListDataItem("Combine 1", new MLText("Comb 1"), "100,30", LabelingRuleType.Detail, Arrays.asList(ing1,ing2),null));
@@ -1069,11 +1086,15 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 	//		        ├──[ing3 french - 5.0]
 	//		        └──[ing5 french - 1.0]
 		
-		
 		checkILL(finishedProductNodeRef1, labelingRuleList, "Pâte french 50% (Legal Raw material 12 66,7% (ing3 french 100%), ing3 french 33,3%), Garniture french 50% (ing3 french 83,3%, Epices french 16,7% [ing6 french 16,7%])", Locale.FRENCH);
 
+		labelingRuleList.add(new LabelingRuleListDataItem("Param4", "showIngCEECode = true", LabelingRuleType.Prefs, null, null));
 		
-	
+		checkILL(finishedProductNodeRef1, labelingRuleList, "Pâte french 50% (Legal Raw material 12 66,7% (ing3 french 100%), ing3 french 33,3%), Garniture french 50% (ing3 french 83,3%, Epices french 16,7% [CEE6 16,7%])", Locale.FRENCH);
+
 		
 	}
+	
+	
+
 }

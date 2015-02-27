@@ -286,6 +286,11 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					mlName.addValue(Locale.ENGLISH, "Epaississant english");
 					mlName.addValue(Locale.FRENCH, "Epaississant french");	
 					properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
+					MLText plmlName = new MLText();
+					plmlName.addValue(I18NUtil.getContentLocaleLang(), "Epaississants default");
+					plmlName.addValue(Locale.ENGLISH, "Epaississants english");
+					plmlName.addValue(Locale.FRENCH, "Epaississants french");	
+					properties.put(PLMModel.PROP_ING_TYPE_LEGAL_NAME_PLURAL, plmlName);
 					ingType1 = nodeService.createNode(folderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_ING_TYPE_ITEM, properties).getChildRef();
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "Epices");
@@ -341,6 +346,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "ing6");
 					properties.put(PLMModel.PROP_ING_TYPE_V2, ingType2);
+					properties.put(PLMModel.PROP_ING_CEECODE,"CEE6");
 					mlName = new MLText();
 					mlName.addValue(I18NUtil.getContentLocaleLang(), "ing6 default");
 					mlName.addValue(Locale.ENGLISH, "ing6 english");
