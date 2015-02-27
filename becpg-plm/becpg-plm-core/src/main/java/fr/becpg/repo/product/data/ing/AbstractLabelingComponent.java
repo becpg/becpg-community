@@ -44,6 +44,7 @@ public abstract class AbstractLabelingComponent extends BeCPGDataObject implemen
 	{
 		super(abstractLabelingComponent);
 	    this.qty = abstractLabelingComponent.qty;
+	    this.volumeQtyPerc = abstractLabelingComponent.volumeQtyPerc;
 	    this.legalName = abstractLabelingComponent.legalName;
 	}
 

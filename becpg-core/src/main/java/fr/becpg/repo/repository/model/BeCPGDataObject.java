@@ -74,6 +74,7 @@ public  abstract class  BeCPGDataObject  extends BaseObject implements Repositor
 	    this.aspects = beCPGDataObject.aspects;
 	    this.extraProperties = beCPGDataObject.extraProperties;
 	    this.isTransient = beCPGDataObject.isTransient;
+	    this.dbHashCode = beCPGDataObject.dbHashCode;
 	}
 
 	
