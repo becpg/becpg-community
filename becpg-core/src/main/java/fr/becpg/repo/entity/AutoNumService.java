@@ -1,11 +1,8 @@
-/*
- * 
- */
 package fr.becpg.repo.entity;
 
+import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface AutoNumService.
  *
@@ -67,4 +64,7 @@ public interface AutoNumService {
 	 * @return 
 	 */
 	public String getPrefixedCode(QName type, QName propertyName, Long autoNum);
+
+	
+	public String getOrCreateBeCPGCode(NodeRef nodeRef);
 }
