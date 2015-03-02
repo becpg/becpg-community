@@ -55,6 +55,7 @@
 		<property name="extensionName">
 			<value>bcpg</value>
 		</property>
+		<property name="autoNumService" ref="autoNumService"/>
 	</bean>
 
 	<!-- Override Alfresco -->

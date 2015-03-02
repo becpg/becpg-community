@@ -45,7 +45,6 @@ import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.ProjectRepoConsts;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.AssociationService;
-import fr.becpg.repo.hierarchy.HierarchyHelper;
 import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.data.PlanningMode;
 import fr.becpg.repo.project.data.ProjectData;
@@ -63,8 +62,12 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 	protected static final String HIERARCHY1_SEA_FOOD = "Sea food";
 	protected static final String HIERARCHY2_FISH = "Fish";
 	protected static final String HIERARCHY2_CRUSTACEAN = "Crustacean";
-	protected static final String HIERARCHY_PROJECT_PATH = 
-			ProjectRepoConsts.PATH_PROJECT_HIERARCHY + "cm:" + HierarchyHelper.getHierarchyPathName(ProjectModel.TYPE_PROJECT);
+	
+	
+	
+	
+	protected static final String HIERARCHY_PROJECT_PATH = "/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:" 
+	       + ProjectRepoConsts.PATH_PROJECT_HIERARCHY;
 	protected static final Double RESOURCE_COST_VALUE = 100d;
 
 	protected NodeRef PROJECT_HIERARCHY1_SEA_FOOD_REF;
@@ -142,7 +145,6 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 		if (super.shouldInit()) {
 			return true;
 		} else {
-			System.out.println(" pwet :"+ hierarchyService.getHierarchyByPath(HIERARCHY_PROJECT_PATH, null, HIERARCHY1_SEA_FOOD));
 			
 			return  hierarchyService.getHierarchyByPath(HIERARCHY_PROJECT_PATH, null, HIERARCHY1_SEA_FOOD) == null;
 		}
@@ -160,8 +162,7 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 					
 					
 					NodeRef projectHierarchyNodeRef = entitySystemService.getSystemEntityDataList(projectListsNodeRef,
-							HierarchyHelper.getHierarchyPathName(ProjectModel.TYPE_PROJECT));
-					
+							ProjectRepoConsts.PATH_PROJECT_HIERARCHY);
 					
 					PROJECT_HIERARCHY1_SEA_FOOD_REF = hierarchyService.createRootHierarchy(projectHierarchyNodeRef, HIERARCHY1_SEA_FOOD);
 					PROJECT_HIERARCHY2_FISH_REF = hierarchyService.createHierarchy(projectHierarchyNodeRef, PROJECT_HIERARCHY1_SEA_FOOD_REF,

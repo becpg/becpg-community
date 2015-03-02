@@ -669,6 +669,11 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
+				<property name="bcpg:ingTypePluralLegalName">
+					<type>d:mltext</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 			</properties>
 			<mandatory-aspects>
 				<aspect>bcpg:legalNameAspect</aspect>
