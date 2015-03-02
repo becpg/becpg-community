@@ -62,32 +62,7 @@ public class CodePolicy extends AbstractBeCPGPolicy implements NodeServicePolici
 		for (NodeRef nodeRef : pendingNodes) {
 			if (isNotLocked(nodeRef) && !isWorkingCopyOrVersion(nodeRef) ) {
 
-				// check code is already taken. If yes : this object is
-				// a copy of an
-				// existing node
-				String code = (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE);
-				boolean generateCode = true;
-				QName typeQName = nodeService.getType(nodeRef);
-
-				if (code != null && !code.isEmpty()) {
-					
-					generateCode = BeCPGQueryBuilder
-							.createQuery()
-							.ofType(typeQName)
-							.andPropEquals(BeCPGModel.PROP_CODE,code)
-							.andNotID(nodeRef)
-							.inDB()
-							.singleValue()!=null;
-				}
-
-				// generate a new code
-				if (generateCode) {
-					String c = autoNumService.getAutoNumValue(typeQName, BeCPGModel.PROP_CODE);
-					nodeService.setProperty(nodeRef, BeCPGModel.PROP_CODE, c);
-				} else {
-					// store autoNum in db
-					autoNumService.createOrUpdateAutoNumValue(typeQName, BeCPGModel.PROP_CODE, code);
-				}
+				autoNumService.getOrCreateBeCPGCode(nodeRef);
 			}
 		}		
 	}

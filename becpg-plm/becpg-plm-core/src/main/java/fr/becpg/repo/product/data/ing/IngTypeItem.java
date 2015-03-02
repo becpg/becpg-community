@@ -17,6 +17,11 @@
  ******************************************************************************/
 package fr.becpg.repo.product.data.ing;
 
+import java.util.Locale;
+
+import org.alfresco.service.cmr.repository.MLText;
+
+import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
@@ -31,6 +36,8 @@ public class IngTypeItem extends AbstractLabelingComponent{
 	
 	private Double decThreshold;
 	
+	private MLText pluralLegalName;
+	
 
 	@AlfProp
 	@AlfQname(qname = "bcpg:ingTypeDecThreshold")
@@ -42,8 +49,36 @@ public class IngTypeItem extends AbstractLabelingComponent{
 		this.decThreshold = decThreshold;
 	}
 
+	@AlfMlText
+	@AlfProp
+	@AlfQname(qname = "bcpg:ingTypePluralLegalName")
+	public MLText getPluralLegalName() {
+		return pluralLegalName;
+	}
+
+	public void setPluralLegalName(MLText pluralLegalName) {
+		this.pluralLegalName = pluralLegalName;
+	}
 	
 	
+	public String getPluralLegalName(Locale locale) {
+		String ret = null;
+		if (pluralLegalName != null) {
+			if (pluralLegalName.containsKey(locale)) {
+				ret =  pluralLegalName.get(locale);
+			} else {
+				ret =  pluralLegalName.getClosestValue(locale);
+			}	
+		}
+		
+		if(ret==null || ret.isEmpty()){
+			return getLegalName(locale);
+		}
+		
+		return ret;
+	}
+	
+
 	@Override
 	public String toString() {
 		return "IngTypeItem [decThreshold=" + decThreshold + ", qty=" + qty + ", volumeQtyPerc=" + volumeQtyPerc + ", legalName=" + legalName
@@ -56,6 +91,7 @@ public class IngTypeItem extends AbstractLabelingComponent{
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + ((decThreshold == null) ? 0 : decThreshold.hashCode());
+		result = prime * result + ((pluralLegalName == null) ? 0 : pluralLegalName.hashCode());
 		return result;
 	}
 
@@ -73,8 +109,15 @@ public class IngTypeItem extends AbstractLabelingComponent{
 				return false;
 		} else if (!decThreshold.equals(other.decThreshold))
 			return false;
+		if (pluralLegalName == null) {
+			if (other.pluralLegalName != null)
+				return false;
+		} else if (!pluralLegalName.equals(other.pluralLegalName))
+			return false;
 		return true;
 	}
+
+	
 
 	
 	

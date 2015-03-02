@@ -20,7 +20,10 @@ package fr.becpg.repo.jscript;
 import java.util.Locale;
 
 import org.alfresco.repo.jscript.BaseScopableProcessorExtension;
+import org.alfresco.repo.jscript.ScriptNode;
 import org.springframework.extensions.surf.util.I18NUtil;
+
+import fr.becpg.repo.entity.AutoNumService;
 
 /**
  * Utility script methods
@@ -29,6 +32,15 @@ import org.springframework.extensions.surf.util.I18NUtil;
  */
 public final class BeCPGScriptHelper extends BaseScopableProcessorExtension{
 
+	private AutoNumService autoNumService;
+	
+	public void setAutoNumService(AutoNumService autoNumService) {
+		this.autoNumService = autoNumService;
+	}
+
+	public String getOrCreateBeCPGCode(ScriptNode sourceNode) {
+		return autoNumService.getOrCreateBeCPGCode(sourceNode.getNodeRef());
+	}
 	
 	public String getMessage(String messageKey){
 		return I18NUtil.getMessage(messageKey,  Locale.getDefault());
@@ -37,6 +49,5 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension{
 	public String getMessage(String messageKey, Object param ){
 		return I18NUtil.getMessage(messageKey,param,  Locale.getDefault());
 	}
-	
 	
 }

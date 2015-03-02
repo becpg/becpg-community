@@ -80,8 +80,6 @@ public class RepoServiceImpl implements RepoService {
 			
 			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 			
-			
-			
 	    	properties.put(ContentModel.PROP_NAME, PropertiesHelper.cleanFolderName(name));	    		    	
 	    	
 	    	folderNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS, 

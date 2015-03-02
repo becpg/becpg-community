@@ -14,7 +14,8 @@
 	      <input id="${fieldHtmlId}" type="text" name="${field.name}" tabindex="0"
 	             class="number<#if field.control.params.styleClass??> ${field.control.params.styleClass}</#if>"
 	             <#if field.control.params.style??>style="${field.control.params.style}"</#if>	
-	             <#if field.value?is_number>value="${field.value?c}"<#else>value="${field.value?html}"</#if>
+				 <#setting locale="en_US">
+	             <#if field.value?is_number>value="${field.value?string("${format}")}"<#else>value="${field.value?html}"</#if>
 	             <#if field.description??>title="${field.description}"</#if>
 	             <#if field.control.params.maxLength??>maxlength="${field.control.params.maxLength}"</#if> 
 	             <#if field.control.params.size??>size="${field.control.params.size}"</#if> 

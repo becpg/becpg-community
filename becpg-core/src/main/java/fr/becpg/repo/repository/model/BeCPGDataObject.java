@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2015 beCPG. 
+ * Copyright (C) 2010-2014 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -30,21 +30,30 @@ import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 
-public abstract class BeCPGDataObject extends BaseObject implements RepositoryEntity {
+public  abstract class  BeCPGDataObject  extends BaseObject implements RepositoryEntity {
 
 	protected NodeRef nodeRef;
-
+	
 	protected NodeRef parentNodeRef;
-
+	
 	protected String name;
-
+	
 	protected Set<QName> aspects = new HashSet<QName>();
-
-	protected Map<QName, Serializable> extraProperties = new HashMap<QName, Serializable>();
-
+	
+	protected Map<QName,Serializable> extraProperties = new HashMap<QName,Serializable>();
+	
 	protected transient boolean isTransient = false;
-
+	
 	private transient int dbHashCode;
+	
+
+	public int getDbHashCode() {
+		return dbHashCode;
+	}
+
+	public void setDbHashCode(int dbHashCode) {
+		this.dbHashCode = dbHashCode;
+	}
 
 	public BeCPGDataObject() {
 		super();
@@ -55,26 +64,20 @@ public abstract class BeCPGDataObject extends BaseObject implements RepositoryEn
 		this.nodeRef = nodeRef;
 		this.name = name;
 	}
+	
 
-	public BeCPGDataObject(BeCPGDataObject beCPGDataObject) {
-		this.nodeRef = beCPGDataObject.nodeRef;
-		this.parentNodeRef = beCPGDataObject.parentNodeRef;
-		this.name = beCPGDataObject.name;
-		this.aspects = beCPGDataObject.aspects;
-		this.extraProperties = beCPGDataObject.extraProperties;
-		this.isTransient = beCPGDataObject.isTransient;
+	public BeCPGDataObject(BeCPGDataObject beCPGDataObject) 
+	{
+	    this.nodeRef = beCPGDataObject.nodeRef;
+	    this.parentNodeRef = beCPGDataObject.parentNodeRef;
+	    this.name = beCPGDataObject.name;
+	    this.aspects = beCPGDataObject.aspects;
+	    this.extraProperties = beCPGDataObject.extraProperties;
+	    this.isTransient = beCPGDataObject.isTransient;
+	    this.dbHashCode = beCPGDataObject.dbHashCode;
 	}
 
-	@Override
-	public int getDbHashCode() {
-		return dbHashCode;
-	}
-
-	public void setDbHashCode(int dbHashCode) {
-		this.dbHashCode = dbHashCode;
-	}
-
-	@Override
+	
 	public NodeRef getNodeRef() {
 		return nodeRef;
 	}
@@ -84,8 +87,7 @@ public abstract class BeCPGDataObject extends BaseObject implements RepositoryEn
 	}
 
 	@AlfProp
-	@AlfQname(qname = "cm:name")
-	@Override
+	@AlfQname(qname="cm:name")
 	public String getName() {
 		return name;
 	}
@@ -94,7 +96,6 @@ public abstract class BeCPGDataObject extends BaseObject implements RepositoryEn
 		this.name = name;
 	}
 
-	@Override
 	public NodeRef getParentNodeRef() {
 		return parentNodeRef;
 	}
@@ -103,6 +104,7 @@ public abstract class BeCPGDataObject extends BaseObject implements RepositoryEn
 		this.parentNodeRef = parentNodeRef;
 	}
 
+	
 	public Set<QName> getAspects() {
 		return aspects;
 	}
@@ -179,4 +181,9 @@ public abstract class BeCPGDataObject extends BaseObject implements RepositoryEn
 		return true;
 	}
 
+
+	
+	
+
+	
 }
