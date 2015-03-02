@@ -50,8 +50,9 @@
 					<control-param name="showTooltip">true</control-param>
 					<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
 				</type>
-
 				<type name="association:rep:reportTpl" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+
+                <type name="float" template="/org/alfresco/components/form/controls/number-float.ftl" />
 
 			</default-controls>
 		</forms>
