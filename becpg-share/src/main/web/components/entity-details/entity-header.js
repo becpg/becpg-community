@@ -121,7 +121,7 @@
                            // Create favourite widget
                            new Alfresco.Favourite(this.id + '-favourite').setOptions({
                               nodeRef : this.options.nodeRef,
-                              type : "folder"
+                              type : "document"
                            }).display(this.options.isFavourite);
                         }
 
