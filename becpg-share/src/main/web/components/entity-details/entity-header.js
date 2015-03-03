@@ -45,7 +45,8 @@
                beCPG.custom.NodeHeader,
                Alfresco.component.NodeHeader,
                {
-
+                   fileUpload : null,
+                   
                   /**
                    * Fired by YUI when parent element is available for scripting. Initial History Manager event
                    * registration
@@ -159,42 +160,9 @@
                                        me.options.path, me.options.itemName, true);
                               });
 
-                      YAHOO.util.Event.addListener(me.id + "-uploadLogo-button", "click", function(e){
-                    	  if (!me.fileUpload)
-                          {
-                             me.fileUpload = Alfresco.getFileUploadInstance();
-                          }
-                          
-                          // Show uploader for single file select - override the upload URL to use appropriate upload service
-                          var uploadConfig =
-                          {
-                             flashUploadURL: "becpg/entity/uploadlogo" ,
-                             htmlUploadURL: "becpg/entity/uploadlogo.html" ,
-                             updateNodeRef: me.options.nodeRef,
-                             mode: me.fileUpload.MODE_SINGLE_UPLOAD,
-                             onFileUploadComplete:
-                             {
-                                fn: function onFileUploadComplete(complete)
-                                {
-                                    var success = complete.successful.length;
-                                    if (success != 0)
-                                    {
-                                       var noderef = complete.successful[0].nodeRef;
-                                       YAHOO.Bubbling.fire("metadataRefresh");
-                                       // replace image URL with the updated one
-//                                       var logoImg = Dom.get(this.id + "-logoimg");
-//                                       logoImg.src = Alfresco.constants.PROXY_URI + "api/node/" + noderef.replace("://", "/") + "/content";
-//                                       
-//                                       // set noderef value in hidden field ready for options form submit
-//                                       Dom.get("console-options-logo").value = noderef;
-                                    }
-                                 },
-                                scope: this
-                             }
-                          };
-                          me.fileUpload.show(uploadConfig);
-                          YAHOO.util.Event.preventDefault(e);
-                         });
+                        
+                      // Upload logo event 
+                      YAHOO.util.Event.addListener(this.id + "-uploadLogo-button", "click", this.doUploadLogo, this, true);
                         
                         if (this.options.report !== null) {
 
@@ -247,6 +215,39 @@
 
                   },
                   
+                  
+                  doUploadLogo : function NodeHeader_doUploadLogo(e) {
+
+                          if (this.fileUpload === null)
+                          {
+                              this.fileUpload = Alfresco.getFileUploadInstance();
+                          }
+                          
+                          
+                          var uploadConfig =
+                          {
+                             flashUploadURL: "becpg/entity/uploadlogo" ,
+                             htmlUploadURL: "becpg/entity/uploadlogo.html" ,
+                             updateNodeRef: this.options.nodeRef,
+                             mode: this.fileUpload.MODE_SINGLE_UPLOAD,
+                             onFileUploadComplete:
+                             {
+                                fn: function onFileUploadComplete(complete)
+                                {
+                                    var success = complete.successful.length;
+                                    if (success != 0)
+                                    {
+                                       var noderef = complete.successful[0].nodeRef;
+                                       YAHOO.Bubbling.fire("metadataRefresh");
+                                    }
+                                 },
+                                scope: this
+                             }
+                          };
+                          this.fileUpload.show(uploadConfig);
+                          YAHOO.util.Event.preventDefault(e);
+                      
+                  },
                   
 
                   /**

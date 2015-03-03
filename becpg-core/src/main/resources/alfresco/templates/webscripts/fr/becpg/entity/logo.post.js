@@ -2,7 +2,8 @@
  * Entity Logo Upload method
  * 
  * @method POST
- * @param filedata {file}
+ * @param filedata
+ *            {file}
  */
 
 function main()
@@ -11,31 +12,48 @@ function main()
    {
       var filename = null;
       var content = null;
-      var nodeRef = null;
+      var updateNodeRef = null;
+      
+      var fnFieldValue = function(p_field)
+      {
+         return p_field.value.length() > 0 && p_field.value != "null" ? p_field.value : null;
+      };
+
       
       // locate file attributes
       for each (field in formdata.fields)
       {
-         if (field.name == "filedata" && field.isFile)
-         {
-            filename = field.filename;
-            content = field.content;
-           
-         }else if (field.name == "updateNodeRef")
-         {
-        	 nodeRef = field.value;
+          switch (String(field.name).toLowerCase())
+          {
+             
+              case "filename":
+                  filename = fnFieldValue(field);
+                  break;
+
+               case "filedata":
+                  if (field.isFile)
+                  {
+                     filename = filename ? filename : field.filename;
+                     content = field.content;
+                     mimetype = field.mimetype;
+                  }
+                  break;
+               case "updatenoderef":
+                   updateNodeRef = fnFieldValue(field);
+                   break;
           }
+          
       }
       
       // ensure all mandatory attributes have been located
-      if (filename == undefined || content == undefined)
+      if (filename == undefined || content == undefined || updateNodeRef ==  undefined)
       {
          status.code = 400;
          status.message = "Uploaded file cannot be located in request";
          status.redirect = true;
          return;
       }
-      var entityNode = search.findNode(nodeRef);
+      var entityNode = search.findNode(updateNodeRef);
       // create the new image node
       logoNode = bThumbnail.getOrCreateImageNode(entityNode);
       logoNode.properties.content.write(content);
@@ -56,12 +74,15 @@ function main()
    catch (e)
    {
       var x = e;
+      
       status.code = 500;
       status.message = "Unexpected error occured during upload of new content.";
       if (x.message && x.message.indexOf("org.alfresco.service.cmr.usage.ContentQuotaException") == 0)
       {
          status.code = 413;
          status.message = x.message;
+      } else {
+          logger.warn(e);
       }
       status.redirect = true;
       return;

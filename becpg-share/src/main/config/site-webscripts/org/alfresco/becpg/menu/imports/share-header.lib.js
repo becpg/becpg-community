@@ -85,7 +85,9 @@ function createDockBar(beCPGMenu){
    try {
          var  nodeRef = page.url.args.nodeRef, dockbarUrl = "/becpg/dockbar", time = new Date();
          if (nodeRef !== null && nodeRef.length > 0) {
-            dockbarUrl += "?entityNodeRef=" + nodeRef.replace(/\\/g,"")+"&time="+time.getTime();
+            dockbarUrl += "?entityNodeRef=" + nodeRef.replace(/\\/g,"")+"&noCache="+time.getTime();
+         } else {
+             dockbarUrl +="?noCache="+time.getTime();  
          }
          
          var result = remote.call(dockbarUrl);
