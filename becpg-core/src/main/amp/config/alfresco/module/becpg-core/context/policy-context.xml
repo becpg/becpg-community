@@ -33,7 +33,10 @@
 	<bean id="codePolicy" class="fr.becpg.repo.entity.policy.CodePolicy" parent="abstractBeCPGPolicy">
 		<property name="autoNumService" ref="autoNumService" />
 	</bean>
-
+	
+	
+	<bean id="emailAliasablePolicy" class="fr.becpg.repo.entity.policy.EmailAliasablePolicy" parent="abstractBeCPGPolicy" />
+	
 	<bean id="docLinkedEntitiesPolicy" class="fr.becpg.repo.entity.policy.DocLinkedEntitiesPolicy" parent="abstractBeCPGPolicy">
 		<property name="entityService" ref="entityService" />
 	</bean>

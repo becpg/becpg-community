@@ -92,7 +92,11 @@ public class CompareProductServiceTest extends PLMBaseTestCase {
 	public void setUp() throws Exception {
 		super.setUp();
 
+		Date startTime = new Date();
+		
 		initObjects();
+		
+		waitForSolr(startTime);
 	}
 
 	/**
@@ -104,38 +108,23 @@ public class CompareProductServiceTest extends PLMBaseTestCase {
 			public NodeRef execute() throws Throwable {
 
 				// costs
-				NodeRef systemFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
-						TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
-				NodeRef costFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS,
-						TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_COSTS));
-				if (costFolder != null) {
-					fileFolderService.delete(costFolder);
-				}
-				costFolder = fileFolderService.create(systemFolder, TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_COSTS),
-						ContentModel.TYPE_FOLDER).getNodeRef();
+
 				for (int i = 0; i < 10; i++) {
 					Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 					properties.put(ContentModel.PROP_NAME, "Cost " + i);
 					properties.put(PLMModel.PROP_COSTCURRENCY, "€");
-					ChildAssociationRef childAssocRef = nodeService.createNode(costFolder, ContentModel.ASSOC_CONTAINS,
+					ChildAssociationRef childAssocRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
 							PLMModel.TYPE_COST, properties);
 					costs.add(childAssocRef.getChildRef());
 				}
 
 				// allergens
-				NodeRef allergensFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS,
-						TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_ALLERGENS));
-				if (allergensFolder != null) {
-					fileFolderService.delete(allergensFolder);
-				}
-				allergensFolder = fileFolderService.create(systemFolder, TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_ALLERGENS),
-						ContentModel.TYPE_FOLDER).getNodeRef();
-
+				
 				for (int i = 0; i < 10; i++) {
 					Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 					properties.put(ContentModel.PROP_NAME, "Allergen " + i);
-					ChildAssociationRef childAssocRef = nodeService.createNode(allergensFolder, ContentModel.ASSOC_CONTAINS,
+					ChildAssociationRef childAssocRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
 							PLMModel.TYPE_ALLERGEN, properties);
 					allergens.add(childAssocRef.getChildRef());

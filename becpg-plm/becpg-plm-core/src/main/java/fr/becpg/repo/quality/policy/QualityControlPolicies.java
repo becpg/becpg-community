@@ -80,9 +80,10 @@ public class QualityControlPolicies extends AbstractBeCPGPolicy implements NodeS
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {						
 		
-		logger.debug("QualityControlPolicies onUpdateProperties.");
+		
 		if (isPropChanged(before, after, QualityModel.PROP_CL_VALUE) ||
 				isPropChanged(before, after, QualityModel.PROP_CL_STATE)) {
+			logger.debug("QualityControlPolicies onUpdateProperties.");
 			qualityControlService.updateControlListState(nodeRef);
 		}		
 	}

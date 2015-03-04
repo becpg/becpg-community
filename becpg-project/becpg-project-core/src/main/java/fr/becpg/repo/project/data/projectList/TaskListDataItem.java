@@ -39,8 +39,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfType
 @AlfQname(qname = "pjt:taskList")
 public class TaskListDataItem extends BeCPGDataObject implements CompositeDataItem<TaskListDataItem> {
-	
-	
+
 	private String taskName;
 	private Boolean isMilestone;
 	private Boolean isGroup;
@@ -64,7 +63,7 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	private TaskListDataItem refusedTask;
 	private Double fixedCost;
 	private Double budgetedCost;
-	private ResourceCost resourceCost; 
+	private ResourceCost resourceCost;
 
 	@AlfProp
 	@AlfQname(qname = "pjt:tlTaskName")
@@ -125,6 +124,7 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	public void setWork(Double work) {
 		this.work = work;
 	}
+
 	@AlfProp
 	@AlfQname(qname = "pjt:tlLoggedTime")
 	public Double getLoggedTime() {
@@ -160,13 +160,20 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	public TaskState getTaskState() {
 		return taskState;
 	}
-	
-	
+
 	public void setTaskState(TaskState state) {
 		this.taskState = state;
 	}
-	
-	
+
+	// Helper method for script and Spel
+	public String getState() {
+		return taskState != null ? taskState.toString() : TaskState.Planned.toString();
+	}
+
+	public void setState(String state) {
+		this.taskState = TaskState.valueOf(state);
+	}
+
 	@AlfProp
 	@AlfQname(qname = "pjt:completionPercent")
 	public Integer getCompletionPercent() {
@@ -233,7 +240,6 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 		return workflowInstance;
 	}
 
-	
 	public void setWorkflowInstance(String workflowInstance) {
 		this.workflowInstance = workflowInstance;
 	}
@@ -250,7 +256,7 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 
 	@Override
 	@AlfProp
-	@AlfQname(qname="bcpg:depthLevel")
+	@AlfQname(qname = "bcpg:depthLevel")
 	public Integer getDepthLevel() {
 		return depthLevel;
 	}
@@ -261,14 +267,13 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 
 	@Override
 	@AlfProp
-	@AlfQname(qname="bcpg:parentLevel")
+	@AlfQname(qname = "bcpg:parentLevel")
 	public TaskListDataItem getParent() {
 		return this.parent;
 	}
 
-	
 	@AlfSingleAssoc
-	@AlfQname(qname="pjt:tlRefusedTaskRef")
+	@AlfQname(qname = "pjt:tlRefusedTaskRef")
 	public TaskListDataItem getRefusedTask() {
 		return refusedTask;
 	}
@@ -279,9 +284,9 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 
 	@Override
 	public void setParent(TaskListDataItem parent) {
-		this.parent = parent;		
+		this.parent = parent;
 	}
-	
+
 	@AlfProp
 	@AlfQname(qname = "pjt:tlFixedCost")
 	public Double getFixedCost() {
@@ -320,8 +325,8 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 		super(nodeRef, name);
 	}
 
-	public TaskListDataItem(NodeRef nodeRef, String taskName, Boolean isMilestone, Integer duration, List<NodeRef> prevTasks, List<NodeRef> resources, NodeRef taskLegend,
-			String workflowName) {
+	public TaskListDataItem(NodeRef nodeRef, String taskName, Boolean isMilestone, Integer duration, List<NodeRef> prevTasks,
+			List<NodeRef> resources, NodeRef taskLegend, String workflowName) {
 		super();
 		this.nodeRef = nodeRef;
 		this.taskName = taskName;
@@ -333,8 +338,9 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 		this.workflowName = workflowName;
 	}
 
-	public TaskListDataItem(NodeRef nodeRef, String taskName, Boolean isMilestone, Integer duration, Date start, Date end, TaskState state, Integer completionPercent,
-			List<NodeRef> prevTasks, List<NodeRef> resources, NodeRef taskLegend, String workflowName, String workflowInstance) {
+	public TaskListDataItem(NodeRef nodeRef, String taskName, Boolean isMilestone, Integer duration, Date start, Date end, TaskState state,
+			Integer completionPercent, List<NodeRef> prevTasks, List<NodeRef> resources, NodeRef taskLegend, String workflowName,
+			String workflowInstance) {
 		super();
 		this.nodeRef = nodeRef;
 		this.taskName = taskName;
@@ -342,7 +348,7 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 		this.duration = duration;
 		this.start = start;
 		this.end = end;
-		this.taskState = state!=null ? state : TaskState.Planned;
+		this.taskState = state != null ? state : TaskState.Planned;
 		this.completionPercent = completionPercent;
 		this.prevTasks = prevTasks;
 		this.resources = resources;
@@ -498,13 +504,12 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 
 	@Override
 	public String toString() {
-		return "TaskListDataItem [taskName=" + taskName + ", isMilestone=" + isMilestone + ", isGroup=" + isGroup
-				+ ", duration=" + duration + ", capacity=" + capacity + ", work=" + work + ", start=" + start
-				+ ", end=" + end + ", state=" + taskState + ", completionPercent=" + completionPercent + ", prevTasks="
-				+ prevTasks + ", resources=" + resources + ", observers=" + observers + ", taskLegend=" + taskLegend
-				+ ", workflowName=" + workflowName + ", workflowInstance=" + workflowInstance + ", manualDate="
-				+ manualDate + ", depthLevel=" + depthLevel + ", parent=" + parent + ", fixedCost=" + fixedCost
-				+ ", budgetedCost=" + budgetedCost + ", resourceCost=" + resourceCost + "]";
+		return "TaskListDataItem [taskName=" + taskName + ", isMilestone=" + isMilestone + ", isGroup=" + isGroup + ", duration=" + duration
+				+ ", capacity=" + capacity + ", work=" + work + ", start=" + start + ", end=" + end + ", state=" + taskState + ", completionPercent="
+				+ completionPercent + ", prevTasks=" + prevTasks + ", resources=" + resources + ", observers=" + observers + ", taskLegend="
+				+ taskLegend + ", workflowName=" + workflowName + ", workflowInstance=" + workflowInstance + ", manualDate=" + manualDate
+				+ ", depthLevel=" + depthLevel + ", parent=" + parent + ", fixedCost=" + fixedCost + ", budgetedCost=" + budgetedCost
+				+ ", resourceCost=" + resourceCost + "]";
 	}
 
 }

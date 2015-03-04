@@ -191,6 +191,8 @@ public class QualityControlTest extends PLMBaseTestCase {
 				NodeRef controlListNodeRef = entityListDAO.getList(entityListDAO.getListContainer(qualityControlNodeRef), "Analyses");
 				List<FileInfo> fileInfos = fileFolderService.listFiles(controlListNodeRef);
 				logger.info("fileInfos.size() " + fileInfos.size());
+				
+				
 				assertEquals(6*10, fileInfos.size());
 				boolean isFirstCLOfSample3 = true;
 
