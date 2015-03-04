@@ -10,6 +10,13 @@
 		          <sourcePackageRoot>org.alfresco.components.custom-menu-project</sourcePackageRoot>
 		        </customization>
 		        <customization>
+		          <targetPackageRoot>org.alfresco.share.pages</targetPackageRoot>
+		          <sourcePackageRoot>org.alfresco.components.custom-menu-project</sourcePackageRoot>
+		          <alwaysApply>
+					  <webscript>share-header</webscript>
+				   </alwaysApply>
+		        </customization>
+		        <customization>
 					<targetPackageRoot>org.alfresco.modules</targetPackageRoot>
 					<sourcePackageRoot>org.alfresco.components.custom-presets-project</sourcePackageRoot>
 				</customization>

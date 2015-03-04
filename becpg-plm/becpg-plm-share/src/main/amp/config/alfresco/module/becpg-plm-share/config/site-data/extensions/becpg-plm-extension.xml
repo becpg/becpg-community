@@ -5,9 +5,16 @@
 			<id>becpg-plm-extension</id>
 			<auto-deploy>true</auto-deploy>
 			<customizations>
-				 <customization>
+				<customization>
 		          <targetPackageRoot>org.alfresco.share.header</targetPackageRoot>
 		          <sourcePackageRoot>org.alfresco.components.custom-menu-plm</sourcePackageRoot>
+		        </customization>
+				 <customization>
+		          <targetPackageRoot>org.alfresco.share.pages</targetPackageRoot>
+		          <sourcePackageRoot>org.alfresco.components.custom-menu-plm</sourcePackageRoot>
+		       	  <alwaysApply>
+					   <webscript>share-header</webscript>
+				   </alwaysApply>
 		        </customization>
 		        <customization>
 					<targetPackageRoot>org.alfresco.modules</targetPackageRoot>
@@ -27,7 +34,7 @@
 				</customization>
 			</customizations>
 		</module>
-		<module>
+		<!-- <module>
 		   <id>becpg-contextual-help</id>
 		   <components>
                 <component>
@@ -40,6 +47,6 @@
                     </sub-components>
                 </component>
             </components>
-		</module>
+		</module> -->
 	</modules>
 </extension>  

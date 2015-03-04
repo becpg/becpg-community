@@ -26,7 +26,7 @@
 		<div class="wused-form form-container"> 
 			<#if wusedTypes??>
 			 <div class="form-fields item-type-select">
-				<button id="${el}-wusedTypeSelect-button" name="wusedType-itemSelect-button">${msg("menu.select.type")}</button>
+				<button id="${el}-wusedTypeSelect-button" name="wusedType-itemSelect-button">${msg("menu.select.type")}&nbsp;&#9662;</button>
 				<div id="${el}-wusedTypeSelect-menu" class="yuimenu" style="visibility:hidden;">
 				         <div class="bd">
 				             <ul>
