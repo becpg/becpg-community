@@ -65,7 +65,7 @@
                         });
                            
                            
-                        this.widgets.reportingMenu.set("label", this.msg("button.download-report"));
+                        this.widgets.reportingMenu.set("label", this.msg("button.download-report")+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
                         
                         // event handler for export menu
 
