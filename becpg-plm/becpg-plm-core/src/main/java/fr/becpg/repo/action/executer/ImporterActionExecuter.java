@@ -126,7 +126,7 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase {
 
 			if (nodeRefs != null) {
 				for (NodeRef nodeRef : nodeRefs) {
-					Runnable runnable = new FileImporter(nodeRef, AuthenticationUtil.getRunAsUser(), doNotMoveNode);
+					Runnable runnable = new FileImporter(nodeRef, AuthenticationUtil.getFullyAuthenticatedUser(), doNotMoveNode);
 					threadExecuter.execute(runnable);
 				}
 			}

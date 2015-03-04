@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -80,11 +81,11 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService{
 	}
 
 	@Override
-	public void startWorkflow(ProjectData projectData, TaskListDataItem taskListDataItem,
-			List<DeliverableListDataItem> nextDeliverables) {
+	public void startWorkflow(final ProjectData projectData,final TaskListDataItem taskListDataItem,
+			final List<DeliverableListDataItem> nextDeliverables) {
 		
-		String workflowDescription = calculateWorkflowDescription(projectData, taskListDataItem, nextDeliverables);
-		Map<QName, Serializable> workflowProps = new HashMap<QName, Serializable>();
+		final String workflowDescription = calculateWorkflowDescription(projectData, taskListDataItem, nextDeliverables);
+		final Map<QName, Serializable> workflowProps = new HashMap<QName, Serializable>();
 
 		if (taskListDataItem.getEnd() != null) {			
 			workflowProps.put(WorkflowModel.PROP_WORKFLOW_DUE_DATE, taskListDataItem.getEnd());
@@ -116,44 +117,52 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService{
 		else if (authenticatedUser == null || authenticatedUser.isEmpty()){
 			authenticatedUser = DEFAULT_INITIATOR;
 		}
-		AuthenticationUtil.setFullyAuthenticatedUser(authenticatedUser);
 		
-		
-		NodeRef wfPackage = workflowService.createPackage(null);
-		nodeService.addChild(wfPackage, projectData.getNodeRef(), WorkflowModel.ASSOC_PACKAGE_CONTAINS,
-				ContentModel.ASSOC_CHILDREN);
-		if (!projectData.getEntities().isEmpty()) {
-			for(NodeRef entity : projectData.getEntities()){
-				nodeService.addChild(wfPackage, entity, WorkflowModel.ASSOC_PACKAGE_CONTAINS,
+		AuthenticationUtil.runAs(new RunAsWork<Object>() {
+
+			@Override
+			public Object doWork() throws Exception {
+				NodeRef wfPackage = workflowService.createPackage(null);
+				nodeService.addChild(wfPackage, projectData.getNodeRef(), WorkflowModel.ASSOC_PACKAGE_CONTAINS,
 						ContentModel.ASSOC_CHILDREN);
-			}			
-		}
-		workflowProps.put(WorkflowModel.ASSOC_PACKAGE, wfPackage);
+				if (!projectData.getEntities().isEmpty()) {
+					for(NodeRef entity : projectData.getEntities()){
+						nodeService.addChild(wfPackage, entity, WorkflowModel.ASSOC_PACKAGE_CONTAINS,
+								ContentModel.ASSOC_CHILDREN);
+					}			
+				}
+				workflowProps.put(WorkflowModel.ASSOC_PACKAGE, wfPackage);
 
-		String workflowDefId = getWorkflowDefId(taskListDataItem.getWorkflowName());
-		if(logger.isDebugEnabled()){
-			logger.debug("workflowDefId: " + workflowDefId + " props " + workflowProps);
-		}		
-		if (workflowDefId != null) {
+				String workflowDefId = getWorkflowDefId(taskListDataItem.getWorkflowName());
+				if(logger.isDebugEnabled()){
+					logger.debug("workflowDefId: " + workflowDefId + " props " + workflowProps);
+				}		
+				if (workflowDefId != null) {
 
-			WorkflowPath wfPath = workflowService.startWorkflow(workflowDefId, workflowProps);
-			logger.debug("New worflow started. Id: " + wfPath.getId() + " - workflowDescription: "
-					+ workflowDescription);
-			String workflowId = wfPath.getInstance().getId();
-			taskListDataItem.setWorkflowInstance(workflowId);
+					WorkflowPath wfPath = workflowService.startWorkflow(workflowDefId, workflowProps);
+					logger.debug("New worflow started. Id: " + wfPath.getId() + " - workflowDescription: "
+							+ workflowDescription);
+					String workflowId = wfPath.getInstance().getId();
+					taskListDataItem.setWorkflowInstance(workflowId);
 
-			// get the workflow tasks
-			WorkflowTask startTask = workflowService.getStartTask(workflowId);
+					// get the workflow tasks
+					WorkflowTask startTask = workflowService.getStartTask(workflowId);
 
-			// end task
-			try {
-				workflowService.endTask(startTask.getId(), null);
-			} catch(WorkflowException err){
-				if (logger.isDebugEnabled())
-					logger.debug("Failed - caught error during project adhoc workflow transition: " + err.getMessage());
-				throw err;
+					// end task
+					try {
+						workflowService.endTask(startTask.getId(), null);
+					} catch(WorkflowException err){
+						if (logger.isDebugEnabled())
+							logger.debug("Failed - caught error during project adhoc workflow transition: " + err.getMessage());
+						throw err;
+					}
+				}
+				return null;
 			}
-		}
+			
+			
+		}, authenticatedUser);
+		
 	}
 	
 	private List<NodeRef> getAssignees(List<NodeRef> resources, boolean group) {
