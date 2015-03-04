@@ -46,7 +46,7 @@ public class BeCPGReportServiceImpl implements BeCPGReportService {
 	private static final String KEY_XML_INPUTSTREAM = "org.eclipse.datatools.enablement.oda.xml.inputStream";
 	
 
-	private static Log logger = LogFactory.getLog(BeCPGReportServiceImpl.class);
+	private final static Log logger = LogFactory.getLog(BeCPGReportServiceImpl.class);
 	
 	/** The report engine. */
 	private IReportEngine reportEngine = BirtPlatformListener.getReportEngine();

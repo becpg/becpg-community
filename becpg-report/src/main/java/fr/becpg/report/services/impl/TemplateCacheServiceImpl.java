@@ -43,9 +43,9 @@ import fr.becpg.report.services.TemplateCacheService;
  */
 public class TemplateCacheServiceImpl implements TemplateCacheService {
 
-	private static int NUMBER_IN_MEMORY = 10000;
-
 	private static final Log logger = LogFactory.getLog(TemplateCacheServiceImpl.class);
+
+	private static int NUMBER_IN_MEMORY = 10000;
 
 	private Map<String, TemplateCacheEl> cache = new ConcurrentHashMap<String, TemplateCacheServiceImpl.TemplateCacheEl>();
 

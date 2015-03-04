@@ -37,11 +37,13 @@ define([ "dojo/_base/declare", "alfresco/core/CoreXhr", "dojo/_base/lang", "dojo
 			this.inherited(arguments);
 			this.alfLog("log", "Loading recents");
 
-			var nodeRef = this.entityNodeRef, url = Alfresco.constants.PROXY_URI + "becpg/dockbar";
-			if (nodeRef !== null && nodeRef.length > 0) {
-				url += "?entityNodeRef=" + nodeRef.replace(/\\/g, "");
-			}
-
+			var nodeRef = this.entityNodeRef, url = Alfresco.constants.PROXY_URI + "becpg/dockbar", time = new Date();
+	        if (nodeRef !== null && nodeRef.length > 0) {
+	            url += "?entityNodeRef=" + nodeRef.replace(/\\/g,"")+"&noCache="+time.getTime();
+	         } else {
+	            url +="?noCache="+time.getTime();  
+	         }
+	         
 			this.serviceXhr({
 				url : url,
 				method : "GET",

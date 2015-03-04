@@ -60,11 +60,11 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 public class QualityControlServiceImpl implements QualityControlService {
 
 	private static Log logger = LogFactory.getLog(QualityControlServiceImpl.class);
-	
+
 	private final static String BATCH_SEPARATOR = "/";
-	private static final long HOUR = 3600*1000; // in milli-seconds.
-	
-	private NodeService nodeService;	
+	private static final long HOUR = 3600 * 1000; // in milli-seconds.
+
+	private NodeService nodeService;
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 	private EntityListDAO entityListDAO;
 	private BehaviourFilter policyBehaviourFilter;
@@ -97,223 +97,216 @@ public class QualityControlServiceImpl implements QualityControlService {
 
 	@Override
 	public void createSamplingList(NodeRef qcNodeRef, NodeRef controlPlanNodeRef) {
-		
-		logger.debug("createSamplingList");		
-		QualityControlData qualityControlData = (QualityControlData) alfrescoRepository.findOne(qcNodeRef);								
+
+		logger.debug("createSamplingList");
+		QualityControlData qualityControlData = (QualityControlData) alfrescoRepository.findOne(qcNodeRef);
 		Map<NodeRef, WorkItemAnalysisData> wiaMap = new HashMap<NodeRef, WorkItemAnalysisData>();
 		createSamples(qualityControlData, controlPlanNodeRef, wiaMap);
 		alfrescoRepository.save(qualityControlData);
 	}
-	
-	private void createSamples(QualityControlData qualityControlData, NodeRef controlPlanNodeRef, Map<NodeRef, WorkItemAnalysisData> wiaMap){
-		
-		logger.debug("createSamples");		
-		List<SamplingListDataItem> samplingList = new ArrayList<SamplingListDataItem>();		
+
+	private void createSamples(QualityControlData qualityControlData, NodeRef controlPlanNodeRef, Map<NodeRef, WorkItemAnalysisData> wiaMap) {
+
+		logger.debug("createSamples");
+		List<SamplingListDataItem> samplingList = new ArrayList<SamplingListDataItem>();
 		int samplesCounter = 0;
 		String batchId = qualityControlData.getBatchId();
 		Date batchStart = qualityControlData.getBatchStart();
 		Integer batchDuration = qualityControlData.getBatchDuration();
-		
+
 		logger.debug("load control plan");
 		ControlPlanData controlPlanData = (ControlPlanData) alfrescoRepository.findOne(controlPlanNodeRef);
-		
-		logger.debug("control plan loaded, controlPlanData.getSamplingDefList(): " + controlPlanData.getSamplingDefList());
-		
-		if(controlPlanData.getSamplingDefList() != null){
-		
-			for(SamplingDefListDataItem sdl : controlPlanData.getSamplingDefList()){
-				
+
+		if (controlPlanData.getSamplingDefList() != null) {
+
+			logger.debug("control plan loaded, controlPlanData.getSamplingDefList(): " + controlPlanData.getSamplingDefList().size());
+
+			for (SamplingDefListDataItem sdl : controlPlanData.getSamplingDefList()) {
+
 				logger.debug("create sample");
-				
-				//TODO : take in account freq and english language for lot !!!
+
+				// TODO : take in account freq and english language for lot !!!
 				String freq = sdl.getFreqUnit();
 				int samplesToTake = 1;
 				int freqInHour = 0;
 				Date sampleDateTime = batchStart;
-				
+
 				// per batch
-				if(freq.equals("/batch")){
-					
-				}
-				else if(freq.equals("/hour")){
-					
+				if (freq.equals("/batch")) {
+
+				} else if (freq.equals("/hour")) {
+
 					freqInHour = 1;
-					samplesToTake = batchDuration / freqInHour + 1;					
-				}
-				else if(freq.equals("/4hours")){
-					
+					samplesToTake = batchDuration / freqInHour + 1;
+				} else if (freq.equals("/4hours")) {
+
 					freqInHour = 4;
-					samplesToTake = batchDuration / freqInHour + 1;					
-				}
-				else if(freq.equals("/8hours")){
-					
+					samplesToTake = batchDuration / freqInHour + 1;
+				} else if (freq.equals("/8hours")) {
+
 					freqInHour = 8;
-					samplesToTake = batchDuration / freqInHour + 1;					
+					samplesToTake = batchDuration / freqInHour + 1;
 				}
-				
-				// create samples to take 
-				for(int z_idx=0 ; z_idx<samplesToTake ; z_idx++){
-					
+
+				// create samples to take
+				for (int z_idx = 0; z_idx < samplesToTake; z_idx++) {
+
 					// several samples must be taken
-					for(int z_idx2=0 ; z_idx2<sdl.getQty() ; z_idx2++){
-					
+					for (int z_idx2 = 0; z_idx2 < sdl.getQty(); z_idx2++) {
+
 						samplesCounter++;
 						String sampleId = batchId + BATCH_SEPARATOR + samplesCounter;
-						
-						samplingList.add(new SamplingListDataItem(
-										sampleDateTime, 
-										sampleId, 
-										null, 
-										sdl.getControlPoint(), 
-										sdl.getControlStep(),
-										sdl.getSamplingGroup(),
-										sdl.getControlingGroup(),
-										sdl.getFixingGroup(),
-										sdl.getReaction()));
-					}			
-					
+
+						samplingList.add(new SamplingListDataItem(sampleDateTime, sampleId, null, sdl.getControlPoint(), sdl.getControlStep(), sdl
+								.getSamplingGroup(), sdl.getControlingGroup(), sdl.getFixingGroup(), sdl.getReaction()));
+					}
+
 					// calculate next time
 					sampleDateTime = new Date(sampleDateTime.getTime() + freqInHour * HOUR);
-				}				
+				}
 			}
-			
+
 			qualityControlData.setSamplesCounter(samplesCounter);
-			qualityControlData.setSamplingList(samplingList);			
-		}		
+			qualityControlData.setSamplingList(samplingList);
+		}
 	}
-	
+
 	@Override
 	public void createControlList(NodeRef sampleListNodeRef) {
-		
+
 		NodeRef qcNodeRef = entityListDAO.getEntity(sampleListNodeRef);
 		QualityControlData qualityControlData = (QualityControlData) alfrescoRepository.findOne(qcNodeRef);
-		
+
 		ProductData productData = null;
 		ProductData productMicrobioCriteriaData = null;
-		
-		if(qualityControlData.getProduct() != null){
-		
-			logger.debug("createSamplingList - load product");
+
+		if (qualityControlData.getProduct() != null) {
+
+			logger.debug("createControlList - load product");
 
 			productData = (ProductData) alfrescoRepository.findOne(qualityControlData.getProduct());
-			
+
 			// load microbio
-			List<AssociationRef> controlPointAssocRefs = nodeService.getTargetAssocs(qualityControlData.getProduct(), PLMModel.ASSOC_PRODUCT_MICROBIO_CRITERIA);
-			
-			if(!controlPointAssocRefs.isEmpty()){
+			List<AssociationRef> controlPointAssocRefs = nodeService.getTargetAssocs(qualityControlData.getProduct(),
+					PLMModel.ASSOC_PRODUCT_MICROBIO_CRITERIA);
+
+			if (!controlPointAssocRefs.isEmpty()) {
 				NodeRef productMicrobioCriteriaNodeRef = (controlPointAssocRefs.get(0)).getTargetRef();
-				
-				productMicrobioCriteriaData = (ProductData) alfrescoRepository.findOne(productMicrobioCriteriaNodeRef);				
+
+				productMicrobioCriteriaData = (ProductData) alfrescoRepository.findOne(productMicrobioCriteriaNodeRef);
 				productData.setMicrobioList(productMicrobioCriteriaData.getMicrobioList());
-			}			
+			}
 		}
-		
+
 		SamplingListDataItem sl = (SamplingListDataItem) alfrescoRepository.findOne(sampleListNodeRef);
 		List<ControlListDataItem> controlList = calculateControlList(qualityControlData, sl, productData);
-		createControlList(qualityControlData.getNodeRef(), sl.getControlingGroup(), controlList);		
+		createControlList(qualityControlData.getNodeRef(), sl.getControlingGroup(), controlList);
 	}
 
 	/**
 	 * get control point and create control list
+	 * 
 	 * @param qualityControlData
 	 * @param sampleListNodeRef
 	 * @param productData
 	 * @return
 	 */
-	private List<ControlListDataItem> calculateControlList(QualityControlData qualityControlData, SamplingListDataItem sl, ProductData productData){
-		
+	private List<ControlListDataItem> calculateControlList(QualityControlData qualityControlData, SamplingListDataItem sl, ProductData productData) {
+
 		List<ControlListDataItem> controlList = new LinkedList<>();
-		
+
 		ControlPointData controlPointData = (ControlPointData) alfrescoRepository.findOne(sl.getControlPoint());
-		
-		logger.debug("calculateControlList, controlPointData.getControlDefList(): " + controlPointData.getControlDefList().size());				
-		for(ControlDefListDataItem cdl : controlPointData.getControlDefList()){
-			
-			for(NodeRef n : cdl.getCharacts()){
-			
-				Double target = null;
-				Double mini = null;
-				Double maxi = null;
-				String unit = null;
-				
-				if(productData != null){
-					
-					// TODO : générique			
-					if(cdl.getType().equals("bcpg_microbioList")){
-					
-						if(productData.getMicrobioList() != null){							
-						
-							for(MicrobioListDataItem mbl : productData.getMicrobioList()){
-								if(n.equals(mbl.getMicrobio())){
-									
-									target = mbl.getValue();
-									unit = mbl.getUnit();
-									maxi = mbl.getMaxi();
-									break;
+		if (controlPointData.getControlDefList() != null) {
+
+			logger.debug("calculateControlList, controlPointData.getControlDefList(): " + controlPointData.getControlDefList().size());
+
+			for (ControlDefListDataItem cdl : controlPointData.getControlDefList()) {
+				if (cdl.getCharacts() != null) {
+					logger.debug("characts size : " + cdl.getCharacts().size());
+					for (NodeRef n : cdl.getCharacts()) {
+
+						Double target = null;
+						Double mini = null;
+						Double maxi = null;
+						String unit = null;
+
+						if (productData != null) {
+
+							// TODO : générique
+							if (cdl.getType().equals("bcpg_microbioList")) {
+
+								if (productData.getMicrobioList() != null) {
+
+									for (MicrobioListDataItem mbl : productData.getMicrobioList()) {
+										if (n.equals(mbl.getMicrobio())) {
+
+											target = mbl.getValue();
+											unit = mbl.getUnit();
+											maxi = mbl.getMaxi();
+											break;
+										}
+									}
 								}
-							}
-						}						
-					}
-					else{
-						QName dataListQName = null;
-						if(cdl.getType().contains("_")){
-							dataListQName = QName.createQName(cdl.getType().replace("_", ":"), namespaceService);
-						}
-						
-						if(dataListQName != null){
-							Map<QName, List<? extends RepositoryEntity>> datalists = repositoryEntityDefReader.getDataLists(productData);
-							@SuppressWarnings("unchecked")
-							List<BeCPGDataObject> dataListItems = (List<BeCPGDataObject>) datalists.get(dataListQName);
-							
-							for (RepositoryEntity dataListItem : dataListItems) {
-								
-								if(dataListItem instanceof SimpleListDataItem){
-									SimpleListDataItem simpleListDataItem = (SimpleListDataItem)dataListItem;
-									if(n.equals(simpleListDataItem.getCharactNodeRef())){
-										
-										target = simpleListDataItem.getValue();
-										unit = simpleListDataItem.getUnit();
-										mini = simpleListDataItem.getMini();
-										maxi = simpleListDataItem.getMaxi();
+							} else {
+								QName dataListQName = null;
+								if (cdl.getType().contains("_")) {
+									dataListQName = QName.createQName(cdl.getType().replace("_", ":"), namespaceService);
+								}
+
+								if (dataListQName != null) {
+									Map<QName, List<? extends RepositoryEntity>> datalists = repositoryEntityDefReader.getDataLists(productData);
+									@SuppressWarnings("unchecked")
+									List<BeCPGDataObject> dataListItems = (List<BeCPGDataObject>) datalists.get(dataListQName);
+
+									for (RepositoryEntity dataListItem : dataListItems) {
+
+										if (dataListItem instanceof SimpleListDataItem) {
+											SimpleListDataItem simpleListDataItem = (SimpleListDataItem) dataListItem;
+											if (n.equals(simpleListDataItem.getCharactNodeRef())) {
+
+												target = simpleListDataItem.getValue();
+												unit = simpleListDataItem.getUnit();
+												mini = simpleListDataItem.getMini();
+												maxi = simpleListDataItem.getMaxi();
+											}
+										}
 									}
 								}
 							}
-						}						
+						}
+
+						List<NodeRef> subList = new ArrayList<NodeRef>();
+						subList.add(n);
+
+						controlList.add(new ControlListDataItem(null, cdl.getType(), mini, maxi, cdl.getRequired(), sl.getSampleId(), null, target,
+								unit, null, cdl.getMethod(), subList));
 					}
 				}
-				
-				List<NodeRef> subList = new ArrayList<NodeRef>();
-				subList.add(n);
-				
-				controlList.add(new ControlListDataItem(null, cdl.getType(), mini, maxi, cdl.getRequired(), 
-													sl.getSampleId(), null, target, unit, null, cdl.getMethod(), subList));					
-				}		
-			}			
-		
+			}
+		}
 		return controlList;
 	}
-	
-	private void createControlList(NodeRef qualityControlNodeRef, NodeRef authorityNodeRef, List<ControlListDataItem> controlList){
-				
-		String name = "Analyses";		
-		if(authorityNodeRef != null){
+
+	private void createControlList(NodeRef qualityControlNodeRef, NodeRef authorityNodeRef, List<ControlListDataItem> controlList) {
+
+		String name = "Analyses";
+		if (authorityNodeRef != null) {
 			name += " - " + nodeService.getProperty(authorityNodeRef, ContentModel.PROP_AUTHORITY_DISPLAY_NAME);
 		}
-		
+
 		NodeRef listContainerNodeRef = entityListDAO.getListContainer(qualityControlNodeRef);
 		NodeRef controlListNodeRef = entityListDAO.getList(listContainerNodeRef, name);
-		if(controlListNodeRef == null){
-			try{
+		if (controlListNodeRef == null) {
+			try {
 				policyBehaviourFilter.disableBehaviour(DataListModel.TYPE_DATALIST);
 				controlListNodeRef = entityListDAO.createList(listContainerNodeRef, name, QualityModel.TYPE_CONTROL_LIST);
-			}
-			finally{
+			} finally {
 				policyBehaviourFilter.enableBehaviour(DataListModel.TYPE_DATALIST);
-			}			
+			}
 		}
-		
+
 		logger.debug("createControlList " + controlList.size());
-		for(ControlListDataItem cl : controlList){
+		for (ControlListDataItem cl : controlList) {
 			alfrescoRepository.create(controlListNodeRef, cl);
 		}
 	}
@@ -323,120 +316,106 @@ public class QualityControlServiceImpl implements QualityControlService {
 		Double mini = (Double) nodeService.getProperty(controlListNodeRef, QualityModel.PROP_CL_MINI);
 		Double maxi = (Double) nodeService.getProperty(controlListNodeRef, QualityModel.PROP_CL_MAXI);
 		Double value = (Double) nodeService.getProperty(controlListNodeRef, QualityModel.PROP_CL_VALUE);
-		
-		if(value != null && (mini != null || maxi != null)){
-			
+
+		if (value != null && (mini != null || maxi != null)) {
+
 			boolean isCompliant = true;
-			if(mini != null && mini.compareTo(value) > 0){
+			if (mini != null && mini.compareTo(value) > 0) {
 				isCompliant = false;
 			}
-			if(maxi != null && maxi.compareTo(value) < 0){
+			if (maxi != null && maxi.compareTo(value) < 0) {
 				isCompliant = false;
 			}
 			logger.debug("updateControlListState isCompliant: " + isCompliant + " mini " + mini + " maxi " + maxi + " value " + value);
-			if(isCompliant){
-				nodeService.setProperty(controlListNodeRef, QualityModel.PROP_CL_STATE, QualityControlState.Compliant.toString());				
-			}	
-			else{
+			if (isCompliant) {
+				nodeService.setProperty(controlListNodeRef, QualityModel.PROP_CL_STATE, QualityControlState.Compliant.toString());
+			} else {
 				nodeService.setProperty(controlListNodeRef, QualityModel.PROP_CL_STATE, QualityControlState.NonCompliant.toString());
-			}						
+			}
 		}
-		
-		updateSampleState(controlListNodeRef);		
+
+		updateSampleState(controlListNodeRef);
 	}
-		
-	private void updateSampleState(NodeRef controlListNodeRef){
-	
-		String sampleId = (String)nodeService.getProperty(controlListNodeRef, QualityModel.PROP_CL_SAMPLE_ID);
-		if(sampleId != null){
+
+	private void updateSampleState(NodeRef controlListNodeRef) {
+
+		String sampleId = (String) nodeService.getProperty(controlListNodeRef, QualityModel.PROP_CL_SAMPLE_ID);
+		if (sampleId != null) {
 			NodeRef parentNodeRef = nodeService.getPrimaryParent(controlListNodeRef).getParentRef();
-			if(isSampleControled(parentNodeRef, sampleId)){
+			if (isSampleControled(parentNodeRef, sampleId)) {
 				NodeRef entityNodeRef = entityListDAO.getEntity(controlListNodeRef);
-				QualityControlData qualityControlData = (QualityControlData)alfrescoRepository.findOne(entityNodeRef);
+				QualityControlData qualityControlData = (QualityControlData) alfrescoRepository.findOne(entityNodeRef);
 				boolean isQCControled = true;
 				boolean isQCCompliant = true;
-				
-				for(SamplingListDataItem sl : qualityControlData.getSamplingList()){
-					if(sampleId.equals(sl.getSampleId())){
+
+				for (SamplingListDataItem sl : qualityControlData.getSamplingList()) {
+					if (sampleId.equals(sl.getSampleId())) {
 						sl.setSampleState(calculateSampleState(parentNodeRef, sampleId));
 					}
-										
-					if(sl.getSampleState() == null ){
+
+					if (sl.getSampleState() == null) {
 						isQCControled = false;
-					}
-					else if(sl.getSampleState().equals(QualityControlState.NonCompliant)){						
+					} else if (sl.getSampleState().equals(QualityControlState.NonCompliant)) {
 						isQCCompliant = false;
-					}					
-				}				
-				
+					}
+				}
+
 				logger.debug("QC isQCControled : " + isQCControled + " isQCCompliant " + isQCCompliant);
 				qualityControlData.setState(null);
-				if(isQCControled){
-					if(isQCCompliant){
+				if (isQCControled) {
+					if (isQCCompliant) {
 						qualityControlData.setState(QualityControlState.Compliant);
-					}
-					else{
+					} else {
 						qualityControlData.setState(QualityControlState.NonCompliant);
 					}
 				}
 				alfrescoRepository.save(qualityControlData);
 			}
-		}
-		else{
+		} else {
 			logger.warn("SampleId is null");
-		} 
+		}
 	}
-	
-	private boolean isSampleControled(NodeRef parentNodeRef, String sampleId){
-		
+
+	private boolean isSampleControled(NodeRef parentNodeRef, String sampleId) {
+
 		boolean isSampleControled = true;
-				
-		List<NodeRef> clNodeRefs = BeCPGQueryBuilder
-		.createQuery()
-		.ofType(QualityModel.TYPE_CONTROL_LIST)
-		.parent(parentNodeRef)		
-		.andPropEquals(QualityModel.PROP_CL_SAMPLE_ID, sampleId)
-		// unsupported in DB
-		//.andPropEquals(QualityModel.PROP_CL_REQUIRED, "true")
-		.isNull(QualityModel.PROP_CL_STATE)
-		.inDB()
-		.list();
-		
-		for(NodeRef clNodeRef : clNodeRefs){
-			Boolean isRequired = (Boolean)nodeService.getProperty(clNodeRef, QualityModel.PROP_CL_REQUIRED);
-			if(isRequired != null && isRequired.booleanValue()){
+
+		List<NodeRef> clNodeRefs = BeCPGQueryBuilder.createQuery().ofType(QualityModel.TYPE_CONTROL_LIST).parent(parentNodeRef)
+				.andPropEquals(QualityModel.PROP_CL_SAMPLE_ID, sampleId)
+				// unsupported in DB
+				// .andPropEquals(QualityModel.PROP_CL_REQUIRED, "true")
+				.isNull(QualityModel.PROP_CL_STATE).inDB().list();
+
+		for (NodeRef clNodeRef : clNodeRefs) {
+			Boolean isRequired = (Boolean) nodeService.getProperty(clNodeRef, QualityModel.PROP_CL_REQUIRED);
+			if (isRequired != null && isRequired.booleanValue()) {
 				isSampleControled = false;
 				break;
 			}
 		}
-		
+
 		logger.debug("Is sample controled : " + isSampleControled);
 		return isSampleControled;
 	}
-	
-	private QualityControlState calculateSampleState(NodeRef parentNodeRef, String sampleId){
-		
+
+	private QualityControlState calculateSampleState(NodeRef parentNodeRef, String sampleId) {
+
 		QualityControlState sampleState = QualityControlState.Compliant;
-		
-		List<NodeRef> clNodeRefs = BeCPGQueryBuilder
-		.createQuery()
-		.ofType(QualityModel.TYPE_CONTROL_LIST)
-		.parent(parentNodeRef)
-		.andPropEquals(QualityModel.PROP_CL_SAMPLE_ID, sampleId)	
-		// unsupported in DB
-		//.andPropEquals(QualityModel.PROP_CL_REQUIRED, "true")
-		.andPropEquals(QualityModel.PROP_CL_STATE, QualityControlState.NonCompliant.toString())
-		.inDB()
-		.list();
-		
-		for(NodeRef clNodeRef : clNodeRefs){
-			Boolean isRequired = (Boolean)nodeService.getProperty(clNodeRef, QualityModel.PROP_CL_REQUIRED);
-			if(isRequired != null && isRequired.booleanValue()){
+
+		List<NodeRef> clNodeRefs = BeCPGQueryBuilder.createQuery().ofType(QualityModel.TYPE_CONTROL_LIST).parent(parentNodeRef)
+				.andPropEquals(QualityModel.PROP_CL_SAMPLE_ID, sampleId)
+				// unsupported in DB
+				// .andPropEquals(QualityModel.PROP_CL_REQUIRED, "true")
+				.andPropEquals(QualityModel.PROP_CL_STATE, QualityControlState.NonCompliant.toString()).inDB().list();
+
+		for (NodeRef clNodeRef : clNodeRefs) {
+			Boolean isRequired = (Boolean) nodeService.getProperty(clNodeRef, QualityModel.PROP_CL_REQUIRED);
+			if (isRequired != null && isRequired.booleanValue()) {
 				sampleState = QualityControlState.NonCompliant;
 				break;
 			}
 		}
-		
+
 		logger.debug("Sample state : " + sampleState);
 		return sampleState;
 	}

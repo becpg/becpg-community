@@ -19,6 +19,8 @@ package fr.becpg.test.repo.web.scripts.report;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
@@ -43,6 +45,8 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.extensions.surf.util.I18NUtil;
+
+import com.google.gdata.util.common.net.UriEncoder;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.PlmRepoConsts;
@@ -84,159 +88,9 @@ public class ExportSearchWebScriptTest extends fr.becpg.test.PLMBaseTestCase {
 	@Resource
 	private EntityService entityService;
 
-	/** The local s f1 node ref. */
-	private NodeRef localSF1NodeRef;
 
-	/** The raw material1 node ref. */
-	private NodeRef rawMaterial1NodeRef;
 
-	/** The raw material2 node ref. */
-	private NodeRef rawMaterial2NodeRef;
-
-	/** The local s f2 node ref. */
-	private NodeRef localSF2NodeRef;
-
-	/** The raw material3 node ref. */
-	private NodeRef rawMaterial3NodeRef;
-
-	/** The raw material4 node ref. */
-	private NodeRef rawMaterial4NodeRef;
-
-	/** The export product report tpl. */
-	private NodeRef exportProductReportTpl;
-
-	/**
-	 * Inits the objects.
-	 */
-	private void initObjects() {
-
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
-
-				// costs
-				NodeRef systemFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
-						TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
-				NodeRef costFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS,
-						TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_COSTS));
-				if (costFolder != null) {
-					fileFolderService.delete(costFolder);
-				}
-				costFolder = fileFolderService.create(systemFolder, TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_COSTS),
-						ContentModel.TYPE_FOLDER).getNodeRef();
-				List<FileInfo> costsFileInfo = fileFolderService.listFiles(costFolder);
-				if (costsFileInfo.size() == 0) {
-
-					String[] costNames = { "Coût MP", "Coût prév MP", "Coût Emb", "Coût prév emb" };
-					for (String costName : costNames) {
-						Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-						properties.put(ContentModel.PROP_NAME, costName);
-						properties.put(PLMModel.PROP_COSTCURRENCY, "€");
-						ChildAssociationRef childAssocRef = nodeService.createNode(costFolder, ContentModel.ASSOC_CONTAINS,
-								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
-								PLMModel.TYPE_COST, properties);
-						costs.add(childAssocRef.getChildRef());
-					}
-				}
-
-				// nuts
-				NodeRef nutFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS,
-						TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_NUTS));
-				if (nutFolder != null) {
-					fileFolderService.delete(nutFolder);
-				}
-				nutFolder = fileFolderService.create(systemFolder, TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_NUTS),
-						ContentModel.TYPE_FOLDER).getNodeRef();
-				List<FileInfo> nutsFileInfo = fileFolderService.listFiles(nutFolder);
-				if (nutsFileInfo.size() == 0) {
-
-					String[] nutNames = { "Protéines", "Lipides", "Glucides", };
-					for (String nutName : nutNames) {
-						Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-						properties.put(ContentModel.PROP_NAME, nutName);
-						properties.put(PLMModel.PROP_NUTGROUP, "Groupe 1");
-						properties.put(PLMModel.PROP_NUTUNIT, "g");
-						ChildAssociationRef childAssocRef = nodeService.createNode(nutFolder, ContentModel.ASSOC_CONTAINS,
-								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
-								PLMModel.TYPE_NUT, properties);
-						nuts.add(childAssocRef.getChildRef());
-					}
-				}
-
-				// allergens
-				NodeRef allergensFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS,
-						TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_ALLERGENS));
-				if (allergensFolder == null) {
-					allergensFolder = fileFolderService.create(systemFolder, TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_ALLERGENS),
-							ContentModel.TYPE_FOLDER).getNodeRef();
-				}
-				List<FileInfo> allergensFileInfo = fileFolderService.listFiles(allergensFolder);
-				if (allergensFileInfo.size() == 0) {
-					for (int i = 0; i < 10; i++) {
-						Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-						properties.put(ContentModel.PROP_NAME, "Allergen " + i);
-						ChildAssociationRef childAssocRef = nodeService.createNode(allergensFolder, ContentModel.ASSOC_CONTAINS,
-								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
-								PLMModel.TYPE_ALLERGEN, properties);
-						allergens.add(childAssocRef.getChildRef());
-					}
-				} else {
-					for (FileInfo fileInfo : allergensFileInfo) {
-						allergens.add(fileInfo.getNodeRef());
-					}
-				}
-
-				/*-- Create raw materials --*/
-				logger.debug("/*-- Create raw materials --*/");
-				/*-- Raw material 1 --*/
-				RawMaterialData rawMaterial1 = new RawMaterialData();
-				rawMaterial1.setName("Raw material 1");
-				rawMaterial1.setLegalName("Legal Raw material 1");
-				rawMaterial1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial1).getNodeRef();
-
-				/*-- Raw material 2 --*/
-				RawMaterialData rawMaterial2 = new RawMaterialData();
-				rawMaterial2.setName("Raw material 2");
-				rawMaterial2.setLegalName("Legal Raw material 2");
-				rawMaterial2NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial2).getNodeRef();
-
-				/*-- Raw material 3 --*/
-				RawMaterialData rawMaterial3 = new RawMaterialData();
-				rawMaterial3.setName("Raw material 3");
-				rawMaterial3.setLegalName("Legal Raw material 3");
-				rawMaterial3NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial3).getNodeRef();
-
-				/*-- Raw material 4 --*/
-				RawMaterialData rawMaterial4 = new RawMaterialData();
-				rawMaterial4.setName("Raw material 4");
-				rawMaterial4.setLegalName("Legal Raw material 4");
-				rawMaterial4NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial4).getNodeRef();
-
-				/*-- Raw material 5 --*/
-				RawMaterialData rawMaterial5 = new RawMaterialData();
-				rawMaterial5.setName("Raw material 5");
-				rawMaterial5.setLegalName("Legal Raw material 5");
-				alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial5).getNodeRef();
-
-				/*-- Local semi finished product 1 --*/
-				LocalSemiFinishedProductData localSF1 = new LocalSemiFinishedProductData();
-				localSF1.setName("Local semi finished 1");
-				localSF1.setLegalName("Legal Local semi finished 1");
-				localSF1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), localSF1).getNodeRef();
-
-				/*-- Local semi finished product 1 --*/
-				LocalSemiFinishedProductData localSF2 = new LocalSemiFinishedProductData();
-				localSF2.setName("Local semi finished 2");
-				localSF2.setLegalName("Legal Local semi finished 2");
-				localSF2NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), localSF2).getNodeRef();
-
-				return null;
-
-			}
-		}, false, true);
-
-	}
-
+	
 	/**
 	 * Inits the tests.
 	 * 
@@ -304,6 +158,15 @@ public class ExportSearchWebScriptTest extends fr.becpg.test.PLMBaseTestCase {
 		writer.putContent(img.getInputStream());
 	}
 
+	private NodeRef localSF1NodeRef;
+	private NodeRef rawMaterial1NodeRef;
+	private NodeRef rawMaterial2NodeRef;
+	private NodeRef localSF2NodeRef;
+	private NodeRef rawMaterial3NodeRef;
+	private NodeRef rawMaterial4NodeRef;
+	private NodeRef exportProductReportTpl;
+
+	
 	/**
 	 * Test export search.
 	 */
@@ -316,14 +179,79 @@ public class ExportSearchWebScriptTest extends fr.becpg.test.PLMBaseTestCase {
 
 		Date startTime = new Date();
 
-		initObjects();
-
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
 			public NodeRef execute() throws Throwable {
 
 				// Create comparison product report
 				initTests();
+				return null;
+
+			}
+		}, false, true);
+		
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
+
+
+				/*-- Create raw materials --*/
+				logger.debug("/*-- Create raw materials --*/");
+				/*-- Raw material 1 --*/
+				RawMaterialData rawMaterial1 = new RawMaterialData();
+				rawMaterial1.setName("Raw material 1");
+				rawMaterial1.setLegalName("Legal Raw material 1");
+				rawMaterial1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial1).getNodeRef();
+
+				/*-- Raw material 2 --*/
+				RawMaterialData rawMaterial2 = new RawMaterialData();
+				rawMaterial2.setName("Raw material 2");
+				rawMaterial2.setLegalName("Legal Raw material 2");
+				rawMaterial2NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial2).getNodeRef();
+
+				/*-- Raw material 3 --*/
+				RawMaterialData rawMaterial3 = new RawMaterialData();
+				rawMaterial3.setName("Raw material 3");
+				rawMaterial3.setLegalName("Legal Raw material 3");
+				rawMaterial3NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial3).getNodeRef();
+
+				/*-- Raw material 4 --*/
+				RawMaterialData rawMaterial4 = new RawMaterialData();
+				rawMaterial4.setName("Raw material 4");
+				rawMaterial4.setLegalName("Legal Raw material 4");
+				rawMaterial4NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial4).getNodeRef();
+
+				/*-- Raw material 5 --*/
+				RawMaterialData rawMaterial5 = new RawMaterialData();
+				rawMaterial5.setName("Raw material 5");
+				rawMaterial5.setLegalName("Legal Raw material 5");
+				alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial5).getNodeRef();
+
+				/*-- Local semi finished product 1 --*/
+				LocalSemiFinishedProductData localSF1 = new LocalSemiFinishedProductData();
+				localSF1.setName("Local semi finished 1");
+				localSF1.setLegalName("Legal Local semi finished 1");
+				localSF1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), localSF1).getNodeRef();
+
+				/*-- Local semi finished product 1 --*/
+				LocalSemiFinishedProductData localSF2 = new LocalSemiFinishedProductData();
+				localSF2.setName("Local semi finished 2");
+				localSF2.setLegalName("Legal Local semi finished 2");
+				localSF2NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), localSF2).getNodeRef();
+
+				return null;
+
+			}
+		}, false, true);
+		
+		
+
+		waitForSolr(startTime);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
 
 				logger.debug("createRawMaterial 1");
 
@@ -433,9 +361,9 @@ public class ExportSearchWebScriptTest extends fr.becpg.test.PLMBaseTestCase {
 
 			String url = "/becpg/report/exportsearch/"
 					+ exportProductReportTpl.toString().replace("://", "/")
-					+ "/Excel.xls?repo=true&term=&query={\"prop_cm_name\"%3A\"\"%2C\"prop_bcpg_legalName\"%3A\"\"%2C\"prop_bcpg_productHierarchy1\"%3A\"\"%2C\"prop_bcpg_productHierarchy2\"%3A\"\"%2C\"prop_bcpg_productState\"%3A\"\"%2C\"prop_bcpg_productCode\"%3A\"\"%2C\"prop_bcpg_eanCode\"%3A\"\"%2C\"assoc_bcpg_supplierAssoc\"%3A\"\"%2C\"assoc_bcpg_supplierAssoc_added\"%3A\"\"%2C\"assoc_bcpg_supplierAssoc_removed\"%3A\"\"%2C\"prop_cm_modified-date-range\"%3A\"2011-04-17T00%3A00%3A00%2B02%3A00|2011-05-23T00%3A00%3A00%2B02%3A00\"%2C\"prop_cm_modifier\"%3A\"\"%2C\"assoc_bcpg_ingListIng\"%3A\"\"%2C\"assoc_bcpg_ingListIng_added\"%3A\"\"%2C\"assoc_bcpg_ingListIng_removed\"%3A\"\"%2C\"assoc_bcpg_ingListGeoOrigin\"%3A\"\"%2C\"assoc_bcpg_ingListGeoOrigin_added\"%3A\"\"%2C\"assoc_bcpg_ingListGeoOrigin_removed\"%3A\"\"%2C\"assoc_bcpg_ingListBioOrigin\"%3A\"\"%2C\"assoc_bcpg_ingListBioOrigin_added\"%3A\"\"%2C\"assoc_bcpg_ingListBioOrigin_removed\"%3A\"\"%2C\"datatype\"%3A\"bcpg%3Aproduct\"}";
+					+ "/Excel.xlsx?repo=true&term=&query={\"prop_cm_name\":\"\",\"prop_bcpg_legalName\":\"\",\"prop_bcpg_productHierarchy1\":\"\",\"prop_bcpg_productHierarchy2\":\"\",\"prop_bcpg_productState\":\"\",\"prop_bcpg_productCode\":\"\",\"prop_bcpg_eanCode\":\"\",\"assoc_bcpg_supplierAssoc\":\"\",\"assoc_bcpg_supplierAssoc_added\":\"\",\"assoc_bcpg_supplierAssoc_removed\":\"\",\"prop_cm_modified-date-range\":\"2011-04-17T00:00:00%2B02:00|2011-05-23T00:00:00%2B02:00\",\"prop_cm_modifier\":\"\",\"assoc_bcpg_ingListIng\":\"\",\"assoc_bcpg_ingListIng_added\":\"\",\"assoc_bcpg_ingListIng_removed\":\"\",\"assoc_bcpg_ingListGeoOrigin\":\"\",\"assoc_bcpg_ingListGeoOrigin_added\":\"\",\"assoc_bcpg_ingListGeoOrigin_removed\":\"\",\"assoc_bcpg_ingListBioOrigin\":\"\",\"assoc_bcpg_ingListBioOrigin_added\":\"\",\"assoc_bcpg_ingListBioOrigin_removed\":\"\",\"datatype\":\"bcpg:product\"}";
 
-			Response response = TestWebscriptExecuters.sendRequest(new GetRequest(url), 200, "admin");
+			Response response = TestWebscriptExecuters.sendRequest(new GetRequest(UriEncoder.encode(url)), 200, "admin");
 			logger.debug("Response: " + response.getContentAsString());
 		} catch (Exception e) {
 			logger.error("Failed to execute webscript", e);
@@ -447,9 +375,9 @@ public class ExportSearchWebScriptTest extends fr.becpg.test.PLMBaseTestCase {
 
 			String url = "/becpg/report/exportsearch/"
 					+ exportProductReportTpl.toString().replace("://", "/")
-					+ "/Excel.xlsx?repo=true&term=&query={\"prop_cm_name\"%3A\"FP\"%2C\"prop_cm_title\"%3A\"\"%2C\"prop_cm_description\"%3A\"\"%2C\"prop_mimetype\"%3A\"\"%2C\"prop_cm_modified-date-range\"%3A\"\"%2C\"prop_cm_modifier\"%3A\"\"%2C\"datatype\"%3A\"cm%3Acontent\"}";
+					+ "/Excel.xlsx?repo=true&term=&query={\"prop_cm_name\":\"FP\",\"prop_cm_title\":\"\",\"prop_cm_description\":\"\",\"prop_mimetype\":\"\",\"prop_cm_modified-date-range\":\"\",\"prop_cm_modifier\":\"\",\"datatype\":\"cm:content\"}";
 
-			Response response = TestWebscriptExecuters.sendRequest(new GetRequest(url), 200, "admin");
+			Response response = TestWebscriptExecuters.sendRequest(new GetRequest(UriEncoder.encode(url)), 200, "admin");
 			logger.debug("Response: " + response.getContentAsString());
 		} catch (Exception e) {
 			logger.error("Failed to execute webscript", e);
@@ -461,6 +389,7 @@ public class ExportSearchWebScriptTest extends fr.becpg.test.PLMBaseTestCase {
 	/**
 	 * Test get export search tpls.
 	 */
+	@Test
 	public void testGetExportSearchTpls() {
 
 		Date startTime = new Date();
