@@ -168,7 +168,7 @@
 		<providers>
 			<provider index="3">
 				<provider-id>beCPG</provider-id>
-				<provider-url>http://www.becpg.fr/becpg-project-community.png</provider-url>
+				<provider-url>http://www.becpg.fr/becpg-project-community-${project.version}.png</provider-url>
 			</provider>
 		</providers>
 	</config>
