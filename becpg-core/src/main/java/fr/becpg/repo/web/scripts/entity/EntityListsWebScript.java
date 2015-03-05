@@ -192,7 +192,7 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 		final NodeRef nodeRef = new NodeRef(storeType, storeId, nodeId);
 		NodeRef listContainerNodeRef = null;
 		QName nodeType = nodeService.getType(nodeRef);
-		boolean hasWritePermission = authorityService.isAdminAuthority(AuthenticationUtil.getRunAsUser());//admin can delete entity lists
+		boolean hasWritePermission = authorityService.isAdminAuthority(AuthenticationUtil.getFullyAuthenticatedUser());//admin can delete entity lists
 		boolean skipFilter = false;
 		String wUsedList = null;
 
