@@ -212,7 +212,7 @@
 	    <providers>
 			<provider index="2">
 				<provider-id>beCPG</provider-id>
-				<provider-url>http://www.becpg.fr/becpg-designer-community.png</provider-url>
+				<provider-url>http://www.becpg.fr/becpg-designer-community-${project.version}.png</provider-url>
 			</provider>
 		</providers>	
 	</config>

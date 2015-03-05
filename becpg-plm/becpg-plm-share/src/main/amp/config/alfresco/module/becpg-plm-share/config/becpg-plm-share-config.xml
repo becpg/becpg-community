@@ -211,7 +211,7 @@
     	<providers>
 			<provider index="5">
 				<provider-id>beCPG</provider-id>
-				<provider-url>http://www.becpg.fr/becpg-plm-community.png</provider-url>
+				<provider-url>http://www.becpg.fr/becpg-plm-community-${project.version}.png</provider-url>
 			</provider>
 		</providers>
 	</config>
