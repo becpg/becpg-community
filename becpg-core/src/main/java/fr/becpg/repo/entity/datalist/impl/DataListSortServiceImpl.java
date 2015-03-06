@@ -134,7 +134,9 @@ public class DataListSortServiceImpl implements DataListSortService {
 		}
 
 		NodeRef listContainer = nodeService.getPrimaryParent(selectedNodeRef).getParentRef();
-		insertAfter(dataType, listContainer, nodeRef, selectedNodeRef, new HashSet<NodeRef>());
+		if(nodeService.exists(listContainer)){
+			insertAfter(dataType, listContainer, nodeRef, selectedNodeRef, new HashSet<NodeRef>());
+		}
 	}
 
 	private void insertAfter(QName dataType, NodeRef listContainer, NodeRef siblingNode, NodeRef nodeRef, HashSet<NodeRef> pendingNodeRefs) {
