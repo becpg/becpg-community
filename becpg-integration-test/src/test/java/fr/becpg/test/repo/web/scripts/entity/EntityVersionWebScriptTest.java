@@ -11,8 +11,11 @@ import javax.annotation.Resource;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
+import org.alfresco.repo.version.VersionModel;
 import org.alfresco.service.cmr.coci.CheckOutCheckInService;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.version.Version;
+import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,58 +32,80 @@ import fr.becpg.test.utils.TestWebscriptExecuters.Response;
  *
  * @author querephi
  */
-public class EntityVersionWebScriptTest extends PLMBaseTestCase{
+public class EntityVersionWebScriptTest extends PLMBaseTestCase {
 
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(EntityVersionWebScriptTest.class);
 
 	@Resource
-    private CheckOutCheckInService checkOutCheckInService;
-    
+	private CheckOutCheckInService checkOutCheckInService;
+
 	@Test
 	public void testGetVersionHistory() throws Exception {
-		
+
 		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(
 				new RetryingTransactionCallback<NodeRef>() {
 
 					@Override
 					public NodeRef execute() throws Throwable {
-						logger.debug("Add versionnable aspect");
 
-						NodeRef rawMaterialNodeRef = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test report");
-						if (!nodeService.hasAspect(rawMaterialNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
-							Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>();
-							aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
-							nodeService.addAspect(rawMaterialNodeRef, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
-						}
-						return rawMaterialNodeRef;
+						return BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test report");
 					}
 
 				}, false, true);
-		
-		
-		 transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
+
+		if (!nodeService.hasAspect(rawMaterialNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
+			transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+
 				@Override
-				public NodeRef execute() throws Throwable {					   
-			
-					
-	 				NodeRef checkedOutNodeRef = checkOutCheckInService.checkout(rawMaterialNodeRef);
-	 				NodeRef checkedInNodeRef = checkOutCheckInService.checkin(checkedOutNodeRef, null);
-	 				
-	 				NodeRef checkedOutNodeRef2 = checkOutCheckInService.checkout(checkedInNodeRef);
-	 				checkOutCheckInService.checkin(checkedOutNodeRef2, null);
-	 				
-					return null;
+				public NodeRef execute() throws Throwable {
+					logger.debug("Add versionnable aspect");
+					Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>();
+					aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
+					nodeService.addAspect(rawMaterialNodeRef, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
+					return rawMaterialNodeRef;
+				}
 
-				}},false,true);
-		 
-			//Call webscript on raw material to check out
-			String url = "/api/version?nodeRef=" + rawMaterialNodeRef;
-			logger.debug("url : " + url);				
+			}, false, true);
 
-			Response response = TestWebscriptExecuters.sendRequest(new GetRequest(url), 200, "admin");
-			logger.debug("version history: " + response.getContentAsString());
+		}
 
-    }
-    	
+		final NodeRef checkedOutNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(
+				new RetryingTransactionCallback<NodeRef>() {
+					@Override
+					public NodeRef execute() throws Throwable {
+
+						return checkOutCheckInService.checkout(rawMaterialNodeRef);
+
+					}
+				}, false, true);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
+
+				Map<String, Serializable> versionProperties = new HashMap<String, Serializable>();
+				versionProperties.put(Version.PROP_DESCRIPTION, "This is a test version");
+				versionProperties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
+
+				NodeRef checkedInNodeRef = checkOutCheckInService.checkin(checkedOutNodeRef, versionProperties);
+
+				NodeRef checkedOutNodeRef2 = checkOutCheckInService.checkout(checkedInNodeRef);
+				checkOutCheckInService.checkin(checkedOutNodeRef2, null);
+
+				return null;
+
+			}
+		}, false, true);
+
+		// Call webscript on raw material to check out
+		String url = "/api/version?nodeRef=" + rawMaterialNodeRef;
+		logger.debug("url : " + url);
+
+		Response response = TestWebscriptExecuters.sendRequest(new GetRequest(url), 200, "admin");
+		logger.debug("version history: " + response.getContentAsString());
+
+	}
+	
+
 }

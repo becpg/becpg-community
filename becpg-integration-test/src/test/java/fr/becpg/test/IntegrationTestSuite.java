@@ -37,24 +37,31 @@ import fr.becpg.test.repo.web.scripts.search.SearchWebScriptTest;
 		EntityListsWebScriptTest.class,
 		AutoCompleteWebScriptTest.class,
 		ProductWUsedWebScriptTest.class,
-		RemoteEntityWebScriptTest.class,
-		
-		ExportSearchWebScriptTest.class,
+	
 		SearchWebScriptTest.class,
 		
 		//Compare
 		CompareProductServiceTest.class,
-		CompareProductReportWebScriptTest.class,
+		
 		
 		//Slow
-		NPDServiceTest.class,
-		ProjectListSortTest.class,
 		MultiLevelDataServiceTest.class,
 		EntityReportServiceTest.class,
 		
-		//Bug
+		
 		EntityVersionWebScriptTest.class,
-		CheckOutCheckInWebScriptTest.class
+		
+		
+		//Bug
+		CheckOutCheckInWebScriptTest.class,
+	    RemoteEntityWebScriptTest.class,
+		ExportSearchWebScriptTest.class,
+		CompareProductReportWebScriptTest.class,
+		
+		
+		//Project
+		NPDServiceTest.class,
+		ProjectListSortTest.class
 })
 public class IntegrationTestSuite {
 
