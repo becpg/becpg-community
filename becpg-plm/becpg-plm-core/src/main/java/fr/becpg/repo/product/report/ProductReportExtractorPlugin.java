@@ -510,7 +510,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 					if (variantPackagingData.getBoxesPerPallet() != null) {
 
-						BigDecimal tareTertiary = tarePrimary.multiply(new BigDecimal(variantPackagingData.getBoxesPerPallet())).add(
+						BigDecimal tareTertiary = tareSecondary.multiply(new BigDecimal(variantPackagingData.getBoxesPerPallet())).add(
 								variantPackagingData.getTareTertiary());
 						BigDecimal netWeightTertiary = netWeightSecondary.multiply(new BigDecimal(variantPackagingData.getBoxesPerPallet()));
 						packgLevelMesuresElt.addAttribute(ATTR_PKG_TARE_LEVEL_3, toString(tareTertiary));
