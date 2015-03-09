@@ -61,7 +61,7 @@ public class EntityTplProjectPlugin implements EntityTplPlugin {
 
 			// Deliverables
 			NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, ProjectModel.TYPE_DELIVERABLE_LIST);
-			if (listNodeRef != null) {
+			if (listNodeRef != null && nodeService.exists(listNodeRef)) {
 				List<NodeRef> listItems = entityListDAO.getListItems(listNodeRef, ProjectModel.TYPE_DELIVERABLE_LIST);
 				for (NodeRef listItem : listItems) {
 					updateDelieverableDocument(projectNodeRef, listItem);

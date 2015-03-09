@@ -55,7 +55,7 @@ import fr.becpg.repo.web.scripts.WebscriptHelper;
  */
 public class DockBarWebScript extends AbstractWebScript {
 
-	private static Log logger = LogFactory.getLog(DockBarWebScript.class);
+	private final static Log logger = LogFactory.getLog(DockBarWebScript.class);
 
 	private static final String PARAM_ENTITY_NODEREF = "entityNodeRef";
 
@@ -63,13 +63,13 @@ public class DockBarWebScript extends AbstractWebScript {
 
 	protected static final String PARAM_FIELDS = "metadataFields";
 
+	private final static int DOCKBAR_SIZE = 6;
+
 	private AttributeExtractorService attributeExtractorService;
 
 	private PreferenceService preferenceService;
 
 	private ServiceRegistry serviceRegistry;
-
-	private static int DOCKBAR_SIZE = 6;
 
 	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
 		this.serviceRegistry = serviceRegistry;
@@ -188,7 +188,8 @@ public class DockBarWebScript extends AbstractWebScript {
 
 		for (Iterator<NodeRef> iterator = results.iterator(); iterator.hasNext();) {
 			NodeRef nodeRef = (NodeRef) iterator.next();
-			if (serviceRegistry.getNodeService().exists(nodeRef) && serviceRegistry.getPermissionService().hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED) {
+			if (serviceRegistry.getNodeService().exists(nodeRef)
+					&& serviceRegistry.getPermissionService().hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED) {
 				items.put(new ContentDataExtractor(metadataFields, serviceRegistry, attributeExtractorService).extract(nodeRef));
 			}
 		}

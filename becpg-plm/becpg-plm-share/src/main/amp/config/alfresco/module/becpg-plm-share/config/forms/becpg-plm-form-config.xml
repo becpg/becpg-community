@@ -3390,12 +3390,18 @@
 					<show id="bcpg:legalName" />
 					<show id="bcpg:costCurrency" />
 					<show id="bcpg:costFixed" />
+					<show id="bcpg:costFormula" />
 				</field-visibility>
 				<appearance>
 					<field id="cm:name" />
 					<field id="cm:description">
 						<control>
 							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:costFormula">
+						<control template="/org/alfresco/components/form/controls/spel-editor.ftl">
+							<control-param name="rows">10</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -3413,12 +3419,18 @@
 					<show id="bcpg:legalName" />
 					<show id="bcpg:costCurrency" />
 					<show id="bcpg:costFixed" />
+					<show id="bcpg:costFormula" />
 				</field-visibility>
 				<appearance>
 					<field id="cm:name" />
 					<field id="cm:description">
 						<control>
 							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:costFormula">
+						<control template="/org/alfresco/components/form/controls/spel-editor.ftl">
+							<control-param name="rows">10</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -5158,6 +5170,7 @@
 					<show id="bcpg:costListValue" />
 					<show id="bcpg:costListUnit" />
 					<show id="bcpg:costListMaxi" />
+					<show id="bcpg:plants" force="true" />
 					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 
@@ -5178,10 +5191,14 @@
 					<show id="bcpg:costListMaxi" />
 					<show id="bcpg:isManualListItem" force="true" />
 					<show id="fm:commentCount" force="true" />
+					<show id="bcpg:costListIsFormulated" />
+					<show id="bcpg:costListFormulaErrorLog" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden"></field>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
+					<field id="bcpg:costListIsFormulated"  label="hidden"/>
+					<field id="bcpg:costListFormulaErrorLog"  label="hidden"/>
 				</appearance>
 			</form>
 		</forms>
@@ -5196,6 +5213,7 @@
 					<show id="bcpg:costListValue" />
 					<show id="bcpg:costListUnit" />
 					<show id="bcpg:costListMaxi" />
+					<show id="bcpg:plants" force="true" />
 					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 

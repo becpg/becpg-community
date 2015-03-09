@@ -31,7 +31,7 @@ import fr.becpg.report.services.impl.TemplateCacheServiceImpl;
 
 public class TemplateServlet extends AbstractReportServlet {
 
-	TemplateCacheService templateCacheService = new TemplateCacheServiceImpl();
+	TemplateCacheService templateCacheService = TemplateCacheServiceImpl.getInstance();
 	
 	/**
 	 * 

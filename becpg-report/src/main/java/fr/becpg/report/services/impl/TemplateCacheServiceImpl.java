@@ -46,6 +46,16 @@ public class TemplateCacheServiceImpl implements TemplateCacheService {
 	private static final Log logger = LogFactory.getLog(TemplateCacheServiceImpl.class);
 
 	private static int NUMBER_IN_MEMORY = 10000;
+	
+	private static TemplateCacheService INSTANCE = new TemplateCacheServiceImpl();
+		
+	public static TemplateCacheService getInstance() {
+		return INSTANCE;
+	}
+	
+	private TemplateCacheServiceImpl(){
+		super();
+	}
 
 	private Map<String, TemplateCacheEl> cache = new ConcurrentHashMap<String, TemplateCacheServiceImpl.TemplateCacheEl>();
 
@@ -128,5 +138,6 @@ public class TemplateCacheServiceImpl implements TemplateCacheService {
 		}
 		throw new ReportException("No template URL found in cache for: " + templateId);
 	}
+
 
 }

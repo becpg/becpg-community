@@ -26,6 +26,10 @@ public class CostListDataItem extends AbstractManualDataItem implements SimpleLi
 	
 	private NodeRef cost;
 	
+	private Boolean isFormulated;
+	
+	private String errorLog;
+	
 		
 	@AlfProp
 	@AlfQname(qname="bcpg:costListValue")
@@ -96,6 +100,28 @@ public class CostListDataItem extends AbstractManualDataItem implements SimpleLi
 		// TODO Auto-generated method stub
 		
 	}
+	
+	@AlfProp
+	@AlfQname(qname="bcpg:costListIsFormulated")
+	public Boolean getIsFormulated() {
+		return isFormulated;
+	}
+
+
+	public void setIsFormulated(Boolean isFormulated) {
+		this.isFormulated = isFormulated;
+	}
+
+	@AlfProp
+	@AlfQname(qname="bcpg:costListFormulaErrorLog")
+	public String getErrorLog() {
+		return errorLog;
+	}
+
+
+	public void setErrorLog(String errorLog) {
+		this.errorLog = errorLog;
+	}
 
 	
 	/**
@@ -157,6 +183,8 @@ public class CostListDataItem extends AbstractManualDataItem implements SimpleLi
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + ((cost == null) ? 0 : cost.hashCode());
+		result = prime * result + ((errorLog == null) ? 0 : errorLog.hashCode());
+		result = prime * result + ((isFormulated == null) ? 0 : isFormulated.hashCode());
 		result = prime * result + ((maxi == null) ? 0 : maxi.hashCode());
 		result = prime * result + ((unit == null) ? 0 : unit.hashCode());
 		result = prime * result + ((value == null) ? 0 : value.hashCode());
@@ -177,6 +205,16 @@ public class CostListDataItem extends AbstractManualDataItem implements SimpleLi
 			if (other.cost != null)
 				return false;
 		} else if (!cost.equals(other.cost))
+			return false;
+		if (errorLog == null) {
+			if (other.errorLog != null)
+				return false;
+		} else if (!errorLog.equals(other.errorLog))
+			return false;
+		if (isFormulated == null) {
+			if (other.isFormulated != null)
+				return false;
+		} else if (!isFormulated.equals(other.isFormulated))
 			return false;
 		if (maxi == null) {
 			if (other.maxi != null)

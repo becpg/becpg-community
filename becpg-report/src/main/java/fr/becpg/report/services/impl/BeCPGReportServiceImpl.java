@@ -51,9 +51,10 @@ public class BeCPGReportServiceImpl implements BeCPGReportService {
 	/** The report engine. */
 	private IReportEngine reportEngine = BirtPlatformListener.getReportEngine();
 
-	private TemplateCacheService templateCacheService = new TemplateCacheServiceImpl();
+	private TemplateCacheService templateCacheService =  TemplateCacheServiceImpl.getInstance();
 	
-
+	
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public void generateReport(String templateId, String format, String lang,

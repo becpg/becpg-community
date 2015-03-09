@@ -18,6 +18,7 @@
 package fr.becpg.repo.entity.datalist.data;
 
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -183,7 +184,12 @@ public class DataListFilter {
 		return maxLevel;
 	}
 
-	
+	public void updateMaxDepth(int depth){
+		if(criteriaMap==null){
+			criteriaMap = new HashMap<String, String>();
+		}
+		criteriaMap.put(PROP_DEPTH_LEVEL,Integer.toString(depth));
+	}
 
 	public String getFilterParams() {
 		return filterParams;

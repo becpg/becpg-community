@@ -79,7 +79,7 @@
 		<alfresco.version>5.0.c</alfresco.version>
 		<app.testing.jvm.args>-Xms256m -Xmx1524m -Duser.language=fr</app.testing.jvm.args>
 		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
-		<birt.version>4.4.1</birt.version>
+		<birt.version>4.4.0</birt.version>
 		<sonar.language>java</sonar.language>
 		
 		<springloaded.version>1.2.1.RELEASE</springloaded.version>
@@ -225,11 +225,11 @@
 		<module>becpg-project/becpg-project-share</module>
 		<module>becpg-designer/becpg-designer-share</module>
 		<module>becpg-plm/becpg-plm-share</module>
+		<module>becpg-integration-test</module>
 		<module>repo</module>
 		<module>solr</module>
 	    <module>share</module> 
 	    <module>runner</module>
-	    <module>becpg-integration-test</module>
 	</modules>
 
 	<dependencies>
@@ -327,6 +327,23 @@
 				<alfresco.data.location>/dev/shm/alfresco</alfresco.data.location>
 			</properties>
 		</profile>
+		<profile>
+			<id>parallel</id>
+				<build>
+					<plugins>
+						<plugin>
+		                  <groupId>org.apache.maven.plugins</groupId>
+		                  <artifactId>maven-surefire-plugin</artifactId>
+		                  <version>${maven.surefire.version}</version>
+		                  <configuration>
+		       				  <threadCount>6</threadCount>
+		       				  <parallel>classes</parallel>
+		                      <argLine>${app.testing.jvm.args}</argLine>
+		                  </configuration>
+		                </plugin>
+	                </plugins>
+                </build>
+         </profile>       
 		<profile>
 			<id>purge</id>
 			<build>

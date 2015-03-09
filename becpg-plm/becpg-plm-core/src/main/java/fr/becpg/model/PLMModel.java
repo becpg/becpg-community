@@ -169,6 +169,7 @@ public interface PLMModel {
 
 	// cost
 	QName TYPE_COST = QName.createQName(BeCPGModel.BECPG_URI, "cost");
+	QName PROP_COST_FORMULA = QName.createQName(BeCPGModel.BECPG_URI, "costFormula");
 	QName PROP_COSTCURRENCY = QName.createQName(BeCPGModel.BECPG_URI, "costCurrency");
 	QName PROP_COSTFIXED = QName.createQName(BeCPGModel.BECPG_URI, "costFixed");
 
@@ -322,6 +323,7 @@ public interface PLMModel {
 	QName PROP_NUTRIENT_PROFILE_SCORE_FORMULA =  QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfileScoreFormula");
 	QName PROP_NUTRIENT_PROFILE_CLASS_FORMULA =  QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfileClassFormula");
 	QName TYPE_NUTRIENT_PROFILE = QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfile");
+	
 	
 	
 	

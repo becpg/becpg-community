@@ -239,6 +239,8 @@
 					<value>€/m</value>
 					<value>€/m2</value>
 					<value>€/h</value>
+					<value>€/CSU</value>
+					<value>€/Pal</value>
 					<value>$</value>
 					<value>$/L</value>
 					<value>$/kg</value>
@@ -246,6 +248,8 @@
 					<value>$/m</value>
 					<value>$/m2</value>
 					<value>$/h</value>
+					<value>$/CSU</value>
+					<value>$/Pal</value>
 					<value>£</value>
 					<value>£/L</value>
 					<value>£/kg</value>
@@ -253,6 +257,8 @@
 					<value>£/m</value>
 					<value>£/m2</value>
 					<value>£/h</value>
+					<value>£/CSU</value>
+					<value>£/Pal</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -657,6 +663,10 @@
 					<type>d:boolean</type>
 					<mandatory enforced="true">true</mandatory>
 					<default>false</default>
+				</property>
+				<property name="bcpg:costFormula">
+					<type>d:text</type>
+					<index enabled="false" />
 				</property>
 			</properties>
 		</type>
@@ -1139,6 +1149,14 @@
 				<property name="bcpg:costListMaxi">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:costListIsFormulated">
+					<type>d:boolean</type>
+					<default>false</default>
+				</property>
+				<property name="bcpg:costListFormulaErrorLog">
+					<type>d:text</type>
 					<index enabled="false" />
 				</property>
 			</properties>
