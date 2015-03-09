@@ -42,7 +42,7 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy implements Nod
 		this.entityTplService = entityTplService;
 	}
 
-
+    @Override
 	public void doInit() {
 		logger.debug("Init EntityTplPolicy...");
 

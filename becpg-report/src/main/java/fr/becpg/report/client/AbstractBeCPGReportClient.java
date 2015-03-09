@@ -48,7 +48,7 @@ import org.apache.http.util.EntityUtils;
  */
 public abstract class AbstractBeCPGReportClient {
 
-	protected static Log logger = LogFactory.getLog(AbstractBeCPGReportClient.class);
+	protected final static Log logger = LogFactory.getLog(AbstractBeCPGReportClient.class);
 
 	protected String reportServerUrl;
 
@@ -73,8 +73,7 @@ public abstract class AbstractBeCPGReportClient {
 		reportSession.setTemplateId(templateId);
 
 		String templateTimeStampUrl = reportSession.getTemplateTimeStampUrl();
-		;
-
+		
 		logger.debug("Get Template TimeStamp at: " + templateTimeStampUrl);
 
 		HttpGet httpGet = new HttpGet(templateTimeStampUrl);

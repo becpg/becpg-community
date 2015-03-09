@@ -84,6 +84,7 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 	protected ProjectService projectService;
 	@Resource
 	protected EntityTplService entityTplService;
+	
 
 	protected NodeRef userOne;
 	protected NodeRef userTwo;

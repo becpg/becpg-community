@@ -33,6 +33,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.repo.domain.qname.QNameDAO;
 import org.alfresco.repo.model.Repository;
+import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationComponent;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.MutableAuthenticationDao;
@@ -188,6 +189,11 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 	@Resource
 	protected RuleService ruleService;
+	
+	
+	@Resource
+	protected BehaviourFilter policyBehaviourFilter;
+	
 
 	@Resource
 	private SOLRTrackingComponent solrTrackingComponent;
@@ -251,13 +257,16 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
 			public Boolean execute() throws Throwable {
 				ruleService.disableRules();
+				policyBehaviourFilter.disableAllBehaviours();
 				try {
 					nodeService.setProperty(threadSafeTestFolder.get(),  ContentModel.ASPECT_TEMPORARY, null);
 					
 					nodeService.deleteNode(threadSafeTestFolder.get());
 				} finally {
+					policyBehaviourFilter.enableAllBehaviours();
 					ruleService.enableRules();
 				}
+				
 
 				return true;
 

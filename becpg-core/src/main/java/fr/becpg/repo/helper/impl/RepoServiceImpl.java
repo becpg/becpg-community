@@ -36,7 +36,7 @@ public class RepoServiceImpl implements RepoService {
 	
 	
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(RepoServiceImpl.class);
+	private static final Log logger = LogFactory.getLog(RepoServiceImpl.class);
 	
 	@Autowired
 	private NodeService nodeService = null;	

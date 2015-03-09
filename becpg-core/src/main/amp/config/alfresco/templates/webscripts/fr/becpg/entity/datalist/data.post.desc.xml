@@ -23,6 +23,6 @@
    <url>/becpg/entity/datalists/item/node/{store_type}/{store_id}/{id}?entityNodeRef={entityNodeRef}</url>
    <format default="json">argument</format>
    <authentication>user</authentication>
-	<transaction allow="readonly" >required</transaction>
+	<transaction allow="readwrite" >required</transaction>
 	<lifecycle>internal</lifecycle>
 </webscript>

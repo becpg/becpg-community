@@ -111,19 +111,6 @@
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
 	</bean>
 
-	<!-- Sort plugin -->
-	<bean id="projectListSortPlugin" parent="baseDataListSortPlugin" class="fr.becpg.repo.project.impl.ProjectListSortPlugin">
-		<property name="dataListSortRegistry" ref="dataListSortRegistry" />
-		<property name="nodeService" ref="nodeService" />
-	</bean>
-
-    <bean id="resourcesSortPlugin" parent="baseDataListSortPlugin" class="fr.becpg.repo.project.impl.ResourcesSortPlugin">
-		<property name="dataListSortRegistry" ref="dataListSortRegistry" />
-		<property name="associationService" ref="associationService" />
-		<property name="attributeExtractorService" ref="attributeExtractorService" />
-		<property name="nodeService" ref="nodeService" />
-	</bean>
-
 
 	<!-- DataList Extractor -->
 

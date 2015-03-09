@@ -7,12 +7,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.expression.Expression;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.StandardEvaluationContext;
+import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
@@ -26,10 +33,13 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ResourceProductData;
 import fr.becpg.repo.product.data.constraints.ProcessListUnit;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
+import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
+import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.product.data.spel.SpelHelper;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
 /**
@@ -45,6 +55,12 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	private static Log logger = LogFactory.getLog(CostsCalculatingFormulationHandler.class);
 
 	private EntityTplService entityTplService;
+
+	private FormulaService formulaService;
+
+	public void setFormulaService(FormulaService formulaService) {
+		this.formulaService = formulaService;
+	}
 
 	public void setEntityTplService(EntityTplService entityTplService) {
 		this.entityTplService = entityTplService;
@@ -62,8 +78,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		logger.debug("Cost calculating visitor");
 
 		// no compo => no formulation
-		if (!formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE)
-				&& !formulatedProduct.hasPackagingListEl(EffectiveFilters.EFFECTIVE)
+		if (!formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE) && !formulatedProduct.hasPackagingListEl(EffectiveFilters.EFFECTIVE)
 				&& !formulatedProduct.hasProcessListEl(EffectiveFilters.EFFECTIVE)) {
 			logger.debug("no compo => no formulation");
 			return true;
@@ -75,10 +90,16 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 
 		formulateSimpleList(formulatedProduct, formulatedProduct.getCostList());
 
+		ExpressionParser parser = new SpelExpressionParser();
+		StandardEvaluationContext context = formulaService.createEvaluationContext(formulatedProduct);
+
+		computeCostsList(formulatedProduct, parser, context);
+
 		if (formulatedProduct.getCostList() != null) {
 
 			for (CostListDataItem c : formulatedProduct.getCostList()) {
 				if (isCharactFormulated(c)) {
+
 					String unit = calculateUnit(formulatedProduct.getUnit(),
 							(String) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTCURRENCY));
 					c.setUnit(unit);
@@ -96,6 +117,69 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		return true;
 	}
 
+	
+	//Merge with nutList
+	@Deprecated
+	private void computeCostsList(ProductData productData, ExpressionParser parser, StandardEvaluationContext context) {
+		if (productData.getCostList() != null) {
+			for (CostListDataItem costListDataItem : productData.getCostList()) {
+				costListDataItem.setIsFormulated(false);
+				costListDataItem.setErrorLog(null);
+				if ((costListDataItem.getIsManual() == null || !costListDataItem.getIsManual()) && costListDataItem.getCost() != null) {
+
+					String formula = (String) nodeService.getProperty(costListDataItem.getCost(), PLMModel.PROP_COST_FORMULA);
+					if (formula != null && formula.length() > 0) {
+						try {
+							costListDataItem.setIsFormulated(true);
+							costListDataItem.setMaxi(null);
+							costListDataItem.setMini(null);
+							costListDataItem.setValue(null);
+							formula = SpelHelper.formatFormula(formula);
+
+							Expression exp = parser.parseExpression(formula);
+							Object ret = exp.getValue(context);
+							if (ret instanceof Double) {
+								costListDataItem.setValue((Double) ret);
+
+								if (formula.contains(".value")) {
+									try {
+										exp = parser.parseExpression(formula.replace(".value", ".mini"));
+										costListDataItem.setMini((Double) exp.getValue(context));
+										exp = parser.parseExpression(formula.replace(".value", ".maxi"));
+										costListDataItem.setMaxi((Double) exp.getValue(context));
+									} catch (Exception e) {
+										if (logger.isDebugEnabled()) {
+											logger.debug("Error in formula :" + formula, e);
+										}
+									}
+								}
+
+							} else {
+								costListDataItem.setErrorLog(I18NUtil.getMessage("message.formulate.formula.incorrect.type.double",
+										Locale.getDefault()));
+							}
+
+						} catch (Exception e) {
+							costListDataItem.setErrorLog(e.getLocalizedMessage());
+							if (logger.isDebugEnabled()) {
+								logger.debug("Error in formula :" + SpelHelper.formatFormula(formula), e);
+							}
+						}
+					}
+				}
+
+				if (costListDataItem.getErrorLog() != null) {
+					String message = I18NUtil.getMessage("message.formulate.costList.error", Locale.getDefault(),
+							nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME), costListDataItem.getErrorLog());
+					productData.getCompoListView().getReqCtrlList()
+							.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, new ArrayList<NodeRef>()));
+				}
+
+			}
+		}
+
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void visitChildren(ProductData formulatedProduct, List<CostListDataItem> costList) throws FormulateException {
@@ -105,66 +189,59 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			netQty = FormulationHelper.QTY_FOR_PIECE;
 		} else if (formulatedProduct instanceof ResourceProductData) {
 			netQty = FormulationHelper.QTY_FOR_PIECE;
-		}	else {
-			if(ProductUnit.P.equals(formulatedProduct.getUnit())){
+		} else {
+			if (ProductUnit.P.equals(formulatedProduct.getUnit())) {
 				netQty = FormulationHelper.QTY_FOR_PIECE;
-			} else {	
+			} else {
 				netQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
 			}
 		}
 
-
 		if (formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)) {
-			
+
 			/*
 			 * Composition
 			 */
 			Map<NodeRef, List<NodeRef>> mandatoryCharacts1 = getMandatoryCharacts(formulatedProduct, PLMModel.TYPE_RAWMATERIAL);
-			
+
 			Composite<CompoListDataItem> composite = CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList(
 					EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT));
 			visitCompoListChildren(formulatedProduct, composite, costList, DEFAULT_LOSS_RATIO, netQty, mandatoryCharacts1);
-			
+
 			addReqCtrlList(formulatedProduct.getCompoListView().getReqCtrlList(), mandatoryCharacts1);
-		
+
 		}
 
-		
-
 		if (formulatedProduct.hasPackagingListEl(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)) {
-			
+
 			/*
 			 * PackagingList
 			 */
 			Map<NodeRef, List<NodeRef>> mandatoryCharacts2 = getMandatoryCharacts(formulatedProduct, PLMModel.TYPE_PACKAGINGMATERIAL);
-			
+
 			for (PackagingListDataItem packagingListDataItem : formulatedProduct.getPackagingList(EffectiveFilters.EFFECTIVE,
 					VariantFilters.DEFAULT_VARIANT)) {
 				Double qty = FormulationHelper.getQtyWithLost(packagingListDataItem);
-			
-				if(PLMModel.TYPE_PACKAGINGKIT.equals(nodeService.getType(packagingListDataItem.getProduct()))){
+
+				if (PLMModel.TYPE_PACKAGINGKIT.equals(nodeService.getType(packagingListDataItem.getProduct()))) {
 					Integer nbByPalet = (Integer) nodeService.getProperty(packagingListDataItem.getProduct(), PackModel.PROP_PALLET_BOXES_PER_PALLET);
-					if(nbByPalet!=null && nbByPalet>0){
-						qty = qty/nbByPalet;
+					if (nbByPalet != null && nbByPalet > 0) {
+						qty = qty / nbByPalet;
 					}
 				}
-				
+
 				visitPart(packagingListDataItem.getProduct(), costList, qty, null, netQty, mandatoryCharacts2, null);
 			}
-			
+
 			addReqCtrlList(formulatedProduct.getPackagingListView().getReqCtrlList(), mandatoryCharacts2);
 		}
 
-		
-
-		
 		if (formulatedProduct.hasProcessListEl(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)) {
 			/*
 			 * ProcessList
 			 */
 			Map<NodeRef, List<NodeRef>> mandatoryCharacts3 = getMandatoryCharacts(formulatedProduct, PLMModel.TYPE_RESOURCEPRODUCT);
 
-			
 			for (ProcessListDataItem processListDataItem : formulatedProduct.getProcessList(EffectiveFilters.EFFECTIVE,
 					VariantFilters.DEFAULT_VARIANT)) {
 
@@ -173,15 +250,14 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 					if (ProcessListUnit.P.equals(processListDataItem.getUnit())) {
 						netQty = FormulationHelper.QTY_FOR_PIECE;
 					}
-					
+
 					visitPart(processListDataItem.getResource(), costList, qty, null, netQty, mandatoryCharacts3, null);
 				}
 			}
-			
+
 			addReqCtrlList(formulatedProduct.getProcessListView().getReqCtrlList(), mandatoryCharacts3);
 		}
 
-		
 	}
 
 	private void visitCompoListChildren(ProductData formulatedProduct, Composite<CompoListDataItem> composite, List<CostListDataItem> costList,

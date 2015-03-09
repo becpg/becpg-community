@@ -73,7 +73,7 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 		NodeRef folderNodeRef = repoService.getFolderByPath(parentNodeRef, folderPath);		
 	    if(folderNodeRef == null){
 
-	    	logger.debug("Create folder, path: " + folderPath + " - translatedName: " + folderName);	    		    	
+	    	logger.info("Create folder, path: " + folderPath + " - translatedName: " + folderName);	    		    	
 	    	//logger.debug("QName: " + QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, folderPath));
 	    	
 	    	folderNodeRef = repoService.getOrCreateFolderByPath(parentNodeRef, folderPath, folderName);

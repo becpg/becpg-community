@@ -113,6 +113,7 @@
 
 	<bean id="multiLevelExtractor" class="fr.becpg.repo.entity.datalist.impl.MultiLevelExtractor" parent="simpleExtractor">
 		<property name="multiLevelDataListService" ref="multiLevelDataListService" />
+		<property name="preferenceService" ref="preferenceService"/>
 		<property name="defaultExtractor" value="false"/>
 	</bean>
 
@@ -130,13 +131,7 @@
 		<property name="namespaceService" ref="namespaceService" />
 	</bean>
 	
-	<bean id="dataListSortRegistry" class="fr.becpg.repo.entity.datalist.impl.DataListSortRegistryImpl"/>	
-	<bean id="baseDataListSortPlugin" abstract="true"  class="fr.becpg.repo.entity.datalist.AbstractDataListSortPlugin" init-method="init">
-		<property name="dataListSortRegistry" ref="dataListSortRegistry"/>
-	</bean>
 
-	
-	
 	<!-- Public API -->
 	
 	<alias name="advSearchService" alias="AdvSearchService"/>

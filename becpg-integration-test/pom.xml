@@ -252,6 +252,12 @@
                 </plugins>
             </build>
         </profile>
+		<profile>
+			<id>run</id>
+			<properties>
+				<skipTests>true</skipTests>
+			</properties>
+		</profile>
     </profiles>
  
 </project>

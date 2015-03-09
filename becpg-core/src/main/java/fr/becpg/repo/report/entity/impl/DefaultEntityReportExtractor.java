@@ -67,7 +67,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @Service
 public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin {
 
-	private static Log logger = LogFactory.getLog(DefaultEntityReportExtractor.class);
+	private static final Log logger = LogFactory.getLog(DefaultEntityReportExtractor.class);
 
 	/** The Constant TAG_ENTITY. */
 	protected static final String TAG_ENTITY = "entity";
