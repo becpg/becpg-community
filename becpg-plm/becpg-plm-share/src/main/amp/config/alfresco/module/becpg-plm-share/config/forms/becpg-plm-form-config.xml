@@ -4717,7 +4717,7 @@
 				<appearance>
 					<field id="bcpg:depthLevel">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">1|1,2|2,3|3,4|4,All|data.level.all
+							<control-param name="options">0|,1|1,2|2,3|3,4|4,All|data.level.all
 							</control-param>
 						</control>
 					</field>
@@ -4925,7 +4925,7 @@
 				<appearance>
 					<field id="bcpg:depthLevel">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">,All|data.level.all
+							<control-param name="options">0|,All|data.level.all
 							</control-param>
 						</control>
 					</field>

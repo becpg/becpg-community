@@ -188,7 +188,11 @@ public class DataListFilter {
 		if(criteriaMap==null){
 			criteriaMap = new HashMap<String, String>();
 		}
-		criteriaMap.put(PROP_DEPTH_LEVEL,Integer.toString(depth));
+		if(depth!=-1){
+			criteriaMap.put(PROP_DEPTH_LEVEL,Integer.toString(depth));
+		} else {
+			criteriaMap.put(PROP_DEPTH_LEVEL,"all");
+		}
 	}
 
 	public String getFilterParams() {

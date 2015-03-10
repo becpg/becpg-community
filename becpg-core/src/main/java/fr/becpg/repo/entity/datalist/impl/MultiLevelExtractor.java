@@ -74,13 +74,16 @@ public class MultiLevelExtractor extends SimpleExtractor {
 
 		if (!dataListFilter.isDepthDefined()) {
 			int depth = getDepthUserPref(dataListFilter);
-			if (depth > 1) {
-				dataListFilter.updateMaxDepth(depth);
-			} else {
+			if (depth == 0 ) {
 				return super.extract(dataListFilter, metadataFields, pagination, hasWriteAccess);
 			}
+			dataListFilter.updateMaxDepth(depth);
 		} else {
 			updateDepthUserPref(dataListFilter);
+			if(dataListFilter.getMaxDepth() == 0){
+				dataListFilter.updateMaxDepth(-1);
+				return super.extract(dataListFilter, metadataFields, pagination, hasWriteAccess);
+			}
 		}
 
 		int pageSize = pagination.getPageSize();
@@ -106,9 +109,10 @@ public class MultiLevelExtractor extends SimpleExtractor {
 		Map<String, Serializable> prefs = preferenceService.getPreferences(username);
 
 		Integer depth = (Integer) prefs.get(PREF_DEPTH_PREFIX + dataListFilter.getDataType().getLocalName());
-
 		if (depth == null || !depth.equals(dataListFilter.getMaxDepth())) {
-
+			if (logger.isDebugEnabled()) {
+				logger.debug("Update ("+PREF_DEPTH_PREFIX + dataListFilter.getDataType().getLocalName()+"):" + dataListFilter.getMaxDepth() + "  for " + username);
+			}
 			prefs.put(PREF_DEPTH_PREFIX + dataListFilter.getDataType().getLocalName(), dataListFilter.getMaxDepth());
 			preferenceService.setPreferences(username, prefs);
 		}
@@ -122,9 +126,9 @@ public class MultiLevelExtractor extends SimpleExtractor {
 
 		Integer depth = (Integer) prefs.get(PREF_DEPTH_PREFIX + dataListFilter.getDataType().getLocalName());
 		if (logger.isDebugEnabled()) {
-			logger.debug("Getting :" + depth + " from history for " + username);
+			logger.debug("Getting ("+PREF_DEPTH_PREFIX + dataListFilter.getDataType().getLocalName()+"):" + depth + " from history for " + username);
 		}
-		return depth != null ? depth : -1;
+		return depth != null ? depth : 0;
 	}
 
 	protected int appendNextLevel(PaginatedExtractedItems ret, List<String> metadataFields, MultiLevelListData listData, int currIndex,
