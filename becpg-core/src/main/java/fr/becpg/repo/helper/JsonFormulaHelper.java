@@ -25,18 +25,25 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import fr.becpg.config.format.PropertyFormats;
+
 /**
  * @author matthieu
  *
  */
-public class CompareHelper {
+public class JsonFormulaHelper {
 
+	
+	private static final Log logger = LogFactory.getLog(JsonFormulaHelper.class);
+	
 	public static final String JSON_COMP_ITEMS = "comp";
-	public static final String JSON_COMP_VALUE = "value";
-	public static final String JSON_COMP_ITEM_NODEREF = "nodeRef";
+	public static final String JSON_VALUE = "value";
+	public static final String JSON_NODEREF = "nodeRef";
+	public static final String JSON_PATH = "path";
+	public static final String JSON_SUB_VALUES = "sub";
+    public static final String JSON_DISPLAY_VALUE = "displayValue";
 	
 	
-	private static Log logger = LogFactory.getLog(CompareHelper.class);
 	
 	/**
 	 * @param strValue1
@@ -48,12 +55,31 @@ public class CompareHelper {
 				JSONTokener tokener = new JSONTokener(value);
 				JSONObject jsonObject = new JSONObject(tokener);
 				JSONArray array = (JSONArray) jsonObject.get(JSON_COMP_ITEMS);
-				return((JSONObject)array.get(0)).get(JSON_COMP_VALUE);
+				return((JSONObject)array.get(0)).get(JSON_VALUE);
 			} catch (Exception e) {
 				logger.warn("Cannot parse "+value,e);
 			}
 		}
+		
+		if(value!=null && value.contains(JSON_SUB_VALUES)) {
+			try {
+				JSONObject jsonObject = new JSONObject(value);
+				return jsonObject.get(JSON_VALUE);
+			} catch (Exception e) {
+				logger.warn("Cannot parse "+value,e);
+			}
+		}
+		
 		return value;
+	}
+	
+	public static Object formatValue(Object v) {
+		PropertyFormats propertyFormats = new PropertyFormats(true);
+		
+		if (v != null && (v instanceof Double || v instanceof Float)) {
+			return propertyFormats.formatDecimal(v);
+		}
+		return v;
 	}
 
 }

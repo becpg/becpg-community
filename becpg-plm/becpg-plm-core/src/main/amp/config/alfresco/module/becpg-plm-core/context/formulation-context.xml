@@ -108,6 +108,7 @@
 				<bean parent="abstractSimpleFormulationHandler"
 					class="fr.becpg.repo.product.formulation.CostsCalculatingFormulationHandler">
 					<property name="entityTplService" ref="entityTplService" />
+					<property name="formulaService" ref="formulaService"/>
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.IngsCalculatingFormulationHandler" >
 					<property name="nodeService" ref="nodeService" />
@@ -142,7 +143,6 @@
 					<property name="nodeService" ref="nodeService" />
 					<property name="attributeExtractorService" ref="attributeExtractorService"/>
 				</bean>
-				
 			</list>
 		</property>
 		<property name="formulationService" ref="formulationService" />
@@ -179,6 +179,7 @@
 					class="fr.becpg.repo.product.formulation.CostsCalculatingFormulationHandler">
 					<property name="entityTplService" ref="entityTplService" />
 					<property name="transientFormulation" value="true"/>
+					<property name="formulaService" ref="formulaService"/>
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.FormulaFormulationHandler" >
 					<property name="alfrescoRepository" ref="alfrescoRepository" />

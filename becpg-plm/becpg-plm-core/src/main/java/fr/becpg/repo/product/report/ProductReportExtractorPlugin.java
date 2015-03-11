@@ -30,7 +30,7 @@ import fr.becpg.model.MPMModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.helper.CompareHelper;
+import fr.becpg.repo.helper.JsonFormulaHelper;
 import fr.becpg.repo.product.ProductDictionaryService;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
@@ -805,7 +805,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		for (DynamicCharactListItem dc : dynamicCharactList) {
 			Element dynamicCharact = dynCharactListElt.addElement(PLMModel.TYPE_DYNAMICCHARACTLIST.getLocalName());
 			dynamicCharact.addAttribute(PLMModel.PROP_DYNAMICCHARACT_TITLE.getLocalName(), dc.getTitle());
-			dynamicCharact.addAttribute(PLMModel.PROP_DYNAMICCHARACT_VALUE.getLocalName(), dc.getValue() == null ? VALUE_NULL : CompareHelper
+			dynamicCharact.addAttribute(PLMModel.PROP_DYNAMICCHARACT_VALUE.getLocalName(), dc.getValue() == null ? VALUE_NULL : JsonFormulaHelper
 					.cleanCompareJSON(dc.getValue().toString()).toString());
 		}
 	}

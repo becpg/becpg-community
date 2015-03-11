@@ -96,50 +96,26 @@ public class MultiLevelExtractor extends SimpleExtractor {
 		Map<String, Object> props = new HashMap<String, Object>();
 		props.put(PROP_ACCESSRIGHT, true); // TODO
 		props.put(PROP_ROOT_ENTITYNODEREF, dataListFilter.getEntityNodeRef());
-
+		props.put(PROP_PATH,"");
 		appendNextLevel(ret, metadataFields, listData, 0, startIndex, pageSize, props, dataListFilter.getFormat());
 
 		ret.setFullListSize(listData.getSize());
 		return ret;
 	}
 
-	private void updateDepthUserPref(DataListFilter dataListFilter) {
-		String username = AuthenticationUtil.getFullyAuthenticatedUser();
-
-		Map<String, Serializable> prefs = preferenceService.getPreferences(username);
-
-		Integer depth = (Integer) prefs.get(PREF_DEPTH_PREFIX + dataListFilter.getDataType().getLocalName());
-		if (depth == null || !depth.equals(dataListFilter.getMaxDepth())) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Update ("+PREF_DEPTH_PREFIX + dataListFilter.getDataType().getLocalName()+"):" + dataListFilter.getMaxDepth() + "  for " + username);
-			}
-			prefs.put(PREF_DEPTH_PREFIX + dataListFilter.getDataType().getLocalName(), dataListFilter.getMaxDepth());
-			preferenceService.setPreferences(username, prefs);
-		}
-
-	}
-
-	private int getDepthUserPref(DataListFilter dataListFilter) {
-		String username = AuthenticationUtil.getFullyAuthenticatedUser();
-
-		Map<String, Serializable> prefs = preferenceService.getPreferences(username);
-
-		Integer depth = (Integer) prefs.get(PREF_DEPTH_PREFIX + dataListFilter.getDataType().getLocalName());
-		if (logger.isDebugEnabled()) {
-			logger.debug("Getting ("+PREF_DEPTH_PREFIX + dataListFilter.getDataType().getLocalName()+"):" + depth + " from history for " + username);
-		}
-		return depth != null ? depth : 0;
-	}
-
+	
 	protected int appendNextLevel(PaginatedExtractedItems ret, List<String> metadataFields, MultiLevelListData listData, int currIndex,
 			int startIndex, int pageSize, Map<String, Object> props, String format) {
 
 		Map<NodeRef, Map<String, Object>> cache = new HashMap<>();
 
+		String curPath = (String) props.get(PROP_PATH);
+		
 		for (Entry<NodeRef, MultiLevelListData> entry : listData.getTree().entrySet()) {
 			NodeRef nodeRef = entry.getKey();
 			props.put(PROP_DEPTH, entry.getValue().getDepth());
 			props.put(PROP_ENTITYNODEREF, entry.getValue().getEntityNodeRef());
+			props.put(PROP_PATH, curPath+"/"+entry.getKey().getId());
 
 			if (currIndex >= startIndex && currIndex < (startIndex + pageSize)) {
 				if (ret.getComputedFields() == null) {
@@ -184,6 +160,9 @@ public class MultiLevelExtractor extends SimpleExtractor {
 			if (extraProps.get(PROP_ROOT_ENTITYNODEREF) != null) {
 				if (!extraProps.get(PROP_ROOT_ENTITYNODEREF).equals(entityListDAO.getEntity(nodeRef))) {
 					tmp.put("isMultiLevel", true);
+					if(extraProps.get(PROP_PATH) != null){
+						tmp.put("path", extraProps.get(PROP_PATH));
+					}
 				}
 			}
 
@@ -233,4 +212,34 @@ public class MultiLevelExtractor extends SimpleExtractor {
 		return null;
 	}
 
+	
+	private void updateDepthUserPref(DataListFilter dataListFilter) {
+		String username = AuthenticationUtil.getFullyAuthenticatedUser();
+
+		Map<String, Serializable> prefs = preferenceService.getPreferences(username);
+
+		Integer depth = (Integer) prefs.get(PREF_DEPTH_PREFIX + dataListFilter.getDataType().getLocalName());
+		if (depth == null || !depth.equals(dataListFilter.getMaxDepth())) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Update ("+PREF_DEPTH_PREFIX + dataListFilter.getDataType().getLocalName()+"):" + dataListFilter.getMaxDepth() + "  for " + username);
+			}
+			prefs.put(PREF_DEPTH_PREFIX + dataListFilter.getDataType().getLocalName(), dataListFilter.getMaxDepth());
+			preferenceService.setPreferences(username, prefs);
+		}
+
+	}
+
+	private int getDepthUserPref(DataListFilter dataListFilter) {
+		String username = AuthenticationUtil.getFullyAuthenticatedUser();
+
+		Map<String, Serializable> prefs = preferenceService.getPreferences(username);
+
+		Integer depth = (Integer) prefs.get(PREF_DEPTH_PREFIX + dataListFilter.getDataType().getLocalName());
+		if (logger.isDebugEnabled()) {
+			logger.debug("Getting ("+PREF_DEPTH_PREFIX + dataListFilter.getDataType().getLocalName()+"):" + depth + " from history for " + username);
+		}
+		return depth != null ? depth : 0;
+	}
+
+	
 }
