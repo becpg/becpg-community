@@ -1,6 +1,21 @@
-/*
- *  Copyright (C) 2010-2011 beCPG. All rights reserved.
- */
+/*******************************************************************************
+ * Copyright (C) 2010-2015 beCPG. 
+ *  
+ * This file is part of beCPG 
+ *  
+ * beCPG is free software: you can redistribute it and/or modify 
+ * it under the terms of the GNU Lesser General Public License as published by 
+ * the Free Software Foundation, either version 3 of the License, or 
+ * (at your option) any later version. 
+ *  
+ * beCPG is distributed in the hope that it will be useful, 
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ * GNU Lesser General Public License for more details. 
+ *  
+ * You should have received a copy of the GNU Lesser General Public License along with beCPG. 
+ * If not, see <http://www.gnu.org/licenses/>.
+ ******************************************************************************/
 package fr.becpg.repo.listvalue.web.scripts;
 
 import java.io.Serializable;
@@ -20,7 +35,6 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import fr.becpg.repo.listvalue.ListValuePage;
 import fr.becpg.repo.listvalue.ListValueService;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class AutoCompleteWebScript.
  * 
@@ -28,57 +42,26 @@ import fr.becpg.repo.listvalue.ListValueService;
  */
 public class AutoCompleteWebScript extends DeclarativeWebScript {
 
-	// request parameter names
-	/** The Constant PARAM_SOURCE_TYPE. */
 	private static final String PARAM_SOURCE_TYPE = "sourcetype";
-
-	/** The Constant PARAM_CLASS_NAME. */
 	private static final String PARAM_CLASS_NAME = "className";
-
 	private static final String PARAM_CLASS_NAMES = "classNames";
-	
+	private static final String PARAM_ATTRIBUTE_NAME = "attributeName";
 	private static final String PARAM_EXCLUDE_CLASS_NAMES = "excludeClassNames";
-
 	private static final String PARAM_PAGE_SIZE = "pageSize";
-
-	/** The Constant PARAM_PATH. */
 	private static final String PARAM_PATH = "path";
-
-	/** The Constant PARAM_PARENT. */
 	private static final String PARAM_PARENT = "parent";
-
-	/** The Constant PARAM_NODEREF. */
 	private static final String PARAM_NODEREF = "entityNodeRef";
-
-	/** The Constant PARAM_QUERY. */
 	private static final String PARAM_QUERY = "q";
-
-	/** The Constant PARAM_PRODUCT_TYPE. */
 	private static final String PARAM_PRODUCT_TYPE = "productType";
-
-	// model key names
-	/** The Constant MODEL_KEY_NAME_SUGGESTIONS. */
 	private static final String MODEL_KEY_NAME_SUGGESTIONS = "suggestions";
-
-	// values
-
-	/** The Constant PARAM_QUERY. */
 	private static final String PARAM_PAGE = "page";
-
 	private static final String MODEL_PAGE_SIZE = "pageSize";
 
-	/** The logger. */
-	private static Log logger = LogFactory.getLog(AutoCompleteWebScript.class);
+	private static final Log logger = LogFactory.getLog(AutoCompleteWebScript.class);
 
-	/** The list value service. */
 	private ListValueService listValueService;
 
-	/**
-	 * Sets the list value service.
-	 * 
-	 * @param listValueService
-	 *            the new list value service
-	 */
+
 	public void setListValueService(ListValueService listValueService) {
 		this.listValueService = listValueService;
 	}
@@ -151,10 +134,12 @@ public class AutoCompleteWebScript extends DeclarativeWebScript {
 		props.put(ListValueService.PROP_PATH, path);
 		props.put(ListValueService.PROP_CLASS_NAME, className);
 		props.put(ListValueService.PROP_CLASS_NAMES, classNames);
+		props.put(ListValueService.PROP_ATTRIBUTE_NAME, req.getParameter(PARAM_ATTRIBUTE_NAME));
 		props.put(ListValueService.PROP_EXCLUDE_CLASS_NAMES, excludeClassNames);
 		props.put(ListValueService.PROP_PARENT, parent);
 		props.put(ListValueService.PROP_PRODUCT_TYPE, productType);
 		props.put(ListValueService.EXTRA_PARAM, getExtraParams(req));
+		
 
 		suggestions = listValueService.suggestBySourceType(sourceType, query, pageNum, pageSize, props);
 
