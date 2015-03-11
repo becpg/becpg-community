@@ -23,6 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
@@ -83,6 +84,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	private static final String ATTR_NB_PRODUCTS_LEVEL_2 = "nbProductsPkgLevel2";
 	private static final String ATTR_VARIANT_ID = "variantId";
 	private static final String TAG_PACKAGING_LEVEL_MEASURES = "packagingLevelMeasures";
+
+	@Value("${beCPG.product.report.multiLevel}")
+	private Boolean extractInMultiLevel = false;
 
 	@Autowired
 	protected ProductDictionaryService productDictionaryService;
@@ -471,6 +475,19 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				loadPackagingItem(dataItem, packagingListElt, packagingData, defaultVariantNodeRef, images);
 			}
 
+			if (extractInMultiLevel) {
+				for (CompoListDataItem dataItem : productData.getCompoList(EffectiveFilters.EFFECTIVE)) {
+					if (nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT) && extractInMultiLevel) {
+						ProductData sfProductData = alfrescoRepository.findOne(dataItem.getProduct());
+						if (sfProductData.hasPackagingListEl(EffectiveFilters.EFFECTIVE)) {
+							for (PackagingListDataItem subDataItem : sfProductData.getPackagingList(EffectiveFilters.EFFECTIVE)) {
+								loadPackagingItem(subDataItem, packagingListElt, packagingData, defaultVariantNodeRef, images);
+							}
+						}
+					}
+				}
+			}
+
 			loadDynamicCharactList(productData.getPackagingListView().getDynamicCharactList(), packagingListElt);
 
 			// display tare, net weight and gross weight
@@ -556,7 +573,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				partElt.addAttribute(BeCPGModel.PROP_DEPTH_LEVEL.getLocalName(), "" + (depthLevel * level));
 			}
 
-			if (nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT)) {
+			if (nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT) && extractInMultiLevel) {
 				ProductData productData = alfrescoRepository.findOne(dataItem.getProduct());
 				if (productData.hasCompoListEl(EffectiveFilters.EFFECTIVE)) {
 					if (dataListsElt == null) {
