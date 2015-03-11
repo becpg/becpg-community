@@ -6314,6 +6314,7 @@
 					<show id="bcpg:dynamicCharactGroupColor" />
 					<show id="bcpg:dynamicCharactSynchronisableState"/>
 					<show id="bcpg:dynamicCharactExecOrder" />
+					<show id="bcpg:dynamicCharactMultiLevel" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:dynamicCharactFormula">
@@ -6384,6 +6385,7 @@
 					<show id="bcpg:dynamicCharactGroupColor" />
 					<show id="bcpg:dynamicCharactSynchronisableState" />
 					<show id="bcpg:dynamicCharactExecOrder" />
+					<show id="bcpg:dynamicCharactMultiLevel" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:dynamicCharactFormula">
