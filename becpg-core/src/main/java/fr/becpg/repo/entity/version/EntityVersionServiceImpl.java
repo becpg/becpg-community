@@ -227,7 +227,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			NodeRef versionHistoryRef = getVersionHistoryNodeRef(origNodeRef);
 			boolean isInitialVersion = versionHistoryRef == null ? true : false;
 
-			if (!isInitialVersion && entityVersionPlugins != null) {
+			if (!isInitialVersion && entityVersionPlugins != null  && !createAlfrescoVersion) {
 				for (EntityVersionPlugin entityVersionPlugin : entityVersionPlugins) {
 					entityVersionPlugin.doBeforeCheckin(origNodeRef, workingCopyNodeRef);
 				}
