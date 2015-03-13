@@ -40,7 +40,7 @@ public class ParentValuePlugin extends EntityListValuePlugin {
 	
 	private static Log logger = LogFactory.getLog(ParentValuePlugin.class);
 
-	private static final String SOURCE_TYPE_PARENT_VALUE = "parentValue";
+	private static final String SOURCE_TYPE_PARENT_VALUE = "ParentValue";
 
 	@Override
 	public String[] getHandleSourceTypes() {
