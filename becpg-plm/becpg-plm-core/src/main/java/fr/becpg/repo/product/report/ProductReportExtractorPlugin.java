@@ -484,7 +484,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 						ProductData sfProductData = alfrescoRepository.findOne(dataItem.getProduct());
 						if (sfProductData.hasPackagingListEl(EffectiveFilters.EFFECTIVE)) {
 							for (PackagingListDataItem subDataItem : sfProductData.getPackagingList(EffectiveFilters.EFFECTIVE)) {
-								loadPackagingItem(subDataItem, packagingListElt, packagingData, defaultVariantNodeRef, images);
+								loadPackagingItem(subDataItem, packagingListElt, defaultVariantNodeRef, images);
 							}
 						}
 					}
