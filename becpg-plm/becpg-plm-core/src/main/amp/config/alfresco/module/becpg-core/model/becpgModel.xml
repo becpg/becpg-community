@@ -239,7 +239,6 @@
 					<value>€/m</value>
 					<value>€/m2</value>
 					<value>€/h</value>
-					<value>€/CSU</value>
 					<value>€/Pal</value>
 					<value>$</value>
 					<value>$/L</value>
@@ -248,7 +247,6 @@
 					<value>$/m</value>
 					<value>$/m2</value>
 					<value>$/h</value>
-					<value>$/CSU</value>
 					<value>$/Pal</value>
 					<value>£</value>
 					<value>£/L</value>
@@ -257,7 +255,6 @@
 					<value>£/m</value>
 					<value>£/m2</value>
 					<value>£/h</value>
-					<value>£/CSU</value>
 					<value>£/Pal</value>
 				</list>
 			</parameter>
