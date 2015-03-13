@@ -22,6 +22,7 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
@@ -29,7 +30,7 @@ import fr.becpg.model.MPMModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.helper.CompareHelper;
+import fr.becpg.repo.helper.JsonFormulaHelper;
 import fr.becpg.repo.product.ProductDictionaryService;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
@@ -84,6 +85,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	private static final String ATTR_NB_PRODUCTS_LEVEL_2 = "nbProductsPkgLevel2";
 	private static final String ATTR_VARIANT_ID = "variantId";
 	private static final String TAG_PACKAGING_LEVEL_MEASURES = "packagingLevelMeasures";
+
+	@Value("${beCPG.product.report.multiLevel}")
+	private Boolean extractInMultiLevel = false;
 
 	@Autowired
 	protected ProductDictionaryService productDictionaryService;
@@ -474,6 +478,19 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				loadPackagingItem(dataItem, packagingListElt, defaultVariantNodeRef, images);
 			}
 
+			if (extractInMultiLevel) {
+				for (CompoListDataItem dataItem : productData.getCompoList(EffectiveFilters.EFFECTIVE)) {
+					if (nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT) && extractInMultiLevel) {
+						ProductData sfProductData = alfrescoRepository.findOne(dataItem.getProduct());
+						if (sfProductData.hasPackagingListEl(EffectiveFilters.EFFECTIVE)) {
+							for (PackagingListDataItem subDataItem : sfProductData.getPackagingList(EffectiveFilters.EFFECTIVE)) {
+								loadPackagingItem(subDataItem, packagingListElt, packagingData, defaultVariantNodeRef, images);
+							}
+						}
+					}
+				}
+			}
+
 			loadDynamicCharactList(productData.getPackagingListView().getDynamicCharactList(), packagingListElt);
 
 			// display tare, net weight and gross weight
@@ -514,7 +531,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 					if (variantPackagingData.getBoxesPerPallet() != null) {
 
-						BigDecimal tareTertiary = tarePrimary.multiply(new BigDecimal(variantPackagingData.getBoxesPerPallet())).add(
+						BigDecimal tareTertiary = tareSecondary.multiply(new BigDecimal(variantPackagingData.getBoxesPerPallet())).add(
 								variantPackagingData.getTareTertiary());
 						BigDecimal netWeightTertiary = netWeightSecondary.multiply(new BigDecimal(variantPackagingData.getBoxesPerPallet()));
 						packgLevelMesuresElt.addAttribute(ATTR_PKG_TARE_LEVEL_3, toString(tareTertiary));
@@ -560,7 +577,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				partElt.addAttribute(BeCPGModel.PROP_DEPTH_LEVEL.getLocalName(), "" + (depthLevel * level));
 			}
 
-			if (nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT)) {
+			if (nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT) && extractInMultiLevel) {
 				ProductData productData = alfrescoRepository.findOne(dataItem.getProduct());
 				if (productData.hasCompoListEl(EffectiveFilters.EFFECTIVE)) {
 					if (dataListsElt == null) {
@@ -670,7 +687,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		for (DynamicCharactListItem dc : dynamicCharactList) {
 			Element dynamicCharact = dynCharactListElt.addElement(PLMModel.TYPE_DYNAMICCHARACTLIST.getLocalName());
 			dynamicCharact.addAttribute(PLMModel.PROP_DYNAMICCHARACT_TITLE.getLocalName(), dc.getTitle());
-			dynamicCharact.addAttribute(PLMModel.PROP_DYNAMICCHARACT_VALUE.getLocalName(), dc.getValue() == null ? VALUE_NULL : CompareHelper
+			dynamicCharact.addAttribute(PLMModel.PROP_DYNAMICCHARACT_VALUE.getLocalName(), dc.getValue() == null ? VALUE_NULL : JsonFormulaHelper
 					.cleanCompareJSON(dc.getValue().toString()).toString());
 		}
 	}

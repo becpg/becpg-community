@@ -160,6 +160,11 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 
 				dynCol.setColumnName("bcpg_dynamicCharactColumn2");
 				dynamicCharactListItems.add(dynCol);
+				
+			    dynCol = new DynamicCharactListItem("Col Dyn 3", "entity.costList[0].value + dataListItem.qty");
+				dynCol.setColumnName("bcpg_dynamicCharactColumn3");
+				dynCol.setMultiLevelFormula(true);
+				dynamicCharactListItems.add(dynCol);
 
 				finishedProduct.getCompoListView().setDynamicCharactList(dynamicCharactListItems);
 

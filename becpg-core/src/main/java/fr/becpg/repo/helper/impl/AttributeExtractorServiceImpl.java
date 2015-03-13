@@ -61,7 +61,7 @@ import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
-import fr.becpg.repo.helper.CompareHelper;
+import fr.becpg.repo.helper.JsonFormulaHelper;
 import fr.becpg.repo.helper.ExcelHelper;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.helper.TranslateHelper;
@@ -675,7 +675,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 
 			if (value instanceof NodeRef || value instanceof String || value instanceof List) {
 				if (DataTypeDefinition.ANY.toString().equals(propertyDef.getDataType().toString()) && value instanceof String) {
-					value = (Serializable) CompareHelper.cleanCompareJSON((String) value);
+					value = (Serializable) JsonFormulaHelper.cleanCompareJSON((String) value);
 				}
 				if (propertyDef.getConstraints().isEmpty()) {
 					return getStringValue(propertyDef, value, propertyFormats);

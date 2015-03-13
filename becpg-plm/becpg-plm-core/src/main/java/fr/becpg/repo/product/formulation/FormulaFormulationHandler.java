@@ -13,7 +13,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
  * GNU Lesser General Public License for more details. 
  *  
- * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License along with beCPG. 
+ * If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.product.formulation;
 
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import org.json.JSONArray;
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -31,6 +33,8 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
@@ -41,7 +45,9 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
+import fr.becpg.repo.helper.JsonFormulaHelper;
 import fr.becpg.repo.product.data.AbstractProductDataView;
+import fr.becpg.repo.product.data.CompoListView;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompositionDataItem;
@@ -52,6 +58,7 @@ import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.spel.FormulaFormulationContext;
 import fr.becpg.repo.product.data.spel.SpelHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.security.BeCPGAccessDeniedException;
 
 /**
@@ -72,7 +79,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 	private NodeService nodeService;
 
 	private NamespaceService namespaceService;
-	
+
 	private FormulaService formulaService;
 
 	private DynamicCharactExecOrder execOrder = DynamicCharactExecOrder.Post;
@@ -89,12 +96,10 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 		this.namespaceService = namespaceService;
 	}
 
-
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
-	
 	public void setFormulaService(FormulaService formulaService) {
 		this.formulaService = formulaService;
 	}
@@ -132,25 +137,24 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 					Object ret = exp.getValue(context);
 					if (ret instanceof Number) {
 						productData.setNutrientScore(Double.valueOf(ret.toString()));
-						String classformula = (String) nodeService.getProperty(productData.getNutrientProfile(), PLMModel.PROP_NUTRIENT_PROFILE_CLASS_FORMULA);
+						String classformula = (String) nodeService.getProperty(productData.getNutrientProfile(),
+								PLMModel.PROP_NUTRIENT_PROFILE_CLASS_FORMULA);
 						if (classformula != null && classformula.length() > 0) {
 							exp = parser.parseExpression(SpelHelper.formatFormula(classformula));
 							productData.setNutrientClass((String) exp.getValue(context));
 						}
 					} else {
 						productData.setNutrientClass(I18NUtil.getMessage("message.formulate.formula.incorrect.nutrientProfile",
-										I18NUtil.getMessage("message.formulate.formula.incorrect.type.double", Locale.getDefault()),
-										Locale.getDefault()));
+								I18NUtil.getMessage("message.formulate.formula.incorrect.type.double", Locale.getDefault()), Locale.getDefault()));
 					}
 				} catch (Exception e) {
-					productData.setNutrientClass(
-							I18NUtil.getMessage("message.formulate.formula.incorrect.nutrientProfile", e.getLocalizedMessage(), Locale.getDefault()));
+					productData.setNutrientClass(I18NUtil.getMessage("message.formulate.formula.incorrect.nutrientProfile", e.getLocalizedMessage(),
+							Locale.getDefault()));
 					if (logger.isDebugEnabled()) {
 						logger.debug("Error in formula :" + SpelHelper.formatFormula(scoreformula), e);
 					}
 				}
 			}
-			
 
 		}
 
@@ -201,9 +205,6 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 	}
 
-
-
-
 	private void computeFormula(ProductData productData, ExpressionParser parser, EvaluationContext context, AbstractProductDataView view) {
 
 		if (view.getDynamicCharactList() != null) {
@@ -230,8 +231,23 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 										alfrescoRepository, productData, dataListItem));
 								formulaService.registerCustomFunctions(dataContext);
 								Object value = exp.getValue(dataContext);
-								dataListItem.getExtraProperties().put(columnName, (Serializable) value);
-								logger.debug("Value :" + value);
+
+								if (!L2CacheSupport.isCacheOnlyEnable()
+										&& (dynamicCharactListItem.getMultiLevelFormula() != null && Boolean.TRUE.equals(dynamicCharactListItem
+												.getMultiLevelFormula()))
+										&& view instanceof CompoListView
+										&& (dataListItem.getProduct() != null && PLMModel.TYPE_SEMIFINISHEDPRODUCT.equals(nodeService
+												.getType(dataListItem.getProduct())))) {
+
+									JSONObject jsonTree = extractJSONTree(productData, dataListItem, value, exp);
+									dataListItem.getExtraProperties().put(columnName, (Serializable) jsonTree.toString());
+									if (logger.isDebugEnabled()) {
+										logger.debug("JsonTree :" + value);
+									}
+								} else {
+									dataListItem.getExtraProperties().put(columnName, (Serializable) value);
+									logger.debug("Value :" + value);
+								}
 							}
 							dynamicCharactListItem.setValue(null);
 						} else {
@@ -272,6 +288,51 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 			}
 		}
 
+	}
+
+	private JSONObject extractJSONTree(ProductData productData, CompositionDataItem dataListItem, Object value, Expression exp) throws JSONException {
+		JSONObject jsonObject = new JSONObject();
+
+		JSONArray subList = new JSONArray();
+			
+		String path = "/"+dataListItem.getNodeRef().getId();
+		
+		
+		extractJSONSubList(productData, dataListItem, exp, path , subList);
+
+		if (subList.length()>0) {
+			jsonObject.put(JsonFormulaHelper.JSON_SUB_VALUES, subList);
+		}
+
+		jsonObject.put(JsonFormulaHelper.JSON_VALUE, value);
+		jsonObject.put(JsonFormulaHelper.JSON_DISPLAY_VALUE, JsonFormulaHelper.formatValue(value));
+
+		return jsonObject;
+	}
+
+	private void extractJSONSubList(ProductData productData, CompositionDataItem dataListItem, Expression exp, String path, JSONArray subList) throws JSONException {
+		ProductData subProductData = alfrescoRepository.findOne(dataListItem.getProduct());
+		for (CompositionDataItem subDataListItem : subProductData.getCompoListView().getCompoList()) {
+			JSONObject subObject = new JSONObject();
+
+			if (subProductData.getRecipeQtyUsed() != null && subProductData.getRecipeQtyUsed() != 0) {
+				subDataListItem.setQty(dataListItem.getQty() * subDataListItem.getQty() / subProductData.getRecipeQtyUsed());
+			}
+
+			StandardEvaluationContext dataContext = new StandardEvaluationContext(new FormulaFormulationContext(alfrescoRepository, productData,
+					subDataListItem));
+			formulaService.registerCustomFunctions(dataContext);
+			Object subValue = exp.getValue(dataContext);
+			subObject.put(JsonFormulaHelper.JSON_VALUE, subValue);
+			subObject.put(JsonFormulaHelper.JSON_DISPLAY_VALUE, JsonFormulaHelper.formatValue(subValue));
+			subObject.put(JsonFormulaHelper.JSON_PATH, path+"/"+subDataListItem.getNodeRef().getId());
+			subList.put(subObject);
+			
+			if (PLMModel.TYPE_SEMIFINISHEDPRODUCT.equals(nodeService.getType(dataListItem.getProduct()))) {
+				extractJSONSubList(productData, subDataListItem, exp, path, subList);
+			} 
+		}
+		
 	}
 
 	/**
