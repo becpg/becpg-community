@@ -34,6 +34,7 @@ import fr.becpg.repo.product.data.ResourceProductData;
 import fr.becpg.repo.product.data.constraints.ProcessListUnit;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementType;
+import fr.becpg.repo.product.data.packaging.VariantPackagingData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
@@ -57,6 +58,8 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	private EntityTplService entityTplService;
 
 	private FormulaService formulaService;
+	
+	private PackagingHelper packagingHelper;
 
 	public void setFormulaService(FormulaService formulaService) {
 		this.formulaService = formulaService;
@@ -64,6 +67,10 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 
 	public void setEntityTplService(EntityTplService entityTplService) {
 		this.entityTplService = entityTplService;
+	}
+
+	public void setPackagingHelper(PackagingHelper packagingHelper) {
+		this.packagingHelper = packagingHelper;
 	}
 
 	@Override
@@ -86,10 +93,10 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 
 		if (formulatedProduct.getCostList() == null) {
 			formulatedProduct.setCostList(new LinkedList<CostListDataItem>());
-		}
+		}				
 
 		formulateSimpleList(formulatedProduct, formulatedProduct.getCostList());
-
+		
 		ExpressionParser parser = new SpelExpressionParser();
 		StandardEvaluationContext context = formulaService.createEvaluationContext(formulatedProduct);
 
@@ -382,5 +389,103 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			}
 		}
 		return mandatoryCharacts;
+	}
+	
+	@Override
+	protected void copyProductTemplateList(ProductData formulatedProduct, List<CostListDataItem> simpleListDataList){
+		//TODO : manage multiple plants
+		NodeRef plantNodeRef = formulatedProduct.getPlants().isEmpty() ? null : formulatedProduct.getPlants().get(0);
+		if (formulatedProduct.getEntityTpl() != null) {
+			
+			//need packagingData
+			VariantPackagingData packagingData = null;			
+			for(CostListDataItem templateCostList : formulatedProduct.getEntityTpl().getCostList()){
+				if(templateCostList.getUnit() != null && templateCostList.getUnit().endsWith("Pal")){
+					packagingData = packagingHelper.getDefaultVariantPackagingData(formulatedProduct);
+				}
+			}
+			
+			for(CostListDataItem templateCostList : formulatedProduct.getEntityTpl().getCostList()){
+				boolean addCost = true;
+				for(CostListDataItem costList : simpleListDataList){
+					//plants
+					if(templateCostList.getPlants().isEmpty() || templateCostList.getPlants().contains(plantNodeRef)){
+						//same cost
+						if(costList.getCost() != null && costList.getCost().equals(templateCostList.getCost())){						
+							//manual
+							if(templateCostList.getIsManual() == null || !templateCostList.getIsManual()){
+								copyTemplateCost(formulatedProduct, packagingData, templateCostList, costList);
+							}
+							addCost = false;
+							break;
+						}
+					}
+					else{
+						addCost = false;
+					}					
+				}
+				if(addCost){
+					templateCostList.setNodeRef(null);
+					templateCostList.setParentNodeRef(null);
+					copyTemplateCost(formulatedProduct, packagingData, templateCostList, templateCostList);
+					simpleListDataList.add(templateCostList);
+				}
+			}			
+		}
+	}
+	
+	private void copyTemplateCost(ProductData formulatedProduct, VariantPackagingData packagingData, CostListDataItem templateCostList, CostListDataItem costList){
+		
+		Double value = templateCostList.getValue();
+		Double maxi = templateCostList.getMaxi();
+		
+		if(logger.isDebugEnabled()){
+			logger.debug("copy cost " + nodeService.getProperty(templateCostList.getCost(), ContentModel.PROP_NAME));
+		}
+		
+		if(formulatedProduct.getUnit() != null && templateCostList.getUnit() != null){
+			if(!templateCostList.getUnit().endsWith(formulatedProduct.getUnit().toString())){				
+				if(FormulationHelper.isProductUnitP(formulatedProduct.getUnit())){
+					if(templateCostList.getUnit().endsWith("kg") || templateCostList.getUnit().endsWith("L")){
+						value = multiply(value, FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d));
+						maxi = multiply(maxi, FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d));
+					}
+					else if(templateCostList.getUnit().endsWith("Pal") && packagingData != null && packagingData.getProductPerBoxes() != null && packagingData.getBoxesPerPallet() != null){
+						value = divide(value, (double)packagingData.getProductPerBoxes() * packagingData.getBoxesPerPallet());
+						maxi = divide(maxi, (double)packagingData.getProductPerBoxes() * packagingData.getBoxesPerPallet());
+					}
+				}
+				else if(FormulationHelper.isProductUnitKg(formulatedProduct.getUnit()) || FormulationHelper.isProductUnitLiter(formulatedProduct.getUnit())){
+					if(templateCostList.getUnit().endsWith("P")){
+						value = divide(value, FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d));
+						maxi = divide(maxi, FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d));
+					}
+					else if(templateCostList.getUnit().endsWith("Pal") && packagingData != null && packagingData.getProductPerBoxes() != null && packagingData.getBoxesPerPallet() != null){
+						value = divide(value, (double)packagingData.getProductPerBoxes() * packagingData.getBoxesPerPallet() * FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d));
+						maxi = divide(maxi, (double)packagingData.getProductPerBoxes() * packagingData.getBoxesPerPallet() * FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d));
+					}
+				}				
+			}
+		}
+		if(value != null){
+			costList.setValue(value);
+		}
+		if(maxi != null){
+			costList.setMaxi(maxi);
+		}
+	}
+	
+	private Double divide(Double a, Double b){
+		if(a != null && b != null && b != 0d){
+			return a/b;
+		}
+		return null;
+	}
+	
+	private Double multiply(Double a, Double b){
+		if(a!=null && b!=null){
+			return a*b;
+		}
+		return null;
 	}
 }

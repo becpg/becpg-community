@@ -54,6 +54,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private SystemState state = SystemState.Simulation;
 	private ProductUnit unit = ProductUnit.kg;
 	private ProductData entityTpl;
+	private List<NodeRef> plants = new ArrayList<NodeRef>();
 
 	/*
 	 * Transformable properties
@@ -243,6 +244,16 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 
 	public void setEntityTpl(ProductData entityTpl) {
 		this.entityTpl = entityTpl;
+	}
+	
+	@AlfMultiAssoc
+	@AlfQname(qname="bcpg:plants")
+	public List<NodeRef> getPlants() {
+		return plants;
+	}
+
+	public void setPlants(List<NodeRef> plants) {
+		this.plants = plants;
 	}
 	
 	@AlfProp

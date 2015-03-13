@@ -99,9 +99,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	}
 
 	protected void formulateSimpleList(ProductData formulatedProduct, List<T> simpleListDataList) throws FormulateException{
-		logger.debug("formulateSimpleList");	
-		
-		copyProductTemplateList(formulatedProduct, simpleListDataList);
+		logger.debug("formulateSimpleList");				
 
 		if(simpleListDataList != null){			
 			for(SimpleListDataItem sl : simpleListDataList){
@@ -118,6 +116,8 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 				}							
 			}
 		}
+		
+		copyProductTemplateList(formulatedProduct, simpleListDataList);
 				
 		visitChildren(formulatedProduct, simpleListDataList);		
 		
