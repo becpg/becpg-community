@@ -109,11 +109,7 @@
 					class="fr.becpg.repo.product.formulation.CostsCalculatingFormulationHandler">
 					<property name="entityTplService" ref="entityTplService" />
 					<property name="formulaService" ref="formulaService"/>
-<<<<<<< local
-					<property name="entityTplService" ref="entityTplService" />
 					<property name="packagingHelper" ref="packagingHelper" />
-=======
->>>>>>> other
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.IngsCalculatingFormulationHandler" >
 					<property name="nodeService" ref="nodeService" />
