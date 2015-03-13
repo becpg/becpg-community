@@ -47,7 +47,7 @@ import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
-import fr.becpg.repo.helper.CompareHelper;
+import fr.becpg.repo.helper.JsonFormulaHelper;
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.AbstractProductDataView;
 import fr.becpg.repo.product.data.ProductData;
@@ -109,8 +109,6 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 	@Override
 	public boolean process(final ProductData productData) throws FormulateException {
 
-		
-		
 		if (!L2CacheSupport.isCacheOnlyEnable()
 				&& (productData.getAspects().contains(BeCPGModel.ASPECT_COMPARE_WITH) ||( productData.getNodeRef()!=null && nodeService.hasAspect(productData.getNodeRef(),
 						BeCPGModel.ASPECT_COMPARE_WITH)))) {
@@ -170,7 +168,7 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 							for (Map.Entry<DynamicCharactListItem, JSONArray> entry : dynamicCharactToTreat.entrySet()) {
 
 								JSONObject jsonObject = new JSONObject();
-								jsonObject.put(CompareHelper.JSON_COMP_ITEMS, entry.getValue());
+								jsonObject.put(JsonFormulaHelper.JSON_COMP_ITEMS, entry.getValue());
 
 								entry.getKey().setValue(jsonObject.toString());
 							}
@@ -178,7 +176,7 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 							for (Map.Entry<Pair<CompositionDataItem, QName>, JSONArray> entry : dynamicColumnToTreat.entrySet()) {
 
 								JSONObject jsonObject = new JSONObject();
-								jsonObject.put(CompareHelper.JSON_COMP_ITEMS, entry.getValue());
+								jsonObject.put(JsonFormulaHelper.JSON_COMP_ITEMS, entry.getValue());
 
 								entry.getKey().getFirst().getExtraProperties().put(entry.getKey().getSecond(), jsonObject.toString());
 							}
@@ -243,15 +241,15 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 	private JSONObject getJSONValue(ProductData toCompareWith, Object value, NodeRef itemNodeRef) throws JSONException {
 		JSONObject jsonObject = new JSONObject();
 		
-		jsonObject.put(CompareHelper.JSON_COMP_ITEM_NODEREF, toCompareWith.getNodeRef());
+		jsonObject.put(JsonFormulaHelper.JSON_NODEREF, toCompareWith.getNodeRef());
 		jsonObject.put("name", toCompareWith.getName());	
 			
 		if (itemNodeRef != null) {
 			jsonObject.put("itemNodeRef", itemNodeRef);
 		}
 
-		jsonObject.put(CompareHelper.JSON_COMP_VALUE, value);
-		jsonObject.put("displayValue", formatValue(value));
+		jsonObject.put(JsonFormulaHelper.JSON_VALUE, value);
+		jsonObject.put(JsonFormulaHelper.JSON_DISPLAY_VALUE, JsonFormulaHelper.formatValue(value));
 		jsonObject.put("itemType", nodeService.getType(toCompareWith.getNodeRef()).toPrefixString(namespaceService));
 		String siteId = attributeExtractorService.extractSiteId(toCompareWith.getNodeRef());
 		if (siteId != null) {
@@ -271,14 +269,7 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 		return dataListItem.getExtraProperties().get(columnName);
 	}
 
-	private Object formatValue(Object v) {
-		PropertyFormats propertyFormats = new PropertyFormats(true);
-		
-		if (v != null && (v instanceof Double || v instanceof Float)) {
-			return propertyFormats.formatDecimal(v);
-		}
-		return v;
-	}
+	
 
 	private AbstractProductDataView getMatchingView(ProductData productData, AbstractProductDataView view) {
 		for (AbstractProductDataView tmp : productData.getViews()) {

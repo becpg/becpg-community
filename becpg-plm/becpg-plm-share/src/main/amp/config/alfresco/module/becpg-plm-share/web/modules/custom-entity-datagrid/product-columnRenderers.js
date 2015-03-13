@@ -499,37 +499,56 @@ if (beCPG.module.EntityDataGridRenderers) {
 
 	});
 	
+	
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : [ "bcpg:dynamicCharactColumn1", "bcpg:dynamicCharactColumn2", "bcpg:dynamicCharactColumn3", "bcpg:dynamicCharactColumn4",
 				"bcpg:dynamicCharactColumn5", "bcpg:dynamicCharactColumn6", "bcpg:dynamicCharactColumn7", "bcpg:dynamicCharactColumn8",
 				"bcpg:dynamicCharactColumn9", "bcpg:dynamicCharactColumn10" ],
 		renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
-			if (data.value != null) {
-				
-			    if(oRecord.getData("itemData")["isMultiLevel"]){
-			        return "";
-			    } 
+		   
+		    if(oRecord.getData("itemData")["isMultiLevel"]){
+		        if(scope.subCache!=null){
+		              for (var j = 0; j < scope.subCache.length; j++) {
+                        var path = scope.subCache[j].path;
+                        if(path == oRecord.getData("itemData")["path"]){
+                            return scope.subCache[j].displayValue;
+                        }
+                    }
+                }
+		        return "";
+		    }
+		    
+		    if (data.value != null) {
+			    if(!oRecord.getData("itemData")["isMultiLevel"]){ 
+    			    if (data.value.indexOf && data.value.indexOf("\"sub\":") > -1) {
+    			        var json = JSON.parse(data.value);
+                        if (json) {
+                            scope.subCache = json.sub;
+                            return json.displayValue;
+                        }
+    			    }
+			    }
 			    
 				if (data.value.indexOf && data.value.indexOf("\"comp\":") > -1) {
 					var json = JSON.parse(data.value);
 					if (json) {
-						var ret = "", i = 0, refValue = null, className, currValue = null;
-						for (i = 0; i < json.comp.length; i++) {
-							if (json.comp[i].value) {
-								if (i == 0) {
-									refValue = parseFloat(json.comp[i].value);
-									ret += '<span>' + Alfresco.util.encodeHTML(json.comp[i].displayValue) + '</span>';
+						var ret = "", z = 0, refValue = null, className, currValue = null;
+						for (z = 0; z < json.comp.length; z++) {
+							if (json.comp[z].value) {
+								if (z == 0) {
+									refValue = parseFloat(json.comp[z].value);
+									ret += '<span>' + Alfresco.util.encodeHTML(json.comp[z].displayValue) + '</span>';
 								} else {
-									currValue = parseFloat(json.comp[i].value);
+									currValue = parseFloat(json.comp[z].value);
 									if (currValue != Number.NaN && refValue != Number.NaN) {
 										className = (refValue > currValue) ? "dynaCompIncrease" : "dynaCompDecrease";
 									} else {
 										className = "dynaCompNone";
 									}
-									ret += '<span  class="' + className + '" >(<a title="' + json.comp[i].name + '" href="'
-											+ beCPG.util.entityCharactURL(json.comp[i].siteId, json.comp[i].nodeRef, json.comp[i].itemType) + '">'
-											+ Alfresco.util.encodeHTML(json.comp[i].displayValue) + '</a>)</span>';
+									ret += '<span  class="' + className + '" >(<a title="' + json.comp[z].name + '" href="'
+											+ beCPG.util.entityCharactURL(json.comp[z].siteId, json.comp[z].nodeRef, json.comp[z].itemType) + '">'
+											+ Alfresco.util.encodeHTML(json.comp[z].displayValue) + '</a>)</span>';
 								}
 							}
 						}

@@ -1876,7 +1876,12 @@
 					<constraints>
 						<constraint ref="bcpg:dynamicCharactExecOrders" />
 					</constraints>
-				</property>		
+				</property>	
+				<property name="bcpg:dynamicCharactMultiLevel" >
+					<type>d:boolean</type>
+					<default>false</default>
+				</property>
+					
 			</properties>
 		</type>
 	

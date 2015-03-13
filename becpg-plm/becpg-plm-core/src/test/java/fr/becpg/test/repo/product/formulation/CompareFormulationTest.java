@@ -32,7 +32,7 @@ import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.helper.AssociationService;
-import fr.becpg.repo.helper.CompareHelper;
+import fr.becpg.repo.helper.JsonFormulaHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 
@@ -111,14 +111,14 @@ public class CompareFormulationTest extends FormulationFullTest {
 				
 				JSONTokener tokener = new JSONTokener((String)formulatedProduct.getCompoListView().getDynamicCharactList().get(0).getValue());
 				JSONObject jsonObject = new JSONObject(tokener);
-				JSONArray array = (JSONArray) jsonObject.get(CompareHelper.JSON_COMP_ITEMS);
+				JSONArray array = (JSONArray) jsonObject.get(JsonFormulaHelper.JSON_COMP_ITEMS);
 				assertEquals(2,array.length());
 				
-				assertEquals(2,((JSONObject)array.get(0)).get(CompareHelper.JSON_COMP_VALUE));
-				assertEquals(finishedProductNodeRef2.toString(),((JSONObject)array.get(0)).get(CompareHelper.JSON_COMP_ITEM_NODEREF));
+				assertEquals(2,((JSONObject)array.get(0)).get(JsonFormulaHelper.JSON_VALUE));
+				assertEquals(finishedProductNodeRef2.toString(),((JSONObject)array.get(0)).get(JsonFormulaHelper.JSON_NODEREF));
 				
-				assertEquals(3,((JSONObject)array.get(1)).get(CompareHelper.JSON_COMP_VALUE));
-				assertEquals(finishedProductNodeRef2.toString(),((JSONObject)array.get(1)).get(CompareHelper.JSON_COMP_ITEM_NODEREF));
+				assertEquals(3,((JSONObject)array.get(1)).get(JsonFormulaHelper.JSON_VALUE));
+				assertEquals(finishedProductNodeRef2.toString(),((JSONObject)array.get(1)).get(JsonFormulaHelper.JSON_NODEREF));
 				
 				return null;
 			}
