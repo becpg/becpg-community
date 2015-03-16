@@ -84,6 +84,7 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 				finishedProduct.setUnitPrice(22.4d);
 				finishedProduct.setDensity(1d);
 				finishedProduct.setServingSize(50d);//50g
+				finishedProduct.setProjectedQty(10000l);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
 				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
@@ -278,9 +279,9 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 		// profitability
 		DecimalFormat df = new DecimalFormat("0.00");
 		assertEquals("check unitPrice", 22.4d, formulatedProduct.getUnitPrice());
-		assertEquals("check unitTotalCost", 20d, formulatedProduct.getUnitTotalCost());
-		assertEquals("check profitability", df.format(10.71d), df.format(formulatedProduct.getProfitability()));
-		assertEquals("check breakEven", (Long) 1667L, formulatedProduct.getBreakEven());
+		assertEquals("check unitTotalCost", 20.4d, formulatedProduct.getUnitTotalCost());
+		assertEquals("check profitability", df.format(8.9285d), df.format(formulatedProduct.getProfitability()));
+		assertEquals("check breakEven", (Long) 2000L, formulatedProduct.getBreakEven());
 
 		// nuts
 		checks = 0;

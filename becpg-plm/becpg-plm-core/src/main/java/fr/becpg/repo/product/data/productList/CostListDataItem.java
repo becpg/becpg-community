@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -20,22 +21,19 @@ import fr.becpg.repo.repository.model.Synchronisable;
 
 @AlfType
 @AlfQname(qname = "bcpg:costList")
-public class CostListDataItem extends AbstractManualDataItem implements SimpleListDataItem, Synchronisable{
+public class CostListDataItem extends AbstractManualDataItem implements SimpleListDataItem, Synchronisable, CompositeDataItem<CostListDataItem>{
 	
 
-	private Double value = 0d;
-	
-	private String unit;	
-	
-	private Double maxi = null;
-	
-	private NodeRef cost;
-	
-	private Boolean isFormulated;
-	
-	private String errorLog;
-	
-	private List<NodeRef> plants = new ArrayList<NodeRef>();
+	private Double value = 0d;	
+	private String unit;		
+	private Double maxi = null;	
+	private NodeRef cost;	
+	private Boolean isFormulated;	
+	private String errorLog;	
+	private List<NodeRef> plants = new ArrayList<NodeRef>();	
+	private Integer depthLevel;
+	private CostListDataItem parent;
+	private NodeRef componentNodeRef;
 	
 		
 	@AlfProp
@@ -270,6 +268,39 @@ public class CostListDataItem extends AbstractManualDataItem implements SimpleLi
 	@Override
 	public boolean isSynchronisable() {
 		return plants.isEmpty();
+	}
+
+	@Override
+	@AlfProp
+	@AlfQname(qname = "bcpg:depthLevel")
+	public Integer getDepthLevel() {
+		return depthLevel;
+	}
+
+	public void setDepthLevel(Integer depthLevel) {
+		this.depthLevel = depthLevel;
+	}
+
+	@Override
+	@AlfProp
+	@AlfQname(qname = "bcpg:parentLevel")
+	public CostListDataItem getParent() {
+		return this.parent;
+	}
+
+	@Override
+	public void setParent(CostListDataItem parent) {
+		this.parent = parent;
+	}
+
+	@AlfSingleAssoc
+	@AlfQname(qname="bcpg:costListComponent")
+	public NodeRef getComponentNodeRef() {
+		return componentNodeRef;
+	}
+
+	public void setComponentNodeRef(NodeRef componentNodeRef) {
+		this.componentNodeRef = componentNodeRef;
 	}
 	
 }

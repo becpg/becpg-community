@@ -16,22 +16,28 @@
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. 
  * If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package fr.becpg.repo.listvalue;
+package fr.becpg.repo.listvalue.impl;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.listvalue.impl.EntityListValuePlugin;
-import fr.becpg.repo.listvalue.impl.NodeRefListValueExtractor;
+import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.listvalue.ListValueEntry;
+import fr.becpg.repo.listvalue.ListValuePage;
+import fr.becpg.repo.listvalue.ListValueService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 @Service
@@ -41,6 +47,12 @@ public class ParentValuePlugin extends EntityListValuePlugin {
 	private static Log logger = LogFactory.getLog(ParentValuePlugin.class);
 
 	private static final String SOURCE_TYPE_PARENT_VALUE = "ParentValue";
+	
+	@Autowired
+	private EntityListDAO entityListDAO;
+
+	@Autowired
+	private AssociationService associationService;
 
 	@Override
 	public String[] getHandleSourceTypes() {
@@ -67,24 +79,50 @@ public class ParentValuePlugin extends EntityListValuePlugin {
 				itemId = new NodeRef((String) extras.get("itemId"));
 			}
 		}
-
-		return suggestDatalistItem(entityNodeRef, itemId, type, attributeQName, query, pageNum, pageSize);
+		
+		NodeRef listsContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
+		if (listsContainerNodeRef != null) {
+			NodeRef dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, type);
+			if(dataListNodeRef != null){
+				if(dictionaryService.getProperty(attributeQName) != null){
+					return suggestFromProp(dataListNodeRef, itemId, type, attributeQName, query, pageNum, pageSize);
+				}
+				else{
+					return suggestFromAssoc(dataListNodeRef, itemId, type, attributeQName, pageNum, pageSize);
+				}
+			}
+		}		
+		return new ListValuePage(new ArrayList<>(), pageNum, pageSize, null); 
 	}
 
-	private ListValuePage suggestDatalistItem(NodeRef entityNodeRef, NodeRef itemId, QName datalistType, QName propertyQName, String query,
+	private ListValuePage suggestFromProp(NodeRef dataListNodeRef, NodeRef itemId, QName datalistType, QName propertyQName, String query,
 			Integer pageNum, Integer pageSize) {
 
 		BeCPGQueryBuilder beCPGQueryBuilder = BeCPGQueryBuilder.createQuery().ofType(datalistType).andPropQuery(propertyQName, prepareQuery(query))
-				.inPath(nodeService.getPath(entityNodeRef).toPrefixString(namespaceService) + "/*/*");
+				.inPath(nodeService.getPath(dataListNodeRef).toPrefixString(namespaceService));
 
 		if (itemId != null) {
 			beCPGQueryBuilder.andNotID(itemId);
-
 		}
 		
 		logger.debug("suggestDatalistItem for query : " + beCPGQueryBuilder.toString());
-
 		List<NodeRef> ret = beCPGQueryBuilder.maxResults(RepoConsts.MAX_SUGGESTIONS).list();
 		return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(propertyQName, nodeService));
+	}
+	
+	private ListValuePage suggestFromAssoc(NodeRef dataListNodeRef, NodeRef itemId, QName datalistType, QName associationQName,
+			Integer pageNum, Integer pageSize){
+		
+		List<ListValueEntry> result = new ArrayList<>();				
+		for (NodeRef dataListItemNodeRef : entityListDAO.getListItems(dataListNodeRef, datalistType)) {
+			if (!dataListItemNodeRef.equals(itemId)) {
+				NodeRef nut = associationService.getTargetAssoc(dataListItemNodeRef, associationQName);
+				if (nut != null) {
+					String name = (String) nodeService.getProperty(nut, ContentModel.PROP_NAME);
+					result.add(new ListValueEntry(dataListItemNodeRef.toString(), name, datalistType.getLocalName()));
+				}
+			}
+		}
+		return new ListValuePage(result, pageNum, pageSize, null);
 	}
 }

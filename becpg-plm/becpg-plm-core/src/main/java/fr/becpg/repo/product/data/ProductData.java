@@ -17,6 +17,7 @@ import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.hierarchy.HierarchicalEntity;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.TareUnit;
+import fr.becpg.repo.product.data.packaging.VariantPackagingData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
@@ -55,7 +56,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private ProductUnit unit = ProductUnit.kg;
 	private ProductData entityTpl;
 	private List<NodeRef> plants = new ArrayList<NodeRef>();
-
+	private VariantPackagingData defaultVariantPackagingData;
 	/*
 	 * Transformable properties
 	 */
@@ -78,6 +79,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private Double unitPrice;
 	private Double profitability;
 	private Long breakEven;
+	private Long projectedQty;
 
 	/*
 	 * Formulation
@@ -256,6 +258,14 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		this.plants = plants;
 	}
 	
+	public VariantPackagingData getDefaultVariantPackagingData() {
+		return defaultVariantPackagingData;
+	}
+
+	public void setDefaultVariantPackagingData(VariantPackagingData defaultVariantPackagingData) {
+		this.defaultVariantPackagingData = defaultVariantPackagingData;
+	}
+
 	@AlfProp
 	@AlfQname(qname = "bcpg:productQty")
 	public Double getQty() {
@@ -421,6 +431,16 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 
 	public void setBreakEven(Long breakEven) {
 		this.breakEven = breakEven;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "bcpg:projectedQty")
+	public Long getProjectedQty() {
+		return projectedQty;
+	}
+
+	public void setProjectedQty(Long projectedQty) {
+		this.projectedQty = projectedQty;
 	}
 
 	@DataList

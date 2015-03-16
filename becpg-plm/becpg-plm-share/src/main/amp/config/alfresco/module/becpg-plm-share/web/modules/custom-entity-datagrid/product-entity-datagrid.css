@@ -277,7 +277,8 @@
 }
 
 .datagrid .reqTypeTolerated,.datagrid span.dynaError,.datagrid span.lcl-formulated-error,
-.datagrid span.nut-formulated-error
+.datagrid span.nut-formulated-error,
+.datagrid span.cost-formulated-error
 	{
 	background: url("../../components/images/states/warning-16.png")
 		no-repeat;
@@ -290,7 +291,8 @@
 }
 
 .datagrid span.lcl-formulated,
-.datagrid span.nut-formulated{
+.datagrid span.nut-formulated,
+.datagrid span.cost-formulated{
 	background: url("../../components/images/lcl-formulated-16.png")
 		no-repeat;
 	padding-left: 20px;
