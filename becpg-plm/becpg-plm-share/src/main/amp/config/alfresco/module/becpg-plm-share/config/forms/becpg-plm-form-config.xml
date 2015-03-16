@@ -246,6 +246,7 @@
 					<show id="bcpg:useByDate" force="true" />
 					<show id="bcpg:bestBeforeDate" force="true" />
 					<show id="bcpg:periodAfterOpening" force="true" />
+					<show id="bcpg:contractDate" force="true" />
 					<show id="bcpg:storageConditionsRef" force="true" />
 					<show id="bcpg:precautionOfUseRef" force="true" />
 					<show id="bcpg:preparationTips" force="true" />
@@ -435,7 +436,8 @@
 					<!-- consumer -->
 					<field id="bcpg:useByDate" set="consumer" />
 					<field id="bcpg:bestBeforeDate" set="consumer" />
-					<field id="bcpg:periodAfterOpening" set="consumer" />
+					<field id="bcpg:periodAfterOpening" set="consumer" />					
+					<field id="bcpg:contractDate" set="consumer" />
 					<field id="bcpg:storageConditionsRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -710,6 +712,7 @@
 					<show id="bcpg:useByDate" force="true" />
 					<show id="bcpg:bestBeforeDate" force="true" />
 					<show id="bcpg:periodAfterOpening" force="true" />
+					<show id="bcpg:contractDate" force="true" />
 					<show id="bcpg:storageConditionsRef" force="true" />
 					<show id="bcpg:precautionOfUseRef" force="true" />
 					<show id="bcpg:preparationTips" force="true" />
@@ -810,6 +813,7 @@
 					<field id="bcpg:useByDate" set="consumer" />
 					<field id="bcpg:bestBeforeDate" set="consumer" />
 					<field id="bcpg:periodAfterOpening" set="consumer" />
+					<field id="bcpg:contractDate" set="consumer" />
 					<field id="bcpg:storageConditionsRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -1911,19 +1915,23 @@
 					<show id="bcpg:entityTplRef" force="true" />
 
 					<!-- Consumer -->
+					
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:netWeight" force="true" />
 					<show id="bcpg:productDensity" />
 					<show id="bcpg:reconstitutionRate" />
+					<show id="bcpg:ingTypeV2" force="true" />
 					<show id="bcpg:useByDate" force="true" />
 					<show id="bcpg:bestBeforeDate" force="true" />
 					<show id="bcpg:periodAfterOpening" force="true" />
+					<show id="bcpg:contractDate" force="true" />
 					<show id="bcpg:storageConditionsRef" force="true" />
 					<show id="bcpg:precautionOfUseRef" force="true" />
 					<show id="bcpg:preparationTips" force="true" />
 					<show id="bcpg:productMicrobioCriteriaRef" />
 					<show id="bcpg:certificateDate" force="true" />
+					
 
 					<!-- pallet -->
 					<show id="pack:palletLayers" />
@@ -2021,14 +2029,22 @@
 					<field id="rep:reportTpls" set="mainInfo" />
 
 					<!-- consumer -->
+					
 					<field id="bcpg:productQty" set="consumer" />
 					<field id="bcpg:productUnit" set="consumer" />
 					<field id="bcpg:netWeight" set="consumer" />
 					<field id="bcpg:productDensity" set="consumer" />
 					<field id="bcpg:reconstitutionRate" set="consumer" />
+					<field id="bcpg:ingTypeV2" set="consumer">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ingTypeItem
+							</control-param>
+						</control>
+					</field>
 					<field id="bcpg:useByDate" set="consumer" />
 					<field id="bcpg:bestBeforeDate" set="consumer" />
 					<field id="bcpg:periodAfterOpening" set="consumer" />
+					<field id="bcpg:contractDate" set="consumer" />
 					<field id="bcpg:netWeight" set="consumer" />
 					<field id="bcpg:storageConditionsRef" set="consumer">
 						<control
@@ -2206,14 +2222,17 @@
 					<show id="rep:reportTpls" />
 
 					<!-- Consumer -->
+					
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:netWeight" force="true" />
 					<show id="bcpg:productDensity" />
 					<show id="bcpg:reconstitutionRate" />
+					<show id="bcpg:ingTypeV2" force="true" />
 					<show id="bcpg:useByDate" force="true" />
 					<show id="bcpg:bestBeforeDate" force="true" />
 					<show id="bcpg:periodAfterOpening" force="true" />
+					<show id="bcpg:contractDate" force="true" />
 					<show id="bcpg:storageConditionsRef" force="true" />
 					<show id="bcpg:precautionOfUseRef" force="true" />
 					<show id="bcpg:preparationTips" force="true" />
@@ -2286,14 +2305,22 @@
 					<field id="rep:reportTpls" set="mainInfo" />
 
 					<!-- consumer -->
+					
 					<field id="bcpg:productQty" set="consumer" />
 					<field id="bcpg:productUnit" set="consumer" />
 					<field id="bcpg:netWeight" set="consumer" />
 					<field id="bcpg:productDensity" set="consumer" />
 					<field id="bcpg:reconstitutionRate" set="consumer" />
+					<field id="bcpg:ingTypeV2" set="consumer">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ingTypeItem
+							</control-param>
+						</control>
+					</field>
 					<field id="bcpg:useByDate" set="consumer" />
 					<field id="bcpg:bestBeforeDate" set="consumer" />
 					<field id="bcpg:periodAfterOpening" set="consumer" />
+					<field id="bcpg:contractDate" set="consumer" />
 					<field id="bcpg:storageConditionsRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -2502,6 +2529,7 @@
 					<show id="bcpg:useByDate" force="true" />
 					<show id="bcpg:bestBeforeDate" force="true" />
 					<show id="bcpg:periodAfterOpening" force="true" />
+					<show id="bcpg:contractDate" force="true" />
 					<show id="bcpg:storageConditionsRef" force="true" />
 					<show id="bcpg:precautionOfUseRef" force="true" />
 					<show id="bcpg:preparationTips" force="true" />
@@ -2623,6 +2651,7 @@
 					<field id="bcpg:useByDate" set="consumer" />
 					<field id="bcpg:bestBeforeDate" set="consumer" />
 					<field id="bcpg:periodAfterOpening" set="consumer" />
+					<field id="bcpg:contractDate" set="consumer" />
 					<field id="bcpg:storageConditionsRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -2813,6 +2842,7 @@
 					<show id="bcpg:useByDate" force="true" />
 					<show id="bcpg:bestBeforeDate" force="true" />
 					<show id="bcpg:periodAfterOpening" force="true" />
+					<show id="bcpg:contractDate" force="true" />
 					<show id="bcpg:storageConditionsRef" force="true" />
 					<show id="bcpg:precautionOfUseRef" force="true" />
 					<show id="bcpg:preparationTips" force="true" />
@@ -2895,6 +2925,7 @@
 					<field id="bcpg:useByDate" set="consumer" />
 					<field id="bcpg:bestBeforeDate" set="consumer" />
 					<field id="bcpg:periodAfterOpening" set="consumer" />
+					<field id="bcpg:contractDate" set="consumer" />
 					<field id="bcpg:storageConditionsRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -3466,7 +3497,7 @@
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:ingCEECode" />
-					<show id="bcpg:ingTypeV2" />
+					<show id="bcpg:ingTypeV2"  force="true"/>
 				</field-visibility>
 
 				<appearance>
@@ -3499,7 +3530,7 @@
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:ingCEECode" />
-					<show id="bcpg:ingTypeV2" />
+					<show id="bcpg:ingTypeV2"  force="true"/>
 				</field-visibility>
 
 				<appearance>
@@ -3524,7 +3555,7 @@
 			<form id="filter">
 				<field-visibility>
 					<show id="cm:name" />
-					<show id="bcpg:ingTypeV2" />
+					<show id="bcpg:ingTypeV2"  force="true"/>
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:ingTypeV2">
@@ -3541,7 +3572,7 @@
 					<show id="cm:name" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:ingCEECode" />
-					<show id="bcpg:ingTypeV2" />
+					<show id="bcpg:ingTypeV2"  force="true"/>
 				</field-visibility>
 			</form>
 		</forms>
