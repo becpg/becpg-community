@@ -208,6 +208,35 @@ if (beCPG.module.EntityDataGridRenderers) {
 
     });
 	
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+      propertyName : "bcpg:cost",
+      renderer : function(oRecord, data, label, scope) {
+          
+          var title = Alfresco.util.encodeHTML(data.metadata);
+          var cssClass = data.metadata;
+          var isFormulated = oRecord.getData("itemData")["prop_bcpg_costListIsFormulated"].value;
+          if (isFormulated) {
+              var error = oRecord.getData("itemData")["prop_bcpg_costListFormulaErrorLog"].value;
+              if (error == null) {
+                  cssClass= "cost-formulated";
+              } else {
+                  cssClass= "cost-formulated-error";
+                  title = Alfresco.util.encodeHTML(error);
+              }
+          }
+          
+          if (oRecord.getData("itemData")["prop_bcpg_depthLevel"] != null) {
+              var padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 15;
+              return '<span class="' + cssClass + '" style="margin-left:' + padding + 'px;" title="'+title+'">' 
+              + Alfresco.util.encodeHTML(data.displayValue)
+                      + '</span>';
+          }
+
+          return '<span class="' + cssClass + '" title="'+title+'">' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+      }
+
+  });
+	
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : "bcpg:dynamicCharactValue",

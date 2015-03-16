@@ -5166,10 +5166,11 @@
 			<!-- Create item form -->
 			<form>
 				<field-visibility>
-					<show id="bcpg:costListCost" />
+					<show id="bcpg:costListCost" />					
 					<show id="bcpg:costListValue" />
 					<show id="bcpg:costListUnit" />
 					<show id="bcpg:costListMaxi" />
+					<show id="bcpg:parentLevel" />
 					<show id="bcpg:plants" force="true" />
 					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
@@ -5179,27 +5180,36 @@
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
+					<field id="bcpg:parentLevel">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:costList&#38;attributeName=bcpg:costListCost
+							</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
 					<show id="bcpg:variantIds" force="true" />
+					<show id="bcpg:depthLevel" />
 					<show id="bcpg:costListCost" />
 					<show id="bcpg:costListValue" />
 					<show id="bcpg:costListUnit" />
 					<show id="bcpg:costListMaxi" />
 					<show id="bcpg:isManualListItem" force="true" />
+					<show id="bcpg:plants" force="true" />
 					<show id="fm:commentCount" force="true" />
 					<show id="bcpg:costListIsFormulated" />
 					<show id="bcpg:costListFormulaErrorLog" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden"></field>
+					<field id="bcpg:depthLevel" label="hidden"></field>					
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 					<field id="bcpg:costListIsFormulated"  label="hidden"/>
 					<field id="bcpg:costListFormulaErrorLog"  label="hidden"/>
-				</appearance>
+				</appearance>				
 			</form>
 		</forms>
 	</config>
@@ -5210,6 +5220,7 @@
 			<form>
 				<field-visibility>
 					<show id="bcpg:costListCost" />
+					<show id="bcpg:parentLevel" />
 					<show id="bcpg:costListValue" />
 					<show id="bcpg:costListUnit" />
 					<show id="bcpg:costListMaxi" />
@@ -5222,72 +5233,11 @@
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
-				</appearance>
-			</form>
-		</forms>
-	</config>
-
-	<!-- bcpg:costDetailsList type -->
-	<config evaluator="model-type" condition="bcpg:costDetailsList">
-		<forms>
-			<!-- Create item form -->
-			<form>
-				<field-visibility>
-					<show id="bcpg:costDetailsListCost" />
-					<show id="bcpg:costDetailsListSource" />
-					<show id="bcpg:costDetailsListValue" />
-					<show id="bcpg:costDetailsListUnit" />
-					<show id="bcpg:costDetailsListPerc" />
-				</field-visibility>
-
-				<appearance>
-					<field id="bcpg:costDetailsListCost">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
-					</field>
-				</appearance>
-				<appearance>
-					<field id="bcpg:costDetailsListSource">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
-					</field>
-				</appearance>
-			</form>
-			<!-- Data Grid view -->
-			<form id="datagrid">
-				<field-visibility>
-					<show id="bcpg:costDetailsListCost" />
-					<show id="bcpg:costDetailsListSource" />
-					<show id="bcpg:costDetailsListValue" />
-					<show id="bcpg:costDetailsListUnit" />
-					<show id="bcpg:costDetailsListPerc" />
-				</field-visibility>
-			</form>
-		</forms>
-	</config>
-	<!-- bcpg:costDetailsList type (existing nodes) -->
-	<config evaluator="node-type" condition="bcpg:costDetailsList">
-		<forms>
-			<!-- Data List pop-up edit form -->
-			<form>
-				<field-visibility>
-					<show id="bcpg:costDetailsListCost" />
-					<show id="bcpg:costDetailsListSource" />
-					<show id="bcpg:costDetailsListValue" />
-					<show id="bcpg:costDetailsListUnit" />
-					<show id="bcpg:costDetailsListPerc" />
-				</field-visibility>
-
-				<appearance>
-					<field id="bcpg:costDetailsListCost">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
-					</field>
-				</appearance>
-				<appearance>
-					<field id="bcpg:costDetailsListSource">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					<field id="bcpg:parentLevel">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:costList&#38;attributeName=bcpg:costListCost
+							</control-param>
+						</control>
 					</field>
 				</appearance>
 			</form>
@@ -5574,7 +5524,7 @@
 					</field>
 					<field id="bcpg:parentLevel">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/ingListParentLevel
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:ingList&#38;attributeName=bcpg:ingListIng
 							</control-param>
 						</control>
 					</field>
@@ -5645,7 +5595,7 @@
 					</field>
 					<field id="bcpg:parentLevel">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/ingListParentLevel
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:ingList&#38;attributeName=bcpg:ingListIng
 							</control-param>
 						</control>
 					</field>
@@ -5747,7 +5697,7 @@
 					</field>
 					<field id="bcpg:parentLevel">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/nutListParentLevel
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:nutList&#38;attributeName=bcpg:nutListNut
 							</control-param>
 						</control>
 					</field>
@@ -5848,7 +5798,7 @@
 					</field>
 					<field id="bcpg:parentLevel">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/nutListParentLevel
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:nutList&#38;attributeName=bcpg:nutListNut
 							</control-param>
 							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>

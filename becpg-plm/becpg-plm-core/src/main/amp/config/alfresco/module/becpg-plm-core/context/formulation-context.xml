@@ -96,6 +96,7 @@
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.ProcessCalculatingFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
+					<property name="packagingHelper" ref="packagingHelper" />
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.AllergensCalculatingFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
@@ -110,6 +111,7 @@
 					<property name="entityTplService" ref="entityTplService" />
 					<property name="formulaService" ref="formulaService"/>
 					<property name="packagingHelper" ref="packagingHelper" />
+					<property name="alfrescoRepositoryProductData" ref="alfrescoRepository" />
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.IngsCalculatingFormulationHandler" >
 					<property name="nodeService" ref="nodeService" />
@@ -181,6 +183,7 @@
 					<property name="formulaService" ref="formulaService"/>
 					<property name="entityTplService" ref="entityTplService" />
 					<property name="packagingHelper" ref="packagingHelper" />
+					<property name="alfrescoRepositoryProductData" ref="alfrescoRepository" />
 					<property name="transientFormulation" value="true"/>
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.FormulaFormulationHandler" >

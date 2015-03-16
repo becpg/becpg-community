@@ -133,6 +133,10 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
     
     protected NodeRef cost3;
     
+    protected NodeRef cost4;
+    
+    protected NodeRef parentCost;
+    
     protected NodeRef fixedCost;
     
     protected NodeRef pkgCost1;
@@ -233,6 +237,14 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					properties.put(ContentModel.PROP_NAME, "cost3");			 					 				
 					properties.put(PLMModel.PROP_COSTCURRENCY, "€");
 					cost3 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
+					properties.clear();
+					properties.put(ContentModel.PROP_NAME, "cost4");			 					 				
+					properties.put(PLMModel.PROP_COSTCURRENCY, "€");
+					cost4 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
+					properties.clear();
+					properties.put(ContentModel.PROP_NAME, "parentCost");			 					 				
+					properties.put(PLMModel.PROP_COSTCURRENCY, "€");
+					parentCost = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "pkgCost1");			 					 				
 					properties.put(PLMModel.PROP_COSTCURRENCY, "€");

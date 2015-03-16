@@ -23,8 +23,6 @@ import org.alfresco.repo.copy.CopyServicePolicies;
 import org.alfresco.repo.copy.DefaultCopyBehaviourCallback;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.service.namespace.QName;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
@@ -34,8 +32,6 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
 public class CostListPolicy extends AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyNodePolicy {
 
-	private static Log logger = LogFactory.getLog(CostListPolicy.class);
-	
 	private EntityListDAO entityListDAO;
 	
 	private AssociationService associationService;
@@ -67,7 +63,6 @@ public class CostListPolicy extends AbstractBeCPGPolicy implements CopyServicePo
 		public boolean getMustCopy(QName classQName, CopyDetails copyDetails) {			
 			if (nodeService.hasAspect(entityListDAO.getEntity(copyDetails.getSourceNodeRef()), BeCPGModel.ASPECT_ENTITY_TPL)
 					&& associationService.getTargetAssocs(copyDetails.getSourceNodeRef(), PLMModel.ASSOC_PLANTS).isEmpty() == false) {
-				logger.info("callback false");
 				return false;
 			}
 			return true;

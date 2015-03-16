@@ -512,21 +512,21 @@
 					<field id="pjt:tlPrevTasks" set="mainInfo">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/TaskValue?className=pjt:taskList
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
 							</control-param>
 							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
 					</field>	
 					<field id="bcpg:parentLevel" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/TaskValue?className=pjt:taskList
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
 							</control-param>
 						</control>
 					</field>
 					<field id="pjt:tlRefusedTaskRef" set="mainInfo">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/TaskValue?className=pjt:taskList
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
 							</control-param>
 							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
@@ -584,7 +584,7 @@
 					<field id="pjt:tlPrevTasks">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/TaskValue?className=pjt:taskList
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
 							</control-param>
 							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
@@ -621,13 +621,13 @@
 					<field id="pjt:tlPrevTasks" set="mainInfo">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/TaskValue?className=pjt:taskList
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
 							</control-param>
 						</control>
 					</field>		
 					<field id="bcpg:parentLevel" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/TaskValue?className=pjt:taskList
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
 							</control-param>
 						</control>
 					</field>
@@ -677,21 +677,21 @@
 					<field id="pjt:tlPrevTasks" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/TaskValue?className=pjt:taskList
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
 							</control-param>
 							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
 					</field>	
 					<field id="bcpg:parentLevel" >
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/TaskValue?className=pjt:taskList
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
 							</control-param>
 						</control>
 					</field>
 					<field id="pjt:tlRefusedTaskRef" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/TaskValue?className=pjt:taskList
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
 							</control-param>
 							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
@@ -811,7 +811,7 @@
 					<field id="pjt:dlTask">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/TaskValue?className=pjt:taskList
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
 							</control-param>
 						</control>
 					</field>
@@ -872,7 +872,7 @@
 					<field id="pjt:dlTask">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/TaskValue?className=pjt:taskList
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
 							</control-param>
 						</control>
 					</field>
@@ -1104,7 +1104,7 @@
 					<field id="pjt:alTaskId">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/TaskValue?className=pjt:taskList
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
 							</control-param>
 						</control>
 					</field>
@@ -1134,7 +1134,7 @@
 					<field id="pjt:ltlTask" mandatory="false" read-only="false">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/TaskValue?className=pjt:taskList
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
 							</control-param>
 						</control>
 					</field>
@@ -1160,7 +1160,7 @@
 					<field id="pjt:ltlTask" mandatory="false" read-only="false">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/TaskValue?className=pjt:taskList
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
 							</control-param>
 						</control>
 					</field>					
