@@ -1787,11 +1787,15 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				
 				properties.put(ContentModel.PROP_NAME, "costMOTransfo");			 					 				
 				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
-				NodeRef costMOTransfoNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
+				NodeRef costMOTransfoNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();								
 				
 				properties.put(ContentModel.PROP_NAME, "costMOMaintenance");			 					 				
 				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
 				NodeRef costMOMaintenanceNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
+
+				properties.put(ContentModel.PROP_NAME, "costEmb");			 					 				
+				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
+				NodeRef costEmbNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
 				
 				//Steps
 				logger.debug("Steps");
@@ -1814,6 +1818,10 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				properties.put(ContentModel.PROP_NAME, "Etape Ligne");			 					 				
 				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
 				NodeRef ligneStepNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
+				
+				properties.put(ContentModel.PROP_NAME, "Etape emb");			 					 				
+				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
+				NodeRef embStepNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
 				
 				// resources
 				logger.debug("Resources");
@@ -1861,6 +1869,13 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				ligneResourceData.setCostList(costList);
 				NodeRef ligneResourceNodeRef= alfrescoRepository.create(getTestFolderNodeRef(), ligneResourceData).getNodeRef();
 				
+				ResourceProductData emballageResourceData = new ResourceProductData();
+				emballageResourceData.setName("Emballage");
+				costList = new ArrayList<CostListDataItem>();
+				costList.add(new CostListDataItem(null, 40d, "€/h", null, costEmbNodeRef, false));
+				emballageResourceData.setCostList(costList);
+				NodeRef emballageResourceNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), emballageResourceData).getNodeRef();
+				
 				/*-- Create finished product --*/
 				dataLists.clear();
 				dataLists.add(MPMModel.TYPE_PROCESSLIST);
@@ -1873,7 +1888,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setDensity(1d);
 				List<ProcessListDataItem> processList = new ArrayList<ProcessListDataItem>();
 				//decoupe
-				processList.add(new ProcessListDataItem(null, 0.4d, 50d, 4d, ProcessListUnit.kg, null, null, decoupeNodeRef, null, boucherResourceNodeRef));
+				processList.add(new ProcessListDataItem(null, 0.4d, 50d, 200d, ProcessListUnit.kg, null, null, decoupeNodeRef, null, boucherResourceNodeRef));
 				//hachage
 				processList.add(new ProcessListDataItem(null, 0.4d, 1d, 200d, ProcessListUnit.kg, null, null, hachageNodeRef, null, hachoirResourceNodeRef));
 				//cuisson
@@ -1882,13 +1897,20 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				processList.add(new ProcessListDataItem(null, 0.24d, 1d, 600d, ProcessListUnit.kg, null, null, melangeNodeRef, null, malaxeurResourceNodeRef));
 				//ligne
 				processList.add(new ProcessListDataItem(null, 1d, 1d, 500d, ProcessListUnit.kg, null, null, ligneStepNodeRef, null, ligneResourceNodeRef));				
+				//emballage
+				processList.add(new ProcessListDataItem(null, 1d, 1d, 100d, ProcessListUnit.Box, null, null, embStepNodeRef, null, emballageResourceNodeRef));
 				finishedProduct.getProcessListView().setProcessList(processList);
 				
 				costList = new ArrayList<CostListDataItem>();				
 				costList.add(new CostListDataItem(null, null, null, null, costTransfoNodeRef, null));
 				costList.add(new CostListDataItem(null, null, null, null, costMOTransfoNodeRef, null));
 				costList.add(new CostListDataItem(null, null, null, null, costMOMaintenanceNodeRef, null));
+				costList.add(new CostListDataItem(null, null, null, null, costEmbNodeRef, null));
 				finishedProduct.setCostList(costList);
+				
+				List<PackagingListDataItem> packList = new ArrayList<>();
+				packList.add(new PackagingListDataItem(null, 25d, PackagingListUnit.PP, PackagingLevel.Secondary, true, packagingKit1NodeRef));			
+				finishedProduct.getPackagingListView().setPackagingList(packList);
 				
 				NodeRef finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 								
@@ -1907,7 +1929,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				assertNotNull("CostList is null", formulatedProduct.getCostList());
 				for(CostListDataItem costListDataItem : formulatedProduct.getCostList()){
 					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
-					logger.trace(trace);
+					logger.debug(trace);
 					//Transfo
 					if(costListDataItem.getCost().equals(costTransfoNodeRef)){
 						assertEquals(df.format(0.156d), df.format(costListDataItem.getValue()));
@@ -1926,13 +1948,20 @@ public class FormulationTest extends AbstractFinishedProductTest {
 						assertEquals("€/kg", costListDataItem.getUnit());
 						checks++;
 					}
+					//Emb
+					if(costListDataItem.getCost().equals(costEmbNodeRef)){
+						// =40/(100*25*1)
+						assertEquals(df.format(0.016d), df.format(costListDataItem.getValue()));
+						assertEquals("€/kg", costListDataItem.getUnit());
+						checks++;
+					}
 				}
-				assertEquals(3, checks);
+				assertEquals(4, checks);
 				
 				logger.debug("/*-- Verify process --*/");							
 				checks = 0;
 				for(ProcessListDataItem p : formulatedProduct.getProcessListView().getProcessList()){
-					//logger.debug(p.toString());
+					logger.debug(p.toString());
 					
 					if(p.getStep() != null){						
 					
@@ -1940,7 +1969,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 						if(p.getStep().equals(decoupeNodeRef)){
 							assertEquals(0.4d, p.getQty());
 							assertEquals(50.0d, p.getQtyResource());
-							assertEquals(4.0d, p.getRateResource());		
+							assertEquals(200.0d, p.getRateResource());		
 							assertEquals(500.0d, p.getRateProduct());						
 							checks++;
 						}
@@ -1980,10 +2009,19 @@ public class FormulationTest extends AbstractFinishedProductTest {
 							assertEquals(500.0d, p.getRateProduct());						
 							checks++;
 						}
+						
+						//emb
+						if(p.getStep().equals(embStepNodeRef)){
+							assertEquals(1.0d, p.getQty());
+							assertEquals(1.0d, p.getQtyResource());
+							assertEquals(100.0d, p.getRateResource());	
+							assertEquals(2500.0d, p.getRateProduct());						
+							checks++;
+						}
 					}
 				}
 				
-				assertEquals(5, checks);
+				assertEquals(6, checks);
 								
 				return null;
 

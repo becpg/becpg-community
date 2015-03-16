@@ -3,32 +3,37 @@
  */
 package fr.becpg.repo.product.data.productList;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
+import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
+import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.model.AbstractManualDataItem;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
+import fr.becpg.repo.repository.model.Synchronisable;
 
 @AlfType
 @AlfQname(qname = "bcpg:costList")
-public class CostListDataItem extends AbstractManualDataItem implements SimpleListDataItem{
+public class CostListDataItem extends AbstractManualDataItem implements SimpleListDataItem, Synchronisable, CompositeDataItem<CostListDataItem>{
 	
 
-	private Double value = 0d;
-	
-	private String unit;	
-	
-	private Double maxi = null;
-	
-	private NodeRef cost;
-	
-	private Boolean isFormulated;
-	
-	private String errorLog;
+	private Double value = 0d;	
+	private String unit;		
+	private Double maxi = null;	
+	private NodeRef cost;	
+	private Boolean isFormulated;	
+	private String errorLog;	
+	private List<NodeRef> plants = new ArrayList<NodeRef>();	
+	private Integer depthLevel;
+	private CostListDataItem parent;
+	private NodeRef componentNodeRef;
 	
 		
 	@AlfProp
@@ -123,6 +128,15 @@ public class CostListDataItem extends AbstractManualDataItem implements SimpleLi
 		this.errorLog = errorLog;
 	}
 
+	@AlfMultiAssoc
+	@AlfQname(qname="bcpg:plants")
+	public List<NodeRef> getPlants() {
+		return plants;
+	}
+
+	public void setPlants(List<NodeRef> plants) {
+		this.plants = plants;
+	}
 	
 	/**
 	 * Instantiates a new cost list data item.
@@ -147,6 +161,17 @@ public class CostListDataItem extends AbstractManualDataItem implements SimpleLi
 		this.maxi = maxi;
 		this.cost = cost;
 		this.isManual = isManual;
+	}
+	
+	public CostListDataItem(NodeRef nodeRef, Double value, String unit, Double maxi, NodeRef cost, Boolean isManual, List<NodeRef> plants){
+		super();
+		this.nodeRef = nodeRef;		
+		this.value = value;
+		this.unit =  unit;
+		this.maxi = maxi;
+		this.cost = cost;
+		this.isManual = isManual;
+		this.plants = plants;
 	}
 	
 	
@@ -240,7 +265,43 @@ public class CostListDataItem extends AbstractManualDataItem implements SimpleLi
 		return "CostListDataItem [value=" + value + ", unit=" + unit + ", maxi=" + maxi + ", cost=" + cost + "]";
 	}
 
-	
+	@Override
+	public boolean isSynchronisable() {
+		return plants.isEmpty();
+	}
+
+	@Override
+	@AlfProp
+	@AlfQname(qname = "bcpg:depthLevel")
+	public Integer getDepthLevel() {
+		return depthLevel;
+	}
+
+	public void setDepthLevel(Integer depthLevel) {
+		this.depthLevel = depthLevel;
+	}
+
+	@Override
+	@AlfProp
+	@AlfQname(qname = "bcpg:parentLevel")
+	public CostListDataItem getParent() {
+		return this.parent;
+	}
+
+	@Override
+	public void setParent(CostListDataItem parent) {
+		this.parent = parent;
+	}
+
+	@AlfSingleAssoc
+	@AlfQname(qname="bcpg:costListComponent")
+	public NodeRef getComponentNodeRef() {
+		return componentNodeRef;
+	}
+
+	public void setComponentNodeRef(NodeRef componentNodeRef) {
+		this.componentNodeRef = componentNodeRef;
+	}
 	
 }
 

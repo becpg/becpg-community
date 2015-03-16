@@ -3,7 +3,6 @@ package fr.becpg.repo.product.report;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -36,7 +35,8 @@ import fr.becpg.repo.product.ProductDictionaryService;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ResourceProductData;
-import fr.becpg.repo.product.data.constraints.PackagingLevel;
+import fr.becpg.repo.product.data.packaging.PackagingData;
+import fr.becpg.repo.product.data.packaging.VariantPackagingData;
 import fr.becpg.repo.product.data.productList.AbstractManualVariantListDataItem;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -48,6 +48,7 @@ import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.ResourceParamListItem;
 import fr.becpg.repo.product.formulation.FormulationHelper;
+import fr.becpg.repo.product.formulation.PackagingHelper;
 import fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -97,6 +98,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	@Autowired
 	protected AlfrescoRepository<ProductData> alfrescoRepository;
+	
+	@Autowired
+	protected PackagingHelper packagingHelper;
 
 	/**
 	 * load the datalists of the product data.
@@ -467,12 +471,11 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	private void loadPackagingList(ProductData productData, Element dataListsElt, NodeRef defaultVariantNodeRef, Map<String, byte[]> images) {
 
 		if (productData.hasPackagingListEl(EffectiveFilters.EFFECTIVE)) {
-
-			PackagingData packagingData = new PackagingData(productData.getVariants());
+			
 			Element packagingListElt = dataListsElt.addElement(PLMModel.TYPE_PACKAGINGLIST.getLocalName() + "s");
 
 			for (PackagingListDataItem dataItem : productData.getPackagingList(EffectiveFilters.EFFECTIVE)) {
-				loadPackagingItem(dataItem, packagingListElt, packagingData, defaultVariantNodeRef, images);
+				loadPackagingItem(dataItem, packagingListElt, defaultVariantNodeRef, images);
 			}
 
 			if (extractInMultiLevel) {
@@ -481,7 +484,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 						ProductData sfProductData = alfrescoRepository.findOne(dataItem.getProduct());
 						if (sfProductData.hasPackagingListEl(EffectiveFilters.EFFECTIVE)) {
 							for (PackagingListDataItem subDataItem : sfProductData.getPackagingList(EffectiveFilters.EFFECTIVE)) {
-								loadPackagingItem(subDataItem, packagingListElt, packagingData, defaultVariantNodeRef, images);
+								loadPackagingItem(subDataItem, packagingListElt, defaultVariantNodeRef, images);
 							}
 						}
 					}
@@ -499,6 +502,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					FormulationHelper.DEFAULT_NET_WEIGHT));
 			BigDecimal grossWeightPrimary = tarePrimary.add(netWeightPrimary);
 
+			PackagingData packagingData = packagingHelper.getPackagingData(productData);
 			for (Map.Entry<NodeRef, VariantPackagingData> kv : packagingData.getVariants().entrySet()) {
 				VariantPackagingData variantPackagingData = kv.getValue();
 
@@ -590,58 +594,28 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	}
 
-	private void loadPackagingItem(PackagingListDataItem dataItem, Element packagingListElt, PackagingData packagingData,
+	private void loadPackagingItem(PackagingListDataItem dataItem, Element packagingListElt,
 			NodeRef defaultVariantNodeRef, Map<String, byte[]> images) {
 
 		if (nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_PACKAGINGKIT)) {
-			loadPackagingKit(dataItem, packagingListElt, packagingData, defaultVariantNodeRef);
+			loadPackagingKit(dataItem, packagingListElt, defaultVariantNodeRef);
 			Element imgsElt = (Element) packagingListElt.getDocument().selectSingleNode(TAG_ENTITY + "/" + TAG_IMAGES);
 			if (imgsElt != null) {
 				extractEntityImages(dataItem.getProduct(), imgsElt, images);
 			}
 		} else {
-			loadPackaging(dataItem, packagingListElt, packagingData, defaultVariantNodeRef, dataItem.getVariants());
+			loadPackaging(dataItem, packagingListElt, defaultVariantNodeRef, dataItem.getVariants());
 		}
 	}
 
-	private Element loadPackaging(PackagingListDataItem dataItem, Element packagingListElt, PackagingData packagingData,
+	private Element loadPackaging(PackagingListDataItem dataItem, Element packagingListElt,
 			NodeRef defaultVariantNodeRef, List<NodeRef> currentVariants) {
-		QName nodeType = nodeService.getType(dataItem.getProduct());
 
 		Element partElt = packagingListElt.addElement(PLMModel.TYPE_PACKAGINGLIST.getLocalName());
 		loadProductData(dataItem.getProduct(), partElt);
 		loadDataListItemAttributes(dataItem, partElt);
 
 		extractVariants(dataItem.getVariants(), partElt, defaultVariantNodeRef);
-
-		if (nodeService.hasAspect(dataItem.getProduct(), PackModel.ASPECT_TARE)) {
-
-			// Sum tare (don't take in account packagingKit)
-			if (dataItem.getPkgLevel() != null && !PLMModel.TYPE_PACKAGINGKIT.equals(nodeType)) {
-
-				BigDecimal tare = FormulationHelper.getTareInKg(dataItem, nodeService);
-
-				if (dataItem.getPkgLevel().equals(PackagingLevel.Secondary)) {
-					packagingData.addTareSecondary(currentVariants, tare);
-				} else if (dataItem.getPkgLevel().equals(PackagingLevel.Tertiary)) {
-					packagingData.addTareTertiary(currentVariants, tare);
-				}
-			}
-		}
-
-		if (nodeService.hasAspect(dataItem.getProduct(), PackModel.ASPECT_PALLET)) {
-			logger.debug("load pallet aspect ");
-
-			// product per box and boxes per pallet
-			if (dataItem.getQty() != null) {
-				logger.debug("setProductPerBoxes " + dataItem.getQty().intValue());
-				packagingData.setProductPerBoxes(currentVariants, dataItem.getQty().intValue());
-			}
-			Integer palletBoxesPerPallet = (Integer) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_PALLET_BOXES_PER_PALLET);
-			if (palletBoxesPerPallet != null) {
-				packagingData.setBoxesPerPallet(currentVariants, palletBoxesPerPallet);
-			}
-		}
 
 		// we want labeling template <labelingTemplate>...</labelingTemplate>
 		if (nodeService.hasAspect(dataItem.getNodeRef(), PackModel.ASPECT_LABELING)) {
@@ -653,15 +627,15 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	// manage 2 level depth
 	@SuppressWarnings("unchecked")
-	private void loadPackagingKit(PackagingListDataItem dataItem, Element packagingListElt, PackagingData packagingData, NodeRef defaultVariantNodeRef) {
+	private void loadPackagingKit(PackagingListDataItem dataItem, Element packagingListElt, NodeRef defaultVariantNodeRef) {
 
-		Element packagingKitEl = loadPackaging(dataItem, packagingListElt, packagingData, defaultVariantNodeRef, dataItem.getVariants());
+		Element packagingKitEl = loadPackaging(dataItem, packagingListElt, defaultVariantNodeRef, dataItem.getVariants());
 		Element dataListsElt = packagingKitEl.addElement(TAG_DATALISTS);
 		Element packagingKitListEl = dataListsElt.addElement(PLMModel.TYPE_PACKAGINGLIST.getLocalName() + "s");
 		ProductData packagingKitData = alfrescoRepository.findOne(dataItem.getProduct());
 
 		for (PackagingListDataItem p : packagingKitData.getPackagingList(EffectiveFilters.EFFECTIVE)) {
-			loadPackaging(p, packagingKitListEl, packagingData, defaultVariantNodeRef, dataItem.getVariants());
+			loadPackaging(p, packagingKitListEl, defaultVariantNodeRef, dataItem.getVariants());
 		}
 	}
 
@@ -677,115 +651,6 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	private String toString(BigDecimal value) {
 
 		return value == null ? VALUE_NULL : toString(value.doubleValue());
-	}
-
-	private class PackagingData {
-		private Map<NodeRef, VariantPackagingData> variants = new HashMap<>();
-
-		private Collection<VariantPackagingData> getVariantPackagingData(List<NodeRef> variantNodeRefs) {
-			if (variantNodeRefs == null || variantNodeRefs.isEmpty()) {
-				return variants.values();
-			}
-			List<VariantPackagingData> selectedVariants = new ArrayList<>();
-			for (NodeRef variantNodeRef : variantNodeRefs) {
-				selectedVariants.add(variants.get(variantNodeRef));
-			}
-			return selectedVariants;
-		}
-
-		public PackagingData(List<VariantData> variantDataList) {
-			boolean hasDefaultVariant = false;
-
-			for (VariantData variantData : variantDataList) {
-				variants.put(variantData.getNodeRef(), new VariantPackagingData());
-				if (variantData.getIsDefaultVariant()) {
-					hasDefaultVariant = true;
-				}
-			}
-
-			if (!hasDefaultVariant) {
-				variants.put(null, new VariantPackagingData());
-			}
-		}
-
-		public Map<NodeRef, VariantPackagingData> getVariants() {
-			return variants;
-		}
-
-		public void addTareSecondary(List<NodeRef> variantNodeRefs, BigDecimal value) {
-			if (value != null) {
-				for (VariantPackagingData variantPackagingData : getVariantPackagingData(variantNodeRefs)) {
-					if (variantPackagingData.getTareSecondary() != null) {
-						variantPackagingData.setTareSecondary(variantPackagingData.getTareSecondary().add(value));
-					} else {
-						variantPackagingData.setTareSecondary(value);
-					}
-				}
-			}
-		}
-
-		public void addTareTertiary(List<NodeRef> variantNodeRefs, BigDecimal value) {
-			if (value != null) {
-				for (VariantPackagingData variantPackagingData : getVariantPackagingData(variantNodeRefs)) {
-					if (variantPackagingData.getTareTertiary() != null) {
-						variantPackagingData.setTareTertiary(variantPackagingData.getTareTertiary().add(value));
-					} else {
-						variantPackagingData.setTareTertiary(value);
-					}
-				}
-			}
-		}
-
-		public void setProductPerBoxes(List<NodeRef> variantNodeRefs, Integer value) {
-			for (VariantPackagingData variantPackagingData : getVariantPackagingData(variantNodeRefs)) {
-				variantPackagingData.setProductPerBoxes(value);
-			}
-		}
-
-		public void setBoxesPerPallet(List<NodeRef> variantNodeRefs, Integer value) {
-			for (VariantPackagingData variantPackagingData : getVariantPackagingData(variantNodeRefs)) {
-				variantPackagingData.setBoxesPerPallet(value);
-			}
-		}
-	}
-
-	private class VariantPackagingData {
-		private BigDecimal tareSecondary = new BigDecimal(0d);
-		private BigDecimal tareTertiary = new BigDecimal(0d);
-		private Integer productPerBoxes;
-		private Integer boxesPerPallet;
-
-		public BigDecimal getTareSecondary() {
-			return tareSecondary;
-		}
-
-		public void setTareSecondary(BigDecimal tareSecondary) {
-			this.tareSecondary = tareSecondary;
-		}
-
-		public BigDecimal getTareTertiary() {
-			return tareTertiary;
-		}
-
-		public void setTareTertiary(BigDecimal tareTertiary) {
-			this.tareTertiary = tareTertiary;
-		}
-
-		public Integer getProductPerBoxes() {
-			return productPerBoxes;
-		}
-
-		public void setProductPerBoxes(Integer productPerBoxes) {
-			this.productPerBoxes = productPerBoxes;
-		}
-
-		public Integer getBoxesPerPallet() {
-			return boxesPerPallet;
-		}
-
-		public void setBoxesPerPallet(Integer boxesPerPallet) {
-			this.boxesPerPallet = boxesPerPallet;
-		}
 	}
 
 	protected NodeRef loadVariants(ProductData productData, Element entityElt) {

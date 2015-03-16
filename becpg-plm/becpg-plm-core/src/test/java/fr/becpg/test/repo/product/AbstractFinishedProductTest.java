@@ -40,8 +40,10 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
+import fr.becpg.model.PackModel;
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
+import fr.becpg.repo.product.data.PackagingKitData;
 import fr.becpg.repo.product.data.PackagingMaterialData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
@@ -121,11 +123,19 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
     protected NodeRef packagingMaterial2NodeRef;
     protected NodeRef packagingMaterial3NodeRef;
     
+    protected NodeRef packagingKit1NodeRef;
+    
     /** The cost1. */
     protected NodeRef cost1;
     
     /** The cost2. */
     protected NodeRef cost2;
+    
+    protected NodeRef cost3;
+    
+    protected NodeRef cost4;
+    
+    protected NodeRef parentCost;
     
     protected NodeRef fixedCost;
     
@@ -199,6 +209,10 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
     
     protected NodeRef supplier2;
     
+    protected NodeRef plant1;
+    
+    protected NodeRef plant2;
+    
     /**
 	 * Inits the parts.
 	 */
@@ -219,6 +233,18 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					properties.put(ContentModel.PROP_NAME, "cost2");			 					 				
 					properties.put(PLMModel.PROP_COSTCURRENCY, "€");
 					cost2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
+					properties.clear();
+					properties.put(ContentModel.PROP_NAME, "cost3");			 					 				
+					properties.put(PLMModel.PROP_COSTCURRENCY, "€");
+					cost3 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
+					properties.clear();
+					properties.put(ContentModel.PROP_NAME, "cost4");			 					 				
+					properties.put(PLMModel.PROP_COSTCURRENCY, "€");
+					cost4 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
+					properties.clear();
+					properties.put(ContentModel.PROP_NAME, "parentCost");			 					 				
+					properties.put(PLMModel.PROP_COSTCURRENCY, "€");
+					parentCost = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "pkgCost1");			 					 				
 					properties.put(PLMModel.PROP_COSTCURRENCY, "€");
@@ -381,6 +407,13 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "supplier2");			 					 				
 					supplier2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_SUPPLIER, properties).getChildRef();
+					
+					//Plants
+					properties.put(ContentModel.PROP_NAME, "plant1");			 					 				
+					plant1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_PLANT, properties).getChildRef();
+					properties.clear();
+					properties.put(ContentModel.PROP_NAME, "plant2");			 					 				
+					plant2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_PLANT, properties).getChildRef();
 					
 					/*-- Create raw materials --*/
 					logger.debug("/*-- Create raw materials --*/");
@@ -842,6 +875,12 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					costList.add(new CostListDataItem(null, 2d, "€/P", null, pkgCost2, false));
 					packagingMaterial3.setCostList(costList);					
 					packagingMaterial3NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial3).getNodeRef();
+										
+					PackagingKitData packagingKit1 = new PackagingKitData();
+					packagingKit1.setName("Packaging kit 1");
+					packagingKit1.setLegalName("Legal Packaging kit 1");			
+					packagingKit1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial3).getNodeRef();
+					nodeService.setProperty(packagingKit1NodeRef, PackModel.PROP_PALLET_BOXES_PER_PALLET, 40);
 					
 //				}
 //				else{

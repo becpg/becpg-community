@@ -1,0 +1,97 @@
+package fr.becpg.repo.product.data.packaging;
+
+import java.math.BigDecimal;
+
+/**
+ * Manage variant
+ * @author quere
+ *
+ */
+public class VariantPackagingData {
+	
+	private BigDecimal tareSecondary = new BigDecimal(0d);
+	private BigDecimal tareTertiary = new BigDecimal(0d);
+	private Integer productPerBoxes;
+	private Integer boxesPerPallet;
+
+	public BigDecimal getTareSecondary() {
+		return tareSecondary;
+	}
+
+	public void setTareSecondary(BigDecimal tareSecondary) {
+		this.tareSecondary = tareSecondary;
+	}
+
+	public BigDecimal getTareTertiary() {
+		return tareTertiary;
+	}
+
+	public void setTareTertiary(BigDecimal tareTertiary) {
+		this.tareTertiary = tareTertiary;
+	}
+
+	public Integer getProductPerBoxes() {
+		return productPerBoxes;
+	}
+
+	public void setProductPerBoxes(Integer productPerBoxes) {
+		this.productPerBoxes = productPerBoxes;
+	}
+
+	public Integer getBoxesPerPallet() {
+		return boxesPerPallet;
+	}
+
+	public void setBoxesPerPallet(Integer boxesPerPallet) {
+		this.boxesPerPallet = boxesPerPallet;
+	}
+	
+	@Override
+	public String toString() {
+		return "VariantPackagingData [tareSecondary=" + tareSecondary + ", tareTertiary=" + tareTertiary
+				+ ", productPerBoxes=" + productPerBoxes + ", boxesPerPallet=" + boxesPerPallet + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((boxesPerPallet == null) ? 0 : boxesPerPallet.hashCode());
+		result = prime * result + ((productPerBoxes == null) ? 0 : productPerBoxes.hashCode());
+		result = prime * result + ((tareSecondary == null) ? 0 : tareSecondary.hashCode());
+		result = prime * result + ((tareTertiary == null) ? 0 : tareTertiary.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		VariantPackagingData other = (VariantPackagingData) obj;
+		if (boxesPerPallet == null) {
+			if (other.boxesPerPallet != null)
+				return false;
+		} else if (!boxesPerPallet.equals(other.boxesPerPallet))
+			return false;
+		if (productPerBoxes == null) {
+			if (other.productPerBoxes != null)
+				return false;
+		} else if (!productPerBoxes.equals(other.productPerBoxes))
+			return false;
+		if (tareSecondary == null) {
+			if (other.tareSecondary != null)
+				return false;
+		} else if (!tareSecondary.equals(other.tareSecondary))
+			return false;
+		if (tareTertiary == null) {
+			if (other.tareTertiary != null)
+				return false;
+		} else if (!tareTertiary.equals(other.tareTertiary))
+			return false;
+		return true;
+	}
+}

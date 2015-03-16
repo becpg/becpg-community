@@ -41,9 +41,15 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 	private static Log logger = LogFactory.getLog(ProcessCalculatingFormulationHandler.class);
 
 	private AlfrescoRepository<ResourceProductData> alfrescoRepository;
+	
+	private PackagingHelper packagingHelper;
 
 	public void setAlfrescoRepository(AlfrescoRepository<ResourceProductData> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
+	}
+
+	public void setPackagingHelper(PackagingHelper packagingHelper) {
+		this.packagingHelper = packagingHelper;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -57,7 +63,11 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 			logger.debug("no process => no formulation");
 			return true;
 		}
-
+		
+		if(formulatedProduct.getDefaultVariantPackagingData() == null){
+			formulatedProduct.setDefaultVariantPackagingData(packagingHelper.getDefaultVariantPackagingData(formulatedProduct));
+		}
+		
 		if (formulatedProduct instanceof ResourceProductData) {
 
 			int sort = 0;
@@ -124,16 +134,24 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 		}
 
 		// visit resources and steps from the end to the beginning
-
 		for (ProcessListDataItem p : formulatedProduct.getProcessList(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT)) {
 
-			if (p.getRateResource() != null && p.getQtyResource() != null) {
+			if (p.getRateResource() != null) {
 				if (ProcessListUnit.P.equals(p.getUnit())) {
-					p.setRateProduct(p.getQtyResource() * p.getRateResource());
-				} else {
-					Double productQtyToTransform = p.getQty() != null ? p.getQty() : FormulationHelper.getNetWeight(formulatedProduct, null);
+					p.setRateProduct(p.getRateResource());
+				}
+				else if(ProcessListUnit.Box.equals(p.getUnit())){
+					if(formulatedProduct.getDefaultVariantPackagingData() != null && formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() != null){
+						p.setRateProduct(p.getRateResource() * formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes());
+					}
+					else{
+						throw new FormulateException("Number of product per boxes is not defined on product " + formulatedProduct.getNodeRef());
+					}					
+				}
+				else {
+					Double productQtyToTransform = p.getQty() != null ? p.getQty() : FormulationHelper.getNetWeight(formulatedProduct, null);										
 					if (productQtyToTransform != null) {
-						p.setRateProduct(p.getQtyResource() * p.getRateResource() / productQtyToTransform);
+						p.setRateProduct(p.getRateResource() / productQtyToTransform);
 					} else {
 						p.setRateProduct(null);
 					}
