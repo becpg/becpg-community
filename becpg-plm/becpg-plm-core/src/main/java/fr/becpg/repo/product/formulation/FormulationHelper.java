@@ -16,7 +16,6 @@ import fr.becpg.model.PackModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.data.PackagingKitData;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.ResourceProductData;
 import fr.becpg.repo.product.data.constraints.CompoListUnit;
 import fr.becpg.repo.product.data.constraints.PackagingListUnit;
 import fr.becpg.repo.product.data.constraints.ProcessListUnit;
@@ -191,35 +190,42 @@ public class FormulationHelper {
 	 * 
 	 * @param processListDataItem
 	 * @return
+	 * @throws FormulateException 
 	 */
-	public static Double getQty(ProductData formulatedProduct, ProcessListDataItem processListDataItem) {
+	public static Double getQty(ProductData formulatedProduct, ProcessListDataItem processListDataItem) throws FormulateException {
 
 		Double qty = 0d;
 
-		if (formulatedProduct instanceof ResourceProductData) {
-			if (processListDataItem.getQtyResource() != null) {
-				qty = processListDataItem.getQtyResource();
+		Double productQtyToTransform = FormulationHelper.QTY_FOR_PIECE;
+		if (!ProcessListUnit.P.equals(processListDataItem.getUnit())) {
+			productQtyToTransform = processListDataItem.getQty() != null ? processListDataItem.getQty() : FormulationHelper.getNetWeight(formulatedProduct, null);
+		}
+		
+		if(ProcessListUnit.Box.equals(processListDataItem.getUnit())){
+			if(formulatedProduct.getDefaultVariantPackagingData() != null && formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() != null){
+				productQtyToTransform = productQtyToTransform / formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes();
 			}
-		} else {
-
-			Double productQtyToTransform = FormulationHelper.QTY_FOR_PIECE;
-			if (!ProcessListUnit.P.equals(processListDataItem.getUnit())) {
-				productQtyToTransform = processListDataItem.getQty() != null ? processListDataItem.getQty() : FormulationHelper.getNetWeight(formulatedProduct, null);
-			}
-
-			if (productQtyToTransform != null) {
-
-				// process cost depends of rateProcess (€/h)
-				if (processListDataItem.getRateResource() != null && processListDataItem.getRateResource() != 0d) {
-					qty = productQtyToTransform / processListDataItem.getRateResource();
-				}
-				// process cost doesn't depend of rateProcess (€/kg)
-				else {
-					qty = productQtyToTransform;
-				}
+			else{
+				throw new FormulateException("Number of product per boxes is not defined on product " + formulatedProduct.getNodeRef());
 			}
 		}
 
+		if (productQtyToTransform != null) {
+
+			// process cost depends of rateProcess (€/h)
+			if (processListDataItem.getRateResource() != null && processListDataItem.getRateResource() != 0d) {
+				qty = productQtyToTransform / processListDataItem.getRateResource();
+			}
+			// process cost doesn't depend of rateProcess (€/kg)
+			else {
+				qty = productQtyToTransform;
+			}
+		}
+
+		if (processListDataItem.getQtyResource() != null) {
+			qty = qty * processListDataItem.getQtyResource();
+		}
+		
 		return qty;
 	}
 

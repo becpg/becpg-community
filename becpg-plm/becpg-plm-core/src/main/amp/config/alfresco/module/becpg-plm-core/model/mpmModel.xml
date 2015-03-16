@@ -37,7 +37,8 @@
 				<list>
 					<value>P</value>
 					<value>kg</value>
-					<value>L</value>					
+					<value>L</value>
+					<value>Box</value>
 				</list>
 			</parameter>
 		</constraint>
