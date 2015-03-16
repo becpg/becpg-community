@@ -508,11 +508,11 @@ if (beCPG.module.EntityDataGridRenderers) {
 		renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
 		   
 		    if(oRecord.getData("itemData")["isMultiLevel"]){
-		        if(scope.subCache!=null){
-		              for (var j = 0; j < scope.subCache.length; j++) {
-                        var path = scope.subCache[j].path;
+		        if( scope.subCache!=null && scope.subCache["idx_"+oColumn.getKeyIndex()]!=null){
+		              for (var j = 0; j <  scope.subCache["idx_"+oColumn.getKeyIndex()].length; j++) {
+                        var path =  scope.subCache["idx_"+oColumn.getKeyIndex()][j].path;
                         if(path == oRecord.getData("itemData")["path"]){
-                            return scope.subCache[j].displayValue;
+                            return  scope.subCache["idx_"+oColumn.getKeyIndex()][j].displayValue;
                         }
                     }
                 }
@@ -524,7 +524,10 @@ if (beCPG.module.EntityDataGridRenderers) {
     			    if (data.value.indexOf && data.value.indexOf("\"sub\":") > -1) {
     			        var json = JSON.parse(data.value);
                         if (json) {
-                            scope.subCache = json.sub;
+                            if(!scope.subCache){
+                                scope.subCache = [];
+                            }
+                            scope.subCache["idx_"+oColumn.getKeyIndex()] = json.sub;
                             return json.displayValue;
                         }
     			    }
