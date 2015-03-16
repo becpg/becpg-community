@@ -636,18 +636,9 @@ public class LabelingFormulaContext {
 				if (aggregateRules.containsKey(lblComponent.getNodeRef())) {
 					for (AggregateRule aggregateRule : aggregateRules.get(lblComponent.getNodeRef())) {
 						if (LabelingRuleType.Type.equals(aggregateRule.getLabelingRuleType())) {
-							if (aggregateRule.getReplacement() != null) {
-								RepositoryEntity repositoryEntity = alfrescoRepository.findOne(aggregateRule.getReplacement());
-								if (repositoryEntity instanceof IngTypeItem) {
-									ingType = (IngTypeItem) repositoryEntity;
-								}
-							} else {
-								ingType = new IngTypeItem();
-								ingType.setLegalName(aggregateRule.getLabel());
-							}
+							ingType = getReplacementIngType(aggregateRule);
 						}
 					}
-
 				}
 
 				if (ingType != null) {
@@ -656,12 +647,7 @@ public class LabelingFormulaContext {
 					if (aggregateRules.containsKey(ingType.getNodeRef())) {
 						for (AggregateRule aggregateRule : aggregateRules.get(ingType.getNodeRef())) {
 							if (LabelingRuleType.Type.equals(aggregateRule.getLabelingRuleType())) {
-								if (aggregateRule.getReplacement() != null) {
-									ingType = (IngTypeItem) alfrescoRepository.findOne(aggregateRule.getReplacement());
-								} else {
-									ingType = new IngTypeItem();
-									ingType.setLegalName(aggregateRule.getLabel());
-								}
+								ingType = getReplacementIngType(aggregateRule);
 							}
 						}
 						// Ing IngType replacement
@@ -691,7 +677,6 @@ public class LabelingFormulaContext {
 			}
 
 			if (ingType == null) {
-
 				ingType = new IngTypeItem();
 				ingType.setNodeRef(new NodeRef(RepoConsts.SPACES_STORE, "ingType-" + lblComponent.getNodeRef().hashCode()));
 			}
@@ -775,6 +760,22 @@ public class LabelingFormulaContext {
 
 		return sortedIngListByType;
 
+	}
+
+	private IngTypeItem getReplacementIngType(AggregateRule aggregateRule) {
+		IngTypeItem ingType = null;
+		
+		if (aggregateRule.getReplacement() != null) {
+			RepositoryEntity repositoryEntity = alfrescoRepository.findOne(aggregateRule.getReplacement());
+			if (repositoryEntity instanceof IngTypeItem) {
+				ingType = (IngTypeItem) repositoryEntity;
+			}
+		} else {
+			ingType = new IngTypeItem();
+			ingType.setLegalName(aggregateRule.getLabel());
+		}
+	
+		return ingType;
 	}
 
 	public boolean matchFormule(String formula, DeclarationFilterContext declarationFilterContext) {

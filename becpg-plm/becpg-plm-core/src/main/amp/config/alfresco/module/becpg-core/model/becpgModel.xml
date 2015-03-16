@@ -688,6 +688,7 @@
 			<mandatory-aspects>
 				<aspect>bcpg:legalNameAspect</aspect>
 				<aspect>bcpg:sortableListAspect</aspect>
+				<aspect>bcpg:ingTypeAspect</aspect>
 			</mandatory-aspects>
 		</type>
 
@@ -697,10 +698,6 @@
 			<properties>
 				<property name="bcpg:ingCEECode">
 					<type>d:text</type>
-				</property>
-				<property name="bcpg:ingTypeV2">
-					<type>d:noderef</type>
-					<mandatory>true</mandatory>
 				</property>
 			</properties>
 		</type>
@@ -2587,6 +2584,26 @@
 				</property>
 			</properties>
 		</aspect>
+		
+		<aspect name="bcpg:ingTypeAspect">
+			 <properties>	
+				<property name="bcpg:ingTypeV2">
+					<type>d:noderef</type>
+					<mandatory>false</mandatory>
+				</property>
+			 </properties>	
+		</aspect>		
+		
+		
+		<aspect name="bcpg:contractDateAspect">
+            <properties>
+            	 <property name="bcpg:contractDate">
+                    <type>d:int</type>
+                    <mandatory>false</mandatory>
+                    <index enabled="false"/>
+                </property>
+            </properties>
+        </aspect>
 
 		<aspect name="bcpg:certificateDateAspect">
 			<properties>
