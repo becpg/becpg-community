@@ -52,9 +52,9 @@ import fr.becpg.test.repo.product.AbstractFinishedProductTest;
  * @author quere
  *
  */
-public class FormulationCostsFromTemplateTest extends AbstractFinishedProductTest {
+public class FormulationCostsTest extends AbstractFinishedProductTest {
 
-	protected static Log logger = LogFactory.getLog(FormulationCostsFromTemplateTest.class);
+	protected static Log logger = LogFactory.getLog(FormulationCostsTest.class);
 
 	@Resource
 	private AssociationService associationService;
@@ -72,7 +72,7 @@ public class FormulationCostsFromTemplateTest extends AbstractFinishedProductTes
 	 * @throws Exception
 	 *             the exception
 	 */
-	//@Test
+	@Test
 	public void testFormulationCostsFromTemplate() throws Exception {
 
 		logger.info("testFormulationCostsFromTemplate");

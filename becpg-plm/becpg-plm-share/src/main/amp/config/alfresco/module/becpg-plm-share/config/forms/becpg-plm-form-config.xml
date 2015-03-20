@@ -5203,6 +5203,7 @@
 					<show id="bcpg:costListMaxi" />
 					<show id="bcpg:parentLevel" />
 					<show id="bcpg:plants" force="true" />
+					<show id="bcpg:costListComponent" />
 					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 
@@ -5214,6 +5215,13 @@
 					<field id="bcpg:parentLevel">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:costList&#38;attributeName=bcpg:costListCost
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:costListComponent">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial,bcpg:packagingMaterial&#38;excludeClassNames=bcpg:entityTplAspect
 							</control-param>
 						</control>
 					</field>
@@ -5230,6 +5238,7 @@
 					<show id="bcpg:costListMaxi" />
 					<show id="bcpg:isManualListItem" force="true" />
 					<show id="bcpg:plants" force="true" />
+					<show id="bcpg:costListComponent" />
 					<show id="fm:commentCount" force="true" />
 					<show id="bcpg:costListIsFormulated" />
 					<show id="bcpg:costListFormulaErrorLog" />
@@ -5256,6 +5265,7 @@
 					<show id="bcpg:costListUnit" />
 					<show id="bcpg:costListMaxi" />
 					<show id="bcpg:plants" force="true" />
+					<show id="bcpg:costListComponent" />
 					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 
@@ -5267,6 +5277,13 @@
 					<field id="bcpg:parentLevel">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:costList&#38;attributeName=bcpg:costListCost
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:costListComponent">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial,bcpg:packagingMaterial&#38;excludeClassNames=bcpg:entityTplAspect
 							</control-param>
 						</control>
 					</field>
