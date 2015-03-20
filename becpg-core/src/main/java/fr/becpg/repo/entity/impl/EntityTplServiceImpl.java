@@ -127,11 +127,12 @@ public class EntityTplServiceImpl implements EntityTplService {
 	 * @param entityType
 	 */
 	@Override
-	public NodeRef createEntityTpl(NodeRef parentNodeRef, QName entityType, boolean enabled, Set<QName> entityLists, Set<String> subFolders) {
+	public NodeRef createEntityTpl(NodeRef parentNodeRef,QName entityType, String entityTplName,  boolean enabled, Set<QName> entityLists, Set<String> subFolders) {
 
 		TypeDefinition typeDef = dictionaryService.getType(entityType);
-		String entityTplName = typeDef.getTitle(dictionaryService);
-
+		if(entityTplName == null){
+			entityTplName = typeDef.getTitle(dictionaryService);
+		}
 		// entityTpl
 		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 		properties.put(ContentModel.PROP_NAME, entityTplName);

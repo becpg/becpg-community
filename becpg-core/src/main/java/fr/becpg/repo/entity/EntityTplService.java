@@ -27,7 +27,7 @@ import fr.becpg.repo.formulation.FormulateException;
 
 public interface EntityTplService {
 
-	NodeRef createEntityTpl(NodeRef parentNodeRef, QName entityType, boolean enabled, Set<QName> entityLists, Set<String> subFolders);
+	NodeRef createEntityTpl(NodeRef parentNodeRef, QName entityType, String entityTplName,  boolean enabled, Set<QName> entityLists, Set<String> subFolders);
 	
 	NodeRef getEntityTpl(QName nodeType);
 	
