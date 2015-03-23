@@ -99,9 +99,9 @@ public class ExternalUserDashboardInterceptor extends AbstractWebFrameworkInterc
 								tokens.put("userid", userid);
 								//beCPG
 								if (!isExternalUser(rc.getUser())) {
-								  serviceRegistry.getPresetsManager().constructPreset("user-dashboard", tokens);
+									serviceRegistry.getPresetsManager().constructPreset("user-dashboard", tokens);
 								} else {
-									serviceRegistry.getPresetsManager().constructPreset("external-user-dashboard", tokens);
+									serviceRegistry.getPresetsManager().constructPreset("external-dashboard", tokens);
 								}
 							}
 					} else {

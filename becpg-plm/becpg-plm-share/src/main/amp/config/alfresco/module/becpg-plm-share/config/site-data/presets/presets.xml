@@ -112,7 +112,7 @@
       </pages>
    </preset>
 
-    <preset id="external-user-dashboard">
+    <preset id="external-dashboard">
       <components>
          <!-- title -->
          <component>
