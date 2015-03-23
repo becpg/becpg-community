@@ -17,6 +17,8 @@ import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AccessStatus;
+import org.alfresco.service.cmr.security.AuthorityService;
+import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -31,6 +33,8 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 import org.springframework.util.StopWatch;
 
+import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.SystemGroup;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.datalist.DataListExtractor;
 import fr.becpg.repo.entity.datalist.DataListExtractorFactory;
@@ -131,6 +135,8 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 	private DataListSortService dataListSortService;
 	
 	private DictionaryService dictionaryService;
+	
+	private AuthorityService authorityService;
 
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
@@ -158,6 +164,11 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 
 	public void setDataListSortService(DataListSortService dataListSortService) {
 		this.dataListSortService = dataListSortService;
+	}
+
+	
+	public void setAuthorityService(AuthorityService authorityService) {
+		this.authorityService = authorityService;
 	}
 
 	/**
@@ -321,7 +332,8 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 			boolean hasWriteAccess = !dataListFilter.isVersionFilter();
 			if (hasWriteAccess && !entityNodeRefsList.isEmpty()) {
 				hasWriteAccess = !nodeService.hasAspect(entityNodeRefsList.get(0), ContentModel.ASPECT_CHECKED_OUT)
-						&& securityService.computeAccessMode(nodeService.getType(entityNodeRefsList.get(0)), itemType) == SecurityService.WRITE_ACCESS;
+						&& securityService.computeAccessMode(nodeService.getType(entityNodeRefsList.get(0)), itemType) == SecurityService.WRITE_ACCESS
+						&& isExternalUserAllowed(dataListFilter);
 			}
 
 			// TODO : #546
@@ -415,6 +427,27 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 	}
 
 	
+
+	private boolean isExternalUserAllowed(DataListFilter dataListFilter) {
+		if(dataListFilter.getParentNodeRef() !=null 
+				&& nodeService.hasAspect(dataListFilter.getParentNodeRef(), BeCPGModel.ASPECT_ENTITYLIST_STATE)
+				&& "Valid".equals(nodeService.getProperty(dataListFilter.getParentNodeRef(), BeCPGModel.PROP_ENTITYLIST_STATE))
+				&& isCurrentUserExternal()
+				){
+			return false;
+			
+		}
+		return true;
+	}
+
+	private boolean isCurrentUserExternal() {
+		for (String currAuth : authorityService.getAuthorities()) {
+			if((PermissionService.GROUP_PREFIX+SystemGroup.ExternalUser.toString()).equals(currAuth)){
+				return true;
+			}
+		}
+		return false;
+	}
 
 	private JSONArray processResults(PaginatedExtractedItems extractedItems) {
 

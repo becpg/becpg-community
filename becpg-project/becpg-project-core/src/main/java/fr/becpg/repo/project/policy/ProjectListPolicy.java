@@ -14,6 +14,8 @@ import org.alfresco.repo.copy.DefaultCopyBehaviourCallback;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.node.archive.NodeArchiveService;
 import org.alfresco.repo.policy.JavaBehaviour;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -134,24 +136,33 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 				}
 			}
 		} else {
-			for (NodeRef projectNodeRef : pendingNodes) {
+			for (final NodeRef projectNodeRef : pendingNodes) {
 				if (nodeService.exists(projectNodeRef) && isNotLocked(projectNodeRef)) {
-					try {
-						policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_LOG_TIME_LIST);
-						policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
-						policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
-						policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_PROJECT);
-						policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_SCORE_LIST);
-						projectService.formulate(projectNodeRef);
-					} catch (FormulateException e) {
-						logger.error(e, e);
-					} finally {
-						policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_LOG_TIME_LIST);
-						policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
-						policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
-						policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_PROJECT);
-						policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_SCORE_LIST);
-					}
+					AuthenticationUtil.runAs(new RunAsWork<NodeRef>() {
+
+						@Override
+						public NodeRef doWork() throws Exception {
+
+							try {
+								policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_LOG_TIME_LIST);
+								policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
+								policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
+								policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_PROJECT);
+								policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_SCORE_LIST);
+								projectService.formulate(projectNodeRef);
+							} catch (FormulateException e) {
+								logger.error(e, e);
+							} finally {
+								policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_LOG_TIME_LIST);
+								policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
+								policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
+								policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_PROJECT);
+								policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_SCORE_LIST);
+							}
+
+							return null;
+						}
+					}, AuthenticationUtil.SYSTEM_USER_NAME);
 				}
 			}
 		}

@@ -6417,12 +6417,12 @@
 				<field-visibility>
 					<show id="bcpg:lclLabelClaim" />
 					<show id="bcpg:lclIsClaimed" />
-					<show id="bcpg:instruction" force="true" />
+					<show id="bcpg:lclComments"  />
 					<show id="bcpg:certificateDate" force="true" />
 					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 				<appearance>
-				   <field id="bcpg:instruction">
+				   <field id="bcpg:lclComments">
 						<control template="/org/alfresco/components/form/controls/richtext.ftl">
 							<control-param name="rows">10</control-param>
 						</control>
@@ -6454,12 +6454,12 @@
 				<field-visibility>
 					<show id="bcpg:lclLabelClaim" />
 					<show id="bcpg:lclIsClaimed" />
-					<show id="bcpg:instruction" force="true" />
+					<show id="bcpg:lclComments" />
 					<show id="bcpg:certificateDate" force="true" />
 					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:instruction">
+					<field id="bcpg:lclComments">
 						<control template="/org/alfresco/components/form/controls/richtext.ftl">
 							<control-param name="rows">10</control-param>
 						</control>

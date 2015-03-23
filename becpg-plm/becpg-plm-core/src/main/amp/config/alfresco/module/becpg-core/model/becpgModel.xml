@@ -1832,6 +1832,10 @@
 					<type>d:boolean</type>
 					<default>true</default>
 				</property>
+				<property name="bcpg:lclComments">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
 				<property name="bcpg:lclIsFormulated">
 					<type>d:boolean</type>
 					<default>false</default>
