@@ -178,4 +178,16 @@
 		<property name="repoService" ref="repoService" />
 	</bean>
 
+	<!-- Supplier portal -->
+	<bean id="bSupplierPortalScript" parent="baseJavaScriptExtension" class="fr.becpg.repo.jscript.SupplierPortalHelper">
+		<property name="extensionName">
+			<value>bSupplier</value>
+		</property>
+		<property name="associationService" ref="associationService" />
+		<property name="nodeService" ref="NodeService" />
+		<property name="permissionService" ref="permissionService" />
+		<property name="repository" ref="repositoryHelper" />
+	</bean>
+
+
 </beans>

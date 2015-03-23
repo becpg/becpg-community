@@ -254,36 +254,10 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 
 	}
 
-	protected void createSystemGroups(String[] groups) {
+	private void createSystemGroups(String[] groups) {
 
-
-		Set<String> zones = new HashSet<String>();
-		zones.add(AuthorityService.ZONE_APP_DEFAULT);
-		zones.add(AuthorityService.ZONE_APP_SHARE);
-		zones.add(AuthorityService.ZONE_AUTH_ALFRESCO);
-
-		for (String group : groups) {
-
-			logger.debug("group: " + group);
-			String groupName = I18NUtil.getMessage(String.format("%s.%s", LOCALIZATION_PFX_GROUP, group).toLowerCase(), Locale.getDefault());
-
-			if (!authorityService.authorityExists(PermissionService.GROUP_PREFIX + group)) {
-				logger.debug("create group: " + groupName);
-				authorityService.createAuthority(AuthorityType.GROUP, group, groupName, zones);
-			} else {
-				Set<String> zonesAdded = authorityService.getAuthorityZones(PermissionService.GROUP_PREFIX + group);
-				Set<String> zonesToAdd = new HashSet<String>();
-				for (String zone : zones)
-					if (!zonesAdded.contains(zone)) {
-						zonesToAdd.add(zone);
-					}
-
-				if (!zonesToAdd.isEmpty()) {
-					logger.debug("Add group to zone: " + groupName + " - " + zonesToAdd.toString());
-					authorityService.addAuthorityToZones(PermissionService.GROUP_PREFIX + group, zonesToAdd);
-				}
-			}
-		}
+          createGroups(groups);
+	
 
 		// Group hierarchy
 		Set<String> authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP, PermissionService.GROUP_PREFIX

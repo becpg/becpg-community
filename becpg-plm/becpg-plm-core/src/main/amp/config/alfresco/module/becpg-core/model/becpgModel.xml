@@ -848,6 +848,19 @@
 					<type>d:text</type>
 				</property>
 			</properties>
+			<associations>
+			  <association name="bcpg:supplierAccountRef" >
+			        <source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>cm:person</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+			  </association>
+			</associations>
 			<mandatory-aspects>
 				<aspect>bcpg:codeAspect</aspect>
 				<aspect>bcpg:location</aspect>
@@ -1471,6 +1484,11 @@
 			<parent>bcpg:productListItem</parent>
 			<properties>
 				<property name="bcpg:nutListValue">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:nutListFormulatedValue">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="false" />

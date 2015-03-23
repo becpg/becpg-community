@@ -10,6 +10,16 @@ function isbeCPGSystemMember(user){
     return false;
 }
 
+function isbeCPGExternalUser(user){
+    var groups = people.getContainerGroups(user);
+    for (var i=0;i<groups.length;i++) {
+        if("GROUP_ExternalUser" == groups[i].properties["cm:authorityName"]){
+            return true;
+        }
+    }
+    return false;
+}
+
 
 model.includeChildren = true;
 model.includeContent = false;
@@ -36,6 +46,7 @@ else if (args["user"] != null)
    model.capabilities = people.getCapabilities(object);
    
    model.capabilities["isbeCPGSystemManager"] = isbeCPGSystemMember(object);
+   model.capabilities["isbeCPGExternalUser"] = isbeCPGExternalUser(object);
    model.immutableProperties = people.getImmutableProperties(userId);
 }
 

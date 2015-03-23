@@ -24,7 +24,6 @@ import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.rule.Rule;
 import org.alfresco.service.cmr.rule.RuleType;
-import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.QName;
@@ -36,6 +35,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ECMModel;
 import fr.becpg.model.MPMModel;
 import fr.becpg.model.NCGroup;
+import fr.becpg.model.PLMGroup;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
 import fr.becpg.model.QualityModel;
@@ -75,7 +75,6 @@ import fr.becpg.report.client.ReportFormat;
 @Service
 public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
-	private static final String LOCALIZATION_PFX_GROUP = "becpg.group";
 	public static final String PRODUCT_REPORT_CLIENT_PATH = "beCPG/birt/document/product/default/ProductReport.rptdesign";
 	public static final String PRODUCT_REPORT_CLIENT_NAME = "path.productreportclienttemplate";
 	public static final String PRODUCT_REPORT_PRODUCTION_PATH = "beCPG/birt/document/product/default/ProductReport_Prod.rptdesign";
@@ -86,9 +85,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	private static final String EXPORT_PRODUCTS_REPORT_XMLFILE_PATH = "beCPG/birt/exportsearch/product/ExportSearchQuery.xml";
 	private static final String EXPORT_NC_REPORT_RPTFILE_PATH = "beCPG/birt/exportsearch/nonconformity/NonConformitySynthesis.rptdesign";
 	private static final String EXPORT_NC_REPORT_XMLFILE_PATH = "beCPG/birt/exportsearch/nonconformity/ExportSearchQuery.xml";
-
-	@Autowired
-	private AuthorityService authorityService;
 
 	@Autowired
 	private PermissionService permissionService;
@@ -190,11 +186,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		contentHelper.addFilesResources(beCPGMailService.getEmailTemplatesFolder(), "classpath*:beCPG/mails/*.ftl");
 		contentHelper.addFilesResources(beCPGMailService.getEmailWorkflowTemplatesFolder(), "classpath*:beCPG/mails/workflow/*.ftl");
 
-		// Companies
-		NodeRef companiesNodeRef = visitFolder(companyHome, PlmRepoConsts.PATH_COMPANIES);
-		visitFolder(companiesNodeRef, PlmRepoConsts.PATH_SUPPLIERS);
-		visitFolder(companiesNodeRef, PlmRepoConsts.PATH_CLIENTS);
-
 		// Reports
 		visitReports(systemNodeRef);
 
@@ -208,32 +199,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 		visitFolder(systemImportNodeRef, PlmRepoConsts.PATH_IMPORT_SAMPLES);
 
-		// Designer
-		// addReadOnlyDesignerFiles("classpath:alfresco/module/becpg-core/model/becpgModel.xml");
-		// addReadOnlyDesignerFiles("classpath:alfresco/module/becpg-plm-core/model/qualityModel.xml");
-
 		// OLAP
 		visitFolder(systemNodeRef, RepoConsts.PATH_OLAP_QUERIES);
 	}
-
-	// @Override
-	// public void addReadOnlyDesignerFiles(String pattern) {
-	//
-	// try {
-	//
-	// PathMatchingResourcePatternResolver resolver = new
-	// PathMatchingResourcePatternResolver();
-	//
-	// for (Resource res : resolver.getResources(pattern)) {
-	// Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-	// properties.put(DesignerModel.PROP_DSG_READ_ONLY_FILE, true);
-	// addFileResource(getModelsNodeRef(), res, properties);
-	// }
-	// } catch (Exception e) {
-	// logger.error(e, e);
-	// }
-	//
-	// }
 
 	/**
 	 * Add resources to folder
@@ -357,18 +325,13 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	@Override
 	protected void visitPermissions(NodeRef nodeRef, String folderName) {
 
-		if (folderName == RepoConsts.PATH_SYSTEM) {
-
-			permissionService
-					.setPermission(nodeRef, PermissionService.GROUP_PREFIX + SystemGroup.SystemMgr.toString(), PermissionService.WRITE, true);
-		} else if (folderName == PlmRepoConsts.PATH_EXCHANGE) {
+		if (folderName == PlmRepoConsts.PATH_EXCHANGE) {
 			permissionService
 					.setPermission(nodeRef, PermissionService.GROUP_PREFIX + SystemGroup.SystemMgr.toString(), PermissionService.WRITE, true);
 		}
 
 		else if (folderName == PlmRepoConsts.PATH_QUALITY) {
-			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + SystemGroup.QualityMgr.toString(), PermissionService.WRITE,
-					true);
+			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + PLMGroup.QualityMgr.toString(), PermissionService.WRITE, true);
 		}
 
 		else if (folderName == PlmRepoConsts.PATH_NC) {
@@ -795,86 +758,59 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	 */
 	private void createSystemGroups() {
 
-		String[] groups = { SystemGroup.SystemMgr.toString(), SystemGroup.RD.toString(), SystemGroup.RDUser.toString(), SystemGroup.RDMgr.toString(),
-				SystemGroup.Quality.toString(), SystemGroup.QualityUser.toString(), SystemGroup.QualityMgr.toString(),
-				SystemGroup.Purchasing.toString(), SystemGroup.PurchasingUser.toString(), SystemGroup.PurchasingMgr.toString(),
-				SystemGroup.Production.toString(), SystemGroup.ProductionUser.toString(), SystemGroup.ProductionMgr.toString(),
-				SystemGroup.Trade.toString(), SystemGroup.TradeUser.toString(), SystemGroup.TradeMgr.toString(), NCGroup.ClaimStart.toString(),
-				NCGroup.ClaimAnalysis.toString(), NCGroup.ClaimClassification.toString(), NCGroup.ClaimTreatment.toString(),
-				NCGroup.ClaimResponse.toString(), NCGroup.ClaimClosing.toString() };
+		String[] groups = { PLMGroup.RD.toString(), PLMGroup.RDUser.toString(), PLMGroup.RDMgr.toString(), PLMGroup.Quality.toString(),
+				PLMGroup.QualityUser.toString(), PLMGroup.QualityMgr.toString(), PLMGroup.Purchasing.toString(), PLMGroup.PurchasingUser.toString(),
+				PLMGroup.PurchasingMgr.toString(), PLMGroup.Production.toString(), PLMGroup.ProductionUser.toString(),
+				PLMGroup.ProductionMgr.toString(), PLMGroup.ReferencingMgr.toString(), PLMGroup.Trade.toString(), PLMGroup.TradeUser.toString(),
+				PLMGroup.TradeMgr.toString(), NCGroup.ClaimStart.toString(), NCGroup.ClaimAnalysis.toString(),
+				NCGroup.ClaimClassification.toString(), NCGroup.ClaimTreatment.toString(), NCGroup.ClaimResponse.toString(),
+				NCGroup.ClaimClosing.toString() };
 
-		Set<String> zones = new HashSet<String>();
-		zones.add(AuthorityService.ZONE_APP_DEFAULT);
-		zones.add(AuthorityService.ZONE_APP_SHARE);
-		zones.add(AuthorityService.ZONE_AUTH_ALFRESCO);
-
-		for (String group : groups) {
-
-			logger.debug("group: " + group);
-			String groupName = I18NUtil.getMessage(String.format("%s.%s", LOCALIZATION_PFX_GROUP, group).toLowerCase(), Locale.getDefault());
-
-			if (!authorityService.authorityExists(PermissionService.GROUP_PREFIX + group)) {
-				logger.debug("create group: " + groupName);
-				authorityService.createAuthority(AuthorityType.GROUP, group, groupName, zones);
-			} else {
-				Set<String> zonesAdded = authorityService.getAuthorityZones(PermissionService.GROUP_PREFIX + group);
-				Set<String> zonesToAdd = new HashSet<String>();
-				for (String zone : zones)
-					if (!zonesAdded.contains(zone)) {
-						zonesToAdd.add(zone);
-					}
-
-				if (!zonesToAdd.isEmpty()) {
-					logger.debug("Add group to zone: " + groupName + " - " + zonesToAdd.toString());
-					authorityService.addAuthorityToZones(PermissionService.GROUP_PREFIX + group, zonesToAdd);
-				}
-			}
-		}
+		createGroups(groups);
 
 		// Group hierarchy
 		Set<String> authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP,
-				PermissionService.GROUP_PREFIX + SystemGroup.RD.toString(), true);
-		if (!authorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.RDMgr.toString()))
-			authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.RD.toString(), PermissionService.GROUP_PREFIX
-					+ SystemGroup.RDMgr.toString());
-		if (!authorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.RDUser.toString()))
-			authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.RD.toString(), PermissionService.GROUP_PREFIX
-					+ SystemGroup.RDUser.toString());
+				PermissionService.GROUP_PREFIX + PLMGroup.RD.toString(), true);
+		if (!authorities.contains(PermissionService.GROUP_PREFIX + PLMGroup.RDMgr.toString()))
+			authorityService.addAuthority(PermissionService.GROUP_PREFIX + PLMGroup.RD.toString(),
+					PermissionService.GROUP_PREFIX + PLMGroup.RDMgr.toString());
+		if (!authorities.contains(PermissionService.GROUP_PREFIX + PLMGroup.RDUser.toString()))
+			authorityService.addAuthority(PermissionService.GROUP_PREFIX + PLMGroup.RD.toString(),
+					PermissionService.GROUP_PREFIX + PLMGroup.RDUser.toString());
 
-		authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP, PermissionService.GROUP_PREFIX + SystemGroup.Quality.toString(),
+		authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP, PermissionService.GROUP_PREFIX + PLMGroup.Quality.toString(),
 				true);
-		if (!authorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.QualityMgr.toString()))
-			authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.Quality.toString(), PermissionService.GROUP_PREFIX
-					+ SystemGroup.QualityMgr.toString());
-		if (!authorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.QualityUser.toString()))
-			authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.Quality.toString(), PermissionService.GROUP_PREFIX
-					+ SystemGroup.QualityUser.toString());
+		if (!authorities.contains(PermissionService.GROUP_PREFIX + PLMGroup.QualityMgr.toString()))
+			authorityService.addAuthority(PermissionService.GROUP_PREFIX + PLMGroup.Quality.toString(), PermissionService.GROUP_PREFIX
+					+ PLMGroup.QualityMgr.toString());
+		if (!authorities.contains(PermissionService.GROUP_PREFIX + PLMGroup.QualityUser.toString()))
+			authorityService.addAuthority(PermissionService.GROUP_PREFIX + PLMGroup.Quality.toString(), PermissionService.GROUP_PREFIX
+					+ PLMGroup.QualityUser.toString());
 
-		authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP,
-				PermissionService.GROUP_PREFIX + SystemGroup.Purchasing.toString(), true);
-		if (!authorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.PurchasingMgr.toString()))
-			authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.Purchasing.toString(), PermissionService.GROUP_PREFIX
-					+ SystemGroup.PurchasingMgr.toString());
-		if (!authorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.PurchasingUser.toString()))
-			authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.Purchasing.toString(), PermissionService.GROUP_PREFIX
-					+ SystemGroup.PurchasingUser.toString());
-
-		authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP,
-				PermissionService.GROUP_PREFIX + SystemGroup.Production.toString(), true);
-		if (!authorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.ProductionMgr.toString()))
-			authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.Production.toString(), PermissionService.GROUP_PREFIX
-					+ SystemGroup.ProductionMgr.toString());
-		if (!authorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.ProductionUser.toString()))
-			authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.Production.toString(), PermissionService.GROUP_PREFIX
-					+ SystemGroup.ProductionUser.toString());
-
-		authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP, PermissionService.GROUP_PREFIX + SystemGroup.Trade.toString(),
+		authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP, PermissionService.GROUP_PREFIX + PLMGroup.Purchasing.toString(),
 				true);
-		if (!authorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.TradeMgr.toString()))
-			authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.Trade.toString(), PermissionService.GROUP_PREFIX
-					+ SystemGroup.TradeMgr.toString());
-		if (!authorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.TradeUser.toString()))
-			authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.Trade.toString(), PermissionService.GROUP_PREFIX
-					+ SystemGroup.TradeUser.toString());
+		if (!authorities.contains(PermissionService.GROUP_PREFIX + PLMGroup.PurchasingMgr.toString()))
+			authorityService.addAuthority(PermissionService.GROUP_PREFIX + PLMGroup.Purchasing.toString(), PermissionService.GROUP_PREFIX
+					+ PLMGroup.PurchasingMgr.toString());
+		if (!authorities.contains(PermissionService.GROUP_PREFIX + PLMGroup.PurchasingUser.toString()))
+			authorityService.addAuthority(PermissionService.GROUP_PREFIX + PLMGroup.Purchasing.toString(), PermissionService.GROUP_PREFIX
+					+ PLMGroup.PurchasingUser.toString());
+
+		authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP, PermissionService.GROUP_PREFIX + PLMGroup.Production.toString(),
+				true);
+		if (!authorities.contains(PermissionService.GROUP_PREFIX + PLMGroup.ProductionMgr.toString()))
+			authorityService.addAuthority(PermissionService.GROUP_PREFIX + PLMGroup.Production.toString(), PermissionService.GROUP_PREFIX
+					+ PLMGroup.ProductionMgr.toString());
+		if (!authorities.contains(PermissionService.GROUP_PREFIX + PLMGroup.ProductionUser.toString()))
+			authorityService.addAuthority(PermissionService.GROUP_PREFIX + PLMGroup.Production.toString(), PermissionService.GROUP_PREFIX
+					+ PLMGroup.ProductionUser.toString());
+
+		authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP, PermissionService.GROUP_PREFIX + PLMGroup.Trade.toString(), true);
+		if (!authorities.contains(PermissionService.GROUP_PREFIX + PLMGroup.TradeMgr.toString()))
+			authorityService.addAuthority(PermissionService.GROUP_PREFIX + PLMGroup.Trade.toString(), PermissionService.GROUP_PREFIX
+					+ PLMGroup.TradeMgr.toString());
+		if (!authorities.contains(PermissionService.GROUP_PREFIX + PLMGroup.TradeUser.toString()))
+			authorityService.addAuthority(PermissionService.GROUP_PREFIX + PLMGroup.Trade.toString(), PermissionService.GROUP_PREFIX
+					+ PLMGroup.TradeUser.toString());
 	}
 }

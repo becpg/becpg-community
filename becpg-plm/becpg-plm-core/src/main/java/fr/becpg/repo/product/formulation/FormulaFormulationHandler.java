@@ -193,7 +193,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 				if (labelClaimListDataItem.getErrorLog() != null) {
 
-					String message = I18NUtil.getMessage("message.formulate.labelCLaim.error", Locale.getDefault(),
+					String message = I18NUtil.getMessage("message.formulate.labelClaim.error", Locale.getDefault(),
 							nodeService.getProperty(labelClaimListDataItem.getLabelClaim(), ContentModel.PROP_NAME),
 							labelClaimListDataItem.getErrorLog());
 					productData.getCompoListView().getReqCtrlList()
