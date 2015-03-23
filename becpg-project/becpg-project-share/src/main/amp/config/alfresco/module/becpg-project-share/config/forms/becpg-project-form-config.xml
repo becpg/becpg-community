@@ -290,7 +290,6 @@
 					</field>
 				</appearance>
 			</form>
-
 			<form id="datagrid">
 				<field-visibility>
 					<show id="pjt:projectOverdue" />
@@ -930,9 +929,9 @@
 				</field-visibility>
 				<appearance>
 					<field id="pjt:slScreening">
-                  <control template="/org/alfresco/components/form/controls/richtext.ftl">                  
-                  <control-param name="editorHeight">8</control-param>
-               </control>
+	                <control template="/org/alfresco/components/form/controls/richtext.ftl">                  
+	                  <control-param name="row">8</control-param>
+	                </control>
                </field>					
 				</appearance>
 			</form>
@@ -950,7 +949,7 @@
 				<appearance>
 					<field id="pjt:slScreening">
                   <control template="/org/alfresco/components/form/controls/richtext.ftl">                  
-                  <control-param name="editorHeight">8</control-param>
+                  <control-param name="row">8</control-param>
                </control>
                </field>	
 				</appearance>
@@ -966,6 +965,11 @@
             <appearance>
             	<field id="pjt:slScreening" read-only="true" ></field>
             </appearance>
+         </form>
+         <form id="filter">
+            <field-visibility>
+            	   <show id="pjt:slCriterion" />
+            </field-visibility>
          </form>
 		</forms>
 	</config>

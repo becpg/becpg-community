@@ -10,7 +10,7 @@ function getOrCreateBeCPGMenu() {
 
    var beCPGMenu = widgetUtils.findObject(model.jsonModel, "id", "HEADER_BECPG");
 
-   if (beCPGMenu == null) {
+   if (beCPGMenu == null && !isExternalUser(user)) {
 
       beCPGMenu = {
          id : "HEADER_BECPG",
@@ -22,7 +22,6 @@ function getOrCreateBeCPGMenu() {
          }
       };
 
-      //createDockBar(beCPGMenu);
       beCPGMenu.config.widgets.push({
           name : "alfresco/header/BeCPGRecentMenu",
           config : {
@@ -80,74 +79,9 @@ function isSystemMgr(user){
     return user.capabilities["isbeCPGSystemManager"] !=null && user.capabilities["isbeCPGSystemManager"] == true;
 }
 
+function isExternalUser(user){
+    return user.capabilities["isbeCPGExternalUser"] !=null && user.capabilities["isbeCPGExternalUser"] == true;
+}
 
-function createDockBar(beCPGMenu){
-   try {
-         var  nodeRef = page.url.args.nodeRef, dockbarUrl = "/becpg/dockbar", time = new Date();
-         if (nodeRef !== null && nodeRef.length > 0) {
-            dockbarUrl += "?entityNodeRef=" + nodeRef.replace(/\\/g,"")+"&noCache="+time.getTime();
-         } else {
-             dockbarUrl +="?noCache="+time.getTime();  
-         }
-         
-         var result = remote.call(dockbarUrl);
-         if (result.status.code == status.STATUS_OK)
-         {
-            results = eval('(' + result + ')');
-      
-            if(results.items.length>0){
-            	
 
-            	
-              var recentsMenu = {
-                    name : "alfresco/menus/AlfMenuGroup",
-                    config : {
-                       label : "header.becpg.recents",
-                       widgets : []
-                    }
-                 }; 
-                 
-             
-               
-               for (var i=0; i < results.items.length; i++){
-                  var item = results.items[i];
-                  
-                  var targetUrl = "entity-details?nodeRef=" +item.nodeRef ;
-                  if(page.url.uri.indexOf("entity-data-lists")){
-                     targetUrl = "entity-data-lists?nodeRef=" +item.nodeRef ;
-                     //TODO Should be split or better
-                     // page.url.args.list
-                     if (item.itemType == "bcpg:finishedProduct" || item.itemType == "bcpg:semiFinishedProduct") {
-                        targetUrl += "&list=compoList";
-                     } else if (item.itemType == "bcpg:packagingKit") {
-                        targetUrl += "&list=packagingList";
-                     } else if(item.itemType == "pjt:project"){
-                         targetUrl += "&list=taskList";
-                     }
-                     
-                  }
-                  
-                  
-                  if(item.site){
-                     targetUrl = "site/" + item.site.shortName+"/"+targetUrl ;
-                  }
-                  
-                  recentsMenu.config.widgets.push( {
-                     name : "alfresco/header/AlfMenuItem",
-                     config : {
-                        label : item.displayName,
-                        iconClass : "entity "+item.itemType.split(":")[1],
-                        targetUrl : targetUrl
-                     }
-                  });
-                  
-               }
-               
-               beCPGMenu.config.widgets.push( recentsMenu );
-            }
-         }
-      } catch(e){
-        logger.log(e);  
-      }
-   }
- 
+
