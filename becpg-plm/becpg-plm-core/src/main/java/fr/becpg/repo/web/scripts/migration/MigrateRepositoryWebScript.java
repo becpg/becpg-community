@@ -5,8 +5,10 @@ package fr.becpg.repo.web.scripts.migration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
@@ -278,26 +280,25 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery()
 					.ofType(PLMModel.TYPE_RAWMATERIAL)
 					.isNotNull(PLMModel.PROP_ERP_CODE)
-					.excludeAspect(BeCPGModel.ASPECT_ENTITY_TPL)
-					.excludeAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION)
-					.addSort(PLMModel.PROP_ERP_CODE,true);
+					.excludeDefaults()
+					.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED);
 							
 			List<NodeRef> rawMaterialNodeRefs = queryBuilder.list();
-			Map<String, List<NodeRef>> rawMaterialsGroupByERPCode = new HashMap<String, List<NodeRef>>();
+			Map<String, Set<NodeRef>> rawMaterialsGroupByERPCode = new HashMap<String, Set<NodeRef>>();
 			
 			for(NodeRef rawMaterialNodeRef : rawMaterialNodeRefs){	
 				
 				String erpCode = (String)nodeService.getProperty(rawMaterialNodeRef, PLMModel.PROP_ERP_CODE);
 				
-				List<NodeRef> subList = rawMaterialsGroupByERPCode.get(erpCode);
+				Set<NodeRef> subList = rawMaterialsGroupByERPCode.get(erpCode);
 				if(subList == null){
-					subList = new ArrayList<NodeRef>();
+					subList = new HashSet<NodeRef>();
 					rawMaterialsGroupByERPCode.put(erpCode, subList);
 				}
 				subList.add(rawMaterialNodeRef);				
 			}
 			
-			for(Map.Entry<String, List<NodeRef>> kv : rawMaterialsGroupByERPCode.entrySet()){
+			for(Map.Entry<String, Set<NodeRef>> kv : rawMaterialsGroupByERPCode.entrySet()){
 				
 				if(kv.getValue().size()>1){
 					
@@ -331,10 +332,10 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 					}
 										
 					if(genRMNodeRef == null){
-						NodeRef rawMaterialNodeRef = kv.getValue().get(0);
+						NodeRef rawMaterialNodeRef = kv.getValue().iterator().next();
 						ProductData rawMaterialData = alfrescoRepository.findOne(rawMaterialNodeRef);
 						RawMaterialData genRawMaterialData = new RawMaterialData();
-						genRawMaterialData.setName(kv.getKey() + "-GEN");
+						genRawMaterialData.setName(kv.getKey() +" - "+rawMaterialData.getName().split(" - ")[0]+ " - GEN");
 						genRawMaterialData.setHierarchy1(rawMaterialData.getHierarchy1());
 						genRawMaterialData.setHierarchy2(rawMaterialData.getHierarchy2());
 						genRawMaterialData.setErpCode(kv.getKey());
@@ -347,7 +348,7 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 						
 						genRawMaterialData.getCompoListView().setCompoList(compoList);
 						logger.info("Create new gen raw material " + kv.getKey());						
-						alfrescoRepository.create(repository.getCompanyHome(), genRawMaterialData);
+						alfrescoRepository.create(nodeService.getPrimaryParent(rawMaterialNodeRef).getParentRef(), genRawMaterialData);
 						//nodeService.setProperty(productData.getNodeRef(), BeCPGModel.PROP_ERP_CODE, kv.getKey());	
 					}						
 				}
