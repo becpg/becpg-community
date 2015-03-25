@@ -55,6 +55,7 @@ if(isExternalUser(user)){
        var searchBox =  widgetUtils.findObject(model.jsonModel, "id","HEADER_SEARCH");
          if(searchBox){
              searchBox.name ="alfresco/header/BecpgSearchBox";
+             searchBox.config.linkToFacetedSearch=false;
          }
     	
     }
