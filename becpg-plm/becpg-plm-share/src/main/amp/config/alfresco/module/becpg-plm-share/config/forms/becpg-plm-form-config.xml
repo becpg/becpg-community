@@ -4579,6 +4579,7 @@
 	</config>
 	
 	<config evaluator="model-type" condition="pjt:project">
+	   <forms>
 	 	 <form id="supplier-project">
 				<field-visibility>
 				   <show id="cm:name" />
@@ -4608,6 +4609,7 @@
 					</field>										
 				</appearance>
 			</form>
+		</forms>	
 	</config>
 
 	<!-- bcpg:supplier type (existing nodes) -->

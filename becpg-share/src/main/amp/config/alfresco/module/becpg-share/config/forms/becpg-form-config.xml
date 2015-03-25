@@ -175,7 +175,7 @@
 					<show id="bcpg:entityTplIsDefault" />
 				</field-visibility>
 				<appearance>
-					<set id="template" label-id="becpg.forms.set.template.label" />
+					<set id="template" appearance="bordered-panel" label-id="becpg.forms.set.template.label" />
 					<field id="bcpg:entityTplEnabled" set="template" />
 					<field id="bcpg:entityTplIsDefault" set="template" />
 				</appearance>

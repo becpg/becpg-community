@@ -52,7 +52,10 @@
 				"title": "${row.item.assocs["bcpg:ingListIng"][0].properties.name!""}",					
 				<#elseif row.item.typeShort == "pjt:taskList" >
 				"name": "${row.item.properties["pjt:tlTaskName"]!""}",
-				"title": "${row.item.properties["pjt:tlTaskName"]!""}",			
+				"title": "${row.item.properties["pjt:tlTaskName"]!""}",	
+				<#elseif row.item.typeShort == "pjt:budgetList" >
+				"name": "${row.item.properties["pjt:blItem"]!""}",
+				"title": "${row.item.properties["pjt:blItem"]!""}",			
 				<#else>
 				"name": "${row.item.properties.name!""}",
 				"title":<#if row.item.properties["lnk:title"]??>"${row.item.properties["lnk:title"]}",
