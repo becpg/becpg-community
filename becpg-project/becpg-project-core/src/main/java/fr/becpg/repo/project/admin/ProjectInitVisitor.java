@@ -132,6 +132,10 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 		dataLists.add(ProjectModel.TYPE_SCORE_LIST);
 		dataLists.add(ProjectModel.TYPE_ACTIVITY_LIST);
 		dataLists.add(ProjectModel.TYPE_LOG_TIME_LIST);
+		dataLists.add(ProjectModel.TYPE_BUDGET_LIST);
+		dataLists.add(ProjectModel.TYPE_INVOICE_LIST);
+		dataLists.add(ProjectModel.TYPE_EXPENSE_LIST);
+
 		NodeRef entityTplNodeRef = entityTplService.createEntityTpl(entityTplsNodeRef, ProjectModel.TYPE_PROJECT,null, true, dataLists, null);
 
 		try {

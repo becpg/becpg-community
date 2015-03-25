@@ -25,7 +25,10 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.hierarchy.HierarchicalEntity;
+import fr.becpg.repo.project.data.projectList.BudgetListDataItem;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
+import fr.becpg.repo.project.data.projectList.ExpenseListDataItem;
+import fr.becpg.repo.project.data.projectList.InvoiceListDataItem;
 import fr.becpg.repo.project.data.projectList.LogTimeListDataItem;
 import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
@@ -83,6 +86,11 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	private List<DeliverableListDataItem> deliverableList;
 	private List<ScoreListDataItem> scoreList;
 	private List<LogTimeListDataItem> logTimeList;
+	private List<BudgetListDataItem> budgetList;
+	private List<InvoiceListDataItem> invoiceList;
+	private List<ExpenseListDataItem> expenseList;
+
+
 
 	public ProjectData() {
 		super();
@@ -394,44 +402,102 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	public void setLogTimeList(List<LogTimeListDataItem> logTimeList) {
 		this.logTimeList = logTimeList;
 	}
+	
+	@DataList
+	@AlfQname(qname="pjt:budgetList")
+	public List<BudgetListDataItem> getBudgetList() {
+		return budgetList;
+	}
+	public void setBudgetList(List<BudgetListDataItem> budgetList) {
+		this.budgetList = budgetList;
+	}
+	
+	@DataList
+	@AlfQname(qname="pjt:invoiceList")
+	public List<InvoiceListDataItem> getInvoiceList() {
+		return invoiceList;
+	}
+	public void setInvoiceList(List<InvoiceListDataItem> invoiceList) {
+		this.invoiceList = invoiceList;
+	}
+	
+	@DataList
+	@AlfQname(qname="pjt:expenseList")
+	public List<ExpenseListDataItem> getExpenseList() {
+		return expenseList;
+	}
 
+	public void setExpenseList(List<ExpenseListDataItem> expenseList) {
+		this.expenseList = expenseList;
+	}
+
+	
 	@Override
 	public String getEntityState() {
 		return projectState!=null ? projectState.toString() : null;
 	}
 
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + ((budgetedCost == null) ? 0 : budgetedCost.hashCode());
-		result = prime * result + ((completionDate == null) ? 0 : completionDate.hashCode());
-		result = prime * result + ((completionPercent == null) ? 0 : completionPercent.hashCode());
+		result = prime * result
+				+ ((budgetList == null) ? 0 : budgetList.hashCode());
+		result = prime * result
+				+ ((budgetedCost == null) ? 0 : budgetedCost.hashCode());
+		result = prime * result
+				+ ((completionDate == null) ? 0 : completionDate.hashCode());
+		result = prime
+				* result
+				+ ((completionPercent == null) ? 0 : completionPercent
+						.hashCode());
 		result = prime * result + ((created == null) ? 0 : created.hashCode());
 		result = prime * result + ((creator == null) ? 0 : creator.hashCode());
-		result = prime * result + ((deliverableList == null) ? 0 : deliverableList.hashCode());
+		result = prime * result
+				+ ((deliverableList == null) ? 0 : deliverableList.hashCode());
 		result = prime * result + ((dueDate == null) ? 0 : dueDate.hashCode());
-		result = prime * result + ((entities == null) ? 0 : entities.hashCode());
-		result = prime * result + ((formulatedDate == null) ? 0 : formulatedDate.hashCode());
-		result = prime * result + ((hierarchy1 == null) ? 0 : hierarchy1.hashCode());
-		result = prime * result + ((hierarchy2 == null) ? 0 : hierarchy2.hashCode());
+		result = prime * result
+				+ ((entities == null) ? 0 : entities.hashCode());
+		result = prime * result
+				+ ((expenseList == null) ? 0 : expenseList.hashCode());
+		result = prime * result
+				+ ((formulatedDate == null) ? 0 : formulatedDate.hashCode());
+		result = prime * result
+				+ ((hierarchy1 == null) ? 0 : hierarchy1.hashCode());
+		result = prime * result
+				+ ((hierarchy2 == null) ? 0 : hierarchy2.hashCode());
+		result = prime * result
+				+ ((invoiceList == null) ? 0 : invoiceList.hashCode());
 		result = prime * result + ((legends == null) ? 0 : legends.hashCode());
-		result = prime * result + ((logTimeList == null) ? 0 : logTimeList.hashCode());
-		result = prime * result + ((loggedTime == null) ? 0 : loggedTime.hashCode());
-		result = prime * result + ((modified == null) ? 0 : modified.hashCode());
-		result = prime * result + ((modifier == null) ? 0 : modifier.hashCode());
+		result = prime * result
+				+ ((logTimeList == null) ? 0 : logTimeList.hashCode());
+		result = prime * result
+				+ ((loggedTime == null) ? 0 : loggedTime.hashCode());
+		result = prime * result
+				+ ((modified == null) ? 0 : modified.hashCode());
+		result = prime * result
+				+ ((modifier == null) ? 0 : modifier.hashCode());
 		result = prime * result + ((overdue == null) ? 0 : overdue.hashCode());
-		result = prime * result + ((planningMode == null) ? 0 : planningMode.hashCode());
-		result = prime * result + ((priority == null) ? 0 : priority.hashCode());
-		result = prime * result + ((projectManager == null) ? 0 : projectManager.hashCode());
-		result = prime * result + ((projectState == null) ? 0 : projectState.hashCode());
-		result = prime * result + ((projectTpl == null) ? 0 : projectTpl.hashCode());
-		result = prime * result + ((reformulateCount == null) ? 0 : reformulateCount.hashCode());
+		result = prime * result
+				+ ((planningMode == null) ? 0 : planningMode.hashCode());
+		result = prime * result
+				+ ((priority == null) ? 0 : priority.hashCode());
+		result = prime * result
+				+ ((projectManager == null) ? 0 : projectManager.hashCode());
+		result = prime * result
+				+ ((projectState == null) ? 0 : projectState.hashCode());
+		result = prime * result
+				+ ((projectTpl == null) ? 0 : projectTpl.hashCode());
+		result = prime
+				* result
+				+ ((reformulateCount == null) ? 0 : reformulateCount.hashCode());
 		result = prime * result + ((score == null) ? 0 : score.hashCode());
-		result = prime * result + ((scoreList == null) ? 0 : scoreList.hashCode());
-		result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());
-		result = prime * result + ((taskList == null) ? 0 : taskList.hashCode());
+		result = prime * result
+				+ ((scoreList == null) ? 0 : scoreList.hashCode());
+		result = prime * result
+				+ ((startDate == null) ? 0 : startDate.hashCode());
+		result = prime * result
+				+ ((taskList == null) ? 0 : taskList.hashCode());
 		result = prime * result + ((work == null) ? 0 : work.hashCode());
 		return result;
 	}
@@ -445,6 +511,11 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 		if (getClass() != obj.getClass())
 			return false;
 		ProjectData other = (ProjectData) obj;
+		if (budgetList == null) {
+			if (other.budgetList != null)
+				return false;
+		} else if (!budgetList.equals(other.budgetList))
+			return false;
 		if (budgetedCost == null) {
 			if (other.budgetedCost != null)
 				return false;
@@ -485,6 +556,11 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 				return false;
 		} else if (!entities.equals(other.entities))
 			return false;
+		if (expenseList == null) {
+			if (other.expenseList != null)
+				return false;
+		} else if (!expenseList.equals(other.expenseList))
+			return false;
 		if (formulatedDate == null) {
 			if (other.formulatedDate != null)
 				return false;
@@ -499,6 +575,11 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 			if (other.hierarchy2 != null)
 				return false;
 		} else if (!hierarchy2.equals(other.hierarchy2))
+			return false;
+		if (invoiceList == null) {
+			if (other.invoiceList != null)
+				return false;
+		} else if (!invoiceList.equals(other.invoiceList))
 			return false;
 		if (legends == null) {
 			if (other.legends != null)
@@ -584,14 +665,27 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 
 	@Override
 	public String toString() {
-		return "ProjectData [hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", startDate=" + startDate + ", dueDate=" + dueDate
-				+ ", completionDate=" + completionDate + ", planningMode=" + planningMode + ", priority=" + priority + ", projectState="
-				+ projectState + ", projectTpl=" + projectTpl + ", completionPercent=" + completionPercent + ", entities=" + entities + ", legends="
-				+ legends + ", overdue=" + overdue + ", score=" + score + ", created=" + created + ", modified=" + modified + ", creator=" + creator
-				+ ", modifier=" + modifier + ", projectManager=" + projectManager + ", budgetedCost=" + budgetedCost + ", work=" + work
-				+ ", loggedTime=" + loggedTime + ", formulatedDate=" + formulatedDate + ", reformulateCount=" + reformulateCount + ", taskList="
-				+ taskList + ", deliverableList=" + deliverableList + ", scoreList=" + scoreList + ", logTimeList=" + logTimeList + "]";
+		return "ProjectData [hierarchy1=" + hierarchy1 + ", hierarchy2="
+				+ hierarchy2 + ", startDate=" + startDate + ", dueDate="
+				+ dueDate + ", completionDate=" + completionDate
+				+ ", planningMode=" + planningMode + ", priority=" + priority
+				+ ", projectState=" + projectState + ", projectTpl="
+				+ projectTpl + ", completionPercent=" + completionPercent
+				+ ", entities=" + entities + ", legends=" + legends
+				+ ", overdue=" + overdue + ", score=" + score + ", created="
+				+ created + ", modified=" + modified + ", creator=" + creator
+				+ ", modifier=" + modifier + ", projectManager="
+				+ projectManager + ", budgetedCost=" + budgetedCost + ", work="
+				+ work + ", loggedTime=" + loggedTime + ", formulatedDate="
+				+ formulatedDate + ", reformulateCount=" + reformulateCount
+				+ ", taskList=" + taskList + ", deliverableList="
+				+ deliverableList + ", scoreList=" + scoreList
+				+ ", logTimeList=" + logTimeList + ", budgetList=" + budgetList
+				+ ", invoiceList=" + invoiceList + ", expenseList="
+				+ expenseList + "]";
 	}
+
+
 
 	
 	

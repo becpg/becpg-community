@@ -47,7 +47,7 @@ public class ProjectAttributeExtractorPlugin implements AttributeExtractorPlugin
 	 
 	@Override
 	public Collection<QName> getMatchingTypes() {
-		return Arrays.asList(ProjectModel.TYPE_TASK_LIST, ProjectModel.TYPE_DELIVERABLE_LIST);
+		return Arrays.asList(ProjectModel.TYPE_TASK_LIST, ProjectModel.TYPE_DELIVERABLE_LIST, ProjectModel.TYPE_BUDGET_LIST);
 	}
 	
 
@@ -55,6 +55,9 @@ public class ProjectAttributeExtractorPlugin implements AttributeExtractorPlugin
 	public String extractPropName(QName type, NodeRef nodeRef) {
 		if(ProjectModel.TYPE_DELIVERABLE_LIST.equals(type)){
 			return (String) nodeService.getProperty(nodeRef,ProjectModel.PROP_DL_DESCRIPTION);
+		}
+		else if(ProjectModel.TYPE_BUDGET_LIST.equals(type)){
+			return (String) nodeService.getProperty(nodeRef,ProjectModel.PROP_Bl_ITEM);
 		}
 		return (String) nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_TASK_NAME);
 	}
