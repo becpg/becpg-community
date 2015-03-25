@@ -21,3 +21,4 @@ syntax: regexp
 syntax: regexp
 ^becpg-olap/archives$
 ^solr/solr_home$
+^repo/alf_data_dev$

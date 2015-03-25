@@ -25,9 +25,9 @@ import fr.becpg.test.project.AbstractProjectTestCase;
  * 
  * @author quere
  */
-public class ProjectBudgetTest extends AbstractProjectTestCase {	
+public class ProjectBudgetTasksTest extends AbstractProjectTestCase {	
 
-	private static Log logger = LogFactory.getLog(ProjectBudgetTest.class);
+	private static Log logger = LogFactory.getLog(ProjectBudgetTasksTest.class);
 	private final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");	
 	
 	@Test
@@ -76,11 +76,12 @@ public class ProjectBudgetTest extends AbstractProjectTestCase {
 				for (TaskListDataItem tl : projectData.getTaskList()) {
 					logger.info("Task " + tl.getTaskName() + " planned cost : " + tl.getBudgetedCost() + " work " + tl.getWork());
 				}
-				
+				int checks = 0;
 				for (TaskListDataItem tl : projectData.getTaskList()) {				
 					if (tl.getTaskName().equals("task2")) {
 						assertEquals(8d*RESOURCE_COST_VALUE+3000d, tl.getBudgetedCost());
 						assertEquals(12d, tl.getLoggedTime());
+						checks++;
 					}
 					if (tl.getTaskName().equals("task3")) {
 						assertEquals(16d*RESOURCE_COST_VALUE, tl.getBudgetedCost());
@@ -100,6 +101,7 @@ public class ProjectBudgetTest extends AbstractProjectTestCase {
 					}
 				}
 				
+				assertEquals(6, checks);
 				assertEquals(12800d, projectData.getBudgetedCost());			
 				assertEquals(48d, projectData.getWork());
 				assertEquals(15d, projectData.getLoggedTime());
