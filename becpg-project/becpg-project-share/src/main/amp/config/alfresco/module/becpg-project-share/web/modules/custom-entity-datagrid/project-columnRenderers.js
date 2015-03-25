@@ -112,13 +112,6 @@ if (beCPG.module.EntityDataGridRenderers) {
 	      }
 	   });
    
-//   YAHOO.Bubbling.fire("registerDataGridRenderer", {
-//	   propertyName : "pjt:budgetList",
-//	   renderer : function(oRecord, data, label, scope, idx, length) {
-//		   
-//		   return  Alfresco.util.encodeHTML(data.displayValue);
-//	   }
-//	});
    
    YAHOO.Bubbling.fire("registerDataGridRenderer", {
 	      propertyName : [ "pjt:blItem" ],
@@ -126,8 +119,8 @@ if (beCPG.module.EntityDataGridRenderers) {
 	      	
 	      	var padding = 0;
 	      	if (oRecord.getData("itemData")["prop_bcpg_depthLevel"] && oRecord.getData("itemData")["prop_bcpg_depthLevel"].value) {
-					padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 15;
-				}      	
+				padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 15;
+			}      	
 	         
 	         return '<span style="margin-left:' + padding + 'px;" >' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
 	      }

@@ -103,7 +103,7 @@ public interface ProjectModel {
 	
 	//Budget List
 	public static final QName TYPE_BUDGET_LIST  = QName.createQName(PROJECT_URI, "budgetList");
-	public static final QName PROP_Bl_ITEM  = QName.createQName(PROJECT_URI, "blItem");
+	public static final QName PROP_BL_ITEM  = QName.createQName(PROJECT_URI, "blItem");
 	public static final QName PROP_BL_BUDGETED_EXPENSE  = QName.createQName(PROJECT_URI, "blBudgetedExpense");
 	public static final QName PROP_BL_BUDGETED_INVOICE  = QName.createQName(PROJECT_URI, "blBudgetedInvoice");
 	public static final QName PROP_BL_PROFIT  = QName.createQName(PROJECT_URI, "blProfit");

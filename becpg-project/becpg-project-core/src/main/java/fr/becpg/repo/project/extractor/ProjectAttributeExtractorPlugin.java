@@ -57,7 +57,7 @@ public class ProjectAttributeExtractorPlugin implements AttributeExtractorPlugin
 			return (String) nodeService.getProperty(nodeRef,ProjectModel.PROP_DL_DESCRIPTION);
 		}
 		else if(ProjectModel.TYPE_BUDGET_LIST.equals(type)){
-			return (String) nodeService.getProperty(nodeRef,ProjectModel.PROP_Bl_ITEM);
+			return (String) nodeService.getProperty(nodeRef,ProjectModel.PROP_BL_ITEM);
 		}
 		return (String) nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_TASK_NAME);
 	}

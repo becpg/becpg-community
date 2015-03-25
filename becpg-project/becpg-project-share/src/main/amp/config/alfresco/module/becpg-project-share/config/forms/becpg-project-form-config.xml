@@ -46,7 +46,10 @@
 					<show id="pjt:projectWork" for-mode="view"/>
 					<show id="pjt:projectBudgetedCost" for-mode="view"/>
 					<show id="pjt:projectLoggedTime" for-mode="view"/>
-					
+
+					<!-- Model -->
+					<show id="bcpg:entityTplEnabled" />
+					<show id="bcpg:entityTplIsDefault" />
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" />
@@ -64,6 +67,7 @@
 						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="planning" appearance="bordered-panel"
 						label-id="becpg.forms.set.planning.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+				    <set id="template" appearance="bordered-panel" label-id="becpg.forms.set.template.label" />
 					<set id="categories" appearance="bordered-panel"
 						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
@@ -120,7 +124,12 @@
 					<field id="pjt:projectOverdue" set="planning" />
 					<field id="pjt:projectWork" set="planning" />
 					<field id="pjt:projectBudgetedCost" set="planning" />
-					<field id="pjt:projectLoggedTime" set="planning" />					
+					<field id="pjt:projectLoggedTime" set="planning" />		
+					
+					
+					<field id="bcpg:entityTplEnabled" set="template" />
+					<field id="bcpg:entityTplIsDefault" set="template" />
+								
 
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
