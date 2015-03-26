@@ -418,16 +418,7 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
-				<property name="pjt:tlActualExpense">
-					<type>d:double</type>
-					<mandatory>false</mandatory>
-					<index enabled="false" />
-				</property>
-				<property name="pjt:tlActualInvoice">
-					<type>d:double</type>
-					<mandatory>false</mandatory>
-					<index enabled="false" />
-				</property>
+
 			</properties>
 			<associations>
 				<association name="pjt:tlPrevTasks">
@@ -501,6 +492,7 @@
 				<aspect>bcpg:sortableListAspect</aspect>
 				<aspect>pjt:completionAspect</aspect>
 				<aspect>bcpg:depthLevelAspect</aspect>
+				<aspect>pjt:budgetAspect</aspect>
 			</mandatory-aspects>
 		</type>
 
@@ -770,16 +762,7 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
-				<property name="pjt:blActualExpense">
-					<type>d:double</type>
-					<mandatory>false</mandatory>
-					<index enabled="false" />
-				</property>
-				<property name="pjt:blActualInvoice">
-					<type>d:double</type>
-					<mandatory>false</mandatory>
-					<index enabled="false" />
-				</property>
+
 				<property name="pjt:blProfit">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
@@ -788,7 +771,8 @@
 			</properties>
 			<associations />
 			<mandatory-aspects>
-			<aspect>bcpg:depthLevelAspect</aspect>
+				<aspect>bcpg:depthLevelAspect</aspect>
+				<aspect>pjt:budgetAspect</aspect>
 			</mandatory-aspects>
 		</type>
 
@@ -798,12 +782,7 @@
 		<type name="pjt:expenseList">
 			<parent>bcpg:entityListItem</parent>
 			<properties>
-				<property name="pjt:elExpenseAmount">
-					<type>d:double</type>
-					<mandatory>false</mandatory>
-					<index enabled="false">
-					</index>
-				</property>
+
 				<property name="pjt:elExpenseName">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
@@ -811,7 +790,7 @@
 					</index>
 				</property>
 			</properties>
-		<associations>
+			<associations>
 				<association name="pjt:elTaskRef">
 					<source>
 						<mandatory>true</mandatory>
@@ -848,6 +827,9 @@
 					</target>
 				</association>
 			</associations>
+			<mandatory-aspects>
+				<aspect>pjt:budgetAspect</aspect>
+			</mandatory-aspects>
 		</type>
 
 		<!-- Invoices List -->
@@ -855,11 +837,7 @@
 		<type name="pjt:invoiceList">
 			<parent>bcpg:entityListItem</parent>
 			<properties>
-				<property name="pjt:ilInvoiceAmount">
-					<type>d:double</type>
-					<mandatory>false</mandatory>
-					<index enabled="false" />
-				</property>
+
 				<property name="pjt:ilInvoiceName">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
@@ -900,12 +878,31 @@
 						<many>true</many>
 					</target>
 				</association>
-			   </associations>
-			  </type>
-			 </types>
-			 
-			 
-		<aspects>
+			</associations>
+			<mandatory-aspects>
+				<aspect>pjt:budgetAspect</aspect>
+			</mandatory-aspects>
+		</type>
+	</types>
+
+	<aspects>
+
+		<aspect name="pjt:budgetAspect">
+			<properties>
+				<property name="pjt:invoice">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="pjt:expense">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false">
+					</index>
+				</property>
+			</properties>
+		</aspect>
+
 		<aspect name="pjt:completionAspect">
 			<properties>
 				<property name="pjt:completionPercent">

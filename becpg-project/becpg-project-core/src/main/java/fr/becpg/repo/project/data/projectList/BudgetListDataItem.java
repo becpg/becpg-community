@@ -37,7 +37,7 @@ public class BudgetListDataItem extends BeCPGDataObject implements CompositeData
 	private Double budgetedExpense;
 	private Double budgetedInvoice;
 	private Double actualExpense;
-	private Double actualInvoice=0d;
+	private Double actualInvoice;
 	private Double profit;
 	
 	private BudgetListDataItem parent;
@@ -108,7 +108,7 @@ public class BudgetListDataItem extends BeCPGDataObject implements CompositeData
 		this.budgetedInvoice = budgetedInvoice;
 	}
 	@AlfProp
-	@AlfQname(qname = "pjt:blActualExpense")
+	@AlfQname(qname = "pjt:expense")
 	public Double getActualExpense() {
 		return actualExpense;
 	}
@@ -117,7 +117,7 @@ public class BudgetListDataItem extends BeCPGDataObject implements CompositeData
 		this.actualExpense = actualExpense;
 	}
 	@AlfProp
-	@AlfQname(qname = "pjt:blActualInvoice")
+	@AlfQname(qname = "pjt:invoice")
 	public Double getActualInvoice() {
 		return actualInvoice;
 	}
