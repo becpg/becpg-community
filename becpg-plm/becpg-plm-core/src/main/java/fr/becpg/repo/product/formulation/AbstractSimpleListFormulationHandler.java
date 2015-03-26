@@ -231,51 +231,53 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 						//Calculate values			
 						if(slDataItem != null && qtyUsed != null ){
 												
-							Double origValue = newSimpleListDataItem.getValue() != null ? newSimpleListDataItem.getValue() : 0d;
-							Double value = slDataItem.getValue();
-							if(value != null){
-								newSimpleListDataItem.setValue(FormulationHelper.calculateValue(newSimpleListDataItem.getValue(), qtyUsed, slDataItem.getValue(), netQty));
-								
-								if(totalQties!=null){
-									Double currentQty = totalQties.get(newSimpleListDataItem.getCharactNodeRef());
-									if(currentQty==null){
-										currentQty = 0d;
-									}
-									totalQties.put(newSimpleListDataItem.getCharactNodeRef(),currentQty+qtyUsed);
+							calculate(newSimpleListDataItem, slDataItem, qtyUsed, netQty);
+							
+							if(totalQties!=null && slDataItem.getValue() != null){
+								Double currentQty = totalQties.get(newSimpleListDataItem.getCharactNodeRef());
+								if(currentQty==null){
+									currentQty = 0d;
 								}
-								
+								totalQties.put(newSimpleListDataItem.getCharactNodeRef(),currentQty+qtyUsed);
 							}
-							else{
-								value = 0d;
-							}
-							
-							Double origMini = newSimpleListDataItem.getMini() != null ? newSimpleListDataItem.getMini() : origValue;
-							Double miniValue = slDataItem.getMini() != null ? slDataItem.getMini() : value;
-							if(miniValue < value || origMini < origValue){
-								newSimpleListDataItem.setMini(FormulationHelper.calculateValue(newSimpleListDataItem.getMini(), qtyUsed, miniValue, netQty));
-							}
-							
-							Double origMaxi = newSimpleListDataItem.getMaxi() != null ? newSimpleListDataItem.getMaxi() : origValue;
-							Double maxiValue = slDataItem.getMaxi() != null ? slDataItem.getMaxi() : value;
-							if(maxiValue > value || origMaxi > origValue){
-								newSimpleListDataItem.setMaxi(FormulationHelper.calculateValue(newSimpleListDataItem.getMaxi(), qtyUsed, maxiValue, netQty));
-							}					
-							
-							if(logger.isDebugEnabled()){
-								logger.debug("valueToAdd = qtyUsed * value : " + qtyUsed + " * " + slDataItem.getValue());
-								if(newSimpleListDataItem.getNodeRef()!=null){
-									logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), ContentModel.PROP_NAME) + " - newValue : " + newSimpleListDataItem.getValue());
-									logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), ContentModel.PROP_NAME) + " - newMini : " + newSimpleListDataItem.getMini());
-									logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), ContentModel.PROP_NAME) + " - newMaxi : " + newSimpleListDataItem.getMaxi());
-								}
-							}
-							
 							
 						}		
 					}						
 				}	
 			}
 		}		
+	}
+	
+	protected void calculate(SimpleListDataItem newSimpleListDataItem, SimpleListDataItem slDataItem, Double qtyUsed, Double netQty){
+		Double origValue = newSimpleListDataItem.getValue() != null ? newSimpleListDataItem.getValue() : 0d;
+		Double value = slDataItem.getValue();
+		if(value != null){
+			newSimpleListDataItem.setValue(FormulationHelper.calculateValue(newSimpleListDataItem.getValue(), qtyUsed, slDataItem.getValue(), netQty));			
+		}
+		else{
+			value = 0d;
+		}
+		
+		Double origMini = newSimpleListDataItem.getMini() != null ? newSimpleListDataItem.getMini() : origValue;
+		Double miniValue = slDataItem.getMini() != null ? slDataItem.getMini() : value;
+		if(miniValue < value || origMini < origValue){
+			newSimpleListDataItem.setMini(FormulationHelper.calculateValue(newSimpleListDataItem.getMini(), qtyUsed, miniValue, netQty));
+		}
+		
+		Double origMaxi = newSimpleListDataItem.getMaxi() != null ? newSimpleListDataItem.getMaxi() : origValue;
+		Double maxiValue = slDataItem.getMaxi() != null ? slDataItem.getMaxi() : value;
+		if(maxiValue > value || origMaxi > origValue){
+			newSimpleListDataItem.setMaxi(FormulationHelper.calculateValue(newSimpleListDataItem.getMaxi(), qtyUsed, maxiValue, netQty));
+		}					
+		
+		if(logger.isDebugEnabled()){
+			logger.debug("valueToAdd = qtyUsed * value : " + qtyUsed + " * " + slDataItem.getValue());
+			if(newSimpleListDataItem.getNodeRef()!=null){
+				logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), ContentModel.PROP_NAME) + " - newValue : " + newSimpleListDataItem.getValue());
+				logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), ContentModel.PROP_NAME) + " - newMini : " + newSimpleListDataItem.getMini());
+				logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), ContentModel.PROP_NAME) + " - newMaxi : " + newSimpleListDataItem.getMaxi());
+			}
+		}
 	}
 	
 	protected void addMissingMandatoryCharact(Map<NodeRef, List<NodeRef>> mandatoryCharacts, NodeRef charactNodeRef, NodeRef componentNodeRef){

@@ -125,6 +125,12 @@ public class FormulationHelper {
 
 				}
 
+			} else if (compoListUnit.equals(CompoListUnit.m) || compoListUnit.equals(CompoListUnit.m2)) {
+				Double productQty = FormulationHelper.getProductQty(compoListDataItem.getProduct(), nodeService);
+				if (productQty == null) {
+					productQty = 1d;
+				}
+				return FormulationHelper.getNetWeight(compoListDataItem.getProduct(), nodeService, FormulationHelper.DEFAULT_NET_WEIGHT) * qty / productQty;
 			}
 			return qty;
 		}

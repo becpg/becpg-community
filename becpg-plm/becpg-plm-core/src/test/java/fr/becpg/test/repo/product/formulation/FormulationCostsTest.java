@@ -29,13 +29,14 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.product.data.ClientData;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.CompoListUnit;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
@@ -45,6 +46,7 @@ import fr.becpg.repo.product.data.constraints.TareUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
+import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
 /**
@@ -55,6 +57,9 @@ import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 public class FormulationCostsTest extends AbstractFinishedProductTest {
 
 	protected static Log logger = LogFactory.getLog(FormulationCostsTest.class);
+	
+	@Autowired
+	protected AlfrescoRepository<ClientData> clientRepository;
 
 	@Resource
 	private AssociationService associationService;
@@ -91,21 +96,21 @@ public class FormulationCostsTest extends AbstractFinishedProductTest {
 				costList.get(2).setParent(costList.get(1));
 				List<NodeRef> plants = new ArrayList<>();
 				plants.add(plant1);
-				costList.add(new CostListDataItem(null, 2000d, "€/Pal", 2400d, cost3, false, plants));
+				costList.add(new CostListDataItem(null, 2000d, "€/Pal", 2400d, cost3, false, plants, null, null));
 				plants = new ArrayList<>();
 				plants.add(plant2);
-				costList.add(new CostListDataItem(null, 4000d, "€/Pal", 2400d, cost3, false, plants));
+				costList.add(new CostListDataItem(null, 4000d, "€/Pal", 2400d, cost3, false, plants, null, null));
 				templateFinishedProduct.setCostList(costList);
 				ProductData entityTpl = alfrescoRepository.create(getTestFolderNodeRef(), templateFinishedProduct);
 				nodeService.addAspect(entityTpl.getNodeRef(), BeCPGModel.ASPECT_ENTITY_TPL, null);
 				
-				// product specification
-				ProductSpecificationData productSpecificationData = new ProductSpecificationData();
-				productSpecificationData.setName("Spec1");
+				// Client
+				ClientData client = new ClientData();
+				client.setName("client");				
 				costList = new ArrayList<>();
 				costList.add(new CostListDataItem(new CostListDataItem(null, 1d, "€/kg", 3d, cost4, false)));
-				productSpecificationData.setCostList(costList);
-				productSpecificationData = (ProductSpecificationData)alfrescoRepository.create(getTestFolderNodeRef(), productSpecificationData);
+				client.setCostList(costList);
+				client = clientRepository.create(getTestFolderNodeRef(), client);
 				
 				// product
 				FinishedProductData finishedProduct = new FinishedProductData();
@@ -123,9 +128,9 @@ public class FormulationCostsTest extends AbstractFinishedProductTest {
 				
 				finishedProduct =  (FinishedProductData)alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct);
 				// assoc is readonly
-				ArrayList<NodeRef> productSpecificationNodeRefs = new ArrayList<>();
-				productSpecificationNodeRefs.add(productSpecificationData.getNodeRef());
-				associationService.update(finishedProduct.getNodeRef(), PLMModel.ASSOC_PRODUCT_SPECIFICATIONS, productSpecificationNodeRefs);
+				ArrayList<NodeRef> clientNodeRefs = new ArrayList<>();
+				clientNodeRefs.add(client.getNodeRef());
+				associationService.update(finishedProduct.getNodeRef(), PLMModel.ASSOC_CLIENTS, clientNodeRefs);
 								
 				return finishedProduct.getNodeRef();
 
@@ -190,6 +195,11 @@ public class FormulationCostsTest extends AbstractFinishedProductTest {
 				formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
 								
 				for(CostListDataItem c : formulatedProduct.getCostList()){
+					
+					String trace = "cost: " + nodeService.getProperty(c.getCost(), ContentModel.PROP_NAME) + " - value: " + c.getValue()
+							+ " - unit: " + c.getUnit();
+					logger.info(trace);
+					
 					assertEquals("€/kg", c.getUnit());
 					if(c.getCost().equals(parentCost)){
 						assertEquals(19d, c.getValue());
@@ -268,15 +278,21 @@ public class FormulationCostsTest extends AbstractFinishedProductTest {
 				assertNotNull("CostList is null", formulatedProduct.getCostList());
 				for (CostListDataItem costListDataItem : formulatedProduct.getCostList()) {
 					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue()
+							+ " - previous value: " + costListDataItem.getPreviousValue()
+							+ " - future value: " + costListDataItem.getFutureValue()
 							+ " - unit: " + costListDataItem.getUnit();
 					logger.info(trace);
 					if (costListDataItem.getCost().equals(cost1) && costListDataItem.getComponentNodeRef() == null) {
 						assertEquals(3.5d, costListDataItem.getValue());
+						assertEquals(2d, costListDataItem.getPreviousValue());
+						assertEquals(8d, costListDataItem.getFutureValue());
 						assertEquals("€/kg", costListDataItem.getUnit());
 						checks++;
 					}
 					if (costListDataItem.getCost().equals(cost2)) {
 						assertEquals(6.0d, costListDataItem.getValue());
+						assertEquals(3d, costListDataItem.getPreviousValue());
+						assertEquals(12d, costListDataItem.getFutureValue());
 						assertEquals("€/kg", costListDataItem.getUnit());
 						checks++;
 					}

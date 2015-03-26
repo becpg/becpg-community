@@ -130,6 +130,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	 */
 
 	private List<ProductSpecificationData> productSpecifications;
+	private List<ClientData> clients;
 
 	@AlfMultiAssoc(isEntity = true)
 	@AlfQname(qname = "bcpg:productSpecifications")
@@ -140,6 +141,17 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 
 	public void setProductSpecifications(List<ProductSpecificationData> productSpecifications) {
 		this.productSpecifications = productSpecifications;
+	}
+
+	@AlfMultiAssoc(isEntity = true)
+	@AlfQname(qname = "bcpg:clients")
+	@AlfReadOnly
+	public List<ClientData> getClients() {
+		return clients;
+	}
+
+	public void setClients(List<ClientData> clients) {
+		this.clients = clients;
 	}
 
 	@AlfMultiAssoc(isChildAssoc = true, isEntity = true)
