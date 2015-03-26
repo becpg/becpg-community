@@ -257,17 +257,12 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Boolean>() {
 			public Boolean execute() throws Throwable {
 				ruleService.disableRules();
-				policyBehaviourFilter.disableAllBehaviours();
 				try {
-					nodeService.setProperty(threadSafeTestFolder.get(),  ContentModel.ASPECT_TEMPORARY, null);
-					
+					nodeService.addAspect(threadSafeTestFolder.get(),  ContentModel.ASPECT_TEMPORARY, null);
 					nodeService.deleteNode(threadSafeTestFolder.get());
 				} finally {
-					policyBehaviourFilter.enableAllBehaviours();
 					ruleService.enableRules();
 				}
-				
-
 				return true;
 
 			}
