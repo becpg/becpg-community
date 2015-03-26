@@ -27,11 +27,11 @@ import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.formulation.FormulateException;
+import fr.becpg.repo.product.data.ClientData;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.PackagingKitData;
 import fr.becpg.repo.product.data.PackagingMaterialData;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.ResourceProductData;
 import fr.becpg.repo.product.data.constraints.ProcessListUnit;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
@@ -43,6 +43,7 @@ import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.spel.SpelHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.model.SimpleListDataItem;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
 /**
@@ -313,6 +314,26 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			}
 		}
 	}
+	
+	@Override
+	protected void calculate(SimpleListDataItem newSimpleListDataItem, SimpleListDataItem slDataItem, Double qtyUsed, Double netQty){
+		super.calculate(newSimpleListDataItem, slDataItem, qtyUsed, netQty);
+		
+		if(slDataItem instanceof CostListDataItem && newSimpleListDataItem instanceof CostListDataItem){
+			CostListDataItem nclDataItem = (CostListDataItem)newSimpleListDataItem;
+			CostListDataItem clDataItem = (CostListDataItem)slDataItem; 
+			nclDataItem.setPreviousValue(FormulationHelper.calculateValue(nclDataItem.getPreviousValue(), qtyUsed, clDataItem.getPreviousValue(), netQty));
+			nclDataItem.setFutureValue(FormulationHelper.calculateValue(nclDataItem.getFutureValue(), qtyUsed, clDataItem.getFutureValue(), netQty));
+			
+			if(logger.isDebugEnabled()){
+				logger.debug("valueToAdd = qtyUsed * value : " + qtyUsed + " * " + slDataItem.getValue());
+				if(newSimpleListDataItem.getNodeRef()!=null){
+					logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), ContentModel.PROP_NAME) + " - previousValue : " + nclDataItem.getPreviousValue());
+					logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), ContentModel.PROP_NAME) + " - futureValue : " + nclDataItem.getFutureValue());
+				}
+			}
+		}		
+	}
 
 	@Override
 	protected QName getDataListVisited() {
@@ -423,8 +444,8 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		if (formulatedProduct.getEntityTpl() != null) {
 			templateCostLists.addAll(formulatedProduct.getEntityTpl().getCostList());
 		}
-		for(ProductSpecificationData psd : formulatedProduct.getProductSpecifications()){
-			templateCostLists.addAll(psd.getCostList());
+		for(ClientData client : formulatedProduct.getClients()){
+			templateCostLists.addAll(client.getCostList());
 		}
 				
 		for(CostListDataItem templateCostList : templateCostLists){
@@ -457,43 +478,80 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	
 	private void copyTemplateCost(ProductData formulatedProduct, CostListDataItem templateCostList, CostListDataItem costList){
 		
-		Double value = templateCostList.getValue();
-		Double maxi = templateCostList.getMaxi();
-		
 		if(logger.isDebugEnabled()){
-			logger.debug("copy cost " + nodeService.getProperty(templateCostList.getCost(), ContentModel.PROP_NAME));
+			logger.debug("copy cost " + nodeService.getProperty(templateCostList.getCost(), ContentModel.PROP_NAME) + " unit " + templateCostList.getUnit() +
+					" PackagingData " + formulatedProduct.getDefaultVariantPackagingData());
 		}
+		boolean isCalculated = false;
 		
 		if(formulatedProduct.getUnit() != null && templateCostList.getUnit() != null){
 			if(!templateCostList.getUnit().endsWith(formulatedProduct.getUnit().toString())){				
 				if(FormulationHelper.isProductUnitP(formulatedProduct.getUnit())){
 					if(templateCostList.getUnit().endsWith("kg") || templateCostList.getUnit().endsWith("L")){
-						value = multiply(value, FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d));
-						maxi = multiply(maxi, FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d));
+						calculateValues(templateCostList, costList, false, FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d));
+						isCalculated = true;
 					}
-					else if(templateCostList.getUnit().endsWith("Pal") && formulatedProduct.getDefaultVariantPackagingData() != null && formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() != null && formulatedProduct.getDefaultVariantPackagingData().getBoxesPerPallet() != null){
-						value = divide(value, (double)formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() * formulatedProduct.getDefaultVariantPackagingData().getBoxesPerPallet());
-						maxi = divide(maxi, (double)formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() * formulatedProduct.getDefaultVariantPackagingData().getBoxesPerPallet());
+					else if(templateCostList.getUnit().endsWith("Pal") && formulatedProduct.getDefaultVariantPackagingData() != null && formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() != null && formulatedProduct.getDefaultVariantPackagingData().getBoxesPerPallet() != null){						
+						calculateValues(templateCostList, costList, true, (double)formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() * formulatedProduct.getDefaultVariantPackagingData().getBoxesPerPallet());
+						isCalculated = true;
 					}
 				}
 				else if(FormulationHelper.isProductUnitKg(formulatedProduct.getUnit()) || FormulationHelper.isProductUnitLiter(formulatedProduct.getUnit())){
 					if(templateCostList.getUnit().endsWith("P")){
-						value = divide(value, FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d));
-						maxi = divide(maxi, FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d));
+						calculateValues(templateCostList, costList, true, FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d));
+						isCalculated = true;
 					}
 					else if(templateCostList.getUnit().endsWith("Pal") && formulatedProduct.getDefaultVariantPackagingData() != null && formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() != null && formulatedProduct.getDefaultVariantPackagingData().getBoxesPerPallet() != null){
-						value = divide(value, (double)formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() * formulatedProduct.getDefaultVariantPackagingData().getBoxesPerPallet() * FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d));
-						maxi = divide(maxi, (double)formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() * formulatedProduct.getDefaultVariantPackagingData().getBoxesPerPallet() * FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d));
+						calculateValues(templateCostList, costList, true, (double)formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() * formulatedProduct.getDefaultVariantPackagingData().getBoxesPerPallet() * FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d));
+						isCalculated = true;
 					}
 				}				
 			}
+		}	
+		
+		if(!isCalculated){
+			calculateValues(templateCostList, costList, null, null);
 		}
+	}
+	
+	private void calculateValues(CostListDataItem templateCostList, CostListDataItem costList, Boolean divide, Double qty){
+		
+		if(logger.isDebugEnabled()){
+			logger.debug("calculateValues " + nodeService.getProperty(templateCostList.getCost(), ContentModel.PROP_NAME));
+		}
+		
+		Double value = templateCostList.getValue();
+		Double maxi = templateCostList.getMaxi();
+		Double previousValue = templateCostList.getPreviousValue();
+		Double futureValue = templateCostList.getFutureValue();
+		
+		if(divide != null && qty != null){
+			if(divide.booleanValue()){
+				value = divide(value, qty);
+				maxi = divide(maxi, qty);
+				previousValue = divide(previousValue, qty);
+				futureValue = divide(futureValue, qty); 
+			}
+			else{
+				value = multiply(value, qty);
+				maxi = multiply(maxi, qty);
+				previousValue = multiply(previousValue, qty);
+				futureValue = multiply(futureValue, qty); 
+			}
+		}		
+		
 		if(value != null){
 			costList.setValue(value);
 		}
 		if(maxi != null){
 			costList.setMaxi(maxi);
 		}
+		if(previousValue != null){
+			costList.setPreviousValue(previousValue);
+		}
+		if(futureValue != null){
+			costList.setFutureValue(futureValue);
+		}					
 	}
 	
 	private Double divide(Double a, Double b){

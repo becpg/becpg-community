@@ -1140,6 +1140,16 @@
 						<constraint ref="bcpg:costListUnit" />
 					</constraints>
 				</property>
+				<property name="bcpg:costListPreviousValue">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:costListFutureValue">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 				<property name="bcpg:costListMaxi">
 					<type>d:double</type>
 					<mandatory>false</mandatory>

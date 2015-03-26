@@ -26,6 +26,8 @@ public class CostListDataItem extends AbstractManualDataItem implements SimpleLi
 
 	private Double value = 0d;	
 	private String unit;		
+	private Double previousValue = 0d;
+	private Double futureValue = 0d;
 	private Double maxi = null;	
 	private NodeRef cost;	
 	private Boolean isFormulated;	
@@ -52,13 +54,31 @@ public class CostListDataItem extends AbstractManualDataItem implements SimpleLi
 	public String getUnit() {
 		return unit;
 	}
-	
-	
+		
 	public void setUnit(String unit) {
 		this.unit = unit;
 	}
-	
-	
+		
+	@AlfProp
+	@AlfQname(qname="bcpg:costListPreviousValue")
+	public Double getPreviousValue() {
+		return previousValue;
+	}
+
+	public void setPreviousValue(Double previousValue) {
+		this.previousValue = previousValue;
+	}
+
+	@AlfProp
+	@AlfQname(qname="bcpg:costListFutureValue")
+	public Double getFutureValue() {
+		return futureValue;
+	}
+
+	public void setFutureValue(Double futureValue) {
+		this.futureValue = futureValue;
+	}
+
 	@AlfSingleAssoc
 	@AlfQname(qname="bcpg:costListCost")
 	@DataListIdentifierAttr
@@ -163,7 +183,7 @@ public class CostListDataItem extends AbstractManualDataItem implements SimpleLi
 		this.isManual = isManual;
 	}
 	
-	public CostListDataItem(NodeRef nodeRef, Double value, String unit, Double maxi, NodeRef cost, Boolean isManual, List<NodeRef> plants){
+	public CostListDataItem(NodeRef nodeRef, Double value, String unit, Double maxi, NodeRef cost, Boolean isManual, List<NodeRef> plants, Double previousValue, Double futureValue){
 		super();
 		this.nodeRef = nodeRef;		
 		this.value = value;
@@ -172,6 +192,8 @@ public class CostListDataItem extends AbstractManualDataItem implements SimpleLi
 		this.cost = cost;
 		this.isManual = isManual;
 		this.plants = plants;
+		this.previousValue = previousValue;
+		this.futureValue = futureValue;
 	}
 	
 	

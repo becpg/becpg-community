@@ -428,8 +428,8 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					rawMaterial1.setSuppliers(Arrays.asList(supplier1));
 					//costList
 					List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
-					costList.add(new CostListDataItem(null, 3d, "€/kg", 3.1d, cost1, false));
-					costList.add(new CostListDataItem(null, 2d, "€/kg", 2.1d, cost2, false));
+					costList.add(new CostListDataItem(null, 3d, "€/kg", 3.1d, cost1, false, null, 1.5d, 6d));
+					costList.add(new CostListDataItem(null, 2d, "€/kg", 2.1d, cost2, false, null, 1d, 4d));
 					rawMaterial1.setCostList(costList);
 					//nutList
 					List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
@@ -479,8 +479,8 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					rawMaterial2.setSuppliers(Arrays.asList(supplier2));
 					//costList
 					costList = new ArrayList<CostListDataItem>();
-					costList.add(new CostListDataItem(null, 1d, "€/kg", 2.1d, cost1, false));
-					costList.add(new CostListDataItem(null, 2d, "€/kg", 2.2d, cost2, false));
+					costList.add(new CostListDataItem(null, 1d, "€/kg", 2.1d, cost1, false, null, 0.5d, 2d));
+					costList.add(new CostListDataItem(null, 2d, "€/kg", 2.2d, cost2, false, null, 1d, 4d));
 					rawMaterial2.setCostList(costList);
 					//nutList
 					nutList = new ArrayList<NutListDataItem>();
@@ -528,8 +528,8 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					rawMaterial3.setDensity(1d);
 					//costList
 					costList = new ArrayList<CostListDataItem>();
-					costList.add(new CostListDataItem(null, 1d, "€/kg", null, cost1, false));
-					costList.add(new CostListDataItem(null, 2d, "€/kg", null, cost2, false));
+					costList.add(new CostListDataItem(null, 1d, "€/kg", null, cost1, false, null, 0.5d, 2d));
+					costList.add(new CostListDataItem(null, 2d, "€/kg", null, cost2, false, null, 1d, 4d));
 					rawMaterial3.setCostList(costList);
 					//nutList
 					nutList = new ArrayList<NutListDataItem>();
