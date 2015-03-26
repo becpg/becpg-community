@@ -34,45 +34,42 @@ public class PackagingHelper {
 	protected AlfrescoRepository<ProductData> alfrescoRepository;
 	
 	public VariantPackagingData getDefaultVariantPackagingData(ProductData productData){		
-		NodeRef defaultVariantNodeRef = getDefaultVariant(productData);
-		PackagingData packagingData = getPackagingData(productData, getDefaultVariant(productData));		
-		return packagingData.getVariants().get(defaultVariantNodeRef);
+		PackagingData packagingData = getPackagingData(productData);		
+		return packagingData.getVariants().get(getDefaultVariant(productData));
 	}
 	
-	public PackagingData getPackagingData(ProductData productData){		
-		return getPackagingData(productData, getDefaultVariant(productData));
-	}
 	
-	private PackagingData getPackagingData(ProductData productData, NodeRef defaultVariantNodeRef){
+	@SuppressWarnings("unchecked")
+	private PackagingData getPackagingData(ProductData productData){
 		PackagingData packagingData = new PackagingData(productData.getVariants());		
 		for (PackagingListDataItem dataItem : productData.getPackagingList(EffectiveFilters.EFFECTIVE)) {
-			loadPackagingItem(dataItem, packagingData, defaultVariantNodeRef);
+			loadPackagingItem(dataItem, packagingData);
 		}		
 		return packagingData;
 	}
 	
 	private NodeRef getDefaultVariant(ProductData productData){
 		NodeRef defaultVariantNodeRef = null;
-		for (VariantData variantData : productData.getVariants()) {
-			if (variantData.getIsDefaultVariant()) {
-				defaultVariantNodeRef = variantData.getNodeRef();
+		if(productData.getVariants()!=null){
+			for (VariantData variantData : productData.getVariants()) {
+				if (variantData.getIsDefaultVariant()) {
+					defaultVariantNodeRef = variantData.getNodeRef();
+				}
 			}
 		}
 		return defaultVariantNodeRef;
 	}
 	
-	private void loadPackagingItem(PackagingListDataItem dataItem, PackagingData packagingData,
-			NodeRef defaultVariantNodeRef) {
+	private void loadPackagingItem(PackagingListDataItem dataItem, PackagingData packagingData) {
 
 		if (nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_PACKAGINGKIT)) {
-			loadPackagingKit(dataItem, packagingData, defaultVariantNodeRef);			
+			loadPackagingKit(dataItem, packagingData);			
 		} else {
-			loadPackaging(dataItem, packagingData, defaultVariantNodeRef, dataItem.getVariants());
+			loadPackaging(dataItem, packagingData, dataItem.getVariants());
 		}
 	}
 
-	private void loadPackaging(PackagingListDataItem dataItem, PackagingData packagingData,
-		NodeRef defaultVariantNodeRef, List<NodeRef> currentVariants) {
+	private void loadPackaging(PackagingListDataItem dataItem, PackagingData packagingData, List<NodeRef> currentVariants) {
 		QName nodeType = nodeService.getType(dataItem.getProduct());
 
 		if (nodeService.hasAspect(dataItem.getProduct(), PackModel.ASPECT_TARE)) {
@@ -107,13 +104,13 @@ public class PackagingHelper {
 
 	// manage 2 level depth
 	@SuppressWarnings("unchecked")
-	private void loadPackagingKit(PackagingListDataItem dataItem, PackagingData packagingData, NodeRef defaultVariantNodeRef) {
+	private void loadPackagingKit(PackagingListDataItem dataItem, PackagingData packagingData) {
 
-		loadPackaging(dataItem, packagingData, defaultVariantNodeRef, dataItem.getVariants());
+		loadPackaging(dataItem, packagingData, dataItem.getVariants());
 		ProductData packagingKitData = alfrescoRepository.findOne(dataItem.getProduct());
 
 		for (PackagingListDataItem p : packagingKitData.getPackagingList(EffectiveFilters.EFFECTIVE)) {
-			loadPackaging(p, packagingData, defaultVariantNodeRef, dataItem.getVariants());
+			loadPackaging(p, packagingData, dataItem.getVariants());
 		}
 	}
 }
