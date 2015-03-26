@@ -467,6 +467,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			if (logger.isDebugEnabled()) {
 				logger.debug("delete versionHistoryRef " + versionHistoryRef);
 			}
+			nodeService.addAspect(versionHistoryRef,  ContentModel.ASPECT_TEMPORARY, null);
 			nodeService.deleteNode(versionHistoryRef);
 		}
 	}
