@@ -60,7 +60,8 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	@Resource
 	private CopyService copyService;
 	
-	@Resource private PersonService personService;
+	@Resource 
+	private PersonService personService;
 
 	/**
 	 * Test a project create InProgress start automatically
@@ -68,7 +69,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	@Test
 	public void testCreateProjectInProgress() {
 
-		createProject(ProjectState.InProgress, new Date(), null);
+		final NodeRef projectNodeRef = createProject(ProjectState.InProgress, new Date(), null);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
@@ -99,7 +100,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	@Test
 	public void testCancelProject() {
 
-		createProject(ProjectState.InProgress, new Date(), null);
+		final NodeRef projectNodeRef = createProject(ProjectState.InProgress, new Date(), null);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
@@ -130,7 +131,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	@Test
 	public void testDeleteProject() {
 
-		createProject(ProjectState.InProgress, new Date(), null);
+		final NodeRef projectNodeRef = createProject(ProjectState.InProgress, new Date(), null);
 
 		final String workflowInstanceId = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<String>() {
 			@Override
@@ -215,7 +216,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	@Test
 	public void testInitDeliverables() throws InterruptedException {
 
-		createProject(ProjectState.Planned, new Date(), null);
+		final NodeRef projectNodeRef = createProject(ProjectState.Planned, new Date(), null);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
@@ -284,7 +285,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 
 		final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
-		createProject(ProjectState.OnHold, null, dateFormat.parse("15/11/2012"));
+		final NodeRef projectNodeRef = createProject(ProjectState.OnHold, null, dateFormat.parse("15/11/2012"));
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
@@ -372,7 +373,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	@Test
 	public void testCalculateScoring() {
 
-		createProject(ProjectState.Planned, new Date(), null);
+		final NodeRef projectNodeRef =	createProject(ProjectState.Planned, new Date(), null);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
@@ -429,7 +430,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	public void testProjectState(){
 
 		
-		projectNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(
+		final NodeRef projectNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(
 				new RetryingTransactionCallback<NodeRef>() {
 					@Override
 					public NodeRef execute() throws Throwable {						
@@ -490,7 +491,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	@Test
 	public void testTaskWorkflow() {
 
-		createProject(ProjectState.Planned, null, null);
+		final NodeRef projectNodeRef =createProject(ProjectState.Planned, null, null);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 
@@ -543,7 +544,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	@Test
 	public void testCopyProject() {
 
-		createProject(ProjectState.InProgress, null, null);
+		final NodeRef projectNodeRef = createProject(ProjectState.InProgress, null, null);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<String>() {
 			@Override
@@ -586,7 +587,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	@Test
 	public void testWorkflowProperitesSynchronization() {
 
-		createProject(ProjectState.InProgress, new Date(), null);
+		final NodeRef projectNodeRef = createProject(ProjectState.InProgress, new Date(), null);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
@@ -650,7 +651,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	@Test
 	public void testTaskListOrDeliverableListDeleted() {
 
-		createProject(ProjectState.InProgress, new Date(), null);
+		final NodeRef projectNodeRef = createProject(ProjectState.InProgress, new Date(), null);
 
 		final String finalWorkflowInstanceId = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<String>() {
 			@Override
@@ -708,7 +709,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	@Test
 	public void testDeleteTaskAndDependancies() {
 
-		createProject(ProjectState.InProgress, new Date(), null);
+		final NodeRef projectNodeRef =	createProject(ProjectState.InProgress, new Date(), null);
 			
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override

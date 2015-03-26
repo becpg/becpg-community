@@ -40,7 +40,7 @@ public class ProjectSubmitTaskTest extends AbstractProjectTestCase {
 	@Test
 	public void testSubmitTask() {
 
-		createProject(ProjectState.InProgress, new Date(), null);
+		final NodeRef projectNodeRef = createProject(ProjectState.InProgress, new Date(), null);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override

@@ -30,7 +30,7 @@ public class ProjectOverdueTest extends AbstractProjectTestCase {
 	@Test
 	public void testProjectOverdue() {
 
-		createProject(ProjectState.Planned, new Date(), null);
+		final NodeRef projectNodeRef = createProject(ProjectState.Planned, new Date(), null);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override

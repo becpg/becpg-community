@@ -36,7 +36,7 @@ public class ProjectMultiLevelPlanningTest extends AbstractProjectTestCase {
 	@Test
 	public void testCalculatePlanningDates() throws ParseException {		
 		final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-		createMultiLevelProject(ProjectState.OnHold, dateFormat.parse("15/11/2012"), null, PlanningMode.Planning);		
+		final NodeRef projectNodeRef = createMultiLevelProject(ProjectState.OnHold, dateFormat.parse("15/11/2012"), null, PlanningMode.Planning);		
 		final Date today = ProjectHelper.removeTime(new Date());
 		final Date nextStartDate = ProjectHelper.calculateNextStartDate(today);
 		
@@ -215,7 +215,7 @@ public class ProjectMultiLevelPlanningTest extends AbstractProjectTestCase {
 	@Test
 	public void testRetroCalculatePlanningDates() throws ParseException {
 		final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-		createMultiLevelProject(ProjectState.OnHold, null, dateFormat.parse("15/11/2012"), PlanningMode.RetroPlanning);		
+		final NodeRef projectNodeRef = createMultiLevelProject(ProjectState.OnHold, null, dateFormat.parse("15/11/2012"), PlanningMode.RetroPlanning);		
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override

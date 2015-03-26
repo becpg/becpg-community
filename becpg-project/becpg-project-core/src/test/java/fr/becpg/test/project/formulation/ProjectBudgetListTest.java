@@ -37,7 +37,7 @@ public class ProjectBudgetListTest extends AbstractProjectTestCase {
 	@Test
 	public void testCalculateBudgetedExpense() throws ParseException {
 
-		createMultiLevelProject(ProjectState.OnHold, dateFormat.parse("15/11/2012"), null, PlanningMode.Planning);
+		final NodeRef projectNodeRef  =  createMultiLevelProject(ProjectState.OnHold, dateFormat.parse("15/11/2012"), null, PlanningMode.Planning);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
