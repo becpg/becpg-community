@@ -293,7 +293,7 @@ define(["dojo/_base/declare",
                                  id: this.id + "_ADVANCED_SEARCH",
                                  i18nScope: "org.alfresco.SearchBox",
                                  label: "header.becpg.search.label",
-                                 targetUrl: (currSite ? "site/" + currSite + "/" : "") + "search"
+                                 targetUrl: (currSite ? "site/" + currSite + "/" : "") + "dp/ws/faceted-search"
                               }
                            }
                         ]
@@ -577,6 +577,9 @@ define(["dojo/_base/declare",
                            link = "blog-postview?postId=" + encodeURIComponent(item.name);
                            item.name = item.title;
                            break;
+                        case "entity":
+                           link = "entity-details?nodeRef=" + item.nodeRef;
+                           break;   
                         default:
                            link = "document-details?nodeRef=" + item.nodeRef;
                            break;

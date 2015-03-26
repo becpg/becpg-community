@@ -32,7 +32,7 @@
                         itemId : nodes[0],
                         mode : "edit",
                         submitType : "json",
-                        entityNodeRef : nodes[1]
+                        entityNodeRef : nodes[1] != "#access_forbidden" ? nodes[1] : ""
                      });
 
          // Using Forms Service, so always create new instance
@@ -78,9 +78,10 @@
 
       },
       onActionCommentTask : function PL_onActionShowTask(className) {
-         var nodes = className.replace("node-", "").split("|");
+         var nodes = className.replace("node-", "").split("|")
+         , entityNodeRef =  nodes[1] != "#access_forbidden" ? nodes[1] : "";
 
-         var url = Alfresco.constants.URL_SERVICECONTEXT + "modules/comments/list?nodeRef=" + nodes[0] + "&activityType=task&entityNodeRef="+nodes[1];
+         var url = Alfresco.constants.URL_SERVICECONTEXT + "modules/comments/list?nodeRef=" + nodes[0] + "&activityType=task&entityNodeRef="+entityNodeRef;
 
          this._showPanel(url ,this.id+"_comments", nodes[1]);
          

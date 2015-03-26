@@ -29,7 +29,7 @@ import org.alfresco.util.PropertyMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.becpg.model.SystemGroup;
+import fr.becpg.model.PLMGroup;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
@@ -51,7 +51,7 @@ public class BeCPGPLMTestHelper {
 	public static final String USER_ONE = "matthieuWF";
 	public static final String USER_TWO = "philippeWF";
 
-	protected static String[] groups = { SystemGroup.QualityUser.toString(), SystemGroup.QualityMgr.toString() };
+	protected static String[] groups = { PLMGroup.QualityUser.toString(), PLMGroup.QualityMgr.toString() };
 
 	/** The PAT h_ testfolder. */
 	public static String PATH_TESTFOLDER = "TestFolder";
@@ -90,9 +90,9 @@ public class BeCPGPLMTestHelper {
 		// USER_ONE
 		createUser(USER_ONE);
 		createUser(USER_TWO);
-		if(!PLMBaseTestCase.INSTANCE2.authorityService.getAuthoritiesForUser(USER_TWO).contains(PermissionService.GROUP_PREFIX + SystemGroup.QualityUser.toString())){
+		if(!PLMBaseTestCase.INSTANCE2.authorityService.getAuthoritiesForUser(USER_TWO).contains(PermissionService.GROUP_PREFIX + PLMGroup.QualityUser.toString())){
 		
-			PLMBaseTestCase.INSTANCE2.authorityService.addAuthority(PermissionService.GROUP_PREFIX + SystemGroup.QualityUser.toString(), USER_TWO);
+			PLMBaseTestCase.INSTANCE2.authorityService.addAuthority(PermissionService.GROUP_PREFIX + PLMGroup.QualityUser.toString(), USER_TWO);
 		}
 
 		for (String s : PLMBaseTestCase.INSTANCE2.authorityService.getAuthoritiesForUser(USER_ONE)) {

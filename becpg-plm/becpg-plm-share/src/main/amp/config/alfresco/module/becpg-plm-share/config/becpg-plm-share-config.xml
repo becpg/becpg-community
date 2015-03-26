@@ -27,7 +27,7 @@
 			<workflow name="activiti$activitiInvitationNominated" />
 			<workflow name="activiti$activitiReviewPooled" />
 			<workflow name="activiti$activitiParallelGroupReview" />
-<!-- 			<workflow name="activiti$activitiParallelReview" /> -->
+<!-- 		<workflow name="activiti$activitiParallelReview" /> -->
 			<workflow name="activiti$nonConformityAdhoc" />
 			<workflow name="activiti$nonConformityProcess" />
 			<!-- <workflow name="activiti$activitiAdhoc" /> -->
@@ -109,11 +109,17 @@
 				<step id="step1" label="Informations matière première" type="form" formId="supplier-mp"
 					itemId="bcpg:rawMaterial" ></step>
 				<step id="step2" label="Ingrédients" type="entityDataList"
-					listId="ingList" itemId="bcpg:ingList"></step>
+					listId="ingList" itemId="bcpg:ingList"
+					title="Veuillez renseigner vos ingrédients, tous les champs doivent être renseignés"
+					></step>
 			    <step id="step3" label="Nutriments" type="entityDataList"
 					listId="nutList" itemId="bcpg:nutList"></step>
 				<step id="step4" label="Allergènes" type="entityDataList"
 					listId="allergenList" itemId="bcpg:allergenList"></step>
+			    <step id="step5" label="Physico-chimiques" type="entityDataList"
+					listId="physicoChemList" itemId="bcpg:physicoChemList"></step>
+			    <step id="step6" label="Allégations" type="entityDataList"
+					listId="labelClaimList" itemId="bcpg:labelClaimList"></step>
 			</wizard>
 		</wizards>	
 	</config>	

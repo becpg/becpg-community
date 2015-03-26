@@ -125,7 +125,7 @@ function getWorkflowDefinitionsOfCurrentUser()
         {
             var permissionWorkflows = workflowConfig["permission-workflows"];
             var permissionDefinitions = permissionWorkflows.getChildren("permission-workflow"), authorities = null;
-            // for #4
+         
             var defaultAllow = (permissionWorkflows.hasAttribute("default") && permissionWorkflows.attributes["default"] == "allow") ? true : false;
             var workflowDefinitionsResult = new java.util.HashSet();
 

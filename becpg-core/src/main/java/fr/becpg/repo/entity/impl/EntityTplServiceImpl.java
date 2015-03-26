@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.alfresco.error.AlfrescoRuntimeException;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.rule.RuleModel;
@@ -36,7 +35,6 @@ import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.InvalidAspectException;
 import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.cmr.repository.AssociationRef;
-import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.InvalidNodeRefException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -127,11 +125,12 @@ public class EntityTplServiceImpl implements EntityTplService {
 	 * @param entityType
 	 */
 	@Override
-	public NodeRef createEntityTpl(NodeRef parentNodeRef, QName entityType, boolean enabled, Set<QName> entityLists, Set<String> subFolders) {
+	public NodeRef createEntityTpl(NodeRef parentNodeRef,QName entityType, String entityTplName,  boolean enabled, Set<QName> entityLists, Set<String> subFolders) {
 
 		TypeDefinition typeDef = dictionaryService.getType(entityType);
-		String entityTplName = typeDef.getTitle(dictionaryService);
-
+		if(entityTplName == null){
+			entityTplName = typeDef.getTitle(dictionaryService);
+		}
 		// entityTpl
 		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 		properties.put(ContentModel.PROP_NAME, entityTplName);

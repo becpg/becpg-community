@@ -36,7 +36,6 @@
 					<show id="pjt:projectPriority" />
 					<show id="pjt:projectState" />	
 					<show id="bcpg:suppliers" />
-										
 					<show id="pjt:projectStartDate" />
 					<show id="pjt:projectDueDate" />
 					<show id="pjt:projectPlanningMode" />	
@@ -47,7 +46,10 @@
 					<show id="pjt:projectWork" for-mode="view"/>
 					<show id="pjt:projectBudgetedCost" for-mode="view"/>
 					<show id="pjt:projectLoggedTime" for-mode="view"/>
-					
+
+					<!-- Model -->
+					<show id="bcpg:entityTplEnabled" />
+					<show id="bcpg:entityTplIsDefault" />
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" />
@@ -65,6 +67,7 @@
 						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="planning" appearance="bordered-panel"
 						label-id="becpg.forms.set.planning.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+				    <set id="template" appearance="bordered-panel" label-id="becpg.forms.set.template.label" />
 					<set id="categories" appearance="bordered-panel"
 						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
@@ -121,7 +124,12 @@
 					<field id="pjt:projectOverdue" set="planning" />
 					<field id="pjt:projectWork" set="planning" />
 					<field id="pjt:projectBudgetedCost" set="planning" />
-					<field id="pjt:projectLoggedTime" set="planning" />					
+					<field id="pjt:projectLoggedTime" set="planning" />		
+					
+					
+					<field id="bcpg:entityTplEnabled" set="template" />
+					<field id="bcpg:entityTplIsDefault" set="template" />
+								
 
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
@@ -290,7 +298,6 @@
 					</field>
 				</appearance>
 			</form>
-
 			<form id="datagrid">
 				<field-visibility>
 					<show id="pjt:projectOverdue" />
@@ -478,6 +485,9 @@
 			</form>
 		</forms>
 	</config>
+	
+	<!-- TASK LIST -->
+	
 	<config condition="pjt:taskList" evaluator="node-type">
 		<forms>
 			<form>
@@ -491,7 +501,6 @@
 					<show id="pjt:tlObservers" />
 					<show id="pjt:tlTaskLegend" />					
 					<show id="pjt:tlWorkflowName" />
-					
 					<show id="pjt:tlIsMilestone" />
 					<show id="pjt:tlDuration" />					
 					<show id="pjt:tlWork" />
@@ -501,7 +510,9 @@
 					<show id="pjt:tlStart" />
 					<show id="pjt:tlEnd"   />					
 					<show id="pjt:tlFixedCost" />	
-					<show id="pjt:tlResourceCost" />										
+					<show id="pjt:tlResourceCost" />
+					
+															
 				</field-visibility>
 				<appearance>
 				
@@ -602,7 +613,6 @@
 					<show id="pjt:tlPrevTasks" />
 					<show id="bcpg:parentLevel" force="true" />
 					<show id="pjt:tlResources" />
-					
 					<show id="pjt:tlIsMilestone" />
 					<show id="pjt:tlDuration" />					
 					<show id="pjt:tlWork" />	
@@ -610,7 +620,9 @@
 					<show id="pjt:tlResourceCost" />
 					<show id="pjt:tlManualDate" />
 					<show id="pjt:tlStart" />
-					<show id="pjt:tlEnd"   />							
+					<show id="pjt:tlEnd"/>
+					
+												
 				</field-visibility>
 				<appearance>
 					
@@ -748,6 +760,8 @@
 					<show id="pjt:tlCapacity" />
 					<show id="pjt:tlResources" />
 					<show id="pjt:tlBudgetedCost" />
+					<show id="pjt:tlActualExpense"/>
+          			<show id="pjt:tlActualInvoice"/>
 					<show id="pjt:tlLoggedTime" />
 					<show id="pjt:completionPercent" />					
 					<show id="pjt:tlTaskLegend" />																		
@@ -759,6 +773,8 @@
 					<field id="bcpg:parentLevel" label="hidden"/>
 					<field id="pjt:tlIsGroup" label="hidden"/>
 					<field id="pjt:tlPrevTasks" label="hidden"/>
+					<field id="pjt:tlActualInvoice" read-only="true"/>
+					<field id="pjt:tlActualExpense" read-only="true"/>
 					<field id="fm:commentCount" label="hidden" read-only="true"/>
 					<field id="pjt:tlIsMilestone" label="hidden" ></field>
 					<field id="pjt:tlStart" read-only="true"/>
@@ -930,9 +946,9 @@
 				</field-visibility>
 				<appearance>
 					<field id="pjt:slScreening">
-                  <control template="/org/alfresco/components/form/controls/richtext.ftl">                  
-                  <control-param name="editorHeight">8</control-param>
-               </control>
+	                <control template="/org/alfresco/components/form/controls/richtext.ftl">                  
+	                  <control-param name="row">8</control-param>
+	                </control>
                </field>					
 				</appearance>
 			</form>
@@ -950,7 +966,7 @@
 				<appearance>
 					<field id="pjt:slScreening">
                   <control template="/org/alfresco/components/form/controls/richtext.ftl">                  
-                  <control-param name="editorHeight">8</control-param>
+                  <control-param name="row">8</control-param>
                </control>
                </field>	
 				</appearance>
@@ -966,6 +982,11 @@
             <appearance>
             	<field id="pjt:slScreening" read-only="true" ></field>
             </appearance>
+         </form>
+         <form id="filter">
+            <field-visibility>
+            	   <show id="pjt:slCriterion" />
+            </field-visibility>
          </form>
 		</forms>
 	</config>
@@ -1195,4 +1216,226 @@
 			</form>
 		</forms>
 	</config>
+
+  <!--  Budget LIST -->
+	
+  <config condition="pjt:budgetList" evaluator="node-type">
+    <forms>
+      <form>
+        <field-visibility>
+          <show force="false" id="pjt:blItem"/>
+          <show force="false" id="bcpg:parentLevel"/>
+          <show force="false" id="pjt:blBudgetedExpense"/>
+          <show force="false" id="pjt:blBudgetedInvoice"/>
+        </field-visibility>
+        <appearance>
+         
+          <field id="bcpg:parentLevel" mandatory="false" read-only="false">
+            <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+              <control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:budgetList&amp;attributeName=pjt:blItem</control-param>
+            </control>
+          </field>
+        </appearance>
+      </form>
+    </forms>
+  </config>
+  
+  <config condition="pjt:budgetList" evaluator="model-type" >
+    <forms>
+      <form>
+        <field-visibility>
+          <show force="false" id="pjt:blItem"/>
+          <show force="false" id="bcpg:parentLevel"/>
+          <show force="false" id="pjt:blBudgetedExpense"/>
+          <show force="false" id="pjt:blBudgetedInvoice"/>
+      
+        </field-visibility>
+        <appearance>
+          
+          <field id="bcpg:parentLevel" mandatory="false" read-only="false">
+            <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+              <control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:budgetList&amp;attributeName=pjt:blItem</control-param>
+            </control>
+          </field>
+        </appearance>
+      </form>
+      <form id="datagrid">
+        <field-visibility>
+     	  <show id="bcpg:depthLevel" />
+		  <show id="bcpg:parentLevel"  />
+          <show force="false" id="pjt:blItem"/>
+          <show force="false" id="pjt:blBudgetedExpense" />
+          <show force="false" id="pjt:blActualExpense" />
+          <show force="false" id="pjt:blBudgetedInvoice"/>
+          <show force="false" id="pjt:blActualInvoice" />
+          <show force="false" id="pjt:blProfit" />
+        </field-visibility>
+            <appearance>
+            <field id="bcpg:depthLevel" label="hidden"/>
+			<field id="bcpg:parentLevel" label="hidden"/>
+           <field id="pjt:blActualExpense" mandatory="false" read-only="true"/>
+          <field id="pjt:blActualInvoice" mandatory="false" read-only="true"/>
+          <field id="pjt:blProfit" mandatory="false" read-only="true"/>
+        </appearance>
+      </form>
+      <form id="filter">
+        <field-visibility>
+          <show force="false" id="pjt:blItem"/>
+        </field-visibility>
+      </form>
+    </forms>
+  </config>
+
+
+<!-- EXPENSE LIST -->
+  <config condition="pjt:expenseList" evaluator="node-type">
+    <forms>
+      <form>
+        <field-visibility>
+          <show force="false" id="pjt:elBudgetRef"/>
+          <show force="false" id="pjt:elExpenseName"/>
+          <show force="false" id="pjt:elExpenseAmount"/>
+          <show force="false" id="pjt:elTaskRef"/>
+          <show force="false" id="pjt:elDocRef"/>
+        </field-visibility>
+        <appearance>
+         <field id="pjt:elBudgetRef" mandatory="false" read-only="false">
+            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+              <control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:budgetList&amp;attributeName=pjt:blItem</control-param>
+            </control>
+          </field>
+          <field id="pjt:elTaskRef" mandatory="false" read-only="false">
+            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+              <control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&amp;attributeName=pjt:tlTaskName</control-param>
+            </control>
+          </field>
+        </appearance>
+      </form>
+    </forms>
+  </config>
+  <config condition="pjt:expenseList" evaluator="model-type" >
+    <forms>
+      <form>
+        <field-visibility>
+         <show force="false" id="pjt:elBudgetRef"/>
+          <show force="false" id="pjt:elExpenseName"/>
+          <show force="false" id="pjt:elExpenseAmount"/>
+          <show force="false" id="pjt:elTaskRef"/>
+          <show force="false" id="pjt:elDocRef"/>
+        </field-visibility>
+        <appearance>
+           <field id="pjt:elBudgetRef" mandatory="false" read-only="false">
+            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+              <control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:budgetList&amp;attributeName=pjt:blItem</control-param>
+            </control>
+          </field>
+          <field id="pjt:elTaskRef" mandatory="false" read-only="false">
+            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+              <control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&amp;attributeName=pjt:tlTaskName</control-param>
+            </control>
+          </field>
+        </appearance>
+      </form>
+      <form id="datagrid">
+        <field-visibility>
+          <show force="false" id="pjt:elBudgetRef"/>
+          <show force="false" id="pjt:elExpenseName"/>
+          <show force="false" id="pjt:elExpenseAmount"/>
+          <show force="false" id="pjt:elTaskRef"/>
+          <show force="false" id="pjt:elDocRef"/>
+        </field-visibility>
+      </form>
+      <form id="filter">
+        <field-visibility>
+          <show force="false" id="pjt:elBudgetRef"/>
+          <show force="false" id="pjt:elExpenseName"/>
+          <show force="false" id="pjt:elTaskRef"/>
+        </field-visibility>
+        <appearance>
+          <field id="pjt:elBudgetRef" mandatory="false" read-only="false">
+            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+              <control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:budgetList&amp;attributeName=pjt:blItem</control-param>
+            </control>
+          </field>
+          <field id="pjt:elTaskRef" mandatory="false" read-only="false">
+            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+              <control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&amp;attributeName=pjt:tlTaskName</control-param>
+            </control>
+          </field>
+        </appearance>
+      </form>
+    </forms>
+  </config>
+  
+  <!--  INVOICE LIST -->
+  <config condition="pjt:invoiceList" evaluator="node-type" >
+    <forms>
+      <form>
+        <field-visibility>
+          <show force="false" id="pjt:ilBudgetRef"/>
+          <show force="false" id="pjt:ilInvoiceName"/>
+          <show force="false" id="pjt:ilInvoiceAmount"/>
+          <show force="false" id="pjt:ilTaskRef"/>
+          <show force="false" id="pjt:ilDocRef"/>
+          
+        </field-visibility>
+        <appearance>
+          <field id="pjt:ilBudgetRef" mandatory="false" read-only="false">
+            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+              <control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:budgetList&amp;attributeName=pjt:blItem</control-param>
+            </control>
+          </field>
+          <field id="pjt:ilTaskRef" mandatory="false" read-only="false">
+            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+              <control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&amp;attributeName=pjt:tlTaskName</control-param>
+            </control>
+          </field>
+        </appearance>
+      </form>
+    </forms>
+  </config>
+  <config condition="pjt:invoiceList" evaluator="model-type" >
+    <forms>
+      <form>
+        <field-visibility>
+          <show force="false" id="pjt:ilBudgetRef"/>
+          <show force="false" id="pjt:ilInvoiceName"/>
+          <show force="false" id="pjt:ilInvoiceAmount"/>
+          <show force="false" id="pjt:ilTaskRef"/>
+          <show force="false" id="pjt:ilDocRef"/>
+        </field-visibility>
+        <appearance>
+          <field id="pjt:ilBudgetRef" mandatory="false" read-only="false">
+            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+              <control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:budgetList&amp;attributeName=pjt:blItem</control-param>
+            </control>
+          </field>
+          <field id="pjt:ilTaskRef" mandatory="false" read-only="false">
+            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+              <control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&amp;attributeName=pjt:tlTaskName</control-param>
+            </control>
+          </field>
+        </appearance>
+      </form>
+      <form id="datagrid">
+        <field-visibility>
+        <show force="false" id="pjt:ilBudgetRef"/>
+        <show force="false" id="pjt:ilInvoiceName"/>
+        <show force="false" id="pjt:ilInvoiceAmount"/>
+        <show force="false" id="pjt:ilTaskRef"/>
+        <show force="false" id="pjt:ilDocRef"/>
+        </field-visibility>
+      </form>
+      <form id="filter">
+        <field-visibility>
+          <show force="false" id="pjt:ilBudgetRef"/>
+          <show force="false" id="pjt:ilInvoiceName"/>
+          <show force="false" id="pjt:ilTaskRef"/>
+        </field-visibility>
+      </form>
+    </forms>
+  </config>
+  
+  
+	
 </alfresco-config>

@@ -20,6 +20,12 @@ public interface BeCPGModel {
 	QName ASPECT_HIDDEN_FOLDER = QName.createQName(BECPG_URI, "hiddenFolder");
 
 	QName TYPE_ENTITYLIST_ITEM = QName.createQName(BECPG_URI, "entityListItem");
+	
+	QName ASPECT_ENTITYLIST_STATE = QName.createQName(BECPG_URI, "entityDataListStateAspect");
+	
+	QName PROP_ENTITYLIST_STATE = QName.createQName(BECPG_URI, "entityDataListState");
+	
+	
 
 	// linkedValue
 	QName TYPE_LINKED_VALUE = QName.createQName(BECPG_URI, "linkedValue");

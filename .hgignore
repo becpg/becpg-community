@@ -21,5 +21,9 @@ syntax: regexp
 syntax: regexp
 ^becpg-olap/archives$
 ^solr/solr_home$
+<<<<<<< local
 
 /alf_data_dev$
+=======
+^repo/alf_data_dev$
+>>>>>>> other

@@ -42,8 +42,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 
    });
 
-   
-   YAHOO.Bubbling.fire("registerDataGridRenderer", {
+ YAHOO.Bubbling.fire("registerDataGridRenderer", {
       propertyName : [ "pjt:tlState", "pjt:dlState" ],
       renderer : function(oRecord, data, label, scope) {
          return '<span class="' + "task-" + data.value.toLowerCase() + '" title="' + data.displayValue + '" />';
@@ -112,5 +111,20 @@ if (beCPG.module.EntityDataGridRenderers) {
 	         return '<div class="scoreList-screening">' + data.displayValue + '</div>';
 	      }
 	   });
+   
+   
+   YAHOO.Bubbling.fire("registerDataGridRenderer", {
+	      propertyName : [ "pjt:blItem" ],
+	      renderer : function(oRecord, data, label, scope) {
+	      	
+	      	var padding = 0;
+	      	if (oRecord.getData("itemData")["prop_bcpg_depthLevel"] && oRecord.getData("itemData")["prop_bcpg_depthLevel"].value) {
+				padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 15;
+			}      	
+	         
+	         return '<span style="margin-left:' + padding + 'px;" >' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+	      }
 
+	   });
+   
 }
