@@ -208,6 +208,26 @@ if (beCPG.module.EntityDataGridRenderers) {
 
     });
 	
+
+    YAHOO.Bubbling.fire("registerDataGridRenderer", {
+        propertyName : "bcpg:nutListFormulatedValue",
+        renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+            
+            if (data.value != null) {
+
+                if (oColumn.hidden) {
+                    scope.widgets.dataTable.showColumn(oColumn);
+                    Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
+                    
+                }
+                return '<span class="nut-formulated" >' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+            }
+
+           return "";
+        }
+
+    });
+	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
       propertyName : "bcpg:cost",
       renderer : function(oRecord, data, label, scope) {

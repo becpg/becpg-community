@@ -848,6 +848,19 @@
 					<type>d:text</type>
 				</property>
 			</properties>
+			<associations>
+			  <association name="bcpg:supplierAccountRef" >
+			        <source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>cm:person</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+			  </association>
+			</associations>
 			<mandatory-aspects>
 				<aspect>bcpg:codeAspect</aspect>
 				<aspect>bcpg:location</aspect>
@@ -1485,6 +1498,11 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
+				<property name="bcpg:nutListFormulatedValue">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 				<property name="bcpg:nutListUnit">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
@@ -1823,6 +1841,10 @@
 				<property name="bcpg:lclIsClaimed">
 					<type>d:boolean</type>
 					<default>true</default>
+				</property>
+				<property name="bcpg:lclComments">
+					<type>d:text</type>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:lclIsFormulated">
 					<type>d:boolean</type>
@@ -2519,6 +2541,12 @@
 				<property name="bcpg:erpCode">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>true</atomic>
+						<stored>false</stored>
+						<!-- Important for SOLR sorting -->
+						<tokenised>false</tokenised>
+					</index>
 				</property>
 			</properties>
 		</aspect>

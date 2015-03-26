@@ -160,6 +160,10 @@
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=pjt:project&amp;formId=create&amp;isEntity=true
 				</param>
 			</content>
+			<content id="supplier-project" label="menu.create-content.project-supplier" type="pagelink" index="110" icon="project">
+				<param name="page">create-content?destination={nodeRef}&amp;itemId=pjt:project&amp;formId=supplier-project&amp;isEntity=true
+				</param>
+			</content>
 			<content id="supplier" label="menu.create-content.supplier" type="pagelink" index="120" icon="supplier">
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:supplier&amp;formId=create&amp;isEntity=true
 				</param>

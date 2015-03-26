@@ -96,6 +96,7 @@
 		<property name="permissionService" ref="PermissionService" />
 		<property name="dataListSortService" ref="dataListSortService" />
 		<property name="dictionaryService" ref="dictionaryService" />
+		<property name="authorityService" ref="authorityService"/>
 	</bean>
 
 

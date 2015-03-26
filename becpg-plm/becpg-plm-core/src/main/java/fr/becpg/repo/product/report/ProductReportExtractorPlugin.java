@@ -269,12 +269,15 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			// NutList
 			Element nutListsElt = (Element) dataListsElt.selectSingleNode(PLMModel.TYPE_NUTLIST.getLocalName() + "s");
 			if (nutListsElt != null) {
-				@SuppressWarnings("unchecked")
 				List<Element> nutListElts = (List<Element>) nutListsElt.selectNodes(PLMModel.TYPE_NUTLIST.getLocalName());
 				for (Element nutListElt : nutListElts) {
 					String nut = nutListElt.valueOf("@" + PLMModel.ASSOC_NUTLIST_NUT.getLocalName());
 					if (nut != null) {
 						String value = nutListElt.valueOf("@" + PLMModel.PROP_NUTLIST_VALUE.getLocalName());
+						if(value==null || value.isEmpty()){
+							value = nutListElt.valueOf("@" + PLMModel.PROP_NUTLIST_FORMULATED_VALUE.getLocalName());
+							nutListElt.addAttribute(PLMModel.PROP_NUTLIST_VALUE.getLocalName(), value);
+						}
 						nutListsElt.addAttribute(generateKeyAttribute(nut), value != null ? value : "");
 					}
 				}
@@ -382,6 +385,11 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				String nut = nutListElt.valueOf("@" + PLMModel.ASSOC_NUTLIST_NUT.getLocalName());
 				if (nut != null) {
 					String value = nutListElt.valueOf("@" + PLMModel.PROP_NUTLIST_VALUE.getLocalName());
+					if(value==null || value.isEmpty()){
+						value = nutListElt.valueOf("@" + PLMModel.PROP_NUTLIST_FORMULATED_VALUE.getLocalName());
+						nutListElt.addAttribute(PLMModel.PROP_NUTLIST_VALUE.getLocalName(), value);
+					}
+					
 					nutListsElt.addAttribute(generateKeyAttribute(nut), value != null ? value : "");
 				}
 			}
@@ -529,6 +537,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					packgLevelMesuresElt.addAttribute(ATTR_PKG_GROSS_WEIGHT_LEVEL_2, toString(tareSecondary.add(netWeightSecondary)));
 					packgLevelMesuresElt.addAttribute(ATTR_NB_PRODUCTS_LEVEL_2, toString(variantPackagingData.getProductPerBoxes()));
 
+					
 					if (variantPackagingData.getBoxesPerPallet() != null) {
 
 						BigDecimal tareTertiary = tareSecondary.multiply(new BigDecimal(variantPackagingData.getBoxesPerPallet())).add(

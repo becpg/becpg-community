@@ -193,7 +193,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 				if (labelClaimListDataItem.getErrorLog() != null) {
 
-					String message = I18NUtil.getMessage("message.formulate.labelCLaim.error", Locale.getDefault(),
+					String message = I18NUtil.getMessage("message.formulate.labelClaim.error", Locale.getDefault(),
 							nodeService.getProperty(labelClaimListDataItem.getLabelClaim(), ContentModel.PROP_NAME),
 							labelClaimListDataItem.getErrorLog());
 					productData.getCompoListView().getReqCtrlList()
@@ -315,8 +315,8 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 		for (CompositionDataItem subDataListItem : subProductData.getCompoListView().getCompoList()) {
 			JSONObject subObject = new JSONObject();
 
-			if (subProductData.getRecipeQtyUsed() != null && subProductData.getRecipeQtyUsed() != 0) {
-				subDataListItem.setQty(dataListItem.getQty() * subDataListItem.getQty() / subProductData.getRecipeQtyUsed());
+			if (FormulationHelper.getNetWeight(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT) != 0) {
+				subDataListItem.setQty(dataListItem.getQty() * subDataListItem.getQty() / FormulationHelper.getNetWeight(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT));
 			}
 
 			StandardEvaluationContext dataContext = new StandardEvaluationContext(new FormulaFormulationContext(alfrescoRepository, productData,

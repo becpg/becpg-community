@@ -107,7 +107,8 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 
 		visitReports(systemNodeRef);
 
-		createSystemGroups();
+		createSystemGroups(new String[]{ ProjectGroup.ProjectRoles.toString(), createRoleGroup(ContentModel.PROP_CREATOR),
+			createRoleGroup(ProjectModel.ASSOC_PROJECT_MANAGER) });
 
 		// MailTemplates
 		NodeRef emailsProject = visitFolder(BeCPGQueryBuilder.createQuery().selectNodeByPath(companyHome, EMAIL_TEMPLATES),
@@ -124,9 +125,6 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 
 		NodeRef entityTplsNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_ENTITY_TEMPLATES);
 
-		Set<String> subFolders = new HashSet<String>();
-		subFolders.add(RepoConsts.PATH_IMAGES);
-
 		// visit supplier
 		Set<QName> dataLists = new LinkedHashSet<QName>();
 		dataLists.add(ProjectModel.TYPE_TASK_LIST);
@@ -134,7 +132,11 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 		dataLists.add(ProjectModel.TYPE_SCORE_LIST);
 		dataLists.add(ProjectModel.TYPE_ACTIVITY_LIST);
 		dataLists.add(ProjectModel.TYPE_LOG_TIME_LIST);
-		NodeRef entityTplNodeRef = entityTplService.createEntityTpl(entityTplsNodeRef, ProjectModel.TYPE_PROJECT, true, dataLists, null);
+		dataLists.add(ProjectModel.TYPE_BUDGET_LIST);
+		dataLists.add(ProjectModel.TYPE_INVOICE_LIST);
+		dataLists.add(ProjectModel.TYPE_EXPENSE_LIST);
+
+		NodeRef entityTplNodeRef = entityTplService.createEntityTpl(entityTplsNodeRef, ProjectModel.TYPE_PROJECT,null, true, dataLists, null);
 
 		try {
 
@@ -256,38 +258,10 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 
 	}
 
-	private void createSystemGroups() {
+	private void createSystemGroups(String[] groups) {
 
-		String[] groups = { ProjectGroup.ProjectRoles.toString(), createRoleGroup(ContentModel.PROP_CREATOR),
-				createRoleGroup(ProjectModel.ASSOC_PROJECT_MANAGER) };
-
-		Set<String> zones = new HashSet<String>();
-		zones.add(AuthorityService.ZONE_APP_DEFAULT);
-		zones.add(AuthorityService.ZONE_APP_SHARE);
-		zones.add(AuthorityService.ZONE_AUTH_ALFRESCO);
-
-		for (String group : groups) {
-
-			logger.debug("group: " + group);
-			String groupName = I18NUtil.getMessage(String.format("%s.%s", LOCALIZATION_PFX_GROUP, group).toLowerCase(), Locale.getDefault());
-
-			if (!authorityService.authorityExists(PermissionService.GROUP_PREFIX + group)) {
-				logger.debug("create group: " + groupName);
-				authorityService.createAuthority(AuthorityType.GROUP, group, groupName, zones);
-			} else {
-				Set<String> zonesAdded = authorityService.getAuthorityZones(PermissionService.GROUP_PREFIX + group);
-				Set<String> zonesToAdd = new HashSet<String>();
-				for (String zone : zones)
-					if (!zonesAdded.contains(zone)) {
-						zonesToAdd.add(zone);
-					}
-
-				if (!zonesToAdd.isEmpty()) {
-					logger.debug("Add group to zone: " + groupName + " - " + zonesToAdd.toString());
-					authorityService.addAuthorityToZones(PermissionService.GROUP_PREFIX + group, zonesToAdd);
-				}
-			}
-		}
+          createGroups(groups);
+	
 
 		// Group hierarchy
 		Set<String> authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP, PermissionService.GROUP_PREFIX
@@ -302,7 +276,7 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 		}
 	}
 
-	private String createRoleGroup(QName qName) {
+	protected String createRoleGroup(QName qName) {
 		return ProjectRepoConsts.PROJECT_GROUP_PREFIX + qName.toPrefixString(namespaceService).replace(":", "_");
 	}
 
