@@ -5352,6 +5352,8 @@
 					<show id="bcpg:costListCost" />					
 					<show id="bcpg:costListValue" />
 					<show id="bcpg:costListUnit" />
+					<show id="bcpg:costListPreviousValue" />
+					<show id="bcpg:costListFutureValue" />
 					<show id="bcpg:costListMaxi" />
 					<show id="bcpg:parentLevel" />
 					<show id="bcpg:plants" force="true" />
@@ -5387,6 +5389,8 @@
 					<show id="bcpg:costListCost" />
 					<show id="bcpg:costListValue" />
 					<show id="bcpg:costListUnit" />
+					<show id="bcpg:costListPreviousValue" />
+					<show id="bcpg:costListFutureValue" />
 					<show id="bcpg:costListMaxi" />
 					<show id="bcpg:isManualListItem" force="true" />
 					<show id="bcpg:plants" force="true" />
@@ -5414,6 +5418,8 @@
 					<show id="bcpg:costListCost" />
 					<show id="bcpg:parentLevel" />
 					<show id="bcpg:costListValue" />
+					<show id="bcpg:costListPreviousValue" />
+					<show id="bcpg:costListFutureValue" />
 					<show id="bcpg:costListUnit" />
 					<show id="bcpg:costListMaxi" />
 					<show id="bcpg:plants" force="true" />
