@@ -85,18 +85,23 @@ public class ProjectBudgetTasksTest extends AbstractProjectTestCase {
 					if (tl.getTaskName().equals("task3")) {
 						assertEquals(16d*RESOURCE_COST_VALUE, tl.getBudgetedCost());
 						assertEquals(3d, tl.getLoggedTime());
+						checks++;
 					}
 					if (tl.getTaskName().equals("task5")) {
 						assertEquals(24d*RESOURCE_COST_VALUE+1000d, tl.getBudgetedCost());
+						checks++;
 					}
 					if (tl.getTaskName().equals("task6")) {
 						assertEquals(4000d, tl.getBudgetedCost());
+						checks++;
 					}
 					if (tl.getTaskName().equals("task1")) {
 						assertEquals(8d*RESOURCE_COST_VALUE+3000d+16d*RESOURCE_COST_VALUE, tl.getBudgetedCost());
+						checks++;
 					}
 					if (tl.getTaskName().equals("task4")) {
 						assertEquals(24d*RESOURCE_COST_VALUE+1000d+4000d, tl.getBudgetedCost());
+						checks++;
 					}
 				}
 				
