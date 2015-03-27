@@ -176,6 +176,10 @@
 					<title>Hauteur palette (mm)</title>
 					<type>d:int</type>
 				</property>
+				<property name="pack:palletNumberOnGround">
+					<title>Number of pallets on ground</title>
+					<type>d:int</type>
+				</property>
 				
 				<!-- <property name="pack:palletDimensions">
 					<title>Dimensions palette (mm)</title>

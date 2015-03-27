@@ -1180,6 +1180,7 @@
 					<show id="pack:palletBoxesPerLastLayer" />
 					<show id="pack:palletBoxesPerPallet" />
 					<show id="pack:palletHeight" />
+					<show id="pack:palletNumberOnGround" />
 			
 					<!-- Tare -->
 					<show id="pack:tare" force="true" />
@@ -1259,6 +1260,7 @@
 					<field id="pack:palletBoxesPerPallet" set="pallet" />
 					<field id="pack:palletBoxesPerLastLayer" set="pallet" />
 					<field id="pack:palletHeight" set="pallet" />
+					<field id="pack:palletNumberOnGround" set="pallet" />					
 
 					<!-- tare -->
 					<field id="pack:tare" set="tare" />
@@ -1460,6 +1462,7 @@
 					<show id="pack:palletBoxesPerLastLayer" force="true" />
 					<show id="pack:palletBoxesPerPallet" force="true" />
 					<show id="pack:palletHeight" force="true" />
+					<show id="pack:palletNumberOnGround" force="true" />
 					
 					<!-- Tare -->
 					<show id="pack:tare" force="true" />
@@ -1939,6 +1942,7 @@
 					<show id="pack:palletBoxesPerLastLayer" />
 					<show id="pack:palletBoxesPerPallet" />
 					<show id="pack:palletHeight" />
+					<show id="pack:palletNumberOnGround" />
 
 					<!-- Tare -->
 					<show id="pack:tare" />
@@ -2078,6 +2082,7 @@
 					<field id="pack:palletBoxesPerPallet" set="pallet" />
 					<field id="pack:palletBoxesPerLastLayer" set="pallet" />
 					<field id="pack:palletHeight" set="pallet" />
+					<field id="pack:palletNumberOnGround" set="pallet" />
 					
 
 					<!-- tare -->
@@ -2150,6 +2155,7 @@
 					<show id="pack:palletBoxesPerLastLayer" />
 					<show id="pack:palletBoxesPerPallet" />
 					<show id="pack:palletHeight" />
+					<show id="pack:palletNumberOnGround" />
 
 					<!-- Tare -->
 					<show id="pack:tare" />
@@ -2231,6 +2237,7 @@
 					<field id="pack:palletBoxesPerPallet" set="pallet" />
 					<field id="pack:palletBoxesPerLastLayer" set="pallet" />
 					<field id="pack:palletHeight" set="pallet" />
+					<field id="pack:palletNumberOnGround" set="pallet" />
 					
 
 					<!-- tare -->
@@ -5354,10 +5361,10 @@
 					<show id="bcpg:costListUnit" />
 					<show id="bcpg:costListPreviousValue" />
 					<show id="bcpg:costListFutureValue" />
-					<show id="bcpg:costListMaxi" />
 					<show id="bcpg:parentLevel" />
 					<show id="bcpg:plants" force="true" />
 					<show id="bcpg:costListComponent" />
+					<show id="bcpg:costListSimulatedValue" />
 					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 
@@ -5388,13 +5395,14 @@
 					<show id="bcpg:depthLevel" />
 					<show id="bcpg:costListCost" />
 					<show id="bcpg:costListValue" />
-					<show id="bcpg:costListUnit" />
+					<show id="bcpg:costListUnit" />					
 					<show id="bcpg:costListPreviousValue" />
 					<show id="bcpg:costListFutureValue" />
-					<show id="bcpg:costListMaxi" />
+					<show id="bcpg:costListValuePerProduct" />
 					<show id="bcpg:isManualListItem" force="true" />
 					<show id="bcpg:plants" force="true" />
 					<show id="bcpg:costListComponent" />
+					<show id="bcpg:costListSimulatedValue" />
 					<show id="fm:commentCount" force="true" />
 					<show id="bcpg:costListIsFormulated" />
 					<show id="bcpg:costListFormulaErrorLog" />
@@ -5405,6 +5413,7 @@
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 					<field id="bcpg:costListIsFormulated"  label="hidden"/>
 					<field id="bcpg:costListFormulaErrorLog"  label="hidden"/>
+					<field id="bcpg:costListValuePerProduct" read-only="true" />
 				</appearance>				
 			</form>
 		</forms>
@@ -5421,9 +5430,9 @@
 					<show id="bcpg:costListPreviousValue" />
 					<show id="bcpg:costListFutureValue" />
 					<show id="bcpg:costListUnit" />
-					<show id="bcpg:costListMaxi" />
 					<show id="bcpg:plants" force="true" />
 					<show id="bcpg:costListComponent" />
+					<show id="bcpg:costListSimulatedValue" />
 					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 

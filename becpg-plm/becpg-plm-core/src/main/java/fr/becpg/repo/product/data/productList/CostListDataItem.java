@@ -28,6 +28,7 @@ public class CostListDataItem extends AbstractManualDataItem implements SimpleLi
 	private String unit;		
 	private Double previousValue = 0d;
 	private Double futureValue = 0d;
+	private Double valuePerProduct = 0d;
 	private Double maxi = null;	
 	private NodeRef cost;	
 	private Boolean isFormulated;	
@@ -36,7 +37,7 @@ public class CostListDataItem extends AbstractManualDataItem implements SimpleLi
 	private Integer depthLevel;
 	private CostListDataItem parent;
 	private NodeRef componentNodeRef;
-	
+	private Double simulatedValue;	
 		
 	@AlfProp
 	@AlfQname(qname="bcpg:costListValue")
@@ -77,6 +78,16 @@ public class CostListDataItem extends AbstractManualDataItem implements SimpleLi
 
 	public void setFutureValue(Double futureValue) {
 		this.futureValue = futureValue;
+	}
+
+	@AlfProp
+	@AlfQname(qname="bcpg:costListValuePerProduct")
+	public Double getValuePerProduct() {
+		return valuePerProduct;
+	}
+
+	public void setValuePerProduct(Double valuePerProduct) {
+		this.valuePerProduct = valuePerProduct;
 	}
 
 	@AlfSingleAssoc
@@ -323,6 +334,16 @@ public class CostListDataItem extends AbstractManualDataItem implements SimpleLi
 
 	public void setComponentNodeRef(NodeRef componentNodeRef) {
 		this.componentNodeRef = componentNodeRef;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "bcpg:costListSimulatedValue")
+	public Double getSimulatedValue() {
+		return simulatedValue;
+	}
+
+	public void setSimulatedValue(Double simulatedValue) {
+		this.simulatedValue = simulatedValue;
 	}
 	
 }

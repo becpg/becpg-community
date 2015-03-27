@@ -99,7 +99,9 @@ public class FormulationCostsTest extends AbstractFinishedProductTest {
 				costList.add(new CostListDataItem(null, 2000d, "€/Pal", 2400d, cost3, false, plants, null, null));
 				plants = new ArrayList<>();
 				plants.add(plant2);
-				costList.add(new CostListDataItem(null, 4000d, "€/Pal", 2400d, cost3, false, plants, null, null));
+				costList.add(new CostListDataItem(null, 4000d, "€/Pal", 4400d, cost3, false, plants, null, null));
+				templateFinishedProduct.setCostList(costList);
+				costList.add(new CostListDataItem(null, 2000d, "€/PalGround", 2400d, cost5, false));
 				templateFinishedProduct.setCostList(costList);
 				ProductData entityTpl = alfrescoRepository.create(getTestFolderNodeRef(), templateFinishedProduct);
 				nodeService.addAspect(entityTpl.getNodeRef(), BeCPGModel.ASPECT_ENTITY_TPL, null);
@@ -143,10 +145,14 @@ public class FormulationCostsTest extends AbstractFinishedProductTest {
 				productService.formulate(finishedProductNodeRef);
 				ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
 				
-				assertEquals(5, formulatedProduct.getCostList().size());
+				assertEquals(6, formulatedProduct.getCostList().size());
 				assertEquals(TareUnit.g, formulatedProduct.getTareUnit());
 				
 				for(CostListDataItem c : formulatedProduct.getCostList()){
+					String trace = "cost: " + nodeService.getProperty(c.getCost(), ContentModel.PROP_NAME) + " - value: " + c.getValue()
+							+ " - unit: " + c.getUnit();
+					logger.info(trace);
+					
 					assertEquals("€/kg", c.getUnit());
 					if(c.getCost().equals(parentCost)){
 						assertEquals(20d, c.getValue());
@@ -169,6 +175,11 @@ public class FormulationCostsTest extends AbstractFinishedProductTest {
 						assertEquals(1d, c.getValue());
 						assertEquals(3d, c.getMaxi());
 					}
+					else if(c.getCost().equals(cost5)){
+						// 1000 finished product on pallet (2 pallets on ground)
+						assertEquals(0.5d, c.getValue());
+						assertEquals(0.6d, c.getMaxi());
+					}
 					else{
 						assertFalse(true);
 					}
@@ -186,6 +197,9 @@ public class FormulationCostsTest extends AbstractFinishedProductTest {
 						c.setValue(20d);
 					}
 					else if(c.getCost().equals(cost4)){
+						c.setValue(20d);
+					}
+					else if(c.getCost().equals(cost5)){
 						c.setValue(20d);
 					}
 				}
@@ -221,6 +235,11 @@ public class FormulationCostsTest extends AbstractFinishedProductTest {
 					else if(c.getCost().equals(cost4)){
 						assertEquals(1d, c.getValue());
 						assertEquals(3d, c.getMaxi());
+					}
+					else if(c.getCost().equals(cost5)){
+						// 1000 finished product on pallet (2 pallets on ground)
+						assertEquals(0.5d, c.getValue());
+						assertEquals(0.6d, c.getMaxi());
 					}
 					else{
 						assertFalse(true);
@@ -258,8 +277,10 @@ public class FormulationCostsTest extends AbstractFinishedProductTest {
 				List<CostListDataItem> costList = new LinkedList<CostListDataItem>();
 				costList.add(new CostListDataItem(null, null, null, null, cost1, null));
 				costList.add(new CostListDataItem(null, null, null, null, cost2, null));
-				costList.add(new CostListDataItem(null, 2d, "€/kg", null, cost1, true));
+				costList.add(new CostListDataItem(null, null, "€/kg", null, cost5, true));
+				costList.get(2).setParent(costList.get(0));
 				costList.get(2).setComponentNodeRef(rawMaterial1NodeRef);
+				costList.get(2).setSimulatedValue(2d);
 				finishedProduct.setCostList(costList);
 				
 				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
@@ -285,8 +306,9 @@ public class FormulationCostsTest extends AbstractFinishedProductTest {
 					if (costListDataItem.getCost().equals(cost1) && costListDataItem.getComponentNodeRef() == null) {
 						assertEquals(3.5d, costListDataItem.getValue());
 						assertEquals(2d, costListDataItem.getPreviousValue());
-						assertEquals(8d, costListDataItem.getFutureValue());
+						assertEquals(8d, costListDataItem.getFutureValue());						
 						assertEquals("€/kg", costListDataItem.getUnit());
+						assertEquals(7d, costListDataItem.getValuePerProduct());
 						checks++;
 					}
 					if (costListDataItem.getCost().equals(cost2)) {
@@ -294,11 +316,14 @@ public class FormulationCostsTest extends AbstractFinishedProductTest {
 						assertEquals(3d, costListDataItem.getPreviousValue());
 						assertEquals(12d, costListDataItem.getFutureValue());
 						assertEquals("€/kg", costListDataItem.getUnit());
+						assertEquals(12d, costListDataItem.getValuePerProduct());
 						checks++;
 					}
-					if (costListDataItem.getCost().equals(cost1) && costListDataItem.getComponentNodeRef() != null) {
-						assertEquals(2d, costListDataItem.getValue());
+					if (costListDataItem.getCost().equals(cost5) && costListDataItem.getComponentNodeRef() != null) {
+						assertEquals(2d, costListDataItem.getSimulatedValue());
+						assertEquals(-0.5d, costListDataItem.getValue());
 						assertEquals("€/kg", costListDataItem.getUnit());
+						assertEquals(-1d, costListDataItem.getValuePerProduct());
 						checks++;
 					}
 				}
