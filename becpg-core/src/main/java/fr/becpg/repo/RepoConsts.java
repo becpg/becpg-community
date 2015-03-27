@@ -77,7 +77,7 @@ public class RepoConsts {
 	/*-- Report --*/
 	public static final String REPORT_EXTENSION_BIRT = "rptdesign";
 	public static final String REPORT_EXTENSION_PDF = ".PDF";
-	public static final String REPORT_EXTENSION_XLS = ".XLS";
+	public static final String REPORT_EXTENSION_XLSX = ".XLSX";
 	public static final String EXTENSION_LOG = ".log";
 	
 	// FORMAT
@@ -136,7 +136,7 @@ public class RepoConsts {
 	
 	//Formats
 	public static final String FORMAT_CSV = "csv";
-	public static final String FORMAT_XLS = "xls";
+	public static final String FORMAT_XLSX = "xlsx";
 
 	
 }

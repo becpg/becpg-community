@@ -106,7 +106,7 @@
                      actionName : "export-csv",
                      right : true,
                      evaluate : function(asset, entity) {
-                        return asset.name !== null && asset.name.indexOf("WUsed") > -1;
+                        return asset.name !== null;
                      },
                      fn : function(instance) {
 
@@ -116,7 +116,7 @@
 
                         var PAGE_SIZE = 5000;
 
-                        document.location.href = dt._getDataUrl(PAGE_SIZE) + "&format=xls&metadata=" + encodeURIComponent(YAHOO.lang.JSON
+                        document.location.href = dt._getDataUrl(PAGE_SIZE) + "&format=xlsx&metadata=" + encodeURIComponent(YAHOO.lang.JSON
                               .stringify(dt._buildDataGridParams()));
 
                      }

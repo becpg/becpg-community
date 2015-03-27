@@ -46,7 +46,7 @@ function main()
 
     //beCPG
     if(node.isSubType("bcpg:entityV2")){
-	  if(thumbnailName == "webpreview" && node.assocs && node.assocs["rep:reports"] ) {
+	  if((thumbnailName == "webpreview" || thumbnailName == "pdf") && node.assocs && node.assocs["rep:reports"] ) {
 	     node = bThumbnail.getReportNode(node);
 	     model.allowBrowserToCache = "false";
 	  } else {

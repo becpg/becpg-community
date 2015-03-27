@@ -79,7 +79,7 @@
 		<alfresco.version>5.0.c</alfresco.version>
 		<app.testing.jvm.args>-Xms256m -Xmx1524m -Duser.language=fr</app.testing.jvm.args>
 		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
-		<birt.version>4.4.0</birt.version>
+		<birt.version>4.4.2</birt.version>
 		<sonar.language>java</sonar.language>
 		
 		<springloaded.version>1.2.1.RELEASE</springloaded.version>

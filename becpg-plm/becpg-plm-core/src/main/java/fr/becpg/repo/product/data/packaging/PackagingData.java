@@ -33,10 +33,12 @@ public class PackagingData {
 	public PackagingData(List<VariantData> variantDataList) {
 		boolean hasDefaultVariant = false;
 
-		for (VariantData variantData : variantDataList) {
-			variants.put(variantData.getNodeRef(), new VariantPackagingData());
-			if (variantData.getIsDefaultVariant()) {
-				hasDefaultVariant = true;
+		if(variantDataList!=null){
+			for (VariantData variantData : variantDataList) {
+				variants.put(variantData.getNodeRef(), new VariantPackagingData());
+				if (variantData.getIsDefaultVariant()) {
+					hasDefaultVariant = true;
+				}
 			}
 		}
 

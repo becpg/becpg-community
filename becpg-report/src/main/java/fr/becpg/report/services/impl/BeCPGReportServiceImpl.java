@@ -27,7 +27,9 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eclipse.birt.report.engine.api.DocxRenderOption;
 import org.eclipse.birt.report.engine.api.EXCELRenderOption;
+import org.eclipse.birt.report.engine.api.IExcelRenderOption;
 import org.eclipse.birt.report.engine.api.IRenderOption;
 import org.eclipse.birt.report.engine.api.IReportEngine;
 import org.eclipse.birt.report.engine.api.IReportRunnable;
@@ -81,15 +83,15 @@ public class BeCPGReportServiceImpl implements BeCPGReportService {
 				options = new RenderOption();
 				options.setOutputFormat(IRenderOption.OUTPUT_FORMAT_PDF);
 			}			
-			else if(format.equals(ReportFormat.DOC.toString())){
+			else if(format.equals(ReportFormat.DOCX.toString())){
 				
-				options = new RenderOption();
-				options.setOutputFormat(ReportFormat.DOC.toString());
+				options = new DocxRenderOption();
+				options.setOutputFormat(ReportFormat.DOCX.toString());
 			}
 			else{
 				// default format excel
 				options = new EXCELRenderOption();
-				options.setOutputFormat(ReportFormat.XLS.toString());
+				options.setOutputFormat(ReportFormat.XLSX.toString());
 			}
 			
 			options.setOutputStream(out);							

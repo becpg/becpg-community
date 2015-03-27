@@ -34,11 +34,12 @@ public class PackagingHelper {
 	protected AlfrescoRepository<ProductData> alfrescoRepository;
 	
 	public VariantPackagingData getDefaultVariantPackagingData(ProductData productData){		
-		NodeRef defaultVariantNodeRef = getDefaultVariant(productData);
 		PackagingData packagingData = getPackagingData(productData);		
-		return packagingData.getVariants().get(defaultVariantNodeRef);
-	}	
+		return packagingData.getVariants().get(getDefaultVariant(productData));
+	}
 	
+	
+	@SuppressWarnings("unchecked")
 	public PackagingData getPackagingData(ProductData productData){
 		PackagingData packagingData = new PackagingData(productData.getVariants());		
 		for (PackagingListDataItem dataItem : productData.getPackagingList(EffectiveFilters.EFFECTIVE)) {
@@ -49,9 +50,11 @@ public class PackagingHelper {
 	
 	private NodeRef getDefaultVariant(ProductData productData){
 		NodeRef defaultVariantNodeRef = null;
-		for (VariantData variantData : productData.getVariants()) {
-			if (variantData.getIsDefaultVariant()) {
-				defaultVariantNodeRef = variantData.getNodeRef();
+		if(productData.getVariants()!=null){
+			for (VariantData variantData : productData.getVariants()) {
+				if (variantData.getIsDefaultVariant()) {
+					defaultVariantNodeRef = variantData.getNodeRef();
+				}
 			}
 		}
 		return defaultVariantNodeRef;

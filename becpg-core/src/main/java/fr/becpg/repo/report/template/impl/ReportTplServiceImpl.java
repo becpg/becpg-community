@@ -289,7 +289,7 @@ public class ReportTplServiceImpl implements ReportTplService {
 		String dbReportFormat = (String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
 		if (dbReportFormat == null) {
 			if (ReportType.ExportSearch.equals(reportType)) {
-				reportFormat = ReportFormat.XLS;
+				reportFormat = ReportFormat.XLSX;
 			} else {
 				reportFormat = ReportFormat.PDF;
 			}
