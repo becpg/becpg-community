@@ -729,7 +729,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			NodeRef exportSearchProductsNodeRef = visitFolder(exportSearchNodeRef, PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_PRODUCTS);
 			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
 					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_PRODUCTS), EXPORT_PRODUCTS_REPORT_RPTFILE_PATH,
-					ReportType.ExportSearch, ReportFormat.XLS, PLMModel.TYPE_PRODUCT, false, true, false);
+					ReportType.ExportSearch, ReportFormat.XLSX, PLMModel.TYPE_PRODUCT, false, true, false);
 
 			reportTplService.createTplRessource(exportSearchProductsNodeRef, EXPORT_PRODUCTS_REPORT_XMLFILE_PATH, false);
 		} catch (IOException e) {

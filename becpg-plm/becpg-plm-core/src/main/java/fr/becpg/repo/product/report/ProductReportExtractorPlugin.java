@@ -507,7 +507,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				tarePrimary = new BigDecimal(0d);
 			}
 			BigDecimal netWeightPrimary = new BigDecimal(FormulationHelper.getNetWeight(productData.getNodeRef(), nodeService,
-					FormulationHelper.DEFAULT_NET_WEIGHT));
+					FormulationHelper.DEFAULT_NET_WEIGHT).toString());
 			BigDecimal grossWeightPrimary = tarePrimary.add(netWeightPrimary);
 
 			PackagingData packagingData = packagingHelper.getPackagingData(productData);

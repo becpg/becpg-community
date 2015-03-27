@@ -480,7 +480,7 @@ public class FormulationHelper {
 					}
 				}
 				logger.debug("compo tare: " + tare + " qty " + qty + " productQty " + productQty);
-				return tare.multiply(new BigDecimal(qty)).divide(new BigDecimal(productQty), MathContext.DECIMAL64);
+				return tare.multiply(new BigDecimal(qty.toString())).divide(new BigDecimal(productQty.toString()), MathContext.DECIMAL64);
 			}
 		}
 		return new BigDecimal(0d);
@@ -493,11 +493,11 @@ public class FormulationHelper {
 
 		if (qty != null) {
 			if (FormulationHelper.isPackagingListUnitKg(packList.getPackagingListUnit())) {
-				tare = new BigDecimal(qty);
+				tare = new BigDecimal(qty.toString());
 			} else {
 				BigDecimal t = FormulationHelper.getTareInKg(packList.getProduct(), nodeService);
 				if (t != null) {
-					tare =  t.multiply(new BigDecimal(qty));
+					tare =  t.multiply(new BigDecimal(qty.toString()));
 				}
 			}
 		}
@@ -521,7 +521,7 @@ public class FormulationHelper {
 		if (tare == null || tareUnit == null) {
 			return null;
 		} else {
-			BigDecimal ret = new BigDecimal(tare);
+			BigDecimal ret = new BigDecimal(tare.toString());
 			if (tareUnit == TareUnit.g) {
 				ret = ret.divide(new BigDecimal(1000d));
 			}

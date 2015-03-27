@@ -362,7 +362,7 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 				DataListOutputWriter outputWriter = new CSVDataListOutputWriter(dictionaryService);
 				outputWriter.write(res,extractedItems);
 
-			} else if (RepoConsts.FORMAT_XLS.equals(dataListFilter.getFormat())) {
+			} else if (RepoConsts.FORMAT_XLSX.equals(dataListFilter.getFormat())) {
 				DataListOutputWriter outputWriter = new ExcelDataListOutputWriter(dictionaryService,dataListFilter);
 				outputWriter.write(res, extractedItems);
 			} else {
