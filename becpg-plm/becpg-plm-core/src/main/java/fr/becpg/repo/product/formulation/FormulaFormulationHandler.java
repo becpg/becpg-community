@@ -332,7 +332,6 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 				extractJSONSubList(productData, subDataListItem, exp, path, subList);
 			} 
 		}
-		
 	}
 
 	/**
