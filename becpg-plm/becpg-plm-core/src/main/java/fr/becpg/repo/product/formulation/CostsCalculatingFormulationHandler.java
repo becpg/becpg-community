@@ -122,12 +122,6 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			calculateSimulationCosts(formulatedProduct);
 			
 			for (CostListDataItem c : formulatedProduct.getCostList()) {
-							
-				if (isCharactFormulated(c)) {
-					String unit = calculateUnit(formulatedProduct.getUnit(),(String) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTCURRENCY));
-					c.setUnit(unit);
-				}
-
 				if (transientFormulation) {
 					c.setTransient(true);
 				}
@@ -378,8 +372,10 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				if (c.getValue() != null) {
 					if (isFixed != null && isFixed == Boolean.TRUE) {
 						unitTotalFixedCost += c.getValue();
-						c.setValuePerProduct(c.getValue() / formulatedProduct.getProjectedQty());
-						unitTotalVariableCost += c.getValuePerProduct();
+						if(formulatedProduct.getProjectedQty() != null && !formulatedProduct.getProjectedQty().equals(0)){
+							c.setValuePerProduct(c.getValue() / formulatedProduct.getProjectedQty());
+							unitTotalVariableCost += c.getValuePerProduct();
+						}												
 						
 					} else if(netQty != FormulationHelper.DEFAULT_NET_WEIGHT){
 						c.setValuePerProduct(netQty * c.getValue());
