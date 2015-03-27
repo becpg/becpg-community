@@ -114,7 +114,7 @@ public class ExportSearchWebScriptTest extends fr.becpg.test.PLMBaseTestCase {
 
 		exportProductReportTpl = reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
 				TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_PRODUCTS), EXPORT_PRODUCTS_REPORT_RPTFILE_PATH,
-				ReportType.ExportSearch, ReportFormat.XLS, PLMModel.TYPE_PRODUCT, false, true, true);
+				ReportType.ExportSearch, ReportFormat.XLSX, PLMModel.TYPE_PRODUCT, false, true, true);
 
 		reportTplService.createTplRessource(exportSearchProductsNodeRef, EXPORT_PRODUCTS_REPORT_XMLFILE_PATH, false);
 	}

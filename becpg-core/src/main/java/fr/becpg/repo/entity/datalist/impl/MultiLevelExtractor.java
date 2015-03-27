@@ -122,8 +122,8 @@ public class MultiLevelExtractor extends SimpleExtractor {
 					ret.setComputedFields(attributeExtractorService.readExtractStructure(nodeService.getType(nodeRef), metadataFields));
 				}
 
-				if (RepoConsts.FORMAT_CSV.equals(format) || RepoConsts.FORMAT_XLS.equals(format)) {
-					ret.addItem(extractExport(RepoConsts.FORMAT_XLS.equals(format) ? AttributeExtractorMode.XLS : AttributeExtractorMode.CSV,
+				if (RepoConsts.FORMAT_CSV.equals(format) || RepoConsts.FORMAT_XLSX.equals(format)) {
+					ret.addItem(extractExport(RepoConsts.FORMAT_XLSX.equals(format) ? AttributeExtractorMode.XLSX : AttributeExtractorMode.CSV,
 							nodeRef, ret.getComputedFields(), props, cache));
 				} else {
 					ret.addItem(extractJSON(nodeRef, ret.getComputedFields(), props, cache));
@@ -181,7 +181,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 
 				tmp.put("assoc_" + assocName.replaceFirst(":", "_"), entity);
 			}
-		} else if (AttributeExtractorMode.CSV.equals(mode) || AttributeExtractorMode.XLS.equals(mode)) {
+		} else if (AttributeExtractorMode.CSV.equals(mode) || AttributeExtractorMode.XLSX.equals(mode)) {
 			if (extraProps.get(PROP_DEPTH) != null) {
 				tmp.put("prop_bcpg_depthLevel", ((Integer) extraProps.get(PROP_DEPTH)).toString());
 			}

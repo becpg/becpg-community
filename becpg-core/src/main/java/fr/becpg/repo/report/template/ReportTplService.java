@@ -28,7 +28,7 @@ import fr.becpg.report.client.ReportFormat;
 public interface ReportTplService {
 
 	public static final String PARAM_VALUE_DESIGN_EXTENSION = ".rptdesign";
-	public static final String PARAM_VALUE_XLSREPORT_EXTENSION = ".xlsx";
+	public static final String PARAM_VALUE_XLSXREPORT_EXTENSION = ".xlsx";
 	
 	
 	/**

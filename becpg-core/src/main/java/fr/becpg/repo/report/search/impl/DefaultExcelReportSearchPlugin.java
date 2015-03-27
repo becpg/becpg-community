@@ -107,7 +107,7 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields,
 			Map<QName, Serializable> properties, final Map<NodeRef, Map<String, Object>> cache) {
 
-		return attributeExtractorService.extractNodeData(nodeRef, itemType, properties, metadataFields, AttributeExtractorMode.XLS,
+		return attributeExtractorService.extractNodeData(nodeRef, itemType, properties, metadataFields, AttributeExtractorMode.XLSX,
 				new AttributeExtractorService.DataListCallBack() {
 
 					@Override

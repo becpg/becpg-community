@@ -110,8 +110,8 @@ public class ProjectListExtractor extends SimpleExtractor {
 						ret.setComputedFields(attributeExtractorService.readExtractStructure(nodeService.getType(nodeRef), metadataFields));
 					}
 					if (RepoConsts.FORMAT_CSV.equals(dataListFilter.getFormat())
-							|| RepoConsts.FORMAT_XLS.equals(dataListFilter.getFormat())) {
-						ret.addItem(extractExport( RepoConsts.FORMAT_XLS.equals(dataListFilter.getFormat())? AttributeExtractorMode.XLS: AttributeExtractorMode.CSV, nodeRef, ret.getComputedFields(), props, cache));
+							|| RepoConsts.FORMAT_XLSX.equals(dataListFilter.getFormat())) {
+						ret.addItem(extractExport( RepoConsts.FORMAT_XLSX.equals(dataListFilter.getFormat())? AttributeExtractorMode.XLSX: AttributeExtractorMode.CSV, nodeRef, ret.getComputedFields(), props, cache));
 					} else {
 						Map<String, Object> extracted = extractJSON(nodeRef, ret.getComputedFields(), props, cache);
 						if (favorites.contains(nodeRef)) {
@@ -329,7 +329,7 @@ public class ProjectListExtractor extends SimpleExtractor {
 							ret.add(cache.get(itemNodeRef));
 						} else {
 							if (permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED) {
-								if (AttributeExtractorMode.CSV.equals(mode) || AttributeExtractorMode.XLS.equals(mode)) {
+								if (AttributeExtractorMode.CSV.equals(mode) || AttributeExtractorMode.XLSX.equals(mode)) {
 									ret.add(extractExport(mode, itemNodeRef, field.getChildrens(), props, cache));
 								} else {
 									ret.add(extractJSON(itemNodeRef, field.getChildrens(), props, cache));

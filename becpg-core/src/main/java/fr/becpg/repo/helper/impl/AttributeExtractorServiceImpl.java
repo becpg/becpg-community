@@ -432,7 +432,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 			if (field.isNested()) {
 				List<Map<String, Object>> extracted = callback.extractNestedField(nodeRef, field);
 
-				if ((AttributeExtractorMode.CSV.equals(mode) || AttributeExtractorMode.XLS.equals(mode)) && !extracted.isEmpty()) {
+				if ((AttributeExtractorMode.CSV.equals(mode) || AttributeExtractorMode.XLSX.equals(mode)) && !extracted.isEmpty()) {
 					for (Map.Entry<String, Object> entry : extracted.get(0).entrySet()) {
 						// Prefix with field name for CSV
 						ret.put(field.getFieldName() + "_" + entry.getKey(), entry.getValue());
@@ -476,7 +476,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 
 			if (AttributeExtractorMode.CSV.equals(mode)) {
 				return displayName;
-			} else if (AttributeExtractorMode.XLS.equals(mode)) {
+			} else if (AttributeExtractorMode.XLSX.equals(mode)) {
 				if (ExcelHelper.isExcelType(value)) {
 					return value;
 				} else {
@@ -537,7 +537,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 				tmp.put("value", nodeRefs);
 				return tmp;
 
-			} else if (AttributeExtractorMode.CSV.equals(mode) || AttributeExtractorMode.XLS.equals(mode)) {
+			} else if (AttributeExtractorMode.CSV.equals(mode) || AttributeExtractorMode.XLSX.equals(mode)) {
 				String ret = "";
 				for (NodeRef assocNodeRef : assocRefs) {
 					type = nodeService.getType(assocNodeRef);
