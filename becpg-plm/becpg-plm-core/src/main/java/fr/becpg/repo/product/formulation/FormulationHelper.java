@@ -159,7 +159,7 @@ public class FormulationHelper {
 	}
 
 	public static BigDecimal getQtyWithLost(BigDecimal qty, BigDecimal lossPerc) {
-		return (new BigDecimal(1).add(lossPerc).divide(new BigDecimal(100d))).multiply(qty);
+		return ((new BigDecimal(1)).add(lossPerc.divide(new BigDecimal(100d)))).multiply(qty);
 	}
 
 	public static BigDecimal getQtyWithLost(PackagingListDataItem packagingListDataItem) {
@@ -184,7 +184,7 @@ public class FormulationHelper {
 
 		if (qty.doubleValue() > 0 && packagingListUnit != null) {
 			if (packagingListUnit.equals(PackagingListUnit.PP)) {
-				qty = new BigDecimal(1).divide(qty);
+				qty = (new BigDecimal(1)).divide(qty);
 			} else if (packagingListUnit.equals(PackagingListUnit.g)) {
 				qty = qty.divide(new BigDecimal(1000));
 			}
