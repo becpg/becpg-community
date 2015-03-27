@@ -135,6 +135,8 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
     
     protected NodeRef cost4;
     
+    protected NodeRef cost5;
+    
     protected NodeRef parentCost;
     
     protected NodeRef fixedCost;
@@ -241,6 +243,10 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					properties.put(ContentModel.PROP_NAME, "cost4");			 					 				
 					properties.put(PLMModel.PROP_COSTCURRENCY, "€");
 					cost4 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
+					properties.clear();
+					properties.put(ContentModel.PROP_NAME, "cost5");			 					 				
+					properties.put(PLMModel.PROP_COSTCURRENCY, "€");
+					cost5 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "parentCost");			 					 				
 					properties.put(PLMModel.PROP_COSTCURRENCY, "€");
@@ -881,6 +887,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					packagingKit1.setLegalName("Legal Packaging kit 1");			
 					packagingKit1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial3).getNodeRef();
 					nodeService.setProperty(packagingKit1NodeRef, PackModel.PROP_PALLET_BOXES_PER_PALLET, 40);
+					nodeService.setProperty(packagingKit1NodeRef, PackModel.PROP_PALLET_NUMBER_ON_GROUND, 2);
 					
 //				}
 //				else{

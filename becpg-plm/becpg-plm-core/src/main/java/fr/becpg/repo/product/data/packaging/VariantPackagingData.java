@@ -13,6 +13,7 @@ public class VariantPackagingData {
 	private BigDecimal tareTertiary = new BigDecimal(0d);
 	private Integer productPerBoxes;
 	private Integer boxesPerPallet;
+	private Integer palletNumberOnGround;
 
 	public BigDecimal getTareSecondary() {
 		return tareSecondary;
@@ -45,7 +46,15 @@ public class VariantPackagingData {
 	public void setBoxesPerPallet(Integer boxesPerPallet) {
 		this.boxesPerPallet = boxesPerPallet;
 	}
-	
+
+	public Integer getPalletNumberOnGround() {
+		return palletNumberOnGround;
+	}
+
+	public void setPalletNumberOnGround(Integer palletNumberOnGround) {
+		this.palletNumberOnGround = palletNumberOnGround;
+	}
+
 	@Override
 	public String toString() {
 		return "VariantPackagingData [tareSecondary=" + tareSecondary + ", tareTertiary=" + tareTertiary

@@ -84,4 +84,10 @@ public class PackagingData {
 			variantPackagingData.setBoxesPerPallet(value);
 		}
 	}
+	
+	public void setPalletNumberOnGround(List<NodeRef> variantNodeRefs, Integer value) {
+		for (VariantPackagingData variantPackagingData : getVariantPackagingData(variantNodeRefs)) {
+			variantPackagingData.setPalletNumberOnGround(value);
+		}
+	}
 }
