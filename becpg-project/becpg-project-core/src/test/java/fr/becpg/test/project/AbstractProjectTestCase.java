@@ -94,7 +94,6 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 	protected List<NodeRef> assigneesTwo;
 	protected NodeRef projectTplNodeRef;
 	protected NodeRef rawMaterialNodeRef;
-	protected NodeRef projectNodeRef;
 	protected ResourceCost resourceCost;
 
 	private static Log logger = LogFactory.getLog(AbstractProjectTestCase.class);
@@ -343,13 +342,13 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 		}, false, true);
 	}
 
-	protected void createProject(final ProjectState projectState, final Date startDate, final Date endDate) {
-		createProject(projectState, startDate, endDate, endDate != null ? PlanningMode.RetroPlanning : PlanningMode.Planning);
+	protected NodeRef createProject(final ProjectState projectState, final Date startDate, final Date endDate) {
+		return createProject(projectState, startDate, endDate, endDate != null ? PlanningMode.RetroPlanning : PlanningMode.Planning);
 	}
 
-	protected void createProject(final ProjectState projectState, final Date startDate, final Date endDate, final PlanningMode planningMode) {
+	protected NodeRef createProject(final ProjectState projectState, final Date startDate, final Date endDate, final PlanningMode planningMode) {
 
-		projectNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+		return transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
 			public NodeRef execute() throws Throwable {
 
@@ -373,11 +372,11 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 		}, false, true);
 	}
 
-	protected void createMultiLevelProject(final ProjectState projectState, final Date startDate, final Date endDate, final PlanningMode planningMode) {
+	protected NodeRef createMultiLevelProject(final ProjectState projectState, final Date startDate, final Date endDate, final PlanningMode planningMode) {
 
 		logger.info("Create multiLevel project");
 
-		projectNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+		return transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
 			public NodeRef execute() throws Throwable {
 

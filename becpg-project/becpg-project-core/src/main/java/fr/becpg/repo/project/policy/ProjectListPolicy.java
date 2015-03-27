@@ -229,8 +229,7 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		}
 
 		if (isPropChanged(before, after, ProjectModel.PROP_TL_DURATION) || isPropChanged(before, after, ProjectModel.PROP_TL_START) || isPropChanged(before, after, ProjectModel.PROP_TL_WORK)
-				|| isPropChanged(before, after, ProjectModel.PROP_TL_FIXED_COST) || isPropChanged(before, after, ProjectModel.PROP_EL_EXPENSE_AMOUNT)
-				|| isPropChanged(before, after, ProjectModel.PROP_IL_INVOICE_AMOUNT)) {
+				|| isPropChanged(before, after, ProjectModel.PROP_TL_FIXED_COST) ) {
 
 			logger.debug("update task list start, duration or end: " + nodeRef);
 			formulateProject = true;
@@ -296,7 +295,7 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 
 	public void onUpdatePropertiesExpenseList(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 
-		if (isPropChanged(before, after, ProjectModel.PROP_EL_EXPENSE_AMOUNT)) {
+		if (isPropChanged(before, after, ProjectModel.PROP_BUDGET_EXPENSE)) {
 
 			logger.debug("update log time list : " + nodeRef);
 			queueListItem(nodeRef);
@@ -305,7 +304,7 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 
 	public void onUpdatePropertiesInvoiceList(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 
-		if (isPropChanged(before, after, ProjectModel.PROP_IL_INVOICE_AMOUNT)) {
+		if (isPropChanged(before, after, ProjectModel.PROP_BUDGET_INVOICE)) {
 
 			logger.debug("update log time list : " + nodeRef);
 			queueListItem(nodeRef);

@@ -37,7 +37,7 @@ public class ProjectCalculatePlanningDatesTest extends AbstractProjectTestCase {
 
 		final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
-		createProject(ProjectState.OnHold, dateFormat.parse("15/11/2012"), null);
+		final NodeRef projectNodeRef  = createProject(ProjectState.OnHold, dateFormat.parse("15/11/2012"), null);
 		final Date today = ProjectHelper.removeTime(new Date());
 		final Date nextStartDate = ProjectHelper.calculateNextStartDate(today);
 

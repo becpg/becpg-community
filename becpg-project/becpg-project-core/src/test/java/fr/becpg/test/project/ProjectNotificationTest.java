@@ -28,7 +28,7 @@ public class ProjectNotificationTest extends AbstractProjectTestCase {
 	@Test
 	public void testNotification() {
 
-		createProject(ProjectState.Planned, new Date(), null);
+		final NodeRef projectNodeRef = createProject(ProjectState.Planned, new Date(), null);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override

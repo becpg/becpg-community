@@ -31,7 +31,7 @@ public class ProjectStartByStartingTaskTest extends AbstractProjectTestCase {
 
 		logger.debug("testStartProjectByStartingTask");
 
-		createProject(ProjectState.Planned, null, null);
+		final NodeRef projectNodeRef = createProject(ProjectState.Planned, null, null);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override

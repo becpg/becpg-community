@@ -34,7 +34,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 public class InvoiceListDataItem extends BeCPGDataObject  {
 
 	private BudgetListDataItem budget ; //ilBudgetRef = Item
-	private Double  invoiceAmount=0d;  //ilInvoiceAmount
+	private Double invoiceAmount;  //ilInvoiceAmount
 	private TaskListDataItem task; //ilTaskRef
 	
 	@AlfSingleAssoc
@@ -47,7 +47,7 @@ public class InvoiceListDataItem extends BeCPGDataObject  {
 	}
 
 	@AlfProp
-	@AlfQname(qname = "pjt:ilInvoiceAmount")
+	@AlfQname(qname = "pjt:invoice")
 	public Double getInvoiceAmount() {
 		return invoiceAmount;
 	}
