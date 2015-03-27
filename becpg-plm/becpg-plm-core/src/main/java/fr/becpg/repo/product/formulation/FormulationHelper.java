@@ -146,22 +146,24 @@ public class FormulationHelper {
 	 * @return the qty
 	 * @throws FormulateException
 	 */
+	@Deprecated
+	//TODO change to use bigDecimal
 	public static Double getQtyWithLost(CompoListDataItem compoListDataItem, Double parentLossRatio) {
 		Double lossPerc = compoListDataItem.getLossPerc() != null ? compoListDataItem.getLossPerc() : 0d;
-		return FormulationHelper.getQtyWithLost(FormulationHelper.getQty(compoListDataItem),
-				FormulationHelper.calculateLossPerc(parentLossRatio, lossPerc));
+		return FormulationHelper.getQtyWithLost(new BigDecimal( FormulationHelper.getQty(compoListDataItem)),
+				new BigDecimal(FormulationHelper.calculateLossPerc(parentLossRatio, lossPerc))).doubleValue();
 	}
 
 	public static Double calculateLossPerc(Double parentLossRatio, Double lossPerc) {
 		return 100 * ((1 + lossPerc / 100) * (1 + parentLossRatio / 100) - 1);
 	}
 
-	public static Double getQtyWithLost(Double qty, Double lossPerc) {
-		return (1 + lossPerc / 100) * qty;
+	public static BigDecimal getQtyWithLost(BigDecimal qty, BigDecimal lossPerc) {
+		return (new BigDecimal(1).add(lossPerc).divide(new BigDecimal(100d))).multiply(qty);
 	}
 
-	public static Double getQtyWithLost(PackagingListDataItem packagingListDataItem) {
-		Double lossPerc = packagingListDataItem.getLossPerc() != null ? packagingListDataItem.getLossPerc() : 0d;
+	public static BigDecimal getQtyWithLost(PackagingListDataItem packagingListDataItem) {
+		BigDecimal lossPerc = new BigDecimal( packagingListDataItem.getLossPerc() != null ? packagingListDataItem.getLossPerc() : 0d);
 		return FormulationHelper.getQtyWithLost(FormulationHelper.getQty(packagingListDataItem), lossPerc);
 	}
 
@@ -171,20 +173,20 @@ public class FormulationHelper {
 	 * @param packagingListDataItem
 	 * @return
 	 */
-	public static Double getQty(PackagingListDataItem packagingListDataItem) {
+	public static BigDecimal getQty(PackagingListDataItem packagingListDataItem) {
 
 		if (packagingListDataItem.getQty() == null) {
 			logger.warn("Packaging element doesn't have any quantity");
 		}
 
-		Double qty = packagingListDataItem.getQty() != null ? packagingListDataItem.getQty() : DEFAULT_COMPONANT_QUANTITY;
+		BigDecimal qty = new BigDecimal(packagingListDataItem.getQty() != null ? packagingListDataItem.getQty() : DEFAULT_COMPONANT_QUANTITY);
 		PackagingListUnit packagingListUnit = packagingListDataItem.getPackagingListUnit();
 
-		if (qty > 0 && packagingListUnit != null) {
+		if (qty.doubleValue() > 0 && packagingListUnit != null) {
 			if (packagingListUnit.equals(PackagingListUnit.PP)) {
-				qty = 1 / qty;
+				qty = new BigDecimal(1).divide(qty);
 			} else if (packagingListUnit.equals(PackagingListUnit.g)) {
-				qty = qty / 1000;
+				qty = qty.divide(new BigDecimal(1000));
 			}
 		}
 
@@ -489,15 +491,15 @@ public class FormulationHelper {
 	public static BigDecimal getTareInKg(PackagingListDataItem packList, NodeService nodeService) {
 
 		BigDecimal tare = new BigDecimal(0d);
-		Double qty = FormulationHelper.getQty(packList);
+		BigDecimal qty = FormulationHelper.getQty(packList);
 
 		if (qty != null) {
 			if (FormulationHelper.isPackagingListUnitKg(packList.getPackagingListUnit())) {
-				tare = new BigDecimal(qty.toString());
+				tare = qty;
 			} else {
 				BigDecimal t = FormulationHelper.getTareInKg(packList.getProduct(), nodeService);
 				if (t != null) {
-					tare =  t.multiply(new BigDecimal(qty.toString()));
+					tare =  t.multiply(qty);
 				}
 			}
 		}
