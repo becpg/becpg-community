@@ -20,7 +20,6 @@ package fr.becpg.report.client;
 public enum ReportFormat {
 	
 	PDF,
-	XLS,
 	XLSX,
-	DOC
+	DOCX
 }

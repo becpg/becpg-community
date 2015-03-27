@@ -35,9 +35,8 @@
 			<parameter name="allowedValues">
 				<list>
 					<value>PDF</value>
-					<value>XLS</value>
 					<value>XLSX</value>
-					<value>DOC</value>
+					<value>DOCX</value>
 				</list>
 			</parameter>
 		</constraint>					

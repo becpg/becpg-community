@@ -804,7 +804,7 @@
          var me = this, fileurl = this.attributes.src ? this.wp.getThumbnailUrl(this.attributes.src) : this.wp.getContentUrl();
          
          //#beCPG
-         if(Alfresco.constants.PAGEID === "entity-details"){
+         if(Alfresco.constants.PAGEID === "entity-details" && !fileurl.indexOf("thumbnails")>0){
              fileurl = fileurl.replace("/api/","/becpg/report/")+"&entityNodeRef="+YAHOO.util.History.getQueryStringParameter('nodeRef');
          }
          

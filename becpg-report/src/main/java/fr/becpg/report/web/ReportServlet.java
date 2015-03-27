@@ -102,13 +102,13 @@ public class ReportServlet extends AbstractReportServlet {
 			      resp.setContentType("application/pdf");
 			      resp.addHeader("Content-Disposition", "attachment; filename=report.pdf" );
 			}			
-			else if(format.equals(ReportFormat.DOC.toString())){
-				 resp.setContentType("application/ms-word");
-			     resp.addHeader("Content-Disposition", "attachment; filename=report.doc" );
+			else if(format.equals(ReportFormat.DOCX.toString())){
+				 resp.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+			     resp.addHeader("Content-Disposition", "attachment; filename=report.docx" );
 			}
 			else{
-				 resp.setContentType("application/vnd.xls");
-			     resp.addHeader("Content-Disposition", "attachment; filename=report.xls" );
+				 resp.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+			     resp.addHeader("Content-Disposition", "attachment; filename=report.xlsx" );
 			}
 			
 		    
