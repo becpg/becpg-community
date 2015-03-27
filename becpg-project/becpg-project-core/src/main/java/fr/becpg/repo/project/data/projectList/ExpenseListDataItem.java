@@ -49,7 +49,7 @@ public class ExpenseListDataItem extends BeCPGDataObject {
 	}
 
 	@AlfProp
-	@AlfQname(qname = "pjt:elExpenseAmount")
+	@AlfQname(qname = "pjt:expense")
 	public Double getExpenseAmount() {
 		return expenseAmount;
 	}

@@ -1,20 +1,23 @@
 package fr.becpg.repo.project.formulation;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.projectList.BudgetListDataItem;
-import fr.becpg.repo.project.data.projectList.ExpenseListDataItem;
-import fr.becpg.repo.project.data.projectList.InvoiceListDataItem;
 import fr.becpg.repo.project.data.projectList.LogTimeListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 
@@ -28,37 +31,62 @@ public class BudgetFormulationHandler extends FormulationBaseHandler<ProjectData
 
 	private final static Log logger = LogFactory.getLog(BudgetFormulationHandler.class);
 
+	private AssociationService associationService;
+	
+	private NodeService nodeService;
+	
+	public void setAssociationService(AssociationService associationService) {
+		this.associationService = associationService;
+	}
+	
+	
+
+	public void setNodeService(NodeService nodeService) {
+		this.nodeService = nodeService;
+	}
+
+
+
 	@Override
 	public boolean process(ProjectData projectData) throws FormulateException {
 
 		logger.debug("BudgetFormulationHandler");
 		clearData(projectData);
-
-		// Les champs Actual Invoice dans Task et Budget
-		for (InvoiceListDataItem invoiceList : projectData.getInvoiceList()) {
-			BudgetListDataItem budgetListItem = invoiceList.getBudget();
-			TaskListDataItem taskListItem = invoiceList.getTask();
-			Double addInvoice = invoiceList.getInvoiceAmount() != null ? invoiceList.getInvoiceAmount() : 0d;
-			if(budgetListItem!=null){
-			budgetListItem.setActualInvoice(budgetListItem.getActualInvoice() + addInvoice);
-			}
-			if(taskListItem!=null){
-			taskListItem.setActualInvoice(taskListItem.getActualInvoice() + addInvoice);
-			}
-		}
-		// Les champs Actual Expense dans Task et Budget
-		for (ExpenseListDataItem expenseList : projectData.getExpenseList()) {
-			BudgetListDataItem budgetListItem = expenseList.getBudget();
-		    TaskListDataItem taskListItem = expenseList.getTask();
-			Double addExpense = expenseList.getExpenseAmount() != null ? expenseList.getExpenseAmount() : 0d;
-			if(budgetListItem!=null) {
-			budgetListItem.setActualExpense(budgetListItem.getActualExpense() + addExpense);
-			}
-			if(taskListItem!=null){
-			taskListItem.setActualExpense(taskListItem.getActualExpense() + addExpense);
+		
+		
+		
+		for(BudgetListDataItem budgetListItem : projectData.getBudgetList()){
+			List<NodeRef> assocs = associationService.getSourcesAssocs(budgetListItem.getNodeRef(), RegexQNamePattern.MATCH_ALL);
+			for(NodeRef item : assocs){
+				if(nodeService.exists(item) && nodeService.hasAspect(item, ProjectModel.ASPECT_BUDGET)){
+					Double invoice  = (Double) nodeService.getProperty(item, ProjectModel.PROP_BUDGET_INVOICE);
+					if(invoice!=null){
+						budgetListItem.setActualInvoice(budgetListItem.getActualInvoice() + invoice);
+					}
+					Double expense  = (Double) nodeService.getProperty(item, ProjectModel.PROP_BUDGET_EXPENSE);
+					if(expense!=null){
+						budgetListItem.setActualExpense(budgetListItem.getActualExpense() + expense);
+					}	
+				}
 			}
 		}
-
+		
+		for(TaskListDataItem taskListDataItem : projectData.getTaskList()){
+			List<NodeRef> assocs = associationService.getSourcesAssocs(taskListDataItem.getNodeRef(), RegexQNamePattern.MATCH_ALL);
+			for(NodeRef item : assocs){
+				if(nodeService.exists(item) && nodeService.hasAspect(item, ProjectModel.ASPECT_BUDGET)){
+					Double invoice  = (Double) nodeService.getProperty(item, ProjectModel.PROP_BUDGET_INVOICE);
+					if(invoice!=null){
+						taskListDataItem.setActualInvoice(taskListDataItem.getActualInvoice() + invoice);
+					}
+					Double expense  = (Double) nodeService.getProperty(item, ProjectModel.PROP_BUDGET_EXPENSE);
+					if(expense!=null){
+						taskListDataItem.setActualExpense(taskListDataItem.getActualExpense() + expense);
+					}	
+				}
+			}
+		}
+		
 		// Hierarchie dans Task List
 		Composite<TaskListDataItem> compositeTask = CompositeHelper.getHierarchicalCompoList(projectData.getTaskList());
 		calculateCost(projectData, compositeTask);

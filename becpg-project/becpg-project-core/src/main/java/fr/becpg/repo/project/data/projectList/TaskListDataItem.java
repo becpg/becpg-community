@@ -315,7 +315,7 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	}
 	
 	@AlfProp
-	@AlfQname(qname = "pjt:tlActualInvoice")
+	@AlfQname(qname = "pjt:invoice")
 	public Double getActualInvoice() {
 		return actualInvoice;
 	}
@@ -324,7 +324,7 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 		this.actualInvoice = actualInvoice;
 	}
 	@AlfProp
-	@AlfQname(qname = "pjt:tlActualExpense")
+	@AlfQname(qname = "pjt:expense")
 	public Double getActualExpense() {
 		return actualExpense;
 	}

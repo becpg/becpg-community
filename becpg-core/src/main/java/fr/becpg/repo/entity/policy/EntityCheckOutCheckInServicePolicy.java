@@ -147,7 +147,7 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 			logger.debug("OnDeleteNode cm:versionable " + childAssocRef.getChildRef() + " isNodeArchived: " + isNodeArchived);
 			// if (isNodeArchived == false) { //Move history under archive store
 			// instead
-			// If we are perminantly deleting the node then we need to
+			// If we are permanantly deleting the node then we need to
 			// remove
 			// the associated version history
 			entityVersionService.deleteVersionHistory(childAssocRef.getChildRef());
