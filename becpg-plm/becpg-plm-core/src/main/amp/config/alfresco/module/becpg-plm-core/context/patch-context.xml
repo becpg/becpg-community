@@ -318,5 +318,7 @@
         </property>
         <property name="entityListDAO" ref="entityListDAO"/>
 	</bean>
+	
+	
 
 </beans>
