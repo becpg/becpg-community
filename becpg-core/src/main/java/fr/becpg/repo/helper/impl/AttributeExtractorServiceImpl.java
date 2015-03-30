@@ -480,6 +480,10 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 				if (ExcelHelper.isExcelType(value)) {
 					return value;
 				} else {
+					if (DataTypeDefinition.ANY.toString().equals((((PropertyDefinition) attribute).getDataType()).toString())
+							&& value instanceof String) {
+						return JsonFormulaHelper.cleanCompareJSON((String) value);
+					}
 					return displayName;
 				}
 
@@ -542,7 +546,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 				for (NodeRef assocNodeRef : assocRefs) {
 					type = nodeService.getType(assocNodeRef);
 					if (ret.length() > 0) {
-						ret += "|";
+						ret += RepoConsts.LABEL_SEPARATOR;
 					}
 					ret += extractPropName(type, assocNodeRef);
 				}
@@ -633,7 +637,6 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 
 		return metadata;
 	}
-
 
 	@Override
 	public String getDisplayPath(NodeRef nodeRef) {

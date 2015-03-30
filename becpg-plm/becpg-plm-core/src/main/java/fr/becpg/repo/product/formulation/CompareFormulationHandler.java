@@ -20,6 +20,7 @@ package fr.becpg.repo.product.formulation;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -110,8 +111,8 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 	public boolean process(final ProductData productData) throws FormulateException {
 
 		if (!L2CacheSupport.isCacheOnlyEnable()
-				&& (productData.getAspects().contains(BeCPGModel.ASPECT_COMPARE_WITH) ||( productData.getNodeRef()!=null && nodeService.hasAspect(productData.getNodeRef(),
-						BeCPGModel.ASPECT_COMPARE_WITH)))) {
+				&& (productData.getAspects().contains(BeCPGModel.ASPECT_COMPARE_WITH) || (productData.getNodeRef() != null && nodeService.hasAspect(
+						productData.getNodeRef(), BeCPGModel.ASPECT_COMPARE_WITH)))) {
 			L2CacheSupport.doInCacheContext(new Action() {
 
 				@Override
@@ -133,31 +134,34 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 								addCompareValueColumn(PLMModel.PROP_COMPARE_WITH_DYN_COLUMN, view, toCompareWith, dynamicColumnToTreat, true);
 
 								for (DynamicCharactListItem dynamicCharactListItem : view.getDynamicCharactList()) {
-									DynamicCharactListItem toCompareDynamicCharactListItem = getMatchingCharact(dynamicCharactListItem,
-											getMatchingView(toCompareWith, view).getDynamicCharactList());
-									if (toCompareDynamicCharactListItem != null) {
+									if (!Boolean.TRUE.equals(dynamicCharactListItem.getMultiLevelFormula())) {
 
-										if (logger.isDebugEnabled()) {
-											logger.debug(" - Found matching charact to compare: ");
-											logger.debug(" - " + toCompareDynamicCharactListItem.toString());
-										}
+										DynamicCharactListItem toCompareDynamicCharactListItem = getMatchingCharact(dynamicCharactListItem,
+												getMatchingView(toCompareWith, view).getDynamicCharactList());
+										if (toCompareDynamicCharactListItem != null) {
 
-										// DynamicColumns
-										if (dynamicCharactListItem.getColumnName() != null && !dynamicCharactListItem.getColumnName().isEmpty()) {
-											QName columnName = QName.createQName(dynamicCharactListItem.getColumnName().replaceFirst("_", ":"),
-													namespaceService);
-
-											addCompareValueColumn(columnName, view, toCompareWith, dynamicColumnToTreat, false);
-
-											// DynamicCharacts
-										} else {
-											JSONArray values = dynamicCharactToTreat.get(dynamicCharactListItem);
-											if (values == null) {
-												values = new JSONArray();
-												values.put(getJSONValue(toCompareWith, dynamicCharactListItem.getValue(),null));
+											if (logger.isDebugEnabled()) {
+												logger.debug(" - Found matching charact to compare: ");
+												logger.debug(" - " + toCompareDynamicCharactListItem.toString());
 											}
-											values.put(getJSONValue(toCompareWith, toCompareDynamicCharactListItem.getValue(),null));
-											dynamicCharactToTreat.put(dynamicCharactListItem, values);
+
+											// DynamicColumns
+											if (dynamicCharactListItem.getColumnName() != null && !dynamicCharactListItem.getColumnName().isEmpty()) {
+												QName columnName = QName.createQName(dynamicCharactListItem.getColumnName().replaceFirst("_", ":"),
+														namespaceService);
+
+												addCompareValueColumn(columnName, view, toCompareWith, dynamicColumnToTreat, false);
+
+												// DynamicCharacts
+											} else {
+												JSONArray values = dynamicCharactToTreat.get(dynamicCharactListItem);
+												if (values == null) {
+													values = new JSONArray();
+													values.put(getJSONValue(toCompareWith, dynamicCharactListItem.getValue(), null));
+												}
+												values.put(getJSONValue(toCompareWith, toCompareDynamicCharactListItem.getValue(), null));
+												dynamicCharactToTreat.put(dynamicCharactListItem, values);
+											}
 										}
 									}
 								}
@@ -221,29 +225,27 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 		return true;
 	}
 
-
-
 	private JSONObject getJSONValue(ProductData toCompareWith, CompositionDataItem dataListItem, QName columnName, boolean isQty)
 			throws JSONException {
 
 		Object value = getValue(dataListItem, columnName, isQty);
-		
+
 		if (isQty) {
-			
-			return getJSONValue(toCompareWith,value, dataListItem.getNodeRef());
-			
+
+			return getJSONValue(toCompareWith, value, dataListItem.getNodeRef());
+
 		} else {
-			return getJSONValue(toCompareWith,value, null);
+			return getJSONValue(toCompareWith, value, null);
 		}
 
 	}
 
 	private JSONObject getJSONValue(ProductData toCompareWith, Object value, NodeRef itemNodeRef) throws JSONException {
 		JSONObject jsonObject = new JSONObject();
-		
+
 		jsonObject.put(JsonFormulaHelper.JSON_NODEREF, toCompareWith.getNodeRef());
-		jsonObject.put("name", toCompareWith.getName());	
-			
+		jsonObject.put("name", toCompareWith.getName());
+
 		if (itemNodeRef != null) {
 			jsonObject.put("itemNodeRef", itemNodeRef);
 		}
@@ -268,8 +270,6 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 		}
 		return dataListItem.getExtraProperties().get(columnName);
 	}
-
-	
 
 	private AbstractProductDataView getMatchingView(ProductData productData, AbstractProductDataView view) {
 		for (AbstractProductDataView tmp : productData.getViews()) {
@@ -348,7 +348,7 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 	private List<ProductData> getComparableProductDatas(ProductData productData) {
 
 		List<NodeRef> compareWithEntities = associationService.getTargetAssocs(productData.getNodeRef(), BeCPGModel.ASSOC_COMPARE_WITH_ENTITIES);
-		List<ProductData> ret = new ArrayList<>();
+		List<ProductData> ret = new LinkedList<>();
 		if (compareWithEntities != null && !compareWithEntities.isEmpty()) {
 
 			for (NodeRef entityNodeRef : compareWithEntities) {

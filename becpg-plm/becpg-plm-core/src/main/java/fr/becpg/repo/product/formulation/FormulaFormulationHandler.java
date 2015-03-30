@@ -316,20 +316,24 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 			JSONObject subObject = new JSONObject();
 
 			if (FormulationHelper.getNetWeight(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT) != 0) {
-				subDataListItem.setQty(dataListItem.getQty() * subDataListItem.getQty() / FormulationHelper.getNetWeight(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT));
+			 	subDataListItem.setQty(dataListItem.getQty() * subDataListItem.getQty() / FormulationHelper.getNetWeight(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT));
 			}
 
 			StandardEvaluationContext dataContext = new StandardEvaluationContext(new FormulaFormulationContext(alfrescoRepository, productData,
 					subDataListItem));
+			
+			String subPath = path+"/"+subDataListItem.getNodeRef().getId();
+			
 			formulaService.registerCustomFunctions(dataContext);
 			Object subValue = exp.getValue(dataContext);
 			subObject.put(JsonFormulaHelper.JSON_VALUE, subValue);
 			subObject.put(JsonFormulaHelper.JSON_DISPLAY_VALUE, JsonFormulaHelper.formatValue(subValue));
-			subObject.put(JsonFormulaHelper.JSON_PATH, path+"/"+subDataListItem.getNodeRef().getId());
+			subObject.put(JsonFormulaHelper.JSON_PATH, subPath);
 			subList.put(subObject);
 			
-			if (PLMModel.TYPE_SEMIFINISHEDPRODUCT.equals(nodeService.getType(dataListItem.getProduct()))) {
-				extractJSONSubList(productData, subDataListItem, exp, path, subList);
+			if (PLMModel.TYPE_SEMIFINISHEDPRODUCT.equals(nodeService.getType(dataListItem.getProduct())) 
+					|| PLMModel.TYPE_FINISHEDPRODUCT.equals(nodeService.getType(dataListItem.getProduct()))) {
+				extractJSONSubList(productData, subDataListItem, exp, subPath, subList);
 			} 
 		}
 	}
