@@ -108,7 +108,6 @@ public interface ProjectModel {
 	//Invoice List
 	public static final QName TYPE_INVOICE_LIST  = QName.createQName(PROJECT_URI, "invoiceList");
 	public static final QName ASSOC_IL_BUDGET_REF  = QName.createQName(PROJECT_URI, "ilBudgetRef");
-	public static final QName PROP_IL_INVOICE_AMOUNT  = QName.createQName(PROJECT_URI, "ilInvoiceAmount");
 	public static final QName ASSOC_IL_TASK_REF  = QName.createQName(PROJECT_URI, "ilTaskRef");
 	public static final QName ASSOC_IL_DOC_REF  = QName.createQName(PROJECT_URI, "ilDocRef");
 	
