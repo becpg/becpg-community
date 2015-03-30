@@ -72,21 +72,19 @@ public class PackagingHelper {
 	private void loadPackaging(PackagingListDataItem dataItem, PackagingData packagingData, List<NodeRef> currentVariants) {
 		QName nodeType = nodeService.getType(dataItem.getProduct());
 
-		if (nodeService.hasAspect(dataItem.getProduct(), PackModel.ASPECT_TARE)) {
-
-			// Sum tare (don't take in account packagingKit)
+		// Sum tare (don't take in account packagingKit)
 			if (dataItem.getPkgLevel() != null && !PLMModel.TYPE_PACKAGINGKIT.equals(nodeType)) {
 
 				BigDecimal tare = FormulationHelper.getTareInKg(dataItem, nodeService);
 
 				if (dataItem.getPkgLevel().equals(PackagingLevel.Secondary)) {
+					
 					packagingData.addTareSecondary(currentVariants, tare);
 				} else if (dataItem.getPkgLevel().equals(PackagingLevel.Tertiary)) {
 					packagingData.addTareTertiary(currentVariants, tare);
 				}
 			}
-		}
-
+		
 		if (nodeService.hasAspect(dataItem.getProduct(), PackModel.ASPECT_PALLET)) {
 			logger.debug("load pallet aspect ");
 

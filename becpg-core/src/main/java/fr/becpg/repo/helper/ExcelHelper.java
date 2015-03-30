@@ -62,7 +62,6 @@ public class ExcelHelper {
 			XSSFCellStyle style, int cellnum, ExcelFieldTitleProvider titleProvider) {
 		if (fields != null) {
 			for (AttributeExtractorStructure field : fields) {
-
 				if (field.isNested()) {
 
 					cellnum = appendExcelHeader(field.getChildrens(), field.getFieldName(), titleProvider.getTitle(field), headerRow, labelRow,

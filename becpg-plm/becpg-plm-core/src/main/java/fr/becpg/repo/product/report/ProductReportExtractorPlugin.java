@@ -506,10 +506,12 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			if (tarePrimary == null) {
 				tarePrimary = new BigDecimal(0d);
 			}
+			
 			BigDecimal netWeightPrimary = new BigDecimal(FormulationHelper.getNetWeight(productData.getNodeRef(), nodeService,
 					FormulationHelper.DEFAULT_NET_WEIGHT).toString());
+			
 			BigDecimal grossWeightPrimary = tarePrimary.add(netWeightPrimary);
-
+			
 			PackagingData packagingData = packagingHelper.getPackagingData(productData);
 			for (Map.Entry<NodeRef, VariantPackagingData> kv : packagingData.getVariants().entrySet()) {
 				VariantPackagingData variantPackagingData = kv.getValue();
@@ -529,12 +531,16 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				packgLevelMesuresElt.addAttribute(ATTR_PKG_GROSS_WEIGHT_LEVEL_1, toString(grossWeightPrimary));
 
 				if (variantPackagingData.getProductPerBoxes() != null) {
+					
 					BigDecimal tareSecondary = tarePrimary.multiply(new BigDecimal(variantPackagingData.getProductPerBoxes())).add(
 							variantPackagingData.getTareSecondary());
+					
 					BigDecimal netWeightSecondary = netWeightPrimary.multiply(new BigDecimal(variantPackagingData.getProductPerBoxes()));
+					BigDecimal grossWeightSecondary = tareSecondary.add(netWeightSecondary);
+				
 					packgLevelMesuresElt.addAttribute(ATTR_PKG_TARE_LEVEL_2, toString(tareSecondary));
 					packgLevelMesuresElt.addAttribute(ATTR_PKG_NET_WEIGHT_LEVEL_2, toString(netWeightSecondary));
-					packgLevelMesuresElt.addAttribute(ATTR_PKG_GROSS_WEIGHT_LEVEL_2, toString(tareSecondary.add(netWeightSecondary)));
+					packgLevelMesuresElt.addAttribute(ATTR_PKG_GROSS_WEIGHT_LEVEL_2, toString(grossWeightSecondary));
 					packgLevelMesuresElt.addAttribute(ATTR_NB_PRODUCTS_LEVEL_2, toString(variantPackagingData.getProductPerBoxes()));
 
 					
