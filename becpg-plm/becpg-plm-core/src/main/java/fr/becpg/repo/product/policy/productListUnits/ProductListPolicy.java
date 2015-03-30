@@ -200,7 +200,7 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 											if (!(costListUnit != null && !costListUnit.isEmpty() && costListUnit
 													.endsWith(CostsCalculatingFormulationHandler.calculateSuffixUnit(productUnit)))) {
 												nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_COSTLIST_UNIT,
-														CostsCalculatingFormulationHandler.calculateUnit(productUnit, costCurrency));
+														CostsCalculatingFormulationHandler.calculateUnit(productUnit, costCurrency, costFixed));
 											}
 										}
 									}
@@ -259,25 +259,19 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 							String costCurrency = (String) nodeService.getProperty(targetNodeRef, PLMModel.PROP_COSTCURRENCY);
 							String costListUnit = (String) nodeService.getProperty(productListItemNodeRef, PLMModel.PROP_COSTLIST_UNIT);
 
-							if (costFixed != null && costFixed.booleanValue()) {
+							if (!(costListUnit != null && !costListUnit.isEmpty() && costListUnit.startsWith(costCurrency))) {
+								NodeRef listNodeRef = nodeService.getPrimaryParent(productListItemNodeRef).getParentRef();
 
-								if (!(costListUnit != null && costListUnit.equals(costCurrency))) {
-									nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_COSTLIST_UNIT, costCurrency);
-								}
-							} else {
+								if (listNodeRef != null && !isTemplate(getProduct(listNodeRef))) {
 
-								if (!(costListUnit != null && !costListUnit.isEmpty() && costListUnit.startsWith(costCurrency
-										+ AbstractSimpleListFormulationHandler.UNIT_SEPARATOR))) {
-
-									NodeRef listNodeRef = nodeService.getPrimaryParent(productListItemNodeRef).getParentRef();
-
-									if (listNodeRef != null && !isTemplate(getProduct(listNodeRef))) {
-
-										nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_COSTLIST_UNIT,
-												CostsCalculatingFormulationHandler.calculateUnit(getProductUnit(listNodeRef), costCurrency));
-									}
+									nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_COSTLIST_UNIT,
+											CostsCalculatingFormulationHandler.calculateUnit(getProductUnit(listNodeRef), 
+													costCurrency, 
+													costFixed));
 								}
 							}
+							
+							
 						} else if (type.equals(PLMModel.TYPE_NUTLIST)) {
 							String nutUnit = (String) nodeService.getProperty(targetNodeRef, PLMModel.PROP_NUTUNIT);
 							String nutListUnit = (String) nodeService.getProperty(productListItemNodeRef, PLMModel.PROP_NUTLIST_UNIT);

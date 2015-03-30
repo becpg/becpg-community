@@ -373,6 +373,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 								targetItem.setGroupColor(sourceItem.getGroupColor());
 								targetItem.setSynchronisableState(sourceItem.getSynchronisableState());
 								targetItem.setExecOrder(sourceItem.getExecOrder());
+								targetItem.setMultiLevelFormula(sourceItem.getMultiLevelFormula());
 							}
 							isFound = true;
 							break;

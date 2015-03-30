@@ -112,23 +112,23 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		
 		for(Composite<CompoListDataItem> component : composite.getChildren()){					
 			
-			Double qtySubFormula = FormulationHelper.getQtySubFormula(component.getData(), nodeService);
-			logger.debug("qtySubFormula: " + qtySubFormula + " parentQty: " + parentQty);
-			if(qtySubFormula != null){
+			Double qtyInKg = calculateQtyInKg(component.getData());
+			logger.debug("qtySubFormula: " + qtyInKg + " parentQty: " + parentQty);
+			if(qtyInKg != null){
 									
 				// take in account percentage
 				if(CompoListUnit.Perc.equals(component.getData().getCompoListUnit()) &&
 						parentQty != null && !parentQty.equals(0d)){
-					qtySubFormula = qtySubFormula * parentQty / 100;
+					qtyInKg = qtyInKg * parentQty / 100;
 				}
 				
 				// Take in account yield that is defined on component
 				Double qty = null;
 				if(component.isLeaf()){						
-					qty = qtySubFormula * 100 / FormulationHelper.getYield(component.getData());
+					qty = qtyInKg * 100 / FormulationHelper.getYield(component.getData());
 				}
 				else{
-					qty = qtySubFormula;
+					qty = qtyInKg;
 				}													
 				component.getData().setQty(qty);					
 			}
@@ -200,7 +200,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		Double qtyUsed = 0d;				
 		for(Composite<CompoListDataItem> component : composite.getChildren()){
 			
-			Double qty = FormulationHelper.getQty(component.getData());
+			Double qty = component.getData().getQty();
 			if(qty != null){
 				// water can be taken in account on Raw Material
 				if(component.isLeaf()){
@@ -213,14 +213,13 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		}
 		
 		// qty after process
-		Double qtyAfterProcess = FormulationHelper.getQtySubFormula(composite.getData(), nodeService);		
-		if(qtyAfterProcess != null && qtyAfterProcess != 0 && qtyUsed != 0){
-			yieldPerc = qtyAfterProcess / qtyUsed * 100;
+		if(composite.getData().getQty() != null && qtyUsed != 0){
+			yieldPerc = composite.getData().getQty() / qtyUsed * 100;
 		}
 		
 		if(logger.isDebugEnabled()){
 			logger.debug("component: " + nodeService.getProperty(composite.getData().getProduct(),  ContentModel.PROP_NAME) + 
-					" qtyAfterProcess: " + qtyAfterProcess + " - qtyUsed: " + qtyUsed + " yieldPerc: " + yieldPerc);
+					" qtyAfterProcess: " + composite.getData().getQty() + " - qtyUsed: " + qtyUsed + " yieldPerc: " + yieldPerc);
 		}
 		
 		return yieldPerc;
@@ -236,9 +235,8 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 				// calculate children
 				qty += calculateQtyUsed(component);
 			}else{
-				Double qtyInKg =  FormulationHelper.getQtyInKg(component.getData());
-				if(qtyInKg!=null) {
-					qty += qtyInKg * FormulationHelper.getYield(component.getData()) / 100;				
+				if(component.getData().getQty()!=null) {
+					qty += component.getData().getQty() * FormulationHelper.getYield(component.getData()) / 100;				
 				}
 			}
 		}
@@ -287,5 +285,50 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		}
 		rawMaterialData.setSuppliers(supplierNodeRefs);
 		rawMaterialData.setPlants(plantNodeRefs);
+	}
+	
+	private Double calculateQtyInKg(CompoListDataItem compoListDataItem) {
+		Double qty = compoListDataItem.getQtySubFormula();
+		CompoListUnit compoListUnit = compoListDataItem.getCompoListUnit();
+		if (qty != null && compoListUnit != null) {
+
+			if (compoListUnit.equals(CompoListUnit.kg)) {
+				return qty;
+			} else if (compoListUnit.equals(CompoListUnit.g)) {
+				return qty / 1000;
+			} else if (compoListUnit.equals(CompoListUnit.P)) {				
+				return FormulationHelper.getNetWeight(compoListDataItem.getProduct(), nodeService, FormulationHelper.DEFAULT_NET_WEIGHT) * qty;
+			} else if (compoListUnit.equals(CompoListUnit.L) || compoListUnit.equals(CompoListUnit.mL)) {
+
+				if (compoListUnit.equals(CompoListUnit.mL)) {
+					qty = qty / 1000;
+				}
+
+				Double overrun = compoListDataItem.getOverrunPerc();
+				if (compoListDataItem.getOverrunPerc() == null) {
+					overrun = FormulationHelper.DEFAULT_OVERRUN;
+				}
+
+				Double density = FormulationHelper.getDensity(compoListDataItem.getProduct(), nodeService);
+				if (density == null || density.equals(0d)) {
+					if (logger.isDebugEnabled()) {
+						logger.debug("Cannot calculate volume since density is null or equals to 0");
+					}
+				} else {
+					return (qty * density * 100) / (100 + overrun);
+
+				}
+
+			} else if (compoListUnit.equals(CompoListUnit.m) || compoListUnit.equals(CompoListUnit.m2)) {
+				Double productQty = FormulationHelper.getProductQty(compoListDataItem.getProduct(), nodeService);
+				if (productQty == null) {
+					productQty = 1d;
+				}
+				return FormulationHelper.getNetWeight(compoListDataItem.getProduct(), nodeService, FormulationHelper.DEFAULT_NET_WEIGHT) * qty / productQty;
+			}
+			return qty;
+		}
+
+		return FormulationHelper.DEFAULT_COMPONANT_QUANTITY;
 	}
 }
