@@ -434,7 +434,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		for (CompoListDataItem compoList : productData.getCompoList(EffectiveFilters.EFFECTIVE)) {
 			NodeRef productNodeRef = compoList.getProduct();
 			QName type = nodeService.getType(productNodeRef);
-			Double qty = FormulationHelper.getQty(compoList);
+			Double qty = FormulationHelper.getQtyInKg(compoList);
 			if (logger.isDebugEnabled()) {
 				logger.debug("Get rawMaterial " + nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME) + "qty: " + qty + " netWeight "
 						+ productData.getNetWeight());

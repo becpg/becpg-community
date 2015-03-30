@@ -46,96 +46,37 @@ public class FormulationHelper {
 
 	private static Log logger = LogFactory.getLog(FormulationHelper.class);
 
-	/**
-	 * Gets the qty.
-	 *
-	 * @param compoListDataItem
-	 *            the compo list data item
-	 * @return the qty
-	 * @throws FormulateException
-	 */
-	public static Double getQty(CompoListDataItem compoListDataItem) {
-		Double qty = null;
-		if (FormulationHelper.isCompoUnitLiter(compoListDataItem.getCompoListUnit())) {
-			if (compoListDataItem.getQtySubFormula() != null) {
-				if (compoListDataItem.getCompoListUnit().equals(CompoListUnit.mL)) {
-					qty = compoListDataItem.getQtySubFormula() / 1000;
-				} else {
-					qty = compoListDataItem.getQtySubFormula();
-				}
-			}
-		} else {
-			qty = compoListDataItem.getQty();
-		}
-		
-		return qty != null ? qty : DEFAULT_COMPONANT_QUANTITY;
-	}
-
 	public static Double getQtyInKg(CompoListDataItem compoListDataItem) {
-		return compoListDataItem.getQty();
+		return compoListDataItem.getQty() != null ? compoListDataItem.getQty() : DEFAULT_COMPONANT_QUANTITY;
 	}
 
 	public static Double getYield(CompoListDataItem compoListDataItem) {
 		return compoListDataItem.getYieldPerc() != null && compoListDataItem.getYieldPerc() != 0d ? compoListDataItem.getYieldPerc() : DEFAULT_YIELD;
 	}
 
-	public static Double getQtySubFormula(CompoListDataItem compoListDataItem, NodeService nodeService) {
-
+	private static Double getQtySubFormula(CompoListDataItem compoListDataItem, ProductUnit productUnit) {
 		Double qty = compoListDataItem.getQtySubFormula();
 		CompoListUnit compoListUnit = compoListDataItem.getCompoListUnit();
-		if (qty != null && compoListUnit != null) {
+		if (qty != null && compoListUnit != null && productUnit != null) {
 
-			if (compoListUnit.equals(CompoListUnit.kg)) {
+			if(compoListUnit.equals(productUnit)){
 				return qty;
-			} else if (compoListUnit.equals(CompoListUnit.g)) {
-				return qty / 1000;
-			} else if (compoListUnit.equals(CompoListUnit.P)) {
-//				Double productQty = null;
-//				ProductUnit productUnit = FormulationHelper.getProductUnit(compoListDataItem.getProduct(), nodeService);
-//				if (productUnit != null && productUnit.equals(ProductUnit.P)) {
-//					productQty = FormulationHelper.getProductQty(compoListDataItem.getProduct(), nodeService);
-//				}
-//
-//				if (productQty == null) {
-//					productQty = 1d;
-//				}
-
-//				return FormulationHelper.getNetWeight(compoListDataItem.getProduct(), nodeService, FormulationHelper.DEFAULT_NET_WEIGHT) * qty
-//						/ productQty;
-				
-				return FormulationHelper.getNetWeight(compoListDataItem.getProduct(), nodeService, FormulationHelper.DEFAULT_NET_WEIGHT) * qty;
-			} else if (compoListUnit.equals(CompoListUnit.L) || compoListUnit.equals(CompoListUnit.mL)) {
-
-				if (compoListUnit.equals(CompoListUnit.mL)) {
-					qty = qty / 1000;
-				}
-
-				Double overrun = compoListDataItem.getOverrunPerc();
-				if (compoListDataItem.getOverrunPerc() == null) {
-					overrun = FormulationHelper.DEFAULT_OVERRUN;
-				}
-
-				Double density = FormulationHelper.getDensity(compoListDataItem.getProduct(), nodeService);
-				if (density == null || density.equals(0d)) {
-					if (logger.isDebugEnabled()) {
-						logger.debug("Cannot calculate volume since density is null or equals to 0");
-					}
-				} else {
-					return (qty * density * 100) / (100 + overrun);
-
-				}
-
-			} else if (compoListUnit.equals(CompoListUnit.m) || compoListUnit.equals(CompoListUnit.m2)) {
-				Double productQty = FormulationHelper.getProductQty(compoListDataItem.getProduct(), nodeService);
-				if (productQty == null) {
-					productQty = 1d;
-				}
-				return FormulationHelper.getNetWeight(compoListDataItem.getProduct(), nodeService, FormulationHelper.DEFAULT_NET_WEIGHT) * qty / productQty;
 			}
-			return qty;
+			else if (compoListUnit.equals(CompoListUnit.g) && isProductUnitKg(productUnit)) {
+				return qty / 1000;
+			}
+			else if (compoListUnit.equals(CompoListUnit.mL) && isProductUnitLiter(productUnit)) {
+				return qty / 1000;
+			}
+			else if(isProductUnitKg(productUnit)){
+				// compoListUnit is P or mL but
+				return getQtyInKg(compoListDataItem);
+			}
+			else if(isProductUnitLiter(productUnit)){
+				return compoListDataItem.getVolume();
+			}
 		}
-
-		return null;
+		return DEFAULT_COMPONANT_QUANTITY;
 	}
 
 	/**
@@ -146,9 +87,9 @@ public class FormulationHelper {
 	 * @return the qty
 	 * @throws FormulateException
 	 */
-	public static Double getQtyWithLost(CompoListDataItem compoListDataItem, Double parentLossRatio) {
+	public static Double getQtyWithLost(CompoListDataItem compoListDataItem, Double parentLossRatio, ProductUnit productUnit) {
 		Double lossPerc = compoListDataItem.getLossPerc() != null ? compoListDataItem.getLossPerc() : 0d;
-		return FormulationHelper.getQtyWithLost(FormulationHelper.getQty(compoListDataItem),
+		return FormulationHelper.getQtyWithLost(FormulationHelper.getQtySubFormula(compoListDataItem, productUnit),
 				FormulationHelper.calculateLossPerc(parentLossRatio, lossPerc));
 	}
 

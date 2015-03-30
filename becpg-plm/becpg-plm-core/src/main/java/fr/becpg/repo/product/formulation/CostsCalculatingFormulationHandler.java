@@ -122,6 +122,11 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			calculateSimulationCosts(formulatedProduct);
 			
 			for (CostListDataItem c : formulatedProduct.getCostList()) {
+				
+				c.setUnit(calculateUnit(formulatedProduct.getUnit(), 
+						(String)nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTCURRENCY), 
+						(Boolean)nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTFIXED)));
+				
 				if (transientFormulation) {
 					c.setTransient(true);
 				}
@@ -298,7 +303,9 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				visitCompoListChildren(formulatedProduct, c, costList, newLossPerc, netQty, mandatoryCharacts);
 			} else {
 				CompoListDataItem compoListDataItem = component.getData();
-				Double qty = FormulationHelper.getQtyWithLost(compoListDataItem, parentLossRatio);
+				Double qty = FormulationHelper.getQtyWithLost(compoListDataItem, 
+						parentLossRatio,
+						ProductUnit.getUnit((String)nodeService.getProperty(compoListDataItem.getProduct(), PLMModel.PROP_PRODUCT_UNIT)));
 				visitPart(compoListDataItem.getProduct(), costList, qty, null, netQty, mandatoryCharacts, null);
 			}
 		}
@@ -336,9 +343,14 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	 * @param costUnit
 	 * @return
 	 */
-	public static String calculateUnit(ProductUnit productUnit, String costUnit) {
+	public static String calculateUnit(ProductUnit productUnit, String costUnit, Boolean isFixed) {
 
-		return costUnit + calculateSuffixUnit(productUnit);
+		if (isFixed != null && isFixed.booleanValue()) {
+			return costUnit;
+		}
+		else{
+			return costUnit + calculateSuffixUnit(productUnit);
+		}		
 	}
 
 	/**
@@ -629,7 +641,9 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		double totalQty = 0d;
 		for (CompoListDataItem compoList : productData.getCompoList(EffectiveFilters.EFFECTIVE)) {
 			NodeRef productNodeRef = compoList.getProduct();			
-			Double qty = FormulationHelper.getQtyWithLost(compoList, 0d);
+			Double qty = FormulationHelper.getQtyWithLost(compoList, 
+									0d,
+									ProductUnit.getUnit((String)nodeService.getProperty(productNodeRef, PLMModel.PROP_PRODUCT_UNIT)));
 			if (logger.isDebugEnabled()) {
 				logger.debug("Get component " + nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME) + "qty: " + qty + " recipeQtyUsed "
 						+ productData.getRecipeQtyUsed());

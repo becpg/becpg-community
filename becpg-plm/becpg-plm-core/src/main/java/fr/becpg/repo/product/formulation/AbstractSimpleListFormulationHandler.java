@@ -137,7 +137,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 			Map<NodeRef, List<NodeRef>> mandatoryCharacts = getMandatoryCharacts(formulatedProduct, PLMModel.TYPE_RAWMATERIAL);
 			
 			for(CompoListDataItem compoItem : formulatedProduct.getCompoList(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)){
-				Double weight = FormulationHelper.getQty(compoItem);
+				Double weight = FormulationHelper.getQtyInKg(compoItem);
 				Double vol = FormulationHelper.getNetVolume(compoItem, nodeService);
 				
 				if(weight != null){
