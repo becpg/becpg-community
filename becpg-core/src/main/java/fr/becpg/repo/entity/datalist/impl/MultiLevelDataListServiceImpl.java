@@ -96,8 +96,7 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 				NodeRef dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, dataListFilter.getDataType());
 				if (dataListNodeRef != null) {
 
-					List<NodeRef> childRefs = advSearchService.queryAdvSearch(dataListFilter.getDataType(),  
-							dataListFilter.getSearchQuery(dataListNodeRef), dataListFilter.getCriteriaMap(), RepoConsts.MAX_RESULTS_UNLIMITED);
+					List<NodeRef> childRefs =  getListNodeRef(dataListNodeRef, dataListFilter);
 					//Adv search already filter by perm 
 					
 					for (NodeRef childRef : childRefs) {
@@ -118,6 +117,15 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 			}
 		}
 		return ret;
+	}
+
+	private List<NodeRef> getListNodeRef(NodeRef dataListNodeRef, DataListFilter dataListFilter) {
+		if (dataListFilter.isAllFilter() && entityDictionaryService.isSubClass(dataListFilter.getDataType(), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
+			return entityListDAO.getListItems(dataListNodeRef, dataListFilter.getDataType(), dataListFilter.getSortMap());
+		} else  {		
+			return  advSearchService.queryAdvSearch(dataListFilter.getDataType(),  
+					dataListFilter.getSearchQuery(dataListNodeRef), dataListFilter.getCriteriaMap(), RepoConsts.MAX_RESULTS_UNLIMITED);
+		}
 	}
 
 	private NodeRef getEntityNodeRef(NodeRef listItemNodeRef) {
