@@ -26,6 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.DeliverableUrl;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.project.ProjectService;
@@ -225,6 +226,12 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 						if (DeliverableState.Planned.equals(nextDeliverable.getState())) {
 							nextDeliverable.setState(DeliverableState.InProgress);
 							nextDeliverable.setUrl(projectService.getDeliverableUrl(projectData.getNodeRef(), nextDeliverable.getUrl()));
+							if(nextDeliverable.getUrl()!=null && nextDeliverable.getUrl().startsWith(DeliverableUrl.CONTENT_URL_PREFIX)
+									&& NodeRef.isNodeRef(nextDeliverable.getUrl().substring(DeliverableUrl.CONTENT_URL_PREFIX.length()))){
+								nextDeliverable.setContent(new NodeRef(nextDeliverable.getUrl().substring(DeliverableUrl.CONTENT_URL_PREFIX.length())));
+								nextDeliverable.setUrl(null);
+							}
+							
 							if(DeliverableScriptOrder.Pre.equals(nextDeliverable.getScriptOrder())){
 								projectService.runScript(projectData, nextTask, nextDeliverable.getContent());
 								nextDeliverable.setState(DeliverableState.Completed);

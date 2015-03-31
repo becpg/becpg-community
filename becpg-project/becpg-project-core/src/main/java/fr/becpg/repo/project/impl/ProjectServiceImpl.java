@@ -43,6 +43,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.DeliverableUrl;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.ProjectRepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
@@ -279,18 +280,26 @@ public class ProjectServiceImpl implements ProjectService {
 
 				String assocQname = patternMatcher.group(1);
 				String replacement = "";
-				if ("nodeRef".equals(assocQname)) {
+				if (DeliverableUrl.NODEREF_URL_PARAM.equals(assocQname)) {
 					replacement += projectNodeRef;
 
 				} else {
-
-					List<AssociationRef> assocs = nodeService.getTargetAssocs(projectNodeRef, QName.createQName(assocQname, namespaceService));
+					String[] splitted = assocQname.split("\\|");
+					List<AssociationRef> assocs = nodeService.getTargetAssocs(projectNodeRef, QName.createQName(splitted[0], namespaceService));
 					if (assocs != null) {
 						for (AssociationRef assoc : assocs) {
 							if (replacement.length() > 0) {
 								replacement += ",";
 							}
-							replacement += assoc.getTargetRef();
+							if(splitted.length>1){
+								if(splitted[1].startsWith(DeliverableUrl.XPATH_URL_PREFIX)){
+									replacement += BeCPGQueryBuilder.createQuery().selectNodeByPath(assoc.getTargetRef(), splitted[1].substring(DeliverableUrl.XPATH_URL_PREFIX.length()));	
+								} else {
+									replacement += nodeService.getProperty(assoc.getTargetRef(), QName.createQName(splitted[1], namespaceService));
+								}
+							} else {
+								replacement += assoc.getTargetRef();
+							}
 						}
 					}
 

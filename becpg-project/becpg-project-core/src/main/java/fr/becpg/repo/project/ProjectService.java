@@ -47,12 +47,6 @@ public interface ProjectService {
 	public void reopenTask(NodeRef taskNodeRef);
 
 	
-//	/**
-//	 * Complete task
-//	 * @param taskNodeRef
-//	 */
-//	public void completeTask(NodeRef taskNodeRef);
-	
 	/**
 	 * Get the task legend list
 	 * 
