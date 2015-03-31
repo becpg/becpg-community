@@ -532,6 +532,7 @@
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
 							</control-param>
+							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
 					</field>
 					<field id="pjt:tlRefusedTaskRef" set="mainInfo">
@@ -691,7 +692,6 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
 							</control-param>
-							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
 					</field>	
 					<field id="bcpg:parentLevel" >
@@ -705,7 +705,6 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
 							</control-param>
-							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
 					</field>	
 				
@@ -1229,10 +1228,10 @@
           <show force="false" id="pjt:blBudgetedInvoice"/>
         </field-visibility>
         <appearance>
-         
           <field id="bcpg:parentLevel" mandatory="false" read-only="false">
             <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
               <control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:budgetList&amp;attributeName=pjt:blItem</control-param>
+              <control-param name="urlParamsToPass">itemId</control-param>
             </control>
           </field>
         </appearance>
@@ -1248,10 +1247,8 @@
           <show force="false" id="bcpg:parentLevel"/>
           <show force="false" id="pjt:blBudgetedExpense"/>
           <show force="false" id="pjt:blBudgetedInvoice"/>
-      
         </field-visibility>
         <appearance>
-          
           <field id="bcpg:parentLevel" mandatory="false" read-only="false">
             <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
               <control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:budgetList&amp;attributeName=pjt:blItem</control-param>

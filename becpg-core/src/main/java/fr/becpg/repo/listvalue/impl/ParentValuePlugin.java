@@ -43,7 +43,6 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 @Service
 public class ParentValuePlugin extends EntityListValuePlugin {
 	
-	
 	private static Log logger = LogFactory.getLog(ParentValuePlugin.class);
 
 	private static final String SOURCE_TYPE_PARENT_VALUE = "ParentValue";
@@ -71,7 +70,10 @@ public class ParentValuePlugin extends EntityListValuePlugin {
 		String attributeName = (String) props.get(ListValueService.PROP_ATTRIBUTE_NAME);
 		QName attributeQName = QName.createQName(attributeName, namespaceService);
 
+		String queryFilter = (String) props.get(ListValueService.PROP_FILTER);
+		
 		NodeRef itemId = null;
+		
 		@SuppressWarnings("unchecked")
 		Map<String, String> extras = (HashMap<String, String>) props.get(ListValueService.EXTRA_PARAM);
 		if (extras != null) {
@@ -85,22 +87,29 @@ public class ParentValuePlugin extends EntityListValuePlugin {
 			NodeRef dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, type);
 			if(dataListNodeRef != null){
 				if(dictionaryService.getProperty(attributeQName) != null){
-					return suggestFromProp(dataListNodeRef, itemId, type, attributeQName, query, pageNum, pageSize);
+					return suggestFromProp(dataListNodeRef, itemId, type, attributeQName, query, queryFilter, pageNum, pageSize);
 				}
 				else{
-					return suggestFromAssoc(dataListNodeRef, itemId, type, attributeQName, pageNum, pageSize);
+					return suggestFromAssoc(dataListNodeRef, itemId, type, attributeQName, query, queryFilter, pageNum, pageSize);
 				}
 			}
 		}		
 		return new ListValuePage(new ArrayList<>(), pageNum, pageSize, null); 
 	}
 
-	private ListValuePage suggestFromProp(NodeRef dataListNodeRef, NodeRef itemId, QName datalistType, QName propertyQName, String query,
+	private ListValuePage suggestFromProp(NodeRef dataListNodeRef, NodeRef itemId, QName datalistType, QName propertyQName, String query, String queryFilter,
 			Integer pageNum, Integer pageSize) {
+		
 
 		BeCPGQueryBuilder beCPGQueryBuilder = BeCPGQueryBuilder.createQuery().ofType(datalistType).andPropQuery(propertyQName, prepareQuery(query))
-				.inPath(nodeService.getPath(dataListNodeRef).toPrefixString(namespaceService));
-
+				.parent(dataListNodeRef);
+		
+		if(queryFilter !=null  && queryFilter.length()>0){
+			String[] splitted = queryFilter.split("\\|");
+			beCPGQueryBuilder.andPropEquals(QName.createQName(splitted[0], namespaceService), splitted[1]);
+		}
+		
+		
 		if (itemId != null) {
 			beCPGQueryBuilder.andNotID(itemId);
 		}
@@ -110,15 +119,15 @@ public class ParentValuePlugin extends EntityListValuePlugin {
 		return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(propertyQName, nodeService));
 	}
 	
-	private ListValuePage suggestFromAssoc(NodeRef dataListNodeRef, NodeRef itemId, QName datalistType, QName associationQName,
+	private ListValuePage suggestFromAssoc(NodeRef dataListNodeRef, NodeRef itemId, QName datalistType, QName associationQName, String query, String queryFilter,
 			Integer pageNum, Integer pageSize){
 		
 		List<ListValueEntry> result = new ArrayList<>();				
 		for (NodeRef dataListItemNodeRef : entityListDAO.getListItems(dataListNodeRef, datalistType)) {
 			if (!dataListItemNodeRef.equals(itemId)) {
-				NodeRef nut = associationService.getTargetAssoc(dataListItemNodeRef, associationQName);
-				if (nut != null) {
-					String name = (String) nodeService.getProperty(nut, ContentModel.PROP_NAME);
+				NodeRef targetNode = associationService.getTargetAssoc(dataListItemNodeRef, associationQName);
+				if (targetNode != null) {
+					String name = (String) nodeService.getProperty(targetNode, ContentModel.PROP_NAME);
 					result.add(new ListValueEntry(dataListItemNodeRef.toString(), name, datalistType.getLocalName()));
 				}
 			}

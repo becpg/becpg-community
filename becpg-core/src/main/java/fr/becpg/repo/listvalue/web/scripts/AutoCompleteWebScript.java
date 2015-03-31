@@ -46,6 +46,7 @@ public class AutoCompleteWebScript extends DeclarativeWebScript {
 	private static final String PARAM_CLASS_NAME = "className";
 	private static final String PARAM_CLASS_NAMES = "classNames";
 	private static final String PARAM_ATTRIBUTE_NAME = "attributeName";
+	private static final String PARAM_FILTER = "filter";
 	private static final String PARAM_EXCLUDE_CLASS_NAMES = "excludeClassNames";
 	private static final String PARAM_PAGE_SIZE = "pageSize";
 	private static final String PARAM_PATH = "path";
@@ -135,6 +136,7 @@ public class AutoCompleteWebScript extends DeclarativeWebScript {
 		props.put(ListValueService.PROP_CLASS_NAME, className);
 		props.put(ListValueService.PROP_CLASS_NAMES, classNames);
 		props.put(ListValueService.PROP_ATTRIBUTE_NAME, req.getParameter(PARAM_ATTRIBUTE_NAME));
+		props.put(ListValueService.PROP_FILTER, req.getParameter(PARAM_FILTER));
 		props.put(ListValueService.PROP_EXCLUDE_CLASS_NAMES, excludeClassNames);
 		props.put(ListValueService.PROP_PARENT, parent);
 		props.put(ListValueService.PROP_PRODUCT_TYPE, productType);
