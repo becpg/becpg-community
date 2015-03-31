@@ -4,7 +4,7 @@ package fr.becpg.model;
  * Param used in advanced deliverable URL
  *  - /share/page/wizard?id=wizard-id&destination={nodeRef}
  *  - /share/page/wizard?id=supplier-mp&nodeRef={pjt:projectEntity}
- *  - content:{pjt:projectEntity|xpath:./Documents/*contains('Fiche Technique Client.pdf')}
+ *  - content:{pjt:projectEntity|xpath:./Documents/child[contains('Fiche Technique Client')]}
  * @author matthieu
  *
  */
