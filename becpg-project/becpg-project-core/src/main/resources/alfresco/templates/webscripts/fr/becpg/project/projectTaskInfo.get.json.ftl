@@ -15,12 +15,13 @@
 							"name": "${content.properties.name!""}",
 							"nodeRef": "${content.nodeRef}",
 							"type": "${content.typeShort}",
-							"siteId": "${content.getSiteShortName()!""}"
+							"siteId": "${content.getSiteShortName()!""}",
+							"path": "${content.displayPath!""}"
 							}
 		   				<#if content_has_next>,</#if>
 		   			</#list>
 	   			</#if>
-	   		] 
+	   			] 
 			}<#if deliverable_has_next>,</#if>	
 		</#if>	
 	</#list>
