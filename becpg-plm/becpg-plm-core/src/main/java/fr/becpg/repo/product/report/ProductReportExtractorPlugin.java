@@ -44,6 +44,7 @@ import fr.becpg.repo.product.data.productList.CompositionDataItem;
 import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.MicrobioListDataItem;
+import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.ResourceParamListItem;
@@ -64,11 +65,12 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	protected static final String KEY_PRODUCT_IMAGE = "productImage";
 
 	protected static final List<QName> DATALIST_SPECIFIC_EXTRACTOR = Arrays.asList(PLMModel.TYPE_COMPOLIST, PLMModel.TYPE_PACKAGINGLIST,
-			MPMModel.TYPE_PROCESSLIST, PLMModel.TYPE_MICROBIOLIST, PLMModel.TYPE_INGLABELINGLIST);
+			MPMModel.TYPE_PROCESSLIST, PLMModel.TYPE_MICROBIOLIST, PLMModel.TYPE_INGLABELINGLIST, PLMModel.TYPE_NUTLIST);
 
 	protected static final List<QName> RAWMATERIAL_DATALIST = Arrays.asList(PLMModel.TYPE_INGLIST, PLMModel.TYPE_ORGANOLIST);
 
 	private static Log logger = LogFactory.getLog(ProductReportExtractorPlugin.class);
+	
 
 	protected static final String ATTR_LANGUAGE = "language";
 
@@ -267,22 +269,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			}
 
 			// NutList
-			Element nutListsElt = (Element) dataListsElt.selectSingleNode(PLMModel.TYPE_NUTLIST.getLocalName() + "s");
-			if (nutListsElt != null) {
-				List<Element> nutListElts = (List<Element>) nutListsElt.selectNodes(PLMModel.TYPE_NUTLIST.getLocalName());
-				for (Element nutListElt : nutListElts) {
-					String nut = nutListElt.valueOf("@" + PLMModel.ASSOC_NUTLIST_NUT.getLocalName());
-					if (nut != null) {
-						String value = nutListElt.valueOf("@" + PLMModel.PROP_NUTLIST_VALUE.getLocalName());
-						if(value==null || value.isEmpty()){
-							value = nutListElt.valueOf("@" + PLMModel.PROP_NUTLIST_FORMULATED_VALUE.getLocalName());
-							nutListElt.addAttribute(PLMModel.PROP_NUTLIST_VALUE.getLocalName(), value);
-						}
-						nutListsElt.addAttribute(generateKeyAttribute(nut), value != null ? value : "");
-					}
-				}
-			}
-
+			Element nutListElt = dataListsElt.addElement(PLMModel.TYPE_NUTLIST.getLocalName() + "s");
+			loadNutLists(productData, nutListElt);
+						
 			// MicrobioList
 			List<MicrobioListDataItem> microbioList = null;
 
@@ -367,35 +356,35 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		return dataListsElt;
 	}
 
-	private Element loadNutLists(NodeRef entityNodeRef, Element partElt) {
-		Element dataListsElt = null;
-		ProductData productData = (ProductData) alfrescoRepository.findOne(entityNodeRef);
+	private void loadNutLists(ProductData productData, Element dataListsElt) {
+		
 
 		if (productData.getNutList() != null && !productData.getNutList().isEmpty()) {
 
-			dataListsElt = partElt.addElement(TAG_DATALISTS);
+			
 			Element nutListsElt = dataListsElt.addElement(PLMModel.TYPE_NUTLIST.getLocalName() + "s");
 
-			for (BeCPGDataObject dataListItem : productData.getNutList()) {
+			for (NutListDataItem dataListItem : productData.getNutList()) {
 
 				Element nutListElt = nutListsElt.addElement(PLMModel.TYPE_NUTLIST.getLocalName());
 
 				loadDataListItemAttributes(dataListItem, nutListElt);
-
+	
 				String nut = nutListElt.valueOf("@" + PLMModel.ASSOC_NUTLIST_NUT.getLocalName());
 				if (nut != null) {
 					String value = nutListElt.valueOf("@" + PLMModel.PROP_NUTLIST_VALUE.getLocalName());
 					if(value==null || value.isEmpty()){
 						value = nutListElt.valueOf("@" + PLMModel.PROP_NUTLIST_FORMULATED_VALUE.getLocalName());
 						nutListElt.addAttribute(PLMModel.PROP_NUTLIST_VALUE.getLocalName(), value);
+						
 					}
 					
 					nutListsElt.addAttribute(generateKeyAttribute(nut), value != null ? value : "");
+					NodeRef nutNodeRef = dataListItem.getNut();  
+				    nutListElt.addAttribute(ContentModel.PROP_DESCRIPTION.getLocalName(), (String)nodeService.getProperty(nutNodeRef, ContentModel.PROP_DESCRIPTION));				   				   
 				}
 			}
 		}
-
-		return dataListsElt;
 	}
 
 	private void extractRawMaterials(ProductData productData, Element dataListsElt, Map<String, byte[]> images) {
@@ -584,7 +573,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			loadProductData(dataItem.getProduct(), partElt);
 			loadDataListItemAttributes(dataItem, partElt);
 			if (level == 1) {
-				dataListsElt = loadNutLists(dataItem.getProduct(), partElt);
+				dataListsElt = partElt.addElement(TAG_DATALISTS);
+				ProductData productData = (ProductData) alfrescoRepository.findOne(dataItem.getProduct());
+				loadNutLists(productData, dataListsElt);
 				extractVariants(dataItem.getVariants(), partElt, defaultVariantNodeRef);
 			}
 			Integer depthLevel = dataItem.getDepthLevel();
