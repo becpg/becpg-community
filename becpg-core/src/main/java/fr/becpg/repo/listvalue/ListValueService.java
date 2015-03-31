@@ -51,18 +51,10 @@ public interface ListValueService {
 	public static final String PROP_PRODUCT_TYPE = "productType";
 
 	public static final String EXTRA_PARAM = "extra";
+
+	public static final String PROP_FILTER = "filter";
 	
 	
-	
-	/**
-	 * 
-	 * @param sourceType
-	 * @param query
-	 * @param pageNum
-	 * @param pageSize 
-	 * @param props
-	 * @return
-	 */
 	public ListValuePage suggestBySourceType(String sourceType, String query, Integer pageNum,
 			Integer pageSize, Map<String, Serializable> props);
 }
