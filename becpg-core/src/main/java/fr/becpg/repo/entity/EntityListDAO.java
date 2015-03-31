@@ -147,6 +147,16 @@ public interface EntityListDAO {
 	 * 
 	 * @param listContainerNodeRef
 	 * @param listQName
+	 * @param sortMap
+	 * @return
+	 */
+	public List<NodeRef> getListItems(NodeRef dataListNodeRef, QName dataType, Map<String, Boolean> sortMap);
+	
+	/**
+	 * Get list items
+	 * 
+	 * @param listContainerNodeRef
+	 * @param listQName
 	 * @return
 	 */
 	public List<NodeRef> getListItems(NodeRef listNodeRef, QName listQName);
@@ -157,5 +167,7 @@ public interface EntityListDAO {
 	 * @param targetNodeRef
 	 */
 	public void moveDataLists(NodeRef sourceNodeRef, NodeRef targetNodeRef);
+
+
 
 }
