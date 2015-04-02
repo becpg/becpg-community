@@ -34,6 +34,7 @@ import fr.becpg.repo.helper.CompareHelper;
 import fr.becpg.repo.product.ProductDictionaryService;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.ResourceProductData;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.productList.AbstractManualVariantListDataItem;
@@ -47,6 +48,7 @@ import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.ResourceParamListItem;
 import fr.becpg.repo.product.formulation.FormulationHelper;
+import fr.becpg.repo.report.entity.EntityReportData;
 import fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -93,7 +95,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	@Autowired
 	protected AlfrescoRepository<ProductData> alfrescoRepository;
-
+	
 	/**
 	 * load the datalists of the product data.
 	 * 
@@ -120,7 +122,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	private void loadDataLists(NodeRef entityNodeRef, Element dataListsElt, Map<String, byte[]> images, boolean isExtractedProduct) {
 
 		RepositoryEntity entity = alfrescoRepository.findOne(entityNodeRef);
-		Map<QName, List<? extends RepositoryEntity>> datalists = repositoryEntityDefReader.getDataLists(entity);
+		Map<QName, List<? extends RepositoryEntity>> datalists = repositoryEntityDefReader.getDataLists(entity);		
 
 		// TODO make it more generic!!!!
 		ProductData productData = (ProductData) alfrescoRepository.findOne(entityNodeRef);
@@ -274,14 +276,15 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 			// MicrobioList
 			List<MicrobioListDataItem> microbioList = null;
-
+			NodeRef productMicrobioCriteriaNodeRef = null;
+			
 			if (!productData.getMicrobioList().isEmpty()) {
 				microbioList = productData.getMicrobioList();
 			} else {
 				List<NodeRef> productMicrobioCriteriaNodeRefs = associationService.getTargetAssocs(entityNodeRef,
 						PLMModel.ASSOC_PRODUCT_MICROBIO_CRITERIA);
 				if (!productMicrobioCriteriaNodeRefs.isEmpty()) {
-					NodeRef productMicrobioCriteriaNodeRef = productMicrobioCriteriaNodeRefs.get(0);
+					productMicrobioCriteriaNodeRef = productMicrobioCriteriaNodeRefs.get(0);
 					if (productMicrobioCriteriaNodeRef != null) {
 						ProductData pmcData = alfrescoRepository.findOne(productMicrobioCriteriaNodeRef);
 						microbioList = pmcData.getMicrobioList();
@@ -290,9 +293,12 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			}
 
 			if (microbioList != null && !microbioList.isEmpty()) {
-				Element organoListElt = dataListsElt.addElement(PLMModel.TYPE_MICROBIOLIST.getLocalName() + "s");
+				Element microbioListElt = dataListsElt.addElement(PLMModel.TYPE_MICROBIOLIST.getLocalName() + "s");
+				if(productMicrobioCriteriaNodeRef != null){
+					loadNodeAttributes(productMicrobioCriteriaNodeRef, microbioListElt, false);
+				}				
 				for (MicrobioListDataItem dataItem : microbioList) {
-					Element nodeElt = organoListElt.addElement(PLMModel.TYPE_MICROBIOLIST.getLocalName());
+					Element nodeElt = microbioListElt.addElement(PLMModel.TYPE_MICROBIOLIST.getLocalName());
 					loadDataListItemAttributes(dataItem, nodeElt);
 				}
 			}
@@ -445,13 +451,17 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	}
 
 	@Override
-	protected boolean loadTargetAssoc(NodeRef entityNodeRef, AssociationDefinition assocDef, Element entityElt) {
-
+	protected boolean loadTargetAssoc(NodeRef entityNodeRef, AssociationDefinition assocDef, Element entityElt) {		
+		
 		if (assocDef != null && assocDef.getName() != null) {
 			if (assocDef.getName().equals(PLMModel.ASSOC_PLANTS) || assocDef.getName().equals(PLMModel.ASSOC_STORAGE_CONDITIONS)
 					|| assocDef.getName().equals(PLMModel.ASSOC_PRECAUTION_OF_USE)) {
 
 				extractTargetAssoc(entityNodeRef, assocDef, entityElt);
+				return true;
+			}
+			else if(assocDef.getName().equals(PLMModel.ASSOC_PRODUCT_SPECIFICATIONS)){
+				extractProductSpecifications(entityNodeRef, entityElt);
 				return true;
 			}
 		}
@@ -845,4 +855,14 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		return dictionaryService.isSubClass(type, PLMModel.TYPE_PRODUCT) ? EntityReportExtractorPriority.NORMAL : EntityReportExtractorPriority.NONE;
 	}
 
+	private void extractProductSpecifications(NodeRef productNodeRef, Element productElt){		
+		Element productSpecificationsElt = productElt.addElement(PLMModel.ASSOC_PRODUCT_SPECIFICATIONS.getLocalName());
+		List<NodeRef> nodeRefs = associationService.getTargetAssocs(productNodeRef, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);		
+		for(NodeRef nodeRef : nodeRefs){
+			Element productSpecificationElt = productSpecificationsElt.addElement(PLMModel.TYPE_PRODUCT_SPECIFICATION.getLocalName());
+			loadNodeAttributes(nodeRef, productSpecificationElt, true);
+			Element dataListsElt = productSpecificationElt.addElement(TAG_DATALISTS);
+			loadDataLists(nodeRef, dataListsElt, new HashMap<String, byte[]>());
+		}
+	}
 }

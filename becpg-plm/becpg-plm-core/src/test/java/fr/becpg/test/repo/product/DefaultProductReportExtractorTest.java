@@ -19,19 +19,24 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
+import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.CompoListUnit;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.PackagingListUnit;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
+import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
+import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
+import fr.becpg.repo.product.data.productList.ResourceParamDataItem;
 import fr.becpg.repo.product.report.ProductReportExtractorPlugin;
 import fr.becpg.repo.report.entity.EntityReportData;
 
@@ -96,6 +101,19 @@ public class DefaultProductReportExtractorTest extends AbstractFinishedProductTe
 				compoList.add(new CompoListDataItem(null, null, 0.5d, 0.5d, CompoListUnit.kg, 3d, DeclarationType.Declare, rawMaterial3NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
 				NodeRef finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();	
+				
+				// ProductSpecification
+				ProductSpecificationData psd = new ProductSpecificationData();
+				psd.setName("PSD");			
+				List<ResourceParamDataItem> resourceParamList = new ArrayList<>();
+				resourceParamList.add(new ResourceParamDataItem("name", "title", "descr"));
+				psd.setResourceParamList(resourceParamList);
+				NodeRef psdNodeRef = alfrescoRepository.create(testFolderNodeRef, psd).getNodeRef();
+				
+				// assoc is readonly
+				ArrayList<NodeRef> psdNodeRefs = new ArrayList<>();
+				psdNodeRefs.add(psdNodeRef);
+				associationService.update(finishedProduct.getNodeRef(), PLMModel.ASSOC_PRODUCT_SPECIFICATIONS, psdNodeRefs);
 				
 				// add labelingTemplate aspect
 				ProductData finishedProductData = alfrescoRepository.findOne(finishedProductNodeRef);
