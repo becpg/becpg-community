@@ -160,7 +160,7 @@ public interface PLMModel {
 	// labelClaimList
 	QName TYPE_LABELCLAIMLIST = QName.createQName(BeCPGModel.BECPG_URI, "labelClaimList");
 	QName PROP_LCL_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "lclType");
-	QName PROP_LCL_IS_CLAIMED = QName.createQName(BeCPGModel.BECPG_URI, "lclIsClaimed");
+	QName PROP_LCL_CLAIM_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "lclClaimValue");
 	QName ASSOC_LCL_LABELCLAIM = QName.createQName(BeCPGModel.BECPG_URI, "lclLabelClaim");
 
 	// allergen

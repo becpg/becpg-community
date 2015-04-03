@@ -456,7 +456,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 						NodeRef n = assocRef.getSourceRef();
 						if (isWorkSpaceProtocol(n)) {
 
-							Boolean isClaimed = (Boolean) nodeService.getProperty(n, PLMModel.PROP_LCL_IS_CLAIMED);
+							Boolean isClaimed = "true".equals(nodeService.getProperty(n, PLMModel.PROP_LCL_CLAIM_VALUE));
 							if (isClaimed) {
 								labelClaimListItems.add(n);
 							}

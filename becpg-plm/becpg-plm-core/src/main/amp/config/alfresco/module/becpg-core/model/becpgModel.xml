@@ -364,6 +364,16 @@
 				</list>
 			</parameter>
 		</constraint>
+		<constraint name="bcpg:labelClaimValues" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>na</value>
+					<value>true</value>
+					<value>false</value>
+				</list>
+			</parameter>
+		</constraint>
 		<constraint name="bcpg:labelClaimTypes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
@@ -1851,9 +1861,12 @@
 						<constraint ref="bcpg:labelClaimTypes" />
 					</constraints>
 				</property>
-				<property name="bcpg:lclIsClaimed">
-					<type>d:boolean</type>
-					<default>true</default>
+				<property name="bcpg:lclClaimValue">
+					<type>d:text</type>
+					<default></default>
+					<constraints>
+					  <constraint ref="bcpg:labelClaimValues"></constraint>
+					</constraints>
 				</property>
 				<property name="bcpg:lclComments">
 					<type>d:text</type>
@@ -1867,6 +1880,7 @@
 					<type>d:text</type>
 					<index enabled="false" />
 				</property>
+				
 			</properties>
 			<associations>
 				<association name="bcpg:lclLabelClaim">

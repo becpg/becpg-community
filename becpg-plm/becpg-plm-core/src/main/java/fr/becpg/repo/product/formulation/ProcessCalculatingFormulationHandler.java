@@ -68,13 +68,13 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 			formulatedProduct.setDefaultVariantPackagingData(packagingHelper.getDefaultVariantPackagingData(formulatedProduct));
 		}
 		
-		if (formulatedProduct instanceof ResourceProductData) {
+		if (formulatedProduct instanceof ResourceProductData || formulatedProduct.getResourceParamList()!=null) {
 
 			int sort = 0;
 
 			List<ResourceParamListItem> toAdd = new LinkedList<>();
 			// Keep local param
-			for (ResourceParamListItem param : ((ResourceProductData) formulatedProduct).getResourceParamList()) {
+			for (ResourceParamListItem param : formulatedProduct.getResourceParamList()) {
 				if (param.getResource() == null) {
 					param.setSort(sort++);
 					toAdd.add(param);
@@ -86,7 +86,7 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 					ResourceProductData resource = alfrescoRepository.findOne(p.getResource());
 					for (ResourceParamListItem param : resource.getResourceParamList()) {
 						boolean isFound = false;
-						for (ResourceParamListItem param2 : ((ResourceProductData) formulatedProduct).getResourceParamList()) {
+						for (ResourceParamListItem param2 : formulatedProduct.getResourceParamList()) {
 							if (Objects.equals(param2.getParam(), param.getParam()) && Objects.equals(param2.getResource(), resource.getNodeRef())
 									&& Objects.equals(param2.getStep(), p.getStep()) && Objects.equals(param2.getParamType(), param.getParamType())) {
 								param2.setSort(sort++);
@@ -111,10 +111,10 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 
 			if (formulatedProduct.getEntityTpl() != null) {
 				// Set default params
-				List<ResourceParamListItem> templatePl = ((ResourceProductData) formulatedProduct.getEntityTpl()).getResourceParamList();
+				List<ResourceParamListItem> templatePl = formulatedProduct.getEntityTpl().getResourceParamList();
 				if (templatePl != null) {
 					for (ResourceParamListItem paramTpl : templatePl) {
-						for (ResourceParamListItem param : ((ResourceProductData) formulatedProduct).getResourceParamList()) {
+						for (ResourceParamListItem param : formulatedProduct.getResourceParamList()) {
 							if (Objects.equals(param.getParam(), paramTpl.getParam()) && Objects.equals(param.getResource(), paramTpl.getResource())
 									&& Objects.equals(param.getStep(), paramTpl.getStep())
 									&& Objects.equals(param.getParamType(), paramTpl.getParamType()) && paramTpl.getParamValue() != null
@@ -127,9 +127,11 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 				}
 			}
 
-			((ResourceProductData) formulatedProduct).getResourceParamList().clear();
-			((ResourceProductData) formulatedProduct).getResourceParamList().addAll(toAdd);
-			formulatedProduct.setUnit(ProductUnit.h);
+			formulatedProduct.getResourceParamList().clear();
+			formulatedProduct.getResourceParamList().addAll(toAdd);
+			if(formulatedProduct instanceof ResourceProductData){
+				formulatedProduct.setUnit(ProductUnit.h);
+			}
 
 		}
 
