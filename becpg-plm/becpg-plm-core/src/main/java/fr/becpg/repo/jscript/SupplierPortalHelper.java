@@ -19,6 +19,7 @@
 package fr.becpg.repo.jscript;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.jscript.BaseScopableProcessorExtension;
@@ -28,6 +29,7 @@ import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -82,6 +84,9 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 			if (entityNodeRef != null) {
 				NodeRef supplierNodeRef = associationService.getTargetAssoc(entityNodeRef.getNodeRef(), PLMModel.ASSOC_SUPPLIERS);
 				if (supplierNodeRef != null) {
+					
+				    associationService.update(project.getNodeRef(), PLMModel.ASSOC_SUPPLIERS, Arrays.asList(supplierNodeRef));
+					
 					NodeRef accountNodeRef = associationService.getTargetAssoc(supplierNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNT);
 					if (accountNodeRef != null) {
 						if (task.getResources() != null) {
@@ -106,12 +111,21 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 						if (task.getResources() != null && !task.getResources().isEmpty()) {
 							NodeRef resourceRef = task.getResources().get(0);
 							NodeRef userHome = repository.getUserHome(resourceRef);
-
-							nodeService.moveNode(entityNodeRef.getNodeRef(), userHome, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
-
-							permissionService.setInheritParentPermissions(entityNodeRef.getNodeRef(), true);
+							
 							permissionService.setPermission(userHome, PermissionService.GROUP_PREFIX + PLMGroup.ReferencingMgr.toString(),
 									PermissionService.COORDINATOR, true);
+							
+							NodeRef supplierNodeRef = associationService.getTargetAssoc(entityNodeRef.getNodeRef(), PLMModel.ASSOC_SUPPLIERS);
+							if (supplierNodeRef != null) {
+							   nodeService.moveNode(supplierNodeRef, userHome, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
+							   permissionService.setInheritParentPermissions(supplierNodeRef, true);
+							   
+							   permissionService.setPermission(supplierNodeRef, PermissionService.ALL_PERMISSIONS,
+										PermissionService.CONSUMER, true);
+							}
+							
+							nodeService.moveNode(entityNodeRef.getNodeRef(), userHome, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
+							permissionService.setInheritParentPermissions(entityNodeRef.getNodeRef(), true);
 							
 							permissionService.setPermission(task.getNodeRef(),(String)nodeService.getProperty(resourceRef,ContentModel.PROP_USERNAME),
 									PermissionService.COORDINATOR, true);

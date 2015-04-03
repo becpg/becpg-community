@@ -35,6 +35,7 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 	private static final String SUPPLIER_TASK_NAME = "plm.supplier.portal.task.supplier.name";
 	private static final String VALIDATION_TASK_NAME = "plm.supplier.portal.task.validation.name";
 	private static final String SUPPLIER_WIZARD_NAME = "plm.supplier.portal.deliverable.wizard.name";
+	private static final String SUPPLIER_WIZARD_RAW_MATERIAL_NAME = "plm.supplier.portal.deliverable.wizard.rawmaterial.name";
 	private static final String SUPPLIER_PRE_SCRIPT = "plm.supplier.portal.deliverable.scripts.pre.name";
 
 	private static final String XPATH_DICTIONNARY_SCRIPTS = "./app:dictionary/app:scripts";
@@ -101,11 +102,17 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			task2.setPrevTasks(Arrays.asList(task1.getNodeRef()));
 			
-			
 			DeliverableListDataItem supplierWizard = new DeliverableListDataItem();
 			supplierWizard.setDescription(I18NUtil.getMessage(SUPPLIER_WIZARD_NAME));
-			supplierWizard.setUrl("/share/page/wizard?id=supplier-mp&nodeRef={pjt:projectEntity}");
+			supplierWizard.setUrl("/share/page/wizard?id=supplier&nodeRef={bcpg:suppliers}");
 			supplierWizard.setTasks(Arrays.asList(task1.getNodeRef()));
+
+			
+			DeliverableListDataItem supplierMPWizard = new DeliverableListDataItem();
+			supplierMPWizard.setDescription(I18NUtil.getMessage(SUPPLIER_WIZARD_RAW_MATERIAL_NAME));
+			supplierMPWizard.setUrl("/share/page/wizard?id=supplier-mp&nodeRef={pjt:projectEntity}");
+			supplierMPWizard.setTasks(Arrays.asList(task1.getNodeRef()));
+			
 
 			DeliverableListDataItem preSupplierScript = new DeliverableListDataItem();
 
@@ -119,6 +126,7 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 			preSupplierScript.setTasks(Arrays.asList(task1.getNodeRef()));
 			pjtTpl.getDeliverableList().add(preSupplierScript);
 			pjtTpl.getDeliverableList().add(supplierWizard);
+			pjtTpl.getDeliverableList().add(supplierMPWizard);
 
 			alfrescoRepository.save(pjtTpl);
 		}

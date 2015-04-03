@@ -269,8 +269,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			}
 
 			// NutList
-			Element nutListElt = dataListsElt.addElement(PLMModel.TYPE_NUTLIST.getLocalName() + "s");
-			loadNutLists(productData, nutListElt);
+			loadNutLists(productData, dataListsElt);
 						
 			// MicrobioList
 			List<MicrobioListDataItem> microbioList = null;

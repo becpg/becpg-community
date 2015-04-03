@@ -84,9 +84,9 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, ProjectModel.TYPE_TASK_LIST, new JavaBehaviour(this, "onUpdateProperties"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, ProjectModel.TYPE_DELIVERABLE_LIST, new JavaBehaviour(this, "onUpdateProperties"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, ProjectModel.TYPE_SCORE_LIST, new JavaBehaviour(this, "onUpdateProperties"));
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, ProjectModel.TYPE_EXPENSE_LIST, new JavaBehaviour(this, "onUpdateProperties"));
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, ProjectModel.TYPE_INVOICE_LIST, new JavaBehaviour(this, "onUpdateProperties"));
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, ProjectModel.TYPE_BUDGET_LIST, new JavaBehaviour(this, "onUpdateProperties"));
+		
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, ProjectModel.ASPECT_BUDGET, new JavaBehaviour(this, "onUpdateProperties"));		
+		
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, ProjectModel.TYPE_LOG_TIME_LIST, new JavaBehaviour(this, "onUpdateProperties"));
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, ProjectModel.TYPE_TASK_LIST, ProjectModel.ASSOC_TL_RESOURCES, new JavaBehaviour(this,
 				"onCreateAssociation"));
@@ -98,22 +98,10 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 				"onDeleteAssociation"));
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, ProjectModel.TYPE_TASK_LIST, ProjectModel.ASSOC_TL_RESOURCE_COST, new JavaBehaviour(this,
 				"onCreateAssociation"));
-		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME, ProjectModel.TYPE_EXPENSE_LIST, ProjectModel.ASSOC_EL_BUDGET_REF, new JavaBehaviour(this,
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME, ProjectModel.ASPECT_BUDGET, new JavaBehaviour(this,
 				"onDeleteAssociation"));
-		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, ProjectModel.TYPE_EXPENSE_LIST, ProjectModel.ASSOC_EL_BUDGET_REF, new JavaBehaviour(this,
-				"onCreateAssociation"));
-		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME, ProjectModel.TYPE_INVOICE_LIST, ProjectModel.ASSOC_IL_BUDGET_REF, new JavaBehaviour(this,
-				"onDeleteAssociation"));
-		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, ProjectModel.TYPE_INVOICE_LIST, ProjectModel.ASSOC_IL_BUDGET_REF, new JavaBehaviour(this,
-				"onCreateAssociation"));
-		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME, ProjectModel.TYPE_EXPENSE_LIST, ProjectModel.ASSOC_EL_TASK_REF, new JavaBehaviour(this,
-				"onDeleteAssociation"));
-		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, ProjectModel.TYPE_EXPENSE_LIST, ProjectModel.ASSOC_EL_TASK_REF, new JavaBehaviour(this,
-				"onCreateAssociation"));
-		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME, ProjectModel.TYPE_INVOICE_LIST, ProjectModel.ASSOC_IL_TASK_REF, new JavaBehaviour(this,
-				"onDeleteAssociation"));
-		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, ProjectModel.TYPE_INVOICE_LIST, ProjectModel.ASSOC_IL_TASK_REF, new JavaBehaviour(this,
-				"onCreateAssociation"));
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, ProjectModel.ASPECT_BUDGET, new JavaBehaviour(this,
+				"onCreateAssociation"));		
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME, ProjectModel.TYPE_TASK_LIST, ProjectModel.ASSOC_TL_RESOURCE_COST, new JavaBehaviour(this,
 				"onDeleteAssociation"));
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, ProjectModel.TYPE_DELIVERABLE_LIST, ProjectModel.ASSOC_DL_TASK, new JavaBehaviour(this,
@@ -132,9 +120,9 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME, ProjectModel.TYPE_BUDGET_LIST, new JavaBehaviour(this, "beforeDeleteNode"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME, ProjectModel.TYPE_BUDGET_LIST, new JavaBehaviour(this, "onDeleteNode"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME, ProjectModel.TYPE_EXPENSE_LIST, new JavaBehaviour(this, "beforeDeleteNode"));
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME, ProjectModel.TYPE_EXPENSE_LIST, new JavaBehaviour(this, "onDeleteNode"));
-		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME, ProjectModel.TYPE_INVOICE_LIST, new JavaBehaviour(this, "beforeDeleteNode"));
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME, ProjectModel.TYPE_INVOICE_LIST, new JavaBehaviour(this, "onDeleteNode"));
+
+		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME, ProjectModel.ASPECT_BUDGET, new JavaBehaviour(this, "beforeDeleteNode"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME, ProjectModel.ASPECT_BUDGET, new JavaBehaviour(this, "onDeleteNode"));
 	}
 
 	@Override
@@ -166,8 +154,7 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 								policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_PROJECT);
 								policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_SCORE_LIST);
 								policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_BUDGET_LIST);
-								policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_EXPENSE_LIST);
-								policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_INVOICE_LIST);
+								policyBehaviourFilter.disableBehaviour(ProjectModel.ASPECT_BUDGET);
 								projectService.formulate(projectNodeRef);
 							} catch (FormulateException e) {
 								logger.error(e, e);
@@ -178,8 +165,7 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 								policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_PROJECT);
 								policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_SCORE_LIST);
 								policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_BUDGET_LIST);
-								policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_EXPENSE_LIST);
-								policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_INVOICE_LIST);
+								policyBehaviourFilter.enableBehaviour(ProjectModel.ASPECT_BUDGET);
 							}
 
 							return null;
@@ -202,14 +188,13 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 			onUpdatePropertiesScoreList(nodeRef, before, after);
 		} else if (nodeService.getType(nodeRef).equals(ProjectModel.TYPE_LOG_TIME_LIST)) {
 			onUpdatePropertiesLogTimeList(nodeRef, before, after);
-		} else if (nodeService.getType(nodeRef).equals(ProjectModel.TYPE_EXPENSE_LIST)) {
-			onUpdatePropertiesExpenseList(nodeRef, before, after);
-		} else if (nodeService.getType(nodeRef).equals(ProjectModel.TYPE_INVOICE_LIST)) {
-			onUpdatePropertiesInvoiceList(nodeRef, before, after);
+		} else if (nodeService.hasAspect(nodeRef, ProjectModel.ASPECT_BUDGET)) {
+			onUpdatePropertiesBudgetAspect(nodeRef, before, after);
 		}
+		
 	}
 
-	public void onUpdatePropertiesTaskList(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
+	private void onUpdatePropertiesTaskList(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 
 		boolean formulateProject = false;
 		String beforeState = (String) before.get(ProjectModel.PROP_TL_STATE);
@@ -229,7 +214,7 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		}
 
 		if (isPropChanged(before, after, ProjectModel.PROP_TL_DURATION) || isPropChanged(before, after, ProjectModel.PROP_TL_START) || isPropChanged(before, after, ProjectModel.PROP_TL_WORK)
-				|| isPropChanged(before, after, ProjectModel.PROP_TL_FIXED_COST) ) {
+				|| isPropChanged(before, after, ProjectModel.PROP_TL_FIXED_COST)) {
 
 			logger.debug("update task list start, duration or end: " + nodeRef);
 			formulateProject = true;
@@ -240,7 +225,7 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		}
 	}
 
-	public void onUpdatePropertiesDeliverableList(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
+	private void onUpdatePropertiesDeliverableList(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 
 		boolean formulateProject = false;
 
@@ -275,7 +260,7 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		}
 	}
 
-	public void onUpdatePropertiesScoreList(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
+	private void onUpdatePropertiesScoreList(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 
 		if (isPropChanged(before, after, ProjectModel.PROP_SL_SCORE) || isPropChanged(before, after, ProjectModel.PROP_SL_WEIGHT)) {
 
@@ -284,7 +269,7 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		}
 	}
 
-	public void onUpdatePropertiesLogTimeList(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
+	private void onUpdatePropertiesLogTimeList(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 
 		if (isPropChanged(before, after, ProjectModel.PROP_LTL_TIME)) {
 
@@ -293,24 +278,19 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		}
 	}
 
-	public void onUpdatePropertiesExpenseList(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 
-		if (isPropChanged(before, after, ProjectModel.PROP_BUDGET_EXPENSE)) {
 
-			logger.debug("update log time list : " + nodeRef);
+	private void onUpdatePropertiesBudgetAspect(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
+
+		if (isPropChanged(before, after, ProjectModel.PROP_BUDGET_EXPENSE) || isPropChanged(before, after, ProjectModel.PROP_BUDGET_INVOICE) ) {
+
+			if (logger.isDebugEnabled()) {
+				logger.debug("UPDATE Budget Aspect (Invoice or Expense)  : " + nodeRef);
+			}
 			queueListItem(nodeRef);
 		}
 	}
-
-	public void onUpdatePropertiesInvoiceList(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
-
-		if (isPropChanged(before, after, ProjectModel.PROP_BUDGET_INVOICE)) {
-
-			logger.debug("update log time list : " + nodeRef);
-			queueListItem(nodeRef);
-		}
-	}
-
+	
 	private void queueListItem(NodeRef listItemNodeRef) {
 		NodeRef projectNodeRef = entityListDAO.getEntity(listItemNodeRef);
 		if (projectNodeRef != null) {
@@ -323,6 +303,7 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		if (assocRef.getTypeQName().equals(ProjectModel.ASSOC_TL_RESOURCES)) {
 
 			setPermission(assocRef, false);
+			
 		}
 		queueListItem(assocRef.getSourceRef());
 	}
@@ -332,7 +313,6 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		if (assocRef.getTypeQName().equals(ProjectModel.ASSOC_TL_RESOURCES)) {
 			setPermission(assocRef, true);
 		}
-
 		queueListItem(assocRef.getSourceRef());
 	}
 
@@ -393,9 +373,8 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
 				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_PROJECT);
 				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_SCORE_LIST);
-				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_EXPENSE_LIST);
-				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_INVOICE_LIST);
 				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_BUDGET_LIST);
+				policyBehaviourFilter.disableBehaviour(ProjectModel.ASPECT_BUDGET);
 
 				projectService.deleteTask(nodeRef);
 			} finally {
@@ -404,9 +383,8 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
 				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_PROJECT);
 				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_SCORE_LIST);
-				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_EXPENSE_LIST);
-				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_INVOICE_LIST);
 				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_BUDGET_LIST);
+				policyBehaviourFilter.disableBehaviour(ProjectModel.ASPECT_BUDGET);
 			}
 
 			queueListItem(nodeRef);
