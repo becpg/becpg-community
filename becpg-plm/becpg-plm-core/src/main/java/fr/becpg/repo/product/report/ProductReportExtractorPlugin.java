@@ -141,11 +141,10 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			for (QName dataListQName : datalists.keySet()) {
 
 				if (alfrescoRepository.hasDataList(entityNodeRef, dataListQName)) {
-					Element dataListElt = dataListsElt.addElement(dataListQName.getLocalName() + "s");
-
 					if ((isExtractedProduct && !DATALIST_SPECIFIC_EXTRACTOR.contains(dataListQName)) || !isExtractedProduct
 							&& RAWMATERIAL_DATALIST.contains(dataListQName)) {
-
+						Element dataListElt = dataListsElt.addElement(dataListQName.getLocalName() + "s");
+						
 						@SuppressWarnings({ "rawtypes" })
 						List<BeCPGDataObject> dataListItems = (List) datalists.get(dataListQName);
 
