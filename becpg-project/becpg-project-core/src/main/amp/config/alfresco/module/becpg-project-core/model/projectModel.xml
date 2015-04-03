@@ -832,7 +832,7 @@
 			</mandatory-aspects>
 		</type>
 
-		<!-- Invoices List -->
+		<!-- Invoice List -->
 
 		<type name="pjt:invoiceList">
 			<parent>bcpg:entityListItem</parent>

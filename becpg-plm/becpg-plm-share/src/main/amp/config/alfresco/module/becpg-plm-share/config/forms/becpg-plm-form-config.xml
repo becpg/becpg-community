@@ -4651,7 +4651,6 @@
 					<show id="cm:description" />
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
-					<show id="bcpg:certificateDateAspect" />
 					<show id="bcpg:supplierAccountRef" />
 					<show id="bcpg:supplierTel" />
 					<show id="bcpg:supplierEmail" />
@@ -4682,6 +4681,30 @@
 						</control>
 					</field>
 					<field id="bcpg:code" read-only="true" />
+				</appearance>
+			</form>
+			<form id="supplier">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:title" force="true" />
+					<show id="cm:description" />
+					<show id="bcpg:supplierTel" />
+					<show id="bcpg:supplierEmail" />
+					<show id="bcpg:supplierFax" />
+					<!-- bcpg:location type -->
+					<show id="bcpg:locationAddress1" />
+					<show id="bcpg:locationAddress2" />
+					<show id="bcpg:locationAddress3" />
+					<show id="bcpg:locationZip" />
+					<show id="bcpg:locationCity" />
+					<show id="bcpg:locationCountry" />
+				</field-visibility>
+				<appearance>
+					<field id="cm:description">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 		</forms>

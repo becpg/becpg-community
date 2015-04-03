@@ -121,6 +121,15 @@
 			    <step id="step6" label="Allégations" type="entityDataList"
 					listId="labelClaimList" itemId="bcpg:labelClaimList"></step>
 			</wizard>
+			<wizard id="supplier">
+				<step id="step1" label="Informations fournisseur" type="form" formId="supplier"
+					itemId="bcpg:supplier" ></step>
+				<step id="step2" label="Usines" type="entityDataList"
+					listId="plant" itemId="bcpg:plant"
+					></step>
+			    <step id="step3" label="Contacts" type="entityDataList"
+					listId="contactList" itemId="bcpg:contactList"></step>
+			</wizard>
 		</wizards>	
 	</config>	
 
