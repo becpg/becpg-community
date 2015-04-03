@@ -154,10 +154,16 @@ public class HierarchyServiceImpl implements HierarchyService {
 
 		// value == * -> return all
 		if (!isAllQuery(value)) {
-			ret.andPropEquals(property, value);
+			if(value.contains(SUFFIX_ALL)){
+				ret.andPropQuery(property, value);
+			} else {
+				ret.andPropEquals(property, value).inDB();
+			}
+		} else {
+			ret.inDB();
 		}
 
-		return ret.inDB();
+		return ret;
 	}
 
 	/**

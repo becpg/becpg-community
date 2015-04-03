@@ -80,8 +80,7 @@
                </#list>
          </select>
          <script type="text/javascript">
-         	YAHOO.Bubbling.on("beforeFormRuntimeInit", function (layer, args)
-     			 {	
+         	YAHOO.Bubbling.on("beforeFormRuntimeInit", function (layer, args) {	
 		         var formUI = args[1].component,
 		            formsRuntime = args[1].runtime;
 		         	YAHOO.util.Event.addListener("${fieldHtmlId}", "change", function(){

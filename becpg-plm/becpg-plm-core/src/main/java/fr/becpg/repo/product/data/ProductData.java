@@ -31,6 +31,7 @@ import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.data.productList.PriceListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
+import fr.becpg.repo.product.data.productList.ResourceParamListItem;
 import fr.becpg.repo.quality.data.dataList.ControlDefListDataItem;
 import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
@@ -110,6 +111,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private List<LabelClaimListDataItem> labelClaimList;
 	private List<ControlDefListDataItem> controlDefList;
 	private List<LabelingListDataItem> labelingList;
+    private List<ResourceParamListItem> resourceParamList;
 
 	/*
 	 * View
@@ -553,6 +555,19 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 
 	public void setControlDefList(List<ControlDefListDataItem> controlDefList) {
 		this.controlDefList = controlDefList;
+	}
+	
+
+
+    
+    @DataList
+	@AlfQname(qname="mpm:resourceParamList")
+	public List<ResourceParamListItem> getResourceParamList() {
+		return resourceParamList;
+	}
+
+	public void setResourceParamList(List<ResourceParamListItem> resourceParamList) {
+		this.resourceParamList = resourceParamList;
 	}
 
 	@DataList
