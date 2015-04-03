@@ -467,13 +467,13 @@
 					<!-- formulation -->
 					<field id="bcpg:productQty" set="formulation" />
 					<field id="bcpg:productUnit" set="formulation">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
 							<control-param name="options">kg,g,L,mL,P
 							</control-param>
 						</control>
 					</field>
 					<field id="bcpg:netWeight" set="formulation" />
-					<field id="bcpg:productDensity" set="formulation" />
+					<field id="bcpg:productDensity" set="formulation" read-only="true" />
 					<field id="bcpg:servingSize" set="formulation" />
 					<field id="bcpg:numberOfServings" set="formulation" />
 					<field id="bcpg:productSpecifications" set="formulation">
@@ -601,7 +601,7 @@
 				<appearance>
 					<field id="bcpg:productQty" />
 					<field id="bcpg:productUnit">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
 							<control-param name="options">kg,g,L,mL,P
 							</control-param>
 						</control>
@@ -842,13 +842,13 @@
 					<!-- formulation -->
 					<field id="bcpg:productQty" set="formulation" />
 					<field id="bcpg:productUnit" set="formulation">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
 							<control-param name="options">kg,g,L,mL,P
 							</control-param>
 						</control>
 					</field>
 					<field id="bcpg:netWeight" set="formulation" />
-					<field id="bcpg:productDensity" set="formulation" />
+					<field id="bcpg:productDensity" set="formulation" read-only="true"/>
 					<field id="bcpg:servingSize" set="formulation" />
 					<field id="bcpg:numberOfServings" set="formulation" />
 					<field id="bcpg:productSpecifications" set="formulation">
@@ -901,7 +901,7 @@
 				<appearance>
 					<field id="bcpg:productQty" />
 					<field id="bcpg:productUnit">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
 							<control-param name="options">kg,g,L,mL,P
 							</control-param>
 						</control>
@@ -1919,7 +1919,7 @@
 
 					<!-- Consumer -->
 					
-					<show id="bcpg:productQty" />
+					<!-- <show id="bcpg:productQty" /> -->
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:netWeight" force="true" />
 					<show id="bcpg:productDensity" />
@@ -2034,8 +2034,13 @@
 
 					<!-- consumer -->
 					
-					<field id="bcpg:productQty" set="consumer" />
-					<field id="bcpg:productUnit" set="consumer" />
+					<!-- <field id="bcpg:productQty" set="consumer" /> -->
+					<field id="bcpg:productUnit"  set="consumer">
+						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
+							<control-param name="options">kg,g,L,mL,P
+							</control-param>
+						</control>
+					</field>
 					<field id="bcpg:netWeight" set="consumer" />
 					<field id="bcpg:productDensity" set="consumer" />
 					<field id="bcpg:reconstitutionRate" set="consumer" />
@@ -2294,14 +2299,16 @@
 					<show id="cm:name" />
 					<show id="bcpg:legalName" />
 					<show id="cm:description" />
-					<show id="bcpg:productQty" />
+				<!-- 	<show id="bcpg:productQty" /> -->
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:netWeight" force="true" />
+					<show id="bcpg:productDensity" />
+					
 					<show id="bcpg:entityTplRef" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:productUnit">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
 							<control-param name="options">kg,g,L,mL,P
 							</control-param>
 						</control>
@@ -2348,7 +2355,7 @@
 
 					<!-- Consumer -->
 					
-					<show id="bcpg:productQty" />
+					<!-- <show id="bcpg:productQty" /> -->
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:netWeight" force="true" />
 					<show id="bcpg:productDensity" />
@@ -2431,8 +2438,13 @@
 
 					<!-- consumer -->
 					
-					<field id="bcpg:productQty" set="consumer" />
-					<field id="bcpg:productUnit" set="consumer" />
+					<!-- <field id="bcpg:productQty" set="consumer" /> -->
+					<field id="bcpg:productUnit"  set="consumer">
+						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
+							<control-param name="options">kg,g,L,mL,P
+							</control-param>
+						</control>
+					</field>
 					<field id="bcpg:netWeight" set="consumer" />
 					<field id="bcpg:productDensity" set="consumer" />
 					<field id="bcpg:reconstitutionRate" set="consumer" />
@@ -2497,14 +2509,15 @@
 					<show id="cm:name" />
 					<show id="bcpg:legalName" />
 					<show id="cm:description" />
-					<show id="bcpg:productQty" />
+					<!-- <show id="bcpg:productQty" /> -->
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:netWeight" force="true" />
+					<show id="bcpg:productDensity" force="true" />
 					<show id="bcpg:entityTplRef" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:productUnit">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
 							<control-param name="options">kg,g,L,mL,P
 							</control-param>
 						</control>
@@ -2755,13 +2768,13 @@
 					<!-- formulation -->
 					<field id="bcpg:productQty" set="formulation" />
 					<field id="bcpg:productUnit" set="formulation">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
 							<control-param name="options">kg,g,L,mL,P
 							</control-param>
 						</control>
 					</field>
 					<field id="bcpg:netWeight" set="formulation" />
-					<field id="bcpg:productDensity" set="formulation" />
+					<field id="bcpg:productDensity" set="formulation"  read-only="true"/>
 					<field id="bcpg:servingSize" set="formulation" />
 					<field id="bcpg:productSpecifications" set="formulation">
 						<control
@@ -2862,13 +2875,13 @@
 				<appearance>
 					<field id="bcpg:productQty" />
 					<field id="bcpg:productUnit">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
 							<control-param name="options">kg,g,L,mL,P
 							</control-param>
 						</control>
 					</field>
 					<field id="bcpg:netWeight" />
-					<field id="bcpg:productDensity" />
+					<field id="bcpg:productDensity" read-only="true" />
 					<field id="bcpg:productSpecifications">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -3080,13 +3093,13 @@
 					<!-- formulation -->
 					<field id="bcpg:productQty" set="formulation" />
 					<field id="bcpg:productUnit" set="formulation">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
 							<control-param name="options">kg,g,L,mL,P
 							</control-param>
 						</control>
 					</field>
 					<field id="bcpg:netWeight" set="formulation" />
-					<field id="bcpg:productDensity" set="formulation" />
+					<field id="bcpg:productDensity" set="formulation" read-only="true"/>
 					<field id="bcpg:servingSize" set="formulation" />
 					<field id="bcpg:productSpecifications" set="formulation">
 						<control
@@ -3128,7 +3141,7 @@
 				<appearance>
 					<field id="bcpg:productQty" />
 					<field id="bcpg:productUnit">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
 							<control-param name="options">kg,g,L,mL,P
 							</control-param>
 						</control>
@@ -5717,7 +5730,6 @@
 					<show id="bcpg:ingListGeoTransfo" />
 					<show id="bcpg:ingListBioOrigin" />
 					<show id="bcpg:parentLevel" />
-					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 
 				<appearance>
@@ -5759,7 +5771,6 @@
 					<show id="bcpg:ingListGeoOrigin" />
 					<show id="bcpg:ingListGeoTransfo" />
 					<show id="bcpg:ingListBioOrigin" />
-					<show id="bcpg:isManualListItem" force="true" />
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
@@ -5788,7 +5799,6 @@
 					<show id="bcpg:ingListGeoTransfo" />
 					<show id="bcpg:ingListBioOrigin" />
 					<show id="bcpg:parentLevel" />
-					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 
 				<appearance>
@@ -6433,7 +6443,7 @@
 			<form>
 				<field-visibility>
 					<show id="bcpg:lclLabelClaim" />
-					<show id="bcpg:lclIsClaimed" />
+					<show id="bcpg:lclClaimValue" />
 					<show id="bcpg:lclComments"  />
 					<show id="bcpg:certificateDate" force="true" />
 					<show id="bcpg:isManualListItem" force="true" />
@@ -6452,7 +6462,7 @@
 				<field-visibility>
 					<show id="bcpg:lclLabelClaim" />
 					<show id="bcpg:lclType" />
-					<show id="bcpg:lclIsClaimed" />
+					<show id="bcpg:lclClaimValue" />
 					<show id="bcpg:lclIsFormulated" />
 					<show id="bcpg:lclFormulaErrorLog" />
 				</field-visibility>
@@ -6470,7 +6480,7 @@
 			<form>
 				<field-visibility>
 					<show id="bcpg:lclLabelClaim" />
-					<show id="bcpg:lclIsClaimed" />
+					<show id="bcpg:lclClaimValue" />
 					<show id="bcpg:lclComments" />
 					<show id="bcpg:certificateDate" force="true" />
 					<show id="bcpg:isManualListItem" force="true" />
