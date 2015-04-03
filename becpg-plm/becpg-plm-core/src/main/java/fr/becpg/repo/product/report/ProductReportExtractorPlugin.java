@@ -174,7 +174,6 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			Element allergenListElt = (Element) dataListsElt.selectSingleNode(PLMModel.TYPE_ALLERGENLIST.getLocalName() + "s");
 			if (allergenListElt != null) {
 
-				@SuppressWarnings("unchecked")
 				List<AllergenListDataItem> allergenList = (List<AllergenListDataItem>) datalists.get(PLMModel.TYPE_ALLERGENLIST);
 				String volAllergens = "";
 				String inVolAllergens = "";
@@ -595,7 +594,6 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				}
 			}
 		}
-
 	}
 
 	private void loadPackagingItem(PackagingListDataItem dataItem, Element packagingListElt,
