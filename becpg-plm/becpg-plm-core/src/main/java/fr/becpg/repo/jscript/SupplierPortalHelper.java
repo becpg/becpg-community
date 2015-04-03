@@ -29,7 +29,6 @@ import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,7 +43,7 @@ import fr.becpg.repo.project.data.projectList.TaskState;
 import fr.becpg.repo.project.impl.ProjectHelper;
 
 /**
- * Utility script methods for suplier portal
+ * Utility script methods for supplier portal
  * 
  * @author matthieu
  *
@@ -119,9 +118,6 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 							if (supplierNodeRef != null) {
 							   nodeService.moveNode(supplierNodeRef, userHome, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
 							   permissionService.setInheritParentPermissions(supplierNodeRef, true);
-							   
-							   permissionService.setPermission(supplierNodeRef, PermissionService.ALL_PERMISSIONS,
-										PermissionService.CONSUMER, true);
 							}
 							
 							nodeService.moveNode(entityNodeRef.getNodeRef(), userHome, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
