@@ -100,9 +100,16 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 			formulatedProduct.setYieldVolume(100 * netVolume / volumeUsed);
 		}
 		
+		
+		
 		// generic raw material
 		if(formulatedProduct instanceof RawMaterialData){
 			calculateAttributesOfGenericRawMaterial((RawMaterialData) formulatedProduct, compositeAll);
+		} else {
+			if(netVolume!=null){
+				formulatedProduct
+			      .setDensity(FormulationHelper.getNetWeight(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT) / netVolume);
+			}
 		}
 		
 		return true;
