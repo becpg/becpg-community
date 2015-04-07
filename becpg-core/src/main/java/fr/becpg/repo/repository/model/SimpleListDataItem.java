@@ -37,4 +37,6 @@ public interface SimpleListDataItem extends IManualDataItem, SimpleCharactDataIt
 	public void setUnit(String unit);
 	
 	public String getUnit();
+
+	public Double getFormulatedValue();
 }

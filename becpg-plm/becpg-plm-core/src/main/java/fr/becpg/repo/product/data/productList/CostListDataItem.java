@@ -50,6 +50,12 @@ public class CostListDataItem extends AbstractManualDataItem implements SimpleLi
 		this.value = value;
 	}
 	
+	@Override
+	public Double getFormulatedValue() {
+		return getValue();
+	}
+	
+	
 	@AlfProp
 	@AlfQname(qname="bcpg:costListUnit")
 	public String getUnit() {
@@ -345,6 +351,9 @@ public class CostListDataItem extends AbstractManualDataItem implements SimpleLi
 	public void setSimulatedValue(Double simulatedValue) {
 		this.simulatedValue = simulatedValue;
 	}
+
+
+	
 	
 }
 

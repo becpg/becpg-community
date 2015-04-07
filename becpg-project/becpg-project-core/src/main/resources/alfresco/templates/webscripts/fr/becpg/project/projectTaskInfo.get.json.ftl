@@ -38,7 +38,7 @@
 		  "entityNodeRef" : "#access_forbidden",
 		</#if>
 		"name": "${task.properties["pjt:tlTaskName"]!""}",
-		"description": "${task.properties["cm:description"]!""}",
+		"description": "${task.properties["pjt:tlTaskDescription"]!""}",
 	   "state": "${task.properties["pjt:tlState"]!""}",
 	   "completionPercent": "${task.properties["pjt:completionPercent"]!""}",
 	   "commentCount":"${task.properties["fm:commentCount"]!""}",
