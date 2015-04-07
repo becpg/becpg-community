@@ -493,7 +493,7 @@
 			<form>
 				<field-visibility>
 					<show id="pjt:tlTaskName" />
-					<show id="cm:description" force="true" />
+					<show id="pjt:tlTaskDescription" />
 					<show id="pjt:tlPrevTasks" />
 					<show id="bcpg:parentLevel" force="true" />
 					<show id="pjt:tlRefusedTaskRef" />
@@ -519,7 +519,7 @@
 					<set id="mainInfo" appearance="bordered-panel"
 						label-id="becpg.forms.set.designation.label" />
 					<field id="pjt:tlTaskName" set="mainInfo"/>
-					<field id="cm:description" set="mainInfo">
+					<field id="pjt:tlTaskDescription" set="mainInfo">
 					    <control template="/org/alfresco/components/form/controls/richtext.ftl">
 							<control-param name="rows">10</control-param>
 						</control>
@@ -614,7 +614,7 @@
 			<form>
 				<field-visibility>
 					<show id="pjt:tlTaskName" />
-					<show id="cm:description" force="true" />
+					<show id="pjt:tlTaskDescription"  />
 					<show id="pjt:tlPrevTasks" />
 					<show id="bcpg:parentLevel" force="true" />
 					<show id="pjt:tlResources" />
@@ -634,7 +634,7 @@
 					<set id="mainInfo" appearance="bordered-panel"
 						label-id="becpg.forms.set.designation.label" />													
 					<field id="pjt:tlTaskName" set="mainInfo"/>
-					<field id="cm:description" set="mainInfo">
+					<field id="pjt:tlTaskDescription" set="mainInfo">
 					    <control template="/org/alfresco/components/form/controls/richtext.ftl">
 							<control-param name="rows">10</control-param>
 						</control>
@@ -673,7 +673,7 @@
 			<form id="create">
 				<field-visibility>
 					<show id="pjt:tlTaskName" />
-					<show id="cm:description" force="true" />
+					<show id="pjt:tlTaskDescription" />
 					<show id="pjt:tlPrevTasks" />
 					<show id="bcpg:parentLevel" force="true" />
 					<show id="pjt:tlRefusedTaskRef" />

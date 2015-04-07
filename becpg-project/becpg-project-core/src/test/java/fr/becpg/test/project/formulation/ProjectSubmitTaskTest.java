@@ -180,6 +180,7 @@ public class ProjectSubmitTaskTest extends AbstractProjectTestCase {
 				nodeService.setProperty(projectData.getDeliverableList().get(1).getNodeRef(),
 						ProjectModel.PROP_DL_STATE, DeliverableState.InProgress);				
 
+				
 				return null;
 			}
 		}, false, true);
