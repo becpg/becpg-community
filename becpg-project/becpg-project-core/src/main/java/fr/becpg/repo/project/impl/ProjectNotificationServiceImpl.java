@@ -97,7 +97,7 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 		Map<String, Serializable> templateArgs = new HashMap<String, Serializable>(7);
 		templateArgs.put(ARG_ACTIVITY_TYPE, ActivityType.State);
 		templateArgs.put(ARG_TASK_TITLE, nodeService.getProperty(taskNodeRef, ProjectModel.PROP_TL_TASK_NAME));
-		templateArgs.put(ARG_TASK_DESCRIPTION, nodeService.getProperty(taskNodeRef, ContentModel.PROP_DESCRIPTION));
+		templateArgs.put(ARG_TASK_DESCRIPTION, nodeService.getProperty(taskNodeRef, ProjectModel.PROP_TL_TASK_DESCRIPTION));
 		templateArgs.put(ARG_BEFORE_STATE, beforeStateMsg);
 		templateArgs.put(ARG_AFTER_STATE, afterStateMsg);
 		templateArgs.put(ARG_PROJECT, projectNodeRef);
@@ -124,7 +124,7 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 		templateArgs.put(ARG_PROJECT, projectNodeRef);
 		if (taskNodeRef != null) {
 			templateArgs.put(ARG_TASK_TITLE, nodeService.getProperty(taskNodeRef, ProjectModel.PROP_TL_TASK_NAME));
-			templateArgs.put(ARG_TASK_DESCRIPTION, nodeService.getProperty(taskNodeRef, ContentModel.PROP_DESCRIPTION));
+			templateArgs.put(ARG_TASK_DESCRIPTION, nodeService.getProperty(taskNodeRef,ProjectModel.PROP_TL_TASK_DESCRIPTION));
 		}
 		if (deliverableNodeRef != null) {
 			templateArgs.put(ARG_DELIVERABLE_TITLE, nodeService.getProperty(deliverableNodeRef, ProjectModel.PROP_DL_DESCRIPTION));

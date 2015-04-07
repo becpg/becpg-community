@@ -1,0 +1,170 @@
+package fr.becpg.repo.project.admin.patch;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import org.alfresco.model.ContentModel;
+import org.alfresco.repo.batch.BatchProcessWorkProvider;
+import org.alfresco.repo.batch.BatchProcessor;
+import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
+import org.alfresco.repo.domain.node.NodeDAO;
+import org.alfresco.repo.domain.patch.PatchDAO;
+import org.alfresco.repo.domain.qname.QNameDAO;
+import org.alfresco.repo.policy.BehaviourFilter;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.rule.RuleService;
+import org.alfresco.service.namespace.QName;
+import org.alfresco.util.Pair;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.extensions.surf.util.I18NUtil;
+
+import fr.becpg.model.ProjectModel;
+import fr.becpg.repo.admin.patch.AbstractBeCPGPatch;
+
+/**
+ * Add missing aspect to task
+ * @author matthieu
+ *
+ */
+public class TaskDescPatch extends AbstractBeCPGPatch {
+
+	private static Log logger = LogFactory.getLog(TaskDescPatch.class);
+	private static final String MSG_SUCCESS = "patch.bcpg.projet.taskDescPatch.result";
+	
+
+
+	private NodeDAO nodeDAO;
+	private PatchDAO patchDAO;
+	private QNameDAO qnameDAO;
+	private BehaviourFilter policyBehaviourFilter;
+	private RuleService ruleService;
+
+	private final int batchThreads = 3;
+	private final int batchSize = 40;
+	private final long count = batchThreads * batchSize;
+
+	@Override
+	protected String applyInternal() throws Exception {
+
+			AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
+
+			BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
+				final List<NodeRef> result = new ArrayList<NodeRef>();
+
+				long maxNodeId = getPatchDAO().getMaxAdmNodeID();
+
+				long minSearchNodeId = 1;
+				long maxSearchNodeId = count;
+
+				Pair<Long, QName> val = getQnameDAO().getQName(ProjectModel.TYPE_TASK_LIST);
+
+				public int getTotalEstimatedWorkSize() {
+					return result.size();
+				}
+
+				public Collection<NodeRef> getNextWork() {
+					if (val != null) {
+						Long typeQNameId = val.getFirst();
+
+						result.clear();
+
+						while (result.isEmpty() && minSearchNodeId < maxNodeId) {
+							
+							
+							List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, maxSearchNodeId);
+
+							for (Long nodeid : nodeids) {
+								NodeRef.Status status = getNodeDAO().getNodeIdStatus(nodeid);
+								if (!status.isDeleted()) {
+									result.add(status.getNodeRef());
+								}
+							}
+							minSearchNodeId = minSearchNodeId + count;
+							maxSearchNodeId = maxSearchNodeId + count;
+						}
+					}
+
+					return result;
+				}
+			};
+
+			BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<NodeRef>("BudgetPatch",
+					transactionService.getRetryingTransactionHelper(), workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 1000);
+
+			BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
+
+				public void afterProcess() throws Throwable {
+					ruleService.disableRules();
+				}
+
+				public void beforeProcess() throws Throwable {
+					ruleService.enableRules();
+				}
+
+				public String getIdentifier(NodeRef entry) {
+					return entry.toString();
+				}
+
+				public void process(NodeRef taskNodeRef) throws Throwable {
+					
+					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
+					policyBehaviourFilter.disableBehaviour();
+					
+					if (nodeService.exists(taskNodeRef)) {
+						AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
+						nodeService.setProperty(taskNodeRef,ProjectModel.PROP_TL_TASK_DESCRIPTION, nodeService.getProperty(taskNodeRef, ContentModel.PROP_DESCRIPTION));
+						nodeService.removeProperty(taskNodeRef, ContentModel.PROP_DESCRIPTION);
+					} else {
+						logger.warn("projectNodeRef doesn't exist : " + taskNodeRef);
+					}
+
+				}
+
+			};
+
+			batchProcessor.process(worker, true);
+		
+
+		return I18NUtil.getMessage(MSG_SUCCESS);
+	}
+
+	public NodeDAO getNodeDAO() {
+		return nodeDAO;
+	}
+
+	public void setNodeDAO(NodeDAO nodeDAO) {
+		this.nodeDAO = nodeDAO;
+	}
+
+	public PatchDAO getPatchDAO() {
+		return patchDAO;
+	}
+
+	public void setPatchDAO(PatchDAO patchDAO) {
+		this.patchDAO = patchDAO;
+	}
+
+	public QNameDAO getQnameDAO() {
+		return qnameDAO;
+	}
+
+	public void setQnameDAO(QNameDAO qnameDAO) {
+		this.qnameDAO = qnameDAO;
+	}
+
+	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
+		this.policyBehaviourFilter = policyBehaviourFilter;
+	}
+
+	public RuleService getRuleService() {
+		return ruleService;
+	}
+
+	public void setRuleService(RuleService ruleService) {
+		this.ruleService = ruleService;
+	}
+
+}
