@@ -178,9 +178,10 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 						if (listContainerNodeRef != null) {
 
 							// costList
-							NodeRef costListNodeRef = entityListDAO.getList(listContainerNodeRef, PLMModel.TYPE_COSTLIST);
+							NodeRef costListNodeRef = entityListDAO.getList(listContainerNodeRef, PLMModel.TYPE_COSTLIST);							
 							if (costListNodeRef != null && !isTemplate(productNodeRef)) {
 
+								productsUnit.put(costListNodeRef, productUnit);
 								List<FileInfo> nodes = fileFolderService.listFiles(costListNodeRef);
 
 								for (int z_idx = 0; z_idx < nodes.size(); z_idx++) {
@@ -211,6 +212,7 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 							NodeRef nutListNodeRef = entityListDAO.getList(listContainerNodeRef, PLMModel.TYPE_NUTLIST);
 							if (nutListNodeRef != null) {
 
+								productsUnit.put(nutListNodeRef, productUnit);
 								List<FileInfo> nodes = fileFolderService.listFiles(nutListNodeRef);
 
 								for (int z_idx = 0; z_idx < nodes.size(); z_idx++) {
@@ -258,20 +260,28 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 							Boolean costFixed = (Boolean) nodeService.getProperty(targetNodeRef, PLMModel.PROP_COSTFIXED);
 							String costCurrency = (String) nodeService.getProperty(targetNodeRef, PLMModel.PROP_COSTCURRENCY);
 							String costListUnit = (String) nodeService.getProperty(productListItemNodeRef, PLMModel.PROP_COSTLIST_UNIT);
+						
+							if (costFixed != null && costFixed.booleanValue()) {
 
-							if (!(costListUnit != null && !costListUnit.isEmpty() && costListUnit.startsWith(costCurrency))) {
-								NodeRef listNodeRef = nodeService.getPrimaryParent(productListItemNodeRef).getParentRef();
+								if (!(costListUnit != null && costListUnit.equals(costCurrency))) {
+									nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_COSTLIST_UNIT, costCurrency);
+								}
+							} else {
 
-								if (listNodeRef != null && !isTemplate(getProduct(listNodeRef))) {
+								if (!(costListUnit != null && !costListUnit.isEmpty() && costListUnit.startsWith(costCurrency
+										+ AbstractSimpleListFormulationHandler.UNIT_SEPARATOR))) {
 
-									nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_COSTLIST_UNIT,
-											CostsCalculatingFormulationHandler.calculateUnit(getProductUnit(listNodeRef), 
-													costCurrency, 
-													costFixed));
+									NodeRef listNodeRef = nodeService.getPrimaryParent(productListItemNodeRef).getParentRef();
+
+									if (listNodeRef != null) {
+
+										nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_COSTLIST_UNIT,
+												CostsCalculatingFormulationHandler.calculateUnit(getProductUnit(listNodeRef), 
+														costCurrency, 
+														costFixed));
+									}
 								}
 							}
-							
-							
 						} else if (type.equals(PLMModel.TYPE_NUTLIST)) {
 							String nutUnit = (String) nodeService.getProperty(targetNodeRef, PLMModel.PROP_NUTUNIT);
 							String nutListUnit = (String) nodeService.getProperty(productListItemNodeRef, PLMModel.PROP_NUTLIST_UNIT);
