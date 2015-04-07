@@ -36,6 +36,11 @@ public class PhysicoChemListDataItem extends AbstractManualDataItem implements S
 		return value;
 	}
 	
+	@Override
+	public Double getFormulatedValue() {
+		return getValue();
+	}
+	
 	
 	public void setValue(Double value) {
 		this.value = value;
@@ -183,7 +188,6 @@ public class PhysicoChemListDataItem extends AbstractManualDataItem implements S
 		return "PhysicoChemListDataItem [value=" + value + ", unit=" + unit + ", mini=" + mini + ", maxi=" + maxi + ", physicoChem=" + physicoChem + ", isManual=" + isManual
 				+ ", nodeRef=" + nodeRef + ", name=" + name + "]";
 	}
-	
 
 
 	

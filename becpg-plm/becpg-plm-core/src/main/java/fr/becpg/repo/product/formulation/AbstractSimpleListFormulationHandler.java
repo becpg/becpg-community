@@ -40,6 +40,7 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
@@ -249,14 +250,10 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	}
 	
 	protected void calculate(SimpleListDataItem newSimpleListDataItem, SimpleListDataItem slDataItem, Double qtyUsed, Double netQty){
-		Double origValue = newSimpleListDataItem.getValue() != null ? newSimpleListDataItem.getValue() : 0d;
-		if(isCharactFormulated(newSimpleListDataItem)){
-			origValue = 0d;
-		}
-		
+		Double origValue = newSimpleListDataItem.getFormulatedValue() != null ? newSimpleListDataItem.getFormulatedValue() : 0d;
 		Double value = slDataItem.getValue();
 		if(value != null){
-			newSimpleListDataItem.setValue(FormulationHelper.calculateValue(origValue, qtyUsed, slDataItem.getValue(), netQty));			
+			newSimpleListDataItem.setValue(FormulationHelper.calculateValue(newSimpleListDataItem.getFormulatedValue(), qtyUsed, slDataItem.getValue(), netQty));			
 		}
 		else{
 			value = 0d;

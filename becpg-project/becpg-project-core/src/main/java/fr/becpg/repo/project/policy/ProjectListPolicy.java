@@ -112,6 +112,7 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 				"onDeleteAssociation"));
 		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyNodePolicy.QNAME, ProjectModel.TYPE_DELIVERABLE_LIST, new JavaBehaviour(this, "getCopyCallback"));
 		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyNodePolicy.QNAME, ProjectModel.TYPE_TASK_LIST, new JavaBehaviour(this, "getCopyCallback"));
+		
 		// action duplicate use createNode API
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, ProjectModel.TYPE_DELIVERABLE_LIST, new JavaBehaviour(this, "onCreateNode"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, ProjectModel.TYPE_TASK_LIST, new JavaBehaviour(this, "onCreateNode"));
@@ -242,8 +243,10 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 				logger.debug("re-open deliverable: " + nodeRef);
 				try {
 					policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
+					policyBehaviourFilter.disableBehaviour(ProjectModel.ASPECT_BUDGET);
 					projectService.openDeliverable(nodeRef);
 				} finally {
+					policyBehaviourFilter.enableBehaviour(ProjectModel.ASPECT_BUDGET);
 					policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
 				}
 			}
@@ -367,7 +370,7 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		QName projectListType = nodeService.getType(nodeRef);
 		if (ProjectModel.TYPE_TASK_LIST.equals(projectListType)) {
 
-			try {
+		   try {
 				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_LOG_TIME_LIST);
 				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
 				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
@@ -384,7 +387,7 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_PROJECT);
 				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_SCORE_LIST);
 				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_BUDGET_LIST);
-				policyBehaviourFilter.disableBehaviour(ProjectModel.ASPECT_BUDGET);
+				policyBehaviourFilter.enableBehaviour(ProjectModel.ASPECT_BUDGET);
 			}
 
 			queueListItem(nodeRef);
