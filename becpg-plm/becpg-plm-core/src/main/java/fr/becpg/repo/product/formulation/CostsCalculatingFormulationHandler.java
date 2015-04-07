@@ -21,6 +21,7 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
 import fr.becpg.repo.data.hierarchicalList.Composite;
@@ -96,7 +97,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 
 		// no compo => no formulation
 		if (!formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE) && !formulatedProduct.hasPackagingListEl(EffectiveFilters.EFFECTIVE)
-				&& !formulatedProduct.hasProcessListEl(EffectiveFilters.EFFECTIVE)) {
+				&& !formulatedProduct.hasProcessListEl(EffectiveFilters.EFFECTIVE) || formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
 			logger.debug("no compo => no formulation");
 			return true;
 		}

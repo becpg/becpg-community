@@ -5979,7 +5979,7 @@
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden"></field>
 					<field id="bcpg:depthLevel" label="hidden"></field>
-					<field id="bcpg:nutListFormulatedValue"  label="hidden" read-only="true" />
+					<field id="bcpg:nutListFormulatedValue"  read-only="true" />
 					<field id="bcpg:nutListUnit" read-only="true"></field>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 					<field id="bcpg:nutListIsFormulated" label="hidden"/>
