@@ -7,6 +7,7 @@ if(isExternalUser(user)){
     widgetUtils.deleteObjectFromArray(model.jsonModel, "id", "HEADER_PEOPLE"); 
     widgetUtils.deleteObjectFromArray(model.jsonModel, "id", "HEADER_SEARCH"); 
     widgetUtils.deleteObjectFromArray(model.jsonModel, "id", "HEADER_TASKS");
+    widgetUtils.deleteObjectFromArray(model.jsonModel, "id", "HEADER_REPOSITORY");
 } else {
 
     var beCPGMenu = getOrCreateBeCPGMenu();
