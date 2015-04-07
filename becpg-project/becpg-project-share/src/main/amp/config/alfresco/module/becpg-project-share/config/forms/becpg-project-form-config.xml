@@ -519,7 +519,11 @@
 					<set id="mainInfo" appearance="bordered-panel"
 						label-id="becpg.forms.set.designation.label" />
 					<field id="pjt:tlTaskName" set="mainInfo"/>
-					<field id="cm:description" set="mainInfo"/>
+					<field id="cm:description" set="mainInfo">
+					    <control template="/org/alfresco/components/form/controls/richtext.ftl">
+							<control-param name="rows">10</control-param>
+						</control>
+					</field>
 					<field id="pjt:tlPrevTasks" set="mainInfo">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -630,7 +634,11 @@
 					<set id="mainInfo" appearance="bordered-panel"
 						label-id="becpg.forms.set.designation.label" />													
 					<field id="pjt:tlTaskName" set="mainInfo"/>
-					<field id="cm:description" set="mainInfo"/>
+					<field id="cm:description" set="mainInfo">
+					    <control template="/org/alfresco/components/form/controls/richtext.ftl">
+							<control-param name="rows">10</control-param>
+						</control>
+					</field>
 					<field id="pjt:tlPrevTasks" set="mainInfo">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">

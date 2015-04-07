@@ -250,9 +250,13 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	
 	protected void calculate(SimpleListDataItem newSimpleListDataItem, SimpleListDataItem slDataItem, Double qtyUsed, Double netQty){
 		Double origValue = newSimpleListDataItem.getValue() != null ? newSimpleListDataItem.getValue() : 0d;
+		if(isCharactFormulated(newSimpleListDataItem)){
+			origValue = 0d;
+		}
+		
 		Double value = slDataItem.getValue();
 		if(value != null){
-			newSimpleListDataItem.setValue(FormulationHelper.calculateValue(newSimpleListDataItem.getValue(), qtyUsed, slDataItem.getValue(), netQty));			
+			newSimpleListDataItem.setValue(FormulationHelper.calculateValue(origValue, qtyUsed, slDataItem.getValue(), netQty));			
 		}
 		else{
 			value = 0d;
