@@ -274,13 +274,15 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 					.createQuery()
 					.inPath(RepoConsts.PATH_SYSTEM + "/" + RepoConsts.PATH_PRODUCT_HIERARCHY + "/"
 							+ BeCPGModel.ASSOC_ENTITYLISTS.toPrefixString(namespaceService)).inType(BeCPGModel.TYPE_LINKED_VALUE)
-					.andPropEquals(BeCPGModel.PROP_LKV_VALUE, hierachyName);
+					.andPropQuery(BeCPGModel.PROP_LKV_VALUE, hierachyName);
 
 			if (propName.endsWith("productHierarchy1")) {
 				queryBuilder.andPropEquals(BeCPGModel.PROP_DEPTH_LEVEL, "1");
 			}
 			nodes = queryBuilder.list();
 		}
+		
+		
 		String ret = "";
 		if (nodes != null && !nodes.isEmpty()) {
 			for (NodeRef node : nodes) {
