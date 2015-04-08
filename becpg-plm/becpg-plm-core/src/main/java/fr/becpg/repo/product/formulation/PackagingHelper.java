@@ -16,6 +16,7 @@ import fr.becpg.model.PackModel;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
+import fr.becpg.repo.product.data.constraints.PackagingListUnit;
 import fr.becpg.repo.product.data.packaging.PackagingData;
 import fr.becpg.repo.product.data.packaging.VariantPackagingData;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
@@ -26,31 +27,30 @@ import fr.becpg.repo.variant.model.VariantData;
 public class PackagingHelper {
 
 	private static Log logger = LogFactory.getLog(PackagingHelper.class);
-	
+
 	@Autowired
 	private NodeService nodeService;
-	
+
 	@Autowired
 	protected AlfrescoRepository<ProductData> alfrescoRepository;
-	
-	public VariantPackagingData getDefaultVariantPackagingData(ProductData productData){		
-		PackagingData packagingData = getPackagingData(productData);		
+
+	public VariantPackagingData getDefaultVariantPackagingData(ProductData productData) {
+		PackagingData packagingData = getPackagingData(productData);
 		return packagingData.getVariants().get(getDefaultVariant(productData));
 	}
-	
-	
+
 	@SuppressWarnings("unchecked")
-	public PackagingData getPackagingData(ProductData productData){
-		PackagingData packagingData = new PackagingData(productData.getVariants());		
+	public PackagingData getPackagingData(ProductData productData) {
+		PackagingData packagingData = new PackagingData(productData.getVariants());
 		for (PackagingListDataItem dataItem : productData.getPackagingList(EffectiveFilters.EFFECTIVE)) {
 			loadPackagingItem(dataItem, packagingData);
-		}		
+		}
 		return packagingData;
 	}
-	
-	private NodeRef getDefaultVariant(ProductData productData){
+
+	private NodeRef getDefaultVariant(ProductData productData) {
 		NodeRef defaultVariantNodeRef = null;
-		if(productData.getVariants()!=null){
+		if (productData.getVariants() != null) {
 			for (VariantData variantData : productData.getVariants()) {
 				if (variantData.getIsDefaultVariant()) {
 					defaultVariantNodeRef = variantData.getNodeRef();
@@ -59,11 +59,11 @@ public class PackagingHelper {
 		}
 		return defaultVariantNodeRef;
 	}
-	
+
 	private void loadPackagingItem(PackagingListDataItem dataItem, PackagingData packagingData) {
 
 		if (nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_PACKAGINGKIT)) {
-			loadPackagingKit(dataItem, packagingData);			
+			loadPackagingKit(dataItem, packagingData);
 		} else {
 			loadPackaging(dataItem, packagingData, dataItem.getVariants());
 		}
@@ -73,19 +73,20 @@ public class PackagingHelper {
 		QName nodeType = nodeService.getType(dataItem.getProduct());
 
 		// Sum tare (don't take in account packagingKit)
-			if (dataItem.getPkgLevel() != null && !PLMModel.TYPE_PACKAGINGKIT.equals(nodeType)) {
+		if (dataItem.getPkgLevel() != null && !PLMModel.TYPE_PACKAGINGKIT.equals(nodeType)) {
 
-				BigDecimal tare = FormulationHelper.getTareInKg(dataItem, nodeService);
+			BigDecimal tare = FormulationHelper.getTareInKg(dataItem, nodeService);
 
-				if (dataItem.getPkgLevel().equals(PackagingLevel.Secondary)) {
-					
-					packagingData.addTareSecondary(currentVariants, tare);
-				} else if (dataItem.getPkgLevel().equals(PackagingLevel.Tertiary)) {
-					packagingData.addTareTertiary(currentVariants, tare);
-				}
+			if (PackagingLevel.Secondary.equals(dataItem.getPkgLevel())) {
+
+				packagingData.addTareSecondary(currentVariants, tare);
+			} else if (PackagingLevel.Tertiary.equals(dataItem.getPkgLevel())) {
+				packagingData.addTareTertiary(currentVariants, tare);
 			}
-		
-		if (nodeService.hasAspect(dataItem.getProduct(), PackModel.ASPECT_PALLET)) {
+		}
+
+		if (nodeService.hasAspect(dataItem.getProduct(), PackModel.ASPECT_PALLET) && PackagingLevel.Secondary.equals(dataItem.getPkgLevel())
+				&& PackagingListUnit.PP.equals(dataItem.getPackagingListUnit()) && PLMModel.TYPE_PACKAGINGKIT.equals(nodeType)) {
 			logger.debug("load pallet aspect ");
 
 			// product per box and boxes per pallet
@@ -97,7 +98,8 @@ public class PackagingHelper {
 			if (palletBoxesPerPallet != null) {
 				packagingData.setBoxesPerPallet(currentVariants, palletBoxesPerPallet);
 			}
-			packagingData.setPalletNumberOnGround(currentVariants, (Integer)nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_PALLET_NUMBER_ON_GROUND));
+			packagingData.setPalletNumberOnGround(currentVariants,
+					(Integer) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_PALLET_NUMBER_ON_GROUND));
 		}
 	}
 

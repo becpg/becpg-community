@@ -1412,6 +1412,11 @@
 					<mandatory enforced="true">true</mandatory>
 					<default>false</default>
 				</property>
+				<property name="bcpg:ingListIsSupport">
+					<type>d:boolean</type>
+					<mandatory enforced="true">true</mandatory>
+					<default>false</default>
+				</property>
 			</properties>
 			<associations>
 				<association name="bcpg:ingListIng">

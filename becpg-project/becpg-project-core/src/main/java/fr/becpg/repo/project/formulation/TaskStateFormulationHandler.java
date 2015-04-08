@@ -29,6 +29,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DeliverableUrl;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
+import fr.becpg.repo.project.ProjectActivityService;
 import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.ProjectWorkflowService;
 import fr.becpg.repo.project.data.ProjectData;
@@ -49,6 +50,8 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 	private ProjectWorkflowService projectWorkflowService;
 
 	private ProjectService projectService;
+	
+	private ProjectActivityService projectActivityService;
 
 	public void setProjectWorkflowService(ProjectWorkflowService projectWorkflowService) {
 		this.projectWorkflowService = projectWorkflowService;
@@ -56,6 +59,10 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 
 	public void setProjectService(ProjectService projectService) {
 		this.projectService = projectService;
+	}
+
+	public void setProjectActivityService(ProjectActivityService projectActivityService) {
+		this.projectActivityService = projectActivityService;
 	}
 
 	@Override
@@ -143,7 +150,7 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 					if (nextTask.getPrevTasks().isEmpty()) {
 						if (nextTask.getStart()!=null &&  nextTask.getStart().before(new Date())) {
 							logger.debug("Start first task.");
-							nextTask.setTaskState(TaskState.InProgress);
+							ProjectHelper.setTaskState(nextTask,TaskState.InProgress, projectActivityService);
 
 						}
 					} else {
@@ -151,12 +158,12 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 						if (ProjectHelper.areTasksDone(projectData, nextTask.getPrevTasks())) {
 							if (nextTask.getManualDate() == null) {
 								logger.debug("Start task since previous are done");
-								nextTask.setTaskState(TaskState.InProgress);
+								ProjectHelper.setTaskState(nextTask,TaskState.InProgress, projectActivityService);
 							}
 							// manual date -> we wait the date
 							else if (nextTask.getStart()!=null && nextTask.getStart().before(new Date())) {
 								logger.debug("Start task since we are after planned startDate. start planned: " + nextTask.getStart());
-								nextTask.setTaskState(TaskState.InProgress);
+								ProjectHelper.setTaskState(nextTask,TaskState.InProgress, projectActivityService);
 							}
 						}
 					}
@@ -201,7 +208,7 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 					if (shouldRefused) {
 						logger.debug("Reopen path : "+nextTask.getRefusedTask().getTaskName());
 						
-						ProjectHelper.reOpenPath(projectData, nextTask, nextTask.getRefusedTask());
+						ProjectHelper.reOpenPath(projectData, nextTask, nextTask.getRefusedTask(), projectActivityService);
 						
 						//Revisit tasks 
 						reformulate = true;
@@ -302,16 +309,18 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 				}
 			}
 			if (hasTaskInProgress) {
-				parent.setTaskState(TaskState.InProgress);
+				ProjectHelper.setTaskState(parent,TaskState.InProgress, projectActivityService);
 			} else if (allTasksPlanned) {
-				parent.setTaskState(TaskState.Planned);
+				ProjectHelper.setTaskState(parent,TaskState.Planned, projectActivityService);
 			} else {
-				parent.setTaskState(TaskState.Completed);
+				ProjectHelper.setTaskState(parent,TaskState.Completed, projectActivityService);
 			}
 			parent.setCompletionPercent(completionPerc/tasks.size());
 			
 		}
 	}
+
+	
 
 	private void calculateProjectLegends(ProjectData projectData) {
 

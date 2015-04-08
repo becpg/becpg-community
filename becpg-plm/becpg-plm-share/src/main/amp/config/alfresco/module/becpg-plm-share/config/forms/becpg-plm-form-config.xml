@@ -5754,6 +5754,7 @@
 					<show id="bcpg:ingListIsGMO" />
 					<show id="bcpg:ingListIsIonized" />
 					<show id="bcpg:ingListIsProcessingAid" />
+					<show id="bcpg:ingListIsSupport" />
 					<show id="bcpg:ingListGeoOrigin" />
 					<show id="bcpg:ingListGeoTransfo" />
 					<show id="bcpg:ingListBioOrigin" />
@@ -5796,6 +5797,7 @@
 					<show id="bcpg:ingListIsGMO" />
 					<show id="bcpg:ingListIsIonized" />
 					<show id="bcpg:ingListIsProcessingAid" />
+					<show id="bcpg:ingListIsSupport" />
 					<show id="bcpg:ingListGeoOrigin" />
 					<show id="bcpg:ingListGeoTransfo" />
 					<show id="bcpg:ingListBioOrigin" />
@@ -5823,6 +5825,7 @@
 					<show id="bcpg:ingListIsGMO" />
 					<show id="bcpg:ingListIsIonized" />
 					<show id="bcpg:ingListIsProcessingAid" />
+					<show id="bcpg:ingListIsSupport" />
 					<show id="bcpg:ingListGeoOrigin" />
 					<show id="bcpg:ingListGeoTransfo" />
 					<show id="bcpg:ingListBioOrigin" />
