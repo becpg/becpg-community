@@ -120,6 +120,7 @@ public class NutListValuePatch extends AbstractBeCPGPatch {
 						NodeRef entityNodeRef = entityListDAO.getEntity(dataListNodeRef);
 						NodeRef listContainer = entityListDAO.getListContainer(entityNodeRef);
 						if (listContainer != null && entityListDAO.getList(listContainer, PLMModel.TYPE_COMPOLIST) != null) {
+							nodeService.setProperty(dataListNodeRef, PLMModel.PROP_NUTLIST_FORMULATED_VALUE, nodeService.getProperty(dataListNodeRef, PLMModel.PROP_NUTLIST_VALUE));
 							nodeService.setProperty(dataListNodeRef, PLMModel.PROP_NUTLIST_VALUE, null);
 						}
 
