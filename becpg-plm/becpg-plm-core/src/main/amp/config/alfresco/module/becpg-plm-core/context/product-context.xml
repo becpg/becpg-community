@@ -63,6 +63,10 @@
 		<property name="associationService" ref="associationService"/>
 	</bean>
 	
+	<bean id="dynamicCharactListPolicy" class="fr.becpg.repo.product.policy.DynamicCharactListPolicy"
+		parent="abstractBeCPGPolicy" depends-on="bcpg.plm.dictionaryBootstrap">
+	</bean>
+	
 	<bean id="productPolicy" class="fr.becpg.repo.product.policy.ProductPolicy"
 		parent="abstractBeCPGPolicy" depends-on="bcpg.plm.dictionaryBootstrap">
 	</bean>

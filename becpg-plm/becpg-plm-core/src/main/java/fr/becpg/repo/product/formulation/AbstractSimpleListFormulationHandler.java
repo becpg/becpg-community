@@ -40,7 +40,6 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
-import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
@@ -109,6 +108,8 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 					sl.setValue(null);
 					sl.setMini(null);
 					sl.setMaxi(null);
+					sl.setPreviousValue(null);
+					sl.setFutureValue(null);
 					
 					// add detailable aspect
 					if(!sl.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM)){
@@ -269,7 +270,10 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		Double maxiValue = slDataItem.getMaxi() != null ? slDataItem.getMaxi() : value;
 		if(maxiValue > value || origMaxi > origValue){
 			newSimpleListDataItem.setMaxi(FormulationHelper.calculateValue(newSimpleListDataItem.getMaxi(), qtyUsed, maxiValue, netQty));
-		}					
+		}
+		
+		newSimpleListDataItem.setPreviousValue(FormulationHelper.calculateValue(newSimpleListDataItem.getPreviousValue(), qtyUsed, slDataItem.getPreviousValue(), netQty));
+		newSimpleListDataItem.setFutureValue(FormulationHelper.calculateValue(newSimpleListDataItem.getFutureValue(), qtyUsed, slDataItem.getFutureValue(), netQty));
 		
 		if(logger.isDebugEnabled()){
 			logger.debug("valueToAdd = qtyUsed * value : " + qtyUsed + " * " + slDataItem.getValue());
@@ -277,6 +281,8 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 				logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), ContentModel.PROP_NAME) + " - newValue : " + newSimpleListDataItem.getValue());
 				logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), ContentModel.PROP_NAME) + " - newMini : " + newSimpleListDataItem.getMini());
 				logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), ContentModel.PROP_NAME) + " - newMaxi : " + newSimpleListDataItem.getMaxi());
+				logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), ContentModel.PROP_NAME) + " - previousValue : " + newSimpleListDataItem.getPreviousValue());
+				logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), ContentModel.PROP_NAME) + " - futureValue : " + newSimpleListDataItem.getFutureValue());
 			}
 		}
 	}

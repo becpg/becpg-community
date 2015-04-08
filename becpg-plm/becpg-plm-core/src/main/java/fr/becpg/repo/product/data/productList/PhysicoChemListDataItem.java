@@ -105,6 +105,30 @@ public class PhysicoChemListDataItem extends AbstractManualDataItem implements S
 		this.physicoChem = physicoChem;
 	}
 	
+	@Override
+	public Double getPreviousValue() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setPreviousValue(Double previousValue) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Double getFutureValue() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setFutureValue(Double futureValue) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	/**
 	 * Instantiates a new physico chem list data item.
 	 */
@@ -187,8 +211,5 @@ public class PhysicoChemListDataItem extends AbstractManualDataItem implements S
 	public String toString() {
 		return "PhysicoChemListDataItem [value=" + value + ", unit=" + unit + ", mini=" + mini + ", maxi=" + maxi + ", physicoChem=" + physicoChem + ", isManual=" + isManual
 				+ ", nodeRef=" + nodeRef + ", name=" + name + "]";
-	}
-
-
-	
+	}	
 }
