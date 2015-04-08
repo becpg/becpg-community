@@ -681,7 +681,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 				List<AggregateRule> aggregateRules = getAggregateRules(component, composite.getChildren(), labelingFormulaContext);
 
-				if (aggregateRules != null && logger.isTraceEnabled()) {
+				if (aggregateRules != null && !aggregateRules.isEmpty() && logger.isTraceEnabled()) {
 					logger.trace(aggregateRules.toString() + " match ");
 				}
 
@@ -833,7 +833,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			}
 		}
 
-		if (!(DeclarationType.Declare.equals(declarationType) && (productData instanceof LocalSemiFinishedProductData || isMultiLevel))) {
+		if (!(DeclarationType.Declare.equals(declarationType) && aggregateRules.isEmpty()
+				&& (productData instanceof LocalSemiFinishedProductData || isMultiLevel))) {
 			// Update parent qty
 			if (qty != null) {
 				parent.setQtyRMUsed(parent.getQtyRMUsed() + qty);
