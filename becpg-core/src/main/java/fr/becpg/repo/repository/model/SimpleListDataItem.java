@@ -39,4 +39,12 @@ public interface SimpleListDataItem extends IManualDataItem, SimpleCharactDataIt
 	public String getUnit();
 
 	public Double getFormulatedValue();
+	
+	public Double getPreviousValue();
+	
+	public void setPreviousValue(Double previousValue);
+	
+	public Double getFutureValue();
+	
+	public void setFutureValue(Double futureValue);
 }

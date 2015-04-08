@@ -156,10 +156,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 					String formula = (String) nodeService.getProperty(costListDataItem.getCost(), PLMModel.PROP_COST_FORMULA);
 					if (formula != null && formula.length() > 0) {
 						try {
-							costListDataItem.setIsFormulated(true);
-							costListDataItem.setMaxi(null);
-							costListDataItem.setMini(null);
-							costListDataItem.setValue(null);
+							costListDataItem.setIsFormulated(true);							
 							formula = SpelHelper.formatFormula(formula);
 
 							Expression exp = parser.parseExpression(formula);
@@ -174,6 +171,8 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 										exp = parser.parseExpression(formula.replace(".value", ".maxi"));
 										costListDataItem.setMaxi((Double) exp.getValue(context));
 									} catch (Exception e) {
+										costListDataItem.setMaxi(null);
+										costListDataItem.setMini(null);
 										if (logger.isDebugEnabled()) {
 											logger.debug("Error in formula :" + formula, e);
 										}
@@ -181,11 +180,13 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 								}
 
 							} else {
+								costListDataItem.setValue(null);
 								costListDataItem.setErrorLog(I18NUtil.getMessage("message.formulate.formula.incorrect.type.double",
 										Locale.getDefault()));
 							}
 
 						} catch (Exception e) {
+							costListDataItem.setValue(null);
 							costListDataItem.setErrorLog(e.getLocalizedMessage());
 							if (logger.isDebugEnabled()) {
 								logger.debug("Error in formula :" + SpelHelper.formatFormula(formula), e);
@@ -310,26 +311,6 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				visitPart(compoListDataItem.getProduct(), costList, qty, null, netQty, mandatoryCharacts, null);
 			}
 		}
-	}
-	
-	@Override
-	protected void calculate(SimpleListDataItem newSimpleListDataItem, SimpleListDataItem slDataItem, Double qtyUsed, Double netQty){
-		super.calculate(newSimpleListDataItem, slDataItem, qtyUsed, netQty);
-		
-		if(slDataItem instanceof CostListDataItem && newSimpleListDataItem instanceof CostListDataItem){
-			CostListDataItem nclDataItem = (CostListDataItem)newSimpleListDataItem;
-			CostListDataItem clDataItem = (CostListDataItem)slDataItem; 
-			nclDataItem.setPreviousValue(FormulationHelper.calculateValue(nclDataItem.getPreviousValue(), qtyUsed, clDataItem.getPreviousValue(), netQty));
-			nclDataItem.setFutureValue(FormulationHelper.calculateValue(nclDataItem.getFutureValue(), qtyUsed, clDataItem.getFutureValue(), netQty));
-			
-			if(logger.isDebugEnabled()){
-				logger.debug("valueToAdd = qtyUsed * value : " + qtyUsed + " * " + slDataItem.getValue());
-				if(newSimpleListDataItem.getNodeRef()!=null){
-					logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), ContentModel.PROP_NAME) + " - previousValue : " + nclDataItem.getPreviousValue());
-					logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), ContentModel.PROP_NAME) + " - futureValue : " + nclDataItem.getFutureValue());
-				}
-			}
-		}		
 	}
 
 	@Override
@@ -508,14 +489,6 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 						}
 						isCalculated = true;
 					}
-					else if(templateCostList.getUnit().endsWith("PalGround")){
-						if(formulatedProduct.getDefaultVariantPackagingData() != null 
-								&& formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() != null
-								&& formulatedProduct.getDefaultVariantPackagingData().getPalletNumberOnGround() != null){
-							calculateValues(templateCostList, costList, true, (double)formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() * formulatedProduct.getDefaultVariantPackagingData().getBoxesPerPallet() * formulatedProduct.getDefaultVariantPackagingData().getBoxesPerPallet() * formulatedProduct.getDefaultVariantPackagingData().getPalletNumberOnGround());
-						}					
-						isCalculated = true;
-					}
 				}
 				else if(FormulationHelper.isProductUnitKg(formulatedProduct.getUnit()) || FormulationHelper.isProductUnitLiter(formulatedProduct.getUnit())){
 					if(templateCostList.getUnit().endsWith("P")){
@@ -528,15 +501,6 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 								&& formulatedProduct.getDefaultVariantPackagingData().getBoxesPerPallet() != null){
 							calculateValues(templateCostList, costList, true, (double)formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() * formulatedProduct.getDefaultVariantPackagingData().getBoxesPerPallet() * FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d));							
 						}						
-						isCalculated = true;
-					}
-					else if(templateCostList.getUnit().endsWith("PalGround")){
-						if(formulatedProduct.getDefaultVariantPackagingData() != null 
-							&& formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() != null 
-							&& formulatedProduct.getDefaultVariantPackagingData().getBoxesPerPallet() != null 
-							&& formulatedProduct.getDefaultVariantPackagingData().getPalletNumberOnGround() != null){
-							calculateValues(templateCostList, costList, true, (double)formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() * formulatedProduct.getDefaultVariantPackagingData().getBoxesPerPallet() * FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d) * formulatedProduct.getDefaultVariantPackagingData().getPalletNumberOnGround());
-						}
 						isCalculated = true;
 					}
 				}				
@@ -691,7 +655,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 					qtyComponent = getCompoListQty(formulatedProduct, c.getComponentNodeRef(), formulatedProduct.getRecipeQtyUsed());					
 				}
 				for(CostListDataItem c2 : componentData.getCostList()){
-					if(c2.getCost().equals(c.getParent().getCost())){						
+					if(c2.getCost().equals(c.getParent().getCost()) && c.getSimulatedValue() != null){						
 						if(logger.isDebugEnabled()){
 							logger.debug("add simulationCost " + "c2 value " + c2.getValue() + "c simulated value " + c.getSimulatedValue() + " qty component " + qtyComponent + " netQty " + netQty);
 						}			

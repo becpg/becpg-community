@@ -101,8 +101,6 @@ public class FormulationCostsTest extends AbstractFinishedProductTest {
 				plants.add(plant2);
 				costList.add(new CostListDataItem(null, 4000d, "€/Pal", 4400d, cost3, false, plants, null, null));
 				templateFinishedProduct.setCostList(costList);
-				costList.add(new CostListDataItem(null, 2000d, "€/PalGround", 2400d, cost5, false));
-				templateFinishedProduct.setCostList(costList);
 				ProductData entityTpl = alfrescoRepository.create(getTestFolderNodeRef(), templateFinishedProduct);
 				nodeService.addAspect(entityTpl.getNodeRef(), BeCPGModel.ASPECT_ENTITY_TPL, null);
 				
@@ -145,7 +143,7 @@ public class FormulationCostsTest extends AbstractFinishedProductTest {
 				productService.formulate(finishedProductNodeRef);
 				ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
 				
-				assertEquals(6, formulatedProduct.getCostList().size());
+				assertEquals(5, formulatedProduct.getCostList().size());
 				assertEquals(TareUnit.g, formulatedProduct.getTareUnit());
 				
 				for(CostListDataItem c : formulatedProduct.getCostList()){
@@ -174,12 +172,7 @@ public class FormulationCostsTest extends AbstractFinishedProductTest {
 					else if(c.getCost().equals(cost4)){
 						assertEquals(1d, c.getValue());
 						assertEquals(3d, c.getMaxi());
-					}
-					else if(c.getCost().equals(cost5)){
-						// 1000 finished product on pallet (2 pallets on ground)
-						assertEquals(0.5d, c.getValue());
-						assertEquals(0.6d, c.getMaxi());
-					}
+					}		
 					else{
 						assertFalse(true);
 					}
@@ -198,10 +191,7 @@ public class FormulationCostsTest extends AbstractFinishedProductTest {
 					}
 					else if(c.getCost().equals(cost4)){
 						c.setValue(20d);
-					}
-					else if(c.getCost().equals(cost5)){
-						c.setValue(20d);
-					}
+					}					
 				}
 				
 				alfrescoRepository.save(formulatedProduct);
@@ -235,12 +225,7 @@ public class FormulationCostsTest extends AbstractFinishedProductTest {
 					else if(c.getCost().equals(cost4)){
 						assertEquals(1d, c.getValue());
 						assertEquals(3d, c.getMaxi());
-					}
-					else if(c.getCost().equals(cost5)){
-						// 1000 finished product on pallet (2 pallets on ground)
-						assertEquals(0.5d, c.getValue());
-						assertEquals(0.6d, c.getMaxi());
-					}
+					}					
 					else{
 						assertFalse(true);
 					}
