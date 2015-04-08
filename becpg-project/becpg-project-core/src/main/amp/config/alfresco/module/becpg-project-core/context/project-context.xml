@@ -92,7 +92,8 @@
 				<bean class="fr.becpg.repo.project.formulation.ScoreFormulationHandler" />
 				<bean class="fr.becpg.repo.project.formulation.TaskStateFormulationHandler">
 					<property name="projectWorkflowService" ref="projectWorkflowService" />
-					<property name="projectService" ref="projectService"/>
+					<property name="projectService" ref="projectService" />
+					<property name="projectActivityService" ref="projectActivityService" />
 				</bean>
 			</list>
 		</property>
