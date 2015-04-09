@@ -98,10 +98,12 @@ public class NutListValuePatch extends AbstractBeCPGPatch {
 
 			public void afterProcess() throws Throwable {
 				ruleService.disableRules();
+				policyBehaviourFilter.disableBehaviour();
 			}
 
 			public void beforeProcess() throws Throwable {
 				ruleService.enableRules();
+				policyBehaviourFilter.enableBehaviour();
 			}
 
 			public String getIdentifier(NodeRef entry) {
@@ -111,7 +113,7 @@ public class NutListValuePatch extends AbstractBeCPGPatch {
 			public void process(NodeRef dataListNodeRef) throws Throwable {
 
 				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
-				policyBehaviourFilter.disableBehaviour();
+				
 
 				if (nodeService.exists(dataListNodeRef) && dataListNodeRef.getStoreRef().getProtocol().equals(StoreRef.PROTOCOL_WORKSPACE)) {
 					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();

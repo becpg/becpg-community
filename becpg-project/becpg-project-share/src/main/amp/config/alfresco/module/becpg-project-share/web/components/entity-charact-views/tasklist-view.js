@@ -37,10 +37,6 @@ var g; // uggly gantt var
 
         YAHOO.Bubbling.on("viewModeChange", this.onViewModeChange, this);
         
-        YAHOO.Bubbling.on("dataItemUpdated", this.initGantt, this);
-        YAHOO.Bubbling.on("dataItemsDeleted", this.initGantt, this);
-        YAHOO.Bubbling.on("dataItemCreated", this.initGantt, this);
-
         return this;
     };
 
@@ -210,13 +206,13 @@ var g; // uggly gantt var
                                 }
 
                             };
-                            this.cache = [];
+                          
                             this.extraAfterDataGridUpdate.push(fnDrawGantt);
 
                         },
                         
                         refreshGantt : function TaskListView_refreshGantt(){
-
+                            this.cache = [];
                             g.Draw();
                             g.DrawDependencies();
                         }
