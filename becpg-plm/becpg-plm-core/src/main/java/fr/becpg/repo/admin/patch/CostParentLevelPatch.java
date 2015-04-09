@@ -45,7 +45,7 @@ public class CostParentLevelPatch extends AbstractBeCPGPatch {
 
 	private final int batchThreads = 3;
 	private final int batchSize = 40;
-	private final long count = batchThreads * batchSize;
+	private final long count = 10000;
 
 	@Override
 	protected String applyInternal() throws Exception {
@@ -98,13 +98,11 @@ public class CostParentLevelPatch extends AbstractBeCPGPatch {
 			BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
 
 				public void afterProcess() throws Throwable {
-					ruleService.disableRules();
-					policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
+					ruleService.enableRules();									
 				}
 
 				public void beforeProcess() throws Throwable {
-					ruleService.enableRules();
-					policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
+					ruleService.disableRules();					
 				}
 
 				public String getIdentifier(NodeRef entry) {
@@ -116,9 +114,15 @@ public class CostParentLevelPatch extends AbstractBeCPGPatch {
 					if (nodeService.exists(dataListNodeRef)) {
 						AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 						if(!nodeService.hasAspect(dataListNodeRef, BeCPGModel.ASPECT_DEPTH_LEVEL)){
-							Map<QName, Serializable> properties = new HashMap<>();
-							properties.put(BeCPGModel.PROP_DEPTH_LEVEL, 1);
-							nodeService.addAspect(dataListNodeRef, BeCPGModel.ASPECT_DEPTH_LEVEL, properties);
+							try{
+								policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
+								Map<QName, Serializable> properties = new HashMap<>();
+								properties.put(BeCPGModel.PROP_DEPTH_LEVEL, 1);
+								nodeService.addAspect(dataListNodeRef, BeCPGModel.ASPECT_DEPTH_LEVEL, properties);
+							}
+							finally{
+								policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
+							}							
 						}
 					
 						
