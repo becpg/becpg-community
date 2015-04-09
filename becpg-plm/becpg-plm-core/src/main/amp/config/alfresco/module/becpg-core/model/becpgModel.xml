@@ -266,6 +266,7 @@
 		<constraint name="bcpg:physicoChemUnit" type="LIST">
 			<parameter name="allowedValues">
 				<list>
+					<value>-</value>
 					<value>L</value>
 					<value>mL</value>
 					<value>kg</value>
@@ -273,20 +274,32 @@
 					<value>m</value>
 					<value>cm</value>
 					<value>mm</value>
+					<value>µm</value>
 					<value>m2</value>
 					<value>m3</value>
 					<value>P</value>
 					<value>%</value>
 					<value>°C</value>
-					<value>-</value>
+					<value>K</value>
+					<value>°Cent</value>
+					<value>J</value>
+					<value>eV</value>
+					<value>pg/kg</value>
+					<value>µg/kg</value>
+					<value>mg/kg</value>
+					<value>g/kg</value>
 					<value>meqO2/kg</value>
 					<value>g/L</value>
+					<value>g/mL</value>
 					<value>mPa.s</value>
+					<value>Pa.s</value>
 					<value>s</value>
 					<value>min</value>
 					<value>°B</value>
 					<value>mosm/L</value>
 					<value>meq/kg</value>
+					<value>mol/L</value>
+					<value>/25g</value>		
 				</list>
 			</parameter>
 		</constraint>
