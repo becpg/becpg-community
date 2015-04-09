@@ -132,10 +132,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 					String formula = (String) nodeService.getProperty(nutListDataItem.getNut(), PLMModel.PROP_NUT_FORMULA);
 					if (formula != null && formula.length() > 0) {
 						try {
-							nutListDataItem.setIsFormulated(true);
-							nutListDataItem.setMaxi(null);
-							nutListDataItem.setMini(null);
-							nutListDataItem.setValue(null);
+							nutListDataItem.setIsFormulated(true);							
 							formula = SpelHelper.formatFormula(formula);
 
 							Expression exp = parser.parseExpression(formula);
@@ -150,6 +147,8 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 										exp = parser.parseExpression(formula.replace(".value", ".maxi"));
 										nutListDataItem.setMaxi((Double) exp.getValue(context));
 									} catch (Exception e) {
+										nutListDataItem.setMaxi(null);
+										nutListDataItem.setMini(null);
 										if (logger.isDebugEnabled()) {
 											logger.debug("Error in formula :" + formula, e);
 										}
@@ -157,11 +156,13 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 								}
 
 							} else {
+								nutListDataItem.setValue(null);
 								nutListDataItem.setErrorLog(I18NUtil.getMessage("message.formulate.formula.incorrect.type.double",
 										Locale.getDefault()));
 							}
 
 						} catch (Exception e) {
+							nutListDataItem.setValue(null);
 							nutListDataItem.setErrorLog(e.getLocalizedMessage());
 							if (logger.isDebugEnabled()) {
 								logger.debug("Error in formula :" + SpelHelper.formatFormula(formula), e);

@@ -99,20 +99,19 @@ public class CostParentLevelPatch extends AbstractBeCPGPatch {
 
 				public void afterProcess() throws Throwable {
 					ruleService.disableRules();
+					policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
 				}
 
 				public void beforeProcess() throws Throwable {
 					ruleService.enableRules();
+					policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
 				}
 
 				public String getIdentifier(NodeRef entry) {
 					return entry.toString();
 				}
 
-				public void process(NodeRef dataListNodeRef) throws Throwable {
-					
-					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
-					policyBehaviourFilter.disableBehaviour();
+				public void process(NodeRef dataListNodeRef) throws Throwable {									
 					
 					if (nodeService.exists(dataListNodeRef)) {
 						AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
