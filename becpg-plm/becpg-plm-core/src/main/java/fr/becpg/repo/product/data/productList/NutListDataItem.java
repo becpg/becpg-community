@@ -201,6 +201,29 @@ public class NutListDataItem extends AbstractManualDataItem  implements SimpleLi
 		this.errorLog = errorLog;
 	}
 
+	@Override
+	public Double getPreviousValue() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setPreviousValue(Double previousValue) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Double getFutureValue() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setFutureValue(Double futureValue) {
+		// TODO Auto-generated method stub
+		
+	}
 
 	/**
 	 * Instantiates a new nut list data item.
