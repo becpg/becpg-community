@@ -91,6 +91,7 @@ public class PlmRepoConsts {
 	public static final String PATH_PRODUCT_REPORTTEMPLATES = "ProductReportTemplates";
 	public static final String PATH_QUALITY_REPORTTEMPLATES = "QualityReportTemplates";
 	public static final String PATH_REPORTS_EXPORT_SEARCH_PRODUCTS = "ExportProducts";
+	public static final String PATH_REPORTS_EXPORT_SEARCH_RAWMATERIAL_INGLIST = "ExportRawMaterialIngList";
 	public static final String PATH_REPORTS_EXPORT_SEARCH_NON_CONFORMITIES = "ExportNCSynthesis";
 	public static final String PATH_REPORTS_ECO = "ECOReports";
 	

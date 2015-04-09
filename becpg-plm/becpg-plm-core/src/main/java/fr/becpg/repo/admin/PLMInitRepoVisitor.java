@@ -85,7 +85,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	private static final String EXPORT_PRODUCTS_REPORT_XMLFILE_PATH = "beCPG/birt/exportsearch/product/ExportSearchQuery.xml";
 	private static final String EXPORT_NC_REPORT_RPTFILE_PATH = "beCPG/birt/exportsearch/nonconformity/NonConformitySynthesis.rptdesign";
 	private static final String EXPORT_NC_REPORT_XMLFILE_PATH = "beCPG/birt/exportsearch/nonconformity/ExportSearchQuery.xml";
-
+	private static final String EXPORT_RAWMATERIAL_INGLIST_XLSX_PATH = "beCPG/birt/exportsearch/product/ExportRawMaterialIngList.xlsx";
+	
 	@Autowired
 	private PermissionService permissionService;
 
@@ -729,9 +730,14 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			NodeRef exportSearchProductsNodeRef = visitFolder(exportSearchNodeRef, PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_PRODUCTS);
 			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
 					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_PRODUCTS), EXPORT_PRODUCTS_REPORT_RPTFILE_PATH,
-					ReportType.ExportSearch, ReportFormat.XLSX, PLMModel.TYPE_PRODUCT, false, true, false);
+					ReportType.ExportSearch, ReportFormat.XLSX, PLMModel.TYPE_PRODUCT, false, false, false);
 
 			reportTplService.createTplRessource(exportSearchProductsNodeRef, EXPORT_PRODUCTS_REPORT_XMLFILE_PATH, false);
+			
+			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
+					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_RAWMATERIAL_INGLIST), EXPORT_RAWMATERIAL_INGLIST_XLSX_PATH,
+					ReportType.ExportSearch, ReportFormat.XLSX, PLMModel.TYPE_RAWMATERIAL, false, false, false);
+			
 		} catch (IOException e) {
 			logger.error("Failed to create export search report tpl.", e);
 		}
