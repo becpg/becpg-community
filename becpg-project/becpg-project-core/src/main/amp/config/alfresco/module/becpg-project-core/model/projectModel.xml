@@ -353,7 +353,6 @@
 				</property>
 				<property name="pjt:tlTaskDescription">
 					<type>d:text</type>
-					<mandatory>true</mandatory>
 				</property>
 				<property name="pjt:tlIsMilestone">
 					<type>d:boolean</type>
@@ -950,7 +949,5 @@
 				</association>
 			</associations>
 		</aspect>
-
-
 	</aspects>
 </model>
