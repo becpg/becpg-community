@@ -273,7 +273,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder
 					.createQuery()
 					.inPath(RepoConsts.PATH_SYSTEM + "/" + RepoConsts.PATH_PRODUCT_HIERARCHY + "/"
-							+ BeCPGModel.ASSOC_ENTITYLISTS.toPrefixString(namespaceService)).inType(BeCPGModel.TYPE_LINKED_VALUE)
+							+ BeCPGModel.ASSOC_ENTITYLISTS.toPrefixString(namespaceService)+"/").inType(BeCPGModel.TYPE_LINKED_VALUE)
 					.andPropQuery(BeCPGModel.PROP_LKV_VALUE, hierachyName);
 
 			if (propName.endsWith("productHierarchy1")) {
