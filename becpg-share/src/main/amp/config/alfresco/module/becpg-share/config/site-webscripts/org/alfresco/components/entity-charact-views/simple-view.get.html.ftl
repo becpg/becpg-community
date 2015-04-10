@@ -18,7 +18,7 @@
 			      sortable : true,
 			      sortUrl :  Alfresco.constants.PROXY_URI+ "becpg/entity/datalists/sort/node",
 			      itemType : "${args.itemType}",
-			      saveFieldUrl :  Alfresco.constants.PROXY_URI+ "alfresco/becpg/bulkedit/save",
+			      saveFieldUrl :  Alfresco.constants.PROXY_URI+ "becpg/bulkedit/save",
 			      hiddenColumns : ["prop_bcpg_depthLevel"],
 			      useHistoryManager : false
 			   }).setMessages(${messages});
