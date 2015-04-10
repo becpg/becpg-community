@@ -272,10 +272,16 @@ public class DataListFilter {
 		if(!isSimpleItem()){
 			if(parentNodeRef!=null) {
 				queryBuilder.parent(parentNodeRef);	
-			} else if(!isRepo && !DataListFilter.NODE_PATH_FILTER.equals(filterId)) {
-				queryBuilder.inSite(siteId, containerId);
-			}
-			queryBuilder.excludeDefaults();
+				if(isAllFilter()){
+				  queryBuilder.inDB();
+				}
+			} else {
+				if(!isRepo && !DataListFilter.NODE_PATH_FILTER.equals(filterId)) {
+					queryBuilder.inSite(siteId, containerId);
+				}
+				 queryBuilder.excludeDefaults();
+			} 
+			
 			queryBuilder.addSort(sortMap);
 		} else {
 			//Force DB Mode
