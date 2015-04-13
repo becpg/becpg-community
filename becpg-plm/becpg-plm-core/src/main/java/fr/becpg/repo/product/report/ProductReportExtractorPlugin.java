@@ -315,6 +315,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		Element dataListsElt = null;
 
 		Element partElt = processListElt.addElement(MPMModel.TYPE_PROCESSLIST.getLocalName());
+		loadProductData(dataItem.getProduct(), partElt);
 		loadDataListItemAttributes(dataItem, partElt);
 		if (dataItem.getResource() != null && nodeService.exists(dataItem.getResource())) {
 			dataListsElt = loadResourceParams(dataItem.getResource(), partElt);

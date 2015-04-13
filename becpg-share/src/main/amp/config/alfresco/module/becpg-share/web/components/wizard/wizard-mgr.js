@@ -282,7 +282,7 @@
                                                 		"&formId={formId}" +
                                                 		"&itemId={itemId}" +
                                                 		"&itemKind={itemKind}" + 
-                                                		"&mode={mode}&submitType=json&&showCancelButton=false&showSubmitButton=true",
+                                                		"&mode={mode}&submitType=json&showCancelButton=false&showSubmitButton=true",
                                                 {
                                                     mode:  (step.nodeRef != null && step.nodeRef.length > 0) ? "edit" : "create",
                                                     itemKind : (step.nodeRef != null && step.nodeRef.length > 0) ?"node" : "type",

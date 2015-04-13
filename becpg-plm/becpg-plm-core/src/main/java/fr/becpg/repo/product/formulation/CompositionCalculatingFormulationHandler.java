@@ -104,8 +104,13 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		if (formulatedProduct instanceof RawMaterialData) {
 			calculateAttributesOfGenericRawMaterial((RawMaterialData) formulatedProduct, compositeAll);
 		} else {
-			if (netVolume != null) {
-				formulatedProduct.setDensity(FormulationHelper.getNetWeight(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT) / netVolume);
+			Double vol = netVolume != null ? netVolume : volumeUsed;
+			Double weight = netWeight != null ? netWeight : qtyUsed;
+			if (weight != null && weight != 0d && vol != null && vol != 0d) {
+				formulatedProduct.setDensity(weight / vol);
+			}
+			else{
+				formulatedProduct.setDensity(null);
 			}
 		}
 
