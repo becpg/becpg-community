@@ -229,20 +229,16 @@
 
 
 		<aspect name="pack:sizeAspect">
-			<title>Emballage - Dimensions</title>
 			<properties>
 				<property name="pack:length">
-					<title>Longueur extérieur (mm)</title>
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 				</property>
 				<property name="pack:width">
-					<title>Largeur extérieur (mm)</title>
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 				</property>
 				<property name="pack:height">
-					<title>Hauteur extérieur (mm)</title>
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 				</property>
@@ -260,7 +256,6 @@
 			</properties>
 			<associations>
 				<association name="pack:labelingLabelingTemplate">
-					<title>Marquage</title>
 					<source>
 						<mandatory>false</mandatory>
 						<many>true</many>

@@ -41,9 +41,9 @@ public class PlmRepoConsts {
 	public static final String PATH_LABELING_TEMPLATES = "LabelingTemplates";
 	public static final String PATH_LABELING_POSITIONS = "LabelingPositions";
 	
-	public static final String PATH_PM_MATERIALS = "Materials";
-	public static final String PATH_PM_PRINT_TYPES = "Print types";
-	public static final String PATH_PM_PRINT_VANISHS = "Print varnishes";
+	public static final String PATH_PM_MATERIALS = "pmMaterials";
+	public static final String PATH_PM_PRINT_TYPES = "pmPrintTypes";
+	public static final String PATH_PM_PRINT_VANISHS = "pmPrintVarnishs";
 	
 	
 	public static final String PATH_LABEL = "Labels";
