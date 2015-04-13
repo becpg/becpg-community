@@ -40,6 +40,12 @@ public class PlmRepoConsts {
 	public static final String PATH_PRECAUTION_OF_USE = "PrecautionOfUse";
 	public static final String PATH_LABELING_TEMPLATES = "LabelingTemplates";
 	public static final String PATH_LABELING_POSITIONS = "LabelingPositions";
+	
+	public static final String PATH_PM_MATERIALS = "Materials";
+	public static final String PATH_PM_PRINT_TYPES = "Print types";
+	public static final String PATH_PM_PRINT_VANISHS = "Print varnishes";
+	
+	
 	public static final String PATH_LABEL = "Labels";
 	public static final String PATH_LABEL_TYPES = "LabelTypes";	
 	public static final String PATH_VARIANT_CHARACTS = "VariantCharacts";
@@ -99,6 +105,7 @@ public class PlmRepoConsts {
 	public static final String PATH_ECO = "ECO";
 	
 	public static final String PATH_PRODUCT_HIERARCHY = "/app:company_home/cm:System/cm:ProductHierarchy/bcpg:entityLists/";
+	
 	
 	
 }

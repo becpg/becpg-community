@@ -1545,6 +1545,29 @@
 					<show id="pack:length" />
 					<show id="pack:width" />
 					<show id="pack:height" />
+					
+					<!-- internal dimension -->	
+					<show id="pack:pmIntLength" />
+					<show id="pack:pmIntWidth" />
+					<show id="pack:pmIntHeight" />
+					
+					<!-- thickness -->	
+					<show id="pack:pmThickness" />
+					<show id="pack:pmPaperWeight" />
+					
+					<!-- material -->	
+					<show id="pack:pmMaterial" />
+					<show id="pack:pmAdditionnalMaterial" />
+					
+					<!-- coil -->
+					<show id="pack:pmCoreDiameter"/>
+					<show id="pack:pmCoilDiameter"/>
+					
+					<!-- print -->
+					<show id="pack:pmPrintNbColors"/>	
+					<show id="pack:pmPrintColor"/>
+					<show id="pack:pmPrintType"/>
+					<show id="pack:pmPrintVarnish"/>					
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" />
@@ -1564,6 +1587,16 @@
 						template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="dimension" appearance="bordered-panel"
 						label-id="becpg.forms.set.pack.size.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="internalDimension" appearance="bordered-panel"
+						label-id="becpg.forms.set.pack.intSize.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="thickness" appearance="bordered-panel"
+						label-id="becpg.forms.set.pack.thickness.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="material" appearance="bordered-panel"
+						label-id="becpg.forms.set.pack.material.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="coil" appearance="bordered-panel"
+						label-id="becpg.forms.set.pack.coil.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="print" appearance="bordered-panel"
+						label-id="becpg.forms.set.pack.print.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="categories" appearance="bordered-panel"
 						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
@@ -1627,6 +1660,29 @@
 					<field id="pack:length" set="dimension" />
 					<field id="pack:width" set="dimension" />
 					<field id="pack:height" set="dimension" />
+					
+					<!-- internal dimension -->	
+					<field id="pack:pmIntLength" set="internalDimension"/>
+					<field id="pack:pmIntWidth" set="internalDimension"/>
+					<field id="pack:pmIntHeight" set="internalDimension"/>
+					
+					<!-- thickness -->	
+					<field id="pack:pmThickness" set="thickness"/>
+					<field id="pack:pmPaperWeight" set="thickness"/>
+					
+					<!-- material -->	
+					<field id="pack:pmMaterial" set="material"/>
+					<field id="pack:pmAdditionnalMaterial" set="material"/>
+					
+					<!-- coil -->
+					<field id="pack:pmCoreDiameter" set="coil"/>
+					<field id="pack:pmCoilDiameter" set="coil"/>
+					
+					<!-- print -->
+					<field id="pack:pmPrintNbColors" set="print"/>	
+					<field id="pack:pmPrintColor" set="print"/>
+					<field id="pack:pmPrintType" set="print"/>
+					<field id="pack:pmPrintVarnish" set="print"/>
 
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
