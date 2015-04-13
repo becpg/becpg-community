@@ -108,6 +108,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	private QName type = null;
 	private Set<QName> types = new HashSet<>();
 	private Set<QName> aspects = new HashSet<>();
+	private String subPath = null;
 	private String path = null;
 	private String excludePath = null;
 	private String membersPath = null;
@@ -210,6 +211,20 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		return this;
 	}
+	
+
+	public BeCPGQueryBuilder inSubPath(String subPath) {
+		if (this.path != null) {
+			logger.warn("Path is already set for this query.( old:" + this.path + " -  new: " + path + ")");
+		}
+		if (this.subPath !=null) {
+			logger.warn("SubPath is already set for this query.( old:" + this.subPath + " -  new: " + subPath + ")");
+		}
+		this.subPath = subPath;
+
+		return this;
+	}
+
 	
 	public BeCPGQueryBuilder excludePath(String excludePath) {
 		if (this.path != null) {
@@ -508,6 +523,8 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			runnedQuery.append(mandatory(getCondPath(path)));
 		} else if (excludePath != null) {
 			runnedQuery.append(prohibided(getCondExactPath(excludePath)));
+		} else if (subPath != null) {
+			runnedQuery.append(mandatory(getCondSubPath(subPath)));
 		}
 
 		if (type != null) {
