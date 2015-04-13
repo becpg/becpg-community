@@ -222,20 +222,23 @@ if (beCPG.module.EntityDataGridRenderers) {
 	
 
     YAHOO.Bubbling.fire("registerDataGridRenderer", {
-        propertyName : "bcpg:nutListFormulatedValue",
+        propertyName : "bcpg:nutListValue",
         renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
-            
+            var ret = "";
             if (data.value != null) {
-
-                if (oColumn.hidden) {
-                    scope.widgets.dataTable.showColumn(oColumn);
-                    Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
-                    
-                }
-                return '<span class="nut-formulated" >' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+                ret+=Alfresco.util.encodeHTML(data.displayValue);
             }
-
-           return "";
+            
+            var formulatedValue = oRecord.getData("itemData")["prop_bcpg_nutListFormulatedValue"];
+            if(formulatedValue!=null && formulatedValue.value!=null ){
+                if(ret.length>0){
+                    ret+= '&nbsp;&nbsp;(' + Alfresco.util.encodeHTML(formulatedValue.displayValue) + ')';
+                } else {
+                  ret+= Alfresco.util.encodeHTML(formulatedValue.displayValue) ;
+                }
+            }
+            
+           return ret;
         }
 
     });
