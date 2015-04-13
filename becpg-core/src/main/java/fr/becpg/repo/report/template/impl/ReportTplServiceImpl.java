@@ -148,8 +148,13 @@ public class ReportTplServiceImpl implements ReportTplService {
 		InputStream in = null;
 		if (resource.exists()) {
 			try {
-				in = new BufferedInputStream(resource.getInputStream());
-				String tplFullName = tplName + "." + RepoConsts.REPORT_EXTENSION_BIRT;
+				in = new BufferedInputStream(resource.getInputStream());				
+				String extension = RepoConsts.REPORT_EXTENSION_BIRT;
+				int i = tplFilePath.lastIndexOf('.');
+				if (i > 0) {
+				    extension = tplFilePath.substring(i+1);
+				}				
+				String tplFullName = tplName + "." + extension;
 				reportTplNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, tplFullName);
 
 				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();

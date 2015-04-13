@@ -885,7 +885,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					PackagingKitData packagingKit1 = new PackagingKitData();
 					packagingKit1.setName("Packaging kit 1");
 					packagingKit1.setLegalName("Legal Packaging kit 1");			
-					packagingKit1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial3).getNodeRef();
+					packagingKit1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingKit1).getNodeRef();
 					nodeService.setProperty(packagingKit1NodeRef, PackModel.PROP_PALLET_BOXES_PER_PALLET, 40);
 					nodeService.setProperty(packagingKit1NodeRef, PackModel.PROP_PALLET_NUMBER_ON_GROUND, 2);
 					
