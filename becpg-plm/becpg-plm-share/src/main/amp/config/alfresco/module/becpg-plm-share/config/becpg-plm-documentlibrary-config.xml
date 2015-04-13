@@ -18,6 +18,11 @@
 				<aspect name="pack:sizeAspect" />
 				<aspect name="pack:tareAspect" />
 				<aspect name="bcpg:nutrientProfilingScoreAspect" />
+				<aspect name="pack:pmThicknessAspect" />
+				<aspect name="pack:pmMaterialAspect" />
+				<aspect name="pack:pmIntSizeAspect" />
+				<aspect name="pack:pmCoilAspect" />
+				<aspect name="pack:pmPrintAspect" />
 				
 			</visible>
 			<!-- Aspects that a user can add. Same as "visible" if left empty -->

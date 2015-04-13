@@ -18,20 +18,75 @@
 	<namespaces>
 		<namespace uri="http://www.bcpg.fr/model/pack/1.0" prefix="pack" />
 	</namespaces>
-	
-	 <constraints>
-		 <constraint name="pack:tareUnits" type="LIST">
-            <parameter name="allowedValues">
-                <list>
-                    <value>g</value>
-                    <value>kg</value>
-                </list>
-            </parameter>
-            <parameter name="caseSensitive">
-                <value>true</value>
-            </parameter>
-        </constraint>
-        <constraint name="pack:labelingPositions"
+
+	<constraints>
+
+		<constraint name="pack:pmMaterials"
+			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/Lists/bcpg:entityLists/pmMaterials</value>
+				</list>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>bcpg:lvValue</value>
+			</parameter>
+		</constraint>
+
+		<constraint name="pack:pmPrintTypes"
+			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/Lists/bcpg:entityLists/pmPrintTypes</value>
+				</list>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>bcpg:lvValue</value>
+			</parameter>
+		</constraint>
+
+		<constraint name="pack:pmPrintVarnishs"
+			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/Lists/bcpg:entityLists/pmPrintVarnishs</value>
+				</list>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>bcpg:lvValue</value>
+			</parameter>
+		</constraint>
+
+		<constraint name="pack:tareUnits" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>g</value>
+					<value>kg</value>
+				</list>
+			</parameter>
+			<parameter name="caseSensitive">
+				<value>true</value>
+			</parameter>
+		</constraint>
+		<constraint name="pack:labelingPositions"
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
@@ -59,13 +114,13 @@
 				<value>bcpg:lvValue</value>
 			</parameter>
 		</constraint>
-     </constraints>		
-     
-     <types>
-     	<type name="pack:labelingTemplate">
+	</constraints>
+
+	<types>
+		<type name="pack:labelingTemplate">
 			<parent>bcpg:entityListItem</parent>
 		</type>
-		
+
 		<type name="pack:label">
 			<parent>bcpg:entityListItem</parent>
 			<properties>
@@ -77,7 +132,7 @@
 				</property>
 			</properties>
 		</type>
-		
+
 		<type name="pack:labelingList">
 			<parent>bcpg:productListItem</parent>
 			<properties>
@@ -92,7 +147,7 @@
 					<constraints>
 						<constraint ref="pack:labelingPositions" />
 					</constraints>
-				</property>				
+				</property>
 			</properties>
 			<associations>
 				<association name="pack:llLabel">
@@ -111,51 +166,15 @@
 				<aspect>bcpg:sortableListAspect</aspect>
 			</mandatory-aspects>
 		</type>
-     </types>
+	</types>
 
 	<aspects>
-		<!-- pallet -->
-		<aspect name="pack:packInfo">
-			<title>Info packaging</title>
-			<properties>
-				
-<!-- 				<property name="pack:piNbFirstLevel"> -->
-<!-- 					<title>Elt / conditionnement primaire</title> -->
-<!-- 					<type>d:int</type>					 -->
-<!-- 				</property> -->
-<!-- 				<property name="pack:piNbSecondLevel"> -->
-<!-- 					<title>Elt / conditionnement secondaire</title> -->
-<!-- 					<type>d:int</type>					 -->
-<!-- 				</property> -->
-<!-- 				<property name="pack:piNbThirdLevel"> -->
-<!-- 					<title>Elt / conditionnement tertiaire</title> -->
-<!-- 					<type>d:int</type>					 -->
-<!-- 				</property> -->
-									
-<!-- 				Weight -->
-<!-- 				<property name="pack:piTareFirstLevel"> -->
-<!-- 					<title>Tare UVC (g)</title> -->
-<!-- 					<type>d:double</type> -->
-<!-- 				</property> -->
-<!-- 				<property name="pack:piWeightFirstLevel"> -->
-<!-- 					<title>Poids UVC (kg)</title> -->
-<!-- 					<type>d:double</type> -->
-<!-- 				</property> -->
-<!-- 				<property name="pack:piWeightSecondLevel"> -->
-<!-- 					<title>Poids colis (kg)</title> -->
-<!-- 					<type>d:double</type> -->
-<!-- 				</property> -->
-<!-- 				<property name="pack:piWeightThirdLevel"> -->
-<!-- 					<title>Poids palette (kg)</title> -->
-<!-- 					<type>d:double</type> -->
-<!-- 				</property> -->
-			</properties>			
-		</aspect>
-		
+
+
 		<!-- pallet -->
 		<aspect name="pack:palletAspect">
 			<title>Palettisation</title>
-			<properties>							
+			<properties>
 				<property name="pack:palletLayers">
 					<title>Nombre de couches / palette</title>
 					<type>d:int</type>
@@ -180,71 +199,66 @@
 					<title>Number of pallets on ground</title>
 					<type>d:int</type>
 				</property>
-				
-				<!-- <property name="pack:palletDimensions">
-					<title>Dimensions palette (mm)</title>
-					<type>d:text</type>
-				</property> -->
-				
-			</properties>			
+
+			</properties>
 		</aspect>
-		
-		
-		 <aspect name="pack:tareAspect">
-            <title>Emballage - Tare</title>
-            <properties>
-                <property name="pack:tare">
-                    <title>Tare</title>
-                    <type>d:double</type>
-                    <mandatory>false</mandatory>
-                </property>
-                <property name="pack:tareUnit">
-                    <title>Unité de tare</title>
-                    <type>d:text</type>
-                    <mandatory>true</mandatory>
-                    <default>g</default>
-                    <constraints>
-                        <constraint ref="pack:tareUnits"/>
-                    </constraints>
-                </property>
-            </properties>
-            <associations/>
-            <overrides/>
-            <mandatory-aspects/>
-        </aspect>
-        
-        
-        <aspect name="pack:sizeAspect">
-            <title>Emballage - Dimensions</title>
-            <properties>
-                <property name="pack:length">
-                    <title>Longueur extérieur (mm)</title>
-                    <type>d:double</type>
-                    <mandatory>false</mandatory>
-                </property>
-                <property name="pack:width">
-                    <title>Largeur extérieur (mm)</title>
-                    <type>d:double</type>
-                    <mandatory>false</mandatory>
-                </property>
-                <property name="pack:height">
-                    <title>Hauteur extérieur (mm)</title>
-                    <type>d:double</type>
-                    <mandatory>false</mandatory>
-                </property>
-            </properties>
-        </aspect>
-        
-        <aspect name="pack:labelingAspect">
-			<properties>			
+
+
+		<aspect name="pack:tareAspect">
+			<title>Emballage - Tare</title>
+			<properties>
+				<property name="pack:tare">
+					<title>Tare</title>
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="pack:tareUnit">
+					<title>Unité de tare</title>
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<default>g</default>
+					<constraints>
+						<constraint ref="pack:tareUnits" />
+					</constraints>
+				</property>
+			</properties>
+			<associations />
+			<overrides />
+			<mandatory-aspects />
+		</aspect>
+
+
+		<aspect name="pack:sizeAspect">
+			<title>Emballage - Dimensions</title>
+			<properties>
+				<property name="pack:length">
+					<title>Longueur extérieur (mm)</title>
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="pack:width">
+					<title>Largeur extérieur (mm)</title>
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="pack:height">
+					<title>Hauteur extérieur (mm)</title>
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+				</property>
+			</properties>
+		</aspect>
+
+		<aspect name="pack:labelingAspect">
+			<properties>
 				<property name="pack:labelingPosition">
 					<type>d:text</type>
 					<constraints>
 						<constraint ref="pack:labelingPositions" />
-					</constraints>					
+					</constraints>
 				</property>
 			</properties>
-			<associations>			
+			<associations>
 				<association name="pack:labelingLabelingTemplate">
 					<title>Marquage</title>
 					<source>
@@ -256,10 +270,157 @@
 						<mandatory>false</mandatory>
 						<many>false</many>
 					</target>
-				</association>				
+				</association>
 			</associations>
 		</aspect>
-        
-		
+
+		<aspect name="pack:pmThicknessAspect">
+			<properties>
+				<property name="pack:pmThickness">
+					<type>d:int</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="pack:pmPaperWeight">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+			</properties>
+		</aspect>
+		<aspect name="pack:pmMaterialAspect">
+			<properties>
+				<property name="pack:pmMaterial">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<multiple>true</multiple>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="pack:pmMaterials" />
+					</constraints>
+				</property>
+				<property name="pack:pmAdditionnalMaterial">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+			</properties>
+		</aspect>
+		<aspect name="pack:pmIntSizeAspect">
+			<properties>
+				<property name="pack:pmIntLength">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="pack:pmIntWidth">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="pack:pmIntHeight">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+			</properties>
+		</aspect>
+
+		<aspect name="pack:pmCoilAspect">
+			<properties>
+				<property name="pack:pmCoreDiameter">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="pack:pmCoilDiameter">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+			</properties>
+		</aspect>
+
+		<aspect name="pack:pmPrintAspect">
+			<properties>
+				<property name="pack:pmPrintNbColors">
+					<type>d:int</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="pack:pmPrintColor">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="pack:pmPrintType">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<multiple>true</multiple>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+					<constraints>
+						<constraint ref="pack:pmPrintTypes" />
+					</constraints>
+				</property>
+				<property name="pack:pmPrintVarnish">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+					<constraints>
+						<constraint ref="pack:pmPrintVarnishs" />
+					</constraints>
+				</property>
+			</properties>
+		</aspect>
+
+
 	</aspects>
 </model>
