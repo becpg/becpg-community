@@ -28,6 +28,7 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.common.BeCPGException;
+import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 
 /**
  * Get entity as XML
@@ -51,7 +52,8 @@ public class GetEntityDataWebScript extends AbstractEntityWebScript {
 
 			// set mimetype for the content and the character encoding + length
 			// for the stream
-			resp.setContentType(mimetypeService.guessMimetype(getFormat(req).toString()));
+			resp.setContentType(getContentType(req));
+			resp.setContentEncoding("UTF-8");
 			out = new CountingOutputStream(resp.getOutputStream());
 			resp.setHeader("Content-Length", Long.toString(out.getByteCount()));
 
@@ -70,5 +72,7 @@ public class GetEntityDataWebScript extends AbstractEntityWebScript {
 		}
 
 	}
+
+	
 
 }

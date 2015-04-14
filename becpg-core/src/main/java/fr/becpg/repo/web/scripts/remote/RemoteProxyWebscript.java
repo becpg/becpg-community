@@ -42,6 +42,9 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
  */
 public class RemoteProxyWebscript extends AbstractWebScript {
 
+
+	private static final Log logger = LogFactory.getLog(RemoteProxyWebscript.class);
+	
 	private static String REMOTE_URL_PARAM = "remoteUrl"; 
 
 	private String remoteServer;
@@ -64,9 +67,6 @@ public class RemoteProxyWebscript extends AbstractWebScript {
 		}
 	}
 
-	
-	private Log logger = LogFactory.getLog(RemoteProxyWebscript.class);
-	
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
 		
 		Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();
