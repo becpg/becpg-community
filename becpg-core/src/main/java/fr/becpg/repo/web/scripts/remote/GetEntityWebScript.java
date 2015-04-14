@@ -51,7 +51,8 @@ public class GetEntityWebScript extends AbstractEntityWebScript {
 
 			// set mimetype for the content and the character encoding + length
 			// for the stream
-			resp.setContentType(mimetypeService.guessMimetype(getFormat(req).toString()));
+			resp.setContentType(getContentType(req));
+			resp.setContentEncoding("UTF-8");
 			out = new CountingOutputStream(resp.getOutputStream());
 			resp.setHeader("Content-Length", Long.toString(out.getByteCount()));
 
