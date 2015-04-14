@@ -34,6 +34,7 @@ import fr.becpg.repo.helper.JsonFormulaHelper;
 import fr.becpg.repo.product.ProductDictionaryService;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.ResourceProductData;
 import fr.becpg.repo.product.data.packaging.PackagingData;
 import fr.becpg.repo.product.data.packaging.VariantPackagingData;
@@ -457,6 +458,10 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				extractTargetAssoc(entityNodeRef, assocDef, entityElt);
 				return true;
 			}
+			else if(assocDef.getName().equals(PLMModel.ASSOC_PRODUCT_SPECIFICATIONS)){
+				extractProductSpecifications(entityNodeRef, entityElt);
+				return true;
+			}
 		}
 
 		return false;
@@ -728,4 +733,14 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		return dictionaryService.isSubClass(type, PLMModel.TYPE_PRODUCT) ? EntityReportExtractorPriority.NORMAL : EntityReportExtractorPriority.NONE;
 	}
 
+	private void extractProductSpecifications(NodeRef productNodeRef, Element productElt){		
+		Element productSpecificationsElt = productElt.addElement(PLMModel.ASSOC_PRODUCT_SPECIFICATIONS.getLocalName());
+		List<NodeRef> nodeRefs = associationService.getTargetAssocs(productNodeRef, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);		
+		for(NodeRef nodeRef : nodeRefs){
+			Element productSpecificationElt = productSpecificationsElt.addElement(PLMModel.TYPE_PRODUCT_SPECIFICATION.getLocalName());
+			loadNodeAttributes(nodeRef, productSpecificationElt, true);
+			Element dataListsElt = productSpecificationElt.addElement(TAG_DATALISTS);
+			loadDataLists(nodeRef, dataListsElt, new HashMap<String, byte[]>());
+		}
+	}
 }

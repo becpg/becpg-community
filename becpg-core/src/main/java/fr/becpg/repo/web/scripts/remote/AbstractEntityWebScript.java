@@ -47,47 +47,36 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 public abstract class AbstractEntityWebScript extends AbstractWebScript {
 
-	protected static Log logger = LogFactory.getLog(AbstractEntityWebScript.class);
+	protected static final Log logger = LogFactory.getLog(AbstractEntityWebScript.class);
 
-	/** The Constant PARAM_QUERY. */
 	protected static final String PARAM_QUERY = "query";
-
-	/** The Constant PARAM_PATH. */
 	protected static final String PARAM_PATH = "path";
-
-	/** The Constant PARAM_PATH. */
 	protected static final String PARAM_FORMAT = "format";
-
-	/** The Constant PARAM_NODEREF. */
 	protected static final String PARAM_NODEREF = "nodeRef";
 
-	/** The Constant PARAM_CALLBACK. */
 	/** http://localhost:8080/alfresco/services/becpg/remote/entity **/
 	protected static final String PARAM_CALLBACK = "callback";
 
 	/**
-	 * Callbach auth 
-	 * admin:becpg
+	 * Callback auth admin:becpg
 	 */
 	protected static final String PARAM_CALLBACK_USER = "callbackUser";
-	
+
 	protected static final String PARAM_CALLBACK_PASSWORD = "callbackPassword";
 
 	private static final String PARAM_MAX_RESULTS = "maxResults";
-	
+
 	/** Services **/
 
 	protected NodeService nodeService;
 
 	protected RemoteEntityService remoteEntityService;
 
-
 	protected MimetypeService mimetypeService;
 
 	public void setMimetypeService(MimetypeService mimetypeService) {
 		this.mimetypeService = mimetypeService;
 	}
-
 
 	public void setRemoteEntityService(RemoteEntityService remoteEntityService) {
 		this.remoteEntityService = remoteEntityService;
@@ -96,14 +85,13 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
-	
+
 	protected List<NodeRef> findEntities(WebScriptRequest req) {
-	
-		
+
 		String path = req.getParameter(PARAM_PATH);
 		String query = req.getParameter(PARAM_QUERY);
 		String maxResultsString = req.getParameter(PARAM_MAX_RESULTS);
-		
+
 		Integer maxResults = null;
 		if (maxResultsString != null) {
 			try {
@@ -112,46 +100,38 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 				logger.error("Cannot parse page argument", e);
 			}
 		}
-		
-		
-		
-		
+
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery();
-		
+
 		queryBuilder.ofType(BeCPGModel.TYPE_ENTITY_V2).excludeDefaults();
-		
-		if(maxResults==null){
+
+		if (maxResults == null) {
 			queryBuilder.maxResults(RepoConsts.MAX_RESULTS_256);
 		} else {
 			queryBuilder.maxResults(maxResults);
 		}
-		
+
 		if (path != null && path.length() > 0) {
 			queryBuilder.inPath(path);
 		}
-		
-		
+
 		if (query != null && query.length() > 0) {
 			queryBuilder.andFTSQuery(query);
-		
+
 		}
-		
+
 		List<NodeRef> refs = queryBuilder.list();
-		
-	
-		
-		
-		if (refs!=null && !refs.isEmpty()) {
-			logger.info("Returning "+refs.size()+" entities");
-			
+
+		if (refs != null && !refs.isEmpty()) {
+			logger.info("Returning " + refs.size() + " entities");
+
 			return refs;
 		}
-		
+
 		logger.info("No entities found for query " + queryBuilder.toString());
 		return new ArrayList<NodeRef>();
-		
+
 	}
-	
 
 	protected NodeRef findEntity(WebScriptRequest req) {
 		String nodeRef = req.getParameter(PARAM_NODEREF);
@@ -164,7 +144,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 			}
 
 		}
-		
+
 		return findEntities(req).get(0);
 	}
 
@@ -173,11 +153,11 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	}
 
 	protected EntityProviderCallBack getEntityProviderCallback(WebScriptRequest req) {
-	
+
 		String callBack = req.getParameter(PARAM_CALLBACK);
-		String user = req.getParameter(PARAM_CALLBACK_USER)!=null ?  req.getParameter(PARAM_CALLBACK_USER) : "admin";
-		String password = req.getParameter(PARAM_CALLBACK_PASSWORD)!=null ?  req.getParameter(PARAM_CALLBACK_PASSWORD) : "becpg";
-		
+		String user = req.getParameter(PARAM_CALLBACK_USER) != null ? req.getParameter(PARAM_CALLBACK_USER) : "admin";
+		String password = req.getParameter(PARAM_CALLBACK_PASSWORD) != null ? req.getParameter(PARAM_CALLBACK_PASSWORD) : "becpg";
+
 		if (callBack != null && callBack.length() > 0) {
 			return new HttpEntityProviderCallback(callBack, user, password, remoteEntityService);
 		}
@@ -189,11 +169,21 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		String format = req.getParameter(PARAM_FORMAT);
 		if (format != null && RemoteEntityFormat.csv.toString().equals(format)) {
 			return RemoteEntityFormat.csv;
-		} else if( format != null && RemoteEntityFormat.xml_excel.toString().equals(format)){
+		} else if (format != null && RemoteEntityFormat.xml_excel.toString().equals(format)) {
 			return RemoteEntityFormat.xml_excel;
-		} else if( format != null && RemoteEntityFormat.xml_all.toString().equals(format)){
+		} else if (format != null && RemoteEntityFormat.xml_all.toString().equals(format)) {
 			return RemoteEntityFormat.xml_all;
 		}
 		return RemoteEntityFormat.xml;
 	}
+
+	protected String getContentType(WebScriptRequest req) {
+		RemoteEntityFormat format = getFormat(req);
+		if (RemoteEntityFormat.csv.equals(format)) {
+			return "text/csv";
+		} else {
+			return "application/xml";
+		}
+	}
+
 }
