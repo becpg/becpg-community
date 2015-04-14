@@ -91,7 +91,7 @@ public class TaskDescPatch extends AbstractBeCPGPatch {
 				}
 			};
 
-			BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<NodeRef>("BudgetPatch",
+			BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<NodeRef>("TaskDescPatch",
 					transactionService.getRetryingTransactionHelper(), workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 1000);
 
 			BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
@@ -118,7 +118,7 @@ public class TaskDescPatch extends AbstractBeCPGPatch {
 						nodeService.setProperty(taskNodeRef,ProjectModel.PROP_TL_TASK_DESCRIPTION, nodeService.getProperty(taskNodeRef, ContentModel.PROP_DESCRIPTION));
 						nodeService.removeProperty(taskNodeRef, ContentModel.PROP_DESCRIPTION);
 					} else {
-						logger.warn("projectNodeRef doesn't exist : " + taskNodeRef);
+						logger.warn("taskNodeRef doesn't exist : " + taskNodeRef);
 					}
 
 				}

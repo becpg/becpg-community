@@ -119,7 +119,7 @@ public class TestWebscriptExecuters {
 
 		// execute method
 		httpClient.executeMethod(httpMethod);
-	
+		
 		return new Response(httpMethod);
 	}
 
@@ -184,6 +184,11 @@ public class TestWebscriptExecuters {
 
 		public int getStatus() {
 			return method.getStatusCode();
+		}
+		
+		public void release(){
+
+			 method.releaseConnection();
 		}
 
 	}
