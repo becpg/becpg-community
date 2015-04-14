@@ -24,10 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.data.FinishedProductData;
-import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.constraints.CompoListUnit;
@@ -35,9 +32,7 @@ import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
-import fr.becpg.repo.report.template.ReportTplService;
-import fr.becpg.repo.report.template.ReportType;
-import fr.becpg.report.client.ReportFormat;
+import fr.becpg.test.repo.product.AbstractCompareProductTest;
 import fr.becpg.test.utils.TestWebscriptExecuters;
 import fr.becpg.test.utils.TestWebscriptExecuters.GetRequest;
 import fr.becpg.test.utils.TestWebscriptExecuters.Response;
@@ -47,140 +42,22 @@ import fr.becpg.test.utils.TestWebscriptExecuters.Response;
  *
  * @author querephi
  */
-@Deprecated
-// TODO : merge CompareProductReportWebScript avec CompareProductServiceTest =>
-// beaucoup de code en commun !
-public class CompareProductReportWebScriptTest extends fr.becpg.test.PLMBaseTestCase {
+public class CompareProductReportWebScriptTest extends AbstractCompareProductTest {
 
-	private static final String COMPARE_ENTITIES_REPORT_PATH = "beCPG/birt/CompareEntities.rptdesign";
-
-	/** The logger. */
-	private static Log logger = LogFactory.getLog(CompareProductReportWebScriptTest.class);
-
-	@Resource
-	private ReportTplService reportTplService;
+	private static final Log logger = LogFactory.getLog(CompareProductReportWebScriptTest.class);
 
 	@Resource
 	private CheckOutCheckInService checkOutCheckInService;
 
-	/** The local s f1 node ref. */
-	private NodeRef localSF1NodeRef;
-
-	/** The raw material1 node ref. */
-	private NodeRef rawMaterial1NodeRef;
-
-	/** The raw material2 node ref. */
-	private NodeRef rawMaterial2NodeRef;
-
-	/** The local s f2 node ref. */
-	private NodeRef localSF2NodeRef;
-
-	/** The raw material3 node ref. */
-	private NodeRef rawMaterial3NodeRef;
-
-	/** The raw material4 node ref. */
-	private NodeRef rawMaterial4NodeRef;
-
-	/** The fp1 node ref. */
-	private NodeRef fpNodeRef;
-
-	/**
-	 * Inits the objects.
-	 */
-	private void initObjects() {
-
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@Override
-			public NodeRef execute() throws Throwable {
-
-				/*-- Create raw materials --*/
-				logger.debug("/*-- Create raw materials --*/");
-				/*-- Raw material 1 --*/
-				RawMaterialData rawMaterial1 = new RawMaterialData();
-				rawMaterial1.setName("Raw material 1");
-				rawMaterial1.setLegalName("Legal Raw material 1");
-				rawMaterial1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial1).getNodeRef();
-
-				/*-- Raw material 2 --*/
-				RawMaterialData rawMaterial2 = new RawMaterialData();
-				rawMaterial2.setName("Raw material 2");
-				rawMaterial2.setLegalName("Legal Raw material 2");
-				rawMaterial2NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial2).getNodeRef();
-
-				/*-- Raw material 3 --*/
-				RawMaterialData rawMaterial3 = new RawMaterialData();
-				rawMaterial3.setName("Raw material 3");
-				rawMaterial3.setLegalName("Legal Raw material 3");
-				rawMaterial3NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial3).getNodeRef();
-
-				/*-- Raw material 4 --*/
-				RawMaterialData rawMaterial4 = new RawMaterialData();
-				rawMaterial4.setName("Raw material 4");
-				rawMaterial4.setLegalName("Legal Raw material 4");
-				rawMaterial4NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial4).getNodeRef();
-
-				/*-- Raw material 5 --*/
-				RawMaterialData rawMaterial5 = new RawMaterialData();
-				rawMaterial5.setName("Raw material 5");
-				rawMaterial5.setLegalName("Legal Raw material 5");
-				alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial5).getNodeRef();
-
-				/*-- Local semi finished product 1 --*/
-				LocalSemiFinishedProductData localSF1 = new LocalSemiFinishedProductData();
-				localSF1.setName("Local semi finished 1");
-				localSF1.setLegalName("Legal Local semi finished 1");
-				localSF1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), localSF1).getNodeRef();
-
-				/*-- Local semi finished product 1 --*/
-				LocalSemiFinishedProductData localSF2 = new LocalSemiFinishedProductData();
-				localSF2.setName("Local semi finished 2");
-				localSF2.setLegalName("Legal Local semi finished 2");
-				localSF2NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), localSF2).getNodeRef();
-
-				return null;
-
-			}
-		}, false, true);
-
-	}
-
-	/**
-	 * Inits the tests.
-	 * 
-	 * @throws IOException
-	 */
-	private void initTests() throws IOException {
-
-		NodeRef systemFolder = repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM,
-				TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
-		NodeRef reportsFolder = repoService.getOrCreateFolderByPath(systemFolder, RepoConsts.PATH_REPORTS,
-				TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS));
-		NodeRef compareReportFolder = repoService.getOrCreateFolderByPath(reportsFolder, RepoConsts.PATH_REPORTS_COMPARE_ENTITIES,
-				TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_COMPARE_ENTITIES));
-
-		// compare report
-		reportTplService.createTplRptDesign(compareReportFolder, TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_COMPARE_ENTITIES),
-				COMPARE_ENTITIES_REPORT_PATH, ReportType.System, ReportFormat.PDF, null, true, true, false);
-
-	}
-
-	/**
-	 * Test compare products.
-	 * 
-	 * @throws IOException
-	 */
+	
 	@Test
 	public void testCompareProducts() throws IOException {
 
-		// init objects
-		initObjects();
-
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+		NodeRef fpNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				// Create comparison product report
-				initTests();
+				
 
 				logger.debug("createRawMaterial 1");
 
@@ -213,18 +90,15 @@ public class CompareProductReportWebScriptTest extends fr.becpg.test.PLMBaseTest
 				fp1.setAllergenList(allergenList);
 
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail,
-						localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(0), 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare,
-						rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail,localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(0), 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare,rawMaterial1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), 2d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail,
-						localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(3), 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare,
-						rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(3), 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+				
 				fp1.getCompoListView().setCompoList(compoList);
 
-				fpNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), fp1).getNodeRef();
+				NodeRef fpNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), fp1).getNodeRef();
 
 				Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>();
 				aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
@@ -295,13 +169,13 @@ public class CompareProductReportWebScriptTest extends fr.becpg.test.PLMBaseTest
 				// nodeService.getProperty(fpv2NodeRef,
 				// BeCPGModel.PROP_VERSION_LABEL));
 
-				return null;
+				return fpNodeRef;
 
 			}
 		}, false, true);
 
 		String url = String.format("/becpg/entity/compare/%s/%s/version.pdf", fpNodeRef.toString().replace("://", "/"), "1.0");
-		;
+	
 		Response response = TestWebscriptExecuters.sendRequest(new GetRequest(url), 200, "admin");
 
 		logger.debug("response: " + response.getContentAsString());

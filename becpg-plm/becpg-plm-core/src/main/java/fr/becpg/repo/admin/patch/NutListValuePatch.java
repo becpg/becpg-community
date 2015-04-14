@@ -98,12 +98,10 @@ public class NutListValuePatch extends AbstractBeCPGPatch {
 
 			public void afterProcess() throws Throwable {
 				ruleService.disableRules();
-				policyBehaviourFilter.disableBehaviour();
 			}
 
 			public void beforeProcess() throws Throwable {
 				ruleService.enableRules();
-				policyBehaviourFilter.enableBehaviour();
 			}
 
 			public String getIdentifier(NodeRef entry) {
@@ -122,8 +120,10 @@ public class NutListValuePatch extends AbstractBeCPGPatch {
 						NodeRef entityNodeRef = entityListDAO.getEntity(dataListNodeRef);
 						NodeRef listContainer = entityListDAO.getListContainer(entityNodeRef);
 						if (listContainer != null && entityListDAO.getList(listContainer, PLMModel.TYPE_COMPOLIST) != null) {
+							policyBehaviourFilter.disableBehaviour();
 							nodeService.setProperty(dataListNodeRef, PLMModel.PROP_NUTLIST_FORMULATED_VALUE, nodeService.getProperty(dataListNodeRef, PLMModel.PROP_NUTLIST_VALUE));
 							nodeService.setProperty(dataListNodeRef, PLMModel.PROP_NUTLIST_VALUE, null);
+							policyBehaviourFilter.enableBehaviour();
 						}
 
 					}

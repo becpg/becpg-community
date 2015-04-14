@@ -813,7 +813,7 @@
 					</source>
 					<target>
 						<class>pjt:budgetList</class>
-						<mandatory>true</mandatory>
+						<mandatory>false</mandatory>
 						<many>false</many>
 					</target>
 				</association>

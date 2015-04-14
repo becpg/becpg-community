@@ -434,8 +434,10 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		if (formulatedProduct.getEntityTpl() != null) {
 			templateCostLists.addAll(formulatedProduct.getEntityTpl().getCostList());
 		}
-		for(ClientData client : formulatedProduct.getClients()){
-			templateCostLists.addAll(client.getCostList());
+		if(formulatedProduct.getClients() !=null){
+			for(ClientData client : formulatedProduct.getClients()){
+				templateCostLists.addAll(client.getCostList());
+			}
 		}
 				
 		for(CostListDataItem templateCostList : templateCostLists){
