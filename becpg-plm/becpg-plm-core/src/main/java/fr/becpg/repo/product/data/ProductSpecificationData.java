@@ -20,7 +20,7 @@ public class ProductSpecificationData extends ProductData   {
 	
 	private List<LabelingRuleListDataItem> labelingRuleList;
 	
-	private List<ResourceParamDataItem> resourceParamList;
+	private List<ResourceParamDataItem> resourceParams;
 	
 	@DataList
 	@AlfQname(qname = "bcpg:labelingRuleList")
@@ -49,12 +49,12 @@ public class ProductSpecificationData extends ProductData   {
 
 	@DataList
 	@AlfQname(qname = "mpm:resourceParam")
-	public List<ResourceParamDataItem> getResourceParamList() {
-		return resourceParamList;
+	public List<ResourceParamDataItem> getResourceParams() {
+		return resourceParams;
 	}
 
-	public void setResourceParamList(List<ResourceParamDataItem> resourceParamList) {
-		this.resourceParamList = resourceParamList;
+	public void setResourceParams(List<ResourceParamDataItem> resourceParams) {
+		this.resourceParams = resourceParams;
 	}
 
 	@Override
