@@ -768,6 +768,12 @@
                               type : "bcpg:labelClaim",
                               subType : "fr.becpg.repo.product.data.productList.LabelClaimListDataItem",
                               template : "labelClaimList.?[labelClaim.toString() == '{item1}'][0].{item2}"
+                           },
+                           {
+                              name : "ingLabelingList",
+                              type : "bcpg:labelingRuleList",
+                              subType : "fr.becpg.repo.product.data.productList.IngLabelingListDataItem",
+                              template : "labelingListView.ingLabelingList.?[grp.toString() == '{item1}'][0].{item2}"
                            } ];
 
                      var menuItem, item, label;
