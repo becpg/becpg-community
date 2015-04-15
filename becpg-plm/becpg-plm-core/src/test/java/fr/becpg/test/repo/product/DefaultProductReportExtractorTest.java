@@ -105,10 +105,10 @@ public class DefaultProductReportExtractorTest extends AbstractFinishedProductTe
 				// ProductSpecification
 				ProductSpecificationData psd = new ProductSpecificationData();
 				psd.setName("PSD");			
-				List<ResourceParamDataItem> resourceParamList = new ArrayList<>();
-				resourceParamList.add(new ResourceParamDataItem("name", "title", "descr"));
-				psd.setResourceParamList(resourceParamList);
-				NodeRef psdNodeRef = alfrescoRepository.create(testFolderNodeRef, psd).getNodeRef();
+				List<ResourceParamDataItem> resourceParams = new ArrayList<>();
+				resourceParams.add(new ResourceParamDataItem("name", "title", "descr"));
+				psd.setResourceParams(resourceParams);
+				NodeRef psdNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), psd).getNodeRef();
 				
 				// assoc is readonly
 				ArrayList<NodeRef> psdNodeRefs = new ArrayList<>();
