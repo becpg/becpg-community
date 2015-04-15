@@ -210,7 +210,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					}
 				}
 
-			}
+			}			
 			formulatedProduct.getCompoListView().getReqCtrlList().addAll(labelingFormulaContext.getErrors());
 
 		}
@@ -464,7 +464,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 									if (error != null) {
 
 										if (parent.getNodeRef() != null && nodeService.exists(parent.getNodeRef())) {
-											error.getSources().add(parent.getNodeRef());
+											if(!error.getSources().contains(parent.getNodeRef())){
+												error.getSources().add(parent.getNodeRef());
+											}											
 										}
 										if (logger.isDebugEnabled()) {
 											logger.debug("Adding aggregate error " + error.toString());
@@ -936,7 +938,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					String message = I18NUtil.getMessage("message.formulate.labelRule.error.nullIng", ingLabelItem.getName());
 					ReqCtrlListDataItem error = errors.get(message);
 					if (error != null) {
-						error.getSources().add(productNodeRef);
+						if(!error.getSources().contains(productNodeRef)){
+							error.getSources().add(productNodeRef);
+						}
 					} else {
 						if (logger.isDebugEnabled()) {
 							logger.debug("Store error for future qtyPerc is null " + ingLabelItem.getName());
@@ -983,7 +987,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						ReqCtrlListDataItem error = errors.get(message);
 						if (error != null) {
 							if (qty == null) {
-								error.getSources().add(productNodeRef);
+								if(!error.getSources().contains(productNodeRef)){
+									error.getSources().add(productNodeRef);
+								}
 							}
 							if (ingLabelItem.getQty() != qty) {
 								if (logger.isDebugEnabled()) {
