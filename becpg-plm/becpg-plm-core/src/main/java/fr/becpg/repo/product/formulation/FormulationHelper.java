@@ -59,7 +59,7 @@ public class FormulationHelper {
 		CompoListUnit compoListUnit = compoListDataItem.getCompoListUnit();
 		if (qty != null && compoListUnit != null && productUnit != null) {
 
-			if(compoListUnit.equals(productUnit)){
+			if(compoListUnit.toString().equals(productUnit.toString())){
 				return qty;
 			}
 			else if (compoListUnit.equals(CompoListUnit.g) && isProductUnitKg(productUnit)) {
