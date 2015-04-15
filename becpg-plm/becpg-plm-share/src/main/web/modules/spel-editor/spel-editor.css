@@ -318,6 +318,12 @@ div.current-formula
 	border: 1px dashed #D9D9D9;
 }
 
+.spel-editor span.labelingRuleList,
+.spel-editor span.ingLabelingList  {
+	background: url(../../components/images/filetypes/generic-labelingRuleList-16.png) no-repeat;
+	padding-left: 20px;
+}
+
 /** Autocomplete **/
 
 
