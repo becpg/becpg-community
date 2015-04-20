@@ -34,7 +34,6 @@ import fr.becpg.repo.helper.JsonFormulaHelper;
 import fr.becpg.repo.product.ProductDictionaryService;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.ResourceProductData;
 import fr.becpg.repo.product.data.packaging.PackagingData;
 import fr.becpg.repo.product.data.packaging.VariantPackagingData;
@@ -87,6 +86,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	private static final String ATTR_NB_PRODUCTS_LEVEL_3 = "nbProductsPkgLevel3";
 	private static final String ATTR_NB_PRODUCTS_LEVEL_2 = "nbProductsPkgLevel2";
 	private static final String ATTR_VARIANT_ID = "variantId";
+	private static final String ATTR_COMPOLIST_QTY_FOR_PRODUCT = "compoListQtyForProduct";	
 	private static final String TAG_PACKAGING_LEVEL_MEASURES = "packagingLevelMeasures";
 
 	@Value("${beCPG.product.report.multiLevel}")
@@ -558,8 +558,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		if (productData.hasCompoListEl(EffectiveFilters.EFFECTIVE)) {
 			Element compoListElt = dataListsElt.addElement(PLMModel.TYPE_COMPOLIST.getLocalName() + "s");
 
-			for (CompoListDataItem dataItem : productData.getCompoList(EffectiveFilters.EFFECTIVE)) {
-				loadCompoListItem(dataItem, compoListElt, defaultVariantNodeRef, 1);
+			for (CompoListDataItem dataItem : productData.getCompoList(EffectiveFilters.EFFECTIVE)) {				
+				loadCompoListItem(dataItem, compoListElt, defaultVariantNodeRef, 1, dataItem.getQty());
 			}
 
 			loadDynamicCharactList(productData.getCompoListView().getDynamicCharactList(), compoListElt);
@@ -568,13 +568,14 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void loadCompoListItem(CompoListDataItem dataItem, Element compoListElt, NodeRef defaultVariantNodeRef, int level) {
+	private void loadCompoListItem(CompoListDataItem dataItem, Element compoListElt, NodeRef defaultVariantNodeRef, int level, double compoListQty) {
 		if (dataItem.getProduct() != null && nodeService.exists(dataItem.getProduct())) {
 			Element dataListsElt = null;
 
 			Element partElt = compoListElt.addElement(PLMModel.TYPE_COMPOLIST.getLocalName());
 			loadProductData(dataItem.getProduct(), partElt);
 			loadDataListItemAttributes(dataItem, partElt);
+			partElt.addAttribute(ATTR_COMPOLIST_QTY_FOR_PRODUCT, Double.toString(compoListQty));
 			if (level == 1) {
 				dataListsElt = partElt.addElement(TAG_DATALISTS);
 				ProductData productData = (ProductData) alfrescoRepository.findOne(dataItem.getProduct());
@@ -595,7 +596,11 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					Element subCompoListElt = dataListsElt.addElement(PLMModel.TYPE_COMPOLIST.getLocalName() + "s");
 
 					for (CompoListDataItem subDataItem : productData.getCompoList(EffectiveFilters.EFFECTIVE)) {
-						loadCompoListItem(subDataItem, subCompoListElt, defaultVariantNodeRef, level + 1);
+						loadCompoListItem(subDataItem, 
+								subCompoListElt, 
+								defaultVariantNodeRef, 
+								level + 1, 
+								productData.getRecipeQtyUsed() != null && productData.getRecipeQtyUsed() != 0d && subDataItem.getQty() != null ? compoListQty * subDataItem.getQty() / productData.getRecipeQtyUsed() : 0d);
 					}
 				}
 			}

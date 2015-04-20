@@ -295,6 +295,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 								}
 
 							}
+							
 							if (!update) {
 
 								for (RepositoryEntity dataListItemTpl : datalistsTpl.get(dataListQName)) {
@@ -313,9 +314,11 @@ public class EntityTplServiceImpl implements EntityTplService {
 												break;
 											}
 										}
-
+										
 										if (!isFound) {
 
+											//if we change identifier assoc -> Duplicate child name not allowed
+											dataListItemTpl.setName(null);
 											dataListItemTpl.setNodeRef(null);
 											dataListItemTpl.setParentNodeRef(null);
 
