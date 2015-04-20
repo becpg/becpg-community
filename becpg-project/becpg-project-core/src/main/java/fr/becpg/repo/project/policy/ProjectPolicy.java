@@ -16,16 +16,20 @@ import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
+import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
+import org.alfresco.repo.transaction.TransactionListener;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.ProjectModel;
+import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.project.ProjectActivityService;
 import fr.becpg.repo.project.ProjectService;
+import fr.becpg.repo.project.ProjectWorkflowService;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.ProjectState;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
@@ -41,9 +45,23 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 
 	private static Log logger = LogFactory.getLog(ProjectPolicy.class);
 
-	private ProjectService projectService;
-	private ProjectActivityService projectActivityService;
-	private AlfrescoRepository<ProjectData> alfrescoRepository;
+	protected static String KEY_DELETED_TASK_LIST_ITEM = "DeletedTaskListItem";
+
+	protected static String KEY_PROJECT_ITEM = "ProjectItem";
+
+	protected ProjectService projectService;
+	protected ProjectActivityService projectActivityService;
+	protected AlfrescoRepository<ProjectData> alfrescoRepository;
+	protected ProjectWorkflowService projectWorkflowService;
+	protected EntityListDAO entityListDAO;
+
+	public void setEntityListDAO(EntityListDAO entityListDAO) {
+		this.entityListDAO = entityListDAO;
+	}
+
+	public void setProjectWorkflowService(ProjectWorkflowService projectWorkflowService) {
+		this.projectWorkflowService = projectWorkflowService;
+	}
 
 	public void setProjectService(ProjectService projectService) {
 		this.projectService = projectService;
@@ -110,34 +128,96 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 		}
 	}
 
+	protected void queueListItem(NodeRef listItemNodeRef) {
+		NodeRef projectNodeRef = entityListDAO.getEntity(listItemNodeRef);
+		if (projectNodeRef != null) {
+			queueNode(projectNodeRef);
+		}
+	}
+
 	@Override
-	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
+	protected void queueNode(NodeRef nodeRef) {
+		super.queueNode(KEY_PROJECT_ITEM, nodeRef);
+	}
 
-		for (final NodeRef projectNodeRef : pendingNodes) {
-			if (nodeService.exists(projectNodeRef) && isNotLocked(projectNodeRef)) {
-				AuthenticationUtil.runAs(new RunAsWork<NodeRef>() {
+	@Override
+	protected void doBeforeCommit(String key, final Set<NodeRef> pendingNodes) {
 
-					@Override
-					public NodeRef doWork() throws Exception {
-						try {
-							policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
-							policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
-							policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_PROJECT);
-							projectService.formulate(projectNodeRef);
-						} catch (FormulateException e) {
-							logger.error(e, e);
-						} finally {
-							policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
-							policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
-							policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_PROJECT);
+		if (logger.isDebugEnabled()) {
+			logger.debug("doBeforeCommit key: " + key + " size: " + pendingNodes.size());
+		}
+		if (KEY_DELETED_TASK_LIST_ITEM.equals(key)) {
+			for (NodeRef taskListItemNodeRef : pendingNodes) {
+				if (nodeService.exists(taskListItemNodeRef)) {
+					// delete workflow
+					projectWorkflowService.deleteWorkflowTask(taskListItemNodeRef);
+				}
+			}
+		} else {
+			// TODO Move that to afterCommit ?
+			// Unsure is the last one
+			// Case a rule is execute after #1446
+			AlfrescoTransactionSupport.bindListener(new TransactionListener() {
+
+				@Override
+				public void beforeCommit(boolean readOnly) {
+					for (final NodeRef projectNodeRef : pendingNodes) {
+						if (logger.isDebugEnabled()) {
+							logger.debug("doBeforeCommit last - formulate project");
+						}
+						if (nodeService.exists(projectNodeRef) && isNotLocked(projectNodeRef)) {
+
+							AuthenticationUtil.runAs(new RunAsWork<NodeRef>() {
+
+								@Override
+								public NodeRef doWork() throws Exception {
+
+									try {
+										policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_LOG_TIME_LIST);
+										policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
+										policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
+										policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_PROJECT);
+										policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_SCORE_LIST);
+										policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_BUDGET_LIST);
+										policyBehaviourFilter.disableBehaviour(ProjectModel.ASPECT_BUDGET);
+										projectService.formulate(projectNodeRef);
+									} catch (FormulateException e) {
+										logger.error(e, e);
+									} finally {
+										policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_LOG_TIME_LIST);
+										policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
+										policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
+										policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_PROJECT);
+										policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_SCORE_LIST);
+										policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_BUDGET_LIST);
+										policyBehaviourFilter.enableBehaviour(ProjectModel.ASPECT_BUDGET);
+									}
+
+									return null;
+								}
+							}, AuthenticationUtil.SYSTEM_USER_NAME);
 						}
 
-						return null;
 					}
 
-				}, AuthenticationUtil.SYSTEM_USER_NAME);
+				}
 
-			}
+				@Override
+				public void flush() {
+				}
+
+				@Override
+				public void beforeCompletion() {
+				}
+
+				@Override
+				public void afterRollback() {
+				}
+
+				@Override
+				public void afterCommit() {
+				}
+			});
 		}
 
 	}
