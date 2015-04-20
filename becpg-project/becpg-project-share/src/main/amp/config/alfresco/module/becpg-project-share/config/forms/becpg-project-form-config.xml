@@ -310,7 +310,7 @@
 					<show id="cm:name" />
 					<show id="pjt:projectEntity" />
 					<show id="dataList_pjt:taskList" />
-					<show id="dataList_pjt:deliverableList" />
+					<!-- <show id="dataList_pjt:deliverableList" /> -->
 					<show id="pjt:projectManager" />
 					<show id="pjt:projectStartDate" />
 					<show id="pjt:projectCompletionDate" />
@@ -318,7 +318,7 @@
 					<show id="pjt:projectState" />
 				</field-visibility>
 				<appearance>
-					<field id="dataList_pjt:deliverableList" label-id="becpg.forms.field.projects.datagrid.deliverableList.label" />
+					<!-- <field id="dataList_pjt:deliverableList" label-id="becpg.forms.field.projects.datagrid.deliverableList.label" /> -->
 					<field id="dataList_pjt:taskList" label-id="becpg.forms.field.projects.datagrid.taskList.label" />
 					<field id="pjt:projectStartDate" label-id="becpg.forms.field.projects.datagrid.projectStartDate.label"   />
 				</appearance>
@@ -341,7 +341,8 @@
 					<show id="pjt:projectPriority" />
 					<show id="pjt:projectState" />														
 					<show id="pjt:projectStartDate" />
-					<show id="pjt:projectDueDate" />					
+					<show id="pjt:projectDueDate" />
+					<show id="pjt:projectCurrentTasks" />					
 				</field-visibility>
 			</form>	
 				
@@ -359,7 +360,7 @@
 					<show id="pjt:projectDueDate" />
 					
 					<!-- Task -->
-					<!-- <show id="entity_dataList_pjt:taskList" /> -->
+					<!-- <show id="pjt:projectCurrentTasks" /> -->
 					
 				</field-visibility>
 				<appearance>

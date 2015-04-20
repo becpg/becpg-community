@@ -89,6 +89,9 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	private List<BudgetListDataItem> budgetList;
 	private List<InvoiceListDataItem> invoiceList;
 	private List<ExpenseListDataItem> expenseList;
+	
+	
+	private List<NodeRef> currTasks;
 
 
 
@@ -351,6 +354,17 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 
 	public void setWork(Double work) {
 		this.work = work;
+	}
+
+	
+	@AlfMultiAssoc
+	@AlfQname(qname = "pjt:projectCurrentTasks")
+	public List<NodeRef> getCurrTasks() {
+		return currTasks;
+	}
+
+	public void setCurrTasks(List<NodeRef> currTasks) {
+		this.currTasks = currTasks;
 	}
 
 	@AlfProp

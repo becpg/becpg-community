@@ -117,6 +117,16 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 			projectData.setCompletionPercent(ProjectHelper.geProjectCompletionPercent(projectData));
 
 			calculateProjectLegends(projectData);
+			
+			
+			List<NodeRef> currTasks = new ArrayList<>();
+			for (TaskListDataItem task : projectData.getTaskList()) {
+				if (TaskState.InProgress.equals(task.getTaskState())) {
+					currTasks.add(task.getNodeRef());
+				}
+			}
+			projectData.setCurrTasks(currTasks);
+			
 		}
 
 		return true;

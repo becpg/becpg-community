@@ -5,7 +5,6 @@ package fr.becpg.repo.project.policy;
 
 import java.io.Serializable;
 import java.util.Map;
-import java.util.Set;
 
 import org.alfresco.repo.copy.CopyBehaviourCallback;
 import org.alfresco.repo.copy.CopyDetails;
@@ -14,8 +13,6 @@ import org.alfresco.repo.copy.DefaultCopyBehaviourCallback;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.node.archive.NodeArchiveService;
 import org.alfresco.repo.policy.JavaBehaviour;
-import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -24,12 +21,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.ProjectModel;
-import fr.becpg.repo.entity.EntityListDAO;
-import fr.becpg.repo.formulation.FormulateException;
-import fr.becpg.repo.policy.AbstractBeCPGPolicy;
-import fr.becpg.repo.project.ProjectActivityService;
-import fr.becpg.repo.project.ProjectService;
-import fr.becpg.repo.project.ProjectWorkflowService;
 import fr.becpg.repo.project.data.projectList.DeliverableState;
 import fr.becpg.repo.project.data.projectList.TaskState;
 
@@ -38,47 +29,24 @@ import fr.becpg.repo.project.data.projectList.TaskState;
  * 
  * @author querephi
  */
-public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnCreateAssociationPolicy,
+public class ProjectListPolicy extends ProjectPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnCreateAssociationPolicy,
 		NodeServicePolicies.OnDeleteAssociationPolicy, CopyServicePolicies.OnCopyNodePolicy, NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.BeforeDeleteNodePolicy,
 		NodeServicePolicies.OnDeleteNodePolicy {
 
-	private static String KEY_DELETED_TASK_LIST_ITEM = "DeletedTaskListItem";
+	private static final Log logger = LogFactory.getLog(ProjectListPolicy.class);
 
-	private static Log logger = LogFactory.getLog(ProjectListPolicy.class);
-
-	private ProjectService projectService;
-
-	private EntityListDAO entityListDAO;
-
-	private ProjectActivityService projectActivityService;
 
 	private NodeArchiveService nodeArchiveService;
-
-	private ProjectWorkflowService projectWorkflowService;
-
-	public void setProjectService(ProjectService projectService) {
-		this.projectService = projectService;
-	}
-
-	public void setEntityListDAO(EntityListDAO entityListDAO) {
-		this.entityListDAO = entityListDAO;
-	}
-
-	public void setProjectActivityService(ProjectActivityService projectActivityService) {
-		this.projectActivityService = projectActivityService;
-	}
 
 	public void setNodeArchiveService(NodeArchiveService nodeArchiveService) {
 		this.nodeArchiveService = nodeArchiveService;
 	}
 
-	public void setProjectWorkflowService(ProjectWorkflowService projectWorkflowService) {
-		this.projectWorkflowService = projectWorkflowService;
-	}
-
+	
 	/**
 	 * Inits the.
 	 */
+	@Override
 	public void doInit() {
 		logger.debug("Init SubmitTaskPolicy...");
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, ProjectModel.TYPE_TASK_LIST, new JavaBehaviour(this, "onUpdateProperties"));
@@ -124,58 +92,6 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 
 		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME, ProjectModel.ASPECT_BUDGET, new JavaBehaviour(this, "beforeDeleteNode"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME, ProjectModel.ASPECT_BUDGET, new JavaBehaviour(this, "onDeleteNode"));
-	}
-
-	@Override
-	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
-
-		if (logger.isDebugEnabled()) {
-			logger.debug("doBeforeCommit key: " + key + " size: " + pendingNodes.size());
-		}
-		if (KEY_DELETED_TASK_LIST_ITEM.equals(key)) {
-			for (NodeRef taskListItemNodeRef : pendingNodes) {
-				if (nodeService.exists(taskListItemNodeRef)) {
-					// delete workflow
-					projectWorkflowService.deleteWorkflowTask(taskListItemNodeRef);
-				}
-			}
-		} else {
-			for (final NodeRef projectNodeRef : pendingNodes) {
-				if (nodeService.exists(projectNodeRef) && isNotLocked(projectNodeRef)) {
-
-					AuthenticationUtil.runAs(new RunAsWork<NodeRef>() {
-
-						@Override
-						public NodeRef doWork() throws Exception {
-
-							try {
-								policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_LOG_TIME_LIST);
-								policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
-								policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
-								policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_PROJECT);
-								policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_SCORE_LIST);
-								policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_BUDGET_LIST);
-								policyBehaviourFilter.disableBehaviour(ProjectModel.ASPECT_BUDGET);
-								projectService.formulate(projectNodeRef);
-							} catch (FormulateException e) {
-								logger.error(e, e);
-							} finally {
-								policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_LOG_TIME_LIST);
-								policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);
-								policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_TASK_LIST);
-								policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_PROJECT);
-								policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_SCORE_LIST);
-								policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_BUDGET_LIST);
-								policyBehaviourFilter.enableBehaviour(ProjectModel.ASPECT_BUDGET);
-							}
-
-							return null;
-						}
-					}, AuthenticationUtil.SYSTEM_USER_NAME);
-
-				}
-			}
-		}
 	}
 
 	@Override
@@ -294,12 +210,6 @@ public class ProjectListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		}
 	}
 	
-	private void queueListItem(NodeRef listItemNodeRef) {
-		NodeRef projectNodeRef = entityListDAO.getEntity(listItemNodeRef);
-		if (projectNodeRef != null) {
-			queueNode(projectNodeRef);
-		}
-	}
 
 	@Override
 	public void onDeleteAssociation(AssociationRef assocRef) {
