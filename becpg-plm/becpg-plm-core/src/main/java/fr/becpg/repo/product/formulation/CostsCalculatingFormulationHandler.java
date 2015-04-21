@@ -45,7 +45,6 @@ import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.spel.SpelHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
-import fr.becpg.repo.repository.model.SimpleListDataItem;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
 /**
@@ -95,10 +94,11 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 		logger.debug("Cost calculating visitor");
 
-		// no compo => no formulation
-		if (!formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE) && !formulatedProduct.hasPackagingListEl(EffectiveFilters.EFFECTIVE)
-				&& !formulatedProduct.hasProcessListEl(EffectiveFilters.EFFECTIVE) || formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
-			logger.debug("no compo => no formulation");
+		// no formulation
+		if ((formulatedProduct.getCostList()==null)
+				 &&	!alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_COSTLIST)
+				 || formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
+			logger.debug("no formulation");
 			return true;
 		}
 
@@ -110,7 +110,13 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			formulatedProduct.setDefaultVariantPackagingData(packagingHelper.getDefaultVariantPackagingData(formulatedProduct));
 		}
 		
-		formulateSimpleList(formulatedProduct, formulatedProduct.getCostList());
+		if(formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE) || formulatedProduct.hasPackagingListEl(EffectiveFilters.EFFECTIVE)
+				|| formulatedProduct.hasProcessListEl(EffectiveFilters.EFFECTIVE)){
+			formulateSimpleList(formulatedProduct, formulatedProduct.getCostList());
+			
+			// simulation: take in account cost of components defined on formulated product
+			calculateSimulationCosts(formulatedProduct);
+		}		
 		
 		ExpressionParser parser = new SpelExpressionParser();
 		StandardEvaluationContext context = formulaService.createEvaluationContext(formulatedProduct);
@@ -118,12 +124,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		computeCostsList(formulatedProduct, parser, context);
 
 		if (formulatedProduct.getCostList() != null) {
-
-			// simulation: take in account cost of components defined on formulated product
-			calculateSimulationCosts(formulatedProduct);
-			
-			for (CostListDataItem c : formulatedProduct.getCostList()) {
-				
+			for (CostListDataItem c : formulatedProduct.getCostList()) {				
 				c.setUnit(calculateUnit(formulatedProduct.getUnit(), 
 						(String)nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTCURRENCY), 
 						(Boolean)nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTFIXED)));
@@ -353,54 +354,64 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 
 	private void calculateProfitability(ProductData formulatedProduct) {
 
-		if(formulatedProduct instanceof FinishedProductData){
-			Double netQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
-			Double unitTotalVariableCost = 0d;
-			Double unitTotalFixedCost = 0d;
+		Double netQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct, 1d);
+		Double unitTotalVariableCost = 0d;//for 1 product
+		Double unitTotalFixedCost = 0d;
 
-			for (CostListDataItem c : formulatedProduct.getCostList()) {
+		for (CostListDataItem c : formulatedProduct.getCostList()) {
 
-				Boolean isFixed = (Boolean) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTFIXED);
-				c.setValuePerProduct(null);
-				
-				if (c.getValue() != null) {
-					if (isFixed != null && isFixed == Boolean.TRUE) {
-						unitTotalFixedCost += c.getValue();
-						if(formulatedProduct.getProjectedQty() != null && !formulatedProduct.getProjectedQty().equals(0)){
-							c.setValuePerProduct(c.getValue() / formulatedProduct.getProjectedQty());
-							unitTotalVariableCost += c.getValuePerProduct();
-						}												
-						
-					} else if(netQty != FormulationHelper.DEFAULT_NET_WEIGHT){
-						c.setValuePerProduct(netQty * c.getValue());
-						unitTotalVariableCost += c.getValuePerProduct();
-					}
-				}
-			}
-
-			formulatedProduct.setUnitTotalCost(unitTotalVariableCost);
-
-			if (formulatedProduct.getUnitPrice() != null && formulatedProduct.getUnitTotalCost() != null) {
-
-				// profitability
-				Double profit = formulatedProduct.getUnitPrice() - formulatedProduct.getUnitTotalCost();
-				Double profitability = 100 * profit / formulatedProduct.getUnitPrice();
-				logger.debug("profitability: " + profitability);
-				formulatedProduct.setProfitability(profitability);
-
-				// breakEven
-				if (profit > 0) {
-
-					Long breakEven = Math.round(unitTotalFixedCost / profit);
-					formulatedProduct.setBreakEven(breakEven);
+			Boolean isFixed = (Boolean) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTFIXED);
+			Double costPerProduct = null;				
+			
+			if (c.getValue() != null) {
+				if (isFixed != null && isFixed == Boolean.TRUE) {
+					unitTotalFixedCost += c.getValue();
+					if(formulatedProduct.getProjectedQty() != null && !formulatedProduct.getProjectedQty().equals(0)){
+						costPerProduct = c.getValue() / formulatedProduct.getProjectedQty();
+					}												
+					
 				} else {
-					formulatedProduct.setBreakEven(null);
+					costPerProduct = netQty * c.getValue();
 				}
-
-			} else {
-				formulatedProduct.setProfitability(null);
 			}
-		}	
+			
+			c.setValuePerProduct(null);
+			if(costPerProduct != null){
+				unitTotalVariableCost += costPerProduct;
+				if(formulatedProduct instanceof FinishedProductData){
+					c.setValuePerProduct(costPerProduct);
+				}
+			}
+		}
+
+		if(formulatedProduct instanceof FinishedProductData){
+			formulatedProduct.setUnitTotalCost(unitTotalVariableCost);
+		}		
+		else{
+			// €/Kg, €/L or €/P
+			formulatedProduct.setUnitTotalCost(unitTotalVariableCost / netQty);
+		}
+
+		if (formulatedProduct.getUnitPrice() != null && formulatedProduct.getUnitTotalCost() != null) {
+
+			// profitability
+			Double profit = formulatedProduct.getUnitPrice() - formulatedProduct.getUnitTotalCost();
+			Double profitability = 100 * profit / formulatedProduct.getUnitPrice();
+			logger.debug("profitability: " + profitability);
+			formulatedProduct.setProfitability(profitability);
+
+			// breakEven
+			if (profit > 0) {
+
+				Long breakEven = Math.round(unitTotalFixedCost / profit);
+				formulatedProduct.setBreakEven(breakEven);
+			} else {
+				formulatedProduct.setBreakEven(null);
+			}
+
+		} else {
+			formulatedProduct.setProfitability(null);
+		}
 	}
 
 	protected Map<NodeRef, List<NodeRef>> getMandatoryCharacts(ProductData formulatedProduct, QName componentType) {

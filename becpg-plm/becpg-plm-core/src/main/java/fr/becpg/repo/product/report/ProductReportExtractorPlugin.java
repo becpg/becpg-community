@@ -155,7 +155,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 							if (dataListItem instanceof CompositionDataItem) {
 								CompositionDataItem compositionDataItem = (CompositionDataItem) dataListItem;
-								loadProductData(compositionDataItem.getProduct(), nodeElt);
+								loadProductData(compositionDataItem.getComponent(), nodeElt);
 							}
 
 							loadDataListItemAttributes(dataListItem, nodeElt);

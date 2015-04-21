@@ -166,35 +166,32 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 			Set<CompositionDataItem> compositionDataItems = new HashSet<>();
 			compositionDataItems.addAll(productData.getCompoList());
 			compositionDataItems.addAll(productData.getPackagingList());
+			compositionDataItems.addAll(productData.getProcessList(EffectiveFilters.EFFECTIVE));
 
-			if (!compositionDataItems.isEmpty()) {
-
-				boolean shouldFormulate = false;
+			boolean shouldFormulate = false;
+			if (!compositionDataItems.isEmpty()) {				
 				for (CompositionDataItem c : compositionDataItems) {
-					ProductData p = alfrescoRepository.findOne(c.getProduct());
+					ProductData p = alfrescoRepository.findOne(c.getComponent());
 					// recursive
 					if (checkShouldFormulateComponents(false, p, checkedProducts)) {
 						shouldFormulate = true;
 					}
-
 					// check modified date on component
-					Date modified = (Date) nodeService.getProperty(c.getProduct(), ContentModel.PROP_MODIFIED);
+					Date modified = (Date) nodeService.getProperty(c.getComponent(), ContentModel.PROP_MODIFIED);
 					if (modified == null || productData.getFormulatedDate() == null || modified.getTime() > productData.getFormulatedDate().getTime()) {
 						shouldFormulate = true;
 					}
-				}
-
-				if (!isRoot && (shouldFormulate || productService.shouldFormulate(productData.getNodeRef()))) {
-
-					if (logger.isDebugEnabled()) {
-						logger.debug("auto-formulate: " + productData.getName());
-					}
-					productService.formulate(productData);
-					alfrescoRepository.save(productData);
-					isFormulated = true;
-				}
+				}	
 			}
-
+			
+			if (!isRoot && (shouldFormulate || productService.shouldFormulate(productData.getNodeRef()))) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("auto-formulate: " + productData.getName());
+				}
+				productService.formulate(productData);
+				alfrescoRepository.save(productData);
+				isFormulated = true;
+			}
 		}
 
 		return isFormulated;

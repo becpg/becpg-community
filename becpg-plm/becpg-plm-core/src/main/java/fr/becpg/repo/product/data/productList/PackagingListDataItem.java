@@ -189,4 +189,14 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 		return new PackagingListDataItem(this);
 	}
 
+	@Override
+	public NodeRef getComponent() {
+		return getProduct();
+	}
+
+	@Override
+	public void setComponent(NodeRef targetItem) {
+		setProduct(targetItem);
+	}
+
 }
