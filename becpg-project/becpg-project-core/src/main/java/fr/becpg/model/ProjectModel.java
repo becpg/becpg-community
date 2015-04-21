@@ -46,6 +46,9 @@ public interface ProjectModel {
 	public static final QName ASSOC_PROJECT_ENTITY = QName.createQName(PROJECT_URI, "projectEntity");	
 	public static final QName ASSOC_PROJECT_OBSERVERS = QName.createQName(PROJECT_URI, "projectObservers");
 	
+	public static final QName ASSOC_PROJECT_CUR_TASKS = QName.createQName(PROJECT_URI, "projectCurrentTasks");
+	public static final QName ASSOC_PROJECT_CUR_COMMENTS = QName.createQName(PROJECT_URI, "projectCurrentComments");
+	
 	public static final QName TYPE_TASK_LIST = QName.createQName(PROJECT_URI, "taskList");
 	public static final QName PROP_TL_TASK_NAME = QName.createQName(PROJECT_URI, "tlTaskName");
 	public static final QName PROP_TL_TASK_DESCRIPTION = QName.createQName(PROJECT_URI, "tlTaskDescription");

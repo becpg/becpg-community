@@ -601,6 +601,11 @@
 		</type>
 		<type name="bcpg:packagingMaterial">
 			<parent>bcpg:product</parent>
+				<properties>
+					<property name="bcpg:foodContact">
+						<type>d:boolean</type>
+					</property>
+				</properties>
 			<mandatory-aspects>
 				<aspect>bcpg:eanAspect</aspect>
 				<aspect>bcpg:suppliersAspect</aspect>

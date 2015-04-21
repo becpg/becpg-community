@@ -17,6 +17,8 @@
  ******************************************************************************/
 package fr.becpg.repo.project.impl;
 
+import java.util.List;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.activities.post.lookup.PostLookup;
 import org.alfresco.repo.forum.CommentService;
@@ -233,7 +235,17 @@ public class ProjectActivityServiceImpl implements ProjectActivityService {
 				}
 
 				alfrescoRepository.save(activityListDataItem);
-
+				
+				//Update curr comments assoc
+				List<NodeRef> currCommentsAssoc = associationService.getTargetAssocs(projectNodeRef, ProjectModel.ASSOC_PROJECT_CUR_COMMENTS);
+				
+				if(currCommentsAssoc.size()>3){
+					currCommentsAssoc.remove(currCommentsAssoc.size()-1);
+				}
+				
+				currCommentsAssoc.add(activityListDataItem.getNodeRef());
+				associationService.update(projectNodeRef, ProjectModel.ASSOC_PROJECT_CUR_COMMENTS, currCommentsAssoc);
+				
 			} catch (JSONException e) {
 				logger.error(e, e);
 			}
