@@ -62,7 +62,7 @@ public class FormulaFormulationContext {
 	}
 
 	public ProductData getDataListItemEntity() {
-		return dataListItem.getProduct() != null ? alfrescoRepository.findOne(dataListItem.getProduct()) : null;
+		return dataListItem.getComponent() != null ? alfrescoRepository.findOne(dataListItem.getComponent()) : null;
 	}
 
 	

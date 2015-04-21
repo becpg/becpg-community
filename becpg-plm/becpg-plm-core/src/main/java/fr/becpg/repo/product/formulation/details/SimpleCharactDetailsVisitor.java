@@ -20,6 +20,7 @@ package fr.becpg.repo.product.formulation.details;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
@@ -117,7 +118,10 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 				}
 				
 				if (logger.isDebugEnabled()) {
-					logger.debug("Add new charact detail. Charact: " + simpleCharact.getCharactNodeRef() + " - entityNodeRef: " + entityNodeRef + " - value: " + value);
+					logger.debug("Add new charact detail. Charact: " + 
+							nodeService.getProperty(simpleCharact.getCharactNodeRef(), ContentModel.PROP_NAME) + 
+							" - entityNodeRef: " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + 
+							" - value: " + value);
 				}
 				charactDetails.addKeyValue(simpleCharact.getCharactNodeRef(), entityNodeRef, value);
 			}

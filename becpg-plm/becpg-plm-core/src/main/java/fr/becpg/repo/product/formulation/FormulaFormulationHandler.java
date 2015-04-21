@@ -236,8 +236,8 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 										&& (dynamicCharactListItem.getMultiLevelFormula() != null && Boolean.TRUE.equals(dynamicCharactListItem
 												.getMultiLevelFormula()))
 										&& view instanceof CompoListView
-										&& (dataListItem.getProduct() != null && PLMModel.TYPE_SEMIFINISHEDPRODUCT.equals(nodeService
-												.getType(dataListItem.getProduct())))) {
+										&& (dataListItem.getComponent() != null && PLMModel.TYPE_SEMIFINISHEDPRODUCT.equals(nodeService
+												.getType(dataListItem.getComponent())))) {
 
 									JSONObject jsonTree = extractJSONTree(productData, dataListItem, value, exp);
 									dataListItem.getExtraProperties().put(columnName, (Serializable) jsonTree.toString());
@@ -311,7 +311,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 	}
 
 	private void extractJSONSubList(ProductData productData, CompositionDataItem dataListItem, Expression exp, String path, JSONArray subList) throws JSONException {
-		ProductData subProductData = alfrescoRepository.findOne(dataListItem.getProduct());
+		ProductData subProductData = alfrescoRepository.findOne(dataListItem.getComponent());
 		for (CompositionDataItem subDataListItem : subProductData.getCompoListView().getCompoList()) {
 			JSONObject subObject = new JSONObject();
 
@@ -331,8 +331,8 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 			subObject.put(JsonFormulaHelper.JSON_PATH, subPath);
 			subList.put(subObject);
 			
-			if (PLMModel.TYPE_SEMIFINISHEDPRODUCT.equals(nodeService.getType(dataListItem.getProduct())) 
-					|| PLMModel.TYPE_FINISHEDPRODUCT.equals(nodeService.getType(dataListItem.getProduct()))) {
+			if (PLMModel.TYPE_SEMIFINISHEDPRODUCT.equals(nodeService.getType(dataListItem.getComponent())) 
+					|| PLMModel.TYPE_FINISHEDPRODUCT.equals(nodeService.getType(dataListItem.getComponent()))) {
 				extractJSONSubList(productData, subDataListItem, exp, subPath, subList);
 			} 
 		}

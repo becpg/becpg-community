@@ -303,6 +303,14 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 		return new CompoListDataItem(this);
 	}
 
-	
+	@Override
+	public NodeRef getComponent() {
+		return getProduct();
+	}
+
+	@Override
+	public void setComponent(NodeRef targetItem) {
+		setProduct(targetItem);		
+	}
 	
 }

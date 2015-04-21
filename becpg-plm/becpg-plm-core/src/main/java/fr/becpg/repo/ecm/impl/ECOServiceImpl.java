@@ -552,7 +552,7 @@ public class ECOServiceImpl implements ECOService {
 					// TODO Can be retrieve by link from wusedList
 
 					// Look if compo match with
-					if (replacementListDataItem.getSourceItems().get(0).equals(compoListDataItem.getProduct())) {
+					if (replacementListDataItem.getSourceItems().get(0).equals(compoListDataItem.getComponent())) {
 
 						boolean apply = true;
 						if (replacementListDataItem.getSourceItems().size() > 1) {
@@ -561,7 +561,7 @@ public class ECOServiceImpl implements ECOService {
 								apply = false;
 								for (Iterator<T> iterator2 = items.iterator(); iterator2.hasNext();) {
 									CompositionDataItem compoListDataItem2 = (CompoListDataItem) iterator2.next();
-									if (replacementListDataItem.getSourceItems().get(i).equals(compoListDataItem2.getProduct())) {
+									if (replacementListDataItem.getSourceItems().get(i).equals(compoListDataItem2.getComponent())) {
 										apply = true;
 										// DELETE
 										toDelete.add(compoListDataItem2.getNodeRef());
@@ -577,10 +577,10 @@ public class ECOServiceImpl implements ECOService {
 
 						if (apply) {
 							// ADD
-							if (temp.containsKey(compoListDataItem.getProduct())) {
+							if (temp.containsKey(compoListDataItem.getComponent())) {
 								T newCompoListDataItem = (T) compoListDataItem.createCopy();
 								newCompoListDataItem.setNodeRef(null);
-								newCompoListDataItem.setProduct(replacementListDataItem.getTargetItem());
+								newCompoListDataItem.setComponent(replacementListDataItem.getTargetItem());
 								if (compoListDataItem.getQty() != null && replacementListDataItem.getQtyPerc() != null) {
 									newCompoListDataItem.setQty(replacementListDataItem.getQtyPerc() / 100 * compoListDataItem.getQty());
 								}
@@ -590,11 +590,11 @@ public class ECOServiceImpl implements ECOService {
 								if (replacementListDataItem.getTargetItem() == null) {
 									iterator.remove();
 								} else {
-									compoListDataItem.setProduct(replacementListDataItem.getTargetItem());
+									compoListDataItem.setComponent(replacementListDataItem.getTargetItem());
 									if (compoListDataItem.getQty() != null && replacementListDataItem.getQtyPerc() != null) {
 										compoListDataItem.setQty(replacementListDataItem.getQtyPerc() / 100 * compoListDataItem.getQty());
 									}
-									temp.put(compoListDataItem.getProduct(), compoListDataItem);
+									temp.put(compoListDataItem.getComponent(), compoListDataItem);
 								}
 							}
 						}
