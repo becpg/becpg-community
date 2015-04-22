@@ -12,12 +12,16 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.AuthenticationException;
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.impl.auth.BasicScheme;
+import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.HttpClientBuilder;
 
 import fr.becpg.common.BeCPGException;
@@ -58,21 +62,16 @@ public class HttpEntityProviderCallback implements EntityProviderCallBack {
 			logger.debug("User : " + remoteUser);
 			logger.debug("Password : " + remotePwd);
 
-			HttpClient httpClient = HttpClientBuilder.create().build();
-
-			BasicScheme basicScheme = new BasicScheme(Charset.forName("UTF-8"));
-			HttpClientContext httpContext = HttpClientContext.create();
-
 			HttpGet entityUrl = new HttpGet(url);
-			basicScheme.authenticate(new UsernamePasswordCredentials(remoteUser, remotePwd), entityUrl, httpContext);
 
-			HttpResponse httpResponse = httpClient.execute(entityUrl, httpContext);
+			HttpResponse httpResponse = getResponse(entityUrl);
 			HttpEntity responseEntity = httpResponse.getEntity();
 
 			try (InputStream entityStream = responseEntity.getContent()) {
 				return remoteEntityService.createOrUpdateEntity(nodeRef, destNodeRef, properties, entityStream, RemoteEntityFormat.xml, this);
 			}
-		} catch (AuthenticationException | IOException e) {
+			
+		} catch (IOException e) {
 			throw new BeCPGException(e);
 		}
 
@@ -87,23 +86,31 @@ public class HttpEntityProviderCallback implements EntityProviderCallBack {
 			logger.debug("User : " + remoteUser);
 			logger.debug("Password : " + remotePwd);
 
-			HttpClient httpClient = HttpClientBuilder.create().build();
-			BasicScheme basicScheme = new BasicScheme(Charset.forName("UTF-8"));
-			HttpClientContext httpContext = HttpClientContext.create();
-
 			HttpGet entityUrl = new HttpGet(url);
-			basicScheme.authenticate(new UsernamePasswordCredentials(remoteUser, remotePwd), entityUrl, httpContext);
 
-			HttpResponse httpResponse = httpClient.execute(entityUrl, httpContext);
+			HttpResponse httpResponse = getResponse(entityUrl);
 			HttpEntity responseEntity = httpResponse.getEntity();
 
 			try (InputStream dataStream = responseEntity.getContent()) {
 				remoteEntityService.addOrUpdateEntityData(destNodeRef, dataStream, RemoteEntityFormat.xml);
 			}
-		} catch (AuthenticationException | IOException e) {
+		} catch (IOException e) {
 			throw new BeCPGException(e);
 		}
 
+	}
+	
+	private HttpResponse getResponse(HttpGet entityUrl) throws ClientProtocolException, IOException{
+		HttpClient httpClient = HttpClientBuilder.create().build();
+		HttpClientContext httpContext = HttpClientContext.create();
+		
+		
+		UsernamePasswordCredentials creds = new UsernamePasswordCredentials(remoteUser, remotePwd);
+		CredentialsProvider credsProvider = new BasicCredentialsProvider();
+		credsProvider.setCredentials(new AuthScope(AuthScope.ANY_HOST, AuthScope.ANY_PORT), creds);
+		httpContext.setCredentialsProvider(credsProvider);
+		
+		return httpClient.execute(entityUrl, httpContext);
 	}
 
 }
