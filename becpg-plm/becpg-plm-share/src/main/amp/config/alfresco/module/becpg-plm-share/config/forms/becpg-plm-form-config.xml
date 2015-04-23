@@ -1756,6 +1756,105 @@
 	<!-- bcpg:packagingMaterial type (creating nodes nodes) -->
 	<config evaluator="model-type" condition="bcpg:packagingMaterial">
 		<forms>
+		
+		<form id="bulk-edit">
+				<field-visibility>
+
+					<!-- mainInfo -->
+					<show id="cm:name" force="true"/>
+					<show id="cm:title" force="true" />
+					<show id="bcpg:legalName" force="true"/>
+					<show id="cm:description" force="true" />
+					<show id="bcpg:productComments" force="true"/>
+					<show id="bcpg:productHierarchy1" force="true"/>
+					<show id="bcpg:productHierarchy2" force="true"/>
+					<show id="bcpg:productState" force="true"/>
+					<show id="bcpg:productUnit" force="true"/>
+					<show id="bcpg:code" force="true"/>
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:entityTplRef" force="true" />
+					<show id="rep:reportTpls" />
+
+					<!-- pallet -->
+					<show id="pack:palletLayers" force="true" />
+					<show id="pack:palletBoxesPerLayer" force="true" />
+					<show id="pack:palletBoxesPerLastLayer" force="true" />
+					<show id="pack:palletBoxesPerPallet" force="true" />
+					<show id="pack:palletHeight" force="true" />
+					<show id="pack:palletNumberOnGround" force="true" />
+					
+					<!-- Tare -->
+					<show id="pack:tare" force="true" />
+					<show id="pack:tareUnit" force="true" />
+
+					<!-- Dimension -->
+					<show id="pack:length" force="true" />
+					<show id="pack:width" force="true" />
+					<show id="pack:height" force="true" />
+					
+					<!-- internal dimension -->	
+					<show id="pack:pmIntLength" force="true" />
+					<show id="pack:pmIntWidth" force="true" />
+					<show id="pack:pmIntHeight" force="true" />
+					
+					<!-- thickness -->	
+					<show id="pack:pmThickness" force="true" />
+					<show id="pack:pmPaperWeight" force="true" />
+					
+					<!-- material -->	
+					<show id="pack:pmMaterial" force="true"  />
+					<show id="pack:pmAdditionnalMaterial" force="true" />
+					
+					<!-- coil -->
+					<show id="pack:pmCoreDiameter" force="true" />
+					<show id="pack:pmCoilDiameter" force="true" />
+					
+					<!-- print -->
+					<show id="pack:pmPrintNbColors" force="true" />	
+					<show id="pack:pmPrintColor" force="true" />
+					<show id="pack:pmPrintType" force="true" />
+					<show id="pack:pmPrintVarnish" force="true" />			
+					
+
+					<!-- tags and categories -->
+					<show id="cm:taggable" />
+					<show id="cm:categories" />
+
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:productHierarchy1" mandatory="false"
+						read-only="false">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingKit_Hierarchy
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productHierarchy2" mandatory="false"
+						read-only="false">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingKit_Hierarchy
+							</control-param>
+							<control-param name="parent">bcpg_productHierarchy1
+							</control-param>
+						</control>
+					</field>
+					<field id="cm:taggable">
+						<control>
+							<control-param name="compactMode">true</control-param>
+							<control-param name="params">aspect=cm:taggable
+							</control-param>
+							<control-param name="createNewItemUri">/api/tag/workspace/SpacesStore
+							</control-param>
+							<control-param name="createNewItemIcon">tag</control-param>
+						</control>
+					</field>
+					<field id="cm:categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
 
 			<form id="create">
 				<field-visibility>
@@ -1779,13 +1878,41 @@
 					<show id="bcpg:certificateDate" force="true" />
 					<show id="rep:reportTpls" />
 
-					<!-- tare -->
+					<!-- Tare -->
 					<show id="pack:tare" force="true" />
 					<show id="pack:tareUnit" force="true" />
 
+					<!-- Dimension -->
+					<show id="pack:length" force="true" />
+					<show id="pack:width" force="true" />
+					<show id="pack:height" force="true" />
+					
+					<!-- internal dimension -->	
+					<show id="pack:pmIntLength" force="true" />
+					<show id="pack:pmIntWidth" force="true" />
+					<show id="pack:pmIntHeight" force="true" />
+					
+					<!-- thickness -->	
+					<show id="pack:pmThickness" force="true" />
+					<show id="pack:pmPaperWeight" force="true" />
+					
+					<!-- material -->	
+					<show id="pack:pmMaterial" force="true"/>
+					<show id="pack:pmAdditionnalMaterial" force="true"/>
+					
+					<!-- coil -->
+					<show id="pack:pmCoreDiameter" force="true"/>
+					<show id="pack:pmCoilDiameter" force="true"/>
+					
+					<!-- print -->
+					<show id="pack:pmPrintNbColors" force="true"/>	
+					<show id="pack:pmPrintColor" force="true"/>
+					<show id="pack:pmPrintType" force="true"/>
+					<show id="pack:pmPrintVarnish" force="true"/>			
+
 					<!-- tags and categories -->
 					<show id="cm:taggable" />
-					<show id="cm:categories" />
+					<show id="cm:categories"/>
 
 				</field-visibility>
 				<appearance>
@@ -1793,6 +1920,18 @@
 						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 				   <set id="tare" appearance="bordered-panel" label-id="becpg.forms.set.tare.label"
 						template="/org/alfresco/components/form/2-column-set.ftl" />
+						<set id="dimension" appearance="bordered-panel"
+						label-id="becpg.forms.set.pack.size.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="internalDimension" appearance="bordered-panel"
+						label-id="becpg.forms.set.pack.intSize.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="thickness" appearance="bordered-panel"
+						label-id="becpg.forms.set.pack.thickness.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="material" appearance="bordered-panel"
+						label-id="becpg.forms.set.pack.material.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="coil" appearance="bordered-panel"
+						label-id="becpg.forms.set.pack.coil.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="print" appearance="bordered-panel"
+						label-id="becpg.forms.set.pack.print.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="categories" appearance="bordered-panel"
 						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					
@@ -1849,6 +1988,38 @@
 					<!-- tare -->
 					<field id="pack:tare" set="tare" />
 					<field id="pack:tareUnit" set="tare" />
+					
+					<!-- tare -->
+					<field id="pack:tare" set="tare" />
+					<field id="pack:tareUnit" set="tare" />
+
+					<!-- Dimension -->
+					<field id="pack:length" set="dimension" />
+					<field id="pack:width" set="dimension" />
+					<field id="pack:height" set="dimension" />
+					
+					<!-- internal dimension -->	
+					<field id="pack:pmIntLength" set="internalDimension"/>
+					<field id="pack:pmIntWidth" set="internalDimension"/>
+					<field id="pack:pmIntHeight" set="internalDimension"/>
+					
+					<!-- thickness -->	
+					<field id="pack:pmThickness" set="thickness"/>
+					<field id="pack:pmPaperWeight" set="thickness"/>
+					
+					<!-- material -->	
+					<field id="pack:pmMaterial" set="material"/>
+					<field id="pack:pmAdditionnalMaterial" set="material"/>
+					
+					<!-- coil -->
+					<field id="pack:pmCoreDiameter" set="coil"/>
+					<field id="pack:pmCoilDiameter" set="coil"/>
+					
+					<!-- print -->
+					<field id="pack:pmPrintNbColors" set="print"/>	
+					<field id="pack:pmPrintColor" set="print"/>
+					<field id="pack:pmPrintType" set="print"/>
+					<field id="pack:pmPrintVarnish" set="print"/>
 
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">

@@ -291,7 +291,7 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 			// Skip if already match
 			if (!cache.contains(tmp)) {
 				// Same NodeRef Same Pos
-				if (Objects.equals(tmp.getProduct(), dataListItem.getProduct())) {
+				if (Objects.equals(tmp.getComponent(), dataListItem.getComponent())) {
 					// We break as no better match
 					if (tmpPos == currentPos) {
 						ret = tmp;
@@ -302,7 +302,7 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 					}
 				}
 
-				if (approxMatch(dataListItem.getProduct(), tmp.getProduct()) && Math.abs(tmpPos - currentPos) < posDiff) {
+				if (approxMatch(dataListItem.getComponent(), tmp.getComponent()) && Math.abs(tmpPos - currentPos) < posDiff) {
 					posDiff = Math.abs(tmpPos - currentPos);
 					ret = tmp;
 				}

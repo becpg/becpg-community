@@ -246,6 +246,16 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 		return true;
 	}
 
+	@Override
+	public NodeRef getComponent() {
+		return getResource();
+	}
+
+	@Override
+	public void setComponent(NodeRef targetItem) {
+		setResource(targetItem);
+	}
+
 
 	
 	
