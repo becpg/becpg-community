@@ -781,8 +781,8 @@
 					<show id="pjt:tlCapacity" />
 					<show id="pjt:tlResources" />
 					<show id="pjt:tlBudgetedCost" />
-					<show force="true" id="pjt:expense"/>
-          			<show force="true" id="pjt:invoice"/>
+					<!-- <show force="true" id="pjt:expense"/>
+          			<show force="true" id="pjt:invoice"/> -->
 					<show id="pjt:tlLoggedTime" />
 					<show id="pjt:completionPercent" />					
 					<show id="pjt:tlTaskLegend" />																		
@@ -1316,7 +1316,7 @@
           <show force="false" id="pjt:elBudgetRef"/>
           <show force="false" id="pjt:elExpenseName"/>
           <show force="true" id="pjt:expense"/>
-          <show force="false" id="pjt:elTaskRef"/>
+          <!-- <show force="false" id="pjt:elTaskRef"/> -->
           <show force="false" id="pjt:elDocRef"/>
         </field-visibility>
         <appearance>
@@ -1341,7 +1341,7 @@
          <show force="false" id="pjt:elBudgetRef"/>
           <show force="false" id="pjt:elExpenseName"/>
           <show force="true" id="pjt:expense"/>
-          <show force="false" id="pjt:elTaskRef"/>
+          <!-- <show force="false" id="pjt:elTaskRef"/> -->
           <show force="false" id="pjt:elDocRef"/>
         </field-visibility>
         <appearance>
@@ -1362,7 +1362,7 @@
           <show force="false" id="pjt:elBudgetRef"/>
           <show force="false" id="pjt:elExpenseName"/>
           <show force="true" id="pjt:expense"/>
-          <show force="false" id="pjt:elTaskRef"/>
+        <!--   <show force="false" id="pjt:elTaskRef"/> -->
           <show force="false" id="pjt:elDocRef"/>
         </field-visibility>
       </form>
@@ -1370,7 +1370,7 @@
         <field-visibility>
           <show force="false" id="pjt:elBudgetRef"/>
           <show force="false" id="pjt:elExpenseName"/>
-          <show force="false" id="pjt:elTaskRef"/>
+         <!--  <show force="false" id="pjt:elTaskRef"/> -->
         </field-visibility>
         <appearance>
           <field id="pjt:elBudgetRef" mandatory="false" read-only="false">
@@ -1396,7 +1396,7 @@
           <show force="false" id="pjt:ilBudgetRef"/>
           <show force="false" id="pjt:ilInvoiceName"/>
           <show force="true"  id="pjt:invoice" />
-          <show force="false" id="pjt:ilTaskRef"/>
+          <!-- <show force="false" id="pjt:ilTaskRef"/> -->
           <show force="false" id="pjt:ilDocRef"/>
           
         </field-visibility>
@@ -1422,7 +1422,7 @@
           <show force="false" id="pjt:ilBudgetRef"/>
           <show force="false" id="pjt:ilInvoiceName"/>
           <show force="true" id="pjt:invoice"/>
-          <show force="false" id="pjt:ilTaskRef"/>
+          <!-- <show force="false" id="pjt:ilTaskRef"/> -->
           <show force="false" id="pjt:ilDocRef"/>
         </field-visibility>
         <appearance>
@@ -1443,7 +1443,7 @@
         <show force="false" id="pjt:ilBudgetRef"/>
         <show force="false" id="pjt:ilInvoiceName"/>
         <show force="true" id="pjt:invoice"/>
-        <show force="false" id="pjt:ilTaskRef"/>
+        <!-- <show force="false" id="pjt:ilTaskRef"/> -->
         <show force="false" id="pjt:ilDocRef"/>
         </field-visibility>
       </form>
@@ -1451,7 +1451,7 @@
         <field-visibility>
           <show force="false" id="pjt:ilBudgetRef"/>
           <show force="false" id="pjt:ilInvoiceName"/>
-          <show force="false" id="pjt:ilTaskRef"/>
+          <!-- <show force="false" id="pjt:ilTaskRef"/> -->
         </field-visibility>
       </form>
     </forms>
