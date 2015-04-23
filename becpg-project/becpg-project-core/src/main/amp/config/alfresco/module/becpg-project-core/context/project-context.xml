@@ -187,5 +187,17 @@
       <property name="nodeService" ref="nodeService" />  
       <property name="projectActivityService" ref="projectActivityService" />     
     </bean>
+    
+    	<!-- Supplier portal -->
+	<bean id="bProjectScript" parent="baseJavaScriptExtension" class="fr.becpg.repo.project.jscript.ProjectScriptHelper">
+		<property name="extensionName">
+			<value>bProject</value>
+		</property>
+		<property name="alfrescoRepository" ref="alfrescoRepository" />
+		<property name="nodeService" ref="NodeService" />
+		<property name="namespaceService" ref="namespaceService" />
+		<property name="entityListDAO" ref="entityListDAO" />
+	</bean>
+    
 
 </beans>

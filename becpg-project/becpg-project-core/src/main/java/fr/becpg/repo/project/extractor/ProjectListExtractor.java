@@ -35,7 +35,6 @@ import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.neo4j.cypher.internal.compiler.v2_1.planner.logical.steps.projection;
 
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.RepoConsts;
@@ -43,14 +42,10 @@ import fr.becpg.repo.entity.datalist.DataListSortPlugin;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.DataListPagination;
-import fr.becpg.repo.entity.datalist.impl.SimpleExtractor;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorMode;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
-import fr.becpg.repo.project.ProjectActivityService;
-import fr.becpg.repo.project.data.projectList.ActivityType;
-import fr.becpg.repo.project.data.projectList.TaskState;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 public class ProjectListExtractor extends ActivityListExtractor {
