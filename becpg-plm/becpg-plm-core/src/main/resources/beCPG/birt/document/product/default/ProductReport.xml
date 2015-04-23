@@ -126,9 +126,10 @@ Après décongélation, à conserver au réfrigérateur et à consommer dans la 
 			protéines="0.8114429663693793" fibresalimentaires="0.39466666666666667"
 			sodium="23.278086259754737" alcooléthanol="0.0">
 			<nutList isManualListItem="" sort="100" nutListGroup="Groupe 1"
-				depthLevel="1" nutListMethod="Formulation" nutListMaxi="500"  nutListMini="100"
-				nutListValuePerServing="476.16326604112476" nutListUnit="kJ/100mL"
-				locale="fr_FR" nutListNut="Energie kJ" legalName="" />
+				depthLevel="1" nutListMethod="Formulation" nutListMaxi="500"
+				nutListMini="100" nutListValuePerServing="476.16326604112476"
+				nutListUnit="kJ/100mL" locale="fr_FR" nutListNut="Energie kJ"
+				legalName="" />
 			<nutList nutListGDAPerc="5.696018496841323" isManualListItem=""
 				sort="101" nutListGroup="Groupe 1" depthLevel="1" nutListMethod="Formulation"
 				nutListValue="113.92036993682646" nutListValuePerServing="50"
@@ -199,9 +200,9 @@ Après décongélation, à conserver au réfrigérateur et à consommer dans la 
 		<organoLists>
 			<organoList sort="100"
 				organoListValue="Présence de choupettes / Présence de sauce caramel et de noix de pécan en décor"
-				organoListOrgano="Aspect" locale="fr"/>
+				organoListOrgano="Aspect" locale="fr" />
 			<organoList sort="101" organoListValue=""
-				organoListOrgano="Couleur" locale="fr"  legalName="Color"/>
+				organoListOrgano="Couleur" locale="fr" legalName="Color" />
 			<organoList sort="102"
 				organoListValue="Caractéristique de la vanille, du caramel et des noix de pécan, absence de notes parasites"
 				organoListOrgano="Goût" locale="fr" />
@@ -215,7 +216,7 @@ Après décongélation, à conserver au réfrigérateur et à consommer dans la 
 		<labelClaimLists>
 			<labelClaimList lclLabelClaim="Sans BPA"
 				isManualListItem="" lclType="Santé" sort="100" lclIsClaimed="true"
-				lclIsFormulated="false" locale="fr" legalName="legal name"/>
+				lclIsFormulated="false" locale="fr" legalName="legal name" />
 			<labelClaimList lclLabelClaim="Sans huile de palme"
 				isManualListItem="" lclType="Santé" sort="101" lclIsClaimed="true"
 				lclIsFormulated="false" locale="fr" />
@@ -434,7 +435,7 @@ Après décongélation, à conserver au réfrigérateur et à consommer dans la 
 				compoListQty="0.065" sort="102" compoListProduct="Sauce caramel"
 				depthLevel="1" compoListQtySubFormula="65.0" compoListVolume="0.05"
 				dynamicCharactColumn2="1.3" compoListUnit="g" variantIds=""
-				isDefaultVariant="true" compoListYield="100"/>
+				isDefaultVariant="true" compoListYield="100" />
 			<compoList eanCode="" suppliers="Table USDA"
 				packagingDescription="" productState="A valider" code="USDA12142"
 				startEffectivity="2012-09-03T16:32:23.849Z" preparationTips=""
@@ -568,10 +569,30 @@ Après décongélation, à conserver au réfrigérateur et à consommer dans la 
 				</description>
 				<entityTplRef prefix="bcpg"><![CDATA[Matière première]]></entityTplRef>
 				<compoListQty prefix="bcpg"><![CDATA[36.06059192161599]]></compoListQty>
+				<storageConditions>
+					<storageConditionsMode prefix="bcpg">Surgelé</storageConditionsMode>
+					<created prefix="cm">2013-07-25T13:56:21.575Z</created>
+					<description prefix="cm">* 3 jours dans le compartiment à
+						glace du réfrigérateur à -6°C
+						*** Plusieurs mois au congélateur à -18°C, jusqu’à la date indiquée
+						sur le côté de la boite.
+
+						Après décongélation, à conserver au réfrigérateur et à consommer dans
+						la journée.
+					</description>
+					<creator prefix="cm">admin</creator>
+					<isDeleted prefix="bcpg">false</isDeleted>
+					<name prefix="cm">Surgelé</name>
+					<locale prefix="sys">fr</locale>
+					<modifier prefix="cm">admin</modifier>
+					<modified prefix="cm">2015-04-23T13:07:37.915Z</modified>
+					<sort prefix="bcpg">134</sort>
+				</storageConditions>
 				<dataLists>
 					<priceLists />
 					<nutLists />
 					<costLists />
+
 					<organoLists>
 						<organoList sort="100" organoListOrgano="Aspect"
 							locale="fr" />

@@ -45,6 +45,7 @@ import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.MicrobioListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
+import fr.becpg.repo.product.data.productList.OrganoListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.ResourceParamListItem;
@@ -65,7 +66,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	protected static final String KEY_PRODUCT_IMAGE = "productImage";
 
 	protected static final List<QName> DATALIST_SPECIFIC_EXTRACTOR = Arrays.asList(PLMModel.TYPE_COMPOLIST, PLMModel.TYPE_PACKAGINGLIST,
-			MPMModel.TYPE_PROCESSLIST, PLMModel.TYPE_MICROBIOLIST, PLMModel.TYPE_INGLABELINGLIST, PLMModel.TYPE_NUTLIST);
+			MPMModel.TYPE_PROCESSLIST, PLMModel.TYPE_MICROBIOLIST, PLMModel.TYPE_INGLABELINGLIST, PLMModel.TYPE_NUTLIST, PLMModel.TYPE_ORGANOLIST);
 
 	protected static final List<QName> RAWMATERIAL_DATALIST = Arrays.asList(PLMModel.TYPE_INGLIST, PLMModel.TYPE_ORGANOLIST);
 
@@ -269,6 +270,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 			// NutList
 			loadNutLists(productData, dataListsElt);
+			
+			loadOrganoLists(productData, dataListsElt);
 						
 			// MicrobioList
 			List<MicrobioListDataItem> microbioList = null;
@@ -385,11 +388,21 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			}
 		}
 	}
+	
+	private void loadOrganoLists(ProductData productData, Element dataListsElt) {
+		if (productData.getOrganoList() != null && !productData.getOrganoList().isEmpty()) {
+			Element organoListsElt = dataListsElt.addElement(PLMModel.TYPE_ORGANOLIST.getLocalName() + "s");
+			for (OrganoListDataItem dataListItem : productData.getOrganoList()) {
+				Element organoListElt = organoListsElt.addElement(PLMModel.TYPE_ORGANOLIST.getLocalName());
+				loadDataListItemAttributes(dataListItem, organoListElt);
+			}
+		}
+	}
 
 	private void extractRawMaterials(ProductData productData, Element dataListsElt, Map<String, byte[]> images) {
 
 		Map<NodeRef, Double> rawMaterials = new HashMap<>();
-		rawMaterials = getRawMaterials(productData, rawMaterials, productData.getNetWeight() != null ? productData.getNetWeight() : 0d);
+		rawMaterials = getRawMaterials(productData, rawMaterials, FormulationHelper.getNetWeight(productData.getNodeRef(), nodeService, FormulationHelper.DEFAULT_NET_WEIGHT));
 		Double totalQty = 0d;
 		for (Double qty : rawMaterials.values()) {
 			totalQty += qty;
@@ -423,12 +436,13 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			NodeRef productNodeRef = compoList.getProduct();
 			QName type = nodeService.getType(productNodeRef);
 			Double qty = FormulationHelper.getQtyInKg(compoList);
+			Double netWeight = FormulationHelper.getNetWeight(productData.getNodeRef(), nodeService, FormulationHelper.DEFAULT_NET_WEIGHT);
 			if (logger.isDebugEnabled()) {
 				logger.debug("Get rawMaterial " + nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME) + "qty: " + qty + " netWeight "
-						+ productData.getNetWeight());
+						+ netWeight);
 			}
-			if (qty != null && productData.getNetWeight() != null) {
-				qty = parentQty * qty * FormulationHelper.getYield(compoList) / (100 * productData.getNetWeight());
+			if (qty != null && netWeight != null) {
+				qty = parentQty * qty * FormulationHelper.getYield(compoList) / (100 * netWeight);
 
 				if (type.isMatch(PLMModel.TYPE_RAWMATERIAL)) {
 					Double rmQty = rawMaterials.get(productNodeRef);
@@ -580,6 +594,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				dataListsElt = partElt.addElement(TAG_DATALISTS);
 				ProductData productData = (ProductData) alfrescoRepository.findOne(dataItem.getProduct());
 				loadNutLists(productData, dataListsElt);
+				loadOrganoLists(productData, dataListsElt);
 				extractVariants(dataItem.getVariants(), partElt, defaultVariantNodeRef);
 			}
 			Integer depthLevel = dataItem.getDepthLevel();
