@@ -116,16 +116,8 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 
 			projectData.setCompletionPercent(ProjectHelper.geProjectCompletionPercent(projectData));
 
-			calculateProjectLegends(projectData);
+			calculateProjectLegendsAndCurrTasks(projectData);
 			
-			
-			List<NodeRef> currTasks = new ArrayList<>();
-			for (TaskListDataItem task : projectData.getTaskList()) {
-				if (TaskState.InProgress.equals(task.getTaskState())) {
-					currTasks.add(task.getNodeRef());
-				}
-			}
-			projectData.setCurrTasks(currTasks);
 			
 		}
 
@@ -332,25 +324,23 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 
 	
 
-	private void calculateProjectLegends(ProjectData projectData) {
+	private void calculateProjectLegendsAndCurrTasks(ProjectData projectData) {
 
-		if (projectData.getLegends() == null) {
-			logger.debug("projectData.setLegends(new ArrayList<NodeRef>());");
-			projectData.setLegends(new ArrayList<NodeRef>());
-		}
+		List<NodeRef> currLegends = new ArrayList<>();
+ 		List<NodeRef> currTasks = new ArrayList<>();
 
 		for (TaskListDataItem tl : projectData.getTaskList()) {
-
 			if (TaskState.InProgress.equals(tl.getTaskState())) {
-				if (!projectData.getLegends().contains(tl.getTaskLegend())) {
-					projectData.getLegends().add(tl.getTaskLegend());
+				if (!currLegends.contains(tl.getTaskLegend())) {
+					currLegends.add(tl.getTaskLegend());
 				}
-			} else if (TaskState.Completed.equals(tl.getTaskState())) {
-				if (projectData.getLegends().contains(tl.getTaskLegend())) {
-					projectData.getLegends().remove(tl.getTaskLegend());
-				}
-			}
-
+				currTasks.add(tl.getNodeRef());
+			} 
 		}
+		
+		projectData.setCurrTasks(currTasks);
+		projectData.setLegends(currLegends);
+		
+		
 	}
 }

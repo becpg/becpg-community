@@ -49,7 +49,7 @@ public class BudgetListDataItem extends BeCPGDataObject implements CompositeData
 	}
 	
 	public BudgetListDataItem (String item, Double budgetedExpense, Double budgetedInvoice, Double actualExpense, Double actualInvoice, Double profit){
-		this.item= item;
+		this.item = item;
 		this.budgetedExpense= budgetedExpense;
 		this.budgetedInvoice= budgetedInvoice;
 		this.actualExpense = actualExpense;

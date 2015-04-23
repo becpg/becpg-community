@@ -310,6 +310,7 @@
 					<show id="cm:name" />
 					<show id="pjt:projectEntity" />
 					<show id="dataList_pjt:taskList" />
+					<show id="dataList_pjt:activityList" />
 					<!-- <show id="dataList_pjt:deliverableList" /> -->
 					<show id="pjt:projectManager" />
 					<show id="pjt:projectStartDate" />
@@ -320,6 +321,7 @@
 				<appearance>
 					<!-- <field id="dataList_pjt:deliverableList" label-id="becpg.forms.field.projects.datagrid.deliverableList.label" /> -->
 					<field id="dataList_pjt:taskList" label-id="becpg.forms.field.projects.datagrid.taskList.label" />
+					<field id="dataList_pjt:activityList" label-id="becpg.forms.field.projects.datagrid.activityList.label" />
 					<field id="pjt:projectStartDate" label-id="becpg.forms.field.projects.datagrid.projectStartDate.label"   />
 				</appearance>
 
@@ -360,7 +362,7 @@
 					<show id="pjt:projectDueDate" />
 					
 					<!-- Task -->
-					<!-- <show id="pjt:projectCurrentTasks" /> -->
+					<show id="entity_pjt:projectCurrentTasks_pjt:taskList" />
 					
 				</field-visibility>
 				<appearance>
@@ -393,6 +395,9 @@
 							</control-param>
 						</control>
 					</field>
+					
+					<field id="entity_pjt:projectCurrentTasks_pjt:taskList" set="mainInfo" />
+					
 					<set id="main2" />
 					<field id="pjt:projectStartDate" set="main2">
 						<control template="/org/alfresco/components/form/controls/daterange.ftl" />
@@ -753,6 +758,14 @@
 					</field>
 				</appearance>			
 			</form>
+			<form id="sub-datagrid-filter">
+				<field-visibility>
+					<show id="pjt:tlTaskName" />
+				</field-visibility>
+				<appearance>
+				   <field id="pjt:tlTaskName" label-id="becpg.forms.filter.task.name"/>
+				</appearance>
+			</form>
 			<form id="datagrid">
 				<field-visibility>
 					<show id="bcpg:depthLevel" />
@@ -768,8 +781,8 @@
 					<show id="pjt:tlCapacity" />
 					<show id="pjt:tlResources" />
 					<show id="pjt:tlBudgetedCost" />
-					<show force="true" id="pjt:expense"/>
-          			<show force="true" id="pjt:invoice"/>
+					<!-- <show force="true" id="pjt:expense"/>
+          			<show force="true" id="pjt:invoice"/> -->
 					<show id="pjt:tlLoggedTime" />
 					<show id="pjt:completionPercent" />					
 					<show id="pjt:tlTaskLegend" />																		
@@ -808,14 +821,6 @@
 					<show id="pjt:tlWorkflowInstance" />
 					<show id="fm:commentCount" force="true"/>
 				</field-visibility>
-			</form>
-			
-			<form id="sub-datagrid-filter">
-			    <field-visibility>
-					<show force="true" id="pjt:tlResources" />
-					<show id="pjt:tlTaskLegend" />					
-					<show id="pjt:tlState" />
-				</field-visibility>			
 			</form>
 		</forms>
 	</config>
@@ -1103,6 +1108,16 @@
 					<field id="cm:created"  label="hidden" read-only="true"/>
 				</appearance>
 			</form>
+			<form id="sub-datagrid">
+				<field-visibility>
+					<show id="pjt:alType" />
+					<show id="pjt:alData" />
+					<show id="pjt:alUserId" />
+					<show id="pjt:alTaskId" />
+					<show id="pjt:alDeliverableId" />
+					<show id="cm:created" />
+				</field-visibility>
+			</form>
 			<form id="filter">
 				<field-visibility>
 					<show id="pjt:alType" />
@@ -1301,7 +1316,7 @@
           <show force="false" id="pjt:elBudgetRef"/>
           <show force="false" id="pjt:elExpenseName"/>
           <show force="true" id="pjt:expense"/>
-          <show force="false" id="pjt:elTaskRef"/>
+          <!-- <show force="false" id="pjt:elTaskRef"/> -->
           <show force="false" id="pjt:elDocRef"/>
         </field-visibility>
         <appearance>
@@ -1326,7 +1341,7 @@
          <show force="false" id="pjt:elBudgetRef"/>
           <show force="false" id="pjt:elExpenseName"/>
           <show force="true" id="pjt:expense"/>
-          <show force="false" id="pjt:elTaskRef"/>
+          <!-- <show force="false" id="pjt:elTaskRef"/> -->
           <show force="false" id="pjt:elDocRef"/>
         </field-visibility>
         <appearance>
@@ -1347,7 +1362,7 @@
           <show force="false" id="pjt:elBudgetRef"/>
           <show force="false" id="pjt:elExpenseName"/>
           <show force="true" id="pjt:expense"/>
-          <show force="false" id="pjt:elTaskRef"/>
+        <!--   <show force="false" id="pjt:elTaskRef"/> -->
           <show force="false" id="pjt:elDocRef"/>
         </field-visibility>
       </form>
@@ -1355,7 +1370,7 @@
         <field-visibility>
           <show force="false" id="pjt:elBudgetRef"/>
           <show force="false" id="pjt:elExpenseName"/>
-          <show force="false" id="pjt:elTaskRef"/>
+         <!--  <show force="false" id="pjt:elTaskRef"/> -->
         </field-visibility>
         <appearance>
           <field id="pjt:elBudgetRef" mandatory="false" read-only="false">
@@ -1381,7 +1396,7 @@
           <show force="false" id="pjt:ilBudgetRef"/>
           <show force="false" id="pjt:ilInvoiceName"/>
           <show force="true"  id="pjt:invoice" />
-          <show force="false" id="pjt:ilTaskRef"/>
+          <!-- <show force="false" id="pjt:ilTaskRef"/> -->
           <show force="false" id="pjt:ilDocRef"/>
           
         </field-visibility>
@@ -1407,7 +1422,7 @@
           <show force="false" id="pjt:ilBudgetRef"/>
           <show force="false" id="pjt:ilInvoiceName"/>
           <show force="true" id="pjt:invoice"/>
-          <show force="false" id="pjt:ilTaskRef"/>
+          <!-- <show force="false" id="pjt:ilTaskRef"/> -->
           <show force="false" id="pjt:ilDocRef"/>
         </field-visibility>
         <appearance>
@@ -1428,7 +1443,7 @@
         <show force="false" id="pjt:ilBudgetRef"/>
         <show force="false" id="pjt:ilInvoiceName"/>
         <show force="true" id="pjt:invoice"/>
-        <show force="false" id="pjt:ilTaskRef"/>
+        <!-- <show force="false" id="pjt:ilTaskRef"/> -->
         <show force="false" id="pjt:ilDocRef"/>
         </field-visibility>
       </form>
@@ -1436,7 +1451,7 @@
         <field-visibility>
           <show force="false" id="pjt:ilBudgetRef"/>
           <show force="false" id="pjt:ilInvoiceName"/>
-          <show force="false" id="pjt:ilTaskRef"/>
+          <!-- <show force="false" id="pjt:ilTaskRef"/> -->
         </field-visibility>
       </form>
     </forms>

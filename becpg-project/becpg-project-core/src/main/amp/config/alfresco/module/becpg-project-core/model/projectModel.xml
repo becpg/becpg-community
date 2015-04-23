@@ -517,7 +517,7 @@
 				<aspect>bcpg:sortableListAspect</aspect>
 				<aspect>pjt:completionAspect</aspect>
 				<aspect>bcpg:depthLevelAspect</aspect>
-				<aspect>pjt:budgetAspect</aspect>
+				 <!-- <aspect>pjt:budgetAspect</aspect>  -->
 			</mandatory-aspects>
 		</type>
 
@@ -830,7 +830,7 @@
 
 				<association name="pjt:elBudgetRef">
 					<source>
-						<mandatory>true</mandatory>
+						<mandatory>false</mandatory>
 						<many>true</many>
 					</source>
 					<target>
@@ -888,7 +888,7 @@
 					</source>
 					<target>
 						<class>pjt:budgetList</class>
-						<mandatory>true</mandatory>
+						<mandatory>false</mandatory>
 						<many>false</many>
 					</target>
 				</association>
@@ -904,9 +904,9 @@
 					</target>
 				</association>
 			</associations>
-			<mandatory-aspects>
+			 <mandatory-aspects>
 				<aspect>pjt:budgetAspect</aspect>
-			</mandatory-aspects>
+			</mandatory-aspects>  
 		</type>
 	</types>
 

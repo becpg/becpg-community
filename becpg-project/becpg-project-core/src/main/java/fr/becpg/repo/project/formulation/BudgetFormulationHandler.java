@@ -39,12 +39,9 @@ public class BudgetFormulationHandler extends FormulationBaseHandler<ProjectData
 		this.associationService = associationService;
 	}
 	
-	
-
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
-
 
 
 	@Override
@@ -52,8 +49,7 @@ public class BudgetFormulationHandler extends FormulationBaseHandler<ProjectData
 
 		logger.debug("BudgetFormulationHandler");
 		clearData(projectData);
-		
-		
+
 		
 		for(BudgetListDataItem budgetListItem : projectData.getBudgetList()){
 			List<NodeRef> assocs = associationService.getSourcesAssocs(budgetListItem.getNodeRef(), RegexQNamePattern.MATCH_ALL);
@@ -89,55 +85,96 @@ public class BudgetFormulationHandler extends FormulationBaseHandler<ProjectData
 		
 		// Hierarchie dans Task List
 		Composite<TaskListDataItem> compositeTask = CompositeHelper.getHierarchicalCompoList(projectData.getTaskList());
-		calculateCost(projectData, compositeTask);
+		calculateTaskParentValueAndCosts(compositeTask,projectData);
 		calculateLogTime(projectData);
-		calculateTaskListActualExpenseParentValue(compositeTask);
-		calculateTaskListActualInvoiceParentValue(compositeTask);
+		
 		// Hierachie dans Budget List
 		Composite<BudgetListDataItem> compositeBugdet = CompositeHelper.getHierarchicalCompoList(projectData.getBudgetList());
-		calculateBudgetListActualInvoiceParentValue(compositeBugdet);
-		calculateBudgetListActualExpenseParentValue(compositeBugdet);
-
-		// Champs Profit dans Budget
-		for (BudgetListDataItem myBudget : projectData.getBudgetList()) {
-			myBudget.setProfit(myBudget.getActualInvoice() - myBudget.getActualExpense());
-		}
+		calculateBudgetParentValue(compositeBugdet);
 
 		return true;
 	}
 
-	public Double calculateBudgetListActualExpenseParentValue(Composite<BudgetListDataItem> compositeBugdet) {
-		Double value = 0d;
-		for (Composite<BudgetListDataItem> component : compositeBugdet.getChildren()) {
-			value += calculateBudgetListActualExpenseParentValue(component);
-		}
+	
 
-		if (!compositeBugdet.isRoot()) {
-			if (compositeBugdet.isLeaf()) {
-				return compositeBugdet.getData().getActualExpense();
-			} else {
-				compositeBugdet.getData().setActualExpense(value + compositeBugdet.getData().getActualExpense());
+	private void calculateTaskParentValueAndCosts(Composite<TaskListDataItem> parent, ProjectData projectData) {
+		Double actualExpense = 0d;
+		Double actualInvoice = 0d;
+		Double cost = 0d;
+		if (!parent.isLeaf()) {
+			for (Composite<TaskListDataItem> component : parent.getChildren()) {
+				calculateTaskParentValueAndCosts(component, projectData);	
+				
+				TaskListDataItem taskListDataItem = component.getData();
+				Double taskCost = 0d;
+
+				if (taskListDataItem.getBudgetedCost() != null) {
+					// cost are roll-up
+					taskCost += taskListDataItem.getBudgetedCost();
+				} else {
+					if (taskListDataItem.getWork() != null && taskListDataItem.getResourceCost() != null && taskListDataItem.getResourceCost().getValue() != null) {
+						taskCost += taskListDataItem.getWork() * taskListDataItem.getResourceCost().getValue();
+					}
+					// fixed cost are not roll-up
+					if (taskListDataItem.getFixedCost() != null) {
+						taskCost += taskListDataItem.getFixedCost();
+					}
+				}
+				cost += taskCost;
+				taskListDataItem.setBudgetedCost(taskCost == 0d ? null : taskCost);
+				if(taskListDataItem.getActualExpense()!=null){
+					actualExpense += taskListDataItem.getActualExpense();
+				}
+				if(taskListDataItem.getActualInvoice()!=null){
+					actualInvoice += taskListDataItem.getActualInvoice();
+				}
+			}
+			if (!parent.isRoot()) {
+				parent.getData().setActualExpense(actualExpense);
+				parent.getData().setActualInvoice(actualInvoice);
+				parent.getData().setBudgetedCost(cost == 0d ? null : cost);
 			}
 		}
-		return value;
+		if (parent.isRoot()) {
+			projectData.setBudgetedCost(cost == 0d ? null : cost);
+		}
+		
 	}
 
-	public Double calculateBudgetListActualInvoiceParentValue(Composite<BudgetListDataItem> compositeBugdet) {
-		Double value = 0d;
-		for (Composite<BudgetListDataItem> component : compositeBugdet.getChildren()) {
-			value += calculateBudgetListActualInvoiceParentValue(component);
-		}
-
-		if (!compositeBugdet.isRoot()) {
-			if (compositeBugdet.isLeaf()) {
-				return compositeBugdet.getData().getActualInvoice();
-			} else {
-				compositeBugdet.getData().setActualInvoice(value + compositeBugdet.getData().getActualInvoice());
+	private void calculateBudgetParentValue(Composite<BudgetListDataItem> parent) {
+		Double actualExpense = 0d;
+		Double actualInvoice = 0d;
+		Double budgetedExpense = 0d;
+		Double budgetedInvoice = 0d;
+		if (!parent.isLeaf()) {
+			for (Composite<BudgetListDataItem> component : parent.getChildren()) {
+				calculateBudgetParentValue(component);	
+				if(component.getData().getActualExpense()!=null){
+					actualExpense += component.getData().getActualExpense();
+				}
+				if(component.getData().getActualInvoice()!=null){
+					actualInvoice += component.getData().getActualInvoice();
+				}
+				if(component.getData().getBudgetedExpense()!=null){
+					budgetedExpense += component.getData().getBudgetedExpense();
+				}
+				if(component.getData().getBudgetedInvoice()!=null){
+					budgetedInvoice += component.getData().getBudgetedInvoice();
+				}
+			}
+			if (!parent.isRoot()) {
+				parent.getData().setActualExpense(actualExpense);
+				parent.getData().setActualInvoice(actualInvoice);
+				parent.getData().setBudgetedExpense(budgetedExpense);
+				parent.getData().setBudgetedInvoice(budgetedInvoice);
 			}
 		}
-		return value;
+		if (!parent.isRoot()) {
+			parent.getData().setProfit(parent.getData().getActualInvoice() - parent.getData().getActualExpense());
+		}
+		
 	}
-
+	
 	private void clearData(ProjectData projectData) {
 		for (TaskListDataItem tl : projectData.getTaskList()) {
 			tl.setBudgetedCost(null);
@@ -151,35 +188,7 @@ public class BudgetFormulationHandler extends FormulationBaseHandler<ProjectData
 		}
 
 	}
-
-	private void calculateCost(ProjectData projectData, Composite<TaskListDataItem> composite) {
-		Double cost = 0d;
-		for (Composite<TaskListDataItem> component : composite.getChildren()) {
-			calculateCost(projectData, component);
-			TaskListDataItem taskListDataItem = component.getData();
-			Double taskCost = 0d;
-
-			if (taskListDataItem.getBudgetedCost() != null) {
-				// cost are roll-up
-				taskCost += taskListDataItem.getBudgetedCost();
-			} else {
-				if (taskListDataItem.getWork() != null && taskListDataItem.getResourceCost() != null && taskListDataItem.getResourceCost().getValue() != null) {
-					taskCost += taskListDataItem.getWork() * taskListDataItem.getResourceCost().getValue();
-				}
-				// fixed cost are not roll-up
-				if (taskListDataItem.getFixedCost() != null) {
-					taskCost += taskListDataItem.getFixedCost();
-				}
-			}
-			cost += taskCost;
-			taskListDataItem.setBudgetedCost(taskCost == 0d ? null : taskCost);
-		}
-		if (composite.isRoot()) {
-			projectData.setBudgetedCost(cost == 0d ? null : cost);
-		} else
-			composite.getData().setBudgetedCost(cost == 0d ? null : cost);
-	}
-
+	
 	private void calculateLogTime(ProjectData projectData) {
 		Map<NodeRef, Double> totalLogTimeMap = new HashMap<>();
 		Double totalLogTime = 0d;
@@ -202,36 +211,6 @@ public class BudgetFormulationHandler extends FormulationBaseHandler<ProjectData
 		projectData.setLoggedTime(totalLogTime);
 	}
 
-	public Double calculateTaskListActualExpenseParentValue(Composite<TaskListDataItem> compositeTask) {
-		Double value = 0d;
-		for (Composite<TaskListDataItem> component : compositeTask.getChildren()) {
-			value += calculateTaskListActualExpenseParentValue(component);
-		}
-
-		if (!compositeTask.isRoot()) {
-			if (compositeTask.isLeaf()) {
-				return compositeTask.getData().getActualExpense();
-			} else {
-				compositeTask.getData().setActualExpense(value + compositeTask.getData().getActualExpense());
-			}
-		}
-		return value;
-	}
-
-	public Double calculateTaskListActualInvoiceParentValue(Composite<TaskListDataItem> compositeTask) {
-		Double value = 0d;
-		for (Composite<TaskListDataItem> component : compositeTask.getChildren()) {
-			value += calculateTaskListActualInvoiceParentValue(component);
-		}
-
-		if (!compositeTask.isRoot()) {
-			if (compositeTask.isLeaf()) {
-				return compositeTask.getData().getActualInvoice();
-			} else {
-				compositeTask.getData().setActualInvoice(value + compositeTask.getData().getActualInvoice());
-			}
-		}
-		return value;
-	}
-
+	
+	
 }

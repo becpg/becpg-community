@@ -891,6 +891,38 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		return nodes;
 	}
 
+	
+	public Long count() {
+		
+		String runnedQuery = buildQuery();
+		
+		Long ret = 0L;
+		
+		SearchParameters sp = new SearchParameters();
+		sp.addStore(RepoConsts.SPACES_STORE);
+
+		sp.setQuery(runnedQuery);
+		sp.addLocale(Locale.getDefault());
+		sp.excludeDataInTheCurrentTransaction(true);
+		sp.setLanguage(language);
+		sp.setQueryConsistency(queryConsistancy);
+
+		ResultSet result = null;
+		try {
+			result = searchService.query(sp);
+			if (result != null) {
+				ret =  result.getNumberFound();
+			}
+		} finally {
+			if (result != null) {
+				result.close();
+			}
+		}
+		
+		return ret;
+	}
+
+	
 	public PagingResults<FileInfo> childFileFolders(PagingRequest pageRequest) {
 
 		StopWatch watch = new StopWatch();
@@ -935,6 +967,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	public String toString() {
 		return buildQuery();
 	}
+
 
 	
 

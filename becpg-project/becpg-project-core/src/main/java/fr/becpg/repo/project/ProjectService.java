@@ -53,6 +53,13 @@ public interface ProjectService {
 	 * @return
 	 */
 	public List<NodeRef> getTaskLegendList();
+	
+	/**
+	 * Get the number of inProgress project for this legend
+	 * 
+	 * @return
+	 */
+	public Long getNbProjectsByLegend(NodeRef legendNodeRef);
 
 	/**
 	 * Get the projects container
@@ -130,6 +137,8 @@ public interface ProjectService {
 	 * @param stringScript
 	 */
 	public void runScript(ProjectData project, TaskListDataItem task, NodeRef scriptNode);
+
+
 
 	
 
