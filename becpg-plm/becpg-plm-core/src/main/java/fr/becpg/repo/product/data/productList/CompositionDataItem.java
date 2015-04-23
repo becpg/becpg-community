@@ -23,9 +23,9 @@ import fr.becpg.repo.repository.RepositoryEntity;
 
 public interface CompositionDataItem extends RepositoryEntity  {
 
-	NodeRef getProduct();
+	NodeRef getComponent();
 
-	void setProduct(NodeRef targetItem);
+	void setComponent(NodeRef targetItem);
 
 	Double getQty();
 

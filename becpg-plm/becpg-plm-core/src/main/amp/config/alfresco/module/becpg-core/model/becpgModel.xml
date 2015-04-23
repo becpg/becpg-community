@@ -590,6 +590,7 @@
 				<aspect>bcpg:eanAspect</aspect>
 				<aspect>bcpg:suppliersAspect</aspect>
 				<aspect>bcpg:productMicrobioCriteriaAspect</aspect>
+				<aspect>bcpg:formulatedEntityAspect</aspect>
 			</mandatory-aspects>
 		</type>
 		<type name="bcpg:packagingKit">
@@ -600,9 +601,15 @@
 		</type>
 		<type name="bcpg:packagingMaterial">
 			<parent>bcpg:product</parent>
+				<properties>
+					<property name="bcpg:foodContact">
+						<type>d:boolean</type>
+					</property>
+				</properties>
 			<mandatory-aspects>
 				<aspect>bcpg:eanAspect</aspect>
 				<aspect>bcpg:suppliersAspect</aspect>
+				<aspect>bcpg:formulatedEntityAspect</aspect>
 			</mandatory-aspects>
 		</type>
 		<type name="bcpg:resourceProduct">
@@ -615,6 +622,7 @@
 			<mandatory-aspects>
 				<aspect>bcpg:eanAspect</aspect>
 				<aspect>bcpg:suppliersAspect</aspect>
+				<aspect>bcpg:formulatedEntityAspect</aspect>
 			</mandatory-aspects>
 		</type>
 
