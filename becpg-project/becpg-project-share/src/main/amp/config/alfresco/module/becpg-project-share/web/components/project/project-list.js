@@ -159,12 +159,17 @@ var g; // gantt var
                                                     {
                                                         id : data[i].nodeRef,
                                                         label : data[i].label,
-                                                        color : data[i].color.replace('#', '')
+                                                        color : data[i].color.replace('#', ''),
+                                                        nbProjects : data[i].nbProjects
                                                     };
 
                                                     this.taskLegends.push(taskLegend);
 
-                                                    html += '<span class="task-legend" style="background-color:#' + taskLegend.color + '" ></span><span>' + taskLegend.label + '</span>&nbsp;';
+                                                    html += '<span class="task-legend" style="background-color:#' + taskLegend.color + '" ></span><span><a href='+Alfresco.util
+                                                    .siteURL("project-list?view="+
+                                                            this.view+"#filter=filterform|%7B%22prop_pjt_projectState%22%3A%22InProgress%22%2C%22prop_pjt_projectLegends%22%3A%22"
+                                                            +encodeURIComponent(taskLegend.id)+"%22%7D")+">"
+                                                    + taskLegend.label + ' ('+taskLegend.nbProjects +')</a></span>&nbsp;';
                                                 }
 
                                                 Dom.get(this.id + "-legend").innerHTML = html;

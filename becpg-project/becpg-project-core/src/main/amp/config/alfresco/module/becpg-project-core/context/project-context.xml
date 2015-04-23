@@ -117,7 +117,13 @@
 
 	<!-- DataList Extractor -->
 
-	<bean id="projectListExtractor" class="fr.becpg.repo.project.extractor.ProjectListExtractor" parent="abstractDataListExtractor">
+    <bean id="activityListExtractor" class="fr.becpg.repo.project.extractor.ActivityListExtractor" parent="simpleExtractor">
+		<property name="projectActivityService" ref="projectActivityService"/>
+		<property name="defaultExtractor" value="false"/>
+	</bean>
+
+
+	<bean id="projectListExtractor" parent="activityListExtractor" class="fr.becpg.repo.project.extractor.ProjectListExtractor">
 		<property name="personService" ref="personService" />
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="associationService" ref="associationService" />
@@ -125,10 +131,7 @@
 		<property name="preferenceService" ref="preferenceService" />
 	</bean>
 
-	<bean id="activityListExtractor" class="fr.becpg.repo.project.extractor.ActivityListExtractor" parent="simpleExtractor">
-		<property name="projectActivityService" ref="projectActivityService"/>
-		<property name="defaultExtractor" value="false"/>
-	</bean>
+
 
 
 	<!-- Webscripts -->
