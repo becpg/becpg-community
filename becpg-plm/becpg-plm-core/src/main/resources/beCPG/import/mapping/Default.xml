@@ -123,6 +123,15 @@
 		</columns>
 	</mapping>
 	
+	<mapping name="bcpg:dynamicCharactList">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="cm:name" />
+		</nodeColumnKeys>
+		<columns>
+			<column id="bcpg:dynamicCharactFormula" type="Formula" attribute="bcpg:labelClaimFormula" />
+		</columns>
+	</mapping>
+	
 	<mapping name="bcpg:nut">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="cm:name" />

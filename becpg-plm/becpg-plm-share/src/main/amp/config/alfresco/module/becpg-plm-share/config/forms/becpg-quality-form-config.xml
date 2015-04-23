@@ -1184,6 +1184,9 @@
 				<field-visibility>
 					<show id="qa:clType" />
 					<show id="qa:clCharacts" />
+					<show id="qa:cdlQty" />
+					<show id="qa:cdlFreq" />
+					<show id="qa:cdlFreqUnit" />
 					<show id="qa:clTarget" />
 					<show id="qa:clUnit" />
 					<show id="qa:clMini" />
@@ -1206,6 +1209,9 @@
 				<field-visibility>
 					<show id="qa:clType" />
 					<show id="qa:clCharacts" />
+					<show id="qa:cdlQty" />
+					<show id="qa:cdlFreq" />
+					<show id="qa:cdlFreqUnit" />
 					<show id="qa:clTarget" />
 					<show id="qa:clUnit" />
 					<show id="qa:clMini" />
@@ -1229,6 +1235,9 @@
 				<field-visibility>
 					<show id="qa:clType" />
 					<show id="qa:clCharacts" />
+					<show id="qa:cdlQty" />
+					<show id="qa:cdlFreq" />
+					<show id="qa:cdlFreqUnit" />
 					<show id="qa:clTarget" />
 					<show id="qa:clUnit" />
 					<show id="qa:clMini" />
