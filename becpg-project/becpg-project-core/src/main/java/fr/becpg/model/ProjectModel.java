@@ -109,6 +109,9 @@ public interface ProjectModel {
 	public static final QName TYPE_BUDGET_LIST  = QName.createQName(PROJECT_URI, "budgetList");
 	public static final QName PROP_BL_ITEM  = QName.createQName(PROJECT_URI, "blItem");
 	public static final QName PROP_BL_PROFIT  = QName.createQName(PROJECT_URI, "blProfit");
+	public static final QName PROP_BL_BUDGEDTED_EXPENSE = QName.createQName(PROJECT_URI, "blBudgetedExpense");
+	public static final QName PROP_BL_BUDGEDTED_INVOICE = QName.createQName(PROJECT_URI, "blBudgetedInvoice");
+	
 	
 	//Invoice List
 	public static final QName TYPE_INVOICE_LIST  = QName.createQName(PROJECT_URI, "invoiceList");
@@ -126,6 +129,8 @@ public interface ProjectModel {
 	public static final QName ASPECT_BUDGET = QName.createQName(PROJECT_URI, "budgetAspect");
 	public static final QName PROP_BUDGET_INVOICE = QName.createQName(PROJECT_URI, "invoice");
 	public static final QName PROP_BUDGET_EXPENSE = QName.createQName(PROJECT_URI, "expense");
+	
+	
 
 
 }
