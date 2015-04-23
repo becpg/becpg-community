@@ -54,6 +54,7 @@ import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.ProjectWorkflowService;
 import fr.becpg.repo.project.data.ProjectData;
+import fr.becpg.repo.project.data.ProjectState;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 import fr.becpg.repo.project.data.projectList.DeliverableState;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
@@ -385,6 +386,12 @@ public class ProjectServiceImpl implements ProjectService {
 
 		return associationService.getTargetAssoc(nodeRef, ProjectModel.ASSOC_TL_REFUSED_TASK_REF);
 
+	}
+
+	@Override
+	public Long getNbProjectsByLegend(NodeRef legendNodeRef) {
+		return BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_PROJECT).andPropEquals(ProjectModel.PROP_PROJECT_STATE, ProjectState.InProgress.toString())
+				.andPropEquals(ProjectModel.PROP_PROJECT_LEGENDS, legendNodeRef.toString()).inDB().count();
 	}
 
 }

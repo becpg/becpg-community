@@ -107,9 +107,12 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 
 	private String createSubject(NodeRef projectNodeRef, NodeRef taskNodeRef, String afterStateMsg) {
 		String code =  (String) nodeService.getProperty(projectNodeRef, BeCPGModel.PROP_CODE);
+		String taskName = taskNodeRef!=null ? (String)nodeService.getProperty(taskNodeRef, ProjectModel.PROP_TL_TASK_NAME) : null;
+		
+		
 		return  "[" + nodeService.getProperty(projectNodeRef, ContentModel.PROP_NAME) + (code!=null ? " - "
-				+ code  : "")+ "] "
-				+ nodeService.getProperty(taskNodeRef, ProjectModel.PROP_TL_TASK_NAME) + (afterStateMsg!=null? " (" + afterStateMsg + ")" : "");
+				+ code  : "")+ "]"
+				+ (taskName!=null ? " "+taskName :"" ) + (afterStateMsg!=null? " (" + afterStateMsg + ")" : "");
 	}
 
 	@Override
@@ -144,11 +147,10 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 		} else {
 
 			Set<String> authorities = new HashSet<>();
-
+			List<NodeRef> observerNodeRefs = new ArrayList<>();
 			// Set the notification recipients
-			List<NodeRef> observerNodeRefs = associationService.getTargetAssocs(taskNodeRef, ProjectModel.ASSOC_TL_OBSERVERS);
-			if (observerNodeRefs == null) {
-				observerNodeRefs = new ArrayList<>();
+			if(taskNodeRef!=null){
+				observerNodeRefs.addAll(associationService.getTargetAssocs(taskNodeRef, ProjectModel.ASSOC_TL_OBSERVERS));
 			}
 
 			if (projectNodeRef != null) {
@@ -156,8 +158,9 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 			}
 			if (!observerNodeRefs.isEmpty()) {
 				
-				
-				observerNodeRefs  = projectService.updateTaskResources(projectNodeRef, taskNodeRef, observerNodeRefs, false);
+				if(taskNodeRef!=null){
+					observerNodeRefs  = projectService.updateTaskResources(projectNodeRef, taskNodeRef, observerNodeRefs, false);
+				}
 
 				for (NodeRef observerNodeRef : observerNodeRefs) {
 					String authorityName = null;

@@ -20,6 +20,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.project.data.projectList.DeliverableState;
 import fr.becpg.repo.project.data.projectList.TaskState;
@@ -201,7 +202,10 @@ public class ProjectListPolicy extends ProjectPolicy implements NodeServicePolic
 
 	private void onUpdatePropertiesBudgetAspect(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 
-		if (isPropChanged(before, after, ProjectModel.PROP_BUDGET_EXPENSE) || isPropChanged(before, after, ProjectModel.PROP_BUDGET_INVOICE) ) {
+		if (isPropChanged(before, after, ProjectModel.PROP_BUDGET_EXPENSE) || isPropChanged(before, after, ProjectModel.PROP_BUDGET_INVOICE)
+				|| isPropChanged(before, after, ProjectModel.PROP_BL_BUDGEDTED_EXPENSE) 
+				|| isPropChanged(before, after, ProjectModel.PROP_BL_BUDGEDTED_INVOICE) 
+				|| isPropChanged(before, after, BeCPGModel.PROP_PARENT_LEVEL)) {
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("UPDATE Budget Aspect (Invoice or Expense)  : " + nodeRef);
