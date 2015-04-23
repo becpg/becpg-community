@@ -35,6 +35,7 @@ import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.neo4j.cypher.internal.compiler.v2_1.planner.logical.steps.projection;
 
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.RepoConsts;
@@ -47,10 +48,12 @@ import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorMode;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
+import fr.becpg.repo.project.ProjectActivityService;
+import fr.becpg.repo.project.data.projectList.ActivityType;
 import fr.becpg.repo.project.data.projectList.TaskState;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
-public class ProjectListExtractor extends SimpleExtractor {
+public class ProjectListExtractor extends ActivityListExtractor {
 
 	private static final String PREF_FOLDER_FAVOURITES = "org.alfresco.share.documents.favourites";
 	private static final String PROP_IS_FAVOURITE = "isFavourite";
@@ -259,49 +262,52 @@ public class ProjectListExtractor extends SimpleExtractor {
 					public List<Map<String, Object>> extractNestedField(NodeRef nodeRef, AttributeExtractorStructure field) {
 						List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();
 						if (field.isDataListItems()) {
-							
+
 							DataListPagination pagination = (DataListPagination) props.get(PAGINATION);
-							TaskState taskState = null;
-							if (pagination.getPageSize() > 10) {
-								DataListFilter filter = (DataListFilter) props.get(FILTER_DATA);
-								if (filter.getFilterData() != null) {
-									try {
-										taskState = TaskState.valueOf(filter.getFilterData());
-									} catch (Exception e) {
-										// Case filter data is incorrect
-									}
+						
+						
+							if ((ProjectModel.TYPE_TASK_LIST.equals(field.getFieldQname()) && pagination.getPageSize()>10)
+									|| ProjectModel.TYPE_ACTIVITY_LIST.equals(field.getFieldQname())) {
+								// Only in progress tasks
+								List<NodeRef> assocRefs = null;
+								if (ProjectModel.TYPE_ACTIVITY_LIST.equals(field.getFieldQname())) {
+									assocRefs = associationService.getTargetAssocs(nodeRef, ProjectModel.ASSOC_PROJECT_CUR_COMMENTS);
+								} else {
+									assocRefs = associationService.getTargetAssocs(nodeRef, ProjectModel.ASSOC_PROJECT_CUR_TASKS);
 								}
-							}
 
-							if (ProjectModel.TYPE_TASK_LIST.equals(field.getFieldQname()) && TaskState.InProgress.equals(taskState)) {
-								//Only in progress tasks
-								for (NodeRef itemNodeRef : associationService.getTargetAssocs(nodeRef, ProjectModel.ASSOC_PROJECT_CUR_TASKS)) {
+								for (NodeRef itemNodeRef : assocRefs) {
 
-									if ( permissionService.hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED) {
+									if (permissionService.hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED) {
 
 										Map<String, Object> tmp = new HashMap<String, Object>(3);
+
 										QName itemType = nodeService.getType(itemNodeRef);
 										Map<QName, Serializable> properties = nodeService.getProperties(itemNodeRef);
 										tmp.put(PROP_TYPE, itemType.toPrefixString(services.getNamespaceService()));
 										tmp.put(PROP_NODE, itemNodeRef);
-										tmp.put(PROP_NODEDATA, doExtract(itemNodeRef, itemType, field.getChildrens(), mode, properties, props, cache));
+										if (ProjectModel.TYPE_ACTIVITY_LIST.equals(field.getFieldQname())) {
+											Map<String, Object> tmp2 = doExtract(itemNodeRef, itemType, field.getChildrens(), mode, properties,
+													props, cache);
+											postLookupActivity(tmp2, properties);
+											tmp.put(PROP_NODEDATA, tmp2);
+										} else {
+											tmp.put(PROP_NODEDATA,
+													doExtract(itemNodeRef, itemType, field.getChildrens(), mode, properties, props, cache));
+										}
+
 										ret.add(tmp);
 									}
 								}
 							} else {
-
+								
 								NodeRef listContainerNodeRef = entityListDAO.getListContainer(nodeRef);
 								NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, field.getFieldQname());
 								if (listNodeRef != null) {
 									List<NodeRef> results = entityListDAO.getListItems(listNodeRef, field.getFieldQname());
 
 									for (NodeRef itemNodeRef : results) {
-
-										if ((taskState == null
-												|| (ProjectModel.TYPE_TASK_LIST.equals(field.getFieldQname()) && taskState.toString().equals(
-														nodeService.getProperty(itemNodeRef, ProjectModel.PROP_TL_STATE))) || ProjectModel.TYPE_DELIVERABLE_LIST
-													.equals(field.getFieldQname()))
-												&& permissionService.hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED) {
+										if (permissionService.hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED) {
 
 											Map<String, Object> tmp = new HashMap<String, Object>(3);
 											QName itemType = nodeService.getType(itemNodeRef);
