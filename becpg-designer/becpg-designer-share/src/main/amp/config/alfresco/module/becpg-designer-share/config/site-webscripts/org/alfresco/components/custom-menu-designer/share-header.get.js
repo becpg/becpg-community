@@ -6,13 +6,16 @@ if(user.isAdmin){
 
    if (beCPGMenu != null) {
      
-      widgetUtils.findObject(model.jsonModel, "id", "HEADER_ADMIN_BECPG").config.widgets.push ( {
-         name : "alfresco/header/AlfMenuItem",
-         config : {
-            label : "header.model-designer.label",
-            iconClass : "model-designer-header",
-            targetUrl : "model-designer"
-         }
-      } );
+       var beCPGAdminMenu  =   widgetUtils.findObject(model.jsonModel, "id", "HEADER_ADMIN_BECPG");
+       if(beCPGAdminMenu){
+           beCPGAdminMenu.config.widgets.push ( {
+             name : "alfresco/header/AlfMenuItem",
+             config : {
+                label : "header.model-designer.label",
+                iconClass : "model-designer-header",
+                targetUrl : "model-designer"
+             }
+          } );
+       }
    }
 }
