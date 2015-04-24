@@ -23,7 +23,7 @@ function getOrCreateBeCPGMenu() {
       };
 
       beCPGMenu.config.widgets.push({
-          name : "alfresco/header/BeCPGRecentMenu",
+          name : "becpg/header/BeCPGRecentMenu",
           config : {
              label : "header.becpg.recents",
              entityNodeRef : page.url.args.nodeRef,

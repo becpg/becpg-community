@@ -15,7 +15,7 @@ if(isExternalUser(user)){
     
     if (beCPGMenu != null) {
       
-      model.jsonModel.services.push("alfresco/services/EcmService");
+      model.jsonModel.services.push("becpg/services/EcmService");
     
       var tools =  widgetUtils.findObject(model.jsonModel, "id", "HEADER_TOOLS_BECPG");
     	
@@ -39,7 +39,7 @@ if(isExternalUser(user)){
       
        var warningBar =  widgetUtils.findObject(model.jsonModel, "id", "HEADER_LICENSE_WARNING");
        if(warningBar){
-         warningBar.name ="alfresco/header/EcmWarningBar";
+         warningBar.name ="becpg/header/EcmWarningBar";
          warningBar.config = {};
        }
       

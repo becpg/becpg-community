@@ -1,5 +1,5 @@
 /**
- * @module alfresco/services/EcmService
+ * @module becpg/services/EcmService
  * @extends module:alfresco/core/Core
  * @author Matthieu Laborie
  */
