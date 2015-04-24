@@ -3,7 +3,7 @@
  * This is a generic banner warning that can be used to display warning and error messages
  * to the user.
  * 
- * @module alfresco/header/EcmWarningBar
+ * @module becpg/header/EcmWarningBar
  * @extends dijit/_WidgetBase
  * @mixes dijit/_TemplatedMixin
  * @mixes module:alfresco/core/Core

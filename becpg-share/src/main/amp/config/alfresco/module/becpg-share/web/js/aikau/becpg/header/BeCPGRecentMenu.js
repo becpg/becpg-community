@@ -1,6 +1,6 @@
 
 /**
- * @module alfresco/header/BeCPGRecentMenu
+ * @module becpg/header/BeCPGRecentMenu
  * @extends module:alfresco/menus/AlfMenuBarPopup
  * @mixes module:alfresco/core/CoreXhr
  * @author Matthieu Laborie

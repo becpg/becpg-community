@@ -5,7 +5,7 @@
 	<groupId>fr.becpg</groupId>
 	<artifactId>becpg-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>2.0.1</version>
+	<version>2.0.2</version>
 	<name>beCPG</name>
 	<parent>
 		<groupId>org.alfresco.maven</groupId>
@@ -76,7 +76,7 @@
 	    <app.log.root.level>WARN</app.log.root.level>
         <alfresco.data.location>${project.basedir}/alf_data_dev</alfresco.data.location>
         <env>local</env>
-		<alfresco.version>5.0.c</alfresco.version>
+		<alfresco.version>5.0.d</alfresco.version>
 		<app.testing.jvm.args>-Xms256m -Xmx1524m -Duser.language=fr</app.testing.jvm.args>
 		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
 		<birt.version>4.4.2</birt.version>
