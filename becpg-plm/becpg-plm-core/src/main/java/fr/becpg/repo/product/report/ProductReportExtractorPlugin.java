@@ -573,7 +573,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			Element compoListElt = dataListsElt.addElement(PLMModel.TYPE_COMPOLIST.getLocalName() + "s");
 
 			for (CompoListDataItem dataItem : productData.getCompoList(EffectiveFilters.EFFECTIVE)) {				
-				loadCompoListItem(dataItem, compoListElt, defaultVariantNodeRef, 1, dataItem.getQty());
+				loadCompoListItem(dataItem, compoListElt, defaultVariantNodeRef, 1, dataItem.getQty() != null ? dataItem.getQty() : 0d);
 			}
 
 			loadDynamicCharactList(productData.getCompoListView().getDynamicCharactList(), compoListElt);
