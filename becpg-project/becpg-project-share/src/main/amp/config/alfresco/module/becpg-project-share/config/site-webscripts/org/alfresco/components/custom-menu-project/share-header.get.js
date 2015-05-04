@@ -3,13 +3,16 @@
  var beCPGMenu = getOrCreateBeCPGMenu();
 
    if (beCPGMenu != null) {
-      widgetUtils.findObject(model.jsonModel, "id", "HEADER_TOOLS_BECPG").config.widgets.push( {
-         name : "alfresco/header/AlfMenuItem",
-         config : {
-            label : "header.project-list.label",
-            iconClass : "project-list-header",
-            targetUrl : "project-list#filter=projects|InProgress"
-               
-         }
-      });
+        var tools =   widgetUtils.findObject(model.jsonModel, "id", "HEADER_TOOLS_BECPG");
+        
+        if(tools){
+            tools.config.widgets.push( {
+                 name : "alfresco/header/AlfMenuItem",
+                 config : {
+                    label : "header.project-list.label",
+                    iconClass : "project-list-header",
+                    targetUrl : "project-list#filter=projects|InProgress"
+                 }
+              });
+        }
    }
