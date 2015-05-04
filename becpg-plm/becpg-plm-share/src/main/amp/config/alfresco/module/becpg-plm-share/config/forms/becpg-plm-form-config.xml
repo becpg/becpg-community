@@ -3100,6 +3100,7 @@
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:netWeight" force="true" />
+					<show id="bcpg:servingSize" force="true" />
 					<show id="bcpg:productSpecifications" />
 					<show id="bcpg:compareWithEntities" force="true" />
 					<show id="bcpg:entityTplRef" force="true" />
@@ -4022,6 +4023,7 @@
 					<show id="bcpg:nutType" />
 					<show id="bcpg:nutUnit" />
 					<show id="bcpg:nutGDA" />
+					<show id="bcpg:nutUL" />
 					<show id="bcpg:nutFormula" />
 				</field-visibility>
 				<appearance>
@@ -4053,6 +4055,7 @@
 					<show id="bcpg:nutType" />
 					<show id="bcpg:nutUnit" />
 					<show id="bcpg:nutGDA" />
+					<show id="bcpg:nutUL" />
 					<show id="bcpg:nutFormula" />
 				</field-visibility>
 
@@ -4100,6 +4103,7 @@
 					<show id="bcpg:nutType" />
 					<show id="bcpg:nutUnit" />
 					<show id="bcpg:nutGDA" />
+					<show id="bcpg:nutUL" />
 				</field-visibility>
 			</form>
 		</forms>

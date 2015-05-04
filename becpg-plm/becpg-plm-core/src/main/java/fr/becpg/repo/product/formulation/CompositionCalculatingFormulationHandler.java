@@ -315,6 +315,8 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 				return qty;
 			} else if (compoListUnit.equals(CompoListUnit.g)) {
 				return qty / 1000;
+			} else if (compoListUnit.equals(CompoListUnit.mg)) {
+				return qty / 1000000;
 			} else if (compoListUnit.equals(CompoListUnit.P)) {
 				return FormulationHelper.getNetWeight(compoListDataItem.getProduct(), nodeService, FormulationHelper.DEFAULT_NET_WEIGHT) * qty;
 			} else if (compoListUnit.equals(CompoListUnit.L) || compoListUnit.equals(CompoListUnit.mL)) {

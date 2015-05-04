@@ -59,14 +59,17 @@ public class FormulationHelper {
 		CompoListUnit compoListUnit = compoListDataItem.getCompoListUnit();
 		if (qty != null && compoListUnit != null && productUnit != null) {
 
-			if(compoListUnit.toString().equals(productUnit.toString())){
-				return qty;
-			}
-			else if (compoListUnit.equals(CompoListUnit.g) && isProductUnitKg(productUnit)) {
+			if (compoListUnit.equals(CompoListUnit.g) && isProductUnitKg(productUnit)) {
 				return qty / 1000;
+			}
+			else if (compoListUnit.equals(CompoListUnit.mg) && isProductUnitKg(productUnit)) {
+				return qty / 1000000;
 			}
 			else if (compoListUnit.equals(CompoListUnit.mL) && isProductUnitLiter(productUnit)) {
 				return qty / 1000;
+			}
+			else if(compoListUnit.toString().equals(productUnit.toString())){
+				return qty;
 			}
 			else if(isProductUnitKg(productUnit)){
 				// compoListUnit is P or mL but
@@ -207,7 +210,7 @@ public class FormulationHelper {
 	}
 
 	public static boolean isCompoUnitKg(CompoListUnit unit) {
-		return unit != null && (unit.equals(CompoListUnit.kg) || unit.equals(CompoListUnit.g));
+		return unit != null && (unit.equals(CompoListUnit.kg) || unit.equals(CompoListUnit.g) || unit.equals(CompoListUnit.mg));
 	}
 
 	public static boolean isCompoUnitP(CompoListUnit unit) {
@@ -418,6 +421,8 @@ public class FormulationHelper {
 				} else if (FormulationHelper.isCompoUnitKg(unit)) {
 					if (unit.equals(CompoListUnit.g)) {
 						qty = qty * 1000;
+					} else if (unit.equals(CompoListUnit.mg)) {
+						qty = qty * 1000000;
 					}
 				}
 				logger.debug("compo tare: " + tare + " qty " + qty + " productQty " + productQty);
