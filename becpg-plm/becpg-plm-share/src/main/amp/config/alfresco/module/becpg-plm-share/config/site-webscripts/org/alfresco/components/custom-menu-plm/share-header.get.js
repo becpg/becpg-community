@@ -19,24 +19,26 @@ if(isExternalUser(user)){
     
       var tools =  widgetUtils.findObject(model.jsonModel, "id", "HEADER_TOOLS_BECPG");
     	
-      tools.config.widgets.push({
-          name: "alfresco/header/AlfMenuItem",
-          config: {
-             label: "header.ecm-auto-record.label",
-             publishTopic: "BECPG_ECM_AUTOMATIC_CHANGE",
-             iconClass : "ecm-record"
-          }
-       });
-      
-      tools.config.widgets.push({
-          name : "alfresco/header/AlfMenuItem",
-          config : {
-             label : "header.nc-list.label",
-             iconClass : "nc-list-header",
-             targetUrl : "nc-list#filter=ncs|Claim"
-          }
-       });
-      
+      if(tools){
+          tools.config.widgets.push({
+              name: "alfresco/header/AlfMenuItem",
+              config: {
+                 label: "header.ecm-auto-record.label",
+                 publishTopic: "BECPG_ECM_AUTOMATIC_CHANGE",
+                 iconClass : "ecm-record"
+              }
+           });
+          
+          tools.config.widgets.push({
+              name : "alfresco/header/AlfMenuItem",
+              config : {
+                 label : "header.nc-list.label",
+                 iconClass : "nc-list-header",
+                 targetUrl : "nc-list#filter=ncs|Claim"
+              }
+           });
+         }
+          
        var warningBar =  widgetUtils.findObject(model.jsonModel, "id", "HEADER_LICENSE_WARNING");
        if(warningBar){
          warningBar.name ="alfresco/header/EcmWarningBar";
