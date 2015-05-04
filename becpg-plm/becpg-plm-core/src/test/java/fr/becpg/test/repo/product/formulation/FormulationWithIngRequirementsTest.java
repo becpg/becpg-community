@@ -33,6 +33,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
+import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.AssociationService;
@@ -44,9 +45,11 @@ import fr.becpg.repo.product.data.constraints.CompoListUnit;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementType;
+import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.product.formulation.AllergensCalculatingFormulationHandler;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
 public class FormulationWithIngRequirementsTest extends AbstractFinishedProductTest {
@@ -163,10 +166,14 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 							
 							ForbiddenIngListDataItem forbiddenIngListDataItem = new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "Ing3 geoOrigin1 obligatoire", null, null, null, ings, new ArrayList<NodeRef>(), bioOrigins);
 							forbiddenIngListDataItem.setRequiredGeoOrigins(geoOrigins);
-							forbiddenIngList1.add(forbiddenIngListDataItem);
-							
-							
+							forbiddenIngList1.add(forbiddenIngListDataItem);														
 							productSpecification1.setForbiddenIngList(forbiddenIngList1);
+							
+							// allergens
+							ArrayList<AllergenListDataItem> allergenList = new ArrayList<>();
+							allergenList.add(new AllergenListDataItem(null, null, false, false, null, null, allergen1, false));
+							productSpecification1.setAllergenList(allergenList);
+							
 							alfrescoRepository.save(productSpecification1);
 							
 							// specification2
@@ -261,10 +268,16 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 						assertTrue(reqCtrlList.getSources().contains(rawMaterial2NodeRef));
 						assertTrue(reqCtrlList.getSources().contains(rawMaterial6NodeRef));
 						checks++;
-					}										
+					}
+					else if(reqCtrlList.getReqMessage().equals(I18NUtil.getMessage(AllergensCalculatingFormulationHandler.MESSAGE_FORBIDDEN_ALLERGEN, nodeService.getProperty(allergen1, ContentModel.PROP_NAME)))){
+						
+						assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
+						assertEquals(0, reqCtrlList.getSources().size());
+						checks++;
+					}
 				}				
 				
-				assertEquals(6, checks);
+				assertEquals(7, checks);
 				
 				/*
 				 *  #257: check reqCtrlList is clear if all req are respected (we remove specification to get everything OK)

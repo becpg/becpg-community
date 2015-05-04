@@ -220,6 +220,7 @@
 				<list>
 					<value>kg</value>
 					<value>g</value>
+					<value>mg</value>
 					<value>L</value>
 					<value>mL</value>
 					<value>P</value>
@@ -774,6 +775,11 @@
 					</constraints>
 				</property>
 				<property name="bcpg:nutGDA">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:nutUL">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="false" />

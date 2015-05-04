@@ -103,6 +103,20 @@
 		</columns>
 	</mapping>
 
+	<mapping name="bcpg:resourceProduct">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:erpCode" />
+		</nodeColumnKeys>
+		<columns>
+
+			<column id="bcpg:productHierarchy1" type="Hierarchy"
+				attribute="bcpg:productHierarchy1" />
+			<column id="bcpg:productHierarchy2" type="Hierarchy"
+				attribute="bcpg:productHierarchy2" parentLevel="bcpg:productHierarchy1"
+				parentLevelAttribute="bcpg:parentLevel" />
+		</columns>
+	</mapping>
+	
 	<mapping name="bcpg:compoList">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="bcpg:erpCode" />

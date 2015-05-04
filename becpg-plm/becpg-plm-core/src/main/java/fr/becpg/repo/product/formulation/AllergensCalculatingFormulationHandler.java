@@ -25,6 +25,7 @@ import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.constraints.AllergenType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
@@ -42,6 +43,8 @@ import fr.becpg.repo.variant.model.VariantDataItem;
  */
 public class AllergensCalculatingFormulationHandler extends FormulationBaseHandler<ProductData> {
 
+	public static final String MESSAGE_FORBIDDEN_ALLERGEN = "message.formulate.allergen.forbidden";
+	
 	private static Log logger = LogFactory.getLog(AllergensCalculatingFormulationHandler.class);
 
 	protected AlfrescoRepository<AllergenListDataItem> alfrescoRepository;
@@ -156,6 +159,8 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 		formulatedProduct.getCompoListView().getReqCtrlList().addAll(rclCtrlMap.values());
 		// sort
 		sort(formulatedProduct.getAllergenList());
+		
+		checkAllergensOfFormulatedProduct(formulatedProduct, formulatedProduct.getProductSpecifications());
 
 		return true;
 	}
@@ -389,6 +394,43 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 		for (AllergenListDataItem al : allergenList) {
 			al.setSort(i);
 			i++;
+		}
+	}
+	
+	/**
+	 * check the allergens of the part according to the specification
+	 * 
+	 */
+	private void checkAllergensOfFormulatedProduct(ProductData formulatedProduct, List<ProductSpecificationData> productSpecicationDataList) {
+
+		for (ProductSpecificationData productSpecification : productSpecicationDataList) {
+
+			for (AllergenListDataItem allergenListDataItem : formulatedProduct.getAllergenList()) {
+				
+				if(allergenListDataItem.getInVoluntary() || allergenListDataItem.getVoluntary()){
+					logger.info("### allergène présent " + nodeService.getProperty(allergenListDataItem.getAllergen(), ContentModel.PROP_NAME));
+					
+					for (AllergenListDataItem al : productSpecification.getAllergenList()) {											
+						
+						boolean isAllergenAllowed = false;
+						if(allergenListDataItem.getAllergen().equals(al.getAllergen())){
+							if(al.getVoluntary()){
+								isAllergenAllowed = true;
+							}
+							else if(al.getInVoluntary()){
+								isAllergenAllowed = true;
+							}							
+						}
+						
+						logger.info("### allergène présent " + nodeService.getProperty(al.getAllergen(), ContentModel.PROP_NAME) + " is Allowed " + isAllergenAllowed);
+						
+						if(!isAllergenAllowed){
+							String message = I18NUtil.getMessage(MESSAGE_FORBIDDEN_ALLERGEN, nodeService.getProperty(allergenListDataItem.getAllergen(), ContentModel.PROP_NAME));
+							formulatedProduct.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, new ArrayList<NodeRef>()));
+						}
+					}					
+				}
+			}
 		}
 	}
 }

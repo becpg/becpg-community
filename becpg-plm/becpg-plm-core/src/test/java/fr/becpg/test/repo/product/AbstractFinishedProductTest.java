@@ -277,12 +277,14 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					properties.put(PLMModel.PROP_NUTUNIT, "kcal");
 					properties.put(PLMModel.PROP_NUTGROUP, GROUP2);
 					properties.put(PLMModel.PROP_NUTGDA, 2000d);
+					properties.put(PLMModel.PROP_NUTUL, 2000d);
 					nut2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_NUT, properties).getChildRef();			
 					properties.clear();
 					properties.put(ContentModel.PROP_NAME, "nut3");
 					properties.put(PLMModel.PROP_NUTUNIT, "kcal");
 					properties.put(PLMModel.PROP_NUTGROUP, GROUP2);
-					properties.put(PLMModel.PROP_NUTGDA, 2000d);
+					properties.put(PLMModel.PROP_NUTGDA, 5d);
+					properties.put(PLMModel.PROP_NUTUL, 5d);
 					nut3 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_NUT, properties).getChildRef();			
 					
 					//Allergens

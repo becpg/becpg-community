@@ -200,6 +200,7 @@ public interface PLMModel {
 	QName PROP_NUTTYPE = QName.createQName(BeCPGModel.BECPG_URI, "nutType");
 	QName PROP_NUTUNIT = QName.createQName(BeCPGModel.BECPG_URI, "nutUnit");
 	QName PROP_NUTGDA = QName.createQName(BeCPGModel.BECPG_URI, "nutGDA");
+	QName PROP_NUTUL = QName.createQName(BeCPGModel.BECPG_URI, "nutUL");
 	QName PROP_NUT_FORMULA = QName.createQName(BeCPGModel.BECPG_URI, "nutFormula");
 
 	// organo
