@@ -1935,7 +1935,6 @@
 				</property>
 				<property name="bcpg:dynamicCharactFormula">
 					<type>d:text</type>
-					<mandatory>true</mandatory>
 					<index enabled="false" />
 				</property>
 				<property name="bcpg:dynamicCharactErrorLog">

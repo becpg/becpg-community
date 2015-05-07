@@ -1,3 +1,22 @@
+
+function getI18N(step,itemName){
+    var label = step.attributes[itemName];
+    if (label == null)
+    {
+        var labelId = step.attributes[itemName+"Id"];
+        if (labelId != null)
+        {
+           label = msg.get(labelId);
+            
+            if(label == labelId){
+                label = "";
+            }
+            
+        }
+    }
+    return label;
+}
+
 function main() {
 
     var wizardStruct = [];
@@ -11,12 +30,12 @@ function main() {
                 step = steps.get(j);
                 wizardStruct.push({
                         id : step.attributes["id"],
-                        label : step.attributes["label"],
+                        label : getI18N(step,"label"),
                         type : step.attributes["type"],
                         formId : step.attributes["formId"],
                         itemId : step.attributes["itemId"],
                         listId : step.attributes["listId"],
-                        title :  step.attributes["title"],
+                        title : getI18N(step,"title"),
                         nodeRefStepIndex : step.attributes["nodeRefStepIndex"],
                         nextStepWebScript:  step.attributes["nextStepWebScript"]   
                 });
