@@ -575,7 +575,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 		        if( scope.subCache!=null && scope.subCache["idx_"+oColumn.getKeyIndex()]!=null){
 		              for (var j = 0; j <  scope.subCache["idx_"+oColumn.getKeyIndex()].length; j++) {
                         var path =  scope.subCache["idx_"+oColumn.getKeyIndex()][j].path;
-                        if(path == oRecord.getData("itemData")["path"]){
+                        if(path == oRecord.getData("itemData")["path"] && scope.subCache["idx_"+oColumn.getKeyIndex()][j].displayValue){
                             return  scope.subCache["idx_"+oColumn.getKeyIndex()][j].displayValue;
                         }
                     }
