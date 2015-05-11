@@ -98,8 +98,17 @@ public class CreateNC extends BaseJavaDelegate {
 					Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 					properties.put(ContentModel.PROP_NAME, ncName);
 					properties.put(QualityModel.PROP_NC_TYPE, ncType);
-					properties.put(ContentModel.PROP_DESCRIPTION, (String) task.getVariable("bpm_workflowDescription"));
-					properties.put(QualityModel.PROP_NC_PRIORITY, (Integer) task.getVariable("bpm_priority"));
+					
+					String description = (String) task.getVariable("bpm_workflowDescription");
+					Integer priority = (Integer) task.getVariable("bpm_priority");
+					if(description!=null){
+						properties.put(ContentModel.PROP_DESCRIPTION,description );
+					}
+					if(priority!=null){
+						properties.put(QualityModel.PROP_NC_PRIORITY, priority);
+					} else {
+						properties.put(QualityModel.PROP_NC_PRIORITY, 2);
+					}
 					properties.put(BeCPGModel.PROP_CODE,code);
 
 					return  nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
