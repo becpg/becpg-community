@@ -28,30 +28,39 @@
 			</removeable>
 		</aspects>
 		<types>
-			<type name="cm:content">
-				<subtype name="bcpg:product" />
-				<subtype name="bcpg:productMicrobioCriteria" />
-				<subtype name="bcpg:productSpecification" />
-				<subtype name="bcpg:allergen" />
+		    <type  name="cm:content">
+		        <subtype name="bcpg:allergen" />
 				<subtype name="bcpg:cost" />
 				<subtype name="bcpg:ing" />
 				<subtype name="bcpg:microBio" />
 				<subtype name="bcpg:nut" />
 				<subtype name="bcpg:organo" />
 				<subtype name="bcpg:physicoChem" />
-				<subtype name="qa:nc" />
+				
 				<subtype name="qa:controlPlan" />
 				<subtype name="qa:qualityControl" />
 				<subtype name="qa:controlPoint" />
 				<subtype name="qa:controlStep" />
 				<subtype name="qa:controlMethod" />
 				<subtype name="qa:workItemAnalysis" />
+		    </type>
+			<type name="bcpg:entityV2">
+			    <subtype name="bcpg:productReportTemplate" />
+				<subtype name="bcpg:product" />
+				<subtype name="bcpg:productMicrobioCriteria" />
+				<subtype name="bcpg:productSpecification" />
+				
+				<subtype name="qa:nc" />
 				<subtype name="bcpg:supplier" />
 				<subtype name="bcpg:client" />
 				<subtype name="ecm:changeOrder" />	
 			</type>
-			<type name="cm:folder">
-				<subtype name="bcpg:productReportTemplate" />
+			<type name="bcpg:product">
+			  <subtype name="bcpg:finishedProduct" />
+			  <subtype name="bcpg:rawMaterial" />
+			  <subtype name="bcpg:semiFinishedProduct" />
+			  <subtype name="bcpg:packagingMaterial" />
+			  <subtype name="bcpg:packagingKit" />
 			</type>
 			<type name="dl:dataListItem">
 				<subtype name="bcpg:allergenList" />
