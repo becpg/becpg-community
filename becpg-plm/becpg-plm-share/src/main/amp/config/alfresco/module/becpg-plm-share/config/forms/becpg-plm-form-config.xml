@@ -28,6 +28,8 @@
 
 					<!-- bcpg:eanAspect -->
 					<show id="bcpg:eanCode" force="true" />
+					<show id="bcpg:eanCodeLevel2" force="true" />
+					<show id="bcpg:eanCodeLevel3" force="true" />
 
 					<show id="bcpg:certificateDate" force="true" />
 
@@ -87,6 +89,9 @@
 
 					<!-- bcpg:eanAspect -->
 					<field id="bcpg:eanCode" set="product-criteria" />
+					<field id="bcpg:eanCodeLevel2" set="product-criteria" />
+					<field id="bcpg:eanCodeLevel3" set="product-criteria" />
+					
 					<field id="bcpg:certificateDate" set="product-criteria" />
 
 					<field id="bcpg:suppliers" set="product-criteria">
@@ -233,6 +238,8 @@
 					<show id="bcpg:productState" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:eanCode" />
+					<show id="bcpg:eanCodeLevel2"  />
+					<show id="bcpg:eanCodeLevel3" />
 					<show id="bcpg:subsidiaryRef" force="true" />
 					<show id="bcpg:trademarkRef" force="true" />
 					<show id="bcpg:plants" force="true" />
@@ -414,6 +421,8 @@
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
 					<field id="bcpg:eanCode" set="mainInfo" />
+					<field id="bcpg:eanCodeLevel2" set="mainInfo" />
+					<field id="bcpg:eanCodeLevel3" set="mainInfo" />
 					<field id="bcpg:subsidiaryRef" set="mainInfo" />
 					<field id="bcpg:plants" set="mainInfo" />
 					<field id="bcpg:trademarkRef" set="mainInfo" />
@@ -701,6 +710,8 @@
 					<show id="bcpg:productState" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:eanCode" />
+					<show id="bcpg:eanCodeLevel2" />
+					<show id="bcpg:eanCodeLevel3" />
 					<show id="bcpg:subsidiaryRef" force="true" />
 					<show id="bcpg:plants" force="true" />
 					<show id="bcpg:trademarkRef" force="true" />
@@ -794,6 +805,8 @@
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
 					<field id="bcpg:eanCode" set="mainInfo" />
+					<field id="bcpg:eanCodeLevel2" set="mainInfo" />
+					<field id="bcpg:eanCodeLevel3" set="mainInfo" />
 					<field id="bcpg:subsidiaryRef" force="true" set="mainInfo" />
 					<field id="bcpg:trademarkRef" force="true" set="mainInfo" />
 					<field id="bcpg:plants" force="true" set="mainInfo" />
