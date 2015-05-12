@@ -46,7 +46,7 @@
 					<show id="pjt:projectWork" for-mode="view"/>
 					<show id="pjt:projectBudgetedCost" for-mode="view"/>
 					<show id="pjt:projectLoggedTime" for-mode="view"/>
-
+					
 					<!-- Model -->
 					<show id="bcpg:entityTplEnabled" />
 					<show id="bcpg:entityTplIsDefault" />
@@ -64,7 +64,7 @@
 				</field-visibility>
 				<appearance>
 					<set id="mainInfo" appearance="bordered-panel"
-						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />					
 					<set id="planning" appearance="bordered-panel"
 						label-id="becpg.forms.set.planning.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 				    <set id="template" appearance="bordered-panel" label-id="becpg.forms.set.template.label" />
@@ -124,8 +124,7 @@
 					<field id="pjt:projectOverdue" set="planning" />
 					<field id="pjt:projectWork" set="planning" />
 					<field id="pjt:projectBudgetedCost" set="planning" />
-					<field id="pjt:projectLoggedTime" set="planning" />		
-					
+					<field id="pjt:projectLoggedTime" set="planning" />												
 					
 					<field id="bcpg:entityTplEnabled" set="template" />
 					<field id="bcpg:entityTplIsDefault" set="template" />
@@ -215,8 +214,8 @@
 					<show id="bcpg:entityTplRef" force="true" />			
 					<show id="pjt:projectEntity" />
 					<show id="pjt:projectPriority" />
-					<show id="pjt:projectState" />										
-										
+					<show id="pjt:projectState" />							
+					
 					<show id="pjt:projectStartDate" />
 					<show id="pjt:projectDueDate" />
 					<show id="pjt:projectPlanningMode" />					
@@ -274,8 +273,8 @@
 							<control-param name="options">Planned|data.taskstate.planned,InProgress|data.taskstate.inprogress,OnHold|data.taskstate.onhold,Cancelled|data.taskstate.cancelled,Completed|data.taskstate.completed
 							</control-param>
 						</control>
-					</field>										
-					
+					</field>		
+																	
 					<field id="pjt:projectStartDate" set="planning" />
 					<field id="pjt:projectDueDate" set="planning" />
 					<field id="pjt:projectPlanningMode" set="planning" />
@@ -777,6 +776,7 @@
 					<show id="pjt:tlIsMilestone" />					
 					<show id="pjt:tlState" />
 					<show id="pjt:tlDuration" />
+					<show id="pjt:tlRealDuration" />
 					<show id="pjt:tlWork" />
 					<show id="pjt:tlCapacity" />
 					<show id="pjt:tlResources" />
@@ -800,6 +800,7 @@
 					<field id="pjt:tlIsMilestone" label="hidden" ></field>
 					<field id="pjt:tlStart" read-only="true"/>
 					<field id="pjt:tlEnd" read-only="true"/>
+					<field id="pjt:tlRealDuration" read-only="true"/>
 					<field id="pjt:tlCapacity" read-only="true"/>
 					<field id="pjt:tlBudgetedCost" read-only="true"/>
 					<field id="pjt:tlLoggedTime" read-only="true"/>
