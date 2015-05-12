@@ -2444,6 +2444,12 @@
 				<property name="bcpg:eanCode">
 					<type>d:text</type>
 				</property>
+				<property name="bcpg:eanCodeLevel2">
+					<type>d:text</type>
+				</property>
+				<property name="bcpg:eanCodeLevel3">
+					<type>d:text</type>
+				</property>
 			</properties>
 		</aspect>
 
