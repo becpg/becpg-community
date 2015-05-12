@@ -262,7 +262,13 @@
                 <structure>
                     <property name="columnName">created</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">created</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">productCompoQtyUsed</property>
+                    <property name="analysis">measure</property>
+                    <text-property name="heading">productCompoQtyUsed</text-property>
                 </structure>
             </list-property>
             <list-property name="parameters"/>
@@ -442,6 +448,11 @@
                         <property name="position">35</property>
                         <property name="name">created</property>
                         <property name="dataType">date-time</property>
+                    </structure>
+                    <structure>
+                        <property name="position">36</property>
+                        <property name="name">productCompoQtyUsed</property>
+                        <property name="dataType">float</property>
                     </structure>
                 </list-property>
             </structure>
@@ -692,8 +703,15 @@
                     <property name="dataType">date-time</property>
                     <property name="nativeDataType">93</property>
                 </structure>
+                <structure>
+                    <property name="position">36</property>
+                    <property name="name">productCompoQtyUsed</property>
+                    <property name="nativeName">productCompoQtyUsed</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{productCurrency;STRING;/productCurrency},{productPrice;DOUBLE;/productPrice},{productUnit;STRING;/productUnit},{productType;STRING;/productType},{name;STRING;/name},{productState;STRING;/productState},{modified;TIMESTAMP;/modified},{productQty;DOUBLE;/productQty},{productDensity;DOUBLE;/productDensity},{description;STRING;/description},{clients;STRING;/clients},{productHierarchy1;STRING;/productHierarchy1},{productHierarchy2;STRING;/productHierarchy2},{legalName;STRING;/legalName},{useByDate;INT;/useByDate},{productComments;STRING;/productComments},{eanCode;STRING;/eanCode},{pvValidationDate;TIMESTAMP;/pvValidationDate},{pvCallerActor;STRING;/pvCallerActor},{pvTransmitterActor;STRING;/pvTransmitterActor},{pvQualityApprovalActor;STRING;/pvQualityApprovalActor},{pvProductionApprovalActor;STRING;/pvProductionApprovalActor},{pvRDApprovalActor;STRING;/pvRDApprovalActor},{itemType;STRING;/itemType},{preparationTips;STRING;/preparationTips},{packagingDescription;STRING;/packagingDescription},{numberOfServings;STRING;/numberOfServings},{precautionOfUseDescription;STRING;/precautionOfUse/description},{storageConditionsDescription;STRING;/storageConditions/description},{netWeight;DOUBLE;/netWeight},{bestBeforeDate;INT;/bestBeforeDate},{title;STRING;/title},{servingSize;DOUBLE;/servingSize},{created;TIMESTAMP;/created}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{productCurrency;STRING;/productCurrency},{productPrice;DOUBLE;/productPrice},{productUnit;STRING;/productUnit},{productType;STRING;/productType},{name;STRING;/name},{productState;STRING;/productState},{modified;TIMESTAMP;/modified},{productQty;DOUBLE;/productQty},{productDensity;DOUBLE;/productDensity},{description;STRING;/description},{clients;STRING;/clients},{productHierarchy1;STRING;/productHierarchy1},{productHierarchy2;STRING;/productHierarchy2},{legalName;STRING;/legalName},{useByDate;INT;/useByDate},{productComments;STRING;/productComments},{eanCode;STRING;/eanCode},{pvValidationDate;TIMESTAMP;/pvValidationDate},{pvCallerActor;STRING;/pvCallerActor},{pvTransmitterActor;STRING;/pvTransmitterActor},{pvQualityApprovalActor;STRING;/pvQualityApprovalActor},{pvProductionApprovalActor;STRING;/pvProductionApprovalActor},{pvRDApprovalActor;STRING;/pvRDApprovalActor},{itemType;STRING;/itemType},{preparationTips;STRING;/preparationTips},{packagingDescription;STRING;/packagingDescription},{numberOfServings;STRING;/numberOfServings},{precautionOfUseDescription;STRING;/precautionOfUse/description},{storageConditionsDescription;STRING;/storageConditions/description},{netWeight;DOUBLE;/netWeight},{bestBeforeDate;INT;/bestBeforeDate},{title;STRING;/title},{servingSize;DOUBLE;/servingSize},{created;TIMESTAMP;/created},{productCompoQtyUsed;DOUBLE;/productCompoQtyUsed}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -9393,25 +9411,9 @@ dataSetRow["packagingListProduct"]
                                         <cell id="2760">
                                             <property name="colSpan">3</property>
                                             <property name="rowSpan">1</property>
-                                            <table id="2680">
-                                                <property name="borderBottomColor">#FFFFFF</property>
-                                                <property name="borderLeftColor">#FFFFFF</property>
-                                                <property name="borderRightColor">#FFFFFF</property>
-                                                <property name="borderTopColor">#FFFFFF</property>
+                                            <table id="5976">
                                                 <property name="dataSet">packSecondLevel</property>
                                                 <list-property name="boundDataColumns">
-                                                    <structure>
-                                                        <property name="name">itemType</property>
-                                                        <text-property name="displayName">itemType</text-property>
-                                                        <expression name="expression" type="javascript">dataSetRow["itemType"]</expression>
-                                                        <property name="dataType">string</property>
-                                                    </structure>
-                                                    <structure>
-                                                        <property name="name">packagingListProduct</property>
-                                                        <text-property name="displayName">packagingListProduct</text-property>
-                                                        <expression name="expression" type="javascript">dataSetRow["packagingListProduct"]</expression>
-                                                        <property name="dataType">string</property>
-                                                    </structure>
                                                     <structure>
                                                         <property name="name">legalName</property>
                                                         <text-property name="displayName">legalName</text-property>
@@ -9424,141 +9426,12 @@ dataSetRow["packagingListProduct"]
                                                         <property name="dataType">string</property>
                                                         <property name="allowExport">true</property>
                                                     </structure>
-                                                    <structure>
-                                                        <property name="name">packagingListQty</property>
-                                                        <text-property name="displayName">packagingListQty</text-property>
-                                                        <expression name="expression" type="javascript">dataSetRow["packagingListQty"]</expression>
-                                                        <property name="dataType">string</property>
-                                                    </structure>
-                                                    <structure>
-                                                        <property name="name">packagingListUnit</property>
-                                                        <text-property name="displayName">packagingListUnit</text-property>
-                                                        <expression name="expression" type="javascript">dataSetRow["packagingListUnit"]</expression>
-                                                        <property name="dataType">string</property>
-                                                    </structure>
-                                                    <structure>
-                                                        <property name="name">packagingListPkgLevel</property>
-                                                        <text-property name="displayName">packagingListPkgLevel</text-property>
-                                                        <expression name="expression" type="javascript">dataSetRow["packagingListPkgLevel"]</expression>
-                                                        <property name="dataType">string</property>
-                                                    </structure>
-                                                    <structure>
-                                                        <property name="name">pmDimensions</property>
-                                                        <text-property name="displayName">pmDimensions</text-property>
-                                                        <expression name="expression" type="javascript">dataSetRow["pmDimensions"]</expression>
-                                                        <property name="dataType">string</property>
-                                                    </structure>
-                                                    <structure>
-                                                        <property name="name">tare</property>
-                                                        <text-property name="displayName">tare</text-property>
-                                                        <expression name="expression" type="javascript">dataSetRow["tare"]</expression>
-                                                        <property name="dataType">string</property>
-                                                    </structure>
-                                                    <structure>
-                                                        <property name="name">palletLayers</property>
-                                                        <text-property name="displayName">palletLayers</text-property>
-                                                        <expression name="expression" type="javascript">dataSetRow["palletLayers"]</expression>
-                                                        <property name="dataType">string</property>
-                                                    </structure>
-                                                    <structure>
-                                                        <property name="name">palletBoxesPerLayer</property>
-                                                        <text-property name="displayName">palletBoxesPerLayer</text-property>
-                                                        <expression name="expression" type="javascript">dataSetRow["palletBoxesPerLayer"]</expression>
-                                                        <property name="dataType">string</property>
-                                                    </structure>
-                                                    <structure>
-                                                        <property name="name">palletBoxesPerPallet</property>
-                                                        <text-property name="displayName">palletBoxesPerPallet</text-property>
-                                                        <expression name="expression" type="javascript">dataSetRow["palletBoxesPerPallet"]</expression>
-                                                        <property name="dataType">string</property>
-                                                    </structure>
-                                                    <structure>
-                                                        <property name="name">nbFinishedProductThirdLevel</property>
-                                                        <text-property name="displayName">nbFinishedProductThirdLevel</text-property>
-                                                        <expression name="expression" type="javascript">dataSetRow["nbFinishedProductThirdLevel"]</expression>
-                                                        <property name="dataType">string</property>
-                                                    </structure>
                                                 </list-property>
-                                                <column id="2583"/>
+                                                <column id="5983"/>
                                                 <detail>
-                                                    <row id="2579">
-                                                        <cell id="2681">
-                                                            <data id="2682">
-                                                                <property name="dataSet">packSecondLevel</property>
-                                                                <list-property name="boundDataColumns">
-                                                                    <structure>
-                                                                        <property name="name">itemType</property>
-                                                                        <text-property name="displayName">itemType</text-property>
-                                                                        <expression name="expression" type="javascript">dataSetRow["itemType"]</expression>
-                                                                        <property name="dataType">string</property>
-                                                                    </structure>
-                                                                    <structure>
-                                                                        <property name="name">packagingListProduct</property>
-                                                                        <text-property name="displayName">packagingListProduct</text-property>
-                                                                        <expression name="expression" type="javascript">dataSetRow["packagingListProduct"]</expression>
-                                                                        <property name="dataType">string</property>
-                                                                    </structure>
-                                                                    <structure>
-                                                                        <property name="name">legalName</property>
-                                                                        <text-property name="displayName">legalName</text-property>
-                                                                        <expression name="expression" type="javascript">dataSetRow["legalName"]</expression>
-                                                                        <property name="dataType">string</property>
-                                                                    </structure>
-                                                                    <structure>
-                                                                        <property name="name">packagingListQty</property>
-                                                                        <text-property name="displayName">packagingListQty</text-property>
-                                                                        <expression name="expression" type="javascript">dataSetRow["packagingListQty"]</expression>
-                                                                        <property name="dataType">string</property>
-                                                                    </structure>
-                                                                    <structure>
-                                                                        <property name="name">packagingListUnit</property>
-                                                                        <text-property name="displayName">packagingListUnit</text-property>
-                                                                        <expression name="expression" type="javascript">dataSetRow["packagingListUnit"]</expression>
-                                                                        <property name="dataType">string</property>
-                                                                    </structure>
-                                                                    <structure>
-                                                                        <property name="name">packagingListPkgLevel</property>
-                                                                        <text-property name="displayName">packagingListPkgLevel</text-property>
-                                                                        <expression name="expression" type="javascript">dataSetRow["packagingListPkgLevel"]</expression>
-                                                                        <property name="dataType">string</property>
-                                                                    </structure>
-                                                                    <structure>
-                                                                        <property name="name">pmDimensions</property>
-                                                                        <text-property name="displayName">pmDimensions</text-property>
-                                                                        <expression name="expression" type="javascript">dataSetRow["pmDimensions"]</expression>
-                                                                        <property name="dataType">string</property>
-                                                                    </structure>
-                                                                    <structure>
-                                                                        <property name="name">tare</property>
-                                                                        <text-property name="displayName">tare</text-property>
-                                                                        <expression name="expression" type="javascript">dataSetRow["tare"]</expression>
-                                                                        <property name="dataType">string</property>
-                                                                    </structure>
-                                                                    <structure>
-                                                                        <property name="name">palletLayers</property>
-                                                                        <text-property name="displayName">palletLayers</text-property>
-                                                                        <expression name="expression" type="javascript">dataSetRow["palletLayers"]</expression>
-                                                                        <property name="dataType">string</property>
-                                                                    </structure>
-                                                                    <structure>
-                                                                        <property name="name">palletBoxesPerLayer</property>
-                                                                        <text-property name="displayName">palletBoxesPerLayer</text-property>
-                                                                        <expression name="expression" type="javascript">dataSetRow["palletBoxesPerLayer"]</expression>
-                                                                        <property name="dataType">string</property>
-                                                                    </structure>
-                                                                    <structure>
-                                                                        <property name="name">palletBoxesPerPallet</property>
-                                                                        <text-property name="displayName">palletBoxesPerPallet</text-property>
-                                                                        <expression name="expression" type="javascript">dataSetRow["palletBoxesPerPallet"]</expression>
-                                                                        <property name="dataType">string</property>
-                                                                    </structure>
-                                                                    <structure>
-                                                                        <property name="name">nbFinishedProductThirdLevel</property>
-                                                                        <text-property name="displayName">nbFinishedProductThirdLevel</text-property>
-                                                                        <expression name="expression" type="javascript">dataSetRow["nbFinishedProductThirdLevel"]</expression>
-                                                                        <property name="dataType">string</property>
-                                                                    </structure>
-                                                                </list-property>
+                                                    <row id="5979">
+                                                        <cell id="5980">
+                                                            <data id="5984">
                                                                 <property name="resultSetColumn">legalName</property>
                                                             </data>
                                                         </cell>
@@ -9690,8 +9563,14 @@ else{
                                                     <structure>
                                                         <property name="name">netWeight</property>
                                                         <text-property name="displayName">netWeight</text-property>
-                                                        <expression name="expression" type="javascript">dataSetRow["netWeight"]</expression>
+                                                        <expression name="expression" type="javascript">if(dataSetRow["netWeight"] != null){
+dataSetRow["netWeight"] 
+}
+else{
+dataSetRow["productCompoQtyUsed"]
+}</expression>
                                                         <property name="dataType">float</property>
+                                                        <property name="allowExport">true</property>
                                                     </structure>
                                                 </list-property>
                                                 <property name="resultSetColumn">netWeight</property>

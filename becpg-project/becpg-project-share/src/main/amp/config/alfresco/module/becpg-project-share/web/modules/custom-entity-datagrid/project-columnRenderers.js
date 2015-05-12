@@ -127,4 +127,18 @@ if (beCPG.module.EntityDataGridRenderers) {
 
 	   });
    
+   YAHOO.Bubbling.fire("registerDataGridRenderer", {
+      propertyName : [ "pjt:tlRealDuration" ],
+      renderer : function(oRecord, data, label, scope) {
+      	
+      	var className = "";
+      	if (data.value && oRecord.getData("itemData")["prop_pjt_tlDuration"].value && data.value > oRecord.getData("itemData")["prop_pjt_tlDuration"].value) {
+      		className = "red";
+			}      	
+         
+         return '<span class="' + className + '" >' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+      }
+
+   });
+   
 }

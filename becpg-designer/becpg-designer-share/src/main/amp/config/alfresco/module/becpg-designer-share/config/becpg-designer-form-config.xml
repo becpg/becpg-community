@@ -111,7 +111,7 @@
 					<show id="dsg:label" />
 					<!--<show id="dsg:labelId" /> -->
 					<show id="dsg:appearance" />
-					<!-- <show id="dsg:templatePath" /> -->
+					<show id="dsg:templatePath" />
 				</field-visibility>
 				<appearance>
 					<set id="mainInfo" appearance="panel" label="Informations" label-id="designer.sets.mainInfo" />
@@ -119,7 +119,11 @@
 					<field id="dsg:label" set="mainInfo" />
 					<!-- <field id="dsg:labelId" set="mainInfo" /> -->
 					<field id="dsg:appearance" set="mainInfo" />
-					<!-- <field id="dsg:templatePath" set="mainInfo" /> -->
+					<field id="dsg:templatePath" set="mainInfo" >
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">,/org/alfresco/components/form/2-column-set.ftl,/org/alfresco/components/form/3-column-set.ftl</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 		</forms>

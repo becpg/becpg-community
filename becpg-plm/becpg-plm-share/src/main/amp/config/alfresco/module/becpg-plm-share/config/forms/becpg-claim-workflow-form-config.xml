@@ -208,7 +208,7 @@
 				</field-visibility>
 				<appearance>
 				
-					<set id="info"  appearance="title" label-id="workflow.claim.set.start"  />
+					<set id="info"  appearance="bordered-panel" label-id="workflow.claim.set.start"  />
 				    <field id="message" set="info" >
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
@@ -247,7 +247,7 @@
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
 					
-					<set id="analysis" appearance="title" label-id="workflow.claim.set.orientation"  />
+					<set id="analysis" appearance="bordered-panel" label-id="workflow.claim.set.orientation"  />
 					<field id="bcpg:plants" set="analysis" mandatory="false" read-only="false" label="Site de fabrication"/>
 					
 					<set id="analysis2" parent="analysis" appearance="" template="/org/alfresco/components/form/2-column-set.ftl"/>
@@ -340,7 +340,7 @@
 				</field-visibility>
 				<appearance>
 				
-					<set id="info"  appearance="title" label-id="workflow.claim.set.start"  />
+					<set id="info"  appearance="bordered-panel" label-id="workflow.claim.set.start"  />
 				    <field id="message" set="info" >
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
@@ -379,7 +379,7 @@
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
 					
-					<set id="analysis" appearance="title" label-id="workflow.claim.set.orientation"  />
+					<set id="analysis" appearance="bordered-panel" label-id="workflow.claim.set.orientation"  />
 					<field id="bcpg:plants" set="analysis" mandatory="false" read-only="true" label="Site de fabrication"/>
 					
 					<set id="analysis2" parent="analysis" appearance="" template="/org/alfresco/components/form/2-column-set.ftl"/>
@@ -397,7 +397,7 @@
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
 					
-					<set id="treatment" appearance="title" label-id="workflow.claim.set.treatment" />
+					<set id="treatment" appearance="bordered-panel" label-id="workflow.claim.set.treatment" />
 					<field id="qa:claimTreatementDetails" set="treatment" mandatory="true" read-only="false">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
@@ -482,7 +482,7 @@
 				</field-visibility>
 				<appearance>
 
-					<set id="info"  appearance="title" label-id="workflow.claim.set.start"  />
+					<set id="info"  appearance="bordered-panel" label-id="workflow.claim.set.start"  />
 				    <field id="message" set="info" >
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
@@ -521,7 +521,7 @@
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
 					
-					<set id="analysis" appearance="title" label-id="workflow.claim.set.orientation"  />
+					<set id="analysis" appearance="bordered-panel" label-id="workflow.claim.set.orientation"  />
 					<field id="bcpg:plants" set="analysis" mandatory="false" read-only="true" label="Site de fabrication"/>
 					
 					<set id="analysis2" parent="analysis" appearance="" template="/org/alfresco/components/form/2-column-set.ftl"/>
@@ -539,7 +539,7 @@
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
 					
-					<set id="treatment" appearance="title" label-id="workflow.claim.set.treatment" />
+					<set id="treatment" appearance="bordered-panel" label-id="workflow.claim.set.treatment" />
 					
 					<field id="qa:claimTreatementDetails" set="treatment" mandatory="true" read-only="true" >
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
@@ -551,7 +551,7 @@
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
 					
-					<set id="response" appearance="title" label-id="workflow.claim.set.response" />
+					<set id="response" appearance="bordered-panel" label-id="workflow.claim.set.response" />
 					<field id="qa:claimResponseState" mandatory="true" set="response" />
 					<field id="qa:claimResponseDetails" mandatory="true" set="response">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
@@ -635,7 +635,7 @@
 				</field-visibility>
 				<appearance>
 				
-					<set id="info"  appearance="title" label-id="workflow.claim.set.start"  />
+					<set id="info"  appearance="bordered-panel" label-id="workflow.claim.set.start"  />
 				    <field id="message" set="info" >
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
@@ -674,7 +674,7 @@
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
 					
-					<set id="analysis" appearance="title" label-id="workflow.claim.set.orientation"  />
+					<set id="analysis" appearance="bordered-panel" label-id="workflow.claim.set.orientation"  />
 					<field id="bcpg:plants" set="analysis" mandatory="false" read-only="true" label="Site de fabrication"/>
 					
 					<set id="analysis2" parent="analysis" appearance="" template="/org/alfresco/components/form/2-column-set.ftl"/>
@@ -692,7 +692,7 @@
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
 					
-					<set id="treatment" appearance="title" label-id="workflow.claim.set.treatment" />
+					<set id="treatment" appearance="bordered-panel" label-id="workflow.claim.set.treatment" />
 					
 					<field id="qa:claimTreatementDetails" set="treatment" mandatory="true" read-only="true">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
@@ -704,7 +704,7 @@
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
 					
-					<set id="response" appearance="title" label-id="workflow.claim.set.response" />
+					<set id="response" appearance="bordered-panel" label-id="workflow.claim.set.response" />
 					<field id="qa:claimResponseState" mandatory="true" set="response"   read-only="true" >
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
@@ -716,7 +716,7 @@
 					</field>
 					
 					
-					<set id="classification" appearance="title"  label-id="workflow.claim.set.classification" />
+					<set id="classification" appearance="bordered-panel"  label-id="workflow.claim.set.classification" />
 					<set id="classification1" parent="classification" appearance="" template="/org/alfresco/components/form/2-column-set.ftl"  />
 					<field id="qa:claimType" set="classification" mandatory="true" read-only="false" />
 					<field id="qa:claimOriginHierarchy1" set="classification1" >
@@ -808,7 +808,7 @@
 
 				</field-visibility>
 				<appearance>		
-					<set id="info"  appearance="title" label-id="workflow.claim.set.start"  />
+					<set id="info"  appearance="bordered-panel" label-id="workflow.claim.set.start"  />
 				    <field id="message" set="info" >
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
@@ -847,7 +847,7 @@
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
 					
-					<set id="analysis" appearance="title" label-id="workflow.claim.set.orientation"  />
+					<set id="analysis" appearance="bordered-panel" label-id="workflow.claim.set.orientation"  />
 					<field id="bcpg:plants" set="analysis" mandatory="false" read-only="true" label="Site de fabrication"/>
 					
 					<set id="analysis2" parent="analysis" appearance="" template="/org/alfresco/components/form/2-column-set.ftl"/>
@@ -865,7 +865,7 @@
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
 					
-					<set id="treatment" appearance="title" label-id="workflow.claim.set.treatment" />
+					<set id="treatment" appearance="bordered-panel" label-id="workflow.claim.set.treatment" />
 					
 					<field id="qa:claimTreatementDetails" set="treatment" mandatory="true" read-only="true">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
@@ -877,7 +877,7 @@
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
 					
-					<set id="response" appearance="title" label-id="workflow.claim.set.response" />
+					<set id="response" appearance="bordered-panel" label-id="workflow.claim.set.response" />
 					<field id="qa:claimResponseState" mandatory="true" set="response"  read-only="true" >
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
@@ -888,7 +888,7 @@
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
 					
-					<set id="classification" appearance="title"  label-id="workflow.claim.set.classification" />
+					<set id="classification" appearance="bordered-panel"  label-id="workflow.claim.set.classification" />
 					<set id="classification1" parent="classification" appearance="" template="/org/alfresco/components/form/2-column-set.ftl"  />
 					<field id="qa:claimType" set="classification" mandatory="true" read-only="true" >
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
@@ -911,7 +911,7 @@
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>
 					
-					<set id="closing" appearance="title" label-id="workflow.claim.set.closing" />
+					<set id="closing" appearance="bordered-panel" label-id="workflow.claim.set.closing" />
 					<field id="qa:claimClosingComment"  set="closing">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
