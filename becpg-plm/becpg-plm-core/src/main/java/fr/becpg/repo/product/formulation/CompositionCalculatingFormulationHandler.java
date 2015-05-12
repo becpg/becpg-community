@@ -271,7 +271,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		List<NodeRef> supplierNodeRefs = new ArrayList<>();
 		List<NodeRef> plantNodeRefs = new ArrayList<>();
 		List<NodeRef> supplierPlantNodeRefs = new ArrayList<>();
-		Double density = 1d;
+		Double density = 0d;
 		for (Composite<CompoListDataItem> component : composite.getChildren()) {
 			ProductData productData = alfrescoRepository.findOne(component.getData().getProduct());
 			if (productData instanceof RawMaterialData) {
@@ -297,7 +297,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 			}
 
 		}
-		if (density != 1d) {
+		if (density != 0d) {
 			rawMaterialData.setDensity(density / composite.getChildren().size());
 		}
 
