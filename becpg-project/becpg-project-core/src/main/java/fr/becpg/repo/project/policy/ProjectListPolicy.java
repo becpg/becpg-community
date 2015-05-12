@@ -6,10 +6,6 @@ package fr.becpg.repo.project.policy;
 import java.io.Serializable;
 import java.util.Map;
 
-import org.alfresco.repo.copy.CopyBehaviourCallback;
-import org.alfresco.repo.copy.CopyDetails;
-import org.alfresco.repo.copy.CopyServicePolicies;
-import org.alfresco.repo.copy.DefaultCopyBehaviourCallback;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.node.archive.NodeArchiveService;
 import org.alfresco.repo.policy.JavaBehaviour;
@@ -24,6 +20,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.project.data.projectList.DeliverableState;
 import fr.becpg.repo.project.data.projectList.TaskState;
+import fr.becpg.repo.project.impl.ProjectHelper;
 
 /**
  * The Class SubmitTaskPolicy.
@@ -31,7 +28,7 @@ import fr.becpg.repo.project.data.projectList.TaskState;
  * @author querephi
  */
 public class ProjectListPolicy extends ProjectPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnCreateAssociationPolicy,
-		NodeServicePolicies.OnDeleteAssociationPolicy, CopyServicePolicies.OnCopyNodePolicy, NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.BeforeDeleteNodePolicy,
+		NodeServicePolicies.OnDeleteAssociationPolicy, NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.BeforeDeleteNodePolicy,
 		NodeServicePolicies.OnDeleteNodePolicy {
 
 	private static final Log logger = LogFactory.getLog(ProjectListPolicy.class);
@@ -79,8 +76,6 @@ public class ProjectListPolicy extends ProjectPolicy implements NodeServicePolic
 				"onCreateAssociation"));
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME, ProjectModel.TYPE_LOG_TIME_LIST, ProjectModel.ASSOC_LTL_TASK, new JavaBehaviour(this,
 				"onDeleteAssociation"));
-		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyNodePolicy.QNAME, ProjectModel.TYPE_DELIVERABLE_LIST, new JavaBehaviour(this, "getCopyCallback"));
-		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyNodePolicy.QNAME, ProjectModel.TYPE_TASK_LIST, new JavaBehaviour(this, "getCopyCallback"));
 		
 		// action duplicate use createNode API
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, ProjectModel.TYPE_DELIVERABLE_LIST, new JavaBehaviour(this, "onCreateNode"));
@@ -242,28 +237,6 @@ public class ProjectListPolicy extends ProjectPolicy implements NodeServicePolic
 	}
 
 	@Override
-	public CopyBehaviourCallback getCopyCallback(QName classRef, CopyDetails copyDetails) {
-		return new ProjectListCopyBehaviourCallback();
-	}
-
-	private class ProjectListCopyBehaviourCallback extends DefaultCopyBehaviourCallback {
-
-		private ProjectListCopyBehaviourCallback() {
-		}
-
-		@Override
-		public boolean getMustCopy(QName classQName, CopyDetails copyDetails) {
-			return true;
-		}
-
-		@Override
-		public Map<QName, Serializable> getCopyProperties(QName classQName, CopyDetails copyDetails, Map<QName, Serializable> properties) {
-
-			return resetProperties(classQName, properties);
-		}
-	}
-
-	@Override
 	public void onDeleteNode(ChildAssociationRef childRef, boolean isArchived) {
 		if (isArchived) {
 			NodeRef nodeRef = nodeArchiveService.getArchivedNode(childRef.getChildRef());
@@ -313,26 +286,6 @@ public class ProjectListPolicy extends ProjectPolicy implements NodeServicePolic
 	public void onCreateNode(ChildAssociationRef childRef) {
 
 		// action duplicate use createNode API
-		nodeService.setProperties(childRef.getChildRef(), resetProperties(nodeService.getType(childRef.getChildRef()), nodeService.getProperties(childRef.getChildRef())));
-	}
-
-	private Map<QName, Serializable> resetProperties(QName classQName, Map<QName, Serializable> properties) {
-
-		if (ProjectModel.TYPE_TASK_LIST.equals(classQName)) {
-			properties.remove(ProjectModel.PROP_TL_START);
-			properties.remove(ProjectModel.PROP_TL_END);
-			properties.remove(ProjectModel.PROP_TL_WORKFLOW_INSTANCE);
-			properties.remove(ProjectModel.PROP_COMPLETION_PERCENT);
-			if (properties.containsKey(ProjectModel.PROP_TL_STATE) && !TaskState.OnHold.toString().equals(properties.get(ProjectModel.PROP_TL_STATE))
-					&& !TaskState.Cancelled.toString().equals(properties.get(ProjectModel.PROP_TL_STATE))) {
-				properties.put(ProjectModel.PROP_TL_STATE, TaskState.Planned);
-			}
-		} else if (ProjectModel.TYPE_DELIVERABLE_LIST.equals(classQName)) {
-			if (properties.containsKey(ProjectModel.PROP_DL_STATE)) {
-				properties.put(ProjectModel.PROP_DL_STATE, DeliverableState.Planned);
-			}
-		}
-
-		return properties;
+		nodeService.removeProperty(childRef.getChildRef(), ProjectModel.PROP_TL_WORKFLOW_INSTANCE);		
 	}
 }

@@ -17,15 +17,19 @@
  ******************************************************************************/
 package fr.becpg.repo.project.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.project.ProjectActivityService;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
@@ -388,8 +392,8 @@ public class ProjectHelper {
 	public static Date calculatePrevEndDate(Date startDate) {
 		return calculateNextDate(startDate, DURATION_NEXT_DAY, false);
 	}
-
-	public static Integer calculateOverdue(TaskListDataItem task) {
+	
+	public static Integer calculateRealDuration(TaskListDataItem task) {
 
 		Date endDate;
 
@@ -405,12 +409,16 @@ public class ProjectHelper {
 		} else {
 			return null;
 		}
-		Integer realDuration = calculateTaskDuration(task.getStart(), endDate);
+		return calculateTaskDuration(task.getStart(), endDate);		
+	}
+
+	public static Integer calculateOverdue(TaskListDataItem task) {
+		
+		Integer realDuration = calculateRealDuration(task);
 		Integer plannedDuration = task.getDuration() != null ? task.getDuration() : task.getIsMilestone() ? DURATION_DEFAULT : null;
 		if (realDuration != null && plannedDuration != null) {
 			return realDuration - plannedDuration;
 		}
-
 		return null;
 	}
 
@@ -421,4 +429,23 @@ public class ProjectHelper {
 		}
 	}
 
+	public static Map<QName, Serializable> resetProperties(QName classQName, Map<QName, Serializable> properties) {
+
+		if (ProjectModel.TYPE_TASK_LIST.equals(classQName)) {
+			properties.remove(ProjectModel.PROP_TL_START);
+			properties.remove(ProjectModel.PROP_TL_END);
+			properties.remove(ProjectModel.PROP_TL_WORKFLOW_INSTANCE);
+			properties.remove(ProjectModel.PROP_COMPLETION_PERCENT);
+			if (properties.containsKey(ProjectModel.PROP_TL_STATE) && !TaskState.OnHold.toString().equals(properties.get(ProjectModel.PROP_TL_STATE))
+					&& !TaskState.Cancelled.toString().equals(properties.get(ProjectModel.PROP_TL_STATE))) {
+				properties.put(ProjectModel.PROP_TL_STATE, TaskState.Planned);
+			}
+		} else if (ProjectModel.TYPE_DELIVERABLE_LIST.equals(classQName)) {
+			if (properties.containsKey(ProjectModel.PROP_DL_STATE)) {
+				properties.put(ProjectModel.PROP_DL_STATE, DeliverableState.Planned);
+			}
+		}
+
+		return properties;
+	}
 }

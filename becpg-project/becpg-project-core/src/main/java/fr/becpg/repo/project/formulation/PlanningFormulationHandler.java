@@ -309,19 +309,20 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 			// avoid cycle
 			checkCycle(taskNodeRef, nextTask);
 
-			Integer o = ProjectHelper.calculateOverdue(nextTask);
-			if (o != null && (initOverdue || o.compareTo(taskOverdue) < 0)) {
-				taskOverdue += o;
+			nextTask.setRealDuration(ProjectHelper.calculateRealDuration(nextTask));
+			Integer o = ProjectHelper.calculateOverdue(nextTask);						
+			if (o != null && (initOverdue || o.intValue() > taskOverdue)) {
+				taskOverdue = o;
 				initOverdue = false;
 			}
 
-			o = calculateOverdue(projectData, nextTask.getNodeRef());
-			if (o != null && (initNextOverdue || o.compareTo(nextTaskOverdue) < 0)) {
-				nextTaskOverdue += o;
+			o = calculateOverdue(projectData, nextTask.getNodeRef());			
+			if (o != null && (initNextOverdue || o.intValue() > nextTaskOverdue)) {
+				nextTaskOverdue = o;
 				initNextOverdue = false;
 			}
 		}
-
+		
 		return taskOverdue + nextTaskOverdue;
 	}
 
