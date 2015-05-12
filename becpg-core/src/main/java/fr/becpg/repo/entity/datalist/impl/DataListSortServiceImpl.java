@@ -437,6 +437,15 @@ public class DataListSortServiceImpl implements DataListSortService {
 		// look for the right destNode (before or after sibling)
 		NodeRef destNodeRef = getNextSiblingNode(dataType, listContainer, nodeRef, moveUp);
 
+		if (destNodeRef == null) {			
+			if(getSortedNode(dataType, listContainer, sort, nodeRef) != null){
+				// several node with same sort
+				fixSortableList(dataType, listContainer);
+				sort = (Integer) nodeService.getProperty(nodeRef, BeCPGModel.PROP_SORT);
+				destNodeRef = getNextSiblingNode(dataType, listContainer, nodeRef, moveUp);
+			}			
+		} 
+
 		if (destNodeRef == null) {
 			// cannot swap
 			logger.debug("Cannot swap.");
