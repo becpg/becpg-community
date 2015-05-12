@@ -224,7 +224,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 					// Define involuntary
 					if (allergenListDataItem.getInVoluntary()) {
 						newAllergenListDataItem.setInVoluntary(true);
-						if (!newAllergenListDataItem.getInVoluntarySources().contains(part)) {
+						if (!newAllergenListDataItem.getInVoluntarySources().contains(part)  && !(partProduct instanceof SemiFinishedProductData)) {
 							newAllergenListDataItem.getInVoluntarySources().add(part);
 						}
 						for (NodeRef p : allergenListDataItem.getInVoluntarySources()) {
