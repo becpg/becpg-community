@@ -22,6 +22,7 @@ function onCreateEnteringClaimTask() {
         if (nc.isSubType("qa:nc")) {
             var bpm_workflowDescription = extractName(nc);
             task.setVariable('bpm_workflowDescription', bpm_workflowDescription);
+            task.setVariable('bpm_description', bpm_workflowDescription);
         }
     }
 }
@@ -57,6 +58,7 @@ function onCreateAnalysisTask() {
         if (nc.isSubType("qa:nc")) {
             bpm_workflowDescription = extractName(nc);
             task.setVariable('bpm_workflowDescription', bpm_workflowDescription);
+            task.setVariable('bpm_description', bpm_workflowDescription);
         }
     }
 
