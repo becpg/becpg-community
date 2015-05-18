@@ -262,7 +262,7 @@ public class UserImporterServiceImpl implements UserImporterService {
 		final String username = splitted[headers.get(USERNAME)];
 		final String password = splitted[headers.get(PASSWORD)];
 		
-		 AuthenticationUtil.runAs(new RunAsWork<Object>()
+		 AuthenticationUtil.runAsSystem(new RunAsWork<Object>()
 			        {
 			            public Object doWork() throws Exception
 			            {
@@ -347,12 +347,12 @@ public class UserImporterServiceImpl implements UserImporterService {
             
 		}
 
-						 }, AuthenticationUtil.getSystemUserName());
+						 });
             
             
 	
 		 if(headers.containsKey(MEMBERSHIPS)){
-			 AuthenticationUtil.runAs(new RunAsWork<Object>()
+			 AuthenticationUtil.runAsSystem(new RunAsWork<Object>()
 				        {
 				            public Object doWork() throws Exception
 				            {
@@ -405,7 +405,7 @@ public class UserImporterServiceImpl implements UserImporterService {
 				            }
 
 						
-				        }, AuthenticationUtil.getAdminUserName());
+				        });
 
             }
 		

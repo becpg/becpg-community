@@ -83,7 +83,7 @@ public class ValidateProduct extends BaseJavaDelegate {
 				return null;
 			}
 		};
-		AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getAdminUserName());
+		AuthenticationUtil.runAsSystem(actionRunAs);
 
 		logger.debug("end ApproveActionHandler");
 	}
