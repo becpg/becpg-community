@@ -315,7 +315,7 @@ public class EntityServiceImpl implements EntityService {
 		if (sourceNodeRef != null && nodeService.exists(sourceNodeRef)) {
 			logger.debug("Copy existing entity");
 
-			ret = AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<NodeRef>() {
+			ret = AuthenticationUtil.runAsSystem(new AuthenticationUtil.RunAsWork<NodeRef>() {
 				@Override
 				public NodeRef doWork() throws Exception {
 					NodeRef ret = copyService.copyAndRename(sourceNodeRef, parentNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN,
@@ -323,7 +323,7 @@ public class EntityServiceImpl implements EntityService {
 					nodeService.setProperty(ret, ContentModel.PROP_NAME, entityName);
 					return ret;
 				}
-			}, AuthenticationUtil.getSystemUserName());
+			});
 
 		} else {
 			logger.debug("Create new entity with name " + entityName);

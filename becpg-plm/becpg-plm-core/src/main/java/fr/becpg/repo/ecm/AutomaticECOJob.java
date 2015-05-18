@@ -34,12 +34,12 @@ public class AutomaticECOJob implements Job {
 		final AutomaticECOService automaticECOService = (AutomaticECOService) jobData.get("automaticECOService");
 		final TenantAdminService tenantAdminService = (TenantAdminService) jobData.get("tenantAdminService");
 
-		AuthenticationUtil.runAs(new RunAsWork<Object>() {
+		AuthenticationUtil.runAsSystem(new RunAsWork<Object>() {
 			public Object doWork() throws Exception {
 				automaticECOService.applyAutomaticEco();
 				return null;
 			}
-		}, AuthenticationUtil.getSystemUserName());
+		});
 		
 		if ((tenantAdminService != null) && tenantAdminService.isEnabled()) {
 			List<Tenant> tenants = tenantAdminService.getAllTenants();
