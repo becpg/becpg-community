@@ -607,7 +607,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 					Resource resource = applicationContext.getResource(value);
 					in = resource.getInputStream();
 				} catch (IOException e) {
-					logger.error("No resource found in path "+value);
+					logger.error("No resource found in path " + value);
 					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_LOAD_FILE, value));
 				}
 
@@ -911,8 +911,13 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 			// columnId not mapped, is it a property or an association ?
 			if (!isAttributeMapped) {
+				QName qName = null;
+				if (columnId.indexOf(QName.NAMESPACE_BEGIN) != -1) {
+					qName = QName.createQName(columnId);
+				} else {
+					qName = QName.createQName(columnId, namespaceService);
+				}
 
-				QName qName = QName.createQName(columnId, namespaceService);
 				PropertyDefinition propertyDefinition = dictionaryService.getProperty(qName);
 
 				if (propertyDefinition != null) {
@@ -1051,7 +1056,8 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 						} else {
 							throw new ImporterException("NodeColumnKey cannot be null. NodeColumnKey: " + attribute);
 						}
-					} else if (properties.get(attribute) != null && NodeRef.isNodeRef(properties.get(attribute).toString()) && classMapping.getNodeColumnKeys().size() == 1) {
+					} else if (properties.get(attribute) != null && NodeRef.isNodeRef(properties.get(attribute).toString())
+							&& classMapping.getNodeColumnKeys().size() == 1) {
 						return new NodeRef(properties.get(attribute).toString());
 					} else {
 						queryBuilder.andPropEquals(attribute, properties.get(attribute) != null ? properties.get(attribute).toString() : null);
@@ -1090,9 +1096,9 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 					queryBuilder.andPropEquals(RemoteHelper.getPropName(type), (String) properties.get(ContentModel.PROP_NAME));
 					doQuery = true;
 				}
-			} else  if(properties.get(ContentModel.PROP_NAME) !=null && NodeRef.isNodeRef(properties.get(ContentModel.PROP_NAME).toString())) {
+			} else if (properties.get(ContentModel.PROP_NAME) != null && NodeRef.isNodeRef(properties.get(ContentModel.PROP_NAME).toString())) {
 				return new NodeRef(properties.get(ContentModel.PROP_NAME).toString());
-			} 
+			}
 
 			if (!doQuery) {
 				logger.warn("No keys defined in mapping, neither code property. Type: " + type + " Properties: " + properties);
@@ -1104,9 +1110,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 			if (dictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM) && !dictionaryService.isSubClass(type, PLMModel.TYPE_CHARACT)
 					&& !dictionaryService.isSubClass(type, BeCPGModel.TYPE_LINKED_VALUE)
-					&& !dictionaryService.isSubClass(type, BeCPGModel.TYPE_LIST_VALUE)
-					&& !dictionaryService.isSubClass(type, PLMModel.TYPE_PLANT)
-					) {
+					&& !dictionaryService.isSubClass(type, BeCPGModel.TYPE_LIST_VALUE) && !dictionaryService.isSubClass(type, PLMModel.TYPE_PLANT)) {
 				for (NodeRef tmpNodeRef : queryBuilder.inDB().ftsLanguage().list()) {
 					if (nodeService.getPrimaryParent(tmpNodeRef).getParentRef().equals(importContext.getParentNodeRef())
 							&& !nodeService.hasAspect(tmpNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)
@@ -1165,10 +1169,10 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			}
 		}
 
-		if (logger.isDebugEnabled()){
+		if (logger.isDebugEnabled()) {
 			logger.debug("assoc, targetClass: " + targetClass + " - value: " + value + "- targetRefs: " + targetRefs);
 		}
-		
+
 		return targetRefs;
 	}
 
@@ -1189,18 +1193,15 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			AbstractAttributeMapping attributeMapping, String value, Map<QName, Serializable> properties) throws ImporterException {
 
 		if (attributeMapping instanceof HierarchyMapping) {
-			
-			
-//			String path = PlmRepoConsts.PATH_PRODUCT_HIERARCHY + "cm:" + HierarchyHelper.getHierarchyPathName(importContext.getType());
 
-			
-		
+			// String path = PlmRepoConsts.PATH_PRODUCT_HIERARCHY + "cm:" +
+			// HierarchyHelper.getHierarchyPathName(importContext.getType());
+
 			String path = importContext.getPath();
-			if(((HierarchyMapping) attributeMapping).getPath()!=null && 
-					!((HierarchyMapping) attributeMapping).getPath().isEmpty()){
+			if (((HierarchyMapping) attributeMapping).getPath() != null && !((HierarchyMapping) attributeMapping).getPath().isEmpty()) {
 				path = ((HierarchyMapping) attributeMapping).getPath();
 			}
-			
+
 			logger.debug("Case hierarchy mapping");
 			NodeRef hierarchyNodeRef = null;
 			if (((HierarchyMapping) attributeMapping).getParentLevelColumn() != null
@@ -1210,24 +1211,24 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 				if (parentHierachyNodeRef != null) {
 					hierarchyNodeRef = hierarchyService.getHierarchyByPath(path, parentHierachyNodeRef, value);
 				} else {
-					if(logger.isDebugEnabled()){
-						logger.debug("No parent for column "+attributeMapping.getAttribute().getName()+ " prop "+((HierarchyMapping) attributeMapping).getParentLevelColumn());
+					if (logger.isDebugEnabled()) {
+						logger.debug("No parent for column " + attributeMapping.getAttribute().getName() + " prop "
+								+ ((HierarchyMapping) attributeMapping).getParentLevelColumn());
 					}
 					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_GET_ASSOC_TARGET, propDef.getName(), value));
 				}
 			} else {
-				if(logger.isDebugEnabled()){
-					logger.debug("Look for hierarchy "+attributeMapping.getAttribute().getName()+": "+value+" at path "+path);
+				if (logger.isDebugEnabled()) {
+					logger.debug("Look for hierarchy " + attributeMapping.getAttribute().getName() + ": " + value + " at path " + path);
 				}
 				hierarchyNodeRef = hierarchyService.getHierarchyByPath(path, null, value);
 			}
 
 			if (hierarchyNodeRef != null) {
-				
-				
+
 				return hierarchyNodeRef;
 			} else {
-				logger.error("No hierarchy found in path "+ importContext.getPath()+ " with value "+value);
+				logger.error("No hierarchy found in path " + importContext.getPath() + " with value " + value);
 				throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_GET_ASSOC_TARGET, propDef.getName(), value));
 			}
 		}

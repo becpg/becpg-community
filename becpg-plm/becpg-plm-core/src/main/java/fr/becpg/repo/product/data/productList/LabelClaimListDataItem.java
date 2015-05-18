@@ -30,6 +30,12 @@ import fr.becpg.repo.repository.model.AbstractManualDataItem;
 @AlfQname(qname = "bcpg:labelClaimList")
 public class LabelClaimListDataItem extends AbstractManualDataItem {
 
+	public static final String VALUE_TRUE = "true";
+	public static final String VALUE_FALSE = "false";
+	public static final String VALUE_EMPTY = "";
+	public static final String VALUE_NA = "na";
+	
+	
 	private NodeRef labelClaim;
 	private String type;
 	private String labelClaimValue;
@@ -65,14 +71,14 @@ public class LabelClaimListDataItem extends AbstractManualDataItem {
 	}
 	
 	public Boolean getIsClaimed() {
-		return "true".equals(labelClaimValue);
+		return VALUE_TRUE.equals(labelClaimValue);
 	}
 	
 	public void setIsClaimed(Boolean isClaimed) {
 		if(isClaimed){
-			this.labelClaimValue = "true";
+			this.labelClaimValue = VALUE_TRUE;
 		} else  {
-			this.labelClaimValue = "false";
+			this.labelClaimValue = VALUE_FALSE;
 		}
 	}
 	
@@ -105,9 +111,14 @@ public class LabelClaimListDataItem extends AbstractManualDataItem {
 		super();
 		this.labelClaim = labelClaim;
 		this.type = type;
-		this.labelClaimValue = isClaimed ? "true" : "false";
+		this.labelClaimValue = isClaimed ? VALUE_TRUE : VALUE_FALSE;
 	}
 	
+	public LabelClaimListDataItem(LabelClaimListDataItem labelClaimItem) {
+		this.labelClaim = labelClaimItem.labelClaim;
+		this.type = labelClaimItem.type;
+		this.labelClaimValue = labelClaimItem.labelClaimValue;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
