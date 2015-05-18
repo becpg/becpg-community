@@ -8,10 +8,6 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
-import org.alfresco.repo.copy.CopyBehaviourCallback;
-import org.alfresco.repo.copy.CopyDetails;
-import org.alfresco.repo.copy.CopyServicePolicies;
-import org.alfresco.repo.copy.DefaultCopyBehaviourCallback;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -25,6 +21,7 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.entity.version.EntityVersionPlugin;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.project.ProjectActivityService;
@@ -41,7 +38,7 @@ import fr.becpg.repo.repository.AlfrescoRepository;
  * 
  * @author querephi
  */
-public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy {
+public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy, EntityVersionPlugin {
 
 	private static Log logger = LogFactory.getLog(ProjectPolicy.class);
 
@@ -162,7 +159,7 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 						if (logger.isDebugEnabled()) {
 							logger.debug("doBeforeCommit last - formulate project");
 						}
-						if (nodeService.exists(projectNodeRef) && isNotLocked(projectNodeRef)) {
+						if (nodeService.exists(projectNodeRef)) {
 
 							AuthenticationUtil.runAs(new RunAsWork<NodeRef>() {
 
@@ -217,6 +214,22 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 			});
 		}
 
+	}
+
+	@Override
+	public void doAfterCheckout(NodeRef origNodeRef, NodeRef workingCopyNodeRef) {
+		queueNode(origNodeRef);
+		queueNode(workingCopyNodeRef);		
+	}
+
+	@Override
+	public void doBeforeCheckin(NodeRef origNodeRef, NodeRef workingCopyNodeRef) {
+		queueNode(origNodeRef);
+	}
+
+	@Override
+	public void cancelCheckout(NodeRef origNodeRef, NodeRef workingCopyNodeRef) {
+		queueNode(origNodeRef);		
 	}
 
 }
