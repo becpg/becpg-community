@@ -47,12 +47,12 @@ public class ProjectFormulationJob implements Job {
 		final ProjectFormulationWorker projectFormulationWorker = (ProjectFormulationWorker) jobData.get(KEY_PROJECT_FORMULATION_WORKER);
 		final TenantAdminService tenantAdminService = (TenantAdminService) jobData.get(KEY_TENANT_ADMIN_SERVICE);
 
-		AuthenticationUtil.runAs(new RunAsWork<Object>() {
+		AuthenticationUtil.runAsSystem(new RunAsWork<Object>() {
 			public Object doWork() throws Exception {
 				projectFormulationWorker.executeFormulation();
 				return null;
 			}
-		}, AuthenticationUtil.getSystemUserName());
+		});
 		
 		
 		if ((tenantAdminService != null) && tenantAdminService.isEnabled()) {

@@ -393,7 +393,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 							return transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, false, true);
 						}
 					};
-					AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getSystemUserName());
+					AuthenticationUtil.runAsSystem(actionRunAs);
 
 				}
 

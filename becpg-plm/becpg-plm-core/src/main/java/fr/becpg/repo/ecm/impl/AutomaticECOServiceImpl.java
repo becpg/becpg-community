@@ -83,7 +83,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 			return false;
 		}
 
-		return AuthenticationUtil.runAs(new RunAsWork<Boolean>() {
+		return AuthenticationUtil.runAsSystem(new RunAsWork<Boolean>() {
 			public Boolean doWork() throws Exception {
 				NodeRef parentNodeRef = getChangeOrderFolder();
 
@@ -134,7 +134,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 
 				return true;
 			}
-		}, AuthenticationUtil.getSystemUserName());
+		});
 
 	}
 
