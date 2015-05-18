@@ -128,6 +128,11 @@
 				<bean class="fr.becpg.repo.product.formulation.TareFormulationHandler">
 					<property name="nodeService" ref="nodeService" />
 				</bean>
+				<bean class="fr.becpg.repo.product.formulation.LabelClaimFormulationHandler" >
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+					<property name="formulaService" ref="formulaService"/>
+					<property name="nodeService" ref="nodeService" />
+				</bean>
 				<bean class="fr.becpg.repo.product.formulation.FormulaFormulationHandler" >
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="namespaceService" ref="namespaceService"/>

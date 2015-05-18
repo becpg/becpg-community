@@ -19,20 +19,17 @@
 package fr.becpg.repo.product.formulation;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import org.json.JSONArray;
-import org.alfresco.model.ContentModel;
-import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.expression.EvaluationContext;
@@ -49,12 +46,9 @@ import fr.becpg.repo.helper.JsonFormulaHelper;
 import fr.becpg.repo.product.data.AbstractProductDataView;
 import fr.becpg.repo.product.data.CompoListView;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompositionDataItem;
 import fr.becpg.repo.product.data.productList.DynamicCharactExecOrder;
 import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
-import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.spel.FormulaFormulationContext;
 import fr.becpg.repo.product.data.spel.SpelHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -119,7 +113,6 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 		}
 
 		if (DynamicCharactExecOrder.Post.equals(execOrder)) {
-			computeClaimList(productData, parser, context);
 			computeNutrientProfile(productData, parser, context);
 		}
 
@@ -160,50 +153,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 	}
 
-	private void computeClaimList(ProductData productData, ExpressionParser parser, StandardEvaluationContext context) {
-		// ClaimLabel list
-		if (productData.getLabelClaimList() != null) {
-			for (LabelClaimListDataItem labelClaimListDataItem : productData.getLabelClaimList()) {
-				labelClaimListDataItem.setIsFormulated(false);
-				labelClaimListDataItem.setErrorLog(null);
-				if ((labelClaimListDataItem.getIsManual() == null || !labelClaimListDataItem.getIsManual())
-						&& labelClaimListDataItem.getLabelClaim() != null) {
-
-					String formula = (String) nodeService.getProperty(labelClaimListDataItem.getLabelClaim(), PLMModel.PROP_LABEL_CLAIM_FORMULA);
-					if (formula != null && formula.length() > 0) {
-						try {
-							labelClaimListDataItem.setIsFormulated(true);
-							Expression exp = parser.parseExpression(SpelHelper.formatFormula(formula));
-							Object ret = exp.getValue(context);
-							if (ret instanceof Boolean) {
-								labelClaimListDataItem.setIsClaimed((Boolean) ret);
-							} else {
-								labelClaimListDataItem.setErrorLog(I18NUtil.getMessage("message.formulate.formula.incorrect.type.boolean",
-										Locale.getDefault()));
-							}
-
-						} catch (Exception e) {
-							labelClaimListDataItem.setErrorLog(e.getLocalizedMessage());
-							if (logger.isDebugEnabled()) {
-								logger.debug("Error in formula :" + SpelHelper.formatFormula(formula), e);
-							}
-						}
-					}
-				}
-
-				if (labelClaimListDataItem.getErrorLog() != null) {
-
-					String message = I18NUtil.getMessage("message.formulate.labelClaim.error", Locale.getDefault(),
-							nodeService.getProperty(labelClaimListDataItem.getLabelClaim(), ContentModel.PROP_NAME),
-							labelClaimListDataItem.getErrorLog());
-					productData.getCompoListView().getReqCtrlList()
-							.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, new ArrayList<NodeRef>()));
-				}
-
-			}
-		}
-
-	}
+	
 
 	private void computeFormula(ProductData productData, ExpressionParser parser, EvaluationContext context, AbstractProductDataView view) {
 
