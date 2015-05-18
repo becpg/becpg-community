@@ -8,4 +8,5 @@ public interface EntityVersionPlugin {
 
 	void doBeforeCheckin(NodeRef origNodeRef, NodeRef workingCopyNodeRef);
 
+	void cancelCheckout(NodeRef origNodeRef, NodeRef workingCopyNodeRef);
 }
