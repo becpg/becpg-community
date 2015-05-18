@@ -105,7 +105,7 @@ Après décongélation, à conserver au réfrigérateur et à consommer dans la 
 	</categories>
 	<reports prefix="rep"><![CDATA[900mL Adélie vanille pécan caramel E1 - Fiche Technique Client.pdf, 900mL Adélie vanille pécan caramel E1 - Fiche Technique Production.pdf, 900mL Adélie vanille pécan caramel E1 - FT Origines MP.pdf, 900mL Adélie vanille pécan caramel E1 - Fiche Technique R&D.pdf]]></reports>
 	<tareUnit prefix="pack"><![CDATA[g]]></tareUnit>
-	<aspects><![CDATA[referenceable, tareAspect, titled, transformationAspect, entityTplRefAspect, compareWithAspect, auditable, manufacturingAspect, entityListsAspect, reportEntityAspect, clientsAspect, reportTplsAspect, productAspect, eanAspect, consumerAspect, localized, legalNameAspect, erpCodeAspect, effectivityAspect, codeAspect, taggable, productMicrobioCriteriaAspect, generalclassifiable, profitabilityAspect, formulatedEntityAspect, versionable]]></aspects>
+	<aspects><![CDATA[productValidationAspect, referenceable, tareAspect, titled, transformationAspect, entityTplRefAspect, compareWithAspect, auditable, manufacturingAspect, entityListsAspect, reportEntityAspect, clientsAspect, reportTplsAspect, productAspect, eanAspect, consumerAspect, localized, legalNameAspect, erpCodeAspect, effectivityAspect, codeAspect, taggable, productMicrobioCriteriaAspect, generalclassifiable, profitabilityAspect, formulatedEntityAspect, versionable]]></aspects>
 	<itemType><![CDATA[finishedProduct]]></itemType>
 	<images>
 		<image id="Img0" name="img_schema.png" />
@@ -432,7 +432,7 @@ Après décongélation, à conserver au réfrigérateur et à consommer dans la 
 				compoListProduct="Glace vanille" depthLevel="1"
 				compoListQtySubFormula="398.80769230769226" compoListVolume="0.7976153846153846"
 				dynamicCharactColumn2="7.976153846153846" compoListUnit="g"
-				variantIds="" isDefaultVariant="true" compoListYieldPerc="100" />
+				isDefaultVariant="true" compoListYieldPerc="100" />
 			<compoList eanCode="" packagingDescription="" productState="A valider"
 				code="MP25534" startEffectivity="2014-02-07T17:42:42.647Z"
 				preparationTips="" productComments="" title="" useByDate=""

@@ -229,6 +229,11 @@
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">eanCode</text-property>
                 </structure>
+                <structure>
+                    <property name="columnName">aspects</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">aspects</text-property>
+                </structure>
             </list-property>
             <list-property name="parameters"/>
             <structure name="cachedMetaData">
@@ -386,6 +391,11 @@
                     <structure>
                         <property name="position">31</property>
                         <property name="name">eanCode</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">32</property>
+                        <property name="name">aspects</property>
                         <property name="dataType">string</property>
                     </structure>
                 </list-property>
@@ -609,8 +619,15 @@
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
+                <structure>
+                    <property name="position">32</property>
+                    <property name="name">aspects</property>
+                    <property name="nativeName">aspects</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{productCurrency;STRING;/productCurrency},{productPrice;DOUBLE;/productPrice},{productUnit;STRING;/productUnit},{productType;STRING;/productType},{name;STRING;/name},{productState;STRING;/productState},{modified;TIMESTAMP;/modified},{productQty;DOUBLE;/productQty},{versionLabel;STRING;/versionLabel},{productHierarchy1;STRING;/productHierarchy1},{productHierarchy2;STRING;/productHierarchy2},{trademark;STRING;/trademark},{clients;STRING;/clients},{created;TIMESTAMP;/created},{description;STRING;/description},{useByDate;STRING;/useByDate},{startEffectivity;TIMESTAMP;/startEffectivity},{productComments;STRING;/productComments},{pvCallerActor;STRING;/pvCallerActor},{pvTransmitterActor;STRING;/pvTransmitterActor},{pvQualityApprovalActor;STRING;/pvQualityApprovalActor},{pvProductionApprovalActor;STRING;/pvProductionApprovalActor},{pvValidationDate;TIMESTAMP;/pvValidationDate},{pvRDApprovalActor;STRING;/pvRDApprovalActor},{legalName;STRING;/legalName},{productDensity;DOUBLE;/productDensity},{plants;STRING;/plants},{erpCode;STRING;/erpCode},{packagingDescription;STRING;/packagingDescription},{eanCode;STRING;/eanCode}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{productCurrency;STRING;/productCurrency},{productPrice;DOUBLE;/productPrice},{productUnit;STRING;/productUnit},{productType;STRING;/productType},{name;STRING;/name},{productState;STRING;/productState},{modified;TIMESTAMP;/modified},{productQty;DOUBLE;/productQty},{versionLabel;STRING;/versionLabel},{productHierarchy1;STRING;/productHierarchy1},{productHierarchy2;STRING;/productHierarchy2},{trademark;STRING;/trademark},{clients;STRING;/clients},{created;TIMESTAMP;/created},{description;STRING;/description},{useByDate;STRING;/useByDate},{startEffectivity;TIMESTAMP;/startEffectivity},{productComments;STRING;/productComments},{pvCallerActor;STRING;/pvCallerActor},{pvTransmitterActor;STRING;/pvTransmitterActor},{pvQualityApprovalActor;STRING;/pvQualityApprovalActor},{pvProductionApprovalActor;STRING;/pvProductionApprovalActor},{pvValidationDate;TIMESTAMP;/pvValidationDate},{pvRDApprovalActor;STRING;/pvRDApprovalActor},{legalName;STRING;/legalName},{productDensity;DOUBLE;/productDensity},{plants;STRING;/plants},{erpCode;STRING;/erpCode},{packagingDescription;STRING;/packagingDescription},{eanCode;STRING;/eanCode},{aspects;STRING;/aspects}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -1071,6 +1088,12 @@
                     <property name="dataType">integer</property>
                     <property name="aggregateFunction">COUNT</property>
                 </structure>
+                <structure>
+                    <property name="name">count variant</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">COUNT</property>
+                    <expression name="filterExpr">row["variants"] != null</expression>
+                </structure>
             </list-property>
             <list-property name="columnHints">
                 <structure>
@@ -1192,6 +1215,11 @@
                     <structure>
                         <property name="position">11</property>
                         <property name="name">tableCheck</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">count variant</property>
                         <property name="dataType">integer</property>
                     </structure>
                 </list-property>
@@ -1489,6 +1517,12 @@ value = value + "x" + BirtMath.round(dataSetRow["height"],0);
 }</expression>
                     <property name="dataType">string</property>
                 </structure>
+                <structure>
+                    <property name="name">count variant</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">COUNT</property>
+                    <expression name="filterExpr">row["variants"] != null</expression>
+                </structure>
             </list-property>
             <list-property name="columnHints">
                 <structure>
@@ -1670,6 +1704,11 @@ value = value + "x" + BirtMath.round(dataSetRow["height"],0);
                         <property name="position">15</property>
                         <property name="name">pmDimensions</property>
                         <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">16</property>
+                        <property name="name">count variant</property>
+                        <property name="dataType">integer</property>
                     </structure>
                 </list-property>
             </structure>
@@ -5779,6 +5818,12 @@ value = value + "x" + BirtMath.round(dataSetRow["height"],0);
                                     </cell>
                                 </row>
                                 <row id="3010">
+                                    <list-property name="visibility">
+                                        <structure>
+                                            <property name="format">all</property>
+                                            <expression name="valueExpr" type="javascript">(row["pvValidationDate"] == null)</expression>
+                                        </structure>
+                                    </list-property>
                                     <cell id="3011">
                                         <property name="borderBottomColor">#FFFFFF</property>
                                         <property name="borderLeftColor">#FFFFFF</property>
@@ -6413,6 +6458,12 @@ BirtMath.round(dataSetRow["compoListQty"] * 1000000, 2)+ " mg";
                                 <expression name="expression" type="javascript">dataSetRow["variants"]</expression>
                                 <property name="dataType">string</property>
                             </structure>
+                            <structure>
+                                <property name="name">count variant</property>
+                                <text-property name="displayName">count variant</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["count variant"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
                         </list-property>
                         <structure name="toc"/>
                         <column id="2910">
@@ -6432,6 +6483,12 @@ BirtMath.round(dataSetRow["compoListQty"] * 1000000, 2)+ " mg";
                             <property name="width">0.6979166666666666in</property>
                         </column>
                         <column id="3001">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["count variant"] == 0</expression>
+                                </structure>
+                            </list-property>
                             <property name="style">becpg-col-border</property>
                             <property name="width">0.6106870229007634in</property>
                         </column>
@@ -6680,6 +6737,12 @@ value = value + " x " + dataSetRow["height"];
                                 <expression name="expression" type="javascript">dataSetRow["variants"]</expression>
                                 <property name="dataType">string</property>
                             </structure>
+                            <structure>
+                                <property name="name">count variant</property>
+                                <text-property name="displayName">count variant</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["count variant"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
                         </list-property>
                         <column id="2787">
                             <property name="width">0.7633587786259542in</property>
@@ -6701,6 +6764,12 @@ value = value + " x " + dataSetRow["height"];
                             <property name="width">0.7480916030534351in</property>
                         </column>
                         <column id="2996">
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["count variant"] == 0</expression>
+                                </structure>
+                            </list-property>
                             <property name="style">becpg-col-border</property>
                             <property name="width">0.6259541984732825in</property>
                         </column>
@@ -8320,6 +8389,21 @@ false
         <grid id="1945">
             <property name="style">becpg-table</property>
             <property name="pageBreakInside">avoid</property>
+            <property name="dataSet">Product</property>
+            <list-property name="visibility">
+                <structure>
+                    <property name="format">all</property>
+                    <expression name="valueExpr" type="javascript">(BirtStr.indexOf("productValidationAspect",row["aspects"],0) == -1)</expression>
+                </structure>
+            </list-property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">aspects</property>
+                    <text-property name="displayName">aspects</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["aspects"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
             <column id="1946"/>
             <column id="1947">
                 <property name="style">becpg-col-border</property>
