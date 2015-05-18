@@ -167,6 +167,6 @@ public class CreateNC extends BaseJavaDelegate {
 			}
 
 		};
-		AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getSystemUserName());
+		AuthenticationUtil.runAsSystem(actionRunAs);
 	}
 }
