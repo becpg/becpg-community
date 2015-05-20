@@ -21,7 +21,7 @@ if (beCPG.module.EntityDataGridRenderers) {
     YAHOO.Bubbling.on("dirtyDataTable",function(event,args) {
         if (args && args.length >1) {
             var field = args[1].column.field;
-            if(field == "prop_pjt_tlState" || field == "prop_pjt_tlDuration" || field == "prop_pjt_tlWork") {
+            if(field == "prop_pjt_tlState" || field == "prop_pjt_tlDuration" || field == "prop_pjt_tlWork" || field == "prop_pjt_blBudgetedExpense" || field == "prop_pjt_blBudgetedInvoice") {
                 YAHOO.Bubbling.fire("refreshDataGrids", {updateOnly : true});
             }
         }    

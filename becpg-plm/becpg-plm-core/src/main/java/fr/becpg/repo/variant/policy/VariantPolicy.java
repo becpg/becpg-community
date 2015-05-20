@@ -207,6 +207,12 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 		return original;
 	}
 
+	@Override
+	public void cancelCheckout(NodeRef origNodeRef, NodeRef workingCopyNodeRef) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	
 
 }
