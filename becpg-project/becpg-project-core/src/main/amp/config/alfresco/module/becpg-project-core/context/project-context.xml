@@ -88,6 +88,7 @@
 				<bean class="fr.becpg.repo.project.formulation.BudgetFormulationHandler" >
 				  <property name="associationService" ref="associationService"/>
 				  <property name="nodeService" ref="nodeService"/>
+				  <property name="alfrescoRepository" ref="alfrescoRepository" />
 				</bean>
 				<bean class="fr.becpg.repo.project.formulation.ScoreFormulationHandler" />
 				<bean class="fr.becpg.repo.project.formulation.TaskStateFormulationHandler">

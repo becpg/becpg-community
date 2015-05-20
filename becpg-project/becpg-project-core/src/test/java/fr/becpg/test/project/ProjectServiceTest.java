@@ -546,7 +546,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 
 		final NodeRef projectNodeRef = createProject(ProjectState.InProgress, null, null);
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<String>() {
+		final String workflowInstance = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<String>() {
 			@Override
 			public String execute() throws Throwable {
 
@@ -558,30 +558,40 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 				assertEquals(TaskState.InProgress, projectData.getTaskList().get(0).getTaskState());
 				assertEquals(DeliverableState.InProgress, projectData.getDeliverableList().get(0).getState());
 
-				return null;
+				return projectData.getTaskList().get(0).getWorkflowInstance();
 			}
 
 		}, false, true);
 
+		final NodeRef copiedProjectNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+
+			@Override
+			public NodeRef execute() throws Throwable {
+
+				return copyService.copy(projectNodeRef, getTestFolderNodeRef(),
+						ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);				
+				
+			}
+		}, false, true);
+		
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				NodeRef copiedProjectNodeRef = copyService.copy(projectNodeRef, getTestFolderNodeRef(),
-						ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);				
-				
 				// check
 				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(copiedProjectNodeRef);
-				assertEquals(ProjectState.Planned, projectData.getProjectState());				
-				assertEquals(TaskState.Planned, projectData.getTaskList().get(0).getTaskState());
-				assertNull(projectData.getTaskList().get(0).getWorkflowInstance());
-				assertEquals(DeliverableState.Planned, projectData.getDeliverableList().get(0).getState());
+				assertEquals(ProjectState.InProgress, projectData.getProjectState());
+				assertNotSame("", projectData.getTaskList().get(0).getWorkflowInstance());
+				assertNotSame(workflowInstance, projectData.getTaskList().get(0).getWorkflowInstance());				
+				assertTrue(projectWorkflowService.isWorkflowActive(projectData.getTaskList().get(0)));
+				assertEquals(TaskState.InProgress, projectData.getTaskList().get(0).getTaskState());
+				assertEquals(DeliverableState.InProgress, projectData.getDeliverableList().get(0).getState());
 				
 				return null;
 				
 			}
-		}, false, true);		
+		}, false, true);
 	}
 	
 	@Test

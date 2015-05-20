@@ -193,21 +193,6 @@
 	width: 85%;
 }
 
-.project-list  .project-activity-details .user-info {
-
-	font-weight: bold;
-}
-
-.project-list .project-activity-details .date-info {
-	color: #777;
-	font-size: 11px;
-}
-
-.project-list .project-activity-details .details .activity-title {
-	clear: both;
-}
-
-
 .project-list   .project-activity-details .details .activity-content {
 	clear: both;
 	list-style-type: disc;
@@ -224,7 +209,6 @@
 .project-list   .activity-content {
 	border: 1px solid #CCCCCC;
 	padding: 5px;
-	margin: 10px;
 	box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
 	position: relative;
 	min-width: 200px;

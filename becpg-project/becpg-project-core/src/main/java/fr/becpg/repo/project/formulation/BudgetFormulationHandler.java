@@ -20,6 +20,7 @@ import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.projectList.BudgetListDataItem;
 import fr.becpg.repo.project.data.projectList.LogTimeListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
+import fr.becpg.repo.repository.AlfrescoRepository;
 
 /**
  * Calculate budget
@@ -35,6 +36,8 @@ public class BudgetFormulationHandler extends FormulationBaseHandler<ProjectData
 	
 	private NodeService nodeService;
 	
+	protected AlfrescoRepository<ProjectData> alfrescoRepository;
+	
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
@@ -43,6 +46,9 @@ public class BudgetFormulationHandler extends FormulationBaseHandler<ProjectData
 		this.nodeService = nodeService;
 	}
 
+	public void setAlfrescoRepository(AlfrescoRepository<ProjectData> alfrescoRepository) {
+		this.alfrescoRepository = alfrescoRepository;
+	}
 
 	@Override
 	public boolean process(ProjectData projectData) throws FormulateException {
@@ -90,7 +96,7 @@ public class BudgetFormulationHandler extends FormulationBaseHandler<ProjectData
 		
 		// Hierachie dans Budget List
 		Composite<BudgetListDataItem> compositeBugdet = CompositeHelper.getHierarchicalCompoList(projectData.getBudgetList());
-		calculateBudgetParentValue(compositeBugdet);
+		calculateBudgetParentValue(compositeBugdet,projectData);
 
 		return true;
 	}
@@ -141,14 +147,14 @@ public class BudgetFormulationHandler extends FormulationBaseHandler<ProjectData
 		
 	}
 
-	private void calculateBudgetParentValue(Composite<BudgetListDataItem> parent) {
+	private void calculateBudgetParentValue(Composite<BudgetListDataItem> parent, ProjectData projectData) {
 		Double actualExpense = 0d;
 		Double actualInvoice = 0d;
 		Double budgetedExpense = 0d;
 		Double budgetedInvoice = 0d;
 		if (!parent.isLeaf()) {
 			for (Composite<BudgetListDataItem> component : parent.getChildren()) {
-				calculateBudgetParentValue(component);	
+				calculateBudgetParentValue(component, projectData);	
 				if(component.getData().getActualExpense()!=null){
 					actualExpense += component.getData().getActualExpense();
 				}
@@ -171,6 +177,11 @@ public class BudgetFormulationHandler extends FormulationBaseHandler<ProjectData
 		}
 		if (!parent.isRoot()) {
 			parent.getData().setProfit(parent.getData().getActualInvoice() - parent.getData().getActualExpense());
+		}
+		
+		// has budgetList
+		if(parent.isRoot() && alfrescoRepository.hasDataList(projectData, ProjectModel.TYPE_BUDGET_LIST)){
+			projectData.setBudgetedCost(budgetedExpense == 0d ? null : budgetedExpense);
 		}
 		
 	}
