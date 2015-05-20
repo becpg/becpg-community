@@ -21,7 +21,6 @@ import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
@@ -62,29 +61,29 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 		ExpressionParser parser = new SpelExpressionParser();
 		StandardEvaluationContext context = formulaService.createEvaluationContext(productData);
 
-		for (LabelClaimListDataItem labelClaimListDataItem : productData.getLabelClaimList()) {
-			labelClaimListDataItem.setLabelClaimValue(null);
-			labelClaimListDataItem.setIsFormulated(false);
-			labelClaimListDataItem.setErrorLog(null);
-		}
+		if (productData.hasCompoListEl(EffectiveFilters.EFFECTIVE)) {
 
-		if (productData instanceof RawMaterialData) {
-
-			Set<NodeRef> visitedProducts = new HashSet<NodeRef>();
-
-			for (CompoListDataItem compoItem : productData.getCompoList(EffectiveFilters.EFFECTIVE)) {
-
-				NodeRef part = compoItem.getProduct();
-				if (!visitedProducts.contains(part)) {
-					ProductData partProduct = (ProductData) alfrescoRepository.findOne(part);
-					if (partProduct.getLabelClaimList() != null) {
-						for (LabelClaimListDataItem labelClaim : partProduct.getLabelClaimList()) {
-							visitPart(productData, labelClaim);
-						}
-					}
-					visitedProducts.add(part);
+			for (LabelClaimListDataItem labelClaimListDataItem : productData.getLabelClaimList()) {
+				if((labelClaimListDataItem.getIsManual() == null || !labelClaimListDataItem.getIsManual())){
+					labelClaimListDataItem.setLabelClaimValue(null);
 				}
+
 			}
+				Set<NodeRef> visitedProducts = new HashSet<NodeRef>();
+
+				for (CompoListDataItem compoItem : productData.getCompoList(EffectiveFilters.EFFECTIVE)) {
+
+					NodeRef part = compoItem.getProduct();
+					if (!visitedProducts.contains(part)) {
+						ProductData partProduct = (ProductData) alfrescoRepository.findOne(part);
+						if (partProduct.getLabelClaimList() != null) {
+							for (LabelClaimListDataItem labelClaim : partProduct.getLabelClaimList()) {
+								visitPart(productData, labelClaim);
+							}
+						}
+						visitedProducts.add(part);
+					}
+				}
 
 		}
 
@@ -95,31 +94,33 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 
 	private void visitPart(ProductData productData, LabelClaimListDataItem labelClaimItem) {
 
-			for (LabelClaimListDataItem tmp : productData.getLabelClaimList()) {
+		for (LabelClaimListDataItem tmp : productData.getLabelClaimList()) {
 
-				if ((tmp.getIsManual() == null || !tmp.getIsManual()) && (tmp.getLabelClaim() != null && tmp.getLabelClaim().equals(labelClaimItem))) {
-					switch (labelClaimItem.getLabelClaimValue()) {
-					case LabelClaimListDataItem.VALUE_TRUE:
-						if (tmp.getLabelClaimValue() == null) {
-							tmp.setIsClaimed(true);
-						}
-						break;
-					case LabelClaimListDataItem.VALUE_FALSE:
-						if (tmp.getIsClaimed()) {
-							tmp.setIsClaimed(false);
-						}
-						break;
-					case LabelClaimListDataItem.VALUE_NA:
-						tmp.setLabelClaimValue(LabelClaimListDataItem.VALUE_NA);
-						break;
-					case LabelClaimListDataItem.VALUE_EMPTY:
-					default:
-						tmp.setLabelClaimValue(LabelClaimListDataItem.VALUE_EMPTY);
-						break;
+			if ((tmp.getIsManual() == null || !tmp.getIsManual()) && (tmp.getLabelClaim() != null && tmp.getLabelClaim().equals(labelClaimItem.getLabelClaim()))) {
+				switch (labelClaimItem.getLabelClaimValue()) {
+				case LabelClaimListDataItem.VALUE_TRUE:
+					if (tmp.getLabelClaimValue() == null) {
+						tmp.setIsClaimed(true);
 					}
-
+					break;
+				case LabelClaimListDataItem.VALUE_FALSE:
+					if (tmp.getIsClaimed() || tmp.getLabelClaimValue() == null) {
+						tmp.setIsClaimed(false);
+					}
+					break;
+				case LabelClaimListDataItem.VALUE_NA:
+					if(!LabelClaimListDataItem.VALUE_EMPTY.equals(tmp.getLabelClaimValue())){
+						tmp.setLabelClaimValue(LabelClaimListDataItem.VALUE_NA);
+					}
+					break;
+				case LabelClaimListDataItem.VALUE_EMPTY:
+				default:
+					tmp.setLabelClaimValue(LabelClaimListDataItem.VALUE_EMPTY);
+					break;
 				}
+
 			}
+		}
 
 	}
 
@@ -127,7 +128,8 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 		// ClaimLabel list
 		if (productData.getLabelClaimList() != null) {
 			for (LabelClaimListDataItem labelClaimListDataItem : productData.getLabelClaimList()) {
-
+				labelClaimListDataItem.setIsFormulated(false);
+				labelClaimListDataItem.setErrorLog(null);
 				if ((labelClaimListDataItem.getIsManual() == null || !labelClaimListDataItem.getIsManual())
 						&& labelClaimListDataItem.getLabelClaim() != null) {
 
