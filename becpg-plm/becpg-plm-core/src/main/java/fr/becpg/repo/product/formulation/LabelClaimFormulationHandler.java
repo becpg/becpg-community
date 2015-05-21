@@ -97,26 +97,30 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 		for (LabelClaimListDataItem tmp : productData.getLabelClaimList()) {
 
 			if ((tmp.getIsManual() == null || !tmp.getIsManual()) && (tmp.getLabelClaim() != null && tmp.getLabelClaim().equals(labelClaimItem.getLabelClaim()))) {
-				switch (labelClaimItem.getLabelClaimValue()) {
-				case LabelClaimListDataItem.VALUE_TRUE:
-					if (tmp.getLabelClaimValue() == null) {
-						tmp.setIsClaimed(true);
+				if(labelClaimItem.getLabelClaimValue()!=null){
+					switch (labelClaimItem.getLabelClaimValue()) {
+					case LabelClaimListDataItem.VALUE_TRUE:
+						if (tmp.getLabelClaimValue() == null) {
+							tmp.setIsClaimed(true);
+						}
+						break;
+					case LabelClaimListDataItem.VALUE_FALSE:
+						if (tmp.getIsClaimed() || tmp.getLabelClaimValue() == null) {
+							tmp.setIsClaimed(false);
+						}
+						break;
+					case LabelClaimListDataItem.VALUE_NA:
+						if(!LabelClaimListDataItem.VALUE_EMPTY.equals(tmp.getLabelClaimValue())){
+							tmp.setLabelClaimValue(LabelClaimListDataItem.VALUE_NA);
+						}
+						break;
+					case LabelClaimListDataItem.VALUE_EMPTY:
+					default:
+						tmp.setLabelClaimValue(LabelClaimListDataItem.VALUE_EMPTY);
+						break;
 					}
-					break;
-				case LabelClaimListDataItem.VALUE_FALSE:
-					if (tmp.getIsClaimed() || tmp.getLabelClaimValue() == null) {
-						tmp.setIsClaimed(false);
-					}
-					break;
-				case LabelClaimListDataItem.VALUE_NA:
-					if(!LabelClaimListDataItem.VALUE_EMPTY.equals(tmp.getLabelClaimValue())){
-						tmp.setLabelClaimValue(LabelClaimListDataItem.VALUE_NA);
-					}
-					break;
-				case LabelClaimListDataItem.VALUE_EMPTY:
-				default:
+				} else {
 					tmp.setLabelClaimValue(LabelClaimListDataItem.VALUE_EMPTY);
-					break;
 				}
 
 			}
