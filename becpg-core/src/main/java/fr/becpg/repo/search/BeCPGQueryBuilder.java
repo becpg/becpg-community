@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.activiti.engine.impl.juel.AstBinary.Operator;
 import org.alfresco.model.ApplicationModel;
 import org.alfresco.model.ContentModel;
 import org.alfresco.model.ForumModel;
@@ -126,6 +127,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	private QueryConsistency queryConsistancy = QueryConsistency.EVENTUAL;
 	private boolean isExactType = false;
 	private String searchTemplate = null;
+	private SearchParameters.Operator operator = null;
 	
 	
 	@Override
@@ -182,6 +184,11 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 	public BeCPGQueryBuilder maxResults(int maxResults) {
 		this.maxResults = maxResults;
+		return this;
+	}
+	
+	public BeCPGQueryBuilder andOperator() {
+		this.operator = SearchParameters.Operator.AND;
 		return this;
 	}
 
@@ -819,6 +826,10 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		if (SearchService.LANGUAGE_FTS_ALFRESCO.equals(language)) {
 			sp.setDefaultFieldName(DEFAULT_FIELD_NAME);
+			
+			if(operator!=null){
+				sp.setDefaultFTSFieldConnective(operator);
+			}
 			if(searchTemplate!=null){
 				sp.addQueryTemplate(DEFAULT_FIELD_NAME, searchTemplate);
 			} else {
