@@ -269,7 +269,14 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 							// Remove rules
 							ChildAssociationRef ruleChildAssocRef = ruleService.getSavedRuleFolderAssoc(origNodeRef);
 							if (ruleChildAssocRef != null) {
-								nodeService.deleteNode(ruleChildAssocRef.getChildRef());
+								if(ruleChildAssocRef.isPrimary() == true){
+									logger.debug("remove primary rule of entity " + origNodeRef);
+									nodeService.deleteNode(ruleChildAssocRef.getChildRef());
+								}								
+								else{
+									logger.debug("remove secondary rule of entity " + origNodeRef);
+									nodeService.removeSecondaryChildAssociation(ruleChildAssocRef);
+								}
 							}
 							entityService.moveFiles(workingCopyNodeRef, origNodeRef);
 							// delete files that are not moved (ie: Documents)
