@@ -25,7 +25,10 @@
 var JSGantt;
 if (!JSGantt) {
    JSGantt = {};
+ 
 }
+
+JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
 
 (function() {
 
@@ -700,6 +703,10 @@ if (!JSGantt) {
     */
 
    JSGantt.GanttChart = function(pGanttVar, pDiv, pFormat) {
+       
+       
+      var preferences = new Alfresco.service.Preferences();
+       
       /**
        * The name of the gantt chart variable
        * 
@@ -726,7 +733,11 @@ if (!JSGantt) {
        * @default pFormat
        * @private
        */
-      var vFormat = pFormat;
+      var vFormat = Alfresco.util.findValueByDotNotation(preferences.get(), JSGantt.PREF_GANTT_FORMAT);
+      
+      if(!vFormat){
+          vFormat = pFormat;
+      }
       /**
        * Show resource column
        * 
@@ -927,10 +938,11 @@ if (!JSGantt) {
        */
       this.setFormat = function(ppFormat) {
          vFormat = ppFormat;
+         preferences.set(JSGantt.PREF_GANTT_FORMAT,ppFormat);
          this.Draw();
       };
       
-      this.getFormat = function() {
+      this.getFormat = function() {     
          return  vFormat;
        };
       /**
@@ -1092,24 +1104,13 @@ if (!JSGantt) {
 
          // retrieve DIV
          var oDiv = document.createElement('div');
-
+         oDiv.className = "ggline";
          oDiv.id = "line" + vDepId++;
-         oDiv.style.position = "absolute";
-         oDiv.style.margin = "0px";
-         oDiv.style.padding = "0px";
-         oDiv.style.overflow = "hidden";
-         oDiv.style.border = "0px";
-
-         // set attributes
-         oDiv.style.zIndex = 0;
-         oDiv.style.backgroundColor = "red";
-
+                
          oDiv.style.left = vLeft + "px";
          oDiv.style.top = vTop + "px";
          oDiv.style.width = vWid + "px";
          oDiv.style.height = vHgt + "px";
-
-         oDiv.style.visibility = "visible";
 
          vDoc.appendChild(oDiv);
 
@@ -1198,11 +1199,11 @@ if (!JSGantt) {
                   if (vTask!=null && vList[vTask].getVisible() == 1){
                       
                       if(vList[vTask].getMile()) {
-                          this.drawDependency(vList[vTask].getEndX() - 250, vList[vTask].getEndY(), vList[i].getStartX() - 1,
-                                  vList[i].getStartY());
+                          this.drawDependency(vList[vTask].getEndX() - 251, vList[vTask].getEndY()+1, vList[i].getStartX()-1,
+                                  vList[i].getStartY()+1);
                       } else {
-                          this.drawDependency(vList[vTask].getEndX(), vList[vTask].getEndY(), vList[i].getStartX() - 1,
-                                  vList[i].getStartY());
+                          this.drawDependency(vList[vTask].getEndX()+1, vList[vTask].getEndY()+1, vList[i].getStartX() - 1,
+                                  vList[i].getStartY()+1);
                       }
                       
                    
@@ -1717,7 +1718,7 @@ if (!JSGantt) {
                   vTaskRight = 1;
 
                   vRightTable += '<div id="bardiv_' + vcurrDivID + '" style="position:absolute; top:3px; left:' + (Math
-                        .ceil((vTaskLeft * (vDayWidth) + 1)) + vDayWidth - 20) + 'px; height: 16px; width:266px; overflow:hidden;">' + '  <div id="taskbar_' + vcurrDivID + '" title="' + vDateRowStr + '"  class="milestone ' + (vTaskList[i]
+                        .ceil((vTaskLeft * (vDayWidth) - 1)) + vDayWidth - 20) + 'px; height: 16px; width:266px; overflow:hidden;">' + '  <div id="taskbar_' + vcurrDivID + '" title="' + vDateRowStr + '"  class="milestone ' + (vTaskList[i]
                         .getCompVal() < 100 ? "completed" : "") + '" >';
 
                   // if (vTaskList[i].getCompVal() < 100) {
@@ -1783,7 +1784,7 @@ if (!JSGantt) {
                   if (vTaskList[i].getGroup()) {
                      vRightTable += '<DIV><TABLE style=" width: ' + vChartWidth + 'px;" cellSpacing="0" cellPadding="0" border="0"><TBODY class="yui-dt-data">' + '<TR id="childrow_' + vcurrDivID + '" class="yesdisplay ggroup"   onMouseover=g.mouseOver(this,"' + vcurrDivID + '","right","group") onMouseout=g.mouseOut(this,"' + vcurrDivID + '","right","group")>' + vItemRowStr + '</TR></TBODY></TABLE></DIV>';
                      vRightTable += '<div id="bardiv_' + vcurrDivID + '" style="position:absolute; top:5px; left:' + Math
-                           .ceil(vTaskLeft * (vDayWidth) + 1) + 'px; height: 7px; width:' + Math
+                           .ceil(vTaskLeft * (vDayWidth) - 1) + 'px; height: 7px; width:' + Math
                            .ceil((vTaskRight) * (vDayWidth) - 1) + 'px">' + '<div id="taskbar_' + vcurrDivID + '" title="' + vDateRowStr + '" class="ggtask" style="width:' + Math
                            .ceil((vTaskRight) * (vDayWidth) - 1) + 'px;">' + '<div class="ggcomplete" style="width:' + vTaskList[i]
                            .getCompStr() + '" >' + '</div>' + '</div>' + '<div style="Z-INDEX: -4; float:left; background-color:red; height:4px; overflow: hidden; width:1px;"></div>' + '<div style="Z-INDEX: -4; float:right; background-color:red; height:4px; overflow: hidden; width:1px;"></div>' + '<div style="Z-INDEX: -4; float:left; background-color:red; height:3px; overflow: hidden; width:1px;"></div>' + '<div style="Z-INDEX: -4; float:right; background-color:red; height:3px; overflow: hidden; width:1px;"></div>' + '<div style="Z-INDEX: -4; float:left; background-color:red; height:2px; overflow: hidden; width:1px;"></div>' + '<div style="Z-INDEX: -4; float:right; background-color:red; height:2px; overflow: hidden; width:1px;"></div>' + '<div style="Z-INDEX: -4; float:left; background-color:red; height:1px; overflow: hidden; width:1px;"></div>' + '<div style="Z-INDEX: -4; float:right; background-color:red; height:1px; overflow: hidden; width:1px;"></div>';
@@ -1823,7 +1824,7 @@ if (!JSGantt) {
                      // bar
                      // div, and opaque completion div
                      vRightTable += '<div id="bardiv_' + vcurrDivID + '" style="position:absolute; top:4px; left:' + Math
-                           .ceil(vTaskLeft * (vDayWidth) + 1) + 'px; height:18px; width:' + Math
+                           .ceil(vTaskLeft * (vDayWidth) - 1) + 'px; height:18px; width:' + Math
                            .ceil((vTaskRight) * (vDayWidth) - 1) + 'px">' + '<div id="taskbar_' + vcurrDivID + '" title="' + vDateRowStr + '" class="gtask" style="background-color:#' + vTaskList[i]
                            .getColor() + '; height: 13px; width:' + Math.ceil((vTaskRight) * (vDayWidth) - 1) + 'px;opacity:0.9;"  >' + '<div class="gcomplete" style="width:' + vTaskList[i]
                            .getCompStr() + ';">' + '</div>' + '</div>';
@@ -2145,7 +2146,7 @@ if (!JSGantt) {
 
       if (ganttObj) {
          ganttObj.setFormat(pFormat);
-         ganttObj.DrawDependencies();
+         ganttObj.DrawDependencies();   
       } else {
          alert('Chart undefined');
       }
