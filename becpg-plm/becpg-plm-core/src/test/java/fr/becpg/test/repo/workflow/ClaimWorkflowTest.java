@@ -249,6 +249,7 @@ public class ClaimWorkflowTest extends AbstractWorkflowTest {
 
 		task = submitTask(workflowInstanceId, "ncwf:claimStartTask", null, properties);
 		assertEquals("analysisTask", task.getPath().getNode().getName());
+		
 
 		if (!shortWay) {
 
