@@ -717,7 +717,6 @@
 			<mandatory-aspects>
 				<aspect>bcpg:legalNameAspect</aspect>
 				<aspect>bcpg:sortableListAspect</aspect>
-				<aspect>bcpg:ingTypeAspect</aspect>
 			</mandatory-aspects>
 		</type>
 
@@ -729,6 +728,9 @@
 					<type>d:text</type>
 				</property>
 			</properties>
+			<mandatory-aspects>
+				<aspect>bcpg:ingTypeAspect</aspect>
+			</mandatory-aspects>
 		</type>
 
 		<type name="bcpg:microbio">
