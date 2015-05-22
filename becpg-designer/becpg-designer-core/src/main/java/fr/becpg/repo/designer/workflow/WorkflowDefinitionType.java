@@ -183,7 +183,7 @@ public class WorkflowDefinitionType implements ContentServicePolicies.OnContentU
 
 				for (final NodeRef nodeRef : pendingModels) {
 
-					AuthenticationUtil.runAs(new RunAsWork<Object>() {
+					AuthenticationUtil.runAsSystem(new RunAsWork<Object>() {
 						public Object doWork() {
 							// Ignore if the node no longer exists
 							if (!nodeService.exists(nodeRef)) {
@@ -198,7 +198,7 @@ public class WorkflowDefinitionType implements ContentServicePolicies.OnContentU
 
 							return null;
 						}
-					}, AuthenticationUtil.getAdminUserName());
+					});
 				}
 				// unbind the resource from the transaction
 				AlfrescoTransactionSupport.unbindResource(KEY_PENDING_DEFS);
