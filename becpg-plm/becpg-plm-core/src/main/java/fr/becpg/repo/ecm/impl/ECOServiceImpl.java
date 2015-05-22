@@ -443,7 +443,7 @@ public class ECOServiceImpl implements ECOService {
 								return transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, isSimulation, true);
 							}
 						};
-						AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getSystemUserName());
+						AuthenticationUtil.runAsSystem(actionRunAs);
 					} catch (Throwable e) {
 
 						changeUnitDataItem.setTreated(false);

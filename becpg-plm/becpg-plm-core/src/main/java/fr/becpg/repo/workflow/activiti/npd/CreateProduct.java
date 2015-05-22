@@ -189,7 +189,7 @@ public class CreateProduct extends BaseJavaDelegate {
 
 
 		};
-		AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getAdminUserName());
+		AuthenticationUtil.runAsSystem(actionRunAs);
 
 	}
 
