@@ -342,6 +342,7 @@
 					<show id="pjt:projectPriority" />
 					<show id="pjt:projectState" />														
 					<show id="pjt:projectStartDate" />
+					<show id="pjt:projectCompletionDate" />
 					<show id="pjt:projectDueDate" />
 					<show id="pjt:projectCurrentTasks" />					
 				</field-visibility>
@@ -430,7 +431,7 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="pjt:projectHierarchy2" set="mainInfo" >
+					<field id="pjt:projectHierarchy2" >
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProjectLists/bcpg:entityLists/project_Hierarchy
 							</control-param>
