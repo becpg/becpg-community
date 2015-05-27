@@ -65,13 +65,13 @@
                         });
                            
                            
-                        this.widgets.reportingMenu.set("label", this.msg("button.download-report"));
+                        this.widgets.reportingMenu.set("label", this.msg("button.download-report")+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
                         
                         // event handler for export menu
 
                         Alfresco.util.Ajax
                               .request({
-                                 url : Alfresco.constants.PROXY_URI + "/becpg/report/exportsearch/templates/pjt:project",
+                                 url : Alfresco.constants.PROXY_URI + "becpg/report/exportsearch/templates/pjt:project",
                                  successCallback : {
                                     fn : function(response) {
 
@@ -94,7 +94,7 @@
                                     },
                                     scope : this
                                  },
-                                 failureMessage : "Could not get project reports '" + Alfresco.constants.PROXY_URI + "/becpg/report/exportsearch/templates/pjt:project" + "'.",
+                                 failureMessage : "Could not get project reports '" + Alfresco.constants.PROXY_URI + "becpg/report/exportsearch/templates/pjt:project" + "'.",
                               });
 
                      }

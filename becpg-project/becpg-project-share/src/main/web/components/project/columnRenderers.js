@@ -39,6 +39,36 @@
 			   }
 		   }
 		});
+		
+		YAHOO.Bubbling.fire("registerDataGridRenderer", {
+	           propertyName : "pjt:activityList",
+	           renderer : function(oRecord, data, label, scope, idx, length) {
+	               if( data["itemData"]){
+	                   var user =data["itemData"]["prop_pjt_alUserId"];
+	                   var dateCreated = data["itemData"]["prop_cm_created"];
+	                   var alData = data["itemData"]["prop_pjt_alData"] ? data["itemData"]["prop_pjt_alData"] : null;
+	                   var html = "";
+	                   if(alData!=null && alData.title){
+	                       var className = data["itemData"]["prop_pjt_alDeliverableId"].value!=null ? "deliverable" : 
+                               data["itemData"]["prop_pjt_alTaskId"].value!=null ? "task" : "project" ;
+	                       
+	                       var title = "<span class=\""+className+"\">"+Alfresco.util.encodeHTML(alData.title)+"</span>";
+	                      
+	                       html += '<div class="project-activity-details">';
+	                       html += '   <div class="icon" title="' +  user.displayValue + '">' + Alfresco.Share.userAvatar(user.value,32) + '</div>';
+	                       html += '   <div class="details">';
+	                       if(alData.content){
+	                     	  html += '      <div class="activity-content">' + (alData.content) + '</div>';
+                          }
+	                       html += '   </div>';
+	                       html += '   <div class="clear"></div>';
+	                       html += '</div>';
+	                   }
+	                   return html;
+	               }
+	           }
+	        });
+		
 
 		YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		   propertyName : "pjt:deliverableList",

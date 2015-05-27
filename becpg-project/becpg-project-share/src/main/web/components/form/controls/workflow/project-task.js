@@ -207,9 +207,16 @@
 
                                 if (contents.length > 0)
                                 {
+                                    var contentUrl =  "";
+                                    
+                                    if(contents[0].type == "cm:folder" ){
+                                       contentUrl = this._getBrowseUrlForFolderPath(contents[0].path, contents[0].siteId, contents[0].name);
+                                    } else {
+                                       contentUrl = beCPG.util.entityDetailsURL(contents[0].siteId, contents[0].nodeRef, "document");
+                                    }
+                                        
                                     ret += '<span class="doc-file"><a title="' + this
-                                            .msg("form.control.project-task.link.title.open-document") + '" href="' + beCPG.util
-                                            .entityDetailsURL(contents[0].siteId, contents[0].nodeRef, contents[0].type == "cm:folder" ? "folder" : "document") + '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' + Alfresco.util
+                                            .msg("form.control.project-task.link.title.open-document") + '" href="' +contentUrl + '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' + Alfresco.util
                                             .getFileIcon(contents[0].name, contents[0].type == "cm:folder" ? "cm:folder" : "cm:content", 16) + '" /></a></span>';
                                 }
 
@@ -251,19 +258,27 @@
                             return ret;
                         },
 
-                        _buildCellUrl : function PT__buildCellUrl(content)
+                     
+                        /**
+                         * Helper to get folder URL
+                         */
+                        _getBrowseUrlForFolderPath: function (path, siteId, name)
                         {
-                            var cellUrl;
-                            if (content.siteId)
-                            {
-                                cellUrl = Alfresco.constants.URL_PAGECONTEXT + "site/" + data.siteId + "/" + 'document-details?nodeRef=' + content.nodeRef;
-                            }
-                            else
-                            {
-                                cellUrl = Alfresco.constants.URL_PAGECONTEXT + 'document-details?nodeRef=' + content.nodeRef;
-                            }
-                            return cellUrl;
-
+                           var url = null;
+                           if (siteId)
+                           {
+                              url = Alfresco.constants.URL_PAGECONTEXT + "site/" + siteId + "/documentlibrary?path=" + encodeURIComponent('/' + path.split('/').slice(5).join('/')+ '/' + name);
+                           }
+                           else
+                           {
+                               if (path.indexOf("/User Homes") > 0 || path.indexOf("/Espaces Utilisateurs") > 0)
+                               {
+                                   url = Alfresco.constants.URL_PAGECONTEXT + "context/mine/myfiles?path=" + encodeURIComponent('/' + path.split('/').slice(4).join('/')+ '/' + name);
+                               } else {
+                                   url = Alfresco.constants.URL_PAGECONTEXT + "repository?path=" + encodeURIComponent('/' + path.split('/').slice(2).join('/')+ '/' + name);
+                               }
+                           }
+                           return url;
                         },
 
                         /**
