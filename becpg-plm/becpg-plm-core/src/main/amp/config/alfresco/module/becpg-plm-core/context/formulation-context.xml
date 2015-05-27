@@ -83,9 +83,8 @@
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="formulateChildren" value="true" />
 				</bean>
-				<bean	class="fr.becpg.repo.product.formulation.CompositionCalculatingFormulationHandler">
+				<bean	class="fr.becpg.repo.product.formulation.CompositionQtyCalculatingFormulationHandler">
 					<property name="nodeService" ref="nodeService" />
-					<property name="alfrescoRepository" ref="alfrescoRepository" />
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.FormulaFormulationHandler" >
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
@@ -93,6 +92,10 @@
 					<property name="formulaService" ref="formulaService"/>
 					<property name="nodeService" ref="nodeService" />
 					<property name="execOrder" value="Pre"/>
+				</bean>
+				<bean	class="fr.becpg.repo.product.formulation.CompositionCalculatingFormulationHandler">
+					<property name="nodeService" ref="nodeService" />
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.ProcessCalculatingFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
@@ -167,9 +170,8 @@
 					<property name="productService" ref="productService"/>
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 				</bean>
-				<bean class="fr.becpg.repo.product.formulation.CompositionCalculatingFormulationHandler">
+				<bean class="fr.becpg.repo.product.formulation.CompositionQtyCalculatingFormulationHandler">
 					<property name="nodeService" ref="nodeService" />
-					<property name="alfrescoRepository" ref="alfrescoRepository" />
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.FormulaFormulationHandler" >
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
@@ -177,6 +179,10 @@
 					<property name="formulaService" ref="formulaService"/>
 					<property name="nodeService" ref="nodeService" />
 					<property name="execOrder" value="Pre"/>
+				</bean>
+				<bean class="fr.becpg.repo.product.formulation.CompositionCalculatingFormulationHandler">
+					<property name="nodeService" ref="nodeService" />
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
 				</bean>
 				<bean parent="abstractSimpleFormulationHandler"
 					class="fr.becpg.repo.product.formulation.NutsCalculatingFormulationHandler">
