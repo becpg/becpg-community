@@ -64,48 +64,32 @@ import fr.becpg.repo.security.SecurityService;
  */
 public class EntityListsWebScript extends DeclarativeWebScript {
 
-	// request parameter names
-	/** The Constant PARAM_STORE_TYPE. */
 	private static final String PARAM_STORE_TYPE = "store_type";
 
-	/** The Constant PARAM_STORE_ID. */
 	private static final String PARAM_STORE_ID = "store_id";
 
-	/** The Constant PARAM_ACL_MODE. */
 	private static final String PARAM_ACL_MODE = "aclMode";
 
-	/** The Constant PARAM_ID. */
 	private static final String PARAM_ID = "id";
-	// model key names
-	/** The Constant MODEL_KEY_NAME_PRODUCT. */
+
 	private static final String MODEL_KEY_NAME_ENTITY = "entity";
 
-	/** The Constant MODEL_KEY_NAME_CONTAINER. */
 	private static final String MODEL_KEY_NAME_CONTAINER = "container";
 
-	/** The Constant MODEL_KEY_NAME_LISTS. */
 	private static final String MODEL_KEY_NAME_LISTS = "lists";
 
-	/** The Constant MODEL_HAS_WRITE_PERMISSION. */
 	private static final String MODEL_HAS_WRITE_PERMISSION = "hasWritePermission";
 
-	/** the Constant MODEL_KEY_ACL_TYPE **/
 	private static final String MODEL_KEY_ACL_TYPE = "aclType";
-
-	/** The Constant MODEL_WUSED_LIST. */
-	private static final String MODEL_WUSED_LIST = "wUsedList";
 	
 	private static final String MODEL_PROP_KEY_LIST_TYPES = "listTypes";
 
 	private static final String MODEL_KEY_NAME_ENTITY_PATH = "entityPath";
 
-	/** The logger. */
 	private static Log logger = LogFactory.getLog(EntityListsWebScript.class);
 
-	/** The node service. */
 	private NodeService nodeService;
 
-	/** The security service. */
 	private SecurityService securityService;
 
 	private EntityListDAO entityListDAO;
@@ -194,7 +178,6 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 		QName nodeType = nodeService.getType(nodeRef);
 		boolean hasWritePermission = authorityService.isAdminAuthority(AuthenticationUtil.getFullyAuthenticatedUser());//admin can delete entity lists
 		boolean skipFilter = false;
-		String wUsedList = null;
 
 		Map<String, Object> model = new HashMap<String, Object>();
 		// We get datalist for a given aclGroup
@@ -330,7 +313,6 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 		model.put(MODEL_KEY_NAME_ENTITY, nodeRef);
 		model.put(MODEL_KEY_NAME_CONTAINER, listContainerNodeRef);
 		model.put(MODEL_HAS_WRITE_PERMISSION, hasWritePermission);
-		model.put(MODEL_WUSED_LIST, wUsedList);
 		model.put(MODEL_KEY_NAME_LISTS, listsNodeRef);
 
 		return model;

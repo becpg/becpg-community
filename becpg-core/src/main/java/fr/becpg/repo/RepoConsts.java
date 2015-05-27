@@ -124,6 +124,9 @@ public class RepoConsts {
 	public final static String WUSED_PREFIX = "WUsed";
 	public final static String WUSED_SEPARATOR = "-";
 	
+	//View
+	public final static String CUSTOM_VIEW_PREFIX = "View";
+	
 	
 	//Version
 	public static final String VERSION_NAME_DELIMITER = " v";

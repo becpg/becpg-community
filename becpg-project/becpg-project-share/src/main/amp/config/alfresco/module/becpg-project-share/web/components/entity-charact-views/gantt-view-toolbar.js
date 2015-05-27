@@ -27,7 +27,7 @@
             right : true,
             evaluate : function(asset, entity)
             {
-                return asset.name !== null && asset.name === "taskList";
+                return asset.name !== null && (asset.name.indexOf("View-gantt") > -1 || asset.name === "taskList") ;
             },
             createWidget : function(containerDiv, instance)
             {
@@ -61,7 +61,7 @@
             actionName : "full-screen",
             evaluate : function(asset, entity)
             {
-                return asset.name !== null && asset.name === "taskList";
+                return asset.name !== null && (asset.name.indexOf("View-gantt") > -1 || asset.name === "taskList") ;
             },
             fn : function(instance)
             {
