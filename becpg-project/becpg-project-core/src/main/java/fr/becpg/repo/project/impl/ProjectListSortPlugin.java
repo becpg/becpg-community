@@ -25,30 +25,32 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.entity.datalist.AbstractDataListSortPlugin;
 import fr.becpg.repo.hierarchy.HierarchyHelper;
 
+@Service
 public class ProjectListSortPlugin extends AbstractDataListSortPlugin {
 
 	private static final String PLUGIN_ID = "ProjectList";
-	
-	private NodeService nodeService;
+	private static final Log logger = LogFactory.getLog(ProjectListSortPlugin.class);
 
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
+	@Autowired
+	private NodeService nodeService;
 
 	@Override
 	public String getPluginId() {
-
 		return PLUGIN_ID;
 	}
 
 	public List<NodeRef> sort(List<NodeRef> projectList) {
-		
+
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
 			watch = new StopWatch();
@@ -64,18 +66,18 @@ public class ProjectListSortPlugin extends AbstractDataListSortPlugin {
 
 				if (EQUAL == comp) {
 					comp = compare(getHierarchy(n1, ProjectModel.PROP_PROJECT_HIERARCHY2), getHierarchy(n2, ProjectModel.PROP_PROJECT_HIERARCHY2));
-					
+
 					if (EQUAL == comp) {
-						comp = compare((String)nodeService.getProperty(n1, ContentModel.PROP_NAME), (String)nodeService.getProperty(n2, ContentModel.PROP_NAME));
+						comp = compare((String) nodeService.getProperty(n1, ContentModel.PROP_NAME),
+								(String) nodeService.getProperty(n2, ContentModel.PROP_NAME));
 					}
 				}
 
 				return comp;
 			}
-			
-			
-			private String getHierarchy(NodeRef nodeRef, QName hierarchyQName){
-			
+
+			private String getHierarchy(NodeRef nodeRef, QName hierarchyQName) {
+
 				NodeRef hierarchyNodeRef = (NodeRef) nodeService.getProperty(nodeRef, hierarchyQName);
 				return HierarchyHelper.getHierachyName(hierarchyNodeRef, nodeService);
 			}
@@ -101,11 +103,9 @@ public class ProjectListSortPlugin extends AbstractDataListSortPlugin {
 
 		if (logger.isDebugEnabled()) {
 			watch.stop();
-			logger.debug("Project List sorted in "
-					+ watch.getTotalTimeSeconds() + " seconds - size results "
-					+  projectList.size() );
+			logger.debug("Project List sorted in " + watch.getTotalTimeSeconds() + " seconds - size results " + projectList.size());
 		}
-		
+
 		return projectList;
 	}
 }

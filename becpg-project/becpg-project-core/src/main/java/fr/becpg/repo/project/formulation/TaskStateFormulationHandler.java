@@ -21,13 +21,16 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.DeliverableUrl;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
+import fr.becpg.repo.project.ProjectActivityService;
 import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.ProjectWorkflowService;
 import fr.becpg.repo.project.data.ProjectData;
@@ -48,6 +51,8 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 	private ProjectWorkflowService projectWorkflowService;
 
 	private ProjectService projectService;
+	
+	private ProjectActivityService projectActivityService;
 
 	public void setProjectWorkflowService(ProjectWorkflowService projectWorkflowService) {
 		this.projectWorkflowService = projectWorkflowService;
@@ -57,12 +62,25 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 		this.projectService = projectService;
 	}
 
+	public void setProjectActivityService(ProjectActivityService projectActivityService) {
+		this.projectActivityService = projectActivityService;
+	}
+
 	@Override
 	public boolean process(ProjectData projectData) throws FormulateException {
-
 		
+		if (projectData.getAspects().contains(ContentModel.ASPECT_CHECKED_OUT) || 
+				projectData.getAspects().contains(ContentModel.ASPECT_WORKING_COPY) ||
+				projectData.getAspects().contains(BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
+			for (TaskListDataItem task : projectData.getTaskList()) {
+				if (TaskState.InProgress.equals(task.getTaskState()) && projectWorkflowService.isWorkflowActive(task)) {
+					logger.debug("Cancel workflow of project " + projectData.getName() + " for task " + task.getTaskName());
+					projectWorkflowService.cancelWorkflow(task);
+				}
+			}
+		}		
 		// we don't want tasks of project template start
-		if (!projectData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
+		else if (!projectData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) && !projectData.getAspects().contains(BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
 
 			// start project if startdate is before now and startdate != created
 			// otherwise ProjectMgr will start it manually
@@ -108,7 +126,9 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 
 			projectData.setCompletionPercent(ProjectHelper.geProjectCompletionPercent(projectData));
 
-			calculateProjectLegends(projectData);
+			calculateProjectLegendsAndCurrTasks(projectData);
+			
+			
 		}
 
 		return true;
@@ -142,7 +162,7 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 					if (nextTask.getPrevTasks().isEmpty()) {
 						if (nextTask.getStart()!=null &&  nextTask.getStart().before(new Date())) {
 							logger.debug("Start first task.");
-							nextTask.setTaskState(TaskState.InProgress);
+							ProjectHelper.setTaskState(nextTask,TaskState.InProgress, projectActivityService);
 
 						}
 					} else {
@@ -150,12 +170,12 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 						if (ProjectHelper.areTasksDone(projectData, nextTask.getPrevTasks())) {
 							if (nextTask.getManualDate() == null) {
 								logger.debug("Start task since previous are done");
-								nextTask.setTaskState(TaskState.InProgress);
+								ProjectHelper.setTaskState(nextTask,TaskState.InProgress, projectActivityService);
 							}
 							// manual date -> we wait the date
 							else if (nextTask.getStart()!=null && nextTask.getStart().before(new Date())) {
 								logger.debug("Start task since we are after planned startDate. start planned: " + nextTask.getStart());
-								nextTask.setTaskState(TaskState.InProgress);
+								ProjectHelper.setTaskState(nextTask,TaskState.InProgress, projectActivityService);
 							}
 						}
 					}
@@ -200,7 +220,7 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 					if (shouldRefused) {
 						logger.debug("Reopen path : "+nextTask.getRefusedTask().getTaskName());
 						
-						ProjectHelper.reOpenPath(projectData, nextTask, nextTask.getRefusedTask());
+						ProjectHelper.reOpenPath(projectData, nextTask, nextTask.getRefusedTask(), projectActivityService);
 						
 						//Revisit tasks 
 						reformulate = true;
@@ -225,6 +245,12 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 						if (DeliverableState.Planned.equals(nextDeliverable.getState())) {
 							nextDeliverable.setState(DeliverableState.InProgress);
 							nextDeliverable.setUrl(projectService.getDeliverableUrl(projectData.getNodeRef(), nextDeliverable.getUrl()));
+							if(nextDeliverable.getUrl()!=null && nextDeliverable.getUrl().startsWith(DeliverableUrl.CONTENT_URL_PREFIX)
+									&& NodeRef.isNodeRef(nextDeliverable.getUrl().substring(DeliverableUrl.CONTENT_URL_PREFIX.length()))){
+								nextDeliverable.setContent(new NodeRef(nextDeliverable.getUrl().substring(DeliverableUrl.CONTENT_URL_PREFIX.length())));
+								nextDeliverable.setUrl(null);
+							}
+							
 							if(DeliverableScriptOrder.Pre.equals(nextDeliverable.getScriptOrder())){
 								projectService.runScript(projectData, nextTask, nextDeliverable.getContent());
 								nextDeliverable.setState(DeliverableState.Completed);
@@ -295,36 +321,36 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 				}
 			}
 			if (hasTaskInProgress) {
-				parent.setTaskState(TaskState.InProgress);
+				ProjectHelper.setTaskState(parent,TaskState.InProgress, projectActivityService);
 			} else if (allTasksPlanned) {
-				parent.setTaskState(TaskState.Planned);
+				ProjectHelper.setTaskState(parent,TaskState.Planned, projectActivityService);
 			} else {
-				parent.setTaskState(TaskState.Completed);
+				ProjectHelper.setTaskState(parent,TaskState.Completed, projectActivityService);
 			}
 			parent.setCompletionPercent(completionPerc/tasks.size());
 			
 		}
 	}
 
-	private void calculateProjectLegends(ProjectData projectData) {
+	
 
-		if (projectData.getLegends() == null) {
-			logger.debug("projectData.setLegends(new ArrayList<NodeRef>());");
-			projectData.setLegends(new ArrayList<NodeRef>());
-		}
+	private void calculateProjectLegendsAndCurrTasks(ProjectData projectData) {
+
+		List<NodeRef> currLegends = new ArrayList<>();
+ 		List<NodeRef> currTasks = new ArrayList<>();
 
 		for (TaskListDataItem tl : projectData.getTaskList()) {
-
 			if (TaskState.InProgress.equals(tl.getTaskState())) {
-				if (!projectData.getLegends().contains(tl.getTaskLegend())) {
-					projectData.getLegends().add(tl.getTaskLegend());
+				if (!currLegends.contains(tl.getTaskLegend())) {
+					currLegends.add(tl.getTaskLegend());
 				}
-			} else if (TaskState.Completed.equals(tl.getTaskState())) {
-				if (projectData.getLegends().contains(tl.getTaskLegend())) {
-					projectData.getLegends().remove(tl.getTaskLegend());
-				}
-			}
-
+				currTasks.add(tl.getNodeRef());
+			} 
 		}
+		
+		projectData.setCurrTasks(currTasks);
+		projectData.setLegends(currLegends);
+		
+		
 	}
 }

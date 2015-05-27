@@ -87,6 +87,7 @@ public class ProjectModuleInfoWebScript extends AbstractWebScript {
 				lObj.put("nodeRef", legend);
 				lObj.put("label", nodeService.getProperty(legend, ContentModel.PROP_NAME));
 				lObj.put("color", nodeService.getProperty(legend, BeCPGModel.PROP_COLOR));
+				lObj.put("nbProjects", projectService.getNbProjectsByLegend(legend));
 				jsonArray.put(lObj);
 			}
 

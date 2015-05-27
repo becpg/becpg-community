@@ -25,7 +25,6 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -214,7 +213,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 					return true;
 				}
 			} else {
-				logger.warn("Workflow instance unknown. WorkflowId: " + workflowId);
+				logger.warn("Workflow instance unknown. WorkflowId: " + workflowId + " task " + task.getNodeRef() + " Task name " + task.getTaskName());
 			}
 		}
 

@@ -72,14 +72,20 @@ public class ActivityListExtractor extends SimpleExtractor {
 	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields,
 			AttributeExtractorMode mode, Map<QName, Serializable> properties, Map<String, Object> props, Map<NodeRef, Map<String, Object>> cache) {
 		Map<String, Object> ret = super.doExtract(nodeRef, itemType, metadataFields, mode, properties, props, cache);
+		if(ProjectModel.TYPE_ACTIVITY_LIST.equals(itemType)){
+			postLookupActivity(ret,properties);
+		}
 
+		return ret;
+
+	}
+	
+	protected void postLookupActivity(Map<String, Object> ret, Map<QName, Serializable> properties) {
 		ret.put("prop_pjt_alUserId", extractPerson((String) properties.get(ProjectModel.PROP_ACTIVITYLIST_USERID)));
 		ret.put("prop_pjt_alData", projectActivityService.postActivityLookUp(
 				ActivityType.valueOf((String) properties.get(ProjectModel.PROP_ACTIVITYLIST_TYPE)),
 				(String)properties.get(ProjectModel.PROP_ACTIVITYLIST_DATA)));
-
-		return ret;
-
+		
 	}
 
 	@Override

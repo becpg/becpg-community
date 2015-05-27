@@ -45,13 +45,13 @@
 		depends-on="bcpg.dictionaryBootstrap">
 		<property name="models">
 			<list>
-				<value>alfresco/module/${artifactId}/model/projectModel.xml</value>
+				<value>alfresco/module/${pom.artifactId}/model/projectModel.xml</value>
 			</list>
 		</property>
 
 		<property name="labels">
 			<list>
-				<value>alfresco/module/${artifactId}/model/projectModel</value>
+				<value>alfresco/module/${pom.artifactId}/model/projectModel</value>
 			</list>
 		</property>
 	</bean>
@@ -85,11 +85,16 @@
 		<property name="handlers">
 			<list>
 				<bean class="fr.becpg.repo.project.formulation.PlanningFormulationHandler" />
-				<bean class="fr.becpg.repo.project.formulation.BudgetFormulationHandler" />
+				<bean class="fr.becpg.repo.project.formulation.BudgetFormulationHandler" >
+				  <property name="associationService" ref="associationService"/>
+				  <property name="nodeService" ref="nodeService"/>
+				  <property name="alfrescoRepository" ref="alfrescoRepository" />
+				</bean>
 				<bean class="fr.becpg.repo.project.formulation.ScoreFormulationHandler" />
 				<bean class="fr.becpg.repo.project.formulation.TaskStateFormulationHandler">
 					<property name="projectWorkflowService" ref="projectWorkflowService" />
-					<property name="projectService" ref="projectService"/>
+					<property name="projectService" ref="projectService" />
+					<property name="projectActivityService" ref="projectActivityService" />
 				</bean>
 			</list>
 		</property>
@@ -111,32 +116,15 @@
 	</bean>
 
 
-	<!-- List Value plugin -->
-	<bean id="taskValuePlugin" parent="baseListValuePlugin" init-method="init" class="fr.becpg.repo.project.listvalue.TaskValuePlugin">
-		<property name="namespaceService" ref="namespaceService" />
-		<property name="nodeService" ref="nodeService" />
-		<property name="dictionaryDAO" ref="dictionaryDAO" />
-	</bean>
-
-
-
-	<!-- Sort plugin -->
-	<bean id="projectListSortPlugin" parent="baseDataListSortPlugin" class="fr.becpg.repo.project.impl.ProjectListSortPlugin">
-		<property name="dataListSortRegistry" ref="dataListSortRegistry" />
-		<property name="nodeService" ref="nodeService" />
-	</bean>
-
-    <bean id="resourcesSortPlugin" parent="baseDataListSortPlugin" class="fr.becpg.repo.project.impl.ResourcesSortPlugin">
-		<property name="dataListSortRegistry" ref="dataListSortRegistry" />
-		<property name="associationService" ref="associationService" />
-		<property name="attributeExtractorService" ref="attributeExtractorService" />
-		<property name="nodeService" ref="nodeService" />
-	</bean>
-
-
 	<!-- DataList Extractor -->
 
-	<bean id="projectListExtractor" class="fr.becpg.repo.project.extractor.ProjectListExtractor" parent="abstractDataListExtractor">
+    <bean id="activityListExtractor" class="fr.becpg.repo.project.extractor.ActivityListExtractor" parent="simpleExtractor">
+		<property name="projectActivityService" ref="projectActivityService"/>
+		<property name="defaultExtractor" value="false"/>
+	</bean>
+
+
+	<bean id="projectListExtractor" parent="activityListExtractor" class="fr.becpg.repo.project.extractor.ProjectListExtractor">
 		<property name="personService" ref="personService" />
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="associationService" ref="associationService" />
@@ -144,10 +132,7 @@
 		<property name="preferenceService" ref="preferenceService" />
 	</bean>
 
-	<bean id="activityListExtractor" class="fr.becpg.repo.project.extractor.ActivityListExtractor" parent="simpleExtractor">
-		<property name="projectActivityService" ref="projectActivityService"/>
-		<property name="defaultExtractor" value="false"/>
-	</bean>
+
 
 
 	<!-- Webscripts -->
@@ -203,5 +188,17 @@
       <property name="nodeService" ref="nodeService" />  
       <property name="projectActivityService" ref="projectActivityService" />     
     </bean>
+    
+    	<!-- Supplier portal -->
+	<bean id="bProjectScript" parent="baseJavaScriptExtension" class="fr.becpg.repo.project.jscript.ProjectScriptHelper">
+		<property name="extensionName">
+			<value>bProject</value>
+		</property>
+		<property name="alfrescoRepository" ref="alfrescoRepository" />
+		<property name="nodeService" ref="NodeService" />
+		<property name="namespaceService" ref="namespaceService" />
+		<property name="entityListDAO" ref="entityListDAO" />
+	</bean>
+    
 
 </beans>

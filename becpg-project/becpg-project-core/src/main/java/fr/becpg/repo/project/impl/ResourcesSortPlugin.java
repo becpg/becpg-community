@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2015 beCPG. 
+ * Copyright (C) 2010-2014 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -24,6 +24,9 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.model.ProjectModel;
@@ -34,25 +37,14 @@ import fr.becpg.repo.helper.AttributeExtractorService;
 public class ResourcesSortPlugin extends AbstractDataListSortPlugin {
 
 	private static final String PLUGIN_ID = "TaskResources";
-
-	private AttributeExtractorService attributeExtractorService;
-
-	private AssociationService associationService;
-
-	private NodeService nodeService;
-
-	public void setAssociationService(AssociationService associationService) {
-		this.associationService = associationService;
-	}
-
-	public void setAttributeExtractorService(AttributeExtractorService attributeExtractorService) {
-		this.attributeExtractorService = attributeExtractorService;
-	}
-
+	private static final Log logger = LogFactory.getLog(ResourcesSortPlugin.class); 
 	
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
+	@Autowired
+	private AttributeExtractorService attributeExtractorService;
+	@Autowired
+	private AssociationService associationService;
+	@Autowired
+	private NodeService nodeService;
 
 	@Override
 	public String getPluginId() {

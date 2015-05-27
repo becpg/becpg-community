@@ -33,6 +33,7 @@ public interface RepositoryEntity {
 	public NodeRef getParentNodeRef();
 	public void setParentNodeRef(NodeRef parentNodeRef);
 	public String getName();
+	public void setName(String name);
 	
 	
 	

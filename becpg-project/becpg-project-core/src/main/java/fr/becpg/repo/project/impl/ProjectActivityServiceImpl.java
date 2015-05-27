@@ -17,6 +17,9 @@
  ******************************************************************************/
 package fr.becpg.repo.project.impl;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.activities.post.lookup.PostLookup;
 import org.alfresco.repo.forum.CommentService;
@@ -198,7 +201,6 @@ public class ProjectActivityServiceImpl implements ProjectActivityService {
 				if (ProjectModel.TYPE_PROJECT.equals(itemType)) {
 					data.put(PROP_TITLE, (String) nodeService.getProperty(itemNodeRef, ContentModel.PROP_NAME));
 					projectNotificationService.notifyComment(commentNodeRef, activityEvent, projectNodeRef, null, null);
-
 				} else if (ProjectModel.TYPE_TASK_LIST.equals(itemType)) {
 					projectNodeRef = getProjectNodeRef(itemNodeRef);
 					data.put(PROP_TITLE, (String) nodeService.getProperty(itemNodeRef, ProjectModel.PROP_TL_TASK_NAME));
@@ -233,7 +235,10 @@ public class ProjectActivityServiceImpl implements ProjectActivityService {
 				}
 
 				alfrescoRepository.save(activityListDataItem);
-
+				
+				//Update curr comments assoc
+				associationService.update(projectNodeRef, ProjectModel.ASSOC_PROJECT_CUR_COMMENTS, Arrays.asList(activityListDataItem.getNodeRef()));
+				
 			} catch (JSONException e) {
 				logger.error(e, e);
 			}

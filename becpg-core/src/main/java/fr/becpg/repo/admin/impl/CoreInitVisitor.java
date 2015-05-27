@@ -250,7 +250,7 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 		// visit acls
 		Set<QName> dataLists = new LinkedHashSet<QName>();
 		dataLists.add(SecurityModel.TYPE_ACL_ENTRY);
-		entityTplService.createEntityTpl(entityTplsNodeRef, SecurityModel.TYPE_ACL_GROUP, true, dataLists, null);
+		entityTplService.createEntityTpl(entityTplsNodeRef, SecurityModel.TYPE_ACL_GROUP,null, true, dataLists, null);
 	}
 	
 }

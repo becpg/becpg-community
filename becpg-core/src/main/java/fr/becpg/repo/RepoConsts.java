@@ -77,7 +77,7 @@ public class RepoConsts {
 	/*-- Report --*/
 	public static final String REPORT_EXTENSION_BIRT = "rptdesign";
 	public static final String REPORT_EXTENSION_PDF = ".PDF";
-	public static final String REPORT_EXTENSION_XLS = ".XLS";
+	public static final String REPORT_EXTENSION_XLSX = ".XLS";
 	public static final String EXTENSION_LOG = ".log";
 	
 	// FORMAT
@@ -116,13 +116,16 @@ public class RepoConsts {
 	
 
 	// Sort
-	public static int SORT_DEFAULT_STEP = 100;
-	public static int SORT_INSERTING_STEP = 1;
+	public final static int SORT_DEFAULT_STEP = 100;
+	public final static int SORT_INSERTING_STEP = 1;
 	
 	
 	//WUsed
-	public static String WUSED_PREFIX = "WUsed";
-	public static String WUSED_SEPARATOR = "-";
+	public final static String WUSED_PREFIX = "WUsed";
+	public final static String WUSED_SEPARATOR = "-";
+	
+	//View
+	public final static String CUSTOM_VIEW_PREFIX = "View";
 	
 	
 	//Version
