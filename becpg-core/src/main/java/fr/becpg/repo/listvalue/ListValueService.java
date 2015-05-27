@@ -17,11 +17,13 @@ public interface ListValueService {
 	/** Prop Constants **/
 	
 
-	public static final int SUGGEST_PAGE_SIZE = 10;
+    public static final int SUGGEST_PAGE_SIZE = 10;
 	
 	public static final String PROP_SOURCE_TYPE = "sourcetype";
 	
 	public static final String PROP_CLASS_NAME = "className";
+	
+	public static final String PROP_ATTRIBUTE_NAME = "attributeName";
 	
 	public static final String PROP_PATH = "path";
 	
@@ -38,7 +40,8 @@ public interface ListValueService {
 	public static final String PROP_PRODUCT_TYPE = "productType";
 
 	public static final String EXTRA_PARAM = "extra";
-	
+
+	public static final String PROP_FILTER = "filter";
 	
 	
 	/**
