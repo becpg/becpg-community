@@ -57,7 +57,7 @@
 				</list>
 			</parameter>
 		</constraint>
-		
+
 		<constraint name="pjt:dlScriptExecOrders" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -102,7 +102,7 @@
 				</list>
 			</parameter>
 		</constraint>
-		
+
 		<constraint name="pjt:planningModes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -190,7 +190,7 @@
 				<value>bcpg:lvValue</value>
 			</parameter>
 		</constraint>
-		
+
 		<constraint name="pjt:timeTypes"
 			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
@@ -277,7 +277,7 @@
 					<constraints>
 						<constraint ref="pjt:percentage" />
 					</constraints>
-				</property>			
+				</property>
 				<property name="pjt:projectBudgetedCost">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
@@ -328,6 +328,28 @@
 						<many>true</many>
 					</target>
 				</association>
+				<association name="pjt:projectCurrentTasks">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>pjt:taskList</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="pjt:projectCurrentComments">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>pjt:activityList</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
 			</associations>
 			<mandatory-aspects>
 				<aspect>bcpg:codeAspect</aspect>
@@ -351,6 +373,9 @@
 					<type>d:text</type>
 					<mandatory>true</mandatory>
 				</property>
+				<property name="pjt:tlTaskDescription">
+					<type>d:text</type>
+				</property>
 				<property name="pjt:tlIsMilestone">
 					<type>d:boolean</type>
 				</property>
@@ -358,6 +383,11 @@
 					<type>d:boolean</type>
 				</property>
 				<property name="pjt:tlDuration">
+					<type>d:int</type>
+					<mandatory>true</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="pjt:tlRealDuration">
 					<type>d:int</type>
 					<mandatory>true</mandatory>
 					<index enabled="false" />
@@ -407,7 +437,7 @@
 					<constraints>
 						<constraint ref="pjt:manualDate" />
 					</constraints>
-				</property>				
+				</property>
 				<property name="pjt:tlFixedCost">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
@@ -418,6 +448,7 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
+
 			</properties>
 			<associations>
 				<association name="pjt:tlPrevTasks">
@@ -491,6 +522,7 @@
 				<aspect>bcpg:sortableListAspect</aspect>
 				<aspect>pjt:completionAspect</aspect>
 				<aspect>bcpg:depthLevelAspect</aspect>
+				 <!-- <aspect>pjt:budgetAspect</aspect>  -->
 			</mandatory-aspects>
 		</type>
 
@@ -660,70 +692,70 @@
 				</property>
 			</properties>
 		</type>
-		
+
 		<type name="pjt:logTimeList">
-            <title>Log time</title>
-            <parent>bcpg:entityListItem</parent>
-            <properties>
-                <property name="pjt:ltlDate">
-                    <title>Date</title>
-                    <type>d:date</type>
-                    <mandatory>true</mandatory>
-                    <index enabled="true">
-                        <atomic>false</atomic>
-                        <stored>false</stored>
-                        <tokenised>TRUE</tokenised>
-                    </index>
-                </property>
-                <property name="pjt:ltlTime">
-                    <title>Time (h)</title>
-                    <type>d:double</type>
-                    <mandatory>true</mandatory>
-                    <index enabled="true">
-                        <atomic>false</atomic>
-                        <stored>false</stored>
-                        <tokenised>TRUE</tokenised>
-                    </index>
-                </property>
-                <property name="pjt:ltlComment">
-                    <title>Comment</title>
-                    <type>d:text</type>
-                    <mandatory>false</mandatory>
-                    <index enabled="false"/>                        
-                </property>
-                <property name="pjt:ltlType">
-                    <title>Activity type</title>
-                    <type>d:text</type>
-                    <mandatory>true</mandatory>
-                    <index enabled="true">
-                        <atomic>false</atomic>
-                        <stored>false</stored>
-                        <tokenised>FALSE</tokenised>
-                    </index>
-                    <constraints>
-							<constraint ref="pjt:timeTypes" />
-						</constraints>
-                </property>
-            </properties>
-            <associations>
-                <association name="pjt:ltlTask">
-                    <title>Task</title>
-                    <source>
-                        <mandatory>false</mandatory>
-                        <many>true</many>
-                    </source>
-                    <target>
-                        <class>bcpg:entityListItem</class>
-                        <mandatory enforced="false">true</mandatory>
-                        <many>false</many>
-                    </target>
-                </association>
-            </associations>
-            <overrides/>
-            <mandatory-aspects/>
-        </type>
-        
-        <type name="pjt:resourceCost">
+			<title>Log time</title>
+			<parent>bcpg:entityListItem</parent>
+			<properties>
+				<property name="pjt:ltlDate">
+					<title>Date</title>
+					<type>d:date</type>
+					<mandatory>true</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="pjt:ltlTime">
+					<title>Time (h)</title>
+					<type>d:double</type>
+					<mandatory>true</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="pjt:ltlComment">
+					<title>Comment</title>
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="pjt:ltlType">
+					<title>Activity type</title>
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>FALSE</tokenised>
+					</index>
+					<constraints>
+						<constraint ref="pjt:timeTypes" />
+					</constraints>
+				</property>
+			</properties>
+			<associations>
+				<association name="pjt:ltlTask">
+					<title>Task</title>
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:entityListItem</class>
+						<mandatory enforced="false">true</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+			<overrides />
+			<mandatory-aspects />
+		</type>
+
+		<type name="pjt:resourceCost">
 			<parent>bcpg:charact</parent>
 			<properties>
 				<property name="pjt:resourceCostValue">
@@ -736,11 +768,171 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
-			</properties>			
+			</properties>
+		</type>
+
+
+
+		<!-- Budget List -->
+
+		<type name="pjt:budgetList">
+			<parent>bcpg:entityListItem</parent>
+			<properties>
+				<property name="pjt:blItem">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+				</property>
+				<property name="pjt:blBudgetedExpense">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="pjt:blBudgetedInvoice">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+
+				<property name="pjt:blProfit">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+			</properties>
+			<associations />
+			<mandatory-aspects>
+				<aspect>bcpg:depthLevelAspect</aspect>
+				<aspect>pjt:budgetAspect</aspect>
+			</mandatory-aspects>
+		</type>
+
+
+		<!-- Expenses List -->
+
+		<type name="pjt:expenseList">
+			<parent>bcpg:entityListItem</parent>
+			<properties>
+
+				<property name="pjt:elExpenseName">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="false">
+					</index>
+				</property>
+			</properties>
+			<associations>
+				<association name="pjt:elTaskRef">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>pjt:taskList</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+
+				<association name="pjt:elBudgetRef">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>pjt:budgetList</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+
+				<association name="pjt:elDocRef">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>cm:content</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>
+			<mandatory-aspects>
+				<aspect>pjt:budgetAspect</aspect>
+			</mandatory-aspects>
+		</type>
+
+		<!-- Invoice List -->
+
+		<type name="pjt:invoiceList">
+			<parent>bcpg:entityListItem</parent>
+			<properties>
+
+				<property name="pjt:ilInvoiceName">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+			</properties>
+			<associations>
+				<association name="pjt:ilTaskRef">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>pjt:taskList</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="pjt:ilBudgetRef">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>pjt:budgetList</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="pjt:ilDocRef">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>cm:content</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>
+			 <mandatory-aspects>
+				<aspect>pjt:budgetAspect</aspect>
+			</mandatory-aspects>  
 		</type>
 	</types>
 
 	<aspects>
+
+		<aspect name="pjt:budgetAspect">
+			<properties>
+				<property name="pjt:invoice">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="pjt:expense">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false">
+					</index>
+				</property>
+			</properties>
+		</aspect>
+
 		<aspect name="pjt:completionAspect">
 			<properties>
 				<property name="pjt:completionPercent">
@@ -753,22 +945,21 @@
 				</property>
 			</properties>
 		</aspect>
-
 		<aspect name="pjt:workflowAspect">
 			<properties>
 				<property name="pjt:worflowTransition">
-						<type>d:text</type>
-						<default>validate</default>
-						<constraints>
-							<constraint name="pjt:worflowTransitions" type="LIST">
-					            <parameter name="allowedValues">
-					                <list>
-					                	<value>refused</value>
-					                    <value>validate</value>                
-					                </list>
-					            </parameter>
-					        </constraint>
-						</constraints>
+					<type>d:text</type>
+					<default>validate</default>
+					<constraints>
+						<constraint name="pjt:worflowTransitions" type="LIST">
+							<parameter name="allowedValues">
+								<list>
+									<value>refused</value>
+									<value>validate</value>
+								</list>
+							</parameter>
+						</constraint>
+					</constraints>
 				</property>
 			</properties>
 			<associations>
@@ -785,7 +976,5 @@
 				</association>
 			</associations>
 		</aspect>
-		
-		
 	</aspects>
 </model>

@@ -5,7 +5,10 @@ package fr.becpg.repo.admin.impl;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.repo.action.evaluator.HasAspectEvaluator;
 import org.alfresco.repo.action.evaluator.IsSubTypeEvaluator;
@@ -21,10 +24,14 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.rule.Rule;
 import org.alfresco.service.cmr.rule.RuleService;
 import org.alfresco.service.cmr.rule.RuleType;
+import org.alfresco.service.cmr.security.AuthorityService;
+import org.alfresco.service.cmr.security.AuthorityType;
+import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.repo.admin.InitVisitor;
 import fr.becpg.repo.helper.RepoService;
@@ -38,6 +45,9 @@ import fr.becpg.repo.helper.TranslateHelper;
 public abstract class AbstractInitVisitorImpl implements InitVisitor {		
 	
 	protected static Log logger = LogFactory.getLog(AbstractInitVisitorImpl.class);
+	
+
+	private static final String LOCALIZATION_PFX_GROUP = "becpg.group";
 	
 	@Autowired
 	protected NodeService nodeService;
@@ -54,6 +64,8 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 	@Autowired
 	protected ActionService actionService;
 
+	@Autowired
+	protected AuthorityService authorityService;
 		
 	/**
 	 * Visit folder.
@@ -193,6 +205,39 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 	}
 	
 
+	protected void createGroups(String[] groups) {
+
+		Set<String> zones = new HashSet<String>();
+		zones.add(AuthorityService.ZONE_APP_DEFAULT);
+		zones.add(AuthorityService.ZONE_APP_SHARE);
+		zones.add(AuthorityService.ZONE_AUTH_ALFRESCO);
+
+		for (String group : groups) {
+
+			logger.debug("group: " + group);
+			String groupName = I18NUtil.getMessage(String.format("%s.%s", LOCALIZATION_PFX_GROUP, group).toLowerCase(), Locale.getDefault());
+
+			if (!authorityService.authorityExists(PermissionService.GROUP_PREFIX + group)) {
+				logger.debug("create group: " + groupName);
+				authorityService.createAuthority(AuthorityType.GROUP, group, groupName, zones);
+			} else {
+				Set<String> zonesAdded = authorityService.getAuthorityZones(PermissionService.GROUP_PREFIX + group);
+				Set<String> zonesToAdd = new HashSet<String>();
+				for (String zone : zones)
+					if (!zonesAdded.contains(zone)) {
+						zonesToAdd.add(zone);
+					}
+
+				if (!zonesToAdd.isEmpty()) {
+					logger.debug("Add group to zone: " + groupName + " - " + zonesToAdd.toString());
+					authorityService.addAuthorityToZones(PermissionService.GROUP_PREFIX + group, zonesToAdd);
+				}
+			}
+		}
+
+		
+	}
 	
+
 
 }

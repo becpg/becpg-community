@@ -46,8 +46,13 @@ public interface ProjectModel {
 	public static final QName ASSOC_PROJECT_ENTITY = QName.createQName(PROJECT_URI, "projectEntity");	
 	public static final QName ASSOC_PROJECT_OBSERVERS = QName.createQName(PROJECT_URI, "projectObservers");
 	
+	public static final QName ASSOC_PROJECT_CUR_TASKS = QName.createQName(PROJECT_URI, "projectCurrentTasks");
+	public static final QName ASSOC_PROJECT_CUR_COMMENTS = QName.createQName(PROJECT_URI, "projectCurrentComments");
+	
 	public static final QName TYPE_TASK_LIST = QName.createQName(PROJECT_URI, "taskList");
 	public static final QName PROP_TL_TASK_NAME = QName.createQName(PROJECT_URI, "tlTaskName");
+	public static final QName PROP_TL_TASK_DESCRIPTION = QName.createQName(PROJECT_URI, "tlTaskDescription");
+
 	public static final QName PROP_TL_IS_MILESTONE = QName.createQName(PROJECT_URI, "tlIsMilestone");
 	public static final QName PROP_TL_DURATION = QName.createQName(PROJECT_URI, "tlDuration");
 	public static final QName PROP_TL_CAPACITY = QName.createQName(PROJECT_URI, "tlCapacity");
@@ -63,6 +68,7 @@ public interface ProjectModel {
 	public static final QName ASSOC_TL_OBSERVERS = QName.createQName(PROJECT_URI, "tlObservers");
 	public static final QName PROP_TL_WORKFLOW_INSTANCE = QName.createQName(PROJECT_URI, "tlWorkflowInstance");
 	public static final QName PROP_TL_FIXED_COST = QName.createQName(PROJECT_URI, "tlFixedCost");
+
 	public static final QName ASSOC_TL_RESOURCE_COST = QName.createQName(PROJECT_URI, "tlResourceCost");
 		
 	public static final QName TYPE_DELIVERABLE_LIST = QName.createQName(PROJECT_URI, "deliverableList");
@@ -98,8 +104,33 @@ public interface ProjectModel {
 	
 	public static final QName TYPE_RESOURCE_COST = QName.createQName(PROJECT_URI, "resourceCost");
 	public static final QName PROP_RESOURCE_COST_VALUE = QName.createQName(PROJECT_URI, "resourceCostValue");
+	
+	//Budget List
+	public static final QName TYPE_BUDGET_LIST  = QName.createQName(PROJECT_URI, "budgetList");
+	public static final QName PROP_BL_ITEM  = QName.createQName(PROJECT_URI, "blItem");
+	public static final QName PROP_BL_PROFIT  = QName.createQName(PROJECT_URI, "blProfit");
+	public static final QName PROP_BL_BUDGEDTED_EXPENSE = QName.createQName(PROJECT_URI, "blBudgetedExpense");
+	public static final QName PROP_BL_BUDGEDTED_INVOICE = QName.createQName(PROJECT_URI, "blBudgetedInvoice");
+	
+	
+	//Invoice List
+	public static final QName TYPE_INVOICE_LIST  = QName.createQName(PROJECT_URI, "invoiceList");
+	public static final QName ASSOC_IL_BUDGET_REF  = QName.createQName(PROJECT_URI, "ilBudgetRef");
+	public static final QName ASSOC_IL_TASK_REF  = QName.createQName(PROJECT_URI, "ilTaskRef");
+	public static final QName ASSOC_IL_DOC_REF  = QName.createQName(PROJECT_URI, "ilDocRef");
+	
+	//Expense List
+	public static final QName TYPE_EXPENSE_LIST  = QName.createQName(PROJECT_URI, "expenseList");
+	public static final QName ASSOC_EL_BUDGET_REF  = QName.createQName(PROJECT_URI, "elBudgetRef");
+	public static final QName ASSOC_EL_TASK_REF  = QName.createQName(PROJECT_URI, "elTaskRef");
+	public static final QName ASSOC_EL_DOC_REF  = QName.createQName(PROJECT_URI, "elDocRef");
 
+	//Budget Aspect
+	public static final QName ASPECT_BUDGET = QName.createQName(PROJECT_URI, "budgetAspect");
+	public static final QName PROP_BUDGET_INVOICE = QName.createQName(PROJECT_URI, "invoice");
+	public static final QName PROP_BUDGET_EXPENSE = QName.createQName(PROJECT_URI, "expense");
+	
 	
 
-	
+
 }

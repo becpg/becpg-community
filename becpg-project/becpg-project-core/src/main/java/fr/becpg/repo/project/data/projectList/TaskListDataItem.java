@@ -44,6 +44,7 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	private Boolean isMilestone;
 	private Boolean isGroup;
 	private Integer duration;
+	private Integer realDuration;
 	private Integer capacity;
 	private Double work;
 	private Double loggedTime;
@@ -63,7 +64,14 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	private TaskListDataItem refusedTask;
 	private Double fixedCost;
 	private Double budgetedCost;
+	private Double actualInvoice;
+	private Double actualExpense;
 	private ResourceCost resourceCost;
+
+
+	public void setActualExpense(Double actualExpense) {
+		this.actualExpense = actualExpense;
+	}
 
 	@AlfProp
 	@AlfQname(qname = "pjt:tlTaskName")
@@ -103,6 +111,16 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 
 	public void setDuration(Integer duration) {
 		this.duration = duration;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "pjt:tlRealDuration")
+	public Integer getRealDuration() {
+		return realDuration;
+	}
+
+	public void setRealDuration(Integer realDuration) {
+		this.realDuration = realDuration;
 	}
 
 	@AlfProp
@@ -306,6 +324,21 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	public void setBudgetedCost(Double budgetedCost) {
 		this.budgetedCost = budgetedCost;
 	}
+	
+	@AlfProp
+	@AlfQname(qname = "pjt:invoice")
+	public Double getActualInvoice() {
+		return actualInvoice;
+	}
+
+	public void setActualInvoice(Double actualInvoice) {
+		this.actualInvoice = actualInvoice;
+	}
+	@AlfProp
+	@AlfQname(qname = "pjt:expense")
+	public Double getActualExpense() {
+		return actualExpense;
+	}
 
 	@AlfSingleAssoc
 	@AlfQname(qname = "pjt:tlResourceCost")
@@ -336,11 +369,13 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 		this.resources = resources;
 		this.taskLegend = taskLegend;
 		this.workflowName = workflowName;
+		//this.actualInvoice = actualInvoice;
+		//this.actualExpense = actualExpense;
 	}
 
 	public TaskListDataItem(NodeRef nodeRef, String taskName, Boolean isMilestone, Integer duration, Date start, Date end, TaskState state,
 			Integer completionPercent, List<NodeRef> prevTasks, List<NodeRef> resources, NodeRef taskLegend, String workflowName,
-			String workflowInstance) {
+			String workflowInstance, Double actualInvoice , Double actualExpense) {
 		super();
 		this.nodeRef = nodeRef;
 		this.taskName = taskName;
@@ -355,34 +390,64 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 		this.taskLegend = taskLegend;
 		this.workflowName = workflowName;
 		this.workflowInstance = workflowInstance;
+		this.actualInvoice = actualInvoice;
+		this.actualExpense = actualExpense;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + ((capacity == null) ? 0 : capacity.hashCode());
-		result = prime * result + ((completionPercent == null) ? 0 : completionPercent.hashCode());
-		result = prime * result + ((depthLevel == null) ? 0 : depthLevel.hashCode());
-		result = prime * result + ((duration == null) ? 0 : duration.hashCode());
+		result = prime * result
+				+ ((actualExpense == null) ? 0 : actualExpense.hashCode());
+		result = prime * result
+				+ ((actualInvoice == null) ? 0 : actualInvoice.hashCode());
+		result = prime * result
+				+ ((budgetedCost == null) ? 0 : budgetedCost.hashCode());
+		result = prime * result
+				+ ((capacity == null) ? 0 : capacity.hashCode());
+		result = prime
+				* result
+				+ ((completionPercent == null) ? 0 : completionPercent
+						.hashCode());
+		result = prime * result
+				+ ((depthLevel == null) ? 0 : depthLevel.hashCode());
+		result = prime * result
+				+ ((duration == null) ? 0 : duration.hashCode());
 		result = prime * result + ((end == null) ? 0 : end.hashCode());
-		result = prime * result + ((fixedCost == null) ? 0 : fixedCost.hashCode());
+		result = prime * result
+				+ ((fixedCost == null) ? 0 : fixedCost.hashCode());
 		result = prime * result + ((isGroup == null) ? 0 : isGroup.hashCode());
-		result = prime * result + ((isMilestone == null) ? 0 : isMilestone.hashCode());
-		result = prime * result + ((manualDate == null) ? 0 : manualDate.hashCode());
-		result = prime * result + ((observers == null) ? 0 : observers.hashCode());
+		result = prime * result
+				+ ((isMilestone == null) ? 0 : isMilestone.hashCode());
+		result = prime * result
+				+ ((loggedTime == null) ? 0 : loggedTime.hashCode());
+		result = prime * result
+				+ ((manualDate == null) ? 0 : manualDate.hashCode());
+		result = prime * result
+				+ ((observers == null) ? 0 : observers.hashCode());
 		result = prime * result + ((parent == null) ? 0 : parent.hashCode());
-		result = prime * result + ((budgetedCost == null) ? 0 : budgetedCost.hashCode());
-		result = prime * result + ((prevTasks == null) ? 0 : prevTasks.hashCode());
-		result = prime * result + ((resourceCost == null) ? 0 : resourceCost.hashCode());
-		result = prime * result + ((resources == null) ? 0 : resources.hashCode());
+		result = prime * result
+				+ ((prevTasks == null) ? 0 : prevTasks.hashCode());
+		result = prime * result
+				+ ((refusedTask == null) ? 0 : refusedTask.hashCode());
+		result = prime * result
+				+ ((resourceCost == null) ? 0 : resourceCost.hashCode());
+		result = prime * result
+				+ ((resources == null) ? 0 : resources.hashCode());
 		result = prime * result + ((start == null) ? 0 : start.hashCode());
-		result = prime * result + ((taskState == null) ? 0 : taskState.hashCode());
-		result = prime * result + ((taskLegend == null) ? 0 : taskLegend.hashCode());
-		result = prime * result + ((taskName == null) ? 0 : taskName.hashCode());
+		result = prime * result
+				+ ((taskLegend == null) ? 0 : taskLegend.hashCode());
+		result = prime * result
+				+ ((taskName == null) ? 0 : taskName.hashCode());
+		result = prime * result
+				+ ((taskState == null) ? 0 : taskState.hashCode());
 		result = prime * result + ((work == null) ? 0 : work.hashCode());
-		result = prime * result + ((workflowInstance == null) ? 0 : workflowInstance.hashCode());
-		result = prime * result + ((workflowName == null) ? 0 : workflowName.hashCode());
+		result = prime
+				* result
+				+ ((workflowInstance == null) ? 0 : workflowInstance.hashCode());
+		result = prime * result
+				+ ((workflowName == null) ? 0 : workflowName.hashCode());
 		return result;
 	}
 
@@ -395,6 +460,21 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 		if (getClass() != obj.getClass())
 			return false;
 		TaskListDataItem other = (TaskListDataItem) obj;
+		if (actualExpense == null) {
+			if (other.actualExpense != null)
+				return false;
+		} else if (!actualExpense.equals(other.actualExpense))
+			return false;
+		if (actualInvoice == null) {
+			if (other.actualInvoice != null)
+				return false;
+		} else if (!actualInvoice.equals(other.actualInvoice))
+			return false;
+		if (budgetedCost == null) {
+			if (other.budgetedCost != null)
+				return false;
+		} else if (!budgetedCost.equals(other.budgetedCost))
+			return false;
 		if (capacity == null) {
 			if (other.capacity != null)
 				return false;
@@ -435,6 +515,11 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 				return false;
 		} else if (!isMilestone.equals(other.isMilestone))
 			return false;
+		if (loggedTime == null) {
+			if (other.loggedTime != null)
+				return false;
+		} else if (!loggedTime.equals(other.loggedTime))
+			return false;
 		if (manualDate != other.manualDate)
 			return false;
 		if (observers == null) {
@@ -447,15 +532,15 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 				return false;
 		} else if (!parent.equals(other.parent))
 			return false;
-		if (budgetedCost == null) {
-			if (other.budgetedCost != null)
-				return false;
-		} else if (!budgetedCost.equals(other.budgetedCost))
-			return false;
 		if (prevTasks == null) {
 			if (other.prevTasks != null)
 				return false;
 		} else if (!prevTasks.equals(other.prevTasks))
+			return false;
+		if (refusedTask == null) {
+			if (other.refusedTask != null)
+				return false;
+		} else if (!refusedTask.equals(other.refusedTask))
 			return false;
 		if (resourceCost == null) {
 			if (other.resourceCost != null)
@@ -472,8 +557,6 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 				return false;
 		} else if (!start.equals(other.start))
 			return false;
-		if (taskState != other.taskState)
-			return false;
 		if (taskLegend == null) {
 			if (other.taskLegend != null)
 				return false;
@@ -483,6 +566,8 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 			if (other.taskName != null)
 				return false;
 		} else if (!taskName.equals(other.taskName))
+			return false;
+		if (taskState != other.taskState)
 			return false;
 		if (work == null) {
 			if (other.work != null)
@@ -504,12 +589,23 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 
 	@Override
 	public String toString() {
-		return "TaskListDataItem [taskName=" + taskName + ", isMilestone=" + isMilestone + ", isGroup=" + isGroup + ", duration=" + duration
-				+ ", capacity=" + capacity + ", work=" + work + ", start=" + start + ", end=" + end + ", state=" + taskState + ", completionPercent="
-				+ completionPercent + ", prevTasks=" + prevTasks + ", resources=" + resources + ", observers=" + observers + ", taskLegend="
-				+ taskLegend + ", workflowName=" + workflowName + ", workflowInstance=" + workflowInstance + ", manualDate=" + manualDate
-				+ ", depthLevel=" + depthLevel + ", parent=" + parent + ", fixedCost=" + fixedCost + ", budgetedCost=" + budgetedCost
-				+ ", resourceCost=" + resourceCost + "]";
+		return "TaskListDataItem [taskName=" + taskName + ", isMilestone="
+				+ isMilestone + ", isGroup=" + isGroup + ", duration="
+				+ duration + ", capacity=" + capacity + ", work=" + work
+				+ ", loggedTime=" + loggedTime + ", start=" + start + ", end="
+				+ end + ", taskState=" + taskState + ", completionPercent="
+				+ completionPercent + ", prevTasks=" + prevTasks
+				+ ", resources=" + resources + ", observers=" + observers
+				+ ", taskLegend=" + taskLegend + ", workflowName="
+				+ workflowName + ", workflowInstance=" + workflowInstance
+				+ ", manualDate=" + manualDate + ", depthLevel=" + depthLevel
+				+ ", parent=" + parent + ", refusedTask=" + refusedTask
+				+ ", fixedCost=" + fixedCost + ", budgetedCost=" + budgetedCost
+				+ ", actualInvoice=" + actualInvoice + ", actualExpense="
+				+ actualExpense + ", resourceCost=" + resourceCost + "]";
 	}
+
+	
+	
 
 }

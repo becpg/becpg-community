@@ -30,6 +30,7 @@ import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.service.namespace.QNamePattern;
 import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -59,6 +60,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 
 		if (dbAssocNodeRefs != null) {
 			// remove from db
+			
 			for (AssociationRef assocRef : dbAssocNodeRefs) {
 				if (assocNodeRefs == null) {
 					nodeService.removeAssociation(nodeRef, assocRef.getTargetRef(), qName);
@@ -178,7 +180,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 	}
 
 	@Override
-	public List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QName qName) {
+	public List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QNamePattern qName) {
 		List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, qName);
 		List<NodeRef> listItems = new LinkedList<NodeRef>();
 		for (AssociationRef assocRef : assocRefs) {

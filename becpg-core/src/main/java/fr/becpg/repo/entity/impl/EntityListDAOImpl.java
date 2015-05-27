@@ -197,27 +197,30 @@ public class EntityListDAOImpl implements EntityListDAO {
 	}
 
 	@Override
-	public List<NodeRef> getListItems(final NodeRef listNodeRef, final QName listQNameFilter) {
-
-		
+	public List<NodeRef> getListItems(NodeRef dataListNodeRef, QName dataType) {
 
 		Map<String, Boolean> sortMap = new LinkedHashMap<String, Boolean>();
 		sortMap.put("@bcpg:sort", true);
 		sortMap.put("@cm:created", true);
 
+		return getListItems(dataListNodeRef, dataType, sortMap);
+	}
+
+	@Override
+	public List<NodeRef> getListItems(final NodeRef listNodeRef, final QName listQNameFilter, Map<String, Boolean> sortMap) {
+
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().addSort(sortMap).parent(listNodeRef);
 
-		
-		if(listQNameFilter!=null){
+		if (listQNameFilter != null) {
 			Collection<QName> qnames = entityDictionaryService.getSubTypes(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 			for (QName qname : qnames) {
 				if (!qname.equals(listQNameFilter)) {
-	
+
 					if (logger.isDebugEnabled()) {
 						logger.debug("Add to ignore :" + qname);
 					}
 					queryBuilder.excludeType(qname);
-	
+
 				}
 			}
 		}
@@ -317,7 +320,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 							NodeRef existingListNodeRef = null;
 
-							if (name.startsWith(RepoConsts.WUSED_PREFIX)) {
+							if (name.startsWith(RepoConsts.WUSED_PREFIX) || name.startsWith(RepoConsts.CUSTOM_VIEW_PREFIX)) {
 								existingListNodeRef = getList(targetListContainerNodeRef, name);
 							} else {
 								existingListNodeRef = getList(targetListContainerNodeRef, listQName);

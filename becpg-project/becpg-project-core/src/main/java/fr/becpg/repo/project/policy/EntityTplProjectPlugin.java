@@ -19,6 +19,7 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityTplPlugin;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.project.ProjectService;
+import fr.becpg.repo.project.impl.ProjectHelper;
 import fr.becpg.repo.repository.RepositoryEntity;
 
 @Service
@@ -61,10 +62,19 @@ public class EntityTplProjectPlugin implements EntityTplPlugin {
 
 			// Deliverables
 			NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, ProjectModel.TYPE_DELIVERABLE_LIST);
-			if (listNodeRef != null) {
+			if (listNodeRef != null && nodeService.exists(listNodeRef)) {
 				List<NodeRef> listItems = entityListDAO.getListItems(listNodeRef, ProjectModel.TYPE_DELIVERABLE_LIST);
 				for (NodeRef listItem : listItems) {
 					updateDelieverableDocument(projectNodeRef, listItem);
+				}
+			}
+			
+			// Tasks
+			listNodeRef = entityListDAO.getList(listContainerNodeRef, ProjectModel.TYPE_TASK_LIST);
+			if (listNodeRef != null && nodeService.exists(listNodeRef)) {
+				List<NodeRef> listItems = entityListDAO.getListItems(listNodeRef, ProjectModel.TYPE_TASK_LIST);
+				for (NodeRef listItem : listItems) {					
+					nodeService.setProperties(listItem, ProjectHelper.resetProperties(ProjectModel.TYPE_TASK_LIST, nodeService.getProperties(listItem)));
 				}
 			}
 		}

@@ -145,13 +145,13 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 		ruleService.disableRules();
 		try {
 			logger.debug("OnDeleteNode cm:versionable " + childAssocRef.getChildRef() + " isNodeArchived: " + isNodeArchived);
-
-			if (isNodeArchived == false) {
-				// If we are perminantly deleting the node then we need to
-				// remove
-				// the associated version history
-				entityVersionService.deleteVersionHistory(childAssocRef.getChildRef());
-			}
+			// if (isNodeArchived == false) { //Move history under archive store
+			// instead
+			// If we are permanantly deleting the node then we need to
+			// remove
+			// the associated version history
+			entityVersionService.deleteVersionHistory(childAssocRef.getChildRef());
+			// }
 		} finally {
 			ruleService.enableRules();
 		}

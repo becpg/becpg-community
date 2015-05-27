@@ -144,6 +144,7 @@ public class SortableListPolicy extends AbstractBeCPGPolicy implements NodeServi
 		}
 	}	
 	
+	@Override
 	protected void doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 		
 		Set<NodeRef> deletedNodes = new HashSet<>();		

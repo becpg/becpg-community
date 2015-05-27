@@ -43,6 +43,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.DeliverableUrl;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.ProjectRepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
@@ -53,6 +54,7 @@ import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.ProjectWorkflowService;
 import fr.becpg.repo.project.data.ProjectData;
+import fr.becpg.repo.project.data.ProjectState;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 import fr.becpg.repo.project.data.projectList.DeliverableState;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
@@ -131,7 +133,7 @@ public class ProjectServiceImpl implements ProjectService {
 
 	@Override
 	public List<NodeRef> getTaskLegendList() {
-		return BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_TASK_LEGEND).addSort(BeCPGModel.PROP_SORT, true).list();
+		return BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_TASK_LEGEND).addSort(BeCPGModel.PROP_SORT, true).inDB().list();
 	}
 
 	@Override
@@ -279,18 +281,26 @@ public class ProjectServiceImpl implements ProjectService {
 
 				String assocQname = patternMatcher.group(1);
 				String replacement = "";
-				if ("nodeRef".equals(assocQname)) {
+				if (DeliverableUrl.NODEREF_URL_PARAM.equals(assocQname)) {
 					replacement += projectNodeRef;
 
 				} else {
-
-					List<AssociationRef> assocs = nodeService.getTargetAssocs(projectNodeRef, QName.createQName(assocQname, namespaceService));
+					String[] splitted = assocQname.split("\\|");
+					List<AssociationRef> assocs = nodeService.getTargetAssocs(projectNodeRef, QName.createQName(splitted[0], namespaceService));
 					if (assocs != null) {
 						for (AssociationRef assoc : assocs) {
 							if (replacement.length() > 0) {
 								replacement += ",";
 							}
-							replacement += assoc.getTargetRef();
+							if(splitted.length>1){
+								if(splitted[1].startsWith(DeliverableUrl.XPATH_URL_PREFIX)){
+									replacement += BeCPGQueryBuilder.createQuery().selectNodeByPath(assoc.getTargetRef(), splitted[1].substring(DeliverableUrl.XPATH_URL_PREFIX.length()));	
+								} else {
+									replacement += nodeService.getProperty(assoc.getTargetRef(), QName.createQName(splitted[1], namespaceService));
+								}
+							} else {
+								replacement += assoc.getTargetRef();
+							}
 						}
 					}
 
@@ -325,7 +335,7 @@ public class ProjectServiceImpl implements ProjectService {
 			List<NodeRef> nodeRefs = new ArrayList<NodeRef>(1);
 			nodeRefs.add(taskListNodeRef);
 
-			if (resourceNodeRef != null) {
+			if (resourceNodeRef != null && nodeService.exists(resourceNodeRef)) {
 				String authorityName = authorityDAO.getAuthorityName(resourceNodeRef);
 
 				if (authorityName != null && !isRoleAuhtority(authorityName)) {
@@ -376,6 +386,12 @@ public class ProjectServiceImpl implements ProjectService {
 
 		return associationService.getTargetAssoc(nodeRef, ProjectModel.ASSOC_TL_REFUSED_TASK_REF);
 
+	}
+
+	@Override
+	public Long getNbProjectsByLegend(NodeRef legendNodeRef) {
+		return BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_PROJECT).andPropEquals(ProjectModel.PROP_PROJECT_STATE, ProjectState.InProgress.toString())
+				.andPropEquals(ProjectModel.PROP_PROJECT_LEGENDS, legendNodeRef.toString()).inDB().count();
 	}
 
 }

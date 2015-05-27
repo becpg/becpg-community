@@ -107,12 +107,13 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 
 		visitReports(systemNodeRef);
 
-		createSystemGroups();
+		createSystemGroups(new String[]{ ProjectGroup.ProjectRoles.toString(), createRoleGroup(ContentModel.PROP_CREATOR),
+			createRoleGroup(ProjectModel.ASSOC_PROJECT_MANAGER) });
 
 		// MailTemplates
 		NodeRef emailsProject = visitFolder(BeCPGQueryBuilder.createQuery().selectNodeByPath(companyHome, EMAIL_TEMPLATES),
 				ProjectRepoConsts.PATH_EMAILS_PROJECT);
-		contentHelper.addFilesResources(emailsProject, "classpath:beCPG/mails/project/*.ftl");
+		contentHelper.addFilesResources(emailsProject, "classpath*:beCPG/mails/project/*.ftl");
 	}
 
 	/**
@@ -124,9 +125,6 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 
 		NodeRef entityTplsNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_ENTITY_TEMPLATES);
 
-		Set<String> subFolders = new HashSet<String>();
-		subFolders.add(RepoConsts.PATH_IMAGES);
-
 		// visit supplier
 		Set<QName> dataLists = new LinkedHashSet<QName>();
 		dataLists.add(ProjectModel.TYPE_TASK_LIST);
@@ -134,72 +132,82 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 		dataLists.add(ProjectModel.TYPE_SCORE_LIST);
 		dataLists.add(ProjectModel.TYPE_ACTIVITY_LIST);
 		dataLists.add(ProjectModel.TYPE_LOG_TIME_LIST);
-		NodeRef entityTplNodeRef = entityTplService.createEntityTpl(entityTplsNodeRef, ProjectModel.TYPE_PROJECT, true, dataLists, null);
+		dataLists.add(ProjectModel.TYPE_BUDGET_LIST);
+		dataLists.add(ProjectModel.TYPE_INVOICE_LIST);
+		dataLists.add(ProjectModel.TYPE_EXPENSE_LIST);
 
-		if (ruleService.getRules(entityTplNodeRef).isEmpty()) {
+		NodeRef entityTplNodeRef = entityTplService.createEntityTpl(entityTplsNodeRef, ProjectModel.TYPE_PROJECT,null, true, dataLists, null);
 
-			ActionCondition typeCondition = actionService.createActionCondition(IsSubTypeEvaluator.NAME);
-			typeCondition.setParameterValue(IsSubTypeEvaluator.PARAM_TYPE, BeCPGModel.TYPE_ENTITYLIST_ITEM);
-			typeCondition.setInvertCondition(true);
+		try {
 
-			Map<String, Serializable> params = new HashMap<String, Serializable>();
-			params.put(ProjectActivityActionExecuter.PARAM_ACTIVITY_EVENT, ActivityEvent.Create.toString());
-			CompositeAction compositeAction = actionService.createCompositeAction();
-			Action myAction = actionService.createAction(ProjectActivityActionExecuter.NAME, params);
-			compositeAction.addAction(myAction);
-			compositeAction.addActionCondition(typeCondition);
+			if (ruleService.getRules(entityTplNodeRef).isEmpty()) {
 
-			// Create Rule
-			Rule rule = new Rule();
-			rule.setTitle(I18NUtil.getMessage("project.activity.rule.inbound.title"));
-			rule.setDescription(I18NUtil.getMessage("project.activity.rule.inbound.description"));
-			rule.applyToChildren(true);
-			rule.setExecuteAsynchronously(false);
-			rule.setRuleDisabled(false);
-			rule.setRuleType(RuleType.INBOUND);
-			rule.setAction(compositeAction);
-			ruleService.saveRule(entityTplNodeRef, rule);
+				ActionCondition typeCondition = actionService.createActionCondition(IsSubTypeEvaluator.NAME);
+				typeCondition.setParameterValue(IsSubTypeEvaluator.PARAM_TYPE, BeCPGModel.TYPE_ENTITYLIST_ITEM);
+				typeCondition.setInvertCondition(true);
 
-			params.put(ProjectActivityActionExecuter.PARAM_ACTIVITY_EVENT, ActivityEvent.Update.toString());
-			compositeAction = actionService.createCompositeAction();
-			myAction = actionService.createAction(ProjectActivityActionExecuter.NAME, params);
-			typeCondition = actionService.createActionCondition(IsSubTypeEvaluator.NAME);
-			typeCondition.setParameterValue(IsSubTypeEvaluator.PARAM_TYPE, BeCPGModel.TYPE_ENTITYLIST_ITEM);
-			typeCondition.setInvertCondition(true);
-			compositeAction.addAction(myAction);
-			compositeAction.addActionCondition(typeCondition);
+				Map<String, Serializable> params = new HashMap<String, Serializable>();
+				params.put(ProjectActivityActionExecuter.PARAM_ACTIVITY_EVENT, ActivityEvent.Create.toString());
+				CompositeAction compositeAction = actionService.createCompositeAction();
+				Action myAction = actionService.createAction(ProjectActivityActionExecuter.NAME, params);
+				compositeAction.addAction(myAction);
+				compositeAction.addActionCondition(typeCondition);
 
-			// Update Rule
-			rule = new Rule();
-			rule.setTitle(I18NUtil.getMessage("project.activity.rule.update.title"));
-			rule.setDescription(I18NUtil.getMessage("project.activity.rule.update.description"));
-			rule.applyToChildren(true);
-			rule.setExecuteAsynchronously(false);
-			rule.setRuleDisabled(false);
-			rule.setRuleType(RuleType.UPDATE);
-			rule.setAction(compositeAction);
-			ruleService.saveRule(entityTplNodeRef, rule);
+				// Create Rule
+				Rule rule = new Rule();
+				rule.setTitle(I18NUtil.getMessage("project.activity.rule.inbound.title"));
+				rule.setDescription(I18NUtil.getMessage("project.activity.rule.inbound.description"));
+				rule.applyToChildren(true);
+				rule.setExecuteAsynchronously(false);
+				rule.setRuleDisabled(false);
+				rule.setRuleType(RuleType.INBOUND);
+				rule.setAction(compositeAction);
+				ruleService.saveRule(entityTplNodeRef, rule);
 
-			params.put(ProjectActivityActionExecuter.PARAM_ACTIVITY_EVENT, ActivityEvent.Delete.toString());
-			compositeAction = actionService.createCompositeAction();
-			myAction = actionService.createAction(ProjectActivityActionExecuter.NAME, params);
-			typeCondition = actionService.createActionCondition(IsSubTypeEvaluator.NAME);
-			typeCondition.setParameterValue(IsSubTypeEvaluator.PARAM_TYPE, BeCPGModel.TYPE_ENTITYLIST_ITEM);
-			typeCondition.setInvertCondition(true);
-			compositeAction.addAction(myAction);
-			compositeAction.addActionCondition(typeCondition);
+				params.put(ProjectActivityActionExecuter.PARAM_ACTIVITY_EVENT, ActivityEvent.Update.toString());
+				compositeAction = actionService.createCompositeAction();
+				myAction = actionService.createAction(ProjectActivityActionExecuter.NAME, params);
+				typeCondition = actionService.createActionCondition(IsSubTypeEvaluator.NAME);
+				typeCondition.setParameterValue(IsSubTypeEvaluator.PARAM_TYPE, BeCPGModel.TYPE_ENTITYLIST_ITEM);
+				typeCondition.setInvertCondition(true);
+				compositeAction.addAction(myAction);
+				compositeAction.addActionCondition(typeCondition);
 
-			// Delete Rule
-			rule = new Rule();
-			rule.setTitle(I18NUtil.getMessage("project.activity.rule.outbound.title"));
-			rule.setDescription(I18NUtil.getMessage("project.activity.rule.outbound.description"));
-			rule.applyToChildren(true);
-			rule.setExecuteAsynchronously(false);
-			rule.setRuleDisabled(false);
-			rule.setRuleType(RuleType.OUTBOUND);
-			rule.setAction(compositeAction);
-			ruleService.saveRule(entityTplNodeRef, rule);
+				// Update Rule
+				rule = new Rule();
+				rule.setTitle(I18NUtil.getMessage("project.activity.rule.update.title"));
+				rule.setDescription(I18NUtil.getMessage("project.activity.rule.update.description"));
+				rule.applyToChildren(true);
+				rule.setExecuteAsynchronously(false);
+				rule.setRuleDisabled(false);
+				rule.setRuleType(RuleType.UPDATE);
+				rule.setAction(compositeAction);
+				ruleService.saveRule(entityTplNodeRef, rule);
 
+				params.put(ProjectActivityActionExecuter.PARAM_ACTIVITY_EVENT, ActivityEvent.Delete.toString());
+				compositeAction = actionService.createCompositeAction();
+				myAction = actionService.createAction(ProjectActivityActionExecuter.NAME, params);
+				typeCondition = actionService.createActionCondition(IsSubTypeEvaluator.NAME);
+				typeCondition.setParameterValue(IsSubTypeEvaluator.PARAM_TYPE, BeCPGModel.TYPE_ENTITYLIST_ITEM);
+				typeCondition.setInvertCondition(true);
+				compositeAction.addAction(myAction);
+				compositeAction.addActionCondition(typeCondition);
+
+				// Delete Rule
+				rule = new Rule();
+				rule.setTitle(I18NUtil.getMessage("project.activity.rule.outbound.title"));
+				rule.setDescription(I18NUtil.getMessage("project.activity.rule.outbound.description"));
+				rule.applyToChildren(true);
+				rule.setExecuteAsynchronously(false);
+				rule.setRuleDisabled(false);
+				rule.setRuleType(RuleType.OUTBOUND);
+				rule.setAction(compositeAction);
+				ruleService.saveRule(entityTplNodeRef, rule);
+
+			}
+		} catch (Exception e) {
+			// TODO unit tests
+			logger.error(e, e);
 		}
 
 	}
@@ -250,38 +258,10 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 
 	}
 
-	private void createSystemGroups() {
+	private void createSystemGroups(String[] groups) {
 
-		String[] groups = { ProjectGroup.ProjectRoles.toString(), createRoleGroup(ContentModel.PROP_CREATOR),
-				createRoleGroup(ProjectModel.ASSOC_PROJECT_MANAGER) };
-
-		Set<String> zones = new HashSet<String>();
-		zones.add(AuthorityService.ZONE_APP_DEFAULT);
-		zones.add(AuthorityService.ZONE_APP_SHARE);
-		zones.add(AuthorityService.ZONE_AUTH_ALFRESCO);
-
-		for (String group : groups) {
-
-			logger.debug("group: " + group);
-			String groupName = I18NUtil.getMessage(String.format("%s.%s", LOCALIZATION_PFX_GROUP, group).toLowerCase(), Locale.getDefault());
-
-			if (!authorityService.authorityExists(PermissionService.GROUP_PREFIX + group)) {
-				logger.debug("create group: " + groupName);
-				authorityService.createAuthority(AuthorityType.GROUP, group, groupName, zones);
-			} else {
-				Set<String> zonesAdded = authorityService.getAuthorityZones(PermissionService.GROUP_PREFIX + group);
-				Set<String> zonesToAdd = new HashSet<String>();
-				for (String zone : zones)
-					if (!zonesAdded.contains(zone)) {
-						zonesToAdd.add(zone);
-					}
-
-				if (!zonesToAdd.isEmpty()) {
-					logger.debug("Add group to zone: " + groupName + " - " + zonesToAdd.toString());
-					authorityService.addAuthorityToZones(PermissionService.GROUP_PREFIX + group, zonesToAdd);
-				}
-			}
-		}
+          createGroups(groups);
+	
 
 		// Group hierarchy
 		Set<String> authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP, PermissionService.GROUP_PREFIX
@@ -296,7 +276,7 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 		}
 	}
 
-	private String createRoleGroup(QName qName) {
+	protected String createRoleGroup(QName qName) {
 		return ProjectRepoConsts.PROJECT_GROUP_PREFIX + qName.toPrefixString(namespaceService).replace(":", "_");
 	}
 
