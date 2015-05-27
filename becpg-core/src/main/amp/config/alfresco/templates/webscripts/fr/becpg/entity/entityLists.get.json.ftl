@@ -16,9 +16,9 @@
       "description": "${classdef.description!""}"
      },</#list>
      {
-	     "name":"WUsedList",
-	     "title":"${msg('entity-datalist-wused-title')}",
-	     "description":"${msg('entity-datalist-wused-description')}"
+	     "name":"CustomView",
+	     "title":"${msg('entity-datalist-customview-title')}",
+	     "description":"${msg('entity-datalist-customview-description')}"
      }
      ],
     </#if>

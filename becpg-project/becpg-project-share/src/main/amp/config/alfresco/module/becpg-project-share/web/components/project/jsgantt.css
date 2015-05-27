@@ -4,7 +4,7 @@
 }
 
 .projects .yui-gd .yui-u {
-	margin: none;
+	margin: 0;
 }
 
 .gdatehead {
@@ -71,10 +71,16 @@ tr.gheader {
 	padding: 0px;
 	overflow: hidden;
 	border: 0px;
-	zIndex: 0;
+	z-index: 0;
 	background-color: red;
 	visibility: visible;
 }
+
+td.ggtaskCheckbox {
+	width: 16px;
+	padding:2px!important;
+}
+
 
 .ggtask {
 	background: none repeat scroll 0 0 #FFBC00;
@@ -119,7 +125,7 @@ tr.ggroup {
 	height: 23px;
 }
 
-tr.ggroup.highlight, tr.grow.highlight {
+tr.ggroup.highlight, tr.grow.highlight, tr.gweekend.highlight {
 	background-color: #ffffaa;
 }
 
@@ -151,18 +157,34 @@ div.scroll {
 }
 
 .projects div.milestone {
-	height: 16px;
+	/* height: 16px;
 	width: 16px;
 	overflow: hidden;
 	background: url(../images/filetypes/generic-task-milestone-16.png)
-		no-repeat;
+		no-repeat; */
+	-ms-transform: rotate(45deg); 
+	-moz-transform: rotate(45deg); 
+	-webkit-transform: rotate(45deg); 
+	-o-transform: rotate(45deg);
+	margin:2px;
+	height: 11px; 
+	width:11px;	
+		
 }
 
 .projects div.completed.milestone {
-	height: 16px;
+	/* height: 16px;
 	width: 16px;
 	overflow: hidden;
 	background:
 		url(../images/filetypes/generic-task-milestone-completed-16.png)
-		no-repeat;
+		no-repeat; */
+	-ms-transform: rotate(45deg); 
+	-moz-transform: rotate(45deg); 
+	-webkit-transform: rotate(45deg); 
+	-o-transform: rotate(45deg);
+	margin:2px;
+	height: 11px; 
+	width:11px;	
+	background-image: url("../../themes/default/images/title-button-bg.png");
 }

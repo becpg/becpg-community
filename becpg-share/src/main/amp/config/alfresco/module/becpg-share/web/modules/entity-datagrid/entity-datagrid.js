@@ -1243,7 +1243,7 @@
                          * @method _setupDataTable
                          * @protected
                          */
-                        _setupDataTable : function EntityDataGrid__setupDataTable(columns)
+                        _setupDataTable : function EntityDataGrid__setupDataTable()
                         {
 
                             var me = this;

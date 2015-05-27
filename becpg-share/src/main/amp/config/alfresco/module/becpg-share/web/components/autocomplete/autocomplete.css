@@ -166,13 +166,13 @@ stickers
 
 .yui-skin-default .yui-ac  .ac-footer  a.yui-pg-first:link,.yui-skin-default a.yui-pg-first:visited,.yui-skin-default a.yui-pg-first:active,.yui-skin-default a.yui-pg-first:hover,.yui-skin-default a.yui-pg-previous:link,.yui-skin-default a.yui-pg-previous:visited,.yui-skin-default a.yui-pg-previous:active,.yui-skin-default a.yui-pg-previous:hover,.yui-skin-default a.yui-pg-next:link,.yui-skin-default a.yui-pg-next:visited,.yui-skin-default a.yui-pg-next:active,.yui-skin-default a.yui-pg-next:hover,.yui-skin-default a.yui-pg-last:link,.yui-skin-default a.yui-pg-last:visited,.yui-skin-default a.yui-pg-last:active,.yui-skin-default a.yui-pg-last:hover,.yui-skin-default a.yui-pg-page:link,.yui-skin-default a.yui-pg-page:visited,.yui-skin-default a.yui-pg-page:active,.yui-skin-default a.yui-pg-page:hover
 	{
-	color: #grey;
+	color: grey;
 	outline: 0 none;
 	text-decoration: none;
 }
 
 .yui-skin-default  .yui-ac  .ac-footer  a.yui-pg-first:link, .yui-skin-default a.yui-pg-first:visited, .yui-skin-default a.yui-pg-first:active, .yui-skin-default a.yui-pg-first:hover, .yui-skin-default a.yui-pg-previous:link, .yui-skin-default a.yui-pg-previous:visited, .yui-skin-default a.yui-pg-previous:active, .yui-skin-default a.yui-pg-previous:hover, .yui-skin-default a.yui-pg-next:link, .yui-skin-default a.yui-pg-next:visited, .yui-skin-default a.yui-pg-next:active, .yui-skin-default a.yui-pg-next:hover, .yui-skin-default a.yui-pg-last:link, .yui-skin-default a.yui-pg-last:visited, .yui-skin-default a.yui-pg-last:active, .yui-skin-default a.yui-pg-last:hover, .yui-skin-default a.yui-pg-page:link, .yui-skin-default a.yui-pg-page:visited, .yui-skin-default a.yui-pg-page:active, .yui-skin-default a.yui-pg-page:hover {
-    color: #grey;
+    color: grey;
     outline: 0 none;
     text-decoration: none;
 }
