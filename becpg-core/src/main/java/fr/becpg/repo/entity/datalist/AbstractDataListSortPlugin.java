@@ -17,8 +17,11 @@
  ******************************************************************************/
 package fr.becpg.repo.entity.datalist;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 
 public abstract class AbstractDataListSortPlugin implements DataListSortPlugin {
@@ -27,6 +30,7 @@ public abstract class AbstractDataListSortPlugin implements DataListSortPlugin {
 	protected static final int EQUAL = 0;
 	protected static final int AFTER = 1;
 	
+	@Autowired
 	protected DataListSortRegistry dataListSortRegistry;
 	
 	protected Log logger = LogFactory.getLog(getClass());
@@ -35,6 +39,7 @@ public abstract class AbstractDataListSortPlugin implements DataListSortPlugin {
 		this.dataListSortRegistry = dataListSortRegistry;
 	}
 
+	@PostConstruct
 	public void init(){
 		dataListSortRegistry.addPlugin(this);
 	}

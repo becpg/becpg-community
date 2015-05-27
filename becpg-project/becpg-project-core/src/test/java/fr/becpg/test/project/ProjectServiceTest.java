@@ -545,7 +545,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 
 		createProject(ProjectState.InProgress, null, null);
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<String>() {
+		final String workflowInstance =  transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<String>() {
 			@Override
 			public String execute() throws Throwable {
 
@@ -557,7 +557,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 				assertEquals(TaskState.InProgress, projectData.getTaskList().get(0).getTaskState());
 				assertEquals(DeliverableState.InProgress, projectData.getDeliverableList().get(0).getState());
 
-				return null;
+				return projectData.getTaskList().get(0).getWorkflowInstance();
 			}
 
 		}, false, true);
@@ -572,11 +572,12 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 				
 				// check
 				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(copiedProjectNodeRef);
-				assertEquals(ProjectState.Planned, projectData.getProjectState());				
-				assertEquals(TaskState.Planned, projectData.getTaskList().get(0).getTaskState());
-				assertNull(projectData.getTaskList().get(0).getWorkflowInstance());
-				assertEquals(DeliverableState.Planned, projectData.getDeliverableList().get(0).getState());
-				
+				assertEquals(ProjectState.InProgress, projectData.getProjectState());
+				assertNotSame("", projectData.getTaskList().get(0).getWorkflowInstance());
+				assertNotSame(workflowInstance, projectData.getTaskList().get(0).getWorkflowInstance());				
+				assertTrue(projectWorkflowService.isWorkflowActive(projectData.getTaskList().get(0)));
+				assertEquals(TaskState.InProgress, projectData.getTaskList().get(0).getTaskState());
+				assertEquals(DeliverableState.InProgress, projectData.getDeliverableList().get(0).getState());
 				return null;
 				
 			}
