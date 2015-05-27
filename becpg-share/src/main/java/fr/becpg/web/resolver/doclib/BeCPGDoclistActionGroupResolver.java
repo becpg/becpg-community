@@ -83,7 +83,7 @@ public class BeCPGDoclistActionGroupResolver implements DoclistActionGroupResolv
 	 *            ApplicationScriptUtils class.
 	 * @return JSONArray containing aspects on the node
 	 */
-	public final JSONArray getNodeAspects(JSONObject jsonObject) {
+	private final JSONArray getNodeAspects(JSONObject jsonObject) {
 		JSONArray aspects = null;
 
 		try {

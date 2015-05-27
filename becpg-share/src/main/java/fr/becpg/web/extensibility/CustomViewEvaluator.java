@@ -27,7 +27,7 @@ import org.springframework.extensions.surf.extensibility.impl.DefaultSubComponen
  * @author matthieu
  *
  */
-public class UrlParamsEvaluator extends DefaultSubComponentEvaluator
+public class CustomViewEvaluator extends DefaultSubComponentEvaluator
 {
 	
 	
@@ -41,14 +41,10 @@ public class UrlParamsEvaluator extends DefaultSubComponentEvaluator
     @Override
     public boolean evaluate(RequestContext context, Map<String, String> params)
     {
-    	
-    	
-    	for(Map.Entry<String, String> param : params.entrySet() ){
-    		
-    		if(!param.getValue().equals(context.getParameter(param.getKey()))){
-    			return false;
-    		}
+    	if(context.getParameter("list")!=null && context.getParameter("list").indexOf("View-")==0){
+    		context.getAttributes().put("customview", context.getParameter("list").split("-")[1]);  
+    		return true; 
     	}
-        return true;
+        return false;
     }
 }
