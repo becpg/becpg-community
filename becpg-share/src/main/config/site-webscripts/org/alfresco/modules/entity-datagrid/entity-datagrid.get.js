@@ -5,12 +5,15 @@ function main(){
   
    parseActions();
    
+   model.filter = args.filter!=null ?args.filter!="false":false;
+   model.pagination = args.pagination!=null ?args.pagination!="false":false;
+   
    var entityDataGrid = {
          id : "entityDataGrid", 
          name : "beCPG.module.EntityDataGrid",
          options : {
-            usePagination:args.pagination!=null ?args.pagination!="false":false,
-            useFilter: args.filter!=null ?args.filter!="false":false ,
+            usePagination: model.pagination,
+            useFilter:  model.filter,
             entityNodeRef: args.nodeRef!=null ? args.nodeRef:"",
             postMethod : true,
             sortable : true,

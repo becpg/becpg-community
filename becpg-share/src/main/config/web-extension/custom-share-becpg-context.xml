@@ -47,6 +47,7 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 	<bean id="becpg.resolver.doclib.actionGroup" class="fr.becpg.web.resolver.doclib.BeCPGDoclistActionGroupResolver" />
 	<!-- evaluators -->
 	<bean id="evaluator.component.becpg.params.equal" class="fr.becpg.web.extensibility.UrlParamsEvaluator" />
+    <bean id="evaluator.component.becpg.custom.view" class="fr.becpg.web.extensibility.CustomViewEvaluator" />
 	<bean id="evaluator.becpg.doclib.action.entity" parent="evaluator.doclib.action.hasAspect">
 		<property name="aspects">
 			<list>

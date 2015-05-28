@@ -72,7 +72,7 @@
         <property name="id"><value>patch.bcpg.project.budgetPatch</value></property>
         <property name="description"><value>patch.bcpg.project.budgetPatch.description</value></property>
         <property name="fixesFromSchema" value="0"/>
-        <property name="fixesToSchema" value="8009" />
+        <property name="fixesToSchema" value="6033" />
         <property name="targetSchema" value="10160 "/>
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
@@ -95,7 +95,7 @@
         <property name="id"><value>patch.bcpg.project.taskDescPatch</value></property>
         <property name="description"><value>patch.bcpg.project.taskDescPatch.description</value></property>
         <property name="fixesFromSchema" value="0"/>
-        <property name="fixesToSchema" value="8009" />
+        <property name="fixesToSchema" value="6033" />
         <property name="targetSchema" value="10160 "/>
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>

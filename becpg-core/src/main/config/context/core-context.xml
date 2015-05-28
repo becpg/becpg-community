@@ -102,11 +102,10 @@
 		
 	</bean>	
 	
-	<bean id="parentValuePlugin" parent="baseListValuePlugin"
+	<bean id="parentValuePlugin" parent="entityListValuePlugin"
 		init-method="init" class="fr.becpg.repo.listvalue.impl.ParentValuePlugin">
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="associationService" ref="associationService" />
-		
 	</bean>	
 	
 

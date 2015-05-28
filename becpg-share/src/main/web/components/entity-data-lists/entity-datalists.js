@@ -479,22 +479,22 @@
 										Dom.removeClass(divs, selectedClass);
 										Dom.addClass(myDiv, selectedClass);
 										
-										if("WUsedList" == listType){
+										if("CustomView" == listType){
 											
 											var inputType =  Dom.get(formFieldId);
 											
 											var labelHtml = document.createElement('label');
-											labelHtml.id = me.id+'-wUsedLabel';
-											labelHtml.innerHTML = '<label  for="'+formFieldId+'">'+me.msg("label.wused.type.header")+'<span class="mandatory-indicator">*</span></label>';
+											labelHtml.id = me.id+'-CustomViewLabel';
+											labelHtml.innerHTML = '<label  for="'+formFieldId+'">'+me.msg("label.view.type.header")+'<span class="mandatory-indicator">(*)</span></label>';
 											
 											Dom.insertBefore(labelHtml,inputType);
 											
 											
 											var nameHtml = document.createElement('div');
-											nameHtml.id = me.id+'-wUsedName';
+											nameHtml.id = me.id+'-CustomViewName';
 											nameHtml.className = "form-field" 
-											nameHtml.innerHTML = '<label for="'+me.id+'-prop_cm_name">'+me.msg("label.wused.name")+':<span class="mandatory-indicator">*</span> </label>'+
-									         '<input type="text"  name="prop_cm_name" id="'+me.id+'-prop_cm_name" value="WUsed-" class="mandatory" >';
+											nameHtml.innerHTML = '<label for="'+me.id+'-prop_cm_name">'+me.msg("label.view.name")+':<span class="mandatory-indicator">*</span> </label>'+
+									         '<input type="text"  name="prop_cm_name" id="'+me.id+'-prop_cm_name"  class="mandatory" >';
 											
 											inputType.type= "text";
 											inputType.value = "";
@@ -502,13 +502,14 @@
 											Dom.insertAfter(nameHtml,inputType.parentNode);
 											
 											
-										} else {
+										}  else {
+										
 											
-											var element = document.getElementById(me.id+'-wUsedLabel');
+											var element = document.getElementById(me.id+'-CustomViewLabel');
 											if(element){
 												element.parentNode.removeChild(element);
 											}
-										    element = document.getElementById(me.id+'-wUsedName');
+										    element = document.getElementById(me.id+'-CustomViewName');
 										    if(element){
 												element.parentNode.removeChild(element);
 											}
