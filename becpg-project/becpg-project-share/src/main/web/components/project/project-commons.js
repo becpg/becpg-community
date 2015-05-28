@@ -312,7 +312,7 @@
 
             for (i in this.taskLegends) {
                if (this.taskLegends[i].id == id) {
-                  return this.taskLegends[i].color.replace('#','');;
+                  return this.taskLegends[i].color.replace('#','');
                }
             }
       	}
