@@ -167,6 +167,10 @@
 		<property name="nestedAdvSearchPlugin" ref="nestedAdvSearchPlugin"/>
 	</bean>
 
+	<bean id="multiListExtractor" class="fr.becpg.repo.entity.datalist.impl.MultiListExtractor" parent="simpleExtractor">
+		<property name="namespaceService" ref="namespaceService" />
+		<property name="defaultExtractor" value="false"/>
+	</bean>
 
 
 	<bean id="bulkEditExtractor" class="fr.becpg.repo.entity.datalist.impl.BulkEditExtractor" parent="simpleExtractor">
