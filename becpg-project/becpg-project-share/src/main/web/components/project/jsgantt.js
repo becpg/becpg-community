@@ -871,6 +871,18 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
          vShowDur = pShow;
       };
       /**
+       * Show/Hide duration column
+       * 
+       * @param pShow
+       *            {Number} 1=Show,0=Hide
+       * @method setShowDur
+       * @return {void}
+       */
+      this.setShowSelect = function(pShowSelect) {
+         vShowSelect = pShowSelect;
+      };
+      
+      /**
        * Show/Hide completed column
        * 
        * @param pShow
