@@ -92,7 +92,7 @@ var g = null; // uggly gantt var
     YAHOO.lang.augmentObject(beCPG.component.GanttView.prototype,
     {
 
-        view : "dataTable",
+        view : "gantt",
 
         taskLegends : [],
 

@@ -43,7 +43,7 @@
                     type : "checkbox",
                     title : instance.msg("button.toggle-gantt.description"),
                     container : divEl,
-                    checked : false
+                    checked : true
                 });
 
                 widget.on("checkedChange", function()
