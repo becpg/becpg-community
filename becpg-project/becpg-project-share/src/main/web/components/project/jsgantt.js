@@ -1263,6 +1263,8 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
        * @return {Void}
        */
       this.Draw = function() {
+          
+         try { 
          var vMaxDate = new Date();
          var vMinDate = new Date();
          var vTmpDate = new Date();
@@ -1792,27 +1794,28 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
                }
                
                
+               var vClass = "row";
                if (vTaskList[i].getMile()) {
-
-                  vRightTable += '<div><table style=" width: ' + vChartWidth + 'px;" cellSpacing="0" cellPadding="0" border="0">' + '<tbody class="yui-dt-data"><tr id="childrow_' + vcurrDivID + '" class="yesdisplay grow" style="" onMouseover="g.mouseOver(this,\'' + vcurrDivID + '\',\'right\',\'mile\')" onMouseout="g.mouseOut(this,\'' + vcurrDivID + '\',\'right\',\'mile\')">' + vItemRowStr + '</tr></tbody></table></div>';
+                   vClass="group";
+               } else  if (vTaskList[i].getGroup()) {
+                   vClass="mile"; 
+               }
+               
+   
+               vRightTable += '<div><table style="width: ' + vChartWidth + 'px;"><tbody class="yui-dt-data">' 
+                           + '<tr id="childrow_' + vcurrDivID + '" class="g'+ vClass +'" onMouseover="g.mouseOver(this,\'' 
+                           + vcurrDivID + '\',\'right\',\''+vClass+'\')" onMouseout="g.mouseOut(this,\'' 
+                           + vcurrDivID + '\',\'right\',\''+vClass+'\')">' 
+                           + vItemRowStr + '</tr></tbody></table></div>';
+    
+           
+               if (vTaskList[i].getMile()) {
 
                   // Build date string for Title
                   vDateRowStr = JSGantt.formatDateStr(vTaskStart, vDateDisplayFormat);
 
-                  vTaskRight = 1;
-
-                  vRightTable += '<div id="bardiv_' + vcurrDivID + '" style="position:absolute; top:3px; left:' + Math
-                        .ceil(vTaskLeft * (vDayWidth) + 1)  + 'px; height: 16px; width:266px; overflow:hidden;">' + '  <div id="taskbar_' + vcurrDivID + '" title="'+vDateRowStr + '"  class="milestone ' + (vTaskList[i]
-                        .getCompVal() < 100 ? "" : "completed") + '" style="background-color:#' + vTaskList[i].getColor() + ';">';
-
-
-                  vRightTable += '&nbsp;</div>';
-
-                  if (g.getCaptionType()) {
-                     vRightTable += '<div style="font-size:12px; position:absolute; top:0px; width:250px; left:20px">' + vCaptionStr + '</div>';
-                  }
-
-                  vRightTable += '</div>';
+                  vRightTable += this.renderMile(vcurrDivID,vTaskLeft,vTaskRight,vDayWidth,vDateRowStr, vCaptionStr,vTaskList[i]);
+                
 
                } else {
 
@@ -1820,75 +1823,50 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
                   vDateRowStr = JSGantt.formatDateStr(vTaskStart, vDateDisplayFormat) + ' - ' + JSGantt.formatDateStr(
                         vTaskEnd, vDateDisplayFormat);
 
-
                   // Draw Group Bar which has outer div with inner group div and
                   // several small divs to left and right to create angled-end
                   // indicators
                   if (vTaskList[i].getGroup()) {
                   
-                      var m = 0,milesDiv = "",vTaskLeftCustom=0,vDateRowStrCustom="";	
+                      var m = 0, milesDiv = "", vTaskLeftCustom = 0, vDateRowStrCustom = "";	
                       
-                     //if(vTaskList[i].getOpen() != 1){
-    					  for (m = i+1; m < vTaskList.length; m++){	
-     							if (!vTaskList[m].getGroup() && vTaskList[m].getMile() && vTaskList[m].getParent() == vcurrDivID) {
-     							   if (vFormat == 'minute') {
-     							      vTaskLeftCustom = Math.ceil((vTaskList[m].getStart().getTime() - vMinDate.getTime()) / (60 * 1000));
-     				                } else if (vFormat == 'hour') {
-     				                   vTaskLeftCustom = (vTaskList[m].getStart().getTime() - vMinDate.getTime()) / (60 * 60 * 1000);
-     				                } else {
-     				                   vTaskLeftCustom = Math
-     				                         .ceil((vTaskList[m].getStart().getTime() - vMinDate.getTime()) / (24 * 60 * 60 * 1000));
-     				                }  
-     							  vDateRowStrCustom = JSGantt.formatDateStr(vTaskList[m].getStart(), vDateDisplayFormat);
-     	                          
-     	                           milesDiv  += '<div style="position:absolute;top:5px; left:'+
-     	                              Math.ceil(vTaskLeftCustom * (vDayWidth) + 1)+'px; z-index:1; background-color:#' 
-     	                               + vTaskList[m].getColor() + ';" title="'+vDateRowStrCustom+'" class="milestone" >&nbsp;</div>'; 										   
-     							}
-    						}
-                     //}
+					  for (m = i+1; m < vTaskList.length; m++){	
+ 							if (!vTaskList[m].getGroup() && vTaskList[m].getMile() && vTaskList[m].getParent() == vcurrDivID) {
+ 							   if (vFormat == 'minute') {
+ 							      vTaskLeftCustom = Math.ceil((vTaskList[m].getStart().getTime() - vMinDate.getTime()) / (60 * 1000));
+ 				                } else if (vFormat == 'hour') {
+ 				                   vTaskLeftCustom = (vTaskList[m].getStart().getTime() - vMinDate.getTime()) / (60 * 60 * 1000);
+ 				                } else {
+ 				                   vTaskLeftCustom = Math
+ 				                         .ceil((vTaskList[m].getStart().getTime() - vMinDate.getTime()) / (24 * 60 * 60 * 1000));
+ 				                }  
+ 							  vDateRowStrCustom = JSGantt.formatDateStr(vTaskList[m].getStart(), vDateDisplayFormat);
+ 	                          
+ 	                          milesDiv  += '<div style="position:absolute;top:5px; left:'+
+ 	                              Math.ceil(vTaskLeftCustom * (vDayWidth) + 1)+'px; z-index:1; background-color:#' 
+ 	                               + vTaskList[m].getColor() + ';" title="'+vDateRowStrCustom+'" class="milestone" >&nbsp;</div>'; 										   
+ 							}
+						}
+      
                   
-                  
-                     vRightTable += '<div><table style=" width: ' + vChartWidth + 'px;" cellSpacing="0" cellPadding="0" border="0"><tbody class="yui-dt-data">' + '<tr id="childrow_' + vcurrDivID + '" class="yesdisplay ggroup"   onMouseover=g.mouseOver(this,"' + vcurrDivID + '","right","group") onMouseout=g.mouseOut(this,"' + vcurrDivID + '","right","group")>' + milesDiv + vItemRowStr + '</tr></tbody></table></div>';
-                     vRightTable += '<div id="bardiv_' + vcurrDivID + '" style="position:absolute; top:8px; left:' + Math
-                           .ceil(vTaskLeft * (vDayWidth) - 1) + 'px; height: 7px; width:' + Math
-                           .ceil((vTaskRight) * (vDayWidth) - 1) + 'px">' + '<div id="taskbar_' + vcurrDivID + '" title="' + vDateRowStr + '" class="ggtask" style="width:' + Math
-                           .ceil((vTaskRight) * (vDayWidth) - 1) + 'px;">' + '<div class="ggcomplete" style="width:' + vTaskList[i]
-                           .getCompStr() + '" ></div></div>' ;
+                       vRightTable += milesDiv + this.renderGroup(vcurrDivID,vTaskLeft,vTaskRight,vDayWidth, vDateRowStr, vCaptionStr ,vTaskList[i] );
 
-                    
                   } else {
-
-                     vDivStr = '<div><table style="position:relative; top:0px; width: ' + vChartWidth + 'px;" cellSpacing=0 cellPadding=0 border=0><tbody class="yui-dt-data">' 
-                             + '<tr id="childrow_' + vcurrDivID + '" class="yesdisplay grow" onMouseover="g.mouseOver(this,\'' + vcurrDivID + '\',\'right\',\'row\')" onMouseout="g.mouseOut(this,\'' + vcurrDivID + '\',\'right\',\'row\')">' + vItemRowStr + '</tr></tbody></table></div>';
-                     vRightTable += vDivStr;
-
+                     
                      // Draw Task Bar which has outer div with enclosed colored
                      // bar
                      // div, and opaque completion div
-                     vRightTable += '<div id="bardiv_' + vcurrDivID + '" style="position:absolute; top:4px; left:' + Math
-                           .ceil(vTaskLeft * (vDayWidth) - 1) + 'px; height:18px; width:' + Math
-                           .ceil((vTaskRight) * (vDayWidth) - 1) + 'px">' + '<div id="taskbar_' + vcurrDivID + '" title="' + vDateRowStr + '" class="gtask" style="background-color:#' + vTaskList[i]
-                           .getColor() + '; height: 13px; width:' + Math.ceil((vTaskRight) * (vDayWidth) - 1) + 'px;opacity:0.9;"  >' + '<div class="gcomplete" style="width:' + vTaskList[i]
-                           .getCompStr() + ';">' + '</div>' + '</div>';
-
+                     vRightTable += this.renderTask(vcurrDivID,vTaskLeft,vTaskRight,vDayWidth, vDateRowStr, vCaptionStr,vTaskList[i] );
 
                   }
 
-                  
-                  if (g.getCaptionType()) {
-                      vRightTable += '<div style="font-size:12px; position:absolute; top:-3px; width:250px; left:' + (Math
-                            .ceil((vTaskRight) * (vDayWidth) - 1) + 6) + 'px">' + vCaptionStr + '</div>';
-                   }
-
-                   vRightTable += '</div>';
 
                }
-
-               vRightTable += '</div>';
+               vRightTable += '</div></div>';
 
             }
 
+            
             vMainTable += vRightTable + '</div></div>';
 
             vDiv.innerHTML = vMainTable;
@@ -1914,8 +1892,42 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
         
             
          this.scrollToY(vCurrPosY);
+         
+         } catch (e){
+             alert(e);
+         }
 
-      }; // this.draw
+      }; 
+      
+      
+      this.renderMile = function(vcurrDivID,vTaskLeft,vTaskRight,vDayWidth,vDateRowStr,vCaptionStr,vTask){
+          return '<div id="bardiv_' + vcurrDivID + '" style="position:absolute; top:3px; left:' + Math
+          .ceil(vTaskLeft * (vDayWidth) + 1)  + 'px; height: 16px; width:266px; overflow:hidden;">' + '  <div id="taskbar_' + vcurrDivID + '" title="'+vDateRowStr 
+          + '"  class="milestone ' + (vTask.getCompVal() < 100 ? "" : "completed") + '" style="background-color:#' + vTask.getColor() + ';">&nbsp;</div>'
+          + (( vCaptionStr!=null && vCaptionStr.length>0)?'<div class="gcaption" style="top:0px; left:20px">' + vCaptionStr + '</div>': '');
+         
+      };
+      
+      this.renderTask = function(vcurrDivID,vTaskLeft,vTaskRight,vDayWidth, vDateRowStr,vCaptionStr,vTask){
+         return  '<div id="bardiv_' + vcurrDivID + '" style="position:absolute; top:4px; left:' 
+          + Math.ceil(vTaskLeft * (vDayWidth) - 1) + 'px; height:18px; width:' 
+          + Math.ceil((vTaskRight) * (vDayWidth) - 1) + 'px">' + '<div id="taskbar_' + vcurrDivID + '" title="' + vDateRowStr 
+          + '" class="gtask" style="background-color:#' + vTask.getColor() + '; width:' + Math.ceil((vTaskRight) * (vDayWidth) - 1) + 'px;"  >' 
+          + '<div class="gcomplete" style="width:' + vTask.getCompStr() + ';">' + '</div>' + '</div>'
+          + (( vCaptionStr!=null && vCaptionStr.length>0)?'<div class="gcaption" style="top:-3px; left:'
+          +  (Math.ceil((vTaskRight) * (vDayWidth) - 1) + 6) + 'px">' + vCaptionStr + '</div>': '');
+         
+      };
+      
+      this.renderGroup = function(vcurrDivID,vTaskLeft,vTaskRight,vDayWidth, vDateRowStr,vCaptionStr ,vTask){
+          return '<div id="bardiv_' + vcurrDivID + '" style="position:absolute; top:8px; left:' 
+          + Math.ceil(vTaskLeft * (vDayWidth) - 1) + 'px; height: 7px; width:' 
+          + Math.ceil((vTaskRight) * (vDayWidth) - 1) + 'px">' + '<div id="taskbar_' + vcurrDivID + '" title="' + vDateRowStr + '" class="ggtask" style="width:' 
+          + Math.ceil((vTaskRight) * (vDayWidth) - 1) + 'px;">' 
+          + '<div class="ggcomplete" style="width:' + vTask.getCompStr() + '" ></div></div>'
+          + (( vCaptionStr!=null && vCaptionStr.length>0)?'<div class="gcaption" style="top:-3px; left:'
+          +  (Math.ceil((vTaskRight) * (vDayWidth) - 1) + 6) + 'px">' + vCaptionStr + '</div>': '');
+      };
       
       /**
        * Select nodeRef when checkbox click
