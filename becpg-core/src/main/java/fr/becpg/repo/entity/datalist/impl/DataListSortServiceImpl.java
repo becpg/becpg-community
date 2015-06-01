@@ -134,7 +134,9 @@ public class DataListSortServiceImpl implements DataListSortService {
 		}
 
 		NodeRef listContainer = nodeService.getPrimaryParent(selectedNodeRef).getParentRef();
-		insertAfter(dataType, listContainer, nodeRef, selectedNodeRef, new HashSet<NodeRef>());
+		if(nodeService.exists(listContainer)){
+			insertAfter(dataType, listContainer, nodeRef, selectedNodeRef, new HashSet<NodeRef>());
+		}
 	}
 
 	private void insertAfter(QName dataType, NodeRef listContainer, NodeRef siblingNode, NodeRef nodeRef, HashSet<NodeRef> pendingNodeRefs) {
@@ -398,15 +400,6 @@ public class DataListSortServiceImpl implements DataListSortService {
 			return null;
 		}
 
-		// List<AssociationRef> compoAssocRefs =
-		// nodeService.getTargetAssocs(nodeRef,
-		// BeCPGModel.ASSOC_COMPOLIST_PRODUCT);
-		// NodeRef part = compoAssocRefs!=null && !compoAssocRefs.isEmpty() ?
-		// (compoAssocRefs.get(0)).getTargetRef() : null;
-		//
-		// return part != null ? (String) nodeService.getProperty(part,
-		// ContentModel.PROP_NAME) : (String) nodeService.getProperty(nodeRef,
-		// ContentModel.PROP_NAME);
 		return (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
 	}
 
@@ -449,13 +442,12 @@ public class DataListSortServiceImpl implements DataListSortService {
 		if (destNodeRef == null) {
 			// cannot swap
 			logger.debug("Cannot swap.");
-		} else {
-
+		}
+		else{
 			/*
 			 * Calculate children lists first, then update sort otherwise we get
 			 * the second time all children
 			 */
-
 			NodeRef lastChild = getLastChild(dataType, nodeRef, listContainer, null, true);
 			Integer lastSort = (Integer) nodeService.getProperty(lastChild, BeCPGModel.PROP_SORT);
 
