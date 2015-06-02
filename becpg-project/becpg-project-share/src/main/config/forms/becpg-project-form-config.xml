@@ -593,6 +593,7 @@
 				<field-visibility>
 			 		<show id="pjt:tlTaskName" />					
 					<show id="pjt:tlPrevTasks"/>
+					<show id="bcpg:parentLevel" force="true" />
 					<show id="pjt:tlResources" />
 					<show id="pjt:tlState" />
 					<show id="pjt:tlDuration" />
@@ -605,6 +606,13 @@
 					<field id="pjt:tlPrevTasks">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
+							</control-param>
+							<control-param name="urlParamsToPass">itemId</control-param>
+						</control>
+					</field>
+					<field id="bcpg:parentLevel" >
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
 							</control-param>
 							<control-param name="urlParamsToPass">itemId</control-param>
