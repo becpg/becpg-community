@@ -36,6 +36,7 @@ import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.cmr.version.Version;
 import org.alfresco.service.cmr.version.VersionHistory;
 import org.alfresco.service.cmr.version.VersionService;
@@ -87,6 +88,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	protected static final String TAG_IMAGE = "image";
 	protected static final String PRODUCT_IMG_ID = "Img%d";
 	protected static final String ATTR_IMAGE_ID = "id";
+	protected static final String AVATAR_IMG_ID = "avatar";
 
 	/** The Constant VALUE_NULL. */
 	protected static final String VALUE_NULL = "";
@@ -122,6 +124,9 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	@Autowired
 	protected AssociationService associationService;
+	
+	@Autowired
+	protected PersonService personService;
 
 	@Autowired
 	protected RepositoryEntityDefReader<RepositoryEntity> repositoryEntityDefReader;
@@ -147,6 +152,8 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		// load images
 		Element imgsElt = entityElt.addElement(TAG_IMAGES);
 		extractEntityImages(entityNodeRef, imgsElt, images);
+		
+		loadCreator(entityNodeRef, entityElt, imgsElt, images);
 
 		// render data lists
 		Element dataListsElt = entityElt.addElement(TAG_DATALISTS);
@@ -161,23 +168,21 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		return ret;
 	}
 
-	protected int extractEntityImages(NodeRef entityNodeRef, Element imgsElt, Map<String, byte[]> images) {
+	protected void extractEntityImages(NodeRef entityNodeRef, Element imgsElt, Map<String, byte[]> images) {
 
 		int cnt = imgsElt.selectNodes(TAG_IMAGE) != null ? imgsElt.selectNodes(TAG_IMAGE).size() : 1;
 		NodeRef imagesFolderNodeRef = nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS,
 				TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
 		if (imagesFolderNodeRef != null) {
 			for (FileInfo fileInfo : fileFolderService.listFiles(imagesFolderNodeRef)) {
-				extractImage(fileInfo.getNodeRef(), cnt, imgsElt, images);
+				extractImage(fileInfo.getNodeRef(), String.format(PRODUCT_IMG_ID, cnt), imgsElt, images);
 				cnt++;
 			}
-		}
-
-		return cnt;
+		}				
 	}
 
-	protected void extractImage(NodeRef imgNodeRef, int cnt, Element imgsElt, Map<String, byte[]> images) {
-		String imgId = String.format(PRODUCT_IMG_ID, cnt);
+	protected void extractImage(NodeRef imgNodeRef, String imgId, Element imgsElt, Map<String, byte[]> images) {
+		
 		byte[] imageBytes = entityService.getImage(imgNodeRef);
 		if (imageBytes != null) {
 			Element imgElt = imgsElt.addElement(TAG_IMAGE);
@@ -392,4 +397,17 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		return EntityReportExtractorPriority.LOW;
 	}
 
+	private void loadCreator(NodeRef entityNodeRef, Element entityElt, Element imgsElt, Map<String, byte[]> images){		
+		String creator = (String)nodeService.getProperty(entityNodeRef, ContentModel.PROP_CREATOR);
+		if(creator != null){					
+			Element creatorElt = (Element) entityElt.selectSingleNode(ContentModel.PROP_CREATOR.getLocalName());
+			NodeRef creatorNodeRef = personService.getPerson(creator);
+			loadNodeAttributes(creatorNodeRef, creatorElt, true);
+			// extract avatar			
+			List<AssociationRef> avatorAssocs = nodeService.getTargetAssocs(creatorNodeRef, ContentModel.ASSOC_AVATAR);
+			if(!avatorAssocs.isEmpty()){
+				extractImage(avatorAssocs.get(0).getTargetRef(), AVATAR_IMG_ID, imgsElt, images);
+			}
+		}
+	}
 }
