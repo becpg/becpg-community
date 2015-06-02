@@ -201,7 +201,7 @@
                             else
                             {
 
-                                ret += '<span class="delivrable-status delivrable-status-' + deliverable.state + '">&nbsp;</span>';
+                                ret += '<span class="delivrable-status delivrable-status-' + deliverable.state + '">&nbsp;<a href=""></a></span>';
 
                                 var contents = deliverable.contents;
 
@@ -223,8 +223,8 @@
                                 ret += '<span class="node-' + deliverable.nodeRef + '|' + entityNodeRef + '">';
                                 if (!this.options.readOnly)
                                 {
-                                    ret += '<a class="theme-color-1 ' + TASK_EVENTCLASS + '" title="' + this
-                                            .msg("form.control.project-task.link.title.deliverable-edit") + '" >';
+                                    ret += '<a class="theme-color-1 ' + '" title="' + this
+                                            .msg("form.control.project-task.link.title.open-document") + '" href="' +contentUrl + '" >';
                                 }
                                 ret += deliverable.name;
                                 if (!this.options.readOnly)
@@ -238,13 +238,13 @@
                                     ret += '<span class="doc-url"><a title="' + this
                                             .msg("form.control.project-task.link.title.open-link") + '" href="' + url + '">' + '<img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/link-16.png" /></a></span>';
                                 }
-
+/*
                                 ret += '<span class="node-' + deliverable.nodeRef + '|' + entityNodeRef + '"><a class="task-comments ' + COMMENT_EVENTCLASS + '" title="' + this
                                         .msg("link.title.comment-task") + '" href="#" >';
                                 if (deliverable.commentCount)
                                 {
                                     ret += deliverable.commentCount;
-                                }
+                                }*/
                                 else
                                 {
                                     ret += "&nbsp;";
