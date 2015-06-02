@@ -795,7 +795,15 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
        */
       var  vShowSelect = 1;
       
-      
+      /**
+       * Factor to augment col width
+       * 
+       * @property vColWidthFactor
+       * @type Number
+       * @default 1
+       * @private
+       */
+      var vColWidthFactor = 1;
       /**
        * Date input format
        * 
@@ -881,7 +889,17 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
       this.setShowSelect = function(pShowSelect) {
          vShowSelect = pShowSelect;
       };
-      
+      /**
+       * Show/Hide duration column
+       * 
+       * @param pShow
+       *            {Number} 1=Show,0=Hide
+       * @method setShowDur
+       * @return {void}
+       */
+      this.setColWidthFactor = function(pColWidthFactor) {
+          vColWidthFactor = pColWidthFactor;
+      };
       /**
        * Show/Hide completed column
        * 
@@ -1302,26 +1320,22 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
             // based
             // on existing pWidth parameter
             if (vFormat == 'day') {
-               vColWidth = 22;
+               vColWidth = 22 * vColWidthFactor;
                vColUnit = 1;
             } else if (vFormat == 'week') {
-               vColWidth = 37;
+               vColWidth = 37 * vColWidthFactor;
                vColUnit = 7;
             } else if (vFormat == 'month') {
-               vColWidth = 37;
+               vColWidth = 37 * vColWidthFactor;
                vColUnit = 30;
             } else if (vFormat == 'quarter') {
-               vColWidth = 60;
+               vColWidth = 60 * vColWidthFactor;
                vColUnit = 90;
-            }
-
-            else if (vFormat == 'hour') {
-               vColWidth = 22;
+            }else if (vFormat == 'hour') {
+               vColWidth = 22 * vColWidthFactor;
                vColUnit = 1;
-            }
-
-            else if (vFormat == 'minute') {
-               vColWidth = 22;
+            } else if (vFormat == 'minute') {
+               vColWidth = 22 * vColWidthFactor;
                vColUnit = 1;
             }
 
@@ -1552,68 +1566,43 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
             vTmpDate.setFullYear(vMinDate.getFullYear(), vMinDate.getMonth(), vMinDate.getDate());
             vNxtDate.setFullYear(vMinDate.getFullYear(), vMinDate.getMonth(), vMinDate.getDate());
             vNumCols = 0;
+            
+          
 
             while (vTmpDate.getTime() <= vMaxDate.getTime()) {
+                var cssClass = "ghead" , vHeader = ""; 
+                
                if (vFormat == 'minute') {
 
                   if (vTmpDate.getMinutes() === 0) {
-                     vWeekdayColor = "ccccff";
+                      cssClass = "ghead current";
                      vCurrPosY = vColWidth * vNumCols;
-                  } else {
-                     vWeekdayColor = "ffffff";
-                  }
-                  vNumCols++;
-
-                  vDateRowStr += '<th class="ghead"   bgcolor=#' + vWeekdayColor + ' ><div style="width: ' + vColWidth + 'px">' + vTmpDate
-                        .getMinutes() + '</div></th>';
-                  vItemRowStr += '<td class="ghead"   bgcolor=#' + vWeekdayColor + ' ><div style="width: ' + vColWidth + 'px">&nbsp;&nbsp;</div></td>';
+                  } 
+                
+                  vHeader = vTmpDate.getMinutes();
                   vTmpDate.setMinutes(vTmpDate.getMinutes() + 1);
                }
 
                else if (vFormat == 'hour') {
 
                   if (vTmpDate.getHours() === 0) {
-                     vWeekdayColor = "ccccff";
+                      cssClass = "ghead current";
                      vCurrPosY = vColWidth * vNumCols;
-                  } else {
-                     vWeekdayColor = "ffffff";
                   }
-                  vNumCols++;
-
-                  vDateRowStr += '<th class="ghead"   bgcolor=#' + vWeekdayColor + ' ><div style="width: ' + vColWidth + 'px">' + vTmpDate
-                        .getHours() + '</div></th>';
-                  vItemRowStr += '<td class="ghead"   bgcolor=#' + vWeekdayColor + ' ><div style="width: ' + vColWidth + 'px">&nbsp;&nbsp;</div></td>';
+                  vHeader = vTmpDate.getHours();
                   vTmpDate.setHours(vTmpDate.getHours() + 1);
                }
-
                else if (vFormat == 'day') {
+                   
+                   if (vTmpDate.getDay() % 6 === 0) {
+                       cssClass = "gheadwkend";
+                   }
+                   
                   if (JSGantt.formatDateStr(vCurrDate, 'shortDate') == JSGantt.formatDateStr(vTmpDate, 'shortDate')) {
-                     vWeekdayColor = "F5FAFF";
-                     vWeekendColor = "9999ff";
-                     vWeekdayGColor = "bbbbff";
-                     vWeekendGColor = "8888ff";
+                      cssClass += " current";
                      vCurrPosY = vColWidth * vNumCols;
-                  } else {
-                     vWeekdayColor = "ffffff";
-                     vWeekendColor = "cfcfcf";
-                     vWeekdayGColor = "f3f3f3";
-                     vWeekendGColor = "c3c3c3";
                   }
-                  vNumCols++;
-
-                  if (vTmpDate.getDay() % 6 === 0) {
-                     vDateRowStr += '<th class="gheadwkend"  bgcolor=#' + vWeekendColor + ' ><div style="width: ' + vColWidth + 'px"><center>' + vTmpDate
-                           .getDate() + '</center></div></th>';
-                     vItemRowStr += '<td class="gheadwkend"  bgcolor=#' + vWeekendColor + ' ><div style="width: ' + vColWidth + 'px">&nbsp;</div></td>';
-                  } else {
-                     vDateRowStr += '<th class="ghead"   bgcolor=#' + vWeekdayColor + ' ><div style="width: ' + vColWidth + 'px"><center>' + vTmpDate
-                           .getDate() + '</center></div></th>';
-                     if (JSGantt.formatDateStr(vCurrDate, 'shortDate') == JSGantt.formatDateStr(vTmpDate, 'shortDate'))
-                        vItemRowStr += '<td class="ghead"   bgcolor=#' + vWeekdayColor + ' ><div style="width: ' + vColWidth + 'px">&nbsp;&nbsp;</div></td>';
-                     else
-                        vItemRowStr += '<td class="ghead"  ><div style="width: ' + vColWidth + 'px">&nbsp;&nbsp;</div></td>';
-                  }
-
+                  vHeader = vTmpDate.getDate();
                   vTmpDate.setDate(vTmpDate.getDate() + 1);
 
                }
@@ -1621,64 +1610,22 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
                else if (vFormat == 'week') {
 
                   vNxtDate.setDate(vNxtDate.getDate() + 7);
-
                   if (vCurrDate >= vTmpDate && vCurrDate < vNxtDate) {
-                     vWeekdayColor = "ccccff";
+                      cssClass = "ghead current";
                      vCurrPosY = vColWidth * vNumCols;
-                  } else {
-                     vWeekdayColor = "ffffff";
                   }
-                  vNumCols++;
-
-                  if (vNxtDate <= vMaxDate) {
-                     vDateRowStr += '<th class="ghead"  bgcolor=#' + vWeekdayColor + '  width:' + vColWidth + 'px><div style="width: ' + vColWidth + 'px">' + vTmpDate
-                           .getDate() + '/' + (vTmpDate.getMonth() + 1) + '</div></th>';
-                     if (vCurrDate >= vTmpDate && vCurrDate < vNxtDate)
-                        vItemRowStr += '<td class="ghead"  bgcolor=#' + vWeekdayColor + ' ><div style="width: ' + vColWidth + 'px">&nbsp;&nbsp;</div></td>';
-                     else
-                        vItemRowStr += '<td class="ghead"  ><div style="width: ' + vColWidth + 'px">&nbsp&nbsp</div></td>';
-
-                  } else {
-                     vDateRowStr += '<th class="ghead"  bgcolor=#' + vWeekdayColor + '   width:' + vColWidth + 'px><div style="width: ' + vColWidth + 'px">' + (vTmpDate
-                           .getMonth() + 1) + '/' + vTmpDate.getDate() + '</div></th>';
-                     if (vCurrDate >= vTmpDate && vCurrDate < vNxtDate)
-                        vItemRowStr += '<td class="ghead" bgcolor=#' + vWeekdayColor + ' ><div style="width: ' + vColWidth + 'px">&nbsp;&nbsp;</div></td>';
-                     else
-                        vItemRowStr += '<td class="ghead"  ><div style="width: ' + vColWidth + 'px">&nbsp;&nbsp;</div></td>';
-
-                  }
-
+                  vHeader = vTmpDate.getDate() + '/' + (vTmpDate.getMonth() + 1);
                   vTmpDate.setDate(vTmpDate.getDate() + 7);
 
                }
-
                else if (vFormat == 'month') {
 
                   vNxtDate.setFullYear(vTmpDate.getFullYear(), vTmpDate.getMonth(), vMonthDaysArr[vTmpDate.getMonth()]);
                   if (vCurrDate >= vTmpDate && vCurrDate < vNxtDate) {
-                     vWeekdayColor = "ccccff";
+                      cssClass = "ghead current";
                      vCurrPosY = vColWidth * vNumCols;
-                  } else {
-                     vWeekdayColor = "ffffff";
                   }
-                  vNumCols++;
-
-                  if (vNxtDate <= vMaxDate) {
-                     vDateRowStr += '<th class="ghead"  bgcolor=#' + vWeekdayColor + '  width:' + vColWidth + 'px><div style="width: ' + vColWidth + 'px"><center>' + vMonthArr[vTmpDate
-                           .getMonth()].substr(0, 3) + '</center></div></th>';
-                     if (vCurrDate >= vTmpDate && vCurrDate < vNxtDate)
-                        vItemRowStr += '<td class="ghead"  bgcolor=#' + vWeekdayColor + ' ><div style="width: ' + vColWidth + 'px">&nbsp;&nbsp;</div></td>';
-                     else
-                        vItemRowStr += '<td class="ghead"  ><div style="width: ' + vColWidth + 'px">&nbsp;&nbsp;</div></td>';
-                  } else {
-                     vDateRowStr += '<th class="ghead"  bgcolor=#' + vWeekdayColor + '  width:' + vColWidth + 'px><div style="width: ' + vColWidth + 'px"><center>' + vMonthArr[vTmpDate
-                           .getMonth()].substr(0, 3) + '</center></div></th>';
-                     if (vCurrDate >= vTmpDate && vCurrDate < vNxtDate)
-                        vItemRowStr += '<td class="ghead"  bgcolor=#' + vWeekdayColor + ' ><div style="width: ' + vColWidth + 'px">&nbsp;&nbsp;</div></td>';
-                     else
-                        vItemRowStr += '<td class="ghead" ><div style="width: ' + vColWidth + 'px">&nbsp;&nbsp;</div></td>';
-                  }
-
+                  vHeader = vMonthArr[vTmpDate.getMonth()].substr(0, 3);
                   vTmpDate.setDate(vTmpDate.getDate() + 1);
 
                   while (vTmpDate.getDate() > 1) {
@@ -1700,36 +1647,21 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
                      vNxtDate.setFullYear(vTmpDate.getFullYear(), 11, 31);
 
                   if (vCurrDate >= vTmpDate && vCurrDate < vNxtDate) {
-                     vWeekdayColor = "ccccff";
+                      cssClass = "ghead current";
                      vCurrPosY = vColWidth * vNumCols;
-                  } else {
-                     vWeekdayColor = "ffffff";
-                  }
-                  vNumCols++;
-
-                  if (vNxtDate <= vMaxDate) {
-                     vDateRowStr += '<th class="ghead"  bgcolor=#' + vWeekdayColor + '  width:' + vColWidth + 'px><div style="width: ' + vColWidth + 'px"><center>Qtr. ' + vQuarterArr[vTmpDate
-                           .getMonth()] + '</center></div></th>';
-                     if (vCurrDate >= vTmpDate && vCurrDate < vNxtDate)
-                        vItemRowStr += '<td class="ghead"  bgcolor=#' + vWeekdayColor + ' ><div style="width: ' + vColWidth + 'px">&nbsp;&nbsp;</div></td>';
-                     else
-                        vItemRowStr += '<td class="ghead"  ><div style="width: ' + vColWidth + 'px">&nbsp&nbsp</div></th>';
-                  } else {
-                     vDateRowStr += '<th class="ghead"  bgcolor=#' + vWeekdayColor + '  width:' + vColWidth + 'px><div style="width: ' + vColWidth + 'px"><center>Qtr. ' + vQuarterArr[vTmpDate
-                           .getMonth()] + '</center></div></th>';
-                     if (vCurrDate >= vTmpDate && vCurrDate < vNxtDate)
-                        vItemRowStr += '<td class="ghead"  bgcolor=#' + vWeekdayColor + ' ><div style="width: ' + vColWidth + 'px">&nbsp;&nbsp;</div></td>';
-                     else
-                        vItemRowStr += '<td class="ghead"  ><div style="width: ' + vColWidth + 'px">&nbsp;&nbsp;</div></td>';
                   }
 
+                  vHeader = 'Qtr. ' + vQuarterArr[vTmpDate.getMonth()];
                   vTmpDate.setDate(vTmpDate.getDate() + 81);
-
                   while (vTmpDate.getDate() > 1) {
                      vTmpDate.setDate(vTmpDate.getDate() + 1);
                   }
 
                }
+               
+               vDateRowStr += this.renderDateHeaderCell(cssClass, vColWidth, vHeader);
+               vItemRowStr += this.renderDateCell(cssClass,vColWidth);
+               vNumCols++;
 
             }
 
@@ -1796,9 +1728,9 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
                
                var vClass = "row";
                if (vTaskList[i].getMile()) {
-                   vClass="group";
+                   vClass="mile";
                } else  if (vTaskList[i].getGroup()) {
-                   vClass="mile"; 
+                   vClass="group"; 
                }
                
    
@@ -1814,7 +1746,7 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
                   // Build date string for Title
                   vDateRowStr = JSGantt.formatDateStr(vTaskStart, vDateDisplayFormat);
 
-                  vRightTable += this.renderMile(vcurrDivID,vTaskLeft,vTaskRight,vDayWidth,vDateRowStr, vCaptionStr,vTaskList[i]);
+                  vRightTable += this.renderMile(vcurrDivID,vTaskLeft,vTaskRight,vDayWidth,vColWidth,vDateRowStr, vCaptionStr,vTaskList[i]);
                 
 
                } else {
@@ -1849,14 +1781,14 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
 						}
       
                   
-                       vRightTable += milesDiv + this.renderGroup(vcurrDivID,vTaskLeft,vTaskRight,vDayWidth, vDateRowStr, vCaptionStr ,vTaskList[i] );
+                       vRightTable += milesDiv + this.renderGroup(vcurrDivID,vTaskLeft,vTaskRight,vDayWidth, vColWidth, vDateRowStr, vCaptionStr ,vTaskList[i] );
 
                   } else {
                      
                      // Draw Task Bar which has outer div with enclosed colored
                      // bar
                      // div, and opaque completion div
-                     vRightTable += this.renderTask(vcurrDivID,vTaskLeft,vTaskRight,vDayWidth, vDateRowStr, vCaptionStr,vTaskList[i] );
+                     vRightTable += this.renderTask(vcurrDivID,vTaskLeft,vTaskRight,vDayWidth, vColWidth, vDateRowStr, vCaptionStr,vTaskList[i] );
 
                   }
 
@@ -1900,7 +1832,7 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
       }; 
       
       
-      this.renderMile = function(vcurrDivID,vTaskLeft,vTaskRight,vDayWidth,vDateRowStr,vCaptionStr,vTask){
+      this.renderMile = function(vcurrDivID,vTaskLeft,vTaskRight,vDayWidth,vColWidth,vDateRowStr,vCaptionStr,vTask){
           return '<div id="bardiv_' + vcurrDivID + '" style="position:absolute; top:3px; left:' + Math
           .ceil(vTaskLeft * (vDayWidth) + 1)  + 'px; height: 16px; width:266px; overflow:hidden;">' + '  <div id="taskbar_' + vcurrDivID + '" title="'+vDateRowStr 
           + '"  class="milestone ' + (vTask.getCompVal() < 100 ? "" : "completed") + '" style="background-color:#' + vTask.getColor() + ';">&nbsp;</div>'
@@ -1908,7 +1840,7 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
          
       };
       
-      this.renderTask = function(vcurrDivID,vTaskLeft,vTaskRight,vDayWidth, vDateRowStr,vCaptionStr,vTask){
+      this.renderTask = function(vcurrDivID,vTaskLeft,vTaskRight,vDayWidth,vColWidth, vDateRowStr,vCaptionStr,vTask){
          return  '<div id="bardiv_' + vcurrDivID + '" style="position:absolute; top:4px; left:' 
           + Math.ceil(vTaskLeft * (vDayWidth) - 1) + 'px; height:18px; width:' 
           + Math.ceil((vTaskRight) * (vDayWidth) - 1) + 'px">' + '<div id="taskbar_' + vcurrDivID + '" title="' + vDateRowStr 
@@ -1919,7 +1851,7 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
          
       };
       
-      this.renderGroup = function(vcurrDivID,vTaskLeft,vTaskRight,vDayWidth, vDateRowStr,vCaptionStr ,vTask){
+      this.renderGroup = function(vcurrDivID,vTaskLeft,vTaskRight,vDayWidth,vColWidth, vDateRowStr,vCaptionStr ,vTask){
           return '<div id="bardiv_' + vcurrDivID + '" style="position:absolute; top:8px; left:' 
           + Math.ceil(vTaskLeft * (vDayWidth) - 1) + 'px; height: 7px; width:' 
           + Math.ceil((vTaskRight) * (vDayWidth) - 1) + 'px">' + '<div id="taskbar_' + vcurrDivID + '" title="' + vDateRowStr + '" class="ggtask" style="width:' 
@@ -1927,6 +1859,16 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
           + '<div class="ggcomplete" style="width:' + vTask.getCompStr() + '" ></div></div>'
           + (( vCaptionStr!=null && vCaptionStr.length>0)?'<div class="gcaption" style="top:-3px; left:'
           +  (Math.ceil((vTaskRight) * (vDayWidth) - 1) + 6) + 'px">' + vCaptionStr + '</div>': '');
+      };
+      
+      
+      this.renderDateHeaderCell = function(cssClass, vColWidth, vHeader){
+          return  '<th class="'+cssClass+'"  ><div style="width: ' + vColWidth + 'px">' + vHeader + '</div></th>';
+      };
+      
+      this.renderDateCell = function(cssClass, vColWidth){ 
+          return  '<td class="'+cssClass+'"  ><div style="width: ' + vColWidth + 'px">&nbsp;&nbsp;</div></td>';
+          
       };
       
       /**
