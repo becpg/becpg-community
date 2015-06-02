@@ -116,6 +116,8 @@ stickers
 	position: relative;
 	height: 16px;
 	width:16px;
+	display: block;
+    float: left;
 }
 
 /**
