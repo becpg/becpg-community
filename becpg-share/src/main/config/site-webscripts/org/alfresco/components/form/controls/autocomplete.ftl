@@ -27,8 +27,8 @@
       <div  class="yui-ac">
         <div id="${fieldHtmlId}-autocomplete" class="ac-body" <#if style??>style="${style}"</#if>>
         <span id="${fieldHtmlId}-toggle-autocomplete" class="ac-toogle" ></span>
-	         <#if field.repeating || field.dataType == 'noderef' >
-	         	<#if field.dataType != 'noderef' || field.repeating >
+	         <#if field.repeating || field.dataType == 'noderef' || field.control.params.parentMode?exists >
+	         	<#if field.dataType != 'noderef' || field.repeating || field.control.params.parentMode?exists >
 			 			<span id="${fieldHtmlId}-basket" class="viewmode-value current-values"></span>
 			 		</#if>
 			 		<input id="${fieldHtmlId}" type="text" name="-" tabindex="0"
@@ -49,7 +49,7 @@
          <span class="clear" ></span>
          </div>
          <div id="${fieldHtmlId}-container"></div>
-         <#if field.repeating ||  field.dataType == 'noderef'>
+         <#if field.repeating ||  field.dataType == 'noderef' || field.control.params.parentMode?exists>
         	<input type="hidden" id="${fieldHtmlId}-added" name="${field.name}" <#if field.value?is_number>value="${field.value?c}"<#else>value="${field.value?html}"</#if> />
          </#if>
       </div>
@@ -62,7 +62,12 @@
 			 		currentValue: "${field.value}",
 			 		mode: "${form.mode}",
 			 		readOnly : ${field.disabled?string},
+			<#if field.control.params.parentMode?exists>				 		
+                    multipleSelectMode:true,
+                    isParentMode : true,
+			<#else>
 			      multipleSelectMode: ${field.repeating?string}, 
+			</#if>
 			      isMandatory : ${field.mandatory?string},
 			 		dsStr:"${ds}"
 			<#if field.control.params.parent?exists>
