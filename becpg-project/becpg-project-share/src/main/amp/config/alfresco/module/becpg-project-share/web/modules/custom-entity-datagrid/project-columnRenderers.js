@@ -21,7 +21,7 @@ if (beCPG.module.EntityDataGridRenderers) {
     YAHOO.Bubbling.on("dirtyDataTable",function(event,args) {
         if (args && args.length >1) {
             var field = args[1].column.field;
-            if(field == "prop_pjt_tlState" || field == "prop_pjt_tlDuration" || field == "prop_pjt_tlWork") {
+            if(field == "prop_pjt_tlState" || field == "prop_pjt_tlDuration" || field == "prop_pjt_tlWork" || field == "prop_pjt_blBudgetedExpense" || field == "prop_pjt_blBudgetedInvoice") {
                 YAHOO.Bubbling.fire("refreshDataGrids", {updateOnly : true});
             }
         }    
@@ -126,5 +126,19 @@ if (beCPG.module.EntityDataGridRenderers) {
 	      }
 
 	   });
+   
+   YAHOO.Bubbling.fire("registerDataGridRenderer", {
+      propertyName : [ "pjt:tlRealDuration" ],
+      renderer : function(oRecord, data, label, scope) {
+      	
+      	var className = "";
+      	if (data.value && oRecord.getData("itemData")["prop_pjt_tlDuration"].value && data.value > oRecord.getData("itemData")["prop_pjt_tlDuration"].value) {
+      		className = "red";
+			}      	
+         
+         return '<span class="' + className + '" >' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+      }
+
+   });
    
 }

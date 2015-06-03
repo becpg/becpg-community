@@ -164,9 +164,15 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 			checkedProducts.add(productData.getNodeRef());
 
 			Set<CompositionDataItem> compositionDataItems = new HashSet<>();
-			compositionDataItems.addAll(productData.getCompoList());
-			compositionDataItems.addAll(productData.getPackagingList());
-			compositionDataItems.addAll(productData.getProcessList(EffectiveFilters.EFFECTIVE));
+			if(productData.getCompoList()!=null){
+				compositionDataItems.addAll(productData.getCompoList());
+			}
+			if(productData.getPackagingList()!=null){
+				compositionDataItems.addAll(productData.getPackagingList());
+			}
+			if(productData.getProcessList()!=null){
+				compositionDataItems.addAll(productData.getProcessList());
+			}
 
 			boolean shouldFormulate = false;
 			if (!compositionDataItems.isEmpty()) {				

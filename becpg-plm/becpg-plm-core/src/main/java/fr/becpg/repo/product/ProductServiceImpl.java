@@ -140,7 +140,7 @@ public class ProductServiceImpl implements ProductService {
 		productData.getCompoListView().setCompoList(CompositionLexer.lexMultiLine(recipe));
 		productData.getPackagingListView().setPackagingList(new ArrayList<PackagingListDataItem>());
 		
-		return formulationService.formulate(productData);    	
+		return formulate(productData);    	
     } 
   
 

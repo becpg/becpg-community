@@ -334,7 +334,7 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 
 	private DynamicCharactListItem getMatchingCharact(DynamicCharactListItem dynamicCharactListItem, List<DynamicCharactListItem> dynamicCharactList) {
 		for (DynamicCharactListItem tmp : dynamicCharactList) {
-			if (Objects.equals(tmp.getFormula(), dynamicCharactListItem.getFormula())) {
+			if (dynamicCharactListItem.getFormula()!=null && Objects.equals(tmp.getFormula(), dynamicCharactListItem.getFormula())) {
 				if (!Objects.equals(tmp.getValue(), dynamicCharactListItem.getValue())
 						|| (dynamicCharactListItem.getColumnName() != null && !dynamicCharactListItem.getColumnName().isEmpty() && Objects.equals(
 								dynamicCharactListItem.getColumnName(), tmp.getColumnName()))) {

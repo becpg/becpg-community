@@ -220,6 +220,7 @@
 				<list>
 					<value>kg</value>
 					<value>g</value>
+					<value>mg</value>
 					<value>L</value>
 					<value>mL</value>
 					<value>P</value>
@@ -716,7 +717,6 @@
 			<mandatory-aspects>
 				<aspect>bcpg:legalNameAspect</aspect>
 				<aspect>bcpg:sortableListAspect</aspect>
-				<aspect>bcpg:ingTypeAspect</aspect>
 			</mandatory-aspects>
 		</type>
 
@@ -728,6 +728,9 @@
 					<type>d:text</type>
 				</property>
 			</properties>
+			<mandatory-aspects>
+				<aspect>bcpg:ingTypeAspect</aspect>
+			</mandatory-aspects>
 		</type>
 
 		<type name="bcpg:microbio">
@@ -774,6 +777,11 @@
 					</constraints>
 				</property>
 				<property name="bcpg:nutGDA">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:nutUL">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="false" />
@@ -1929,7 +1937,6 @@
 				</property>
 				<property name="bcpg:dynamicCharactFormula">
 					<type>d:text</type>
-					<mandatory>true</mandatory>
 					<index enabled="false" />
 				</property>
 				<property name="bcpg:dynamicCharactErrorLog">
@@ -2437,6 +2444,12 @@
 		<aspect name="bcpg:eanAspect">
 			<properties>
 				<property name="bcpg:eanCode">
+					<type>d:text</type>
+				</property>
+				<property name="bcpg:eanCodeLevel2">
+					<type>d:text</type>
+				</property>
+				<property name="bcpg:eanCodeLevel3">
 					<type>d:text</type>
 				</property>
 			</properties>

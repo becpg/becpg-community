@@ -482,6 +482,7 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 		checks = 0;
 		String message1 = I18NUtil.getMessage(AbstractSimpleListFormulationHandler.MESSAGE_MISSING_MANDATORY_CHARACT, nodeService.getProperty(nut3, ContentModel.PROP_NAME));
 		logger.info(message1);
+		String message2 = I18NUtil.getMessage(NutsCalculatingFormulationHandler.MESSAGE_MAXIMAL_DAILY_VALUE, nodeService.getProperty(nut3, ContentModel.PROP_NAME));
 		logger.info(formulatedProduct.getCompoListView().getReqCtrlList().size());
 		for (ReqCtrlListDataItem r : formulatedProduct.getCompoListView().getReqCtrlList()) {
 
@@ -492,8 +493,12 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 				assertEquals(rawMaterial4NodeRef, r.getSources().get(0));
 				checks++;
 			}
+			else if (message2.equals(r.getReqMessage()) ) {
+				assertEquals(0, r.getSources().size());
+				checks++;
+			}
 		}
-		assertEquals(1, checks);
+		assertEquals(2, checks);
 
 		// Claim label list
 		checks = 0;

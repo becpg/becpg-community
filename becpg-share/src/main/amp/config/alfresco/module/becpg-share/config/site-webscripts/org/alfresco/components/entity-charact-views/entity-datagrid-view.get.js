@@ -7,6 +7,9 @@ function main()
 	model.listName = page.url.args.list;
    }
 	
+   model.pagination = args.pagination!=null ? args.pagination!="false" : false;
+   model.filter = args.filter!=null ? args.filter!="false" : false;
+   
    parseActions(model.listName);
 
    //Widget instantiation metadata...
@@ -15,8 +18,8 @@ function main()
     name : "beCPG.module.EntityDataGrid",
     options : {
        siteId : (page.url.templateArgs.site != null) ? page.url.templateArgs.site : "",
-       usePagination: args.pagination!=null ? args.pagination!="false" : false,
-       useFilter: args.filter!=null ? args.filter!="false" : false,
+       usePagination: model.pagination,
+       useFilter: model.filter,
        entityNodeRef: page.url.args.nodeRef!=null ?page.url.args.nodeRef : "",
        list:  model.listName!=null ? model.listName : "",
        sortable : true,

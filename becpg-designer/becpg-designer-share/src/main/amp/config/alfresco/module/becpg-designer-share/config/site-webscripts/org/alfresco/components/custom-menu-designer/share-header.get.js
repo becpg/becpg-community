@@ -7,7 +7,7 @@ if(user.isAdmin){
    if (beCPGMenu != null) {
      
        var beCPGAdminMenu  =   widgetUtils.findObject(model.jsonModel, "id", "HEADER_ADMIN_BECPG");
-       if(beCPGAdminMenu!=null){
+       if(beCPGAdminMenu){
            beCPGAdminMenu.config.widgets.push ( {
              name : "alfresco/header/AlfMenuItem",
              config : {

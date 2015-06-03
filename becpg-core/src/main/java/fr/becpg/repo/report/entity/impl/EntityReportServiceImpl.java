@@ -157,7 +157,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 						return transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, false, false);
 					}
 				};
-				AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getSystemUserName());
+				AuthenticationUtil.runAsSystem(actionRunAs);
 			}
 		}, false, true);
 	}

@@ -46,7 +46,7 @@
 					<show id="pjt:projectWork" for-mode="view"/>
 					<show id="pjt:projectBudgetedCost" for-mode="view"/>
 					<show id="pjt:projectLoggedTime" for-mode="view"/>
-
+					
 					<!-- Model -->
 					<show id="bcpg:entityTplEnabled" />
 					<show id="bcpg:entityTplIsDefault" />
@@ -64,7 +64,7 @@
 				</field-visibility>
 				<appearance>
 					<set id="mainInfo" appearance="bordered-panel"
-						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />					
 					<set id="planning" appearance="bordered-panel"
 						label-id="becpg.forms.set.planning.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 				    <set id="template" appearance="bordered-panel" label-id="becpg.forms.set.template.label" />
@@ -124,8 +124,7 @@
 					<field id="pjt:projectOverdue" set="planning" />
 					<field id="pjt:projectWork" set="planning" />
 					<field id="pjt:projectBudgetedCost" set="planning" />
-					<field id="pjt:projectLoggedTime" set="planning" />		
-					
+					<field id="pjt:projectLoggedTime" set="planning" />												
 					
 					<field id="bcpg:entityTplEnabled" set="template" />
 					<field id="bcpg:entityTplIsDefault" set="template" />
@@ -215,8 +214,8 @@
 					<show id="bcpg:entityTplRef" force="true" />			
 					<show id="pjt:projectEntity" />
 					<show id="pjt:projectPriority" />
-					<show id="pjt:projectState" />										
-										
+					<show id="pjt:projectState" />							
+					
 					<show id="pjt:projectStartDate" />
 					<show id="pjt:projectDueDate" />
 					<show id="pjt:projectPlanningMode" />					
@@ -274,8 +273,8 @@
 							<control-param name="options">Planned|data.taskstate.planned,InProgress|data.taskstate.inprogress,OnHold|data.taskstate.onhold,Cancelled|data.taskstate.cancelled,Completed|data.taskstate.completed
 							</control-param>
 						</control>
-					</field>										
-					
+					</field>		
+																	
 					<field id="pjt:projectStartDate" set="planning" />
 					<field id="pjt:projectDueDate" set="planning" />
 					<field id="pjt:projectPlanningMode" set="planning" />
@@ -343,6 +342,7 @@
 					<show id="pjt:projectPriority" />
 					<show id="pjt:projectState" />														
 					<show id="pjt:projectStartDate" />
+					<show id="pjt:projectCompletionDate" />
 					<show id="pjt:projectDueDate" />
 					<show id="pjt:projectCurrentTasks" />					
 				</field-visibility>
@@ -431,7 +431,7 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="pjt:projectHierarchy2" set="mainInfo" >
+					<field id="pjt:projectHierarchy2" >
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProjectLists/bcpg:entityLists/project_Hierarchy
 							</control-param>
@@ -540,9 +540,10 @@
 					</field>	
 					<field id="bcpg:parentLevel" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
-							</control-param>
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName</control-param>
 							<control-param name="urlParamsToPass">itemId</control-param>
+							<control-param name="parent">bcpg_parentLevel</control-param>
+							<control-param name="parentMode">true</control-param>
 						</control>
 					</field>
 					<field id="pjt:tlRefusedTaskRef" set="mainInfo">
@@ -594,6 +595,7 @@
 				<field-visibility>
 			 		<show id="pjt:tlTaskName" />					
 					<show id="pjt:tlPrevTasks"/>
+					<show id="bcpg:parentLevel" force="true" />
 					<show id="pjt:tlResources" />
 					<show id="pjt:tlState" />
 					<show id="pjt:tlDuration" />
@@ -609,6 +611,14 @@
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
 							</control-param>
 							<control-param name="urlParamsToPass">itemId</control-param>
+						</control>
+					</field>
+					<field id="bcpg:parentLevel" >
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName</control-param>
+							<control-param name="urlParamsToPass">itemId</control-param>
+							<control-param name="parent">bcpg_parentLevel</control-param>
+							<control-param name="parentMode">true</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -654,8 +664,10 @@
 					</field>		
 					<field id="bcpg:parentLevel" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
-							</control-param>
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName</control-param>
+							<control-param name="urlParamsToPass">itemId</control-param>
+							<control-param name="parent">bcpg_parentLevel</control-param>
+							<control-param name="parentMode">true</control-param>
 						</control>
 					</field>
 					<field id="pjt:tlResources" set="mainInfo"/>					
@@ -710,8 +722,10 @@
 					</field>	
 					<field id="bcpg:parentLevel" >
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
-							</control-param>
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName</control-param>
+							<control-param name="urlParamsToPass">itemId</control-param>
+							<control-param name="parent">bcpg_parentLevel</control-param>
+							<control-param name="parentMode">true</control-param>
 						</control>
 					</field>
 					<field id="pjt:tlRefusedTaskRef" >
@@ -777,6 +791,7 @@
 					<show id="pjt:tlIsMilestone" />					
 					<show id="pjt:tlState" />
 					<show id="pjt:tlDuration" />
+					<show id="pjt:tlRealDuration" />
 					<show id="pjt:tlWork" />
 					<show id="pjt:tlCapacity" />
 					<show id="pjt:tlResources" />
@@ -800,6 +815,7 @@
 					<field id="pjt:tlIsMilestone" label="hidden" ></field>
 					<field id="pjt:tlStart" read-only="true"/>
 					<field id="pjt:tlEnd" read-only="true"/>
+					<field id="pjt:tlRealDuration" read-only="true"/>
 					<field id="pjt:tlCapacity" read-only="true"/>
 					<field id="pjt:tlBudgetedCost" read-only="true"/>
 					<field id="pjt:tlLoggedTime" read-only="true"/>

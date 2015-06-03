@@ -17,6 +17,7 @@ import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.hierarchy.HierarchicalEntity;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.TareUnit;
+import fr.becpg.repo.product.data.ing.IngTypeItem;
 import fr.becpg.repo.product.data.packaging.VariantPackagingData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -87,6 +88,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	 */
 	private Date formulatedDate;
 	private Integer reformulateCount;
+	private IngTypeItem ingType;
 	
 	
 	/*
@@ -272,6 +274,16 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		this.plants = plants;
 	}
 	
+	@AlfProp
+	@AlfQname(qname="bcpg:ingTypeV2")
+	public IngTypeItem getIngType() {
+		return ingType;
+	}
+
+	public void setIngType(IngTypeItem ingType) {
+		this.ingType = ingType;
+	}
+
 	public VariantPackagingData getDefaultVariantPackagingData() {
 		return defaultVariantPackagingData;
 	}

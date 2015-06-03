@@ -178,6 +178,8 @@ public interface PLMModel {
 	QName TYPE_ING = QName.createQName(BeCPGModel.BECPG_URI, "ing");
 	QName PROP_ING_CEECODE = QName.createQName(BeCPGModel.BECPG_URI, "ingCEECode");
 
+	QName PROP_ING_TYPE_ASPECT = QName.createQName(BeCPGModel.BECPG_URI, "ingTypeAspect");
+	
 	QName PROP_ING_TYPE_V2 = QName.createQName(BeCPGModel.BECPG_URI, "ingTypeV2");
 	QName TYPE_ING_TYPE_ITEM = QName.createQName(BeCPGModel.BECPG_URI, "ingTypeItem");
 	QName PROP_ING_TYPE_DEC_THRESHOLD = QName.createQName(BeCPGModel.BECPG_URI, "ingTypeDecThreshold");
@@ -200,6 +202,7 @@ public interface PLMModel {
 	QName PROP_NUTTYPE = QName.createQName(BeCPGModel.BECPG_URI, "nutType");
 	QName PROP_NUTUNIT = QName.createQName(BeCPGModel.BECPG_URI, "nutUnit");
 	QName PROP_NUTGDA = QName.createQName(BeCPGModel.BECPG_URI, "nutGDA");
+	QName PROP_NUTUL = QName.createQName(BeCPGModel.BECPG_URI, "nutUL");
 	QName PROP_NUT_FORMULA = QName.createQName(BeCPGModel.BECPG_URI, "nutFormula");
 
 	// organo

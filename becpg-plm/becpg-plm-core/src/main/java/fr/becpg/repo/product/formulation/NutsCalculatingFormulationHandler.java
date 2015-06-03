@@ -44,6 +44,8 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 	public static final String UNIT_PER100ML = "/100mL";
 
 	public static final String NUT_FORMULATED = I18NUtil.getMessage("message.formulate.nut.formulated");
+	
+	public static final String MESSAGE_MAXIMAL_DAILY_VALUE = "message.formulate.nut.maximalDailyValue";
 
 	private FormulaService formulaService;
 
@@ -99,6 +101,13 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 					Double gda = (Double) nodeService.getProperty(n.getNut(), PLMModel.PROP_NUTGDA);
 					if (gda != null && gda != 0d) {
 						n.setGdaPerc(100 * n.getValuePerServing() / gda);
+					}
+					Double ul = (Double) nodeService.getProperty(n.getNut(), PLMModel.PROP_NUTUL);
+					if (ul != null) {
+						if(valuePerserving > ul){
+							String message = I18NUtil.getMessage(MESSAGE_MAXIMAL_DAILY_VALUE, nodeService.getProperty(n.getNut(), ContentModel.PROP_NAME));
+							formulatedProduct.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, new ArrayList<NodeRef>()));
+						}
 					}
 				} else {
 					n.setValuePerServing(null);

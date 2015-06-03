@@ -72,8 +72,8 @@
                                                                      </tr>
                                                                      <tr>
                                                                         <td>
-                                                                           <a href="${shareUrl}/page/entity-data-lists?list=activityList&nodeRef=${args.project.nodeRef}">
-                                                                           ${shareUrl}/page/entity-data-lists?list=activityList&nodeRef=${args.project.nodeRef}</a>
+                                                                           <a href="${shareUrl}/page/entity-data-lists?list=taskList&nodeRef=${args.project.nodeRef}">
+                                                                           ${shareUrl}/page/entity-data-lists?list=taskList&nodeRef=${args.project.nodeRef}</a>
                                                                         </td>
                                                                      </tr>                                                                         
                                                                   </table>

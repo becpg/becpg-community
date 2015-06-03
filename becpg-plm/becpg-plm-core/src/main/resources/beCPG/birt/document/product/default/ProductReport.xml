@@ -105,7 +105,7 @@ Après décongélation, à conserver au réfrigérateur et à consommer dans la 
 	</categories>
 	<reports prefix="rep"><![CDATA[900mL Adélie vanille pécan caramel E1 - Fiche Technique Client.pdf, 900mL Adélie vanille pécan caramel E1 - Fiche Technique Production.pdf, 900mL Adélie vanille pécan caramel E1 - FT Origines MP.pdf, 900mL Adélie vanille pécan caramel E1 - Fiche Technique R&D.pdf]]></reports>
 	<tareUnit prefix="pack"><![CDATA[g]]></tareUnit>
-	<aspects><![CDATA[referenceable, tareAspect, titled, transformationAspect, entityTplRefAspect, compareWithAspect, auditable, manufacturingAspect, entityListsAspect, reportEntityAspect, clientsAspect, reportTplsAspect, productAspect, eanAspect, consumerAspect, localized, legalNameAspect, erpCodeAspect, effectivityAspect, codeAspect, taggable, productMicrobioCriteriaAspect, generalclassifiable, profitabilityAspect, formulatedEntityAspect, versionable]]></aspects>
+	<aspects><![CDATA[productValidationAspect, referenceable, tareAspect, titled, transformationAspect, entityTplRefAspect, compareWithAspect, auditable, manufacturingAspect, entityListsAspect, reportEntityAspect, clientsAspect, reportTplsAspect, productAspect, eanAspect, consumerAspect, localized, legalNameAspect, erpCodeAspect, effectivityAspect, codeAspect, taggable, productMicrobioCriteriaAspect, generalclassifiable, profitabilityAspect, formulatedEntityAspect, versionable]]></aspects>
 	<itemType><![CDATA[finishedProduct]]></itemType>
 	<images>
 		<image id="Img0" name="img_schema.png" />
@@ -118,7 +118,20 @@ Après décongélation, à conserver au réfrigérateur et à consommer dans la 
 		<image id="Img7" name="img_palet2.jpg" title="Palette" />
 	</images>
 	<dataLists>
-		<controlDefLists />
+		<controlDefLists>
+			<controlDefList clType="Composition"
+				name="e1ba92f5-6d84-4622-b5fa-5e54a54b63c6" clMini="19.8" clTarget="20.0"
+				clUnit="cm" clTextCriteria="" clMaxi="20.5" clRequired="false"
+				locale="fr" sort="100" clCharacts="Diamètre extérieur" />
+			<controlDefList clType="Composition"
+				name="071f437d-bf76-4367-a43e-35f1c3310b4d" clMini="9.8" clTarget="10.0"
+				clUnit="mm" clTextCriteria="" clMaxi="10.2" clRequired="false"
+				locale="fr" sort="101" clCharacts="Epaisseur" />
+			<controlDefList clType="Composition"
+				name="0611277b-08ab-43aa-a54b-720a08005da7" clMini="198.0" clTarget="200.0"
+				clUnit="g" clTextCriteria="" clRequired="false" locale="fr" sort="102"
+				clMethod="Métrologique" clCharacts="Poids" />
+		</controlDefLists>
 		<nutLists energiekj="476.1632660411247" energiekcal="113.92036993682646"
 			lipides="6.931577303047195" agsaturés="0.7945643640839837"
 			agmonoinsaturés="3.2775978262417937" agpolyinsaturés="2.533568901833272"
@@ -419,7 +432,7 @@ Après décongélation, à conserver au réfrigérateur et à consommer dans la 
 				compoListProduct="Glace vanille" depthLevel="1"
 				compoListQtySubFormula="398.80769230769226" compoListVolume="0.7976153846153846"
 				dynamicCharactColumn2="7.976153846153846" compoListUnit="g"
-				variantIds="" isDefaultVariant="true" compoListYieldPerc="100" />
+				isDefaultVariant="true" compoListYieldPerc="100" />
 			<compoList eanCode="" packagingDescription="" productState="A valider"
 				code="MP25534" startEffectivity="2014-02-07T17:42:42.647Z"
 				preparationTips="" productComments="" title="" useByDate=""
@@ -570,15 +583,19 @@ Après décongélation, à conserver au réfrigérateur et à consommer dans la 
 				<entityTplRef prefix="bcpg"><![CDATA[Matière première]]></entityTplRef>
 				<compoListQty prefix="bcpg"><![CDATA[36.06059192161599]]></compoListQty>
 				<storageConditions>
-					<storageConditionsMode prefix="bcpg">Surgelé</storageConditionsMode>
+					<storageConditionsMode prefix="bcpg">Surgelé
+					</storageConditionsMode>
 					<created prefix="cm">2013-07-25T13:56:21.575Z</created>
 					<description prefix="cm">* 3 jours dans le compartiment à
 						glace du réfrigérateur à -6°C
-						*** Plusieurs mois au congélateur à -18°C, jusqu’à la date indiquée
+						*** Plusieurs mois au congélateur à
+						-18°C, jusqu’à la date indiquée
 						sur le côté de la boite.
 
-						Après décongélation, à conserver au réfrigérateur et à consommer dans
-						la journée.
+						Après
+						décongélation, à conserver au réfrigérateur et à consommer dans
+						la
+						journée.
 					</description>
 					<creator prefix="cm">admin</creator>
 					<isDeleted prefix="bcpg">false</isDeleted>

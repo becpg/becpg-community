@@ -175,7 +175,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 
 	private List<String> getAllowedValues(final String path, final QName constraintType, final QName constraintProp) {
 
-		return AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<List<String>>() {
+		return AuthenticationUtil.runAsSystem(new AuthenticationUtil.RunAsWork<List<String>>() {
 			@Override
 			public List<String> doWork() throws Exception {
 				List<String> allowedValues = new LinkedList<String>();
@@ -256,7 +256,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 
 				return 0;
 			}
-		}, AuthenticationUtil.getSystemUserName());
+		});
 	}
 
 	@Override
