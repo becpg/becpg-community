@@ -106,6 +106,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 	private Integer maxResults = RepoConsts.MAX_RESULTS_256;
 	private NodeRef parentNodeRef;
+	private Set<NodeRef> parentNodeRefs = new HashSet<>();
 	private QName type = null;
 	private Set<QName> types = new HashSet<>();
 	private Set<QName> aspects = new HashSet<>();
@@ -181,6 +182,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		aspects.add(aspect);
 		return this;
 	}
+	
+	public BeCPGQueryBuilder inParent(NodeRef parentNodeRef) {
+		parentNodeRefs.add(parentNodeRef);
+		return this;
+	}
+
 
 	public BeCPGQueryBuilder maxResults(int maxResults) {
 		this.maxResults = maxResults;
@@ -534,6 +541,19 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			runnedQuery.append(mandatory(getCondSubPath(subPath)));
 		}
 
+		if(!parentNodeRefs.isEmpty()){
+			if (parentNodeRefs.size() == 1) {
+				runnedQuery.append(mandatory(getCondParent(parentNodeRefs.iterator().next())));
+			} else {
+				runnedQuery.append(mandatory(startGroup()));
+				for (NodeRef tmp : parentNodeRefs) {
+					runnedQuery.append(optional(getCondParent(tmp)));
+				}
+				runnedQuery.append(endGroup());
+			}
+		}
+
+		
 		if (type != null) {
 			if(isExactType){
 				runnedQuery.append(mandatory(getCondExactType(type)));
