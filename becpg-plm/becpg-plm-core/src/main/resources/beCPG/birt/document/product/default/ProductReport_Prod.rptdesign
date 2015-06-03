@@ -6442,7 +6442,7 @@ BirtMath.round(dataSetRow["compoListQty"] * 1000000, 2)+ " mg";
                             <structure>
                                 <property name="name">compoListQtySubFormula</property>
                                 <text-property name="displayName">compoListQtySubFormula</text-property>
-                                <expression name="expression" type="javascript">BirtMath.round(dataSetRow["compoListQtySubFormula"], 2) + " " + (dataSetRow["compoListUnit"]  == "Perc" ? "%" : dataSetRow["compoListUnit"])</expression>
+                                <expression name="expression" type="javascript">BirtMath.round(dataSetRow["compoListQtySubFormula"], 4) + " " + (dataSetRow["compoListUnit"]  == "Perc" ? "%" : dataSetRow["compoListUnit"])</expression>
                                 <property name="dataType">string</property>
                                 <property name="allowExport">true</property>
                             </structure>
