@@ -83,7 +83,8 @@
                             showToolTip : false,
                             showPage : true,
                             saveTitle : true,
-                            urlParamsToPass : null
+                            urlParamsToPass : null,
+                            isParentMode : false
                         },
                         /**
                          * Fired by YUI when parent element is available for
@@ -429,7 +430,7 @@
 
                                         var inputAdded = Dom.get(me.controlId + "-added");
 
-                                        if (!me.options.multipleSelectMode)
+                                        if (!me.options.multipleSelectMode || me.options.isParentMode)
                                         {
                                             var inputOrig = Dom.get(me.controlId + "-orig"), inputRemoved = Dom
                                                     .get(me.controlId + "-removed");
@@ -507,12 +508,17 @@
                         addToBasket : function AutoCompletePicker_addToBasket(basket, itemTitle, itemValue)
                         {
 
-                            var displayVal = "<span id='ac-m-selected-" + this.fieldHtmlId + "-" + itemValue + "' class='ac-m-selected'><span class='ac-m-selected-body'>";
+                            var displayVal = "<span id='ac-m-selected-" + this.fieldHtmlId + "-" + itemValue + "' class='ac-m-selected'>";
+                            if(this.options.isParentMode && basket!=null && basket.innerHTML != ''){
+                                displayVal += "<span  class='ac-parent-sep' >&nbsp;</span>";
+                            }
+                            displayVal += "<span class='ac-m-selected-body'>";
                             displayVal += itemTitle;
                             displayVal += "</span>";
                             displayVal += "<span id='ac-close-" + this.fieldHtmlId + "-" + itemValue + "' class='ac-closebutton' ></span>";
+                           
                             displayVal += "</span>";
-
+ 
                             basket.innerHTML += displayVal;
 
                         },
