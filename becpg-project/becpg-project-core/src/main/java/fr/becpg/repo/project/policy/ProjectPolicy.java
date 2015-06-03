@@ -8,10 +8,6 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
-import org.alfresco.repo.copy.CopyBehaviourCallback;
-import org.alfresco.repo.copy.CopyDetails;
-import org.alfresco.repo.copy.CopyServicePolicies;
-import org.alfresco.repo.copy.DefaultCopyBehaviourCallback;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -25,6 +21,7 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.entity.version.EntityVersionPlugin;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.project.ProjectActivityService;
@@ -41,7 +38,7 @@ import fr.becpg.repo.repository.AlfrescoRepository;
  * 
  * @author querephi
  */
-public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy, CopyServicePolicies.OnCopyNodePolicy {
+public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy, EntityVersionPlugin {
 
 	private static Log logger = LogFactory.getLog(ProjectPolicy.class);
 
@@ -83,9 +80,6 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, ProjectModel.TYPE_PROJECT, new JavaBehaviour(this,
 				"onUpdateProperties"));
-
-		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyNodePolicy.QNAME, ProjectModel.TYPE_PROJECT, new JavaBehaviour(this,
-				"getCopyCallback"));
 
 		// disable otherwise, impossible to copy project that has a template
 		super.disableOnCopyBehaviour(ProjectModel.TYPE_PROJECT);
@@ -165,7 +159,7 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 						if (logger.isDebugEnabled()) {
 							logger.debug("doBeforeCommit last - formulate project");
 						}
-						if (nodeService.exists(projectNodeRef) && isNotLocked(projectNodeRef)) {
+						if (nodeService.exists(projectNodeRef)) {
 
 							AuthenticationUtil.runAs(new RunAsWork<NodeRef>() {
 
@@ -223,41 +217,19 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 	}
 
 	@Override
-	public CopyBehaviourCallback getCopyCallback(QName classRef, CopyDetails copyDetails) {
-		super.getCopyCallback(classRef, copyDetails);
-		return new ProjectCopyBehaviourCallback();
+	public void doAfterCheckout(NodeRef origNodeRef, NodeRef workingCopyNodeRef) {
+		queueNode(origNodeRef);
+		queueNode(workingCopyNodeRef);		
 	}
 
-	private class ProjectCopyBehaviourCallback extends DefaultCopyBehaviourCallback {
+	@Override
+	public void doBeforeCheckin(NodeRef origNodeRef, NodeRef workingCopyNodeRef) {
+		queueNode(origNodeRef);
+	}
 
-		private ProjectCopyBehaviourCallback() {
-		}
-
-		@Override
-		public boolean getMustCopy(QName classQName, CopyDetails copyDetails) {
-			return true;
-		}
-
-		@Override
-		public Map<QName, Serializable> getCopyProperties(QName classQName, CopyDetails copyDetails, Map<QName, Serializable> properties) {
-
-			if (ProjectModel.TYPE_PROJECT.equals(classQName)) {
-				if (properties.containsKey(ProjectModel.PROP_PROJECT_STATE)) {
-					properties.put(ProjectModel.PROP_PROJECT_STATE, ProjectState.Planned);
-				}
-				if (properties.containsKey(ProjectModel.PROP_PROJECT_START_DATE)) {
-					properties.remove(ProjectModel.PROP_PROJECT_START_DATE);
-				}
-				if (properties.containsKey(ProjectModel.PROP_PROJECT_DUE_DATE)) {
-					properties.remove(ProjectModel.PROP_PROJECT_DUE_DATE);
-				}
-				if (properties.containsKey(ProjectModel.PROP_PROJECT_COMPLETION_DATE)) {
-					properties.remove(ProjectModel.PROP_PROJECT_COMPLETION_DATE);
-				}
-			}
-
-			return properties;
-		}
+	@Override
+	public void cancelCheckout(NodeRef origNodeRef, NodeRef workingCopyNodeRef) {
+		queueNode(origNodeRef);		
 	}
 
 }

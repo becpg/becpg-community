@@ -387,6 +387,11 @@
 					<mandatory>true</mandatory>
 					<index enabled="false" />
 				</property>
+				<property name="pjt:tlRealDuration">
+					<type>d:int</type>
+					<mandatory>true</mandatory>
+					<index enabled="false" />
+				</property>
 				<property name="pjt:tlCapacity">
 					<type>d:int</type>
 					<mandatory>false</mandatory>

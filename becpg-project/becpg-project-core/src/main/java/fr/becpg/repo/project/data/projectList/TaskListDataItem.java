@@ -44,6 +44,7 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	private Boolean isMilestone;
 	private Boolean isGroup;
 	private Integer duration;
+	private Integer realDuration;
 	private Integer capacity;
 	private Double work;
 	private Double loggedTime;
@@ -110,6 +111,16 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 
 	public void setDuration(Integer duration) {
 		this.duration = duration;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "pjt:tlRealDuration")
+	public Integer getRealDuration() {
+		return realDuration;
+	}
+
+	public void setRealDuration(Integer realDuration) {
+		this.realDuration = realDuration;
 	}
 
 	@AlfProp

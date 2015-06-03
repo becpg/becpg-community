@@ -146,7 +146,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 		// Copy entity datalists (rights are checked by copyService during
 		// recursiveCopy)
-		AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<Void>() {
+		AuthenticationUtil.runAsSystem(new AuthenticationUtil.RunAsWork<Void>() {
 			@Override
 			public Void doWork() throws Exception {
 
@@ -163,7 +163,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				return null;
 
 			}
-		}, AuthenticationUtil.getSystemUserName());
+		});
 
 		// Set contributor permission for user to edit datalists
 		String userName = getUserName();
@@ -181,7 +181,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	@Override
 	public void cancelCheckOut(final NodeRef origNodeRef, final NodeRef workingCopyNodeRef) {
 
-		AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<NodeRef>() {
+		AuthenticationUtil.runAsSystem(new AuthenticationUtil.RunAsWork<NodeRef>() {
 			@Override
 			public NodeRef doWork() throws Exception {
 
@@ -196,7 +196,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				return null;
 
 			}
-		}, AuthenticationUtil.getSystemUserName());
+		});
 
 		// Delete initialversion
 		if (versionService.getVersionHistory(origNodeRef) == null || versionService.getVersionHistory(origNodeRef).getAllVersions().size() == 1) {
@@ -240,7 +240,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			NodeRef versionNodeRef = null;
 
 			// Rights are checked by copyService during recursiveCopy
-			versionNodeRef = AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<NodeRef>() {
+			versionNodeRef = AuthenticationUtil.runAsSystem(new AuthenticationUtil.RunAsWork<NodeRef>() {
 				@Override
 				public NodeRef doWork() throws Exception {
 
@@ -269,7 +269,14 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 							// Remove rules
 							ChildAssociationRef ruleChildAssocRef = ruleService.getSavedRuleFolderAssoc(origNodeRef);
 							if (ruleChildAssocRef != null) {
-								nodeService.deleteNode(ruleChildAssocRef.getChildRef());
+								if(ruleChildAssocRef.isPrimary() == true){
+									logger.debug("remove primary rule of entity " + origNodeRef);
+									nodeService.deleteNode(ruleChildAssocRef.getChildRef());
+								}								
+								else{
+									logger.debug("remove secondary rule of entity " + origNodeRef);
+									nodeService.removeSecondaryChildAssociation(ruleChildAssocRef);
+								}
 							}
 							entityService.moveFiles(workingCopyNodeRef, origNodeRef);
 							// delete files that are not moved (ie: Documents)
@@ -286,7 +293,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 					}
 
 				}
-			}, AuthenticationUtil.getSystemUserName());
+			});
 
 			// Map<QName, Serializable> versionProperties =
 			// nodeService.getProperties(versionNodeRef);
@@ -437,7 +444,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 								// create folder
 								final NodeRef storeNodeRef = nodeService.getRootNode(RepoConsts.SPACES_STORE);
 
-								return AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<NodeRef>() {
+								return AuthenticationUtil.runAsSystem(new AuthenticationUtil.RunAsWork<NodeRef>() {
 									@Override
 									public NodeRef doWork() throws Exception {
 										HashMap<QName, Serializable> props = new HashMap<QName, Serializable>();
@@ -449,7 +456,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 										return n;
 									}
-								}, AuthenticationUtil.getSystemUserName());
+								});
 							}
 						} catch (Exception e) {
 							logger.error("Failed to get entitysHistory", e);

@@ -17,13 +17,7 @@ function startEvent() {
 function onCreateEnteringClaimTask() {
     task.setVariable('ncwf_claimRejectedCause', execution.getVariable('ncwf_claimRejectedCause'));
 
-    for (var i = 0; i < bpm_package.children.length; i++) {
-        var nc = bpm_package.children[i];
-        if (nc.isSubType("qa:nc")) {
-            var bpm_workflowDescription = extractName(nc);
-            task.setVariable('bpm_workflowDescription', bpm_workflowDescription);
-        }
-    }
+    readNCName();
 }
 
 function onCompleteEnteringClaimTask() {
@@ -49,17 +43,25 @@ function onCompleteEnteringClaimTask() {
 
 }
 
-function onCreateAnalysisTask() {
-    var bpm_workflowDescription = null;
-
+function readNCName(){
     for (var i = 0; i < bpm_package.children.length; i++) {
         var nc = bpm_package.children[i];
         if (nc.isSubType("qa:nc")) {
             bpm_workflowDescription = extractName(nc);
             task.setVariable('bpm_workflowDescription', bpm_workflowDescription);
+            task.setVariable('bpm_description', bpm_workflowDescription);
+            execution.setVariable('bpm_workflowDescription', bpm_workflowDescription);
+            execution.setVariable('bpm_description', bpm_workflowDescription);
+            break;
         }
     }
+    
+}
 
+function onCreateAnalysisTask() {
+    
+    readNCName();
+        
     var tDate = new java.util.Date();
     tDate.setDate(tDate.getDate() + 5);
     var rDate = new java.util.Date();

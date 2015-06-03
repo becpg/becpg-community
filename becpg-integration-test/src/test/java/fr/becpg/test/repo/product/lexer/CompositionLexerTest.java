@@ -20,6 +20,8 @@ package fr.becpg.test.repo.product.lexer;
 import java.util.Date;
 import java.util.List;
 
+import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
+import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
@@ -34,7 +36,6 @@ import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 public class CompositionLexerTest extends AbstractFinishedProductTest {
 
 	protected static Log logger = LogFactory.getLog(CompositionLexerTest.class);
-
 
 	@Override
 	public void setUp() throws Exception {
@@ -84,12 +85,18 @@ public class CompositionLexerTest extends AbstractFinishedProductTest {
 	@Test
 	public void testFormulateRecipe() throws Exception {
 
-		String recipe = "5 P Raw material 1\n 12,9 gr Raw material 2\n 25.5005 g Raw material 3\n50 Raw material 5";
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
 
-		ProductData productData = productService.formulateText(recipe, new FinishedProductData());
+				String recipe = "5 P Raw material 1\n 12,9 gr Raw material 2\n 25.5005 g Raw material 3\n50 Raw material 5";
 
-		org.junit.Assert.assertNotNull(productData);
+				ProductData productData = productService.formulateText(recipe, new FinishedProductData());
 
+				org.junit.Assert.assertNotNull(productData);
+				return null;
+
+			}
+		}, false, true);
 	}
 
 }

@@ -1,10 +1,12 @@
+
+
 #rightside {
-	width:68%;
-	margin:auto;
+	width: 68%;
+	margin: auto;
 }
 
 .projects .yui-gd .yui-u {
-    margin:none;
+	margin: 0;
 }
 
 .gdatehead {
@@ -12,67 +14,94 @@
 }
 
 tr.gheader {
-		height: 23px;
+	height: 23px;
 }
 
 .project-list .projects .yui-dt .gheader th {
 	vertical-align: middle;
 }
 
-.project-list .projects .yui-dt-data td.ghead,
-.project-list .projects .yui-dt-data td.gheadwkend {
-	 border-color: #D9D9D9;
-    border-style: dashed solid none none;
-    border-width: 1px 1px 0 0;
-    border-collapse: separate;
+.project-list .projects .yui-dt-data td.ghead, .project-list .projects .yui-dt-data td.gheadwkend
+	{
+	border-color: #D9D9D9;
+	border-style: dashed solid none none;
+	border-width: 1px 1px 0 0;
+	border-collapse: separate;
 }
 
-.gheadwkend {
-	background-color: #cfcfcf
-}
-
-
-.gweekend {
-	background-color: #EEEEEE;
+th.ghead, th.gheadwkend{
 	text-align: center;
 }
 
 
-
-.projects  span.task-title {
-	white-space:nowrap;
-   text-overflow:ellipsis;
-   overflow:hidden;
-   width:230px;
-   display: inline-block;
+td.gheadwkend {
+	background-color: #cfcfcf
 }
 
-.projects  span.task-title a{
+td.ghead {
+	background-color:#ffffff
+}
+
+td.gheadwkend.current {
+	background-color: #9999ff;
+}
+
+td.ghead.current {
+	background-color: #F5FAFF;
+}
+
+
+.projects  span.task-title {
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	width: 200px;
+	display: inline-block;
+}
+
+.projects  span.task-title a {
 	cursor: pointer;
 }
 
-
 .projects  span.resource-title {
-	white-space:nowrap;
-   text-overflow:ellipsis;
-   overflow:hidden;
-   width:120px;
-   display: inline-block;
-   background: url("../images/filetypes/generic-user-16.png") no-repeat scroll 0 0 transparent;
-   padding-left: 20px;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	width: 120px;
+	display: inline-block;
+	background: url("../images/filetypes/generic-user-16.png") no-repeat
+		scroll 0 0 transparent;
+	padding-left: 20px;
 }
 
 .project-list .projects .yui-dt-data td.gfoot {
-	border : none;
+	border: none;
 	height: 40px;
 	vertical-align: middle;
 }
 
+.ggline {
+	position: absolute;
+	margin: 0px;
+	padding: 0px;
+	overflow: hidden;
+	border: 0px;
+	z-index: 0;
+	background-color: red;
+	visibility: visible;
+}
+
+td.ggtaskCheckbox {
+	width: 16px;
+	padding:2px!important;
+}
+
+
 .ggtask {
- 	 background: none repeat scroll 0 0 #FFBC00;
-    border: 1px solid red;
-    height: 7px;
-    color:red;
+	background: none repeat scroll 0 0 #FFBC00;
+	border: 1px solid red;
+	height: 7px;
+	color: red;
 }
 
 .ggcomplete {
@@ -80,16 +109,21 @@ tr.gheader {
 	height: 7px;
 	overflow: auto;
 	z-index: -4;
-	float:left;
+	float: left;
 }
 
-
 .gtask {
-	 background: none repeat scroll 0 0 #E5ECF5;
-    border: 1px solid #3172D7;
-    border-radius: 5px;
-    height: 13px;
-    opacity: 0.8;
+	background: none repeat scroll 0 0 #E5ECF5;
+	border: 1px solid #3172D7;
+	border-radius: 5px;
+	height: 13px;
+	opacity: 0.8;
+}
+
+.gcaption{
+	font-size:12px;
+	position:absolute; 
+	 width:250px;
 }
 
 .gday {
@@ -103,7 +137,7 @@ tr.gheader {
 	overflow: auto;
 	background-image: url("../../themes/default/images/title-button-bg.png");
 	z-index: -4;
-	float:left;
+	float: left;
 	border-radius: 5px;
 }
 
@@ -112,11 +146,11 @@ tr.ggroup {
 	height: 23px;
 }
 
-tr.ggroup.highlight, tr.grow.highlight {
-	background-color: #ffffaa;
+tr.ggroup.highlight > td, tr.grow.highlight > td, tr.gweekend.highlight  > td,tr.gmile.highlight  > td {
+	background-color: #ffffaa !important; 
 }
 
-tr.grow {
+tr.grow, tr.gmile {
 	height: 23px;
 }
 
@@ -128,29 +162,39 @@ div.scroll {
 }
 
 .projects .gicon {
-    height: 15px;
-    width: 18px;
-    display: inline-block;
+	height: 15px;
+	width: 18px;
+	display: inline-block;
 }
 
-.projects .ggroup-expanded  {
-    background-image: url("./images/dt-group-arrow-down.png");
-    background-repeat: no-repeat;
+.projects .ggroup-expanded {
+	background-image: url("./images/dt-group-arrow-down.png");
+	background-repeat: no-repeat;
 }
 
 .projects .ggroup-collapsed {
-    background-image: url("./images/dt-group-arrow-up.png");
-    background-repeat: no-repeat;
+	background-image: url("./images/dt-group-arrow-up.png");
+	background-repeat: no-repeat;
 }
 
 .projects div.milestone {
-	height: 16px; width:16px; overflow:hidden;
-	background: url(../images/filetypes/generic-task-milestone-16.png) no-repeat;
+	-ms-transform: rotate(45deg); 
+	-moz-transform: rotate(45deg); 
+	-webkit-transform: rotate(45deg); 
+	-o-transform: rotate(45deg);
+	margin:2px;
+	height: 11px; 
+	width:11px;	
+		
 }
 
 .projects div.completed.milestone {
-	height: 16px; width:16px; overflow:hidden;
-	background: url(../images/filetypes/generic-task-milestone-completed-16.png) no-repeat;
+	-ms-transform: rotate(45deg); 
+	-moz-transform: rotate(45deg); 
+	-webkit-transform: rotate(45deg); 
+	-o-transform: rotate(45deg);
+	margin:2px;
+	height: 11px; 
+	width:11px;	
+	background-image: url("../../themes/default/images/title-button-bg.png");
 }
-
-

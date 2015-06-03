@@ -114,7 +114,7 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 
 		if (nodeService.hasAspect(origNodeRef, PLMModel.ASPECT_ENTITY_VARIANT)) {
 			logger.debug("On check out Variant");
-			AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<Void>() {
+			AuthenticationUtil.runAsSystem(new AuthenticationUtil.RunAsWork<Void>() {
 				@Override
 				public Void doWork() throws Exception {
 
@@ -139,7 +139,7 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 					return null;
 
 				}
-			}, AuthenticationUtil.getSystemUserName());
+			});
 		}
 	}
 
@@ -150,7 +150,7 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 			
 			logger.debug("On check in Variant");
 
-			AuthenticationUtil.runAs(new AuthenticationUtil.RunAsWork<Void>() {
+			AuthenticationUtil.runAsSystem(new AuthenticationUtil.RunAsWork<Void>() {
 				@Override
 				public Void doWork() throws Exception {
 					NodeRef origNodeRef = getCheckedOut(workingCopyNodeRef);
@@ -180,7 +180,7 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 					return null;
 
 				}
-			}, AuthenticationUtil.getSystemUserName());
+			});
 		}
 		
 	}
@@ -205,6 +205,12 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 		}
 
 		return original;
+	}
+
+	@Override
+	public void cancelCheckout(NodeRef origNodeRef, NodeRef workingCopyNodeRef) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	

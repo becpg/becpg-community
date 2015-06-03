@@ -213,7 +213,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 					return true;
 				}
 			} else {
-				logger.warn("Workflow instance unknown. WorkflowId: " + workflowId);
+				logger.warn("Workflow instance unknown. WorkflowId: " + workflowId + " task " + task.getNodeRef() + " Task name " + task.getTaskName());
 			}
 		}
 

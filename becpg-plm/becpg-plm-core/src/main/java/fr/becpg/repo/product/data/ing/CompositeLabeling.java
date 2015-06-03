@@ -18,10 +18,10 @@ public class CompositeLabeling extends AbstractLabelingComponent {
 
 	private Map<NodeRef, AbstractLabelingComponent> ingList = new LinkedHashMap<NodeRef, AbstractLabelingComponent>();
 
-
 	private Double qtyRMUsed = 0d;
 	
-
+	private IngTypeItem ingType;
+	
 	private DeclarationType declarationType;
 	
 
@@ -32,6 +32,7 @@ public class CompositeLabeling extends AbstractLabelingComponent {
 	public CompositeLabeling(CompositeLabeling compositeLabeling) 
 	{
 		super(compositeLabeling);
+		this.ingType = compositeLabeling.ingType;
 	    this.ingList = compositeLabeling.ingList;
 	    this.qtyRMUsed = compositeLabeling.qtyRMUsed;
 	    this.declarationType = compositeLabeling.declarationType;
@@ -42,9 +43,18 @@ public class CompositeLabeling extends AbstractLabelingComponent {
 		this.name = productData.getName();
 		this.nodeRef = productData.getNodeRef();
 		this.legalName = productData.getLegalName();
+		this.ingType = productData.getIngType();
 	}
 
 	
+	public IngTypeItem getIngType() {
+		return ingType;
+	}
+
+	public void setIngType(IngTypeItem ingType) {
+		this.ingType = ingType;
+	}
+
 	public DeclarationType getDeclarationType() {
 		return declarationType;
 	}

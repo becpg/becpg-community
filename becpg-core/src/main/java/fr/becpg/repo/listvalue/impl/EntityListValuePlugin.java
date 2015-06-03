@@ -138,11 +138,13 @@ public class EntityListValuePlugin implements ListValuePlugin {
 			}
 		}
 
-		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery();
-		queryBuilder.ofType(type);
-		queryBuilder.excludeDefaults();
-		queryBuilder.inSearchTemplate(searchTemplate);
-		queryBuilder.ftsLanguage();
+		BeCPGQueryBuilder queryBuilder = 
+				BeCPGQueryBuilder.createQuery()
+					.ofType(type)
+					.excludeDefaults()
+					.inSearchTemplate(searchTemplate)
+					.andOperator()
+					.ftsLanguage();
 
 		// Is code or name search
 		// if (isQueryCode(query, type, arrClassNames)) {

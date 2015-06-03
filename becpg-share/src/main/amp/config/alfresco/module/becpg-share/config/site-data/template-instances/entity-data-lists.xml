@@ -176,6 +176,12 @@
 				<sub-component id="default">
 					<evaluations>
 						<!-- if view selected -->
+						<evaluation id="custom-view">
+							<evaluators>
+								<evaluator type="evaluator.component.becpg.custom.view"/>
+							</evaluators>
+							<url>/components/entity-charact-views/{customview}-view</url>
+						</evaluation>
 						<evaluation id="formulate">
 							<evaluators>
 								<evaluator type="evaluator.component.becpg.params.equal">
@@ -214,13 +220,7 @@
 									</params>
 								</evaluator>
 							</evaluators>
-							<url>/components/entity-charact-views/tasklist-view</url>
-							<properties>
-								<pagination>true</pagination>
-								<filter>true</filter>
-								<dataUrl>becpg/entity/datalists/data/node/</dataUrl>
-								<itemUrl>becpg/entity/datalists/item/node/</itemUrl>
-							</properties>
+							<url>/components/entity-charact-views/gantt-view</url>
 						</evaluation>
 						<evaluation id="labeling">
 							<evaluators>

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -67,10 +68,19 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 
 	@Override
 	public boolean process(ProjectData projectData) throws FormulateException {
-
 		
+		if (projectData.getAspects().contains(ContentModel.ASPECT_CHECKED_OUT) || 
+				projectData.getAspects().contains(ContentModel.ASPECT_WORKING_COPY) ||
+				projectData.getAspects().contains(BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
+			for (TaskListDataItem task : projectData.getTaskList()) {
+				if (TaskState.InProgress.equals(task.getTaskState()) && projectWorkflowService.isWorkflowActive(task)) {
+					logger.debug("Cancel workflow of project " + projectData.getName() + " for task " + task.getTaskName());
+					projectWorkflowService.cancelWorkflow(task);
+				}
+			}
+		}		
 		// we don't want tasks of project template start
-		if (!projectData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
+		else if (!projectData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) && !projectData.getAspects().contains(BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
 
 			// start project if startdate is before now and startdate != created
 			// otherwise ProjectMgr will start it manually
