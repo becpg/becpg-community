@@ -1,0 +1,16 @@
+
+.datalist-toolbar .entity-download-report span.first-child {
+   background-image: url(../documentlibrary/actions/document-download-16.png);
+   background-color: transparent;
+   background-position: 6px 4px;
+   background-repeat: no-repeat ;
+   padding-left: 6px;
+}
+.web-preview .previewer.PdfJs .controls {
+	border-top : none;
+}
+
+.web-preview {
+	background-color: rgb(250, 250, 250);
+	margin: 0 -10px;
+} 

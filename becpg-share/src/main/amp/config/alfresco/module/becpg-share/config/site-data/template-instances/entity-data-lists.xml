@@ -274,6 +274,7 @@
 			<region-id>actions-common</region-id>
 			<url>/components/data-lists/actions-common</url>
 		</component>
+		
 	</components>
 </template-instance>
 
