@@ -213,7 +213,7 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 			
 	        for(QName entityListType: entityListTypes)
 		    {	
-	        	if(!BeCPGModel.TYPE_ENTITYLIST_ITEM.equals(entityListType) /*&& !BeCPGModel.TYPE_PRODUCTLIST_ITEM.equals(entityListType)*/){
+	        	if(!BeCPGModel.TYPE_ENTITYLIST_ITEM.equals(entityListType)){
 	        		classDefinitions.add(dictionaryService.getClass(entityListType));
 	        	}
 		    }

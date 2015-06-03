@@ -25,7 +25,7 @@
           * {-7d} -  resolves to a iso8601 date respresentation of the current day rolled the given number of days back
           * {+7d} -  resolves to a iso8601 date respresentation of the current day rolled the given number of days forward
       -->
-      <filter id="projects"      data="*"      		  parameters="fts(=pjt\:projectState:&quot;{data}&quot;)"/>
+      <filter id="projects"      data="*"      		  parameters="fts(+@pjt\:projectState:&quot;{data}&quot;)"/>
       <filter id="due"           data="today"        parameters="fts(+@pjt\:projectDueDate:['{-1d}' TO '{0d}'])"/>
       <filter id="due"           data="tomorrow"     parameters="fts(+@pjt\:projectDueDate:['{0d}' TO '{1d}'])"/>
       <filter id="due"           data="next7Days"    parameters="fts(+@pjt\:projectDueDate:['{0d}' TO '{8d}'])"/>
@@ -34,6 +34,6 @@
       <filter id="started"       data="last7Days"    parameters="fts(+@pjt\:projectStartDate:['{-7d}' TO MAX])"/>
       <filter id="started"       data="last14Days"   parameters="fts(+@pjt\:projectStartDate:['{-14d}' TO MAX])"/>
       <filter id="started"       data="last28Days"   parameters="fts(+@pjt\:projectStartDate:['{-28d}' TO MAX])"/>
-      <filter id="priority"      data="*"            parameters="fts(=pjt\:projectPriority:{data})"/>
+      <filter id="priority"      data="*"            parameters="fts(+@pjt\:projectPriority:{data})"/>
    </filters-parameters>
 </config>
