@@ -1575,6 +1575,11 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
+				<property name="bcpg:nutListLossPerc">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 				<property name="bcpg:nutListGroup">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
