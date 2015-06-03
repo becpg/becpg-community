@@ -165,9 +165,7 @@
 					<field id="dsg:hide" set="visibilityInfo"  />
 					<field id="dsg:force" set="visibilityInfo" />
 					<field id="dsg:forMode" set="visibilityInfo" />
-					<field id="dsg:id" set="mainInfo">
-						<control template="/org/alfresco/components/form/controls/info.ftl"/>
-					</field>
+					<field id="dsg:id" set="mainInfo"/>
 					<field id="dsg:label" set="mainInfo" />
 					<!-- <field id="dsg:labelId" set="mainInfo" /> -->
 					<field id="dsg:description" set="appearanceInfo"/>
