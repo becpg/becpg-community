@@ -430,7 +430,7 @@ Après décongélation, à conserver au réfrigérateur et à consommer dans la 
 				compoListDeclType="Déclarer" dynamicCharactColumn1="0.13153429069119288"
 				compoListQty="0.3988076923076923" compoListOverrunPerc="120.0" sort="101"
 				compoListProduct="Glace vanille" depthLevel="1"
-				compoListQtySubFormula="398.80769230769226" compoListVolume="0.7976153846153846"
+				compoListQtySubFormula="0.05" compoListVolume="0.7976153846153846"
 				dynamicCharactColumn2="7.976153846153846" compoListUnit="g"
 				isDefaultVariant="true" compoListYieldPerc="100" />
 			<compoList eanCode="" packagingDescription="" productState="A valider"
