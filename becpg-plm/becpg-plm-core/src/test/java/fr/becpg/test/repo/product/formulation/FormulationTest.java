@@ -2295,5 +2295,45 @@ public class FormulationTest extends AbstractFinishedProductTest {
 			}},false,true);
 		   
 	   }
+	
+	@Test
+	public void testNutrientLost() throws Exception{
+		
+		logger.info("testNutrientLost");
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
+			@SuppressWarnings("unchecked")
+			public NodeRef execute() throws Throwable {					   
+
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName("Finished product 1");
+			finishedProduct.setServingSize(300d);
+			List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
+			nutList.add(new NutListDataItem(null, 12d, null, 11d, 13d, null, nut1, false));
+			nutList.get(0).setLossPerc(30d);
+			nutList.add(new NutListDataItem(null, 12d, null, 11d, 13d, null, nut2, false));
+			finishedProduct.setNutList(nutList);
+			NodeRef finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+			
+			/*-- Formulate product --*/
+			productService.formulate(finishedProductNodeRef);					
+			
+			/*-- Verify formulation --*/
+			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+			assertEquals(8.4d, formulatedProduct.getNutList().get(0).getValue());
+			assertEquals(7.7d, formulatedProduct.getNutList().get(0).getMini());
+			assertEquals(9.1d, formulatedProduct.getNutList().get(0).getMaxi());
+			assertEquals(25.2d, formulatedProduct.getNutList().get(0).getValuePerServing());
+			
+			assertEquals(12d, formulatedProduct.getNutList().get(1).getValue());
+			assertEquals(11d, formulatedProduct.getNutList().get(1).getMini());
+			assertEquals(13d, formulatedProduct.getNutList().get(1).getMaxi());
+			assertEquals(36d, formulatedProduct.getNutList().get(1).getValuePerServing());
+			
+			return null;
+
+			}},false,true);
+		   
+	   }
 }
 
