@@ -56,6 +56,20 @@
     padding-left: 24px;
 }
 
+.datalists li a.View-properties
+{
+    background-image: url("../documentlibrary/actions/document-edit-metadata-16.png");
+    display: block;
+    padding: 0 0 0 24px;
+}
+
+.datalists li a.View-reports
+{
+    background-image: url("../documentlibrary/actions/entity-view-documents-16.png");
+    display: block;
+    padding: 0 0 0 24px;
+}
+
 .datalists li a span
 {
    cursor: pointer;

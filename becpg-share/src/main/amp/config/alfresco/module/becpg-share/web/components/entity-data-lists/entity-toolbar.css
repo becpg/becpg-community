@@ -67,6 +67,24 @@
    padding-left: 24px;
 }
 
+.datalist-toolbar .entity-edit-metadata span.first-child
+{
+   background: url(../documentlibrary/actions/folder-edit-metadata-16.png) no-repeat 12px 4px;
+   padding-left: 24px;
+}
+
+.datalist-toolbar .entity-print-metadata span.first-child
+{
+   background: url(../images/printer-16.png) no-repeat 12px 4px;
+   padding-left: 24px;
+}
+
+.datalist-toolbar .entity-refresh-reports span.first-child
+{
+   background: url(../documentlibrary/actions/entity-refresh-reports-16.png) no-repeat 12px 4px;
+   padding-left: 24px;
+}
+
 .datalist-toolbar .full-screen span.first-child
 {
    background: url(../images/fullscreen-enter.png) no-repeat 5px 4px;

@@ -74,6 +74,8 @@
 	
 	<config evaluator="string-compare" condition="EntityDataLists">
 		<lists>
+		   <list id="View-properties" index="0" />
+		   <list id="View-reports" index="10" />
 		   <list id="aclEntry" index="200" />
 		   <list id="WUsed" index="1000" />
 		</lists>

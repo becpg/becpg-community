@@ -123,5 +123,95 @@
                   });
 
    }
+   
+   YAHOO.Bubbling.fire("registerToolbarButtonAction", {
+       actionName : "entity-edit-metadata",
+       evaluate : function(asset, entity) {
+           return asset.name !== null && asset.name.indexOf("View-properties") == 0;
+       },
+       fn : function(instance) {
+
+          window.location.href = Alfresco.util.siteURL("edit-metadata?nodeRef="+this.entity.nodeRef);
+
+       }
+
+    });
+   
+   
+   YAHOO.Bubbling.fire("registerToolbarButtonAction", {
+       actionName : "entity-add-aspect",
+       evaluate : function(asset, entity) {
+           return asset.name !== null && asset.name.indexOf("View-properties") == 0;
+       },
+       fn : function(instance) {
+           try {
+           
+               if (!this.modules.aspects)
+               {
+                  this.modules.aspects = new Alfresco.module.DoclibAspects(instance.id + "-aspects");
+               }
+    
+               this.modules.aspects.setOptions(
+               {
+                  file: this.entity
+               }).show();
+           } catch(e){
+               alert(e);
+           }
+       }
+
+    });
+   
+   YAHOO.Bubbling.fire("registerToolbarButtonAction", {
+       actionName : "entity-print-metadata",
+       evaluate : function(asset, entity) {
+           return asset.name !== null && asset.name.indexOf("View-properties") == 0;
+       },
+       fn : function(instance) {
+           var wnd = window.open(Alfresco.constants.URL_PAGECONTEXT+"print-details?nodeRef="+this.entity.nodeRef);
+           setTimeout(function() {
+               wnd.print();
+           }, 3000);
+       }
+
+    });
+   
+  
+   
+   
+   YAHOO.Bubbling.fire("registerToolbarButtonAction", {
+       actionName : "entity-refresh-reports",
+       evaluate : function(asset, entity) {
+           return asset.name !== null && asset.name.indexOf("View-reports") == 0;
+       },
+       fn : function(instance) {
+           Alfresco.util.PopupManager.displayMessage({
+               text : this.msg("message.generate-reports.please-wait")
+           });
+
+           Alfresco.util.Ajax.request({
+              method : Alfresco.util.Ajax.GET,
+              url : Alfresco.constants.PROXY_URI + "becpg/entity/generate-report/node/" + this.entity.nodeRef.replace(":/", "")
+                    + "/force",
+              successCallback : {
+                 fn : function EntityDataListToolbar_onFinish_success(response) {
+                     YAHOO.Bubbling.fire("previewChangedEvent");
+                 },
+                 scope : this
+              },
+              failureCallback : {
+                 fn : function EntityDataListToolbar_onFinish_failure(response) {
+                     Alfresco.util.PopupManager.displayMessage({
+                         text : this.msg("message.generate-reports.failure")
+                     });
+                 },
+                 scope : this
+              }
+           });
+       }
+
+    });
+   
+   
 
 })();
