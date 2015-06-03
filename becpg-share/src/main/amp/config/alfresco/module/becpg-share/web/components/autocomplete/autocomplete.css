@@ -76,6 +76,7 @@
 }
 
 
+
 /**
 stickers
 */
@@ -107,6 +108,16 @@ stickers
     right: 0px;
     top: 1px;
     width: 16px;
+}
+
+ .yui-ac span.ac-parent-sep {
+    vertical-align: middle;
+	background: url(../images/collapsed.png) center center no-repeat;
+	position: relative;
+	height: 16px;
+	width:16px;
+	display: block;
+    float: left;
 }
 
 /**

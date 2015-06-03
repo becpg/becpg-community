@@ -1,3 +1,5 @@
+
+
 #rightside {
 	width: 68%;
 	margin: auto;
@@ -27,20 +29,33 @@ tr.gheader {
 	border-collapse: separate;
 }
 
-.gheadwkend {
+th.ghead, th.gheadwkend{
+	text-align: center;
+}
+
+
+td.gheadwkend {
 	background-color: #cfcfcf
 }
 
-.gweekend {
-	background-color: #EEEEEE;
-	text-align: center;
+td.ghead {
+	background-color:#ffffff
 }
+
+td.gheadwkend.current {
+	background-color: #9999ff;
+}
+
+td.ghead.current {
+	background-color: #F5FAFF;
+}
+
 
 .projects  span.task-title {
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	overflow: hidden;
-	width: 230px;
+	width: 200px;
 	display: inline-block;
 }
 
@@ -105,6 +120,12 @@ td.ggtaskCheckbox {
 	opacity: 0.8;
 }
 
+.gcaption{
+	font-size:12px;
+	position:absolute; 
+	 width:250px;
+}
+
 .gday {
 	font-family: tahoma, arial, verdana;
 	text-align: center;
@@ -125,11 +146,11 @@ tr.ggroup {
 	height: 23px;
 }
 
-tr.ggroup.highlight, tr.grow.highlight, tr.gweekend.highlight {
-	background-color: #ffffaa;
+tr.ggroup.highlight > td, tr.grow.highlight > td, tr.gweekend.highlight  > td,tr.gmile.highlight  > td {
+	background-color: #ffffaa !important; 
 }
 
-tr.grow {
+tr.grow, tr.gmile {
 	height: 23px;
 }
 
@@ -157,11 +178,6 @@ div.scroll {
 }
 
 .projects div.milestone {
-	/* height: 16px;
-	width: 16px;
-	overflow: hidden;
-	background: url(../images/filetypes/generic-task-milestone-16.png)
-		no-repeat; */
 	-ms-transform: rotate(45deg); 
 	-moz-transform: rotate(45deg); 
 	-webkit-transform: rotate(45deg); 
@@ -173,12 +189,6 @@ div.scroll {
 }
 
 .projects div.completed.milestone {
-	/* height: 16px;
-	width: 16px;
-	overflow: hidden;
-	background:
-		url(../images/filetypes/generic-task-milestone-completed-16.png)
-		no-repeat; */
 	-ms-transform: rotate(45deg); 
 	-moz-transform: rotate(45deg); 
 	-webkit-transform: rotate(45deg); 
