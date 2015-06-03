@@ -25,11 +25,13 @@ public class NutListDataItem extends AbstractManualDataItem  implements SimpleLi
 	
 	private Double mini;
 	
-	private Double maxi;
+	private Double maxi;		
 	
 	private Double valuePerServing;
 	
 	private Double gdaPerc;
+	
+	private Double lossPerc;
 
 	private String group;
 	
@@ -124,11 +126,19 @@ public class NutListDataItem extends AbstractManualDataItem  implements SimpleLi
 		return gdaPerc;
 	}
 
-
 	public void setGdaPerc(Double gdaPerc) {
 		this.gdaPerc = gdaPerc;
 	}
 
+	@AlfProp
+	@AlfQname(qname="bcpg:nutListLossPerc")
+	public Double getLossPerc() {
+		return lossPerc;
+	}
+
+	public void setLossPerc(Double lossPerc) {
+		this.lossPerc = lossPerc;
+	}
 
 	@AlfProp
 	@AlfQname(qname="bcpg:nutListGroup")
