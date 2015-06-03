@@ -94,7 +94,19 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 
 				n.setGroup((String) nodeService.getProperty(n.getNut(), PLMModel.PROP_NUTGROUP));
 				n.setUnit(calculateUnit(formulatedProduct.getUnit(), (String) nodeService.getProperty(n.getNut(), PLMModel.PROP_NUTUNIT)));
-
+				
+				if(n.getLossPerc() != null){
+					if (n.getValue() != null) {
+						n.setValue(n.getValue() * (100 - n.getLossPerc()) / 100);
+					}
+					if (n.getMini() != null) {
+						n.setMini(n.getMini() * (100 - n.getLossPerc()) / 100);
+					}
+					if (n.getMaxi() != null) {
+						n.setMaxi(n.getMaxi() * (100 - n.getLossPerc()) / 100);
+					}					
+				}
+				
 				if (formulatedProduct.getServingSize() != null && n.getValue() != null) {
 					double valuePerserving = n.getValue() * formulatedProduct.getServingSize() / 100;
 					n.setValuePerServing(valuePerserving);
