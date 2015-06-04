@@ -349,12 +349,12 @@ public class DataListSortServiceImpl implements DataListSortService {
 		if (level != null) {
 			queryBuilder.andPropEquals(BeCPGModel.PROP_DEPTH_LEVEL, level.toString());
 		}
-
+		
 		NodeRef parentLevel = (NodeRef) nodeService.getProperty(nodeRef, BeCPGModel.PROP_PARENT_LEVEL);
 		if(parentLevel != null){
 			queryBuilder.andPropEquals(BeCPGModel.PROP_PARENT_LEVEL, parentLevel.toString());
 		}
-		
+
 		return queryBuilder.inDB().singleValue();
 	}
 
@@ -434,6 +434,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 
 		// look for the right destNode (before or after sibling)
 		NodeRef destNodeRef = getNextSiblingNode(dataType, listContainer, nodeRef, moveUp);
+		logger.debug("destNodeRef " + destNodeRef);
 
 		if (destNodeRef == null) {			
 			if(getSortedNode(dataType, listContainer, sort, nodeRef) != null){
@@ -473,20 +474,23 @@ public class DataListSortServiceImpl implements DataListSortService {
 			List<NodeRef> destChildren = queryBuilder.inDB().list();
 
 			// udpate sort of nodeRef and children
+			logger.debug("udpate sort of nodeRef and children");
 			int newSort = destSort;
 			for (NodeRef listItem : children) {
 				newSort++;
 				setProperty(listItem, BeCPGModel.PROP_SORT, newSort);
-			}
-
+			}			
+			
 			// update sort of destNodeRef and children
+			logger.debug("update sort of destNodeRef and children");
 			newSort = sort;
 			for (NodeRef listItem : destChildren) {
 				newSort++;
 				setProperty(listItem, BeCPGModel.PROP_SORT, newSort);
 			}
-
+			
 			// swap parent
+			logger.debug("swap parent");
 			setProperty(nodeRef, BeCPGModel.PROP_SORT, moveUp ? destSort : newSort+1);
 			setProperty(destNodeRef, BeCPGModel.PROP_SORT, sort);
 		}
