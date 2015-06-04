@@ -256,8 +256,8 @@ var g; // gantt var
                                 if (recordSet.getLength() != 0)
                                 {
                                     g = new JSGantt.GanttChart('g', Dom.get(this.id + "-gantt"), 'day');
-                                    g.setDateInputFormat("shortDate");
-                                    g.setDateDisplayFormat("shortDate");
+                                    g.setDateInputFormat("mediumDate");
+                                    g.setDateDisplayFormat("mediumDate");
                                     g.setCaptionType('Resource');
 
                                     for (var i = 0; i < recordSet.getLength(); i++)

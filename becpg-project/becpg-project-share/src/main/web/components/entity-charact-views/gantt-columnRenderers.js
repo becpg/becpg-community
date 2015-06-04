@@ -44,8 +44,8 @@
                                                 {
                                                     g = new JSGantt.GanttChart('g', Dom.get(this.id + "-gantt"), g != null ? g
                                                             .getFormat() : 'day');
-                                                    g.setDateInputFormat("shortDate");
-                                                    g.setDateDisplayFormat("shortDate");
+                                                    g.setDateInputFormat("mediumDate");
+                                                    g.setDateDisplayFormat("mediumDate");
                                                     g.setCaptionType('Resource');
                                                     var start = new Date();
                                                     for (var i = 0; i < recordSet.getLength(); i++)
@@ -96,7 +96,7 @@
                                                         g.AddTaskItem(new JSGantt.TaskItem(taskId, this.getTaskTitle(task,
                                                                 this.options.entityNodeRef, tdates.start), tdates.start,
                                                                 tdates.end, this.getTaskColor(task), null, tlIsMilestone ? 1 : 0,
-                                                                taskOwner, tlPercent, pGroup, pParent, 1, precTaskIds));
+                                                                taskOwner, tlPercent, pGroup, pParent, 1, precTaskIds,null,task.color));
                                                     }
 
                                                     this.refreshView();

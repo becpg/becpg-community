@@ -133,7 +133,7 @@
 	display: inline-table;
 }
 
-.project-list span.task-status-onHold {
+.project-list span.task-status-OnHold {
 	background: url("../documentlibrary/indicators/project-onhold-16.png") no-repeat;
 	display: inline-table;
 }
