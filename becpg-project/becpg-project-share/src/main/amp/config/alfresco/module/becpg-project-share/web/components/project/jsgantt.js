@@ -84,7 +84,7 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
     * @return void
     */	
    JSGantt.TaskItem = function(pID, pName, pStart, pEnd, pColor, pLink, pMile, pRes, pComp, pGroup, pParent, pOpen,
-                               pDepend, pCaption) {
+                               pDepend, pCaption, pLineColor) {
 
 	   
 	 
@@ -131,6 +131,14 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
        */
       var vColor = pColor;
 
+      /**
+       * @property vLineColor
+       * @type String
+       * @default pColor
+       * @private
+       */
+      var vLineColor = pLineColor;
+      
       /**
        * @property vLink
        * @type String
@@ -234,6 +242,8 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
        * @private
        */
       var vVisible = 1;
+      
+
 
       var x1 = 0, y1 = 0, x2 = 0, y2 = 0;
 
@@ -286,6 +296,16 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
          return vColor;
       };
 
+      /**
+       * Returns Line color (i.e. 00FF00)
+       * 
+       * @method getColor
+       * @return {String}
+       */
+      this.getLineColor = function() {
+         return vLineColor;
+      };
+      
       /**
        * Returns task URL (i.e. http://www.jsgantt.com)
        * 
@@ -413,29 +433,6 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
             }
          }
 
-         // else if(vFormat == 'week') {
-         // tmpPer = ((this.getEnd() - this.getStart()) / (24 * 60 * 60 * 1000)
-         // +
-         // 1)/7;
-         // if(tmpPer == 1) vDuration = '1 Week';
-         // else vDuration = tmpPer + ' Weeks';
-         // }
-
-         // else if(vFormat == 'month') {
-         // tmpPer = ((this.getEnd() - this.getStart()) / (24 * 60 * 60 * 1000)
-         // +
-         // 1)/30;
-         // if(tmpPer == 1) vDuration = '1 Month';
-         // else vDuration = tmpPer + ' Months';
-         // }
-
-         // else if(vFormat == 'quater') {
-         // tmpPer = ((this.getEnd() - this.getStart()) / (24 * 60 * 60 * 1000)
-         // +
-         // 1)/120;
-         // if(tmpPer == 1) vDuration = '1 Qtr';
-         // else vDuration = tmpPer + ' Qtrs';
-         // }
          return vDuration;
       };
 
@@ -831,8 +828,7 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
       var vQuarterArr = [ 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4 ];
       var vMonthDaysArr = [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ];
 	  var vMonthWeeksArr = [5,  4,  4,  5,  4,  4,  5,  4,  5,  4,  4,  4];    
-      var vMonthArr = [ "January", "February", "March", "April", "May", "June", "July", "August", "September",
-            "October", "November", "December" ];
+      var vMonthArr = Alfresco.util.message("months.long").split(",");
       
  
       
@@ -1446,11 +1442,13 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
 
                vcurrDivID = vTaskList[i].getID();
                
-
+               var vLineColorStyle = vTaskList[i].getLineColor()? 'style="background-color:' 
+                  + vTaskList[i].getLineColor() + '"' :"";
+               
                if (vTaskList[i].getVisible() === 0) {
-                  vLeftTable += '<tr id="child_' + vcurrDivID + '" class="g' + vRowType + ' hidden"  onMouseover="g.mouseOver(this,\'' + vcurrDivID + '\',\'left\',\'' + vRowType + '\')" onMouseout="g.mouseOut(this,\'' + vcurrDivID + '\',\'left\',\'' + vRowType + '\')">';
+                  vLeftTable += '<tr id="child_' + vcurrDivID + '" class="g' + vRowType + ' hidden" '+vLineColorStyle+' onMouseover="g.mouseOver(this,\'' + vcurrDivID + '\',\'left\',\'' + vRowType + '\')" onMouseout="g.mouseOut(this,\'' + vcurrDivID + '\',\'left\',\'' + vRowType + '\')">';
                } else {
-                  vLeftTable += '<tr id="child_' + vcurrDivID + '"  class="g' + vRowType + '"  onMouseover="g.mouseOver(this,\'' + vcurrDivID + '\',\'left\',\'' + vRowType + '\')" onMouseout="g.mouseOut(this,\'' + vcurrDivID + '\',\'left\',\'' + vRowType + '\')">';
+                  vLeftTable += '<tr id="child_' + vcurrDivID + '"  class="g' + vRowType + '" '+vLineColorStyle+' onMouseover="g.mouseOver(this,\'' + vcurrDivID + '\',\'left\',\'' + vRowType + '\')" onMouseout="g.mouseOut(this,\'' + vcurrDivID + '\',\'left\',\'' + vRowType + '\')">';
                }
                
                if (vShowSelect === 1 ) {
@@ -1537,6 +1535,7 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
                }
 
                if (vFormat == 'day') {
+                   
                   vRightTable += '<th class="gdatehead"   colspan="7"><center>' + vTmpDate.getDate() + ' - ';
                   vTmpDate.setDate(vTmpDate.getDate() + 6);
                   vRightTable += JSGantt.formatDateStr(vTmpDate, vDateDisplayFormat) + '</center></th>';
@@ -1602,6 +1601,7 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
                       cssClass += " current";
                      vCurrPosY = vColWidth * vNumCols;
                   }
+                  
                   vHeader = vTmpDate.getDate();
                   vTmpDate.setDate(vTmpDate.getDate() + 1);
 
@@ -1651,7 +1651,7 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
                      vCurrPosY = vColWidth * vNumCols;
                   }
 
-                  vHeader = 'Qtr. ' + vQuarterArr[vTmpDate.getMonth()];
+                  vHeader = JSGantt.msg("jsgantt.quarter").substr(0, 3)+'. ' + vQuarterArr[vTmpDate.getMonth()];
                   vTmpDate.setDate(vTmpDate.getDate() + 81);
                   while (vTmpDate.getDate() > 1) {
                      vTmpDate.setDate(vTmpDate.getDate() + 1);
@@ -1733,9 +1733,11 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
                    vClass="group"; 
                }
                
+               var vLineColorStyle = vTaskList[i].getLineColor()? 'style="background-color:' 
+               + vTaskList[i].getLineColor() + '"' :"";
    
                vRightTable += '<div><table style="width: ' + vChartWidth + 'px;"><tbody class="yui-dt-data">' 
-                           + '<tr id="childrow_' + vcurrDivID + '" class="g'+ vClass +'" onMouseover="g.mouseOver(this,\'' 
+                           + '<tr id="childrow_' + vcurrDivID + '" '+vLineColorStyle+' class="g'+ vClass +'" onMouseover="g.mouseOver(this,\'' 
                            + vcurrDivID + '\',\'right\',\''+vClass+'\')" onMouseout="g.mouseOut(this,\'' 
                            + vcurrDivID + '\',\'right\',\''+vClass+'\')">' 
                            + vItemRowStr + '</tr></tbody></table></div>';
@@ -1978,7 +1980,7 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
          }
       }
 
-      if (pRow >= 0) {
+      if (pRow >= 0 && ! pList[pRow].getMile()) {
          pList[pRow].setStart(vMinDate);
          pList[pRow].setEnd(vMaxDate);
          pList[pRow].setNumKid(vNumKid);
@@ -2180,93 +2182,59 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
 
             if (vList[i].getOpen() == 1) {
                vList[i].setOpen(0);
-               JSGantt.hide(pID, ganttObj);
+               JSGantt.toogleDiv(pID, ganttObj,0);
                Dom.removeClass('group_' + pID, "ggroup-expanded");
                Dom.addClass('group_' + pID, "ggroup-collapsed");
 
             } else {
 
                vList[i].setOpen(1);
-               JSGantt.show(pID, 1, ganttObj);
+               JSGantt.toogleDiv(pID, ganttObj,1);
                Dom.removeClass('group_' + pID, "ggroup-collapsed");
                Dom.addClass('group_' + pID, "ggroup-expanded");
 
             }
+            
 
          }
       }
    };
 
    /**
-    * Hide children of a task
+    * Toogle children of a task
     * 
     * @method hide
     * @param pID
     *            {Number} - Task ID
     * @param ganttObj
     *            {GanttChart} - the gantt object
+    * @param pShow
+    *            {pShow} - 0/1 hide or show div
     * @return {void}
     */
-   JSGantt.hide = function(pID, ganttObj) {
+   JSGantt.toogleDiv = function(pID, ganttObj, pShow) {
       var vList = ganttObj.getList();
       var vCurrID = 0;
 
       for ( var i = 0; i < vList.length; i++) {
          if (vList[i].getParent() == pID) {
             vCurrID = vList[i].getID();
-            Dom.addClass('child_' + vCurrID, "hidden");
-            Dom.addClass('childgrid_' + vCurrID, "hidden");
-            vList[i].setVisible(0);
-            // if (vList[i].getGroup() == 1) {
-            // JSGantt.hide(vcurrDivID, ganttObj);
-            // }
+            if(pShow == 0){
+                Dom.addClass('child_' + vCurrID, "hidden");
+                Dom.addClass('childgrid_' + vCurrID, "hidden");
+            } else {
+                Dom.removeClass('child_' + vCurrID, "hidden");
+                Dom.removeClass('childgrid_' + vCurrID, "hidden");
+            }
+            vList[i].setVisible(pShow);
+            if (vList[i].getGroup() == 1) {
+                JSGantt.toogleDiv(vCurrID, ganttObj,pShow);
+            }
          }
 
       }
    };
 
-   /**
-    * Show children of a task
-    * 
-    * @method show
-    * @param pID
-    *            {Number} - Task ID
-    * @param ganttObj
-    *            {GanttChart} - the gantt object
-    * @return {void}
-    */
-   JSGantt.show = function(pID, pTop, ganttObj) {
-      var vList = ganttObj.getList();
-      var vCurrID = 0;
-
-      for ( var i = 0; i < vList.length; i++) {
-         if (vList[i].getParent() == pID) {
-            vCurrID = vList[i].getID();
-            // if (pTop == 1) {
-
-            // if (Dom.hasClass('group_' + pID,"ggroup-collapsed")) {
-            Dom.removeClass('child_' + vCurrID, "hidden");
-            Dom.removeClass('childgrid_' + vCurrID, "hidden");
-            vList[i].setVisible(1);
-            // }
-
-            // } else {
-            //
-            // if (Dom.hasClass('group_' + pID,"ggroup-expended")) {
-            // Dom.removeClass('child_' + vcurrDivID,"hidden");
-            // Dom.removeClass('childgrid_' + vcurrDivID,"hidden");
-            // vList[i].setVisible(1);
-            // }
-            //		
-            // }
-
-            // if (vList[i].getGroup() == 1) {
-            // JSGantt.show(vcurrDivID, 0, ganttObj);
-            // }
-
-         }
-      }
-   };
 
    /**
     * Parse dates based on gantt date format setting as defined in JSGantt.GanttChart.setDateInputFormat()

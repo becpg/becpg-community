@@ -350,6 +350,11 @@ public class DataListSortServiceImpl implements DataListSortService {
 			queryBuilder.andPropEquals(BeCPGModel.PROP_DEPTH_LEVEL, level.toString());
 		}
 
+		NodeRef parentLevel = (NodeRef) nodeService.getProperty(nodeRef, BeCPGModel.PROP_PARENT_LEVEL);
+		if(parentLevel != null){
+			queryBuilder.andPropEquals(BeCPGModel.PROP_PARENT_LEVEL, parentLevel.toString());
+		}
+		
 		return queryBuilder.inDB().singleValue();
 	}
 
@@ -482,7 +487,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 			}
 
 			// swap parent
-			setProperty(nodeRef, BeCPGModel.PROP_SORT, destSort);
+			setProperty(nodeRef, BeCPGModel.PROP_SORT, moveUp ? destSort : newSort+1);
 			setProperty(destNodeRef, BeCPGModel.PROP_SORT, sort);
 		}
 	}

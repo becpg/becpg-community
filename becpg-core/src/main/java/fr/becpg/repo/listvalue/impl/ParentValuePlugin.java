@@ -109,6 +109,17 @@ public class ParentValuePlugin extends EntityListValuePlugin {
 			beCPGQueryBuilder.andPropEquals(QName.createQName(splitted[0], namespaceService), splitted[1]);
 		}
 		
+		if(props.containsKey(ListValueService.PROP_PARENT)){
+			String parent = (String) props.get(ListValueService.PROP_PARENT);
+			if(parent!=null){
+				if(!parent.isEmpty() && NodeRef.isNodeRef(parent)){
+					beCPGQueryBuilder.andPropEquals(BeCPGModel.PROP_PARENT_LEVEL, parent);
+				} else {
+					beCPGQueryBuilder.andPropEquals(BeCPGModel.PROP_PARENT_LEVEL,null);
+				}
+			}
+		}
+		
 		
 		if (itemId != null) {
 			beCPGQueryBuilder.andNotID(itemId);
