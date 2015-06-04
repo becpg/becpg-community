@@ -221,13 +221,13 @@
                                 }
 
                                 ret += '<span class="node-' + deliverable.nodeRef + '|' + entityNodeRef + '">';
-                                if (!this.options.readOnly)
+                                if (contents.length > 0)
                                 {
                                     ret += '<a class="theme-color-1 ' + '" title="' + this
                                             .msg("form.control.project-task.link.title.open-document") + '" href="' +contentUrl + '" >';
                                 }
                                 ret += deliverable.name;
-                                if (!this.options.readOnly)
+                                if (contents.length > 0)
                                 {
                                     ret += '</a>';
                                 }
