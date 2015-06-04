@@ -597,6 +597,7 @@
 					<show id="pjt:tlPrevTasks"/>
 					<show id="bcpg:parentLevel" force="true" />
 					<show id="pjt:tlResources" />
+					<show id="pjt:tlTaskLegend" />
 					<show id="pjt:tlState" />
 					<show id="pjt:tlDuration" />
 					<show id="pjt:completionPercent" />
@@ -634,6 +635,7 @@
 					<show id="pjt:tlPrevTasks" />
 					<show id="bcpg:parentLevel" force="true" />
 					<show id="pjt:tlResources" />
+					<show id="pjt:tlTaskLegend" />
 					<show id="pjt:tlIsMilestone" />
 					<show id="pjt:tlDuration" />					
 					<show id="pjt:tlWork" />	
@@ -665,12 +667,12 @@
 					<field id="bcpg:parentLevel" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName</control-param>
-							<control-param name="urlParamsToPass">itemId</control-param>
 							<control-param name="parent">bcpg_parentLevel</control-param>
 							<control-param name="parentMode">true</control-param>
 						</control>
 					</field>
-					<field id="pjt:tlResources" set="mainInfo"/>					
+					<field id="pjt:tlResources" set="mainInfo"/>
+					<field id="pjt:tlTaskLegend" set="mainInfo"/>
 					
 					<set id="planning" appearance="bordered-panel"
 						label-id="becpg.forms.set.planning.label" template="/org/alfresco/components/form/2-column-set.ftl" />		
@@ -723,7 +725,6 @@
 					<field id="bcpg:parentLevel" >
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName</control-param>
-							<control-param name="urlParamsToPass">itemId</control-param>
 							<control-param name="parent">bcpg_parentLevel</control-param>
 							<control-param name="parentMode">true</control-param>
 						</control>

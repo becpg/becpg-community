@@ -27,6 +27,7 @@ tr.gheader {
 	border-style: dashed solid none none;
 	border-width: 1px 1px 0 0;
 	border-collapse: separate;
+	background-color: transparent;
 }
 
 th.ghead, th.gheadwkend{
@@ -35,19 +36,16 @@ th.ghead, th.gheadwkend{
 
 
 td.gheadwkend {
-	background-color: #cfcfcf
+	background-color: #cfcfcf !important;
 }
 
-td.ghead {
-	background-color:#ffffff
-}
 
 td.gheadwkend.current {
-	background-color: #9999ff;
+	background-color: #9999ff !important;
 }
 
 td.ghead.current {
-	background-color: #F5FAFF;
+	background-color: #F5FAFF !important;
 }
 
 

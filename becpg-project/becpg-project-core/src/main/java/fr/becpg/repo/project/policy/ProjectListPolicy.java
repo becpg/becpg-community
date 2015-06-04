@@ -127,7 +127,7 @@ public class ProjectListPolicy extends ProjectPolicy implements NodeServicePolic
 		}
 
 		if (isPropChanged(before, after, ProjectModel.PROP_TL_DURATION) || isPropChanged(before, after, ProjectModel.PROP_TL_START) || isPropChanged(before, after, ProjectModel.PROP_TL_WORK)
-				|| isPropChanged(before, after, ProjectModel.PROP_TL_FIXED_COST)) {
+				|| isPropChanged(before, after, ProjectModel.PROP_TL_FIXED_COST) ||  isPropChanged(before, after, BeCPGModel.PROP_PARENT_LEVEL)) {
 
 			logger.debug("update task list start, duration or end: " + nodeRef);
 			formulateProject = true;
