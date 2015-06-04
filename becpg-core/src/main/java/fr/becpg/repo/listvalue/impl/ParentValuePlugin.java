@@ -120,10 +120,12 @@ public class ParentValuePlugin extends EntityListValuePlugin {
 		
 		if(props.containsKey(ListValueService.PROP_PARENT)){
 			String parent = (String) props.get(ListValueService.PROP_PARENT);
-			if(parent!=null && NodeRef.isNodeRef(parent)){
-				beCPGQueryBuilder.andPropEquals(BeCPGModel.PROP_PARENT_LEVEL, parent);
-			} else {
-				beCPGQueryBuilder.andPropEquals(BeCPGModel.PROP_PARENT_LEVEL,null);
+			if(parent!=null){
+				if(!parent.isEmpty() && NodeRef.isNodeRef(parent)){
+					beCPGQueryBuilder.andPropEquals(BeCPGModel.PROP_PARENT_LEVEL, parent);
+				} else {
+					beCPGQueryBuilder.andPropEquals(BeCPGModel.PROP_PARENT_LEVEL,null);
+				}
 			}
 		}
 		
