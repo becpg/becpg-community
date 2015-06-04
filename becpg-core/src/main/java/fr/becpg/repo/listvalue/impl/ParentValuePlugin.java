@@ -124,7 +124,7 @@ public class ParentValuePlugin extends EntityListValuePlugin {
 				if(!parent.isEmpty() && NodeRef.isNodeRef(parent)){
 					beCPGQueryBuilder.andPropEquals(BeCPGModel.PROP_PARENT_LEVEL, parent);
 				} else {
-					beCPGQueryBuilder.andPropEquals(BeCPGModel.PROP_PARENT_LEVEL,null);
+					beCPGQueryBuilder.andPropEquals(BeCPGModel.PROP_DEPTH_LEVEL,String.valueOf(RepoConsts.DEFAULT_LEVEL));
 				}
 			}
 		}
