@@ -26,7 +26,7 @@
    /**
     * YUI Library aliases
     */
-   var Dom = YAHOO.util.Dom, Bubbling = YAHOO.Bubbling;
+   var Dom = YAHOO.util.Dom, Bubbling = YAHOO.Bubbling,Event = YAHOO.util.Event;
 
    /**
     * EntityDataListToolbar constructor.
@@ -50,6 +50,11 @@
       Bubbling.on("registerToolbarButtonAction", this.onRegisterToolbarButtonAction, this);
 
       Bubbling.on("activeDataListChanged", this.onActiveDataListChanged, this);
+      
+      // Decoupled event listeners
+//      YAHOO.Bubbling.on("filesPermissionsUpdated", this.doRefresh, this);
+//      YAHOO.Bubbling.on("metadataRefresh", this.doRefresh, this);
+      YAHOO.Bubbling.on("registerAction", this.onRegisterAction, this);
 
       /* Deferred list population until DOM ready */
       this.deferredToolbarPopulation = new Alfresco.util.Deferred([ "onReady", "onActiveDataListChanged" ], {
@@ -60,10 +65,18 @@
       return this;
    };
 
+  
    /**
     * Extend from Alfresco.component.Base
     */
    YAHOO.extend(beCPG.component.EntityDataListToolbar, Alfresco.component.Base);
+   
+   /**
+    * Augment prototype with Actions module
+    */
+   if(Alfresco.doclib.Actions){
+       YAHOO.lang.augmentProto(beCPG.component.EntityDataListToolbar, Alfresco.doclib.Actions);
+   }
 
    /**
     * Augment prototype with main class implementation, ensuring overwrite is enabled
@@ -80,25 +93,109 @@
        * @property options
        * @type object
        */
-      options : {
+      options:
+      {
          /**
-          * Current siteId.
-          * 
-          * @property siteId
+          * Reference to the current document
+          *
+          * @property nodeRef
           * @type string
-          * @default ""
           */
-         siteId : "",
+         nodeRef: null,
+         
+         /**
+          * Entity nodeRef 
+          */
+         entityNodeRef : null,
 
          /**
-          * Current entityNodeRef.
-          * 
-          * @property entityNodeRef
+          * Current siteId, if any.
+          *
+          * @property siteId
           * @type string
-          * @default ""
           */
-         entityNodeRef : ""
+         siteId: null,
+
+         /**
+          * ContainerId representing root container
+          *
+          * @property containerId
+          * @type string
+          * @default "documentLibrary"
+          */
+         containerId: "documentLibrary",
+
+         /**
+          * Valid inline edit mimetypes
+          * Currently allowed are plain text, HTML and XML only
+          *
+          * @property inlineEditMimetypes
+          * @type object
+          */
+         inlineEditMimetypes:
+         {
+            "text/plain": true,
+            "text/html": true,
+            "text/xml": true
+         },
+
+         /**
+          * Root node
+          *
+          * @property rootNode
+          * @type string
+          */
+         rootNode: "alfresco://company/home",
+
+         /**
+          * Replication URL Mapping details
+          *
+          * @property replicationUrlMapping
+          * @type object
+          */
+         replicationUrlMapping: {},
+
+         /**
+          * JSON representation of document details
+          *
+          * @property documentDetails
+          * @type object
+          */
+         documentDetails: null,
+
+         /**
+          * Whether the Repo Browser is in use or not
+          *
+          * @property repositoryBrowsing
+          * @type boolean
+          */
+         repositoryBrowsing: true
       },
+
+      /**
+       * The data for the document
+       *
+       * @property recordData
+       * @type object
+       */
+      recordData: null,
+
+      /**
+       * Metadata returned by doclist data webscript
+       *
+       * @property doclistMetadata
+       * @type object
+       * @default null
+       */
+      doclistMetadata: null,
+
+      /**
+       * Path of asset being viewed - used to scope some actions (e.g. copy to, move to)
+       *
+       * @property currentPath
+       * @type string
+       */
+      currentPath: null,
 
       /**
        * Register a toolbar button action via Bubbling event
@@ -194,12 +291,171 @@
       onReady : function EntityDataListToolbar_onReady() {
 
          this.deferredToolbarPopulation.fulfil("onReady");
-
+         
+         if(this.options.nodeRef!=null){
+         
+            // Asset data
+             this.recordData = this.options.documentDetails.item;
+             this.doclistMetadata = this.options.documentDetails.metadata;
+             this.currentPath = this.recordData.location.path;
+    
+             // Populate convenience property
+             this.recordData.jsNode = new Alfresco.util.Node(this.recordData.node);
+    
+             // Retrieve the actionSet for this record
+             var record = this.recordData,
+                node = record.node,
+                actions = record.actions,
+                actionsEl = Dom.get(this.id + "-actionSet"),
+                actionHTML = "",
+                actionsSel;
+    
+             record.actionParams = {};
+             for (var i = 0, ii = actions.length; i < ii; i++)
+             {
+                actionHTML += this.renderAction(actions[i], record).replace(/div/g,"li");
+             }
+    
+             // Token replacement (actionUrls is re-used further down)
+             var actionUrls = this.getActionUrls(record);
+             actionsEl.innerHTML = YAHOO.lang.substitute(actionHTML, actionUrls);
+    
+             // DocLib Actions module
+             this.modules.actions = new Alfresco.module.DoclibActions();
+             
+             this.widgets.actionsMenu = Alfresco.util.createYUIButton(this, "action-set-button",
+                     this.onActionMenu,
+                     {
+                         type : "menu",
+                         menu : "action-set-menu",
+                         lazyloadmenu : false,
+                         disabled : false
+                     });
+         }
         
          // Finally show the component body here to prevent UI artifacts on YUI
          // button decoration
          Dom.setStyle(this.id + "-body", "visibility", "visible");
+      },
+      
+      onActionMenu :  function EntityDataGrid_onSelectedItems(sType, aArgs, p_obj)
+      {
+          
+          var domEvent = aArgs[0], eventTarget = aArgs[1];
+
+            
+                if (typeof this[eventTarget.id] === "function")
+                {
+                   try
+                   {
+                      this[eventTarget.id].call(this, this.recordData, eventTarget);
+                      Event.preventDefault(domEvent);
+                   }
+                   catch (e)
+                   {
+                     alert(e);
+                   }
+                }
+             
+             return true;
+          
+          
+      },
+      
+      /**
+       * Delete Asset confirmed.
+       *
+       * @override
+       * @method _onActionDeleteConfirm
+       * @param asset {object} Object literal representing file or folder to be actioned
+       * @private
+       */
+      _onActionDeleteConfirm: function DocumentActions__onActionDeleteConfirm(asset)
+      {
+         var path = asset.location.path;
+         
+         // Update the path for My Files and Shared Files...
+         if (Alfresco.constants.PAGECONTEXT == "mine" || Alfresco.constants.PAGECONTEXT == "shared")
+         {
+            // Get rid of the first "/"
+            var tmpPath = path.substring(1); 
+            if (Alfresco.constants.PAGECONTEXT == "mine")
+            {
+               tmpPath = tmpPath.substring(tmpPath.indexOf("/") + 1);
+            }
+            var slashIndex = tmpPath.indexOf("/");
+            if (slashIndex != -1)
+            {
+               path = tmpPath.substring(slashIndex);
+            }
+            else
+            {
+               path = "";
+            }
+         }
+         
+         var fileName = asset.fileName,
+            displayName = asset.displayName,
+            nodeRef = new Alfresco.util.NodeRef(asset.nodeRef),
+            callbackUrl = "",
+            encodedPath = path.length > 1 ? "?path=" + encodeURIComponent(path) : "";
+
+         // Work out the correct Document Library to return to...
+         if (Alfresco.constants.PAGECONTEXT == "mine")
+         {
+            callbackUrl = "myfiles";
+         }
+         else if (Alfresco.constants.PAGECONTEXT == "shared")
+         {
+            callbackUrl = "sharedfiles";
+         }
+         else
+         {
+            callbackUrl = Alfresco.util.isValueSet(this.options.siteId) ? "documentlibrary" : "repository";
+         }
+           
+         this.modules.actions.genericAction(
+         {
+            success:
+            {
+               activity:
+               {
+                  siteId: this.options.siteId,
+                  activityType: "file-deleted",
+                  page: "documentlibrary",
+                  activityData:
+                  {
+                     fileName: fileName,
+                     path: path,
+                     nodeRef: nodeRef.toString()
+                  }
+               },
+               callback:
+               {
+                  fn: function DocumentActions_oADC_success(data)
+                  {
+                     window.location = $siteURL(callbackUrl + encodedPath);
+                  }
+               }
+            },
+            failure:
+            {
+               message: this.msg("message.delete.failure", displayName)
+            },
+            webscript:
+            {
+               method: Alfresco.util.Ajax.DELETE,
+               name: "file/node/{nodeRef}",
+               params:
+               {
+                  nodeRef: nodeRef.uri
+               }
+            }
+         });
       }
 
    }, true);
+   
+   
+   
 })();

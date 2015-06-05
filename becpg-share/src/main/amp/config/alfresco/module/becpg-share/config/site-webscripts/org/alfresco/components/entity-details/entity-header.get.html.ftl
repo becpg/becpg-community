@@ -73,7 +73,7 @@
                <#if showPath == "true">
                   <!-- Path-->
                   <div class="node-path">
-                     <@renderPaths paths />
+                     <@renderPaths paths /><#if showOnlyLocation == "true"><span id="document-version" class="document-version">${item.version}</span></#if>
                   </div>
                </#if>
                <#if showOnlyLocation == "false">

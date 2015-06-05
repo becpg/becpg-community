@@ -1,3 +1,6 @@
+<import resource="classpath:/alfresco/templates/org/alfresco/import/alfresco-util.js">
+<import resource="classpath:/alfresco/site-webscripts/org/alfresco/components/documentlibrary/include/documentlist.lib.js">
+
 /*******************************************************************************
  *  Copyright (C) 2010-2015 beCPG. 
  *   
@@ -18,18 +21,60 @@
  ******************************************************************************/
 function main()
 {
-	
-// Widget instantiation metadata...
-var entityDataListToolbar = {
-   id : "EntityDataListToolbar", 
-   name : "beCPG.component.EntityDataListToolbar",
-   options : {
-   	siteId : (page.url.templateArgs.site != null) ? page.url.templateArgs.site : "",
-      entityNodeRef : (page.url.args.nodeRef != null) ? page.url.args.nodeRef : ""
-   }
-};
+    
+    
+    AlfrescoUtil.param('nodeRef',null);
+    AlfrescoUtil.param('site', null);
+    AlfrescoUtil.param('container', 'documentLibrary');
 
-model.widgets = [entityDataListToolbar];
+    if(model.nodeRef == null){
+        var entityDataListToolbar = {
+                id : "EntityDataListToolbar", 
+                name : "beCPG.component.EntityDataListToolbar",
+                options : {
+                   siteId : (model.site != null) ? model.site : null   
+                }
+             };
+
+    } else {
+        var documentDetails = AlfrescoUtil.getNodeDetails(model.nodeRef, model.site,
+                {
+                   actions: true
+                });
+                if (documentDetails)
+                {
+                   model.documentDetails = true;
+                   doclibCommon();
+                }
+                
+                model.syncMode = syncMode.getValue();
+
+                // Widget instantiation metadata...
+                var entityDataListToolbar = {
+                   id : "EntityDataListToolbar", 
+                   name : "beCPG.component.EntityDataListToolbar",
+                   options : {
+                      nodeRef : model.nodeRef,
+                      entityNodeRef : model.nodeRef,
+                      siteId : (model.site != null) ? model.site : null,
+                      containerId : model.container,
+                      rootNode : model.rootNode,
+                      replicationUrlMapping : (model.replicationUrlMapping != null) ? model.replicationUrlMapping : "{}",
+                      documentDetails : documentDetails,
+                      repositoryBrowsing : (model.rootNode != null),
+                      syncMode : model.syncMode != null ? model.syncMode : ""         
+                   }
+                };
+                
+                if (model.repositoryUrl != null)
+                {
+                    entityDataListToolbar.options.repositoryUrl = model.repositoryUrl;
+                }  
+                
+                model.widgets = [entityDataListToolbar];
+    }
+    
+   
 
 }
 

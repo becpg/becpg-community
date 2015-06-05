@@ -32,11 +32,6 @@
 					      	</#list>
 					      </select>
 						</div>
-					
-		               <div class="entity-download-report">
-					   		<a id="${el}-downloadEntityReport-button" title="${msg("actions.entity.download-report")}"  href="#" >&nbsp;</a>
-					   	</div>
-		               
 				   	</#if>
           </div>
 
