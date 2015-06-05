@@ -1,0 +1,29 @@
+.properties-view .form-container .form-fields {
+    border-bottom: none;
+}
+
+.properties-view .properties-details {
+	padding-top:1em;
+}
+
+.properties-view .properties-details table td {
+	vertical-align: top;
+}
+
+
+.properties-view a.upload-logo-action:hover  span.upload-logo-span {
+   background-image: url(../images/edit-16.png);
+   background-color: transparent;
+   background-position: 6px 4px;
+   background-repeat: no-repeat ;
+   padding-left: 20px;
+}
+
+.properties-view span.item-modifier{
+	display:block;
+	float: none;
+}
+
+.properties-view span.item-separator {
+    margin-left: 0.8em;
+}

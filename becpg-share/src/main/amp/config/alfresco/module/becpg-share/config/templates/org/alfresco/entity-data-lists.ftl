@@ -1,5 +1,6 @@
 <#include "include/alfresco-template.ftl" />
 <@templateHeader>
+	
    <@markup id="location-hash">
    <script type="text/javascript">//<![CDATA[
    (function()
@@ -51,7 +52,8 @@
       new Alfresco.widget.Resizer("DataLists");
    //]]></script>
    </@>
-   <@script type="text/javascript" src="${url.context}/res/modules/data-lists/datalist-actions.js"></@script>
+<@script type="text/javascript" src="${url.context}/res/modules/documentlibrary/doclib-actions.js" group="entity-datalists"/>
+   <@script type="text/javascript" src="${url.context}/res/modules/data-lists/datalist-actions.js" group="entity-datalists"></@script>
 </@>
 
 <@templateBody>
@@ -63,10 +65,10 @@
    </@>
    <@markup id="bd">
    <div id="bd">
-      <@region id="actions-common" scope="template" />
         <div class="yui-t1" id="alfresco-data-lists">
            <div id="yui-main">
               <div class="yui-b" id="alf-content">
+				<@region id="actions-common" scope="template" />
                 <@region id="toolbar" scope="template"  />               
                 <@region id="datagrid" scope="template" />
               </div>
@@ -76,7 +78,12 @@
                <@region id="document-versions" scope="template"/>
            </div>
         </div>
+	      <@region id="html-upload" scope="template"/>
+		  <@region id="flash-upload" scope="template"/>
+		  <@region id="file-upload" scope="template"/>
+		  <@region id="dnd-upload" scope="template"/>
    </div>
+          <@region id="doclib-custom" scope="template"/>
    </@>
 </@>
 

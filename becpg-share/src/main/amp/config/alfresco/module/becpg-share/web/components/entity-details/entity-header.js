@@ -47,6 +47,7 @@
                {
                    fileUpload : null,
                    
+                   
                   /**
                    * Fired by YUI when parent element is available for scripting. Initial History Manager event
                    * registration
@@ -258,12 +259,17 @@
                   doRefresh : function NodeHeader_doRefresh() {
                      YAHOO.Bubbling.unsubscribe("metadataRefresh", this.doRefresh, this);
 
-                     var url = 'components/entity-details/entity-header?nodeRef={nodeRef}&rootPage={rootPage}' + '&rootLabelId={rootLabelId}&showFavourite={showFavourite}&showLikes={showLikes}' + '&showComments={showComments}&showQuickShare={showQuickShare}&showDownload={showDownload}&showPath={showPath}' + (this.options.pagecontext ? '&pagecontext={pagecontext}'
-                           : '') + (this.options.libraryRoot ? '&libraryRoot={libraryRoot}' : '') + (this.options.siteId ? '&site={siteId}'
-                           : '');
+                     var url = 'components/entity-details/entity-header?nodeRef={nodeRef}&rootPage={rootPage}' 
+                             + '&rootLabelId={rootLabelId}&showFavourite={showFavourite}&showLikes={showLikes}' 
+                             + '&showComments={showComments}&showQuickShare={showQuickShare}&showDownload={showDownload}&showPath={showPath}' 
+                             + (this.options.pagecontext ? '&pagecontext={pagecontext}': '')
+                             + (this.options.libraryRoot ? '&libraryRoot={libraryRoot}' : '') 
+                             + (this.options.siteId ? '&site={siteId}': '')
+                             + (this.options.showOnlyLocation ? '&showOnlyLocation={showOnlyLocation}':'');
 
                      this.refresh(url);
                   },
+                 
 
                   /**
                    * @param menuItem

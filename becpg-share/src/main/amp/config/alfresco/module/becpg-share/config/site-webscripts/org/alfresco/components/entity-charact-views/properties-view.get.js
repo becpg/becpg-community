@@ -10,10 +10,11 @@ function getActivityParameters(nodeRef, defaultValue)
          return (
          {
             itemTitle: metadata.properties[cm + 'name'],
-            page: 'entity-details',
+            page: 'entity-datalist',
             pageParams:
             {
-               nodeRef: metadata.nodeRef
+               nodeRef: metadata.nodeRef,
+               list: "View-properties"
             }
          });
    }
@@ -33,12 +34,19 @@ function main()
    if (documentDetails)
    {
       model.document = documentDetails;
+      model.item = documentDetails.item;
+      model.node = documentDetails.item.node;
       model.allowMetaDataUpdate = (!documentDetails.item.node.isLocked && documentDetails.item.node.permissions.user["Write"]) || false;
+      model.thumbnailUrl= "/share/proxy/alfresco/api/node/" + model.nodeRef.replace(':/','') + "/content/thumbnails/doclib?c=queue&ph=true";
+      model.displayName =  (model.item.displayName != null) ? model.item.displayName : model.item.fileName;
       activityParameters = getActivityParameters(model.nodeRef, null);
+      var count = documentDetails.item.node.properties["fm:commentCount"];
+      model.commentCount = (count != undefined ? count : null);
    // Widget instantiation 
       var commentList = {
          id : "CommentsList",
          name : "Alfresco.CommentsList",
+        
          options : {
             nodeRef : model.nodeRef,
             siteId : model.site,
@@ -54,9 +62,9 @@ function main()
       };
     
       var documentMetadata = {
-         id : "DocumentMetadata", 
-         name : "Alfresco.DocumentMetadata",
-         initArgs : ["\""+htmlid+"-custom\""],
+         id : "Properties", 
+         initArgs : ["\""+(args.htmlid!=null?args.htmlid:htmlid)+"-custom\""],
+         name : "beCPG.component.Properties",
          options : {
             nodeRef : model.nodeRef,
             siteId : model.site,

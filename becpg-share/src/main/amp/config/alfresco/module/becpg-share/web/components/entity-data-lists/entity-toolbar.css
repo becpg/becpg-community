@@ -2,6 +2,10 @@
 	float:left;
 }
 
+.datalist-toolbar .right .action-set div {
+	float:none;
+}
+
 .datalist-toolbar .entity-view-details span.first-child
 {
    background: url(../documentlibrary/actions/entity-view-details-16.png) no-repeat 12px 4px;
@@ -13,6 +17,13 @@
    background: url(../documentlibrary/actions/entity-view-documents-16.png) no-repeat 12px 4px;
    padding-left: 24px;
 }
+
+
+.datalist-toolbar .entity-add-aspect span.first-child  {
+	background:  url("../documentlibrary/actions/document-manage-aspects-16.png") no-repeat 12px 4px;
+	padding-left: 24px;
+}
+
 
 .datalist-toolbar .eco-calculate-wused span.first-child
 {
@@ -136,4 +147,5 @@
 .datalist-toolbar .onActionSelectColor  {
 	background-image:  url("../../components/images/select-color-16.png") ;
 }
+
 

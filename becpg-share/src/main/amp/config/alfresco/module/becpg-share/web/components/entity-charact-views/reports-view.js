@@ -74,17 +74,6 @@
                             if (this.options.report !== null)
                             {
 
-                                this.widgets.downloadEntityReport = Alfresco.util
-                                .createYUIButton(
-                                        me,
-                                        "downloadEntityReport-button",
-                                        function(sType, aArgs, p_obj)
-                                        {
-                                            window.location.href = Alfresco.constants.PROXY_URI + me.options.report.contentURL + "&a=true&noCache=" + new Date()
-                                                    .getTime();
-
-                                        });
-                        
                                 
                                 this.widgets.entityReportPicker = new YAHOO.widget.Button(
                                         me.id + "-entityReportPicker-button",

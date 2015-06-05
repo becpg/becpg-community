@@ -25,10 +25,24 @@
 		         <div id="toolbar-contribs" ></div>
 		         <div id="${el}-toolbar-buttons-left" ></div>
 		      </div>
-		
+		 
 		      <div class="right">
-		   	 	<div id="${el}-toolbar-buttons-right" ></div>
+		   	 	<div id="${el}-toolbar-buttons-right" >
+		   	 	</div>
+		   	 	<div>
+		   	 		<#if nodeRef??>
+					<div class="action-set-menu doclist">
+      				   <button  id="${el}-action-set-button" >${msg("button.entity-actions")}&nbsp;&#9662;</button>
+				   	   <div id="${el}-action-set-menu" class="yuimenu" >
+				         <div class="bd">
+				            <ul id="${el}-actionSet" ></ul>
+				         </div>
+				      </div>			
+				 	</div>
+				 </#if>	
+				</div>
 		      </div>
+
 		   </div>
 		</div>
 		<#-- template -->
