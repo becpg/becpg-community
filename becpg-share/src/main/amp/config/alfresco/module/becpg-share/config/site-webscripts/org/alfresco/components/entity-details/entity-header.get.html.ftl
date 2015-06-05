@@ -27,7 +27,6 @@
             <#assign modifyLabel = "label.modified-by-user-on-date">
             <div class="node-header">
                <!-- Message banner -->
-               <#if showOnlyLocation == "false">
                <#if item.workingCopy??>
                   <#assign modifyLabel = "label.editing-started-on-date-by-user">
                   <#if item.workingCopy.isWorkingCopy??>
@@ -67,7 +66,6 @@
                      </#if>
                      </div>
                   </#if>
-               </#if>
                </#if>
                <div class="node-info">
                <#if showPath == "true">
