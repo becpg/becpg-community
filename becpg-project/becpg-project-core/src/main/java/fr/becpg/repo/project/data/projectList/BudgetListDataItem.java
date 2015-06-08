@@ -36,8 +36,8 @@ public class BudgetListDataItem extends BeCPGDataObject implements CompositeData
 	private String item;
 	private Double budgetedExpense;
 	private Double budgetedInvoice;
-	private Double actualExpense;
-	private Double actualInvoice;
+	private Double expense;
+	private Double invoice;
 	private Double profit;
 	
 	private BudgetListDataItem parent;
@@ -48,12 +48,12 @@ public class BudgetListDataItem extends BeCPGDataObject implements CompositeData
 		super();
 	}
 	
-	public BudgetListDataItem (String item, Double budgetedExpense, Double budgetedInvoice, Double actualExpense, Double actualInvoice, Double profit){
+	public BudgetListDataItem (String item, Double budgetedExpense, Double budgetedInvoice, Double expense, Double invoice, Double profit){
 		this.item = item;
 		this.budgetedExpense= budgetedExpense;
 		this.budgetedInvoice= budgetedInvoice;
-		this.actualExpense = actualExpense;
-		this.actualInvoice = actualInvoice;
+		this.expense = expense;
+		this.invoice = invoice;
 		this.profit = profit;
 	}
 	
@@ -89,6 +89,7 @@ public class BudgetListDataItem extends BeCPGDataObject implements CompositeData
 	public void setParent(BudgetListDataItem parent) {
 		this.parent = parent;
 	}
+	
 	@AlfProp
 	@AlfQname(qname = "pjt:blBudgetedExpense")
 	public Double getBudgetedExpense() {
@@ -98,32 +99,34 @@ public class BudgetListDataItem extends BeCPGDataObject implements CompositeData
 	public void setBudgetedExpense(Double budgetedExpense) {
 		this.budgetedExpense = budgetedExpense;
 	}
+	
 	@AlfProp
 	@AlfQname(qname = "pjt:blBudgetedInvoice")
 	public Double getBudgetedInvoice() {
 		return budgetedInvoice;
 	}
-
+	
 	public void setBudgetedInvoice(Double budgetedInvoice) {
 		this.budgetedInvoice = budgetedInvoice;
-	}
+	}	
+
 	@AlfProp
 	@AlfQname(qname = "pjt:expense")
-	public Double getActualExpense() {
-		return actualExpense;
+	public Double getExpense() {
+		return expense;
 	}
 
-	public void setActualExpense(Double actualExpense) {
-		this.actualExpense = actualExpense;
+	public void setExpense(Double actualExpense) {
+		this.expense = actualExpense;
 	}
 	@AlfProp
 	@AlfQname(qname = "pjt:invoice")
-	public Double getActualInvoice() {
-		return actualInvoice;
+	public Double getInvoice() {
+		return invoice;
 	}
 
-	public void setActualInvoice(Double actualInvoice) {
-		this.actualInvoice = actualInvoice;
+	public void setInvoice(Double actualInvoice) {
+		this.invoice = actualInvoice;
 	}
 	@AlfProp
 	@AlfQname(qname = "pjt:blProfit")
@@ -141,8 +144,8 @@ public class BudgetListDataItem extends BeCPGDataObject implements CompositeData
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + ((actualExpense == null) ? 0 : actualExpense.hashCode());
-		result = prime * result + ((actualInvoice == null) ? 0 : actualInvoice.hashCode());
+		result = prime * result + ((expense == null) ? 0 : expense.hashCode());
+		result = prime * result + ((invoice == null) ? 0 : invoice.hashCode());
 		result = prime * result + ((budgetedExpense == null) ? 0 : budgetedExpense.hashCode());
 		result = prime * result + ((budgetedInvoice == null) ? 0 : budgetedInvoice.hashCode());
 		result = prime * result + ((depthLevel == null) ? 0 : depthLevel.hashCode());
@@ -161,15 +164,15 @@ public class BudgetListDataItem extends BeCPGDataObject implements CompositeData
 		if (getClass() != obj.getClass())
 			return false;
 		BudgetListDataItem other = (BudgetListDataItem) obj;
-		if (actualExpense == null) {
-			if (other.actualExpense != null)
+		if (expense == null) {
+			if (other.expense != null)
 				return false;
-		} else if (!actualExpense.equals(other.actualExpense))
+		} else if (!expense.equals(other.expense))
 			return false;
-		if (actualInvoice == null) {
-			if (other.actualInvoice != null)
+		if (invoice == null) {
+			if (other.invoice != null)
 				return false;
-		} else if (!actualInvoice.equals(other.actualInvoice))
+		} else if (!invoice.equals(other.invoice))
 			return false;
 		if (budgetedExpense == null) {
 			if (other.budgetedExpense != null)
@@ -206,8 +209,8 @@ public class BudgetListDataItem extends BeCPGDataObject implements CompositeData
 
 	@Override
 	public String toString() {
-		return "BudgetListDataItem [item=" + item + ", budgetedExpense=" + budgetedExpense + ", budgetedInvoice=" + budgetedInvoice + ", actualExpense=" + actualExpense + ", actualInvoice="
-				+ actualInvoice + ", profit=" + profit + ", parent=" + parent + ", depthLevel=" + depthLevel + "]";
+		return "BudgetListDataItem [item=" + item + ", budgetedExpense=" + budgetedExpense + ", budgetedInvoice=" + budgetedInvoice + ", actualExpense=" + expense + ", actualInvoice="
+				+ invoice + ", profit=" + profit + ", parent=" + parent + ", depthLevel=" + depthLevel + "]";
 	}
 
 	

@@ -1,8 +1,6 @@
 package fr.becpg.repo.project.formulation;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -20,6 +18,7 @@ import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.projectList.BudgetListDataItem;
 import fr.becpg.repo.project.data.projectList.LogTimeListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
+import fr.becpg.repo.project.data.projectList.TaskState;
 import fr.becpg.repo.repository.AlfrescoRepository;
 
 /**
@@ -56,127 +55,100 @@ public class BudgetFormulationHandler extends FormulationBaseHandler<ProjectData
 		logger.debug("BudgetFormulationHandler");
 		clearData(projectData);
 
+		calculateLogTime(projectData);
+		calculateTaskExpenses(projectData);
 		
 		for(BudgetListDataItem budgetListItem : projectData.getBudgetList()){
-			List<NodeRef> assocs = associationService.getSourcesAssocs(budgetListItem.getNodeRef(), RegexQNamePattern.MATCH_ALL);
-			for(NodeRef item : assocs){
-				if(nodeService.exists(item) && nodeService.hasAspect(item, ProjectModel.ASPECT_BUDGET)){
-					Double invoice  = (Double) nodeService.getProperty(item, ProjectModel.PROP_BUDGET_INVOICE);
-					if(invoice!=null){
-						budgetListItem.setActualInvoice(budgetListItem.getActualInvoice() + invoice);
-					}
-					Double expense  = (Double) nodeService.getProperty(item, ProjectModel.PROP_BUDGET_EXPENSE);
-					if(expense!=null){
-						budgetListItem.setActualExpense(budgetListItem.getActualExpense() + expense);
-					}	
-				}
-			}
+			calculateExpensesAndInvoices(budgetListItem);
 		}
-		
-		for(TaskListDataItem taskListDataItem : projectData.getTaskList()){
-			List<NodeRef> assocs = associationService.getSourcesAssocs(taskListDataItem.getNodeRef(), RegexQNamePattern.MATCH_ALL);
-			for(NodeRef item : assocs){
-				if(nodeService.exists(item) && nodeService.hasAspect(item, ProjectModel.ASPECT_BUDGET)){
-					Double invoice  = (Double) nodeService.getProperty(item, ProjectModel.PROP_BUDGET_INVOICE);
-					if(invoice!=null){
-						taskListDataItem.setActualInvoice(taskListDataItem.getActualInvoice() + invoice);
-					}
-					Double expense  = (Double) nodeService.getProperty(item, ProjectModel.PROP_BUDGET_EXPENSE);
-					if(expense!=null){
-						taskListDataItem.setActualExpense(taskListDataItem.getActualExpense() + expense);
-					}	
-				}
-			}
-		}
-		
-		// Hierarchie dans Task List
+				
 		Composite<TaskListDataItem> compositeTask = CompositeHelper.getHierarchicalCompoList(projectData.getTaskList());
-		calculateTaskParentValueAndCosts(compositeTask,projectData);
-		calculateLogTime(projectData);
+		calculateTaskParentValue(compositeTask,projectData);		
 		
-		// Hierachie dans Budget List
 		Composite<BudgetListDataItem> compositeBugdet = CompositeHelper.getHierarchicalCompoList(projectData.getBudgetList());
 		calculateBudgetParentValue(compositeBugdet,projectData);
-
+		removeZeroValues(projectData);
+		
 		return true;
 	}
-
 	
-
-	private void calculateTaskParentValueAndCosts(Composite<TaskListDataItem> parent, ProjectData projectData) {
-		Double actualExpense = 0d;
-		Double actualInvoice = 0d;
-		Double cost = 0d;
-		if (!parent.isLeaf()) {
-			for (Composite<TaskListDataItem> component : parent.getChildren()) {
-				calculateTaskParentValueAndCosts(component, projectData);	
-				
-				TaskListDataItem taskListDataItem = component.getData();
-				Double taskCost = 0d;
-
-				if (taskListDataItem.getBudgetedCost() != null) {
-					// cost are roll-up
-					taskCost += taskListDataItem.getBudgetedCost();
-				} else {
-					if (taskListDataItem.getWork() != null && taskListDataItem.getResourceCost() != null && taskListDataItem.getResourceCost().getValue() != null) {
-						taskCost += taskListDataItem.getWork() * taskListDataItem.getResourceCost().getValue();
-					}
-					// fixed cost are not roll-up
-					if (taskListDataItem.getFixedCost() != null) {
-						taskCost += taskListDataItem.getFixedCost();
-					}
-				}
-				cost += taskCost;
-				taskListDataItem.setBudgetedCost(taskCost == 0d ? null : taskCost);
-				if(taskListDataItem.getActualExpense()!=null){
-					actualExpense += taskListDataItem.getActualExpense();
-				}
-				if(taskListDataItem.getActualInvoice()!=null){
-					actualInvoice += taskListDataItem.getActualInvoice();
+	private void calculateExpensesAndInvoices(BudgetListDataItem budgetListDataItem){
+		List<NodeRef> assocs = associationService.getSourcesAssocs(budgetListDataItem.getNodeRef(), RegexQNamePattern.MATCH_ALL);
+		for(NodeRef item : assocs){
+			if(nodeService.exists(item) && nodeService.hasAspect(item, ProjectModel.ASPECT_BUDGET)){				
+				Double expense  = (Double) nodeService.getProperty(item, ProjectModel.PROP_BUDGET_EXPENSE);
+				if(expense!=null){
+					budgetListDataItem.setExpense(budgetListDataItem.getExpense() + expense);
+				}				
+				Double invoice  = (Double) nodeService.getProperty(item, ProjectModel.PROP_BUDGET_INVOICE);
+				if(invoice!=null){
+					budgetListDataItem.setInvoice(budgetListDataItem.getInvoice() + invoice);
 				}
 			}
+		}
+	}
+
+	private void calculateTaskExpenses(ProjectData projectData) {		
+
+		for (TaskListDataItem taskListDataItem : projectData.getTaskList()) {			
+			Double taskExpense = 0d;			
+			logger.debug("taskListDataItem " + taskListDataItem.getTaskName() + " work " + taskListDataItem.getWork() + " loggedTime " + taskListDataItem.getLoggedTime());
+			
+			if(taskListDataItem.getResourceCost() != null && 
+					taskListDataItem.getResourceCost().getValue() != null && 
+					taskListDataItem.getTaskState() != null){				
+				if(taskListDataItem.getLoggedTime() != null && 
+						!TaskState.Planned.equals(taskListDataItem.getTaskState()) && 
+						!TaskState.InProgress.equals(taskListDataItem.getTaskState())){
+					taskExpense = taskListDataItem.getLoggedTime() * taskListDataItem.getResourceCost().getValue();
+				}
+				else if (taskListDataItem.getWork() != null) {
+					taskExpense = taskListDataItem.getWork() * taskListDataItem.getResourceCost().getValue();
+				}
+			}												
+			taskListDataItem.setExpense(taskExpense);
+		}
+	}
+	
+	private void calculateTaskParentValue(Composite<TaskListDataItem> parent, ProjectData projectData) {
+		Double expense = 0d;
+		if (!parent.isLeaf()) {
+			for (Composite<TaskListDataItem> component : parent.getChildren()) {
+				calculateTaskParentValue(component, projectData);					
+				TaskListDataItem taskListDataItem = component.getData();
+				expense += taskListDataItem.getExpense();
+			}
 			if (!parent.isRoot()) {
-				parent.getData().setActualExpense(actualExpense);
-				parent.getData().setActualInvoice(actualInvoice);
-				parent.getData().setBudgetedCost(cost == 0d ? null : cost);
+				parent.getData().setExpense(expense);
 			}
 		}
 		if (parent.isRoot()) {
-			projectData.setBudgetedCost(cost == 0d ? null : cost);
-		}
-		
+			projectData.setBudgetedCost(expense == 0d ? null : expense);
+		}		
 	}
-
-	private void calculateBudgetParentValue(Composite<BudgetListDataItem> parent, ProjectData projectData) {
-		Double actualExpense = 0d;
-		Double actualInvoice = 0d;
+	
+	private void calculateBudgetParentValue(Composite<BudgetListDataItem> parent, ProjectData projectData) {		
+		Double expense = 0d;
+		Double invoice = 0d;
 		Double budgetedExpense = 0d;
 		Double budgetedInvoice = 0d;
 		if (!parent.isLeaf()) {
 			for (Composite<BudgetListDataItem> component : parent.getChildren()) {
-				calculateBudgetParentValue(component, projectData);	
-				if(component.getData().getActualExpense()!=null){
-					actualExpense += component.getData().getActualExpense();
-				}
-				if(component.getData().getActualInvoice()!=null){
-					actualInvoice += component.getData().getActualInvoice();
-				}
-				if(component.getData().getBudgetedExpense()!=null){
-					budgetedExpense += component.getData().getBudgetedExpense();
-				}
-				if(component.getData().getBudgetedInvoice()!=null){
-					budgetedInvoice += component.getData().getBudgetedInvoice();
-				}
+				calculateBudgetParentValue(component, projectData);
+				expense += component.getData().getExpense();
+				invoice += component.getData().getInvoice();
+				budgetedExpense += component.getData().getBudgetedExpense() != null ? component.getData().getBudgetedExpense() : 0d;
+				budgetedInvoice += component.getData().getBudgetedInvoice() != null ? component.getData().getBudgetedInvoice() : 0d;			
 			}
 			if (!parent.isRoot()) {
-				parent.getData().setActualExpense(actualExpense);
-				parent.getData().setActualInvoice(actualInvoice);
+				parent.getData().setExpense(expense);
+				parent.getData().setInvoice(invoice);
 				parent.getData().setBudgetedExpense(budgetedExpense);
 				parent.getData().setBudgetedInvoice(budgetedInvoice);
 			}
 		}
 		if (!parent.isRoot()) {
-			parent.getData().setProfit(parent.getData().getActualInvoice() - parent.getData().getActualExpense());
+			parent.getData().setProfit(parent.getData().getInvoice() - parent.getData().getExpense());
 		}
 		
 		// has budgetList
@@ -188,40 +160,38 @@ public class BudgetFormulationHandler extends FormulationBaseHandler<ProjectData
 	
 	private void clearData(ProjectData projectData) {
 		for (TaskListDataItem tl : projectData.getTaskList()) {
-			tl.setBudgetedCost(null);
-			tl.setLoggedTime(null);
-			tl.setActualExpense(0d);
-			tl.setActualInvoice(0d);
+			tl.setLoggedTime(0d);
+			tl.setExpense(0d);
 		}
 		for (BudgetListDataItem bl : projectData.getBudgetList()) {
-			bl.setActualExpense(0d);
-			bl.setActualInvoice(0d);
+			bl.setExpense(0d);
+			bl.setInvoice(0d);
 		}
-
+	}
+	
+	private void removeZeroValues(ProjectData projectData) {
+		for (TaskListDataItem tl : projectData.getTaskList()) {
+			tl.setLoggedTime(tl.getLoggedTime() != 0d ? tl.getLoggedTime() : null);
+			tl.setExpense(tl.getExpense() != 0d ? tl.getExpense() : null);
+		}
+		for (BudgetListDataItem bl : projectData.getBudgetList()) {
+			bl.setExpense(bl.getExpense() != 0d ? bl.getExpense() : null);
+			bl.setInvoice(bl.getInvoice() != 0d ? bl.getInvoice() : null);
+		}
 	}
 	
 	private void calculateLogTime(ProjectData projectData) {
-		Map<NodeRef, Double> totalLogTimeMap = new HashMap<>();
 		Double totalLogTime = 0d;
-
-		for (LogTimeListDataItem logTime : projectData.getLogTimeList()) {
-			Double time = logTime.getTime();
-			if (time != null) {
-				totalLogTime += time;
-				Double totalTime = totalLogTimeMap.get(logTime.getTask());
-				if (totalTime == null) {
-					totalLogTimeMap.put(logTime.getTask(), time);
-				} else {
-					totalLogTimeMap.put(logTime.getTask(), totalTime + time);
+		for (LogTimeListDataItem logTime : projectData.getLogTimeList()) {							
+			if (logTime.getTime() != null && logTime.getTask() != null) {
+				logger.debug("logTime " + logTime.getTime() + "task" + logTime.getTask().getTaskName());
+				totalLogTime += logTime.getTime();
+				logTime.getTask().setLoggedTime(logTime.getTask().getLoggedTime()+logTime.getTime());				
+				if(logTime.getTask().getResourceCost() != null && logTime.getTask().getResourceCost().getBillRate() != null){
+					logTime.setInvoice(logTime.getTime() * logTime.getTask().getResourceCost().getBillRate());
 				}
 			}
 		}
-		for (TaskListDataItem tl : projectData.getTaskList()) {
-			tl.setLoggedTime(totalLogTimeMap.get(tl.getNodeRef()));
-		}
 		projectData.setLoggedTime(totalLogTime);
-	}
-
-	
-	
+	}	
 }

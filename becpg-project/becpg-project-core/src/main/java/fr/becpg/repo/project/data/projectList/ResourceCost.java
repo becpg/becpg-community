@@ -15,6 +15,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 public class ResourceCost extends BeCPGDataObject {
 
 	private Double value;
+	private Double billRate;
 	private Double hoursPerDay;
 
 	@AlfProp
@@ -25,6 +26,16 @@ public class ResourceCost extends BeCPGDataObject {
 
 	public void setValue(Double value) {
 		this.value = value;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "pjt:resourceCostBillRate")
+	public Double getBillRate() {
+		return billRate;
+	}
+
+	public void setBillRate(Double billRate) {
+		this.billRate = billRate;
 	}
 
 	@AlfProp
@@ -39,13 +50,14 @@ public class ResourceCost extends BeCPGDataObject {
 
 	@Override
 	public String toString() {
-		return "ResourceCost [value=" + value + ", hoursPerDay=" + hoursPerDay + "]";
+		return "ResourceCost [value=" + value + ", billRate=" + billRate + ", hoursPerDay=" + hoursPerDay + "]";
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
+		result = prime * result + ((billRate == null) ? 0 : billRate.hashCode());
 		result = prime * result + ((hoursPerDay == null) ? 0 : hoursPerDay.hashCode());
 		result = prime * result + ((value == null) ? 0 : value.hashCode());
 		return result;
@@ -60,6 +72,11 @@ public class ResourceCost extends BeCPGDataObject {
 		if (getClass() != obj.getClass())
 			return false;
 		ResourceCost other = (ResourceCost) obj;
+		if (billRate == null) {
+			if (other.billRate != null)
+				return false;
+		} else if (!billRate.equals(other.billRate))
+			return false;
 		if (hoursPerDay == null) {
 			if (other.hoursPerDay != null)
 				return false;

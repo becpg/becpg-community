@@ -104,6 +104,7 @@ public interface ProjectModel {
 	
 	public static final QName TYPE_RESOURCE_COST = QName.createQName(PROJECT_URI, "resourceCost");
 	public static final QName PROP_RESOURCE_COST_VALUE = QName.createQName(PROJECT_URI, "resourceCostValue");
+	public static final QName PROP_RESOURCE_COST_BILL_RATE = QName.createQName(PROJECT_URI, "resourceCostBillRate");
 	
 	//Budget List
 	public static final QName TYPE_BUDGET_LIST  = QName.createQName(PROJECT_URI, "budgetList");
