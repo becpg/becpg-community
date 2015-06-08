@@ -138,6 +138,8 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 
 		NodeRef entityTplNodeRef = entityTplService.createEntityTpl(entityTplsNodeRef, ProjectModel.TYPE_PROJECT,null, true, dataLists, null);
 
+		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
+		
 		try {
 
 			if (ruleService.getRules(entityTplNodeRef).isEmpty()) {

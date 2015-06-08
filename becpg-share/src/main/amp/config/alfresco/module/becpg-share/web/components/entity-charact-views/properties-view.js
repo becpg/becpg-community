@@ -44,7 +44,7 @@
     {
         beCPG.component.Properties.superclass.constructor.call(this, htmlId);
 
-
+        YAHOO.Bubbling.on("versionChangeFilter", this.onVersionChanged,this);
         return this;
     };
 
@@ -54,6 +54,11 @@
                     Alfresco.DocumentMetadata,
                     { 
                  
+                        options : {
+                            currVersionNodeRef : null
+                            
+                        },
+                        
                         fileUpload : null,
                         /**
                          * Fired by YUI when parent element is available for
@@ -83,7 +88,7 @@
 
                         },
 
-                        doUploadLogo : function NodeHeader_doUploadLogo(e) {
+                        doUploadLogo : function Properties_doUploadLogo(e) {
 
                             if (this.fileUpload === null)
                             {
@@ -108,23 +113,32 @@
                                          YAHOO.Bubbling.fire("metadataRefresh");
                                       }
                                    },
-                                  scope: this
+                                   scope: this
                                }
                             };
                             this.fileUpload.show(uploadConfig);
                             YAHOO.util.Event.preventDefault(e);
                         
                     } ,
-                    /**
-                         * Refresh component in response to metadataRefresh event
-                        *
-                        * @method doRefresh
-                        */
-                       doRefresh: function DocumentMetadata_doRefresh()
-                       {
-                          YAHOO.Bubbling.unsubscribe("metadataRefresh", this.doRefresh, this);
-                          this.refresh('components/entity-charact-views/properties-view?nodeRef={nodeRef}' + (this.options.siteId ? '&site={siteId}' :  '') + (this.options.formId ? '&formId={formId}' :  ''));
-                       }
+
+                    doRefresh: function DocumentMetadata_doRefresh()
+                    {
+                        this.id = this.id.replace("-custom","");
+                        YAHOO.Bubbling.unsubscribe("metadataRefresh", this.doRefresh, this);
+                        this.refresh('components/entity-charact-views/properties-view?nodeRef={nodeRef}' + (this.options.siteId ? '&site={siteId}' :  '') + (this.options.formId ? '&formId={formId}' :  ''));
+                    },
+
+                    onVersionChanged : function Properties_onVersionChanged(layer, args)
+                    {
+                        var obj = args[1];
+                        this.id = this.id.replace("-custom","");
+                        if ((obj !== null) && obj.filterId !== null &&  obj.filterId === "version" && obj.filterData !== null)
+                        {
+                           this.refresh('components/entity-charact-views/properties-view?currVersionNodeRef={nodeRef}&nodeRef='+ obj.filterData+ (this.options.siteId ? '&site={siteId}' :  '') + (this.options.formId ? '&formId={formId}' :  ''));   
+                         } else if(this.options.currVersionNodeRef!=null){
+                            this.refresh('components/entity-charact-views/properties-view?nodeRef='+ this.options.currVersionNodeRef+ (this.options.siteId ? '&site={siteId}' :  '') + (this.options.formId ? '&formId={formId}' :  ''));   
+                         }
+                    }
 
                });
 })();

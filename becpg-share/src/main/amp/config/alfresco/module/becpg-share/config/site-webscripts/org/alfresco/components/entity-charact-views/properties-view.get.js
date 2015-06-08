@@ -29,6 +29,7 @@ function main()
    AlfrescoUtil.param('formId', null);
    AlfrescoUtil.param('maxItems', 10);
    AlfrescoUtil.param('activityType', null);
+   AlfrescoUtil.param('currVersionNodeRef',null);
    
    var documentDetails = AlfrescoUtil.getNodeDetails(model.nodeRef, model.site);
    if (documentDetails)
@@ -68,7 +69,8 @@ function main()
          options : {
             nodeRef : model.nodeRef,
             siteId : model.site,
-            formId : model.formId
+            formId : model.formId,
+            currVersionNodeRef : model.currVersionNodeRef
          }
       };
       

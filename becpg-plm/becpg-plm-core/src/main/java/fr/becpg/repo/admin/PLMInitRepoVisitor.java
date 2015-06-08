@@ -600,6 +600,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			if (wusedQName != null) {
 				entityTplService.createWUsedList(entityTplNodeRef, wusedQName, null);
 			}
+			entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
+			entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_REPORTS);
+			
 		}
 	}
 
