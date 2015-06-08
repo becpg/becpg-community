@@ -126,7 +126,9 @@ public class RepoConsts {
 	
 	//View
 	public final static String CUSTOM_VIEW_PREFIX = "View";
-	
+
+	public static final String VIEW_PROPERTIES = CUSTOM_VIEW_PREFIX+"-properties";
+	public static final String VIEW_REPORTS = CUSTOM_VIEW_PREFIX+"-reports";
 	
 	//Version
 	public static final String VERSION_NAME_DELIMITER = " v";

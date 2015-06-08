@@ -207,6 +207,31 @@ public class EntityTplServiceImpl implements EntityTplService {
 		}
 		return listNodeRef;
 	}
+	
+
+	@Override
+	public NodeRef createView(NodeRef entityTplNodeRef, QName typeQName, String name) {
+
+		NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityTplNodeRef);
+		if (listContainerNodeRef == null) {
+			listContainerNodeRef = entityListDAO.createListContainer(entityTplNodeRef);
+		}
+
+		NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, name);
+		if (listNodeRef == null) {
+
+			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+			properties.put(ContentModel.PROP_NAME, name);
+			properties.put(ContentModel.PROP_TITLE, I18NUtil.getMessage("entity-datalist-"+name.toLowerCase()+"-title"));
+			properties.put(ContentModel.PROP_DESCRIPTION, I18NUtil.getMessage("entity-datalist-"+name.toLowerCase()+"-description"));
+			properties.put(DataListModel.PROP_DATALISTITEMTYPE, typeQName.toPrefixString(namespaceService));
+
+			listNodeRef = nodeService.createNode(listContainerNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS,
+					DataListModel.TYPE_DATALIST, properties).getChildRef();
+
+		}
+		return listNodeRef;
+	}
 
 	/**
 	 * Get the entityTpl
