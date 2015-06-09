@@ -69,6 +69,9 @@ var g = null; // uggly gantt var
         beCPG.component.GanttView.superclass.constructor.call(this, htmlId);
 
         Bubbling.on("viewModeChange", this.onViewModeChange, this);
+        Bubbling.on("dirtyDataTable", function(){
+            YAHOO.Bubbling.fire("refreshDataGrids", {updateOnly : true});
+        }, this);
 
         JSGantt.register(this);
 
