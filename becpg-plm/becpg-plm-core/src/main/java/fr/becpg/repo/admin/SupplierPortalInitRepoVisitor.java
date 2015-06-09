@@ -65,7 +65,7 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 
 		NodeRef entityTplNodeRef = nodeService.getChildByName(entityTplsNodeRef, ContentModel.ASSOC_CONTAINS, I18NUtil.getMessage(SUPPLIER_PJT_TPL_NAME));
 		
-		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
+	
 
 		if (entityTplNodeRef == null) {
 			NodeRef scriptFolderNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(companyHome, XPATH_DICTIONNARY_SCRIPTS);
@@ -133,6 +133,8 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			alfrescoRepository.save(pjtTpl);
 		}
+
+		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 	}
 
 }

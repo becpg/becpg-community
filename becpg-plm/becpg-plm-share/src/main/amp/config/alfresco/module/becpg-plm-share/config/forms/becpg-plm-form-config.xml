@@ -5902,7 +5902,7 @@
 					<show id="bcpg:lrType" />
 					<show id="bcpg:lrGroup" />
 					<show id="bcpg:lrIsActive" />
-					<show id="bcpg:isManualListItem" />
+					<show id="bcpg:isManualListItem" force="true"/>
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:lrFormula">
@@ -5959,7 +5959,7 @@
 					<show id="bcpg:lrType" />
 					<show id="bcpg:lrGroup" />
 					<show id="bcpg:lrIsActive" />
-					<show id="bcpg:isManualListItem" />
+					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:lrFormula">

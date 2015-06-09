@@ -1398,9 +1398,6 @@
 				</association>
 			</associations>
 
-			<mandatory-aspects>
-				<aspect>bcpg:isManualListItemAspect</aspect>
-			</mandatory-aspects>
 		</type>
 
 		<type name="bcpg:ingList">
