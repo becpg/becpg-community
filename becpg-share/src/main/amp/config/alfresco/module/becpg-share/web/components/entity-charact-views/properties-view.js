@@ -29,7 +29,10 @@
     /**
      * YUI Library aliases
      */
-    var Dom = YAHOO.util.Dom, Event = YAHOO.util.Event, Selector = YAHOO.util.Selector, Bubbling = YAHOO.Bubbling;
+    var Dom = YAHOO.util.Dom,
+    Event = YAHOO.util.Event,
+    formatDate = Alfresco.util.formatDate,
+    fromISO8601 = Alfresco.util.fromISO8601;
 
 
     /**
@@ -43,7 +46,11 @@
     beCPG.component.Properties = function Properties_constructor(htmlId)
     {
         beCPG.component.Properties.superclass.constructor.call(this, htmlId);
-
+        
+        
+        // Decoupled event listeners
+        YAHOO.Bubbling.on("metadataRefresh", this.doRefresh, this);
+        
         YAHOO.Bubbling.on("versionChangeFilter", this.onVersionChanged,this);
         return this;
     };
@@ -51,11 +58,35 @@
     YAHOO
             .extend(
                     beCPG.component.Properties,
-                    Alfresco.DocumentMetadata,
+                    Alfresco.CommentsList,
                     { 
                  
                         options : {
-                            currVersionNodeRef : null
+                            currVersionNodeRef : null,
+                            /**
+                             * The nodeRefs to load the form for.
+                             *
+                             * @property nodeRef
+                             * @type string
+                             * @required
+                             */
+                            nodeRef: null,
+
+                            /**
+                             * The current site (if any)
+                             *
+                             * @property site
+                             * @type string
+                             */
+                            site: null,
+
+                            /**
+                             * The form id for the form to use.
+                             *
+                             * @property destination
+                             * @type string
+                             */
+                            formId: null
                             
                         },
                         
@@ -81,13 +112,61 @@
                             //Favourite
                             new Alfresco.Favourite(this.id + '-favourite').setOptions({
                                 nodeRef : this.options.nodeRef,
-                                type : "document"
+                                type : "folder"
                              }).display(this.options.isFavourite);
                             
+                            // Load the form
+                            Alfresco.util.Ajax.request(
+                            {
+                               url: Alfresco.constants.URL_SERVICECONTEXT + "components/form",
+                               dataObj:
+                               {
+                                  htmlid: this.id + "-formContainer",
+                                  itemKind: "node",
+                                  itemId: this.options.nodeRef,
+                                  formId: this.options.formId,
+                                  mode: "view"
+                               },
+                               successCallback:
+                               {
+                                  fn: this.onFormLoaded,
+                                  scope: this
+                               },
+                               failureMessage: this.msg("message.failure"),
+                               scope: this,
+                               execScripts: true
+                            });
+                            
+                            
                             beCPG.component.Properties.superclass.onReady.call(this);
-
                         },
 
+
+                        /**
+                         * Called when a workflow form has been loaded.
+                         * Will insert the form in the Dom.
+                         *
+                         * @method onFormLoaded
+                         * @param response {Object}
+                         */
+                        onFormLoaded: function Properties_onFormLoaded(response)
+                        {
+                           var formEl = Dom.get(this.id + "-formContainer"),
+                              me = this;
+                           formEl.innerHTML = response.serverResponse.responseText;
+                           Dom.getElementsByClassName("viewmode-value-date", "span", formEl, function()
+                           {
+                              var showTime = Dom.getAttribute(this, "data-show-time"),
+                                  fieldValue = Dom.getAttribute(this, "data-date-iso8601"),
+                                  dateFormat = (showTime=='false') ? me.msg("date-format.defaultDateOnly") : me.msg("date-format.default"),
+                                  // MNT-9693 - Pass the ignoreTime flag
+                                  ignoreTime = showTime == 'false',
+                                  theDate = fromISO8601(fieldValue, ignoreTime);
+                              
+                              this.innerHTML = formatDate(theDate, dateFormat);
+                           });
+                        },
+                        
                         doUploadLogo : function Properties_doUploadLogo(e) {
 
                             if (this.fileUpload === null)
@@ -121,9 +200,8 @@
                         
                     } ,
 
-                    doRefresh: function DocumentMetadata_doRefresh()
+                    doRefresh: function Properties_doRefresh()
                     {
-                        this.id = this.id.replace("-custom","");
                         YAHOO.Bubbling.unsubscribe("metadataRefresh", this.doRefresh, this);
                         this.refresh('components/entity-charact-views/properties-view?nodeRef={nodeRef}' + (this.options.siteId ? '&site={siteId}' :  '') + (this.options.formId ? '&formId={formId}' :  ''));
                     },
@@ -131,7 +209,6 @@
                     onVersionChanged : function Properties_onVersionChanged(layer, args)
                     {
                         var obj = args[1];
-                        this.id = this.id.replace("-custom","");
                         if ((obj !== null) && obj.filterId !== null &&  obj.filterId === "version" && obj.filterData !== null)
                         {
                            this.refresh('components/entity-charact-views/properties-view?currVersionNodeRef={nodeRef}&nodeRef='+ obj.filterData+ (this.options.siteId ? '&site={siteId}' :  '') + (this.options.formId ? '&formId={formId}' :  ''));   

@@ -212,7 +212,7 @@
                                     if(contents[0].type == "cm:folder" ){
                                        contentUrl = this._getBrowseUrlForFolderPath(contents[0].path, contents[0].siteId, contents[0].name);
                                     } else {
-                                       contentUrl = beCPG.util.entityDetailsURL(contents[0].siteId, contents[0].nodeRef, "document");
+                                       contentUrl = beCPG.util.entityURL(contents[0].siteId, contents[0].nodeRef, "document");
                                     }
                                         
                                     ret += '<span class="doc-file"><a title="' + this

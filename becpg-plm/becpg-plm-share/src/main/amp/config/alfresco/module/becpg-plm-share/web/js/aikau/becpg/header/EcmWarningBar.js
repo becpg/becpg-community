@@ -142,7 +142,7 @@ define(["dojo/_base/declare",
           }, this.messageBox);
          
          domConstruct.create("a", {
-            href : Alfresco.constants.URL_PAGECONTEXT+"entity-details?nodeRef="+changeOrderData.nodeRef,
+            href : Alfresco.constants.URL_PAGECONTEXT+"entity-data-lists?list=View-properties&nodeRef="+changeOrderData.nodeRef,
             innerHTML: changeOrderData.name
          }, this.messageBox);
          

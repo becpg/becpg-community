@@ -60,6 +60,8 @@
    <@markup id="alf-hd">
    <div id="alf-hd">
       <@region scope="global" id="share-header" chromeless="true"/>
+      <@region id="actions-common" scope="template"/>
+      <@region id="actions" scope="template"/>
       <@region id="node-header" scope="template"/>
    </div>
    </@>
@@ -68,7 +70,6 @@
         <div class="yui-t1" id="alfresco-data-lists">
            <div id="yui-main">
               <div class="yui-b" id="alf-content">
-				<@region id="actions-common" scope="template" />
                 <@region id="toolbar" scope="template"  />               
                 <@region id="datagrid" scope="template" />
               </div>

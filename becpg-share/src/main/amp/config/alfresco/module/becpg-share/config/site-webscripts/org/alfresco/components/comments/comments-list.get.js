@@ -23,10 +23,11 @@ function getActivityParameters(nodeRef, defaultValue)
          return (
          {
             itemTitle: metadata.properties[cm + 'name'],
-            page: 'entity-details',
+            page: 'entity-data-lists',
             pageParams:
             {
-               nodeRef: metadata.nodeRef
+               nodeRef: metadata.nodeRef,
+               list : "View-properties"
             }
          });
       }

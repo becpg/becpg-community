@@ -792,7 +792,7 @@ define(["dojo/_base/declare",
                            item.name = item.title;
                            break;
                         case "entity":
-                           link = "entity-details?nodeRef=" + item.nodeRef;
+                           link = "entity-data-lists?list=View-properties&nodeRef=" + item.nodeRef;
                            break;   
                         default:
                            link = this.documentPage + "?nodeRef=" + item.nodeRef;

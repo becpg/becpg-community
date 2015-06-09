@@ -42,7 +42,7 @@
 			      callback : {
 			         fn : function DocumentActions_oAEO_success(data) {
 				         this.recordData.jsNode.setNodeRef(data.json.results[0].nodeRef);
-				         window.location.href = this.getActionUrls(this.recordData).documentDetailsUrl.replace("document-details","entity-details");
+				         window.location.href = this.getActionUrls(this.recordData).documentDetailsUrl.replace("document-details?","entity-data-lists?list=View-properties&");
 			         },
 			         scope : this
 			      }
@@ -85,7 +85,7 @@
 		                  onNewEntityVersionComplete : {
 		                     fn : function EntityActions_oACI_success(data) {
 			                     this.recordData.jsNode.setNodeRef(data.successful[0].nodeRef);
-			                     window.location.href = this.getActionUrls(this.recordData).documentDetailsUrl.replace("document-details","entity-details");
+			                     window.location.href = this.getActionUrls(this.recordData).documentDetailsUrl.replace("document-details?","entity-data-lists?list=View-properties&");
 		                     },
 		                     scope : this
 		                  }
@@ -115,7 +115,7 @@
                     onNewEntityVersionComplete : {
                        fn : function EntityActions_oACI_success(data) {
                            this.recordData.jsNode.setNodeRef(data.successful[0].nodeRef);
-                           window.location.href = this.getActionUrls(this.recordData).documentDetailsUrl.replace("document-details","entity-details");
+                           window.location.href = this.getActionUrls(this.recordData).documentDetailsUrl.replace("document-details?","entity-data-lists?list=View-properties&");
                        },
                        scope : this
                     }
@@ -139,7 +139,7 @@
                     successCallback : {
                        fn : function(resp) {
                           if (resp.json) {
-                             window.location.href = beCPG.util.entityDetailsURL(recordSiteName,
+                             window.location.href = beCPG.util.entityURL(recordSiteName,
                                    resp.json.persistedObject, p_record.node.type);
                           }
                        },
@@ -169,7 +169,7 @@
 		                      var oldNodeRef = this.recordData.jsNode.nodeRef.nodeRef,
 		                      newNodeRef = data.json.results[0].nodeRef;
 		                      this.recordData.jsNode.setNodeRef(newNodeRef);
-		                      window.location = this.getActionUrls(this.recordData).documentDetailsUrl.replace("document-details","entity-details") + "#editCancelled";
+		                      window.location = this.getActionUrls(this.recordData).documentDetailsUrl.replace("document-details?","entity-data-lists?list=View-properties&") + "#editCancelled";
 		                      // ALF-16598 fix, page is not refreshed if only hash was changed, force page reload for cancel online editing
 		                      if (oldNodeRef == newNodeRef)
 		                      {
@@ -210,7 +210,7 @@
 		      successCallback : {
 		         fn : function EntityDataListToolbar_onFinish_success(response) {
 			         this.recordData.jsNode.setNodeRef(asset.nodeRef);
-			         window.location.href = this.getActionUrls(this.recordData).documentDetailsUrl.replace("document-details","entity-details");
+			         window.location.href = this.getActionUrls(this.recordData).documentDetailsUrl.replace("document-details?","entity-data-lists?list=View-properties&");
 
 		         },
 		         scope : this
@@ -234,7 +234,7 @@
 	   	var recordSiteName = $isValueSet(p_record.location.site) ? p_record.location.site.name : null;
 	   
 	   	
-	   	window.location.href = beCPG.util.entityCharactURL(recordSiteName, p_record.nodeRef, p_record.node.type);
+	   	window.location.href = beCPG.util.entityURL(recordSiteName, p_record.nodeRef, p_record.node.type);
 	   	
 	   	
 	   }

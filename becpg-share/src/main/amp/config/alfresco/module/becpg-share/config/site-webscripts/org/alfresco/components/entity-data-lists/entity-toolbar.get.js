@@ -35,6 +35,7 @@ function main()
                    siteId : (model.site != null) ? model.site : null   
                 }
              };
+        model.widgets = [entityDataListToolbar];
 
     } else {
         var documentDetails = AlfrescoUtil.getNodeDetails(model.nodeRef, model.site,

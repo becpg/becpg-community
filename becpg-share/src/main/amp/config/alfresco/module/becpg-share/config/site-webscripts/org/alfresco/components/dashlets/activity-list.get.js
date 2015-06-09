@@ -158,7 +158,7 @@ function specialize(item, activity, summary)
          if(activity.siteNetwork== null || activity.siteNetwork.length==0){
             item.suppressSite = true;
          }
-         item.itemPage = url.context + "/page/site/" + encodeURI(activity.siteNetwork)+"/entity-details?nodeRef="+summary.nodeRef;
+         item.itemPage = url.context + "/page/site/" + encodeURI(activity.siteNetwork)+"/entity-data-lists?list=View-properties&nodeRef="+summary.nodeRef;
          item.custom0 = msg.get("data.projectstate." + summary.beforeState.toLowerCase());
          item.custom1 = msg.get("data.projectstate." + summary.afterState.toLowerCase());
          break;

@@ -186,7 +186,7 @@
                                                 context = null;
                                             }
 
-                                            window.location = beCPG.util.entityCharactURL(instance.options.siteId,
+                                            window.location = beCPG.util.entityURL(instance.options.siteId,
                                                     response.json.persistedObject, type, context);
 
                                         }
@@ -252,7 +252,7 @@
                                                             context = null;
                                                         }
 
-                                                        window.location = beCPG.util.entityDetailsURL(
+                                                        window.location = beCPG.util.entityURL(
                                                                 instance.options.siteId, response.json[0], null,
                                                                 context);
                                                     }

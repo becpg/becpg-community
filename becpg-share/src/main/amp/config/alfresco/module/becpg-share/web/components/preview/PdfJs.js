@@ -528,7 +528,8 @@
          });
          // Maximise button should show on the document details and document list pages
          //#beCPG
-         if (Alfresco.constants.PAGEID === "document-details" || Alfresco.constants.PAGEID === "documentlibrary"  || Alfresco.constants.PAGEID === "entity-details" ||
+         if (Alfresco.constants.PAGEID === "document-details" || Alfresco.constants.PAGEID === "documentlibrary"  || Alfresco.constants.PAGEID === "entity-details"
+             || Alfresco.constants.PAGEID === "entity-data-lists" ||
              window.location.pathname.match("/document-details$"))
          {
             // TODO: Full Screen doesn't work in IE10 or IE11 - also the range of mimetypes isn't complete
@@ -561,7 +562,7 @@
          }
          // Only show and set up the link button on the document details page (fixes #12)
          //#beCPG
-         if (Alfresco.constants.PAGEID === "document-details" || Alfresco.constants.PAGEID === "entity-details"  )
+         if (Alfresco.constants.PAGEID === "document-details" || Alfresco.constants.PAGEID === "entity-details" || Alfresco.constants.PAGEID === "entity-data-lists"  )
          {
             Dom.getElementsByClassName("linkbutton", "span", this.controls, function setDisplay(el) {
                Dom.setStyle(el, "display", "inline");
@@ -614,7 +615,7 @@
          this._loadPdf();
 
          // Keyboard shortcuts
-         if (Alfresco.constants.PAGEID === 'document-details' || Alfresco.constants.PAGEID === "entity-details")
+         if (Alfresco.constants.PAGEID === 'document-details' || Alfresco.constants.PAGEID === "entity-details"|| Alfresco.constants.PAGEID === "entity-data-lists" )
          {
             var findShortcutHandler = function findShortcutHandler(type, args) {
                var e = args[1];
@@ -804,7 +805,7 @@
          var me = this, fileurl = this.attributes.src ? this.wp.getThumbnailUrl(this.attributes.src) : this.wp.getContentUrl();
          
          //#beCPG
-         if(Alfresco.constants.PAGEID === "entity-details" && !fileurl.indexOf("thumbnails")>0){
+         if(Alfresco.constants.PAGEID === "entity-details" && Alfresco.constants.PAGEID === "entity-data-lists" && !fileurl.indexOf("thumbnails")>0){
              fileurl = fileurl.replace("/api/","/becpg/report/")+"&entityNodeRef="+YAHOO.util.History.getQueryStringParameter('nodeRef');
          }
          

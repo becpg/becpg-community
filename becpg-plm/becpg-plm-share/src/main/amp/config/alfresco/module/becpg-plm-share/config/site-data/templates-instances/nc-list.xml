@@ -95,8 +95,8 @@
          <region-id>list</region-id>
          <url>/components/quality/nc-list</url>
          <properties>
-         	<pagination>true</pagination>
-				<filter>true</filter>
+         <pagination>true</pagination>
+		 <filter>true</filter>
          </properties>
       </component>
    </components>

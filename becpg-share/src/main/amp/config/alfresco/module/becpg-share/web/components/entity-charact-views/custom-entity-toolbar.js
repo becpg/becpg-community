@@ -19,38 +19,6 @@
 (function() {
    if (beCPG.component.EntityDataListToolbar) {
 
-  
-//      YAHOO.Bubbling.fire("registerToolbarButtonAction", {
-//         actionName : "entity-view-details",
-//         right : true,
-//         evaluate : function(datalistMeta, entity) {
-//            return entity != null && entity.type != "bcpg:systemEntity";
-//         },
-//         fn : function(instance) {
-//
-//            var url = beCPG.util.entityDetailsURL(this.options.siteId, this.options.entityNodeRef, this.entity.type);
-//
-//            window.location.href = url;
-//   
-//         }
-//
-//      });
-//
-//      YAHOO.Bubbling.fire("registerToolbarButtonAction", {
-//         actionName : "entity-view-documents",
-//         right : true,
-//         evaluate : function(datalistMeta, entity) {
-//            return entity != null && entity.type != "bcpg:systemEntity";
-//         },
-//         fn : function(instance) {
-//
-//            var url = beCPG.util.entityDocumentsURL(this.options.siteId, this.entity.path, this.entity.name);
-//
-//            window.location.href = url;
-//
-//         }
-//
-//      });
 
       YAHOO.Bubbling.fire("registerToolbarButtonAction", {
          right : true,

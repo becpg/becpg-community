@@ -174,7 +174,7 @@
 
                      html += '<div class="entity-branches">';
                      html += '   <span class="document-version">' + $html(doc.label) + '</span>';
-                     html += '   <span class="'+doc.metadata+(current ? " current":"")+'" ><a title="'+doc.description+'" href="'+beCPG.util.entityCharactURL(doc.siteId, doc.nodeRef, doc.itemType)+'">' + $html(doc.name) + '</a></span>';
+                     html += '   <span class="'+doc.metadata+(current ? " current":"")+'" ><a title="'+doc.description+'" href="'+beCPG.util.entityURL(doc.siteId, doc.nodeRef, doc.itemType)+'">' + $html(doc.name) + '</a></span>';
                    if(!current) {
                      html += '   <span class="actions"><a href="' + compareURL + '" class="compare" title="' + this
                      .msg("label.compare") + '">&nbsp;</a></span>';

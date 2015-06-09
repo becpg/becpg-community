@@ -44,13 +44,15 @@ function main()
       var count = documentDetails.item.node.properties["fm:commentCount"];
       model.commentCount = (count != undefined ? count : null);
    // Widget instantiation 
-      var commentList = {
-         id : "CommentsList",
-         name : "Alfresco.CommentsList",
-        
+
+      var propertiesView = {
+         id : "Properties", 
+         name : "beCPG.component.Properties",
          options : {
             nodeRef : model.nodeRef,
             siteId : model.site,
+            formId : model.formId,
+            currVersionNodeRef : model.currVersionNodeRef,
             maxItems : parseInt(model.maxItems),
             activity :  activityParameters,
             editorConfig : {
@@ -61,20 +63,8 @@ function main()
             }
          }
       };
-    
-      var documentMetadata = {
-         id : "Properties", 
-         initArgs : ["\""+(args.htmlid!=null?args.htmlid:htmlid)+"-custom\""],
-         name : "beCPG.component.Properties",
-         options : {
-            nodeRef : model.nodeRef,
-            siteId : model.site,
-            formId : model.formId,
-            currVersionNodeRef : model.currVersionNodeRef
-         }
-      };
       
-      model.widgets = [commentList,documentMetadata];
+      model.widgets = [propertiesView];
       
    }
    

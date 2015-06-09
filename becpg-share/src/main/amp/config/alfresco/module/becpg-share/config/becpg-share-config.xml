@@ -48,7 +48,7 @@
 
 				<type name="association:bcpg:entityV2" template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 					<control-param name="showTooltip">true</control-param>
-					<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+					<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
 				</type>
 				<type name="association:rep:reportTpl" template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 
@@ -187,12 +187,12 @@
 
 			<!-- View original (of a Working Copy pair) -->
 			<action id="entity-view-original" type="pagelink" label="actions.document.view-original">
-				<param name="page">entity-details?nodeRef={workingCopy.sourceNodeRef}</param>
+				<param name="page">entity-data-lists?list=View-properties&amp;nodeRef={workingCopy.sourceNodeRef}</param>
 				<evaluator>evaluator.doclib.action.isWorkingCopy</evaluator>
 			</action>
 			<!-- View working copy (of a Working Copy pair) -->
 			<action id="entity-view-working-copy" type="pagelink" label="actions.document.view-working-copy">
-				<param name="page">entity-details?nodeRef={workingCopy.workingCopyNodeRef}</param>
+				<param name="page">entity-data-lists?list=View-properties&amp;nodeRef={workingCopy.workingCopyNodeRef}</param>
 				<evaluator>evaluator.doclib.action.hasWorkingCopy</evaluator>
 			</action>
 			

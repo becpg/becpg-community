@@ -452,7 +452,7 @@
                                         {
                                             data = oData[i];
                                             html+= '<a href="' + Alfresco.util
-                                                    .siteURL('entity-details?nodeRef=' + oRecord.getData("nodeRef"),{
+                                                    .siteURL('entity-data-lists?list=View-properties&nodeRef=' + oRecord.getData("nodeRef"),{
                                                         site : oRecord.getData("site")!=null ? oRecord.getData("site").shortName :null
                                                     }) + '">' + $html(data.displayValue) + '</a>';
                                         }

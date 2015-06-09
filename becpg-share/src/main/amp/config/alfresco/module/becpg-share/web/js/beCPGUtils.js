@@ -30,12 +30,17 @@
      */
     var $siteURL = Alfresco.util.siteURL;
 
-    beCPG.util.entityCharactURL = function(siteId, pNodeRef, type, context)
+    beCPG.util.entityURL = function(siteId, pNodeRef, type, context)
     {
 
         var nodeRef = new Alfresco.util.NodeRef(pNodeRef);
 
         var redirect = "entity-data-lists?nodeRef=" + nodeRef.toString();
+        
+        if (type == "document" || type == "folder")
+        {
+            redirect = type+"-details?nodeRef=" + nodeRef.toString();
+        }
 
         if (context && context != null)
         {
@@ -58,11 +63,16 @@
         else if (type == "pjt:project")
         {
             redirect += "&list=taskList";
+        } else if(!( type == "document" || type == "folder")){
+            
+            redirect +="&list=View-properties";
         }
 
         return redirect;
 
     };
+   
+    
 
     beCPG.util.entityDocumentsURL = function(siteId, path, name, isFullPath)
     {
@@ -111,30 +121,7 @@
 
     };
 
-    beCPG.util.entityDetailsURL = function(siteId, pNodeRef, type, context)
-    {
-        var nodeRef = new Alfresco.util.NodeRef(pNodeRef);
-
-        var containerType = "entity";
-        if (type == "document" || type == "folder")
-        {
-            containerType = type;
-        }
-
-        var redirect = containerType + "-details?nodeRef=" + nodeRef.toString();
-
-        if (context && context != null)
-        {
-            redirect = "context/" + context + "/" + redirect;
-        }
-
-        return $siteURL(redirect,
-        {
-            site : siteId
-        });
-
-    };
-
+   
     beCPG.util.isEntity = function(record)
     {
         if (record && record.jsNode && beCPG.util.contains(record.jsNode.aspects, "bcpg:entityListsAspect"))

@@ -63,7 +63,7 @@ define([ "dojo/_base/declare", "alfresco/core/CoreXhr", "dojo/_base/lang", "dojo
 				for (var i = 0; i < response.items.length; i++) {
 					var item = response.items[i];
 					
-					var targetUrl = "entity-details?nodeRef=" + item.nodeRef;
+					var targetUrl = "entity-data-lists?list=View-properties&nodeRef=" + item.nodeRef;
 					if (this.pageUri.indexOf("entity-data-lists")) {
 						targetUrl = "entity-data-lists?nodeRef=" + item.nodeRef;
 						// TODO Should be split or better
@@ -74,6 +74,8 @@ define([ "dojo/_base/declare", "alfresco/core/CoreXhr", "dojo/_base/lang", "dojo
 							targetUrl += "&list=packagingList";
 						} else if(item.itemType == "pjt:project"){
 	                         targetUrl += "&list=taskList";
+	                     } else {
+	                         targetUrl += "&list=View-properties";
 	                     }
 
 					}

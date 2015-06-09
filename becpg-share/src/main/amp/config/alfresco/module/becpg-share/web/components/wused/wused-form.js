@@ -155,7 +155,7 @@
 					YAHOO.Bubbling.fire("registerDataGridRenderer", {
 						propertyName : [ me.options.itemType + "_" + me.options.assocType ],
 						renderer : function(oRecord, data, label, scope) {
-							var url = beCPG.util.entityCharactURL(data.siteId, data.value);
+							var url = beCPG.util.entityURL(data.siteId, data.value);
 
 							return '<span class="' + data.metadata + '" ><a href="' + url + '">' + Alfresco.util.encodeHTML(data.displayValue)
 									+ '</a></span>';

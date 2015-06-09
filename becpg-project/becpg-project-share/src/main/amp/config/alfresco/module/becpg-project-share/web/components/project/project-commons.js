@@ -232,7 +232,7 @@
          var contents = deliverable["itemData"]["assoc_pjt_dlContent"];
 
          if (contents.length > 0) {
-            ret += '<span class="doc-file"><a title="' + this.msg("link.title.open-document") + '" href="' +  beCPG.util.entityDetailsURL(contents[0].siteId,contents[0].value, "document") + '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' + Alfresco.util
+            ret += '<span class="doc-file"><a title="' + this.msg("link.title.open-document") + '" href="' +  beCPG.util.entityURL(contents[0].siteId,contents[0].value, "document") + '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' + Alfresco.util
                   .getFileIcon(contents[0].displayValue, "cm:content", 16) + '" /></a></span>';
          }
          
@@ -279,8 +279,7 @@
          var title = record.itemData["prop_cm_name"].displayValue, code = record.itemData["prop_bcpg_code"].displayValue, 
          overdue = '', ret = "";
 
-         detailsUrl = beCPG.util.entityDetailsURL(record.siteId, record.nodeRef);
-         url = beCPG.util.entityCharactURL(record.siteId, record.nodeRef,"pjt:project");
+         url = beCPG.util.entityURL(record.siteId, record.nodeRef,"pjt:project");
          urlFolder = beCPG.util.entityDocumentsURL(record.siteId, record.path, title);
 
          if (record.version && record.version !== "") {
@@ -301,7 +300,7 @@
             ret += this.getPriorityImg(record, large);
          }
 
-         ret += '<a class="theme-color-1" href="' + (full ?detailsUrl : url) + '" title="' + this.msg("link.title.open-project") + '">' + code + "&nbsp;-&nbsp;" + $html(title) + '</a></span>' + version;
+         ret += '<a class="theme-color-1" href="' +  url + '" title="' + this.msg("link.title.open-project") + '">' + code + "&nbsp;-&nbsp;" + $html(title) + '</a></span>' + version;
 
          return ret;
       },

@@ -225,7 +225,7 @@
       //Becpg
       _getDetailsUrl: function CreateContentMgr__getDetailsUrl(nodeRef){
       	if(this.options.isEntity){
-      		return "entity-details?nodeRef=" + nodeRef.toString();
+      		return "entity-data-lists?list=View-properties&nodeRef=" + nodeRef.toString();
       	}
       	
       	return (this.options.isContainer ? "folder" : "document") + "-details?nodeRef=" + nodeRef.toString();
