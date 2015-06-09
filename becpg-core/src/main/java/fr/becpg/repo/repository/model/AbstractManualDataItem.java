@@ -24,14 +24,14 @@ import fr.becpg.repo.repository.annotation.AlfQname;
 public abstract class AbstractManualDataItem extends BeCPGDataObject implements IManualDataItem {
 
 	
-	protected Boolean isManual;
+	protected Boolean isManual = Boolean.FALSE;
 	protected Integer sort;
 
 	@AlfProp
 	@AlfEnforced
 	@AlfQname(qname="bcpg:isManualListItem")
 	public Boolean getIsManual() {
-		return isManual;
+		return isManual!=null ? isManual : Boolean.FALSE;
 	}
 
 	public void setIsManual(Boolean isManual) {
