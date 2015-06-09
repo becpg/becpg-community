@@ -152,7 +152,7 @@
                         this.widgets.viewEntityDatalist = Alfresco.util.createYUIButton(me,
                               "viewEntityDatalist-button", function(sType, aArgs, p_obj) {
 
-                                 window.location.href = beCPG.util.entityCharactURL(me.options.siteId,
+                                 window.location.href = beCPG.util.entityURL(me.options.siteId,
                                        me.options.nodeRef, me.options.itemType);
                               });
                         this.widgets.viewEntityDocuments = Alfresco.util.createYUIButton(me,

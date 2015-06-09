@@ -10,7 +10,7 @@
                      renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
 
                         var record = oRecord.getData(), url = beCPG.util
-                              .entityDetailsURL(record.siteId, record.nodeRef), version = "", priorityImg = "", priority = record.itemData["prop_qa_ncPriority"].value, priorityMap = {
+                              .entityURL(record.siteId, record.nodeRef), version = "", priorityImg = "", priority = record.itemData["prop_qa_ncPriority"].value, priorityMap = {
                            "1" : "high",
                            "2" : "medium",
                            "3" : "low"

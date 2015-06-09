@@ -239,7 +239,7 @@
          html += '<div id="graph-version-row-' + this.getRecordIndex(oRecord) + '" class="entity-branches">';
          html += '   <span class="document-version">' + $html(doc.label) + '</span>';
          html += '   <span class="' + doc.metadata + (current ? " current" : "") + '" ><a href="' + beCPG.util
-               .entityCharactURL(doc.siteId, doc.nodeRef, doc.itemType) + '">' + $html(doc.name) + '</a></span>';
+               .entityURL(doc.siteId, doc.nodeRef, doc.itemType) + '">' + $html(doc.name) + '</a></span>';
          html += '<div class="version-details">';
          html += ((doc.description || "").length > 0) ? $html(doc.description, true)
                : '<span class="faded">(' + Alfresco.util.message("label.noComment", beCPG.module

@@ -2,7 +2,6 @@
 <@markup id="css" >
    <#-- CSS Dependencies -->
    <#include "../form/form.css.ftl"/>
-   <@link href="${url.context}/res/components/document-details/document-metadata.css" group="properties-view"/>
    <@link href="${url.context}/res/components/comments/comments-list.css" group="properties-view"/>
    <@link href="${url.context}/res/components/entity-charact-views/properties-view.css" group="properties-view"/>
 </@>
@@ -10,11 +9,10 @@
 <@markup id="js">
    <#-- JavaScript Dependencies -->
    <#include "../form/form.js.ftl"/>  
-
    <@script src="${url.context}/res/components/entity-charact-views/custom-entity-toolbar.js" group="entity-toolbar"/>
    <@script src="${url.context}/res/components/comments/comments-list.js" group="properties-view"/>
-   <@script src="${url.context}/res/components/document-details/document-metadata.js" group="properties-view"/>
    <@script src="${url.context}/res/components/entity-charact-views/properties-view.js" group="properties-view"/>
+   
 
 </@>
 
@@ -31,15 +29,16 @@
          <!-- Parameters and libs -->
          <#include "../../include/alfresco-macros.lib.ftl" />
          <#assign el=args.htmlid?html>
-			<div  id="${el}-custom" >
-		      <div class="yui-gc properties-view" >
-		            <div  class="yui-u first ">
-				        <div id="${el}-custom-formContainer"></div>
+		      <div id="{el}">
+			      <div class="yui-gc properties-view" >
+			            <div  class="yui-u first ">
+					        <div id="${el}-formContainer">
+					        </div>
 				     </div>
 		            <div class="yui-u properties-details">
 					     <table >
 		           				<tr><td>
-									<a id="${el}-custom-uploadLogo-button" class="upload-logo-action" title="${msg("actions.entity.upload-logo")}" href="#">
+									<a id="${el}-Logo-button" class="upload-logo-action" title="${msg("actions.entity.upload-logo")}" href="#">
 					               	  	<img src="${thumbnailUrl}"  title="${displayName}" class="node-thumbnail"/>
 					               	  	<span class="upload-logo-span" >&nbsp;</span>
 					               </a>
@@ -51,9 +50,9 @@
 					                     <#assign modifyUser = node.properties["cm:modifier"]>
 					                     <#assign modifyDate = node.properties["cm:modified"]>
 					                     <#assign modifierLink = userProfileLink(modifyUser.userName, modifyUser.displayName, 'class="theme-color-1"') >
-					                     ${msg("label.modified-by-user-on-date", modifierLink, "<span id='${el}-custom-modifyDate'>${modifyDate.iso8601}</span>")}
+					                     ${msg("label.modified-by-user-on-date", modifierLink, "<span id='${el}-modifyDate'>${modifyDate.iso8601}</span>")}
 					                 </span>
-                     				<span id="${el}-custom-favourite" class="item"></span>
+                     				<span id="${el}-favourite" class="item"></span>
                    					<span class="item item-separator item-social">
 					                        <a href="#" name="@commentNode" rel="${item.nodeRef?html}" class="theme-color-1 comment<#if commentCount??> hasComments</#if> ${el}" title="${msg("comment.document.tip")}" tabindex="0">${msg("comment.document.label")}</a><#if commentCount??><span class="comment-count">${commentCount}</span></#if>
 				                     </span>
@@ -90,7 +89,7 @@
 				        </div>
 		            </div>
 		      </div>
-		</div>
+		     </div> 
       </#if>
    </@>
 </@>

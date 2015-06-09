@@ -29,8 +29,8 @@
 		      <div class="right">
 		   	 	<div id="${el}-toolbar-buttons-right" >
 		   	 	</div>
+				<#if nodeRef??>
 		   	 	<div>
-		   	 		<#if nodeRef??>
 					<div class="action-set-menu doclist">
       				   <button  id="${el}-action-set-button" >${msg("button.entity-actions")}&nbsp;&#9662;</button>
 				   	   <div id="${el}-action-set-menu" class="yuimenu" >
@@ -39,8 +39,8 @@
 				         </div>
 				      </div>			
 				 	</div>
-				 </#if>	
 				</div>
+				</#if>	
 		      </div>
 
 		   </div>

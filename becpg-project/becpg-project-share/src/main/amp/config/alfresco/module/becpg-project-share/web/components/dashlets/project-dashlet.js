@@ -426,7 +426,7 @@
 
                         var thumbName = record.itemData["prop_cm_name"].value, recordSiteName = record.site != null ? record.site.shortName
                               : null, extn = record.itemType.substring(record.itemType.lastIndexOf(":")+1), nodeRef = new Alfresco.util.NodeRef(
-                              record.nodeRef), docDetailsUrl = beCPG.util.entityDetailsURL(recordSiteName,
+                              record.nodeRef), docDetailsUrl = beCPG.util.entityURL(recordSiteName,
                               record.nodeRef, record.itemType);
 
                         if (this.options.simpleView) {
@@ -573,7 +573,7 @@
 
                               desc += '</div>';
 
-                              var charactsUrl = beCPG.util.entityCharactURL(recordSiteName, record.nodeRef,
+                              var charactsUrl = beCPG.util.entityURL(recordSiteName, record.nodeRef,
                                     record.itemType), documentsUrl = beCPG.util.entityDocumentsURL(recordSiteName,
                                     record.path, record.itemData["prop_cm_name"].value);
 

@@ -20,10 +20,8 @@ package fr.becpg.repo.project.admin;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -71,8 +69,6 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 	private static final String EXPORT_PROJECTS_REPORT_XMLFILE_PATH = "beCPG/birt/project/ExportSearchQuery.xml";
 
 	public static final String EMAIL_TEMPLATES = "./app:dictionary/app:email_templates";
-
-	private static final String LOCALIZATION_PFX_GROUP = "becpg.project.group";
 
 	@Autowired
 	private EntitySystemService entitySystemService;

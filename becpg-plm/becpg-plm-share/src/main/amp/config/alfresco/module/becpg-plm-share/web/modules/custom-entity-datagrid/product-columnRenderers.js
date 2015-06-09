@@ -24,7 +24,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 				"ecm:wulSourceItems", "ecm:rlSourceItems", "ecm:rlTargetItem", "ecm:culSourceItem", "ecm:culTargetItem", "ecm:cclSourceItem" ],
 		renderer : function(oRecord, data, label, scope, z, zz, elCell, oColumn) {
 
-			var url = beCPG.util.entityCharactURL(data.siteId, data.value), version = "";
+			var url = beCPG.util.entityURL(data.siteId, data.value), version = "";
 
 			if (label == "mpm:plProduct" || label == "bcpg:compoListProduct" || label == "bcpg:packagingListProduct" || label == "mpm:plResource") {
 
@@ -34,7 +34,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 				} else if (data.metadata.indexOf("packagingKit") != -1) {
 					url += "&list=packagingList";
 				} else if (data.metadata.indexOf("localSemiFinishedProduct") != -1) {
-					url = beCPG.util.entityDetailsURL(data.siteId, data.value);
+					url = beCPG.util.entityURL(data.siteId, data.value);
 				}
 				if (data.version && data.version !== "") {
 					version = '<span class="document-version">' + data.version + '</span>';
@@ -42,7 +42,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 			}
 			
 			if(label == "mpm:rplResourceRef"){
-			    url = beCPG.util.entityDetailsURL(data.siteId, data.value);
+			    url = beCPG.util.entityURL(data.siteId, data.value);
 			    if (oColumn.hidden) {
                     scope.widgets.dataTable.showColumn(oColumn);
                     Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
@@ -157,7 +157,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : [ "qa:slControlPoint" ],
 		renderer : function(oRecord, data, label, scope) {
-			var url = beCPG.util.entityCharactURL(data.siteId, data.value);
+			var url = beCPG.util.entityURL(data.siteId, data.value);
 			return '<span class="controlPoint"><a href="' + url + '">' + Alfresco.util.encodeHTML(data.displayValue) + '</a></span>';
 
 		}
@@ -306,7 +306,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 											className = "dynaCompNone";
 										}
 										ret += '<span  class="' + className + '" >(<a title="' + json.comp[i].name + '" href="'
-												+ beCPG.util.entityCharactURL(json.comp[i].siteId, json.comp[i].nodeRef, json.comp[i].itemType)
+												+ beCPG.util.entityURL(json.comp[i].siteId, json.comp[i].nodeRef, json.comp[i].itemType)
 												+ '">' + Alfresco.util.encodeHTML(json.comp[i].displayValue) + '</a>)</span>';
 									}
 								}
@@ -367,7 +367,7 @@ if (beCPG.module.EntityDataGridRenderers) {
                         for(var i in reqProducts){
                             var product = reqProducts[i];
                             html +='<li><span class="' + product.metadata + '" ><a href="' +
-                            beCPG.util.entityDetailsURL(product.siteId, product.value) + '">' 
+                            beCPG.util.entityURL(product.siteId, product.value) + '">' 
                             + Alfresco.util.encodeHTML(product.displayValue) + '</a></span></li>';
     
                         }
@@ -614,7 +614,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 										className = "dynaCompNone";
 									}
 									ret += '<span  class="' + className + '" >(<a title="' + json.comp[z].name + '" href="'
-											+ beCPG.util.entityCharactURL(json.comp[z].siteId, json.comp[z].nodeRef, json.comp[z].itemType) + '">'
+											+ beCPG.util.entityURL(json.comp[z].siteId, json.comp[z].nodeRef, json.comp[z].itemType) + '">'
 											+ Alfresco.util.encodeHTML(json.comp[z].displayValue) + '</a>)</span>';
 								}
 							}

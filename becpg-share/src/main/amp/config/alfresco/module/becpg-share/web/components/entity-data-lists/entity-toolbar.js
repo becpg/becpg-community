@@ -54,8 +54,11 @@
       // Decoupled event listeners
 //      YAHOO.Bubbling.on("filesPermissionsUpdated", this.doRefresh, this);
 //      YAHOO.Bubbling.on("metadataRefresh", this.doRefresh, this);
-      YAHOO.Bubbling.on("registerAction", this.onRegisterAction, this);
-
+      
+      if(Alfresco.doclib && Alfresco.doclib.Actions){
+          YAHOO.Bubbling.on("registerAction", this.onRegisterAction, this);
+      }
+      
       /* Deferred list population until DOM ready */
       this.deferredToolbarPopulation = new Alfresco.util.Deferred([ "onReady", "onActiveDataListChanged" ], {
          fn : this.populateToolbar,
@@ -74,7 +77,7 @@
    /**
     * Augment prototype with Actions module
     */
-   if(Alfresco.doclib.Actions){
+   if(Alfresco.doclib && Alfresco.doclib.Actions){
        YAHOO.lang.augmentProto(beCPG.component.EntityDataListToolbar, Alfresco.doclib.Actions);
    }
 

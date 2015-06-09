@@ -241,7 +241,7 @@
 
                         var thumbName = record.itemData["prop_cm_name"].value, recordSiteName = record.site != null ? record.site.shortName
                               : null, extn = thumbName.substring(thumbName.lastIndexOf(".")), nodeRef = new Alfresco.util.NodeRef(
-                              record.nodeRef), docDetailsUrl = beCPG.util.entityDetailsURL(recordSiteName,
+                              record.nodeRef), docDetailsUrl = beCPG.util.entityURL(recordSiteName,
                               record.nodeRef, record.itemType);
 
                            desc = '<span class="thumbnail" ><a href="' + docDetailsUrl + '"><img width="90%" height="90%"  src="' + Alfresco.constants.PROXY_URI + 'api/node/' + nodeRef.uri + '/content/thumbnails/doclib?c=queue&ph=true" alt="' + extn + '" title="' + $html(thumbName) + '" /></a></span>';

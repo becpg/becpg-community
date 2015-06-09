@@ -89,7 +89,7 @@
             }
             case "entity":
            {
-            	url = "entity-details?nodeRef=" + nodeRef;
+            	url = "entity-data-lists?list=View-properties&nodeRef=" + nodeRef;
                break;
            }
             case "folder":

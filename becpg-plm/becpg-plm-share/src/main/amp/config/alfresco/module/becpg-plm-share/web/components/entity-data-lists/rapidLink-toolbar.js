@@ -236,7 +236,7 @@
                               successCallback : {
                                  fn : function(resp) {
                                     if (resp.json) {
-                                       window.location.href = beCPG.util.entityCharactURL(this.options.siteId,
+                                       window.location.href = beCPG.util.entityURL(this.options.siteId,
                                              resp.json.persistedObject, this.options.entity.type);
                                     }
                                  },

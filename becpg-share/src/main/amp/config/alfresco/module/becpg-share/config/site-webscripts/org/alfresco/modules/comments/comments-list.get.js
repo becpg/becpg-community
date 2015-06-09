@@ -15,10 +15,11 @@ function getActivityParameters(nodeRef, entityNodeRef)
          return (
          {
             itemTitle: metadata.properties[cm + 'name'],
-            page: 'entity-details',
+            page: 'entity-data-lists',
             pageParams:
             {
-               nodeRef: metadata.nodeRef
+               nodeRef: metadata.nodeRef,
+               list : "View-properties"
             }
          });
         }
@@ -56,10 +57,11 @@ function getActivityParameters(nodeRef, entityNodeRef)
                 return (
                 {
                    itemTitle: entityNodeRefMetadata.properties[cm + 'name'],
-                   page: 'entity-details',
+                   page: 'entity-data-lists',
                    pageParams:
                    {
-                      nodeRef: entityNodeRef
+                      nodeRef: metadata.nodeRef,
+                      list : "View-properties"
                    }
                 });
             } 

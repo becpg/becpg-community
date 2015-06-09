@@ -6,7 +6,7 @@
 		function(item)
 		{
 			if(item.aspects !=null && beCPG.util.contains(item.aspects, "bcpg:entityListsAspect")){
-			  return Alfresco.util.siteURL("entity-details?nodeRef=" + item.nodeRef, { site: item.site })
+			  return Alfresco.util.siteURL("entity-data-lists?list=View-properties&nodeRef=" + item.nodeRef, { site: item.site })
 			}
 
 		   return item.isContainer ? Alfresco.util.siteURL("folder-details?nodeRef=" + item.nodeRef, { site: item.site }) : Alfresco.util.siteURL("document-details?nodeRef=" + item.nodeRef, { site: item.site });

@@ -307,7 +307,7 @@
                      } else {
                         var thumbName = record.fileName, recordSiteName = $isValueSet(record.location.site) ? record.location.site
                               : null, extn = record.nodeType.substring(record.nodeType.lastIndexOf(":")+1), nodeRef = new Alfresco.util.NodeRef(
-                              record.nodeRef), docDetailsUrl = beCPG.util.entityDetailsURL(recordSiteName,
+                              record.nodeRef), docDetailsUrl = beCPG.util.entityURL(recordSiteName,
                               record.nodeRef, record.nodeType);
 
                         if (this.options.simpleView) {
@@ -359,7 +359,7 @@
                      } else {
                         var id = this.id + '-metadata-' + oRecord.getId(), recordSiteName = $isValueSet(record.location.site) ? record.location.site
                               : null, version = "", dateLine = "", locn = record.location, docDetailsUrl = beCPG.util
-                              .entityDetailsURL(recordSiteName, record.nodeRef, record.itemType);
+                              .entityURL(recordSiteName, record.nodeRef, record.itemType);
 
                         // Version display
                         if (record.version && record.version !== "") {
@@ -399,8 +399,7 @@
                            desc += '<span class="item">' + dateLine + '</span>';
                            desc += '</div>';
 
-                           var charactsUrl = beCPG.util.entityCharactURL(recordSiteName, record.nodeRef,
-                                 record.nodeType), documentsUrl = beCPG.util.entityDocumentsURL(recordSiteName,
+                           var  documentsUrl = beCPG.util.entityDocumentsURL(recordSiteName,
                                  record.location.path, record.location.file, true);
 
                            /* Favourite / Charact / Download */
@@ -409,7 +408,7 @@
                            desc += '<span class="item item-social item-separator"><a class="view-documents" href="' + documentsUrl + '"  title="' + this
                                  .msg("actions.entity.view-documents") + '" tabindex="0">' + this
                                  .msg("actions.entity.view-documents.short") + '</a></span>';
-                           desc += '<span class="item item-social item-separator"><a class="view-characts" href="' + charactsUrl + '" title="' + this
+                           desc += '<span class="item item-social item-separator"><a class="view-characts" href="' + docDetailsUrl + '" title="' + this
                                  .msg("actions.entity.view-datalists") + '" tabindex="0">' + this
                                  .msg("actions.entity.view-datalists.short") + '</a></span>';
                            desc += '</div>';
@@ -558,7 +557,7 @@
 
                      var recordSiteName = $isValueSet(p_record.location.site) ? p_record.location.site : null;
 
-                     window.location.href = beCPG.util.entityCharactURL(recordSiteName, p_record.nodeRef,
+                     window.location.href = beCPG.util.entityURL(recordSiteName, p_record.nodeRef,
                            p_record.nodeType);
                   },
 

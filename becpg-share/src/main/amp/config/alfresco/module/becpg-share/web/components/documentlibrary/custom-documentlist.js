@@ -74,20 +74,11 @@
 
                                 div.innerHTML = instructions;
 
-                                this.widgets.viewEntityDetails = Alfresco.util.createYUIButton(me,
-                                        "viewEntityDetails-button", function(sType, aArgs, p_obj)
-                                        {
-
-                                            window.location.href = beCPG.util.entityDetailsURL(me.options.siteId,
-                                                    me.doclistMetadata.parent.nodeRef, me.doclistMetadata.parent.type);
-
-                                        });
-
                                 this.widgets.viewEntityLists = Alfresco.util.createYUIButton(me,
                                         "viewEntityLists-button", function(sType, aArgs, p_obj)
                                         {
 
-                                            window.location.href = beCPG.util.entityCharactURL(me.options.siteId,
+                                            window.location.href = beCPG.util.entityURL(me.options.siteId,
                                                     me.doclistMetadata.parent.nodeRef, me.doclistMetadata.parent.type);
 
                                         });
@@ -154,7 +145,7 @@
                                                 if (beCPG.util.isEntity(record))
                                                 {
                                                     this.modules.actions.postActivity(this.options.siteId,
-                                                            "entity-liked", "entity-details", activityData);
+                                                            "entity-liked", "entity-data-lists", activityData);
                                                 }
                                                 else if (node.isContainer)
                                                 {
@@ -251,7 +242,7 @@
 
                 if (beCPG.util.isEntity(record))
                 {
-                    html = scope.getActionUrls(record).documentDetailsUrl.replace("document-details", "entity-details");
+                    html = scope.getActionUrls(record).documentDetailsUrl.replace("document-details?","entity-data-lists?list=View-properties&");
                 }
                 else
                 {
@@ -455,7 +446,7 @@
         // beCPG
         if (beCPG.util.isEntity(record))
         {
-            url = url.replace("folder-details", "entity-details");
+            url = url.replace("folder-details?","entity-data-lists?list=View-properties&");
         }
 
         var hasComments = (node.properties["fm:commentCount"] !== undefined);

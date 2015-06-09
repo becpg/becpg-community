@@ -8,7 +8,7 @@
 		   propertyName : [ "pjt:projectEntity" ],
 		   renderer : function(oRecord, data, label, scope) {
 
-			   var url = beCPG.util.entityDetailsURL(data.siteId, data.value), version = "";
+			   var url = beCPG.util.entityURL(data.siteId, data.value), version = "";
 
 			   if (data.version && data.version !== "") {
 				   version = '<span class="document-version">' + data.version + '</span>';

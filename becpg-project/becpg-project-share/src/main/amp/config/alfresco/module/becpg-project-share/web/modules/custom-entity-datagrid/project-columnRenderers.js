@@ -73,7 +73,7 @@ if (beCPG.module.EntityDataGridRenderers) {
             			  title = '<span class="doc-file"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' + Alfresco.util
  	                     .getFileIcon(data.title, "cm:content", 16) + '" />'+Alfresco.util.encodeHTML(data.title)+'</span>';
             		  } else {
-	            		 title = '<span class="doc-file"><a  href="' +  beCPG.util.entityDetailsURL(oRecord.getData("siteId"),data.contentNodeRef, "document") + 
+	            		 title = '<span class="doc-file"><a  href="' +  beCPG.util.entityURL(oRecord.getData("siteId"),data.contentNodeRef, "document") + 
 	            		 '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' + Alfresco.util
 	                     .getFileIcon(data.title, "cm:content", 16) + '" />'+Alfresco.util.encodeHTML(data.title)+'</a></span>';
             		  }

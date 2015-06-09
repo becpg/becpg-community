@@ -433,8 +433,7 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:finishedProduct?classNames=bcpg:entityTplAspect
 							</control-param>
-							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}
-							</control-param>
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
 						</control>
 					</field>
 					<field id="rep:reportTpls" set="mainInfo" />
@@ -469,7 +468,7 @@
 					<field id="bcpg:productMicrobioCriteriaRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
 						</control>
 					</field>
 
@@ -488,7 +487,7 @@
 					<field id="bcpg:productSpecifications" set="formulation">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
 							<control-param name="style">width:200px</control-param>
 						</control>
@@ -619,7 +618,7 @@
 					<field id="bcpg:productSpecifications">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
 						</control>
 					</field>
@@ -628,7 +627,7 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:product?classNames=bcpg:finishedProduct,bcpg:semiFinishedProduct
 							</control-param>
-							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
 						</control>
 					</field>
@@ -637,7 +636,7 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:finishedProduct?classNames=bcpg:entityTplAspect
 							</control-param>
-							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
 						</control>
 					</field>
@@ -816,7 +815,7 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:finishedProduct?classNames=bcpg:entityTplAspect
 							</control-param>
-							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
 						</control>
 					</field>
@@ -848,7 +847,7 @@
 					<field id="bcpg:productMicrobioCriteriaRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
 						</control>
 					</field>
 
@@ -867,7 +866,7 @@
 					<field id="bcpg:productSpecifications" set="formulation">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
 							<control-param name="style">width:200px</control-param>
 						</control>
@@ -925,7 +924,7 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:finishedProduct?classNames=bcpg:entityTplAspect
 							</control-param>
-							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
 						</control>
 					</field>
@@ -1261,7 +1260,7 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:packagingKit?classNames=bcpg:entityTplAspect
 							</control-param>
-							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
 						</control>
 					</field>
@@ -1421,7 +1420,7 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:packagingKit?classNames=bcpg:entityTplAspect
 							</control-param>
-							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
 						</control>
 					</field>
@@ -1658,7 +1657,7 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:packagingMaterial?classNames=bcpg:entityTplAspect
 							</control-param>
-							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
 						</control>
 					</field>
@@ -1992,7 +1991,7 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:packagingMaterial?classNames=bcpg:entityTplAspect
 							</control-param>
-							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
 						</control>
 					</field>
@@ -2268,7 +2267,7 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:rawMaterial?classNames=bcpg:entityTplAspect
 							</control-param>
-							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
 						</control>
 					</field>
@@ -2318,7 +2317,7 @@
 					<field id="bcpg:productMicrobioCriteriaRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
 						</control>
 					</field>
 					<field id="bcpg:certificateDate" set="consumer" />
@@ -2561,7 +2560,7 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:rawMaterial?classNames=bcpg:entityTplAspect
 							</control-param>
-							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
 						</control>
 					</field>
@@ -2675,7 +2674,7 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:rawMaterial?classNames=bcpg:entityTplAspect
 							</control-param>
-							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
 						</control>
 					</field>
@@ -2725,7 +2724,7 @@
 					<field id="bcpg:productMicrobioCriteriaRef" set="consumer" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
 						</control>
 					</field>
 					
@@ -2772,7 +2771,7 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:rawMaterial?classNames=bcpg:entityTplAspect
 							</control-param>
-							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
 						</control>
 					</field>
@@ -3004,7 +3003,7 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:semiFinishedProduct?classNames=bcpg:entityTplAspect
 							</control-param>
-							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
 						</control>
 					</field>
@@ -3025,7 +3024,7 @@
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="style">width:200px</control-param>
-							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
 						</control>
 					</field>
@@ -3057,7 +3056,7 @@
 					<field id="bcpg:productMicrobioCriteriaRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
 						</control>
 					</field>
 
@@ -3131,7 +3130,7 @@
 					<field id="bcpg:productSpecifications">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
 						</control>
 					</field>
@@ -3140,7 +3139,7 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:product?classNames=bcpg:finishedProduct,bcpg:semiFinishedProduct
 							</control-param>
-							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
 						</control>
 					</field>
@@ -3149,7 +3148,7 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:semiFinishedProduct?classNames=bcpg:entityTplAspect
 							</control-param>
-							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
 						</control>
 					</field>
@@ -3299,7 +3298,7 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:semiFinishedProduct?classNames=bcpg:entityTplAspect
 							</control-param>
-							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
 						</control>
 					</field>
@@ -3332,7 +3331,7 @@
 					<field id="bcpg:productMicrobioCriteriaRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
 						</control>
 					</field>
 
@@ -3351,7 +3350,7 @@
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="style">width:200px</control-param>
-							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
 						</control>
 					</field>
@@ -3397,7 +3396,7 @@
 					<field id="bcpg:productSpecifications">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
 						</control>
 					</field>
@@ -3406,7 +3405,7 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:semiFinishedProduct?classNames=bcpg:entityTplAspect
 							</control-param>
-							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
 						</control>
 					</field>
@@ -3501,7 +3500,7 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:resourceProduct?classNames=bcpg:entityTplAspect
 							</control-param>
-							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
 						</control>
 					</field>
@@ -3657,7 +3656,7 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:resourceProduct?classNames=bcpg:entityTplAspect
 							</control-param>
-							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
 						</control>
 					</field>
@@ -4866,7 +4865,7 @@
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pjt:project?classNames=pjt:project,bcpg:entityTplAspect</control-param>
-							<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}</control-param>
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
 						</control>
 					</field>				
 					<field id="pjt:projectEntity" set="mainInfo" />	

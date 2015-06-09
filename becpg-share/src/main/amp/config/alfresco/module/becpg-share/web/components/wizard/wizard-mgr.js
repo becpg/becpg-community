@@ -373,7 +373,7 @@
                            /* Have we been given a nodeRef from the Forms Service? */
                            if (YAHOO.lang.isObject(nodeRef))
                            {
-                              window.location.href = $siteURL("entity-details?nodeRef=" + nodeRef.toString());
+                              window.location.href = $siteURL("entity-data-lists?list=View-properties&nodeRef=" + nodeRef.toString());
                            }
                            else if (document.referrer)
                            {

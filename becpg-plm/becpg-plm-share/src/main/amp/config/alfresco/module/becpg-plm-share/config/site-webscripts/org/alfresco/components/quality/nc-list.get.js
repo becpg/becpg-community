@@ -9,6 +9,9 @@ function main()
    parseActions();
    
    var filterParameters =  getFilterParameters();
+   
+   model.pagination = true;
+   model.filter = true;
 
    //Widget instantiation metadata...
    var entityDataGrid = {
