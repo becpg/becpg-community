@@ -51,8 +51,6 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	public static final String NO_GRP = "-";
 	private static final String MESSAGE_MISSING_INGLIST = "message.formulate.missing.ingList";
 
-	private String tmpDiluentKey = "KEY_DILUANT";
-
 	/** The logger. */
 	private static Log logger = LogFactory.getLog(IngsCalculatingFormulationHandler.class);
 
@@ -144,7 +142,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		if (compoList != null) {
 			for (CompoListDataItem compoItem : compoList) {
 
-				ProductData componentProductData = (ProductData)alfrescoRepository.findOne(compoItem.getProduct());
+				ProductData componentProductData = (ProductData) alfrescoRepository.findOne(compoItem.getProduct());
 				visitILOfPart(formulatedProduct, compoItem, componentProductData, retainNodes, totalQtyIngMap, totalQtyVolMap, reqCtrlMap);
 
 				QName type = nodeService.getType(compoItem.getProduct());
@@ -162,10 +160,6 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 					}
 				}
 
-				if (nodeService.hasAspect(compoItem.getProduct(), PLMModel.ASPECT_DILUENT) && !componentProductData.getIngList().isEmpty()) {
-					diluantIngNodeRef = componentProductData.getIngList().get(0).getIng();
-				}
-
 			}
 		}
 
@@ -175,10 +169,6 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			for (IngListDataItem ingListDataItem : formulatedProduct.getIngList()) {
 				// qtyPerc
 				Double totalQtyIng = totalQtyIngMap.get(ingListDataItem.getName());
-
-				if (diluantIngNodeRef != null && diluantIngNodeRef.equals(ingListDataItem.getIng()) && totalQtyVolMap.get(tmpDiluentKey) != null) {
-					totalQtyIng += totalQtyVolMap.get(tmpDiluentKey);
-				}
 
 				if (totalQtyIng != null) {
 					if (ingListDataItem.getParent() != null) {
@@ -246,8 +236,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		}
 
 		// calculate ingList of formulated product
-		calculateILOfPart(compoListDataItem, CompositeHelper.getHierarchicalCompoList(componentProductData.getIngList()), formulatedProduct.getIngList(), retainNodes,
-				totalQtyIngMap, totalQtyVolMap, null);
+		calculateILOfPart(compoListDataItem, CompositeHelper.getHierarchicalCompoList(componentProductData.getIngList()),
+				formulatedProduct.getIngList(), retainNodes, totalQtyIngMap, totalQtyVolMap, null);
 	}
 
 	/**
@@ -313,33 +303,11 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 					volumeQty = 0d;
 				}
 
-				Double volumeReconstitution = FormulationHelper.getVolumeReconstitution(compoListDataItem, nodeService);
+				// Semi finished
+				if (ingListDataItem.getVolumeQtyPerc() != null && compoListDataItem.getVolume() != null) {
 
-				if (volumeReconstitution != null) {
-
-					Double diluentVolume = (volumeReconstitution - compoListDataItem.getVolume()) * 100;
-
-					// Raw material
-					totalQtyVolMap.put(newIngListDataItem.getName(), volumeQty + volumeReconstitution);
-
-					Double qtyDiluent = totalQtyVolMap.get(tmpDiluentKey);
-					if (qtyDiluent == null) {
-						qtyDiluent = 0d;
-					}
-
-					qtyDiluent -= diluentVolume;
-					valueToAdd += diluentVolume;
-
-					// Decrease diluent
-					totalQtyVolMap.put(tmpDiluentKey, qtyDiluent);
-
-				} else {
-					// Semi finished
-					if (ingListDataItem.getVolumeQtyPerc() != null && compoListDataItem.getVolume() != null) {
-
-						totalQtyVolMap.put(newIngListDataItem.getName(),
-								volumeQty + ingListDataItem.getVolumeQtyPerc() * compoListDataItem.getVolume() / 100);
-					}
+					totalQtyVolMap.put(newIngListDataItem.getName(), volumeQty + ingListDataItem.getVolumeQtyPerc() * compoListDataItem.getVolume()
+							/ 100);
 				}
 
 				totalQtyIng += valueToAdd;
@@ -371,7 +339,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			if (ingListDataItem.getIsProcessingAid() == null || !ingListDataItem.getIsProcessingAid()) {
 				newIngListDataItem.setIsProcessingAid(false);
 			}
-			
+
 			// Support
 			if (ingListDataItem.getIsSupport() == null || !ingListDataItem.getIsSupport()) {
 				newIngListDataItem.setIsSupport(false);
@@ -483,7 +451,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 									continue; // check next rule
 								}
 							}
-							
+
 							// Required GeoOrigins
 							if (!fil.getRequiredGeoOrigins().isEmpty()) {
 								boolean hasGeoOrigin = true;
@@ -529,17 +497,13 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 							// req not respected
 							logger.debug("Adding not respected for :" + fil.getReqMessage());
 							// Look for raw material
-							if (componentProductData.getCompoListView().getCompoList() != null &&
-									!componentProductData.getCompoListView().getCompoList().isEmpty()) {
-								for(CompoListDataItem c : componentProductData.getCompoListView().getCompoList()){
-									checkILOfPart(c.getProduct(), 
-											declType, 
-											(ProductData)alfrescoRepository.findOne(c.getProduct()), 
-											productSpecicationDataList, 
-											reqCtrlMap);
+							if (componentProductData.getCompoListView().getCompoList() != null
+									&& !componentProductData.getCompoListView().getCompoList().isEmpty()) {
+								for (CompoListDataItem c : componentProductData.getCompoListView().getCompoList()) {
+									checkILOfPart(c.getProduct(), declType, (ProductData) alfrescoRepository.findOne(c.getProduct()),
+											productSpecicationDataList, reqCtrlMap);
 								}
-							}
-							else{
+							} else {
 								ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(fil.getNodeRef());
 								if (reqCtrl == null) {
 									reqCtrl = new ReqCtrlListDataItem(null, fil.getReqType(), fil.getReqMessage(), new ArrayList<NodeRef>());
@@ -549,7 +513,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 								if (!reqCtrl.getSources().contains(productNodeRef)) {
 									reqCtrl.getSources().add(productNodeRef);
 								}
-							}							
+							}
 						}
 					}
 				}

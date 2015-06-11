@@ -124,6 +124,7 @@
 				   <property name="nodeService" ref="nodeService" />
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="mlNodeService" ref="mlAwareNodeService" />
+					<property name="associationService" ref="associationService"/>
 				</bean>
 				<bean parent="abstractSimpleFormulationHandler"
 					class="fr.becpg.repo.product.formulation.PhysicoChemCalculatingFormulationHandler">
