@@ -350,7 +350,9 @@ public class XmlEntityVisitor {
 			xmlw.writeCharacters(ISO8601DateFormat.format((Date) value));
 		} else {
 			// xmlw.writeCharacters(cleanInvalidXmlChars(value.toString(),""));
-			xmlw.writeCData(value.toString());
+			if(value!=null){
+				xmlw.writeCData(value.toString());
+			}
 		}
 	}
 
