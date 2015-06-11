@@ -104,25 +104,27 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 	private void clearDates(ProjectData projectData, boolean isPlanning) {
 
 		for (TaskListDataItem tl : projectData.getTaskList()) {
-			if (projectData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
-				tl.setStart(null);
-				tl.setEnd(null);
-			} else {
+			if(tl.getManualDate() == null){
+				if (projectData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
+					tl.setStart(null);
+					tl.setEnd(null);
+				} else {
 
-				if (hasPlannedDuration(tl)) {
-					//in retro-planning or task has prev tasks
-					if (tl.getIsGroup() || !isPlanning || ProjectHelper.getPrevTasks(projectData, tl).isEmpty() == false) {
-						ProjectHelper.setTaskStartDate(tl, null);
+					if (hasPlannedDuration(tl)) {
+						//in retro-planning or task has prev tasks
+						if (tl.getIsGroup() || !isPlanning || ProjectHelper.getPrevTasks(projectData, tl).isEmpty() == false) {
+							ProjectHelper.setTaskStartDate(tl, null);
+						}
+						//in planning or task has next tasks
+						if (tl.getIsGroup() || isPlanning || ProjectHelper.getNextTasks(projectData, tl.getNodeRef()).isEmpty() == false) {
+							ProjectHelper.setTaskEndDate(tl, null);
+						}
 					}
-					//in planning or task has next tasks
-					if (tl.getIsGroup() || isPlanning || ProjectHelper.getNextTasks(projectData, tl.getNodeRef()).isEmpty() == false) {
-						ProjectHelper.setTaskEndDate(tl, null);
+					else if(tl.getStart() != null && tl.getEnd() != null){
+						tl.setDuration(ProjectHelper.calculateTaskDuration(tl.getStart(), tl.getEnd()));
 					}
 				}
-				else if(tl.getStart() != null && tl.getEnd() != null){
-					tl.setDuration(ProjectHelper.calculateTaskDuration(tl.getStart(), tl.getEnd()));
-				}
-			}
+			}			
 		}
 	}
 

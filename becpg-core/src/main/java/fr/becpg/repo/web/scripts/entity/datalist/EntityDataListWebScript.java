@@ -214,7 +214,7 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 		String repo = req.getParameter(PARAM_REPOSITORY);
 
 		boolean isRepo = true;
-		if (repo != null && repo.equals("false")) {
+		if ("false".equals(repo)) {
 			isRepo = false;
 		}
 		dataListFilter.setRepo(isRepo);
