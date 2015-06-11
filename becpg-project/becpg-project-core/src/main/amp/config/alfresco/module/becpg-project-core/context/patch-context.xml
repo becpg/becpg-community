@@ -113,5 +113,30 @@
             <ref bean="policyBehaviourFilter"/>
         </property>
 	</bean>
-
+	
+	<bean id="patch.bcpg.project.addViewPatch" class="fr.becpg.repo.project.admin.patch.AddViewPatch" parent="beCPGBasePatch" >
+        <property name="id"><value>patch.bcpg.project.addViewPatch</value></property>
+        <property name="description"><value>patch.bcpg.project.addViewPatch.description</value></property>
+        <property name="fixesFromSchema" value="0"/>
+        <property name="fixesToSchema" value="8022" />
+        <property name="targetSchema" value="10160 "/>
+        <property name="requiresTransaction"><value>true</value></property>
+        <property name="applyToTenants"><value>true</value></property>
+        <property name="ruleService" ref="ruleService"/>
+         <property name="patchDAO">
+            <ref bean="patchDAO"/>
+        </property>
+        <property name="nodeDAO">
+            <ref bean="nodeDAO"/>
+        </property>
+        <property name="qnameDAO">
+            <ref bean="qnameDAO"/>
+        </property>
+         <property name="dictionaryService">
+            <ref bean="dictionaryService"/>
+        </property>
+        <property name="entityTplService">
+            <ref bean="entityTplService"/>
+        </property>
+	</bean>
 </beans>
