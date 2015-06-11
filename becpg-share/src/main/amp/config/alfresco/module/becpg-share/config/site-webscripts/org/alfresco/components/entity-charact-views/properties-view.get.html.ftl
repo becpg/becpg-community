@@ -38,7 +38,7 @@
 		            <div class="yui-u properties-details">
 					     <table >
 		           				<tr><td>
-									<a id="${el}-Logo-button" class="upload-logo-action" title="${msg("actions.entity.upload-logo")}" href="#">
+									<a id="${el}-uploadLogo-button" class="upload-logo-action" title="${msg("actions.entity.upload-logo")}" href="#">
 					               	  	<img src="${thumbnailUrl}"  title="${displayName}" class="node-thumbnail"/>
 					               	  	<span class="upload-logo-span" >&nbsp;</span>
 					               </a>

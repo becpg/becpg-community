@@ -71,8 +71,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	
 	private AssociationService associationService;
 
-	//private NodeRef tmpDiluentNodeRef = new NodeRef("ings", "tempDiluent", "0");
-
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
