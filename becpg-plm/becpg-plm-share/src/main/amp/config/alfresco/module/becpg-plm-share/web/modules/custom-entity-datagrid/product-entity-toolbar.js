@@ -252,7 +252,7 @@ YAHOO.Bubbling
 
                               var templateUrl = YAHOO.lang
                                     .substitute(
-                                          Alfresco.constants.URL_SERVICECONTEXT + "components/form?formId=full-screen&entityNodeRef={entityNodeRef}&itemKind={itemKind}&itemId={itemId}&destination={destination}&mode={mode}&submitType={submitType}&showCancelButton=true&dataListsName={dataListsName}",
+                                          Alfresco.constants.URL_SERVICECONTEXT + "components/form?formId=full-screen&showCaption=false&entityNodeRef={entityNodeRef}&itemKind={itemKind}&itemId={itemId}&destination={destination}&mode={mode}&submitType={submitType}&showCancelButton=true&dataListsName={dataListsName}",
                                           {
                                              itemKind : "type",
                                              itemId : this.datalistMeta.itemType,

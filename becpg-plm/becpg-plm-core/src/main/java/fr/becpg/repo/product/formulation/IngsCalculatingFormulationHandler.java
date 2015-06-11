@@ -127,7 +127,6 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap = new HashMap<NodeRef, ReqCtrlListDataItem>();
 		Map<String, Double> totalQtyIngMap = new HashMap<String, Double>();
 		Map<String, Double> totalQtyVolMap = new HashMap<String, Double>();
-		NodeRef diluantIngNodeRef = null;
 
 		List<IngListDataItem> retainNodes = new ArrayList<IngListDataItem>();
 

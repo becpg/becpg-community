@@ -109,7 +109,7 @@
    YAHOO.Bubbling.fire("registerToolbarButtonAction", {
        actionName : "entity-add-aspect",
        evaluate : function(asset, entity) {
-           return asset.name !== null && asset.name.indexOf("View-properties") == 0;
+           return asset.name !== null && asset.name.indexOf("View-properties") == 0 && entity.userAccess.edit;
        },
        fn : function(instance) {
            
@@ -139,7 +139,7 @@
    YAHOO.Bubbling.fire("registerToolbarButtonAction", {
        actionName : "entity-refresh-reports",
        evaluate : function(asset, entity) {
-           return asset.name !== null && asset.name.indexOf("View-reports") == 0;
+           return asset.name !== null && asset.name.indexOf("View-reports") == 0  && entity.userAccess.edit;
        },
        fn : function(instance) {
            Alfresco.util.PopupManager.displayMessage({
