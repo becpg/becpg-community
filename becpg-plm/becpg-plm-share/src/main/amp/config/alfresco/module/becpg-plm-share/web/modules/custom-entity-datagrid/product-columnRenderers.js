@@ -113,7 +113,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 			if (data.metadata == "ing") {
 				return '<span class="' + data.metadata + '" >' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
 			}
-			return '<span class="' + data.metadata + '" ><a href="' + beCPG.util.entityCharactURL(data.siteId, data.value) + '">'
+			return '<span class="' + data.metadata + '" ><a href="' + beCPG.util.entityURL(data.siteId, data.value) + '">'
 					+ Alfresco.util.encodeHTML(data.displayValue) + '</a></span>';
 		}
 
