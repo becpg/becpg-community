@@ -539,6 +539,7 @@ public class LabelingFormulaContext {
 				ret.append(getIngTextFormat(kv.getKey()).format(
 						new Object[] { getIngName(kv.getKey(), kv.getValue().size() > 1), kv.getKey().getQty(),
 								renderLabelingComponent(compositeLabeling, kv.getValue(), ingTypeDefaultSeparator) }));
+
 			} else {
 				ret.append(renderLabelingComponent(compositeLabeling, kv.getValue(), defaultSeparator));
 			}
@@ -561,40 +562,48 @@ public class LabelingFormulaContext {
 				logger.debug(" --" + ingName + " qtyRMUsed: " + parent.getQtyRMUsed() + " qtyPerc " + qtyPerc);
 			}
 
-			if (ret.length() > 0) {
-				if (appendEOF) {
-					ret.append("<br/>");
-				} else {
-					ret.append(separator);
-				}
-			}
+			qtyPerc = (useVolume ? component.getVolumeQtyPerc() : qtyPerc);
 
-			if (isGroup(component)) {
-				appendEOF = true;
-			} else {
-				appendEOF = false;
-			}
+			if (qtyPerc == null || qtyPerc != 0d) {
 
-			if (component instanceof IngItem) {
-				IngItem ingItem = (IngItem) component;
-				StringBuffer subIngBuff = new StringBuffer();
-				for (IngItem subIngItem : ingItem.getSubIngs()) {
-					if (subIngBuff.length() > 0) {
-						subIngBuff.append(subIngsSeparator);
+				if (ret.length() > 0) {
+					if (appendEOF) {
+						ret.append("<br/>");
+					} else {
+						ret.append(separator);
 					}
-					subIngBuff.append(getIngName(subIngItem, false));
 				}
 
-				ret.append(getIngTextFormat(component).format(
-						new Object[] { ingName, useVolume ? ingItem.getVolumeQtyPerc() : qtyPerc, subIngBuff.toString() }));
+				if (isGroup(component)) {
+					appendEOF = true;
+				} else {
+					appendEOF = false;
+				}
 
-			} else if (component instanceof CompositeLabeling) {
-				ret.append(getIngTextFormat(component)
-						.format(new Object[] { ingName, useVolume ? component.getVolumeQtyPerc() : qtyPerc,
-								renderCompositeIng((CompositeLabeling) component) }));
+				if (component instanceof IngItem) {
+					IngItem ingItem = (IngItem) component;
+
+					StringBuffer subIngBuff = new StringBuffer();
+					for (IngItem subIngItem : ingItem.getSubIngs()) {
+						if (subIngBuff.length() > 0) {
+							subIngBuff.append(subIngsSeparator);
+						}
+						subIngBuff.append(getIngName(subIngItem, false));
+					}
+
+					ret.append(getIngTextFormat(component).format(new Object[] { ingName, qtyPerc, subIngBuff.toString() }));
+
+				} else if (component instanceof CompositeLabeling) {
+
+					ret.append(getIngTextFormat(component).format(
+							new Object[] { ingName, qtyPerc, renderCompositeIng((CompositeLabeling) component) }));
+
+				} else {
+					logger.error("Unsupported ing type. Name: " + component.getName());
+				}
 
 			} else {
-				logger.error("Unsupported ing type. Name: " + component.getName());
+				logger.debug("Removing ing with qty of 0: " + ingName);
 			}
 
 		}
