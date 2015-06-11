@@ -255,7 +255,8 @@ var g; // gantt var
                                 var recordSet = this.widgets.dataTable.getRecordSet();
                                 if (recordSet.getLength() != 0)
                                 {
-                                    g = new JSGantt.GanttChart('g', Dom.get(this.id + "-gantt"), 'day');
+                                    g = new JSGantt.GanttChart('g', Dom.get(this.id + "-gantt"), g != null ? g
+                                            .getFormat() : null);
                                     g.setDateInputFormat("mediumDate");
                                     g.setDateDisplayFormat("mediumDate");
                                     g.setCaptionType('Resource');
@@ -355,7 +356,8 @@ var g; // gantt var
                                 var recordSet = this.widgets.dataTable.getRecordSet();
                                 if (recordSet.getLength() != 0)
                                 {
-                                    g = new JSGantt.GanttChart('g', Dom.get(this.id + "-gantt"), 'day');
+                                    g = new JSGantt.GanttChart('g', Dom.get(this.id + "-gantt"), g != null ? g
+                                            .getFormat() : null);
                                     g.setDateInputFormat("shortDate");
                                     g.setDateDisplayFormat("shortDate");
                                     g.setCaptionType('Resource');

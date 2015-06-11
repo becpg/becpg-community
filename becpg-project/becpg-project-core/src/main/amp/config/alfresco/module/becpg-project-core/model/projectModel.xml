@@ -443,6 +443,7 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
+				<!-- @Deprecated -->
 				<property name="pjt:tlBudgetedCost">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
@@ -517,12 +518,22 @@
 						<many>false</many>
 					</target>
 				</association>
+				<association name="pjt:tlBudgetRef">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>pjt:budgetList</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
 			</associations>
 			<mandatory-aspects>
 				<aspect>bcpg:sortableListAspect</aspect>
 				<aspect>pjt:completionAspect</aspect>
 				<aspect>bcpg:depthLevelAspect</aspect>
-				 <!-- <aspect>pjt:budgetAspect</aspect>  -->
 			</mandatory-aspects>
 		</type>
 
@@ -706,7 +717,7 @@
 						<stored>false</stored>
 						<tokenised>TRUE</tokenised>
 					</index>
-				</property>
+				</property>				
 				<property name="pjt:ltlTime">
 					<title>Time (h)</title>
 					<type>d:double</type>
@@ -763,6 +774,11 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
+				<property name="pjt:resourceCostBillRate">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 				<property name="pjt:resourceCostHoursPerDay">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
@@ -808,7 +824,6 @@
 
 
 		<!-- Expenses List -->
-
 		<type name="pjt:expenseList">
 			<parent>bcpg:entityListItem</parent>
 			<properties>
@@ -818,6 +833,9 @@
 					<mandatory>false</mandatory>
 					<index enabled="false">
 					</index>
+				</property>
+				<property name="pjt:elDate">
+					<type>d:date</type>					
 				</property>
 			</properties>
 			<associations>
@@ -863,7 +881,6 @@
 		</type>
 
 		<!-- Invoice List -->
-
 		<type name="pjt:invoiceList">
 			<parent>bcpg:entityListItem</parent>
 			<properties>
@@ -872,6 +889,9 @@
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="false" />
+				</property>
+				<property name="pjt:ilDate">
+					<type>d:date</type>
 				</property>
 			</properties>
 			<associations>
@@ -912,18 +932,18 @@
 			 <mandatory-aspects>
 				<aspect>pjt:budgetAspect</aspect>
 			</mandatory-aspects>  
-		</type>
+		</type>		
 	</types>
 
 	<aspects>
 
 		<aspect name="pjt:budgetAspect">
-			<properties>
+			<properties>				
 				<property name="pjt:invoice">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="false" />
-				</property>
+				</property>				
 				<property name="pjt:expense">
 					<type>d:double</type>
 					<mandatory>false</mandatory>

@@ -43,7 +43,7 @@
                                                 if (recordSet.getLength() != 0)
                                                 {
                                                     g = new JSGantt.GanttChart('g', Dom.get(this.id + "-gantt"), g != null ? g
-                                                            .getFormat() : 'day');
+                                                            .getFormat() : null);
                                                     g.setDateInputFormat("mediumDate");
                                                     g.setDateDisplayFormat("mediumDate");
                                                     g.setCaptionType('Resource');

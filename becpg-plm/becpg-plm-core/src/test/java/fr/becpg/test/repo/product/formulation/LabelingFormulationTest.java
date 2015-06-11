@@ -375,14 +375,15 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 						List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
 
 						compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, null, 10d, CompoListUnit.kg, 0d,
-								DeclarationType.DoNotDetails, rawMaterial7NodeRef));
+								DeclarationType.Declare, rawMaterial7NodeRef));
 						compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare,
 								rawMaterial1NodeRef));
 
 						Map<QName, Serializable> props = new HashMap<>();
 						props.put(PLMModel.PROP_RECONSTITUTION_RATE, 5d);
 						nodeService.addAspect(rawMaterial1NodeRef, PLMModel.ASPECT_RECONSTITUTABLE, props);
-						nodeService.addAspect(rawMaterial7NodeRef, PLMModel.ASPECT_DILUENT, null);
+						associationService.update(rawMaterial1NodeRef, PLMModel.ASSOC_DILUENT_REF, ing5);
+						
 
 						finishedProduct.getCompoListView().setCompoList(compoList);
 						return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
@@ -405,8 +406,8 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format, null, null));
 		labelingRuleList.add(new LabelingRuleListDataItem("Juice", null, LabelingRuleType.Detail, Arrays.asList(ing1, ing2), null));
 
-		checkILL(finishedProductNodeRef1, labelingRuleList, "Legal Raw material 7 54,5%, Juice 45,5% (ing2 french 66,7%, ing1 french 33,3%)",
-				Locale.FRENCH);
+		checkILL(finishedProductNodeRef1, labelingRuleList, "ing5 french 54,5% (ing1 french 70%, ing4 french 30%), Juice 45,5% (ing2 french 66,7%, ing1 french 33,3%)",Locale.FRENCH);
+		//Juice 45,5% (ing2 french 66,7%, ing1 french 33,3%), Epaississant french: ing5 french -36,4%
 
 		NodeRef finishedProductNodeRef2 = transactionService.getRetryingTransactionHelper().doInTransaction(
 				new RetryingTransactionCallback<NodeRef>() {
@@ -421,7 +422,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 						List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
 
 						compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, null, 10d, CompoListUnit.kg, 0d,
-								DeclarationType.DoNotDetails, rawMaterial7NodeRef));
+								DeclarationType.Declare, rawMaterial7NodeRef));
 						compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, null, 1d, CompoListUnit.kg, 0d,
 								DeclarationType.DoNotDetails, rawMaterial1NodeRef));
 						compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, null, 5d, CompoListUnit.kg, 0d, DeclarationType.Group,
@@ -430,7 +431,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 						Map<QName, Serializable> props = new HashMap<>();
 						props.put(PLMModel.PROP_RECONSTITUTION_RATE, 5d);
 						nodeService.addAspect(rawMaterial1NodeRef, PLMModel.ASPECT_RECONSTITUTABLE, props);
-						nodeService.addAspect(rawMaterial7NodeRef, PLMModel.ASPECT_DILUENT, null);
+						associationService.update(rawMaterial1NodeRef, PLMModel.ASSOC_DILUENT_REF, ing5);
 
 						finishedProduct.getCompoListView().setCompoList(compoList);
 						return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
@@ -454,8 +455,8 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render(false)", LabelingRuleType.Render));
 		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format, null, null));
 
-		checkILL(finishedProductNodeRef2, labelingRuleList, "Legal Raw material 7 54,5%, Legal Raw material 1 45,5%", Locale.FRENCH);
-
+		checkILL(finishedProductNodeRef2, labelingRuleList, "ing5 french 54,5% (ing1 french 70%, ing4 french 30%), Legal Raw material 1 45,5%", Locale.FRENCH);
+		
 	}
 
 	@Test

@@ -69,6 +69,7 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 	protected static final String HIERARCHY_PROJECT_PATH = "/app:company_home/cm:System/cm:ProjectLists/bcpg:entityLists/cm:" 
 	       + ProjectRepoConsts.PATH_PROJECT_HIERARCHY;
 	protected static final Double RESOURCE_COST_VALUE = 100d;
+	protected static final Double RESOURCE_COST_BILL_RATE = 200d;
 
 	protected NodeRef PROJECT_HIERARCHY1_SEA_FOOD_REF;
 	protected NodeRef PROJECT_HIERARCHY2_FISH_REF;
@@ -134,6 +135,7 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
 			properties.put(ContentModel.PROP_NAME, "ResourceCost");
 			properties.put(ProjectModel.PROP_RESOURCE_COST_VALUE, RESOURCE_COST_VALUE);
+			properties.put(ProjectModel.PROP_RESOURCE_COST_BILL_RATE, RESOURCE_COST_BILL_RATE);
 			nodeService.createNode(resourceCostsFolder, ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
 					ProjectModel.TYPE_RESOURCE_COST, properties).getChildRef();

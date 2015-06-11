@@ -4,7 +4,6 @@
 package fr.becpg.repo.product.formulation;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -30,6 +29,7 @@ import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
@@ -68,8 +68,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	protected AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
 	private NodeService mlNodeService;
+	
+	private AssociationService associationService;
 
-	private NodeRef tmpDiluentNodeRef = new NodeRef("ings", "tempDiluent", "0");
+	//private NodeRef tmpDiluentNodeRef = new NodeRef("ings", "tempDiluent", "0");
 
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
@@ -81,6 +83,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	public void setMlNodeService(NodeService mlNodeService) {
 		this.mlNodeService = mlNodeService;
+	}
+	
+	public void setAssociationService(AssociationService associationService) {
+		this.associationService = associationService;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -649,17 +655,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		// Look for diluent
 		for (Composite<CompoListDataItem> component : composite.getChildren()) {
 			DeclarationType declarationType = getDeclarationType(component.getData(), null, labelingFormulaContext);
-			if (nodeService.hasAspect(component.getData().getProduct(), PLMModel.ASPECT_DILUENT)) {
-
-				ProductData productData = (ProductData) alfrescoRepository.findOne(component.getData().getProduct());
-
-				if (DeclarationType.Detail.equals(declarationType) || DeclarationType.Group.equals(declarationType)
-						|| DeclarationType.DoNotDetails.equals(declarationType)) {
-					createDiluentAggregateRule(labelingFormulaContext, productData.getNodeRef());
-				} else if (!DeclarationType.Omit.equals(declarationType)) {
-					createDiluentAggregateRule(labelingFormulaContext, productData.getIngList().get(0).getIng());
-				}
-			}
+			
 			QName type = nodeService.getType(component.getData().getProduct());
 			if (type != null
 					&& (type.isMatch(PLMModel.TYPE_RAWMATERIAL) || type.isMatch(PLMModel.TYPE_SEMIFINISHEDPRODUCT) || type
@@ -731,10 +727,17 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		Double volumeReconstitution = FormulationHelper.getVolumeReconstitution(compoListDataItem, nodeService);
 		Double volumePerc = null;
 		if (volumeReconstitution != null) {
-			Double diluentVolume = (volumeReconstitution - compoListDataItem.getVolume());
-			qty += diluentVolume;
-			updateDiluentQty(parent, diluentVolume);
-			volumePerc = volumeReconstitution / totalVolumeUsed;
+			NodeRef diluentNodeRef = associationService.getTargetAssoc(compoListDataItem.getProduct(), PLMModel.ASSOC_DILUENT_REF);
+			
+			
+			if(diluentNodeRef!=null){
+				Double diluentVolume = (volumeReconstitution - compoListDataItem.getVolume());
+				qty += diluentVolume;
+				updateDiluentQty(parent, diluentVolume,diluentNodeRef);
+				volumePerc = volumeReconstitution / totalVolumeUsed;
+			} else {
+				logger.warn("Diluent is null for: "+compoListDataItem.getName());
+			}
 		}
 
 		boolean isMultiLevel = false;
@@ -888,7 +891,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			if (!DeclarationType.Omit.equals(ingDeclarationType) && !DeclarationType.DoNotDeclare.equals(ingDeclarationType)) {
 
 				NodeRef ingNodeRef = ingListItem.getData().getIng();
-				IngItem ingLabelItem = (compositeLabeling.get(ingNodeRef) instanceof IngItem) ? (IngItem) compositeLabeling.get(ingNodeRef) : null;
+				AbstractLabelingComponent ingLabelItem = compositeLabeling.get(ingNodeRef);
 				boolean isNew = true;
 
 				if (ingLabelItem == null) {
@@ -914,16 +917,28 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						c.setName(ingLabelItem.getName());
 						c.setLegalName(ingLabelItem.getLegalName());
 						c.setDeclarationType(DeclarationType.Detail);
-						c.setQty(qty);
+						c.setQty(0d);
+						c.setQtyRMUsed(0d);
 						compositeLabeling.add(c);
+						ingLabelItem = c;
+						
 						loadIngList(productNodeRef, ingListItem, qty, volumePerc, labelingFormulaContext, compoListDataItem, c,
 								new HashMap<String, ReqCtrlListDataItem>());
+						
+						for (Composite<IngListDataItem> subIngListItem : ingListItem.getChildren()) {
+							if(qty!=null && c.getQtyRMUsed()!=null && subIngListItem.getData().getQtyPerc()!=null){
+								c.setQtyRMUsed(c.getQtyRMUsed()+subIngListItem.getData().getQtyPerc()/100*qty);
+							} else {
+								c.setQtyRMUsed(null);
+							}
+						}
+						
 					} else {
 						compositeLabeling.add(ingLabelItem);
 					}
 
 					if (logger.isTraceEnabled()) {
-						logger.trace("- Add new ing to current Label: " + ingLabelItem.getLegalName(I18NUtil.getContentLocaleLang()));
+						logger.trace("- Add new ing "+ ingLabelItem.getName() + " to current Label "+compositeLabeling.getName() );
 					}
 
 				} else if (logger.isDebugEnabled()) {
@@ -977,8 +992,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						}
 
 						if (logger.isTraceEnabled()) {
-							logger.trace(" -- new qty to add :" + valueToAdd);
-							logger.trace(" -- new volumePerc to add :" + volumePerc);
+							logger.trace(" -- new qty to add to "+ingLabelItem.getName()+": " + valueToAdd);
+							logger.trace(" -- new volumePerc to add: " + volumePerc);
 						}
 
 					} else {
@@ -1018,7 +1033,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 	}
 
-	private ReqCtrlListDataItem createError(IngItem ingItem, NodeRef productNodeRef) {
+	private ReqCtrlListDataItem createError(AbstractLabelingComponent ingItem, NodeRef productNodeRef) {
 		String message = I18NUtil.getMessage("message.formulate.labelRule.error.nullIng", ingItem.getName());
 		List<NodeRef> sourceNodeRefs = new ArrayList<NodeRef>();
 		if (productNodeRef != null) {
@@ -1028,35 +1043,23 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	}
 
-	private void updateDiluentQty(CompositeLabeling compositeLabeling, Double diluentVolume) {
-		CompositeLabeling diluent = (CompositeLabeling) compositeLabeling.get(tmpDiluentNodeRef);
-		if (diluent == null) {
-			diluent = new CompositeLabeling();
-			diluent.setNodeRef(tmpDiluentNodeRef);
-			diluent.setName("diluent");
-			diluent.setDeclarationType(DeclarationType.Detail);
-			diluent.setQty(0d);
-			compositeLabeling.add(diluent);
-
+	private void updateDiluentQty(CompositeLabeling compositeLabeling, Double diluentVolume, NodeRef diluentNodeRef) {
+		AbstractLabelingComponent ingLabelItem = compositeLabeling.get(diluentNodeRef);
+		
+		if (ingLabelItem == null) {
+			ingLabelItem = (IngItem) alfrescoRepository.findOne(diluentNodeRef);
+			ingLabelItem.setQty(0d);
+			compositeLabeling.add(ingLabelItem);
 		}
+		
 		if (logger.isTraceEnabled()) {
-			logger.trace(" -- new diluentVolume to add :" + diluentVolume);
+			logger.trace(" -- new diluentVolume to add :" + diluentVolume+" to: "+ingLabelItem.getName()+" old qty: "+ingLabelItem.getQty());
 		}
-		diluent.setQty(diluent.getQty() - diluentVolume);
+		ingLabelItem.setQty(ingLabelItem.getQty() - diluentVolume);
 		compositeLabeling.setQtyRMUsed(compositeLabeling.getQtyRMUsed() - diluentVolume);
 
 	}
 
-	private void createDiluentAggregateRule(LabelingFormulaContext labelingFormulaContext, NodeRef diluentNodeRef) {
-		if (!labelingFormulaContext.getAggregateRules().containsKey(diluentNodeRef)) {
-			labelingFormulaContext.addRule(diluentNodeRef, "diluentRule", Arrays.asList(diluentNodeRef, tmpDiluentNodeRef),
-					Arrays.asList(diluentNodeRef), null, null, LabelingRuleType.DoNotDetails);
-		}
-
-		if (logger.isTraceEnabled()) {
-			logger.trace(" - Found diluent : " + diluentNodeRef);
-		}
-	}
 
 	private DeclarationType getDeclarationType(CompoListDataItem compoListDataItem, IngListDataItem ingListDataItem,
 			LabelingFormulaContext labelingFormulaContext) {

@@ -2164,6 +2164,7 @@
 					<show id="bcpg:netWeight" force="true" />
 					<show id="bcpg:productDensity" />
 					<show id="bcpg:reconstitutionRate" />
+					<show id="bcpg:diluentRef" />
 					<show id="bcpg:ingTypeV2" force="true" />
 					<show id="bcpg:useByDate" force="true" />
 					<show id="bcpg:bestBeforeDate" force="true" />
@@ -2285,6 +2286,12 @@
 					<field id="bcpg:netWeight" set="consumer" />
 					<field id="bcpg:productDensity" set="consumer" />
 					<field id="bcpg:reconstitutionRate" set="consumer" />
+					<field id="bcpg:diluentRef"  set="consumer">
+					 <control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="showTooltip">false</control-param>
+						</control>
+					</field>
 					<field id="bcpg:ingTypeV2" set="consumer">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ingTypeItem
@@ -2603,6 +2610,7 @@
 					<show id="bcpg:netWeight" force="true" />
 					<show id="bcpg:productDensity" />
 					<show id="bcpg:reconstitutionRate" />
+					<show id="bcpg:diluentRef" />
 					<show id="bcpg:ingTypeV2" force="true" />
 					<show id="bcpg:useByDate" force="true" />
 					<show id="bcpg:bestBeforeDate" force="true" />
@@ -2692,6 +2700,12 @@
 					<field id="bcpg:netWeight" set="consumer" />
 					<field id="bcpg:productDensity" set="consumer" />
 					<field id="bcpg:reconstitutionRate" set="consumer" />
+					<field id="bcpg:diluentRef" set="consumer" >
+					<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="showTooltip">false</control-param>
+						</control>
+					</field>
 					<field id="bcpg:ingTypeV2" set="consumer">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ingTypeItem
@@ -6983,10 +6997,6 @@
 			</form>
 		</forms>
 	</config>
-	<!-- <config evaluator="aspect" condition="bcpg:reconstitutableAspect"> 
-		<forms> <form> <field-visibility> <show id="bcpg:reconstitutionRate" force="true"/> 
-		</field-visibility> </form> </forms> </config> -->
-
 
 	<config evaluator="aspect" condition="bcpg:docLinkedEntitiesAspect">
 		<forms>

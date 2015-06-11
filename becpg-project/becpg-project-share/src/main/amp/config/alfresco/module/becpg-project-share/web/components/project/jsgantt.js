@@ -732,11 +732,18 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
        * @default pFormat
        * @private
        */
-      var vFormat = Alfresco.util.findValueByDotNotation(preferences.get(), JSGantt.PREF_GANTT_FORMAT);
+      var vFormat = 'day';
       
-      if(!vFormat){
+      if(pFormat != null && pFormat.length>0){
           vFormat = pFormat;
+      } else {
+          vFormat = Alfresco.util.findValueByDotNotation(preferences.get(), JSGantt.PREF_GANTT_FORMAT);
+          if(!vFormat){
+              vFormat = 'day';
+          }
       }
+      
+      
       /**
        * Show resource column
        * 
