@@ -105,6 +105,7 @@ public class FormulationHelper {
 		return (1 + lossPerc / 100) * qty / (yieldPerc / 100);
 	}
 
+
 	public static Double getQtyWithLost(PackagingListDataItem packagingListDataItem) {
 		Double lossPerc = packagingListDataItem.getLossPerc() != null ? packagingListDataItem.getLossPerc() : 0d;
 		return FormulationHelper.getQtyWithLostAndYield(FormulationHelper.getQty(packagingListDataItem), lossPerc, 100d);
