@@ -129,11 +129,11 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 
 			if (p.getRateResource() != null && p.getQtyResource() != null) {
 				if (ProcessListUnit.P.equals(p.getUnit())) {
-					p.setRateProduct(p.getQtyResource() * p.getRateResource());
+					p.setRateProduct(p.getRateResource());
 				} else {
 					Double productQtyToTransform = p.getQty() != null ? p.getQty() : FormulationHelper.getNetWeight(formulatedProduct, null);
 					if (productQtyToTransform != null) {
-						p.setRateProduct(p.getQtyResource() * p.getRateResource() / productQtyToTransform);
+						p.setRateProduct(p.getRateResource() / productQtyToTransform);
 					} else {
 						p.setRateProduct(null);
 					}
