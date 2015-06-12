@@ -46,7 +46,7 @@
 		<div id="toolbar-contribs-${el}" style="display:none;">
 			<@dataGridToolbar  toolbarId=el />
 		</div>
-		<@entityDataGrid />
+		<@entityDataGrid showDataListTitle=false/>
 		<div class="project-list"> 
 	    	<div id="${el}-gantt" class="projects hidden" > </div>
 	    </div>
