@@ -34,7 +34,6 @@ import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.constraints.CompoListUnit;
-import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.variant.filters.VariantFilters;
@@ -66,22 +65,10 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 			logger.debug("no compo => no formulation");
 			return true;
 		}
-		
-		//Take in account net weight
-		if(formulatedProduct.getQty() != null && formulatedProduct.getUnit() != null){
-			if(ProductUnit.g.equals(formulatedProduct.getUnit())){
-				formulatedProduct.setNetWeight(formulatedProduct.getQty() / 1000);
-			}
-			else if(ProductUnit.kg.equals(formulatedProduct.getUnit())){
-				formulatedProduct.setNetWeight(formulatedProduct.getQty());
-			}
-		}
+				
 		Double netWeight = formulatedProduct.getNetWeight();			
 		Composite<CompoListDataItem> compositeAll = CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList(EffectiveFilters.ALL));
 		Composite<CompoListDataItem> compositeDefaultVariant = CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT));
-		
-		// calculate on every item		
-		visitQtyChildren(formulatedProduct, netWeight, compositeAll);
 		
 		// Yield		
 		visitYieldChildren(formulatedProduct, compositeDefaultVariant);
@@ -108,66 +95,6 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		return true;
 	}
 	
-	private void visitQtyChildren(ProductData formulatedProduct, Double parentQty, Composite<CompoListDataItem> composite) throws FormulateException{				
-		
-		for(Composite<CompoListDataItem> component : composite.getChildren()){					
-			
-			Double qtySubFormula = FormulationHelper.getQtySubFormula(component.getData(), nodeService);
-			logger.debug("qtySubFormula: " + qtySubFormula + " parentQty: " + parentQty);
-			if(qtySubFormula != null){
-									
-				// take in account percentage
-				if(CompoListUnit.Perc.equals(component.getData().getCompoListUnit()) &&
-						parentQty != null && !parentQty.equals(0d)){
-					qtySubFormula = qtySubFormula * parentQty / 100;
-				}
-				
-				// Take in account yield that is defined on component
-				Double qty = null;
-				if(component.isLeaf()){						
-					qty = qtySubFormula * 100 / FormulationHelper.getYield(component.getData());
-				}
-				else{
-					qty = qtySubFormula;
-				}													
-				component.getData().setQty(qty);					
-			}
-			
-			// calculate volume ?			
-			Double volume = FormulationHelper.getNetVolume(component.getData(), nodeService); 
-			component.getData().setVolume(volume);
-			
-			// calculate children
-			if(!component.isLeaf()){
-				
-				// take in account percentage
-				if(	CompoListUnit.Perc.equals(component.getData().getCompoListUnit()) &&
-						parentQty != null && !parentQty.equals(0d)){	
-					
-					visitQtyChildren(formulatedProduct, parentQty, component);
-					
-					// no yield but calculate % of composite
-					Double compositePerc = 0d;
-					boolean isUnitPerc = true;
-					for(Composite<CompoListDataItem> child : component.getChildren()){	
-						compositePerc += child.getData().getQtySubFormula();
-						isUnitPerc = isUnitPerc && CompoListUnit.Perc.equals(child.getData().getCompoListUnit());
-						if(!isUnitPerc){
-							break;
-						}
-					}
-					if(isUnitPerc){
-						component.getData().setQtySubFormula(compositePerc);
-						component.getData().setQty(compositePerc * parentQty / 100);
-					}
-				}
-				else{
-					visitQtyChildren(formulatedProduct, component.getData().getQty(),component);					
-				}				
-			}			
-		}
-	}
-
 	private void visitYieldChildren(ProductData formulatedProduct, Composite<CompoListDataItem> composite) throws FormulateException{				
 		
 		for(Composite<CompoListDataItem> component : composite.getChildren()){					
@@ -192,37 +119,35 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		}		
 	}
 		
-	private Double calculateYield(Composite<CompoListDataItem> composite) throws FormulateException{
-		
+	private Double calculateYield(Composite<CompoListDataItem> composite) throws FormulateException {
+
 		Double yieldPerc = 100d;
-		
+
 		// qty Used in the sub formula
-		Double qtyUsed = 0d;				
-		for(Composite<CompoListDataItem> component : composite.getChildren()){
-			
-			Double qty = FormulationHelper.getQty(component.getData());
-			if(qty != null){
+		Double qtyUsed = 0d;
+		for (Composite<CompoListDataItem> component : composite.getChildren()) {
+
+			Double qty = component.getData().getQty();
+			if (qty != null) {
 				// water can be taken in account on Raw Material
-				if(component.isLeaf()){
+				if (component.isLeaf()) {
 					qtyUsed += qty * FormulationHelper.getYield(component.getData()) / 100;
-				}
-				else{
+				} else {
 					qtyUsed += qty;
-				}				
+				}
 			}
 		}
-		
+
 		// qty after process
-		Double qtyAfterProcess = FormulationHelper.getQtySubFormula(composite.getData(), nodeService);		
-		if(qtyAfterProcess != null && qtyAfterProcess != 0 && qtyUsed != 0){
-			yieldPerc = qtyAfterProcess / qtyUsed * 100;
+		if (composite.getData().getQty() != null && qtyUsed != 0) {
+			yieldPerc = composite.getData().getQty() / qtyUsed * 100;
 		}
-		
-		if(logger.isDebugEnabled()){
-			logger.debug("component: " + nodeService.getProperty(composite.getData().getProduct(),  ContentModel.PROP_NAME) + 
-					" qtyAfterProcess: " + qtyAfterProcess + " - qtyUsed: " + qtyUsed + " yieldPerc: " + yieldPerc);
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("component: " + nodeService.getProperty(composite.getData().getProduct(), ContentModel.PROP_NAME) + " qtyAfterProcess: "
+					+ composite.getData().getQty() + " - qtyUsed: " + qtyUsed + " yieldPerc: " + yieldPerc);
 		}
-		
+
 		return yieldPerc;
 	}	
 	
@@ -259,10 +184,10 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 				component.getData().setVolume(value);				
 				
 			}else{
-				value = (Double)component.getData().getVolume();
-				value = value != null ? value : 0d;
+				value = FormulationHelper.getNetVolume(component.getData(), nodeService);
+				component.getData().setVolume(value);
 			}			
-			volume += value;
+			volume += (value != null ? value : 0d);
 		}		
 		return volume;
 	}

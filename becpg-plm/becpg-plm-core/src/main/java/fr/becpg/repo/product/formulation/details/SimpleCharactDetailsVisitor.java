@@ -69,7 +69,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 
 		if (productData.hasCompoListEl(EffectiveFilters.EFFECTIVE)) {
 			for (CompoListDataItem compoListDataItem : productData.getCompoList(EffectiveFilters.EFFECTIVE)) {
-				Double qty = FormulationHelper.getQty(compoListDataItem);			
+				Double qty = FormulationHelper.getQtyInKg(compoListDataItem);			
 				visitPart(compoListDataItem.getProduct(), ret, qty, netQty);
 			}
 		}		

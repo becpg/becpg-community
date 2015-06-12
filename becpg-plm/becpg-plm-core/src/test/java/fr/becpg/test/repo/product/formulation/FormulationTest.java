@@ -1873,7 +1873,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setDensity(1d);
 				List<ProcessListDataItem> processList = new ArrayList<ProcessListDataItem>();
 				//decoupe
-				processList.add(new ProcessListDataItem(null, 0.4d, 50d, 4d, ProcessListUnit.kg, null, null, decoupeNodeRef, null, boucherResourceNodeRef));
+				processList.add(new ProcessListDataItem(null, 0.4d, 50d, 200d, ProcessListUnit.kg, null, null, decoupeNodeRef, null, boucherResourceNodeRef));
 				//hachage
 				processList.add(new ProcessListDataItem(null, 0.4d, 1d, 200d, ProcessListUnit.kg, null, null, hachageNodeRef, null, hachoirResourceNodeRef));
 				//cuisson
@@ -1907,7 +1907,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				assertNotNull("CostList is null", formulatedProduct.getCostList());
 				for(CostListDataItem costListDataItem : formulatedProduct.getCostList()){
 					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
-					logger.trace(trace);
+					logger.info(trace);
 					//Transfo
 					if(costListDataItem.getCost().equals(costTransfoNodeRef)){
 						assertEquals(df.format(0.156d), df.format(costListDataItem.getValue()));
@@ -1940,7 +1940,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 						if(p.getStep().equals(decoupeNodeRef)){
 							assertEquals(0.4d, p.getQty());
 							assertEquals(50.0d, p.getQtyResource());
-							assertEquals(4.0d, p.getRateResource());		
+							assertEquals(200.0d, p.getRateResource());		
 							assertEquals(500.0d, p.getRateProduct());						
 							checks++;
 						}
@@ -2113,12 +2113,12 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setUnitPrice(12.4d);
 				finishedProduct.setDensity(1d);
 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(0), 1d, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(0), 2d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(3), 3d, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(3), 3d, null, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);		
 				
 				List<PhysicoChemListDataItem> physicoChemList = new ArrayList<PhysicoChemListDataItem>();				
