@@ -119,37 +119,35 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		}		
 	}
 		
-	private Double calculateYield(Composite<CompoListDataItem> composite) throws FormulateException{
-		
+	private Double calculateYield(Composite<CompoListDataItem> composite) throws FormulateException {
+
 		Double yieldPerc = 100d;
-		
+
 		// qty Used in the sub formula
-		Double qtyUsed = 0d;				
-		for(Composite<CompoListDataItem> component : composite.getChildren()){
-			
-			Double qty = FormulationHelper.getQty(component.getData());
-			if(qty != null){
+		Double qtyUsed = 0d;
+		for (Composite<CompoListDataItem> component : composite.getChildren()) {
+
+			Double qty = component.getData().getQty();
+			if (qty != null) {
 				// water can be taken in account on Raw Material
-				if(component.isLeaf()){
+				if (component.isLeaf()) {
 					qtyUsed += qty * FormulationHelper.getYield(component.getData()) / 100;
-				}
-				else{
+				} else {
 					qtyUsed += qty;
-				}				
+				}
 			}
 		}
-		
+
 		// qty after process
-		Double qtyAfterProcess = FormulationHelper.getQtySubFormula(composite.getData(), nodeService);		
-		if(qtyAfterProcess != null && qtyAfterProcess != 0 && qtyUsed != 0){
-			yieldPerc = qtyAfterProcess / qtyUsed * 100;
+		if (composite.getData().getQty() != null && qtyUsed != 0) {
+			yieldPerc = composite.getData().getQty() / qtyUsed * 100;
 		}
-		
-		if(logger.isDebugEnabled()){
-			logger.debug("component: " + nodeService.getProperty(composite.getData().getProduct(),  ContentModel.PROP_NAME) + 
-					" qtyAfterProcess: " + qtyAfterProcess + " - qtyUsed: " + qtyUsed + " yieldPerc: " + yieldPerc);
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("component: " + nodeService.getProperty(composite.getData().getProduct(), ContentModel.PROP_NAME) + " qtyAfterProcess: "
+					+ composite.getData().getQty() + " - qtyUsed: " + qtyUsed + " yieldPerc: " + yieldPerc);
 		}
-		
+
 		return yieldPerc;
 	}	
 	
