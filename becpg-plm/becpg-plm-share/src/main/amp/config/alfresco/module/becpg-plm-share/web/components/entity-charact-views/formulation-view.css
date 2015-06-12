@@ -51,6 +51,7 @@
 .formulation-view  .datagrid .datagrid-bar .paginator {
 	float: inherit;
 	width: inherit;
+	padding: 3px;
 }
 
 .formulation-view  .datagrid-bar .left,.datagrid-bar .left div {

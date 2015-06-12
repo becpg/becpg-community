@@ -19,8 +19,8 @@
 <template-instance>
 	<template-type>org/alfresco/entity-data-lists</template-type>
 	<properties>
-		<pageFamily>data-lists</pageFamily>
-        <container>entity-datalists</container>
+		<pageFamily>documentlibrary</pageFamily>
+      <container>documentLibrary</container>
 	</properties>
 	<components>
        
