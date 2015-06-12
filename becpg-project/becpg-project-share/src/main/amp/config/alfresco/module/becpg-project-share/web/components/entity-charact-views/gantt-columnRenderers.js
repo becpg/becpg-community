@@ -22,7 +22,7 @@
                                     {
                                         fn : function(response)
                                         {
-                                            var data = response.json.legends;
+                                            var data = response.json.legends,html="";
 
                                             for ( var i in data)
                                             {
@@ -34,7 +34,11 @@
                                                 };
 
                                                 this.taskLegends.push(taskLegend);
+                                                
+                                                html += '<span class="task-legend" style="background-color:#' + taskLegend.color + '" ></span><span>' + taskLegend.label +'</span>&nbsp;';
                                             }
+                                            
+                                            Dom.get(this.id + "-legend").innerHTML = html;
 
                                             var fnDrawGantt = function PL_onReady_fnDrawGantt()
                                             {

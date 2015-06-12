@@ -11,6 +11,10 @@
 	width: auto;
 }
 
+div.legend.project-list  {
+	float:right;
+	margin-top:10px;
+}
 
 /* Data Table */
 .project-list .projects table {
