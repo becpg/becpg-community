@@ -10,6 +10,7 @@ import java.util.List;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.repository.InvalidNodeRefException;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.security.AccessStatus;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
@@ -151,7 +152,7 @@ public class SearchWebScript extends AbstractSearchWebScript {
 		
 		for (Iterator<NodeRef> iterator = results.iterator(); iterator.hasNext();) {
 			NodeRef nodeRef = (NodeRef) iterator.next();
-			if(serviceRegistry.getNodeService().exists(nodeRef)){
+			if(serviceRegistry.getNodeService().exists(nodeRef) && serviceRegistry.getPermissionService().hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED){
 				items.put(new JSONObject(getExtractor(nodeRef, metadataFields).extract(nodeRef)));
 			}
 		}
