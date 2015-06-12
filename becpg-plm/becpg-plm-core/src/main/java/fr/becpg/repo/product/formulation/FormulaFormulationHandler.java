@@ -187,8 +187,9 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 											&& (dynamicCharactListItem.getMultiLevelFormula() != null && Boolean.TRUE.equals(dynamicCharactListItem
 													.getMultiLevelFormula()))
 											&& view instanceof CompoListView
-											&& (dataListItem.getComponent() != null && PLMModel.TYPE_SEMIFINISHEDPRODUCT.equals(nodeService
-													.getType(dataListItem.getComponent())))) {
+											&& (dataListItem.getComponent() != null && (PLMModel.TYPE_SEMIFINISHEDPRODUCT.equals(nodeService
+													.getType(dataListItem.getComponent())) || PLMModel.TYPE_FINISHEDPRODUCT.equals(nodeService
+															.getType(dataListItem.getComponent()))))) {
 	
 										JSONObject jsonTree = extractJSONTree(productData, dataListItem, value, exp);
 										dataListItem.getExtraProperties().put(columnName, (Serializable) jsonTree.toString());
