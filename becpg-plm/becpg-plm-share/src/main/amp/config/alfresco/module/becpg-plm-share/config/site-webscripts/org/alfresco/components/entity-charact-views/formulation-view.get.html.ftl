@@ -42,9 +42,12 @@
 			<iframe id="yui-history-iframe" src="${url.context}/res/yui/history/assets/blank.html"></iframe> 
 			<![endif]-->
 			<input id="yui-history-field" type="hidden" ></input>
+			<div id="toolbar-contribs-compoList-${el}" style="display:none;">
+				<@dataGridToolbar  toolbarId="compoList-"+el />
+			</div>
 			<div id="main-view-${el}" class="formulation-view">
 					<div id="full-screen-form" class=" hidden"></div>
-					<@dataGridDashlet dashletName="compoListDashlet" dashletId="compoList-${el}" />
+					<@dataGridDashlet dashletName="compoListDashlet" dashletId="compoList-${el}" hideTitle="true" hideToolbar="true" />
 					<div class="yui-gc">
 						<div class="yui-u first dynamicCharactList">
 							<@dataGridDashlet  dashletName="dynamicCharactListDashlet"
@@ -63,7 +66,7 @@
 							   <@dataGridDashlet dashletName="constraintsListDashlet"
 							   	dashletId="constraintsList-${el}" 
 							   	dashletTitle=msg("dashlet.constraintsList.title")
-							   	itemType="bcpg:reqCtrlList"  />
+							   	itemType="bcpg:reqCtrlList"  hideTitle="true" />
 							</div>
 					   </div>
 					</div>

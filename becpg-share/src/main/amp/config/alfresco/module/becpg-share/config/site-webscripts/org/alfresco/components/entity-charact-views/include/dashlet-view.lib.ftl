@@ -5,7 +5,9 @@
 <div id="${dashletId}">
 <@uniqueIdDiv>
 	<div class="dashlet datagrid" id="${dashletId}-body" >
+			<#if !extra["hideTitle"]??>
 		  	<div  class="title"><#if extra["dashletTitle"]??>${extra["dashletTitle"]?string}<#else><span id="${dashletId}-title"></span>&nbsp;(<span id="${dashletId}-description"></span>)</#if></div>
+			</#if>
 			 <div class="toolbar datagrid-bar flat-button">
 			      <div class="left">
 			          <#if !extra["hideFilter"]?? >
@@ -22,8 +24,10 @@
 							</div>
 						</div>
 					</#if>	
+                    <#if !extra["hideToolbar"]?? >
 			         <@dataGridToolbarSelectedItem toolbarId=dashletId />
 			         <@dataGridToolbarNewRow toolbarId=dashletId />
+                    </#if>
 					</div>			
 					 <div class="right">
 			         <div id="${dashletId}-paginator" class="paginator hidden"></div>
