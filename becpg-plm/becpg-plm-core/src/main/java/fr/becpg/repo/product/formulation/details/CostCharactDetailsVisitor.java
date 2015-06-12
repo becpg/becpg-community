@@ -24,12 +24,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.data.CharactDetails;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
@@ -60,7 +63,7 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 		 */
 		if (productData.hasPackagingListEl(EffectiveFilters.EFFECTIVE)) {
 			for (PackagingListDataItem packagingListDataItem : productData.getPackagingList(EffectiveFilters.EFFECTIVE)) {
-				Double qty = FormulationHelper.getQty(packagingListDataItem);
+				Double qty = FormulationHelper.getQty(packagingListDataItem).doubleValue();
 				visitPart(packagingListDataItem.getProduct(), ret, qty, netQty);
 
 			}
@@ -98,7 +101,9 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 			}
 			else{
 				CompoListDataItem compoListDataItem = component.getData();
-				Double qty = FormulationHelper.getQtyWithLost(compoListDataItem, parentLossRatio);
+				Double qty = FormulationHelper.getQtyWithLost(compoListDataItem, 
+						parentLossRatio, 
+						ProductUnit.getUnit((String)nodeService.getProperty(compoListDataItem.getProduct(), PLMModel.PROP_PRODUCT_UNIT)));
 				visitPart(compoListDataItem.getProduct(), ret, qty, netQty);
 			}			
 		}
