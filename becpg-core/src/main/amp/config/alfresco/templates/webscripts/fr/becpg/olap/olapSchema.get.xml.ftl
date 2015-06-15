@@ -373,7 +373,7 @@
 		<Measure name="Montant lié &#224; la non conformité (euro)" column="ncCost" datatype="Numeric" aggregator="sum" visible="true"  />
 	</Cube>
 	
-	<Cube name="Etapes de projets" cache="true" enabled="true" defaultMeasure="Nombre d'étapes">
+	<Cube name="Tâches des projets" cache="true" enabled="true" defaultMeasure="Nombre de tâches">
 		<View alias="projectTask">
 			<SQL dialect="generic">
 			<![CDATA[
@@ -384,14 +384,14 @@
 					datalist.is_last_version as isLastVersion,
 					MAX(IF(prop.prop_name = "pjt:tlTaskName",prop.string_value,NULL)) as tlTaskName,
 					MAX(IF(prop.prop_name = "pjt:tlDuration",prop.long_value,NULL)) as tlDuration,
+					MAX(IF(prop.prop_name = "pjt:tlRealDuration",prop.long_value,NULL)) as tlRealDuration,
+					MAX(IF(prop.prop_name = "pjt:tlWork",prop.double_value,NULL)) as tlWork,
+					MAX(IF(prop.prop_name = "pjt:tlLoggedTime",prop.double_value,NULL)) as tlLoggedTime,
 					MAX(IF(prop.prop_name = "pjt:tlStart",prop.date_value,NULL)) as tlStart,
 					MAX(IF(prop.prop_name = "pjt:tlEnd",prop.date_value,NULL)) as tlEnd,
 					MAX(IF(prop.prop_name = "pjt:tlState",prop.string_value,NULL)) as tlState,
 					MAX(IF(prop.prop_name = "pjt:tlResources",prop.string_value,NULL)) as tlResources,
-					MAX(IF(prop.prop_name = "bcpg:sort",prop.long_value,NULL)) as sortOrder,
-					DATEDIFF(MAX(IF(prop.prop_name = "pjt:tlEnd",prop.date_value,NULL)),
-								MAX(IF(prop.prop_name = "pjt:tlStart",prop.date_value,NULL))
-						) as duration,					
+					MAX(IF(prop.prop_name = "bcpg:sort",prop.long_value,NULL)) as sortOrder,				
 					datalist.instance_id as instance_id
 				from
 					becpg_datalist AS datalist LEFT JOIN becpg_property AS prop ON prop.datalist_id = datalist.id
@@ -405,8 +405,8 @@
 		
 		
 		<Dimension  name="Désignation" >
-			<Hierarchy name="Etape par nom" hasAll="true" allMemberCaption="Toutes les étapes">
-				<Level name="Nom étape" column="tlTaskName"  type="String"   ordinalColumn="sortOrder" />
+			<Hierarchy name="Tâche par nom" hasAll="true" allMemberCaption="Toutes les tâches">
+				<Level name="Nom tâche" column="tlTaskName"  type="String"   ordinalColumn="sortOrder" />
 			</Hierarchy>
 		</Dimension>
 		
@@ -467,12 +467,14 @@
 		
 		<DimensionUsage name="Date début" caption="Date début" source="Time dimension" foreignKey="tlStart" />
 		<DimensionUsage name="Date de fin" caption="Date de fin" source="Time dimension" foreignKey="tlEnd" />
-		<Measure name="Nombre d'étapes" column="noderef" datatype="Numeric" aggregator="distinct-count" visible="true" />
+		<Measure name="Nombre de tâches" column="noderef" datatype="Numeric" aggregator="distinct-count" visible="true" />
 		<Measure name="Moyenne des durées (prévi)" column="tlDuration" datatype="Numeric" aggregator="avg" visible="true"  />
-		<Measure name="Moyenne des durées" column="duration" datatype="Numeric" aggregator="avg" visible="true"  />
+		<Measure name="Moyenne des durées (réelle)" column="tlRealDuration" datatype="Numeric" aggregator="avg" visible="true"  />
+		<Measure name="Temps budgété (h)" column="tlWork" datatype="Numeric" aggregator="sum" visible="true"  />
+		<Measure name="Temps passé (h)" column="tlLoggedTime" datatype="Numeric" aggregator="sum" visible="true"  />
 		
 		<CalculatedMember name="Moyenne des durées (Cumulé)" dimension="Measures" visible="true">
-			<Formula>([Measures].[Moyenne des durées],[Désignation.Etape par nom].PrevMember) + ([Measures].[Moyenne des durées])</Formula>
+			<Formula>([Measures].[Moyenne des durées],[Désignation.Tâche par nom].PrevMember) + ([Measures].[Moyenne des durées])</Formula>
 		</CalculatedMember> 
 		
 	</Cube>
