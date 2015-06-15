@@ -11,7 +11,6 @@ import org.alfresco.repo.domain.node.NodeDAO;
 import org.alfresco.repo.domain.patch.PatchDAO;
 import org.alfresco.repo.domain.qname.QNameDAO;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.rule.RuleService;
 import org.alfresco.service.namespace.QName;
@@ -41,12 +40,7 @@ public class AddViewPatch extends AbstractBeCPGPatch {
 	private PatchDAO patchDAO;
 	private QNameDAO qnameDAO;
 	private RuleService ruleService;
-	private DictionaryService dictionaryService;
-	private EntityTplService entityTplService;
-		
-	public void setDictionaryService(DictionaryService dictionaryService) {
-		this.dictionaryService = dictionaryService;
-	}
+	private EntityTplService entityTplService;		
 
 	public void setEntityTplService(EntityTplService entityTplService) {
 		this.entityTplService = entityTplService;
@@ -76,7 +70,7 @@ public class AddViewPatch extends AbstractBeCPGPatch {
 			long minSearchNodeId = 1;
 			long maxSearchNodeId = count;
 
-			Pair<Long, QName> val = getQnameDAO().getQName(BeCPGModel.ASPECT_ENTITY_TPL);
+			Pair<Long, QName> val = getQnameDAO().getQName(type);
 
 			public int getTotalEstimatedWorkSize() {
 				return result.size();
@@ -91,7 +85,7 @@ public class AddViewPatch extends AbstractBeCPGPatch {
 					while (result.isEmpty() && minSearchNodeId < maxNodeId) {
 						
 						
-						List<Long> nodeids = getPatchDAO().getNodesByAspectQNameId(typeQNameId, minSearchNodeId, maxSearchNodeId);
+						List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, maxSearchNodeId);
 
 						for (Long nodeid : nodeids) {
 							NodeRef.Status status = getNodeDAO().getNodeIdStatus(nodeid);
@@ -125,16 +119,19 @@ public class AddViewPatch extends AbstractBeCPGPatch {
 				return entry.toString();
 			}
 
-			public void process(NodeRef entityTplNodeRef) throws Throwable {
+			public void process(NodeRef entityNodeRef) throws Throwable {
 				
 				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();				
 				
-				if (nodeService.exists(entityTplNodeRef)) {
-					if(dictionaryService.isSubClass(nodeService.getType(entityTplNodeRef), type)){
-						entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
-					}
+				if (nodeService.exists(entityNodeRef)) {
+					if(nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL) ||
+							nodeService.getTargetAssocs(entityNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF).isEmpty()){
+						logger.info("Create views on entity " + entityNodeRef);
+						entityTplService.createView(entityNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
+						entityTplService.createView(entityNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_REPORTS);
+					}					
 				} else {
-					logger.warn("entityTplNodeRef doesn't exist : " + entityTplNodeRef);
+					logger.warn("entityNodeRef doesn't exist : " + entityNodeRef);
 				}
 
 			}
