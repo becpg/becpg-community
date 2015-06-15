@@ -463,10 +463,19 @@ define(["dojo/_base/declare",
                               config: {
                                  id: this.id + "_ADVANCED_SEARCH",
                                  i18nScope: "org.alfresco.SearchBox",
-                                 label: "header.becpg.search.label",
-                                 targetUrl: (currSite ? "site/" + currSite + "/" : "") + "dp/ws/faceted-search"
+                                 label: "header.becpg.adv.search.label",
+                                 targetUrl: (currSite ? "site/" + currSite + "/" : "") + "search"
                               }
-                           }
+                           },
+                           {
+                               name: "alfresco/menus/AlfMenuItem",
+                               config: {
+                                  id: this.id + "_FACETED_SEARCH",
+                                  i18nScope: "org.alfresco.SearchBox",
+                                  label: "header.becpg.faceted.search.label",
+                                  targetUrl: (currSite ? "site/" + currSite + "/" : "") + "dp/ws/faceted-search"
+                               }
+                            }
                         ]
                      }
                   }
