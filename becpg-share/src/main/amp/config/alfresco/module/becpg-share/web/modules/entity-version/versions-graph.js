@@ -234,18 +234,25 @@
        * @method renderCellVersion
        */
       renderCellVersion : function VersionsGraph_renderCellVersions(elCell, oRecord, oColumn, oData) {
-         var html = "", doc = oRecord.getData(), current = (beCPG.module.getVersionsGraphInstance().options.nodeRef == doc.entityNodeRef);
+         var html = "", doc = oRecord.getData(), current = (beCPG.module.getVersionsGraphInstance().options.nodeRef == doc.entityNodeRef),
+             compareURL = Alfresco.constants.PROXY_URI + 'becpg/entity/compare/' + beCPG.module.getVersionsGraphInstance().options.nodeRef
+                 .replace(":/", "") + '/' + encodeURIComponent(doc.label) + '/' + encodeURIComponent(doc.name) + ".pdf";
 
          html += '<div id="graph-version-row-' + this.getRecordIndex(oRecord) + '" class="entity-branches">';
          html += '   <span class="document-version">' + $html(doc.label) + '</span>';
          html += '   <span class="' + doc.metadata + (current ? " current" : "") + '" ><a href="' + beCPG.util
-               .entityURL(doc.siteId, doc.nodeRef, doc.itemType) + '">' + $html(doc.name) + '</a></span>';
-         html += '<div class="version-details">';
+               .entityURL(doc.siteId, doc.nodeRef, doc.itemType) + '">' + $html(doc.name) + '</a>';
+         if(current){
+             html += '      <a href="' + compareURL + '" class="compare" title="' + Alfresco.util.message("label.compare") + '">&nbsp;</a>';
+         } 
+         
+         html += '</span><div class="version-details">';
          html += ((doc.description || "").length > 0) ? $html(doc.description, true)
                : '<span class="faded">(' + Alfresco.util.message("label.noComment", beCPG.module
                      .getVersionsGraphInstance().name) + ')</span>';
          html += '</div>';
          html += '</div>';
+    
 
          elCell.innerHTML = html;
       },
@@ -393,7 +400,6 @@
          // Show the panel
          this.widgets.panel.show();
       }
-
    };
 })();
 
