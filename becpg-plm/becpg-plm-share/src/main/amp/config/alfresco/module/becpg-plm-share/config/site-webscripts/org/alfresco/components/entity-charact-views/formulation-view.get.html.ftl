@@ -16,8 +16,6 @@
    <@script src="${url.context}/res/modules/custom-entity-datagrid/product-columnRenderers.js" group="entity-datagrid"></@script>
    <@script src="${url.context}/res/modules/custom-entity-datagrid/product-entity-toolbar.js" group="entity-toolbar"/>
   
-   <@script src="${url.context}/res/components/entity-charact-views/custom-entity-toolbar.js" group="entity-toolbar"/>
-    
    <@script src="${url.context}/res/components/entity-charact-views/dashlet-resizer.js" group="formulation-view"/>
    <@script src="${url.context}/res/components/entity-charact-views/formulation-view.js" group="formulation-view"/>
 </@>

@@ -3,10 +3,13 @@
    <#-- CSS Dependencies -->
 	<@link rel="stylesheet" type="text/css" href="${url.context}/res/components/data-lists/toolbar.css" group="entity-toolbar"/>
 	<@link rel="stylesheet" type="text/css" href="${url.context}/res/components/entity-data-lists/entity-toolbar.css" group="entity-toolbar" />
+
+    
 </@>
 
 <@markup id="js">
-   <#-- JavaScript Dependencies -->
+   <#-- JavaScript Dependencies --> 
+    <@script type="text/javascript" src="${url.context}/res/modules/documentlibrary/doclib-actions.js" group="entity-toolbar"/> 
     <@script type="text/javascript" src="${url.context}/res/components/entity-data-lists/entity-toolbar.js" group="entity-toolbar"/>
 </@>
 
@@ -14,6 +17,10 @@
   	<@createWidgets group="entity-toolbar"/>
 </@>
 
+<@markup id="">
+   <@script src="${url.context}/res/components/documentlibrary/becpg/docLibAction.js" group="custom-entity-toolbar"/>
+   <@script src="${url.context}/res/components/entity-charact-views/custom-entity-toolbar.js" group="custom-entity-toolbar"/>
+</@markup>
 
 
 <@markup id="html">
@@ -25,7 +32,6 @@
 		         <div id="toolbar-contribs" ></div>
 		         <div id="${el}-toolbar-buttons-left" ></div>
 		      </div>
-		 
 		      <div class="right">
 		   	 	<div id="${el}-toolbar-buttons-right" >
 		   	 	</div>
@@ -42,7 +48,6 @@
 				</div>
 				</#if>	
 		      </div>
-
 		   </div>
 		</div>
 		<#-- template -->

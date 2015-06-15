@@ -8,7 +8,6 @@
    <@markup id="js" >
       <#include "../preview/include/web-preview-js-dependencies.lib.ftl" />
       <@script src="${url.context}/res/components/entity-charact-views/reports-view.js" group="web-preview"/>
-      <@script src="${url.context}/res/components/entity-charact-views/custom-entity-toolbar.js" group="entity-toolbar"/>
    </@>
 
    <@markup id="widgets">

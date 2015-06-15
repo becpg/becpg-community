@@ -20,7 +20,7 @@
 	<template-type>org/alfresco/entity-data-lists</template-type>
 	<properties>
 		<pageFamily>documentlibrary</pageFamily>
-      <container>documentLibrary</container>
+        <container>documentLibrary</container>
 	</properties>
 	<components>
        
@@ -115,7 +115,7 @@
 	         <url>/components/documentlibrary/actions-common</url>
 	         <properties>
 	            <nodeRef>{nodeRef}</nodeRef>
-	            <dependencyGroup>entity-datalists</dependencyGroup>
+	            <dependencyGroup>entity-toolbar</dependencyGroup>
 	         </properties>
 	      </component>
 
@@ -125,14 +125,6 @@
 			<url>/components/entity-data-lists/entity-toolbar</url>
 		</component>
 		
-		
-	      <component>
-	         <region-id>doclib-custom</region-id>
-	         <url>/components/documentlibrary/doclib-custom</url>
-	      </component>
-	      
-		
-
 		<!-- Datagrid -->
 		<component>
 			<region-id>datagrid</region-id>
