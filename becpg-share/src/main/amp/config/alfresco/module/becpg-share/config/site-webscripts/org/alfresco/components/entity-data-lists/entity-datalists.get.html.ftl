@@ -24,11 +24,20 @@
 		<div id="${el}-body" class="datalists">
 		   <div id="${el}-headerBar" class="header-bar toolbar flat-button theme-bg-2">
 		      <div class="left">
+		      
+		      	<#if showCreate?? && showCreate == true>
 		         <span id="${el}-newListButton" class="yui-button yui-push-button new-list">
 		             <span class="first-child">
 		                 <button type="button">${msg('button.new-list')}</button>
 		             </span>
 		         </span>
+				<#else>	
+					<span class="yui-button ">
+		            	 <span class="first-child">
+	           		 		<span class="entity ${itemType?replace(":","_")}">${msg("type."+itemType?replace(":","_"))}</span>
+	           			 </span>
+	           		</span> 
+            	</#if>
 		      </div>
 		   </div>
 		   

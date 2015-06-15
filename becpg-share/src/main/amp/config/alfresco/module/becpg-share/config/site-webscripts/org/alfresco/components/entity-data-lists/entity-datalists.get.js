@@ -1,3 +1,4 @@
+<import resource="classpath:/alfresco/templates/org/alfresco/import/alfresco-util.js">
 /*******************************************************************************
  * Copyright (C) 2010-2015 beCPG.
  * 
@@ -51,21 +52,36 @@ function getSortOptions()
 
 function main()
 {
-
-    // Widget instantiation metadata...
-    var entityDataLists =
-    {
-        id : "EntityDataLists",
-        name : "beCPG.component.EntityDataLists",
-        options :
-        {
-            listId : (page.url.args.list != null) ? page.url.args.list : "",
-            entityNodeRef : (page.url.args.nodeRef != null) ? page.url.args.nodeRef : "",
-            sortOptions : getSortOptions()
+    
+    AlfrescoUtil.param("nodeRef");
+    var nodeDetails = AlfrescoUtil.getNodeDetails(model.nodeRef, model.site);
+    
+    if(nodeDetails){
+        model.item = nodeDetails.item;
+        model.itemType = model.item.node.type;
+     
+        model.showCreate = false;
+        if( model.item.node.aspects.indexOf("bcpg:entityTplAspect")>0 ||  model.itemType == "bcpg:systemEntity"){
+            model.showCreate = true;
         }
-    };
-
-    model.widgets = [ entityDataLists ];
+    
+        // Widget instantiation metadata...
+        var entityDataLists =
+        {
+            id : "EntityDataLists",
+            name : "beCPG.component.EntityDataLists",
+            options :
+            {
+                listId : (page.url.args.list != null) ? page.url.args.list : "",
+                entityNodeRef : (page.url.args.nodeRef != null) ? page.url.args.nodeRef : "",
+                sortOptions : getSortOptions(),
+                showCreate : model.showCreate
+            }
+        };
+    
+        model.widgets = [ entityDataLists ];
+    
+    }
 
 }
 

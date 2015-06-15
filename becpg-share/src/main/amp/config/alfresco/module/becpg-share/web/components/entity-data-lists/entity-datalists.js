@@ -96,7 +96,9 @@
 							 * Sort options
 							 */
 							
-							sortOptions : []
+							sortOptions : [],
+							
+							showCreate : false
 						},
 
 						/**
@@ -122,9 +124,11 @@
 									+ '/components/images/rel_interstitial_loading.gif" /></div>');
 							this.widgets.spinner.render(document.body);
 
-							this.widgets.newList = Alfresco.util.createYUIButton(this, "newListButton", this.onNewList, {
-								disabled : true
-							});
+							if(this.options.showCreate){
+    							this.widgets.newList = Alfresco.util.createYUIButton(this, "newListButton", this.onNewList, {
+    								disabled : true
+    							});
+							}
 							// Retrieve the lists from the specified Site &
 							// Container
 							this.populateDataLists({
@@ -143,8 +147,10 @@
 										YAHOO.Bubbling.fire("hideFilter");
 									}
 
-									if (this.dataListsLength === 0 || window.location.hash === "#new") {
-										this.widgets.newList.fireEvent("click");
+									if(this.options.showCreate){
+    									if (this.dataListsLength === 0 || window.location.hash === "#new") {
+    										this.widgets.newList.fireEvent("click");
+    									}
 									}
 								},
 								scope : this
@@ -194,7 +200,9 @@
 									this.containerNodeRef = new Alfresco.util.NodeRef(this.options.entityNodeRef);
 								}
 								this.entity = response.json.entity;
-								this.widgets.newList.set("disabled", !response.json.permissions.create);
+								if(this.options.showCreate){
+								    this.widgets.newList.set("disabled", !response.json.permissions.create);
+								}   
 
 							    if(this.options.sortOptions!=null && this.options.sortOptions.length>0){
 							        
@@ -323,6 +331,43 @@
 							};
 
 							/**
+                             * Click handler for state change
+                             * 
+                             * @method fnEditOnClick
+                             * @param listName
+                             *            {String} Name of the Data List
+                             */
+							var fnChangeStateOnClick = function DataLists_renderDataLists_fnChangeStateOnClick(list, enabled) {
+
+							    return function DataLists_renderDataLists_fnChangeStateOnClick(e) {
+                                    if (enabled) {
+                                        Alfresco.util.Ajax.request({
+                                            method : Alfresco.util.Ajax.POST,
+                                            url : Alfresco.constants.PROXY_URI + "becpg/entitylist/node/" + list.nodeRef
+                                                  .replace(":/", "") + "?state=" + ("Valid" == list.state ? "ToValidate"
+                                                  : "Valid"),
+                                            successCallback : {
+                                               fn : function(response) {
+                                                   
+                                                   list.state = "Valid" == list.state ? "ToValidate"
+                                                           : "Valid"
+                                                   
+                                                  Alfresco.util.PopupManager.displayMessage({
+                                                     text : me.msg("message.entitylist.state.change.success")
+                                                  });
+                                                  Bubbling.fire("dataListDetailsUpdated", {dataList: list});
+                                               },
+                                             scope : this
+                                            }
+                                        });
+                                    }
+                                    Event.stopEvent(e || window.event);
+                                };
+                            };
+
+							
+							
+							/**
 							 * Click handler for edit Data List
 							 * 
 							 * @method fnDeleteOnClick
@@ -347,11 +392,6 @@
 									container = document.createElement("ul");
 									listsContainer.appendChild(container);
 
-									// Create the DOM structure: <li onclick><a
-									// class='filter-link' title href><span
-									// class='edit'
-									// onclick></span><span class='delete'
-									// onclick></span>"text"</a></li>
 									for ( var index in lists) {
 										if (lists.hasOwnProperty(index)) {
 
@@ -378,6 +418,8 @@
 											// Build the DOM elements
 											el = document.createElement("li");
 											el.onclick = fnOnClick();
+											
+                                   
 											elEdit = document.createElement("span");
 											if (permissions["edit"]) {
 												elEdit.className = "edit";
@@ -398,32 +440,31 @@
 											}
 											elLink = document.createElement("a");
 											elLink.title = list.description;
-											// ### beCPG : change url to
-											// entity-data-lists
-											// and add the nodeRef reference
-											// elLink.href = "data-lists?list="
-											// +
-											// $html(list.name);
 											elLink.href = "entity-data-lists?list=" + $html(list.name) + "&nodeRef="
 													+ $html(this.options.entityNodeRef);
 
-											if(list.name.indexOf("WUsed")>-1){
-												elLink.className = "WUsed";
-											} else {
-												elLink.className = list.name;
-											}
 
+											elState = document.createElement("span");
+                                            elState.className = "state";
+                                            elState.title = this.msg("button.datalist-state.description");
+                                            elState.onclick = fnChangeStateOnClick(list, permissions["edit"] && list.name.indexOf("WUsed")<0);
+
+                                            if(list.name.indexOf("WUsed")>-1){
+                                                elState.className = "state WUsed";
+                                            } else {
+                                                elState.className = "state "+list.name;
+                                            }
+                                            
 											if (list.state && list.state.length > 0) {
-												elLink.className += " " + list.state;
+											    elState.className += " " + list.state;
 											}
-											
-											
 
 											elText = document.createTextNode(list.title);
 
 											// Build the DOM structure with the
 											// new
 											// elements
+											elLink.appendChild(elState);
 											elLink.appendChild(elDelete);
 											elLink.appendChild(elEdit);
 											elLink.appendChild(elText);
