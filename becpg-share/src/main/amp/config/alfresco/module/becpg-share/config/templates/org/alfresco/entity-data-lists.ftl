@@ -1,59 +1,11 @@
 <#include "include/alfresco-template.ftl" />
 <@templateHeader>
-	
-   <@markup id="location-hash">
-   <script type="text/javascript">//<![CDATA[
-   (function()
-   {
-      // If no location.hash exists, convert certain params in location.search to location.hash and replace the page
-      var loc = window.location;
-      if (loc.hash === "" && loc.search !== "")
-      {
-         var qs, q, url = loc.protocol + "//" + loc.host + loc.pathname, hash = "";
-
-         qs = Alfresco.util.getQueryStringParameters();
-
-         var hashParams =
-         {
-            "page": true,
-            "filter": true
-         },
-            filterDataParam = "filterData";
-
-         for (q in qs)
-         {
-            if (qs.hasOwnProperty(q) && q in hashParams)
-            {
-               hash += "&" + escape(q) + "=" + escape(qs[q]);
-               if (q === "filter")
-               {
-                  // Check for filterData in QueryString for the "filter" case
-                  if (qs.hasOwnProperty(filterDataParam))
-                  {
-                     hash += escape("|" + qs[filterDataParam]);
-                     delete qs[filterDataParam];
-                  }
-               }
-               delete qs[q];
-            }
-         }
-         
-         if (hash.length > 0)
-         {
-            url += Alfresco.util.toQueryString(qs) + "#" + hash.substring(1);
-            window.location.replace(url);
-         }
-      }
-   })();
-   //]]></script>
-   </@>
    <@markup id="resizer">
    <script type="text/javascript">//<![CDATA[
       new Alfresco.widget.Resizer("DataLists");
    //]]></script>
    </@>
-<@script type="text/javascript" src="${url.context}/res/modules/documentlibrary/doclib-actions.js" group="entity-datalists"/>
-   <@script type="text/javascript" src="${url.context}/res/modules/data-lists/datalist-actions.js" group="entity-datalists"></@script>
+   <@script type="text/javascript" src="${url.context}/res/modules/data-lists/datalist-actions.js" group="entity-datalists"/>
 </@>
 
 <@templateBody>
@@ -79,12 +31,12 @@
                <@region id="document-versions" scope="template"/>
            </div>
         </div>
-	      <@region id="html-upload" scope="template"/>
-		  <@region id="flash-upload" scope="template"/>
-		  <@region id="file-upload" scope="template"/>
-		  <@region id="dnd-upload" scope="template"/>
+	    <@region id="html-upload" scope="template"/>
+		<@region id="flash-upload" scope="template"/>
+		<@region id="file-upload" scope="template"/>
+		<@region id="dnd-upload" scope="template"/>
    </div>
-          <@region id="doclib-custom" scope="template"/>
+        <@region id="doclib-custom" scope="template"/>
    </@>
 </@>
 

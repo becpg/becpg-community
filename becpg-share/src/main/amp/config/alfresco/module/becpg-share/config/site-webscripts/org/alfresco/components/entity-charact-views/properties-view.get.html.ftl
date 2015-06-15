@@ -9,7 +9,6 @@
 <@markup id="js">
    <#-- JavaScript Dependencies -->
    <#include "../form/form.js.ftl"/>  
-   <@script src="${url.context}/res/components/entity-charact-views/custom-entity-toolbar.js" group="entity-toolbar"/>
    <@script src="${url.context}/res/components/comments/comments-list.js" group="properties-view"/>
    <@script src="${url.context}/res/components/entity-charact-views/properties-view.js" group="properties-view"/>
    

@@ -5,7 +5,6 @@
 .nutrient-class-e
  {
     border-radius: 50%;
-    behavior: url(PIE.htc); /* remove if you don't care about IE8 */
     
     width: 16px;
     height: 16px;

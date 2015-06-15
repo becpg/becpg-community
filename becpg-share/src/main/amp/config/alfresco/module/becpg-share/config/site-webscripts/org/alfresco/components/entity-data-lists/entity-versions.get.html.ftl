@@ -3,12 +3,14 @@
       <#-- CSS Dependencies -->
       <@link rel="stylesheet" type="text/css" href="${url.context}/res/modules/entity-version/versions-graph.css" group="entity-version"/>
       <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/entity-data-lists/entity-versions.css" group="entity-version"/>
+      <@link rel="stylesheet" type="text/css" href="${url.context}/res/modules/entity-version/new-version.css" group="entity-version" />
    </@>
    
    <@markup id="js">
       <#-- JavaScript Dependencies -->
       <@script type="text/javascript" src="${url.context}/res/modules/entity-version/versions-graph.js" group="entity-version"/>
       <@script type="text/javascript" src="${url.context}/res/components/entity-data-lists/entity-versions.js" group="entity-version"/>
+      <@script type="text/javascript" src="${url.context}/res/modules/entity-version/new-version.js" group="entity-version"/>
      
    </@>
    
