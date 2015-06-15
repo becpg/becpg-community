@@ -141,4 +141,32 @@ if (beCPG.module.EntityDataGridRenderers) {
 
    });
    
+   YAHOO.Bubbling.fire("registerDataGridRenderer", {
+      propertyName : [ "pjt:tlLoggedTime" ],
+      renderer : function(oRecord, data, label, scope) {
+      	
+      	var className = "";
+      	if (data.value && oRecord.getData("itemData")["prop_pjt_tlWork"].value && data.value > oRecord.getData("itemData")["prop_pjt_tlWork"].value) {
+      		className = "red";
+			}      	
+         
+         return '<span class="' + className + '" >' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+      }
+
+   });
+   
+   YAHOO.Bubbling.fire("registerDataGridRenderer", {
+      propertyName : [ "pjt:tlCapacity" ],
+      renderer : function(oRecord, data, label, scope) {
+      	
+      	var className = "";
+      	if (data.value && data.value > 100) {
+      		className = "red";
+			}      	
+         
+         return '<span class="' + className + '" >' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+      }
+
+   });
+   
 }

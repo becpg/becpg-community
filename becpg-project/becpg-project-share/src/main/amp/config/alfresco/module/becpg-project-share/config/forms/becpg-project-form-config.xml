@@ -357,6 +357,8 @@
 					<show id="pjt:projectState" />
 					<show id="pjt:projectHierarchy1" />
 					<show id="pjt:projectHierarchy2" />
+					<show id="pjt:projectOrigin" />
+					<show id="pjt:projectSponsor" />	
 					<show id="pjt:projectStartDate" />
 					<show id="pjt:projectCompletionDate" />
 					<show id="pjt:projectDueDate" />
@@ -396,6 +398,17 @@
 						</control>
 					</field>
 					
+					<field id="pjt:projectOrigin"  set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
+					<field id="pjt:projectSponsor"  set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
+					
 					<field id="entity_pjt:projectCurrentTasks_pjt:taskList" set="mainInfo" />
 					
 					<set id="main2" />
@@ -415,23 +428,40 @@
 			<form id="search">
 				<field-visibility>
 					<show id="cm:name" />
+					<show id="pjt:projectManager" />
+					<show id="pjt:projectPriority"  />
+					<show id="pjt:projectState" />
 					<show id="pjt:projectHierarchy1" />
 					<show id="pjt:projectHierarchy2" />
-					<show id="pjt:projectPriority" />
+					<show id="pjt:projectOrigin" />
+					<show id="pjt:projectSponsor" />	
 					<show id="pjt:projectStartDate" />
 					<show id="pjt:projectCompletionDate" />
 					<show id="pjt:projectDueDate" />
-					<show id="pjt:projectState" />
-					<show id="pjt:projectEntity" />
 				</field-visibility>
 				<appearance>
-					<field id="pjt:projectHierarchy1" >
+					<set id="main" />
+					<field id="cm:name"  set="main"/>
+					<field id="pjt:projectManager"  set="main"/>
+					<set id="mainInfo" template="/org/alfresco/components/form/2-column-set.ftl"  />
+					<field id="pjt:projectPriority" set="mainInfo" >
+						<control template="/org/alfresco/components/form/controls/selectone.ftl" >
+							<control-param name="options">1|priority.high,2|priority.medium,3|priority.low</control-param>
+							<control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
+					<field id="pjt:projectState" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
+					<field id="pjt:projectHierarchy1" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProjectLists/bcpg:entityLists/project_Hierarchy
 							</control-param>
 						</control>
 					</field>
-					<field id="pjt:projectHierarchy2" >
+					<field id="pjt:projectHierarchy2" set="mainInfo" >
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProjectLists/bcpg:entityLists/project_Hierarchy
 							</control-param>
@@ -439,18 +469,29 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="pjt:projectPriority">
+					
+					<field id="pjt:projectOrigin"  set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">1|priority.high,2|priority.medium,3|priority.low</control-param>
 							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
-					<field id="pjt:projectState" >
+					<field id="pjt:projectSponsor"  set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">Planned|data.taskstate.planned,InProgress|data.taskstate.inprogress,OnHold|data.taskstate.onhold,Cancelled|data.taskstate.cancelled,Completed|data.taskstate.completed
-							</control-param>
 							<control-param name="insertBlank">true</control-param>
 						</control>
+					</field>
+					
+					<field id="entity_pjt:projectCurrentTasks_pjt:taskList" set="mainInfo" />
+					
+					<set id="main2" />
+					<field id="pjt:projectStartDate" set="main2">
+						<control template="/org/alfresco/components/form/controls/daterange.ftl" />
+					</field>
+					<field id="pjt:projectCompletionDate" set="main2">
+						<control template="/org/alfresco/components/form/controls/daterange.ftl" />
+					</field>
+					<field id="pjt:projectDueDate" set="main2">
+						<control template="/org/alfresco/components/form/controls/daterange.ftl" />
 					</field>
 				</appearance>
 			</form>			
@@ -603,6 +644,7 @@
 					<show id="pjt:tlResources" />
 					<show id="pjt:tlTaskLegend" />
 					<show id="pjt:tlState" />
+					<show id="pjt:tlIsMilestone" />
 					<show id="pjt:tlDuration" />
 					<show id="pjt:completionPercent" />
 					<show id="pjt:tlManualDate" />

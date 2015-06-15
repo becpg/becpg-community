@@ -97,7 +97,7 @@ public class BudgetFormulationHandler extends FormulationBaseHandler<ProjectData
 			if(taskListDataItem.getResourceCost() != null && 
 					taskListDataItem.getResourceCost().getValue() != null && 
 					taskListDataItem.getTaskState() != null){				
-				if(taskListDataItem.getLoggedTime() != null && 
+				if(taskListDataItem.getLoggedTime() != null && taskListDataItem.getLoggedTime() != 0d && 
 						!TaskState.Planned.equals(taskListDataItem.getTaskState()) && 
 						!TaskState.InProgress.equals(taskListDataItem.getTaskState())){
 					taskExpense = taskListDataItem.getLoggedTime() * taskListDataItem.getResourceCost().getValue();
