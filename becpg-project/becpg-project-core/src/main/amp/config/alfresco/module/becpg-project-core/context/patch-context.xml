@@ -132,9 +132,6 @@
         <property name="qnameDAO">
             <ref bean="qnameDAO"/>
         </property>
-         <property name="dictionaryService">
-            <ref bean="dictionaryService"/>
-        </property>
         <property name="entityTplService">
             <ref bean="entityTplService"/>
         </property>
