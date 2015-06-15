@@ -19,53 +19,53 @@
 (function() {
    if (beCPG.component.EntityDataListToolbar) {
 
-
-      YAHOO.Bubbling.fire("registerToolbarButtonAction", {
-         right : true,
-         actionName : "datalist-state",
-         evaluate : function(asset, entity) {
-            return entity != null && asset.state !== null && asset.name.indexOf("WUsed") < 0;
-         },
-         createWidget : function(containerDiv, instance) {
-
-            var divEl = document.createElement("div");
-
-            containerDiv.appendChild(divEl);
-
-            Dom.setAttribute(divEl, "id", instance.id + "-stateCkeckbox");
-
-            Dom.addClass(divEl, "stateCkeckbox");
-
-            var stateCkeckbox = new YAHOO.widget.Button({
-               type : "checkbox",
-               title : instance.msg("button.datalist-state.description"),
-               value : instance.datalistMeta.state,
-               container : divEl,
-               disabled : !instance.entity.userAccess.edit,
-               checked : "Valid" == instance.datalistMeta.state
-            });
-
-            stateCkeckbox.on("checkedChange", function() {
-               Alfresco.util.Ajax.request({
-                  method : Alfresco.util.Ajax.POST,
-                  url : Alfresco.constants.PROXY_URI + "becpg/entitylist/node/" + instance.datalistMeta.nodeRef
-                        .replace(":/", "") + "?state=" + ("Valid" == instance.datalistMeta.state ? "ToValidate"
-                        : "Valid"),
-                  successCallback : {
-                     fn : function(response) {
-                        Alfresco.util.PopupManager.displayMessage({
-                           text : instance.msg("message.entitylist.state.change.success")
-                        });
-                     },
-                     scope : this
-                  }
-               });
-
-            });
-
-            return stateCkeckbox;
-         }
-      });
+//
+//      YAHOO.Bubbling.fire("registerToolbarButtonAction", {
+//         right : true,
+//         actionName : "datalist-state",
+//         evaluate : function(asset, entity) {
+//            return entity != null && asset.state !== null && asset.name.indexOf("WUsed") < 0;
+//         },
+//         createWidget : function(containerDiv, instance) {
+//
+//            var divEl = document.createElement("div");
+//
+//            containerDiv.appendChild(divEl);
+//
+//            Dom.setAttribute(divEl, "id", instance.id + "-stateCkeckbox");
+//
+//            Dom.addClass(divEl, "stateCkeckbox");
+//
+//            var stateCkeckbox = new YAHOO.widget.Button({
+//               type : "checkbox",
+//               title : instance.msg("button.datalist-state.description"),
+//               value : instance.datalistMeta.state,
+//               container : divEl,
+//               disabled : !instance.entity.userAccess.edit,
+//               checked : "Valid" == instance.datalistMeta.state
+//            });
+//
+//            stateCkeckbox.on("checkedChange", function() {
+//               Alfresco.util.Ajax.request({
+//                  method : Alfresco.util.Ajax.POST,
+//                  url : Alfresco.constants.PROXY_URI + "becpg/entitylist/node/" + instance.datalistMeta.nodeRef
+//                        .replace(":/", "") + "?state=" + ("Valid" == instance.datalistMeta.state ? "ToValidate"
+//                        : "Valid"),
+//                  successCallback : {
+//                     fn : function(response) {
+//                        Alfresco.util.PopupManager.displayMessage({
+//                           text : instance.msg("message.entitylist.state.change.success")
+//                        });
+//                     },
+//                     scope : this
+//                  }
+//               });
+//
+//            });
+//
+//            return stateCkeckbox;
+//         }
+//      });
 
       YAHOO.Bubbling
             .fire(
