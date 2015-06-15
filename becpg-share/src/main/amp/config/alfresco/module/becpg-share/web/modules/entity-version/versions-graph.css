@@ -28,3 +28,9 @@
 .versions-graph div.version-details {
 	margin-left:25px;
 }
+
+.versions-graph a.compare
+{
+   background: url(../../components/document-details/images/compare-16.png) no-repeat;
+   padding-left:20px;
+}
