@@ -32,11 +32,7 @@
 		             </span>
 		         </span>
 				<#else>	
-					<span class="yui-button ">
-		            	 <span class="first-child">
-	           		 		<span class="entity ${itemType?replace(":","_")}">${msg("type."+itemType?replace(":","_"))}</span>
-	           			 </span>
-	           		</span> 
+					<span class="entity ${itemType?replace(":","_")}">${msg("type."+itemType?replace(":","_"))}</span>
             	</#if>
 		      </div>
 		   </div>

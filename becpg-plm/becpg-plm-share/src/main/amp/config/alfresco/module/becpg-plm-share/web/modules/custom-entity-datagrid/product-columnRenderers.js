@@ -30,11 +30,11 @@ if (beCPG.module.EntityDataGridRenderers) {
 
 				// datalist
 				if (data.metadata.indexOf("finishedProduct") != -1 || data.metadata.indexOf("semiFinishedProduct") != -1) {
-					url += "&list=compoList";
+					url = beCPG.util.entityURL(data.siteId, data.value,null,null,"compoList");
 				} else if (data.metadata.indexOf("packagingKit") != -1) {
-					url += "&list=packagingList";
+				    url = beCPG.util.entityURL(data.siteId, data.value,null,null,"packagingList");
 				} else if (data.metadata.indexOf("localSemiFinishedProduct") != -1) {
-					url = beCPG.util.entityURL(data.siteId, data.value);
+					url = beCPG.util.entityURL(data.siteId, data.value,"folder");
 				}
 				if (data.version && data.version !== "") {
 					version = '<span class="document-version">' + data.version + '</span>';
@@ -42,7 +42,6 @@ if (beCPG.module.EntityDataGridRenderers) {
 			}
 			
 			if(label == "mpm:rplResourceRef"){
-			    url = beCPG.util.entityURL(data.siteId, data.value);
 			    if (oColumn.hidden) {
                     scope.widgets.dataTable.showColumn(oColumn);
                     Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
