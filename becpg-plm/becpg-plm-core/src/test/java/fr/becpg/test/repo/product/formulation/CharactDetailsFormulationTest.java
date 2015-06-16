@@ -162,6 +162,7 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 				compoList.add(item);
 				compoList.add(new CompoListDataItem(null,item, null, 3d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 				compoList.add(new CompoListDataItem(null, item, null, 3d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, item, null, 2d, CompoListUnit.kg, 5d, DeclarationType.Declare, rawMaterial1NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
 				return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();				
 				
@@ -196,7 +197,7 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 							if(kv2.getKey().equals(rawMaterial1NodeRef)){
 							
 								checks++;
-								assertEquals("cost.getValue() == 1.7325, actual values: " + trace, df.format(1.7325d), df.format(kv2.getValue()));
+								assertEquals("cost.getValue() == 5.5125, actual values: " + trace, df.format(5.5125d), df.format(kv2.getValue()));
 								//assertEquals("cost.getPercentage() == 36.5314, actual values: " + trace, df.format(36.5314), df.format(kv2.getPercentage()));
 							}
 							else if(kv2.getKey().equals(rawMaterial2NodeRef)){
@@ -222,7 +223,7 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 							if(kv2.getKey().equals(rawMaterial1NodeRef)){
 							
 								checks++;
-								assertEquals("cost.getValue() == 1.155, actual values: " + trace, df.format(1.155d), df.format(kv2.getValue()));
+								assertEquals("cost.getValue() == 3.675, actual values: " + trace, df.format(3.675d), df.format(kv2.getValue()));
 								//assertEquals("cost.getPercentage() == 16.0976, actual values: " + trace, df.format(16.0976), df.format(kv2.getPercentage()));
 							}
 							else if(kv2.getKey().equals(rawMaterial2NodeRef)){
