@@ -463,7 +463,7 @@ define(["dojo/_base/declare",
                               config: {
                                  id: this.id + "_ADVANCED_SEARCH",
                                  i18nScope: "org.alfresco.SearchBox",
-                                 label: "header.search.label",
+                                 label: "header.becpg.adv.search.label",
                                  targetUrl: (currSite ? "site/" + currSite + "/" : "") + "search"
                               }
                            },
@@ -472,7 +472,7 @@ define(["dojo/_base/declare",
                                config: {
                                   id: this.id + "_FACETED_SEARCH",
                                   i18nScope: "org.alfresco.SearchBox",
-                                  label: "header.becpg.search.label",
+                                  label: "header.becpg.faceted.search.label",
                                   targetUrl: (currSite ? "site/" + currSite + "/" : "") + "dp/ws/faceted-search"
                                }
                             }
@@ -560,7 +560,9 @@ define(["dojo/_base/declare",
        */
       generateSearchPageLink: function alfresco_header_SearchBox__generateSearchPageLink(terms) {
          var url;
-         var scope = this.site || this.defaultSearchScope;
+         var currSite = lang.getObject("Alfresco.constants.SITE");
+         
+         var scope = currSite || this.defaultSearchScope;
          if (this.searchResultsPage)
          {
             // Generate custom search page link...
@@ -576,9 +578,9 @@ define(["dojo/_base/declare",
             // Generate old search page link...
             url = "search?t=" + encodeURIComponent(terms) + (this.allsites ? "&a=true&r=false" : "&a=false&r=true");
          }
-         if (this.site)
+         if (currSite)
          {
-            url = "site/" + this.site + "/" + url;
+            url = "site/" + currSite + "/" + url;
          }
          this.alfLog("log", "Generated search page link", url, this);
          return url;
