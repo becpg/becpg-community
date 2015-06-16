@@ -4,6 +4,7 @@ function main()
 {
    AlfrescoUtil.param('nodeRef');
    AlfrescoUtil.param('site', null);
+   AlfrescoUtil.param('list',null);
 
    // Widget instantiation metadata...
    var entityVersions = {
@@ -11,7 +12,8 @@ function main()
       name : "beCPG.component.EntityVersions",
       options : {
          nodeRef : model.nodeRef,
-         siteId : model.site
+         siteId : model.site,
+         list: model.list
       }
    };
    

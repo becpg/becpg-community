@@ -34,6 +34,7 @@ function main()
       model.commentCount = (count != undefined ? count : null);
       model.thumbnailUrl= "/share/proxy/alfresco/api/node/" + model.nodeRef.replace(':/','') + "/content/thumbnails/doclib?c=queue&ph=true";
       model.defaultReport = null;
+      model.productState = BeCPGUtil.getProductState(nodeDetails.item.node);
     
       if(model.pathMode != "true" && nodeDetails.item.node.associations &&  nodeDetails.item.node.associations["rep:reports"]){
       

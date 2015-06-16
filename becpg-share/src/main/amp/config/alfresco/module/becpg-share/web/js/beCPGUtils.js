@@ -30,7 +30,7 @@
      */
     var $siteURL = Alfresco.util.siteURL;
 
-    beCPG.util.entityURL = function(siteId, pNodeRef, type, context)
+    beCPG.util.entityURL = function(siteId, pNodeRef, type, context, list)
     {
 
         var nodeRef = new Alfresco.util.NodeRef(pNodeRef);
@@ -52,20 +52,25 @@
             site : siteId
         });
 
-        if (type == "bcpg:finishedProduct" || type == "bcpg:semiFinishedProduct")
-        {
-            redirect += "&list=compoList";
-        }
-        else if (type == "bcpg:packagingKit")
-        {
-            redirect += "&list=packagingList";
-        }
-        else if (type == "pjt:project")
-        {
-            redirect += "&list=taskList";
-        } else if(!( type == "document" || type == "folder")){
-            
-            redirect +="&list=View-properties";
+        if(list && list !=null){
+            redirect += "&list="+list;
+        } else {
+        
+            if (type == "bcpg:finishedProduct" || type == "bcpg:semiFinishedProduct")
+            {
+                redirect += "&list=compoList";
+            }
+            else if (type == "bcpg:packagingKit")
+            {
+                redirect += "&list=packagingList";
+            }
+            else if (type == "pjt:project")
+            {
+                redirect += "&list=taskList";
+            } else if(!( type == "document" || type == "folder")){
+                
+                redirect +="&list=View-properties";
+            }
         }
 
         return redirect;

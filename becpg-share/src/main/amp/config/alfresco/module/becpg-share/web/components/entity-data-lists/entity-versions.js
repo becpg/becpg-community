@@ -56,7 +56,12 @@
                       * @property siteId
                       * @type string
                       */
-                     siteId : ""
+                     siteId : "",
+                         
+                     /**
+                      * Current list
+                      */    
+                     list : null
 
                   },
 
@@ -170,11 +175,12 @@
                    */
                   getDocumentVersionMarkup : function EntityVersions_getDocumentVersionMarkup(doc) {
                      var compareURL =  Alfresco.constants.PROXY_URI + 'becpg/entity/compare/'
-                     + this.options.nodeRef.replace(":/", "") + "/compare.pdf?entities="+doc.nodeRef, html = '', current = ( this.options.nodeRef == doc.nodeRef);
-
+                     + this.options.nodeRef.replace(":/", "") + "/compare.pdf?entities="+doc.nodeRef, html = '', current = ( this.options.nodeRef == doc.nodeRef),
+                     url = beCPG.util.entityURL(doc.siteId, doc.nodeRef, doc.itemType, null, this.options.list);
+                     
                      html += '<div class="entity-branches">';
                      html += '   <span class="document-version">' + $html(doc.label) + '</span>';
-                     html += '   <span class="'+doc.metadata+(current ? " current":"")+'" ><a title="'+doc.description+'" href="'+beCPG.util.entityURL(doc.siteId, doc.nodeRef, doc.itemType)+'">' + $html(doc.name) + '</a></span>';
+                     html += '   <span class="'+doc.metadata+(current ? " current":"")+'" ><a title="'+doc.description+'" href="'+url+'">' + $html(doc.name) + '</a></span>';
                    if(!current) {
                      html += '   <span class="actions"><a href="' + compareURL + '" class="compare" title="' + this
                      .msg("label.compare") + '">&nbsp;</a></span>';
