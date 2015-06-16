@@ -139,6 +139,11 @@
 					titleId="becpg.wizard.supplier.step2.title" type="entityDataList"
 					listId="contactList" itemId="bcpg:contactList"></step>
 			</wizard>
+			<wizard id="supplier-pack">
+				<step id="step1" labelId="becpg.wizard.supplier.pack.step1.label"
+					type="form" formId="supplierPack"
+					itemId="bcpg:packagingKit"></step>
+			</wizard>
 		</wizards>
 	</config>
 

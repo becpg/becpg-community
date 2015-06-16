@@ -1763,6 +1763,126 @@
 					</field>
 				</appearance>
 			</form>
+			
+			<form id="supplier-pack">
+				<field-visibility>
+
+					<!-- mainInfo -->
+					<show id="cm:name" />
+					<show id="cm:title" force="true" />
+					<show id="bcpg:legalName" />
+					<show id="bcpg:productComments" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:eanCode" />
+					<show id="bcpg:certificateDate" force="true" />
+					<show id="bcpg:plants" force="true" />
+
+					<!-- Tare -->
+					<show id="pack:tare" force="true" />
+					<show id="pack:tareUnit" force="true" />
+
+					<!-- Dimension -->
+					<show id="pack:length" />
+					<show id="pack:width" />
+					<show id="pack:height" />
+					
+					<!-- internal dimension -->	
+					<show id="pack:pmIntLength" />
+					<show id="pack:pmIntWidth" />
+					<show id="pack:pmIntHeight" />
+					
+					<!-- thickness -->	
+					<show id="pack:pmThickness" />
+					<show id="pack:pmPaperWeight" />
+					
+					<!-- material -->	
+					<show id="pack:pmMaterial" />
+					<show id="pack:pmAdditionnalMaterial" />
+					
+					<!-- coil -->
+					<show id="pack:pmCoreDiameter"/>
+					<show id="pack:pmCoilDiameter"/>
+					
+					<!-- print -->
+					<show id="pack:pmPrintNbColors"/>	
+					<show id="pack:pmPrintColor"/>
+					<show id="pack:pmPrintType"/>
+					<show id="pack:pmPrintVarnish"/>	
+
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="bordered-panel"
+						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="tare" appearance="bordered-panel" label-id="becpg.forms.set.tare.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="dimension" appearance="bordered-panel"
+						label-id="becpg.forms.set.pack.size.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="internalDimension" appearance="bordered-panel"
+						label-id="becpg.forms.set.pack.intSize.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="thickness" appearance="bordered-panel"
+						label-id="becpg.forms.set.pack.thickness.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="material" appearance="bordered-panel"
+						label-id="becpg.forms.set.pack.material.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="coil" appearance="bordered-panel"
+						label-id="becpg.forms.set.pack.coil.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="print" appearance="bordered-panel"
+						label-id="becpg.forms.set.pack.print.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+			
+
+					<!-- Main info -->
+					<field id="cm:name" set="mainInfo" />
+					<field id="cm:title" set="mainInfo" label-id="becpg.forms.field.tradeName">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:legalName" set="mainInfo" />
+					<field id="cm:description" set="mainInfo">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productComments" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
+						</control>
+					</field>					
+					<field id="bcpg:eanCode" set="mainInfo" />
+					<field id="bcpg:certificateDate" set="mainInfo" />				
+					<field id="bcpg:plants" set="mainInfo" />
+
+					<!-- tare -->
+					<field id="pack:tare" set="tare" />
+					<field id="pack:tareUnit" set="tare" />
+
+					<!-- Dimension -->
+					<field id="pack:length" set="dimension" />
+					<field id="pack:width" set="dimension" />
+					<field id="pack:height" set="dimension" />
+					
+					<!-- internal dimension -->	
+					<field id="pack:pmIntLength" set="internalDimension"/>
+					<field id="pack:pmIntWidth" set="internalDimension"/>
+					<field id="pack:pmIntHeight" set="internalDimension"/>
+					
+					<!-- thickness -->	
+					<field id="pack:pmThickness" set="thickness"/>
+					<field id="pack:pmPaperWeight" set="thickness"/>
+					
+					<!-- material -->	
+					<field id="pack:pmMaterial" set="material"/>
+					<field id="pack:pmAdditionnalMaterial" set="material"/>
+					
+					<!-- coil -->
+					<field id="pack:pmCoreDiameter" set="coil"/>
+					<field id="pack:pmCoilDiameter" set="coil"/>
+					
+					<!-- print -->
+					<field id="pack:pmPrintNbColors" set="print"/>	
+					<field id="pack:pmPrintColor" set="print"/>
+					<field id="pack:pmPrintType" set="print"/>
+					<field id="pack:pmPrintVarnish" set="print"/>
+					
+				</appearance>
+			</form>
 		</forms>
 	</config>
 
@@ -2137,7 +2257,7 @@
 	<config evaluator="node-type" condition="bcpg:rawMaterial">
 		<forms>
 			<form>
-				<field-visibility>
+				<field-visibility>			
 
 					<!-- mainInfo -->
 					<show id="cm:name" />
