@@ -127,11 +127,10 @@ function advSearch()
     // Prepare the model
     var repoconfig = config.scoped['Search']['search'].getChildValue('repository-search');
 
-    // config override can force repository search on/off
-    model.searchScope = "repo";
+    model.searchScope = model.searchRepo? "repo" : model.searchAllSites?  "all_sites" : siteId;
+    
     model.siteId = siteId;
     model.searchForms = searchForms;
-  //  model.searchPath = "{site}dp/ws/faceted-search#searchTerm={terms}&query={query}&scope={scope}";
     model.searchPath = "{site}search?t={terms}&q={query}&r={repo}";
     
     
@@ -143,7 +142,7 @@ function advSearch()
         options :
         {
             siteId : model.siteId,
-            savedQuery : (page.url.args.sq != null) ? page.url.args.sq : "",
+            savedQuery : model.searchQuery,
             searchScope : model.searchScope,
             searchForms : model.searchForms,
             searchPath : model.searchPath

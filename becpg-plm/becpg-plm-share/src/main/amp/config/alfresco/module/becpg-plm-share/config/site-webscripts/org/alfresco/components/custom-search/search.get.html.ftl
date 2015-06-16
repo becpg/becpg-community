@@ -23,7 +23,7 @@
       <#assign searchconfig=config.scoped['Search']['search']>
       <div id="${el}-body" class="search">
          <#assign context=searchconfig.getChildValue('repository-search')!"context">
-         <#if searchQuery?length == 0 && context != "always">
+         <#if context != "always">
          <div class="search-sites">
             <span <#if context == "none">class="hidden"</#if>><a id="${el}-repo-link" href="#" <#if searchRepo>class="bold"</#if>>${msg('message.repository')}</a></span><#if context != "none"> |</#if>
             <a id="${el}-all-sites-link" href="#" <#if searchAllSites && !searchRepo>class="bold"</#if>>${msg('message.allsites')}</a>

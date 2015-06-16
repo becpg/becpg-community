@@ -560,7 +560,9 @@ define(["dojo/_base/declare",
        */
       generateSearchPageLink: function alfresco_header_SearchBox__generateSearchPageLink(terms) {
          var url;
-         var scope = this.site || this.defaultSearchScope;
+         var currSite = lang.getObject("Alfresco.constants.SITE");
+         
+         var scope = currSite || this.defaultSearchScope;
          if (this.searchResultsPage)
          {
             // Generate custom search page link...
@@ -576,9 +578,9 @@ define(["dojo/_base/declare",
             // Generate old search page link...
             url = "search?t=" + encodeURIComponent(terms) + (this.allsites ? "&a=true&r=false" : "&a=false&r=true");
          }
-         if (this.site)
+         if (currSite)
          {
-            url = "site/" + this.site + "/" + url;
+            url = "site/" + currSite + "/" + url;
          }
          this.alfLog("log", "Generated search page link", url, this);
          return url;
