@@ -50,7 +50,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 public class ProjectListExtractor extends ActivityListExtractor {
 
-	private static final String PREF_FOLDER_FAVOURITES = "org.alfresco.share.documents.favourites";
+	private static final String PREF_FOLDER_FAVOURITES = "org.alfresco.share.folders.favourites";
 	private static final String PROP_IS_FAVOURITE = "isFavourite";
 	private static final String FILTER_DATA = "filterData";
 	private static final String PAGINATION = "pagination";

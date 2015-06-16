@@ -55,6 +55,7 @@ function main()
             currVersionNodeRef : model.currVersionNodeRef,
             maxItems : parseInt(model.maxItems),
             activity :  activityParameters,
+            isFavourite : (model.item.isFavourite || false),
             editorConfig : {
                menu: {},
                toolbar: "bold italic underline | bullist numlist | forecolor backcolor | undo redo removeformat",
