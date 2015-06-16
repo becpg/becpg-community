@@ -79,7 +79,7 @@
                            });
                         } else {
                            // Moved elsewhere in repository...
-                           var correctUrl = "/share/page/entity-details?nodeRef=" + this.options.nodeRef;
+                           var correctUrl = "/share/page/entity-data-lists?list=View-properties&nodeRef=" + this.options.nodeRef;
                            Alfresco.util.PopupManager.displayPrompt({
                               text : this.msg("message.document.movedToRepo"),
                               buttons : [ {
@@ -113,7 +113,7 @@
                               activity : {
                                  "entity" : {
                                     type : "org.alfresco.documentlibrary.entity-liked",
-                                    page : "entity-details?nodeRef={nodeRef}"
+                                    page : "entity-data-lists?list=View-properties&nodeRef={nodeRef}"
                                  }
                               }
                            }).display(this.options.likes.isLiked, this.options.likes.totalLikes);

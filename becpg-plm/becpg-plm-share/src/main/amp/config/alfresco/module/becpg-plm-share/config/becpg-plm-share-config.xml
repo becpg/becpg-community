@@ -205,7 +205,7 @@
 				<type name="association:bcpg:supplier"
 					template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 					<control-param name="showTooltip">true</control-param>
-					<control-param name="pageLinkTemplate">entity-details?nodeRef={nodeRef}
+					<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 					</control-param>
 					<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:supplier?excludeClassNames=bcpg:entityTplAspect
 					</control-param>

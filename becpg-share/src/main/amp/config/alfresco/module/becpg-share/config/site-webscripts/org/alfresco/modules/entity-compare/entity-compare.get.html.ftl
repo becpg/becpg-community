@@ -1,6 +1,6 @@
 <#assign el=args.htmlid?html>
 <#assign siteId=args.siteId!"">
-<#if siteId != ""><#assign targetLinkTemplate='${url.context}/page/site/${siteId}/entity-data-lists?list=View-properties&nodeRef={nodeRef}'><#else><#assign targetLinkTemplate='${url.context}/page/entity-details?nodeRef={nodeRef}'></#if>
+<#if siteId != ""><#assign targetLinkTemplate='${url.context}/page/site/${siteId}/entity-data-lists?list=View-properties&nodeRef={nodeRef}'><#else><#assign targetLinkTemplate='${url.context}/page/entity-data-lists?list=View-properties&nodeRef={nodeRef}'></#if>
 
 <div id="${el}-dialog" class="change-type">
    <div id="${el}-dialogTitle" class="hd">${msg("title")}</div>
