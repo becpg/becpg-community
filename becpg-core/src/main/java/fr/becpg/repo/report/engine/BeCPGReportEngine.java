@@ -27,6 +27,6 @@ import fr.becpg.report.client.ReportException;
 
 public interface BeCPGReportEngine {
 
-	public void createReport(NodeRef tplNodeRef,InputStream in, OutputStream out, Map<String,Object> params) throws ReportException;
+	void createReport(NodeRef tplNodeRef, InputStream in, OutputStream out, Map<String, Object> params) throws ReportException;
 
 }

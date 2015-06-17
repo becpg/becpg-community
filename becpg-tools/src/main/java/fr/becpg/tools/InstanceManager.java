@@ -52,7 +52,7 @@ public class InstanceManager {
 		this.jdbcConnectionManager = jdbcConnectionManager;
 	}
 	
-	private static Log logger = LogFactory.getLog(InstanceManager.class);
+	private static final Log logger = LogFactory.getLog(InstanceManager.class);
 
 	public enum InstanceState {
 		UP,DOWN
@@ -61,13 +61,13 @@ public class InstanceManager {
 	public class Instance  implements Serializable {
 		
 		private static final long serialVersionUID = -6767708131173643111L;
-		private Long id;
+		private final Long id;
 		private Long batchId;
-		private String tenantUser;
-		private String tenantPassword;
-		private String tenantName;
-		private String instanceName;
-		private String instanceUrl;
+		private final String tenantUser;
+		private final String tenantPassword;
+		private final String tenantName;
+		private final String instanceName;
+		private final String instanceUrl;
 		private InstanceState instanceState;
 		private Date lastImport;
 

@@ -46,7 +46,7 @@ public class WikiDataExtractor extends AbstractNodeDataExtractor  {
 //		      return null;
 //		   }
 		   
-		Map<String, Object> ret = new HashMap<String, Object>();
+		Map<String, Object> ret = new HashMap<>();
 		
 		 ret.put(PROP_NODEREF, nodeRef.toString());
 		 ret.put(PROP_TAGS, attributeExtractorService.getTags(nodeRef));

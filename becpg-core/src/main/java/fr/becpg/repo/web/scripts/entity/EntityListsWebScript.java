@@ -86,7 +86,7 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 
 	private static final String MODEL_KEY_NAME_ENTITY_PATH = "entityPath";
 
-	private static Log logger = LogFactory.getLog(EntityListsWebScript.class);
+	private static final Log logger = LogFactory.getLog(EntityListsWebScript.class);
 
 	private NodeService nodeService;
 
@@ -172,14 +172,14 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 
 		logger.debug("entityListsWebScript executeImpl()");
 
-		List<NodeRef> listsNodeRef = new ArrayList<NodeRef>();
+		List<NodeRef> listsNodeRef = new ArrayList<>();
 		final NodeRef nodeRef = new NodeRef(storeType, storeId, nodeId);
 		NodeRef listContainerNodeRef = null;
 		QName nodeType = nodeService.getType(nodeRef);
 		boolean hasWritePermission = authorityService.isAdminAuthority(AuthenticationUtil.getFullyAuthenticatedUser());//admin can delete entity lists
 		boolean skipFilter = false;
 
-		Map<String, Object> model = new HashMap<String, Object>();
+		Map<String, Object> model = new HashMap<>();
 		// We get datalist for a given aclGroup
 		if (aclMode != null && SecurityModel.TYPE_ACL_GROUP.equals(nodeType)) {
 			logger.debug("We want to get datalist for current ACL entity");
@@ -208,7 +208,7 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 			}
 	
 			// Add types that can be added
-	        Set<ClassDefinition> classDefinitions = new HashSet<ClassDefinition>();
+	        Set<ClassDefinition> classDefinitions = new HashSet<>();
 			Collection <QName> entityListTypes = dictionaryService.getSubTypes(BeCPGModel.TYPE_ENTITYLIST_ITEM, true);
 			
 	        for(QName entityListType: entityListTypes)
@@ -226,7 +226,7 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 		// We get datalist for entity
 		else {
 			
-			NodeRef entityTplNodeRef = null;
+			NodeRef entityTplNodeRef;
 			if(nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_TPL_REF)){
 				entityTplNodeRef = associationService.getTargetAssoc(nodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
 			}
@@ -291,7 +291,7 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 		if (!skipFilter) {
 			Iterator<NodeRef> it = listsNodeRef.iterator();
 			while (it.hasNext()) {
-				NodeRef temp = (NodeRef) it.next();
+				NodeRef temp = it.next();
 				String dataListType = (String) nodeService.getProperty(temp, DataListModel.PROP_DATALISTITEMTYPE);
 				int access_mode = securityService.computeAccessMode(nodeType, dataListType);
 

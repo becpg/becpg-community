@@ -30,7 +30,7 @@ public class DataListExtractorFactoryImpl implements DataListExtractorFactory {
 	DataListExtractor defaultExtractor;
 	
 	
-	List<DataListExtractor> extractors = new ArrayList<>();
+	final List<DataListExtractor> extractors = new ArrayList<>();
 	
 	@Override
 	public void registerExtractor(DataListExtractor extractor){

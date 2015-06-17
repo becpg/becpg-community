@@ -44,7 +44,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.HttpClient;
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.saiku.web.rest.objects.acl.AclEntry;
@@ -83,7 +82,7 @@ public class AlfrescoRepository {
 	}
 
 	public interface AlfrescoSessionCallBack<T> {
-		public T execute(Instance instance, HttpClient httpClient);
+		T execute(Instance instance, HttpClient httpClient);
 	}
 
 	private <T> T runInAlfrescoSession(AlfrescoSessionCallBack<T> alfrescoSessionCallBack) {
@@ -106,7 +105,7 @@ public class AlfrescoRepository {
 	public class QueryList {
 
 		private String parentNodeRef;
-		Map<String, String> queries = new HashMap<String, String>();
+		final Map<String, String> queries = new HashMap<>();
 
 		public String getParentNodeRef() {
 			return parentNodeRef;
@@ -117,10 +116,10 @@ public class AlfrescoRepository {
 		}
 
 		public List<IRepositoryObject> getRepositoryObjects() {	
-			List<AclMethod> aclMethods = new ArrayList<AclMethod>();
+			List<AclMethod> aclMethods = new ArrayList<>();
 				aclMethods.add(AclMethod.READ);
 				aclMethods.add(AclMethod.WRITE);
-			List<IRepositoryObject> objects = new ArrayList<IRepositoryObject>();
+			List<IRepositoryObject> objects = new ArrayList<>();
 			for (String filename : queries.keySet()) {
 
 				objects.add(new RepositoryFileObject(filename, "#"+filename, "saiku", filename+".saiku", aclMethods));
@@ -129,7 +128,7 @@ public class AlfrescoRepository {
 			return objects;
 		}
 
-		public void load(InputStream in) throws JsonParseException, IOException {
+		public void load(InputStream in) throws IOException {
 			queries.clear();
 			JsonFactory jsonFactory = new JsonFactory();
 			JsonParser jp = jsonFactory.createJsonParser(in);
@@ -174,7 +173,7 @@ public class AlfrescoRepository {
 				} catch (Exception e) {
 					log.error(this.getClass().getName(), e);
 				}
-				return new ArrayList<IRepositoryObject>();
+				return new ArrayList<>();
 
 			}
 		});
@@ -182,7 +181,7 @@ public class AlfrescoRepository {
 	}
 
 	private QueryList retrieveQueries(Instance instance, HttpClient httpClient) throws IOException {
-		QueryList queryList = null;
+		QueryList queryList;
 		ListQueriesCommand listQueriesCommand = new ListQueriesCommand(instance.getInstanceUrl());
 		try (InputStream in = listQueriesCommand.runCommand(httpClient)) {
 			queryList = new QueryList();
@@ -244,7 +243,7 @@ public class AlfrescoRepository {
 							try (InputStreamReader reader = new InputStreamReader(downloadQueryCommand.runCommand(httpClient, nodeRef,file))) {
 
 								BufferedReader br = new BufferedReader(reader);
-								String chunk = "", content = "";
+								String chunk, content = "";
 								while ((chunk = br.readLine()) != null) {
 									content += chunk + "\n";
 								}

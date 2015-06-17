@@ -45,7 +45,7 @@ import fr.becpg.test.project.AbstractProjectTestCase;
 
 public class ProjectListSortTest extends AbstractProjectTestCase {
 
-	private static Log logger = LogFactory.getLog(ProjectListSortTest.class);
+	private static final Log logger = LogFactory.getLog(ProjectListSortTest.class);
 
 	@Resource
 	protected AlfrescoRepository<ProjectData> alfrescoRepository;
@@ -72,7 +72,7 @@ public class ProjectListSortTest extends AbstractProjectTestCase {
 					projectData.setHierarchy1(PROJECT_HIERARCHY1_SEA_FOOD_REF);
 					projectData.setHierarchy2(hierarchy2NodeRef);
 					projectData.setParentNodeRef(getTestFolderNodeRef());
-					projectData = (ProjectData) alfrescoRepository.save(projectData);
+					projectData = alfrescoRepository.save(projectData);
 				}
 
 				return null;
@@ -104,7 +104,7 @@ public class ProjectListSortTest extends AbstractProjectTestCase {
 				pagination.setMaxResults(-1);
 				pagination.setPageSize(25);
 
-				List<String> metadataFields = new LinkedList<String>();
+				List<String> metadataFields = new LinkedList<>();
 				metadataFields.add("cm:name");
 				metadataFields.add("bcpg:code");
 				metadataFields.add("pjt:projectOverdue");
@@ -117,7 +117,7 @@ public class ProjectListSortTest extends AbstractProjectTestCase {
 				assertEquals(25, extractedItems.getPageItems().size());
 
 				for (int i = 0; i < extractedItems.getPageItems().size(); i++) {
-					Map<String, Object> item = (Map<String, Object>) extractedItems.getPageItems().get(i);
+					Map<String, Object> item = extractedItems.getPageItems().get(i);
 					Map<String, Object> itemData = (Map<String, Object>) item.get("itemData");
 					Map<String, Object> nameData = (Map<String, Object>) itemData.get("prop_cm_name");
 					Map<String, Object> hierarchy2Data = (Map<String, Object>) itemData.get("prop_pjt_projectHierarchy2");

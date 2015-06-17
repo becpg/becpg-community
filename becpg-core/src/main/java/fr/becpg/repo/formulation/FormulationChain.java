@@ -41,7 +41,7 @@ import org.apache.commons.logging.LogFactory;
  *            Any type passed as context information.
  */
 public class FormulationChain<T extends FormulatedEntity> {
-	private Log logger = LogFactory.getLog(FormulationChain.class);
+	private final Log logger = LogFactory.getLog(FormulationChain.class);
 
 	private Class<T> contextClass;
 

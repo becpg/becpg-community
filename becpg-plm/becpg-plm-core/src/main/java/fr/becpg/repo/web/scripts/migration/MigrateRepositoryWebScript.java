@@ -85,7 +85,7 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 	private static final String ACTION_CREATE_GEN_RAWMATERIAL = "createGenRawMaterial";
 	
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(MigrateRepositoryWebScript.class);
+	private static final Log logger = LogFactory.getLog(MigrateRepositoryWebScript.class);
 
 
 	private BehaviourFilter policyBehaviourFilter;
@@ -283,7 +283,7 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 					.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED);
 							
 			List<NodeRef> rawMaterialNodeRefs = queryBuilder.list();
-			Map<String, Set<NodeRef>> rawMaterialsGroupByERPCode = new HashMap<String, Set<NodeRef>>();
+			Map<String, Set<NodeRef>> rawMaterialsGroupByERPCode = new HashMap<>();
 			
 			for(NodeRef rawMaterialNodeRef : rawMaterialNodeRefs){	
 				
@@ -291,7 +291,7 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 				
 				Set<NodeRef> subList = rawMaterialsGroupByERPCode.get(erpCode);
 				if(subList == null){
-					subList = new HashSet<NodeRef>();
+					subList = new HashSet<>();
 					rawMaterialsGroupByERPCode.put(erpCode, subList);
 				}
 				subList.add(rawMaterialNodeRef);				
@@ -323,7 +323,7 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 							String newERPCode = kv.getKey();	
 							List<NodeRef> rawMaterialSupplierNodeRefs = associationService.getTargetAssocs(n, PLMModel.ASSOC_SUPPLIERS);
 							for(NodeRef rawMaterialSupplierNodeRef : rawMaterialSupplierNodeRefs){
-								newERPCode += "-" + (String)nodeService.getProperty(rawMaterialSupplierNodeRef, PLMModel.PROP_ERP_CODE);
+								newERPCode += "-" + nodeService.getProperty(rawMaterialSupplierNodeRef, PLMModel.PROP_ERP_CODE);
 							}
 							logger.info("Set ERP code for " + n + " code " + newERPCode);
 							nodeService.setProperty(n, PLMModel.PROP_ERP_CODE, newERPCode);
@@ -339,9 +339,9 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 						genRawMaterialData.setHierarchy2(rawMaterialData.getHierarchy2());
 						genRawMaterialData.setErpCode(kv.getKey());
 						
-						List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>(kv.getValue().size());
+						List<CompoListDataItem> compoList = new ArrayList<>(kv.getValue().size());
 						for(NodeRef rmNodeRef : supplierRMNodeRefs){
-							Double subQty = new Double(100 / kv.getValue().size());						
+							Double subQty = (double) (100 / kv.getValue().size());
 							compoList.add(new CompoListDataItem(null, null, null, subQty, CompoListUnit.Perc, null, DeclarationType.Declare, rmNodeRef));						
 						}								
 						

@@ -4,7 +4,6 @@
 package fr.becpg.repo.web.scripts.search;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
 
 import org.alfresco.service.ServiceRegistry;
@@ -41,7 +40,7 @@ import fr.becpg.repo.web.scripts.WebscriptHelper;
 public class SearchWebScript extends AbstractSearchWebScript {
 
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(SearchWebScript.class);
+	private static final Log logger = LogFactory.getLog(SearchWebScript.class);
 
 	private ServiceRegistry serviceRegistry;
 
@@ -149,10 +148,9 @@ public class SearchWebScript extends AbstractSearchWebScript {
 			throws InvalidNodeRefException, JSONException {
 
 		JSONArray items = new JSONArray();
-		
-		for (Iterator<NodeRef> iterator = results.iterator(); iterator.hasNext();) {
-			NodeRef nodeRef = (NodeRef) iterator.next();
-			if(serviceRegistry.getNodeService().exists(nodeRef) && serviceRegistry.getPermissionService().hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED){
+
+		for (NodeRef nodeRef : results) {
+			if (serviceRegistry.getNodeService().exists(nodeRef) && serviceRegistry.getPermissionService().hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED) {
 				items.put(new JSONObject(getExtractor(nodeRef, metadataFields).extract(nodeRef)));
 			}
 		}
@@ -170,18 +168,19 @@ public class SearchWebScript extends AbstractSearchWebScript {
 
 		String container = SiteHelper.extractContainerId(path);
 		if (container != null) {
-			if (container.equals("blog")) {
-				return new BlogDataExtractor(serviceRegistry,attributeExtractorService);
-			} else if (container.equals("discussions")) {
-				return new ForumDataExtractor(serviceRegistry,attributeExtractorService);
-			} else if (container.equals("calendar")) {
-				return new CalendarDataExtractor(serviceRegistry,attributeExtractorService);
-			} else if (container.equals("wiki")) {
-				return new WikiDataExtractor(serviceRegistry,attributeExtractorService);
-			} else if (container.equals("links")) {
-				return new LinkDataExtractor(serviceRegistry,attributeExtractorService);
-			} else if (container.equals("dataLists")) {
-				return new DataListDataExtractor(serviceRegistry,attributeExtractorService);
+			switch (container) {
+				case "blog":
+					return new BlogDataExtractor(serviceRegistry, attributeExtractorService);
+				case "discussions":
+					return new ForumDataExtractor(serviceRegistry, attributeExtractorService);
+				case "calendar":
+					return new CalendarDataExtractor(serviceRegistry, attributeExtractorService);
+				case "wiki":
+					return new WikiDataExtractor(serviceRegistry, attributeExtractorService);
+				case "links":
+					return new LinkDataExtractor(serviceRegistry, attributeExtractorService);
+				case "dataLists":
+					return new DataListDataExtractor(serviceRegistry, attributeExtractorService);
 			}
 		}
 

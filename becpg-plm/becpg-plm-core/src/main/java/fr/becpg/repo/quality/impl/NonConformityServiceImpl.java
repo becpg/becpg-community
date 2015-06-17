@@ -34,7 +34,7 @@ import fr.becpg.repo.quality.NonConformityService;
 
 public class NonConformityServiceImpl implements NonConformityService {
 
-	private static Log logger = LogFactory.getLog(NonConformityServiceImpl.class);
+	private static final Log logger = LogFactory.getLog(NonConformityServiceImpl.class);
 
 	private RepoService repoService;
 	private Repository repositoryHelper;
@@ -66,7 +66,7 @@ public class NonConformityServiceImpl implements NonConformityService {
 		// default folder
 		if (destFolderNodeRef == null) {
 
-			List<String> paths = new ArrayList<String>(2);
+			List<String> paths = new ArrayList<>(2);
 			paths.add(PlmRepoConsts.PATH_QUALITY);
 			paths.add(PlmRepoConsts.PATH_NC);
 

@@ -11,11 +11,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import org.alfresco.model.ContentModel;
@@ -159,7 +155,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	protected static final String MSG_ERROR_GET_ASSOC_TARGET = "import_service.error.err_get_assoc_target";
 	protected static final String MSG_ERROR_NO_DOCS_BASE_PATH_SET = "import_service.error.err_no_docs_base_path_set";
 
-	private static Log logger = LogFactory.getLog(AbstractImportVisitor.class);
+	private static final Log logger = LogFactory.getLog(AbstractImportVisitor.class);
 
 	protected NodeService nodeService;
 
@@ -302,7 +298,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	protected Map<QName, Serializable> getNodePropertiesToImport(ImportContext importContext, List<String> values) throws ParseException,
 			ImporterException {
 
-		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+		Map<QName, Serializable> properties = new HashMap<>();
 
 		for (int z_idx = 0; z_idx < values.size() && z_idx < importContext.getColumns().size(); z_idx++) {
 
@@ -314,7 +310,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 				if (column instanceof PropertyDefinition) {
 					PropertyDefinition propDef = (PropertyDefinition) column;
-					Serializable value = null;
+					Serializable value;
 					QName dataType = propDef.getDataType().getName();
 
 					if (ImportHelper.NULL_VALUE.equalsIgnoreCase(values.get(z_idx))) {
@@ -475,7 +471,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		 */
 		NodeRef targetFolderNodeRef = nodeRef;
 		String fileName = "";
-		List<String> path = new ArrayList<String>();
+		List<String> path = new ArrayList<>();
 		for (int z_idx = 0; z_idx < values.size() && z_idx < importContext.getColumns().size(); z_idx++) {
 
 			AbstractAttributeMapping attributeMapping = importContext.getColumns().get(z_idx);
@@ -497,7 +493,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 						fileName = fileMapping.getPath().get(fileMapping.getPath().size() - 1);
 
 						// remove the last path since it is the fileName
-						List<String> pathFolders = new ArrayList<String>();
+						List<String> pathFolders = new ArrayList<>();
 						for (int cntPath = 0; cntPath < fileMapping.getPath().size() - 1; cntPath++) {
 							pathFolders.add(fileMapping.getPath().get(cntPath));
 						}
@@ -645,7 +641,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	private NodeRef createFile(NodeRef targetFolderNodeRef, String fileName, String localName) {
 		NodeRef fileNodeRef = nodeService.getChildByName(targetFolderNodeRef, ContentModel.ASSOC_CONTAINS, fileName);
 		if (fileNodeRef == null) {
-			Map<QName, Serializable> fileProperties = new HashMap<QName, Serializable>();
+			Map<QName, Serializable> fileProperties = new HashMap<>();
 			fileProperties.put(ContentModel.PROP_NAME, fileName);
 			fileNodeRef = nodeService.createNode(targetFolderNodeRef, ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(localName)), ContentModel.TYPE_CONTENT,
@@ -777,7 +773,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			for (Node columnNode : columnNodes) {
 				QName qName = QName.createQName(columnNode.valueOf(QUERY_ATTR_GET_ATTRIBUTE), namespaceService);
 				QName dataListQName = QName.createQName(columnNode.valueOf(QUERY_ATTR_GET_DATALIST_QNAME), namespaceService);
-				NodeRef charactNodeRef = null;
+				NodeRef charactNodeRef;
 				String charactNodeRefString = columnNode.valueOf(QUERY_ATTR_GET_CHARACT_NODE_REF);
 				String charactName = columnNode.valueOf(QUERY_ATTR_GET_CHARACT_NAME);
 				QName charactQName = QName.createQName(columnNode.valueOf(QUERY_ATTR_GET_CHARACT_QNAME), namespaceService);
@@ -814,10 +810,9 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 				QName qName = QName.createQName(columnNode.valueOf(QUERY_ATTR_GET_ATTRIBUTE), namespaceService);
 
 				String path = columnNode.valueOf(QUERY_ATTR_GET_PATH);
-				List<String> paths = new ArrayList<String>();
+				List<String> paths = new ArrayList<>();
 				String[] arrPath = path.split(RepoConsts.PATH_SEPARATOR);
-				for (String p : arrPath)
-					paths.add(p);
+				Collections.addAll(paths, arrPath);
 
 				PropertyDefinition propertyDefinition = dictionaryService.getProperty(qName);
 				FileMapping attributeMapping = new FileMapping(columnNode.valueOf(QUERY_ATTR_GET_ID), propertyDefinition, paths);
@@ -889,13 +884,13 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		logger.debug("Type: " + importContext.getType() + "classMapping: " + classMapping);
 
 		// check COLUMNS respects the mapping and the class attributes
-		List<AbstractAttributeMapping> columnsAttributeMapping = new ArrayList<AbstractAttributeMapping>();
-		List<String> unknownColumns = new ArrayList<String>();
+		List<AbstractAttributeMapping> columnsAttributeMapping = new ArrayList<>();
+		List<String> unknownColumns = new ArrayList<>();
 		boolean isMLPropertyDef = false;
-		for (int z_idx = 0; z_idx < columns.size(); z_idx++) {
+		for (String column : columns) {
 
 			boolean isAttributeMapped = false;
-			String columnId = columns.get(z_idx);
+			String columnId = column;
 
 			if (classMapping != null) {
 				// columns
@@ -911,7 +906,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 			// columnId not mapped, is it a property or an association ?
 			if (!isAttributeMapped) {
-				QName qName = null;
+				QName qName;
 				if (columnId.indexOf(QName.NAMESPACE_BEGIN) != -1) {
 					qName = QName.createQName(columnId);
 				} else {
@@ -954,7 +949,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		if (!unknownColumns.isEmpty()) {
 
 			// calculate mappedColumns
-			List<String> mappedColumns = new ArrayList<String>();
+			List<String> mappedColumns = new ArrayList<>();
 			if (classMapping != null) {
 				for (AbstractAttributeMapping attrMapping : classMapping.getColumns()) {
 					mappedColumns.add(attrMapping.getId());
@@ -1087,7 +1082,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			}
 
 			// look by name
-			if (!doQuery && !dictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITY_V2) && (String) properties.get(ContentModel.PROP_NAME) != null) {
+			if (!doQuery && !dictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITY_V2) && properties.get(ContentModel.PROP_NAME) != null) {
 
 				if (NodeRef.isNodeRef(properties.get(ContentModel.PROP_NAME).toString())) {
 					return new NodeRef(properties.get(ContentModel.PROP_NAME).toString());
@@ -1146,7 +1141,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	protected List<NodeRef> findTargetNodesByValue(ImportContext importContext, boolean isTargetMany, QName targetClass, String value)
 			throws ImporterException {
 
-		List<NodeRef> targetRefs = new ArrayList<NodeRef>();
+		List<NodeRef> targetRefs = new ArrayList<>();
 
 		if (!value.isEmpty()) {
 
@@ -1203,7 +1198,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			}
 
 			logger.debug("Case hierarchy mapping");
-			NodeRef hierarchyNodeRef = null;
+			NodeRef hierarchyNodeRef;
 			if (((HierarchyMapping) attributeMapping).getParentLevelColumn() != null
 					&& !((HierarchyMapping) attributeMapping).getParentLevelColumn().isEmpty()) {
 				NodeRef parentHierachyNodeRef = (NodeRef) properties.get(QName.createQName(
@@ -1293,7 +1288,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 				}
 
 				// we try with the name
-				if (doQuery == false) {
+				if (!doQuery) {
 					properties.put(RemoteHelper.getPropName(type), value);
 					doQuery = true;
 				}

@@ -80,7 +80,7 @@ public class ReportTplsWebScript extends DeclarativeWebScript {
 		}
 
 		List<NodeRef> reportTpls = reportTplService.getUserReportTemplates(type, datatypeQName, null);
-		Map<String, Object> model = new HashMap<String, Object>();
+		Map<String, Object> model = new HashMap<>();
 		model.put(MODEL_KEY_NAME_REPORT_TEMPLATES, reportTpls);
 
 		return model;

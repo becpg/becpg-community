@@ -28,7 +28,7 @@ import fr.becpg.test.PLMBaseTestCase;
 public class EntityTplServiceTest extends PLMBaseTestCase {
 
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(EntityTplServiceTest.class);
+	private static final Log logger = LogFactory.getLog(EntityTplServiceTest.class);
 
 	
 	

@@ -39,9 +39,9 @@ import fr.becpg.repo.olap.impl.OlapServiceImpl;
 
 public class OlapUtils {
 	
-	private static String ALF_USER_HEADER = "ALF_USER";
+	private static final String ALF_USER_HEADER = "ALF_USER";
 
-	private static Log logger = LogFactory.getLog(OlapServiceImpl.class);
+	private static final Log logger = LogFactory.getLog(OlapServiceImpl.class);
 
 	
 	
@@ -149,7 +149,7 @@ public class OlapUtils {
 		} catch (NumberFormatException e) {
 			try {
 				return Double.parseDouble(value.replace(",","."));
-			} catch (NumberFormatException e2) {
+			} catch (NumberFormatException ignored) {
 			}
 		}
 		return value;

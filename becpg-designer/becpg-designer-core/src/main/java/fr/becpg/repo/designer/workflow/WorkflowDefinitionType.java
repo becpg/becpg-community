@@ -58,7 +58,7 @@ public class WorkflowDefinitionType implements ContentServicePolicies.OnContentU
 	/** Key to the pending models */
 	private static final String KEY_PENDING_DEFS = "workflowDefinitionType.pendingDefs";
 
-	private static Log logger = LogFactory.getLog(WorkflowDefinitionType.class);
+	private static final Log logger = LogFactory.getLog(WorkflowDefinitionType.class);
 
 	/**
 	 * Set the policy component
@@ -110,7 +110,7 @@ public class WorkflowDefinitionType implements ContentServicePolicies.OnContentU
 		}
 
 		Boolean value = (Boolean) nodeService.getProperty(nodeRef, WorkflowModel.PROP_WORKFLOW_DEF_DEPLOYED);
-		if ((value == null) || (value == false)) {
+		if ((value == null) || (!value)) {
 			queueModel(nodeRef);
 
 		}
@@ -119,9 +119,9 @@ public class WorkflowDefinitionType implements ContentServicePolicies.OnContentU
 	@SuppressWarnings("unchecked")
 	private void queueModel(NodeRef nodeRef) {
 
-		Set<NodeRef> pendingModels = (Set<NodeRef>) AlfrescoTransactionSupport.getResource(KEY_PENDING_DEFS);
+		Set<NodeRef> pendingModels = AlfrescoTransactionSupport.getResource(KEY_PENDING_DEFS);
 		if (pendingModels == null) {
-			pendingModels = new CopyOnWriteArraySet<NodeRef>();
+			pendingModels = new CopyOnWriteArraySet<>();
 			AlfrescoTransactionSupport.bindResource(KEY_PENDING_DEFS, pendingModels);
 		}
 		pendingModels.add(nodeRef);
@@ -140,7 +140,7 @@ public class WorkflowDefinitionType implements ContentServicePolicies.OnContentU
 
 		if (nodeService.getType(nodeRef).equals(WorkflowModel.TYPE_WORKFLOW_DEF)) {
 			Boolean value = (Boolean) nodeService.getProperty(nodeRef, WorkflowModel.PROP_WORKFLOW_DEF_DEPLOYED);
-			if ((value == null) || (value == false)) {
+			if ((value == null) || (!value)) {
 				queueModel(nodeRef);
 			}
 		}
@@ -155,7 +155,7 @@ public class WorkflowDefinitionType implements ContentServicePolicies.OnContentU
 		}
 		if (nodeService.getType(nodeRef).equals(WorkflowModel.TYPE_WORKFLOW_DEF)) {
 			Boolean value = (Boolean) nodeService.getProperty(nodeRef, WorkflowModel.PROP_WORKFLOW_DEF_DEPLOYED);
-			if ((value == null) || (value == false)) {
+			if ((value == null) || (!value)) {
 				queueModel(nodeRef);
 
 			}
@@ -168,7 +168,7 @@ public class WorkflowDefinitionType implements ContentServicePolicies.OnContentU
 	 */
 	public class WorkflowDefinitionTypeTransactionListener extends TransactionListenerAdapter {
 
-		private NodeService nodeService;
+		private final NodeService nodeService;
 
 		public WorkflowDefinitionTypeTransactionListener(NodeService nodeService) {
 			this.nodeService = nodeService;
@@ -177,7 +177,7 @@ public class WorkflowDefinitionType implements ContentServicePolicies.OnContentU
 		@SuppressWarnings("unchecked")
 		@Override
 		public void beforeCommit(boolean readOnly) {
-			Set<NodeRef> pendingModels = (Set<NodeRef>) AlfrescoTransactionSupport.getResource(KEY_PENDING_DEFS);
+			Set<NodeRef> pendingModels = AlfrescoTransactionSupport.getResource(KEY_PENDING_DEFS);
 			
 			if (pendingModels != null) {
 

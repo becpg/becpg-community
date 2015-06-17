@@ -3,37 +3,25 @@
  */
 package fr.becpg.test.repo.product;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.AssociationRef;
-import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.namespace.NamespaceService;
-import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
 import fr.becpg.model.PLMModel;
-import fr.becpg.repo.PlmRepoConsts;
-import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.entity.EntityListDAO;
-import fr.becpg.repo.entity.comparison.CompareEntityService;
 import fr.becpg.repo.entity.comparison.CompareResultDataItem;
 import fr.becpg.repo.entity.comparison.StructCompareOperator;
 import fr.becpg.repo.entity.comparison.StructCompareResultDataItem;
-import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.data.FinishedProductData;
-import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.CompoListUnit;
@@ -42,7 +30,6 @@ import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
-import fr.becpg.test.PLMBaseTestCase;
 
 /**
  * The Class CompareProductServiceTest.
@@ -51,7 +38,7 @@ import fr.becpg.test.PLMBaseTestCase;
  */
 public class CompareProductServiceTest extends AbstractCompareProductTest {
 
-	private static Log logger = LogFactory.getLog(CompareProductServiceTest.class);
+	private static final Log logger = LogFactory.getLog(CompareProductServiceTest.class);
 
 
 	/**
@@ -70,9 +57,9 @@ public class CompareProductServiceTest extends AbstractCompareProductTest {
 				fp1.setUnit(ProductUnit.kg);
 
 				// Costs €
-				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
-				for (int j = 0; j < costs.size(); j++) {
-					CostListDataItem costListItemData = new CostListDataItem(null, 12.2d, "", null, costs.get(j), false);
+				List<CostListDataItem> costList = new ArrayList<>();
+				for (NodeRef cost : costs) {
+					CostListDataItem costListItemData = new CostListDataItem(null, 12.2d, "", null, cost, false);
 					costList.add(costListItemData);
 				}
 				fp1.setCostList(costList);
@@ -83,27 +70,27 @@ public class CompareProductServiceTest extends AbstractCompareProductTest {
 				NodeRef allergenRawMaterialNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), allergenRawMaterial).getNodeRef();
 
 				// Allergens
-				List<AllergenListDataItem> allergenList = new ArrayList<AllergenListDataItem>();
-				for (int j = 0; j < allergens.size(); j++) {
-					List<NodeRef> volontarySources = new ArrayList<NodeRef>();
+				List<AllergenListDataItem> allergenList = new ArrayList<>();
+				for (NodeRef allergen : allergens) {
+					List<NodeRef> volontarySources = new ArrayList<>();
 					volontarySources.add(allergenRawMaterialNodeRef);
 
 					AllergenListDataItem allergenListItemData = new AllergenListDataItem(null, null, true, false, volontarySources, null,
-							allergens.get(j), false);
+							allergen, false);
 					allergenList.add(allergenListItemData);
 				}
 				fp1.setAllergenList(allergenList);
 
-				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
+				List<CompoListDataItem> compoList = new ArrayList<>();
 
-				CompoListDataItem parent1 = new CompoListDataItem(null, (CompoListDataItem) null, 1d, 0d, CompoListUnit.kg, 0d,
+				CompoListDataItem parent1 = new CompoListDataItem(null, null, 1d, 0d, CompoListUnit.kg, 0d,
 						DeclarationType.Detail, localSF1NodeRef);
 
 				compoList.add(parent1);
 				compoList.add(new CompoListDataItem(null, parent1, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
 				compoList.add(new CompoListDataItem(null, parent1, 2d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
 
-				CompoListDataItem parent2 = new CompoListDataItem(null, (CompoListDataItem) null, 1d, 0d, CompoListUnit.kg, 0d,
+				CompoListDataItem parent2 = new CompoListDataItem(null, null, 1d, 0d, CompoListUnit.kg, 0d,
 						DeclarationType.Detail, localSF2NodeRef);
 				compoList.add(parent2);
 				compoList.add(new CompoListDataItem(null, parent2, 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
@@ -121,7 +108,7 @@ public class CompareProductServiceTest extends AbstractCompareProductTest {
 				fp2.setUnit(ProductUnit.L);
 
 				// Costs $
-				costList = new ArrayList<CostListDataItem>();
+				costList = new ArrayList<>();
 				for (int j = 0; j < 10; j++) {
 					CostListDataItem costListItemData = new CostListDataItem(null, 12.4d, "", null, costs.get(j), false);
 					costList.add(costListItemData);
@@ -129,11 +116,11 @@ public class CompareProductServiceTest extends AbstractCompareProductTest {
 				fp2.setCostList(costList);
 
 				// Allergens
-				allergenList = new ArrayList<AllergenListDataItem>();
+				allergenList = new ArrayList<>();
 				for (int j = 0; j < allergens.size(); j++) {
-					List<NodeRef> allSources = new ArrayList<NodeRef>();
+					List<NodeRef> allSources = new ArrayList<>();
 					allSources.add(allergenRawMaterialNodeRef);
-					AllergenListDataItem allergenListItemData = null;
+					AllergenListDataItem allergenListItemData;
 
 					if (j < 5) {
 						allergenListItemData = new AllergenListDataItem(null, null, true, false, allSources, null, allergens.get(j), false);
@@ -145,13 +132,13 @@ public class CompareProductServiceTest extends AbstractCompareProductTest {
 				}
 				fp2.setAllergenList(allergenList);
 
-				compoList = new ArrayList<CompoListDataItem>();
-				CompoListDataItem parent11 = new CompoListDataItem(null, (CompoListDataItem) null, 1d, 0d, CompoListUnit.kg, 0d,
+				compoList = new ArrayList<>();
+				CompoListDataItem parent11 = new CompoListDataItem(null, null, 1d, 0d, CompoListUnit.kg, 0d,
 						DeclarationType.Detail, localSF1NodeRef);
 				compoList.add(parent11);
 				compoList.add(new CompoListDataItem(null, parent11, 2d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
 				compoList.add(new CompoListDataItem(null, parent11, 2d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-				CompoListDataItem parent22 = new CompoListDataItem(null, (CompoListDataItem) null, 1d, 0d, CompoListUnit.kg, 0d,
+				CompoListDataItem parent22 = new CompoListDataItem(null, null, 1d, 0d, CompoListUnit.kg, 0d,
 						DeclarationType.Detail, localSF2NodeRef);
 				compoList.add(parent22);
 				compoList.add(new CompoListDataItem(null, parent22, 2d, 0d, CompoListUnit.P, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
@@ -168,7 +155,7 @@ public class CompareProductServiceTest extends AbstractCompareProductTest {
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
-				List<NodeRef> productsNodeRef = new ArrayList<NodeRef>();
+				List<NodeRef> productsNodeRef = new ArrayList<>();
 				productsNodeRef.add(fp2NodeRef);
 
 				List<CompareResultDataItem> compareResult = new ArrayList<>();
@@ -287,13 +274,13 @@ public class CompareProductServiceTest extends AbstractCompareProductTest {
 				FinishedProductData fp1 = new FinishedProductData();
 				fp1.setName("FP 1");
 
-				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail,
+				List<CompoListDataItem> compoList = new ArrayList<>();
+				compoList.add(new CompoListDataItem(null, null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail,
 						localSF1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare,
 						rawMaterial1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), 2d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail,
+				compoList.add(new CompoListDataItem(null, null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail,
 						localSF2NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(3), 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare,
 						rawMaterial3NodeRef));
@@ -315,10 +302,10 @@ public class CompareProductServiceTest extends AbstractCompareProductTest {
 				SemiFinishedProductData sf2 = new SemiFinishedProductData();
 				sf2.setName("SF 2");
 
-				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, 2d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare,
+				List<CompoListDataItem> compoList = new ArrayList<>();
+				compoList.add(new CompoListDataItem(null, null, 2d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare,
 						rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, 2d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail,
+				compoList.add(new CompoListDataItem(null, null, 2d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail,
 						rawMaterial2NodeRef));
 				sf2.getCompoListView().setCompoList(compoList);
 
@@ -327,20 +314,20 @@ public class CompareProductServiceTest extends AbstractCompareProductTest {
 				FinishedProductData fp2 = new FinishedProductData();
 				fp2.setName("FP 2");
 
-				compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail,
+				compoList = new ArrayList<>();
+				compoList.add(new CompoListDataItem(null, null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail,
 						localSF1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), 2d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare,
 						rawMaterial1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), 2d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail,
+				compoList.add(new CompoListDataItem(null, null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail,
 						localSF2NodeRef));
 				compoList
 						.add(new CompoListDataItem(null, compoList.get(3), 2d, 0d, CompoListUnit.P, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 				compoList
 						.add(new CompoListDataItem(null, compoList.get(3), 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial4NodeRef));
 				compoList
-						.add(new CompoListDataItem(null, (CompoListDataItem) null, 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, sf2NodeRef));
+						.add(new CompoListDataItem(null, null, 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, sf2NodeRef));
 				fp2.getCompoListView().setCompoList(compoList);
 
 				return alfrescoRepository.create(getTestFolderNodeRef(), fp2).getNodeRef();
@@ -353,8 +340,6 @@ public class CompareProductServiceTest extends AbstractCompareProductTest {
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
-				List<NodeRef> productsNodeRef = new ArrayList<NodeRef>();
-				productsNodeRef.add(fp2NodeRef);
 
 				Map<String, List<StructCompareResultDataItem>> structCompareResults = new HashMap<>();
 				compareEntityService.compareStructDatalist(fp1NodeRef, fp2NodeRef, PLMModel.TYPE_COMPOLIST, structCompareResults);
@@ -365,14 +350,14 @@ public class CompareProductServiceTest extends AbstractCompareProductTest {
 					String product1Name = "";
 					if (c.getCharacteristic1() != null) {
 						List<AssociationRef> compoAssocRefs = nodeService.getTargetAssocs(c.getCharacteristic1(), PLMModel.ASSOC_COMPOLIST_PRODUCT);
-						NodeRef productNodeRef = ((AssociationRef) compoAssocRefs.get(0)).getTargetRef();
+						NodeRef productNodeRef = compoAssocRefs.get(0).getTargetRef();
 						product1Name = (String) nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME);
 					}
 
 					String product2Name = "";
 					if (c.getCharacteristic2() != null) {
 						List<AssociationRef> compoAssocRefs = nodeService.getTargetAssocs(c.getCharacteristic2(), PLMModel.ASSOC_COMPOLIST_PRODUCT);
-						NodeRef productNodeRef = ((AssociationRef) compoAssocRefs.get(0)).getTargetRef();
+						NodeRef productNodeRef = compoAssocRefs.get(0).getTargetRef();
 						product2Name = (String) nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME);
 					}
 

@@ -41,7 +41,7 @@ import fr.becpg.tools.jdbc.JdbcConnectionManager.JdbcConnectionManagerCallBack;
  * 
  */
 public class RemoteETLClient {
-	private static Log logger = LogFactory.getLog(RemoteETLClient.class);
+	private static final Log logger = LogFactory.getLog(RemoteETLClient.class);
 	
 	public static void main(String[] args) throws Exception {
 

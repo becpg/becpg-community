@@ -44,7 +44,7 @@ public class AccentFilter extends TokenFilter {
 	 * @return
 	 */
 	private static HashMap<String,String> initSubstitutions() {
-		HashMap<String,String> retVal = new HashMap<String,String>(12);
+		HashMap<String,String> retVal = new HashMap<>(12);
 
 		retVal.put("Â", "A");
 		retVal.put("Ç", "C");
@@ -239,12 +239,10 @@ public class AccentFilter extends TokenFilter {
 		if (token == null)
 			return null;
 
-		Token ret = null;
-
 		String termText = token.termText();
 		termText = killAccent(termText);
 
-		ret =
+		Token ret =
 			new Token(
 				termText,
 				token.startOffset(),
@@ -262,7 +260,7 @@ public class AccentFilter extends TokenFilter {
 		for (int i = 0; i < chars.length; i++) {
 			if (substitutions.containsKey("" + chars[i])) {
 				chars[i] =
-					((String) substitutions.get(("" + chars[i]))).charAt(0);
+					substitutions.get(("" + chars[i])).charAt(0);
 			}
 		}
 

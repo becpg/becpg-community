@@ -55,7 +55,7 @@ public class ForumDataExtractor extends AbstractNodeDataExtractor  {
 		   NodeRef postNode = nodeService.getChildAssocs(topicNode).get(0).getChildRef();
 
 			
-			Map<String, Object> ret = new HashMap<String, Object>();
+			Map<String, Object> ret = new HashMap<>();
 			
 			 ret.put(PROP_NODEREF, topicNode.toString());
 			 ret.put(PROP_TAGS, attributeExtractorService.getTags(topicNode));

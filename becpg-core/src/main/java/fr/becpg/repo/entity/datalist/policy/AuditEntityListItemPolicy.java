@@ -27,10 +27,10 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy implements No
 		NodeServicePolicies.OnUpdateNodePolicy, NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnCreateAssociationPolicy,
 		NodeServicePolicies.OnDeleteAssociationPolicy {
 
-	private static String KEY_LIST_ITEM = "AuditEntityListItemPolicy.KeyListItem";
-	private static String KEY_LIST = "AuditEntityListItemPolicy.KeyList";
+	private static final String KEY_LIST_ITEM = "AuditEntityListItemPolicy.KeyListItem";
+	private static final String KEY_LIST = "AuditEntityListItemPolicy.KeyList";
 
-	private static Log logger = LogFactory.getLog(AuditEntityListItemPolicy.class);
+	private static final Log logger = LogFactory.getLog(AuditEntityListItemPolicy.class);
 
 	private AuthenticationService authenticationService;
 
@@ -84,7 +84,7 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy implements No
 		Set<NodeRef> listContainerNodeRefs = new HashSet<>();
 		for (NodeRef pendingNode : pendingNodes) {
 			if (nodeService.exists(pendingNode)) {
-				NodeRef listNodeRef = null;
+				NodeRef listNodeRef;
 				if (key.equals(KEY_LIST_ITEM)) {
 					listNodeRef = nodeService.getPrimaryParent(pendingNode).getParentRef();
 				} else {

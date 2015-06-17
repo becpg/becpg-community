@@ -14,7 +14,6 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.repository.AlfrescoRepository;
-import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.security.aop.SecurityMethodBeforeAdvice;
 
 public class FormulaService {
@@ -48,7 +47,7 @@ public class FormulaService {
 	public void registerCustomFunctions(StandardEvaluationContext context) {
 		context.setBeanResolver(new BeanResolver() {
 
-			SpelHelperFonctions spelHelperFonctions = new SpelHelperFonctions();
+			final SpelHelperFonctions spelHelperFonctions = new SpelHelperFonctions();
 
 			@Override
 			public Object resolve(EvaluationContext context, String beanName) throws AccessException {

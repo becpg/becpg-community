@@ -35,9 +35,9 @@ import fr.becpg.tools.http.AbstractHttpCommand;
 
 public class UploadQueryCommand extends AbstractHttpCommand {
 
-	private static String COMMAND_URL_TEMPLATE = "/api/upload";
-	private static String FILEBODY_CHARSET = "UTF-8";
-	private static String FILEBODY_MIMETYPE = "text/plain";
+	private static final String COMMAND_URL_TEMPLATE = "/api/upload";
+	private static final String FILEBODY_CHARSET = "UTF-8";
+	private static final String FILEBODY_MIMETYPE = "text/plain";
 
 	public UploadQueryCommand(String serverUrl) {
 		super(serverUrl);
@@ -60,9 +60,9 @@ public class UploadQueryCommand extends AbstractHttpCommand {
 
 				if (logger.isDebugEnabled()) {
 					logger.debug("Create upload post request");
-					logger.debug("destination=" + (String) params[0]);
-					logger.debug("filename=" + (String) params[1]);
-					logger.debug("filedata=" + (String) params[2]);
+					logger.debug("destination=" + params[0]);
+					logger.debug("filename=" + params[1]);
+					logger.debug("filedata=" + params[2]);
 				}
 
 			} else {
@@ -74,8 +74,8 @@ public class UploadQueryCommand extends AbstractHttpCommand {
 
 				if (logger.isDebugEnabled()) {
 					logger.debug("Update upload post request");
-					logger.debug("updatenoderef=" + (String) params[0]);
-					logger.debug("filedata=" + (String) params[1]);
+					logger.debug("updatenoderef=" + params[0]);
+					logger.debug("filedata=" + params[1]);
 				}
 			}
 			
@@ -128,16 +128,13 @@ public class UploadQueryCommand extends AbstractHttpCommand {
 				if (out == null) {
 					throw new IllegalArgumentException("Output stream may not be null");
 				}
-				InputStream in = getInputStream();
-				try {
+				try (InputStream in = getInputStream()) {
 					byte[] tmp = new byte[4096];
 					int l;
 					while ((l = in.read(tmp)) != -1) {
 						out.write(tmp, 0, l);
 					}
 					out.flush();
-				} finally {
-					in.close();
 				}
 			}
 

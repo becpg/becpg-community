@@ -23,7 +23,7 @@ import fr.becpg.tools.http.AbstractHttpCommand;
 
 public class DownloadQueryCommand  extends AbstractHttpCommand {
 
-	private static String COMMAND_URL_TEMPLATE = "/api/node/content/%s/%s";
+	private static final String COMMAND_URL_TEMPLATE = "/api/node/content/%s/%s";
 
 	
 	public DownloadQueryCommand(String serverUrl) {

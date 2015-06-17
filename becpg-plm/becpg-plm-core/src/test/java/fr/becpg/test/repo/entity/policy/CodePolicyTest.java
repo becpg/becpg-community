@@ -61,7 +61,7 @@ public class CodePolicyTest extends PLMBaseTestCase  {
 						// delete autonum value
 						autoNumService.deleteAutoNumValue(PLMModel.TYPE_SUPPLIER, BeCPGModel.PROP_CODE);
 
-						Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+						Map<QName, Serializable> properties = new HashMap<>();
 						String name = "Supplier 1";
 						properties.put(ContentModel.PROP_NAME, name);
 						return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
@@ -80,7 +80,7 @@ public class CodePolicyTest extends PLMBaseTestCase  {
 						assertNotNull("Check supplier created", supplier1NodeRef);
 						code1 = (String) nodeService.getProperty(supplier1NodeRef, BeCPGModel.PROP_CODE);
 
-						Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+						Map<QName, Serializable> properties = new HashMap<>();
 						String name = "Supplier 2";
 						properties.put(ContentModel.PROP_NAME, name);
 						return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
@@ -100,7 +100,7 @@ public class CodePolicyTest extends PLMBaseTestCase  {
 						code2 = (String) nodeService.getProperty(supplier2NodeRef, BeCPGModel.PROP_CODE);
 
 						// auto num defined not taken
-						Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+						Map<QName, Serializable> properties = new HashMap<>();
 						String name = "Supplier 3";
 						properties.put(ContentModel.PROP_NAME, name);
 						properties.put(BeCPGModel.PROP_CODE, "F3");
@@ -121,7 +121,7 @@ public class CodePolicyTest extends PLMBaseTestCase  {
 						code3 = (String) nodeService.getProperty(supplier3NodeRef, BeCPGModel.PROP_CODE);
 
 						// auto num defined but already taken
-						Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+						Map<QName, Serializable> properties = new HashMap<>();
 						String name = "Supplier 4";
 						properties.put(ContentModel.PROP_NAME, name);
 						properties.put(BeCPGModel.PROP_CODE, "F3");

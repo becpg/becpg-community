@@ -33,7 +33,7 @@ import fr.becpg.repo.admin.patch.AbstractBeCPGPatch;
  */
 public class BudgetPatch extends AbstractBeCPGPatch {
 
-	private static Log logger = LogFactory.getLog(BudgetPatch.class);
+	private static final Log logger = LogFactory.getLog(BudgetPatch.class);
 	private static final String MSG_SUCCESS = "patch.bcpg.projet.budgetPatch.result";
 	
 	public static final QName PROP_TL_ACTUAL_INVOICE = QName.createQName(ProjectModel.PROJECT_URI, "tlActualInvoice");
@@ -57,14 +57,14 @@ public class BudgetPatch extends AbstractBeCPGPatch {
 			AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
 			BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
-				final List<NodeRef> result = new ArrayList<NodeRef>();
+				final List<NodeRef> result = new ArrayList<>();
 
-				long maxNodeId = getPatchDAO().getMaxAdmNodeID();
+				final long maxNodeId = getPatchDAO().getMaxAdmNodeID();
 
 				long minSearchNodeId = 1;
 				long maxSearchNodeId = count;
 
-				Pair<Long, QName> val = getQnameDAO().getQName(ProjectModel.TYPE_TASK_LIST);
+				final Pair<Long, QName> val = getQnameDAO().getQName(ProjectModel.TYPE_TASK_LIST);
 
 				public int getTotalEstimatedWorkSize() {
 					return result.size();
@@ -96,7 +96,7 @@ public class BudgetPatch extends AbstractBeCPGPatch {
 				}
 			};
 
-			BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<NodeRef>("BudgetPatch",
+			BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("BudgetPatch",
 					transactionService.getRetryingTransactionHelper(), workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 1000);
 
 			BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {

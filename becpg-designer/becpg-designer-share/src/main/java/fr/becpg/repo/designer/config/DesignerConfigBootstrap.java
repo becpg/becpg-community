@@ -104,7 +104,7 @@ public class DesignerConfigBootstrap implements BeanNameAware, ConfigDeployer {
 	}
 
 	private List<String> processWildcards(List<String> configs) {
-		List<String> ret = new ArrayList<String>();
+		List<String> ret = new ArrayList<>();
 		for (String config : configs) {
 			ret.addAll(processWidlCards(config));
 		}
@@ -116,8 +116,8 @@ public class DesignerConfigBootstrap implements BeanNameAware, ConfigDeployer {
 	// file:C:\Alfresco\alf_data\*.xml
 
 	private List<String> processWidlCards(String sourceString) {
-		List<String> ret = new ArrayList<String>();
-		if (sourceString != null && sourceString.startsWith(PREFIX_FILE) && sourceString.indexOf(WILDCARD) != -1) {
+		List<String> ret = new ArrayList<>();
+		if (sourceString != null && sourceString.startsWith(PREFIX_FILE) && sourceString.contains(WILDCARD)) {
 			char separator = guessSeparator(sourceString);
 			logger.debug("processWildCards: " + sourceString);
 			File dir = new File(sourceString.substring(PREFIX_FILE.length(), sourceString.lastIndexOf(separator)));
@@ -125,9 +125,9 @@ public class DesignerConfigBootstrap implements BeanNameAware, ConfigDeployer {
 				FileFilter fileFilter = new WildcardFileFilter(sourceString.substring(sourceString.lastIndexOf(separator) + 1));
 				File[] files = dir.listFiles(fileFilter);
 				if (files != null) {
-					for (int i = 0; i < files.length; i++) {
-						logger.debug("Add config file : " + PREFIX_FILE + files[i].getAbsolutePath());
-						ret.add(PREFIX_FILE + files[i].getAbsolutePath());
+					for (File file : files) {
+						logger.debug("Add config file : " + PREFIX_FILE + file.getAbsolutePath());
+						ret.add(PREFIX_FILE + file.getAbsolutePath());
 					}
 				}
 			}

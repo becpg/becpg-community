@@ -14,7 +14,7 @@ import org.alfresco.service.namespace.QName;
  */
 public interface EntityReportExtractorPlugin {
 
-	public enum EntityReportExtractorPriority {
+	enum EntityReportExtractorPriority {
 		HIGHT, NORMAL, LOW, NONE;
 
 		public boolean isHigherPriority(EntityReportExtractorPriority compareTo) {
@@ -28,10 +28,10 @@ public interface EntityReportExtractorPlugin {
 		}
 	}
 
-	public EntityReportData extract(NodeRef entityNodeRef);
+	EntityReportData extract(NodeRef entityNodeRef);
 
-	public boolean shouldGenerateReport(NodeRef entityNodeRef);
+	boolean shouldGenerateReport(NodeRef entityNodeRef);
 
-	public EntityReportExtractorPriority getMatchPriority(QName type);
+	EntityReportExtractorPriority getMatchPriority(QName type);
 
 }

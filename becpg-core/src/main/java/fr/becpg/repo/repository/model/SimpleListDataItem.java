@@ -22,29 +22,29 @@ package fr.becpg.repo.repository.model;
 public interface SimpleListDataItem extends IManualDataItem, SimpleCharactDataItem, AspectAwareDataItem {
 
 
-	public Double getMini();
+	Double getMini();
 
-	public void setMini(Double value);
+	void setMini(Double value);
 
-	public Double getMaxi();
+	Double getMaxi();
 
-	public void setMaxi(Double value);
+	void setMaxi(Double value);
 	
-	public Integer getSort();
+	Integer getSort();
 	
-	public void setSort(Integer sort);
+	void setSort(Integer sort);
 	
-	public void setUnit(String unit);
+	void setUnit(String unit);
 	
-	public String getUnit();
+	String getUnit();
 
-	public Double getFormulatedValue();
+	Double getFormulatedValue();
 	
-	public Double getPreviousValue();
+	Double getPreviousValue();
 	
-	public void setPreviousValue(Double previousValue);
+	void setPreviousValue(Double previousValue);
 	
-	public Double getFutureValue();
+	Double getFutureValue();
 	
-	public void setFutureValue(Double futureValue);
+	void setFutureValue(Double futureValue);
 }

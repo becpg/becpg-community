@@ -18,8 +18,7 @@
 package fr.becpg.test.repo.ecm;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -30,12 +29,10 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.version.Version;
 import org.alfresco.service.cmr.version.VersionHistory;
 import org.alfresco.service.cmr.version.VersionService;
-import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
-import fr.becpg.model.PLMModel;
 import fr.becpg.repo.ecm.ECOService;
 import fr.becpg.repo.ecm.ECOState;
 import fr.becpg.repo.ecm.data.ChangeOrderData;
@@ -68,7 +65,7 @@ import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 public class ECOTest extends AbstractFinishedProductTest {
 
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(ECOTest.class);
+	private static final Log logger = LogFactory.getLog(ECOTest.class);
 
 	/** The product service. */
 	@Resource
@@ -116,23 +113,23 @@ public class ECOTest extends AbstractFinishedProductTest {
 				finishedProduct.setHierarchy2(HIERARCHY2_PIZZA_REF);
 				finishedProduct.setDensity(1d);
 				finishedProduct.setQty(2d);
-				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
+				List<CompoListDataItem> compoList = new ArrayList<>();
 
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
+				compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 
 				finishedProduct.getCompoListView().setCompoList(compoList);
 
-				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
+				List<CostListDataItem> costList = new ArrayList<>();
 				costList.add(new CostListDataItem(null, null, null, null, cost1, null));
 				costList.add(new CostListDataItem(null, null, null, null, cost2, null));
 				finishedProduct.setCostList(costList);
 
-				List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
+				List<NutListDataItem> nutList = new ArrayList<>();
 				nutList.add(new NutListDataItem(null, null, null, null, null, null, nut1, null));
 				nutList.add(new NutListDataItem(null, null, null, null, null, null, nut2, null));
 				finishedProduct.setNutList(nutList);
@@ -218,16 +215,16 @@ public class ECOTest extends AbstractFinishedProductTest {
 
 				logger.debug("create Change order to replace RM4: " + rawMaterial4NodeRef + " by RM5: " + rawMaterial5NodeRef);
 
-				List<NodeRef> calculatedCharacts = new ArrayList<NodeRef>();
+				List<NodeRef> calculatedCharacts = new ArrayList<>();
 				calculatedCharacts.add(cost1);
 				calculatedCharacts.add(cost2);
 				calculatedCharacts.add(nut1);
 				calculatedCharacts.add(nut2);
 				ChangeOrderData changeOrderData = new ChangeOrderData( "ECO", ECOState.ToCalculateWUsed, ChangeOrderType.Simulation, calculatedCharacts);
 
-				List<ReplacementListDataItem> replacementList = new ArrayList<ReplacementListDataItem>();
+				List<ReplacementListDataItem> replacementList = new ArrayList<>();
 
-				replacementList.add(new ReplacementListDataItem(RevisionType.Minor, Arrays.asList(rawMaterial4NodeRef), rawMaterial5NodeRef, 100));
+				replacementList.add(new ReplacementListDataItem(RevisionType.Minor, Collections.singletonList(rawMaterial4NodeRef), rawMaterial5NodeRef, 100));
 				changeOrderData.setReplacementList(replacementList);
 
 				NodeRef ecoNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), changeOrderData).getNodeRef();
@@ -401,19 +398,18 @@ public class ECOTest extends AbstractFinishedProductTest {
 				finishedProduct3.setQty(2d);
 				finishedProduct3.setHierarchy1(HIERARCHY1_SEA_FOOD_REF);
 				finishedProduct3.setHierarchy2(HIERARCHY2_CRUSTACEAN_REF);
-				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, 1d, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, finishedProduct1NodeRef));
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, 2d, 2d, CompoListUnit.kg, 0d, DeclarationType.Declare, finishedProduct2NodeRef));
+				List<CompoListDataItem> compoList = new ArrayList<>();
+				compoList.add(new CompoListDataItem(null, null, 1d, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, finishedProduct1NodeRef));
+				compoList.add(new CompoListDataItem(null, null, 2d, 2d, CompoListUnit.kg, 0d, DeclarationType.Declare, finishedProduct2NodeRef));
 				finishedProduct3.getCompoListView().setCompoList(compoList);
-				Collection<QName> dataLists = new ArrayList<QName>();
-				dataLists.add(PLMModel.TYPE_COMPOLIST);
 
-				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
+
+				List<CostListDataItem> costList = new ArrayList<>();
 				costList.add(new CostListDataItem(null, null, null, null, cost1, null));
 				costList.add(new CostListDataItem(null, null, null, null, cost2, null));
 				finishedProduct3.setCostList(costList);
 
-				List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
+				List<NutListDataItem> nutList = new ArrayList<>();
 				nutList.add(new NutListDataItem(null, null, null, null, null, null, nut1, null));
 				nutList.add(new NutListDataItem(null, null, null, null, null, null, nut2, null));
 				finishedProduct3.setNutList(nutList);
@@ -479,15 +475,15 @@ public class ECOTest extends AbstractFinishedProductTest {
 
 				logger.debug("create Change order to replace RM4: " + rawMaterial4NodeRef + " by RM5: " + rawMaterial5NodeRef);
 
-				List<NodeRef> calculatedCharacts = new ArrayList<NodeRef>();
+				List<NodeRef> calculatedCharacts = new ArrayList<>();
 				calculatedCharacts.add(cost1);
 				calculatedCharacts.add(cost2);
 				calculatedCharacts.add(nut1);
 				calculatedCharacts.add(nut2);
 				ChangeOrderData changeOrderData = new ChangeOrderData( "ECO", ECOState.ToCalculateWUsed, ChangeOrderType.Simulation, calculatedCharacts);
 
-				List<ReplacementListDataItem> replacementList = new ArrayList<ReplacementListDataItem>();
-				replacementList.add(new ReplacementListDataItem(RevisionType.Major, Arrays.asList(rawMaterial4NodeRef), rawMaterial5NodeRef, 100));
+				List<ReplacementListDataItem> replacementList = new ArrayList<>();
+				replacementList.add(new ReplacementListDataItem(RevisionType.Major, Collections.singletonList(rawMaterial4NodeRef), rawMaterial5NodeRef, 100));
 				changeOrderData.setReplacementList(replacementList);
 
 				NodeRef ecoNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), changeOrderData).getNodeRef();

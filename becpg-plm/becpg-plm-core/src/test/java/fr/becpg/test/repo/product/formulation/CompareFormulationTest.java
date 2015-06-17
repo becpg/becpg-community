@@ -17,7 +17,7 @@
  ******************************************************************************/
 package fr.becpg.test.repo.product.formulation;
 
-import java.util.Arrays;
+import java.util.Collections;
 
 import javax.annotation.Resource;
 
@@ -38,7 +38,7 @@ import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 
 public class CompareFormulationTest extends FormulationFullTest {
 
-	protected static Log logger = LogFactory.getLog(CompareFormulationTest.class);
+	protected static final Log logger = LogFactory.getLog(CompareFormulationTest.class);
 
 	@Resource
 	private AssociationService associationService;
@@ -60,7 +60,7 @@ public class CompareFormulationTest extends FormulationFullTest {
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 				public NodeRef execute() throws Throwable {
 
-					 associationService.update(finishedProductNodeRef1, BeCPGModel.ASSOC_COMPARE_WITH_ENTITIES, Arrays.asList(finishedProductNodeRef2));
+					 associationService.update(finishedProductNodeRef1, BeCPGModel.ASSOC_COMPARE_WITH_ENTITIES, Collections.singletonList(finishedProductNodeRef2));
 					
 					/*-- Formulate product --*/
 					logger.info("/*-- Formulate product --*/");

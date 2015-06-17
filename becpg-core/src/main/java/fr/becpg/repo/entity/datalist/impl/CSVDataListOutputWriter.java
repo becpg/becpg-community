@@ -17,7 +17,7 @@ import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtracto
 
 public class CSVDataListOutputWriter implements DataListOutputWriter{
 	
-	private DictionaryService dictionaryService;
+	private final DictionaryService dictionaryService;
 	
 
 	public CSVDataListOutputWriter(DictionaryService dictionaryService) {

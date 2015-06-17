@@ -18,7 +18,6 @@
 package fr.becpg.repo.olap.webscripts;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -43,7 +42,7 @@ public class OlapChartWebScript  extends AbstractWebScript
 {
 	
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(OlapChartWebScript.class);
+	private static final Log logger = LogFactory.getLog(OlapChartWebScript.class);
 	
 	// request parameter names
 	/** The Constant PARAM_ACTION. */
@@ -95,7 +94,7 @@ public class OlapChartWebScript  extends AbstractWebScript
 		
 	    	    		
 	    	} else {
-	    		List<OlapChart> charts = new ArrayList<OlapChart>(); 
+	    		List<OlapChart> charts = new ArrayList<>();
 	    		try {
 	    			charts=  olapService.retrieveOlapCharts();
 	    		} catch (Exception e) {
@@ -104,8 +103,7 @@ public class OlapChartWebScript  extends AbstractWebScript
 	    		
 	    		JSONObject ret = new JSONObject();
 	    		JSONArray obj = new JSONArray();
-		    	for (Iterator<OlapChart> iterator = charts.iterator(); iterator.hasNext();) {
-					OlapChart olapChart = iterator.next();
+				for (OlapChart olapChart : charts) {
 					obj.put(olapChart.toJSONObject());
 				}
 		    	ret.put("queries",obj);

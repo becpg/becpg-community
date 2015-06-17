@@ -46,11 +46,11 @@ public class JdbcConnectionManager {
 
 	private DataSource dataSource;
 
-	private static Log logger = LogFactory.getLog(JdbcConnectionManager.class);
+	private static final Log logger = LogFactory.getLog(JdbcConnectionManager.class);
 
 	public interface JdbcConnectionManagerCallBack {
 
-		public void execute(Connection connection) throws Exception;
+		void execute(Connection connection) throws Exception;
 
 	}
 
@@ -67,10 +67,10 @@ public class JdbcConnectionManager {
 			connection.commit();
 		}
 
-	};
+	}
 
 	public interface RowMapper<T> {
-		public T mapRow(ResultSet rs, int line) throws SQLException;
+		T mapRow(ResultSet rs, int line) throws SQLException;
 	}
 
 	public JdbcConnectionManager(String dbUser, String dbPassword, String dbConnectionUrl) {
@@ -106,12 +106,12 @@ public class JdbcConnectionManager {
 
 	public <T> List<T> list(String sql, RowMapper<T> rowMapper, Object[] objects) throws SQLException {
 
-		List<T> ret = new ArrayList<T>();
-		try (Connection connection = createConnection(); PreparedStatement pst = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);) {
+		List<T> ret = new ArrayList<>();
+		try (Connection connection = createConnection(); PreparedStatement pst = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 			for (int i = 0; i < objects.length; i++) {
 				pst.setObject(i + 1, objects[i]);
 			}
-			try (ResultSet rs = pst.executeQuery();) {
+			try (ResultSet rs = pst.executeQuery()) {
 				if (rs != null) {
 					int line = 0;
 					while (rs.next()) {

@@ -43,7 +43,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyCompletePolicy, EntityVersionPlugin {
 
-	private static Log logger = LogFactory.getLog(VariantPolicy.class);
+	private static final Log logger = LogFactory.getLog(VariantPolicy.class);
 
 	private CopyService copyService;
 

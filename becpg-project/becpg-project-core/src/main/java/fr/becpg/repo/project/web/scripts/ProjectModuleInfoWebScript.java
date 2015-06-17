@@ -45,7 +45,7 @@ import fr.becpg.repo.project.ProjectService;
  */
 public class ProjectModuleInfoWebScript extends AbstractWebScript {
 
-	private static Log logger = LogFactory.getLog(ProjectModuleInfoWebScript.class);
+	private static final Log logger = LogFactory.getLog(ProjectModuleInfoWebScript.class);
 
 	private static final String PARAM_SITE = "site";
 

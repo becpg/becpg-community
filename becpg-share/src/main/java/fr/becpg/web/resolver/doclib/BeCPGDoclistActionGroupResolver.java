@@ -32,7 +32,7 @@ import org.json.simple.JSONObject;
  */
 public class BeCPGDoclistActionGroupResolver implements DoclistActionGroupResolver {
 
-	private static Log logger = LogFactory.getLog(BeCPGDoclistActionGroupResolver.class);
+	private static final Log logger = LogFactory.getLog(BeCPGDoclistActionGroupResolver.class);
 
 	/**
 	 * Will return the action group id matching action group configs in a, i.e.

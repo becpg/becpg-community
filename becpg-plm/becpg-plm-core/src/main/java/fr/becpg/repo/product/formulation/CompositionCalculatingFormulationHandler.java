@@ -40,7 +40,7 @@ import fr.becpg.repo.variant.filters.VariantFilters;
 
 public class CompositionCalculatingFormulationHandler extends FormulationBaseHandler<ProductData> {
 
-	private static Log logger = LogFactory.getLog(CompositionCalculatingFormulationHandler.class);
+	private static final Log logger = LogFactory.getLog(CompositionCalculatingFormulationHandler.class);
 
 	private NodeService nodeService;
 
@@ -183,7 +183,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 
 		for (Composite<CompoListDataItem> component : composite.getChildren()) {
 
-			Double value = null;
+			Double value;
 
 			if (!component.isLeaf()) {
 				// calculate children
@@ -212,7 +212,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 						supplierNodeRefs.add(supplierNodeRef);
 					}
 				}
-				for (NodeRef plantNodeRef : ((RawMaterialData) productData).getPlants()) {
+				for (NodeRef plantNodeRef : productData.getPlants()) {
 					if (!plantNodeRefs.contains(plantNodeRef)) {
 						plantNodeRefs.add(plantNodeRef);
 					}

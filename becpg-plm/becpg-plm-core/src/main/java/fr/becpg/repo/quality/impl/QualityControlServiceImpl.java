@@ -59,7 +59,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 public class QualityControlServiceImpl implements QualityControlService {
 
-	private static Log logger = LogFactory.getLog(QualityControlServiceImpl.class);
+	private static final Log logger = LogFactory.getLog(QualityControlServiceImpl.class);
 
 	private final static String BATCH_SEPARATOR = "/";
 	private static final long HOUR = 3600 * 1000; // in milli-seconds.
@@ -100,7 +100,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 
 		logger.debug("createSamplingList");
 		QualityControlData qualityControlData = (QualityControlData) alfrescoRepository.findOne(qcNodeRef);
-		Map<NodeRef, WorkItemAnalysisData> wiaMap = new HashMap<NodeRef, WorkItemAnalysisData>();
+		Map<NodeRef, WorkItemAnalysisData> wiaMap = new HashMap<>();
 		createSamples(qualityControlData, controlPlanNodeRef, wiaMap);
 		alfrescoRepository.save(qualityControlData);
 	}
@@ -108,7 +108,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 	private void createSamples(QualityControlData qualityControlData, NodeRef controlPlanNodeRef, Map<NodeRef, WorkItemAnalysisData> wiaMap) {
 
 		logger.debug("createSamples");
-		List<SamplingListDataItem> samplingList = new ArrayList<SamplingListDataItem>();
+		List<SamplingListDataItem> samplingList = new ArrayList<>();
 		int samplesCounter = 0;
 		String batchId = qualityControlData.getBatchId();
 		Date batchStart = qualityControlData.getBatchStart();
@@ -132,20 +132,25 @@ public class QualityControlServiceImpl implements QualityControlService {
 				Date sampleDateTime = batchStart;
 
 				// per batch
-				if (freq.equals("/batch")) {
+				switch (freq) {
+					case "/batch":
 
-				} else if (freq.equals("/hour")) {
+						break;
+					case "/hour":
 
-					freqInHour = 1;
-					samplesToTake = batchDuration / freqInHour + 1;
-				} else if (freq.equals("/4hours")) {
+						freqInHour = 1;
+						samplesToTake = batchDuration / freqInHour + 1;
+						break;
+					case "/4hours":
 
-					freqInHour = 4;
-					samplesToTake = batchDuration / freqInHour + 1;
-				} else if (freq.equals("/8hours")) {
+						freqInHour = 4;
+						samplesToTake = batchDuration / freqInHour + 1;
+						break;
+					case "/8hours":
 
-					freqInHour = 8;
-					samplesToTake = batchDuration / freqInHour + 1;
+						freqInHour = 8;
+						samplesToTake = batchDuration / freqInHour + 1;
+						break;
 				}
 
 				// create samples to take
@@ -178,7 +183,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 		QualityControlData qualityControlData = (QualityControlData) alfrescoRepository.findOne(qcNodeRef);
 
 		ProductData productData = null;
-		ProductData productMicrobioCriteriaData = null;
+		ProductData productMicrobioCriteriaData;
 
 		if (qualityControlData.getProduct() != null) {
 
@@ -275,7 +280,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 							}
 						}
 
-						List<NodeRef> subList = new ArrayList<NodeRef>();
+						List<NodeRef> subList = new ArrayList<>();
 						subList.add(n);
 
 						controlList.add(new ControlListDataItem(null, cdl.getType(), mini, maxi, cdl.getRequired(), sl.getSampleId(), null, target,
@@ -388,7 +393,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 
 		for (NodeRef clNodeRef : clNodeRefs) {
 			Boolean isRequired = (Boolean) nodeService.getProperty(clNodeRef, QualityModel.PROP_CL_REQUIRED);
-			if (isRequired != null && isRequired.booleanValue()) {
+			if (isRequired != null && isRequired) {
 				isSampleControled = false;
 				break;
 			}
@@ -410,7 +415,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 
 		for (NodeRef clNodeRef : clNodeRefs) {
 			Boolean isRequired = (Boolean) nodeService.getProperty(clNodeRef, QualityModel.PROP_CL_REQUIRED);
-			if (isRequired != null && isRequired.booleanValue()) {
+			if (isRequired != null && isRequired) {
 				sampleState = QualityControlState.NonCompliant;
 				break;
 			}

@@ -43,7 +43,7 @@ public class ControlListDataItem extends BeCPGDataObject{
 	String unit;
 	QualityControlState state;		
 	NodeRef method;
-	List<NodeRef> characts = new ArrayList<NodeRef>();
+	List<NodeRef> characts = new ArrayList<>();
 	
 	@AlfProp
 	@AlfQname(qname = "qa:clType")

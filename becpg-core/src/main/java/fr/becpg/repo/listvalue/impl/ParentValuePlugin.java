@@ -44,7 +44,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 @Service
 public class ParentValuePlugin extends EntityListValuePlugin {
 	
-	private static Log logger = LogFactory.getLog(ParentValuePlugin.class);
+	private static final Log logger = LogFactory.getLog(ParentValuePlugin.class);
 
 	private static final String SOURCE_TYPE_PARENT_VALUE = "ParentValue";
 	
@@ -79,7 +79,7 @@ public class ParentValuePlugin extends EntityListValuePlugin {
 		Map<String, String> extras = (HashMap<String, String>) props.get(ListValueService.EXTRA_PARAM);
 		if (extras != null) {
 			if (extras.get("itemId") != null) {
-				itemId = new NodeRef((String) extras.get("itemId"));
+				itemId = new NodeRef(extras.get("itemId"));
 			}
 		}
 		

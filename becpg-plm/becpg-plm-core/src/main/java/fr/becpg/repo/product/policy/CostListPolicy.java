@@ -62,7 +62,7 @@ public class CostListPolicy extends AbstractBeCPGPolicy implements CopyServicePo
 		@Override
 		public boolean getMustCopy(QName classQName, CopyDetails copyDetails) {			
 			if (nodeService.hasAspect(entityListDAO.getEntity(copyDetails.getSourceNodeRef()), BeCPGModel.ASPECT_ENTITY_TPL)
-					&& associationService.getTargetAssocs(copyDetails.getSourceNodeRef(), PLMModel.ASSOC_PLANTS).isEmpty() == false) {
+					&& !associationService.getTargetAssocs(copyDetails.getSourceNodeRef(), PLMModel.ASSOC_PLANTS).isEmpty()) {
 				return false;
 			}
 			return true;

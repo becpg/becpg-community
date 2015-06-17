@@ -27,8 +27,8 @@ import fr.becpg.report.client.ReportFormat;
 
 public interface ReportTplService {
 
-	public static final String PARAM_VALUE_DESIGN_EXTENSION = ".rptdesign";
-	public static final String PARAM_VALUE_XLSXREPORT_EXTENSION = ".xlsx";
+	String PARAM_VALUE_DESIGN_EXTENSION = ".rptdesign";
+	String PARAM_VALUE_XLSXREPORT_EXTENSION = ".xlsx";
 	
 	
 	/**
@@ -37,7 +37,7 @@ public interface ReportTplService {
 	 * @param nodeType
 	 * @return the system report templates
 	 */
-	public List<NodeRef> getSystemReportTemplates(ReportType reportType, QName nodeType);
+	List<NodeRef> getSystemReportTemplates(ReportType reportType, QName nodeType);
 	
 	/**
 	 * Gets the system report template.
@@ -46,7 +46,7 @@ public interface ReportTplService {
 	 * @param tplName
 	 * @return
 	 */
-	public NodeRef getSystemReportTemplate(ReportType reportType, QName nodeType, String tplName);
+	NodeRef getSystemReportTemplate(ReportType reportType, QName nodeType, String tplName);
 	
 	/**
 	 * Get the user template by name
@@ -55,7 +55,7 @@ public interface ReportTplService {
 	 * @param tplName
 	 * @return
 	 */
-	public NodeRef getUserReportTemplate(ReportType reportType, QName nodeType, String tplName);
+	NodeRef getUserReportTemplate(ReportType reportType, QName nodeType, String tplName);
 	
 	/**
 	 * Gets the user report templates.
@@ -64,7 +64,7 @@ public interface ReportTplService {
 	 * @param tplName the tpl name
 	 * @return the user report templates
 	 */
-	public List<NodeRef> getUserReportTemplates(ReportType reportType, QName nodeType, String tplName);
+	List<NodeRef> getUserReportTemplates(ReportType reportType, QName nodeType, String tplName);
 	
 	/**
 	 * Create the rptdesign node for the report
@@ -80,7 +80,7 @@ public interface ReportTplService {
 	 * @return
 	 * @throws IOException
 	 */
-	public NodeRef createTplRptDesign(NodeRef parentNodeRef, String tplName, String tplFilePath, ReportType reportType, ReportFormat reportFormat, QName nodeType, boolean isSystemTpl, boolean isDefaultTpl, boolean overrideTpl) throws IOException;
+	NodeRef createTplRptDesign(NodeRef parentNodeRef, String tplName, String tplFilePath, ReportType reportType, ReportFormat reportFormat, QName nodeType, boolean isSystemTpl, boolean isDefaultTpl, boolean overrideTpl) throws IOException;
 	
 	/**
 	 * Create a resource for the report
@@ -89,7 +89,7 @@ public interface ReportTplService {
 	 * @param overrideRessource
 	 * @throws IOException
 	 */
-	public void createTplRessource(NodeRef parentNodeRef, String xmlFilePath, boolean overrideRessource) throws IOException;
+	void createTplRessource(NodeRef parentNodeRef, String xmlFilePath, boolean overrideRessource) throws IOException;
 	
 	/**
 	 * Check the default reports (return one default tpl)
@@ -97,19 +97,19 @@ public interface ReportTplService {
 	 * @param tplsNodeRef
 	 * @return
 	 */
-	public List<NodeRef> cleanDefaultTpls(List<NodeRef> tplsNodeRef);
+	List<NodeRef> cleanDefaultTpls(List<NodeRef> tplsNodeRef);
 	
 	/**
 	 * Get the report format
 	 * @param tplNodeRef
 	 * @return
 	 */
-	public ReportFormat getReportFormat(NodeRef tplNodeRef);
+	ReportFormat getReportFormat(NodeRef tplNodeRef);
 
 	/**
 	 * Get the template associated to the report
 	 * @param nodeRef
 	 * @return
 	 */
-	public NodeRef getAssociatedReportTemplate(NodeRef nodeRef);
+	NodeRef getAssociatedReportTemplate(NodeRef nodeRef);
 }

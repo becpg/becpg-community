@@ -45,7 +45,7 @@ import fr.becpg.test.repo.product.AbstractFinishedProductTest;
  */
 public class FormulationProductWithoutQtyTest extends AbstractFinishedProductTest {
 
-	protected static Log logger = LogFactory.getLog(FormulationFullTest.class);
+	protected static final Log logger = LogFactory.getLog(FormulationFullTest.class);
 	
 	@Override
 	public void setUp() throws Exception {
@@ -73,21 +73,21 @@ public class FormulationProductWithoutQtyTest extends AbstractFinishedProductTes
 				finishedProduct.setName("Produit fini 1");
 				finishedProduct.setLegalName("Legal Produit fini 1");
 				finishedProduct.setUnit(ProductUnit.kg);				
-				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
+				List<CompoListDataItem> compoList = new ArrayList<>();
+				compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, CompoListUnit.g, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
 				
-				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
+				List<CostListDataItem> costList = new ArrayList<>();
 				costList.add(new CostListDataItem(null, null, null, null, cost1, null));
 				costList.add(new CostListDataItem(null, null, null, null, cost2, null));
 				finishedProduct.setCostList(costList);
 
-				List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
+				List<NutListDataItem> nutList = new ArrayList<>();
 				nutList.add(new NutListDataItem(null, null, null, null, null, null, nut1, null));
 				nutList.add(new NutListDataItem(null, null, null, null, null, null, nut2, null));
 				finishedProduct.setNutList(nutList);
@@ -166,21 +166,21 @@ public class FormulationProductWithoutQtyTest extends AbstractFinishedProductTes
 				finishedProduct.setName("Produit fini 1");
 				finishedProduct.setLegalName("Legal Produit fini 1");
 				finishedProduct.setUnit(ProductUnit.P);
-				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 42d, CompoListUnit.g, 0d, DeclarationType.Detail, localSF1NodeRef));
+				List<CompoListDataItem> compoList = new ArrayList<>();
+				compoList.add(new CompoListDataItem(null, null, null, 42d, CompoListUnit.g, 0d, DeclarationType.Detail, localSF1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 40d, CompoListUnit.g, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, CompoListUnit.mL, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 30d, CompoListUnit.g, 0d, DeclarationType.Detail, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, null, null, 30d, CompoListUnit.g, 0d, DeclarationType.Detail, localSF2NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 30d, CompoListUnit.g, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 0.05d, CompoListUnit.P, 0d, DeclarationType.Omit, rawMaterial5NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);				
 
-				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
+				List<CostListDataItem> costList = new ArrayList<>();
 				costList.add(new CostListDataItem(null, null, null, null, cost1, null));
 				costList.add(new CostListDataItem(null, null, null, null, cost2, null));
 				finishedProduct.setCostList(costList);
 
-				List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
+				List<NutListDataItem> nutList = new ArrayList<>();
 				nutList.add(new NutListDataItem(null, null, null, null, null, null, nut1, null));
 				nutList.add(new NutListDataItem(null, null, null, null, null, null, nut2, null));
 				finishedProduct.setNutList(nutList);

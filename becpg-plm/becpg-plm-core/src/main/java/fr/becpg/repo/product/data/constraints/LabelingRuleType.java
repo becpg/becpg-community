@@ -46,6 +46,6 @@ public enum LabelingRuleType {
 	
 	DoNotDeclare, 
 	
-	Prefs;
+	Prefs
 
 }

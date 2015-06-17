@@ -19,8 +19,8 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  */
 package fr.becpg.repo.helper;
 
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -44,7 +44,7 @@ public class LabelClaimExtractorPlugin implements AttributeExtractorPlugin {
 
 	@Override
 	public Collection<QName> getMatchingTypes() {
-		return Arrays.asList(PLMModel.TYPE_LABEL_CLAIM);
+		return Collections.singletonList(PLMModel.TYPE_LABEL_CLAIM);
 	}
 
 	@Override

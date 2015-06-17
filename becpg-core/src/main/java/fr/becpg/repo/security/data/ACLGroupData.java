@@ -33,7 +33,7 @@ public class ACLGroupData extends BeCPGDataObject {
 
 	private String nodeType;
 	
-	List<ACLEntryDataItem> acls = new ArrayList<ACLEntryDataItem>();
+	List<ACLEntryDataItem> acls = new ArrayList<>();
 
 	@DataList
 	@AlfQname(qname = "sec:aclEntry")
