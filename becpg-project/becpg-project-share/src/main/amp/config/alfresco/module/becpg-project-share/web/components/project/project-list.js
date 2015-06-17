@@ -310,6 +310,15 @@ var g; // gantt var
 
                                             }
 
+                                            var pParent = projectId;
+
+                                            if (task["itemData"]["prop_bcpg_parentLevel"].value != null)
+                                            {
+                                                  pParent = task["itemData"]["prop_bcpg_parentLevel"].value;
+                                            }
+                                            var pGroup = !task["itemData"]["prop_pjt_tlIsGroup"].value ? 0 : 1;
+
+
                                             var tlIsMilestone = task["itemData"]["prop_pjt_tlIsMilestone"].value;
                                             var tlPercent = task["itemData"]["prop_pjt_completionPercent"].value;
 
@@ -326,7 +335,7 @@ var g; // gantt var
                                             g.AddTaskItem(new JSGantt.TaskItem(taskId, this.getTaskTitle(task,
                                                     oData.nodeRef, tdates.start), tdates.start, tdates.end, this
                                                     .getTaskColor(task), null, tlIsMilestone ? 1 : 0, taskOwner,
-                                                    tlPercent, 0, projectId, 1, precTaskIds));
+                                                    tlPercent, pGroup, pParent, 1, precTaskIds));
 
                                         }
 
