@@ -60,7 +60,7 @@ public class MetaModelVisitor {
 
 	private NamespaceService namespaceService;
 
-	private static Log logger = LogFactory.getLog(MetaModelVisitor.class);
+	private static final Log logger = LogFactory.getLog(MetaModelVisitor.class);
 
 	/**
 	 * @return the nodeService
@@ -97,7 +97,7 @@ public class MetaModelVisitor {
 	public void visitModelNodeRef(NodeRef modelNodeRef, Object model) throws IllegalArgumentException,
 			IllegalAccessException, InvocationTargetException {
 
-		List<Class<?>> classes = new ArrayList<Class<?>>();
+		List<Class<?>> classes = new ArrayList<>();
 		classes.add(model.getClass());
 		classes.add(model.getClass().getSuperclass());
 
@@ -159,7 +159,7 @@ public class MetaModelVisitor {
 
 	private QName getNodeTypeQName(Object m2Object, Object model) {
 
-		String name = "string";
+		String name;
 		
 		if(m2Object instanceof M2Constraint && (model instanceof M2Property || model instanceof M2PropertyOverride)){
 			name = "constraintRef";
@@ -168,8 +168,7 @@ public class MetaModelVisitor {
 			Class<?> fieldArgClass = m2Object.getClass();
 			name = fieldArgClass.getSimpleName().replace("M2", "");
 	
-			name = new StringBuffer(name.length()).append(Character.toLowerCase(name.charAt(0))).append(name.substring(1))
-					.toString();
+			name = String.valueOf(Character.toLowerCase(name.charAt(0))) + name.substring(1);
 		}
 		return QName.createQName(DesignerModel.M2_URI, name);
 	}
@@ -187,8 +186,7 @@ public class MetaModelVisitor {
 				Class<?> fieldArgClass = (Class<?>) fieldArgType;
 				name = fieldArgClass.getSimpleName().replace("M2", "");
 
-				name = new StringBuffer(name.length()).append(Character.toLowerCase(name.charAt(0)))
-						.append(name.substring(1)).toString();
+				name = String.valueOf(Character.toLowerCase(name.charAt(0))) + name.substring(1);
 				break;
 			}
 		}
@@ -224,7 +222,7 @@ public class MetaModelVisitor {
 		//Set properties
 		for(Entry<QName, Serializable> entry : props.entrySet()){
 			if(entry.getKey().getNamespaceURI().equals(DesignerModel.M2_URI)){
-				Method setterMethod = null;
+				Method setterMethod;
 				if(entry.getKey().getLocalName().equals("mandatoryAspects")){
 					if(entry.getValue() !=null ){
 						@SuppressWarnings("unchecked")
@@ -252,7 +250,7 @@ public class MetaModelVisitor {
 		 
 		 for(ChildAssociationRef assoc : assocs){
 			 NodeRef childRef = assoc.getChildRef();
-			 Method createAssocMethod = null;
+			 Method createAssocMethod;
 			 if(assoc.getQName().getNamespaceURI().equals(DesignerModel.M2_URI)){
 				 if(assoc.getQName().equals(DesignerModel.ASSOC_M2_CONSTRAINTS)
 						 && (nodeService.getType(modelNodeRef).equals(DesignerModel.TYPE_M2_PROPERTY)

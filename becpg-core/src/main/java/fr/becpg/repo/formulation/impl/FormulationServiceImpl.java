@@ -46,9 +46,9 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 
 	AlfrescoRepository<T> alfrescoRepository;
 	
-	private Map<Class<T>,Map<String,FormulationChain<T>> > formulationChains = new HashMap<>();
+	private final Map<Class<T>,Map<String,FormulationChain<T>> > formulationChains = new HashMap<>();
 
-	private static Log logger = LogFactory.getLog(FormulationServiceImpl.class);
+	private static final Log logger = LogFactory.getLog(FormulationServiceImpl.class);
 	
 
 	public void setAlfrescoRepository(AlfrescoRepository<T> alfrescoRepository) {
@@ -98,7 +98,8 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 		entity = formulate(entity,chainId);
 		
 		if(logger.isDebugEnabled()){
-        	watch.stop();
+			assert watch != null;
+			watch.stop();
         	logger.debug("Formulate : "+this.getClass().getName()+" takes " + watch.getTotalTimeSeconds() + " seconds");
         	watch = new StopWatch();
 			watch.start();
@@ -107,7 +108,8 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 		alfrescoRepository.save(entity);
 		
 		if(logger.isDebugEnabled()){
-        	watch.stop();
+			assert watch != null;
+			watch.stop();
         	logger.debug("Save : "+this.getClass().getName()+" takes " + watch.getTotalTimeSeconds() + " seconds");
         }
 

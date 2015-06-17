@@ -37,7 +37,7 @@ import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
 public class FormulationCalcILWithYieldOnCompTest extends AbstractFinishedProductTest {
 
-	protected static Log logger = LogFactory.getLog(FormulationCalcILWithYieldOnCompTest.class);
+	protected static final Log logger = LogFactory.getLog(FormulationCalcILWithYieldOnCompTest.class);
 
 	@Override
 	public void setUp() throws Exception {
@@ -65,10 +65,10 @@ public class FormulationCalcILWithYieldOnCompTest extends AbstractFinishedProduc
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(4d);
 				finishedProduct.setDensity(1d);
-				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 1d, CompoListUnit.kg, 10d, DeclarationType.Declare, rawMaterial1NodeRef));
+				List<CompoListDataItem> compoList = new ArrayList<>();
+				compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 10d, DeclarationType.Declare, rawMaterial1NodeRef));
 				
-				CompoListDataItem temp = new CompoListDataItem(null, (CompoListDataItem)null, null, 3d, CompoListUnit.kg, 10d, DeclarationType.Declare, rawMaterial2NodeRef);
+				CompoListDataItem temp = new CompoListDataItem(null, null, null, 3d, CompoListUnit.kg, 10d, DeclarationType.Declare, rawMaterial2NodeRef);
 				temp.setYieldPerc(200d);
 				compoList.add(temp); 
 
@@ -119,8 +119,8 @@ public class FormulationCalcILWithYieldOnCompTest extends AbstractFinishedProduc
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
 				finishedProduct.setDensity(1d);
-				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 65d, CompoListUnit.g, null, DeclarationType.Declare, localSF1NodeRef));
+				List<CompoListDataItem> compoList = new ArrayList<>();
+				compoList.add(new CompoListDataItem(null, null, null, 65d, CompoListUnit.g, null, DeclarationType.Declare, localSF1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 80d, CompoListUnit.Perc, null, DeclarationType.Declare, rawMaterial1NodeRef));
 				CompoListDataItem temp = new CompoListDataItem(null, compoList.get(0), null, 10d, CompoListUnit.Perc, null, DeclarationType.Declare, rawMaterial2NodeRef);
 				temp.setYieldPerc(200d);

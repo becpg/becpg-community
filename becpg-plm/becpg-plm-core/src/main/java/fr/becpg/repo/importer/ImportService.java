@@ -3,14 +3,11 @@
  */
 package fr.becpg.repo.importer;
 
-import java.io.IOException;
-import java.text.ParseException;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface ImportService.
  *
@@ -24,15 +21,15 @@ public interface ImportService {
 	 * @param nodeRef the node ref
 	 * @param doUpdate the do update
 	 */
-	public List<String> importText(NodeRef nodeRef, boolean doUpdate, boolean requiresNewTransaction) throws  ImporterException, IOException, ParseException, Exception;
+	List<String> importText(NodeRef nodeRef, boolean doUpdate, boolean requiresNewTransaction) throws Exception;
 	
 	/**
 	 * Move the imported file in the Succeeded or Failed folder
 	 * @param nodeRef
 	 * @param hasFailed
 	 */
-	public void moveImportedFile(NodeRef nodeRef, boolean hasFailed, String titleLog, String fileLog);
+	void moveImportedFile(NodeRef nodeRef, boolean hasFailed, String titleLog, String fileLog);
 
 	
-	public void writeLogInFileTitle( NodeRef nodeRef,String log, boolean hasFailed);
+	void writeLogInFileTitle(NodeRef nodeRef, String log, boolean hasFailed);
 }

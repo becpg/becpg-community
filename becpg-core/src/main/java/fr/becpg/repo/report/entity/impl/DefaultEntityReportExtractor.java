@@ -95,11 +95,11 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	private static final String REGEX_REMOVE_CHAR = "[^\\p{L}\\p{N}]";
 
-	protected static final ArrayList<QName> hiddenNodeAttributes = new ArrayList<QName>(Arrays.asList(ContentModel.PROP_NODE_REF,
+	protected static final ArrayList<QName> hiddenNodeAttributes = new ArrayList<>(Arrays.asList(ContentModel.PROP_NODE_REF,
 			ContentModel.PROP_NODE_DBID, ContentModel.PROP_NODE_UUID, ContentModel.PROP_STORE_IDENTIFIER, ContentModel.PROP_STORE_NAME,
 			ContentModel.PROP_STORE_PROTOCOL, ContentModel.PROP_CONTENT));
 
-	protected static final ArrayList<QName> hiddenDataListItemAttributes = new ArrayList<QName>(Arrays.asList(ContentModel.PROP_CREATED, ContentModel.PROP_CREATOR, ContentModel.PROP_MODIFIED, ContentModel.PROP_MODIFIER));
+	protected static final ArrayList<QName> hiddenDataListItemAttributes = new ArrayList<>(Arrays.asList(ContentModel.PROP_CREATED, ContentModel.PROP_CREATOR, ContentModel.PROP_MODIFIED, ContentModel.PROP_MODIFIER));
 
 	@Autowired
 	protected DictionaryService dictionaryService;
@@ -138,7 +138,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 		Document document = DocumentHelper.createDocument();
 		Element entityElt = document.addElement(TAG_ENTITY);
-		Map<String, byte[]> images = new HashMap<String, byte[]>();
+		Map<String, byte[]> images = new HashMap<>();
 
 		// add attributes at <product/> tag
 		loadNodeAttributes(entityNodeRef, entityElt, true);
@@ -259,14 +259,14 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			}
 
 			// associations
-			Map<QName, List<AssociationRef>> tempHashMap = new HashMap<QName, List<AssociationRef>>();
+			Map<QName, List<AssociationRef>> tempHashMap = new HashMap<>();
 			List<AssociationRef> associations = nodeService.getTargetAssocs(nodeRef, RegexQNamePattern.MATCH_ALL);
 
 			for (AssociationRef assocRef : associations) {
 				QName qName = assocRef.getTypeQName();
 				List<AssociationRef> assocRefs = tempHashMap.get(qName);
 				if (assocRefs == null) {
-					assocRefs = new ArrayList<AssociationRef>();
+					assocRefs = new ArrayList<>();
 					tempHashMap.put(qName, assocRefs);
 				}
 				assocRefs.add(assocRef);

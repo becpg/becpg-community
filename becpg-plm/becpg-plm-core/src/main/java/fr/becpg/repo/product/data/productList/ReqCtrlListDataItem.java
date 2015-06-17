@@ -37,7 +37,7 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 	private RequirementType reqType;
 	private String reqMessage;
 	private Integer sort;
-	private List<NodeRef> sources = new ArrayList<NodeRef>();
+	private List<NodeRef> sources = new ArrayList<>();
 
 	@AlfProp
 	@AlfQname(qname="bcpg:rclReqType")

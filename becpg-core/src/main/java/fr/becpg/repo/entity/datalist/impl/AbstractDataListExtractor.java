@@ -114,7 +114,7 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 	public static final String PROP_VERSION = "version";
 	public static final String PROP_COLOR = "color";
 
-	private static Log logger = LogFactory.getLog(AbstractNodeDataExtractor.class);
+	private static final Log logger = LogFactory.getLog(AbstractNodeDataExtractor.class);
 	
 	
 	public void init(){
@@ -140,7 +140,7 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 			Map<QName,Serializable> properties = nodeService.getProperties(nodeRef);
 			
 
-			Map<String, Object> ret = new HashMap<String, Object>(20);
+			Map<String, Object> ret = new HashMap<>(20);
 
 			ret.put(PROP_NODE, nodeRef);
 		
@@ -159,8 +159,8 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 			}
 
 
-			Map<String, Object> permissions = new HashMap<String, Object>(1);
-			Map<String, Boolean> userAccess = new HashMap<String, Boolean>(5);
+			Map<String, Object> permissions = new HashMap<>(1);
+			Map<String, Boolean> userAccess = new HashMap<>(5);
 
 			boolean accessRight = (Boolean) (props.get(PROP_ACCESSRIGHT) != null ? props.get(PROP_ACCESSRIGHT) : false);
 
@@ -190,10 +190,10 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 			SiteService siteService = services.getSiteService();
 			
 			
-			SiteInfo site = null;
+			SiteInfo site;
 			if(siteId!=null){
 				
-					Map<String, Object> siteData = new HashMap<String, Object>();
+					Map<String, Object> siteData = new HashMap<>();
 					siteData.put(PROP_SHORTNAME, siteId);
 					site = siteService.getSite(siteId);
 					if(site!=null){		
@@ -248,7 +248,7 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 	}
 
 	protected Map<String, String> extractPerson(String person) {
-		Map<String, String>  ret =  new HashMap<String, String>(2);
+		Map<String, String>  ret = new HashMap<>(2);
 		ret.put("value", person);
 		ret.put("displayValue", attributeExtractorService.getPersonDisplayName(person));
 		return ret;

@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
@@ -54,7 +55,7 @@ import fr.becpg.repo.designer.data.FormControl;
  */
 public class FormModelVisitor {
 
-	private static Log logger = LogFactory.getLog(FormModelVisitor.class);
+	private static final Log logger = LogFactory.getLog(FormModelVisitor.class);
 
 	private NodeService nodeService;
 
@@ -77,7 +78,7 @@ public class FormModelVisitor {
 	 * @throws FactoryConfigurationError
 	 */
 	public List<FormControl> visitControls(InputStream is) throws SAXException, IOException, ParserConfigurationException, FactoryConfigurationError {
-		List<FormControl> ret = new LinkedList<FormControl>();
+		List<FormControl> ret = new LinkedList<>();
 
 		Document doc = DOMUtils.parse(is);
 
@@ -233,7 +234,7 @@ public class FormModelVisitor {
 			}
 		}
 
-		el.setAttribute("force", ((Boolean) nodeService.getProperty(fieldNodeRef, DesignerModel.PROP_DSG_FORCE)).toString());
+		el.setAttribute("force", nodeService.getProperty(fieldNodeRef, DesignerModel.PROP_DSG_FORCE).toString());
 
 		Element field = DOMUtils.createElement(appearance, "field");
 		field.setAttribute("id", (String) nodeService.getProperty(fieldNodeRef, DesignerModel.PROP_DSG_ID));
@@ -246,8 +247,8 @@ public class FormModelVisitor {
 		appendAtt(field, "description-id", fieldNodeRef, DesignerModel.PROP_DSG_DESCRIPTIONID);
 		appendAtt(field, "help", fieldNodeRef, DesignerModel.PROP_DSG_HELP);
 		appendAtt(field, "help-id", fieldNodeRef, DesignerModel.PROP_DSG_HELPID);
-		field.setAttribute("read-only", ((Boolean) nodeService.getProperty(fieldNodeRef, DesignerModel.PROP_DSG_READONLY)).toString());
-		field.setAttribute("mandatory", ((Boolean) nodeService.getProperty(fieldNodeRef, DesignerModel.PROP_DSG_MANDATORY)).toString());
+		field.setAttribute("read-only", nodeService.getProperty(fieldNodeRef, DesignerModel.PROP_DSG_READONLY).toString());
+		field.setAttribute("mandatory", nodeService.getProperty(fieldNodeRef, DesignerModel.PROP_DSG_MANDATORY).toString());
 
 		List<ChildAssociationRef> assocs = nodeService.getChildAssocs(fieldNodeRef);
 
@@ -405,7 +406,7 @@ public class FormModelVisitor {
 				nodeService.setProperty(setNodeRef, DesignerModel.PROP_DSG_LABEL, elem.getAttribute("label"));
 				nodeService.setProperty(setNodeRef, DesignerModel.PROP_DSG_LABELID, elem.getAttribute("label-id"));
 				nodeService.setProperty(setNodeRef,BeCPGModel.PROP_SORT,sortOrder);
-				if (setId != parentId) {
+				if (!Objects.equals(setId, parentId)) {
 					visitFormSets(setNodeRef, parentEl, setId);
 				}
 				visitFormFields(setNodeRef, parentEl, setId, 0);
@@ -448,7 +449,7 @@ public class FormModelVisitor {
 					}
 				}
 			}
-			if (setId == "" && !added) {
+			if (Objects.equals(setId, "") && !added) {
 				createField(nodeRef, elem, null, show, sortOrder);
 			}
 			sortOrder+=i*100;
@@ -515,7 +516,7 @@ public class FormModelVisitor {
 	public NodeRef visitM2Type(NodeRef from, NodeRef to) {
 		String typeName = (String) nodeService.getProperty(from, DesignerModel.PROP_M2_NAME);
 		String parentName = (String) nodeService.getProperty(from, DesignerModel.PROP_M2_PARENT_NAME);
-		NodeRef configElNodeRef = null;
+		NodeRef configElNodeRef;
 
 		if ("bpm:activitiStartTask".equals(parentName) || "bpm:startTask".equals(parentName) || "bpm:workflowTask".equals(parentName)) {
 

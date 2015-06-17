@@ -72,7 +72,7 @@ import fr.becpg.repo.helper.TranslateHelper;
 @Service("entityService")
 public class EntityServiceImpl implements EntityService {
 
-	private static Log logger = LogFactory.getLog(EntityServiceImpl.class);
+	private static final Log logger = LogFactory.getLog(EntityServiceImpl.class);
 
 	@Autowired
 	private NodeService nodeService;
@@ -137,7 +137,7 @@ public class EntityServiceImpl implements EntityService {
 
 		NodeRef imagesFolderNodeRef = getImageFolder(nodeRef);
 
-		List<NodeRef> ret = new ArrayList<NodeRef>();
+		List<NodeRef> ret = new ArrayList<>();
 
 		List<FileInfo> files = fileFolderService.listFiles(imagesFolderNodeRef);
 		for (FileInfo file : files) {
@@ -215,7 +215,7 @@ public class EntityServiceImpl implements EntityService {
 			// create file if it doesn't exist
 			NodeRef fileNodeRef = nodeService.getChildByName(imagesFolderNodeRef, ContentModel.ASSOC_CONTAINS, filename);
 			if (fileNodeRef == null) {
-				Map<QName, Serializable> fileProperties = new HashMap<QName, Serializable>();
+				Map<QName, Serializable> fileProperties = new HashMap<>();
 				fileProperties.put(ContentModel.PROP_NAME, filename);
 				fileNodeRef = nodeService.createNode(imagesFolderNodeRef, ContentModel.ASSOC_CONTAINS,
 						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(filename)), ContentModel.TYPE_CONTENT,
@@ -224,7 +224,7 @@ public class EntityServiceImpl implements EntityService {
 
 			String mimetype = mimetypeService.guessMimetype(filename);
 
-			BufferedImage bufferedImage = null;
+			BufferedImage bufferedImage;
 			OutputStream out = null;
 			try {
 				bufferedImage = ImageIO.read(new ByteArrayInputStream(image.getValue()));
@@ -281,7 +281,7 @@ public class EntityServiceImpl implements EntityService {
 	public NodeRef createDefaultImage(NodeRef entityNodeRef) {
 		NodeRef imagesFolderNodeRef = getOrCreateImageFolder(entityNodeRef);
 		String name = getDefaultImageName(nodeService.getType(entityNodeRef));
-		Map<QName, Serializable> props = new HashMap<QName, Serializable>();
+		Map<QName, Serializable> props = new HashMap<>();
 		props.put(ContentModel.PROP_NAME, name);
 
 		logger.info("Create new Image node: " + name + " under " + imagesFolderNodeRef);
@@ -308,8 +308,8 @@ public class EntityServiceImpl implements EntityService {
 
 	@Override
 	public NodeRef createOrCopyFrom(final NodeRef sourceNodeRef, final NodeRef parentNodeRef, final QName entityType, final String entityName) {
-		NodeRef ret = null;
-		Map<QName, Serializable> props = new HashMap<QName, Serializable>();
+		NodeRef ret;
+		Map<QName, Serializable> props = new HashMap<>();
 		props.put(ContentModel.PROP_NAME, entityName);
 
 		if (sourceNodeRef != null && nodeService.exists(sourceNodeRef)) {

@@ -23,8 +23,8 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem {
 	private Double qtyPerc;
 	private Boolean voluntary = false;
 	private Boolean inVoluntary = false;
-	private List<NodeRef> voluntarySources = new ArrayList<NodeRef>();
-	private List<NodeRef> inVoluntarySources = new ArrayList<NodeRef>();
+	private List<NodeRef> voluntarySources = new ArrayList<>();
+	private List<NodeRef> inVoluntarySources = new ArrayList<>();
 	private NodeRef allergen;
 	
 	

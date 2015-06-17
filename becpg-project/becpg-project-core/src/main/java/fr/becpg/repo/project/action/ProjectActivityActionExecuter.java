@@ -48,7 +48,7 @@ public class ProjectActivityActionExecuter extends ActionExecuterAbstractBase {
 	
 	public static final String PARAM_ACTIVITY_EVENT = "activityEvent";
 
-	private Log logger = LogFactory.getLog(ProjectActivityActionExecuter.class);
+	private final Log logger = LogFactory.getLog(ProjectActivityActionExecuter.class);
 
 	private ProjectActivityService projectActivityService;
 	

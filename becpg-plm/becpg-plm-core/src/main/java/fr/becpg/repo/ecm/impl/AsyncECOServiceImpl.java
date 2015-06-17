@@ -22,7 +22,7 @@ public class AsyncECOServiceImpl implements AsyncECOService {
 	@Autowired
 	ECOService ecoService;
 
-	private static Log logger = LogFactory.getLog(AsyncECOServiceImpl.class);
+	private static final Log logger = LogFactory.getLog(AsyncECOServiceImpl.class);
 
 	@Autowired
 	@Qualifier("ecoAsyncThreadPool")
@@ -56,9 +56,9 @@ public class AsyncECOServiceImpl implements AsyncECOService {
 
 	private class AsyncECOGenerator implements Runnable {
 
-		private NodeRef ecoNodeRef;
+		private final NodeRef ecoNodeRef;
 		private boolean apply = false;
-		private String userName;
+		private final String userName;
 
 		public AsyncECOGenerator(NodeRef ecoNodeRef, boolean apply, String userName) {
 			super();

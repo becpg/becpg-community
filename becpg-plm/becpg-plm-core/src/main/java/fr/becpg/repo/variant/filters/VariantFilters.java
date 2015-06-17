@@ -36,7 +36,7 @@ public class VariantFilters implements DataListFilter<ProductData> {
 		this.variantNodeRef = variantNodeRef;
 	}
 
-	public static VariantFilters DEFAULT_VARIANT = new VariantFilters(true);
+	public static final VariantFilters DEFAULT_VARIANT = new VariantFilters(true);
 
 	public VariantFilters(Boolean isDefaultVariant) {
 		super();

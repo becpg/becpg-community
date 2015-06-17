@@ -28,15 +28,15 @@ import fr.becpg.repo.entity.remote.RemoteEntityService;
 
 public class HttpEntityProviderCallback implements EntityProviderCallBack {
 
-	private static Log logger = LogFactory.getLog(HttpEntityProviderCallback.class);
+	private static final Log logger = LogFactory.getLog(HttpEntityProviderCallback.class);
 
-	private String remoteServer;
+	private final String remoteServer;
 
-	private String remoteUser;
+	private final String remoteUser;
 
-	private String remotePwd;
+	private final String remotePwd;
 
-	private RemoteEntityService remoteEntityService;
+	private final RemoteEntityService remoteEntityService;
 
 	public HttpEntityProviderCallback(String remoteServer, String remoteUser, String remotePwd, RemoteEntityService remoteEntityService) {
 		super();

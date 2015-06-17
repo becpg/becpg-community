@@ -30,7 +30,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfQname(qname = "qa:controlPoint")
 public class ControlPointData extends BeCPGDataObject {
 
-	List<ControlDefListDataItem> controlDefList = new LinkedList<ControlDefListDataItem>();
+	List<ControlDefListDataItem> controlDefList = new LinkedList<>();
 
 	@DataList
 	@AlfQname(qname = "qa:controlDefList")

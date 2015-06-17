@@ -22,7 +22,7 @@ package fr.becpg.repo.search.lucene.analysis;
  * créé le 23 juil. 2003
  */
 public interface FrenchStopWords {
-    public static final String[] STOP_WORDS =
+    String[] STOP_WORDS =
         {
 			"a",
             "au",

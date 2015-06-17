@@ -25,10 +25,10 @@ public class TestWebscriptExecuters {
 
 	private HttpClient httpClient = null;
 
-	private static Log logger = LogFactory.getLog(TestWebscriptExecuters.class);
+	private static final Log logger = LogFactory.getLog(TestWebscriptExecuters.class);
 
 	
-	private static TestWebscriptExecuters instance = new TestWebscriptExecuters();
+	private static final TestWebscriptExecuters instance = new TestWebscriptExecuters();
 	
 	
 	
@@ -88,7 +88,7 @@ public class TestWebscriptExecuters {
 		}
 
 		// construct method
-		HttpMethod httpMethod = null;
+		HttpMethod httpMethod;
 		String method = req.getMethod();
 		if (method.equalsIgnoreCase("GET")) {
 			GetMethod get = new GetMethod(uri);
@@ -143,7 +143,7 @@ public class TestWebscriptExecuters {
 	 * HttpMethod wrapped as Web Script Test Response
 	 */
 	public static class Response {
-		private HttpMethod method;
+		private final HttpMethod method;
 
 		public Response(HttpMethod method) {
 			this.method = method;
@@ -199,8 +199,8 @@ public class TestWebscriptExecuters {
      */
     public static class Request
     {
-        private String method;
-        private String uri;
+        private final String method;
+        private final String uri;
         private Map<String, String> args;
         private Map<String, String> headers;
         private byte[] body;

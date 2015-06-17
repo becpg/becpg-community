@@ -26,7 +26,6 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -68,20 +67,20 @@ import fr.becpg.repo.entity.remote.RemoteEntityService;
  */
 public class XmlEntityVisitor {
 
-	private NodeService nodeService;
-	private NamespaceService namespaceService;
-	private DictionaryService dictionaryService;
-	private ContentService contentService;
+	private final NodeService nodeService;
+	private final NamespaceService namespaceService;
+	private final DictionaryService dictionaryService;
+	private final ContentService contentService;
 
 	private boolean dumpAll = false;
 
-	private Set<NodeRef> cacheList = new HashSet<NodeRef>();
+	private final Set<NodeRef> cacheList = new HashSet<>();
 
 	public void setDumpAll(boolean dumpAll) {
 		this.dumpAll = dumpAll;
 	}
 
-	private static Log logger = LogFactory.getLog(XmlEntityVisitor.class);
+	private static final Log logger = LogFactory.getLog(XmlEntityVisitor.class);
 
 	public XmlEntityVisitor(NodeService nodeService, NamespaceService namespaceService, DictionaryService dictionaryService,
 			ContentService contentService) {
@@ -133,8 +132,7 @@ public class XmlEntityVisitor {
 		// Visit node
 		xmlw.writeStartElement(BeCPGModel.BECPG_PREFIX, RemoteEntityService.ELEM_ENTITIES, BeCPGModel.BECPG_URI);
 
-		for (Iterator<NodeRef> iterator = entities.iterator(); iterator.hasNext();) {
-			NodeRef nodeRef = (NodeRef) iterator.next();
+		for (NodeRef nodeRef : entities) {
 			visitNode(nodeRef, xmlw, false, false, false);
 		}
 
@@ -247,7 +245,7 @@ public class XmlEntityVisitor {
 
 	private void visitAssocs(NodeRef nodeRef, XMLStreamWriter xmlw) throws XMLStreamException {
 
-		Map<QName, AssociationDefinition> assocs = new HashMap<QName, AssociationDefinition>(dictionaryService.getType(nodeService.getType(nodeRef))
+		Map<QName, AssociationDefinition> assocs = new HashMap<>(dictionaryService.getType(nodeService.getType(nodeRef))
 				.getAssociations());
 		for (QName aspect : nodeService.getAspects(nodeRef)) {
 			if(dictionaryService.getAspect(aspect)!=null){

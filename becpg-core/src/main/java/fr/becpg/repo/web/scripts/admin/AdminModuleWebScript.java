@@ -39,7 +39,7 @@ import fr.becpg.repo.security.SecurityService;
  */
 public class AdminModuleWebScript extends DeclarativeWebScript {
 
-	private static Log logger = LogFactory.getLog(AdminModuleWebScript.class);
+	private static final Log logger = LogFactory.getLog(AdminModuleWebScript.class);
 
 	private static final String PARAM_ACTION = "action";
 	private static final String ACTION_INIT_REPO = "init-repo";
@@ -109,7 +109,7 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 		Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();
 
 		String action = templateArgs.get(PARAM_ACTION);
-		Map<String, Object> ret = new HashMap<String, Object>();
+		Map<String, Object> ret = new HashMap<>();
 
 		// Check arg
 		if (action == null || action.isEmpty()) {
@@ -118,7 +118,7 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 
 		Set<String> users = new HashSet<>(authenticationService.getUsersWithTickets(true));
 		for (Iterator<String> iterator = users.iterator(); iterator.hasNext();) {
-			String user = (String) iterator.next();
+			String user = iterator.next();
 			if ("guest".equals(user)) {
 				iterator.remove();
 			} else if (tenantAdminService.isEnabled() && !tenantAdminService.getCurrentUserDomain().equals(tenantAdminService.getUserDomain(user))) {
@@ -129,33 +129,40 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 		// #378 : force to use server locale
 		I18NUtil.setLocale(Locale.getDefault());
 
-		if (action.equals(ACTION_INIT_REPO)) {
-			logger.debug("Init repository");
-			initVisitorService.run(repository.getCompanyHome());
-		} else if (action.equals(ACTION_RELOAD_CACHE)) {
-			beCPGCacheService.printCacheInfos();
-			logger.debug("Delete all cache");
-			beCPGCacheService.clearAllCaches();
-		} else if (action.equals(ACTION_RELOAD_ACL)) {
-			logger.debug("Reload acls");
-			securityService.refreshAcls();
-		} else if (action.equals(ACTION_RELOAD_MODEL)) {
-			logger.debug("Reload models");
-			MTDictionnarySupport.doInResetContext(new Action() {
-				@Override
-				public void run() {
-					dictionaryDAO.reset();
-				}
-			});
-		} else if (action.equals(ACTION_GET_SYSTEM_ENTITIES)) {
-			logger.debug("Get system entities");
-			ret.put("systemEntities", entitySystemService.getSystemEntities());
-			ret.put("systemFolders", entitySystemService.getSystemFolders());
-		} else if (action.equals(ACTION_GET_CONNECTED_USERS)) {
-			logger.debug("Get connected users");
-			ret.put("users", users);
-		} else {
-			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Unsupported argument 'action'. action = " + action);
+		switch (action) {
+			case ACTION_INIT_REPO:
+				logger.debug("Init repository");
+				initVisitorService.run(repository.getCompanyHome());
+				break;
+			case ACTION_RELOAD_CACHE:
+				beCPGCacheService.printCacheInfos();
+				logger.debug("Delete all cache");
+				beCPGCacheService.clearAllCaches();
+				break;
+			case ACTION_RELOAD_ACL:
+				logger.debug("Reload acls");
+				securityService.refreshAcls();
+				break;
+			case ACTION_RELOAD_MODEL:
+				logger.debug("Reload models");
+				MTDictionnarySupport.doInResetContext(new Action() {
+					@Override
+					public void run() {
+						dictionaryDAO.reset();
+					}
+				});
+				break;
+			case ACTION_GET_SYSTEM_ENTITIES:
+				logger.debug("Get system entities");
+				ret.put("systemEntities", entitySystemService.getSystemEntities());
+				ret.put("systemFolders", entitySystemService.getSystemFolders());
+				break;
+			case ACTION_GET_CONNECTED_USERS:
+				logger.debug("Get connected users");
+				ret.put("users", users);
+				break;
+			default:
+				throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Unsupported argument 'action'. action = " + action);
 		}
 
 		// Add status

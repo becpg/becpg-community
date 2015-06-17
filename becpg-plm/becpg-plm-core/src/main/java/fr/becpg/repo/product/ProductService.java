@@ -34,23 +34,23 @@ public interface ProductService {
     /**
      * Formulate the product (update DB)
      */
-    public void formulate(NodeRef productNodeRef) throws FormulateException;
+    void formulate(NodeRef productNodeRef) throws FormulateException;
     
     /**
      * Use fast chain formulation handler if fast param is true
      */
-	public void formulate(NodeRef productNodeRef, boolean fast)   throws FormulateException;
+    void formulate(NodeRef productNodeRef, boolean fast)   throws FormulateException;
     
     /**
      * Formulate the product (don't update DB)
      */
-    public ProductData formulate(ProductData productData) throws FormulateException;
+    ProductData formulate(ProductData productData) throws FormulateException;
      
     
-	public CharactDetails formulateDetails(NodeRef productNodeRef, QName dataType, String dataListName, List<NodeRef> elements) throws FormulateException;
+	CharactDetails formulateDetails(NodeRef productNodeRef, QName dataType, String dataListName, List<NodeRef> elements) throws FormulateException;
 
 
-	public boolean shouldFormulate(NodeRef product);
+	boolean shouldFormulate(NodeRef product);
 
 	
 	/**

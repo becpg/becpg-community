@@ -37,7 +37,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfQname(qname = "qa:qualityControl")
 public class QualityControlData extends BeCPGDataObject {
 
-	List<NodeRef> controlPlans = new ArrayList<NodeRef>();
+	List<NodeRef> controlPlans = new ArrayList<>();
 	Integer samplesCounter;
 	QualityControlState state;
 
@@ -50,7 +50,7 @@ public class QualityControlData extends BeCPGDataObject {
 	NodeRef client;
 	NodeRef supplier;
 
-	List<SamplingListDataItem> samplingList = new LinkedList<SamplingListDataItem>();
+	List<SamplingListDataItem> samplingList = new LinkedList<>();
 
 	@AlfMultiAssoc
 	@AlfQname(qname = "qa:qcControlPlans")

@@ -41,7 +41,6 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import com.google.gdata.util.common.base.Pair;
 
-import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulateException;
@@ -69,7 +68,7 @@ import fr.becpg.repo.repository.L2CacheSupport.Action;
  */
 public class CompareFormulationHandler extends FormulationBaseHandler<ProductData> {
 
-	private static Log logger = LogFactory.getLog(CompareFormulationHandler.class);
+	private static final Log logger = LogFactory.getLog(CompareFormulationHandler.class);
 
 	private AssociationService associationService;
 
@@ -213,14 +212,6 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 				}
 
 			}, true);
-		} else {
-			// //TODO remove aspect
-			// for (AbstractProductDataView view : productData.getViews()) {
-			// for (CompositionDataItem dataListItem : view.getMainDataList()) {
-			//
-			// }
-			// }
-
 		}
 		return true;
 	}

@@ -98,7 +98,7 @@ public class RepoConsts {
 	public static final String PERMISSION_COLLABORATOR = "Collaborator";
 
 	// Configuration
-	public static int DEFAULT_LEVEL = 1;
+	public static final int DEFAULT_LEVEL = 1;
 	public static final int MAX_DEPTH_LEVEL = 256;
 	
 	/*

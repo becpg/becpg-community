@@ -6,11 +6,9 @@ package fr.becpg.repo.dictionary.constraint;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.alfresco.repo.dictionary.constraint.ListOfValuesConstraint;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -45,7 +43,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 	private static final String ERR_NON_STRING = "d_dictionary.constraint.string_length.non_string";
 	private static final String ERR_INVALID_VALUE = "d_dictionary.constraint.list_of_values.invalid_value";
 
-	private static Log logger = LogFactory.getLog(DynListConstraint.class);
+	private static final Log logger = LogFactory.getLog(DynListConstraint.class);
 
 	private static ServiceRegistry serviceRegistry;
 
@@ -59,7 +57,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 
 	private Boolean addEmptyValue = null;
 
-	private Map<String, List<String>> allowedValues = new HashMap<>();
+	private final Map<String, List<String>> allowedValues = new HashMap<>();
 
 	public void setPath(List<String> paths) {
 
@@ -125,7 +123,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 								@Override
 								public List<String> execute() throws Throwable {
 
-									List<String> allowedValues = new LinkedList<String>();
+									List<String> allowedValues = new LinkedList<>();
 
 									if (addEmptyValue != null && addEmptyValue) {
 										allowedValues.add("");
@@ -160,7 +158,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 	@Override
 	protected void evaluateSingleValue(Object value) {
 		// convert the value to a String
-		String valueStr = null;
+		String valueStr;
 		try {
 			valueStr = DefaultTypeConverter.INSTANCE.convert(String.class, value);
 		} catch (TypeConversionException e) {
@@ -178,7 +176,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 		return AuthenticationUtil.runAsSystem(new AuthenticationUtil.RunAsWork<List<String>>() {
 			@Override
 			public List<String> doWork() throws Exception {
-				List<String> allowedValues = new LinkedList<String>();
+				List<String> allowedValues = new LinkedList<>();
 
 				try {
 					List<NodeRef> nodeRefs = BeCPGQueryBuilder.createQuery().selectNodesByPath(
@@ -246,8 +244,6 @@ public class DynListConstraint extends ListOfValuesConstraint {
 			}
 
 			private int computeLevel(NodeRef nodeRef, QName createQName) {
-				Set<QName> qnames = new HashSet<QName>();
-				qnames.add(createQName);
 
 				NodeRef parentNode = (NodeRef) serviceRegistry.getNodeService().getProperty(nodeRef, createQName);
 				if (parentNode != null) {

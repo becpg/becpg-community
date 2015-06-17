@@ -19,7 +19,7 @@
 package fr.becpg.repo.jscript;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.jscript.BaseScopableProcessorExtension;
@@ -84,7 +84,7 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 				NodeRef supplierNodeRef = associationService.getTargetAssoc(entityNodeRef.getNodeRef(), PLMModel.ASSOC_SUPPLIERS);
 				if (supplierNodeRef != null) {
 					
-				    associationService.update(project.getNodeRef(), PLMModel.ASSOC_SUPPLIERS, Arrays.asList(supplierNodeRef));
+				    associationService.update(project.getNodeRef(), PLMModel.ASSOC_SUPPLIERS, Collections.singletonList(supplierNodeRef));
 					
 					NodeRef accountNodeRef = associationService.getTargetAssoc(supplierNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNT);
 					if (accountNodeRef != null) {

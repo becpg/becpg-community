@@ -31,7 +31,7 @@ import fr.becpg.model.BeCPGModel;
  */
 public class ListValuePatch extends AbstractBeCPGPatch {
 
-	private static Log logger = LogFactory.getLog(ListValuePatch.class);
+	private static final Log logger = LogFactory.getLog(ListValuePatch.class);
 	private static final String MSG_SUCCESS = "patch.bcpg.listValuePatch.result";
 
 	private NodeDAO nodeDAO;
@@ -56,14 +56,14 @@ public class ListValuePatch extends AbstractBeCPGPatch {
 	protected String applyInternal() throws Exception {
 
 		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
-			final List<NodeRef> result = new ArrayList<NodeRef>();
+			final List<NodeRef> result = new ArrayList<>();
 
-			long maxNodeId = getPatchDAO().getMaxAdmNodeID();
+			final long maxNodeId = getPatchDAO().getMaxAdmNodeID();
 
 			long minSearchNodeId = 1;
 			long maxSearchNodeId = count;
 
-			Pair<Long, QName> val = getQnameDAO().getQName(BeCPGModel.TYPE_LIST_VALUE);
+			final Pair<Long, QName> val = getQnameDAO().getQName(BeCPGModel.TYPE_LIST_VALUE);
 
 			public int getTotalEstimatedWorkSize() {
 				return result.size();
@@ -93,7 +93,7 @@ public class ListValuePatch extends AbstractBeCPGPatch {
 			}
 		};
 
-		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<NodeRef>("ListValuePatch", transactionService.getRetryingTransactionHelper(),
+		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("ListValuePatch", transactionService.getRetryingTransactionHelper(),
 				workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 1000);
 
 		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {

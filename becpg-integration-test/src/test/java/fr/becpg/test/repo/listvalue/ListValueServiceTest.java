@@ -32,7 +32,7 @@ import fr.becpg.test.BeCPGPLMTestHelper;
  */
 public class ListValueServiceTest extends AbstractListValuePluginTest {
 
-	private static Log logger = LogFactory.getLog(ListValueServiceTest.class);
+	private static final Log logger = LogFactory.getLog(ListValueServiceTest.class);
 
 	@Resource
 	private EntityListValuePlugin entityListValuePlugin;
@@ -68,7 +68,7 @@ public class ListValueServiceTest extends AbstractListValuePluginTest {
 
 				// Create supplier 1 with allowed constraint
 				logger.debug("create temp supplier 1");
-				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				Map<QName, Serializable> properties = new HashMap<>();
 				properties.put(ContentModel.PROP_NAME, supplierName);
 				return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
@@ -113,7 +113,7 @@ public class ListValueServiceTest extends AbstractListValuePluginTest {
 
 				// suggest supplier and exclude entityTplAspect (return supplier
 				// 1 and template
-				Map<String, Serializable> props = new HashMap<String, Serializable>();
+				Map<String, Serializable> props = new HashMap<>();
 				props.put(ListValueService.PROP_EXCLUDE_CLASS_NAMES, "bcpg:entityTplAspect");
 				suggestions = entityListValuePlugin.suggestTargetAssoc(PLMModel.TYPE_SUPPLIER, "*", 0, 10, arrClassNames, props).getResults();
 

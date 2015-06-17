@@ -30,7 +30,7 @@ import fr.becpg.repo.admin.patch.AbstractBeCPGPatch;
  */
 public class ProjectEmailTemplatesPatch extends AbstractBeCPGPatch {
 
-	private static Log logger = LogFactory.getLog(ProjectEmailTemplatesPatch.class);
+	private static final Log logger = LogFactory.getLog(ProjectEmailTemplatesPatch.class);
 
 	private static final String MSG_SUCCESS = "patch.bcpg.project.projectEmailTemplatesPatch";
 

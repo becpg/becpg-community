@@ -30,7 +30,7 @@ public class FormulateWebScript extends AbstractProductWebscript {
 
 	protected static final String PARAM_FAST = "fast";
 
-	private static Log logger = LogFactory.getLog(FormulateWebScript.class);
+	private static final Log logger = LogFactory.getLog(FormulateWebScript.class);
 
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws WebScriptException {

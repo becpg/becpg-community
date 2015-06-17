@@ -19,6 +19,6 @@ package fr.becpg.repo.product.data.constraints;
 
 public enum TareUnit{
 	g,
-	kg;
+	kg
 
 }

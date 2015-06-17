@@ -38,7 +38,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 public class ProjectFormulationWorker {
 
-	private static Log logger = LogFactory.getLog(ProjectFormulationWorker.class);
+	private static final Log logger = LogFactory.getLog(ProjectFormulationWorker.class);
 	
 	private ProjectService projectService;
 	private BehaviourFilter policyBehaviourFilter;

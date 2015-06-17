@@ -44,7 +44,7 @@ public class ProjectHelper {
 	private static final int DURATION_DEFAULT = 1;
 	private static final int DURATION_NEXT_DAY = 2;
 
-	private static Log logger = LogFactory.getLog(PlanningFormulationHandler.class);
+	private static final Log logger = LogFactory.getLog(PlanningFormulationHandler.class);
 
 	public static TaskListDataItem getTask(ProjectData projectData, NodeRef taskListNodeRef) {
 
@@ -60,7 +60,7 @@ public class ProjectHelper {
 
 	public static List<TaskListDataItem> getNextTasks(ProjectData projectData, NodeRef taskListNodeRef) {
 
-		List<TaskListDataItem> taskList = new ArrayList<TaskListDataItem>();
+		List<TaskListDataItem> taskList = new ArrayList<>();
 		if (projectData.getTaskList() != null) {
 			for (TaskListDataItem p : projectData.getTaskList()) {
 				// taskNodeRef is null when we start project
@@ -75,7 +75,7 @@ public class ProjectHelper {
 
 	public static List<TaskListDataItem> getPrevTasks(ProjectData projectData, TaskListDataItem taskListDataItem) {
 
-		List<TaskListDataItem> taskList = new ArrayList<TaskListDataItem>();
+		List<TaskListDataItem> taskList = new ArrayList<>();
 		if (taskListDataItem.getPrevTasks() != null) {
 			for (TaskListDataItem p : projectData.getTaskList()) {
 				if (taskListDataItem.getPrevTasks().contains(p.getNodeRef())) {
@@ -88,7 +88,7 @@ public class ProjectHelper {
 
 	public static List<TaskListDataItem> getLastTasks(ProjectData projectData) {
 
-		List<TaskListDataItem> taskList = new ArrayList<TaskListDataItem>();
+		List<TaskListDataItem> taskList = new ArrayList<>();
 		if (projectData.getTaskList() != null) {
 			for (TaskListDataItem t : projectData.getTaskList()) {
 				if (getNextTasks(projectData, t.getNodeRef()).isEmpty() && (t.getIsGroup() == null || !t.getIsGroup())) {
@@ -101,7 +101,7 @@ public class ProjectHelper {
 
 	public static List<TaskListDataItem> getChildrenTasks(ProjectData projectData, TaskListDataItem taskListDataItem) {
 
-		List<TaskListDataItem> taskList = new ArrayList<TaskListDataItem>();
+		List<TaskListDataItem> taskList = new ArrayList<>();
 		for (TaskListDataItem t : projectData.getTaskList()) {
 			if (t.getParent() != null && t.getParent().equals(taskListDataItem)) {
 				taskList.add(t);
@@ -111,7 +111,7 @@ public class ProjectHelper {
 	}
 
 	public static List<TaskListDataItem> getBrethrenTask(ProjectData projectData, TaskListDataItem nextTask) {
-		List<TaskListDataItem> taskList = new ArrayList<TaskListDataItem>();
+		List<TaskListDataItem> taskList = new ArrayList<>();
 		for (TaskListDataItem t : projectData.getTaskList()) {
 			for (NodeRef taskListNodeRef : t.getPrevTasks()) {
 				if (!taskList.contains(t)
@@ -161,21 +161,19 @@ public class ProjectHelper {
 
 	public static List<TaskListDataItem> getSourceTasks(ProjectData projectData) {
 
-		List<TaskListDataItem> taskList = new ArrayList<TaskListDataItem>();
+		List<TaskListDataItem> taskList = new ArrayList<>();
 		for (TaskListDataItem t : projectData.getTaskList()) {
 			// has parent with prevTask ?
 			boolean hasPrevTaskInParent = false;
 			TaskListDataItem parent = t.getParent();
 			if (parent != null) {
 				if (parent.getPrevTasks().isEmpty()) {
-					parent = parent.getParent();
 				} else {
-					hasPrevTaskInParent = true;
 					break;
 				}
 			}
 			boolean hasChildren = !ProjectHelper.getChildrenTasks(projectData, t).isEmpty();
-			if (hasChildren == false && hasPrevTaskInParent == false) {
+			if (!hasChildren && !hasPrevTaskInParent) {
 				taskList.add(t);
 			}
 		}
@@ -184,7 +182,7 @@ public class ProjectHelper {
 
 	public static List<DeliverableListDataItem> getDeliverables(ProjectData projectData, NodeRef taskListNodeRef) {
 
-		List<DeliverableListDataItem> deliverableList = new ArrayList<DeliverableListDataItem>();
+		List<DeliverableListDataItem> deliverableList = new ArrayList<>();
 		if (projectData.getDeliverableList() != null) {
 			for (DeliverableListDataItem d : projectData.getDeliverableList()) {
 				if (d.getTasks() != null && d.getTasks().contains(taskListNodeRef)) {
@@ -216,10 +214,10 @@ public class ProjectHelper {
 			return true;
 		}
 
-		List<NodeRef> inProgressTasks = new ArrayList<NodeRef>();
+		List<NodeRef> inProgressTasks = new ArrayList<>();
 		inProgressTasks.addAll(taskNodeRefs);
 
-		if (projectData.getTaskList() != null && projectData.getTaskList().isEmpty() == false) {
+		if (projectData.getTaskList() != null && !projectData.getTaskList().isEmpty()) {
 			for (int i = projectData.getTaskList().size() - 1; i >= 0; i--) {
 				TaskListDataItem t = projectData.getTaskList().get(i);
 

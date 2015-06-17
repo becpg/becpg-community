@@ -4,17 +4,14 @@
 package fr.becpg.test.repo.web.scripts.product;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
-import fr.becpg.model.PLMModel;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
@@ -31,9 +28,10 @@ import fr.becpg.test.utils.TestWebscriptExecuters.Response;
  *
  * @author querephi
  */
+@SuppressWarnings("unused")
 public class ProductWUsedWebScriptTest extends fr.becpg.test.PLMBaseTestCase{
 
-	private static Log logger = LogFactory.getLog(ProductWUsedWebScriptTest.class);
+	private static final Log logger = LogFactory.getLog(ProductWUsedWebScriptTest.class);
 	
 	private NodeRef rawMaterialNodeRef = null;
 	private NodeRef finishedProductNodeRef = null;
@@ -65,12 +63,11 @@ public class ProductWUsedWebScriptTest extends fr.becpg.test.PLMBaseTestCase{
 	 				logger.debug("/*-- Create finished product --*/");
 	 				FinishedProductData finishedProduct = new FinishedProductData();
 	 				finishedProduct.setName("Finished Product");
-	 				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>(); 				
-	 				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, lSFNodeRef));
+	 				List<CompoListDataItem> compoList = new ArrayList<>();
+	 				compoList.add(new CompoListDataItem(null, null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, lSFNodeRef));
 	 				compoList.add(new CompoListDataItem(null, compoList.get(0), 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterialNodeRef));
 					finishedProduct.getCompoListView().setCompoList(compoList); 				
-					Collection<QName> dataLists = new ArrayList<QName>();		
-					dataLists.add(PLMModel.TYPE_COMPOLIST);
+
 	 				finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 	 				
 	 				logger.debug("local semi finished: " + lSFNodeRef);

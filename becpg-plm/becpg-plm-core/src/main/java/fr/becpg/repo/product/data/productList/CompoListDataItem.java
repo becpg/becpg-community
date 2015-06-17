@@ -15,6 +15,8 @@ import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.MultiLevelDataList;
 
+import java.util.Objects;
+
 @AlfType
 @AlfQname(qname = "bcpg:compoList")
 @MultiLevelDataList
@@ -208,7 +210,7 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 
 	public static DeclarationType parseDeclarationType(String declType) {
 		
-		return (declType != null && declType != "") ? DeclarationType.valueOf(declType) : DeclarationType.Declare;		
+		return (declType != null && !Objects.equals(declType, "")) ? DeclarationType.valueOf(declType) : DeclarationType.Declare;
 	}
 
 	@Override

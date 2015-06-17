@@ -22,7 +22,7 @@ import org.apache.commons.collections.Predicate;
 public interface DataListFilter<T> {
 	
 	
-	public Predicate createPredicate(T data);
+	Predicate createPredicate(T data);
 	
 	
 }

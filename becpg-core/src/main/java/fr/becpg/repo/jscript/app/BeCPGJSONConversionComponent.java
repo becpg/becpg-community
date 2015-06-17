@@ -43,10 +43,10 @@ public class BeCPGJSONConversionComponent extends JSONConversionComponent {
 		this.associationService = associationService;
 	}
 
-	private static Log logger = LogFactory.getLog(BeCPGJSONConversionComponent.class);
+	private static final Log logger = LogFactory.getLog(BeCPGJSONConversionComponent.class);
 
 	/** Registered decorators */
-	protected Map<QName, AssociationDecorator> associationDecorators = new HashMap<QName, AssociationDecorator>(3);
+	protected final Map<QName, AssociationDecorator> associationDecorators = new HashMap<>(3);
 
 	
 

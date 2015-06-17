@@ -42,7 +42,7 @@ import fr.becpg.test.PLMBaseTestCase;
 public class AlfrescoRepositoryTest extends PLMBaseTestCase {
 
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(AlfrescoRepositoryTest.class);
+	private static final Log logger = LogFactory.getLog(AlfrescoRepositoryTest.class);
 
 	/** The ml node service impl. */
 	@Resource(name = "mlAwareNodeService")
@@ -69,9 +69,9 @@ public class AlfrescoRepositoryTest extends PLMBaseTestCase {
 				// create SF
 				SemiFinishedProductData sfData = new SemiFinishedProductData();
 				sfData.setName("SF");
-				List<NodeRef> allSources = new ArrayList<NodeRef>();
+				List<NodeRef> allSources = new ArrayList<>();
 				allSources.add(rmNodeRef);
-				List<AllergenListDataItem> allergenList = new ArrayList<AllergenListDataItem>();
+				List<AllergenListDataItem> allergenList = new ArrayList<>();
 				allergenList.add(new AllergenListDataItem(null,null, true, true, allSources, null, allergens.get(0), false));
 				allergenList.add(new AllergenListDataItem(null,null, false, true, null, allSources, allergens.get(1), false));
 				allergenList.add(new AllergenListDataItem(null,null, true, false, null, allSources, allergens.get(2), false));
@@ -178,7 +178,7 @@ public class AlfrescoRepositoryTest extends PLMBaseTestCase {
 				mlTextILL.addValue(Locale.ENGLISH, "English value");
 				mlTextILL.addValue(Locale.FRENCH, "French value");
 
-				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				Map<QName, Serializable> properties = new HashMap<>();
 				properties.put(PLMModel.PROP_ILL_VALUE, mlTextILL);
 
 				NodeRef illNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, PLMModel.TYPE_INGLABELINGLIST,

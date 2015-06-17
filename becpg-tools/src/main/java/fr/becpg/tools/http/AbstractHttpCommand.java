@@ -33,9 +33,9 @@ import org.apache.http.client.methods.HttpUriRequest;
 
 public abstract class AbstractHttpCommand {
 
-	private String serverUrl;
+	private final String serverUrl;
 	
-	protected static Log logger = LogFactory.getLog(AbstractHttpCommand.class);
+	protected static final Log logger = LogFactory.getLog(AbstractHttpCommand.class);
 	
 	public enum HttpCommandMethod {
 		METHOD_GET,METHOD_PUT,METHOD_POST,METHOD_DELETE

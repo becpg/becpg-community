@@ -37,7 +37,7 @@ import fr.becpg.repo.importer.ImporterException;
 public class ImportEntityListAspectVisitor extends AbstractImportVisitor implements ImportVisitor {
 
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(ImportEntityListAspectVisitor.class);
+	private static final Log logger = LogFactory.getLog(ImportEntityListAspectVisitor.class);
 
 	protected static final String CACHE_KEY = "cKey%s-%s";
 
@@ -63,8 +63,8 @@ public class ImportEntityListAspectVisitor extends AbstractImportVisitor impleme
 
 		// import characteristics
 		logger.debug("import characteristics");
-		Map<String, NodeRef> cacheLists = new HashMap<String, NodeRef>();
-		Map<String, NodeRef> cacheLinks = new HashMap<String, NodeRef>();
+		Map<String, NodeRef> cacheLists = new HashMap<>();
+		Map<String, NodeRef> cacheLinks = new HashMap<>();
 		int sort = RepoConsts.SORT_DEFAULT_STEP;
 		boolean createList = false;
 		for (int z_idx = 0; z_idx < values.size() && z_idx < importContext.getColumns().size(); z_idx++) {
@@ -88,7 +88,7 @@ public class ImportEntityListAspectVisitor extends AbstractImportVisitor impleme
 					String listKey = String.format(CACHE_KEY, listContainerNodeRef, charactMapping.getDataListQName());
 					String linkKey = String.format(CACHE_KEY, charactMapping.getCharactNodeRef(), charactMapping.getCharactQName());
 
-					NodeRef listNodeRef = null;
+					NodeRef listNodeRef;
 					NodeRef linkNodeRef = null;
 
 					// look for list
@@ -118,7 +118,7 @@ public class ImportEntityListAspectVisitor extends AbstractImportVisitor impleme
 					if (linkNodeRef != null) {
 						nodeService.setProperty(linkNodeRef, column.getName(), value);
 					} else {
-						Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+						Map<QName, Serializable> properties = new HashMap<>();
 						properties.put(column.getName(), value);
 
 						// sort

@@ -30,7 +30,7 @@ import fr.becpg.test.project.AbstractProjectTestCase;
  */
 public class ProjectCalculatePlanningDatesTest extends AbstractProjectTestCase {	
 
-	private static Log logger = LogFactory.getLog(ProjectCalculatePlanningDatesTest.class);
+	private static final Log logger = LogFactory.getLog(ProjectCalculatePlanningDatesTest.class);
 
 	@Test
 	public void testCalculatePlanningDates() throws ParseException {
@@ -104,10 +104,6 @@ public class ProjectCalculatePlanningDatesTest extends AbstractProjectTestCase {
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
 			public NodeRef execute() throws Throwable {
-
-				Collection<QName> dataLists = new ArrayList<QName>();
-				dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
-				dataLists.add(ProjectModel.TYPE_TASK_LIST);
 
 				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 
@@ -186,7 +182,7 @@ public class ProjectCalculatePlanningDatesTest extends AbstractProjectTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				Collection<QName> dataLists = new ArrayList<QName>();
+				Collection<QName> dataLists = new ArrayList<>();
 				dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
 				dataLists.add(ProjectModel.TYPE_TASK_LIST);
 

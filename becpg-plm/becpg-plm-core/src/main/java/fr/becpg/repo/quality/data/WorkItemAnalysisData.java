@@ -30,7 +30,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfQname(qname = "qa:workItemAnalysis")
 public class WorkItemAnalysisData extends BeCPGDataObject {
 
-	List<ControlListDataItem> controlList = new LinkedList<ControlListDataItem>();
+	List<ControlListDataItem> controlList = new LinkedList<>();
 
 	@DataList
 	@AlfQname(qname = "qa:controlList")

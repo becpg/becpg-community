@@ -122,7 +122,7 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 		NodeRef entityTplsNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_ENTITY_TEMPLATES);
 
 		// visit supplier
-		Set<QName> dataLists = new LinkedHashSet<QName>();
+		Set<QName> dataLists = new LinkedHashSet<>();
 		dataLists.add(ProjectModel.TYPE_TASK_LIST);
 		dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
 		dataLists.add(ProjectModel.TYPE_SCORE_LIST);
@@ -144,7 +144,7 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 				typeCondition.setParameterValue(IsSubTypeEvaluator.PARAM_TYPE, BeCPGModel.TYPE_ENTITYLIST_ITEM);
 				typeCondition.setInvertCondition(true);
 
-				Map<String, Serializable> params = new HashMap<String, Serializable>();
+				Map<String, Serializable> params = new HashMap<>();
 				params.put(ProjectActivityActionExecuter.PARAM_ACTIVITY_EVENT, ActivityEvent.Create.toString());
 				CompositeAction compositeAction = actionService.createCompositeAction();
 				Action myAction = actionService.createAction(ProjectActivityActionExecuter.NAME, params);
@@ -219,7 +219,7 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 	 */
 	private NodeRef visitSystemProjectListValuesEntity(NodeRef parentNodeRef, String path) {
 
-		Map<String, QName> entityLists = new LinkedHashMap<String, QName>();
+		Map<String, QName> entityLists = new LinkedHashMap<>();
 
 		entityLists.put(ProjectRepoConsts.PATH_TASK_LEGENDS, ProjectModel.TYPE_TASK_LEGEND);
 		entityLists.put(ProjectRepoConsts.PATH_PROJECT_HIERARCHY, BeCPGModel.TYPE_LINKED_VALUE);

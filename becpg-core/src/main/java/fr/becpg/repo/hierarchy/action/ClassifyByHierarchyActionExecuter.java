@@ -28,7 +28,7 @@ public class ClassifyByHierarchyActionExecuter extends ActionExecuterAbstractBas
 	public static final String PARAM_DESTINATION_FOLDER = "destination-folder";
 	
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(ClassifyByHierarchyActionExecuter.class);	
+	private static final Log logger = LogFactory.getLog(ClassifyByHierarchyActionExecuter.class);
 	
 	private HierarchyService hierarchyService;
 	

@@ -43,7 +43,7 @@ import fr.becpg.repo.designer.workflow.DesignerWorkflowDeployer;
 
 public class DesignerWorkflowDeployerTest extends AbstractDesignerServiceTest {
 
-	private static Log logger = LogFactory.getLog(DesignerWorkflowDeployerTest.class);
+	private static final Log logger = LogFactory.getLog(DesignerWorkflowDeployerTest.class);
 
 	@Autowired
 	private MetaModelVisitor metaModelVisitor;
@@ -71,7 +71,7 @@ public class DesignerWorkflowDeployerTest extends AbstractDesignerServiceTest {
 				String fileName = "testWorkflow.xml";
 				logger.debug("add file " + fileName);
 
-				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				Map<QName, Serializable> properties = new HashMap<>();
 				properties.put(ContentModel.PROP_NAME, fileName);
 				properties.put(WorkflowModel.PROP_WORKFLOW_DEF_ENGINE_ID, ActivitiConstants.ENGINE_ID);
 

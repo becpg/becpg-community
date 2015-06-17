@@ -4,10 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
@@ -51,7 +48,7 @@ import fr.becpg.report.client.ReportParams;
 @Service
 public class ReportServerSearchRenderer implements SearchReportRenderer {
 
-	private static Log logger = LogFactory.getLog(ReportServerSearchRenderer.class);
+	private static final Log logger = LogFactory.getLog(ReportServerSearchRenderer.class);
 
 	@Autowired
 	private NodeService nodeService;
@@ -114,7 +111,7 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 		try {
 			ReportServerSearchContext exportSearchCtx = getQuery(templateNodeRef);
 
-			Map<String, Object> params = new HashMap<String, Object>();
+			Map<String, Object> params = new HashMap<>();
 			params.put(ReportParams.PARAM_FORMAT, reportFormat);
 			params.put(ReportParams.PARAM_IMAGES, new HashMap<String, byte[]>());
 
@@ -221,7 +218,7 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 		}
 
 		// export file
-		Map<NodeRef, Map<String, String>> filesAttributes = new HashMap<NodeRef, Map<String, String>>();
+		Map<NodeRef, Map<String, String>> filesAttributes = new HashMap<>();
 		for (FileMapping fileMapping : exportSearchCtx.getFileColumns()) {
 
 			NodeRef tempNodeRef = nodeRef;
@@ -238,7 +235,7 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 
 				Map<String, String> fileAttributes = filesAttributes.get(tempNodeRef);
 				if (fileAttributes == null) {
-					fileAttributes = new HashMap<String, String>();
+					fileAttributes = new HashMap<>();
 					filesAttributes.put(tempNodeRef, fileAttributes);
 				}
 
@@ -317,7 +314,7 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 	@SuppressWarnings("unchecked")
 	private ReportServerSearchContext getQuery(NodeRef templateNodeRef) throws MappingException {
 
-		Element queryElt = null;
+		Element queryElt;
 		ReportServerSearchContext exportSearchCtx = new ReportServerSearchContext();
 
 		NodeRef folderNodeRef = nodeService.getPrimaryParent(templateNodeRef).getParentRef();
@@ -379,7 +376,7 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 			for (Node columnNode : columnNodes) {
 				QName qName = QName.createQName(columnNode.valueOf(QUERY_ATTR_GET_ATTRIBUTE), namespaceService);
 				QName dataListQName = QName.createQName(columnNode.valueOf(QUERY_ATTR_GET_DATALIST_QNAME), namespaceService);
-				NodeRef charactNodeRef = null;
+				NodeRef charactNodeRef;
 				String charactNodeRefString = columnNode.valueOf(QUERY_ATTR_GET_CHARACT_NODE_REF);
 				String charactName = columnNode.valueOf(QUERY_ATTR_GET_CHARACT_NAME);
 				QName charactQName = QName.createQName(columnNode.valueOf(QUERY_ATTR_GET_CHARACT_QNAME), namespaceService);
@@ -415,10 +412,9 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 				QName qName = QName.createQName(columnNode.valueOf(QUERY_ATTR_GET_ATTRIBUTE), namespaceService);
 
 				String path = columnNode.valueOf(QUERY_ATTR_GET_PATH);
-				List<String> paths = new ArrayList<String>();
+				List<String> paths = new ArrayList<>();
 				String[] arrPath = path.split(RepoConsts.PATH_SEPARATOR);
-				for (String p : arrPath)
-					paths.add(p);
+				Collections.addAll(paths, arrPath);
 
 				PropertyDefinition propertyDefinition = dictionaryService.getProperty(qName);
 				FileMapping attributeMapping = new FileMapping(columnNode.valueOf(QUERY_ATTR_GET_ID), propertyDefinition, paths);

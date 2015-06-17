@@ -30,7 +30,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 public class ReportTplWebScript extends AbstractWebScript {
 
-	private static Log logger = LogFactory.getLog(ReportTplWebScript.class);
+	private static final Log logger = LogFactory.getLog(ReportTplWebScript.class);
 
 	private static final String ACTION_REFRESH = "refresh";
 	private static final String ACTION_DISABLE = "disable";

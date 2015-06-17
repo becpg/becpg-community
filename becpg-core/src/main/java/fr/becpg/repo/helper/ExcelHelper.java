@@ -31,7 +31,7 @@ public class ExcelHelper {
 			} else {
 				Cell cell = row.createCell(cellnum++);
 
-				Object obj = null;
+				Object obj;
 				if (prefix != null) {
 					obj = item.get(prefix + "_" + field.getFieldName());
 				} else {

@@ -18,13 +18,7 @@
 package fr.becpg.test.repo.product;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import javax.annotation.Resource;
 
@@ -59,7 +53,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 	
 
 	/** The logger. */
-	protected static Log logger = LogFactory.getLog(AbstractFinishedProductTest.class);
+	protected static final Log logger = LogFactory.getLog(AbstractFinishedProductTest.class);
 
 	
 	/** The product service. */
@@ -68,10 +62,10 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 
     
     /** The GROU p1. */
-	protected static String GROUP1 = "Groupe 1";      
+	protected static final String GROUP1 = "Groupe 1";
     
     /** The GROU p2. */
-	protected static String GROUP2 = "Groupe 2";
+	protected static final String GROUP2 = "Groupe 2";
     
     /** The GROUPOTHER. */
 	protected static String GROUPOTHER = "Autre";
@@ -226,7 +220,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					
 				
 					/*-- characteristics --*/
-					Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+					Map<QName, Serializable> properties = new HashMap<>();
 					//Costs
 					properties.put(ContentModel.PROP_NAME, "cost1");			 					 				
 					properties.put(PLMModel.PROP_COSTCURRENCY, "€");
@@ -433,42 +427,42 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					legalName.addValue(Locale.FRENCH, "Legal Raw material 1");
 					legalName.addValue(Locale.ENGLISH, "Legal Raw material 1");
 					rawMaterial1.setLegalName(legalName);
-					rawMaterial1.setSuppliers(Arrays.asList(supplier1));
+					rawMaterial1.setSuppliers(Collections.singletonList(supplier1));
 					//costList
-					List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
+					List<CostListDataItem> costList = new ArrayList<>();
 					costList.add(new CostListDataItem(null, 3d, "€/kg", 3.1d, cost1, false, null, 1.5d, 6d));
 					costList.add(new CostListDataItem(null, 2d, "€/kg", 2.1d, cost2, false, null, 1d, 4d));
 					rawMaterial1.setCostList(costList);
 					//nutList
-					List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
+					List<NutListDataItem> nutList = new ArrayList<>();
 					nutList.add(new NutListDataItem(null, 1d, "g/100g", 0.8d, 2.1d, "Groupe 1", nut1, false));
 					nutList.add(new NutListDataItem(null, 2d, "g/100g", 1.5d, 2.2d, "Groupe 1", nut2, false));
 					nutList.add(new NutListDataItem(null, 4d, "g/100g", 0.8d, 2.1d, "Groupe 1", nut3, false));
 					rawMaterial1.setNutList(nutList);
 					//allergenList
-					List<AllergenListDataItem> allergenList = new ArrayList<AllergenListDataItem>();
+					List<AllergenListDataItem> allergenList = new ArrayList<>();
 					allergenList.add(new AllergenListDataItem(null, 20d, true, false, null, null, allergen1, false));
 					allergenList.add(new AllergenListDataItem(null,100d, false, false, null, null, allergen2, false));
 					allergenList.add(new AllergenListDataItem(null,null, false, false, null, null, allergen3, false));
 					allergenList.add(new AllergenListDataItem(null,null, false, false, null, null, allergen4, false));
 					rawMaterial1.setAllergenList(allergenList);
 					//ingList : 1 ing1 ; bio1 ; geo1 // 2 ing2 ; bio1 ; geo1|geo2 
-					List<IngListDataItem> ingList = new ArrayList<IngListDataItem>();
-					List<NodeRef> bioOrigins = new ArrayList<NodeRef>();
+					List<IngListDataItem> ingList = new ArrayList<>();
+					List<NodeRef> bioOrigins = new ArrayList<>();
 					bioOrigins.add(bioOrigin1);
-					List<NodeRef> geoOrigins = new ArrayList<NodeRef>();
+					List<NodeRef> geoOrigins = new ArrayList<>();
 					geoOrigins.add(geoOrigin1);			
 					ingList.add(new IngListDataItem(null, 100/3d, geoOrigins, bioOrigins, false, false,false, ing1, false));
-					geoOrigins = new ArrayList<NodeRef>();
+					geoOrigins = new ArrayList<>();
 					geoOrigins.add(geoOrigin1);
 					geoOrigins.add(geoOrigin2);
-					List<NodeRef> geoTransfo = new ArrayList<NodeRef>();
+					List<NodeRef> geoTransfo = new ArrayList<>();
 					geoTransfo.add(geoOrigin2);
 					ingList.add(new IngListDataItem(null, null, 200/3d, geoOrigins, geoTransfo, bioOrigins, false, false, false, false, ing2, false));
 					rawMaterial1.setIngList(ingList);
 					//physicoChem
-					List<PhysicoChemListDataItem> physicoChemList = new ArrayList<PhysicoChemListDataItem>();
-					physicoChemList = new ArrayList<PhysicoChemListDataItem>();
+					List<PhysicoChemListDataItem> physicoChemList;
+					physicoChemList = new ArrayList<>();
 					physicoChemList.add(new PhysicoChemListDataItem(null, 3d, "-", null, 3.1d, physicoChem1));
 					physicoChemList.add(new PhysicoChemListDataItem(null, 2d, "-", null, 2.1d, physicoChem2));
 					physicoChemList.add(new PhysicoChemListDataItem(null, 1d, "-", 0.8d, 2.1d, physicoChem3));
@@ -484,39 +478,39 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					legalName.addValue(Locale.ENGLISH, "Legal Raw material 2");
 					rawMaterial2.setLegalName(legalName);
 					rawMaterial2.setDensity(1d);
-					rawMaterial2.setSuppliers(Arrays.asList(supplier2));
+					rawMaterial2.setSuppliers(Collections.singletonList(supplier2));
 					//costList
-					costList = new ArrayList<CostListDataItem>();
+					costList = new ArrayList<>();
 					costList.add(new CostListDataItem(null, 1d, "€/kg", 2.1d, cost1, false, null, 0.5d, 2d));
 					costList.add(new CostListDataItem(null, 2d, "€/kg", 2.2d, cost2, false, null, 1d, 4d));
 					rawMaterial2.setCostList(costList);
 					//nutList
-					nutList = new ArrayList<NutListDataItem>();
+					nutList = new ArrayList<>();
 					nutList.add(new NutListDataItem(null, 1d, "g/100g", 0.8d, 1.1d, "Groupe 1", nut1, false));
 					nutList.add(new NutListDataItem(null, 2d, "g/100g", 0.8d, 2.1d, "Groupe 1", nut2, false));
 					nutList.add(new NutListDataItem(null, 6d, "g/100g", 0.8d, 2.1d, "Groupe 1", nut3, false));
 					rawMaterial2.setNutList(nutList);
 					//allergenList
-					allergenList = new ArrayList<AllergenListDataItem>();
+					allergenList = new ArrayList<>();
 					allergenList.add(new AllergenListDataItem(null, 10d, true, false, null, null, allergen1, false));
 					allergenList.add(new AllergenListDataItem(null, 50d, false, true, null, null, allergen2, false));
 					allergenList.add(new AllergenListDataItem(null,null ,false, false, null, null, allergen3, false));
 					allergenList.add(new AllergenListDataItem(null,null ,false, false, null, null, allergen4, false));
 					rawMaterial2.setAllergenList(allergenList);
 					//ingList : 1 ing1 ; bio1 ; geo1 // 3 ing2 ; bio2 ; geo1|geo2
-					ingList = new ArrayList<IngListDataItem>();
-					bioOrigins = new ArrayList<NodeRef>();
+					ingList = new ArrayList<>();
+					bioOrigins = new ArrayList<>();
 					bioOrigins.add(bioOrigin1);
-					geoOrigins = new ArrayList<NodeRef>();
+					geoOrigins = new ArrayList<>();
 					geoOrigins.add(geoOrigin1);			
 					ingList.add(new IngListDataItem(null, 100/4d, geoOrigins, bioOrigins, true, true,false, ing1, false));
-					bioOrigins = new ArrayList<NodeRef>();
+					bioOrigins = new ArrayList<>();
 					bioOrigins.add(bioOrigin2);
-					geoOrigins = new ArrayList<NodeRef>();
+					geoOrigins = new ArrayList<>();
 					geoOrigins.add(geoOrigin2);
 					ingList.add(new IngListDataItem(null, 300/4d, geoOrigins, bioOrigins, false, false,false, ing2, false));
 					//physicoChem
-					physicoChemList = new ArrayList<PhysicoChemListDataItem>();
+					physicoChemList = new ArrayList<>();
 					physicoChemList.add(new PhysicoChemListDataItem(null, 1d, "-", null, 2.1d, physicoChem1));
 					physicoChemList.add(new PhysicoChemListDataItem(null, 2d, "-", null, 2.2d, physicoChem2));
 					physicoChemList.add(new PhysicoChemListDataItem(null, 1d, "-", 0.8d, 1.1d, physicoChem3));
@@ -535,33 +529,33 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					rawMaterial3.setLegalName(legalName);
 					rawMaterial3.setDensity(1d);
 					//costList
-					costList = new ArrayList<CostListDataItem>();
+					costList = new ArrayList<>();
 					costList.add(new CostListDataItem(null, 1d, "€/kg", null, cost1, false, null, 0.5d, 2d));
 					costList.add(new CostListDataItem(null, 2d, "€/kg", null, cost2, false, null, 1d, 4d));
 					rawMaterial3.setCostList(costList);
 					//nutList
-					nutList = new ArrayList<NutListDataItem>();
+					nutList = new ArrayList<>();
 					nutList.add(new NutListDataItem(null, 1d, "g/100g", null, null, "Groupe 1", nut1, false));
 					nutList.add(new NutListDataItem(null, 2d, "g/100g", null, null, "Groupe 1", nut2, false));
 					nutList.add(new NutListDataItem(null, 4d, "g/100g", 0.8d, 2.1d, "Groupe 1", nut3, false));
 					rawMaterial3.setNutList(nutList);
 					//allergenList
-					allergenList = new ArrayList<AllergenListDataItem>();
+					allergenList = new ArrayList<>();
 					allergenList.add(new AllergenListDataItem(null,100d, false, false, null, null, allergen1, false));
 					allergenList.add(new AllergenListDataItem(null,100d, false, false, null, null, allergen2, false));
 					allergenList.add(new AllergenListDataItem(null,null, true, true, null, null, allergen3, false));
 					allergenList.add(new AllergenListDataItem(null,null, false, false, null, null, allergen4, false));
 					rawMaterial3.setAllergenList(allergenList);
 					//ingList : 4 ing3 ; bio1|bio2 ; geo2
-					ingList = new ArrayList<IngListDataItem>();
-					bioOrigins = new ArrayList<NodeRef>();
+					ingList = new ArrayList<>();
+					bioOrigins = new ArrayList<>();
 					bioOrigins.add(bioOrigin1);
 					bioOrigins.add(bioOrigin2);
-					geoOrigins = new ArrayList<NodeRef>();
+					geoOrigins = new ArrayList<>();
 					geoOrigins.add(geoOrigin2);			
 					ingList.add(new IngListDataItem(null, 100d, geoOrigins, bioOrigins, true, true,false, ing3, false));
 					//physicoChem
-					physicoChemList = new ArrayList<PhysicoChemListDataItem>();
+					physicoChemList = new ArrayList<>();
 					physicoChemList.add(new PhysicoChemListDataItem(null, 1d, "-", null, null, physicoChem1));
 					physicoChemList.add(new PhysicoChemListDataItem(null, 2d, "-", null, null, physicoChem2));
 					physicoChemList.add(new PhysicoChemListDataItem(null, 1d, "-", null, null, physicoChem3));
@@ -579,24 +573,24 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					rawMaterial4.setLegalName(legalName);
 					rawMaterial4.setDensity(1.1d);
 					//ingList : 4 ing3 ; bio1|bio2 ; geo2
-					ingList = new ArrayList<IngListDataItem>();
-					bioOrigins = new ArrayList<NodeRef>();
+					ingList = new ArrayList<>();
+					bioOrigins = new ArrayList<>();
 					bioOrigins.add(bioOrigin1);
 					bioOrigins.add(bioOrigin2);
-					geoOrigins = new ArrayList<NodeRef>();
+					geoOrigins = new ArrayList<>();
 					geoOrigins.add(geoOrigin2);			
 					ingList.add(new IngListDataItem(null, 100d, geoOrigins, bioOrigins, true, true,false, ing3, false));			
 					rawMaterial4.setIngList(ingList);		
 					rawMaterial4.setCostList(new LinkedList<CostListDataItem>());
 					rawMaterial4.setNutList(new LinkedList<NutListDataItem>());
-					nutList = new ArrayList<NutListDataItem>();
+					nutList = new ArrayList<>();
 					nutList.add(new NutListDataItem(null, 0d, "g/100g", 0d,  0d, "Groupe 1", nut1, false));
 					nutList.add(new NutListDataItem(null, 0d, "g/100g", 0d,  0d, "Groupe 1", nut2, false));
 					rawMaterial4.setNutList(nutList);		
 					rawMaterial4NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial4).getNodeRef();
 					
 					/*-- Raw material 5 --*/
-					ingList = new ArrayList<IngListDataItem>();
+					ingList = new ArrayList<>();
 					ingList.add(new IngListDataItem(null, 100d, geoOrigins, bioOrigins, true, true,false, ing3, false));	
 					
 					RawMaterialData rawMaterial5 = new RawMaterialData();
@@ -612,12 +606,12 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					rawMaterial5.setTare(9d);
 					rawMaterial5.setTareUnit(TareUnit.g);
 					//costList
-					costList = new ArrayList<CostListDataItem>();
+					costList = new ArrayList<>();
 					costList.add(new CostListDataItem(null, 5d, "€/m", null, cost1, false));
 					costList.add(new CostListDataItem(null, 6d, "€/m", null, cost2, false));
 					rawMaterial5.setCostList(costList);
 					//nutList
-					nutList = new ArrayList<NutListDataItem>();
+					nutList = new ArrayList<>();
 					nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d,  0d, "Groupe 1", nut1, false));
 					nutList.add(new NutListDataItem(null, 3d, "g/100g", 0d,  0d, "Groupe 1", nut2, false));
 					rawMaterial5.setNutList(nutList);					
@@ -634,32 +628,32 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					rawMaterial6.setUnit(ProductUnit.L);
 					rawMaterial6.setDensity(0.7d);
 					//costList
-					costList = new ArrayList<CostListDataItem>();
+					costList = new ArrayList<>();
 					costList.add(new CostListDataItem(null, 1d, "€/L", 2.1d, cost1, false));
 					costList.add(new CostListDataItem(null, 2d, "€/L", 2.2d, cost2, false));
 					rawMaterial6.setCostList(costList);
 					//nutList
-					nutList = new ArrayList<NutListDataItem>();
+					nutList = new ArrayList<>();
 					nutList.add(new NutListDataItem(null, 1d, "g/100mL", 0.8d, 1.1d, "Groupe 1", nut1, false));
 					nutList.add(new NutListDataItem(null, 2d, "g/100mL", 0.8d, 2.1d, "Groupe 1", nut2, false));
 					rawMaterial6.setNutList(nutList);
 					//allergenList
-					allergenList = new ArrayList<AllergenListDataItem>();
+					allergenList = new ArrayList<>();
 					allergenList.add(new AllergenListDataItem(null,100d, true, false, null, null, allergen1, false));
 					allergenList.add(new AllergenListDataItem(null,100d, false, true, null, null, allergen2, false));
 					allergenList.add(new AllergenListDataItem(null,null, false, false, null, null, allergen3, false));
 					allergenList.add(new AllergenListDataItem(null,null, false, false, null, null, allergen4, false));
 					rawMaterial6.setAllergenList(allergenList);
 					//ingList : 1 ing1 ; bio1 ; geo1 // 3 ing2 ; bio2 ; geo1|geo2
-					ingList = new ArrayList<IngListDataItem>();
-					bioOrigins = new ArrayList<NodeRef>();
+					ingList = new ArrayList<>();
+					bioOrigins = new ArrayList<>();
 					bioOrigins.add(bioOrigin1);
-					geoOrigins = new ArrayList<NodeRef>();
+					geoOrigins = new ArrayList<>();
 					geoOrigins.add(geoOrigin1);			
 					ingList.add(new IngListDataItem(null, 80d, geoOrigins, bioOrigins, true, true,false, ing1, false));
-					bioOrigins = new ArrayList<NodeRef>();
+					bioOrigins = new ArrayList<>();
 					bioOrigins.add(bioOrigin2);
-					geoOrigins = new ArrayList<NodeRef>();
+					geoOrigins = new ArrayList<>();
 					geoOrigins.add(geoOrigin2);
 					ingList.add(new IngListDataItem(null, 20d, geoOrigins, bioOrigins, false, false,false, ing2, false));
 					rawMaterial6.setIngList(ingList);
@@ -675,7 +669,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					rawMaterial7.setUnit(ProductUnit.kg);
 					rawMaterial7.setDensity(1d);			
 					//ingList : ing5
-					ingList = new ArrayList<IngListDataItem>();			
+					ingList = new ArrayList<>();
 					ingList.add(new IngListDataItem(null, 100d, null, null, false, false,false, ing5, false));
 					ingList.add(new IngListDataItem(null, ingList.get(0), 70d, null, null, null, false, false,false,false, ing1, false));
 					ingList.add(new IngListDataItem(null, ingList.get(0), 30d, null, null, null, false, false,false,false, ing4, false));
@@ -717,13 +711,13 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					rawMaterial11.setLegalName(legalName);
 					rawMaterial11.setDensity(1d);
 					//ingList : 1 ing1 ; bio1 ; geo1 // 2 ing2 ; bio1 ; geo1|geo2 
-					ingList = new ArrayList<IngListDataItem>();
-					bioOrigins = new ArrayList<NodeRef>();
+					ingList = new ArrayList<>();
+					bioOrigins = new ArrayList<>();
 					bioOrigins.add(bioOrigin1);
-					geoOrigins = new ArrayList<NodeRef>();
+					geoOrigins = new ArrayList<>();
 					geoOrigins.add(geoOrigin1);			
 					ingList.add(new IngListDataItem(null, 100/3d, geoOrigins, bioOrigins, false, false,false, ing1, false));
-					geoOrigins = new ArrayList<NodeRef>();
+					geoOrigins = new ArrayList<>();
 					geoOrigins.add(geoOrigin1);
 					geoOrigins.add(geoOrigin2);
 					ingList.add(new IngListDataItem(null, 200/3d, geoOrigins, bioOrigins, false, false,false, ing2, false));
@@ -739,15 +733,15 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					rawMaterial12.setLegalName(legalName);
 					rawMaterial12.setDensity(1d);
 					//ingList : 1 ing1 ; bio1 ; geo1 // 3 ing2 ; bio2 ; geo1|geo2
-					ingList = new ArrayList<IngListDataItem>();
-					bioOrigins = new ArrayList<NodeRef>();
+					ingList = new ArrayList<>();
+					bioOrigins = new ArrayList<>();
 					bioOrigins.add(bioOrigin1);
-					geoOrigins = new ArrayList<NodeRef>();
+					geoOrigins = new ArrayList<>();
 					geoOrigins.add(geoOrigin1);			
 					ingList.add(new IngListDataItem(null, 100/4d, geoOrigins, bioOrigins, true, true,false, ing1, false));
-					bioOrigins = new ArrayList<NodeRef>();
+					bioOrigins = new ArrayList<>();
 					bioOrigins.add(bioOrigin2);
-					geoOrigins = new ArrayList<NodeRef>();
+					geoOrigins = new ArrayList<>();
 					geoOrigins.add(geoOrigin2);
 					ingList.add(new IngListDataItem(null, 300/4d, geoOrigins, bioOrigins, false, false,true, ing2, false));
 					rawMaterial12.setIngList(ingList);			
@@ -762,11 +756,11 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					rawMaterial13.setLegalName(legalName);
 					rawMaterial13.setDensity(1d);
 					//ingList : 4 ing3 ; bio1|bio2 ; geo2
-					ingList = new ArrayList<IngListDataItem>();
-					bioOrigins = new ArrayList<NodeRef>();
+					ingList = new ArrayList<>();
+					bioOrigins = new ArrayList<>();
 					bioOrigins.add(bioOrigin1);
 					bioOrigins.add(bioOrigin2);
-					geoOrigins = new ArrayList<NodeRef>();
+					geoOrigins = new ArrayList<>();
 					geoOrigins.add(geoOrigin2);			
 					ingList.add(new IngListDataItem(null, 100d, geoOrigins, bioOrigins, true, true,false, ing3, false));			
 					rawMaterial13.setIngList(ingList);		
@@ -781,11 +775,11 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					rawMaterial14.setLegalName(legalName);
 					rawMaterial14.setDensity(1d);
 					//ingList : 4 ing3 ; bio1|bio2 ; geo2
-					ingList = new ArrayList<IngListDataItem>();
-					bioOrigins = new ArrayList<NodeRef>();
+					ingList = new ArrayList<>();
+					bioOrigins = new ArrayList<>();
 					bioOrigins.add(bioOrigin1);
 					bioOrigins.add(bioOrigin2);
-					geoOrigins = new ArrayList<NodeRef>();
+					geoOrigins = new ArrayList<>();
 					geoOrigins.add(geoOrigin2);			
 					ingList.add(new IngListDataItem(null, 200/3d, geoOrigins, bioOrigins, true, true,false, ing3, false));
 					ingList.add(new IngListDataItem(null, 100/3d, geoOrigins, bioOrigins, true, true,false, ing4, false));
@@ -835,11 +829,11 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					rawMaterial16.setLegalName(legalName);
 					rawMaterial16.setDensity(1d);
 					//ingList : 4 ing3 ; bio1|bio2 ; geo2
-					ingList = new ArrayList<IngListDataItem>();
-					bioOrigins = new ArrayList<NodeRef>();
+					ingList = new ArrayList<>();
+					bioOrigins = new ArrayList<>();
 					bioOrigins.add(bioOrigin1);
 					bioOrigins.add(bioOrigin2);
-					geoOrigins = new ArrayList<NodeRef>();
+					geoOrigins = new ArrayList<>();
 					geoOrigins.add(geoOrigin2);
 					ingList.add(new IngListDataItem(null, null, geoOrigins, bioOrigins, true, true,false, ing1, false));
 					ingList.add(new IngListDataItem(null, 55d, geoOrigins, bioOrigins, true, true,false, ing3, false));	
@@ -854,7 +848,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					packagingMaterial1.setTare(0.015d);
 					packagingMaterial1.setTareUnit(TareUnit.kg);
 					//costList
-					costList = new ArrayList<CostListDataItem>();
+					costList = new ArrayList<>();
 					costList.add(new CostListDataItem(null, 3d, "€/P", null, pkgCost1, false));
 					costList.add(new CostListDataItem(null, 2d, "€/P", null, pkgCost2, false));
 					packagingMaterial1.setCostList(costList);					
@@ -954,7 +948,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 	
 	public void checkILL(String expectedStr1, String expectedStr2, String actualStr){
 		
-		String expectedStr = "";
+		String expectedStr;
 		
 		if(actualStr.startsWith(expectedStr1)){
 			expectedStr = expectedStr1 + ", " + expectedStr2;

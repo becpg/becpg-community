@@ -43,7 +43,7 @@ import fr.becpg.repo.project.data.ProjectData;
  */
 public class ProjectCOCITest extends AbstractProjectTestCase {
 
-	private static Log logger = LogFactory.getLog(ProjectCOCITest.class);
+	private static final Log logger = LogFactory.getLog(ProjectCOCITest.class);
 	
 	@Resource
 	private CheckOutCheckInService checkOutCheckInService;
@@ -59,7 +59,7 @@ public class ProjectCOCITest extends AbstractProjectTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 				
-				Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>();
+				Map<QName, Serializable> aspectProperties = new HashMap<>();
 				aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
 				nodeService.addAspect(projectTplNodeRef, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
 
@@ -75,7 +75,7 @@ public class ProjectCOCITest extends AbstractProjectTestCase {
 				
 				// Check in
 				logger.info("Check in project " + workingCopyNodeRef  + ruleService.getSavedRuleFolderAssoc(workingCopyNodeRef));
-				Map<String, Serializable> versionProperties = new HashMap<String, Serializable>();
+				Map<String, Serializable> versionProperties = new HashMap<>();
 				versionProperties.put(Version.PROP_DESCRIPTION, "This is a test version");
 				NodeRef newProjectNodeRef = checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
 				

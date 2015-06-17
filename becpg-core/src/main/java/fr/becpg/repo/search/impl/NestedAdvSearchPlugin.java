@@ -41,7 +41,7 @@ public class NestedAdvSearchPlugin implements AdvSearchPlugin {
 	private static final String ASSOC_SUFFIX = "assoc_";
 	private static final String ASSOC_KEY = "_"+ASSOC_SUFFIX;
 
-	private static Log logger = LogFactory.getLog(AdvSearchPlugin.class);
+	private static final Log logger = LogFactory.getLog(AdvSearchPlugin.class);
 
 	public Map<String, Map<String, String>> extractNested(Map<String, String> criteriaMap) {
 		Map<String, Map<String, String>> nested = new HashMap<>();
@@ -120,7 +120,7 @@ public class NestedAdvSearchPlugin implements AdvSearchPlugin {
 
 			if (!criteriaMap.isEmpty()) {
 				for (Iterator<NodeRef> iterator = nodes.iterator(); iterator.hasNext();) {
-					NodeRef nodeRef = (NodeRef) iterator.next();
+					NodeRef nodeRef = iterator.next();
 					if (nodeService.exists(nodeRef)) {
 
 						List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, assocQName);

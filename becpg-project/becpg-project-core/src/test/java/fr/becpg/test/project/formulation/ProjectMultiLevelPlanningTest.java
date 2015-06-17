@@ -6,13 +6,10 @@ package fr.becpg.test.project.formulation;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
@@ -31,7 +28,7 @@ import fr.becpg.test.project.AbstractProjectTestCase;
  */
 public class ProjectMultiLevelPlanningTest extends AbstractProjectTestCase {	
 
-	private static Log logger = LogFactory.getLog(ProjectMultiLevelPlanningTest.class);
+	private static final Log logger = LogFactory.getLog(ProjectMultiLevelPlanningTest.class);
 
 	@Test
 	public void testCalculatePlanningDates() throws ParseException {		
@@ -108,10 +105,6 @@ public class ProjectMultiLevelPlanningTest extends AbstractProjectTestCase {
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
 			public NodeRef execute() throws Throwable {
-
-				Collection<QName> dataLists = new ArrayList<QName>();
-				dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
-				dataLists.add(ProjectModel.TYPE_TASK_LIST);
 
 				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 
@@ -193,9 +186,6 @@ public class ProjectMultiLevelPlanningTest extends AbstractProjectTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				Collection<QName> dataLists = new ArrayList<QName>();
-				dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
-				dataLists.add(ProjectModel.TYPE_TASK_LIST);
 
 				projectService.formulate(projectNodeRef);
 

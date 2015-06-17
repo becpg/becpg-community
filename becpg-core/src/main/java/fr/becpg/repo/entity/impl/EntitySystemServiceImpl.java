@@ -70,7 +70,7 @@ public class EntitySystemServiceImpl implements EntitySystemService {
 				entityName = entityPath;
 			}
 
-			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+			Map<QName, Serializable> properties = new HashMap<>();
 			properties.put(ContentModel.PROP_NAME, entityName);
 
 			NodeRef entityNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, entityName);
@@ -112,8 +112,7 @@ public class EntitySystemServiceImpl implements EntitySystemService {
 	public NodeRef getSystemEntityDataList(NodeRef systemEntityNodeRef, String dataListPath) {
 		String entityName = TranslateHelper.getTranslatedPath(dataListPath);
 		if (entityName == null) {
-			entityName = dataListPath;
-		}		
+		}
 		return entityListDAO.getList(entityListDAO.getListContainer(systemEntityNodeRef), dataListPath);
 	}
 
@@ -125,7 +124,7 @@ public class EntitySystemServiceImpl implements EntitySystemService {
 	@Override
 	public List<NodeRef> getSystemEntities() {
 		
-	List<NodeRef> tplsNodeRef =  new LinkedList<NodeRef>();
+	List<NodeRef> tplsNodeRef = new LinkedList<>();
 		
 		for(NodeRef tpl : BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_SYSTEM_ENTITY).inDB().list()){
 			if(!nodeService.hasAspect(tpl, BeCPGModel.ASPECT_COMPOSITE_VERSION)){

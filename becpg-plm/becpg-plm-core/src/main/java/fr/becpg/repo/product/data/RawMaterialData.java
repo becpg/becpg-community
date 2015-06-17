@@ -16,9 +16,9 @@ import fr.becpg.repo.repository.annotation.AlfType;
 @AlfQname(qname = "bcpg:rawMaterial")
 public class RawMaterialData extends ProductData {
 
-	private List<NodeRef> suppliers = new ArrayList<NodeRef>();	
+	private List<NodeRef> suppliers = new ArrayList<>();
 	
-	private List<NodeRef> supplierPlants = new ArrayList<NodeRef>();	
+	private List<NodeRef> supplierPlants = new ArrayList<>();
 
 	@AlfMultiAssoc
 	@AlfQname(qname="bcpg:suppliers")

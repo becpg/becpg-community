@@ -46,7 +46,7 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 
 	private static final int COMPLETED = 100;
 
-	private static Log logger = LogFactory.getLog(TaskStateFormulationHandler.class);
+	private static final Log logger = LogFactory.getLog(TaskStateFormulationHandler.class);
 
 	private ProjectWorkflowService projectWorkflowService;
 

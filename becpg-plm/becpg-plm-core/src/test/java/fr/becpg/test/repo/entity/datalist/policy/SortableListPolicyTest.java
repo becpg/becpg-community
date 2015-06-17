@@ -37,7 +37,7 @@ import fr.becpg.test.PLMBaseTestCase;
 public class SortableListPolicyTest extends PLMBaseTestCase {
 
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(SortableListPolicyTest.class);
+	private static final Log logger = LogFactory.getLog(SortableListPolicyTest.class);
 
 	@Resource
 	private EntityListDAO entityListDAO;
@@ -65,7 +65,7 @@ public class SortableListPolicyTest extends PLMBaseTestCase {
 				// create SF
 				SemiFinishedProductData sfData = new SemiFinishedProductData();
 				sfData.setName("SF");
-				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
+				List<CostListDataItem> costList = new ArrayList<>();
 				costList.add(new CostListDataItem(null, 3d, "€/kg", null, costs.get(0), false));
 				costList.add(new CostListDataItem(null, 2d, "€/kg", null, costs.get(1), false));
 				costList.add(new CostListDataItem(null, 3d, "€/kg", null, costs.get(2), false));
@@ -78,7 +78,7 @@ public class SortableListPolicyTest extends PLMBaseTestCase {
 				NodeRef listContainerNodeRef = entityListDAO.getListContainer(sfNodeRef);
 				NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, PLMModel.TYPE_COSTLIST);
 
-				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				Map<QName, Serializable> properties = new HashMap<>();
 				ChildAssociationRef childAssocRef = nodeService.createNode(listNodeRef, ContentModel.ASSOC_CONTAINS,
 						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, GUID.generate()),
 						PLMModel.TYPE_COSTLIST, properties);
@@ -517,9 +517,9 @@ public class SortableListPolicyTest extends PLMBaseTestCase {
 
 		for (CostListDataItem c : costListDataItem) {
 
-			logger.info("level : " + (Integer) nodeService.getProperty(c.getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL)
-					+ " - Cost " + (String) nodeService.getProperty(c.getCost(), ContentModel.PROP_NAME)
-					+ " - sorted: " + (Integer) nodeService.getProperty(c.getNodeRef(), BeCPGModel.PROP_SORT));
+			logger.info("level : " + nodeService.getProperty(c.getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL)
+					+ " - Cost " + nodeService.getProperty(c.getCost(), ContentModel.PROP_NAME)
+					+ " - sorted: " + nodeService.getProperty(c.getNodeRef(), BeCPGModel.PROP_SORT));
 		}
 	}
 }

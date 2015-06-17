@@ -33,7 +33,7 @@ public class PriceListDataItem extends AbstractEffectiveDataItem{
 
 	private NodeRef cost;
 	
-	private List<NodeRef> suppliers = new ArrayList<NodeRef>();
+	private List<NodeRef> suppliers = new ArrayList<>();
 	
 	@AlfProp
 	@AlfQname(qname="bcpg:priceListValue")

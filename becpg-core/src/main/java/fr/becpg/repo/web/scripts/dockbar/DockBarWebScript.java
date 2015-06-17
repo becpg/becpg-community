@@ -19,7 +19,6 @@ package fr.becpg.repo.web.scripts.dockbar;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -115,7 +114,7 @@ public class DockBarWebScript extends AbstractWebScript {
 				logger.debug("Getting :" + nodeRefs + " from history for " + username);
 			}
 
-			LinkedList<NodeRef> elements = new LinkedList<NodeRef>();
+			LinkedList<NodeRef> elements = new LinkedList<>();
 
 			if (nodeRefs != null && nodeRefs.length() > 0) {
 				String[] splitted = nodeRefs.split(",");
@@ -175,6 +174,7 @@ public class DockBarWebScript extends AbstractWebScript {
 			throw new WebScriptException("Unable to serialize JSON", e);
 		} finally {
 			if (logger.isDebugEnabled()) {
+				assert watch != null;
 				watch.stop();
 				logger.debug("DockBarWebScript execute in " + watch.getTotalTimeSeconds() + "s");
 			}
@@ -186,8 +186,7 @@ public class DockBarWebScript extends AbstractWebScript {
 
 		JSONArray items = new JSONArray();
 
-		for (Iterator<NodeRef> iterator = results.iterator(); iterator.hasNext();) {
-			NodeRef nodeRef = (NodeRef) iterator.next();
+		for (NodeRef nodeRef : results) {
 			if (serviceRegistry.getNodeService().exists(nodeRef)
 					&& serviceRegistry.getPermissionService().hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED) {
 				items.put(new ContentDataExtractor(metadataFields, serviceRegistry, attributeExtractorService).extract(nodeRef));

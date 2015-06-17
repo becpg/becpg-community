@@ -18,14 +18,7 @@
 package fr.becpg.repo.helper.impl;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
+import java.util.*;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
@@ -70,7 +63,7 @@ import fr.becpg.repo.security.SecurityService;
 @Service("attributeExtractorService")
 public class AttributeExtractorServiceImpl implements AttributeExtractorService, InitializingBean {
 
-	private static Log logger = LogFactory.getLog(AttributeExtractorServiceImpl.class);
+	private static final Log logger = LogFactory.getLog(AttributeExtractorServiceImpl.class);
 
 	@Autowired
 	private NodeService nodeService;
@@ -108,11 +101,11 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 	@Autowired
 	private PersonAttributeExtractorPlugin personAttributeExtractorPlugin;
 
-	private Map<QName, AttributeExtractorPlugin> pluginsCache = new HashMap<>();
+	private final Map<QName, AttributeExtractorPlugin> pluginsCache = new HashMap<>();
 
-	private PropertyFormats csvPropertyFormats = new CSVPropertyFormats(false);
+	private final PropertyFormats csvPropertyFormats = new CSVPropertyFormats(false);
 
-	private PropertyFormats propertyFormats = new PropertyFormats(false);
+	private final PropertyFormats propertyFormats = new PropertyFormats(false);
 
 	@Override
 	public PropertyFormats getPropertyFormats(AttributeExtractorMode mode) {
@@ -135,7 +128,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 
 	public class AttributeExtractorStructure {
 
-		String fieldName;
+		final String fieldName;
 		DataListCallBack callback;
 		boolean isEntityField;
 		ClassAttributeDefinition fieldDef;
@@ -281,10 +274,10 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 			}
 
 			if (propertyDef.isMultiValued()) {
-				List<String> values = null;
+				List<String> values;
 
 				if (v instanceof String) {
-					values = Arrays.asList((String) v);
+					values = Collections.singletonList((String) v);
 				} else {
 					values = (List<String>) v;
 				}
@@ -371,7 +364,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 
 				QName fieldQname = QName.createQName(dlField, namespaceService);
 
-				List<String> dLFields = new ArrayList<String>();
+				List<String> dLFields = new ArrayList<>();
 				while (tokeniser.hasMoreTokens()) {
 					dLFields.add(tokeniser.nextToken());
 				}
@@ -424,7 +417,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 			watch = new StopWatch();
 			watch.start();
 		}
-		Map<String, Object> ret = new HashMap<String, Object>(metadataFields.size());
+		Map<String, Object> ret = new HashMap<>(metadataFields.size());
 
 		Integer order = 0;
 
@@ -464,9 +457,9 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 	private Object extractNodeData(NodeRef nodeRef, Map<QName, Serializable> properties, ClassAttributeDefinition attribute,
 			AttributeExtractorMode mode, int order) {
 
-		Serializable value = null;
+		Serializable value;
 		String displayName = "";
-		QName type = null;
+		QName type;
 
 		// property
 		if (attribute instanceof PropertyDefinition) {
@@ -488,7 +481,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 				}
 
 			} else {
-				HashMap<String, Object> tmp = new HashMap<String, Object>(6);
+				HashMap<String, Object> tmp = new HashMap<>(6);
 
 				type = ((PropertyDefinition) attribute).getDataType().getName().getPrefixedQName(namespaceService);
 
@@ -512,7 +505,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 
 		if (attribute instanceof AssociationDefinition) {// associations
 
-			List<NodeRef> assocRefs = null;
+			List<NodeRef> assocRefs;
 			if (((AssociationDefinition) attribute).isChild()) {
 				assocRefs = associationService.getChildAssocs(nodeRef, attribute.getName());
 			} else {
@@ -520,7 +513,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 			}
 
 			if (AttributeExtractorMode.SEARCH.equals(mode)) {
-				HashMap<String, Object> tmp = new HashMap<String, Object>(5);
+				HashMap<String, Object> tmp = new HashMap<>(5);
 
 				String nodeRefs = "";
 				for (NodeRef assocNodeRef : assocRefs) {
@@ -553,9 +546,9 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 				return ret;
 
 			} else {
-				List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>(assocRefs.size());
+				List<Map<String, Object>> ret = new ArrayList<>(assocRefs.size());
 				for (NodeRef assocNodeRef : assocRefs) {
-					Map<String, Object> tmp = new HashMap<String, Object>(5);
+					Map<String, Object> tmp = new HashMap<>(5);
 
 					type = nodeService.getType(assocNodeRef);
 
@@ -600,12 +593,12 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 
 	@Override
 	public String extractPropName(NodeRef v) {
-		QName type = nodeService.getType((NodeRef) v);
+		QName type = nodeService.getType(v);
 		return extractPropName(type, v);
 	}
 
 	private String extractPropName(QName type, NodeRef nodeRef) {
-		String value = "";
+		String value;
 
 		if (permissionService.hasReadPermission(nodeRef) == AccessStatus.ALLOWED) {
 			AttributeExtractorPlugin plugin = getAttributeExtractorPlugin(type, nodeRef);
@@ -624,7 +617,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 	@Override
 	public String extractMetadata(QName type, NodeRef nodeRef) {
 
-		String metadata = "";
+		String metadata;
 
 		AttributeExtractorPlugin plugin = getAttributeExtractorPlugin(type, nodeRef);
 		if (plugin != null) {
@@ -646,12 +639,12 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 
 	@Override
 	public String[] getTags(NodeRef nodeRef) {
-		String[] result = null;
+		String[] result;
 		List<String> tags = taggingService.getTags(nodeRef);
 		if (tags == null || tags.isEmpty()) {
 			result = new String[0];
 		} else {
-			result = (String[]) tags.toArray(new String[tags.size()]);
+			result = tags.toArray(new String[tags.size()]);
 		}
 		return result;
 	}

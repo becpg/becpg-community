@@ -41,7 +41,7 @@ import fr.becpg.repo.RepoConsts;
 
 public class ContentHelper {
 
-	private static Log logger = LogFactory.getLog(ContentHelper.class);
+	private static final Log logger = LogFactory.getLog(ContentHelper.class);
 
 	private ContentService contentService;
 
@@ -77,7 +77,7 @@ public class ContentHelper {
 				String fileName = res.getFilename();
 				logger.debug("add file " + fileName);
 
-				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				Map<QName, Serializable> properties = new HashMap<>();
 				properties.put(ContentModel.PROP_NAME, fileName);
 
 				NodeRef nodeRef = nodeService.getChildByName(folderNodeRef, ContentModel.ASSOC_CONTAINS, (String) properties.get(ContentModel.PROP_NAME));

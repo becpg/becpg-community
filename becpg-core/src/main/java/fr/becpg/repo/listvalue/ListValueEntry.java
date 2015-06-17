@@ -39,7 +39,7 @@ public class ListValueEntry {
 		this.value = value;
 		this.name = name;
 		this.cssClass = cssClass;
-		this.metadatas = new HashMap<String,String>();
+		this.metadatas = new HashMap<>();
 	}
 	
 	public ListValueEntry(String value, String name, String cssClass, Map<String,String> metadatas) {

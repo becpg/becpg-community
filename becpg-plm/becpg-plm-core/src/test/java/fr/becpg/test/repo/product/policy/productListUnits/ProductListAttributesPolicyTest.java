@@ -30,9 +30,9 @@ import fr.becpg.test.PLMBaseTestCase;
 public class ProductListAttributesPolicyTest extends PLMBaseTestCase {
 
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(ProductListAttributesPolicyTest.class);
+	private static final Log logger = LogFactory.getLog(ProductListAttributesPolicyTest.class);
 
-	Set<QName> dataLists = new HashSet<QName>();
+	final Set<QName> dataLists = new HashSet<>();
 	NodeRef cost1 = null;
 	NodeRef cost2 = null;
 	NodeRef cost3 = null;
@@ -78,13 +78,13 @@ public class ProductListAttributesPolicyTest extends PLMBaseTestCase {
 				rawMaterialData.setUnit(ProductUnit.kg);
 				rawMaterialData.setName("RM");
 
-				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
+				List<CostListDataItem> costList = new ArrayList<>();
 				costList.add(new CostListDataItem(null, 12d, "", null, cost1, false));
 				costList.add(new CostListDataItem(null, 11d, "", null, cost2, false));
 				costList.add(new CostListDataItem(null, 13d, "", null, cost3, false));
 				rawMaterialData.setCostList(costList);
 
-				List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
+				List<NutListDataItem> nutList = new ArrayList<>();
 				nutList.add(new NutListDataItem(null, 12.4d, "", 0d, 0d, "Groupe 1", nut1, false));
 				nutList.add(new NutListDataItem(null, 12.5d, "", 0d, 0d, "Groupe 1", nut2, false));
 				rawMaterialData.setNutList(nutList);

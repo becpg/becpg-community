@@ -36,7 +36,7 @@ import fr.becpg.repo.variant.filters.VariantFilters;
 
 public class TareFormulationHandler extends FormulationBaseHandler<ProductData> {
 	
-	private static Log logger = LogFactory.getLog(TareFormulationHandler.class);
+	private static final Log logger = LogFactory.getLog(TareFormulationHandler.class);
 	
 	private NodeService nodeService;
 	

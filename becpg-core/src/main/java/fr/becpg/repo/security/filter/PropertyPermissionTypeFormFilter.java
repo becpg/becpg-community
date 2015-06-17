@@ -22,7 +22,7 @@ import org.apache.commons.logging.LogFactory;
 public class PropertyPermissionTypeFormFilter  extends AbstractPropertyPermissionFormFilter<TypeDefinition>{
 
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(PropertyPermissionTypeFormFilter.class);
+	private static final Log logger = LogFactory.getLog(PropertyPermissionTypeFormFilter.class);
 	
 	/* (non-Javadoc)
 	 * @see fr.becpg.repo.form.processor.PropertyPermissionFormFilter#afterGenerate(java.lang.Object, java.util.List, java.util.List, org.alfresco.repo.forms.Form, java.util.Map)

@@ -52,7 +52,7 @@ public class ActivityListExtractor extends SimpleExtractor {
 	@Override
 	protected List<NodeRef> getListNodeRef(DataListFilter dataListFilter, DataListPagination pagination) {
 
-		Map<String, Boolean> sortMap = new LinkedHashMap<String, Boolean>();
+		Map<String, Boolean> sortMap = new LinkedHashMap<>();
 
 		sortMap.put("@cm:created", false);
 

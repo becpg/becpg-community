@@ -64,7 +64,6 @@ import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.RequirementType;
-import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompositionDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.helper.CharactHelper;
@@ -81,7 +80,7 @@ import fr.becpg.repo.repository.RepositoryEntity;
  */
 public class ECOServiceImpl implements ECOService {
 
-	private static Log logger = LogFactory.getLog(ECOServiceImpl.class);
+	private static final Log logger = LogFactory.getLog(ECOServiceImpl.class);
 
 	private WUsedListService wUsedListService;
 	private EntityVersionService entityVersionService;
@@ -459,7 +458,7 @@ public class ECOServiceImpl implements ECOService {
 			}
 
 			if (!component.isLeaf()) {
-				if (!visitChildrens((Composite<WUsedListDataItem>) component, ecoData, isSimulation)) {
+				if (!visitChildrens(component, ecoData, isSimulation)) {
 					return false;
 				}
 			}
@@ -544,7 +543,7 @@ public class ECOServiceImpl implements ECOService {
 		Set<NodeRef> toDelete = new HashSet<>();
 
 		for (Iterator<T> iterator = items.iterator(); iterator.hasNext();) {
-			T compoListDataItem = (T) iterator.next();
+			T compoListDataItem = iterator.next();
 
 			for (ReplacementListDataItem replacementListDataItem : ecoData.getReplacementList()) {
 				if (replacementListDataItem.getSourceItems() != null && !replacementListDataItem.getSourceItems().isEmpty()) {
@@ -559,8 +558,8 @@ public class ECOServiceImpl implements ECOService {
 
 							for (int i = 1; i < replacementListDataItem.getSourceItems().size(); i++) {
 								apply = false;
-								for (Iterator<T> iterator2 = items.iterator(); iterator2.hasNext();) {
-									CompositionDataItem compoListDataItem2 = (CompoListDataItem) iterator2.next();
+								for (T item : items) {
+									CompositionDataItem compoListDataItem2 = item;
 									if (replacementListDataItem.getSourceItems().get(i).equals(compoListDataItem2.getComponent())) {
 										apply = true;
 										// DELETE
@@ -630,7 +629,7 @@ public class ECOServiceImpl implements ECOService {
 			ChangeOrderData ecoData){
 
 		
-		Map<String, Serializable> properties = new HashMap<String, Serializable>();
+		Map<String, Serializable> properties = new HashMap<>();
 		properties.put(VersionModel.PROP_VERSION_TYPE, versionType);
 		properties.put(Version.PROP_DESCRIPTION, I18NUtil.getMessage("plm.ecm.apply.version.label", ecoData.getCode()+" - "+ecoData.getName()));
 
@@ -711,7 +710,7 @@ public class ECOServiceImpl implements ECOService {
 
 	@Deprecated
 	private List<QName> evaluateWUsedAssociations(NodeRef targetAssocNodeRef) {
-		List<QName> wUsedAssociations = new ArrayList<QName>();
+		List<QName> wUsedAssociations = new ArrayList<>();
 
 		QName nodeType = nodeService.getType(targetAssocNodeRef);
 

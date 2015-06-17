@@ -31,7 +31,7 @@ public class PublishWebScript extends DeclarativeWebScript  {
 
 	
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(PublishWebScript.class);
+	private static final Log logger = LogFactory.getLog(PublishWebScript.class);
 	
 	/** The node service. */
 	private DesignerService designerService;
@@ -64,7 +64,7 @@ public class PublishWebScript extends DeclarativeWebScript  {
 		NodeRef parentNodeRef = new NodeRef( req.getParameter(PARAM_NODEREF));		
 
 		
-		Map<String, Object> model = new HashMap<String, Object>();
+		Map<String, Object> model = new HashMap<>();
 		
 		designerService.writeXml(parentNodeRef);
 		designerService.publish(parentNodeRef);

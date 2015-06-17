@@ -77,7 +77,7 @@ public class IngLabelingListDataItem extends AbstractManualDataItem {
 	 * @param value the value
 	 */
 	public IngLabelingListDataItem(NodeRef nodeRef, NodeRef grp, MLText value, Boolean isManual){
-		this.nodeRef = nodeRef;;
+		this.nodeRef = nodeRef;
 		this.grp=grp;
 		this.value=value;		
 		this.isManual=isManual;
@@ -88,7 +88,7 @@ public class IngLabelingListDataItem extends AbstractManualDataItem {
 	 * @param i
 	 */
 	public IngLabelingListDataItem(IngLabelingListDataItem i){
-		this.nodeRef = i.nodeRef;;
+		this.nodeRef = i.nodeRef;
 		this.grp = i.grp;
 		this.value = i.value;		
 		this.isManual = i.isManual;

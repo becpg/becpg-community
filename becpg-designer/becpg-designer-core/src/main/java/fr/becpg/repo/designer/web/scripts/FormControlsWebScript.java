@@ -27,7 +27,7 @@ public class FormControlsWebScript extends DeclarativeWebScript  {
 	private static final String FORM_CONTROLS = "controls";
 
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(FormControlsWebScript.class);
+	private static final Log logger = LogFactory.getLog(FormControlsWebScript.class);
 	
 	/** The node service. */
 	private DesignerService designerService;
@@ -58,7 +58,7 @@ public class FormControlsWebScript extends DeclarativeWebScript  {
 	protected Map<String, Object> executeImpl(WebScriptRequest req, Status status, Cache cache){
 				
 		logger.debug("Retrieve form controls");
-		Map<String, Object> model = new HashMap<String, Object>();
+		Map<String, Object> model = new HashMap<>();
 
 		model.put(FORM_CONTROLS, designerService.getFormControls());
 	

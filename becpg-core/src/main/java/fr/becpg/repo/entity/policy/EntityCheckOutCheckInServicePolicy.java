@@ -52,7 +52,7 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 		CheckOutCheckInServicePolicies.BeforeCheckIn, CheckOutCheckInServicePolicies.OnCheckIn, CheckOutCheckInServicePolicies.BeforeCancelCheckOut,
 		NodeServicePolicies.OnRemoveAspectPolicy, NodeServicePolicies.OnDeleteNodePolicy, CheckOutCheckInServicePolicies.OnCancelCheckOut {
 
-	private static Log logger = LogFactory.getLog(EntityCheckOutCheckInServicePolicy.class);
+	private static final Log logger = LogFactory.getLog(EntityCheckOutCheckInServicePolicy.class);
 
 	private EntityVersionService entityVersionService;
 
@@ -190,7 +190,7 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy impl
 
 	@Override
 	protected void doAfterCommit(String key, Set<NodeRef> pendingNodes) {
-		entityReportAsyncGenerator.queueNodes(new ArrayList<NodeRef>(pendingNodes));
+		entityReportAsyncGenerator.queueNodes(new ArrayList<>(pendingNodes));
 
 	}
 

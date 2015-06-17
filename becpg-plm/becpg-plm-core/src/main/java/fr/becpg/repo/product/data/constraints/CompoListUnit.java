@@ -37,6 +37,6 @@ public enum CompoListUnit {
 	/** m2 **/
 	m2,
 	
-	Perc;
-	
+	Perc
+
 }

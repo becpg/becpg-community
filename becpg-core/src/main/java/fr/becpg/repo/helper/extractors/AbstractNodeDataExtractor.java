@@ -40,11 +40,11 @@ import fr.becpg.repo.helper.SiteHelper;
 
 public abstract class AbstractNodeDataExtractor implements NodeDataExtractor {
 
-	protected NodeService nodeService;
+	protected final NodeService nodeService;
 
-	protected ServiceRegistry services;
+	protected final ServiceRegistry services;
 	
-	protected AttributeExtractorService attributeExtractorService;
+	protected final AttributeExtractorService attributeExtractorService;
 
 	protected static final String PROP_NODEREF = "nodeRef";
 	protected static final String PROP_TAGS = "tags";
@@ -78,7 +78,7 @@ public abstract class AbstractNodeDataExtractor implements NodeDataExtractor {
 	}
 
 
-	private static Log logger = LogFactory.getLog(AbstractNodeDataExtractor.class);
+	private static final Log logger = LogFactory.getLog(AbstractNodeDataExtractor.class);
 
 	@Override
 	public Map<String, Object> extract(final NodeRef nodeRef) {
@@ -118,7 +118,7 @@ public abstract class AbstractNodeDataExtractor implements NodeDataExtractor {
 					
 
 					if (site != null) {
-						Map<String, Object> siteData = new HashMap<String, Object>();
+						Map<String, Object> siteData = new HashMap<>();
 						siteData.put(PROP_SHORTNAME, siteId);
 						siteData.put(PROP_TITLE, site.getTitle());
 						ret.put(PROP_SITE, siteData);
@@ -128,6 +128,7 @@ public abstract class AbstractNodeDataExtractor implements NodeDataExtractor {
 			
 		} finally {
 			if (logger.isDebugEnabled()) {
+				assert watch != null;
 				watch.stop();
 				logger.debug( getClass().getSimpleName()+" extract metadata in  "
 						+ watch.getTotalTimeSeconds()+"s" );
