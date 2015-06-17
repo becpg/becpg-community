@@ -878,7 +878,9 @@
 			</form>
 			<form id="sub-datagrid">
 				<field-visibility>
+					<show id="bcpg:parentLevel"  />
 					<show id="pjt:tlTaskName" />
+					<show id="pjt:tlIsGroup" />
 					<show id="pjt:tlIsMilestone" />
 					<show id="pjt:tlDuration" />
 					<show force="true" id="pjt:tlPrevTasks" />
