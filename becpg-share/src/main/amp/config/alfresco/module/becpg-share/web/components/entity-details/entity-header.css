@@ -4,6 +4,7 @@
 .node-header .node-path .entity {
 	background-image:  url(../images/filetypes/generic-entity-16.png);
 	padding-left: 20px;
+	font-size: 125%;
 }
 
 .node-header .node-path .folder-pjt_project {
@@ -167,7 +168,7 @@
 
 .node-header .product-state
 {
-   font-weight: bold; 
+   font-size: 125%;
 }
 
 
