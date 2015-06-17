@@ -72,9 +72,8 @@
                   <!-- Path-->
                   <div class="node-path">
                      <@renderPaths paths />
-		             <#if showOnlyLocation == "true" && productState??><span class="product-state ${productState}">[&nbsp;${msg("status."+productState)}&nbsp;]</span></#if>
-					<#if showOnlyLocation == "true" && item.version?? && item.version?length &gt; 0 ><span class="document-version">${item.version}</span></#if>
-                   
+		             	<#if showOnlyLocation == "true" && productState??><span class="product-state ${productState}">[${msg("status."+productState)}]</span></#if>
+							<#if showOnlyLocation == "true" && item.version?? && item.version?length &gt; 0 ><span class="document-version">${item.version}</span></#if>
                   </div>
                </#if>
                <#if showOnlyLocation == "false">
