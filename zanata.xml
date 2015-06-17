@@ -12,5 +12,6 @@
     <locale>ru</locale>
     <locale>it</locale>
     <locale>nl</locale>
+    <locale>pt</locale>
   </locales>
 </config>
