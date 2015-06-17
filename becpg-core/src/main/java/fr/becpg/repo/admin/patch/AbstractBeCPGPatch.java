@@ -35,7 +35,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 public abstract class AbstractBeCPGPatch extends AbstractPatch {
 
-	private static Log logger = LogFactory.getLog(AbstractBeCPGPatch.class);
+	private static final Log logger = LogFactory.getLog(AbstractBeCPGPatch.class);
 
 	protected Repository repository;
 	
@@ -86,9 +86,8 @@ public abstract class AbstractBeCPGPatch extends AbstractPatch {
 	public NodeRef getFolder(NodeRef parentNodeRef, String folderPath) {
 		String folderName = TranslateHelper.getTranslatedPath(folderPath);
 		if (folderName == null) {
-			folderName = folderPath;
 		}
-		return repoService.getFolderByPath(parentNodeRef, folderPath);
+		return repoService.getFolderByPath(parentNodeRef, folderName);
 	}
 	
 	

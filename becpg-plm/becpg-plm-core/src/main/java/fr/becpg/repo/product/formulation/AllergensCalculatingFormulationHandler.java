@@ -47,7 +47,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 	public static final String MESSAGE_FORBIDDEN_ALLERGEN = "message.formulate.allergen.forbidden";
 	
-	private static Log logger = LogFactory.getLog(AllergensCalculatingFormulationHandler.class);
+	private static final Log logger = LogFactory.getLog(AllergensCalculatingFormulationHandler.class);
 
 	protected AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
@@ -75,8 +75,8 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 			return true;
 		}
 
-		Set<NodeRef> visitedProducts = new HashSet<NodeRef>();
-		List<AllergenListDataItem> retainNodes = new ArrayList<AllergenListDataItem>();
+		Set<NodeRef> visitedProducts = new HashSet<>();
+		List<AllergenListDataItem> retainNodes = new ArrayList<>();
 
 		if (formulatedProduct.getAllergenList() != null) {
 			for (AllergenListDataItem a : formulatedProduct.getAllergenList()) {
@@ -98,8 +98,8 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 		boolean isGenericRawMaterial = formulatedProduct instanceof RawMaterialData;
 		
-		Map<String, ReqCtrlListDataItem> errors = new HashMap<String, ReqCtrlListDataItem>();
-		Map<String, ReqCtrlListDataItem> rclCtrlMap = new HashMap<String, ReqCtrlListDataItem>();
+		Map<String, ReqCtrlListDataItem> errors = new HashMap<>();
+		Map<String, ReqCtrlListDataItem> rclCtrlMap = new HashMap<>();
 		// compoList
 		Double totalQtyUsed = 0d;
 		
@@ -181,7 +181,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 	private List<ReqCtrlListDataItem> visitPart(VariantDataItem variantDataItem, NodeRef part, List<AllergenListDataItem> allergenList,
 			List<AllergenListDataItem> retainNodes, Double qtyUsed, Boolean isRawMaterial, Map<String,ReqCtrlListDataItem> errors) {
 
-		List<ReqCtrlListDataItem> ret = new ArrayList<ReqCtrlListDataItem>();
+		List<ReqCtrlListDataItem> ret = new ArrayList<>();
 		
 		
 		ProductData partProduct = (ProductData) alfrescoRepository.findOne(part);
@@ -273,7 +273,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 											}	
 										} else {
 											isFirst = false;
-												List<NodeRef> sourceNodeRefs =  new ArrayList<NodeRef>();
+												List<NodeRef> sourceNodeRefs = new ArrayList<>();
 													sourceNodeRefs.add(part);
 												
 												error =  new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, sourceNodeRefs);

@@ -41,7 +41,7 @@ public class ContentDataExtractor extends AbstractNodeDataExtractor  {
 	
 	
 
-	private List<String> metadataFields = new ArrayList<String>();
+	private List<String> metadataFields = new ArrayList<>();
 	
 
 	
@@ -58,7 +58,7 @@ public class ContentDataExtractor extends AbstractNodeDataExtractor  {
 	@Override
 	protected Map<String, Object> doExtract(NodeRef nodeRef,QName itemType ,SiteInfo site) {
 		 
-		Map<String, Object> ret = new HashMap<String, Object>();
+		Map<String, Object> ret = new HashMap<>();
 		
 		 ret.put(PROP_NODEREF, nodeRef.toString());
 		 ret.put(PROP_TAGS,  attributeExtractorService.getTags(nodeRef));
@@ -97,7 +97,7 @@ public class ContentDataExtractor extends AbstractNodeDataExtractor  {
 	         ret.put(PROP_SIZE, getSize((ContentData)props.get(ContentModel.PROP_CONTENT)));
 	      }           
 	      
-		 List<String> aspects = new ArrayList<String>();
+		 List<String> aspects = new ArrayList<>();
 		 for(QName aspect : nodeService.getAspects(nodeRef)){
 			 aspects.add(aspect.toPrefixString(services.getNamespaceService()));
 		 }

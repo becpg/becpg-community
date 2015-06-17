@@ -82,7 +82,7 @@ public class DesignerModel {
 	 * Props
 	 */
 
-	public static QName PROP_DSG_ID = QName.createQName(DESIGNER_URI, "id");
+	public static final QName PROP_DSG_ID = QName.createQName(DESIGNER_URI, "id");
 
 	public static final QName PROP_M2_NAME = QName.createQName(M2_URI, "name");
 

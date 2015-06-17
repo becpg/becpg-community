@@ -24,7 +24,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
@@ -42,7 +41,7 @@ import fr.becpg.repo.product.formulation.FormulationHelper;
 @Service
 public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 
-	private static Log logger = LogFactory.getLog(CostCharactDetailsVisitor.class);
+	private static final Log logger = LogFactory.getLog(CostCharactDetailsVisitor.class);
 
 	@Override
 	public CharactDetails visit(ProductData productData, List<NodeRef> dataListItems) throws FormulateException {
@@ -63,7 +62,7 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 		 */
 		if (productData.hasPackagingListEl(EffectiveFilters.EFFECTIVE)) {
 			for (PackagingListDataItem packagingListDataItem : productData.getPackagingList(EffectiveFilters.EFFECTIVE)) {
-				Double qty = FormulationHelper.getQty(packagingListDataItem).doubleValue();
+				Double qty = FormulationHelper.getQty(packagingListDataItem);
 				visitPart(packagingListDataItem.getProduct(), ret, qty, netQty);
 
 			}
@@ -96,7 +95,7 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 				}
 				
 				// calculate children				
-				Composite<CompoListDataItem> c = (Composite<CompoListDataItem>)component;
+				Composite<CompoListDataItem> c = component;
 				visitCompoListChildren(formulatedProduct, c, ret, newLossPerc, netQty);							
 			}
 			else{

@@ -18,11 +18,7 @@
 package fr.becpg.repo.listvalue;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -67,7 +63,7 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 
 			DataListFilter dataListFilter = new DataListFilter();
 			dataListFilter.setDataType(PLMModel.TYPE_COMPOLIST);
-			dataListFilter.setEntityNodeRefs(Arrays.asList(entityNodeRef));
+			dataListFilter.setEntityNodeRefs(Collections.singletonList(entityNodeRef));
 
 			// need to load assoc so we use the MultiLevelDataListService
 			MultiLevelListData mlld = multiLevelDataListService.getMultiLevelListData(dataListFilter);
@@ -77,7 +73,7 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 			Map<String, String> extras = (HashMap<String, String>) props.get(ListValueService.EXTRA_PARAM);
 			if (extras != null) {
 				if (extras.get("itemId") != null) {
-					itemId = new NodeRef((String) extras.get("itemId"));
+					itemId = new NodeRef(extras.get("itemId"));
 				}
 			}
 
@@ -90,7 +86,7 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 
 	private List<ListValueEntry> getParentsLevel(MultiLevelListData mlld, String query, NodeRef itemId) {
 
-		List<ListValueEntry> result = new ArrayList<ListValueEntry>();
+		List<ListValueEntry> result = new ArrayList<>();
 
 		if (mlld != null) {
 

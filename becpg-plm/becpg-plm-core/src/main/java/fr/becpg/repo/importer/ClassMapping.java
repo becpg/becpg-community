@@ -22,13 +22,13 @@ public class ClassMapping {
 	private QName type;	
 	
 	/** The node column keys. */
-	private List<QName> nodeColumnKeys = new ArrayList<QName>();	
+	private List<QName> nodeColumnKeys = new ArrayList<>();
 	
 	/** The data list column keys. */
-	private List<QName> dataListColumnKeys = new ArrayList<QName>();
+	private List<QName> dataListColumnKeys = new ArrayList<>();
 	
 	/** The columns. */
-	private List<AbstractAttributeMapping> columns = new ArrayList<AbstractAttributeMapping>();
+	private List<AbstractAttributeMapping> columns = new ArrayList<>();
 	
 	/**
 	 * Gets the type.

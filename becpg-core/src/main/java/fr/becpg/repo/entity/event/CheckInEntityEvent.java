@@ -28,7 +28,7 @@ import org.springframework.context.ApplicationEvent;
 public class CheckInEntityEvent extends ApplicationEvent {
 
 	private static final long serialVersionUID = 6872600105098661778L;	
-	private NodeRef entityNodeRef;
+	private final NodeRef entityNodeRef;
 	
 	public NodeRef getEntityNodeRef() {
 		return entityNodeRef;

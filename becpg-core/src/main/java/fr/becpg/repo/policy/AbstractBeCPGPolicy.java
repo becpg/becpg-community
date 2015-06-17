@@ -58,9 +58,9 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 
 	private AbstractBeCPGPolicyTransactionListener transactionListener;
 
-	private Set<String> keys = new HashSet<String>();
+	private final Set<String> keys = new HashSet<>();
 	
-	private static Log logger = LogFactory.getLog(AbstractBeCPGPolicy.class);
+	private static final Log logger = LogFactory.getLog(AbstractBeCPGPolicy.class);
 
 	public void setPolicyComponent(PolicyComponent policyComponent) {
 		this.policyComponent = policyComponent;
@@ -159,9 +159,9 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 	
 	protected void queueNode(String key, NodeRef nodeRef) {
 		@SuppressWarnings("unchecked")
-		Set<NodeRef> pendingNodes = (Set<NodeRef>) AlfrescoTransactionSupport.getResource(key);
+		Set<NodeRef> pendingNodes = AlfrescoTransactionSupport.getResource(key);
 		if (pendingNodes == null) {
-			pendingNodes = new LinkedHashSet<NodeRef>();
+			pendingNodes = new LinkedHashSet<>();
 			if(logger.isDebugEnabled()){
 				logger.debug("Bind key to transaction : "+key);
 			}
@@ -183,7 +183,7 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 	
 	protected void unQueueNode(String key, NodeRef entityNodeRef) {
 		@SuppressWarnings("unchecked")
-		Set<NodeRef> pendingNodes = (Set<NodeRef>) AlfrescoTransactionSupport.getResource(key);
+		Set<NodeRef> pendingNodes = AlfrescoTransactionSupport.getResource(key);
 		if (pendingNodes != null) {
 			pendingNodes.remove(entityNodeRef);
 		}
@@ -195,11 +195,8 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 	
 	protected boolean containsNodeInQueue(String key, NodeRef entityNodeRef) {
 		@SuppressWarnings("unchecked")
-		Set<NodeRef> pendingNodes = (Set<NodeRef>) AlfrescoTransactionSupport.getResource(key);
-		if (pendingNodes != null) {
-			return pendingNodes.contains(entityNodeRef);
-		}
-		return false;
+		Set<NodeRef> pendingNodes = AlfrescoTransactionSupport.getResource(key);
+		return pendingNodes != null && pendingNodes.contains(entityNodeRef);
 	}
 	
 	protected String generateDefaultKey(){
@@ -225,7 +222,7 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 			for (String key : keys) {
 
 				@SuppressWarnings("unchecked")
-				Set<NodeRef> pendingNodes = (Set<NodeRef>) AlfrescoTransactionSupport.getResource(key);
+				Set<NodeRef> pendingNodes = AlfrescoTransactionSupport.getResource(key);
 
 				if (pendingNodes != null) {
 					doBeforeCommit(key, pendingNodes);
@@ -238,7 +235,7 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 			for (String key : keys) {
 
 				@SuppressWarnings("unchecked")
-				Set<NodeRef> pendingNodes = (Set<NodeRef>) AlfrescoTransactionSupport.getResource(key);
+				Set<NodeRef> pendingNodes = AlfrescoTransactionSupport.getResource(key);
 
 				if (pendingNodes != null) {
 					doAfterCommit(key, pendingNodes);

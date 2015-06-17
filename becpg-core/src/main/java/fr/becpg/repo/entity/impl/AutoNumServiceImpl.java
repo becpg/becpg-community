@@ -47,7 +47,7 @@ public class AutoNumServiceImpl implements AutoNumService {
 
 	private static final String DEFAULT_PATTERN = "(^[A-Z]+)(\\d+$)";
 
-	private static Log logger = LogFactory.getLog(AutoNumServiceImpl.class);
+	private static final Log logger = LogFactory.getLog(AutoNumServiceImpl.class);
 
 	@Autowired
 	private NodeService nodeService;
@@ -79,7 +79,7 @@ public class AutoNumServiceImpl implements AutoNumService {
 		Long autoNumValue = DEFAULT_AUTO_NUM;
 		NodeRef autoNumNodeRef = getAutoNumNodeRef(className, propertyName);
 
-		String prefix = DEFAULT_PREFIX;
+		String prefix;
 
 		// get value store in db
 		if (autoNumNodeRef != null && nodeService.exists(autoNumNodeRef)) {
@@ -219,7 +219,7 @@ public class AutoNumServiceImpl implements AutoNumService {
 	}
 
 	private String getAutoNumPrefix(QName type, QName propertyName) {
-		String prefix = DEFAULT_PREFIX;
+		String prefix;
 		NodeRef autoNumNodeRef = getAutoNumNodeRef(type, propertyName);
 		if (autoNumNodeRef != null) {
 			prefix = getPrefix(autoNumNodeRef, DEFAULT_PREFIX);
@@ -323,7 +323,7 @@ public class AutoNumServiceImpl implements AutoNumService {
 				TranslateHelper.getTranslatedPath(RepoConsts.PATH_AUTO_NUM));
 
 		String name = String.format(NAME, className.getLocalName(), propertyName.getLocalName());
-		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+		Map<QName, Serializable> properties = new HashMap<>();
 		properties.put(ContentModel.PROP_NAME, name);
 		properties.put(BeCPGModel.PROP_AUTO_NUM_CLASS_NAME, className);
 		properties.put(BeCPGModel.PROP_AUTO_NUM_PROPERTY_NAME, propertyName);

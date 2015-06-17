@@ -58,7 +58,7 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 	protected EntityDictionaryService entityDictionaryService;
 
-	private static Log logger = LogFactory.getLog(SimpleExtractor.class);
+	private static final Log logger = LogFactory.getLog(SimpleExtractor.class);
 
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
@@ -84,7 +84,7 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 		List<NodeRef> results = getListNodeRef(dataListFilter, pagination);
 
-		Map<String, Object> props = new HashMap<String, Object>();
+		Map<String, Object> props = new HashMap<>();
 		props.put(PROP_ACCESSRIGHT, hasWriteAccess);
 
 		Map<NodeRef, Map<String, Object>> cache = new HashMap<>();
@@ -111,7 +111,7 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 	protected List<NodeRef> getListNodeRef(DataListFilter dataListFilter, DataListPagination pagination) {
 
-		List<NodeRef> results = new ArrayList<NodeRef>();
+		List<NodeRef> results = new ArrayList<>();
 		
 		if (dataListFilter.isAllFilter() && entityDictionaryService.isSubClass(dataListFilter.getDataType(), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
 
@@ -197,7 +197,7 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 					@Override
 					public List<Map<String, Object>> extractNestedField(NodeRef nodeRef, AttributeExtractorStructure field) {
-						List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();
+						List<Map<String, Object>> ret = new ArrayList<>();
 						if (field.isDataListItems()) {
 							NodeRef listContainerNodeRef = entityListDAO.getListContainer(nodeRef);
 							NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, field.getFieldQname());
@@ -215,7 +215,7 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 						} else {
 
 							if (field.getFieldDef() instanceof AssociationDefinition) {
-								List<NodeRef> assocRefs = null;
+								List<NodeRef> assocRefs;
 								if (((AssociationDefinition) field.getFieldDef()).isChild()) {
 									assocRefs = associationService.getChildAssocs(nodeRef, field.getFieldDef().getName());
 								} else {

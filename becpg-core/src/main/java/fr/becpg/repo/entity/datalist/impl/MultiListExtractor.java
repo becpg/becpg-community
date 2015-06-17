@@ -39,7 +39,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 public class MultiListExtractor extends SimpleExtractor {
 
-	private static Log logger = LogFactory.getLog(MultiListExtractor.class);
+	private static final Log logger = LogFactory.getLog(MultiListExtractor.class);
 
 	private static final String MULTI_LIST_EXTRACTOR_PREFIX = "multiList_";
 

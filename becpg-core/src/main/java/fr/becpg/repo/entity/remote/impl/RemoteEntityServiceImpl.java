@@ -82,7 +82,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	@Autowired
 	private EntityDictionaryService entityDictionaryService;
 
-	private static Log logger = LogFactory.getLog(RemoteEntityServiceImpl.class);
+	private static final Log logger = LogFactory.getLog(RemoteEntityServiceImpl.class);
 
 	@Override
 	public void getEntity(NodeRef entityNodeRef, OutputStream out, RemoteEntityFormat format) throws BeCPGException {
@@ -125,11 +125,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 			try {
 				ret = xmlEntityVisitor.visit(entityNodeRef,destNodeRef, properties , in);
 
-			} catch (IOException e) {
-				throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
-			} catch (SAXException e) {
-				throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
-			} catch (ParserConfigurationException e) {
+			} catch (IOException | ParserConfigurationException | SAXException e) {
 				throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
 			} finally {
 				if (ret == null) {
@@ -183,11 +179,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 			writer.setMimetype(mimetype);
 			try (OutputStream out = writer.getContentOutputStream()) {
 				xmlEntityVisitor.visitData(in, out);
-			} catch (IOException e) {
-				throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
-			} catch (SAXException e) {
-				throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
-			} catch (ParserConfigurationException e) {
+			} catch (IOException | ParserConfigurationException | SAXException e) {
 				throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
 			}
 		} else {

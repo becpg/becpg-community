@@ -3,14 +3,7 @@
  */
 package fr.becpg.repo.product.formulation;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -52,7 +45,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	private static final String MESSAGE_MISSING_INGLIST = "message.formulate.missing.ingList";
 
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(IngsCalculatingFormulationHandler.class);
+	private static final Log logger = LogFactory.getLog(IngsCalculatingFormulationHandler.class);
 
 	private NodeService nodeService;
 
@@ -124,11 +117,11 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		@SuppressWarnings("unchecked")
 		List<CompoListDataItem> compoList = formulatedProduct.getCompoList(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT);
 
-		Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap = new HashMap<NodeRef, ReqCtrlListDataItem>();
-		Map<String, Double> totalQtyIngMap = new HashMap<String, Double>();
-		Map<String, Double> totalQtyVolMap = new HashMap<String, Double>();
+		Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap = new HashMap<>();
+		Map<String, Double> totalQtyIngMap = new HashMap<>();
+		Map<String, Double> totalQtyVolMap = new HashMap<>();
 
-		List<IngListDataItem> retainNodes = new ArrayList<IngListDataItem>();
+		List<IngListDataItem> retainNodes = new ArrayList<>();
 
 		// manuel
 		for (IngListDataItem i : formulatedProduct.getIngList()) {
@@ -153,7 +146,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 						totalQtyUsed += qty * FormulationHelper.getYield(compoItem) / 100;
 					}
 
-					Double vol = (Double) compoItem.getVolume();
+					Double vol = compoItem.getVolume();
 					if (vol != null) {
 						totalVolumeUsed += vol / 100;
 					}
@@ -613,7 +606,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 					if (i2.getQtyPerc() != null) {
 						return i2.getQtyPerc().compareTo(i1.getQtyPerc());
 					} else {
-						return i2.getQtyPerc() == i1.getQtyPerc() ? 0 : -1;
+						return Objects.equals(i2.getQtyPerc(), i1.getQtyPerc()) ? 0 : -1;
 					}
 				} else {
 					IngListDataItem root1 = findRoot(i1);

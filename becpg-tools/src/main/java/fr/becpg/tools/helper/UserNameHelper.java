@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
  */
 public class UserNameHelper {
 
-	public static Pattern userNamePattern = Pattern.compile("(.*)\\$(.*)@(.*)");
+	public static final Pattern userNamePattern = Pattern.compile("(.*)\\$(.*)@(.*)");
 	
 	
 	public static String extractLogin(String username){

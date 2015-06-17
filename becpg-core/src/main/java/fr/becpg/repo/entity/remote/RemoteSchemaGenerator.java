@@ -28,7 +28,7 @@ import fr.becpg.model.ReportModel;
 @Service("remoteSchemaGenerator")
 public class RemoteSchemaGenerator {
 
-	private static Log logger = LogFactory.getLog(RemoteSchemaGenerator.class);
+	private static final Log logger = LogFactory.getLog(RemoteSchemaGenerator.class);
 
 	@Autowired
 	private DictionaryService dictionaryService;

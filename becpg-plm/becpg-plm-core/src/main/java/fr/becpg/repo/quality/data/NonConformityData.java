@@ -34,7 +34,7 @@ public class NonConformityData extends BeCPGDataObject {
 	private String state;
 	private String comment;
 
-	List<WorkLogDataItem> workLog = new LinkedList<WorkLogDataItem>();
+	List<WorkLogDataItem> workLog = new LinkedList<>();
 
 	@AlfProp
 	@AlfQname(qname = "qa:ncState")

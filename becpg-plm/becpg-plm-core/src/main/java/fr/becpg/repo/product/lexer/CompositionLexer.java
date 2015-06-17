@@ -26,21 +26,21 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 public class CompositionLexer {
 
-	public static enum TokenType {
+	public enum TokenType {
 
 		QTY("[-+]?([0-9]*(\\.|,)[0-9]+|[0-9]+)"), PRODUCTNAME("(.*)^"), COMPOUNIT("([ \t\f\r\n]+)(kg|g|gr|ml|l|p|m2|m|perc|%)([ \t\f\r\n]+)"), WHITESPACE(
 				"[ \t\f\r\n]+");
 
 		public final String pattern;
 
-		private TokenType(String pattern) {
+		TokenType(String pattern) {
 			this.pattern = pattern;
 		}
 	}
 
 	public static class Token {
-		public TokenType type;
-		public String data;
+		public final TokenType type;
+		public final String data;
 
 		public Token(TokenType type, String data) {
 			this.type = type;
@@ -61,7 +61,7 @@ public class CompositionLexer {
 		compoListDataItem.setCompoListUnit(CompoListUnit.P);
 
 		// Lexer logic begins here
-		StringBuffer tokenPatternsBuffer = new StringBuffer();
+		StringBuilder tokenPatternsBuffer = new StringBuilder();
 		for (TokenType tokenType : TokenType.values())
 			tokenPatternsBuffer.append(String.format("|(?<%s>%s)", tokenType.name(), tokenType.pattern));
 		Pattern tokenPatterns = Pattern.compile(new String(tokenPatternsBuffer.substring(1)));

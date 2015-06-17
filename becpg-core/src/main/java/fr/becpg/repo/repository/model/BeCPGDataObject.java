@@ -38,9 +38,9 @@ public  abstract class  BeCPGDataObject  extends BaseObject implements Repositor
 	
 	protected String name;
 	
-	protected Set<QName> aspects = new HashSet<QName>();
+	protected Set<QName> aspects = new HashSet<>();
 	
-	protected Map<QName,Serializable> extraProperties = new HashMap<QName,Serializable>();
+	protected Map<QName,Serializable> extraProperties = new HashMap<>();
 	
 	protected transient boolean isTransient = false;
 	

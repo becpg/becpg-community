@@ -45,7 +45,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 @Service("projectNotificationService")
 public class ProjectNotificationServiceImpl implements ProjectNotificationService {
 
-	private static Log logger = LogFactory.getLog(ProjectNotificationServiceImpl.class);
+	private static final Log logger = LogFactory.getLog(ProjectNotificationServiceImpl.class);
 
 	public static final String MAIL_TEMPLATE = "/app:company_home/app:dictionary/app:email_templates/cm:project/cm:project-observer-email.html.ftl";
 
@@ -94,7 +94,7 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 		
 		String subject = createSubject(projectNodeRef,taskNodeRef, afterStateMsg);
 
-		Map<String, Serializable> templateArgs = new HashMap<String, Serializable>(7);
+		Map<String, Serializable> templateArgs = new HashMap<>(7);
 		templateArgs.put(ARG_ACTIVITY_TYPE, ActivityType.State);
 		templateArgs.put(ARG_TASK_TITLE, nodeService.getProperty(taskNodeRef, ProjectModel.PROP_TL_TASK_NAME));
 		templateArgs.put(ARG_TASK_DESCRIPTION, nodeService.getProperty(taskNodeRef, ProjectModel.PROP_TL_TASK_DESCRIPTION));
@@ -121,7 +121,7 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 
 		String subject = createSubject(projectNodeRef, taskNodeRef,null);
 
-		Map<String, Serializable> templateArgs = new HashMap<String, Serializable>(7);
+		Map<String, Serializable> templateArgs = new HashMap<>(7);
 		templateArgs.put(ARG_ACTIVITY_TYPE, ActivityType.Comment);
 		templateArgs.put(ARG_ACTIVITY_EVENT, activityEvent);
 		templateArgs.put(ARG_PROJECT, projectNodeRef);
@@ -163,7 +163,7 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 				}
 
 				for (NodeRef observerNodeRef : observerNodeRefs) {
-					String authorityName = null;
+					String authorityName;
 					QName type = nodeService.getType(observerNodeRef);
 					if (type.equals(ContentModel.TYPE_AUTHORITY_CONTAINER)) {
 					    authorityName  = (String) nodeService.getProperty(observerNodeRef, ContentModel.PROP_AUTHORITY_NAME);
@@ -188,10 +188,10 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 					if(!authorities.isEmpty()){
 						Action mailAction = actionService.createAction(MailActionExecuter.NAME);
 						mailAction.setParameterValue(MailActionExecuter.PARAM_SUBJECT, subject);
-						mailAction.setParameterValue(MailActionExecuter.PARAM_TO_MANY, new ArrayList<String>(authorities));
+						mailAction.setParameterValue(MailActionExecuter.PARAM_TO_MANY, new ArrayList<>(authorities));
 						mailAction.setParameterValue(MailActionExecuter.PARAM_TEMPLATE, fileFolderService.getLocalizedSibling(templateNodeRef));
 	
-						Map<String, Serializable> templateModel = new HashMap<String, Serializable>();
+						Map<String, Serializable> templateModel = new HashMap<>();
 						templateModel.put("args", (Serializable) templateArgs);
 						mailAction.setParameterValue(MailActionExecuter.PARAM_TEMPLATE_MODEL, (Serializable) templateModel);
 	

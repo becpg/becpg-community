@@ -22,7 +22,7 @@ package fr.becpg.tools.http;
 public class RetrieveUserCommand  extends AbstractHttpCommand {
 
 
-	private static String COMMAND_URL_TEMPLATE = "/api/people/%s?groups=true";
+	private static final String COMMAND_URL_TEMPLATE = "/api/people/%s?groups=true";
 
 	
 	public RetrieveUserCommand(String serverUrl) {

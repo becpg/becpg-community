@@ -39,7 +39,7 @@ public class ExportSearchWebScript extends AbstractSearchWebScript {
 	private static final String PARAM_STORE_ID = "store_id";
 	private static final String PARAM_ID = "id";
 
-	private static Log logger = LogFactory.getLog(ExportSearchWebScript.class);
+	private static final Log logger = LogFactory.getLog(ExportSearchWebScript.class);
 
 	private ExportSearchService exportSearchService;
 

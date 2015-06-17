@@ -41,7 +41,7 @@ import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
 public class FormulationTareTest extends AbstractFinishedProductTest {
 
-	protected static Log logger = LogFactory.getLog(FormulationTareTest.class);
+	protected static final Log logger = LogFactory.getLog(FormulationTareTest.class);
 
 	@Override
 	public void setUp() throws Exception {
@@ -71,7 +71,7 @@ public class FormulationTareTest extends AbstractFinishedProductTest {
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(1d);
 				finishedProduct.setDensity(1d);
-				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
+				List<CompoListDataItem> compoList = new ArrayList<>();
 				compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial5NodeRef));
 				compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.P, 0d, DeclarationType.Detail, rawMaterial5NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);

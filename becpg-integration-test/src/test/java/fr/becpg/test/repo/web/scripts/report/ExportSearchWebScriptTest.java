@@ -19,8 +19,6 @@ package fr.becpg.test.repo.web.scripts.report;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,8 +31,6 @@ import javax.annotation.Resource;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.content.encoding.ContentCharsetFinder;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
-import org.alfresco.service.cmr.model.FileInfo;
-import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentIOException;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -77,7 +73,7 @@ import fr.becpg.test.utils.TestWebscriptExecuters.Response;
 public class ExportSearchWebScriptTest extends fr.becpg.test.PLMBaseTestCase {
 
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(ExportSearchWebScriptTest.class);
+	private static final Log logger = LogFactory.getLog(ExportSearchWebScriptTest.class);
 
 	private static final String EXPORT_PRODUCTS_REPORT_RPTFILE_PATH = "beCPG/birt/exportsearch/product/ExportSearch.rptdesign";
 	private static final String EXPORT_PRODUCTS_REPORT_XMLFILE_PATH = "beCPG/birt/exportsearch/product/ExportSearchQuery.xml";
@@ -136,7 +132,7 @@ public class ExportSearchWebScriptTest extends fr.becpg.test.PLMBaseTestCase {
 		logger.debug("/*-- add product image--*/");
 		String imageName = I18NUtil.getMessage(RepoConsts.PATH_LOGO_IMAGE) + ".jpg";
 		logger.debug("image name: " + imageName);
-		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+		Map<QName, Serializable> properties = new HashMap<>();
 		properties.put(ContentModel.PROP_NAME, imageName);
 		NodeRef imageNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
 				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
@@ -259,9 +255,9 @@ public class ExportSearchWebScriptTest extends fr.becpg.test.PLMBaseTestCase {
 				fp1.setName("FP 1");
 
 				// Costs
-				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
-				for (int j = 0; j < costs.size(); j++) {
-					CostListDataItem costListItemData = new CostListDataItem(null, 12.2d, "€/kg", null, costs.get(j), false);
+				List<CostListDataItem> costList = new ArrayList<>();
+				for (NodeRef cost1 : costs) {
+					CostListDataItem costListItemData = new CostListDataItem(null, 12.2d, "€/kg", null, cost1, false);
 					costList.add(costListItemData);
 				}
 				fp1.setCostList(costList);
@@ -272,24 +268,24 @@ public class ExportSearchWebScriptTest extends fr.becpg.test.PLMBaseTestCase {
 				NodeRef allergenRawMaterialNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), allergenRawMaterial).getNodeRef();
 
 				// Allergens
-				List<AllergenListDataItem> allergenList = new ArrayList<AllergenListDataItem>();
-				for (int j = 0; j < allergens.size(); j++) {
-					List<NodeRef> voluntarySources = new ArrayList<NodeRef>();
+				List<AllergenListDataItem> allergenList = new ArrayList<>();
+				for (NodeRef allergen : allergens) {
+					List<NodeRef> voluntarySources = new ArrayList<>();
 					voluntarySources.add(allergenRawMaterialNodeRef);
 
 					AllergenListDataItem allergenListItemData = new AllergenListDataItem(null, null, true, false, voluntarySources, null,
-							allergens.get(j), false);
+							allergen, false);
 					allergenList.add(allergenListItemData);
 				}
 				fp1.setAllergenList(allergenList);
 
-				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail,
+				List<CompoListDataItem> compoList = new ArrayList<>();
+				compoList.add(new CompoListDataItem(null, null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail,
 						localSF1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare,
 						rawMaterial1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), 2d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail,
+				compoList.add(new CompoListDataItem(null, null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail,
 						localSF2NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(3), 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare,
 						rawMaterial3NodeRef));
@@ -303,19 +299,19 @@ public class ExportSearchWebScriptTest extends fr.becpg.test.PLMBaseTestCase {
 				fp2.setName("FP 2");
 
 				// Costs
-				costList = new ArrayList<CostListDataItem>();
-				for (int j = 0; j < costs.size(); j++) {
-					CostListDataItem costListItemData = new CostListDataItem(null, 12.4d, "$/kg", null, costs.get(j), false);
+				costList = new ArrayList<>();
+				for (NodeRef cost : costs) {
+					CostListDataItem costListItemData = new CostListDataItem(null, 12.4d, "$/kg", null, cost, false);
 					costList.add(costListItemData);
 				}
 				fp2.setCostList(costList);
 
 				// Allergens
-				allergenList = new ArrayList<AllergenListDataItem>();
+				allergenList = new ArrayList<>();
 				for (int j = 0; j < allergens.size(); j++) {
-					List<NodeRef> allSources = new ArrayList<NodeRef>();
+					List<NodeRef> allSources = new ArrayList<>();
 					allSources.add(allergenRawMaterialNodeRef);
-					AllergenListDataItem allergenListItemData = null;
+					AllergenListDataItem allergenListItemData;
 
 					if (j < 5) {
 						allergenListItemData = new AllergenListDataItem(null, null, true, false, allSources, null, allergens.get(j), false);
@@ -327,14 +323,14 @@ public class ExportSearchWebScriptTest extends fr.becpg.test.PLMBaseTestCase {
 				}
 				fp2.setAllergenList(allergenList);
 
-				compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail,
+				compoList = new ArrayList<>();
+				compoList.add(new CompoListDataItem(null, null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail,
 						localSF1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), 2d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare,
 						rawMaterial1NodeRef));
 				compoList
 						.add(new CompoListDataItem(null, compoList.get(0), 2d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail,
+				compoList.add(new CompoListDataItem(null, null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail,
 						localSF2NodeRef));
 				compoList
 						.add(new CompoListDataItem(null, compoList.get(3), 2d, 0d, CompoListUnit.P, 0d, DeclarationType.Declare, rawMaterial3NodeRef));

@@ -39,7 +39,7 @@ public class SortableListPolicy extends AbstractBeCPGPolicy implements NodeServi
 										   CopyServicePolicies.OnCopyCompletePolicy{
 
 	
-	private static Log logger = LogFactory.getLog(SortableListPolicy.class);
+	private static final Log logger = LogFactory.getLog(SortableListPolicy.class);
 
 	private DataListSortService dataListSortService;
 	
@@ -89,7 +89,7 @@ public class SortableListPolicy extends AbstractBeCPGPolicy implements NodeServi
 		}
 		
 		// has changed ?
-		boolean hasChanged = false;
+		boolean hasChanged;
 		if (afterParentLevel != null && !afterParentLevel.equals(beforeParentLevel)) {				
 			hasChanged = true;
 		}else if(beforeParentLevel != null && !beforeParentLevel.equals(afterParentLevel)){//parentLevel is null

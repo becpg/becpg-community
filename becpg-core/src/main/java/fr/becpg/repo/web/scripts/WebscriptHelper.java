@@ -34,7 +34,7 @@ public class WebscriptHelper {
 	public static List<String> extractMetadataFields(WebScriptRequest req){
 	
 		String fields = req.getParameter(PARAM_FIELDS);
-		List<String> metadataFields = new LinkedList<String>();
+		List<String> metadataFields = new LinkedList<>();
 	
 		if (fields != null && fields.length() > 0) {
 			String[] splitted = fields.split(",");
@@ -50,7 +50,7 @@ public class WebscriptHelper {
 
 	public static  Map<String, Boolean> extractSortMap(String sort, NamespaceService namespaceService) {
 
-		Map<String, Boolean> sortMap = new HashMap<String, Boolean>();
+		Map<String, Boolean> sortMap = new HashMap<>();
 		if (sort != null && sort.length() != 0) {
 			boolean asc = true;
 			int separator = sort.indexOf('|');

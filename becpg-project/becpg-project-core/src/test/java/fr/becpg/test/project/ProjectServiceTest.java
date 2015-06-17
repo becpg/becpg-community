@@ -49,7 +49,7 @@ import fr.becpg.test.data.EntityTestData;
  */
 public class ProjectServiceTest extends AbstractProjectTestCase {	
 
-	private static Log logger = LogFactory.getLog(ProjectServiceTest.class);
+	private static final Log logger = LogFactory.getLog(ProjectServiceTest.class);
 	
 	@Resource
 	private EntityTplProjectPlugin entityTplProjectPlugin;
@@ -338,7 +338,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 								null, null, null, PlanningMode.Planning, null, null, null, 0, null);
 						
 						// create datalists
-						List<TaskListDataItem> taskList = new LinkedList<TaskListDataItem>();
+						List<TaskListDataItem> taskList = new LinkedList<>();
 						taskList.add(new TaskListDataItem(null, "task1", false, 2, null, assigneesOne, taskLegends.get(0),
 								"activiti$projectAdhoc"));
 						projectData.setTaskList(taskList);
@@ -449,7 +449,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 						projectData.setParentNodeRef(getTestFolderNodeRef());
 						
 						// create datalists
-						List<TaskListDataItem> taskList = new LinkedList<TaskListDataItem>();
+						List<TaskListDataItem> taskList = new LinkedList<>();
 
 						taskList.add(new TaskListDataItem(null, "task1", false, 2, null, assigneesOne, taskLegends.get(0),
 								"activiti$projectAdhoc"));

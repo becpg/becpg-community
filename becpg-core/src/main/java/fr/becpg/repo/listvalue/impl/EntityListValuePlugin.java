@@ -88,7 +88,7 @@ public class EntityListValuePlugin implements ListValuePlugin {
 	@Autowired
 	private TargetAssocValueExtractor targetAssocValueExtractor;
 
-	private Analyzer luceneAnaLyzer = null;
+	private final Analyzer luceneAnaLyzer = null;
 
 	public String[] getHandleSourceTypes() {
 		return new String[] { SOURCE_TYPE_TARGET_ASSOC, SOURCE_TYPE_LINKED_VALUE, SOURCE_TYPE_LINKED_VALUE_ALL, SOURCE_TYPE_LIST_VALUE };
@@ -101,15 +101,16 @@ public class EntityListValuePlugin implements ListValuePlugin {
 		String classNames = (String) props.get(ListValueService.PROP_CLASS_NAMES);
 		String[] arrClassNames = classNames != null ? classNames.split(PARAM_VALUES_SEPARATOR) : null;
 
-		if (sourceType.equals(SOURCE_TYPE_TARGET_ASSOC)) {
-			QName type = QName.createQName(className, namespaceService);
-			return suggestTargetAssoc(type, query, pageNum, pageSize, arrClassNames, props);
-		} else if (sourceType.equals(SOURCE_TYPE_LINKED_VALUE)) {
-			return suggestLinkedValue(path, query, pageNum, pageSize, props, false);
-		} else if (sourceType.equals(SOURCE_TYPE_LINKED_VALUE_ALL)) {
-			return suggestLinkedValue(path, query, pageNum, pageSize, props, true);
-		} else if (sourceType.equals(SOURCE_TYPE_LIST_VALUE)) {
-			return suggestListValue(path, query, pageNum, pageSize);
+		switch (sourceType) {
+			case SOURCE_TYPE_TARGET_ASSOC:
+				QName type = QName.createQName(className, namespaceService);
+				return suggestTargetAssoc(type, query, pageNum, pageSize, arrClassNames, props);
+			case SOURCE_TYPE_LINKED_VALUE:
+				return suggestLinkedValue(path, query, pageNum, pageSize, props, false);
+			case SOURCE_TYPE_LINKED_VALUE_ALL:
+				return suggestLinkedValue(path, query, pageNum, pageSize, props, true);
+			case SOURCE_TYPE_LIST_VALUE:
+				return suggestListValue(path, query, pageNum, pageSize);
 		}
 
 		return null;
@@ -184,7 +185,7 @@ public class EntityListValuePlugin implements ListValuePlugin {
 
 			Map<String, String> extras = (HashMap<String, String>) props.get(ListValueService.EXTRA_PARAM);
 			if (extras != null) {
-				String filterByAssoc = (String) extras.get(PROP_FILTER_BY_ASSOC);
+				String filterByAssoc = extras.get(PROP_FILTER_BY_ASSOC);
 				String strAssocNodeRef = (String) props.get(ListValueService.PROP_PARENT);
 				if (filterByAssoc != null && filterByAssoc.length() > 0 && strAssocNodeRef != null && strAssocNodeRef.length() > 0) {
 					QName assocQName = QName.createQName(filterByAssoc, namespaceService);
@@ -197,7 +198,7 @@ public class EntityListValuePlugin implements ListValuePlugin {
 
 						List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, assocQName);
 
-						List<NodeRef> nodesToKeep = new ArrayList<NodeRef>();
+						List<NodeRef> nodesToKeep = new ArrayList<>();
 						for (AssociationRef assocRef : assocRefs) {
 							nodesToKeep.add(assocRef.getSourceRef());
 						}
@@ -245,9 +246,9 @@ public class EntityListValuePlugin implements ListValuePlugin {
 			Map<String, String> extras = (HashMap<String, String>) props.get(ListValueService.EXTRA_PARAM);
 			if (extras != null) {
 				if (extras.get("destination") != null) {
-					entityNodeRef = new NodeRef((String) extras.get("destination"));
+					entityNodeRef = new NodeRef(extras.get("destination"));
 				} else if (extras.get("itemId") != null) {
-					itemIdNodeRef = new NodeRef((String) extras.get("itemId"));
+					itemIdNodeRef = new NodeRef(extras.get("itemId"));
 					entityNodeRef = nodeService.getPrimaryParent(itemIdNodeRef).getParentRef();
 				}
 				if (entityNodeRef != null) {
@@ -257,7 +258,7 @@ public class EntityListValuePlugin implements ListValuePlugin {
 		}
 
 		query = prepareQuery(query);
-		List<NodeRef> ret = null;
+		List<NodeRef> ret;
 
 		if (!all) {
 			String parent = (String) props.get(ListValueService.PROP_PARENT);
@@ -329,7 +330,7 @@ public class EntityListValuePlugin implements ListValuePlugin {
 				logger.debug("Using analyzer : " + analyzer.getClass().getName());
 			}
 			TokenStream source = null;
-			Reader reader = null;
+			Reader reader;
 			try {
 
 				reader = new StringReader(query.trim());
@@ -340,7 +341,7 @@ public class EntityListValuePlugin implements ListValuePlugin {
 					source = analyzer.tokenStream(null, reader);
 				}
 
-				StringBuffer buff = new StringBuffer();
+				StringBuilder buff = new StringBuilder();
 				Token reusableToken = new Token();
 				while ((reusableToken = source.next(reusableToken)) != null) {
 					if (buff.length() > 0) {
@@ -447,9 +448,9 @@ public class EntityListValuePlugin implements ListValuePlugin {
 				logger.debug("Using analyzer : " + analyzer.getClass().getName());
 			}
 			TokenStream querySource = null;
-			Reader queryReader = null;
+			Reader queryReader;
 			TokenStream productNameSource = null;
-			Reader productNameReader = null;
+			Reader productNameReader;
 			try {
 
 				queryReader = new StringReader(query);

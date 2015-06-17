@@ -129,7 +129,7 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 
 			rownum++;
 
-			Map<NodeRef, Map<String, Object>> cache = new HashMap<NodeRef, Map<String, Object>>();
+			Map<NodeRef, Map<String, Object>> cache = new HashMap<>();
 
 			ExcelReportSearchPlugin plugin = null;
 			
@@ -152,7 +152,7 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 
 	private List<AttributeExtractorStructure> extractListStruct(QName itemType, Row headerRow) {
 
-		List<String> metadataFields = new LinkedList<String>();
+		List<String> metadataFields = new LinkedList<>();
 		String currentNested = "";
 		for (int i = 1; i < headerRow.getLastCellNum(); i++) {
 			if (headerRow.getCell(i) != null) {

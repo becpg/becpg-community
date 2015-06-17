@@ -63,7 +63,7 @@ public class CharactDetailsHelper {
 		metadata.put("colName", getYAxisLabel());
 		metadatas.put(metadata);
 
-		SortedSet<NodeRef> compEls = new TreeSet<NodeRef>(new Comparator<NodeRef>() {
+		SortedSet<NodeRef> compEls = new TreeSet<>(new Comparator<NodeRef>() {
 			@Override
 			public int compare(NodeRef o1, NodeRef o2) {
 				return ((String) nodeService.getProperty(o1, ContentModel.PROP_NAME)).compareTo((String) nodeService.getProperty(o2, ContentModel.PROP_NAME));
@@ -86,11 +86,11 @@ public class CharactDetailsHelper {
 		
 		//Entity nut 1, nut2, nut3
 
-		List<List<Object>> resultsets = new ArrayList<List<Object>>();
+		List<List<Object>> resultsets = new ArrayList<>();
 		
 		for (NodeRef compoEl : compEls) {
-			List<Object> tmp = new ArrayList<Object>();
-			tmp.add((String)nodeService.getProperty(compoEl, ContentModel.PROP_NAME));
+			List<Object> tmp = new ArrayList<>();
+			tmp.add(nodeService.getProperty(compoEl, ContentModel.PROP_NAME));
 			for (Map.Entry<NodeRef, Map<NodeRef, Double>> entry : charactDetails.getData().entrySet()) {
 				if (entry.getValue().containsKey(compoEl)) {
 						tmp.add(entry.getValue().get(compoEl));
@@ -118,7 +118,7 @@ public class CharactDetailsHelper {
 		csvConfig.addField(new CSVField(getYAxisLabel()));
 		
 		
-		SortedSet<NodeRef> compEls = new TreeSet<NodeRef>(new Comparator<NodeRef>() {
+		SortedSet<NodeRef> compEls = new TreeSet<>(new Comparator<NodeRef>() {
 			@Override
 			public int compare(NodeRef o1, NodeRef o2) {
 				return ((String) nodeService.getProperty(o1, ContentModel.PROP_NAME)).compareTo((String) nodeService.getProperty(o2, ContentModel.PROP_NAME));
@@ -143,7 +143,7 @@ public class CharactDetailsHelper {
 		csvWriter.setWriter(writer);
 		
 		for (NodeRef compoEl : compEls) {
-			Map<String,String> tmp = new HashMap<String, String>();
+			Map<String,String> tmp = new HashMap<>();
 			tmp.put(getYAxisLabel(),(String)nodeService.getProperty(compoEl, ContentModel.PROP_NAME));
 			for (Map.Entry<NodeRef, Map<NodeRef, Double>> entry : charactDetails.getData().entrySet()) {
 				if (entry.getValue().containsKey(compoEl)) {

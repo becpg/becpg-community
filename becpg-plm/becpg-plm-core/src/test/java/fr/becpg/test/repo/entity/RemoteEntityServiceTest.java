@@ -35,7 +35,7 @@ import fr.becpg.test.PLMBaseTestCase;
 public class RemoteEntityServiceTest extends PLMBaseTestCase {
 
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(RemoteEntityServiceTest.class);
+	private static final Log logger = LogFactory.getLog(RemoteEntityServiceTest.class);
 
 	@Resource
 	private RemoteEntityService remoteEntityService;
@@ -62,7 +62,7 @@ public class RemoteEntityServiceTest extends PLMBaseTestCase {
 					File tempFile = File.createTempFile("remoteEntity", "xml");
 					File tempFile2 = File.createTempFile("remoteEntity2", "xml");
 					
-					List<NodeRef> entities = new ArrayList<NodeRef>();
+					List<NodeRef> entities = new ArrayList<>();
 					entities.add(sfNodeRef);
 					
 					remoteEntityService.listEntities(entities, new FileOutputStream(tempFile2),  RemoteEntityFormat.xml);

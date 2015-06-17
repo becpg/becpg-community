@@ -145,14 +145,14 @@ public abstract class AbstractCompareProductTest extends PLMBaseTestCase {
 			String tempProduct1 = "";
 			if (c.getCharacteristic1() != null) {
 				List<AssociationRef> compoAssocRefs = nodeService.getTargetAssocs(c.getCharacteristic1(), PLMModel.ASSOC_COMPOLIST_PRODUCT);
-				NodeRef productNodeRef = ((AssociationRef) compoAssocRefs.get(0)).getTargetRef();
+				NodeRef productNodeRef = compoAssocRefs.get(0).getTargetRef();
 				tempProduct1 = (String) nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME);
 			}
 
 			String tempProduct2 = "";
 			if (c.getCharacteristic2() != null) {
 				List<AssociationRef> compoAssocRefs = nodeService.getTargetAssocs(c.getCharacteristic2(), PLMModel.ASSOC_COMPOLIST_PRODUCT);
-				NodeRef productNodeRef = ((AssociationRef) compoAssocRefs.get(0)).getTargetRef();
+				NodeRef productNodeRef = compoAssocRefs.get(0).getTargetRef();
 				tempProduct2 = (String) nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME);
 			}
 

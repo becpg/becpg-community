@@ -34,7 +34,7 @@ import fr.becpg.repo.admin.patch.AbstractBeCPGPatch;
  */
 public class DepthLevelInTaskListPatch extends AbstractBeCPGPatch {
 
-	private static Log logger = LogFactory.getLog(DepthLevelInTaskListPatch.class);
+	private static final Log logger = LogFactory.getLog(DepthLevelInTaskListPatch.class);
 	private static final String MSG_SUCCESS = "patch.bcpg.plm.depthLevelInTaskListPatch.result";
 
 	private NodeDAO nodeDAO;
@@ -53,14 +53,14 @@ public class DepthLevelInTaskListPatch extends AbstractBeCPGPatch {
 			AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
 			BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
-				final List<NodeRef> result = new ArrayList<NodeRef>();
+				final List<NodeRef> result = new ArrayList<>();
 
-				long maxNodeId = getPatchDAO().getMaxAdmNodeID();
+				final long maxNodeId = getPatchDAO().getMaxAdmNodeID();
 
 				long minSearchNodeId = 1;
 				long maxSearchNodeId = count;
 
-				Pair<Long, QName> val = getQnameDAO().getQName(ProjectModel.TYPE_TASK_LIST);
+				final Pair<Long, QName> val = getQnameDAO().getQName(ProjectModel.TYPE_TASK_LIST);
 
 				public int getTotalEstimatedWorkSize() {
 					return result.size();
@@ -92,7 +92,7 @@ public class DepthLevelInTaskListPatch extends AbstractBeCPGPatch {
 				}
 			};
 
-			BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<NodeRef>("DepthLevelInTaskListPatch",
+			BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("DepthLevelInTaskListPatch",
 					transactionService.getRetryingTransactionHelper(), workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 1000);
 
 			BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {

@@ -39,7 +39,7 @@ import fr.becpg.test.repo.product.AbstractFinishedProductTest;
  */
 public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 
-	protected static Log logger = LogFactory.getLog(CharactDetailsFormulationTest.class);
+	protected static final Log logger = LogFactory.getLog(CharactDetailsFormulationTest.class);
 	
 	@Override
 	public void setUp() throws Exception {
@@ -71,8 +71,8 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
 				finishedProduct.setUnitPrice(12.4d);
-				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				CompoListDataItem item = new CompoListDataItem(null,(CompoListDataItem) null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail,
+				List<CompoListDataItem> compoList = new ArrayList<>();
+				CompoListDataItem item = new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail,
 						localSF1NodeRef);
 				
 				compoList.add(item);
@@ -80,7 +80,7 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 						rawMaterial1NodeRef));
 				compoList.add(new CompoListDataItem(null, item, null, 2d, CompoListUnit.kg, 0d, DeclarationType.Detail,
 						rawMaterial2NodeRef));
-				item = new CompoListDataItem(null, (CompoListDataItem)null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail,
+				item = new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail,
 						localSF2NodeRef);
 				compoList.add(item);
 				compoList.add(new CompoListDataItem(null, item, null, 3d, CompoListUnit.kg, 0d, DeclarationType.Declare,
@@ -142,7 +142,7 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setLegalName("Legal Produit fini 1");
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
-				List<PackagingListDataItem> packagingList = new ArrayList<PackagingListDataItem>();
+				List<PackagingListDataItem> packagingList = new ArrayList<>();
 				packagingList.add(new PackagingListDataItem(null, 1d, PackagingListUnit.P, PackagingLevel.Primary, true, packagingMaterial1NodeRef));
 				packagingList.add(new PackagingListDataItem(null, 3d, PackagingListUnit.m, PackagingLevel.Primary, true, packagingMaterial2NodeRef));
 				packagingList.add(new PackagingListDataItem(null, 8d, PackagingListUnit.PP, PackagingLevel.Tertiary, true, packagingMaterial3NodeRef));
@@ -152,13 +152,13 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 				/*
 				 * Composition
 				 */				
-				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				CompoListDataItem item = new CompoListDataItem(null, (CompoListDataItem)null, null, 1d, CompoListUnit.kg, 10d, DeclarationType.Detail, localSF1NodeRef);
+				List<CompoListDataItem> compoList = new ArrayList<>();
+				CompoListDataItem item = new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 10d, DeclarationType.Detail, localSF1NodeRef);
 				
 				compoList.add(item);
 				compoList.add(new CompoListDataItem(null, item, null, 1d, CompoListUnit.kg, 5d, DeclarationType.Declare, rawMaterial1NodeRef));
 				compoList.add(new CompoListDataItem(null, item, null, 2d, CompoListUnit.kg, 10d, DeclarationType.Detail, rawMaterial2NodeRef));
-				 item = new CompoListDataItem(null, (CompoListDataItem)null, 1d, 0d, CompoListUnit.kg, 20d, DeclarationType.Detail, localSF2NodeRef);
+				 item = new CompoListDataItem(null, null, 1d, 0d, CompoListUnit.kg, 20d, DeclarationType.Detail, localSF2NodeRef);
 				compoList.add(item);
 				compoList.add(new CompoListDataItem(null,item, null, 3d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 				compoList.add(new CompoListDataItem(null, item, null, 3d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
@@ -171,7 +171,7 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 			public NodeRef execute() throws Throwable {
 
 				//formulate Details
-				List<NodeRef> costNodeRefs = new ArrayList<NodeRef>();			
+				List<NodeRef> costNodeRefs = new ArrayList<>();
 				CharactDetails ret = productService.formulateDetails(finishedProductNodeRef, PLMModel.TYPE_COSTLIST,
 						"costList", costNodeRefs);
 				

@@ -66,7 +66,7 @@ public class WorkflowPackageListValuePlugin implements ListValuePlugin {
 		Map<String, String> extras = (HashMap<String, String>) props.get(ListValueService.EXTRA_PARAM);
 		if (extras != null) {
 			if (extras.get("taskId") != null && extras.get("taskId").length()>0) {
-				String taskId = (String)  extras.get("taskId");
+				String taskId = extras.get("taskId");
 				
 				  ret = workflowService.getPackageContents(taskId);
 			
@@ -74,7 +74,7 @@ public class WorkflowPackageListValuePlugin implements ListValuePlugin {
 						QName type = QName.createQName(className, namespaceService);
 
 						for (Iterator<NodeRef> iterator = ret.iterator(); iterator.hasNext();) {
-							NodeRef nodeRef = (NodeRef) iterator.next();
+							NodeRef nodeRef = iterator.next();
 							if (!type.equals(nodeService.getType(nodeRef))) {
 								iterator.remove();
 							}

@@ -148,7 +148,7 @@ public abstract class AbstractBeCPGQueryBuilder {
 	}
 
 	protected Map<String, Boolean> getSort(QName field, boolean asc) {
-		Map<String, Boolean> sort = new HashMap<String, Boolean>();
+		Map<String, Boolean> sort = new HashMap<>();
 		sort.put(getSortProp(field), asc);
 
 		return sort;
@@ -189,7 +189,7 @@ public abstract class AbstractBeCPGQueryBuilder {
 					pathBuffer.append("/cm:");
 					pathBuffer.append(ISO9075.encode(folder));
 				} else {
-					pathBuffer.append("/" + folder);
+					pathBuffer.append("/").append(folder);
 				}
 			}
 	

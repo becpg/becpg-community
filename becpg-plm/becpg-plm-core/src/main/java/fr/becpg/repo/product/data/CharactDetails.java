@@ -32,7 +32,7 @@ public class CharactDetails {
 
 	List<NodeRef> computedCharacts = null;
 	
-	Map<NodeRef,Map<NodeRef,Double>> data = new HashMap<NodeRef,Map<NodeRef,Double>>();
+	final Map<NodeRef,Map<NodeRef,Double>> data = new HashMap<>();
 	
 	public CharactDetails(List<NodeRef> computedCharacts) {
 		super();
@@ -42,7 +42,7 @@ public class CharactDetails {
 	public void addKeyValue(NodeRef charactNodeRef, NodeRef key, Double value) {
 		Map<NodeRef,Double> tmp = data.get(charactNodeRef);
 		if(tmp==null){
-			tmp = new HashMap<NodeRef,Double>();
+			tmp = new HashMap<>();
 		}
 		tmp.put(key, value);
 		

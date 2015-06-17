@@ -28,33 +28,33 @@ import java.util.Map;
  */
 public interface ListValueService {
 
-	public static final int SUGGEST_PAGE_SIZE = 10;
+	int SUGGEST_PAGE_SIZE = 10;
 	
-	public static final String PROP_SOURCE_TYPE = "sourcetype";
+	String PROP_SOURCE_TYPE = "sourcetype";
 	
-	public static final String PROP_CLASS_NAME = "className";
+	String PROP_CLASS_NAME = "className";
 	
-	public static final String PROP_ATTRIBUTE_NAME = "attributeName";
+	String PROP_ATTRIBUTE_NAME = "attributeName";
 	
-	public static final String PROP_PATH = "path";
+	String PROP_PATH = "path";
 	
-	public static final String PROP_PARENT = "parent";
+	String PROP_PARENT = "parent";
 	
-	public static final String PROP_NODEREF = "nodeRef";
+	String PROP_NODEREF = "nodeRef";
 	
-	public static final String PROP_LOCALE = "locale";
+	String PROP_LOCALE = "locale";
 
-	public static final String PROP_CLASS_NAMES = "classNames";
+	String PROP_CLASS_NAMES = "classNames";
 	
-	public static final String PROP_EXCLUDE_CLASS_NAMES = "excludeClassNames";
+	String PROP_EXCLUDE_CLASS_NAMES = "excludeClassNames";
 
-	public static final String PROP_PRODUCT_TYPE = "productType";
+	String PROP_PRODUCT_TYPE = "productType";
 
-	public static final String EXTRA_PARAM = "extra";
+	String EXTRA_PARAM = "extra";
 
-	public static final String PROP_FILTER = "filter";
+	String PROP_FILTER = "filter";
 	
 	
-	public ListValuePage suggestBySourceType(String sourceType, String query, Integer pageNum,
-			Integer pageSize, Map<String, Serializable> props);
+	ListValuePage suggestBySourceType(String sourceType, String query, Integer pageNum,
+									  Integer pageSize, Map<String, Serializable> props);
 }

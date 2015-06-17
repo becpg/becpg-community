@@ -38,7 +38,7 @@ public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerato
 
 	private EntityReportService entityReportService;
 
-	private static Log logger = LogFactory.getLog(EntityReportAsyncGeneratorImpl.class);
+	private static final Log logger = LogFactory.getLog(EntityReportAsyncGeneratorImpl.class);
 
 	public void setThreadExecuter(ThreadPoolExecutor threadExecuter) {
 		this.threadExecuter = threadExecuter;
@@ -67,7 +67,7 @@ public class EntityReportAsyncGeneratorImpl implements EntityReportAsyncGenerato
 
 	private class ProductReportGenerator implements Runnable {
 
-		private NodeRef entityNodeRef;
+		private final NodeRef entityNodeRef;
 
 		private ProductReportGenerator(NodeRef entityNodeRef) {
 			this.entityNodeRef = entityNodeRef;

@@ -65,7 +65,7 @@ public class CreateModelElementWebScript extends DeclarativeWebScript  {
 
 	
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(CreateModelElementWebScript.class);
+	private static final Log logger = LogFactory.getLog(CreateModelElementWebScript.class);
 	
 	/** The node service. */
 	private DesignerService designerService;
@@ -107,14 +107,14 @@ public class CreateModelElementWebScript extends DeclarativeWebScript  {
 		logger.debug("CreateModelElementWebScript executeImpl()");
 		
 
-		Map<String, Object> model = new HashMap<String, Object>();
+		Map<String, Object> model = new HashMap<>();
 
 	
-		Map<QName, Serializable> props = new HashMap<QName, Serializable>();
+		Map<QName, Serializable> props = new HashMap<>();
 		NodeRef parentNodeRef = new NodeRef( req.getParameter(PARAM_NODEREF));	
 		Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();	
 		
-		NodeRef createNodeRef = null;
+		NodeRef createNodeRef;
 		
 		if(templateArgs.containsKey(PARAM_STORE_TYPE)){
 			    	

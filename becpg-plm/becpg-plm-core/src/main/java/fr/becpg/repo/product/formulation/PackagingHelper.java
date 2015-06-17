@@ -26,7 +26,7 @@ import fr.becpg.repo.variant.model.VariantData;
 @Service
 public class PackagingHelper {
 
-	private static Log logger = LogFactory.getLog(PackagingHelper.class);
+	private static final Log logger = LogFactory.getLog(PackagingHelper.class);
 
 	@Autowired
 	private NodeService nodeService;

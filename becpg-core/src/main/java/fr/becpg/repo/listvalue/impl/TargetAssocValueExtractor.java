@@ -58,14 +58,14 @@ public class TargetAssocValueExtractor implements ListValueExtractor<NodeRef> {
 	@Override
 	public List<ListValueEntry> extract(List<NodeRef> nodeRefs) {
 
-		List<ListValueEntry> suggestions = new ArrayList<ListValueEntry>();
+		List<ListValueEntry> suggestions = new ArrayList<>();
 		if (nodeRefs != null) {
 			for (NodeRef nodeRef : nodeRefs) {
 
-				String name = null;
+				String name;
 				QName type = nodeService.getType(nodeRef);
 				String cssClass = type.getLocalName();
-				Map<String, String> props = new HashMap<String, String>(2);
+				Map<String, String> props = new HashMap<>(2);
 				props.put("type", type.toPrefixString(namespaceService));
 
 				if (alfrescoRepository.isRegisteredType(type)) {

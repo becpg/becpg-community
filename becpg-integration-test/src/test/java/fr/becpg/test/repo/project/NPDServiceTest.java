@@ -4,11 +4,7 @@
 package fr.becpg.test.repo.project;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.annotation.Resource;
 
@@ -44,7 +40,7 @@ import fr.becpg.test.project.AbstractProjectTestCase;
  */
 public class NPDServiceTest extends AbstractProjectTestCase {
 
-	private static Log logger = LogFactory.getLog(NPDServiceTest.class);
+	private static final Log logger = LogFactory.getLog(NPDServiceTest.class);
 
 	@Resource
 	private ProjectPolicy projectPolicy;
@@ -73,7 +69,7 @@ public class NPDServiceTest extends AbstractProjectTestCase {
 						null, null, PlanningMode.Planning, null, null, null, 0, null);
 
 				// create datalists
-				List<TaskListDataItem> taskList = new LinkedList<TaskListDataItem>();
+				List<TaskListDataItem> taskList = new LinkedList<>();
 				taskList.add(new TaskListDataItem(null, "task1", false, 2, null, assigneesOne, taskLegends.get(0), "activiti$projectNewProduct"));
 				projectData.setTaskList(taskList);
 
@@ -125,10 +121,10 @@ public class NPDServiceTest extends AbstractProjectTestCase {
 			public WorkflowTask execute() throws Throwable {
 
 				logger.info("Set npd task information " + task1.getName());
-				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				Map<QName, Serializable> properties = new HashMap<>();
 				properties.put(QName.createQName(NPDWF_URI, "npdProductName"), "Test NPD");
 				properties.put(QName.createQName(NPDWF_URI, "npdAction"), "createNewProduct");
-				java.util.Map<QName, List<NodeRef>> assocs = new HashMap<QName, List<NodeRef>>();
+				java.util.Map<QName, List<NodeRef>> assocs = new HashMap<>();
 
 				workflowService.updateTask(task1.getId(), properties, assocs, new HashMap<QName, List<NodeRef>>());
 
@@ -182,10 +178,10 @@ public class NPDServiceTest extends AbstractProjectTestCase {
 			public WorkflowTask execute() throws Throwable {
 
 				logger.info("Set npd task information " + task2.getName());
-				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				Map<QName, Serializable> properties = new HashMap<>();
 				properties.put(QName.createQName(NPDWF_URI, "npdAction"), "submitTask");
-				java.util.Map<QName, List<NodeRef>> assocs = new HashMap<QName, List<NodeRef>>();
-				assocs.put(QName.createQName(NPDWF_URI, "npdSelectedProducts"), Arrays.asList(productNoderef));
+				java.util.Map<QName, List<NodeRef>> assocs = new HashMap<>();
+				assocs.put(QName.createQName(NPDWF_URI, "npdSelectedProducts"), Collections.singletonList(productNoderef));
 
 				workflowService.updateTask(task2.getId(), properties, assocs, new HashMap<QName, List<NodeRef>>());
 				return workflowService.endTask(task2.getId(), null);

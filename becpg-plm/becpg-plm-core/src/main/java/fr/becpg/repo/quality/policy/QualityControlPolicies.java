@@ -36,7 +36,7 @@ import fr.becpg.repo.quality.QualityControlService;
 public class QualityControlPolicies extends AbstractBeCPGPolicy implements NodeServicePolicies.OnCreateAssociationPolicy,
 				NodeServicePolicies.OnUpdatePropertiesPolicy{
 
-	private static Log logger = LogFactory.getLog(QualityControlPolicies.class);
+	private static final Log logger = LogFactory.getLog(QualityControlPolicies.class);
 	
 	private QualityControlService qualityControlService;
 	

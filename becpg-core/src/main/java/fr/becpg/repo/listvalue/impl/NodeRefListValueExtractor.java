@@ -34,9 +34,9 @@ import fr.becpg.repo.listvalue.ListValueExtractor;
  */
 public class NodeRefListValueExtractor implements ListValueExtractor<NodeRef> {
 
-	private QName propName;
+	private final QName propName;
 	
-	private NodeService nodeService;
+	private final NodeService nodeService;
 	
 	
 
@@ -49,7 +49,7 @@ public class NodeRefListValueExtractor implements ListValueExtractor<NodeRef> {
 
 	@Override
 	public List<ListValueEntry> extract(List<NodeRef> nodeRefs) {
-		List<ListValueEntry> suggestions = new ArrayList<ListValueEntry>();
+		List<ListValueEntry> suggestions = new ArrayList<>();
     	if(nodeRefs!=null){
     		for(NodeRef nodeRef : nodeRefs){
     			

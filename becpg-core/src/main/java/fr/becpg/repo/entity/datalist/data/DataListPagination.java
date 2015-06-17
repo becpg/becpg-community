@@ -110,12 +110,10 @@ public class DataListPagination {
 	public List<NodeRef> paginate(PagingResults<FileInfo> pageOfNodeInfos) {
    		    List<FileInfo> nodeInfos = pageOfNodeInfos.getPage();
 	        int size = nodeInfos.size();
-	        List<NodeRef> ret = new LinkedList<NodeRef>();
-	        for (int i=0; i<size; i++)
-	        {
-	            FileInfo nodeInfo = nodeInfos.get(i);
-	            ret.add(nodeInfo.getNodeRef());
-	        }
+	        List<NodeRef> ret = new LinkedList<>();
+		for (FileInfo nodeInfo : nodeInfos) {
+			ret.add(nodeInfo.getNodeRef());
+		}
 	        
 	        Pair<Integer, Integer> totalResultCount = pageOfNodeInfos.getTotalResultCount();
 	        if (totalResultCount != null)

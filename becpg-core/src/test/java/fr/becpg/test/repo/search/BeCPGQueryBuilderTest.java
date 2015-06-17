@@ -32,7 +32,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 public  class BeCPGQueryBuilderTest {
 	
-	private static Log logger = LogFactory.getLog(BeCPGQueryBuilderTest.class);
+	private static final Log logger = LogFactory.getLog(BeCPGQueryBuilderTest.class);
 	
 	@Test
 	public void testQueryGeneration() {

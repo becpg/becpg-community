@@ -85,7 +85,7 @@ public class InitializationTest {
 
 				NodeRef testNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, "name");
 				if (testNodeRef == null) {
-					Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+					Map<QName, Serializable> properties = new HashMap<>();
 					properties.put(ContentModel.PROP_NAME, "name");
 					properties.put(BeCPGModel.PROP_SORT, 1);
 					nodeService.createNode(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS,

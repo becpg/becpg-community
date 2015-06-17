@@ -33,7 +33,7 @@ import fr.becpg.tools.InstanceManager.Instance;
 
 public class AlfrescoSchemaProcessor implements DynamicSchemaProcessor {
 
-	private static Log logger = LogFactory.getLog(AlfrescoSchemaProcessor.class);
+	private static final Log logger = LogFactory.getLog(AlfrescoSchemaProcessor.class);
 	
 	InstanceManager instanceManager;
 	

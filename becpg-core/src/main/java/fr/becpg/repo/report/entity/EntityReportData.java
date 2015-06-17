@@ -26,7 +26,7 @@ public class EntityReportData {
 	
 	private Element xmlDataSource;
 	
-	private Map<String, byte[]> dataObjects = new HashMap<String, byte[]>();
+	private Map<String, byte[]> dataObjects = new HashMap<>();
 	/**
 	 * @return the xmlDataSource
 	 */

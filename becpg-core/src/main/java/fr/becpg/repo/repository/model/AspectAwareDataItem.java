@@ -27,7 +27,7 @@ public interface AspectAwareDataItem {
 	 * Optional Set to add extra aspects
 	 * @return
 	 */
-	public Set<QName> getAspects();
-	public void setAspects(Set<QName> aspects);
+	Set<QName> getAspects();
+	void setAspects(Set<QName> aspects);
 	
 }

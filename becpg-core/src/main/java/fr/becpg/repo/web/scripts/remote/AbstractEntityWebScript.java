@@ -129,7 +129,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		}
 
 		logger.info("No entities found for query " + queryBuilder.toString());
-		return new ArrayList<NodeRef>();
+		return new ArrayList<>();
 
 	}
 

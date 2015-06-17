@@ -144,7 +144,7 @@ public class ChangeOrderData extends BeCPGDataObject {
 
 	public Map<NodeRef, ChangeUnitDataItem> getChangeUnitMap() {
 
-		Map<NodeRef, ChangeUnitDataItem> changeUnitMap = new LinkedHashMap<NodeRef, ChangeUnitDataItem>();
+		Map<NodeRef, ChangeUnitDataItem> changeUnitMap = new LinkedHashMap<>();
 
 		if(changeUnitList!=null){
 			for (ChangeUnitDataItem dataItem : changeUnitList) {

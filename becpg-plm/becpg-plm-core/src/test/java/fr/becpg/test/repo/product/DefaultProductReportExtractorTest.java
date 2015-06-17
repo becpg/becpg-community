@@ -30,10 +30,8 @@ import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.PackagingListUnit;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
-import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
-import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.ResourceParamDataItem;
@@ -48,7 +46,7 @@ import fr.becpg.repo.report.entity.EntityReportData;
 public class DefaultProductReportExtractorTest extends AbstractFinishedProductTest {
 
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(DefaultProductReportExtractorTest.class);
+	private static final Log logger = LogFactory.getLog(DefaultProductReportExtractorTest.class);
 
 	@Resource
 	private ProductReportExtractorPlugin defaultProductReportExtractor; 
@@ -83,7 +81,7 @@ public class DefaultProductReportExtractorTest extends AbstractFinishedProductTe
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);		
 				finishedProduct.setNetWeight(2d);
-				List<PackagingListDataItem> packagingList = new ArrayList<PackagingListDataItem>();
+				List<PackagingListDataItem> packagingList = new ArrayList<>();
 				packagingList.add(new PackagingListDataItem(null, 1d, PackagingListUnit.P, PackagingLevel.Primary, true, packagingMaterial1NodeRef));
 				packagingList.add(new PackagingListDataItem(null, 3d, PackagingListUnit.m, PackagingLevel.Primary, true, packagingMaterial2NodeRef));
 				packagingList.add(new PackagingListDataItem(null, 8d, PackagingListUnit.PP, PackagingLevel.Tertiary, true, packagingMaterial3NodeRef));
@@ -117,7 +115,7 @@ public class DefaultProductReportExtractorTest extends AbstractFinishedProductTe
 				
 				// add labelingTemplate aspect
 				ProductData finishedProductData = alfrescoRepository.findOne(finishedProductNodeRef);
-				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				Map<QName, Serializable> properties = new HashMap<>();
 				properties.put(PackModel.PROP_LABELING_POSITION, "Côté de la boîte");
 				nodeService.addAspect(finishedProductData.getPackagingList().get(0).getNodeRef(), PackModel.ASPECT_LABELING, properties);				
 				associationService.update(finishedProductData.getPackagingList().get(0).getNodeRef(), PackModel.ASSOC_LABELING_TEMPLATE, labelingTemplateNodeRef);
