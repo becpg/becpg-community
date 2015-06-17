@@ -2,7 +2,6 @@ package fr.becpg.repo.entity.version;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -227,7 +226,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			NodeRef versionHistoryRef = getVersionHistoryNodeRef(origNodeRef);
 			boolean isInitialVersion = versionHistoryRef == null ? true : false;
 
-			if (!isInitialVersion && entityVersionPlugins != null  && !createAlfrescoVersion) {
+			if (!isInitialVersion && entityVersionPlugins != null && !createAlfrescoVersion) {
 				for (EntityVersionPlugin entityVersionPlugin : entityVersionPlugins) {
 					entityVersionPlugin.doBeforeCheckin(origNodeRef, workingCopyNodeRef);
 				}
@@ -237,7 +236,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				versionHistoryRef = createVersionHistory(getEntitiesHistoryFolder(), origNodeRef);
 			}
 			final NodeRef finalVersionHistoryRef = versionHistoryRef;
-			NodeRef versionNodeRef = null;
+			NodeRef versionNodeRef;
 
 			// Rights are checked by copyService during recursiveCopy
 			versionNodeRef = AuthenticationUtil.runAsSystem(new AuthenticationUtil.RunAsWork<NodeRef>() {
@@ -269,11 +268,10 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 							// Remove rules
 							ChildAssociationRef ruleChildAssocRef = ruleService.getSavedRuleFolderAssoc(origNodeRef);
 							if (ruleChildAssocRef != null) {
-								if(ruleChildAssocRef.isPrimary() == true){
+								if (ruleChildAssocRef.isPrimary()) {
 									logger.debug("remove primary rule of entity " + origNodeRef);
 									nodeService.deleteNode(ruleChildAssocRef.getChildRef());
-								}								
-								else{
+								} else {
 									logger.debug("remove secondary rule of entity " + origNodeRef);
 									nodeService.removeSecondaryChildAssociation(ruleChildAssocRef);
 								}
@@ -300,7 +298,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			String versionLabel = getVersionLabel(origNodeRef, versionProperties, isInitialVersion, createAlfrescoVersion);
 
 			String name = nodeService.getProperty(origNodeRef, ContentModel.PROP_NAME) + RepoConsts.VERSION_NAME_DELIMITER + versionLabel;
-			Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>(2);
+			Map<QName, Serializable> aspectProperties = new HashMap<>(2);
 			aspectProperties.put(ContentModel.PROP_NAME, name);
 			aspectProperties.put(BeCPGModel.PROP_VERSION_LABEL, versionLabel);
 			nodeService.addAspect(versionNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION, aspectProperties);
@@ -337,36 +335,26 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		List<AssociationRef> sourceAssocRefs = nodeService.getTargetAssocs(sourceCopy, RegexQNamePattern.MATCH_ALL);
 		List<AssociationRef> targetAssocRefs = nodeService.getTargetAssocs(targetCopy, RegexQNamePattern.MATCH_ALL);
 
-		// don't copy/remove theses assocs
-		List<QName> assocs = new ArrayList<QName>(0);
-		// assocs.add(ReportModel.ASSOC_REPORTS);
-
-		List<QName> childAssocs = new ArrayList<QName>(2);
-		childAssocs.add(ContentModel.ASSOC_CHILDREN);
-		childAssocs.add(BeCPGModel.ASSOC_ENTITYLISTS);
-
 		for (AssociationRef targetAssocRef : targetAssocRefs) {
 
 			if (!ContentModel.ASSOC_WORKING_COPY_LINK.equals(targetAssocRef.getTypeQName())) {
 
-				if (!assocs.contains(targetAssocRef.getTypeQName())) {
-
-					boolean removeAssoc = true;
-					if (targetAssocRef.getTargetRef() != null) {
-						for (AssociationRef sourceAssocRef : sourceAssocRefs) {
-							if (targetAssocRef.getTargetRef().equals(sourceAssocRef.getTargetRef())) {
-								removeAssoc = false;
-								break;
-							}
+				boolean removeAssoc = true;
+				if (targetAssocRef.getTargetRef() != null) {
+					for (AssociationRef sourceAssocRef : sourceAssocRefs) {
+						if (targetAssocRef.getTargetRef().equals(sourceAssocRef.getTargetRef())) {
+							removeAssoc = false;
+							break;
 						}
 					}
-
-					if (removeAssoc) {
-						logger.debug("Remove association sourceRef : " + targetCopy + " targetRef: " + targetAssocRef.getTargetRef() + " assocType: "
-								+ targetAssocRef.getTypeQName());
-						nodeService.removeAssociation(targetCopy, targetAssocRef.getTargetRef(), targetAssocRef.getTypeQName());
-					}
 				}
+
+				if (removeAssoc) {
+					logger.debug("Remove association sourceRef : " + targetCopy + " targetRef: " + targetAssocRef.getTargetRef() + " assocType: "
+							+ targetAssocRef.getTypeQName());
+					nodeService.removeAssociation(targetCopy, targetAssocRef.getTargetRef(), targetAssocRef.getTypeQName());
+				}
+
 			}
 
 		}
@@ -377,7 +365,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	public void createInitialVersion(NodeRef entityNodeRef) {
 		if (getVersionHistoryNodeRef(entityNodeRef) == null) {
 			// Create the initial-version
-			Map<String, Serializable> versionProperties = new HashMap<String, Serializable>(1);
+			Map<String, Serializable> versionProperties = new HashMap<>(1);
 			versionProperties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
 
 			if (logger.isDebugEnabled()) {
@@ -389,7 +377,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			if (nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
 				createVersionAndCheckin(entityNodeRef, null, versionProperties);
 			} else {
-				Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>();
+				Map<QName, Serializable> aspectProperties = new HashMap<>();
 				aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
 				nodeService.addAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
 				createVersion(entityNodeRef, versionProperties);
@@ -447,7 +435,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 								return AuthenticationUtil.runAsSystem(new AuthenticationUtil.RunAsWork<NodeRef>() {
 									@Override
 									public NodeRef doWork() throws Exception {
-										HashMap<QName, Serializable> props = new HashMap<QName, Serializable>();
+										HashMap<QName, Serializable> props = new HashMap<>();
 										props.put(ContentModel.PROP_NAME, RepoConsts.ENTITIES_HISTORY_NAME);
 										NodeRef n = nodeService.createNode(storeNodeRef, ContentModel.ASSOC_CHILDREN, QNAME_ENTITIES_HISTORY,
 												ContentModel.TYPE_FOLDER, props).getChildRef();
@@ -474,7 +462,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			if (logger.isDebugEnabled()) {
 				logger.debug("delete versionHistoryRef " + versionHistoryRef);
 			}
-			nodeService.addAspect(versionHistoryRef,  ContentModel.ASPECT_TEMPORARY, null);
+			nodeService.addAspect(versionHistoryRef, ContentModel.ASPECT_TEMPORARY, null);
 			nodeService.deleteNode(versionHistoryRef);
 		}
 	}
@@ -487,7 +475,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	@Override
 	public List<EntityVersion> getAllVersions(NodeRef entityNodeRef) {
 
-		List<EntityVersion> entityVersions = new ArrayList<EntityVersion>();
+		List<EntityVersion> entityVersions = new ArrayList<>();
 		VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
 
 		if (versionHistory != null) {
@@ -523,7 +511,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	public List<NodeRef> buildVersionHistory(NodeRef versionHistoryRef, NodeRef nodeRef) {
 
 		List<ChildAssociationRef> versionAssocs = getVersionAssocs(versionHistoryRef, true);
-		List<NodeRef> versionRefs = new ArrayList<NodeRef>();
+		List<NodeRef> versionRefs = new ArrayList<>();
 
 		for (ChildAssociationRef versionAssoc : versionAssocs) {
 
@@ -571,7 +559,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 					ret.add(entityVersion);
 				}
 			} else {
-				Map<String, Serializable> propsMap = new HashMap<String, Serializable>();
+				Map<String, Serializable> propsMap = new HashMap<>();
 				propsMap.put(Version2Model.PROP_FROZEN_MODIFIED, nodeService.getProperty(branchNodeRef, ContentModel.PROP_CREATED));
 				propsMap.put(Version2Model.PROP_FROZEN_MODIFIER, nodeService.getProperty(branchNodeRef, ContentModel.PROP_CREATOR));
 				propsMap.put(VersionBaseModel.PROP_VERSION_LABEL, RepoConsts.INITIAL_VERSION);
@@ -587,8 +575,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 			@Override
 			public int compare(EntityVersion o1, EntityVersion o2) {
-				Date d1 = (Date) o1.getFrozenModifiedDate();
-				Date d2 = (Date) o2.getFrozenModifiedDate();
+				Date d1 = o1.getFrozenModifiedDate();
+				Date d2 = o2.getFrozenModifiedDate();
 				return (d1 == d2) ? 0 : d2 == null ? -1 : d2.compareTo(d1);
 			}
 
@@ -607,7 +595,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		NodeRef primaryParentNodeRef = entityNodeRef;
 
 		// Look for primary parent
-		NodeRef tmp = null;
+		NodeRef tmp;
 
 		do {
 			tmp = associationService.getTargetAssoc(primaryParentNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY);
@@ -670,7 +658,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 				if (preceedingVersion == null) {
 
-					Map<String, Serializable> propsMap = new HashMap<String, Serializable>();
+					Map<String, Serializable> propsMap = new HashMap<>();
 					propsMap.put(VersionBaseModel.PROP_VERSION_LABEL, RepoConsts.INITIAL_VERSION);
 					propsMap.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
 
@@ -799,7 +787,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		try {
 
 			// Apply the lock aspect if required
-			if (nodeService.hasAspect(branchToNodeRef, ContentModel.ASPECT_LOCKABLE) == false) {
+			if (!nodeService.hasAspect(branchToNodeRef, ContentModel.ASPECT_LOCKABLE)) {
 				nodeService.addAspect(branchToNodeRef, ContentModel.ASPECT_LOCKABLE, null);
 			}
 
@@ -814,7 +802,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				copyName = createWorkingCopyName(copyName, workingCopyLabel);
 
 				// Apply the working copy aspect to the working copy
-				Map<QName, Serializable> workingCopyProperties = new HashMap<QName, Serializable>(1);
+				Map<QName, Serializable> workingCopyProperties = new HashMap<>(1);
 				workingCopyProperties.put(ContentModel.PROP_WORKING_COPY_OWNER, userName);
 				workingCopyProperties.put(ContentModel.PROP_WORKING_COPY_LABEL, workingCopyLabel);
 				nodeService.addAspect(branchNodeRef, ContentModel.ASPECT_WORKING_COPY, workingCopyProperties);
@@ -864,7 +852,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		} else {
 			nodeService.setProperty(branchNodeRef, BeCPGModel.PROP_BRANCH_FROM_VERSION_LABEL, RepoConsts.INITIAL_VERSION);
 		}
-		nodeService.setAssociations(branchNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY, Arrays.asList(entityNodeRef));
+		nodeService.setAssociations(branchNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY, Collections.singletonList(entityNodeRef));
 		return branchNodeRef;
 	}
 

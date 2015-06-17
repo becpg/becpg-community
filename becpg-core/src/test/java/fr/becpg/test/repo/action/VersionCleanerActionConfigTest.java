@@ -44,7 +44,7 @@ import fr.becpg.repo.action.VersionCleanerActionConfig;
 
 public class VersionCleanerActionConfigTest {
 
-	private static Log logger = LogFactory.getLog(VersionCleanerActionConfig.class);
+	private static final Log logger = LogFactory.getLog(VersionCleanerActionConfig.class);
 	
 	
 	private Collection<Version> getAllVersions(){

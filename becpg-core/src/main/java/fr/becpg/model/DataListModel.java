@@ -14,15 +14,15 @@ import org.alfresco.service.namespace.QName;
 public interface DataListModel {
 	
 	/** DataList Model URI. */
-	static final String MODEL_1_0_URI = "http://www.alfresco.org/model/datalist/1.0";	
+	String MODEL_1_0_URI = "http://www.alfresco.org/model/datalist/1.0";
 	
 	/** DataList Prefix. */
-	static final String MODEL_PREFIX = "dl";
+	String MODEL_PREFIX = "dl";
 	
 	/** The Constant TYPE_DATALIST. */
-	static final QName TYPE_DATALIST = QName.createQName(MODEL_1_0_URI, "dataList");
+	QName TYPE_DATALIST = QName.createQName(MODEL_1_0_URI, "dataList");
 	
 	/** The Constant PROP_DATALISTITEMTYPE. */
-	static final QName PROP_DATALISTITEMTYPE = QName.createQName(MODEL_1_0_URI, "dataListItemType");
+	QName PROP_DATALISTITEMTYPE = QName.createQName(MODEL_1_0_URI, "dataListItemType");
 
 }

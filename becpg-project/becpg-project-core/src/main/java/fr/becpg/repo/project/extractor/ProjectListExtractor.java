@@ -68,7 +68,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 
 	private PreferenceService preferenceService;
 
-	private static Log logger = LogFactory.getLog(ProjectListExtractor.class);
+	private static final Log logger = LogFactory.getLog(ProjectListExtractor.class);
 
 	public void setPersonService(PersonService personService) {
 		this.personService = personService;
@@ -92,7 +92,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 
 		List<NodeRef> results = getListNodeRef(dataListFilter, pagination, favorites);
 
-		Map<String, Object> props = new HashMap<String, Object>();
+		Map<String, Object> props = new HashMap<>();
 		props.put(PROP_ACCESSRIGHT, hasWriteAccess);
 		props.put(FILTER_DATA, dataListFilter);
 		props.put(PAGINATION, pagination);
@@ -156,7 +156,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 
 	private List<NodeRef> getListNodeRef(DataListFilter dataListFilter, DataListPagination pagination, List<NodeRef> favorites) {
 
-		List<NodeRef> results = new ArrayList<NodeRef>();
+		List<NodeRef> results = new ArrayList<>();
 
 		// pjt:project
 		QName dataType = dataListFilter.getDataType();
@@ -192,7 +192,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 				if (VIEW_RESOURCES.equals(dataListFilter.getExtraParams())) {
 
 					for (Iterator<NodeRef> iterator = results.iterator(); iterator.hasNext();) {
-						NodeRef nodeRef = (NodeRef) iterator.next();
+						NodeRef nodeRef = iterator.next();
 						if (associationService.getTargetAssoc(nodeRef, ProjectModel.ASSOC_TL_RESOURCES) == null) {
 							iterator.remove();
 						}
@@ -203,7 +203,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 						projectQueryBuilder.ofType(ProjectModel.TYPE_PROJECT);
 						List<NodeRef> projectList = projectQueryBuilder.ftsLanguage().list();
 						for (Iterator<NodeRef> iterator = results.iterator(); iterator.hasNext();) {
-							NodeRef nodeRef = (NodeRef) iterator.next();
+							NodeRef nodeRef = iterator.next();
 							NodeRef entityNodeRef = entityListDAO.getEntity(nodeRef);
 							if (!projectList.contains(entityNodeRef)) {
 								iterator.remove();
@@ -255,7 +255,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 
 					@Override
 					public List<Map<String, Object>> extractNestedField(NodeRef nodeRef, AttributeExtractorStructure field) {
-						List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();
+						List<Map<String, Object>> ret = new ArrayList<>();
 						if (field.isDataListItems()) {
 
 							DataListPagination pagination = (DataListPagination) props.get(PAGINATION);
@@ -264,7 +264,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 							if ((ProjectModel.TYPE_TASK_LIST.equals(field.getFieldQname()) && pagination.getPageSize()>10)
 									|| ProjectModel.TYPE_ACTIVITY_LIST.equals(field.getFieldQname())) {
 								// Only in progress tasks
-								List<NodeRef> assocRefs = null;
+								List<NodeRef> assocRefs;
 								if (ProjectModel.TYPE_ACTIVITY_LIST.equals(field.getFieldQname())) {
 									assocRefs = associationService.getTargetAssocs(nodeRef, ProjectModel.ASSOC_PROJECT_CUR_COMMENTS);
 								} else {
@@ -275,7 +275,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 
 									if (permissionService.hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED) {
 
-										Map<String, Object> tmp = new HashMap<String, Object>(3);
+										Map<String, Object> tmp = new HashMap<>(3);
 
 										QName itemType = nodeService.getType(itemNodeRef);
 										Map<QName, Serializable> properties = nodeService.getProperties(itemNodeRef);
@@ -304,7 +304,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 									for (NodeRef itemNodeRef : results) {
 										if (permissionService.hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED) {
 
-											Map<String, Object> tmp = new HashMap<String, Object>(3);
+											Map<String, Object> tmp = new HashMap<>(3);
 											QName itemType = nodeService.getType(itemNodeRef);
 											Map<QName, Serializable> properties = nodeService.getProperties(itemNodeRef);
 											tmp.put(PROP_TYPE, itemType.toPrefixString(services.getNamespaceService()));
@@ -323,7 +323,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 						} else {
 
 							if (field.getFieldDef() instanceof AssociationDefinition) {
-								List<NodeRef> assocRefs = null;
+								List<NodeRef> assocRefs;
 								if (((AssociationDefinition) field.getFieldDef()).isChild()) {
 									assocRefs = associationService.getChildAssocs(nodeRef, field.getFieldDef().getName());
 								} else {

@@ -44,7 +44,7 @@ import fr.becpg.repo.helper.TranslateHelper;
  */
 public abstract class AbstractInitVisitorImpl implements InitVisitor {		
 	
-	protected static Log logger = LogFactory.getLog(AbstractInitVisitorImpl.class);
+	protected static final Log logger = LogFactory.getLog(AbstractInitVisitorImpl.class);
 	
 
 	private static final String LOCALIZATION_PFX_GROUP = "becpg.group";
@@ -148,7 +148,7 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 	protected void createRuleSpecialiseType(NodeRef nodeRef, boolean applyToChildren, QName type){
 		
 	    // Action : apply type
-	    Map<String,Serializable> params = new HashMap<String, Serializable>();
+	    Map<String,Serializable> params = new HashMap<>();
   	  	params.put(SpecialiseTypeActionExecuter.PARAM_TYPE_NAME, type);
 	    CompositeAction compositeAction = actionService.createCompositeAction();
 	    Action myAction= actionService.createAction(SpecialiseTypeActionExecuter.NAME, params);
@@ -176,7 +176,7 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 
 		// action
 		CompositeAction compositeAction = actionService.createCompositeAction();
-		Map<String, Serializable> params = new HashMap<String, Serializable>();
+		Map<String, Serializable> params = new HashMap<>();
 		params.put(AddFeaturesActionExecuter.PARAM_ASPECT_NAME, aspect);
 		Action action = actionService.createAction(AddFeaturesActionExecuter.NAME, params);
 		compositeAction.addAction(action);
@@ -207,7 +207,7 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 	
 	protected void createGroups(String[] groups) {
 
-		Set<String> zones = new HashSet<String>();
+		Set<String> zones = new HashSet<>();
 		zones.add(AuthorityService.ZONE_APP_DEFAULT);
 		zones.add(AuthorityService.ZONE_APP_SHARE);
 		zones.add(AuthorityService.ZONE_AUTH_ALFRESCO);
@@ -222,7 +222,7 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 				authorityService.createAuthority(AuthorityType.GROUP, group, groupName, zones);
 			} else {
 				Set<String> zonesAdded = authorityService.getAuthorityZones(PermissionService.GROUP_PREFIX + group);
-				Set<String> zonesToAdd = new HashSet<String>();
+				Set<String> zonesToAdd = new HashSet<>();
 				for (String zone : zones)
 					if (!zonesAdded.contains(zone)) {
 						zonesToAdd.add(zone);

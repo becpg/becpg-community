@@ -42,7 +42,7 @@ public class AlfrescoSessionService extends SessionService {
 
 	private AuthenticationManager authenticationManager;
 
-	Map<Object, Map<String, Object>> sessionHolder = new HashMap<Object, Map<String, Object>>();
+	final Map<Object, Map<String, Object>> sessionHolder = new HashMap<>();
 
 	/*
 	 * (non-Javadoc)
@@ -118,7 +118,7 @@ public class AlfrescoSessionService extends SessionService {
 	}
 
 	public Map<String, Object> getAllSessionObjects() {
-		Map<String, Object> ret = new HashMap<String, Object>();
+		Map<String, Object> ret = new HashMap<>();
 
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
@@ -127,7 +127,7 @@ public class AlfrescoSessionService extends SessionService {
 
 			ret.put("username", userDetails.getUsername());
 			ret.put("sessionid", userDetails.getSessionId());
-			List<String> roles = new ArrayList<String>();
+			List<String> roles = new ArrayList<>();
 			for (GrantedAuthority ga : userDetails.getAuthorities()) {
 				roles.add(ga.getAuthority());
 			}

@@ -33,7 +33,7 @@ import fr.becpg.repo.entity.EntityListDAO;
  */
 public class NutListValuePatch extends AbstractBeCPGPatch {
 
-	private static Log logger = LogFactory.getLog(NutListValuePatch.class);
+	private static final Log logger = LogFactory.getLog(NutListValuePatch.class);
 	private static final String MSG_SUCCESS = "patch.bcpg.plm.nutListValuePatch.result";
 
 	private NodeDAO nodeDAO;
@@ -53,14 +53,14 @@ public class NutListValuePatch extends AbstractBeCPGPatch {
 		AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
 		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
-			final List<NodeRef> result = new ArrayList<NodeRef>();
+			final List<NodeRef> result = new ArrayList<>();
 
-			long maxNodeId = getPatchDAO().getMaxAdmNodeID();
+			final long maxNodeId = getPatchDAO().getMaxAdmNodeID();
 
 			long minSearchNodeId = 1;
 			long maxSearchNodeId = count;
 
-			Pair<Long, QName> val = getQnameDAO().getQName(PLMModel.TYPE_NUTLIST);
+			final Pair<Long, QName> val = getQnameDAO().getQName(PLMModel.TYPE_NUTLIST);
 
 			public int getTotalEstimatedWorkSize() {
 				return result.size();
@@ -91,7 +91,7 @@ public class NutListValuePatch extends AbstractBeCPGPatch {
 			}
 		};
 
-		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<NodeRef>("NutListValuePatch", transactionService.getRetryingTransactionHelper(),
+		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("NutListValuePatch", transactionService.getRetryingTransactionHelper(),
 				workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 1000);
 
 		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {

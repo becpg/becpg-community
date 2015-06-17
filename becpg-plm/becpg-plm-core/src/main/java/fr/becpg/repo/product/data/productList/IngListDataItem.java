@@ -43,11 +43,11 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	
 	private Double volumeQtyPerc;
 	
-	private List<NodeRef> geoOrigin = new ArrayList<NodeRef>();
+	private List<NodeRef> geoOrigin = new ArrayList<>();
 	
-	private List<NodeRef> geoTransfo = new ArrayList<NodeRef>();
+	private List<NodeRef> geoTransfo = new ArrayList<>();
 	
-	private List<NodeRef> bioOrigin = new ArrayList<NodeRef>();
+	private List<NodeRef> bioOrigin = new ArrayList<>();
 	
 	private Boolean isGMO = false;
 	

@@ -102,7 +102,7 @@ public class EffectivityAspectPolicy extends AbstractBeCPGPolicy implements Node
 
 	private static class EffectivityAspectCopyBehaviourCallback extends DefaultCopyBehaviourCallback {
 
-		private DictionaryService dictionaryService;
+		private final DictionaryService dictionaryService;
 
 		public EffectivityAspectCopyBehaviourCallback(DictionaryService dictionaryService) {
 			this.dictionaryService = dictionaryService;

@@ -11,7 +11,6 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -77,7 +76,7 @@ public class ProductServiceTest extends PLMBaseTestCase {
 	private static final int WUSED_LEVEL = 1;
 
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(ProductServiceTest.class);
+	private static final Log logger = LogFactory.getLog(ProductServiceTest.class);
 
 	@Resource
 	private ProductService productService;
@@ -181,8 +180,8 @@ public class ProductServiceTest extends PLMBaseTestCase {
 				out.close();
 
 				/*-- Product template --*/
-				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-				properties = new HashMap<QName, Serializable>();
+				Map<QName, Serializable> properties;
+				properties = new HashMap<>();
 				properties.put(ContentModel.PROP_NAME, "Product Tpl");
 				nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_ENTITY_V2, properties)
@@ -218,7 +217,7 @@ public class ProductServiceTest extends PLMBaseTestCase {
 
 				// add permissions on image folder Tpl
 				if(nodeService.hasAspect(imagesFolder, BeCPGModel.ASPECT_PERMISSIONS_TPL)){
-					Set<String> zones = new HashSet<String>();
+					Set<String> zones = new HashSet<>();
 					String collaboratorGroupName = "Collaborator_Test";
 					if (!authorityService.authorityExists(PermissionService.GROUP_PREFIX + collaboratorGroupName)) {
 						zones.add(AuthorityService.ZONE_APP_DEFAULT);
@@ -301,7 +300,7 @@ public class ProductServiceTest extends PLMBaseTestCase {
 		
 		if(imageNodeRef == null){
 			logger.debug("image name: " + imageName);
-			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+			Map<QName, Serializable> properties = new HashMap<>();
 			properties.put(ContentModel.PROP_NAME, imageName);
 			imageNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), ContentModel.TYPE_CONTENT, properties).getChildRef();
@@ -489,13 +488,11 @@ public class ProductServiceTest extends PLMBaseTestCase {
 				logger.debug("/*-- Create finished product --*/");
 				FinishedProductData finishedProduct = new FinishedProductData();
 				finishedProduct.setName("Finished Product");
-				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, 1d, CompoListUnit.P, 0d, DeclarationType.Declare, lSF1NodeRef));
+				List<CompoListDataItem> compoList = new ArrayList<>();
+				compoList.add(new CompoListDataItem(null, null, 1d, 1d, CompoListUnit.P, 0d, DeclarationType.Declare, lSF1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), 1d, 4d, CompoListUnit.P, 0d, DeclarationType.Declare, lSF2NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(1), 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterialNodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
-				Collection<QName> dataLists = new ArrayList<QName>();
-				dataLists.add(PLMModel.TYPE_COMPOLIST);
 				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 				
 			}
@@ -535,7 +532,7 @@ public class ProductServiceTest extends PLMBaseTestCase {
 		
 		logger.debug("getWUsedProduct");
 		
-		List<CompoListDataItem> wUsedList = new ArrayList<CompoListDataItem>();		
+		List<CompoListDataItem> wUsedList = new ArrayList<>();
 		MultiLevelListData wUsedData = wUsedListService.getWUsedEntity(productNodeRef, PLMModel.ASSOC_COMPOLIST_PRODUCT, WUSED_LEVEL);
 		
 		for(Map.Entry<NodeRef, MultiLevelListData> kv : wUsedData.getTree().entrySet()){
@@ -545,7 +542,7 @@ public class ProductServiceTest extends PLMBaseTestCase {
 			CompoListUnit compoListUnit = CompoListUnit.valueOf((String)properties.get(PLMModel.PROP_COMPOLIST_UNIT));
 			DeclarationType declType = DeclarationType.valueOf((String)properties.get(PLMModel.PROP_COMPOLIST_DECL_TYPE));
 			
-			CompoListDataItem compoListDataItem = new CompoListDataItem(kv.getKey(), (CompoListDataItem)null, 
+			CompoListDataItem compoListDataItem = new CompoListDataItem(kv.getKey(), null,
 										(Double)properties.get(PLMModel.PROP_COMPOLIST_QTY), 
 										(Double)properties.get(PLMModel.PROP_COMPOLIST_QTY_SUB_FORMULA), 
 										compoListUnit, 
@@ -581,19 +578,17 @@ public class ProductServiceTest extends PLMBaseTestCase {
 
 				/*-- Create finished product --*/
 				logger.debug("/*-- Create finished product --*/");
-				Collection<QName> dataLists = new ArrayList<QName>();
-				dataLists.add(PLMModel.TYPE_PACKAGINGLIST);
 
 				FinishedProductData finishedProduct1 = new FinishedProductData();
 				finishedProduct1.setName("Finished Product 1");
-				List<PackagingListDataItem> packagingList1 = new ArrayList<PackagingListDataItem>();
+				List<PackagingListDataItem> packagingList1 = new ArrayList<>();
 				packagingList1.add(new PackagingListDataItem(null, 1d, PackagingListUnit.P, PackagingLevel.Primary, true, packagingMaterialNodeRef));
 				finishedProduct1.getPackagingListView().setPackagingList(packagingList1);
 				NodeRef finishedProductNodeRef1 = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
 
 				FinishedProductData finishedProduct2 = new FinishedProductData();
 				finishedProduct2.setName("Finished Product");
-				List<PackagingListDataItem> packagingList2 = new ArrayList<PackagingListDataItem>();
+				List<PackagingListDataItem> packagingList2 = new ArrayList<>();
 				packagingList2.add(new PackagingListDataItem(null, 8d, PackagingListUnit.PP, PackagingLevel.Secondary, true, packagingMaterialNodeRef));
 				finishedProduct2.getPackagingListView().setPackagingList(packagingList2);
 				NodeRef finishedProductNodeRef2 = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct2).getNodeRef();
@@ -626,7 +621,7 @@ public class ProductServiceTest extends PLMBaseTestCase {
 		
 		logger.debug("getWUsedProduct");
 		
-		List<PackagingListDataItem> wUsedList = new ArrayList<PackagingListDataItem>();
+		List<PackagingListDataItem> wUsedList = new ArrayList<>();
 		MultiLevelListData wUsedData = wUsedListService.getWUsedEntity(productNodeRef, PLMModel.ASSOC_PACKAGINGLIST_PRODUCT, WUSED_LEVEL);
 		
 		for(Map.Entry<NodeRef, MultiLevelListData> kv : wUsedData.getTree().entrySet()){

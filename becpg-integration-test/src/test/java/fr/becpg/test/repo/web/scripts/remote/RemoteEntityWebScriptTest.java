@@ -38,7 +38,7 @@ import fr.becpg.test.utils.TestWebscriptExecuters.Response;
  */
 public class RemoteEntityWebScriptTest extends RepoBaseTestCase {
 
-	private static Log logger = LogFactory.getLog(RemoteEntityWebScriptTest.class);
+	private static final Log logger = LogFactory.getLog(RemoteEntityWebScriptTest.class);
 
 	@Autowired
 	private EntityService entityService;

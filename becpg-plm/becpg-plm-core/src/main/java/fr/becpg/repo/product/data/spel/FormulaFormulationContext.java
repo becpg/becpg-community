@@ -36,14 +36,14 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 
 public class FormulaFormulationContext {
 	
-	private static Log logger = LogFactory.getLog(FormulaFormulationContext.class);
+	private static final Log logger = LogFactory.getLog(FormulaFormulationContext.class);
 	
-	private ProductData entity;
-	private CompositionDataItem dataListItem;
-	private AlfrescoRepository<ProductData> alfrescoRepository;
+	private final ProductData entity;
+	private final CompositionDataItem dataListItem;
+	private final AlfrescoRepository<ProductData> alfrescoRepository;
 	
 	private enum Operator {
-		SUM,AVG,PERC;
+		SUM,AVG,PERC
 	}
 
 	public FormulaFormulationContext(AlfrescoRepository<ProductData> alfrescoRepository, ProductData entity, CompositionDataItem dataListItem) {

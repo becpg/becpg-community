@@ -31,9 +31,9 @@ public interface SecurityService {
 	/**
 	 * Access status
 	 */
-	static int NONE_ACCESS = 0;
-	static int READ_ACCESS = 1;
-	static int WRITE_ACCESS = 2;
+	int NONE_ACCESS = 0;
+	int READ_ACCESS = 1;
+	int WRITE_ACCESS = 2;
 	
 	/**
 	 * Compute access mode for the given field name on a specific type

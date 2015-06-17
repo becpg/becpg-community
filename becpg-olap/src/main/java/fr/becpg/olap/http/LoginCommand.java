@@ -33,7 +33,7 @@ import fr.becpg.tools.http.AbstractHttpCommand;
 public class LoginCommand  extends AbstractHttpCommand {
 
 
-	private static String COMMAND_URL_TEMPLATE = "/api/login?u=%s&pw=%s";
+	private static final String COMMAND_URL_TEMPLATE = "/api/login?u=%s&pw=%s";
 
 	
 	public LoginCommand(String serverUrl) {
@@ -56,7 +56,7 @@ public class LoginCommand  extends AbstractHttpCommand {
 			DocumentBuilder builder = domFactory.newDocumentBuilder();
 			Document doc = builder.parse(in);
 	
-			NodeList nodes = (NodeList) doc.getElementsByTagName("ticket");
+			NodeList nodes = doc.getElementsByTagName("ticket");
 			if(nodes!=null && nodes.getLength()>0){
 				return nodes.item(0).getTextContent();
 			}

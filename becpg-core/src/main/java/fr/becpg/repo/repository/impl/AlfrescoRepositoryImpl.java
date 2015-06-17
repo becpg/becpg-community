@@ -17,7 +17,6 @@
  ******************************************************************************/
 package fr.becpg.repo.repository.impl;
 
-import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
@@ -72,7 +71,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 	@Qualifier("mlAwareNodeService")
 	private NodeService mlNodeService;
 
-	private static Log logger = LogFactory.getLog(AlfrescoRepositoryImpl.class);
+	private static final Log logger = LogFactory.getLog(AlfrescoRepositoryImpl.class);
 
 	@Autowired
 	private RepositoryEntityDefReader<T> repositoryEntityDefReader;
@@ -345,7 +344,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 	@Override
 	public Iterable<T> save(Iterable<? extends T> entities) {
-		List<T> ret = new ArrayList<T>();
+		List<T> ret = new ArrayList<>();
 
 		for (T entity : entities) {
 			ret.add(save(entity));
@@ -375,7 +374,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 		QName type = nodeService.getType(id);
 
-		Class<T> entityClass = (Class<T>) repositoryEntityDefReader.getEntityClass(type);
+		Class<T> entityClass = repositoryEntityDefReader.getEntityClass(type);
 		if (entityClass == null) {
 			throw new IllegalArgumentException("Type is not registered : " + type);
 		}
@@ -436,13 +435,13 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 	private void loadAspects(T entity) {
 		if (entity instanceof AspectAwareDataItem) {
-			((AspectAwareDataItem) entity).setAspects(new TreeSet<QName>(nodeService.getAspects(entity.getNodeRef())));
+			((AspectAwareDataItem) entity).setAspects(new TreeSet<>(nodeService.getAspects(entity.getNodeRef())));
 		}
 
 	}
 
 	private <R> R loadDataListView(final T entity, QName datalistContainerQname, Class<R> returnType, Map<NodeRef, RepositoryEntity> caches)
-			throws InstantiationException, IllegalAccessException, IntrospectionException, InvocationTargetException, NoSuchMethodException {
+			throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
 		R ret = returnType.newInstance();
 
@@ -469,7 +468,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 			logger.debug("read dataList : " + pd.getName());
 		}
 
-		LazyLoadingDataList<T> dataList = new LazyLoadingDataList<T>();
+		LazyLoadingDataList<T> dataList = new LazyLoadingDataList<>();
 		dataList.setDataProvider(new LazyLoadingDataList.DataProvider<T>() {
 			public List<T> getData() {
 				return loadDataList(entity.getNodeRef(), datalistContainerQname, datalistQname, caches);
@@ -490,7 +489,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 			if (logger.isTraceEnabled()) {
 				logger.trace("read multi assoc : " + pd.getName());
 			}
-			List<NodeRef> assocRefs = null;
+			List<NodeRef> assocRefs;
 			if (!isChildAssoc) {
 				assocRefs = associationService.getTargetAssocs(entity.getNodeRef(), repositoryEntityDefReader.readQName(readMethod));
 			} else {
@@ -512,7 +511,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 				logger.trace("read single assoc : " + pd.getName());
 			}
 
-			NodeRef assocRef = null;
+			NodeRef assocRef;
 			if (!isChildAssoc) {
 				assocRef = associationService.getTargetAssoc(entity.getNodeRef(), repositoryEntityDefReader.readQName(readMethod));
 			} else {
@@ -565,7 +564,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 			NodeRef dataListNodeRef = entityListDAO.getList(listContainerNodeRef, datalistContainerQname);
 
 			if (dataListNodeRef != null) {
-				LinkedList<T> dataList = new LinkedList<T>();
+				LinkedList<T> dataList = new LinkedList<>();
 				List<NodeRef> listItemNodeRefs = entityListDAO.getListItems(dataListNodeRef, datalistQname);
 				for (NodeRef listItemNodeRef : listItemNodeRefs) {
 					T item = findOne(listItemNodeRef, caches);
@@ -580,7 +579,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 			}
 		}
 
-		return new LinkedList<T>();
+		return new LinkedList<>();
 	}
 
 	@Override

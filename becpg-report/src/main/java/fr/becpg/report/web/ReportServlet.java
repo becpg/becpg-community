@@ -37,7 +37,7 @@ import fr.becpg.report.services.impl.BeCPGReportServiceImpl;
 
 public class ReportServlet extends AbstractReportServlet {
 
-	private BeCPGReportService beCPGReportService;
+	private final BeCPGReportService beCPGReportService;
 	
 	private final static int BUFFER_SIZE = 2048;
 	
@@ -61,26 +61,21 @@ public class ReportServlet extends AbstractReportServlet {
 		@SuppressWarnings("unchecked")
 		Map<String,byte[]> images = (Map<String, byte[]>) session.getAttribute(ReportParams.PARAM_IMAGES);
 		if(images==null){
-			images = new HashMap<String, byte[]>();
+			images = new HashMap<>();
 		}
 		
 		if(format.equals(ReportParams.PARAM_IMAGES)){
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			InputStream in = req.getInputStream();
-			try {
+			try (ByteArrayOutputStream out = new ByteArrayOutputStream(); InputStream in = req.getInputStream()) {
 				byte[] buffer = new byte[BUFFER_SIZE];
 				int l;
 				// consume until EOF
 				while ((l = in.read(buffer)) != -1) {
-				
+
 					out.write(buffer, 0, l);
 				}
-				images.put(templateId,out.toByteArray());
-				
-				
-			} finally {
-				in.close();
-				out.close();
+				images.put(templateId, out.toByteArray());
+
+
 			}
 			
 			session.setAttribute(ReportParams.PARAM_IMAGES, images);

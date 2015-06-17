@@ -35,7 +35,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
  */
 public class IsManualListItemPatch extends AbstractBeCPGPatch {
 
-	private static Log logger = LogFactory.getLog(IsManualListItemPatch.class);
+	private static final Log logger = LogFactory.getLog(IsManualListItemPatch.class);
 	private static final String MSG_SUCCESS = "patch.bcpg.isManualListItemPatch.result";
 
 	private NodeDAO nodeDAO;
@@ -108,14 +108,14 @@ public class IsManualListItemPatch extends AbstractBeCPGPatch {
 		
 	private void doForAspect(final QName aspect, final Map<QName, List<PropertyDefinition>> mapAspect, final Map<QName, List<PropertyDefinition>> mapTypes, final boolean isAspect) {
 		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
-			final List<NodeRef> result = new ArrayList<NodeRef>();
+			final List<NodeRef> result = new ArrayList<>();
 
-			long maxNodeId = getPatchDAO().getMaxAdmNodeID();
+			final long maxNodeId = getPatchDAO().getMaxAdmNodeID();
 
 			long minSearchNodeId = 1;
 			long maxSearchNodeId = count;
 
-			Pair<Long, QName> val = getQnameDAO().getQName(aspect);
+			final Pair<Long, QName> val = getQnameDAO().getQName(aspect);
 
 			public int getTotalEstimatedWorkSize() {
 				return result.size();
@@ -128,7 +128,7 @@ public class IsManualListItemPatch extends AbstractBeCPGPatch {
 					result.clear();
 
 					while (result.isEmpty() && minSearchNodeId < maxNodeId) {
-						List<Long> nodeids = null;
+						List<Long> nodeids;
 						if(isAspect){
 							nodeids = getPatchDAO().getNodesByAspectQNameId(typeQNameId, minSearchNodeId, maxSearchNodeId);
 						}
@@ -152,7 +152,7 @@ public class IsManualListItemPatch extends AbstractBeCPGPatch {
 			}
 		};
 
-		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<NodeRef>("IsManualListItemPatch", transactionService.getRetryingTransactionHelper(),
+		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("IsManualListItemPatch", transactionService.getRetryingTransactionHelper(),
 				workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 1000);
 
 		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {

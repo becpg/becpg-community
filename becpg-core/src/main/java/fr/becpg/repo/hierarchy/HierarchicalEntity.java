@@ -4,8 +4,8 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 public interface HierarchicalEntity {
 
-	public NodeRef getHierarchy1();
-	public NodeRef getHierarchy2();
+	NodeRef getHierarchy1();
+	NodeRef getHierarchy2();
 	
 	
 }

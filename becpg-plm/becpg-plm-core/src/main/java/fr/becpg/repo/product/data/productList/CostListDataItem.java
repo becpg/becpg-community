@@ -33,7 +33,7 @@ public class CostListDataItem extends AbstractManualDataItem implements SimpleLi
 	private NodeRef cost;	
 	private Boolean isFormulated;	
 	private String errorLog;	
-	private List<NodeRef> plants = new ArrayList<NodeRef>();	
+	private List<NodeRef> plants = new ArrayList<>();
 	private Integer depthLevel;
 	private CostListDataItem parent;
 	private NodeRef componentNodeRef;

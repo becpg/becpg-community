@@ -65,9 +65,9 @@ public class CompareProductReportWebScriptTest extends AbstractCompareProductTes
 				fp1.setName("FP 1");
 
 				// Costs
-				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
-				for (int j = 0; j < costs.size(); j++) {
-					CostListDataItem costListItemData = new CostListDataItem(null, 12.2d, "€/kg", null, costs.get(j), false);
+				List<CostListDataItem> costList = new ArrayList<>();
+				for (NodeRef cost : costs) {
+					CostListDataItem costListItemData = new CostListDataItem(null, 12.2d, "€/kg", null, cost, false);
 					costList.add(costListItemData);
 				}
 				fp1.setCostList(costList);
@@ -78,35 +78,35 @@ public class CompareProductReportWebScriptTest extends AbstractCompareProductTes
 				NodeRef allergenRawMaterialNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), allergenRawMaterial).getNodeRef();
 
 				// Allergens
-				List<AllergenListDataItem> allergenList = new ArrayList<AllergenListDataItem>();
-				for (int j = 0; j < allergens.size(); j++) {
-					List<NodeRef> voluntarySources = new ArrayList<NodeRef>();
+				List<AllergenListDataItem> allergenList = new ArrayList<>();
+				for (NodeRef allergen : allergens) {
+					List<NodeRef> voluntarySources = new ArrayList<>();
 					voluntarySources.add(allergenRawMaterialNodeRef);
 
 					AllergenListDataItem allergenListItemData = new AllergenListDataItem(null, null, true, false, voluntarySources, null,
-							allergens.get(j), false);
+							allergen, false);
 					allergenList.add(allergenListItemData);
 				}
 				fp1.setAllergenList(allergenList);
 
-				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail,localSF1NodeRef));
+				List<CompoListDataItem> compoList = new ArrayList<>();
+				compoList.add(new CompoListDataItem(null, null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail,localSF1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare,rawMaterial1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), 2d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(3), 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 				
 				fp1.getCompoListView().setCompoList(compoList);
 
 				NodeRef fpNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), fp1).getNodeRef();
 
-				Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>();
+				Map<QName, Serializable> aspectProperties = new HashMap<>();
 				aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
 				nodeService.addAspect(fpNodeRef, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
 
 				// CheckOut/CheckIn
 				NodeRef workingCopyNodeRef = checkOutCheckInService.checkout(fpNodeRef);
-				Map<String, Serializable> properties = new HashMap<String, Serializable>();
+				Map<String, Serializable> properties = new HashMap<>();
 				properties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
 				NodeRef fpv1NodeRef = checkOutCheckInService.checkin(workingCopyNodeRef, properties);
 
@@ -115,23 +115,23 @@ public class CompareProductReportWebScriptTest extends AbstractCompareProductTes
 
 				logger.debug("update workingCopy");
 
-				ProductData workingCopy = (ProductData) alfrescoRepository.findOne(workingCopyNodeRef);
+				ProductData workingCopy = alfrescoRepository.findOne(workingCopyNodeRef);
 				workingCopy.setName("FP new version");
 
 				// Costs
-				costList = new ArrayList<CostListDataItem>();
-				for (int j = 0; j < costs.size(); j++) {
-					CostListDataItem costListItemData = new CostListDataItem(null, 12.4d, "$/kg", null, costs.get(j), false);
+				costList = new ArrayList<>();
+				for (NodeRef cost : costs) {
+					CostListDataItem costListItemData = new CostListDataItem(null, 12.4d, "$/kg", null, cost, false);
 					costList.add(costListItemData);
 				}
 				workingCopy.setCostList(costList);
 
 				// Allergens
-				allergenList = new ArrayList<AllergenListDataItem>();
+				allergenList = new ArrayList<>();
 				for (int j = 0; j < allergens.size(); j++) {
-					List<NodeRef> allSources = new ArrayList<NodeRef>();
+					List<NodeRef> allSources = new ArrayList<>();
 					allSources.add(allergenRawMaterialNodeRef);
-					AllergenListDataItem allergenListItemData = null;
+					AllergenListDataItem allergenListItemData;
 
 					if (j < 5) {
 						allergenListItemData = new AllergenListDataItem(null, null, true, false, allSources, null, allergens.get(j), false);
@@ -143,14 +143,14 @@ public class CompareProductReportWebScriptTest extends AbstractCompareProductTes
 				}
 				workingCopy.setAllergenList(allergenList);
 
-				compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail,
+				compoList = new ArrayList<>();
+				compoList.add(new CompoListDataItem(null, null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail,
 						localSF1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), 2d, 0d, CompoListUnit.kg, 0d, DeclarationType.Declare,
 						rawMaterial1NodeRef));
 				compoList
 						.add(new CompoListDataItem(null, compoList.get(0), 2d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail,
+				compoList.add(new CompoListDataItem(null, null, 1d, 0d, CompoListUnit.kg, 0d, DeclarationType.Detail,
 						localSF2NodeRef));
 				compoList
 						.add(new CompoListDataItem(null, compoList.get(3), 2d, 0d, CompoListUnit.P, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
@@ -160,7 +160,7 @@ public class CompareProductReportWebScriptTest extends AbstractCompareProductTes
 
 				alfrescoRepository.save(workingCopy);
 
-				properties = new HashMap<String, Serializable>();
+				properties = new HashMap<>();
 				properties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
 				NodeRef fpv2NodeRef = checkOutCheckInService.checkin(workingCopyNodeRef, properties);
 				logger.info("nodeService.getProperty(fpv2NodeRef, BeCPGModel.PROP_VERSION_LABEL)"

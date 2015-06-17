@@ -50,7 +50,7 @@ import org.springframework.util.StopWatch;
  */
 public class MultilingualFieldWebScript extends AbstractWebScript {
 
-	private static Log logger = LogFactory.getLog(MultilingualFieldWebScript.class);
+	private static final Log logger = LogFactory.getLog(MultilingualFieldWebScript.class);
 
 	private static final String PARAM_NODEREF = "nodeRef";
 

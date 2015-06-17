@@ -11,6 +11,6 @@ public enum ProcessListUnit {
 	
 	L,
 	
-	Box;
-	
+	Box
+
 }

@@ -54,7 +54,7 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 	private static final String KEY_PRODUCT_LISTITEMS = "ProductListPolicy.productListItems";
 	private static final String KEY_PRODUCTS = "ProductListPolicy.products";
 
-	private static Log logger = LogFactory.getLog(ProductListPolicy.class);
+	private static final Log logger = LogFactory.getLog(ProductListPolicy.class);
 
 	private TransactionListener transactionListener;
 
@@ -115,9 +115,9 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		AlfrescoTransactionSupport.bindListener(transactionListener);
 		// Get the set of nodes read
 		@SuppressWarnings("unchecked")
-		Set<AssociationRef> assocRefs = (Set<AssociationRef>) AlfrescoTransactionSupport.getResource(KEY_PRODUCT_LISTITEMS);
+		Set<AssociationRef> assocRefs = AlfrescoTransactionSupport.getResource(KEY_PRODUCT_LISTITEMS);
 		if (assocRefs == null) {
-			assocRefs = new HashSet<AssociationRef>(5);
+			assocRefs = new HashSet<>(5);
 			AlfrescoTransactionSupport.bindResource(KEY_PRODUCT_LISTITEMS, assocRefs);
 		}
 		assocRefs.add(assocRef);
@@ -135,9 +135,9 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 			AlfrescoTransactionSupport.bindListener(transactionListener);
 			// Get the set of nodes read
 			@SuppressWarnings("unchecked")
-			Set<NodeRef> nodeRefs = (Set<NodeRef>) AlfrescoTransactionSupport.getResource(KEY_PRODUCTS);
+			Set<NodeRef> nodeRefs = AlfrescoTransactionSupport.getResource(KEY_PRODUCTS);
 			if (nodeRefs == null) {
-				nodeRefs = new HashSet<NodeRef>(3);
+				nodeRefs = new HashSet<>(3);
 				AlfrescoTransactionSupport.bindResource(KEY_PRODUCTS, nodeRefs);
 			}
 			nodeRefs.add(productNodeRef);
@@ -146,17 +146,17 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 
 	private class ProductListPolicyTransactionListener extends TransactionListenerAdapter {
 
-		Map<NodeRef, ProductUnit> productsUnit = new HashMap<NodeRef, ProductUnit>(3);
-		Map<NodeRef, NodeRef> productNodeRefs = new HashMap<NodeRef, NodeRef>(3);
+		final Map<NodeRef, ProductUnit> productsUnit = new HashMap<>(3);
+		final Map<NodeRef, NodeRef> productNodeRefs = new HashMap<>(3);
 
 		@Override
 		public void beforeCommit(boolean readOnly) {
 
 			@SuppressWarnings("unchecked")
-			final Set<NodeRef> products = (Set<NodeRef>) AlfrescoTransactionSupport.getResource(KEY_PRODUCTS);
+			final Set<NodeRef> products = AlfrescoTransactionSupport.getResource(KEY_PRODUCTS);
 
 			@SuppressWarnings("unchecked")
-			final Set<AssociationRef> assocRefs = (Set<AssociationRef>) AlfrescoTransactionSupport.getResource(KEY_PRODUCT_LISTITEMS);
+			final Set<AssociationRef> assocRefs = AlfrescoTransactionSupport.getResource(KEY_PRODUCT_LISTITEMS);
 
 			updateProducts(products);
 			updateProductListItems(assocRefs);
@@ -184,8 +184,7 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 								productsUnit.put(costListNodeRef, productUnit);
 								List<FileInfo> nodes = fileFolderService.listFiles(costListNodeRef);
 
-								for (int z_idx = 0; z_idx < nodes.size(); z_idx++) {
-									FileInfo node = nodes.get(z_idx);
+								for (FileInfo node : nodes) {
 									NodeRef productListItemNodeRef = node.getNodeRef();
 
 									NodeRef costNodeRef = associationService.getTargetAssoc(productListItemNodeRef, PLMModel.ASSOC_COSTLIST_COST);
@@ -215,8 +214,7 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 								productsUnit.put(nutListNodeRef, productUnit);
 								List<FileInfo> nodes = fileFolderService.listFiles(nutListNodeRef);
 
-								for (int z_idx = 0; z_idx < nodes.size(); z_idx++) {
-									FileInfo node = nodes.get(z_idx);
+								for (FileInfo node : nodes) {
 									NodeRef productListItemNodeRef = node.getNodeRef();
 									String nutListUnit = (String) nodeService.getProperty(productListItemNodeRef, PLMModel.PROP_NUTLIST_UNIT);
 
@@ -261,7 +259,7 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 							String costCurrency = (String) nodeService.getProperty(targetNodeRef, PLMModel.PROP_COSTCURRENCY);
 							String costListUnit = (String) nodeService.getProperty(productListItemNodeRef, PLMModel.PROP_COSTLIST_UNIT);
 						
-							if (costFixed != null && costFixed.booleanValue()) {
+							if (costFixed != null && costFixed) {
 
 								if (!(costListUnit != null && costListUnit.equals(costCurrency))) {
 									nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_COSTLIST_UNIT, costCurrency);

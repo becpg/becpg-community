@@ -39,7 +39,7 @@ import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.report.template.ReportTplService;
 
 public class ReportAssociationDecorator extends fr.becpg.repo.jscript.app.BaseAssociationDecorator {
-	private static Log logger = LogFactory.getLog(ReportAssociationDecorator.class);
+	private static final Log logger = LogFactory.getLog(ReportAssociationDecorator.class);
 
 	private ReportTplService reportTplService;
 

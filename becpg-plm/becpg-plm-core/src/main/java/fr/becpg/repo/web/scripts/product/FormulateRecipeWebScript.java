@@ -38,7 +38,7 @@ public class FormulateRecipeWebScript extends AbstractProductWebscript {
 
 	private static final String PARAM_METADATA = "metadata";
 
-	private static Log logger = LogFactory.getLog(FormulateRecipeWebScript.class);
+	private static final Log logger = LogFactory.getLog(FormulateRecipeWebScript.class);
 
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res)  throws IOException {
@@ -50,7 +50,7 @@ public class FormulateRecipeWebScript extends AbstractProductWebscript {
 		try 
 		{
 			
-			JSONObject json = null;
+			JSONObject json;
 
 			if (req.getParameter(PARAM_METADATA) != null) {
 				json = new JSONObject(req.getParameter(PARAM_METADATA));

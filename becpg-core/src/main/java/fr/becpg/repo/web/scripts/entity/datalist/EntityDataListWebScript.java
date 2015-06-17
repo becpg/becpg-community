@@ -18,7 +18,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.AuthorityService;
-import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -59,7 +58,7 @@ import fr.becpg.repo.web.scripts.WebscriptHelper;
 public class EntityDataListWebScript extends AbstractCachingWebscript {
 
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(EntityDataListWebScript.class);
+	private static final Log logger = LogFactory.getLog(EntityDataListWebScript.class);
 
 	/** The Constant PARAM_FILTER. */
 
@@ -252,7 +251,7 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 
 		try {
 
-			JSONObject json = null;
+			JSONObject json;
 
 			if (req.getParameter(PARAM_METADATA) != null) {
 				json = new JSONObject(req.getParameter(PARAM_METADATA));
@@ -305,7 +304,7 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 				dataListFilter.setCriteriaMap(JSONHelper.extractCriteria(jsonObject));
 			}
 
-			List<String> metadataFields = new LinkedList<String>();
+			List<String> metadataFields = new LinkedList<>();
 
 			if (json != null && json.has(PARAM_FIELDS)) {
 				JSONArray jsonFields = (JSONArray) json.get(PARAM_FIELDS);

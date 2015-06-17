@@ -38,7 +38,7 @@ public class ControlDefListDataItem extends BeCPGDataObject {
 	Double maxi;
 	Boolean required;
 	NodeRef method;
-	List<NodeRef> characts = new ArrayList<NodeRef>();
+	List<NodeRef> characts = new ArrayList<>();
 	
 	@AlfProp
 	@AlfQname(qname = "qa:clType")

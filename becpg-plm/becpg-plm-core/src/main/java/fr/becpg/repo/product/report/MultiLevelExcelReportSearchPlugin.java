@@ -1,10 +1,7 @@
 package fr.becpg.repo.product.report;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 import org.alfresco.model.ContentModel;
@@ -64,7 +61,7 @@ public class MultiLevelExcelReportSearchPlugin extends DefaultExcelReportSearchP
 					Map<String, String> criteriaMap = new HashMap<>();
 					criteriaMap.put(DataListFilter.PROP_DEPTH_LEVEL, "All");
 					dataListFilter.setCriteriaMap(criteriaMap);
-					dataListFilter.setEntityNodeRefs(Arrays.asList(entityNodeRef));
+					dataListFilter.setEntityNodeRefs(Collections.singletonList(entityNodeRef));
 					
 					MultiLevelListData listData = multiLevelDataListService.getMultiLevelListData(dataListFilter);
 					
@@ -86,8 +83,8 @@ public class MultiLevelExcelReportSearchPlugin extends DefaultExcelReportSearchP
 					Map<QName, Serializable> properties = nodeService.getProperties(itemNodeRef);
 					Map<String, Object> item = doExtract(itemNodeRef, itemType, metadataFields, properties, cache);
 					
-					item.put("prop_bcpg_depthLevel", new Integer(entry.getValue().getDepth()));
-					item.put("prop_bcpg_parent", (String) nodeService.getProperty(listData.getEntityNodeRef(), BeCPGModel.PROP_CODE));
+					item.put("prop_bcpg_depthLevel", entry.getValue().getDepth());
+					item.put("prop_bcpg_parent", nodeService.getProperty(listData.getEntityNodeRef(), BeCPGModel.PROP_CODE));
 					
 					
 				

@@ -17,10 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.entity.datalist.data;
 
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -35,9 +32,9 @@ public class MultiLevelListData {
 	private int depth = 0;
 	
 	//Keep order
-	private Map<NodeRef, MultiLevelListData> tree = new LinkedHashMap<NodeRef, MultiLevelListData>();
+	private final Map<NodeRef, MultiLevelListData> tree = new LinkedHashMap<>();
 	
-	private List<NodeRef> entityNodeRefs;
+	private final List<NodeRef> entityNodeRefs;
 
 	
 	public MultiLevelListData(List<NodeRef> entityNodeRefs,int depth ) {
@@ -49,7 +46,7 @@ public class MultiLevelListData {
 	public MultiLevelListData(NodeRef entityNodeRef,int depth ) {
 		super();
 		this.depth = depth;
-		this.entityNodeRefs = Arrays.asList(entityNodeRef);
+		this.entityNodeRefs = Collections.singletonList(entityNodeRef);
 	}
 
 	public int getDepth() {

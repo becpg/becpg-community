@@ -20,7 +20,6 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.project.data.projectList.DeliverableState;
 import fr.becpg.repo.project.data.projectList.TaskState;
-import fr.becpg.repo.project.impl.ProjectHelper;
 
 /**
  * The Class SubmitTaskPolicy.

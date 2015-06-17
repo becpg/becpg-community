@@ -28,7 +28,6 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.common.BeCPGException;
-import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 
 /**
  * Get entity as XML

@@ -3,15 +3,11 @@
  */
 package fr.becpg.test.repo.web.scripts.entity;
 
-import java.util.List;
-
 import javax.annotation.Resource;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.coci.CheckOutCheckInService;
-import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,7 +40,7 @@ import fr.becpg.test.utils.TestWebscriptExecuters.Response;
 @ContextConfiguration({ "classpath:alfresco/application-context.xml" })
 public class CheckOutCheckInWebScriptTest extends PLMBaseTestCase {
 
-	private static Log logger = LogFactory.getLog(CheckOutCheckInWebScriptTest.class);
+	private static final Log logger = LogFactory.getLog(CheckOutCheckInWebScriptTest.class);
 
 	@Resource
 	private CheckOutCheckInService checkOutCheckInService;

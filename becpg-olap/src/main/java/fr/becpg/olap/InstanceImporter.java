@@ -45,9 +45,9 @@ import fr.becpg.tools.http.GetEntityCommand;
 import fr.becpg.tools.http.ListEntitiesCommand;
 
 public class InstanceImporter {
-	private static Log logger = LogFactory.getLog(InstanceImporter.class);
+	private static final Log logger = LogFactory.getLog(InstanceImporter.class);
 
-	private String serverUrl;
+	private final String serverUrl;
 
 	public InstanceImporter(String serverUrl) {
 		super();
@@ -76,7 +76,7 @@ public class InstanceImporter {
 			XPath xpath = factory.newXPath();
 
 			int count = 1;
-			String nodeRef = null;
+			String nodeRef;
 			while ((nodeRef = (String) xpath.evaluate("//*[" + count + "]/@nodeRef", doc, XPathConstants.STRING)) != null && nodeRef.length() > 0) {
 				count++;
 				try {

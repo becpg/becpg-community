@@ -47,7 +47,7 @@ public class EntityVersionWebScript extends AbstractCachingWebscript {
 	private static final String DISPLAY_FORMAT = "dd MMM yyyy HH:mm:ss 'GMT'Z '('zzz')'";
 	private static final String PARAM_MODE = "mode";
 
-	private static Log logger = LogFactory.getLog(EntityVersionWebScript.class);
+	private static final Log logger = LogFactory.getLog(EntityVersionWebScript.class);
 
 	private EntityVersionService entityVersionService;
 
@@ -112,7 +112,7 @@ public class EntityVersionWebScript extends AbstractCachingWebscript {
 		cache.setLastModified(lastModified);
 		res.setCache(cache);
 
-		List<EntityVersion> versions = null;
+		List<EntityVersion> versions;
 		if ("graph".equals(mode)) {
 			versions = entityVersionService.getAllVersionAndBranches(nodeRef);
 		} else {
@@ -211,9 +211,9 @@ public class EntityVersionWebScript extends AbstractCachingWebscript {
 		JSONObject jsonCreator = new JSONObject();
 		try {
 			NodeRef creatorNodeRef = personService.getPerson(frozenModifier);
-			jsonCreator.put("userName", (String) nodeService.getProperty(creatorNodeRef, ContentModel.PROP_USERNAME));
-			jsonCreator.put("firstName", (String) nodeService.getProperty(creatorNodeRef, ContentModel.PROP_FIRSTNAME));
-			jsonCreator.put("lastName", (String) nodeService.getProperty(creatorNodeRef, ContentModel.PROP_LASTNAME));
+			jsonCreator.put("userName", nodeService.getProperty(creatorNodeRef, ContentModel.PROP_USERNAME));
+			jsonCreator.put("firstName", nodeService.getProperty(creatorNodeRef, ContentModel.PROP_FIRSTNAME));
+			jsonCreator.put("lastName", nodeService.getProperty(creatorNodeRef, ContentModel.PROP_LASTNAME));
 		} catch (NoSuchPersonException e) {
 			logger.debug("Person doesn't exist : " + frozenModifier);
 			jsonCreator.put("userName", frozenModifier);

@@ -64,7 +64,7 @@ public class NCWorkflowTest extends AbstractWorkflowTest {
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(NCWorkflowTest.class);
+	private static final Log logger = LogFactory.getLog(NCWorkflowTest.class);
 
 	private NodeRef rawMaterial1NodeRef;
 
@@ -113,7 +113,7 @@ public class NCWorkflowTest extends AbstractWorkflowTest {
 				logger.debug("wfDefId found : " + wfDef.getId());
 
 				// Fill a map of default properties to start the workflow with
-				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				Map<QName, Serializable> properties = new HashMap<>();
 				Date dueDate = Calendar.getInstance().getTime();
 				properties.put(WorkflowModel.PROP_WORKFLOW_DUE_DATE, dueDate);
 				properties.put(WorkflowModel.PROP_WORKFLOW_PRIORITY, 2);
@@ -167,16 +167,16 @@ public class NCWorkflowTest extends AbstractWorkflowTest {
 			public WorkflowTask execute() throws Throwable {
 
 				logger.info("Set analysisTask information " + task1.getName());
-				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				Map<QName, Serializable> properties = new HashMap<>();
 				properties.put(WorkflowModel.PROP_COMMENT, "commentaire émetteur");
 				properties.put(PROP_NEED_PREV_ACTION, needPrevAction);
 				properties.put(PROP_STATE, "new");
 
-				java.util.Map<QName, List<NodeRef>> assocs = new HashMap<QName, List<NodeRef>>();
-				List<NodeRef> assignees = new ArrayList<NodeRef>();
+				java.util.Map<QName, List<NodeRef>> assocs = new HashMap<>();
+				List<NodeRef> assignees = new ArrayList<>();
 				assignees.add(personService.getPerson(BeCPGPLMTestHelper.USER_ONE));
 				assocs.put(ASSOC_CORR_ACTION_ACTOR, assignees);
-				assignees = new ArrayList<NodeRef>();
+				assignees = new ArrayList<>();
 				assignees.add(personService.getPerson(BeCPGPLMTestHelper.USER_TWO));
 				assocs.put(ASSOC_CHECK_ACTOR, assignees);
 
@@ -235,7 +235,7 @@ public class NCWorkflowTest extends AbstractWorkflowTest {
 				logger.debug("wfDefId found : " + wfDef.getId());
 
 				// Fill a map of default properties to start the workflow with
-				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				Map<QName, Serializable> properties = new HashMap<>();
 				Date dueDate = Calendar.getInstance().getTime();
 				properties.put(WorkflowModel.PROP_WORKFLOW_DUE_DATE, dueDate);
 				properties.put(WorkflowModel.PROP_WORKFLOW_PRIORITY, 2);
@@ -328,8 +328,8 @@ public class NCWorkflowTest extends AbstractWorkflowTest {
 				taskQuery.setProcessId(workflowInstanceId);
 				taskQuery.setTaskState(WorkflowTaskState.IN_PROGRESS);
 
-				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-				java.util.Map<QName, List<NodeRef>> assocs = new HashMap<QName, List<NodeRef>>();
+				Map<QName, Serializable> properties = new HashMap<>();
+				java.util.Map<QName, List<NodeRef>> assocs = new HashMap<>();
 				properties.put(WorkflowModel.PROP_COMMENT, comment);
 				if (state != null) {
 					properties.put(PROP_STATE, state);
@@ -337,7 +337,7 @@ public class NCWorkflowTest extends AbstractWorkflowTest {
 
 				if (assigneeNodeRef != null) {
 
-					List<NodeRef> assignees = new ArrayList<NodeRef>();
+					List<NodeRef> assignees = new ArrayList<>();
 					assignees.add(assigneeNodeRef);
 					assocs.put(PROP_ASSIGNEE, assignees);
 				}

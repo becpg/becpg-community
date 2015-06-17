@@ -23,11 +23,11 @@ import fr.becpg.repo.repository.RepositoryEntity;
 
 public interface SimpleCharactDataItem extends RepositoryEntity{
 
-	public void setCharactNodeRef(NodeRef nodeRef);
+	void setCharactNodeRef(NodeRef nodeRef);
 
-	public void setValue(Double value);
+	void setValue(Double value);
 
-	public NodeRef getCharactNodeRef();
+	NodeRef getCharactNodeRef();
 
-	public Double getValue();
+	Double getValue();
 }

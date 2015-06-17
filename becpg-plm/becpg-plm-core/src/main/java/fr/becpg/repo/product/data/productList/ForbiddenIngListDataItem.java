@@ -39,11 +39,11 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject{
 	Double qtyPercMaxi;
 	String isGMO;
 	String isIonized;
-	private List<NodeRef> ings = new ArrayList<NodeRef>();
-	private List<NodeRef> geoOrigins = new ArrayList<NodeRef>();
-	private List<NodeRef> requiredGeoOrigins = new ArrayList<NodeRef>();
-	private List<NodeRef> geoTransfo = new ArrayList<NodeRef>();
-	private List<NodeRef> bioOrigins = new ArrayList<NodeRef>();
+	private List<NodeRef> ings = new ArrayList<>();
+	private List<NodeRef> geoOrigins = new ArrayList<>();
+	private List<NodeRef> requiredGeoOrigins = new ArrayList<>();
+	private List<NodeRef> geoTransfo = new ArrayList<>();
+	private List<NodeRef> bioOrigins = new ArrayList<>();
 	
 
 	@AlfProp

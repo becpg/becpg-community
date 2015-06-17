@@ -26,9 +26,9 @@ import fr.becpg.repo.product.data.constraints.DeclarationType;
  */
 public class DeclarationFilter {
 
-	private String formula;
+	private final String formula;
 	
-	private DeclarationType declarationType;
+	private final DeclarationType declarationType;
 	
 
 	public DeclarationFilter(String formula, DeclarationType declarationType) {

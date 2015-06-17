@@ -49,7 +49,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 
 	private FormulaService formulaService;
 
-	private static Log logger = LogFactory.getLog(NutsCalculatingFormulationHandler.class);
+	private static final Log logger = LogFactory.getLog(NutsCalculatingFormulationHandler.class);
 
 	@Override
 	protected Class<NutListDataItem> getInstanceClass() {
@@ -239,7 +239,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 	}
 
 	protected Map<NodeRef, List<NodeRef>> getMandatoryCharacts(ProductData formulatedProduct, QName componentType) {
-		Map<NodeRef, List<NodeRef>> mandatoryCharacts = new HashMap<NodeRef, List<NodeRef>>();
+		Map<NodeRef, List<NodeRef>> mandatoryCharacts = new HashMap<>();
 		for(Map.Entry<NodeRef, List<NodeRef>> kv : getMandatoryCharactsFromList(formulatedProduct.getNutList()).entrySet()){
 			String formula = (String) nodeService.getProperty(kv.getKey(), PLMModel.PROP_NUT_FORMULA);
 			if (formula == null || formula.isEmpty()) {

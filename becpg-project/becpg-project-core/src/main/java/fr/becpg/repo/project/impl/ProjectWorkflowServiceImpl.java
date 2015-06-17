@@ -62,7 +62,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 	private static final String WORKFLOW_DESCRIPTION = "%s - %s";
 	private static final String DEFAULT_INITIATOR = "System";
 
-	private static Log logger = LogFactory.getLog(ProjectWorkflowServiceImpl.class);
+	private static final Log logger = LogFactory.getLog(ProjectWorkflowServiceImpl.class);
 
 	@Autowired
 	@Qualifier("WorkflowService")
@@ -84,7 +84,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 			final List<DeliverableListDataItem> nextDeliverables) {
 		
 		final String workflowDescription = calculateWorkflowDescription(projectData, taskListDataItem, nextDeliverables);
-		final Map<QName, Serializable> workflowProps = new HashMap<QName, Serializable>();
+		final Map<QName, Serializable> workflowProps = new HashMap<>();
 
 		if (taskListDataItem.getEnd() != null) {			
 			workflowProps.put(WorkflowModel.PROP_WORKFLOW_DUE_DATE, taskListDataItem.getEnd());
@@ -166,7 +166,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 	}
 
 	private List<NodeRef> getAssignees(List<NodeRef> resources, boolean group) {
-		List<NodeRef> ret = new ArrayList<NodeRef>();
+		List<NodeRef> ret = new ArrayList<>();
 
 		for (NodeRef resource : resources) {
 			QName type = nodeService.getType(resource);
@@ -255,7 +255,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 						if (taskNodeRef != null && taskNodeRef.equals(taskListDataItem.getNodeRef())) {
 
 							logger.debug("check task" + taskListDataItem.getTaskName());
-							Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+							Map<QName, Serializable> properties = new HashMap<>();
 
 							properties = getWorkflowTaskNewProperties(WorkflowModel.PROP_WORKFLOW_DESCRIPTION, workflowDescription,
 									workflowTask.getProperties(), properties);

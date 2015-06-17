@@ -76,17 +76,17 @@ public class DesignerTreeVisitor {
 		DesignerTree ret = extractModelTreeNode(modelNodeRef);
 		List<ChildAssociationRef> assocs = nodeService.getChildAssocs(modelNodeRef);
 		DesignerHelper.sort(assocs,nodeService);
-		Map<String, DesignerTree> assocRoots = new HashMap<String, DesignerTree>();
+		Map<String, DesignerTree> assocRoots = new HashMap<>();
 		for (ChildAssociationRef assoc : assocs) {
 			String assocName = assoc.getQName().getLocalName();
-			DesignerTree tmp = null;
+			DesignerTree tmp;
 			if (assocRoots.containsKey(assocName)) {
 				tmp = assocRoots.get(assocName);
 			} else {
 				tmp = new DesignerTree(assoc.getParentRef().toString());
 				tmp.setName(assocName);
 				tmp.setType(assoc.getTypeQName().toPrefixString(namespaceService));
-				String title = "";
+				String title;
 				if (DesignerModel.M2_URI.equals(assoc.getTypeQName().getNamespaceURI())) {
 					title = I18NUtil.getMessage("m2_m2model.association.m2_" + assocName + ".title");
 				} else {

@@ -98,9 +98,9 @@ public class DesignerServiceImpl implements DesignerService {
 	private String configPath;
 
 	// Controls cache
-	private List<FormControl> controls = new ArrayList<FormControl>();
+	private List<FormControl> controls = new ArrayList<>();
 
-	private static Log logger = LogFactory.getLog(DesignerServiceImpl.class);
+	private static final Log logger = LogFactory.getLog(DesignerServiceImpl.class);
 
 	public void setDesignerInitService(DesignerInitService designerInitService) {
 		this.designerInitService = designerInitService;
@@ -532,7 +532,7 @@ public class DesignerServiceImpl implements DesignerService {
 		if (designerInitService.getConfigsNodeRef() != null) {
 			return controls;
 		}
-		return new ArrayList<FormControl>();
+		return new ArrayList<>();
 	}
 
 	/**
@@ -602,7 +602,7 @@ public class DesignerServiceImpl implements DesignerService {
 				@SuppressWarnings("unchecked")
 				List<String> aspects = (List<String>) nodeService.getProperty(to, DesignerModel.PROP_M2_MANDATORYASPECTS);
 				if (aspects == null) {
-					aspects = new ArrayList<String>();
+					aspects = new ArrayList<>();
 				}
 				String aspect = (String) nodeService.getProperty(from, DesignerModel.PROP_M2_NAME);
 				if (!aspects.contains(aspect)) {
@@ -625,9 +625,7 @@ public class DesignerServiceImpl implements DesignerService {
 		NodeRef modelNodeRef = null;
 		try {
 			modelNodeRef = findOrCreateModelFile(designerInitService.getModelsNodeRef(), modelName, modelTemplate, templateContext, false);
-		} catch (IOException e) {
-			logger.error(e, e);
-		} catch (TemplateException e) {
+		} catch (IOException | TemplateException e) {
 			logger.error(e, e);
 		}
 
@@ -644,9 +642,7 @@ public class DesignerServiceImpl implements DesignerService {
 		NodeRef modelNodeRef = null;
 		try {
 			modelNodeRef = findOrCreateModelFile(designerInitService.getConfigsNodeRef(), configName, modelTemplate, templateContext, true);
-		} catch (IOException e) {
-			logger.error(e, e);
-		} catch (TemplateException e) {
+		} catch (IOException | TemplateException e) {
 			logger.error(e, e);
 		}
 		NodeRef ret = findConfigNodeRef(modelNodeRef);
@@ -665,7 +661,7 @@ public class DesignerServiceImpl implements DesignerService {
 
 			try {
 
-				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				Map<QName, Serializable> properties = new HashMap<>();
 				properties.put(ContentModel.PROP_NAME, modelName);
 
 				modelNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,

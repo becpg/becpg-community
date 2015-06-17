@@ -33,16 +33,16 @@ public interface EntityListDAO {
 	 * @param listItemNodeRef
 	 * @return
 	 */
-    public NodeRef getEntity(NodeRef listItemNodeRef);
+	NodeRef getEntity(NodeRef listItemNodeRef);
 	
 
     /*
      * TODO Get List and create List should directly take entityNodeRef
      */
 
-	public NodeRef getListContainer(NodeRef nodeRef);
+	NodeRef getListContainer(NodeRef nodeRef);
     
-	public NodeRef createListContainer(NodeRef dataNodeRef);
+	NodeRef createListContainer(NodeRef dataNodeRef);
 
 	/**
 	 * Get dataList with specified name and type
@@ -51,7 +51,7 @@ public interface EntityListDAO {
 	 * @param name
 	 * @return
 	 */
-	public NodeRef getList(NodeRef listContainerNodeRef, String name);
+	NodeRef getList(NodeRef listContainerNodeRef, String name);
 
 	/**
 	 * Create dataList with specified name and type
@@ -60,7 +60,7 @@ public interface EntityListDAO {
 	 * @param name
 	 * @param type
 	 */
-	public NodeRef createList(NodeRef listContainerNodeRef, String name, QName type);
+	NodeRef createList(NodeRef listContainerNodeRef, String name, QName type);
 
 	/**
 	 * Get the data list NodeRef.
@@ -71,7 +71,7 @@ public interface EntityListDAO {
 	 *            : type of the data list
 	 * @return the list
 	 */
-	public NodeRef getList(NodeRef listContainerNodeRef, QName dataListQName);
+	NodeRef getList(NodeRef listContainerNodeRef, QName dataListQName);
 
 	
 
@@ -84,7 +84,7 @@ public interface EntityListDAO {
 	 *            : type of the data list
 	 * @return the node ref
 	 */
-	public NodeRef createList(NodeRef listContainerNodeRef, QName dataListQName);
+	NodeRef createList(NodeRef listContainerNodeRef, QName dataListQName);
 
 	/**
 	 * Get the link node of a data list that has the nodeRef stored in the
@@ -98,7 +98,7 @@ public interface EntityListDAO {
 	 *            the node ref
 	 * @return the link
 	 */
-	public NodeRef getListItem(NodeRef listNodeRef, QName propertyQName, NodeRef nodeRef);
+	NodeRef getListItem(NodeRef listNodeRef, QName propertyQName, NodeRef nodeRef);
 	
 	/**
 	 * Create the link node of a data list that has the nodeRef stored in the
@@ -112,14 +112,14 @@ public interface EntityListDAO {
 	 *            the node ref
 	 * @return the link
 	 */
-	public NodeRef createListItem(NodeRef listNodeRef, QName listType, Map<QName, Serializable> properties, Map<QName, List<NodeRef>>associations);
+	NodeRef createListItem(NodeRef listNodeRef, QName listType, Map<QName, Serializable> properties, Map<QName, List<NodeRef>> associations);
 
 	/**
 	 * 
 	 * @param listContainerNodeRef
 	 * @return
 	 */
-	public List<NodeRef> getExistingListsNodeRef(NodeRef listContainerNodeRef);
+	List<NodeRef> getExistingListsNodeRef(NodeRef listContainerNodeRef);
 	
 	/**
 	 * Copy all data lists.
@@ -131,7 +131,7 @@ public interface EntityListDAO {
 	 * @param override
 	 *            the override
 	 */
-	public void copyDataLists(NodeRef sourceNodeRef, NodeRef targetNodeRef, boolean override);
+	void copyDataLists(NodeRef sourceNodeRef, NodeRef targetNodeRef, boolean override);
 	
 	/**
 	 * Copy all data lists
@@ -140,7 +140,7 @@ public interface EntityListDAO {
 	 * @param listQNames (if null, copy all)
 	 * @param override
 	 */
-	public void copyDataLists(NodeRef sourceNodeRef, NodeRef targetNodeRef, Collection<QName> listQNames, boolean override);
+	void copyDataLists(NodeRef sourceNodeRef, NodeRef targetNodeRef, Collection<QName> listQNames, boolean override);
 	
 	/**
 	 * Get list items
@@ -150,7 +150,7 @@ public interface EntityListDAO {
 	 * @param sortMap
 	 * @return
 	 */
-	public List<NodeRef> getListItems(NodeRef dataListNodeRef, QName dataType, Map<String, Boolean> sortMap);
+	List<NodeRef> getListItems(NodeRef dataListNodeRef, QName dataType, Map<String, Boolean> sortMap);
 	
 	/**
 	 * Get list items
@@ -159,14 +159,14 @@ public interface EntityListDAO {
 	 * @param listQName
 	 * @return
 	 */
-	public List<NodeRef> getListItems(NodeRef listNodeRef, QName listQName);
+	List<NodeRef> getListItems(NodeRef listNodeRef, QName listQName);
 
 	/**
 	 * Move datalists
 	 * @param sourceNodeRef
 	 * @param targetNodeRef
 	 */
-	public void moveDataLists(NodeRef sourceNodeRef, NodeRef targetNodeRef);
+	void moveDataLists(NodeRef sourceNodeRef, NodeRef targetNodeRef);
 
 
 

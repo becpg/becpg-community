@@ -85,7 +85,7 @@ public class VersionCleanerActionConfig {
 	}
 
 	private List<Version> versionToKeep(Collection<Version> versions, VersionType versionType, Integer numberOfDay, Integer numberByDay, Integer numberOfVersion) {
-		Map<Long, List<Version>> cacheByDay = new LinkedHashMap<Long, List<Version>>();
+		Map<Long, List<Version>> cacheByDay = new LinkedHashMap<>();
 		List<Version> majorToKeep = new ArrayList<>();
 
 		for (Version version : versions) {

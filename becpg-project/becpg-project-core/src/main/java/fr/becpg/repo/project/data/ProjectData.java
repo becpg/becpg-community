@@ -64,7 +64,7 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	private NodeRef projectTpl;
 	private Integer completionPercent = 0;
 	private List<NodeRef> entities;
-	private List<NodeRef> legends = new ArrayList<NodeRef>();
+	private List<NodeRef> legends = new ArrayList<>();
 	private Integer overdue = 0;
 	private Integer score = 0;
 	private Date created;

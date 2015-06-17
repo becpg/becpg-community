@@ -59,7 +59,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 	private static final String MESSAGE_WRONG_UNIT = "message.formulate.wrong.unit";
 	private static final String MESSAGE_MISSING_TARE = "message.formulate.missing.tare";
 
-	protected static Log logger = LogFactory.getLog(ProductFormulationHandler.class);
+	protected static final Log logger = LogFactory.getLog(ProductFormulationHandler.class);
 
 	private NodeService nodeService;
 
@@ -143,7 +143,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 	private void clearReqCltrlList(List<ReqCtrlListDataItem> reqCtrlList) {
 		if (reqCtrlList != null) {
 			for (Iterator<ReqCtrlListDataItem> iterator = reqCtrlList.iterator(); iterator.hasNext();) {
-				ReqCtrlListDataItem reqCtrlListDataItem = (ReqCtrlListDataItem) iterator.next();
+				ReqCtrlListDataItem reqCtrlListDataItem = iterator.next();
 				if (reqCtrlListDataItem.getNodeRef() == null) {
 					iterator.remove();
 				}
@@ -232,7 +232,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 	private void checkFormulatedProduct(ProductData formulatedProduct) {
 
 		NodeRef productNodeRef = formulatedProduct.getNodeRef();
-		List<ReqCtrlListDataItem> reqCtrlList = null;
+		List<ReqCtrlListDataItem> reqCtrlList;
 		if (formulatedProduct instanceof PackagingKitData) {
 			reqCtrlList = formulatedProduct.getPackagingListView().getReqCtrlList();
 
@@ -302,7 +302,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 
 	private void addMessingReq(List<ReqCtrlListDataItem> reqCtrlListDataItem, NodeRef sourceNodeRef, String reqMsg) {
 		String message = I18NUtil.getMessage(reqMsg);
-		ArrayList<NodeRef> sources = new ArrayList<NodeRef>(1);
+		ArrayList<NodeRef> sources = new ArrayList<>(1);
 		if (sourceNodeRef != null) {
 			sources.add(sourceNodeRef);
 		}

@@ -27,7 +27,7 @@ public class FilterFormUIGet extends FormUIGet {
 
 	private static final String PARAM_LIST = "list";
 
-	private static Log logger = LogFactory.getLog(FilterFormUIGet.class);
+	private static final Log logger = LogFactory.getLog(FilterFormUIGet.class);
 
 	@SuppressWarnings("unchecked")
 	protected Map<String, Object> generateModel(String itemKind, String itemId, WebScriptRequest request, Status status, Cache cache) {

@@ -17,11 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.entity.datalist.impl;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -45,9 +41,9 @@ import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 @Service("wUsedListService")
 public class WUsedListServiceImpl implements WUsedListService {
 
-	private static Log logger = LogFactory.getLog(WUsedListServiceImpl.class);
+	private static final Log logger = LogFactory.getLog(WUsedListServiceImpl.class);
 	
-	private static int  MAX_LEVEL = 20;
+	private static final int  MAX_LEVEL = 20;
 
 	@Autowired
 	private NodeService nodeService;
@@ -63,7 +59,7 @@ public class WUsedListServiceImpl implements WUsedListService {
 
 	@Override
 	public MultiLevelListData getWUsedEntity(NodeRef entityNodeRef, QName associationName, int maxDepthLevel) {
-		return getWUsedEntity(Arrays.asList(entityNodeRef), WUsedOperator.AND, null, associationName, 0, maxDepthLevel);
+		return getWUsedEntity(Collections.singletonList(entityNodeRef), WUsedOperator.AND, null, associationName, 0, maxDepthLevel);
 	}
 
 	@Override
@@ -114,7 +110,7 @@ public class WUsedListServiceImpl implements WUsedListService {
 
 					// Test for join
 					for (Iterator<AssociationRef> iterator = associationRefs.iterator(); iterator.hasNext();) {
-						AssociationRef associationRef = (AssociationRef) iterator.next();
+						AssociationRef associationRef = iterator.next();
 						boolean delete = true;
 						for (AssociationRef associationRef2 : nodeService.getSourceAssocs(entityNodeRef, associationName)) {
 							// Test that assoc is also include in product
@@ -152,10 +148,10 @@ public class WUsedListServiceImpl implements WUsedListService {
 				if (!nodeService.hasAspect(rootNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)
 						&& permissionService.hasReadPermission(rootNodeRef) == AccessStatus.ALLOWED) {
 
-					MultiLevelListData multiLevelListData = null;
+					MultiLevelListData multiLevelListData;
 					// next level
 					if (maxDepthLevel < 0 || depthLevel + 1 < maxDepthLevel) {
-						multiLevelListData = getWUsedEntity(Arrays.asList(rootNodeRef), WUsedOperator.AND, filter, associationName, depthLevel + 1,
+						multiLevelListData = getWUsedEntity(Collections.singletonList(rootNodeRef), WUsedOperator.AND, filter, associationName, depthLevel + 1,
 								maxDepthLevel);
 					} else {
 						multiLevelListData = new MultiLevelListData(rootNodeRef, depthLevel + 1);

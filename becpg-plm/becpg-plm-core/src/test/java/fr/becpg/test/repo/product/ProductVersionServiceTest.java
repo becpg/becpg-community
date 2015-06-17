@@ -4,12 +4,7 @@
 package fr.becpg.test.repo.product;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.annotation.Resource;
 
@@ -118,7 +113,7 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 				@Override
 				public NodeRef execute() throws Throwable {
 					logger.debug("Add versionnable aspect");
-					Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>();
+					Map<QName, Serializable> aspectProperties = new HashMap<>();
 					aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
 					nodeService.addAspect(rawMaterialNodeRef, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
 					return rawMaterialNodeRef;
@@ -193,7 +188,7 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 					public NodeRef execute() throws Throwable {
 
 						// Check in
-						Map<String, Serializable> versionProperties = new HashMap<String, Serializable>();
+						Map<String, Serializable> versionProperties = new HashMap<>();
 						versionProperties.put(Version.PROP_DESCRIPTION, "This is a test version");
 						versionProperties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
 						return checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
@@ -234,7 +229,7 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 					@Override
 					public NodeRef execute() throws Throwable {
 						logger.debug("Add versionnable aspect");
-						Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>();
+						Map<QName, Serializable> aspectProperties = new HashMap<>();
 						aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
 						nodeService.addAspect(rawMaterialNodeRef, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
 						return rawMaterialNodeRef;
@@ -306,13 +301,13 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 			public NodeRef execute() throws Throwable {
 
 				NodeRef rawMaterialNodeRef = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test report");
-				Map<String, Serializable> properties = new HashMap<String, Serializable>();
+				Map<String, Serializable> properties = new HashMap<>();
 				properties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
 				Version vRawMaterialNodeRef = versionService.createVersion(rawMaterialNodeRef, properties);
 
 				assertEquals("1.0", vRawMaterialNodeRef.getVersionLabel());
 
-				properties = new HashMap<String, Serializable>();
+				properties = new HashMap<>();
 				properties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MINOR);
 				Version vRawMaterialNodeRefV0_2 = versionService.createVersion(rawMaterialNodeRef, properties);
 				assertEquals("1.1", vRawMaterialNodeRefV0_2.getVersionLabel());
@@ -347,7 +342,7 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 						NodeRef rawMaterialNodeRef = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test report");
 
 						logger.debug("Add versionnable aspect");
-						Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>();
+						Map<QName, Serializable> aspectProperties = new HashMap<>();
 						aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
 						nodeService.addAspect(rawMaterialNodeRef, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
 						return rawMaterialNodeRef;
@@ -375,9 +370,9 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 						nodeService.getProperty(workingCopyNodeRef, PLMModel.PROP_PRODUCT_STATE));
 
 				// Check in
-				NodeRef newRawMaterialNodeRef = null;
+				NodeRef newRawMaterialNodeRef;
 
-				Map<String, Serializable> versionProperties = new HashMap<String, Serializable>();
+				Map<String, Serializable> versionProperties = new HashMap<>();
 				versionProperties.put(Version.PROP_DESCRIPTION, "This is a test version");
 				versionProperties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MINOR);
 				newRawMaterialNodeRef = checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
@@ -423,12 +418,12 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 								PLMModel.TYPE_VARIANT, props).getChildRef();
 
 						logger.debug("Add versionnable aspect");
-						Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>();
+						Map<QName, Serializable> aspectProperties = new HashMap<>();
 						aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
 						nodeService.addAspect(finishedProductNodeRef, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
 
 						ProductData productData = alfrescoRepository.findOne(finishedProductNodeRef);
-						productData.getCompoListView().getCompoList().get(2).setVariants(Arrays.asList(variantNodeRef));
+						productData.getCompoListView().getCompoList().get(2).setVariants(Collections.singletonList(variantNodeRef));
 						alfrescoRepository.save(productData);
 
 						// check variant before checkOut
@@ -467,7 +462,7 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 						+ nodeService.getPath(productData.getCompoListView().getCompoList().get(2).getVariants().get(0)));
 
 				// Check in
-				Map<String, Serializable> versionProperties = new HashMap<String, Serializable>(1);
+				Map<String, Serializable> versionProperties = new HashMap<>(1);
 				versionProperties.put(Version.PROP_DESCRIPTION, "This is a test version");
 				versionProperties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
 				return checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
@@ -532,7 +527,7 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 
 						NodeRef rawMaterialNodeRef = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test report");
 						if (!nodeService.hasAspect(rawMaterialNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
-							Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>();
+							Map<QName, Serializable> aspectProperties = new HashMap<>();
 							aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
 							nodeService.addAspect(rawMaterialNodeRef, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
 						}
@@ -547,7 +542,7 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 
 				// suppliers
 				String[] supplierNames = { "Supplier1", "Supplier2", "Supplier3" };
-				List<NodeRef> supplierNodeRefs = new LinkedList<NodeRef>();
+				List<NodeRef> supplierNodeRefs = new LinkedList<>();
 				for (String supplierName : supplierNames) {
 					NodeRef supplierNodeRef = null;
 					NodeRef entityFolder = nodeService.getChildByName(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, supplierName);
@@ -556,7 +551,7 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 					}
 
 					if (supplierNodeRef == null) {
-						Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+						Map<QName, Serializable> properties = new HashMap<>();
 						properties.put(ContentModel.PROP_NAME, supplierName);
 						supplierNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 								QName.createQName((String) properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_SUPPLIER, properties).getChildRef();
@@ -578,7 +573,7 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 				associationService.update(workingCopyNodeRef, PLMModel.ASSOC_SUPPLIERS, supplierNodeRefs);
 
 				// check-in
-				Map<String, Serializable> versionProperties = new HashMap<String, Serializable>();
+				Map<String, Serializable> versionProperties = new HashMap<>();
 				versionProperties.put(Version.PROP_DESCRIPTION, "This is a test version");
 				checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
 
@@ -701,7 +696,7 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 
 						entityVersionService.prepareBranchBeforeMerge(branchNodeRef, rawMaterialNodeRef);
 						// Check in
-						Map<String, Serializable> versionProperties = new HashMap<String, Serializable>();
+						Map<String, Serializable> versionProperties = new HashMap<>();
 						versionProperties.put(Version.PROP_DESCRIPTION, "This is a test version");
 						versionProperties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
 						return checkOutCheckInService.checkin(branchNodeRef, versionProperties);
@@ -754,7 +749,7 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 				// 2nd Check out, Check in
 				NodeRef workingCopy2NodeRef = checkOutCheckInService.checkout(rawMaterialNodeRef);
 
-				Map<String, Serializable> versionProperties = new HashMap<String, Serializable>();
+				Map<String, Serializable> versionProperties = new HashMap<>();
 				versionProperties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
 				versionProperties.put(Version.PROP_DESCRIPTION, "description");
 				return checkOutCheckInService.checkin(workingCopy2NodeRef, versionProperties);

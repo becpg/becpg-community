@@ -42,7 +42,7 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 public class AdminTenantWebScript extends AbstractWebScript {
 
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(AdminTenantWebScript.class);
+	private static final Log logger = LogFactory.getLog(AdminTenantWebScript.class);
 
 	// request parameter names
 

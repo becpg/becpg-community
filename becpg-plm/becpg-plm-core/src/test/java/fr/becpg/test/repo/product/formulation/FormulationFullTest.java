@@ -57,7 +57,7 @@ import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
 public class FormulationFullTest extends AbstractFinishedProductTest {
 
-	protected static Log logger = LogFactory.getLog(FormulationFullTest.class);
+	protected static final Log logger = LogFactory.getLog(FormulationFullTest.class);
 
 	@Resource
 	private AssociationService associationService;
@@ -85,28 +85,28 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 				finishedProduct.setDensity(1d);
 				finishedProduct.setServingSize(50d);//50g
 				finishedProduct.setProjectedQty(10000l);
-				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
+				List<CompoListDataItem> compoList = new ArrayList<>();
+				compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
 
-				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
+				List<CostListDataItem> costList = new ArrayList<>();
 				costList.add(new CostListDataItem(null, 4000d, "€", null, fixedCost, true));
 				costList.add(new CostListDataItem(null, null, null, null, cost1, null));
 				costList.add(new CostListDataItem(null, null, null, null, cost2, null));
 				finishedProduct.setCostList(costList);
 
-				List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
+				List<NutListDataItem> nutList = new ArrayList<>();
 				nutList.add(new NutListDataItem(null, null, null, null, null, null, nut1, null));
 				nutList.add(new NutListDataItem(null, null, null, null, null, null, nut2, null));
 				nutList.add(new NutListDataItem(null, null, null, null, null, null, nut3, null));
 				finishedProduct.setNutList(nutList);
 
-				List<DynamicCharactListItem> dynamicCharactListItems = new ArrayList<DynamicCharactListItem>();
+				List<DynamicCharactListItem> dynamicCharactListItems = new ArrayList<>();
 				//Product
 				dynamicCharactListItems.add(new DynamicCharactListItem("Product qty 1", "qty"));
 				// Literal formula
@@ -171,7 +171,7 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 
 				// Claim List
 
-				List<LabelClaimListDataItem> labelClaimListDataItems = new ArrayList<LabelClaimListDataItem>();
+				List<LabelClaimListDataItem> labelClaimListDataItems = new ArrayList<>();
 
 				nodeService.setProperty(labelClaims.get(0), PLMModel.PROP_LABEL_CLAIM_FORMULA, "((nutList.?[nut.toString() == '" + nut1
 						+ "'][0].value < 40 and unit != T(fr.becpg.repo.product.data.ProductUnit).L and unit != T(fr.becpg.repo.product.data.ProductUnit).mL )"
@@ -328,7 +328,7 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 
 			String trace = "allergen: " + nodeService.getProperty(allergenListDataItem.getAllergen(), ContentModel.PROP_NAME) +" qty Perc:  "+ allergenListDataItem.getQtyPerc()
 					+" - voluntary: "
-					+ allergenListDataItem.getVoluntary().booleanValue() + " - involuntary: " + allergenListDataItem.getInVoluntary().booleanValue()
+					+ allergenListDataItem.getVoluntary() + " - involuntary: " + allergenListDataItem.getInVoluntary()
 					+ " - voluntary sources:" + voluntarySources + " - involuntary sources:" + inVoluntarySources;
 			logger.info(trace);
 
@@ -403,8 +403,8 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 				bioOriginsText += nodeService.getProperty(bioOrigin, ContentModel.PROP_NAME) + ", ";
 
 			String trace = "ing: " + nodeService.getProperty(ingListDataItem.getIng(), ContentModel.PROP_NAME) + " - qty: " + ingListDataItem.getQtyPerc()
-					+ " - geo origins: " + geoOriginsText + " - bio origins: " + bioOriginsText + " is gmo: " + ingListDataItem.getIsGMO().booleanValue() + " is ionized: "
-					+ ingListDataItem.getIsIonized().booleanValue();
+					+ " - geo origins: " + geoOriginsText + " - bio origins: " + bioOriginsText + " is gmo: " + ingListDataItem.getIsGMO() + " is ionized: "
+					+ ingListDataItem.getIsIonized();
 			logger.debug(trace);
 
 			df = new DecimalFormat("0.000000");
@@ -417,8 +417,8 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 				assertEquals("ing1.getGeoOrigin() doesn't contain geo2, actual values: " + trace, false, ingListDataItem.getGeoOrigin().contains(geoOrigin2));
 				assertEquals("ing1.getBioOrigin() contains bio1, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(bioOrigin1));
 				assertEquals("ing1.getBioOrigin() doesn't contain bio2, actual values: " + trace, false, ingListDataItem.getBioOrigin().contains(bioOrigin2));
-				assertEquals("ing1.getIsGMO() is false, actual values: " + trace, true, ingListDataItem.getIsGMO().booleanValue() == true);
-				assertEquals("ing1.getIsIonized().booleanValue() is false, actual values: " + trace, true, ingListDataItem.getIsIonized().booleanValue() == true);
+				assertEquals("ing1.getIsGMO() is false, actual values: " + trace, true, ingListDataItem.getIsGMO().booleanValue());
+				assertEquals("ing1.getIsIonized().booleanValue() is false, actual values: " + trace, true, ingListDataItem.getIsIonized().booleanValue());
 				checks++;
 			}
 			// ing2 - qty: 36.111111111111114 - geo origins: geoOrigin1,

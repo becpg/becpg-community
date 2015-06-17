@@ -17,7 +17,6 @@
  ******************************************************************************/
 package fr.becpg.repo.olap.data;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -32,8 +31,8 @@ import org.json.JSONObject;
  */
 public class OlapChartData {
 	
-	List<OlapChartMetadata> metadatas = new LinkedList<OlapChartMetadata>();
-	List<List<Object>> resultsets = new LinkedList<List<Object>>();
+	List<OlapChartMetadata> metadatas = new LinkedList<>();
+	List<List<Object>> resultsets = new LinkedList<>();
 	
 
 	public void addMetadata(OlapChartMetadata olapChartMetadata) {
@@ -66,8 +65,8 @@ public class OlapChartData {
 	public JSONObject toJSONObject() throws JSONException {
 		JSONObject obj = new JSONObject();
 		JSONArray jsonArray = new JSONArray();
-		for (Iterator<OlapChartMetadata> iterator = metadatas.iterator(); iterator.hasNext();) {
-			jsonArray.put(iterator.next().toJSONObject());	
+		for (OlapChartMetadata metadata : metadatas) {
+			jsonArray.put(metadata.toJSONObject());
 		}
 		obj.put("metadatas", jsonArray);
 		obj.put("resultsets", resultsets);

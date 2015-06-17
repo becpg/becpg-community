@@ -1,10 +1,6 @@
 package fr.becpg.repo.admin;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -71,11 +67,9 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 			NodeRef scriptFolderNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(companyHome, XPATH_DICTIONNARY_SCRIPTS);
 
 			List<NodeRef> scriptResources = contentHelper.addFilesResources(scriptFolderNodeRef, "classpath*:beCPG/supplier/*.js");
-			Set<String> subFolders = new HashSet<String>();
-			subFolders.add(RepoConsts.PATH_IMAGES);
 
 			// visit supplier
-			Set<QName> dataLists = new LinkedHashSet<QName>();
+			Set<QName> dataLists = new LinkedHashSet<>();
 			dataLists.add(ProjectModel.TYPE_TASK_LIST);
 			dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
 			dataLists.add(ProjectModel.TYPE_ACTIVITY_LIST);
@@ -96,25 +90,25 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 			TaskListDataItem task2 = new TaskListDataItem();
 			task2.setTaskName(I18NUtil.getMessage(VALIDATION_TASK_NAME));
 			task2.setDuration(5);
-			task2.setResources(Arrays.asList(qualityNodeRef));
+			task2.setResources(Collections.singletonList(qualityNodeRef));
 			task2.setRefusedTask(task1);
 
 			pjtTpl.getTaskList().add(task2);
 			
 			alfrescoRepository.save(pjtTpl);
 
-			task2.setPrevTasks(Arrays.asList(task1.getNodeRef()));
+			task2.setPrevTasks(Collections.singletonList(task1.getNodeRef()));
 			
 			DeliverableListDataItem supplierWizard = new DeliverableListDataItem();
 			supplierWizard.setDescription(I18NUtil.getMessage(SUPPLIER_WIZARD_NAME));
 			supplierWizard.setUrl("/share/page/wizard?id=supplier&nodeRef={bcpg:suppliers}");
-			supplierWizard.setTasks(Arrays.asList(task1.getNodeRef()));
+			supplierWizard.setTasks(Collections.singletonList(task1.getNodeRef()));
 
 			
 			DeliverableListDataItem supplierMPWizard = new DeliverableListDataItem();
 			supplierMPWizard.setDescription(I18NUtil.getMessage(SUPPLIER_WIZARD_RAW_MATERIAL_NAME));
 			supplierMPWizard.setUrl("/share/page/wizard?id=supplier-mp&nodeRef={pjt:projectEntity}");
-			supplierMPWizard.setTasks(Arrays.asList(task1.getNodeRef()));
+			supplierMPWizard.setTasks(Collections.singletonList(task1.getNodeRef()));
 			
 
 			DeliverableListDataItem preSupplierScript = new DeliverableListDataItem();
@@ -126,7 +120,7 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 					preSupplierScript.setContent(scriptNodeRef);
 				}
 			}
-			preSupplierScript.setTasks(Arrays.asList(task1.getNodeRef()));
+			preSupplierScript.setTasks(Collections.singletonList(task1.getNodeRef()));
 			pjtTpl.getDeliverableList().add(preSupplierScript);
 			pjtTpl.getDeliverableList().add(supplierWizard);
 			pjtTpl.getDeliverableList().add(supplierMPWizard);

@@ -57,7 +57,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	public static final Double DEFAULT_LOSS_RATIO = 0d;
 
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(CostsCalculatingFormulationHandler.class);
+	private static final Log logger = LogFactory.getLog(CostsCalculatingFormulationHandler.class);
 
 	private EntityTplService entityTplService;
 
@@ -212,7 +212,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	@Override
 	protected void visitChildren(ProductData formulatedProduct, List<CostListDataItem> costList) throws FormulateException {
 
-		Double netQty = null;
+		Double netQty;
 		if (formulatedProduct instanceof PackagingKitData) {
 			netQty = FormulationHelper.QTY_FOR_PIECE;
 		} else if (formulatedProduct instanceof ResourceProductData) {
@@ -249,7 +249,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 
 			for (PackagingListDataItem packagingListDataItem : formulatedProduct.getPackagingList(EffectiveFilters.EFFECTIVE,
 					VariantFilters.DEFAULT_VARIANT)) {
-				Double qty = FormulationHelper.getQtyWithLost(packagingListDataItem).doubleValue();
+				Double qty = FormulationHelper.getQtyWithLost(packagingListDataItem);
 
 				if (PLMModel.TYPE_PACKAGINGKIT.equals(nodeService.getType(packagingListDataItem.getProduct()))) {
 					Integer nbByPalet = (Integer) nodeService.getProperty(packagingListDataItem.getProduct(), PackModel.PROP_PALLET_BOXES_PER_PALLET);
@@ -302,7 +302,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				}
 
 				// calculate children
-				Composite<CompoListDataItem> c = (Composite<CompoListDataItem>) component;
+				Composite<CompoListDataItem> c = component;
 				visitCompoListChildren(formulatedProduct, c, costList, newLossPerc, netQty, mandatoryCharacts);
 			} else {
 				CompoListDataItem compoListDataItem = component.getData();
@@ -328,7 +328,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	 */
 	public static String calculateUnit(ProductUnit productUnit, String costUnit, Boolean isFixed) {
 
-		if (isFixed != null && isFixed.booleanValue()) {
+		if (isFixed != null && isFixed) {
 			return costUnit;
 		}
 		else{
@@ -416,7 +416,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 
 	protected Map<NodeRef, List<NodeRef>> getMandatoryCharacts(ProductData formulatedProduct, QName componentType) {
 
-		Map<NodeRef, List<NodeRef>> mandatoryCharacts = new HashMap<NodeRef, List<NodeRef>>();
+		Map<NodeRef, List<NodeRef>> mandatoryCharacts = new HashMap<>();
 
 		NodeRef entityTplNodeRef = entityTplService.getEntityTpl(componentType);
 
@@ -537,7 +537,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		Double futureValue = templateCostList.getFutureValue();
 		
 		if(divide != null && qty != null){
-			if(divide.booleanValue()){
+			if(divide){
 				value = divide(value, qty);
 				maxi = divide(maxi, qty);
 				previousValue = divide(previousValue, qty);
@@ -632,7 +632,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				if (productNodeRef.equals(componentNodeRef)) {
 					totalQty += qty;	
 				} else {
-					totalQty += getCompoListQty(alfrescoRepositoryProductData.findOne(productNodeRef), componentNodeRef, qty.doubleValue());
+					totalQty += getCompoListQty(alfrescoRepositoryProductData.findOne(productNodeRef), componentNodeRef, qty);
 				}
 			}
 		}
@@ -644,7 +644,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		double totalQty = 0d;
 		for (PackagingListDataItem packList : productData.getPackagingList(EffectiveFilters.EFFECTIVE)) {
 			NodeRef productNodeRef = packList.getProduct();			
-			Double qty = FormulationHelper.getQtyWithLost(packList).doubleValue();
+			Double qty = FormulationHelper.getQtyWithLost(packList);
 			if (logger.isDebugEnabled()) {
 				logger.debug("Get component " + nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME) + "qty: " + qty);
 			}
@@ -659,7 +659,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		Double netQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
 		for (CostListDataItem c : formulatedProduct.getCostList()) {				
 			if(c.getComponentNodeRef() != null && c.getParent() != null){
-				Double qtyComponent = 0d;			
+				Double qtyComponent;
 				ProductData componentData = alfrescoRepositoryProductData.findOne(c.getComponentNodeRef());
 				if(componentData instanceof PackagingMaterialData){
 					qtyComponent = getPackagingListQty(formulatedProduct, c.getComponentNodeRef());

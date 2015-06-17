@@ -43,7 +43,7 @@ public class CompoListValuePluginTest extends AbstractListValuePluginTest {
 	@Resource
     CompoListValuePlugin compoListValuePlugin;
 
-	private static Log logger = LogFactory.getLog(CompoListValuePluginTest.class);
+	private static final Log logger = LogFactory.getLog(CompoListValuePluginTest.class);
 
 	/**
 	 * Test suggest supplier.
@@ -62,7 +62,7 @@ public class CompoListValuePluginTest extends AbstractListValuePluginTest {
 			public NodeRef execute() throws Throwable {
 
 				
-				Map<String, Serializable> props = new HashMap<String, Serializable>();
+				Map<String, Serializable> props = new HashMap<>();
 				props.put(ListValueService.PROP_LOCALE, Locale.FRENCH);
 				props.put(ListValueService.PROP_NODEREF, finishedProductNodeRef.toString());
 				props.put(ListValueService.PROP_CLASS_NAME, "bcpg:compoList");
@@ -96,7 +96,7 @@ public class CompoListValuePluginTest extends AbstractListValuePluginTest {
 				// Check cycle detection (exclude localSF1NodeRef)
 				ProductData finishedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
 
-				HashMap<String, String> extras = new HashMap<String, String>();
+				HashMap<String, String> extras = new HashMap<>();
 				extras.put("itemId", finishedProduct.getCompoListView().getCompoList().get(0).getNodeRef().toString());
 				props.put(ListValueService.EXTRA_PARAM, extras);
 

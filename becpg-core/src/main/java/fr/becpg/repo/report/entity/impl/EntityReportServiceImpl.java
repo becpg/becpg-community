@@ -80,7 +80,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 	private static final String PREF_REPORT_PREFIX = "fr.becpg.repo.report.";
 	private static final String PREF_REPORT_SUFFIX = ".view";
 
-	private static Log logger = LogFactory.getLog(EntityReportServiceImpl.class);
+	private static final Log logger = LogFactory.getLog(EntityReportServiceImpl.class);
 
 	@Autowired
 	private NamespaceService namespaceService;
@@ -213,8 +213,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	private String getReportDocumentName(NodeRef entityNodeRef, NodeRef tplNodeRef, String reportFormat, Locale locale) {
 
-		String documentName = String.format(REPORT_NAME, (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME),
-				(String) nodeService.getProperty(tplNodeRef, ContentModel.PROP_NAME));
+		String documentName = String.format(REPORT_NAME, nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME),
+				nodeService.getProperty(tplNodeRef, ContentModel.PROP_NAME));
 
 		String extension = (String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
 		if (documentName.endsWith(RepoConsts.REPORT_EXTENSION_BIRT) && extension != null) {
@@ -266,7 +266,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 			throw new IllegalArgumentException("tplsNodeRef is empty");
 		}
 
-		List<NodeRef> newReports = new ArrayList<NodeRef>();
+		List<NodeRef> newReports = new ArrayList<>();
 
 		for (Locale locale : getEntityReportLocales(entityNodeRef)) {
 
@@ -297,7 +297,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 							if (writer != null) {
 								String mimetype = mimetypeService.guessMimetype(documentName);
 								writer.setMimetype(mimetype);
-								Map<String, Object> params = new HashMap<String, Object>();
+								Map<String, Object> params = new HashMap<>();
 
 								params.put(ReportParams.PARAM_IMAGES, reportData.getDataObjects());
 								params.put(ReportParams.PARAM_FORMAT, ReportFormat.valueOf(reportFormat));
@@ -353,7 +353,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	@SuppressWarnings("unchecked")
 	private List<Locale> getEntityReportLocales(NodeRef entityNodeRef) {
-		List<Locale> ret = new ArrayList<Locale>();
+		List<Locale> ret = new ArrayList<>();
 		List<String> langs = (List<String>) nodeService.getProperty(entityNodeRef, ReportModel.PROP_REPORT_LOCALES);
 		if (langs != null) {
 			for (String lang : langs) {
@@ -391,7 +391,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 	 */
 	public List<NodeRef> getReportTplsToGenerate(NodeRef nodeRef) {
 
-		List<NodeRef> tplsToReturnNodeRef = new ArrayList<NodeRef>();
+		List<NodeRef> tplsToReturnNodeRef = new ArrayList<>();
 
 		// system reports
 		QName nodeType = nodeService.getType(nodeRef);

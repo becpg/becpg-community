@@ -32,7 +32,7 @@ import fr.becpg.test.utils.TestWebscriptExecuters.Response;
  */
 public class EntityDictionnaryWebScriptTest extends PLMBaseTestCase{
 
-	private static Log logger = LogFactory.getLog(EntityDictionnaryWebScriptTest.class);
+	private static final Log logger = LogFactory.getLog(EntityDictionnaryWebScriptTest.class);
 	
 	
 

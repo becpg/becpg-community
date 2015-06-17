@@ -29,7 +29,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.birt.report.engine.api.DocxRenderOption;
 import org.eclipse.birt.report.engine.api.EXCELRenderOption;
-import org.eclipse.birt.report.engine.api.IExcelRenderOption;
 import org.eclipse.birt.report.engine.api.IRenderOption;
 import org.eclipse.birt.report.engine.api.IReportEngine;
 import org.eclipse.birt.report.engine.api.IReportRunnable;
@@ -51,9 +50,9 @@ public class BeCPGReportServiceImpl implements BeCPGReportService {
 	private final static Log logger = LogFactory.getLog(BeCPGReportServiceImpl.class);
 	
 	/** The report engine. */
-	private IReportEngine reportEngine = BirtPlatformListener.getReportEngine();
+	private final IReportEngine reportEngine = BirtPlatformListener.getReportEngine();
 
-	private TemplateCacheService templateCacheService =  TemplateCacheServiceImpl.getInstance();
+	private final TemplateCacheService templateCacheService =  TemplateCacheServiceImpl.getInstance();
 	
 	
 	
@@ -76,7 +75,7 @@ public class BeCPGReportServiceImpl implements BeCPGReportService {
 			task  = reportEngine.createRunAndRenderTask(design);
 			
 			
-			IRenderOption options = null;
+			IRenderOption options;
 			
 			if(format.equals(ReportFormat.PDF.toString())){
 			

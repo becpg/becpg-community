@@ -42,8 +42,8 @@ public class LabelingRuleListDataItem extends AbstractManualDataItem implements 
 	private String formula;
 	private MLText label;
 	private LabelingRuleType labelingRuleType;
-	private List<NodeRef> components = new ArrayList<NodeRef>();
-	private List<NodeRef> replacements = new ArrayList<NodeRef>();
+	private List<NodeRef> components = new ArrayList<>();
+	private List<NodeRef> replacements = new ArrayList<>();
 	private Boolean isActive = true;
 	private String group;
 

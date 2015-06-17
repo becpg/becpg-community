@@ -63,7 +63,7 @@ import fr.becpg.repo.security.BeCPGAccessDeniedException;
  */
 public class FormulaFormulationHandler extends FormulationBaseHandler<ProductData> {
 
-	private static Log logger = LogFactory.getLog(FormulaFormulationHandler.class);
+	private static final Log logger = LogFactory.getLog(FormulaFormulationHandler.class);
 
 	public static final int DYN_COLUMN_SIZE = 10;
 	public static final String DYN_COLUMN_NAME = "bcpg:dynamicCharactColumn";
@@ -159,7 +159,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 		if (view.getDynamicCharactList() != null) {
 
-			Set<QName> nullDynColumnNames = new HashSet<QName>(DYN_COLUMN_SIZE);
+			Set<QName> nullDynColumnNames = new HashSet<>(DYN_COLUMN_SIZE);
 			for (int i = 1; i <= DYN_COLUMN_SIZE; i++) {
 				nullDynColumnNames.add(QName.createQName(DYN_COLUMN_NAME + i, namespaceService));
 			}
@@ -192,7 +192,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 															.getType(dataListItem.getComponent()))))) {
 	
 										JSONObject jsonTree = extractJSONTree(productData, dataListItem, value, exp);
-										dataListItem.getExtraProperties().put(columnName, (Serializable) jsonTree.toString());
+										dataListItem.getExtraProperties().put(columnName, jsonTree.toString());
 										if (logger.isDebugEnabled()) {
 											logger.debug("JsonTree :" + value);
 										}
@@ -325,7 +325,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 						}
 						// update formula
 						if (sourceItem.getTitle().equals(targetItem.getTitle())) {
-							if (targetItem.getIsManual() == null || targetItem.getIsManual() == false) {
+							if (targetItem.getIsManual() == null || !targetItem.getIsManual()) {
 								targetItem.setFormula(sourceItem.getFormula());
 								targetItem.setColumnName(sourceItem.getColumnName());
 								targetItem.setGroupColor(sourceItem.getGroupColor());

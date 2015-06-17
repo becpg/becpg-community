@@ -22,11 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.content.encoding.ContentCharsetFinder;
@@ -55,7 +51,7 @@ import fr.becpg.report.client.ReportFormat;
 @Service("reportTplService")
 public class ReportTplServiceImpl implements ReportTplService {
 
-	private static Log logger = LogFactory.getLog(ReportTplServiceImpl.class);
+	private static final Log logger = LogFactory.getLog(ReportTplServiceImpl.class);
 
 	@Autowired
 	private NodeService nodeService;
@@ -157,7 +153,7 @@ public class ReportTplServiceImpl implements ReportTplService {
 				String tplFullName = tplName + "." + extension;
 				reportTplNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, tplFullName);
 
-				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				Map<QName, Serializable> properties = new HashMap<>();
 				properties.put(ContentModel.PROP_NAME, tplFullName);
 				properties.put(ReportModel.PROP_REPORT_TPL_TYPE, reportType);
 				properties.put(ReportModel.PROP_REPORT_TPL_FORMAT, reportFormat);
@@ -222,7 +218,7 @@ public class ReportTplServiceImpl implements ReportTplService {
 
 				if (xmlReportTplNodeRef == null || overrideRessource) {
 
-					Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+					Map<QName, Serializable> properties = new HashMap<>();
 					properties.put(ContentModel.PROP_NAME, resource.getFilename());
 					NodeRef fileNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
 							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
@@ -251,7 +247,7 @@ public class ReportTplServiceImpl implements ReportTplService {
 	@Override
 	public List<NodeRef> cleanDefaultTpls(List<NodeRef> tplsNodeRef) {
 
-		List<NodeRef> defaultTplsNodeRef = new ArrayList<NodeRef>();
+		List<NodeRef> defaultTplsNodeRef = new ArrayList<>();
 		NodeRef userDefaultTplNodeRef = null;
 
 		for (NodeRef tplNodeRef : tplsNodeRef) {
@@ -312,7 +308,7 @@ public class ReportTplServiceImpl implements ReportTplService {
 
 		
 		//Full text
-		if (tplName != null && tplName != "*") {
+		if (tplName != null && !Objects.equals(tplName, "*")) {
 			queryBuilder.andPropQuery(ContentModel.PROP_NAME, tplName);
 		} else {
 			queryBuilder.inDB();

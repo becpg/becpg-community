@@ -24,7 +24,7 @@ import fr.becpg.tools.http.AbstractHttpCommand;
 public class DeleteQueryCommand  extends AbstractHttpCommand {
 
 
-	private static String COMMAND_URL_TEMPLATE = "/api/node/%s";
+	private static final String COMMAND_URL_TEMPLATE = "/api/node/%s";
 
 	
 	public DeleteQueryCommand(String serverUrl) {

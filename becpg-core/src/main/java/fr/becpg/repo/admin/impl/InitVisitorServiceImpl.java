@@ -30,7 +30,7 @@ import fr.becpg.repo.admin.InitVisitorService;
 @Service("initVisitorService")
 public class InitVisitorServiceImpl implements InitVisitorService {
 
-	private static Log logger = LogFactory.getLog(InitVisitorServiceImpl.class);
+	private static final Log logger = LogFactory.getLog(InitVisitorServiceImpl.class);
 	
 	@Autowired
 	private InitVisitor[] initVisitors;

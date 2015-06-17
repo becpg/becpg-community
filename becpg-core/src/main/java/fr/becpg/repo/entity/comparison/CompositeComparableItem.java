@@ -20,7 +20,7 @@ public class CompositeComparableItem extends AbstractComparableItem {
 	//key : is composed from pivot fields and position (if the concatenation of pivot fields is present several times)
 	//value : the node datalist 
 	/** The item list. */
-	protected Map<String, AbstractComparableItem> itemList = new LinkedHashMap<String, AbstractComparableItem>();
+	protected Map<String, AbstractComparableItem> itemList = new LinkedHashMap<>();
 	
 	/**
 	 * Gets the item list.

@@ -26,7 +26,7 @@ import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtracto
 public class PaginatedExtractedItems {
 	
 
-	List<Map<String,Object>> items;
+	final List<Map<String,Object>> items;
 	
 	List<AttributeExtractorStructure> computedFields;
 	
@@ -34,7 +34,7 @@ public class PaginatedExtractedItems {
 	
 
 	public PaginatedExtractedItems(Integer pageSize) {
-		items = new ArrayList<Map<String,Object>>(pageSize);
+		items = new ArrayList<>(pageSize);
 	}
 
 	

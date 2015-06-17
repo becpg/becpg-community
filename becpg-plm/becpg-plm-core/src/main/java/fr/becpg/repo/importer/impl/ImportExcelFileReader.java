@@ -99,7 +99,7 @@ public class ImportExcelFileReader implements ImportFileReader {
 		if (sheet != null && importIndex < sheet.getLastRowNum() + 1) {
 			Row row = sheet.getRow(importIndex);
 			if (row != null) {
-				XSSFCellStyle style = (XSSFCellStyle) workbook.createCellStyle();
+				XSSFCellStyle style = workbook.createCellStyle();
 
 				XSSFColor green = new XSSFColor(new java.awt.Color(255, 0, 0));
 
@@ -136,7 +136,7 @@ public class ImportExcelFileReader implements ImportFileReader {
 		if (sheet != null && index < sheet.getLastRowNum() + 1) {
 			Row row = sheet.getRow(index);
 			if (row != null) {
-				XSSFCellStyle style = (XSSFCellStyle) workbook.createCellStyle();
+				XSSFCellStyle style = workbook.createCellStyle();
 
 				XSSFColor green = new XSSFColor(new java.awt.Color(0, 255, 0));
 

@@ -35,7 +35,7 @@ import fr.becpg.test.utils.TestWebscriptExecuters.Response;
  */
 public class AutoCompleteWebScriptTest extends fr.becpg.test.PLMBaseTestCase {
 
-	private static Log logger = LogFactory.getLog(AutoCompleteWebScriptTest.class);
+	private static final Log logger = LogFactory.getLog(AutoCompleteWebScriptTest.class);
 
 
 	/**

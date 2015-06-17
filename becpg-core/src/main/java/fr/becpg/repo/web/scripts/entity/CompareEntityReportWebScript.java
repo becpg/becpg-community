@@ -67,7 +67,7 @@ public class CompareEntityReportWebScript extends AbstractWebScript {
 
 	private static final String PARAM_TPL_NODEREF = "tplNodeRef";
 
-	private static Log logger = LogFactory.getLog(CompareEntityReportWebScript.class);
+	private static final Log logger = LogFactory.getLog(CompareEntityReportWebScript.class);
 
 	private CompareEntityReportService compareEntityReportService;
 
@@ -102,10 +102,10 @@ public class CompareEntityReportWebScript extends AbstractWebScript {
 
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
-		List<NodeRef> entityNodeRefs = new ArrayList<NodeRef>();
+		List<NodeRef> entityNodeRefs = new ArrayList<>();
 
 		NodeRef entityNodeRef = null;
-		NodeRef templateNodeRef = null;
+		NodeRef templateNodeRef;
 
 		Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();
 		if (templateArgs != null) {
@@ -182,15 +182,11 @@ public class CompareEntityReportWebScript extends AbstractWebScript {
 			res.setContentType(mimetypeService.guessMimetype(fileName));
 			res.setHeader("Content-disposition", "attachment; filename=" + fileName);
 
-		} catch (SocketException e1) {
+		} catch (SocketException | ContentIOException e1) {
 			// the client cut the connection - our mission was accomplished
 			// apart from a little error message
 			if (logger.isInfoEnabled()){
 				logger.info("Client aborted stream read:\n\tcontent", e1);
-			}
-		} catch (ContentIOException e2) {
-			if (logger.isInfoEnabled()) {
-				logger.info("Client aborted stream read:\n\tcontent", e2);
 			}
 		}
 

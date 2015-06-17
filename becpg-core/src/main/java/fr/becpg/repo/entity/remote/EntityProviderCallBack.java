@@ -27,10 +27,10 @@ import fr.becpg.common.BeCPGException;
 
 public interface EntityProviderCallBack {
 
-	public NodeRef provideNode(NodeRef nodeRef, NodeRef destNodeRef, Map<QName,Serializable> properties) throws BeCPGException;
+	NodeRef provideNode(NodeRef nodeRef, NodeRef destNodeRef, Map<QName, Serializable> properties) throws BeCPGException;
 	
-	public NodeRef provideNode(NodeRef nodeRef) throws BeCPGException;
+	NodeRef provideNode(NodeRef nodeRef) throws BeCPGException;
 
-	public void provideContent(NodeRef origNodeRef, NodeRef destNodeRef) throws BeCPGException;
+	void provideContent(NodeRef origNodeRef, NodeRef destNodeRef) throws BeCPGException;
 
 }

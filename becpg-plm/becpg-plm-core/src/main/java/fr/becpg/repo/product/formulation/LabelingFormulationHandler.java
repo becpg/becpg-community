@@ -3,13 +3,7 @@
  */
 package fr.becpg.repo.product.formulation;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.MLText;
@@ -101,7 +95,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 		Map<String, List<LabelingRuleListDataItem>> labelingRuleListsByGroup = getLabelingRules(formulatedProduct);
 
-		List<IngLabelingListDataItem> retainNodes = new ArrayList<IngLabelingListDataItem>();
+		List<IngLabelingListDataItem> retainNodes = new ArrayList<>();
 
 		for (Map.Entry<String, List<LabelingRuleListDataItem>> labelingRuleListsGroup : labelingRuleListsByGroup.entrySet()) {
 
@@ -233,7 +227,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		// Start adding all the components
 		for (AbstractLabelingComponent component : lblCompositeContext.getIngList().values()) {
 			if (!labelingFormulaContext.isGroup(component)) {
-				AbstractLabelingComponent clonedComponent = null;
+				AbstractLabelingComponent clonedComponent;
 				if (component instanceof CompositeLabeling) {
 					clonedComponent = new CompositeLabeling((CompositeLabeling) component);
 				} else {
@@ -256,7 +250,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					}
 
 					if (toMerged == null) {
-						AbstractLabelingComponent clonedSubComponent = null;
+						AbstractLabelingComponent clonedSubComponent;
 						if (subComponent instanceof CompositeLabeling) {
 							clonedSubComponent = new CompositeLabeling((CompositeLabeling) subComponent);
 						} else {
@@ -356,7 +350,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			Map<NodeRef, AbstractLabelingComponent> toAdd = new HashMap<>();
 
 			for (Iterator<Map.Entry<NodeRef, AbstractLabelingComponent>> iterator = parent.getIngList().entrySet().iterator(); iterator.hasNext();) {
-				AbstractLabelingComponent component = (AbstractLabelingComponent) iterator.next().getValue();
+				AbstractLabelingComponent component = iterator.next().getValue();
 
 				// Recur
 				if (recur && component instanceof CompositeLabeling) {
@@ -573,12 +567,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		List<CompositeLabeling> ret = new LinkedList<>();
 
 		for (Iterator<Map.Entry<NodeRef, AbstractLabelingComponent>> iterator = current.getIngList().entrySet().iterator(); iterator.hasNext();) {
-			AbstractLabelingComponent component = (AbstractLabelingComponent) iterator.next().getValue();
+			AbstractLabelingComponent component = iterator.next().getValue();
 			if (component instanceof CompositeLabeling) {
 
 				Double currQty = component.getQty();
 				ret.addAll(reorderCompositeLabeling((CompositeLabeling) component, false));
-				if (component.getQty() != currQty && component.getQty() == 0) {
+				if (!Objects.equals(component.getQty(), currQty) && component.getQty() == 0) {
 					iterator.remove();
 				} else {
 					if (!isFirst) {
@@ -659,7 +653,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					&& (type.isMatch(PLMModel.TYPE_RAWMATERIAL) || type.isMatch(PLMModel.TYPE_SEMIFINISHEDPRODUCT) || type
 							.isMatch(PLMModel.TYPE_FINISHEDPRODUCT)) && declarationType != DeclarationType.Omit) {
 
-				Double vol = (Double) component.getData().getVolume();
+				Double vol = component.getData().getVolume();
 				if (vol != null) {
 					totalVolumeUsed += vol;
 				}
@@ -667,7 +661,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 		}
 
-		Map<String, ReqCtrlListDataItem> errors = new HashMap<String, ReqCtrlListDataItem>();
+		Map<String, ReqCtrlListDataItem> errors = new HashMap<>();
 
 		for (Composite<CompoListDataItem> component : composite.getChildren()) {
 
@@ -1004,7 +998,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 									error.getSources().add(productNodeRef);
 								}
 							}
-							if (ingLabelItem.getQty() != qty) {
+							if (!Objects.equals(ingLabelItem.getQty(), qty)) {
 								if (logger.isDebugEnabled()) {
 									logger.debug("Adding aggregate error " + error.toString());
 								}
@@ -1033,7 +1027,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	private ReqCtrlListDataItem createError(AbstractLabelingComponent ingItem, NodeRef productNodeRef) {
 		String message = I18NUtil.getMessage("message.formulate.labelRule.error.nullIng", ingItem.getName());
-		List<NodeRef> sourceNodeRefs = new ArrayList<NodeRef>();
+		List<NodeRef> sourceNodeRefs = new ArrayList<>();
 		if (productNodeRef != null) {
 			sourceNodeRefs.add(productNodeRef);
 		}

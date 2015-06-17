@@ -54,7 +54,7 @@ public class SecurityServiceTest extends RepoBaseTestCase {
 	private String grp3;
 
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(SecurityServiceTest.class);
+	private static final Log logger = LogFactory.getLog(SecurityServiceTest.class);
 
 	@Resource
 	private AlfrescoRepository<ACLGroupData> alfrescoRepository;
@@ -116,13 +116,13 @@ public class SecurityServiceTest extends RepoBaseTestCase {
 		// aclGroupData.setNodeAspects(Arrays.asList(new
 		// String[]{BeCPGModel.ASPECT_CLIENTS.toString(),BeCPGModel.ASPECT_CODE.toString()}));
 
-		List<NodeRef> groups = new ArrayList<NodeRef>();
+		List<NodeRef> groups = new ArrayList<>();
 		groups.add(authorityService.getAuthorityNodeRef(grp3));
-		List<ACLEntryDataItem> acls = new ArrayList<ACLEntryDataItem>();
+		List<ACLEntryDataItem> acls = new ArrayList<>();
 
 		acls.add(new ACLEntryDataItem("cm:name", PermissionModel.READ_ONLY, groups));
 
-		groups = new ArrayList<NodeRef>();
+		groups = new ArrayList<>();
 		groups.add(authorityService.getAuthorityNodeRef(grp1));
 
 		acls.add(new ACLEntryDataItem("sec:propName", PermissionModel.READ_WRITE, groups));

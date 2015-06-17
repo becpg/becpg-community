@@ -39,7 +39,7 @@ import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
 public class FormulationCheckPropsOfCompTest extends AbstractFinishedProductTest {
 
-	protected static Log logger = LogFactory.getLog(FormulationCheckPropsOfCompTest.class);
+	protected static final Log logger = LogFactory.getLog(FormulationCheckPropsOfCompTest.class);
 
 	@Override
 	public void setUp() throws Exception {
@@ -61,7 +61,7 @@ public class FormulationCheckPropsOfCompTest extends AbstractFinishedProductTest
 				finishedProduct.setLegalName("Legal Finished product 1");
 				finishedProduct.setQty(2d);
 				finishedProduct.setUnit(ProductUnit.P);
-				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
+				List<CompoListDataItem> compoList = new ArrayList<>();
 				compoList.add(new CompoListDataItem(null, null, null, 100d, CompoListUnit.P, 10d, DeclarationType.Detail, rawMaterial1NodeRef));
 				compoList.add(new CompoListDataItem(null, null, null, 10d, CompoListUnit.mL, 10d, DeclarationType.Detail, rawMaterial5NodeRef));
 				compoList.add(new CompoListDataItem(null, null, null, 10d, CompoListUnit.g, 10d, DeclarationType.Detail, rawMaterial6NodeRef));

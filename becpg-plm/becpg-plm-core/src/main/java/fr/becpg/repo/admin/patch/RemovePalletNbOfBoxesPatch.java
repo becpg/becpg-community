@@ -32,7 +32,7 @@ import fr.becpg.model.PackModel;
  */
 public class RemovePalletNbOfBoxesPatch extends AbstractBeCPGPatch {
 
-	private static Log logger = LogFactory.getLog(RemovePalletNbOfBoxesPatch.class);
+	private static final Log logger = LogFactory.getLog(RemovePalletNbOfBoxesPatch.class);
 	private static final String MSG_SUCCESS = "patch.bcpg.plm.removePalletNbOfBoxesPatch.result";
 
 	private NodeDAO nodeDAO;
@@ -62,14 +62,14 @@ public class RemovePalletNbOfBoxesPatch extends AbstractBeCPGPatch {
 
 	private void doForType(final QName type) {
 		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
-			final List<NodeRef> result = new ArrayList<NodeRef>();
+			final List<NodeRef> result = new ArrayList<>();
 
-			long maxNodeId = getPatchDAO().getMaxAdmNodeID();
+			final long maxNodeId = getPatchDAO().getMaxAdmNodeID();
 
 			long minSearchNodeId = 1;
 			long maxSearchNodeId = count;
 
-			Pair<Long, QName> val = getQnameDAO().getQName(type);
+			final Pair<Long, QName> val = getQnameDAO().getQName(type);
 
 			public int getTotalEstimatedWorkSize() {
 				return result.size();
@@ -101,7 +101,7 @@ public class RemovePalletNbOfBoxesPatch extends AbstractBeCPGPatch {
 			}
 		};
 
-		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<NodeRef>("RemovePalletNbOfBoxesPatch",
+		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("RemovePalletNbOfBoxesPatch",
 				transactionService.getRetryingTransactionHelper(), workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 1000);
 
 		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {

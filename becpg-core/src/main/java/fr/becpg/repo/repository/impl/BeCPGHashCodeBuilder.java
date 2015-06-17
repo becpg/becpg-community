@@ -404,8 +404,8 @@ public class BeCPGHashCodeBuilder {
 		if (array == null) {
 			iTotal = iTotal * iConstant;
 		} else {
-			for (int i = 0; i < array.length; i++) {
-				append(array[i]);
+			for (boolean anArray : array) {
+				append(anArray);
 			}
 		}
 		return this;
@@ -442,8 +442,8 @@ public class BeCPGHashCodeBuilder {
 		if (array == null) {
 			iTotal = iTotal * iConstant;
 		} else {
-			for (int i = 0; i < array.length; i++) {
-				append(array[i]);
+			for (byte anArray : array) {
+				append(anArray);
 			}
 		}
 		return this;
@@ -476,8 +476,8 @@ public class BeCPGHashCodeBuilder {
 		if (array == null) {
 			iTotal = iTotal * iConstant;
 		} else {
-			for (int i = 0; i < array.length; i++) {
-				append(array[i]);
+			for (char anArray : array) {
+				append(anArray);
 			}
 		}
 		return this;
@@ -509,8 +509,8 @@ public class BeCPGHashCodeBuilder {
 		if (array == null) {
 			iTotal = iTotal * iConstant;
 		} else {
-			for (int i = 0; i < array.length; i++) {
-				append(array[i]);
+			for (double anArray : array) {
+				append(anArray);
 			}
 		}
 		return this;
@@ -543,8 +543,8 @@ public class BeCPGHashCodeBuilder {
 		if (array == null) {
 			iTotal = iTotal * iConstant;
 		} else {
-			for (int i = 0; i < array.length; i++) {
-				append(array[i]);
+			for (float anArray : array) {
+				append(anArray);
 			}
 		}
 		return this;
@@ -577,8 +577,8 @@ public class BeCPGHashCodeBuilder {
 		if (array == null) {
 			iTotal = iTotal * iConstant;
 		} else {
-			for (int i = 0; i < array.length; i++) {
-				append(array[i]);
+			for (int anArray : array) {
+				append(anArray);
 			}
 		}
 		return this;
@@ -615,8 +615,8 @@ public class BeCPGHashCodeBuilder {
 		if (array == null) {
 			iTotal = iTotal * iConstant;
 		} else {
-			for (int i = 0; i < array.length; i++) {
-				append(array[i]);
+			for (long anArray : array) {
+				append(anArray);
 			}
 		}
 		return this;
@@ -684,8 +684,8 @@ public class BeCPGHashCodeBuilder {
 		if (array == null) {
 			iTotal = iTotal * iConstant;
 		} else {
-			for (int i = 0; i < array.length; i++) {
-				append(array[i]);
+			for (Object anArray : array) {
+				append(anArray);
 			}
 		}
 		return this;
@@ -718,8 +718,8 @@ public class BeCPGHashCodeBuilder {
 		if (array == null) {
 			iTotal = iTotal * iConstant;
 		} else {
-			for (int i = 0; i < array.length; i++) {
-				append(array[i]);
+			for (short anArray : array) {
+				append(anArray);
 			}
 		}
 		return this;
