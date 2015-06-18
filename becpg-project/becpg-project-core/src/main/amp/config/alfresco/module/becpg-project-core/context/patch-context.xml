@@ -118,7 +118,7 @@
         <property name="id"><value>patch.bcpg.project.addViewPatch</value></property>
         <property name="description"><value>patch.bcpg.project.addViewPatch.description</value></property>
         <property name="fixesFromSchema" value="0"/>
-        <property name="fixesToSchema" value="8022" />
+        <property name="fixesToSchema" value="8009" />
         <property name="targetSchema" value="10160 "/>
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
