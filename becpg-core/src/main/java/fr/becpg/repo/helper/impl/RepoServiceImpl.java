@@ -37,6 +37,8 @@ public class RepoServiceImpl implements RepoService {
 	
 	/** The logger. */
 	private static final Log logger = LogFactory.getLog(RepoServiceImpl.class);
+
+	private static final String EXISTING_NODE_NAME_SUFFIX = "(1)";
 	
 	@Autowired
 	private final NodeService nodeService = null;
@@ -75,13 +77,16 @@ public class RepoServiceImpl implements RepoService {
 		
 		NodeRef folderNodeRef = getFolderByPath(parentNodeRef, path);
 		
-		if(folderNodeRef == null){
+		if(folderNodeRef == null || !ContentModel.TYPE_FOLDER.equals(nodeService.getType(folderNodeRef))){
 			logger.debug("Create folder : " + name + "  ");
 			
-			Map<QName, Serializable> properties = new HashMap<>();
+			if(folderNodeRef!=null){
+				logger.warn("Other node with the same name in this folder");
+				return  getOrCreateFolderByPath( parentNodeRef,  path,  (name + EXISTING_NODE_NAME_SUFFIX));
+			}
 			
+			Map<QName, Serializable> properties = new HashMap<>();
 	    	properties.put(ContentModel.PROP_NAME, PropertiesHelper.cleanFolderName(name));	    		    	
-	    	
 	    	folderNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS, 
 	    											QName.resolveToQName(namespaceService, path), 
 	    											ContentModel.TYPE_FOLDER, properties).getChildRef();	    		 
