@@ -274,13 +274,14 @@
       },
 
       getProjectTitle : function PL_getProjectTitle(record, full, large) {
-         var url = null, urlFolder = null, version = "";
+         var propertiesUrl = null, dataListUrl = null, folderUrl = null, version = "";
 
          var title = record.itemData["prop_cm_name"].displayValue, code = record.itemData["prop_bcpg_code"].displayValue, 
          overdue = '', ret = "";
 
-         url = beCPG.util.entityURL(record.siteId, record.nodeRef,"pjt:project");
-         urlFolder = beCPG.util.entityDocumentsURL(record.siteId, record.path, title);
+         propertiesUrl = beCPG.util.entityURL(record.siteId, record.nodeRef,"pjt:project", null, "View-properties");
+         dataListUrl = beCPG.util.entityURL(record.siteId, record.nodeRef,"pjt:project");
+         folderUrl = beCPG.util.entityDocumentsURL(record.siteId, record.path, title);
 
          if (record.version && record.version !== "") {
             version = '<span class="document-version">' + record.version + '</span>';
@@ -292,7 +293,7 @@
             ret += '<span class="' + this.getOverdueClass(record, large ? 32 : null) + '" title="' + overdue + '">';
 
          } else {
-            ret += '<span class="project-title"><a class="folder-link" href="' + urlFolder + '" title="' + this
+            ret += '<span class="project-title"><a class="folder-link" href="' + folderUrl + '" title="' + this
                   .msg("link.title.open-folder") + '">&nbsp;</a>';
          }
          
@@ -300,7 +301,7 @@
             ret += this.getPriorityImg(record, large);
          }
 
-         ret += '<a class="theme-color-1" href="' +  url + '" title="' + this.msg("link.title.open-project") + '">' + code + "&nbsp;-&nbsp;" + $html(title) + '</a></span>' + version;
+         ret += '<a class="theme-color-1" href="' + (full ? propertiesUrl : dataListUrl) + '" title="' + (full ? "" : this.msg("actions.entity.view-tasks")) + '">' + code + "&nbsp;-&nbsp;" + $html(title) + '</a></span>' + version;
 
          return ret;
       },
