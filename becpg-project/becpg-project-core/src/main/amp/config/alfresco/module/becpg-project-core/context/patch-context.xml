@@ -27,7 +27,7 @@
         <property name="description"><value>patch.bcpg.project.planningModePatch.description</value></property>
         <property name="fixesFromSchema" value="0"/>
         <property name="fixesToSchema" value="6033" />
-        <property name="targetSchema" value="10150 "/>
+        <property name="targetSchema" value="10150"/>
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
         <property name="ruleService" ref="ruleService"/>
@@ -50,7 +50,7 @@
         <property name="description"><value>patch.bcpg.project.depthLevelInTaskListPatch.description</value></property>
         <property name="fixesFromSchema" value="0"/>
         <property name="fixesToSchema" value="6033" />
-        <property name="targetSchema" value="10150 "/>
+        <property name="targetSchema" value="10150"/>
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
         <property name="ruleService" ref="ruleService"/>
@@ -73,7 +73,7 @@
         <property name="description"><value>patch.bcpg.project.budgetPatch.description</value></property>
         <property name="fixesFromSchema" value="0"/>
         <property name="fixesToSchema" value="8009" />
-        <property name="targetSchema" value="10160 "/>
+        <property name="targetSchema" value="10160"/>
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
         <property name="ruleService" ref="ruleService"/>
@@ -96,7 +96,7 @@
         <property name="description"><value>patch.bcpg.project.taskDescPatch.description</value></property>
         <property name="fixesFromSchema" value="0"/>
         <property name="fixesToSchema" value="8009" />
-        <property name="targetSchema" value="10160 "/>
+        <property name="targetSchema" value="10160"/>
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
         <property name="ruleService" ref="ruleService"/>
@@ -118,8 +118,8 @@
         <property name="id"><value>patch.bcpg.project.addViewPatch</value></property>
         <property name="description"><value>patch.bcpg.project.addViewPatch.description</value></property>
         <property name="fixesFromSchema" value="0"/>
-        <property name="fixesToSchema" value="8009" />
-        <property name="targetSchema" value="10160 "/>
+        <property name="fixesToSchema" value="8010" />
+        <property name="targetSchema" value="10170"/>
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
         <property name="ruleService" ref="ruleService"/>
