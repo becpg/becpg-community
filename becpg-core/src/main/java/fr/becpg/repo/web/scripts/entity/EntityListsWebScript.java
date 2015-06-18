@@ -34,6 +34,7 @@ import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -79,6 +80,8 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 	private static final String MODEL_KEY_NAME_LISTS = "lists";
 
 	private static final String MODEL_HAS_WRITE_PERMISSION = "hasWritePermission";
+	
+	private static final String MODEL_HAS_CHANGE_STATE_PERMISSION = "hasChangeStatePermission";
 
 	private static final String MODEL_KEY_ACL_TYPE = "aclType";
 	
@@ -176,6 +179,7 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 		final NodeRef nodeRef = new NodeRef(storeType, storeId, nodeId);
 		NodeRef listContainerNodeRef = null;
 		QName nodeType = nodeService.getType(nodeRef);
+		boolean hasChangeStatePermission = false;
 		boolean hasWritePermission = authorityService.isAdminAuthority(AuthenticationUtil.getFullyAuthenticatedUser());//admin can delete entity lists
 		boolean skipFilter = false;
 
@@ -286,7 +290,7 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 
 			listsNodeRef = entityListDAO.getExistingListsNodeRef(listContainerNodeRef);
 		}
-
+		
 		// filter list with perms
 		if (!skipFilter) {
 			Iterator<NodeRef> it = listsNodeRef.iterator();
@@ -300,6 +304,8 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 						logger.trace("Don't display dataList:" + dataListType);
 					}
 					it.remove();
+				} else if(SecurityService.WRITE_ACCESS == access_mode && permissionService.hasPermission(temp, PermissionService.WRITE) == AccessStatus.ALLOWED){
+					hasChangeStatePermission = true;
 				}
 			}
 		}
@@ -313,6 +319,7 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 		model.put(MODEL_KEY_NAME_ENTITY, nodeRef);
 		model.put(MODEL_KEY_NAME_CONTAINER, listContainerNodeRef);
 		model.put(MODEL_HAS_WRITE_PERMISSION, hasWritePermission);
+		model.put(MODEL_HAS_CHANGE_STATE_PERMISSION, hasChangeStatePermission);
 		model.put(MODEL_KEY_NAME_LISTS, listsNodeRef);
 
 		return model;

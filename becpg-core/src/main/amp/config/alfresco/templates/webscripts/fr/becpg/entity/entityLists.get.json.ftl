@@ -36,7 +36,8 @@
 	   "permissions":
 	   {
 	      "edit": ${hasWritePermission?string},
-	      "delete": ${hasWritePermission?string}
+	      "delete": ${hasWritePermission?string},
+	      "changeState": ${hasChangeStatePermission?string}
 	   }
 	}<#if list_has_next>,</#if>
    </#list>
