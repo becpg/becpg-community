@@ -4,7 +4,13 @@
 package fr.becpg.repo.admin;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.action.evaluator.CompareMimeTypeEvaluator;
@@ -156,13 +162,15 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		NodeRef qualityNodeRef = visitFolder(companyHome, PlmRepoConsts.PATH_QUALITY);
 		// Regulations
 		NodeRef regulationsNodeRef = visitFolder(qualityNodeRef, PlmRepoConsts.PATH_REGULATIONS);
-		visitFolder(regulationsNodeRef, PlmRepoConsts.PATH_PRODUCT_MICROBIO_CRITERIA);
+		NodeRef folderNodeRef = visitFolder(regulationsNodeRef, PlmRepoConsts.PATH_PRODUCT_MICROBIO_CRITERIA);
+		addSystemFolderAspect(folderNodeRef);
 		// Specifications
 		NodeRef qualSpecNodeRef = visitFolder(qualityNodeRef, PlmRepoConsts.PATH_QUALITY_SPECIFICATIONS);
 		visitFolder(qualSpecNodeRef, PlmRepoConsts.PATH_CONTROL_PLANS);
 		visitFolder(qualSpecNodeRef, PlmRepoConsts.PATH_CONTROL_POINTS);
 
-		visitFolder(qualityNodeRef, PlmRepoConsts.PATH_PRODUCT_SPECIFICATIONS);
+		folderNodeRef = visitFolder(qualityNodeRef, PlmRepoConsts.PATH_PRODUCT_SPECIFICATIONS);
+		addSystemFolderAspect(folderNodeRef);
 
 		// NC
 		visitFolder(qualityNodeRef, PlmRepoConsts.PATH_NC);
@@ -170,7 +178,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		visitFolder(qualityNodeRef, PlmRepoConsts.PATH_QUALITY_CONTROLS);
 
 		// ECO
-		visitFolder(systemNodeRef, PlmRepoConsts.PATH_ECO);
+		folderNodeRef = visitFolder(systemNodeRef, PlmRepoConsts.PATH_ECO);
+		addSystemFolderAspect(folderNodeRef);
 
 		// Icons
 		visitFolder(systemNodeRef, RepoConsts.PATH_ICON);
@@ -310,9 +319,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 		// specialise type
 		if (specialiseType != null) {
-
 			createRuleSpecialiseType(nodeRef, applyToChildren, specialiseType);
-		}
+		}		
 	}
 
 	/**
@@ -515,7 +523,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			// datalists
 			Set<QName> dataLists = new LinkedHashSet<>();
 			QName wusedQName = null;
-
+			
 			if (productType.equals(PLMModel.TYPE_RAWMATERIAL)) {
 
 				dataLists.add(PLMModel.TYPE_ALLERGENLIST);
@@ -583,7 +591,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 				dataLists.add(PLMModel.TYPE_PACKAGINGLIST);
 				dataLists.add(PLMModel.TYPE_COSTLIST);
-				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
+				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);				
 
 				wusedQName = PLMModel.TYPE_PACKAGINGLIST;
 
@@ -597,7 +605,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			}
 			entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 			entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_REPORTS);
-			
 		}
 	}
 
