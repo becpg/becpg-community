@@ -30,6 +30,10 @@ import fr.becpg.repo.repository.model.AbstractManualDataItem;
 @AlfQname(qname = "bcpg:labelClaimList")
 public class LabelClaimListDataItem extends AbstractManualDataItem {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1232488781703843974L;
 	public static final String VALUE_TRUE = "true";
 	public static final String VALUE_FALSE = "false";
 	public static final String VALUE_EMPTY = "";

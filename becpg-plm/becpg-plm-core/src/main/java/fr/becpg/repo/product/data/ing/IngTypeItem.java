@@ -31,6 +31,12 @@ import fr.becpg.repo.repository.annotation.AlfType;
 public class IngTypeItem extends AbstractLabelingComponent{
 
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 182156222574786727L;
+
+
 	public static final IngTypeItem DEFAULT_GROUP = new IngTypeItem();
 	
 	

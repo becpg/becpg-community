@@ -112,7 +112,6 @@
 	</bean>
 	
 	<bean id="projectListPolicy" class="fr.becpg.repo.project.policy.ProjectListPolicy" parent="projectPolicy" depends-on="bcpg.project.dictionaryBootstrap">
-		<property name="nodeArchiveService" ref="nodeArchiveService" />
 	</bean>
 
 

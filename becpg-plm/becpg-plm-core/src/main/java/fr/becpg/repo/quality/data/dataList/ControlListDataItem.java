@@ -33,6 +33,10 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfQname(qname = "qa:controlList")
 public class ControlListDataItem extends BeCPGDataObject{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7794847133363024701L;
 	String type;
 	Double mini;
 	Double maxi;

@@ -19,7 +19,6 @@ package fr.becpg.repo.entity.datalist.impl;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -121,19 +120,6 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 				logger.debug("DataType to filter :" + dataListFilter.getDataType());
 			}
 
-			Collection<QName> qnames = entityDictionaryService.getSubTypes(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-
-			for (QName qname : qnames) {
-				if (!qname.equals(dataListFilter.getDataType())) {
-
-					if (logger.isDebugEnabled()) {
-						logger.debug("Add to ignore :" + qname);
-					}
-					queryBuilder.excludeType(qname);
-
-				}
-
-			}
 
 			int skipOffset = (pagination.getPage() - 1) * pagination.getPageSize();
 			int requestTotalCountMax = skipOffset + RepoConsts.MAX_RESULTS_1000;

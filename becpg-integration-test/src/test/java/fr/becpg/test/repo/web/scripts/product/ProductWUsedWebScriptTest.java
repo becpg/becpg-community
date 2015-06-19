@@ -28,7 +28,6 @@ import fr.becpg.test.utils.TestWebscriptExecuters.Response;
  *
  * @author querephi
  */
-@SuppressWarnings("unused")
 public class ProductWUsedWebScriptTest extends fr.becpg.test.PLMBaseTestCase{
 
 	private static final Log logger = LogFactory.getLog(ProductWUsedWebScriptTest.class);

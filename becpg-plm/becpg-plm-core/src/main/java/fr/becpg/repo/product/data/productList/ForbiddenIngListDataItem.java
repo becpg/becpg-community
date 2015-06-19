@@ -34,6 +34,10 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 public class ForbiddenIngListDataItem extends BeCPGDataObject{
 
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8044333209643017576L;
 	RequirementType reqType;
 	String reqMessage;
 	Double qtyPercMaxi;

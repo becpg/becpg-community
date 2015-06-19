@@ -30,6 +30,10 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfQname(qname = "qa:controlPoint")
 public class ControlPointData extends BeCPGDataObject {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5543494940526679993L;
 	List<ControlDefListDataItem> controlDefList = new LinkedList<>();
 
 	@DataList

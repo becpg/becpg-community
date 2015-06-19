@@ -35,6 +35,10 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfQname(qname = "pjt:activityList")
 public class ActivityListDataItem extends BeCPGDataObject {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -817711206754301661L;
 	private NodeRef task;
 	private NodeRef deliverable;
 	private ActivityType activityType = ActivityType.State;

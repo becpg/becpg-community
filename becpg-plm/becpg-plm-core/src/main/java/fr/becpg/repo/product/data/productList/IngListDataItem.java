@@ -39,6 +39,11 @@ import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 public class IngListDataItem extends AbstractManualDataItem  implements SimpleCharactDataItem, AspectAwareDataItem, CompositeDataItem<IngListDataItem> {
 
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2710240943326822672L;
+
 	private Double qtyPerc = 0d;
 	
 	private Double volumeQtyPerc;

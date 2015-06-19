@@ -20,7 +20,6 @@ package fr.becpg.repo.product.policy.productListUnits;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,8 +28,6 @@ import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
 import org.alfresco.repo.transaction.TransactionListener;
 import org.alfresco.repo.transaction.TransactionListenerAdapter;
-import org.alfresco.service.cmr.model.FileFolderService;
-import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
@@ -60,8 +57,6 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 
 	private EntityListDAO entityListDAO;
 
-	private FileFolderService fileFolderService;
-
 	private AssociationService associationService;
 
 	public void setAssociationService(AssociationService associationService) {
@@ -70,10 +65,6 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
-	}
-
-	public void setFileFolderService(FileFolderService fileFolderService) {
-		this.fileFolderService = fileFolderService;
 	}
 
 	@Override
@@ -114,7 +105,6 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		// Bind the listener to the transaction
 		AlfrescoTransactionSupport.bindListener(transactionListener);
 		// Get the set of nodes read
-		@SuppressWarnings("unchecked")
 		Set<AssociationRef> assocRefs = AlfrescoTransactionSupport.getResource(KEY_PRODUCT_LISTITEMS);
 		if (assocRefs == null) {
 			assocRefs = new HashSet<>(5);
@@ -134,7 +124,6 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 			// Bind the listener to the transaction
 			AlfrescoTransactionSupport.bindListener(transactionListener);
 			// Get the set of nodes read
-			@SuppressWarnings("unchecked")
 			Set<NodeRef> nodeRefs = AlfrescoTransactionSupport.getResource(KEY_PRODUCTS);
 			if (nodeRefs == null) {
 				nodeRefs = new HashSet<>(3);
@@ -152,10 +141,8 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 		@Override
 		public void beforeCommit(boolean readOnly) {
 
-			@SuppressWarnings("unchecked")
 			final Set<NodeRef> products = AlfrescoTransactionSupport.getResource(KEY_PRODUCTS);
 
-			@SuppressWarnings("unchecked")
 			final Set<AssociationRef> assocRefs = AlfrescoTransactionSupport.getResource(KEY_PRODUCT_LISTITEMS);
 
 			updateProducts(products);
@@ -182,10 +169,8 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 							if (costListNodeRef != null && !isTemplate(productNodeRef)) {
 
 								productsUnit.put(costListNodeRef, productUnit);
-								List<FileInfo> nodes = fileFolderService.listFiles(costListNodeRef);
-
-								for (FileInfo node : nodes) {
-									NodeRef productListItemNodeRef = node.getNodeRef();
+								
+								for (NodeRef productListItemNodeRef : entityListDAO.getListItems(costListNodeRef, PLMModel.TYPE_COSTLIST)) {
 
 									NodeRef costNodeRef = associationService.getTargetAssoc(productListItemNodeRef, PLMModel.ASSOC_COSTLIST_COST);
 									if (costNodeRef != null) {
@@ -212,10 +197,9 @@ public class ProductListPolicy extends AbstractBeCPGPolicy implements NodeServic
 							if (nutListNodeRef != null) {
 
 								productsUnit.put(nutListNodeRef, productUnit);
-								List<FileInfo> nodes = fileFolderService.listFiles(nutListNodeRef);
 
-								for (FileInfo node : nodes) {
-									NodeRef productListItemNodeRef = node.getNodeRef();
+								for (NodeRef productListItemNodeRef : entityListDAO.getListItems(nutListNodeRef,  PLMModel.TYPE_NUTLIST)) {
+
 									String nutListUnit = (String) nodeService.getProperty(productListItemNodeRef, PLMModel.PROP_NUTLIST_UNIT);
 
 									NodeRef nutNodeRef = associationService.getTargetAssoc(productListItemNodeRef, PLMModel.ASSOC_NUTLIST_NUT);

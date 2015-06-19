@@ -39,5 +39,6 @@ public interface ProjectWorkflowService {
 	void checkWorkflowInstance(ProjectData projectData, TaskListDataItem taskListDataItem,
 							   List<DeliverableListDataItem> nextDeliverables);
 	void deleteWorkflowTask(NodeRef taskListNodeRef);
+	void deleteWorkflowById(String workflowInstanceId);
 	
 }

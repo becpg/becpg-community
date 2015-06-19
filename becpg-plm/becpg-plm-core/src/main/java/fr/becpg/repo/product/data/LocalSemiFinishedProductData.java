@@ -11,5 +11,10 @@ import fr.becpg.repo.repository.annotation.AlfType;
 @AlfQname(qname = "bcpg:localSemiFinishedProduct")
 public class LocalSemiFinishedProductData extends ProductData  {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8914857797618909988L;
+
 
 }

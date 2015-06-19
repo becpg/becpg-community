@@ -78,7 +78,6 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase {
 
 		AlfrescoTransactionSupport.bindResource(PARAM_DO_NOT_MOVE_NODE, doNotMoveNode);
 		// Get the set of nodes read
-		@SuppressWarnings("unchecked")
 		Set<NodeRef> nodeRefs = AlfrescoTransactionSupport.getResource(KEY_FILES_TO_IMPORT);
 		if (nodeRefs == null) {
 			nodeRefs = new HashSet<>(5);
@@ -119,7 +118,6 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase {
 		@Override
 		public void afterCommit() {
 
-			@SuppressWarnings("unchecked")
 			Set<NodeRef> nodeRefs = AlfrescoTransactionSupport.getResource(KEY_FILES_TO_IMPORT);
 
 			Boolean doNotMoveNode = AlfrescoTransactionSupport.getResource(PARAM_DO_NOT_MOVE_NODE);

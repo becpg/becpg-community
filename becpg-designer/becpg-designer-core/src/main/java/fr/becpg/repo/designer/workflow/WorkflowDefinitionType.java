@@ -116,7 +116,6 @@ public class WorkflowDefinitionType implements ContentServicePolicies.OnContentU
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private void queueModel(NodeRef nodeRef) {
 
 		Set<NodeRef> pendingModels = AlfrescoTransactionSupport.getResource(KEY_PENDING_DEFS);
@@ -174,7 +173,6 @@ public class WorkflowDefinitionType implements ContentServicePolicies.OnContentU
 			this.nodeService = nodeService;
 		}
 
-		@SuppressWarnings("unchecked")
 		@Override
 		public void beforeCommit(boolean readOnly) {
 			Set<NodeRef> pendingModels = AlfrescoTransactionSupport.getResource(KEY_PENDING_DEFS);

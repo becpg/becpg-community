@@ -49,6 +49,10 @@ import fr.becpg.repo.variant.model.VariantData;
 
 public class ProductData extends AbstractEffectiveDataItem implements FormulatedEntity, HierarchicalEntity, StateableEntity {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 764534088277737617L;
 	private NodeRef hierarchy1;
 	private NodeRef hierarchy2;
 	private MLText legalName;

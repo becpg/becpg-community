@@ -78,6 +78,7 @@ import com.tradeshift.test.remote.RemoteTestRunner;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.admin.InitVisitorService;
 import fr.becpg.repo.cache.BeCPGCacheService;
+import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntitySystemService;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.RepoService;
@@ -194,6 +195,9 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 	@Resource
 	private SOLRTrackingComponent solrTrackingComponent;
+	
+	@Resource
+	protected EntityListDAO entityListDAO;
 
 	@Resource
 	@Qualifier("qnameDAO")

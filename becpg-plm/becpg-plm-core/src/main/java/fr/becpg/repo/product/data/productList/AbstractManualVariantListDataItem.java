@@ -29,6 +29,10 @@ import fr.becpg.repo.variant.model.VariantDataItem;
 public abstract class AbstractManualVariantListDataItem extends AbstractManualDataItem implements VariantDataItem {
 
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 910812503752985666L;
 	private List<NodeRef> variants;
 
 	@AlfProp

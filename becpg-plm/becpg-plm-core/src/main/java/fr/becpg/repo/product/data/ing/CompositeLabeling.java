@@ -16,6 +16,11 @@ import fr.becpg.repo.product.data.constraints.DeclarationType;
 //TODO voir pour faire mieux avec les heritages Composite<LabelingComponent>
 public class CompositeLabeling extends AbstractLabelingComponent {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7903326038199131582L;
+
 	private Map<NodeRef, AbstractLabelingComponent> ingList = new LinkedHashMap<>();
 
 	private Double qtyRMUsed = 0d;

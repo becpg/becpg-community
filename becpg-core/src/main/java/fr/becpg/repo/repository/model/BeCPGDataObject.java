@@ -32,6 +32,11 @@ import fr.becpg.repo.repository.annotation.AlfQname;
 
 public  abstract class  BeCPGDataObject  extends BaseObject implements RepositoryEntity {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7452420206089817249L;
+
 	protected NodeRef nodeRef;
 	
 	protected NodeRef parentNodeRef;

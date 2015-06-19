@@ -314,10 +314,17 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 
 		String workflowInstanceId = (String) nodeService.getProperty(taskListNodeRef, ProjectModel.PROP_TL_WORKFLOW_INSTANCE);
 		if (workflowInstanceId != null && !workflowInstanceId.isEmpty()) {
-			WorkflowInstance workflowInstance = workflowService.getWorkflowById(workflowInstanceId);
-			if (workflowInstance != null) {
-				workflowService.deleteWorkflow(workflowInstanceId);
-			}
+			deleteWorkflowById(workflowInstanceId);
 		}
 	}
+
+	@Override
+	public void deleteWorkflowById(String workflowInstanceId) {
+		WorkflowInstance workflowInstance = workflowService.getWorkflowById(workflowInstanceId);
+		if (workflowInstance != null) {
+			workflowService.deleteWorkflow(workflowInstanceId);
+		}
+		
+	}
+	
 }

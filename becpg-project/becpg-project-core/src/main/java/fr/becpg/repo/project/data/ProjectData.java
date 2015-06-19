@@ -53,6 +53,10 @@ import fr.becpg.repo.repository.model.StateableEntity;
 public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem, FormulatedEntity, HierarchicalEntity, StateableEntity {
 
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6572843222555593368L;
 	private NodeRef hierarchy1;
 	private NodeRef hierarchy2;
 	private Date startDate;

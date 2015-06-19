@@ -141,11 +141,8 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 			logger.debug("doBeforeCommit key: " + key + " size: " + pendingNodes.size());
 		}
 		if (KEY_DELETED_TASK_LIST_ITEM.equals(key)) {
-			for (NodeRef taskListItemNodeRef : pendingNodes) {
-				if (nodeService.exists(taskListItemNodeRef)) {
-					// delete workflow
-					projectWorkflowService.deleteWorkflowTask(taskListItemNodeRef);
-				}
+			for (NodeRef wfIds : pendingNodes) {
+				projectWorkflowService.deleteWorkflowById(wfIds.getId());
 			}
 		} else {
 			// TODO Move that to afterCommit ?

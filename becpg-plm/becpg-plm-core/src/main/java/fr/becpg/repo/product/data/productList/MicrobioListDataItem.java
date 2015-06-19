@@ -16,6 +16,11 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfQname(qname = "bcpg:microbioList")
 public class MicrobioListDataItem extends BeCPGDataObject {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6910021090157153860L;
+
 	private Double value;
 	
 	private String unit;
