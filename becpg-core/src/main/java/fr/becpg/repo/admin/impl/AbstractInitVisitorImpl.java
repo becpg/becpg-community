@@ -33,6 +33,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.extensions.surf.util.I18NUtil;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.admin.InitVisitor;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
@@ -238,5 +239,9 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 		
 	}
 	
-
+	protected void addSystemFolderAspect(NodeRef nodeRef){
+		if (!nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_SYSTEM_FOLDER)) {
+			nodeService.addAspect(nodeRef, BeCPGModel.ASPECT_SYSTEM_FOLDER, null);
+		}
+	}
 }
