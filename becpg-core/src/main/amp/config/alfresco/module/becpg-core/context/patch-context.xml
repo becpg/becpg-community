@@ -56,10 +56,11 @@
         <property name="id"><value>patch.bcpg.isManualListItemPatch</value></property>
         <property name="description"><value>patch.bcpg.isManualListItemPatch.description</value></property>
         <property name="fixesFromSchema" value="0"/>
-        <property name="fixesToSchema" value="8022" />
-        <property name="targetSchema" value="10100 "/>
+        <property name="fixesToSchema" value="8010" />
+        <property name="targetSchema" value="10170 "/>
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
+        <property name="integrityChecker" ref="integrityChecker"/>
          <property name="patchDAO">
             <ref bean="patchDAO"/>
         </property>

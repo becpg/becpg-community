@@ -10,9 +10,11 @@ import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
 import org.alfresco.repo.domain.node.NodeDAO;
 import org.alfresco.repo.domain.patch.PatchDAO;
 import org.alfresco.repo.domain.qname.QNameDAO;
+import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.cmr.rule.RuleService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.Pair;
@@ -22,6 +24,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
+import fr.becpg.model.PackModel;
 
 /**
  * Update CostParentLevel
@@ -39,6 +42,8 @@ public class FormulatedAspectPatch extends AbstractBeCPGPatch {
 	private QNameDAO qnameDAO;
 	private BehaviourFilter policyBehaviourFilter;
 	private RuleService ruleService;
+
+	private IntegrityChecker integrityChecker;
 
 	private final int batchThreads = 3;
 	private final int batchSize = 40;
@@ -119,19 +124,28 @@ public class FormulatedAspectPatch extends AbstractBeCPGPatch {
 				
 				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();				
 				
-				if (nodeService.exists(productNodeRef)) {
+				if (nodeService.exists(productNodeRef) && productNodeRef.getStoreRef().getProtocol().equals(StoreRef.PROTOCOL_WORKSPACE) ) {
 					if(!nodeService.hasAspect(productNodeRef, BeCPGModel.ASPECT_FORMULATED_ENTITY)){
 						nodeService.addAspect(productNodeRef, BeCPGModel.ASPECT_FORMULATED_ENTITY, null);						
 					}
+					if(!nodeService.hasAspect(productNodeRef, BeCPGModel.ASPECT_ENTITY_TPL_REF)){
+						nodeService.addAspect(productNodeRef, BeCPGModel.ASPECT_ENTITY_TPL_REF, null);						
+					}
+					// nodeService.removeAspect(productNodeRef, QName.createQName(BeCPGModel.BECPG_URI, "entityVersionable"));
 				} else {
-					logger.warn("productNodeRef doesn't exist : " + productNodeRef);
+					logger.warn("productNodeRef doesn't exist : " + productNodeRef +" or is not in workspace store");
 				}
 
 			}
 
 		};
 
-		batchProcessor.process(worker, true);
+		integrityChecker.setEnabled(false);
+		try {
+			batchProcessor.process(worker, true);
+		} finally {
+			integrityChecker.setEnabled(true);
+		}
 	
 	}
 
@@ -170,5 +184,11 @@ public class FormulatedAspectPatch extends AbstractBeCPGPatch {
 	public void setRuleService(RuleService ruleService) {
 		this.ruleService = ruleService;
 	}
+	
+
+	public void setIntegrityChecker(IntegrityChecker integrityChecker) {
+		this.integrityChecker = integrityChecker;
+	}
+	
 
 }

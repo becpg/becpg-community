@@ -279,6 +279,7 @@
         <property name="targetSchema" value="10150 "/>
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
+         <property name="integrityChecker" ref="integrityChecker"/>
         <property name="ruleService" ref="ruleService"/>
          <property name="patchDAO">
             <ref bean="patchDAO"/>
@@ -303,6 +304,7 @@
         <property name="targetSchema" value="10160 "/>
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
+         <property name="integrityChecker" ref="integrityChecker"/>
         <property name="ruleService" ref="ruleService"/>
          <property name="patchDAO">
             <ref bean="patchDAO"/>
@@ -327,6 +329,7 @@
         <property name="targetSchema" value="10160 "/>
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
+         <property name="integrityChecker" ref="integrityChecker"/>
         <property name="ruleService" ref="ruleService"/>
          <property name="patchDAO">
             <ref bean="patchDAO"/>
@@ -347,11 +350,12 @@
         <property name="description"><value>patch.bcpg.plm.formulatedAspectPatch.description</value></property>
         <property name="fixesFromSchema" value="0"/>
         <property name="fixesToSchema" value="8009" />
-        <property name="targetSchema" value="10150 "/>
+        <property name="targetSchema" value="10160 "/>
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
         <property name="ruleService" ref="ruleService"/>
-         <property name="patchDAO">
+        <property name="integrityChecker" ref="integrityChecker"/>
+        <property name="patchDAO">
             <ref bean="patchDAO"/>
         </property>
         <property name="nodeDAO">
@@ -368,8 +372,8 @@
         <property name="id"><value>patch.bcpg.plm.addViewPatch</value></property>
         <property name="description"><value>patch.bcpg.plm.addViewPatch.description</value></property>
         <property name="fixesFromSchema" value="0"/>
-        <property name="fixesToSchema" value="8022" />
-        <property name="targetSchema" value="10150 "/>
+        <property name="fixesToSchema" value="8010" />
+        <property name="targetSchema" value="10170"/>
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
         <property name="ruleService" ref="ruleService"/>
