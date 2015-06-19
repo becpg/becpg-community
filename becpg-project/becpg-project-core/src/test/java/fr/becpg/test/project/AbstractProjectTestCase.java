@@ -18,14 +18,19 @@
 package fr.becpg.test.project;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
-import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.workflow.WorkflowService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -196,15 +201,15 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 				// taskLegends
 				NodeRef npdListsFolder = entitySystemService.getSystemEntity(systemFolderNodeRef, ProjectRepoConsts.PATH_PROJECT_LISTS);
 				NodeRef taskLegendFolder = entitySystemService.getSystemEntityDataList(npdListsFolder, ProjectRepoConsts.PATH_TASK_LEGENDS);
-				List<FileInfo> taskLegendsFileInfo = fileFolderService.listFiles(taskLegendFolder);
-				for (FileInfo fileInfo : taskLegendsFileInfo) {
-					taskLegends.add(fileInfo.getNodeRef());
+				List<NodeRef> taskLegendsFileInfo =  entityListDAO.getListItems(taskLegendFolder, ProjectModel.TYPE_TASK_LEGEND );
+				for (NodeRef fileInfo : taskLegendsFileInfo) {
+					taskLegends.add(fileInfo);
 				}
 
 				// resourceCost
 				NodeRef resourceCostFolder = entitySystemService.getSystemEntityDataList(npdListsFolder, ProjectRepoConsts.PATH_RESOURCE_COSTS);
-				List<FileInfo> resourceCostsFileInfo = fileFolderService.listFiles(resourceCostFolder);
-				resourceCost = (ResourceCost) alfrescoRepository.findOne(resourceCostsFileInfo.get(0).getNodeRef());
+				List<NodeRef> resourceCostsFileInfo =  entityListDAO.getListItems(resourceCostFolder,ProjectModel.TYPE_RESOURCE_COST);
+				resourceCost = (ResourceCost) alfrescoRepository.findOne(resourceCostsFileInfo.get(0));
 
 				userOne = BeCPGTestHelper.createUser(BeCPGTestHelper.USER_ONE);
 				userTwo = BeCPGTestHelper.createUser(BeCPGTestHelper.USER_TWO);

@@ -27,6 +27,10 @@ import fr.becpg.repo.repository.annotation.AlfType;
 @AlfQname(qname = "qa:samplingDefList")
 public class SamplingDefListDataItem extends AbstractSamplingListDataItem {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 622827042336832867L;
 	private Integer qty;
 	private Integer freq;
 	private String freqUnit;

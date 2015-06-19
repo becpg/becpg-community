@@ -26,6 +26,10 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 public abstract class AbstractSamplingListDataItem extends BeCPGDataObject {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4363331493366178223L;
 	protected NodeRef controlPoint;
 	protected NodeRef controlStep;
 	protected NodeRef samplingGroup;

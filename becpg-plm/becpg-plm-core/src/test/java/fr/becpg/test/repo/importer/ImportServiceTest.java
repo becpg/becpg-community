@@ -16,7 +16,6 @@ import javax.annotation.Resource;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
-import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.MLText;
@@ -578,6 +577,8 @@ public class ImportServiceTest extends PLMBaseTestCase {
 				ProductData productData = alfrescoRepository.findOne(product1NodeRef);
 
 				/*-- check productLists --*/
+		
+				
 				assertEquals("compoList should exist", 3, productData.getCompoListView().getCompoList().size());
 				String[] rmNames = { "MP1", "MP2", "MP3" };
 				double[] qtyValues = { 1.0d, 2.0d, 3.2d };
@@ -741,14 +742,14 @@ public class ImportServiceTest extends PLMBaseTestCase {
 		NodeRef systemFolder = repoService.getFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM);
 
 		NodeRef labelClaimListsFolder = entitySystemService.getSystemEntityDataList(systemFolder, RepoConsts.PATH_CHARACTS, PlmRepoConsts.PATH_LABELCLAIMS);
-		List<FileInfo> labelClaimsFileInfo = fileFolderService.listFiles(labelClaimListsFolder);
+		List<NodeRef> labelClaimsFileInfo = entityListDAO.getListItems(labelClaimListsFolder,PLMModel.TYPE_LABEL_CLAIM);
 
 		Assert.assertTrue(labelClaimsFileInfo.size()==2);
 		
 		
 		
-		for (FileInfo fileInfo : labelClaimsFileInfo) {
-			String formula = (String)nodeService.getProperty( fileInfo.getNodeRef(),PLMModel.PROP_LABEL_CLAIM_FORMULA);
+		for (NodeRef fileInfo : labelClaimsFileInfo) {
+			String formula = (String)nodeService.getProperty( fileInfo,PLMModel.PROP_LABEL_CLAIM_FORMULA);
 			
 			Assert.assertNotNull(formula);
 			logger.info(formula);

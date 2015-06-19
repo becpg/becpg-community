@@ -37,6 +37,10 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfQname(qname = "qa:qualityControl")
 public class QualityControlData extends BeCPGDataObject {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2908648013735858142L;
 	List<NodeRef> controlPlans = new ArrayList<>();
 	Integer samplesCounter;
 	QualityControlState state;

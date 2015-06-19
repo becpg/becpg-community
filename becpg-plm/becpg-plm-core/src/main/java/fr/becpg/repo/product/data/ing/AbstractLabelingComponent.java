@@ -28,6 +28,11 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 public abstract class AbstractLabelingComponent extends BeCPGDataObject implements LabelingComponent, Comparable<LabelingComponent> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 270866664168102414L;
+
 	protected Double qty = 0d;
 	
 	protected Double volumeQtyPerc;

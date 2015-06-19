@@ -15,6 +15,11 @@ import fr.becpg.repo.repository.annotation.AlfType;
 @AlfQname(qname="bcpg:ing")
 public class IngItem extends AbstractLabelingComponent {	
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -958461714975420707L;
+
 	private String ingCEECode;
 	
 	private IngTypeItem ingType;

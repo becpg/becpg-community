@@ -203,9 +203,13 @@ public class HierarchyServiceImpl implements HierarchyService {
 						logger.warn("Cannot classify entity since it doesn't have a hierarchy.");
 					}
 
-					if (destinationNodeRef != null) {
+					if (destinationNodeRef != null ) {
 						// classify
-						repoService.moveNode(entityNodeRef, destinationNodeRef);
+						if(!ContentModel.TYPE_FOLDER.equals(nodeService.getType(destinationNodeRef))){
+							logger.warn("Incorrect destination node type:"+nodeService.getType(destinationNodeRef));
+						} else {
+							repoService.moveNode(entityNodeRef, destinationNodeRef);
+						}
 					} else {
 						logger.warn("Failed to classify entity. entityNodeRef: " + entityNodeRef);
 					}

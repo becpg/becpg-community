@@ -26,7 +26,6 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
-import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
@@ -268,9 +267,9 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 		
 		if(allergens.isEmpty()){
 			NodeRef allergenFolder = entitySystemService.getSystemEntityDataList(charactsFolder, PlmRepoConsts.PATH_ALLERGENS);
-			List<FileInfo> allergensFileInfo = fileFolderService.listFiles(allergenFolder);
+			List<NodeRef> allergensNodeRef = entityListDAO.getListItems(allergenFolder,PLMModel.TYPE_ALLERGEN );
 			
-			if (allergensFileInfo.size() == 0) {
+			if (allergensNodeRef.size() == 0) {
 				for (int i = 0; i < 10; i++) {
 					Map<QName, Serializable> properties = new HashMap<>();
 					properties.put(ContentModel.PROP_NAME, "Allergen " + i);
@@ -281,9 +280,9 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 					allergens.add(childAssocRef.getChildRef());
 				}
 			} else {
-				for (FileInfo fileInfo : allergensFileInfo) {
-					if(fileInfo.getName().startsWith("Allergen")){
-						allergens.add(fileInfo.getNodeRef());
+				for (NodeRef fileInfo : allergensNodeRef) {
+					if(((String)nodeService.getProperty(fileInfo,ContentModel.PROP_NAME)).startsWith("Allergen")){
+						allergens.add(fileInfo);
 					}
 				}
 			}
@@ -296,8 +295,8 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 		// costs
 		if(costs.isEmpty()){
 			NodeRef costFolder = entitySystemService.getSystemEntityDataList(charactsFolder, PlmRepoConsts.PATH_COSTS);
-			List<FileInfo> costsFileInfo = fileFolderService.listFiles(costFolder);
-			if (costsFileInfo.size() == 0) {
+			List<NodeRef> costsNodeRef = entityListDAO.getListItems(costFolder,PLMModel.TYPE_COST);
+			if (costsNodeRef.size() == 0) {
 	
 				String[] costNames = { "Coût MP", "Coût prév MP", "Coût Emb", "Coût prév Emb" };
 				for (String costName : costNames) {
@@ -310,9 +309,9 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 					costs.add(childAssocRef.getChildRef());
 				}
 			} else {
-				for (FileInfo fileInfo : costsFileInfo) {
-					if(fileInfo.getName().startsWith("Coût")){
-					costs.add(fileInfo.getNodeRef());
+				for (NodeRef fileInfo : costsNodeRef) {
+					if(((String)nodeService.getProperty(fileInfo,ContentModel.PROP_NAME)).startsWith("Coût")){
+					costs.add(fileInfo);
 					}
 				}
 			}
@@ -324,8 +323,8 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 		// ings
 		if(ings.isEmpty()){
 			NodeRef ingFolder = entitySystemService.getSystemEntityDataList(charactsFolder, PlmRepoConsts.PATH_INGS);
-			List<FileInfo> ingsFileInfo = fileFolderService.listFiles(ingFolder);
-			if (ingsFileInfo.size() == 0) {
+			List<NodeRef> ingsNodeRef = entityListDAO.getListItems(ingFolder,PLMModel.TYPE_ING);
+			if (ingsNodeRef.size() == 0) {
 				for (int i = 0; i < 10; i++) {
 					Map<QName, Serializable> properties = new HashMap<>();
 					properties.put(ContentModel.PROP_NAME, "Ing " + i);
@@ -335,9 +334,9 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 					ings.add(childAssocRef.getChildRef());
 				}
 			} else {
-				for (FileInfo fileInfo : ingsFileInfo) {
-					if(fileInfo.getName().startsWith("Ing")){
-						ings.add(fileInfo.getNodeRef());
+				for (NodeRef fileInfo : ingsNodeRef) {
+					if(((String)nodeService.getProperty(fileInfo,ContentModel.PROP_NAME)).startsWith("Ing")){
+						ings.add(fileInfo);
 					}
 				}
 			}
@@ -349,8 +348,8 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 		// nuts
 		if(nuts.isEmpty()){
 			NodeRef nutFolder = entitySystemService.getSystemEntityDataList(charactsFolder, PlmRepoConsts.PATH_NUTS);
-			List<FileInfo> nutsFileInfo = fileFolderService.listFiles(nutFolder);
-			if (nutsFileInfo.size() == 0) {
+			List<NodeRef> nutsNodeRef = entityListDAO.getListItems(nutFolder,PLMModel.TYPE_NUT);
+			if (nutsNodeRef.size() == 0) {
 				for (int i = 0; i < 10; i++) {
 					Map<QName, Serializable> properties = new HashMap<>();
 					properties.put(ContentModel.PROP_NAME, "Nut " + i);
@@ -362,9 +361,9 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 					nuts.add(childAssocRef.getChildRef());
 				}
 			} else {
-				for (FileInfo fileInfo : nutsFileInfo) {
-					if(fileInfo.getName().startsWith("Nut")){
-				   	 nuts.add(fileInfo.getNodeRef());
+				for (NodeRef fileInfo : nutsNodeRef) {
+					if(((String)nodeService.getProperty(fileInfo,ContentModel.PROP_NAME)).startsWith("Nut")){
+				   	 nuts.add(fileInfo);
 					}
 				}
 			}
@@ -375,8 +374,8 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 		// organos
 		if(organos.isEmpty()){
 			NodeRef organoFolder = entitySystemService.getSystemEntityDataList(charactsFolder, PlmRepoConsts.PATH_ORGANOS);
-			List<FileInfo> organosFileInfo = fileFolderService.listFiles(organoFolder);
-			if (organosFileInfo.size() == 0) {
+			List<NodeRef> organosNodeRef = entityListDAO.getListItems(organoFolder,PLMModel.TYPE_ORGANO);
+			if (organosNodeRef.size() == 0) {
 				for (int i = 0; i < 10; i++) {
 					Map<QName, Serializable> properties = new HashMap<>();
 					properties.put(ContentModel.PROP_NAME, "Organo " + i);
@@ -386,9 +385,9 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 					organos.add(childAssocRef.getChildRef());
 				}
 			} else {
-				for (FileInfo fileInfo : organosFileInfo) {
-					if(fileInfo.getName().startsWith("Organo")){
-					  organos.add(fileInfo.getNodeRef());
+				for (NodeRef fileInfo : organosNodeRef) {
+					if(((String)nodeService.getProperty(fileInfo,ContentModel.PROP_NAME)).startsWith("Organo")){
+					  organos.add(fileInfo);
 					}
 				}
 			}
@@ -399,8 +398,8 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 		// claim labelling
 		if(labelClaims.isEmpty()){
 			NodeRef labelClaimListsFolder = entitySystemService.getSystemEntityDataList(charactsFolder, PlmRepoConsts.PATH_LABELCLAIMS);
-			List<FileInfo> labelClaimsFileInfo = fileFolderService.listFiles(labelClaimListsFolder);
-			if (labelClaimsFileInfo.size() == 0) {
+			List<NodeRef> labelClaimsNodeRef = entityListDAO.getListItems(labelClaimListsFolder,PLMModel.TYPE_LABEL_CLAIM);
+			if (labelClaimsNodeRef.size() == 0) {
 	
 				String[] labelClaimNames = { "Faible valeur énergétique", "Sans apport énergétique" };
 				for (String labelClaim : labelClaimNames) {
@@ -413,10 +412,10 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 					labelClaims.add(childAssocRef.getChildRef());
 				}
 			} else {
-				for (FileInfo fileInfo : labelClaimsFileInfo) {
-					if(fileInfo.getName().startsWith( "Faible valeur énergétique")
-							|| fileInfo.getName().startsWith( "Sans apport énergétique")){
-						labelClaims.add(fileInfo.getNodeRef());
+				for (NodeRef fileInfo : labelClaimsNodeRef) {
+					if(((String)nodeService.getProperty(fileInfo,ContentModel.PROP_NAME)).startsWith( "Faible valeur énergétique")
+							|| ((String)nodeService.getProperty(fileInfo,ContentModel.PROP_NAME)).startsWith( "Sans apport énergétique")){
+						labelClaims.add(fileInfo);
 					}
 				}
 			}
@@ -502,8 +501,8 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 
 		// labelingTemplate
 		NodeRef labelingTemplateFolder = entitySystemService.getSystemEntityDataList(listsFolder, PlmRepoConsts.PATH_LABELING_TEMPLATES);
-		List<FileInfo> labelingTemplatesFileInfo = fileFolderService.listFiles(labelingTemplateFolder);
-		if (labelingTemplatesFileInfo.size() == 0) {
+		List<NodeRef> labelingTemplatesNodeRef = entityListDAO.getListItems(labelingTemplateFolder,PackModel.TYPE_LABELING_TEMPLATE);
+		if (labelingTemplatesNodeRef.size() == 0) {
 			Map<QName, Serializable> properties = new HashMap<>();
 			properties.put(ContentModel.PROP_NAME, "Marquage 1");
 			properties.put(ContentModel.PROP_DESCRIPTION,
@@ -512,7 +511,7 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
 					PackModel.TYPE_LABELING_TEMPLATE, properties).getChildRef();
 		} else {
-			labelingTemplateNodeRef = labelingTemplatesFileInfo.get(0).getNodeRef();
+			labelingTemplateNodeRef = labelingTemplatesNodeRef.get(0);
 		}
 
 	}

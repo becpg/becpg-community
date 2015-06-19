@@ -18,6 +18,10 @@ import fr.becpg.repo.repository.annotation.MultiLevelDataList;
 @MultiLevelDataList
 public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem implements CompositionDataItem {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8313567761346202059L;
 	private Double qty = 0d;	
 	private Double qtyResource = 0d;
 	private Double rateResource = 0d;

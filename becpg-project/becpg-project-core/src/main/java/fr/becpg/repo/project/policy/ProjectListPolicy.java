@@ -7,7 +7,6 @@ import java.io.Serializable;
 import java.util.Map;
 
 import org.alfresco.repo.node.NodeServicePolicies;
-import org.alfresco.repo.node.archive.NodeArchiveService;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
@@ -27,17 +26,9 @@ import fr.becpg.repo.project.data.projectList.TaskState;
  * @author querephi
  */
 public class ProjectListPolicy extends ProjectPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnCreateAssociationPolicy,
-		NodeServicePolicies.OnDeleteAssociationPolicy, NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.BeforeDeleteNodePolicy,
-		NodeServicePolicies.OnDeleteNodePolicy {
+		NodeServicePolicies.OnDeleteAssociationPolicy, NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.BeforeDeleteNodePolicy {
 
 	private static final Log logger = LogFactory.getLog(ProjectListPolicy.class);
-
-
-	private NodeArchiveService nodeArchiveService;
-
-	public void setNodeArchiveService(NodeArchiveService nodeArchiveService) {
-		this.nodeArchiveService = nodeArchiveService;
-	}
 
 	
 	/**
@@ -80,13 +71,9 @@ public class ProjectListPolicy extends ProjectPolicy implements NodeServicePolic
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, ProjectModel.TYPE_DELIVERABLE_LIST, new JavaBehaviour(this, "onCreateNode"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, ProjectModel.TYPE_TASK_LIST, new JavaBehaviour(this, "onCreateNode"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME, ProjectModel.TYPE_TASK_LIST, new JavaBehaviour(this, "beforeDeleteNode"));
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME, ProjectModel.TYPE_TASK_LIST, new JavaBehaviour(this, "onDeleteNode"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME, ProjectModel.TYPE_BUDGET_LIST, new JavaBehaviour(this, "beforeDeleteNode"));
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME, ProjectModel.TYPE_BUDGET_LIST, new JavaBehaviour(this, "onDeleteNode"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME, ProjectModel.TYPE_EXPENSE_LIST, new JavaBehaviour(this, "beforeDeleteNode"));
-
 		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME, ProjectModel.ASPECT_BUDGET, new JavaBehaviour(this, "beforeDeleteNode"));
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME, ProjectModel.ASPECT_BUDGET, new JavaBehaviour(this, "onDeleteNode"));
 	}
 
 	@Override
@@ -236,20 +223,6 @@ public class ProjectListPolicy extends ProjectPolicy implements NodeServicePolic
 	}
 
 	@Override
-	public void onDeleteNode(ChildAssociationRef childRef, boolean isArchived) {
-		if (isArchived) {
-			NodeRef nodeRef = nodeArchiveService.getArchivedNode(childRef.getChildRef());
-			QName projectListType = nodeService.getType(nodeRef);
-			logger.debug("ProjectList policy delete type: " + projectListType + " nodeRef: " + nodeRef);
-
-			// we need to do it at the end
-			if (ProjectModel.TYPE_TASK_LIST.equals(projectListType)) {
-				queueNode(KEY_DELETED_TASK_LIST_ITEM, nodeRef);
-			}
-		}
-	}
-
-	@Override
 	public void beforeDeleteNode(NodeRef nodeRef) {
 		// we need to queue item before delete in order to have WUsed
 
@@ -266,6 +239,12 @@ public class ProjectListPolicy extends ProjectPolicy implements NodeServicePolic
 				policyBehaviourFilter.disableBehaviour(ProjectModel.ASPECT_BUDGET);
 
 				projectService.deleteTask(nodeRef);
+				
+				String workflowInstanceId = (String) nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_WORKFLOW_INSTANCE);
+				if (workflowInstanceId != null && !workflowInstanceId.isEmpty()) {
+					queueNode(KEY_DELETED_TASK_LIST_ITEM, new NodeRef("becpg", "wf", workflowInstanceId));
+				}
+				
 			} finally {
 				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_LOG_TIME_LIST);
 				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_DELIVERABLE_LIST);

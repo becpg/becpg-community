@@ -20,6 +20,10 @@ import fr.becpg.repo.repository.annotation.AlfType;
 @AlfQname(qname = "bcpg:allergenList")
 public class AllergenListDataItem extends AbstractManualVariantListDataItem {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6746076643301742367L;
 	private Double qtyPerc;
 	private Boolean voluntary = false;
 	private Boolean inVoluntary = false;

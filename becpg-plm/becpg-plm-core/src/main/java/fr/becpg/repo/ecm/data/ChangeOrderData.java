@@ -41,6 +41,10 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfQname(qname = "ecm:changeOrder")
 public class ChangeOrderData extends BeCPGDataObject {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4704853499333377270L;
 	private String code;
 	private ECOState ecoState;
 	private ChangeOrderType ecoType;

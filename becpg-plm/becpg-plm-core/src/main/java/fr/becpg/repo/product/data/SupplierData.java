@@ -11,6 +11,10 @@ import fr.becpg.repo.repository.model.StateableEntity;
 
 public class SupplierData extends BeCPGDataObject implements HierarchicalEntity, StateableEntity {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2554133542406623412L;
 	private String name;
 	private NodeRef hierarchy1;
 	private NodeRef hierarchy2;

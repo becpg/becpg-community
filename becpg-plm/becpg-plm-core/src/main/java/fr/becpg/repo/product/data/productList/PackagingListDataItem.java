@@ -20,6 +20,11 @@ import fr.becpg.repo.repository.annotation.MultiLevelDataList;
 @MultiLevelDataList
 public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem implements CompositionDataItem {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8724448903680191263L;
+
 	private Double qty = 0d;
 
 	private PackagingListUnit packagingListUnit = PackagingListUnit.Unknown;

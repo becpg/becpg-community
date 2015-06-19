@@ -19,6 +19,7 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  */
 package fr.becpg.repo.search;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -27,20 +28,24 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import org.alfresco.model.ApplicationModel;
 import org.alfresco.model.ContentModel;
 import org.alfresco.model.ForumModel;
+import org.alfresco.query.CannedQueryFactory;
+import org.alfresco.query.CannedQueryResults;
 import org.alfresco.query.PagingRequest;
 import org.alfresco.query.PagingResults;
+import org.alfresco.repo.model.filefolder.GetChildrenCannedQueryFactory;
+import org.alfresco.repo.node.getchildren.GetChildrenCannedQuery;
 import org.alfresco.repo.rule.RuleModel;
 import org.alfresco.repo.search.impl.parsers.FTSQueryException;
 import org.alfresco.repo.search.impl.querymodel.QueryModelException;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.security.permissions.PermissionCheckedValue.PermissionCheckedValueMixin;
 import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
-import org.alfresco.service.cmr.model.FileFolderService;
-import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.search.LimitBy;
@@ -50,10 +55,9 @@ import org.alfresco.service.cmr.search.SearchParameters;
 import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.FileFilterMode;
-import org.alfresco.util.FileFilterMode.Client;
 import org.alfresco.util.ISO9075;
 import org.alfresco.util.Pair;
+import org.alfresco.util.registry.NamedObjectRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -79,6 +83,8 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	private static final Log logger = LogFactory.getLog(BeCPGQueryBuilder.class);
 
 	private static final String DEFAULT_FIELD_NAME = "keywords";
+	
+	private static final String CANNED_QUERY_FILEFOLDER_LIST = "fileFolderGetChildrenCannedQueryFactory";
 
 	private static BeCPGQueryBuilder INSTANCE = null;
 
@@ -87,10 +93,15 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	private SearchService searchService;
 	@Autowired
 	private NamespaceService namespaceService;
-	@Autowired
-	@Qualifier("FileFolderService")
-	private FileFolderService fileFolderService;
+//	@Autowired
+//	@Qualifier("FileFolderService")
+//	private FileFolderService fileFolderService;
 
+	@Autowired
+	@Qualifier("fileFolderCannedQueryRegistry")
+	private NamedObjectRegistry<CannedQueryFactory<NodeRef>> cannedQueryRegistry;
+	
+	
 	@Autowired
 	private DictionaryService dictionaryService;
 	
@@ -147,7 +158,8 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			builder.searchService = INSTANCE.searchService;
 			builder.namespaceService = INSTANCE.namespaceService;
 			builder.defaultSearchTemplate = INSTANCE.defaultSearchTemplate;
-			builder.fileFolderService = INSTANCE.fileFolderService;
+	//		builder.fileFolderService = INSTANCE.fileFolderService;
+			builder.cannedQueryRegistry = INSTANCE.cannedQueryRegistry;
 			builder.nodeService = INSTANCE.nodeService;
 			builder.dictionaryService = INSTANCE.dictionaryService;
 			builder.tenantService = INSTANCE.tenantService;
@@ -950,14 +962,12 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	
-	public PagingResults<FileInfo> childFileFolders(PagingRequest pageRequest) {
+	public PagingResults<NodeRef> childFileFolders(PagingRequest pageRequest) {
 
 		StopWatch watch = new StopWatch();
 		watch.start();
 
-		PagingResults<FileInfo> pageOfNodeInfos = null;
-
-		FileFilterMode.setClient(Client.script);
+		PagingResults<NodeRef> pageOfNodeInfos = null;
 
 		List<Pair<QName, Boolean>> tmp = new LinkedList<>();
 
@@ -966,10 +976,15 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		}
 
 		try {
-			pageOfNodeInfos = fileFolderService.list(parentNodeRef, true, false, null, excludedTypes, tmp, pageRequest);
+			
+			if (type != null) {
+			
+				pageOfNodeInfos = internalList(parentNodeRef, Collections.singleton(type), excludedAspects, tmp, pageRequest);
+			} else if (!types.isEmpty()) {
+				pageOfNodeInfos = internalList(parentNodeRef, types, excludedAspects, tmp, pageRequest);
+			}
 
 		} finally {
-			FileFilterMode.clearClient();
 			watch.stop();
 
 			if (pageOfNodeInfos != null) {
@@ -989,6 +1004,76 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		}
 		return pageOfNodeInfos;
 	}
+	
+	
+	private PagingResults<NodeRef>  internalList(NodeRef rootNodeRef, Set<QName> searchTypeQNames, Set<QName> ignoreAspectQNames, List<Pair<QName, Boolean>> sortProps, PagingRequest pagingRequest) {
+	 	
+		// get canned query
+	        GetChildrenCannedQueryFactory getChildrenCannedQueryFactory = (GetChildrenCannedQueryFactory)cannedQueryRegistry.getNamedObject(CANNED_QUERY_FILEFOLDER_LIST);
+  
+	        GetChildrenCannedQuery cq = (GetChildrenCannedQuery)getChildrenCannedQueryFactory.getCannedQuery(rootNodeRef, null, Collections.singleton(ContentModel.ASSOC_CONTAINS), searchTypeQNames, ignoreAspectQNames, null, sortProps, pagingRequest);
+	        
+	         // execute canned query
+	        CannedQueryResults<NodeRef> results = cq.execute();
+	    	        
+	        return getPagingResults(pagingRequest,results);
+	}
+	
+	 private PagingResults<NodeRef> getPagingResults(PagingRequest pagingRequest, final CannedQueryResults<NodeRef> results)
+	    {
+		  
+	       final   List<NodeRef> nodeRefs;
+	        if (results.getPageCount() > 0)
+	        {
+	            nodeRefs = results.getPages().get(0);
+	        }
+	        else
+	        {
+	            nodeRefs = Collections.emptyList();
+	        }
+	        
+	        // set total count
+	        final Pair<Integer, Integer> totalCount;
+	        if (pagingRequest.getRequestTotalCountMax() > 0)
+	        {
+	            totalCount = results.getTotalResultCount();
+	        }
+	        else
+	        {
+	            totalCount = null;
+	        }
+	        
+	      
+	        PermissionCheckedValueMixin.create(nodeRefs);
+	        
+	        return new PagingResults<NodeRef>()
+	        {
+	            @Override
+	            public String getQueryExecutionId()
+	            {
+	                return results.getQueryExecutionId();
+	            }
+	            @Override
+	            public List<NodeRef> getPage()
+	            {
+	            	if(type != null && !BeCPGModel.TYPE_ENTITYLIST_ITEM.equals(type)) {
+	            		return nodeRefs.stream().filter(n -> nodeService.getType(n).equals(type)).collect(Collectors.toList());
+	            	}
+	                return nodeRefs ;
+	            }
+	            @Override
+	            public boolean hasMoreItems()
+	            {
+	                return results.hasMoreItems();
+	            }
+	            @Override
+	            public Pair<Integer, Integer> getTotalResultCount()
+	            {
+	                return totalCount;
+	            }
+	        };        
+	    }
+	
 
 	@Override
 	public String toString() {

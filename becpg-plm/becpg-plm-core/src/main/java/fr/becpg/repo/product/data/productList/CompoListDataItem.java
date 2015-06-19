@@ -23,6 +23,11 @@ import java.util.Objects;
 public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  implements CompositeDataItem<CompoListDataItem>, CompositionDataItem {
 
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6389166205836523748L;
+
 	private Integer depthLevel;
 	
 	private Double qty = 0d;

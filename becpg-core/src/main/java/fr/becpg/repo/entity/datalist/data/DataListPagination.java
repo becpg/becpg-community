@@ -17,11 +17,9 @@
  ******************************************************************************/
 package fr.becpg.repo.entity.datalist.data;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import org.alfresco.query.PagingResults;
-import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.util.Pair;
 
@@ -107,14 +105,9 @@ public class DataListPagination {
 		return list;
 	}
 
-	public List<NodeRef> paginate(PagingResults<FileInfo> pageOfNodeInfos) {
-   		    List<FileInfo> nodeInfos = pageOfNodeInfos.getPage();
-	        int size = nodeInfos.size();
-	        List<NodeRef> ret = new LinkedList<>();
-		for (FileInfo nodeInfo : nodeInfos) {
-			ret.add(nodeInfo.getNodeRef());
-		}
-	        
+	public List<NodeRef> paginate(PagingResults<NodeRef> pageOfNodeInfos) {
+   		    List<NodeRef> ret = pageOfNodeInfos.getPage();
+
 	        Pair<Integer, Integer> totalResultCount = pageOfNodeInfos.getTotalResultCount();
 	        if (totalResultCount != null)
 	        {

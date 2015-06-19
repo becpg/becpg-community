@@ -28,7 +28,6 @@ import javax.annotation.Resource;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
-import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -37,7 +36,6 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
 import fr.becpg.model.QualityModel;
-import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.quality.data.ControlPlanData;
 import fr.becpg.repo.quality.data.ControlPointData;
 import fr.becpg.repo.quality.data.QualityControlData;
@@ -59,8 +57,7 @@ public class QualityControlTest extends PLMBaseTestCase {
 
 	@Resource
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
-	@Resource
-	private EntityListDAO entityListDAO;
+
 
 	private NodeRef controlStepNodeRef;
 	private NodeRef methodNodeRef;
@@ -194,7 +191,8 @@ public class QualityControlTest extends PLMBaseTestCase {
 				// check controlList
 				//List<ControlListDataItem> controlList = (List)alfrescoRepository.loadDataList(qualityControlNodeRef, QualityModel.TYPE_CONTROL_LIST, QualityModel.TYPE_CONTROL_LIST);
 				NodeRef controlListNodeRef = entityListDAO.getList(entityListDAO.getListContainer(qualityControlNodeRef), "Analyses");
-				List<FileInfo> fileInfos = fileFolderService.listFiles(controlListNodeRef);
+				
+				List<NodeRef> fileInfos = entityListDAO.getListItems(controlListNodeRef, QualityModel.TYPE_CONTROL_LIST);
 				logger.info("fileInfos.size() " + fileInfos.size());
 				
 				
@@ -203,8 +201,8 @@ public class QualityControlTest extends PLMBaseTestCase {
 
 				// fill controlList (sample1)
 				logger.info("fill controlList");
-				for(FileInfo fileInfo : fileInfos){
-					ControlListDataItem cl = (ControlListDataItem)alfrescoRepository.findOne(fileInfo.getNodeRef());
+				for(NodeRef fileInfo : fileInfos){
+					ControlListDataItem cl = (ControlListDataItem)alfrescoRepository.findOne(fileInfo);
 					switch (cl.getSampleId()) {
 						case "12247904/1":
 							cl.setState(QualityControlState.Compliant);

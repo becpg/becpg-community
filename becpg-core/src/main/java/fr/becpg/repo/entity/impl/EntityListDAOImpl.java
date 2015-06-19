@@ -23,13 +23,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.query.PagingRequest;
-import org.alfresco.query.PagingResults;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.model.FileFolderService;
@@ -212,46 +210,13 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().addSort(sortMap).parent(listNodeRef);
 
-		if (listQNameFilter != null) {
-			Collection<QName> qnames = entityDictionaryService.getSubTypes(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-			for (QName qname : qnames) {
-				if (!qname.equals(listQNameFilter)) {
-
-					if (logger.isDebugEnabled()) {
-						logger.debug("Add to ignore :" + qname);
-					}
-					queryBuilder.excludeType(qname);
-
-				}
-			}
+		if(listQNameFilter != null ){
+			queryBuilder.ofType(listQNameFilter);
+		} else {
+			queryBuilder.ofType(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 		}
-
-		List<NodeRef> ret = new LinkedList<>();
-
-		String queryExecutionId = null;
-		int page = 0;
-		boolean nextPage = true;
-		while (nextPage) {
-			int skipOffset = (page - 1) * RepoConsts.MAX_RESULTS_1000;
-			int requestTotalCountMax = skipOffset + RepoConsts.MAX_RESULTS_1000;
-
-			PagingRequest pageRequest = new PagingRequest(skipOffset, RepoConsts.MAX_RESULTS_1000, queryExecutionId);
-			pageRequest.setRequestTotalCountMax(requestTotalCountMax);
-
-			PagingResults<FileInfo> pageOfNodeInfos = queryBuilder.childFileFolders(pageRequest);
-
-			List<FileInfo> nodeInfos = pageOfNodeInfos.getPage();
-			int size = nodeInfos.size();
-
-			for (FileInfo nodeInfo : nodeInfos) {
-				ret.add(nodeInfo.getNodeRef());
-			}
-			nextPage = pageOfNodeInfos.hasMoreItems();
-			queryExecutionId = pageOfNodeInfos.getQueryExecutionId();
-
-		}
-
-		return ret;
+	   
+		return queryBuilder.childFileFolders(new PagingRequest(5000, null)).getPage();		
 
 	}
 

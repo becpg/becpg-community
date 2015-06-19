@@ -394,7 +394,9 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 			for (AllergenListDataItem allergenListDataItem : formulatedProduct.getAllergenList()) {
 				
 				if(allergenListDataItem.getInVoluntary() || allergenListDataItem.getVoluntary()){
-					logger.info("### allergène présent " + nodeService.getProperty(allergenListDataItem.getAllergen(), ContentModel.PROP_NAME));
+					if(logger.isDebugEnabled()){
+						logger.debug("### allergène présent " + nodeService.getProperty(allergenListDataItem.getAllergen(), ContentModel.PROP_NAME));
+					}
 					
 					for (AllergenListDataItem al : productSpecification.getAllergenList()) {											
 						
@@ -407,9 +409,9 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 								isAllergenAllowed = true;
 							}							
 						}
-						
-						logger.info("### allergène présent " + nodeService.getProperty(al.getAllergen(), ContentModel.PROP_NAME) + " is Allowed " + isAllergenAllowed);
-						
+						if(logger.isDebugEnabled()){
+							logger.debug("### allergène présent " + nodeService.getProperty(al.getAllergen(), ContentModel.PROP_NAME) + " is Allowed " + isAllergenAllowed);
+						}
 						if(!isAllergenAllowed){
 							String message = I18NUtil.getMessage(MESSAGE_FORBIDDEN_ALLERGEN, nodeService.getProperty(allergenListDataItem.getAllergen(), ContentModel.PROP_NAME));
 							formulatedProduct.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, new ArrayList<NodeRef>()));

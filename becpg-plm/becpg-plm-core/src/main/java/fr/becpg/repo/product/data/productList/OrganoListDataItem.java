@@ -16,6 +16,11 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfQname(qname = "bcpg:organoList")
 public class OrganoListDataItem extends BeCPGDataObject {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6048458461427271748L;
+
 	private String value;
 	
 	private NodeRef organo;

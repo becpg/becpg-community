@@ -21,6 +21,11 @@ import fr.becpg.repo.repository.model.AbstractEffectiveDataItem;
 @AlfQname(qname = "bcpg:priceList")
 public class PriceListDataItem extends AbstractEffectiveDataItem{
 		
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5767191493924794423L;
+
 	private Double value = 0d;
 	
 	private String unit;

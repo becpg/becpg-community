@@ -18,6 +18,11 @@ import fr.becpg.repo.repository.model.AbstractManualDataItem;
 public class IngLabelingListDataItem extends AbstractManualDataItem {
 
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3043212457177647400L;
+
 	private NodeRef grp;
 	
 	private MLText value;
