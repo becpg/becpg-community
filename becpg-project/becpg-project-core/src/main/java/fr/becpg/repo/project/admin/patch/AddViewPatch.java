@@ -128,7 +128,6 @@ public class AddViewPatch extends AbstractBeCPGPatch {
 							nodeService.getTargetAssocs(entityNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF).isEmpty()){
 						logger.debug("Create views on entity " + entityNodeRef);
 						entityTplService.createView(entityNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
-						entityTplService.createView(entityNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_REPORTS);
 					}					
 				} else {
 					logger.warn("entityNodeRef doesn't exist : " + entityNodeRef);
