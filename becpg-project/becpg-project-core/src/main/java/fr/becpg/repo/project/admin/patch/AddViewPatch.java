@@ -126,7 +126,7 @@ public class AddViewPatch extends AbstractBeCPGPatch {
 				if (nodeService.exists(entityNodeRef)) {
 					if(nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL) ||
 							nodeService.getTargetAssocs(entityNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF).isEmpty()){
-						logger.info("Create views on entity " + entityNodeRef);
+						logger.debug("Create views on entity " + entityNodeRef);
 						entityTplService.createView(entityNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 					}					
 				} else {
