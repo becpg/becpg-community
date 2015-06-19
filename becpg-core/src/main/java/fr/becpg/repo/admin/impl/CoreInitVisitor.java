@@ -199,9 +199,7 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 		case RepoConsts.PATH_REPORTS:
 		case RepoConsts.PATH_SECURITY:
 		case RepoConsts.PATH_ICON:
-			if (!nodeService.hasAspect(folderNodeRef, BeCPGModel.ASPECT_SYSTEM_FOLDER)) {
-				nodeService.addAspect(folderNodeRef, BeCPGModel.ASPECT_SYSTEM_FOLDER, null);
-			}
+			addSystemFolderAspect(folderNodeRef);
 			break;
 		default:
 			break;
