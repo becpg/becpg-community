@@ -100,7 +100,7 @@ public class DataListPagination {
 			fullListSize = list.size();
 
 			// Pagination
-			if (fullListSize > 0) {
+			if (fullListSize > 0 && (fullListSize >= Math.min(getPage() * getPageSize(), fullListSize))) {
 				list = list.subList(Math.max((getPage() - 1) * getPageSize(), 0), Math.min(getPage() * getPageSize(), fullListSize));
 			}
 		}
