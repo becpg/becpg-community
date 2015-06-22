@@ -29,6 +29,10 @@ import java.io.Serializable;
  */
 public abstract class BaseObject implements Serializable {    
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1281409754709493657L;
 	public abstract String toString();
     public abstract boolean equals(Object o);
     public abstract int hashCode();

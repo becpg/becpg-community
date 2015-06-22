@@ -33,7 +33,7 @@ import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
  */
 public class ScoreFormulationHandler extends FormulationBaseHandler<ProjectData> {
 
-	private static Log logger = LogFactory.getLog(ScoreFormulationHandler.class);
+	private static final Log logger = LogFactory.getLog(ScoreFormulationHandler.class);
 
 	private static final int TOTAL_WEIGHT = 100;
 

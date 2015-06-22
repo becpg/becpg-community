@@ -28,7 +28,7 @@ import fr.becpg.repo.project.data.projectList.ActivityEvent;
  */
 public interface ProjectNotificationService {
 
-	public void notifyTaskStateChanged(NodeRef projectNodeRef, NodeRef taskNodeRef, String beforeState, String afterState);	
-	public void notifyComment(NodeRef commentNodeRef, ActivityEvent activityEvent, NodeRef projectNodeRef, NodeRef taskNodeRef, NodeRef deliverableNodeRef);
+	void notifyTaskStateChanged(NodeRef projectNodeRef, NodeRef taskNodeRef, String beforeState, String afterState);
+	void notifyComment(NodeRef commentNodeRef, ActivityEvent activityEvent, NodeRef projectNodeRef, NodeRef taskNodeRef, NodeRef deliverableNodeRef);
 	
 }

@@ -17,7 +17,7 @@ import fr.becpg.repo.variant.model.VariantData;
  *
  */
 public class PackagingData {
-	private Map<NodeRef, VariantPackagingData> variants = new HashMap<>();
+	private final Map<NodeRef, VariantPackagingData> variants = new HashMap<>();
 
 	private Collection<VariantPackagingData> getVariantPackagingData(List<NodeRef> variantNodeRefs) {
 		if (variantNodeRefs == null || variantNodeRefs.isEmpty()) {

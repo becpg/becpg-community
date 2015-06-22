@@ -34,7 +34,7 @@ import fr.becpg.test.project.AbstractProjectTestCase;
  */
 public class ProjectSubmitTaskTest extends AbstractProjectTestCase {	
 
-	private static Log logger = LogFactory.getLog(ProjectSubmitTaskTest.class);
+	private static final Log logger = LogFactory.getLog(ProjectSubmitTaskTest.class);
 
 
 	@Test
@@ -137,7 +137,7 @@ public class ProjectSubmitTaskTest extends AbstractProjectTestCase {
 				List<WorkflowTask> tasks = workflowService.queryTasks(taskQuery, false);
 				logger.debug("tasks in progress size: " + tasks.size());
 				for (WorkflowTask task : tasks) {
-					Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+					Map<QName, Serializable> properties = new HashMap<>();
 					properties.put(WorkflowModel.PROP_COMMENT, "Comment submited by WF!");
 					//properties.put(PROP_NPD_ACTION, "createNewProduct");
 					workflowService.updateTask(task.getId(), properties, null, null);

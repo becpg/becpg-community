@@ -16,7 +16,6 @@ import org.apache.commons.logging.LogFactory;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
-import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * The Class CodePolicy.
@@ -27,7 +26,7 @@ public class CodePolicy extends AbstractBeCPGPolicy implements NodeServicePolici
 
 
 
-	private static Log logger = LogFactory.getLog(CodePolicy.class);
+	private static final Log logger = LogFactory.getLog(CodePolicy.class);
 
 	private AutoNumService autoNumService;
 

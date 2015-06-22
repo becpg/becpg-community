@@ -47,7 +47,7 @@ import fr.becpg.tools.http.RetrieveUserCommand;
  */
 public class AlfrescoUserDetailsService implements UserDetailsService {
 
-	private static Log logger = LogFactory.getLog(AlfrescoUserDetailsService.class);
+	private static final Log logger = LogFactory.getLog(AlfrescoUserDetailsService.class);
 
 	InstanceManager instanceManager;
 
@@ -68,7 +68,7 @@ public class AlfrescoUserDetailsService implements UserDetailsService {
 
 				String presentedLogin = UserNameHelper.extractLogin(username);
 
-				List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+				List<GrantedAuthority> authorities = new ArrayList<>();
 				try (InputStream in = retrieveUserCommand.runCommand(client, presentedLogin)) {
 
 					JsonFactory jsonFactory = new JsonFactory();

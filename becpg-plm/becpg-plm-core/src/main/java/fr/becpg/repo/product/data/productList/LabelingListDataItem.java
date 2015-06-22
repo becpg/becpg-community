@@ -30,6 +30,10 @@ import fr.becpg.repo.repository.annotation.AlfType;
 @AlfQname(qname = "pack:labelingList")
 public class LabelingListDataItem extends AbstractManualDataItem {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4453720395817133765L;
 	private NodeRef label;
 	private String type;	
 	private String position;

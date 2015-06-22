@@ -36,7 +36,7 @@ import fr.becpg.test.utils.TestWebscriptExecuters.Response;
 public class SearchWebScriptTest extends fr.becpg.test.PLMBaseTestCase {
 
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(SearchWebScriptTest.class);
+	private static final Log logger = LogFactory.getLog(SearchWebScriptTest.class);
 
 	@Test
 	public void testSearch() throws IOException {

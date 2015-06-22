@@ -34,6 +34,11 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfQname(qname = "sec:aclEntry")
 public class ACLEntryDataItem extends BeCPGDataObject {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -9182353002403432757L;
+
 	private String propName;
 
 	private String aclPermission;

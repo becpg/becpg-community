@@ -34,7 +34,7 @@ import fr.becpg.repo.variant.filters.VariantFilters;
 
 public class CompositionQtyCalculatingFormulationHandler extends FormulationBaseHandler<ProductData> {
 
-	private static Log logger = LogFactory.getLog(CompositionQtyCalculatingFormulationHandler.class);
+	private static final Log logger = LogFactory.getLog(CompositionQtyCalculatingFormulationHandler.class);
 
 	private NodeService nodeService;
 	
@@ -85,7 +85,7 @@ public class CompositionQtyCalculatingFormulationHandler extends FormulationBase
 				}
 
 				// Take in account yield that is defined on component
-				Double qty = null;
+				Double qty;
 				if (component.isLeaf()) {
 					qty = qtyInKg * 100 / FormulationHelper.getYield(component.getData());
 				} else {

@@ -16,7 +16,12 @@ import fr.becpg.repo.product.data.constraints.DeclarationType;
 //TODO voir pour faire mieux avec les heritages Composite<LabelingComponent>
 public class CompositeLabeling extends AbstractLabelingComponent {
 
-	private Map<NodeRef, AbstractLabelingComponent> ingList = new LinkedHashMap<NodeRef, AbstractLabelingComponent>();
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7903326038199131582L;
+
+	private Map<NodeRef, AbstractLabelingComponent> ingList = new LinkedHashMap<>();
 
 	private Double qtyRMUsed = 0d;
 	
@@ -104,13 +109,13 @@ public class CompositeLabeling extends AbstractLabelingComponent {
 	}
 
 	private void print(StringBuilder sb, String prefix, boolean isTail) {
-		sb.append(prefix + (isTail ? "└──[" : "├──[")+ (getLegalName(I18NUtil.getContentLocaleLang())==null ? "root" : getLegalName(I18NUtil.getContentLocaleLang()))+" - "+getQty()+" ("+getQtyRMUsed()+", vol: "+getVolumeQtyPerc()+") "+(declarationType!=null ? declarationType.toString():"")+"]\n");
+		sb.append(prefix).append(isTail ? "└──[" : "├──[").append(getLegalName(I18NUtil.getContentLocaleLang()) == null ? "root" : getLegalName(I18NUtil.getContentLocaleLang())).append(" - ").append(getQty()).append(" (").append(getQtyRMUsed()).append(", vol: ").append(getVolumeQtyPerc()).append(") ").append(declarationType != null ? declarationType.toString() : "").append("]\n");
         for (Iterator<AbstractLabelingComponent> iterator = ingList.values().iterator(); iterator.hasNext(); ) {
         	AbstractLabelingComponent labelingComponent =  iterator.next();
         	if(labelingComponent  instanceof CompositeLabeling) {
 				((CompositeLabeling)labelingComponent).print(sb, prefix + (isTail ? "    " : "│   "), !iterator.hasNext());
 			} else {
-				sb.append(prefix + (isTail ? "    " : "│   ") +(!iterator.hasNext() ? "└──[" : "├──[")+ labelingComponent.getLegalName(I18NUtil.getContentLocaleLang())+" - "+labelingComponent.getQty() +" ( vol : "+labelingComponent.getVolumeQtyPerc()+") ]\n");
+				sb.append(prefix).append(isTail ? "    " : "│   ").append(!iterator.hasNext() ? "└──[" : "├──[").append(labelingComponent.getLegalName(I18NUtil.getContentLocaleLang())).append(" - ").append(labelingComponent.getQty()).append(" ( vol : ").append(labelingComponent.getVolumeQtyPerc()).append(") ]\n");
 			      
 			}
  

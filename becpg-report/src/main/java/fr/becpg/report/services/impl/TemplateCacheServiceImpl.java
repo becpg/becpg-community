@@ -45,9 +45,9 @@ public class TemplateCacheServiceImpl implements TemplateCacheService {
 
 	private static final Log logger = LogFactory.getLog(TemplateCacheServiceImpl.class);
 
-	private static int NUMBER_IN_MEMORY = 10000;
+	private static final int NUMBER_IN_MEMORY = 10000;
 	
-	private static TemplateCacheService INSTANCE = new TemplateCacheServiceImpl();
+	private static final TemplateCacheService INSTANCE = new TemplateCacheServiceImpl();
 		
 	public static TemplateCacheService getInstance() {
 		return INSTANCE;
@@ -57,13 +57,13 @@ public class TemplateCacheServiceImpl implements TemplateCacheService {
 		super();
 	}
 
-	private Map<String, TemplateCacheEl> cache = new ConcurrentHashMap<String, TemplateCacheServiceImpl.TemplateCacheEl>();
+	private final Map<String, TemplateCacheEl> cache = new ConcurrentHashMap<>();
 
 	private class TemplateCacheEl {
 
 		private Path backedFile;
 		
-		private long timeStamp = Calendar.getInstance().getTimeInMillis();
+		private final long timeStamp = Calendar.getInstance().getTimeInMillis();
 
 		public TemplateCacheEl(String templateId) throws IOException {
 			super();

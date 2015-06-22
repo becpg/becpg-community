@@ -49,7 +49,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 @Service("advSearchService")
 public class AdvSearchServiceImpl implements AdvSearchService {
 
-	private static Log logger = LogFactory.getLog(AdvSearchServiceImpl.class);
+	private static final Log logger = LogFactory.getLog(AdvSearchServiceImpl.class);
 
 	@Autowired
 	private NodeService nodeService;
@@ -157,7 +157,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 								// no need to add the term
 								if (!propValue.isEmpty()) {
 
-									String from = "", to = "";
+									String from, to;
 									int sepindex = propValue.indexOf("|");
 									if (propName.endsWith("-date-range")) {
 										// date range found

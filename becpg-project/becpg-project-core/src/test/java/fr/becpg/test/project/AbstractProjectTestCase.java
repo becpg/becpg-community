@@ -19,7 +19,7 @@ package fr.becpg.test.project;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -31,7 +31,6 @@ import javax.annotation.Resource;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
-import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.workflow.WorkflowService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -75,7 +74,7 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 	protected NodeRef PROJECT_HIERARCHY2_FISH_REF;
 	protected NodeRef PROJECT_HIERARCHY2_CRUSTACEAN_REF;
 
-	protected List<NodeRef> taskLegends = new ArrayList<NodeRef>();
+	protected final List<NodeRef> taskLegends = new ArrayList<>();
 
 	@Resource(name = "WorkflowService")
 	protected WorkflowService workflowService;
@@ -97,7 +96,7 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 	protected NodeRef rawMaterialNodeRef;
 	protected ResourceCost resourceCost;
 
-	private static Log logger = LogFactory.getLog(AbstractProjectTestCase.class);
+	private static final Log logger = LogFactory.getLog(AbstractProjectTestCase.class);
 
 	private void initTasks() {
 
@@ -108,7 +107,7 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 		String[] taskLegendNames = { "TaskLegend1", "TaskLegend2", "TaskLegend3" };
 		for (String taskLegendName : taskLegendNames) {
 			if (nodeService.getChildByName(taskLegendsFolder, ContentModel.ASSOC_CONTAINS, taskLegendName) == null) {
-				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				Map<QName, Serializable> properties = new HashMap<>();
 				properties.put(ContentModel.PROP_NAME, taskLegendName);
 				nodeService.createNode(taskLegendsFolder, ContentModel.ASSOC_CONTAINS,
 						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
@@ -120,7 +119,7 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 		NodeRef criteriaFolder = entitySystemService.getSystemEntityDataList(listsFolder, ProjectRepoConsts.PATH_SCORE_CRITERIA);
 		for (int i = 0; i < 5; i++) {
 			if (nodeService.getChildByName(criteriaFolder, ContentModel.ASSOC_CONTAINS, "Criterion" + i) == null) {
-				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				Map<QName, Serializable> properties = new HashMap<>();
 				properties.put(BeCPGModel.PROP_LV_VALUE, "Criterion" + i);
 				properties.put(ContentModel.PROP_NAME, "Criterion" + i);
 				nodeService.createNode(criteriaFolder, ContentModel.ASSOC_CONTAINS,
@@ -132,7 +131,7 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 		// resourceCost
 		NodeRef resourceCostsFolder = entitySystemService.getSystemEntityDataList(listsFolder, ProjectRepoConsts.PATH_RESOURCE_COSTS);
 		if (nodeService.getChildByName(resourceCostsFolder, ContentModel.ASSOC_CONTAINS, "ResourceCost") == null) {
-			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+			Map<QName, Serializable> properties = new HashMap<>();
 			properties.put(ContentModel.PROP_NAME, "ResourceCost");
 			properties.put(ProjectModel.PROP_RESOURCE_COST_VALUE, RESOURCE_COST_VALUE);
 			properties.put(ProjectModel.PROP_RESOURCE_COST_BILL_RATE, RESOURCE_COST_BILL_RATE);
@@ -144,12 +143,7 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 
 	@Override
 	protected boolean shouldInit() {
-		if (super.shouldInit()) {
-			return true;
-		} else {
-			
-			return  hierarchyService.getHierarchyByPath(HIERARCHY_PROJECT_PATH, null, HIERARCHY1_SEA_FOOD) == null;
-		}
+		return super.shouldInit() || hierarchyService.getHierarchyByPath(HIERARCHY_PROJECT_PATH, null, HIERARCHY1_SEA_FOOD) == null;
 	}
 
 	@Override
@@ -207,24 +201,24 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 				// taskLegends
 				NodeRef npdListsFolder = entitySystemService.getSystemEntity(systemFolderNodeRef, ProjectRepoConsts.PATH_PROJECT_LISTS);
 				NodeRef taskLegendFolder = entitySystemService.getSystemEntityDataList(npdListsFolder, ProjectRepoConsts.PATH_TASK_LEGENDS);
-				List<FileInfo> taskLegendsFileInfo = fileFolderService.listFiles(taskLegendFolder);
-				for (FileInfo fileInfo : taskLegendsFileInfo) {
-					taskLegends.add(fileInfo.getNodeRef());
+				List<NodeRef> taskLegendsFileInfo =  entityListDAO.getListItems(taskLegendFolder, ProjectModel.TYPE_TASK_LEGEND );
+				for (NodeRef fileInfo : taskLegendsFileInfo) {
+					taskLegends.add(fileInfo);
 				}
 
 				// resourceCost
 				NodeRef resourceCostFolder = entitySystemService.getSystemEntityDataList(npdListsFolder, ProjectRepoConsts.PATH_RESOURCE_COSTS);
-				List<FileInfo> resourceCostsFileInfo = fileFolderService.listFiles(resourceCostFolder);
-				resourceCost = (ResourceCost) alfrescoRepository.findOne(resourceCostsFileInfo.get(0).getNodeRef());
+				List<NodeRef> resourceCostsFileInfo =  entityListDAO.getListItems(resourceCostFolder,ProjectModel.TYPE_RESOURCE_COST);
+				resourceCost = (ResourceCost) alfrescoRepository.findOne(resourceCostsFileInfo.get(0));
 
 				userOne = BeCPGTestHelper.createUser(BeCPGTestHelper.USER_ONE);
 				userTwo = BeCPGTestHelper.createUser(BeCPGTestHelper.USER_TWO);
 
 				groupOne = BeCPGTestHelper.createGroup("groupOne", BeCPGTestHelper.USER_TWO);
 
-				assigneesOne = new ArrayList<NodeRef>();
+				assigneesOne = new ArrayList<>();
 				assigneesOne.add(userOne);
-				assigneesTwo = new ArrayList<NodeRef>();
+				assigneesTwo = new ArrayList<>();
 				assigneesTwo.add(groupOne);
 
 				return null;
@@ -255,7 +249,7 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 				assertNotNull(projectTplData.getNodeRef());
 				NodeRef subFolder = nodeService.getChildByName(projectTplNodeRef, ContentModel.ASSOC_CONTAINS, "SubFolder");
 				if (subFolder == null) {
-					Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+					Map<QName, Serializable> properties = new HashMap<>();
 					properties.put(ContentModel.PROP_NAME, "SubFolder");
 					subFolder = nodeService.createNode(projectTplNodeRef, ContentModel.ASSOC_CONTAINS,
 							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "SubFolder"), ContentModel.TYPE_FOLDER, properties)
@@ -264,7 +258,7 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 
 				NodeRef doc1NodeRef = nodeService.getChildByName(subFolder, ContentModel.ASSOC_CONTAINS, "Doc1");
 				if (doc1NodeRef == null) {
-					Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+					Map<QName, Serializable> properties = new HashMap<>();
 					properties.put(ContentModel.PROP_NAME, "Doc1");
 					doc1NodeRef = nodeService.createNode(subFolder, ContentModel.ASSOC_CONTAINS,
 							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "Doc1"), ContentModel.TYPE_CONTENT, properties).getChildRef();
@@ -272,14 +266,14 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 
 				NodeRef doc2NodeRef = nodeService.getChildByName(subFolder, ContentModel.ASSOC_CONTAINS, "Doc2");
 				if (doc2NodeRef == null) {
-					Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+					Map<QName, Serializable> properties = new HashMap<>();
 					properties.put(ContentModel.PROP_NAME, "Doc2");
 					doc2NodeRef = nodeService.createNode(subFolder, ContentModel.ASSOC_CONTAINS,
 							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "Doc2"), ContentModel.TYPE_CONTENT, properties).getChildRef();
 				}
 
 				// create datalists
-				List<TaskListDataItem> taskList = new LinkedList<TaskListDataItem>();
+				List<TaskListDataItem> taskList = new LinkedList<>();
 
 				taskList.add(new TaskListDataItem(null, "task1", false, 2, null, assigneesOne, taskLegends.get(0), "activiti$projectAdhoc"));
 				taskList.add(new TaskListDataItem(null, "task2", false, 2, null, assigneesOne, taskLegends.get(0), "activiti$projectAdhoc"));
@@ -290,7 +284,7 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 				projectTplData.setTaskList(taskList);
 
 				// create scoreList
-				List<ScoreListDataItem> scoreList = new LinkedList<ScoreListDataItem>();
+				List<ScoreListDataItem> scoreList = new LinkedList<>();
 				for (int i = 0; i < 5; i++) {
 					scoreList.add(new ScoreListDataItem(null, "Criterion" + i, i * 10, null));
 				}
@@ -304,36 +298,36 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 
 				// update a second time to manage prevTask
 
-				List<NodeRef> prevTasks = new ArrayList<NodeRef>();
+				List<NodeRef> prevTasks = new ArrayList<>();
 
 				prevTasks.add(projectTplData.getTaskList().get(0).getNodeRef());
 				projectTplData.getTaskList().get(1).setPrevTasks(prevTasks);
 
-				prevTasks = new ArrayList<NodeRef>();
+				prevTasks = new ArrayList<>();
 				prevTasks.add(projectTplData.getTaskList().get(1).getNodeRef());
 				projectTplData.getTaskList().get(2).setPrevTasks(prevTasks);
 
-				prevTasks = new ArrayList<NodeRef>();
+				prevTasks = new ArrayList<>();
 				prevTasks.add(projectTplData.getTaskList().get(2).getNodeRef());
 				projectTplData.getTaskList().get(3).setPrevTasks(prevTasks);
 
-				prevTasks = new ArrayList<NodeRef>();
+				prevTasks = new ArrayList<>();
 				prevTasks.add(projectTplData.getTaskList().get(2).getNodeRef());
 				projectTplData.getTaskList().get(4).setPrevTasks(prevTasks);
 
-				prevTasks = new ArrayList<NodeRef>();
+				prevTasks = new ArrayList<>();
 				prevTasks.add(projectTplData.getTaskList().get(3).getNodeRef());
 				prevTasks.add(projectTplData.getTaskList().get(4).getNodeRef());
 				projectTplData.getTaskList().get(5).setPrevTasks(prevTasks);
 
-				List<DeliverableListDataItem> deliverableList = new LinkedList<DeliverableListDataItem>();
-				deliverableList.add(new DeliverableListDataItem(null, Arrays.asList(projectTplData.getTaskList().get(0).getNodeRef()), null,
+				List<DeliverableListDataItem> deliverableList = new LinkedList<>();
+				deliverableList.add(new DeliverableListDataItem(null, Collections.singletonList(projectTplData.getTaskList().get(0).getNodeRef()), null,
 						"Deliveray descr 1", 100, doc1NodeRef));
-				deliverableList.add(new DeliverableListDataItem(null, Arrays.asList(projectTplData.getTaskList().get(1).getNodeRef()), null,
+				deliverableList.add(new DeliverableListDataItem(null, Collections.singletonList(projectTplData.getTaskList().get(1).getNodeRef()), null,
 						"Deliveray descr 2.1", 30, doc2NodeRef));
-				deliverableList.add(new DeliverableListDataItem(null, Arrays.asList(projectTplData.getTaskList().get(1).getNodeRef()), null,
+				deliverableList.add(new DeliverableListDataItem(null, Collections.singletonList(projectTplData.getTaskList().get(1).getNodeRef()), null,
 						"Deliveray descr 2.2", 70, doc1NodeRef));
-				deliverableList.add(new DeliverableListDataItem(null, Arrays.asList(projectTplData.getTaskList().get(2).getNodeRef()), null,
+				deliverableList.add(new DeliverableListDataItem(null, Collections.singletonList(projectTplData.getTaskList().get(2).getNodeRef()), null,
 						"Deliveray descr 3", 100, null));
 				projectTplData.setDeliverableList(deliverableList);
 
@@ -387,7 +381,7 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 				projectData.setParentNodeRef(getTestFolderNodeRef());
 
 				// multi level tasks
-				List<TaskListDataItem> taskList = new LinkedList<TaskListDataItem>();
+				List<TaskListDataItem> taskList = new LinkedList<>();
 				taskList.add(new TaskListDataItem(null, "task1", false, 2, null, assigneesOne, taskLegends.get(0), "activiti$projectAdhoc"));
 				taskList.add(new TaskListDataItem(null, "task2", false, 2, null, assigneesOne, taskLegends.get(0), "activiti$projectAdhoc"));
 				taskList.get(1).setParent(taskList.get(0));
@@ -403,17 +397,17 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 				projectData = (ProjectData) alfrescoRepository.save(projectData);
 				// add aspect entityTpl
 
-				List<NodeRef> prevTasks = new ArrayList<NodeRef>();
+				List<NodeRef> prevTasks;
 
-				prevTasks = new ArrayList<NodeRef>();
+				prevTasks = new ArrayList<>();
 				prevTasks.add(projectData.getTaskList().get(1).getNodeRef());
 				projectData.getTaskList().get(2).setPrevTasks(prevTasks);
 
-				prevTasks = new ArrayList<NodeRef>();
+				prevTasks = new ArrayList<>();
 				prevTasks.add(projectData.getTaskList().get(2).getNodeRef());
 				projectData.getTaskList().get(4).setPrevTasks(prevTasks);
 
-				prevTasks = new ArrayList<NodeRef>();
+				prevTasks = new ArrayList<>();
 				prevTasks.add(projectData.getTaskList().get(4).getNodeRef());
 				projectData.getTaskList().get(5).setPrevTasks(prevTasks);
 

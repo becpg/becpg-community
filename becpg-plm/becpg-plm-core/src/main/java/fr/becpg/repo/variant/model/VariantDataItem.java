@@ -25,8 +25,8 @@ import fr.becpg.repo.repository.RepositoryEntity;
 
 public interface VariantDataItem extends RepositoryEntity {
 
-	public List<NodeRef> getVariants();
+	List<NodeRef> getVariants();
 
-	public void setVariants(List<NodeRef> nodeRefs);
+	void setVariants(List<NodeRef> nodeRefs);
 	
 }

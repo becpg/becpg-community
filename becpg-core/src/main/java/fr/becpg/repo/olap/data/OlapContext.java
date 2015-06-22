@@ -23,11 +23,11 @@ import org.apache.http.client.HttpClient;
 
 public class OlapContext {
 
-	HttpClient session;
+	final HttpClient session;
 	
-	String currentUser;
+	final String currentUser;
 	
-	String uuid; 
+	final String uuid;
 
 	public HttpClient getSession() {
 		return session;

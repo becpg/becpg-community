@@ -4,7 +4,6 @@
 package fr.becpg.test.repo.entity.datalist.policy;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -13,13 +12,11 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.PLMModel;
 import fr.becpg.repo.entity.datalist.DataListSortService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
@@ -40,7 +37,7 @@ import fr.becpg.test.PLMBaseTestCase;
 public class DepthLevelListPolicyTest extends PLMBaseTestCase {
 
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(DepthLevelListPolicyTest.class);
+	private static final Log logger = LogFactory.getLog(DepthLevelListPolicyTest.class);
 
 	@Resource
 	private DataListSortService dataListSortService;
@@ -64,7 +61,7 @@ public class DepthLevelListPolicyTest extends PLMBaseTestCase {
 			}
 		}, false, true);
 		
-		final ProductData finishedProductLoaded = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);						
+		final ProductData finishedProductLoaded = alfrescoRepository.findOne(finishedProductNodeRef);
 
 		assertNotNull(finishedProductLoaded.getCompoListView().getCompoList());
 
@@ -79,13 +76,13 @@ public class DepthLevelListPolicyTest extends PLMBaseTestCase {
 		assertEquals((Integer)2, finishedProductLoaded.getCompoListView().getCompoList().get(5).getDepthLevel());
 		assertEquals((Integer)1, finishedProductLoaded.getCompoListView().getCompoList().get(6).getDepthLevel());
 		
-		assertEquals((Integer)100, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)101, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)102, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)103, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)104, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)105, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)106, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(100, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(101, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(102, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(103, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(104, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(105, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(106, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_SORT));
 				
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
@@ -102,21 +99,21 @@ public class DepthLevelListPolicyTest extends PLMBaseTestCase {
 		
 		
 		//check level have been propagated
-		assertEquals((Integer)1, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
-		assertEquals((Integer)2, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
-		assertEquals((Integer)3, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
-		assertEquals((Integer)4, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
-		assertEquals((Integer)5, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
-		assertEquals((Integer)5, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
-		assertEquals((Integer)1, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(1, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(2, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(3, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(4, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(5, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(5, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(1, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
 		
-		assertEquals((Integer)100, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)101, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)102, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)103, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)104, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)105, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)106, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(100, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(101, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(102, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(103, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(104, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(105, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(106, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_SORT));
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
@@ -132,21 +129,21 @@ public class DepthLevelListPolicyTest extends PLMBaseTestCase {
 		printSort(finishedProductLoaded.getCompoListView().getCompoList());
 		
 		//check level have been propagated
-		assertEquals((Integer)1, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
-		assertEquals((Integer)2, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
-		assertEquals((Integer)3, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));				
-		assertEquals((Integer)4, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
-		assertEquals((Integer)5, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
-		assertEquals((Integer)3, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));							
-		assertEquals((Integer)1, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(1, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(2, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(3, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(4, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(5, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(3, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(1, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
 		
-		assertEquals((Integer)100, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)101, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)102, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)103, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)104, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)105, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)106, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_SORT));							
+		assertEquals(100, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(101, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(102, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(103, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(104, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(105, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(106, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_SORT));
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
@@ -162,21 +159,21 @@ public class DepthLevelListPolicyTest extends PLMBaseTestCase {
 		printSort(finishedProductLoaded.getCompoListView().getCompoList());
 		
 		//check level have been propagated
-		assertEquals((Integer)1, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
-		assertEquals((Integer)2, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
-		assertEquals((Integer)3, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));				
-		assertEquals((Integer)4, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
-		assertEquals((Integer)5, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
-		assertEquals((Integer)3, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
-		assertEquals((Integer)3, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));												
+		assertEquals(1, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(2, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(3, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(4, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(5, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(3, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(3, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
 		
-		assertEquals((Integer)100, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)101, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)102, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)103, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)104, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)105, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)106, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(100, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(101, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(102, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(103, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(104, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(105, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(106, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_SORT));
 								
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
@@ -188,7 +185,7 @@ public class DepthLevelListPolicyTest extends PLMBaseTestCase {
 			}
 		}, false, true);			
 		
-		ProductData finishedProductLoaded2 = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+		ProductData finishedProductLoaded2 = alfrescoRepository.findOne(finishedProductNodeRef);
 		
 		assertNotNull(finishedProductLoaded2.getCompoListView().getCompoList());
 		assertEquals(5, finishedProductLoaded2.getCompoListView().getCompoList().size());
@@ -209,21 +206,20 @@ public class DepthLevelListPolicyTest extends PLMBaseTestCase {
 			}
 		}, false, true);		
 		
-		Collection<QName> dataLists = new ArrayList<QName>();
-		dataLists.add(PLMModel.TYPE_COMPOLIST);
-		final ProductData finishedProductLoaded = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);						
+
+		final ProductData finishedProductLoaded = alfrescoRepository.findOne(finishedProductNodeRef);
 
 		assertNotNull(finishedProductLoaded.getCompoListView().getCompoList());
 
 		printSort(finishedProductLoaded.getCompoListView().getCompoList());				
 		
-		assertEquals((Integer)100, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)101, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)102, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)103, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)104, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)105, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)106, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(100, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(101, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(102, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(103, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(104, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(105, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(106, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_SORT));
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
@@ -236,13 +232,13 @@ public class DepthLevelListPolicyTest extends PLMBaseTestCase {
 		
 		printSort(finishedProductLoaded.getCompoListView().getCompoList());
 		
-		assertEquals((Integer)100, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)101, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)102, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)103, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)104, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)105, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)106, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_SORT));		
+		assertEquals(100, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(101, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(102, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(103, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(104, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(105, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(106, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_SORT));
 	}	
 	
 	/**
@@ -258,10 +254,8 @@ public class DepthLevelListPolicyTest extends PLMBaseTestCase {
 				return BeCPGPLMTestHelper.createMultiLevelProduct(getTestFolderNodeRef());
 			}
 		}, false, true);		
-		
-		Collection<QName> dataLists = new ArrayList<QName>();
-		dataLists.add(PLMModel.TYPE_COMPOLIST);
-		final ProductData finishedProductLoaded = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);						
+
+		final ProductData finishedProductLoaded = alfrescoRepository.findOne(finishedProductNodeRef);
 
 		assertNotNull(finishedProductLoaded.getCompoListView().getCompoList());
 
@@ -275,13 +269,13 @@ public class DepthLevelListPolicyTest extends PLMBaseTestCase {
 		assertEquals((Integer)2, finishedProductLoaded.getCompoListView().getCompoList().get(5).getDepthLevel());
 		assertEquals((Integer)1, finishedProductLoaded.getCompoListView().getCompoList().get(6).getDepthLevel());
 		
-		assertEquals((Integer)100, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)101, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)102, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)103, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)104, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)105, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)106, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(100, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(101, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(102, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(103, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(104, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(105, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(106, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_SORT));
 		
 		logger.debug("Test InsertAfter");
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
@@ -294,21 +288,21 @@ public class DepthLevelListPolicyTest extends PLMBaseTestCase {
 				
 		printSort(finishedProductLoaded.getCompoListView().getCompoList());
 				
-		assertEquals((Integer)1, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
-		assertEquals((Integer)2, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
-		assertEquals((Integer)3, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));				
-		assertEquals((Integer)3, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
-		assertEquals((Integer)4, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
-		assertEquals((Integer)4, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));							
-		assertEquals((Integer)1, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(1, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(2, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(3, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(3, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(4, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(4, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(1, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
 		
-		assertEquals((Integer)100, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)101, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)102, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)103, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)104, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)105, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)106, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(100, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(101, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(102, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(103, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(104, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(105, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(106, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_SORT));
 		
 		logger.debug("Test InsertAfter 2");
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
@@ -321,21 +315,21 @@ public class DepthLevelListPolicyTest extends PLMBaseTestCase {
 				
 		printSort(finishedProductLoaded.getCompoListView().getCompoList());
 		
-		assertEquals((Integer)1, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
-		assertEquals((Integer)2, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
-		assertEquals((Integer)3, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));				
-		assertEquals((Integer)2, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
-		assertEquals((Integer)3, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
-		assertEquals((Integer)3, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));							
-		assertEquals((Integer)1, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(1, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(2, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(3, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(2, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(3, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(3, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(1, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
 		
-		assertEquals((Integer)100, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)200, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)300, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)400, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)601, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)602, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)700, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(100, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(200, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(300, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(400, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(601, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(602, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(700, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_SORT));
 		
 		logger.debug("Test InsertAfter 3");
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
@@ -348,21 +342,21 @@ public class DepthLevelListPolicyTest extends PLMBaseTestCase {
 				
 		printSort(finishedProductLoaded.getCompoListView().getCompoList());
 		
-		assertEquals((Integer)1, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
-		assertEquals((Integer)2, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
-		assertEquals((Integer)3, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));				
-		assertEquals((Integer)1, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
-		assertEquals((Integer)2, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
-		assertEquals((Integer)2, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));							
-		assertEquals((Integer)1, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(1, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(2, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(3, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(1, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(2, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(2, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(1, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
 		
-		assertEquals((Integer)100, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)200, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)300, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)701, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)702, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)703, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)700, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(100, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(200, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(300, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(701, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(702, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(703, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(700, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_SORT));
 		
 		logger.debug("Test InsertAfter 4");
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
@@ -376,21 +370,21 @@ public class DepthLevelListPolicyTest extends PLMBaseTestCase {
 		
 		printSort(finishedProductLoaded.getCompoListView().getCompoList());
 		
-		assertEquals((Integer)1, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
-		assertEquals((Integer)2, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
-		assertEquals((Integer)3, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));				
-		assertEquals((Integer)2, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
-		assertEquals((Integer)3, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
-		assertEquals((Integer)3, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));							
-		assertEquals((Integer)1, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(1, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(2, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(3, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(2, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(3, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(3, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
+		assertEquals(1, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL));
 		
-		assertEquals((Integer)100, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)200, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)300, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)301, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)302, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)303, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_SORT));
-		assertEquals((Integer)700, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(100, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(0).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(200, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(1).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(300, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(2).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(301, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(3).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(302, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(4).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(303, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(5).getNodeRef(), BeCPGModel.PROP_SORT));
+		assertEquals(700, nodeService.getProperty(finishedProductLoaded.getCompoListView().getCompoList().get(6).getNodeRef(), BeCPGModel.PROP_SORT));
 		
 	}	
 	
@@ -408,10 +402,8 @@ public class DepthLevelListPolicyTest extends PLMBaseTestCase {
 				return BeCPGPLMTestHelper.createMultiLevelProduct(getTestFolderNodeRef());
 			}
 		}, false, true);		
-		
-		Collection<QName> dataLists = new ArrayList<QName>();
-		dataLists.add(PLMModel.TYPE_COMPOLIST);
-		final ProductData finishedProductLoaded = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);						
+
+		final ProductData finishedProductLoaded = alfrescoRepository.findOne(finishedProductNodeRef);
 
 		assertNotNull(finishedProductLoaded.getCompoListView().getCompoList());
 		
@@ -458,9 +450,9 @@ public class DepthLevelListPolicyTest extends PLMBaseTestCase {
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(1d);				
 				finishedProduct.setDensity(1d);
-				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, lSF1NodeRef));
+				List<CompoListDataItem> compoList = new ArrayList<>();
+				compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, lSF1NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
 				
 				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();				
@@ -470,7 +462,7 @@ public class DepthLevelListPolicyTest extends PLMBaseTestCase {
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 								
-				ProductData finishedProductLoaded = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
+				ProductData finishedProductLoaded = alfrescoRepository.findOne(finishedProductNodeRef);
 				
 				finishedProductLoaded.getCompoListView().getCompoList().get(0).setParent(finishedProductLoaded.getCompoListView().getCompoList().get(1));
 				alfrescoRepository.save(finishedProductLoaded);
@@ -489,8 +481,8 @@ public class DepthLevelListPolicyTest extends PLMBaseTestCase {
 			}
 		}, false, true);
 		
-		final ProductData finishedProductLoaded = (ProductData) alfrescoRepository.findOne(finishedProductNodeRef);
-		final ProductData copiedProductLoaded = (ProductData) alfrescoRepository.findOne(copiedNodeRef);
+		final ProductData finishedProductLoaded = alfrescoRepository.findOne(finishedProductNodeRef);
+		final ProductData copiedProductLoaded = alfrescoRepository.findOne(copiedNodeRef);
 
 		logger.debug("origin " + finishedProductLoaded.getCompoListView().getCompoList().get(1).getParent().getNodeRef());
 		logger.debug("target " + copiedProductLoaded.getCompoListView().getCompoList().get(1).getParent().getNodeRef());
@@ -505,10 +497,10 @@ public class DepthLevelListPolicyTest extends PLMBaseTestCase {
 
 		for (CompoListDataItem c : compoListDataItem) {
 
-			logger.info("level : " + (Integer) nodeService.getProperty(c.getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL)
-					+ " - Product " + (String) nodeService.getProperty(c.getProduct(), ContentModel.PROP_NAME)
+			logger.info("level : " + nodeService.getProperty(c.getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL)
+					+ " - Product " + nodeService.getProperty(c.getProduct(), ContentModel.PROP_NAME)
 					+ " - Parent " + c.getParent()
-					+ " - sorted: " + (Integer) nodeService.getProperty(c.getNodeRef(), BeCPGModel.PROP_SORT));
+					+ " - sorted: " + nodeService.getProperty(c.getNodeRef(), BeCPGModel.PROP_SORT));
 		}
 	}
 }

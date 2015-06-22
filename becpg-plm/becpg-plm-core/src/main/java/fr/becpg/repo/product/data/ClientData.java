@@ -18,6 +18,10 @@ import fr.becpg.repo.repository.model.StateableEntity;
 @AlfQname(qname = "bcpg:client")
 public class ClientData extends BeCPGDataObject implements HierarchicalEntity, StateableEntity {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5302327031354625757L;
 	private String name;
 	private NodeRef hierarchy1;
 	private NodeRef hierarchy2;

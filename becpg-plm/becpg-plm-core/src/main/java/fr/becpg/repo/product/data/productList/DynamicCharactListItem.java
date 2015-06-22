@@ -28,6 +28,11 @@ import fr.becpg.repo.repository.model.Synchronisable;
 @AlfQname(qname = "bcpg:dynamicCharactList")
 public class DynamicCharactListItem extends BeCPGDataObject implements Synchronisable,IManualDataItem {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8824174891991469677L;
+
 	private String title;
 
 	private String formula;

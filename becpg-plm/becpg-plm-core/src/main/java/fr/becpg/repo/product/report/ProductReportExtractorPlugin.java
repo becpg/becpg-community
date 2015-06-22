@@ -70,7 +70,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	protected static final List<QName> RAWMATERIAL_DATALIST = Arrays.asList(PLMModel.TYPE_INGLIST, PLMModel.TYPE_ORGANOLIST);
 
-	private static Log logger = LogFactory.getLog(ProductReportExtractorPlugin.class);
+	private static final Log logger = LogFactory.getLog(ProductReportExtractorPlugin.class);
 	
 
 	protected static final String ATTR_LANGUAGE = "language";
@@ -91,7 +91,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	private static final String TAG_PACKAGING_LEVEL_MEASURES = "packagingLevelMeasures";
 
 	@Value("${beCPG.product.report.multiLevel}")
-	private Boolean extractInMultiLevel = false;
+	private final Boolean extractInMultiLevel = false;
 
 	@Autowired
 	protected ProductDictionaryService productDictionaryService;
@@ -135,7 +135,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		Map<QName, List<? extends RepositoryEntity>> datalists = repositoryEntityDefReader.getDataLists(entity);
 
 		// TODO make it more generic!!!!
-		ProductData productData = (ProductData) alfrescoRepository.findOne(entityNodeRef);
+		ProductData productData = alfrescoRepository.findOne(entityNodeRef);
 		NodeRef defaultVariantNodeRef = loadVariants(productData, dataListsElt.getParent());
 
 		if (datalists != null && !datalists.isEmpty()) {
@@ -232,7 +232,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					}
 
 					if (labelingText != null) {
-						List<String> locales = new ArrayList<String>();
+						List<String> locales = new ArrayList<>();
 						for (Locale locale : labelingText.getLocales()) {
 
 							logger.debug("ill, locale: " + locale);
@@ -316,7 +316,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	private void loadProcessListItem(ProcessListDataItem dataItem, Element processListElt, NodeRef defaultVariantNodeRef, int level) {
 
-		Element dataListsElt = null;
+		Element dataListsElt;
 
 		Element partElt = processListElt.addElement(MPMModel.TYPE_PROCESSLIST.getLocalName());
 		loadProductData(dataItem.getProduct(), partElt);
@@ -592,7 +592,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			partElt.addAttribute(ATTR_COMPOLIST_QTY_FOR_PRODUCT, Double.toString(compoListQty));
 			if (level == 1) {
 				dataListsElt = partElt.addElement(TAG_DATALISTS);
-				ProductData productData = (ProductData) alfrescoRepository.findOne(dataItem.getProduct());
+				ProductData productData = alfrescoRepository.findOne(dataItem.getProduct());
 				loadNutLists(productData, dataListsElt);
 				loadOrganoLists(productData, dataListsElt);
 				extractVariants(dataItem.getVariants(), partElt, defaultVariantNodeRef);

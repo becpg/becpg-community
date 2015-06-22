@@ -73,7 +73,7 @@ public class AssociationServiceTest extends PLMBaseTestCase {
 
 						NodeRef rawMaterialNodeRef = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test report");
 						if (!nodeService.hasAspect(rawMaterialNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
-							Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>();
+							Map<QName, Serializable> aspectProperties = new HashMap<>();
 							aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
 							nodeService.addAspect(rawMaterialNodeRef, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
 						}
@@ -89,7 +89,7 @@ public class AssociationServiceTest extends PLMBaseTestCase {
 
 				// suppliers
 				String []supplierNames = {"Supplier1", "Supplier2", "Supplier3"};
-				List<NodeRef> supplierNodeRefs = new LinkedList<NodeRef>();
+				List<NodeRef> supplierNodeRefs = new LinkedList<>();
 				for(String supplierName : supplierNames){
 					NodeRef supplierNodeRef = null;
 					NodeRef entityFolder = nodeService.getChildByName(getTestFolderNodeRef(),
@@ -100,7 +100,7 @@ public class AssociationServiceTest extends PLMBaseTestCase {
 					}
 					
 					if(supplierNodeRef == null){
-						Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+						Map<QName, Serializable> properties = new HashMap<>();
 						properties.put(ContentModel.PROP_NAME, supplierName);
 						supplierNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName((String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_SUPPLIER, properties).getChildRef();
 					}
@@ -122,7 +122,7 @@ public class AssociationServiceTest extends PLMBaseTestCase {
 				associationService.update(workingCopyNodeRef, PLMModel.ASSOC_SUPPLIERS, supplierNodeRefs);
 				
 				// check-in
-				Map<String, Serializable> versionProperties = new HashMap<String, Serializable>();
+				Map<String, Serializable> versionProperties = new HashMap<>();
 				versionProperties.put(Version.PROP_DESCRIPTION, "This is a test version");
 				checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
 				

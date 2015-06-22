@@ -78,6 +78,7 @@ import com.tradeshift.test.remote.RemoteTestRunner;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.admin.InitVisitorService;
 import fr.becpg.repo.cache.BeCPGCacheService;
+import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntitySystemService;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.RepoService;
@@ -97,11 +98,10 @@ import fr.becpg.repo.repository.RepositoryEntity;
 @ContextConfiguration({ "classpath:alfresco/application-context.xml" })
 public abstract class RepoBaseTestCase extends TestCase implements InitializingBean {
 
-	private static Log logger = LogFactory.getLog(RepoBaseTestCase.class);
+	private static final Log logger = LogFactory.getLog(RepoBaseTestCase.class);
 
-	private ThreadLocal<NodeRef> threadSafeTestFolder = new ThreadLocal<>();
-	
-	
+	private final ThreadLocal<NodeRef> threadSafeTestFolder = new ThreadLocal<>();
+
 	public NodeRef getTestFolderNodeRef() {
 		return threadSafeTestFolder.get();
 	}
@@ -110,7 +110,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 	public static RepoBaseTestCase INSTANCE;
 
-	public static Wiser wiser = new Wiser(2500);
+	public static final Wiser wiser = new Wiser(2500);
 
 	static {
 		try {
@@ -189,14 +189,15 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 	@Resource
 	protected RuleService ruleService;
-	
-	
+
 	@Resource
 	protected BehaviourFilter policyBehaviourFilter;
-	
 
 	@Resource
 	private SOLRTrackingComponent solrTrackingComponent;
+	
+	@Resource
+	protected EntityListDAO entityListDAO;
 
 	@Resource
 	@Qualifier("qnameDAO")
@@ -258,7 +259,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 			public Boolean execute() throws Throwable {
 				ruleService.disableRules();
 				try {
-					nodeService.addAspect(threadSafeTestFolder.get(),  ContentModel.ASPECT_TEMPORARY, null);
+					nodeService.addAspect(threadSafeTestFolder.get(), ContentModel.ASPECT_TEMPORARY, null);
 					nodeService.deleteNode(threadSafeTestFolder.get());
 				} finally {
 					ruleService.enableRules();
@@ -303,7 +304,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 		assertEquals("HTTP Response Status is not OK(200)", HttpStatus.SC_OK, httpResponse.getStatusLine().getStatusCode());
 		HttpEntity entity = httpResponse.getEntity();
 		assertNotNull("Response from Web Script is null", entity);
-	
+
 		DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
 		domFactory.setNamespaceAware(true); // never forget this!
 		DocumentBuilder builder = domFactory.newDocumentBuilder();

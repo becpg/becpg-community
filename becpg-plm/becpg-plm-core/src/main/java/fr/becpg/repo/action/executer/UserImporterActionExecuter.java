@@ -39,7 +39,7 @@ import fr.becpg.repo.importer.user.UserImporterService;
  */
 public class UserImporterActionExecuter extends ActionExecuterAbstractBase {
 	
-	private static Log _logger = LogFactory.getLog(UserImporterActionExecuter.class);
+	private static final Log _logger = LogFactory.getLog(UserImporterActionExecuter.class);
 
 	public static final String NAME = "import-user";
 	public static final String PARAM_VALUE_EXTENSION = ".csv";

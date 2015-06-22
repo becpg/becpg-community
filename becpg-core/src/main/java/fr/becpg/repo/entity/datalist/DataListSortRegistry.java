@@ -21,6 +21,6 @@ package fr.becpg.repo.entity.datalist;
 
 public interface DataListSortRegistry {
 	
-	public DataListSortPlugin getPluginById(String pluginId);
+	DataListSortPlugin getPluginById(String pluginId);
 	
 }

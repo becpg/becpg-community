@@ -30,7 +30,7 @@ import fr.becpg.repo.repository.AlfrescoRepository;
  */
 public class ChangeOrderWebScript extends AbstractWebScript {
 
-	private static Log logger = LogFactory.getLog(ChangeOrderWebScript.class);
+	private static final Log logger = LogFactory.getLog(ChangeOrderWebScript.class);
 
 	private static final String PARAM_STORE_TYPE = "store_type";
 	private static final String PARAM_STORE_ID = "store_id";
@@ -120,7 +120,7 @@ public class ChangeOrderWebScript extends AbstractWebScript {
 			try {
 				String name = req.getParameter(PARAM_ECO_NAME);
 
-				JSONObject json = null;
+				JSONObject json;
 
 				if (name == null) {
 					json = (JSONObject) req.parseContent();

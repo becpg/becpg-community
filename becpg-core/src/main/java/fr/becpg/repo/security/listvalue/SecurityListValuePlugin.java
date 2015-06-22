@@ -43,9 +43,9 @@ import fr.becpg.repo.listvalue.ListValuePlugin;
 @Service
 public class SecurityListValuePlugin implements ListValuePlugin {
 
-	private static String TYPE_ACL_TYPE = "aclType";
+	private static final String TYPE_ACL_TYPE = "aclType";
 
-	private static String SEPARATOR = "|";
+	private static final String SEPARATOR = "|";
 
 	@Autowired
 	private ServiceRegistry serviceRegistry;
@@ -64,7 +64,7 @@ public class SecurityListValuePlugin implements ListValuePlugin {
 
 	public class StringValueExtractor implements ListValueExtractor<String> {
 
-		private String type;
+		private final String type;
 
 		public StringValueExtractor(String type) {
 			this.type = type;
@@ -73,7 +73,7 @@ public class SecurityListValuePlugin implements ListValuePlugin {
 		@Override
 		public List<ListValueEntry> extract(List<String> values) {
 
-			List<ListValueEntry> suggestions = new ArrayList<ListValueEntry>();
+			List<ListValueEntry> suggestions = new ArrayList<>();
 			if (values != null) {
 				for (String value : values) {
 					String[] splitted = value.split("\\|");
@@ -92,7 +92,7 @@ public class SecurityListValuePlugin implements ListValuePlugin {
 
 	private ListValuePage getAvailableEntityTypeNames(String query, Integer pageNum, Integer pageSize) {
 
-		List<String> suggestions = new ArrayList<String>();
+		List<String> suggestions = new ArrayList<>();
 
 		addSuggestions(serviceRegistry.getDictionaryService().getSubTypes(BeCPGModel.TYPE_ENTITY_V2, true), suggestions, query);
 		addSuggestions(serviceRegistry.getDictionaryService().getSubTypes(BeCPGModel.TYPE_ENTITYLIST_ITEM, true), suggestions, query);

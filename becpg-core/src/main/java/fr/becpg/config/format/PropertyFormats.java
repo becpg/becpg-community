@@ -36,34 +36,34 @@ public class PropertyFormats {
 
 	private static final String FORMAT_DECIMAL_VALUE = "0.####";
 	
-    private  ThreadLocal<SimpleDateFormat> s_localDateFormat = new ThreadLocal<SimpleDateFormat>(){
+    private final ThreadLocal<SimpleDateFormat> s_localDateFormat = new ThreadLocal<SimpleDateFormat>(){
     	protected SimpleDateFormat initialValue() {
     		if(useDefaultLocale){
     			return new SimpleDateFormat(dateFormat,Locale.getDefault());
     		} else {
     			return new SimpleDateFormat(dateFormat, I18NUtil.getLocale());
     		}
-    	};
-    	
-    };
+    	}
+
+	};
     
-    private  ThreadLocal<SimpleDateFormat> s_localDateTimeFormat = new ThreadLocal<SimpleDateFormat>(){
+    private final ThreadLocal<SimpleDateFormat> s_localDateTimeFormat = new ThreadLocal<SimpleDateFormat>(){
     	protected SimpleDateFormat initialValue() {
     		if(useDefaultLocale){
     			return new SimpleDateFormat(datetimeFormat,Locale.getDefault());
     		} else {
     			return new SimpleDateFormat(datetimeFormat, I18NUtil.getLocale());
     		}
-    	};
-    	
-    };
+    	}
+
+	};
     
-    private  ThreadLocal<DecimalFormat> s_localDecimalFormat = new ThreadLocal<DecimalFormat>(){
+    private final ThreadLocal<DecimalFormat> s_localDecimalFormat = new ThreadLocal<DecimalFormat>(){
     	protected DecimalFormat initialValue() {
     		return new DecimalFormat(decimalFormat);
-    	};
-    	
-    };
+    	}
+
+	};
 	
 	private boolean useDefaultLocale = true;
 	

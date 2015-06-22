@@ -62,9 +62,9 @@ public class OlapServiceImpl implements OlapService {
 	
 	private TenantService tenantService;
 
-	private static String ROW_HEADER = "ROW_HEADER_HEADER";
+	private static final String ROW_HEADER = "ROW_HEADER_HEADER";
 
-	private static Log logger = LogFactory.getLog(OlapServiceImpl.class);
+	private static final Log logger = LogFactory.getLog(OlapServiceImpl.class);
 
 	public void setInstanceName(String instanceName) {
 		this.instanceName = instanceName;
@@ -98,7 +98,7 @@ public class OlapServiceImpl implements OlapService {
 
 	@Override
 	public List<OlapChart> retrieveOlapCharts()  {
-		List<OlapChart> olapCharts = new ArrayList<OlapChart>();
+		List<OlapChart> olapCharts = new ArrayList<>();
 
 		for (FileInfo fileInfo : fileFolderService.list(getOlapQueriesFolder())) {
 
@@ -129,7 +129,7 @@ public class OlapServiceImpl implements OlapService {
 	@Override
 	public List<OlapChart> retrieveOlapChartsFromSaiku() {
 
-		List<OlapChart> olapCharts = new ArrayList<OlapChart>();
+		List<OlapChart> olapCharts = new ArrayList<>();
 		try {
 
 			OlapContext olapContext = OlapUtils.createOlapContext(getCurrentOlapUserName());
@@ -212,7 +212,7 @@ public class OlapServiceImpl implements OlapService {
 									.getJSONObject(field).getString("value")));
 						}
 					} else if (cur.getJSONObject(0).getString("value") != null) {
-						List<Object> record = new ArrayList<Object>();
+						List<Object> record = new ArrayList<>();
 						for (int col = lowest_level; col < cur.length(); col++) {
 							String value = cur.getJSONObject(col).getString("value");
 							record.add(OlapUtils.convert(value));

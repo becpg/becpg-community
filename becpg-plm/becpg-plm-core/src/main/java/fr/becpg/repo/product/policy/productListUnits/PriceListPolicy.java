@@ -40,9 +40,9 @@ import fr.becpg.repo.repository.RepositoryEntity;
 
 public class PriceListPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnCreateNodePolicy {
 
-	private static int PREF_RANK = 1;
+	private static final int PREF_RANK = 1;
 
-	private static Log logger = LogFactory.getLog(PriceListPolicy.class);
+	private static final Log logger = LogFactory.getLog(PriceListPolicy.class);
 
 	private EntityListDAO entityListDAO;
 

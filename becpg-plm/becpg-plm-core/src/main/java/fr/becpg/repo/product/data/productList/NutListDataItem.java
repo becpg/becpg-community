@@ -17,6 +17,11 @@ import fr.becpg.repo.repository.model.SimpleListDataItem;
 @AlfQname(qname = "bcpg:nutList")
 public class NutListDataItem extends AbstractManualDataItem  implements SimpleListDataItem {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4580421935974923617L;
+
 	private Double manualValue;
 
 	private Double formulatedValue;

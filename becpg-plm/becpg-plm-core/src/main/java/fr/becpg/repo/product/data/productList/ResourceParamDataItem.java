@@ -9,6 +9,10 @@ import fr.becpg.repo.repository.model.AbstractManualDataItem;
 @AlfQname(qname = "mpm:resourceParam")
 public class ResourceParamDataItem extends AbstractManualDataItem {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8690882973602794555L;
 	private String title;
 	private String description;
 	

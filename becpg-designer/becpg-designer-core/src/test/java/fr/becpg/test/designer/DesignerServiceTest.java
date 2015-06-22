@@ -45,7 +45,7 @@ import fr.becpg.repo.designer.impl.MetaModelVisitor;
 
 public class DesignerServiceTest extends AbstractDesignerServiceTest {
 
-	private static Log logger = LogFactory.getLog(DesignerServiceTest.class);
+	private static final Log logger = LogFactory.getLog(DesignerServiceTest.class);
 
 	@Autowired
 	private MetaModelVisitor metaModelVisitor;
@@ -146,7 +146,7 @@ public class DesignerServiceTest extends AbstractDesignerServiceTest {
 				// Try to parse becpgModel
 				metaModelVisitor.visitModelNodeRef(modelNodeRef, m2Model);
 
-				Map<QName, Serializable> props = new HashMap<QName, Serializable>();
+				Map<QName, Serializable> props = new HashMap<>();
 				props.put(DesignerModel.PROP_M2_NAME, "bcpg:test");
 
 				NodeRef elNodeRef = designerService.createModelElement(modelNodeRef, DesignerModel.TYPE_M2_TYPE, DesignerModel.ASSOC_M2_TYPES, props,
@@ -172,7 +172,7 @@ public class DesignerServiceTest extends AbstractDesignerServiceTest {
 
 				String name = "testFindOrCreateModel.xml";
 
-				Map<String, Object> templateContext = new HashMap<String, Object>();
+				Map<String, Object> templateContext = new HashMap<>();
 				templateContext.put("processId", "processId");
 				templateContext.put("modelName", "modelName");
 				templateContext.put("engineId", "activiti");

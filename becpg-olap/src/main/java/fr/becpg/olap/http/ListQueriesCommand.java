@@ -24,7 +24,7 @@ import fr.becpg.tools.http.AbstractHttpCommand;
 public class ListQueriesCommand  extends AbstractHttpCommand {
 
 
-	private static String COMMAND_URL_TEMPLATE = "/becpg/olap/chart";
+	private static final String COMMAND_URL_TEMPLATE = "/becpg/olap/chart";
 
 	
 	public ListQueriesCommand(String serverUrl) {

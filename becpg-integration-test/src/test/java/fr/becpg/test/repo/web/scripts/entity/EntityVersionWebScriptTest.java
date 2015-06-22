@@ -35,7 +35,7 @@ import fr.becpg.test.utils.TestWebscriptExecuters.Response;
 public class EntityVersionWebScriptTest extends PLMBaseTestCase {
 
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(EntityVersionWebScriptTest.class);
+	private static final Log logger = LogFactory.getLog(EntityVersionWebScriptTest.class);
 
 	@Resource
 	private CheckOutCheckInService checkOutCheckInService;
@@ -60,7 +60,7 @@ public class EntityVersionWebScriptTest extends PLMBaseTestCase {
 				@Override
 				public NodeRef execute() throws Throwable {
 					logger.debug("Add versionnable aspect");
-					Map<QName, Serializable> aspectProperties = new HashMap<QName, Serializable>();
+					Map<QName, Serializable> aspectProperties = new HashMap<>();
 					aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
 					nodeService.addAspect(rawMaterialNodeRef, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
 					return rawMaterialNodeRef;
@@ -84,7 +84,7 @@ public class EntityVersionWebScriptTest extends PLMBaseTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				Map<String, Serializable> versionProperties = new HashMap<String, Serializable>();
+				Map<String, Serializable> versionProperties = new HashMap<>();
 				versionProperties.put(Version.PROP_DESCRIPTION, "This is a test version");
 				versionProperties.put(VersionModel.PROP_VERSION_TYPE, VersionType.MAJOR);
 

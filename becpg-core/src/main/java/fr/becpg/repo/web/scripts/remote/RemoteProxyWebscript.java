@@ -45,7 +45,7 @@ public class RemoteProxyWebscript extends AbstractWebScript {
 
 	private static final Log logger = LogFactory.getLog(RemoteProxyWebscript.class);
 	
-	private static String REMOTE_URL_PARAM = "remoteUrl"; 
+	private static final String REMOTE_URL_PARAM = "remoteUrl";
 
 	private String remoteServer;
 

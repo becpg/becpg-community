@@ -34,10 +34,14 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 public class ReqCtrlListDataItem extends BeCPGDataObject {
 
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3851143080201225383L;
 	private RequirementType reqType;
 	private String reqMessage;
 	private Integer sort;
-	private List<NodeRef> sources = new ArrayList<NodeRef>();
+	private List<NodeRef> sources = new ArrayList<>();
 
 	@AlfProp
 	@AlfQname(qname="bcpg:rclReqType")

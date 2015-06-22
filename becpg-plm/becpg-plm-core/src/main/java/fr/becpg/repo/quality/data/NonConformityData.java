@@ -31,10 +31,14 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfQname(qname = "qa:nc")
 public class NonConformityData extends BeCPGDataObject {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4975442023838379466L;
 	private String state;
 	private String comment;
 
-	List<WorkLogDataItem> workLog = new LinkedList<WorkLogDataItem>();
+	List<WorkLogDataItem> workLog = new LinkedList<>();
 
 	@AlfProp
 	@AlfQname(qname = "qa:ncState")

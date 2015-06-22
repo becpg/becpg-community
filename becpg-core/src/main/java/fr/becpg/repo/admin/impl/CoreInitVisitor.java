@@ -20,11 +20,7 @@ package fr.becpg.repo.admin.impl;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.action.evaluator.ComparePropertyValueEvaluator;
@@ -154,7 +150,7 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 		} else if (RepoConsts.PATH_REPORTS.equals(folderName)) {
 
 			// Action : apply type
-			Map<String, Serializable> params = new HashMap<String, Serializable>();
+			Map<String, Serializable> params = new HashMap<>();
 			params.put(SpecialiseTypeActionExecuter.PARAM_TYPE_NAME, ReportModel.TYPE_REPORT_TPL);
 			CompositeAction compositeAction = actionService.createCompositeAction();
 			Action myAction = actionService.createAction(SpecialiseTypeActionExecuter.NAME, params);
@@ -203,9 +199,7 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 		case RepoConsts.PATH_REPORTS:
 		case RepoConsts.PATH_SECURITY:
 		case RepoConsts.PATH_ICON:
-			if (!nodeService.hasAspect(folderNodeRef, BeCPGModel.ASPECT_SYSTEM_FOLDER)) {
-				nodeService.addAspect(folderNodeRef, BeCPGModel.ASPECT_SYSTEM_FOLDER, null);
-			}
+			addSystemFolderAspect(folderNodeRef);
 			break;
 		default:
 			break;
@@ -243,7 +237,7 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 		NodeRef entityTplsNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_ENTITY_TEMPLATES);
 
 		// visit acls
-		Set<QName> dataLists = new LinkedHashSet<QName>();
+		Set<QName> dataLists = new LinkedHashSet<>();
 		dataLists.add(SecurityModel.TYPE_ACL_ENTRY);
 		NodeRef entityTplNodeRef = entityTplService.createEntityTpl(entityTplsNodeRef, SecurityModel.TYPE_ACL_GROUP, null, true, dataLists, null);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
@@ -251,7 +245,7 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 
 	@Override
 	protected void visitPermissions(NodeRef nodeRef, String folderName) {
-		if (folderName == RepoConsts.PATH_SYSTEM) {
+		if (Objects.equals(folderName, RepoConsts.PATH_SYSTEM)) {
 
 			permissionService
 					.setPermission(nodeRef, PermissionService.GROUP_PREFIX + SystemGroup.SystemMgr.toString(), PermissionService.WRITE, true);

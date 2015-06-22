@@ -39,7 +39,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 public final class Search extends BaseScopableProcessorExtension{
 
-	private static Log logger = LogFactory.getLog(Search.class);
+	private static final Log logger = LogFactory.getLog(Search.class);
 	
     protected ServiceRegistry services;
     
@@ -114,13 +114,13 @@ public final class Search extends BaseScopableProcessorExtension{
 		
 		if (criteria instanceof ScriptableObject){
 			
-			criteriaMap = new HashMap<String, String>(4, 1.0f);
+			criteriaMap = new HashMap<>(4, 1.0f);
             extractCriteriaAttributes((ScriptableObject)criteria, criteriaMap);
         }
 		
 		if (sort instanceof ScriptableObject){
 			
-			sortMap = new HashMap<String, Boolean>();
+			sortMap = new HashMap<>();
 			extractSortAttributes((ScriptableObject)sort, sortMap);
         }
 		
@@ -147,7 +147,7 @@ public final class Search extends BaseScopableProcessorExtension{
         
         if(!nodes.isEmpty()){
         	
-        	set = new LinkedHashSet<ScriptNode>(nodes.size(), 1.0f);
+        	set = new LinkedHashSet<>(nodes.size(), 1.0f);
         	for (NodeRef node : nodes)
             {
                 set.add(new ScriptNode(node, this.services, getScope()));
@@ -172,23 +172,18 @@ public final class Search extends BaseScopableProcessorExtension{
         // we need to get all the keys to the properties provided
         // and convert them to a Map of QName to Serializable objects
         Object[] propIds = scriptable.getIds();
-        for (int i = 0; i < propIds.length; i++)
-        {
-            // work on each key in turn
-            Object propId = propIds[i];
-            
-            // we are only interested in keys that are formed of Strings i.e. QName.toString()
-            if (propId instanceof String)
-            {
-                // get the value out for the specified key - it must be Serializable
-                String key = (String)propId;
-                Object value = scriptable.get(key, scriptable);
-                if (value instanceof String)
-                {
-                    map.put(key, (String)value);
-                }
-            }
-        }
+		for (Object propId : propIds) {
+			// work on each key in turn
+			// we are only interested in keys that are formed of Strings i.e. QName.toString()
+			if (propId instanceof String) {
+				// get the value out for the specified key - it must be Serializable
+				String key = (String) propId;
+				Object value = scriptable.get(key, scriptable);
+				if (value instanceof String) {
+					map.put(key, (String) value);
+				}
+			}
+		}
     }
     
 	/**
@@ -201,19 +196,16 @@ public final class Search extends BaseScopableProcessorExtension{
     {
 
         Object[] propIds = scriptable.getIds();
-        for (int i = 0; i < propIds.length; i++)
-        {
-            // work on each key in turn
-            Object propId = propIds[i];
-            if (propId instanceof Integer)
-            {
-            	ScriptableObject array = (ScriptableObject) scriptable.get(0, scriptable);
-            	String column = (String) array.get("column", scriptable);
-            	Boolean asc =  (Boolean) array.get("ascending", scriptable);
-            	map.put(column, asc);
-            } 
-           
-        }
+		for (Object propId : propIds) {
+			// work on each key in turn
+			if (propId instanceof Integer) {
+				ScriptableObject array = (ScriptableObject) scriptable.get(0, scriptable);
+				String column = (String) array.get("column", scriptable);
+				Boolean asc = (Boolean) array.get("ascending", scriptable);
+				map.put(column, asc);
+			}
+
+		}
     }
     
 }

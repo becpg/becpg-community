@@ -37,18 +37,18 @@ public class LazyLoadingDataList<E> implements List<E>  {
 	
 	List<E> backedList = null;
 
-	private static Log logger = LogFactory.getLog(LazyLoadingDataList.class);
+	private static final Log logger = LogFactory.getLog(LazyLoadingDataList.class);
 	
 	public interface DataProvider<E> {
-		public List<E> getData();
-		public String getFieldName();
+		List<E> getData();
+		String getFieldName();
 	}
 
 	DataProvider<E> dataProvider; 
 
 	private boolean loaded = false;
 	
-	Set<E> deletedNodes  = new HashSet<E>();
+	final Set<E> deletedNodes  = new HashSet<>();
 
 	public void setDataProvider(DataProvider<E> dataProvider) {
 		this.dataProvider = dataProvider;

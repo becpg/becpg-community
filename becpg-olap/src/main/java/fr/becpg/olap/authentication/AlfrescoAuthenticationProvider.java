@@ -41,7 +41,7 @@ public class AlfrescoAuthenticationProvider extends AbstractUserDetailsAuthentic
 
     //~ Instance fields ================================================================================================
 
-	private static Log logger = LogFactory.getLog(AlfrescoAuthenticationProvider.class);
+	private static final Log logger = LogFactory.getLog(AlfrescoAuthenticationProvider.class);
 
     private UserDetailsService userDetailsService;
 

@@ -84,7 +84,7 @@ public class DesignerWorkflowDeployer {
 		this.namespaceService = namespaceService;
 	}
 
-	private static Log logger = LogFactory.getLog(DesignerWorkflowDeployer.class);
+	private static final Log logger = LogFactory.getLog(DesignerWorkflowDeployer.class);
 
 	public void createMissingFormsAndType(NodeRef nodeRef) {
 
@@ -101,7 +101,7 @@ public class DesignerWorkflowDeployer {
 
 				String name = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
 
-				Map<String,Object> templateContext = new HashMap<String, Object>();
+				Map<String,Object> templateContext = new HashMap<>();
 				templateContext.put("processId", bpmn2Parser.getProcessId());
 				templateContext.put("modelName", FilenameUtils.removeExtension(name));
 				templateContext.put("prefix", extractPrefix(bpmn2Parser));
@@ -115,7 +115,7 @@ public class DesignerWorkflowDeployer {
 
 					if (!checkForType(startTask, modelNodeRef)) {
 						addNameSpace(startTask, modelNodeRef);
-						Map<QName, Serializable> props = new HashMap<QName, Serializable>();
+						Map<QName, Serializable> props = new HashMap<>();
 
 						props.put(DesignerModel.PROP_M2_NAME, startTask);
 						NodeRef typeNodeRef = designerService.createModelElement(modelNodeRef, DesignerModel.TYPE_M2_TYPE, DesignerModel.ASSOC_M2_TYPES, props,
@@ -127,7 +127,7 @@ public class DesignerWorkflowDeployer {
 				for (String userTask : bpmn2Parser.getUserTasks()) {
 					if (!checkForType(userTask, modelNodeRef)) {
 						addNameSpace( userTask, modelNodeRef);
-						Map<QName, Serializable> props = new HashMap<QName, Serializable>();
+						Map<QName, Serializable> props = new HashMap<>();
 						props.put(DesignerModel.PROP_M2_NAME, userTask);
 						NodeRef typeNodeRef = designerService.createModelElement(modelNodeRef, DesignerModel.TYPE_M2_TYPE, DesignerModel.ASSOC_M2_TYPES, props,
 								"templateModel_TASKNODE");
@@ -136,11 +136,7 @@ public class DesignerWorkflowDeployer {
 				}
 			}
 
-		} catch (IOException e) {
-			logger.error(e, e);
-		} catch (SAXException e) {
-			logger.error(e, e);
-		} catch (ParserConfigurationException e) {
+		} catch (IOException | ParserConfigurationException | SAXException e) {
 			logger.error(e, e);
 		} finally {
 			IOUtils.closeQuietly(in);
@@ -170,7 +166,7 @@ public class DesignerWorkflowDeployer {
 		UUID uuid = UUID.randomUUID();
 		String prefix = qName.split(":")[0];
 		String uri = namespaceService.getNamespaceURI(prefix);
-		Map<QName, Serializable> props = new HashMap<QName, Serializable>();
+		Map<QName, Serializable> props = new HashMap<>();
 
 		props.put(DesignerModel.PROP_M2_PREFIX, prefix);
 		QName assocQName = DesignerModel.ASSOC_M2_IMPORTS;
@@ -198,7 +194,7 @@ public class DesignerWorkflowDeployer {
 	}
 
 	private boolean checkForType(String qname, NodeRef modelNodeRef) {
-		boolean exist = false;
+		boolean exist;
 		try {
 			QName typeQName = QName.createQName(qname, namespaceService);
 			exist = dictionaryService.getType(typeQName) != null;

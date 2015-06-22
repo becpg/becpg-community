@@ -21,8 +21,6 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -30,13 +28,13 @@ import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 
-public class ProductDataTest extends TestCase {
+public class ProductDataTest {
 	
-	Date now = new Date();
-	Date nowplus1h = new Date(now.getTime()+1000*60*60);
-	Date nowplus2h = new Date(now.getTime()+2000*60*60);
-	Date nowminus1h = new Date(now.getTime()-1000*60*60);
-	Date nowminus2h = new Date(now.getTime()-1000*60*60);
+	final Date now = new Date();
+	final Date nowplus1h = new Date(now.getTime()+1000*60*60);
+	final Date nowplus2h = new Date(now.getTime()+2000*60*60);
+	final Date nowminus1h = new Date(now.getTime()-1000*60*60);
+	final Date nowminus2h = new Date(now.getTime()-1000*60*60);
 	
 	@Test
 	public void testEffectiveFilter(){
@@ -46,7 +44,7 @@ public class ProductDataTest extends TestCase {
 		//Test NPE
 		Assert.assertFalse(productData.hasCompoListEl(EffectiveFilters.ALL));
 		
-		List<CompoListDataItem> compoList = new LinkedList<CompoListDataItem>();
+		List<CompoListDataItem> compoList = new LinkedList<>();
 		
 		
 		CompoListDataItem item = new CompoListDataItem();

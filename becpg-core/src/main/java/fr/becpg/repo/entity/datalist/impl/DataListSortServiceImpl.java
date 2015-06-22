@@ -45,7 +45,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 @Service("dataListSortService")
 public class DataListSortServiceImpl implements DataListSortService {
 
-	private static Log logger = LogFactory.getLog(DataListSortServiceImpl.class);	
+	private static final Log logger = LogFactory.getLog(DataListSortServiceImpl.class);
 
 	@Autowired
 	private NodeService nodeService;
@@ -62,7 +62,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 		int sort = RepoConsts.SORT_DEFAULT_STEP - RepoConsts.SORT_INSERTING_STEP;
 		int level = RepoConsts.DEFAULT_LEVEL;
 
-		HashSet<NodeRef> pendingNodeRefs = new HashSet<NodeRef>(nodeRefs);
+		HashSet<NodeRef> pendingNodeRefs = new HashSet<>(nodeRefs);
 
 		for (NodeRef nodeRef : nodeRefs) {
 
@@ -198,7 +198,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 		}
 
 		// calculate next sort
-		Integer nextSort = RepoConsts.SORT_DEFAULT_STEP;
+		Integer nextSort;
 		if (sort == null) {
 			nextSort = RepoConsts.SORT_DEFAULT_STEP;
 		} else {

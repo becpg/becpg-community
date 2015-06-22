@@ -40,7 +40,7 @@ import fr.becpg.repo.workflow.activiti.nc.NCWorkflowUtils.NCWorkflowUtilsTask;
  */
 public class CreateNC extends BaseJavaDelegate {
 
-	private static Log logger = LogFactory.getLog(CreateNC.class);
+	private static final Log logger = LogFactory.getLog(CreateNC.class);
 
 	private NodeService nodeService;
 	private ServiceRegistry serviceRegistry;
@@ -94,7 +94,7 @@ public class CreateNC extends BaseJavaDelegate {
 					String ncName = Calendar.getInstance().get(Calendar.YEAR) + "-" + (QualityModel.NC_TYPE_CLAIM.equals(ncType) ? "RC-" : "NC-")
 							+ code;
 
-					Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+					Map<QName, Serializable> properties = new HashMap<>();
 					properties.put(ContentModel.PROP_NAME, ncName);
 					properties.put(QualityModel.PROP_NC_TYPE, ncType);
 
@@ -116,7 +116,7 @@ public class CreateNC extends BaseJavaDelegate {
 
 					NodeRef briefNodeRef = entityService.getOrCreateDocumentsFolder(ncNodeRef);
 
-					Map<QName, Serializable> emailableProperties = new HashMap<QName, Serializable>();
+					Map<QName, Serializable> emailableProperties = new HashMap<>();
 					emailableProperties.put(EmailServerModel.PROP_ALIAS, ncName);
 					nodeService.addAspect(briefNodeRef, EmailServerModel.ASPECT_ALIASABLE, emailableProperties);
 

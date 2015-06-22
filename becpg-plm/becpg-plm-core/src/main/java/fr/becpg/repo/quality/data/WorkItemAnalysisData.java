@@ -30,7 +30,11 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfQname(qname = "qa:workItemAnalysis")
 public class WorkItemAnalysisData extends BeCPGDataObject {
 
-	List<ControlListDataItem> controlList = new LinkedList<ControlListDataItem>();
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7826247093687640349L;
+	List<ControlListDataItem> controlList = new LinkedList<>();
 
 	@DataList
 	@AlfQname(qname = "qa:controlList")

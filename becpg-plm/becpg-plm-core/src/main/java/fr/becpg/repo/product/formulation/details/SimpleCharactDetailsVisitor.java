@@ -41,7 +41,7 @@ import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 @Service
 public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 
-	private static Log logger = LogFactory.getLog(SimpleCharactDetailsVisitor.class);
+	private static final Log logger = LogFactory.getLog(SimpleCharactDetailsVisitor.class);
 
 	protected AlfrescoRepository<SimpleCharactDataItem> alfrescoRepository;
 	
@@ -80,7 +80,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 
 	protected List<NodeRef> extractCharacts(List<NodeRef> dataListItems) {
 
-		List<NodeRef> ret = new ArrayList<NodeRef>();
+		List<NodeRef> ret = new ArrayList<>();
 		if (dataListItems != null) {
 			for (NodeRef dataListItem : dataListItems) {
 

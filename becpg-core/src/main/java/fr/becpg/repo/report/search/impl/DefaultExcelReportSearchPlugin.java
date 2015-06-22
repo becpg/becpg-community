@@ -112,7 +112,7 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 
 					@Override
 					public List<Map<String, Object>> extractNestedField(NodeRef nodeRef, AttributeExtractorStructure field) {
-						List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();
+						List<Map<String, Object>> ret = new ArrayList<>();
 						if (field.isDataListItems()) {
 							NodeRef listContainerNodeRef = entityListDAO.getListContainer(nodeRef);
 							NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, field.getFieldQname());
@@ -130,7 +130,7 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 						} else {
 
 							if (field.getFieldDef() instanceof AssociationDefinition) {
-								List<NodeRef> assocRefs = null;
+								List<NodeRef> assocRefs;
 								if (((AssociationDefinition) field.getFieldDef()).isChild()) {
 									assocRefs = associationService.getChildAssocs(nodeRef, field.getFieldDef().getName());
 								} else {

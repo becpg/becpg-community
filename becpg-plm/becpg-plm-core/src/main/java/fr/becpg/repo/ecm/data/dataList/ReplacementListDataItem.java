@@ -33,6 +33,10 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfQname(qname = "ecm:replacementList")
 public class ReplacementListDataItem extends BeCPGDataObject {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7417848239590059467L;
 	private RevisionType revision;
 	private List<NodeRef> sourceItems;
 	private NodeRef targetItem;

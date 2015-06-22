@@ -183,18 +183,9 @@
 {
    background: url("../images/edit-16.png") no-repeat;
 }
-
-.datalists li a span.edit-disabled
-{
-   background: url("../images/edit-disabled-16.png") no-repeat;
-}
 .datalists li a span.delete
 {
    background: url("../images/delete-16.png") no-repeat;
-}
-.datalists li a span.delete-disabled
-{
-   background: url("../images/delete-disabled-16.png") no-repeat;
 }
 .datalists li a:active span,
 .datalists li a:hover span

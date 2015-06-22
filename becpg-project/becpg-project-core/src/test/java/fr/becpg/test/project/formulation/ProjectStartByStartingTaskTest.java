@@ -21,7 +21,7 @@ import fr.becpg.test.project.AbstractProjectTestCase;
  */
 public class ProjectStartByStartingTaskTest extends AbstractProjectTestCase {	
 
-	private static Log logger = LogFactory.getLog(ProjectStartByStartingTaskTest.class);		
+	private static final Log logger = LogFactory.getLog(ProjectStartByStartingTaskTest.class);
 
 	/**
 	 * Test the project is InProgress if we set a task InProgress

@@ -53,7 +53,7 @@ import fr.becpg.repo.search.impl.NestedAdvSearchPlugin;
  */
 public class WUsedExtractor extends MultiLevelExtractor {
 
-	private static Log logger = LogFactory.getLog(WUsedExtractor.class);
+	private static final Log logger = LogFactory.getLog(WUsedExtractor.class);
 
 	private WUsedListService wUsedListService;
 
@@ -79,7 +79,7 @@ public class WUsedExtractor extends MultiLevelExtractor {
 
 		PaginatedExtractedItems ret = new PaginatedExtractedItems(pagination.getPageSize());
 
-		QName associationName = null;
+		QName associationName;
 
 		if (dataListFilter.getDataListName() != null && dataListFilter.getDataListName().indexOf(RepoConsts.WUSED_SEPARATOR) > 0) {
 			associationName = QName.createQName(dataListFilter.getDataListName().split(RepoConsts.WUSED_SEPARATOR)[1].replace("_", ":"),
@@ -93,7 +93,7 @@ public class WUsedExtractor extends MultiLevelExtractor {
 			return ret;
 		}
 
-		Map<String, Object> props = new HashMap<String, Object>();
+		Map<String, Object> props = new HashMap<>();
 		String assocName = associationName.toPrefixString(namespaceService);
 
 		props.put(PROP_ACCESSRIGHT, true); // TODO

@@ -18,5 +18,5 @@ public interface NodeVisitor {
 	 *
 	 * @param nodeRef the node ref
 	 */
-	public void visitNode(NodeRef nodeRef);
+	void visitNode(NodeRef nodeRef);
 }

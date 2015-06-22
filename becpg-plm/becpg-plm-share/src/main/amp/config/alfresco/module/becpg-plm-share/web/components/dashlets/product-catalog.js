@@ -359,7 +359,7 @@
                      } else {
                         var id = this.id + '-metadata-' + oRecord.getId(), recordSiteName = $isValueSet(record.location.site) ? record.location.site
                               : null, version = "", dateLine = "", locn = record.location, docDetailsUrl = beCPG.util
-                              .entityURL(recordSiteName, record.nodeRef, record.itemType);
+                              .entityURL(recordSiteName, record.nodeRef, record.nodeType, null, "View-properties");
 
                         // Version display
                         if (record.version && record.version !== "") {
@@ -399,8 +399,8 @@
                            desc += '<span class="item">' + dateLine + '</span>';
                            desc += '</div>';
 
-                           var  documentsUrl = beCPG.util.entityDocumentsURL(recordSiteName,
-                                 record.location.path, record.location.file, true);
+                           var  charactsUrl = beCPG.util.entityURL(recordSiteName, record.nodeRef, record.nodeType),
+                           		documentsUrl = beCPG.util.entityURL(recordSiteName, record.nodeRef, record.nodeType, null, "View-reports");
 
                            /* Favourite / Charact / Download */
                            desc += '<div class="detail detail-social">';
@@ -408,7 +408,7 @@
                            desc += '<span class="item item-social item-separator"><a class="view-documents" href="' + documentsUrl + '"  title="' + this
                                  .msg("actions.entity.view-documents") + '" tabindex="0">' + this
                                  .msg("actions.entity.view-documents.short") + '</a></span>';
-                           desc += '<span class="item item-social item-separator"><a class="view-characts" href="' + docDetailsUrl + '" title="' + this
+                           desc += '<span class="item item-social item-separator"><a class="view-characts" href="' + charactsUrl + '" title="' + this
                                  .msg("actions.entity.view-datalists") + '" tabindex="0">' + this
                                  .msg("actions.entity.view-datalists.short") + '</a></span>';
                            desc += '</div>';

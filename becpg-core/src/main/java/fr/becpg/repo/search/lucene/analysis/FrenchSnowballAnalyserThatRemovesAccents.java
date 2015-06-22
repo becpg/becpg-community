@@ -35,7 +35,7 @@ import org.apache.lucene.analysis.standard.StandardTokenizer;
  */
 public class FrenchSnowballAnalyserThatRemovesAccents extends Analyzer
 {
-	 private Set<?> stopSet;
+	 private final Set<?> stopSet;
 	
     /**
      * An array containing some common English words that are usually not useful for searching.

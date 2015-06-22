@@ -44,7 +44,7 @@ public class FormulationHelper {
 
 	public static final Double DEFAULT_OVERRUN = 0d;
 
-	private static Log logger = LogFactory.getLog(FormulationHelper.class);
+	private static final Log logger = LogFactory.getLog(FormulationHelper.class);
 
 	public static Double getQtyInKg(CompoListDataItem compoListDataItem) {
 		return compoListDataItem.getQty() != null ? compoListDataItem.getQty() : DEFAULT_COMPONANT_QUANTITY;
@@ -364,7 +364,7 @@ public class FormulationHelper {
 		}
 	}
 
-	public static Double getNetVolume(CompoListDataItem compoListDataItem, NodeService nodeService) throws FormulateException {
+	public static Double getNetVolume(CompoListDataItem compoListDataItem, NodeService nodeService) {
 
 		Double qty = FormulationHelper.getQtyInKg(compoListDataItem);
 		if (qty != null) {

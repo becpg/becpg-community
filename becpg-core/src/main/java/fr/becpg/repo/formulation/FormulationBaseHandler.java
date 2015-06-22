@@ -24,7 +24,7 @@ import org.springframework.util.StopWatch;
 public abstract class FormulationBaseHandler<T> implements FormulationHandler<T> {
  
 
-	private Log logger = LogFactory.getLog(FormulationBaseHandler.class);
+	private final Log logger = LogFactory.getLog(FormulationBaseHandler.class);
 	
     private FormulationHandler<T> nextHandler;
  

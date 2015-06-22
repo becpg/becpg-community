@@ -24,6 +24,10 @@ import fr.becpg.repo.repository.model.Synchronisable;
 public class CostListDataItem extends AbstractManualDataItem implements SimpleListDataItem, Synchronisable, CompositeDataItem<CostListDataItem>{
 	
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4160545876076772520L;
 	private Double value = 0d;	
 	private String unit;		
 	private Double previousValue = 0d;
@@ -33,7 +37,7 @@ public class CostListDataItem extends AbstractManualDataItem implements SimpleLi
 	private NodeRef cost;	
 	private Boolean isFormulated;	
 	private String errorLog;	
-	private List<NodeRef> plants = new ArrayList<NodeRef>();	
+	private List<NodeRef> plants = new ArrayList<>();
 	private Integer depthLevel;
 	private CostListDataItem parent;
 	private NodeRef componentNodeRef;

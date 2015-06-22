@@ -26,6 +26,10 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfQname(qname="bcpg:variant")
 public class VariantData extends BeCPGDataObject {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6714268508538918393L;
 	protected Boolean isDefaultVariant;
 
 	@AlfProp

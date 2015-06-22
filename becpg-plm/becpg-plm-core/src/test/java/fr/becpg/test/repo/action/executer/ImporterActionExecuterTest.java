@@ -36,10 +36,10 @@ import fr.becpg.test.PLMBaseTestCase;
  */
 public class ImporterActionExecuterTest  extends PLMBaseTestCase {
 	
-	private static String FILENAME_IMPORT_CSV = "import.csv";
+	private static final String FILENAME_IMPORT_CSV = "import.csv";
 	
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(ImporterActionExecuterTest.class);
+	private static final Log logger = LogFactory.getLog(ImporterActionExecuterTest.class);
 
 	@Resource
 	private Repository repository;
@@ -72,7 +72,7 @@ public class ImporterActionExecuterTest  extends PLMBaseTestCase {
  		    	}
  		    	
  		    	//Create file to import
- 		    	Map<QName, Serializable> properties = new HashMap<QName, Serializable>();		
+ 		    	Map<QName, Serializable> properties = new HashMap<>();
  		    	properties.put(ContentModel.PROP_NAME, FILENAME_IMPORT_CSV);
  		    	
  		    	NodeRef importNodeRef = nodeService.getChildByName(importToTreatFolder, ContentModel.ASSOC_CONTAINS, (String)properties.get(ContentModel.PROP_NAME));    	
@@ -124,7 +124,7 @@ public class ImporterActionExecuterTest  extends PLMBaseTestCase {
  		    	}
  		    	
  		    	//Create file to import
- 		    	Map<QName, Serializable> properties = new HashMap<QName, Serializable>();		
+ 		    	Map<QName, Serializable> properties = new HashMap<>();
  		    	properties.put(ContentModel.PROP_NAME, "import.csv");
  		    	
  		    	NodeRef importNodeRef = nodeService.getChildByName(importToTreatFolder, ContentModel.ASSOC_CONTAINS, (String)properties.get(ContentModel.PROP_NAME));    	

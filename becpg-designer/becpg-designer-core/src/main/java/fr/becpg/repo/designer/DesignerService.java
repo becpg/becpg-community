@@ -35,29 +35,29 @@ import fr.becpg.repo.designer.data.FormControl;
  */
 public interface DesignerService {
 
-	public NodeRef createModelAspectNode(NodeRef parentNode, InputStream modelXml);
+	NodeRef createModelAspectNode(NodeRef parentNode, InputStream modelXml);
 
-	public void writeXml(NodeRef nodeRef);
+	void writeXml(NodeRef nodeRef);
 	
-	public DesignerTree getDesignerTree(NodeRef nodeRef);
+	DesignerTree getDesignerTree(NodeRef nodeRef);
 	
-	public NodeRef createModelElement(NodeRef parentNodeRef, QName typeName, QName assocName, Map<QName,Serializable> props, String modelTemplate);
+	NodeRef createModelElement(NodeRef parentNodeRef, QName typeName, QName assocName, Map<QName, Serializable> props, String modelTemplate);
 
-	public String prefixName(NodeRef elementRef, String name);
+	String prefixName(NodeRef elementRef, String name);
 
-	public NodeRef findModelNodeRef(NodeRef nodeRef);
+	NodeRef findModelNodeRef(NodeRef nodeRef);
 
 	void publish(NodeRef nodeRef);
 
-	public List<FormControl> getFormControls();
+	List<FormControl> getFormControls();
 
-	public NodeRef moveElement(NodeRef from, NodeRef to);
+	NodeRef moveElement(NodeRef from, NodeRef to);
 
-	public NodeRef findOrCreateModel(String modelName, String modelTemplate, Map<String,Object> templateContext);
+	NodeRef findOrCreateModel(String modelName, String modelTemplate, Map<String, Object> templateContext);
 
-	public NodeRef findOrCreateConfig(String configName, String modelTemplate, Map<String,Object> templateContext);
+	NodeRef findOrCreateConfig(String configName, String modelTemplate, Map<String, Object> templateContext);
 
-	public void unpublish(NodeRef parentNodeRef);
+	void unpublish(NodeRef parentNodeRef);
 
 	
 }

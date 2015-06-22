@@ -28,6 +28,10 @@ import fr.becpg.repo.repository.model.BaseObject;
 
 public abstract class AbstractProductDataView extends BaseObject {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8864829069100366849L;
 	protected List<ReqCtrlListDataItem> reqCtrlList;
 	protected List<DynamicCharactListItem> dynamicCharactList;
 	

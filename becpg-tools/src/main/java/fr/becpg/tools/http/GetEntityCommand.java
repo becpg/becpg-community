@@ -22,7 +22,7 @@ package fr.becpg.tools.http;
 public class GetEntityCommand  extends AbstractHttpCommand {
 
 
-	private static String COMMAND_URL_TEMPLATE = "/becpg/remote/entity?nodeRef=%s";
+	private static final String COMMAND_URL_TEMPLATE = "/becpg/remote/entity?nodeRef=%s";
 
 	
 	public GetEntityCommand(String serverUrl) {

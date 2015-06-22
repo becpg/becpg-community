@@ -35,7 +35,7 @@ import fr.becpg.repo.repository.AlfrescoRepository;
  */
 public class LabelClaimFormulationHandler extends FormulationBaseHandler<ProductData> {
 
-	private static Log logger = LogFactory.getLog(LabelClaimFormulationHandler.class);
+	private static final Log logger = LogFactory.getLog(LabelClaimFormulationHandler.class);
 
 	private NodeService nodeService;
 
@@ -69,13 +69,13 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 				}
 
 			}
-				Set<NodeRef> visitedProducts = new HashSet<NodeRef>();
+				Set<NodeRef> visitedProducts = new HashSet<>();
 
 				for (CompoListDataItem compoItem : productData.getCompoList(EffectiveFilters.EFFECTIVE)) {
 
 					NodeRef part = compoItem.getProduct();
 					if (!visitedProducts.contains(part)) {
-						ProductData partProduct = (ProductData) alfrescoRepository.findOne(part);
+						ProductData partProduct = alfrescoRepository.findOne(part);
 						if (partProduct.getLabelClaimList() != null) {
 							for (LabelClaimListDataItem labelClaim : partProduct.getLabelClaimList()) {
 								visitPart(productData, labelClaim);

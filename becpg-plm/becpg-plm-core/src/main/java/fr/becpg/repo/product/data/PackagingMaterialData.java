@@ -23,5 +23,10 @@ import fr.becpg.repo.repository.annotation.AlfType;
 @AlfType
 @AlfQname(qname = "bcpg:packagingMaterial")
 public class PackagingMaterialData extends ProductData   {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1386599003766479590L;
 	
 }

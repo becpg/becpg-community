@@ -36,7 +36,7 @@ import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
 public class FormulationMultiLevelILTest extends AbstractFinishedProductTest {
 
-	protected static Log logger = LogFactory.getLog(FormulationMultiLevelILTest.class);
+	protected static final Log logger = LogFactory.getLog(FormulationMultiLevelILTest.class);
 
 	@Override
 	public void setUp() throws Exception {
@@ -59,9 +59,9 @@ public class FormulationMultiLevelILTest extends AbstractFinishedProductTest {
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(4d);
 				finishedProduct.setDensity(1d);
-				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 3d, CompoListUnit.kg, 3d, DeclarationType.Declare, rawMaterial7NodeRef));	
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 1d, CompoListUnit.kg, 1d, DeclarationType.Declare, rawMaterial6NodeRef)); 
+				List<CompoListDataItem> compoList = new ArrayList<>();
+				compoList.add(new CompoListDataItem(null, null, null, 3d, CompoListUnit.kg, 3d, DeclarationType.Declare, rawMaterial7NodeRef));
+				compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 1d, DeclarationType.Declare, rawMaterial6NodeRef));
 
 				finishedProduct.getCompoListView().setCompoList(compoList);
 				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();				

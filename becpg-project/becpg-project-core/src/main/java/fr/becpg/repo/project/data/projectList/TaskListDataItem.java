@@ -40,6 +40,10 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfQname(qname = "pjt:taskList")
 public class TaskListDataItem extends BeCPGDataObject implements CompositeDataItem<TaskListDataItem> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 158129873096972078L;
 	private String taskName;
 	private Boolean isMilestone;
 	private Boolean isGroup;
