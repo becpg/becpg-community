@@ -95,7 +95,7 @@
    YAHOO.Bubbling.fire("registerToolbarButtonAction", {
        actionName : "entity-edit-metadata",
        evaluate : function(asset, entity) {
-           return asset.name !== null && asset.name.indexOf("View-properties") == 0;
+           return asset.name !== null && asset.name.indexOf("View-properties") == 0 && entity.userAccess.edit;
        },
        fn : function(instance) {
 
