@@ -42,7 +42,7 @@ import java.util.List;
             this.page = pageNum;
             this.pageSize = pageSize;
             this.fullListSize = fullList.size();
-            if(!fullList.isEmpty()){
+            if(!fullList.isEmpty() && (fullListSize >= Math.min(page * pageSize, fullListSize))){
             	if(listValueExtractor == null){
             		results = (List<ListValueEntry>) fullList.subList(Math.max((page-1) * pageSize,0), Math.min(page * pageSize, fullListSize));
             	}else {
