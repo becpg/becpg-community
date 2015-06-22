@@ -30,6 +30,10 @@ import fr.becpg.repo.repository.annotation.AlfType;
 @AlfQname(qname = "qa:samplingList")
 public class SamplingListDataItem extends AbstractSamplingListDataItem {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6184834607047086429L;
 	private Date dateTime;
 	private String sampleId;
 	private QualityControlState sampleState;

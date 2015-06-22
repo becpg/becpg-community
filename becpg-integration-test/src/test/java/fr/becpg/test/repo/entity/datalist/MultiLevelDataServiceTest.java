@@ -3,10 +3,7 @@
  */
 package fr.becpg.test.repo.entity.datalist;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import javax.annotation.Resource;
 
@@ -36,7 +33,7 @@ import fr.becpg.test.PLMBaseTestCase;
 public class MultiLevelDataServiceTest extends PLMBaseTestCase {
 
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(MultiLevelDataServiceTest.class);
+	private static final Log logger = LogFactory.getLog(MultiLevelDataServiceTest.class);
 
 	@Resource
 	private MultiLevelDataListService multiLevelDataListService;
@@ -90,13 +87,13 @@ public class MultiLevelDataServiceTest extends PLMBaseTestCase {
 				FinishedProductData finishedProduct = new FinishedProductData();
 				finishedProduct.setName("Finished Product");
 
-				List<CompoListDataItem> compoList = new LinkedList<CompoListDataItem>();
-				CompoListDataItem parent1 = new CompoListDataItem(null, (CompoListDataItem) null, 1d, 1d, CompoListUnit.P, 0d,
+				List<CompoListDataItem> compoList = new LinkedList<>();
+				CompoListDataItem parent1 = new CompoListDataItem(null, null, 1d, 1d, CompoListUnit.P, 0d,
 						DeclarationType.Declare, lSF1NodeRef);
 				CompoListDataItem child1 = new CompoListDataItem(null, parent1, 1d, 4d, CompoListUnit.P, 0d, DeclarationType.Declare, lSF2NodeRef);
 				CompoListDataItem child12 = new CompoListDataItem(null, child1, 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit,
 						rawMaterial1NodeRef);
-				CompoListDataItem parent2 = new CompoListDataItem(null, (CompoListDataItem) null, 1d, 4d, CompoListUnit.P, 0d,
+				CompoListDataItem parent2 = new CompoListDataItem(null, null, 1d, 4d, CompoListUnit.P, 0d,
 						DeclarationType.Declare, lSF3NodeRef);
 				CompoListDataItem child2 = new CompoListDataItem(null, parent2, 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit,
 						rawMaterial2NodeRef);
@@ -127,7 +124,7 @@ waitForSolr(startTime);
 
 				final DataListFilter dataListFilter = new DataListFilter();
 				dataListFilter.setDataType(PLMModel.TYPE_COMPOLIST);
-				dataListFilter.setEntityNodeRefs(Arrays.asList(finishedProductNodeRef));
+				dataListFilter.setEntityNodeRefs(Collections.singletonList(finishedProductNodeRef));
 
 				MultiLevelListData mlld = multiLevelDataListService.getMultiLevelListData(dataListFilter);
 				int checks = 0;

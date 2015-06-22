@@ -43,7 +43,6 @@
 					               </a>
 			                     </td>
 			                     <td>
-			                        <h2 class="thin dark">${displayName}</h2>
 			                        <div>
 					                 <span class="item-modifier">
 					                     <#assign modifyUser = node.properties["cm:modifier"]>
@@ -51,10 +50,7 @@
 					                     <#assign modifierLink = userProfileLink(modifyUser.userName, modifyUser.displayName, 'class="theme-color-1"') >
 					                     ${msg("label.modified-by-user-on-date", modifierLink, "<span id='${el}-modifyDate'>${modifyDate.iso8601}</span>")}
 					                 </span>
-                     				<span id="${el}-favourite" class="item"></span>
-                   					<span class="item item-separator item-social">
-					                        <a href="#" name="@commentNode" rel="${item.nodeRef?html}" class="theme-color-1 comment<#if commentCount??> hasComments</#if> ${el}" title="${msg("comment.document.tip")}" tabindex="0">${msg("comment.document.label")}</a><#if commentCount??><span class="comment-count">${commentCount}</span></#if>
-				                     </span>
+                     				<span id="${el}-favourite" class="item"></span>                   					
                     			  </div>
 								</td></tr>
 					   </table>   

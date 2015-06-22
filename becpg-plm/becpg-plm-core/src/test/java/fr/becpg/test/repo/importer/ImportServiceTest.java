@@ -16,7 +16,6 @@ import javax.annotation.Resource;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
-import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.MLText;
@@ -56,11 +55,11 @@ import fr.becpg.test.PLMBaseTestCase;
  */
 public class ImportServiceTest extends PLMBaseTestCase {
 
-	private static String PATH_TEMP = "Temp";
-	private static String PATH_PRODUCTS = "Products";
-	private static String PATH_SITE_FOLDER = "./st:sites/cm:folder";	
+	private static final String PATH_TEMP = "Temp";
+	private static final String PATH_PRODUCTS = "Products";
+	private static final String PATH_SITE_FOLDER = "./st:sites/cm:folder";
 	
-	private static Log logger = LogFactory.getLog(ImportServiceTest.class);
+	private static final Log logger = LogFactory.getLog(ImportServiceTest.class);
 
 	@Resource
 	private ImportService importService;
@@ -120,7 +119,7 @@ public class ImportServiceTest extends PLMBaseTestCase {
 
 				/*-- Create file to import --*/
 				logger.debug("create file to import");
-				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				Map<QName, Serializable> properties = new HashMap<>();
 				properties.put(ContentModel.PROP_NAME, "import.xlsx");
 
 				NodeRef nodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, (String) properties.get(ContentModel.PROP_NAME));
@@ -198,7 +197,7 @@ public class ImportServiceTest extends PLMBaseTestCase {
 	 * @throws ParseException
 	 */
 	@Test
-	public void testImportProducts() throws ParseException, Exception {
+	public void testImportProducts() throws Exception {
 
 		/*
 		 * Delete temp, products folder Add mapping file
@@ -243,7 +242,7 @@ public class ImportServiceTest extends PLMBaseTestCase {
 			public NodeRef execute() throws Throwable {
 
 				logger.debug("create file to import");
-				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				Map<QName, Serializable> properties = new HashMap<>();
 				properties.put(ContentModel.PROP_NAME, "Import-Products.csv");
 
 				NodeRef nodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, (String) properties.get(ContentModel.PROP_NAME));
@@ -275,7 +274,7 @@ public class ImportServiceTest extends PLMBaseTestCase {
 		assertNotNull("Temp folder should exist", tempNodeRef);
 		NodeRef importFolderNodeRef = nodeService.getChildByName(tempNodeRef, ContentModel.ASSOC_CONTAINS, PATH_PRODUCTS);
 		assertNotNull("import folder should exist", importFolderNodeRef);
-		assertEquals((int) 5, fileFolderService.list(importFolderNodeRef).size());
+		assertEquals(5, fileFolderService.list(importFolderNodeRef).size());
 
 		/*
 		 * check products in repo
@@ -287,7 +286,7 @@ public class ImportServiceTest extends PLMBaseTestCase {
 
 		assertNotNull("product 1 should exist", product1NodeRef);
 
-		ProductData productData = (ProductData)alfrescoRepository.findOne(product1NodeRef);
+		ProductData productData = alfrescoRepository.findOne(product1NodeRef);
 
 		logger.debug("Props: " + nodeService.getProperties(product1NodeRef));
 
@@ -327,8 +326,8 @@ public class ImportServiceTest extends PLMBaseTestCase {
 		assertEquals("check supplier name", "1000014", supplier2Code);
 
 		/*-- check productLists --*/
-		assertEquals("costs should exist", (int) 2, productData.getCostList().size());
-		assertEquals("nuts should exist", (int) 3, productData.getNutList().size());
+		assertEquals("costs should exist", 2, productData.getCostList().size());
+		assertEquals("nuts should exist", 3, productData.getNutList().size());
 		String[] costNames = { "Coût MP", "Coût Emb" };
 		double[] costValues = { 1.0d, 3.1d };
 		String[] nutNames = { "Protéines", "Lipides", "Glucides" };
@@ -349,7 +348,7 @@ public class ImportServiceTest extends PLMBaseTestCase {
 			}
 			z_idx++;
 		}
-		assertEquals("2 costs have been checked", (int) 2, costChecked);
+		assertEquals("2 costs have been checked", 2, costChecked);
 
 		// check nuts
 		int nutChecked = 0;
@@ -366,7 +365,7 @@ public class ImportServiceTest extends PLMBaseTestCase {
 			}
 			z_idx++;
 		}
-		assertEquals("3 nuts have been checked", (int) 3, nutChecked);
+		assertEquals("3 nuts have been checked", 3, nutChecked);
 
 		// check that file Images/produit.jpg has been imported and check title
 		NodeRef imagesNodeRef = nodeService.getChildByName(product2NodeRef, ContentModel.ASSOC_CONTAINS, "Images");
@@ -390,11 +389,11 @@ public class ImportServiceTest extends PLMBaseTestCase {
 		NodeRef productTplNodeRef = nodeService.getChildByName(importFolderNodeRef, ContentModel.ASSOC_CONTAINS, "productTpl");
 		assertNotNull("productTpl should exist", productTplNodeRef);
 
-		ProductData productTplData = (ProductData)alfrescoRepository.findOne(product1NodeRef);
+		ProductData productTplData = alfrescoRepository.findOne(product1NodeRef);
 
 		/*-- check productLists of productTpl --*/
-		assertEquals("costs should exist", (int) 2, productData.getCostList().size());
-		assertEquals("nuts should exist", (int) 3, productData.getNutList().size());
+		assertEquals("costs should exist", 2, productData.getCostList().size());
+		assertEquals("nuts should exist", 3, productData.getNutList().size());
 
 		// check costs
 		costChecked = 0;
@@ -411,7 +410,7 @@ public class ImportServiceTest extends PLMBaseTestCase {
 			}
 			z_idx++;
 		}
-		assertEquals("2 costs have been checked", (int) 2, costChecked);
+		assertEquals("2 costs have been checked", 2, costChecked);
 
 		// check nuts
 		nutChecked = 0;
@@ -429,16 +428,16 @@ public class ImportServiceTest extends PLMBaseTestCase {
 			z_idx++;
 		}
 
-		assertEquals("3 nuts have been checked", (int) 3, nutChecked);
+		assertEquals("3 nuts have been checked", 3, nutChecked);
 
 		/*
 		 * check products import in site, it is not classified
 		 */
 
 		List<NodeRef> siteFoldernode = BeCPGQueryBuilder.createQuery().selectNodesByPath(repositoryHelper.getCompanyHome(), PATH_SITE_FOLDER);
-		assertEquals("classif folder should exist", (int) 1, siteFoldernode.size());
+		assertEquals("classif folder should exist", 1, siteFoldernode.size());
 		NodeRef siteFolderNodeRef = siteFoldernode.get(0);
-		assertEquals("1 product should exist", (int) 1, fileFolderService.list(siteFolderNodeRef).size());
+		assertEquals("1 product should exist", 1, fileFolderService.list(siteFolderNodeRef).size());
 
 		productName = "Saumon surgelé 80x20x4";
 		product1NodeRef = nodeService.getChildByName(importFolderNodeRef, ContentModel.ASSOC_CONTAINS, productName);
@@ -471,7 +470,7 @@ public class ImportServiceTest extends PLMBaseTestCase {
 
 					/*-- Create file to import --*/
 					logger.debug("create file to import");
-					Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+					Map<QName, Serializable> properties = new HashMap<>();
 					properties.put(ContentModel.PROP_NAME, "Import-with-IntegrityException.csv");
 
 					NodeRef nodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, (String) properties.get(ContentModel.PROP_NAME));
@@ -531,7 +530,7 @@ public class ImportServiceTest extends PLMBaseTestCase {
 
 				/*-- Create file to import --*/
 				logger.debug("create file to import");
-				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				Map<QName, Serializable> properties = new HashMap<>();
 				properties.put(ContentModel.PROP_NAME, "Import-ProductLists.csv");
 
 				NodeRef nodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, (String) properties.get(ContentModel.PROP_NAME));
@@ -566,7 +565,7 @@ public class ImportServiceTest extends PLMBaseTestCase {
 				NodeRef importFolderNodeRef = nodeService.getChildByName(tempNodeRef, ContentModel.ASSOC_CONTAINS, PATH_PRODUCTS);
 				assertNotNull("import folder should exist", importFolderNodeRef);
 				logger.info("###fileFolderService.listFiles(importFolderNodeRef).size()" + fileFolderService.listFiles(importFolderNodeRef).size());
-				assertEquals((int) 4, fileFolderService.list(importFolderNodeRef).size());
+				assertEquals(4, fileFolderService.list(importFolderNodeRef).size());
 
 				/*
 				 * check products
@@ -578,7 +577,9 @@ public class ImportServiceTest extends PLMBaseTestCase {
 				ProductData productData = alfrescoRepository.findOne(product1NodeRef);
 
 				/*-- check productLists --*/
-				assertEquals("compoList should exist", (int) 3, productData.getCompoListView().getCompoList().size());
+		
+				
+				assertEquals("compoList should exist", 3, productData.getCompoListView().getCompoList().size());
 				String[] rmNames = { "MP1", "MP2", "MP3" };
 				double[] qtyValues = { 1.0d, 2.0d, 3.2d };
 				String[] unitValues = { "g", "kg", "g" };
@@ -599,7 +600,7 @@ public class ImportServiceTest extends PLMBaseTestCase {
 					}
 					z_idx++;
 				}
-				assertEquals("3 rm have been checked", (int) 3, rmChecked);
+				assertEquals("3 rm have been checked", 3, rmChecked);
 
 				return null;
 
@@ -648,7 +649,7 @@ public class ImportServiceTest extends PLMBaseTestCase {
 
 				/*-- Create file to import --*/
 				logger.debug("create file to import");
-				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				Map<QName, Serializable> properties = new HashMap<>();
 				properties.put(ContentModel.PROP_NAME, "import-productHierarchies" + i + ".csv");
 
 				NodeRef nodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, (String) properties.get(ContentModel.PROP_NAME));
@@ -717,7 +718,7 @@ public class ImportServiceTest extends PLMBaseTestCase {
 
 				/*-- Create file to import --*/
 				logger.debug("create file to import");
-				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				Map<QName, Serializable> properties = new HashMap<>();
 				properties.put(ContentModel.PROP_NAME, "importClaim.csv");
 
 				NodeRef nodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
@@ -741,14 +742,14 @@ public class ImportServiceTest extends PLMBaseTestCase {
 		NodeRef systemFolder = repoService.getFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM);
 
 		NodeRef labelClaimListsFolder = entitySystemService.getSystemEntityDataList(systemFolder, RepoConsts.PATH_CHARACTS, PlmRepoConsts.PATH_LABELCLAIMS);
-		List<FileInfo> labelClaimsFileInfo = fileFolderService.listFiles(labelClaimListsFolder);
+		List<NodeRef> labelClaimsFileInfo = entityListDAO.getListItems(labelClaimListsFolder,PLMModel.TYPE_LABEL_CLAIM);
 
 		Assert.assertTrue(labelClaimsFileInfo.size()==2);
 		
 		
 		
-		for (FileInfo fileInfo : labelClaimsFileInfo) {
-			String formula = (String)nodeService.getProperty( fileInfo.getNodeRef(),PLMModel.PROP_LABEL_CLAIM_FORMULA);
+		for (NodeRef fileInfo : labelClaimsFileInfo) {
+			String formula = (String)nodeService.getProperty( fileInfo,PLMModel.PROP_LABEL_CLAIM_FORMULA);
 			
 			Assert.assertNotNull(formula);
 			logger.info(formula);

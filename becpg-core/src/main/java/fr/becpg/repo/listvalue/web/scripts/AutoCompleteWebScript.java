@@ -129,7 +129,7 @@ public class AutoCompleteWebScript extends DeclarativeWebScript {
 
 		logger.debug("exec webscript");
 
-		Map<String, Serializable> props = new HashMap<String, Serializable>();
+		Map<String, Serializable> props = new HashMap<>();
 		props.put(ListValueService.PROP_LOCALE, locale);
 		props.put(ListValueService.PROP_NODEREF, nodeRef);
 		props.put(ListValueService.PROP_PATH, path);
@@ -149,7 +149,7 @@ public class AutoCompleteWebScript extends DeclarativeWebScript {
 			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Unsupported argument 'sourcetype'. sourcetype = " + sourceType);
 		}
 
-		Map<String, Object> model = new HashMap<String, Object>();
+		Map<String, Object> model = new HashMap<>();
 		model.put(MODEL_KEY_NAME_SUGGESTIONS, suggestions);
 		model.put(MODEL_PAGE_SIZE, pageSize);
 		logger.debug("return model");
@@ -157,7 +157,7 @@ public class AutoCompleteWebScript extends DeclarativeWebScript {
 	}
 
 	private HashMap<String, String> getExtraParams(WebScriptRequest req) {
-		HashMap<String, String> ret = new HashMap<String, String>();
+		HashMap<String, String> ret = new HashMap<>();
 
 		for (String name : req.getParameterNames()) {
 			if (name.startsWith(ListValueService.EXTRA_PARAM + ".")) {

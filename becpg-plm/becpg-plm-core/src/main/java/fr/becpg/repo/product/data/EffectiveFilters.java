@@ -26,7 +26,7 @@ import fr.becpg.repo.repository.model.EffectiveDataItem;
 
 public class EffectiveFilters {
 	
-	public static DataListFilter<ProductData> FUTUR = new DataListFilter<ProductData>() {
+	public static final DataListFilter<ProductData> FUTUR = new DataListFilter<ProductData>() {
 
 		@Override
 		public Predicate createPredicate(final ProductData data) {
@@ -52,7 +52,7 @@ public class EffectiveFilters {
 			};
 		}
 	};
-	public static DataListFilter<ProductData> EFFECTIVE = new DataListFilter<ProductData>() {
+	public static final DataListFilter<ProductData> EFFECTIVE = new DataListFilter<ProductData>() {
 
 		@Override
 		public Predicate createPredicate(final ProductData data) {
@@ -81,7 +81,7 @@ public class EffectiveFilters {
 			};
 		}
 	};
-	public static DataListFilter<ProductData> ALL = new DataListFilter<ProductData>() {
+	public static final DataListFilter<ProductData> ALL = new DataListFilter<ProductData>() {
 
 		@Override
 		public Predicate createPredicate(ProductData data) {

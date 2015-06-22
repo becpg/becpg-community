@@ -18,6 +18,11 @@ import fr.becpg.repo.repository.model.SimpleListDataItem;
 public class PhysicoChemListDataItem extends AbstractManualDataItem implements SimpleListDataItem{
 			
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3018711765028656339L;
+
 	private Double value;
 	
 	private String unit;

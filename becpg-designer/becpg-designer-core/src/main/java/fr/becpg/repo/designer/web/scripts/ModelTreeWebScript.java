@@ -39,7 +39,7 @@ public class ModelTreeWebScript extends DeclarativeWebScript  {
 
 	
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(ModelTreeWebScript.class);
+	private static final Log logger = LogFactory.getLog(ModelTreeWebScript.class);
 	
 	/** The node service. */
 	private DesignerService designerService;
@@ -79,7 +79,7 @@ public class ModelTreeWebScript extends DeclarativeWebScript  {
 		NodeRef nodeRef = new NodeRef(storeType, storeId, nodeId);		
 		
 		
-		Map<String, Object> model = new HashMap<String, Object>();
+		Map<String, Object> model = new HashMap<>();
 
 		model.put(MODEL_TREE, designerService.getDesignerTree(nodeRef));
 	

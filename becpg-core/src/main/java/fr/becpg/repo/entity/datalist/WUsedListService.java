@@ -26,7 +26,7 @@ import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 
 public interface WUsedListService {
 	
-	public enum WUsedOperator {
+	enum WUsedOperator {
 		AND,OR
 	}
 
@@ -37,7 +37,7 @@ public interface WUsedListService {
      * @param associationName
      * @param maxDepthLevel
      */
-    public MultiLevelListData getWUsedEntity(NodeRef entityNodeRef, QName associationName, int maxDepthLevel);
+	MultiLevelListData getWUsedEntity(NodeRef entityNodeRef, QName associationName, int maxDepthLevel);
     
     /**
      * Calculate the WUsed entities of the items 
@@ -46,14 +46,14 @@ public interface WUsedListService {
      * @param filter
      * @param maxDepthLevel
      */
-    public MultiLevelListData getWUsedEntity(List<NodeRef> entityNodeRefs, WUsedOperator operator , WUsedFilter filter,  QName associationQName, int maxDepthLevel);
+	MultiLevelListData getWUsedEntity(List<NodeRef> entityNodeRefs, WUsedOperator operator, WUsedFilter filter, QName associationQName, int maxDepthLevel);
     /**
      * Calculate the WUsed entities of the items 
      * @param entityNodeRef item associated to datalists
      * @param associationName
      * @param maxDepthLevel
      */
-	public MultiLevelListData getWUsedEntity(List<NodeRef> entityNodeRefs, WUsedOperator operator, QName associationName, int maxDepthLevel);
+	MultiLevelListData getWUsedEntity(List<NodeRef> entityNodeRefs, WUsedOperator operator, QName associationName, int maxDepthLevel);
 
     
 }

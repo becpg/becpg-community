@@ -41,5 +41,5 @@ public interface ExportSearchService {
 	 * @param reportFormat
 	 * @param outputStream
 	 */
-	public void createReport(QName nodeType, NodeRef templateNodeRef, List<NodeRef> searchResults, ReportFormat reportFormat, OutputStream outputStream);	
+	void createReport(QName nodeType, NodeRef templateNodeRef, List<NodeRef> searchResults, ReportFormat reportFormat, OutputStream outputStream);
 }

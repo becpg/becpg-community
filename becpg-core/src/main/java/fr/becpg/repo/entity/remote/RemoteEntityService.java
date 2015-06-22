@@ -31,20 +31,20 @@ import fr.becpg.common.BeCPGException;
 public interface RemoteEntityService {
 
 	/* Constants */
-	static final String CHILD_ASSOC_TYPE = "childAssoc";
-	static final String ASSOC_TYPE = "assoc";
-	static final String NODEREF_TYPE = "d:noderef";
-	static final String CATEGORY_TYPE = "d:category";
-	static final String NODE_TYPE = "node";
-	static final String ATTR_TYPE = "type";
-	static final String ATTR_PATH = "path";
-	static final String ATTR_NAME = "name";
-	static final String ATTR_NODEREF = "nodeRef";
-	static final String ATTR_CODE = "code";
-	static final String ELEM_ENTITIES = "entities";
-	static final String ELEM_DATA = "data";
-	static final String ELEM_LIST = "values";
-	static final String ELEM_LIST_VALUE = "value";
+	String CHILD_ASSOC_TYPE = "childAssoc";
+	String ASSOC_TYPE = "assoc";
+	String NODEREF_TYPE = "d:noderef";
+	String CATEGORY_TYPE = "d:category";
+	String NODE_TYPE = "node";
+	String ATTR_TYPE = "type";
+	String ATTR_PATH = "path";
+	String ATTR_NAME = "name";
+	String ATTR_NODEREF = "nodeRef";
+	String ATTR_CODE = "code";
+	String ELEM_ENTITIES = "entities";
+	String ELEM_DATA = "data";
+	String ELEM_LIST = "values";
+	String ELEM_LIST_VALUE = "value";
 
 	/**
 	 * Get entity at provided format

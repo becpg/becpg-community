@@ -44,17 +44,17 @@ import fr.becpg.repo.product.data.productList.OrganoListDataItem;
 
 public class BeCPGPLMTestHelper {
 
-	private static Log logger = LogFactory.getLog(BeCPGPLMTestHelper.class);
+	private static final Log logger = LogFactory.getLog(BeCPGPLMTestHelper.class);
 
 	public static String PRODUCT_NAME = "Finished Product";
 
 	public static final String USER_ONE = "matthieuWF";
 	public static final String USER_TWO = "philippeWF";
 
-	protected static String[] groups = { PLMGroup.QualityUser.toString(), PLMGroup.QualityMgr.toString() };
+	protected static final String[] groups = { PLMGroup.QualityUser.toString(), PLMGroup.QualityMgr.toString() };
 
 	/** The PAT h_ testfolder. */
-	public static String PATH_TESTFOLDER = "TestFolder";
+	public static final String PATH_TESTFOLDER = "TestFolder";
 
 	public static NodeRef createTestFolder() {
 		return createTestFolder(PATH_TESTFOLDER);
@@ -103,7 +103,7 @@ public class BeCPGPLMTestHelper {
 
 	public static NodeRef createUser(String userName) {
 
-		if (PLMBaseTestCase.INSTANCE2.authenticationService.authenticationExists(userName) == false) {
+		if (!PLMBaseTestCase.INSTANCE2.authenticationService.authenticationExists(userName)) {
 			PLMBaseTestCase.INSTANCE2.authenticationService.createAuthentication(userName, "PWD".toCharArray());
 
 			NodeRef userOne = PLMBaseTestCase.INSTANCE2.personService.getPerson(userName);
@@ -156,16 +156,16 @@ public class BeCPGPLMTestHelper {
 		finishedProduct.setName("Finished Product");
 		finishedProduct.setHierarchy1(PLMBaseTestCase.INSTANCE2.HIERARCHY1_FROZEN_REF);
 		finishedProduct.setHierarchy2(PLMBaseTestCase.INSTANCE2.HIERARCHY2_PIZZA_REF);
-		List<CompoListDataItem> compoList = new LinkedList<CompoListDataItem>();
-		CompoListDataItem parent1 = new CompoListDataItem(null, (CompoListDataItem) null, 1d, 1d, CompoListUnit.P, 0d, DeclarationType.Declare,
+		List<CompoListDataItem> compoList = new LinkedList<>();
+		CompoListDataItem parent1 = new CompoListDataItem(null, null, 1d, 1d, CompoListUnit.P, 0d, DeclarationType.Declare,
 				lSF1NodeRef);
 		CompoListDataItem child1 = new CompoListDataItem(null, parent1, 1d, 4d, CompoListUnit.P, 0d, DeclarationType.Declare, lSF2NodeRef);
 		CompoListDataItem child12 = new CompoListDataItem(null, child1, 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial1NodeRef);
-		CompoListDataItem parent2 = new CompoListDataItem(null, (CompoListDataItem) null, 1d, 4d, CompoListUnit.P, 0d, DeclarationType.Declare,
+		CompoListDataItem parent2 = new CompoListDataItem(null, null, 1d, 4d, CompoListUnit.P, 0d, DeclarationType.Declare,
 				lSF3NodeRef);
 		CompoListDataItem child2 = new CompoListDataItem(null, parent2, 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial2NodeRef);
 		CompoListDataItem child21 = new CompoListDataItem(null, parent2, 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit, lSF4NodeRef);
-		CompoListDataItem parent3 = new CompoListDataItem(null, (CompoListDataItem) null, 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit,
+		CompoListDataItem parent3 = new CompoListDataItem(null,null, 3d, 0d, CompoListUnit.kg, 0d, DeclarationType.Omit,
 				rawMaterial1NodeRef);
 
 		compoList.add(parent1);
@@ -201,7 +201,7 @@ public class BeCPGPLMTestHelper {
 		rawMaterial.setHierarchy2(PLMBaseTestCase.INSTANCE2.HIERARCHY2_FISH_REF);
 
 		// Allergens
-		List<AllergenListDataItem> allergenList = new ArrayList<AllergenListDataItem>();
+		List<AllergenListDataItem> allergenList = new ArrayList<>();
 		for (int j = 0; j < PLMBaseTestCase.INSTANCE2.allergens.size(); j++) {
 			AllergenListDataItem allergenListItemData = new AllergenListDataItem(null, null, false, false, null, null,
 					PLMBaseTestCase.INSTANCE2.allergens.get(j), false);
@@ -210,7 +210,7 @@ public class BeCPGPLMTestHelper {
 		rawMaterial.setAllergenList(allergenList);
 
 		// Costs
-		List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
+		List<CostListDataItem> costList = new ArrayList<>();
 		for (int j = 0; j < PLMBaseTestCase.INSTANCE2.costs.size(); j++) {
 			CostListDataItem costListItemData = new CostListDataItem(null, 12.2d, "€/kg", null, PLMBaseTestCase.INSTANCE2.costs.get(j), false);
 			costList.add(costListItemData);
@@ -218,7 +218,7 @@ public class BeCPGPLMTestHelper {
 		rawMaterial.setCostList(costList);
 
 		// Ings
-		List<IngListDataItem> ingList = new ArrayList<IngListDataItem>();
+		List<IngListDataItem> ingList = new ArrayList<>();
 		for (int j = 0; j < PLMBaseTestCase.INSTANCE2.ings.size(); j++) {
 			IngListDataItem ingListItemData = new IngListDataItem(null, 12.2d, null, null, false, false, false,
 					PLMBaseTestCase.INSTANCE2.ings.get(j), false);
@@ -227,7 +227,7 @@ public class BeCPGPLMTestHelper {
 		rawMaterial.setIngList(ingList);
 
 		// Nuts
-		List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
+		List<NutListDataItem> nutList = new ArrayList<>();
 		for (int j = 0; j < PLMBaseTestCase.INSTANCE2.nuts.size(); j++) {
 			NutListDataItem nutListItemData = new NutListDataItem(null, 2d, "kJ/100g", 0d, 0d, "Groupe 1", PLMBaseTestCase.INSTANCE2.nuts.get(j),
 					false);
@@ -236,7 +236,7 @@ public class BeCPGPLMTestHelper {
 		rawMaterial.setNutList(nutList);
 
 		// Organos
-		List<OrganoListDataItem> organoList = new ArrayList<OrganoListDataItem>();
+		List<OrganoListDataItem> organoList = new ArrayList<>();
 		for (int j = 0; j < PLMBaseTestCase.INSTANCE2.organos.size(); j++) {
 			OrganoListDataItem organoListItemData = new OrganoListDataItem(null, "Descr organo....", PLMBaseTestCase.INSTANCE2.organos.get(j));
 			organoList.add(organoListItemData);

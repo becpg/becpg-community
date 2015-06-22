@@ -40,7 +40,7 @@ import fr.becpg.test.PLMBaseTestCase;
 public class EntityReportServiceTest extends PLMBaseTestCase {
 
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(EntityReportServiceTest.class);
+	private static final Log logger = LogFactory.getLog(EntityReportServiceTest.class);
 
 	@Resource
 	private ReportTplService reportTplService;
@@ -109,7 +109,7 @@ public class EntityReportServiceTest extends PLMBaseTestCase {
 				// create PF
 				FinishedProductData pfData = new FinishedProductData();
 				pfData.setName("PF");
-				List<AllergenListDataItem> allergenList = new ArrayList<AllergenListDataItem>();
+				List<AllergenListDataItem> allergenList = new ArrayList<>();
 				allergenList.add(new AllergenListDataItem(null,null, true, true, null, null, allergens.get(0), false));
 				allergenList.add(new AllergenListDataItem(null,null, false, true, null, null, allergens.get(1), false));
 				allergenList.add(new AllergenListDataItem(null,null, true, false, null, null, allergens.get(2), false));
@@ -312,7 +312,7 @@ public class EntityReportServiceTest extends PLMBaseTestCase {
 				// create PF
 				FinishedProductData pfData = new FinishedProductData();
 				pfData.setName("PF");
-				List<AllergenListDataItem> allergenList = new ArrayList<AllergenListDataItem>();
+				List<AllergenListDataItem> allergenList = new ArrayList<>();
 				allergenList.add(new AllergenListDataItem(null,null, true, true, null, null, allergens.get(0), false));
 				allergenList.add(new AllergenListDataItem(null,null, false, true, null, null, allergens.get(1), false));
 				allergenList.add(new AllergenListDataItem(null,null, true, false, null, null, allergens.get(2), false));

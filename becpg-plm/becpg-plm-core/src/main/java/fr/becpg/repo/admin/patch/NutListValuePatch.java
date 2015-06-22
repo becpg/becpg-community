@@ -10,6 +10,7 @@ import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
 import org.alfresco.repo.domain.node.NodeDAO;
 import org.alfresco.repo.domain.patch.PatchDAO;
 import org.alfresco.repo.domain.qname.QNameDAO;
+import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -33,34 +34,36 @@ import fr.becpg.repo.entity.EntityListDAO;
  */
 public class NutListValuePatch extends AbstractBeCPGPatch {
 
-	private static Log logger = LogFactory.getLog(NutListValuePatch.class);
+	private static final Log logger = LogFactory.getLog(NutListValuePatch.class);
 	private static final String MSG_SUCCESS = "patch.bcpg.plm.nutListValuePatch.result";
 
 	private NodeDAO nodeDAO;
 	private PatchDAO patchDAO;
 	private QNameDAO qnameDAO;
 	private BehaviourFilter policyBehaviourFilter;
+	private IntegrityChecker integrityChecker;
 	private RuleService ruleService;
 	private EntityListDAO entityListDAO;
 
-	private final int batchThreads = 3;
-	private final int batchSize = 40;
+	private final int batchThreads = 4;
+	private final int batchSize = 30;
 	private final long count = batchThreads * batchSize;
 
 	@Override
 	protected String applyInternal() throws Exception {
 
 		AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
+	
 
 		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
-			final List<NodeRef> result = new ArrayList<NodeRef>();
+			final List<NodeRef> result = new ArrayList<>();
 
-			long maxNodeId = getPatchDAO().getMaxAdmNodeID();
+			final long maxNodeId = getPatchDAO().getMaxAdmNodeID();
 
 			long minSearchNodeId = 1;
 			long maxSearchNodeId = count;
 
-			Pair<Long, QName> val = getQnameDAO().getQName(PLMModel.TYPE_NUTLIST);
+			final Pair<Long, QName> val = getQnameDAO().getQName(PLMModel.TYPE_NUTLIST);
 
 			public int getTotalEstimatedWorkSize() {
 				return result.size();
@@ -91,8 +94,8 @@ public class NutListValuePatch extends AbstractBeCPGPatch {
 			}
 		};
 
-		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<NodeRef>("NutListValuePatch", transactionService.getRetryingTransactionHelper(),
-				workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 1000);
+		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("NutListValuePatch", transactionService.getRetryingTransactionHelper(),
+				workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 500);
 
 		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
 
@@ -123,6 +126,7 @@ public class NutListValuePatch extends AbstractBeCPGPatch {
 							policyBehaviourFilter.disableBehaviour();
 							nodeService.setProperty(dataListNodeRef, PLMModel.PROP_NUTLIST_FORMULATED_VALUE, nodeService.getProperty(dataListNodeRef, PLMModel.PROP_NUTLIST_VALUE));
 							nodeService.setProperty(dataListNodeRef, PLMModel.PROP_NUTLIST_VALUE, null);
+							nodeService.setProperty(dataListNodeRef, BeCPGModel.PROP_IS_MANUAL_LISTITEM,false);
 							policyBehaviourFilter.enableBehaviour();
 						}
 
@@ -135,8 +139,13 @@ public class NutListValuePatch extends AbstractBeCPGPatch {
 			}
 
 		};
-
-		batchProcessor.process(worker, true);
+		
+		integrityChecker.setEnabled(false);
+		try {
+			batchProcessor.process(worker, true);
+		} finally {
+			integrityChecker.setEnabled(true);
+		}
 
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}
@@ -180,5 +189,11 @@ public class NutListValuePatch extends AbstractBeCPGPatch {
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
 	}
+
+	public void setIntegrityChecker(IntegrityChecker integrityChecker) {
+		this.integrityChecker = integrityChecker;
+	}
+	
+	
 
 }

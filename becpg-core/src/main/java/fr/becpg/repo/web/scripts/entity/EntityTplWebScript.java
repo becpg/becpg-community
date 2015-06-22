@@ -22,7 +22,7 @@ import fr.becpg.repo.formulation.FormulateException;
  */
 public class EntityTplWebScript extends AbstractWebScript {
 
-	private static Log logger = LogFactory.getLog(EntityTplWebScript.class);
+	private static final Log logger = LogFactory.getLog(EntityTplWebScript.class);
 
 	private static final String ACTION_SYNCHRONIZE_ENTITIES = "synchronizeEntities";
 	private static final String ACTION_FORMULATION_ENTITIES = "formulateEntities";

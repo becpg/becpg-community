@@ -54,17 +54,17 @@ public class ImportContext {
 
 	private ImportType importType = ImportType.Node;
 
-	private List<QName> disabledPolicies = new ArrayList<QName>();
+	private List<QName> disabledPolicies = new ArrayList<>();
 
 	private PropertyFormats propertyFormats;
 
-	private List<AbstractAttributeMapping> columns = new ArrayList<AbstractAttributeMapping>();
+	private List<AbstractAttributeMapping> columns = new ArrayList<>();
 
-	private Map<QName, ClassMapping> classMappings = new HashMap<QName, ClassMapping>();
+	private Map<QName, ClassMapping> classMappings = new HashMap<>();
 
-	private Map<String, NodeRef> cacheNodes = new HashMap<String, NodeRef>();
+	private Map<String, NodeRef> cacheNodes = new HashMap<>();
 
-	private List<String> log = new ArrayList<String>();
+	private List<String> log = new ArrayList<>();
 
 	private String path;
 
@@ -270,7 +270,7 @@ public class ImportContext {
 		
 	}
 
-	Set<NodeRef> deletedDataListEntityNodeRefs = new HashSet<>();
+	final Set<NodeRef> deletedDataListEntityNodeRefs = new HashSet<>();
 
 	public boolean isDeleteDataList(NodeRef entityNodeRef) {
 		if (deleteDataList && !deletedDataListEntityNodeRefs.contains(entityNodeRef)) {

@@ -22,9 +22,9 @@ import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtracto
 
 public class ExcelDataListOutputWriter implements DataListOutputWriter {
 
-	private DictionaryService dictionaryService;
+	private final DictionaryService dictionaryService;
 
-	private DataListFilter dataListFilter;
+	private final DataListFilter dataListFilter;
 
 	public ExcelDataListOutputWriter(DictionaryService dictionaryService, DataListFilter dataListFilter) {
 		super();
@@ -50,7 +50,7 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 		headerRow = sheet.createRow(rownum++);
 		headerRow.setZeroHeight(true);
 		Row labelRow = sheet.createRow(rownum++);
-		XSSFCellStyle style = (XSSFCellStyle) workbook.createCellStyle();
+		XSSFCellStyle style = workbook.createCellStyle();
 
 		XSSFColor green = new XSSFColor(new java.awt.Color(0, 102, 0));
 

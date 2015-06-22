@@ -84,23 +84,24 @@ public class DesignerListValuePlugin implements ListValuePlugin {
 			modelNodeRef = designerService.findModelNodeRef(new NodeRef(nodeRef));
 		}
 
-		if (sourceType.equals(TYPE_PARENT_NAME)) {
-			return getAvailableEntityTypeNames(modelNodeRef, query, pageNum, pageSize);
-		} else if (sourceType.equals(TYPE_MANDATORY_ASPECTS)) {
-			return getAvailableEntityAspectNames(modelNodeRef, query, pageNum, pageSize);
-		} else if (sourceType.equals(TYPE_PROPERTY_TYPE)) {
-			return getAvailableDataTypeNames(modelNodeRef, query, pageNum, pageSize);
-		} else if (sourceType.equals(TYPE_TARGET_CLASS_NAME)) {
-			return getAvailableEntityTypeNames(modelNodeRef, query, pageNum, pageSize);
-		} else if (sourceType.equals(TYPE_CONSTRAINT_REF)) {
-			return getAvailableConstraints(modelNodeRef, query, pageNum, pageSize);
+		switch (sourceType) {
+			case TYPE_PARENT_NAME:
+				return getAvailableEntityTypeNames(modelNodeRef, query, pageNum, pageSize);
+			case TYPE_MANDATORY_ASPECTS:
+				return getAvailableEntityAspectNames(modelNodeRef, query, pageNum, pageSize);
+			case TYPE_PROPERTY_TYPE:
+				return getAvailableDataTypeNames(modelNodeRef, query, pageNum, pageSize);
+			case TYPE_TARGET_CLASS_NAME:
+				return getAvailableEntityTypeNames(modelNodeRef, query, pageNum, pageSize);
+			case TYPE_CONSTRAINT_REF:
+				return getAvailableConstraints(modelNodeRef, query, pageNum, pageSize);
 		}
 
 		return null;
 	}
 
 	private ListValuePage getAvailableConstraints(NodeRef modelNodeRef, String query, Integer pageNum, Integer pageSize) {
-		List<String> suggestions = new ArrayList<String>();
+		List<String> suggestions = new ArrayList<>();
 		
 		if(modelNodeRef!=null){
 			for(ChildAssociationRef assoc :  serviceRegistry.getNodeService().getChildAssocs(modelNodeRef)){
@@ -122,7 +123,7 @@ public class DesignerListValuePlugin implements ListValuePlugin {
 
 	public class StringValueExtractor implements ListValueExtractor<String> {
 
-		private String type;
+		private final String type;
 		
 		public StringValueExtractor(String type) {
 			this.type = type;
@@ -131,7 +132,7 @@ public class DesignerListValuePlugin implements ListValuePlugin {
 		@Override
 		public List<ListValueEntry> extract(List<String> values) {
 
-			List<ListValueEntry> suggestions = new ArrayList<ListValueEntry>();
+			List<ListValueEntry> suggestions = new ArrayList<>();
 			if (values != null) {
 				for (String value : values) {
 					String[] splitted = value.split("\\|");
@@ -147,7 +148,7 @@ public class DesignerListValuePlugin implements ListValuePlugin {
 	private ListValuePage getAvailableDataTypeNames(NodeRef modelNodeRef, String query, Integer pageNum, Integer pageSize) {
 		List<String> uris = getImports(modelNodeRef);
 		
-		List<String> suggestions = new ArrayList<String>();
+		List<String> suggestions = new ArrayList<>();
 		Collection<QName> types = serviceRegistry.getDictionaryService().getAllDataTypes();
 		if (types != null) {
 			for (QName type : types) {
@@ -192,7 +193,7 @@ public class DesignerListValuePlugin implements ListValuePlugin {
 
 		List<String> uris = getImports(modelNodeRef);
 
-		List<String> suggestions = new ArrayList<String>();
+		List<String> suggestions = new ArrayList<>();
 		Collection<QName> types = serviceRegistry.getDictionaryService().getAllTypes();
 		if (types != null) {
 			for (QName type : types) {
@@ -234,7 +235,7 @@ public class DesignerListValuePlugin implements ListValuePlugin {
 
 		List<String> uris = getImports(modelNodeRef);
 
-		List<String> suggestions = new ArrayList<String>();
+		List<String> suggestions = new ArrayList<>();
 		Collection<QName> aspects = serviceRegistry.getDictionaryService().getAllAspects();
 		if (aspects != null) {
 			for (QName aspect : aspects) {
@@ -270,7 +271,7 @@ public class DesignerListValuePlugin implements ListValuePlugin {
 	
 	
 	private List<String> getImports(NodeRef modelNodeRef) {
-		List<String> imports = new ArrayList<String>();
+		List<String> imports = new ArrayList<>();
 		if(modelNodeRef!=null){
 			for(ChildAssociationRef assoc :  serviceRegistry.getNodeService().getChildAssocs(modelNodeRef)){
 				if(assoc.getQName().equals(DesignerModel.ASSOC_M2_IMPORTS)){

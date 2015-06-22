@@ -25,7 +25,7 @@ import fr.becpg.repo.repository.RepositoryEntity;
 @Service
 public class EntityTplProjectPlugin implements EntityTplPlugin {
 
-	private static Log logger = LogFactory.getLog(EntityTplProjectPlugin.class);
+	private static final Log logger = LogFactory.getLog(EntityTplProjectPlugin.class);
 
 	@Autowired
 	private NodeService nodeService;
@@ -82,7 +82,7 @@ public class EntityTplProjectPlugin implements EntityTplPlugin {
 
 	private void updateDelieverableDocument(NodeRef projectNodeRef, NodeRef listItem) {
 
-		Stack<String> stack = new Stack<String>();
+		Stack<String> stack = new Stack<>();
 		NodeRef documentNodeRef = associationService.getTargetAssoc(listItem, ProjectModel.ASSOC_DL_CONTENT);
 
 		if (documentNodeRef != null) {

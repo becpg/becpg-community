@@ -72,7 +72,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 @Service("projectService")
 public class ProjectServiceImpl implements ProjectService {
 
-	private static Log logger = LogFactory.getLog(ProjectServiceImpl.class);
+	private static final Log logger = LogFactory.getLog(ProjectServiceImpl.class);
 
 	@Autowired
 	private AlfrescoRepository<ProjectData> alfrescoRepository;
@@ -208,15 +208,15 @@ public class ProjectServiceImpl implements ProjectService {
 		nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_END, endDate);
 		// milestone duration is maximum 1 day or startDate is after endDate
 		Boolean isMileStone = (Boolean) nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_IS_MILESTONE);
-		if ((isMileStone != null && isMileStone.booleanValue()) || (startDate == null || startDate.after(endDate))) {
+		if ((isMileStone != null && isMileStone) || (startDate == null || startDate.after(endDate))) {
 			nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_START, endDate);
 		}
 	}
 
 	@Override
 	public List<NodeRef> updateTaskResources(NodeRef projectNodeRef, NodeRef taskRef, List<NodeRef> resources, boolean updatePermissions) {
-		List<NodeRef> toRemove = new ArrayList<NodeRef>();
-		List<NodeRef> toAdd = new ArrayList<NodeRef>();
+		List<NodeRef> toRemove = new ArrayList<>();
+		List<NodeRef> toAdd = new ArrayList<>();
 		for (NodeRef resourceNodeRef : resources) {
 			String authorityName = authorityDAO.getAuthorityName(resourceNodeRef);
 			if (isRoleAuhtority(authorityName)) {
@@ -332,7 +332,7 @@ public class ProjectServiceImpl implements ProjectService {
 		if (ProjectModel.TYPE_PROJECT.equals(nodeService.getType(projectNodeRef))
 				&& permissionService.hasReadPermission(projectNodeRef) == AccessStatus.ALLOWED) {
 
-			List<NodeRef> nodeRefs = new ArrayList<NodeRef>(1);
+			List<NodeRef> nodeRefs = new ArrayList<>(1);
 			nodeRefs.add(taskListNodeRef);
 
 			if (resourceNodeRef != null && nodeService.exists(resourceNodeRef)) {
@@ -348,7 +348,7 @@ public class ProjectServiceImpl implements ProjectService {
 
 					for (NodeRef n : nodeRefs) {
 						if (allow) {
-							permissionService.setPermission(n, authorityName, PermissionService.EDITOR, allow);
+							permissionService.setPermission(n, authorityName, PermissionService.EDITOR, true);
 						} else {
 							// permissionService.deletePermission(n, userName,
 							// PermissionService.EDITOR);
@@ -366,7 +366,7 @@ public class ProjectServiceImpl implements ProjectService {
 	public void runScript(ProjectData project, TaskListDataItem task, NodeRef scriptNode) {
 
 		if (scriptNode != null && nodeService.exists(scriptNode)) {
-			Map<String, Object> model = new HashMap<String, Object>();
+			Map<String, Object> model = new HashMap<>();
 
 			logger.debug("Run task script " );
 

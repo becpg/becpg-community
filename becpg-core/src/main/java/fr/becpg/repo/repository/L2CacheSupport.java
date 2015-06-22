@@ -28,7 +28,7 @@ import fr.becpg.repo.RepoConsts;
 
 public class L2CacheSupport {
 
-	private static ThreadLocal<L2CacheThreadInfo> threadLocalCache = new ThreadLocal<L2CacheThreadInfo>() {
+	private static final ThreadLocal<L2CacheThreadInfo> threadLocalCache = new ThreadLocal<L2CacheThreadInfo>() {
 		protected L2CacheThreadInfo initialValue() {
 			return new L2CacheThreadInfo(false,false, false);
 		}
@@ -36,7 +36,7 @@ public class L2CacheSupport {
 
 	public interface Action {
 
-		public void run();
+		void run();
 		
 	}
 
@@ -45,7 +45,7 @@ public class L2CacheSupport {
 		boolean isCacheOnlyEnable = false;
 		boolean isThreadCacheEnable = false;
 		boolean isThreadLockEnable = false;
-		Map<NodeRef, RepositoryEntity> cache = new HashMap<NodeRef, RepositoryEntity>();
+		final Map<NodeRef, RepositoryEntity> cache = new HashMap<>();
 		
 		public L2CacheThreadInfo(boolean isCacheOnlyEnable, boolean isThreadCacheEnable, boolean isThreadLockEnable ) {
 			super();
@@ -60,7 +60,7 @@ public class L2CacheSupport {
 		if(threadLocalCache.get().isThreadCacheEnable){
 			return threadLocalCache.get().cache;
 		} 
-		return new HashMap<NodeRef,RepositoryEntity>();
+		return new HashMap<>();
 	}
 
 	public static  boolean isCacheOnlyEnable() {

@@ -33,6 +33,10 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfQname(qname = "pjt:invoiceList")
 public class InvoiceListDataItem extends BeCPGDataObject  {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1066729680514598898L;
 	private BudgetListDataItem budget ; //ilBudgetRef = Item
 	private Double invoiceAmount;  //ilInvoiceAmount
 	private TaskListDataItem task; //ilTaskRef

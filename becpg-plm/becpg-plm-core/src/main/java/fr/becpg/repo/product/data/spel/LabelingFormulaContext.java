@@ -20,7 +20,6 @@ package fr.becpg.repo.product.data.spel;
 import java.text.Format;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -66,17 +65,17 @@ import fr.becpg.repo.repository.RepositoryEntity;
  */
 public class LabelingFormulaContext {
 
-	private static Log logger = LogFactory.getLog(LabelingFormulaContext.class);
+	private static final Log logger = LogFactory.getLog(LabelingFormulaContext.class);
 
 	private CompositeLabeling lblCompositeContext;
 
 	private CompositeLabeling mergedLblCompositeContext;
 
-	private Set<Locale> availableLocales;
+	private final Set<Locale> availableLocales;
 
-	private NodeService mlNodeService;
+	private final NodeService mlNodeService;
 
-	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
+	private final AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
 	private List<ReqCtrlListDataItem> errors = new ArrayList<>();
 
@@ -131,7 +130,7 @@ public class LabelingFormulaContext {
 	 * FORMAT
 	 */
 
-	private Map<NodeRef, String> textFormaters = new HashMap<>();
+	private final Map<NodeRef, String> textFormaters = new HashMap<>();
 
 	private String ingDefaultFormat = "{0}";
 	private String groupDefaultFormat = "<b>{0} ({1,number,0.#%}):</b> {2}";
@@ -236,7 +235,7 @@ public class LabelingFormulaContext {
 	 * RENAME
 	 */
 
-	private Map<NodeRef, MLText> renameRules = new HashMap<>();
+	private final Map<NodeRef, MLText> renameRules = new HashMap<>();
 
 	public boolean rename(List<NodeRef> components, List<NodeRef> replacement, MLText label, String formula) {
 		for (NodeRef component : components) {
@@ -289,7 +288,7 @@ public class LabelingFormulaContext {
 
 	public class AggregateRule {
 
-		String name;
+		final String name;
 		MLText label;
 		NodeRef replacement;
 		NodeRef ruleNodeRef;
@@ -382,7 +381,7 @@ public class LabelingFormulaContext {
 
 	}
 
-	private Map<NodeRef, List<AggregateRule>> aggregateRules = new HashMap<>();
+	private final Map<NodeRef, List<AggregateRule>> aggregateRules = new HashMap<>();
 
 	public Map<NodeRef, List<AggregateRule>> getAggregateRules() {
 		return aggregateRules;
@@ -392,8 +391,8 @@ public class LabelingFormulaContext {
 	 * DECLARE
 	 */
 
-	private Map<NodeRef, DeclarationFilter> nodeDeclarationFilters = new HashMap<>();
-	private List<DeclarationFilter> declarationFilters = new ArrayList<>();
+	private final Map<NodeRef, DeclarationFilter> nodeDeclarationFilters = new HashMap<>();
+	private final List<DeclarationFilter> declarationFilters = new ArrayList<>();
 
 	public Map<NodeRef, DeclarationFilter> getNodeDeclarationFilters() {
 		return nodeDeclarationFilters;
@@ -457,7 +456,7 @@ public class LabelingFormulaContext {
 			if (aggregateRules.containsKey(component)) {
 				aggregateRules.get(component).add(aggregateRule);
 			} else {
-				aggregateRules.put(component, new LinkedList<>(Arrays.asList(aggregateRule)));
+				aggregateRules.put(component, new LinkedList<>(Collections.singletonList(aggregateRule)));
 			}
 
 		}
@@ -583,7 +582,7 @@ public class LabelingFormulaContext {
 				if (component instanceof IngItem) {
 					IngItem ingItem = (IngItem) component;
 
-					StringBuffer subIngBuff = new StringBuffer();
+					StringBuilder subIngBuff = new StringBuilder();
 					for (IngItem subIngItem : ingItem.getSubIngs()) {
 						if (subIngBuff.length() > 0) {
 							subIngBuff.append(subIngsSeparator);
@@ -629,7 +628,7 @@ public class LabelingFormulaContext {
 
 	Map<IngTypeItem, List<AbstractLabelingComponent>> getSortedIngListByType(CompositeLabeling compositeLabeling) {
 
-		Map<IngTypeItem, List<AbstractLabelingComponent>> tmp = new LinkedHashMap<IngTypeItem, List<AbstractLabelingComponent>>();
+		Map<IngTypeItem, List<AbstractLabelingComponent>> tmp = new LinkedHashMap<>();
 
 		boolean keepOrder = false;
 		for (AbstractLabelingComponent lblComponent : compositeLabeling.getIngList().values()) {
@@ -696,7 +695,7 @@ public class LabelingFormulaContext {
 			List<AbstractLabelingComponent> subSortedList = tmp.get(ingType);
 
 			if (subSortedList == null) {
-				subSortedList = new LinkedList<AbstractLabelingComponent>();
+				subSortedList = new LinkedList<>();
 				tmp.put(ingType, subSortedList);
 			}
 			subSortedList.add(lblComponent);
@@ -757,7 +756,7 @@ public class LabelingFormulaContext {
 				// }
 			});
 		}
-		Map<IngTypeItem, List<AbstractLabelingComponent>> sortedIngListByType = new LinkedHashMap<IngTypeItem, List<AbstractLabelingComponent>>();
+		Map<IngTypeItem, List<AbstractLabelingComponent>> sortedIngListByType = new LinkedHashMap<>();
 		for (Map.Entry<IngTypeItem, List<AbstractLabelingComponent>> entry : entries) {
 
 			if (!keepOrder) {

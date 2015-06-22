@@ -24,6 +24,11 @@ import fr.becpg.repo.repository.annotation.AlfQname;
 
 public abstract class AbstractEffectiveDataItem extends BeCPGDataObject implements EffectiveDataItem {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4228655692015575076L;
+
 	protected Date startEffectivity;
 	
 	protected Date endEffectivity;

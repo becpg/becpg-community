@@ -42,7 +42,6 @@
 		class="fr.becpg.repo.product.policy.productListUnits.ProductListPolicy"
 		parent="abstractBeCPGPolicy" depends-on="bcpg.plm.dictionaryBootstrap">
 		<property name="entityListDAO" ref="entityListDAO" />
-		<property name="fileFolderService" ref="fileFolderService" />
 		<property name="associationService" ref="associationService"/>
 	</bean>
 	<bean id="productListUnits.PriceListPolicy"

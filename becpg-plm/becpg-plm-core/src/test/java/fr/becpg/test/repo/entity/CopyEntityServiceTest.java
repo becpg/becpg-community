@@ -28,7 +28,7 @@ import fr.becpg.test.PLMBaseTestCase;
  */
 public class CopyEntityServiceTest extends PLMBaseTestCase {
 
-	private static Log logger = LogFactory.getLog(CopyEntityServiceTest.class);
+	private static final Log logger = LogFactory.getLog(CopyEntityServiceTest.class);
 	
 	@Resource
 	private EntityService entityService;
@@ -78,8 +78,8 @@ public class CopyEntityServiceTest extends PLMBaseTestCase {
 		assertTrue(startEffectivity.getTime() < startEffectivity2.getTime());
 		
 		// #276 bcpg:parent nodeRef must be different
-		ProductData sourceProductData = (ProductData) alfrescoRepository.findOne(sourceNodeRef);
-		ProductData copyProductData = (ProductData) alfrescoRepository.findOne(productNodeRef);
+		ProductData sourceProductData = alfrescoRepository.findOne(sourceNodeRef);
+		ProductData copyProductData = alfrescoRepository.findOne(productNodeRef);
 		
 		int [] arrRawMaterials = {2,4};
 		

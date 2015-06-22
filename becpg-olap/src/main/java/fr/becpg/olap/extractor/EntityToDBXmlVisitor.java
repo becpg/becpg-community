@@ -58,9 +58,9 @@ public class EntityToDBXmlVisitor {
 	private static final String ATTR_NAME = "name";
 	private static final String ATTR_NODEREF = "nodeRef";
 
-	private Connection connection;
+	private final Connection connection;
 
-	private Instance instance;
+	private final Instance instance;
 
 	public EntityToDBXmlVisitor(Connection connection, Instance instance) {
 		super();
@@ -69,9 +69,9 @@ public class EntityToDBXmlVisitor {
 	}
 
 	class Column {
-		String key;
+		final String key;
 		String nodeRef = null;
-		Serializable value;
+		final Serializable value;
 
 		public Column(String key, Serializable value) {
 			super();
@@ -137,9 +137,9 @@ public class EntityToDBXmlVisitor {
 
 	}
 
-	private static Log logger = LogFactory.getLog(EntityToDBXmlVisitor.class);
+	private static final Log logger = LogFactory.getLog(EntityToDBXmlVisitor.class);
 
-	private static List<String> ignoredProperties = new ArrayList<String>();
+	private static final List<String> ignoredProperties = new ArrayList<>();
 
 	static {
 		ignoredProperties.add("cm:name");
@@ -153,7 +153,7 @@ public class EntityToDBXmlVisitor {
 		ignoredProperties.add("bcpg:sort");
 		ignoredProperties.add("rep:reports");
 		ignoredProperties.add("rep:reports");
-	};
+	}
 
 	public void visit(InputStream in) throws IOException, SAXException, ParserConfigurationException, DOMException, ParseException, SQLException {
 
@@ -170,12 +170,12 @@ public class EntityToDBXmlVisitor {
 
 		Long dbId = createDBEntity(nodeRef, type, name, readProperties(entity));
 
-		NodeList dataLists = (NodeList) entity.getElementsByTagName("dl:dataList");
+		NodeList dataLists = entity.getElementsByTagName("dl:dataList");
 		for (int i = 0; i < dataLists.getLength(); i++) {
 			Element dataList = ((Element) dataLists.item(i));
 			String dataListname = dataList.getAttribute(ATTR_NAME);
 
-			NodeList contains = (NodeList) dataList.getElementsByTagName("cm:contains");
+			NodeList contains = dataList.getElementsByTagName("cm:contains");
 			Element container = (Element) contains.item(0);
 
 			NodeList dataListItems = container.getChildNodes();
@@ -261,7 +261,7 @@ public class EntityToDBXmlVisitor {
 	}
 
 	private List<Column> readProperties(Element entity) throws DOMException, ParseException {
-		List<Column> ret = new ArrayList<Column>();
+		List<Column> ret = new ArrayList<>();
 
 		NodeList properties = entity.getChildNodes();
 		for (int j = 0; j < properties.getLength(); j++) {
@@ -342,7 +342,7 @@ public class EntityToDBXmlVisitor {
 
 	private static final ThreadLocal<Map<String, TimeZone>> timezones;
 	static {
-		timezones = new ThreadLocal<Map<String, TimeZone>>();
+		timezones = new ThreadLocal<>();
 	}
 
 	/**
@@ -355,7 +355,7 @@ public class EntityToDBXmlVisitor {
 	 *             if the parse failed
 	 */
 	public static Date parse(String isoDate) {
-		Date parsed = null;
+		Date parsed;
 
 		int offset = 0;
 
@@ -406,7 +406,7 @@ public class EntityToDBXmlVisitor {
 		// Get the timezone
 		Map<String, TimeZone> timezoneMap = timezones.get();
 		if (timezoneMap == null) {
-			timezoneMap = new HashMap<String, TimeZone>(4);
+			timezoneMap = new HashMap<>(4);
 			timezones.set(timezoneMap);
 		}
 		TimeZone timezone = timezoneMap.get(timezoneId);

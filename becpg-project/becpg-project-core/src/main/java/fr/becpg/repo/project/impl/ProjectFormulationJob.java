@@ -35,7 +35,7 @@ public class ProjectFormulationJob implements Job {
 	private static final String KEY_PROJECT_FORMULATION_WORKER = "projectFormulationWorker";
 	private static final String KEY_TENANT_ADMIN_SERVICE = "tenantAdminService";
 
-	private static Log logger = LogFactory.getLog(ProjectFormulationJob.class);
+	private static final Log logger = LogFactory.getLog(ProjectFormulationJob.class);
 
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {

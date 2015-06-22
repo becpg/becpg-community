@@ -27,7 +27,6 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -68,7 +67,7 @@ public abstract class AbstractBeCPGReportClient {
 		this.password = password;
 	}
 
-	protected Long getTemplateTimeStamp(ReportSession reportSession, String templateId) throws ClientProtocolException, IOException {
+	protected Long getTemplateTimeStamp(ReportSession reportSession, String templateId) throws IOException {
 
 		reportSession.setTemplateId(templateId);
 
@@ -93,7 +92,7 @@ public abstract class AbstractBeCPGReportClient {
 		}
 	}
 
-	protected void saveTemplate(ReportSession reportSession, InputStream in) throws ClientProtocolException, IOException, ReportException {
+	protected void saveTemplate(ReportSession reportSession, InputStream in) throws IOException, ReportException {
 		String saveTemplateUrl = reportSession.getSaveTemplateUrl();
 
 		logger.debug("Save Template at: " + saveTemplateUrl);
@@ -114,7 +113,7 @@ public abstract class AbstractBeCPGReportClient {
 
 	}
 
-	protected void sendImage(ReportSession reportSession, String imageName, InputStream in) throws ClientProtocolException, IOException,
+	protected void sendImage(ReportSession reportSession, String imageName, InputStream in) throws IOException,
 			ReportException {
 
 		String sendImageUrl = reportSession.getSendImageUrl(imageName);
@@ -137,7 +136,7 @@ public abstract class AbstractBeCPGReportClient {
 
 	}
 
-	protected void generateReport(ReportSession reportSession, InputStream in, OutputStream out) throws ClientProtocolException, IOException {
+	protected void generateReport(ReportSession reportSession, InputStream in, OutputStream out) throws IOException {
 
 		String reportUrl = reportSession.getReportUrl();
 
@@ -182,8 +181,6 @@ public abstract class AbstractBeCPGReportClient {
 			callBack.doInReportSession(reportSession);
 		} catch (HttpHostConnectException conEx) {
 			logger.warn("Report failed : Cannot connect to report server");
-		} catch (ClientProtocolException e) {
-			throw new ReportException(e);
 		} catch (IOException e) {
 			throw new ReportException(e);
 		}
@@ -192,7 +189,7 @@ public abstract class AbstractBeCPGReportClient {
 
 	protected interface ReportSessionCallBack {
 
-		void doInReportSession(ReportSession reportSession) throws ClientProtocolException, IOException, ReportException;
+		void doInReportSession(ReportSession reportSession) throws IOException, ReportException;
 
 	}
 
@@ -204,9 +201,9 @@ public abstract class AbstractBeCPGReportClient {
 
 		String lang;
 
-		HttpClient httpClient;
+		final HttpClient httpClient;
 
-		HttpClientContext httpContext;
+		final HttpClientContext httpContext;
 
 		public ReportSession() {
 			super();

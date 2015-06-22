@@ -29,6 +29,10 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfQname(qname="ecm:calculatedCharactList")
 public class SimulationListDataItem extends BeCPGDataObject{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5349047677356009299L;
 	private NodeRef sourceItem;
 	private NodeRef charact;
 	private Double sourceValue;

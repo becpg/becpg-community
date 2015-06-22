@@ -384,7 +384,7 @@
 							};
 
 							try {
-								var lists = this.dataLists, list, permissions, elHighlight = null, container, el, elEdit, elDelete, elLink, elText;
+								var lists = this.dataLists, list, permissions, elHighlight = null, container, el, elLink, elText;
 
 								if (this.dataListsLength === 0) {
 									listsContainer.innerHTML = '<div class="no-lists">' + this.msg("message.no-lists") + '</div>';
@@ -418,42 +418,42 @@
 											// Build the DOM elements
 											el = document.createElement("li");
 											el.onclick = fnOnClick();
+											                                   											
 											
-                                   
-											elEdit = document.createElement("span");
-											if (permissions["edit"]) {
-												elEdit.className = "edit";
-												elEdit.title = this.msg("label.edit-list");
-												elEdit.onclick = fnEditOnClick(list.name, true);
-											} else {
-												elEdit.className = "edit-disabled";
-												elEdit.onclick = fnEditOnClick(list.name, false);
-											}
-											elDelete = document.createElement("span");
-											if (permissions["delete"]) {
-												elDelete.className = "delete";
-												elDelete.title = this.msg("label.delete-list");
-												elDelete.onclick = fnDeleteOnClick(list.name, true);
-											} else {
-												elDelete.className = "delete-disabled";
-												elDelete.onclick = fnDeleteOnClick(list.name, false);
-											}
+											
 											elLink = document.createElement("a");
 											elLink.title = list.description;
 											elLink.href = "entity-data-lists?list=" + $html(list.name) + "&nodeRef="
 													+ $html(this.options.entityNodeRef);
-
-
+											
+											if (permissions["edit"]) {
+												var elEdit = document.createElement("span");
+												elEdit.className = "edit";
+												elEdit.title = this.msg("label.edit-list");
+												elEdit.onclick = fnEditOnClick(list.name, true);
+												elLink.appendChild(elEdit);
+											}
+											
+											if (permissions["delete"]) {
+												var elDelete = document.createElement("span");
+												elDelete.className = "delete";
+												elDelete.title = this.msg("label.delete-list");
+												elDelete.onclick = fnDeleteOnClick(list.name, true);
+												elLink.appendChild(elDelete);
+											}
+											
 											elState = document.createElement("span");
-                                            elState.className = "state";
-                                            elState.title = this.msg("button.datalist-state.description");
-                                            elState.onclick = fnChangeStateOnClick(list, permissions["edit"] && list.name.indexOf("WUsed")<0);
+											elState.className = "state";											
+											if(permissions["changeState"] && list.name.indexOf("WUsed")<0){
+												elState.title = this.msg("button.datalist-state.description");
+												elState.onclick = fnChangeStateOnClick(list, true);
+											}											
 
-                                            if(list.name.indexOf("WUsed")>-1){
-                                                elState.className = "state WUsed";
-                                            } else {
-                                                elState.className = "state "+list.name;
-                                            }
+											if(list.name.indexOf("WUsed")>-1){
+											    elState.className = "state WUsed";
+											} else {
+											    elState.className = "state "+list.name;
+											}
                                             
 											if (list.state && list.state.length > 0) {
 											    elState.className += " " + list.state;
@@ -464,9 +464,7 @@
 											// Build the DOM structure with the
 											// new
 											// elements
-											elLink.appendChild(elState);
-											elLink.appendChild(elDelete);
-											elLink.appendChild(elEdit);
+											elLink.appendChild(elState);																						
 											elLink.appendChild(elText);
 											el.appendChild(elLink);
 											container.appendChild(el);

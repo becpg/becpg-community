@@ -64,7 +64,7 @@ import fr.becpg.repo.mail.BeCPGMailService;
  */
 public class UserImporterServiceImpl implements UserImporterService {
 	
-	private static Log logger = LogFactory.getLog(UserImporterService.class);
+	private static final Log logger = LogFactory.getLog(UserImporterService.class);
 
 	public static final String USERNAME = "username";
 	public static final String PASSWORD = "password";
@@ -158,9 +158,8 @@ public class UserImporterServiceImpl implements UserImporterService {
 	
 		
 		ContentReader reader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
-		InputStream is = null;
-		try{
-			is = reader.getContentInputStream();
+
+		try (InputStream is = reader.getContentInputStream()){
 			
 
 			if (logger.isDebugEnabled()) {
@@ -179,12 +178,6 @@ public class UserImporterServiceImpl implements UserImporterService {
 			
 		} catch (Exception e) {
 			throw new ImporterException("Invalid content",e);
-		} finally {
-			try {
-				if(is!=null){
-					is.close();
-				}
-			}catch (Exception e) {}
 		}
 		
 	}
@@ -231,9 +224,9 @@ public class UserImporterServiceImpl implements UserImporterService {
 		
 		CSVReader csvReader = new CSVReader(new InputStreamReader(input,charset), SEPARATOR);
 		try {
-				String[] splitted = null;
+				String[] splitted;
 				boolean isFirst = true;
-			    Map<String,Integer> headers = new HashMap<String, Integer>();
+			    Map<String,Integer> headers = new HashMap<>();
 				while ((splitted = csvReader.readNext())!=null) {
 						try {
 							if(isFirst){
@@ -267,7 +260,7 @@ public class UserImporterServiceImpl implements UserImporterService {
 			            public Object doWork() throws Exception
 			            {
 							
-							 if (authenticationService.authenticationExists(username) == false)
+							 if (!authenticationService.authenticationExists(username))
 					         {
 					                // create user
 					                authenticationService.createAuthentication(username,
@@ -305,37 +298,37 @@ public class UserImporterServiceImpl implements UserImporterService {
 					
 					          if(headers.containsKey(GROUPS)){
 					            	String[] groups = splitted[headers.get(GROUPS)].split(FIELD_SEPARATOR);
-					            	for (int i = 0; i < groups.length; i++) {
-										String[] grp = groups[i].split(PATH_SEPARATOR);
-										String currGroup = null;
-					            		for (int j = 0; j < grp.length; j++) {
-					            			String tmp = grp[j];
-					            			if(tmp!=null && !tmp.isEmpty()){
-					            				if(!authorityService.authorityExists(
-					            						authorityService.getName(AuthorityType.GROUP, tmp))){
-							            			tmp = authorityService.createAuthority(
-							            					AuthorityType.GROUP,tmp);
-							            			logger.debug("Create group : "+tmp);
-							            			if(currGroup!=null && ! currGroup.isEmpty()){
-							            				logger.debug("Add group  "+tmp+" to "+currGroup);
-							            				authorityService.addAuthority(currGroup,tmp );
-							            					
-							            			} 
-					            				} else {
-					            					tmp = authorityService.getName(AuthorityType.GROUP, tmp);
-					            				}
-						            			currGroup = tmp;
-					            			}
-										}
-					            		
-					            		if(currGroup!=null && !currGroup.isEmpty()){
-					            			logger.debug("Add user  "+username+" to "+currGroup);
-					            			
-					            			
-					            			authorityService.addAuthority(currGroup, username);
-					            		}
-					            		
-									}
+								  for (String group : groups) {
+									  String[] grp = group.split(PATH_SEPARATOR);
+									  String currGroup = null;
+									  for (String aGrp : grp) {
+										  String tmp = aGrp;
+										  if (tmp != null && !tmp.isEmpty()) {
+											  if (!authorityService.authorityExists(
+													  authorityService.getName(AuthorityType.GROUP, tmp))) {
+												  tmp = authorityService.createAuthority(
+														  AuthorityType.GROUP, tmp);
+												  logger.debug("Create group : " + tmp);
+												  if (currGroup != null && !currGroup.isEmpty()) {
+													  logger.debug("Add group  " + tmp + " to " + currGroup);
+													  authorityService.addAuthority(currGroup, tmp);
+
+												  }
+											  } else {
+												  tmp = authorityService.getName(AuthorityType.GROUP, tmp);
+											  }
+											  currGroup = tmp;
+										  }
+									  }
+
+									  if (currGroup != null && !currGroup.isEmpty()) {
+										  logger.debug("Add user  " + username + " to " + currGroup);
+
+
+										  authorityService.addAuthority(currGroup, username);
+									  }
+
+								  }
 					            }
 							
 					          
@@ -357,49 +350,49 @@ public class UserImporterServiceImpl implements UserImporterService {
 				            public Object doWork() throws Exception
 				            {
 					            String[] memberships = splitted[headers.get(MEMBERSHIPS)].split(FIELD_SEPARATOR);
-					            for (int i = 0; i < memberships.length; i++) {
-					           
-					            	String[] sites = memberships[i].split("_"); 
-					            	final String siteName = formatSiteName(sites[0]);
-					            	final String role = formatRole(sites[1]);
-					            	if(logger.isDebugEnabled()){
-				            			logger.debug("Adding role "+role+ " to "+username+ " on site "+siteName);
-				            		}
-					            	if(siteService.getSite(cleanSiteName(siteName))!=null){
-					            		siteService.setMembership(cleanSiteName(siteName),  username ,role );
-					            	} else {
-					            		logger.debug("Site "+siteName+" doesn't exist.");
-					            		
-					            		SiteInfo siteInfo = siteService.createSite(DEFAULT_PRESET, cleanSiteName(siteName), siteName, "", SiteVisibility.PUBLIC);
-					            		//ISSUE ALF-4771 
-					            		//TODO http://ecmstuff.blogspot.fr/2012/03/creating-alfresco-share-sites-with.html
-					            		try {
-					            			logger.debug("Due to issue ALF-4771 we should call Share webscript to enable site");
-					            			//TODO externalyze password
-					            			
-					            			Authenticator.setDefault (new Authenticator() {
-					            			    protected PasswordAuthentication getPasswordAuthentication() {
-					            			        return new PasswordAuthentication (AuthenticationUtil.getAdminUserName(), "becpg".toCharArray());
-					            			    }
-					            			});
+								for (String membership : memberships) {
 
-					            			
-						            		URL url = new URL("http://localhost:8080/share/service/modules/enable-site?url="+siteInfo.getShortName()+"&preset="+DEFAULT_PRESET+"");
-						            		URLConnection con = url.openConnection();
-						            		
-						            		InputStream in = con.getInputStream();
-						            		if(in!=null){
-						            			in.close();
-						            		}
-						            	
-					            		} catch (Exception e) {
-											logger.error("Unable to enable site",e);
+									String[] sites = membership.split("_");
+									final String siteName = formatSiteName(sites[0]);
+									final String role = formatRole(sites[1]);
+									if (logger.isDebugEnabled()) {
+										logger.debug("Adding role " + role + " to " + username + " on site " + siteName);
+									}
+									if (siteService.getSite(cleanSiteName(siteName)) != null) {
+										siteService.setMembership(cleanSiteName(siteName), username, role);
+									} else {
+										logger.debug("Site " + siteName + " doesn't exist.");
+
+										SiteInfo siteInfo = siteService.createSite(DEFAULT_PRESET, cleanSiteName(siteName), siteName, "", SiteVisibility.PUBLIC);
+										//ISSUE ALF-4771
+										//TODO http://ecmstuff.blogspot.fr/2012/03/creating-alfresco-share-sites-with.html
+										try {
+											logger.debug("Due to issue ALF-4771 we should call Share webscript to enable site");
+											//TODO externalyze password
+
+											Authenticator.setDefault(new Authenticator() {
+												protected PasswordAuthentication getPasswordAuthentication() {
+													return new PasswordAuthentication(AuthenticationUtil.getAdminUserName(), "becpg".toCharArray());
+												}
+											});
+
+
+											URL url = new URL("http://localhost:8080/share/service/modules/enable-site?url=" + siteInfo.getShortName() + "&preset=" + DEFAULT_PRESET + "");
+											URLConnection con = url.openConnection();
+
+											InputStream in = con.getInputStream();
+											if (in != null) {
+												in.close();
+											}
+
+										} catch (Exception e) {
+											logger.error("Unable to enable site", e);
 										}
-					            		
-					            		siteService.setMembership(siteInfo.getShortName(),  username ,role );
-					            			
-					            	}
-					            	
+
+										siteService.setMembership(siteInfo.getShortName(), username, role);
+
+									}
+
 								}
 					            	return null;
 				            }
@@ -448,10 +441,10 @@ public class UserImporterServiceImpl implements UserImporterService {
 
 
 	private Map<String, Integer> processHeaders(String[] splitted) throws ImporterException {
-		Map<String,Integer> headers = new HashMap<String, Integer>();
+		Map<String,Integer> headers = new HashMap<>();
 		for (int i = 0; i < splitted.length; i++) {
 			logger.debug("Adding header: "+splitted[i]);
-			headers.put(splitted[i], new Integer(i));
+			headers.put(splitted[i], i);
 		}
 		verifyHeaders(headers);
 		return headers;

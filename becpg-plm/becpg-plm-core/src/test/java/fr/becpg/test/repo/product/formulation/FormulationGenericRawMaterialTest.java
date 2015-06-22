@@ -43,7 +43,7 @@ import fr.becpg.test.repo.product.AbstractFinishedProductTest;
  */
 public class FormulationGenericRawMaterialTest extends AbstractFinishedProductTest {
 
-	protected static Log logger = LogFactory.getLog(FormulationGenericRawMaterialTest.class);
+	protected static final Log logger = LogFactory.getLog(FormulationGenericRawMaterialTest.class);
 
 	@Resource
 	private AssociationService associationService;
@@ -67,9 +67,9 @@ public class FormulationGenericRawMaterialTest extends AbstractFinishedProductTe
 				genRawMaterial.setName("Gen RM");
 				genRawMaterial.setUnit(ProductUnit.kg);
 				genRawMaterial.setQty(1d);				
-				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, null, 2d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));				
+				List<CompoListDataItem> compoList = new ArrayList<>();
+				compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, null, null, 2d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
 				genRawMaterial.getCompoListView().setCompoList(compoList);
 
 				return alfrescoRepository.create(getTestFolderNodeRef(), genRawMaterial).getNodeRef();

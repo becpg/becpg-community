@@ -31,6 +31,10 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfQname(qname = "qa:workLog")
 public class WorkLogDataItem extends BeCPGDataObject {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2584500247193834816L;
 	private String state;
 	private String comment;
 	private String creator;

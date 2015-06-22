@@ -32,7 +32,7 @@ import fr.becpg.repo.product.data.productList.DynamicCharactSynchronisableState;
  */
 public class DynCharactPatch extends AbstractBeCPGPatch {
 
-	private static Log logger = LogFactory.getLog(DynCharactPatch.class);
+	private static final Log logger = LogFactory.getLog(DynCharactPatch.class);
 	private static final String MSG_SUCCESS = "patch.bcpg.plm.dynCharactPatch.result";
 
 	private NodeDAO nodeDAO;
@@ -51,14 +51,14 @@ public class DynCharactPatch extends AbstractBeCPGPatch {
 			AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
 			BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
-				final List<NodeRef> result = new ArrayList<NodeRef>();
+				final List<NodeRef> result = new ArrayList<>();
 
-				long maxNodeId = getPatchDAO().getMaxAdmNodeID();
+				final long maxNodeId = getPatchDAO().getMaxAdmNodeID();
 
 				long minSearchNodeId = 1;
 				long maxSearchNodeId = count;
 
-				Pair<Long, QName> val = getQnameDAO().getQName(PLMModel.TYPE_DYNAMICCHARACTLIST);
+				final Pair<Long, QName> val = getQnameDAO().getQName(PLMModel.TYPE_DYNAMICCHARACTLIST);
 
 				public int getTotalEstimatedWorkSize() {
 					return result.size();
@@ -88,7 +88,7 @@ public class DynCharactPatch extends AbstractBeCPGPatch {
 				}
 			};
 
-			BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<NodeRef>("DynCharactPatch",
+			BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("DynCharactPatch",
 					transactionService.getRetryingTransactionHelper(), workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 1000);
 
 			BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {

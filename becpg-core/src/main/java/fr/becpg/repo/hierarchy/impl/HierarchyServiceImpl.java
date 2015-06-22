@@ -57,7 +57,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 @Service("hierarchyService")
 public class HierarchyServiceImpl implements HierarchyService {
 
-	private static Log logger = LogFactory.getLog(HierarchyServiceImpl.class);
+	private static final Log logger = LogFactory.getLog(HierarchyServiceImpl.class);
 
 	private static final String SUFFIX_ALL = "*";
 
@@ -103,7 +103,7 @@ public class HierarchyServiceImpl implements HierarchyService {
 	public NodeRef createHierarchy(NodeRef dataListNodeRef, NodeRef parentHierachy, String hierachy) {
 
 		logger.debug("createHierarchy, parent hierarchy : " + parentHierachy + " - hierarchy: " + hierachy);
-		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+		Map<QName, Serializable> properties = new HashMap<>();
 		properties.put(BeCPGModel.PROP_LKV_VALUE, hierachy);
 		if (parentHierachy != null) {
 			properties.put(BeCPGModel.PROP_PARENT_LEVEL, parentHierachy);
@@ -203,9 +203,13 @@ public class HierarchyServiceImpl implements HierarchyService {
 						logger.warn("Cannot classify entity since it doesn't have a hierarchy.");
 					}
 
-					if (destinationNodeRef != null) {
+					if (destinationNodeRef != null ) {
 						// classify
-						repoService.moveNode(entityNodeRef, destinationNodeRef);
+						if(!ContentModel.TYPE_FOLDER.equals(nodeService.getType(destinationNodeRef))){
+							logger.warn("Incorrect destination node type:"+nodeService.getType(destinationNodeRef));
+						} else {
+							repoService.moveNode(entityNodeRef, destinationNodeRef);
+						}
 					} else {
 						logger.warn("Failed to classify entity. entityNodeRef: " + entityNodeRef);
 					}

@@ -33,7 +33,7 @@ import fr.becpg.repo.entity.EntityTplService;
  */
 public class AddViewPatch extends AbstractBeCPGPatch {
 
-	private static Log logger = LogFactory.getLog(AddViewPatch.class);
+	private static final Log logger = LogFactory.getLog(AddViewPatch.class);
 	private static final String MSG_SUCCESS = "patch.bcpg.projet.addViewPatch.result";
 
 	private NodeDAO nodeDAO;
@@ -63,14 +63,14 @@ public class AddViewPatch extends AbstractBeCPGPatch {
 
 	private void doForType(final QName type) {
 		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
-			final List<NodeRef> result = new ArrayList<NodeRef>();
+			final List<NodeRef> result = new ArrayList<>();
 
-			long maxNodeId = getPatchDAO().getMaxAdmNodeID();
+			final long maxNodeId = getPatchDAO().getMaxAdmNodeID();
 
 			long minSearchNodeId = 1;
 			long maxSearchNodeId = count;
 
-			Pair<Long, QName> val = getQnameDAO().getQName(type);
+			final Pair<Long, QName> val = getQnameDAO().getQName(type);
 
 			public int getTotalEstimatedWorkSize() {
 				return result.size();
@@ -102,7 +102,7 @@ public class AddViewPatch extends AbstractBeCPGPatch {
 			}
 		};
 
-		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<NodeRef>("AddViewPatch",
+		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("AddViewPatch",
 				transactionService.getRetryingTransactionHelper(), workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 1000);
 
 		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
@@ -126,9 +126,8 @@ public class AddViewPatch extends AbstractBeCPGPatch {
 				if (nodeService.exists(entityNodeRef)) {
 					if(nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL) ||
 							nodeService.getTargetAssocs(entityNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF).isEmpty()){
-						logger.info("Create views on entity " + entityNodeRef);
+						logger.debug("Create views on entity " + entityNodeRef);
 						entityTplService.createView(entityNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
-						entityTplService.createView(entityNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_REPORTS);
 					}					
 				} else {
 					logger.warn("entityNodeRef doesn't exist : " + entityNodeRef);

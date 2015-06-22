@@ -36,7 +36,7 @@ public class SecurityMethodBeforeAdvice implements MethodBeforeAdvice {
 
 	private NamespaceService namespaceService;
 
-	private static Log logger = LogFactory.getLog(SecurityMethodBeforeAdvice.class);
+	private static final Log logger = LogFactory.getLog(SecurityMethodBeforeAdvice.class);
 
 	public void setSecurityService(SecurityService securityService) {
 		this.securityService = securityService;

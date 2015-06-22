@@ -44,7 +44,7 @@ import fr.becpg.repo.product.data.CharactDetails;
  */
 public class FormulateCharactDetailsWebScript extends AbstractProductWebscript {
 	
-	private static Log logger = LogFactory.getLog(FormulateCharactDetailsWebScript.class);
+	private static final Log logger = LogFactory.getLog(FormulateCharactDetailsWebScript.class);
 	
 	private static final String PARAM_DATA_LIST_NAME = "dataListName";
 	
@@ -76,7 +76,7 @@ public class FormulateCharactDetailsWebScript extends AbstractProductWebscript {
 		QName dataType = QName.createQName(itemType, namespaceService);
 		
 		String dataListItems = req.getParameter(PARAM_DATALISTITEMS);
-		List<NodeRef> elements = new ArrayList<NodeRef>();
+		List<NodeRef> elements = new ArrayList<>();
 		if(dataListItems!=null && dataListItems.length()>0){
 			
 			for(String nodeRef : dataListItems.split(",")){

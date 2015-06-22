@@ -31,9 +31,14 @@ import fr.becpg.repo.security.data.dataList.ACLEntryDataItem;
 @AlfQname(qname = "sec:aclGroup")
 public class ACLGroupData extends BeCPGDataObject {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1271936196192020455L;
+
 	private String nodeType;
 	
-	List<ACLEntryDataItem> acls = new ArrayList<ACLEntryDataItem>();
+	List<ACLEntryDataItem> acls = new ArrayList<>();
 
 	@DataList
 	@AlfQname(qname = "sec:aclEntry")

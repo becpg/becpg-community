@@ -50,7 +50,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	public static final String UNIT_SEPARATOR = "/";
 	public static final String MESSAGE_MISSING_MANDATORY_CHARACT = "message.formulate.missing.mandatory.charact";
 	
-	private static Log logger = LogFactory.getLog(AbstractSimpleListFormulationHandler.class);
+	private static final Log logger = LogFactory.getLog(AbstractSimpleListFormulationHandler.class);
 	
 
 	protected AlfrescoRepository<T> alfrescoRepository;
@@ -89,7 +89,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	protected abstract Map<NodeRef, List<NodeRef>> getMandatoryCharacts(ProductData formulatedProduct, QName componentType);
 	
 	protected Map<NodeRef, List<NodeRef>> getMandatoryCharactsFromList(List<T> simpleListDataList){
-		Map<NodeRef, List<NodeRef>> mandatoryCharacts = new HashMap<NodeRef, List<NodeRef>>(simpleListDataList.size());
+		Map<NodeRef, List<NodeRef>> mandatoryCharacts = new HashMap<>(simpleListDataList.size());
 		for(SimpleListDataItem sl : simpleListDataList){
 			if(isCharactFormulated(sl)){
 				mandatoryCharacts.put(sl.getCharactNodeRef(), new ArrayList<NodeRef>());
@@ -130,7 +130,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	@SuppressWarnings("unchecked")
 	protected void visitChildren(ProductData formulatedProduct, List<T> simpleListDataList) throws FormulateException{
 		
-        Map<NodeRef, Double> totalQties = new HashMap<NodeRef, Double>();		
+        Map<NodeRef, Double> totalQties = new HashMap<>();
 		
 		Double netQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
 		
@@ -301,7 +301,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	}
 	
 	protected boolean isCharactFormulated(SimpleListDataItem sl){
-		return sl.getIsManual()==null || !sl.getIsManual().booleanValue();
+		return sl.getIsManual()==null || !sl.getIsManual();
 	}
 	
 	protected boolean isCharactFormulatedFromVol(SimpleListDataItem sl){

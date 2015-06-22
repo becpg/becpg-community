@@ -52,7 +52,7 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 	protected static final String MSG_ERROR_NO_MAPPING_FOR = "import_service.error.no_mapping_for";
 
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(ImportEntityListItemVisitor.class);
+	private static final Log logger = LogFactory.getLog(ImportEntityListItemVisitor.class);
 
 	private FileFolderService fileFolderService;
 
@@ -95,7 +95,7 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 		 */
 
 		Map<QName, Serializable> propValues = getNodePropertiesToImport(importContext, values);
-		Map<QName, Serializable> entityProperties = new HashMap<QName, Serializable>();
+		Map<QName, Serializable> entityProperties = new HashMap<>();
 
 		// calculate entity properties
 		for (QName qName : classMapping.getNodeColumnKeys()) {
@@ -136,8 +136,8 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 		 */
 
 		NodeRef entityListItemNodeRef = null;
-		Map<QName, String> dataListColumnsProps = new HashMap<QName, String>();
-		Map<QName, List<NodeRef>> dataListColumnsAssocs = new HashMap<QName, List<NodeRef>>();
+		Map<QName, String> dataListColumnsProps = new HashMap<>();
+		Map<QName, List<NodeRef>> dataListColumnsAssocs = new HashMap<>();
 
 		if (!classMapping.getDataListColumnKeys().isEmpty()) {
 
@@ -176,7 +176,7 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 		// Read again variant
 		propValues = getNodePropertiesToImport(importContext, values);
 
-		Map<QName, Serializable> entityListItemProperties = new HashMap<QName, Serializable>();
+		Map<QName, Serializable> entityListItemProperties = new HashMap<>();
 
 		// calculate entity list properties (there are not entity properties)
 		for (QName qName : propValues.keySet()) {
@@ -255,7 +255,7 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 
 				List<NodeRef> targetRefs1 = dataListColumnAssocs.getValue();
 				List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, dataListColumnAssocs.getKey());
-				List<NodeRef> targetRefs2 = new ArrayList<NodeRef>();
+				List<NodeRef> targetRefs2 = new ArrayList<>();
 				for (AssociationRef assocRef : assocRefs)
 					targetRefs2.add(assocRef.getTargetRef());
 
@@ -321,8 +321,8 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 			NodeRef entityNodeRef = importContext.getEntityNodeRef();
 			if (entityNodeRef != null && value != null && !value.isEmpty()) {
 
-				Map<QName, String> dataListColumnsProps = new HashMap<QName, String>();
-				Map<QName, List<NodeRef>> dataListColumnsAssocs = new HashMap<QName, List<NodeRef>>();
+				Map<QName, String> dataListColumnsProps = new HashMap<>();
+				Map<QName, List<NodeRef>> dataListColumnsAssocs = new HashMap<>();
 
 				ClassMapping classMapping = importContext.getClassMappings().get(importContext.getType());
 

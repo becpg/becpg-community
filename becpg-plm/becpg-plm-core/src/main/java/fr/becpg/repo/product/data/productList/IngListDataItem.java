@@ -39,15 +39,20 @@ import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 public class IngListDataItem extends AbstractManualDataItem  implements SimpleCharactDataItem, AspectAwareDataItem, CompositeDataItem<IngListDataItem> {
 
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2710240943326822672L;
+
 	private Double qtyPerc = 0d;
 	
 	private Double volumeQtyPerc;
 	
-	private List<NodeRef> geoOrigin = new ArrayList<NodeRef>();
+	private List<NodeRef> geoOrigin = new ArrayList<>();
 	
-	private List<NodeRef> geoTransfo = new ArrayList<NodeRef>();
+	private List<NodeRef> geoTransfo = new ArrayList<>();
 	
-	private List<NodeRef> bioOrigin = new ArrayList<NodeRef>();
+	private List<NodeRef> bioOrigin = new ArrayList<>();
 	
 	private Boolean isGMO = false;
 	

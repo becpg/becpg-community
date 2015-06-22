@@ -33,6 +33,10 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfQname(qname = "qa:controlList")
 public class ControlListDataItem extends BeCPGDataObject{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7794847133363024701L;
 	String type;
 	Double mini;
 	Double maxi;
@@ -43,7 +47,7 @@ public class ControlListDataItem extends BeCPGDataObject{
 	String unit;
 	QualityControlState state;		
 	NodeRef method;
-	List<NodeRef> characts = new ArrayList<NodeRef>();
+	List<NodeRef> characts = new ArrayList<>();
 	
 	@AlfProp
 	@AlfQname(qname = "qa:clType")

@@ -40,11 +40,11 @@ import fr.becpg.repo.repository.AlfrescoRepository;
  */
 public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy, EntityVersionPlugin {
 
-	private static Log logger = LogFactory.getLog(ProjectPolicy.class);
+	private static final Log logger = LogFactory.getLog(ProjectPolicy.class);
 
-	protected static String KEY_DELETED_TASK_LIST_ITEM = "DeletedTaskListItem";
+	protected static final String KEY_DELETED_TASK_LIST_ITEM = "DeletedTaskListItem";
 
-	protected static String KEY_PROJECT_ITEM = "ProjectItem";
+	protected static final String KEY_PROJECT_ITEM = "ProjectItem";
 
 	protected ProjectService projectService;
 	protected ProjectActivityService projectActivityService;
@@ -141,11 +141,8 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 			logger.debug("doBeforeCommit key: " + key + " size: " + pendingNodes.size());
 		}
 		if (KEY_DELETED_TASK_LIST_ITEM.equals(key)) {
-			for (NodeRef taskListItemNodeRef : pendingNodes) {
-				if (nodeService.exists(taskListItemNodeRef)) {
-					// delete workflow
-					projectWorkflowService.deleteWorkflowTask(taskListItemNodeRef);
-				}
+			for (NodeRef wfIds : pendingNodes) {
+				projectWorkflowService.deleteWorkflowById(wfIds.getId());
 			}
 		} else {
 			// TODO Move that to afterCommit ?

@@ -33,6 +33,10 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfQname(qname = "pjt:budgetList")
 public class BudgetListDataItem extends BeCPGDataObject implements CompositeDataItem<BudgetListDataItem> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4337355975343249214L;
 	private String item;
 	private Double budgetedExpense;
 	private Double budgetedInvoice;

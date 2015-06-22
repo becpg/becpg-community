@@ -37,6 +37,10 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfQname(qname = "ecm:changeUnitList")
 public class ChangeUnitDataItem extends BeCPGDataObject {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 465151815242873452L;
 	private RevisionType revision;
 	private RequirementType reqType;
 	private String reqDetails;

@@ -19,6 +19,7 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  */
 package fr.becpg.repo.search;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -27,20 +28,24 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import org.alfresco.model.ApplicationModel;
 import org.alfresco.model.ContentModel;
 import org.alfresco.model.ForumModel;
+import org.alfresco.query.CannedQueryFactory;
+import org.alfresco.query.CannedQueryResults;
 import org.alfresco.query.PagingRequest;
 import org.alfresco.query.PagingResults;
+import org.alfresco.repo.model.filefolder.GetChildrenCannedQueryFactory;
+import org.alfresco.repo.node.getchildren.GetChildrenCannedQuery;
 import org.alfresco.repo.rule.RuleModel;
 import org.alfresco.repo.search.impl.parsers.FTSQueryException;
 import org.alfresco.repo.search.impl.querymodel.QueryModelException;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.security.permissions.PermissionCheckedValue.PermissionCheckedValueMixin;
 import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
-import org.alfresco.service.cmr.model.FileFolderService;
-import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.search.LimitBy;
@@ -50,10 +55,9 @@ import org.alfresco.service.cmr.search.SearchParameters;
 import org.alfresco.service.cmr.search.SearchService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.FileFilterMode;
-import org.alfresco.util.FileFilterMode.Client;
 import org.alfresco.util.ISO9075;
 import org.alfresco.util.Pair;
+import org.alfresco.util.registry.NamedObjectRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -76,9 +80,11 @@ import fr.becpg.repo.search.impl.AbstractBeCPGQueryBuilder;
 @Service("beCPGQueryBuilder")
 public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements InitializingBean {
 
-	private static Log logger = LogFactory.getLog(BeCPGQueryBuilder.class);
+	private static final Log logger = LogFactory.getLog(BeCPGQueryBuilder.class);
 
 	private static final String DEFAULT_FIELD_NAME = "keywords";
+	
+	private static final String CANNED_QUERY_FILEFOLDER_LIST = "fileFolderGetChildrenCannedQueryFactory";
 
 	private static BeCPGQueryBuilder INSTANCE = null;
 
@@ -87,10 +93,15 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	private SearchService searchService;
 	@Autowired
 	private NamespaceService namespaceService;
-	@Autowired
-	@Qualifier("FileFolderService")
-	private FileFolderService fileFolderService;
+//	@Autowired
+//	@Qualifier("FileFolderService")
+//	private FileFolderService fileFolderService;
 
+	@Autowired
+	@Qualifier("fileFolderCannedQueryRegistry")
+	private NamedObjectRegistry<CannedQueryFactory<NodeRef>> cannedQueryRegistry;
+	
+	
 	@Autowired
 	private DictionaryService dictionaryService;
 	
@@ -105,25 +116,25 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 	private Integer maxResults = RepoConsts.MAX_RESULTS_256;
 	private NodeRef parentNodeRef;
-	private Set<NodeRef> parentNodeRefs = new HashSet<>();
+	private final Set<NodeRef> parentNodeRefs = new HashSet<>();
 	private QName type = null;
-	private Set<QName> types = new HashSet<>();
-	private Set<QName> aspects = new HashSet<>();
+	private final Set<QName> types = new HashSet<>();
+	private final Set<QName> aspects = new HashSet<>();
 	private String subPath = null;
 	private String path = null;
 	private String excludePath = null;
 	private String membersPath = null;
-	private Set<NodeRef> ids = new HashSet<>();
-	private Set<NodeRef> notIds = new HashSet<>();
-	private Set<QName> notNullProps = new HashSet<>();
-	private Set<QName> nullProps = new HashSet<>();
-	private Map<QName, String> propQueriesMap = new HashMap<QName, String>();
-	private Map<QName, Pair<String, String>> propBetweenQueriesMap = new HashMap<QName, Pair<String, String>>();
-	private Map<QName, String> propQueriesEqualMap = new HashMap<QName, String>();
-	private Set<String> ftsQueries = new HashSet<>();
-	private Set<QName> excludedAspects = new HashSet<>();
-	private Set<QName> excludedTypes = new HashSet<>();
-	private Map<QName, String> excludedPropQueriesMap = new HashMap<QName, String>();
+	private final Set<NodeRef> ids = new HashSet<>();
+	private final Set<NodeRef> notIds = new HashSet<>();
+	private final Set<QName> notNullProps = new HashSet<>();
+	private final Set<QName> nullProps = new HashSet<>();
+	private final Map<QName, String> propQueriesMap = new HashMap<>();
+	private final Map<QName, Pair<String, String>> propBetweenQueriesMap = new HashMap<>();
+	private final Map<QName, String> propQueriesEqualMap = new HashMap<>();
+	private final Set<String> ftsQueries = new HashSet<>();
+	private final Set<QName> excludedAspects = new HashSet<>();
+	private final Set<QName> excludedTypes = new HashSet<>();
+	private final Map<QName, String> excludedPropQueriesMap = new HashMap<>();
 	private QueryConsistency queryConsistancy = QueryConsistency.EVENTUAL;
 	private boolean isExactType = false;
 	private String searchTemplate = null;
@@ -147,7 +158,8 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			builder.searchService = INSTANCE.searchService;
 			builder.namespaceService = INSTANCE.namespaceService;
 			builder.defaultSearchTemplate = INSTANCE.defaultSearchTemplate;
-			builder.fileFolderService = INSTANCE.fileFolderService;
+	//		builder.fileFolderService = INSTANCE.fileFolderService;
+			builder.cannedQueryRegistry = INSTANCE.cannedQueryRegistry;
 			builder.nodeService = INSTANCE.nodeService;
 			builder.dictionaryService = INSTANCE.dictionaryService;
 			builder.tenantService = INSTANCE.tenantService;
@@ -351,7 +363,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	public BeCPGQueryBuilder andBetween(QName propQName, String start, String end) {
-		propBetweenQueriesMap.put(propQName, new Pair<String, String>(start, end));
+		propBetweenQueriesMap.put(propQName, new Pair<>(start, end));
 		return this;
 	}
 
@@ -444,7 +456,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		StopWatch watch = new StopWatch();
 		watch.start();
 
-		List<NodeRef> refs = new LinkedList<NodeRef>();
+		List<NodeRef> refs = new LinkedList<>();
 
 		String runnedQuery = buildQuery();
 
@@ -668,13 +680,13 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		} else if ( ContentModel.TYPE_FOLDER.equals(type)) {
 			runnedQuery.append("cmis:folder as D");
 		} else {
-			runnedQuery.append(type.toPrefixString(namespaceService) + " as D");
+			runnedQuery.append(type.toPrefixString(namespaceService)).append(" as D");
 		}
 
 		
 
 		if (parentNodeRef != null) {
-			whereClause.append(" AND IN_FOLDER( D,'" + parentNodeRef + "')");
+			whereClause.append(" AND IN_FOLDER( D,'").append(parentNodeRef).append("')");
 		} else if (membersPath != null) {
 			throw new IllegalStateException("members not supported for CMIS search");
 		} else if (path != null) {
@@ -695,45 +707,45 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		if (!notNullProps.isEmpty()) {
 			for (QName tmpQName : notNullProps) {
-				whereClause.append(" AND " + getCmisPrefix(tmpQName) + " IS NOT NULL");
+				whereClause.append(" AND ").append(getCmisPrefix(tmpQName)).append(" IS NOT NULL");
 			}
 
 		}
 
 		if (!nullProps.isEmpty()) {
 			for (QName tmpQName : nullProps) {
-				whereClause.append(" AND " + getCmisPrefix(tmpQName) + " IS NULL");
+				whereClause.append(" AND ").append(getCmisPrefix(tmpQName)).append(" IS NULL");
 			}
 		}
 
 		if (!ids.isEmpty()) {
 			for (NodeRef tmpNodeRef : ids) {
-				whereClause.append(" AND D.cmis:objectId = '" + tmpNodeRef + "'");
+				whereClause.append(" AND D.cmis:objectId = '").append(tmpNodeRef).append("'");
 			}
 		}
 
 		if (!notIds.isEmpty()) {
 			for (NodeRef tmpNodeRef : notIds) {
-				whereClause.append(" AND D.cmis:objectId <> '" + tmpNodeRef + "'");
+				whereClause.append(" AND D.cmis:objectId <> '").append(tmpNodeRef).append("'");
 			}
 		}
 
 		if (!propQueriesMap.isEmpty()) {
 			
 			for (Map.Entry<QName, String> propQueryEntry : propQueriesMap.entrySet()) {
-				whereClause.append(" AND "+ getCmisPrefix(propQueryEntry.getKey()) + " LIKE '%" + propQueryEntry.getValue() + "%'");
+				whereClause.append(" AND ").append(getCmisPrefix(propQueryEntry.getKey())).append(" LIKE '%").append(propQueryEntry.getValue()).append("%'");
 			}
 		}
 
 		if (!propQueriesEqualMap.isEmpty()) {
 			for (Map.Entry<QName, String> propQueryEntry : propQueriesEqualMap.entrySet()) {
-				whereClause.append(" AND " + getCmisPrefix(propQueryEntry.getKey()) + " = '" + propQueryEntry.getValue() + "'");
+				whereClause.append(" AND ").append(getCmisPrefix(propQueryEntry.getKey())).append(" = '").append(propQueryEntry.getValue()).append("'");
 			}
 		}
 
 		if (!excludedPropQueriesMap.isEmpty()) {
 			for (Map.Entry<QName, String> propQueryEntry : excludedPropQueriesMap.entrySet()) {
-				whereClause.append(" AND " + getCmisPrefix(propQueryEntry.getKey()) + " <> '" + propQueryEntry.getValue() + "'");
+				whereClause.append(" AND ").append(getCmisPrefix(propQueryEntry.getKey())).append(" <> '").append(propQueryEntry.getValue()).append("'");
 			}
 		}
 
@@ -742,10 +754,10 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			String first = propQueryEntry.getValue().getFirst();
 			String second = propQueryEntry.getValue().getSecond();
 			if (!"MIN".equals(first)) {
-				whereClause.append(" AND " + getCmisPrefix(propQueryEntry.getKey()) + " >= " + first + "");
+				whereClause.append(" AND ").append(getCmisPrefix(propQueryEntry.getKey())).append(" >= ").append(first).append("");
 			}
 			if (!"MAX".equals(second)) {
-				whereClause.append(" AND " + getCmisPrefix(propQueryEntry.getKey()) + " <= " + second + "");
+				whereClause.append(" AND ").append(getCmisPrefix(propQueryEntry.getKey())).append(" <= ").append(second).append("");
 			}
 		}
 
@@ -759,7 +771,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 				if (logger.isTraceEnabled()) {
 					logger.trace("Add sort :" + kv.getKey() + " " + kv.getValue());
 				}
-				orderBy.append(" "+getCmisPrefix(QName.createQName(kv.getKey().replaceFirst("@", ""))) +(kv.getValue()?" ASC": " DESC"));
+				orderBy.append(" ").append(getCmisPrefix(QName.createQName(kv.getKey().replaceFirst("@", "")))).append(kv.getValue() ? " ASC" : " DESC");
 			}
 		}
 		
@@ -775,8 +787,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		if (!aspects.isEmpty()) {
 			for (QName tmpQName : aspects) {
-				runnedQuery.append(" JOIN " + tmpQName.toPrefixString(namespaceService) + " as " + tmpQName.getLocalName() + " on D.cmis:objectId = "
-						+ tmpQName.getLocalName() + ".cmis:objectId");
+				runnedQuery.append(" JOIN ").append(tmpQName.toPrefixString(namespaceService)).append(" as ").append(tmpQName.getLocalName()).append(" on D.cmis:objectId = ").append(tmpQName.getLocalName()).append(".cmis:objectId");
 			}
 		}
 		
@@ -827,7 +838,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 	private List<NodeRef> search(String runnedQuery, Map<String, Boolean> sort, int page, int maxResults) {
 
-		List<NodeRef> nodes = new LinkedList<NodeRef>();
+		List<NodeRef> nodes = new LinkedList<>();
 
 		SearchParameters sp = new SearchParameters();
 		sp.addStore(RepoConsts.SPACES_STORE);
@@ -835,6 +846,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		sp.setQuery(runnedQuery);
 		sp.addLocale(Locale.getDefault());
 		sp.excludeDataInTheCurrentTransaction(true);
+		sp.setExcludeTenantFilter(false);
 		
 		if(logger.isDebugEnabled()  && language!=null){
 			logger.debug("Use search language:" +language.toString());
@@ -899,19 +911,16 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			if (result != null) {
 				
 				if(AuthenticationUtil.isMtEnabled()){
-					nodes = new LinkedList<NodeRef>();
+					nodes = new LinkedList<>();
 					for(NodeRef node :  result.getNodeRefs()){
 						nodes.add(tenantService.getBaseName(node));
 					}
 				} else {
-					nodes = new LinkedList<NodeRef>(result.getNodeRefs());
+					nodes = new LinkedList<>(result.getNodeRefs());
 				}
 			}
-		} catch (FTSQueryException e) {
+		} catch (FTSQueryException | QueryModelException e) {
 			logger.error("Incorrect query :" + runnedQuery, e);
-		} catch (QueryModelException e) {
-			logger.error("Incorrect query :" + runnedQuery, e);
-
 		} finally {
 			if (result != null) {
 				result.close();
@@ -953,26 +962,29 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	}
 
 	
-	public PagingResults<FileInfo> childFileFolders(PagingRequest pageRequest) {
+	public PagingResults<NodeRef> childFileFolders(PagingRequest pageRequest) {
 
 		StopWatch watch = new StopWatch();
 		watch.start();
 
-		PagingResults<FileInfo> pageOfNodeInfos = null;
+		PagingResults<NodeRef> pageOfNodeInfos = null;
 
-		FileFilterMode.setClient(Client.script);
-
-		List<Pair<QName, Boolean>> tmp = new LinkedList<Pair<QName, Boolean>>();
+		List<Pair<QName, Boolean>> tmp = new LinkedList<>();
 
 		for (Map.Entry<String, Boolean> entry : sortProps.entrySet()) {
-			tmp.add(new Pair<QName, Boolean>(QName.createQName(entry.getKey().replace("@", ""), namespaceService), entry.getValue()));
+			tmp.add(new Pair<>(QName.createQName(entry.getKey().replace("@", ""), namespaceService), entry.getValue()));
 		}
 
 		try {
-			pageOfNodeInfos = fileFolderService.list(parentNodeRef, true, false, null, excludedTypes, tmp, pageRequest);
+			
+			if (type != null) {
+			
+				pageOfNodeInfos = internalList(parentNodeRef, Collections.singleton(type), excludedAspects, tmp, pageRequest);
+			} else if (!types.isEmpty()) {
+				pageOfNodeInfos = internalList(parentNodeRef, types, excludedAspects, tmp, pageRequest);
+			}
 
 		} finally {
-			FileFilterMode.clearClient();
 			watch.stop();
 
 			if (pageOfNodeInfos != null) {
@@ -992,6 +1004,76 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		}
 		return pageOfNodeInfos;
 	}
+	
+	
+	private PagingResults<NodeRef>  internalList(NodeRef rootNodeRef, Set<QName> searchTypeQNames, Set<QName> ignoreAspectQNames, List<Pair<QName, Boolean>> sortProps, PagingRequest pagingRequest) {
+	 	
+		// get canned query
+	        GetChildrenCannedQueryFactory getChildrenCannedQueryFactory = (GetChildrenCannedQueryFactory)cannedQueryRegistry.getNamedObject(CANNED_QUERY_FILEFOLDER_LIST);
+  
+	        GetChildrenCannedQuery cq = (GetChildrenCannedQuery)getChildrenCannedQueryFactory.getCannedQuery(rootNodeRef, null, Collections.singleton(ContentModel.ASSOC_CONTAINS), searchTypeQNames, ignoreAspectQNames, null, sortProps, pagingRequest);
+	        
+	         // execute canned query
+	        CannedQueryResults<NodeRef> results = cq.execute();
+	    	        
+	        return getPagingResults(pagingRequest,results);
+	}
+	
+	 private PagingResults<NodeRef> getPagingResults(PagingRequest pagingRequest, final CannedQueryResults<NodeRef> results)
+	    {
+		  
+	       final   List<NodeRef> nodeRefs;
+	        if (results.getPageCount() > 0)
+	        {
+	            nodeRefs = results.getPages().get(0);
+	        }
+	        else
+	        {
+	            nodeRefs = Collections.emptyList();
+	        }
+	        
+	        // set total count
+	        final Pair<Integer, Integer> totalCount;
+	        if (pagingRequest.getRequestTotalCountMax() > 0)
+	        {
+	            totalCount = results.getTotalResultCount();
+	        }
+	        else
+	        {
+	            totalCount = null;
+	        }
+	        
+	      
+	        PermissionCheckedValueMixin.create(nodeRefs);
+	        
+	        return new PagingResults<NodeRef>()
+	        {
+	            @Override
+	            public String getQueryExecutionId()
+	            {
+	                return results.getQueryExecutionId();
+	            }
+	            @Override
+	            public List<NodeRef> getPage()
+	            {
+	            	if(type != null && !BeCPGModel.TYPE_ENTITYLIST_ITEM.equals(type)) {
+	            		return nodeRefs.stream().filter(n -> nodeService.getType(n).equals(type)).collect(Collectors.toList());
+	            	}
+	                return nodeRefs ;
+	            }
+	            @Override
+	            public boolean hasMoreItems()
+	            {
+	                return results.hasMoreItems();
+	            }
+	            @Override
+	            public Pair<Integer, Integer> getTotalResultCount()
+	            {
+	                return totalCount;
+	            }
+	        };        
+	    }
+	
 
 	@Override
 	public String toString() {

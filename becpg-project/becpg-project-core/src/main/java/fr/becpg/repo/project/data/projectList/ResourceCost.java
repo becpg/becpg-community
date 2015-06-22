@@ -14,6 +14,10 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfQname(qname = "pjt:resourceCost")
 public class ResourceCost extends BeCPGDataObject {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7228049984713268561L;
 	private Double value;
 	private Double billRate;
 	private Double hoursPerDay;

@@ -30,11 +30,11 @@ public interface DesignerInitService {
 	/**
 	 * Designer common folders 
 	 */
-	public NodeRef getWorkflowsNodeRef();
+	NodeRef getWorkflowsNodeRef();
 
-	public NodeRef getModelsNodeRef();
+	NodeRef getModelsNodeRef();
 
-	public NodeRef getConfigsNodeRef();
+	NodeRef getConfigsNodeRef();
 
 
 

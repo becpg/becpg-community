@@ -56,9 +56,9 @@ public class SpelEditorListValuePlugin extends EntityListValuePlugin {
 		try {
 			Class<?> c = Class.forName(className);
 			Field[] fields = c.getDeclaredFields();
-			List<ListValueEntry> ret = new ArrayList<ListValueEntry>();
-			for (int i = 0; i < fields.length; i++) {
-				ret.add(new ListValueEntry(fields[i].getName(), fields[i].getName(), fields[i].getType()
+			List<ListValueEntry> ret = new ArrayList<>();
+			for (Field field : fields) {
+				ret.add(new ListValueEntry(field.getName(), field.getName(), field.getType()
 						.getSimpleName()));
 			}
 			return new ListValuePage(ret, pageNum, pageSize, null);

@@ -10,6 +10,7 @@ import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
 import org.alfresco.repo.domain.node.NodeDAO;
 import org.alfresco.repo.domain.patch.PatchDAO;
 import org.alfresco.repo.domain.qname.QNameDAO;
+import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -23,7 +24,6 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
-import fr.becpg.repo.entity.EntityListDAO;
 
 /**
  * Update ClaimListValuePatch
@@ -33,7 +33,7 @@ import fr.becpg.repo.entity.EntityListDAO;
  */
 public class ClaimListValuePatch extends AbstractBeCPGPatch {
 
-	private static Log logger = LogFactory.getLog(ClaimListValuePatch.class);
+	private static final Log logger = LogFactory.getLog(ClaimListValuePatch.class);
 	private static final String MSG_SUCCESS = "patch.bcpg.plm.claimListValuePatch.result";
 
 	private NodeDAO nodeDAO;
@@ -41,6 +41,8 @@ public class ClaimListValuePatch extends AbstractBeCPGPatch {
 	private QNameDAO qnameDAO;
 	private BehaviourFilter policyBehaviourFilter;
 	private RuleService ruleService;
+
+	private IntegrityChecker integrityChecker;
 
 	private final int batchThreads = 3;
 	private final int batchSize = 40;
@@ -52,14 +54,14 @@ public class ClaimListValuePatch extends AbstractBeCPGPatch {
 		AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
 		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
-			final List<NodeRef> result = new ArrayList<NodeRef>();
+			final List<NodeRef> result = new ArrayList<>();
 
-			long maxNodeId = getPatchDAO().getMaxAdmNodeID();
+			final long maxNodeId = getPatchDAO().getMaxAdmNodeID();
 
 			long minSearchNodeId = 1;
 			long maxSearchNodeId = count;
 
-			Pair<Long, QName> val = getQnameDAO().getQName(PLMModel.TYPE_LABELCLAIMLIST);
+			final Pair<Long, QName> val = getQnameDAO().getQName(PLMModel.TYPE_LABELCLAIMLIST);
 
 			public int getTotalEstimatedWorkSize() {
 				return result.size();
@@ -90,7 +92,7 @@ public class ClaimListValuePatch extends AbstractBeCPGPatch {
 			}
 		};
 
-		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<NodeRef>("ClaimListValuePatch", transactionService.getRetryingTransactionHelper(),
+		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("ClaimListValuePatch", transactionService.getRetryingTransactionHelper(),
 				workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 1000);
 
 		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
@@ -129,7 +131,13 @@ public class ClaimListValuePatch extends AbstractBeCPGPatch {
 
 		};
 
-		batchProcessor.process(worker, true);
+		integrityChecker.setEnabled(false);
+		try {
+			batchProcessor.process(worker, true);
+		} finally {
+			integrityChecker.setEnabled(true);
+		}
+	
 
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}
@@ -169,6 +177,12 @@ public class ClaimListValuePatch extends AbstractBeCPGPatch {
 	public void setRuleService(RuleService ruleService) {
 		this.ruleService = ruleService;
 	}
+
+	public void setIntegrityChecker(IntegrityChecker integrityChecker) {
+		this.integrityChecker = integrityChecker;
+	}
+	
+	
 
 
 }

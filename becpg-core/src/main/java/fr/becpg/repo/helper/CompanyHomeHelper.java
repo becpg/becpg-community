@@ -19,7 +19,7 @@ package fr.becpg.repo.helper;
 
 public class CompanyHomeHelper {
 
-	static String USER_SPACE_QNAME_PATH = "/app:company_home/app:user_homes/";
+	static final String USER_SPACE_QNAME_PATH = "/app:company_home/app:user_homes/";
 	
 	
 	public static boolean isInUserHome(String path) {

@@ -45,7 +45,7 @@ public class DesignerTree {
 	}
 
 
-	private List<DesignerTree> childrens = new ArrayList<DesignerTree>();
+	private List<DesignerTree> childrens = new ArrayList<>();
 
 	/**
 	 * @return the type
@@ -162,7 +162,7 @@ public class DesignerTree {
 	}
 
 	public List<String> getAccepts() {
-		List<String> ret = new ArrayList<String>();
+		List<String> ret = new ArrayList<>();
 		if ("m2:type".equals(type) || "m2:aspect".equals(type) || "m2:properties".equals(type)
 				|| "m2:propertyOverrides".equals(type) ) {
 			ret.add("property");

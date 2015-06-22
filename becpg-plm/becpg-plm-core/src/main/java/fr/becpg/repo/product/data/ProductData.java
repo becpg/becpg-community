@@ -49,6 +49,10 @@ import fr.becpg.repo.variant.model.VariantData;
 
 public class ProductData extends AbstractEffectiveDataItem implements FormulatedEntity, HierarchicalEntity, StateableEntity {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 764534088277737617L;
 	private NodeRef hierarchy1;
 	private NodeRef hierarchy2;
 	private MLText legalName;
@@ -57,7 +61,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private SystemState state = SystemState.Simulation;
 	private ProductUnit unit = ProductUnit.kg;
 	private ProductData entityTpl;
-	private List<NodeRef> plants = new ArrayList<NodeRef>();
+	private List<NodeRef> plants = new ArrayList<>();
 	private VariantPackagingData defaultVariantPackagingData;
 	/*
 	 * Transformable properties
@@ -610,7 +614,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 
 	public List<CompoListDataItem> getCompoList(@SuppressWarnings("unchecked") DataListFilter<ProductData>... filters) {
 		if (compoListView != null && compoListView.getCompoList() != null) {
-			List<CompoListDataItem> ret = new ArrayList<CompoListDataItem>(compoListView.getCompoList());
+			List<CompoListDataItem> ret = new ArrayList<>(compoListView.getCompoList());
 			if (filters != null) {
 				for (DataListFilter<ProductData> filter : filters) {
 					CollectionUtils.filter(ret, filter.createPredicate(this));
@@ -638,7 +642,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 
 	public  List<ProcessListDataItem> getProcessList(@SuppressWarnings("unchecked") DataListFilter<ProductData>... filters) {
 		if (processListView != null && processListView.getProcessList() != null) {
-			List<ProcessListDataItem> ret = new ArrayList<ProcessListDataItem>(processListView.getProcessList());
+			List<ProcessListDataItem> ret = new ArrayList<>(processListView.getProcessList());
 			if (filters != null) {
 				for (DataListFilter<ProductData> filter : filters) {
 					CollectionUtils.filter(ret, filter.createPredicate(this));
@@ -666,7 +670,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	
 	public  List<PackagingListDataItem> getPackagingList(@SuppressWarnings("unchecked") DataListFilter<ProductData>... filters) {
 		if (packagingListView != null && packagingListView.getPackagingList() != null) {
-			List<PackagingListDataItem> ret = new ArrayList<PackagingListDataItem>(packagingListView.getPackagingList());
+			List<PackagingListDataItem> ret = new ArrayList<>(packagingListView.getPackagingList());
 			if (filters != null) {
 				for (DataListFilter<ProductData> filter : filters) {
 					CollectionUtils.filter(ret, filter.createPredicate(this));

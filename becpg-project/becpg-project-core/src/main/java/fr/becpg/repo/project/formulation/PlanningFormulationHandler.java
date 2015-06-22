@@ -43,8 +43,8 @@ import fr.becpg.repo.project.impl.ProjectHelper;
  */
 public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectData> {
 
-	private static Log logger = LogFactory.getLog(PlanningFormulationHandler.class);
-	private static int DEFAULT_WORK_HOURS_PER_DAY = 8;
+	private static final Log logger = LogFactory.getLog(PlanningFormulationHandler.class);
+	private static final int DEFAULT_WORK_HOURS_PER_DAY = 8;
 
 	@Override
 	public boolean process(ProjectData projectData) throws FormulateException {
@@ -112,11 +112,11 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 
 					if (hasPlannedDuration(tl)) {
 						//in retro-planning or task has prev tasks
-						if (tl.getIsGroup() || !isPlanning || ProjectHelper.getPrevTasks(projectData, tl).isEmpty() == false) {
+						if (tl.getIsGroup() || !isPlanning || !ProjectHelper.getPrevTasks(projectData, tl).isEmpty()) {
 							ProjectHelper.setTaskStartDate(tl, null);
 						}
 						//in planning or task has next tasks
-						if (tl.getIsGroup() || isPlanning || ProjectHelper.getNextTasks(projectData, tl.getNodeRef()).isEmpty() == false) {
+						if (tl.getIsGroup() || isPlanning || !ProjectHelper.getNextTasks(projectData, tl.getNodeRef()).isEmpty()) {
 							ProjectHelper.setTaskEndDate(tl, null);
 						}
 					}
@@ -249,7 +249,7 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 	}
 
 	private void calculateRetroPlanningOfPrevTasks(ProjectData projectData, TaskListDataItem task, Date endDate) throws FormulateException {
-		List<TaskListDataItem> prevTasks = null;
+		List<TaskListDataItem> prevTasks;
 		if (task == null) {
 			prevTasks = ProjectHelper.getLastTasks(projectData);
 		} else {
@@ -313,13 +313,13 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 
 			nextTask.setRealDuration(ProjectHelper.calculateRealDuration(nextTask));
 			Integer o = ProjectHelper.calculateOverdue(nextTask);						
-			if (o != null && (initOverdue || o.intValue() > taskOverdue)) {
+			if (o != null && (initOverdue || o > taskOverdue)) {
 				taskOverdue = o;
 				initOverdue = false;
 			}
 
 			o = calculateOverdue(projectData, nextTask.getNodeRef());			
-			if (o != null && (initNextOverdue || o.intValue() > nextTaskOverdue)) {
+			if (o != null && (initNextOverdue || o > nextTaskOverdue)) {
 				nextTaskOverdue = o;
 				initNextOverdue = false;
 			}

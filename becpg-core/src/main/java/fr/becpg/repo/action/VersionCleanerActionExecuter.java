@@ -51,7 +51,7 @@ public class VersionCleanerActionExecuter extends ActionExecuterAbstractBase {
 	public static final String PARAM_NUMBER_OF_DAY = "numberOfDay";
 	public static final String PARAM_NUMBER_BY_DAY = "numberByDay";
 
-	private Log logger = LogFactory.getLog(VersionCleanerActionExecuter.class);
+	private final Log logger = LogFactory.getLog(VersionCleanerActionExecuter.class);
 
 	private NodeService nodeService;
 	private RuleService ruleService;

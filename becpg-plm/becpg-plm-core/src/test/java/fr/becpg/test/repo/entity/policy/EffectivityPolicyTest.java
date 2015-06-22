@@ -35,7 +35,7 @@ import fr.becpg.test.PLMBaseTestCase;
 public class EffectivityPolicyTest extends PLMBaseTestCase {
 
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(EffectivityPolicyTest.class);
+	private static final Log logger = LogFactory.getLog(EffectivityPolicyTest.class);
 
 	/** The sf node ref. */
 	private NodeRef sfNodeRef;
@@ -62,7 +62,7 @@ public class EffectivityPolicyTest extends PLMBaseTestCase {
 				/*-- Create raw material --*/
 				logger.debug("/*-- Create raw material --*/");
 
-				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				Map<QName, Serializable> properties = new HashMap<>();
 				// Costs
 				properties.put(ContentModel.PROP_NAME, "cost1");
 				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
@@ -79,7 +79,7 @@ public class EffectivityPolicyTest extends PLMBaseTestCase {
 				rawMaterial1.setStartEffectivity(nowplus1h);
 				rawMaterial1.setEndEffectivity(nowplus2h);
 
-				List<PriceListDataItem> priceList = new LinkedList<PriceListDataItem>();
+				List<PriceListDataItem> priceList = new LinkedList<>();
 				priceList.add(priceListDataItem);
 				rawMaterial1.setPriceList(priceList);
 

@@ -26,6 +26,10 @@ import fr.becpg.repo.repository.annotation.DataList;
 
 public class CompoListView extends AbstractProductDataView {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1646699257033977776L;
 	private List<CompoListDataItem> compoList;
 	
 	@DataList

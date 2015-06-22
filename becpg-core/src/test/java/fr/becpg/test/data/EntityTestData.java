@@ -25,6 +25,11 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfQname(qname = "bcpg:entityV2")
 public class EntityTestData extends BeCPGDataObject{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3749476265688523815L;
+
 	@Override
 	public String toString() {
 		return "EntityTestData [name=" + name + "]";

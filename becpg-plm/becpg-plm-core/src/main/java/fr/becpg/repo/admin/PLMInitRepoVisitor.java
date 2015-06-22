@@ -9,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
@@ -161,13 +162,15 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		NodeRef qualityNodeRef = visitFolder(companyHome, PlmRepoConsts.PATH_QUALITY);
 		// Regulations
 		NodeRef regulationsNodeRef = visitFolder(qualityNodeRef, PlmRepoConsts.PATH_REGULATIONS);
-		visitFolder(regulationsNodeRef, PlmRepoConsts.PATH_PRODUCT_MICROBIO_CRITERIA);
+		NodeRef folderNodeRef = visitFolder(regulationsNodeRef, PlmRepoConsts.PATH_PRODUCT_MICROBIO_CRITERIA);
+		addSystemFolderAspect(folderNodeRef);
 		// Specifications
 		NodeRef qualSpecNodeRef = visitFolder(qualityNodeRef, PlmRepoConsts.PATH_QUALITY_SPECIFICATIONS);
 		visitFolder(qualSpecNodeRef, PlmRepoConsts.PATH_CONTROL_PLANS);
 		visitFolder(qualSpecNodeRef, PlmRepoConsts.PATH_CONTROL_POINTS);
 
-		visitFolder(qualityNodeRef, PlmRepoConsts.PATH_PRODUCT_SPECIFICATIONS);
+		folderNodeRef = visitFolder(qualityNodeRef, PlmRepoConsts.PATH_PRODUCT_SPECIFICATIONS);
+		addSystemFolderAspect(folderNodeRef);
 
 		// NC
 		visitFolder(qualityNodeRef, PlmRepoConsts.PATH_NC);
@@ -175,7 +178,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		visitFolder(qualityNodeRef, PlmRepoConsts.PATH_QUALITY_CONTROLS);
 
 		// ECO
-		visitFolder(systemNodeRef, PlmRepoConsts.PATH_ECO);
+		folderNodeRef = visitFolder(systemNodeRef, PlmRepoConsts.PATH_ECO);
+		addSystemFolderAspect(folderNodeRef);
 
 		// Icons
 		visitFolder(systemNodeRef, RepoConsts.PATH_ICON);
@@ -210,13 +214,13 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	@Override
 	protected void visitFiles(NodeRef folderNodeRef, String folderName) {
 
-		if (folderName == RepoConsts.PATH_ICON) {
+		if (Objects.equals(folderName, RepoConsts.PATH_ICON)) {
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/images/*.png");
 		}
-		if (folderName == PlmRepoConsts.PATH_MAPPING) {
+		if (Objects.equals(folderName, PlmRepoConsts.PATH_MAPPING)) {
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/import/mapping/*.xml");
 		}
-		if (folderName == RepoConsts.PATH_OLAP_QUERIES) {
+		if (Objects.equals(folderName, RepoConsts.PATH_OLAP_QUERIES)) {
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/olap/*.saiku");
 		}
 	}
@@ -230,9 +234,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		QName specialiseType = null;
 		boolean applyToChildren = false;
 
-		if (folderName == PlmRepoConsts.PATH_ECO) {
+		if (Objects.equals(folderName, PlmRepoConsts.PATH_ECO)) {
 			specialiseType = ECMModel.TYPE_ECO;
-		} else if (folderName == PlmRepoConsts.PATH_IMPORT_TO_TREAT) {
+		} else if (Objects.equals(folderName, PlmRepoConsts.PATH_IMPORT_TO_TREAT)) {
 
 			// action
 			CompositeAction compositeAction = actionService.createCompositeAction();
@@ -264,7 +268,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			rule.setDescription("Every item created will be imported");
 
 			ruleService.saveRule(nodeRef, rule);
-		} else if (folderName == PlmRepoConsts.PATH_IMPORT_USER) {
+		} else if (Objects.equals(folderName, PlmRepoConsts.PATH_IMPORT_USER)) {
 
 			// action
 			CompositeAction compositeAction = actionService.createCompositeAction();
@@ -299,25 +303,24 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		}
 
 		// quality
-		else if (folderName == PlmRepoConsts.PATH_PRODUCT_MICROBIO_CRITERIA) {
+		else if (Objects.equals(folderName, PlmRepoConsts.PATH_PRODUCT_MICROBIO_CRITERIA)) {
 			specialiseType = PLMModel.TYPE_PRODUCT_MICROBIO_CRITERIA;
-		} else if (folderName == PlmRepoConsts.PATH_CONTROL_PLANS) {
+		} else if (Objects.equals(folderName, PlmRepoConsts.PATH_CONTROL_PLANS)) {
 			specialiseType = QualityModel.TYPE_CONTROL_PLAN;
-		} else if (folderName == PlmRepoConsts.PATH_CONTROL_POINTS) {
+		} else if (Objects.equals(folderName, PlmRepoConsts.PATH_CONTROL_POINTS)) {
 			specialiseType = QualityModel.TYPE_CONTROL_POINT;
-		} else if (folderName == PlmRepoConsts.PATH_QUALITY_CONTROLS) {
+		} else if (Objects.equals(folderName, PlmRepoConsts.PATH_QUALITY_CONTROLS)) {
 			specialiseType = QualityModel.TYPE_QUALITY_CONTROL;
-		} else if (folderName == PlmRepoConsts.PATH_NC) {
+		} else if (Objects.equals(folderName, PlmRepoConsts.PATH_NC)) {
 			specialiseType = QualityModel.TYPE_NC;
-		} else if (folderName == PlmRepoConsts.PATH_PRODUCT_SPECIFICATIONS) {
+		} else if (Objects.equals(folderName, PlmRepoConsts.PATH_PRODUCT_SPECIFICATIONS)) {
 			specialiseType = PLMModel.TYPE_PRODUCT_SPECIFICATION;
 		}
 
 		// specialise type
 		if (specialiseType != null) {
-
 			createRuleSpecialiseType(nodeRef, applyToChildren, specialiseType);
-		}
+		}		
 	}
 
 	/**
@@ -326,16 +329,16 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	@Override
 	protected void visitPermissions(NodeRef nodeRef, String folderName) {
 
-		if (folderName == PlmRepoConsts.PATH_EXCHANGE) {
+		if (Objects.equals(folderName, PlmRepoConsts.PATH_EXCHANGE)) {
 			permissionService
 					.setPermission(nodeRef, PermissionService.GROUP_PREFIX + SystemGroup.SystemMgr.toString(), PermissionService.WRITE, true);
 		}
 
-		else if (folderName == PlmRepoConsts.PATH_QUALITY) {
+		else if (Objects.equals(folderName, PlmRepoConsts.PATH_QUALITY)) {
 			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + PLMGroup.QualityMgr.toString(), PermissionService.WRITE, true);
 		}
 
-		else if (folderName == PlmRepoConsts.PATH_NC) {
+		else if (Objects.equals(folderName, PlmRepoConsts.PATH_NC)) {
 
 			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + NCGroup.ClaimStart, PermissionService.WRITE, true);
 
@@ -367,27 +370,30 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		// create product tpls
 		visitProductTpls(entityTplsNodeRef);
 
-		Set<String> subFolders = new HashSet<String>();
+		Set<String> subFolders = new HashSet<>();
 		subFolders.add(RepoConsts.PATH_IMAGES);
 
 		// visit supplier
-		Set<QName> dataLists = new LinkedHashSet<QName>();
+		Set<QName> dataLists = new LinkedHashSet<>();
 		dataLists.add(PLMModel.TYPE_CONTACTLIST);
 		dataLists.add(PLMModel.TYPE_PLANT);
-		entityTplService.createEntityTpl(entityTplsNodeRef, PLMModel.TYPE_SUPPLIER, null, true, dataLists, subFolders);
+		NodeRef entityTplNodeRef = entityTplService.createEntityTpl(entityTplsNodeRef, PLMModel.TYPE_SUPPLIER, null, true, dataLists, subFolders);
+		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 
 		// visit client
-		dataLists = new LinkedHashSet<QName>();
+		dataLists = new LinkedHashSet<>();
 		dataLists.add(PLMModel.TYPE_CONTACTLIST);
-		entityTplService.createEntityTpl(entityTplsNodeRef, PLMModel.TYPE_CLIENT, null, true, dataLists, subFolders);
+		entityTplNodeRef = entityTplService.createEntityTpl(entityTplsNodeRef, PLMModel.TYPE_CLIENT, null, true, dataLists, subFolders);
+		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 
 		// visit ECO
-		dataLists = new LinkedHashSet<QName>();
+		dataLists = new LinkedHashSet<>();
 		dataLists.add(ECMModel.TYPE_REPLACEMENTLIST);
 		dataLists.add(ECMModel.TYPE_WUSEDLIST);
 		dataLists.add(ECMModel.TYPE_CALCULATEDCHARACTLIST);
 		dataLists.add(ECMModel.TYPE_CHANGEUNITLIST);
-		entityTplService.createEntityTpl(entityTplsNodeRef, ECMModel.TYPE_ECO, null, true, dataLists, null);
+		entityTplNodeRef = entityTplService.createEntityTpl(entityTplsNodeRef, ECMModel.TYPE_ECO, null, true, dataLists, null);
+		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 
 		// visit quality
 		visitQuality(entityTplsNodeRef);
@@ -402,7 +408,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	 */
 	private NodeRef visitSystemCharactsEntity(NodeRef parentNodeRef, String path) {
 
-		Map<String, QName> entityLists = new LinkedHashMap<String, QName>();
+		Map<String, QName> entityLists = new LinkedHashMap<>();
 
 		entityLists.put(PlmRepoConsts.PATH_NUTS, PLMModel.TYPE_NUT);
 		entityLists.put(PlmRepoConsts.PATH_INGS, PLMModel.TYPE_ING);
@@ -433,7 +439,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 	private NodeRef visitSystemHierachiesEntity(NodeRef parentNodeRef, String path) {
 
-		Map<String, QName> entityLists = new LinkedHashMap<String, QName>();
+		Map<String, QName> entityLists = new LinkedHashMap<>();
 
 		entityLists.put(HierarchyHelper.getHierarchyPathName(PLMModel.TYPE_RAWMATERIAL), BeCPGModel.TYPE_LINKED_VALUE);
 		entityLists.put(HierarchyHelper.getHierarchyPathName(PLMModel.TYPE_PACKAGINGMATERIAL), BeCPGModel.TYPE_LINKED_VALUE);
@@ -457,7 +463,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	 */
 	private NodeRef visitSystemListValuesEntity(NodeRef parentNodeRef, String path) {
 
-		Map<String, QName> entityLists = new LinkedHashMap<String, QName>();
+		Map<String, QName> entityLists = new LinkedHashMap<>();
 
 		entityLists.put(PlmRepoConsts.PATH_ING_TYPES, PLMModel.TYPE_ING_TYPE_ITEM);
 		entityLists.put(PlmRepoConsts.PATH_NUT_GROUPS, BeCPGModel.TYPE_LIST_VALUE);
@@ -478,7 +484,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 	private NodeRef visitSystemQualityListValuesEntity(NodeRef parentNodeRef, String path) {
 
-		Map<String, QName> entityLists = new LinkedHashMap<String, QName>();
+		Map<String, QName> entityLists = new LinkedHashMap<>();
 		entityLists.put(PlmRepoConsts.PATH_CLAIM_ORIGIN_HIERARCHY, BeCPGModel.TYPE_LINKED_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_CLAIM_SOURCES, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_CLAIM_DISTRIBUTION_NETWORKS, BeCPGModel.TYPE_LIST_VALUE);
@@ -502,7 +508,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 		NodeRef productTplsNodeRef = visitFolder(entityTplsNodeRef, PlmRepoConsts.PATH_PRODUCT_TEMPLATES);
 
-		Set<QName> productTypes = new HashSet<QName>();
+		Set<QName> productTypes = new HashSet<>();
 		productTypes.add(PLMModel.TYPE_RAWMATERIAL);
 		productTypes.add(PLMModel.TYPE_SEMIFINISHEDPRODUCT);
 		productTypes.add(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT);
@@ -511,16 +517,16 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		productTypes.add(PLMModel.TYPE_PACKAGINGKIT);
 		productTypes.add(PLMModel.TYPE_RESOURCEPRODUCT);
 
-		Set<String> subFolders = new HashSet<String>();
+		Set<String> subFolders = new HashSet<>();
 		subFolders.add(RepoConsts.PATH_IMAGES);
 		subFolders.add(RepoConsts.PATH_BRIEF);
 
 		for (QName productType : productTypes) {
 
 			// datalists
-			Set<QName> dataLists = new LinkedHashSet<QName>();
+			Set<QName> dataLists = new LinkedHashSet<>();
 			QName wusedQName = null;
-
+			
 			if (productType.equals(PLMModel.TYPE_RAWMATERIAL)) {
 
 				dataLists.add(PLMModel.TYPE_ALLERGENLIST);
@@ -588,7 +594,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 				dataLists.add(PLMModel.TYPE_PACKAGINGLIST);
 				dataLists.add(PLMModel.TYPE_COSTLIST);
-				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
+				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);				
 
 				wusedQName = PLMModel.TYPE_PACKAGINGLIST;
 
@@ -602,7 +608,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			}
 			entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 			entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_REPORTS);
-			
 		}
 	}
 
@@ -611,42 +616,49 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		NodeRef qualityTplsNodeRef = visitFolder(entityTplsNodeRef, PlmRepoConsts.PATH_QUALITY_TEMPLATES);
 
 		// visit productMicrobioCriteria
-		Set<QName> dataLists = new LinkedHashSet<QName>();
+		Set<QName> dataLists = new LinkedHashSet<>();
 		dataLists.add(PLMModel.TYPE_MICROBIOLIST);
-		entityTplService.createEntityTpl(qualityTplsNodeRef, PLMModel.TYPE_PRODUCT_MICROBIO_CRITERIA, null, true, dataLists, null);
+		NodeRef entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, PLMModel.TYPE_PRODUCT_MICROBIO_CRITERIA, null, true, dataLists, null);
+		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 
 		// visit productSpecification
 		dataLists.clear();
 		dataLists.add(PLMModel.TYPE_FORBIDDENINGLIST);
 		dataLists.add(PLMModel.TYPE_LABELING_RULE_LIST);
-		entityTplService.createEntityTpl(qualityTplsNodeRef, PLMModel.TYPE_PRODUCT_SPECIFICATION, null, true, dataLists, null);
+		 entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, PLMModel.TYPE_PRODUCT_SPECIFICATION, null, true, dataLists, null);
+		 entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 
 		// visit controlPlan
-		Set<String> subFolders = new HashSet<String>();
+		Set<String> subFolders = new HashSet<>();
 		dataLists.clear();
 		dataLists.add(QualityModel.TYPE_SAMPLINGDEF_LIST);
-		entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_CONTROL_PLAN, null, true, dataLists, subFolders);
+		 entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_CONTROL_PLAN, null, true, dataLists, subFolders);
+		 entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 
 		// visit qualityControl
 		dataLists.clear();
 		dataLists.add(QualityModel.TYPE_SAMPLING_LIST);
-		entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_QUALITY_CONTROL, null, true, dataLists, null);
+		 entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_QUALITY_CONTROL, null, true, dataLists, null);
+		 entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 
 		// visit controlPoint
 		dataLists.clear();
 		dataLists.add(QualityModel.TYPE_CONTROLDEF_LIST);
-		entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_CONTROL_POINT, null, true, dataLists, null);
+		 entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_CONTROL_POINT, null, true, dataLists, null);
+		 entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 
 		// visit workItemAnalysis
 		dataLists.clear();
 		dataLists.add(QualityModel.TYPE_CONTROL_LIST);
-		entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_WORK_ITEM_ANALYSIS, null, true, dataLists, null);
+		 entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_WORK_ITEM_ANALYSIS, null, true, dataLists, null);
+		 entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 
 		// visit NC
-		subFolders = new HashSet<String>();
+		subFolders = new HashSet<>();
 		dataLists.clear();
 		dataLists.add(QualityModel.TYPE_WORK_LOG);
-		entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_NC, null, true, dataLists, subFolders);
+		 entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_NC, null, true, dataLists, subFolders);
+		 entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 	}
 
 	/**

@@ -36,7 +36,7 @@ import fr.becpg.test.utils.TestWebscriptExecuters.Response;
  */
 public class EntityListsWebScriptTest extends PLMBaseTestCase{
 
-	private static Log logger = LogFactory.getLog(EntityListsWebScriptTest.class);
+	private static final Log logger = LogFactory.getLog(EntityListsWebScriptTest.class);
 	
 	private NodeRef rawMaterialNodeRef = null;
 	

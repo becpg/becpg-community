@@ -32,15 +32,20 @@ import fr.becpg.repo.repository.annotation.AlfQname;
 
 public  abstract class  BeCPGDataObject  extends BaseObject implements RepositoryEntity {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7452420206089817249L;
+
 	protected NodeRef nodeRef;
 	
 	protected NodeRef parentNodeRef;
 	
 	protected String name;
 	
-	protected Set<QName> aspects = new HashSet<QName>();
+	protected Set<QName> aspects = new HashSet<>();
 	
-	protected Map<QName,Serializable> extraProperties = new HashMap<QName,Serializable>();
+	protected Map<QName,Serializable> extraProperties = new HashMap<>();
 	
 	protected transient boolean isTransient = false;
 	

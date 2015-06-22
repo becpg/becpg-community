@@ -48,7 +48,7 @@ import fr.becpg.repo.search.AdvSearchService;
 @Service("multiLevelDataListService")
 public class MultiLevelDataListServiceImpl implements MultiLevelDataListService {
 
-	private static Log logger = LogFactory.getLog(MultiLevelDataListServiceImpl.class);
+	private static final Log logger = LogFactory.getLog(MultiLevelDataListServiceImpl.class);
 
 	@Autowired
 	private EntityListDAO entityListDAO;

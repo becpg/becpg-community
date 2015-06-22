@@ -17,8 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.project.impl;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.Collections;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.activities.post.lookup.PostLookup;
@@ -54,19 +53,19 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 public class ProjectActivityServiceImpl implements ProjectActivityService {
 
 	
-	private static String PROJECT_ACTIVITY_TYPE = "fr.becpg.project";
+	private static final String PROJECT_ACTIVITY_TYPE = "fr.becpg.project";
 
-	public static String PROJECT_STATE_ACTIVITY = PROJECT_ACTIVITY_TYPE + ".project-state";
-	public static String TASK_STATE_ACTIVITY = PROJECT_ACTIVITY_TYPE + ".task-state";
-	public static String DELIVERABLE_STATE_ACTIVITY = PROJECT_ACTIVITY_TYPE + ".deliverable-state";
+	public static final String PROJECT_STATE_ACTIVITY = PROJECT_ACTIVITY_TYPE + ".project-state";
+	public static final String TASK_STATE_ACTIVITY = PROJECT_ACTIVITY_TYPE + ".task-state";
+	public static final String DELIVERABLE_STATE_ACTIVITY = PROJECT_ACTIVITY_TYPE + ".deliverable-state";
 	public static String COMMENT_CREATED_ACTIVITY = "org.alfresco.comments.comment-created";
 
-	private static String PROP_COMMENT_NODEREF = "commentNodeRef";
-	private static String PROP_CONTENT_NODEREF = "contentNodeRef";
+	private static final String PROP_COMMENT_NODEREF = "commentNodeRef";
+	private static final String PROP_CONTENT_NODEREF = "contentNodeRef";
 	private static final String PROP_ACTIVITY_EVENT = "activityEvent";
 	private static final String PROP_TITLE = "title";
 
-	private static Log logger = LogFactory.getLog(ProjectActivityServiceImpl.class);
+	private static final Log logger = LogFactory.getLog(ProjectActivityServiceImpl.class);
 
 	@Autowired
 	ActivityService activityService;
@@ -199,17 +198,17 @@ public class ProjectActivityServiceImpl implements ProjectActivityService {
 				NodeRef projectNodeRef = itemNodeRef;
 				QName itemType = nodeService.getType(itemNodeRef);
 				if (ProjectModel.TYPE_PROJECT.equals(itemType)) {
-					data.put(PROP_TITLE, (String) nodeService.getProperty(itemNodeRef, ContentModel.PROP_NAME));
+					data.put(PROP_TITLE, nodeService.getProperty(itemNodeRef, ContentModel.PROP_NAME));
 					projectNotificationService.notifyComment(commentNodeRef, activityEvent, projectNodeRef, null, null);
 				} else if (ProjectModel.TYPE_TASK_LIST.equals(itemType)) {
 					projectNodeRef = getProjectNodeRef(itemNodeRef);
-					data.put(PROP_TITLE, (String) nodeService.getProperty(itemNodeRef, ProjectModel.PROP_TL_TASK_NAME));
+					data.put(PROP_TITLE, nodeService.getProperty(itemNodeRef, ProjectModel.PROP_TL_TASK_NAME));
 					activityListDataItem.setTask(itemNodeRef);
 					projectNotificationService.notifyComment(commentNodeRef, activityEvent, projectNodeRef, itemNodeRef, null);
 
 				} else if (ProjectModel.TYPE_DELIVERABLE_LIST.equals(itemType)) {
 					projectNodeRef = getProjectNodeRef(itemNodeRef);
-					data.put(PROP_TITLE, (String) nodeService.getProperty(itemNodeRef, ProjectModel.PROP_DL_DESCRIPTION));
+					data.put(PROP_TITLE, nodeService.getProperty(itemNodeRef, ProjectModel.PROP_DL_DESCRIPTION));
 					activityListDataItem.setDeliverable(itemNodeRef);
 					NodeRef taskNodeRef = getTaskNodeRef(itemNodeRef);
 					activityListDataItem.setTask(taskNodeRef);
@@ -237,7 +236,7 @@ public class ProjectActivityServiceImpl implements ProjectActivityService {
 				alfrescoRepository.save(activityListDataItem);
 				
 				//Update curr comments assoc
-				associationService.update(projectNodeRef, ProjectModel.ASSOC_PROJECT_CUR_COMMENTS, Arrays.asList(activityListDataItem.getNodeRef()));
+				associationService.update(projectNodeRef, ProjectModel.ASSOC_PROJECT_CUR_COMMENTS, Collections.singletonList(activityListDataItem.getNodeRef()));
 				
 			} catch (JSONException e) {
 				logger.error(e, e);
@@ -268,7 +267,7 @@ public class ProjectActivityServiceImpl implements ProjectActivityService {
 					return ; 
 				}	
 				
-				data.put(PROP_TITLE, (String) nodeService.getProperty(contentNodeRef, ContentModel.PROP_NAME));
+				data.put(PROP_TITLE, nodeService.getProperty(contentNodeRef, ContentModel.PROP_NAME));
 
 				activityListDataItem.setActivityType(ActivityType.Content);
 				activityListDataItem.setActivityData(data.toString());

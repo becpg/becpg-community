@@ -30,7 +30,7 @@ import fr.becpg.test.project.AbstractProjectTestCase;
  */
 public class ProjectBudgetTasksTest extends AbstractProjectTestCase {	
 
-	private static Log logger = LogFactory.getLog(ProjectBudgetTasksTest.class);
+	private static final Log logger = LogFactory.getLog(ProjectBudgetTasksTest.class);
 	private final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");	
 	
 	@Test

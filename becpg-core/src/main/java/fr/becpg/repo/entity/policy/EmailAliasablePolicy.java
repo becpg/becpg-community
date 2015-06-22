@@ -29,7 +29,7 @@ public class EmailAliasablePolicy extends AbstractBeCPGPolicy implements
 			CheckOutCheckInServicePolicies.OnCheckIn,
 			CheckOutCheckInServicePolicies.BeforeCancelCheckOut{
 
-	private static Log logger = LogFactory.getLog(EmailAliasablePolicy.class);
+	private static final Log logger = LogFactory.getLog(EmailAliasablePolicy.class);
 
 	public void doInit() {
 		logger.debug("Init EmailAlisablePolicy...");

@@ -17,6 +17,10 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfQname(qname = "pjt:logTimeList")
 public class LogTimeListDataItem extends BeCPGDataObject {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1949764030787913474L;
 	private Date date;
 	private Double time;
 	private TaskListDataItem task;
