@@ -89,13 +89,11 @@ public class FormulationHelper {
 	 * @return the qty
 	 * @throws FormulateException
 	 */
-	public static Double getQtyWithLost(CompoListDataItem compoListDataItem,
-			Double parentLossRatio, ProductUnit productUnit) {
-		Double lossPerc = compoListDataItem.getLossPerc() != null ? compoListDataItem
-				.getLossPerc() : 0d;
-		return FormulationHelper.getQtyWithLost(FormulationHelper
-				.getQtySubFormula(compoListDataItem, productUnit),
-				FormulationHelper.calculateLossPerc(parentLossRatio, lossPerc));
+	public static Double getQtyWithLostAndYield(CompoListDataItem compoListDataItem, Double parentLossRatio, ProductUnit productUnit) {
+		double lossPerc = compoListDataItem.getLossPerc() != null ? compoListDataItem.getLossPerc() : 0d;
+		double yieldPerc = compoListDataItem.getYieldPerc() != null ? compoListDataItem.getYieldPerc() : 100d;
+		return FormulationHelper.getQtyWithLostAndYield(FormulationHelper.getQtySubFormula(compoListDataItem, productUnit),
+				FormulationHelper.calculateLossPerc(parentLossRatio, lossPerc), yieldPerc);
 	}
 
 	public static Double calculateLossPerc(Double parentLossRatio,
@@ -103,16 +101,14 @@ public class FormulationHelper {
 		return 100 * ((1 + lossPerc / 100) * (1 + parentLossRatio / 100) - 1);
 	}
 
-	public static Double getQtyWithLost(Double qty, Double lossPerc) {
-		return (1 + lossPerc / 100) * qty;
+	private static Double getQtyWithLostAndYield(double qty, double lossPerc, double yieldPerc) {
+		return (1 + lossPerc / 100) * qty / (yieldPerc / 100);
 	}
 
-	public static Double getQtyWithLost(
-			PackagingListDataItem packagingListDataItem) {
-		Double lossPerc = packagingListDataItem.getLossPerc() != null ? packagingListDataItem
-				.getLossPerc() : 0d;
-		return FormulationHelper.getQtyWithLost(
-				FormulationHelper.getQty(packagingListDataItem), lossPerc);
+
+	public static Double getQtyWithLost(PackagingListDataItem packagingListDataItem) {
+		Double lossPerc = packagingListDataItem.getLossPerc() != null ? packagingListDataItem.getLossPerc() : 0d;
+		return FormulationHelper.getQtyWithLostAndYield(FormulationHelper.getQty(packagingListDataItem), lossPerc, 100d);
 	}
 
 	/**
