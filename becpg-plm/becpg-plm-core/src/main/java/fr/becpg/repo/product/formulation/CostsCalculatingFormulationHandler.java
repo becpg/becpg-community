@@ -203,7 +203,8 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				visitCompoListChildren(formulatedProduct, c, costList, newLossPerc, netQty, mandatoryCharacts);
 			} else {
 				CompoListDataItem compoListDataItem = component.getData();
-				Double qty = FormulationHelper.getQtyWithLost(compoListDataItem, parentLossRatio,
+				Double qty = FormulationHelper.getQtyWithLostAndYield(compoListDataItem, 
+						parentLossRatio,
 						ProductUnit.getUnit((String)nodeService.getProperty(compoListDataItem.getProduct(), PLMModel.PROP_PRODUCT_UNIT)));
 				visitPart(compoListDataItem.getProduct(), costList, qty, null, netQty, mandatoryCharacts, null);
 			}

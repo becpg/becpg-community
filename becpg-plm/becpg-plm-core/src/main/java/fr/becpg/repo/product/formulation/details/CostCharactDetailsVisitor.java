@@ -101,7 +101,7 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 			}
 			else{
 				CompoListDataItem compoListDataItem = component.getData();
-				Double qty = FormulationHelper.getQtyWithLost(compoListDataItem, 
+				Double qty = FormulationHelper.getQtyWithLostAndYield(compoListDataItem, 
 						parentLossRatio, 
 						ProductUnit.getUnit((String)nodeService.getProperty(compoListDataItem.getProduct(), PLMModel.PROP_PRODUCT_UNIT)));
 				visitPart(compoListDataItem.getProduct(), ret, qty, netQty);
