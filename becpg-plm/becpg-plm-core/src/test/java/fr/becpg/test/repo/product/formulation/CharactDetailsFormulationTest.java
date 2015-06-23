@@ -93,6 +93,7 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 
 				/*-- Formulate product --*/
 				logger.debug("/*-- Formulate details --*/");
+				productService.formulate(finishedProductNodeRef);
 				CharactDetails ret = productService.formulateDetails(finishedProductNodeRef, PLMModel.TYPE_NUTLIST,
 						"nutList", null);
 
@@ -172,6 +173,7 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 
 				//formulate Details
 				List<NodeRef> costNodeRefs = new ArrayList<>();
+				productService.formulate(finishedProductNodeRef);
 				CharactDetails ret = productService.formulateDetails(finishedProductNodeRef, PLMModel.TYPE_COSTLIST,
 						"costList", costNodeRefs);
 				

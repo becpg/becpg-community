@@ -134,6 +134,18 @@ public class PhysicoChemListDataItem extends AbstractManualDataItem implements S
 		
 	}
 	
+	@Override
+	public String getErrorLog() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setErrorLog(String errorLog) {
+		// TODO Auto-generated method stub
+		
+	}	
+	
 	/**
 	 * Instantiates a new physico chem list data item.
 	 */
@@ -216,5 +228,5 @@ public class PhysicoChemListDataItem extends AbstractManualDataItem implements S
 	public String toString() {
 		return "PhysicoChemListDataItem [value=" + value + ", unit=" + unit + ", mini=" + mini + ", maxi=" + maxi + ", physicoChem=" + physicoChem + ", isManual=" + isManual
 				+ ", nodeRef=" + nodeRef + ", name=" + name + "]";
-	}	
+	}
 }

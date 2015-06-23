@@ -166,7 +166,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 							nodeService.getProperty(labelClaimListDataItem.getLabelClaim(), ContentModel.PROP_NAME),
 							labelClaimListDataItem.getErrorLog());
 					productData.getCompoListView().getReqCtrlList()
-							.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, new ArrayList<NodeRef>()));
+							.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, labelClaimListDataItem.getLabelClaim(), new ArrayList<NodeRef>()));
 				}
 
 			}

@@ -185,7 +185,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 								String message = I18NUtil.getMessage("message.formulate.labelRule.error", labelingRuleListDataItem.getName(),
 										e.getLocalizedMessage());
 								formulatedProduct.getCompoListView().getReqCtrlList()
-										.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, new ArrayList<NodeRef>()));
+										.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, null, new ArrayList<NodeRef>()));
 
 								if (logger.isDebugEnabled()) {
 									logger.info("Error in formula :" + SpelHelper.formatFormula(labelingRuleListDataItem.getFormula()), e);
@@ -555,7 +555,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				current.setQty(null);
 				String message = I18NUtil.getMessage("message.formulate.labelRule.error.nullIng", current.getName());
 
-				return new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, new ArrayList<NodeRef>());
+				return new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, null, new ArrayList<NodeRef>());
 			}
 		}
 
@@ -1031,7 +1031,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		if (productNodeRef != null) {
 			sourceNodeRefs.add(productNodeRef);
 		}
-		return new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, sourceNodeRefs);
+		return new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, null, sourceNodeRefs);
 
 	}
 

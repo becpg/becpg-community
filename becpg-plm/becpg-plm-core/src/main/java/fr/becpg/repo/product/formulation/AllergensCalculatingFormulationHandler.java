@@ -276,7 +276,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 												List<NodeRef> sourceNodeRefs = new ArrayList<>();
 													sourceNodeRefs.add(part);
 												
-												error =  new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, sourceNodeRefs);
+												error =  new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, allergenNodeRef, sourceNodeRefs);
 												errors.put(message, error);
 										}
 										
@@ -414,7 +414,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 						}
 						if(!isAllergenAllowed){
 							String message = I18NUtil.getMessage(MESSAGE_FORBIDDEN_ALLERGEN, nodeService.getProperty(allergenListDataItem.getAllergen(), ContentModel.PROP_NAME));
-							formulatedProduct.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, new ArrayList<NodeRef>()));
+							formulatedProduct.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, allergenListDataItem.getAllergen(), new ArrayList<NodeRef>()));
 						}
 					}					
 				}

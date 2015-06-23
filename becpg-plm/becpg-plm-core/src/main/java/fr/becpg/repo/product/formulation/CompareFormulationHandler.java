@@ -351,7 +351,7 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 					String message = I18NUtil.getMessage("message.formulate.comparewith.formulate.entity.error", Locale.getDefault(),
 							tmpData.getName());
 					productData.getCompoListView().getReqCtrlList()
-							.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, new ArrayList<NodeRef>()));
+							.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, null, new ArrayList<NodeRef>()));
 				}
 			}
 

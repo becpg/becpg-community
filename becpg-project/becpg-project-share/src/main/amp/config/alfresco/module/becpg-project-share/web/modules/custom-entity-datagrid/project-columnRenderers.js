@@ -34,7 +34,7 @@ if (beCPG.module.EntityDataGridRenderers) {
       	
       	var padding = 0, className = oRecord.getData("itemData")["prop_pjt_tlIsMilestone"].value ? "task-milestone" : "task";
       	if (oRecord.getData("itemData")["prop_bcpg_depthLevel"] && oRecord.getData("itemData")["prop_bcpg_depthLevel"].value) {
-				padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 15;
+				padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 25;
 			}      	
          
          return '<span class="' + className + '" style="margin-left:' + padding + 'px;" >' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
@@ -119,7 +119,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 	      	
 	      	var padding = 0;
 	      	if (oRecord.getData("itemData")["prop_bcpg_depthLevel"] && oRecord.getData("itemData")["prop_bcpg_depthLevel"].value) {
-				padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 15;
+				padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 25;
 			}      	
 	         
 	         return '<span style="margin-left:' + padding + 'px;" >' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';

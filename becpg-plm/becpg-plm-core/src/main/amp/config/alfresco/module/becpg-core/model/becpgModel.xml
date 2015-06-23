@@ -1812,6 +1812,17 @@
 				</property>
 			</properties>
 			<associations>
+				<association name="bcpg:rclCharact">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:charact</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
 				<association name="bcpg:rclSources">
 					<source>
 						<mandatory>true</mandatory>

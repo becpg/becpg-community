@@ -121,6 +121,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 					logger.debug("Add new charact detail. Charact: " + 
 							nodeService.getProperty(simpleCharact.getCharactNodeRef(), ContentModel.PROP_NAME) + 
 							" - entityNodeRef: " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + 
+							" - qty: " + qty +
 							" - value: " + value);
 				}
 				charactDetails.addKeyValue(simpleCharact.getCharactNodeRef(), entityNodeRef, value);

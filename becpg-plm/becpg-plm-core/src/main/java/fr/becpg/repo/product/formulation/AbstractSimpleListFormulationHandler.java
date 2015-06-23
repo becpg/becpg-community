@@ -48,7 +48,7 @@ import fr.becpg.repo.variant.filters.VariantFilters;
 public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListDataItem> extends FormulationBaseHandler<ProductData> {
 
 	public static final String UNIT_SEPARATOR = "/";
-	public static final String MESSAGE_MISSING_MANDATORY_CHARACT = "message.formulate.missing.mandatory.charact";
+	public static final String MESSAGE_UNDEFINED_CHARACT = "message.formulate.undefined.charact";
 	
 	private static final Log logger = LogFactory.getLog(AbstractSimpleListFormulationHandler.class);
 	
@@ -110,6 +110,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 					sl.setMaxi(null);
 					sl.setPreviousValue(null);
 					sl.setFutureValue(null);
+					sl.setErrorLog(null);
 					
 					// add detailable aspect
 					if(!sl.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM)){
@@ -173,10 +174,10 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		//ReqCtrlList
 		for(Map.Entry<NodeRef, List<NodeRef>> mandatoryCharact : mandatoryCharacts.entrySet()){
 			if(mandatoryCharact.getValue() != null && !mandatoryCharact.getValue().isEmpty()){
-				String message = I18NUtil.getMessage(MESSAGE_MISSING_MANDATORY_CHARACT,
+				String message = I18NUtil.getMessage(MESSAGE_UNDEFINED_CHARACT,
 									nodeService.getProperty(mandatoryCharact.getKey(), ContentModel.PROP_NAME));
 				
-				reqCtrlList.add(new ReqCtrlListDataItem(null,  RequirementType.Tolerated, message, mandatoryCharact.getValue()));					
+				reqCtrlList.add(new ReqCtrlListDataItem(null,  RequirementType.Tolerated, message, mandatoryCharact.getKey(), mandatoryCharact.getValue()));
 			}
 		}
 	}

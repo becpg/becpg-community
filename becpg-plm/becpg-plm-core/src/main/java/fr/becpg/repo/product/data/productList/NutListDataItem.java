@@ -207,11 +207,12 @@ public class NutListDataItem extends AbstractManualDataItem  implements SimpleLi
 
 	@AlfProp
 	@AlfQname(qname="bcpg:nutListFormulaErrorLog")
+	@Override
 	public String getErrorLog() {
 		return errorLog;
 	}
 
-
+	@Override
 	public void setErrorLog(String errorLog) {
 		this.errorLog = errorLog;
 	}

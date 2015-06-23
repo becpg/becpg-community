@@ -148,10 +148,10 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	//Merge with nutList
 	@Deprecated
 	private void computeCostsList(ProductData productData, ExpressionParser parser, StandardEvaluationContext context) {
+		String error = null;
 		if (productData.getCostList() != null) {
 			for (CostListDataItem costListDataItem : productData.getCostList()) {
 				costListDataItem.setIsFormulated(false);
-				costListDataItem.setErrorLog(null);
 				if ((costListDataItem.getIsManual() == null || !costListDataItem.getIsManual()) && costListDataItem.getCost() != null) {
 
 					String formula = (String) nodeService.getProperty(costListDataItem.getCost(), PLMModel.PROP_COST_FORMULA);
@@ -181,14 +181,12 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 								}
 
 							} else {
-								costListDataItem.setValue(null);
-								costListDataItem.setErrorLog(I18NUtil.getMessage("message.formulate.formula.incorrect.type.double",
-										Locale.getDefault()));
+								error = I18NUtil.getMessage("message.formulate.formula.incorrect.type.double",
+										Locale.getDefault());
 							}
 
 						} catch (Exception e) {
-							costListDataItem.setValue(null);
-							costListDataItem.setErrorLog(e.getLocalizedMessage());
+							error = e.getLocalizedMessage();
 							if (logger.isDebugEnabled()) {
 								logger.debug("Error in formula :" + SpelHelper.formatFormula(formula), e);
 							}
@@ -196,11 +194,13 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 					}
 				}
 
-				if (costListDataItem.getErrorLog() != null) {
+				if (error != null) {
+					costListDataItem.setValue(null);
+					costListDataItem.setErrorLog(error);
 					String message = I18NUtil.getMessage("message.formulate.costList.error", Locale.getDefault(),
-							nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME), costListDataItem.getErrorLog());
+							nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME), error);
 					productData.getCompoListView().getReqCtrlList()
-							.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, new ArrayList<NodeRef>()));
+							.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, costListDataItem.getCost(), new ArrayList<NodeRef>()));
 				}
 
 			}
@@ -249,7 +249,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 
 			for (PackagingListDataItem packagingListDataItem : formulatedProduct.getPackagingList(EffectiveFilters.EFFECTIVE,
 					VariantFilters.DEFAULT_VARIANT)) {
-				Double qty = FormulationHelper.getQtyWithLost(packagingListDataItem);
+				Double qty = FormulationHelper.getQtyForCost(packagingListDataItem);
 
 				if (PLMModel.TYPE_PACKAGINGKIT.equals(nodeService.getType(packagingListDataItem.getProduct()))) {
 					Integer nbByPalet = (Integer) nodeService.getProperty(packagingListDataItem.getProduct(), PackModel.PROP_PALLET_BOXES_PER_PALLET);
@@ -306,7 +306,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				visitCompoListChildren(formulatedProduct, c, costList, newLossPerc, netQty, mandatoryCharacts);
 			} else {
 				CompoListDataItem compoListDataItem = component.getData();
-				Double qty = FormulationHelper.getQtyWithLostAndYield(compoListDataItem, 
+				Double qty = FormulationHelper.getQtyForCost(compoListDataItem, 
 						parentLossRatio,
 						ProductUnit.getUnit((String)nodeService.getProperty(compoListDataItem.getProduct(), PLMModel.PROP_PRODUCT_UNIT)));
 				visitPart(compoListDataItem.getProduct(), costList, qty, null, netQty, mandatoryCharacts, null);
@@ -619,7 +619,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		double totalQty = 0d;
 		for (CompoListDataItem compoList : productData.getCompoList(EffectiveFilters.EFFECTIVE)) {
 			NodeRef productNodeRef = compoList.getProduct();			
-			Double qty = FormulationHelper.getQtyWithLostAndYield(compoList, 
+			Double qty = FormulationHelper.getQtyForCost(compoList, 
 									0d,
 									ProductUnit.getUnit((String)nodeService.getProperty(productNodeRef, PLMModel.PROP_PRODUCT_UNIT)));
 			if (logger.isDebugEnabled()) {
@@ -644,7 +644,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		double totalQty = 0d;
 		for (PackagingListDataItem packList : productData.getPackagingList(EffectiveFilters.EFFECTIVE)) {
 			NodeRef productNodeRef = packList.getProduct();			
-			Double qty = FormulationHelper.getQtyWithLost(packList);
+			Double qty = FormulationHelper.getQtyForCost(packList);
 			if (logger.isDebugEnabled()) {
 				logger.debug("Get component " + nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME) + "qty: " + qty);
 			}

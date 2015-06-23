@@ -248,6 +248,11 @@
 					<show id="bcpg:entityTplRef" force="true" />
 					<show id="rep:reportTpls" />
 					<show id="rep:reportLocales" />
+					
+					<!-- Nutrient profiling score -->
+					<show id="bcpg:nutrientProfilingScore"  for-mode="view"/>
+					<show id="bcpg:nutrientProfilingClass"  for-mode="view"/>
+					<show id="bcpg:nutrientProfileRef"   />
 
 					<!-- Consumer -->
 					<show id="bcpg:useByDate" force="true" />
@@ -283,12 +288,7 @@
 
 					<!-- Tare -->
 					<show id="pack:tare" />
-					<show id="pack:tareUnit" />
-					
-					<!-- Nutrient profiling score -->
-					<show id="bcpg:nutrientProfilingScore"  for-mode="view"/>
-					<show id="bcpg:nutrientProfilingClass"  for-mode="view"/>
-					<show id="bcpg:nutrientProfileRef"   />
+					<show id="pack:tareUnit" />									
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" />
@@ -339,6 +339,8 @@
 					<set id="mainInfo" appearance="bordered-panel"
 						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl"
 						parent="mainTab" />
+					<set id="score" appearance="bordered-panel" label-id="becpg.forms.set.nutrient.score.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" parent="mainTab" />
 					<set id="formulation" appearance="bordered-panel"
 						label-id="becpg.forms.set.formulation.label" template="/org/alfresco/components/form/3-column-set.ftl"
 						parent="mainTab" />
@@ -353,9 +355,7 @@
 						label-id="becpg.forms.set.pack.size.label" template="/org/alfresco/components/form/2-column-set.ftl"
 						parent="mainTab" />
 					<set id="tare" appearance="bordered-panel" label-id="becpg.forms.set.tare.label"
-						template="/org/alfresco/components/form/2-column-set.ftl" parent="mainTab" />
-					<set id="score" appearance="bordered-panel" label-id="becpg.forms.set.nutrient.score.label"
-						template="/org/alfresco/components/form/2-column-set.ftl" parent="mainTab" />
+						template="/org/alfresco/components/form/2-column-set.ftl" parent="mainTab" />					
 				
 					<set id="categories" appearance="bordered-panel"
 					
