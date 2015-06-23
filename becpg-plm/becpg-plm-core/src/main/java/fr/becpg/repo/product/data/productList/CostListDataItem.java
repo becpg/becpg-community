@@ -160,11 +160,12 @@ public class CostListDataItem extends AbstractManualDataItem implements SimpleLi
 
 	@AlfProp
 	@AlfQname(qname="bcpg:costListFormulaErrorLog")
+	@Override
 	public String getErrorLog() {
 		return errorLog;
 	}
 
-
+	@Override
 	public void setErrorLog(String errorLog) {
 		this.errorLog = errorLog;
 	}

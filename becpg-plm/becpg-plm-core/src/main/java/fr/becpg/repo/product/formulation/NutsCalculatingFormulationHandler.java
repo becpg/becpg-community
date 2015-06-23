@@ -118,7 +118,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 					if (ul != null) {
 						if(valuePerserving > ul){
 							String message = I18NUtil.getMessage(MESSAGE_MAXIMAL_DAILY_VALUE, nodeService.getProperty(n.getNut(), ContentModel.PROP_NAME));
-							formulatedProduct.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, new ArrayList<NodeRef>()));
+							formulatedProduct.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, n.getNut(), new ArrayList<NodeRef>()));
 						}
 					}
 				} else {
@@ -144,10 +144,10 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 	//Merge with costList
     @Deprecated
 	private void computeNutList(ProductData productData, ExpressionParser parser, StandardEvaluationContext context) {
+    	String error = null;
 		if (productData.getNutList() != null) {
 			for (NutListDataItem nutListDataItem : productData.getNutList()) {
 				nutListDataItem.setIsFormulated(false);
-				nutListDataItem.setErrorLog(null);
 				if ((nutListDataItem.getIsManual() == null || !nutListDataItem.getIsManual()) && nutListDataItem.getNut() != null) {
 
 					String formula = (String) nodeService.getProperty(nutListDataItem.getNut(), PLMModel.PROP_NUT_FORMULA);
@@ -177,14 +177,12 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 								}
 
 							} else {
-								nutListDataItem.setValue(null);
-								nutListDataItem.setErrorLog(I18NUtil.getMessage("message.formulate.formula.incorrect.type.double",
-										Locale.getDefault()));
+								error = I18NUtil.getMessage("message.formulate.formula.incorrect.type.double",
+										Locale.getDefault());
 							}
 
 						} catch (Exception e) {
-							nutListDataItem.setValue(null);
-							nutListDataItem.setErrorLog(e.getLocalizedMessage());
+							error = e.getLocalizedMessage();							
 							if (logger.isDebugEnabled()) {
 								logger.debug("Error in formula :" + SpelHelper.formatFormula(formula), e);
 							}
@@ -192,12 +190,13 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 					}
 				}
 
-				if (nutListDataItem.getErrorLog() != null) {
-
+				if (error != null) {
+					nutListDataItem.setValue(null);
+					nutListDataItem.setErrorLog(error);
 					String message = I18NUtil.getMessage("message.formulate.nutList.error", Locale.getDefault(),
-							nodeService.getProperty(nutListDataItem.getNut(), ContentModel.PROP_NAME), nutListDataItem.getErrorLog());
+							nodeService.getProperty(nutListDataItem.getNut(), ContentModel.PROP_NAME), error);
 					productData.getCompoListView().getReqCtrlList()
-							.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, new ArrayList<NodeRef>()));
+							.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, nutListDataItem.getNut(), new ArrayList<NodeRef>()));
 				}
 
 			}

@@ -480,7 +480,7 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 
 		// ReqCtrlList
 		checks = 0;
-		String message1 = I18NUtil.getMessage(AbstractSimpleListFormulationHandler.MESSAGE_MISSING_MANDATORY_CHARACT, nodeService.getProperty(nut3, ContentModel.PROP_NAME));
+		String message1 = I18NUtil.getMessage(AbstractSimpleListFormulationHandler.MESSAGE_UNDEFINED_CHARACT, nodeService.getProperty(nut3, ContentModel.PROP_NAME));
 		logger.info(message1);
 		String message2 = I18NUtil.getMessage(NutsCalculatingFormulationHandler.MESSAGE_MAXIMAL_DAILY_VALUE, nodeService.getProperty(nut3, ContentModel.PROP_NAME));
 		logger.info(formulatedProduct.getCompoListView().getReqCtrlList().size());
@@ -500,6 +500,10 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 		}
 		assertEquals(2, checks);
 
+		assertEquals(nut3, formulatedProduct.getNutList().get(2).getNut());
+		assertTrue(formulatedProduct.getNutList().get(2).getErrorLog().contains("Caractéristique 'nut3' non renseignée : Raw material 4"));
+		assertTrue(formulatedProduct.getNutList().get(2).getErrorLog().contains(message2));		
+		
 		// Claim label list
 		checks = 0;
 		for (LabelClaimListDataItem labelClaimListDataItem : formulatedProduct.getLabelClaimList()) {

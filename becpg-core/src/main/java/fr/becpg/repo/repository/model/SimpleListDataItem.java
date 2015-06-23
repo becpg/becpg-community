@@ -47,4 +47,8 @@ public interface SimpleListDataItem extends IManualDataItem, SimpleCharactDataIt
 	Double getFutureValue();
 	
 	void setFutureValue(Double futureValue);
+	
+	public String getErrorLog();
+	
+	public void setErrorLog(String errorLog);
 }

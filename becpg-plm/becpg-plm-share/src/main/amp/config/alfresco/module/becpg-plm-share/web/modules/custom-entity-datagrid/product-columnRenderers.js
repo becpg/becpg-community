@@ -49,7 +49,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 			}
 
 			if (oRecord.getData("itemData")["prop_bcpg_depthLevel"] && oRecord.getData("itemData")["prop_bcpg_depthLevel"].value) {
-				var padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 15;
+				var padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 25;
 				return '<span class="' + data.metadata + '" style="margin-left:' + padding + 'px;"><a href="' + url + '">'
 						+ Alfresco.util.encodeHTML(data.displayValue) + '</a></span>' + version;
 			}
@@ -179,7 +179,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 		renderer : function(oRecord, data, label, scope) {
 
 			if (oRecord.getData("itemData")["prop_bcpg_depthLevel"] != null) {
-				var padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 15;
+				var padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 25;
 				return '<span class="' + data.metadata + '" style="margin-left:' + padding + 'px;">' + Alfresco.util.encodeHTML(data.displayValue)
 						+ '</span>';
 			}
@@ -197,18 +197,16 @@ if (beCPG.module.EntityDataGridRenderers) {
             var title = Alfresco.util.encodeHTML(data.metadata);
             var cssClass = data.metadata;
             var isFormulated = oRecord.getData("itemData")["prop_bcpg_nutListIsFormulated"].value;
-            if (isFormulated) {
-                var error = oRecord.getData("itemData")["prop_bcpg_nutListFormulaErrorLog"].value;
-                if (error == null) {
-                    cssClass= "nut-formulated";
-                } else {
-                    cssClass= "nut-formulated-error";
-                    title = Alfresco.util.encodeHTML(error);
-                }
+            var error = oRecord.getData("itemData")["prop_bcpg_nutListFormulaErrorLog"].value;
+            if(error != null){
+           	 cssClass= "nut-formulated-error";
+               title = Alfresco.util.encodeHTML(error);
+            } else if(isFormulated){
+           	 cssClass= "nut-formulated";
             }
             
             if (oRecord.getData("itemData")["prop_bcpg_depthLevel"] != null) {
-                var padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 15;
+                var padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 25;
                 return '<span class="' + cssClass + '" style="margin-left:' + padding + 'px;" title="'+title+'">' 
                 + Alfresco.util.encodeHTML(data.displayValue)
                         + '</span>';
@@ -219,28 +217,50 @@ if (beCPG.module.EntityDataGridRenderers) {
 
     });
 	
+	beCPG.util.sigFigs = function(n, sig){
+		if(n != 0){
+			var mult = Math.pow(10,
+			        sig - Math.floor(Math.log(n) / Math.LN10) - 1);
+			return Math.round(n * mult) / mult;
+		}
+		else{
+			return n;	
+		}		
+	}
+	
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+      propertyName : "bcpg:nutListValue",
+      renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+          var ret = "";
+          if (data.value != null) {
+              ret+=Alfresco.util.encodeHTML(data.value.toLocaleString());
+          }
+          
+          var formulatedValue = oRecord.getData("itemData")["prop_bcpg_nutListFormulatedValue"];
+          if(formulatedValue!=null && formulatedValue.value!=null ){
+              if(ret.length>0){
+                  ret+= '&nbsp;&nbsp;(' + Alfresco.util.encodeHTML(beCPG.util.sigFigs(formulatedValue.value,3).toLocaleString()) + ')';
+              } else {
+                ret+= Alfresco.util.encodeHTML(beCPG.util.sigFigs(formulatedValue.value,3).toLocaleString()) ;
+              }
+          }
+          
+         return ret;
+      }
 
-    YAHOO.Bubbling.fire("registerDataGridRenderer", {
-        propertyName : "bcpg:nutListValue",
-        renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
-            var ret = "";
-            if (data.value != null) {
-                ret+=Alfresco.util.encodeHTML(data.displayValue);
-            }
-            
-            var formulatedValue = oRecord.getData("itemData")["prop_bcpg_nutListFormulatedValue"];
-            if(formulatedValue!=null && formulatedValue.value!=null ){
-                if(ret.length>0){
-                    ret+= '&nbsp;&nbsp;(' + Alfresco.util.encodeHTML(formulatedValue.displayValue) + ')';
-                } else {
-                  ret+= Alfresco.util.encodeHTML(formulatedValue.displayValue) ;
-                }
-            }
-            
-           return ret;
-        }
+  });
+	
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+      propertyName : ["bcpg:nutListMini", "bcpg:nutListMaxi", "bcpg:nutListValuePerServing", "bcpg:nutListGDAPerc"],
+      renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+      	if(data.value != null){
+      		return Alfresco.util.encodeHTML(beCPG.util.sigFigs(data.value,3).toLocaleString());
+      	}
+      	
+      	return "";
+      }
 
-    });
+  });
 	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
       propertyName : "bcpg:cost",
@@ -249,18 +269,16 @@ if (beCPG.module.EntityDataGridRenderers) {
           var title = Alfresco.util.encodeHTML(data.metadata);
           var cssClass = data.metadata;
           var isFormulated = oRecord.getData("itemData")["prop_bcpg_costListIsFormulated"].value;
-          if (isFormulated) {
-              var error = oRecord.getData("itemData")["prop_bcpg_costListFormulaErrorLog"].value;
-              if (error == null) {
-                  cssClass= "cost-formulated";
-              } else {
-                  cssClass= "cost-formulated-error";
-                  title = Alfresco.util.encodeHTML(error);
-              }
+          var error = oRecord.getData("itemData")["prop_bcpg_costListFormulaErrorLog"].value;
+          if(error != null){
+         	 cssClass= "cost-formulated-error";
+             title = Alfresco.util.encodeHTML(error);
+          } else if(isFormulated){
+         	 cssClass= "cost-formulated";
           }
           
           if (oRecord.getData("itemData")["prop_bcpg_depthLevel"] != null) {
-              var padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 15;
+              var padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 25;
               return '<span class="' + cssClass + '" style="margin-left:' + padding + 'px;" title="'+title+'">' 
               + Alfresco.util.encodeHTML(data.displayValue)
                       + '</span>';

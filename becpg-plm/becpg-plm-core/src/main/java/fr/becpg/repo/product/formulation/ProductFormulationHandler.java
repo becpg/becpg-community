@@ -177,16 +177,18 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 			boolean shouldFormulate = false;
 			if (!compositionDataItems.isEmpty()) {				
 				for (CompositionDataItem c : compositionDataItems) {
-					ProductData p = alfrescoRepository.findOne(c.getComponent());
-					// recursive
-					if (checkShouldFormulateComponents(false, p, checkedProducts)) {
-						shouldFormulate = true;
-					}
-					// check modified date on component
-					Date modified = (Date) nodeService.getProperty(c.getComponent(), ContentModel.PROP_MODIFIED);
-					if (modified == null || productData.getFormulatedDate() == null || modified.getTime() > productData.getFormulatedDate().getTime()) {
-						shouldFormulate = true;
-					}
+					if(c.getComponent() != null){
+						ProductData p = alfrescoRepository.findOne(c.getComponent());
+						// recursive
+						if (checkShouldFormulateComponents(false, p, checkedProducts)) {
+							shouldFormulate = true;
+						}
+						// check modified date on component
+						Date modified = (Date) nodeService.getProperty(c.getComponent(), ContentModel.PROP_MODIFIED);
+						if (modified == null || productData.getFormulatedDate() == null || modified.getTime() > productData.getFormulatedDate().getTime()) {
+							shouldFormulate = true;
+						}
+					}					
 				}	
 			}
 			
@@ -306,6 +308,6 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		if (sourceNodeRef != null) {
 			sources.add(sourceNodeRef);
 		}
-		reqCtrlListDataItem.add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, sources));
+		reqCtrlListDataItem.add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, null, sources));
 	}
 }

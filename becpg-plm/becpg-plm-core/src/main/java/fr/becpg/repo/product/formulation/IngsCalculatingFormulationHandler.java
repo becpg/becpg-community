@@ -390,7 +390,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 					}
 
 					if (reqCtrl == null) {
-						reqCtrl = new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, new ArrayList<NodeRef>());
+						reqCtrl = new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, null, new ArrayList<NodeRef>());
 						reqCtrlMap.put(null, reqCtrl);
 					}
 
@@ -498,7 +498,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 							} else {
 								ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(fil.getNodeRef());
 								if (reqCtrl == null) {
-									reqCtrl = new ReqCtrlListDataItem(null, fil.getReqType(), fil.getReqMessage(), new ArrayList<NodeRef>());
+									reqCtrl = new ReqCtrlListDataItem(null, fil.getReqType(), fil.getReqMessage(), null, new ArrayList<NodeRef>());
 									reqCtrlMap.put(fil.getNodeRef(), reqCtrl);
 								}
 
@@ -534,7 +534,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 								// req not respected
 								ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(fil.getNodeRef());
 								if (reqCtrl == null) {
-									reqCtrl = new ReqCtrlListDataItem(null, fil.getReqType(), fil.getReqMessage(), new ArrayList<NodeRef>());
+									reqCtrl = new ReqCtrlListDataItem(null, fil.getReqType(), fil.getReqMessage(), ingListDataItem.getIng(), new ArrayList<NodeRef>());
 									reqCtrlMap.put(fil.getNodeRef(), reqCtrl);
 								}
 							}
