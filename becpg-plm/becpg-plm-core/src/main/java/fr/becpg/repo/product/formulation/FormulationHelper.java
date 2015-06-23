@@ -57,58 +57,55 @@ public class FormulationHelper {
 				.getYieldPerc() : DEFAULT_YIELD;
 	}
 
-	private static Double getQtySubFormula(CompoListDataItem compoListDataItem,
-			ProductUnit productUnit) {
-		Double qty = compoListDataItem.getQtySubFormula();
+	public static Double getQtyForCost(CompoListDataItem compoListDataItem, Double parentLossRatio, ProductUnit productUnit) {
+		double lossPerc = FormulationHelper.calculateLossPerc(parentLossRatio, compoListDataItem.getLossPerc() != null ? compoListDataItem.getLossPerc() : 0d);
+		double yieldPerc = compoListDataItem.getYieldPerc() != null ? compoListDataItem.getYieldPerc() : 100d;
+		Double qtySubFormuala = compoListDataItem.getQtySubFormula() != null ? compoListDataItem.getQtySubFormula() : DEFAULT_COMPONANT_QUANTITY;
+		Double qtyInKg = compoListDataItem.getQty() != null ? compoListDataItem.getQty() : DEFAULT_COMPONANT_QUANTITY;
 		CompoListUnit compoListUnit = compoListDataItem.getCompoListUnit();
-		if (qty != null && compoListUnit != null && productUnit != null) {
+		
+		if (compoListUnit != null && productUnit != null) {
 
-			if (compoListUnit.equals(CompoListUnit.g)
-					&& isProductUnitKg(productUnit)) {
-				return qty / 1000;
-			} else if (compoListUnit.equals(CompoListUnit.mL)
-					&& isProductUnitLiter(productUnit)) {
-				return qty / 1000;
-			} else if (compoListUnit.toString().equals(productUnit.toString())) {
-				return qty;
-			} else if (isProductUnitKg(productUnit)) {
-				// compoListUnit is P or mL but
-				return getQtyInKg(compoListDataItem);
-			} else if (isProductUnitLiter(productUnit)) {
+			if (isCompoUnitKg(compoListUnit) && isProductUnitKg(productUnit)) {
+				return FormulationHelper.getQtyWithLoss(qtyInKg, lossPerc);
+			}
+			else if (isCompoUnitLiter(compoListUnit) && isProductUnitLiter(productUnit)) {
+				if(CompoListUnit.mL.equals(compoListUnit)){
+					qtySubFormuala = qtySubFormuala / 1000;
+				}
+				return FormulationHelper.getQtyWithLossAndYield(qtySubFormuala, lossPerc, yieldPerc);
+			}
+			else if(compoListUnit.toString().equals(productUnit.toString())){
+				// compoListUnit is P
+				return FormulationHelper.getQtyWithLossAndYield(qtySubFormuala, lossPerc, yieldPerc);
+			}
+			else if(isProductUnitKg(productUnit)){
+				// compoListUnit is %
+				return FormulationHelper.getQtyWithLoss(qtyInKg, lossPerc);
+			}
+			else if(isProductUnitLiter(productUnit)){
 				return compoListDataItem.getVolume();
 			}
 		}
 		return DEFAULT_COMPONANT_QUANTITY;
 	}
 
-	/**
-	 * Gets the qty with lost.
-	 *
-	 * @param compoListDataItem
-	 *            the compo list data item
-	 * @return the qty
-	 * @throws FormulateException
-	 */
-	public static Double getQtyWithLostAndYield(CompoListDataItem compoListDataItem, Double parentLossRatio, ProductUnit productUnit) {
-		double lossPerc = compoListDataItem.getLossPerc() != null ? compoListDataItem.getLossPerc() : 0d;
-		double yieldPerc = compoListDataItem.getYieldPerc() != null ? compoListDataItem.getYieldPerc() : 100d;
-		return FormulationHelper.getQtyWithLostAndYield(FormulationHelper.getQtySubFormula(compoListDataItem, productUnit),
-				FormulationHelper.calculateLossPerc(parentLossRatio, lossPerc), yieldPerc);
-	}
-
-	public static Double calculateLossPerc(Double parentLossRatio,
-			Double lossPerc) {
+	public static Double calculateLossPerc(Double parentLossRatio, Double lossPerc) {
 		return 100 * ((1 + lossPerc / 100) * (1 + parentLossRatio / 100) - 1);
 	}
 
-	private static Double getQtyWithLostAndYield(double qty, double lossPerc, double yieldPerc) {
+	private static Double getQtyWithLossAndYield(double qty, double lossPerc, double yieldPerc) {
 		return (1 + lossPerc / 100) * qty / (yieldPerc / 100);
+	}
+	
+	private static Double getQtyWithLoss(double qty, double lossPerc) {
+		return (1 + lossPerc / 100) * qty;
 	}
 
 
-	public static Double getQtyWithLost(PackagingListDataItem packagingListDataItem) {
+	public static Double getQtyForCost(PackagingListDataItem packagingListDataItem) {
 		Double lossPerc = packagingListDataItem.getLossPerc() != null ? packagingListDataItem.getLossPerc() : 0d;
-		return FormulationHelper.getQtyWithLostAndYield(FormulationHelper.getQty(packagingListDataItem), lossPerc, 100d);
+		return FormulationHelper.getQtyWithLoss(FormulationHelper.getQty(packagingListDataItem), lossPerc);
 	}
 
 	/**

@@ -140,7 +140,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			
 			for (PackagingListDataItem packagingListDataItem : formulatedProduct.getPackagingList(EffectiveFilters.EFFECTIVE,
 					VariantFilters.DEFAULT_VARIANT)) {
-				Double qty = FormulationHelper.getQtyWithLost(packagingListDataItem);
+				Double qty = FormulationHelper.getQtyForCost(packagingListDataItem);
 			
 				if(PLMModel.TYPE_PACKAGINGKIT.equals(nodeService.getType(packagingListDataItem.getProduct()))){
 					Integer nbByPalet = (Integer) nodeService.getProperty(packagingListDataItem.getProduct(), PackModel.PROP_PALLET_BOXES_PER_PALLET);
@@ -203,7 +203,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				visitCompoListChildren(formulatedProduct, c, costList, newLossPerc, netQty, mandatoryCharacts);
 			} else {
 				CompoListDataItem compoListDataItem = component.getData();
-				Double qty = FormulationHelper.getQtyWithLostAndYield(compoListDataItem, 
+				Double qty = FormulationHelper.getQtyForCost(compoListDataItem, 
 						parentLossRatio,
 						ProductUnit.getUnit((String)nodeService.getProperty(compoListDataItem.getProduct(), PLMModel.PROP_PRODUCT_UNIT)));
 				visitPart(compoListDataItem.getProduct(), costList, qty, null, netQty, mandatoryCharacts, null);
