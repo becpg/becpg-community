@@ -2,9 +2,9 @@
 <classpath>
 	<classpathentry excluding="**/*.java" including="**/*.java" kind="src" path="src/main/resources"/>
 	<classpathentry excluding="**/*.java" including="**|**/*.java" kind="src" path="src/main/properties/local"/>
-	<classpathentry kind="var" path="M2_REPO/org/apache/ant/ant/1.9.3/ant-1.9.3.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/apache/ant/ant-launcher/1.9.3/ant-launcher-1.9.3.jar"/>
-	<classpathentry kind="var" path="M2_REPO/tk/skuro/alfresco/h2-support/1.6/h2-support-1.6.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/ant/ant/1.9.3/ant-1.9.3.jar" sourcepath="M2_REPO/org/apache/ant/ant/1.9.3/ant-1.9.3-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/ant/ant-launcher/1.9.3/ant-launcher-1.9.3.jar" sourcepath="M2_REPO/org/apache/ant/ant-launcher/1.9.3/ant-launcher-1.9.3-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/tk/skuro/alfresco/h2-support/1.6/h2-support-1.6.jar" sourcepath="M2_REPO/tk/skuro/alfresco/h2-support/1.6/h2-support-1.6-sources.jar"/>
 	<classpathentry kind="src" output="target/classes" path="src/main/java">
 		<attributes>
 			<attribute name="optional" value="true"/>
