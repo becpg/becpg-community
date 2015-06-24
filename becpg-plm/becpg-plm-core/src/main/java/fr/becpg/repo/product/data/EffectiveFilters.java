@@ -40,7 +40,7 @@ public class EffectiveFilters<T extends EffectiveDataItem> implements
 
 
 	@Override
-	public Predicate<T> createPredicate(ProductData data) {
+	public Predicate<T> createPredicate(final ProductData data) {
 
 		final Date now = new Date();
 		final Date startEffectivity = data.getStartEffectivity() != null && data.getStartEffectivity().getTime()>now.getTime() ? data.getStartEffectivity() : now;

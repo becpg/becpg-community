@@ -615,7 +615,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		if (filters != null) {
 			Stream<T> stream = list.stream();
 			for (DataListFilter<ProductData, T> filter : filters) {
-				stream.filter(filter.createPredicate(this));
+				stream = stream.filter(filter.createPredicate(this));
 			}
 			return stream.collect(Collectors.toList());
 		} 
