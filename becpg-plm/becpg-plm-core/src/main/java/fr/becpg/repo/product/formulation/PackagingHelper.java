@@ -39,10 +39,9 @@ public class PackagingHelper {
 		return packagingData.getVariants().get(getDefaultVariant(productData));
 	}
 
-	@SuppressWarnings("unchecked")
 	public PackagingData getPackagingData(ProductData productData) {
 		PackagingData packagingData = new PackagingData(productData.getVariants());
-		for (PackagingListDataItem dataItem : productData.getPackagingList(EffectiveFilters.EFFECTIVE)) {
+		for (PackagingListDataItem dataItem : productData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 			loadPackagingItem(dataItem, packagingData);
 		}
 		return packagingData;
@@ -104,13 +103,12 @@ public class PackagingHelper {
 	}
 
 	// manage 2 level depth
-	@SuppressWarnings("unchecked")
 	private void loadPackagingKit(PackagingListDataItem dataItem, PackagingData packagingData) {
 
 		loadPackaging(dataItem, packagingData, dataItem.getVariants());
 		ProductData packagingKitData = alfrescoRepository.findOne(dataItem.getProduct());
 
-		for (PackagingListDataItem p : packagingKitData.getPackagingList(EffectiveFilters.EFFECTIVE)) {
+		for (PackagingListDataItem p : packagingKitData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 			loadPackaging(p, packagingData, dataItem.getVariants());
 		}
 	}

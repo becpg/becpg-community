@@ -26,7 +26,6 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
-import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ResourceProductData;
 import fr.becpg.repo.product.data.constraints.ProcessListUnit;
@@ -52,14 +51,13 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 		this.packagingHelper = packagingHelper;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 
 		logger.debug("process calculating visitor");
 
 		// no compo => no formulation
-		if (!formulatedProduct.hasProcessListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT)) {
+		if (!formulatedProduct.hasProcessListEl(new VariantFilters<>())) {
 			logger.debug("no process => no formulation");
 			return true;
 		}
@@ -81,7 +79,7 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 				}
 			}
 
-			for (ProcessListDataItem p : formulatedProduct.getProcessList(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT)) {
+			for (ProcessListDataItem p : formulatedProduct.getProcessList(new VariantFilters<>())) {
 				if (p.getResource() != null) {
 					ResourceProductData resource = alfrescoRepository.findOne(p.getResource());
 					for (ResourceParamListItem param : resource.getResourceParamList()) {
@@ -136,7 +134,7 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 		}
 
 		// visit resources and steps from the end to the beginning
-		for (ProcessListDataItem p : formulatedProduct.getProcessList(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT)) {
+		for (ProcessListDataItem p : formulatedProduct.getProcessList(new VariantFilters<>())) {
 
 			if (p.getRateResource() != null) {
 				if (ProcessListUnit.P.equals(p.getUnit())) {

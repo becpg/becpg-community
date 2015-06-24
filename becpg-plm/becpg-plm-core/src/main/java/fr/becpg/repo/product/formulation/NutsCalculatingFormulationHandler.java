@@ -23,7 +23,6 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulateException;
-import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementType;
@@ -60,7 +59,6 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 		this.formulaService = formulaService;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 		logger.debug("Nuts calculating visitor");
@@ -72,7 +70,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 			return true;
 		}
 		
-		boolean hasCompo = formulatedProduct.hasCompoListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT);
+		boolean hasCompo = formulatedProduct.hasCompoListEl(new VariantFilters<>());
 		
         
 		if (formulatedProduct.getNutList() == null) {

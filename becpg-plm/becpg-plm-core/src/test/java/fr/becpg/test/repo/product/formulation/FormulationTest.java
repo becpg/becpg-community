@@ -2204,7 +2204,6 @@ public class FormulationTest extends AbstractFinishedProductTest {
 		logger.info("testOverrunAndVolume");
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
-			@SuppressWarnings("unchecked")
 			public NodeRef execute() throws Throwable {					   
 			
 			

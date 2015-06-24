@@ -68,8 +68,8 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 		CharactDetails ret = new CharactDetails(extractCharacts(dataListItems));
 		Double netQty = FormulationHelper.getNetQtyInLorKg(productData,FormulationHelper.DEFAULT_NET_WEIGHT);
 
-		if (productData.hasCompoListEl(EffectiveFilters.EFFECTIVE)) {
-			for (CompoListDataItem compoListDataItem : productData.getCompoList(EffectiveFilters.EFFECTIVE)) {
+		if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+			for (CompoListDataItem compoListDataItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 				Double qty = FormulationHelper.getQtyInKg(compoListDataItem);			
 				visitPart(compoListDataItem.getProduct(), ret, qty, netQty);
 			}

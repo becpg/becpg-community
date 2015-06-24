@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.person.PersonServiceImpl;
 import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
@@ -38,7 +37,6 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.migration.MigrationService;
-import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.constraints.CompoListUnit;
@@ -96,9 +94,6 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 
 	private NodeService nodeService;
 
-	private Repository repository;
-
-	
 	private NamespaceService namespaceService;	
 	
 	private MigrationService migrationService;
@@ -131,10 +126,6 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 		this.nodeService = nodeService;
 	}
 
-	public void setRepository(Repository repository) {
-		this.repository = repository;
-	}
-	
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
@@ -308,7 +299,7 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 					List<NodeRef> supplierRMNodeRefs = new ArrayList<>();
 					for(NodeRef n : kv.getValue()){
 						RawMaterialData rawMaterialData = (RawMaterialData)alfrescoRepository.findOne(n);
-						if(rawMaterialData.hasCompoListEl(EffectiveFilters.ALL)){
+						if(rawMaterialData.hasCompoListEl()){
 							if(genRMNodeRef == null){
 								genRMNodeRef = n;
 							}					

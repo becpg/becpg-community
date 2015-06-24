@@ -61,7 +61,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 		ExpressionParser parser = new SpelExpressionParser();
 		StandardEvaluationContext context = formulaService.createEvaluationContext(productData);
 
-		if (productData.hasCompoListEl(EffectiveFilters.EFFECTIVE)) {
+		if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 
 			for (LabelClaimListDataItem labelClaimListDataItem : productData.getLabelClaimList()) {
 				if((labelClaimListDataItem.getIsManual() == null || !labelClaimListDataItem.getIsManual())){
@@ -71,7 +71,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 			}
 				Set<NodeRef> visitedProducts = new HashSet<>();
 
-				for (CompoListDataItem compoItem : productData.getCompoList(EffectiveFilters.EFFECTIVE)) {
+				for (CompoListDataItem compoItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 
 					NodeRef part = compoItem.getProduct();
 					if (!visitedProducts.contains(part)) {

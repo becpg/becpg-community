@@ -44,15 +44,14 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 		this.nodeService = nodeService;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 
 		logger.debug("Tare visitor");		
 		
 		// no compo => no formulation
-		if(!formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT) && 
-				!formulatedProduct.hasPackagingListEl(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)){			
+		if(!formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()) && 
+				!formulatedProduct.hasPackagingListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())){			
 			logger.debug("no compoList, no packagingList => no formulation");
 			return true;
 		}
@@ -71,19 +70,17 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 		return true;
 	}	
 	
-	@SuppressWarnings("unchecked")
 	private BigDecimal calculateTareOfComposition(ProductData formulatedProduct){
 		BigDecimal totalTare = new BigDecimal(0d);
-		for(CompoListDataItem compoList : formulatedProduct.getCompoList(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)){			
+		for(CompoListDataItem compoList : formulatedProduct.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())){			
 			totalTare = totalTare.add(FormulationHelper.getTareInKg(compoList, nodeService));
 		}			
 		return totalTare;
 	}
 	
-	@SuppressWarnings("unchecked")
 	private BigDecimal calculateTareOfPackaging(ProductData formulatedProduct){
 		BigDecimal totalTare  = new BigDecimal(0d);
-		for(PackagingListDataItem packList : formulatedProduct.getPackagingList(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)){
+		for(PackagingListDataItem packList : formulatedProduct.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())){
 			// take in account only primary
 			PackagingLevel level = PackagingLevel.Primary;
 			if(nodeService.hasAspect(formulatedProduct.getNodeRef(), PackModel.ASPECT_PALLET)){

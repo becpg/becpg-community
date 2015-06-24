@@ -7,10 +7,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.apache.commons.collections.CollectionUtils;
 
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.formulation.FormulatedEntity;
@@ -573,9 +574,6 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		this.controlDefList = controlDefList;
 	}
 	
-
-
-    
     @DataList
 	@AlfQname(qname="mpm:resourceParamList")
 	public List<ResourceParamListItem> getResourceParamList() {
@@ -612,21 +610,28 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		return compoListView;
 	}
 
-	public List<CompoListDataItem> getCompoList(@SuppressWarnings("unchecked") DataListFilter<ProductData>... filters) {
-		if (compoListView != null && compoListView.getCompoList() != null) {
-			List<CompoListDataItem> ret = new ArrayList<>(compoListView.getCompoList());
-			if (filters != null) {
-				for (DataListFilter<ProductData> filter : filters) {
-					CollectionUtils.filter(ret, filter.createPredicate(this));
-				}
+	@SafeVarargs 
+	private final <T> List<T>  filterList(List<T> list,DataListFilter<ProductData, T>...filters ) {
+		if (filters != null) {
+			Stream<T> stream = list.stream();
+			for (DataListFilter<ProductData, T> filter : filters) {
+				stream.filter(filter.createPredicate(this));
 			}
-			return ret;
+			return stream.collect(Collectors.toList());
+		} 
+		return list;
+	}
+	
+	@SafeVarargs 
+	public final List<CompoListDataItem> getCompoList(DataListFilter<ProductData, CompoListDataItem>... filters) {
+		if (compoListView != null && compoListView.getCompoList() != null) {
+			return filterList(compoListView.getCompoList(),filters);
 		}
 		return null;
 	}
 
-   @SuppressWarnings("unchecked")
-	public boolean hasCompoListEl( DataListFilter<ProductData>... filters) {
+	@SafeVarargs 
+	public final boolean hasCompoListEl( DataListFilter<ProductData, CompoListDataItem>... filters) {
 		return compoListView != null && compoListView.getCompoList() != null && !getCompoList(filters).isEmpty();
 	}
 
@@ -640,20 +645,16 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		return processListView;
 	}
 
-	public  List<ProcessListDataItem> getProcessList(@SuppressWarnings("unchecked") DataListFilter<ProductData>... filters) {
+	@SafeVarargs 
+	public final  List<ProcessListDataItem> getProcessList(DataListFilter<ProductData,ProcessListDataItem>... filters) {
 		if (processListView != null && processListView.getProcessList() != null) {
-			List<ProcessListDataItem> ret = new ArrayList<>(processListView.getProcessList());
-			if (filters != null) {
-				for (DataListFilter<ProductData> filter : filters) {
-					CollectionUtils.filter(ret, filter.createPredicate(this));
-				}
-			}
-			return ret;
+			return filterList(processListView.getProcessList(),filters);
 		}
 		return null;
 	}
-
-	public  boolean hasProcessListEl(@SuppressWarnings("unchecked") DataListFilter<ProductData>... filters) {
+	
+	@SafeVarargs 
+	public  final boolean hasProcessListEl(DataListFilter<ProductData,ProcessListDataItem>... filters) {
 		return processListView != null && processListView.getProcessList() != null && !getProcessList(filters).isEmpty();
 	}
 
@@ -667,22 +668,16 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		return packagingListView;
 	}
 
-	
-	public  List<PackagingListDataItem> getPackagingList(@SuppressWarnings("unchecked") DataListFilter<ProductData>... filters) {
+	@SafeVarargs 
+	public final  List<PackagingListDataItem> getPackagingList(DataListFilter<ProductData,PackagingListDataItem>... filters) {
 		if (packagingListView != null && packagingListView.getPackagingList() != null) {
-			List<PackagingListDataItem> ret = new ArrayList<>(packagingListView.getPackagingList());
-			if (filters != null) {
-				for (DataListFilter<ProductData> filter : filters) {
-					CollectionUtils.filter(ret, filter.createPredicate(this));
-				}
-			}
-			return ret;
+			return filterList(packagingListView.getPackagingList(),filters);
 		}
 		return null;
 	}
 
-	
-	public  boolean hasPackagingListEl(@SuppressWarnings("unchecked") DataListFilter<ProductData>... filters) {
+	@SafeVarargs
+	public final boolean hasPackagingListEl(DataListFilter<ProductData,PackagingListDataItem>... filters) {
 		return packagingListView != null && packagingListView.getPackagingList() != null && !getPackagingList(filters).isEmpty();
 	}
 

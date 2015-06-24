@@ -39,7 +39,7 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 		logger.debug("Physico chemical calculating visitor");
 
 		// no compo => no formulation
-		if (!formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE)) {
+		if (!formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 			logger.debug("no compo => no formulation");
 			return true;
 		}

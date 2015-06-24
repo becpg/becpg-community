@@ -42,7 +42,7 @@ public class ProductDataTest {
 		ProductData productData = new ProductData();
 		
 		//Test NPE
-		Assert.assertFalse(productData.hasCompoListEl(EffectiveFilters.ALL));
+		Assert.assertFalse(productData.hasCompoListEl());
 		
 		List<CompoListDataItem> compoList = new LinkedList<>();
 		
@@ -71,32 +71,32 @@ public class ProductDataTest {
 		
 		productData.getCompoListView().setCompoList(compoList);
 		
-		Assert.assertTrue(productData.hasCompoListEl(EffectiveFilters.ALL));
+		Assert.assertTrue(productData.hasCompoListEl());
 		
 		Assert.assertEquals(5, productData.getCompoListView().getCompoList().size());
 		
-		Assert.assertEquals(5, productData.getCompoList(EffectiveFilters.ALL).size());
+		Assert.assertEquals(5, productData.getCompoList().size());
 		
-		Assert.assertEquals(3, productData.getCompoList(EffectiveFilters.EFFECTIVE).size());
+		Assert.assertEquals(3, productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)).size());
 		
-		Assert.assertEquals(4, productData.getCompoList(EffectiveFilters.FUTUR).size());
+		Assert.assertEquals(4, productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.FUTUR)).size());
 		
 		productData.setStartEffectivity(nowminus2h);
 		productData.setEndEffectivity(now);
 		
 		compoList.remove(0);
 		
-		Assert.assertEquals(3, productData.getCompoList(EffectiveFilters.EFFECTIVE).size());
+		Assert.assertEquals(3, productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)).size());
 		
-		Assert.assertEquals(4, productData.getCompoList(EffectiveFilters.ALL).size());
+		Assert.assertEquals(4, productData.getCompoList().size());
 		
-		Assert.assertEquals(4, productData.getCompoList(EffectiveFilters.FUTUR).size());
+		Assert.assertEquals(4, productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.FUTUR)).size());
 		
 		productData.setStartEffectivity(nowminus2h);
 		productData.setEndEffectivity(nowminus1h);
 		
-		Assert.assertTrue(productData.hasCompoListEl(EffectiveFilters.ALL));
-		Assert.assertTrue(productData.hasCompoListEl(EffectiveFilters.EFFECTIVE));
+		Assert.assertTrue(productData.hasCompoListEl());
+		Assert.assertTrue(productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)));
 		
 	}
 	

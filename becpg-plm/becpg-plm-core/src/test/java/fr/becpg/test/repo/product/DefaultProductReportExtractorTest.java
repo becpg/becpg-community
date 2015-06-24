@@ -68,7 +68,6 @@ public class DefaultProductReportExtractorTest extends AbstractFinishedProductTe
 		logger.debug("testReport()");
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@SuppressWarnings("unchecked")
 			public NodeRef execute() throws Throwable {
 				
 				/*-- Create finished product --*/

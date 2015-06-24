@@ -18,81 +18,61 @@
 package fr.becpg.repo.product.data;
 
 import java.util.Date;
-
-import org.apache.commons.collections.Predicate;
+import java.util.function.Predicate;
 
 import fr.becpg.repo.repository.filters.DataListFilter;
 import fr.becpg.repo.repository.model.EffectiveDataItem;
 
-public class EffectiveFilters {
+public class EffectiveFilters<T extends EffectiveDataItem> implements
+		DataListFilter<ProductData, T> {
+
+	public final static String EFFECTIVE = "EFFECTIVE";
+	public final static String FUTUR = "FUTUR";
+	public final static String ALL = "ALL";
+
+	private String effectiveState = EFFECTIVE;
 	
-	public static final DataListFilter<ProductData> FUTUR = new DataListFilter<ProductData>() {
 
-		@Override
-		public Predicate createPredicate(final ProductData data) {
+	public EffectiveFilters(String effectiveState) {
+		super();
+		this.effectiveState = effectiveState;
+	}
 
-			final Date now = new Date();
 
-			return new Predicate() {
+	@Override
+	public Predicate<T> createPredicate(ProductData data) {
 
-				@Override
-				public boolean evaluate(Object obj) {
+		final Date now = new Date();
+		final Date startEffectivity = data.getStartEffectivity() != null && data.getStartEffectivity().getTime()>now.getTime() ? data.getStartEffectivity() : now;
+
+
+		return new Predicate<T>() {
+
+			@Override
+			public boolean test(EffectiveDataItem item) {
+				
 					
-					if (obj instanceof EffectiveDataItem) {
-						EffectiveDataItem item = ((EffectiveDataItem) obj);
-
-						return  (item.getEndEffectivity() == null
-										|| (data.getStartEffectivity() != null && item.getEndEffectivity().getTime() > data.getStartEffectivity().getTime()) || item
-										.getEndEffectivity().getTime() > now.getTime());
-
-					}
-					
-					return true;
-				}
-			};
-		}
-	};
-	public static final DataListFilter<ProductData> EFFECTIVE = new DataListFilter<ProductData>() {
-
-		@Override
-		public Predicate createPredicate(final ProductData data) {
-
-			final Date now = new Date();
-			final Date startEffectivity = data.getStartEffectivity() != null && data.getStartEffectivity().getTime()>now.getTime() ? data.getStartEffectivity() : now;
-
-			return new Predicate() {
-
-				@Override
-				public boolean evaluate(Object obj) {
-					
-					if (obj instanceof EffectiveDataItem) {
-						EffectiveDataItem item = ((EffectiveDataItem) obj);
+					if(FUTUR.equals(effectiveState)){
 						
-						
-						return  (item.getStartEffectivity() == null || item.getStartEffectivity().getTime() <= startEffectivity.getTime())
-								&& (item.getEndEffectivity() == null
-										|| (data.getEndEffectivity() != null && item.getEndEffectivity().getTime() <= data.getEndEffectivity().getTime()) || item
-										.getEndEffectivity().getTime() > now.getTime());
-
-					}
 					
-					return true;
-				}
-			};
-		}
-	};
-	public static final DataListFilter<ProductData> ALL = new DataListFilter<ProductData>() {
 
-		@Override
-		public Predicate createPredicate(ProductData data) {
-			return new Predicate() {
+					return  (item.getEndEffectivity() == null
+									|| (data.getStartEffectivity() != null && item.getEndEffectivity().getTime() > data.getStartEffectivity().getTime()) || item
+									.getEndEffectivity().getTime() > now.getTime());
+					}else if(EFFECTIVE.equals(effectiveState)){
+					
+					return  (item.getStartEffectivity() == null || item.getStartEffectivity().getTime() <= startEffectivity.getTime())
+							&& (item.getEndEffectivity() == null
+									|| (data.getEndEffectivity() != null && item.getEndEffectivity().getTime() <= data.getEndEffectivity().getTime()) || item
+									.getEndEffectivity().getTime() > now.getTime());
+					} else {
+						return true;
+					}
+				
+			}
 
-				@Override
-				public boolean evaluate(Object obj) {
-					return true;
-				}
-			};
-		}
-	};
+			
+		};
 
+	}
 }

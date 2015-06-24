@@ -86,17 +86,17 @@ public class CopyEntityServiceTest extends PLMBaseTestCase {
 		for(int rawMaterial : arrRawMaterials){
 			
 			logger.debug("check rawMaterial " + rawMaterial);
-			NodeRef sourceMP1NodeRef = sourceProductData.getCompoList(EffectiveFilters.EFFECTIVE).get(rawMaterial).getProduct();
-			NodeRef copyMP1NodeRef = copyProductData.getCompoList(EffectiveFilters.EFFECTIVE).get(rawMaterial).getProduct();
+			NodeRef sourceMP1NodeRef = sourceProductData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)).get(rawMaterial).getProduct();
+			NodeRef copyMP1NodeRef = copyProductData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)).get(rawMaterial).getProduct();
 			
 			assertEquals(PLMModel.TYPE_RAWMATERIAL, nodeService.getType(sourceMP1NodeRef));
 			assertEquals(PLMModel.TYPE_RAWMATERIAL, nodeService.getType(copyMP1NodeRef));
 			assertEquals(sourceMP1NodeRef, copyMP1NodeRef);
 			
 			// source and copy have different parents
-			assertFalse(sourceProductData.getCompoList(EffectiveFilters.EFFECTIVE).get(rawMaterial).getParent().getNodeRef().equals(copyProductData.getCompoList(EffectiveFilters.EFFECTIVE).get(rawMaterial).getParent().getNodeRef()));
+			assertFalse(sourceProductData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)).get(rawMaterial).getParent().getNodeRef().equals(copyProductData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)).get(rawMaterial).getParent().getNodeRef()));
 			// check parent
-			assertEquals(copyProductData.getCompoList(EffectiveFilters.EFFECTIVE).get(rawMaterial-1).getNodeRef(), copyProductData.getCompoList(EffectiveFilters.EFFECTIVE).get(rawMaterial).getParent().getNodeRef());
+			assertEquals(copyProductData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)).get(rawMaterial-1).getNodeRef(), copyProductData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)).get(rawMaterial).getParent().getNodeRef());
 		}		
 	}
 }
