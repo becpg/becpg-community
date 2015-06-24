@@ -105,7 +105,7 @@
                     + "/force",
               successCallback : {
                  fn : function EntityDataListToolbar_onFinish_success(response) {
-                     YAHOO.Bubbling.fire("previewChangedEvent");
+                	 	 YAHOO.Bubbling.fire("previewChangedEvent");
                  },
                  scope : this
               },

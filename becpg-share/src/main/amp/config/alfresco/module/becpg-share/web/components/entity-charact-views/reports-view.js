@@ -60,7 +60,8 @@
                         options :{
                             report : null,
                             itemType : null,
-                            currVersionNodeRef : null
+                            currVersionNodeRef : null,
+                            reports :[]
                          },
                       
 
@@ -157,8 +158,24 @@
                                                         {
                                                                 if (encodeURIComponent(scope.options.report.nodeRef) != scope.widgets.entityReportPicker.value)
                                                                 {
-                                                                    scope.options.report.nodeRef = decodeURIComponent(scope.widgets.entityReportPicker.value);
-                                                                    scope.options.nodeRef = scope.options.report.nodeRef;
+                                                                    scope.options.nodeRef = decodeURIComponent(scope.widgets.entityReportPicker.value);
+                                                                    
+                                                                    for(var i in scope.options.reports){
+                                                                    	if(scope.options.reports[i].nodeRef == scope.options.nodeRef){
+                                                                    		scope.options.report = scope.options.reports[i];
+                                                                    		break;
+                                                                    		
+                                                                    	}
+                                                                    }
+                                                                   
+                                                                    if(scope.options.name.split('.').pop()!=scope.options.report.name.split('.').pop()){
+                                                                    	 window.location.href = window.location.href.split("#")[0];
+                                                                    }
+                                                                    
+                                                                    scope.options.name = scope.options.report.name;
+                                                                    
+                                                                    
+                                                                    
                                                                     YAHOO.Bubbling.fire("previewChangedEvent");
                                                                 }
                                                         },
@@ -169,6 +186,20 @@
 
                         },
 
+                        
+                        onPreviewChanged: function WebPreview_onPreviewChanged(event)
+                        {
+                           if(!this.options.report){
+                        	   window.location.href = window.location.href.split("#")[0];
+                           }	
+                        	
+                           this.options.avoidCachedThumbnail = true;
+
+                           YAHOO.util.Event.preventDefault(event);
+                           YAHOO.util.Event.stopPropagation(event)
+                        },
+                        
+                        
                         getPickerPreference : function ReportViewer_getPickerPreference()
                         {
                             return "fr.becpg.repo.report." + this.options.itemType.replace(":", "_") + ".view";

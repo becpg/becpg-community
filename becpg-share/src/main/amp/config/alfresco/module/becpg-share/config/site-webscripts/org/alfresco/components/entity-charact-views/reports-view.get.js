@@ -100,6 +100,7 @@ function main()
                 name : nodeMetadata.name,
                 mimeType : nodeMetadata.mimeType,
                 size: nodeMetadata.size,
+                reports :  model.reports,
                 thumbnails : nodeMetadata.thumbnails,
                 pluginConditions : pluginConditionsJSON,
                 currVersionNodeRef : model.currVersionNodeRef,
