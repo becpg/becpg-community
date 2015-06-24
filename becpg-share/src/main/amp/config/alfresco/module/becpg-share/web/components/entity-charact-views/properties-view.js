@@ -208,10 +208,12 @@
 
                     onVersionChanged : function Properties_onVersionChanged(layer, args)
                     {
+                    	YAHOO.Bubbling.unsubscribe("metadataRefresh", this.doRefresh, this);
+                        YAHOO.Bubbling.unsubscribe("versionChangeFilter", this.onVersionChanged, this);
                         var obj = args[1];
                         if ((obj !== null) && obj.filterId !== null &&  obj.filterId === "version" && obj.filterData !== null)
                         {
-                           this.refresh('components/entity-charact-views/properties-view?currVersionNodeRef={nodeRef}&nodeRef='+ obj.filterData+ (this.options.siteId ? '&site={siteId}' :  '') + (this.options.formId ? '&formId={formId}' :  ''));   
+                           this.refresh('components/entity-charact-views/properties-view?currVersionNodeRef='+(this.options.currVersionNodeRef!=null ? this.options.currVersionNodeRef : '{nodeRef}')+'&nodeRef='+ obj.filterData+ (this.options.siteId ? '&site={siteId}' :  '') + (this.options.formId ? '&formId={formId}' :  ''));   
                          } else if(this.options.currVersionNodeRef!=null){
                             this.refresh('components/entity-charact-views/properties-view?nodeRef='+ this.options.currVersionNodeRef+ (this.options.siteId ? '&site={siteId}' :  '') + (this.options.formId ? '&formId={formId}' :  ''));   
                          }

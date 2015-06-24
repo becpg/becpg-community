@@ -43,6 +43,8 @@
     beCPG.component.ReportViewer = function ReportViewer_constructor(htmlId)
     {
         beCPG.component.ReportViewer.superclass.constructor.call(this, htmlId);
+        
+        YAHOO.Bubbling.on("versionChangeFilter", this.onVersionChanged,this);
 
         this.preferencesService = new Alfresco.service.Preferences();
 
@@ -57,7 +59,8 @@
                         
                         options :{
                             report : null,
-                            itemType : null
+                            itemType : null,
+                            currVersionNodeRef : null
                          },
                       
 
@@ -170,6 +173,24 @@
                         {
                             return "fr.becpg.repo.report." + this.options.itemType.replace(":", "_") + ".view";
 
+                        },
+                        
+                        onVersionChanged : function ReportViewer_onVersionChanged(layer, args)
+                        {
+                            YAHOO.Bubbling.unsubscribe("versionChangeFilter", this.onVersionChanged, this);
+                        	var el = new YAHOO.util.Element("toolbar-contribs");
+                        	if (el.hasChildNodes()) {
+                        	    el.removeChild(el.get('firstChild'));
+                        	}
+
+                            var obj = args[1];
+                            if ((obj !== null) && obj.filterId !== null &&  obj.filterId === "version" && obj.filterData !== null)
+                            {
+                                this.refresh('components/entity-charact-views/reports-view?currVersionNodeRef='+(this.options.currVersionNodeRef!=null ? this.options.currVersionNodeRef : '{nodeRef}')+'&nodeRef='+ obj.filterData+ (this.options.siteId ? '&site={siteId}' :  ''));   
+                             } else if(this.options.currVersionNodeRef!=null){
+                                 this.refresh('components/entity-charact-views/reports-view?nodeRef='+ this.options.currVersionNodeRef+ (this.options.siteId ? '&site={siteId}' :  ''));   
+                             }
+                            
                         }
 
                     });
