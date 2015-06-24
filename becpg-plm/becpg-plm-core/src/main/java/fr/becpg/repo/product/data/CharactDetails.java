@@ -43,9 +43,9 @@ public class CharactDetails {
 		Map<NodeRef,Double> tmp = data.get(charactNodeRef);
 		if(tmp==null){
 			tmp = new HashMap<>();
-		}
-		tmp.put(key, value);
-		
+		}		
+		double v = (value != null ? value : 0d) + (tmp.get(key) != null ? tmp.get(key) : 0d);
+		tmp.put(key, v != 0d ? v : null);		
 		data.put(charactNodeRef, tmp);
 	}
 

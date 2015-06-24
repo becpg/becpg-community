@@ -146,10 +146,10 @@ public class CharactDetailsHelper {
 			Map<String,String> tmp = new HashMap<>();
 			tmp.put(getYAxisLabel(),(String)nodeService.getProperty(compoEl, ContentModel.PROP_NAME));
 			for (Map.Entry<NodeRef, Map<NodeRef, Double>> entry : charactDetails.getData().entrySet()) {
-				if (entry.getValue().containsKey(compoEl)) {
+				if (entry.getValue().containsKey(compoEl) && entry.getValue().get(compoEl) != null) {
 						tmp.put((String) nodeService.getProperty(entry.getKey(), ContentModel.PROP_NAME), propertyFormats.formatDecimal(entry.getValue().get(compoEl)));
 					} else {
-						tmp.put((String) nodeService.getProperty(entry.getKey(), ContentModel.PROP_NAME),"0");
+						tmp.put((String) nodeService.getProperty(entry.getKey(), ContentModel.PROP_NAME),"");
 					}
 			}
 			csvWriter.writeRecord(tmp);
