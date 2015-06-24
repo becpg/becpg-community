@@ -17,12 +17,15 @@
  ******************************************************************************/
 package fr.becpg.repo.repository.filters;
 
-import org.apache.commons.collections.Predicate;
+import java.util.function.Predicate;
 
-public interface DataListFilter<T> {
+
+public interface DataListFilter<T,K> {
 	
 	
-	Predicate createPredicate(T data);
+	Predicate<K> createPredicate(T data);
+	
+	
 	
 	
 }
