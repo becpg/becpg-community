@@ -163,6 +163,7 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 				compoList.add(item);
 				compoList.add(new CompoListDataItem(null,item, null, 3d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 				compoList.add(new CompoListDataItem(null, item, null, 3d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
+				compoList.add(new CompoListDataItem(null, item, null, 2d, CompoListUnit.kg, 5d, DeclarationType.Declare, rawMaterial1NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
 				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();				
 				
