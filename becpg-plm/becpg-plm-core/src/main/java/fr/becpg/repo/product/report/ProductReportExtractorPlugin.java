@@ -300,12 +300,11 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private void loadProcessList(ProductData productData, Element dataListsElt, NodeRef defaultVariantNodeRef) {
-		if (productData.hasProcessListEl(EffectiveFilters.EFFECTIVE)) {
+		if (productData.hasProcessListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 			Element processListElt = dataListsElt.addElement(MPMModel.TYPE_PROCESSLIST.getLocalName() + "s");
 
-			for (ProcessListDataItem dataItem : productData.getProcessList(EffectiveFilters.EFFECTIVE)) {
+			for (ProcessListDataItem dataItem : productData.getProcessList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 				loadProcessListItem(dataItem, processListElt, defaultVariantNodeRef, 1);
 			}
 
@@ -325,9 +324,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			dataListsElt = loadResourceParams(dataItem.getResource(), partElt);
 
 			ProductData productData = alfrescoRepository.findOne(dataItem.getResource());
-			if (productData.hasProcessListEl(EffectiveFilters.EFFECTIVE)) {
+			if (productData.hasProcessListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 				Element subProcessListElt = dataListsElt.addElement(MPMModel.TYPE_PROCESSLIST.getLocalName() + "s");
-				for (ProcessListDataItem subDataItem : productData.getProcessList(EffectiveFilters.EFFECTIVE)) {
+				for (ProcessListDataItem subDataItem : productData.getProcessList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 					loadProcessListItem(subDataItem, subProcessListElt, defaultVariantNodeRef, level + 1);
 				}
 			}
@@ -429,10 +428,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private Map<NodeRef, Double> getRawMaterials(ProductData productData, Map<NodeRef, Double> rawMaterials, Double parentQty) {
 
-		for (CompoListDataItem compoList : productData.getCompoList(EffectiveFilters.EFFECTIVE)) {
+		for (CompoListDataItem compoList : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 			NodeRef productNodeRef = compoList.getProduct();
 			QName type = nodeService.getType(productNodeRef);
 			Double qty = FormulationHelper.getQtyInKg(compoList);
@@ -481,23 +479,22 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		return false;
 	}
 
-	@SuppressWarnings({ "unchecked" })
 	private void loadPackagingList(ProductData productData, Element dataListsElt, NodeRef defaultVariantNodeRef, Map<String, byte[]> images) {
 
-		if (productData.hasPackagingListEl(EffectiveFilters.EFFECTIVE)) {
+		if (productData.hasPackagingListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 			
 			Element packagingListElt = dataListsElt.addElement(PLMModel.TYPE_PACKAGINGLIST.getLocalName() + "s");
 
-			for (PackagingListDataItem dataItem : productData.getPackagingList(EffectiveFilters.EFFECTIVE)) {
+			for (PackagingListDataItem dataItem : productData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 				loadPackagingItem(dataItem, packagingListElt, defaultVariantNodeRef, images);
 			}
 
 			if (extractInMultiLevel) {
-				for (CompoListDataItem dataItem : productData.getCompoList(EffectiveFilters.EFFECTIVE)) {
+				for (CompoListDataItem dataItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 					if (nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT) && extractInMultiLevel) {
 						ProductData sfProductData = alfrescoRepository.findOne(dataItem.getProduct());
-						if (sfProductData.hasPackagingListEl(EffectiveFilters.EFFECTIVE)) {
-							for (PackagingListDataItem subDataItem : sfProductData.getPackagingList(EffectiveFilters.EFFECTIVE)) {
+						if (sfProductData.hasPackagingListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+							for (PackagingListDataItem subDataItem : sfProductData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 								loadPackagingItem(subDataItem, packagingListElt, defaultVariantNodeRef, images);
 							}
 						}
@@ -566,13 +563,12 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private void loadCompoList(ProductData productData, Element dataListsElt, NodeRef defaultVariantNodeRef) {
 		// compoList
-		if (productData.hasCompoListEl(EffectiveFilters.EFFECTIVE)) {
+		if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 			Element compoListElt = dataListsElt.addElement(PLMModel.TYPE_COMPOLIST.getLocalName() + "s");
 
-			for (CompoListDataItem dataItem : productData.getCompoList(EffectiveFilters.EFFECTIVE)) {				
+			for (CompoListDataItem dataItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {				
 				loadCompoListItem(dataItem, compoListElt, defaultVariantNodeRef, 1, dataItem.getQty() != null ? dataItem.getQty() : 0d);
 			}
 
@@ -581,7 +577,6 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	private void loadCompoListItem(CompoListDataItem dataItem, Element compoListElt, NodeRef defaultVariantNodeRef, int level, double compoListQty) {
 		if (dataItem.getProduct() != null && nodeService.exists(dataItem.getProduct())) {
 			Element dataListsElt = null;
@@ -604,13 +599,13 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 			if (nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT) && extractInMultiLevel) {
 				ProductData productData = alfrescoRepository.findOne(dataItem.getProduct());
-				if (productData.hasCompoListEl(EffectiveFilters.EFFECTIVE)) {
+				if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 					if (dataListsElt == null) {
 						dataListsElt = partElt.addElement(TAG_DATALISTS);
 					}
 					Element subCompoListElt = dataListsElt.addElement(PLMModel.TYPE_COMPOLIST.getLocalName() + "s");
 
-					for (CompoListDataItem subDataItem : productData.getCompoList(EffectiveFilters.EFFECTIVE)) {
+					for (CompoListDataItem subDataItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 						loadCompoListItem(subDataItem, 
 								subCompoListElt, 
 								defaultVariantNodeRef, 
@@ -654,7 +649,6 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	}
 
 	// manage 2 level depth
-	@SuppressWarnings("unchecked")
 	private void loadPackagingKit(PackagingListDataItem dataItem, Element packagingListElt, NodeRef defaultVariantNodeRef) {
 
 		Element packagingKitEl = loadPackaging(dataItem, packagingListElt, defaultVariantNodeRef, dataItem.getVariants());
@@ -662,7 +656,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		Element packagingKitListEl = dataListsElt.addElement(PLMModel.TYPE_PACKAGINGLIST.getLocalName() + "s");
 		ProductData packagingKitData = alfrescoRepository.findOne(dataItem.getProduct());
 
-		for (PackagingListDataItem p : packagingKitData.getPackagingList(EffectiveFilters.EFFECTIVE)) {
+		for (PackagingListDataItem p : packagingKitData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 			loadPackaging(p, packagingKitListEl, defaultVariantNodeRef, dataItem.getVariants());
 		}
 	}

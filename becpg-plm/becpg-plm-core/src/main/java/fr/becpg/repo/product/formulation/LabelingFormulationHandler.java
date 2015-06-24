@@ -81,12 +81,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		this.associationService = associationService;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 
 		// no compo => no formulation
-		if (!formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)) {
+		if (!formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())) {
 			logger.debug("no compo => no formulation");
 			return true;
 		}
@@ -130,7 +129,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				}
 			}
 
-			List<CompoListDataItem> compoList = formulatedProduct.getCompoList(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT);
+			List<CompoListDataItem> compoList = formulatedProduct.getCompoList(new VariantFilters<>());
 
 			// Compute composite
 			Composite<CompoListDataItem> compositeDefaultVariant = CompositeHelper.getHierarchicalCompoList(compoList);
@@ -752,9 +751,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			// MultiLevel only if detail or group
 			if (!DeclarationType.DoNotDetails.equals(declarationType)
 					&& (productData instanceof SemiFinishedProductData || productData instanceof FinishedProductData)) {
-				@SuppressWarnings("unchecked")
-				Composite<CompoListDataItem> sfComposite = CompositeHelper.getHierarchicalCompoList(productData.getCompoList(EffectiveFilters.ALL,
-						VariantFilters.DEFAULT_VARIANT));
+				Composite<CompoListDataItem> sfComposite = CompositeHelper.getHierarchicalCompoList(productData.getCompoList(
+						new VariantFilters<>()));
 				for (Composite<CompoListDataItem> sfChild : sfComposite.getChildren()) {
 					sfChild.getData().setParent(compoListDataItem);
 					composite.addChild(sfChild);

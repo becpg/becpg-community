@@ -30,7 +30,6 @@ import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
-import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.constraints.CompoListUnit;
@@ -54,22 +53,20 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 
 		logger.debug("Composition calculating visitor");
 
 		// no compo => no formulation
-		if (!formulatedProduct.hasCompoListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT)) {
+		if (!formulatedProduct.hasCompoListEl(new VariantFilters<>())) {
 			logger.debug("no compo => no formulation");
 			return true;
 		}
 		
 		Double netWeight = formulatedProduct.getNetWeight();
-		Composite<CompoListDataItem> compositeAll = CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList(EffectiveFilters.ALL));
-		Composite<CompoListDataItem> compositeDefaultVariant = CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList(
-				EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT));
+		Composite<CompoListDataItem> compositeAll = CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList());
+		Composite<CompoListDataItem> compositeDefaultVariant = CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList(new VariantFilters<>()));
 
 		// Yield
 		visitYieldChildren(formulatedProduct, compositeDefaultVariant);
@@ -238,51 +235,4 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		rawMaterialData.setSupplierPlants(supplierPlantNodeRefs);
 	}
 
-	private Double calculateQtyInKg(CompoListDataItem compoListDataItem) {
-		Double qty = compoListDataItem.getQtySubFormula();
-		CompoListUnit compoListUnit = compoListDataItem.getCompoListUnit();
-		if (qty != null && compoListUnit != null) {
-
-			if (compoListUnit.equals(CompoListUnit.kg)) {
-				return qty;
-			} else if (compoListUnit.equals(CompoListUnit.g)) {
-				return qty / 1000;
-			} else if (compoListUnit.equals(CompoListUnit.mg)) {
-				return qty / 1000000;
-			} else if (compoListUnit.equals(CompoListUnit.P)) {
-				return FormulationHelper.getNetWeight(compoListDataItem.getProduct(), nodeService, FormulationHelper.DEFAULT_NET_WEIGHT) * qty;
-			} else if (compoListUnit.equals(CompoListUnit.L) || compoListUnit.equals(CompoListUnit.mL)) {
-
-				if (compoListUnit.equals(CompoListUnit.mL)) {
-					qty = qty / 1000;
-				}
-
-				Double overrun = compoListDataItem.getOverrunPerc();
-				if (compoListDataItem.getOverrunPerc() == null) {
-					overrun = FormulationHelper.DEFAULT_OVERRUN;
-				}
-
-				Double density = FormulationHelper.getDensity(compoListDataItem.getProduct(), nodeService);
-				if (density == null || density.equals(0d)) {
-					if (logger.isDebugEnabled()) {
-						logger.debug("Cannot calculate volume since density is null or equals to 0");
-					}
-				} else {
-					return (qty * density * 100) / (100 + overrun);
-
-				}
-
-			} else if (compoListUnit.equals(CompoListUnit.m) || compoListUnit.equals(CompoListUnit.m2)) {
-				Double productQty = FormulationHelper.getProductQty(compoListDataItem.getProduct(), nodeService);
-				if (productQty == null) {
-					productQty = 1d;
-				}
-				return FormulationHelper.getNetWeight(compoListDataItem.getProduct(), nodeService, FormulationHelper.DEFAULT_NET_WEIGHT) * qty
-						/ productQty;
-			}
-			return qty;
-		}
-
-		return FormulationHelper.DEFAULT_COMPONANT_QUANTITY;
-	}
 }

@@ -169,7 +169,6 @@
 		<property name="mlNodeService" ref="mlAwareNodeService" />
 		<property name="personService" ref="PersonService" />
 		<property name="nodeService" ref="NodeService" />
-		<property name="repository" ref="repositoryHelper" />
 		<property name="namespaceService" ref="NamespaceService" />
 		<property name="migrationService" ref="migrationService" />
 		<property name="alfrescoRepository" ref="alfrescoRepository" />

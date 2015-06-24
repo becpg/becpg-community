@@ -38,7 +38,6 @@ import fr.becpg.model.PackModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.ProductService;
-import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.PackagingKitData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ResourceProductData;
@@ -85,29 +84,28 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		this.formulateChildren = formulateChildren;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean process(ProductData productData) throws FormulateException {
 
-		if ((productData.hasCompoListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT))
-				|| (productData.hasPackagingListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT))
-				|| (productData.hasProcessListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT))) {
+		if ((productData.hasCompoListEl(new VariantFilters<>()))
+				|| (productData.hasPackagingListEl( new VariantFilters<>()))
+				|| (productData.hasProcessListEl( new VariantFilters<>()))) {
 
-			if (productData.hasCompoListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT)) {
+			if (productData.hasCompoListEl( new VariantFilters<>())) {
 				if (productData.getCompoListView().getReqCtrlList() != null) {
 					clearReqCltrlList(productData.getCompoListView().getReqCtrlList());
 				} else {
 					productData.getCompoListView().setReqCtrlList(new LinkedList<ReqCtrlListDataItem>());
 				}
 			}
-			if (productData.hasPackagingListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT)) {
+			if (productData.hasPackagingListEl( new VariantFilters<>())) {
 				if (productData.getPackagingListView().getReqCtrlList() != null) {
 					clearReqCltrlList(productData.getPackagingListView().getReqCtrlList());
 				} else {
 					productData.getPackagingListView().setReqCtrlList(new LinkedList<ReqCtrlListDataItem>());
 				}
 			}
-			if (productData.hasProcessListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT)) {
+			if (productData.hasProcessListEl( new VariantFilters<>())) {
 				if (productData.getProcessListView().getReqCtrlList() != null) {
 					clearReqCltrlList(productData.getProcessListView().getReqCtrlList());
 				} else {
@@ -152,7 +150,6 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 
 	}
 
-	@SuppressWarnings("unchecked")
 	private boolean checkShouldFormulateComponents(boolean isRoot, ProductData productData, Set<NodeRef> checkedProducts) throws FormulateException {
 		boolean isFormulated = false;
 
@@ -205,12 +202,11 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		return isFormulated;
 	}
 
-	@SuppressWarnings("unchecked")
 	private void checkMissingProperties(ProductData formulatedProduct) {
 
 		checkFormulatedProduct(formulatedProduct);
 
-		if (formulatedProduct.hasCompoListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT)) {
+		if (formulatedProduct.hasCompoListEl( new VariantFilters<>())) {
 			for (CompoListDataItem c : formulatedProduct.getCompoList()) {
 				if (c.getCompoListUnit() == null) {
 					addMessingReq(formulatedProduct.getCompoListView().getReqCtrlList(), null, MESSAGE_WRONG_UNIT);
@@ -219,7 +215,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 				}
 			}
 		}
-		if (formulatedProduct.hasPackagingListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT)) {
+		if (formulatedProduct.hasPackagingListEl( new VariantFilters<>())) {
 			for (PackagingListDataItem p : formulatedProduct.getPackagingList()) {
 				if (p.getPackagingListUnit() == null) {
 					addMessingReq(formulatedProduct.getCompoListView().getReqCtrlList(), null, MESSAGE_WRONG_UNIT);

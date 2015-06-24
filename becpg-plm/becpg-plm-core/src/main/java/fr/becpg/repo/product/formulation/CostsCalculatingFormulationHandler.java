@@ -89,7 +89,6 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		return CostListDataItem.class;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 		logger.debug("Cost calculating visitor");
@@ -110,8 +109,8 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			formulatedProduct.setDefaultVariantPackagingData(packagingHelper.getDefaultVariantPackagingData(formulatedProduct));
 		}
 		
-		if(formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE) || formulatedProduct.hasPackagingListEl(EffectiveFilters.EFFECTIVE)
-				|| formulatedProduct.hasProcessListEl(EffectiveFilters.EFFECTIVE)){
+		if(formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)) || formulatedProduct.hasPackagingListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))
+				|| formulatedProduct.hasProcessListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))){
 			formulateSimpleList(formulatedProduct, formulatedProduct.getCostList());
 			
 			// simulation: take in account cost of components defined on formulated product
@@ -208,7 +207,6 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected void visitChildren(ProductData formulatedProduct, List<CostListDataItem> costList) throws FormulateException {
 
@@ -225,7 +223,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			}
 		}
 
-		if (formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)) {
+		if (formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())) {
 
 			/*
 			 * Composition
@@ -233,22 +231,22 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			Map<NodeRef, List<NodeRef>> mandatoryCharacts1 = getMandatoryCharacts(formulatedProduct, PLMModel.TYPE_RAWMATERIAL);
 
 			Composite<CompoListDataItem> composite = CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList(
-					EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT));
+					new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()));
 			visitCompoListChildren(formulatedProduct, composite, costList, DEFAULT_LOSS_RATIO, netQty, mandatoryCharacts1);
 
 			addReqCtrlList(formulatedProduct.getCompoListView().getReqCtrlList(), mandatoryCharacts1);
 
 		}
 
-		if (formulatedProduct.hasPackagingListEl(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)) {
+		if (formulatedProduct.hasPackagingListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())) {
 
 			/*
 			 * PackagingList
 			 */
 			Map<NodeRef, List<NodeRef>> mandatoryCharacts2 = getMandatoryCharacts(formulatedProduct, PLMModel.TYPE_PACKAGINGMATERIAL);
 
-			for (PackagingListDataItem packagingListDataItem : formulatedProduct.getPackagingList(EffectiveFilters.EFFECTIVE,
-					VariantFilters.DEFAULT_VARIANT)) {
+			for (PackagingListDataItem packagingListDataItem : formulatedProduct.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE),
+					new VariantFilters<>())) {
 				Double qty = FormulationHelper.getQtyForCost(packagingListDataItem);
 
 				if (PLMModel.TYPE_PACKAGINGKIT.equals(nodeService.getType(packagingListDataItem.getProduct()))) {
@@ -264,13 +262,13 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			addReqCtrlList(formulatedProduct.getPackagingListView().getReqCtrlList(), mandatoryCharacts2);
 		}
 
-		if (formulatedProduct.hasProcessListEl(EffectiveFilters.EFFECTIVE, VariantFilters.DEFAULT_VARIANT)) {
+		if (formulatedProduct.hasProcessListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())) {
 			/*
 			 * ProcessList
 			 */
 			Map<NodeRef, List<NodeRef>> mandatoryCharacts3 = getMandatoryCharacts(formulatedProduct, PLMModel.TYPE_RESOURCEPRODUCT);
-			for (ProcessListDataItem processListDataItem : formulatedProduct.getProcessList(EffectiveFilters.EFFECTIVE,
-					VariantFilters.DEFAULT_VARIANT)) {
+			for (ProcessListDataItem processListDataItem : formulatedProduct.getProcessList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE),
+					new VariantFilters<>())) {
 
 				Double qty = FormulationHelper.getQty(formulatedProduct, processListDataItem);
 				if (processListDataItem.getResource() != null && qty != null) {
@@ -614,10 +612,9 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	private double getCompoListQty(ProductData productData, NodeRef componentNodeRef, double parentQty) {
 		double totalQty = 0d;
-		for (CompoListDataItem compoList : productData.getCompoList(EffectiveFilters.EFFECTIVE)) {
+		for (CompoListDataItem compoList : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 			NodeRef productNodeRef = compoList.getProduct();			
 			Double qty = FormulationHelper.getQtyForCost(compoList, 
 									0d,
@@ -639,10 +636,9 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		return totalQty;
 	}
 	
-	@SuppressWarnings("unchecked")
 	private double getPackagingListQty(ProductData productData, NodeRef componentNodeRef) {
 		double totalQty = 0d;
-		for (PackagingListDataItem packList : productData.getPackagingList(EffectiveFilters.EFFECTIVE)) {
+		for (PackagingListDataItem packList : productData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 			NodeRef productNodeRef = packList.getProduct();			
 			Double qty = FormulationHelper.getQtyForCost(packList);
 			if (logger.isDebugEnabled()) {

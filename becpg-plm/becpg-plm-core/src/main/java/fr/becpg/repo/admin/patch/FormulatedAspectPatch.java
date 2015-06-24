@@ -11,7 +11,6 @@ import org.alfresco.repo.domain.node.NodeDAO;
 import org.alfresco.repo.domain.patch.PatchDAO;
 import org.alfresco.repo.domain.qname.QNameDAO;
 import org.alfresco.repo.node.integrity.IntegrityChecker;
-import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.StoreRef;
@@ -24,7 +23,6 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
-import fr.becpg.model.PackModel;
 
 /**
  * Update CostParentLevel
@@ -40,7 +38,6 @@ public class FormulatedAspectPatch extends AbstractBeCPGPatch {
 	private NodeDAO nodeDAO;
 	private PatchDAO patchDAO;
 	private QNameDAO qnameDAO;
-	private BehaviourFilter policyBehaviourFilter;
 	private RuleService ruleService;
 
 	private IntegrityChecker integrityChecker;
@@ -171,10 +168,6 @@ public class FormulatedAspectPatch extends AbstractBeCPGPatch {
 
 	public void setQnameDAO(QNameDAO qnameDAO) {
 		this.qnameDAO = qnameDAO;
-	}
-
-	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
-		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
 
 	public RuleService getRuleService() {

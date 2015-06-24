@@ -62,14 +62,13 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 	}
 
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 
 		logger.debug("Start AllergensCalculatingVisitor");
 
 		// no compo, nor allergenList on formulated product => no formulation
-		if (!formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE) && !formulatedProduct.hasProcessListEl(EffectiveFilters.EFFECTIVE) ||
+		if (!formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)) && !formulatedProduct.hasProcessListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)) ||
 				!alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_ALLERGENLIST)) {
 			logger.debug("no compo => no formulation");
 			return true;
@@ -103,7 +102,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 		// compoList
 		Double totalQtyUsed = 0d;
 		
-		for (CompoListDataItem compoItem : formulatedProduct.getCompoList(EffectiveFilters.EFFECTIVE)) {
+		for (CompoListDataItem compoItem : formulatedProduct.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 			
 			NodeRef part = compoItem.getProduct();
 			Double qtyUsed = null;
@@ -144,8 +143,8 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 		}
 		
 		// process
-		if (formulatedProduct.hasProcessListEl(EffectiveFilters.EFFECTIVE)) {
-			for (ProcessListDataItem processItem : formulatedProduct.getProcessList(EffectiveFilters.EFFECTIVE)) {
+		if (formulatedProduct.hasProcessListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+			for (ProcessListDataItem processItem : formulatedProduct.getProcessList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 
 				NodeRef resource = processItem.getResource();
 				if (resource != null && !visitedProducts.contains(resource)) {
