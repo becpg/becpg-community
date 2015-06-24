@@ -63,6 +63,7 @@ function main()
    AlfrescoUtil.param("nodeRef");
    AlfrescoUtil.param("api", "api");
    AlfrescoUtil.param("proxy", "alfresco");
+   AlfrescoUtil.param('currVersionNodeRef',null);
    
    var nodeDetails = AlfrescoUtil.getNodeDetails(model.nodeRef, model.site);
    
@@ -101,6 +102,7 @@ function main()
                 size: nodeMetadata.size,
                 thumbnails : nodeMetadata.thumbnails,
                 pluginConditions : pluginConditionsJSON,
+                currVersionNodeRef : model.currVersionNodeRef,
                 api:  model.api,
                 proxy: model.proxy,
                 avoidCachedThumbnail : model.entityNodeRef? true : false,

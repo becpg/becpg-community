@@ -23,8 +23,8 @@
                <#assign el=args.htmlid?html>
                <div id="${el}-body" class="entity-versions filter hidden">
 				         <div class="nav flat-button">
-								<a href="#" rel="previous" class="version-historic-nav prev">previous</a>
-								<a href="#" rel="next" class="version-historic-nav next">next</a>
+								<a href="#" rel="previous" class="version-historic-nav prev disabled">previous</a>
+								<a href="#" rel="next" class="version-historic-nav next disabled">next</a>
 								<span id="${el}-versionNav-button" class="yui-button yui-push-button">
 					            <span class="first-child">
 					               <button name="version-historic-versionNav-menu"></button>

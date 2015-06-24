@@ -265,7 +265,7 @@
                      if (this.options.nodeRef === this.earliestVersion.nodeRef) {
                         // At earliest, so disable the previous button
                         Dom.addClass(navEls[0], "disabled");
-                     } else if (this.options.nodeRef === this.latestVersion.nodeRef) {
+                     } else if (this.options.nodeRef === this.latestVersion.nodeRef || this.options.nodeRef === this.latestVersion.entityNodeRef) {
                         // at latest, so disable the next button.
                         Dom.addClass(navEls[1], "disabled");
                      }
