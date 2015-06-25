@@ -230,10 +230,10 @@
 					<show id="cm:title" force="true" />
 					<show id="bcpg:productHierarchy1" />
 					<show id="bcpg:productHierarchy2" />
-					<show id="bcpg:legalName" />
-					<show id="bcpg:productComments" />
+					<show id="bcpg:legalName" />					
 					<show id="cm:description" force="true" />
 					<show id="bcpg:packagingDescription" force="true" />
+					<show id="bcpg:productComments" />					
 					<show id="bcpg:code" />
 					<show id="bcpg:productState" />
 					<show id="bcpg:erpCode" force="true" />
@@ -388,11 +388,6 @@
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:legalName" set="mainInfo" />
-					<field id="bcpg:productComments" set="mainInfo">
-						<control template="/org/alfresco/components/form/controls/textarea.ftl">
-							<control-param name="rows">2</control-param>
-						</control>
-					</field>
 					<field id="cm:description" set="mainInfo">
 						<control>
 							<control-param name="activateLinks">true</control-param>
@@ -403,6 +398,11 @@
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
+					<field id="bcpg:productComments" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
+						</control>
+					</field>										
 					<field id="bcpg:productHierarchy1" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/finishedProduct_Hierarchy
@@ -701,9 +701,9 @@
 					<show id="bcpg:productHierarchy1" />
 					<show id="bcpg:productHierarchy2" />
 					<show id="bcpg:legalName" />
-					<show id="bcpg:productComments" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:packagingDescription" force="true" />
+					<show id="bcpg:productComments" />										
 					<show id="bcpg:entityTplRef" force="true" />
 					<show id="bcpg:code" force="true" />
 					<show id="bcpg:productState" />
@@ -771,11 +771,6 @@
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:legalName" set="mainInfo" />
-					<field id="bcpg:productComments" set="mainInfo">
-						<control template="/org/alfresco/components/form/controls/textarea.ftl">
-							<control-param name="rows">2</control-param>
-						</control>
-					</field>
 					<field id="cm:description" set="mainInfo">
 						<control>
 							<control-param name="activateLinks">true</control-param>
@@ -786,6 +781,11 @@
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
+					<field id="bcpg:productComments" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">2</control-param>
+						</control>
+					</field>										
 					<field id="bcpg:productHierarchy1" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/finishedProduct_Hierarchy
@@ -1536,8 +1536,8 @@
 					<show id="bcpg:productHierarchy1" />
 					<show id="bcpg:productHierarchy2" />
 					<show id="bcpg:legalName" />
-					<show id="bcpg:productComments" />
 					<show id="cm:description" force="true" />
+					<show id="bcpg:productComments" />					
 					<show id="bcpg:productState" />
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:code" />
@@ -1770,8 +1770,8 @@
 					<show id="cm:name" />
 					<show id="cm:title" force="true" />
 					<show id="bcpg:legalName" />
-					<show id="bcpg:productComments" />
 					<show id="cm:description" force="true" />
+					<show id="bcpg:productComments" />					
 					<show id="bcpg:eanCode" />
 					<show id="bcpg:certificateDate" force="true" />
 					<show id="bcpg:plants" force="true" />
@@ -1997,8 +1997,8 @@
 					<show id="bcpg:productHierarchy1" />
 					<show id="bcpg:productHierarchy2" />
 					<show id="bcpg:legalName" />
-					<show id="bcpg:productComments" />
 					<show id="cm:description" force="true" />
+					<show id="bcpg:productComments" />					
 					<show id="bcpg:entityTplRef" force="true" />
 					<show id="bcpg:productState" />
 					<show id="bcpg:productUnit" />
@@ -2264,9 +2264,9 @@
 					<show id="bcpg:productHierarchy1" />
 					<show id="bcpg:productHierarchy2" />
 					<show id="bcpg:legalName" />
-					<show id="bcpg:productComments" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:packagingDescription" force="true" />
+					<show id="bcpg:productComments" />										
 					<show id="bcpg:code" />
 					<show id="bcpg:productState" />
 					<show id="bcpg:erpCode" force="true" />
@@ -2506,9 +2506,9 @@
 					<show id="cm:name" />
 					<show id="cm:title" force="true" />
 					<show id="bcpg:legalName" />
-					<show id="bcpg:productComments" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:packagingDescription" force="true" />
+					<show id="bcpg:productComments" />										
 					<show id="bcpg:eanCode" />
 					<show id="bcpg:supplierPlants" force="true"/>
 					<!-- Consumer -->
@@ -2710,9 +2710,9 @@
 					<show id="bcpg:productHierarchy1" />
 					<show id="bcpg:productHierarchy2" />
 					<show id="bcpg:legalName" />
-					<show id="bcpg:productComments" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:packagingDescription" force="true" />
+					<show id="bcpg:productComments" />										
 					<show id="bcpg:code" force="true" />
 					<show id="bcpg:entityTplRef" force="true" />
 					<show id="bcpg:productState" />
@@ -3024,9 +3024,9 @@
 					<show id="bcpg:productHierarchy1" />
 					<show id="bcpg:productHierarchy2" />
 					<show id="bcpg:legalName" />
-					<show id="bcpg:productComments" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:packagingDescription" force="true" />
+					<show id="bcpg:productComments" />										
 					<show id="bcpg:code" />
 					<show id="bcpg:productState" />
 					<show id="bcpg:erpCode" force="true" />
@@ -3346,9 +3346,9 @@
 					<show id="bcpg:productHierarchy1" />
 					<show id="bcpg:productHierarchy2" />
 					<show id="bcpg:legalName" />
-					<show id="bcpg:productComments" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:packagingDescription" force="true" />
+					<show id="bcpg:productComments" />										
 					<show id="bcpg:entityTplRef" force="true" />
 					<show id="bcpg:productState" />
 					<show id="bcpg:code" force="true" />

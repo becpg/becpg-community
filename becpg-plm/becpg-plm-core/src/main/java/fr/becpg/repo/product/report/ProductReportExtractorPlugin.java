@@ -729,6 +729,12 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			if (attribute.equals(PLMModel.PROP_INSTRUCTION)) {
 				return true;
 			}
+			if (attribute.equals(PLMModel.PROP_PRODUCT_COMMENTS)) {
+				return true;
+			}
+			if (attribute.equals(ContentModel.PROP_DESCRIPTION)) {
+				return true;
+			}
 		}
 		return false;
 	}
