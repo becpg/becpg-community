@@ -67,6 +67,8 @@ public class ParentValuePlugin extends EntityListValuePlugin {
 
 		String className = (String) props.get(ListValueService.PROP_CLASS_NAME);
 		QName type = QName.createQName(className, namespaceService);
+		
+		String listName = (String) props.get(ListValueService.PROP_PATH);
 
 		String attributeName = (String) props.get(ListValueService.PROP_ATTRIBUTE_NAME);
 		QName attributeQName = QName.createQName(attributeName, namespaceService);
