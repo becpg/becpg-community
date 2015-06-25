@@ -208,6 +208,7 @@
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.MergeReqCtrlFormulationHandler" >
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
+					<property name="nodeService" ref="nodeService" />
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.CompareFormulationHandler" >
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
