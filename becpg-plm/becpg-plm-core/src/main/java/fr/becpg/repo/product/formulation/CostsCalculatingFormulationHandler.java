@@ -4,6 +4,7 @@
 package fr.becpg.repo.product.formulation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -223,7 +224,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			}
 		}
 
-		if (formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())) {
+		if (formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 
 			/*
 			 * Composition
@@ -231,22 +232,22 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			Map<NodeRef, List<NodeRef>> mandatoryCharacts1 = getMandatoryCharacts(formulatedProduct, PLMModel.TYPE_RAWMATERIAL);
 
 			Composite<CompoListDataItem> composite = CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList(
-					new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()));
+					Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())));
 			visitCompoListChildren(formulatedProduct, composite, costList, DEFAULT_LOSS_RATIO, netQty, mandatoryCharacts1);
 
 			addReqCtrlList(formulatedProduct.getCompoListView().getReqCtrlList(), mandatoryCharacts1);
 
 		}
 
-		if (formulatedProduct.hasPackagingListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())) {
+		if (formulatedProduct.hasPackagingListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 
 			/*
 			 * PackagingList
 			 */
 			Map<NodeRef, List<NodeRef>> mandatoryCharacts2 = getMandatoryCharacts(formulatedProduct, PLMModel.TYPE_PACKAGINGMATERIAL);
 
-			for (PackagingListDataItem packagingListDataItem : formulatedProduct.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE),
-					new VariantFilters<>())) {
+			for (PackagingListDataItem packagingListDataItem : formulatedProduct.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE),
+					new VariantFilters<>()))) {
 				Double qty = FormulationHelper.getQtyForCost(packagingListDataItem);
 
 				if (PLMModel.TYPE_PACKAGINGKIT.equals(nodeService.getType(packagingListDataItem.getProduct()))) {
@@ -262,13 +263,13 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			addReqCtrlList(formulatedProduct.getPackagingListView().getReqCtrlList(), mandatoryCharacts2);
 		}
 
-		if (formulatedProduct.hasProcessListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())) {
+		if (formulatedProduct.hasProcessListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 			/*
 			 * ProcessList
 			 */
 			Map<NodeRef, List<NodeRef>> mandatoryCharacts3 = getMandatoryCharacts(formulatedProduct, PLMModel.TYPE_RESOURCEPRODUCT);
-			for (ProcessListDataItem processListDataItem : formulatedProduct.getProcessList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE),
-					new VariantFilters<>())) {
+			for (ProcessListDataItem processListDataItem : formulatedProduct.getProcessList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE),
+					new VariantFilters<>()))) {
 
 				Double qty = FormulationHelper.getQty(formulatedProduct, processListDataItem);
 				if (processListDataItem.getResource() != null && qty != null) {
