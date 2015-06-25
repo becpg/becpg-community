@@ -67,6 +67,8 @@ public class ParentValuePlugin extends EntityListValuePlugin {
 
 		String className = (String) props.get(ListValueService.PROP_CLASS_NAME);
 		QName type = QName.createQName(className, namespaceService);
+		
+		String listName = (String) props.get(ListValueService.PROP_PATH);
 
 		String attributeName = (String) props.get(ListValueService.PROP_ATTRIBUTE_NAME);
 		QName attributeQName = QName.createQName(attributeName, namespaceService);
@@ -85,7 +87,12 @@ public class ParentValuePlugin extends EntityListValuePlugin {
 		
 		NodeRef listsContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
 		if (listsContainerNodeRef != null) {
-			NodeRef dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, type);
+			NodeRef dataListNodeRef;
+				if(listName == null){	
+					dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, type);
+				} else {
+					dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, listName);
+				}
 			if(dataListNodeRef != null){
 				if(dictionaryService.getProperty(attributeQName) != null){
 					return suggestFromProp(dataListNodeRef, itemId, type, attributeQName, query, queryFilter, pageNum, pageSize,props);

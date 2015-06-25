@@ -105,6 +105,10 @@ public class AutoCompleteWebScript extends DeclarativeWebScript {
 		String nodeRef = req.getParameter(PARAM_NODEREF);
 
 		String path = templateArgs.get(PARAM_PATH);
+		if(path==null){
+			path = req.getParameter(PARAM_PATH);
+		}
+		
 		String productType = templateArgs.get(PARAM_PRODUCT_TYPE);
 
 		Integer pageNum = null;

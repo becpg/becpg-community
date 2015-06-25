@@ -1755,7 +1755,7 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
                   // Build date string for Title
                   vDateRowStr = JSGantt.formatDateStr(vTaskStart, vDateDisplayFormat);
 
-                  vRightTable += this.renderMile(vcurrDivID,vTaskLeft,vTaskRight,vDayWidth,vColWidth,vDateRowStr, vCaptionStr,vTaskList[i]);
+                  vRightTable += this.renderMile(vcurrDivID,vTaskLeft,vTaskRight,vDayWidth,vColWidth,vDateRowStr, vCaptionStr,vTaskList[i], vFormat);
                 
 
                } else {
@@ -1783,6 +1783,10 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
  				                }  
  							  vDateRowStrCustom = JSGantt.formatDateStr(vTaskList[m].getStart(), vDateDisplayFormat);
  	                          
+ 							 if(vDayWidth < 6){
+ 							    vTaskLeftCustom = vTaskLeftCustom -  Math.ceil(6/vDayWidth);
+ 					          }
+ 							  
  	                          milesDiv  += '<div style="position:absolute;top:5px; left:'+
  	                              Math.ceil(vTaskLeftCustom * (vDayWidth) + 1)+'px; z-index:1; background-color:#' 
  	                               + vTaskList[m].getColor() + ';" title="'+vDateRowStrCustom+'" class="milestone" >&nbsp;</div>'; 										   
@@ -1790,14 +1794,14 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
 						}
       
                   
-                       vRightTable += milesDiv + this.renderGroup(vcurrDivID,vTaskLeft,vTaskRight,vDayWidth, vColWidth, vDateRowStr, vCaptionStr ,vTaskList[i] );
+                       vRightTable += milesDiv + this.renderGroup(vcurrDivID,vTaskLeft,vTaskRight,vDayWidth, vColWidth, vDateRowStr, vCaptionStr ,vTaskList[i], vFormat );
 
                   } else {
                      
                      // Draw Task Bar which has outer div with enclosed colored
                      // bar
                      // div, and opaque completion div
-                     vRightTable += this.renderTask(vcurrDivID,vTaskLeft,vTaskRight,vDayWidth, vColWidth, vDateRowStr, vCaptionStr,vTaskList[i] );
+                     vRightTable += this.renderTask(vcurrDivID,vTaskLeft,vTaskRight,vDayWidth, vColWidth, vDateRowStr, vCaptionStr,vTaskList[i], vFormat );
 
                   }
 
@@ -1841,7 +1845,11 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
       }; 
       
       
-      this.renderMile = function(vcurrDivID,vTaskLeft,vTaskRight,vDayWidth,vColWidth,vDateRowStr,vCaptionStr,vTask){
+      this.renderMile = function(vcurrDivID,vTaskLeft,vTaskRight,vDayWidth,vColWidth,vDateRowStr,vCaptionStr,vTask, vFormat){
+          if(vDayWidth < 6){
+              vTaskLeft = vTaskLeft -  Math.ceil(6/vDayWidth);
+          }
+          
           return '<div id="bardiv_' + vcurrDivID + '" style="position:absolute; top:3px; left:' + Math
           .ceil(vTaskLeft * (vDayWidth) + 1)  + 'px; height: 16px; width:266px; overflow:hidden;">' + '  <div id="taskbar_' + vcurrDivID + '" title="'+vDateRowStr 
           + '"  class="milestone ' + (vTask.getCompVal() < 100 ? "" : "completed") + '" style="background-color:#' + vTask.getColor() + ';">&nbsp;</div>'
@@ -1849,7 +1857,7 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
          
       };
       
-      this.renderTask = function(vcurrDivID,vTaskLeft,vTaskRight,vDayWidth,vColWidth, vDateRowStr,vCaptionStr,vTask){
+      this.renderTask = function(vcurrDivID,vTaskLeft,vTaskRight,vDayWidth,vColWidth, vDateRowStr,vCaptionStr,vTask, vFormat){
          return  '<div id="bardiv_' + vcurrDivID + '" style="position:absolute; top:4px; left:' 
           + Math.ceil(vTaskLeft * (vDayWidth) - 1) + 'px; height:18px; width:' 
           + Math.ceil((vTaskRight) * (vDayWidth) - 1) + 'px">' + '<div id="taskbar_' + vcurrDivID + '" title="' + vDateRowStr 
@@ -1860,7 +1868,7 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
          
       };
       
-      this.renderGroup = function(vcurrDivID,vTaskLeft,vTaskRight,vDayWidth,vColWidth, vDateRowStr,vCaptionStr ,vTask){
+      this.renderGroup = function(vcurrDivID,vTaskLeft,vTaskRight,vDayWidth,vColWidth, vDateRowStr,vCaptionStr ,vTask, vFormat){
           return '<div id="bardiv_' + vcurrDivID + '" style="position:absolute; top:8px; left:' 
           + Math.ceil(vTaskLeft * (vDayWidth) - 1) + 'px; height: 7px; width:' 
           + Math.ceil((vTaskRight) * (vDayWidth) - 1) + 'px">' + '<div id="taskbar_' + vcurrDivID + '" title="' + vDateRowStr + '" class="ggtask" style="width:' 
