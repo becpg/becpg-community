@@ -27,6 +27,14 @@
     * YUI Library aliases
     */
    var Dom = YAHOO.util.Dom, Bubbling = YAHOO.Bubbling,Event = YAHOO.util.Event;
+   
+   /**
+    * Alfresco Slingshot aliases
+    */
+   var $html = Alfresco.util.encodeHTML,
+      $combine = Alfresco.util.combinePaths,
+      $siteURL = Alfresco.util.siteURL;
+
 
    /**
     * EntityDataListToolbar constructor.
