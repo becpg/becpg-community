@@ -70,7 +70,7 @@ var g = null; // uggly gantt var
 
         Bubbling.on("viewModeChange", this.onViewModeChange, this);
         Bubbling.on("dirtyDataTable", function(){
-             YAHOO.Bubbling.fire("refreshDataGrids", {updateOnly : true});
+            YAHOO.Bubbling.fire("refreshDataGrids", {updateOnly : true});
         }, this);
 
         JSGantt.register(this);
@@ -148,12 +148,14 @@ var g = null; // uggly gantt var
                 Dom.addClass(this.id + "-itemSelect-div", "hidden");
                 Dom.addClass(this.id + "-grid", "hidden");
                 Dom.removeClass(this.id + "-gantt", "hidden");
+                Dom.removeClass(this.id + "-legend", "hidden");
                 this.cache = [];
                 g.Draw();
                 g.DrawDependencies();
 
             }  else {
                 Dom.addClass(this.id + "-gantt", "hidden");
+                Dom.addClass(this.id + "-legend", "hidden");
                 Dom.removeClass(this.id + "-grid", "hidden");
                 Dom.removeClass(this.id + "-datagridBarBottom", "hidden");
                 Dom.removeClass(this.id + "-itemSelect-div", "hidden");
