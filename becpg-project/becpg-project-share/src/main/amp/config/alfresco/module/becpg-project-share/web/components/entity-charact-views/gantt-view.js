@@ -70,7 +70,7 @@ var g = null; // uggly gantt var
 
         Bubbling.on("viewModeChange", this.onViewModeChange, this);
         Bubbling.on("dirtyDataTable", function(){
-             YAHOO.Bubbling.fire("refreshDataGrids", {updateOnly : true});
+            YAHOO.Bubbling.fire("refreshDataGrids", {updateOnly : true});
         }, this);
 
         JSGantt.register(this);
