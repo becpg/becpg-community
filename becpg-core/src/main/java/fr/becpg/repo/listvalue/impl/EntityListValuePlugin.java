@@ -74,7 +74,6 @@ public class EntityListValuePlugin extends AbstractBaseListValuePlugin {
 	/** The Constant SOURCE_TYPE_TARGET_ASSOC. */
 	private static final String SOURCE_TYPE_TARGET_ASSOC = "targetassoc";
 
-
 	/** The Constant SOURCE_TYPE_LINKED_VALUE. */
 	private static final String SOURCE_TYPE_LINKED_VALUE = "linkedvalue";
 	
