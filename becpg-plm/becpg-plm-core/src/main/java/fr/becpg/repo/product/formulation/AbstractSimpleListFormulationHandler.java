@@ -18,6 +18,7 @@
 package fr.becpg.repo.product.formulation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -134,11 +135,11 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		
 		Double netQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
 		
-		if(formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())){
+		if(formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))){
 			
 			Map<NodeRef, List<NodeRef>> mandatoryCharacts = getMandatoryCharacts(formulatedProduct, PLMModel.TYPE_RAWMATERIAL);
 			
-			for(CompoListDataItem compoItem : formulatedProduct.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())){
+			for(CompoListDataItem compoItem : formulatedProduct.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))){
 				Double weight = FormulationHelper.getQtyInKg(compoItem);
 				Double vol = FormulationHelper.getNetVolume(compoItem, nodeService);
 				

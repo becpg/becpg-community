@@ -70,31 +70,14 @@
 }
 
 
-.formulation-view  .datagrid-bar .new-row span.first-child {
-	background: url(../images/add-row-16.png) no-repeat 12px 4px;
-	padding-left: 24px;
-}
-
-.formulation-view  .datagrid-bar  .onActionBulkEdit {
-	background: transparent url(../images/edit-inline-16.png) no-repeat 12px
-		4px;
-	padding-left: 22px;
-}
-
-.formulation-view  .datagrid-bar  .onActionSelectColor  {
-	background-image:  url("../../components/images/select-color-16.png") no-repeat 12px
-		4px;
-	padding-left: 22px;
-}
-
-.formulation-view  .datagrid-bar  .onActionSimulate,.datagrid .onActionSimulate a
+.datalist-toolbar .onActionSimulate, .datagrid .onActionSimulate a
 	{
-	background: transparent url(../documentlibrary/actions/folder-copy-to-16.png)
+	background: transparent url(../../components/documentlibrary/actions/folder-copy-to-16.png)
 		no-repeat 12px 4px;
 	padding-left: 22px;
 }
 
-.datagrid-bar .onAddLabelingAspect,.datagrid .onAddLabelingAspect a {
+.datalist-toolbar .onAddLabelingAspect,.datagrid .onAddLabelingAspect a {
 	background: transparent url(../images/tag-16.png) no-repeat 12px 4px;
 	padding-left: 22px;
 }
@@ -104,26 +87,6 @@
 	padding-left: 14px;
 }
 
-/* Constraints List */
-
-/* .formulation-bottom-panel  {
-	padding: 5px;
-	margin-top: 5px; 
-	background-color: rgb(238, 238, 238);
-	border: 1px solid #CCCCCC;
-}
-
-.formulation-bottom-panel .yui-u {
-	padding:0px;
-	margin:0px;
-	
-}
-
-.formulation-bottom-panel   .dashlet .title,
-.formulation-bottom-panel   .dashlet  {
-    background-color: white;
-    border: none;
-} */
 
 .dynamicCharactList .dashlet {
 	width:100%;

@@ -85,7 +85,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 
 		// no compo => no formulation
-		if (!formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())) {
+		if (!formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 			logger.debug("no compo => no formulation");
 			return true;
 		}

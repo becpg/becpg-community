@@ -5,6 +5,7 @@ package fr.becpg.repo.product.data;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -610,9 +611,9 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		return compoListView;
 	}
 
-	@SafeVarargs 
-	private final <T> List<T>  filterList(List<T> list,DataListFilter<ProductData, T>...filters ) {
-		if (filters != null) {
+	
+	private <T> List<T>  filterList(List<T> list,List<DataListFilter<ProductData, T>> filters ) {
+		if (filters != null && !filters.isEmpty()) {
 			Stream<T> stream = list.stream();
 			for (DataListFilter<ProductData, T> filter : filters) {
 				stream = stream.filter(filter.createPredicate(this));
@@ -622,16 +623,30 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		return list;
 	}
 	
-	@SafeVarargs 
-	public final List<CompoListDataItem> getCompoList(DataListFilter<ProductData, CompoListDataItem>... filters) {
+	public List<CompoListDataItem> getCompoList(){
+		return getCompoList(Collections.emptyList());
+	}
+	
+	public List<CompoListDataItem> getCompoList(DataListFilter<ProductData, CompoListDataItem> filter) {
+		return getCompoList(Collections.singletonList(filter));
+	}
+	
+	public List<CompoListDataItem> getCompoList(List<DataListFilter<ProductData, CompoListDataItem>> filters) {
 		if (compoListView != null && compoListView.getCompoList() != null) {
 			return filterList(compoListView.getCompoList(),filters);
 		}
 		return null;
 	}
 
-	@SafeVarargs 
-	public final boolean hasCompoListEl( DataListFilter<ProductData, CompoListDataItem>... filters) {
+	public boolean hasCompoListEl(){
+		return hasCompoListEl(Collections.emptyList());
+	}
+	
+	public boolean hasCompoListEl( DataListFilter<ProductData, CompoListDataItem> filter) {
+		return hasCompoListEl(Collections.singletonList(filter));
+	}
+	
+	public boolean hasCompoListEl( List<DataListFilter<ProductData, CompoListDataItem>> filters) {
 		return compoListView != null && compoListView.getCompoList() != null && !getCompoList(filters).isEmpty();
 	}
 
@@ -645,16 +660,33 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		return processListView;
 	}
 
-	@SafeVarargs 
-	public final  List<ProcessListDataItem> getProcessList(DataListFilter<ProductData,ProcessListDataItem>... filters) {
+	
+	public  List<ProcessListDataItem> getProcessList() {
+		return getProcessList(Collections.emptyList());
+	}
+	
+	public  List<ProcessListDataItem> getProcessList(DataListFilter<ProductData,ProcessListDataItem> filter) {
+		return getProcessList(Collections.singletonList(filter));
+	}
+	
+	
+	public  List<ProcessListDataItem> getProcessList(List<DataListFilter<ProductData,ProcessListDataItem>> filters) {
 		if (processListView != null && processListView.getProcessList() != null) {
 			return filterList(processListView.getProcessList(),filters);
 		}
 		return null;
 	}
 	
-	@SafeVarargs 
-	public  final boolean hasProcessListEl(DataListFilter<ProductData,ProcessListDataItem>... filters) {
+	
+	public boolean hasProcessListEl(){
+		return hasCompoListEl(Collections.emptyList());
+	}
+	
+	public boolean hasProcessListEl( DataListFilter<ProductData, ProcessListDataItem> filter) {
+		return hasProcessListEl(Collections.singletonList(filter));
+	}
+	
+	public  boolean hasProcessListEl(List<DataListFilter<ProductData,ProcessListDataItem>> filters) {
 		return processListView != null && processListView.getProcessList() != null && !getProcessList(filters).isEmpty();
 	}
 
@@ -668,16 +700,31 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		return packagingListView;
 	}
 
-	@SafeVarargs 
-	public final  List<PackagingListDataItem> getPackagingList(DataListFilter<ProductData,PackagingListDataItem>... filters) {
+	public  List<PackagingListDataItem> getPackagingList() {
+		return getPackagingList(Collections.emptyList());
+	}
+	
+	public  List<PackagingListDataItem> getPackagingList(DataListFilter<ProductData,PackagingListDataItem> filter) {
+		return getPackagingList(Collections.singletonList(filter));
+	}
+	
+	
+	public List<PackagingListDataItem> getPackagingList(List<DataListFilter<ProductData,PackagingListDataItem>> filters) {
 		if (packagingListView != null && packagingListView.getPackagingList() != null) {
 			return filterList(packagingListView.getPackagingList(),filters);
 		}
 		return null;
 	}
 
-	@SafeVarargs
-	public final boolean hasPackagingListEl(DataListFilter<ProductData,PackagingListDataItem>... filters) {
+	public boolean hasPackagingListEl(){
+		return hasCompoListEl(Collections.emptyList());
+	}
+	
+	public boolean hasPackagingListEl( DataListFilter<ProductData, PackagingListDataItem> filter) {
+		return hasPackagingListEl(Collections.singletonList(filter));
+	}
+	
+	public boolean hasPackagingListEl(List<DataListFilter<ProductData,PackagingListDataItem>> filters) {
 		return packagingListView != null && packagingListView.getPackagingList() != null && !getPackagingList(filters).isEmpty();
 	}
 

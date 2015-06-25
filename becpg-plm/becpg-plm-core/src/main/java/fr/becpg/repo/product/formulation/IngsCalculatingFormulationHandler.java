@@ -64,7 +64,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		logger.debug("Calculate ingredient list");
 
 		// no compo, nor ingList on formulated product => no formulation
-		if (!formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())
+		if (!formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))
 				|| (!alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_INGLIST) && !alfrescoRepository.hasDataList(formulatedProduct,
 						PLMModel.TYPE_INGLABELINGLIST))) {
 			logger.debug("no compo => no formulation");
@@ -113,7 +113,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	 */
 	private void calculateIL(ProductData formulatedProduct) throws FormulateException {
 
-		List<CompoListDataItem> compoList = formulatedProduct.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>());
+		List<CompoListDataItem> compoList = formulatedProduct.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()));
 
 		Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap = new HashMap<>();
 		Map<String, Double> totalQtyIngMap = new HashMap<>();
