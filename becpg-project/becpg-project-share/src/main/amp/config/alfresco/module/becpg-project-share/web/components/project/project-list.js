@@ -309,6 +309,14 @@ var g; // gantt var
                                                 }
 
                                             }
+                                            
+                                            var pParent = projectId;
+
+                                            if (task["itemData"]["prop_bcpg_parentLevel"].value != null)
+                                            {
+                                                pParent = task["itemData"]["prop_bcpg_parentLevel"].value;
+                                            }
+                                            var pGroup = !task["itemData"]["prop_pjt_tlIsGroup"].value ? 0 : 1;
 
                                             var pParent = projectId;
 

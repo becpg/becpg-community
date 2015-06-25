@@ -24,6 +24,8 @@
                                         {
                                             var data = response.json.legends;
 
+                                            var html = "";
+                                            
                                             for ( var i in data)
                                             {
                                                 var taskLegend =
@@ -34,7 +36,12 @@
                                                 };
 
                                                 this.taskLegends.push(taskLegend);
+                                                
+                                                html += '<span class="task-legend" style="background-color:#' + taskLegend.color + '" ></span><span>' + taskLegend.label +'</span>&nbsp;';
+                                                
                                             }
+                                            
+                                            Dom.get(this.id + "-legend").innerHTML = html;
 
                                             var fnDrawGantt = function PL_onReady_fnDrawGantt()
                                             {
@@ -43,7 +50,7 @@
                                                 if (recordSet.getLength() != 0)
                                                 {
                                                     g = new JSGantt.GanttChart('g', Dom.get(this.id + "-gantt"), g != null ? g
-                                                            .getFormat() : null);
+                                                            .getFormat() : 'day');
                                                     g.setDateInputFormat("mediumDate");
                                                     g.setDateDisplayFormat("mediumDate");
                                                     g.setCaptionType('Resource');

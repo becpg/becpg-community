@@ -13,6 +13,12 @@
 
 
 /* Data Table */
+
+div.legend.project-list  {
+	float:right;
+	margin-top:10px;
+}
+
 .project-list .projects table {
 	border: medium none;
 	width: 100%;
