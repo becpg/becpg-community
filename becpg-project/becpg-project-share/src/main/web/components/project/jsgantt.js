@@ -1776,6 +1776,10 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
  				                }  
  							  vDateRowStrCustom = JSGantt.formatDateStr(vTaskList[m].getStart(), vDateDisplayFormat);
  	                          
+ 							 if(vDayWidth < 6){
+ 							    vTaskLeftCustom = vTaskLeftCustom -  Math.ceil(6/vDayWidth);
+ 					          }
+ 							  
  	                          milesDiv  += '<div style="position:absolute;top:5px; left:'+
  	                              Math.ceil(vTaskLeftCustom * (vDayWidth) + 1)+'px; z-index:1; background-color:#' 
  	                               + vTaskList[m].getColor() + ';" title="'+vDateRowStrCustom+'" class="milestone" >&nbsp;</div>'; 										   
