@@ -109,20 +109,10 @@
    padding-left: 0px;
 }
 
-/* .datalists li a
+.datalists li a
 {
-   background: url(../images/list-16.png) no-repeat 4px 0;
    display: block;
-   padding: 0 0 0 24px;
 }
-
-.datalists li a.Valid
-{
-	background: url(../images/states/valid-10.png), url(../images/list-16.png) ;
-	background-repeat:  no-repeat;
-	background-position: 7px 3px, 4px 0;
-	padding-left: 24px;
-} */
 
 .datalists li a span
 {

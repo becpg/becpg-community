@@ -628,12 +628,7 @@
 														Alfresco.util.PopupManager.displayMessage({
 															text : this.msg("message.new-list.success", listTitle)
 														});
-														// Activity post
-														Alfresco.Share.postActivity(this.options.siteId, "org.alfresco.datalists.list-created",
-																listTitle + " (" + listTypeTitle + ")", "data-lists?list={cm:name}", {
-																	appTool : "datalists",
-																	nodeRef : nodeRef.toString()
-																});
+														
 													},
 													scope : this
 												},
@@ -646,7 +641,91 @@
 													scope : this
 												}
 											}).show();
-						}
+						},
+						 /**
+					       * Delete List event handler
+					       *
+					       * @method onDeleteList
+					       * @param listName {string} Name of the list to edit
+					       */
+					     onDeleteList: function DataLists_onDeleteList(p_listName)
+					      {
+					         var datalist = this.dataLists[p_listName],
+					            me = this;
+
+					         var fnActionDeleteConfirm = function DataLists_onDeleteList_confirm(p_datalist)
+					         {
+					            var nodeRef = new Alfresco.util.NodeRef(p_datalist.nodeRef),
+					               listTypeTitle = this.getListTypeTitle(p_datalist.itemType);
+					            
+					            Alfresco.util.Ajax.request(
+					            {
+					               method: Alfresco.util.Ajax.DELETE,
+					               url: Alfresco.constants.PROXY_URI + "slingshot/datalists/list/node/" + nodeRef.uri,
+					               successCallback:
+					               {
+					                  fn: function DataLists_onDeleteList_confirm_success(response, p_obj)
+					                  {
+					                  
+					                        // If we deleted the current list, then redirect to "data-lists"
+					                        if (p_obj.name == this.options.listId)
+					                        {
+					                           window.location = "entity-data-lists?nodeRef="
+                                                    + $html(me.options.entityNodeRef);
+					                           return;
+					                        }
+
+					                        Alfresco.util.PopupManager.displayMessage(
+					                        {
+					                           text: this.msg("message.delete-list.success")
+					                        });
+					                     
+					                        delete this.dataLists[p_datalist.name];
+					                        this.dataListsLength--;
+					                        this.renderDataLists();
+					                  },
+					                  obj: p_datalist,
+					                  scope: this
+					                    
+					               },
+					               failureCallback:
+					               {
+					                  fn: function DataLists_onDeleteList_confirm_failure(response)
+					                  {
+					                     Alfresco.util.PopupManager.displayMessage(
+					                     {
+					                        text: this.msg("message.delete-list.failure")
+					                     });
+					                  },
+					                  scope: this
+					               }
+					            });
+					         };
+
+					         Alfresco.util.PopupManager.displayPrompt(
+					         {
+					            title: this.msg("message.delete-list.title"),
+					            text: this.msg("message.delete-list.description", $html(datalist.title)),
+					            buttons: [
+					            {
+					               text: this.msg("button.delete"),
+					               handler: function DataLists_onDeleteList_delete()
+					               {
+					                  this.destroy();
+					                  fnActionDeleteConfirm.call(me, datalist);
+					               }
+					            },
+					            {
+					               text: this.msg("button.cancel"),
+					               handler: function DataLists_onDeleteList_cancel()
+					               {
+					                  this.destroy();
+					               },
+					               isDefault: true
+					            }]
+					         });
+					      }
+						
 
 					});
 	
