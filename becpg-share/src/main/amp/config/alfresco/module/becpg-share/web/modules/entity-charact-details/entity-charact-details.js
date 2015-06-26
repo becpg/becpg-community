@@ -101,8 +101,7 @@
 		 * @returns {String}
 		 */
 	   getPreference : function EntityCharactDetails_getPreference(suffix) {
-		   return PREFERENCES_DETAILS_VIEW + (this.options.itemType ? "." + this.options.itemType : "") + (suffix ? "." + suffix : "");
-
+		   return PREFERENCES_DETAILS_VIEW + (this.options.itemType ? "." + this.options.itemType.replace(":","_") : "") + (suffix ? "." + suffix : "");
 	   },
 
 	   /**
