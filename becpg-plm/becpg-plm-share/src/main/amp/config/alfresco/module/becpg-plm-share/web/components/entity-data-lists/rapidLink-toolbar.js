@@ -207,7 +207,9 @@
                               onSuccess : {
                                  fn : function FormulationView_onActionEntityImport_success(response) {
                                     if (response.json) {
-                                       this.addToDataList(response.json[0], "message.rapid-link.import.success");
+                                       for(var i in response.json) {
+                                           this.addToDataList(response.json[i], "message.rapid-link.import.success");
+                                       }
                                     }
                                  },
                                  scope : this
