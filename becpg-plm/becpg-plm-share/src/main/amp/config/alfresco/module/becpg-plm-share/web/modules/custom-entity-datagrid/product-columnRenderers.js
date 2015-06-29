@@ -254,7 +254,7 @@ if (beCPG.module.EntityDataGridRenderers) {
       propertyName : ["bcpg:nutListMini", "bcpg:nutListMaxi", "bcpg:nutListValuePerServing", "bcpg:nutListGDAPerc"],
       renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
       	if(data.value != null){
-      		return Alfresco.util.encodeHTML(beCPG.util.sigFigs(data.value,3).toLocaleString());
+      		return Alfresco.util.encodeHTML(beCPG.util.sigFigs(data.value,2).toLocaleString());
       	}
       	
       	return "";
