@@ -129,6 +129,7 @@
 
                                                 },
                                                 onFinished : function (event, currentIndex) { 
+                                                    var isValid = false;
                                                     
                                                     var step = me.options.wizardStruct[currentIndex];
                                                     if (step != null)
@@ -139,12 +140,19 @@
                                                             {
                                                                 Dom.get(me.id + "-step-" + step.id + "-form-submit")
                                                                         .click();
+                                                                isValid = step.form
+                                                                .validate(Alfresco.forms.Form.NOTIFICATION_LEVEL_CONTAINER);
+                                                            } else {
+                                                                isValid = true;
                                                             }
                                                         }
                                                     }
                                                     
-                                                    
-                                                    me._navigateForward(me.options.wizardStruct[0].nodeRef);
+                                                    if(isValid){
+                                                        me._navigateForward(me.options.wizardStruct[0].nodeRef);
+                                                    } 
+                                                   return isValid;
+                                                   
                                                 },
                                                 onCanceled : function (event, currentIndex) { 
                                                     //If first step is a creation delete project
