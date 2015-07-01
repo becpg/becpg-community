@@ -67,7 +67,7 @@ public class EntityListValuePlugin implements ListValuePlugin {
 	private static final String SOURCE_TYPE_LINKED_VALUE = "linkedvalue";
 	private static final String SOURCE_TYPE_LINKED_VALUE_ALL = "allLinkedvalue";
 	private static final String SOURCE_TYPE_LIST_VALUE = "listvalue";
-	private static final String searchTemplate = "%(cm:name cm:title bcpg:erpCode bcpg:code bcpg:eanCode cm:description  TAG)";
+	protected static final String searchTemplate = "%(cm:name bcpg:erpCode bcpg:code)";
 
 	protected static final String SUFFIX_ALL = "*";
 	protected static final String PARAM_VALUES_SEPARATOR = ",";
@@ -86,7 +86,7 @@ public class EntityListValuePlugin implements ListValuePlugin {
 	@Autowired
 	private HierarchyService hierarchyService;
 	@Autowired
-	private TargetAssocValueExtractor targetAssocValueExtractor;
+	protected TargetAssocValueExtractor targetAssocValueExtractor;
 
 	private final Analyzer luceneAnaLyzer = null;
 
@@ -102,15 +102,15 @@ public class EntityListValuePlugin implements ListValuePlugin {
 		String[] arrClassNames = classNames != null ? classNames.split(PARAM_VALUES_SEPARATOR) : null;
 
 		switch (sourceType) {
-			case SOURCE_TYPE_TARGET_ASSOC:
-				QName type = QName.createQName(className, namespaceService);
-				return suggestTargetAssoc(type, query, pageNum, pageSize, arrClassNames, props);
-			case SOURCE_TYPE_LINKED_VALUE:
-				return suggestLinkedValue(path, query, pageNum, pageSize, props, false);
-			case SOURCE_TYPE_LINKED_VALUE_ALL:
-				return suggestLinkedValue(path, query, pageNum, pageSize, props, true);
-			case SOURCE_TYPE_LIST_VALUE:
-				return suggestListValue(path, query, pageNum, pageSize);
+		case SOURCE_TYPE_TARGET_ASSOC:
+			QName type = QName.createQName(className, namespaceService);
+			return suggestTargetAssoc(type, query, pageNum, pageSize, arrClassNames, props);
+		case SOURCE_TYPE_LINKED_VALUE:
+			return suggestLinkedValue(path, query, pageNum, pageSize, props, false);
+		case SOURCE_TYPE_LINKED_VALUE_ALL:
+			return suggestLinkedValue(path, query, pageNum, pageSize, props, true);
+		case SOURCE_TYPE_LIST_VALUE:
+			return suggestListValue(path, query, pageNum, pageSize);
 		}
 
 		return null;
@@ -130,8 +130,7 @@ public class EntityListValuePlugin implements ListValuePlugin {
 	 * @return the map
 	 */
 	@SuppressWarnings("unchecked")
-	public ListValuePage suggestTargetAssoc(QName type, String query, Integer pageNum, Integer pageSize, String[] arrClassNames,
-			Map<String, Serializable> props) {
+	public ListValuePage suggestTargetAssoc(QName type, String query, Integer pageNum, Integer pageSize, String[] arrClassNames, Map<String, Serializable> props) {
 
 		if (logger.isDebugEnabled()) {
 			if (arrClassNames != null) {
@@ -139,26 +138,7 @@ public class EntityListValuePlugin implements ListValuePlugin {
 			}
 		}
 
-		BeCPGQueryBuilder queryBuilder = 
-				BeCPGQueryBuilder.createQuery()
-					.ofType(type)
-					.excludeDefaults()
-					.inSearchTemplate(searchTemplate)
-					.andOperator()
-					.ftsLanguage();
-
-		// Is code or name search
-		// if (isQueryCode(query, type, arrClassNames)) {
-		// String codeQuery = prepareQueryCode(query, type, arrClassNames);
-		//
-		// //TODO erpCOde and eanCode not in COre
-		// queryBuilder.andFTSQuery(String.format("@bcpg\\:code:%s OR @bcpg\\:erpCode:%s OR @bcpg\\:eanCode:%s",
-		// codeQuery,codeQuery,codeQuery));
-		//
-		//
-		// } else if (!isAllQuery(query)) {
-		// queryBuilder.andPropQuery(ContentModel.PROP_NAME, query);
-		// }
+		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(type).excludeDefaults().inSearchTemplate(searchTemplate).andOperator().ftsLanguage();
 
 		if (!isAllQuery(query)) {
 			if (query.length() > 2) {
@@ -170,10 +150,6 @@ public class EntityListValuePlugin implements ListValuePlugin {
 		// filter by classNames
 		filterByClass(queryBuilder, arrClassNames);
 
-		// filter product state
-		// queryPath += String.format(RepoConsts.QUERY_FILTER_PRODUCT_STATE,
-		// SystemState.Archived, SystemState.Refused);
-
 		List<NodeRef> ret = null;
 
 		if (props != null) {
@@ -182,6 +158,10 @@ public class EntityListValuePlugin implements ListValuePlugin {
 			String excludeClassNames = (String) props.get(ListValueService.PROP_EXCLUDE_CLASS_NAMES);
 			String[] arrExcludeClassNames = excludeClassNames != null ? excludeClassNames.split(PARAM_VALUES_SEPARATOR) : null;
 			excludeByClass(queryBuilder, arrExcludeClassNames);
+
+			String excluseProps = (String) props.get(ListValueService.PROP_EXCLUDE_PROPS);
+			String[] arrExcluseProps = excluseProps != null ? excluseProps.split(PARAM_VALUES_SEPARATOR) : null;
+			excludeByProp(queryBuilder, arrExcluseProps);
 
 			Map<String, String> extras = (HashMap<String, String>) props.get(ListValueService.EXTRA_PARAM);
 			if (extras != null) {
@@ -235,8 +215,7 @@ public class EntityListValuePlugin implements ListValuePlugin {
 	 * @param b
 	 * @return the map
 	 */
-	private ListValuePage suggestLinkedValue(String path, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props,
-			boolean all) {
+	private ListValuePage suggestLinkedValue(String path, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props, boolean all) {
 
 		NodeRef itemIdNodeRef = null;
 
@@ -319,9 +298,7 @@ public class EntityListValuePlugin implements ListValuePlugin {
 	protected String prepareQuery(String query) {
 
 		logger.debug("Query before prepare:" + query);
-		if (query != null
-				&& !(query.endsWith(SUFFIX_ALL) || query.endsWith(SUFFIX_SPACE) || query.endsWith(SUFFIX_DOUBLE_QUOTE) || query
-						.endsWith(SUFFIX_SIMPLE_QUOTE))) {
+		if (query != null && !(query.endsWith(SUFFIX_ALL) || query.endsWith(SUFFIX_SPACE) || query.endsWith(SUFFIX_DOUBLE_QUOTE) || query.endsWith(SUFFIX_SIMPLE_QUOTE))) {
 			// Query with wildcard are not getting analyzed by stemmers
 			// so do it manually
 			Analyzer analyzer = getTextAnalyzer();
@@ -389,23 +366,46 @@ public class EntityListValuePlugin implements ListValuePlugin {
 		return luceneAnaLyzer;
 	}
 
-	private BeCPGQueryBuilder filterByClass(BeCPGQueryBuilder queryBuilder, String[] arrClassNames) {
+	protected BeCPGQueryBuilder filterByClass(BeCPGQueryBuilder queryBuilder, String[] arrClassNames) {
 
 		if (arrClassNames != null) {
 
 			for (String className : arrClassNames) {
-
-				QName classQName = QName.createQName(className, namespaceService);
+				QName classQName;
+				Integer boost = null;
+				if(className.contains("^")){
+					String[] splitted = className.split("\\^");
+					classQName = QName.createQName(splitted[0], namespaceService);
+					boost = Integer.valueOf(splitted[1]);
+				} else {
+				  classQName = QName.createQName(className, namespaceService);
+				}
 				ClassDefinition classDef = dictionaryService.getClass(classQName);
 				if (classDef.isAspect()) {
-
 					queryBuilder.withAspect(classQName);
 				} else {
-					queryBuilder.inType(classQName);
+					if(boost!=null){
+					  queryBuilder.inBoostedType(classQName,boost);
+					} else {
+					   queryBuilder.inType(classQName);
+					}
 				}
 			}
 		}
 
+		return queryBuilder;
+	}
+
+	private BeCPGQueryBuilder excludeByProp(BeCPGQueryBuilder queryBuilder, String[] arrExcluseProps) {
+		if (arrExcluseProps != null) {
+			for (String excludeProp : arrExcluseProps) {
+				if (excludeProp.contains("|")) {
+					String[] splitted = excludeProp.split("\\|");
+					QName propName = QName.createQName(splitted[0], namespaceService);
+					queryBuilder.excludeProp(propName, splitted[1]);
+				}
+			}
+		}
 		return queryBuilder;
 	}
 
@@ -515,8 +515,7 @@ public class EntityListValuePlugin implements ListValuePlugin {
 	 * @param pageSize
 	 * @return
 	 */
-	protected ListValuePage suggestDatalistItem(NodeRef entityNodeRef, QName datalistType, QName propertyQName, String query, Integer pageNum,
-			Integer pageSize) {
+	protected ListValuePage suggestDatalistItem(NodeRef entityNodeRef, QName datalistType, QName propertyQName, String query, Integer pageNum, Integer pageSize) {
 
 		List<NodeRef> ret = BeCPGQueryBuilder.createQuery().ofType(datalistType).andPropQuery(propertyQName, prepareQuery(query))
 				.inPath(nodeService.getPath(entityNodeRef).toPrefixString(namespaceService) + "/*/*")

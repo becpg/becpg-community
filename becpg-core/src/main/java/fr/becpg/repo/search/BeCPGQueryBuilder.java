@@ -93,9 +93,6 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	private SearchService searchService;
 	@Autowired
 	private NamespaceService namespaceService;
-//	@Autowired
-//	@Qualifier("FileFolderService")
-//	private FileFolderService fileFolderService;
 
 	@Autowired
 	@Qualifier("fileFolderCannedQueryRegistry")
@@ -119,6 +116,8 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	private final Set<NodeRef> parentNodeRefs = new HashSet<>();
 	private QName type = null;
 	private final Set<QName> types = new HashSet<>();
+	private final Set<Pair<QName,Integer>> boostedTypes = new HashSet<>();
+	
 	private final Set<QName> aspects = new HashSet<>();
 	private String subPath = null;
 	private String path = null;
@@ -158,7 +157,6 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			builder.searchService = INSTANCE.searchService;
 			builder.namespaceService = INSTANCE.namespaceService;
 			builder.defaultSearchTemplate = INSTANCE.defaultSearchTemplate;
-	//		builder.fileFolderService = INSTANCE.fileFolderService;
 			builder.cannedQueryRegistry = INSTANCE.cannedQueryRegistry;
 			builder.nodeService = INSTANCE.nodeService;
 			builder.dictionaryService = INSTANCE.dictionaryService;
@@ -187,6 +185,13 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		types.add(typeQname);
 		return this;
 	}
+	
+	public BeCPGQueryBuilder inBoostedType(QName typeQname, Integer boostFactor) {
+		boostedTypes.add(new Pair<>(typeQname,boostFactor));
+		return this;
+	}
+	
+	
 
 	public BeCPGQueryBuilder withAspect(QName aspect) {
 		excludedAspects.remove(aspect);
@@ -573,13 +578,18 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			}
 		}
 
-		if (!types.isEmpty()) {
-			if (types.size() == 1) {
+		if (!types.isEmpty() || !boostedTypes.isEmpty()) {
+			if (types.size() == 1 && boostedTypes.isEmpty()) {
 				runnedQuery.append(mandatory(getCondType(types.iterator().next())));
+			} else if(boostedTypes.size() == 1 && types.isEmpty()){
+				runnedQuery.append(mandatory(boost(getCondType(boostedTypes.iterator().next().getFirst()),boostedTypes.iterator().next().getSecond())));
 			} else {
 				runnedQuery.append(mandatory(startGroup()));
 				for (QName tmpQName : types) {
 					runnedQuery.append(optional(getCondType(tmpQName)));
+				}
+				for (Pair<QName,Integer> typePair : boostedTypes) {
+					runnedQuery.append(optional(boost(getCondType(typePair.getFirst()),typePair.getSecond())));
 				}
 				runnedQuery.append(endGroup());
 			}

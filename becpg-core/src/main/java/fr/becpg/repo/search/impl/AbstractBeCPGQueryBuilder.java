@@ -130,6 +130,10 @@ public abstract class AbstractBeCPGQueryBuilder {
 	protected String optional(String condType) {
 		return " " + condType;
 	}
+	
+	protected String boost(String condType,Integer boostFactor) {
+		return condType+"^"+boostFactor;
+	}
 
 	protected String startGroup() {
 		return "(";

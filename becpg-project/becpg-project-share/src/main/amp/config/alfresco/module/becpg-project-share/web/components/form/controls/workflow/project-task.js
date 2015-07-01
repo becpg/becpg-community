@@ -186,6 +186,15 @@
 
                             ret = '<div class="delivrable delivrable-status-' + deliverable.state + '">';
                             ret += '<div class="delivrable-status delivrable-status-' + deliverable.state + '"></div>';
+                            
+                            /*
+                            ret += '<span class="node-' + deliverable.nodeRef + '|' + entityNodeRef + '"><a class="task-comments ' + COMMENT_EVENTCLASS + '" title="' + this
+                                    .msg("link.title.comment-task") + '" href="#" >';
+                            if (deliverable.commentCount)
+                            {
+                                ret += deliverable.commentCount;
+                            }*/
+                            
                             ret += '<div class="delivrable-container">';
 
                             if (url != null && url.length > 0 && url.indexOf("wizard") > 0)
@@ -238,13 +247,7 @@
                                     ret += '<span class="doc-url"><a title="' + this
                                             .msg("form.control.project-task.link.title.open-link") + '" href="' + url + '">' + '<img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/link-16.png" /></a></span>';
                                 }
-/*
-                                ret += '<span class="node-' + deliverable.nodeRef + '|' + entityNodeRef + '"><a class="task-comments ' + COMMENT_EVENTCLASS + '" title="' + this
-                                        .msg("link.title.comment-task") + '" href="#" >';
-                                if (deliverable.commentCount)
-                                {
-                                    ret += deliverable.commentCount;
-                                }*/
+
                                 else
                                 {
                                     ret += "&nbsp;";

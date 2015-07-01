@@ -53,6 +53,8 @@ public interface ListValueService {
 	String EXTRA_PARAM = "extra";
 
 	String PROP_FILTER = "filter";
+
+	String PROP_EXCLUDE_PROPS = "excludeProps";
 	
 	
 	ListValuePage suggestBySourceType(String sourceType, String query, Integer pageNum,
