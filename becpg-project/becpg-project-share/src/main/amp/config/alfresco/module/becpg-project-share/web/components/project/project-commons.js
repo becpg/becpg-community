@@ -77,6 +77,7 @@
          }).show();
 
       },
+    
       onActionCommentTask : function PL_onActionShowTask(className) {
          var nodes = className.replace("node-", "").split("|")
          , entityNodeRef =  nodes[1] != "#access_forbidden" ? nodes[1] : "";

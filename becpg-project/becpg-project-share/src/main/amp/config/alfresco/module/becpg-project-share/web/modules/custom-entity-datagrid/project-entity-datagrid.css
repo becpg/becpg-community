@@ -39,7 +39,7 @@
 	padding-left: 20px;
 }
 
-.datagrid span.task-cancelled, .datagrid span.task-refused {
+.datagrid span.task-cancelled, .datagrid span.task-refused , .datagrid span.task-closed {
 	background:
 		url("../../components/documentlibrary/indicators/project-cancelled-16.png")
 		no-repeat;
