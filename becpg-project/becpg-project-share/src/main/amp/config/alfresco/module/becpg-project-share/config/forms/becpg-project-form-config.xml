@@ -883,6 +883,7 @@
 					<show id="pjt:tlIsGroup" />
 					<show id="pjt:tlIsMilestone" />
 					<show id="pjt:tlDuration" />
+					<show id="pjt:tlRealDuration" />
 					<show force="true" id="pjt:tlPrevTasks" />
 					<show force="true" id="pjt:tlResources" />
 					<show id="pjt:tlTaskLegend" />

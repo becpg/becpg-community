@@ -1,3 +1,8 @@
+
+.project-list span.red {
+	color: rgb(255, 0, 0);
+}
+
 .project-list .project-cancel-link,.project-list .project-view-link {
 	background: no-repeat scroll 4px 1px;
 	border: 1px solid transparent;
