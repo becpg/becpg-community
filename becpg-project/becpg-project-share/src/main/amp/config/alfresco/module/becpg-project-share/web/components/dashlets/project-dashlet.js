@@ -303,7 +303,7 @@
                               "pjt_completionPercent",
                               "bcpg_code",
                               "cm_name",
-                              "pjt_taskList|pjt_tlTaskName|pjt_tlDuration|pjt_tlPrevTasks|pjt_tlState|pjt_completionPercent|pjt_tlStart|pjt_tlEnd|pjt_tlWorkflowInstance|fm_commentCount",
+                              "pjt_taskList|pjt_tlTaskName|pjt_tlDuration|pjt_tlRealDuration|pjt_tlPrevTasks|pjt_tlState|pjt_completionPercent|pjt_tlStart|pjt_tlEnd|pjt_tlWorkflowInstance|fm_commentCount",
                               "pjt_deliverableList|pjt_dlDescription|pjt_dlContent|pjt_dlState|pjt_dlScriptExecOrder|fm_commentCount",
                               "pjt_projectManager", "pjt_projectStartDate", "pjt_projectCompletionDate",
                               "pjt_projectDueDate", "pjt_projectState" ],
@@ -317,7 +317,7 @@
                                            "cm_name",
                                            "pjt_projectManager", "pjt_projectStartDate", "pjt_projectCompletionDate",
                                            "pjt_projectDueDate", "pjt_projectState" ],
-                        "task" : [ "pjt_tlTaskName", "pjt_tlDuration",
+                        "task" : [ "pjt_tlTaskName", "pjt_tlDuration","pjt_tlRealDuration",
                               "pjt_tlResources", "pjt_tlTaskLegend", "pjt_tlState", "pjt_completionPercent",
                               "pjt_tlStart", "pjt_tlEnd", "pjt_tlWorkflowInstance","fm_commentCount",
                               "pjt_project|cm_name|pjt_projectHierarchy1|pjt_projectHierarchy2|pjt_completionPercent|bcpg_code" ]

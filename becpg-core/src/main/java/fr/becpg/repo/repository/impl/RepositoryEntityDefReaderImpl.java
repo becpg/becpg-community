@@ -54,6 +54,7 @@ import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.annotation.DataListView;
 import fr.becpg.repo.repository.annotation.MultiLevelDataList;
+import fr.becpg.repo.repository.annotation.MultiLevelLeaf;
 import fr.becpg.repo.repository.model.BaseObject;
 
 @Repository("repositoryEntityDefReader")
@@ -234,6 +235,12 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 	public boolean isMultiLevelDataList(QName dataListItemType) {
 		Class<T> entityClass = getEntityClass(dataListItemType);
 		return entityClass != null && entityClass.isAnnotationPresent(MultiLevelDataList.class);
+	}
+
+	@Override
+	public boolean isMultiLevelLeaf(QName entityType) {
+		Class<T> entityClass = getEntityClass(entityType);
+		return entityClass != null && entityClass.isAnnotationPresent(MultiLevelLeaf.class);
 	}
 
 }

@@ -11,9 +11,11 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.annotation.MultiLevelLeaf;
 
 @AlfType
 @AlfQname(qname = "bcpg:rawMaterial")
+@MultiLevelLeaf
 public class RawMaterialData extends ProductData {
 
 	/**

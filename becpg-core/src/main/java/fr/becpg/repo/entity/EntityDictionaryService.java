@@ -29,6 +29,8 @@ public interface EntityDictionaryService {
 	QName getDefaultPivotAssoc(QName dataListItemType);
 	
 	boolean isMultiLevelDataList(QName dataListItemType);
+	
+	boolean isMultiLevelLeaf(QName entityType);
 
 	List<AssociationDefinition> getPivotAssocDefs(QName sourceType);
 

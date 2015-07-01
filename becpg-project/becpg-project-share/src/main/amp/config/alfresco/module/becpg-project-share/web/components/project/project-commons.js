@@ -201,30 +201,52 @@
 
       getTaskTitle : function PL_getTaskTitle(task, entityNodeRef, start, large) {
 
-      	var ret = '<span class="task-status task-status-' + task["itemData"]["prop_pjt_tlState"].value + '">';
-      	
-         ret += '<span class="node-' + task.nodeRef + '|' + entityNodeRef + '"><a class="theme-color-1 ' + TASK_EVENTCLASS + '" title="' + this
-               .msg("link.title.task-edit") + '" >' + task["itemData"]["prop_pjt_tlTaskName"].displayValue + (task["itemData"]["prop_pjt_completionPercent"].value != null ? ' (' + task["itemData"]["prop_pjt_completionPercent"].displayValue + '%)' : "") + '</a></span>';
+          var ret = '<span class="task-status task-status-' + task["itemData"]["prop_pjt_tlState"].value + '">', duration ='';
 
-         if (task["itemData"]["prop_pjt_tlWorkflowInstance"] && task["itemData"]["prop_pjt_tlWorkflowInstance"].value) {
-            ret += '<a class="task-link" title="' + this.msg("link.title.open-workflow") + '" href="' + Alfresco.constants.URL_PAGECONTEXT + 'workflow-details?workflowId=' + task["itemData"]["prop_pjt_tlWorkflowInstance"].value + '&referrer=project-list&myWorkflowsLinkBack=true' + '" >&nbsp;</a>';
-         }
+          ret += '<span class="node-' + task.nodeRef + '|' + entityNodeRef + '"><a class="theme-color-1 ' + TASK_EVENTCLASS + '" title="' + this
+          .msg("link.title.task-edit") + '" >' + task["itemData"]["prop_pjt_tlTaskName"].displayValue;
 
-        
-         ret += '<span class="node-' + task.nodeRef + '|' + entityNodeRef + '">';
-         ret += '<a class="task-comments '+COMMENT_EVENTCLASS+'" title="' + this.msg("link.title.comment-task") + '" href="" >';
-         
-         if (task["itemData"]["prop_fm_commentCount"] && task["itemData"]["prop_fm_commentCount"].value) {
-            ret += task["itemData"]["prop_fm_commentCount"].value;
-         } else {
-            ret +="&nbsp;";
-         }
-         ret += "</a></span>";
-         
-         
-         ret += "</span>";
+          if( task["itemData"]["prop_pjt_tlState"].value == "InProgress"){
+              if(task["itemData"]["prop_pjt_completionPercent"] && 
+                      task["itemData"]["prop_pjt_completionPercent"].value != null)  {
+                  duration += task["itemData"]["prop_pjt_completionPercent"].displayValue + '%';
+              }
+    
+              if(task["itemData"]["prop_pjt_tlRealDuration"] && task["itemData"]["prop_pjt_tlRealDuration"].value!=null)  {
+                  if(duration.length>0){
+                      duration+=" - ";
+                  }
+    
+                  var className = "";
+                  if(task["itemData"]["prop_pjt_tlRealDuration"].value > task["itemData"]["prop_pjt_tlDuration"].value){
+                      className = "red";
+                  } 
+                  duration += '<span class="' + className + '" >' + Alfresco.util.encodeHTML(task["itemData"]["prop_pjt_tlRealDuration"].displayValue)+this
+                  .msg("overdue.day")+ '</span>';
+              } 
+    
+              if(duration.length>0){
+                  ret +=' ('+duration+')';
+              }
+          }
 
-         return ret;
+          ret += '</a></span>';
+
+          if (task["itemData"]["prop_pjt_tlWorkflowInstance"] && task["itemData"]["prop_pjt_tlWorkflowInstance"].value) {
+              ret += '<a class="task-link" title="' + this.msg("link.title.open-workflow") + '" href="' + Alfresco.constants.URL_PAGECONTEXT + 'workflow-details?workflowId=' + task["itemData"]["prop_pjt_tlWorkflowInstance"].value + '&referrer=project-list&myWorkflowsLinkBack=true' + '" >&nbsp;</a>';
+          }
+
+          ret += '<span class="node-' + task.nodeRef + '|' + entityNodeRef + '">';
+          ret += '<a class="task-comments '+COMMENT_EVENTCLASS+'" title="' + this.msg("link.title.comment-task") + '" href="" >';
+
+          if (task["itemData"]["prop_fm_commentCount"] && task["itemData"]["prop_fm_commentCount"].value) {
+              ret += task["itemData"]["prop_fm_commentCount"].value;
+          } else {
+              ret +="&nbsp;";
+          }
+          ret += "</a></span></span>";
+
+          return ret;
       },
       getDeliverableTitle : function PL_getDeliverableTitle(deliverable, entityNodeRef) {
 
