@@ -5,6 +5,7 @@
      */
     var Dom = YAHOO.util.Dom, Bubbling = YAHOO.Bubbling, TASK_EVENTCLASS = Alfresco.util.generateDomId(null, "task");
     var COMMENT_EVENTCLASS = Alfresco.util.generateDomId(null, "comment");
+    var DELIVERABLE_STATE_EVENTCLASS = Alfresco.util.generateDomId(null, "deliverableState");
     /**
      * ProjectTask constructor.
      * 
@@ -123,6 +124,17 @@
                                         return true;
                                     };
                                     Bubbling.addDefaultAction(TASK_EVENTCLASS, fnOnShowTaskHandler);
+                                    
+                                    var fnOnChangeDeliverableStateHandler = function PL__fnOnChangeDeliverableStateHandler(layer, args)
+                                    {
+                                        var owner = Bubbling.getOwnerByTagName(args[1].anchor, "span");
+                                        if (owner !== null)
+                                        {
+                                            me.onActionChangeDeliverableState.call(me, owner.className, owner);
+                                        }
+                                        return true;
+                                    };
+                                    Bubbling.addDefaultAction(DELIVERABLE_STATE_EVENTCLASS, fnOnChangeDeliverableStateHandler);
                                 }
 
                                 var fnOnCommentTaskHandler = function PL__fnOnShowTaskHandler(layer, args)
@@ -135,7 +147,7 @@
                                     }
                                     return true;
                                 };
-                                YAHOO.Bubbling.addDefaultAction(COMMENT_EVENTCLASS, fnOnCommentTaskHandler);
+                               Bubbling.addDefaultAction(COMMENT_EVENTCLASS, fnOnCommentTaskHandler);
                             }
                         },
 
@@ -209,15 +221,22 @@
                             }
                             else
                             {
+                                ret += '<span class="node-' + deliverable.nodeRef + '|' + deliverable.state + '">';
 
-                                ret += '<span class="delivrable-status delivrable-status-' + deliverable.state + '">&nbsp;<a href=""></a></span>';
+                                ret += '<a class="'+DELIVERABLE_STATE_EVENTCLASS+'" title="' + this
+                                .msg("form.control.project-task.change-state") + '" href="#"><span class="delivrable-status delivrable-status-' + deliverable.state + '">&nbsp;</span></a>';
 
                                 var contents = deliverable.contents;
 
-                                if (contents.length > 0)
-                                {
-                                    var contentUrl =  "";
+                                var contentUrl =  "";
+                                
+                                if (url != null && url.length > 0){
+                                    contentUrl = url;
                                     
+                                    ret += '<span class="doc-url"><a title="' + this
+                                    .msg("form.control.project-task.link.title.open-link") + '" href="' + url + '">' + '<img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/link-16.png" /></a></span>';
+                                } else  if (contents.length > 0) {
+                                
                                     if(contents[0].type == "cm:folder" ){
                                        contentUrl = this._getBrowseUrlForFolderPath(contents[0].path, contents[0].siteId, contents[0].name);
                                     } else {
@@ -229,30 +248,20 @@
                                             .getFileIcon(contents[0].name, contents[0].type == "cm:folder" ? "cm:folder" : "cm:content", 16) + '" /></a></span>';
                                 }
 
-                                ret += '<span class="node-' + deliverable.nodeRef + '|' + entityNodeRef + '">';
-                                if (contents.length > 0)
+                               
+                                if (contentUrl.length > 0)
                                 {
                                     ret += '<a class="theme-color-1 ' + '" title="' + this
                                             .msg("form.control.project-task.link.title.open-document") + '" href="' +contentUrl + '" >';
                                 }
                                 ret += deliverable.name;
-                                if (contents.length > 0)
+                                if (contentUrl.length > 0)
                                 {
                                     ret += '</a>';
                                 }
                                 ret += '</span>';
 
-                                if (url != null && url.length > 0)
-                                {
-                                    ret += '<span class="doc-url"><a title="' + this
-                                            .msg("form.control.project-task.link.title.open-link") + '" href="' + url + '">' + '<img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/link-16.png" /></a></span>';
-                                }
 
-                                else
-                                {
-                                    ret += "&nbsp;";
-                                }
-                                ret += "</a></span>";
 
                             }
 
@@ -261,7 +270,33 @@
                             return ret;
                         },
 
-                     
+                        
+                        onActionChangeDeliverableState : function PL_onActionShowTask(className) {
+
+                            var me = this;
+                            
+                            var nodes = className.replace("node-", "").split("|");
+                            
+                            
+                             Alfresco.util.Ajax.jsonPost({
+                                    url :Alfresco.constants.PROXY_URI + "becpg/bulkedit/save",
+                                    dataObj : {
+                                          field : "prop_pjt_dlState",    
+                                          isMultiple: false,
+                                          nodeRef: nodes[0],
+                                          value : nodes[1] == "Completed" ? "InProgress" :"Completed"
+                                     }, 
+                                successCallback : {
+                                   fn : function(response) {
+                                       
+                                      Bubbling.fire(me.scopeId+"dataItemUpdated");
+                                   },
+                                 scope : this
+                                }
+                            });
+
+
+                         },
                         /**
                          * Helper to get folder URL
                          */
