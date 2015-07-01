@@ -264,7 +264,7 @@
                                     {
                                         previewTooltips.push("ac-choice-" + me.fieldHtmlId + "-" + oResultData[0]);
                                     }
-                                    return "<span id='ac-choice-" + me.fieldHtmlId + "-" + oResultData[0] + "' class='" + oResultData[2] + "'  >" + oResultData[1] + "</span>";
+                                    return "<span id='ac-choice-" + me.fieldHtmlId + "-" + oResultData[0] + "' class='" + oResultData[2] + "'  ><span class='ctn-fav'></span>" + oResultData[1] + "</span>";
                                 };
 
                                 // Toggle button

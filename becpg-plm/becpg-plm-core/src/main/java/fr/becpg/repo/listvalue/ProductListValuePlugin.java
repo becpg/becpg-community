@@ -18,20 +18,26 @@
 package fr.becpg.repo.listvalue;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.PLMModel;
+import fr.becpg.model.SystemState;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.listvalue.impl.EntityListValuePlugin;
 import fr.becpg.repo.listvalue.impl.NodeRefListValueExtractor;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 @Service
 public class ProductListValuePlugin extends EntityListValuePlugin {
@@ -39,6 +45,8 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 	private static final String SOURCE_TYPE_PRODUCT = "product";
 
 	private static final String SOURCE_TYPE_PRODUCT_REPORT = "productreport";
+	
+	private final static Log logger = LogFactory.getLog(ProductListValuePlugin.class);
 
 	@Autowired
 	private ReportTplService reportTplService;
@@ -52,11 +60,13 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 
 		String classNames = (String) props.get(ListValueService.PROP_CLASS_NAMES);
 		String[] arrClassNames = classNames != null ? classNames.split(PARAM_VALUES_SEPARATOR) : null;
-		String productType = (String) props.get(ListValueService.PROP_PRODUCT_TYPE);
+	
 
 		if (sourceType.equals(SOURCE_TYPE_PRODUCT)) {
-			return suggestTargetAssoc(PLMModel.TYPE_PRODUCT, query, pageNum, pageSize, arrClassNames, props);
+			return suggestProducts(query, pageNum, pageSize, arrClassNames, props);
 		} else if (sourceType.equals(SOURCE_TYPE_PRODUCT_REPORT)) {
+			String productType = (String) props.get(ListValueService.PROP_PRODUCT_TYPE);
+			
 			QName productTypeQName = QName.createQName(productType, namespaceService);
 			return suggestProductReportTemplates(productTypeQName, query, pageNum, pageSize);
 
@@ -65,6 +75,56 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 		return null;
 	}
 
+
+	private ListValuePage suggestProducts(String query, Integer pageNum, Integer pageSize, String[] arrClassNames, Map<String, Serializable> props) {
+		if (logger.isDebugEnabled()) {
+			if (arrClassNames != null) {
+				logger.debug("suggestTargetAssoc with arrClassNames : " + Arrays.toString(arrClassNames));
+			}
+		}
+
+		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery()
+				.ofType(PLMModel.TYPE_PRODUCT)
+				.excludeDefaults()
+				.inSearchTemplate(searchTemplate)
+				.andOperator().ftsLanguage();
+
+		StringBuilder ftsQuery = new StringBuilder();
+		
+
+		if (!isAllQuery(query)) {
+			if (query.length() > 2) {
+				ftsQuery.append(prepareQuery(query.trim() + SUFFIX_ALL));
+				ftsQuery.append(" ");
+			}
+			ftsQuery.append(query);
+			
+			ftsQuery.append(")^10 AND +(");
+		}
+		
+		ftsQuery.append("@");
+		ftsQuery.append(PLMModel.PROP_PRODUCT_STATE.toString());
+		ftsQuery.append(":");
+		ftsQuery.append(SystemState.Valid.toString());
+		ftsQuery.append("^4 or @");
+		ftsQuery.append(PLMModel.PROP_PRODUCT_STATE.toString());
+		ftsQuery.append(":");
+		ftsQuery.append(SystemState.ToValidate.toString());
+		ftsQuery.append("^2 or @");
+		ftsQuery.append(PLMModel.PROP_PRODUCT_STATE.toString());
+		ftsQuery.append(":");
+		ftsQuery.append(SystemState.Simulation.toString());
+		
+		
+		queryBuilder.andFTSQuery(ftsQuery.toString());
+
+		// filter by classNames
+		filterByClass(queryBuilder, arrClassNames);
+
+		queryBuilder.maxResults(RepoConsts.MAX_SUGGESTIONS);
+
+		return new ListValuePage(queryBuilder.list(), pageNum, pageSize, targetAssocValueExtractor);
+	}
 
 	/**
 	 * Get the report templates of the product type that user can choose from

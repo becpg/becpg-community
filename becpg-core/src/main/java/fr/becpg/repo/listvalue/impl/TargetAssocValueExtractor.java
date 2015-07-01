@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.service.cmr.favourites.FavouritesService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -54,6 +56,9 @@ public class TargetAssocValueExtractor implements ListValueExtractor<NodeRef> {
 
 	@Autowired
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
+	
+	@Autowired
+	private FavouritesService favouritesService;
 
 	@Override
 	public List<ListValueEntry> extract(List<NodeRef> nodeRefs) {
@@ -74,7 +79,12 @@ public class TargetAssocValueExtractor implements ListValueExtractor<NodeRef> {
 					if (entity instanceof StateableEntity) {
 						cssClass += "-" + ((StateableEntity) entity).getEntityState();
 						props.put("state", ((StateableEntity) entity).getEntityState());
+					    if(favouritesService.isFavourite(AuthenticationUtil.getFullyAuthenticatedUser(), nodeRef)){
+					    	cssClass += "  favourite";
+					    }
+					
 					}
+					
 
 				} else {
 					name = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);

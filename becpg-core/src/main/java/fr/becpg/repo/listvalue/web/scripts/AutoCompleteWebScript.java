@@ -48,6 +48,7 @@ public class AutoCompleteWebScript extends DeclarativeWebScript {
 	private static final String PARAM_ATTRIBUTE_NAME = "attributeName";
 	private static final String PARAM_FILTER = "filter";
 	private static final String PARAM_EXCLUDE_CLASS_NAMES = "excludeClassNames";
+	private static final String PARAM_EXCLUDE_PROPS = "excludeProps";
 	private static final String PARAM_PAGE_SIZE = "pageSize";
 	private static final String PARAM_PATH = "path";
 	private static final String PARAM_PARENT = "parent";
@@ -92,9 +93,6 @@ public class AutoCompleteWebScript extends DeclarativeWebScript {
 		if (className == null) {
 			className = req.getParameter(PARAM_CLASS_NAME);
 		}
-		String classNames = req.getParameter(PARAM_CLASS_NAMES);
-		String excludeClassNames = req.getParameter(PARAM_EXCLUDE_CLASS_NAMES);
-
 		// Pagination
 		String page = req.getParameter(PARAM_PAGE);
 		String pageSizeParam = req.getParameter(PARAM_PAGE_SIZE);
@@ -138,10 +136,11 @@ public class AutoCompleteWebScript extends DeclarativeWebScript {
 		props.put(ListValueService.PROP_NODEREF, nodeRef);
 		props.put(ListValueService.PROP_PATH, path);
 		props.put(ListValueService.PROP_CLASS_NAME, className);
-		props.put(ListValueService.PROP_CLASS_NAMES, classNames);
+		props.put(ListValueService.PROP_CLASS_NAMES, req.getParameter(PARAM_CLASS_NAMES));
 		props.put(ListValueService.PROP_ATTRIBUTE_NAME, req.getParameter(PARAM_ATTRIBUTE_NAME));
 		props.put(ListValueService.PROP_FILTER, req.getParameter(PARAM_FILTER));
-		props.put(ListValueService.PROP_EXCLUDE_CLASS_NAMES, excludeClassNames);
+		props.put(ListValueService.PROP_EXCLUDE_CLASS_NAMES,  req.getParameter(PARAM_EXCLUDE_CLASS_NAMES));
+		props.put(ListValueService.PROP_EXCLUDE_PROPS, req.getParameter(PARAM_EXCLUDE_PROPS));
 		props.put(ListValueService.PROP_PARENT, parent);
 		props.put(ListValueService.PROP_PRODUCT_TYPE, productType);
 		props.put(ListValueService.EXTRA_PARAM, getExtraParams(req));
