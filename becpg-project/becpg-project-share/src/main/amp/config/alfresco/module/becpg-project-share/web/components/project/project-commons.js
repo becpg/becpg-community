@@ -209,7 +209,7 @@
           if( task["itemData"]["prop_pjt_tlState"].value == "InProgress"){
               if(task["itemData"]["prop_pjt_completionPercent"] && 
                       task["itemData"]["prop_pjt_completionPercent"].value != null)  {
-                  duration += task["itemData"]["prop_pjt_completionPercent"].displayValue + '%';
+                  duration += '<span title="' + this.msg("completion.title") + '">' + task["itemData"]["prop_pjt_completionPercent"].displayValue + '%</span>';
               }
     
               if(task["itemData"]["prop_pjt_tlRealDuration"] && task["itemData"]["prop_pjt_tlRealDuration"].value!=null)  {
@@ -219,10 +219,9 @@
     
                   var className = "";
                   if(task["itemData"]["prop_pjt_tlRealDuration"].value > task["itemData"]["prop_pjt_tlDuration"].value){
-                      className = "red";
-                  } 
-                  duration += '<span class="' + className + '" >' + Alfresco.util.encodeHTML(task["itemData"]["prop_pjt_tlRealDuration"].displayValue)+this
-                  .msg("overdue.day")+ '</span>';
+                  	duration += '<span class="red" title="' + this.msg("overdue.title") + '">' + Alfresco.util.encodeHTML(task["itemData"]["prop_pjt_tlRealDuration"].value - task["itemData"]["prop_pjt_tlDuration"].value)+" "+this
+                     .msg("overdue.day")+ '</span>';
+                  }
               } 
     
               if(duration.length>0){
