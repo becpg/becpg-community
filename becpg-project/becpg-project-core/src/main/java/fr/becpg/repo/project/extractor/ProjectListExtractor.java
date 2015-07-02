@@ -180,10 +180,14 @@ public class ProjectListExtractor extends ActivityListExtractor {
 						beCPGQueryBuilder.clearFTSQuery();
 
 					}
+					
+					if(dataListFilter.getCriteriaMap()==null){
+						dataListFilter.setCriteriaMap(new HashMap<String, String>());
+					}
 
 					if (dataListFilter.getCriteriaMap() != null && !dataListFilter.getCriteriaMap().containsKey("prop_pjt_tlState")) {
-						dataListFilter.getCriteriaMap().put("prop_pjt_tlState", "Planned,InProgress");
-					}
+						dataListFilter.getCriteriaMap().put("prop_pjt_tlState", "\"Planned\",\"InProgress\"");
+					} 
 
 				}
 
@@ -232,7 +236,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 			}
 
 		}
-
+		
 		if (dataListFilter.getSortId() != null) {
 			DataListSortPlugin plugin = dataListSortRegistry.getPluginById(dataListFilter.getSortId());
 			if (plugin != null) {
