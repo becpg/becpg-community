@@ -727,7 +727,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				updateDiluentQty(parent, diluentVolume,diluentNodeRef);
 				volumePerc = volumeReconstitution / totalVolumeUsed;
 			} else {
-				logger.warn("Diluent is null for: "+compoListDataItem.getName());
+				logger.warn("Diluent is null for: "+compoListDataItem.getProduct());
 			}
 		}
 
