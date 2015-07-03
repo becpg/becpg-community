@@ -93,11 +93,11 @@
 					</#if>
 					<#if arg?eval?? >
 						<#if !firstLabel>
-				      	<#assign urlParamsToPass=urlParamsToPass+"&">
+				        	<#assign urlParamsToPass=urlParamsToPass+"&">
 				     	<#else>
 				        	<#assign firstLabel=false>
 				     	</#if>		
-			    	 	<#assign urlParamsToPass=urlParamsToPass + "extra." +urlParam + "=" + arg?eval>			
+			    	 	<#assign urlParamsToPass=urlParamsToPass + "extra." +urlParam + "=" + arg?eval!"">			
 					</#if>
 				</#list>
 				urlParamsToPass:"${urlParamsToPass}"
