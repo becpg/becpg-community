@@ -37,11 +37,18 @@ import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.formulation.CostsCalculatingFormulationHandler;
 import fr.becpg.repo.product.formulation.FormulationHelper;
+import fr.becpg.repo.product.formulation.PackagingHelper;
 
 @Service
 public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 
 	private static final Log logger = LogFactory.getLog(CostCharactDetailsVisitor.class);
+	
+	private PackagingHelper packagingHelper;
+		
+	public void setPackagingHelper(PackagingHelper packagingHelper) {
+		this.packagingHelper = packagingHelper;
+	}
 
 	@Override
 	public CharactDetails visit(ProductData productData, List<NodeRef> dataListItems) throws FormulateException {
@@ -49,6 +56,10 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 		CharactDetails ret = new CharactDetails(extractCharacts(dataListItems));
 		Double netQty = FormulationHelper.getNetQtyInLorKg(productData,FormulationHelper.DEFAULT_NET_WEIGHT);
 
+		if(productData.getDefaultVariantPackagingData() == null){
+			productData.setDefaultVariantPackagingData(packagingHelper.getDefaultVariantPackagingData(productData));
+		}
+		
 		/*
 		 * Calculate cost details
 		 */

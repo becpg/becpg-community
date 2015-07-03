@@ -26,13 +26,14 @@
 	<bean id="simpleCharactDetailsVisitor"
 		class="fr.becpg.repo.product.formulation.details.SimpleCharactDetailsVisitor">
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
-		<property name="nodeService" ref="nodeService" />
+		<property name="nodeService" ref="nodeService" />		
 	</bean>
 
 	<bean id="costCharactDetailsVisitor"
 		class="fr.becpg.repo.product.formulation.details.CostCharactDetailsVisitor">
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
 		<property name="nodeService" ref="nodeService" />
+		<property name="packagingHelper" ref="packagingHelper" />
 	</bean>
 
 

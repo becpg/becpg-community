@@ -141,9 +141,8 @@ public class FormulationHelper {
 	public static Double getQty(ProductData formulatedProduct, ProcessListDataItem processListDataItem) throws FormulateException {
 
 		Double qty = 0d;
-
 		Double productQtyToTransform = FormulationHelper.QTY_FOR_PIECE;
-		if (!ProcessListUnit.P.equals(processListDataItem.getUnit())) {
+		if (ProcessListUnit.kg.equals(processListDataItem.getUnit()) || ProcessListUnit.L.equals(processListDataItem.getUnit())) {
 			productQtyToTransform = processListDataItem.getQty() != null ? processListDataItem.getQty() : FormulationHelper.getNetWeight(formulatedProduct, null);
 		}
 		
