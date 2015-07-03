@@ -74,7 +74,7 @@ public class SupplierPlantValuePlugin extends EntityListValuePlugin {
 			return new ListValuePage(ret, pageNum, pageSize, targetAssocValueExtractor);
 		}
 		
-		props.put(ListValueService.PROP_CLASS_NAME,PLMModel.TYPE_PLANT);
+		props.put(ListValueService.PROP_CLASS_NAME,PLMModel.TYPE_PLANT.toPrefixString(namespaceService));
 		
 		return super.suggest(SOURCE_TYPE_TARGET_ASSOC, query, pageNum, pageSize, props);
 	}

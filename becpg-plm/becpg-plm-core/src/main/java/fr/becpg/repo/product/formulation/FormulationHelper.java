@@ -422,7 +422,12 @@ public class FormulationHelper {
 					}
 				}
 				logger.debug("compo tare: " + tare + " qty " + qty + " productQty " + productQty);
-				return tare.multiply(new BigDecimal(qty)).divide(new BigDecimal(productQty), MathContext.DECIMAL64);
+				if (qty != null && !qty.isNaN() && !qty.isInfinite()
+						&& productQty!=null && !productQty.isNaN() && !productQty.isInfinite() && productQty!=0d) {
+					return tare.multiply(new BigDecimal(qty)).divide(new BigDecimal(productQty), MathContext.DECIMAL64);
+				} else {
+					logger.error("Qty/ProductQty is NaN :"+qty+" "+productQty+" for "+compoList.getProduct());
+				}
 			}
 		}
 		return new BigDecimal(0d);
