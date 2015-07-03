@@ -401,9 +401,21 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format, null, null));
 		labelingRuleList.add(new LabelingRuleListDataItem("Juice", null, LabelingRuleType.Detail, Arrays.asList(ing1, ing2), null));
 
-		checkILL(finishedProductNodeRef1, labelingRuleList, "ing5 french 54,5% (ing1 french 70%, ing4 french 30%), Juice 45,5% (ing2 french 66,7%, ing1 french 33,3%)",Locale.FRENCH);
-		//Juice 45,5% (ing2 french 66,7%, ing1 french 33,3%), Epaississant french: ing5 french -36,4%
 
+//		└──[root - 0.0 (11.0, vol: 11.0) ]
+//			    ├──[ing5 french - 5.0 (10.0, vol: 10.0) Detail]
+//			    │   ├──[ing1 french - 7.0 ( vol : 7.0) ]
+//			    │   └──[ing4 french - 3.0 ( vol : 3.0) ]
+//			    └──[Juice - 6.0 (6.0, vol: 6.0) Detail]
+//			        ├──[ing1 french - 2.0 ( vol : 2.0) ]
+//			        └──[ing2 french - 4.0 ( vol : 4.0) ]
+
+		
+		
+		checkILL(finishedProductNodeRef1, labelingRuleList, "Juice 54,5% (ing2 french 66,7%, ing1 french 33,3%), ing5 french 45,5% (ing1 french 70%, ing4 french 30%)",Locale.FRENCH);
+
+
+		
 		NodeRef finishedProductNodeRef2 = transactionService.getRetryingTransactionHelper().doInTransaction(
 				new RetryingTransactionCallback<NodeRef>() {
 					public NodeRef execute() throws Throwable {
@@ -450,7 +462,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render(false)", LabelingRuleType.Render));
 		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format, null, null));
 
-		checkILL(finishedProductNodeRef2, labelingRuleList, "ing5 french 54,5% (ing1 french 70%, ing4 french 30%), Legal Raw material 1 45,5%", Locale.FRENCH);
+		checkILL(finishedProductNodeRef2, labelingRuleList, "Legal Raw material 1 54,5%, ing5 french 45,5% (ing1 french 70%, ing4 french 30%)", Locale.FRENCH);
 		
 	}
 
@@ -1064,6 +1076,9 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 	}
 
 	private void checkILL(final NodeRef productNodeRef, final List<LabelingRuleListDataItem> labelingRuleList, final String ill, Locale french) {
+		
+		logger.info("checkILL : "+ill);
+		
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 

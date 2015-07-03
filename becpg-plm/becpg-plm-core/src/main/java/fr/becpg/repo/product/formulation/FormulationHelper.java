@@ -357,10 +357,9 @@ public class FormulationHelper {
 			return null;
 		}
 	}
+	
+	public static Double getNetVolume(Double qty, CompoListDataItem compoListDataItem, NodeService nodeService) {
 
-	public static Double getNetVolume(CompoListDataItem compoListDataItem, NodeService nodeService) {
-
-		Double qty = FormulationHelper.getQtyInKg(compoListDataItem);
 		if (qty != null) {
 			Double overrun = compoListDataItem.getOverrunPerc();
 			if (compoListDataItem.getOverrunPerc() == null) {
@@ -377,6 +376,13 @@ public class FormulationHelper {
 		}
 
 		return null;
+	}
+
+	public static Double getNetVolume(CompoListDataItem compoListDataItem, NodeService nodeService) {
+
+		Double qty = FormulationHelper.getQtyInKg(compoListDataItem);
+	
+		return getNetVolume(qty, compoListDataItem, nodeService);
 	}
 
 	public static Double calculateValue(Double totalValue, Double qtyUsed, Double value, Double netWeight) {
@@ -474,16 +480,6 @@ public class FormulationHelper {
 			}
 			return ret;
 		}
-	}
-
-	public static Double getVolumeReconstitution(CompoListDataItem compoListDataItem, NodeService nodeService) {
-		if (nodeService.hasAspect(compoListDataItem.getProduct(), PLMModel.ASPECT_RECONSTITUTABLE)) {
-			Double reconstitionRate = (Double) nodeService.getProperty(compoListDataItem.getProduct(), PLMModel.PROP_RECONSTITUTION_RATE);
-			if (reconstitionRate != null) {
-				return compoListDataItem.getVolume() * reconstitionRate;
-			}
-		}
-		return null;
 	}
 
 }
