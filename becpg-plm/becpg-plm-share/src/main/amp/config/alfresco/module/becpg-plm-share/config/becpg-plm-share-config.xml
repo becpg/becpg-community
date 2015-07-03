@@ -127,6 +127,9 @@
 				<step id="step6" labelId="becpg.wizard.supplier.mp.step6.label"
 					titleId="becpg.wizard.supplier.mp.step6.title" type="entityDataList"
 					listId="labelClaimList" itemId="bcpg:labelClaimList"></step>
+				<step id="step7" labelId="becpg.wizard.supplier.mp.step7.label"
+					titleId="becpg.wizard.supplier.mp.step7.title" type="entityDataList"
+					listId="microbioList" itemId="bcpg:microbioList"></step>
 			</wizard>
 			<wizard id="supplier">
 				<step id="step1" labelId="becpg.wizard.supplier.step1.label"

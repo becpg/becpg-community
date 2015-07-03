@@ -63,10 +63,10 @@ public class EntityListValuePlugin implements ListValuePlugin {
 	private static final String SUFFIX_DOUBLE_QUOTE = "\"";
 	private static final String SUFFIX_SIMPLE_QUOTE = "'";
 	private static final String PROP_FILTER_BY_ASSOC = "filterByAssoc";
-	private static final String SOURCE_TYPE_TARGET_ASSOC = "targetassoc";
-	private static final String SOURCE_TYPE_LINKED_VALUE = "linkedvalue";
-	private static final String SOURCE_TYPE_LINKED_VALUE_ALL = "allLinkedvalue";
-	private static final String SOURCE_TYPE_LIST_VALUE = "listvalue";
+	protected static final String SOURCE_TYPE_TARGET_ASSOC = "targetassoc";
+	protected static final String SOURCE_TYPE_LINKED_VALUE = "linkedvalue";
+	protected static final String SOURCE_TYPE_LINKED_VALUE_ALL = "allLinkedvalue";
+	protected static final String SOURCE_TYPE_LIST_VALUE = "listvalue";
 	protected static final String searchTemplate = "%(cm:name bcpg:erpCode bcpg:code)";
 
 	protected static final String SUFFIX_ALL = "*";

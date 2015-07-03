@@ -2382,7 +2382,12 @@
 					<field id="bcpg:productState" set="mainInfo" />
 					<field id="bcpg:suppliers" set="mainInfo" />
 					<field id="bcpg:plants" set="mainInfo" />
-					<field id="bcpg:supplierPlants" set="mainInfo" />
+					<field id="bcpg:supplierPlants" set="mainInfo" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/supplierPlants</control-param>
+						</control>
+					</field>
 					<field id="bcpg:entityTplRef" set="mainInfo">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -2569,7 +2574,13 @@
 						</control>
 					</field>
 					<field id="bcpg:eanCode" set="mainInfo" />
-					<field id="bcpg:supplierPlants" set="mainInfo" />
+					<field id="bcpg:supplierPlants" set="mainInfo" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/supplierPlants</control-param>
+							
+						</control>
+					</field>
 					
 					<!-- consumer -->
 					
@@ -2796,7 +2807,12 @@
 					<field id="bcpg:productState" set="mainInfo" />
 					<field id="bcpg:suppliers" set="mainInfo" />
 					<field id="bcpg:plants" set="mainInfo" />
-					<field id="bcpg:supplierPlants" set="mainInfo" />
+					<field id="bcpg:supplierPlants" set="mainInfo" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/supplierPlants</control-param>
+						</control>
+					</field>
 					<field id="bcpg:entityTplRef" set="mainInfo">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
