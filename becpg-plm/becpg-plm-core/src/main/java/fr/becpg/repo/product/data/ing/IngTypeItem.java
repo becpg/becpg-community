@@ -30,20 +30,23 @@ import fr.becpg.repo.repository.annotation.AlfType;
 @AlfQname(qname = "bcpg:ingTypeItem")
 public class IngTypeItem extends AbstractLabelingComponent{
 
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 182156222574786727L;
 
-
 	public static final IngTypeItem DEFAULT_GROUP = new IngTypeItem();
-	
 	
 	private Double decThreshold;
 	
 	private MLText pluralLegalName;
 	
+	public IngTypeItem(){
+		super();
+	}
+
+	public IngTypeItem(IngTypeItem ingTypeItem) {
+		super(ingTypeItem);
+		this.decThreshold = ingTypeItem.decThreshold;
+		this.pluralLegalName = ingTypeItem.pluralLegalName;
+	}
 
 	@AlfProp
 	@AlfQname(qname = "bcpg:ingTypeDecThreshold")
@@ -83,11 +86,15 @@ public class IngTypeItem extends AbstractLabelingComponent{
 		
 		return ret;
 	}
-	
 
 	@Override
+	public IngTypeItem clone() {
+		return new IngTypeItem(this);
+	}
+	
+	@Override
 	public String toString() {
-		return "IngTypeItem [decThreshold=" + decThreshold + ", qty=" + qty + ", volumeQtyPerc=" + volumeQtyPerc + ", legalName=" + legalName
+		return "IngTypeItem [decThreshold=" + decThreshold + ", qty=" + qty + ", volumeQtyPerc=" + volume + ", legalName=" + legalName
 				+ ", nodeRef=" + nodeRef + ", parentNodeRef=" + parentNodeRef + ", name=" + name + ", aspects=" + aspects + ", extraProperties="
 				+ extraProperties + ", isTransient=" + isTransient + ", hashCode()=" + hashCode() + "]";
 	}
@@ -123,8 +130,5 @@ public class IngTypeItem extends AbstractLabelingComponent{
 		return true;
 	}
 
-	
 
-	
-	
 }

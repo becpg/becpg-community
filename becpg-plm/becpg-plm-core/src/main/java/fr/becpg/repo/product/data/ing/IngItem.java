@@ -68,6 +68,11 @@ public class IngItem extends AbstractLabelingComponent {
 		this.subIngs = subIngs;
 	}
 
+	
+	@Override
+	public IngItem clone()  {
+		return new IngItem(this);
+	}
 
 	@Override
 	public int hashCode() {

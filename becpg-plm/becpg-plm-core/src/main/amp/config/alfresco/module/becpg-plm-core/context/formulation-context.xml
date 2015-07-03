@@ -120,7 +120,7 @@
 					<property name="nodeService" ref="nodeService" />
 					<property name="alfrescoRepository" ref="alfrescoRepository" />					
 				</bean>
-				<bean class="fr.becpg.repo.product.formulation.LabelingFormulationHandler">
+				<bean class="fr.becpg.repo.product.formulation.labeling.LabelingFormulationHandler">
 				   <property name="nodeService" ref="nodeService" />
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="mlNodeService" ref="mlAwareNodeService" />
