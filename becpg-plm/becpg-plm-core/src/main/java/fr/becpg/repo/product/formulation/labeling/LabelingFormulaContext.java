@@ -15,7 +15,7 @@
  *  
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package fr.becpg.repo.product.data.spel;
+package fr.becpg.repo.product.formulation.labeling;
 
 import java.text.Format;
 import java.text.MessageFormat;
@@ -55,6 +55,8 @@ import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.ing.IngTypeItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.product.data.spel.DeclarationFilterContext;
+import fr.becpg.repo.product.data.spel.SpelHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 
@@ -499,7 +501,7 @@ public class LabelingFormulaContext {
 
 			String ingName = getIngName(component, false);
 
-			Double qtyPerc = computeQty(lblCompositeContext, component);
+			Double qtyPerc = computeQtyPerc(lblCompositeContext, component);
 
 			if (isGroup(component)) {
 				if (ret.length() > 0) {
@@ -532,7 +534,7 @@ public class LabelingFormulaContext {
 
 			if (kv.getKey() != null && getIngName(kv.getKey(), false) != null) {
 
-				Double qtyPerc = computeQty(compositeLabeling, kv.getKey());
+				Double qtyPerc = computeQtyPerc(compositeLabeling, kv.getKey());
 				kv.getKey().setQty(qtyPerc);
 
 				ret.append(getIngTextFormat(kv.getKey()).format(
@@ -553,15 +555,16 @@ public class LabelingFormulaContext {
 		boolean appendEOF = false;
 		for (AbstractLabelingComponent component : subComponents) {
 
-			Double qtyPerc = computeQty(parent, component);
+			Double qtyPerc = computeQtyPerc(parent, component);
+			Double volumePerc = computeVolumePerc(parent, component);
 
 			String ingName = getIngName(component, false);
 
 			if (logger.isDebugEnabled()) {
-				logger.debug(" --" + ingName + " qtyRMUsed: " + parent.getQtyRMUsed() + " qtyPerc " + qtyPerc);
+				logger.debug(" --" + ingName + " qtyRMUsed: " + parent.getQtyTotal() + " qtyPerc " + qtyPerc);
 			}
 
-			qtyPerc = (useVolume ? component.getVolumeQtyPerc() : qtyPerc);
+			qtyPerc = (useVolume ? volumePerc : qtyPerc);
 
 			if (qtyPerc == null || qtyPerc != 0d) {
 
@@ -618,12 +621,20 @@ public class LabelingFormulaContext {
 		return component instanceof CompositeLabeling && ((CompositeLabeling) component).isGroup();
 	}
 
-	public Double computeQty(CompositeLabeling parent, AbstractLabelingComponent component) {
-		Double qtyPerc = component.getQty();
-		if (parent.getQtyRMUsed() != null && parent.getQtyRMUsed() > 0 && qtyPerc != null) {
-			qtyPerc = qtyPerc / parent.getQtyRMUsed();
+	public Double computeQtyPerc(CompositeLabeling parent, AbstractLabelingComponent component) {
+		Double qty = component.getQty();
+		if (parent.getQtyTotal() != null && parent.getQtyTotal() > 0 && qty != null) {
+			qty = qty / parent.getQtyTotal();
 		}
-		return qtyPerc;
+		return qty;
+	}
+	
+	public Double computeVolumePerc(CompositeLabeling parent, AbstractLabelingComponent component) {
+		Double volume = component.getVolume();
+		if (parent.getVolumeTotal() != null && parent.getVolumeTotal() > 0 && volume != null) {
+			volume = volume / parent.getVolumeTotal();
+		}
+		return volume;
 	}
 
 	Map<IngTypeItem, List<AbstractLabelingComponent>> getSortedIngListByType(CompositeLabeling compositeLabeling) {
