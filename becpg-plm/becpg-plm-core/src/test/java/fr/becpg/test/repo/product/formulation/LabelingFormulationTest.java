@@ -412,7 +412,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 		
 		
-		checkILL(finishedProductNodeRef1, labelingRuleList, "Juice 54,5% (ing2 french 66,7%, ing1 french 33,3%), ing5 french 45,5% (ing1 french 70%, ing4 french 30%)",Locale.FRENCH);
+		checkILL(finishedProductNodeRef1, labelingRuleList, "ing5 french 54,5% (ing1 french 70%, ing4 french 30%), Juice 45,5% (ing2 french 66,7%, ing1 french 33,3%)",Locale.FRENCH);
 
 
 		
@@ -462,7 +462,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render(false)", LabelingRuleType.Render));
 		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format, null, null));
 
-		checkILL(finishedProductNodeRef2, labelingRuleList, "Legal Raw material 1 54,5%, ing5 french 45,5% (ing1 french 70%, ing4 french 30%)", Locale.FRENCH);
+		checkILL(finishedProductNodeRef2, labelingRuleList, "ing5 french 54,5% (ing1 french 70%, ing4 french 30%), Legal Raw material 1 45,5%", Locale.FRENCH);
 		
 	}
 
