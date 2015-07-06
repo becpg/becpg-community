@@ -716,7 +716,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							}
 							
 							
-							Double diluentQty = reconstitionRate * qty;
+							Double diluentQty = reconstitionRate * qty - qty ;
 							Double diluentVolume = FormulationHelper.getNetVolume(diluentQty, compoListDataItem, nodeService);
 							if (diluentVolume == null) {
 								diluentVolume = 0d;
