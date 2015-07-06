@@ -291,7 +291,7 @@
 					</source>
 					<target>
 						<class>cm:person</class>
-						<mandatory>true</mandatory>
+						<mandatory>false</mandatory>
 						<many>false</many>
 					</target>
 				</association>				
@@ -338,7 +338,18 @@
 						<mandatory>false</mandatory>
 						<many>false</many>
 					</target>
-				</association>				
+				</association>		
+				<association name="bcpgwf:pvPackagingApprovalActor">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>cm:person</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>		
 			</associations>			
 		</aspect>	
 		
