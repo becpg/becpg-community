@@ -556,7 +556,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(PLMModel.TYPE_PRICELIST);
 				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
 				dataLists.add(MPMModel.TYPE_RESOURCEPARAMLIST);
-				wusedQName = MPMModel.TYPE_PROCESSLIST;
+				dataLists.add(PLMModel.TYPE_ALLERGENLIST);
+				wusedQName = MPMModel.TYPE_PROCESSLIST;			
 
 			} else if (productType.equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT)) {
 
