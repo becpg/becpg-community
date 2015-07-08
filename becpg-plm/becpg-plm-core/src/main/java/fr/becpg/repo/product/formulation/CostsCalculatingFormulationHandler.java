@@ -148,10 +148,11 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	//Merge with nutList
 	@Deprecated
 	private void computeCostsList(ProductData productData, ExpressionParser parser, StandardEvaluationContext context) {
-		String error = null;
+		
 		if (productData.getCostList() != null) {
 			for (CostListDataItem costListDataItem : productData.getCostList()) {
 				costListDataItem.setIsFormulated(false);
+				String error = null;
 				if ((costListDataItem.getIsManual() == null || !costListDataItem.getIsManual()) && costListDataItem.getCost() != null) {
 
 					String formula = (String) nodeService.getProperty(costListDataItem.getCost(), PLMModel.PROP_COST_FORMULA);
