@@ -146,6 +146,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 		if (productData.getNutList() != null) {
 			for (NutListDataItem nutListDataItem : productData.getNutList()) {
 				nutListDataItem.setIsFormulated(false);
+				nutListDataItem.setErrorLog(null);
 				if ((nutListDataItem.getIsManual() == null || !nutListDataItem.getIsManual()) && nutListDataItem.getNut() != null) {
 
 					String formula = (String) nodeService.getProperty(nutListDataItem.getNut(), PLMModel.PROP_NUT_FORMULA);

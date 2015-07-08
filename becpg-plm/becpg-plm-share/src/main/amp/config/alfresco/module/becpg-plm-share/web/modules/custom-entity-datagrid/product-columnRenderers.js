@@ -226,7 +226,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 		else{
 			return n;	
 		}		
-	}
+	};
 	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
       propertyName : "bcpg:nutListValue",

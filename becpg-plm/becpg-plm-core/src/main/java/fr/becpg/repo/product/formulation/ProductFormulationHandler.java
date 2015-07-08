@@ -253,13 +253,14 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 			if (c != null) {			
 				boolean shouldUseLiter = FormulationHelper.isProductUnitLiter(productUnit);
 				boolean useLiter = FormulationHelper.isCompoUnitLiter(c.getCompoListUnit());
+				Double density = FormulationHelper.getDensity(productNodeRef, nodeService);
 
-				if (shouldUseLiter && !useLiter || !shouldUseLiter && useLiter) {
+				if (density == null && (shouldUseLiter && !useLiter || !shouldUseLiter && useLiter)) {
 					addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_WRONG_UNIT);
+					addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_MISSING_DENSITY);
 				}
 				Double overrunPerc = c.getOverrunPerc();
 				if (FormulationHelper.isProductUnitLiter(productUnit) || overrunPerc != null) {
-					Double density = FormulationHelper.getDensity(productNodeRef, nodeService);
 					if (density == null || density.equals(0d)) {
 						addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_MISSING_DENSITY);
 					}
