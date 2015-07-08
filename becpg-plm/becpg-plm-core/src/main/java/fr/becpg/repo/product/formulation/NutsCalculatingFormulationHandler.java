@@ -142,9 +142,10 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 	//Merge with costList
     @Deprecated
 	private void computeNutList(ProductData productData, ExpressionParser parser, StandardEvaluationContext context) {
-    	String error = null;
+    	
 		if (productData.getNutList() != null) {
 			for (NutListDataItem nutListDataItem : productData.getNutList()) {
+				String error = null;
 				nutListDataItem.setIsFormulated(false);
 				nutListDataItem.setErrorLog(null);
 				if ((nutListDataItem.getIsManual() == null || !nutListDataItem.getIsManual()) && nutListDataItem.getNut() != null) {
