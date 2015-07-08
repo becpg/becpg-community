@@ -39,6 +39,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.SpelEvaluationException;
+import org.springframework.expression.spel.SpelParseException;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
@@ -236,7 +238,6 @@ public class LabelingFormulaContext {
 	/*
 	 * RENAME
 	 */
-
 	private final Map<NodeRef, MLText> renameRules = new HashMap<>();
 
 	public boolean rename(List<NodeRef> components, List<NodeRef> replacement, MLText label, String formula) {
@@ -802,13 +803,16 @@ public class LabelingFormulaContext {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Test Match formula :" + formula);
 			}
-
-			ExpressionParser parser = new SpelExpressionParser();
-			StandardEvaluationContext dataContext = new StandardEvaluationContext(declarationFilterContext);
-
-			Expression exp = parser.parseExpression(SpelHelper.formatFormula(formula));
-
-			return exp.getValue(dataContext, Boolean.class);
+			try {
+				ExpressionParser parser = new SpelExpressionParser();
+				StandardEvaluationContext dataContext = new StandardEvaluationContext(declarationFilterContext);
+	
+				Expression exp = parser.parseExpression(SpelHelper.formatFormula(formula));
+	
+				return exp.getValue(dataContext, Boolean.class);
+			} catch(SpelParseException | SpelEvaluationException e){
+				logger.error("Cannot evaluate formula :"+formula,e);
+			}
 		}
 		return true;
 	}
