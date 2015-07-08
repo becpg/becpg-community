@@ -381,8 +381,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					}
 					
 					nutListsElt.addAttribute(generateKeyAttribute(nut), value != null ? value : "");
-					NodeRef nutNodeRef = dataListItem.getNut();  
-				    nutListElt.addAttribute(ContentModel.PROP_DESCRIPTION.getLocalName(), (String)nodeService.getProperty(nutNodeRef, ContentModel.PROP_DESCRIPTION));				   				   
+					NodeRef nutNodeRef = dataListItem.getNut();
+					addCDATA(nutListElt, ContentModel.PROP_DESCRIPTION, (String)nodeService.getProperty(nutNodeRef, ContentModel.PROP_DESCRIPTION));				   				   
 				}
 			}
 		}
