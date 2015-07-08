@@ -11,10 +11,13 @@
 	         <div class="set">	         
 		         <div class="form-field">
 			         <select id="${el}-locale-picker" name="-" onChange="addFormFieldForLocale(this.form)">
+                            <option value="-" >${msg("locale.choose")}</option>
 							<#assign h = config.scoped["Languages"]["languages"]>
 							<#list  h.getChildren("language") as language>
-							     <#assign key = language.getAttribute("locale")>				
-									<option value=${key?split("_")[0]} <#if key?contains(locale)>selected="true"</#if> >${msg("locale.name.${key}")}</option>
+							     <#assign key = language.getAttribute("locale")>	
+                              <#if !key?contains(locale)>
+								<option value=${key?split("_")[0]}  >${msg("locale.name.${key}")}</option>
+                               </#if>
 							</#list>
 						</select>
 					</div>
@@ -22,6 +25,7 @@
 	         <#list mlFields?reverse as mlField>
 	        		 <#assign label=mlField.label!""?html>
 					<#assign description=mlField.description!""?html>
+                 <#if mlField.locale != locale>
 	         	<div class="form-field">
       				<label for="${el}-${mlField.locale}">${mlField.label!""?html}:&nbsp;
       						<span class="locale-icon"><img  title="${mlField.locale}" tabindex="0" src="${url.context}/res/components/images/flags/${mlField.locale}.png"><span>
@@ -31,9 +35,10 @@
 		      				 name="${mlField.locale}" id="${el}-${mlField.locale}" >${mlField.value!""}</textarea>
 	      			<#else>
 		      			<input type="text" title="${mlField.description!""?html}" tabindex="0"
-		      				 name="${mlField.locale}" id="${el}-${mlField.locale}" value="${mlField.value!""}"></input>
+		      				 name="${mlField.locale}" id="${el}-${mlField.locale}"  value="${mlField.value!""}"></input>
 	      			</#if>	 
 	      		</div>
+               </#if>
 	      	</#list>	
 	      	
 		      	<div id="${el}-added-locale-container"></div>
@@ -57,7 +62,7 @@ var addFormFieldForLocale = function(form){
 	  		container = YAHOO.util.Dom.get("${el}-added-locale-container"),
 	  		varHtml = "";
 	  		
-	  		if(YAHOO.util.Dom.get("${el}-"+lc) == null){
+	  		if(YAHOO.util.Dom.get("${el}-"+lc) == null && lc!="-"){
    
 	   	 varHtml +="<div class=\"form-field\"><label for=\"${el}-"+lc+"\">${label?js_string}:&nbsp;<span class=\"locale-icon\"><img  tabindex=\"0\" src=\"${url.context}/res/components/images/flags/"+lc+".png\"/></span></label>";
 	   	 <#if args.textarea??>
