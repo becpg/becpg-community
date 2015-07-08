@@ -6871,8 +6871,8 @@
 				</field-visibility>
 				<appearance>
 				   <field id="bcpg:lclComments">
-						<control template="/org/alfresco/components/form/controls/richtext.ftl">
-							<control-param name="rows">10</control-param>
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">3</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -6884,6 +6884,8 @@
 					<show id="bcpg:lclLabelClaim" />
 					<show id="bcpg:lclType" />
 					<show id="bcpg:lclClaimValue" />
+					<show id="bcpg:lclComments"  />
+					<show id="bcpg:certificateDate" force="true" />
 					<show id="bcpg:lclIsFormulated" />
 					<show id="bcpg:lclFormulaErrorLog" />
 				</field-visibility>
@@ -6908,8 +6910,8 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:lclComments">
-						<control template="/org/alfresco/components/form/controls/richtext.ftl">
-							<control-param name="rows">10</control-param>
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">3</control-param>
 						</control>
 					</field>
 				</appearance>

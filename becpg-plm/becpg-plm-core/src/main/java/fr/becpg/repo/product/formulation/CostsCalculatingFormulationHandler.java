@@ -152,6 +152,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		if (productData.getCostList() != null) {
 			for (CostListDataItem costListDataItem : productData.getCostList()) {
 				costListDataItem.setIsFormulated(false);
+				costListDataItem.setErrorLog(null);
 				if ((costListDataItem.getIsManual() == null || !costListDataItem.getIsManual()) && costListDataItem.getCost() != null) {
 
 					String formula = (String) nodeService.getProperty(costListDataItem.getCost(), PLMModel.PROP_COST_FORMULA);

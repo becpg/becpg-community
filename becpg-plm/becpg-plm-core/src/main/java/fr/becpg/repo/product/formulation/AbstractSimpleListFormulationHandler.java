@@ -110,8 +110,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 					sl.setMini(null);
 					sl.setMaxi(null);
 					sl.setPreviousValue(null);
-					sl.setFutureValue(null);
-					sl.setErrorLog(null);
+					sl.setFutureValue(null);					
 					
 					// add detailable aspect
 					if(!sl.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM)){
@@ -214,7 +213,9 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 					if(newSimpleListDataItem.getCharactNodeRef() != null && isCharactFormulated(newSimpleListDataItem)){
 						
 						// calculate charact from qty or vol ?
-						Double qtyUsed = isCharactFormulatedFromVol(newSimpleListDataItem) ? volUsed : weightUsed;
+						Double qtyUsed = isCharactFormulatedFromVol(newSimpleListDataItem) || 
+								FormulationHelper.isProductUnitLiter(FormulationHelper.getProductUnit(componentNodeRef, nodeService)) 
+								? volUsed : weightUsed;
 						
 						// look for charact in component
 						SimpleListDataItem slDataItem = null;				
