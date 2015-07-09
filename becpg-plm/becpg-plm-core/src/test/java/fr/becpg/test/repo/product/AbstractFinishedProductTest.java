@@ -465,7 +465,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					physicoChemList = new ArrayList<>();
 					physicoChemList.add(new PhysicoChemListDataItem(null, 3d, "-", null, 3.1d, physicoChem1));
 					physicoChemList.add(new PhysicoChemListDataItem(null, 2d, "-", null, 2.1d, physicoChem2));
-					physicoChemList.add(new PhysicoChemListDataItem(null, 1d, "-", 0.8d, 2.1d, physicoChem3));
+					physicoChemList.add(new PhysicoChemListDataItem(null, 1d, "-", null, 2.1d, physicoChem3));
 					physicoChemList.add(new PhysicoChemListDataItem(null, 2d, "-", 1.5d, 2.2d, physicoChem4));
 					rawMaterial1.setPhysicoChemList(physicoChemList);
 					rawMaterial1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial1).getNodeRef();
