@@ -35,6 +35,7 @@ import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.PackagingKitData;
 import fr.becpg.repo.product.data.PackagingMaterialData;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.ResourceProductData;
 import fr.becpg.repo.product.data.constraints.ProcessListUnit;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
@@ -290,6 +291,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	private void visitCompoListChildren(ProductData formulatedProduct, Composite<CompoListDataItem> composite, List<CostListDataItem> costList,
 			Double parentLossRatio, Double netQty, Map<NodeRef, List<NodeRef>> mandatoryCharacts) throws FormulateException {
 
+		Map<NodeRef, Double> totalQties = new HashMap<>();
 		for (Composite<CompoListDataItem> component : composite.getChildren()) {
 
 			if (!component.isLeaf()) {
@@ -309,8 +311,12 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				Double qty = FormulationHelper.getQtyForCost(compoListDataItem, 
 						parentLossRatio,
 						ProductUnit.getUnit((String)nodeService.getProperty(compoListDataItem.getProduct(), PLMModel.PROP_PRODUCT_UNIT)));
-				visitPart(compoListDataItem.getProduct(), costList, qty, null, netQty, mandatoryCharacts, null);
+				visitPart(compoListDataItem.getProduct(), costList, qty, null, netQty, mandatoryCharacts, totalQties);				
 			}
+		}		
+		//Case Generic MP
+		if( formulatedProduct instanceof RawMaterialData){
+			formulateGenericRawMaterial(costList, totalQties, netQty);
 		}
 	}
 

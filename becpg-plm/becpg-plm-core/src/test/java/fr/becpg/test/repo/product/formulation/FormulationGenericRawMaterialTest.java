@@ -18,10 +18,12 @@
 package fr.becpg.test.repo.product.formulation;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
@@ -34,6 +36,8 @@ import fr.becpg.repo.product.data.constraints.CompoListUnit;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.product.data.productList.CostListDataItem;
+import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
 /**
@@ -69,9 +73,17 @@ public class FormulationGenericRawMaterialTest extends AbstractFinishedProductTe
 				genRawMaterial.setQty(1d);				
 				List<CompoListDataItem> compoList = new ArrayList<>();
 				compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, null, null, 2d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial7NodeRef));
 				genRawMaterial.getCompoListView().setCompoList(compoList);
-
+				List<CostListDataItem> costList = new LinkedList<>();
+				costList.add(new CostListDataItem(null, null, null, null, cost1, null));
+				costList.add(new CostListDataItem(null, null, null, null, cost2, null));
+				genRawMaterial.setCostList(costList);
+				List<PhysicoChemListDataItem> physicoChemList = new LinkedList<>();
+				physicoChemList.add(new PhysicoChemListDataItem(null, null, null, null, null, physicoChem3));
+				genRawMaterial.setPhysicoChemList(physicoChemList);
+				
 				return alfrescoRepository.create(getTestFolderNodeRef(), genRawMaterial).getNodeRef();
 
 			}
@@ -88,6 +100,31 @@ public class FormulationGenericRawMaterialTest extends AbstractFinishedProductTe
 				assertTrue(formulatedProduct.getSuppliers().contains(supplier1));
 				assertTrue(formulatedProduct.getSuppliers().contains(supplier2));
 
+				int checks = 0;
+				for(CostListDataItem c : formulatedProduct.getCostList()){
+					logger.info("c " + nodeService.getProperty(c.getCost(), ContentModel.PROP_NAME) + " " + c.getValue());
+					if(c.getCost().equals(cost1)){
+						assertEquals(2d, c.getValue());
+						checks++;
+					}
+					else if(c.getCost().equals(cost2)){
+						assertEquals(2d, c.getValue());
+						checks++;
+					}
+				}
+				assertEquals(2, checks);
+				
+				checks = 0;
+				for(PhysicoChemListDataItem p : formulatedProduct.getPhysicoChemList()){
+					logger.info("p " + nodeService.getProperty(p.getPhysicoChem(), ContentModel.PROP_NAME) + " value: " + p.getValue()+ " mini: " + p.getMini()+ " maxi: " + p.getMaxi());
+					if(p.getPhysicoChem().equals(physicoChem3)){
+						assertEquals(1d, p.getValue());
+						assertEquals(0.8d, p.getMini());
+						assertEquals(1.6d, p.getMaxi());
+						checks++;
+					}
+				}
+				assertEquals(1, checks);
 				return null;
 
 			}
