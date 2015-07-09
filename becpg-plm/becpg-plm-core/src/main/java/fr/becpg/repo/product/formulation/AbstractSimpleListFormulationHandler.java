@@ -269,14 +269,14 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 								}
 								totalQtiesValue.put(newSimpleListDataItem.getCharactNodeRef(),currentQty+qtyUsed);
 							}
-							if(totalQtiesMini!=null && slDataItem.getMini() != null){
+							if(totalQtiesMini!=null && (slDataItem.getValue() != null || slDataItem.getMini() != null)){
 								Double currentQty = totalQtiesMini.get(newSimpleListDataItem.getCharactNodeRef());
 								if(currentQty==null){
 									currentQty = 0d;
 								}
 								totalQtiesMini.put(newSimpleListDataItem.getCharactNodeRef(),currentQty+qtyUsed);
 							}
-							if(totalQtiesMaxi!=null && slDataItem.getMaxi() != null){
+							if(totalQtiesMaxi!=null && (slDataItem.getValue() != null || slDataItem.getMaxi() != null)){
 								Double currentQty = totalQtiesMaxi.get(newSimpleListDataItem.getCharactNodeRef());
 								if(currentQty==null){
 									currentQty = 0d;
