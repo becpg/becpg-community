@@ -152,21 +152,30 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		
 		//Case Generic MP
 		if( formulatedProduct instanceof RawMaterialData){
-			if(logger.isDebugEnabled()){
-				logger.debug("Case generic MP adjust value to total");
-			}
-			for(SimpleListDataItem newSimpleListDataItem : simpleListDataList){			
-				if(totalQties.containsKey(newSimpleListDataItem.getCharactNodeRef()) ){
-					Double totalQty = totalQties.get(newSimpleListDataItem.getCharactNodeRef());
-					if(newSimpleListDataItem.getValue()!=null){
-						newSimpleListDataItem.setValue(newSimpleListDataItem.getValue()*netQty/totalQty);
-					}
-				}
-			}
+			formulateGenericRawMaterial(simpleListDataList, totalQties, netQty);
 		}
 		
 	}
 	
+	protected void formulateGenericRawMaterial(List<T> simpleListDataList, Map<NodeRef, Double> totalQties, Double netQty){
+		if(logger.isDebugEnabled()){
+			logger.debug("Case generic MP adjust value to total");
+		}
+		for(SimpleListDataItem newSimpleListDataItem : simpleListDataList){			
+			if(totalQties.containsKey(newSimpleListDataItem.getCharactNodeRef()) ){
+				Double totalQty = totalQties.get(newSimpleListDataItem.getCharactNodeRef());
+				if(newSimpleListDataItem.getValue()!=null){
+					newSimpleListDataItem.setValue(newSimpleListDataItem.getValue()*netQty/totalQty);
+				}
+				if(newSimpleListDataItem.getMaxi()!=null){
+					newSimpleListDataItem.setMaxi(newSimpleListDataItem.getMaxi()*netQty/totalQty);
+				}
+				if(newSimpleListDataItem.getMini()!=null){
+					newSimpleListDataItem.setMini(newSimpleListDataItem.getMini()*netQty/totalQty);
+				}
+			}
+		}
+	}
 
 	protected void addReqCtrlList(List<ReqCtrlListDataItem> reqCtrlList, Map<NodeRef, List<NodeRef>> mandatoryCharacts){
 		
