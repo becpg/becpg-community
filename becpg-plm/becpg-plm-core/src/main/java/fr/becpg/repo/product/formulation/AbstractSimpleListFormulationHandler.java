@@ -130,7 +130,9 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	
 	protected void visitChildren(ProductData formulatedProduct, List<T> simpleListDataList) throws FormulateException{
 		
-        Map<NodeRef, Double> totalQties = new HashMap<>();
+        Map<NodeRef, Double> totalQtiesValue = new HashMap<>();
+        Map<NodeRef, Double> totalQtiesMini = new HashMap<>();
+        Map<NodeRef, Double> totalQtiesMaxi = new HashMap<>();
 		
 		Double netQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
 		
@@ -143,7 +145,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 				Double vol = FormulationHelper.getNetVolume(compoItem, nodeService);
 				
 				if(weight != null){
-					visitPart(compoItem.getProduct(), simpleListDataList, weight, vol, netQty, mandatoryCharacts, totalQties);
+					visitPart(compoItem.getProduct(), simpleListDataList, weight, vol, netQty, mandatoryCharacts, totalQtiesValue, totalQtiesMini, totalQtiesMaxi);
 				}			
 			}
 			
@@ -152,21 +154,42 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		
 		//Case Generic MP
 		if( formulatedProduct instanceof RawMaterialData){
-			if(logger.isDebugEnabled()){
-				logger.debug("Case generic MP adjust value to total");
-			}
-			for(SimpleListDataItem newSimpleListDataItem : simpleListDataList){			
-				if(totalQties.containsKey(newSimpleListDataItem.getCharactNodeRef()) ){
-					Double totalQty = totalQties.get(newSimpleListDataItem.getCharactNodeRef());
-					if(newSimpleListDataItem.getValue()!=null){
-						newSimpleListDataItem.setValue(newSimpleListDataItem.getValue()*netQty/totalQty);
-					}
-				}
-			}
+			formulateGenericRawMaterial(simpleListDataList, totalQtiesValue, totalQtiesMini, totalQtiesMaxi, netQty);
 		}
 		
 	}
 	
+	protected void formulateGenericRawMaterial(List<T> simpleListDataList,
+			Map<NodeRef, Double> totalQtiesValue,
+			Map<NodeRef, Double> totalQtiesMini,
+			Map<NodeRef, Double> totalQtiesMaxi, 
+			Double netQty){
+		if(logger.isDebugEnabled()){
+			logger.debug("Case generic MP adjust value to total");
+		}
+		for(SimpleListDataItem newSimpleListDataItem : simpleListDataList){			
+			if(totalQtiesValue.containsKey(newSimpleListDataItem.getCharactNodeRef()) ){
+				Double totalQty = totalQtiesValue.get(newSimpleListDataItem.getCharactNodeRef());
+				if(newSimpleListDataItem.getValue()!=null){
+					newSimpleListDataItem.setValue(newSimpleListDataItem.getValue()*netQty/totalQty);
+				}				
+			}
+			if(totalQtiesMini.containsKey(newSimpleListDataItem.getCharactNodeRef()) ){
+				Double totalQty = totalQtiesMini.get(newSimpleListDataItem.getCharactNodeRef());
+				
+				if(newSimpleListDataItem.getMini()!=null){
+					newSimpleListDataItem.setMini(newSimpleListDataItem.getMini()*netQty/totalQty);
+				}
+				
+			}
+			if(totalQtiesMaxi.containsKey(newSimpleListDataItem.getCharactNodeRef()) ){
+				Double totalQty = totalQtiesMaxi.get(newSimpleListDataItem.getCharactNodeRef());
+				if(newSimpleListDataItem.getMaxi()!=null){
+					newSimpleListDataItem.setMaxi(newSimpleListDataItem.getMaxi()*netQty/totalQty);
+				}
+			}
+		}
+	}
 
 	protected void addReqCtrlList(List<ReqCtrlListDataItem> reqCtrlList, Map<NodeRef, List<NodeRef>> mandatoryCharacts){
 		
@@ -192,7 +215,9 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 			Double volUsed,
 			Double netQty,			
 			Map<NodeRef, List<NodeRef>> mandatoryCharacts,
-			Map<NodeRef, Double> totalQties) throws FormulateException{								
+			Map<NodeRef, Double> totalQtiesValue,
+			Map<NodeRef, Double> totalQtiesMini,
+			Map<NodeRef, Double> totalQtiesMaxi) throws FormulateException{								
 		
 		if(!PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.equals(nodeService.getType(componentNodeRef))){
 			
@@ -237,14 +262,27 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 												
 							calculate(newSimpleListDataItem, slDataItem, qtyUsed, netQty);
 							
-							if(totalQties!=null && slDataItem.getValue() != null){
-								Double currentQty = totalQties.get(newSimpleListDataItem.getCharactNodeRef());
+							if(totalQtiesValue!=null && slDataItem.getValue() != null){
+								Double currentQty = totalQtiesValue.get(newSimpleListDataItem.getCharactNodeRef());
 								if(currentQty==null){
 									currentQty = 0d;
 								}
-								totalQties.put(newSimpleListDataItem.getCharactNodeRef(),currentQty+qtyUsed);
+								totalQtiesValue.put(newSimpleListDataItem.getCharactNodeRef(),currentQty+qtyUsed);
 							}
-							
+							if(totalQtiesMini!=null && (slDataItem.getValue() != null || slDataItem.getMini() != null)){
+								Double currentQty = totalQtiesMini.get(newSimpleListDataItem.getCharactNodeRef());
+								if(currentQty==null){
+									currentQty = 0d;
+								}
+								totalQtiesMini.put(newSimpleListDataItem.getCharactNodeRef(),currentQty+qtyUsed);
+							}
+							if(totalQtiesMaxi!=null && (slDataItem.getValue() != null || slDataItem.getMaxi() != null)){
+								Double currentQty = totalQtiesMaxi.get(newSimpleListDataItem.getCharactNodeRef());
+								if(currentQty==null){
+									currentQty = 0d;
+								}
+								totalQtiesMaxi.put(newSimpleListDataItem.getCharactNodeRef(),currentQty+qtyUsed);
+							}
 						}		
 					}						
 				}	
