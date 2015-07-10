@@ -136,6 +136,7 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 			pjtTpl.getDeliverableList().add(preSupplierScript);
 			pjtTpl.getDeliverableList().add(supplierWizard);
 			pjtTpl.getDeliverableList().add(supplierMPWizard);
+			pjtTpl.getDeliverableList().add(postValidationScript);
 
 			alfrescoRepository.save(pjtTpl);
 		}
