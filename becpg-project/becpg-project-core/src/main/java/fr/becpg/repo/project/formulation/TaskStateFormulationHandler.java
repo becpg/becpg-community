@@ -250,12 +250,14 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 								nextDeliverable.setContent(new NodeRef(nextDeliverable.getUrl().substring(DeliverableUrl.CONTENT_URL_PREFIX.length())));
 								nextDeliverable.setUrl(null);
 							}
-							
-							if(DeliverableScriptOrder.Pre.equals(nextDeliverable.getScriptOrder())){
-								projectService.runScript(projectData, nextTask, nextDeliverable.getContent());
-								nextDeliverable.setState(DeliverableState.Completed);
-							} 
+
 						}
+						
+						if( DeliverableState.InProgress.equals(nextDeliverable.getState()) 
+								&& DeliverableScriptOrder.Pre.equals(nextDeliverable.getScriptOrder())){
+							projectService.runScript(projectData, nextTask, nextDeliverable.getContent());
+							nextDeliverable.setState(DeliverableState.Completed);
+						} 
 						
 					}
 					

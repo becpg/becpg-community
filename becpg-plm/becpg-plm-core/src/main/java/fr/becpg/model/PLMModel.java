@@ -217,6 +217,7 @@ public interface PLMModel {
 	// supplier aspect
 	QName ASPECT_SUPPLIERS = QName.createQName(BeCPGModel.BECPG_URI, "suppliersAspect");
 	QName ASSOC_SUPPLIERS = QName.createQName(BeCPGModel.BECPG_URI, "suppliers");
+	QName PROP_SUPPLIER_STATE = QName.createQName(BeCPGModel.BECPG_URI, "supplierState");
 
 	// supplier
 	QName TYPE_SUPPLIER = QName.createQName(BeCPGModel.BECPG_URI, "supplier");
@@ -329,6 +330,7 @@ public interface PLMModel {
 	QName PROP_NUTRIENT_PROFILE_SCORE_FORMULA =  QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfileScoreFormula");
 	QName PROP_NUTRIENT_PROFILE_CLASS_FORMULA =  QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfileClassFormula");
 	QName TYPE_NUTRIENT_PROFILE = QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfile");
+	
 	
 	
 	
