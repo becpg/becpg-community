@@ -5632,7 +5632,6 @@
 					<show id="bcpg:allergenListInVoluntary" />
 					<show id="bcpg:allergenListVolSources" />
 					<show id="bcpg:allergenListInVolSources" />
-					<show id="bcpg:isManualListItem" force="true" />
 					<!-- <show id="bcpg:allergenListPlants"/> -->
 				</field-visibility>
 
@@ -5694,7 +5693,6 @@
 					<show id="bcpg:allergenListDecisionTree" />
 					<show id="bcpg:allergenListVolSources" />
 					<show id="bcpg:allergenListInVolSources" />
-					<show id="bcpg:isManualListItem" force="true" />
 					<show id="fm:commentCount" force="true" />
 					<!-- <show id="bcpg:allergenListPlants"/> -->
 				</field-visibility>
@@ -5727,7 +5725,6 @@
 					<show id="bcpg:allergenListInVoluntary" />
 					<show id="bcpg:allergenListVolSources" />
 					<show id="bcpg:allergenListInVolSources" />
-					<show id="bcpg:isManualListItem" force="true" />
 					<!-- <show id="bcpg:allergenListPlants"/> -->
 				</field-visibility>
 
@@ -5843,6 +5840,18 @@
 					<field id="bcpg:costListFormulaErrorLog"  label="hidden"/>
 					<field id="bcpg:costListValuePerProduct" read-only="true" />
 				</appearance>				
+			</form>
+			<form id="filter">
+				<field-visibility>
+					<show id="bcpg:costListCost" />
+					<show id="bcpg:plants" force="true" />
+				</field-visibility>	
+				<appearance>
+					<field id="bcpg:costListCost">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+			   </appearance>		
 			</form>
 		</forms>
 	</config>
@@ -6330,7 +6339,6 @@
 					<show id="bcpg:nutListLossPerc" />
 					<show id="bcpg:nutListMethod" />
 					<show id="bcpg:parentLevel" />
-					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 
 				<appearance>
@@ -6391,7 +6399,6 @@
 					<show id="bcpg:nutListLossPerc" />
 					<show id="bcpg:nutListGroup" />
 					<show id="bcpg:nutListMethod" />
-					<show id="bcpg:isManualListItem" force="true" />
 					<show id="fm:commentCount" force="true" />
 					<show id="bcpg:nutListIsFormulated" />
 					<show id="bcpg:nutListFormulaErrorLog" />
@@ -6435,7 +6442,6 @@
 					<show id="bcpg:nutListLossPerc" />
 					<show id="bcpg:nutListMethod" />
 					<show id="bcpg:parentLevel" />
-					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 
 				<appearance>
@@ -6867,7 +6873,6 @@
 					<show id="bcpg:lclClaimValue" />
 					<show id="bcpg:lclComments"  />
 					<show id="bcpg:certificateDate" force="true" />
-					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 				<appearance>
 				   <field id="bcpg:lclComments">
@@ -6904,7 +6909,6 @@
 					<show id="bcpg:lclClaimValue" />
 					<show id="bcpg:lclComments" />
 					<show id="bcpg:certificateDate" force="true" />
-					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:lclComments">

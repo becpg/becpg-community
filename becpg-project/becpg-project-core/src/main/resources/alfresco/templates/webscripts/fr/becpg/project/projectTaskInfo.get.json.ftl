@@ -11,14 +11,16 @@
 		   		"contents": [
 	   			<#if deliverable.assocs["pjt:dlContent"]?exists>
 		   			<#list deliverable.assocs["pjt:dlContent"] as content>
-		   				{
-							"name": "${content.properties.name!""}",
-							"nodeRef": "${content.nodeRef}",
-							"type": "${content.typeShort}",
-							"siteId": "${content.getSiteShortName()!""}",
-							"path": "${content.displayPath!""}"
-							}
-		   				<#if content_has_next>,</#if>
+		                  <#if content.hasPermission("Read")>
+			   				{
+								"name": "${content.properties.name!""}",
+								"nodeRef": "${content.nodeRef}",
+								"type": "${content.typeShort}",
+								"siteId": "${content.getSiteShortName()!""}",
+								"path": "${content.displayPath!""}"
+								}
+			   				<#if content_has_next>,</#if>
+						</#if>
 		   			</#list>
 	   			</#if>
 	   			] 

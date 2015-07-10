@@ -34,6 +34,7 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 	private static final String SUPPLIER_WIZARD_NAME = "plm.supplier.portal.deliverable.wizard.name";
 	private static final String SUPPLIER_WIZARD_RAW_MATERIAL_NAME = "plm.supplier.portal.deliverable.wizard.rawmaterial.name";
 	private static final String SUPPLIER_PRE_SCRIPT = "plm.supplier.portal.deliverable.scripts.pre.name";
+	private static final String VALIDATE_POST_SCRIPT = "plm.supplier.portal.deliverable.scripts.post.name";
 
 	private static final String XPATH_DICTIONNARY_SCRIPTS = "./app:dictionary/app:scripts";
 
@@ -60,8 +61,7 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 		NodeRef entityTplsNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_ENTITY_TEMPLATES);
 
 		NodeRef entityTplNodeRef = nodeService.getChildByName(entityTplsNodeRef, ContentModel.ASSOC_CONTAINS, I18NUtil.getMessage(SUPPLIER_PJT_TPL_NAME));
-		
-	
+
 
 		if (entityTplNodeRef == null) {
 			NodeRef scriptFolderNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(companyHome, XPATH_DICTIONNARY_SCRIPTS);
@@ -115,15 +115,28 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			preSupplierScript.setName(I18NUtil.getMessage(SUPPLIER_PRE_SCRIPT));
 			preSupplierScript.setScriptOrder(DeliverableScriptOrder.Pre);
+			
+			preSupplierScript.setTasks(Collections.singletonList(task1.getNodeRef()));
+			
+			
+			DeliverableListDataItem postValidationScript = new DeliverableListDataItem();
+
+			postValidationScript.setName(I18NUtil.getMessage(VALIDATE_POST_SCRIPT));
+			postValidationScript.setScriptOrder(DeliverableScriptOrder.Post);
+			postValidationScript.setTasks(Collections.singletonList(task2.getNodeRef()));
+			
 			for (NodeRef scriptNodeRef : scriptResources) {
 				if (nodeService.getProperty(scriptNodeRef, ContentModel.PROP_NAME).equals("supplierPortalScript.js")) {
 					preSupplierScript.setContent(scriptNodeRef);
+				} else if (nodeService.getProperty(scriptNodeRef, ContentModel.PROP_NAME).equals("validateProjectEntity.js")){
+					postValidationScript.setContent(scriptNodeRef);
 				}
 			}
-			preSupplierScript.setTasks(Collections.singletonList(task1.getNodeRef()));
+			
 			pjtTpl.getDeliverableList().add(preSupplierScript);
 			pjtTpl.getDeliverableList().add(supplierWizard);
 			pjtTpl.getDeliverableList().add(supplierMPWizard);
+			pjtTpl.getDeliverableList().add(postValidationScript);
 
 			alfrescoRepository.save(pjtTpl);
 		}

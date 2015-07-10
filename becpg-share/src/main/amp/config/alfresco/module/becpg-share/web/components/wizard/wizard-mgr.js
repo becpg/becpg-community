@@ -129,7 +129,7 @@
 
                                                 },
                                                 onFinished : function (event, currentIndex) { 
-                                                    var isValid = false;
+                                                    var isValid = true;
                                                     
                                                     var step = me.options.wizardStruct[currentIndex];
                                                     if (step != null)

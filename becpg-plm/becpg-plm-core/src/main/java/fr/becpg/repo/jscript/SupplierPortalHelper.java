@@ -20,6 +20,7 @@ package fr.becpg.repo.jscript;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.jscript.BaseScopableProcessorExtension;
@@ -33,11 +34,14 @@ import org.alfresco.service.cmr.security.PermissionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMGroup;
 import fr.becpg.model.PLMModel;
+import fr.becpg.model.SystemState;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
+import fr.becpg.repo.project.data.projectList.DeliverableScriptOrder;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskState;
 import fr.becpg.repo.project.impl.ProjectHelper;
@@ -60,7 +64,6 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 
 	private PermissionService permissionService;
 
-
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
@@ -81,11 +84,23 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 
 		if (task != null) {
 			if (entityNodeRef != null) {
-				NodeRef supplierNodeRef = associationService.getTargetAssoc(entityNodeRef.getNodeRef(), PLMModel.ASSOC_SUPPLIERS);
+				NodeRef supplierNodeRef = null;
+				if(PLMModel.TYPE_SUPPLIER.equals(entityNodeRef.getNodeRef())){
+					 supplierNodeRef = entityNodeRef.getNodeRef();
+					 nodeService.setProperty(supplierNodeRef, PLMModel.PROP_SUPPLIER_STATE, SystemState.Simulation);
+					 
+				} else {
+				    supplierNodeRef = associationService.getTargetAssoc(entityNodeRef.getNodeRef(), PLMModel.ASSOC_SUPPLIERS);
+				    if(supplierNodeRef!=null){
+				    	nodeService.setProperty(entityNodeRef.getNodeRef(), PLMModel.PROP_SUPPLIER_STATE, SystemState.Simulation);
+				    }
+				    nodeService.setProperty(entityNodeRef.getNodeRef(), PLMModel.PROP_PRODUCT_STATE, SystemState.Simulation);
+				}
+				
 				if (supplierNodeRef != null) {
-					
-				    associationService.update(project.getNodeRef(), PLMModel.ASSOC_SUPPLIERS, Collections.singletonList(supplierNodeRef));
-					
+
+					associationService.update(project.getNodeRef(), PLMModel.ASSOC_SUPPLIERS, Collections.singletonList(supplierNodeRef));
+
 					NodeRef accountNodeRef = associationService.getTargetAssoc(supplierNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNT);
 					if (accountNodeRef != null) {
 						if (task.getResources() != null) {
@@ -110,25 +125,35 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 						if (task.getResources() != null && !task.getResources().isEmpty()) {
 							NodeRef resourceRef = task.getResources().get(0);
 							NodeRef userHome = repository.getUserHome(resourceRef);
-							
-							permissionService.setPermission(userHome, PermissionService.GROUP_PREFIX + PLMGroup.ReferencingMgr.toString(),
-									PermissionService.COORDINATOR, true);
-							
+
+							permissionService.setPermission(userHome, PermissionService.GROUP_PREFIX + PLMGroup.ReferencingMgr.toString(), PermissionService.COORDINATOR, true);
+
 							NodeRef supplierNodeRef = associationService.getTargetAssoc(entityNodeRef.getNodeRef(), PLMModel.ASSOC_SUPPLIERS);
-							if (supplierNodeRef != null) {
-							   nodeService.moveNode(supplierNodeRef, userHome, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
-							   permissionService.setInheritParentPermissions(supplierNodeRef, true);
+							if (supplierNodeRef != null ) {
+								nodeService.moveNode(supplierNodeRef, userHome, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
+								permissionService.setInheritParentPermissions(supplierNodeRef, true);
 							}
-							
+
 							nodeService.moveNode(entityNodeRef.getNodeRef(), userHome, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
 							permissionService.setInheritParentPermissions(entityNodeRef.getNodeRef(), true);
-							
-							permissionService.setPermission(task.getNodeRef(),(String)nodeService.getProperty(resourceRef,ContentModel.PROP_USERNAME),
-									PermissionService.COORDINATOR, true);
-					        for(DeliverableListDataItem deliverable :  ProjectHelper.getDeliverables(project, task.getNodeRef())){
-					        	permissionService.setPermission(deliverable.getNodeRef(),(String)nodeService.getProperty(resourceRef,ContentModel.PROP_USERNAME),
-										PermissionService.COORDINATOR, true);
-					        }
+
+							permissionService.setPermission(task.getNodeRef(), (String) nodeService.getProperty(resourceRef, ContentModel.PROP_USERNAME), PermissionService.COORDINATOR, true);
+							for (DeliverableListDataItem deliverable : ProjectHelper.getDeliverables(project, task.getNodeRef())) {
+								permissionService.setPermission(deliverable.getNodeRef(), (String) nodeService.getProperty(resourceRef, ContentModel.PROP_USERNAME), PermissionService.COORDINATOR,
+										true);
+								if (deliverable.getContent() != null && (deliverable.getScriptOrder() == null || DeliverableScriptOrder.None.equals(deliverable.getScriptOrder()))
+										&& isInProjectFolder(deliverable.getContent(), project.getNodeRef())) {
+									String name = (String)nodeService.getProperty(deliverable.getContent(), ContentModel.PROP_NAME);
+									NodeRef existingNodeWithSameName = nodeService.getChildByName(entityNodeRef.getNodeRef(), ContentModel.ASSOC_CONTAINS,name );
+									if(existingNodeWithSameName!=null){
+										nodeService.deleteNode(deliverable.getContent());
+										deliverable.setContent(existingNodeWithSameName);
+									} else{
+										nodeService.moveNode(deliverable.getContent(), entityNodeRef.getNodeRef(), ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
+									}
+								}
+
+							}
 						} else {
 							logger.warn("No one is assign to task");
 							task.setTaskState(TaskState.OnHold);
@@ -136,6 +161,7 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 
 						return entityNodeRef.getNodeRef();
 					}
+
 				}, AuthenticationUtil.SYSTEM_USER_NAME);
 
 			} else {
@@ -145,6 +171,40 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 		} else {
 			logger.error("No task provided");
 		}
+	}
+	
+	public void validateProjectEntity(final ScriptNode entityNodeRef){
+		if (entityNodeRef != null) {
+			nodeService.setProperty(entityNodeRef.getNodeRef(), ContentModel.PROP_MODIFIED, new Date());
+			if(PLMModel.TYPE_SUPPLIER.equals(entityNodeRef.getNodeRef())){
+				 nodeService.setProperty(entityNodeRef.getNodeRef(), PLMModel.PROP_SUPPLIER_STATE, SystemState.Valid);
+			} else {
+				nodeService.setProperty(entityNodeRef.getNodeRef(), PLMModel.PROP_PRODUCT_STATE, SystemState.Valid);
+			
+			    NodeRef supplierNodeRef = associationService.getTargetAssoc(entityNodeRef.getNodeRef(), PLMModel.ASSOC_SUPPLIERS);
+			    if (supplierNodeRef != null) {
+			    	nodeService.setProperty(supplierNodeRef, PLMModel.PROP_SUPPLIER_STATE, SystemState.Valid);
+			    	nodeService.setProperty(supplierNodeRef, ContentModel.PROP_MODIFIED, new Date());
+			    }
+			}
+		}
+    }
+
+	private boolean isInProjectFolder(NodeRef documentNodeRef, NodeRef projectNodeRef) {
+
+		if (documentNodeRef != null) {
+			NodeRef folderNodeRef = nodeService.getPrimaryParent(documentNodeRef).getParentRef();
+
+			while (folderNodeRef != null && !nodeService.hasAspect(folderNodeRef, BeCPGModel.ASPECT_ENTITYLISTS)) {
+				folderNodeRef = nodeService.getPrimaryParent(folderNodeRef).getParentRef();
+			}
+
+			if (folderNodeRef != null && folderNodeRef.equals(projectNodeRef)) {
+				return true;
+			}
+
+		}
+		return false;
 	}
 
 }
