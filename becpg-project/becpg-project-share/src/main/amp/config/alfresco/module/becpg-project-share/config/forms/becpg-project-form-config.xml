@@ -36,6 +36,7 @@
 					<show id="pjt:projectPriority" />
 					<show id="pjt:projectState" />	
 					<show id="bcpg:suppliers" />
+					<show id="bcpg:clients" />
 					<show id="pjt:projectStartDate" />
 					<show id="pjt:projectDueDate" />
 					<show id="pjt:projectPlanningMode" />	
@@ -114,6 +115,7 @@
 						</control>
 					</field>				
 					<field id="bcpg:suppliers" set="mainInfo" />
+					<field id="bcpg:clients" set="mainInfo" />
 					<field id="pjt:projectScore" set="mainInfo" />		
 					
 					<field id="pjt:projectStartDate" set="planning" />
