@@ -91,7 +91,7 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 
 		calculateDurationAndWork(projectData, composite);
 
-		Integer projectOverdue = calculateOverdue(projectData, null);
+		int projectOverdue = calculateOverdue(projectData, null);
 		projectData.setOverdue(projectOverdue);
 
 		if (logger.isDebugEnabled()) {
@@ -299,34 +299,23 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 	
 
 
-	private Integer calculateOverdue(ProjectData projectData, NodeRef taskNodeRef) throws FormulateException {
+	private int calculateOverdue(ProjectData projectData, NodeRef taskNodeRef) throws FormulateException {
 
-		Integer taskOverdue = 0;
-		Integer nextTaskOverdue = 0;
-		boolean initOverdue = true;
-		boolean initNextOverdue = true;
-
+		int taskOverdue = 0;
 		for (TaskListDataItem nextTask : ProjectHelper.getNextTasks(projectData, taskNodeRef)) {
 
 			// avoid cycle
 			checkCycle(taskNodeRef, nextTask);
 
 			nextTask.setRealDuration(ProjectHelper.calculateRealDuration(nextTask));
-			Integer o = ProjectHelper.calculateOverdue(nextTask);						
-			if (o != null && (initOverdue || o > taskOverdue)) {
-				taskOverdue = o;
-				initOverdue = false;
+			int temp = ProjectHelper.calculateOverdue(nextTask);			
+			temp += calculateOverdue(projectData, nextTask.getNodeRef());
+			if(temp > taskOverdue){
+				taskOverdue = temp;
 			}
-
-			o = calculateOverdue(projectData, nextTask.getNodeRef());			
-			if (o != null && (initNextOverdue || o > nextTaskOverdue)) {
-				nextTaskOverdue = o;
-				initNextOverdue = false;
-			}
-		}
-		
-		return taskOverdue + nextTaskOverdue;
-	}
+		}				
+		return taskOverdue;
+	}	
 
 	private void checkCycle(NodeRef taskNodeRef, TaskListDataItem nextTask) throws FormulateException {
 

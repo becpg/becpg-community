@@ -7,6 +7,8 @@ import java.util.Date;
 
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
 import fr.becpg.repo.project.data.ProjectData;
@@ -24,6 +26,8 @@ import fr.becpg.test.project.AbstractProjectTestCase;
  */
 public class ProjectOverdueTest extends AbstractProjectTestCase {	
 
+	private static final Log logger = LogFactory.getLog(ProjectOverdueTest.class);
+	
 	/**
 	 * Test the calculation of the project overdue
 	 */
@@ -100,9 +104,22 @@ public class ProjectOverdueTest extends AbstractProjectTestCase {
 				planningFormulationHandler.process(projectData);
 				
 				assertEquals(1, projectData.getOverdue().intValue());
-
+				
+				// add a parallel task
+				TaskListDataItem task = new TaskListDataItem(null, "Task in parallel", false, 2, null, null, null,null);
+				task.setStart(new Date());
+				task.setEnd(ProjectHelper.calculateNextDate(new Date(), 5, true));
+				task.setTaskState(TaskState.Completed);
+				projectData.getTaskList().add(task);
+				alfrescoRepository.save(projectData);
+				projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+				planningFormulationHandler.process(projectData);
+				logger.info("projectData.getOverdue().intValue() " + projectData.getOverdue().intValue());
+				assertEquals(3, projectData.getOverdue().intValue());
+								
 				return null;
 			}
-		}, false, true);		
+		}, false, true);				
+		
 	}
 }
