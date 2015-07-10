@@ -1,6 +1,6 @@
 function main()
 {
-    var  projectEntity = null;
+    var projectEntity = null;
 
     var projectNode = search.findNode(project.nodeRef);
 
@@ -9,7 +9,7 @@ function main()
         projectEntity = projectNode.assocs["pjt:projectEntity"][0];
     } 
 
-    bSupplier.assignToSupplier(project, task ,projectEntity);
+    bSupplier.validateProjectEntity(projectEntity);
     
 }
 

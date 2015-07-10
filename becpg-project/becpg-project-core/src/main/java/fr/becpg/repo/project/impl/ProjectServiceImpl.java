@@ -329,8 +329,7 @@ public class ProjectServiceImpl implements ProjectService {
 
 	@Override
 	public void updateProjectPermission(NodeRef projectNodeRef, NodeRef taskListNodeRef, NodeRef resourceNodeRef, boolean allow) {
-		if (ProjectModel.TYPE_PROJECT.equals(nodeService.getType(projectNodeRef))
-				&& permissionService.hasReadPermission(projectNodeRef) == AccessStatus.ALLOWED) {
+		if (ProjectModel.TYPE_PROJECT.equals(nodeService.getType(projectNodeRef))) {
 
 			List<NodeRef> nodeRefs = new ArrayList<>(1);
 			nodeRefs.add(taskListNodeRef);
@@ -350,8 +349,6 @@ public class ProjectServiceImpl implements ProjectService {
 						if (allow) {
 							permissionService.setPermission(n, authorityName, PermissionService.EDITOR, true);
 						} else {
-							// permissionService.deletePermission(n, userName,
-							// PermissionService.EDITOR);
 							permissionService.clearPermission(n, authorityName);
 						}
 
