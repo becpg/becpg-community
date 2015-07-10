@@ -410,14 +410,14 @@ public class ProjectHelper {
 		return calculateTaskDuration(task.getStart(), endDate);		
 	}
 
-	public static Integer calculateOverdue(TaskListDataItem task) {
+	public static int calculateOverdue(TaskListDataItem task) {
 		
 		Integer realDuration = calculateRealDuration(task);
 		Integer plannedDuration = task.getDuration() != null ? task.getDuration() : task.getIsMilestone() ? DURATION_DEFAULT : null;
 		if (realDuration != null && plannedDuration != null) {
 			return realDuration - plannedDuration;
 		}
-		return null;
+		return 0;
 	}
 
 	public static void setTaskState(TaskListDataItem task, TaskState state, ProjectActivityService projectActivityService) {
