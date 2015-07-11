@@ -121,15 +121,15 @@ public class NutListValuePatch extends AbstractBeCPGPatch {
 
 					if (!Boolean.TRUE.equals(nodeService.getProperty(dataListNodeRef, BeCPGModel.PROP_IS_MANUAL_LISTITEM))) {
 						NodeRef entityNodeRef = entityListDAO.getEntity(dataListNodeRef);
-						NodeRef listContainer = entityListDAO.getListContainer(entityNodeRef);
-						if (listContainer != null && entityListDAO.getList(listContainer, PLMModel.TYPE_COMPOLIST) != null) {
-							policyBehaviourFilter.disableBehaviour();
-							nodeService.setProperty(dataListNodeRef, PLMModel.PROP_NUTLIST_FORMULATED_VALUE, nodeService.getProperty(dataListNodeRef, PLMModel.PROP_NUTLIST_VALUE));
-							nodeService.setProperty(dataListNodeRef, PLMModel.PROP_NUTLIST_VALUE, null);
-							nodeService.setProperty(dataListNodeRef, BeCPGModel.PROP_IS_MANUAL_LISTITEM,false);
-							policyBehaviourFilter.enableBehaviour();
-						}
-
+						if(entityNodeRef!=null){
+							NodeRef listContainer = entityListDAO.getListContainer(entityNodeRef);
+							if (listContainer != null && entityListDAO.getList(listContainer, PLMModel.TYPE_COMPOLIST) != null) {
+								policyBehaviourFilter.disableBehaviour();
+								nodeService.setProperty(dataListNodeRef, PLMModel.PROP_NUTLIST_FORMULATED_VALUE, nodeService.getProperty(dataListNodeRef, PLMModel.PROP_NUTLIST_VALUE));
+								nodeService.setProperty(dataListNodeRef, PLMModel.PROP_NUTLIST_VALUE, null);
+								policyBehaviourFilter.enableBehaviour();
+							}
+						}						
 					}
 
 				} else {
