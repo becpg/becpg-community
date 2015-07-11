@@ -395,7 +395,7 @@ public class ProjectHelper {
 
 		Date endDate;
 
-		if (TaskState.InProgress.equals(task.getTaskState())) {
+		if (TaskState.InProgress.equals(task.getTaskState()) || TaskState.Refused.equals(task.getTaskState())) {
 			endDate = ProjectHelper.removeTime(new Date());
 
 			// we wait the overdue of the task to take it in account
@@ -410,14 +410,8 @@ public class ProjectHelper {
 		return calculateTaskDuration(task.getStart(), endDate);		
 	}
 
-	public static int calculateOverdue(TaskListDataItem task) {
-		
-		Integer realDuration = calculateRealDuration(task);
-		Integer plannedDuration = task.getDuration() != null ? task.getDuration() : task.getIsMilestone() ? DURATION_DEFAULT : null;
-		if (realDuration != null && plannedDuration != null) {
-			return realDuration - plannedDuration;
-		}
-		return 0;
+	public static Integer calculateDuration(TaskListDataItem task) {		
+		return task.getDuration() != null ? task.getDuration() : task.getIsMilestone() ? DURATION_DEFAULT : null;
 	}
 
 	public static void setTaskState(TaskListDataItem task, TaskState state, ProjectActivityService projectActivityService) {

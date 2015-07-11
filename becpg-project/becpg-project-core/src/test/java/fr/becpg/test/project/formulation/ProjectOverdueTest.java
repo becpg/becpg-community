@@ -61,7 +61,7 @@ public class ProjectOverdueTest extends AbstractProjectTestCase {
 				// set start date to simulate 3 days after start (task in progress)
 				startDate = ProjectHelper.calculateNextDate(new Date(), 3, false);
 				projectData.getTaskList().get(0).setStart(startDate);				
-				planningFormulationHandler.process(projectData);	
+				planningFormulationHandler.process(projectData);
 				assertEquals(1, projectData.getOverdue().intValue());
 				
 				// set start date to simulate 3 days after start (task completed in time)
@@ -114,8 +114,7 @@ public class ProjectOverdueTest extends AbstractProjectTestCase {
 				alfrescoRepository.save(projectData);
 				projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 				planningFormulationHandler.process(projectData);
-				logger.info("projectData.getOverdue().intValue() " + projectData.getOverdue().intValue());
-				assertEquals(3, projectData.getOverdue().intValue());
+				assertEquals(1, projectData.getOverdue().intValue());
 								
 				return null;
 			}

@@ -91,8 +91,9 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 
 		calculateDurationAndWork(projectData, composite);
 
-		int projectOverdue = calculateOverdue(projectData, null);
-		projectData.setOverdue(projectOverdue);
+		int projectDuration = calculateDuration(projectData, null, false);
+		int projectRealDuration = calculateDuration(projectData, null, true);				
+		projectData.setOverdue(projectRealDuration - projectDuration);
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("End of formulation process " + composite);
@@ -162,6 +163,7 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 			if (taskListDataItem.getDuration() != null) {
 				duration += taskListDataItem.getDuration();
 			}
+			taskListDataItem.setRealDuration(ProjectHelper.calculateRealDuration(taskListDataItem));
 		}
 		if (composite.isRoot()) {
 			projectData.setWork(work);
@@ -296,25 +298,29 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 			calculateDatesOfParent(prevTask.getParent(), prevTask);
 		}
 	}
-	
 
+	private int calculateDuration(ProjectData projectData, NodeRef taskNodeRef, boolean isRealDuration){
 
-	private int calculateOverdue(ProjectData projectData, NodeRef taskNodeRef) throws FormulateException {
-
-		int taskOverdue = 0;
-		for (TaskListDataItem nextTask : ProjectHelper.getNextTasks(projectData, taskNodeRef)) {
-
-			// avoid cycle
-			checkCycle(taskNodeRef, nextTask);
-
-			nextTask.setRealDuration(ProjectHelper.calculateRealDuration(nextTask));
-			int temp = ProjectHelper.calculateOverdue(nextTask);			
-			temp += calculateOverdue(projectData, nextTask.getNodeRef());
-			if(temp > taskOverdue){
-				taskOverdue = temp;
+		int taskDuration = 0;
+		for (TaskListDataItem task : ProjectHelper.getNextTasks(projectData, taskNodeRef)) {			
+			Integer tempDuration = 0;
+			if(!isRealDuration){
+				tempDuration = ProjectHelper.calculateDuration(task);
 			}
+			else{
+				tempDuration = ProjectHelper.calculateRealDuration(task);
+				if(tempDuration == null){
+					tempDuration = ProjectHelper.calculateDuration(task);
+				}
+			}			
+			tempDuration += calculateDuration(projectData, task.getNodeRef(), isRealDuration);
+			if(tempDuration != null && tempDuration > taskDuration){
+				taskDuration = tempDuration;
+			}
+			logger.debug("task " + task.getTaskName() + " duration " + taskDuration);
 		}				
-		return taskOverdue;
+		logger.debug("final taskDuration " + taskDuration);
+		return taskDuration;
 	}	
 
 	private void checkCycle(NodeRef taskNodeRef, TaskListDataItem nextTask) throws FormulateException {
