@@ -52,6 +52,7 @@ import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.ContentHelper;
 import fr.becpg.repo.helper.TranslateHelper;
+import fr.becpg.repo.mail.BeCPGMailService;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
 import fr.becpg.report.client.ReportFormat;
@@ -82,6 +83,9 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 
 	@Autowired
 	private PermissionService permissionService;
+	
+	@Autowired
+	private BeCPGMailService beCPGMailService;
 
 	@Override
 	public void visitContainer(NodeRef companyHome) {
@@ -119,6 +123,8 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 		// EntityTemplates
 		visitEntityTpls(systemNodeRef);
 
+		// MailTemplates
+		contentHelper.addFilesResources(beCPGMailService.getEmailNotifyTemplatesFolder(), "classpath*:beCPG/mails/notify/*.ftl");
 	}
 
 	/**
