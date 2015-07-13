@@ -92,7 +92,7 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 				} else {
 				    supplierNodeRef = associationService.getTargetAssoc(entityNodeRef.getNodeRef(), PLMModel.ASSOC_SUPPLIERS);
 				    if(supplierNodeRef!=null){
-				    	nodeService.setProperty(entityNodeRef.getNodeRef(), PLMModel.PROP_SUPPLIER_STATE, SystemState.Simulation);
+				    	nodeService.setProperty(supplierNodeRef, PLMModel.PROP_SUPPLIER_STATE, SystemState.Simulation);
 				    }
 				    nodeService.setProperty(entityNodeRef.getNodeRef(), PLMModel.PROP_PRODUCT_STATE, SystemState.Simulation);
 				}
@@ -176,6 +176,7 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 	public void validateProjectEntity(final ScriptNode entityNodeRef){
 		if (entityNodeRef != null) {
 			nodeService.setProperty(entityNodeRef.getNodeRef(), ContentModel.PROP_MODIFIED, new Date());
+			nodeService.setProperty(entityNodeRef.getNodeRef(), ContentModel.PROP_MODIFIER, AuthenticationUtil.getFullyAuthenticatedUser());
 			if(PLMModel.TYPE_SUPPLIER.equals(entityNodeRef.getNodeRef())){
 				 nodeService.setProperty(entityNodeRef.getNodeRef(), PLMModel.PROP_SUPPLIER_STATE, SystemState.Valid);
 			} else {
