@@ -82,6 +82,134 @@ display:none;
     display: none;
 }
 
+
+#alf-id137 {
+    display: none;
+}
+#yui-gen192 {
+    display: none;
+}
+#yui-gen197 {
+    display: none;
+}
+#yui-gen199 {
+    display: none;
+}
+
+#onActionEditOffline {
+    display: none;
+}
+#onActionCopyTo {
+    display: none;
+}
+#onActionMoveTo {
+    display: none;
+}
+#onActionDelete {
+    display: none;
+}
+#onActionAssignWorkflow {
+    display: none;
+}
+#yui-gen257 {
+    display: none;
+}
+#onActionOpenInJavascriptConsole {
+    display: none;
+}
+
+#template_x002e_node-header_x002e_document-details_x0023_default-quickshare {
+    display: none;
+}
+
+#template_x002e_document-tags_x002e_document-details_x0023_default-body {
+    display: none;
+}
+
+#template_x002e_document-links_x002e_document-details_x0023_default-body {
+    display: none;
+}
+
+#template_x002e_document-workflows_x002e_document-details_x0023_default-body{
+    display: none;
+}
+
+.document-view-content{
+    display: none;
+}
+.document-edit-metadata{
+    display: none;
+}
+.document-edit-offline{
+    display: none;
+}
+.document-copy-to{
+    display: none;
+}
+.document-move-to{
+    display: none;
+}
+.document-delete{
+    display: none;
+}
+.document-assign-workflow{
+    display: none;
+}
+.document-manage-granular-permissions{
+    display: none;
+}
+.document-manage-aspects{
+    display: none;
+}
+
+.document-change-type{
+    display: none;
+}
+
+.de_fme_jsconsole-open-in-jsconsole{
+    display: none;
+}
+
+.entity-branches {
+    display: none;
+}
+#template_x002e_document-versions_x002e_entity-data-lists_x0023_default-body {
+    display: none;
+}
+
+#template_x002e_toolbar_x002e_entity-data-lists_x0023_default-action-set-button-button {
+    display: none;
+}
+
+.document-manage-repo-permissions{
+    display: none;
+}
+
+.document-edit-properties{
+    display: none;
+}
+
+#page_x002e_data-form_x002e_task-details_x0023_default_assoc_packageItems-cntrl {
+    display: none;
+}
+
+
+.entity-manage-repo-permissions {
+    display: none;
+}
+
+.document-manage-aspects{
+	display:none;
+}
+
+.folder-manage-rules {
+	display:none;
+}
+
+label[for="page_x002e_data-form_x002e_task-edit_x0023_default_assoc_packageItems-cntrl"] {
+    display: none!important;
+}
+
 /* .datagrid-bar {
     display: none;
 }
