@@ -131,13 +131,13 @@
    float: left;
    height: 16px;
    left: 0px;
-   background: url(../images/states/valid-disabled-10.png), url("../images/list-16.png");
+   background-image : url(../images/states/valid-disabled-10.png), url("../images/list-16.png");
    background-repeat: no-repeat;
 }
 
 .datalists li a span.state.Valid
 {
-  background:url(../images/states/valid-10.png), url("../images/list-16.png");
+  background-image : url(../images/states/valid-10.png), url("../images/list-16.png");
   background-repeat: no-repeat;
 }
 
@@ -159,12 +159,12 @@
 }
 
 .datalists li a span.state.Valid.View-reports {
-	background: url(../images/states/valid-10.png), url("../documentlibrary/actions/entity-view-documents-16.png");
+	 background-image: url(../images/states/valid-10.png), url("../documentlibrary/actions/entity-view-documents-16.png");
 	background-repeat: no-repeat;
 }
 
 .datalists li a span.state.Valid.View-properties {
-	background: url(../images/states/valid-10.png), url("../documentlibrary/actions/document-edit-metadata-16.png");
+    background-image: url(../images/states/valid-10.png), url("../documentlibrary/actions/document-edit-metadata-16.png");
 	background-repeat: no-repeat;
 }
  
