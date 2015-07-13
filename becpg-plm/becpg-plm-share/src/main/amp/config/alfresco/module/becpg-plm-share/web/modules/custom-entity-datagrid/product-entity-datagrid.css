@@ -31,7 +31,7 @@
 }
 
 .datagrid span.finishedProduct-Valid {
-	background: url("../../components/images/states/valid-10.png"),
+	background-image: url("../../components/images/states/valid-10.png"),
 		url("../../components/images/filetypes/generic-finishedProduct-16.png");
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
@@ -39,7 +39,7 @@
 }
 
 .datagrid span.localSemiFinishedProduct-Valid {
-	background: url("../../components/images/states/valid-10.png"),
+	background-image: url("../../components/images/states/valid-10.png"),
 		url("../../components/images/filetypes/generic-localSemiFinishedProduct-16.png");
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
@@ -47,7 +47,7 @@
 }
 
 .datagrid span.packagingKit-Valid {
-	background: url("../../components/images/states/valid-10.png"),
+	background-image: url("../../components/images/states/valid-10.png"),
 		url("../../components/images/filetypes/generic-packagingKit-16.png");
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
@@ -55,7 +55,7 @@
 }
 
 .datagrid span.packagingMaterial-Valid {
-	background: url("../../components/images/states/valid-10.png"),
+	background-image: url("../../components/images/states/valid-10.png"),
 		url("../../components/images/filetypes/generic-packagingMaterial-16.png");
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
@@ -63,7 +63,7 @@
 }
 
 .datagrid span.rawMaterial-Valid {
-	background: url("../../components/images/states/valid-10.png"),
+	background-image: url("../../components/images/states/valid-10.png"),
 		url("../../components/images/filetypes/generic-rawMaterial-16.png");
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
@@ -71,7 +71,7 @@
 }
 
 .datagrid span.semiFinishedProduct-Valid {
-	background: url("../../components/images/states/valid-10.png"),
+	background-image: url("../../components/images/states/valid-10.png"),
 		url("../../components/images/filetypes/generic-semiFinishedProduct-16.png");
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
@@ -79,7 +79,7 @@
 }
 
 .datagrid span.resourceProduct-Valid {
-	background: url("../../components/images/states/valid-10.png"),
+	background-image: url("../../components/images/states/valid-10.png"),
 		url("../../components/images/filetypes/generic-resourceProduct-16.png");
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
@@ -87,7 +87,7 @@
 }
 
 .datagrid span.finishedProduct-Simulation {
-	background: url("../../components/images/states/simulation-10.png"),
+	background-image: url("../../components/images/states/simulation-10.png"),
 		url("../../components/images/filetypes/generic-finishedProduct-16.png");
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
@@ -95,7 +95,7 @@
 }
 
 .datagrid span.localSemiFinishedProduct-Simulation {
-	background: url("../../components/images/states/simulation-10.png"),
+	background-image: url("../../components/images/states/simulation-10.png"),
 		url("../../components/images/filetypes/generic-localSemiFinishedProduct-16.png");
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
@@ -103,7 +103,7 @@
 }
 
 .datagrid span.packagingKit-Simulation {
-	background: url("../../components/images/states/simulation-10.png"),
+	background-image: url("../../components/images/states/simulation-10.png"),
 		url("../../components/images/filetypes/generic-packagingKit-16.png");
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
@@ -111,7 +111,7 @@
 }
 
 .datagrid span.packagingMaterial-Simulation {
-	background: url("../../components/images/states/simulation-10.png"),
+	background-image: url("../../components/images/states/simulation-10.png"),
 		url("../../components/images/filetypes/generic-packagingMaterial-16.png");
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
@@ -119,7 +119,7 @@
 }
 
 .datagrid span.rawMaterial-Simulation {
-	background: url("../../components/images/states/simulation-10.png"),
+	background-image: url("../../components/images/states/simulation-10.png"),
 		url("../../components/images/filetypes/generic-rawMaterial-16.png");
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
@@ -127,7 +127,7 @@
 }
 
 .datagrid span.semiFinishedProduct-Simulation {
-	background: url("../../components/images/states/simulation-10.png"),
+	background-image: url("../../components/images/states/simulation-10.png"),
 		url("../../components/images/filetypes/generic-semiFinishedProduct-16.png");
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
@@ -135,7 +135,7 @@
 }
 
 .datagrid span.resourceProduct-Simulation {
-	background: url("../../components/images/states/simulation-10.png"),
+	background-image: url("../../components/images/states/simulation-10.png"),
 		url("../../components/images/filetypes/generic-resourceProduct-16.png");
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
@@ -143,7 +143,7 @@
 }
 
 .datagrid span.finishedProduct-Archived {
-	background: url("../../components/images/states/archived-10.png"),
+	background-image: url("../../components/images/states/archived-10.png"),
 		url("../../components/images/filetypes/generic-finishedProduct-16.png");
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
@@ -151,7 +151,7 @@
 }
 
 .datagrid span.localSemiFinishedProduct-Archived {
-	background: url("../../components/images/states/archived-10.png"),
+	background-image: url("../../components/images/states/archived-10.png"),
 		url("../../components/images/filetypes/generic-localSemiFinishedProduct-16.png");
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
@@ -159,7 +159,7 @@
 }
 
 .datagrid span.packagingKit-Archived {
-	background: url("../../components/images/states/archived-10.png"),
+	background-image: url("../../components/images/states/archived-10.png"),
 		url("../../components/images/filetypes/generic-packagingKit-16.png");
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
@@ -167,7 +167,7 @@
 }
 
 .datagrid span.packagingMaterial-Archived {
-	background: url("../../components/images/states/archived-10.png"),
+	background-image: url("../../components/images/states/archived-10.png"),
 		url("../../components/images/filetypes/generic-packagingMaterial-16.png");
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
@@ -175,7 +175,7 @@
 }
 
 .datagrid span.rawMaterial-Archived {
-	background: url("../../components/images/states/archived-10.png"),
+	background-image: url("../../components/images/states/archived-10.png"),
 		url("../../components/images/filetypes/generic-rawMaterial-16.png");
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
@@ -183,7 +183,7 @@
 }
 
 .datagrid span.semiFinishedProduct-Archived {
-	background: url("../../components/images/states/archived-10.png"),
+	background-image: url("../../components/images/states/archived-10.png"),
 		url("../../components/images/filetypes/generic-semiFinishedProduct-16.png");
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
@@ -191,7 +191,7 @@
 }
 
 .datagrid span.resourceProduct-Archived {
-	background: url("../../components/images/states/archived-10.png"),
+	background-image: url("../../components/images/states/archived-10.png"),
 		url("../../components/images/filetypes/generic-resourceProduct-16.png");
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
@@ -199,7 +199,7 @@
 }
 
 .datagrid span.finishedProduct-Refused {
-	background: url("../../components/images/states/refused-10.png"),
+	background-image: url("../../components/images/states/refused-10.png"),
 		url("../../components/images/filetypes/generic-finishedProduct-16.png");
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
@@ -207,7 +207,7 @@
 }
 
 .datagrid span.localSemiFinishedProduct-Refused {
-	background: url("../../components/images/states/refused-10.png"),
+	background-image: url("../../components/images/states/refused-10.png"),
 		url("../../components/images/filetypes/generic-localSemiFinishedProduct-16.png");
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
@@ -215,7 +215,7 @@
 }
 
 .datagrid span.packagingKit-Refused {
-	background: url("../../components/images/states/refused-10.png"),
+	background-image: url("../../components/images/states/refused-10.png"),
 		url("../../components/images/filetypes/generic-packagingKit-16.png");
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
@@ -223,7 +223,7 @@
 }
 
 .datagrid span.packagingMaterial-Refused {
-	background: url("../../components/images/states/refused-10.png"),
+	background-image: url("../../components/images/states/refused-10.png"),
 		url("../../components/images/filetypes/generic-packagingMaterial-16.png");
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
@@ -231,7 +231,7 @@
 }
 
 .datagrid span.rawMaterial-Refused {
-	background: url("../../components/images/states/refused-10.png"),
+	background-image: url("../../components/images/states/refused-10.png"),
 		url("../../components/images/filetypes/generic-rawMaterial-16.png");
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
@@ -239,7 +239,7 @@
 }
 
 .datagrid span.semiFinishedProduct-Refused {
-	background: url("../../components/images/states/refused-10.png"),
+	background-image: url("../../components/images/states/refused-10.png"),
 		url("../../components/images/filetypes/generic-semiFinishedProduct-16.png");
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
@@ -247,7 +247,7 @@
 }
 
 .datagrid span.resourceProduct-Refused {
-	background: url("../../components/images/states/refused-10.png"),
+	background-image: url("../../components/images/states/refused-10.png"),
 		url("../../components/images/filetypes/generic-resourceProduct-16.png");
 	background-repeat: no-repeat;
 	background-position: 8px 2px, 0 0;
