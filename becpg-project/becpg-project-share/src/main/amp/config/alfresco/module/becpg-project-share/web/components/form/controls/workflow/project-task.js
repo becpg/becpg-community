@@ -240,7 +240,16 @@
                                     if(contents[0].type == "cm:folder" ){
                                        contentUrl = this._getBrowseUrlForFolderPath(contents[0].path, contents[0].siteId, contents[0].name);
                                     } else {
-                                       contentUrl = beCPG.util.entityURL(contents[0].siteId, contents[0].nodeRef, "document");
+                                       var context =  null;
+                                     //TODO Only work in fr or en
+                                       if (contents[0].path.indexOf("/User Homes") > 0 || contents[0].path.indexOf("/Espaces Utilisateurs") > 0)
+                                       {
+                                           context = "mine";
+                                       } else if(contents[0].path.indexOf("/Shared") > 0 || contents[0].path.indexOf("/Partagé") > 0) {
+                                           context = "shared";
+                                       }
+
+                                       contentUrl = beCPG.util.entityURL(contents[0].siteId, contents[0].nodeRef, "document",context);
                                     }
                                         
                                     ret += '<span class="doc-file"><a title="' + this
@@ -309,9 +318,12 @@
                            }
                            else
                            {
+                               //TODO Only work in fr or en
                                if (path.indexOf("/User Homes") > 0 || path.indexOf("/Espaces Utilisateurs") > 0)
                                {
                                    url = Alfresco.constants.URL_PAGECONTEXT + "context/mine/myfiles?path=" + encodeURIComponent('/' + path.split('/').slice(4).join('/')+ '/' + name);
+                               } else if(path.indexOf("/Shared") > 0 || path.indexOf("/Partagé") > 0) {
+                                   url = Alfresco.constants.URL_PAGECONTEXT + "context/shared/sharedfiles?path=" + encodeURIComponent('/' + path.split('/').slice(4).join('/')+ '/' + name);
                                } else {
                                    url = Alfresco.constants.URL_PAGECONTEXT + "repository?path=" + encodeURIComponent('/' + path.split('/').slice(2).join('/')+ '/' + name);
                                }
