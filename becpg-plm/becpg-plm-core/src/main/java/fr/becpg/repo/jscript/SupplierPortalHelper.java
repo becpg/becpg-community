@@ -63,7 +63,7 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 	private NodeService nodeService;
 
 	private PermissionService permissionService;
-
+	
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
@@ -85,7 +85,7 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 		if (task != null) {
 			if (entityNodeRef != null) {
 				NodeRef supplierNodeRef = null;
-				if(PLMModel.TYPE_SUPPLIER.equals(entityNodeRef.getNodeRef())){
+				if(PLMModel.TYPE_SUPPLIER.equals(nodeService.getType(entityNodeRef.getNodeRef()))){
 					 supplierNodeRef = entityNodeRef.getNodeRef();
 					 nodeService.setProperty(supplierNodeRef, PLMModel.PROP_SUPPLIER_STATE, SystemState.Simulation);
 					 
@@ -175,9 +175,7 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 	
 	public void validateProjectEntity(final ScriptNode entityNodeRef){
 		if (entityNodeRef != null) {
-			nodeService.setProperty(entityNodeRef.getNodeRef(), ContentModel.PROP_MODIFIED, new Date());
-			nodeService.setProperty(entityNodeRef.getNodeRef(), ContentModel.PROP_MODIFIER, AuthenticationUtil.getFullyAuthenticatedUser());
-			if(PLMModel.TYPE_SUPPLIER.equals(entityNodeRef.getNodeRef())){
+			if(PLMModel.TYPE_SUPPLIER.equals(nodeService.getType(entityNodeRef.getNodeRef()))){
 				 nodeService.setProperty(entityNodeRef.getNodeRef(), PLMModel.PROP_SUPPLIER_STATE, SystemState.Valid);
 			} else {
 				nodeService.setProperty(entityNodeRef.getNodeRef(), PLMModel.PROP_PRODUCT_STATE, SystemState.Valid);
