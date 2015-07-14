@@ -141,8 +141,8 @@
 				<step id="step2" labelId="becpg.wizard.supplier.step2.label"
 					titleId="becpg.wizard.supplier.step2.title" type="entityDataList"
 					listId="plant" itemId="bcpg:plant"></step>
-				<step id="step3" labelId="becpg.wizard.supplier.step2.label"
-					titleId="becpg.wizard.supplier.step2.title" type="entityDataList"
+				<step id="step3" labelId="becpg.wizard.supplier.step3.label"
+					titleId="becpg.wizard.supplier.step3.title" type="entityDataList"
 					listId="contactList" itemId="bcpg:contactList"></step>
 			</wizard>
 			<wizard id="supplier-pack">

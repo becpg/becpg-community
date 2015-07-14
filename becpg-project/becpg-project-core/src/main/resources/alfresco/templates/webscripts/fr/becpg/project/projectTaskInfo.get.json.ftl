@@ -17,7 +17,8 @@
 								"nodeRef": "${content.nodeRef}",
 								"type": "${content.typeShort}",
 								"siteId": "${content.getSiteShortName()!""}",
-								"path": "${content.displayPath!""}"
+								"path": "${content.displayPath!""}",
+                                "isContainer" : ${content.isContainer?string}
 								}
 			   				<#if content_has_next>,</#if>
 						</#if>

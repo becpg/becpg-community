@@ -71,6 +71,8 @@ public class ProjectActivityActionExecuter extends ActionExecuterAbstractBase {
 	 */
 	@Override
 	public void executeImpl(Action ruleAction, NodeRef actionedUponNodeRef) {
+		
+		
 		if (nodeService.exists(actionedUponNodeRef) && !nodeService.hasAspect(actionedUponNodeRef, ContentModel.ASPECT_WORKING_COPY)
 				&& !nodeService.hasAspect(actionedUponNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
 			QName type = nodeService.getType(actionedUponNodeRef);

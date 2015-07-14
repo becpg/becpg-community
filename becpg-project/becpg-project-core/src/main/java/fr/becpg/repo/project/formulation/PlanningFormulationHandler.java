@@ -312,7 +312,11 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 				if(tempDuration == null){
 					tempDuration = ProjectHelper.calculateDuration(task);
 				}
-			}			
+			}	
+			if(tempDuration == null){
+				tempDuration = 0;
+			}
+			
 			tempDuration += calculateDuration(projectData, task.getNodeRef(), isRealDuration);
 			if(tempDuration != null && tempDuration > taskDuration){
 				taskDuration = tempDuration;
