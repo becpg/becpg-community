@@ -386,9 +386,18 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
-	public Long getNbProjectsByLegend(NodeRef legendNodeRef) {
-		return BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_PROJECT).andPropEquals(ProjectModel.PROP_PROJECT_STATE, ProjectState.InProgress.toString())
-				.andPropEquals(ProjectModel.PROP_PROJECT_LEGENDS, legendNodeRef.toString()).inDB().count();
+	public Long getNbProjectsByLegend(NodeRef legendNodeRef, String siteId) {
+		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_PROJECT).andPropEquals(ProjectModel.PROP_PROJECT_STATE, ProjectState.InProgress.toString());
+		if(legendNodeRef == null){
+			queryBuilder.isNull(ProjectModel.PROP_PROJECT_LEGENDS);			
+		}
+		else{
+			queryBuilder.andPropEquals(ProjectModel.PROP_PROJECT_LEGENDS, legendNodeRef.toString());
+		}
+		if(siteId != null){
+			queryBuilder.inSite(siteId, null);
+		}
+		return queryBuilder.count();
 	}
 
 }

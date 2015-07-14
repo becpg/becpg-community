@@ -58,6 +58,10 @@ public interface BeCPGMailService {
 	 */
 	NodeRef getEmailWorkflowTemplatesFolder();
 
-
+	/**
+	 * 
+	 * @return the notify model mail nodeRef
+	 */
+	NodeRef getEmailNotifyTemplatesFolder();
 
 }
