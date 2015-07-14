@@ -42,6 +42,8 @@ import fr.becpg.repo.project.data.projectList.ActivityEvent;
  * @author matthieu
  * 
  */
+// Can be removed in next release
+@Deprecated
 public class ProjectActivityActionExecuter extends ActionExecuterAbstractBase {
 
 	public static final String NAME = "project-activity";
