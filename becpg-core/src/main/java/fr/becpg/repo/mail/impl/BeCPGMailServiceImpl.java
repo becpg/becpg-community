@@ -191,11 +191,14 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 		return searchFolder("app:company_home/app:dictionary/app:email_templates/.");
 	}
 
-	
 	@Override
 	public NodeRef getEmailWorkflowTemplatesFolder() {
 		return searchFolder("app:company_home/app:dictionary/app:email_templates/cm:workflownotification/.");
+	}
 
+	@Override
+	public NodeRef getEmailNotifyTemplatesFolder() {
+		return searchFolder("app:company_home/app:dictionary/app:email_templates/app:notify_email_templates/.");
 	}
 	
 	private NodeRef searchFolder(String xpath){

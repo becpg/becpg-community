@@ -59,7 +59,7 @@ public interface ProjectService {
 	 * 
 	 * @return
 	 */
-	Long getNbProjectsByLegend(NodeRef legendNodeRef);
+	Long getNbProjectsByLegend(NodeRef legendNodeRef, String siteId);
 
 	/**
 	 * Get the projects container
