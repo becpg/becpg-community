@@ -104,9 +104,9 @@
 
 		<types>
 			<type name="cm:content">
-
 				<subtype name="bcpg:linkedValue" />
 				<subtype name="bcpg:listValue" />
+				<subtype name="bcpg:entityListItem" />
 			</type>
 			<type name="cm:folder">
 				<subtype name="bcpg:entityV2" />

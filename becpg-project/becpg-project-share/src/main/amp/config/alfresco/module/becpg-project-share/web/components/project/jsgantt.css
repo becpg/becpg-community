@@ -50,15 +50,16 @@ td.ghead.current {
 
 
 .projects  span.task-title {
-	white-space: nowrap;
-	text-overflow: ellipsis;
-	overflow: hidden;
-	width: 200px;
 	display: inline-block;
 }
 
 .projects  span.task-title a {
-	cursor: pointer;
+    cursor: pointer;
+    display: inline-block;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .projects  span.resource-title {

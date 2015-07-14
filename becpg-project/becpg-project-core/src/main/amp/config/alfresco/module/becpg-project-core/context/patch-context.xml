@@ -136,4 +136,25 @@
             <ref bean="entityTplService"/>
         </property>
 	</bean>
+	
+	<bean id="patch.bcpg.project.projectRulesPatch" class="fr.becpg.repo.project.admin.patch.ProjectRulesPatch" parent="beCPGBasePatch" >
+        <property name="id"><value>patch.bcpg.project.projectRulesPatch</value></property>
+        <property name="description"><value>patch.bcpg.project.projectRulesPatch.description</value></property>
+        <property name="fixesFromSchema" value="0"/>
+        <property name="fixesToSchema" value="8010" />
+        <property name="targetSchema" value="10170"/>
+        <property name="requiresTransaction"><value>true</value></property>
+        <property name="applyToTenants"><value>true</value></property>
+        <property name="ruleService" ref="ruleService"/>
+         <property name="patchDAO">
+            <ref bean="patchDAO"/>
+        </property>
+        <property name="nodeDAO">
+            <ref bean="nodeDAO"/>
+        </property>
+        <property name="qnameDAO">
+            <ref bean="qnameDAO"/>
+        </property>
+	</bean>
+	
 </beans>

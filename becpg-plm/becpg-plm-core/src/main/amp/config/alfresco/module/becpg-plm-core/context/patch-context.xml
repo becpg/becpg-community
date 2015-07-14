@@ -318,6 +318,7 @@
          <property name="policyBehaviourFilter">
             <ref bean="policyBehaviourFilter"/>
         </property>
+        <property name="entityListDAO" ref="entityListDAO"/>
 	</bean>
 	
 <bean id="patch.bcpg.plm.claimListValuePatch" class="fr.becpg.repo.admin.patch.ClaimListValuePatch" parent="beCPGBasePatch" >

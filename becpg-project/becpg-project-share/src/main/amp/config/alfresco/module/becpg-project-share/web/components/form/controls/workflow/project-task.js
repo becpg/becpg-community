@@ -237,7 +237,7 @@
                                     .msg("form.control.project-task.link.title.open-link") + '" href="' + url + '">' + '<img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/link-16.png" /></a></span>';
                                 } else  if (contents.length > 0) {
                                 
-                                    if(contents[0].type == "cm:folder" ){
+                                    if(contents[0].type == "cm:folder" ||  contents[0].isContainer ){
                                        contentUrl = this._getBrowseUrlForFolderPath(contents[0].path, contents[0].siteId, contents[0].name);
                                     } else {
                                        var context =  null;
