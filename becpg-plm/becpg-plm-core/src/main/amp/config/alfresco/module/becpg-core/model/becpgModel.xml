@@ -1318,8 +1318,12 @@
 					<index enabled="false" />
 				</property>
 				<property name="bcpg:illManualValue">
-					<title>Etiquette retravaillée</title>
 					<type>d:mltext</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+			   <property name="bcpg:illLogValue">
+					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
@@ -2043,6 +2047,7 @@
 		<type name="bcpg:precautionOfUse">
 			<parent>bcpg:charact</parent>
 		</type>
+		
 
 	</types>
 	

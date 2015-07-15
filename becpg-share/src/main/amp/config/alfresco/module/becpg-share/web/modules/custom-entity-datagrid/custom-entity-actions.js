@@ -35,9 +35,8 @@
 
 		/**
 		 * @method onActionShowDetails
-		 * @param items
-		 *            {Object | Array} Object literal representing the Data Item
-		 *            to be actioned, or an Array thereof
+		 * @param items {Object | Array} Object literal representing the Data
+		 *            Item to be actioned, or an Array thereof
 		 */
 		onActionShowDetails : function EntityDataGrid_onActionShowDetails(p_items) {
 			var items = YAHOO.lang.isArray(p_items) ? p_items : [ p_items ], nodeRefs = [];
@@ -374,7 +373,67 @@
 				this._manageAspect(items[i].nodeRef, "pack:labelingAspect");
 			}
 		},
+		
+		onActionShowLabelingDetails  : function EntityDataGrid_onActionShowLabelingDetails(p_items) {
+			var items = YAHOO.lang.isArray(p_items) ? p_items : [ p_items ];
 
+			var formatTree = function (tree){
+			    var html = '<ul><li >';
+			    if(tree.name && tree.name!="root"){
+			        if(tree.nodeRef){
+        			    html += '<span class="'+tree.cssClass+'">'; 
+            			html += '<a href=' + beCPG.util.entityURL(tree.siteId, tree.nodeRef) + '>'  + this.msg("label.labeling-details.tree.item",tree.legal, beCPG.util.sigFigs(tree.vol,3), beCPG.util.sigFigs(tree.qte,3), tree.decl) +'</a>';
+        			    html += '</span>';
+			        } else {
+			            html += '<span class="packagingMaterial">'; 
+                        html +=  this.msg("label.labeling-details.tree.item",tree.legal, beCPG.util.sigFigs(tree.vol,3), beCPG.util.sigFigs(tree.qte,3), tree.decl);
+                        html += '</span>';
+			        }
+			    }
+			    if(tree.children){    
+			        html+= '<ul>'
+			            for(var i = tree.children.length - 1;  i>=0; --i){
+			                html+=     '<li>';
+			                html+=formatTree.call(this, tree.children[i]);
+			                html+=     '</li>'
+			            }
+			        html+='</ul>'
+			    }
+			    html+='</li></ul>';
+			    return html;
+			};	   
+			if(items.length>0){
+				var noderef = items[0].nodeRef;
+				Alfresco.util.Ajax.request({
+					method : Alfresco.util.Ajax.GET,
+					url : Alfresco.constants.PROXY_URI + "becpg/labeling/showLabelingDetails?nodeRef=" + noderef  ,
+					requestContentType: Alfresco.util.Ajax.JSON,
+				    requestHeaders: {Accept: 'application/json'},
+					successCallback : {
+						fn : function(resp) {
+					         var stringJson = resp.json; 
+							 if (stringJson) {
+                                var html = '<div class="hd">' + this.msg("label.labeling-details.title") + '</div>';
+                                    html += '<div class="bd labeling-details">';
+                                    html+=formatTree.call(this, stringJson); 
+                                    html += '</div>';
+								
+                                 var containerDiv = document.createElement("div");     
+                                      containerDiv.className = "datagrid";
+                                       containerDiv.innerHTML = html;
+							
+                                this.widgets.labelingDetailsPanel = Alfresco.util.createYUIPanel(containerDiv, {
+									draggable : true,
+									width : "45em"
+								});
+								this.widgets.labelingDetailsPanel.show();
+							}
+						},
+						scope : this
+					}
+				});
+			}
+		},
 		onActionSimulate : function EntityDataGrid_onActionSimulate(p_items) {
 			var items = YAHOO.lang.isArray(p_items) ? p_items : [ p_items ], me = this, nodeRefs = "";
 
@@ -476,7 +535,7 @@
 
 					},
 					scope : this
-				},
+				}
 			});
 		},
 
