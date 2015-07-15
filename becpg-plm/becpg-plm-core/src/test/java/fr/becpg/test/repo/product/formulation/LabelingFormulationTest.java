@@ -519,6 +519,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		}, false, true);
 	}
 
+	
 	/**
 	 * Test ingredients calculating.
 	 * 
@@ -1100,6 +1101,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 					for (IngLabelingListDataItem illDataItem : formulatedProduct.getLabelingListView().getIngLabelingList()) {
 						String formulatedIll = illDataItem.getValue().getValue(Locale.FRENCH);
 						Assert.assertEquals("Incorrect label :" + formulatedIll + "\n   - compare to " + ill, ill, formulatedIll);
+						Assert.assertNotNull(illDataItem.getLogValue());
 
 					}
 				} catch (Throwable e) {

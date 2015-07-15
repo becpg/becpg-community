@@ -21,6 +21,8 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
@@ -197,8 +199,17 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 								I18NUtil.setLocale(currentLocal);
 							}
 						}
-
-						retainNodes.add(getOrCreateILLDataItem(formulatedProduct, labelingRuleListDataItem.getNodeRef(), label));
+						
+						//Create logs 
+						String log =  "";
+						
+						if(labelingRuleListDataItem.getFormula().replace(" ", "").contains("render(false)")){
+							log = createJsonLog(mergeCompositeLabeling, null,null).toString();
+						} else {
+							log = createJsonLog(compositeLabeling, null,null).toString();
+						}
+								
+						retainNodes.add(getOrCreateILLDataItem(formulatedProduct, labelingRuleListDataItem.getNodeRef(), label,log));
 					}
 				}
 
@@ -639,7 +650,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		return ret;
 	}
 
-	private IngLabelingListDataItem getOrCreateILLDataItem(ProductData formulatedProduct, NodeRef key, MLText label) {
+	private IngLabelingListDataItem getOrCreateILLDataItem(ProductData formulatedProduct, NodeRef key, MLText label, String log) {
 
 		IngLabelingListDataItem ill = null;
 		for (IngLabelingListDataItem tmp : formulatedProduct.getLabelingListView().getIngLabelingList()) {
@@ -656,6 +667,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		} else if (!Boolean.TRUE.equals(ill.getIsManual())) {
 			ill.setValue(label);
 		}
+		
+		ill.setLogValue(log);
+		
 		return ill;
 
 	}
@@ -1099,5 +1113,49 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	private String getName(NodeRef nodeRef) {
 		return (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
 	}
+	
 
+	@SuppressWarnings("unchecked")
+	private JSONObject createJsonLog(AbstractLabelingComponent component, Double totalQty, Double totalVol){
+		
+		JSONObject tree = new JSONObject();
+		if(component!=null){
+			 if(component.getNodeRef()!=null && nodeService.exists(component.getNodeRef())){
+			    tree.put("nodeRef", component.getNodeRef().toString());
+			    tree.put("cssClass",nodeService.getType(component.getNodeRef()).getLocalName() );			    
+		     }
+			
+			 tree.put("name", component.getName());
+			 tree.put("legal", component.getLegalName(I18NUtil.getContentLocaleLang()));
+			 if(component.getVolume()!=null && totalVol!=null && totalVol>0){
+				 tree.put("vol", component.getVolume()/totalVol*100);
+			 } else {
+				 tree.put("vol", 0);
+			 }
+			 if(component.getQty()!=null && totalQty!=null && totalQty>0){
+				 tree.put("qte", component.getQty()/totalQty*100 );
+			 } else {
+				 tree.put("qte", 0);
+			 }
+			 
+			 if(component instanceof CompositeLabeling){
+				 CompositeLabeling composite = (CompositeLabeling)component;
+	
+				 if(composite.getDeclarationType()!=null){
+					 tree.put("decl", I18NUtil.getMessage("listconstraint.bcpg_declarationTypes."+composite.getDeclarationType().toString()));
+				 }
+			
+				 JSONArray children = new JSONArray();
+				 for(AbstractLabelingComponent childComponent : composite.getIngList().values()){
+					 children.add(createJsonLog(childComponent,composite.getQtyTotal(),composite.getVolumeTotal() ));
+				 }
+				 tree.put("children", children);
+			 } else {
+				 tree.put("decl",I18NUtil.getMessage("listconstraint.bcpg_declarationTypes.DoNotDetails"));
+			 }
+		}
+		 
+		return tree;
+	}
+	
 }

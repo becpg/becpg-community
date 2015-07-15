@@ -551,6 +551,8 @@ if (beCPG.module.EntityDataGridRenderers) {
 		}
 
 	});
+	
+
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : "pack:labelingPosition",
@@ -580,7 +582,23 @@ if (beCPG.module.EntityDataGridRenderers) {
 
 	});
 	
-	
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+	    propertyName : "boolean_bcpg:lrIsActive",
+	    renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+    	        if (oColumn.hidden) {
+                    scope.widgets.dataTable.showColumn(oColumn);
+                    Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
+                }
+    	        
+	            Dom.setStyle(elCell, "width", "16px");
+	            Dom.setStyle(elCell.parentNode, "width", "16px");
+	        if(data.value){
+	            return "<span  class='rule-enabled'>&nbsp;</span>";
+	        } 
+	        return "<span  class='rule-disabled'>&nbsp;</span>";
+	    }
+	});
+
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : [ "bcpg:dynamicCharactColumn1", "bcpg:dynamicCharactColumn2", "bcpg:dynamicCharactColumn3", "bcpg:dynamicCharactColumn4",
