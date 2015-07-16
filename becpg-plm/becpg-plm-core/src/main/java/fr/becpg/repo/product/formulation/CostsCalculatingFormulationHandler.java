@@ -22,7 +22,6 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
 import fr.becpg.repo.data.hierarchicalList.Composite;
@@ -97,8 +96,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 
 		// no formulation
 		if ((formulatedProduct.getCostList()==null)
-				 &&	!alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_COSTLIST)
-				 || formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
+				 &&	!alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_COSTLIST)) {
 			logger.debug("no formulation");
 			return true;
 		}
@@ -451,7 +449,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		NodeRef plantNodeRef = formulatedProduct.getPlants().isEmpty() ? null : formulatedProduct.getPlants().get(0);
 		
 		List<CostListDataItem> templateCostLists = new ArrayList<>();
-		if (formulatedProduct.getEntityTpl() != null) {
+		if (formulatedProduct.getEntityTpl() != null && !formulatedProduct.getEntityTpl().equals(formulatedProduct)) {
 			templateCostLists.addAll(formulatedProduct.getEntityTpl().getCostList());
 		}
 		if(formulatedProduct.getClients() !=null){

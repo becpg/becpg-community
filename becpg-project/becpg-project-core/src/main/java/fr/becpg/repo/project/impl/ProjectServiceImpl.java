@@ -32,7 +32,6 @@ import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.ScriptService;
-import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -95,7 +94,7 @@ public class ProjectServiceImpl implements ProjectService {
 	@Autowired
 	private NamespaceService namespaceService;
 	@Autowired
-	private ScriptService scriptService;
+	private ScriptService scriptService;	
 
 	@Autowired
 	SysAdminParams sysAdminParams;

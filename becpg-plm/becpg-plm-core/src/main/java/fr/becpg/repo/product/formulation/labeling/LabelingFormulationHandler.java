@@ -295,7 +295,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				addLabelingRule(ret, entityLabelingRulList);
 			}
 
-			if (formulatedProduct.getEntityTpl() != null && formulatedProduct.getEntityTpl().getLabelingListView().getLabelingRuleList() != null) {
+			if (formulatedProduct.getEntityTpl() != null && !formulatedProduct.getEntityTpl().equals(formulatedProduct) && formulatedProduct.getEntityTpl().getLabelingListView().getLabelingRuleList() != null) {
 				for (LabelingRuleListDataItem modelLabelingRuleListDataItem : formulatedProduct.getEntityTpl().getLabelingListView().getLabelingRuleList()) {
 					if (!modelLabelingRuleListDataItem.isSynchronisable() && Boolean.TRUE.equals(modelLabelingRuleListDataItem.getIsActive())) {
 						addLabelingRule(ret, modelLabelingRuleListDataItem);
@@ -330,7 +330,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	}
 
 	private void copyTemplateLabelingRuleList(ProductData formulatedProduct) {
-		if (formulatedProduct.getEntityTpl() != null) {
+		if (formulatedProduct.getEntityTpl() != null && !formulatedProduct.getEntityTpl().equals(formulatedProduct)) {
 			for (LabelingRuleListDataItem modelLabelingRuleListDataItem : formulatedProduct.getEntityTpl().getLabelingListView().getLabelingRuleList()) {
 				if (modelLabelingRuleListDataItem.isSynchronisable()) {
 					boolean contains = false;
