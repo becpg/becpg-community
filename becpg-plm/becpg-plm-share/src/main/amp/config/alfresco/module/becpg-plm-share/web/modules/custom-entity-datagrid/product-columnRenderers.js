@@ -268,13 +268,16 @@ if (beCPG.module.EntityDataGridRenderers) {
           
           var title = Alfresco.util.encodeHTML(data.metadata);
           var cssClass = data.metadata;
-          var isFormulated = oRecord.getData("itemData")["prop_bcpg_costListIsFormulated"].value;
-          var error = oRecord.getData("itemData")["prop_bcpg_costListFormulaErrorLog"].value;
-          if(error != null){
-         	 cssClass= "cost-formulated-error";
-             title = Alfresco.util.encodeHTML(error);
-          } else if(isFormulated){
-         	 cssClass= "cost-formulated";
+          
+          if(oRecord.getData("itemData")["prop_bcpg_costListIsFormulated"]!=null){
+              var isFormulated = oRecord.getData("itemData")["prop_bcpg_costListIsFormulated"].value;
+              var error = oRecord.getData("itemData")["prop_bcpg_costListFormulaErrorLog"].value;
+              if(error != null){
+             	 cssClass= "cost-formulated-error";
+                 title = Alfresco.util.encodeHTML(error);
+              } else if(isFormulated){
+             	 cssClass= "cost-formulated";
+              }
           }
           
           if (oRecord.getData("itemData")["prop_bcpg_depthLevel"] != null) {
