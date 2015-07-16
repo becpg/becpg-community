@@ -137,6 +137,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		}
 		
 		if(productData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)){
+			logger.debug("Entity tpl found skipping formulation");
 			//Skip formulation
 			return false;
 		}

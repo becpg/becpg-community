@@ -300,7 +300,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 	 * @param simpleListDataList
 	 */
 	private void copyTemplateDynamicCharactLists(ProductData formulatedProduct) {
-		if (formulatedProduct.getEntityTpl() != null) {
+		if (formulatedProduct.getEntityTpl() != null && !formulatedProduct.getEntityTpl().equals(formulatedProduct)) {
 			ProductData templateProductData = formulatedProduct.getEntityTpl();
 
 			copyTemplateDynamicCharactList(templateProductData.getCompoListView().getDynamicCharactList(), formulatedProduct.getCompoListView()
