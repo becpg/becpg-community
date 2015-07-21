@@ -17,8 +17,10 @@
  ******************************************************************************/
 package fr.becpg.repo.listvalue;
 
+import java.beans.PropertyDescriptor;
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +29,8 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.PLMModel;
@@ -55,12 +59,17 @@ public class SpelEditorListValuePlugin extends EntityListValuePlugin {
 		// Class is a Java class
 		try {
 			Class<?> c = Class.forName(className);
-			Field[] fields = c.getDeclaredFields();
+			BeanWrapper beanWrapper = new BeanWrapperImpl(c);
 			List<ListValueEntry> ret = new ArrayList<>();
-			for (Field field : fields) {
-				ret.add(new ListValueEntry(field.getName(), field.getName(), field.getType()
-						.getSimpleName()));
+			
+			for (PropertyDescriptor pd : beanWrapper.getPropertyDescriptors()) {
+				if(pd.getReadMethod()!=null && pd.getWriteMethod()!=null){
+					ret.add(new ListValueEntry(pd.getName(), pd.getName(), pd.getPropertyType()
+							.getSimpleName()));
+				}
 			}
+			
+			
 			return new ListValuePage(ret, pageNum, pageSize, null);
 
 		} catch (ClassNotFoundException e) {
