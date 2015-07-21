@@ -107,7 +107,7 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 
 			}
 
-			if (formulatedProduct.getEntityTpl() != null) {
+			if (formulatedProduct.getEntityTpl() != null && !formulatedProduct.getEntityTpl().equals(formulatedProduct)) {
 				// Set default params
 				List<ResourceParamListItem> templatePl = formulatedProduct.getEntityTpl().getResourceParamList();
 				if (templatePl != null) {

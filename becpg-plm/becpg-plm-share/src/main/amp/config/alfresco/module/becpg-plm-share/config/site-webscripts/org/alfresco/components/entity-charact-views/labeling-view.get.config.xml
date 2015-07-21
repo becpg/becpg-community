@@ -6,6 +6,7 @@
       <action type="action-link" id="onActionDown" permission="sort" label="menu.selected-items.down" />
    </actionSetToolbar>
    <actionSetDataGrid>
+      <action type="action-link" id="onActionShowLabelingDetails" label="actions.labeling-details" />
       <action type="action-link" id="onActionEdit" permission="edit" label="actions.edit" />
       <action type="action-link" id="onActionDuplicate" permission="create" label="actions.duplicate-row" />
       <action type="action-link" id="onActionDelete" permission="delete" label="actions.delete-row" />

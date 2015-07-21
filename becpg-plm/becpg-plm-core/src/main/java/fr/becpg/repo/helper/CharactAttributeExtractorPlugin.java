@@ -22,6 +22,8 @@ package fr.becpg.repo.helper;
 import java.util.Collection;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,36 +37,33 @@ import fr.becpg.repo.entity.EntityDictionaryService;
  * 
  */
 @Service
-public class ProductAttributeExtractorPlugin extends AbstractExprNameExtractor {
+public class CharactAttributeExtractorPlugin extends AbstractExprNameExtractor {
 
-	@Value("${beCPG.product.name.format}")
-	private String productNameFormat;
+	@Value("${beCPG.charact.name.format}")
+	private String charactNameFormat;
 
-	
+	@Autowired
+	private NodeService nodeService;
+
 	@Autowired
 	private EntityDictionaryService entityDictionaryService;
 
+	@Autowired
+	private NamespaceService namespaceService;
 
 	@Override
 	public Collection<QName> getMatchingTypes() {
-		return entityDictionaryService.getSubTypes(PLMModel.TYPE_PRODUCT);
+		return entityDictionaryService.getSubTypes(PLMModel.TYPE_CHARACT);
 	}
 
 	@Override
 	public String extractPropName(QName type, NodeRef nodeRef) {
-		return extractExpr(nodeRef,productNameFormat);
+		return extractExpr(nodeRef, charactNameFormat);
 	}
 
 	@Override
 	public String extractMetadata(QName type, NodeRef nodeRef) {
-		String ret = type.toPrefixString(namespaceService).split(":")[1] + "-" + nodeService.getProperty(nodeRef, PLMModel.PROP_PRODUCT_STATE);
-		if (nodeService.hasAspect(nodeRef, PLMModel.ASPECT_NUTRIENT_PROFILING_SCORE)) {
-			String nutClass = (String) nodeService.getProperty(nodeRef, PLMModel.PROP_NUTRIENT_PROFILING_CLASS);
-			if (nutClass != null && !nutClass.isEmpty() && nutClass.length() < 5) {
-				ret += " nutrientClass-" + nutClass;
-			}
-		}
-		return ret;
+		return type.toPrefixString(namespaceService).split(":")[1];
 	}
 
 }

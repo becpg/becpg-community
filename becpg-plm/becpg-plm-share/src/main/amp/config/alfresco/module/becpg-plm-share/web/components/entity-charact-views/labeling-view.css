@@ -109,3 +109,28 @@
 .labeling-view .yui-dt-selected .note.rounded:before {
 	border-color: #AAAAAA #AAAAAA #FFEA5B #FFEA5B;
 }
+
+
+.datagrid-bar .onActionShowDetails,.datagrid .onActionShowLabelingDetails a {
+ 	background-image: url("../../components/images/show-details-16.png");
+ }
+
+
+.labeling-details ul li { 
+  display: block;
+  padding: 0.2em 0.2em 0.2em 1em;
+}
+
+
+.labeling-view   span.rule-disabled {
+	background: url(../../components/images/enabled-indicator-off-16.png) no-repeat;
+	padding-left: 20px;
+}
+
+
+
+.labeling-view   span.rule-enabled {
+	background: url(../../components/images/enabled-indicator-on-16.png) no-repeat;
+	padding-left: 20px;
+}
+

@@ -18,6 +18,13 @@
 		                  <button type="button">${msg('button.exportCSV')}</button>
 		               </span>
 		            </span>
+		       </div>
+               <div class="back-button">
+		            <span id="${el}-back" class="yui-button yui-push-button">
+		               <span class="first-child">
+		                  <button type="button">${msg('button.back')}</button>
+		               </span>
+		            </span>
 		        </div>
 	   </div>
 		<div class="body">
