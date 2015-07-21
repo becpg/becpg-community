@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.favourites.FavouritesService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -33,11 +32,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.listvalue.ListValueEntry;
 import fr.becpg.repo.listvalue.ListValueExtractor;
-import fr.becpg.repo.repository.AlfrescoRepository;
-import fr.becpg.repo.repository.RepositoryEntity;
-import fr.becpg.repo.repository.model.StateableEntity;
 
 /**
  * Used to extract properties from product
@@ -53,12 +50,12 @@ public class TargetAssocValueExtractor implements ListValueExtractor<NodeRef> {
 
 	@Autowired
 	private NamespaceService namespaceService;
-
-	@Autowired
-	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 	
 	@Autowired
 	private FavouritesService favouritesService;
+	
+	@Autowired
+	private AttributeExtractorService attributeExtractorService;
 
 	@Override
 	public List<ListValueEntry> extract(List<NodeRef> nodeRefs) {
@@ -67,29 +64,15 @@ public class TargetAssocValueExtractor implements ListValueExtractor<NodeRef> {
 		if (nodeRefs != null) {
 			for (NodeRef nodeRef : nodeRefs) {
 
-				String name;
 				QName type = nodeService.getType(nodeRef);
-				String cssClass = type.getLocalName();
+				String name = attributeExtractorService.extractPropName(nodeRef);
+				String cssClass = attributeExtractorService.extractMetadata(type,nodeRef);
 				Map<String, String> props = new HashMap<>(2);
 				props.put("type", type.toPrefixString(namespaceService));
-
-				if (alfrescoRepository.isRegisteredType(type)) {
-					RepositoryEntity entity = alfrescoRepository.findOne(nodeRef);
-					name = entity.getName();
-					if (entity instanceof StateableEntity) {
-						cssClass += "-" + ((StateableEntity) entity).getEntityState();
-						props.put("state", ((StateableEntity) entity).getEntityState());
-					    if(favouritesService.isFavourite(AuthenticationUtil.getFullyAuthenticatedUser(), nodeRef)){
-					    	cssClass += "  favourite";
-					    }
-					
-					}
-					
-
-				} else {
-					name = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
+				if(favouritesService.isFavourite(AuthenticationUtil.getFullyAuthenticatedUser(), nodeRef)){
+				   	cssClass += "  favourite";
 				}
-
+				
 				if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_COLOR)) {
 					props.put("color", (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_COLOR));
 				}
