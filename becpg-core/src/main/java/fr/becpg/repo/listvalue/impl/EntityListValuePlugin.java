@@ -43,6 +43,7 @@ import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.TokenStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
@@ -67,7 +68,7 @@ public class EntityListValuePlugin implements ListValuePlugin {
 	protected static final String SOURCE_TYPE_LINKED_VALUE = "linkedvalue";
 	protected static final String SOURCE_TYPE_LINKED_VALUE_ALL = "allLinkedvalue";
 	protected static final String SOURCE_TYPE_LIST_VALUE = "listvalue";
-	protected static final String searchTemplate = "%(cm:name bcpg:erpCode bcpg:code)";
+	protected static final String searchTemplate = "%(cm:name bcpg:erpCode bcpg:code bcpg:legalName)";
 
 	protected static final String SUFFIX_ALL = "*";
 	protected static final String PARAM_VALUES_SEPARATOR = ",";
@@ -138,7 +139,8 @@ public class EntityListValuePlugin implements ListValuePlugin {
 			}
 		}
 
-		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(type).excludeDefaults().inSearchTemplate(searchTemplate).andOperator().ftsLanguage();
+		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(type).excludeDefaults().inSearchTemplate(searchTemplate).
+				locale(I18NUtil.getContentLocale()).andOperator().ftsLanguage();
 
 		if (!isAllQuery(query)) {
 			if (query.length() > 2) {

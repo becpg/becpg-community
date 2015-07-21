@@ -138,6 +138,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	private boolean isExactType = false;
 	private String searchTemplate = null;
 	private SearchParameters.Operator operator = null;
+	private Locale locale = Locale.getDefault();
 	
 	
 	@Override
@@ -214,6 +215,13 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		this.operator = SearchParameters.Operator.AND;
 		return this;
 	}
+	
+
+	public BeCPGQueryBuilder locale(Locale locale) {
+		this.locale = locale;
+		return this;
+	}
+
 
 	public BeCPGQueryBuilder parent(NodeRef parentNodeRef) {
 		if (this.parentNodeRef != null) {
@@ -854,7 +862,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		sp.addStore(RepoConsts.SPACES_STORE);
 
 		sp.setQuery(runnedQuery);
-		sp.addLocale(Locale.getDefault());
+		sp.addLocale(locale);
 		sp.excludeDataInTheCurrentTransaction(true);
 		sp.setExcludeTenantFilter(false);
 		
@@ -951,7 +959,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		sp.addStore(RepoConsts.SPACES_STORE);
 
 		sp.setQuery(runnedQuery);
-		sp.addLocale(Locale.getDefault());
+		sp.addLocale(locale);
 		sp.excludeDataInTheCurrentTransaction(true);
 		sp.setLanguage(language);
 		sp.setQueryConsistency(queryConsistancy);
