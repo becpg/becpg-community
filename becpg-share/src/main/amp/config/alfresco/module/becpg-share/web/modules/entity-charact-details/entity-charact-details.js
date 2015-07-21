@@ -70,6 +70,8 @@
 	   options : {
 
 	      entityNodeRef : null,
+	      
+          backEntityNodeRef: [],
 
 	      itemType : null,
 
@@ -141,6 +143,12 @@
 						disabled : false,
 						value : "export"
 			});
+			
+			this.widgets.backButton = Alfresco.util.createYUIButton(this, "back",
+					this.onBack, {
+						disabled : true,
+						value : "back"
+			});
 
 		   // Load preferences to override default filter and range
 		   me.selectMenuValue(me.widgets.chartTypePicker, "barChart");
@@ -163,14 +171,24 @@
 		   me.loadChartData();
 		   
 	   },
-	   /**
-	    * 
-	    */
+
 	   onExportCSV : function BulkEdit_onExportCSV() {
 	   	  if (this.options.entityNodeRef != null && this.options.entityNodeRef.length > 0) {
 				window.location = this._buildDetailsUrl("csv");
 	   	  }
 		},
+		
+	   onBack : function BulkEdit_onBack() {
+		   	  if (this.options.backEntityNodeRef!= null && this.options.backEntityNodeRef.length > 0) {
+		   		   this.options.entityNodeRef = this.options.backEntityNodeRef.pop();
+				   this.loadChartData();
+		   	  } 
+		   	  
+		   	  if (this.options.backEntityNodeRef== null || this.options.backEntityNodeRef.length < 1) {
+		   		  this.widgets.backButton.set("disabled", true);  
+		   	  }
+		   	  
+			},
 	   /**
 		 * 
 		 * @param picker
@@ -219,7 +237,7 @@
    		+"?entityNodeRef="+ this.options.entityNodeRef
    		+"&itemType=" + this.options.itemType 
    		+ "&dataListName="+this.options.dataListName
-         + "&dataListItems="+this.options.dataListItems;
+        + "&dataListItems="+this.options.dataListItems;
 	   },
 	   /**
 		 * 
@@ -234,8 +252,9 @@
 		   this.columnDefs = [];
 		   this.seriesDef = [];
 		   this.barChartSeriesDef = [];
+		   var i=0;
 
-		   for (i in data.metadatas) {
+		   for (i=0;i<data.metadatas.length;i++) {
 			   myFieldDefs.push({key : "col" + i ,
                   parser : function(oData) {
                      if(!YAHOO.lang.isValue(oData) || (oData === "")) {
@@ -255,7 +274,7 @@
 			      key : "col" + i,
 			      label : data.metadatas[i].colName
 			   });
-			   if (i > 0) {
+			   if (i > 1) {
 				   this.seriesDef.push({
 				      displayName : data.metadatas[i].colName,
 				      yField : "col" + i
@@ -266,7 +285,8 @@
 				   });
 			   }
 		   }
-
+		   myFieldDefs.push({key : "nodeRef" });
+		   myFieldDefs.push({key : "type" });
 		   this.dataSource = new YAHOO.util.DataSource(data.resultsets);
 		   this.dataSource.responseType = YAHOO.util.DataSource.TYPE_JSARRAY;
 		   this.dataSource.responseSchema = {
@@ -284,7 +304,7 @@
 		   if (this.dataSource != null) {
 
 			   if (this.widgets.chartTypePicker.value == "lineChart") {
-				   new YAHOO.widget.LineChart(this.id + "-chart", this.dataSource, {
+				   this.widgets.chart = new YAHOO.widget.LineChart(this.id + "-chart", this.dataSource, {
 				      series : this.seriesDef,
 				      xField : "col0",
 				      wmode : "opaque",
@@ -297,7 +317,7 @@
 
 			   } else if (this.widgets.chartTypePicker.value == "barChart") {
 
-				   new YAHOO.widget.BarChart(this.id + "-chart", this.dataSource, {
+				   this.widgets.chart = new YAHOO.widget.BarChart(this.id + "-chart", this.dataSource, {
 				      series : this.barChartSeriesDef,
 				      yField : "col0",
 				      wmode : "opaque",
@@ -309,7 +329,7 @@
 				   });
 
 			   } else if (this.widgets.chartTypePicker.value == "columnChart") {
-				   new YAHOO.widget.ColumnChart(this.id + "-chart", this.dataSource, {
+				   this.widgets.chart = new YAHOO.widget.ColumnChart(this.id + "-chart", this.dataSource, {
 				      series : this.seriesDef,
 				      xField : "col0",
 				      wmode : "opaque",
@@ -321,7 +341,7 @@
 				   });
 
 			   } else if (this.widgets.chartTypePicker.value == "pieChart") {
-				   new YAHOO.widget.PieChart(this.id + "-chart", this.dataSource, {
+				   this.widgets.chart = new YAHOO.widget.PieChart(this.id + "-chart", this.dataSource, {
 				      dataField : "col1",
 				      categoryField : "col0",
 				      wmode : "opaque",
@@ -332,8 +352,22 @@
 				      }
 				   });
 			   } else if (this.widgets.chartTypePicker.value == "chartData") {
+				   this.widgets.chart = null;
 				   new YAHOO.widget.DataTable(this.id + "-chart", this.columnDefs, this.dataSource);
 			   }
+			   
+			   var me = this;
+			   if( this.widgets.chart !=null){
+				   this.widgets.chart.subscribe("itemClickEvent",function (event){
+				       if(event.item.type.indexOf("Material")<0){
+                           me.options.backEntityNodeRef.push(me.options.entityNodeRef);
+    					   me.options.entityNodeRef = event.item.nodeRef;
+    					   me.widgets.backButton.set("disabled", false);
+    					   me.loadChartData();
+				       }
+				   });
+			   }
+			   
 		   }
 
 	   }
