@@ -268,13 +268,16 @@ if (beCPG.module.EntityDataGridRenderers) {
           
           var title = Alfresco.util.encodeHTML(data.metadata);
           var cssClass = data.metadata;
-          var isFormulated = oRecord.getData("itemData")["prop_bcpg_costListIsFormulated"].value;
-          var error = oRecord.getData("itemData")["prop_bcpg_costListFormulaErrorLog"].value;
-          if(error != null){
-         	 cssClass= "cost-formulated-error";
-             title = Alfresco.util.encodeHTML(error);
-          } else if(isFormulated){
-         	 cssClass= "cost-formulated";
+          
+          if(oRecord.getData("itemData")["prop_bcpg_costListIsFormulated"]!=null){
+              var isFormulated = oRecord.getData("itemData")["prop_bcpg_costListIsFormulated"].value;
+              var error = oRecord.getData("itemData")["prop_bcpg_costListFormulaErrorLog"].value;
+              if(error != null){
+             	 cssClass= "cost-formulated-error";
+                 title = Alfresco.util.encodeHTML(error);
+              } else if(isFormulated){
+             	 cssClass= "cost-formulated";
+              }
           }
           
           if (oRecord.getData("itemData")["prop_bcpg_depthLevel"] != null) {
@@ -551,6 +554,8 @@ if (beCPG.module.EntityDataGridRenderers) {
 		}
 
 	});
+	
+
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : "pack:labelingPosition",
@@ -580,7 +585,23 @@ if (beCPG.module.EntityDataGridRenderers) {
 
 	});
 	
-	
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+	    propertyName : "boolean_bcpg:lrIsActive",
+	    renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+    	        if (oColumn.hidden) {
+                    scope.widgets.dataTable.showColumn(oColumn);
+                    Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
+                }
+    	        
+	            Dom.setStyle(elCell, "width", "16px");
+	            Dom.setStyle(elCell.parentNode, "width", "16px");
+	        if(data.value){
+	            return "<span  class='rule-enabled'>&nbsp;</span>";
+	        } 
+	        return "<span  class='rule-disabled'>&nbsp;</span>";
+	    }
+	});
+
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : [ "bcpg:dynamicCharactColumn1", "bcpg:dynamicCharactColumn2", "bcpg:dynamicCharactColumn3", "bcpg:dynamicCharactColumn4",

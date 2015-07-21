@@ -26,17 +26,6 @@
 	</bean>
 
 
-	<!-- Product -->
-	<bean id="productService" class="fr.becpg.repo.product.ProductServiceImpl">
-		<property name="alfrescoRepository" ref="alfrescoRepository" />
-		<property name="formulationService" ref="formulationService" />
-		<property name="charactDetailsVisitorFactory" ref="charactDetailsVisitorFactory" />		
-		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
-		<property name="nodeService" ref="nodeService"/>
-	</bean>
-
-	
-
 	<!-- Product Policies -->
 	<bean id="productListUnits.ProductListPolicy"
 		class="fr.becpg.repo.product.policy.productListUnits.ProductListPolicy"

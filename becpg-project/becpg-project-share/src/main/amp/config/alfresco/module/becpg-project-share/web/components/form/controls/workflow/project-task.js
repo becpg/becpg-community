@@ -237,7 +237,7 @@
                                     .msg("form.control.project-task.link.title.open-link") + '" href="' + url + '">' + '<img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/link-16.png" /></a></span>';
                                 } else  if (contents.length > 0) {
                                 
-                                    if(contents[0].type == "cm:folder" ){
+                                    if( contents[0].isContainer ){
                                        contentUrl = this._getBrowseUrlForFolderPath(contents[0].path, contents[0].siteId, contents[0].name);
                                     } else {
                                        var context =  null;
@@ -254,7 +254,7 @@
                                         
                                     ret += '<span class="doc-file"><a title="' + this
                                             .msg("form.control.project-task.link.title.open-document") + '" href="' +contentUrl + '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' + Alfresco.util
-                                            .getFileIcon(contents[0].name, contents[0].type == "cm:folder" ? "cm:folder" : "cm:content", 16) + '" /></a></span>';
+                                            .getFileIcon(contents[0].name, contents[0].isContainer ? "cm:folder" : "cm:content", 16) + '" /></a></span>';
                                 }
 
                                
@@ -323,7 +323,7 @@
                                {
                                    url = Alfresco.constants.URL_PAGECONTEXT + "context/mine/myfiles?path=" + encodeURIComponent('/' + path.split('/').slice(4).join('/')+ '/' + name);
                                } else if(path.indexOf("/Shared") > 0 || path.indexOf("/Partagé") > 0) {
-                                   url = Alfresco.constants.URL_PAGECONTEXT + "context/shared/sharedfiles?path=" + encodeURIComponent('/' + path.split('/').slice(4).join('/')+ '/' + name);
+                                   url = Alfresco.constants.URL_PAGECONTEXT + "context/shared/sharedfiles?path=" + encodeURIComponent('/' + path.split('/').slice(2).join('/')+ '/' + name);
                                } else {
                                    url = Alfresco.constants.URL_PAGECONTEXT + "repository?path=" + encodeURIComponent('/' + path.split('/').slice(2).join('/')+ '/' + name);
                                }

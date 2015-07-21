@@ -28,6 +28,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.PLMModel;
@@ -87,6 +88,7 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 				.ofType(PLMModel.TYPE_PRODUCT)
 				.excludeDefaults()
 				.inSearchTemplate(searchTemplate)
+				.locale(I18NUtil.getContentLocale())
 				.andOperator().ftsLanguage();
 
 		StringBuilder ftsQuery = new StringBuilder();

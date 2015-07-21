@@ -477,9 +477,24 @@
 
                      Event.addListener(this.widgets.searchBox, "focus", this.onSearchFocus, null, this);
                      Event.addListener(this.widgets.searchBox, "blur", this.onSearchBlur, null, this);
-                     Event.addListener(this.widgets.searchBox, "change", this.onSearchChange, null, this);
-
+                     // Event.addListener(this.widgets.searchBox, "change", this.onSearchChange, null, this);
+                     
                      this.setDefaultSearchText();
+                     
+                     // Register the "enter" event on the search text field
+                     var me = this;
+                     
+                     this.widgets.searchEnterListener = new YAHOO.util.KeyListener(this.widgets.searchBox,
+                     {
+                        keys: YAHOO.util.KeyListener.KEY.ENTER
+                     }, 
+                     {
+                        fn: me.onSearchChange,
+                        scope: this,
+                        correctScope: true
+                     }, "keydown").enable();
+
+                     
 
                      this.widgets.searchMore = new YAHOO.widget.Button(this.id + "-search_more", {
                         type : "menu",

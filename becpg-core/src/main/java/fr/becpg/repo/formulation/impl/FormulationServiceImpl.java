@@ -21,6 +21,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -104,7 +105,10 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
         	watch = new StopWatch();
 			watch.start();
         }
-
+		
+		//Warning only on integrity check for formulation
+		IntegrityChecker.setWarnInTransaction();
+		
 		alfrescoRepository.save(entity);
 		
 		if(logger.isDebugEnabled()){

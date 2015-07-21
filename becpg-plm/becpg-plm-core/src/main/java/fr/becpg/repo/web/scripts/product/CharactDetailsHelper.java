@@ -49,8 +49,6 @@ public class CharactDetailsHelper {
 
 	
 	
-	
-	
 	public static JSONObject toJSONObject(final CharactDetails charactDetails, final NodeService nodeService) throws JSONException {
 
 		
@@ -68,20 +66,20 @@ public class CharactDetailsHelper {
 			public int compare(NodeRef o1, NodeRef o2) {
 				return ((String) nodeService.getProperty(o1, ContentModel.PROP_NAME)).compareTo((String) nodeService.getProperty(o2, ContentModel.PROP_NAME));
 			}
-
 		});
+		
 		int idx = 0;
 		for (Map.Entry<NodeRef, Map<NodeRef, Double>> entry : charactDetails.getData().entrySet()) {
-			idx++;
 			metadata = new JSONObject();
-			metadata.put("colIndex", idx);
+			metadata.put("colIndex", idx++);
 			metadata.put("colType", "Double");
 			metadata.put("colName", nodeService.getProperty(entry.getKey(), ContentModel.PROP_NAME));
+			
 			metadatas.put(metadata);
+			
 			for (Map.Entry<NodeRef, Double> value : entry.getValue().entrySet()) {
 				compEls.add(value.getKey());
 			}
-
 		}
 		
 		//Entity nut 1, nut2, nut3
@@ -95,14 +93,15 @@ public class CharactDetailsHelper {
 				if (entry.getValue().containsKey(compoEl)) {
 						tmp.add(entry.getValue().get(compoEl));
 					} else {
-						tmp.add(0D);
+						tmp.add(0d);
 					}
 			}
+			tmp.add(compoEl);
+			tmp.add(nodeService.getType(compoEl));
 			resultsets.add(tmp);
 		}
 		obj.put("metadatas", metadatas);
 		obj.put("resultsets", resultsets);
-
 		return obj;
 
 	}

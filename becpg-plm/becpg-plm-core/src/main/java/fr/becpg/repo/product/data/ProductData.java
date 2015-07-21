@@ -46,10 +46,11 @@ import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.annotation.DataListView;
 import fr.becpg.repo.repository.filters.DataListFilter;
 import fr.becpg.repo.repository.model.AbstractEffectiveDataItem;
+import fr.becpg.repo.repository.model.AspectAwareDataItem;
 import fr.becpg.repo.repository.model.StateableEntity;
 import fr.becpg.repo.variant.model.VariantData;
 
-public class ProductData extends AbstractEffectiveDataItem implements FormulatedEntity, HierarchicalEntity, StateableEntity {
+public class ProductData extends AbstractEffectiveDataItem implements FormulatedEntity, HierarchicalEntity, StateableEntity, AspectAwareDataItem {
 
 	/**
 	 * 

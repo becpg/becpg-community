@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.batch.BatchProcessWorkProvider;
 import org.alfresco.repo.batch.BatchProcessor;
 import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
@@ -24,6 +25,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
+import fr.becpg.repo.entity.EntityListDAO;
 
 /**
  * Update NutListPatch
@@ -42,6 +44,7 @@ public class NutListValuePatch extends AbstractBeCPGPatch {
 	private BehaviourFilter policyBehaviourFilter;
 	private IntegrityChecker integrityChecker;
 	private RuleService ruleService;
+	private EntityListDAO entityListDAO;
 
 	private final int batchThreads = 4;
 	private final int batchSize = 30;
@@ -50,8 +53,15 @@ public class NutListValuePatch extends AbstractBeCPGPatch {
 	@Override
 	protected String applyInternal() throws Exception {
 
+		doApply(PLMModel.TYPE_FINISHEDPRODUCT);
+
+		doApply(PLMModel.TYPE_SEMIFINISHEDPRODUCT);
+
+		return I18NUtil.getMessage(MSG_SUCCESS);
+	}
+
+	private void doApply(final QName type) {
 		AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
-	
 
 		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
 			final List<NodeRef> result = new ArrayList<>();
@@ -61,7 +71,7 @@ public class NutListValuePatch extends AbstractBeCPGPatch {
 			long minSearchNodeId = 1;
 			long maxSearchNodeId = count;
 
-			final Pair<Long, QName> val = getQnameDAO().getQName(PLMModel.TYPE_NUTLIST);
+			final Pair<Long, QName> val = getQnameDAO().getQName(type);
 
 			public int getTotalEstimatedWorkSize() {
 				return result.size();
@@ -92,8 +102,8 @@ public class NutListValuePatch extends AbstractBeCPGPatch {
 			}
 		};
 
-		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("NutListValuePatch", transactionService.getRetryingTransactionHelper(),
-				workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 500);
+		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("NutListValuePatch", transactionService.getRetryingTransactionHelper(), workProvider, batchThreads, batchSize,
+				applicationEventPublisher, logger, 500);
 
 		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
 
@@ -109,32 +119,43 @@ public class NutListValuePatch extends AbstractBeCPGPatch {
 				return entry.toString();
 			}
 
-			public void process(NodeRef dataListNodeRef) throws Throwable {
+			public void process(NodeRef entityNodeRef) throws Throwable {
 
 				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
-				
 
-				if (nodeService.exists(dataListNodeRef) && dataListNodeRef.getStoreRef().getProtocol().equals(StoreRef.PROTOCOL_WORKSPACE)) {
+				if (nodeService.exists(entityNodeRef) &&  entityNodeRef.getStoreRef().equals(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE)
+						) {
 					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
-					if (!Boolean.TRUE.equals(nodeService.getProperty(dataListNodeRef, BeCPGModel.PROP_IS_MANUAL_LISTITEM))) {
-				
-							policyBehaviourFilter.disableBehaviour();
-							nodeService.setProperty(dataListNodeRef, PLMModel.PROP_NUTLIST_FORMULATED_VALUE, nodeService.getProperty(dataListNodeRef, PLMModel.PROP_NUTLIST_VALUE));
-							nodeService.setProperty(dataListNodeRef, PLMModel.PROP_NUTLIST_VALUE, null);
-							nodeService.setProperty(dataListNodeRef, BeCPGModel.PROP_IS_MANUAL_LISTITEM,false);
-							policyBehaviourFilter.enableBehaviour();
+					logger.debug("Updating :" + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
 
+					NodeRef entityContainer = entityListDAO.getListContainer(entityNodeRef);
+					if (entityContainer != null) {
+						NodeRef listNodeRef = entityListDAO.getList(entityContainer, PLMModel.TYPE_NUTLIST);
+						if (listNodeRef != null) {
+							List<NodeRef> nuts = entityListDAO.getListItems(listNodeRef, PLMModel.TYPE_NUTLIST);
+							for (NodeRef dataListNodeRef : nuts) {
+
+								if (!Boolean.TRUE.equals(nodeService.getProperty(dataListNodeRef, BeCPGModel.PROP_IS_MANUAL_LISTITEM))) {
+
+									policyBehaviourFilter.disableBehaviour();
+									nodeService.setProperty(dataListNodeRef, PLMModel.PROP_NUTLIST_FORMULATED_VALUE, nodeService.getProperty(dataListNodeRef, PLMModel.PROP_NUTLIST_VALUE));
+									nodeService.setProperty(dataListNodeRef, PLMModel.PROP_NUTLIST_VALUE, null);
+									policyBehaviourFilter.enableBehaviour();
+
+								}
+							}
+						}
 					}
 
 				} else {
-					logger.warn("dataListNodeRef doesn't exist : " + dataListNodeRef);
+					logger.warn("dataListNodeRef doesn't exist : " + entityNodeRef);
 				}
 
 			}
 
 		};
-		
+
 		integrityChecker.setEnabled(false);
 		try {
 			batchProcessor.process(worker, true);
@@ -142,7 +163,6 @@ public class NutListValuePatch extends AbstractBeCPGPatch {
 			integrityChecker.setEnabled(true);
 		}
 
-		return I18NUtil.getMessage(MSG_SUCCESS);
 	}
 
 	public NodeDAO getNodeDAO() {
@@ -184,7 +204,9 @@ public class NutListValuePatch extends AbstractBeCPGPatch {
 	public void setIntegrityChecker(IntegrityChecker integrityChecker) {
 		this.integrityChecker = integrityChecker;
 	}
-	
-	
+
+	public void setEntityListDAO(EntityListDAO entityListDAO) {
+		this.entityListDAO = entityListDAO;
+	}
 
 }

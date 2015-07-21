@@ -33,6 +33,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
 import fr.becpg.repo.formulation.FormulateException;
@@ -52,7 +53,7 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
 public class ProductFormulationHandler extends FormulationBaseHandler<ProductData> {
-	
+
 	private static final String MESSAGE_MISSING_UNIT = "message.formulate.missing.unit";
 	private static final String MESSAGE_MISSING_DENSITY = "message.formulate.missing.density";
 	private static final String MESSAGE_WRONG_UNIT = "message.formulate.wrong.unit";
@@ -87,25 +88,26 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 	@Override
 	public boolean process(ProductData productData) throws FormulateException {
 
-		if ((productData.hasCompoListEl(new VariantFilters<>()))
-				|| (productData.hasPackagingListEl( new VariantFilters<>()))
-				|| (productData.hasProcessListEl( new VariantFilters<>()))) {
+		if (!productData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)
+				&& ((productData.hasCompoListEl(new VariantFilters<>())) 
+						|| (productData.hasPackagingListEl(new VariantFilters<>()))
+						|| (productData.hasProcessListEl(new VariantFilters<>())))) {
 
-			if (productData.hasCompoListEl( new VariantFilters<>())) {
+			if (productData.hasCompoListEl(new VariantFilters<>())) {
 				if (productData.getCompoListView().getReqCtrlList() != null) {
 					clearReqCltrlList(productData.getCompoListView().getReqCtrlList());
 				} else {
 					productData.getCompoListView().setReqCtrlList(new LinkedList<ReqCtrlListDataItem>());
 				}
 			}
-			if (productData.hasPackagingListEl( new VariantFilters<>())) {
+			if (productData.hasPackagingListEl(new VariantFilters<>())) {
 				if (productData.getPackagingListView().getReqCtrlList() != null) {
 					clearReqCltrlList(productData.getPackagingListView().getReqCtrlList());
 				} else {
 					productData.getPackagingListView().setReqCtrlList(new LinkedList<ReqCtrlListDataItem>());
 				}
 			}
-			if (productData.hasProcessListEl( new VariantFilters<>())) {
+			if (productData.hasProcessListEl(new VariantFilters<>())) {
 				if (productData.getProcessListView().getReqCtrlList() != null) {
 					clearReqCltrlList(productData.getProcessListView().getReqCtrlList());
 				} else {
@@ -133,8 +135,13 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		if (productData.getProcessListView() != null && productData.getProcessListView().getReqCtrlList() != null) {
 			productData.getProcessListView().getReqCtrlList().clear();
 		}
-
-		// Skip formulation
+		
+		if(productData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)){
+			logger.debug("Entity tpl found skipping formulation");
+			//Skip formulation
+			return false;
+		}
+		
 		return true;
 	}
 
@@ -161,20 +168,20 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 			checkedProducts.add(productData.getNodeRef());
 
 			Set<CompositionDataItem> compositionDataItems = new HashSet<>();
-			if(productData.getCompoList()!=null){
+			if (productData.getCompoList() != null) {
 				compositionDataItems.addAll(productData.getCompoList());
 			}
-			if(productData.getPackagingList()!=null){
+			if (productData.getPackagingList() != null) {
 				compositionDataItems.addAll(productData.getPackagingList());
 			}
-			if(productData.getProcessList()!=null){
+			if (productData.getProcessList() != null) {
 				compositionDataItems.addAll(productData.getProcessList());
 			}
 
 			boolean shouldFormulate = false;
-			if (!compositionDataItems.isEmpty()) {				
+			if (!compositionDataItems.isEmpty()) {
 				for (CompositionDataItem c : compositionDataItems) {
-					if(c.getComponent() != null){
+					if (c.getComponent() != null) {
 						ProductData p = alfrescoRepository.findOne(c.getComponent());
 						// recursive
 						if (checkShouldFormulateComponents(false, p, checkedProducts)) {
@@ -185,10 +192,10 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 						if (modified == null || productData.getFormulatedDate() == null || modified.getTime() > productData.getFormulatedDate().getTime()) {
 							shouldFormulate = true;
 						}
-					}					
-				}	
+					}
+				}
 			}
-			
+
 			if (!isRoot && (shouldFormulate || productService.shouldFormulate(productData.getNodeRef()))) {
 				if (logger.isDebugEnabled()) {
 					logger.debug("auto-formulate: " + productData.getName());
@@ -206,7 +213,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 
 		checkFormulatedProduct(formulatedProduct);
 
-		if (formulatedProduct.hasCompoListEl( new VariantFilters<>())) {
+		if (formulatedProduct.hasCompoListEl(new VariantFilters<>())) {
 			for (CompoListDataItem c : formulatedProduct.getCompoList()) {
 				if (c.getCompoListUnit() == null) {
 					addMessingReq(formulatedProduct.getCompoListView().getReqCtrlList(), null, MESSAGE_WRONG_UNIT);
@@ -215,7 +222,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 				}
 			}
 		}
-		if (formulatedProduct.hasPackagingListEl( new VariantFilters<>())) {
+		if (formulatedProduct.hasPackagingListEl(new VariantFilters<>())) {
 			for (PackagingListDataItem p : formulatedProduct.getPackagingList()) {
 				if (p.getPackagingListUnit() == null) {
 					addMessingReq(formulatedProduct.getCompoListView().getReqCtrlList(), null, MESSAGE_WRONG_UNIT);
@@ -250,7 +257,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		if (!PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.isMatch(nodeService.getType(productNodeRef))) {
 
 			ProductUnit productUnit = FormulationHelper.getProductUnit(productNodeRef, nodeService);
-			if (c != null) {			
+			if (c != null) {
 				boolean shouldUseLiter = FormulationHelper.isProductUnitLiter(productUnit);
 				boolean useLiter = FormulationHelper.isCompoUnitLiter(c.getCompoListUnit());
 				Double density = FormulationHelper.getDensity(productNodeRef, nodeService);
@@ -275,13 +282,11 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		if (productUnit == null) {
 			addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_MISSING_UNIT);
 		} else {
-			if ((p.getPackagingListUnit().equals(PackagingListUnit.kg) || p.getPackagingListUnit().equals(PackagingListUnit.g))
-					&& !FormulationHelper.isProductUnitKg(productUnit)) {
+			if ((p.getPackagingListUnit().equals(PackagingListUnit.kg) || p.getPackagingListUnit().equals(PackagingListUnit.g)) && !FormulationHelper.isProductUnitKg(productUnit)) {
 				addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_WRONG_UNIT);
 			}
 
-			if ((p.getPackagingListUnit().equals(PackagingListUnit.P) || p.getPackagingListUnit().equals(PackagingListUnit.PP))
-					&& !productUnit.equals(ProductUnit.P)) {
+			if ((p.getPackagingListUnit().equals(PackagingListUnit.P) || p.getPackagingListUnit().equals(PackagingListUnit.PP)) && !productUnit.equals(ProductUnit.P)) {
 				addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_WRONG_UNIT);
 			}
 

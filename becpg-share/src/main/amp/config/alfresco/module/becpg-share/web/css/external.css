@@ -83,6 +83,12 @@ display:none;
 }
 
 
+#template_x002e_documentlist_v2_x002e_myfiles_x0023_default-actions-yui-rec65 .document-delete {
+    display: none;
+}
+
+
+
 #alf-id137 {
     display: none;
 }
@@ -106,7 +112,7 @@ display:none;
     display: none;
 }
 #onActionDelete {
-    display: none;
+
 }
 #onActionAssignWorkflow {
     display: none;
@@ -150,7 +156,7 @@ display:none;
     display: none;
 }
 .document-delete{
-    display: none;
+
 }
 .document-assign-workflow{
     display: none;
