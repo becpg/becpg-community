@@ -703,77 +703,77 @@
                               name : "costList",
                               type : "bcpg:cost",
                               subType : "fr.becpg.repo.product.data.productList.CostListDataItem",
-                              template : "costList.?[cost.toString() == '{item1}'][0].{item2}"
+                              template : "costList.^[cost.toString() == '{item1}']?.{item2}"
                            },
                            {
                               name : "nutList",
                               type : "bcpg:nut",
                               subType : "fr.becpg.repo.product.data.productList.NutListDataItem",
-                              template : "nutList.?[nut.toString() == '{item1}'][0].{item2}"
+                              template : "nutList.^[nut.toString() == '{item1}']?.{item2}"
                            },
                            {
                               name : "allergenList",
                               type : "bcpg:allergen",
                               subType : "fr.becpg.repo.product.data.productList.AllergenListDataItem",
-                              template : "allergenList.?[allergen.toString() == '{item1}'][0].{item2}"
+                              template : "allergenList.^[allergen.toString() == '{item1}']?.{item2}"
                            },
                            {
                               name : "ingList",
                               type : "bcpg:ing",
                               subType : "fr.becpg.repo.product.data.productList.IngListDataItem",
-                              template : "ingList.?[ing.toString() == '{item1}'][0].{item2}"
+                              template : "ingList.^[ing.toString() == '{item1}']?.{item2}"
                            },
                            {
                               name : "organoList",
                               type : "bcpg:organo",
                               subType : "fr.becpg.repo.product.data.productList.OrganoListDataItem",
-                              template : "organoList.?[organo.toString() == '{item1}'][0].{item2}"
+                              template : "organoList.^[organo.toString() == '{item1}']?.{item2}"
                            },
                            {
                               name : "physicoChemList",
                               type : "bcpg:physicoChem",
                               subType : "fr.becpg.repo.product.data.productList.PhysicoChemListDataItem",
-                              template : "physicoChemList.?[physicoChem.toString() == '{item1}'][0].{item2}"
+                              template : "physicoChemList.^[physicoChem.toString() == '{item1}']?.{item2}"
                            },
                            {
                               name : "microbioList",
                               type : "bcpg:microbio",
                               subType : "fr.becpg.repo.product.data.productList.MicrobioListDataItem",
-                              template : "microbioList.?[microBio.toString() == '{item1}'][0].{item2}"
+                              template : "microbioList.^[microBio.toString() == '{item1}']?.{item2}"
                            },
                            {
                               name : "compoList",
                               type : "bcpg:rawMaterial,bcpg:finishedProduct,bcpg:localSemiFinishedProduct,bcpg:semiFinishedProduct",
                               subType : "fr.becpg.repo.product.data.productList.CompoListDataItem",
-                              template : "compoListView.compoList.?[product.toString() == '{item1}'][0].{item2}"
+                              template : "compoListView.compoList.^[product.toString() == '{item1}']?.{item2}"
                            },
                            {
                               name : "processList",
                               type : "bcpg:resourceProduct",
                               subType : "fr.becpg.repo.product.data.productList.ProcessListDataItem",
-                              template : "processListView.processList.?[plResource.toString() == '{item1}'][0].{item2}"
+                              template : "processListView.processList.^[plResource.toString() == '{item1}']?.{item2}"
                            },
                            {
                               name : "packagingList",
                               type : "bcpg:packagingMaterial,bcpg:packagingKit",
                               subType : "fr.becpg.repo.product.data.productList.PackagingListDataItem",
-                              template : "packagingListView.packagingList.?[product.toString() == '{item1}'][0].{item2}"
+                              template : "packagingListView.packagingList.^[product.toString() == '{item1}']?.{item2}"
                            }, {
                               name : "variables",
                               type : "bcpg:dynamicCharactList",
-                              template : "{currentList}View.dynamicCharactList.?[title == '{name1}'][0].value"
+                              template : "{currentList}View.dynamicCharactList.^[title == '{name1}']?.value"
                            },
                            {
                               name : "labelClaimList",
                               type : "bcpg:labelClaim",
                               subType : "fr.becpg.repo.product.data.productList.LabelClaimListDataItem",
-                              template : "labelClaimList.?[labelClaim.toString() == '{item1}'][0].{item2}"
+                              template : "labelClaimList.^[labelClaim.toString() == '{item1}']?.{item2}"
                            },
                            {
                               name : "ingLabelingList",
                               type : "bcpg:labelingRuleList",
                               subType : "fr.becpg.repo.product.data.productList.IngLabelingListDataItem",
-                              template : "labelingListView.ingLabelingList.?[grp.toString() == '{item1}'][0].{item2}"
+                              template : "labelingListView.ingLabelingList.^[grp.toString() == '{item1}']?.{item2}"
                            } ];
 
                      var menuItem, item, label;
