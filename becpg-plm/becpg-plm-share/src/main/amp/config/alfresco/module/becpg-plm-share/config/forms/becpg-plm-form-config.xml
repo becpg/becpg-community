@@ -5641,8 +5641,11 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 						</control>
 					</field>
-					<field id="bcpg:allergenListVoluntary" />
-					<field id="bcpg:allergenListInVoluntary" />
+					<field id="bcpg:allergenListVoluntary" >
+						<control
+							template="/org/alfresco/components/form/controls/allergen-voluntary.ftl">
+						</control>
+					</field>
 					<field id="bcpg:allergenListDecisionTree">
 						<control
 							template="/org/alfresco/components/form/controls/decision-tree.ftl">
@@ -5664,6 +5667,7 @@
 							</control-param>
 						</control>
 					</field>
+					<field id="bcpg:allergenListInVoluntary" />
 					<field id="bcpg:allergenListVolSources">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -5733,8 +5737,11 @@
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
-					<field id="bcpg:allergenListVoluntary" />
-					<field id="bcpg:allergenListInVoluntary" />
+					<field id="bcpg:allergenListVoluntary" >
+						<control
+							template="/org/alfresco/components/form/controls/allergen-voluntary.ftl">
+						</control>
+					</field>
 					<field id="bcpg:allergenListDecisionTree">
 						<control
 							template="/org/alfresco/components/form/controls/decision-tree.ftl">
@@ -5756,6 +5763,7 @@
 							</control-param>
 						</control>
 					</field>
+					<field id="bcpg:allergenListInVoluntary" />
 					<field id="bcpg:allergenListVolSources">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">

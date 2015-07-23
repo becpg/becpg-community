@@ -125,7 +125,17 @@
         return url;
 
     };
-
+    
+    beCPG.util.sigFigs = function sigFigs(n, sig){
+        if(n != 0){
+            var mult = Math.pow(10,
+                    sig - Math.floor(Math.log(n) / Math.LN10) - 1);
+            return Math.round(n * mult) / mult;
+        }
+        else{
+            return n;   
+        }       
+    };
    
     beCPG.util.isEntity = function(record)
     {
