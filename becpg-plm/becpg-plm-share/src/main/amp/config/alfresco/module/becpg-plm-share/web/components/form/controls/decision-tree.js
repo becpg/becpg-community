@@ -18,6 +18,7 @@
             "container" ]);
 
       Bubbling.on("afterFormRuntimeInit", this.onAfterFormRuntimeInit, this);
+      Bubbling.on("refreshDecisionTree", this.refreshDecisionTree, this);
       
       this.fieldId = fieldId;
       
@@ -169,6 +170,10 @@
 
                      Bubbling.addDefaultAction(QUESTION_EVENTCLASS, fnOnSelectChoice);
                   
+                  },
+                  
+                  refreshDecisionTree : function(){
+                       this.toogleVisible();
                   },
                   
                   getCurrentValueChecked: function (qid, cid){
