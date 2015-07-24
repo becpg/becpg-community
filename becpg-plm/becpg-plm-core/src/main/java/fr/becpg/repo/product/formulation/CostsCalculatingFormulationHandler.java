@@ -258,7 +258,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 					}
 				}
 
-				visitPart(packagingListDataItem.getProduct(), costList, qty, null, netQty, mandatoryCharacts2, null, null, null);
+				visitPart(packagingListDataItem.getProduct(), costList, qty, null, netQty, mandatoryCharacts2, null,  false);
 			}
 
 			addReqCtrlList(formulatedProduct.getPackagingListView().getReqCtrlList(), mandatoryCharacts2);
@@ -278,7 +278,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 						netQty = FormulationHelper.QTY_FOR_PIECE;
 					}
 
-					visitPart(processListDataItem.getResource(), costList, qty, null, netQty, mandatoryCharacts3, null, null, null);
+					visitPart(processListDataItem.getResource(), costList, qty, null, netQty, mandatoryCharacts3, null, false);
 				}
 			}
 
@@ -291,8 +291,6 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			Double parentLossRatio, Double netQty, Map<NodeRef, List<NodeRef>> mandatoryCharacts) throws FormulateException {
 
 		Map<NodeRef, Double> totalQtiesValue = new HashMap<>();
-		Map<NodeRef, Double> totalQtiesMini = new HashMap<>();
-		Map<NodeRef, Double> totalQtiesMaxi = new HashMap<>();
 		for (Composite<CompoListDataItem> component : composite.getChildren()) {
 
 			if (!component.isLeaf()) {
@@ -312,12 +310,12 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				Double qty = FormulationHelper.getQtyForCost(compoListDataItem, 
 						parentLossRatio,
 						ProductUnit.getUnit((String)nodeService.getProperty(compoListDataItem.getProduct(), PLMModel.PROP_PRODUCT_UNIT)));
-				visitPart(compoListDataItem.getProduct(), costList, qty, null, netQty, mandatoryCharacts, totalQtiesValue, totalQtiesMini, totalQtiesMaxi);				
+				visitPart(compoListDataItem.getProduct(), costList, qty, null, netQty, mandatoryCharacts, totalQtiesValue, formulatedProduct instanceof RawMaterialData);				
 			}
 		}		
 		//Case Generic MP
 		if( formulatedProduct instanceof RawMaterialData){
-			formulateGenericRawMaterial(costList, totalQtiesValue, totalQtiesMini, totalQtiesMaxi, netQty);
+			formulateGenericRawMaterial(costList, totalQtiesValue, netQty);
 		}
 	}
 
