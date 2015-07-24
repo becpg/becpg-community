@@ -101,7 +101,7 @@ public class FormulationCheckPropsOfCompTest extends AbstractFinishedProductTest
 					}
 				}
 
-				Assert.assertEquals(2, checks);
+				Assert.assertEquals(0, checks);
 
 				return null;
 

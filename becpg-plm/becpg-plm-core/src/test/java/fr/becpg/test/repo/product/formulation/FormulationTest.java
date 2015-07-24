@@ -2178,7 +2178,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 					logger.info(trace);
 					if(pcListDataItem.getPhysicoChem().equals(physicoChem3)){
 						assertEquals(3d, pcListDataItem.getValue());
-						assertEquals(2.3d, pcListDataItem.getMini());
+						assertEquals(2.8d, pcListDataItem.getMini());
 						assertEquals(df.format(3.65d), df.format(pcListDataItem.getMaxi()));
 						checks++;
 					}
