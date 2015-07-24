@@ -217,16 +217,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 
     });
 	
-	beCPG.util.sigFigs = function(n, sig){
-		if(n != 0){
-			var mult = Math.pow(10,
-			        sig - Math.floor(Math.log(n) / Math.LN10) - 1);
-			return Math.round(n * mult) / mult;
-		}
-		else{
-			return n;	
-		}		
-	};
+	
 	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
       propertyName : "bcpg:nutListValue",
