@@ -197,7 +197,7 @@ public class ProjectHelper {
 
 		if (projectData.getTaskList() != null && !projectData.getTaskList().isEmpty()) {
 			for (TaskListDataItem t : projectData.getTaskList()) {
-				if (!TaskState.Completed.equals(t.getTaskState())) {
+				if (!(TaskState.Completed.equals(t.getTaskState()) || TaskState.Cancelled.equals(t.getTaskState()))) {
 					return false;
 				}
 			}

@@ -88,6 +88,16 @@
     background: none repeat scroll 0 0 rgb(255, 49, 17);
     color: rgb(255, 255, 255);
 }
+.wizard > .steps .Valid a, .wizard > .steps .Valid a:hover, .wizard > .steps .Valid a:active {
+    background: none repeat scroll 0 0 rgb(123, 209, 72);
+    color: rgb(255, 255, 255);
+}
+
+.wizard > .steps .Valid.done a, .wizard > .steps .Valid.done a:hover, .wizard > .steps .Valid.done a:active {
+    background: none repeat scroll 0 0 #DAFFC5;
+    color: rgb(170, 170, 170);
+}
+
 .wizard > .content {
     background: none repeat scroll 0 0 rgb(238, 238, 238);
     border-radius: 5px;
@@ -289,7 +299,7 @@
 **/
 .wizard  .datagrid .scrollableList {
 	padding: 0;
-	height: 350px;
+	height: 450px;
 }
 
 .wizard  .datagrid {
