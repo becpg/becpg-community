@@ -1378,6 +1378,17 @@ $.fn.steps.getCurrentStep = function ()
 };
 
 /**
+ * Gets the current step object.
+ *
+ * @method getCurrentStep
+ * @return {Object} The actual step object
+ **/
+$.fn.steps.getStepAnchor = function ()
+{
+    return getStepAnchor(this, getState(this).currentIndex);
+};
+
+/**
  * Gets a specific step object by index.
  *
  * @method getStep

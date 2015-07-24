@@ -175,6 +175,7 @@
                             for (var i = 0; i < this.options.wizardStruct.length; i++)
                             {
                                 var step = this.options.wizardStruct[i];
+                                    step.index = i;
                                
                                 this.widgets.wizard.steps("add",
                                 {
@@ -355,8 +356,11 @@
                                       for (var i = 0, ii = lists.length; i < ii; i++) {
                                             list = lists[i];
                                             if(list.name == step.listId){
+
+                                                var stepAnchor = me.widgets.wizard.steps("getStepAnchor");
+                                                stepAnchor.parent().addClass(list.state);
                                                 
-                                             YAHOO.Bubbling.fire("simpleView-"+me.id + "-step-" + step.id+"scopedActiveDataListChanged", {
+                                                YAHOO.Bubbling.fire("simpleView-"+me.id + "-step-" + step.id+"scopedActiveDataListChanged", {
                                                          list : list.name,
                                                           dataList : list
                                                  });
