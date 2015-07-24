@@ -3939,6 +3939,7 @@
 					<show id="bcpg:allergenType" />
 					<show id="bcpg:allergenCode" />
 					<show id="bcpg:allergenSubset" />
+					<show id="bcpg:allergenRegulatoryThreshold"/>
 				</field-visibility>
 			</form>
 		</forms>

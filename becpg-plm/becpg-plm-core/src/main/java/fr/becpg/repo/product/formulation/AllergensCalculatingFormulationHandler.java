@@ -100,7 +100,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 		Map<String, ReqCtrlListDataItem> errors = new HashMap<>();
 		Map<String, ReqCtrlListDataItem> rclCtrlMap = new HashMap<>();
 		// compoList
-		Double totalQtyUsed = 0d;
+		Double netQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
 		
 		for (CompoListDataItem compoItem : formulatedProduct.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 			
@@ -109,7 +109,6 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 			Double qty = FormulationHelper.getQtyInKg(compoItem);
 			if (qty != null) {
 				qtyUsed = qty * FormulationHelper.getYield(compoItem) / 100;
-				totalQtyUsed += qtyUsed;
 			}
 			
 			if (!visitedProducts.contains(part)) {
@@ -127,8 +126,8 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 		//Set qty in perc and reset
 		for(AllergenListDataItem allergenListDataItem : formulatedProduct.getAllergenList()){
 			if (allergenListDataItem.getIsManual() == null || !allergenListDataItem.getIsManual()) {
-				if(allergenListDataItem.getQtyPerc()!=null && totalQtyUsed!=null && totalQtyUsed>0){
-					allergenListDataItem.setQtyPerc((allergenListDataItem.getQtyPerc()/totalQtyUsed)*100);	
+				if(allergenListDataItem.getQtyPerc()!=null && netQty != 0){
+					allergenListDataItem.setQtyPerc((allergenListDataItem.getQtyPerc()/netQty)*100);	
 					
 					if(!allergenListDataItem.getVoluntary()){
 						Double regulatoryThreshold = (Double)nodeService.getProperty(allergenListDataItem.getAllergen(), PLMModel.PROP_ALLERGEN_REGULATORY_THRESHOLD);
