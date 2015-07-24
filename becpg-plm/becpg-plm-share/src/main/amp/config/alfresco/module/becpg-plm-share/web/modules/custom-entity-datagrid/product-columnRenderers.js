@@ -251,15 +251,42 @@ if (beCPG.module.EntityDataGridRenderers) {
   });
 	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-      propertyName : ["bcpg:nutListMini", "bcpg:nutListMaxi", "bcpg:nutListValuePerServing", "bcpg:nutListGDAPerc"],
+      propertyName : ["bcpg:nutListMini", "bcpg:nutListMaxi", "bcpg:nutListValuePerServing"],
+      renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+      	if(data.value != null){
+      		return Alfresco.util.encodeHTML(beCPG.util.sigFigs(data.value,3).toLocaleString());
+      	}      
+      	return "";
+      }
+  });
+	
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+      propertyName : "bcpg:nutListGDAPerc",
       renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
       	if(data.value != null){
       		return Alfresco.util.encodeHTML(beCPG.util.sigFigs(data.value,2).toLocaleString());
-      	}
-      	
+      	}      
       	return "";
       }
-
+  });
+	
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+      propertyName : ["bcpg:allergenListQtyPerc", "bcpg:filQtyPercMaxi", "bcpg:allergenRegulatoryThreshold"],
+      renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+      	if(data.value != null){
+      		var unit, qty;
+      		if(data.value < 0.1){
+      			qty = data.value * 10000;
+      			unit = " ppm";
+      		}
+      		else{
+      			qty = data.value;
+      			unit = "";
+      		}
+      		return Alfresco.util.encodeHTML(beCPG.util.sigFigs(qty,3).toLocaleString() + unit);
+      	}      
+      	return "";
+      }
   });
 	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
@@ -703,6 +730,13 @@ if (beCPG.module.EntityDataGridRenderers) {
             return data.value;
         }
     });
+	
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+      propertyName : "bcpg:instruction",
+      renderer : function(oRecord, data, label, scope) {
+          return data.value;
+      }
+  });	
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : "bcpg:compoListVolume",
