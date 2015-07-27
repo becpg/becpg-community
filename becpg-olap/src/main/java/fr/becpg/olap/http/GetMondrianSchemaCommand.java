@@ -20,34 +20,38 @@ package fr.becpg.olap.http;
 import java.io.IOException;
 
 import org.apache.http.HttpEntity;
-import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 
 import fr.becpg.tools.http.AbstractHttpCommand;
 
-
-
-public class GetMondrianSchemaCommand  extends AbstractHttpCommand {
-
+public class GetMondrianSchemaCommand extends AbstractHttpCommand {
 
 	private static final String COMMAND_URL_TEMPLATE = "/becpg/olap/schema?instance=%s";
 
-	
 	public GetMondrianSchemaCommand(String serverUrl) {
 		super(serverUrl);
 	}
 
 	@Override
 	public String getHttpUrl(Object... params) {
-	
-		return getServerUrl() + String.format(COMMAND_URL_TEMPLATE, encodeParams(params) );
+
+		return getServerUrl() + String.format(COMMAND_URL_TEMPLATE, encodeParams(params));
 	}
 
-	public String getSchema(HttpClient httpClient,Object... params) throws IOException {
-		HttpEntity entity = getEntity(httpClient,params);
-	
-		return EntityUtils.toString(entity);
+	public String getSchema(CloseableHttpClient httpClient, HttpContext httpContext, Object... params) throws IOException {
+
+		try (CloseableHttpResponse resp = runCommand(httpClient, httpContext, params)) {
+			HttpEntity entity = resp.getEntity();
+			if (entity != null) {
+				return EntityUtils.toString(entity);
+			}
+
+		}
+
+		return null;
 	}
 
-	
 }
