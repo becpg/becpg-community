@@ -131,8 +131,6 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	protected void visitChildren(ProductData formulatedProduct, List<T> simpleListDataList) throws FormulateException{
 		
         Map<NodeRef, Double> totalQtiesValue = new HashMap<>();
-        Map<NodeRef, Double> totalQtiesMini = new HashMap<>();
-        Map<NodeRef, Double> totalQtiesMaxi = new HashMap<>();
 		
 		Double netQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
 		
@@ -145,7 +143,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 				Double vol = FormulationHelper.getNetVolume(compoItem, nodeService);
 				
 				if(weight != null){
-					visitPart(compoItem.getProduct(), simpleListDataList, weight, vol, netQty, mandatoryCharacts, totalQtiesValue, totalQtiesMini, totalQtiesMaxi);
+					visitPart(compoItem.getProduct(), simpleListDataList, weight, vol, netQty, mandatoryCharacts, totalQtiesValue, formulatedProduct instanceof RawMaterialData);
 				}			
 			}
 			
@@ -154,15 +152,13 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		
 		//Case Generic MP
 		if( formulatedProduct instanceof RawMaterialData){
-			formulateGenericRawMaterial(simpleListDataList, totalQtiesValue, totalQtiesMini, totalQtiesMaxi, netQty);
+			formulateGenericRawMaterial(simpleListDataList, totalQtiesValue, netQty);
 		}
 		
 	}
 	
 	protected void formulateGenericRawMaterial(List<T> simpleListDataList,
-			Map<NodeRef, Double> totalQtiesValue,
-			Map<NodeRef, Double> totalQtiesMini,
-			Map<NodeRef, Double> totalQtiesMaxi, 
+			Map<NodeRef, Double> totalQtiesValue, 
 			Double netQty){
 		if(logger.isDebugEnabled()){
 			logger.debug("Case generic MP adjust value to total");
@@ -173,21 +169,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 				if(newSimpleListDataItem.getValue()!=null){
 					newSimpleListDataItem.setValue(newSimpleListDataItem.getValue()*netQty/totalQty);
 				}				
-			}
-			if(totalQtiesMini.containsKey(newSimpleListDataItem.getCharactNodeRef()) ){
-				Double totalQty = totalQtiesMini.get(newSimpleListDataItem.getCharactNodeRef());
-				
-				if(newSimpleListDataItem.getMini()!=null){
-					newSimpleListDataItem.setMini(newSimpleListDataItem.getMini()*netQty/totalQty);
-				}
-				
-			}
-			if(totalQtiesMaxi.containsKey(newSimpleListDataItem.getCharactNodeRef()) ){
-				Double totalQty = totalQtiesMaxi.get(newSimpleListDataItem.getCharactNodeRef());
-				if(newSimpleListDataItem.getMaxi()!=null){
-					newSimpleListDataItem.setMaxi(newSimpleListDataItem.getMaxi()*netQty/totalQty);
-				}
-			}
+			}			
 		}
 	}
 
@@ -215,9 +197,8 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 			Double volUsed,
 			Double netQty,			
 			Map<NodeRef, List<NodeRef>> mandatoryCharacts,
-			Map<NodeRef, Double> totalQtiesValue,
-			Map<NodeRef, Double> totalQtiesMini,
-			Map<NodeRef, Double> totalQtiesMaxi) throws FormulateException{								
+			Map<NodeRef, Double> totalQtiesValue, 
+			boolean isGenericRawMaterial) throws FormulateException{								
 		
 		if(!PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.equals(nodeService.getType(componentNodeRef))){
 			
@@ -260,7 +241,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 						//Calculate values			
 						if(slDataItem != null && qtyUsed != null ){
 												
-							calculate(newSimpleListDataItem, slDataItem, qtyUsed, netQty);
+							calculate(newSimpleListDataItem, slDataItem, qtyUsed, netQty, isGenericRawMaterial);
 							
 							if(totalQtiesValue!=null && slDataItem.getValue() != null){
 								Double currentQty = totalQtiesValue.get(newSimpleListDataItem.getCharactNodeRef());
@@ -268,21 +249,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 									currentQty = 0d;
 								}
 								totalQtiesValue.put(newSimpleListDataItem.getCharactNodeRef(),currentQty+qtyUsed);
-							}
-							if(totalQtiesMini!=null && (slDataItem.getValue() != null || slDataItem.getMini() != null)){
-								Double currentQty = totalQtiesMini.get(newSimpleListDataItem.getCharactNodeRef());
-								if(currentQty==null){
-									currentQty = 0d;
-								}
-								totalQtiesMini.put(newSimpleListDataItem.getCharactNodeRef(),currentQty+qtyUsed);
-							}
-							if(totalQtiesMaxi!=null && (slDataItem.getValue() != null || slDataItem.getMaxi() != null)){
-								Double currentQty = totalQtiesMaxi.get(newSimpleListDataItem.getCharactNodeRef());
-								if(currentQty==null){
-									currentQty = 0d;
-								}
-								totalQtiesMaxi.put(newSimpleListDataItem.getCharactNodeRef(),currentQty+qtyUsed);
-							}
+							}							
 						}		
 					}						
 				}	
@@ -290,8 +257,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		}		
 	}
 	
-	protected void calculate(SimpleListDataItem newSimpleListDataItem, SimpleListDataItem slDataItem, Double qtyUsed, Double netQty){
-		Double origValue = newSimpleListDataItem.getFormulatedValue() != null ? newSimpleListDataItem.getFormulatedValue() : 0d;
+	protected void calculate(SimpleListDataItem newSimpleListDataItem, SimpleListDataItem slDataItem, Double qtyUsed, Double netQty, boolean isGenericRawMaterial){
 		Double value = slDataItem.getValue();
 		if(value != null){
 			newSimpleListDataItem.setValue(FormulationHelper.calculateValue(newSimpleListDataItem.getFormulatedValue(), qtyUsed, slDataItem.getValue(), netQty));			
@@ -300,17 +266,20 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 			value = 0d;
 		}
 		
-		Double origMini = newSimpleListDataItem.getMini() != null ? newSimpleListDataItem.getMini() : origValue;
 		Double miniValue = slDataItem.getMini() != null ? slDataItem.getMini() : value;
-		if(miniValue < value || origMini < origValue){
-			newSimpleListDataItem.setMini(FormulationHelper.calculateValue(newSimpleListDataItem.getMini(), qtyUsed, miniValue, netQty));
-		}
-		
-		Double origMaxi = newSimpleListDataItem.getMaxi() != null ? newSimpleListDataItem.getMaxi() : origValue;
 		Double maxiValue = slDataItem.getMaxi() != null ? slDataItem.getMaxi() : value;
-		if(maxiValue > value || origMaxi > origValue){
-			newSimpleListDataItem.setMaxi(FormulationHelper.calculateValue(newSimpleListDataItem.getMaxi(), qtyUsed, maxiValue, netQty));
+		if(isGenericRawMaterial){
+			if((newSimpleListDataItem.getMini() == null && miniValue != null) || newSimpleListDataItem.getMini() > miniValue){
+				newSimpleListDataItem.setMini(miniValue);
+			}
+			if((newSimpleListDataItem.getMaxi() == null && maxiValue != null) || newSimpleListDataItem.getMaxi() < maxiValue){
+				newSimpleListDataItem.setMaxi(maxiValue);
+			}
 		}
+		else{
+			newSimpleListDataItem.setMini(FormulationHelper.calculateValue(newSimpleListDataItem.getMini(), qtyUsed, miniValue, netQty));
+			newSimpleListDataItem.setMaxi(FormulationHelper.calculateValue(newSimpleListDataItem.getMaxi(), qtyUsed, maxiValue, netQty));
+		}	
 		
 		newSimpleListDataItem.setPreviousValue(FormulationHelper.calculateValue(newSimpleListDataItem.getPreviousValue(), qtyUsed, slDataItem.getPreviousValue(), netQty));
 		newSimpleListDataItem.setFutureValue(FormulationHelper.calculateValue(newSimpleListDataItem.getFutureValue(), qtyUsed, slDataItem.getFutureValue(), netQty));

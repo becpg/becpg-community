@@ -120,7 +120,7 @@ public class FormulationGenericRawMaterialTest extends AbstractFinishedProductTe
 					if(p.getPhysicoChem().equals(physicoChem3)){
 						assertEquals(1d, p.getValue());
 						assertEquals(0.8d, p.getMini());
-						assertEquals(1.6d, p.getMaxi());
+						assertEquals(2.1d, p.getMaxi());
 						checks++;
 					}
 				}

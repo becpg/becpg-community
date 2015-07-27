@@ -127,7 +127,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 		for(AllergenListDataItem allergenListDataItem : formulatedProduct.getAllergenList()){
 			if (allergenListDataItem.getIsManual() == null || !allergenListDataItem.getIsManual()) {
 				if(allergenListDataItem.getQtyPerc()!=null && netQty != 0){
-					allergenListDataItem.setQtyPerc((allergenListDataItem.getQtyPerc()/netQty)*100);	
+					allergenListDataItem.setQtyPerc((allergenListDataItem.getQtyPerc()/netQty)*100);
 					
 					if(!allergenListDataItem.getVoluntary()){
 						Double regulatoryThreshold = (Double)nodeService.getProperty(allergenListDataItem.getAllergen(), PLMModel.PROP_ALLERGEN_REGULATORY_THRESHOLD);
