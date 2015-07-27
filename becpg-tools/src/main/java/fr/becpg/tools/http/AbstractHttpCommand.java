@@ -18,18 +18,17 @@
 package fr.becpg.tools.http;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.protocol.HttpContext;
 
 public abstract class AbstractHttpCommand {
 
@@ -56,31 +55,17 @@ public abstract class AbstractHttpCommand {
 
 
 
-	public InputStream runCommand(HttpClient client , Object... params) throws IOException{
+	public CloseableHttpResponse runCommand(CloseableHttpClient client, HttpContext context, Object... params) throws IOException{
 
-		HttpEntity entity = getEntity(client, params);
-		if(entity!=null){
-			return entity.getContent();
-		}
-		return null;
-
-	}
-
-	
-	protected HttpEntity getEntity(HttpClient client , Object... params) throws IOException{
-		
-	
 		String url  = getHttpUrl( params);
 		if(logger.isDebugEnabled()){
 		 logger.debug("Run http command:"+url);
 		}
-
-		HttpResponse response = client.execute(getHttpMethod(url,params));
-		
-		return response.getEntity();
-
-	}
 	
+		return client.execute(getHttpMethod(url,params), context);
+		
+	}
+
 	
 	private HttpUriRequest getHttpMethod(String url, Object[] params) {
 

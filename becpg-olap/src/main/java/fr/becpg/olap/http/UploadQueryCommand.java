@@ -22,12 +22,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
 
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.HttpMultipartMode;
-import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.entity.mime.content.StringBody;
 
@@ -37,7 +37,6 @@ public class UploadQueryCommand extends AbstractHttpCommand {
 
 	private static final String COMMAND_URL_TEMPLATE = "/api/upload";
 	private static final String FILEBODY_CHARSET = "UTF-8";
-	private static final String FILEBODY_MIMETYPE = "text/plain";
 
 	public UploadQueryCommand(String serverUrl) {
 		super(serverUrl);
@@ -49,44 +48,38 @@ public class UploadQueryCommand extends AbstractHttpCommand {
 
 		HttpPost postRequest = new HttpPost(url);
 
-		MultipartEntity entity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+		MultipartEntityBuilder entity = MultipartEntityBuilder.create();
+		entity.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
 
-		try {
-			if (params.length > 2) {
-				// Case create
-				entity.addPart("destination", new StringBody((String) params[0], FILEBODY_MIMETYPE, Charset.forName(FILEBODY_CHARSET)));
-				entity.addPart("filename", new StringBody((String) params[1], Charset.forName(FILEBODY_CHARSET)));
-				entity.addPart("filedata", getFileBody((String) params[1], (String) params[2]));
+		if (params.length > 2) {
+			// Case create
+			entity.addPart("destination", new StringBody((String) params[0], ContentType.MULTIPART_FORM_DATA));
+			entity.addPart("filename", new StringBody((String) params[1], ContentType.MULTIPART_FORM_DATA));
+			entity.addPart("filedata", getFileBody((String) params[1], (String) params[2]));
 
-				if (logger.isDebugEnabled()) {
-					logger.debug("Create upload post request");
-					logger.debug("destination=" + params[0]);
-					logger.debug("filename=" + params[1]);
-					logger.debug("filedata=" + params[2]);
-				}
-
-			} else {
-
-				// Case update
-
-				entity.addPart("updatenoderef", new StringBody((String) params[0], FILEBODY_MIMETYPE, Charset.forName(FILEBODY_CHARSET)));
-				entity.addPart("filedata", getFileBody(null, (String) params[1]));
-
-				if (logger.isDebugEnabled()) {
-					logger.debug("Update upload post request");
-					logger.debug("updatenoderef=" + params[0]);
-					logger.debug("filedata=" + params[1]);
-				}
+			if (logger.isDebugEnabled()) {
+				logger.debug("Create upload post request");
+				logger.debug("destination=" + params[0]);
+				logger.debug("filename=" + params[1]);
+				logger.debug("filedata=" + params[2]);
 			}
-			
-			logger.debug("MultipartEntity: " + entity + " length: " + entity.getContentLength());				
 
-			postRequest.setEntity(entity);		
+		} else {
 
-		} catch (UnsupportedEncodingException e) {
-			logger.error(e, e);
+			// Case update
+
+			entity.addPart("updatenoderef", new StringBody((String) params[0], ContentType.MULTIPART_FORM_DATA));
+			entity.addPart("filedata", getFileBody(null, (String) params[1]));
+
+			if (logger.isDebugEnabled()) {
+				logger.debug("Update upload post request");
+				logger.debug("updatenoderef=" + params[0]);
+				logger.debug("filedata=" + params[1]);
+			}
 		}
-		
+
+		postRequest.setEntity(entity.build());
+
 		return postRequest;
 	}
 

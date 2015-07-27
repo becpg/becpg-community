@@ -152,7 +152,6 @@ public class EntityToDBXmlVisitor {
 		ignoredProperties.add("cm:contains");
 		ignoredProperties.add("bcpg:sort");
 		ignoredProperties.add("rep:reports");
-		ignoredProperties.add("rep:reports");
 	}
 
 	public void visit(InputStream in) throws IOException, SAXException, ParserConfigurationException, DOMException, ParseException, SQLException {

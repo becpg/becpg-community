@@ -35,7 +35,10 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.client.HttpClient;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -60,31 +63,36 @@ public class InstanceImporter {
 		this.entityToDBXmlVisitor = entityToDBXmlVisitor;
 	}
 
-	public void loadEntities(String query, HttpClient client) throws XPathExpressionException, IOException, ParserConfigurationException, SAXException, DOMException,
-			ParseException, SQLException {
+	public void loadEntities(String query, CloseableHttpClient client, HttpClientContext context) throws XPathExpressionException, IOException, ParserConfigurationException, SAXException,
+			DOMException, ParseException, SQLException {
 
 		ListEntitiesCommand listEntitiesCommand = new ListEntitiesCommand(serverUrl);
 
-		try (InputStream entitiesStream = listEntitiesCommand.runCommand(client, query)) {
+		try (CloseableHttpResponse resp = listEntitiesCommand.runCommand(client, context, query)) {
+			HttpEntity entity = resp.getEntity();
+			if (entity != null) {
+				try (InputStream entitiesStream = entity.getContent()) {
 
-			DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
-			domFactory.setNamespaceAware(true); // never forget this!
-			DocumentBuilder builder = domFactory.newDocumentBuilder();
-			Document doc = builder.parse(entitiesStream);
+					DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+					domFactory.setNamespaceAware(true); // never forget this!
+					DocumentBuilder builder = domFactory.newDocumentBuilder();
+					Document doc = builder.parse(entitiesStream);
 
-			XPathFactory factory = XPathFactory.newInstance();
-			XPath xpath = factory.newXPath();
+					XPathFactory factory = XPathFactory.newInstance();
+					XPath xpath = factory.newXPath();
 
-			int count = 1;
-			String nodeRef;
-			while ((nodeRef = (String) xpath.evaluate("//*[" + count + "]/@nodeRef", doc, XPathConstants.STRING)) != null && nodeRef.length() > 0) {
-				count++;
-				try {
-					loadEntity(client, nodeRef);
-				} catch(Exception e){
-					logger.error("Invalid Xml for "+nodeRef+" skipping node");
-					if(logger.isDebugEnabled()){
-						logger.debug(e,e);
+					int count = 1;
+					String nodeRef;
+					while ((nodeRef = (String) xpath.evaluate("//*[" + count + "]/@nodeRef", doc, XPathConstants.STRING)) != null && nodeRef.length() > 0) {
+						count++;
+						try {
+							loadEntity(client, context, nodeRef);
+						} catch (Exception e) {
+							logger.error("Invalid Xml for " + nodeRef + " skipping node " + e.getMessage());
+							if (logger.isDebugEnabled()) {
+								logger.debug(e, e);
+							}
+						}
 					}
 				}
 			}
@@ -93,18 +101,22 @@ public class InstanceImporter {
 
 	}
 
-	private void loadEntity(HttpClient client, String nodeRef) throws IOException, DOMException, SAXException, ParserConfigurationException, ParseException, SQLException {
+	private void loadEntity(CloseableHttpClient client, HttpClientContext context, String nodeRef) throws IOException, DOMException, SAXException, ParserConfigurationException, ParseException,
+			SQLException {
 		logger.info("Import nodeRef:" + nodeRef);
 
 		GetEntityCommand getEntityCommand = new GetEntityCommand(serverUrl);
+		try (CloseableHttpResponse resp = getEntityCommand.runCommand(client, context, nodeRef)) {
+			HttpEntity entity = resp.getEntity();
+			if (entity != null) {
+				try (InputStream entityStream = entity.getContent()) {
+					entityToDBXmlVisitor.visit(entityStream);
 
-		try (InputStream entityStream = getEntityCommand.runCommand(client, nodeRef)) {
-			entityToDBXmlVisitor.visit(entityStream);
-
+				}
+			}
 		}
 
 	}
-	
 
 	public String buildQuery(Date lastImport) {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
@@ -117,9 +129,9 @@ public class InstanceImporter {
 		logger.info("Import from :[ " + dateRange + " TO MAX ]");
 
 		String query = "@cm\\:created:[%s TO MAX] OR @cm\\:modified:[%s TO MAX]";
-		
-		return	String.format(query, dateRange, dateRange);
-		 
+
+		return String.format(query, dateRange, dateRange);
+
 	}
 
 }
