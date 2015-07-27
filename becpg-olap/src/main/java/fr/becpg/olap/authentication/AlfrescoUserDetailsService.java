@@ -23,7 +23,10 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.client.HttpClient;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParser;
@@ -61,33 +64,38 @@ public class AlfrescoUserDetailsService implements UserDetailsService {
 		try {
 			Instance instance = instanceManager.findInstanceByUserName(username);
 
-			HttpClient client = instanceManager.createInstanceSession(instance);
+			try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
 
-			RetrieveUserCommand retrieveUserCommand = new RetrieveUserCommand(instance.getInstanceUrl());
-			try {
+				RetrieveUserCommand retrieveUserCommand = new RetrieveUserCommand(instance.getInstanceUrl());
 
 				String presentedLogin = UserNameHelper.extractLogin(username);
 
 				List<GrantedAuthority> authorities = new ArrayList<>();
-				try (InputStream in = retrieveUserCommand.runCommand(client, presentedLogin)) {
+				try (CloseableHttpResponse resp = retrieveUserCommand.runCommand(httpClient, instance.createHttpContext(), presentedLogin)) {
+					HttpEntity entity = resp.getEntity();
+					if (entity != null) {
 
-					JsonFactory jsonFactory = new JsonFactory();
-					JsonParser jp = jsonFactory.createJsonParser(in);
+						try (InputStream in = entity.getContent()) {
 
-					ObjectMapper mapper = new ObjectMapper();
+							JsonFactory jsonFactory = new JsonFactory();
+							JsonParser jp = jsonFactory.createJsonParser(in);
 
-					JsonNode rootNode = mapper.readTree(jp);
+							ObjectMapper mapper = new ObjectMapper();
 
-					for (JsonNode node : rootNode.path("groups")) {
-						authorities.add(new GrantedAuthorityImpl(node.path("itemName").getTextValue()));
+							JsonNode rootNode = mapper.readTree(jp);
+
+							for (JsonNode node : rootNode.path("groups")) {
+								authorities.add(new GrantedAuthorityImpl(node.path("itemName").getTextValue()));
+							}
+
+							return new AlfrescoUserDetails(username, "no-password", rootNode.path("enabled").asBoolean(), authorities, instance);
+
+						}
+					} else {
+						return null;
 					}
-
-					return new AlfrescoUserDetails(username, "no-password", rootNode.path("enabled").asBoolean(), authorities, instance);
-
 				}
 
-			} finally {
-				client.getConnectionManager().shutdown();
 			}
 
 		} catch (Exception e) {
