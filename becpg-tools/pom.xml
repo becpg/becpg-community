@@ -9,7 +9,7 @@
 	<artifactId>becpg-tools</artifactId>
 	<name>beCPG Tools</name>
 	<description>Set of common classes</description>
-	<version>1.0</version>
+	<version>1.1</version>
 	<licenses>
 		<license>
 			<name>GNU LESSER GENERAL PUBLIC LICENSE</name>

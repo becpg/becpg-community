@@ -41,7 +41,11 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.client.HttpClient;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParser;
@@ -74,7 +78,6 @@ public class AlfrescoRepository {
 
 	private static final Log log = LogFactory.getLog(AlfrescoRepository.class);
 
-	
 	InstanceManager instanceManager;
 
 	public void setInstanceManager(InstanceManager instanceManager) {
@@ -82,7 +85,7 @@ public class AlfrescoRepository {
 	}
 
 	public interface AlfrescoSessionCallBack<T> {
-		T execute(Instance instance, HttpClient httpClient);
+		T execute(Instance instance, CloseableHttpClient httpClient, HttpClientContext httpContext);
 	}
 
 	private <T> T runInAlfrescoSession(AlfrescoSessionCallBack<T> alfrescoSessionCallBack) {
@@ -90,13 +93,13 @@ public class AlfrescoRepository {
 
 		if (auth != null && auth.getPrincipal() != null && (auth.getPrincipal() instanceof AlfrescoUserDetails)) {
 			Instance instance = ((AlfrescoUserDetails) auth.getPrincipal()).getInstance();
-			HttpClient httpClient = instanceManager.createInstanceSession(instance);
-			try {
-				return alfrescoSessionCallBack.execute(instance, httpClient);
-			} finally {
-				httpClient.getConnectionManager().shutdown();
+
+			try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
+				return alfrescoSessionCallBack.execute(instance, httpClient, instance.createHttpContext());
+			} catch (IOException e) {
+				log.error(e, e);
 			}
-			
+
 		}
 
 		return null;
@@ -115,14 +118,14 @@ public class AlfrescoRepository {
 			return queries.get(fileName);
 		}
 
-		public List<IRepositoryObject> getRepositoryObjects() {	
+		public List<IRepositoryObject> getRepositoryObjects() {
 			List<AclMethod> aclMethods = new ArrayList<>();
-				aclMethods.add(AclMethod.READ);
-				aclMethods.add(AclMethod.WRITE);
+			aclMethods.add(AclMethod.READ);
+			aclMethods.add(AclMethod.WRITE);
 			List<IRepositoryObject> objects = new ArrayList<>();
 			for (String filename : queries.keySet()) {
 
-				objects.add(new RepositoryFileObject(filename, "#"+filename, "saiku", filename+".saiku", aclMethods));
+				objects.add(new RepositoryFileObject(filename, "#" + filename, "saiku", filename + ".saiku", aclMethods));
 			}
 
 			return objects;
@@ -161,11 +164,11 @@ public class AlfrescoRepository {
 
 		return runInAlfrescoSession(new AlfrescoSessionCallBack<List<IRepositoryObject>>() {
 
-			public List<IRepositoryObject> execute(Instance instance, HttpClient httpClient) {
+			public List<IRepositoryObject> execute(Instance instance, CloseableHttpClient httpClient, HttpClientContext httpContext) {
 
 				try {
 
-					QueryList queryList = retrieveQueries(instance, httpClient);
+					QueryList queryList = retrieveQueries(instance, httpClient, httpContext);
 					if (queryList != null) {
 						return queryList.getRepositoryObjects();
 					}
@@ -180,13 +183,19 @@ public class AlfrescoRepository {
 
 	}
 
-	private QueryList retrieveQueries(Instance instance, HttpClient httpClient) throws IOException {
-		QueryList queryList;
+	private QueryList retrieveQueries(Instance instance, CloseableHttpClient httpClient, HttpClientContext httpContext) throws IOException {
+		QueryList queryList = null;
 		ListQueriesCommand listQueriesCommand = new ListQueriesCommand(instance.getInstanceUrl());
-		try (InputStream in = listQueriesCommand.runCommand(httpClient)) {
-			queryList = new QueryList();
-			queryList.load(in);
 
+		try (CloseableHttpResponse resp = listQueriesCommand.runCommand(httpClient, httpContext)) {
+			HttpEntity entity = resp.getEntity();
+			if (entity != null) {
+				try (InputStream in = entity.getContent()) {
+					queryList = new QueryList();
+					queryList.load(in);
+
+				}
+			}
 		}
 		return queryList;
 	}
@@ -220,7 +229,7 @@ public class AlfrescoRepository {
 	 * @param path
 	 *            - The path of the given file to load.
 	 * @return A Repository File Object.
-	 */ 
+	 */
 	@GET
 	@Produces({ "text/plain" })
 	@Path("/resource")
@@ -230,9 +239,9 @@ public class AlfrescoRepository {
 
 		return runInAlfrescoSession(new AlfrescoSessionCallBack<Response>() {
 
-			public Response execute(Instance instance, HttpClient httpClient) {
+			public Response execute(Instance instance, CloseableHttpClient httpClient, HttpClientContext httpContext) {
 				try {
-					QueryList queryList = retrieveQueries(instance, httpClient);
+					QueryList queryList = retrieveQueries(instance, httpClient, httpContext);
 					if (queryList != null) {
 
 						String nodeRef = queryList.getQueryNodeRef(file.replace(".saiku", ""));
@@ -240,16 +249,22 @@ public class AlfrescoRepository {
 
 							DownloadQueryCommand downloadQueryCommand = new DownloadQueryCommand(instance.getInstanceUrl());
 
-							try (InputStreamReader reader = new InputStreamReader(downloadQueryCommand.runCommand(httpClient, nodeRef,file))) {
+							try (CloseableHttpResponse resp = downloadQueryCommand.runCommand(httpClient, httpContext, nodeRef, file)) {
+								HttpEntity entity = resp.getEntity();
+								if (entity != null) {
 
-								BufferedReader br = new BufferedReader(reader);
-								String chunk, content = "";
-								while ((chunk = br.readLine()) != null) {
-									content += chunk + "\n";
+									try (InputStreamReader reader = new InputStreamReader(entity.getContent())) {
+
+										BufferedReader br = new BufferedReader(reader);
+										String chunk, content = "";
+										while ((chunk = br.readLine()) != null) {
+											content += chunk + "\n";
+										}
+										byte[] doc = content.getBytes("UTF-8");
+										return Response.ok(doc, MediaType.TEXT_PLAIN).header("content-length", doc.length).build();
+
+									}
 								}
-								byte[] doc = content.getBytes("UTF-8");
-								return Response.ok(doc, MediaType.TEXT_PLAIN).header("content-length", doc.length).build();
-
 							}
 
 						}
@@ -283,33 +298,43 @@ public class AlfrescoRepository {
 
 		return runInAlfrescoSession(new AlfrescoSessionCallBack<Response>() {
 
-			public Response execute(Instance instance, HttpClient httpClient) {
+			public Response execute(Instance instance, CloseableHttpClient httpClient, HttpClientContext httpContext) {
 				try {
-					QueryList queryList = retrieveQueries(instance, httpClient);
+					QueryList queryList = retrieveQueries(instance, httpClient, httpContext);
 					if (queryList != null) {
 
 						String nodeRef = queryList.getQueryNodeRef(file.replace(".saiku", ""));
 						UploadQueryCommand uploadQueryCommand = new UploadQueryCommand(instance.getInstanceUrl());
 						if (nodeRef != null) {
 
-							try (InputStream in = uploadQueryCommand.runCommand(httpClient, nodeRef, content)) {
-								
-								if(log.isDebugEnabled()){
-									IOUtils.copy(in, System.out);
+							try (CloseableHttpResponse resp = uploadQueryCommand.runCommand(httpClient, httpContext, nodeRef, content)) {
+								HttpEntity entity = resp.getEntity();
+								if (entity != null) {
+									try (InputStream in = entity.getContent()) {
+
+										if (log.isDebugEnabled()) {
+											IOUtils.copy(in, System.out);
+										}
+
+										return Response.ok().build();
+									}
 								}
-								
-								return Response.ok().build();
 							}
 
 						} else {
-							try (InputStream in = uploadQueryCommand.runCommand(httpClient, queryList.getParentNodeRef(), file.replace(".saiku", "")+".saiku", content)) {
-								
-								
-								if(log.isDebugEnabled()){
-									IOUtils.copy(in, System.out);
+							try (CloseableHttpResponse resp = uploadQueryCommand.runCommand(httpClient, httpContext, queryList.getParentNodeRef(), file.replace(".saiku", "") + ".saiku", content)) {
+								HttpEntity entity = resp.getEntity();
+								if (entity != null) {
+
+									try (InputStream in = entity.getContent()) {
+
+										if (log.isDebugEnabled()) {
+											IOUtils.copy(in, System.out);
+										}
+
+										return Response.ok().build();
+									}
 								}
-								
-								return Response.ok().build();
 							}
 
 						}
@@ -341,16 +366,17 @@ public class AlfrescoRepository {
 
 		return runInAlfrescoSession(new AlfrescoSessionCallBack<Response>() {
 
-			public Response execute(Instance instance, HttpClient httpClient) {
+			public Response execute(Instance instance, CloseableHttpClient httpClient, HttpClientContext httpContext) {
 				try {
-					QueryList queryList = retrieveQueries(instance, httpClient);
+					QueryList queryList = retrieveQueries(instance, httpClient, httpContext);
 					if (queryList != null) {
 
 						String nodeRef = queryList.getQueryNodeRef(file.replace(".saiku", ""));
 
 						DeleteQueryCommand deleteQueryCommand = new DeleteQueryCommand(instance.getInstanceUrl());
 						if (nodeRef != null) {
-							try (InputStream in = deleteQueryCommand.runCommand(httpClient, nodeRef)) {
+
+							try (CloseableHttpResponse resp = deleteQueryCommand.runCommand(httpClient, httpContext, nodeRef)) {
 								return Response.ok().build();
 							}
 						}
