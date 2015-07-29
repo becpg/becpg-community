@@ -129,10 +129,12 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 				if(allergenListDataItem.getQtyPerc()!=null && netQty != 0){
 					allergenListDataItem.setQtyPerc((allergenListDataItem.getQtyPerc()/netQty)*100);
 					
-					if(!allergenListDataItem.getVoluntary()){
+					//#1678
+					if(allergenListDataItem.getVoluntary() || allergenListDataItem.getInVoluntary()){
 						Double regulatoryThreshold = (Double)nodeService.getProperty(allergenListDataItem.getAllergen(), PLMModel.PROP_ALLERGEN_REGULATORY_THRESHOLD);
 						if(regulatoryThreshold!=null && allergenListDataItem.getQtyPerc()!=null
 								&& regulatoryThreshold >= allergenListDataItem.getQtyPerc() ){
+							allergenListDataItem.setVoluntary(false);
 							allergenListDataItem.setInVoluntary(false);
 						}
 					}
