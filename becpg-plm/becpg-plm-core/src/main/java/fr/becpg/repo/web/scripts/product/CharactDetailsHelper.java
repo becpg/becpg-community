@@ -97,7 +97,8 @@ public class CharactDetailsHelper {
 					}
 			}
 			tmp.add(compoEl);
-			tmp.add(nodeService.getType(compoEl));
+			tmp.add(nodeService.getType(compoEl));//nodeService.getType(component.getNodeRef()).getLocalName()
+			tmp.add(nodeService.getType(compoEl).getLocalName());
 			resultsets.add(tmp);
 		}
 		obj.put("metadatas", metadatas);
