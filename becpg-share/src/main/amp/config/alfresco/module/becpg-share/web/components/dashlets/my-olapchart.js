@@ -67,12 +67,6 @@
       saikuUrl : null,
 
       /**
-       * currentUser
-       */
-
-      saikuUser : null,
-
-      /**
        * Object container for initialization options
        * 
        * @property options
@@ -228,8 +222,7 @@
             me.chartPicker.getMenu().render(document.body);
             me.selectMenuValue(me.chartPicker, encodeURIComponent(firstQueryId));
 
-            me.saikuUrl = json.metadata.olapServerUrl;
-            me.saikuUser = json.metadata.currentUserName;
+            me.saikuUrl = json.metadata.olapSSOUrl;
 
          }
 
@@ -405,12 +398,9 @@
          }
 
       },
-      /**
-       * 
-       */
       openSaikuClick : function OlapChart_openSaikuClick() {
          if (this.saikuUrl !== null) {
-            window.open(this.saikuUrl + "?username=" + this.saikuUser);
+            window.open(this.saikuUrl);
          }
       }
 

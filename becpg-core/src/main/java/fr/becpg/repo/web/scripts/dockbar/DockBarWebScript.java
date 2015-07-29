@@ -60,8 +60,6 @@ public class DockBarWebScript extends AbstractWebScript {
 
 	private static final String PREF_DOCKBAR_HISTORY = "fr.becpg.DockBarHistory";
 
-	protected static final String PARAM_FIELDS = "metadataFields";
-
 	private final static int DOCKBAR_SIZE = 6;
 
 	private AttributeExtractorService attributeExtractorService;

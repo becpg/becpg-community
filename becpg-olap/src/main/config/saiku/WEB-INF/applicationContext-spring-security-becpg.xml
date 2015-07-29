@@ -31,6 +31,7 @@
 
 	<bean id="alfrescoAuthenticationProvider"  class="fr.becpg.olap.authentication.AlfrescoAuthenticationProvider" >
 		<property name="userDetailsService" ref="alfrescoUserDetailsService"/>
+		<property name="instanceManager" ref="instanceManager"/>
 	</bean>
 
 
@@ -43,13 +44,13 @@
 	</bean>
 
 	<security:authentication-manager alias="authenticationManager">
-	 <security:authentication-provider ref="alfrescoAuthenticationProvider"/>
+		 <security:authentication-provider ref="alfrescoAuthenticationProvider"/>
 	</security:authentication-manager>
 
-	<!-- Format instance$user@tenant -->
+	<!-- Format instance$user@tenant#ticket in base64  url ticket= or ALF_USER header -->
 
 
-	<bean id="becpgFilter" class="org.springframework.security.web.authentication.preauth.RequestHeaderAuthenticationFilter">
+	<bean id="becpgFilter" class="fr.becpg.olap.authentication.AlfTicketPreAuthenticatedFilter">
 		<property name="principalRequestHeader" value="ALF_USER" />
 		<property name="exceptionIfHeaderMissing" value="false"/>
 		<property name="authenticationManager" ref="preAuthenticationManager" />

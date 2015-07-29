@@ -95,5 +95,19 @@ public class AdminSaikuRestClient {
 
 		return Response.ok().build();
 	}
+	
+//	
+//	@GET
+//	@Produces({ "text/plain" })
+//	@Path("/purge")
+//	public Response launchPurge() throws Exception {
+//		for (final Instance instance : instanceManager.getAllInstances()) {
+//		 
+//			
+//
+//		}
+//
+//		return Response.ok().build();
+//	}
 
 }

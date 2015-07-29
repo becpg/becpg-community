@@ -41,15 +41,9 @@ import fr.becpg.repo.olap.data.OlapChartData;
 public class OlapChartWebScript  extends AbstractWebScript
 {
 	
-	/** The logger. */
 	private static final Log logger = LogFactory.getLog(OlapChartWebScript.class);
 	
-	// request parameter names
-	/** The Constant PARAM_ACTION. */
 	private static final String PARAM_QUERY_ID = "olapQueryId";
-	
-	private String olapServerUrl;
-	
 	
 	private OlapService olapService;
 	
@@ -58,14 +52,7 @@ public class OlapChartWebScript  extends AbstractWebScript
 		this.olapService = olapService;
 	}
 
-    
-
-	public void setOlapServerUrl(String olapServerUrl) {
-		this.olapServerUrl = olapServerUrl;
-	}
-
-
-
+  
 	/* (non-Javadoc)
      * @see org.springframework.extensions.webscripts.WebScript#execute(org.springframework.extensions.webscripts.WebScriptRequest, org.springframework.extensions.webscripts.WebScriptResponse)
      */
@@ -108,8 +95,7 @@ public class OlapChartWebScript  extends AbstractWebScript
 				}
 		    	ret.put("queries",obj);
 		    	JSONObject metadata = new JSONObject();
-		    	metadata.put("currentUserName", olapService.getCurrentOlapUserName());
-		    	metadata.put("olapServerUrl", olapServerUrl);
+		    	metadata.put("olapSSOUrl", olapService.getSSOUrl());
 		    	metadata.put("olapQueriesFolder", olapService.getOlapQueriesFolder());
 		    	ret.put("metadata",metadata);
 		    	
