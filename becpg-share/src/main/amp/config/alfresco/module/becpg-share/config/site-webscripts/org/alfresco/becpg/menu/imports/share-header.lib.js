@@ -31,13 +31,26 @@ function getOrCreateBeCPGMenu() {
           }
        }); 
       
+      var toolsWidget = [], olapSSOUrl = getOlapSSOUrl(user);
+      if (olapSSOUrl ){
+          toolsWidget.push( {
+              name : "alfresco/header/AlfMenuItem",
+              config : {
+                 label : "header.becpg-olap.label",
+                 iconClass : "becpg-olap-header",
+                 targetUrl : olapSSOUrl,
+                 targetUrlType: "FULL_PATH",
+                 targetUrlLocation: "NEW"
+              }
+           })
+      }
       
       beCPGMenu.config.widgets.push( {
          id : "HEADER_TOOLS_BECPG",
          name : "alfresco/menus/AlfMenuGroup",
          config : {
             label : "header.becpg.tools",
-            widgets : []
+            widgets : toolsWidget
          }
       });
    
@@ -64,7 +77,7 @@ function getOrCreateBeCPGMenu() {
          
       }
       
-      
+
       var menuBar = widgetUtils.findObject(model.jsonModel, "id", "HEADER_APP_MENU_BAR");
       if (menuBar != null) {
          menuBar.config.widgets.push(beCPGMenu);
@@ -73,6 +86,15 @@ function getOrCreateBeCPGMenu() {
    }
 
    return beCPGMenu;
+}
+
+function getOlapSSOUrl(user){
+    for(var i  in user.capabilities){
+       if(i.indexOf("olapSSOUrl_") == 0){
+           return i.substring(11);
+       }
+    }
+    return null;
 }
 
 function isSystemMgr(user){

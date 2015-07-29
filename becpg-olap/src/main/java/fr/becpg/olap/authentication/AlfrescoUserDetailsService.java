@@ -25,6 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.codehaus.jackson.JsonFactory;
@@ -59,9 +60,12 @@ public class AlfrescoUserDetailsService implements UserDetailsService {
 	}
 
 	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
+	public UserDetails loadUserByUsername(String authToken) throws UsernameNotFoundException, DataAccessException {
 
 		try {
+
+			String username = UserNameHelper.extractUserName(authToken);
+
 			Instance instance = instanceManager.findInstanceByUserName(username);
 
 			try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
@@ -69,9 +73,16 @@ public class AlfrescoUserDetailsService implements UserDetailsService {
 				RetrieveUserCommand retrieveUserCommand = new RetrieveUserCommand(instance.getInstanceUrl());
 
 				String presentedLogin = UserNameHelper.extractLogin(username);
+				String ticket = UserNameHelper.extractTicket(authToken);
+
+				if (logger.isDebugEnabled()) {
+					logger.debug("Extracting user name : " + username);
+					logger.debug("Presented Login : " + presentedLogin);
+					logger.debug("Ticket : " + ticket);
+				}
 
 				List<GrantedAuthority> authorities = new ArrayList<>();
-				try (CloseableHttpResponse resp = retrieveUserCommand.runCommand(httpClient, instance.createHttpContext(), presentedLogin)) {
+				try (CloseableHttpResponse resp = retrieveUserCommand.runCommand(httpClient, HttpClientContext.create(), presentedLogin, ticket)) {
 					HttpEntity entity = resp.getEntity();
 					if (entity != null) {
 

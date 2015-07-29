@@ -47,6 +47,13 @@ else if (args["user"] != null)
    
    model.capabilities["isbeCPGSystemManager"] = isbeCPGSystemMember(object);
    model.capabilities["isbeCPGExternalUser"] = isbeCPGExternalUser(object);
+   
+   var olapSSOUrl = bcpg.getOlapSSOUrl();
+   if(olapSSOUrl!=null){
+       model.capabilities["olapSSOUrl_"+olapSSOUrl] = true;
+   }
+   
+   
    model.immutableProperties = people.getImmutableProperties(userId);
 }
 

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. ../common.sh
+export INSTANCE_DIR=/opt/becpg/becpg-tc-server/instances
 
 if [ $# -ne 1 ]
    then

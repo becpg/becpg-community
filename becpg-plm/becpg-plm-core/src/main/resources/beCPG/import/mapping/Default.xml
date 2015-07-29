@@ -41,6 +41,15 @@
 
 		</columns>
 	</mapping>
+	
+	<mapping name="cm:person">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="cm:userName" />
+		</nodeColumnKeys>
+		<columns>
+
+		</columns>
+	</mapping>
 
 	<mapping name="bcpg:client">
 		<nodeColumnKeys>

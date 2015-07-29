@@ -21,23 +21,9 @@
 	xsi:schemaLocation="
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-
-	<bean id="olapService" class="fr.becpg.repo.olap.impl.OlapServiceImpl">
-		<property name="olapServerUrl" value="${becpg.olap.url.internal}" />
-		<property name="instanceName" value="${becpg.instance.name}" />
-		<property name="authenticationService" ref="authenticationService"/>
-		<property name="fileFolderService" ref="fileFolderService" />
-		<property name="contentService" ref="contentService" />
-		<property name="repoService" ref="repoService"/>
-		<property name="tenantService" ref="tenantService"/>
-	</bean>
-
-
-	<!-- Webscript -->
 	<bean id="webscript.fr.becpg.olap.olapChart.get" class="fr.becpg.repo.olap.webscripts.OlapChartWebScript"
 		parent="webscript">
 		<property name="olapService" ref="olapService" />
-		<property name="olapServerUrl" value="${becpg.olap.url.public}" />
 	</bean>
 
 </beans>

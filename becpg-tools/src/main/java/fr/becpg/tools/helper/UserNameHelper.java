@@ -20,6 +20,9 @@ package fr.becpg.tools.helper;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.StringUtils;
+
 /**
  * 
  * @author matthieu
@@ -28,20 +31,48 @@ import java.util.regex.Pattern;
 public class UserNameHelper {
 
 	public static final Pattern userNamePattern = Pattern.compile("(.*)\\$(.*)@(.*)");
-	
-	
-	public static String extractLogin(String username){
+	public static final Pattern userNameAndTicketPattern = Pattern.compile("(.*)#(.*)");
+
+	public static String extractLogin(String username) {
+
 		Matcher ma = userNamePattern.matcher(username);
 		if (ma.matches()) {
-			
-			if(!"default".equals(ma.group(3))){
-				return ma.group(2)+"@"+ma.group(3);
+
+			if (!"default".equals(ma.group(3))) {
+				return ma.group(2) + "@" + ma.group(3);
 			} else {
 				return ma.group(2);
 			}
 		}
 		return null;
 	}
-	
-	
+
+	public static String extractTicket(String authToken) {
+		if (Base64.isBase64(authToken)) {
+			authToken = StringUtils.newStringUtf8(Base64.decodeBase64(authToken));
+		}
+		Matcher ma = userNameAndTicketPattern.matcher(authToken);
+		if (ma.matches()) {
+			return ma.group(2);
+		}
+		return null;
+
+	}
+
+	public static String buildAuthToken(String username, String alfTicket) {
+		return username + "#" + alfTicket;
+	}
+
+	public static String extractUserName(String authToken) {
+		if (Base64.isBase64(authToken)) {
+			authToken = StringUtils.newStringUtf8(Base64.decodeBase64(authToken));
+		}
+		
+		Matcher ma = userNameAndTicketPattern.matcher(authToken);
+		if (ma.matches()) {
+			return ma.group(1);
+		}
+		return null;
+	}
+
 }

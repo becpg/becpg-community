@@ -56,6 +56,7 @@
 			<value>bcpg</value>
 		</property>
 		<property name="autoNumService" ref="autoNumService"/>
+		<property name="olapService" ref="olapService"/>
 	</bean>
 
 	<!-- Override Alfresco -->

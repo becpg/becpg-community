@@ -36,13 +36,12 @@ public interface OlapService {
 
 	List<OlapChart> retrieveOlapCharts();
 	
+	List<OlapChart> retrieveOlapChartsFromSaiku() throws IOException, JSONException;
+	
 	OlapChartData retrieveChartData(String olapQueryId) throws IOException, JSONException;
-
-	String getCurrentOlapUserName();
 
 	NodeRef getOlapQueriesFolder();
 
-	List<OlapChart> retrieveOlapChartsFromSaiku();
-	
+	String getSSOUrl();
 	
 }
