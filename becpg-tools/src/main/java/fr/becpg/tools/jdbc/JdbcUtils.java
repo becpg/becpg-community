@@ -22,8 +22,16 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 public class JdbcUtils {
+	
+
+	public interface RowMapper<T> {
+		T mapRow(ResultSet rs, int line) throws SQLException;
+	}
+	
 	public static Long update(Connection connection, String sql, Object[] objects) throws SQLException {
 
 		try (PreparedStatement pst = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -41,4 +49,28 @@ public class JdbcUtils {
 
 	return -1L;
 }
+	
+	
+	public static <T> List<T> list(Connection connection, String sql, RowMapper<T> rowMapper, Object[] objects) throws SQLException {
+
+		List<T> ret = new ArrayList<>();
+		try ( PreparedStatement pst = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+			for (int i = 0; i < objects.length; i++) {
+				pst.setObject(i + 1, objects[i]);
+			}
+			try (ResultSet rs = pst.executeQuery()) {
+				if (rs != null) {
+					int line = 0;
+					while (rs.next()) {
+						ret.add(rowMapper.mapRow(rs, line));
+						line++;
+					}
+
+				}
+			}
+
+			return ret;
+		}
+	}
+	
 }

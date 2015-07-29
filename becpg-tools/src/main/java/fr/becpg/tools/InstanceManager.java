@@ -165,7 +165,7 @@ public class InstanceManager {
 	public List<Instance> getAllInstances() throws SQLException {
 		return jdbcConnectionManager.list(
 				"SELECT `id`,`batch_id` ,`tenant_username`,`tenant_password`,`tenant_name`,`instance_name`,`instance_url`,`last_imported`,`instance_state`  FROM `becpg_instance`",
-				new JdbcConnectionManager.RowMapper<Instance>() {
+				new JdbcUtils.RowMapper<Instance>() {
 					public Instance mapRow(ResultSet rs, int line) throws SQLException {
 						return new Instance(rs.getLong(1), rs.getLong(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getTimestamp(8), InstanceState
 								.valueOf(rs.getString(9)));
@@ -201,7 +201,7 @@ public class InstanceManager {
 		if (ma.matches()) {
 			List<Instance> instances = jdbcConnectionManager
 					.list("SELECT `id`,`batch_id` ,`tenant_username`,`tenant_password`,`tenant_name`,`instance_name`,`instance_url`,`last_imported`,`instance_state`  FROM `becpg_instance` WHERE instance_name = ? and tenant_name = ?",
-							new JdbcConnectionManager.RowMapper<Instance>() {
+							new JdbcUtils.RowMapper<Instance>() {
 								public Instance mapRow(ResultSet rs, int line) throws SQLException {
 									return new Instance(rs.getLong(1), rs.getLong(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7), rs.getTimestamp(8),
 											InstanceState.valueOf(rs.getString(9)));
