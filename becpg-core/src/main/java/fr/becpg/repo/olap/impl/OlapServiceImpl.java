@@ -65,6 +65,9 @@ public class OlapServiceImpl implements OlapService {
 
 	@Value("${becpg.olap.url.internal}")
 	private String olapServerUrl;
+	
+	@Value("${becpg.olap.enabled}")
+	private Boolean enabled;
 
 	@Autowired
 	private FileFolderService fileFolderService;
@@ -260,7 +263,10 @@ public class OlapServiceImpl implements OlapService {
 
 	@Override
 	public String getSSOUrl() {
-		return olapPublicUrl + "?ticket=" + getCurrentAuthToken();
+		if(enabled){
+			return olapPublicUrl + "?ticket=" + getCurrentAuthToken();
+		} 
+		return null;
 	}
 
 	private OlapChart getOlapChart(String olapQueryId) throws JSONException, IOException {
