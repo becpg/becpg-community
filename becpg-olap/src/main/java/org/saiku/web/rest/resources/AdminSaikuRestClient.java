@@ -32,6 +32,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.stereotype.Component;
 
+import fr.becpg.olap.InstanceCleaner;
 import fr.becpg.olap.InstanceImporter;
 import fr.becpg.olap.extractor.EntityToDBXmlVisitor;
 import fr.becpg.tools.InstanceManager;
@@ -83,7 +84,7 @@ public class AdminSaikuRestClient {
 					remoteETLClient.setEntityToDBXmlVisitor(new EntityToDBXmlVisitor(connection, instance));
 
 					try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
-						
+
 						remoteETLClient.loadEntities(remoteETLClient.buildQuery(instance.getLastImport()), httpClient, instance.createHttpContext());
 					}
 
@@ -95,19 +96,29 @@ public class AdminSaikuRestClient {
 
 		return Response.ok().build();
 	}
-	
-//	
-//	@GET
-//	@Produces({ "text/plain" })
-//	@Path("/purge")
-//	public Response launchPurge() throws Exception {
-//		for (final Instance instance : instanceManager.getAllInstances()) {
-//		 
-//			
-//
-//		}
-//
-//		return Response.ok().build();
-//	}
+
+	@GET
+	@Produces({ "text/plain" })
+	@Path("/purge")
+	public Response launchPurge() throws Exception {
+		for (final Instance instance : instanceManager.getAllInstances()) {
+			if (logger.isInfoEnabled()) {
+				logger.info("Start purging nodes from instance/tenant: " + instance.getId() + "/" + instance.getInstanceName() + "/" + instance.getTenantName());
+			}
+			jdbcConnectionManager.doInTransaction(new JdbcConnectionManagerCallBack() {
+
+				@Override
+				public void execute(Connection connection) throws Exception {
+
+					InstanceCleaner instanceCleaner = new InstanceCleaner();
+
+					instanceCleaner.purgeEntities(connection, instance);
+				}
+			});
+
+		}
+
+		return Response.ok().build();
+	}
 
 }

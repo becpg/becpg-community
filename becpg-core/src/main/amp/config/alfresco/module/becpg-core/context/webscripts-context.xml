@@ -178,6 +178,9 @@
 
 	<bean id="webscript.fr.becpg.remote.entity.get" class="fr.becpg.repo.web.scripts.remote.GetEntityWebScript" parent="abstractEntityWebScript">
 	</bean>
+	
+	<bean id="webscript.fr.becpg.remote.entityCheck.get" class="fr.becpg.repo.web.scripts.remote.CheckEntityWebScript" parent="abstractEntityWebScript">
+	</bean>
 
 	<bean id="webscript.fr.becpg.remote.entityData.get" class="fr.becpg.repo.web.scripts.remote.GetEntityDataWebScript" parent="abstractEntityWebScript">
 	</bean>
