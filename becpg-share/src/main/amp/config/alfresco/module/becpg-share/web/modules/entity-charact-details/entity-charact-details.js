@@ -23,355 +23,485 @@
  * @namespace beCPG
  * @class beCPG.module.EntityCharactDetails
  */
-(function() {
+(function()
+{
 
-	/**
-	 * YUI Chart SWF
-	 */
-	YAHOO.widget.Chart.SWFURL = Alfresco.constants.URL_CONTEXT + "res/yui/charts/assets/charts.swf";
+    /**
+     * YUI Chart SWF
+     */
+    YAHOO.widget.Chart.SWFURL = Alfresco.constants.URL_CONTEXT + "res/yui/charts/assets/charts.swf";
 
-	/**
-	 * Preferences
-	 */
-	var PREFERENCES_DETAILS_VIEW = "beCPG.module.EntityCharactDetails", PREF_CHART_TYPE = "chartType";
+    /**
+     * Preferences
+     */
+    var PREFERENCES_DETAILS_VIEW = "beCPG.module.EntityCharactDetails", PREF_CHART_TYPE = "chartType";
 
-	/**
-	 * Dashboard EntityCharactDetails constructor.
-	 * 
-	 * @param {String}
-	 *           htmlId The HTML id of the parent element
-	 * @return {beCPG.module.EntityCharactDetails } The new component instance
-	 * @constructor
-	 */
-	beCPG.module.EntityCharactDetails = function(fieldHtmlId) {
-		this.id = fieldHtmlId;
+    /**
+     * Dashboard EntityCharactDetails constructor.
+     * 
+     * @param {String}
+     *            htmlId The HTML id of the parent element
+     * @return {beCPG.module.EntityCharactDetails } The new component instance
+     * @constructor
+     */
+    beCPG.module.EntityCharactDetails = function(fieldHtmlId)
+    {
+        this.id = fieldHtmlId;
 
-		beCPG.module.EntityCharactDetails.superclass.constructor.call(this, "beCPG.module.EntityCharactDetails",
-		      fieldHtmlId, [ "button", "container", "menu", "datasource" ]);
+        beCPG.module.EntityCharactDetails.superclass.constructor.call(this, "beCPG.module.EntityCharactDetails", fieldHtmlId, [ "button", "container", "menu", "datasource" ]);
 
-		// Initialise prototype properties
-		this.preferencesService = new Alfresco.service.Preferences();
+        // Initialise prototype properties
+        this.preferencesService = new Alfresco.service.Preferences();
 
-	};
+    };
 
-	YAHOO.extend(beCPG.module.EntityCharactDetails, Alfresco.component.Base, {
+    YAHOO
+            .extend(
+                    beCPG.module.EntityCharactDetails,
+                    Alfresco.component.Base,
+                    {
 
-	   /**
-		 * dataSource
-		 */
-	   dataSource : null,
+                        /**
+                         * dataSource
+                         */
+                        dataSource : null,
 
-	   /**
-		 * Object container for initialization options
-		 * 
-		 * @property options
-		 * @type object
-		 */
-	   options : {
+                        /**
+                         * Object container for initialization options
+                         * 
+                         * @property options
+                         * @type object
+                         */
+                        options :
+                        {
 
-	      entityNodeRef : null,
-	      
-          backEntityNodeRef: [],
+                            entityNodeRef : null,
 
-	      itemType : null,
+                            backEntityNodeRef : [],
 
-	      dataListItems : null,
+                            navigationPath : [],
 
-	      dataListName : null
+                            itemType : null,
 
-	   },
+                            dataListItems : null,
 
-	   /**
-		 * 
-		 * @param menuItem
-		 */
-	   onChartTypeSelected : function EntityCharactDetails_onChartSelected(menuItem) {
-		   var scope = this;
-		   if (menuItem) {
-			   scope.widgets.chartTypePicker.value = menuItem.value;
-			   scope.preferencesService.set(scope.getPreference(PREF_CHART_TYPE), scope.widgets.chartTypePicker.value, {
-				   successCallback : {
-				      fn : scope.render(),
-				      scope : this
-				   }
-			   });
-		   }
-	   },
-	   /**
-		 * 
-		 * @param suffix
-		 * @returns {String}
-		 */
-	   getPreference : function EntityCharactDetails_getPreference(suffix) {
-		   return PREFERENCES_DETAILS_VIEW + (this.options.itemType ? "." + this.options.itemType.replace(":","_") : "") + (suffix ? "." + suffix : "");
-	   },
+                            dataListName : null
 
-	   /**
-		 * 
-		 * @param ev
-		 */
-	   onChartTypeClicked : function EntityCharactDetails_onChartTypeClicked(ev) {
-		   this.render();
-	   },
+                        },
 
-	   /**
-		 * @returns {EntityCharactDetails_onReady}
-		 */
-	   onReady : function EntityCharactDetails_onReady() {
+                        /**
+                         * 
+                         * @param menuItem
+                         */
+                        onChartTypeSelected : function EntityCharactDetails_onChartSelected(menuItem)
+                        {
+                            var scope = this;
+                            if (menuItem)
+                            {
+                                scope.widgets.chartTypePicker.value = menuItem.value;
+                                scope.preferencesService.set(scope.getPreference(PREF_CHART_TYPE), scope.widgets.chartTypePicker.value,
+                                {
+                                    successCallback :
+                                    {
+                                        fn : scope.render(),
+                                        scope : this
+                                    }
+                                });
+                            }
+                        },
+                        /**
+                         * 
+                         * @param suffix
+                         * @returns {String}
+                         */
+                        getPreference : function EntityCharactDetails_getPreference(suffix)
+                        {
+                            return PREFERENCES_DETAILS_VIEW + (this.options.itemType ? "." + this.options.itemType.replace(":", "_") : "") + (suffix ? "." + suffix : "");
+                        },
 
-		   var me = this;
+                        /**
+                         * 
+                         * @param ev
+                         */
+                        onChartTypeClicked : function EntityCharactDetails_onChartTypeClicked(ev)
+                        {
+                            this.render();
+                        },
 
-		   this.widgets.chartTypePicker = new YAHOO.widget.Button(me.id + "-chartTypePicker-button", {
-		      type : "split",
-		      menu : me.id + "-chartTypePicker-select",
-		      lazyloadmenu : false
-		   });
+                        /**
+                         * @returns {EntityCharactDetails_onReady}
+                         */
+                        onReady : function EntityCharactDetails_onReady()
+                        {
 
-		   this.widgets.chartTypePicker.on("click", me.onChartTypeClicked, me, true);
+                            var me = this;
 
-		   this.widgets.chartTypePicker.getMenu().subscribe("click", function(p_sType, p_aArgs) {
-			   var menuItem = p_aArgs[1];
-			   if (menuItem) {
-				   me.widgets.chartTypePicker.set("label", menuItem.cfg.getProperty("text"));
-				   me.onChartTypeSelected.call(me, menuItem);
-			   }
-		   });
-		   
+                            this.widgets.chartTypePicker = new YAHOO.widget.Button(me.id + "-chartTypePicker-button",
+                            {
+                                type : "split",
+                                menu : me.id + "-chartTypePicker-select",
+                                lazyloadmenu : false
+                            });
 
-			this.widgets.exportCSVButton = Alfresco.util.createYUIButton(this, "export-csv",
-					this.onExportCSV, {
-						disabled : false,
-						value : "export"
-			});
-			
-			this.widgets.backButton = Alfresco.util.createYUIButton(this, "back",
-					this.onBack, {
-						disabled : true,
-						value : "back"
-			});
+                            this.widgets.chartTypePicker.on("click", me.onChartTypeClicked, me, true);
 
-		   // Load preferences to override default filter and range
-		   me.selectMenuValue(me.widgets.chartTypePicker, "barChart");
+                            this.widgets.chartTypePicker.getMenu().subscribe("click", function(p_sType, p_aArgs)
+                            {
+                                var menuItem = p_aArgs[1];
+                                if (menuItem)
+                                {
+                                    me.widgets.chartTypePicker.set("label", menuItem.cfg.getProperty("text"));
+                                    me.onChartTypeSelected.call(me, menuItem);
+                                }
+                            });
 
-		   this.preferencesService.request(me.getPreference(), {
-		      successCallback : {
-		         fn : function(p_oResponse) {
+                            this.widgets.exportCSVButton = Alfresco.util.createYUIButton(this, "export-csv", this.onExportCSV,
+                            {
+                                disabled : false,
+                                value : "export"
+                            });
 
-			         var chartTypePreference = Alfresco.util.findValueByDotNotation(p_oResponse.json, me
-			               .getPreference(PREF_CHART_TYPE), null);
-			         if (chartTypePreference !== null) {
-				         me.selectMenuValue(me.widgets.chartTypePicker, chartTypePreference);
+                            this.widgets.backButton = Alfresco.util.createYUIButton(this, "back", this.onBack,
+                            {
+                                disabled : true,
+                                value : "back"
+                            });
 
-			         }
-		         },
-		         scope : this
-		      }
-		   });
 
-		   me.loadChartData();
-		   
-	   },
+                            // Load preferences to override default filter and
+                            // range
+                            me.selectMenuValue(me.widgets.chartTypePicker, "chartData");
 
-	   onExportCSV : function BulkEdit_onExportCSV() {
-	   	  if (this.options.entityNodeRef != null && this.options.entityNodeRef.length > 0) {
-				window.location = this._buildDetailsUrl("csv");
-	   	  }
-		},
-		
-	   onBack : function BulkEdit_onBack() {
-		   	  if (this.options.backEntityNodeRef!= null && this.options.backEntityNodeRef.length > 0) {
-		   		   this.options.entityNodeRef = this.options.backEntityNodeRef.pop();
-				   this.loadChartData();
-		   	  } 
-		   	  
-		   	  if (this.options.backEntityNodeRef== null || this.options.backEntityNodeRef.length < 1) {
-		   		  this.widgets.backButton.set("disabled", true);  
-		   	  }
-		   	  
-			},
-	   /**
-		 * 
-		 * @param picker
-		 * @param value
-		 */
-	   selectMenuValue : function EntityCharactDetails_selectMenuValue(picker, value) {
-		   picker.value = value;
-		   // set the correct menu label
-		   var menuItems = picker.getMenu().getItems();
-		   for (index in menuItems) {
-			   if (menuItems.hasOwnProperty(index)) {
-				   if (menuItems[index].value === value) {
-					   picker.set("label", menuItems[index].cfg.getProperty("text"));
-					   break;
-				   }
-			   }
-		   }
+                            this.preferencesService.request(me.getPreference(),
+                            {
+                                successCallback :
+                                {
+                                    fn : function(p_oResponse)
+                                    {
 
-	   },
+                                        var chartTypePreference = Alfresco.util.findValueByDotNotation(p_oResponse.json, me.getPreference(PREF_CHART_TYPE), null);
+                                        if (chartTypePreference !== null)
+                                        {
+                                            me.selectMenuValue(me.widgets.chartTypePicker, chartTypePreference);
 
-	   /**
-		 * 
-		 */
-	   loadChartData : function EntityCharactDetails_loadChartData() {
-		   if (this.options.entityNodeRef != null && this.options.entityNodeRef.length > 0) {
-		   	
-			   Alfresco.util.Ajax.request({
-			      url : this._buildDetailsUrl("json"),
-			      successCallback : {
-			         fn : this.processData,
-			         scope : this
-			      },
-			      failureCallback : {
-			         fn : function() {
-				         // DO nothing
-			         },
-			         scope : this
-			      }
-			   });
-		   }
-	   },
-	   
-	   _buildDetailsUrl : function EntityCharactDetails__buildUrl(format){
-	   	return Alfresco.constants.PROXY_URI + "becpg/charact/formulate"
-	   	+ (format!=null && format.length>0 ? "."+format : "")
-   		+"?entityNodeRef="+ this.options.entityNodeRef
-   		+"&itemType=" + this.options.itemType 
-   		+ "&dataListName="+this.options.dataListName
-        + "&dataListItems="+this.options.dataListItems;
-	   },
-	   /**
-		 * 
-		 * @param response
-		 * @returns {EntityCharactDetails_processData}
-		 */
-	   processData : function EntityCharactDetails_processData(response) {
+                                        }
+                                    },
+                                    scope : this
+                                }
+                            });
 
-		   var data = response.json;
+                            me.loadChartData();
 
-		   var myFieldDefs = [];
-		   this.columnDefs = [];
-		   this.seriesDef = [];
-		   this.barChartSeriesDef = [];
-		   var i=0;
+                        },
 
-		   for (i=0;i<data.metadatas.length;i++) {
-			   myFieldDefs.push({key : "col" + i ,
-                  parser : function(oData) {
-                     if(!YAHOO.lang.isValue(oData) || (oData === "")) {
-                        return null;
-                    }
+                        onExportCSV : function BulkEdit_onExportCSV()
+                        {
+                            if (this.options.entityNodeRef != null && this.options.entityNodeRef.length > 0)
+                            {
+                                window.location = this._buildDetailsUrl("csv");
+                            }
+                        },
 
-                    //Convert to number
-                    var number = oData * 1;
-                   
-                    // Validate
-                    if(YAHOO.lang.isNumber(number)) {
-                        return Math.floor(number*10000)/10000;
-                    }
-                    return oData;
-                }});
-			   this.columnDefs.push({
-			      key : "col" + i,
-			      label : data.metadatas[i].colName
-			   });
-			   if (i > 1) {
-				   this.seriesDef.push({
-				      displayName : data.metadatas[i].colName,
-				      yField : "col" + i
-				   });
-				   this.barChartSeriesDef.push({
-				      displayName : data.metadatas[i].colName,
-				      xField : "col" + i
-				   });
-			   }
-		   }
-		   myFieldDefs.push({key : "nodeRef" });
-		   myFieldDefs.push({key : "type" });
-		   this.dataSource = new YAHOO.util.DataSource(data.resultsets);
-		   this.dataSource.responseType = YAHOO.util.DataSource.TYPE_JSARRAY;
-		   this.dataSource.responseSchema = {
-			   fields : myFieldDefs
-		   };
+                        onBack : function BulkEdit_onBack()
+                        {
+                            if (this.options.backEntityNodeRef != null && this.options.backEntityNodeRef.length > 0)
+                            {
+                                this.options.entityNodeRef = this.options.backEntityNodeRef.pop();
+                                this.options.navigationPath.pop();
+                                this.loadChartData();
 
-		   this.render();
+                              
+                            }
 
-	   },
-	   /**
-		 * Render Details Chart
-		 */
-	   render : function EntityCharactDetails_render() {
+                            if (this.options.backEntityNodeRef == null || this.options.backEntityNodeRef.length < 1)
+                            {
+                                this.widgets.backButton.set("disabled", true);
+                            }
 
-		   if (this.dataSource != null) {
+                        },
 
-			   if (this.widgets.chartTypePicker.value == "lineChart") {
-				   this.widgets.chart = new YAHOO.widget.LineChart(this.id + "-chart", this.dataSource, {
-				      series : this.seriesDef,
-				      xField : "col0",
-				      wmode : "opaque",
-				      style : {
-					      legend : {
-						      display : "bottom"
-					      }
-				      }
-				   });
+                        /**
+                         * 
+                         * @param picker
+                         * @param value
+                         */
+                        selectMenuValue : function EntityCharactDetails_selectMenuValue(picker, value)
+                        {
+                            picker.value = value;
+                            // set the correct menu label
+                            var menuItems = picker.getMenu().getItems();
+                            for (index in menuItems)
+                            {
+                                if (menuItems.hasOwnProperty(index))
+                                {
+                                    if (menuItems[index].value === value)
+                                    {
+                                        picker.set("label", menuItems[index].cfg.getProperty("text"));
+                                        break;
+                                    }
+                                }
+                            }
 
-			   } else if (this.widgets.chartTypePicker.value == "barChart") {
+                        },
 
-				   this.widgets.chart = new YAHOO.widget.BarChart(this.id + "-chart", this.dataSource, {
-				      series : this.barChartSeriesDef,
-				      yField : "col0",
-				      wmode : "opaque",
-				      style : {
-					      legend : {
-						      display : "bottom"
-					      }
-				      }
-				   });
+                        /**
+                         * 
+                         */
+                        loadChartData : function EntityCharactDetails_loadChartData()
+                        {
+                            if (this.options.entityNodeRef != null && this.options.entityNodeRef.length > 0)
+                            {
 
-			   } else if (this.widgets.chartTypePicker.value == "columnChart") {
-				   this.widgets.chart = new YAHOO.widget.ColumnChart(this.id + "-chart", this.dataSource, {
-				      series : this.seriesDef,
-				      xField : "col0",
-				      wmode : "opaque",
-				      style : {
-					      legend : {
-						      display : "bottom"
-					      }
-				      }
-				   });
+                                Alfresco.util.Ajax.request(
+                                {
+                                    url : this._buildDetailsUrl("json"),
+                                    successCallback :
+                                    {
+                                        fn : this.processData,
+                                        scope : this
+                                    },
+                                    failureCallback :
+                                    {
+                                        fn : function()
+                                        {
+                                            // DO nothing
+                                        },
+                                        scope : this
+                                    }
+                                });
+                            }
+                        },
 
-			   } else if (this.widgets.chartTypePicker.value == "pieChart") {
-				   this.widgets.chart = new YAHOO.widget.PieChart(this.id + "-chart", this.dataSource, {
-				      dataField : "col1",
-				      categoryField : "col0",
-				      wmode : "opaque",
-				      style : {
-					      legend : {
-						      display : "right"
-					      }
-				      }
-				   });
-			   } else if (this.widgets.chartTypePicker.value == "chartData") {
-				   this.widgets.chart = null;
-				   new YAHOO.widget.DataTable(this.id + "-chart", this.columnDefs, this.dataSource);
-			   }
-			   
-			   var me = this;
-			   if( this.widgets.chart !=null){
-				   this.widgets.chart.subscribe("itemClickEvent",function (event){
-				       if(event.item.type.indexOf("Material")<0){
-                           me.options.backEntityNodeRef.push(me.options.entityNodeRef);
-    					   me.options.entityNodeRef = event.item.nodeRef;
-    					   me.widgets.backButton.set("disabled", false);
-    					   me.loadChartData();
-				       }
-				   });
-			   }
-			   
-		   }
+                        _buildDetailsUrl : function EntityCharactDetails__buildUrl(format)
+                        {
+                            return Alfresco.constants.PROXY_URI + "becpg/charact/formulate" + (format != null && format.length > 0 ? "." + format : "")
+                            + "?entityNodeRef=" + this.options.entityNodeRef + "&itemType=" 
+                            + this.options.itemType + "&dataListName=" 
+                            + this.options.dataListName + "&dataListItems=" 
+                            + this.options.dataListItems;
+                        },
+                        /**
+                         * 
+                         * @param response
+                         * @returns {EntityCharactDetails_processData}
+                         */
+                        processData : function EntityCharactDetails_processData(response)
+                        {
 
-	   }
+                            var data = response.json;
 
-	});
+                            var myFieldDefs = [];
+                            this.columnDefs = [];
+                            this.seriesDef = [];
+                            this.barChartSeriesDef = [];
+                            var i = 0;
+
+                            for (i = 0; i < data.metadatas.length; i++)
+                            {
+                                myFieldDefs.push(
+                                {
+                                    key : "col" + i,
+                                    parser : function(oData)
+                                    {
+                                        if (!YAHOO.lang.isValue(oData) || (oData === ""))
+                                        {
+                                            return null;
+                                        }
+
+                                        // Convert to number
+                                        var number = oData * 1;
+
+                                        // Validate
+                                        if (YAHOO.lang.isNumber(number))
+                                        {
+                                            return Math.floor(number * 10000) / 10000;
+                                        }
+                                        return oData;
+                                    }
+                                });
+                                this.columnDefs.push(
+                                {
+                                    key : "col" + i,
+                                    label : data.metadatas[i].colName
+                                });
+                                if (i > 0)
+                                {
+                                    this.seriesDef.push(
+                                    {
+                                        displayName : data.metadatas[i].colName,
+                                        yField : "col" + i
+                                    });
+                                    this.barChartSeriesDef.push(
+                                    {
+                                        displayName : data.metadatas[i].colName,
+                                        xField : "col" + i
+                                    });
+                                }
+                            }
+
+                            myFieldDefs.push(
+                            {
+                                key : "nodeRef"
+                            });
+                            myFieldDefs.push(
+                            {
+                                key : "type"
+                            });
+                            myFieldDefs.push(
+                            {
+                                key : "cssClass"
+                            });
+
+                            this.dataSource = new YAHOO.util.DataSource(data.resultsets);
+                            this.dataSource.responseType = YAHOO.util.DataSource.TYPE_JSARRAY;
+                            this.dataSource.responseSchema =
+                            {
+                                fields : myFieldDefs
+                            };
+
+                            this.render();
+
+                        },
+                        /**
+                         * Render Details Chart
+                         */
+                        render : function EntityCharactDetails_render()
+                        {
+
+                            if (this.dataSource != null)
+                            {
+                                if (this.widgets.chartTypePicker.value == "lineChart")
+                                {
+                                    this.widgets.dataTable = null;
+                                    this.widgets.chart = new YAHOO.widget.LineChart(this.id + "-chart", this.dataSource,
+                                    {
+                                        series : this.seriesDef,
+                                        xField : "col0",
+                                        wmode : "opaque",
+                                        style :
+                                        {
+                                            legend :
+                                            {
+                                                display : "bottom"
+                                            }
+                                        }
+                                    });
+
+                                }
+                                else if (this.widgets.chartTypePicker.value == "barChart")
+                                {
+                                    this.widgets.dataTable = null;
+                                    this.widgets.chart = new YAHOO.widget.BarChart(this.id + "-chart", this.dataSource,
+                                    {
+                                        series : this.barChartSeriesDef,
+                                        yField : "col0",
+                                        wmode : "opaque",
+                                        style :
+                                        {
+                                            legend :
+                                            {
+                                                display : "bottom"
+                                            }
+                                        }
+                                    });
+
+                                }
+                                else if (this.widgets.chartTypePicker.value == "columnChart")
+                                {
+                                    this.widgets.dataTable = null;
+                                    this.widgets.chart = new YAHOO.widget.ColumnChart(this.id + "-chart", this.dataSource,
+                                    {
+                                        series : this.seriesDef,
+                                        xField : "col0",
+                                        wmode : "opaque",
+                                        style :
+                                        {
+                                            legend :
+                                            {
+                                                display : "bottom"
+                                            }
+                                        }
+                                    });
+
+                                }
+                                else if (this.widgets.chartTypePicker.value == "pieChart")
+                                {
+                                    this.widgets.dataTable = null;
+                                    this.widgets.chart = new YAHOO.widget.PieChart(this.id + "-chart", this.dataSource,
+                                    {
+                                        dataField : "col1",
+                                        categoryField : "col0",
+                                        wmode : "opaque",
+                                        style :
+                                        {
+                                            legend :
+                                            {
+                                                display : "right"
+                                            }
+                                        }
+                                    });
+
+                                }
+                                else if (this.widgets.chartTypePicker.value == "chartData")
+                                {
+                                    this.widgets.chart = null;
+                                    this.widgets.dataTable = new YAHOO.widget.DataTable(this.id + "-chart", this.columnDefs, this.dataSource);
+                                }
+
+                                var me = this;
+                                if (this.widgets.chart != null)
+                                {
+                                    this.widgets.chart.subscribe("itemClickEvent", function(event)
+                                    {
+                                        if (event.item.type.indexOf("Material") < 0)
+                                        {
+                                            me.options.backEntityNodeRef.push(me.options.entityNodeRef);
+                                            me.options.navigationPath.push({"name":event.item.col0,"nodeRef":event.item.nodeRef,"cssClass":event.item.cssClass});
+                                            me.options.entityNodeRef = event.item.nodeRef;
+                                            me.widgets.backButton.set("disabled", false);
+                                            me.loadChartData();
+                                        }
+                                    });
+                                }
+
+                                if (this.widgets.dataTable != null)
+                                {
+                                    this.widgets.dataTable.subscribe("cellClickEvent", function(events)
+                                    {
+                                        var target = events.target;
+                                        var recordRowIndex = this.getRecordIndex(target)
+                                        var recordSet = this.getRecordSet(), record;
+                                        record = recordSet.getRecord(recordRowIndex);
+                                        if ((record.getData("type")).indexOf("Material") < 0)
+                                        {
+                                            me.options.backEntityNodeRef.push(me.options.entityNodeRef);
+                                            me.options.navigationPath.push({"name":record.getData("col0"),"nodeRef":record.getData("nodeRef"),"cssClass":record.getData("cssClass")});
+                                            me.options.entityNodeRef = record.getData("nodeRef");
+                                            me.widgets.backButton.set("disabled", false);
+                                            me.loadChartData();
+                                        }
+                                    });
+                                }
+                              
+                                
+                                if(this.options.navigationPath!=null && this.options.navigationPath.length>0){
+                                    var html = "";
+                                    for (i = 0; i < this.options.navigationPath.length; i++)
+                                    {
+                                        html += '<span class="separator"> > </span><span class="' + this.options.navigationPath[i].cssClass + '">'
+                                             + '<a href=' + beCPG.util.entityURL(null, this.options.navigationPath[i].nodeRef) + '>' + this.options.navigationPath[i].name + '</a>'
+                                             + '</span>';
+                                        
+                                    }
+                                    Dom.get(this.id+"-chartPath").innerHTML = html;
+                                    Dom.setStyle(this.id+"-chartPath","visibility","inherit");
+ 
+                                }
+                                
+                                
+                            }
+                        }
+
+                    });
 
 })();

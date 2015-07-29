@@ -29,6 +29,9 @@
 	   </div>
 		<div class="body">
 			<div id="${el}-chartContainer" class="yui-content">
+			    <div class="node-header">
+                  <div id="${el}-chartPath" class="datagrid node-path" ></div>
+				</div>
 				<div class="chart detailsChart" id="${el}-chart" >
 					<div class="empty"><h3>${msg("empty.title")}</h3><span>${msg("empty.description")}</span></div>
 				</div>

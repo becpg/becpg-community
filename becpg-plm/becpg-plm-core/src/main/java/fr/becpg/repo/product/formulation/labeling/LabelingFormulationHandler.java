@@ -1151,6 +1151,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				 }
 				 tree.put("children", children);
 			 } else {
+				 tree.put("leaf",true);
 				 tree.put("decl",I18NUtil.getMessage("listconstraint.bcpg_declarationTypes.DoNotDetails"));
 			 }
 		}
