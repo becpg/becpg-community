@@ -19,6 +19,7 @@
 package fr.becpg.repo.product.formulation;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -45,10 +46,16 @@ import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.helper.JsonFormulaHelper;
 import fr.becpg.repo.product.data.AbstractProductDataView;
 import fr.becpg.repo.product.data.CompoListView;
+import fr.becpg.repo.product.data.FinishedProductData;
+import fr.becpg.repo.product.data.PackagingKitData;
+import fr.becpg.repo.product.data.PackagingListView;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.SemiFinishedProductData;
+import fr.becpg.repo.product.data.constraints.PackagingListUnit;
 import fr.becpg.repo.product.data.productList.CompositionDataItem;
 import fr.becpg.repo.product.data.productList.DynamicCharactExecOrder;
 import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
+import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.spel.FormulaFormulationContext;
 import fr.becpg.repo.product.data.spel.SpelHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -182,14 +189,15 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 											alfrescoRepository, productData, dataListItem));
 									formulaService.registerCustomFunctions(dataContext);
 									Object value = exp.getValue(dataContext);
-	
+									
 									if (!L2CacheSupport.isCacheOnlyEnable()
 											&& (dynamicCharactListItem.getMultiLevelFormula() != null && Boolean.TRUE.equals(dynamicCharactListItem
 													.getMultiLevelFormula()))
-											&& view instanceof CompoListView
-											&& (dataListItem.getComponent() != null && (PLMModel.TYPE_SEMIFINISHEDPRODUCT.equals(nodeService
-													.getType(dataListItem.getComponent())) || PLMModel.TYPE_FINISHEDPRODUCT.equals(nodeService
-															.getType(dataListItem.getComponent()))))) {
+											&& (view instanceof CompoListView || view instanceof PackagingListView)
+											&& (dataListItem.getComponent() != null && 
+											(PLMModel.TYPE_SEMIFINISHEDPRODUCT.equals(nodeService.getType(dataListItem.getComponent())) || 
+													PLMModel.TYPE_FINISHEDPRODUCT.equals(nodeService.getType(dataListItem.getComponent())) || 
+													PLMModel.TYPE_PACKAGINGKIT.equals(nodeService.getType(dataListItem.getComponent()))))) {
 	
 										JSONObject jsonTree = extractJSONTree(productData, dataListItem, value, exp);
 										dataListItem.getExtraProperties().put(columnName, jsonTree.toString());
@@ -267,17 +275,39 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 	private void extractJSONSubList(ProductData productData, CompositionDataItem dataListItem, Expression exp, String path, JSONArray subList) throws JSONException {
 		ProductData subProductData = alfrescoRepository.findOne(dataListItem.getComponent());
-		for (CompositionDataItem subDataListItem : subProductData.getCompoListView().getCompoList()) {
-			JSONObject subObject = new JSONObject();
-
-			if (FormulationHelper.getNetWeight(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT) != 0) {
-			 	subDataListItem.setQty(dataListItem.getQty() * subDataListItem.getQty() / FormulationHelper.getNetWeight(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT));
+		List<CompositionDataItem> compositeList = new ArrayList<CompositionDataItem>();
+		if(subProductData instanceof FinishedProductData || subProductData instanceof SemiFinishedProductData){			
+			for (CompositionDataItem subDataListItem : subProductData.getCompoListView().getCompoList()) {
+				if (FormulationHelper.getNetWeight(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT) != 0) {
+				 	subDataListItem.setQty(dataListItem.getQty() * subDataListItem.getQty() / FormulationHelper.getNetWeight(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT));
+				}
+				compositeList.add(subDataListItem);
 			}
-
+		}
+		else if(subProductData instanceof PackagingKitData){
+			for (CompositionDataItem subDataListItem : subProductData.getPackagingListView().getPackagingList()) {
+				Double listQty = dataListItem.getQty();
+				Double subListQty = subDataListItem.getQty();
+				if(subDataListItem instanceof PackagingListDataItem && 
+						((PackagingListDataItem)subDataListItem).getPackagingListUnit() != null && 
+						PackagingListUnit.PP.equals(((PackagingListDataItem)subDataListItem).getPackagingListUnit())){
+					subListQty = 1/subListQty;
+				}
+				if(dataListItem instanceof PackagingListDataItem && 
+						((PackagingListDataItem)dataListItem).getPackagingListUnit() != null && 
+						PackagingListUnit.PP.equals(((PackagingListDataItem)dataListItem).getPackagingListUnit())){
+					listQty = 1/listQty;
+				}
+				subDataListItem.setQty(listQty * subListQty);
+				compositeList.add(subDataListItem);
+			}
+		}	
+		for (CompositionDataItem subDataListItem : compositeList) {
+			JSONObject subObject = new JSONObject();
 			StandardEvaluationContext dataContext = new StandardEvaluationContext(new FormulaFormulationContext(alfrescoRepository, productData,
 					subDataListItem));
 			
-			String subPath = path+"/"+subDataListItem.getNodeRef().getId();
+			String subPath = path+"/"+subDataListItem.getNodeRef().getId();						
 			
 			formulaService.registerCustomFunctions(dataContext);
 			Object subValue = exp.getValue(dataContext);
@@ -287,7 +317,8 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 			subList.put(subObject);
 			
 			if (PLMModel.TYPE_SEMIFINISHEDPRODUCT.equals(nodeService.getType(dataListItem.getComponent())) 
-					|| PLMModel.TYPE_FINISHEDPRODUCT.equals(nodeService.getType(dataListItem.getComponent()))) {
+					|| PLMModel.TYPE_FINISHEDPRODUCT.equals(nodeService.getType(dataListItem.getComponent()))
+					|| PLMModel.TYPE_PACKAGINGKIT.equals(nodeService.getType(dataListItem.getComponent()))) {
 				extractJSONSubList(productData, subDataListItem, exp, subPath, subList);
 			} 
 		}
