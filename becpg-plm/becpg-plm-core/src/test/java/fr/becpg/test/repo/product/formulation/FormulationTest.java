@@ -1290,6 +1290,10 @@ public class FormulationTest extends AbstractFinishedProductTest {
 					packagingList.add(new PackagingListDataItem(null, 3d, PackagingListUnit.m, PackagingLevel.Primary, true, packagingMaterial2NodeRef));
 					packagingList.add(new PackagingListDataItem(null, 8d, PackagingListUnit.PP, PackagingLevel.Tertiary, true, packagingMaterial3NodeRef));
 					finishedProduct.getPackagingListView().setPackagingList(packagingList);
+					List<CostListDataItem> costList = new ArrayList<>();
+					costList.add(new CostListDataItem(null, null, null, null, pkgCost1, false));
+					costList.add(new CostListDataItem(null, null, null, null, pkgCost2, false));
+					finishedProduct.setCostList(costList);
 					NodeRef finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();				
 					
 					/*-- Formulate product --*/
@@ -1301,6 +1305,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 					ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
 					
 					logger.debug("unit of product formulated: " + finishedProduct.getUnit());
+					int checks = 0;
 					
 					//costs
 					assertNotNull("CostList is null", formulatedProduct.getCostList());
@@ -1310,13 +1315,43 @@ public class FormulationTest extends AbstractFinishedProductTest {
 						if(costListDataItem.getCost().equals(pkgCost1)){
 							assertEquals("cost1.getValue() == 3.0625, actual values: " + trace, 3.0625d, costListDataItem.getValue());
 							assertEquals("cost1.getUnit() == €/kg, actual values: " + trace, "€/kg", costListDataItem.getUnit());
+							checks++;
 						}
 						if(costListDataItem.getCost().equals(pkgCost2)){
 							assertEquals("cost1.getValue() == 4.125, actual values: " + trace, 4.125d, costListDataItem.getValue());
 							assertEquals("cost1.getUnit() == €/kg, actual values: " + trace, "€/kg", costListDataItem.getUnit());
+							checks++;
 						}
 					}
+					assertEquals(2, checks);
 					
+					// add packaging kit
+					formulatedProduct.getPackagingList().add(new PackagingListDataItem(null, 25d, PackagingListUnit.PP, PackagingLevel.Secondary, true, packagingKit1NodeRef));
+					alfrescoRepository.save(formulatedProduct);					
+					productService.formulate(finishedProductNodeRef);
+					formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+					
+					// (1×3+3×1+1÷(8*25*40))/2 = 3,0000625
+					// (1×2+3×2+1÷(8*25*40)*2)/2 = 4.125
+					
+					checks = 0;					
+					//costs
+					assertNotNull("CostList is null", formulatedProduct.getCostList());
+					for(CostListDataItem costListDataItem : formulatedProduct.getCostList()){
+						String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
+						logger.debug(trace);
+						if(costListDataItem.getCost().equals(pkgCost1)){
+							assertEquals(3.0000625d, costListDataItem.getValue());
+							assertEquals("€/kg", costListDataItem.getUnit());
+							checks++;
+						}
+						if(costListDataItem.getCost().equals(pkgCost2)){
+							assertEquals(4.000125d, costListDataItem.getValue());
+							assertEquals("€/kg", costListDataItem.getUnit());
+							checks++;
+						}
+					}
+					assertEquals(2, checks);
 									
 					return null;
 
