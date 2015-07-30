@@ -194,8 +194,14 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 						Map<String, Serializable> templateModel = new HashMap<>();
 						templateModel.put("args", (Serializable) templateArgs);
 						mailAction.setParameterValue(MailActionExecuter.PARAM_TEMPLATE_MODEL, (Serializable) templateModel);
-	
-						actionService.executeAction(mailAction, null);
+												
+						AuthenticationUtil.runAsSystem(new AuthenticationUtil.RunAsWork<Object>() {
+							@Override
+							public NodeRef doWork() throws Exception {
+								actionService.executeAction(mailAction, null);
+								return null;
+							}
+						});
 					}
 				} catch (Exception e) {
 					logger.error("Cannot send email project notify email :" + e.getMessage(), e);
