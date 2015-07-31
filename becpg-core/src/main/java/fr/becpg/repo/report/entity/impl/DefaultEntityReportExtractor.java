@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.alfresco.model.ApplicationModel;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.version.Version2Model;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
@@ -182,6 +183,10 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	}
 
 	protected void extractImage(NodeRef imgNodeRef, String imgId, Element imgsElt, Map<String, byte[]> images) {
+		
+		if(ApplicationModel.TYPE_FILELINK.equals(nodeService.getType(imgNodeRef))){
+			imgNodeRef = (NodeRef)nodeService.getProperty(imgNodeRef, ContentModel.PROP_LINK_DESTINATION);
+		}
 		
 		byte[] imageBytes = entityService.getImage(imgNodeRef);
 		if (imageBytes != null) {
