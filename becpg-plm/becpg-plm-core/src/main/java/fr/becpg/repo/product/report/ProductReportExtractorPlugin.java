@@ -91,7 +91,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	private static final String TAG_PACKAGING_LEVEL_MEASURES = "packagingLevelMeasures";
 
 	@Value("${beCPG.product.report.multiLevel}")
-	private final Boolean extractInMultiLevel = false;
+	private Boolean extractInMultiLevel = false;
 
 	@Autowired
 	protected ProductDictionaryService productDictionaryService;
@@ -423,6 +423,10 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			Element rawMaterialElt = rawMaterialsElt.addElement(PLMModel.TYPE_RAWMATERIAL.getLocalName());
 			loadAttributes(entry.getKey(), rawMaterialElt, true, null);
 			addCDATA(rawMaterialElt, PLMModel.PROP_COMPOLIST_QTY, toString(100 * entry.getValue() / totalQty));
+			if(FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT) != 0d){
+				Element cDATAElt = rawMaterialElt.addElement(ATTR_COMPOLIST_QTY_FOR_PRODUCT);
+				cDATAElt.addCDATA(toString(100 * entry.getValue() / FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT)));				
+			}
 			Element rawMaterialDataListsElt = rawMaterialElt.addElement(TAG_DATALISTS);
 			loadDataLists(entry.getKey(), rawMaterialDataListsElt, images, false);
 		}
@@ -437,9 +441,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			Double netWeight = FormulationHelper.getNetWeight(productData.getNodeRef(), nodeService, FormulationHelper.DEFAULT_NET_WEIGHT);
 			if (logger.isDebugEnabled()) {
 				logger.debug("Get rawMaterial " + nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME) + "qty: " + qty + " netWeight "
-						+ netWeight);
+						+ netWeight + " parentQty " + parentQty);
 			}
-			if (qty != null && netWeight != null) {
+			if (qty != null && netWeight != 0d) {
 				qty = parentQty * qty * FormulationHelper.getYield(compoList) / (100 * netWeight);
 
 				if (type.isMatch(PLMModel.TYPE_RAWMATERIAL)) {

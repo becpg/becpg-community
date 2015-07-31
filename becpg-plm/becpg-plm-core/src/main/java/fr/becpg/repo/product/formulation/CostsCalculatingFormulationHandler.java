@@ -36,6 +36,8 @@ import fr.becpg.repo.product.data.PackagingMaterialData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.ResourceProductData;
+import fr.becpg.repo.product.data.constraints.PackagingLevel;
+import fr.becpg.repo.product.data.constraints.PackagingListUnit;
 import fr.becpg.repo.product.data.constraints.ProcessListUnit;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementType;
@@ -250,14 +252,46 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			for (PackagingListDataItem packagingListDataItem : formulatedProduct.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE),
 					new VariantFilters<>()))) {
 				Double qty = FormulationHelper.getQtyForCost(packagingListDataItem);
-
-				if (PLMModel.TYPE_PACKAGINGKIT.equals(nodeService.getType(packagingListDataItem.getProduct()))) {
-					Integer nbByPalet = (Integer) nodeService.getProperty(packagingListDataItem.getProduct(), PackModel.PROP_PALLET_BOXES_PER_PALLET);
-					if (nbByPalet != null && nbByPalet > 0) {
-						qty = qty / nbByPalet;
+				
+				// secondary on packagingKit with pallet aspect -> nothing
+				// tertiary on packagingKit with pallet aspect -> divide by boxesPerPallet
+				// secondary on finishedProduct (if it's not packagingKit with pallet aspect) -> divide by productPerBoxes
+				// tertiary on finishedProduct (if it's not packagingKit with pallet aspect) -> divide by productPerBoxes * boxesPerPallet				
+				PackagingLevel packagingLevel = packagingListDataItem.getPkgLevel(); 
+				if(packagingLevel != null){
+					if(formulatedProduct instanceof PackagingKitData && 
+							formulatedProduct.getAspects().contains(PackModel.ASPECT_PALLET)){
+						if(packagingLevel.equals(PackagingLevel.Tertiary)){
+							Integer nbByPalet = (Integer) nodeService.getProperty(formulatedProduct.getNodeRef(), PackModel.PROP_PALLET_BOXES_PER_PALLET);
+							if (nbByPalet != null && nbByPalet > 0) {
+								qty = qty / nbByPalet;
+							}
+						}						
+					}
+					else if((nodeService.hasAspect(packagingListDataItem.getProduct(), PackModel.ASPECT_PALLET) && 
+							PackagingLevel.Secondary.equals(packagingListDataItem.getPkgLevel()) && 
+							PackagingListUnit.PP.equals(packagingListDataItem.getPackagingListUnit()) && 
+							PLMModel.TYPE_PACKAGINGKIT.equals(nodeService.getType(packagingListDataItem.getProduct()))) == false &&
+							formulatedProduct.getDefaultVariantPackagingData() != null){
+						if(packagingLevel.equals(PackagingLevel.Secondary)){
+							if(formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() != null &&
+								formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() != 0d){
+								logger.debug("qty : " + qty + " product per boxes " + formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes());
+								qty = qty / formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes();
+							}							
+						}
+						else if(packagingLevel.equals(PackagingLevel.Tertiary)){
+							if(formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() != null &&
+								formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() != 0d &&
+								formulatedProduct.getDefaultVariantPackagingData().getBoxesPerPallet() != null &&
+								formulatedProduct.getDefaultVariantPackagingData().getBoxesPerPallet() != 0d){								
+								logger.debug("qty : " + qty + " product per boxes " + formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() + " boxes per pallet " + formulatedProduct.getDefaultVariantPackagingData().getBoxesPerPallet());
+								qty = qty / (formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() * formulatedProduct.getDefaultVariantPackagingData().getBoxesPerPallet());
+							}
+						}
 					}
 				}
-
+				
 				visitPart(packagingListDataItem.getProduct(), costList, qty, null, netQty, mandatoryCharacts2, null,  false);
 			}
 
