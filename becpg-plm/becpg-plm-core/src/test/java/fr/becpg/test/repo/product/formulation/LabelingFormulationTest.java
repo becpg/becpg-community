@@ -108,7 +108,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 	// private String detailsDefaultFormat = "{0} {1,number,0.#%} ({2})";
 
-	//
+	@Test
 	public void testNullIng() throws Exception {
 
 		NodeRef finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(
@@ -214,7 +214,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 	}
 
-	//
+	@Test
 	public void testMultiLevelSFGroup() throws Exception {
 
 		final NodeRef finishProduct1 = createTestProduct(null);
@@ -329,7 +329,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 	}
 
-	
+	@Test
 	public void testReconstitutionLabeling() throws Exception {
 		// 1. Liste d'ingrédients par ordre pondéral
 		//
@@ -502,7 +502,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		checkILL(finishedProductNodeRef3, labelingRuleList, "ing4 french 71,4%, Epices french, Legal Raw material 1 8,6%",Locale.FRENCH);
 	}
 
-	//
+	@Test
 	public void testRawMaterialIngType() throws Exception {
 
 		final NodeRef finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(
@@ -562,7 +562,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 	 * @throws Exception
 	 *             the exception
 	 */
-	//
+	@Test
 	public void testCalculateILL() throws Exception {
 
 		// Par défaut
@@ -1178,7 +1178,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 	}
 
-	//
+	@Test
 	public void testMultiLingualLabelingFormulation() throws Exception {
 
 		logger.info("testLabelingFormulation");
@@ -1230,7 +1230,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		}, false, true);
 	}
 
-	//
+	@Test
 	public void testIncTypeThreshold() throws Exception {
 
 		List<LabelingRuleListDataItem> labelingRuleList;
