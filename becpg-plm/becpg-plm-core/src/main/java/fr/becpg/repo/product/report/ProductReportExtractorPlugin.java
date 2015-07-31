@@ -91,7 +91,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	private static final String TAG_PACKAGING_LEVEL_MEASURES = "packagingLevelMeasures";
 
 	@Value("${beCPG.product.report.multiLevel}")
-	private final Boolean extractInMultiLevel = false;
+	private Boolean extractInMultiLevel = false;
 
 	@Autowired
 	protected ProductDictionaryService productDictionaryService;
