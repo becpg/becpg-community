@@ -317,7 +317,9 @@ public interface PLMModel {
 	QName ASPECT_DILUENT = QName.createQName(BeCPGModel.BECPG_URI, "diluentAspect");
 	QName ASPECT_RECONSTITUTABLE = QName.createQName(BeCPGModel.BECPG_URI, "reconstitutableAspect");
 	QName PROP_RECONSTITUTION_RATE =  QName.createQName(BeCPGModel.BECPG_URI, "reconstitutionRate");
+	QName PROP_RECONSTITUTION_PRIORITY =  QName.createQName(BeCPGModel.BECPG_URI, "reconstitutionPriority");
 	QName ASSOC_DILUENT_REF =  QName.createQName(BeCPGModel.BECPG_URI, "diluentRef");
+	QName ASSOC_TARGET_RECONSTITUTION_REF =  QName.createQName(BeCPGModel.BECPG_URI, "targetReconstitutionRef");
 	
 	//Compare
 	QName ASPECT_COMPARE_WITH_DYN_COLUMN = QName.createQName(BeCPGModel.BECPG_URI, "compareWithDynColumnAspect");

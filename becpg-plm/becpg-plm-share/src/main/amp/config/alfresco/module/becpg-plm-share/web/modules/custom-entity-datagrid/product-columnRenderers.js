@@ -648,7 +648,7 @@ if (beCPG.module.EntityDataGridRenderers) {
                                 scope.subCache = [];
                             }
                             scope.subCache["idx_"+oColumn.getKeyIndex()] = json.sub;
-                            return json.displayValue;
+                            return json.displayValue? json.displayValue : "";
                         }
     			    }
 			    }

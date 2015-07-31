@@ -297,7 +297,13 @@
                                           text : 'avg($range,$formula)'
                                        }, {
                                           text : 'children($compoListDataItem)'
-                                       }]
+                                       }, {
+                                           text : '@beCPG.findOne($nodeRef)'
+                                       }, {
+                                           text : '@beCPG.propValue($nodeRef,"bcpg:productQty")'
+                                       }
+                                       
+                                       ]
                                     }
 
                                     ]

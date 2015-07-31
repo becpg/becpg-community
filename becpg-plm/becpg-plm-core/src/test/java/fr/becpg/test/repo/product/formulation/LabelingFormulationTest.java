@@ -108,7 +108,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 	// private String detailsDefaultFormat = "{0} {1,number,0.#%} ({2})";
 
-	@Test
+	//
 	public void testNullIng() throws Exception {
 
 		NodeRef finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(
@@ -214,7 +214,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 	}
 
-	@Test
+	//
 	public void testMultiLevelSFGroup() throws Exception {
 
 		final NodeRef finishProduct1 = createTestProduct(null);
@@ -329,7 +329,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 	}
 
-	@Test
+	
 	public void testReconstitutionLabeling() throws Exception {
 		// 1. Liste d'ingrédients par ordre pondéral
 		//
@@ -356,6 +356,8 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		// concentrés 13% ( fraise 10%, sureau), acidifiant: acide citrique,
 		// arôme, colorant: E 129.
 		//
+		
+		/**   FULL Reconstitution **/
 
 		final NodeRef finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(
 				new RetryingTransactionCallback<NodeRef>() {
@@ -378,6 +380,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 						props.put(PLMModel.PROP_RECONSTITUTION_RATE, 5d);
 						nodeService.addAspect(rawMaterial1NodeRef, PLMModel.ASPECT_RECONSTITUTABLE, props);
 						associationService.update(rawMaterial1NodeRef, PLMModel.ASSOC_DILUENT_REF, ing5);
+						associationService.update(rawMaterial1NodeRef, PLMModel.ASSOC_TARGET_RECONSTITUTION_REF, ing6);
 						
 
 						finishedProduct.getCompoListView().setCompoList(compoList);
@@ -399,7 +402,6 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
 		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format, null, null));
-		labelingRuleList.add(new LabelingRuleListDataItem("Juice", null, LabelingRuleType.Detail, Arrays.asList(ing1, ing2), null));
 
 
 //		└──[root - 0.0 (11.0, vol: 11.0) ]
@@ -411,12 +413,12 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 //			        └──[ing2 french - 4.0 ( vol : 4.0) ]
 
 		
-		
-		checkILL(finishedProductNodeRef1, labelingRuleList, "ing5 french 54,5% (ing1 french 70%, ing4 french 30%), Juice 45,5% (ing2 french 66,7%, ing1 french 33,3%)",Locale.FRENCH);
+		checkILL(finishedProductNodeRef1, labelingRuleList, "ing5 french 54,5% (ing1 french 70%, ing4 french 30%), Epices french: ing6 french 45,5%",Locale.FRENCH);
 
 
-		
-		NodeRef finishedProductNodeRef2 = transactionService.getRetryingTransactionHelper().doInTransaction(
+		/**   Partial Reconstitution **/
+
+		final NodeRef finishedProductNodeRef2 = transactionService.getRetryingTransactionHelper().doInTransaction(
 				new RetryingTransactionCallback<NodeRef>() {
 					public NodeRef execute() throws Throwable {
 						logger.debug("/*-- Create finished product --*/");
@@ -428,45 +430,79 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 						finishedProduct.setDensity(1d);
 						List<CompoListDataItem> compoList = new ArrayList<>();
 
-						compoList.add(new CompoListDataItem(null, null, null, 10d, CompoListUnit.kg, 0d,
+						compoList.add(new CompoListDataItem(null, null, null, 3d, CompoListUnit.kg, 0d,
 								DeclarationType.Declare, rawMaterial7NodeRef));
-						compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d,
-								DeclarationType.DoNotDetails, rawMaterial1NodeRef));
-						compoList.add(new CompoListDataItem(null, null, null, 5d, CompoListUnit.kg, 0d, DeclarationType.Group,
-								finishedProductNodeRef1));
+						compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare,
+								rawMaterial1NodeRef));
 
 						Map<QName, Serializable> props = new HashMap<>();
 						props.put(PLMModel.PROP_RECONSTITUTION_RATE, 5d);
 						nodeService.addAspect(rawMaterial1NodeRef, PLMModel.ASPECT_RECONSTITUTABLE, props);
 						associationService.update(rawMaterial1NodeRef, PLMModel.ASSOC_DILUENT_REF, ing5);
+						associationService.update(rawMaterial1NodeRef, PLMModel.ASSOC_TARGET_RECONSTITUTION_REF, ing6);
+						
 
 						finishedProduct.getCompoListView().setCompoList(compoList);
 						return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 					}
 				}, false, true);
 
-		// Declare
-		labelingRuleList = new ArrayList<>();
 
-		// labelingRuleList.add(new LabelingRuleListDataItem("Pref1",
-		// "useVolume = false", LabelingRuleType.Prefs));
-		labelingRuleList.add(new LabelingRuleListDataItem("Pref2", "ingDefaultFormat = \"{0}\"", LabelingRuleType.Prefs));
-		labelingRuleList.add(new LabelingRuleListDataItem("Pref3", "groupDefaultFormat = \"<b>{0} ({1,number,0.#%}):</b> {2}\"",
-				LabelingRuleType.Prefs));
-		labelingRuleList.add(new LabelingRuleListDataItem("Pref4", "detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs));
-		labelingRuleList.add(new LabelingRuleListDataItem("Pref5", "ingTypeDefaultFormat = \"{0}: {2})\"", LabelingRuleType.Prefs));
-		labelingRuleList.add(new LabelingRuleListDataItem("Pref6", "subIngsDefaultFormat = \"{0} ({2})\"", LabelingRuleType.Prefs));
-		labelingRuleList.add(new LabelingRuleListDataItem("DoNotDetails", null, LabelingRuleType.DoNotDetails, Collections.singletonList(rawMaterial1NodeRef),
-				null));
+//		└──[root - 0.0 (11.0, vol: 11.0) ]
+//			    ├──[ing5 french - 5.0 (10.0, vol: 10.0) Detail]
+//			    │   ├──[ing1 french - 7.0 ( vol : 7.0) ]
+//			    │   └──[ing4 french - 3.0 ( vol : 3.0) ]
+//			    └──[Juice - 6.0 (6.0, vol: 6.0) Detail]
+//			        ├──[ing1 french - 2.0 ( vol : 2.0) ]
+//			        └──[ing2 french - 4.0 ( vol : 4.0) ]
 
-		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render(false)", LabelingRuleType.Render));
-		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format, null, null));
-
-		checkILL(finishedProductNodeRef2, labelingRuleList, "ing5 french 54,5% (ing1 french 70%, ing4 french 30%), Legal Raw material 1 45,5%", Locale.FRENCH);
 		
+		checkILL(finishedProductNodeRef2, labelingRuleList, "Epices french: ing6 french 95%, Legal Raw material 1 5%",Locale.FRENCH);
+		
+		/** Test with priority **/
+		
+		
+		final NodeRef finishedProductNodeRef3 = transactionService.getRetryingTransactionHelper().doInTransaction(
+				new RetryingTransactionCallback<NodeRef>() {
+					public NodeRef execute() throws Throwable {
+						logger.debug("/*-- Create finished product --*/");
+						FinishedProductData finishedProduct = new FinishedProductData();
+						finishedProduct.setName("Produit fini 3");
+						finishedProduct.setLegalName("Legal Produit fini 3");
+						finishedProduct.setUnit(ProductUnit.kg);
+						finishedProduct.setQty(4d);
+						finishedProduct.setDensity(1d);
+						List<CompoListDataItem> compoList = new ArrayList<>();
+
+						compoList.add(new CompoListDataItem(null, null, null, 5d, CompoListUnit.kg, 0d,
+								DeclarationType.Declare, rawMaterial7NodeRef));
+						compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare,
+								rawMaterial1NodeRef));
+						compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare,
+								rawMaterial2NodeRef));
+
+						Map<QName, Serializable> props = new HashMap<>();
+						props.put(PLMModel.PROP_RECONSTITUTION_RATE, 5d);
+						nodeService.addAspect(rawMaterial1NodeRef, PLMModel.ASPECT_RECONSTITUTABLE, props);
+						associationService.update(rawMaterial1NodeRef, PLMModel.ASSOC_DILUENT_REF, ing5);
+						associationService.update(rawMaterial1NodeRef, PLMModel.ASSOC_TARGET_RECONSTITUTION_REF, ing6);
+				        props = new HashMap<>();
+						props.put(PLMModel.PROP_RECONSTITUTION_RATE, 5d);
+						props.put(PLMModel.PROP_RECONSTITUTION_PRIORITY, 2);
+						nodeService.addAspect(rawMaterial2NodeRef, PLMModel.ASPECT_RECONSTITUTABLE, props);
+						associationService.update(rawMaterial2NodeRef, PLMModel.ASSOC_DILUENT_REF, ing5);
+						associationService.update(rawMaterial2NodeRef, PLMModel.ASSOC_TARGET_RECONSTITUTION_REF, ing4);
+						
+
+						finishedProduct.getCompoListView().setCompoList(compoList);
+						return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+					}
+				}, false, true);
+
+		checkILL(finishedProductNodeRef3, labelingRuleList, "ing4 french 71,4%, Epices french, Legal Raw material 1 8,6%",Locale.FRENCH);
 	}
 
-	@Test
+	//
 	public void testRawMaterialIngType() throws Exception {
 
 		final NodeRef finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(
@@ -526,7 +562,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 	 * @throws Exception
 	 *             the exception
 	 */
-	@Test
+	//
 	public void testCalculateILL() throws Exception {
 
 		// Par défaut
@@ -1142,7 +1178,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 	}
 
-	@Test
+	//
 	public void testMultiLingualLabelingFormulation() throws Exception {
 
 		logger.info("testLabelingFormulation");
@@ -1194,7 +1230,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		}, false, true);
 	}
 
-	@Test
+	//
 	public void testIncTypeThreshold() throws Exception {
 
 		List<LabelingRuleListDataItem> labelingRuleList;
