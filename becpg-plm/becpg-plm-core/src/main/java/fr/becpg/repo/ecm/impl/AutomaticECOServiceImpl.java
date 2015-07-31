@@ -47,13 +47,13 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
 	@Value("${beCPG.eco.automatic.apply}")
-	private final Boolean shouldApplyAutomaticECO = false;
+	private Boolean shouldApplyAutomaticECO = false;
 
 	@Value("${beCPG.eco.automatic.revision.type}")
-	private final String automaticRevisionType = RevisionType.NoRevision.toString();
+	private String automaticRevisionType = RevisionType.NoRevision.toString();
 	
 	@Value("${beCPG.eco.automatic.states}")
-	private final String statesToRegister = "";
+	private String statesToRegister = "";
 
 	@Autowired
 	private TransactionService transactionService;
@@ -71,7 +71,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 	public boolean addAutomaticChangeEntry(final NodeRef entityNodeRef,final ChangeOrderData currentUserChangeOrderData) {
 
 		String productState = (String) nodeService.getProperty(entityNodeRef, PLMModel.PROP_PRODUCT_STATE);
-
+		
 		if (productState == null || productState.isEmpty() || !statesToRegister.contains(productState)) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Skipping product state : " + productState);
