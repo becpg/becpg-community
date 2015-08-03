@@ -59,7 +59,7 @@ public class BudgetFormulationHandler extends FormulationBaseHandler<ProjectData
 		calculateTaskExpenses(projectData);
 		
 		for(BudgetListDataItem budgetListItem : projectData.getBudgetList()){
-			calculateExpensesAndInvoices(budgetListItem);
+			calculateExpensesAndInvoices(projectData, budgetListItem);
 		}
 				
 		Composite<TaskListDataItem> compositeTask = CompositeHelper.getHierarchicalCompoList(projectData.getTaskList());
@@ -72,15 +72,27 @@ public class BudgetFormulationHandler extends FormulationBaseHandler<ProjectData
 		return true;
 	}
 	
-	private void calculateExpensesAndInvoices(BudgetListDataItem budgetListDataItem){
+	private void calculateExpensesAndInvoices(ProjectData projectData, BudgetListDataItem budgetListDataItem){
 		List<NodeRef> assocs = associationService.getSourcesAssocs(budgetListDataItem.getNodeRef(), RegexQNamePattern.MATCH_ALL);
 		for(NodeRef item : assocs){
-			if(nodeService.exists(item) && nodeService.hasAspect(item, ProjectModel.ASPECT_BUDGET)){				
-				Double expense  = (Double) nodeService.getProperty(item, ProjectModel.PROP_BUDGET_EXPENSE);
+			if(nodeService.exists(item) && nodeService.hasAspect(item, ProjectModel.ASPECT_BUDGET)){
+				Double expense  = null;
+				Double invoice  = null;
+				if(ProjectModel.TYPE_TASK_LIST.equals(nodeService.getType(item))){
+					for(TaskListDataItem taskList : projectData.getTaskList()){
+						if(item.equals(taskList.getNodeRef())){
+							expense = taskList.getExpense();
+							invoice = taskList.getInvoice();
+						}
+					}
+				}
+				else{
+					expense  = (Double) nodeService.getProperty(item, ProjectModel.PROP_BUDGET_EXPENSE);
+					invoice  = (Double) nodeService.getProperty(item, ProjectModel.PROP_BUDGET_INVOICE);
+				}				
 				if(expense!=null){
 					budgetListDataItem.setExpense(budgetListDataItem.getExpense() + expense);
-				}				
-				Double invoice  = (Double) nodeService.getProperty(item, ProjectModel.PROP_BUDGET_INVOICE);
+				}
 				if(invoice!=null){
 					budgetListDataItem.setInvoice(budgetListDataItem.getInvoice() + invoice);
 				}
