@@ -82,6 +82,8 @@ public class LabelingFormulaContext {
 	private final AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
 	private List<ReqCtrlListDataItem> errors = new ArrayList<>();
+	
+	private List<ReconstituableDataItem> reconstituableDataItems = new ArrayList<>();
 
 	public List<ReqCtrlListDataItem> getErrors() {
 		return errors;
@@ -89,6 +91,14 @@ public class LabelingFormulaContext {
 
 	public void setErrors(List<ReqCtrlListDataItem> errors) {
 		this.errors = errors;
+	}
+
+	public List<ReconstituableDataItem> getReconstituableDataItems() {
+		return reconstituableDataItems;
+	}
+
+	public void setReconstituableDataItems(List<ReconstituableDataItem> reconstituableDataItems) {
+		this.reconstituableDataItems = reconstituableDataItems;
 	}
 
 	public CompositeLabeling getCompositeLabeling() {
