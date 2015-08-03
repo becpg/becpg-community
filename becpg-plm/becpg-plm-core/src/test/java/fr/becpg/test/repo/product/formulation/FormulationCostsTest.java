@@ -82,8 +82,8 @@ public class FormulationCostsTest extends AbstractFinishedProductTest {
 
 		logger.info("testFormulationCostsFromTemplate");
 
-		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			public NodeRef execute() throws Throwable {
+		final ProductData entityTpl = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<ProductData>() {
+			public ProductData execute() throws Throwable {
 
 				// template
 				FinishedProductData templateFinishedProduct = new FinishedProductData();
@@ -93,7 +93,7 @@ public class FormulationCostsTest extends AbstractFinishedProductTest {
 				costList.add(new CostListDataItem(null, 12d, "€/kg", 24d, cost1, true));	
 				costList.get(1).setParent(costList.get(0));
 				costList.add(new CostListDataItem(null, 16d, "€/P", 24d, cost2, false));
-				costList.get(2).setParent(costList.get(1));
+				costList.get(2).setParent(costList.get(0));
 				List<NodeRef> plants = new ArrayList<>();
 				plants.add(plant1);
 				costList.add(new CostListDataItem(null, 2000d, "€/Pal", 2400d, cost3, false, plants, null, null));
@@ -104,10 +104,17 @@ public class FormulationCostsTest extends AbstractFinishedProductTest {
 				ProductData entityTpl = alfrescoRepository.create(getTestFolderNodeRef(), templateFinishedProduct);
 				nodeService.addAspect(entityTpl.getNodeRef(), BeCPGModel.ASPECT_ENTITY_TPL, null);
 				
+				return entityTpl;
+			}
+		}, false, true);
+		
+		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			public NodeRef execute() throws Throwable {
+		
 				// Client
 				ClientData client = new ClientData();
 				client.setName("client");				
-				costList = new ArrayList<>();
+				List<CostListDataItem> costList = new ArrayList<>();
 				costList.add(new CostListDataItem(new CostListDataItem(null, 1d, "€/kg", 3d, cost4, false)));
 				client.setCostList(costList);
 				client = clientRepository.create(getTestFolderNodeRef(), client);
@@ -118,7 +125,7 @@ public class FormulationCostsTest extends AbstractFinishedProductTest {
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
 				finishedProduct.setEntityTpl(entityTpl);
-				plants.clear();
+				List<NodeRef> plants = new ArrayList<>();
 				plants.add(plant1);
 				finishedProduct.setPlants(plants);
 				
@@ -148,7 +155,8 @@ public class FormulationCostsTest extends AbstractFinishedProductTest {
 				
 				for(CostListDataItem c : formulatedProduct.getCostList()){
 					String trace = "cost: " + nodeService.getProperty(c.getCost(), ContentModel.PROP_NAME) + " - value: " + c.getValue()
-							+ " - unit: " + c.getUnit();
+							+ " - unit: " + c.getUnit()
+							+ " level: " + c.getDepthLevel();
 					logger.info(trace);
 					
 					assertEquals("€/kg", c.getUnit());
@@ -176,7 +184,9 @@ public class FormulationCostsTest extends AbstractFinishedProductTest {
 					else{
 						assertFalse(true);
 					}
-				}							
+				}				
+				
+				assertEquals(44d, formulatedProduct.getUnitTotalCost());
 				
 				// change data
 				for(CostListDataItem c : formulatedProduct.getCostList()){
@@ -230,6 +240,8 @@ public class FormulationCostsTest extends AbstractFinishedProductTest {
 						assertFalse(true);
 					}
 				}	
+				
+				assertEquals(42d, formulatedProduct.getUnitTotalCost());
 							
 				return null;
 
