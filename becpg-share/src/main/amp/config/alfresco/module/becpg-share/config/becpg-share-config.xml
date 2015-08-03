@@ -107,6 +107,7 @@
 				<subtype name="bcpg:linkedValue" />
 				<subtype name="bcpg:listValue" />
 				<subtype name="bcpg:entityListItem" />
+				<subtype name="rep:reportTpl" />
 			</type>
 			<type name="cm:folder">
 				<subtype name="bcpg:entityV2" />
