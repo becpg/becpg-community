@@ -725,7 +725,12 @@ if (beCPG.module.EntityDataGridRenderers) {
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
       propertyName : "bcpg:instruction",
       renderer : function(oRecord, data, label, scope) {
-          return data.value;
+         if(data.value != null){
+         	return data.value;
+         }
+         else{
+         	return "";
+         }
       }
   });	
 
