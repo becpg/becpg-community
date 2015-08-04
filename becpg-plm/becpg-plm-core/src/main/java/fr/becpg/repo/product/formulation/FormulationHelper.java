@@ -16,6 +16,7 @@ import fr.becpg.model.PackModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.data.PackagingKitData;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.ResourceProductData;
 import fr.becpg.repo.product.data.constraints.CompoListUnit;
 import fr.becpg.repo.product.data.constraints.PackagingListUnit;
 import fr.becpg.repo.product.data.constraints.ProcessListUnit;
@@ -60,27 +61,23 @@ public class FormulationHelper {
 		Double qtySubFormuala = compoListDataItem.getQtySubFormula() != null ? compoListDataItem.getQtySubFormula() : DEFAULT_COMPONANT_QUANTITY;
 		Double qtyInKg = compoListDataItem.getQty() != null ? compoListDataItem.getQty() : DEFAULT_COMPONANT_QUANTITY;
 		CompoListUnit compoListUnit = compoListDataItem.getCompoListUnit();
-		
+
 		if (compoListUnit != null && productUnit != null) {
 
 			if (isCompoUnitKg(compoListUnit) && isProductUnitKg(productUnit)) {
 				return FormulationHelper.getQtyWithLoss(qtyInKg, lossPerc);
-			}
-			else if (isCompoUnitLiter(compoListUnit) && isProductUnitLiter(productUnit)) {
-				if(CompoListUnit.mL.equals(compoListUnit)){
+			} else if (isCompoUnitLiter(compoListUnit) && isProductUnitLiter(productUnit)) {
+				if (CompoListUnit.mL.equals(compoListUnit)) {
 					qtySubFormuala = qtySubFormuala / 1000;
 				}
 				return FormulationHelper.getQtyWithLossAndYield(qtySubFormuala, lossPerc, yieldPerc);
-			}
-			else if(compoListUnit.toString().equals(productUnit.toString())){
+			} else if (compoListUnit.toString().equals(productUnit.toString())) {
 				// compoListUnit is P
 				return FormulationHelper.getQtyWithLossAndYield(qtySubFormuala, lossPerc, yieldPerc);
-			}
-			else if(isProductUnitKg(productUnit)){
+			} else if (isProductUnitKg(productUnit)) {
 				// compoListUnit is %
 				return FormulationHelper.getQtyWithLoss(qtyInKg, lossPerc);
-			}
-			else if(isProductUnitLiter(productUnit)){
+			} else if (isProductUnitLiter(productUnit)) {
 				return compoListDataItem.getVolume();
 			}
 		}
@@ -94,11 +91,10 @@ public class FormulationHelper {
 	private static Double getQtyWithLossAndYield(double qty, double lossPerc, double yieldPerc) {
 		return (1 + lossPerc / 100) * qty / (yieldPerc / 100);
 	}
-	
+
 	private static Double getQtyWithLoss(double qty, double lossPerc) {
 		return (1 + lossPerc / 100) * qty;
 	}
-
 
 	public static Double getQtyForCost(PackagingListDataItem packagingListDataItem) {
 		Double lossPerc = packagingListDataItem.getLossPerc() != null ? packagingListDataItem.getLossPerc() : 0d;
@@ -136,41 +132,45 @@ public class FormulationHelper {
 	 * 
 	 * @param processListDataItem
 	 * @return
-	 * @throws FormulateException 
+	 * @throws FormulateException
 	 */
 	public static Double getQty(ProductData formulatedProduct, ProcessListDataItem processListDataItem) throws FormulateException {
 
 		Double qty = 0d;
-		Double productQtyToTransform = FormulationHelper.QTY_FOR_PIECE;
-		if (ProcessListUnit.kg.equals(processListDataItem.getUnit()) || ProcessListUnit.L.equals(processListDataItem.getUnit())) {
-			productQtyToTransform = processListDataItem.getQty() != null ? processListDataItem.getQty() : FormulationHelper.getNetWeight(formulatedProduct, null);
-		}
-		
-		if(ProcessListUnit.Box.equals(processListDataItem.getUnit())){
-			if(formulatedProduct.getDefaultVariantPackagingData() != null && formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() != null){
-				productQtyToTransform = productQtyToTransform / formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes();
-			}
-			else{
-				throw new FormulateException("Number of product per boxes is not defined on product " + formulatedProduct.getNodeRef());
-			}
-		}
 
-		if (productQtyToTransform != null) {
-
-			// process cost depends of rateProcess (€/h)
-			if (processListDataItem.getRateResource() != null && processListDataItem.getRateResource() != 0d) {
-				qty = productQtyToTransform / processListDataItem.getRateResource();
+		if (formulatedProduct instanceof ResourceProductData) {
+			qty = QTY_FOR_PIECE;
+		} else {
+			Double productQtyToTransform = FormulationHelper.QTY_FOR_PIECE;
+			if (ProcessListUnit.kg.equals(processListDataItem.getUnit()) || ProcessListUnit.L.equals(processListDataItem.getUnit())) {
+				productQtyToTransform = processListDataItem.getQty() != null ? processListDataItem.getQty() : FormulationHelper.getNetWeight(formulatedProduct, null);
 			}
-			// process cost doesn't depend of rateProcess (€/kg)
-			else {
-				qty = productQtyToTransform;
+
+			if (ProcessListUnit.Box.equals(processListDataItem.getUnit())) {
+				if (formulatedProduct.getDefaultVariantPackagingData() != null && formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() != null) {
+					productQtyToTransform = productQtyToTransform / formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes();
+				} else {
+					throw new FormulateException("Number of product per boxes is not defined on product " + formulatedProduct.getNodeRef());
+				}
+			}
+
+			if (productQtyToTransform != null) {
+
+				// process cost depends of rateProcess (€/h)
+				if (processListDataItem.getRateResource() != null && processListDataItem.getRateResource() != 0d) {
+					qty = productQtyToTransform / processListDataItem.getRateResource();
+				}
+				// process cost doesn't depend of rateProcess (€/kg)
+				else {
+					qty = productQtyToTransform;
+				}
 			}
 		}
 
 		if (processListDataItem.getQtyResource() != null) {
 			qty = qty * processListDataItem.getQtyResource();
 		}
-		
+
 		return qty;
 	}
 
@@ -244,9 +244,9 @@ public class FormulationHelper {
 				}
 			}
 		}
-		
+
 		netWeight = (Double) nodeService.getProperty(nodeRef, PLMModel.PROP_PRODUCT_COMPO_QTY_USED);
-		if(netWeight != null){
+		if (netWeight != null) {
 			return netWeight;
 		}
 
@@ -270,14 +270,12 @@ public class FormulationHelper {
 						Double density = productData.getDensity();
 						if (density != null) {
 							qty = qty * density;
-						}
-						else{
+						} else {
 							return FormulationHelper.getQtyFromComposition(productData, productUnit, defaultValue);
 						}
 					}
 					return qty;
-				}
-				else{
+				} else {
 					return FormulationHelper.getQtyFromComposition(productData, productUnit, defaultValue);
 				}
 			}
@@ -291,7 +289,7 @@ public class FormulationHelper {
 		if (productUnit != null) {
 			Double qty = formulatedProduct.getQty();
 			if (qty == null) {
-				return FormulationHelper.getQtyFromComposition(formulatedProduct, productUnit, defaultValue);				
+				return FormulationHelper.getQtyFromComposition(formulatedProduct, productUnit, defaultValue);
 			}
 
 			if (FormulationHelper.isProductUnitKg(productUnit) || FormulationHelper.isProductUnitLiter(productUnit)) {
@@ -308,17 +306,16 @@ public class FormulationHelper {
 
 		return defaultValue;
 	}
-	
-	private static Double getQtyFromComposition(ProductData formulatedProduct, ProductUnit productUnit, Double defaultValue){
+
+	private static Double getQtyFromComposition(ProductData formulatedProduct, ProductUnit productUnit, Double defaultValue) {
 		Double qty = defaultValue;
 		if (productUnit != null && FormulationHelper.isProductUnitLiter(productUnit)) {
-			if(formulatedProduct.getRecipeVolumeUsed() != null){
+			if (formulatedProduct.getRecipeVolumeUsed() != null) {
 				qty = formulatedProduct.getRecipeVolumeUsed();
 			}
+		} else if (formulatedProduct.getRecipeQtyUsed() != null) {
+			qty = formulatedProduct.getRecipeQtyUsed();
 		}
-		else if(formulatedProduct.getRecipeQtyUsed() != null){
-			qty = formulatedProduct.getRecipeQtyUsed();			
-		}		
 		return qty;
 	}
 
@@ -356,7 +353,7 @@ public class FormulationHelper {
 			return null;
 		}
 	}
-	
+
 	public static Double getNetVolume(Double qty, CompoListDataItem compoListDataItem, NodeService nodeService) {
 
 		if (qty != null) {
@@ -380,7 +377,7 @@ public class FormulationHelper {
 	public static Double getNetVolume(CompoListDataItem compoListDataItem, NodeService nodeService) {
 
 		Double qty = FormulationHelper.getQtyInKg(compoListDataItem);
-	
+
 		return getNetVolume(qty, compoListDataItem, nodeService);
 	}
 
@@ -427,11 +424,10 @@ public class FormulationHelper {
 					}
 				}
 				logger.debug("compo tare: " + tare + " qty " + qty + " productQty " + productQty);
-				if (qty != null && !qty.isNaN() && !qty.isInfinite()
-						&& productQty!=null && !productQty.isNaN() && !productQty.isInfinite() && productQty!=0d) {
+				if (qty != null && !qty.isNaN() && !qty.isInfinite() && productQty != null && !productQty.isNaN() && !productQty.isInfinite() && productQty != 0d) {
 					return tare.multiply(new BigDecimal(qty)).divide(new BigDecimal(productQty), MathContext.DECIMAL64);
 				} else {
-					logger.error("Qty/ProductQty is NaN :"+qty+" "+productQty+" for "+compoList.getProduct());
+					logger.error("Qty/ProductQty is NaN :" + qty + " " + productQty + " for " + compoList.getProduct());
 				}
 			}
 		}
@@ -449,7 +445,7 @@ public class FormulationHelper {
 			} else {
 				BigDecimal t = FormulationHelper.getTareInKg(packList.getProduct(), nodeService);
 				if (t != null) {
-					tare =  t.multiply(new BigDecimal(qty));
+					tare = t.multiply(new BigDecimal(qty));
 				}
 			}
 		}
