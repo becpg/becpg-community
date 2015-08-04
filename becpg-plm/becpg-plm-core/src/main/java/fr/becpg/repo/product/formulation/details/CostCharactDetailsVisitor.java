@@ -17,6 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.product.formulation.details;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -38,6 +39,7 @@ import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.formulation.CostsCalculatingFormulationHandler;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.product.formulation.PackagingHelper;
+import fr.becpg.repo.variant.filters.VariantFilters;
 
 @Service
 public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
@@ -54,7 +56,9 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 	public CharactDetails visit(ProductData productData, List<NodeRef> dataListItems) throws FormulateException {
 
 		CharactDetails ret = new CharactDetails(extractCharacts(dataListItems));
-		Double netQty = FormulationHelper.getNetQtyInLorKg(productData,FormulationHelper.DEFAULT_NET_WEIGHT);
+		Double netQty = FormulationHelper.isProductUnitP(productData.getUnit()) 
+				? FormulationHelper.QTY_FOR_PIECE 
+				: FormulationHelper.getNetQtyInLorKg(productData,FormulationHelper.DEFAULT_NET_WEIGHT);
 
 		if(productData.getDefaultVariantPackagingData() == null){
 			productData.setDefaultVariantPackagingData(packagingHelper.getDefaultVariantPackagingData(productData));
@@ -63,17 +67,17 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 		/*
 		 * Calculate cost details
 		 */
-		if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {		
-			Composite<CompoListDataItem> composite = CompositeHelper.getHierarchicalCompoList(productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)));		
+		if (productData.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {		
+			Composite<CompoListDataItem> composite = CompositeHelper.getHierarchicalCompoList(productData.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())));		
 			visitCompoListChildren(productData, composite, ret, CostsCalculatingFormulationHandler.DEFAULT_LOSS_RATIO, netQty);
 		}		
 
 		/*
 		 * Calculate the costs of the packaging
 		 */
-		if (productData.hasPackagingListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-			for (PackagingListDataItem packagingListDataItem : productData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-				Double qty = FormulationHelper.getQty(packagingListDataItem);
+		if (productData.hasPackagingListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
+			for (PackagingListDataItem packagingListDataItem : productData.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
+				Double qty = FormulationHelper.getQtyForCost(packagingListDataItem);
 				visitPart(packagingListDataItem.getProduct(), ret, qty, netQty);
 
 			}
@@ -82,8 +86,8 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 		/*
 		 * Calculate the costs of the processes
 		 */
-		if (productData.hasProcessListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-			for (ProcessListDataItem processListDataItem : productData.getProcessList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+		if (productData.hasProcessListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
+			for (ProcessListDataItem processListDataItem : productData.getProcessList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 				Double qty = FormulationHelper.getQty(productData, processListDataItem);
 				visitPart(processListDataItem.getResource(), ret, qty, netQty);
 			}
