@@ -323,11 +323,13 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		if (dataItem.getResource() != null && nodeService.exists(dataItem.getResource())) {
 			dataListsElt = loadResourceParams(dataItem.getResource(), partElt);
 
-			ProductData productData = alfrescoRepository.findOne(dataItem.getResource());
-			if (productData.hasProcessListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-				Element subProcessListElt = dataListsElt.addElement(MPMModel.TYPE_PROCESSLIST.getLocalName() + "s");
-				for (ProcessListDataItem subDataItem : productData.getProcessList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-					loadProcessListItem(subDataItem, subProcessListElt, defaultVariantNodeRef, level + 1);
+			if(dataListsElt!=null){
+				ProductData productData = alfrescoRepository.findOne(dataItem.getResource());
+				if (productData.hasProcessListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+					Element subProcessListElt = dataListsElt.addElement(MPMModel.TYPE_PROCESSLIST.getLocalName() + "s");
+					for (ProcessListDataItem subDataItem : productData.getProcessList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+						loadProcessListItem(subDataItem, subProcessListElt, defaultVariantNodeRef, level + 1);
+					}
 				}
 			}
 		}
