@@ -3,8 +3,8 @@
 <Schema name="beCPG OLAP Schema"> 
 	
 
-	<Dimension type="TimeDimension"  name="${msg("jsolap.timeDimension.title")}">
-		<Hierarchy name="${msg("jsolap.date.title")}" hasAll="true" allMemberName="All Periods" allMemberCaption="${msg("jsolap.date.caption")}"  primaryKey="id" caption="Date">
+	<Dimension type="TimeDimension"  name="${msg("jsolap.timeDimension.title")}">	
+		<Hierarchy name="${msg("jsolap.date.title")}" hasAll="true" allMemberName="${msg("jsolap.allPeriods.title")}" allMemberCaption="${msg("jsolap.date.caption")}"  primaryKey="id" caption="${msg("jsolap.date.caption")}">
 			<Table name="becpg_dimdate" alias="olapDate" />
 			<Level name="${msg("jsolap.year.title")}" column="Year" type="Numeric"  levelType="TimeYears"  />
 			<Level name="${msg("jsolap.quarter.title")}" column="Quarter" nameColumn="NQuarter" type="String"  levelType="TimeQuarters"  />
@@ -317,13 +317,13 @@
 						where prop.prop_name = "bcpg:clients"
 					</SQL>
 				</View>
-				<Level name="${msg("jsolap.clientName.title")}" nameColumn="name" column="nodeRef"  type="String"   >
+				<Level name="${msg("jsolap.clientName.title")}" nameColumn="name" column="nodeRef"  type="String" >
 				</Level>
 			</Hierarchy>
 		</Dimension>
 
-	   <DimensionUsage name="${msg("jsolap.entryDate.title")}" caption="${msg("jsolap.entryDate.title")}" source="${msg("jsolap.timeDimension.title")}" foreignKey="dateCreated" />
-	   <DimensionUsage name="${msg("jsolap.treatmentDate.title")}" caption="${msg("jsolap.treatmentDate.title")}" source="${msg("jsolap.timeDimension.title")}" foreignKey="claimTreatmentDate" />
+	    <DimensionUsage name="${msg("jsolap.entryDate.title")}" caption="${msg("jsolap.entryDate.title")}" source="${msg("jsolap.timeDimension.title")}" foreignKey="dateCreated" />
+	    <DimensionUsage name="${msg("jsolap.treatmentDate.title")}" caption="${msg("jsolap.treatmentDate.title")}" source="${msg("jsolap.timeDimension.title")}" foreignKey="claimTreatmentDate" />
 		<DimensionUsage name="${msg("jsolap.answerDate.title")}" caption="${msg("jsolap.answerDate.title")}" source="${msg("jsolap.timeDimension.title")}" foreignKey="claimResponseDate" />
 		<DimensionUsage name="${msg("jsolap.closingDate.title")}" caption="${msg("jsolap.closingDate.title")}" source="${msg("jsolap.timeDimension.title")}" foreignKey="claimClosingDate" />
 		
@@ -363,12 +363,11 @@
 					id
 				]]>
 			</SQL>
-		</View>
-		
+		</View>				
 		
 		<Dimension  name="${msg("jsolap.designation.title")}" >
 			<Hierarchy name="${msg("jsolap.taskPerName.title")}" hasAll="true" allMemberCaption="${msg("jsolap.task.caption")}">
-				<Level name="${msg("jsolap.task.title")}" column="tlTaskName"  type="String"   ordinalColumn="sortOrder" />
+				<Level name="${msg("jsolap.task.title")}" column="tlTaskName" type="String" ordinalColumn="sortOrder" />
 			</Hierarchy>
 		</Dimension>
 		
@@ -421,7 +420,7 @@
 			</Hierarchy>
 		</Dimension>
 		
-		<Dimension  name="${msg("jsolap.resource.title")}" >
+		<Dimension name="${msg("jsolap.resource.title")}" >
 			<Hierarchy name="${msg("jsolap.resource.title")}" hasAll="true" allMemberCaption="${msg("jsolap.resource.caption")}">
 				<Level name="${msg("jsolap.resource.title")}" column="tlResources"  type="String"    />
 			</Hierarchy>
@@ -429,14 +428,13 @@
 		
 		<DimensionUsage name="${msg("jsolap.startDate.title")}" caption="Date début" source="${msg("jsolap.timeDimension.title")}" foreignKey="tlStart" />
 		<DimensionUsage name="${msg("jsolap.endDate.title")}" caption="Date de fin" source="${msg("jsolap.timeDimension.title")}" foreignKey="tlEnd" />
-		<DimensionUsage name="${msg("jsolap.modificationDate.title")}" caption="${msg("jsolap.modificationDate.title")}" source="${msg("jsolap.timeDimension.title")}"  foreignKey="projectDateModified" />
+		<DimensionUsage name="${msg("jsolap.modificationDate.title")}" caption="${msg("jsolap.modificationDate.title")}" source="${msg("jsolap.timeDimension.title")}"  foreignKey="projectDateModified" />	
 		<Measure name="${msg("jsolap.stepsNumber.title")}" column="noderef" datatype="Numeric" aggregator="distinct-count" visible="true" />
 		<Measure name="${msg("jsolap.averageForecastDurations.title")}" column="tlDuration" datatype="Numeric" aggregator="avg" visible="true"  />
 		<Measure name="${msg("jsolap.averageActualDurations.title")}" column="duration" datatype="Numeric" aggregator="avg" visible="true"  />
 		<Measure name="${msg("jsolap.workload.title")}" column="tlWork" datatype="Integer" aggregator="sum" visible="true"></Measure>
 		<Measure name="${msg("jsolap.loggedTime.title")}" column="tlLoggedTime" datatype="Integer" aggregator="sum" visible="true"></Measure>
-		<Measure name="${msg("jsolap.avgLoggedTime.title")}" column="tlLoggedTime" datatype="Integer" aggregator="avg" visible="true"></Measure>
-		
+		<Measure name="${msg("jsolap.avgLoggedTime.title")}" column="tlLoggedTime" datatype="Integer" aggregator="avg" visible="true"></Measure>		
 		
 		<CalculatedMember name="${msg("jsolap.averageDurations.title")}" dimension="${msg("jsolap.measures.title")}" visible="true">
 			<Formula>([${msg("jsolap.measures.title")}].[${msg("jsolap.averageDurations.title")}],[${msg("jsolap.designation.title")}.${msg("jsolap.taskPerName.title")}].PrevMember) + ([${msg("jsolap.measures.title")}].[${msg("jsolap.averageDurations.title")}])</Formula>
@@ -445,7 +443,7 @@
 		
 	</Cube>
 	
-	<Cube name="${msg("jsolap.projectsEvaluation.title")}" cache="true" enabled="true" defaultMeasure="Note">
+	<Cube name="${msg("jsolap.projectsEvaluation.title")}" cache="true" enabled="true" defaultMeasure="${msg("jsolap.note.title")}">
 		<View alias="projectScore">
 			<SQL dialect="generic">
 			<![CDATA[
@@ -515,7 +513,7 @@
 		</CalculatedMember> 
 	</Cube>
 
-	<Cube name="${msg("jsolap.projects.title")}" cache="true" enabled="true" defaultMeasure="Nombre de projets (Distinct)">
+	<Cube name="${msg("jsolap.projects.title")}" cache="true" enabled="true" defaultMeasure="${msg("jsolap.projectsNumberDistinct.title")}">
 		<View alias="projet">
 			<SQL dialect="generic">
 			<![CDATA[
@@ -548,7 +546,7 @@
 				from
 					becpg_entity AS entity LEFT JOIN becpg_property AS prop ON prop.entity_id = entity.id
 				where
-					entity.entity_type = "pjt:project" and entity.instance_id = ${instanceId}
+					entity.entity_type = "pjt:project" and entity.instance_id = ${instanceId} 
 				group by 
 					id
 				]]>
@@ -585,7 +583,7 @@
 		</Dimension>
 		<Dimension  name="${msg("jsolap.state.title")}" >
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.state.caption")}" >
-				<Level approxRowCount="5" name="${msg("jsolap.state.title")}"  column="projectState"  type="String"    >
+				<Level approxRowCount="5" name="${msg("jsolap.state.title")}" column="projectState" type="String">
 				  <NameExpression>
 					  <SQL dialect="generic" >
 					  <![CDATA[CASE WHEN projectState='Planned' THEN 'Plannifié'
@@ -600,8 +598,8 @@
 			</Hierarchy>
 		</Dimension>
 		
-		<Dimension type="StandardDimension" foreignKey="id"  name="${msg("jsolap.entities.title")}">
-			<Hierarchy hasAll="true"   primaryKey="entity_id">
+		<Dimension type="StandardDimension" foreignKey="id" name="${msg("jsolap.entities.title")}">
+			<Hierarchy hasAll="true" primaryKey="entity_id">
 				<View alias="projectEntity">
 						<SQL dialect="generic">
 							<![CDATA[
@@ -634,7 +632,7 @@
 		
 		
 		<Dimension  name="${msg("jsolap.history.title")}" >
-			<Hierarchy name="${msg("jsolap.currentVersion.title")}" hasAll="false" defaultMember="[${msg("jsolap.history.title")}.${msg("jsolap.currentVersion.title")}].[true]">
+			<Hierarchy name="${msg("jsolap.currentVersion.title")}" hasAll="true"   defaultMember="[${msg("jsolap.history.title")}.${msg("jsolap.currentVersion.title")}].[true]">
 				<Level name="${msg("jsolap.currentVersion.title")}" column="isLastVersion"  type="Boolean"    />
 			</Hierarchy>
 		</Dimension>
@@ -665,7 +663,7 @@
 		
 		
 		<DimensionUsage name="${msg("jsolap.modificationDate.title")}" caption="${msg("jsolap.modificationDate.title")}" source="${msg("jsolap.timeDimension.title")}"  foreignKey="projectDateModified" />
-	   <DimensionUsage name="${msg("jsolap.creationDate.title")}" caption="${msg("jsolap.creationDate.title")}" source="${msg("jsolap.timeDimension.title")}" foreignKey="projectDateCreated" />
+	   	<DimensionUsage name="${msg("jsolap.creationDate.title")}" caption="${msg("jsolap.creationDate.title")}" source="${msg("jsolap.timeDimension.title")}" foreignKey="projectDateCreated" />
 		<DimensionUsage name="${msg("jsolap.startDate.title")}" caption="${msg("jsolap.startDate.title")}" source="${msg("jsolap.timeDimension.title")}" foreignKey="projectStartDate" />
 		<DimensionUsage name="${msg("jsolap.dueDate.title")}" caption="${msg("jsolap.dueDate.title")}" source="${msg("jsolap.timeDimension.title")}" foreignKey="projectDueDate" />
 		<DimensionUsage name="${msg("jsolap.completionDate.title")}" caption="${msg("jsolap.completionDate.title")}" source="${msg("jsolap.timeDimension.title")}" foreignKey="completionDate" />
@@ -753,7 +751,6 @@
 				select
 					entity.id as id,
 					entity.entity_id as noderef,
-
 					entity.entity_name as name,
 					entity.entity_type as productType,
 					entity.is_last_version as isLastVersion,
@@ -776,7 +773,7 @@
 				from
 					becpg_entity AS entity LEFT JOIN becpg_property AS prop ON prop.entity_id = entity.id
 				where
-					entity.entity_type IN ("bcpg:finishedProduct","bcpg:semiFinishedProduct","bcpg:localSemiFinishedProduct","bcpg:rawMaterial","bcpg:packagingKit","bcpg:packagingMaterial")
+					entity.entity_type IN ("bcpg:finishedProduct","bcpg:semiFinishedProduct","bcpg:localSemiFinishedProduct","bcpg:rawMaterial","bcpg:packagingKit","bcpg:packagingMaterial") 
 					and entity.instance_id = ${instanceId}
 				group by 
 					id
@@ -788,10 +785,10 @@
 			<Hierarchy name="${msg("jsolap.productPerFamily.title")}" hasAll="true" allMemberCaption="${msg("jsolap.product.caption")}">
 				<Level name="${msg("jsolap.family.title")}" column="productHierarchy1"  type="String"    />
 				<Level name="${msg("jsolap.subFamily.title")}" column="productHierarchy2"  type="String"    />
-				<Level name="${msg("jsolap.productName.title")}" column="name"  type="String"    />
-				<Level name="${msg("jsolap.productCode.title")}" column="code"  type="String"   />
-				<Level name="${msg("jsolap.erpCode.title")}" column="erpCode"  type="String"   />
-				<Level name="${msg("jsolap.legalName.title")}" column="legalName" type="String"    />
+				<Level name="${msg("jsolap.productCode.title")}" column="code"  type="String"  uniqueKeyLevelName="true" highCardinality="true"  />
+				<Level name="${msg("jsolap.productName.title")}" column="name"  type="String" />
+			    <Level name="${msg("jsolap.erpCode.title")}" column="erpCode"  type="String" />
+				<Level name="${msg("jsolap.legalName.title")}" column="legalName"  type="String" />
 			</Hierarchy>
 		</Dimension>
 		
@@ -822,10 +819,9 @@
 		</Dimension>
 		
 		<Dimension foreignKey="productType"  name="${msg("jsolap.productType.title")}">
-			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.productType.caption")}" primaryKey="entity_type" defaultMember="[Type de produit].[Produit fini]">
-				<Table name="becpg_entity_type"></Table>
-				<Level approxRowCount="10" name="${msg("jsolap.type.title")}" column="entity_type" nameColumn="entity_label" type="String"   >
-				</Level>
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.productType.caption")}" primaryKey="entity_type" >
+			<Table name="becpg_entity_type"></Table>
+			<Level approxRowCount="10" name="${msg("jsolap.type.title")}" column="entity_type" nameColumn="entity_label" type="String"   ></Level>
 			</Hierarchy>
 		</Dimension>
 		<Dimension type="StandardDimension" foreignKey="id"  name="${msg("jsolap.client.title")}">
@@ -833,7 +829,6 @@
 				<View alias="client">
 					<SQL dialect="generic">
 						select
-							prop.id,
 							prop.prop_id as nodeRef,
 							prop.string_value as name,
 							prop.entity_id
@@ -851,7 +846,6 @@
 				<View alias="supplier">
 					<SQL dialect="generic">
 						select
-							prop.id,
 							prop.prop_id as nodeRef,
 							prop.string_value as name,
 							prop.entity_id
@@ -891,32 +885,60 @@
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.nutritionScale.caption")}" >
 				<Level name="${msg("jsolap.nutritionClass.title")}" column="nutrientProfilingClass"  type="String"    />
 			</Hierarchy>
-		</Dimension>					
-		
-		<Dimension type="StandardDimension" foreignKey="id"  name="${msg("jsolap.allergen.title")}">
+		</Dimension>
+
+		<Dimension type="StandardDimension" foreignKey="id"  name="${msg("jsolap.allergenVoluntary.title")}">
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.allergen.caption")}" primaryKey="entity_fact_id" >
 				<View alias="allergenList">
 					<SQL dialect="generic">
-						select  
-							prop.prop_id as nodeRef, 
-							prop.string_value as name,
-							MAX(IF(prop.prop_name = "bcpg:allergenListVoluntary",prop.boolean_value,NULL)) as voluntary,							
-							MAX(IF(prop.prop_name = "bcpg:allergenListInVoluntary",prop.boolean_value,NULL)) as inVoluntary,
-							(MAX(IF(prop.prop_name = "bcpg:allergenListVoluntary",prop.boolean_value,NULL)) &amp; (! MAX(IF(prop.prop_name = "bcpg:allergenListInVoluntary",prop.boolean_value,NULL)))) as fortuitous,							
-							datalist.entity_fact_id as entity_fact_id
+   							select  
+								prop.prop_id  as nodeRef,
+								prop.string_value name,
+								datalist.entity_fact_id as entity_fact_id
 							from
 								becpg_datalist AS datalist LEFT JOIN becpg_property AS prop ON prop.datalist_id = datalist.id
-							where datalist.datalist_name = "allergenList" and datalist.item_type = "bcpg:allergenList" and datalist.instance_id = ${instanceId} 
+  		                        LEFT JOIN becpg_property AS prop2
+        	                    ON prop2.datalist_id = datalist.id
+              		            AND prop2.prop_name = "bcpg:allergenListVoluntary"
+							where datalist.datalist_name = "allergenList"
+								and datalist.item_type = "bcpg:allergenList"
+								and prop.prop_name = "bcpg:allergenListAllergen"
+								and prop2.boolean_value = true
+								and datalist.instance_id = ${instanceId}
 							group by datalist.id
-							HAVING (voluntary = TRUE or inVoluntary=TRUE )
 					</SQL>
 				</View>
-				<Level approxRowCount="100" name="${msg("jsolap.allergen.title")}" column="nodeRef"  nameColumn="name" type="String"   >
+				<Level approxRowCount="100" name="${msg("jsolap.allergenVoluntary.title")}" column="nodeRef"  nameColumn="name" type="String"   >
 				</Level>
-				<Level name="${msg("jsolap.inVoluntary.title")}" column="fortuitous" type="Boolean" uniqueMembers="true" />
 			</Hierarchy>
 		</Dimension>
-		
+
+		<Dimension type="StandardDimension" foreignKey="id"  name="${msg("jsolap.allergenInVoluntary.title")}">
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.allergen.caption")}" primaryKey="entity_fact_id" >
+				<View alias="allergenInList">
+					<SQL dialect="generic">
+							select  
+								prop.prop_id  as nodeRef,
+								prop.string_value   as name,							
+								datalist.entity_fact_id as entity_fact_id
+							from
+								becpg_datalist AS datalist LEFT JOIN becpg_property AS prop ON prop.datalist_id = datalist.id
+                         		LEFT JOIN becpg_property AS prop2
+                          		ON prop2.datalist_id = datalist.id
+                          		AND prop2.prop_name = "bcpg:allergenListInVoluntary"
+							where datalist.datalist_name = "allergenList"
+								and datalist.item_type = "bcpg:allergenList"
+								and prop.prop_name = "bcpg:allergenListAllergen"
+								and prop2.boolean_value = true
+								and datalist.instance_id = ${instanceId}
+							group by datalist.id
+
+					</SQL>
+				</View>
+				<Level approxRowCount="100" name="${msg("jsolap.allergenInVoluntary.title")}" column="nodeRef"  nameColumn="name" type="String"   >
+				</Level>
+			</Hierarchy>
+		</Dimension>							
 		
 		
 		<Dimension type="StandardDimension" foreignKey="id"  name="${msg("jsolap.ingredient.title")}">
@@ -1013,18 +1035,20 @@
 			</Hierarchy>
 		</Dimension>
 		
-	  <Dimension  name="${msg("jsolap.history.title")}" >
-			<Hierarchy name="${msg("jsolap.currentVersion.title")}" hasAll="false" defaultMember="[Historique.Version courante].[true]">
+
+	    <Dimension  name="${msg("jsolap.history.title")}"  >
+			<Hierarchy name="${msg("jsolap.currentVersion.title")}" hasAll="true" defaultMember="[${msg("jsolap.history.title")}.${msg("jsolap.currentVersion.title")}].[true]" >
 				<Level name="${msg("jsolap.currentVersion.title")}" column="isLastVersion"  type="Boolean"    />
 			</Hierarchy>
 		</Dimension>
 		
+
 		<DimensionUsage name="${msg("jsolap.creationDate.title")}" caption="${msg("jsolap.creationDate.title")}" source="${msg("jsolap.timeDimension.title")}" foreignKey="productDateCreated" />
 		<DimensionUsage name="${msg("jsolap.modificationDate.title")}" caption="${msg("jsolap.modificationDate.title")}" source="${msg("jsolap.timeDimension.title")}" foreignKey="productDateModified" />
 		<DimensionUsage name="${msg("jsolap.effectivityStart.title")}" caption="${msg("jsolap.effectivityStart.title")}" source="${msg("jsolap.timeDimension.title")}" foreignKey="startEffectivity" />
 		<DimensionUsage name="${msg("jsolap.effectivityEnd.title")}" caption="${msg("jsolap.effectivityEnd.title")}" source="${msg("jsolap.timeDimension.title")}" foreignKey="endEffectivity" />
 		
-		<Measure name="${msg("jsolap.productNumber.title")}" column="noderef" datatype="Numeric" aggregator="distinct-count" visible="true" />
+		<Measure name="${msg("jsolap.productNumber.title")}" column="noderef" datatype="Integer" aggregator="distinct-count" visible="true" />
 		<Measure name="${msg("jsolap.plannedQuantity.title")}" column="projectedQty" datatype="Integer" aggregator="sum" visible="true">
 		</Measure>
 		<Measure name="${msg("jsolap.costs.title")}" column="unitTotalCost" datatype="Numeric" aggregator="sum" visible="true" >
