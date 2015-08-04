@@ -7632,9 +7632,10 @@ true
                                     </text>
                                 </cell>
                                 <cell id="3255">
-                                    <data id="3342">
-                                        <property name="resultSetColumn">instruction</property>
-                                    </data>
+                                    <text id="3173">
+                                        <property name="contentType">html</property>
+                                        <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["instruction"]</VALUE-OF>]]></text-property>
+                                    </text>
                                 </cell>
                             </row>
                         </detail>
@@ -7692,9 +7693,10 @@ true
                                     </data>
                                 </cell>
                                 <cell id="3350">
-                                    <data id="3359">
-                                        <property name="resultSetColumn">instruction</property>
-                                    </data>
+                                    <text id="6040">
+                                        <property name="contentType">html</property>
+                                        <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["instruction"]</VALUE-OF>]]></text-property>
+                                    </text>
                                 </cell>
                             </row>
                         </detail>

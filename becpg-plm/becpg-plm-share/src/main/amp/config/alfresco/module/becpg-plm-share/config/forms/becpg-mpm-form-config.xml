@@ -188,8 +188,8 @@
 						</control>
 					</field>
 					<field id="bcpg:instruction">
-						<control template="/org/alfresco/components/form/controls/textarea.ftl">
-							<control-param name="rows">2</control-param>
+						<control template="/org/alfresco/components/form/controls/richtext.ftl">
+							<control-param name="rows">10</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -278,8 +278,8 @@
 						</control>
 					</field>
 					<field id="bcpg:instruction">
-						<control template="/org/alfresco/components/form/controls/textarea.ftl">
-							<control-param name="rows">2</control-param>
+						<control template="/org/alfresco/components/form/controls/richtext.ftl">
+							<control-param name="rows">10</control-param>
 						</control>
 					</field>
 				</appearance>
