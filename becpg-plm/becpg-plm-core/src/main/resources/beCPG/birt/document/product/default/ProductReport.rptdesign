@@ -7543,7 +7543,7 @@ else{
                                 <text-property name="displayName">nutListValue</text-property>
                                 <expression name="expression" type="javascript">if(dataSetRow["nutListValue"] != null){
 
-	if(dataSetRow["nutListNut"] == "Energie"){
+	if(dataSetRow["nutListNut"] == "Energie kJ" || dataSetRow["nutListNut"] == "Energie kcal"){
 	BirtMath.round(dataSetRow["nutListValue"], 0)
 	}
 	else if(dataSetRow["nutListNut"] == "Lipides" &amp;&amp; dataSetRow["nutListValue"] >= 10){
@@ -7558,10 +7558,10 @@ else{
 	else if(dataSetRow["nutListNut"] == "Lipides"){
 	"0"
 	}
-	else if(dataSetRow["nutListNut"] == "AG saturés" &amp;&amp; dataSetRow["nutListValue"] >= 10){
+	else if((dataSetRow["nutListNut"] == "AG saturés" || dataSetRow["nutListNut"] == "AG monoinsaturés" || dataSetRow["nutListNut"] == "AG polyinsaturés") &amp;&amp; dataSetRow["nutListValue"] >= 10){
 	BirtMath.round(dataSetRow["nutListValue"], 0)
 	}
-	else if(dataSetRow["nutListNut"] == "AG saturés"){
+	else if(dataSetRow["nutListNut"] == "AG saturés" || dataSetRow["nutListNut"] == "AG monoinsaturés" || dataSetRow["nutListNut"] == "AG polyinsaturés"){
 	BirtMath.round(dataSetRow["nutListValue"], 1)
 	}
 	else if(dataSetRow["nutListNut"] == "Glucides" || dataSetRow["nutListNut"] == "Sucres" || dataSetRow["nutListNut"] == "Fibres alimentaires" || dataSetRow["nutListNut"] == "Protéines"){
@@ -7615,39 +7615,39 @@ else{
                             <structure>
                                 <property name="name">nutListValuePerServing</property>
                                 <text-property name="displayName">nutListValuePerServing</text-property>
-                                <expression name="expression" type="javascript">if(dataSetRow["nutListValue"] != null){
+                                <expression name="expression" type="javascript">if(dataSetRow["nutListValuePerServing"] != null){
 
-	if(dataSetRow["nutListNut"] == "Energie"){
-	BirtMath.round(dataSetRow["nutListValue"], 0)
+	if(dataSetRow["nutListNut"] == "Energie kJ" || dataSetRow["nutListNut"] == "Energie kcal"){
+	BirtMath.round(dataSetRow["nutListValuePerServing"], 0)
 	}
-	else if(dataSetRow["nutListNut"] == "Lipides" &amp;&amp; dataSetRow["nutListValue"] >= 10){
-	BirtMath.round(dataSetRow["nutListValue"], 0)
+	else if(dataSetRow["nutListNut"] == "Lipides" &amp;&amp; dataSetRow["nutListValuePerServing"] >= 10){
+	BirtMath.round(dataSetRow["nutListValuePerServing"], 0)
 	}
-	else if(dataSetRow["nutListNut"] == "Lipides" &amp;&amp; dataSetRow["nutListValue"] > 0.5){
-	BirtMath.round(dataSetRow["nutListValue"], 1)
+	else if(dataSetRow["nutListNut"] == "Lipides" &amp;&amp; dataSetRow["nutListValuePerServing"] > 0.5){
+	BirtMath.round(dataSetRow["nutListValuePerServing"], 1)
 	}
-	else if(dataSetRow["nutListNut"] == "Lipides" &amp;&amp; dataSetRow["nutListValue"] > 0){
+	else if(dataSetRow["nutListNut"] == "Lipides" &amp;&amp; dataSetRow["nutListValuePerServing"] > 0){
 	"&lt; 0,5"
 	}
 	else if(dataSetRow["nutListNut"] == "Lipides"){
 	"0"
 	}
-	else if(dataSetRow["nutListNut"] == "AG saturés" &amp;&amp; dataSetRow["nutListValue"] >= 10){
-	BirtMath.round(dataSetRow["nutListValue"], 0)
+	else if((dataSetRow["nutListNut"] == "AG saturés" || dataSetRow["nutListNut"] == "AG monoinsaturés" || dataSetRow["nutListNut"] == "AG polyinsaturés") &amp;&amp; dataSetRow["nutListValuePerServing"] >= 10){
+	BirtMath.round(dataSetRow["nutListValuePerServing"], 0)
 	}
-	else if(dataSetRow["nutListNut"] == "AG saturés"){
-	BirtMath.round(dataSetRow["nutListValue"], 1)
+	else if(dataSetRow["nutListNut"] == "AG saturés" || dataSetRow["nutListNut"] == "AG monoinsaturés" || dataSetRow["nutListNut"] == "AG polyinsaturés"){
+	BirtMath.round(dataSetRow["nutListValuePerServing"], 1)
 	}
 	else if(dataSetRow["nutListNut"] == "Glucides" || dataSetRow["nutListNut"] == "Sucres" || dataSetRow["nutListNut"] == "Fibres alimentaires" || dataSetRow["nutListNut"] == "Protéines"){
-		if(dataSetRow["nutListValue"] >= 10){
-		BirtMath.round(dataSetRow["nutListValue"], 0)
+		if(dataSetRow["nutListValuePerServing"] >= 10){
+		BirtMath.round(dataSetRow["nutListValuePerServing"], 0)
 		}
 		else{
-		BirtMath.round(dataSetRow["nutListValue"], 1)
+		BirtMath.round(dataSetRow["nutListValuePerServing"], 1)
 		}
 	}
 	else if(dataSetRow["nutListNut"] == "Sodium"){
-		var value = dataSetRow["nutListValue"];
+		var value = dataSetRow["nutListValuePerServing"];
 		if(dataSetRow["nutListUnit"] == "mg/100g"){
 			value = value / 1000;
 		}
@@ -7666,13 +7666,13 @@ else{
 		}
 	}
 	else if(dataSetRow["nutListNut"] == "Sel"){
-		if(dataSetRow["nutListValue"] >= 1){
-		BirtMath.round(dataSetRow["nutListValue"], 1)
+		if(dataSetRow["nutListValuePerServing"] >= 1){
+		BirtMath.round(dataSetRow["nutListValuePerServing"], 1)
 		}
-		else if(dataSetRow["nutListValue"] >= 0.0125){
-		BirtMath.round(dataSetRow["nutListValue"], 2)
+		else if(dataSetRow["nutListValuePerServing"] >= 0.0125){
+		BirtMath.round(dataSetRow["nutListValuePerServing"], 2)
 		}
-		else if(dataSetRow["nutListValue"] > 0){
+		else if(dataSetRow["nutListValuePerServing"] > 0){
 		"&lt; 0,0125"
 		}
 		else{
@@ -7680,7 +7680,7 @@ else{
 		}
 	}
 	else{
-	dataSetRow["nutListValue"]
+	dataSetRow["nutListValuePerServing"]
 	}
 }</expression>
                                 <property name="dataType">string</property>
