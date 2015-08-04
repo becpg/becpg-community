@@ -416,7 +416,9 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			
 			c.setValuePerProduct(null);
 			if(costPerProduct != null){
-				unitTotalVariableCost += costPerProduct;
+				if(c.getDepthLevel() != null && c.getDepthLevel() == 1){
+					unitTotalVariableCost += costPerProduct;
+				}				
 				if(formulatedProduct instanceof FinishedProductData){
 					c.setValuePerProduct(costPerProduct);
 				}
