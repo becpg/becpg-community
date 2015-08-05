@@ -258,6 +258,8 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	}
 	
 	protected void calculate(SimpleListDataItem newSimpleListDataItem, SimpleListDataItem slDataItem, Double qtyUsed, Double netQty, boolean isGenericRawMaterial){
+		// newValue, newMini, newMaxi : usefull to know if one mini or maxi is filled on 1 raw material
+		Double newValue = newSimpleListDataItem.getFormulatedValue() != null ? newSimpleListDataItem.getFormulatedValue() : 0d;
 		Double value = slDataItem.getValue();
 		if(value != null){
 			newSimpleListDataItem.setValue(FormulationHelper.calculateValue(newSimpleListDataItem.getFormulatedValue(), qtyUsed, slDataItem.getValue(), netQty));			
@@ -265,21 +267,32 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		else{
 			value = 0d;
 		}
-		
-		Double miniValue = slDataItem.getMini() != null ? slDataItem.getMini() : value;
-		Double maxiValue = slDataItem.getMaxi() != null ? slDataItem.getMaxi() : value;
+				
 		if(isGenericRawMaterial){
-			if((newSimpleListDataItem.getMini() == null && miniValue != null) || newSimpleListDataItem.getMini() > miniValue){
-				newSimpleListDataItem.setMini(miniValue);
-			}
-			if((newSimpleListDataItem.getMaxi() == null && maxiValue != null) || newSimpleListDataItem.getMaxi() < maxiValue){
-				newSimpleListDataItem.setMaxi(maxiValue);
+			if(slDataItem.getMini() != null 
+					&& (newSimpleListDataItem.getMini() == null
+						|| (newSimpleListDataItem.getMini() != null && newSimpleListDataItem.getMini() > slDataItem.getMini()))){
+				newSimpleListDataItem.setMini(slDataItem.getMini());
+			}		
+			if(slDataItem.getMaxi() != null 
+					&& (newSimpleListDataItem.getMaxi() == null
+						|| (newSimpleListDataItem.getMaxi() != null && newSimpleListDataItem.getMaxi() < slDataItem.getMaxi()))){
+				newSimpleListDataItem.setMaxi(slDataItem.getMaxi());
 			}
 		}
-		else{
-			newSimpleListDataItem.setMini(FormulationHelper.calculateValue(newSimpleListDataItem.getMini(), qtyUsed, miniValue, netQty));
-			newSimpleListDataItem.setMaxi(FormulationHelper.calculateValue(newSimpleListDataItem.getMaxi(), qtyUsed, maxiValue, netQty));
-		}	
+		else{				
+			Double newMini = newSimpleListDataItem.getMini() != null ? newSimpleListDataItem.getMini() : newValue;
+			Double newMaxi = newSimpleListDataItem.getMaxi() != null ? newSimpleListDataItem.getMaxi() : newValue;
+			Double miniValue = slDataItem.getMini() != null ? slDataItem.getMini() : value;
+			Double maxiValue = slDataItem.getMaxi() != null ? slDataItem.getMaxi() : value;
+			if(miniValue < value || newMini < newValue || newSimpleListDataItem.getMini() != null){
+				logger.info("newMini " + newMini + " miniVaue " + miniValue);
+				newSimpleListDataItem.setMini(FormulationHelper.calculateValue(newMini, qtyUsed, miniValue, netQty));
+			}	
+			if(maxiValue > value || newMaxi > newValue || newSimpleListDataItem.getMaxi() != null){
+				newSimpleListDataItem.setMaxi(FormulationHelper.calculateValue(newMaxi, qtyUsed, maxiValue, netQty));
+			}
+		}
 		
 		newSimpleListDataItem.setPreviousValue(FormulationHelper.calculateValue(newSimpleListDataItem.getPreviousValue(), qtyUsed, slDataItem.getPreviousValue(), netQty));
 		newSimpleListDataItem.setFutureValue(FormulationHelper.calculateValue(newSimpleListDataItem.getFutureValue(), qtyUsed, slDataItem.getFutureValue(), netQty));
