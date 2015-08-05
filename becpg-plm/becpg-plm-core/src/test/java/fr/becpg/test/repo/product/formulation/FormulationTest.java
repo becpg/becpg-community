@@ -1461,10 +1461,39 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				}					
 				assertEquals(2, checks);
 				
+				/**
+				 * Check mini and maxi are null if no rawMaterial has any mini or maxi
+				 */
+				formulatedProduct.getCompoListView().getCompoList().clear();
+				formulatedProduct.getCompoListView().getCompoList().add(new CompoListDataItem(null, null, null, 3d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+				alfrescoRepository.save(formulatedProduct);
+				productService.formulate(finishedProductNodeRef);								
+				formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+				
+				//nuts
+				checks = 0;
+				assertNotNull("NutList is null", formulatedProduct.getNutList());
+				for(NutListDataItem nutListDataItem : 	formulatedProduct.getNutList()){
+					String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), ContentModel.PROP_NAME) + " - value: " + nutListDataItem.getValue() + " - mini: " + nutListDataItem.getMini() + " - maxi: " + nutListDataItem.getMaxi() + " - unit: " + nutListDataItem.getUnit();
+					logger.debug(trace);
+					if(nutListDataItem.getNut().equals(nut1)){
+						assertNull(nutListDataItem.getMini());
+						assertNull(nutListDataItem.getMaxi());
+						checks++;
+					}
+					if(nutListDataItem.getNut().equals(nut2)){
+						assertNull(nutListDataItem.getMini());
+						assertNull(nutListDataItem.getMaxi());
+						checks++;
+					}
+				}					
+				assertEquals(2, checks);
+				
+				
 				return null;
 
 			}},false,true);
-		   
+	   
 	   }
 	
 //	/**
