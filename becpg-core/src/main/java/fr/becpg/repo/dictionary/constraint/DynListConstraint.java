@@ -6,11 +6,13 @@ package fr.becpg.repo.dictionary.constraint;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.alfresco.repo.dictionary.constraint.ListOfValuesConstraint;
+import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.TenantUtil;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
@@ -19,6 +21,7 @@ import org.alfresco.service.cmr.dictionary.ConstraintException;
 import org.alfresco.service.cmr.dictionary.DictionaryException;
 import org.alfresco.service.cmr.i18n.MessageLookup;
 import org.alfresco.service.cmr.repository.InvalidStoreRefException;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.datatype.DefaultTypeConverter;
 import org.alfresco.service.cmr.repository.datatype.TypeConversionException;
@@ -26,6 +29,7 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
@@ -57,7 +61,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 
 	private Boolean addEmptyValue = null;
 
-	private final Map<String, List<String>> allowedValues = new HashMap<>();
+	private final Map<String, Map<String, MLText>> allowedValues = new HashMap<>();
 
 	public void setPath(List<String> paths) {
 
@@ -116,40 +120,44 @@ public class DynListConstraint extends ListOfValuesConstraint {
 	@Override
 	public List<String> getAllowedValues() {
 		if (MTDictionnarySupport.shouldCleanConstraint() || allowedValues.get(TenantUtil.getCurrentDomain()) == null) {
-			allowedValues.put(
-					TenantUtil.getCurrentDomain(),
-					serviceRegistry.getTransactionService().getRetryingTransactionHelper()
-							.doInTransaction(new RetryingTransactionCallback<List<String>>() {
-								@Override
-								public List<String> execute() throws Throwable {
+			allowedValues.put(TenantUtil.getCurrentDomain(),
+					serviceRegistry.getTransactionService().getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<Map<String, MLText>>() {
+						@Override
+						public Map<String, MLText> execute() throws Throwable {
 
-									List<String> allowedValues = new LinkedList<>();
+							Map<String, MLText> allowedValues = new LinkedHashMap<String, MLText>();
 
-									if (addEmptyValue != null && addEmptyValue) {
-										allowedValues.add("");
-									}
+							if (addEmptyValue != null && addEmptyValue) {
+								allowedValues.put("", null);
+							}
 
-									for (String path : paths) {
-										NamespaceService namespaceService = serviceRegistry.getNamespaceService();
-										List<String> values = getAllowedValues(path, QName.createQName(constraintType, namespaceService),
-												QName.createQName(constraintProp, namespaceService));
-										allowedValues.addAll(values);
-									}
+							for (String path : paths) {
+								boolean wasMLAware = MLPropertyInterceptor.setMLAware(true);
 
-									return allowedValues;
+								try {
 
+									NamespaceService namespaceService = serviceRegistry.getNamespaceService();
+									Map<String, MLText> values = getAllowedValues(path, QName.createQName(constraintType,
+											namespaceService), QName.createQName(constraintProp, namespaceService));
+									allowedValues.putAll(values);
+
+								} finally {
+									MLPropertyInterceptor.setMLAware(wasMLAware);
 								}
-							}, true, false));
+							}
+
+							return allowedValues;
+
+						}
+					}, true, false));
 
 			if (allowedValues.get(TenantUtil.getCurrentDomain()).isEmpty()) {
-				allowedValues.get(TenantUtil.getCurrentDomain()).add(UNDIFINED_CONSTRAINT_VALUE);
+				allowedValues.get(TenantUtil.getCurrentDomain()).put(UNDIFINED_CONSTRAINT_VALUE, null);
 			}
 
 			logger.debug("Fill allowedValues  for :" + TenantUtil.getCurrentDomain());
-		} else {
-			logger.debug("AllowedValues exist for :" + TenantUtil.getCurrentDomain());
-		}
-		return allowedValues.get(TenantUtil.getCurrentDomain());
+		} 
+		return new LinkedList<String>(allowedValues.get(TenantUtil.getCurrentDomain()).keySet());
 	}
 
 	/**
@@ -171,16 +179,15 @@ public class DynListConstraint extends ListOfValuesConstraint {
 
 	}
 
-	private List<String> getAllowedValues(final String path, final QName constraintType, final QName constraintProp) {
+	private Map<String, MLText> getAllowedValues(final String path, final QName constraintType, final QName constraintProp) {
 
-		return AuthenticationUtil.runAsSystem(new AuthenticationUtil.RunAsWork<List<String>>() {
+		return AuthenticationUtil.runAsSystem(new AuthenticationUtil.RunAsWork<Map<String, MLText>>() {
 			@Override
-			public List<String> doWork() throws Exception {
-				List<String> allowedValues = new LinkedList<>();
+			public Map<String, MLText> doWork() throws Exception {
+				Map<String, MLText> allowedValues = new LinkedHashMap<>();
 
 				try {
-					List<NodeRef> nodeRefs = BeCPGQueryBuilder.createQuery().selectNodesByPath(
-							serviceRegistry.getNodeService().getRootNode(RepoConsts.SPACES_STORE),
+					List<NodeRef> nodeRefs = BeCPGQueryBuilder.createQuery().selectNodesByPath(serviceRegistry.getNodeService().getRootNode(RepoConsts.SPACES_STORE),
 							"/app:company_home/" + BeCPGQueryBuilder.encodePath(path) + "/*");
 
 					Collections.sort(nodeRefs, new Comparator<NodeRef>() {
@@ -205,11 +212,11 @@ public class DynListConstraint extends ListOfValuesConstraint {
 					});
 
 					for (NodeRef nodeRef : nodeRefs) {
-						if (serviceRegistry.getNodeService().exists(nodeRef)
-								&& serviceRegistry.getNodeService().getType(nodeRef).equals(constraintType)) {
-							String value = (String) serviceRegistry.getNodeService().getProperty(nodeRef, constraintProp);
-							if (!allowedValues.contains(value) && value != null && checkLevel(nodeRef)) {
-								allowedValues.add(value);
+						if (serviceRegistry.getNodeService().exists(nodeRef) && serviceRegistry.getNodeService().getType(nodeRef).equals(constraintType)) {
+							MLText mlText = (MLText) serviceRegistry.getNodeService().getProperty(nodeRef, constraintProp);
+
+							if (mlText != null) {
+								allowedValues.put(mlText.getDefaultValue(), mlText);
 							}
 						} else {
 							logger.warn("Node doesn't exist : " + nodeRef);
@@ -221,43 +228,28 @@ public class DynListConstraint extends ListOfValuesConstraint {
 						logger.debug("allowed values: " + allowedValues.toString());
 					}
 				} catch (InvalidStoreRefException e) {
-					logger.warn("Please reload constraint once tenant created: "+e.getMessage());
+					logger.warn("Please reload constraint once tenant created: " + e.getMessage());
 				}
 
 				return allowedValues;
 
 			}
 
-			private boolean checkLevel(NodeRef nodeRef) {
-				if (level != null) {
-					try {
-						int l = Integer.parseInt(level);
-
-						return l == computeLevel(nodeRef, QName.createQName(levelProp, serviceRegistry.getNamespaceService()));
-
-					} catch (Exception e) {
-						logger.warn("Cannot check level", e);
-					}
-				}
-
-				return true;
-			}
-
-			private int computeLevel(NodeRef nodeRef, QName createQName) {
-
-				NodeRef parentNode = (NodeRef) serviceRegistry.getNodeService().getProperty(nodeRef, createQName);
-				if (parentNode != null) {
-					return 1 + computeLevel(parentNode, createQName);
-				}
-
-				return 0;
-			}
 		});
 	}
 
 	@Override
 	public String getDisplayLabel(String constraintAllowableValue, MessageLookup messageLookup) {
-		// No I18N needed --> Can be done with ML Text
+
+		if (!allowedValues.get(TenantUtil.getCurrentDomain()).containsKey(constraintAllowableValue)) {
+			return null;
+		}
+		MLText mlText = allowedValues.get(TenantUtil.getCurrentDomain()).get(constraintAllowableValue);
+		
+		if (mlText != null && mlText.getClosestValue(I18NUtil.getLocale()) != null && !mlText.getClosestValue(I18NUtil.getLocale()).isEmpty()) {
+			return mlText.getClosestValue(I18NUtil.getLocale());
+		}
+
 		return constraintAllowableValue;
 	}
 
