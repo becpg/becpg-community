@@ -111,8 +111,12 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 						String key = iterator.next();
 						if (!"-".equals(key)) {
 							Locale loc = new Locale(new Locale(key).getLanguage());
-							if (json.getString(key) != null && json.getString(key).length() > 0) {
-								mlText.addValue(loc, json.getString(key));
+							if (json.getString(key) != null) {
+								if(json.getString(key).length() > 0){
+									mlText.addValue(loc, json.getString(key));
+								} else {
+									mlText.removeValue(loc);
+								}
 							}
 						}
 					}
