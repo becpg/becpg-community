@@ -106,9 +106,6 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 			watch.start();
         }
 		
-		//Warning only on integrity check for formulation
-		IntegrityChecker.setWarnInTransaction();
-		
 		alfrescoRepository.save(entity);
 		
 		if(logger.isDebugEnabled()){
@@ -146,6 +143,10 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 				if(chain.shouldUpdateFormulatedDate()){
 					repositoryEntity.setFormulatedDate(Calendar.getInstance().getTime());
 				}
+				
+				//Warning only on integrity check for formulation
+				IntegrityChecker.setWarnInTransaction();
+				
 			} else {
 				logger.error("No formulation chain define for :"+repositoryEntity.getClass().getName());
 			}
