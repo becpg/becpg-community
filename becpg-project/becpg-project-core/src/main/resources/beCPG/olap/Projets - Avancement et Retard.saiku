@@ -1,1 +1,33 @@
-<?xml version="1.0" encoding="UTF-8"?> <Query name="A26E028D-E624-4981-BD3E-FFFCD22DA6B4" type="QM" connection="beCPG" cube="[Projets]" catalog="beCPG OLAP Schema" schema="beCPG OLAP Schema"> <QueryModel> <Axes> <Axis location="ROWS" nonEmpty="true"> <Dimensions> <Dimension name="Désignation" hierarchizeMode="PRE" hierarchyConsistent="true"> <Inclusions> <Selection dimension="Désignation" type="level" node="[Désignation.Projet par famille].[Famille]" operator="MEMBERS" /> <Selection dimension="Désignation" type="level" node="[Désignation.Projet par famille].[Nom projet]" operator="MEMBERS" /> </Inclusions> <Exclusions /> </Dimension> </Dimensions> </Axis> <Axis location="COLUMNS" nonEmpty="true"> <Dimensions> <Dimension name="Measures" hierarchizeMode="PRE" hierarchyConsistent="false"> <Inclusions> <Selection dimension="Measures" type="member" node="[Measures].[Avancement (Dernier)]" operator="MEMBER" /> <Selection dimension="Measures" type="member" node="[Measures].[Retard ]" operator="MEMBER" /> </Inclusions> <Exclusions /> </Dimension> </Dimensions> </Axis> <Axis location="FILTER" nonEmpty="false" /> </Axes> </QueryModel> <MDX>SELECT NON EMPTY {Hierarchize({[Measures].[Avancement (Dernier)], [Measures].[Retard ]})} ON COLUMNS, NON EMPTY {Hierarchize({{[Désignation.Projet par famille].[Famille].Members}, {[Désignation.Projet par famille].[Nom projet].Members}})} ON ROWS FROM [Projets]</MDX> </Query>
+<?xml version="1.0" encoding="UTF-8"?>
+<Query name="A26E028D-E624-4981-BD3E-FFFCD22DA6B4" type="QM" connection="beCPG" cube="[projects]" catalog="beCPG OLAP Schema" schema="beCPG OLAP Schema"> <QueryModel> <Axes> <Axis location="ROWS" nonEmpty="true">
+<Dimensions> 
+<Dimension name="designation" hierarchizeMode="PRE" hierarchyConsistent="true">
+ <Inclusions> 
+ <Selection dimension="designation" type="level" node="[designation.projectPerFamily].[projectHierarchy1]" operator="MEMBERS" />
+  <Selection dimension="designation" type="level" node="[designation.projectPerFamily].[name]" operator="MEMBERS" />
+   </Inclusions>
+<Exclusions />
+ </Dimension> 
+ </Dimensions> 
+ </Axis>
+  <Axis location="COLUMNS" nonEmpty="true">
+   <Dimensions> 
+   <Dimension name="Measures" hierarchizeMode="PRE" hierarchyConsistent="false"> 
+   <Inclusions> 
+   <Selection dimension="Measures" type="member" node="[Measures].[lastProgress]" operator="MEMBER" />
+    <Selection dimension="Measures" type="member" node="[Measures].[delay]" operator="MEMBER" />
+</Inclusions>
+<Exclusions /> 
+</Dimension> 
+</Dimensions> 
+</Axis> 
+<Axis location="FILTER" nonEmpty="false" />
+ </Axes> 
+ </QueryModel> 
+ <MDX>
+SELECT
+NON EMPTY {[Measures].[lastProgress], [Measures].[delay]} ON COLUMNS,
+NON EMPTY {Hierarchize({{[designation.projectPerFamily].[projectHierarchy1].Members}, {[designation.projectPerFamily].[name].Members}})} ON ROWS
+FROM [projects] </MDX> 
+</Query>
+

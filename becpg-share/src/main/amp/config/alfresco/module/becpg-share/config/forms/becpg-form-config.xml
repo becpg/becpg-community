@@ -134,7 +134,6 @@
 			<form>
 				<field-visibility>
 					<show id="bcpg:lvValue" />
-					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
 		</forms>
@@ -146,7 +145,6 @@
 			<form>
 				<field-visibility>
 					<show id="bcpg:lvValue" />
-					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
 
@@ -154,14 +152,12 @@
 			<form id="filter">
 				<field-visibility>
 					<show id="bcpg:lvValue" />
-					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
 
 			<form id="datagrid">
 				<field-visibility>
 					<show id="bcpg:lvValue" />
-					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
 		</forms>

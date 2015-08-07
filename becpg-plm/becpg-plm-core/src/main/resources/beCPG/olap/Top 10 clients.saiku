@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Query name="B5A665B9-78F9-3250-9904-E0F8852B08DC" type="MDX" connection="beCPG" cube="[Produits]" catalog="beCPG OLAP Schema" schema="beCPG OLAP Schema">
+<Query name="B5A665B9-78F9-3250-9904-E0F8852B08DC" type="MDX" connection="beCPG" cube="[products]" catalog="beCPG OLAP Schema" schema="beCPG OLAP Schema">
   <MDX>SELECT
-NON EMPTY {Hierarchize({[Measures].[Nombre de produits]})} ON COLUMNS,
-NON EMPTY Topcount([Client].[Nom client].Members,10,[Measures].[Nombre de produits]) ON ROWS
-FROM [Produits]
-WHERE {Hierarchize({[Type de produit].[All Type de produits]})}</MDX>
+NON EMPTY {Hierarchize({[Measures].[productNumber]})} ON COLUMNS,
+NON EMPTY Topcount([client].[name].Members,10,[Measures].[productNumber]) ON ROWS
+FROM [products]
+WHERE {[productType].[All productTypes]}</MDX>
 </Query>
-
