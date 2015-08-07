@@ -286,7 +286,6 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 			Double miniValue = slDataItem.getMini() != null ? slDataItem.getMini() : value;
 			Double maxiValue = slDataItem.getMaxi() != null ? slDataItem.getMaxi() : value;
 			if(miniValue < value || newMini < newValue || newSimpleListDataItem.getMini() != null){
-				logger.info("newMini " + newMini + " miniVaue " + miniValue);
 				newSimpleListDataItem.setMini(FormulationHelper.calculateValue(newMini, qtyUsed, miniValue, netQty));
 			}	
 			if(maxiValue > value || newMaxi > newValue || newSimpleListDataItem.getMaxi() != null){
