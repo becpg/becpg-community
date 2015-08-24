@@ -81,6 +81,26 @@
 	vertical-align: bottom;
 }
 
+.project-list #page_x002e_data-form_x002e_task-edit_x0023_default_assoc_pjt_workflowTask-cntrl-currentTask a.task-comments {
+	cursor: pointer;
+	margin-left: 5px;
+	display: inline-table;
+	font-color:white;
+	font-weight:bold;	
+	border-radius: 50%;
+    behavior: url(PIE.htc); 
+    width: 10px;
+    height: 10px;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top:2px;
+    padding-bottom:2px;
+    background: #B40431;
+    color: white;
+    text-align: center;
+	
+}
+
 .project-list span.delivrable-status {
 	background-repeat: no-repeat;
 	padding-left: 20px;

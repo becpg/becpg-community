@@ -70,6 +70,7 @@
 				<aspect>bcpg:depthLevelAspect</aspect>
 				<aspect>bcpg:isDeletedAspect</aspect>
 				<aspect>bcpg:codeAspect</aspect>
+				<aspect>bcpg:erpCodeAspect</aspect>
 			</mandatory-aspects>
 		</type>
 
