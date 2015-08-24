@@ -781,6 +781,7 @@
 								MAX(IF(prop.prop_name = "bcpg:nutListNut",prop.prop_id,NULL)) as nutNodeRef,
 								MAX(IF(prop.prop_name = "bcpg:nutListGroup",prop.string_value,NULL)) as nutGroup,
 								MAX(IF(prop.prop_name = "bcpg:nutListValue",prop.double_value,NULL)) as nutValue,
+								MAX(IF(prop.prop_name = "bcpg:nutListFormulatedValue",prop.double_value,NULL)) as nutFormulatedValue,
 								datalist.entity_fact_id as entity_fact_id
 							from
 									becpg_datalist AS datalist LEFT JOIN becpg_property AS prop ON prop.datalist_id = datalist.id
@@ -850,6 +851,7 @@
 			</Hierarchy>	
 		</Dimension>	
 		<Measure name="nutValue" caption="${msg("jsolap.nutritionalValues.title")}" column="nutValue" datatype="Numeric" aggregator="avg" visible="true"></Measure>	
+		<Measure name="nutFormulatedValue" caption="${msg("jsolap.nutritionalFormulatedValues.title")}" column="nutFormulatedValue" datatype="Numeric" aggregator="avg" visible="true"></Measure>	
 		</Cube>				
 	
 
@@ -982,7 +984,7 @@
 								MAX(IF(prop.prop_name = "bcpg:nutListNut",prop.string_value,NULL)) as nutName,
 								MAX(IF(prop.prop_name = "bcpg:nutListNut",prop.prop_id,NULL)) as nutNodeRef,
 								MAX(IF(prop.prop_name = "bcpg:nutListGroup",prop.string_value,NULL)) as nutGroup,
-								MAX(IF(prop.prop_name = "bcpg:nutListValue",prop.double_value,NULL)) as nutValue,
+								MAX(IF(prop.prop_name = "bcpg:nutListValue",prop.double_value,NULL)) as nutValue,								
 								datalist.entity_fact_id as entity_fact_id
 							from
 									becpg_datalist AS datalist LEFT JOIN becpg_property AS prop ON prop.datalist_id = datalist.id
