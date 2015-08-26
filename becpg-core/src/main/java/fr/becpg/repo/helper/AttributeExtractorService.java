@@ -85,6 +85,8 @@ public interface AttributeExtractorService {
 	PropertyFormats getPropertyFormats(AttributeExtractorMode mode);
 
 	String extractPropName(NodeRef v);
+
+	String extractPropName(QName type, NodeRef nodeRef);
 	
 
 	

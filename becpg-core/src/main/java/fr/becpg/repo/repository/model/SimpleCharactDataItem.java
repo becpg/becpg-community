@@ -21,7 +21,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.repository.RepositoryEntity;
 
-public interface SimpleCharactDataItem extends RepositoryEntity{
+public interface SimpleCharactDataItem extends RepositoryEntity {
 
 	void setCharactNodeRef(NodeRef nodeRef);
 

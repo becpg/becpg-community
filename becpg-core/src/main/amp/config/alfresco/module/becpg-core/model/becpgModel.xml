@@ -119,6 +119,12 @@
 		
 		<type name="bcpg:charact">
 			<parent>bcpg:entityListItem</parent>
+			<properties>
+				<property name="bcpg:charactName">
+				    <type>d:mltext</type>
+				    <mandatory>true</mandatory>
+				</property>
+			</properties>
 			<mandatory-aspects>
 				<aspect>bcpg:legalNameAspect</aspect>
 				<aspect>bcpg:isDeletedAspect</aspect>

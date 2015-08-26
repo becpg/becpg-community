@@ -68,7 +68,7 @@ public class ImportHelper{
 				// MLText
 				if(dataType.isMatch(DataTypeDefinition.MLTEXT)){
 					
-					MLText mlText = new MLText();					
+					MLText mlText = new MLText();
 					
 					// load translations
 					boolean first = true;

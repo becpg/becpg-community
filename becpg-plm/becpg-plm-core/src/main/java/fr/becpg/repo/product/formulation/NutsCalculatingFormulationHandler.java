@@ -21,6 +21,7 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.data.ProductData;
@@ -115,7 +116,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 					Double ul = (Double) nodeService.getProperty(n.getNut(), PLMModel.PROP_NUTUL);
 					if (ul != null) {
 						if(valuePerserving > ul){
-							String message = I18NUtil.getMessage(MESSAGE_MAXIMAL_DAILY_VALUE, nodeService.getProperty(n.getNut(), ContentModel.PROP_NAME));
+							String message = I18NUtil.getMessage(MESSAGE_MAXIMAL_DAILY_VALUE, nodeService.getProperty(n.getNut(), BeCPGModel.PROP_CHARACT_NAME));
 							formulatedProduct.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, n.getNut(), new ArrayList<NodeRef>()));
 						}
 					}
@@ -194,7 +195,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 					nutListDataItem.setValue(null);
 					nutListDataItem.setErrorLog(error);
 					String message = I18NUtil.getMessage("message.formulate.nutList.error", Locale.getDefault(),
-							nodeService.getProperty(nutListDataItem.getNut(), ContentModel.PROP_NAME), error);
+							nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME), error);
 					productData.getCompoListView().getReqCtrlList()
 							.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, nutListDataItem.getNut(), new ArrayList<NodeRef>()));
 				}

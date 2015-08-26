@@ -22,6 +22,7 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
 import fr.becpg.repo.data.hierarchicalList.Composite;
@@ -201,7 +202,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 					costListDataItem.setValue(null);
 					costListDataItem.setErrorLog(error);
 					String message = I18NUtil.getMessage("message.formulate.costList.error", Locale.getDefault(),
-							nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME), error);
+							nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME), error);
 					productData.getCompoListView().getReqCtrlList()
 							.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, costListDataItem.getCost(), new ArrayList<NodeRef>()));
 				}
@@ -525,7 +526,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	private void copyTemplateCost(ProductData formulatedProduct, CostListDataItem templateCostList, CostListDataItem costList){
 		
 		if(logger.isDebugEnabled()){
-			logger.debug("copy cost " + nodeService.getProperty(templateCostList.getCost(), ContentModel.PROP_NAME) + " unit " + templateCostList.getUnit() +
+			logger.debug("copy cost " + nodeService.getProperty(templateCostList.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " unit " + templateCostList.getUnit() +
 					" PackagingData " + formulatedProduct.getDefaultVariantPackagingData());
 		}
 		boolean isCalculated = false;
@@ -571,7 +572,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	private void calculateValues(CostListDataItem templateCostList, CostListDataItem costList, Boolean divide, Double qty){
 		
 		if(logger.isDebugEnabled()){
-			logger.debug("calculateValues " + nodeService.getProperty(templateCostList.getCost(), ContentModel.PROP_NAME));
+			logger.debug("calculateValues " + nodeService.getProperty(templateCostList.getCost(), BeCPGModel.PROP_CHARACT_NAME));
 		}
 		
 		Double value = templateCostList.getValue();

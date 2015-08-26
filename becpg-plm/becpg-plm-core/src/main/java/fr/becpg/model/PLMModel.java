@@ -31,8 +31,6 @@ public interface PLMModel {
 
 	QName TYPE_PRODUCTLIST_ITEM = QName.createQName(BeCPGModel.BECPG_URI, "productListItem");
 
-	QName TYPE_CHARACT = QName.createQName(BeCPGModel.BECPG_URI, "charact");
-
 	// allergenList
 	QName TYPE_ALLERGENLIST = QName.createQName(BeCPGModel.BECPG_URI, "allergenList");
 	QName PROP_ALLERGENLIST_VOLUNTARY = QName.createQName(BeCPGModel.BECPG_URI, "allergenListVoluntary");

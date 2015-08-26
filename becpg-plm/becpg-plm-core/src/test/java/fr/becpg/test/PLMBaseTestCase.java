@@ -155,7 +155,7 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 //                       try {
 //						String path = nodeService.getPath(productNodeRef).toDisplayPath(nodeService, permissionService);
 //						// if(!path.contains(BeCPGTestHelper.PATH_TESTFOLDER)){
-//						logger.trace("   - Deleting :" + nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME));
+//						logger.trace("   - Deleting :" + nodeService.getProperty(productNodeRef, BeCPGModel.PROP_CHARACT_NAME));
 //						logger.trace("   - PATH :" + path);
 //						nodeService.deleteNode(productNodeRef);
 //						// }
@@ -272,16 +272,16 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 			if (allergensNodeRef.size() == 0) {
 				for (int i = 0; i < 10; i++) {
 					Map<QName, Serializable> properties = new HashMap<>();
-					properties.put(ContentModel.PROP_NAME, "Allergen " + i);
+					properties.put(BeCPGModel.PROP_CHARACT_NAME, "Allergen " + i);
 					properties.put(PLMModel.PROP_ALLERGEN_TYPE, AllergenType.Major.toString());
 					ChildAssociationRef childAssocRef = nodeService.createNode(allergenFolder, ContentModel.ASSOC_CONTAINS,
-							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 							PLMModel.TYPE_ALLERGEN, properties);
 					allergens.add(childAssocRef.getChildRef());
 				}
 			} else {
 				for (NodeRef fileInfo : allergensNodeRef) {
-					if(((String)nodeService.getProperty(fileInfo,ContentModel.PROP_NAME)).startsWith("Allergen")){
+					if(((String)nodeService.getProperty(fileInfo,BeCPGModel.PROP_CHARACT_NAME)).startsWith("Allergen")){
 						allergens.add(fileInfo);
 					}
 				}
@@ -301,16 +301,16 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 				String[] costNames = { "Coût MP", "Coût prév MP", "Coût Emb", "Coût prév Emb" };
 				for (String costName : costNames) {
 					Map<QName, Serializable> properties = new HashMap<>();
-					properties.put(ContentModel.PROP_NAME, costName);
+					properties.put(BeCPGModel.PROP_CHARACT_NAME, costName);
 					properties.put(PLMModel.PROP_COSTCURRENCY, VALUE_COST_CURRENCY);
 					ChildAssociationRef childAssocRef = nodeService.createNode(costFolder, ContentModel.ASSOC_CONTAINS,
-							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 							PLMModel.TYPE_COST, properties);
 					costs.add(childAssocRef.getChildRef());
 				}
 			} else {
 				for (NodeRef fileInfo : costsNodeRef) {
-					if(((String)nodeService.getProperty(fileInfo,ContentModel.PROP_NAME)).startsWith("Coût")){
+					if(((String)nodeService.getProperty(fileInfo,BeCPGModel.PROP_CHARACT_NAME)).startsWith("Coût")){
 					costs.add(fileInfo);
 					}
 				}
@@ -327,15 +327,15 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 			if (ingsNodeRef.size() == 0) {
 				for (int i = 0; i < 10; i++) {
 					Map<QName, Serializable> properties = new HashMap<>();
-					properties.put(ContentModel.PROP_NAME, "Ing " + i);
+					properties.put(BeCPGModel.PROP_CHARACT_NAME, "Ing " + i);
 					ChildAssociationRef childAssocRef = nodeService.createNode(ingFolder, ContentModel.ASSOC_CONTAINS,
-							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 							PLMModel.TYPE_ING, properties);
 					ings.add(childAssocRef.getChildRef());
 				}
 			} else {
 				for (NodeRef fileInfo : ingsNodeRef) {
-					if(((String)nodeService.getProperty(fileInfo,ContentModel.PROP_NAME)).startsWith("Ing")){
+					if(((String)nodeService.getProperty(fileInfo,BeCPGModel.PROP_CHARACT_NAME)).startsWith("Ing")){
 						ings.add(fileInfo);
 					}
 				}
@@ -352,17 +352,17 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 			if (nutsNodeRef.size() == 0) {
 				for (int i = 0; i < 10; i++) {
 					Map<QName, Serializable> properties = new HashMap<>();
-					properties.put(ContentModel.PROP_NAME, "Nut " + i);
+					properties.put(BeCPGModel.PROP_CHARACT_NAME, "Nut " + i);
 					properties.put(PLMModel.PROP_NUTUNIT, "kcal");
 					properties.put(PLMModel.PROP_NUTGROUP, "Groupe 1");
 					ChildAssociationRef childAssocRef = nodeService.createNode(nutFolder, ContentModel.ASSOC_CONTAINS,
-							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 							PLMModel.TYPE_NUT, properties);
 					nuts.add(childAssocRef.getChildRef());
 				}
 			} else {
 				for (NodeRef fileInfo : nutsNodeRef) {
-					if(((String)nodeService.getProperty(fileInfo,ContentModel.PROP_NAME)).startsWith("Nut")){
+					if(((String)nodeService.getProperty(fileInfo,BeCPGModel.PROP_CHARACT_NAME)).startsWith("Nut")){
 				   	 nuts.add(fileInfo);
 					}
 				}
@@ -378,15 +378,15 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 			if (organosNodeRef.size() == 0) {
 				for (int i = 0; i < 10; i++) {
 					Map<QName, Serializable> properties = new HashMap<>();
-					properties.put(ContentModel.PROP_NAME, "Organo " + i);
+					properties.put(BeCPGModel.PROP_CHARACT_NAME, "Organo " + i);
 					ChildAssociationRef childAssocRef = nodeService.createNode(organoFolder, ContentModel.ASSOC_CONTAINS,
-							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 							PLMModel.TYPE_ORGANO, properties);
 					organos.add(childAssocRef.getChildRef());
 				}
 			} else {
 				for (NodeRef fileInfo : organosNodeRef) {
-					if(((String)nodeService.getProperty(fileInfo,ContentModel.PROP_NAME)).startsWith("Organo")){
+					if(((String)nodeService.getProperty(fileInfo,BeCPGModel.PROP_CHARACT_NAME)).startsWith("Organo")){
 					  organos.add(fileInfo);
 					}
 				}
@@ -404,17 +404,18 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 				String[] labelClaimNames = { "Faible valeur énergétique", "Sans apport énergétique" };
 				for (String labelClaim : labelClaimNames) {
 					Map<QName, Serializable> properties = new HashMap<>();
-					properties.put(ContentModel.PROP_NAME, labelClaim);
+					properties.put(BeCPGModel.PROP_CHARACT_NAME, labelClaim);
 					properties.put(PLMModel.PROP_LABEL_CLAIM_TYPE, "Nutritionnelle");
 					ChildAssociationRef childAssocRef = nodeService.createNode(labelClaimListsFolder, ContentModel.ASSOC_CONTAINS,
-							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 							PLMModel.TYPE_LABEL_CLAIM, properties);
 					labelClaims.add(childAssocRef.getChildRef());
 				}
 			} else {
 				for (NodeRef fileInfo : labelClaimsNodeRef) {
-					if(((String)nodeService.getProperty(fileInfo,ContentModel.PROP_NAME)).startsWith( "Faible valeur énergétique")
-							|| ((String)nodeService.getProperty(fileInfo,ContentModel.PROP_NAME)).startsWith( "Sans apport énergétique")){
+					
+					if(((String)nodeService.getProperty(fileInfo,BeCPGModel.PROP_CHARACT_NAME)).startsWith( "Faible valeur énergétique")
+							|| ((String)nodeService.getProperty(fileInfo,BeCPGModel.PROP_CHARACT_NAME)).startsWith( "Sans apport énergétique")){
 						labelClaims.add(fileInfo);
 					}
 				}
@@ -504,11 +505,11 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 		List<NodeRef> labelingTemplatesNodeRef = entityListDAO.getListItems(labelingTemplateFolder,PackModel.TYPE_LABELING_TEMPLATE);
 		if (labelingTemplatesNodeRef.size() == 0) {
 			Map<QName, Serializable> properties = new HashMap<>();
-			properties.put(ContentModel.PROP_NAME, "Marquage 1");
+			properties.put(BeCPGModel.PROP_CHARACT_NAME, "Marquage 1");
 			properties.put(ContentModel.PROP_DESCRIPTION,
 					"N° de lot : AAJJJ (AA : derniers chiffres de l’année ; JJJ : quantième du jour de fabrication)");
 			labelingTemplateNodeRef = nodeService.createNode(labelingTemplateFolder, ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PackModel.TYPE_LABELING_TEMPLATE, properties).getChildRef();
 		} else {
 			labelingTemplateNodeRef = labelingTemplatesNodeRef.get(0);

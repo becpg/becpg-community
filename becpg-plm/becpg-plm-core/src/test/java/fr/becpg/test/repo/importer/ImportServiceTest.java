@@ -337,7 +337,7 @@ public class ImportServiceTest extends PLMBaseTestCase {
 		int costChecked = 0;
 		int z_idx = 0;
 		for (CostListDataItem c : productData.getCostList()) {
-			String costName = (String) nodeService.getProperty(c.getCost(), ContentModel.PROP_NAME);
+			String costName = (String) nodeService.getProperty(c.getCost(), BeCPGModel.PROP_CHARACT_NAME);
 
 			for (String s : costNames) {
 				if (s.equals(costName)) {
@@ -354,7 +354,7 @@ public class ImportServiceTest extends PLMBaseTestCase {
 		int nutChecked = 0;
 		z_idx = 0;
 		for (NutListDataItem n : productData.getNutList()) {
-			String nutName = (String) nodeService.getProperty(n.getNut(), ContentModel.PROP_NAME);
+			String nutName = (String) nodeService.getProperty(n.getNut(), BeCPGModel.PROP_CHARACT_NAME);
 
 			for (String s : nutNames) {
 				if (s.equals(nutName)) {
@@ -399,7 +399,7 @@ public class ImportServiceTest extends PLMBaseTestCase {
 		costChecked = 0;
 		z_idx = 0;
 		for (CostListDataItem c : productTplData.getCostList()) {
-			String costName = (String) nodeService.getProperty(c.getCost(), ContentModel.PROP_NAME);
+			String costName = (String) nodeService.getProperty(c.getCost(), BeCPGModel.PROP_CHARACT_NAME);
 
 			for (String s : costNames) {
 				if (s.equals(costName)) {
@@ -416,7 +416,7 @@ public class ImportServiceTest extends PLMBaseTestCase {
 		nutChecked = 0;
 		z_idx = 0;
 		for (NutListDataItem n : productTplData.getNutList()) {
-			String nutName = (String) nodeService.getProperty(n.getNut(), ContentModel.PROP_NAME);
+			String nutName = (String) nodeService.getProperty(n.getNut(), BeCPGModel.PROP_CHARACT_NAME);
 
 			for (String s : nutNames) {
 				if (s.equals(nutName)) {

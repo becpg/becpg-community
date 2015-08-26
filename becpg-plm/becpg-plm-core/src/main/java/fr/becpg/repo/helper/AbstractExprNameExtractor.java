@@ -39,21 +39,14 @@ public abstract class AbstractExprNameExtractor implements AttributeExtractorPlu
 			String replacement = "";
 			if (propQname.contains("|")) {
 				for (String propQnameAlt : propQname.split("\\|")) {
-					if(propQnameAlt.startsWith(ML_PREFIX)){
-					     MLText tmp = (MLText) mlNodeService.getProperty(nodeRef, QName.createQName(propQnameAlt.substring(3), namespaceService));
-					     if(tmp!=null){
-					    	 replacement = tmp.getClosestValue(I18NUtil.getContentLocale());
-					     }
-					} else {
-						replacement = (String) nodeService.getProperty(nodeRef, QName.createQName(propQnameAlt, namespaceService));
-					}
+					replacement = extractPropText(nodeRef, propQnameAlt);
 					if (replacement != null && !replacement.isEmpty()) {
 						break;
 					}
 				}
 
 			} else {
-				replacement = (String) nodeService.getProperty(nodeRef, QName.createQName(propQname, namespaceService));
+				replacement = extractPropText(nodeRef, propQname);
 			}
 
 			patternMatcher.appendReplacement(sb, replacement != null ? replacement : "");
@@ -61,6 +54,20 @@ public abstract class AbstractExprNameExtractor implements AttributeExtractorPlu
 		}
 		patternMatcher.appendTail(sb);
 		return sb.toString();
+	}
+
+
+
+	private String extractPropText(NodeRef nodeRef, String propQname) {
+		if(propQname.startsWith(ML_PREFIX)){
+		     MLText tmp = (MLText) mlNodeService.getProperty(nodeRef, QName.createQName(propQname.substring(3), namespaceService));
+		     if(tmp!=null){
+		    	return tmp.getClosestValue(I18NUtil.getContentLocale());
+		     }
+		} else {
+			return (String) nodeService.getProperty(nodeRef, QName.createQName(propQname, namespaceService));
+		}
+		return null;
 	}
 	
 	

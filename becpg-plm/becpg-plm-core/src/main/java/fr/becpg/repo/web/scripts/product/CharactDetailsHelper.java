@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.csv.writer.CSVConfig;
@@ -38,6 +37,7 @@ import org.json.JSONObject;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.config.format.PropertyFormats;
+import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.product.data.CharactDetails;
 
 /**
@@ -49,7 +49,7 @@ public class CharactDetailsHelper {
 
 	
 	
-	public static JSONObject toJSONObject(final CharactDetails charactDetails, final NodeService nodeService) throws JSONException {
+	public static JSONObject toJSONObject(final CharactDetails charactDetails, final NodeService nodeService, final AttributeExtractorService attributeExtractorService) throws JSONException {
 
 		
 		JSONObject obj = new JSONObject();
@@ -64,7 +64,7 @@ public class CharactDetailsHelper {
 		SortedSet<NodeRef> compEls = new TreeSet<>(new Comparator<NodeRef>() {
 			@Override
 			public int compare(NodeRef o1, NodeRef o2) {
-				return ((String) nodeService.getProperty(o1, ContentModel.PROP_NAME)).compareTo((String) nodeService.getProperty(o2, ContentModel.PROP_NAME));
+				return attributeExtractorService.extractPropName(o1).compareTo(attributeExtractorService.extractPropName(o2));
 			}
 		});
 		
@@ -73,7 +73,7 @@ public class CharactDetailsHelper {
 			metadata = new JSONObject();
 			metadata.put("colIndex", idx++);
 			metadata.put("colType", "Double");
-			metadata.put("colName", nodeService.getProperty(entry.getKey(), ContentModel.PROP_NAME));
+			metadata.put("colName", attributeExtractorService.extractPropName(entry.getKey()));
 			
 			metadatas.put(metadata);
 			
@@ -88,7 +88,7 @@ public class CharactDetailsHelper {
 		
 		for (NodeRef compoEl : compEls) {
 			List<Object> tmp = new ArrayList<>();
-			tmp.add(nodeService.getProperty(compoEl, ContentModel.PROP_NAME));
+			tmp.add(attributeExtractorService.extractPropName(compoEl));
 			for (Map.Entry<NodeRef, Map<NodeRef, Double>> entry : charactDetails.getData().entrySet()) {
 				if (entry.getValue().containsKey(compoEl)) {
 						tmp.add(entry.getValue().get(compoEl));
@@ -107,7 +107,7 @@ public class CharactDetailsHelper {
 
 	}
 
-	public static void writeCSV(CharactDetails charactDetails,final NodeService nodeService, Writer writer) {
+	public static void writeCSV(CharactDetails charactDetails,final NodeService nodeService, final AttributeExtractorService attributeExtractorService , Writer writer) {
 		
 		 PropertyFormats propertyFormats = new PropertyFormats(false);
 		
@@ -121,7 +121,7 @@ public class CharactDetailsHelper {
 		SortedSet<NodeRef> compEls = new TreeSet<>(new Comparator<NodeRef>() {
 			@Override
 			public int compare(NodeRef o1, NodeRef o2) {
-				return ((String) nodeService.getProperty(o1, ContentModel.PROP_NAME)).compareTo((String) nodeService.getProperty(o2, ContentModel.PROP_NAME));
+				return attributeExtractorService.extractPropName(o1).compareTo(attributeExtractorService.extractPropName(o2));
 			}
 
 		});
@@ -129,7 +129,7 @@ public class CharactDetailsHelper {
 		
 		for (Map.Entry<NodeRef, Map<NodeRef, Double>> entry : charactDetails.getData().entrySet()) {
 			
-			CSVField field = new CSVField((String) nodeService.getProperty(entry.getKey(), ContentModel.PROP_NAME));
+			CSVField field = new CSVField(attributeExtractorService.extractPropName(entry.getKey()));
 			for (Map.Entry<NodeRef, Double> value : entry.getValue().entrySet()) {
 				compEls.add(value.getKey());
 			}
@@ -144,12 +144,12 @@ public class CharactDetailsHelper {
 		
 		for (NodeRef compoEl : compEls) {
 			Map<String,String> tmp = new HashMap<>();
-			tmp.put(getYAxisLabel(),(String)nodeService.getProperty(compoEl, ContentModel.PROP_NAME));
+			tmp.put(getYAxisLabel(),attributeExtractorService.extractPropName(compoEl));
 			for (Map.Entry<NodeRef, Map<NodeRef, Double>> entry : charactDetails.getData().entrySet()) {
 				if (entry.getValue().containsKey(compoEl) && entry.getValue().get(compoEl) != null) {
-						tmp.put((String) nodeService.getProperty(entry.getKey(), ContentModel.PROP_NAME), propertyFormats.formatDecimal(entry.getValue().get(compoEl)));
+						tmp.put(attributeExtractorService.extractPropName(entry.getKey()), propertyFormats.formatDecimal(entry.getValue().get(compoEl)));
 					} else {
-						tmp.put((String) nodeService.getProperty(entry.getKey(), ContentModel.PROP_NAME),"");
+						tmp.put(attributeExtractorService.extractPropName(entry.getKey()),"");
 					}
 			}
 			csvWriter.writeRecord(tmp);

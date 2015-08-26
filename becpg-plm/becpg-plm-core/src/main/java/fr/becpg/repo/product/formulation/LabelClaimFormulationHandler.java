@@ -16,6 +16,7 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
@@ -163,7 +164,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 				if (labelClaimListDataItem.getErrorLog() != null) {
 
 					String message = I18NUtil.getMessage("message.formulate.labelClaim.error", Locale.getDefault(),
-							nodeService.getProperty(labelClaimListDataItem.getLabelClaim(), ContentModel.PROP_NAME),
+							nodeService.getProperty(labelClaimListDataItem.getLabelClaim(), BeCPGModel.PROP_CHARACT_NAME),
 							labelClaimListDataItem.getErrorLog());
 					productData.getCompoListView().getReqCtrlList()
 							.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, labelClaimListDataItem.getLabelClaim(), new ArrayList<NodeRef>()));

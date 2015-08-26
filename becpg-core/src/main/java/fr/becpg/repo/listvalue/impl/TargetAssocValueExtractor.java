@@ -65,7 +65,7 @@ public class TargetAssocValueExtractor implements ListValueExtractor<NodeRef> {
 			for (NodeRef nodeRef : nodeRefs) {
 
 				QName type = nodeService.getType(nodeRef);
-				String name = attributeExtractorService.extractPropName(nodeRef);
+				String name = attributeExtractorService.extractPropName(type,nodeRef);
 				String cssClass = attributeExtractorService.extractMetadata(type,nodeRef);
 				Map<String, String> props = new HashMap<>(2);
 				props.put("type", type.toPrefixString(namespaceService));

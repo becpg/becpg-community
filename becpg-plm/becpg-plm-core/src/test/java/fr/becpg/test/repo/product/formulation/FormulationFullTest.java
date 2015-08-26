@@ -33,6 +33,7 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.springframework.extensions.surf.util.I18NUtil;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.FinishedProductData;
@@ -247,7 +248,7 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 		int checks = 0;
 		assertNotNull("CostList is null", formulatedProduct.getCostList());
 		for (CostListDataItem costListDataItem : formulatedProduct.getCostList()) {
-			String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue()
+			String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + costListDataItem.getValue()
 					+ " - unit: " + costListDataItem.getUnit();
 			logger.info(trace);
 			if (costListDataItem.getCost().equals(cost1)) {
@@ -287,7 +288,7 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 		checks = 0;
 		assertNotNull("NutList is null", formulatedProduct.getNutList());
 		for (NutListDataItem nutListDataItem : formulatedProduct.getNutList()) {
-			String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), ContentModel.PROP_NAME) + " - value: " + nutListDataItem.getValue() + " - unit: "
+			String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + nutListDataItem.getValue() + " - unit: "
 					+ nutListDataItem.getUnit();
 			logger.info(trace);
 			if (nutListDataItem.getNut().equals(nut1)) {
@@ -320,13 +321,13 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 		for (AllergenListDataItem allergenListDataItem : formulatedProduct.getAllergenList()) {
 			String voluntarySources = "";
 			for (NodeRef part : allergenListDataItem.getVoluntarySources())
-				voluntarySources += nodeService.getProperty(part, ContentModel.PROP_NAME) + ", ";
+				voluntarySources += nodeService.getProperty(part, BeCPGModel.PROP_CHARACT_NAME) + ", ";
 
 			String inVoluntarySources = "";
 			for (NodeRef part : allergenListDataItem.getInVoluntarySources())
-				inVoluntarySources += nodeService.getProperty(part, ContentModel.PROP_NAME) + ", ";
+				inVoluntarySources += nodeService.getProperty(part,BeCPGModel.PROP_CHARACT_NAME) + ", ";
 
-			String trace = "allergen: " + nodeService.getProperty(allergenListDataItem.getAllergen(), ContentModel.PROP_NAME) +" qty Perc:  "+ allergenListDataItem.getQtyPerc()
+			String trace = "allergen: " + nodeService.getProperty(allergenListDataItem.getAllergen(), BeCPGModel.PROP_CHARACT_NAME) +" qty Perc:  "+ allergenListDataItem.getQtyPerc()
 					+" - voluntary: "
 					+ allergenListDataItem.getVoluntary() + " - involuntary: " + allergenListDataItem.getInVoluntary()
 					+ " - voluntary sources:" + voluntarySources + " - involuntary sources:" + inVoluntarySources;
@@ -396,13 +397,13 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 
 			String geoOriginsText = "";
 			for (NodeRef geoOrigin : ingListDataItem.getGeoOrigin())
-				geoOriginsText += nodeService.getProperty(geoOrigin, ContentModel.PROP_NAME) + ", ";
+				geoOriginsText += nodeService.getProperty(geoOrigin, BeCPGModel.PROP_CHARACT_NAME) + ", ";
 
 			String bioOriginsText = "";
 			for (NodeRef bioOrigin : ingListDataItem.getBioOrigin())
-				bioOriginsText += nodeService.getProperty(bioOrigin, ContentModel.PROP_NAME) + ", ";
+				bioOriginsText += nodeService.getProperty(bioOrigin, BeCPGModel.PROP_CHARACT_NAME) + ", ";
 
-			String trace = "ing: " + nodeService.getProperty(ingListDataItem.getIng(), ContentModel.PROP_NAME) + " - qty: " + ingListDataItem.getQtyPerc()
+			String trace = "ing: " + nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME) + " - qty: " + ingListDataItem.getQtyPerc()
 					+ " - geo origins: " + geoOriginsText + " - bio origins: " + bioOriginsText + " is gmo: " + ingListDataItem.getIsGMO() + " is ionized: "
 					+ ingListDataItem.getIsIonized();
 			logger.debug(trace);
@@ -480,9 +481,9 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 
 		// ReqCtrlList
 		checks = 0;
-		String message1 = I18NUtil.getMessage(AbstractSimpleListFormulationHandler.MESSAGE_UNDEFINED_CHARACT, nodeService.getProperty(nut3, ContentModel.PROP_NAME));
+		String message1 = I18NUtil.getMessage(AbstractSimpleListFormulationHandler.MESSAGE_UNDEFINED_CHARACT, nodeService.getProperty(nut3, BeCPGModel.PROP_CHARACT_NAME));
 		logger.info(message1);
-		String message2 = I18NUtil.getMessage(NutsCalculatingFormulationHandler.MESSAGE_MAXIMAL_DAILY_VALUE, nodeService.getProperty(nut3, ContentModel.PROP_NAME));
+		String message2 = I18NUtil.getMessage(NutsCalculatingFormulationHandler.MESSAGE_MAXIMAL_DAILY_VALUE, nodeService.getProperty(nut3, BeCPGModel.PROP_CHARACT_NAME));
 		logger.info(formulatedProduct.getCompoListView().getReqCtrlList().size());
 		for (ReqCtrlListDataItem r : formulatedProduct.getCompoListView().getReqCtrlList()) {
 
@@ -508,7 +509,7 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 		checks = 0;
 		for (LabelClaimListDataItem labelClaimListDataItem : formulatedProduct.getLabelClaimList()) {
 
-			logger.info(nodeService.getProperty(labelClaimListDataItem.getLabelClaim(), ContentModel.PROP_NAME) + " - Evaluate to : "
+			logger.info(nodeService.getProperty(labelClaimListDataItem.getLabelClaim(), BeCPGModel.PROP_CHARACT_NAME) + " - Evaluate to : "
 					+ labelClaimListDataItem.getIsClaimed());
 
 			if (labelClaimListDataItem.getLabelClaim().equals(labelClaims.get(0)) && !labelClaimListDataItem.getIsClaimed()) {

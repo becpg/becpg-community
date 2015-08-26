@@ -28,6 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.CharactDetailsVisitor;
 import fr.becpg.repo.product.data.CharactDetails;
@@ -119,8 +120,8 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 				
 				if (logger.isDebugEnabled()) {
 					logger.debug("Add new charact detail. Charact: " + 
-							nodeService.getProperty(simpleCharact.getCharactNodeRef(), ContentModel.PROP_NAME) + 
-							" - entityNodeRef: " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + 
+							nodeService.getProperty(simpleCharact.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME) + 
+							" - entityNodeRef: " + nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_CHARACT_NAME) + 
 							" - qty: " + qty +
 							" - value: " + value);
 				}
