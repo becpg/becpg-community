@@ -154,7 +154,7 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 				NodeRef listsContainerNodeRef = entityListDAO.getListContainer(new NodeRef(dataListFilter.getFilterData()));
 				if (listsContainerNodeRef != null) {
 
-					NodeRef dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, dataListFilter.getDataType());
+					NodeRef dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, dataListFilter.getDataListName());
 					if (dataListNodeRef != null) {
 						queryBuilder = dataListFilter.getSearchQuery(dataListNodeRef);
 					}
