@@ -1,4 +1,4 @@
 "PATH";"/System/Characts/bcpg:entityLists/Costs";
 "TYPE";"bcpg:cost";
-"COLUMNS";"cm:name";"bcpg:costCurrency"
+"COLUMNS";"bcpg:charactName";"bcpg:costCurrency"
 "VALUES";"Coût MP";"XXX"

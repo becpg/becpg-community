@@ -347,7 +347,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("productData: " + compoListDataItem.getProduct() + " - ing: "
-						+ nodeService.getProperty(ingNodeRef, ContentModel.PROP_NAME) + " qtyPerc: " + totalQtyIng);
+						+ nodeService.getProperty(ingNodeRef, BeCPGModel.PROP_CHARACT_NAME) + " qtyPerc: " + totalQtyIng);
 			}
 
 			// recursive
@@ -402,7 +402,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 					for (IngListDataItem ingListDataItem : componentProductData.getIngList()) {
 						if (logger.isDebugEnabled()) {
 							logger.debug("For " + productNodeRef + " testing ing :"
-									+ nodeService.getProperty(ingListDataItem.getCharactNodeRef(), ContentModel.PROP_NAME));
+									+ nodeService.getProperty(ingListDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME));
 						}
 						for (ForbiddenIngListDataItem fil : productSpecificationData.getForbiddenIngList()) {
 

@@ -1335,7 +1335,7 @@
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="pjt:resourceCostValue" />
 					<show id="pjt:resourceCostBillRate" />
 					<show id="pjt:resourceCostHoursPerDay" />
@@ -1348,7 +1348,7 @@
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="pjt:resourceCostValue" />
 					<show id="pjt:resourceCostBillRate" />
 					<show id="pjt:resourceCostHoursPerDay" />

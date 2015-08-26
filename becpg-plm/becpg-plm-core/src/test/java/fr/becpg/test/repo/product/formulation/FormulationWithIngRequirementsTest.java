@@ -35,6 +35,7 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.springframework.extensions.surf.util.I18NUtil;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.FinishedProductData;
@@ -269,7 +270,7 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 						assertTrue(reqCtrlList.getSources().contains(rawMaterial6NodeRef));
 						checks++;
 					}
-					else if(reqCtrlList.getReqMessage().equals(I18NUtil.getMessage(AllergensCalculatingFormulationHandler.MESSAGE_FORBIDDEN_ALLERGEN, nodeService.getProperty(allergen1, ContentModel.PROP_NAME)))){
+					else if(reqCtrlList.getReqMessage().equals(I18NUtil.getMessage(AllergensCalculatingFormulationHandler.MESSAGE_FORBIDDEN_ALLERGEN, nodeService.getProperty(allergen1, BeCPGModel.PROP_CHARACT_NAME)))){
 						
 						assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
 						assertEquals(0, reqCtrlList.getSources().size());

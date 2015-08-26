@@ -179,7 +179,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		for(Map.Entry<NodeRef, List<NodeRef>> mandatoryCharact : mandatoryCharacts.entrySet()){
 			if(mandatoryCharact.getValue() != null && !mandatoryCharact.getValue().isEmpty()){
 				String message = I18NUtil.getMessage(MESSAGE_UNDEFINED_CHARACT,
-									nodeService.getProperty(mandatoryCharact.getKey(), ContentModel.PROP_NAME));
+									nodeService.getProperty(mandatoryCharact.getKey(), BeCPGModel.PROP_CHARACT_NAME));
 				
 				reqCtrlList.add(new ReqCtrlListDataItem(null,  RequirementType.Tolerated, message, mandatoryCharact.getKey(), mandatoryCharact.getValue()));
 			}
@@ -299,11 +299,11 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		if(logger.isDebugEnabled()){
 			logger.debug("valueToAdd = qtyUsed * value : " + qtyUsed + " * " + slDataItem.getValue());
 			if(newSimpleListDataItem.getNodeRef()!=null){
-				logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), ContentModel.PROP_NAME) + " - newValue : " + newSimpleListDataItem.getValue());
-				logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), ContentModel.PROP_NAME) + " - newMini : " + newSimpleListDataItem.getMini());
-				logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), ContentModel.PROP_NAME) + " - newMaxi : " + newSimpleListDataItem.getMaxi());
-				logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), ContentModel.PROP_NAME) + " - previousValue : " + newSimpleListDataItem.getPreviousValue());
-				logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), ContentModel.PROP_NAME) + " - futureValue : " + newSimpleListDataItem.getFutureValue());
+				logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME) + " - newValue : " + newSimpleListDataItem.getValue());
+				logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME) + " - newMini : " + newSimpleListDataItem.getMini());
+				logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME) + " - newMaxi : " + newSimpleListDataItem.getMaxi());
+				logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME) + " - previousValue : " + newSimpleListDataItem.getPreviousValue());
+				logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME) + " - futureValue : " + newSimpleListDataItem.getFutureValue());
 			}
 		}
 	}

@@ -154,7 +154,7 @@ public class FormulationCostsTest extends AbstractFinishedProductTest {
 				assertEquals(TareUnit.g, formulatedProduct.getTareUnit());
 				
 				for(CostListDataItem c : formulatedProduct.getCostList()){
-					String trace = "cost: " + nodeService.getProperty(c.getCost(), ContentModel.PROP_NAME) + " - value: " + c.getValue()
+					String trace = "cost: " + nodeService.getProperty(c.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + c.getValue()
 							+ " - unit: " + c.getUnit()
 							+ " level: " + c.getDepthLevel();
 					logger.info(trace);
@@ -210,7 +210,7 @@ public class FormulationCostsTest extends AbstractFinishedProductTest {
 								
 				for(CostListDataItem c : formulatedProduct.getCostList()){
 					
-					String trace = "cost: " + nodeService.getProperty(c.getCost(), ContentModel.PROP_NAME) + " - value: " + c.getValue()
+					String trace = "cost: " + nodeService.getProperty(c.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + c.getValue()
 							+ " - unit: " + c.getUnit();
 					logger.info(trace);
 					
@@ -295,7 +295,7 @@ public class FormulationCostsTest extends AbstractFinishedProductTest {
 				int checks = 0;
 				assertNotNull("CostList is null", formulatedProduct.getCostList());
 				for (CostListDataItem costListDataItem : formulatedProduct.getCostList()) {
-					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue()
+					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + costListDataItem.getValue()
 							+ " - previous value: " + costListDataItem.getPreviousValue()
 							+ " - future value: " + costListDataItem.getFutureValue()
 							+ " - unit: " + costListDataItem.getUnit();

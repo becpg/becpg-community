@@ -185,7 +185,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					String allergen = (String) nodeService.getProperty(dataItem.getAllergen(), BeCPGModel.PROP_LEGAL_NAME);
 
 					if (allergen == null || allergen.isEmpty()) {
-						allergen = (String) nodeService.getProperty(dataItem.getAllergen(), ContentModel.PROP_NAME);
+						allergen = (String) nodeService.getProperty(dataItem.getAllergen(), BeCPGModel.PROP_CHARACT_NAME);
 					}
 
 					// concat allergens
@@ -749,7 +749,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	protected QName getPropNameOfType(QName type) {
 		if (type != null && type.equals(PLMModel.TYPE_CERTIFICATION)) {
 			return ContentModel.PROP_TITLE;
-		} else {
+		} if(dictionaryService.isSubClass(type, BeCPGModel.TYPE_CHARACT)){
+		    return BeCPGModel.PROP_CHARACT_NAME;
+		}	else {
 			return ContentModel.PROP_NAME;
 		}
 	}

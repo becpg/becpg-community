@@ -64,7 +64,10 @@ public class JsonFormulaHelper {
 		if(value!=null && value.contains(JSON_SUB_VALUES)) {
 			try {
 				JSONObject jsonObject = new JSONObject(value);
-				return jsonObject.get(JSON_VALUE);
+				if(jsonObject.has(JSON_VALUE)){
+					return jsonObject.get(JSON_VALUE);
+				}
+				return "";
 			} catch (Exception e) {
 				logger.warn("Cannot parse "+value,e);
 			}

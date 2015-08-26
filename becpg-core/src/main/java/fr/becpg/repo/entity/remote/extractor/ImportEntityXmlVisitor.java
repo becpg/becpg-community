@@ -572,7 +572,7 @@ public class ImportEntityXmlVisitor {
 		if (code != null && code.length() > 0) {
 			beCPGQueryBuilder.andPropEquals(BeCPGModel.PROP_CODE, code);
 		} else if (name != null && name.length() > 0) {
-			beCPGQueryBuilder.andPropEquals(RemoteHelper.getPropName(type), cleanName(name));
+			beCPGQueryBuilder.andPropEquals(RemoteHelper.getPropName(type,entityDictionaryService), cleanName(name));
 		}
 
 		if (inBD) {
@@ -585,7 +585,7 @@ public class ImportEntityXmlVisitor {
 		if (!ret.isEmpty()) {
 			for (NodeRef node : ret) {
 				if (serviceRegistry.getNodeService().exists(node)
-						&& name.equals(serviceRegistry.getNodeService().getProperty(node, RemoteHelper.getPropName(type)))) {
+						&& name.equals(serviceRegistry.getNodeService().getProperty(node, RemoteHelper.getPropName(type,entityDictionaryService)))) {
 					logger.debug("Found node for query :" + beCPGQueryBuilder.toString());
 					return node;
 				}

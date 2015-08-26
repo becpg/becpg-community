@@ -597,7 +597,8 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 		return extractPropName(type, v);
 	}
 
-	private String extractPropName(QName type, NodeRef nodeRef) {
+	@Override
+	public  String extractPropName(QName type, NodeRef nodeRef) {
 		String value;
 
 		if (permissionService.hasReadPermission(nodeRef) == AccessStatus.ALLOWED) {

@@ -3866,7 +3866,7 @@
 			<form>
 
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:allergenType" />
@@ -3875,7 +3875,7 @@
 					<show id="bcpg:allergenSubset" />
 				</field-visibility>
 				<appearance>
-					<field id="cm:name" />
+					<field id="bcpg:charactName" />
 					<field id="cm:description">
 						<control>
 							<control-param name="activateLinks">true</control-param>
@@ -3903,7 +3903,7 @@
 			<!-- Create item form -->
 			<form>
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:allergenType" />
@@ -3912,7 +3912,7 @@
 					<show id="bcpg:allergenSubset" />
 				</field-visibility>
 				<appearance>
-					<field id="cm:name" />
+					<field id="bcpg:charactName" />
 					<field id="cm:description">
 						<control>
 							<control-param name="activateLinks">true</control-param>
@@ -3936,7 +3936,7 @@
 			<!-- Data Grid view -->
 			<form id="filter">
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="bcpg:allergenType" />
 					<show id="bcpg:allergenCode" />
 					<show id="bcpg:allergenRegulatoryThreshold"/>
@@ -3953,7 +3953,7 @@
 
 			<form id="datagrid">
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:allergenType" />
 					<show id="bcpg:allergenCode" />
@@ -3969,7 +3969,7 @@
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:costCurrency" />
@@ -3977,7 +3977,7 @@
 					<show id="bcpg:costFormula" />
 				</field-visibility>
 				<appearance>
-					<field id="cm:name" />
+					<field id="bcpg:charactName" />
 					<field id="cm:description">
 						<control>
 							<control-param name="activateLinks">true</control-param>
@@ -3998,7 +3998,7 @@
 			<!-- Create item form -->
 			<form>
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:costCurrency" />
@@ -4006,7 +4006,7 @@
 					<show id="bcpg:costFormula" />
 				</field-visibility>
 				<appearance>
-					<field id="cm:name" />
+					<field id="bcpg:charactName" />
 					<field id="cm:description">
 						<control>
 							<control-param name="activateLinks">true</control-param>
@@ -4023,7 +4023,7 @@
 			<!-- Data Grid view -->
 			<form id="filter">
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="bcpg:costCurrency" />
 					<show id="bcpg:costFixed" />
 				</field-visibility>
@@ -4031,7 +4031,7 @@
 
 			<form id="datagrid">
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:costCurrency" />
 					<show id="bcpg:costFixed" />
@@ -4046,7 +4046,7 @@
 			<form>
 
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:ingCEECode" />
@@ -4055,7 +4055,7 @@
 
 				<appearance>
 
-					<field id="cm:name" />
+					<field id="bcpg:charactName" />
 					<field id="cm:description">
 						<control>
 							<control-param name="activateLinks">true</control-param>
@@ -4079,7 +4079,7 @@
 			<form>
 
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:ingCEECode" />
@@ -4088,7 +4088,7 @@
 
 				<appearance>
 
-					<field id="cm:name" />
+					<field id="bcpg:charactName" />
 					<field id="cm:description">
 						<control>
 							<control-param name="activateLinks">true</control-param>
@@ -4107,7 +4107,7 @@
 			<!-- Data Grid view -->
 			<form id="filter">
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="bcpg:ingTypeV2"  force="true"/>
 				</field-visibility>
 				<appearance>
@@ -4122,7 +4122,7 @@
 
 			<form id="datagrid">
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:ingCEECode" />
 					<show id="bcpg:ingTypeV2"  force="true"/>
@@ -4137,12 +4137,12 @@
 			<form>
 
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
 				</field-visibility>
 				<appearance>
-					<field id="cm:name" />
+					<field id="bcpg:charactName" />
 					<field id="cm:description">
 						<control>
 							<control-param name="activateLinks">true</control-param>
@@ -4160,14 +4160,14 @@
 			<form>
 
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
 				</field-visibility>
 
 				<appearance>
 
-					<field id="cm:name" />
+					<field id="bcpg:charactName" />
 					<field id="cm:description">
 						<control>
 							<control-param name="activateLinks">true</control-param>
@@ -4180,13 +4180,13 @@
 			<!-- Data Grid view -->
 			<form id="filter">
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 				</field-visibility>
 			</form>
 
 			<form id="datagrid">
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="bcpg:legalName" />
 				</field-visibility>
 			</form>
@@ -4198,7 +4198,7 @@
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:nutGroup" />
@@ -4230,7 +4230,7 @@
 			<form>
 
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:nutGroup" />
@@ -4258,7 +4258,7 @@
 			<!-- Data Grid view -->
 			<form id="filter">
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="bcpg:nutGroup" />
 					<show id="bcpg:nutType" />
 					<show id="bcpg:isDeleted" />
@@ -4279,7 +4279,7 @@
 
 			<form id="datagrid">
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:nutGroup" />
 					<show id="bcpg:nutType" />
@@ -4296,7 +4296,7 @@
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:nutrientProfileScoreFormula" />
 					<show id="bcpg:nutrientProfileClassFormula" />
@@ -4326,7 +4326,7 @@
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:nutrientProfileScoreFormula" />
 					<show id="bcpg:nutrientProfileClassFormula" />
@@ -4353,13 +4353,13 @@
 			<!-- Data Grid view -->
 			<form id="filter">
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 				</field-visibility>
 			</form>
 
 			<form id="datagrid">
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="cm:description"/>
 				</field-visibility>
 			</form>
@@ -4372,12 +4372,12 @@
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
 				</field-visibility>
 				<appearance>
-					<field id="cm:name" />
+					<field id="bcpg:charactName" />
 					<field id="cm:description">
 						<control>
 							<control-param name="activateLinks">true</control-param>
@@ -4395,14 +4395,14 @@
 			<form>
 
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
 				</field-visibility>
 
 				<appearance>
 
-					<field id="cm:name" />
+					<field id="bcpg:charactName" />
 					<field id="cm:description">
 						<control>
 							<control-param name="activateLinks">true</control-param>
@@ -4415,13 +4415,13 @@
 			<!-- Data Grid view -->
 			<form id="filter">
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 				</field-visibility>
 			</form>
 
 			<form id="datagrid">
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="bcpg:legalName" />
 				</field-visibility>
 			</form>
@@ -4433,7 +4433,7 @@
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:physicoChemUnit" />
@@ -4441,7 +4441,7 @@
 					<show id="bcpg:physicoChemFormulatedFromVol" />
 				</field-visibility>
 				<appearance>
-					<field id="cm:name" />
+					<field id="bcpg:charactName" />
 					<field id="cm:description">
 						<control>
 							<control-param name="activateLinks">true</control-param>
@@ -4459,7 +4459,7 @@
 			<form>
 
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:physicoChemUnit" />
@@ -4469,7 +4469,7 @@
 
 				<appearance>
 
-					<field id="cm:name" />
+					<field id="bcpg:charactName" />
 					<field id="cm:description">
 						<control>
 							<control-param name="activateLinks">true</control-param>
@@ -4483,14 +4483,14 @@
 			<!-- Data Grid view -->
 			<form id="filter">
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="bcpg:physicoChemUnit" />
 				</field-visibility>
 			</form>
 
 			<form id="datagrid">
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:physicoChemUnit" />
 					<show id="bcpg:physicoChemFormulated" />
@@ -4505,13 +4505,13 @@
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:geoOriginISOCode" />
 				</field-visibility>
 				<appearance>
-					<field id="cm:name" />
+					<field id="bcpg:charactName" />
 					<field id="cm:description">
 						<control>
 							<control-param name="activateLinks">true</control-param>
@@ -4528,7 +4528,7 @@
 			<form>
 
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:geoOriginISOCode" />
@@ -4536,7 +4536,7 @@
 
 				<appearance>
 
-					<field id="cm:name" />
+					<field id="bcpg:charactName" />
 					<field id="cm:description">
 						<control>
 							<control-param name="activateLinks">true</control-param>
@@ -4550,14 +4550,14 @@
 			<!-- Data Grid view -->
 			<form id="filter">
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="bcpg:geoOriginISOCode" />
 				</field-visibility>
 			</form>
 
 			<form id="datagrid">
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:geoOriginISOCode" />
 				</field-visibility>
@@ -4570,13 +4570,13 @@
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:bioOriginType" />
 				</field-visibility>
 				<appearance>
-					<field id="cm:name" />
+					<field id="bcpg:charactName" />
 					<field id="cm:description">
 						<control>
 							<control-param name="activateLinks">true</control-param>
@@ -4593,7 +4593,7 @@
 			<form>
 
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:bioOriginType" />
@@ -4601,7 +4601,7 @@
 
 				<appearance>
 
-					<field id="cm:name" />
+					<field id="bcpg:charactName" />
 					<field id="cm:description">
 						<control>
 							<control-param name="activateLinks">true</control-param>
@@ -4615,14 +4615,14 @@
 			<!-- Data Grid view -->
 			<form id="filter">
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="bcpg:bioOriginType" />
 				</field-visibility>
 			</form>
 
 			<form id="datagrid">
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:bioOriginType" />
 				</field-visibility>
@@ -4929,7 +4929,7 @@
 			<!-- Data Grid view -->
 			<form id="filter">
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 				</field-visibility>
 			</form>
 
@@ -4948,14 +4948,14 @@
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:labelClaimType" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:labelClaimFormula" />
 				</field-visibility>
 				<appearance>
-					<field id="cm:name" />
+					<field id="bcpg:charactName" />
 					<field id="cm:description">
 						<control>
 							<control-param name="activateLinks">true</control-param>
@@ -4976,14 +4976,14 @@
 			<!-- Create item form -->
 			<form>
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:labelClaimType" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:labelClaimFormula" />
 				</field-visibility>
 				<appearance>
-					<field id="cm:name" />
+					<field id="bcpg:charactName" />
 					<field id="cm:description">
 						<control>
 							<control-param name="activateLinks">true</control-param>
@@ -5000,7 +5000,7 @@
 			<!-- Data Grid view -->
 			<form id="filter">
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:labelClaimType" />
 				</field-visibility>
@@ -5008,7 +5008,7 @@
 
 			<form id="datagrid">
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:labelClaimType" />
 				</field-visibility>
@@ -7236,7 +7236,7 @@
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:storageConditionsMode" />
 					<show id="bcpg:storageConditionsTemperature" />
@@ -7264,7 +7264,7 @@
 			<form>
 
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:storageConditionsMode" />
 					<show id="bcpg:storageConditionsTemperature" />
@@ -7288,13 +7288,13 @@
 			<!-- Data Grid view -->
 			<form id="filter">
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 				</field-visibility>
 			</form>
 
 			<form id="datagrid">
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:storageConditionsMode" />
 					<show id="bcpg:storageConditionsTemperature" />
@@ -7307,7 +7307,7 @@
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 				</field-visibility>
 				<appearance>
@@ -7327,7 +7327,7 @@
 			<form>
 
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 				</field-visibility>
 
@@ -7343,13 +7343,13 @@
 			<!-- Data Grid view -->
 			<form id="filter">
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 				</field-visibility>
 			</form>
 
 			<form id="datagrid">
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 				</field-visibility>
 			</form>
