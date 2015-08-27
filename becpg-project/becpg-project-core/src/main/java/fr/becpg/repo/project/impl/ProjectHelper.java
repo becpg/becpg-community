@@ -37,14 +37,13 @@ import fr.becpg.repo.project.data.projectList.DeliverableState;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskManualDate;
 import fr.becpg.repo.project.data.projectList.TaskState;
-import fr.becpg.repo.project.formulation.PlanningFormulationHandler;
 
 public class ProjectHelper {
 
 	private static final int DURATION_DEFAULT = 1;
 	private static final int DURATION_NEXT_DAY = 2;
 
-	private static final Log logger = LogFactory.getLog(PlanningFormulationHandler.class);
+	private static final Log logger = LogFactory.getLog(ProjectHelper.class);
 
 	public static TaskListDataItem getTask(ProjectData projectData, NodeRef taskListNodeRef) {
 
