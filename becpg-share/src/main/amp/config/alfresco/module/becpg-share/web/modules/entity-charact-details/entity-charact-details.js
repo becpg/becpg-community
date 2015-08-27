@@ -37,6 +37,11 @@
     var PREFERENCES_DETAILS_VIEW = "beCPG.module.EntityCharactDetails", PREF_CHART_TYPE = "chartType";
 
     /**
+     * for Path Navigation
+     */
+    var BAR_EVENTCLASS = Alfresco.util.generateDomId(null, "barItem");
+
+    /**
      * Dashboard EntityCharactDetails constructor.
      * 
      * @param {String}
@@ -103,7 +108,7 @@
                                 {
                                     successCallback :
                                     {
-                                        fn : scope.render(),
+                                        fn : scope.loadChartData(),
                                         scope : this
                                     }
                                 });
@@ -125,7 +130,7 @@
                          */
                         onChartTypeClicked : function EntityCharactDetails_onChartTypeClicked(ev)
                         {
-                            this.render();
+                            this.loadChartData();
                         },
 
                         /**
@@ -170,7 +175,8 @@
 
                             // Load preferences to override default filter and
                             // range
-                            me.selectMenuValue(me.widgets.chartTypePicker, "chartData");
+
+                            this.selectMenuValue(this.widgets.chartTypePicker, "chartData");
 
                             this.preferencesService.request(me.getPreference(),
                             {
@@ -192,6 +198,29 @@
 
                             me.loadChartData();
 
+                            var fnOnBarItemClick = function fnOnBarItemClick(layer, args)
+                            {
+                                var owner = YAHOO.Bubbling.getOwnerByTagName(args[1].anchor, "span");
+                                if (owner !== null)
+                                {
+                                    var splitted = owner.className.split(" ");
+                                    var nodeRef = splitted[0];
+                                    me.options.entityNodeRef = nodeRef.replace("bar-","");
+                                    
+                                    for (var index = 0; index < me.options.navigationPath.length; index++) {
+                                       if( me.options.navigationPath[index].nodeRef == me.options.entityNodeRef){
+                                           me.options.navigationPath = me.options.navigationPath.slice(0,index+1);
+                                           break;
+                                        }
+                                    }  
+                                    
+                                    me.loadChartData();
+                                    return false;
+                                }
+                                return true;
+                            };
+
+                            YAHOO.Bubbling.addDefaultAction(BAR_EVENTCLASS, fnOnBarItemClick);
                         },
 
                         onExportCSV : function BulkEdit_onExportCSV()
@@ -209,8 +238,6 @@
                                 this.options.entityNodeRef = this.options.backEntityNodeRef.pop();
                                 this.options.navigationPath.pop();
                                 this.loadChartData();
-
-                              
                             }
 
                             if (this.options.backEntityNodeRef == null || this.options.backEntityNodeRef.length < 1)
@@ -274,11 +301,7 @@
 
                         _buildDetailsUrl : function EntityCharactDetails__buildUrl(format)
                         {
-                            return Alfresco.constants.PROXY_URI + "becpg/charact/formulate" + (format != null && format.length > 0 ? "." + format : "")
-                            + "?entityNodeRef=" + this.options.entityNodeRef + "&itemType=" 
-                            + this.options.itemType + "&dataListName=" 
-                            + this.options.dataListName + "&dataListItems=" 
-                            + this.options.dataListItems;
+                            return Alfresco.constants.PROXY_URI + "becpg/charact/formulate" + (format != null && format.length > 0 ? "." + format : "") + "?entityNodeRef=" + this.options.entityNodeRef + "&itemType=" + this.options.itemType + "&dataListName=" + this.options.dataListName + "&dataListItems=" + this.options.dataListItems;
                         },
                         /**
                          * 
@@ -298,6 +321,8 @@
 
                             for (i = 0; i < data.metadatas.length; i++)
                             {
+                                var colName = data.metadatas[i].colName+(data.metadatas[i].colUnit!=null?" ("+data.metadatas[i].colUnit+")":"");
+                                
                                 myFieldDefs.push(
                                 {
                                     key : "col" + i,
@@ -314,7 +339,7 @@
                                         // Validate
                                         if (YAHOO.lang.isNumber(number))
                                         {
-                                            return Math.floor(number * 10000) / 10000;
+                                            return beCPG.util.sigFigs(number,3);
                                         }
                                         return oData;
                                     }
@@ -322,18 +347,21 @@
                                 this.columnDefs.push(
                                 {
                                     key : "col" + i,
-                                    label : data.metadatas[i].colName
+                                    label : colName
+                                    
                                 });
+                                
+                                
                                 if (i > 0)
                                 {
                                     this.seriesDef.push(
                                     {
-                                        displayName : data.metadatas[i].colName,
+                                        displayName : colName,
                                         yField : "col" + i
                                     });
                                     this.barChartSeriesDef.push(
                                     {
-                                        displayName : data.metadatas[i].colName,
+                                        displayName : colName,
                                         xField : "col" + i
                                     });
                                 }
@@ -352,12 +380,26 @@
                                 key : "cssClass"
                             });
 
+                            this.columnDefs[0].formatter = function (elCell, oRecord, oColumn, oData) {
+                                if(oRecord.getData("cssClass")){
+                                    elCell.innerHTML = '<span class="'+ oRecord.getData("cssClass") + '">'+oData+'</span>';
+                                } else {
+                                    elCell.innerHTML = '<b>'+oData+'</b>'
+                                }
+                            };
+                            
+                            if(this.widgets.chartTypePicker.value != "chartData"){
+                               //Remove totals
+                                data.resultsets.pop();
+                            }
+                            
                             this.dataSource = new YAHOO.util.DataSource(data.resultsets);
                             this.dataSource.responseType = YAHOO.util.DataSource.TYPE_JSARRAY;
                             this.dataSource.responseSchema =
                             {
                                 fields : myFieldDefs
                             };
+                          
 
                             this.render();
 
@@ -466,6 +508,8 @@
 
                                 if (this.widgets.dataTable != null)
                                 {
+                                    
+                                    
                                     this.widgets.dataTable.subscribe("cellClickEvent", function(events)
                                     {
                                         var target = events.target;
@@ -482,26 +526,30 @@
                                         }
                                     });
                                 }
-                              
-                                
-                                if(this.options.navigationPath!=null && this.options.navigationPath.length>0){
+
+                                if (this.options.navigationPath != null && this.options.navigationPath.length > 0)
+                                {
                                     var html = "";
                                     for (i = 0; i < this.options.navigationPath.length; i++)
                                     {
-                                        html += '<span class="separator"> > </span><span class="' + this.options.navigationPath[i].cssClass + '">'
-                                             + '<a href=' + beCPG.util.entityURL(null, this.options.navigationPath[i].nodeRef) + '>' + this.options.navigationPath[i].name + '</a>'
-                                             + '</span>';
+                                        html += '<span class="separator"> > </span><span class="bar-'+this.options.navigationPath[i].nodeRef+' ' 
+                                        + this.options.navigationPath[i].cssClass + '">'
                                         
+                                        + '<a href="#" class="'+BAR_EVENTCLASS+'" >' 
+                                        + this.options.navigationPath[i].name + '</a>' + '</span>';
+
                                     }
-                                    Dom.get(this.id+"-chartPath").innerHTML = html;
-                                    Dom.setStyle(this.id+"-chartPath","visibility","inherit");
- 
+                                    Dom.get(this.id + "-chartPath").innerHTML = html;
+                                    Dom.setStyle(this.id + "-chartPath", "visibility", "inherit");
+
+                                } else {
+                                    Dom.setStyle(this.id + "-chartPath", "visibility", "hidden");
                                 }
                                 
-                                
+                                Dom.setStyle(this.id + "-chart", "visibility", "inherit");
+
                             }
                         }
-
                     });
 
 })();
