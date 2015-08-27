@@ -17,10 +17,10 @@
  ******************************************************************************/
 package fr.becpg.repo.product.formulation.details;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
@@ -38,6 +38,7 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
+import fr.becpg.repo.repository.model.SimpleListDataItem;
 
 @Service
 public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
@@ -79,15 +80,19 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 		return ret;
 	}
 
-	protected List<NodeRef> extractCharacts(List<NodeRef> dataListItems) {
+	protected Map<NodeRef,String> extractCharacts(List<NodeRef> dataListItems) {
 
-		List<NodeRef> ret = new ArrayList<>();
+		Map<NodeRef,String> ret = new HashMap<>();
 		if (dataListItems != null) {
 			for (NodeRef dataListItem : dataListItems) {
 
 				SimpleCharactDataItem o = alfrescoRepository.findOne(dataListItem);
 				if (o != null ) {
-					ret.add(o.getCharactNodeRef());
+					if(o instanceof SimpleListDataItem){
+						ret.put(o.getCharactNodeRef(), ((SimpleListDataItem)o).getUnit());
+					} else {
+						ret.put(o.getCharactNodeRef(), null);
+					}
 				}
 			}
 		}
