@@ -1,7 +1,9 @@
 package fr.becpg.repo.admin.patch;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import org.alfresco.model.ContentModel;
@@ -129,9 +131,16 @@ public class CharactNamePatch extends AbstractBeCPGPatch {
 					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 					policyBehaviourFilter.disableBehaviour();
 					String name = (String) nodeService.getProperty(dataListNodeRef, ContentModel.PROP_NAME);
-					if (name != null) {
+					String charactName = (String) nodeService.getProperty(dataListNodeRef, BeCPGModel.PROP_CHARACT_NAME);
+					Boolean isDeleted = (Boolean) nodeService.getProperty(dataListNodeRef, BeCPGModel.PROP_IS_DELETED);
+					if (name != null && (charactName == null || charactName.isEmpty())) {
 						nodeService.setProperty(dataListNodeRef, ContentModel.PROP_NAME, "patched-"+ name.replaceAll("\\?", "").replace(" ","_"));
 						nodeService.setProperty(dataListNodeRef, BeCPGModel.PROP_CHARACT_NAME, name);
+						nodeService.setProperty(dataListNodeRef, BeCPGModel.PROP_IS_DELETED, isDeleted != null ? isDeleted : false);
+						
+						if(!nodeService.hasAspect(dataListNodeRef, BeCPGModel.ASPECT_LEGAL_NAME)){
+							nodeService.addAspect(dataListNodeRef, BeCPGModel.ASPECT_LEGAL_NAME, new HashMap<QName, Serializable>());
+						}
 					}
 
 				} else {
