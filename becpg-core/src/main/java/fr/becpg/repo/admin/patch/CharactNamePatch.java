@@ -75,8 +75,7 @@ public class CharactNamePatch extends AbstractBeCPGPatch {
 
 			final long maxNodeId = getPatchDAO().getMaxAdmNodeID();
 
-			long minSearchNodeId = 1;
-			long maxSearchNodeId = count;
+			long minSearchNodeId = 0;
 
 			final Pair<Long, QName> val = getQnameDAO().getQName(toApplyType);
 
@@ -91,7 +90,7 @@ public class CharactNamePatch extends AbstractBeCPGPatch {
 					result.clear();
 
 					while (result.isEmpty() && minSearchNodeId < maxNodeId) {
-						List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, maxSearchNodeId);
+						List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, minSearchNodeId + count);
 
 						for (Long nodeid : nodeids) {
 							NodeRef.Status status = getNodeDAO().getNodeIdStatus(nodeid);
@@ -100,7 +99,6 @@ public class CharactNamePatch extends AbstractBeCPGPatch {
 							}
 						}
 						minSearchNodeId = minSearchNodeId + count;
-						maxSearchNodeId = maxSearchNodeId + count;
 					}
 				}
 
@@ -109,7 +107,7 @@ public class CharactNamePatch extends AbstractBeCPGPatch {
 		};
 
 		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("CharactNamePatch", transactionService.getRetryingTransactionHelper(),
-				workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 1000);
+				workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 500);
 
 		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
 
