@@ -262,8 +262,10 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 								} else {
 
 									if (error != null) {
-										if (!error.getSources().contains(part)) {
-											error.getSources().add(part);
+										if(allergenListDataItem.getQtyPerc()==null || qtyUsed == null){
+											if (!error.getSources().contains(part)) {
+												error.getSources().add(part);
+											}
 										}
 									} else {
 										List<NodeRef> sourceNodeRefs = new ArrayList<>();
@@ -271,15 +273,14 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 										error = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, allergenNodeRef, sourceNodeRefs);
 										errors.put(message, error);
-									}
+										Double regulatoryThreshold = (Double) nodeService.getProperty(allergenListDataItem.getAllergen(), PLMModel.PROP_ALLERGEN_REGULATORY_THRESHOLD);
+										if (regulatoryThreshold != null) {
+											if (logger.isDebugEnabled()) {
+												logger.debug("Adding allergen error " + error.toString());
+											}
 
-									Double regulatoryThreshold = (Double) nodeService.getProperty(allergenListDataItem.getAllergen(), PLMModel.PROP_ALLERGEN_REGULATORY_THRESHOLD);
-									if (regulatoryThreshold != null) {
-										if (logger.isDebugEnabled()) {
-											logger.debug("Adding allergen error " + error.toString());
+											ret.add(error);
 										}
-
-										ret.add(error);
 									}
 
 									newAllergenListDataItem.setQtyPerc(null);
