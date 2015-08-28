@@ -38,7 +38,7 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
-import fr.becpg.repo.repository.model.SimpleListDataItem;
+import fr.becpg.repo.repository.model.UnitAwareDataItem;
 
 @Service
 public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
@@ -88,8 +88,8 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 
 				SimpleCharactDataItem o = alfrescoRepository.findOne(dataListItem);
 				if (o != null ) {
-					if(o instanceof SimpleListDataItem){
-						ret.put(o.getCharactNodeRef(), ((SimpleListDataItem)o).getUnit());
+					if(o instanceof UnitAwareDataItem){
+						ret.put(o.getCharactNodeRef(), ((UnitAwareDataItem)o).getUnit());
 					} else {
 						ret.put(o.getCharactNodeRef(), null);
 					}

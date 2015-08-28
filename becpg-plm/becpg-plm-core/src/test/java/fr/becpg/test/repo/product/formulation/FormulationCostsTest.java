@@ -23,7 +23,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;

@@ -17,7 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.repository.model;
 
-public interface IManualDataItem {
+public interface ManualDataItem {
 
 	Boolean getIsManual();
 	void setIsManual(Boolean isManual);
