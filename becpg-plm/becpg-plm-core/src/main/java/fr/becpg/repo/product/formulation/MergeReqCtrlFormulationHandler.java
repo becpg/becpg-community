@@ -41,7 +41,7 @@ import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
-import fr.becpg.repo.repository.model.SimpleListDataItem;
+import fr.becpg.repo.repository.model.FormulatedCharactDataItem;
 
 /**
  * Merge ReqCtrlListDataItem to avoid duplication of items and sort them
@@ -158,14 +158,14 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 			}			
 			if(r.getCharact() != null){
 				QName type = nodeService.getType(r.getCharact());
-				List<SimpleListDataItem> simpleList = new ArrayList<>();
+				List<FormulatedCharactDataItem> simpleList = new ArrayList<>();
 				if(PLMModel.TYPE_NUT.equals(type)){
-					simpleList = (List<SimpleListDataItem>)(List<?>)productData.getNutList();					
+					simpleList = (List<FormulatedCharactDataItem>)(List<?>)productData.getNutList();					
 				}
 				else if(PLMModel.TYPE_COST.equals(type)){
-					simpleList = (List<SimpleListDataItem>)(List<?>)productData.getCostList();
+					simpleList = (List<FormulatedCharactDataItem>)(List<?>)productData.getCostList();
 				}
-				for(SimpleListDataItem sl : simpleList){
+				for(FormulatedCharactDataItem sl : simpleList){
 					if(r.getCharact().equals(sl.getCharactNodeRef())){
 						String message = r.getReqMessage();
 						if(r.getSources() != null && !r.getSources().isEmpty()){

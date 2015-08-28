@@ -21,12 +21,12 @@ import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
-import fr.becpg.repo.repository.model.IManualDataItem;
+import fr.becpg.repo.repository.model.ManualDataItem;
 import fr.becpg.repo.repository.model.Synchronisable;
 
 @AlfType
 @AlfQname(qname = "bcpg:dynamicCharactList")
-public class DynamicCharactListItem extends BeCPGDataObject implements Synchronisable,IManualDataItem {
+public class DynamicCharactListItem extends BeCPGDataObject implements Synchronisable,ManualDataItem {
 
 	/**
 	 * 

@@ -17,9 +17,17 @@
  ******************************************************************************/
 package fr.becpg.repo.repository.model;
 
-public interface SimpleListDataItem extends ManualDataItem,
-					SimpleCharactDataItem,
-					AspectAwareDataItem,
-					SortableDataItem {
 
+
+public interface ForecastValueDataItem extends ManualDataItem, SimpleCharactDataItem, AspectAwareDataItem {
+
+
+	Double getPreviousValue();
+	
+	void setPreviousValue(Double previousValue);
+	
+	Double getFutureValue();
+	
+	void setFutureValue(Double futureValue);
+	
 }

@@ -42,6 +42,9 @@ import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.model.ForecastValueDataItem;
+import fr.becpg.repo.repository.model.FormulatedCharactDataItem;
+import fr.becpg.repo.repository.model.MinMaxValueDataItem;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
@@ -49,18 +52,16 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 	public static final String UNIT_SEPARATOR = "/";
 	public static final String MESSAGE_UNDEFINED_CHARACT = "message.formulate.undefined.charact";
-	
+
 	private static final Log logger = LogFactory.getLog(AbstractSimpleListFormulationHandler.class);
-	
 
 	protected AlfrescoRepository<T> alfrescoRepository;
-	
+
 	protected EntityListDAO entityListDAO;
 
 	protected NodeService nodeService;
 
 	protected boolean transientFormulation = false;
-	
 
 	public void setTransientFormulation(boolean transientFormulation) {
 		this.transientFormulation = transientFormulation;
@@ -77,296 +78,319 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
-	
-	public T createNewInstance() throws InstantiationException, IllegalAccessException{
+
+	public T createNewInstance() throws InstantiationException, IllegalAccessException {
 		return getInstanceClass().newInstance();
 	}
-	
+
 	protected abstract Class<T> getInstanceClass();
-	
+
 	protected abstract QName getDataListVisited();
-	
+
 	protected abstract Map<NodeRef, List<NodeRef>> getMandatoryCharacts(ProductData formulatedProduct, QName componentType);
-	
-	protected Map<NodeRef, List<NodeRef>> getMandatoryCharactsFromList(List<T> simpleListDataList){
+
+	protected Map<NodeRef, List<NodeRef>> getMandatoryCharactsFromList(List<T> simpleListDataList) {
 		Map<NodeRef, List<NodeRef>> mandatoryCharacts = new HashMap<>(simpleListDataList.size());
-		for(SimpleListDataItem sl : simpleListDataList){
-			if(isCharactFormulated(sl)){
+		for (SimpleListDataItem sl : simpleListDataList) {
+			if (isCharactFormulated(sl)) {
 				mandatoryCharacts.put(sl.getCharactNodeRef(), new ArrayList<NodeRef>());
-			}			
+			}
 		}
 		return mandatoryCharacts;
 	}
 
-	protected void formulateSimpleList(ProductData formulatedProduct, List<T> simpleListDataList) throws FormulateException{
-		logger.debug("formulateSimpleList");				
+	protected void formulateSimpleList(ProductData formulatedProduct, List<T> simpleListDataList) throws FormulateException {
+		logger.debug("formulateSimpleList");
 
-		if(simpleListDataList != null){			
-			for(SimpleListDataItem sl : simpleListDataList){
+		if (simpleListDataList != null) {
+			for (SimpleListDataItem sl : simpleListDataList) {
 				// reset value if formulated
-				if(isCharactFormulated(sl)){
+				if (isCharactFormulated(sl)) {
 					sl.setValue(null);
-					sl.setMini(null);
-					sl.setMaxi(null);
-					sl.setPreviousValue(null);
-					sl.setFutureValue(null);					
-					
+
+					if (sl instanceof MinMaxValueDataItem) {
+						((MinMaxValueDataItem) sl).setMini(null);
+						((MinMaxValueDataItem) sl).setMaxi(null);
+					}
+					if (sl instanceof ForecastValueDataItem) {
+						((ForecastValueDataItem) sl).setPreviousValue(null);
+						((ForecastValueDataItem) sl).setFutureValue(null);
+					}
+
 					// add detailable aspect
-					if(!sl.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM)){
+					if (!sl.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM)) {
 						sl.getAspects().add(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
 					}
-				}							
+				}
 			}
 		}
-		
+
 		copyProductTemplateList(formulatedProduct, simpleListDataList);
-				
-		visitChildren(formulatedProduct, simpleListDataList);		
-		
-		//sort
-	//	sort(simpleListDataList);
+
+		visitChildren(formulatedProduct, simpleListDataList);
+
+		// sort
+		// sort(simpleListDataList);
 	}
-	
-	protected void visitChildren(ProductData formulatedProduct, List<T> simpleListDataList) throws FormulateException{
-		
-        Map<NodeRef, Double> totalQtiesValue = new HashMap<>();
-		
+
+	protected void visitChildren(ProductData formulatedProduct, List<T> simpleListDataList) throws FormulateException {
+
+		Map<NodeRef, Double> totalQtiesValue = new HashMap<>();
+
 		Double netQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
-		
-		if(formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))){
-			
+
+		if (formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
+
 			Map<NodeRef, List<NodeRef>> mandatoryCharacts = getMandatoryCharacts(formulatedProduct, PLMModel.TYPE_RAWMATERIAL);
-			
-			for(CompoListDataItem compoItem : formulatedProduct.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))){
+
+			for (CompoListDataItem compoItem : formulatedProduct.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 				Double weight = FormulationHelper.getQtyInKg(compoItem);
 				Double vol = FormulationHelper.getNetVolume(compoItem, nodeService);
-				
-				if(weight != null){
+
+				if (weight != null) {
 					visitPart(compoItem.getProduct(), simpleListDataList, weight, vol, netQty, mandatoryCharacts, totalQtiesValue, formulatedProduct instanceof RawMaterialData);
-				}			
+				}
 			}
-			
+
 			addReqCtrlList(formulatedProduct.getCompoListView().getReqCtrlList(), mandatoryCharacts);
-		}		
-		
-		//Case Generic MP
-		if( formulatedProduct instanceof RawMaterialData){
+		}
+
+		// Case Generic MP
+		if (formulatedProduct instanceof RawMaterialData) {
 			formulateGenericRawMaterial(simpleListDataList, totalQtiesValue, netQty);
 		}
-		
+
 	}
-	
-	protected void formulateGenericRawMaterial(List<T> simpleListDataList,
-			Map<NodeRef, Double> totalQtiesValue, 
-			Double netQty){
-		if(logger.isDebugEnabled()){
+
+	protected void formulateGenericRawMaterial(List<T> simpleListDataList, Map<NodeRef, Double> totalQtiesValue, Double netQty) {
+		if (logger.isDebugEnabled()) {
 			logger.debug("Case generic MP adjust value to total");
 		}
-		for(SimpleListDataItem newSimpleListDataItem : simpleListDataList){			
-			if(totalQtiesValue.containsKey(newSimpleListDataItem.getCharactNodeRef()) ){
+		for (SimpleListDataItem newSimpleListDataItem : simpleListDataList) {
+			if (totalQtiesValue.containsKey(newSimpleListDataItem.getCharactNodeRef())) {
 				Double totalQty = totalQtiesValue.get(newSimpleListDataItem.getCharactNodeRef());
-				if(newSimpleListDataItem.getValue()!=null){
-					newSimpleListDataItem.setValue(newSimpleListDataItem.getValue()*netQty/totalQty);
-				}				
-			}			
+				if (newSimpleListDataItem.getValue() != null) {
+					newSimpleListDataItem.setValue(newSimpleListDataItem.getValue() * netQty / totalQty);
+				}
+			}
 		}
 	}
 
-	protected void addReqCtrlList(List<ReqCtrlListDataItem> reqCtrlList, Map<NodeRef, List<NodeRef>> mandatoryCharacts){
-		
-		//ReqCtrlList
-		for(Map.Entry<NodeRef, List<NodeRef>> mandatoryCharact : mandatoryCharacts.entrySet()){
-			if(mandatoryCharact.getValue() != null && !mandatoryCharact.getValue().isEmpty()){
-				String message = I18NUtil.getMessage(MESSAGE_UNDEFINED_CHARACT,
-									nodeService.getProperty(mandatoryCharact.getKey(), BeCPGModel.PROP_CHARACT_NAME));
-				
-				reqCtrlList.add(new ReqCtrlListDataItem(null,  RequirementType.Tolerated, message, mandatoryCharact.getKey(), mandatoryCharact.getValue()));
+	protected void addReqCtrlList(List<ReqCtrlListDataItem> reqCtrlList, Map<NodeRef, List<NodeRef>> mandatoryCharacts) {
+
+		// ReqCtrlList
+		for (Map.Entry<NodeRef, List<NodeRef>> mandatoryCharact : mandatoryCharacts.entrySet()) {
+			if (mandatoryCharact.getValue() != null && !mandatoryCharact.getValue().isEmpty()) {
+				String message = I18NUtil.getMessage(MESSAGE_UNDEFINED_CHARACT, nodeService.getProperty(mandatoryCharact.getKey(), BeCPGModel.PROP_CHARACT_NAME));
+
+				reqCtrlList.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, mandatoryCharact.getKey(), mandatoryCharact.getValue()));
 			}
 		}
 	}
-	
+
 	/**
 	 * Visit part.
-	 * @param valueCount 
+	 * 
+	 * @param valueCount
 	 *
 	 */
-	protected void visitPart(NodeRef componentNodeRef,  
-			List<T> simpleListDataList,
-			Double weightUsed,
-			Double volUsed,
-			Double netQty,			
-			Map<NodeRef, List<NodeRef>> mandatoryCharacts,
-			Map<NodeRef, Double> totalQtiesValue, 
-			boolean isGenericRawMaterial) throws FormulateException{								
-		
-		if(!PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.equals(nodeService.getType(componentNodeRef))){
-			
-			List<? extends SimpleListDataItem> componentSimpleListDataList = alfrescoRepository.loadDataList(componentNodeRef, getDataListVisited() ,getDataListVisited());
-			
-			if(!alfrescoRepository.hasDataList(componentNodeRef, getDataListVisited()) || 
-					componentSimpleListDataList.isEmpty()){			
-				
+	protected void visitPart(NodeRef componentNodeRef, List<T> simpleListDataList, Double weightUsed, Double volUsed, Double netQty, Map<NodeRef, List<NodeRef>> mandatoryCharacts,
+			Map<NodeRef, Double> totalQtiesValue, boolean isGenericRawMaterial) throws FormulateException {
+
+		if (!PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.equals(nodeService.getType(componentNodeRef))) {
+
+			List<? extends SimpleListDataItem> componentSimpleListDataList = alfrescoRepository.loadDataList(componentNodeRef, getDataListVisited(), getDataListVisited());
+
+			if (!alfrescoRepository.hasDataList(componentNodeRef, getDataListVisited()) || componentSimpleListDataList.isEmpty()) {
+
 				logger.debug("simpleListDataList " + getDataListVisited() + " is null or empty");
-				for(NodeRef charactNodeRef : mandatoryCharacts.keySet()){
+				for (NodeRef charactNodeRef : mandatoryCharacts.keySet()) {
 					addMissingMandatoryCharact(mandatoryCharacts, charactNodeRef, componentNodeRef);
 				}
 				return;
-			}
-			else{
-				
-				for(SimpleListDataItem newSimpleListDataItem : simpleListDataList){			
-					if(newSimpleListDataItem.getCharactNodeRef() != null && isCharactFormulated(newSimpleListDataItem)){
-						
+			} else {
+
+				for (SimpleListDataItem newSimpleListDataItem : simpleListDataList) {
+					if (newSimpleListDataItem.getCharactNodeRef() != null && isCharactFormulated(newSimpleListDataItem)) {
+
 						// calculate charact from qty or vol ?
-						Double qtyUsed = isCharactFormulatedFromVol(newSimpleListDataItem) || 
-								FormulationHelper.isProductUnitLiter(FormulationHelper.getProductUnit(componentNodeRef, nodeService)) 
-								? volUsed : weightUsed;
-						
+						Double qtyUsed = isCharactFormulatedFromVol(newSimpleListDataItem) || FormulationHelper.isProductUnitLiter(FormulationHelper.getProductUnit(componentNodeRef, nodeService)) ? volUsed
+								: weightUsed;
+
 						// look for charact in component
-						SimpleListDataItem slDataItem = null;				
-						for(SimpleListDataItem s : componentSimpleListDataList){
-							if(newSimpleListDataItem.getCharactNodeRef() != null && s.getCharactNodeRef() != null &&
-									newSimpleListDataItem.getCharactNodeRef().equals(s.getCharactNodeRef())){						
+						SimpleListDataItem slDataItem = null;
+						for (SimpleListDataItem s : componentSimpleListDataList) {
+							if (newSimpleListDataItem.getCharactNodeRef() != null && s.getCharactNodeRef() != null && newSimpleListDataItem.getCharactNodeRef().equals(s.getCharactNodeRef())) {
 								slDataItem = s;
 								break;
 							}
 						}
-									
-						//is it a mandatory charact ?
-						if(slDataItem == null || (slDataItem.getValue() == null && slDataItem.getMaxi() == null && slDataItem.getMini() == null)){					
-							addMissingMandatoryCharact(mandatoryCharacts, newSimpleListDataItem.getCharactNodeRef(), componentNodeRef);
+
+						// is it a mandatory charact ?
+						if (slDataItem == null || (slDataItem.getValue() == null)) {
+
+							if (slDataItem instanceof MinMaxValueDataItem) {
+								if (((MinMaxValueDataItem) slDataItem).getMaxi() == null && ((MinMaxValueDataItem) slDataItem).getMini() == null) {
+									addMissingMandatoryCharact(mandatoryCharacts, newSimpleListDataItem.getCharactNodeRef(), componentNodeRef);
+								}
+							} else {
+								addMissingMandatoryCharact(mandatoryCharacts, newSimpleListDataItem.getCharactNodeRef(), componentNodeRef);
+							}
 						}
-						
-						//Calculate values			
-						if(slDataItem != null && qtyUsed != null ){
-												
+
+						// Calculate values
+						if (slDataItem != null && qtyUsed != null) {
+
 							calculate(newSimpleListDataItem, slDataItem, qtyUsed, netQty, isGenericRawMaterial);
-							
-							if(totalQtiesValue!=null && slDataItem.getValue() != null){
+
+							if (totalQtiesValue != null && slDataItem.getValue() != null) {
 								Double currentQty = totalQtiesValue.get(newSimpleListDataItem.getCharactNodeRef());
-								if(currentQty==null){
+								if (currentQty == null) {
 									currentQty = 0d;
 								}
-								totalQtiesValue.put(newSimpleListDataItem.getCharactNodeRef(),currentQty+qtyUsed);
-							}							
-						}		
-					}						
-				}	
+								totalQtiesValue.put(newSimpleListDataItem.getCharactNodeRef(), currentQty + qtyUsed);
+							}
+						}
+					}
+				}
 			}
-		}		
-	}
-	
-	protected void calculate(SimpleListDataItem newSimpleListDataItem, SimpleListDataItem slDataItem, Double qtyUsed, Double netQty, boolean isGenericRawMaterial){
-		// newValue, newMini, newMaxi : usefull to know if one mini or maxi is filled on 1 raw material
-		Double newValue = newSimpleListDataItem.getFormulatedValue() != null ? newSimpleListDataItem.getFormulatedValue() : 0d;
-		Double value = slDataItem.getValue();
-		if(value != null){
-			newSimpleListDataItem.setValue(FormulationHelper.calculateValue(newSimpleListDataItem.getFormulatedValue(), qtyUsed, slDataItem.getValue(), netQty));			
 		}
-		else{
+	}
+
+	protected void calculate(SimpleListDataItem newSimpleListDataItem, SimpleListDataItem slDataItem, Double qtyUsed, Double netQty, boolean isGenericRawMaterial) {
+		// newValue, newMini, newMaxi : usefull to know if one mini or maxi is
+		// filled on 1 raw material
+
+		Double formulatedValue = 0d;
+		if (newSimpleListDataItem instanceof FormulatedCharactDataItem) {
+			formulatedValue = ((FormulatedCharactDataItem) newSimpleListDataItem).getFormulatedValue();
+		} else {
+			formulatedValue = newSimpleListDataItem.getValue();
+		}
+
+		Double newValue = formulatedValue != null ? formulatedValue : 0d;
+		Double value = slDataItem.getValue();
+		if (value != null) {
+			newSimpleListDataItem.setValue(FormulationHelper.calculateValue(formulatedValue, qtyUsed, slDataItem.getValue(), netQty));
+		} else {
 			value = 0d;
 		}
-				
-		if(isGenericRawMaterial){
-			if(slDataItem.getMini() != null 
-					&& (newSimpleListDataItem.getMini() == null
-						|| (newSimpleListDataItem.getMini() != null && newSimpleListDataItem.getMini() > slDataItem.getMini()))){
-				newSimpleListDataItem.setMini(slDataItem.getMini());
-			}		
-			if(slDataItem.getMaxi() != null 
-					&& (newSimpleListDataItem.getMaxi() == null
-						|| (newSimpleListDataItem.getMaxi() != null && newSimpleListDataItem.getMaxi() < slDataItem.getMaxi()))){
-				newSimpleListDataItem.setMaxi(slDataItem.getMaxi());
+		if (slDataItem instanceof MinMaxValueDataItem) {
+			if (isGenericRawMaterial) {
+				if (((MinMaxValueDataItem) slDataItem).getMini() != null
+						&& (((MinMaxValueDataItem) newSimpleListDataItem).getMini() == null || (((MinMaxValueDataItem) newSimpleListDataItem).getMini() != null && ((MinMaxValueDataItem) newSimpleListDataItem)
+								.getMini() > ((MinMaxValueDataItem) slDataItem).getMini()))) {
+					((MinMaxValueDataItem) newSimpleListDataItem).setMini(((MinMaxValueDataItem) slDataItem).getMini());
+				}
+				if (((MinMaxValueDataItem) slDataItem).getMaxi() != null
+						&& (((MinMaxValueDataItem) newSimpleListDataItem).getMaxi() == null || (((MinMaxValueDataItem) newSimpleListDataItem).getMaxi() != null && ((MinMaxValueDataItem) newSimpleListDataItem)
+								.getMaxi() < ((MinMaxValueDataItem) slDataItem).getMaxi()))) {
+					((MinMaxValueDataItem) newSimpleListDataItem).setMaxi(((MinMaxValueDataItem) slDataItem).getMaxi());
+				}
+			} else {
+				Double newMini = ((MinMaxValueDataItem) newSimpleListDataItem).getMini() != null ? ((MinMaxValueDataItem) newSimpleListDataItem).getMini() : newValue;
+				Double newMaxi = ((MinMaxValueDataItem) newSimpleListDataItem).getMaxi() != null ? ((MinMaxValueDataItem) newSimpleListDataItem).getMaxi() : newValue;
+				Double miniValue = ((MinMaxValueDataItem) slDataItem).getMini() != null ? ((MinMaxValueDataItem) slDataItem).getMini() : value;
+				Double maxiValue = ((MinMaxValueDataItem) slDataItem).getMaxi() != null ? ((MinMaxValueDataItem) slDataItem).getMaxi() : value;
+				if (miniValue < value || newMini < newValue || ((MinMaxValueDataItem) newSimpleListDataItem).getMini() != null) {
+					((MinMaxValueDataItem) newSimpleListDataItem).setMini(FormulationHelper.calculateValue(newMini, qtyUsed, miniValue, netQty));
+				}
+				if (maxiValue > value || newMaxi > newValue || ((MinMaxValueDataItem) newSimpleListDataItem).getMaxi() != null) {
+					((MinMaxValueDataItem) newSimpleListDataItem).setMaxi(FormulationHelper.calculateValue(newMaxi, qtyUsed, maxiValue, netQty));
+				}
 			}
 		}
-		else{				
-			Double newMini = newSimpleListDataItem.getMini() != null ? newSimpleListDataItem.getMini() : newValue;
-			Double newMaxi = newSimpleListDataItem.getMaxi() != null ? newSimpleListDataItem.getMaxi() : newValue;
-			Double miniValue = slDataItem.getMini() != null ? slDataItem.getMini() : value;
-			Double maxiValue = slDataItem.getMaxi() != null ? slDataItem.getMaxi() : value;
-			if(miniValue < value || newMini < newValue || newSimpleListDataItem.getMini() != null){
-				newSimpleListDataItem.setMini(FormulationHelper.calculateValue(newMini, qtyUsed, miniValue, netQty));
-			}	
-			if(maxiValue > value || newMaxi > newValue || newSimpleListDataItem.getMaxi() != null){
-				newSimpleListDataItem.setMaxi(FormulationHelper.calculateValue(newMaxi, qtyUsed, maxiValue, netQty));
-			}
+
+		if (newSimpleListDataItem instanceof ForecastValueDataItem) {
+			((ForecastValueDataItem) newSimpleListDataItem).setPreviousValue(FormulationHelper.calculateValue(((ForecastValueDataItem) newSimpleListDataItem).getPreviousValue(), qtyUsed,
+					((ForecastValueDataItem) slDataItem).getPreviousValue(), netQty));
+			((ForecastValueDataItem) newSimpleListDataItem).setFutureValue(FormulationHelper.calculateValue(((ForecastValueDataItem) newSimpleListDataItem).getFutureValue(), qtyUsed,
+					((ForecastValueDataItem) slDataItem).getFutureValue(), netQty));
 		}
-		
-		newSimpleListDataItem.setPreviousValue(FormulationHelper.calculateValue(newSimpleListDataItem.getPreviousValue(), qtyUsed, slDataItem.getPreviousValue(), netQty));
-		newSimpleListDataItem.setFutureValue(FormulationHelper.calculateValue(newSimpleListDataItem.getFutureValue(), qtyUsed, slDataItem.getFutureValue(), netQty));
-		
-		if(logger.isDebugEnabled()){
+
+		if (logger.isDebugEnabled()) {
 			logger.debug("valueToAdd = qtyUsed * value : " + qtyUsed + " * " + slDataItem.getValue());
-			if(newSimpleListDataItem.getNodeRef()!=null){
+			if (newSimpleListDataItem.getNodeRef() != null) {
 				logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME) + " - newValue : " + newSimpleListDataItem.getValue());
-				logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME) + " - newMini : " + newSimpleListDataItem.getMini());
-				logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME) + " - newMaxi : " + newSimpleListDataItem.getMaxi());
-				logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME) + " - previousValue : " + newSimpleListDataItem.getPreviousValue());
-				logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME) + " - futureValue : " + newSimpleListDataItem.getFutureValue());
+				if (newSimpleListDataItem instanceof MinMaxValueDataItem) {
+					logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME) + " - newMini : "
+							+ ((MinMaxValueDataItem) newSimpleListDataItem).getMini());
+					logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME) + " - newMaxi : "
+							+ ((MinMaxValueDataItem) newSimpleListDataItem).getMaxi());
+				}
+				if (newSimpleListDataItem instanceof ForecastValueDataItem) {
+					logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME) + " - previousValue : "
+							+ ((ForecastValueDataItem) newSimpleListDataItem).getPreviousValue());
+					logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME) + " - futureValue : "
+							+ ((ForecastValueDataItem) newSimpleListDataItem).getFutureValue());
+				}
 			}
 		}
 	}
-	
-	protected void addMissingMandatoryCharact(Map<NodeRef, List<NodeRef>> mandatoryCharacts, NodeRef charactNodeRef, NodeRef componentNodeRef){
-		if(mandatoryCharacts.containsKey(charactNodeRef)){
+
+	protected void addMissingMandatoryCharact(Map<NodeRef, List<NodeRef>> mandatoryCharacts, NodeRef charactNodeRef, NodeRef componentNodeRef) {
+		if (mandatoryCharacts.containsKey(charactNodeRef)) {
 			List<NodeRef> sources = mandatoryCharacts.get(charactNodeRef);
-			if(sources==null){
+			if (sources == null) {
 				sources = mandatoryCharacts.put(charactNodeRef, new ArrayList<NodeRef>());
 			}
-			if(!sources.contains(componentNodeRef)){
+			if (!sources.contains(componentNodeRef)) {
 				sources.add(componentNodeRef);
 			}
-			
+
 		}
 	}
-	
-	protected boolean isCharactFormulated(SimpleListDataItem sl){
-		return sl.getIsManual()==null || !sl.getIsManual();
+
+	protected boolean isCharactFormulated(SimpleListDataItem sl) {
+		return sl.getIsManual() == null || !sl.getIsManual();
 	}
-	
-	protected boolean isCharactFormulatedFromVol(SimpleListDataItem sl){
+
+	protected boolean isCharactFormulatedFromVol(SimpleListDataItem sl) {
 		return false;
 	}
-	
-	protected T findSimpleListDataItem(List<T> simpleList, NodeRef charactNodeRef){
-		if(charactNodeRef != null){
-			for(T s : simpleList){
-				if(charactNodeRef.equals(s.getCharactNodeRef())){
+
+	protected T findSimpleListDataItem(List<T> simpleList, NodeRef charactNodeRef) {
+		if (charactNodeRef != null) {
+			for (T s : simpleList) {
+				if (charactNodeRef.equals(s.getCharactNodeRef())) {
 					return s;
 				}
 			}
 		}
-		return null;		
+		return null;
 	}
 
 	/**
 	 * Copy missing item from template
+	 * 
 	 * @param formulatedProduct
 	 * @param simpleListDataList
 	 */
-	protected void copyProductTemplateList(ProductData formulatedProduct, List<T> simpleListDataList){
-		
-		if(formulatedProduct.getEntityTpl() !=null && !formulatedProduct.getEntityTpl().equals(formulatedProduct)){
-			
-			//TODO do not use loadDataList
+	protected void copyProductTemplateList(ProductData formulatedProduct, List<T> simpleListDataList) {
+
+		if (formulatedProduct.getEntityTpl() != null && !formulatedProduct.getEntityTpl().equals(formulatedProduct)) {
+
+			// TODO do not use loadDataList
 			List<T> templateSimpleListDataList = alfrescoRepository.loadDataList(formulatedProduct.getEntityTpl().getNodeRef(), getDataListVisited(), getDataListVisited());
-			
-			for(T tsl : templateSimpleListDataList){
-				if(tsl.getCharactNodeRef() != null){
+
+			for (T tsl : templateSimpleListDataList) {
+				if (tsl.getCharactNodeRef() != null) {
 					boolean isFound = false;
-					for(T sl : simpleListDataList){
-						if(tsl.getCharactNodeRef().equals(sl.getCharactNodeRef())){
+					for (T sl : simpleListDataList) {
+						if (tsl.getCharactNodeRef().equals(sl.getCharactNodeRef())) {
 							isFound = true;
 							break;
 						}
 					}
-					if(!isFound){
+					if (!isFound) {
 						tsl.setNodeRef(null);
 						tsl.setParentNodeRef(null);
 						simpleListDataList.add(tsl);
 					}
-				}			
+
+				}
 			}
-		}		
+
+		}
 	}
 }

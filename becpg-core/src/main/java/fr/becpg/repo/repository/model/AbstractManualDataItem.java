@@ -21,7 +21,7 @@ import fr.becpg.repo.repository.annotation.AlfEnforced;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 
-public abstract class AbstractManualDataItem extends BeCPGDataObject implements IManualDataItem {
+public abstract class AbstractManualDataItem extends BeCPGDataObject implements ManualDataItem, SortableDataItem {
 
 	
 	/**

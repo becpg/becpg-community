@@ -5,22 +5,20 @@ package fr.becpg.repo.product.data.productList;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.model.AbstractManualDataItem;
+import fr.becpg.repo.repository.model.MinMaxValueDataItem;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
 
 @AlfType
 @AlfQname(qname = "bcpg:physicoChemList")
-public class PhysicoChemListDataItem extends AbstractManualDataItem implements SimpleListDataItem{
+public class PhysicoChemListDataItem extends AbstractManualDataItem implements SimpleListDataItem, MinMaxValueDataItem{
 			
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -3018711765028656339L;
 
 	private Double value;
@@ -39,11 +37,6 @@ public class PhysicoChemListDataItem extends AbstractManualDataItem implements S
 	@AlfQname(qname="bcpg:pclValue")
 	public Double getValue() {
 		return value;
-	}
-	
-	@Override
-	public Double getFormulatedValue() {
-		return getValue();
 	}
 	
 	
@@ -110,41 +103,6 @@ public class PhysicoChemListDataItem extends AbstractManualDataItem implements S
 		this.physicoChem = physicoChem;
 	}
 	
-	@Override
-	public Double getPreviousValue() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setPreviousValue(Double previousValue) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public Double getFutureValue() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setFutureValue(Double futureValue) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	@Override
-	public String getErrorLog() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setErrorLog(String errorLog) {
-		// TODO Auto-generated method stub
-		
-	}	
 	
 	/**
 	 * Instantiates a new physico chem list data item.

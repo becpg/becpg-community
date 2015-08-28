@@ -136,13 +136,15 @@ public class CharactDetailsHelper {
 
 		});
 
+		Map<String, String> rowHeader = new HashMap<>();
+		rowHeader.put(getYAxisLabel(), getYAxisLabel());
 		for (Map.Entry<NodeRef, Map<NodeRef, Double>> entry : charactDetails.getData().entrySet()) {
 
-			CSVField field = new CSVField(attributeExtractorService.extractPropName(entry.getKey()));
+			CSVField field = new CSVField(entry.getKey().toString());
 			for (Map.Entry<NodeRef, Double> value : entry.getValue().entrySet()) {
 				compEls.add(value.getKey());
 			}
-
+			rowHeader.put(entry.getKey().toString(), attributeExtractorService.extractPropName(entry.getKey())+" ("+charactDetails.getUnit(entry.getKey())+")");
 			csvConfig.addField(field);
 
 		}
@@ -150,15 +152,17 @@ public class CharactDetailsHelper {
 		CSVWriter csvWriter = new CSVWriter(csvConfig);
 
 		csvWriter.setWriter(writer);
+		csvWriter.writeRecord(rowHeader);
+		
 
 		for (NodeRef compoEl : compEls) {
 			Map<String, String> tmp = new HashMap<>();
 			tmp.put(getYAxisLabel(), attributeExtractorService.extractPropName(compoEl));
 			for (Map.Entry<NodeRef, Map<NodeRef, Double>> entry : charactDetails.getData().entrySet()) {
 				if (entry.getValue().containsKey(compoEl) && entry.getValue().get(compoEl) != null) {
-					tmp.put(attributeExtractorService.extractPropName(entry.getKey()), propertyFormats.formatDecimal(entry.getValue().get(compoEl)));
+					tmp.put(entry.getKey().toString(), propertyFormats.formatDecimal(entry.getValue().get(compoEl)));
 				} else {
-					tmp.put(attributeExtractorService.extractPropName(entry.getKey()), "");
+					tmp.put(entry.getKey().toString(), "");
 				}
 			}
 			csvWriter.writeRecord(tmp);
