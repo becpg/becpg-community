@@ -283,7 +283,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		Double newValue = formulatedValue != null ? formulatedValue : 0d;
 		Double value = slDataItem.getValue();
 		if (value != null) {
-			newSimpleListDataItem.setValue(FormulationHelper.calculateValue(formulatedValue, qtyUsed, slDataItem.getValue(), netQty));
+			newSimpleListDataItem.setValue(FormulationHelper.calculateValue(formulatedValue, qtyUsed, value, netQty));
 		} else {
 			value = 0d;
 		}

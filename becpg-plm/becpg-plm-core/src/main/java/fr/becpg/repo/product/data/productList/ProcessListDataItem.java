@@ -170,7 +170,7 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 
 
 	@Override
-	public CompositionDataItem createCopy() {
+	public CompositionDataItem clone() {
 		return new ProcessListDataItem(this);
 	}
 	

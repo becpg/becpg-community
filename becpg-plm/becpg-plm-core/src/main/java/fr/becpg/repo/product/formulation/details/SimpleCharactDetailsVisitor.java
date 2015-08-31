@@ -122,11 +122,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 		for (SimpleCharactDataItem simpleCharact : simpleCharactDataList) {
 			if (simpleCharact != null && charactDetails.hasElement(simpleCharact.getCharactNodeRef())) {
 
-				Double value = (simpleCharact.getValue() != null ? simpleCharact.getValue() : 0d);
-				value = value * qtyUsed;
-				if (netQty != 0d) {
-					value = value / netQty;
-				}
+				Double value = FormulationHelper.calculateValue(0d, qtyUsed, simpleCharact.getValue(), netQty);
 				
 				if (logger.isDebugEnabled()) {
 					logger.debug("Add new charact detail. Charact: " + 

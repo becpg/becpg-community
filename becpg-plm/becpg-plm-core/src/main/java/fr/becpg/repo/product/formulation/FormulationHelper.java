@@ -389,10 +389,19 @@ public class FormulationHelper {
 
 		totalValue = totalValue != null ? totalValue : 0d;
 		value = value != null ? value : 0d;
-		totalValue += qtyUsed * value / netWeight;
+		value = value*qtyUsed;
+		if(netWeight!=null && netWeight!=0d){
+			value = value / netWeight;
+		}
+		
+		totalValue += value;
+	
+		
 		return totalValue;
 	}
 
+	
+	
 	public static BigDecimal getTareInKg(CompoListDataItem compoList, NodeService nodeService) {
 
 		Double qty = compoList.getQty();
