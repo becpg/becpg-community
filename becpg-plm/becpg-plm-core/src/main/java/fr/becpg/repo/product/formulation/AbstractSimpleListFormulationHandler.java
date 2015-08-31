@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -28,6 +29,10 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.expression.Expression;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
@@ -41,6 +46,7 @@ import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.product.data.spel.SpelHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.model.ForecastValueDataItem;
 import fr.becpg.repo.repository.model.FormulatedCharactDataItem;
@@ -62,6 +68,12 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	protected NodeService nodeService;
 
 	protected boolean transientFormulation = false;
+	
+	protected FormulaService formulaService;
+	
+	public void setFormulaService(FormulaService formulaService) {
+		this.formulaService = formulaService;
+	}
 
 	public void setTransientFormulation(boolean transientFormulation) {
 		this.transientFormulation = transientFormulation;
@@ -359,6 +371,76 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		}
 		return null;
 	}
+	
+
+	protected <U extends FormulatedCharactDataItem> void computeFormulatedList(ProductData formulatedProduct, List<U> formulatedCharactDataItems, QName propFormula, String errorKey) {
+    	
+		if (formulatedCharactDataItems != null) {
+			
+			ExpressionParser parser = new SpelExpressionParser();
+			StandardEvaluationContext context = formulaService.createEvaluationContext(formulatedProduct);
+			
+			for (FormulatedCharactDataItem formulatedCharactDataItem : formulatedCharactDataItems) {
+				String error = null;
+				formulatedCharactDataItem.setIsFormulated(false);
+				formulatedCharactDataItem.setErrorLog(null);
+				if ((formulatedCharactDataItem.getIsManual() == null || !formulatedCharactDataItem.getIsManual()) && formulatedCharactDataItem.getCharactNodeRef() != null) {
+
+					String formula = (String) nodeService.getProperty(formulatedCharactDataItem.getCharactNodeRef(), propFormula );
+					if (formula != null && formula.length() > 0) {
+						try {
+							formulatedCharactDataItem.setIsFormulated(true);							
+							formula = SpelHelper.formatFormula(formula);
+
+							Expression exp = parser.parseExpression(formula);
+							Object ret = exp.getValue(context);
+							if (ret instanceof Double) {
+								formulatedCharactDataItem.setValue((Double) ret);
+
+								if (formula.contains(".value") && formulatedCharactDataItem instanceof MinMaxValueDataItem) {
+									try {
+										exp = parser.parseExpression(formula.replace(".value", ".mini"));
+										((MinMaxValueDataItem) formulatedCharactDataItem).setMini((Double) exp.getValue(context));
+										exp = parser.parseExpression(formula.replace(".value", ".maxi"));
+										((MinMaxValueDataItem)formulatedCharactDataItem).setMaxi((Double) exp.getValue(context));
+									} catch (Exception e) {
+										((MinMaxValueDataItem)formulatedCharactDataItem).setMaxi(null);
+										((MinMaxValueDataItem)formulatedCharactDataItem).setMini(null);
+										if (logger.isDebugEnabled()) {
+											logger.debug("Error in formula :" + formula, e);
+										}
+									}
+								}
+
+							} else {
+								error = I18NUtil.getMessage("message.formulate.formula.incorrect.type.double",
+										Locale.getDefault());
+							}
+
+						} catch (Exception e) {
+							error = e.getLocalizedMessage();							
+							if (logger.isDebugEnabled()) {
+								logger.debug("Error in formula :" + SpelHelper.formatFormula(formula), e);
+							}
+						}
+					}
+				}
+
+				if (error != null) {
+					formulatedCharactDataItem.setValue(null);
+					formulatedCharactDataItem.setErrorLog(error);
+					String message = I18NUtil.getMessage(errorKey, Locale.getDefault(),
+							nodeService.getProperty(formulatedCharactDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME), error);
+					formulatedProduct.getCompoListView().getReqCtrlList()
+							.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message,formulatedCharactDataItem.getCharactNodeRef(), new ArrayList<NodeRef>()));
+				}
+
+			}
+		}
+
+	}
+
+	
 
 	/**
 	 * Copy missing item from template

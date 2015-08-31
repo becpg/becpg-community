@@ -72,8 +72,13 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 
 		if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 			for (CompoListDataItem compoListDataItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-				Double qty = FormulationHelper.getQtyInKg(compoListDataItem);			
-				visitPart(compoListDataItem.getProduct(), ret, qty, netQty);
+				Double qty = FormulationHelper.getQtyInKg(compoListDataItem);				
+				Double qtyUsed = null;
+				if (qty != null) {
+					qtyUsed = qty * FormulationHelper.getYield(compoListDataItem) / 100;
+				}
+
+				visitPart(compoListDataItem.getProduct(), ret, qtyUsed, netQty);
 			}
 		}		
 
@@ -100,7 +105,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 		return ret;
 	}
 
-	protected void visitPart(NodeRef entityNodeRef, CharactDetails charactDetails, Double qty, Double netQty)
+	protected void visitPart(NodeRef entityNodeRef, CharactDetails charactDetails, Double qtyUsed, Double netQty)
 			throws FormulateException {
 
 		if(entityNodeRef == null){
@@ -118,7 +123,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 			if (simpleCharact != null && charactDetails.hasElement(simpleCharact.getCharactNodeRef())) {
 
 				Double value = (simpleCharact.getValue() != null ? simpleCharact.getValue() : 0d);
-				value = value * qty;
+				value = value * qtyUsed;
 				if (netQty != 0d) {
 					value = value / netQty;
 				}
@@ -127,7 +132,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 					logger.debug("Add new charact detail. Charact: " + 
 							nodeService.getProperty(simpleCharact.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME) + 
 							" - entityNodeRef: " + nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_CHARACT_NAME) + 
-							" - qty: " + qty +
+							" - qty: " + qtyUsed +
 							" - value: " + value);
 				}
 				charactDetails.addKeyValue(simpleCharact.getCharactNodeRef(), entityNodeRef, value);

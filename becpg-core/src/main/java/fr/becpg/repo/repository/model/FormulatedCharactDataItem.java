@@ -1,10 +1,14 @@
 package fr.becpg.repo.repository.model;
 
-public interface FormulatedCharactDataItem extends SimpleCharactDataItem {
+public interface FormulatedCharactDataItem extends SimpleCharactDataItem, ManualDataItem {
 
 	Double getFormulatedValue();
-
-	public String getErrorLog();
 	
-	public void setErrorLog(String errorLog);
+	Boolean getIsFormulated();
+	
+	void setIsFormulated(Boolean isFormulated);
+
+	String getErrorLog();
+	
+	void setErrorLog(String errorLog);
 }
