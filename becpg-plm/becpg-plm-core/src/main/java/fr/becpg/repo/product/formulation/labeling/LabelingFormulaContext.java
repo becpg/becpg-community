@@ -819,7 +819,7 @@ public class LabelingFormulaContext {
 	
 				Expression exp = parser.parseExpression(SpelHelper.formatFormula(formula));
 	
-				return exp.getValue(dataContext, Boolean.class);
+				return (Boolean)exp.getValue(dataContext, Boolean.class);
 			} catch(SpelParseException | SpelEvaluationException e){
 				logger.error("Cannot evaluate formula :"+formula,e);
 			}

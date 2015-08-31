@@ -18,7 +18,14 @@
 package fr.becpg.repo.helper.impl;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
@@ -33,14 +40,12 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.datatype.TypeConverter;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.PermissionService;
-import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.cmr.tagging.TaggingService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
@@ -50,26 +55,22 @@ import fr.becpg.config.format.CSVPropertyFormats;
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
-import fr.becpg.repo.helper.JsonFormulaHelper;
 import fr.becpg.repo.helper.ExcelHelper;
+import fr.becpg.repo.helper.JsonFormulaHelper;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.security.SecurityService;
 
 @Service("attributeExtractorService")
-public class AttributeExtractorServiceImpl implements AttributeExtractorService, InitializingBean {
+public class AttributeExtractorServiceImpl implements AttributeExtractorService {
 
 	private static final Log logger = LogFactory.getLog(AttributeExtractorServiceImpl.class);
 
 	@Autowired
 	private NodeService nodeService;
-
-	@Autowired
-	private BeCPGCacheService beCPGCacheService;
 
 	@Autowired
 	private EntityDictionaryService entityDictionaryService;
@@ -82,9 +83,6 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 
 	@Autowired
 	private NamespaceService namespaceService;
-
-	@Autowired
-	private PersonService personService;
 
 	@Autowired
 	private TaggingService taggingService;
@@ -113,18 +111,17 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService,
 	}
 
 	private AttributeExtractorPlugin getAttributeExtractorPlugin(QName type, NodeRef nodeRef) {
-
+        if(pluginsCache.isEmpty()){
+        	for (AttributeExtractorPlugin plugin : attributeExtractorPlugins) {
+    			for (QName plugType : plugin.getMatchingTypes()) {
+    				pluginsCache.put(plugType, plugin);
+    			}
+    		}
+        }
+		
 		return pluginsCache.get(type);
 	}
 
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		for (AttributeExtractorPlugin plugin : attributeExtractorPlugins) {
-			for (QName type : plugin.getMatchingTypes()) {
-				pluginsCache.put(type, plugin);
-			}
-		}
-	}
 
 	public class AttributeExtractorStructure {
 

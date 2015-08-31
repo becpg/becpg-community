@@ -21,8 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -33,7 +31,6 @@ import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.search.AdvSearchPlugin;
 import fr.becpg.repo.search.AdvSearchService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -52,19 +49,12 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	private static final Log logger = LogFactory.getLog(AdvSearchServiceImpl.class);
 
 	@Autowired
-	private NodeService nodeService;
-
-	@Autowired
 	private NamespaceService namespaceService;
 
-	@Autowired
-	private PermissionService permissionService;
 
 	@Autowired(required = false)
 	private AdvSearchPlugin[] advSearchPlugins;
 
-	@Autowired
-	private HierarchyService hierarchyService;
 
 	@Override
 	public List<NodeRef> queryAdvSearch(QName datatype, BeCPGQueryBuilder beCPGQueryBuilder, Map<String, String> criteria, int maxResults) {

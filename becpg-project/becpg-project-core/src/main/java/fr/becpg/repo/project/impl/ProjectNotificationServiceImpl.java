@@ -28,7 +28,6 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
-import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.project.ProjectNotificationService;
 import fr.becpg.repo.project.ProjectService;
@@ -67,8 +66,6 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 	@Autowired
 	private NodeService nodeService;
 
-	@Autowired
-	private EntityListDAO entityListDAO;
 
 	@Autowired
 	private AssociationService associationService;
