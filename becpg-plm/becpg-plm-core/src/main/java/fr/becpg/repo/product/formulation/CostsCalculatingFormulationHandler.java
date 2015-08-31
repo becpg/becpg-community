@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
@@ -16,11 +15,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.expression.Expression;
-import org.springframework.expression.ExpressionParser;
-import org.springframework.expression.spel.standard.SpelExpressionParser;
-import org.springframework.expression.spel.support.StandardEvaluationContext;
-import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
@@ -41,13 +35,10 @@ import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.PackagingListUnit;
 import fr.becpg.repo.product.data.constraints.ProcessListUnit;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
-import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
-import fr.becpg.repo.product.data.spel.SpelHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
@@ -60,20 +51,15 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 
 	public static final Double DEFAULT_LOSS_RATIO = 0d;
 
-	/** The logger. */
 	private static final Log logger = LogFactory.getLog(CostsCalculatingFormulationHandler.class);
 
 	private EntityTplService entityTplService;
 
-	private FormulaService formulaService;
 	
 	private PackagingHelper packagingHelper;
 	
 	private AlfrescoRepository<ProductData> alfrescoRepositoryProductData;
 
-	public void setFormulaService(FormulaService formulaService) {
-		this.formulaService = formulaService;
-	}
 
 	public void setEntityTplService(EntityTplService entityTplService) {
 		this.entityTplService = entityTplService;
@@ -120,12 +106,13 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			calculateSimulationCosts(formulatedProduct);
 		}		
 		
-		ExpressionParser parser = new SpelExpressionParser();
-		StandardEvaluationContext context = formulaService.createEvaluationContext(formulatedProduct);
-
-		computeCostsList(formulatedProduct, parser, context);
 
 		if (formulatedProduct.getCostList() != null) {
+			
+
+			computeFormulatedList(formulatedProduct,formulatedProduct.getCostList() , PLMModel.PROP_COST_FORMULA, "message.formulate.costList.error");
+
+
 			for (CostListDataItem c : formulatedProduct.getCostList()) {				
 				c.setUnit(calculateUnit(formulatedProduct.getUnit(), 
 						(String)nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTCURRENCY), 
@@ -147,70 +134,6 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	}
 
 	
-	//Merge with nutList
-	@Deprecated
-	private void computeCostsList(ProductData productData, ExpressionParser parser, StandardEvaluationContext context) {
-		
-		if (productData.getCostList() != null) {
-			for (CostListDataItem costListDataItem : productData.getCostList()) {
-				String error = null;
-				costListDataItem.setIsFormulated(false);
-				costListDataItem.setErrorLog(null);
-				if ((costListDataItem.getIsManual() == null || !costListDataItem.getIsManual()) && costListDataItem.getCost() != null) {
-
-					String formula = (String) nodeService.getProperty(costListDataItem.getCost(), PLMModel.PROP_COST_FORMULA);
-					if (formula != null && formula.length() > 0) {
-						try {
-							costListDataItem.setIsFormulated(true);							
-							formula = SpelHelper.formatFormula(formula);
-
-							Expression exp = parser.parseExpression(formula);
-							Object ret = exp.getValue(context);
-							if (ret instanceof Double) {
-								costListDataItem.setValue((Double) ret);
-
-								if (formula.contains(".value")) {
-									try {
-										exp = parser.parseExpression(formula.replace(".value", ".mini"));
-										costListDataItem.setMini((Double) exp.getValue(context));
-										exp = parser.parseExpression(formula.replace(".value", ".maxi"));
-										costListDataItem.setMaxi((Double) exp.getValue(context));
-									} catch (Exception e) {
-										costListDataItem.setMaxi(null);
-										costListDataItem.setMini(null);
-										if (logger.isDebugEnabled()) {
-											logger.debug("Error in formula :" + formula, e);
-										}
-									}
-								}
-
-							} else {
-								error = I18NUtil.getMessage("message.formulate.formula.incorrect.type.double",
-										Locale.getDefault());
-							}
-
-						} catch (Exception e) {
-							error = e.getLocalizedMessage();
-							if (logger.isDebugEnabled()) {
-								logger.debug("Error in formula :" + SpelHelper.formatFormula(formula), e);
-							}
-						}
-					}
-				}
-
-				if (error != null) {
-					costListDataItem.setValue(null);
-					costListDataItem.setErrorLog(error);
-					String message = I18NUtil.getMessage("message.formulate.costList.error", Locale.getDefault(),
-							nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME), error);
-					productData.getCompoListView().getReqCtrlList()
-							.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, costListDataItem.getCost(), new ArrayList<NodeRef>()));
-				}
-
-			}
-		}
-
-	}
 
 	@Override
 	protected void visitChildren(ProductData formulatedProduct, List<CostListDataItem> costList) throws FormulateException {
