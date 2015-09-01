@@ -128,9 +128,14 @@
     
     beCPG.util.sigFigs = function sigFigs(n, sig){
         if(n != 0){
-            var mult = Math.pow(10,
+      	  if(n >= Math.pow(10,sig)){
+      		  return Math.round(n);
+      	  }
+      	  else{
+      		  var mult = Math.pow(10,
                     sig - Math.floor(Math.log(n) / Math.LN10) - 1);
-            return Math.round(n * mult) / mult;
+      		  return Math.round(n * mult) / mult;
+      	  }            
         }
         else{
             return n;   
