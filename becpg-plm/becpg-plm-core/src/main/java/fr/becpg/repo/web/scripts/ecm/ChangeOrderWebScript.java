@@ -65,13 +65,6 @@ public class ChangeOrderWebScript extends AbstractWebScript {
 		this.ecoService = ecoService;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.springframework.extensions.webscripts.WebScript#execute(org.
-	 * springframework.extensions.webscripts.WebScriptRequest,
-	 * org.springframework.extensions.webscripts.WebScriptResponse)
-	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
@@ -90,30 +83,22 @@ public class ChangeOrderWebScript extends AbstractWebScript {
 		String action = templateArgs.get(PARAM_ACTION);
 
 		NodeRef ecoNodeRef = null;
-		if(storeType!=null && storeId!=null && nodeId!=null){
-			 ecoNodeRef = new NodeRef(storeType, storeId, nodeId);
+		if (storeType != null && storeId != null && nodeId != null) {
+			ecoNodeRef = new NodeRef(storeType, storeId, nodeId);
 		}
-		
+
 		if (ACTION_CALCULATE_WUSED.equals(action)) {
 			ecoService.calculateWUsedList(ecoNodeRef, false);
+			writeInfos(ecoNodeRef, res);
 		} else if (ACTION_DO_SIMULATION.equals(action)) {
 			asyncECOService.doSimulationAsync(ecoNodeRef);
+			writeInfos(ecoNodeRef, res);
 		} else if (ACTION_APPLY.equals(action)) {
 			asyncECOService.applyAsync(ecoNodeRef);
+			writeInfos(ecoNodeRef, res);
 		} else if (ACTION_GET_INFOS.equals(action)) {
 
-			try {
-				if (nodeService.exists(ecoNodeRef)) {
-					JSONObject ret = createJSONObject(alfrescoRepository.findOne(ecoNodeRef));
-
-					res.setContentType("application/json");
-					res.setContentEncoding("UTF-8");
-					ret.write(res.getWriter());
-
-				}
-			} catch (JSONException | IOException e) {
-				throw new WebScriptException("Unable to serialize JSON", e);
-			}
+			writeInfos(ecoNodeRef, res);
 
 		} else if (ACTION_CREATE_AUTOMATIC_ECO.equals(action)) {
 
@@ -128,10 +113,10 @@ public class ChangeOrderWebScript extends AbstractWebScript {
 						name = (String) json.get(PARAM_ECO_NAME);
 					}
 				}
-				
+
 				if (name != null && name.length() > 0) {
 					JSONObject ret = createJSONObject(automaticECOService.createAutomaticEcoForUser(name));
-					
+
 					res.setContentType("application/json");
 					res.setContentEncoding("UTF-8");
 					ret.write(res.getWriter());
@@ -146,12 +131,29 @@ public class ChangeOrderWebScript extends AbstractWebScript {
 
 	}
 
+	private void writeInfos(NodeRef ecoNodeRef, WebScriptResponse res) {
+
+		try {
+			if (nodeService.exists(ecoNodeRef)) {
+				JSONObject ret = createJSONObject(alfrescoRepository.findOne(ecoNodeRef));
+
+				res.setContentType("application/json");
+				res.setContentEncoding("UTF-8");
+				ret.write(res.getWriter());
+
+			}
+		} catch (JSONException | IOException e) {
+			throw new WebScriptException("Unable to serialize JSON", e);
+		}
+
+	}
+
 	private JSONObject createJSONObject(ChangeOrderData ecm) throws JSONException {
 
-		JSONObject ret =  new JSONObject();
-		ret.put("nodeRef",ecm.getNodeRef());
-		ret.put("name",ecm.getName());
-		ret.put("state",ecm.getEcoState());
+		JSONObject ret = new JSONObject();
+		ret.put("nodeRef", ecm.getNodeRef());
+		ret.put("name", ecm.getName());
+		ret.put("state", ecm.getEcoState());
 		return ret;
 	}
 }

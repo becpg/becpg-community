@@ -190,7 +190,7 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 	}
 
 	@Override
-	public CompositionDataItem createCopy() {
+	public CompositionDataItem clone() {
 		return new PackagingListDataItem(this);
 	}
 

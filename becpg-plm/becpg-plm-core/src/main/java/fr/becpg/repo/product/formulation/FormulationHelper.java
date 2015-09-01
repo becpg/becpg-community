@@ -389,10 +389,19 @@ public class FormulationHelper {
 
 		totalValue = totalValue != null ? totalValue : 0d;
 		value = value != null ? value : 0d;
-		totalValue += qtyUsed * value / netWeight;
+		value = value*qtyUsed;
+		if(netWeight!=null && netWeight!=0d){
+			value = value / netWeight;
+		}
+		
+		totalValue += value;
+	
+		
 		return totalValue;
 	}
 
+	
+	
 	public static BigDecimal getTareInKg(CompoListDataItem compoList, NodeService nodeService) {
 
 		Double qty = compoList.getQty();
@@ -427,7 +436,7 @@ public class FormulationHelper {
 				if (qty != null && !qty.isNaN() && !qty.isInfinite() && productQty != null && !productQty.isNaN() && !productQty.isInfinite() && productQty != 0d) {
 					return tare.multiply(new BigDecimal(qty)).divide(new BigDecimal(productQty), MathContext.DECIMAL64);
 				} else {
-					logger.error("Qty/ProductQty is NaN :" + qty + " " + productQty + " for " + compoList.getProduct());
+					logger.error("Qty/ProductQty is NaN or 0 or infinite:" + qty + " " + productQty + " for " + compoList.getProduct());
 				}
 			}
 		}
