@@ -25,8 +25,10 @@ public interface BeCPGModel {
 	
 	QName PROP_ENTITYLIST_STATE = QName.createQName(BECPG_URI, "entityDataListState");
 	
+    // Caract
+	QName TYPE_CHARACT = QName.createQName(BeCPGModel.BECPG_URI, "charact");
+	QName PROP_CHARACT_NAME  = QName.createQName(BECPG_URI, "charactName");
 	
-
 	// linkedValue
 	QName TYPE_LINKED_VALUE = QName.createQName(BECPG_URI, "linkedValue");
 	QName PROP_LKV_VALUE = QName.createQName(BECPG_URI, "lkvValue");
@@ -120,5 +122,6 @@ public interface BeCPGModel {
 	QName ASPECT_ENTITY_BRANCH = QName.createQName(BeCPGModel.BECPG_URI, "entityBranchAspect");
 	QName ASSOC_BRANCH_FROM_ENTITY = QName.createQName(BECPG_URI, "branchFromEntity");
 	QName PROP_BRANCH_FROM_VERSION_LABEL = QName.createQName(BECPG_URI, "branchFromVersionLabel");
+	
 	
 }

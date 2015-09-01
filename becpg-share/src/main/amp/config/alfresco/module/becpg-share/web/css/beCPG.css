@@ -340,7 +340,15 @@
    width: 20px;
 }
 
+@page { 
+	size: landscape;
+} 
 
+@media print {
+	body {
+		-webkit-print-color-adjust: exact; 
+	}
+}
 
 
 

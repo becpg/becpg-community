@@ -33,6 +33,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.ecm.ECOService;
 import fr.becpg.repo.ecm.ECOState;
 import fr.becpg.repo.ecm.data.ChangeOrderData;
@@ -161,7 +162,7 @@ public class ECOTest extends AbstractFinishedProductTest {
 				assertNotNull("CostList is null", formulatedProduct.getCostList());
 				for (CostListDataItem costListDataItem : formulatedProduct.getCostList()) {
 
-					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue()
+					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + costListDataItem.getValue()
 							+ " - unit: " + costListDataItem.getUnit();
 					logger.info(trace);
 					if (costListDataItem.getCost().equals(cost1)) {
@@ -176,7 +177,7 @@ public class ECOTest extends AbstractFinishedProductTest {
 				// nuts
 				assertNotNull("NutList is null", formulatedProduct.getNutList());
 				for (NutListDataItem nutListDataItem : formulatedProduct.getNutList()) {
-					String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), ContentModel.PROP_NAME) + " - value: " + nutListDataItem.getValue() + " - unit: "
+					String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + nutListDataItem.getValue() + " - unit: "
 							+ nutListDataItem.getUnit();
 					logger.info(trace);
 					if (nutListDataItem.getNut().equals(nut1)) {
@@ -435,7 +436,7 @@ public class ECOTest extends AbstractFinishedProductTest {
 				// costs
 				assertNotNull("CostList is null", formulatedProduct3.getCostList());
 				for (CostListDataItem costListDataItem : formulatedProduct3.getCostList()) {
-					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue()
+					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + costListDataItem.getValue()
 							+ " - unit: " + costListDataItem.getUnit();
 					logger.debug(trace);
 					if (costListDataItem.getCost().equals(cost1)) {
@@ -450,7 +451,7 @@ public class ECOTest extends AbstractFinishedProductTest {
 				// nuts
 				assertNotNull("NutList is null", formulatedProduct3.getNutList());
 				for (NutListDataItem nutListDataItem : formulatedProduct3.getNutList()) {
-					String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), ContentModel.PROP_NAME) + " - value: " + nutListDataItem.getValue() + " - unit: "
+					String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + nutListDataItem.getValue() + " - unit: "
 							+ nutListDataItem.getUnit();
 					logger.debug(trace);
 					if (nutListDataItem.getNut().equals(nut1)) {
@@ -540,7 +541,7 @@ public class ECOTest extends AbstractFinishedProductTest {
 				assertNotNull("Check Simulation list", dbECOData.getSimulationList());
 
 				for (SimulationListDataItem sim : dbECOData.getSimulationList()) {
-					logger.info("Source - Target for " + nodeService.getProperty(sim.getSourceItem(), ContentModel.PROP_NAME) + " - " + sim.getSourceValue() + " - "
+					logger.info("Source - Target for " + nodeService.getProperty(sim.getSourceItem(), BeCPGModel.PROP_CHARACT_NAME) + " - " + sim.getSourceValue() + " - "
 							+ sim.getTargetValue());
 				}
 

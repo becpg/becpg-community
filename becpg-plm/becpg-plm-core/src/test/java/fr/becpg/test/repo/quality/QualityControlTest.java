@@ -35,6 +35,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.QualityModel;
 import fr.becpg.repo.quality.data.ControlPlanData;
 import fr.becpg.repo.quality.data.ControlPointData;
@@ -71,14 +72,14 @@ public class QualityControlTest extends PLMBaseTestCase {
 		// create method
 		Map<QName, Serializable> properties = new HashMap<>();
 		String name = "Method";
-		properties.put(ContentModel.PROP_NAME, name);
+		properties.put(BeCPGModel.PROP_CHARACT_NAME, name);
 		methodNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name),
 				QualityModel.TYPE_CONTROL_METHOD, properties).getChildRef();
 
 		// create control step
 		properties.clear();
 		name = "Step";
-		properties.put(ContentModel.PROP_NAME, name);
+		properties.put(BeCPGModel.PROP_CHARACT_NAME, name);
 		controlStepNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name),
 				QualityModel.TYPE_CONTROL_STEP, properties).getChildRef();
 

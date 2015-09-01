@@ -18,7 +18,6 @@
 package fr.becpg.repo.product.data;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -30,11 +29,11 @@ import org.alfresco.service.cmr.repository.NodeRef;
  */
 public class CharactDetails {
 
-	List<NodeRef> computedCharacts = null;
+	Map<NodeRef,String> computedCharacts = null;
 	
 	final Map<NodeRef,Map<NodeRef,Double>> data = new HashMap<>();
 	
-	public CharactDetails(List<NodeRef> computedCharacts) {
+	public CharactDetails(Map<NodeRef,String> computedCharacts) {
 		super();
 		this.computedCharacts = computedCharacts;
 	}
@@ -50,11 +49,8 @@ public class CharactDetails {
 	}
 
 	public boolean hasElement(NodeRef charactNodeRef) {
-		return computedCharacts==null || computedCharacts.isEmpty() || computedCharacts.contains(charactNodeRef);
+		return computedCharacts==null || computedCharacts.isEmpty() || computedCharacts.containsKey(charactNodeRef);
 	}
-
-	
-
 
 	public Map<NodeRef, Map<NodeRef, Double>> getData() {
 		return data;
@@ -63,6 +59,10 @@ public class CharactDetails {
 	@Override
 	public String toString() {
 		return "CharactDetails [computedCharacts=" + computedCharacts + ", data=" + data + "]";
+	}
+
+	public String getUnit(NodeRef key) {
+		return computedCharacts.get(key);
 	}
 	
 	

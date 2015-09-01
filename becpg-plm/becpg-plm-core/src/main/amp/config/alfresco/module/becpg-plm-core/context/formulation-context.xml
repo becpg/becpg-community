@@ -51,6 +51,9 @@
 				</entry>
 				<entry key="physicoChemList">
 					<ref bean="simpleCharactDetailsVisitor" />
+				</entry>	
+				<entry key="allergenList">
+					<ref bean="simpleCharactDetailsVisitor" />
 				</entry>				
 			</map>
 		</property>

@@ -11,11 +11,14 @@ import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.model.AbstractManualDataItem;
+import fr.becpg.repo.repository.model.FormulatedCharactDataItem;
+import fr.becpg.repo.repository.model.MinMaxValueDataItem;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
+import fr.becpg.repo.repository.model.UnitAwareDataItem;
 
 @AlfType
 @AlfQname(qname = "bcpg:nutList")
-public class NutListDataItem extends AbstractManualDataItem  implements SimpleListDataItem {
+public class NutListDataItem extends AbstractManualDataItem  implements SimpleListDataItem, MinMaxValueDataItem, FormulatedCharactDataItem, UnitAwareDataItem {
 
 	/**
 	 * 
@@ -217,30 +220,6 @@ public class NutListDataItem extends AbstractManualDataItem  implements SimpleLi
 		this.errorLog = errorLog;
 	}
 
-	@Override
-	public Double getPreviousValue() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setPreviousValue(Double previousValue) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public Double getFutureValue() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setFutureValue(Double futureValue) {
-		// TODO Auto-generated method stub
-		
-	}
-
 	/**
 	 * Instantiates a new nut list data item.
 	 */
@@ -285,18 +264,6 @@ public class NutListDataItem extends AbstractManualDataItem  implements SimpleLi
 		setIsManual(n.getIsManual());
     }
 	
-	/**
-	 * Copy constructor
-	 * @param n
-	 */
-	public NutListDataItem(SimpleListDataItem n){
-
-		setValue(n.getValue());
-		setMini(n.getMini());
-		setMaxi(n.getMaxi());
-		setIsManual(n.getIsManual());
-		setNut(n.getCharactNodeRef());
-    }
 
 	@Override
 	public int hashCode() {

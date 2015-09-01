@@ -17,10 +17,10 @@
  ******************************************************************************/
 package fr.becpg.repo.product.formulation.details;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
@@ -28,6 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.CharactDetailsVisitor;
 import fr.becpg.repo.product.data.CharactDetails;
@@ -37,6 +38,7 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
+import fr.becpg.repo.repository.model.UnitAwareDataItem;
 
 @Service
 public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
@@ -70,23 +72,32 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 
 		if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 			for (CompoListDataItem compoListDataItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-				Double qty = FormulationHelper.getQtyInKg(compoListDataItem);			
-				visitPart(compoListDataItem.getProduct(), ret, qty, netQty);
+				Double qty = FormulationHelper.getQtyInKg(compoListDataItem);				
+				Double qtyUsed = null;
+				if (qty != null) {
+					qtyUsed = qty * FormulationHelper.getYield(compoListDataItem) / 100;
+				}
+
+				visitPart(compoListDataItem.getProduct(), ret, qtyUsed, netQty);
 			}
 		}		
 
 		return ret;
 	}
 
-	protected List<NodeRef> extractCharacts(List<NodeRef> dataListItems) {
+	protected Map<NodeRef,String> extractCharacts(List<NodeRef> dataListItems) {
 
-		List<NodeRef> ret = new ArrayList<>();
+		Map<NodeRef,String> ret = new HashMap<>();
 		if (dataListItems != null) {
 			for (NodeRef dataListItem : dataListItems) {
 
 				SimpleCharactDataItem o = alfrescoRepository.findOne(dataListItem);
 				if (o != null ) {
-					ret.add(o.getCharactNodeRef());
+					if(o instanceof UnitAwareDataItem){
+						ret.put(o.getCharactNodeRef(), ((UnitAwareDataItem)o).getUnit());
+					} else {
+						ret.put(o.getCharactNodeRef(), null);
+					}
 				}
 			}
 		}
@@ -94,7 +105,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 		return ret;
 	}
 
-	protected void visitPart(NodeRef entityNodeRef, CharactDetails charactDetails, Double qty, Double netQty)
+	protected void visitPart(NodeRef entityNodeRef, CharactDetails charactDetails, Double qtyUsed, Double netQty)
 			throws FormulateException {
 
 		if(entityNodeRef == null){
@@ -112,16 +123,16 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 			if (simpleCharact != null && charactDetails.hasElement(simpleCharact.getCharactNodeRef())) {
 
 				Double value = (simpleCharact.getValue() != null ? simpleCharact.getValue() : 0d);
-				value = value * qty;
+				value = value * qtyUsed;
 				if (netQty != 0d) {
 					value = value / netQty;
 				}
 				
 				if (logger.isDebugEnabled()) {
 					logger.debug("Add new charact detail. Charact: " + 
-							nodeService.getProperty(simpleCharact.getCharactNodeRef(), ContentModel.PROP_NAME) + 
-							" - entityNodeRef: " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + 
-							" - qty: " + qty +
+							nodeService.getProperty(simpleCharact.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME) + 
+							" - entityNodeRef: " + nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_CHARACT_NAME) + 
+							" - qty: " + qtyUsed +
 							" - value: " + value);
 				}
 				charactDetails.addKeyValue(simpleCharact.getCharactNodeRef(), entityNodeRef, value);

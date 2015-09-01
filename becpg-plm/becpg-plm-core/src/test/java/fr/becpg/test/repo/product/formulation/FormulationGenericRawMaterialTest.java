@@ -23,13 +23,13 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.constraints.CompoListUnit;
@@ -102,7 +102,7 @@ public class FormulationGenericRawMaterialTest extends AbstractFinishedProductTe
 
 				int checks = 0;
 				for(CostListDataItem c : formulatedProduct.getCostList()){
-					logger.info("c " + nodeService.getProperty(c.getCost(), ContentModel.PROP_NAME) + " " + c.getValue());
+					logger.info("c " + nodeService.getProperty(c.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " " + c.getValue());
 					if(c.getCost().equals(cost1)){
 						assertEquals(2d, c.getValue());
 						checks++;
@@ -116,7 +116,7 @@ public class FormulationGenericRawMaterialTest extends AbstractFinishedProductTe
 				
 				checks = 0;
 				for(PhysicoChemListDataItem p : formulatedProduct.getPhysicoChemList()){
-					logger.info("p " + nodeService.getProperty(p.getPhysicoChem(), ContentModel.PROP_NAME) + " value: " + p.getValue()+ " mini: " + p.getMini()+ " maxi: " + p.getMaxi());
+					logger.info("p " + nodeService.getProperty(p.getPhysicoChem(), BeCPGModel.PROP_CHARACT_NAME) + " value: " + p.getValue()+ " mini: " + p.getMini()+ " maxi: " + p.getMaxi());
 					if(p.getPhysicoChem().equals(physicoChem3)){
 						assertEquals(1d, p.getValue());
 						assertEquals(0.8d, p.getMini());

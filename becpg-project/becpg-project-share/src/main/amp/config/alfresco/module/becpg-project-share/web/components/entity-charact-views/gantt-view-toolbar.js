@@ -89,6 +89,32 @@
 
             }
         });
+        
+        YAHOO.Bubbling.fire("registerToolbarButtonAction",
+                {
+        	actionName : "print",
+            evaluate : function(asset, entity) {
+            	return asset.name !== null && (asset.name.indexOf("View-gantt") > -1 || asset.name === "taskList") ;
+            },
+            fn : function(instance) {
+            	
+            	var styleSheets = document.getElementsByTagName("style");
+                for(var i in styleSheets) {
+                    var sheet = styleSheets[i];
+                    sheet.media = "all"; 
+                }
+
+                Dom.addClass("alf-hd", "hidden");
+                Dom.addClass("alf-ft", "hidden");
+                Dom.addClass("Share", "full-screen");
+                Dom.addClass("alf-ft", "hidden");
+                Dom.addClass("alf-filters", "hidden");
+                Dom.removeClass("alf-content", "yui-b");
+                Dom.setStyle("alf-content", "margin-left", null);
+
+                print();
+            }
+        });
 
     }
 })();

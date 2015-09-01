@@ -48,7 +48,6 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.action.executer.ImporterActionExecuter;
 import fr.becpg.repo.action.executer.UserImporterActionExecuter;
 import fr.becpg.repo.admin.impl.AbstractInitVisitorImpl;
-import fr.becpg.repo.designer.DesignerInitService;
 import fr.becpg.repo.entity.EntitySystemService;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.ContentHelper;
@@ -106,9 +105,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 	@Autowired
 	private BeCPGMailService beCPGMailService;
-
-	@Autowired
-	private DesignerInitService designerInitService;
 
 	@Autowired
 	private EntitySystemService entitySystemService;

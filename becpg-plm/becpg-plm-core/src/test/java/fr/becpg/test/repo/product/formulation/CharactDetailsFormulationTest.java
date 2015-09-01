@@ -7,18 +7,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.ibm.icu.text.DecimalFormat;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
+import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.product.data.CharactDetails;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.constraints.CompoListUnit;
@@ -41,6 +42,9 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 
 	protected static final Log logger = LogFactory.getLog(CharactDetailsFormulationTest.class);
 	
+	@Autowired
+	private AttributeExtractorService attributeExtractorService;
+	
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
@@ -57,6 +61,7 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 	 */
 	@Test
 	public void testFormulateCharactDetails() throws Exception {
+		
 
 		logger.info("testFormulateCharactDetails");
 
@@ -99,7 +104,7 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 
 				Assert.assertNotNull(ret);
 
-				logger.info(CharactDetailsHelper.toJSONObject(ret, nodeService).toString(3));
+				logger.info(CharactDetailsHelper.toJSONObject(ret, nodeService,attributeExtractorService).toString(3));
 				return finishedProductNodeRef;
 				
 
@@ -178,7 +183,7 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 						"costList", costNodeRefs);
 				
 				Assert.assertNotNull(ret);
-				logger.info(CharactDetailsHelper.toJSONObject(ret, nodeService).toString(3));
+				logger.info(CharactDetailsHelper.toJSONObject(ret, nodeService, attributeExtractorService).toString(3));
 				
 				//costs
 				int checks = 0;
@@ -187,8 +192,8 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 					
 					for(Map.Entry<NodeRef, Double> kv2 : kv.getValue().entrySet()){
 						
-						String trace = "cost: " + nodeService.getProperty(kv.getKey(), ContentModel.PROP_NAME) + 
-								" - source: " + nodeService.getProperty(kv2.getKey(), ContentModel.PROP_NAME) + 
+						String trace = "cost: " + nodeService.getProperty(kv.getKey(), BeCPGModel.PROP_CHARACT_NAME) + 
+								" - source: " + nodeService.getProperty(kv2.getKey(),BeCPGModel.PROP_CHARACT_NAME) + 
 								" - value: " + kv.getValue();
 						logger.debug(trace);
 						

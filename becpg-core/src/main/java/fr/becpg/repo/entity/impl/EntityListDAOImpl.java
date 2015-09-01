@@ -45,7 +45,6 @@ import org.springframework.stereotype.Repository;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.TranslateHelper;
@@ -78,9 +77,6 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 	@Autowired
 	private AssociationService associationService;
-
-	@Autowired
-	private EntityDictionaryService entityDictionaryService;
 
 	@Override
 	public NodeRef getListContainer(NodeRef nodeRef) {

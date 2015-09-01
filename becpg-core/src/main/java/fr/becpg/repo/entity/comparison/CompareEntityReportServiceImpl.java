@@ -27,8 +27,6 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.ReportModel;
-import fr.becpg.repo.entity.EntityDictionaryService;
-import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
 import fr.becpg.report.client.ReportFormat;
@@ -97,13 +95,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 	private NodeService nodeService;
 
 	@Autowired
-	private EntityListDAO entityListDAO;
-
-	@Autowired
 	private DictionaryService dictionaryService;
-
-	@Autowired
-	private EntityDictionaryService entityDictionaryService;
 
 	@Autowired
 	private NamespaceService namespaceService;

@@ -129,7 +129,7 @@ public class SortableListPolicyTest extends PLMBaseTestCase {
 		for (CostListDataItem c : costListDataItem) {
 
 			logger.info("level : " + nodeService.getProperty(c.getNodeRef(), BeCPGModel.PROP_DEPTH_LEVEL)
-					+ " - Cost " + nodeService.getProperty(c.getCost(), ContentModel.PROP_NAME)
+					+ " - Cost " + nodeService.getProperty(c.getCost(), BeCPGModel.PROP_CHARACT_NAME)
 					+ " - sorted: " + nodeService.getProperty(c.getNodeRef(), BeCPGModel.PROP_SORT));
 		}
 	}

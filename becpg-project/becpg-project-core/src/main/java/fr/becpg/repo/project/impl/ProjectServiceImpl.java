@@ -45,11 +45,9 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DeliverableUrl;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.ProjectRepoConsts;
-import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.AssociationService;
-import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.ProjectWorkflowService;
 import fr.becpg.repo.project.data.ProjectData;
@@ -80,8 +78,6 @@ public class ProjectServiceImpl implements ProjectService {
 	@Autowired
 	private NodeService nodeService;
 	@Autowired
-	private RepoService repoService;
-	@Autowired
 	private SiteService siteService;
 	@Autowired
 	private FormulationService<ProjectData> formulationService;
@@ -98,9 +94,6 @@ public class ProjectServiceImpl implements ProjectService {
 
 	@Autowired
 	SysAdminParams sysAdminParams;
-
-	@Autowired
-	private EntityListDAO entityListDAO;
 
 	@Override
 	public void openDeliverable(NodeRef deliverableNodeRef) {

@@ -854,7 +854,7 @@
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="cm:titled" />
 					<show id="cm:description" />
 					<show id="bcpg:code" />
@@ -868,7 +868,7 @@
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="cm:titled" />
 					<show id="cm:description" />
 					<show id="bcpg:code" />
@@ -876,7 +876,7 @@
 			</form>
 			<form id="datagrid">
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="cm:titled" />
 					<show id="bcpg:code" />
 				</field-visibility>
@@ -889,7 +889,7 @@
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="cm:titled" />
 					<show id="cm:description" />
 					<show id="bcpg:code" />
@@ -903,7 +903,7 @@
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="cm:titled" />
 					<show id="cm:description" />
 					<show id="bcpg:code" />
@@ -911,7 +911,7 @@
 			</form>
 			<form id="datagrid">
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="cm:titled" />
 					<show id="bcpg:code" />
 				</field-visibility>
@@ -925,7 +925,7 @@
 			<form>
 				<field-visibility>
 					<show id="bcpg:controlCharactType" />
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="cm:titled" />
 					<show id="cm:description" />
 					<show id="bcpg:code" />
@@ -940,7 +940,7 @@
 			<form>
 				<field-visibility>
 					<show id="bcpg:controlCharactType" />
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="cm:titled" />
 					<show id="cm:description" />
 					<show id="bcpg:code" />
@@ -949,7 +949,7 @@
 			<form id="datagrid">
 				<field-visibility>
 					<show id="bcpg:controlCharactType" />
-					<show id="cm:name" />
+					<show id="bcpg:charactName" />
 					<show id="cm:titled" />
 					<show id="bcpg:code" />
 				</field-visibility>
@@ -957,40 +957,6 @@
 		</forms>
 	</config>
 	
-	<!-- qa:controlUnit type (existing nodes) -->
-	<config evaluator="node-type" condition="qa:controlUnit">
-		<forms>
-			<form>
-				<field-visibility>
-					<show id="cm:name" />
-					<show id="cm:titled" />
-					<show id="cm:description" />
-					<show id="bcpg:code" />
-				</field-visibility>
-			</form>
-		</forms>
-	</config>
-	
-	<!-- qa:controlUnit type (creating nodes) -->
-	<config evaluator="model-type" condition="qa:controlUnit">
-		<forms>
-			<form>
-				<field-visibility>
-					<show id="cm:name" />
-					<show id="cm:titled" />
-					<show id="cm:description" />
-					<show id="bcpg:code" />
-				</field-visibility>
-			</form>
-			<form id="datagrid">
-				<field-visibility>
-					<show id="cm:name" />
-					<show id="cm:titled" />
-					<show id="bcpg:code" />
-				</field-visibility>
-			</form>
-		</forms>
-	</config>
 
 	<!-- qa:samplingDefList type (existing nodes) -->
 	<config evaluator="node-type" condition="qa:samplingDefList">

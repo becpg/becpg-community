@@ -996,5 +996,45 @@
 				</association>
 			</associations>
 		</aspect>
+		
+		<aspect name="pjt:delegationAspect">
+			<properties>
+				<property name="pjt:delegationActivated">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="pjt:delegationStartDate">
+					<type>d:date</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="pjt:delegationEndDate">
+					<type>d:date</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="pjt:reassignCurrentTasks">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+			</properties>
+			<associations>
+				<association name="pjt:reassignTo">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>cm:person</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+		</aspect>
+		
+		
 	</aspects>
 </model>

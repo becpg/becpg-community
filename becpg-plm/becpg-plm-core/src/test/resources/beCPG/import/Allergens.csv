@@ -1,6 +1,6 @@
 "PATH";"/System/Characts/bcpg:entityLists/Allergens";
 "TYPE";"bcpg:allergen";
-"COLUMNS";"cm:name";"bcpg:allergenType"
+"COLUMNS";"bcpg:charactName";"bcpg:allergenType"
 "VALUES";"Abricot";"Allergène informatif"
 "VALUES";"Absence de Risques";"Risque"
 "VALUES";"Acide Ascorbique (E300), vitamine C";"Allergène informatif"
