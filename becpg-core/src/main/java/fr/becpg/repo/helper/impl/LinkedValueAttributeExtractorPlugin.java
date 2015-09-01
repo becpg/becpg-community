@@ -64,6 +64,12 @@ public class LinkedValueAttributeExtractorPlugin implements AttributeExtractorPl
 		return BeCPGModel.PROP_LKV_VALUE.toPrefixString(namespaceService).split(":")[1];
 	}
 
+
+	@Override
+	public Integer getPriority() {
+		return 0;
+	}
+
 	
 
 }

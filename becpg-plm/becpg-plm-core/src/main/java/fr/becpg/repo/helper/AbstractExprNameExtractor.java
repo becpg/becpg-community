@@ -71,4 +71,9 @@ public abstract class AbstractExprNameExtractor implements AttributeExtractorPlu
 	}
 	
 	
+	@Override
+	public Integer getPriority() {
+		return 0;
+	}
+	
 }
