@@ -78,7 +78,7 @@ public class FormulationHelper {
 				// compoListUnit is %
 				return FormulationHelper.getQtyWithLoss(qtyInKg, lossPerc);
 			} else if (isProductUnitLiter(productUnit)) {
-				return compoListDataItem.getVolume();
+				return FormulationHelper.getQtyWithLoss(compoListDataItem.getVolume(), lossPerc);
 			}
 		}
 		return DEFAULT_COMPONANT_QUANTITY;
@@ -167,11 +167,12 @@ public class FormulationHelper {
 			}
 		}
 
-		if (processListDataItem.getQtyResource() != null) {
-			qty = qty * processListDataItem.getQtyResource();
+		if (processListDataItem.getQtyResource() == null) {
+			return 0d;
 		}
-
-		return qty;
+		else{
+			return qty * processListDataItem.getQtyResource();
+		}
 	}
 
 	public static Double getProductQty(NodeRef nodeRef, NodeService nodeService) {
@@ -358,8 +359,12 @@ public class FormulationHelper {
 
 		if (qty != null) {
 			Double overrun = compoListDataItem.getOverrunPerc();
+			Double yield = compoListDataItem.getYieldPerc();
 			if (compoListDataItem.getOverrunPerc() == null) {
 				overrun = FormulationHelper.DEFAULT_OVERRUN;
+			}
+			if (compoListDataItem.getYieldPerc() == null) {
+				yield = FormulationHelper.DEFAULT_YIELD;
 			}
 			Double density = FormulationHelper.getDensity(compoListDataItem.getProduct(), nodeService);
 			if (density == null || density.equals(0d)) {
@@ -367,7 +372,7 @@ public class FormulationHelper {
 					logger.debug("Cannot calculate volume since density is null or equals to 0");
 				}
 			} else {
-				return (100 + overrun) * qty / (density * 100);
+				return (100 + overrun) * (yield/100) * qty / (density * 100);
 			}
 		}
 
