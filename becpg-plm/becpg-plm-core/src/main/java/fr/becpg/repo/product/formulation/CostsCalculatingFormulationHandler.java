@@ -418,7 +418,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			
 			c.setValuePerProduct(null);
 			if(costPerProduct != null){
-				if(c.getDepthLevel() != null && c.getDepthLevel() == 1){
+				if(c.getDepthLevel() == null || c.getDepthLevel() == 1){
 					unitTotalVariableCost += costPerProduct;
 				}				
 				if(formulatedProduct instanceof FinishedProductData){
@@ -502,7 +502,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 					//same cost
 					if(costList.getCost() != null && costList.getCost().equals(templateCostList.getCost())){						
 						//manual
-						if(templateCostList.getIsManual() == null || !templateCostList.getIsManual()){
+						if(costList.getIsManual() == null || !costList.getIsManual()){
 							copyTemplateCost(formulatedProduct, templateCostList, costList);
 						}
 						addCost = false;
