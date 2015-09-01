@@ -131,4 +131,10 @@ public class PersonAttributeExtractorPlugin implements AttributeExtractorPlugin 
 
 	}
 
+
+	@Override
+	public Integer getPriority() {
+		return 0;
+	}
+
 }

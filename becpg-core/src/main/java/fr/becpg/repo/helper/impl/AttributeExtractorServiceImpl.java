@@ -19,6 +19,7 @@ package fr.becpg.repo.helper.impl;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -112,6 +113,9 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 	private AttributeExtractorPlugin getAttributeExtractorPlugin(QName type, NodeRef nodeRef) {
         if(pluginsCache.isEmpty()){
+        	
+        	Arrays.sort(attributeExtractorPlugins, (a,b) -> Integer.compare(a.getPriority(), b.getPriority()));
+        	
         	for (AttributeExtractorPlugin plugin : attributeExtractorPlugins) {
     			for (QName plugType : plugin.getMatchingTypes()) {
     				pluginsCache.put(plugType, plugin);

@@ -51,6 +51,8 @@ public interface AttributeExtractorService {
 		
 		Collection<QName> getMatchingTypes();
 		
+		Integer getPriority(); 
+		
 	}
 	
 	
