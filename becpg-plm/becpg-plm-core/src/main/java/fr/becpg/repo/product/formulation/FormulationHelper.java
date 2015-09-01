@@ -436,7 +436,7 @@ public class FormulationHelper {
 				if (qty != null && !qty.isNaN() && !qty.isInfinite() && productQty != null && !productQty.isNaN() && !productQty.isInfinite() && productQty != 0d) {
 					return tare.multiply(new BigDecimal(qty)).divide(new BigDecimal(productQty), MathContext.DECIMAL64);
 				} else {
-					logger.error("Qty/ProductQty is NaN :" + qty + " " + productQty + " for " + compoList.getProduct());
+					logger.error("Qty/ProductQty is NaN or 0 or infinite:" + qty + " " + productQty + " for " + compoList.getProduct());
 				}
 			}
 		}

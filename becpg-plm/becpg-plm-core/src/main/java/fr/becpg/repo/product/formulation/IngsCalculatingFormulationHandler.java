@@ -73,8 +73,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 		// no compo, nor ingList on formulated product => no formulation
 		if (!formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))
-				|| (!alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_INGLIST) && !alfrescoRepository.hasDataList(formulatedProduct,
-						PLMModel.TYPE_INGLABELINGLIST))) {
+				|| (!alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_INGLIST) && !alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_INGLABELINGLIST))) {
 			logger.debug("no compo => no formulation");
 			return true;
 		}
@@ -144,9 +143,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				visitILOfPart(formulatedProduct, compoItem, componentProductData, retainNodes, totalQtyIngMap, totalQtyVolMap, reqCtrlMap);
 
 				QName type = nodeService.getType(compoItem.getProduct());
-				if (type != null
-						&& (type.isMatch(PLMModel.TYPE_RAWMATERIAL) || type.isMatch(PLMModel.TYPE_SEMIFINISHEDPRODUCT) || type
-								.isMatch(PLMModel.TYPE_FINISHEDPRODUCT)) && compoItem.getDeclType() != DeclarationType.Omit) {
+				if (type != null && (type.isMatch(PLMModel.TYPE_RAWMATERIAL) || type.isMatch(PLMModel.TYPE_SEMIFINISHEDPRODUCT) || type.isMatch(PLMModel.TYPE_FINISHEDPRODUCT))
+						&& compoItem.getDeclType() != DeclarationType.Omit) {
 					Double qty = FormulationHelper.getQtyInKg(compoItem);
 					if (qty != null) {
 						totalQtyUsed += qty * FormulationHelper.getYield(compoItem) / 100;
@@ -217,13 +215,11 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	 * @param totalQtyVolMap
 	 * @throws FormulateException
 	 */
-	private void visitILOfPart(ProductData formulatedProduct, CompoListDataItem compoListDataItem, ProductData componentProductData,
-			List<IngListDataItem> retainNodes, Map<String, Double> totalQtyIngMap, Map<String, Double> totalQtyVolMap,
-			Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap) throws FormulateException {
+	private void visitILOfPart(ProductData formulatedProduct, CompoListDataItem compoListDataItem, ProductData componentProductData, List<IngListDataItem> retainNodes,
+			Map<String, Double> totalQtyIngMap, Map<String, Double> totalQtyVolMap, Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap) throws FormulateException {
 
 		// check product respect specification
-		checkILOfPart(compoListDataItem.getProduct(), compoListDataItem.getDeclType(), componentProductData,
-				formulatedProduct.getProductSpecifications(), reqCtrlMap);
+		checkILOfPart(compoListDataItem.getProduct(), compoListDataItem.getDeclType(), componentProductData, formulatedProduct.getProductSpecifications(), reqCtrlMap);
 
 		if (componentProductData.getIngList() == null) {
 			if (logger.isDebugEnabled()) {
@@ -234,8 +230,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		}
 
 		// calculate ingList of formulated product
-		calculateILOfPart(compoListDataItem, CompositeHelper.getHierarchicalCompoList(componentProductData.getIngList()),
-				formulatedProduct.getIngList(), retainNodes, totalQtyIngMap, totalQtyVolMap, null);
+		calculateILOfPart(compoListDataItem, CompositeHelper.getHierarchicalCompoList(componentProductData.getIngList()), formulatedProduct.getIngList(), retainNodes, totalQtyIngMap, totalQtyVolMap,
+				null);
 	}
 
 	/**
@@ -250,9 +246,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	 * @param totalQtyVolMap
 	 * @throws FormulateException
 	 */
-	private void calculateILOfPart(CompoListDataItem compoListDataItem, Composite<IngListDataItem> compositeIngList, List<IngListDataItem> ingList,
-			List<IngListDataItem> retainNodes, Map<String, Double> totalQtyIngMap, Map<String, Double> totalQtyVolMap,
-			IngListDataItem parentIngListDataItem) throws FormulateException {
+	private void calculateILOfPart(CompoListDataItem compoListDataItem, Composite<IngListDataItem> compositeIngList, List<IngListDataItem> ingList, List<IngListDataItem> retainNodes,
+			Map<String, Double> totalQtyIngMap, Map<String, Double> totalQtyVolMap, IngListDataItem parentIngListDataItem) throws FormulateException {
 
 		// OMIT is not taken in account
 		if (compoListDataItem.getDeclType() == DeclarationType.Omit) {
@@ -304,8 +299,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				// Semi finished
 				if (ingListDataItem.getVolumeQtyPerc() != null && compoListDataItem.getVolume() != null) {
 
-					totalQtyVolMap.put(newIngListDataItem.getName(), volumeQty + ingListDataItem.getVolumeQtyPerc() * compoListDataItem.getVolume()
-							/ 100);
+					totalQtyVolMap.put(newIngListDataItem.getName(), volumeQty + ingListDataItem.getVolumeQtyPerc() * compoListDataItem.getVolume() / 100);
 				}
 
 				totalQtyIng += valueToAdd;
@@ -354,8 +348,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			}
 
 			if (logger.isDebugEnabled()) {
-				logger.debug("productData: " + compoListDataItem.getProduct() + " - ing: "
-						+ nodeService.getProperty(ingNodeRef, BeCPGModel.PROP_CHARACT_NAME) + " qtyPerc: " + totalQtyIng);
+				logger.debug("productData: " + compoListDataItem.getProduct() + " - ing: " + nodeService.getProperty(ingNodeRef, BeCPGModel.PROP_CHARACT_NAME) + " qtyPerc: " + totalQtyIng);
 			}
 
 			// recursive
@@ -375,8 +368,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	 * @param totalQtyIngMap
 	 *            the total qty ing map
 	 */
-	private void checkILOfPart(NodeRef productNodeRef, DeclarationType declType, ProductData componentProductData,
-			List<ProductSpecificationData> productSpecicationDataList, Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap) {
+	private void checkILOfPart(NodeRef productNodeRef, DeclarationType declType, ProductData componentProductData, List<ProductSpecificationData> productSpecicationDataList,
+			Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap) {
 
 		if (!PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.equals(nodeService.getType(productNodeRef))) {
 
@@ -409,8 +402,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 					for (IngListDataItem ingListDataItem : componentProductData.getIngList()) {
 						if (logger.isDebugEnabled()) {
-							logger.debug("For " + productNodeRef + " testing ing :"
-									+ nodeService.getProperty(ingListDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME));
+							logger.debug("For " + productNodeRef + " testing ing :" + nodeService.getProperty(ingListDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME));
 						}
 						for (ForbiddenIngListDataItem fil : productSpecificationData.getForbiddenIngList()) {
 
@@ -420,8 +412,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 							}
 
 							// Ionized
-							if (fil.getIsIonized() != null && !fil.getIsIonized().isEmpty()
-									&& !fil.getIsIonized().equals(ingListDataItem.getIsIonized().toString())) {
+							if (fil.getIsIonized() != null && !fil.getIsIonized().isEmpty() && !fil.getIsIonized().equals(ingListDataItem.getIsIonized().toString())) {
 								continue; // check next rule
 							}
 
@@ -495,11 +486,9 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 							// req not respected
 							logger.debug("Adding not respected for :" + fil.getReqMessage());
 							// Look for raw material
-							if (componentProductData.getCompoListView().getCompoList() != null
-									&& !componentProductData.getCompoListView().getCompoList().isEmpty()) {
+							if (componentProductData.getCompoListView().getCompoList() != null && !componentProductData.getCompoListView().getCompoList().isEmpty()) {
 								for (CompoListDataItem c : componentProductData.getCompoListView().getCompoList()) {
-									checkILOfPart(c.getProduct(), declType, (ProductData) alfrescoRepository.findOne(c.getProduct()),
-											productSpecicationDataList, reqCtrlMap);
+									checkILOfPart(c.getProduct(), declType, (ProductData) alfrescoRepository.findOne(c.getProduct()), productSpecicationDataList, reqCtrlMap);
 								}
 							} else {
 								ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(fil.getNodeRef());
@@ -523,8 +512,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	 * check the ingredients of the part according to the specification
 	 * 
 	 */
-	private void checkILOfFormulatedProduct(Collection<IngListDataItem> ingList, List<ProductSpecificationData> productSpecicationDataList,
-			Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap) {
+	private void checkILOfFormulatedProduct(Collection<IngListDataItem> ingList, List<ProductSpecificationData> productSpecicationDataList, Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap) {
 
 		for (ProductSpecificationData productSpecification : productSpecicationDataList) {
 
@@ -572,10 +560,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 						if ((parentIngListDataItem != null && p == null) || (parentIngListDataItem == null && p != null)) {
 							isFound = false;
 							break;
-						} else if (parentIngListDataItem != null
-								&& p != null
-								&& ((parentIngListDataItem.getIng() != null && !parentIngListDataItem.getIng().equals(p.getIng())) || (p.getIng() != null && !p
-										.getIng().equals(parentIngListDataItem.getIng())))) {
+						} else if (parentIngListDataItem != null && p != null && ((parentIngListDataItem.getIng() != null && !parentIngListDataItem.getIng().equals(p.getIng()))
+								|| (p.getIng() != null && !p.getIng().equals(parentIngListDataItem.getIng())))) {
 							isFound = false;
 							break;
 						}
@@ -618,9 +604,9 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 					IngListDataItem root1 = findRoot(i1);
 					IngListDataItem root2 = findRoot(i2);
 					if (root1.equals(root2)) {
-						return i1.getDepthLevel().compareTo(i2.getDepthLevel());
+						return Integer.compare(i1.getDepthLevel() != null ? i1.getDepthLevel() : -1, i2.getDepthLevel() != null ? i2.getDepthLevel() : -1);
 					} else {
-						return root2.getQtyPerc().compareTo(root1.getQtyPerc());
+						return Double.compare(root2.getQtyPerc() != null ? root2.getQtyPerc() : -1d, root1.getQtyPerc() != null ? root1.getQtyPerc() : -1d);
 					}
 				}
 			}

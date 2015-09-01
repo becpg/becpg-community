@@ -71,7 +71,9 @@ public class AutomaticECOPolicy extends AbstractBeCPGPolicy implements NodeServi
 				&& !before.get(ContentModel.PROP_MODIFIED).equals(after.get(ContentModel.PROP_MODIFIED))) {
 
 			if (L2CacheSupport.isThreadLockEnable()) {
-				logger.debug("Entity is locked by ECM :" + nodeRef);
+				if(logger.isDebugEnabled()){
+					logger.debug("Entity ["+Thread.currentThread().getName()+"] is locked by ECM :" + nodeRef);
+				}
 				return;
 			}
 

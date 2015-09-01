@@ -65,6 +65,7 @@ import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.RequirementType;
+import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompositionDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -117,13 +118,11 @@ public class ECOServiceImpl implements ECOService {
 
 	@Override
 	public void doSimulation(NodeRef ecoNodeRef) {
-		logger.debug("Run simulation");
 		doRun(ecoNodeRef, ECOState.Simulated);
 	}
 
 	@Override
 	public void apply(NodeRef ecoNodeRef) {
-		logger.debug("Run apply");
 		doRun(ecoNodeRef, ECOState.Applied);
 	}
 
@@ -138,6 +137,7 @@ public class ECOServiceImpl implements ECOService {
 				StopWatch watch = new StopWatch();
 				if (logger.isDebugEnabled()) {
 					watch.start();
+					logger.warn("Start running ECM [" + state.toString() + "] for thread "+Thread.currentThread().getName());
 				}
 
 				// Clear changeUnitList
@@ -367,13 +367,7 @@ public class ECOServiceImpl implements ECOService {
 							if (component.getData().getDepthLevel() == 2) {
 								applyReplacementList(ecoData, productToFormulateData);
 							}
-							// } else {
-							// // Level 3 OR more
-							// applyImpactedProductsData(ecoData,
-							// changeUnitDataItem,
-							// productToFormulateData);
-							// }
-
+							
 							try {
 								productService.formulate(productToFormulateData);
 							} catch (FormulateException e) {
@@ -515,26 +509,19 @@ public class ECOServiceImpl implements ECOService {
 				boolean first = true;
 				for (Pair<NodeRef, Integer> target : replacement.getValue()) {
 
-					if(logger.isDebugEnabled()){
-						logger.debug("replace :"+replacement.getKey() +" with "+target.getFirst()+" qty "+target.getSecond());
-					}
-					
 					if (first) {
 						for (T component : components) {
 							
-							component.setComponent(target.getFirst());
-							if (component.getQty() != null && target.getSecond() != null) {
-								component.setQty(target.getSecond() / 100 * component.getQty());
-							}
+							
+							updateComponent(component, target.getFirst(), target.getSecond());
+							
+			
 						}
 						first = false;
 					} else {
 						T newCompoListDataItem = (T) components.iterator().next().clone();
 						newCompoListDataItem.setNodeRef(null);
-						newCompoListDataItem.setComponent(target.getFirst());
-						if (newCompoListDataItem.getQty() != null && target.getSecond() != null) {
-							newCompoListDataItem.setQty(target.getSecond() / 100 * newCompoListDataItem.getQty());
-						}
+						updateComponent(newCompoListDataItem, target.getFirst(), target.getSecond());
 
 						items.add(newCompoListDataItem);
 					}
@@ -544,6 +531,21 @@ public class ECOServiceImpl implements ECOService {
 
 		}
 
+	}
+
+	private <T extends CompositionDataItem> void updateComponent(T component, NodeRef target, Integer qtyPerc) {
+		component.setComponent(target);
+		if(component instanceof CompoListDataItem){
+			if (((CompoListDataItem) component).getQtySubFormula() != null && qtyPerc != null) {
+				((CompoListDataItem) component).setQtySubFormula(qtyPerc / 100 * ((CompoListDataItem) component).getQtySubFormula());
+			}
+		} else {
+			
+			if (component.getQty() != null && qtyPerc != null) {
+				component.setQty(qtyPerc / 100 * component.getQty());
+			}
+		}
+		
 	}
 
 	private NodeRef getProductToImpact(ChangeOrderData ecoData, ChangeUnitDataItem changeUnitDataItem, boolean isSimulation) {
