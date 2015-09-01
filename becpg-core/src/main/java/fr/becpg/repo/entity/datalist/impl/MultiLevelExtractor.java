@@ -201,7 +201,8 @@ public class MultiLevelExtractor extends SimpleExtractor {
 	public boolean applyTo(DataListFilter dataListFilter) {
 		return !dataListFilter.isSimpleItem() && dataListFilter.getDataType() != null
 				&& entityDictionaryService.isMultiLevelDataList(dataListFilter.getDataType())
-				&& !dataListFilter.getDataListName().startsWith(RepoConsts.WUSED_PREFIX);
+				&& !dataListFilter.getDataListName().startsWith(RepoConsts.WUSED_PREFIX)
+				&& !dataListFilter.isVersionFilter();
 	}
 
 	@Override
