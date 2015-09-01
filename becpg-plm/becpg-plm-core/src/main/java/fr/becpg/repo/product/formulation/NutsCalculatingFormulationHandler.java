@@ -7,20 +7,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.expression.Expression;
-import org.springframework.expression.ExpressionParser;
-import org.springframework.expression.spel.standard.SpelExpressionParser;
-import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.data.ProductData;
@@ -28,7 +23,6 @@ import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
-import fr.becpg.repo.product.data.spel.SpelHelper;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
 /**
@@ -46,7 +40,6 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 	
 	public static final String MESSAGE_MAXIMAL_DAILY_VALUE = "message.formulate.nut.maximalDailyValue";
 
-	private FormulaService formulaService;
 
 	private static final Log logger = LogFactory.getLog(NutsCalculatingFormulationHandler.class);
 
@@ -55,9 +48,6 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 		return NutListDataItem.class;
 	}
 
-	public void setFormulaService(FormulaService formulaService) {
-		this.formulaService = formulaService;
-	}
 
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
@@ -81,12 +71,12 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 			formulateSimpleList(formulatedProduct, formulatedProduct.getNutList());
 		}
 		
-		ExpressionParser parser = new SpelExpressionParser();
-		StandardEvaluationContext context = formulaService.createEvaluationContext(formulatedProduct);
-
-		computeNutList(formulatedProduct, parser, context);
-
+		
 		if (formulatedProduct.getNutList() != null) {
+			
+
+			computeFormulatedList(formulatedProduct,formulatedProduct.getNutList() , PLMModel.PROP_NUT_FORMULA, "message.formulate.nutList.error");
+
 
 			for (NutListDataItem n : formulatedProduct.getNutList()) {
 
@@ -115,7 +105,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 					Double ul = (Double) nodeService.getProperty(n.getNut(), PLMModel.PROP_NUTUL);
 					if (ul != null) {
 						if(valuePerserving > ul){
-							String message = I18NUtil.getMessage(MESSAGE_MAXIMAL_DAILY_VALUE, nodeService.getProperty(n.getNut(), ContentModel.PROP_NAME));
+							String message = I18NUtil.getMessage(MESSAGE_MAXIMAL_DAILY_VALUE, nodeService.getProperty(n.getNut(), BeCPGModel.PROP_CHARACT_NAME));
 							formulatedProduct.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, n.getNut(), new ArrayList<NodeRef>()));
 						}
 					}
@@ -137,71 +127,6 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 		}
 
 		return true;
-	}
-
-	//Merge with costList
-    @Deprecated
-	private void computeNutList(ProductData productData, ExpressionParser parser, StandardEvaluationContext context) {
-    	
-		if (productData.getNutList() != null) {
-			for (NutListDataItem nutListDataItem : productData.getNutList()) {
-				String error = null;
-				nutListDataItem.setIsFormulated(false);
-				nutListDataItem.setErrorLog(null);
-				if ((nutListDataItem.getIsManual() == null || !nutListDataItem.getIsManual()) && nutListDataItem.getNut() != null) {
-
-					String formula = (String) nodeService.getProperty(nutListDataItem.getNut(), PLMModel.PROP_NUT_FORMULA);
-					if (formula != null && formula.length() > 0) {
-						try {
-							nutListDataItem.setIsFormulated(true);							
-							formula = SpelHelper.formatFormula(formula);
-
-							Expression exp = parser.parseExpression(formula);
-							Object ret = exp.getValue(context);
-							if (ret instanceof Double) {
-								nutListDataItem.setValue((Double) ret);
-
-								if (formula.contains(".value")) {
-									try {
-										exp = parser.parseExpression(formula.replace(".value", ".mini"));
-										nutListDataItem.setMini((Double) exp.getValue(context));
-										exp = parser.parseExpression(formula.replace(".value", ".maxi"));
-										nutListDataItem.setMaxi((Double) exp.getValue(context));
-									} catch (Exception e) {
-										nutListDataItem.setMaxi(null);
-										nutListDataItem.setMini(null);
-										if (logger.isDebugEnabled()) {
-											logger.debug("Error in formula :" + formula, e);
-										}
-									}
-								}
-
-							} else {
-								error = I18NUtil.getMessage("message.formulate.formula.incorrect.type.double",
-										Locale.getDefault());
-							}
-
-						} catch (Exception e) {
-							error = e.getLocalizedMessage();							
-							if (logger.isDebugEnabled()) {
-								logger.debug("Error in formula :" + SpelHelper.formatFormula(formula), e);
-							}
-						}
-					}
-				}
-
-				if (error != null) {
-					nutListDataItem.setValue(null);
-					nutListDataItem.setErrorLog(error);
-					String message = I18NUtil.getMessage("message.formulate.nutList.error", Locale.getDefault(),
-							nodeService.getProperty(nutListDataItem.getNut(), ContentModel.PROP_NAME), error);
-					productData.getCompoListView().getReqCtrlList()
-							.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, nutListDataItem.getNut(), new ArrayList<NodeRef>()));
-				}
-
-			}
-		}
-
 	}
 
 	/**

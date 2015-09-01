@@ -64,7 +64,8 @@
 			<form>
 				<field-visibility>
 					<show id="bcpg:lkvValue" />
-					<show id="bcpg:parentLevel" />					
+					<show id="bcpg:parentLevel" />
+					<show id="bcpg:erpCode" force="true" />					
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
 				<appearance>

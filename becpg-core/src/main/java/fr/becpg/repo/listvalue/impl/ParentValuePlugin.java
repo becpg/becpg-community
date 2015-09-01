@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -36,6 +35,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.listvalue.ListValueEntry;
 import fr.becpg.repo.listvalue.ListValuePage;
 import fr.becpg.repo.listvalue.ListValueService;
@@ -53,6 +53,9 @@ public class ParentValuePlugin extends EntityListValuePlugin {
 
 	@Autowired
 	private AssociationService associationService;
+	
+	@Autowired
+	private AttributeExtractorService attributeExtractorService;
 
 	@Override
 	public String[] getHandleSourceTypes() {
@@ -145,9 +148,14 @@ public class ParentValuePlugin extends EntityListValuePlugin {
 		for (NodeRef dataListItemNodeRef : entityListDAO.getListItems(dataListNodeRef, datalistType)) {
 			if (!dataListItemNodeRef.equals(itemId)) {
 				NodeRef targetNode = associationService.getTargetAssoc(dataListItemNodeRef, associationQName);
+				
 				if (targetNode != null) {
-					String name = (String) nodeService.getProperty(targetNode, ContentModel.PROP_NAME);
-					result.add(new ListValueEntry(dataListItemNodeRef.toString(), name, datalistType.getLocalName()));
+					QName type = nodeService.getType(targetNode);
+					String name = attributeExtractorService.extractPropName(type,targetNode);
+					if (isQueryMatch(query, name)) {
+						String cssClass = attributeExtractorService.extractMetadata(type,targetNode);
+						result.add(new ListValueEntry(dataListItemNodeRef.toString(), name, cssClass));
+					}
 				}
 			}
 		}

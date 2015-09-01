@@ -132,11 +132,11 @@ public abstract class AbstractProjectTestCase extends RepoBaseTestCase {
 		NodeRef resourceCostsFolder = entitySystemService.getSystemEntityDataList(listsFolder, ProjectRepoConsts.PATH_RESOURCE_COSTS);
 		if (nodeService.getChildByName(resourceCostsFolder, ContentModel.ASSOC_CONTAINS, "ResourceCost") == null) {
 			Map<QName, Serializable> properties = new HashMap<>();
-			properties.put(ContentModel.PROP_NAME, "ResourceCost");
+			properties.put(BeCPGModel.PROP_CHARACT_NAME, "ResourceCost");
 			properties.put(ProjectModel.PROP_RESOURCE_COST_VALUE, RESOURCE_COST_VALUE);
 			properties.put(ProjectModel.PROP_RESOURCE_COST_BILL_RATE, RESOURCE_COST_BILL_RATE);
 			nodeService.createNode(resourceCostsFolder, ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					ProjectModel.TYPE_RESOURCE_COST, properties).getChildRef();
 		}
 	}

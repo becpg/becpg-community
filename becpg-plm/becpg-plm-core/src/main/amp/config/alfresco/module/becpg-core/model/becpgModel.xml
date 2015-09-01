@@ -330,7 +330,15 @@
 					<value>/1500g</value>
 					<value>/100cm²</value>
 					<value>/100cm² n=50 c=2</value>
-					<value>-</value>
+					<value>mL/g</value>
+					<value>µg/g</value>
+					<value>mg/g</value>
+					<value>µg/L</value>
+					<value>g/2,2L</value>
+					<value>g/15g</value>
+					<value>g/100g</value>
+					<value>UB</value>
+					<value>ppm</value>
 				</list>
 			</parameter>
 		</constraint>		
@@ -470,7 +478,7 @@
 			<parent>bcpg:entityListItem</parent>
 			<properties>
 				<property name="bcpg:lkvValue">
-					<type>d:text</type>
+					<type>d:mltext</type>
 					<mandatory>true</mandatory>
 				</property>
 			</properties>
@@ -626,6 +634,12 @@
 
 		<type name="bcpg:charact">
 			<parent>bcpg:entityListItem</parent>
+			<properties>
+				<property name="bcpg:charactName">
+				    <type>d:mltext</type>
+				    <mandatory>true</mandatory>
+				</property>
+			</properties>
 			<mandatory-aspects>
 				<aspect>bcpg:legalNameAspect</aspect>
 				<aspect>bcpg:isDeletedAspect</aspect>

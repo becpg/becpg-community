@@ -16,17 +16,19 @@ import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.model.AbstractManualDataItem;
+import fr.becpg.repo.repository.model.ForecastValueDataItem;
+import fr.becpg.repo.repository.model.FormulatedCharactDataItem;
+import fr.becpg.repo.repository.model.MinMaxValueDataItem;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
 import fr.becpg.repo.repository.model.Synchronisable;
+import fr.becpg.repo.repository.model.UnitAwareDataItem;
 
 @AlfType
 @AlfQname(qname = "bcpg:costList")
-public class CostListDataItem extends AbstractManualDataItem implements SimpleListDataItem, Synchronisable, CompositeDataItem<CostListDataItem>{
+public class CostListDataItem extends AbstractManualDataItem implements SimpleListDataItem,
+MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ForecastValueDataItem, CompositeDataItem<CostListDataItem> , Synchronisable{
 	
-
-	/**
-	 * 
-	 */
+	
 	private static final long serialVersionUID = 4160545876076772520L;
 	private Double value = 0d;	
 	private String unit;		
@@ -234,17 +236,6 @@ public class CostListDataItem extends AbstractManualDataItem implements SimpleLi
 		this.isManual = c.isManual;
 		
 	}
-	
-	@Deprecated
-	public CostListDataItem(SimpleListDataItem c){
-		super();
-		this.nodeRef = c.getNodeRef();		
-		this.value = c.getValue();
-		this.maxi = c.getMaxi();
-		this.cost = c.getCharactNodeRef();
-		this.isManual = c.getIsManual();
-	}
-
 
 
 	@Override

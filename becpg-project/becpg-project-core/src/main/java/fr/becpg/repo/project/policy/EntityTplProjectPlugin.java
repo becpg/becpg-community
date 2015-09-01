@@ -18,7 +18,6 @@ import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityTplPlugin;
 import fr.becpg.repo.helper.AssociationService;
-import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.impl.ProjectHelper;
 import fr.becpg.repo.repository.RepositoryEntity;
 
@@ -29,8 +28,6 @@ public class EntityTplProjectPlugin implements EntityTplPlugin {
 
 	@Autowired
 	private NodeService nodeService;
-	@Autowired
-	private ProjectService projectService;
 	@Autowired
 	private EntityListDAO entityListDAO;
 	@Autowired

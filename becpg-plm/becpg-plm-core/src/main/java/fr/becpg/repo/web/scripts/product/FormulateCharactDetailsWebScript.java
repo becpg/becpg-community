@@ -35,6 +35,7 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.repo.formulation.FormulateException;
+import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.product.data.CharactDetails;
 
 /**
@@ -57,6 +58,13 @@ public class FormulateCharactDetailsWebScript extends AbstractProductWebscript {
 	private NodeService nodeService;
 	
 	private NamespaceService namespaceService;
+	
+	private AttributeExtractorService attributeExtractorService;
+	
+
+	public void setAttributeExtractorService(AttributeExtractorService attributeExtractorService) {
+		this.attributeExtractorService = attributeExtractorService;
+	}
 
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
@@ -100,11 +108,11 @@ public class FormulateCharactDetailsWebScript extends AbstractProductWebscript {
 			if("csv".equals(req.getFormat()) ){
 				res.setContentType("application/vnd.ms-excel");
 				res.setContentEncoding("ISO-8859-1");
-				CharactDetailsHelper.writeCSV(ret,nodeService,res.getWriter());
+				CharactDetailsHelper.writeCSV(ret,nodeService,attributeExtractorService,res.getWriter());
 			} else {
 				res.setContentType("application/json");
 				res.setContentEncoding("UTF-8");
-				res.getWriter().write(CharactDetailsHelper.toJSONObject(ret,nodeService).toString(3));
+				res.getWriter().write(CharactDetailsHelper.toJSONObject(ret,nodeService,attributeExtractorService).toString(3));
 
 			}
 	

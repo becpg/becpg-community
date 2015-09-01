@@ -1,23 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-  <name>share</name>
-  <comment>Alfresco Share aggregator, installs your Share AMPs in the Share WAR for aggregation and easy deployment purposes. NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
-  <projects>
-    <project>becpg-share</project>
-    <project>becpg-designer-share</project>
-    <project>becpg-project-share</project>
-    <project>becpg-plm-share</project>
-  </projects>
-  <buildSpec>
-    <buildCommand>
-      <name>org.eclipse.jdt.core.javabuilder</name>
-    </buildCommand>
-    <buildCommand>
-      <name>org.eclipse.m2e.core.maven2Builder</name>
-    </buildCommand>
-  </buildSpec>
-  <natures>
-    <nature>org.eclipse.jdt.core.javanature</nature>
-    <nature>org.eclipse.m2e.core.maven2Nature</nature>
-  </natures>
+	<name>share</name>
+	<comment>Alfresco Share aggregator, installs your Share AMPs in the Share WAR for aggregation and easy deployment purposes. NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
+	<projects>
+		<project>becpg-share</project>
+		<project>becpg-designer-share</project>
+		<project>becpg-project-share</project>
+		<project>becpg-plm-share</project>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>org.eclipse.m2e.core.maven2Builder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.m2e.core.maven2Nature</nature>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+	</natures>
 </projectDescription>

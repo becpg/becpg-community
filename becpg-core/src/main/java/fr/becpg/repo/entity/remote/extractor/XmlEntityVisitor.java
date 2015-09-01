@@ -208,7 +208,7 @@ public class XmlEntityVisitor {
 				RemoteEntityService.NODE_TYPE);
 
 		String name = (String) nodeService.getProperty(nodeRef,
-				RemoteHelper.getPropName(nodeType));
+				RemoteHelper.getPropName(nodeType,dictionaryService));
 
 		xmlw.writeAttribute(RemoteEntityService.ATTR_NAME, name);
 		xmlw.writeAttribute(RemoteEntityService.ATTR_NODEREF,
@@ -430,7 +430,6 @@ public class XmlEntityVisitor {
 		} else if (value instanceof Date) {
 			xmlw.writeCharacters(ISO8601DateFormat.format((Date) value));
 		} else {
-			// xmlw.writeCharacters(cleanInvalidXmlChars(value.toString(),""));
 			if (value != null) {
 				xmlw.writeCData(value.toString());
 			}
@@ -448,22 +447,5 @@ public class XmlEntityVisitor {
 							.equals(nodeType));
 	}
 
-	//
-	// /**
-	// * From xml spec valid chars:<br>
-	// * #x9 | #xA | #xD | [#x20-#xD7FF] | [#xE000-#xFFFD] |
-	// [#x10000-#x10FFFF]<br>
-	// * any Unicode character, excluding the surrogate blocks, FFFE, and
-	// FFFF.<br>
-	// * @param text The String to clean
-	// * @param replacement The string to be substituted for each match
-	// * @return The resulting String
-	// */
-	// private String cleanInvalidXmlChars(String text, String replacement) {
-	// String re =
-	// "[^\\x09\\x0A\\x0D\\x20-\\xD7FF\\xE000-\\xFFFD\\x10000-x10FFFF]";
-	// return text.replaceAll(re, replacement);
-	// }
-	//
 
 }

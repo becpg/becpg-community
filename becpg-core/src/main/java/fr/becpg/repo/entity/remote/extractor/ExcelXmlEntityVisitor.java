@@ -170,7 +170,7 @@ public class ExcelXmlEntityVisitor {
 		xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE, RemoteEntityService.NODE_TYPE);
 
 
-		xmlw.writeAttribute(RemoteEntityService.ATTR_NAME, (String) nodeService.getProperty(nodeRef, RemoteHelper.getPropName(nodeType)));
+		xmlw.writeAttribute(RemoteEntityService.ATTR_NAME, (String) nodeService.getProperty(nodeRef, RemoteHelper.getPropName(nodeType,dictionaryService)));
 		xmlw.writeAttribute(RemoteEntityService.ATTR_NODEREF, nodeRef.toString());
 
 		if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_CODE)) {

@@ -45,17 +45,23 @@
 				"name": "${row.item.assocs["bcpg:compoListProduct"][0].properties.name!""}",
 				"title": "${row.item.assocs["bcpg:compoListProduct"][0].properties.name!""}",	
 				<#elseif row.item.typeShort == "bcpg:nutList" >				
-				"name": "${row.item.assocs["bcpg:nutListNut"][0].properties.name!""}",
-				"title": "${row.item.assocs["bcpg:nutListNut"][0].properties.name!""}",	
+				"name": "${row.item.assocs["bcpg:nutListNut"][0].properties["bcpg:charactName"]!""}",
+				"title": "${row.item.assocs["bcpg:nutListNut"][0].properties["bcpg:charactName"]!""}",
+				<#elseif row.item.typeShort == "bcpg:costList" >				
+				"name": "${row.item.assocs["bcpg:costListCost"][0].properties["bcpg:charactName"]!""}",
+				"title": "${row.item.assocs["bcpg:costListCost"][0].properties["bcpg:charactName"]!""}",	
 				<#elseif row.item.typeShort == "bcpg:ingList" >				
-				"name": "${row.item.assocs["bcpg:ingListIng"][0].properties.name!""}",
-				"title": "${row.item.assocs["bcpg:ingListIng"][0].properties.name!""}",					
+				"name": "${row.item.assocs["bcpg:ingListIng"][0].properties["bcpg:charactName"]!""}",
+				"title": "${row.item.assocs["bcpg:ingListIng"][0].properties["bcpg:charactName"]!""}",					
 				<#elseif row.item.typeShort == "pjt:taskList" >
 				"name": "${row.item.properties["pjt:tlTaskName"]!""}",
 				"title": "${row.item.properties["pjt:tlTaskName"]!""}",	
 				<#elseif row.item.typeShort == "pjt:budgetList" >
 				"name": "${row.item.properties["pjt:blItem"]!""}",
-				"title": "${row.item.properties["pjt:blItem"]!""}",			
+				"title": "${row.item.properties["pjt:blItem"]!""}",	
+				<#elseif row.item.properties["bcpg:charactName"]?? >
+				"name": "${row.item.properties["bcpg:charactName"]!""}",
+				"title": "${row.item.properties.title!""}",				
 				<#else>
 				"name": "${row.item.properties.name!""}",
 				"title":<#if row.item.properties["lnk:title"]??>"${row.item.properties["lnk:title"]}",

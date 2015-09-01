@@ -63,7 +63,6 @@ import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationService;
-import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
@@ -111,9 +110,6 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 	@Autowired
 	private RuntimeRuleService ruleService;
-
-	@Autowired
-	private AssociationService associationService;
 
 	@Autowired
 	private EntityTplPlugin[] entityTplPlugins;

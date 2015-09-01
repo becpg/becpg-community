@@ -54,7 +54,9 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.RepositoryEntityDefReader;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
+import fr.becpg.repo.repository.model.MinMaxValueDataItem;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
+import fr.becpg.repo.repository.model.UnitAwareDataItem;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 public class QualityControlServiceImpl implements QualityControlService {
@@ -270,9 +272,13 @@ public class QualityControlServiceImpl implements QualityControlService {
 											if (n.equals(simpleListDataItem.getCharactNodeRef())) {
 
 												target = simpleListDataItem.getValue();
-												unit = simpleListDataItem.getUnit();
-												mini = simpleListDataItem.getMini();
-												maxi = simpleListDataItem.getMaxi();
+												if(simpleListDataItem instanceof UnitAwareDataItem){
+													unit = ((UnitAwareDataItem) simpleListDataItem).getUnit();
+												}
+												if(simpleListDataItem instanceof MinMaxValueDataItem){
+													mini = ((MinMaxValueDataItem) simpleListDataItem).getMini();
+													maxi = ((MinMaxValueDataItem) simpleListDataItem).getMaxi();
+												}
 											}
 										}
 									}

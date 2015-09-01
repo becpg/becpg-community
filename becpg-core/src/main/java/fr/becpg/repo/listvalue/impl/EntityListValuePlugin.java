@@ -68,7 +68,7 @@ public class EntityListValuePlugin implements ListValuePlugin {
 	protected static final String SOURCE_TYPE_LINKED_VALUE = "linkedvalue";
 	protected static final String SOURCE_TYPE_LINKED_VALUE_ALL = "allLinkedvalue";
 	protected static final String SOURCE_TYPE_LIST_VALUE = "listvalue";
-	protected static final String searchTemplate = "%(cm:name bcpg:erpCode bcpg:code bcpg:legalName)";
+	protected static final String searchTemplate = "%(cm:name bcpg:charactName bcpg:erpCode bcpg:code bcpg:legalName)";
 
 	protected static final String SUFFIX_ALL = "*";
 	protected static final String PARAM_VALUES_SEPARATOR = ",";

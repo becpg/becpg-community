@@ -13,7 +13,6 @@ import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -28,8 +27,6 @@ import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
-import fr.becpg.repo.entity.EntityListDAO;
-import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.report.search.SearchReportRenderer;
@@ -48,16 +45,8 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 	private ContentService contentService;
 
 	@Autowired
-	private PermissionService permissionService;
-
-	@Autowired
-	private EntityListDAO entityListDAO;
-
-	@Autowired
 	private AttributeExtractorService attributeExtractorService;
 
-	@Autowired
-	private AssociationService associationService;
 
 	@Autowired
 	private NamespaceService namespaceService;

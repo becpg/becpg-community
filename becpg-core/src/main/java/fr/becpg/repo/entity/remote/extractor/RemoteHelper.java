@@ -18,18 +18,22 @@
 package fr.becpg.repo.entity.remote.extractor;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.namespace.QName;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.entity.EntityDictionaryService;
 
 public class RemoteHelper {
 	
-
-	public static QName getPropName(QName type) {
-		if(BeCPGModel.TYPE_LINKED_VALUE.equals(type)){
+	@Deprecated
+	//Slow
+	public static QName getPropName(QName type, DictionaryService dictionaryService) {
+		if(dictionaryService.isSubClass(type, BeCPGModel.TYPE_LINKED_VALUE)){
 			return BeCPGModel.PROP_LKV_VALUE;
-		}
-		else if(ContentModel.TYPE_PERSON.equals(type)){
+		} else if(dictionaryService.isSubClass(type, BeCPGModel.TYPE_CHARACT)){
+		    return BeCPGModel.PROP_CHARACT_NAME;
+		} else if(ContentModel.TYPE_PERSON.equals(type)){
 			return ContentModel.PROP_USERNAME;
 		} else if(ContentModel.TYPE_AUTHORITY_CONTAINER.equals(type)){
 			return ContentModel.PROP_AUTHORITY_NAME;
@@ -37,5 +41,17 @@ public class RemoteHelper {
 		return ContentModel.PROP_NAME;
 	}
 
-
+	public static QName getPropName(QName type, EntityDictionaryService dictionaryService) {
+		if(dictionaryService.isSubClass(type, BeCPGModel.TYPE_LINKED_VALUE)){
+			return BeCPGModel.PROP_LKV_VALUE;
+		} else if(dictionaryService.isSubClass(type, BeCPGModel.TYPE_CHARACT)){
+		    return BeCPGModel.PROP_CHARACT_NAME;
+		} else if(ContentModel.TYPE_PERSON.equals(type)){
+			return ContentModel.PROP_USERNAME;
+		} else if(ContentModel.TYPE_AUTHORITY_CONTAINER.equals(type)){
+			return ContentModel.PROP_AUTHORITY_NAME;
+		}
+		return ContentModel.PROP_NAME;
+	}
+	
 }

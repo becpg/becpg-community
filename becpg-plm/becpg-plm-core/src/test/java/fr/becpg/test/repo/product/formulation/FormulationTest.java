@@ -126,13 +126,13 @@ public class FormulationTest extends AbstractFinishedProductTest {
 			
 				String geoOriginsText = "";
 				for(NodeRef geoOrigin : ingListDataItem.getGeoOrigin())
-					geoOriginsText += nodeService.getProperty(geoOrigin, ContentModel.PROP_NAME) + ", ";
+					geoOriginsText += nodeService.getProperty(geoOrigin, BeCPGModel.PROP_CHARACT_NAME) + ", ";
 				
 				String bioOriginsText = "";
 				for(NodeRef bioOrigin : ingListDataItem.getBioOrigin())
-					bioOriginsText += nodeService.getProperty(bioOrigin, ContentModel.PROP_NAME) + ", ";
+					bioOriginsText += nodeService.getProperty(bioOrigin, BeCPGModel.PROP_CHARACT_NAME) + ", ";
 				
-				String trace= "ing: " + nodeService.getProperty(ingListDataItem.getIng(), ContentModel.PROP_NAME) + " - qty: " + ingListDataItem.getQtyPerc() + " - geo origins: " + geoOriginsText + " - bio origins: " + bioOriginsText + " is gmo: " + ingListDataItem.getIsGMO() + " is ionized: " + ingListDataItem.getIsIonized();
+				String trace= "ing: " + nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME) + " - qty: " + ingListDataItem.getQtyPerc() + " - geo origins: " + geoOriginsText + " - bio origins: " + bioOriginsText + " is gmo: " + ingListDataItem.getIsGMO() + " is ionized: " + ingListDataItem.getIsIonized();
 				logger.debug(trace);
 				
 				DecimalFormat df = new DecimalFormat("0.000000");
@@ -223,14 +223,14 @@ public class FormulationTest extends AbstractFinishedProductTest {
 			
 				String geoOriginsText = "";
 				for(NodeRef geoOrigin : ingListDataItem.getGeoOrigin())
-					geoOriginsText += nodeService.getProperty(geoOrigin, ContentModel.PROP_NAME) + ", ";
+					geoOriginsText += nodeService.getProperty(geoOrigin, BeCPGModel.PROP_CHARACT_NAME) + ", ";
 				
 				String bioOriginsText = "";
 				for(NodeRef bioOrigin : ingListDataItem.getBioOrigin())
-					bioOriginsText += nodeService.getProperty(bioOrigin, ContentModel.PROP_NAME) + ", ";
+					bioOriginsText += nodeService.getProperty(bioOrigin, BeCPGModel.PROP_CHARACT_NAME) + ", ";
 				
 				DecimalFormat df = new DecimalFormat("0.000000");
-				String trace= "ing: " + nodeService.getProperty(ingListDataItem.getIng(), ContentModel.PROP_NAME) + " - qty: " + df.format(ingListDataItem.getQtyPerc()) + " - geo origins: " + geoOriginsText + " - bio origins: " + bioOriginsText + " is gmo: " + ingListDataItem.getIsGMO() + " is ionized: " + ingListDataItem.getIsIonized();
+				String trace= "ing: " + nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME) + " - qty: " + df.format(ingListDataItem.getQtyPerc()) + " - geo origins: " + geoOriginsText + " - bio origins: " + bioOriginsText + " is gmo: " + ingListDataItem.getIsGMO() + " is ionized: " + ingListDataItem.getIsIonized();
 				logger.debug(trace);
 				
 				
@@ -343,7 +343,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				int checks=0;
 				assertNotNull("CostList is null", formulatedProduct.getCostList());
 				for(CostListDataItem costListDataItem : formulatedProduct.getCostList()){
-					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
+					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
 					logger.debug(trace);
 					if(costListDataItem.getCost().equals(cost1)){
 						assertEquals("cost1.getValue() == 3.001, actual values: " + trace, 3.001d, costListDataItem.getValue());
@@ -361,7 +361,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				checks=0;
 				assertNotNull("NutList is null", formulatedProduct.getNutList());
 				for(NutListDataItem nutListDataItem : 	formulatedProduct.getNutList()){
-					String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), ContentModel.PROP_NAME) + " - value: " + nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
+					String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
 					logger.debug(trace);
 					if(nutListDataItem.getNut().equals(nut1)){
 						assertEquals("nut1.getValue() == 2.001, actual values: " + trace, 2.001d, nutListDataItem.getValue());
@@ -443,7 +443,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				//costs
 				assertNotNull("CostList is null", formulatedProduct.getCostList());
 				for(CostListDataItem costListDataItem : formulatedProduct.getCostList()){
-					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
+					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
 					logger.debug(trace);
 					if(costListDataItem.getCost().equals(cost1)){
 						assertEquals("check cost", df.format(0.177d), df.format(costListDataItem.getValue()));
@@ -461,7 +461,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				checks=0;
 				assertNotNull("NutList is null", formulatedProduct.getNutList());
 				for(NutListDataItem nutListDataItem : 	formulatedProduct.getNutList()){
-					String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), ContentModel.PROP_NAME) + " - value: " + nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
+					String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
 					logger.debug(trace);
 					if(nutListDataItem.getNut().equals(nut1)){
 						assertEquals("check nut", df.format(0.77d), df.format(nutListDataItem.getValue()));
@@ -530,7 +530,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				assertNotNull("IngList is null", formulatedProduct.getIngList());
 				for(IngListDataItem ingListDataItem : formulatedProduct.getIngList()){									
 					
-					String trace= "ing: " + nodeService.getProperty(ingListDataItem.getIng(), ContentModel.PROP_NAME) + " - qty: " + df.format(ingListDataItem.getQtyPerc());
+					String trace= "ing: " + nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME) + " - qty: " + df.format(ingListDataItem.getQtyPerc());
 					logger.debug(trace);
 										
 					if(ingListDataItem.getIng().equals(ing1)){
@@ -564,52 +564,52 @@ public class FormulationTest extends AbstractFinishedProductTest {
 //				public NodeRef execute() throws Throwable {					   				
 //								
 //					Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-//					properties.put(ContentModel.PROP_NAME, "nut3");
+//					properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut3");
 //					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
 //					properties.put(BeCPGModel.PROP_NUTGROUP, GROUP1);
-//					NodeRef nut3 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
+//					NodeRef nut3 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
 //					
 //					properties.clear();
-//					properties.put(ContentModel.PROP_NAME, "nut14");
+//					properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut14");
 //					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
 //					properties.put(BeCPGModel.PROP_NUTGROUP, GROUP1);
-//					NodeRef nut14 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
+//					NodeRef nut14 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
 //					
 //					properties.clear();
-//					properties.put(ContentModel.PROP_NAME, "nut5");
+//					properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut5");
 //					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
 //					properties.put(BeCPGModel.PROP_NUTGROUP, GROUP1);
-//					NodeRef nut5 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
+//					NodeRef nut5 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
 //					
 //					properties.clear();
-//					properties.put(ContentModel.PROP_NAME, "nut26");
+//					properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut26");
 //					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
 //					properties.put(BeCPGModel.PROP_NUTGROUP, GROUP2);
-//					NodeRef nut26 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
+//					NodeRef nut26 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
 //					
 //					properties.clear();
-//					properties.put(ContentModel.PROP_NAME, "nut17");
+//					properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut17");
 //					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
 //					properties.put(BeCPGModel.PROP_NUTGROUP, GROUP2);
-//					NodeRef nut17 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
+//					NodeRef nut17 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
 //					
 //					properties.clear();
-//					properties.put(ContentModel.PROP_NAME, "nut8");
+//					properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut8");
 //					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
 //					properties.put(BeCPGModel.PROP_NUTGROUP, GROUPOTHER);
-//					NodeRef nut8 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
+//					NodeRef nut8 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
 //					
 //					properties.clear();		
-//					properties.put(ContentModel.PROP_NAME, "nut9");
+//					properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut9");
 //					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
 //					properties.put(BeCPGModel.PROP_NUTGROUP, GROUPOTHER);
-//					NodeRef nut9 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
+//					NodeRef nut9 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
 //					
 //					properties.clear();
-//					properties.put(ContentModel.PROP_NAME, "nut10");
+//					properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut10");
 //					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
 //					properties.put(BeCPGModel.PROP_NUTGROUP, GROUPOTHER);
-//					NodeRef nut10 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
+//					NodeRef nut10 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
 //					
 //					List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
 //					nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d,  0d, "Autre", nut10, false));
@@ -671,8 +671,8 @@ public class FormulationTest extends AbstractFinishedProductTest {
 //					int i = 0;
 //					
 //					for(String nutName : nutNames){
-//						logger.debug("nutName : " + nutName+" "+(String)nodeService.getProperty(formulatedSF2.getNutList().get(i).getNut(), ContentModel.PROP_NAME));
-//						assertEquals(nutName, (String)nodeService.getProperty(formulatedSF2.getNutList().get(i).getNut(), ContentModel.PROP_NAME));
+//						logger.debug("nutName : " + nutName+" "+(String)nodeService.getProperty(formulatedSF2.getNutList().get(i).getNut(), BeCPGModel.PROP_CHARACT_NAME));
+//						assertEquals(nutName, (String)nodeService.getProperty(formulatedSF2.getNutList().get(i).getNut(), BeCPGModel.PROP_CHARACT_NAME));
 //						i++;
 //					}
 //		
@@ -766,13 +766,13 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				for(AllergenListDataItem allergenListDataItem : formulatedSF1.getAllergenList()){
 					String voluntarySources = "";
 					for(NodeRef part : allergenListDataItem.getVoluntarySources())
-						voluntarySources += nodeService.getProperty(part, ContentModel.PROP_NAME) + ", ";
+						voluntarySources += nodeService.getProperty(part, BeCPGModel.PROP_CHARACT_NAME) + ", ";
 					
 					String inVoluntarySources = "";
 					for(NodeRef part : allergenListDataItem.getInVoluntarySources())
-						inVoluntarySources += nodeService.getProperty(part, ContentModel.PROP_NAME) + ", ";
+						inVoluntarySources += nodeService.getProperty(part, BeCPGModel.PROP_CHARACT_NAME) + ", ";
 					
-					String trace= "SF1 allergen: " + nodeService.getProperty(allergenListDataItem.getAllergen(), ContentModel.PROP_NAME) + " - voluntary: " + allergenListDataItem.getVoluntary() + " - involuntary: " + allergenListDataItem.getInVoluntary() + " - voluntary sources:" + voluntarySources + " - involuntary sources:" + inVoluntarySources;
+					String trace= "SF1 allergen: " + nodeService.getProperty(allergenListDataItem.getAllergen(), BeCPGModel.PROP_CHARACT_NAME) + " - voluntary: " + allergenListDataItem.getVoluntary() + " - involuntary: " + allergenListDataItem.getInVoluntary() + " - voluntary sources:" + voluntarySources + " - involuntary sources:" + inVoluntarySources;
 					logger.debug(trace);
 					
 					//allergen1 - voluntary: true - involuntary: false - voluntary sources:Raw material 1, Raw material 2 - involuntary sources:
@@ -814,13 +814,13 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				for(AllergenListDataItem allergenListDataItem : formulatedSF2.getAllergenList()){
 					String voluntarySources = "";
 					for(NodeRef part : allergenListDataItem.getVoluntarySources())
-						voluntarySources += nodeService.getProperty(part, ContentModel.PROP_NAME) + ", ";
+						voluntarySources += nodeService.getProperty(part, BeCPGModel.PROP_CHARACT_NAME) + ", ";
 					
 					String inVoluntarySources = "";
 					for(NodeRef part : allergenListDataItem.getInVoluntarySources())
-						inVoluntarySources += nodeService.getProperty(part, ContentModel.PROP_NAME) + ", ";
+						inVoluntarySources += nodeService.getProperty(part, BeCPGModel.PROP_CHARACT_NAME) + ", ";
 					
-					String trace= "SF2 allergen: " + nodeService.getProperty(allergenListDataItem.getAllergen(), ContentModel.PROP_NAME) + " - voluntary: " + allergenListDataItem.getVoluntary() + " - involuntary: " + allergenListDataItem.getInVoluntary() + " - voluntary sources:" + voluntarySources + " - involuntary sources:" + inVoluntarySources;
+					String trace= "SF2 allergen: " + nodeService.getProperty(allergenListDataItem.getAllergen(), BeCPGModel.PROP_CHARACT_NAME) + " - voluntary: " + allergenListDataItem.getVoluntary() + " - involuntary: " + allergenListDataItem.getInVoluntary() + " - voluntary sources:" + voluntarySources + " - involuntary sources:" + inVoluntarySources;
 					logger.debug(trace);
 					
 					//allergen1 - voluntary: true - involuntary: false - voluntary sources:Raw material 1, Raw material 2 - involuntary sources:
@@ -861,13 +861,13 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				for(AllergenListDataItem allergenListDataItem : formulatedProduct.getAllergenList()){
 					String voluntarySources = "";
 					for(NodeRef part : allergenListDataItem.getVoluntarySources())
-						voluntarySources += nodeService.getProperty(part, ContentModel.PROP_NAME) + ", ";
+						voluntarySources += nodeService.getProperty(part, BeCPGModel.PROP_CHARACT_NAME) + ", ";
 					
 					String inVoluntarySources = "";
 					for(NodeRef part : allergenListDataItem.getInVoluntarySources())
-						inVoluntarySources += nodeService.getProperty(part, ContentModel.PROP_NAME) + ", ";
+						inVoluntarySources += nodeService.getProperty(part, BeCPGModel.PROP_CHARACT_NAME) + ", ";
 					
-					String trace= "PF allergen: " + nodeService.getProperty(allergenListDataItem.getAllergen(), ContentModel.PROP_NAME) + " - voluntary: " + allergenListDataItem.getVoluntary() + " - involuntary: " + allergenListDataItem.getInVoluntary() + " - voluntary sources:" + voluntarySources + " - involuntary sources:" + inVoluntarySources;
+					String trace= "PF allergen: " + nodeService.getProperty(allergenListDataItem.getAllergen(), BeCPGModel.PROP_CHARACT_NAME) + " - voluntary: " + allergenListDataItem.getVoluntary() + " - involuntary: " + allergenListDataItem.getInVoluntary() + " - voluntary sources:" + voluntarySources + " - involuntary sources:" + inVoluntarySources;
 					logger.debug(trace);
 					
 					//allergen1 - voluntary: true - involuntary: false - voluntary sources:Raw material 1, Raw material 2 - involuntary sources:
@@ -927,12 +927,12 @@ public class FormulationTest extends AbstractFinishedProductTest {
 					assertEquals("check nutList", 3, rmData1.getNutList().size());
 				
 					Map<QName,Serializable> properties = new HashMap<>();
-					properties.put(ContentModel.PROP_NAME, "nut4");
+					properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut4");
 					properties.put(PLMModel.PROP_NUTUNIT, "kcal");
 					properties.put(PLMModel.PROP_NUTGROUP, GROUP2);
 					properties.put(PLMModel.PROP_NUTGDA, 2000d);
 					properties.put(PLMModel.PROP_NUT_FORMULA, "10d+50");
-					NodeRef nut4 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_NUT, properties).getChildRef();			
+					NodeRef nut4 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), PLMModel.TYPE_NUT, properties).getChildRef();			
 					
 					
 					NutListDataItem nutListDataItem = new NutListDataItem();
@@ -1026,7 +1026,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				//costs
 				assertNotNull("CostList is null", formulatedProduct.getCostList());
 				for(CostListDataItem costListDataItem : formulatedProduct.getCostList()){
-					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
+					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
 					logger.debug(trace);
 					if(costListDataItem.getCost().equals(cost1)){
 						assertEquals("cost1.getValue() == 4.7425003, actual values: " + trace, df.format(4.7425d), df.format(costListDataItem.getValue()));
@@ -1041,7 +1041,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				//nuts
 				assertNotNull("NutList is null", formulatedProduct.getNutList());
 				for(NutListDataItem nutListDataItem : 	formulatedProduct.getNutList()){
-					String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), ContentModel.PROP_NAME) + " - value: " + nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
+					String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
 					logger.debug(trace);
 					if(nutListDataItem.getNut().equals(nut1)){
 						assertEquals("nut1.getValue() == 3, actual values: " + trace, 3d, nutListDataItem.getValue());
@@ -1059,13 +1059,13 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				for(AllergenListDataItem allergenListDataItem : formulatedProduct.getAllergenList()){
 					String voluntarySources = "";
 					for(NodeRef part : allergenListDataItem.getVoluntarySources())
-						voluntarySources += nodeService.getProperty(part, ContentModel.PROP_NAME) + ", ";
+						voluntarySources += nodeService.getProperty(part, BeCPGModel.PROP_CHARACT_NAME) + ", ";
 					
 					String inVoluntarySources = "";
 					for(NodeRef part : allergenListDataItem.getInVoluntarySources())
-						inVoluntarySources += nodeService.getProperty(part, ContentModel.PROP_NAME) + ", ";
+						inVoluntarySources += nodeService.getProperty(part, BeCPGModel.PROP_CHARACT_NAME) + ", ";
 					
-					String trace= "allergen: " + nodeService.getProperty(allergenListDataItem.getAllergen(), ContentModel.PROP_NAME) + " - voluntary: " + allergenListDataItem.getVoluntary() + " - involuntary: " + allergenListDataItem.getInVoluntary() + " - voluntary sources:" + voluntarySources + " - involuntary sources:" + inVoluntarySources;
+					String trace= "allergen: " + nodeService.getProperty(allergenListDataItem.getAllergen(), BeCPGModel.PROP_CHARACT_NAME) + " - voluntary: " + allergenListDataItem.getVoluntary() + " - involuntary: " + allergenListDataItem.getInVoluntary() + " - voluntary sources:" + voluntarySources + " - involuntary sources:" + inVoluntarySources;
 					logger.debug(trace);
 					
 					//allergen1 - voluntary: true - involuntary: false - voluntary sources:Raw material 1, Raw material 2 - involuntary sources:
@@ -1115,13 +1115,13 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				
 					String geoOriginsText = "";
 					for(NodeRef geoOrigin : ingListDataItem.getGeoOrigin())
-						geoOriginsText += nodeService.getProperty(geoOrigin, ContentModel.PROP_NAME) + ", ";
+						geoOriginsText += nodeService.getProperty(geoOrigin, BeCPGModel.PROP_CHARACT_NAME) + ", ";
 					
 					String bioOriginsText = "";
 					for(NodeRef bioOrigin : ingListDataItem.getBioOrigin())
-						bioOriginsText += nodeService.getProperty(bioOrigin, ContentModel.PROP_NAME) + ", ";
+						bioOriginsText += nodeService.getProperty(bioOrigin, BeCPGModel.PROP_CHARACT_NAME) + ", ";
 					
-					String trace= "ing: " + nodeService.getProperty(ingListDataItem.getIng(), ContentModel.PROP_NAME) + " - qty: " + ingListDataItem.getQtyPerc() + " - geo origins: " + geoOriginsText + " - bio origins: " + bioOriginsText + " is gmo: " + ingListDataItem.getIsGMO() + " is ionized: " + ingListDataItem.getIsIonized();
+					String trace= "ing: " + nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME) + " - qty: " + ingListDataItem.getQtyPerc() + " - geo origins: " + geoOriginsText + " - bio origins: " + bioOriginsText + " is gmo: " + ingListDataItem.getIsGMO() + " is ionized: " + ingListDataItem.getIsIonized();
 					logger.debug(trace);
 					
 					df = new DecimalFormat("0.000000");
@@ -1310,7 +1310,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 					//costs
 					assertNotNull("CostList is null", formulatedProduct.getCostList());
 					for(CostListDataItem costListDataItem : formulatedProduct.getCostList()){
-						String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
+						String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
 						logger.debug(trace);
 						if(costListDataItem.getCost().equals(pkgCost1)){
 							assertEquals("cost1.getValue() == 3.0625, actual values: " + trace, 3.0625d, costListDataItem.getValue());
@@ -1338,7 +1338,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 					//costs
 					assertNotNull("CostList is null", formulatedProduct.getCostList());
 					for(CostListDataItem costListDataItem : formulatedProduct.getCostList()){
-						String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
+						String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
 						logger.debug(trace);
 						if(costListDataItem.getCost().equals(pkgCost1)){
 							assertEquals(3.0000625d, costListDataItem.getValue());
@@ -1419,7 +1419,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				int checks = 0;
 				assertNotNull("CostList is null", formulatedProduct.getCostList());
 				for(CostListDataItem costListDataItem : formulatedProduct.getCostList()){
-					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue() + " - maxi: " + costListDataItem.getMaxi() + " - unit: " + costListDataItem.getUnit();
+					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + costListDataItem.getValue() + " - maxi: " + costListDataItem.getMaxi() + " - unit: " + costListDataItem.getUnit();
 					logger.debug(trace);
 					if(costListDataItem.getCost().equals(cost1)){
 						assertEquals("cost1.getValue() == 4.0, actual values: " + trace, 4.0d, costListDataItem.getValue());
@@ -1440,7 +1440,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				checks = 0;
 				assertNotNull("NutList is null", formulatedProduct.getNutList());
 				for(NutListDataItem nutListDataItem : 	formulatedProduct.getNutList()){
-					String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), ContentModel.PROP_NAME) + " - value: " + nutListDataItem.getValue() + " - mini: " + nutListDataItem.getMini() + " - maxi: " + nutListDataItem.getMaxi() + " - unit: " + nutListDataItem.getUnit();
+					String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + nutListDataItem.getValue() + " - mini: " + nutListDataItem.getMini() + " - maxi: " + nutListDataItem.getMaxi() + " - unit: " + nutListDataItem.getUnit();
 					logger.debug(trace);
 					if(nutListDataItem.getNut().equals(nut1)){
 						assertEquals("nut1.getValue() == 3, actual values: " + trace, 3d, nutListDataItem.getValue());
@@ -1474,7 +1474,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				checks = 0;
 				assertNotNull("NutList is null", formulatedProduct.getNutList());
 				for(NutListDataItem nutListDataItem : 	formulatedProduct.getNutList()){
-					String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), ContentModel.PROP_NAME) + " - value: " + nutListDataItem.getValue() + " - mini: " + nutListDataItem.getMini() + " - maxi: " + nutListDataItem.getMaxi() + " - unit: " + nutListDataItem.getUnit();
+					String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + nutListDataItem.getValue() + " - mini: " + nutListDataItem.getMini() + " - maxi: " + nutListDataItem.getMaxi() + " - unit: " + nutListDataItem.getUnit();
 					logger.debug(trace);
 					if(nutListDataItem.getNut().equals(nut1)){
 						assertNull(nutListDataItem.getMini());
@@ -1536,7 +1536,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 //				//costs
 //				assertNotNull("CostList is null", formulatedProduct.getCostList());
 //				for(CostListDataItem costListDataItem : formulatedProduct.getCostList()){
-//					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
+//					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
 //					logger.debug(trace);
 //					if(costListDataItem.getCost().equals(cost1)){
 //						assertEquals("cost1.getValue() == 4.0, actual values: " + trace, 4.0d, costListDataItem.getValue());
@@ -1550,7 +1550,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 //				//nuts
 //				assertNotNull("NutList is null", formulatedProduct.getNutList());
 //				for(NutListDataItem nutListDataItem : 	formulatedProduct.getNutList()){
-//					String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), ContentModel.PROP_NAME) + " - value: " + nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
+//					String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
 //					logger.debug(trace);
 //					if(nutListDataItem.getNut().equals(nut1)){
 //						assertEquals("nut1.getValue() == 3, actual values: " + trace, 3d, nutListDataItem.getValue());
@@ -1768,7 +1768,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				int checks = 0;
 				assertNotNull("CostList is null", formulatedProduct.getCostList());
 				for(CostListDataItem costListDataItem : formulatedProduct.getCostList()){
-					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
+					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
 					logger.debug(trace);
 					if(costListDataItem.getCost().equals(cost1)){
 						assertEquals("cost1.getValue() == 4.0, actual values: " + trace, 4.0d, costListDataItem.getValue());
@@ -1785,7 +1785,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				
 				// manual modification
 				for(CostListDataItem costListDataItem : formulatedProduct.getCostList()){
-					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
+					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
 					logger.debug(trace);
 					if(costListDataItem.getCost().equals(cost1)){
 						
@@ -1802,7 +1802,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				checks = 0;
 				assertNotNull("CostList is null", formulatedProduct.getCostList());
 				for(CostListDataItem costListDataItem : formulatedProduct.getCostList()){
-					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
+					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
 					logger.debug(trace);
 					if(costListDataItem.getCost().equals(cost1)){
 						assertEquals("cost1.getValue() == 5.0, actual values: " + trace, 5.0d, costListDataItem.getValue());
@@ -1841,47 +1841,47 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				logger.debug("/*-- Create process steps, resources --*/");
 				Map<QName, Serializable> properties = new HashMap<>();
 				//Costs
-				properties.put(ContentModel.PROP_NAME, "costTransfo");			 					 				
+				properties.put(BeCPGModel.PROP_CHARACT_NAME, "costTransfo");			 					 				
 				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
-				NodeRef costTransfoNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
+				NodeRef costTransfoNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
 				
-				properties.put(ContentModel.PROP_NAME, "costMOTransfo");			 					 				
+				properties.put(BeCPGModel.PROP_CHARACT_NAME, "costMOTransfo");			 					 				
 				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
-				NodeRef costMOTransfoNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();								
+				NodeRef costMOTransfoNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), PLMModel.TYPE_COST, properties).getChildRef();								
 				
-				properties.put(ContentModel.PROP_NAME, "costMOMaintenance");			 					 				
+				properties.put(BeCPGModel.PROP_CHARACT_NAME, "costMOMaintenance");			 					 				
 				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
-				NodeRef costMOMaintenanceNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
+				NodeRef costMOMaintenanceNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
 
-				properties.put(ContentModel.PROP_NAME, "costEmb");			 					 				
+				properties.put(BeCPGModel.PROP_CHARACT_NAME, "costEmb");			 					 				
 				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
-				NodeRef costEmbNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
+				NodeRef costEmbNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
 				
 				//Steps
 				logger.debug("Steps");
-				properties.put(ContentModel.PROP_NAME, "Découpe");			 					 				
+				properties.put(BeCPGModel.PROP_CHARACT_NAME, "Découpe");			 					 				
 				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
-				NodeRef decoupeNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
+				NodeRef decoupeNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
 				
-				properties.put(ContentModel.PROP_NAME, "Hachage");			 					 				
+				properties.put(BeCPGModel.PROP_CHARACT_NAME, "Hachage");			 					 				
 				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
-				NodeRef hachageNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
+				NodeRef hachageNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
 				
-				properties.put(ContentModel.PROP_NAME, "Cuisson");			 					 				
+				properties.put(BeCPGModel.PROP_CHARACT_NAME, "Cuisson");			 					 				
 				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
-				NodeRef cuissonNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
+				NodeRef cuissonNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
 				
-				properties.put(ContentModel.PROP_NAME, "Mélange");			 					 				
+				properties.put(BeCPGModel.PROP_CHARACT_NAME, "Mélange");			 					 				
 				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
-				NodeRef melangeNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
+				NodeRef melangeNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
 				
-				properties.put(ContentModel.PROP_NAME, "Etape Ligne");			 					 				
+				properties.put(BeCPGModel.PROP_CHARACT_NAME, "Etape Ligne");			 					 				
 				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
-				NodeRef ligneStepNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
+				NodeRef ligneStepNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
 				
-				properties.put(ContentModel.PROP_NAME, "Etape emb");			 					 				
+				properties.put(BeCPGModel.PROP_CHARACT_NAME, "Etape emb");			 					 				
 				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
-				NodeRef embStepNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
+				NodeRef embStepNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
 				
 				// resources
 				logger.debug("Resources");
@@ -1986,7 +1986,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				int checks = 0;
 				assertNotNull("CostList is null", formulatedProduct.getCostList());
 				for(CostListDataItem costListDataItem : formulatedProduct.getCostList()){
-					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
+					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
 					logger.debug(trace);
 					//Transfo
 					if(costListDataItem.getCost().equals(costTransfoNodeRef)){
@@ -2238,7 +2238,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				int checks=0;
 				assertNotNull("physicoChem is null", formulatedProduct.getPhysicoChemList());
 				for(PhysicoChemListDataItem pcListDataItem : formulatedProduct.getPhysicoChemList()){
-					String trace = "physicoChem: " + nodeService.getProperty(pcListDataItem.getPhysicoChem(), ContentModel.PROP_NAME) + " - value: " + pcListDataItem.getValue() + " - unit: " + pcListDataItem.getUnit();
+					String trace = "physicoChem: " + nodeService.getProperty(pcListDataItem.getPhysicoChem(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + pcListDataItem.getValue() + " - unit: " + pcListDataItem.getUnit();
 					logger.info(trace);
 					if(pcListDataItem.getPhysicoChem().equals(physicoChem3)){
 						assertEquals(3d, pcListDataItem.getValue());

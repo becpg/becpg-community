@@ -3,9 +3,17 @@
  */
 package fr.becpg.repo.product.formulation;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
@@ -347,7 +355,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("productData: " + compoListDataItem.getProduct() + " - ing: "
-						+ nodeService.getProperty(ingNodeRef, ContentModel.PROP_NAME) + " qtyPerc: " + totalQtyIng);
+						+ nodeService.getProperty(ingNodeRef, BeCPGModel.PROP_CHARACT_NAME) + " qtyPerc: " + totalQtyIng);
 			}
 
 			// recursive
@@ -402,7 +410,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 					for (IngListDataItem ingListDataItem : componentProductData.getIngList()) {
 						if (logger.isDebugEnabled()) {
 							logger.debug("For " + productNodeRef + " testing ing :"
-									+ nodeService.getProperty(ingListDataItem.getCharactNodeRef(), ContentModel.PROP_NAME));
+									+ nodeService.getProperty(ingListDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME));
 						}
 						for (ForbiddenIngListDataItem fil : productSpecificationData.getForbiddenIngList()) {
 

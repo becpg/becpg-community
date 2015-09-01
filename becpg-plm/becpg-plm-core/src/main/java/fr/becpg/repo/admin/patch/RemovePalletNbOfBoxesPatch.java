@@ -66,7 +66,7 @@ public class RemovePalletNbOfBoxesPatch extends AbstractBeCPGPatch {
 
 			final long maxNodeId = getPatchDAO().getMaxAdmNodeID();
 
-			long minSearchNodeId = 1;
+			long minSearchNodeId = 0;
 			long maxSearchNodeId = count;
 
 			final Pair<Long, QName> val = getQnameDAO().getQName(type);

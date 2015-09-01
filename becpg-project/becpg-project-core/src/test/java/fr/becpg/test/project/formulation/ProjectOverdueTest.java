@@ -7,8 +7,6 @@ import java.util.Date;
 
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
 import fr.becpg.repo.project.data.ProjectData;
@@ -25,8 +23,6 @@ import fr.becpg.test.project.AbstractProjectTestCase;
  * @author quere
  */
 public class ProjectOverdueTest extends AbstractProjectTestCase {	
-
-	private static final Log logger = LogFactory.getLog(ProjectOverdueTest.class);
 	
 	/**
 	 * Test the calculation of the project overdue
