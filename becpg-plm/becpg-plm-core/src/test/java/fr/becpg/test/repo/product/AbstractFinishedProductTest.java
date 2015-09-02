@@ -216,9 +216,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
 			public NodeRef execute() throws Throwable {	
-				
-					
-				
+
 					/*-- characteristics --*/
 					Map<QName, Serializable> properties = new HashMap<>();
 					//Costs
@@ -300,7 +298,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					allergen4 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), PLMModel.TYPE_ALLERGEN, properties).getChildRef();
 					//Ings
 					properties.clear();
-					properties.put(BeCPGModel.PROP_CHARACT_NAME, "Epaississant");
+					properties.put(BeCPGModel.PROP_LV_VALUE, "Epaississant");
 					MLText mlName = new MLText();
 					mlName.addValue(I18NUtil.getContentLocaleLang(), "Epaississant default");
 					mlName.addValue(Locale.ENGLISH, "Epaississant english");
@@ -311,16 +309,16 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					plmlName.addValue(Locale.ENGLISH, "Epaississants english");
 					plmlName.addValue(Locale.FRENCH, "Epaississants french");	
 					properties.put(PLMModel.PROP_ING_TYPE_LEGAL_NAME_PLURAL, plmlName);
-					ingType1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), PLMModel.TYPE_ING_TYPE_ITEM, properties).getChildRef();
+					ingType1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_LV_VALUE)), PLMModel.TYPE_ING_TYPE_ITEM, properties).getChildRef();
 					properties.clear();
-					properties.put(BeCPGModel.PROP_CHARACT_NAME, "Epices");
+					properties.put(BeCPGModel.PROP_LV_VALUE, "Epices");
 					mlName = new MLText();
 					mlName.addValue(I18NUtil.getContentLocaleLang(), "Epices default");
 					mlName.addValue(Locale.ENGLISH, "Epices english");
 					mlName.addValue(Locale.FRENCH, "Epices french");	
 					properties.put(BeCPGModel.PROP_LEGAL_NAME, mlName);
 					properties.put(PLMModel.PROP_ING_TYPE_DEC_THRESHOLD, 20);
-					ingType2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), PLMModel.TYPE_ING_TYPE_ITEM, properties).getChildRef();
+					ingType2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_LV_VALUE)), PLMModel.TYPE_ING_TYPE_ITEM, properties).getChildRef();
 					properties.clear();
 					properties.put(BeCPGModel.PROP_CHARACT_NAME, "ing1");
 					mlName = new MLText();

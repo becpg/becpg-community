@@ -49,6 +49,7 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.AutoNumService;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.listvalue.ListValuePage;
 import fr.becpg.repo.listvalue.ListValuePlugin;
@@ -68,7 +69,9 @@ public class EntityListValuePlugin implements ListValuePlugin {
 	protected static final String SOURCE_TYPE_LINKED_VALUE = "linkedvalue";
 	protected static final String SOURCE_TYPE_LINKED_VALUE_ALL = "allLinkedvalue";
 	protected static final String SOURCE_TYPE_LIST_VALUE = "listvalue";
-	protected static final String searchTemplate = "%(cm:name bcpg:charactName bcpg:erpCode bcpg:code bcpg:legalName)";
+	protected static final String searchTemplate = "%(cm:name  bcpg:erpCode bcpg:code bcpg:legalName)";
+	protected static final String charactSearchTemplate = "%(bcpg:charactName bcpg:legalName)";
+	protected static final String listValueSearchTemplate = "%(bcpg:lvValue bcpg:legalName)";
 
 	protected static final String SUFFIX_ALL = "*";
 	protected static final String PARAM_VALUES_SEPARATOR = ",";
@@ -80,6 +83,8 @@ public class EntityListValuePlugin implements ListValuePlugin {
 	protected NamespaceService namespaceService;
 	@Autowired
 	protected DictionaryService dictionaryService;
+	@Autowired
+	protected EntityDictionaryService entityDictionaryService;
 	@Autowired
 	private DictionaryDAO dictionaryDAO;
 	@Autowired
@@ -139,7 +144,15 @@ public class EntityListValuePlugin implements ListValuePlugin {
 			}
 		}
 
-		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(type).excludeDefaults().inSearchTemplate(searchTemplate).
+		String template = searchTemplate;
+		if(entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_CHARACT)){
+			template = charactSearchTemplate;
+		} else if(entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_LIST_VALUE)){
+			template = listValueSearchTemplate;
+		}
+		
+		
+		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(type).excludeDefaults().inSearchTemplate(template).
 				locale(I18NUtil.getContentLocale()).andOperator().ftsLanguage();
 
 		if (!isAllQuery(query)) {

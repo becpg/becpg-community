@@ -68,6 +68,9 @@
                          */
                         onReady : function ProjectTask_onReady()
                         {
+                        	
+                        	
+                        	
                             this.onDataItemUpdated();
                         },
 
@@ -102,7 +105,11 @@
                                 
                                 
                                 if(!task.isRefusedEnabled){
-                                    Dom.addClass(this.id.replace("assoc_pjt_workflowTask-cntrl",this.options.transitionField) + "-refused", "hidden");
+                                	var refuseButtonId = this.id.replace(/assoc_pjt_workflowTask\-cntrl/g,this.options.transitionField) + "-refused";
+                                	YAHOO.util.Event.onAvailable(refuseButtonId,function(){
+                                		  Dom.addClass(refuseButtonId, "hidden");
+                                	}, this);
+                                  
                                 }
 
                                 if (deliverables != null && deliverables.length > 0)
@@ -150,7 +157,6 @@
                                Bubbling.addDefaultAction(COMMENT_EVENTCLASS, fnOnCommentTaskHandler);
                             }
                         },
-
                         getDeliverableList : function(deliverables, entityNodeRef)
                         {
                             var deliverableHtlm = "<ul>";
@@ -166,13 +172,6 @@
                         },
                         getTaskTitle : function PL_getTaskTitle(task, entityNodeRef)
                         {
-                            // var ret = '<span class="node-' + task.nodeRef +
-                            // '|' + entityNodeRef + '"><a class="theme-color-1
-                            // ' + TASK_EVENTCLASS + '" title="' + this
-                            // .msg("form.control.project-task.link.title.task-edit")
-                            // + '" >' + task.name + ' (' +
-                            // task.completionPercent + '%)</a></span>';
-                            // ret += "</span>";
 
                             var ret = '<span class="node-' + task.nodeRef + '|' + entityNodeRef + '">' + task.name + ' (' + task.completionPercent + '%)';
                             ret += '<a class="task-comments ' + COMMENT_EVENTCLASS +(task.commentCount?" active-comments":"")+ '" title="' + this
@@ -198,14 +197,7 @@
 
                             ret = '<div class="delivrable delivrable-status-' + deliverable.state + '">';
                             ret += '<div class="delivrable-status delivrable-status-' + deliverable.state + '"></div>';
-                            
-                            /*
-                            ret += '<span class="node-' + deliverable.nodeRef + '|' + entityNodeRef + '"><a class="task-comments ' + COMMENT_EVENTCLASS + '" title="' + this
-                                    .msg("link.title.comment-task") + '" href="#" >';
-                            if (deliverable.commentCount)
-                            {
-                                ret += deliverable.commentCount;
-                            }*/
+
                             
                             ret += '<div class="delivrable-container">';
 

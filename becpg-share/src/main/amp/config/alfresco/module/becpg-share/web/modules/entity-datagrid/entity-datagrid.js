@@ -2470,7 +2470,7 @@
                             {
                                 page : this.currentPage,
                                 updateOnly : args[1] != null && args[1].updateOnly ? args[1].updateOnly : false,
-                                callback : args[1] != null && args[1].updateOnly ? args[1].callback : null,
+                                callback : args[1] != null && args[1].updateOnly ? args[1].callback : null
                             });
                         },
 

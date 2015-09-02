@@ -67,6 +67,7 @@
                                             {
                                                 stepsOrientation : "vertical",
                                                 enableCancelButton : true,
+                                                enableKeyNavigation : false,
                                                 labels: {
                                                     cancel: me.msg("wizard.cancel.button"),
                                                     current:  me.msg("wizard.current.step"),

@@ -3,9 +3,9 @@
    "result":
    [
 <#list suggestions.results as result>
-			{"value": "${result.value}"
-			,"name": "${result.name}"
-			,"cssClass":"${result.cssClass}"
+			{"value": "${result.value!""}"
+			,"name": "${result.name!""}"
+			,"cssClass":"${result.cssClass!""}"
 			,"metadatas": [
 			<#list result.metadatas?keys as key>
 				{"key": "${key}",

@@ -10,7 +10,7 @@
          <div class="form-fields">
 	         <div class="set">	         
 		         <div class="form-field">
-			         <select id="${el}-locale-picker" name="-" onChange="addFormFieldForLocale(this.form)">
+			         <select id="${el}-locale-picker" name="-" onChange="addFormFieldForLocale();">
                             <option value="-" >${msg("locale.choose")}</option>
 							<#assign h = config.scoped["Languages"]["languages"]>
 							<#list  h.getChildren("language") as language>
@@ -51,30 +51,29 @@
       </form>
    </div>
 </div>
-
 <script type="text/javascript">//<![CDATA[
 
-var addFormFieldForLocale = function(form){
-  
-	  	var select = YAHOO.util.Dom.get("${el}-locale-picker"),
-	  		index = select.selectedIndex,
-	  		lc = select.options[index].value,
-	  		container = YAHOO.util.Dom.get("${el}-added-locale-container"),
-	  		varHtml = "";
-	  		
-	  		if(YAHOO.util.Dom.get("${el}-"+lc) == null && lc!="-"){
+var addFormFieldForLocale = function(){
+  	
+  	  	var select = document.getElementById("${el}-locale-picker");
+	  	var index = select.selectedIndex;
+	  	var lc = select.options[index].value;
+	  	var container = document.getElementById("${el}-added-locale-container");
+	  	var	varHtml = "";
+	  	if(document.getElementById("${el}-"+lc) == null && lc!="-"){
    
-	   	 varHtml +="<div class=\"form-field\"><label for=\"${el}-"+lc+"\">${label?js_string}:&nbsp;<span class=\"locale-icon\"><img  tabindex=\"0\" src=\"${url.context}/res/components/images/flags/"+lc+".png\"/></span></label>";
+	   	 varHtml +="<div class=\"form-field\"><label for=\"${el}-"+lc
+	   	         +"\">${label?js_string}:&nbsp;<span class=\"locale-icon\">"
+	   	         +"<img  tabindex=\"0\" src=\"${url.context}/res/components/images/flags/"+lc+".png\"/></span></label>";
 	   	 <#if args.textarea??>
-	   	 	 varHtml+="<textarea rows=\"2\" cols=\"60\" title=\"${description?js_string}\" tabindex=\"0\"	 name=\""+lc+"\" id=\"${el}-"+lc+"\"></textarea>";
+	   	 varHtml+="<textarea rows=\"2\" cols=\"60\" title=\"${description?js_string}\" tabindex=\"0\"	 name=\""+lc+"\" id=\"${el}-"+lc+"\"></textarea>";
 	   	 <#else>
-	   		 varHtml+="<input type=\"text\" title=\"${description?js_string}\" tabindex=\"0\"	 name=\""+lc+"\" id=\"${el}-"+lc+"\"></input>";
-	  		</#if>
-	  		 varHtml +="</div>";
-	  		 
-	  		 container.innerHTML += varHtml;
-  		 }
-	      			    
-}
+	   	 varHtml+="<input type=\"text\" title=\"${description?js_string}\" tabindex=\"0\"	 name=\""+lc+"\" id=\"${el}-"+lc+"\"></input>";
+	  	 </#if>
+	  	 varHtml +="</div>";
+	  	 container.innerHTML += varHtml;
+  		}
+	     			    
+};
 
 //]]></script>

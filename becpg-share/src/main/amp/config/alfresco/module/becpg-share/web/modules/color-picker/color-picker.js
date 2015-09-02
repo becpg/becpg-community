@@ -239,7 +239,7 @@
 						},
 						scope : this
 					},
-					failureMessage : "Cannot update color",
+					failureMessage : "Cannot update color"
 				});
 				
 			}
