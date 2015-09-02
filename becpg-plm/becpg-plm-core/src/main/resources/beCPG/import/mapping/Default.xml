@@ -36,6 +36,7 @@
 	<mapping name="bcpg:allergen">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="bcpg:allergenCode" />
+			<nodeColumnKey attribute="bcpg:charactName" />
 		</nodeColumnKeys>
 		<columns>
 

@@ -50,7 +50,7 @@
           * @property nodeRef
           * @type string
           */
-         nodeRef : null,
+         nodeRef : null
 
       },
 

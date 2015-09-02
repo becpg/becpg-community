@@ -7064,7 +7064,7 @@
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:lvValue" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:ingTypePluralLegalName"/>
 					<show id="bcpg:ingTypeDecThreshold" />
@@ -7079,7 +7079,7 @@
 			<!-- Create item form -->
 			<form>
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:lvValue" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:ingTypePluralLegalName"/>
 					<show id="bcpg:ingTypeDecThreshold" />
@@ -7090,7 +7090,7 @@
 			<!-- Data Grid view -->
 			<form id="filter">
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:lvValue" />
 					<show id="bcpg:ingTypeDecThreshold" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
@@ -7098,7 +7098,7 @@
 
 			<form id="datagrid">
 				<field-visibility>
-					<show id="cm:name" />
+					<show id="bcpg:lvValue" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:ingTypePluralLegalName"/>
 					<show id="bcpg:ingTypeDecThreshold" />
