@@ -205,7 +205,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				CompoListDataItem compoListDataItem = component.getData();
 				Double qty = FormulationHelper.getQtyForCost(compoListDataItem, parentLossRatio,
 						ProductUnit.getUnit((String) nodeService.getProperty(compoListDataItem.getProduct(), PLMModel.PROP_PRODUCT_UNIT)));
-				visitPart(compoListDataItem.getProduct(), costList, qty, null, netQty, mandatoryCharacts, totalQtiesValue,
+				visitPart(compoListDataItem.getProduct(), costList, qty, qty, netQty, mandatoryCharacts, totalQtiesValue,
 						formulatedProduct instanceof RawMaterialData);
 			}
 		}
