@@ -5,12 +5,12 @@
 	<groupId>fr.becpg</groupId>
 	<artifactId>becpg-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>2.0.2</version>
+	<version>2.0.3</version>
 	<name>beCPG</name>
 	<parent>
 		<groupId>org.alfresco.maven</groupId>
 		<artifactId>alfresco-sdk-parent</artifactId>
-		<version>2.0.0</version>
+		<version>2.1.0</version>
 	</parent>
 	<description>BeCPG Parent Project</description>
 	<organization>
@@ -117,7 +117,31 @@
 					<artifactId>sonar-maven-plugin</artifactId>
 					<version>2.5</version>
 				</plugin>
-				
+				<plugin>
+	                    <groupId>net.alchim31.maven</groupId>
+	                    <artifactId>yuicompressor-maven-plugin</artifactId>
+	                    <version>1.5.1</version>
+	                    <executions>
+	                        <execution>
+	                            <id>compress-js</id>
+	                            <phase>process-resources</phase>
+	                            <goals>
+	                                <goal>compress</goal>
+	                            </goals>
+	                            <configuration>
+	                                <excludes>
+										<exclude>**/templates/**</exclude>
+	                                    <exclude>**/webscripts/**</exclude>
+	                                    <exclude>**/site-webscripts/**</exclude>
+	                                    <exclude>**/*.lib.js</exclude>
+	                                    <exclude>**/*.css</exclude>
+	                                </excludes>
+	                                <warSourceDirectory>src/main/resources/META-INF</warSourceDirectory>
+	                                <jswarn>false</jswarn>
+	                            </configuration>
+	                        </execution>
+	                    </executions>
+	               </plugin>
 			</plugins>
 		</pluginManagement>
 		<plugins>
@@ -146,24 +170,32 @@
 				<configuration>
 					<encoding>UTF-8</encoding>
 					<nonFilteredFileExtensions>
-						<nonFilteredFileExtension>ftl</nonFilteredFileExtension>
-						<nonFilteredFileExtension>acp</nonFilteredFileExtension>
-						<nonFilteredFileExtension>jpg</nonFilteredFileExtension>
-						<nonFilteredFileExtension>png</nonFilteredFileExtension>
-						<nonFilteredFileExtension>gif</nonFilteredFileExtension>
-						<nonFilteredFileExtension>pdf</nonFilteredFileExtension>
-						<nonFilteredFileExtension>doc</nonFilteredFileExtension>
-						<nonFilteredFileExtension>docx</nonFilteredFileExtension>
-						<nonFilteredFileExtension>xls</nonFilteredFileExtension>
-						<nonFilteredFileExtension>xlsx</nonFilteredFileExtension>
-						<nonFilteredFileExtension>ppt</nonFilteredFileExtension>
-						<nonFilteredFileExtension>pptx</nonFilteredFileExtension>
-						<nonFilteredFileExtension>bin</nonFilteredFileExtension>
-						<nonFilteredFileExtension>lic</nonFilteredFileExtension>
-						<nonFilteredFileExtension>swf</nonFilteredFileExtension>
-						<nonFilteredFileExtension>zip</nonFilteredFileExtension>
-						<nonFilteredFileExtension>msg</nonFilteredFileExtension>
-						<!-- <nonFilteredFileExtension>csv</nonFilteredFileExtension> -->
+						 <nonFilteredFileExtension>ftl</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>acp</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>jpg</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>png</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>gif</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>svg</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>pdf</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>doc</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>docx</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>xls</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>xlsx</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>ppt</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>pptx</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>bin</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>lic</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>swf</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>zip</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>msg</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>jar</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>ttf</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>eot</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>woff</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>woff2</nonFilteredFileExtension>
+                           <!--  <nonFilteredFileExtension>css</nonFilteredFileExtension> -->
+                            <nonFilteredFileExtension>ico</nonFilteredFileExtension>
+                            <nonFilteredFileExtension>psd</nonFilteredFileExtension>
 					</nonFilteredFileExtensions>
 				</configuration>
 			</plugin>

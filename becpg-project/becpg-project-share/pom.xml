@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>becpg-parent</artifactId>
 		<groupId>fr.becpg</groupId>
-		<version>2.0.2</version>
+		<version>2.0.3</version>
 		<relativePath>../../</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
@@ -35,44 +35,10 @@
     </properties>
 	<build>
 		<plugins>
-		<!-- YUI Compressor -->
 			<plugin>
                 <groupId>net.alchim31.maven</groupId>
                 <artifactId>yuicompressor-maven-plugin</artifactId>
-                <version>1.4.0</version>
-                <executions>
-                    <execution>
-                        <id>minimize-slingshot-javascript</id>
-                        <goals>
-                            <goal>compress</goal>
-                        </goals>
-                        <phase>prepare-package</phase>
-                    </execution>
-                </executions>
-                <!-- ensure YUI Compressor 2.4.8-rhino-alfresco-patched is used - as 2.4.7 is the default -->
-                <dependencies>
-                    <dependency>
-                        <groupId>com.yahoo.platform.yui</groupId>
-                        <artifactId>yuicompressor</artifactId>
-                        <version>2.4.8-rhino-alfresco-patched</version>
-                    </dependency>
-                </dependencies>
-                <configuration>
-                    <jswarn>false</jswarn>
-                    <encoding>UTF-8</encoding>
-                    <includes>
-                        <include>**/*.js</include>
-                    </includes>
-                    <!-- We don't need to re-minify YUI or 3rd party libs -->
-                    <excludes>
-                       <exclude>**/entity-data-lists.js</exclude>
-						<exclude>**/*.get.js</exclude>
-						<exclude>**/*.lib.js</exclude>
-						<exclude>**/entity-charact-views/*.js</exclude>
-                    </excludes>
-                </configuration>
             </plugin>
-			
 		</plugins>
 	</build>
 </project>
