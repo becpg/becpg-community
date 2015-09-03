@@ -112,16 +112,13 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 			
 
 			DeliverableListDataItem preSupplierScript = new DeliverableListDataItem();
-
-			preSupplierScript.setName(I18NUtil.getMessage(SUPPLIER_PRE_SCRIPT));
+			preSupplierScript.setDescription(I18NUtil.getMessage(SUPPLIER_PRE_SCRIPT));
 			preSupplierScript.setScriptOrder(DeliverableScriptOrder.Pre);
-			
 			preSupplierScript.setTasks(Collections.singletonList(task1.getNodeRef()));
 			
 			
 			DeliverableListDataItem postValidationScript = new DeliverableListDataItem();
-
-			postValidationScript.setName(I18NUtil.getMessage(VALIDATE_POST_SCRIPT));
+			postValidationScript.setDescription(I18NUtil.getMessage(VALIDATE_POST_SCRIPT));
 			postValidationScript.setScriptOrder(DeliverableScriptOrder.Post);
 			postValidationScript.setTasks(Collections.singletonList(task2.getNodeRef()));
 			
