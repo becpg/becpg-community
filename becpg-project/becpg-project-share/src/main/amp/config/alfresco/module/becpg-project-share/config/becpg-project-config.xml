@@ -26,6 +26,8 @@
 		</forms>
 	</config>
 	
+
+	
 	<config evaluator="string-compare" condition="SitePages">
       <pages>
          <page id="calendar">calendar</page>
@@ -120,7 +122,7 @@
 		</create-content>
 		
 	</config>
-	
+
 	
 	<config evaluator="string-compare" condition="DocLibActions">
 		<!-- Action definitions -->
@@ -154,7 +156,13 @@
 				</permissions>
 				<evaluator>evaluator.becpg.doclib.action.project</evaluator>
 			</action>
-
+			
+			<action id="entity-view-projects" type="javascript" icon="entity-view-projects" label="actions.entity.associated-project">
+				<param name="function">onActionViewAssociatedProject</param>
+				<evaluator>evaluator.becpg.doclib.action.entity</evaluator>
+			</action>
+			
+			
 		</actions>
 		<actionGroups>
 			<actionGroup id="entity-browse">
@@ -162,6 +170,7 @@
 			</actionGroup>
 			<actionGroup id="entity-details">
 				<action index="181" id="project-manage-permissions" icon="folder-manage-permissions" label="actions.folder.manage-permissions" />
+				<action index="501" id="entity-view-projects" />
 			</actionGroup>
 		</actionGroups>
 	</config>

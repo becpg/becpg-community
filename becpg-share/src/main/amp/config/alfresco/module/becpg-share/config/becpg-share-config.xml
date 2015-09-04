@@ -241,6 +241,13 @@
 				<evaluator>evaluator.doclib.metadata.isLocked</evaluator>
 				<evaluator>evaluator.doclib.action.isWorkingCopy</evaluator>
 			</action>
+			
+			<action id="view-associated-workflow" type="javascript" icon="document-assign-workflow" label="actions.entity.associated-workflow">
+				<param name="function">onActionViewAssociatedWorkflow</param>
+				<evaluator>evaluator.becpg.doclib.action.entity</evaluator>
+			</action>
+			
+			
 
 		</actions>
 		<actionGroupResolver>becpg.resolver.doclib.actionGroup</actionGroupResolver>
@@ -294,6 +301,8 @@
 				<action index="370" id="document-cloud-unsync" />
 				<action index="380" id="document-view-in-cloud" />
 				<action index="390" id="document-request-sync" />
+				<action index="500" id="view-associated-workflow" />
+				
 			</actionGroup>
 			<actionGroup id="document-details">
 				<action index="121" id="reportTpl-refresh" />

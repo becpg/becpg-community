@@ -27,7 +27,7 @@
 	/**
 	 * YUI Library aliases
 	 */
-	var Dom = YAHOO.util.Dom, Event = YAHOO.util.Event, Bubbling = YAHOO.Bubbling;
+	var Dom = YAHOO.util.Dom, Bubbling = YAHOO.Bubbling;
 
 	/**
 	 * Alfresco Slingshot aliases
@@ -350,7 +350,7 @@
                                                fn : function(response) {
                                                    
                                                    list.state = "Valid" == list.state ? "ToValidate"
-                                                           : "Valid"
+                                                           : "Valid";
                                                    
                                                   Alfresco.util.PopupManager.displayMessage({
                                                      text : me.msg("message.entitylist.state.change.success")
@@ -531,7 +531,7 @@
 											
 											var nameHtml = document.createElement('div');
 											nameHtml.id = me.id+'-CustomViewName';
-											nameHtml.className = "form-field" 
+											nameHtml.className = "form-field"; 
 											nameHtml.innerHTML = '<label for="'+me.id+'-prop_cm_name">'+me.msg("label.view.name")+':<span class="mandatory-indicator">*</span> </label>'+
 									         '<input type="text"  name="prop_cm_name" id="'+me.id+'-prop_cm_name"  class="mandatory" >';
 											

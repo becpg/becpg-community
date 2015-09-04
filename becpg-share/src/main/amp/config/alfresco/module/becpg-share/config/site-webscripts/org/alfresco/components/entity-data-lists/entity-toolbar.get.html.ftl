@@ -3,8 +3,7 @@
    <#-- CSS Dependencies -->
 	<@link rel="stylesheet" type="text/css" href="${url.context}/res/components/data-lists/toolbar.css" group="entity-toolbar"/>
 	<@link rel="stylesheet" type="text/css" href="${url.context}/res/components/entity-data-lists/entity-toolbar.css" group="entity-toolbar" />
-
-    
+    <@link rel="stylesheet" type="text/css" href="${url.context}/res/modules/entity-workflows/entity-workflows.css" group="entity-toolbar" />
 </@>
 
 <@markup id="js">
@@ -17,7 +16,7 @@
   	<@createWidgets group="entity-toolbar"/>
 </@>
 
-<@markup id="">
+<@markup id="custom-entity-toolbar-js">
    <@script src="${url.context}/res/components/documentlibrary/becpg/docLibAction.js" group="custom-entity-toolbar"/>
    <@script src="${url.context}/res/components/entity-charact-views/custom-entity-toolbar.js" group="custom-entity-toolbar"/>
 </@markup>

@@ -46,7 +46,7 @@
                      <evaluators>
                         <evaluator type="site.component.evaluator"/>
                      </evaluators>
-                     <url>/components/entity-details/entity-header</url>
+                     <url>/components/entity-data-lists/entity-header</url>
                      <properties>
                         <nodeRef>{nodeRef}</nodeRef>
                         <rootPage>documentlibrary</rootPage>
@@ -67,7 +67,7 @@
                            </params>
                         </evaluator>
                      </evaluators>
-                     <url>/components/entity-details/entity-header</url>
+                     <url>/components/entity-data-lists/entity-header</url>
                      <properties>
                         <nodeRef>{nodeRef}</nodeRef>
                         <libraryRoot>alfresco://user/home</libraryRoot>
@@ -84,7 +84,7 @@
                            </params>
                         </evaluator>
                      </evaluators>
-                     <url>/components/entity-details/entity-header</url>
+                     <url>/components/entity-data-lists/entity-header</url>
                      <properties>
                         <nodeRef>{nodeRef}</nodeRef>
                         <libraryRoot>alfresco://shared</libraryRoot>
@@ -96,7 +96,7 @@
                   
                   <!-- otherwise: Repo header -->
                   <evaluation id="repo">
-                     <url>/components/entity-details/entity-header</url>
+                     <url>/components/entity-data-lists/entity-header</url>
                      <properties>
                         <nodeRef>{nodeRef}</nodeRef>
                         <rootPage>repository</rootPage>

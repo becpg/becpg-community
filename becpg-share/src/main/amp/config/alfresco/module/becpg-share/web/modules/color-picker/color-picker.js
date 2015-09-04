@@ -26,7 +26,7 @@
 	/**
 	 * YUI Library aliases
 	 */
-	var Dom = YAHOO.util.Dom, Event = YAHOO.util.Event, KeyListener = YAHOO.util.KeyListener;
+	var KeyListener = YAHOO.util.KeyListener;
 
 	beCPG.module.ColorPicker = function(containerId) {
 		this.name = "beCPG.module.ColorPicker";
@@ -166,8 +166,6 @@
 			this.widgets.cancelButton = Alfresco.util.createYUIButton(this, "cancel-button", this.onCancelButtonClick);
 			this.widgets.okButton = Alfresco.util.createYUIButton(this, "ok-button", this.onOkButtonClick);
 
-			var me = this;
-
 			var handleClick = function(e) {
 
 				m = YAHOO.util.Dom.getStyle(this, 'backgroundColor').match(/^rgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)$/i);
@@ -224,7 +222,6 @@
 			if (this.showConfig.fieldId) {
 				YAHOO.util.Dom.get(this.showConfig.fieldId).value = YAHOO.util.Dom.get(this.id + "-hexValue").value;
 			} else if (this.showConfig.nodeRefs) {
-				var me = this;
 				Alfresco.util.Ajax.request({
 					method : Alfresco.util.Ajax.POST,
 					url : Alfresco.constants.PROXY_URI + "becpg/bulkedit/type/" + this.showConfig.itemType.replace(":", "_")
@@ -278,4 +275,4 @@
 beCPG.module.getColorPickerInstance = function() {
 	var instanceId = "becpg-color-picker-instance";
 	return Alfresco.util.ComponentManager.get(instanceId) || new beCPG.module.ColorPicker(instanceId);
-}
+};

@@ -30,7 +30,6 @@
      * YUI Library aliases
      */
     var Dom = YAHOO.util.Dom,
-    Event = YAHOO.util.Event,
     formatDate = Alfresco.util.formatDate,
     fromISO8601 = Alfresco.util.fromISO8601;
 

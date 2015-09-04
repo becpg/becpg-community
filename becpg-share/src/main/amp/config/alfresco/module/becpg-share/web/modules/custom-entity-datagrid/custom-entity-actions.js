@@ -61,7 +61,7 @@
 			for (var i = 0, ii = items.length; i < ii; i++) {
 				nodeRefs.push(items[i].nodeRef);
 			}
-			var itemType =  this.options.itemType != null ? this.options.itemType : this.datalistMeta.itemType
+			var itemType =  this.options.itemType != null ? this.options.itemType : this.datalistMeta.itemType;
 			
 			beCPG.module.getColorPickerInstance().show({
 				nodeRefs : nodeRefs,
@@ -188,7 +188,7 @@
 				return false;
 			}
 
-			var itemType =  this.options.itemType != null ? this.options.itemType : this.datalistMeta.itemType
+			var itemType =  this.options.itemType != null ? this.options.itemType : this.datalistMeta.itemType;
 			
 			var templateUrl = YAHOO.lang
 					.substitute(
@@ -377,7 +377,7 @@
 		onActionShowLabelingDetails  : function EntityDataGrid_onActionShowLabelingDetails(p_items) {
 			var items = YAHOO.lang.isArray(p_items) ? p_items : [ p_items ];
 
-			var formatTree = function (tree){
+			var formatTree = function onActionShowLabelingDetails_formatTree(tree){
 			    var html = '<ul><li >';
 			    if(tree.name && tree.name!="root"){
 			        if(tree.nodeRef){
@@ -398,13 +398,13 @@
 			        }
 			    }
 			    if(tree.children){    
-			        html+= '<ul>'
+			        html+= '<ul>';
 			            for(var i = tree.children.length - 1;  i>=0; --i){
 			                html+=     '<li>';
-			                html+=formatTree.call(this, tree.children[i]);
-			                html+=     '</li>'
+			                html+= onActionShowLabelingDetails_formatTree.call(this, tree.children[i]);
+			                html+=     '</li>';
 			            }
-			        html+='</ul>'
+			        html+='</ul>';
 			    }
 			    html+='</li></ul>';
 			    return html;

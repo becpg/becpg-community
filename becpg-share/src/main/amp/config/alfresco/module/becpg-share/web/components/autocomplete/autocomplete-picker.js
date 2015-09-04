@@ -173,7 +173,7 @@
                                             inputAdded.value = "";
                                         }
                                         inputRemoved.value = "";
-                                    })
+                                    });
 
                                 }
 

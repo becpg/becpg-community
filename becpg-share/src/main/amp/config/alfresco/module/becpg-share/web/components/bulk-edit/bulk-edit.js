@@ -32,7 +32,7 @@
 	/**
 	 * Alfresco Slingshot aliases
 	 */
-	var $html = Alfresco.util.encodeHTML, $combine = Alfresco.util.combinePaths, $userProfile = Alfresco.util.userProfileLink, $links = Alfresco.util.activateLinks;
+	var $html = Alfresco.util.encodeHTML, $combine = Alfresco.util.combinePaths;
 	/**
 	 * BulkEdit constructor.
 	 * 
@@ -434,7 +434,6 @@
                         
 						fnRenderCellCode : function BulkEdit_fnRenderCellCode(datalistColumn)
                         {
-                            var scope = this;
 
                             return function BulkEdit_renderCellCode(elCell, oRecord, oColumn, oData)
                             {

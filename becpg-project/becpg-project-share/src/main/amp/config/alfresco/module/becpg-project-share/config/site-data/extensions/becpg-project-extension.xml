@@ -1,4 +1,3 @@
-<!-- http://blogs.alfresco.com/wp/ddraper/category/alfresco-share-customization/ -->
 <extension>
 	<modules>
 		<module>
@@ -23,6 +22,10 @@
 				 <customization>
 					<targetPackageRoot>org.alfresco.components.entity-charact-views</targetPackageRoot>
 					<sourcePackageRoot>org.alfresco.components.custom-views-project</sourcePackageRoot>
+				</customization>
+				<customization>
+					<targetPackageRoot>org.alfresco.components.entity-data-lists</targetPackageRoot>
+					<sourcePackageRoot>org.alfresco.components.custom-entity-datalists-project</sourcePackageRoot>
 				</customization>
 			</customizations>
 		</module>

@@ -582,7 +582,7 @@
                
                if (record.getData(field) != null && record.getData(field).itemNodeRef!=null) {
             	   nodeRef = record.getData(field).itemNodeRef;
-            	   field = column.fieldRef
+            	   field = column.fieldRef;
                }
                
                

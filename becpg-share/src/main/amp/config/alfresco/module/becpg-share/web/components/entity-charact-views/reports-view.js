@@ -29,7 +29,7 @@
     /**
      * YUI Library aliases
      */
-    var Dom = YAHOO.util.Dom, Event = YAHOO.util.Event, Selector = YAHOO.util.Selector, Bubbling = YAHOO.Bubbling;
+    var Dom = YAHOO.util.Dom;
 
 
     /**
@@ -196,7 +196,7 @@
                            this.options.avoidCachedThumbnail = true;
 
                            YAHOO.util.Event.preventDefault(event);
-                           YAHOO.util.Event.stopPropagation(event)
+                           YAHOO.util.Event.stopPropagation(event);
                         },
                         
                         

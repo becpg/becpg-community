@@ -48,7 +48,6 @@
         <dependency>
             <groupId>org.alfresco</groupId>
             <artifactId>share</artifactId>
-            <version>${alfresco.version}</version>
             <classifier>classes</classifier>
             <scope>provided</scope>
             <exclusions>

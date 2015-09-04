@@ -384,7 +384,7 @@
                                 if(oRecord.getData("cssClass")){
                                     elCell.innerHTML = '<span class="'+ oRecord.getData("cssClass") + '">'+oData+'</span>';
                                 } else {
-                                    elCell.innerHTML = '<b>'+oData+'</b>'
+                                    elCell.innerHTML = '<b>'+oData+'</b>';
                                 }
                             };
                             
@@ -513,7 +513,7 @@
                                     this.widgets.dataTable.subscribe("cellClickEvent", function(events)
                                     {
                                         var target = events.target;
-                                        var recordRowIndex = this.getRecordIndex(target)
+                                        var recordRowIndex = this.getRecordIndex(target);
                                         var recordSet = this.getRecordSet(), record;
                                         record = recordSet.getRecord(recordRowIndex);
                                         if ((record.getData("type")).indexOf("Material") < 0)
@@ -530,7 +530,7 @@
                                 if (this.options.navigationPath != null && this.options.navigationPath.length > 0)
                                 {
                                     var html = "";
-                                    for (i = 0; i < this.options.navigationPath.length; i++)
+                                    for (var i = 0; i < this.options.navigationPath.length; i++)
                                     {
                                         html += '<span class="separator"> > </span><span class="bar-'+this.options.navigationPath[i].nodeRef+' ' 
                                         + this.options.navigationPath[i].cssClass + '">'
