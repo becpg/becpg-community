@@ -19,7 +19,7 @@
 </@markup>
 
 <@markup id="widgets">
-   	<@inlineScript group="labeling-view">
+   	  <@inlineScript group="labeling-view">
 		    Alfresco.constants.DASHLET_RESIZE = true && YAHOO.env.ua.mobile === null;
 		</@>
   		<@createWidgets group="labeling-view"/>

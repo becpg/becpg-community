@@ -1,14 +1,11 @@
 <#include "/org/alfresco/components/form/controls/common/utils.inc.ftl" />
 <#assign fieldValue=field.value>
-
 <#if fieldValue?string != "">
    <#assign values=fieldValue?split(",")>
 <#else>
    <#assign values=[]>
 </#if>
-
 <#if field.label?replace(":","_") != field.name >
-
 <div class="form-field">
    <#if form.mode == "view">
       <div class="viewmode-field">
@@ -45,7 +42,6 @@
 	</#if>
 </div>
 </#if>
-
 <#function isSelected optionValue>
    <#list values as value>
       <#if optionValue == value?string || (value?is_number && value?c == optionValue) && !field.control.params.isSearch?? >

@@ -9,7 +9,6 @@
 </#if>
 <#if field.control.params.style??><#assign style=field.control.params.style></#if>
 <#assign siteId=args.siteId!"">
-
 <#if !field.control.params.showLink?? || field.control.params.showLink !="false">
 	<#if field.control.params.pageLinkTemplate??>
 		<#assign pageLinkTemplate='${field.control.params.pageLinkTemplate}'/>
@@ -24,9 +23,7 @@
 		<#assign ds=ds+"?entityNodeRef="+args.entityNodeRef>
 	</#if>
 </#if>
-
 <#assign controlId = fieldHtmlId + "-cntrl">
-
 <div class="form-field">
    <#if form.mode == "view"  ||  field.disabled == true>
       <div id="${controlId}" class="viewmode-field">
@@ -63,8 +60,9 @@
       </div>
    </#if>
 </div>
-
-<@inlineScript group="form">
+<script type="text/javascript">//<![CDATA[
+(function()
+{
   new beCPG.component.AutoCompletePicker('${controlId}', '${fieldHtmlId}', true).setOptions(
 		   {
 		 		currentValue: "${field.value}",
@@ -103,4 +101,5 @@
 				urlParamsToPass:"${urlParamsToPass}"
 			</#if>
   });
-</@>
+})();
+//]]></script>

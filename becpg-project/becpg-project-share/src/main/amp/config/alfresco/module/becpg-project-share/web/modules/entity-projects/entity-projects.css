@@ -1,6 +1,3 @@
-/**
-Details
-*/
 .project-list .simple-doclist  .thumbnail {
 	width : 90px;
 	height : 90px;
@@ -18,7 +15,6 @@ Details
 	padding:5px;
 }
 
-
 .project-list .task-resources img {
 	margin:5px;
 }
@@ -28,10 +24,9 @@ Details
 }
 
 .project-list .simple-doclist .detail span.project-date {
-	  color:  #1155CC;
+	color:  #1155CC;
     font-style: italic;
 }
-
 
 .project-list .simple-doclist .detail span.hierachy {	
 	 padding:0px;
@@ -52,4 +47,4 @@ Details
 .project-list img.priority {
 	margin-right:5px;
 }
-}
+
