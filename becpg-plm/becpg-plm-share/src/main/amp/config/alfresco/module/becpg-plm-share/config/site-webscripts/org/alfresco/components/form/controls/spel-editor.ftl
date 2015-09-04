@@ -1,10 +1,9 @@
 <#assign controlId = fieldHtmlId + "-cntrl">
 <#if field.control.params.rows??><#assign rows=field.control.params.rows><#else><#assign rows=2></#if>
 <#if field.control.params.columns??><#assign columns=field.control.params.columns><#else><#assign columns=60></#if>
-
-
-<@markup id="widgets">
-   	<@inlineScript group="form">
+<script type="text/javascript">//<![CDATA[
+(function()
+{
 		   new beCPG.SpelEditor("${controlId}", "${fieldHtmlId}").setOptions(
 		   {
 		      <#if form.mode == "view" || (field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true"))>disabled: true,</#if>
@@ -20,9 +19,8 @@
 		    </#if>
 		      currentValue: "${field.value?js_string}",
 		   }).setMessages( ${messages});
-		</@>
-</@>
-
+})();
+//]]></script>
 <div class="form-field">
    <#if form.mode == "view">
       <div id="${controlId}" class="viewmode-field">

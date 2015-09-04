@@ -7,7 +7,6 @@
 		<#assign ds=ds+"?entityNodeRef="+args.entityNodeRef>
 	</#if>
 </#if>
-
 <div class="form-field">
    <#if form.mode == "view" || field.disabled >
       <div id="${fieldHtmlId}" class="viewmode-field">
@@ -55,8 +54,9 @@
       </div>
    </#if>
 </div>
-
-<@inlineScript group="form">
+<script type="text/javascript">//<![CDATA[
+(function()
+{
 	new beCPG.component.AutoCompletePicker('${fieldHtmlId}', '${fieldHtmlId}', <#if field.dataType == 'noderef' >true<#else>false</#if>).setOptions(
 			   {
 			 		currentValue: "${field.value}",
@@ -103,4 +103,5 @@
 				urlParamsToPass:"${urlParamsToPass}"
 			</#if>
 	 });
-</@>
+})();
+//]]></script>
