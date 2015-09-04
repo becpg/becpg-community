@@ -1,4 +1,3 @@
-<?xml version='1.0' encoding='UTF-8'?>
 <!--
   Copyright (C) 2010-2015 beCPG. 
    
@@ -16,11 +15,8 @@
    
   You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 -->
-<page>
-   <title>Entity Details</title>
-   <title-id>page.documentDetails.title</title-id>
-   <description>Entity details</description>
-   <description-id>page.documentDetails.description</description-id>
-   <template-instance>entity-details</template-instance>
-   <authentication>user</authentication>
-</page>
+<webscript>
+  <shortname>module-entity-projects</shortname>
+  <description>Entity Projects module</description>
+  <url>/modules/entity-projects/entity-projects</url>
+</webscript>

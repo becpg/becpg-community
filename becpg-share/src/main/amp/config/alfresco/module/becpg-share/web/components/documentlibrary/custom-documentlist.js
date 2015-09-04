@@ -303,10 +303,7 @@
             extn = node.type.substring(node.type.lastIndexOf(":"));
         }
 
-        var containerTarget; // This will only get set if thumbnail
-        // represents a
-        // container
-
+    
         oColumn.width = 40;
         Dom.setStyle(elCell, "width", oColumn.width + "px");
         Dom.setStyle(elCell.parentNode, "width", oColumn.width + "px");

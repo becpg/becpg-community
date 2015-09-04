@@ -30,10 +30,6 @@
      */
     var Dom = YAHOO.util.Dom, Event = YAHOO.util.Event, Bubbling = YAHOO.Bubbling;
 
-    /**
-     * Alfresco Slingshot aliases
-     */
-    var $html = Alfresco.util.encodeHTML;
 
     /**
      * Advanced Search constructor.

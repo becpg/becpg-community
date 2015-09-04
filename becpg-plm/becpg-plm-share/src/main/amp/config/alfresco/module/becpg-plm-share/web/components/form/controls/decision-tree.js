@@ -122,7 +122,7 @@
                                      commentLabel = choice.commentLabel;
                                      
                                      if(choice.textarea){
-                                         textarea = choice.textarea
+                                         textarea = choice.textarea;
                                      }
                                   }
                               }

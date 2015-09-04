@@ -486,7 +486,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 					var precColumn = obj.entityDatagrid.widgets.dataTable.getColumn(oColumn.getKeyIndex() - 1);
 					var ind = "";
 					for (var j = 0, jj = scope.entity.compareWithEntities.length; j < jj; j++) {
-						ind +="'"
+						ind +="'";
 						var compareWithEntity = scope.entity.compareWithEntities[j];
 						scope.widgets.dataTable.insertColumn({
 							key : "dynCompareWith-" + compareWithEntity.nodeRef,
@@ -516,7 +516,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 			if (data.value != null && data.value.indexOf && data.value.indexOf("\"comp\":") > -1) {
 				var json = JSON.parse(data.value);
 				if (json) {
-					for (i = 0; i < json.comp.length; i++) {
+					for (var i = 0; i < json.comp.length; i++) {
 						if (json.comp[i].value) {
 
 							var newColumn = scope.widgets.dataTable.getColumn("dynCompareWith-" + json.comp[i].nodeRef);

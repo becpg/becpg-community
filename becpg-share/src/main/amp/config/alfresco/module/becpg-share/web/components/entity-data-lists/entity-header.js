@@ -259,7 +259,7 @@
                   doRefresh : function NodeHeader_doRefresh() {
                      YAHOO.Bubbling.unsubscribe("metadataRefresh", this.doRefresh, this);
 
-                     var url = 'components/entity-details/entity-header?nodeRef={nodeRef}&rootPage={rootPage}' 
+                     var url = 'components/entity-data-lists/entity-header?nodeRef={nodeRef}&rootPage={rootPage}' 
                              + '&rootLabelId={rootLabelId}&showFavourite={showFavourite}&showLikes={showLikes}' 
                              + '&showComments={showComments}&showQuickShare={showQuickShare}&showDownload={showDownload}&showPath={showPath}' 
                              + (this.options.pagecontext ? '&pagecontext={pagecontext}': '')

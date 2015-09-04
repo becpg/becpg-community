@@ -2,13 +2,13 @@
    <@markup id="css" >
       <#-- CSS Dependencies -->
       <@link href="${url.context}/res/components/node-details/node-header.css" group="node-header"/>
-  	  <@link href="${url.context}/res/components/entity-details/entity-header.css" group="node-header"/>
+  	  <@link href="${url.context}/res/components/entity-data-lists/entity-header.css" group="node-header"/>
    </@>
 
    <@markup id="js">
       <#-- JavaScript Dependencies -->
       <@script src="${url.context}/res/components/node-details/node-header.js" group="node-header"/>
-      <@script src="${url.context}/res/components/entity-details/entity-header.js" group="node-header"/>
+      <@script src="${url.context}/res/components/entity-data-lists/entity-header.js" group="node-header"/>
    </@>
 
    <@markup id="widgets">

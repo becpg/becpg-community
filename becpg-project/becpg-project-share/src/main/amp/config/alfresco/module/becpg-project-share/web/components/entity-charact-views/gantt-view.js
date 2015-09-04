@@ -29,7 +29,7 @@ var g = null; // uggly gantt var
     /**
      * Alfresco Slingshot aliases
      */
-    var $html = Alfresco.util.encodeHTML, $links = Alfresco.util.activateLinks, $userProfile = Alfresco.util.userProfileLink, $isValueSet = Alfresco.util.isValueSet;
+    var $isValueSet = Alfresco.util.isValueSet;
 
     beCPG.module.GanttViewRenderer = function()
     {

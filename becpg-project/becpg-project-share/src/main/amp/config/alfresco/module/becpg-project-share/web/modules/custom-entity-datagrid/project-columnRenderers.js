@@ -62,10 +62,10 @@ if (beCPG.module.EntityDataGridRenderers) {
               if(data.title){
             	  var title = "";
             	  var className = oRecord.getData("itemData")["prop_pjt_alDeliverableId"].value!=null ? "deliverable" : 
-            		  oRecord.getData("itemData")["prop_pjt_alTaskId"].value!=null ? "task" : "project" 
-            	  title = "<span class=\""+className+"\">"+Alfresco.util.encodeHTML(data.title)+"</span>"
+            		  oRecord.getData("itemData")["prop_pjt_alTaskId"].value!=null ? "task" : "project"; 
+            	  title = "<span class=\""+className+"\">"+Alfresco.util.encodeHTML(data.title)+"</span>";
             	  if(activityType == "State"){
-            		  title = scope.msg("project.activity.state.change", title, scope.msg("data."+className+"state." +data.beforeState.toLowerCase()), scope.msg("data."+className+"state."+data.afterState.toLowerCase()))
+            		  title = scope.msg("project.activity.state.change", title, scope.msg("data."+className+"state." +data.beforeState.toLowerCase()), scope.msg("data."+className+"state."+data.afterState.toLowerCase()));
             	  } else if(activityType == "Comment"){
             		 title  = scope.msg("project.activity.comment."+data.activityEvent.toLowerCase(), title);
             	  } else if(activityType == "Content"){

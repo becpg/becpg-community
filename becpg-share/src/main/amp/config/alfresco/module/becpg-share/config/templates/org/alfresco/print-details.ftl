@@ -10,7 +10,7 @@
 	      <@link href="${url.context}/res${cssFile}" group="print-details" media="print"/>
 	   </#list>
 	</#if>
- 	<@link href="${url.context}/res/components/entity-details/entity-print.css" group="print-details" media="print" />
+ 	<@link href="${url.context}/res/components/entity-data-lists/entity-print.css" group="print-details" media="print" />
 
 </@>
 

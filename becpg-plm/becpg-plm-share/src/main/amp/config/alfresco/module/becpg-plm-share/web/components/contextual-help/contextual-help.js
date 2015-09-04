@@ -6,8 +6,6 @@
  */
 (function()
 {
-    var Dom = YAHOO.util.Dom, Event = YAHOO.util.Event, Selector = YAHOO.util.Selector;
-
     /**
      * ContextualHelp constructor.
      * 
@@ -58,7 +56,7 @@
 //              }
                 
                 
-                var node = YAHOO.util.Selector.query('.DocListTree div.create-content', null, true)
+                var node = YAHOO.util.Selector.query('.DocListTree div.create-content', null, true);
                   if (node != null)
                   {
                       instance.createBalloon(node, "help.button.create",
@@ -77,7 +75,7 @@
                     {
                         target : true,
                         tipJoint : "top right"
-                    })
+                    });
                 }
     
                 node = YAHOO.util.Selector.query(".entityFolderToolbar-buttons div.entity-view-datalist", null, true);
@@ -87,7 +85,7 @@
                     {
                         target : true,
                         tipJoint : "bottom left"
-                    })
+                    });
                 }
                 // Charact view
 
@@ -98,7 +96,7 @@
                     {
                         target : true,
                         tipJoint : "bottom left"
-                    })
+                    });
                 }
 
                 node = YAHOO.util.Selector.query(".datalist-toolbar div.entity-view-documents", null, true);
@@ -108,7 +106,7 @@
                     {
                         target : true,
                         tipJoint : "top left"
-                    })
+                    });
                 }
                 
                 node = YAHOO.util.Selector.query(".datalist-toolbar div.rapidLink", null, true);
@@ -118,7 +116,7 @@
                     {
                         target : true,
                         tipJoint : "bottom left"
-                    })
+                    });
                 }
                 
 
@@ -131,7 +129,7 @@
                     {
                         target : true,
                         tipJoint : "bottom left"
-                    })
+                    });
                 }
 
                 node = YAHOO.util.Selector.query(".node-header div.entity-view-documents", null, true);
@@ -141,7 +139,7 @@
                     {
                         target : true,
                         tipJoint : "top left"
-                    })
+                    });
                 }
             },2000);
 

@@ -38,8 +38,8 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
 	    
 		JSGantt.msg = function (key){
 			return Alfresco.util.message.call(parentComponent, key, parentComponent.name, Array.prototype.slice.call(arguments).slice(1));
-		}
-	}
+		};
+	};
 	
 	
 	
@@ -210,14 +210,6 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
        * @private
        */
       var vCaption = pCaption;
-
-      /**
-       * @property vDuration
-       * @type Number
-       * @default ''
-       * @private
-       */
-      var vDuration = '';
 
       /**
        * @property vLevel
@@ -402,7 +394,7 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
        * @return {String}
        */
       this.getDuration = function(vFormat) {
-         var tmpPer = null;
+         var tmpPer = null, vDuration = null;
 
          if (vMile) {
             vDuration = '-';
@@ -834,12 +826,10 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
       var vFormatArr = [ "day", "week", "month", "quarter" ];
       var vQuarterArr = [ 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4 ];
       var vMonthDaysArr = [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ];
-	  var vMonthWeeksArr = [5,  4,  4,  5,  4,  4,  5,  4,  5,  4,  4,  4];    
+	  //var vMonthWeeksArr = [5,  4,  4,  5,  4,  4,  5,  4,  5,  4,  4,  4];    
       var vMonthArr = Alfresco.util.message("months.long").split(",");
       
- 
-      
-      
+
       /**
        * Set current display format (minute/hour/day/week/month/quarter) Only the first 4 arguments are used, for
        * example: <code>
@@ -851,7 +841,7 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
        * @return {void}
        */
       this.setFormatArr = function() {
-         vFormatArr = [];
+    	  vFormatArr = new Array();
          for ( var i = 0; i < arguments.length; i++) {
             vFormatArr[i] = arguments[i];
          }

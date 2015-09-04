@@ -5,12 +5,8 @@
     /**
      * YUI Library aliases
      */
-    var Dom = YAHOO.util.Dom, Event = YAHOO.util.Event;
+    var Event = YAHOO.util.Event;
 
-    /**
-     * Alfresco Slingshot aliases
-     */
-    var $html = Alfresco.util.encodeHTML;
 
     // Define constructor...
     beCPG.custom.DynamicWelcome = function CustomSearch_constructor(htmlId, dashboardUrl, dashboardType, site)

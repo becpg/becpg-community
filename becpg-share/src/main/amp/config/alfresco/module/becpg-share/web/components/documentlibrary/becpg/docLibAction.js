@@ -243,7 +243,7 @@
 	
 	   YAHOO.Bubbling.fire("registerAction", {
 	       actionName : "onActionCompareEntity",
-	       fn : function onActionShowCharact(p_record) {
+	       fn : function onActionCompareEntity(p_record) {
 	            var actionUrl = Alfresco.constants.PROXY_URI + 'becpg/entity/compare/' + p_record.nodeRef.replace(":/", "") + "/compare.pdf";
 
 	            // Always create a new instance
@@ -262,7 +262,7 @@
 	                     +"&tplNodeRef="+reportSelect.value;
 	                  },
 	                  scope : this
-	               },
+	               }
 	            });
 	            
 	            
@@ -407,5 +407,30 @@
 	   }
 	});
 	
+	YAHOO.Bubbling.fire("registerAction", {
+		   actionName : "onActionViewAssociatedWorkflow",
+		   fn : function onActionViewAssociatedWorkflow(asset) {
+			   if(asset.nodeRef){
+				   Alfresco.util.Ajax.request({
+					    method : Alfresco.util.Ajax.GET,
+						url : Alfresco.constants.URL_SERVICECONTEXT + "modules/entity-workflows/entity-workflows?nodeRef="+asset.nodeRef+"&htmlid="+this.id ,
+						successCallback : {
+							fn : function(resp){
+								var containerDiv = document.createElement("div");     
+	                            containerDiv.innerHTML = resp.serverResponse.responseText;
+	                            var panelDiv = Dom.getFirstChild(containerDiv);
+	                            this.widgets.entityWorkflows = Alfresco.util.createYUIPanel(panelDiv, {
+									draggable : true,
+									width : "40em"
+								});
+								this.widgets.entityWorkflows.show();
+							},
+							scope : this
+						}
+				   });
+			   }
+		   }
+		});
+
 
 })();

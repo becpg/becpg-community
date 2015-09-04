@@ -31,9 +31,7 @@
    /**
     * Alfresco Slingshot aliases
     */
-   var $html = Alfresco.util.encodeHTML,
-      $combine = Alfresco.util.combinePaths,
-      $siteURL = Alfresco.util.siteURL;
+   var $siteURL = Alfresco.util.siteURL;
 
 
    /**
@@ -315,11 +313,9 @@
     
              // Retrieve the actionSet for this record
              var record = this.recordData,
-                node = record.node,
                 actions = record.actions,
                 actionsEl = Dom.get(this.id + "-actionSet"),
-                actionHTML = "",
-                actionsSel;
+                actionHTML = "";
     
              record.actionParams = {};
              for (var i = 0, ii = actions.length; i < ii; i++)

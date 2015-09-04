@@ -227,7 +227,7 @@
                             
                             if(response.json.persistedObject){
                                 
-                                var step = me.options.wizardStruct[me.currentIndex-1]
+                                var step = me.options.wizardStruct[me.currentIndex-1];
                                 
                                 step.nodeRef = response.json.persistedObject;
                                 

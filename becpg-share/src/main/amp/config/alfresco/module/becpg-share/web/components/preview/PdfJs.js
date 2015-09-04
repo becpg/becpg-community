@@ -435,7 +435,7 @@
 
          // Setup display options, page linking only works for specific pages
          //beCPG
-         this.attributes.disabledPageLinking = (Alfresco.constants.PAGEID==='document-details' || Alfresco.constants.PAGEID==='entity-details') ? false : true;
+         this.attributes.disabledPageLinking = (Alfresco.constants.PAGEID==='document-details' || Alfresco.constants.PAGEID==='entity-data-lists') ? false : true;
 
          // Set page number
          var urlParams = Alfresco.util.getQueryStringParameters(window.location.hash.replace("#", ""));
@@ -528,8 +528,7 @@
          });
          // Maximise button should show on the document details and document list pages
          //#beCPG
-         if (Alfresco.constants.PAGEID === "document-details" || Alfresco.constants.PAGEID === "documentlibrary"  || Alfresco.constants.PAGEID === "entity-details"
-             || Alfresco.constants.PAGEID === "entity-data-lists" ||
+         if (Alfresco.constants.PAGEID === "document-details" || Alfresco.constants.PAGEID === "documentlibrary"  || Alfresco.constants.PAGEID === "entity-data-lists" ||
              window.location.pathname.match("/document-details$"))
          {
             // TODO: Full Screen doesn't work in IE10 or IE11 - also the range of mimetypes isn't complete
@@ -562,7 +561,7 @@
          }
          // Only show and set up the link button on the document details page (fixes #12)
          //#beCPG
-         if (Alfresco.constants.PAGEID === "document-details" || Alfresco.constants.PAGEID === "entity-details" || Alfresco.constants.PAGEID === "entity-data-lists"  )
+         if (Alfresco.constants.PAGEID === "document-details"  || Alfresco.constants.PAGEID === "entity-data-lists"  )
          {
             Dom.getElementsByClassName("linkbutton", "span", this.controls, function setDisplay(el) {
                Dom.setStyle(el, "display", "inline");
@@ -615,7 +614,7 @@
          this._loadPdf();
 
          // Keyboard shortcuts
-         if (Alfresco.constants.PAGEID === 'document-details' || Alfresco.constants.PAGEID === "entity-details"|| Alfresco.constants.PAGEID === "entity-data-lists" )
+         if (Alfresco.constants.PAGEID === 'document-details' || Alfresco.constants.PAGEID === "entity-data-lists" )
          {
             var findShortcutHandler = function findShortcutHandler(type, args) {
                var e = args[1];
@@ -625,7 +624,7 @@
                   e.newValue = (!this.widgets.searchDialog || !this.widgets.searchDialog.cfg.getProperty("visible"));
                   this.widgets.searchBarToggle.set("checked", !this.widgets.searchBarToggle.get("checked"));
                }
-            }
+            };
             var fullscreenShortcutHandler = function fullscreenShortcutHandler(type, args) {
                var e = args[1];
                if (e.ctrlKey || e.metaKey)
@@ -633,7 +632,7 @@
                   Event.stopEvent(e);
                   this.onFullScreen(e);
                }
-            }
+            };
             
             new YAHOO.util.KeyListener(document, { keys: 37 }, { // left arrow
                fn : this.onPagePrevious,
@@ -805,7 +804,7 @@
          var me = this, fileurl = this.attributes.src ? this.wp.getThumbnailUrl(this.attributes.src) : this.wp.getContentUrl();
          
          //#beCPG
-         if((Alfresco.constants.PAGEID === "entity-details" || Alfresco.constants.PAGEID === "entity-data-lists") && fileurl.indexOf("thumbnails")<0){
+         if(Alfresco.constants.PAGEID === "entity-data-lists" && fileurl.indexOf("thumbnails")<0){
              fileurl = fileurl.replace("/api/","/becpg/report/")+"&entityNodeRef="+YAHOO.util.History.getQueryStringParameter('nodeRef');
          }
          
@@ -1026,7 +1025,7 @@
             }, this, true);
             
             // Defer rendering
-            this.thumbnailView = null
+            this.thumbnailView = null;
 
             this.pages = promisedPages;
             this.documentView.addPages(promisedPages);
@@ -1564,7 +1563,7 @@
        */
       onFindChange : function PdfJs_onFindChange(e_obj)
       {
-         var query = Dom.get(this.wp.id + '-findInput').value
+         var query = Dom.get(this.wp.id + '-findInput').value;
          if (!query) return;
 
          var event = document.createEvent('CustomEvent'),
@@ -1576,7 +1575,7 @@
 
          if (e_obj.currentTarget)
          {
-            triggerevent = e_obj.currentTarget.id
+            triggerevent = e_obj.currentTarget.id;
          }
          else
          {
@@ -1914,7 +1913,7 @@
       this.textContent = null;
       this.textLayerDiv = null;
       this.pdfJsPlugin = pdfJsPlugin;
-   }
+   };
 
    DocumentPage.prototype =
    {
@@ -2110,7 +2109,7 @@
 
          if (el)
          {
-            offsetY += el.offsetTop
+            offsetY += el.offsetTop;
             if (Alfresco.logger.isDebugEnabled())
             {
                Alfresco.logger.debug("Page Scroll offsetTop " + el.offsetTop);
@@ -2133,7 +2132,7 @@
 
          this.parent.scrollTo(this.id, offsetY);
       }
-   }
+   };
 
    /**
     * Document View utility class. Used for main view and thumbnail view.
@@ -2166,7 +2165,7 @@
        * Custom events generated by this component
        */
       this.onScrollChange = new YAHOO.util.CustomEvent("scrollChange", this);
-   }
+   };
 
    DocumentView.prototype = {
       /**
@@ -2361,7 +2360,7 @@
          var scrollTop = newPos - firstPos;
          if (offsetY)
          {
-            scrollTop += offsetY
+            scrollTop += offsetY;
          }
 
          if (Alfresco.logger.isDebugEnabled())
@@ -2599,7 +2598,7 @@
             this.onScrollChange.fire(this);
          }
       }
-   }
+   };
 
 
 /**
@@ -2631,7 +2630,7 @@ var TextLayerBuilder = function textLayerBuilder(textLayerDiv, pageIdx, pdfJsPlu
    this.divContentDone = false;
    this.pageIdx = pageIdx;
    this.matches = [];
-   this.pdfJsPlugin = pdfJsPlugin
+   this.pdfJsPlugin = pdfJsPlugin;
    this.isViewerInPresentationMode = false;
    // END ALFRESCO CHANGES
 

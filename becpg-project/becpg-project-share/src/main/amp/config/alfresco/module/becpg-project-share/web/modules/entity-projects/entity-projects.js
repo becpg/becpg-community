@@ -33,6 +33,36 @@
    var $html = Alfresco.util.encodeHTML;
    var  TWISTER_EVENTCLASS = Alfresco.util
    .generateDomId(null, "show-more-twister");
+   
+   
+   /**
+    * Register custom docLibAction
+    */
+   YAHOO.Bubbling.fire("registerAction", {
+	   actionName : "onActionViewAssociatedProject",
+	   fn : function onActionViewAssociatedProject(asset) {
+			   
+			   Alfresco.util.Ajax.request({
+				    method : Alfresco.util.Ajax.GET,
+					url : Alfresco.constants.URL_SERVICECONTEXT + "modules/entity-projects/entity-projects?nodeRef="+asset.nodeRef+"&htmlid="+this.id ,
+					successCallback : {
+						fn : function(resp){
+							var containerDiv = document.createElement("div");     
+                            containerDiv.innerHTML = resp.serverResponse.responseText;
+                            var panelDiv = Dom.getFirstChild(containerDiv);
+                            this.widgets.projects = Alfresco.util.createYUIPanel(panelDiv, {
+								draggable : true,
+								width : "40em"
+							});
+							this.widgets.projects.show();
+						},
+						scope : this
+					},
+					execScripts: true
+			   });
+	   }
+	});
+   
 
    /**
     * Dashboard EntityProjects constructor.

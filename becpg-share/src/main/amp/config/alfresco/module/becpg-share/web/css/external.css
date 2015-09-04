@@ -58,18 +58,6 @@
 }
 
 
-#template_x002e_comments_x002e_entity-details_x0023_default-body {
-    display: none;
-}
-
-#template_x002e_document-workflows_x002e_entity-details_x0023_default-body{
-display:none;
-}
-
-#template_x002e_document-versions_x002e_entity-details_x0023_default-body{
-display:none;
-}
-
 .yui-button-align {
     border-color: transparent;
     border-style: solid;
