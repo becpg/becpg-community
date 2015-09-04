@@ -153,6 +153,20 @@
                                  }
                               }
                            });
+                     
+                     var oldLoadDataTable = this.widgets.alfrescoDataTable.loadDataTable;
+                     this.widgets.alfrescoDataTable.loadDataTable = function(){
+                    	 if(this.fromFilterChange){
+                    		 this.fromFilterChange = false;
+                    		 return;
+                    	 }
+                    	 
+                    	 oldLoadDataTable.call(this);
+                     };
+                     
+                     this.widgets.alfrescoDataTable.setFilterState = function(){
+                    	 this.fromFilterChange = true;
+                     };
 
                   },
 
