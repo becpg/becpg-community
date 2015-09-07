@@ -17,9 +17,13 @@
  ******************************************************************************/
 package fr.becpg.repo.web.scripts.product;
 
+import java.io.IOException;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
@@ -33,7 +37,7 @@ public class FormulateWebScript extends AbstractProductWebscript {
 	private static final Log logger = LogFactory.getLog(FormulateWebScript.class);
 
 	@Override
-	public void execute(WebScriptRequest req, WebScriptResponse res) throws WebScriptException {
+	public void execute(WebScriptRequest req, WebScriptResponse res) throws WebScriptException, IOException {
 		logger.debug("start formulate webscript");
 
 		String fast = req.getParameter(PARAM_FAST);
@@ -46,9 +50,23 @@ public class FormulateWebScript extends AbstractProductWebscript {
 		NodeRef productNodeRef = getProductNodeRef(req);
 		try {
 			productService.formulate(productNodeRef, isFast);
+			
+			JSONObject ret = new JSONObject();
+
+			ret.put("productNodeRef", productNodeRef);
+			ret.put("status", "SUCCESS");
+
+			res.setContentType("application/json");
+			res.setContentEncoding("UTF-8");
+			ret.write(res.getWriter());
+			
 		} catch (FormulateException e) {
 			handleFormulationError(e);
+		} catch (JSONException e) {
+			throw new WebScriptException("Unable to serialize JSON", e);
 		}
+		
+		
 	}
 
 }

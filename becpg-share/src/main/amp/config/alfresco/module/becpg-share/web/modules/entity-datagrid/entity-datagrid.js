@@ -585,8 +585,7 @@
                          */
                         rowFormatter : function EntityDataGrid_rowFormatter(elTr, oRecord)
                         {
-
-                            if (oRecord.getData("color") && oRecord.getData("color")!="000000")
+                            if (oRecord.getData("color") && oRecord.getData("color").length>0 && oRecord.getData("color")!="000000")
                             {
                                 Dom.setStyle(elTr, 'background-color', oRecord.getData("color"));
                             }
