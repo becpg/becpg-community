@@ -55,8 +55,6 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 	protected DataListSortRegistry dataListSortRegistry;
 
-	protected EntityDictionaryService entityDictionaryService;
-
 	private static final Log logger = LogFactory.getLog(SimpleExtractor.class);
 
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
@@ -69,10 +67,6 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
-	}
-
-	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
-		this.entityDictionaryService = entityDictionaryService;
 	}
 
 	@Override

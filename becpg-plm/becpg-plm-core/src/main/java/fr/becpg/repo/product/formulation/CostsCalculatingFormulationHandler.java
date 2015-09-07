@@ -216,8 +216,8 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	}
 
 	@Override
-	protected QName getDataListVisited() {
-		return PLMModel.TYPE_COSTLIST;
+	protected List<CostListDataItem> getDataListVisited(ProductData partProduct) {
+		return partProduct.getCostList();
 	}
 
 	/**
@@ -324,8 +324,8 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 
 		if (entityTplNodeRef != null) {
 
-			List<CostListDataItem> costList = alfrescoRepository.loadDataList(entityTplNodeRef, PLMModel.TYPE_COSTLIST, PLMModel.TYPE_COSTLIST);
-
+			List<CostListDataItem> costList = ((ProductData)alfrescoRepositoryProductData.findOne(entityTplNodeRef)).getCostList();
+			
 			for (CostListDataItem costListDataItem : formulatedProduct.getCostList()) {
 				for (CostListDataItem c : costList) {
 					if (c.getCost() != null && c.getCost().equals(costListDataItem.getCost())) {

@@ -374,7 +374,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		if (!PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.equals(nodeService.getType(productNodeRef))) {
 
 			// datalist ingList is null or empty
-			if ((!alfrescoRepository.hasDataList(productNodeRef, PLMModel.TYPE_INGLIST) || componentProductData.getIngList().isEmpty())) {
+			if (componentProductData.getIngList()==null || componentProductData.getIngList().isEmpty()) {
 
 				if (declType == null || !declType.equals(DeclarationType.DoNotDetails)) {
 					// req not respected

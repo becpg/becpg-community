@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="**/*.lib.js|**/*.min.js|**/bower_components/*|**/node_modules/*|**/site-webscripts/**|**/target/**|**/templates/**|**/webscripts/**" kind="src" path="">
+	<classpathentry excluding="**/*.lib.js|**/*.min.js|**/bower_components/*|**/jquery*.js|**/node_modules/*|**/site-webscripts/**|**/target/**|**/templates/**|**/webscripts/**" kind="src" path="">
 		<attributes>
 			<attribute name="provider" value="org.eclipse.wst.jsdt.web.core.internal.project.ModuleSourcePathProvider"/>
 		</attributes>

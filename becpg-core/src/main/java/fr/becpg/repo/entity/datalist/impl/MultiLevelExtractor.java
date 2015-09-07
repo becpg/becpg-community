@@ -167,19 +167,12 @@ public class MultiLevelExtractor extends SimpleExtractor {
 			}
 
 			if (extraProps.get(PROP_ENTITYNODEREF) != null && extraProps.get(PROP_REVERSE_ASSOC) != null) {
+				//TODO better if retrieved from cache
 				NodeRef entityNodeRef = (NodeRef) extraProps.get(PROP_ENTITYNODEREF);
-				Map<String, Object> entity = new HashMap<>();
-				entity.put("value", entityNodeRef);
-				entity.put("displayValue", nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
-				entity.put("metadata", attributeExtractorService.extractMetadata(nodeService.getType(entityNodeRef), entityNodeRef));
-				String siteId = attributeExtractorService.extractSiteId(entityNodeRef);
-				if (siteId != null) {
-					entity.put("siteId", siteId);
-				}
-
+				
 				String assocName = (String) extraProps.get(PROP_REVERSE_ASSOC);
 
-				tmp.put("assoc_" + assocName.replaceFirst(":", "_"), entity);
+				tmp.put("assoc_" + assocName.replaceFirst(":", "_"), attributeExtractorService.extractCommonNodeData(entityNodeRef));
 			}
 		} else if (AttributeExtractorMode.CSV.equals(mode) || AttributeExtractorMode.XLSX.equals(mode)) {
 			if (extraProps.get(PROP_DEPTH) != null) {

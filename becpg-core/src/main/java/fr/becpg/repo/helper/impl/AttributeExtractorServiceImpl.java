@@ -549,29 +549,38 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			} else {
 				List<Map<String, Object>> ret = new ArrayList<>(assocRefs.size());
 				for (NodeRef assocNodeRef : assocRefs) {
-					Map<String, Object> tmp = new HashMap<>(5);
-
-					type = nodeService.getType(assocNodeRef);
-
-					tmp.put("metadata", extractMetadata(type, assocNodeRef));
-					if (nodeService.hasAspect(assocNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
-						tmp.put("version", nodeService.getProperty(assocNodeRef, ContentModel.PROP_VERSION_LABEL));
-					}
-
-					tmp.put("displayValue", extractPropName(type, assocNodeRef));
-					tmp.put("value", assocNodeRef.toString());
-					String siteId = extractSiteId(assocNodeRef);
-					if (siteId != null) {
-						tmp.put("siteId", siteId);
-					}
-
-					ret.add(tmp);
+					ret.add(extractCommonNodeData(assocNodeRef));
 				}
 				return ret;
 			}
 		}
 		return null;
 	}
+	
+	@Override
+	public Map<String, Object> extractCommonNodeData(NodeRef nodeRef){
+		Map<String, Object> tmp = new HashMap<>(5);
+
+		QName type = nodeService.getType(nodeRef);
+		
+		tmp.put("metadata", extractMetadata(type, nodeRef));
+		if (nodeService.hasAspect(nodeRef, ContentModel.ASPECT_VERSIONABLE)) {
+			tmp.put("version", nodeService.getProperty(nodeRef, ContentModel.PROP_VERSION_LABEL));
+		}
+
+		tmp.put("displayValue", extractPropName(type, nodeRef));
+		tmp.put("value", nodeRef.toString());
+		tmp.put("siteId", extractSiteId(nodeRef));
+		
+		return tmp;
+	}
+	
+	@Override
+	public String extractSiteId(NodeRef entityNodeRef) {
+		String path = nodeService.getPath(entityNodeRef).toPrefixString(namespaceService);
+		return SiteHelper.extractSiteId(path);
+	}
+	
 
 	private Object formatValue(Object value) {
 		if (value != null) {
@@ -633,11 +642,6 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		return metadata;
 	}
 
-	@Override
-	public String getDisplayPath(NodeRef nodeRef) {
-		return this.nodeService.getPath(nodeRef).toDisplayPath(nodeService, permissionService);
-
-	}
 
 	@Override
 	public String[] getTags(NodeRef nodeRef) {
@@ -657,14 +661,6 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 	}
 
-	@Override
-	public String extractSiteId(NodeRef nodeRef) {
-		String path = nodeService.getPath(nodeRef).toPrefixString(namespaceService);
-		if (SiteHelper.isSitePath(path)) {
-			return SiteHelper.extractSiteId(path, getDisplayPath(nodeRef));
-		}
-		return null;
-	}
 
 	@Override
 	public String extractPropertyForReport(PropertyDefinition propertyDef, Serializable value, PropertyFormats propertyFormats, boolean formatData) {
@@ -733,4 +729,6 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	public String getPersonDisplayName(String userId) {
 		return personAttributeExtractorPlugin.getPersonDisplayName(userId);
 	}
+
+	
 }
