@@ -220,7 +220,7 @@
 <#macro renderFieldHelp field>
    <#if field.help?? && field.help?length &gt; 0>
       <span class="help-icon">
-         <img id="${fieldHtmlId}-help-icon" src="${url.context}/res/components/form/images/help.png" title="${msg("form.field.help")}" tabindex="0"/>
+         <img class="icon16" id="${fieldHtmlId}-help-icon" src="${url.context}/res/components/form/images/help.png" title="${msg("form.field.help")}" tabindex="0"/>
       </span>
       <div class="help-text" id="${fieldHtmlId}-help"><#if field.helpEncodeHtml>${field.help?html}<#else>${stringUtils.stripUnsafeHTML(field.help)}</#if></div>
    </#if>
@@ -231,7 +231,7 @@
     <#assign localeshort = locale?substring(0,2)?lower_case >
     <#if form.arguments.itemId??>
 	    <span class="locale-icon">
-			<img id="${fieldHtmlId}-locale-icon" src="${url.context}/res/components/images/flags/${localeshort}.png" title="${msg("form.field.locale")}"  tabindex="0"/>
+			<img class="icon16_11" id="${fieldHtmlId}-locale-icon" src="${url.context}/res/components/images/flags/${localeshort}.png" title="${msg("form.field.locale")}"  tabindex="0"/>
 		 </span>
 		 <script type="text/javascript">//<![CDATA[
 		 	YAHOO.util.Event.onAvailable("${fieldHtmlId}-locale-icon", function (){

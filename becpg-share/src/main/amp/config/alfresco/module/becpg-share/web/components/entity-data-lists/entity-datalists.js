@@ -120,8 +120,8 @@
 							});
 
 							this.widgets.spinner.setHeader(this.msg("message.loading"));
-							this.widgets.spinner.setBody('<div style="text-align:center;"><img src="' + Alfresco.constants.URL_RESCONTEXT
-									+ '/components/images/rel_interstitial_loading.gif" /></div>');
+							this.widgets.spinner.setBody('<div style="text-align:center;"><img class="icon16" src="' + Alfresco.constants.URL_RESCONTEXT
+									+ '/components/images/lightbox/loading.gif" /></div>');
 							this.widgets.spinner.render(document.body);
 
 							if(this.options.showCreate){
@@ -452,7 +452,7 @@
 											if(list.name.indexOf("WUsed")>-1){
 											    elState.className = "state WUsed";
 											} else {
-											    elState.className = "state "+list.name;
+											    elState.className = "state dl-"+list.name;
 											}
                                             
 											if (list.state && list.state.length > 0) {

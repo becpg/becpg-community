@@ -14,7 +14,9 @@
 							<button id="${dashletId}-filterform-button">${msg("filterform.header")}&nbsp;&#9662;</button>
 							<div id="${dashletId}-filterform-panel"  class="yuimenu" >
 								 <div class="bd">
-								 		<div id="${dashletId}-filterform"  class="filterform" ></div>
+								 		<div id="${dashletId}-filterform"  class="filterform" >
+								 			<img class="icon16" src="${url.context}/components/images/lightbox/loading.gif" />				 		
+								 		</div>
 								 		<div class="filterButtonsBar">
 								 			<button id="${dashletId}-filterform-clear"   >${msg("filterform.clear")}</button>
 								  			<button id="${dashletId}-filterform-submit"  >${msg("filterform.submit")}</button>

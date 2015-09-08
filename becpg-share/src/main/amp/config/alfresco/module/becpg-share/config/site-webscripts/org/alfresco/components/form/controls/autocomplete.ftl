@@ -11,7 +11,7 @@
    <#if form.mode == "view" || field.disabled >
       <div id="${fieldHtmlId}" class="viewmode-field">
          <#if field.mandatory && !(field.value?is_number) && field.value == "">
-            <span class="incomplete-warning"><img src="${url.context}/components/form/images/warning-16.png" title="${msg("form.field.incomplete")}" /><span>
+            <span class="incomplete-warning"><img class="icon16" src="${url.context}/components/form/images/warning-16.png" title="${msg("form.field.incomplete")}" /><span>
          </#if>
          <span class="viewmode-label">${field.label?html}:</span>
          <#if field.control.params.activateLinks?? && field.control.params.activateLinks == "true">

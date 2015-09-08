@@ -412,7 +412,7 @@
 
                      if (record.isInfo) {
                         columnWidth = 52;
-                        desc = '<img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/help-docs-bw-32.png" />';
+                        desc = '<img class="icon32" src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/help-docs-bw-32.png" />';
                      } else {
 
                         var isTask = this.widgets.view.value.indexOf("task") > -1;
