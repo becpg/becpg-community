@@ -25,7 +25,7 @@
 			<div class="yui-g">				
 				<div id="${controlId}" class="viewmode-field">
 		         <#if (field.endpointMandatory!false || field.mandatory!false) && field.value == "">
-		            <span class="incomplete-warning"><img src="${url.context}/res/components/form/images/warning-16.png" title="${msg("form.field.incomplete")}" /><span>
+		            <span class="incomplete-warning"><img class="icon16" src="${url.context}/res/components/form/images/warning-16.png" title="${msg("form.field.incomplete")}" /><span>
 		         </#if>
 		         <span class="viewmode-label">${field.label?html}:</span>
 		         <span id="${controlId}-currentTask" class="viewmode-value current-values"></span>

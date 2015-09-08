@@ -2,15 +2,15 @@
 <@markup id="css" >
    <#include "../../modules/entity-datagrid/include/entity-datagrid.css.ftl"/>
    
-	<@link href="${url.context}/res/modules/entity-charact-details/entity-charact-details.css" group="entity-datagrid" />
+	<@link href="${url.context}/res/modules/entity-charact-details/entity-charact-details.css" group="entity-datalists" />
 </@>
 
 <@markup id="js">
     <#include "../../modules/entity-datagrid/include/entity-datagrid.js.ftl"/>
 	
-	<@script src="${url.context}/res/yui/swf/swf.js" group="entity-datagrid"></@script>
-	<@script src="${url.context}/res/yui/charts/charts.js" group="entity-datagrid"></@script>
-	<@script src="${url.context}/res/modules/entity-charact-details/entity-charact-details.js" group="entity-datagrid"></@script>
+	<@script src="${url.context}/res/yui/swf/swf.js" group="entity-datalists"></@script>
+	<@script src="${url.context}/res/yui/charts/charts.js" group="entity-datalists"></@script>
+	<@script src="${url.context}/res/modules/entity-charact-details/entity-charact-details.js" group="entity-datalists"></@script>
 </@>
 
 <@markup id="resources">
@@ -19,7 +19,7 @@
 
 
 <@markup id="widgets">
-  	<@createWidgets group="entity-datagrid"/>
+  	<@createWidgets group="entity-datalists"/>
 </@>
 
 

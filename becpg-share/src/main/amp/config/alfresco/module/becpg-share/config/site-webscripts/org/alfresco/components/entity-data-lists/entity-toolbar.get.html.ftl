@@ -1,24 +1,24 @@
 
 <@markup id="css" >
    <#-- CSS Dependencies -->
-	<@link rel="stylesheet" type="text/css" href="${url.context}/res/components/data-lists/toolbar.css" group="entity-toolbar"/>
-	<@link rel="stylesheet" type="text/css" href="${url.context}/res/components/entity-data-lists/entity-toolbar.css" group="entity-toolbar" />
-    <@link rel="stylesheet" type="text/css" href="${url.context}/res/modules/entity-workflows/entity-workflows.css" group="entity-toolbar" />
+	<@link rel="stylesheet" type="text/css" href="${url.context}/res/components/data-lists/toolbar.css" group="entity-datalists"/>
+	<@link rel="stylesheet" type="text/css" href="${url.context}/res/components/entity-data-lists/entity-toolbar.css" group="entity-datalists" />
+    <@link rel="stylesheet" type="text/css" href="${url.context}/res/modules/entity-workflows/entity-workflows.css" group="entity-datalists" />
 </@>
 
 <@markup id="js">
    <#-- JavaScript Dependencies --> 
-    <@script type="text/javascript" src="${url.context}/res/modules/documentlibrary/doclib-actions.js" group="entity-toolbar"/> 
-    <@script type="text/javascript" src="${url.context}/res/components/entity-data-lists/entity-toolbar.js" group="entity-toolbar"/>
+    <@script type="text/javascript" src="${url.context}/res/modules/documentlibrary/doclib-actions.js" group="entity-datalists"/> 
+    <@script type="text/javascript" src="${url.context}/res/components/entity-data-lists/entity-toolbar.js" group="entity-datalists"/>
 </@>
 
 <@markup id="widgets">
-  	<@createWidgets group="entity-toolbar"/>
+  	<@createWidgets group="entity-datalists"/>
 </@>
 
 <@markup id="custom-entity-toolbar-js">
-   <@script src="${url.context}/res/components/documentlibrary/becpg/docLibAction.js" group="custom-entity-toolbar"/>
-   <@script src="${url.context}/res/components/entity-charact-views/custom-entity-toolbar.js" group="custom-entity-toolbar"/>
+   <@script src="${url.context}/res/components/documentlibrary/becpg/docLibAction.js" group="entity-datalists"/>
+   <@script src="${url.context}/res/components/entity-charact-views/custom-entity-toolbar.js" group="entity-datalists"/>
 </@markup>
 
 

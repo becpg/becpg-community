@@ -157,7 +157,6 @@
 	<config>
 		<forms>
 			<dependencies>
-				<css src="/modules/custom-autocomplete/autocomplete-ext.css" />
 				<!-- Spel editor -->
 				<css src="/modules/spel-editor/spel-editor.css" />
 				<css src="/modules/spel-editor/shThemeDefault.css" />

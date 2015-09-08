@@ -40,7 +40,7 @@
 		                                       ret+=", ";
 		                                      }
 		                                      if(field.value && field.value.length>0){
-		                                   	      ret+= '<span class="locale-icon"><img  title="'+field.locale+'" tabindex="0" src="${url.context}/res/components/images/flags/'+field.locale+'.png"></span>';
+		                                   	      ret+= '<span class="locale-icon"><img class="icon16_11" title="'+field.locale+'" tabindex="0" src="${url.context}/res/components/images/flags/'+field.locale+'.png"></span>';
 		                                          ret+= '<span  class="viewmode-value" >'+field.value+'</span>';
 												}
 		                                    }
