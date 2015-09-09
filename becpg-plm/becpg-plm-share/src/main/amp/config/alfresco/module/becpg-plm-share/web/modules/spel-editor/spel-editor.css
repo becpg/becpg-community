@@ -68,7 +68,7 @@ div.current-formula
 
 .spel-editor .editor-header .navigator span.wait
 {
-   background-image: url(../form/images/ajax_anim.gif);
+   background-image: url(../images/ajax_anim.gif);
    background-repeat: no-repeat;
    padding: 1px 0 2px 16px;
 }
@@ -199,79 +199,6 @@ div.current-formula
 /* DataList */
 
 
-.spel-editor span.allergen, 
-.spel-editor span.allergenList
- {
-	background: url(../../components/images/filetypes/generic-allergen-16.png) no-repeat;
-	padding-left: 20px;
-}
-
-.spel-editor span.bioOrigin {
-	background: url(../../components/images/filetypes/generic-bioOrigin-16.png) no-repeat;
-	padding-left: 20px;
-}
-
-
-.spel-editor span.geoOrigin {
-	background: url(../../components/images/filetypes/generic-geoOrigin-16.png) no-repeat;
-	padding-left: 20px;
-}
-
-.spel-editor span.cost,
-.spel-editor span.costList  {
-	background: url(../../components/images/filetypes/generic-cost-16.png) no-repeat;
-	padding-left: 20px;
-}
-
-.spel-editor span.geo {
-	background: url(../../components/images/filetypes/generic-geo-16.png) no-repeat;
-	padding-left: 20px;
-}
-
-.spel-editor span.ing,
-.spel-editor span.ingList {
-	background: url(../../components/images/filetypes/generic-ing-16.png) no-repeat;
-	padding-left: 20px;
-}
-
-.spel-editor span.microbio,
-.spel-editor span.microbioList {
-	background: url(../../components/images/filetypes/generic-microbio-16.png) no-repeat;
-	padding-left: 20px;
-}
-
-.spel-editor span.organo,
-.spel-editor span.organoList {
-	background: url(../../components/images/filetypes/generic-organo-16.png) no-repeat;
-	padding-left: 20px;
-}
-
-
-.spel-editor span.product,
-.spel-editor span.compoList {
-	background: url(../../components/images/filetypes/generic-finishedProduct-16.png) no-repeat;
-	padding-left: 20px;
-}
-
-.spel-editor span.labelClaimList,
-.spel-editor span.labelClaimList {
-	background: url(../../components/images/filetypes/generic-labelClaim-16.png) no-repeat;
-	padding-left: 20px;
-}
-
-
-
-.spel-editor span.packagingList {
-	background: url(../../components/images/filetypes/generic-packagingKit-16.png) no-repeat;
-	padding-left: 20px;
-}
-
-.spel-editor span.processList {
-	background: url(../../components/images/filetypes/generic-resourceProduct-16.png) no-repeat;
-	padding-left: 20px;
-}
-
-
 
 .spel-editor span.defaultIcon,
 .spel-editor span.variables,
@@ -299,118 +226,10 @@ div.current-formula
 }
 
 
-.spel-editor span.physicoChem,
-.spel-editor span.physicoChemList {
-	background: url(../../components/images/filetypes/generic-physicoChem-16.png)
-		no-repeat;
-	padding-left: 20px;
-}
-
-.spel-editor span.nut,
-.spel-editor span.nutList  {
-	background: url(../../components/images/filetypes/generic-nut-16.png) no-repeat;
-	padding-left: 20px;
-}
-
 .spel-editor-nodeRef {
 	display: inline;
 	background-color: #EDF5FF;
 	border: 1px dashed #D9D9D9;
-}
-
-.spel-editor span.labelingRuleList,
-.spel-editor span.ingLabelingList  {
-	background: url(../../components/images/filetypes/generic-labelingRuleList-16.png) no-repeat;
-	padding-left: 20px;
-}
-
-/** Autocomplete **/
-
-
-.spel-editor span.finishedProduct-ToValidate {
-	background: url(../../components/images/filetypes/generic-finishedProduct-16.png) no-repeat;
-	padding-left: 20px;
-}
-
-.spel-editor span.localSemiFinishedProduct-ToValidate {
-	background: url(../../components/images/filetypes/generic-localSemiFinishedProduct-16.png)
-		no-repeat;
-	padding-left: 20px;
-}
-
-
-.spel-editor span.packagingKit-ToValidate {
-	background: url(../../components/images/filetypes/generic-packagingKit-16.png) no-repeat;
-	padding-left: 20px;
-}
-
-.spel-editor span.packagingMaterial-ToValidate {
-	background: url(../../components/images/filetypes/generic-packagingMaterial-16.png) no-repeat;
-	padding-left: 20px;
-}
-
-.spel-editor span.rawMaterial-ToValidate {
-	background: url(../../components/images/filetypes/generic-rawMaterial-16.png) no-repeat;
-	padding-left: 20px;
-}
-
-.spel-editor span.semiFinishedProduct-ToValidate {
-	background: url(../../components/images/filetypes/generic-semiFinishedProduct-16.png) no-repeat;
-	padding-left: 20px;
-}
-
-.spel-editor span.resourceProduct-ToValidate {
-	background: url(../../components/images/filetypes/generic-resourceProduct-16.png) no-repeat;
-	padding-left: 20px;
-}
-
-.spel-editor span.finishedProduct-Valid {
-	background: url(../../components/images/states/valid-10.png), url(../../components/images/filetypes/generic-finishedProduct-16.png) ;
-	background-repeat:  no-repeat;
-	background-position: 8px 2px, 0 0;
-	padding-left: 20px;
-}
-
-.spel-editor span.localSemiFinishedProduct-Valid {
-	background: url(../../components/images/states/valid-10.png), url(../../components/images/filetypes/generic-localSemiFinishedProduct-16.png);
-		background-repeat:  no-repeat;
-	background-position: 8px 2px, 0 0;
-	padding-left: 20px;
-}
-
-.spel-editor span.packagingKit-Valid {
-	background: url(../../components/images/states/valid-10.png), url(../../components/images/filetypes/generic-packagingKit-16.png);
-	background-repeat:  no-repeat;
-	background-position: 8px 2px, 0 0;
-	padding-left: 20px;
-}
-
-.spel-editor span.packagingMaterial-Valid {
-	background: url(../../components/images/states/valid-10.png), url(../../components/images/filetypes/generic-packagingMaterial-16.png);
-	background-repeat:  no-repeat;
-	background-position: 8px 2px, 0 0;
-	padding-left: 20px;
-}
-
-.spel-editor span.rawMaterial-Valid {
-	background: url(../../components/images/states/valid-10.png), url(../../components/images/filetypes/generic-rawMaterial-16.png) ;
-	background-repeat:  no-repeat;
-	background-position: 8px 2px, 0 0;
-	padding-left: 20px;
-}
-
-.spel-editor span.semiFinishedProduct-Valid {
-	background: url(../../components/images/states/valid-10.png), url(../../components/images/filetypes/generic-semiFinishedProduct-16.png);
-	background-repeat:  no-repeat;
-	background-position: 8px 2px, 0 0;
-	padding-left: 20px;
-}
-
-.spel-editor span.resourceProduct-Valid {
-	background: url(../../components/images/states/valid-10.png), url(../../components/images/filetypes/generic-resourceProduct-16.png);
-	background-repeat:  no-repeat;
-	background-position: 8px 2px, 0 0;
-	padding-left: 20px;
 }
 
 

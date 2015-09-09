@@ -1,19 +1,19 @@
 <@standalone>
    <@markup id="css" >
       <#-- CSS Dependencies -->
-      <@link href="${url.context}/res/components/node-details/node-header.css" group="node-header"/>
-  	  <@link href="${url.context}/res/components/entity-data-lists/entity-header.css" group="node-header"/>
+      <@link href="${url.context}/res/components/node-details/node-header.css" group="entity-datalists"/>
+  	  <@link href="${url.context}/res/components/entity-data-lists/entity-header.css" group="entity-datalists"/>
    </@>
 
    <@markup id="js">
       <#-- JavaScript Dependencies -->
-      <@script src="${url.context}/res/components/node-details/node-header.js" group="node-header"/>
-      <@script src="${url.context}/res/components/entity-data-lists/entity-header.js" group="node-header"/>
+      <@script src="${url.context}/res/components/node-details/node-header.js" group="entity-datalists"/>
+      <@script src="${url.context}/res/components/entity-data-lists/entity-header.js" group="entity-datalists"/>
    </@>
 
    <@markup id="widgets">
       <#if item??>
-      <@createWidgets group="node-header"/>
+      <@createWidgets group="entity-datalists"/>
       </#if>
    </@>
 

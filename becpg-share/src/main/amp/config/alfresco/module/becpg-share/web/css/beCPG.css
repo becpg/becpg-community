@@ -1,99 +1,80 @@
 /*************************************/
 /**            beCPG               **/
 /************************************/
-
 .footer-becpg .copyright {
-   display: inline-block;
-   line-height: 22px;
-   padding-top: 10px;
+	display: inline-block;
+	line-height: 22px;
+	padding-top: 10px;
 }
 
 .footer-becpg .copyright img {
-   padding-right: 1em;
-   vertical-align: baseline;
+	padding-right: 1em;
+	vertical-align: baseline;
 }
 
 .footer-becpg .copyright span {
 	display: none;
 }
 
-
 /* Share forms */
-
-.form-container .yui-navset  .datepicker-icon,
-.form-container .form-field  .datepicker-icon,
-.form-container .yui-g  .form-field  .datepicker-icon,
-.form-container .yui-gb .form-field  .datepicker-icon {
-    margin: 0;
+.form-container .yui-navset  .datepicker-icon, .form-container .form-field  .datepicker-icon,
+	.form-container .yui-g  .form-field  .datepicker-icon, .form-container .yui-gb .form-field  .datepicker-icon
+	{
+	margin: 0;
 }
 
- .form-container .form-field  textarea {
-    width: 95% !important;
-} 
-
+.form-container .form-field  textarea {
+	width: 95% !important;
+}
 
 /*2 Column set */
-
-.form-container .yui-g .form-field input[type="text"], 
-.form-container .yui-g .form-field input[type="file"],
-.form-container .yui-g .form-field input[type="password"],
-.form-container .yui-g .form-field input,
-.form-container .yui-g .form-field select,
-.form-container .yui-g .form-field textarea,
-.form-container .yui-g .yui-ac .ac-body {
+.form-container .yui-g .form-field input[type="text"], .form-container .yui-g .form-field input[type="file"],
+	.form-container .yui-g .form-field input[type="password"],
+	.form-container .yui-g .form-field input, .form-container .yui-g .form-field select,
+	.form-container .yui-g .form-field textarea, .form-container .yui-g .yui-ac .ac-body
+	{
 	width: 27em !important;
 }
 
 /* 1-2 Column Tabbed Set */
-
 .form-container .yui-navset .set {
 	padding-bottom: 0em;
 }
 
-.form-container .yui-navset .form-field input[type="text"], 
-.form-container .yui-navset .form-field input[type="file"],
-.form-container .yui-navset .form-field input[type="password"],
-.form-container .yui-navset .form-field input,
-.form-container .yui-navset .form-field select,
-.form-container .yui-navset .form-field textarea,
-.form-container .yui-navset .yui-ac .ac-body {
+.form-container .yui-navset .form-field input[type="text"],
+	.form-container .yui-navset .form-field input[type="file"],
+	.form-container .yui-navset .form-field input[type="password"],
+	.form-container .yui-navset .form-field input, .form-container .yui-navset .form-field select,
+	.form-container .yui-navset .form-field textarea, .form-container .yui-navset .yui-ac .ac-body
+	{
 	width: 26em !important;
 }
 
-
 /* 3 Column set */
-.form-container .yui-gb .form-field input[type="text"], 
-.form-container .yui-gb .form-field input[type="file"],
-.form-container .yui-gb .form-field input[type="password"],
-.form-container .yui-gb .form-field input,
-.form-container .yui-gb .form-field select,
-.form-container .yui-gb .form-field textarea,
-.form-container .yui-gb .yui-ac .ac-body {
+.form-container .yui-gb .form-field input[type="text"], .form-container .yui-gb .form-field input[type="file"],
+	.form-container .yui-gb .form-field input[type="password"],
+	.form-container .yui-gb .form-field input, .form-container .yui-gb .form-field select,
+	.form-container .yui-gb .form-field textarea, .form-container .yui-gb .yui-ac .ac-body
+	{
 	width: 16em !important;
 }
 
-
-.form-container .yui-g .form-field input[type="checkbox"], 
-.form-container .yui-navset .form-field input[type="checkbox"], 
-.form-container .yui-gb .form-field input[type="checkbox"] {
-	 width: auto !important;
+.form-container .yui-g .form-field input[type="checkbox"],
+	.form-container .yui-navset .form-field input[type="checkbox"],
+	.form-container .yui-gb .form-field input[type="checkbox"] {
+	width: auto !important;
 }
 
-
 /* Auto complete */
-
 .form-container .yui-navset .yui-ac .ac-body .yui-ac-input,
-.form-container .yui-g .yui-ac .ac-body .yui-ac-input,
-.yui-dialog .form-container .yui-ac .ac-body .yui-ac-input  {
+	.form-container .yui-g .yui-ac .ac-body .yui-ac-input, .yui-dialog .form-container .yui-ac .ac-body .yui-ac-input
+	{
 	width: 90% !important;
 }
 
 .form-container .yui-gb .yui-ac .ac-body .yui-ac-input {
 	width: 85% !important;
 }
-
-
-
 
 /** Tab **/
 .share-form .form-container .yui-navset .yui-content {
@@ -103,21 +84,20 @@
 	padding-top: 0.5em;
 }
 
-.yui-skin-lightTheme .share-form .form-container .yui-navset .yui-content {
+.yui-skin-lightTheme .share-form .form-container .yui-navset .yui-content
+	{
 	background-color: #FFFFFF;
 }
 
-.share-form .form-container .yui-navset .yui-nav .selected a, 
-.yui-skin-default .yui-navset .yui-nav .selected a em
-	{
+.share-form .form-container .yui-navset .yui-nav .selected a,
+	.yui-skin-default .yui-navset .yui-nav .selected a em {
 	border-color: #EEEEEE;
 	background-color: #EEEEEE;
 }
 
 .share-form .form-container .yui-navset .yui-nav .selected a,
-.yui-skin-default .yui-navset .yui-nav .selected a:focus,
-.yui-skin-default .yui-navset .yui-nav .selected a:hover
-	{
+	.yui-skin-default .yui-navset .yui-nav .selected a:focus,
+	.yui-skin-default .yui-navset .yui-nav .selected a:hover {
 	background-image: none;
 	background-color: #EEEEEE;
 	color: #000000;
@@ -130,7 +110,7 @@
 	color: #000000;
 }
 
-.share-form .form-container .yui-navset .yui-nav,.yui-skin-sam .yui-navset .yui-navset-top .yui-nav
+.share-form .form-container .yui-navset .yui-nav, .yui-skin-sam .yui-navset .yui-navset-top .yui-nav
 	{
 	border-color: #EEEEEE;
 }
@@ -140,215 +120,573 @@
 }
 
 /** view details **/
-
 .alfresco-twister .alfresco-twister-actions {
-    right: 1em;
-    float: right;
-    position: inherit;
+	right: 1em;
+	float: right;
+	position: inherit;
 }
 
 /** fix ie chrome */
-
 .yui-skin-lightTheme .search-title div.clear {
 	clear: none;
 }
 
-
-/** ##########################   header ######################  */
-
-
-.alfresco-share .dijitIcon.dijitMenuItemIcon.entity {
-	background: url(../../components/images/filetypes/generic-entity-16.png);
-   background-repeat: no-repeat;
-   height: 20px;
-   width: 20px;
-}
-
-
-.alfresco-share .dijitIcon.dijitMenuItemIcon.project-list-header {
-   background: url("../components/images/header/project-list.png");
-   background-repeat: no-repeat;
-   height: 20px;
-   width: 20px;
-}
-
-.alfresco-share .dijitIcon.dijitMenuItemIcon.nc-list-header {
-   background: url("../components/images/header/nc-list.png");
-   background-repeat: no-repeat;
-   height: 20px;
-   width: 20px;
-}
-
-
-.alfresco-share .dijitIcon.dijitMenuItemIcon.ecm-record {
-   background: url("../../components/images/record-16.png");
-   background-repeat: no-repeat;
-   height: 20px;
-   width: 20px;
-}
-
-.alfresco-share .dijitIcon.dijitMenuItemIcon.becpg-admin-header {
-   background: url("../components/images/header/becpg-admin.png");
-   background-repeat: no-repeat;
-   height: 20px;
-   width: 20px;
-}
-
-.alfresco-share .dijitIcon.dijitMenuItemIcon.becpg-olap-header {
-   background: url("../components/images/header/becpg-olap.png");
-   background-repeat: no-repeat;
-   height: 20px;
-   width: 20px;
-}
-
-
-.alfresco-share .dijitIcon.dijitMenuItemIcon.model-designer-header {
-   background: url("../components/images/header/model-designer.png");
-   background-repeat: no-repeat;
-   height: 20px;
-   width: 20px;
-}
-
-
-.alfresco-share .dijitIcon.dijitMenuItemIcon.entity.nc {
-	background: url(../../components/images/filetypes/generic-nc-16.png);
-   background-repeat: no-repeat;
-   height: 20px;
-   width: 20px;
-}
-
-.alfresco-share .dijitIcon.dijitMenuItemIcon.entity.finishedProduct {
-	background: url(../../components/images/filetypes/generic-finishedProduct-16.png);
-   background-repeat: no-repeat;
-   height: 20px;
-   width: 20px;
-}
-
-.alfresco-share .dijitIcon.dijitMenuItemIcon.entity.localSemiFinishedProduct {
-	background: url(../../components/images/filetypes/generic-localSemiFinishedProduct-16.png);
-   background-repeat: no-repeat;
-   height: 20px;
-   width: 20px;
-}
-
-
-.alfresco-share .dijitIcon.dijitMenuItemIcon.entity.rawMaterial {
-	background: url(../../components/images/filetypes/generic-rawMaterial-16.png);
-   background-repeat: no-repeat;
-   height: 20px;
-   width: 20px;
-}
-
-.alfresco-share .dijitIcon.dijitMenuItemIcon.entity.supplier {
-	background: url(../../components/images/filetypes/generic-supplier-16.png);
-   background-repeat: no-repeat;
-   height: 20px;
-   width: 20px;
-}
-
-.alfresco-share .dijitIcon.dijitMenuItemIcon.entity.client {
-	background: url(../../components/images/filetypes/generic-client-16.png);
-   background-repeat: no-repeat;
-   height: 20px;
-   width: 20px;
-}
-
-
-.alfresco-share .dijitIcon.dijitMenuItemIcon.entity.semiFinishedProduct {
-	background: url(../../components/images/filetypes/generic-semiFinishedProduct-16.png);
-   background-repeat: no-repeat;
-   height: 20px;
-   width: 20px;
-}
-
-
-.alfresco-share .dijitIcon.dijitMenuItemIcon.entity.packagingKit {
-	background: url(../../components/images/filetypes/generic-packagingKit-16.png);
-   background-repeat: no-repeat;
-   height: 20px;
-   width: 20px;
-}
-
-.alfresco-share .dijitIcon.dijitMenuItemIcon.entity.packagingMaterial {
-	background: url(../../components/images/filetypes/generic-packagingMaterial-16.png) no-repeat;
-   background-repeat: no-repeat;
-   height: 20px;
-   width: 20px;
-}
-
-.alfresco-share .dijitIcon.dijitMenuItemIcon.entity.resourceProduct {
-   background: url(../../components/images/filetypes/generic-resourceProduct-16.png) no-repeat;
-   background-repeat: no-repeat;
-   height: 20px;
-   width: 20px;
-}
-
-
-.alfresco-share .dijitIcon.dijitMenuItemIcon.entity.project {
-	background: url(../../components/images/filetypes/generic-project-16.png);
-   background-repeat: no-repeat;
-   height: 20px;
-   width: 20px;
-}
-
-.alfresco-share .dijitIcon.dijitMenuItemIcon.entity.changeOrder {
-	background: url(../../components/images/filetypes/generic-changeOrder-16.png);
-   background-repeat: no-repeat;
-   height: 20px;
-   width: 20px;
-}
-
-.alfresco-share .dijitIcon.dijitMenuItemIcon.entity.aclGroup {
-	background: url(../../components/images/filetypes/generic-aclGroup-16.png);
-   background-repeat: no-repeat;
-   height: 20px;
-   width: 20px;
-}
-
-.alfresco-share .dijitIcon.dijitMenuItemIcon.entity.aclGroup {
-	background: url(../../components/images/filetypes/generic-aclGroup-16.png);
-   background-repeat: no-repeat;
-   height: 20px;
-   width: 20px;
-}
-
-.alfresco-share .dijitIcon.dijitMenuItemIcon.entity.controlPlan {
-	background: url(../../components/images/filetypes/generic-controlPlan-16.png);
-   background-repeat: no-repeat;
-   height: 20px;
-   width: 20px;
-}
-
-.alfresco-share .dijitIcon.dijitMenuItemIcon.entity.controlPoint {
-	background: url(../../components/images/filetypes/generic-controlPoint-16.png);
-   background-repeat: no-repeat;
-   height: 20px;
-   width: 20px;
-}
-
-.alfresco-share .dijitIcon.dijitMenuItemIcon.entity.qualityControl {
-	background: url(../../components/images/filetypes/generic-qualityControl-16.png);
-   background-repeat: no-repeat;
-   height: 20px;
-   width: 20px;
-}
-
-.alfresco-share .dijitIcon.dijitMenuItemIcon.entity.productMicrobioCriteria {
-	background: url(../../components/images/filetypes/generic-productMicrobioCriteria-16.png);
-   background-repeat: no-repeat;
-   height: 20px;
-   width: 20px;
-}
-
-@page { 
+@page {
 	size: landscape;
-} 
+}
 
 @media print {
 	body {
-		-webkit-print-color-adjust: exact; 
+		-webkit-print-color-adjust: exact;
 	}
 }
 
+img.icon16 {
+	width: 16px;
+	height: 16px;
+}
+
+img.icon32 {
+	width: 32px;
+	height: 32px;
+}
+
+img.icon16_11 {
+	width: 16px;
+	height: 11px;
+}
+
+/** ##########################   header ######################  */
+
+.dijitIcon.dijitMenuItemIcon.project-list-header {
+    background-image: url("../../components/images/header/project-list.png") !important
+}
+.dijitIcon.dijitMenuItemIcon.nc-list-header {
+    background-image: url("../../components/images/header/nc-list.png") !important
+}
+.dijitIcon.dijitMenuItemIcon.ecm-record {
+    background-image: url("../../components/images/record-16.png") !important
+}
+.dijitIcon.dijitMenuItemIcon.becpg-admin-header {
+    background-image: url("../../components/images/header/becpg-admin.png") !important
+}
+.dijitIcon.dijitMenuItemIcon.becpg-olap-header {
+    background-image: url("../../components/images/header/becpg-olap.png") !important
+}
+.dijitIcon.dijitMenuItemIcon.model-designer-header {
+    background-image: url("../../components/images/header/model-designer.png") !important
+}
 
 
+.dijitIcon.dijitMenuItemIcon.becpg-admin-header,
+.dijitIcon.dijitMenuItemIcon.becpg-olap-header,
+.dijitIcon.dijitMenuItemIcon.ecm-record,
+.dijitIcon.dijitMenuItemIcon.model-designer-header,
+.dijitIcon.dijitMenuItemIcon.nc-list-header,
+.dijitIcon.dijitMenuItemIcon.project-list-header,
+.entity.supplier {
+    background-repeat: no-repeat;
+    height: 20px;
+    width: 20px
+}
+
+.dijitIcon.dijitMenuItemIcon.entity {
+	  padding: 0px !important;
+}
+
+span.dynaAccessDenied,
+span.reqTypeForbidden {
+    background-image: url("../../components/images/states/error-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+span.dynaCompIncrease {
+    background-image: url("../../components/images/increase-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat;
+    margin-left: 5px
+}
+span.dynaCompDecrease {
+    background-image: url("../../components/images/decrease-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat;
+    margin-left: 5px
+}
+span.dynaCompNone {
+    padding-left: 20px
+}
+span.cost-formulated-error,
+span.dynaError,
+span.lcl-formulated-error,
+span.nut-formulated-error,
+span.reqTypeTolerated {
+    background-image: url("../../components/images/states/warning-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+span.reqTypeInfo {
+    background-image: url("../../components/images/states/info-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+
+span.cost-formulated,
+span.lcl-formulated,
+span.nut-formulated {
+    background-image: url("../../components/images/lcl-formulated-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+
+span.variant {
+    background-image: url("../../components/images/enabled-indicator-off-16.png") !important;
+    background-repeat: no-repeat;
+    padding-left: 14px
+}
+span.variant-default {
+    background-image: url("../../components/images/enabled-indicator-on-16.png") !important;
+    background-repeat: no-repeat;
+    padding-left: 14px
+}
+
+
+/** Commons **/
+
+span.entity,
+.entity {
+    background-image: url("../../components/images/filetypes/generic-entity-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+
+span.dataList {
+    background-image: url("../../components/images/list-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+
+span.linkedValue,
+span.listValue {
+    background-image: url("../../components/images/generic-file-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+
+span.client,
+.entity.client {
+    background-image: url("../../components/images/filetypes/generic-client-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+
+span.supplier,
+.entity.bcpg-supplier,
+.entity.supplier {
+    background-image: url("../../components/images/filetypes/generic-supplier-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+
+/** Products **/
+
+
+span.productCatalog {
+    background-image: url("../../components/images/filetypes/generic-productCatalog-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+
+span.product,
+span.finishedProduct,
+span.finishedProduct-ToValidate,
+.entity.bcpg-finishedProduct,
+.entity.finishedProduct  {
+    background-image: url("../../components/images/filetypes/generic-finishedProduct-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+
+span.localSemiFinishedProduct,
+span.localSemiFinishedProduct-ToValidate,
+.entity.bcpg-localSemiFinishedProduct,
+.entity.localSemiFinishedProduct {
+    background-image: url("../../components/images/filetypes/generic-localSemiFinishedProduct-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+
+span.packagingKit,
+span.packagingKit-ToValidate,
+.entity.bcpg-packagingKit,
+.entity.packagingKit {
+    background-image: url("../../components/images/filetypes/generic-packagingKit-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+span.packagingMaterial,
+span.packagingMaterial-ToValidate,
+.entity.bcpg-packagingMaterial,
+.entity.packagingMaterial {
+    background-image: url("../../components/images/filetypes/generic-packagingMaterial-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+span.rawMaterial,
+span.rawMaterial-ToValidate,
+.entity.bcpg-rawMaterial,
+.entity.rawMaterial  {
+    background-image: url("../../components/images/filetypes/generic-rawMaterial-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+
+span.semiFinishedProduct,
+span.semiFinishedProduct-ToValidate,
+.entity.bcpg-semiFinishedProduct,
+.entity.semiFinishedProduct {
+    background-image: url("../../components/images/filetypes/generic-semiFinishedProduct-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+
+span.resourceProduct,
+span.resourceProduct-ToValidate,
+.entity.bcpg-resourceProduct,
+.entity.resourceProduct {
+    background-image: url("../../components/images/filetypes/generic-resourceProduct-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+
+span.finishedProduct-Archived,
+span.finishedProduct-Refused,
+span.finishedProduct-Simulation,
+span.finishedProduct-Valid,
+span.localSemiFinishedProduct-Archived,
+span.localSemiFinishedProduct-Refused,
+span.localSemiFinishedProduct-Simulation,
+span.localSemiFinishedProduct-Valid,
+span.packagingKit-Archived,
+span.packagingKit-Refused,
+span.packagingKit-Simulation,
+span.packagingKit-Valid,
+span.packagingMaterial-Archived,
+span.packagingMaterial-Refused,
+span.packagingMaterial-Simulation,
+span.packagingMaterial-Valid,
+span.rawMaterial-Archived,
+span.rawMaterial-Refused,
+span.rawMaterial-Simulation,
+span.rawMaterial-Valid,
+span.resourceProduct-Refused,
+span.resourceProduct-Simulation,
+span.resourceProduct-Valid,
+span.semiFinishedProduct-Archived,
+span.semiFinishedProduct-Refused,
+span.semiFinishedProduct-Simulation,
+span.semiFinishedProduct-Valid,
+span.resourceProduct-Archived {
+    padding-left: 20px;
+    background-repeat: no-repeat;
+    background-position: 8px 2px, 0 0
+}
+
+span.finishedProduct-Valid {
+    background-image: url("../../components/images/states/valid-10.png") , url("../../components/images/filetypes/generic-finishedProduct-16.png") !important
+}
+span.localSemiFinishedProduct-Valid {
+    background-image: url("../../components/images/states/valid-10.png") , url("../../components/images/filetypes/generic-localSemiFinishedProduct-16.png") !important
+}
+span.packagingKit-Valid {
+    background-image: url("../../components/images/states/valid-10.png") , url("../../components/images/filetypes/generic-packagingKit-16.png") !important
+}
+span.packagingMaterial-Valid {
+    background-image: url("../../components/images/states/valid-10.png") , url("../../components/images/filetypes/generic-packagingMaterial-16.png") !important
+}
+span.rawMaterial-Valid {
+    background-image: url("../../components/images/states/valid-10.png") , url("../../components/images/filetypes/generic-rawMaterial-16.png") !important
+}
+span.semiFinishedProduct-Valid {
+    background-image: url("../../components/images/states/valid-10.png") , url("../../components/images/filetypes/generic-semiFinishedProduct-16.png") !important
+}
+span.resourceProduct-Valid {
+    background-image: url("../../components/images/states/valid-10.png") , url("../../components/images/filetypes/generic-resourceProduct-16.png") !important
+}
+span.finishedProduct-Simulation {
+    background-image: url("../../components/images/states/simulation-10.png") , url("../../components/images/filetypes/generic-finishedProduct-16.png") !important
+}
+span.localSemiFinishedProduct-Simulation {
+    background-image: url("../../components/images/states/simulation-10.png") , url("../../components/images/filetypes/generic-localSemiFinishedProduct-16.png") !important
+}
+span.packagingKit-Simulation {
+    background-image: url("../../components/images/states/simulation-10.png") , url("../../components/images/filetypes/generic-packagingKit-16.png") !important
+}
+span.packagingMaterial-Simulation {
+    background-image: url("../../components/images/states/simulation-10.png") , url("../../components/images/filetypes/generic-packagingMaterial-16.png") !important
+}
+span.rawMaterial-Simulation {
+    background-image: url("../../components/images/states/simulation-10.png") , url("../../components/images/filetypes/generic-rawMaterial-16.png") !important
+}
+span.semiFinishedProduct-Simulation {
+    background-image: url("../../components/images/states/simulation-10.png") , url("../../components/images/filetypes/generic-semiFinishedProduct-16.png") !important
+}
+span.resourceProduct-Simulation {
+    background-image: url("../../components/images/states/simulation-10.png") , url("../../components/images/filetypes/generic-resourceProduct-16.png") !important
+}
+span.finishedProduct-Archived {
+    background-image: url("../../components/images/states/archived-10.png") , url("../../components/images/filetypes/generic-finishedProduct-16.png") !important
+}
+span.localSemiFinishedProduct-Archived {
+    background-image: url("../../components/images/states/archived-10.png") , url("../../components/images/filetypes/generic-localSemiFinishedProduct-16.png") !important
+}
+span.packagingKit-Archived {
+    background-image: url("../../components/images/states/archived-10.png") , url("../../components/images/filetypes/generic-packagingKit-16.png") !important
+}
+span.packagingMaterial-Archived {
+    background-image: url("../../components/images/states/archived-10.png") , url("../../components/images/filetypes/generic-packagingMaterial-16.png") !important
+}
+span.rawMaterial-Archived {
+    background-image: url("../../components/images/states/archived-10.png") , url("../../components/images/filetypes/generic-rawMaterial-16.png") !important
+}
+span.semiFinishedProduct-Archived {
+    background-image: url("../../components/images/states/archived-10.png") , url("../../components/images/filetypes/generic-semiFinishedProduct-16.png") !important
+}
+span.resourceProduct-Archived {
+    background-image: url("../../components/images/states/archived-10.png") , url("../../components/images/filetypes/generic-resourceProduct-16.png") !important
+}
+span.finishedProduct-Refused {
+    background-image: url("../../components/images/states/refused-10.png") , url("../../components/images/filetypes/generic-finishedProduct-16.png") !important
+}
+span.localSemiFinishedProduct-Refused {
+    background-image: url("../../components/images/states/refused-10.png") , url("../../components/images/filetypes/generic-localSemiFinishedProduct-16.png") !important
+}
+span.packagingKit-Refused {
+    background-image: url("../../components/images/states/refused-10.png") , url("../../components/images/filetypes/generic-packagingKit-16.png") !important
+}
+span.packagingMaterial-Refused {
+    background-image: url("../../components/images/states/refused-10.png") , url("../../components/images/filetypes/generic-packagingMaterial-16.png") !important
+}
+span.rawMaterial-Refused {
+    background-image: url("../../components/images/states/refused-10.png") , url("../../components/images/filetypes/generic-rawMaterial-16.png") !important
+}
+span.semiFinishedProduct-Refused {
+    background-image: url("../../components/images/states/refused-10.png") , url("../../components/images/filetypes/generic-semiFinishedProduct-16.png") !important
+}
+span.resourceProduct-Refused {
+    background-image: url("../../components/images/states/refused-10.png") , url("../../components/images/filetypes/generic-resourceProduct-16.png") !important
+}
+
+
+/** Characts **/
+
+span.physicoChem,
+span.physicoChemList {
+    background-image: url("../../components/images/filetypes/generic-physicoChem-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+span.nut,
+span.nutList {
+    background-image: url("../../components/images/filetypes/generic-nut-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+span.ingLabelingList,
+span.labelingRuleList {
+    background-image: url("../../components/images/filetypes/generic-labelingRuleList-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+span.allergen,
+span.allergenList {
+    background-image: url("../../components/images/filetypes/generic-allergen-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+span.bioOrigin {
+    background-image: url("../../components/images/filetypes/generic-bioOrigin-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+span.geoOrigin,
+span.geo {
+    background-image: url("../../components/images/filetypes/generic-geoOrigin-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+span.cost,
+span.costList {
+    background-image: url("../../components/images/filetypes/generic-cost-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+span.ing,
+span.ingList {
+    background-image: url("../../components/images/filetypes/generic-ing-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+span.microbio,
+span.microbioList {
+    background-image: url("../../components/images/filetypes/generic-microbio-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+span.organo,
+span.organoList {
+    background-image: url("../../components/images/filetypes/generic-organo-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+
+span.compoList {
+    background-image: url("../../components/images/filetypes/generic-finishedProduct-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+span.labelClaimList {
+    background-image: url("../../components/images/filetypes/generic-labelClaim-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+span.packagingList {
+    background-image: url("../../components/images/filetypes/generic-packagingKit-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+span.processList {
+    background-image: url("../../components/images/filetypes/generic-resourceProduct-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+
+/** Project **/
+
+span.project,
+.entity.pjt-project,
+.entity.project {
+    background-image: url("../../components/images/filetypes/generic-project-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+
+
+/** Quality **/
+
+span.nc,
+.entity.qa-nc,
+.entity.nc
+ {
+    background-image: url("../../components/images/filetypes/generic-nc-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+
+span.controlPlan
+.entity.qa-controlPlan,
+.entity.controlPlan
+ {
+    background-image: url("../../components/images/filetypes/generic-controlPlan-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+
+span.productSpecification,
+.entity.bcpg-productSpecification
+.entity.productSpecification
+ {
+    background-image: url("../../components/images/filetypes/generic-productSpecification-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+span.qualityControl
+.entity.qa-qualityControl,
+.entity.qualityControl {
+    background-image: url("../../components/images/filetypes/generic-qualityControl-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+
+span.controlPoint,
+.entity.qa-controlPoint,
+.entity.controlPoint {
+    background-image: url("../../components/images/filetypes/generic-controlPoint-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+
+
+span.productMicrobioCriteria,
+.entity.bcpg-productMicrobioCriteria,
+.entity.productMicrobioCriteria
+ {
+    background-image: url("../../components/images/filetypes/generic-productMicrobioCriteria-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+
+
+/** ECM **/
+
+span.changeOrder,
+.entity.ecm-changeOrder,
+.entity.changeOrder 
+
+ {
+    background-image: url("../../components/images/filetypes/generic-changeOrder-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+
+/** Security **/
+
+
+span.userGroup {
+    background-image: url("../../components/images/filetypes/generic-group-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+
+span.aclEntry {
+    background-image: url("../../components/images/filetypes/generic-aclEntry-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+
+span.aclGroup,
+.entity.sec-aclGroup,
+.entity.aclGroup {
+    background-image: url("../../components/images/filetypes/generic-aclGroup-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+
+
+/** Nutrients **/
+
+span.nutrientClass-A:hover {
+    background-image: url("../../components/images/states/nutrient-class-A-16.png") !important;
+    background-position: 0;
+}
+span.nutrientClass-B:hover {
+    background-image: url("../../components/images/states/nutrient-class-B-16.png") !important;
+    background-position: 0;
+}
+span.nutrientClass-C:hover {
+    background-image: url("../../components/images/states/nutrient-class-C-16.png") !important;
+    background-position: 0;
+}
+span.nutrientClass-D:hover {
+    background-image: url("../../components/images/states/nutrient-class-D-16.png") !important;
+    background-position: 0;
+}
+span.nutrientClass-E:hover {
+    background-image: url("../../components/images/states/nutrient-class-E-16.png") !important;
+    background-position: 0;
+}
+
+span.favourite span.ctn-fav {
+	background: rgba(0, 0, 0, 0) url("../../components/images/star-selected_16x16.png") no-repeat scroll 0 1px !important;
+    display: inline  !important;
+    padding-left: 20px;
+}

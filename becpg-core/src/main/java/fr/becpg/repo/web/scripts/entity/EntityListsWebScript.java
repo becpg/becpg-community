@@ -34,6 +34,7 @@ import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.repository.Path;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.PermissionService;
@@ -310,10 +311,12 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 			}
 		}
 		
-		String path = nodeService.getPath(nodeRef).toPrefixString(namespaceService);
-		String displayPath = this.nodeService.getPath(nodeRef).toDisplayPath(nodeService, permissionService);
+		Path path = nodeService.getPath(nodeRef);
+		
+		String stringPath = path.toPrefixString(namespaceService);
+		String displayPath = path.toDisplayPath(nodeService, permissionService);
 
-		String retPath = SiteHelper.extractDisplayPath(path,displayPath);
+		String retPath = SiteHelper.extractDisplayPath(stringPath,displayPath);
 
 		model.put(MODEL_KEY_NAME_ENTITY_PATH, retPath);
 		model.put(MODEL_KEY_NAME_ENTITY, nodeRef);

@@ -585,8 +585,7 @@
                          */
                         rowFormatter : function EntityDataGrid_rowFormatter(elTr, oRecord)
                         {
-
-                            if (oRecord.getData("color") && oRecord.getData("color")!="000000")
+                            if (oRecord.getData("color") && oRecord.getData("color").length>0 && oRecord.getData("color")!="000000")
                             {
                                 Dom.setStyle(elTr, 'background-color', oRecord.getData("color"));
                             }
@@ -682,7 +681,6 @@
                                             filterData : window.unescape(filters[2] || "").replace("$ML$", "|"),
                                             filterDisplay : window.unescape(filters[3] || "")
                                         };
-                                        Alfresco.logger.debug("DL_fnChangeFilterHandler", "changeFilter =>", filterObj);
                                         Bubbling.fire(this.scopeId + "changeFilter", filterObj);
                                     }
                                 }
@@ -716,8 +714,17 @@
                                         {
                                             type : "menu",
                                             menu : "filterform-panel",
-                                            disabled : true
+                                            lazyloadmenu : false
                                         });
+                                
+                         
+                                 
+                                this.widgets.filterForm.getMenu().subscribe("show", function(p_sType, p_aArgs){
+                               	 	me.populateFilterForm();
+                                	
+                                });
+                              
+                                
                             }
 
                             // Toolbar contribs
@@ -758,8 +765,6 @@
                         onHistoryManagerReady : function EntityDataGrid_onHistoryManagerReady()
                         {
                             // Fire changeFilter event for first-time population
-                            Alfresco.logger.debug("EntityDataGrid_onHistoryManagerReady", "changeFilter =>",
-                                    this.options.initialFilter);
                             Bubbling.fire(this.scopeId + "changeFilter", YAHOO.lang.merge(
                             {
                                 datagridFirstTimeNav : true
@@ -833,11 +838,6 @@
                                 return;
                             }
 
-                            // Filter form
-                            if (this.options.useFilter)
-                            {
-                                this.populateFilterForm();
-                            }
 
                             this.renderDataListMeta();
 
@@ -876,44 +876,47 @@
                          */
                         populateFilterForm : function EntityDataGrid_populateFilterForm()
                         {
-                            var listName = this.datalistMeta.name != null ? this.datalistMeta.name : this.options.list;
-
-                            var filterFormUrl = YAHOO.lang
-                                    .substitute(
-                                            Alfresco.constants.URL_SERVICECONTEXT + "module/entity-datagrid/filter/form?itemKind={itemKind}&list={list}&itemId={itemId}&formId={formId}&submitType=json&showCancelButton=false&showCaption=false&showSubmitButton=false" + ((this.options.entityNodeRef != null && this.options.entityNodeRef.length > 0) ? "&entityNodeRef=" + this.options.entityNodeRef
-                                                    : ""),
-                                            {
-                                                itemKind : "type",
-                                                itemId : this.options.itemType != null ? this.options.itemType
-                                                        : this.datalistMeta.itemType,
-                                                formId : "filter",
-                                                list : listName,
-                                                submitType : "json"
-                                            });
-
-                            Alfresco.util.Ajax.request(
-                            {
-                                url : filterFormUrl,
-                                dataObj :
-                                {
-                                    htmlid : this.id + "-filterForm"
-                                },
-                                successCallback :
-                                {
-                                    fn : this.onFilterFormTemplateLoaded,
-                                    scope : this
-                                },
-                                failureCallback :
-                                {
-                                    fn : function()
-                                    {
-                                        this.widgets.filterForm.set("disabled", true);
-                                    },
-                                    scope : this
-                                },
-                                scope : this,
-                                execScripts : true
-                            });
+                            if(!this.isFilterFormLoaded){
+                            	var listName = this.datalistMeta.name != null ? this.datalistMeta.name : this.options.list;
+                            	this.isFilterFormLoaded = true;
+	                            var filterFormUrl = YAHOO.lang
+	                                    .substitute(
+	                                            Alfresco.constants.URL_SERVICECONTEXT + "module/entity-datagrid/filter/form?itemKind={itemKind}&list={list}&itemId={itemId}&formId={formId}&submitType=json&showCancelButton=false&showCaption=false&showSubmitButton=false" + ((this.options.entityNodeRef != null && this.options.entityNodeRef.length > 0) ? "&entityNodeRef=" + this.options.entityNodeRef
+	                                                    : ""),
+	                                            {
+	                                                itemKind : "type",
+	                                                itemId : this.options.itemType != null ? this.options.itemType
+	                                                        : this.datalistMeta.itemType,
+	                                                formId : "filter",
+	                                                list : listName,
+	                                                submitType : "json"
+	                                            });
+	
+	                            Alfresco.util.Ajax.request(
+	                            {
+	                                url : filterFormUrl,
+	                                dataObj :
+	                                {
+	                                    htmlid : this.id + "-filterForm"
+	                                },
+	                                successCallback :
+	                                {
+	                                    fn : this.onFilterFormTemplateLoaded,
+	                                    scope : this
+	                                },
+	                                failureCallback :
+	                                {
+	                                    fn : function()
+	                                    {
+	                                    	this.isFilterFormLoaded = false;
+	                                        this.widgets.filterForm.set("disabled", true);
+	                                    },
+	                                    scope : this
+	                                },
+	                                scope : this,
+	                                execScripts : true
+	                            });
+                            }
                         },
                         /**
                          * Event callback when filtr template has been loaded
@@ -1079,13 +1082,10 @@
                             YAHOO.util.History.register(this.scopeId + "filter", bookmarkedFilter,
                                     function EntityDataGrid_onHistoryManagerFilterChanged(newFilter)
                                     {
-                                        Alfresco.logger.debug("HistoryManager: filter changed:" + newFilter);
                                         // Firefox fix
                                         if (YAHOO.env.ua.gecko > 0)
                                         {
                                             newFilter = window.unescape(newFilter);
-                                            Alfresco.logger
-                                                    .debug("HistoryManager: filter (after Firefox fix):" + newFilter);
                                         }
 
                                         this._updateDataGrid.call(this,
@@ -1107,7 +1107,6 @@
                                      * is when the browser is not supported
                                      * (Opera, or not A-grade)
                                      */
-                                    Alfresco.logger.error(this.name + ": Couldn't initialize HistoryManager.", e2);
                                     var obj = args[1];
                                     if ((obj !== null) && (obj.entityDataGridModule !== null))
                                     {
@@ -1143,7 +1142,6 @@
 
                                 // Should be a filterId in the arguments
                                 this.currentFilter = Alfresco.util.cleanBubblingObject(obj);
-                                Alfresco.logger.debug("DL_onFilterChanged: ", this.currentFilter);
                             }
                         },
 
@@ -1542,9 +1540,6 @@
                             // Rendering complete event handler
                             this.widgets.dataTable.subscribe("renderEvent", function()
                             {
-                                Alfresco.logger.debug("DataTable renderEvent");
-                                
-                                
                              // Item Select menu button
                                 if( this.widgets.itemSelect ==null){
                                    this.widgets.itemSelect = Alfresco.util.createYUIButton(this, me.timeStampId+"itemSelect-button",
@@ -2501,8 +2496,6 @@
                                     strFilter = aFilters[0];
                                 }
 
-                                Alfresco.logger.debug("EntityDataGrid_onChangeFilter: ", filter);
-
                                 // Initial navigation won't fire the History
                                 // event
                                 if (obj.datagridFirstTimeNav || !this.options.useHistoryManager)
@@ -2522,7 +2515,6 @@
                                     }
                                     objNav[this.scopeId + "filter"] = strFilter;
 
-                                    Alfresco.logger.debug("EntityDataGrid_onChangeFilter: objNav = ", objNav);
                                     YAHOO.util.History.multiNavigate(objNav);
                                 }
                             }

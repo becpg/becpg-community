@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2015 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2015 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.repository.impl;
@@ -91,9 +91,8 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 	@Override
 	public T save(T entity) {
 
-		if (entity.isTransient()) {
+		if (entity.isTransient())
 			return entity;
-		}
 
 		if (!L2CacheSupport.isCacheOnlyEnable()) {
 
@@ -128,10 +127,12 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 					entity.setNodeRef(productNodeRef);
 
 				} else {
-					logger.debug("Update instanceOf :" + entity.getClass().getName());
-					if (logger.isTraceEnabled()) {
-						logger.trace(" HashDiff :"
-								+ BeCPGHashCodeBuilder.printDiff(entity, findOne(entity.getNodeRef(), new HashMap<NodeRef, RepositoryEntity>())));
+					if (logger.isDebugEnabled()) {
+						logger.debug("Update instanceOf :" + entity.getClass().getName());
+						if (logger.isTraceEnabled()) {
+							logger.trace(" HashDiff :"
+									+ BeCPGHashCodeBuilder.printDiff(entity, findOne(entity.getNodeRef(), new HashMap<NodeRef, RepositoryEntity>())));
+						}
 					}
 
 					for (Iterator<Map.Entry<QName, Serializable>> iterator = properties.entrySet().iterator(); iterator.hasNext();) {
@@ -287,7 +288,8 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public void saveDataList(NodeRef listContainerNodeRef, QName dataListContainerType, QName dataListType, List<? extends RepositoryEntity> dataList) {
+	public void saveDataList(NodeRef listContainerNodeRef, QName dataListContainerType, QName dataListType,
+			List<? extends RepositoryEntity> dataList) {
 		if (dataList != null && listContainerNodeRef != null) {
 			NodeRef dataListNodeRef = entityListDAO.getList(listContainerNodeRef, dataListContainerType);
 
@@ -354,9 +356,8 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 	@Override
 	public T findOne(NodeRef id) {
-		if (id == null) {
+		if (id == null)
 			throw new IllegalArgumentException("NodeRef cannot be null ");
-		}
 
 		return findOne(id, L2CacheSupport.getCurrentThreadCache());
 
@@ -375,9 +376,8 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		QName type = nodeService.getType(id);
 
 		Class<T> entityClass = repositoryEntityDefReader.getEntityClass(type);
-		if (entityClass == null) {
+		if (entityClass == null)
 			throw new IllegalArgumentException("Type is not registered : " + type);
-		}
 
 		try {
 
@@ -470,6 +470,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 		LazyLoadingDataList<T> dataList = new LazyLoadingDataList<>();
 		dataList.setDataProvider(new LazyLoadingDataList.DataProvider<T>() {
+			@Override
 			public List<T> getData() {
 				return loadDataList(entity.getNodeRef(), datalistContainerQname, datalistQname, caches);
 			}
@@ -625,24 +626,21 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 	@Override
 	public boolean hasDataList(RepositoryEntity entity, QName datalistContainerQname) {
 
-		if (entity.getNodeRef() != null) {
+		if (entity.getNodeRef() != null)
 			return hasDataList(entity.getNodeRef(), datalistContainerQname);
-		} else {
+		else {
 			Map<QName, List<? extends RepositoryEntity>> datalists = repositoryEntityDefReader.getDataLists(entity);
 			if (datalists != null && !datalists.isEmpty()) {
 				for (Map.Entry<QName, List<? extends RepositoryEntity>> dataListEntry : datalists.entrySet()) {
-					if (dataListEntry.getKey().equals(datalistContainerQname)) {
+					if (dataListEntry.getKey().equals(datalistContainerQname))
 						return dataListEntry.getValue() != null && !dataListEntry.getValue().isEmpty();
-					}
 				}
 			}
 		}
 
 		return false;
 	}
-	
-	
-	
+
 	@Override
 	public boolean hasDataList(NodeRef entityNodeRef, QName datalistContainerQname) {
 		if (entityNodeRef != null) {
@@ -651,15 +649,12 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 			if (listContainerNodeRef != null) {
 				NodeRef dataListNodeRef = entityListDAO.getList(listContainerNodeRef, datalistContainerQname);
 
-				if (dataListNodeRef != null) {
+				if (dataListNodeRef != null)
 					return true;
-				}
 			}
-		} 
+		}
 		return false;
 	}
-	
-	
 
 	@Override
 	public boolean isRegisteredType(QName type) {

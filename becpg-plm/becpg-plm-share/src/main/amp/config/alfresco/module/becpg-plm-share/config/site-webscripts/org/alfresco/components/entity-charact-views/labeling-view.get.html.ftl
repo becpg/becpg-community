@@ -1,17 +1,15 @@
 <@markup id="css" >
 	<#include "../../modules/entity-datagrid/include/entity-datagrid.css.ftl"/>
-	
-	<@link href="${url.context}/res/modules/custom-entity-datagrid/product-entity-datagrid.css" group="entity-datagrid" />
-	<@link href="${url.context}/res/components/entity-charact-views/labeling-view.css" group="formulation-view" />
+	<@link href="${url.context}/res/components/entity-charact-views/labeling-view.css" group="entity-datalists" />
 </@>
 
 <@markup id="js">
    <#include "../../modules/entity-datagrid/include/entity-datagrid.js.ftl"/>
    
-   <@script src="${url.context}/res/modules/custom-entity-datagrid/product-columnRenderers.js" group="entity-datagrid"></@script>
-   <@script src="${url.context}/res/modules/custom-entity-datagrid/product-entity-toolbar.js" group="entity-toolbar"/>
+   <@script src="${url.context}/res/modules/custom-entity-datagrid/product-columnRenderers.js" group="entity-datalists"></@script>
+   <@script src="${url.context}/res/modules/custom-entity-datagrid/product-entity-toolbar.js" group="entity-datalists"/>
    
-   <@script src="${url.context}/res/components/entity-charact-views/dashlet-resizer.js" group="formulation-view"/>
+   <@script src="${url.context}/res/components/entity-charact-views/dashlet-resizer.js" group="entity-datalists"/>
 </@>
 
 <@markup id="resources">
@@ -19,11 +17,11 @@
 </@markup>
 
 <@markup id="widgets">
-   	  <@inlineScript group="labeling-view">
+   	    <@inlineScript group="entity-datalists">
 		    Alfresco.constants.DASHLET_RESIZE = true && YAHOO.env.ua.mobile === null;
 		</@>
-  		<@createWidgets group="labeling-view"/>
-  		<@inlineScript group="labeling-view">
+  		<@createWidgets group="entity-datalists"/>
+  		<@inlineScript group="entity-datalists">
   		  (function() {
 		      var dataGridModuleCount = 1;
 		      YAHOO.Bubbling.on("dataGridReady", function(layer, args) {

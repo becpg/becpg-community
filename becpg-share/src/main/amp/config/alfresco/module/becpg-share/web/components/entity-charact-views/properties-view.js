@@ -173,6 +173,7 @@
                                 this.fileUpload = Alfresco.getFileUploadInstance();
                             }
                             
+                            var me = this;
                             
                             var uploadConfig =
                             {
@@ -180,6 +181,7 @@
                                htmlUploadURL: "becpg/entity/uploadlogo.html" ,
                                updateNodeRef: this.options.nodeRef,
                                mode: this.fileUpload.MODE_SINGLE_UPLOAD,
+                               suppressRefreshEvent : true,
                                onFileUploadComplete:
                                {
                                   fn: function onFileUploadComplete(complete)
@@ -187,8 +189,8 @@
                                       var success = complete.successful.length;
                                       if (success != 0)
                                       {
-                                         var noderef = complete.successful[0].nodeRef;
-                                         YAHOO.Bubbling.fire("metadataRefresh");
+                                    	   var productLogo =  Dom.get(me.id+"-productLogo");
+                                    	  setTimeout(function(){  productLogo.src =  productLogo.src+"&"+ new Date().getTime(); }, 3000);
                                       }
                                    },
                                    scope: this

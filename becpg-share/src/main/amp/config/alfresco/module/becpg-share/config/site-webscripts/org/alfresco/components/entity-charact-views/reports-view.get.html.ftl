@@ -2,7 +2,7 @@
    
    <@markup id="css" >
       <#include "../preview/include/web-preview-css-dependencies.lib.ftl" />
-  	  <@link href="${url.context}/res/components/entity-charact-views/reports-view.css" group="entity-toolbar"/>
+  	  <@link href="${url.context}/res/components/entity-charact-views/reports-view.css" group="entity-datalists"/>
    </@>
    
    <@markup id="js" >

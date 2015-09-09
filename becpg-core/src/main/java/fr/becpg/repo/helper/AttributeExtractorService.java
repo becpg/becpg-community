@@ -66,13 +66,11 @@ public interface AttributeExtractorService {
 	
 	Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, Map<QName, Serializable> properties, List<AttributeExtractorStructure> metadataFields, AttributeExtractorMode mode, DataListCallBack dataListCallBack);
 	
+	Map<String, Object> extractCommonNodeData(NodeRef nodeRef);
+	
     String getStringValue(PropertyDefinition propertyDef, Serializable value, PropertyFormats propertyFormats);
 	
-	String getDisplayPath(NodeRef nodeRef);
-
 	String[] getTags(NodeRef nodeRef);
-
-	String extractSiteId(NodeRef entityNodeRef);
 
 	String extractPropertyForReport(PropertyDefinition propertyDef, Serializable value, PropertyFormats propertyFormats, boolean formatData);
 
@@ -89,6 +87,10 @@ public interface AttributeExtractorService {
 	String extractPropName(NodeRef v);
 
 	String extractPropName(QName type, NodeRef nodeRef);
+
+	String extractSiteId(NodeRef entityNodeRef);
+
+	
 	
 
 	

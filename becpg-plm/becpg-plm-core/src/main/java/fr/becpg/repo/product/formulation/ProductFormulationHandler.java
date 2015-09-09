@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2015 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2015 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.product.formulation;
@@ -26,7 +26,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
@@ -88,10 +87,8 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 	@Override
 	public boolean process(ProductData productData) throws FormulateException {
 
-		if (!productData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)
-				&& ((productData.hasCompoListEl(new VariantFilters<>())) 
-						|| (productData.hasPackagingListEl(new VariantFilters<>()))
-						|| (productData.hasProcessListEl(new VariantFilters<>())))) {
+		if (!productData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) && ((productData.hasCompoListEl(new VariantFilters<>()))
+				|| (productData.hasPackagingListEl(new VariantFilters<>())) || (productData.hasProcessListEl(new VariantFilters<>())))) {
 
 			if (productData.hasCompoListEl(new VariantFilters<>())) {
 				if (productData.getCompoListView().getReqCtrlList() != null) {
@@ -135,13 +132,13 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		if (productData.getProcessListView() != null && productData.getProcessListView().getReqCtrlList() != null) {
 			productData.getProcessListView().getReqCtrlList().clear();
 		}
-		
-		if(productData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)){
+
+		if (productData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
 			logger.debug("Entity tpl found skipping formulation");
-			//Skip formulation
+			// Skip formulation
 			return false;
 		}
-		
+
 		return true;
 	}
 
@@ -187,16 +184,13 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 						if (checkShouldFormulateComponents(false, p, checkedProducts)) {
 							shouldFormulate = true;
 						}
-						// check modified date on component
-						Date modified = (Date) nodeService.getProperty(c.getComponent(), ContentModel.PROP_MODIFIED);
-						if (modified == null || productData.getFormulatedDate() == null || modified.getTime() > productData.getFormulatedDate().getTime()) {
-							shouldFormulate = true;
-						}
 					}
 				}
 			}
-
-			if (!isRoot && (shouldFormulate || productService.shouldFormulate(productData.getNodeRef()))) {
+			// check modified date on component
+			Date modified = productData.getModifiedDate();
+			Date formulatedDate = productData.getFormulatedDate();
+			if (!isRoot && (shouldFormulate || (modified == null || formulatedDate == null || modified.getTime() > formulatedDate.getTime()))) {
 				if (logger.isDebugEnabled()) {
 					logger.debug("auto-formulate: " + productData.getName());
 				}
@@ -205,7 +199,6 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 				isFormulated = true;
 			}
 		}
-
 		return isFormulated;
 	}
 
@@ -282,11 +275,13 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		if (productUnit == null) {
 			addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_MISSING_UNIT);
 		} else {
-			if ((p.getPackagingListUnit().equals(PackagingListUnit.kg) || p.getPackagingListUnit().equals(PackagingListUnit.g)) && !FormulationHelper.isProductUnitKg(productUnit)) {
+			if ((p.getPackagingListUnit().equals(PackagingListUnit.kg) || p.getPackagingListUnit().equals(PackagingListUnit.g))
+					&& !FormulationHelper.isProductUnitKg(productUnit)) {
 				addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_WRONG_UNIT);
 			}
 
-			if ((p.getPackagingListUnit().equals(PackagingListUnit.P) || p.getPackagingListUnit().equals(PackagingListUnit.PP)) && !productUnit.equals(ProductUnit.P)) {
+			if ((p.getPackagingListUnit().equals(PackagingListUnit.P) || p.getPackagingListUnit().equals(PackagingListUnit.PP))
+					&& !productUnit.equals(ProductUnit.P)) {
 				addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_WRONG_UNIT);
 			}
 

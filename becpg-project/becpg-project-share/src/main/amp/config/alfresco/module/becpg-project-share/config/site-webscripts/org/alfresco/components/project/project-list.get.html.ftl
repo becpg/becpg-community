@@ -57,7 +57,9 @@
 						<button id="${el}-filterform-button">${msg("filterform.header")}</button>
 						<div id="${el}-filterform-panel"  class="yuimenu" >
 							 <div class="bd">
-							 		<div id="${el}-filterform"  class="filterform" ></div>
+							 		<div id="${el}-filterform"  class="filterform" >
+							 		    <img class="icon16" src="${url.context}/components/images/lightbox/loading.gif" />
+							 		</div>
 							 		<div class="filterButtonsBar">
 							 			<button id="${el}-filterform-clear"   >${msg("filterform.clear")}</button>
 							  			<button id="${el}-filterform-submit"   >${msg("filterform.submit")}</button>
