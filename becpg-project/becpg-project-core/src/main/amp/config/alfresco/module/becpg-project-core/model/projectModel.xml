@@ -756,7 +756,7 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>bcpg:entityListItem</class>
+						<class>pjt:taskList</class>
 						<mandatory enforced="false">true</mandatory>
 						<many>false</many>
 					</target>
