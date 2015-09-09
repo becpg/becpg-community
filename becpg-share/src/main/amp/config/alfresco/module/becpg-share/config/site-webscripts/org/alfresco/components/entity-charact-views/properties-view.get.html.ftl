@@ -38,7 +38,7 @@
 					     <table >
 		           				<tr><td>
 									<a id="${el}-uploadLogo-button" class="upload-logo-action" title="${msg("actions.entity.upload-logo")}" href="#">
-					               	  	<img src="${thumbnailUrl}"  title="${displayName}" class="node-thumbnail"/>
+					               	  	<img id="${el}-productLogo" src="${thumbnailUrl}"  title="${displayName}" class="node-thumbnail"/>
 					               	  	<span class="upload-logo-span" >&nbsp;</span>
 					               </a>
 			                     </td>
