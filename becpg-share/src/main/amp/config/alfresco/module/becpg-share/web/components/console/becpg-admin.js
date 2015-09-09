@@ -38,9 +38,11 @@
             "button", "menu", "container", "json" ]);
 
       // Chart google
-      google.load('visualization', '1', {
-         packages : [ 'gauge' ]
-      });
+      if(typeof google != 'undefined'){
+	      google.load('visualization', '1', {
+	         packages : [ 'gauge' ]
+	      });
+      }
       return this;
    };
 
@@ -76,24 +78,25 @@
                      this.widgets.showUsersButton = Alfresco.util.createYUIButton(this, "show-users-button",
                            this.onShowUsersClick);
 
-                     var data = google.visualization.arrayToDataTable([ [ 'Label', 'Value' ],
-                           [ this.msg("label.memory"), this.options.memory ] ]);
-
-                     var options = {
-                        width : 400,
-                        height : 120,
-                        redFrom : 90,
-                        redTo : 100,
-                        yellowFrom : 80,
-                        yellowTo : 90,
-                        greenFrom : 60,
-                        greenTo : 80,
-                        minorTicks : 5
-                     };
-
-                     var chart = new google.visualization.Gauge(document.getElementById(this.id + '-gauge-div'));
-                     chart.draw(data, options);
-
+                     if(typeof google != 'undefined'){
+	                     var data = google.visualization.arrayToDataTable([ [ 'Label', 'Value' ],
+	                           [ this.msg("label.memory"), this.options.memory ] ]);
+	
+	                     var options = {
+	                        width : 400,
+	                        height : 120,
+	                        redFrom : 90,
+	                        redTo : 100,
+	                        yellowFrom : 80,
+	                        yellowTo : 90,
+	                        greenFrom : 60,
+	                        greenTo : 80,
+	                        minorTicks : 5
+	                     };
+	
+	                     var chart = new google.visualization.Gauge(document.getElementById(this.id + '-gauge-div'));
+	                     chart.draw(data, options);
+                     }
                      // Do stuff here
                   },
 
