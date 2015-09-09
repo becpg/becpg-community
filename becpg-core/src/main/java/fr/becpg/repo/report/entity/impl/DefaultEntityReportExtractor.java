@@ -227,6 +227,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			if (kv.getValue() instanceof NodeRef && nodeService.hasAspect((NodeRef) kv.getValue(), BeCPGModel.ASPECT_LEGAL_NAME)) {
 				nodeElt.addAttribute(BeCPGModel.PROP_LEGAL_NAME.getLocalName(),
 						(String) nodeService.getProperty((NodeRef) kv.getValue(), BeCPGModel.PROP_LEGAL_NAME));
+				addCDATA(nodeElt, ContentModel.PROP_DESCRIPTION, (String)nodeService.getProperty((NodeRef) kv.getValue(), ContentModel.PROP_DESCRIPTION));
 				break;
 			}
 		}
