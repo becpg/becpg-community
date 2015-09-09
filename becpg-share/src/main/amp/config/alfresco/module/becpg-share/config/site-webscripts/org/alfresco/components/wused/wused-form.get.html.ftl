@@ -7,7 +7,7 @@
 </@>
 
 <@markup id="widgets">
-  	<@createWidgets group="entity-datagrid"/>
+  	<@createWidgets group="entity-datalists"/>
 </@>
 
 <@markup id="html">

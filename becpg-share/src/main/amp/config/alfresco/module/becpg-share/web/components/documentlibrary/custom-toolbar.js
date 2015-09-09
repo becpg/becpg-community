@@ -379,7 +379,7 @@
                                 {
                                     if (beCPG.util.isEntity(obj.metadata.parent))
                                     {
-                                        this.entityLinkCustomClass = obj.metadata.parent.type.replace(":", "_");
+                                        this.entityLinkCustomClass = obj.metadata.parent.type.replace(":", "-");
                                         this.folderDetailsUrl = $siteURL("entity-data-lists?list=View-properties&nodeRef=" + obj.metadata.parent.nodeRef);
                                     }
                                     else

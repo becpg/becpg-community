@@ -1,9 +1,9 @@
 <#include "include/alfresco-template.ftl" />
 <@templateHeader>
    <@markup id="resizer">
-   <script type="text/javascript">//<![CDATA[
+    <@inlineScript group="entity-datalists">
       new Alfresco.widget.Resizer("DataLists");
-   //]]></script>
+    </@inlineScript>
    </@>
    <@script type="text/javascript" src="${url.context}/res/modules/data-lists/datalist-actions.js" group="entity-datalists"/>
 </@>

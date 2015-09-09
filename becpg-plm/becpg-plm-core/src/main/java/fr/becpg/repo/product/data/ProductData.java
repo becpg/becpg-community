@@ -94,6 +94,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	 * Formulation
 	 */
 	private Date formulatedDate;
+	private Date modifiedDate;
 	private Integer reformulateCount;
 	private IngTypeItem ingType;
 	
@@ -204,6 +205,18 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 
 	public void setFormulatedDate(Date formulatedDate) {
 		this.formulatedDate = formulatedDate;
+	}
+	
+
+	@AlfProp
+	@AlfReadOnly
+	@AlfQname(qname = "cm:modified")
+	public Date getModifiedDate() {
+		return modifiedDate;
+	}
+
+	public void setModifiedDate(Date modifiedDate) {
+		this.modifiedDate = modifiedDate;
 	}
 
 	@AlfMlText

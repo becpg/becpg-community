@@ -97,7 +97,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 	protected abstract Class<T> getInstanceClass();
 
-	protected abstract QName getDataListVisited();
+	protected abstract List<T> getDataListVisited(ProductData partProduct);
 
 	protected abstract Map<NodeRef, List<NodeRef>> getMandatoryCharacts(ProductData formulatedProduct, QName componentType);
 
@@ -210,12 +210,16 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 			Map<NodeRef, Double> totalQtiesValue, boolean isGenericRawMaterial) throws FormulateException {
 
 		if (!PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.equals(nodeService.getType(componentNodeRef))) {
+			
+			
+			ProductData partProduct = (ProductData) alfrescoRepository.findOne(componentNodeRef);
+			
 
-			List<? extends SimpleListDataItem> componentSimpleListDataList = alfrescoRepository.loadDataList(componentNodeRef, getDataListVisited(), getDataListVisited());
+			List<T> componentSimpleListDataList = getDataListVisited(partProduct);
 
-			if (!alfrescoRepository.hasDataList(componentNodeRef, getDataListVisited()) || componentSimpleListDataList.isEmpty()) {
+			if (componentSimpleListDataList == null || componentSimpleListDataList.isEmpty()) {
 
-				logger.debug("simpleListDataList " + getDataListVisited() + " is null or empty");
+				logger.debug("simpleListDataList  is null or empty");
 				for (NodeRef charactNodeRef : mandatoryCharacts.keySet()) {
 					addMissingMandatoryCharact(mandatoryCharacts, charactNodeRef, componentNodeRef);
 				}
@@ -452,8 +456,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 		if (formulatedProduct.getEntityTpl() != null && !formulatedProduct.getEntityTpl().equals(formulatedProduct)) {
 
-			// TODO do not use loadDataList
-			List<T> templateSimpleListDataList = alfrescoRepository.loadDataList(formulatedProduct.getEntityTpl().getNodeRef(), getDataListVisited(), getDataListVisited());
+			List<T> templateSimpleListDataList = getDataListVisited(formulatedProduct.getEntityTpl());
 
 			for (T tsl : templateSimpleListDataList) {
 				if (tsl.getCharactNodeRef() != null) {

@@ -103,10 +103,26 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 			if (dataType.isMatch(DataTypeDefinition.MLTEXT)) {
 				// Save
 				MLText mlText = null;
+				
+				boolean wasMLAware = MLPropertyInterceptor.setMLAware(true);
+				try {
+						Serializable value = serviceRegistry.getNodeService().getProperty(formNodeRef, fieldQname);
+						if (value instanceof MLText) {
+							mlText = (MLText) value;
+						} else if (value != null && value instanceof String) {
+							mlText = new MLText();
+							mlText.addValue(I18NUtil.getContentLocaleLang(), (String) value);
+						} else {
+							mlText = new MLText();
+							mlText.addValue(I18NUtil.getContentLocaleLang(), "");
+						}
+					
+				} finally {
+					MLPropertyInterceptor.setMLAware(wasMLAware);
+				}
 
 				JSONObject json = (JSONObject) req.parseContent();
 				if (json != null) {
-					mlText = new MLText();
 					for (Iterator<String> iterator = json.keys(); iterator.hasNext();) {
 						String key = iterator.next();
 						if (!"-".equals(key)) {
@@ -120,28 +136,14 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 							}
 						}
 					}
-					serviceRegistry.getNodeService().setProperty(formNodeRef, fieldQname, mlText);
-
-				}
-
-				boolean wasMLAware = MLPropertyInterceptor.setMLAware(true);
-				try {
-					if (mlText == null) {
-						Serializable value = serviceRegistry.getNodeService().getProperty(formNodeRef, fieldQname);
-						if (value instanceof MLText) {
-							mlText = (MLText) value;
-						} else if (value != null && value instanceof String) {
-							mlText = new MLText();
-							mlText.addValue(I18NUtil.getContentLocaleLang(), (String) value);
-						} else {
-							mlText = new MLText();
-							mlText.addValue(I18NUtil.getContentLocaleLang(), "");
-						}
+					if(mlText.isEmpty() ){
+						serviceRegistry.getNodeService().removeProperty(formNodeRef, fieldQname);
+					} else {
+						serviceRegistry.getNodeService().setProperty(formNodeRef, fieldQname, mlText);
 					}
-				} finally {
-					MLPropertyInterceptor.setMLAware(wasMLAware);
-				}
 
+				}
+				
 				JSONObject ret = new JSONObject();
 
 				if (mlText != null) {

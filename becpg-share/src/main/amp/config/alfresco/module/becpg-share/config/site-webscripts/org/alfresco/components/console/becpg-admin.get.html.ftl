@@ -14,7 +14,7 @@
 
 
 <@markup id="widgets">
-	<@createWidgets group="becpg-admin"/> 		
+   <@createWidgets group="becpg-admin"/> 		
 </@>
 
 <@markup id="html">

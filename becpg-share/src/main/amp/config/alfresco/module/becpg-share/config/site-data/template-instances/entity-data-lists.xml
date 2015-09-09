@@ -115,7 +115,7 @@
 	         <url>/components/documentlibrary/actions-common</url>
 	         <properties>
 	            <nodeRef>{nodeRef}</nodeRef>
-	            <dependencyGroup>entity-toolbar</dependencyGroup>
+	            <dependencyGroup>entity-datalists</dependencyGroup>
 	         </properties>
 	      </component>
 

@@ -546,7 +546,7 @@
                            this.widgets.itemTypeMenu
                                  .set(
                                        "label",
-                                       '<div><span class="item-icon"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/form/images/ajax_anim.gif" width="16" height="16" alt="' + this
+                                       '<div><span class="item-icon"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/ajax_anim.gif" class="icon16" alt="' + this
                                              .msg("message.please-wait") + '"></span><span class="item-name">' + this
                                              ._formatLabel(obj.item.name) + '</span></div>');
                            this.options.selectedParentType = obj.item;
