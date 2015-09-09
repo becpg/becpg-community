@@ -567,7 +567,7 @@ span.processList {
 /** Project **/
 
 span.project,
-span.entity.pjt-project,
+.entity.pjt-project,
 .entity.project {
     background-image: url("../../components/images/filetypes/generic-project-16.png") !important;
     padding-left: 20px;
@@ -670,18 +670,23 @@ span.aclGroup,
 
 span.nutrientClass-A:hover {
     background-image: url("../../components/images/states/nutrient-class-A-16.png") !important;
+    background-position: 0;
 }
 span.nutrientClass-B:hover {
     background-image: url("../../components/images/states/nutrient-class-B-16.png") !important;
+    background-position: 0;
 }
 span.nutrientClass-C:hover {
     background-image: url("../../components/images/states/nutrient-class-C-16.png") !important;
+    background-position: 0;
 }
 span.nutrientClass-D:hover {
     background-image: url("../../components/images/states/nutrient-class-D-16.png") !important;
+    background-position: 0;
 }
 span.nutrientClass-E:hover {
     background-image: url("../../components/images/states/nutrient-class-E-16.png") !important;
+    background-position: 0;
 }
 
 span.favourite span.ctn-fav {
