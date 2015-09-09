@@ -508,7 +508,8 @@ span.bioOrigin {
     padding-left: 20px;
     background-repeat: no-repeat
 }
-span.geoOrigin {
+span.geoOrigin,
+span.geo {
     background-image: url("../../components/images/filetypes/generic-geoOrigin-16.png") !important;
     padding-left: 20px;
     background-repeat: no-repeat
@@ -516,11 +517,6 @@ span.geoOrigin {
 span.cost,
 span.costList {
     background-image: url("../../components/images/filetypes/generic-cost-16.png") !important;
-    padding-left: 20px;
-    background-repeat: no-repeat
-}
-span.geo {
-    background-image: url("../../components/images/filetypes/generic-geo-16.png") !important;
     padding-left: 20px;
     background-repeat: no-repeat
 }
