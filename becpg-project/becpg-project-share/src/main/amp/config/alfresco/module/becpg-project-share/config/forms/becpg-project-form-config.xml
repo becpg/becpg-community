@@ -735,6 +735,7 @@
 					<field id="pjt:tlBudgetRef" set="planning">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+								<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:budgetList&amp;attributeName=pjt:blItem</control-param>
 						</control>
 					</field>	
 					<field id="pjt:tlManualDate" set="planning"/>
