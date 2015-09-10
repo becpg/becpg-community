@@ -286,7 +286,11 @@
 
                      var req = 'fts(';
 
-                     req += ' +@pjt\\:' + (isTask ? 'tl' : 'project') + 'State:"' + this.widgets.filter.value + '"';
+                     if(this.widgets.filter.value!="All"){
+                    	 req += ' +@pjt\\:' + (isTask ? 'tl' : 'project') + 'State:"' + this.widgets.filter.value + '"';
+                     } else {
+                    	 req += ' +@pjt\\:' + (isTask ? 'tl' : 'project') + 'State:"*"';
+                     }
 
                      if (this.searchTerm !== null && this.searchTerm.length > 0) {
                         req += "AND  +@" + (isTask ? "pjt\\:tlTaskName" : "cm\\:name") + ":(" + this.searchTerm + ")";
