@@ -60,7 +60,7 @@
       </div>
    </#if>
 </div>
-<script type="text/javascript">//<![CDATA[
+<@inlineScript group="form">
 (function()
 {
   new beCPG.component.AutoCompletePicker('${controlId}', '${fieldHtmlId}', true).setOptions(
@@ -102,4 +102,4 @@
 			</#if>
   });
 })();
-//]]></script>
+</@inlineScript>

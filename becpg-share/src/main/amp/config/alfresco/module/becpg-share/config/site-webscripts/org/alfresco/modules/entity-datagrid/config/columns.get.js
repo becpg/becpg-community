@@ -184,8 +184,8 @@ function createPostBody(itemKind, itemId, visibleFields, formConfig) {
  * @method main
  */
 function main() {
-	var itemType = getArgument("itemType"), list = getArgument("list"), formId = getArgument("formId");// beCPG
-		mode = getArgument("mode")
+	var itemType = getArgument("itemType"), list = getArgument("list"), formId = getArgument("formId"),mode = getArgument("mode");// beCPG
+		
 	cache.maxAge = 3600; // in seconds
 
 	// pass form ui model to FTL
