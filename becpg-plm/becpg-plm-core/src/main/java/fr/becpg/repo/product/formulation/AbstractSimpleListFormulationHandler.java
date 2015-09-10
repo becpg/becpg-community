@@ -181,7 +181,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		for (SimpleListDataItem newSimpleListDataItem : simpleListDataList) {
 			if (totalQtiesValue.containsKey(newSimpleListDataItem.getCharactNodeRef())) {
 				Double totalQty = totalQtiesValue.get(newSimpleListDataItem.getCharactNodeRef());
-				if (newSimpleListDataItem.getValue() != null) {
+				if (newSimpleListDataItem.getValue() != null && netQty != null && totalQty != null && totalQty != 0d) {
 					newSimpleListDataItem.setValue(newSimpleListDataItem.getValue() * netQty / totalQty);
 				}
 			}
