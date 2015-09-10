@@ -58,6 +58,8 @@ public class ProjectListExtractor extends ActivityListExtractor {
 	private static final String VIEW_FAVOURITES = "favourites";
 	private static final String VIEW_TASKS = "tasks";
 	private static final String VIEW_MY_TASKS = "my-tasks";
+	private static final String VIEW_MY_PROJECTS = "my-projects";
+	private static final String VIEW_PROJECTS = "projects";
 	private static final String VIEW_RESOURCES = "resources";
 	private static final String VIEW_ENTITY_PROJECTS = "entity-projects";
 	private static final String PROJECT_LIST = "projectList";
@@ -176,7 +178,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 				}
 
 				if (VIEW_RESOURCES.equals(dataListFilter.getExtraParams())) {
-					if ("projects".equals(dataListFilter.getFilterId())) {
+					if (VIEW_PROJECTS.equals(dataListFilter.getFilterId())) {
 						beCPGQueryBuilder.clearFTSQuery();
 
 					}
@@ -190,7 +192,17 @@ public class ProjectListExtractor extends ActivityListExtractor {
 					} 
 
 				}
-
+				
+				if(VIEW_MY_PROJECTS.equals(dataListFilter.getFilterId())){
+					NodeRef currentUserNodeRef = personService.getPerson(AuthenticationUtil.getFullyAuthenticatedUser());
+					if (dataListFilter.getCriteriaMap() == null) {
+						dataListFilter.setCriteriaMap(new HashMap<>());	
+					}
+						
+					dataListFilter.getCriteriaMap().put("assoc_pjt_projectManager_added", currentUserNodeRef.toString());
+				}
+				
+				
 				results = advSearchService.queryAdvSearch(dataType, beCPGQueryBuilder, dataListFilter.getCriteriaMap(), pagination.getMaxResults());
 
 				if (VIEW_RESOURCES.equals(dataListFilter.getExtraParams())) {
@@ -202,7 +214,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 						}
 					}
 
-					if ("projects".equals(dataListFilter.getFilterId())) {
+					if (VIEW_PROJECTS.equals(dataListFilter.getFilterId())) {
 						BeCPGQueryBuilder projectQueryBuilder = dataListFilter.getSearchQuery();
 						projectQueryBuilder.ofType(ProjectModel.TYPE_PROJECT);
 						List<NodeRef> projectList = projectQueryBuilder.ftsLanguage().list();
@@ -227,9 +239,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 						}
 						results.retainAll(associationService.getSourcesAssocs(currentUserNodeRef, ProjectModel.ASSOC_TL_RESOURCES));
 					}
-				}
-
-				if (VIEW_FAVOURITES.equals(dataListFilter.getFilterId())) {
+				}else if (VIEW_FAVOURITES.equals(dataListFilter.getFilterId())) {
 					logger.debug("Keep only favorites");
 					results.retainAll(favorites);
 				}
