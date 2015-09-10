@@ -20,10 +20,9 @@
     <description>Entity-Data-Grid: Columns configuration webscript</description>
     <url>/module/entity-datagrid/config/columns</url>
     <format default="json"></format>
- <!-- <cache>
+    <cache>
 	   	<never>false</never>
 	   	<public>false</public>
 	    <mustrevalidate>false</mustrevalidate>
-	   <public/>
-	  </cache> -->
+	 </cache>
 </webscript>

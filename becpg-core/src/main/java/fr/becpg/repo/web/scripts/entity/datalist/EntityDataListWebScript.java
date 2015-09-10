@@ -26,6 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.Cache;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
@@ -47,7 +48,7 @@ import fr.becpg.repo.entity.datalist.impl.CSVDataListOutputWriter;
 import fr.becpg.repo.entity.datalist.impl.ExcelDataListOutputWriter;
 import fr.becpg.repo.helper.JSONHelper;
 import fr.becpg.repo.security.SecurityService;
-import fr.becpg.repo.web.scripts.AbstractCachingWebscript;
+import fr.becpg.repo.web.scripts.BrowserCacheHelper;
 import fr.becpg.repo.web.scripts.WebscriptHelper;
 
 /**
@@ -55,7 +56,7 @@ import fr.becpg.repo.web.scripts.WebscriptHelper;
  * 
  * @author matthieu
  */
-public class EntityDataListWebScript extends AbstractCachingWebscript {
+public class EntityDataListWebScript extends AbstractWebScript {
 
 	/** The logger. */
 	private static final Log logger = LogFactory.getLog(EntityDataListWebScript.class);
@@ -338,7 +339,7 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 			// TODO : #546
 			Date lastModified = extractor.computeLastModified(dataListFilter);
 
-			if (shouldReturnNotModified(req, lastModified)) {
+			if (BrowserCacheHelper.shouldReturnNotModified(req, lastModified)) {
 				res.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
 				if (logger.isDebugEnabled()) {
 					logger.debug("Send Not_MODIFIED status");

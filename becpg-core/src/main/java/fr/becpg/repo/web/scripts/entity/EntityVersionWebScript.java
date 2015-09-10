@@ -24,6 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.Cache;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
@@ -33,14 +34,14 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.version.EntityVersion;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.AttributeExtractorService;
-import fr.becpg.repo.web.scripts.AbstractCachingWebscript;
+import fr.becpg.repo.web.scripts.BrowserCacheHelper;
 
 /**
  * The Class VersionHistoryWebScript.
  *
  * @author querephi
  */
-public class EntityVersionWebScript extends AbstractCachingWebscript {
+public class EntityVersionWebScript extends AbstractWebScript {
 
 	// request parameter names
 	private static final String PARAM_NODEREF = "nodeRef";
@@ -85,14 +86,11 @@ public class EntityVersionWebScript extends AbstractCachingWebscript {
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
 
-		logger.debug("VersionWebScript executeImpl()");
 		NodeRef nodeRef = new NodeRef(req.getParameter(PARAM_NODEREF));
-		String mode = req.getParameter(PARAM_MODE);
-		SimpleDateFormat displayFormat = new SimpleDateFormat(DISPLAY_FORMAT);
 
 		Date lastModified = (Date) nodeService.getProperty(nodeRef, ContentModel.PROP_MODIFIED);
 
-		if (lastModified != null && shouldReturnNotModified(req, lastModified)) {
+		if (lastModified != null && BrowserCacheHelper.shouldReturnNotModified(req, lastModified)) {
 			res.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
 			if (logger.isDebugEnabled()) {
 				logger.debug("Send Not_MODIFIED status");
@@ -111,6 +109,9 @@ public class EntityVersionWebScript extends AbstractCachingWebscript {
 		cache.setMaxAge(0L);
 		cache.setLastModified(lastModified);
 		res.setCache(cache);
+		
+		String mode = req.getParameter(PARAM_MODE);
+		SimpleDateFormat displayFormat = new SimpleDateFormat(DISPLAY_FORMAT);
 
 		List<EntityVersion> versions;
 		if ("graph".equals(mode)) {
@@ -204,7 +205,6 @@ public class EntityVersionWebScript extends AbstractCachingWebscript {
 		} catch (JSONException e) {
 			throw new WebScriptException("Unable to serialize JSON");
 		}
-
 	}
 
 	private JSONObject getPerson(String frozenModifier) throws InvalidNodeRefException, JSONException {

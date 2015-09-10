@@ -54,7 +54,7 @@
       </div>
    </#if>
 </div>
-<script type="text/javascript">//<![CDATA[
+<@inlineScript group="form">
 (function()
 {
 	new beCPG.component.AutoCompletePicker('${fieldHtmlId}', '${fieldHtmlId}', <#if field.dataType == 'noderef' >true<#else>false</#if>).setOptions(
@@ -104,4 +104,4 @@
 			</#if>
 	 });
 })();
-//]]></script>
+</@inlineScript>
