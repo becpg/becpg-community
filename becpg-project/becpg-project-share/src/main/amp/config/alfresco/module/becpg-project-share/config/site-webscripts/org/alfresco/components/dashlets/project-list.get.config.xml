@@ -1,19 +1,21 @@
 <config>
    <max-items>25</max-items>
 
-                        
    <views>
    	<view type="projects" />
+    <view type="my-projects" />
    	<view type="my-tasks" />
    	<view type="tasks" />
    	<view type="favourites" />
    </views>     
    
    <filters>
+      <filter type="All" />
       <filter type="Planned" />
       <filter type="InProgress" />
       <filter type="OnHold" />
       <filter type="Cancelled" />
       <filter type="Completed" />
+      <filter type="Refused" />
    </filters>
 </config>
