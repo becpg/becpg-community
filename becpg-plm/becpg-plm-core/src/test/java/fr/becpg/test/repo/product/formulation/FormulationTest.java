@@ -6,7 +6,6 @@ package fr.becpg.test.repo.product.formulation;
 import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +54,7 @@ import fr.becpg.test.repo.product.AbstractFinishedProductTest;
  */
 public class FormulationTest extends AbstractFinishedProductTest {
 	
-	protected static Log logger = LogFactory.getLog(FormulationTest.class);
+	protected static final Log logger = LogFactory.getLog(FormulationTest.class);
 	
 	@Resource
 	private AssociationService associationService;
@@ -97,15 +96,15 @@ public class FormulationTest extends AbstractFinishedProductTest {
 			finishedProduct1.setQty(2d);
 			finishedProduct1.setUnit(ProductUnit.kg);
 			finishedProduct1.setDensity(1d);
-			List<CompoListDataItem> compoList1 = new ArrayList<CompoListDataItem>();
-			compoList1.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF11NodeRef));
+			List<CompoListDataItem> compoList1 = new ArrayList<>();
+			compoList1.add(new CompoListDataItem(null, null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF11NodeRef));
 			compoList1.add(new CompoListDataItem(null, compoList1.get(0), 1d, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial11NodeRef));
 			compoList1.add(new CompoListDataItem(null, compoList1.get(0), 2d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial12NodeRef));
-			compoList1.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF12NodeRef));
+			compoList1.add(new CompoListDataItem(null, null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF12NodeRef));
 			compoList1.add(new CompoListDataItem(null, compoList1.get(3), 3d, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial13NodeRef));
 			compoList1.add(new CompoListDataItem(null, compoList1.get(3), 3d, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial14NodeRef));
 			finishedProduct1.getCompoListView().setCompoList(compoList1);
-			NodeRef finishedProductNodeRef1 = alfrescoRepository.create(testFolderNodeRef, finishedProduct1).getNodeRef();
+			NodeRef finishedProductNodeRef1 = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
 			
 			/*-- Formulate product --*/
 			logger.debug("/*-- Formulate product --*/");
@@ -127,13 +126,13 @@ public class FormulationTest extends AbstractFinishedProductTest {
 			
 				String geoOriginsText = "";
 				for(NodeRef geoOrigin : ingListDataItem.getGeoOrigin())
-					geoOriginsText += nodeService.getProperty(geoOrigin, ContentModel.PROP_NAME) + ", ";
+					geoOriginsText += nodeService.getProperty(geoOrigin, BeCPGModel.PROP_CHARACT_NAME) + ", ";
 				
 				String bioOriginsText = "";
 				for(NodeRef bioOrigin : ingListDataItem.getBioOrigin())
-					bioOriginsText += nodeService.getProperty(bioOrigin, ContentModel.PROP_NAME) + ", ";
+					bioOriginsText += nodeService.getProperty(bioOrigin, BeCPGModel.PROP_CHARACT_NAME) + ", ";
 				
-				String trace= "ing: " + nodeService.getProperty(ingListDataItem.getIng(), ContentModel.PROP_NAME) + " - qty: " + ingListDataItem.getQtyPerc() + " - geo origins: " + geoOriginsText + " - bio origins: " + bioOriginsText + " is gmo: " + ingListDataItem.getIsGMO().booleanValue()  + " is ionized: " + ingListDataItem.getIsIonized().booleanValue();
+				String trace= "ing: " + nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME) + " - qty: " + ingListDataItem.getQtyPerc() + " - geo origins: " + geoOriginsText + " - bio origins: " + bioOriginsText + " is gmo: " + ingListDataItem.getIsGMO() + " is ionized: " + ingListDataItem.getIsIonized();
 				logger.debug(trace);
 				
 				DecimalFormat df = new DecimalFormat("0.000000");
@@ -194,15 +193,15 @@ public class FormulationTest extends AbstractFinishedProductTest {
 			finishedProduct2.setQty(2d);
 			finishedProduct2.setUnit(ProductUnit.kg);
 			finishedProduct2.setDensity(1d);
-			List<CompoListDataItem> compoList2 = new ArrayList<CompoListDataItem>();
-			compoList2.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF11NodeRef));
+			List<CompoListDataItem> compoList2 = new ArrayList<>();
+			compoList2.add(new CompoListDataItem(null, null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF11NodeRef));
 			compoList2.add(new CompoListDataItem(null, compoList2.get(0), 1d, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial11NodeRef));
 			compoList2.add(new CompoListDataItem(null, compoList2.get(0), 2d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial12NodeRef));
-			compoList2.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF12NodeRef));
+			compoList2.add(new CompoListDataItem(null, null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF12NodeRef));
 			compoList2.add(new CompoListDataItem(null, compoList2.get(3), 3d, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial13NodeRef));
 			compoList2.add(new CompoListDataItem(null, compoList2.get(3), 3d, null, CompoListUnit.kg, 0d, DeclarationType.DoNotDeclare, rawMaterial14NodeRef));
 			finishedProduct2.getCompoListView().setCompoList(compoList2);
-			NodeRef finishedProductNodeRef2 = alfrescoRepository.create(testFolderNodeRef, finishedProduct2).getNodeRef();			
+			NodeRef finishedProductNodeRef2 = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct2).getNodeRef();			
 			
 			/*-- Formulate product --*/
 			logger.debug("/*-- Formulate product --*/");
@@ -224,14 +223,14 @@ public class FormulationTest extends AbstractFinishedProductTest {
 			
 				String geoOriginsText = "";
 				for(NodeRef geoOrigin : ingListDataItem.getGeoOrigin())
-					geoOriginsText += nodeService.getProperty(geoOrigin, ContentModel.PROP_NAME) + ", ";
+					geoOriginsText += nodeService.getProperty(geoOrigin, BeCPGModel.PROP_CHARACT_NAME) + ", ";
 				
 				String bioOriginsText = "";
 				for(NodeRef bioOrigin : ingListDataItem.getBioOrigin())
-					bioOriginsText += nodeService.getProperty(bioOrigin, ContentModel.PROP_NAME) + ", ";
+					bioOriginsText += nodeService.getProperty(bioOrigin, BeCPGModel.PROP_CHARACT_NAME) + ", ";
 				
 				DecimalFormat df = new DecimalFormat("0.000000");
-				String trace= "ing: " + nodeService.getProperty(ingListDataItem.getIng(), ContentModel.PROP_NAME) + " - qty: " + df.format(ingListDataItem.getQtyPerc()) + " - geo origins: " + geoOriginsText + " - bio origins: " + bioOriginsText + " is gmo: " + ingListDataItem.getIsGMO().booleanValue() + " is ionized: " + ingListDataItem.getIsIonized().booleanValue();
+				String trace= "ing: " + nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME) + " - qty: " + df.format(ingListDataItem.getQtyPerc()) + " - geo origins: " + geoOriginsText + " - bio origins: " + bioOriginsText + " is gmo: " + ingListDataItem.getIsGMO() + " is ionized: " + ingListDataItem.getIsIonized();
 				logger.debug(trace);
 				
 				
@@ -243,8 +242,8 @@ public class FormulationTest extends AbstractFinishedProductTest {
 					assertEquals("ing1.getGeoOrigin() doesn't contain geo2, actual values: " + trace, false, ingListDataItem.getGeoOrigin().contains(geoOrigin2));
 					assertEquals("ing1.getBioOrigin() contains bio1, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(bioOrigin1));					
 					assertEquals("ing1.getBioOrigin() doesn't contain bio2, actual values: " + trace, false, ingListDataItem.getBioOrigin().contains(bioOrigin2));
-					assertEquals("ing1.getIsGMO() is false, actual values: " + trace, true, ingListDataItem.getIsGMO().booleanValue() == true);
-					assertEquals("ing1.getIsGMO() is false, actual values: " + trace, true, ingListDataItem.getIsIonized().booleanValue() == true);
+					assertEquals("ing1.getIsGMO() is false, actual values: " + trace, true, ingListDataItem.getIsGMO().booleanValue());
+					assertEquals("ing1.getIsGMO() is false, actual values: " + trace, true, ingListDataItem.getIsIonized().booleanValue());
 				}
 				//ing: ing2 - qty: 24.074074074074076 - geo origins: geoOrigin1, geoOrigin2,  - bio origins: bioOrigin1, bioOrigin2,  is gmo: false
 				if(ingListDataItem.getIng().equals(ing2)){
@@ -307,26 +306,26 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
 				finishedProduct.setDensity(1d);
-				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
+				List<CompoListDataItem> compoList = new ArrayList<>();
+				compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, CompoListUnit.g, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);				
 
-				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
+				List<CostListDataItem> costList = new ArrayList<>();
 				costList.add(new CostListDataItem(null, null, null, null, cost1, null));
 				costList.add(new CostListDataItem(null, null, null, null, cost2, null));
 				finishedProduct.setCostList(costList);
 
-				List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
+				List<NutListDataItem> nutList = new ArrayList<>();
 				nutList.add(new NutListDataItem(null, null, null, null, null, null, nut1, null));
 				nutList.add(new NutListDataItem(null, null, null, null, null, null, nut2, null));
 				finishedProduct.setNutList(nutList);
 								
-				NodeRef finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
+				NodeRef finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 				
 				logger.debug("unit of product to formulate: " + finishedProduct.getUnit());
 				
@@ -344,7 +343,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				int checks=0;
 				assertNotNull("CostList is null", formulatedProduct.getCostList());
 				for(CostListDataItem costListDataItem : formulatedProduct.getCostList()){
-					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
+					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
 					logger.debug(trace);
 					if(costListDataItem.getCost().equals(cost1)){
 						assertEquals("cost1.getValue() == 3.001, actual values: " + trace, 3.001d, costListDataItem.getValue());
@@ -362,7 +361,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				checks=0;
 				assertNotNull("NutList is null", formulatedProduct.getNutList());
 				for(NutListDataItem nutListDataItem : 	formulatedProduct.getNutList()){
-					String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), ContentModel.PROP_NAME) + " - value: " + nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
+					String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
 					logger.debug(trace);
 					if(nutListDataItem.getNut().equals(nut1)){
 						assertEquals("nut1.getValue() == 2.001, actual values: " + trace, 2.001d, nutListDataItem.getValue());
@@ -407,26 +406,26 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setNetWeight(0.1d);
 				finishedProduct.setUnit(ProductUnit.P);
 				finishedProduct.setDensity(0.1d);
-				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 42d, CompoListUnit.g, 0d, DeclarationType.Detail, localSF1NodeRef));
+				List<CompoListDataItem> compoList = new ArrayList<>();
+				compoList.add(new CompoListDataItem(null, null, null, 42d, CompoListUnit.g, 0d, DeclarationType.Detail, localSF1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 40d, CompoListUnit.g, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, CompoListUnit.mL, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 30d, CompoListUnit.g, 0d, DeclarationType.Detail, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, null, null, 30d, CompoListUnit.g, 0d, DeclarationType.Detail, localSF2NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 30d, CompoListUnit.g, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 0.05d, CompoListUnit.P, 0d, DeclarationType.Omit, rawMaterial5NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);				
 
-				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
+				List<CostListDataItem> costList = new ArrayList<>();
 				costList.add(new CostListDataItem(null, null, null, null, cost1, null));
 				costList.add(new CostListDataItem(null, null, null, null, cost2, null));
 				finishedProduct.setCostList(costList);
 
-				List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
+				List<NutListDataItem> nutList = new ArrayList<>();
 				nutList.add(new NutListDataItem(null, null, null, null, null, null, nut1, null));
 				nutList.add(new NutListDataItem(null, null, null, null, null, null, nut2, null));
 				finishedProduct.setNutList(nutList);
 								
-				NodeRef finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
+				NodeRef finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 				
 				logger.debug("unit of product to formulate: " + finishedProduct.getUnit());
 				
@@ -444,7 +443,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				//costs
 				assertNotNull("CostList is null", formulatedProduct.getCostList());
 				for(CostListDataItem costListDataItem : formulatedProduct.getCostList()){
-					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
+					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
 					logger.debug(trace);
 					if(costListDataItem.getCost().equals(cost1)){
 						assertEquals("check cost", df.format(0.177d), df.format(costListDataItem.getValue()));
@@ -462,7 +461,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				checks=0;
 				assertNotNull("NutList is null", formulatedProduct.getNutList());
 				for(NutListDataItem nutListDataItem : 	formulatedProduct.getNutList()){
-					String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), ContentModel.PROP_NAME) + " - value: " + nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
+					String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
 					logger.debug(trace);
 					if(nutListDataItem.getNut().equals(nut1)){
 						assertEquals("check nut", df.format(0.77d), df.format(nutListDataItem.getValue()));
@@ -506,11 +505,11 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setQty(2.5d);
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setDensity(1d);
-				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();				
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));				
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 2d, CompoListUnit.L, 0d, DeclarationType.Declare, rawMaterial6NodeRef));
+				List<CompoListDataItem> compoList = new ArrayList<>();
+				compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, null, null, 2d, CompoListUnit.L, 0d, DeclarationType.Declare, rawMaterial6NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
-				return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
+				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
 				}},false,true);
 		
@@ -531,7 +530,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				assertNotNull("IngList is null", formulatedProduct.getIngList());
 				for(IngListDataItem ingListDataItem : formulatedProduct.getIngList()){									
 					
-					String trace= "ing: " + nodeService.getProperty(ingListDataItem.getIng(), ContentModel.PROP_NAME) + " - qty: " + df.format(ingListDataItem.getQtyPerc());
+					String trace= "ing: " + nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME) + " - qty: " + df.format(ingListDataItem.getQtyPerc());
 					logger.debug(trace);
 										
 					if(ingListDataItem.getIng().equals(ing1)){
@@ -565,52 +564,52 @@ public class FormulationTest extends AbstractFinishedProductTest {
 //				public NodeRef execute() throws Throwable {					   				
 //								
 //					Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-//					properties.put(ContentModel.PROP_NAME, "nut3");
+//					properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut3");
 //					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
 //					properties.put(BeCPGModel.PROP_NUTGROUP, GROUP1);
-//					NodeRef nut3 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
+//					NodeRef nut3 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
 //					
 //					properties.clear();
-//					properties.put(ContentModel.PROP_NAME, "nut14");
+//					properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut14");
 //					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
 //					properties.put(BeCPGModel.PROP_NUTGROUP, GROUP1);
-//					NodeRef nut14 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
+//					NodeRef nut14 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
 //					
 //					properties.clear();
-//					properties.put(ContentModel.PROP_NAME, "nut5");
+//					properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut5");
 //					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
 //					properties.put(BeCPGModel.PROP_NUTGROUP, GROUP1);
-//					NodeRef nut5 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
+//					NodeRef nut5 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
 //					
 //					properties.clear();
-//					properties.put(ContentModel.PROP_NAME, "nut26");
+//					properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut26");
 //					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
 //					properties.put(BeCPGModel.PROP_NUTGROUP, GROUP2);
-//					NodeRef nut26 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
+//					NodeRef nut26 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
 //					
 //					properties.clear();
-//					properties.put(ContentModel.PROP_NAME, "nut17");
+//					properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut17");
 //					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
 //					properties.put(BeCPGModel.PROP_NUTGROUP, GROUP2);
-//					NodeRef nut17 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
+//					NodeRef nut17 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
 //					
 //					properties.clear();
-//					properties.put(ContentModel.PROP_NAME, "nut8");
+//					properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut8");
 //					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
 //					properties.put(BeCPGModel.PROP_NUTGROUP, GROUPOTHER);
-//					NodeRef nut8 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
+//					NodeRef nut8 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
 //					
 //					properties.clear();		
-//					properties.put(ContentModel.PROP_NAME, "nut9");
+//					properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut9");
 //					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
 //					properties.put(BeCPGModel.PROP_NUTGROUP, GROUPOTHER);
-//					NodeRef nut9 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
+//					NodeRef nut9 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
 //					
 //					properties.clear();
-//					properties.put(ContentModel.PROP_NAME, "nut10");
+//					properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut10");
 //					properties.put(BeCPGModel.PROP_NUTUNIT, "kJ");
 //					properties.put(BeCPGModel.PROP_NUTGROUP, GROUPOTHER);
-//					NodeRef nut10 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
+//					NodeRef nut10 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), BeCPGModel.TYPE_NUT, properties).getChildRef();
 //					
 //					List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
 //					nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d,  0d, "Autre", nut10, false));
@@ -631,7 +630,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 //					SFProduct1.setUnit(ProductUnit.kg);
 //					SFProduct1.setQty(1d);
 //					SFProduct1.setNutList(nutList);					
-//					NodeRef SFProduct1NodeRef = alfrescoRepository.create(testFolderNodeRef, SFProduct1).getNodeRef();
+//					NodeRef SFProduct1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), SFProduct1).getNodeRef();
 //					
 //					alfrescoRepository.findOne(SFProduct1NodeRef).getNodeRef();					
 //					
@@ -652,7 +651,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 //					}
 //					SFProduct2.setNutList(nutList);
 //					
-//					NodeRef productNodeRef =  alfrescoRepository.create(testFolderNodeRef, SFProduct2).getNodeRef();
+//					NodeRef productNodeRef =  alfrescoRepository.create(getTestFolderNodeRef(), SFProduct2).getNodeRef();
 //
 //					productService.formulate(productNodeRef);
 //									
@@ -672,8 +671,8 @@ public class FormulationTest extends AbstractFinishedProductTest {
 //					int i = 0;
 //					
 //					for(String nutName : nutNames){
-//						logger.debug("nutName : " + nutName+" "+(String)nodeService.getProperty(formulatedSF2.getNutList().get(i).getNut(), ContentModel.PROP_NAME));
-//						assertEquals(nutName, (String)nodeService.getProperty(formulatedSF2.getNutList().get(i).getNut(), ContentModel.PROP_NAME));
+//						logger.debug("nutName : " + nutName+" "+(String)nodeService.getProperty(formulatedSF2.getNutList().get(i).getNut(), BeCPGModel.PROP_CHARACT_NAME));
+//						assertEquals(nutName, (String)nodeService.getProperty(formulatedSF2.getNutList().get(i).getNut(), BeCPGModel.PROP_CHARACT_NAME));
 //						i++;
 //					}
 //		
@@ -704,11 +703,11 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				SFProduct1.setLegalName("Legal semi fini 1");
 				SFProduct1.setUnit(ProductUnit.kg);
 				SFProduct1.setQty(1d);
-				List<CompoListDataItem> compoList1 = new ArrayList<CompoListDataItem>();
-				compoList1.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-				compoList1.add(new CompoListDataItem(null, (CompoListDataItem)null, 2d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));					
+				List<CompoListDataItem> compoList1 = new ArrayList<>();
+				compoList1.add(new CompoListDataItem(null, null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList1.add(new CompoListDataItem(null, null, 2d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
 				SFProduct1.getCompoListView().setCompoList(compoList1);
-				return alfrescoRepository.create(testFolderNodeRef, SFProduct1).getNodeRef();
+				return alfrescoRepository.create(getTestFolderNodeRef(), SFProduct1).getNodeRef();
 				
 			}},false,true);
 		
@@ -721,11 +720,11 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				SFProduct2.setLegalName("Legal semi fini 2");
 				SFProduct2.setUnit(ProductUnit.kg);
 				SFProduct2.setQty(1d);
-				List<CompoListDataItem> compoList2 = new ArrayList<CompoListDataItem>();
-				compoList2.add(new CompoListDataItem(null, (CompoListDataItem)null, 3d, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-				compoList2.add(new CompoListDataItem(null, (CompoListDataItem)null, 3d, null, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));					
+				List<CompoListDataItem> compoList2 = new ArrayList<>();
+				compoList2.add(new CompoListDataItem(null, null, 3d, null, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+				compoList2.add(new CompoListDataItem(null, null, 3d, null, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 				SFProduct2.getCompoListView().setCompoList(compoList2);
-				return alfrescoRepository.create(testFolderNodeRef, SFProduct2).getNodeRef();
+				return alfrescoRepository.create(getTestFolderNodeRef(), SFProduct2).getNodeRef();
 				
 			}},false,true);
 		
@@ -739,11 +738,11 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
 				finishedProduct.setDensity(1d);
-				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, SFProduct1NodeRef));
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, SFProduct2NodeRef));
+				List<CompoListDataItem> compoList = new ArrayList<>();
+				compoList.add(new CompoListDataItem(null, null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, SFProduct1NodeRef));
+				compoList.add(new CompoListDataItem(null, null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, SFProduct2NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
-				return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();	
+				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();	
 				
 			}},false,true);
 				
@@ -767,13 +766,13 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				for(AllergenListDataItem allergenListDataItem : formulatedSF1.getAllergenList()){
 					String voluntarySources = "";
 					for(NodeRef part : allergenListDataItem.getVoluntarySources())
-						voluntarySources += nodeService.getProperty(part, ContentModel.PROP_NAME) + ", ";
+						voluntarySources += nodeService.getProperty(part, BeCPGModel.PROP_CHARACT_NAME) + ", ";
 					
 					String inVoluntarySources = "";
 					for(NodeRef part : allergenListDataItem.getInVoluntarySources())
-						inVoluntarySources += nodeService.getProperty(part, ContentModel.PROP_NAME) + ", ";
+						inVoluntarySources += nodeService.getProperty(part, BeCPGModel.PROP_CHARACT_NAME) + ", ";
 					
-					String trace= "SF1 allergen: " + nodeService.getProperty(allergenListDataItem.getAllergen(), ContentModel.PROP_NAME) + " - voluntary: " + allergenListDataItem.getVoluntary().booleanValue() + " - involuntary: " + allergenListDataItem.getInVoluntary().booleanValue() + " - voluntary sources:" + voluntarySources + " - involuntary sources:" + inVoluntarySources;
+					String trace= "SF1 allergen: " + nodeService.getProperty(allergenListDataItem.getAllergen(), BeCPGModel.PROP_CHARACT_NAME) + " - voluntary: " + allergenListDataItem.getVoluntary() + " - involuntary: " + allergenListDataItem.getInVoluntary() + " - voluntary sources:" + voluntarySources + " - involuntary sources:" + inVoluntarySources;
 					logger.debug(trace);
 					
 					//allergen1 - voluntary: true - involuntary: false - voluntary sources:Raw material 1, Raw material 2 - involuntary sources:
@@ -815,13 +814,13 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				for(AllergenListDataItem allergenListDataItem : formulatedSF2.getAllergenList()){
 					String voluntarySources = "";
 					for(NodeRef part : allergenListDataItem.getVoluntarySources())
-						voluntarySources += nodeService.getProperty(part, ContentModel.PROP_NAME) + ", ";
+						voluntarySources += nodeService.getProperty(part, BeCPGModel.PROP_CHARACT_NAME) + ", ";
 					
 					String inVoluntarySources = "";
 					for(NodeRef part : allergenListDataItem.getInVoluntarySources())
-						inVoluntarySources += nodeService.getProperty(part, ContentModel.PROP_NAME) + ", ";
+						inVoluntarySources += nodeService.getProperty(part, BeCPGModel.PROP_CHARACT_NAME) + ", ";
 					
-					String trace= "SF2 allergen: " + nodeService.getProperty(allergenListDataItem.getAllergen(), ContentModel.PROP_NAME) + " - voluntary: " + allergenListDataItem.getVoluntary().booleanValue() + " - involuntary: " + allergenListDataItem.getInVoluntary().booleanValue() + " - voluntary sources:" + voluntarySources + " - involuntary sources:" + inVoluntarySources;
+					String trace= "SF2 allergen: " + nodeService.getProperty(allergenListDataItem.getAllergen(), BeCPGModel.PROP_CHARACT_NAME) + " - voluntary: " + allergenListDataItem.getVoluntary() + " - involuntary: " + allergenListDataItem.getInVoluntary() + " - voluntary sources:" + voluntarySources + " - involuntary sources:" + inVoluntarySources;
 					logger.debug(trace);
 					
 					//allergen1 - voluntary: true - involuntary: false - voluntary sources:Raw material 1, Raw material 2 - involuntary sources:
@@ -862,13 +861,13 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				for(AllergenListDataItem allergenListDataItem : formulatedProduct.getAllergenList()){
 					String voluntarySources = "";
 					for(NodeRef part : allergenListDataItem.getVoluntarySources())
-						voluntarySources += nodeService.getProperty(part, ContentModel.PROP_NAME) + ", ";
+						voluntarySources += nodeService.getProperty(part, BeCPGModel.PROP_CHARACT_NAME) + ", ";
 					
 					String inVoluntarySources = "";
 					for(NodeRef part : allergenListDataItem.getInVoluntarySources())
-						inVoluntarySources += nodeService.getProperty(part, ContentModel.PROP_NAME) + ", ";
+						inVoluntarySources += nodeService.getProperty(part, BeCPGModel.PROP_CHARACT_NAME) + ", ";
 					
-					String trace= "PF allergen: " + nodeService.getProperty(allergenListDataItem.getAllergen(), ContentModel.PROP_NAME) + " - voluntary: " + allergenListDataItem.getVoluntary().booleanValue() + " - involuntary: " + allergenListDataItem.getInVoluntary().booleanValue() + " - voluntary sources:" + voluntarySources + " - involuntary sources:" + inVoluntarySources;
+					String trace= "PF allergen: " + nodeService.getProperty(allergenListDataItem.getAllergen(), BeCPGModel.PROP_CHARACT_NAME) + " - voluntary: " + allergenListDataItem.getVoluntary() + " - involuntary: " + allergenListDataItem.getInVoluntary() + " - voluntary sources:" + voluntarySources + " - involuntary sources:" + inVoluntarySources;
 					logger.debug(trace);
 					
 					//allergen1 - voluntary: true - involuntary: false - voluntary sources:Raw material 1, Raw material 2 - involuntary sources:
@@ -928,12 +927,12 @@ public class FormulationTest extends AbstractFinishedProductTest {
 					assertEquals("check nutList", 3, rmData1.getNutList().size());
 				
 					Map<QName,Serializable> properties = new HashMap<>();
-					properties.put(ContentModel.PROP_NAME, "nut4");
+					properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut4");
 					properties.put(PLMModel.PROP_NUTUNIT, "kcal");
 					properties.put(PLMModel.PROP_NUTGROUP, GROUP2);
 					properties.put(PLMModel.PROP_NUTGDA, 2000d);
 					properties.put(PLMModel.PROP_NUT_FORMULA, "10d+50");
-					NodeRef nut4 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_NUT, properties).getChildRef();			
+					NodeRef nut4 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), PLMModel.TYPE_NUT, properties).getChildRef();			
 					
 					
 					NutListDataItem nutListDataItem = new NutListDataItem();
@@ -1000,15 +999,15 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
 				finishedProduct.setDensity(1d);
-				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 1d, CompoListUnit.kg, 10d, DeclarationType.Detail, localSF1NodeRef));
+				List<CompoListDataItem> compoList = new ArrayList<>();
+				compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 10d, DeclarationType.Detail, localSF1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, CompoListUnit.kg, 5d, DeclarationType.Declare, rawMaterial1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, CompoListUnit.kg, 10d, DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 1d, CompoListUnit.kg, 20d, DeclarationType.Detail, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 20d, DeclarationType.Detail, localSF2NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
-				return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
+				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 				
 			}},false,true);
 		
@@ -1027,7 +1026,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				//costs
 				assertNotNull("CostList is null", formulatedProduct.getCostList());
 				for(CostListDataItem costListDataItem : formulatedProduct.getCostList()){
-					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
+					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
 					logger.debug(trace);
 					if(costListDataItem.getCost().equals(cost1)){
 						assertEquals("cost1.getValue() == 4.7425003, actual values: " + trace, df.format(4.7425d), df.format(costListDataItem.getValue()));
@@ -1042,7 +1041,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				//nuts
 				assertNotNull("NutList is null", formulatedProduct.getNutList());
 				for(NutListDataItem nutListDataItem : 	formulatedProduct.getNutList()){
-					String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), ContentModel.PROP_NAME) + " - value: " + nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
+					String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
 					logger.debug(trace);
 					if(nutListDataItem.getNut().equals(nut1)){
 						assertEquals("nut1.getValue() == 3, actual values: " + trace, 3d, nutListDataItem.getValue());
@@ -1060,13 +1059,13 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				for(AllergenListDataItem allergenListDataItem : formulatedProduct.getAllergenList()){
 					String voluntarySources = "";
 					for(NodeRef part : allergenListDataItem.getVoluntarySources())
-						voluntarySources += nodeService.getProperty(part, ContentModel.PROP_NAME) + ", ";
+						voluntarySources += nodeService.getProperty(part, BeCPGModel.PROP_CHARACT_NAME) + ", ";
 					
 					String inVoluntarySources = "";
 					for(NodeRef part : allergenListDataItem.getInVoluntarySources())
-						inVoluntarySources += nodeService.getProperty(part, ContentModel.PROP_NAME) + ", ";
+						inVoluntarySources += nodeService.getProperty(part, BeCPGModel.PROP_CHARACT_NAME) + ", ";
 					
-					String trace= "allergen: " + nodeService.getProperty(allergenListDataItem.getAllergen(), ContentModel.PROP_NAME) + " - voluntary: " + allergenListDataItem.getVoluntary().booleanValue() + " - involuntary: " + allergenListDataItem.getInVoluntary().booleanValue() + " - voluntary sources:" + voluntarySources + " - involuntary sources:" + inVoluntarySources;
+					String trace= "allergen: " + nodeService.getProperty(allergenListDataItem.getAllergen(), BeCPGModel.PROP_CHARACT_NAME) + " - voluntary: " + allergenListDataItem.getVoluntary() + " - involuntary: " + allergenListDataItem.getInVoluntary() + " - voluntary sources:" + voluntarySources + " - involuntary sources:" + inVoluntarySources;
 					logger.debug(trace);
 					
 					//allergen1 - voluntary: true - involuntary: false - voluntary sources:Raw material 1, Raw material 2 - involuntary sources:
@@ -1116,13 +1115,13 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				
 					String geoOriginsText = "";
 					for(NodeRef geoOrigin : ingListDataItem.getGeoOrigin())
-						geoOriginsText += nodeService.getProperty(geoOrigin, ContentModel.PROP_NAME) + ", ";
+						geoOriginsText += nodeService.getProperty(geoOrigin, BeCPGModel.PROP_CHARACT_NAME) + ", ";
 					
 					String bioOriginsText = "";
 					for(NodeRef bioOrigin : ingListDataItem.getBioOrigin())
-						bioOriginsText += nodeService.getProperty(bioOrigin, ContentModel.PROP_NAME) + ", ";
+						bioOriginsText += nodeService.getProperty(bioOrigin, BeCPGModel.PROP_CHARACT_NAME) + ", ";
 					
-					String trace= "ing: " + nodeService.getProperty(ingListDataItem.getIng(), ContentModel.PROP_NAME) + " - qty: " + ingListDataItem.getQtyPerc() + " - geo origins: " + geoOriginsText + " - bio origins: " + bioOriginsText + " is gmo: " + ingListDataItem.getIsGMO().booleanValue() + " is ionized: " + ingListDataItem.getIsIonized().booleanValue();
+					String trace= "ing: " + nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME) + " - qty: " + ingListDataItem.getQtyPerc() + " - geo origins: " + geoOriginsText + " - bio origins: " + bioOriginsText + " is gmo: " + ingListDataItem.getIsGMO() + " is ionized: " + ingListDataItem.getIsIonized();
 					logger.debug(trace);
 					
 					df = new DecimalFormat("0.000000");
@@ -1134,8 +1133,8 @@ public class FormulationTest extends AbstractFinishedProductTest {
 						assertEquals("ing1.getGeoOrigin() doesn't contain geo2, actual values: " + trace, false, ingListDataItem.getGeoOrigin().contains(geoOrigin2));
 						assertEquals("ing1.getBioOrigin() contains bio1, actual values: " + trace, true, ingListDataItem.getBioOrigin().contains(bioOrigin1));					
 						assertEquals("ing1.getBioOrigin() doesn't contain bio2, actual values: " + trace, false, ingListDataItem.getBioOrigin().contains(bioOrigin2));
-						assertEquals("ing1.getIsGMO() is false, actual values: " + trace, true, ingListDataItem.getIsGMO().booleanValue() == true);
-						assertEquals("ing1.getIsIonized().booleanValue() is false, actual values: " + trace, true, ingListDataItem.getIsIonized().booleanValue() == true);
+						assertEquals("ing1.getIsGMO() is false, actual values: " + trace, true, ingListDataItem.getIsGMO().booleanValue());
+						assertEquals("ing1.getIsIonized().booleanValue() is false, actual values: " + trace, true, ingListDataItem.getIsIonized().booleanValue());
 						checks++;
 					}
 					//ing2 - qty: 36.111111111111114 - geo origins: geoOrigin1, geoOrigin2,  - bio origins: bioOrigin1, bioOrigin2,  is gmo: false
@@ -1192,8 +1191,8 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
 				finishedProduct.setDensity(1d);
-				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 2d,CompoListUnit.kg, 10d, DeclarationType.Detail, localSF1NodeRef));
+				List<CompoListDataItem> compoList = new ArrayList<>();
+				compoList.add(new CompoListDataItem(null, null, null, 2d,CompoListUnit.kg, 10d, DeclarationType.Detail, localSF1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, CompoListUnit.kg, 10d, DeclarationType.Detail, localSF2NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(1), null, 0.80d, CompoListUnit.kg, 5d, DeclarationType.Declare, rawMaterial1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(1), null, 0.30d, CompoListUnit.kg, 10d, DeclarationType.Detail, rawMaterial2NodeRef));
@@ -1202,7 +1201,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				compoList.add(new CompoListDataItem(null, compoList.get(4), null, 0.40d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(4), null, 1d, CompoListUnit.P, 0d, DeclarationType.Declare, rawMaterial5NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
-				return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();				
+				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();				
 				
 			}},false,true);
 	   
@@ -1286,12 +1285,16 @@ public class FormulationTest extends AbstractFinishedProductTest {
 					finishedProduct.setUnit(ProductUnit.kg);
 					finishedProduct.setQty(2d);
 					finishedProduct.setDensity(1d);
-					List<PackagingListDataItem> packagingList = new ArrayList<PackagingListDataItem>();
+					List<PackagingListDataItem> packagingList = new ArrayList<>();
 					packagingList.add(new PackagingListDataItem(null, 1d, PackagingListUnit.P, PackagingLevel.Primary, true, packagingMaterial1NodeRef));
 					packagingList.add(new PackagingListDataItem(null, 3d, PackagingListUnit.m, PackagingLevel.Primary, true, packagingMaterial2NodeRef));
 					packagingList.add(new PackagingListDataItem(null, 8d, PackagingListUnit.PP, PackagingLevel.Tertiary, true, packagingMaterial3NodeRef));
 					finishedProduct.getPackagingListView().setPackagingList(packagingList);
-					NodeRef finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();				
+					List<CostListDataItem> costList = new ArrayList<>();
+					costList.add(new CostListDataItem(null, null, null, null, pkgCost1, false));
+					costList.add(new CostListDataItem(null, null, null, null, pkgCost2, false));
+					finishedProduct.setCostList(costList);
+					NodeRef finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();				
 					
 					/*-- Formulate product --*/
 					logger.debug("/*-- Formulate product --*/");
@@ -1302,22 +1305,53 @@ public class FormulationTest extends AbstractFinishedProductTest {
 					ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
 					
 					logger.debug("unit of product formulated: " + finishedProduct.getUnit());
+					int checks = 0;
 					
 					//costs
 					assertNotNull("CostList is null", formulatedProduct.getCostList());
 					for(CostListDataItem costListDataItem : formulatedProduct.getCostList()){
-						String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
+						String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
 						logger.debug(trace);
 						if(costListDataItem.getCost().equals(pkgCost1)){
 							assertEquals("cost1.getValue() == 3.0625, actual values: " + trace, 3.0625d, costListDataItem.getValue());
 							assertEquals("cost1.getUnit() == €/kg, actual values: " + trace, "€/kg", costListDataItem.getUnit());
+							checks++;
 						}
 						if(costListDataItem.getCost().equals(pkgCost2)){
 							assertEquals("cost1.getValue() == 4.125, actual values: " + trace, 4.125d, costListDataItem.getValue());
 							assertEquals("cost1.getUnit() == €/kg, actual values: " + trace, "€/kg", costListDataItem.getUnit());
+							checks++;
 						}
 					}
+					assertEquals(2, checks);
 					
+					// add packaging kit
+					formulatedProduct.getPackagingList().add(new PackagingListDataItem(null, 25d, PackagingListUnit.PP, PackagingLevel.Secondary, true, packagingKit1NodeRef));
+					alfrescoRepository.save(formulatedProduct);					
+					productService.formulate(finishedProductNodeRef);
+					formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+					
+					// (1×3+3×1+1÷(8*25*40))/2 = 3,0000625
+					// (1×2+3×2+1÷(8*25*40)*2)/2 = 4.125
+					
+					checks = 0;					
+					//costs
+					assertNotNull("CostList is null", formulatedProduct.getCostList());
+					for(CostListDataItem costListDataItem : formulatedProduct.getCostList()){
+						String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
+						logger.debug(trace);
+						if(costListDataItem.getCost().equals(pkgCost1)){
+							assertEquals(3.0000625d, costListDataItem.getValue());
+							assertEquals("€/kg", costListDataItem.getUnit());
+							checks++;
+						}
+						if(costListDataItem.getCost().equals(pkgCost2)){
+							assertEquals(4.000125d, costListDataItem.getValue());
+							assertEquals("€/kg", costListDataItem.getUnit());
+							checks++;
+						}
+					}
+					assertEquals(2, checks);
 									
 					return null;
 
@@ -1346,26 +1380,26 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
 				finishedProduct.setDensity(1d);
-				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
+				List<CompoListDataItem> compoList = new ArrayList<>();
+				compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
 				
-				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
+				List<CostListDataItem> costList = new ArrayList<>();
 				costList.add(new CostListDataItem(null, null, null, null, cost1, null));
 				costList.add(new CostListDataItem(null, null, null, null, cost2, null));
 				finishedProduct.setCostList(costList);
 				
-				List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
+				List<NutListDataItem> nutList = new ArrayList<>();
 				nutList.add(new NutListDataItem(null, null, null, null, null, null, nut1, null));
 				nutList.add(new NutListDataItem(null, null, null, null, null, null, nut2, null));
 				finishedProduct.setNutList(nutList);
 				
-				return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();				
+				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();				
 				
 			}},false,true);
 	   
@@ -1385,7 +1419,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				int checks = 0;
 				assertNotNull("CostList is null", formulatedProduct.getCostList());
 				for(CostListDataItem costListDataItem : formulatedProduct.getCostList()){
-					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue() + " - maxi: " + costListDataItem.getMaxi() + " - unit: " + costListDataItem.getUnit();
+					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + costListDataItem.getValue() + " - maxi: " + costListDataItem.getMaxi() + " - unit: " + costListDataItem.getUnit();
 					logger.debug(trace);
 					if(costListDataItem.getCost().equals(cost1)){
 						assertEquals("cost1.getValue() == 4.0, actual values: " + trace, 4.0d, costListDataItem.getValue());
@@ -1406,7 +1440,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				checks = 0;
 				assertNotNull("NutList is null", formulatedProduct.getNutList());
 				for(NutListDataItem nutListDataItem : 	formulatedProduct.getNutList()){
-					String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), ContentModel.PROP_NAME) + " - value: " + nutListDataItem.getValue() + " - mini: " + nutListDataItem.getMini() + " - maxi: " + nutListDataItem.getMaxi() + " - unit: " + nutListDataItem.getUnit();
+					String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + nutListDataItem.getValue() + " - mini: " + nutListDataItem.getMini() + " - maxi: " + nutListDataItem.getMaxi() + " - unit: " + nutListDataItem.getUnit();
 					logger.debug(trace);
 					if(nutListDataItem.getNut().equals(nut1)){
 						assertEquals("nut1.getValue() == 3, actual values: " + trace, 3d, nutListDataItem.getValue());
@@ -1427,10 +1461,39 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				}					
 				assertEquals(2, checks);
 				
+				/**
+				 * Check mini and maxi are null if no rawMaterial has any mini or maxi
+				 */
+				formulatedProduct.getCompoListView().getCompoList().clear();
+				formulatedProduct.getCompoListView().getCompoList().add(new CompoListDataItem(null, null, null, 3d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
+				alfrescoRepository.save(formulatedProduct);
+				productService.formulate(finishedProductNodeRef);								
+				formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+				
+				//nuts
+				checks = 0;
+				assertNotNull("NutList is null", formulatedProduct.getNutList());
+				for(NutListDataItem nutListDataItem : 	formulatedProduct.getNutList()){
+					String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + nutListDataItem.getValue() + " - mini: " + nutListDataItem.getMini() + " - maxi: " + nutListDataItem.getMaxi() + " - unit: " + nutListDataItem.getUnit();
+					logger.debug(trace);
+					if(nutListDataItem.getNut().equals(nut1)){
+						assertNull(nutListDataItem.getMini());
+						assertNull(nutListDataItem.getMaxi());
+						checks++;
+					}
+					if(nutListDataItem.getNut().equals(nut2)){
+						assertNull(nutListDataItem.getMini());
+						assertNull(nutListDataItem.getMaxi());
+						checks++;
+					}
+				}					
+				assertEquals(2, checks);
+				
+				
 				return null;
 
 			}},false,true);
-		   
+	   
 	   }
 	
 //	/**
@@ -1460,7 +1523,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 //				compoList.add(new CompoListDataItem(null, compoList.get(3), 3d, null, CompoListUnit.kg, 0d, null, DeclarationType.Declare, rawMaterial3NodeRef));
 //				compoList.add(new CompoListDataItem(null, compoList.get(3), 3d, null, CompoListUnit.kg, 0d, null, DeclarationType.Omit, rawMaterial4NodeRef));
 //				finishedProduct.setCompoList(compoList);
-//				NodeRef finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();				
+//				NodeRef finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();				
 //				
 //				/*-- Formulate product --*/
 //				logger.debug("/*-- Formulate product --*/");
@@ -1473,7 +1536,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 //				//costs
 //				assertNotNull("CostList is null", formulatedProduct.getCostList());
 //				for(CostListDataItem costListDataItem : formulatedProduct.getCostList()){
-//					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
+//					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
 //					logger.debug(trace);
 //					if(costListDataItem.getCost().equals(cost1)){
 //						assertEquals("cost1.getValue() == 4.0, actual values: " + trace, 4.0d, costListDataItem.getValue());
@@ -1487,7 +1550,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 //				//nuts
 //				assertNotNull("NutList is null", formulatedProduct.getNutList());
 //				for(NutListDataItem nutListDataItem : 	formulatedProduct.getNutList()){
-//					String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), ContentModel.PROP_NAME) + " - value: " + nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
+//					String trace = "nut: " + nodeService.getProperty(nutListDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + nutListDataItem.getValue() + " - unit: " + nutListDataItem.getUnit();
 //					logger.debug(trace);
 //					if(nutListDataItem.getNut().equals(nut1)){
 //						assertEquals("nut1.getValue() == 3, actual values: " + trace, 3d, nutListDataItem.getValue());
@@ -1585,8 +1648,8 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
 				finishedProduct.setDensity(1d);
-				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 2d, CompoListUnit.kg, 10d, DeclarationType.Detail, localSF1NodeRef));
+				List<CompoListDataItem> compoList = new ArrayList<>();
+				compoList.add(new CompoListDataItem(null, null, null, 2d, CompoListUnit.kg, 10d, DeclarationType.Detail, localSF1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, CompoListUnit.kg, 10d, DeclarationType.Detail, localSF2NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(1), null, 0.8d, CompoListUnit.kg, 5d, DeclarationType.Declare, rawMaterial1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(1), null, 0.3d, CompoListUnit.kg, 10d, DeclarationType.Detail, rawMaterial2NodeRef));
@@ -1597,7 +1660,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				compoList.add(temp); 
 				compoList.add(new CompoListDataItem(null, compoList.get(4), null, 1d, CompoListUnit.P, 0d, DeclarationType.Declare, rawMaterial5NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
-				return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();				
+				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();				
 				
 			}},false,true);
 	   
@@ -1669,24 +1732,24 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
 				finishedProduct.setDensity(1d);
-				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				CompoListDataItem parent = new CompoListDataItem(null, (CompoListDataItem)null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef);
+				List<CompoListDataItem> compoList = new ArrayList<>();
+				CompoListDataItem parent = new CompoListDataItem(null, null, 1d, null, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef);
 				compoList.add(parent);
 				compoList.add(new CompoListDataItem(null, parent, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
 				compoList.add(new CompoListDataItem(null, parent, null, 2d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-				parent = new CompoListDataItem(null, (CompoListDataItem)null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef);
+				parent = new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef);
 				compoList.add(parent);
 				compoList.add(new CompoListDataItem(null, parent, null, 3d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 				compoList.add(new CompoListDataItem(null, parent, null, 3d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
 				
 
-				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();				
+				List<CostListDataItem> costList = new ArrayList<>();
 				costList.add(new CostListDataItem(null, null, null, null, cost1, null));
 				costList.add(new CostListDataItem(null, null, null, null, cost2, null));
 				finishedProduct.setCostList(costList);				
 				
-				return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();				
+				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();				
 
 			}},false,true);
 	   
@@ -1705,7 +1768,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				int checks = 0;
 				assertNotNull("CostList is null", formulatedProduct.getCostList());
 				for(CostListDataItem costListDataItem : formulatedProduct.getCostList()){
-					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
+					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
 					logger.debug(trace);
 					if(costListDataItem.getCost().equals(cost1)){
 						assertEquals("cost1.getValue() == 4.0, actual values: " + trace, 4.0d, costListDataItem.getValue());
@@ -1722,7 +1785,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				
 				// manual modification
 				for(CostListDataItem costListDataItem : formulatedProduct.getCostList()){
-					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
+					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
 					logger.debug(trace);
 					if(costListDataItem.getCost().equals(cost1)){
 						
@@ -1739,7 +1802,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				checks = 0;
 				assertNotNull("CostList is null", formulatedProduct.getCostList());
 				for(CostListDataItem costListDataItem : formulatedProduct.getCostList()){
-					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
+					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
 					logger.debug(trace);
 					if(costListDataItem.getCost().equals(cost1)){
 						assertEquals("cost1.getValue() == 5.0, actual values: " + trace, 5.0d, costListDataItem.getValue());
@@ -1773,97 +1836,107 @@ public class FormulationTest extends AbstractFinishedProductTest {
 		
 	   transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
 			public NodeRef execute() throws Throwable {					   							
-				
-				Collection<QName> dataLists = new ArrayList<QName>();
-				dataLists.add(PLMModel.TYPE_COSTLIST);
-				
+
 				/*-- Create process steps, resources --*/
 				logger.debug("/*-- Create process steps, resources --*/");
-				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				Map<QName, Serializable> properties = new HashMap<>();
 				//Costs
-				properties.put(ContentModel.PROP_NAME, "costTransfo");			 					 				
+				properties.put(BeCPGModel.PROP_CHARACT_NAME, "costTransfo");			 					 				
 				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
-				NodeRef costTransfoNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
+				NodeRef costTransfoNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
 				
-				properties.put(ContentModel.PROP_NAME, "costMOTransfo");			 					 				
+				properties.put(BeCPGModel.PROP_CHARACT_NAME, "costMOTransfo");			 					 				
 				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
-				NodeRef costMOTransfoNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
+				NodeRef costMOTransfoNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), PLMModel.TYPE_COST, properties).getChildRef();								
 				
-				properties.put(ContentModel.PROP_NAME, "costMOMaintenance");			 					 				
+				properties.put(BeCPGModel.PROP_CHARACT_NAME, "costMOMaintenance");			 					 				
 				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
-				NodeRef costMOMaintenanceNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
+				NodeRef costMOMaintenanceNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
+
+				properties.put(BeCPGModel.PROP_CHARACT_NAME, "costEmb");			 					 				
+				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
+				NodeRef costEmbNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), PLMModel.TYPE_COST, properties).getChildRef();
 				
 				//Steps
 				logger.debug("Steps");
-				properties.put(ContentModel.PROP_NAME, "Découpe");			 					 				
+				properties.put(BeCPGModel.PROP_CHARACT_NAME, "Découpe");			 					 				
 				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
-				NodeRef decoupeNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
+				NodeRef decoupeNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
 				
-				properties.put(ContentModel.PROP_NAME, "Hachage");			 					 				
+				properties.put(BeCPGModel.PROP_CHARACT_NAME, "Hachage");			 					 				
 				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
-				NodeRef hachageNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
+				NodeRef hachageNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
 				
-				properties.put(ContentModel.PROP_NAME, "Cuisson");			 					 				
+				properties.put(BeCPGModel.PROP_CHARACT_NAME, "Cuisson");			 					 				
 				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
-				NodeRef cuissonNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
+				NodeRef cuissonNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
 				
-				properties.put(ContentModel.PROP_NAME, "Mélange");			 					 				
+				properties.put(BeCPGModel.PROP_CHARACT_NAME, "Mélange");			 					 				
 				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
-				NodeRef melangeNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
+				NodeRef melangeNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
 				
-				properties.put(ContentModel.PROP_NAME, "Etape Ligne");			 					 				
+				properties.put(BeCPGModel.PROP_CHARACT_NAME, "Etape Ligne");			 					 				
 				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
-				NodeRef ligneStepNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(ContentModel.PROP_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
+				NodeRef ligneStepNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
+				
+				properties.put(BeCPGModel.PROP_CHARACT_NAME, "Etape emb");			 					 				
+				properties.put(PLMModel.PROP_COSTCURRENCY, "€");
+				NodeRef embStepNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), MPMModel.TYPE_PROCESSSTEP, properties).getChildRef();
 				
 				// resources
 				logger.debug("Resources");
 				ResourceProductData boucherResourceData = new ResourceProductData();
 				boucherResourceData.setName("Boucher");
-				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
+				List<CostListDataItem> costList = new ArrayList<>();
 				costList.add(new CostListDataItem(null, 8d, "€/h", null, costMOTransfoNodeRef, false));
 				boucherResourceData.setCostList(costList);
-				NodeRef boucherResourceNodeRef = alfrescoRepository.create(testFolderNodeRef, boucherResourceData).getNodeRef();
+				NodeRef boucherResourceNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), boucherResourceData).getNodeRef();
 				
 //				ResourceProductData operateurResourceData = new ResourceProductData();
 //				operateurResourceData.setName("Operateur");
 //				costList = new ArrayList<CostListDataItem>();
 //				costList.add(new CostListDataItem(null, 15d, "€/h", null, costMOTransfoNodeRef, false));
 //				operateurResourceData.setCostList(costList);
-//				NodeRef operateurResourceNodeRef = alfrescoRepository.create(testFolderNodeRef, operateurResourceData).getNodeRef();
+//				NodeRef operateurResourceNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), operateurResourceData).getNodeRef();
 				
 				ResourceProductData hachoirResourceData = new ResourceProductData();
 				hachoirResourceData.setName("Hachoir");
-				costList = new ArrayList<CostListDataItem>();
+				costList = new ArrayList<>();
 				costList.add(new CostListDataItem(null, 10d, "€/h", null, costTransfoNodeRef, false));
 				hachoirResourceData.setCostList(costList);
-				NodeRef hachoirResourceNodeRef = alfrescoRepository.create(testFolderNodeRef, hachoirResourceData).getNodeRef();
+				NodeRef hachoirResourceNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), hachoirResourceData).getNodeRef();
 				
 				ResourceProductData cuiseurResourceData = new ResourceProductData();
 				cuiseurResourceData.setName("Cuiseur");
-				costList = new ArrayList<CostListDataItem>();
+				costList = new ArrayList<>();
 				costList.add(new CostListDataItem(null, 30d, "€/h", null, costTransfoNodeRef, false));
 				cuiseurResourceData.setCostList(costList);
-				NodeRef cuiseurResourceNodeRef = alfrescoRepository.create(testFolderNodeRef, cuiseurResourceData).getNodeRef();
+				NodeRef cuiseurResourceNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), cuiseurResourceData).getNodeRef();
 				
 				ResourceProductData malaxeurResourceData = new ResourceProductData();
 				malaxeurResourceData.setName("Malaxeur");
-				costList = new ArrayList<CostListDataItem>();
+				costList = new ArrayList<>();
 				costList.add(new CostListDataItem(null, 40d, "€/h", null, costTransfoNodeRef, false));
 				malaxeurResourceData.setCostList(costList);
-				NodeRef malaxeurResourceNodeRef = alfrescoRepository.create(testFolderNodeRef, malaxeurResourceData).getNodeRef();
+				NodeRef malaxeurResourceNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), malaxeurResourceData).getNodeRef();
 				
 				ResourceProductData ligneResourceData = new ResourceProductData();
 				ligneResourceData.setName("Ligne");
-				costList = new ArrayList<CostListDataItem>();
+				costList = new ArrayList<>();
 				costList.add(new CostListDataItem(null, 30d, "€/h", null, costTransfoNodeRef, false));
 				costList.add(new CostListDataItem(null, 15d, "€/h", null, costMOTransfoNodeRef, false));
 				costList.add(new CostListDataItem(null, 5d, "€/h", null, costMOMaintenanceNodeRef, false));
 				ligneResourceData.setCostList(costList);
-				NodeRef ligneResourceNodeRef= alfrescoRepository.create(testFolderNodeRef, ligneResourceData).getNodeRef();
+				NodeRef ligneResourceNodeRef= alfrescoRepository.create(getTestFolderNodeRef(), ligneResourceData).getNodeRef();
+				
+				ResourceProductData emballageResourceData = new ResourceProductData();
+				emballageResourceData.setName("Emballage");
+				costList = new ArrayList<>();
+				costList.add(new CostListDataItem(null, 40d, "€/h", null, costEmbNodeRef, false));
+				emballageResourceData.setCostList(costList);
+				NodeRef emballageResourceNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), emballageResourceData).getNodeRef();
 				
 				/*-- Create finished product --*/
-				dataLists.clear();
-				dataLists.add(MPMModel.TYPE_PROCESSLIST);
 				logger.debug("/*-- Create finished product --*/");				 
 				FinishedProductData finishedProduct = new FinishedProductData();
 				finishedProduct.setName("Produit fini 1");
@@ -1871,7 +1944,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(1d);
 				finishedProduct.setDensity(1d);
-				List<ProcessListDataItem> processList = new ArrayList<ProcessListDataItem>();
+				List<ProcessListDataItem> processList = new ArrayList<>();
 				//decoupe
 				processList.add(new ProcessListDataItem(null, 0.4d, 50d, 200d, ProcessListUnit.kg, null, null, decoupeNodeRef, null, boucherResourceNodeRef));
 				//hachage
@@ -1882,15 +1955,22 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				processList.add(new ProcessListDataItem(null, 0.24d, 1d, 600d, ProcessListUnit.kg, null, null, melangeNodeRef, null, malaxeurResourceNodeRef));
 				//ligne
 				processList.add(new ProcessListDataItem(null, 1d, 1d, 500d, ProcessListUnit.kg, null, null, ligneStepNodeRef, null, ligneResourceNodeRef));				
+				//emballage
+				processList.add(new ProcessListDataItem(null, 1d, 1d, 100d, ProcessListUnit.Box, null, null, embStepNodeRef, null, emballageResourceNodeRef));
 				finishedProduct.getProcessListView().setProcessList(processList);
 				
-				costList = new ArrayList<CostListDataItem>();				
+				costList = new ArrayList<>();
 				costList.add(new CostListDataItem(null, null, null, null, costTransfoNodeRef, null));
 				costList.add(new CostListDataItem(null, null, null, null, costMOTransfoNodeRef, null));
 				costList.add(new CostListDataItem(null, null, null, null, costMOMaintenanceNodeRef, null));
+				costList.add(new CostListDataItem(null, null, null, null, costEmbNodeRef, null));
 				finishedProduct.setCostList(costList);
 				
-				NodeRef finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
+				List<PackagingListDataItem> packList = new ArrayList<>();
+				packList.add(new PackagingListDataItem(null, 25d, PackagingListUnit.PP, PackagingLevel.Secondary, true, packagingKit1NodeRef));			
+				finishedProduct.getPackagingListView().setPackagingList(packList);
+				
+				NodeRef finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 								
 				/*-- Formulate product --*/
 				logger.debug("/*-- Formulate product --*/");
@@ -1906,8 +1986,8 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				int checks = 0;
 				assertNotNull("CostList is null", formulatedProduct.getCostList());
 				for(CostListDataItem costListDataItem : formulatedProduct.getCostList()){
-					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), ContentModel.PROP_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
-					logger.info(trace);
+					String trace = "cost: " + nodeService.getProperty(costListDataItem.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + costListDataItem.getValue() + " - unit: " + costListDataItem.getUnit();
+					logger.debug(trace);
 					//Transfo
 					if(costListDataItem.getCost().equals(costTransfoNodeRef)){
 						assertEquals(df.format(0.156d), df.format(costListDataItem.getValue()));
@@ -1926,13 +2006,20 @@ public class FormulationTest extends AbstractFinishedProductTest {
 						assertEquals("€/kg", costListDataItem.getUnit());
 						checks++;
 					}
+					//Emb
+					if(costListDataItem.getCost().equals(costEmbNodeRef)){
+						// =40/(100*25*1)
+						assertEquals(df.format(0.016d), df.format(costListDataItem.getValue()));
+						assertEquals("€/kg", costListDataItem.getUnit());
+						checks++;
+					}
 				}
-				assertEquals(3, checks);
+				assertEquals(4, checks);
 				
 				logger.debug("/*-- Verify process --*/");							
 				checks = 0;
 				for(ProcessListDataItem p : formulatedProduct.getProcessListView().getProcessList()){
-					//logger.debug(p.toString());
+					logger.debug(p.toString());
 					
 					if(p.getStep() != null){						
 					
@@ -1980,10 +2067,19 @@ public class FormulationTest extends AbstractFinishedProductTest {
 							assertEquals(500.0d, p.getRateProduct());						
 							checks++;
 						}
+						
+						//emb
+						if(p.getStep().equals(embStepNodeRef)){
+							assertEquals(1.0d, p.getQty());
+							assertEquals(1.0d, p.getQtyResource());
+							assertEquals(100.0d, p.getRateResource());	
+							assertEquals(2500.0d, p.getRateProduct());						
+							checks++;
+						}
 					}
 				}
 				
-				assertEquals(5, checks);
+				assertEquals(6, checks);
 								
 				return null;
 
@@ -2012,8 +2108,8 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
 				finishedProduct.setDensity(1d);				
-				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 100d, CompoListUnit.Perc, 10d, DeclarationType.Detail, localSF1NodeRef));
+				List<CompoListDataItem> compoList = new ArrayList<>();
+				compoList.add(new CompoListDataItem(null, null, null, 100d, CompoListUnit.Perc, 10d, DeclarationType.Detail, localSF1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 45d, CompoListUnit.Perc, 10d, DeclarationType.Detail, localSF2NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(1), null, 20d, CompoListUnit.Perc, 5d, DeclarationType.Declare, rawMaterial1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(1), null, 25d, CompoListUnit.Perc, 10d, DeclarationType.Detail, rawMaterial2NodeRef));
@@ -2022,7 +2118,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				compoList.add(new CompoListDataItem(null, compoList.get(4), null, 25d, CompoListUnit.Perc, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(4), null, 20d, CompoListUnit.Perc, 0d, DeclarationType.Declare, rawMaterial5NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
-				return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();				
+				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();				
 				
 			}},false,true);
 		
@@ -2112,21 +2208,21 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setQty(2d);
 				finishedProduct.setUnitPrice(12.4d);
 				finishedProduct.setDensity(1d);
-				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
+				List<CompoListDataItem> compoList = new ArrayList<>();
+				compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
+				compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);		
 				
-				List<PhysicoChemListDataItem> physicoChemList = new ArrayList<PhysicoChemListDataItem>();				
+				List<PhysicoChemListDataItem> physicoChemList = new ArrayList<>();
 				physicoChemList.add(new PhysicoChemListDataItem(null, null, null, null, null, physicoChem3));
 				physicoChemList.add(new PhysicoChemListDataItem(null, null, null, null, null, physicoChem4));
 				finishedProduct.setPhysicoChemList(physicoChemList);		
 								
-				NodeRef finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
+				NodeRef finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 				
 				/*-- Formulate product --*/
 				logger.info("/*-- Formulate product --*/");
@@ -2142,11 +2238,11 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				int checks=0;
 				assertNotNull("physicoChem is null", formulatedProduct.getPhysicoChemList());
 				for(PhysicoChemListDataItem pcListDataItem : formulatedProduct.getPhysicoChemList()){
-					String trace = "physicoChem: " + nodeService.getProperty(pcListDataItem.getPhysicoChem(), ContentModel.PROP_NAME) + " - value: " + pcListDataItem.getValue() + " - unit: " + pcListDataItem.getUnit();
+					String trace = "physicoChem: " + nodeService.getProperty(pcListDataItem.getPhysicoChem(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + pcListDataItem.getValue() + " - unit: " + pcListDataItem.getUnit();
 					logger.info(trace);
 					if(pcListDataItem.getPhysicoChem().equals(physicoChem3)){
 						assertEquals(3d, pcListDataItem.getValue());
-						assertEquals(2.7d, pcListDataItem.getMini());
+						assertEquals(2.8d, pcListDataItem.getMini());
 						assertEquals(df.format(3.65d), df.format(pcListDataItem.getMaxi()));
 						checks++;
 					}
@@ -2172,7 +2268,6 @@ public class FormulationTest extends AbstractFinishedProductTest {
 		logger.info("testOverrunAndVolume");
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
-			@SuppressWarnings("unchecked")
 			public NodeRef execute() throws Throwable {					   
 			
 			
@@ -2189,8 +2284,8 @@ public class FormulationTest extends AbstractFinishedProductTest {
 			finishedProduct.setUnit(ProductUnit.L);
 			finishedProduct.setNetWeight(2d);
 			finishedProduct.setDensity(1d);
-			List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-			compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 100d, CompoListUnit.Perc, 10d, DeclarationType.Detail, localSF1NodeRef));
+			List<CompoListDataItem> compoList = new ArrayList<>();
+			compoList.add(new CompoListDataItem(null, null, null, 100d, CompoListUnit.Perc, 10d, DeclarationType.Detail, localSF1NodeRef));
 			compoList.add(new CompoListDataItem(null, compoList.get(0), null, 45d, CompoListUnit.Perc, 10d, DeclarationType.Detail, localSF2NodeRef));
 			compoList.add(new CompoListDataItem(null, compoList.get(1), null, 20d, CompoListUnit.Perc, 5d, DeclarationType.Declare, rawMaterial1NodeRef));
 			compoList.add(new CompoListDataItem(null, compoList.get(1), null, 25d, CompoListUnit.Perc, 10d, DeclarationType.Detail, rawMaterial2NodeRef));
@@ -2198,14 +2293,14 @@ public class FormulationTest extends AbstractFinishedProductTest {
 			compoList.add(new CompoListDataItem(null, compoList.get(4), null, 10d, CompoListUnit.Perc, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 			compoList.add(new CompoListDataItem(null, compoList.get(4), null, 25d, CompoListUnit.Perc, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 			compoList.add(new CompoListDataItem(null, compoList.get(4), null, 20d, CompoListUnit.Perc, 0d, DeclarationType.Declare, rawMaterial5NodeRef));
-			compoList.add(new CompoListDataItem(null, (CompoListDataItem)null, null, 1d, CompoListUnit.P, null, DeclarationType.Declare, rawMaterial15NodeRef));
+			compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.P, null, DeclarationType.Declare, rawMaterial15NodeRef));
 			
 			// add overrun
 			compoList.get(6).setOverrunPerc(80d);
 			compoList.get(7).setOverrunPerc(70d);
 			
 			finishedProduct.getCompoListView().setCompoList(compoList);
-			NodeRef finishedProductNodeRef1 = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
+			NodeRef finishedProductNodeRef1 = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 			
 			/*-- Formulate product --*/
 			logger.debug("/*-- Formulate product --*/");
@@ -2251,6 +2346,46 @@ public class FormulationTest extends AbstractFinishedProductTest {
 			// TODO : yieldVolume -> not store as prop so cannot test it
 			//logger.info("yieldVolume: " + finishedProduct.getYieldVolume());
 			//assertEquals(100 * sum / 7.7d, finishedProduct.getYieldVolume());
+			
+			return null;
+
+			}},false,true);
+		   
+	   }
+	
+	@Test
+	public void testNutrientLost() throws Exception{
+		
+		logger.info("testNutrientLost");
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>(){
+
+			public NodeRef execute() throws Throwable {					   
+
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName("Finished product 1");
+			finishedProduct.setServingSize(300d);
+			List<NutListDataItem> nutList = new ArrayList<>();
+			nutList.add(new NutListDataItem(null, 12d, null, 11d, 13d, null, nut1, false));
+			nutList.get(0).setLossPerc(30d);
+			nutList.add(new NutListDataItem(null, 12d, null, 11d, 13d, null, nut2, false));
+			finishedProduct.setNutList(nutList);
+			NodeRef finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+			
+			/*-- Formulate product --*/
+			productService.formulate(finishedProductNodeRef);					
+			
+			/*-- Verify formulation --*/
+			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+			assertEquals(8.4d, formulatedProduct.getNutList().get(0).getValue());
+			assertEquals(7.7d, formulatedProduct.getNutList().get(0).getMini());
+			assertEquals(9.1d, formulatedProduct.getNutList().get(0).getMaxi());
+			assertEquals(25.2d, formulatedProduct.getNutList().get(0).getValuePerServing());
+			
+			assertEquals(12d, formulatedProduct.getNutList().get(1).getValue());
+			assertEquals(11d, formulatedProduct.getNutList().get(1).getMini());
+			assertEquals(13d, formulatedProduct.getNutList().get(1).getMaxi());
+			assertEquals(36d, formulatedProduct.getNutList().get(1).getValuePerServing());
 			
 			return null;
 

@@ -59,7 +59,7 @@ public class CalendarDataExtractor extends AbstractNodeDataExtractor  {
 //		   }
 	
 		
-		Map<String, Object> ret = new HashMap<String, Object>();
+		Map<String, Object> ret = new HashMap<>();
 		
 		 ret.put(PROP_NODEREF, nodeRef.toString());
 		 ret.put(PROP_TAGS, attributeExtractorService.getTags(nodeRef));

@@ -39,7 +39,7 @@ import fr.becpg.repo.entity.EntityDictionaryService;
 
 public class EntityDictionnaryWebScript extends AbstractWebScript {
 
-	private static Log logger = LogFactory.getLog(EntityDictionnaryWebScript.class);
+	private static final Log logger = LogFactory.getLog(EntityDictionnaryWebScript.class);
 
 	protected static final String PARAM_ITEMTYPE = "itemType";
 

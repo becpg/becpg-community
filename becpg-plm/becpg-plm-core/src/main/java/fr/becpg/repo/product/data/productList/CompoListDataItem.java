@@ -15,12 +15,19 @@ import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.MultiLevelDataList;
 
+import java.util.Objects;
+
 @AlfType
 @AlfQname(qname = "bcpg:compoList")
 @MultiLevelDataList
 public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  implements CompositeDataItem<CompoListDataItem>, CompositionDataItem {
 
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6389166205836523748L;
+
 	private Integer depthLevel;
 	
 	private Double qty = 0d;
@@ -208,7 +215,7 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 
 	public static DeclarationType parseDeclarationType(String declType) {
 		
-		return (declType != null && declType != "") ? DeclarationType.valueOf(declType) : DeclarationType.Declare;		
+		return (declType != null && !Objects.equals(declType, "")) ? DeclarationType.valueOf(declType) : DeclarationType.Declare;
 	}
 
 	@Override
@@ -299,10 +306,18 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 	}
 
 	@Override
-	public CompositionDataItem createCopy() {
+	public CompositionDataItem clone() {
 		return new CompoListDataItem(this);
 	}
 
-	
+	@Override
+	public NodeRef getComponent() {
+		return getProduct();
+	}
+
+	@Override
+	public void setComponent(NodeRef targetItem) {
+		setProduct(targetItem);		
+	}
 	
 }

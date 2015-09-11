@@ -34,6 +34,10 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfQname(qname = "ecm:wUsedList")
 public class WUsedListDataItem extends BeCPGDataObject implements CompositeDataItem<WUsedListDataItem> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4323547879052073360L;
 	private Integer depthLevel;
 	private Boolean isWUsedImpacted;
 	private QName impactedDataList;

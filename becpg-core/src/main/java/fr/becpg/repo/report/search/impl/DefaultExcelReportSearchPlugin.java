@@ -99,16 +99,7 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 		}
 
 		cellNum = ExcelHelper.appendExcelField(metadataFields, null, item, row, cellNum);
-//		
-//		Row headerRow = sheet.getRow(1);
-//		if(cellNum < headerRow.getLastCellNum()){
-//			for (int i = cellNum; i < headerRow.getLastCellNum(); i++) {
-//				if(headerRow.getCell(i).getCellType() == Cell.CELL_TYPE_FORMULA){
-//					 cell = row.createCell(i);
-//					 cell.setCellFormula(headerRow.getCell(i).getCellFormula());
-//				}
-//			}
-//		}
+
 		
 		return rownum;
 	}
@@ -116,12 +107,12 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields,
 			Map<QName, Serializable> properties, final Map<NodeRef, Map<String, Object>> cache) {
 
-		return attributeExtractorService.extractNodeData(nodeRef, itemType, properties, metadataFields, AttributeExtractorMode.XLS,
+		return attributeExtractorService.extractNodeData(nodeRef, itemType, properties, metadataFields, AttributeExtractorMode.XLSX,
 				new AttributeExtractorService.DataListCallBack() {
 
 					@Override
 					public List<Map<String, Object>> extractNestedField(NodeRef nodeRef, AttributeExtractorStructure field) {
-						List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();
+						List<Map<String, Object>> ret = new ArrayList<>();
 						if (field.isDataListItems()) {
 							NodeRef listContainerNodeRef = entityListDAO.getListContainer(nodeRef);
 							NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, field.getFieldQname());
@@ -139,7 +130,7 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 						} else {
 
 							if (field.getFieldDef() instanceof AssociationDefinition) {
-								List<NodeRef> assocRefs = null;
+								List<NodeRef> assocRefs;
 								if (((AssociationDefinition) field.getFieldDef()).isChild()) {
 									assocRefs = associationService.getChildAssocs(nodeRef, field.getFieldDef().getName());
 								} else {

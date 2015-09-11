@@ -40,6 +40,12 @@ public class PlmRepoConsts {
 	public static final String PATH_PRECAUTION_OF_USE = "PrecautionOfUse";
 	public static final String PATH_LABELING_TEMPLATES = "LabelingTemplates";
 	public static final String PATH_LABELING_POSITIONS = "LabelingPositions";
+	
+	public static final String PATH_PM_MATERIALS = "pmMaterials";
+	public static final String PATH_PM_PRINT_TYPES = "pmPrintTypes";
+	public static final String PATH_PM_PRINT_VANISHS = "pmPrintVarnishs";
+	
+	
 	public static final String PATH_LABEL = "Labels";
 	public static final String PATH_LABEL_TYPES = "LabelTypes";	
 	public static final String PATH_VARIANT_CHARACTS = "VariantCharacts";
@@ -91,6 +97,8 @@ public class PlmRepoConsts {
 	public static final String PATH_PRODUCT_REPORTTEMPLATES = "ProductReportTemplates";
 	public static final String PATH_QUALITY_REPORTTEMPLATES = "QualityReportTemplates";
 	public static final String PATH_REPORTS_EXPORT_SEARCH_PRODUCTS = "ExportProducts";
+	public static final String PATH_REPORTS_EXPORT_SEARCH_RAWMATERIAL_INGLIST = "ExportRawMaterialIngList";
+	public static final String PATH_REPORTS_EXPORT_SEARCH_INGLABELING = "ExportIngLabeling";
 	public static final String PATH_REPORTS_EXPORT_SEARCH_NON_CONFORMITIES = "ExportNCSynthesis";
 	public static final String PATH_REPORTS_ECO = "ECOReports";
 	
@@ -99,6 +107,7 @@ public class PlmRepoConsts {
 	public static final String PATH_ECO = "ECO";
 	
 	public static final String PATH_PRODUCT_HIERARCHY = "/app:company_home/cm:System/cm:ProductHierarchy/bcpg:entityLists/";
+	
 	
 	
 }

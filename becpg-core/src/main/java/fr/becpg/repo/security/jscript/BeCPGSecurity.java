@@ -32,7 +32,7 @@ import fr.becpg.repo.security.SecurityService;
  */
 public class BeCPGSecurity extends BaseScopableProcessorExtension{
 
-	private static Log logger = LogFactory.getLog(BeCPGSecurity.class);
+	private static final Log logger = LogFactory.getLog(BeCPGSecurity.class);
 	
     protected ServiceRegistry services;
     

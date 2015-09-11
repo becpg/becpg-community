@@ -1,6 +1,6 @@
 PATH;/System/Characts/bcpg:entityLists/Costs;;;;;;;;;;;;;;;;;;;;;;
 TYPE;bcpg:cost;;;;;;;;;;;;;;;;;;;;;;
-COLUMNS;cm:name;bcpg:costCurrency;;;;;;;;;;;;;;;;;;;;;
+COLUMNS;bcpg:charactName;bcpg:costCurrency;;;;;;;;;;;;;;;;;;;;;
 VALUES;Coût MP;€;;;;;;;;;;;;;;;;;;;;;
 VALUES;Coût prév MP;€;;;;;;;;;;;;;;;;;;;;;
 VALUES;Coût Emb;€;;;;;;;;;;;;;;;;;;;;;
@@ -8,7 +8,7 @@ VALUES;Coût prév Emb;€;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;
 PATH;/System/Characts/bcpg:entityLists/Nuts;;;;;;;;;;;;;;;;;;;;;;
 TYPE;bcpg:nut;;;;;;;;;;;;;;;;;;;;;;
-COLUMNS;cm:name;bcpg:nutUnit;bcpg:nutType;bcpg:nutGroup;;;;;;;;;;;;;;;;;;;
+COLUMNS;bcpg:charactName;bcpg:nutUnit;bcpg:nutType;bcpg:nutGroup;;;;;;;;;;;;;;;;;;;
 VALUES;Energie (kJoules);kJ;Valeur énergétique;Groupe 1;;;;;;;;;;;;;;;;;;;
 VALUES;Energie (kCalories);kcal;Valeur énergétique;Groupe 1;;;;;;;;;;;;;;;;;;;
 VALUES;Protéines;g;Nutriment;Groupe 1;;;;;;;;;;;;;;;;;;;

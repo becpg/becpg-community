@@ -31,7 +31,11 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 public class ControlPlanData extends BeCPGDataObject {
 
 	
-	List<SamplingDefListDataItem> samplingDefList = new LinkedList<SamplingDefListDataItem>();
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1365842750141431401L;
+	List<SamplingDefListDataItem> samplingDefList = new LinkedList<>();
 
 
 	@DataList

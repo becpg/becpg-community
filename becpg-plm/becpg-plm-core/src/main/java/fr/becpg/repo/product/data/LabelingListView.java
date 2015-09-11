@@ -28,6 +28,10 @@ import fr.becpg.repo.repository.model.BaseObject;
 public class LabelingListView  extends BaseObject {
 
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4278325759139858561L;
 	private List<IngLabelingListDataItem> ingLabelingList;
 	private List<LabelingRuleListDataItem> labelingRuleList;
 	

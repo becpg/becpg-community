@@ -36,8 +36,8 @@ public class AlfrescoUserDetails extends User implements UserDetails {
 	 * 
 	 */
 	private static final long serialVersionUID = -3854416878397851938L;
-	private Instance instance;
-	private String sessionId;
+	private final Instance instance;
+	private final String sessionId;
 	
 	
 	public AlfrescoUserDetails(String username, String password, boolean enabled,

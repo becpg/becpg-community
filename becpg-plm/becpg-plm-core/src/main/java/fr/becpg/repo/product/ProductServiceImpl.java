@@ -26,6 +26,8 @@ import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
@@ -40,34 +42,24 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 /**
  * @author querephi
  */
+@Service("productService")
 public class ProductServiceImpl implements ProductService {
 	
+	@Autowired
 	private AlfrescoRepository<ProductData> alfrescoRepository;
 	
+	@Autowired
 	private FormulationService<ProductData> formulationService;
 	
+	@Autowired
 	private NodeService nodeService;
 	
+	@Autowired
 	private BehaviourFilter policyBehaviourFilter;
 
+	@Autowired
 	private CharactDetailsVisitorFactory charactDetailsVisitorFactory;
 	
-	
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
-
-	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
-		this.policyBehaviourFilter = policyBehaviourFilter;
-	}
-
-	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
-		this.alfrescoRepository = alfrescoRepository;
-	}
-
-	public void setCharactDetailsVisitorFactory(CharactDetailsVisitorFactory charactDetailsVisitorFactory) {
-		this.charactDetailsVisitorFactory = charactDetailsVisitorFactory;
-	}
 
     public void setFormulationService(FormulationService<ProductData> formulationService) {
 		this.formulationService = formulationService;
@@ -89,14 +81,14 @@ public class ProductServiceImpl implements ProductService {
 			// disable policy to have modified date < formulated date, better way ?
 			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-
 			
 			if(fast){
 				formulationService.formulate(productNodeRef,"fastProductFormulationChain");
 			}  else {
 				formulationService.formulate(productNodeRef);
 			}
-
+			
+			
 		} finally {
 			policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
 			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
@@ -140,7 +132,7 @@ public class ProductServiceImpl implements ProductService {
 		productData.getCompoListView().setCompoList(CompositionLexer.lexMultiLine(recipe));
 		productData.getPackagingListView().setPackagingList(new ArrayList<PackagingListDataItem>());
 		
-		return formulationService.formulate(productData);    	
+		return formulate(productData);    	
     } 
   
 

@@ -143,7 +143,7 @@ public class SecurityServiceImpl implements SecurityService {
 
 					@Override
 					public Map<String, List<ACLEntryDataItem.PermissionModel>> getData() {
-						Map<String, List<ACLEntryDataItem.PermissionModel>> acls = new HashMap<String, List<PermissionModel>>();
+						Map<String, List<ACLEntryDataItem.PermissionModel>> acls = new HashMap<>();
 						StopWatch stopWatch = null;
 						if (logger.isDebugEnabled()) {
 							stopWatch = new StopWatch();
@@ -159,7 +159,7 @@ public class SecurityServiceImpl implements SecurityService {
 								if (aclEntries != null) {
 									for (ACLEntryDataItem aclEntry : aclEntries) {
 										String key = computeAclKey(aclGrpType, aclEntry.getPropName());
-										List<PermissionModel> perms = new ArrayList<ACLEntryDataItem.PermissionModel>();
+										List<PermissionModel> perms = new ArrayList<>();
 										perms.add(aclEntry.getPermissionModel());
 										if (acls.containsKey(key)) {
 											perms.addAll(acls.get(key));
@@ -205,12 +205,12 @@ public class SecurityServiceImpl implements SecurityService {
 	}
 
 	private List<NodeRef> findAllAclGroups() {
-		return BeCPGQueryBuilder.createQuery().ofType(SecurityModel.TYPE_ACL_GROUP).list();
+		return BeCPGQueryBuilder.createQuery().ofType(SecurityModel.TYPE_ACL_GROUP).inDB().list();
 	}
 
 	@Override
 	public List<String> getAvailablePropNames() {
-		List<String> ret = new ArrayList<String>();
+		List<String> ret = new ArrayList<>();
 
 		List<NodeRef> aclGroups = findAllAclGroups();
 		if (aclGroups != null) {
@@ -230,7 +230,7 @@ public class SecurityServiceImpl implements SecurityService {
 					List<AspectDefinition> aspects = typeDefinition.getDefaultAspects();
 
 					if (aspects == null) {
-						aspects = new ArrayList<AspectDefinition>();
+						aspects = new ArrayList<>();
 					}
 
 //					for (QName aspect : aclGroup.getNodeAspects()) {

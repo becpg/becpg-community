@@ -14,6 +14,6 @@ import org.alfresco.service.namespace.QName;
  */
 public interface ProductDictionaryService {
 
-	public QName getWUsedList(NodeRef childNodeRef);
+	QName getWUsedList(NodeRef childNodeRef);
 	
 }

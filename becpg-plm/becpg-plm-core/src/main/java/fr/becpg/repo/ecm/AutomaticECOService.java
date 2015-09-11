@@ -6,13 +6,13 @@ import fr.becpg.repo.ecm.data.ChangeOrderData;
 
 public interface AutomaticECOService {
 
-	public boolean addAutomaticChangeEntry(NodeRef entityNodeRef, ChangeOrderData currentChangeOrder);
+	boolean addAutomaticChangeEntry(NodeRef entityNodeRef, ChangeOrderData currentChangeOrder);
 
-	public boolean applyAutomaticEco();
+	boolean applyAutomaticEco();
 
-	public ChangeOrderData createAutomaticEcoForUser(String ecoName);
+	ChangeOrderData createAutomaticEcoForUser(String ecoName);
 
-	public ChangeOrderData getCurrentUserChangeOrderData();
+	ChangeOrderData getCurrentUserChangeOrderData();
 	
 
 }

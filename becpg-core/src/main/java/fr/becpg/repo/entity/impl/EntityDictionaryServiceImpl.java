@@ -59,6 +59,11 @@ public class EntityDictionaryServiceImpl implements EntityDictionaryService {
 	public boolean isMultiLevelDataList(QName dataListItemType) {
 		return repositoryEntityDefReader.isMultiLevelDataList(dataListItemType);
 	}
+	
+	@Override
+	public boolean isMultiLevelLeaf(QName entityType) {
+		return repositoryEntityDefReader.isMultiLevelLeaf(entityType);
+	}
 
 	@Override
 	public List<AssociationDefinition> getPivotAssocDefs(QName sourceType) {
@@ -112,5 +117,7 @@ public class EntityDictionaryServiceImpl implements EntityDictionaryService {
 					}
 				});
 	}
+
+
 
 }

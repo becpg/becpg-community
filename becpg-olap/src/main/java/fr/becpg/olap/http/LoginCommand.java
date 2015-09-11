@@ -22,51 +22,58 @@ import java.io.InputStream;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 import fr.becpg.tools.http.AbstractHttpCommand;
 
+public class LoginCommand extends AbstractHttpCommand {
 
-public class LoginCommand  extends AbstractHttpCommand {
+	private static final String COMMAND_URL_TEMPLATE = "/api/login?u=%s&pw=%s";
 
-
-	private static String COMMAND_URL_TEMPLATE = "/api/login?u=%s&pw=%s";
-
-	
 	public LoginCommand(String serverUrl) {
 		super(serverUrl);
 	}
 
 	@Override
 	public String getHttpUrl(Object... params) {
-		return getServerUrl() + String.format(COMMAND_URL_TEMPLATE, encodeParams(params) );
+		return getServerUrl() + String.format(COMMAND_URL_TEMPLATE, encodeParams(params));
 	}
-	
-	public String getAlfTicket(String login, String password) throws UsernameNotFoundException{
-		DefaultHttpClient httpclient = new DefaultHttpClient();
 
-		
-		try(InputStream in  = runCommand(httpclient,login, password )){
-			
-			DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
-			domFactory.setNamespaceAware(true); // never forget this!
-			DocumentBuilder builder = domFactory.newDocumentBuilder();
-			Document doc = builder.parse(in);
-	
-			NodeList nodes = (NodeList) doc.getElementsByTagName("ticket");
-			if(nodes!=null && nodes.getLength()>0){
-				return nodes.item(0).getTextContent();
+	public String getAlfTicket(String login, String password) throws UsernameNotFoundException {
+		try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
+			HttpClientContext httpContext = HttpClientContext.create();
+
+			try (CloseableHttpResponse resp = runCommand(httpClient, httpContext, login, password)) {
+				HttpEntity entity = resp.getEntity();
+				if (entity != null) {
+
+					try (InputStream in = entity.getContent()) {
+
+						DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+						domFactory.setNamespaceAware(true); // never forget
+															// this!
+						DocumentBuilder builder = domFactory.newDocumentBuilder();
+						Document doc = builder.parse(in);
+
+						NodeList nodes = doc.getElementsByTagName("ticket");
+						if (nodes != null && nodes.getLength() > 0) {
+							return nodes.item(0).getTextContent();
+						}
+					}
+				}
 			}
-			
 		} catch (Exception e) {
 			throw new UsernameNotFoundException(e.getMessage());
 		}
 		return null;
-		
+
 	}
-	
-	
+
 }

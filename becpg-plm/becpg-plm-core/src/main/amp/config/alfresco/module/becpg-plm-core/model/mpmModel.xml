@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Definition of new Model -->
+<model name="mpm:mpmmodel" xmlns="http://www.alfresco.org/model/dictionary/1.0">
+	<!-- Optional meta-data about the model -->
+	<description>Manufacturing Process Management</description>
+	<author>QUERE</author>
+	<version>1.0</version>
+	<!-- Imports are required to allow references to definitions in other models -->
+	<imports>
+		<!-- Import Alfresco Dictionary Definitions -->
+		<import uri="http://www.alfresco.org/model/dictionary/1.0"
+			prefix="d" />
+		<!-- Import Alfresco Content Domain Model Definitions -->
+		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
+		<import uri="http://www.bcpg.fr/model/becpg/1.0" prefix="bcpg" />
+	</imports>
+	
+	<!-- Introduction of new namespaces defined by this model -->
+	<namespaces>
+		<namespace uri="http://www.bcpg.fr/model/mpm/1.0" prefix="mpm" />
+	</namespaces>
+	
+	<constraints>
+	
+		<constraint name="mpm:resourceTypes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>User</value>
+					<value>Machine</value>					
+				</list>
+			</parameter>
+		</constraint>
+		
+		<constraint name="mpm:plUnits" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>P</value>
+					<value>kg</value>
+					<value>L</value>
+					<value>Box</value>
+				</list>
+			</parameter>
+		</constraint>
+		
+		<constraint name="mpm:resourceParamTypes"
+			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/Lists/bcpg:entityLists/ResourceParamTypes</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>bcpg:lvValue</value>
+			</parameter>
+		</constraint>
+		
+	</constraints>
+
+	<types>
+		
+		<type name="mpm:processStep">
+			<parent>bcpg:charact</parent>					
+			<mandatory-aspects>
+				<aspect>cm:titled</aspect>
+				<aspect>bcpg:codeAspect</aspect>
+			</mandatory-aspects>
+		</type>
+		
+		<!-- processList -->
+		<type name="mpm:processList">
+			<parent>bcpg:productListItem</parent>
+			<properties>
+				<property name="mpm:plQty">
+					<type>d:double</type>
+					<index enabled="false"/>
+				</property>
+				<property name="mpm:plUnit">
+					<type>d:text</type>
+					<index enabled="false"/>
+					<constraints>
+					  <constraint ref="mpm:plUnits"/>
+					</constraints>
+				</property>				
+				<property name="mpm:plQtyResource">
+					<type>d:double</type>
+					<index enabled="false"/>
+				</property>
+				<property name="mpm:plRateResource">
+					<type>d:double</type>
+					<index enabled="false"/>
+				</property>
+				<property name="mpm:plYield">
+					<type>d:double</type>
+					<index enabled="false"/>
+				</property>
+				
+				<property name="mpm:plRateProduct">
+					<type>d:double</type>
+					<index enabled="false"/>
+				</property>
+				<!-- Deprecated -->
+				<property name="mpm:plRateProcess">
+					<type>d:double</type>
+					<index enabled="false"/>
+				</property>
+			</properties>
+			<associations>
+				<association name="mpm:plStep">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>mpm:processStep</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>				
+				<association name="mpm:plProduct">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:product</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="mpm:plResource">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:resourceProduct</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:sortableListAspect</aspect>
+			</mandatory-aspects>
+		</type>
+	
+	
+		<type name="mpm:resourceParam">
+			<parent>bcpg:charact</parent>					
+			<mandatory-aspects>
+				<aspect>cm:titled</aspect>
+			</mandatory-aspects>
+		</type>
+	
+	
+		<type name="mpm:resourceParamList">
+			<parent>bcpg:productListItem</parent>
+			<properties>
+				<property name="mpm:rplParamType">
+					<type>d:text</type>
+					<index enabled="false"/>
+					<constraints>
+						<constraint ref="mpm:resourceParamTypes" />
+					</constraints>
+				</property>	
+				<property name="mpm:rplParamValue">
+					<type>d:text</type>
+					<index enabled="false"/>
+				</property>
+			</properties>
+			<associations>
+				<association name="mpm:rplStepRef">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>mpm:processStep</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="mpm:rplResourceRef">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:resourceProduct</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="mpm:rplParamRef">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>mpm:resourceParam</class>
+						<mandatory>true</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+		</type>	
+
+	</types>
+	
+	<aspects>	
+	
+		<aspect name="mpm:resourceAspect">
+			<properties>
+				<property name="mpm:resourceType">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="mpm:resourceTypes" />
+					</constraints>
+				</property>
+			</properties>
+		</aspect>		
+		
+	</aspects>
+</model>

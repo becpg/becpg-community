@@ -1,0 +1,102 @@
+
+div.entity-versions div.nav 
+{
+	margin: 5px 0;
+   width:11.5em;   
+}
+
+a.version-historic-nav 
+{
+   background: none no-repeat scroll 0 0 transparent;
+   display: block;
+   float: left;
+   height: 16px;
+   margin: 6px 0;
+   text-indent: -1000em;
+   width: 16px;
+   outline:none;
+}
+
+a.version-historic-nav.next 
+{
+   background-image:url(images/right-arrow-enabled.png);
+   float:right;
+}
+
+a.version-historic-nav.next.disabled
+{
+   background-image:url(images/right-arrow-disabled.png);
+}
+
+a.version-historic-nav.prev 
+{
+   background-image:url(images/left-arrow-enabled.png);
+}
+
+a.version-historic-nav.prev.disabled
+{
+   background-image:url(images/left-arrow-disabled.png);
+}
+
+div.entity-versions div.nav h6 
+{
+   border:none;   
+}
+
+.entity-versions .datagrid span.document-version {
+	visibility: visible;
+}
+
+.entity-versions .datagrid span.current {
+	background-color: #EEEEEE;
+}
+
+
+
+.entity-versions .datagrid {
+    padding: 0;
+    visibility: visible;
+}
+
+/* .entity-versions .entity-branch h3 {
+        font-size: 100%;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        width: 150px;
+        display: block;
+} */
+
+.entity-versions div.entity-branches {
+	margin-right : 1em;
+}
+
+.entity-versions .actions a
+{
+   background-repeat: no-repeat;
+   background-position: left;
+   padding: 0.5em;
+   text-decoration: none;
+}
+
+.entity-versions .actions a.compare
+{
+   background-image: url(../documentlibrary/actions/compare-16.png);
+}
+
+.entity-versions  .alfresco-datatable td
+{
+   border-bottom: medium none !important;
+}
+
+.entity-versions  .alfresco-datatable td .yui-dt-liner
+{
+   padding: 4px 0 10px;
+}
+
+
+.entity-versions .actions a.versions-graph
+{
+   background-image: url(images/fork-16.png);
+}
+

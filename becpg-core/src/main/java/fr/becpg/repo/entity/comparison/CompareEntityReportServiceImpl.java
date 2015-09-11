@@ -27,8 +27,6 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.ReportModel;
-import fr.becpg.repo.entity.EntityDictionaryService;
-import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
 import fr.becpg.report.client.ReportFormat;
@@ -85,7 +83,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 
 	private static final String PROPERTY_VALUE_SEPARATOR = " : ";
 
-	private static Log logger = LogFactory.getLog(CompareEntityServiceImpl.class);
+	private static final Log logger = LogFactory.getLog(CompareEntityServiceImpl.class);
 
 	@Autowired
 	private CompareEntityService compareEntityService;
@@ -97,13 +95,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 	private NodeService nodeService;
 
 	@Autowired
-	private EntityListDAO entityListDAO;
-
-	@Autowired
 	private DictionaryService dictionaryService;
-
-	@Autowired
-	private EntityDictionaryService entityDictionaryService;
 
 	@Autowired
 	private NamespaceService namespaceService;
@@ -119,7 +111,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 		if (templateNodeRef != null) {
 
 			List<CompareResultDataItem> compareResult = new ArrayList<>();
-			Map<String, List<StructCompareResultDataItem>> structCompareResults = new HashMap<String, List<StructCompareResultDataItem>>();
+			Map<String, List<StructCompareResultDataItem>> structCompareResults = new HashMap<>();
 			
 			compareEntityService.compare(entity1, entities, compareResult, structCompareResults);
 
@@ -134,7 +126,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 			}
 
 			try {
-				Map<String, Object> params = new HashMap<String, Object>();
+				Map<String, Object> params = new HashMap<>();
 				params.put(ReportParams.PARAM_FORMAT, ReportFormat.PDF);
 				params.put(ReportParams.PARAM_LANG, I18NUtil.getLocale().getLanguage());
 				params.put(ReportParams.PARAM_ASSOCIATED_TPL_FILES,
@@ -195,7 +187,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 				}
 			}
 
-			cmpRowElt.addAttribute(ATTR_CHARACTERISTIC, c.getCharacteristic() == null ? "" : charactPath + (String) nodeService.getProperty(c.getCharacteristic(), ContentModel.PROP_NAME));
+			cmpRowElt.addAttribute(ATTR_CHARACTERISTIC, c.getCharacteristic() == null ? "" : charactPath + nodeService.getProperty(c.getCharacteristic(), ContentModel.PROP_NAME));
 			cmpRowElt.addAttribute(ATTR_PROPERTY, getClassAttributeTitle(c.getProperty()));
 			cmpRowElt.addAttribute(ATTR_PROPERTY_QNAME, c.getProperty().toPrefixString(namespaceService));
 			cmpRowElt.addAttribute(ATTR_IS_DIFFERENT, Boolean.toString(c.isDifferent()));

@@ -24,11 +24,11 @@ import org.apache.commons.logging.LogFactory;
 
 public class CompositeHelper {
 
-	private static Log logger = LogFactory.getLog(CompositeHelper.class);
+	private static final Log logger = LogFactory.getLog(CompositeHelper.class);
 
 	public static <T extends CompositeDataItem<T>> Composite<T> getHierarchicalCompoList(List<T> items) {
 
-		Composite<T> composite = new Composite<T>();
+		Composite<T> composite = new Composite<>();
 		loadChildren(composite, items);
 		if (logger.isDebugEnabled()) {
 			logger.debug(composite.toString());
@@ -40,7 +40,7 @@ public class CompositeHelper {
 		 for (T item : items){
 			 if((item.getParent() == null && composite.getData() == null) 
 					 ||  (item.getParent() != null && item.getParent().equals(composite.getData()))){
-				 Composite<T> temp = new Composite<T>(item);
+				 Composite<T> temp = new Composite<>(item);
 				 composite.addChild(temp);
 				 loadChildren(temp, items);
 			 }

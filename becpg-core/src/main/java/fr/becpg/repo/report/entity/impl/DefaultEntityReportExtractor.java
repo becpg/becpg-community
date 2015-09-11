@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.alfresco.model.ApplicationModel;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.version.Version2Model;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
@@ -36,6 +37,7 @@ import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.cmr.version.Version;
 import org.alfresco.service.cmr.version.VersionHistory;
 import org.alfresco.service.cmr.version.VersionService;
@@ -67,7 +69,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @Service
 public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin {
 
-	private static Log logger = LogFactory.getLog(DefaultEntityReportExtractor.class);
+	private static final Log logger = LogFactory.getLog(DefaultEntityReportExtractor.class);
 
 	/** The Constant TAG_ENTITY. */
 	protected static final String TAG_ENTITY = "entity";
@@ -87,17 +89,18 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	protected static final String TAG_IMAGE = "image";
 	protected static final String PRODUCT_IMG_ID = "Img%d";
 	protected static final String ATTR_IMAGE_ID = "id";
+	protected static final String AVATAR_IMG_ID = "avatar";
 
 	/** The Constant VALUE_NULL. */
 	protected static final String VALUE_NULL = "";
 
 	private static final String REGEX_REMOVE_CHAR = "[^\\p{L}\\p{N}]";
 
-	protected static final ArrayList<QName> hiddenNodeAttributes = new ArrayList<QName>(Arrays.asList(ContentModel.PROP_NODE_REF,
+	protected static final ArrayList<QName> hiddenNodeAttributes = new ArrayList<>(Arrays.asList(ContentModel.PROP_NODE_REF,
 			ContentModel.PROP_NODE_DBID, ContentModel.PROP_NODE_UUID, ContentModel.PROP_STORE_IDENTIFIER, ContentModel.PROP_STORE_NAME,
 			ContentModel.PROP_STORE_PROTOCOL, ContentModel.PROP_CONTENT));
 
-	protected static final ArrayList<QName> hiddenDataListItemAttributes = new ArrayList<QName>(Arrays.asList(ContentModel.PROP_CREATED, ContentModel.PROP_CREATOR, ContentModel.PROP_MODIFIED, ContentModel.PROP_MODIFIER));
+	protected static final ArrayList<QName> hiddenDataListItemAttributes = new ArrayList<>(Arrays.asList(ContentModel.PROP_CREATED, ContentModel.PROP_CREATOR, ContentModel.PROP_MODIFIED, ContentModel.PROP_MODIFIER));
 
 	@Autowired
 	protected DictionaryService dictionaryService;
@@ -122,6 +125,9 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	@Autowired
 	protected AssociationService associationService;
+	
+	@Autowired
+	protected PersonService personService;
 
 	@Autowired
 	protected RepositoryEntityDefReader<RepositoryEntity> repositoryEntityDefReader;
@@ -133,7 +139,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 		Document document = DocumentHelper.createDocument();
 		Element entityElt = document.addElement(TAG_ENTITY);
-		Map<String, byte[]> images = new HashMap<String, byte[]>();
+		Map<String, byte[]> images = new HashMap<>();
 
 		// add attributes at <product/> tag
 		loadNodeAttributes(entityNodeRef, entityElt, true);
@@ -147,6 +153,8 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		// load images
 		Element imgsElt = entityElt.addElement(TAG_IMAGES);
 		extractEntityImages(entityNodeRef, imgsElt, images);
+		
+		loadCreator(entityNodeRef, entityElt, imgsElt, images);
 
 		// render data lists
 		Element dataListsElt = entityElt.addElement(TAG_DATALISTS);
@@ -161,23 +169,25 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		return ret;
 	}
 
-	protected int extractEntityImages(NodeRef entityNodeRef, Element imgsElt, Map<String, byte[]> images) {
+	protected void extractEntityImages(NodeRef entityNodeRef, Element imgsElt, Map<String, byte[]> images) {
 
 		int cnt = imgsElt.selectNodes(TAG_IMAGE) != null ? imgsElt.selectNodes(TAG_IMAGE).size() : 1;
 		NodeRef imagesFolderNodeRef = nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS,
 				TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
 		if (imagesFolderNodeRef != null) {
 			for (FileInfo fileInfo : fileFolderService.listFiles(imagesFolderNodeRef)) {
-				extractImage(fileInfo.getNodeRef(), cnt, imgsElt, images);
+				extractImage(fileInfo.getNodeRef(), String.format(PRODUCT_IMG_ID, cnt), imgsElt, images);
 				cnt++;
 			}
-		}
-
-		return cnt;
+		}				
 	}
 
-	protected void extractImage(NodeRef imgNodeRef, int cnt, Element imgsElt, Map<String, byte[]> images) {
-		String imgId = String.format(PRODUCT_IMG_ID, cnt);
+	protected void extractImage(NodeRef imgNodeRef, String imgId, Element imgsElt, Map<String, byte[]> images) {
+		
+		if(ApplicationModel.TYPE_FILELINK.equals(nodeService.getType(imgNodeRef))){
+			imgNodeRef = (NodeRef)nodeService.getProperty(imgNodeRef, ContentModel.PROP_LINK_DESTINATION);
+		}
+		
 		byte[] imageBytes = entityService.getImage(imgNodeRef);
 		if (imageBytes != null) {
 			Element imgElt = imgsElt.addElement(TAG_IMAGE);
@@ -217,6 +227,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			if (kv.getValue() instanceof NodeRef && nodeService.hasAspect((NodeRef) kv.getValue(), BeCPGModel.ASPECT_LEGAL_NAME)) {
 				nodeElt.addAttribute(BeCPGModel.PROP_LEGAL_NAME.getLocalName(),
 						(String) nodeService.getProperty((NodeRef) kv.getValue(), BeCPGModel.PROP_LEGAL_NAME));
+				addCDATA(nodeElt, ContentModel.PROP_DESCRIPTION, (String)nodeService.getProperty((NodeRef) kv.getValue(), ContentModel.PROP_DESCRIPTION));
 				break;
 			}
 		}
@@ -254,14 +265,14 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			}
 
 			// associations
-			Map<QName, List<AssociationRef>> tempHashMap = new HashMap<QName, List<AssociationRef>>();
+			Map<QName, List<AssociationRef>> tempHashMap = new HashMap<>();
 			List<AssociationRef> associations = nodeService.getTargetAssocs(nodeRef, RegexQNamePattern.MATCH_ALL);
 
 			for (AssociationRef assocRef : associations) {
 				QName qName = assocRef.getTypeQName();
 				List<AssociationRef> assocRefs = tempHashMap.get(qName);
 				if (assocRefs == null) {
-					assocRefs = new ArrayList<AssociationRef>();
+					assocRefs = new ArrayList<>();
 					tempHashMap.put(qName, assocRefs);
 				}
 				assocRefs.add(assocRef);
@@ -392,4 +403,17 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		return EntityReportExtractorPriority.LOW;
 	}
 
+	private void loadCreator(NodeRef entityNodeRef, Element entityElt, Element imgsElt, Map<String, byte[]> images){		
+		String creator = (String)nodeService.getProperty(entityNodeRef, ContentModel.PROP_CREATOR);
+		if(creator != null){					
+			Element creatorElt = (Element) entityElt.selectSingleNode(ContentModel.PROP_CREATOR.getLocalName());
+			NodeRef creatorNodeRef = personService.getPerson(creator);
+			loadNodeAttributes(creatorNodeRef, creatorElt, true);
+			// extract avatar			
+			List<AssociationRef> avatorAssocs = nodeService.getTargetAssocs(creatorNodeRef, ContentModel.ASSOC_AVATAR);
+			if(!avatorAssocs.isEmpty()){
+				extractImage(avatorAssocs.get(0).getTargetRef(), AVATAR_IMG_ID, imgsElt, images);
+			}
+		}
+	}
 }

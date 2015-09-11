@@ -30,52 +30,43 @@ import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.designer.DesignerModel;
 import fr.becpg.repo.designer.DesignerService;
 import fr.becpg.repo.listvalue.ListValueEntry;
 import fr.becpg.repo.listvalue.ListValueExtractor;
 import fr.becpg.repo.listvalue.ListValuePage;
+import fr.becpg.repo.listvalue.ListValuePlugin;
 import fr.becpg.repo.listvalue.ListValueService;
-import fr.becpg.repo.listvalue.impl.AbstractBaseListValuePlugin;
 
 /**
  * 
  * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
  *
  */
-public class DesignerListValuePlugin extends AbstractBaseListValuePlugin {
+@Service
+public class DesignerListValuePlugin implements ListValuePlugin {
 
-	private static String TYPE_PARENT_NAME = "parentName";
-	private static String TYPE_MANDATORY_ASPECTS = "mandatoryAspects";
-	private static String TYPE_PROPERTY_TYPE = "propertyType";
-	private static String TYPE_TARGET_CLASS_NAME = "targetClassName";
-	private static String TYPE_CONSTRAINT_REF = "constraintRef";
+	private final static String TYPE_PARENT_NAME = "parentName";
+	private final static String TYPE_MANDATORY_ASPECTS = "mandatoryAspects";
+	private final static String TYPE_PROPERTY_TYPE = "propertyType";
+	private final static String TYPE_TARGET_CLASS_NAME = "targetClassName";
+	private final static String TYPE_CONSTRAINT_REF = "constraintRef";
 
-	private static String SEPARATOR = "|";
+	private final static String SEPARATOR = "|";
 
-	/** The service registry. */
+
+	private final static Log logger = LogFactory.getLog(ListValuePlugin.class);
+	
+	@Autowired
 	private ServiceRegistry serviceRegistry;
-
+	@Autowired
 	private DesignerService designerService;
 
-	
-	
-	/**
-	 * @param designerService
-	 *            the designerService to set
-	 */
-	public void setDesignerService(DesignerService designerService) {
-		this.designerService = designerService;
-	}
-
-	/**
-	 * @param serviceRegistry
-	 *            the serviceRegistry to set
-	 */
-	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
-		this.serviceRegistry = serviceRegistry;
-	}
 
 	@Override
 	public String[] getHandleSourceTypes() {
@@ -93,23 +84,24 @@ public class DesignerListValuePlugin extends AbstractBaseListValuePlugin {
 			modelNodeRef = designerService.findModelNodeRef(new NodeRef(nodeRef));
 		}
 
-		if (sourceType.equals(TYPE_PARENT_NAME)) {
-			return getAvailableEntityTypeNames(modelNodeRef, query, pageNum, pageSize);
-		} else if (sourceType.equals(TYPE_MANDATORY_ASPECTS)) {
-			return getAvailableEntityAspectNames(modelNodeRef, query, pageNum, pageSize);
-		} else if (sourceType.equals(TYPE_PROPERTY_TYPE)) {
-			return getAvailableDataTypeNames(modelNodeRef, query, pageNum, pageSize);
-		} else if (sourceType.equals(TYPE_TARGET_CLASS_NAME)) {
-			return getAvailableEntityTypeNames(modelNodeRef, query, pageNum, pageSize);
-		} else if (sourceType.equals(TYPE_CONSTRAINT_REF)) {
-			return getAvailableConstraints(modelNodeRef, query, pageNum, pageSize);
+		switch (sourceType) {
+			case TYPE_PARENT_NAME:
+				return getAvailableEntityTypeNames(modelNodeRef, query, pageNum, pageSize);
+			case TYPE_MANDATORY_ASPECTS:
+				return getAvailableEntityAspectNames(modelNodeRef, query, pageNum, pageSize);
+			case TYPE_PROPERTY_TYPE:
+				return getAvailableDataTypeNames(modelNodeRef, query, pageNum, pageSize);
+			case TYPE_TARGET_CLASS_NAME:
+				return getAvailableEntityTypeNames(modelNodeRef, query, pageNum, pageSize);
+			case TYPE_CONSTRAINT_REF:
+				return getAvailableConstraints(modelNodeRef, query, pageNum, pageSize);
 		}
 
 		return null;
 	}
 
 	private ListValuePage getAvailableConstraints(NodeRef modelNodeRef, String query, Integer pageNum, Integer pageSize) {
-		List<String> suggestions = new ArrayList<String>();
+		List<String> suggestions = new ArrayList<>();
 		
 		if(modelNodeRef!=null){
 			for(ChildAssociationRef assoc :  serviceRegistry.getNodeService().getChildAssocs(modelNodeRef)){
@@ -131,7 +123,7 @@ public class DesignerListValuePlugin extends AbstractBaseListValuePlugin {
 
 	public class StringValueExtractor implements ListValueExtractor<String> {
 
-		private String type;
+		private final String type;
 		
 		public StringValueExtractor(String type) {
 			this.type = type;
@@ -140,7 +132,7 @@ public class DesignerListValuePlugin extends AbstractBaseListValuePlugin {
 		@Override
 		public List<ListValueEntry> extract(List<String> values) {
 
-			List<ListValueEntry> suggestions = new ArrayList<ListValueEntry>();
+			List<ListValueEntry> suggestions = new ArrayList<>();
 			if (values != null) {
 				for (String value : values) {
 					String[] splitted = value.split("\\|");
@@ -156,7 +148,7 @@ public class DesignerListValuePlugin extends AbstractBaseListValuePlugin {
 	private ListValuePage getAvailableDataTypeNames(NodeRef modelNodeRef, String query, Integer pageNum, Integer pageSize) {
 		List<String> uris = getImports(modelNodeRef);
 		
-		List<String> suggestions = new ArrayList<String>();
+		List<String> suggestions = new ArrayList<>();
 		Collection<QName> types = serviceRegistry.getDictionaryService().getAllDataTypes();
 		if (types != null) {
 			for (QName type : types) {
@@ -201,7 +193,7 @@ public class DesignerListValuePlugin extends AbstractBaseListValuePlugin {
 
 		List<String> uris = getImports(modelNodeRef);
 
-		List<String> suggestions = new ArrayList<String>();
+		List<String> suggestions = new ArrayList<>();
 		Collection<QName> types = serviceRegistry.getDictionaryService().getAllTypes();
 		if (types != null) {
 			for (QName type : types) {
@@ -243,7 +235,7 @@ public class DesignerListValuePlugin extends AbstractBaseListValuePlugin {
 
 		List<String> uris = getImports(modelNodeRef);
 
-		List<String> suggestions = new ArrayList<String>();
+		List<String> suggestions = new ArrayList<>();
 		Collection<QName> aspects = serviceRegistry.getDictionaryService().getAllAspects();
 		if (aspects != null) {
 			for (QName aspect : aspects) {
@@ -279,7 +271,7 @@ public class DesignerListValuePlugin extends AbstractBaseListValuePlugin {
 	
 	
 	private List<String> getImports(NodeRef modelNodeRef) {
-		List<String> imports = new ArrayList<String>();
+		List<String> imports = new ArrayList<>();
 		if(modelNodeRef!=null){
 			for(ChildAssociationRef assoc :  serviceRegistry.getNodeService().getChildAssocs(modelNodeRef)){
 				if(assoc.getQName().equals(DesignerModel.ASSOC_M2_IMPORTS)){

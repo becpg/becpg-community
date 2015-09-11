@@ -37,7 +37,7 @@ public class ImportProductVisitor extends ImportEntityListAspectVisitor implemen
 
 	private HierarchyService hierarchyService;
 
-	private static Log logger = LogFactory.getLog(ImportProductVisitor.class);
+	private static final Log logger = LogFactory.getLog(ImportProductVisitor.class);
 
 	public void setHierarchyService(HierarchyService hierarchyService) {
 		this.hierarchyService = hierarchyService;
@@ -66,12 +66,12 @@ public class ImportProductVisitor extends ImportEntityListAspectVisitor implemen
 		if (nodeRef != null) {
 
 			ClassMapping classMapping = importContext.getClassMappings().get(importContext.getType());
-			List<QName> nodeColumnKeys = null;
+			List<QName> nodeColumnKeys;
 			if (classMapping != null) {
 
 				nodeColumnKeys = classMapping.getNodeColumnKeys();
 			} else {
-				nodeColumnKeys = new ArrayList<QName>();
+				nodeColumnKeys = new ArrayList<>();
 				nodeColumnKeys.add(BeCPGModel.PROP_CODE);
 			}
 
@@ -98,7 +98,7 @@ public class ImportProductVisitor extends ImportEntityListAspectVisitor implemen
 			Map<QName, Serializable> properties) throws ImporterException {
 
 		if (attributeMapping instanceof HierarchyMapping) {
-			NodeRef hierarchyNodeRef = null;
+			NodeRef hierarchyNodeRef;
 			String path = PlmRepoConsts.PATH_PRODUCT_HIERARCHY + "cm:" + HierarchyHelper.getHierarchyPathName(importContext.getType());
 			if(((HierarchyMapping) attributeMapping).getPath()!=null && 
 					!((HierarchyMapping) attributeMapping).getPath().isEmpty()){

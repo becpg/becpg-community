@@ -38,7 +38,7 @@ import fr.becpg.test.PLMBaseTestCase;
 
 public abstract class AbstractWorkflowTest extends PLMBaseTestCase {
 
-	private static Log logger = LogFactory.getLog(AbstractWorkflowTest.class);
+	private static final Log logger = LogFactory.getLog(AbstractWorkflowTest.class);
 
 
 	@Resource(name = "WorkflowService")

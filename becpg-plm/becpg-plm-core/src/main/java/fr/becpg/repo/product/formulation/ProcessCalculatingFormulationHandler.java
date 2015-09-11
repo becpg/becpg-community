@@ -26,7 +26,6 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
-import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ResourceProductData;
 import fr.becpg.repo.product.data.constraints.ProcessListUnit;
@@ -38,45 +37,54 @@ import fr.becpg.repo.variant.filters.VariantFilters;
 
 public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler<ProductData> {
 
-	private static Log logger = LogFactory.getLog(ProcessCalculatingFormulationHandler.class);
+	private static final Log logger = LogFactory.getLog(ProcessCalculatingFormulationHandler.class);
 
 	private AlfrescoRepository<ResourceProductData> alfrescoRepository;
+	
+	private PackagingHelper packagingHelper;
 
 	public void setAlfrescoRepository(AlfrescoRepository<ResourceProductData> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
-	@SuppressWarnings("unchecked")
+	public void setPackagingHelper(PackagingHelper packagingHelper) {
+		this.packagingHelper = packagingHelper;
+	}
+
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 
 		logger.debug("process calculating visitor");
 
 		// no compo => no formulation
-		if (!formulatedProduct.hasProcessListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT)) {
+		if (!formulatedProduct.hasProcessListEl(new VariantFilters<>())) {
 			logger.debug("no process => no formulation");
 			return true;
 		}
-
-		if (formulatedProduct instanceof ResourceProductData) {
+		
+		if(formulatedProduct.getDefaultVariantPackagingData() == null){
+			formulatedProduct.setDefaultVariantPackagingData(packagingHelper.getDefaultVariantPackagingData(formulatedProduct));
+		}
+		
+		if (formulatedProduct instanceof ResourceProductData || formulatedProduct.getResourceParamList()!=null) {
 
 			int sort = 0;
 
 			List<ResourceParamListItem> toAdd = new LinkedList<>();
 			// Keep local param
-			for (ResourceParamListItem param : ((ResourceProductData) formulatedProduct).getResourceParamList()) {
+			for (ResourceParamListItem param : formulatedProduct.getResourceParamList()) {
 				if (param.getResource() == null) {
 					param.setSort(sort++);
 					toAdd.add(param);
 				}
 			}
 
-			for (ProcessListDataItem p : formulatedProduct.getProcessList(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT)) {
+			for (ProcessListDataItem p : formulatedProduct.getProcessList(new VariantFilters<>())) {
 				if (p.getResource() != null) {
 					ResourceProductData resource = alfrescoRepository.findOne(p.getResource());
 					for (ResourceParamListItem param : resource.getResourceParamList()) {
 						boolean isFound = false;
-						for (ResourceParamListItem param2 : ((ResourceProductData) formulatedProduct).getResourceParamList()) {
+						for (ResourceParamListItem param2 : formulatedProduct.getResourceParamList()) {
 							if (Objects.equals(param2.getParam(), param.getParam()) && Objects.equals(param2.getResource(), resource.getNodeRef())
 									&& Objects.equals(param2.getStep(), p.getStep()) && Objects.equals(param2.getParamType(), param.getParamType())) {
 								param2.setSort(sort++);
@@ -99,12 +107,12 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 
 			}
 
-			if (formulatedProduct.getEntityTpl() != null) {
+			if (formulatedProduct.getEntityTpl() != null && !formulatedProduct.getEntityTpl().equals(formulatedProduct)) {
 				// Set default params
-				List<ResourceParamListItem> templatePl = ((ResourceProductData) formulatedProduct.getEntityTpl()).getResourceParamList();
+				List<ResourceParamListItem> templatePl = formulatedProduct.getEntityTpl().getResourceParamList();
 				if (templatePl != null) {
 					for (ResourceParamListItem paramTpl : templatePl) {
-						for (ResourceParamListItem param : ((ResourceProductData) formulatedProduct).getResourceParamList()) {
+						for (ResourceParamListItem param : formulatedProduct.getResourceParamList()) {
 							if (Objects.equals(param.getParam(), paramTpl.getParam()) && Objects.equals(param.getResource(), paramTpl.getResource())
 									&& Objects.equals(param.getStep(), paramTpl.getStep())
 									&& Objects.equals(param.getParamType(), paramTpl.getParamType()) && paramTpl.getParamValue() != null
@@ -117,21 +125,31 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 				}
 			}
 
-			((ResourceProductData) formulatedProduct).getResourceParamList().clear();
-			((ResourceProductData) formulatedProduct).getResourceParamList().addAll(toAdd);
-			formulatedProduct.setUnit(ProductUnit.h);
+			formulatedProduct.getResourceParamList().clear();
+			formulatedProduct.getResourceParamList().addAll(toAdd);
+			if(formulatedProduct instanceof ResourceProductData){
+				formulatedProduct.setUnit(ProductUnit.h);
+			}
 
 		}
 
 		// visit resources and steps from the end to the beginning
+		for (ProcessListDataItem p : formulatedProduct.getProcessList(new VariantFilters<>())) {
 
-		for (ProcessListDataItem p : formulatedProduct.getProcessList(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT)) {
-
-			if (p.getRateResource() != null && p.getQtyResource() != null) {
+			if (p.getRateResource() != null) {
 				if (ProcessListUnit.P.equals(p.getUnit())) {
 					p.setRateProduct(p.getRateResource());
-				} else {
-					Double productQtyToTransform = p.getQty() != null ? p.getQty() : FormulationHelper.getNetWeight(formulatedProduct, null);
+				}
+				else if(ProcessListUnit.Box.equals(p.getUnit())){
+					if(formulatedProduct.getDefaultVariantPackagingData() != null && formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() != null){
+						p.setRateProduct(p.getRateResource() * formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes());
+					}
+					else{
+						throw new FormulateException("Number of product per boxes is not defined on product " + formulatedProduct.getNodeRef());
+					}					
+				}
+				else {
+					Double productQtyToTransform = p.getQty() != null ? p.getQty() : FormulationHelper.getNetWeight(formulatedProduct, null);										
 					if (productQtyToTransform != null) {
 						p.setRateProduct(p.getRateResource() / productQtyToTransform);
 					} else {

@@ -26,29 +26,29 @@ import java.util.Map;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.namespace.QName;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.listvalue.ListValueEntry;
 import fr.becpg.repo.listvalue.ListValueExtractor;
 import fr.becpg.repo.listvalue.ListValuePage;
-import fr.becpg.repo.listvalue.impl.AbstractBaseListValuePlugin;
+import fr.becpg.repo.listvalue.ListValuePlugin;
 
 /**
  * 
  * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
  * 
  */
-public class SecurityListValuePlugin extends AbstractBaseListValuePlugin {
+@Service
+public class SecurityListValuePlugin implements ListValuePlugin {
 
-	private static String TYPE_ACL_TYPE = "aclType";
+	private static final String TYPE_ACL_TYPE = "aclType";
 
-	private static String SEPARATOR = "|";
+	private static final String SEPARATOR = "|";
 
+	@Autowired
 	private ServiceRegistry serviceRegistry;
-
-	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
-		this.serviceRegistry = serviceRegistry;
-	}
 
 	@Override
 	public String[] getHandleSourceTypes() {
@@ -64,7 +64,7 @@ public class SecurityListValuePlugin extends AbstractBaseListValuePlugin {
 
 	public class StringValueExtractor implements ListValueExtractor<String> {
 
-		private String type;
+		private final String type;
 
 		public StringValueExtractor(String type) {
 			this.type = type;
@@ -73,7 +73,7 @@ public class SecurityListValuePlugin extends AbstractBaseListValuePlugin {
 		@Override
 		public List<ListValueEntry> extract(List<String> values) {
 
-			List<ListValueEntry> suggestions = new ArrayList<ListValueEntry>();
+			List<ListValueEntry> suggestions = new ArrayList<>();
 			if (values != null) {
 				for (String value : values) {
 					String[] splitted = value.split("\\|");
@@ -92,7 +92,7 @@ public class SecurityListValuePlugin extends AbstractBaseListValuePlugin {
 
 	private ListValuePage getAvailableEntityTypeNames(String query, Integer pageNum, Integer pageSize) {
 
-		List<String> suggestions = new ArrayList<String>();
+		List<String> suggestions = new ArrayList<>();
 
 		addSuggestions(serviceRegistry.getDictionaryService().getSubTypes(BeCPGModel.TYPE_ENTITY_V2, true), suggestions, query);
 		addSuggestions(serviceRegistry.getDictionaryService().getSubTypes(BeCPGModel.TYPE_ENTITYLIST_ITEM, true), suggestions, query);

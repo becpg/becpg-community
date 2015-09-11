@@ -48,7 +48,7 @@ import fr.becpg.repo.search.AdvSearchService;
 @Service("multiLevelDataListService")
 public class MultiLevelDataListServiceImpl implements MultiLevelDataListService {
 
-	private static Log logger = LogFactory.getLog(MultiLevelDataListServiceImpl.class);
+	private static final Log logger = LogFactory.getLog(MultiLevelDataListServiceImpl.class);
 
 	@Autowired
 	private EntityListDAO entityListDAO;
@@ -58,17 +58,16 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 
 	@Autowired
 	private AdvSearchService advSearchService;
-	
+
 	@Autowired
 	private PermissionService permissionService;
-	
+
 	@Autowired
 	private EntityDictionaryService entityDictionaryService;
-	
+
 	@Autowired
 	private AssociationService associationService;
-	
-	
+
 	@Override
 	public MultiLevelListData getMultiLevelListData(DataListFilter dataListFilter) {
 		StopWatch watch = null;
@@ -90,45 +89,53 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 		MultiLevelListData ret = new MultiLevelListData(entityNodeRef, currDepth);
 		if (maxDepthLevel < 0 || currDepth < maxDepthLevel) {
 			logger.debug("getMultiLevelListData depth :" + currDepth + " max " + maxDepthLevel);
-			NodeRef listsContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
-			if (listsContainerNodeRef != null) {
+			if (currDepth == 0 || !entityDictionaryService.isMultiLevelLeaf(nodeService.getType(entityNodeRef))) {
+				NodeRef listsContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
+				if (listsContainerNodeRef != null) {
 
-				NodeRef dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, dataListFilter.getDataType());
-				if (dataListNodeRef != null) {
+					NodeRef dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, dataListFilter.getDataType());
+					if (dataListNodeRef != null) {
 
-					List<NodeRef> childRefs = advSearchService.queryAdvSearch(dataListFilter.getDataType(),  
-							dataListFilter.getSearchQuery(dataListNodeRef), dataListFilter.getCriteriaMap(), RepoConsts.MAX_RESULTS_UNLIMITED);
-					//Adv search already filter by perm 
-					
-					for (NodeRef childRef : childRefs) {
-						entityNodeRef = getEntityNodeRef(childRef);
-						if (entityNodeRef != null) {
-							Integer depthLevel = (Integer) nodeService.getProperty(childRef, BeCPGModel.PROP_DEPTH_LEVEL);
-							if (logger.isDebugEnabled()) {
-								logger.debug("Append level:" + depthLevel + " at currLevel " + currDepth + " for "
-										+ nodeService.getProperty(entityNodeRef, org.alfresco.model.ContentModel.PROP_NAME));
+						List<NodeRef> childRefs = getListNodeRef(dataListNodeRef, dataListFilter);
+						// Adv search already filter by perm
+
+						for (NodeRef childRef : childRefs) {
+							entityNodeRef = getEntityNodeRef(childRef);
+							if (entityNodeRef != null) {
+								Integer depthLevel = (Integer) nodeService.getProperty(childRef, BeCPGModel.PROP_DEPTH_LEVEL);
+								if (logger.isDebugEnabled()) {
+									logger.debug("Append level:" + depthLevel + " at currLevel " + currDepth + " for "
+											+ nodeService.getProperty(entityNodeRef, org.alfresco.model.ContentModel.PROP_NAME));
+								}
+
+								MultiLevelListData tmp = getMultiLevelListData(dataListFilter, entityNodeRef, currDepth + (depthLevel != null ? depthLevel : 1), maxDepthLevel);
+								ret.getTree().put(childRef, tmp);
 							}
-
-							MultiLevelListData tmp = getMultiLevelListData(dataListFilter, entityNodeRef, currDepth + (depthLevel != null ? depthLevel : 1), maxDepthLevel);
-							ret.getTree().put(childRef, tmp);
 						}
 					}
 				}
-
 			}
 		}
 		return ret;
 	}
 
+	private List<NodeRef> getListNodeRef(NodeRef dataListNodeRef, DataListFilter dataListFilter) {
+		if (dataListFilter.isAllFilter() && entityDictionaryService.isSubClass(dataListFilter.getDataType(), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
+			return entityListDAO.getListItems(dataListNodeRef, dataListFilter.getDataType(), dataListFilter.getSortMap());
+		} else {
+			return advSearchService.queryAdvSearch(dataListFilter.getDataType(), dataListFilter.getSearchQuery(dataListNodeRef), dataListFilter.getCriteriaMap(), RepoConsts.MAX_RESULTS_UNLIMITED);
+		}
+	}
+
 	private NodeRef getEntityNodeRef(NodeRef listItemNodeRef) {
 		QName pivotAssoc = entityDictionaryService.getDefaultPivotAssoc(nodeService.getType(listItemNodeRef));
-		if(pivotAssoc!=null) {
+		if (pivotAssoc != null) {
 			NodeRef part = associationService.getTargetAssoc(listItemNodeRef, pivotAssoc);
-			if( part!=null && permissionService.hasPermission( part,PermissionService.READ) == AccessStatus.ALLOWED){
+			if (part != null && permissionService.hasPermission(part, PermissionService.READ) == AccessStatus.ALLOWED) {
 				return part;
 			}
 		}
-		
+
 		return null;
 	}
 

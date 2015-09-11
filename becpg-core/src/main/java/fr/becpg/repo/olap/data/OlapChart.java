@@ -28,7 +28,6 @@ import javax.xml.transform.TransformerException;
 
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
@@ -38,13 +37,15 @@ import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 import fr.becpg.common.dom.DOMUtils;
+
 /**
  * Store Chart infos
+ * 
  * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
  *
  */
 public class OlapChart {
-	
+
 	private NodeRef nodeRef;
 	private String queryName;
 	private String queryId;
@@ -52,9 +53,8 @@ public class OlapChart {
 	private String cube;
 	private String type;
 	private String xml;
-	
-	
-	private static Log logger = LogFactory.getLog(OlapChart.class);
+
+	private static final Log logger = LogFactory.getLog(OlapChart.class);
 
 	public OlapChart(FileInfo fileInfo) {
 		super();
@@ -62,112 +62,93 @@ public class OlapChart {
 		this.nodeRef = fileInfo.getNodeRef();
 	}
 
-
 	public OlapChart(String queryName) {
 		// TODO Auto-generated constructor stub
 	}
-
 
 	public String getQueryName() {
 		return queryName;
 	}
 
-
 	public String getQueryId() {
 		return queryId;
 	}
-
 
 	public String getMdx() {
 		return mdx;
 	}
 
-
 	public String getCube() {
 		return cube;
 	}
 
-
 	public String getType() {
 		return type;
 	}
-	
-	
-
 
 	public String getXml() {
 		return xml;
 	}
-	
-	
-
 
 	public NodeRef getNodeRef() {
 		return nodeRef;
 	}
 
-
 	/**
-	 * Parse Xml response 
+	 * Parse Xml response
+	 * 
 	 * @param buildQueryUrl
-	 * @throws FactoryConfigurationError 
-	 * @throws IOException 
-	 * @throws SAXException 
-	 * @throws MalformedURLException 
-	 * @throws ParserConfigurationException 
-	 * @throws TransformerException 
-	 * @throws JSONException 
+	 * @throws FactoryConfigurationError
+	 * @throws IOException
+	 * @throws SAXException
+	 * @throws MalformedURLException
+	 * @throws ParserConfigurationException
+	 * @throws TransformerException
+	 * @throws JSONException
 	 */
 
-//	<?xml version="1.0" encoding="UTF-8"?>
-//	<Query name="4B5AF0DE-4F20-6223-A9FB-1A2FDB5F3FBD" type="MDX" connection="foodmart" cube="[Sales Ragged]" catalog="FoodMart" schema="FoodMart">
-//	  <MDX>SELECT
-//	NON EMPTY {Hierarchize({[Store].[Store Country].Members})} ON COLUMNS,
-//	NON EMPTY {Hierarchize({[Measures].[Grocery Sqft]})} ON ROWS
-//	FROM [Store]</MDX>
-//	</Query>
-	public void load(String xml) throws MalformedURLException, SAXException, IOException, ParserConfigurationException, FactoryConfigurationError, TransformerException, JSONException  {
-		logger.debug("Get XML data query from xml"+xml);
+	// <?xml version="1.0" encoding="UTF-8"?>
+	// <Query name="4B5AF0DE-4F20-6223-A9FB-1A2FDB5F3FBD" type="MDX"
+	// connection="foodmart" cube="[Sales Ragged]" catalog="FoodMart"
+	// schema="FoodMart">
+	// <MDX>SELECT
+	// NON EMPTY {Hierarchize({[Store].[Store Country].Members})} ON COLUMNS,
+	// NON EMPTY {Hierarchize({[Measures].[Grocery Sqft]})} ON ROWS
+	// FROM [Store]</MDX>
+	// </Query>
+	public void load(String xml) throws MalformedURLException, SAXException, IOException, ParserConfigurationException, FactoryConfigurationError, TransformerException, JSONException {
+		logger.trace("Get XML data query from xml" + xml);
 		this.xml = xml;
-		
-		InputStream is = new ByteArrayInputStream(xml.getBytes());
-		
-		try {
+
+		try (InputStream is = new ByteArrayInputStream(xml.getBytes())) {
+
 			Document doc = DOMUtils.parse(is);
-			if(doc!=null){
+			if (doc != null) {
 				Element queryEl = (Element) doc.getFirstChild();
-				if(queryEl!=null){
+				if (queryEl != null) {
 					queryId = queryEl.getAttribute("name");
 					cube = queryEl.getAttribute("cube");
 					type = queryEl.getAttribute("type");
-					mdx = DOMUtils.getElementText(queryEl,"MDX");
+					mdx = DOMUtils.getElementText(queryEl, "MDX");
 				}
 			}
-		} 
-		
-		finally {
-			IOUtils.closeQuietly(is);
+
 		}
 	}
 
-	
-
 	public JSONObject toJSONObject() throws JSONException {
-		JSONObject obj = new JSONObject();		
-		obj.put("queryName",queryName);
-		obj.put("queryId",queryId);
-		//obj.put("mdx",mdx);
-		obj.put("cube",cube);
-		obj.put("type",type);
+		JSONObject obj = new JSONObject();
+		obj.put("queryName", queryName);
+		obj.put("queryId", queryId);
+		// obj.put("mdx",mdx);
+		obj.put("cube", cube);
+		obj.put("type", type);
 		obj.put("noderef", nodeRef);
 		return obj;
 	}
-
 
 	public void setQueryId(String queryId) {
 		this.queryId = queryId;
 	}
 
-	
-	
 }

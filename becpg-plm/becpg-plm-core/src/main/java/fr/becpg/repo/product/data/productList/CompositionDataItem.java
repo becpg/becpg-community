@@ -21,19 +21,16 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.repository.RepositoryEntity;
 
-public interface CompositionDataItem extends RepositoryEntity  {
+public interface CompositionDataItem extends RepositoryEntity, Cloneable {
 
-	NodeRef getProduct();
+	NodeRef getComponent();
 
-	void setProduct(NodeRef targetItem);
+	void setComponent(NodeRef targetItem);
 
 	Double getQty();
 
 	void setQty(Double d);
-
-	//TODO try to remove
-	@Deprecated
-	CompositionDataItem createCopy();
-
+	
+	CompositionDataItem clone();
 
 }

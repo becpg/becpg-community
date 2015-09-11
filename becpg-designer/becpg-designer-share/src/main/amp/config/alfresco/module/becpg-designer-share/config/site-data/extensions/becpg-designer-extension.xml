@@ -1,0 +1,25 @@
+<extension>
+	<modules>
+		<module>
+			<id>becpg-designer-extension</id>
+			<auto-deploy>true</auto-deploy>
+			<customizations>
+				<customization>
+		          <targetPackageRoot>org.alfresco.share.header</targetPackageRoot>
+		          <sourcePackageRoot>org.alfresco.components.custom-menu-designer</sourcePackageRoot>
+		        </customization>
+				 <customization>
+		          <targetPackageRoot>org.alfresco.share.pages</targetPackageRoot>
+		          <sourcePackageRoot>org.alfresco.components.custom-menu-designer</sourcePackageRoot>
+		          <alwaysApply>
+					   <webscript>share-header</webscript>
+				   </alwaysApply>
+		        </customization>
+		   		<customization>
+		          <targetPackageRoot>org.alfresco.components.console</targetPackageRoot>
+		          <sourcePackageRoot>org.alfresco.components.custom-console</sourcePackageRoot>
+		        </customization>     
+		   </customizations>
+		</module>
+	</modules>
+</extension>  

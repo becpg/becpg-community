@@ -1,0 +1,96 @@
+.project-list {
+	clear: both;
+}
+
+.project-list .alfresco-datatable thead {
+	display: table-header-group;
+}
+
+.datagrid .datagrid-bar .item-select {
+	float: left;
+	width: auto;
+}
+
+div.legend.project-list  {
+	float:right;
+	margin-top:10px;
+}
+
+/* Data Table */
+
+div.legend.project-list  {
+	float:right;
+	margin-top:10px;
+}
+
+.project-list .projects table {
+	border: medium none;
+	width: 100%;
+}
+
+.project-list .projects tbody {
+	outline: none;
+}
+
+.project-list .projects .yui-dt table {
+	border: none;
+}
+
+.project-list tr.yui-dt-odd {
+	background-color: #ffffff;
+}
+
+.project-list .projects td.yui-dt-last .yui-dt-liner {
+	visibility: hidden;
+}
+
+.project-list div.projects{
+	border: 1px solid rgb(203, 203, 203);
+}
+
+.project-list .projects tr:hover td.yui-dt-last .yui-dt-liner {
+	border-left: 1px solid #c5e6e9;
+	visibility: visible;
+}
+
+.project-list .projects .yui-dt-data td {
+	border-bottom: 1px dashed #d9d9d9;
+	border-right: medium none;
+	vertical-align: middle;
+}
+
+.project-list .projects .yui-dt-data .yui-dt-last td {
+	border-bottom: medium none;
+}
+
+.project-list .projects tr.yui-dt-first td {
+	border-top: medium none;
+}
+
+.project-list .projects td.yui-dt-last {
+	border-left: 1px solid #fff;
+	vertical-align: middle;
+}
+
+.project-list .yui-dt-liner {
+	padding: 4px;
+}
+
+.project-list .projects tr.yui-dt-first td.yui-dt-empty,.project-list .projects tr.yui-dt-first td.yui-dt-loading
+	{
+	border-right: medium none;
+	padding: 0.5em 1em;
+}
+
+.project-list .yui-dt-error {
+	background: red;
+	color: white;
+	font-weight: bold;
+	margin: 1em auto;
+	padding: 1em;
+}
+
+/* This rule is vital to workaround a Firefox mouseout bug */
+.project-list .yui-dt-col-2 {
+	overflow: visible;
+}

@@ -49,7 +49,7 @@ import fr.becpg.test.data.EntityTestData;
  */
 public class ProjectServiceTest extends AbstractProjectTestCase {	
 
-	private static Log logger = LogFactory.getLog(ProjectServiceTest.class);
+	private static final Log logger = LogFactory.getLog(ProjectServiceTest.class);
 	
 	@Resource
 	private EntityTplProjectPlugin entityTplProjectPlugin;
@@ -60,7 +60,8 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	@Resource
 	private CopyService copyService;
 	
-	@Resource private PersonService personService;
+	@Resource 
+	private PersonService personService;
 
 	/**
 	 * Test a project create InProgress start automatically
@@ -68,7 +69,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	@Test
 	public void testCreateProjectInProgress() {
 
-		createProject(ProjectState.InProgress, new Date(), null);
+		final NodeRef projectNodeRef = createProject(ProjectState.InProgress, new Date(), null);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
@@ -99,7 +100,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	@Test
 	public void testCancelProject() {
 
-		createProject(ProjectState.InProgress, new Date(), null);
+		final NodeRef projectNodeRef = createProject(ProjectState.InProgress, new Date(), null);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
@@ -130,7 +131,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	@Test
 	public void testDeleteProject() {
 
-		createProject(ProjectState.InProgress, new Date(), null);
+		final NodeRef projectNodeRef = createProject(ProjectState.InProgress, new Date(), null);
 
 		final String workflowInstanceId = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<String>() {
 			@Override
@@ -198,9 +199,9 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 		NodeRef legendNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(
 				new RetryingTransactionCallback<NodeRef>() {
 					@Override
-					public NodeRef execute() throws Throwable {
+					public NodeRef execute() throws Exception {
 
-						ChildAssociationRef assocRef = nodeService.createNode(testFolderNodeRef,
+						ChildAssociationRef assocRef = nodeService.createNode(getTestFolderNodeRef(),
 								ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, ProjectModel.TYPE_TASK_LEGEND);
 
 						return assocRef.getChildRef();
@@ -215,7 +216,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	@Test
 	public void testInitDeliverables() throws InterruptedException {
 
-		createProject(ProjectState.Planned, new Date(), null);
+		final NodeRef projectNodeRef = createProject(ProjectState.Planned, new Date(), null);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
@@ -284,7 +285,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 
 		final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
-		createProject(ProjectState.OnHold, null, dateFormat.parse("15/11/2012"));
+		final NodeRef projectNodeRef = createProject(ProjectState.OnHold, null, dateFormat.parse("15/11/2012"));
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
@@ -337,12 +338,12 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 								null, null, null, PlanningMode.Planning, null, null, null, 0, null);
 						
 						// create datalists
-						List<TaskListDataItem> taskList = new LinkedList<TaskListDataItem>();
+						List<TaskListDataItem> taskList = new LinkedList<>();
 						taskList.add(new TaskListDataItem(null, "task1", false, 2, null, assigneesOne, taskLegends.get(0),
 								"activiti$projectAdhoc"));
 						projectData.setTaskList(taskList);
 						
-						projectData.setParentNodeRef(testFolderNodeRef);
+						projectData.setParentNodeRef(getTestFolderNodeRef());
 						projectData = (ProjectData) alfrescoRepository.save(projectData);
 						
 						// start
@@ -372,7 +373,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	@Test
 	public void testCalculateScoring() {
 
-		createProject(ProjectState.Planned, new Date(), null);
+		final NodeRef projectNodeRef =	createProject(ProjectState.Planned, new Date(), null);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
@@ -429,14 +430,14 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	public void testProjectState(){
 
 		
-		projectNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(
+		final NodeRef projectNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(
 				new RetryingTransactionCallback<NodeRef>() {
 					@Override
 					public NodeRef execute() throws Throwable {						
 
 
 						EntityTestData entityTestData = new EntityTestData();
-						entityTestData.setParentNodeRef(testFolderNodeRef);
+						entityTestData.setParentNodeRef(getTestFolderNodeRef());
 						entityTestData.setName("Entity 1");
 						
 						alfrescoRepository.save(entityTestData);
@@ -445,10 +446,10 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 						ProjectData projectData = new ProjectData(null, "Pjt 1", PROJECT_HIERARCHY1_SEA_FOOD_REF, PROJECT_HIERARCHY2_CRUSTACEAN_REF, new Date(),
 								null, null, PlanningMode.Planning, 2, ProjectState.InProgress, null, 0, productNodeRefs);
 
-						projectData.setParentNodeRef(testFolderNodeRef);
+						projectData.setParentNodeRef(getTestFolderNodeRef());
 						
 						// create datalists
-						List<TaskListDataItem> taskList = new LinkedList<TaskListDataItem>();
+						List<TaskListDataItem> taskList = new LinkedList<>();
 
 						taskList.add(new TaskListDataItem(null, "task1", false, 2, null, assigneesOne, taskLegends.get(0),
 								"activiti$projectAdhoc"));
@@ -490,7 +491,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	@Test
 	public void testTaskWorkflow() {
 
-		createProject(ProjectState.Planned, null, null);
+		final NodeRef projectNodeRef =createProject(ProjectState.Planned, null, null);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 
@@ -543,9 +544,9 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	@Test
 	public void testCopyProject() {
 
-		createProject(ProjectState.InProgress, null, null);
+		final NodeRef projectNodeRef = createProject(ProjectState.InProgress, null, null);
 
-		final String workflowInstance =  transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<String>() {
+		final String workflowInstance = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<String>() {
 			@Override
 			public String execute() throws Throwable {
 
@@ -562,14 +563,22 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 
 		}, false, true);
 
+		final NodeRef copiedProjectNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+
+			@Override
+			public NodeRef execute() throws Throwable {
+
+				return copyService.copy(projectNodeRef, getTestFolderNodeRef(),
+						ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);				
+				
+			}
+		}, false, true);
+		
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				NodeRef copiedProjectNodeRef = copyService.copy(projectNodeRef, testFolderNodeRef,
-						ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, true);				
-				
 				// check
 				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(copiedProjectNodeRef);
 				assertEquals(ProjectState.InProgress, projectData.getProjectState());
@@ -578,16 +587,17 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 				assertTrue(projectWorkflowService.isWorkflowActive(projectData.getTaskList().get(0)));
 				assertEquals(TaskState.InProgress, projectData.getTaskList().get(0).getTaskState());
 				assertEquals(DeliverableState.InProgress, projectData.getDeliverableList().get(0).getState());
+				
 				return null;
 				
 			}
-		}, false, true);		
+		}, false, true);
 	}
 	
 	@Test
 	public void testWorkflowProperitesSynchronization() {
 
-		createProject(ProjectState.InProgress, new Date(), null);
+		final NodeRef projectNodeRef = createProject(ProjectState.InProgress, new Date(), null);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
@@ -651,7 +661,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	@Test
 	public void testTaskListOrDeliverableListDeleted() {
 
-		createProject(ProjectState.InProgress, new Date(), null);
+		final NodeRef projectNodeRef = createProject(ProjectState.InProgress, new Date(), null);
 
 		final String finalWorkflowInstanceId = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<String>() {
 			@Override
@@ -709,7 +719,7 @@ public class ProjectServiceTest extends AbstractProjectTestCase {
 	@Test
 	public void testDeleteTaskAndDependancies() {
 
-		createProject(ProjectState.InProgress, new Date(), null);
+		final NodeRef projectNodeRef =	createProject(ProjectState.InProgress, new Date(), null);
 			
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override

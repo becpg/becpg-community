@@ -42,15 +42,13 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.QualityModel;
-import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AssociationService;
-import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.util.ApplicationContextHelper;
 
 public class NCWorkflowUtils {
 
-	private static Log logger = LogFactory.getLog(NCWorkflowUtils.class);
+	private static final Log logger = LogFactory.getLog(NCWorkflowUtils.class);
 
 	public interface NCWorkflowUtilsTask {
 
@@ -80,7 +78,7 @@ public class NCWorkflowUtils {
 		AssociationService associationService = ApplicationContextHelper.getApplicationContext().getBean(fr.becpg.repo.helper.AssociationService.class);
 		EntityService entityService = ApplicationContextHelper.getApplicationContext().getBean(fr.becpg.repo.entity.EntityService.class);
 		
-		Map<QName, Serializable> properties = new HashMap<QName, Serializable>(2);
+		Map<QName, Serializable> properties = new HashMap<>(2);
 		if (task.getVariable("ncwf_ncState") != null) {
 			properties.put(QualityModel.PROP_NC_STATE, (String) task.getVariable("ncwf_ncState"));
 		}

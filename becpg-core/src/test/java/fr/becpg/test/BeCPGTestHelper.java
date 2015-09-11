@@ -38,7 +38,7 @@ public class BeCPGTestHelper {
 
 	
 	
-	private static Log logger = LogFactory.getLog(BeCPGTestHelper.class);
+	private static final Log logger = LogFactory.getLog(BeCPGTestHelper.class);
 	
 	
 	
@@ -80,7 +80,7 @@ public class BeCPGTestHelper {
 	
 	public static NodeRef createGroup(String groupName, String user){
 		
-		Set<String> zones = new HashSet<String>();
+		Set<String> zones = new HashSet<>();
 		zones.add(AuthorityService.ZONE_APP_DEFAULT);
 		zones.add(AuthorityService.ZONE_APP_SHARE);
 		zones.add(AuthorityService.ZONE_AUTH_ALFRESCO);
@@ -96,7 +96,7 @@ public class BeCPGTestHelper {
 	
 
 	public static NodeRef createUser(String userName) {
-		if (RepoBaseTestCase.INSTANCE.authenticationService.authenticationExists(userName) == false) {
+		if (!RepoBaseTestCase.INSTANCE.authenticationService.authenticationExists(userName)) {
 			RepoBaseTestCase.INSTANCE.authenticationService.createAuthentication(userName, "PWD".toCharArray());
 
 			PropertyMap ppOne = new PropertyMap(4);

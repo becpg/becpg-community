@@ -24,7 +24,7 @@ import fr.becpg.repo.report.entity.EntityReportService;
 @Deprecated
 public class ReportWebScript extends AbstractWebScript {
 
-	private static Log logger = LogFactory.getLog(ReportWebScript.class);
+	private static final Log logger = LogFactory.getLog(ReportWebScript.class);
 
 	private static final String ACTION_CHECK_DATALISTS = "check-datalists";
 	private static final String ACTION_FORCE = "force";
@@ -63,7 +63,7 @@ public class ReportWebScript extends AbstractWebScript {
 		String nodeId = templateArgs.get(PARAM_ID);
 
 		NodeRef nodeRef = new NodeRef(storeType, storeId, nodeId);
-		boolean generateReport = false;
+		boolean generateReport;
 
 		if (nodeService.exists(nodeRef) && lockService.getLockStatus(nodeRef) == LockStatus.NO_LOCK) {
 

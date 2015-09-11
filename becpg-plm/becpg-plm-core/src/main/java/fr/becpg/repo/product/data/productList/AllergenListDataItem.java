@@ -15,18 +15,41 @@ import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.model.AspectAwareDataItem;
+import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 
 @AlfType
 @AlfQname(qname = "bcpg:allergenList")
-public class AllergenListDataItem extends AbstractManualVariantListDataItem {
+public class AllergenListDataItem extends AbstractManualVariantListDataItem implements SimpleCharactDataItem, AspectAwareDataItem {
 
+	private static final long serialVersionUID = -6746076643301742367L;
 	private Double qtyPerc;
 	private Boolean voluntary = false;
 	private Boolean inVoluntary = false;
-	private List<NodeRef> voluntarySources = new ArrayList<NodeRef>();
-	private List<NodeRef> inVoluntarySources = new ArrayList<NodeRef>();
+	private List<NodeRef> voluntarySources = new ArrayList<>();
+	private List<NodeRef> inVoluntarySources = new ArrayList<>();
 	private NodeRef allergen;
 	
+	
+	@Override
+	public void setCharactNodeRef(NodeRef nodeRef) {
+		this.allergen = nodeRef;
+	}
+
+	@Override
+	public void setValue(Double value) {
+		 this.qtyPerc = value;
+	}
+
+	@Override
+	public NodeRef getCharactNodeRef() {
+		return allergen;
+	}
+
+	@Override
+	public Double getValue() {
+		return qtyPerc;
+	}
 	
 	
 	@AlfProp
@@ -182,6 +205,8 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem {
 		return "AllergenListDataItem [voluntary=" + voluntary + ", inVoluntary=" + inVoluntary + ", voluntarySources=" + voluntarySources + ", inVoluntarySources="
 				+ inVoluntarySources + ", allergen=" + allergen + ", isManual=" + isManual + ", nodeRef=" + nodeRef + ", parentNodeRef=" + parentNodeRef + ", name=" + name + "]";
 	}
+
+
 
 	
 	

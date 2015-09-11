@@ -36,10 +36,10 @@ public class RepoServiceImpl implements RepoService {
 	
 	
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(RepoServiceImpl.class);
-	
+	private static final Log logger = LogFactory.getLog(RepoServiceImpl.class);
+
 	@Autowired
-	private NodeService nodeService = null;	
+	private final NodeService nodeService = null;
 	
 	@Autowired
 	private FileFolderService fileFolderService;
@@ -77,13 +77,9 @@ public class RepoServiceImpl implements RepoService {
 		
 		if(folderNodeRef == null){
 			logger.debug("Create folder : " + name + "  ");
-			
-			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-			
-			
-			
+
+			Map<QName, Serializable> properties = new HashMap<>();
 	    	properties.put(ContentModel.PROP_NAME, PropertiesHelper.cleanFolderName(name));	    		    	
-	    	
 	    	folderNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS, 
 	    											QName.resolveToQName(namespaceService, path), 
 	    											ContentModel.TYPE_FOLDER, properties).getChildRef();	    		 

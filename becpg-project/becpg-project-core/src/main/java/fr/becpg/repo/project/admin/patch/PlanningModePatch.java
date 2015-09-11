@@ -31,7 +31,7 @@ import fr.becpg.repo.project.data.PlanningMode;
  */
 public class PlanningModePatch extends AbstractBeCPGPatch {
 
-	private static Log logger = LogFactory.getLog(PlanningModePatch.class);
+	private static final Log logger = LogFactory.getLog(PlanningModePatch.class);
 	private static final String MSG_SUCCESS = "patch.bcpg.plm.planningModePatch.result";
 
 	private NodeDAO nodeDAO;
@@ -50,14 +50,14 @@ public class PlanningModePatch extends AbstractBeCPGPatch {
 			AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
 			BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
-				final List<NodeRef> result = new ArrayList<NodeRef>();
+				final List<NodeRef> result = new ArrayList<>();
 
-				long maxNodeId = getPatchDAO().getMaxAdmNodeID();
+				final long maxNodeId = getPatchDAO().getMaxAdmNodeID();
 
-				long minSearchNodeId = 1;
+				long minSearchNodeId = 0;
 				long maxSearchNodeId = count;
 
-				Pair<Long, QName> val = getQnameDAO().getQName(ProjectModel.TYPE_PROJECT);
+				final Pair<Long, QName> val = getQnameDAO().getQName(ProjectModel.TYPE_PROJECT);
 
 				public int getTotalEstimatedWorkSize() {
 					return result.size();
@@ -89,7 +89,7 @@ public class PlanningModePatch extends AbstractBeCPGPatch {
 				}
 			};
 
-			BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<NodeRef>("PlanningModePatch",
+			BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("PlanningModePatch",
 					transactionService.getRetryingTransactionHelper(), workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 1000);
 
 			BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {

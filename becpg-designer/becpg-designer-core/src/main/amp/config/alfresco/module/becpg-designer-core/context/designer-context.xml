@@ -1,0 +1,129 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+  Copyright (C) 2010-2015 beCPG. 
+   
+  This file is part of beCPG 
+   
+  beCPG is free software: you can redistribute it and/or modify 
+  it under the terms of the GNU Lesser General Public License as published by 
+  the Free Software Foundation, either version 3 of the License, or 
+  (at your option) any later version. 
+   
+  beCPG is distributed in the hope that it will be useful, 
+  but WITHOUT ANY WARRANTY; without even the implied warranty of 
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+  GNU Lesser General Public License for more details. 
+   
+  You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
+-->
+<!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN 2.0//EN' 'http://www.springframework.org/dtd/spring-beans-2.0.dtd'>
+
+<beans>
+
+		<!-- beCPG configuration files -->
+	<bean name="becpgDesignerPlaceholderConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
+		<property name="ignoreResourceNotFound" value="true"></property>
+		<property name="locations">
+			<list>
+				<value>classpath:alfresco/module/${pom.artifactId}/becpg-config-designer.properties</value>
+				<value>classpath*:designer.properties</value>	
+				<value>classpath*:beCPG.properties</value>
+			</list>
+		</property>
+	</bean>
+
+
+	<bean id="becpgDesignerBootstrapMessages" class="org.alfresco.i18n.ResourceBundleBootstrapComponent">
+		<property name="resourceBundles">
+			<list>
+				<value>alfresco/module/${pom.artifactId}/messages/controls</value>
+				<value>alfresco/module/${pom.artifactId}/messages/path</value>
+			</list>
+		</property>
+	</bean>
+
+
+	<bean id="metaModelVisitor" class="fr.becpg.repo.designer.impl.MetaModelVisitor">
+		<property name="nodeService" ref="nodeService" />
+		<property name="namespaceService" ref="namespaceService" />
+	</bean>
+
+	<bean id="designerTreeVisitor" class="fr.becpg.repo.designer.impl.DesignerTreeVisitor">
+		<property name="nodeService" ref="nodeService" />
+		<property name="namespaceService" ref="namespaceService" />
+	</bean>
+
+
+	<bean id="formModelVisitor" class="fr.becpg.repo.designer.impl.FormModelVisitor">
+		<property name="nodeService" ref="nodeService" />
+	</bean>
+
+	<bean id="designerService" class="fr.becpg.repo.designer.impl.DesignerServiceImpl"
+		init-method="init">
+		<property name="metaModelVisitor" ref="metaModelVisitor" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="contentService" ref="contentService" />
+		<property name="formModelVisitor" ref="formModelVisitor" />
+		<property name="designerTreeVisitor" ref="designerTreeVisitor" />
+		<property name="configPath" value="${beCPG.designer.configPath}" />
+		<property name="dictionaryService" ref="dictionaryService" />
+		<property name="designerInitService" ref="designerInitService" />
+		<property name="mimetypeService" ref="mimetypeService" />
+		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
+		<property name="dictionaryDAO" ref="dictionaryDAO" />
+	</bean>
+
+
+	
+	<bean id="designerWorkflowDeployer" class="fr.becpg.repo.designer.workflow.DesignerWorkflowDeployer">
+		<property name="nodeService" ref="nodeService" />
+		<property name="contentService" ref="contentService" />
+		<property name="namespaceService" ref="namespaceService" />
+	 	<property name="dictionaryService" ref="dictionaryService" />
+	 	<property name="designerService" ref="designerService" />
+	</bean>
+
+	<bean id="designerWorkflowDefinition" class="fr.becpg.repo.designer.workflow.WorkflowDefinitionType"
+		init-method="init">
+		<property name="nodeService" ref="nodeService" />
+		<property name="policyComponent" ref="policyComponent" />
+		<property name="designerWorkflowDeployer" ref="designerWorkflowDeployer" />
+	</bean>
+
+
+	<!-- Webscripts -->
+
+	<bean id="webscript.fr.becpg.designer.formControls.get"
+		class="fr.becpg.repo.designer.web.scripts.FormControlsWebScript"
+		parent="webscript">
+		<property name="designerService" ref="designerService" />
+	</bean>
+
+
+	<bean id="webscript.fr.becpg.designer.modelTree.get" class="fr.becpg.repo.designer.web.scripts.ModelTreeWebScript"
+		parent="webscript">
+		<property name="designerService" ref="designerService" />
+	</bean>
+
+
+	<bean id="webscript.fr.becpg.designer.createElement.post"
+		class="fr.becpg.repo.designer.web.scripts.CreateModelElementWebScript"
+		parent="webscript">
+		<property name="designerService" ref="designerService" />
+		<property name="namespaceService" ref="namespaceService" />
+	</bean>
+
+
+	<bean id="webscript.fr.becpg.designer.publish.post" class="fr.becpg.repo.designer.web.scripts.PublishWebScript"
+		parent="webscript">
+		<property name="designerService" ref="designerService" />
+	</bean>
+	
+	<bean id="webscript.fr.becpg.designer.unpublish.post" class="fr.becpg.repo.designer.web.scripts.UnPublishWebScript"
+		parent="webscript">
+		<property name="designerService" ref="designerService" />
+	</bean>
+
+</beans>

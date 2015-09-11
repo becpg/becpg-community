@@ -13,6 +13,7 @@ import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,7 @@ import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -60,13 +62,11 @@ import fr.becpg.config.mapping.HierarchyMapping;
 import fr.becpg.config.mapping.MappingException;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
-import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.remote.extractor.RemoteHelper;
 import fr.becpg.repo.helper.RepoService;
-import fr.becpg.repo.hierarchy.HierarchyHelper;
 import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.importer.ClassMapping;
 import fr.becpg.repo.importer.ImportContext;
@@ -81,65 +81,43 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 public class AbstractImportVisitor implements ImportVisitor, ApplicationContextAware {
 
-	/** The Constant QUERY_XPATH_MAPPING. */
 	protected static final String QUERY_XPATH_MAPPING = "mapping";
 
-	/** The Constant QUERY_XPATH_DATE_FORMAT. */
 	protected static final String QUERY_XPATH_DATE_FORMAT = "settings/setting[@id='dateFormat']/@value";
 
 	protected static final String QUERY_XPATH_DATETIME_FORMAT = "settings/setting[@id='datetimeFormat']/@value";
 
 	protected static final String QUERY_XPATH_DECIMAL_PATTERN = "settings/setting[@id='decimalPattern']/@value";
 
-	/** The Constant QUERY_XPATH_NODE_COLUMN_KEY. */
 	protected static final String QUERY_XPATH_NODE_COLUMN_KEY = "nodeColumnKeys/nodeColumnKey";
 
-	/** The Constant QUERY_XPATH_DATALIST_COLUMN_KEY. */
 	protected static final String QUERY_XPATH_DATALIST_COLUMN_KEY = "dataListColumnKeys/dataListColumnKey";
 
-	/** The Constant QUERY_XPATH_COLUMNS_ATTRIBUTE. */
 	protected static final String QUERY_XPATH_COLUMNS_ATTRIBUTE = "columns/column[@type='Attribute']";
 
 	protected static final String QUERY_XPATH_COLUMNS_FORMULA = "columns/column[@type='Formula']";
 
-	/** The Constant QUERY_XPATH_COLUMNS_DATALIST. */
-	protected static final String QUERY_XPATH_COLUMNS_DATALIST = "columns/column[@type='Characteristic']"; // productLists,
-																											// projectLists
-																											// and
-																											// more...
+	protected static final String QUERY_XPATH_COLUMNS_DATALIST = "columns/column[@type='Characteristic']"; 
 
-	/** The Constant QUERY_XPATH_COLUMNS_FILE. */
 	protected static final String QUERY_XPATH_COLUMNS_FILE = "columns/column[@type='File']";
 
-	/** The Constant QUERY_ATTR_GET_ID. */
 	protected static final String QUERY_ATTR_GET_ID = "@id";
 
-	/** The Constant QUERY_ATTR_GET_ATTRIBUTE. */
 	protected static final String QUERY_ATTR_GET_ATTRIBUTE = "@attribute";
 
 	protected static final String QUERY_ATTR_GET_TARGET_CLASS = "@targetClass";
 
-	/** The Constant QUERY_ATTR_GET_NAME. */
 	protected static final String QUERY_ATTR_GET_NAME = "@name";
 
-	/** The Constant QUERY_ATTR_GET_DATALIST_QNAME. */
 	protected static final String QUERY_ATTR_GET_DATALIST_QNAME = "@dataListQName";
 
-	/** The Constant QUERY_ATTR_GET_PATH. */
 	protected static final String QUERY_ATTR_GET_PATH = "@path";
 
-	/** The Constant QUERY_ATTR_GET_CHARACT_QNAME. */
 	protected static final String QUERY_ATTR_GET_CHARACT_QNAME = "@charactQName";
 
-	/** The Constant QUERY_ATTR_GET_CHARACT_NODE_REF. */
 	protected static final String QUERY_ATTR_GET_CHARACT_NODE_REF = "@charactNodeRef";
 
-	/** The Constant QUERY_ATTR_GET_CHARACT_NAME. */
 	protected static final String QUERY_ATTR_GET_CHARACT_NAME = "@charactName";
-
-	/**
-	 * Hierarchy
-	 */
 
 	private static final String QUERY_XPATH_COLUMNS_HIERARCHY = "columns/column[@type='Hierarchy']";
 
@@ -161,7 +139,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	protected static final String MSG_ERROR_GET_ASSOC_TARGET = "import_service.error.err_get_assoc_target";
 	protected static final String MSG_ERROR_NO_DOCS_BASE_PATH_SET = "import_service.error.err_no_docs_base_path_set";
 
-	private static Log logger = LogFactory.getLog(AbstractImportVisitor.class);
+	private static final Log logger = LogFactory.getLog(AbstractImportVisitor.class);
 
 	protected NodeService nodeService;
 
@@ -248,7 +226,8 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		NodeRef nodeRef = findNode(importContext, importContext.getType(), properties);
 
 		if (nodeRef == null) {
-			String name = (String) properties.get(ContentModel.PROP_NAME);
+			String name = getName(importContext.getType(), properties);
+
 			if (logger.isDebugEnabled()) {
 				logger.debug("create node. Type: " + importContext.getType() + " - Properties: " + properties);
 			}
@@ -291,6 +270,19 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		return nodeRef;
 	}
 
+	private String getName(QName type, Map<QName, Serializable> properties) {
+		String name = null;
+		QName propName = RemoteHelper.getPropName(type, dictionaryService);
+		if(properties.get(propName)!=null){
+			if(properties.get(propName) instanceof MLText){
+				name = ((MLText)properties.get(propName)).getDefaultValue();
+			} else {
+				name = (String) properties.get(propName);
+			}
+		}
+		return name;
+	}
+
 	/**
 	 * Calculate the properties of the node import
 	 * 
@@ -304,7 +296,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	protected Map<QName, Serializable> getNodePropertiesToImport(ImportContext importContext, List<String> values) throws ParseException,
 			ImporterException {
 
-		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+		Map<QName, Serializable> properties = new HashMap<>();
 
 		for (int z_idx = 0; z_idx < values.size() && z_idx < importContext.getColumns().size(); z_idx++) {
 
@@ -316,7 +308,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 				if (column instanceof PropertyDefinition) {
 					PropertyDefinition propDef = (PropertyDefinition) column;
-					Serializable value = null;
+					Serializable value;
 					QName dataType = propDef.getDataType().getName();
 
 					if (ImportHelper.NULL_VALUE.equalsIgnoreCase(values.get(z_idx))) {
@@ -394,8 +386,9 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		}
 	}
 
+	//DO NOT REMOVED USED in FORMULA
 	public String findCharact(String type, String name) {
-		NodeRef ret = getItemByTypeAndProp(QName.createQName(type, namespaceService), ContentModel.PROP_NAME, name);
+		NodeRef ret = findCharact(QName.createQName(type, namespaceService), name);
 		if (ret == null) {
 			logger.error("Cannot find (" + type + "," + name + ")");
 			return null;
@@ -403,6 +396,18 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 		return ret.toString();
 
+	}
+	
+	
+	private NodeRef findCharact(QName type, String name){
+		
+			for (NodeRef tmpNodeRef : BeCPGQueryBuilder.createQuery().ofType(type).andPropEquals(BeCPGModel.PROP_CHARACT_NAME, name).inDB().ftsLanguage().list()) {
+				if (!nodeService.hasAspect(tmpNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)
+						&& !nodeService.hasAspect(tmpNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)) {
+					return tmpNodeRef;
+				}
+			}
+			return null;
 	}
 
 	/**
@@ -477,7 +482,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		 */
 		NodeRef targetFolderNodeRef = nodeRef;
 		String fileName = "";
-		List<String> path = new ArrayList<String>();
+		List<String> path = new ArrayList<>();
 		for (int z_idx = 0; z_idx < values.size() && z_idx < importContext.getColumns().size(); z_idx++) {
 
 			AbstractAttributeMapping attributeMapping = importContext.getColumns().get(z_idx);
@@ -499,7 +504,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 						fileName = fileMapping.getPath().get(fileMapping.getPath().size() - 1);
 
 						// remove the last path since it is the fileName
-						List<String> pathFolders = new ArrayList<String>();
+						List<String> pathFolders = new ArrayList<>();
 						for (int cntPath = 0; cntPath < fileMapping.getPath().size() - 1; cntPath++) {
 							pathFolders.add(fileMapping.getPath().get(cntPath));
 						}
@@ -609,6 +614,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 					Resource resource = applicationContext.getResource(value);
 					in = resource.getInputStream();
 				} catch (IOException e) {
+					logger.error("No resource found in path " + value);
 					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_LOAD_FILE, value));
 				}
 
@@ -646,7 +652,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	private NodeRef createFile(NodeRef targetFolderNodeRef, String fileName, String localName) {
 		NodeRef fileNodeRef = nodeService.getChildByName(targetFolderNodeRef, ContentModel.ASSOC_CONTAINS, fileName);
 		if (fileNodeRef == null) {
-			Map<QName, Serializable> fileProperties = new HashMap<QName, Serializable>();
+			Map<QName, Serializable> fileProperties = new HashMap<>();
 			fileProperties.put(ContentModel.PROP_NAME, fileName);
 			fileNodeRef = nodeService.createNode(targetFolderNodeRef, ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(localName)), ContentModel.TYPE_CONTENT,
@@ -778,7 +784,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			for (Node columnNode : columnNodes) {
 				QName qName = QName.createQName(columnNode.valueOf(QUERY_ATTR_GET_ATTRIBUTE), namespaceService);
 				QName dataListQName = QName.createQName(columnNode.valueOf(QUERY_ATTR_GET_DATALIST_QNAME), namespaceService);
-				NodeRef charactNodeRef = null;
+				NodeRef charactNodeRef;
 				String charactNodeRefString = columnNode.valueOf(QUERY_ATTR_GET_CHARACT_NODE_REF);
 				String charactName = columnNode.valueOf(QUERY_ATTR_GET_CHARACT_NAME);
 				QName charactQName = QName.createQName(columnNode.valueOf(QUERY_ATTR_GET_CHARACT_QNAME), namespaceService);
@@ -788,7 +794,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 					charactNodeRef = new NodeRef(charactNodeRefString);
 				} else if (!charactName.isEmpty()) {
 					AssociationDefinition assocDef = dictionaryService.getAssociation(charactQName);
-					charactNodeRef = getItemByTypeAndProp(assocDef.getTargetClass().getName(), ContentModel.PROP_NAME, charactName);
+					charactNodeRef = findCharact(assocDef.getTargetClass().getName(),charactName);
 
 					if (charactNodeRef == null) {
 						String error = I18NUtil.getMessage(MSG_ERROR_GET_NODEREF_CHARACT, assocDef.getTargetClass().getName(), charactName);
@@ -815,10 +821,9 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 				QName qName = QName.createQName(columnNode.valueOf(QUERY_ATTR_GET_ATTRIBUTE), namespaceService);
 
 				String path = columnNode.valueOf(QUERY_ATTR_GET_PATH);
-				List<String> paths = new ArrayList<String>();
+				List<String> paths = new ArrayList<>();
 				String[] arrPath = path.split(RepoConsts.PATH_SEPARATOR);
-				for (String p : arrPath)
-					paths.add(p);
+				Collections.addAll(paths, arrPath);
 
 				PropertyDefinition propertyDefinition = dictionaryService.getProperty(qName);
 				FileMapping attributeMapping = new FileMapping(columnNode.valueOf(QUERY_ATTR_GET_ID), propertyDefinition, paths);
@@ -890,13 +895,13 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		logger.debug("Type: " + importContext.getType() + "classMapping: " + classMapping);
 
 		// check COLUMNS respects the mapping and the class attributes
-		List<AbstractAttributeMapping> columnsAttributeMapping = new ArrayList<AbstractAttributeMapping>();
-		List<String> unknownColumns = new ArrayList<String>();
+		List<AbstractAttributeMapping> columnsAttributeMapping = new ArrayList<>();
+		List<String> unknownColumns = new ArrayList<>();
 		boolean isMLPropertyDef = false;
-		for (int z_idx = 0; z_idx < columns.size(); z_idx++) {
+		for (String column : columns) {
 
 			boolean isAttributeMapped = false;
-			String columnId = columns.get(z_idx);
+			String columnId = column;
 
 			if (classMapping != null) {
 				// columns
@@ -912,8 +917,13 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 			// columnId not mapped, is it a property or an association ?
 			if (!isAttributeMapped) {
+				QName qName;
+				if (columnId.indexOf(QName.NAMESPACE_BEGIN) != -1) {
+					qName = QName.createQName(columnId);
+				} else {
+					qName = QName.createQName(columnId, namespaceService);
+				}
 
-				QName qName = QName.createQName(columnId, namespaceService);
 				PropertyDefinition propertyDefinition = dictionaryService.getProperty(qName);
 
 				if (propertyDefinition != null) {
@@ -950,7 +960,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		if (!unknownColumns.isEmpty()) {
 
 			// calculate mappedColumns
-			List<String> mappedColumns = new ArrayList<String>();
+			List<String> mappedColumns = new ArrayList<>();
 			if (classMapping != null) {
 				for (AbstractAttributeMapping attrMapping : classMapping.getColumns()) {
 					mappedColumns.add(attrMapping.getId());
@@ -994,7 +1004,8 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 				// look in import folder
 				nodeRef = nodeService.getChildByName(importContext.getParentNodeRef(), ContentModel.ASSOC_CONTAINS, name);
-			} else if (!type.equals(BeCPGModel.TYPE_LINKED_VALUE) && !type.equals(BeCPGModel.TYPE_LIST_VALUE)) {
+			} else if (!dictionaryService.isSubClass(type,BeCPGModel.TYPE_LINKED_VALUE) && !dictionaryService.isSubClass(type,BeCPGModel.TYPE_LIST_VALUE)
+					&& !dictionaryService.isSubClass(type, BeCPGModel.TYPE_CHARACT)) {
 
 				throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_GET_OR_CREATE_NODEREF));
 			}
@@ -1043,19 +1054,25 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 					queryBuilder.parent(folderNodeRef);
 					doQuery = true;
 				} else if (properties.get(attribute) != null) {
-					if (ImportHelper.NULL_VALUE.equals(properties.get(attribute))) {
-
-						// TODO : unsupported in db-afts right now so workaround
-						// queryBuilder.isNull(attribute);
+					
+					String value = null;
+					if(properties.get(attribute) instanceof MLText){
+						value = ((MLText)properties.get(attribute)).getDefaultValue();
+					} else {
+						value = properties.get(attribute).toString();
+					}
+		
+					if (ImportHelper.NULL_VALUE.equals(value)) {
 						if (attribute.equals(BeCPGModel.PROP_PARENT_LEVEL)) {
 							queryBuilder.andPropEquals(BeCPGModel.PROP_DEPTH_LEVEL, Integer.toString(RepoConsts.DEFAULT_LEVEL));
 						} else {
 							throw new ImporterException("NodeColumnKey cannot be null. NodeColumnKey: " + attribute);
 						}
-					} else if (properties.get(attribute) != null && NodeRef.isNodeRef(properties.get(attribute).toString()) && classMapping.getNodeColumnKeys().size() == 1) {
-						return new NodeRef(properties.get(attribute).toString());
+					} else if (properties.get(attribute) != null && NodeRef.isNodeRef(value)
+							&& classMapping.getNodeColumnKeys().size() == 1) {
+						return new NodeRef(value);
 					} else {
-						queryBuilder.andPropEquals(attribute, properties.get(attribute) != null ? properties.get(attribute).toString() : null);
+						queryBuilder.andPropEquals(attribute, value);
 					}
 					doQuery = true;
 				} else {
@@ -1072,7 +1089,6 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 						if (NodeRef.isNodeRef(properties.get(BeCPGModel.PROP_CODE).toString())) {
 							return new NodeRef(properties.get(BeCPGModel.PROP_CODE).toString());
 						} else {
-
 							queryBuilder.andPropEquals(BeCPGModel.PROP_CODE, (String) properties.get(BeCPGModel.PROP_CODE));
 							doQuery = true;
 							break;
@@ -1081,19 +1097,22 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 				}
 			}
 
+			QName propName = RemoteHelper.getPropName(type,dictionaryService);
+			
 			// look by name
-			if (!doQuery && !dictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITY_V2) && (String) properties.get(ContentModel.PROP_NAME) != null) {
+			if (!doQuery && !dictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITY_V2) && properties.get(propName) != null) {
 
-				if (NodeRef.isNodeRef(properties.get(ContentModel.PROP_NAME).toString())) {
-					return new NodeRef(properties.get(ContentModel.PROP_NAME).toString());
+				String name = getName(type, properties);
+				
+				if (NodeRef.isNodeRef(name.toString())) {
+					return new NodeRef(name.toString());
 				} else {
-
-					queryBuilder.andPropEquals(RemoteHelper.getPropName(type), (String) properties.get(ContentModel.PROP_NAME));
+					queryBuilder.andPropEquals(propName, name);
 					doQuery = true;
 				}
-			} else  if(properties.get(ContentModel.PROP_NAME) !=null && NodeRef.isNodeRef(properties.get(ContentModel.PROP_NAME).toString())) {
+			}  else if (properties.get(ContentModel.PROP_NAME) != null && NodeRef.isNodeRef(properties.get(ContentModel.PROP_NAME).toString())) {
 				return new NodeRef(properties.get(ContentModel.PROP_NAME).toString());
-			} 
+			}
 
 			if (!doQuery) {
 				logger.warn("No keys defined in mapping, neither code property. Type: " + type + " Properties: " + properties);
@@ -1103,11 +1122,9 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		if (doQuery) {
 			logger.debug("findNodeByKeyOrCode: " + queryBuilder.toString());
 
-			if (dictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM) && !dictionaryService.isSubClass(type, PLMModel.TYPE_CHARACT)
+			if (dictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM) && !dictionaryService.isSubClass(type, BeCPGModel.TYPE_CHARACT)
 					&& !dictionaryService.isSubClass(type, BeCPGModel.TYPE_LINKED_VALUE)
-					&& !dictionaryService.isSubClass(type, BeCPGModel.TYPE_LIST_VALUE)
-					&& !dictionaryService.isSubClass(type, PLMModel.TYPE_PLANT)
-					) {
+					&& !dictionaryService.isSubClass(type, BeCPGModel.TYPE_LIST_VALUE) && !dictionaryService.isSubClass(type, PLMModel.TYPE_PLANT)) {
 				for (NodeRef tmpNodeRef : queryBuilder.inDB().ftsLanguage().list()) {
 					if (nodeService.getPrimaryParent(tmpNodeRef).getParentRef().equals(importContext.getParentNodeRef())
 							&& !nodeService.hasAspect(tmpNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)
@@ -1143,7 +1160,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	protected List<NodeRef> findTargetNodesByValue(ImportContext importContext, boolean isTargetMany, QName targetClass, String value)
 			throws ImporterException {
 
-		List<NodeRef> targetRefs = new ArrayList<NodeRef>();
+		List<NodeRef> targetRefs = new ArrayList<>();
 
 		if (!value.isEmpty()) {
 
@@ -1166,10 +1183,10 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			}
 		}
 
-		if (logger.isDebugEnabled()){
+		if (logger.isDebugEnabled()) {
 			logger.debug("assoc, targetClass: " + targetClass + " - value: " + value + "- targetRefs: " + targetRefs);
 		}
-		
+
 		return targetRefs;
 	}
 
@@ -1190,20 +1207,14 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			AbstractAttributeMapping attributeMapping, String value, Map<QName, Serializable> properties) throws ImporterException {
 
 		if (attributeMapping instanceof HierarchyMapping) {
-			
-			
-//			String path = PlmRepoConsts.PATH_PRODUCT_HIERARCHY + "cm:" + HierarchyHelper.getHierarchyPathName(importContext.getType());
 
-			
-		
 			String path = importContext.getPath();
-			if(((HierarchyMapping) attributeMapping).getPath()!=null && 
-					!((HierarchyMapping) attributeMapping).getPath().isEmpty()){
+			if (((HierarchyMapping) attributeMapping).getPath() != null && !((HierarchyMapping) attributeMapping).getPath().isEmpty()) {
 				path = ((HierarchyMapping) attributeMapping).getPath();
 			}
-			
+
 			logger.debug("Case hierarchy mapping");
-			NodeRef hierarchyNodeRef = null;
+			NodeRef hierarchyNodeRef;
 			if (((HierarchyMapping) attributeMapping).getParentLevelColumn() != null
 					&& !((HierarchyMapping) attributeMapping).getParentLevelColumn().isEmpty()) {
 				NodeRef parentHierachyNodeRef = (NodeRef) properties.get(QName.createQName(
@@ -1211,23 +1222,24 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 				if (parentHierachyNodeRef != null) {
 					hierarchyNodeRef = hierarchyService.getHierarchyByPath(path, parentHierachyNodeRef, value);
 				} else {
-					if(logger.isDebugEnabled()){
-						logger.debug("No parent for column "+attributeMapping.getAttribute().getName()+ " prop "+((HierarchyMapping) attributeMapping).getParentLevelColumn());
+					if (logger.isDebugEnabled()) {
+						logger.debug("No parent for column " + attributeMapping.getAttribute().getName() + " prop "
+								+ ((HierarchyMapping) attributeMapping).getParentLevelColumn());
 					}
 					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_GET_ASSOC_TARGET, propDef.getName(), value));
 				}
 			} else {
-				if(logger.isDebugEnabled()){
-					logger.debug("Look for hierarchy "+attributeMapping.getAttribute().getName()+": "+value+" at path "+path);
+				if (logger.isDebugEnabled()) {
+					logger.debug("Look for hierarchy " + attributeMapping.getAttribute().getName() + ": " + value + " at path " + path);
 				}
 				hierarchyNodeRef = hierarchyService.getHierarchyByPath(path, null, value);
 			}
 
 			if (hierarchyNodeRef != null) {
-				
-				
+
 				return hierarchyNodeRef;
 			} else {
+				logger.error("No hierarchy found in path " + importContext.getPath() + " with value " + value);
 				throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_GET_ASSOC_TARGET, propDef.getName(), value));
 			}
 		}
@@ -1292,8 +1304,8 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 				}
 
 				// we try with the name
-				if (doQuery == false) {
-					properties.put(RemoteHelper.getPropName(type), value);
+				if (!doQuery) {
+					properties.put(RemoteHelper.getPropName(type,dictionaryService), value);
 					doQuery = true;
 				}
 			}
@@ -1321,15 +1333,6 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		return nodeRef;
 	}
 
-	private NodeRef getItemByTypeAndProp(QName type, QName prop, String value) {
-		// TODO #ALF-21197 excludeDefault instead
-		for (NodeRef tmpNodeRef : BeCPGQueryBuilder.createQuery().ofType(type).andPropEquals(prop, value).inDB().ftsLanguage().list()) {
-			if (!nodeService.hasAspect(tmpNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)
-					&& !nodeService.hasAspect(tmpNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)) {
-				return tmpNodeRef;
-			}
-		}
-		return null;
-	}
+	
 
 }

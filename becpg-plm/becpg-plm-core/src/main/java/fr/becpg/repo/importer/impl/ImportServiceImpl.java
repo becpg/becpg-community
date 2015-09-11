@@ -9,10 +9,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.content.MimetypeMap;
@@ -112,7 +109,7 @@ public class ImportServiceImpl implements ImportService {
 
 	private static final int BATCH_SIZE = 10;
 
-	private static Log logger = LogFactory.getLog(ImportServiceImpl.class);
+	private static final Log logger = LogFactory.getLog(ImportServiceImpl.class);
 
 	@Autowired
 	private NodeService nodeService;
@@ -156,8 +153,8 @@ public class ImportServiceImpl implements ImportService {
 	 * @throws IOException
 	 */
 	@Override
-	public List<String> importText(final NodeRef nodeRef, boolean doUpdate, boolean requiresNewTransaction) throws ImporterException, IOException,
-			ParseException, Exception {
+	public List<String> importText(final NodeRef nodeRef, boolean doUpdate, boolean requiresNewTransaction) throws
+			Exception {
 
 		logger.debug("start import");
 
@@ -339,7 +336,7 @@ public class ImportServiceImpl implements ImportService {
 	private ImportContext importInBatch(ImportContext importContext, final int lastIndex) throws Exception {
 
 		Element mappingElt = null;
-		String[] arrStr = null;
+		String[] arrStr;
 
 		while (importContext.getImportIndex() < lastIndex && (arrStr = importContext.nextLine()) != null) {
 
@@ -361,10 +358,9 @@ public class ImportServiceImpl implements ImportService {
 					importContext.setSiteDocLib(false);
 				}
 
-				List<String> paths = new ArrayList<String>();
+				List<String> paths = new ArrayList<>();
 				String[] arrPath = pathValue.split(RepoConsts.PATH_SEPARATOR);
-				for (String path : arrPath)
-					paths.add(path);
+				Collections.addAll(paths, arrPath);
 
 				NodeRef parentNodeRef = repoService.getOrCreateFolderByPaths(repositoryHelper.getCompanyHome(), paths);
 				importContext.setParentNodeRef(parentNodeRef);
@@ -434,7 +430,7 @@ public class ImportServiceImpl implements ImportService {
 			} else if (prefix.equals(PFX_COLUMS)) {
 
 				boolean undefinedColumns = true;
-				List<String> columns = new ArrayList<String>(arrStr.length);
+				List<String> columns = new ArrayList<>(arrStr.length);
 				for (int z_idx = 1; z_idx < arrStr.length; z_idx++) {
 					if (!arrStr[z_idx].isEmpty()) {
 						columns.add(arrStr[z_idx]);
@@ -450,8 +446,6 @@ public class ImportServiceImpl implements ImportService {
 
 			} else if (prefix.equals(PFX_MAPPING)) {
 
-				mappingElt = null;
-
 				String mappingValue = arrStr[COLUMN_MAPPING];
 				if (mappingValue.isEmpty())
 					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_MAPPING, importContext.getImportIndex()));
@@ -463,7 +457,7 @@ public class ImportServiceImpl implements ImportService {
 				try {
 
 					boolean undefinedValues = true;
-					List<String> values = new ArrayList<String>(arrStr.length);
+					List<String> values = new ArrayList<>(arrStr.length);
 					for (int z_idx = 1; z_idx < arrStr.length; z_idx++) {
 
 						String value = PropertiesHelper.cleanValue(arrStr[z_idx]);
@@ -542,14 +536,9 @@ public class ImportServiceImpl implements ImportService {
 	private Element loadMapping(String name) throws ImporterException {
 
 		Element mappingElt = null;
-		NodeRef mappingNodeRef = null;
-
-		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().inPath(FULL_PATH_IMPORT_MAPPING)
-				.andPropEquals(ContentModel.PROP_NAME, name + ".xml");
-
-		logger.debug(queryBuilder.toString());
-
-		mappingNodeRef = queryBuilder.singleValue();
+		
+		NodeRef mappingNodeRef = BeCPGQueryBuilder.createQuery().parent( BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(), FULL_PATH_IMPORT_MAPPING))
+				.andPropEquals(ContentModel.PROP_NAME, name+".xml").inDB().singleValue();
 
 		if (mappingNodeRef == null) {
 			String msg = I18NUtil.getMessage(MSG_ERROR_MAPPING_NOT_FOUND, name);
@@ -577,7 +566,7 @@ public class ImportServiceImpl implements ImportService {
 
 	private void createLogFile(NodeRef parentNodeRef, String fileName, String content) {
 
-		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+		Map<QName, Serializable> properties = new HashMap<>();
 		properties.put(ContentModel.PROP_NAME, fileName);
 
 		NodeRef nodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, fileName);

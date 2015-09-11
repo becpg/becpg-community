@@ -32,7 +32,7 @@ public class TranslateHelper {
 	private static final String MESSAGE_FALSE = "data.boolean.false";
 	
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(TranslateHelper.class);
+	private static final Log logger = LogFactory.getLog(TranslateHelper.class);
 	
 	/**
 	 * Translate the name of the path.
@@ -76,7 +76,7 @@ public class TranslateHelper {
 	
 	public static String getConstraint(String constraintName, String value,  boolean useDefaultLocale) {
 		
-			String translation = null;
+			String translation;
 			String messageKey = String.format(LIST_CONSTRAINT_MSG_PFX, constraintName,  value);
 			
 			if(useDefaultLocale){

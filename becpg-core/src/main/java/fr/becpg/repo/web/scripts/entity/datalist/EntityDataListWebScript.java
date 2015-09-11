@@ -17,6 +17,7 @@ import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AccessStatus;
+import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -25,12 +26,15 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.Cache;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 import org.springframework.util.StopWatch;
 
+import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.SystemGroup;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.datalist.DataListExtractor;
 import fr.becpg.repo.entity.datalist.DataListExtractorFactory;
@@ -44,7 +48,7 @@ import fr.becpg.repo.entity.datalist.impl.CSVDataListOutputWriter;
 import fr.becpg.repo.entity.datalist.impl.ExcelDataListOutputWriter;
 import fr.becpg.repo.helper.JSONHelper;
 import fr.becpg.repo.security.SecurityService;
-import fr.becpg.repo.web.scripts.AbstractCachingWebscript;
+import fr.becpg.repo.web.scripts.BrowserCacheHelper;
 import fr.becpg.repo.web.scripts.WebscriptHelper;
 
 /**
@@ -52,10 +56,10 @@ import fr.becpg.repo.web.scripts.WebscriptHelper;
  * 
  * @author matthieu
  */
-public class EntityDataListWebScript extends AbstractCachingWebscript {
+public class EntityDataListWebScript extends AbstractWebScript {
 
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(EntityDataListWebScript.class);
+	private static final Log logger = LogFactory.getLog(EntityDataListWebScript.class);
 
 	/** The Constant PARAM_FILTER. */
 
@@ -131,6 +135,8 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 	private DataListSortService dataListSortService;
 	
 	private DictionaryService dictionaryService;
+	
+	private AuthorityService authorityService;
 
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
@@ -158,6 +164,11 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 
 	public void setDataListSortService(DataListSortService dataListSortService) {
 		this.dataListSortService = dataListSortService;
+	}
+
+	
+	public void setAuthorityService(AuthorityService authorityService) {
+		this.authorityService = authorityService;
 	}
 
 	/**
@@ -203,7 +214,7 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 		String repo = req.getParameter(PARAM_REPOSITORY);
 
 		boolean isRepo = true;
-		if (repo != null && repo.equals("false")) {
+		if ("false".equals(repo)) {
 			isRepo = false;
 		}
 		dataListFilter.setRepo(isRepo);
@@ -241,7 +252,7 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 
 		try {
 
-			JSONObject json = null;
+			JSONObject json;
 
 			if (req.getParameter(PARAM_METADATA) != null) {
 				json = new JSONObject(req.getParameter(PARAM_METADATA));
@@ -294,7 +305,7 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 				dataListFilter.setCriteriaMap(JSONHelper.extractCriteria(jsonObject));
 			}
 
-			List<String> metadataFields = new LinkedList<String>();
+			List<String> metadataFields = new LinkedList<>();
 
 			if (json != null && json.has(PARAM_FIELDS)) {
 				JSONArray jsonFields = (JSONArray) json.get(PARAM_FIELDS);
@@ -321,13 +332,14 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 			boolean hasWriteAccess = !dataListFilter.isVersionFilter();
 			if (hasWriteAccess && !entityNodeRefsList.isEmpty()) {
 				hasWriteAccess = !nodeService.hasAspect(entityNodeRefsList.get(0), ContentModel.ASPECT_CHECKED_OUT)
-						&& securityService.computeAccessMode(nodeService.getType(entityNodeRefsList.get(0)), itemType) == SecurityService.WRITE_ACCESS;
+						&& securityService.computeAccessMode(nodeService.getType(entityNodeRefsList.get(0)), itemType) == SecurityService.WRITE_ACCESS
+						&& isExternalUserAllowed(dataListFilter);
 			}
 
 			// TODO : #546
 			Date lastModified = extractor.computeLastModified(dataListFilter);
 
-			if (shouldReturnNotModified(req, lastModified)) {
+			if (BrowserCacheHelper.shouldReturnNotModified(req, lastModified)) {
 				res.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
 				if (logger.isDebugEnabled()) {
 					logger.debug("Send Not_MODIFIED status");
@@ -350,7 +362,7 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 				DataListOutputWriter outputWriter = new CSVDataListOutputWriter(dictionaryService);
 				outputWriter.write(res,extractedItems);
 
-			} else if (RepoConsts.FORMAT_XLS.equals(dataListFilter.getFormat())) {
+			} else if (RepoConsts.FORMAT_XLSX.equals(dataListFilter.getFormat())) {
 				DataListOutputWriter outputWriter = new ExcelDataListOutputWriter(dictionaryService,dataListFilter);
 				outputWriter.write(res, extractedItems);
 			} else {
@@ -415,6 +427,27 @@ public class EntityDataListWebScript extends AbstractCachingWebscript {
 	}
 
 	
+
+	private boolean isExternalUserAllowed(DataListFilter dataListFilter) {
+		if(dataListFilter.getParentNodeRef() !=null 
+				&& nodeService.hasAspect(dataListFilter.getParentNodeRef(), BeCPGModel.ASPECT_ENTITYLIST_STATE)
+				&& "Valid".equals(nodeService.getProperty(dataListFilter.getParentNodeRef(), BeCPGModel.PROP_ENTITYLIST_STATE))
+				&& isCurrentUserExternal()
+				){
+			return false;
+			
+		}
+		return true;
+	}
+
+	private boolean isCurrentUserExternal() {
+		for (String currAuth : authorityService.getAuthorities()) {
+			if((PermissionService.GROUP_PREFIX+SystemGroup.ExternalUser.toString()).equals(currAuth)){
+				return true;
+			}
+		}
+		return false;
+	}
 
 	private JSONArray processResults(PaginatedExtractedItems extractedItems) {
 

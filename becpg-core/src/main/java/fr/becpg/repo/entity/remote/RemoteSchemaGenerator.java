@@ -28,7 +28,7 @@ import fr.becpg.model.ReportModel;
 @Service("remoteSchemaGenerator")
 public class RemoteSchemaGenerator {
 
-	private static Log logger = LogFactory.getLog(RemoteSchemaGenerator.class);
+	private static final Log logger = LogFactory.getLog(RemoteSchemaGenerator.class);
 
 	@Autowired
 	private DictionaryService dictionaryService;
@@ -138,7 +138,7 @@ public class RemoteSchemaGenerator {
 				
 				
 
-				logger.error("Create type :" + type.toPrefixString());
+				logger.debug("Create type :" + type.toPrefixString());
 				xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema", "complexType");
 				xmlw.writeAttribute("name", type.getPrefixString().replace(":", "_") + "_type");
 				xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema", "complexContent");
@@ -279,44 +279,6 @@ public class RemoteSchemaGenerator {
 
 			}
 		}
-
-		// for (QName assocQName : keySet) {
-		// AssociationDefinition assocDef =
-		// dictionaryService.getAssociation(assocQName);
-		// if (dataType == null ||
-		// dictionaryService.isSubClass(assocDef.getSourceClass().getName(),
-		// dataType)) {
-		// if(first){
-		// xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema",
-		// "sequence");
-		// first = false ;
-		// }
-		// xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema",
-		// "element");
-		// xmlw.writeAttribute("name",
-		// assocDef.getName().getPrefixString().replace(":", "_"));
-		// xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema",
-		// "complexType");
-		// xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema",
-		// "sequence");
-		// xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema",
-		// "extension");
-		// xmlw.writeAttribute("base", "remoteProp");
-		//
-		// xmlw.writeStartElement("http://www.w3.org/2001/XMLSchema",
-		// "element");
-		// xmlw.writeAttribute("ref",
-		// assocDef.getTargetClass().getName().getPrefixString().replace(":",
-		// "_"));
-		// xmlw.writeEndElement();
-		//
-		// xmlw.writeEndElement();
-		// xmlw.writeEndElement();
-		// xmlw.writeEndElement();
-		// xmlw.writeEndElement();
-		//
-		// }
-		// }
 		return first;
 	}
 

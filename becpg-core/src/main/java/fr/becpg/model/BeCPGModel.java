@@ -20,7 +20,15 @@ public interface BeCPGModel {
 	QName ASPECT_HIDDEN_FOLDER = QName.createQName(BECPG_URI, "hiddenFolder");
 
 	QName TYPE_ENTITYLIST_ITEM = QName.createQName(BECPG_URI, "entityListItem");
-
+	
+	QName ASPECT_ENTITYLIST_STATE = QName.createQName(BECPG_URI, "entityDataListStateAspect");
+	
+	QName PROP_ENTITYLIST_STATE = QName.createQName(BECPG_URI, "entityDataListState");
+	
+    // Caract
+	QName TYPE_CHARACT = QName.createQName(BeCPGModel.BECPG_URI, "charact");
+	QName PROP_CHARACT_NAME  = QName.createQName(BECPG_URI, "charactName");
+	
 	// linkedValue
 	QName TYPE_LINKED_VALUE = QName.createQName(BECPG_URI, "linkedValue");
 	QName PROP_LKV_VALUE = QName.createQName(BECPG_URI, "lkvValue");
@@ -101,7 +109,6 @@ public interface BeCPGModel {
 
 	// legalName aspect
 	QName ASPECT_LEGAL_NAME = QName.createQName(BeCPGModel.BECPG_URI, "legalNameAspect");
-	@Deprecated
 	QName PROP_LEGAL_NAME = QName.createQName(BeCPGModel.BECPG_URI, "legalName");
 
 	// isDeleted aspect
@@ -115,5 +122,6 @@ public interface BeCPGModel {
 	QName ASPECT_ENTITY_BRANCH = QName.createQName(BeCPGModel.BECPG_URI, "entityBranchAspect");
 	QName ASSOC_BRANCH_FROM_ENTITY = QName.createQName(BECPG_URI, "branchFromEntity");
 	QName PROP_BRANCH_FROM_VERSION_LABEL = QName.createQName(BECPG_URI, "branchFromVersionLabel");
+	
 	
 }

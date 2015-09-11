@@ -39,15 +39,20 @@ import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 public class IngListDataItem extends AbstractManualDataItem  implements SimpleCharactDataItem, AspectAwareDataItem, CompositeDataItem<IngListDataItem> {
 
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2710240943326822672L;
+
 	private Double qtyPerc = 0d;
 	
 	private Double volumeQtyPerc;
 	
-	private List<NodeRef> geoOrigin = new ArrayList<NodeRef>();
+	private List<NodeRef> geoOrigin = new ArrayList<>();
 	
-	private List<NodeRef> geoTransfo = new ArrayList<NodeRef>();
+	private List<NodeRef> geoTransfo = new ArrayList<>();
 	
-	private List<NodeRef> bioOrigin = new ArrayList<NodeRef>();
+	private List<NodeRef> bioOrigin = new ArrayList<>();
 	
 	private Boolean isGMO = false;
 	
@@ -58,6 +63,8 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	private Boolean isManual;
 
 	private Boolean isProcessingAid = false;
+	
+	private Boolean isSupport = false;
 	
 	private Integer depthLevel;
 	
@@ -168,7 +175,20 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	public void setIsProcessingAid(Boolean isProcessingAid) {
 		this.isProcessingAid = isProcessingAid;
 	}
+	
+	@AlfProp
+	@AlfEnforced
+	@AlfQname(qname="bcpg:ingListIsSupport")
+	public Boolean getIsSupport() {
+		return isSupport;
+	}
 
+	public void setIsSupport(Boolean isSupport) {
+		this.isSupport = isSupport;
+	}
+	
+	
+	
 
 	@AlfProp
 	@AlfEnforced
@@ -176,6 +196,8 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	public Boolean getIsIonized() {
 		return isIonized;
 	}
+	
+
 	
 
 	public void setIsIonized(Boolean isIonized) {
@@ -266,7 +288,7 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 		setIsProcessingAid(processingAid);
 	}
 	
-	public IngListDataItem(NodeRef nodeRef, IngListDataItem ingList, Double qtyPerc, List<NodeRef> geoOrigin, List<NodeRef> geoTransfo, List<NodeRef> bioOrigin, Boolean isGMO, Boolean isIonized, Boolean processingAid, NodeRef ing, Boolean isManual)
+	public IngListDataItem(NodeRef nodeRef, IngListDataItem ingList, Double qtyPerc, List<NodeRef> geoOrigin, List<NodeRef> geoTransfo, List<NodeRef> bioOrigin, Boolean isGMO, Boolean isIonized, Boolean processingAid, Boolean isSupport, NodeRef ing, Boolean isManual)
 	{
 		setNodeRef(nodeRef);
 		setParent(ingList);
@@ -279,6 +301,7 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 		setIng(ing);
 		setIsManual(isManual);
 		setIsProcessingAid(processingAid);
+		setIsSupport(isSupport);
 	}
 	
 	/**
@@ -296,6 +319,7 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 		setIng(i.getIng());
 		setIsManual(i.getIsManual());
 		setIsProcessingAid(i.getIsProcessingAid());
+		setIsSupport(i.getIsSupport());
 	}
 
 	@Override
@@ -305,11 +329,13 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 		result = prime * result + ((bioOrigin == null) ? 0 : bioOrigin.hashCode());
 		result = prime * result + ((depthLevel == null) ? 0 : depthLevel.hashCode());
 		result = prime * result + ((geoOrigin == null) ? 0 : geoOrigin.hashCode());
+		result = prime * result + ((geoTransfo == null) ? 0 : geoTransfo.hashCode());
 		result = prime * result + ((ing == null) ? 0 : ing.hashCode());
 		result = prime * result + ((isGMO == null) ? 0 : isGMO.hashCode());
 		result = prime * result + ((isIonized == null) ? 0 : isIonized.hashCode());
 		result = prime * result + ((isManual == null) ? 0 : isManual.hashCode());
 		result = prime * result + ((isProcessingAid == null) ? 0 : isProcessingAid.hashCode());
+		result = prime * result + ((isSupport == null) ? 0 : isSupport.hashCode());
 		result = prime * result + ((maxi == null) ? 0 : maxi.hashCode());
 		result = prime * result + ((mini == null) ? 0 : mini.hashCode());
 		result = prime * result + ((parent == null) ? 0 : parent.hashCode());
@@ -342,6 +368,11 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 				return false;
 		} else if (!geoOrigin.equals(other.geoOrigin))
 			return false;
+		if (geoTransfo == null) {
+			if (other.geoTransfo != null)
+				return false;
+		} else if (!geoTransfo.equals(other.geoTransfo))
+			return false;
 		if (ing == null) {
 			if (other.ing != null)
 				return false;
@@ -366,6 +397,11 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 			if (other.isProcessingAid != null)
 				return false;
 		} else if (!isProcessingAid.equals(other.isProcessingAid))
+			return false;
+		if (isSupport == null) {
+			if (other.isSupport != null)
+				return false;
+		} else if (!isSupport.equals(other.isSupport))
 			return false;
 		if (maxi == null) {
 			if (other.maxi != null)
@@ -397,8 +433,9 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 
 	@Override
 	public String toString() {
-		return "IngListDataItem [qtyPerc=" + qtyPerc + ", volumeQtyPerc=" + volumeQtyPerc + ", geoOrigin=" + geoOrigin + ", bioOrigin=" + bioOrigin
-				+ ", isGMO=" + isGMO + ", isIonized=" + isIonized + ", ing=" + ing + ", isManual=" + isManual + ", isProcessingAid="
-				+ isProcessingAid + ", depthLevel=" + depthLevel + ", parent=" + parent + ", mini=" + mini + ", maxi=" + maxi + "]";
+		return "IngListDataItem [qtyPerc=" + qtyPerc + ", volumeQtyPerc=" + volumeQtyPerc + ", geoOrigin=" + geoOrigin + ", geoTransfo=" + geoTransfo
+				+ ", bioOrigin=" + bioOrigin + ", isGMO=" + isGMO + ", isIonized=" + isIonized + ", ing=" + ing + ", isManual=" + isManual
+				+ ", isProcessingAid=" + isProcessingAid + ", isSupport=" + isSupport + ", depthLevel=" + depthLevel + ", parent=" + parent
+				+ ", mini=" + mini + ", maxi=" + maxi + "]";
 	}
 }

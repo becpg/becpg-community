@@ -1,0 +1,166 @@
+<!-- Copyright (C) 2010-2015 beCPG. This file is part of beCPG beCPG is free 
+	software: you can redistribute it and/or modify it under the terms of the 
+	GNU Lesser General Public License as published by the Free Software Foundation, 
+	either version 3 of the License, or (at your option) any later version. beCPG 
+	is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+	without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+	PURPOSE. See the GNU Lesser General Public License for more details. You 
+	should have received a copy of the GNU Lesser General Public License along 
+	with beCPG. If not, see <http://www.gnu.org/licenses/>. -->
+<alfresco-config>
+
+	<config evaluator="model-type" condition="pack:labelingTemplate">
+		<forms>
+			<!-- Create item form -->
+			<form>
+
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:description" force="true" />
+				</field-visibility>
+
+				<appearance>
+					<field id="cm:description">
+						<control template="/org/alfresco/components/form/controls/richtext.ftl">
+							<control-param name="editorHeight">4</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+
+			<!-- Data Grid view -->
+			<form id="filter">
+				<field-visibility>
+					<show id="cm:name" />
+				</field-visibility>
+			</form>
+
+			<form id="datagrid">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:description" force="true" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+
+	<config evaluator="node-type" condition="pack:labelingTemplate">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:description" force="true" />
+				</field-visibility>
+				<appearance>
+					<field id="cm:description">
+						<control template="/org/alfresco/components/form/controls/richtext.ftl">
+							<control-param name="editorHeight">4</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<config evaluator="model-type" condition="pack:label">
+		<forms>
+			<!-- Create item form -->
+			<form>
+
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:title" force="true" />
+					<show id="pack:labelType" />
+					<show id="cm:description" force="true" />
+				</field-visibility>
+			</form>
+
+			<!-- Data Grid view -->
+			<form id="filter">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="pack:labelType" />
+				</field-visibility>
+			</form>
+
+			<form id="datagrid">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:title" force="true" />
+					<show id="pack:labelType" />
+					<show id="cm:description" force="true" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+
+	<config evaluator="node-type" condition="pack:label">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:title" force="true" />
+					<show id="pack:labelType" />
+					<show id="cm:description" force="true" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+
+	<config evaluator="model-type" condition="pack:labelingList">
+		<forms>
+			<!-- Create item form -->
+			<form>
+
+				<field-visibility>
+					<show id="pack:llPosition" />
+					<show id="pack:llLabel" />
+				</field-visibility>
+				<appearance>
+					<field id="pack:llLabel">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+				</appearance>
+			</form>
+
+			<!-- Data Grid view -->
+			<form id="filter">
+				<field-visibility>
+					<show id="pack:llPosition" />
+					<show id="pack:llType" />
+				</field-visibility>
+			</form>
+
+			<form id="datagrid">
+				<field-visibility>
+					<show id="pack:llType" />
+					<show id="pack:llPosition" />
+					<show id="pack:llLabel" />
+					<show id="fm:commentCount" force="true" />
+				</field-visibility>
+				<appearance>
+					<field id="fm:commentCount" label="hidden" read-only="true" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<config evaluator="node-type" condition="pack:labelingList">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="pack:llPosition" />
+					<show id="pack:llLabel" />
+				</field-visibility>
+				<appearance>
+					<field id="pack:llLabel">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+</alfresco-config>

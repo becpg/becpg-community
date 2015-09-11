@@ -22,7 +22,13 @@ import mondrian.spi.DynamicSchemaProcessor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.client.HttpClient;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -33,38 +39,42 @@ import fr.becpg.tools.InstanceManager.Instance;
 
 public class AlfrescoSchemaProcessor implements DynamicSchemaProcessor {
 
-	private static Log logger = LogFactory.getLog(AlfrescoSchemaProcessor.class);
-	
+	private static final Log logger = LogFactory.getLog(AlfrescoSchemaProcessor.class);
+
 	InstanceManager instanceManager;
-	
+
 	@Override
 	public String processSchema(String schemaUrl, PropertyList connectInfo) throws Exception {
-		if(logger.isDebugEnabled()){
-			logger.debug("Retrieve mondrian schema for: "+schemaUrl);
-			logger.debug("Connection info: "+connectInfo);
+		if (logger.isDebugEnabled()) {
+			logger.debug("Retrieve mondrian schema for: " + schemaUrl);
+			logger.debug("Connection info: " + connectInfo);
 		}
-		
-		//retrieve instance manager from webapp ctx
-		if(instanceManager == null){
-			instanceManager = MondrianApplicationContextProvider.getApplicationContext().getBean("instanceManager",InstanceManager.class);
+
+		// retrieve instance manager from webapp ctx
+		if (instanceManager == null) {
+			instanceManager = MondrianApplicationContextProvider.getApplicationContext().getBean("instanceManager", InstanceManager.class);
 		}
-		
-		 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		 
-		 if(auth!=null && auth.getPrincipal()!=null &&   (auth.getPrincipal() instanceof AlfrescoUserDetails)){
-			Instance instance = ((AlfrescoUserDetails)auth.getPrincipal()).getInstance();
-			HttpClient httpClient =  instanceManager.createInstanceSession(instance);
-			GetMondrianSchemaCommand schemaCommand = new GetMondrianSchemaCommand(instance.getInstanceUrl());
-			try {
-				return schemaCommand.getSchema(httpClient, instance.getId());
-			} finally {
-				httpClient.getConnectionManager().shutdown();
+
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+		if (auth != null && auth.getPrincipal() != null && (auth.getPrincipal() instanceof AlfrescoUserDetails)) {
+			Instance instance = ((AlfrescoUserDetails) auth.getPrincipal()).getInstance();
+			try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
+				HttpClientContext httpContext = HttpClientContext.create();
+
+				UsernamePasswordCredentials creds = new UsernamePasswordCredentials(instance.getTenantUser(), instance.getTenantPassword());
+				CredentialsProvider credsProvider = new BasicCredentialsProvider();
+				credsProvider.setCredentials(new AuthScope(AuthScope.ANY_HOST, AuthScope.ANY_PORT), creds);
+				httpContext.setCredentialsProvider(credsProvider);
+				GetMondrianSchemaCommand schemaCommand = new GetMondrianSchemaCommand(instance.getInstanceUrl());
+
+				return schemaCommand.getSchema(httpClient, httpContext, instance.getId());
 			}
-			 
-		 }
-		
-		 return "<Schema name=\"beCPG OLAP Schema\"></Schema>";
-		
+
+		}
+
+		return "<Schema name=\"beCPG OLAP Schema\"></Schema>";
+
 	}
 
 }

@@ -42,7 +42,7 @@ import fr.becpg.test.PLMBaseTestCase;
 public class AlfrescoRepositoryTest extends PLMBaseTestCase {
 
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(AlfrescoRepositoryTest.class);
+	private static final Log logger = LogFactory.getLog(AlfrescoRepositoryTest.class);
 
 	/** The ml node service impl. */
 	@Resource(name = "mlAwareNodeService")
@@ -64,21 +64,21 @@ public class AlfrescoRepositoryTest extends PLMBaseTestCase {
 				// create RM
 				RawMaterialData rmData = new RawMaterialData();
 				rmData.setName("RM");
-				NodeRef rmNodeRef = alfrescoRepository.create(testFolderNodeRef, rmData).getNodeRef();
+				NodeRef rmNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rmData).getNodeRef();
 
 				// create SF
 				SemiFinishedProductData sfData = new SemiFinishedProductData();
 				sfData.setName("SF");
-				List<NodeRef> allSources = new ArrayList<NodeRef>();
+				List<NodeRef> allSources = new ArrayList<>();
 				allSources.add(rmNodeRef);
-				List<AllergenListDataItem> allergenList = new ArrayList<AllergenListDataItem>();
+				List<AllergenListDataItem> allergenList = new ArrayList<>();
 				allergenList.add(new AllergenListDataItem(null,null, true, true, allSources, null, allergens.get(0), false));
 				allergenList.add(new AllergenListDataItem(null,null, false, true, null, allSources, allergens.get(1), false));
 				allergenList.add(new AllergenListDataItem(null,null, true, false, null, allSources, allergens.get(2), false));
 				allergenList.add(new AllergenListDataItem(null,null, false, false, allSources, null, allergens.get(3), false));
 				sfData.setAllergenList(allergenList);
 
-				NodeRef sfNodeRef = alfrescoRepository.create(testFolderNodeRef, sfData).getNodeRef();
+				NodeRef sfNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), sfData).getNodeRef();
 
 				// load SF and test it
 				sfData = (SemiFinishedProductData) alfrescoRepository.findOne(sfNodeRef);
@@ -137,7 +137,7 @@ public class AlfrescoRepositoryTest extends PLMBaseTestCase {
 			@Override
 			public NodeRef execute() throws Throwable {
 
-				NodeRef rawMaterialNodeRef = BeCPGPLMTestHelper.createRawMaterial(testFolderNodeRef, "MP test report");
+				NodeRef rawMaterialNodeRef = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test report");
 				ProductData rawMaterial = alfrescoRepository.findOne(rawMaterialNodeRef);
 
 				NodeRef costNodeRef = costs.get(3);
@@ -178,10 +178,10 @@ public class AlfrescoRepositoryTest extends PLMBaseTestCase {
 				mlTextILL.addValue(Locale.ENGLISH, "English value");
 				mlTextILL.addValue(Locale.FRENCH, "French value");
 
-				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				Map<QName, Serializable> properties = new HashMap<>();
 				properties.put(PLMModel.PROP_ILL_VALUE, mlTextILL);
 
-				NodeRef illNodeRef = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, PLMModel.TYPE_INGLABELINGLIST,
+				NodeRef illNodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, PLMModel.TYPE_INGLABELINGLIST,
 						properties).getChildRef();
 
 				nodeService.setProperty(illNodeRef, PLMModel.PROP_ILL_VALUE, mlTextILL);

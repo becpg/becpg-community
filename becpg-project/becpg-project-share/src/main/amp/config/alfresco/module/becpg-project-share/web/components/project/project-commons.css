@@ -1,0 +1,192 @@
+
+.project-list span.red {
+	color: rgb(255, 0, 0);
+}
+
+.project-list .project-cancel-link,.project-list .project-view-link {
+	background: no-repeat scroll 4px 1px;
+	border: 1px solid transparent;
+	padding-left: 30px;
+}
+
+.project-list .project-cancel-link {
+	background-image: url("../images/remove-icon-16.png");
+}
+
+.project-list .project-view-link {
+	background-image: url("../images/workflow-16.png");
+}
+
+.project-list .project-cancel-link a,.project-list .project-view-link a
+	{
+	min-height: 2em;
+	cursor: pointer;
+	color: #2B6EB5;
+	outline-color: invert;
+	outline-width: medium;
+	text-decoration: none;
+}
+
+.project-list.project-task a {
+	cursor: pointer;
+}
+
+.project-list .project-cancel-link-over,.project-list .project-view-link-over
+	{
+	background-color: #FFF;
+	border: 1px solid #2B6EB5;
+	cursor: pointer;
+}
+
+.project-list span.task-legend {
+	width: 14px;
+	height: 14px;
+	border: 1px solid;
+	border-radius: 5px;
+	margin-right: 5px;
+	display: inline-table;
+	vertical-align: middle;
+}
+
+.project-list table a.folder-link {
+	cursor: pointer;
+	padding-left: 15px;
+	text-decoration: none;
+	background: url("../images/folder-up-16.png") no-repeat;
+	display: inline-table;
+	height: 16px;
+}
+
+.project-list table a.task-link {
+	cursor: pointer;
+	padding-left: 15px;
+	text-decoration: none;
+	background: url("../images/task-16.png") no-repeat;
+	margin-left: 5px;
+	display: inline-table;
+	height: 16px;
+	vertical-align: middle;
+}
+
+
+
+.project-list  a.task-comments {
+	cursor: pointer;
+	padding-left: 20px;
+	margin-left: 5px;
+	text-decoration: none;
+	background: url("../images/comment-16.png") no-repeat;
+	display: inline-table;
+	height: 16px;
+	vertical-align: bottom;
+}
+
+
+.project-list span.delivrable-status {
+	background-repeat: no-repeat;
+	padding-left: 20px;
+}
+
+.project-list span.delivrable-status-Completed,.project-list span.delivrable-status-Closed
+	{
+	background: url("../documentlibrary/indicators/project-completed-16.png") no-repeat;
+	display: inline-table;
+}
+
+.project-list span.delivrable-status-Planned {
+	background: url("../documentlibrary/indicators/project-planned-16.png") no-repeat;
+	display: inline-table;
+}
+
+.project-list span.delivrable-status-InProgress {
+	background: url("../documentlibrary/indicators/project-inprogress-16.png") no-repeat;
+	display: inline-table;
+}
+
+.project-list .more-deliverable a.show-more {
+	background-repeat: no-repeat;
+	border: 1px solid transparent;
+	display: block;
+	padding-left: 20px;
+	background-position: top left;
+}
+
+.project-list span.doc-file {
+	padding-right: 4px;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.project-list span.doc-url {
+	padding-right: 4px;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+
+.project-list span.task-status {
+	background-repeat: no-repeat;
+	padding-left: 20px;
+}
+
+.project-list span.task-status-Planned {
+	background: url("../documentlibrary/indicators/project-planned-16.png") no-repeat;
+	display: inline-table;
+}
+
+.project-list span.task-status-InProgress {
+	background: url("../documentlibrary/indicators/project-inprogress-16.png") no-repeat;
+	display: inline-table;
+}
+
+.project-list span.task-status-OnHold {
+	background: url("../documentlibrary/indicators/project-onhold-16.png") no-repeat;
+	display: inline-table;
+}
+
+.project-list span.task-status-Cancelled, .project-list span.task-status-Refused {
+	background: url("../documentlibrary/indicators/project-cancelled-16.png") no-repeat;
+	display: inline-table;
+}
+
+.project-list span.task-status-Completed
+	{
+	background: url("../documentlibrary/indicators/project-completed-16.png") no-repeat;
+	display: inline-table;
+}
+
+.project-list span.overdue-negative-32 {
+	background: url("./images/overdue-negative.png") no-repeat scroll 0 -4px transparent;
+	display: inline-table;
+	padding-left: 35px;
+	height: 32px;
+}
+
+.project-list span.overdue-0to14-32 {
+	background: url("./images/overdue-0to14.png") no-repeat;
+	display: inline-table;
+	padding-left: 35px;
+	height: 32px;
+}
+
+.project-list span.overdue-15to29-32 {
+	background: url("./images/overdue-15to29.png") no-repeat;
+	display: inline-table;
+	padding-left: 35px;
+	height: 32px;
+	height: 32px;
+}
+
+.project-list span.overdue-30to45-32 {
+	background: url("./images/overdue-30to45.png") no-repeat;
+	display: inline-table;
+	padding-left: 35px;
+	height: 32px;
+}
+
+.project-list span.overdue-45plus-32 {
+	background: url("./images/overdue-45plus.png") no-repeat;
+	display: inline-table;
+	padding-left: 35px;
+	height: 32px;
+}

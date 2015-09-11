@@ -23,7 +23,7 @@ import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 public interface MultiLevelDataListService {
 
 	
-	public MultiLevelListData getMultiLevelListData(DataListFilter dataListFilter);
+	MultiLevelListData getMultiLevelListData(DataListFilter dataListFilter);
 
 	
 }

@@ -40,7 +40,7 @@ import fr.becpg.repo.workflow.activiti.nc.NCWorkflowUtils.NCWorkflowUtilsTask;
  */
 public class CreateNC extends BaseJavaDelegate {
 
-	private static Log logger = LogFactory.getLog(CreateNC.class);
+	private static final Log logger = LogFactory.getLog(CreateNC.class);
 
 	private NodeService nodeService;
 	private ServiceRegistry serviceRegistry;
@@ -78,7 +78,6 @@ public class CreateNC extends BaseJavaDelegate {
 
 					// product
 					NodeRef productNodeRef = null;
-				
 
 					String ncType = (String) task.getVariable("ncwf_ncType");
 
@@ -89,49 +88,40 @@ public class CreateNC extends BaseJavaDelegate {
 					NodeRef parentNodeRef = nonConformityService.getStorageFolder(productNodeRef);
 
 					String code = autoNumService.getAutoNumValue(QualityModel.TYPE_NC, BeCPGModel.PROP_CODE);
-					
+
 					// create nc
 					// force name YYYY-NCCode, is there a better way ?
 					String ncName = Calendar.getInstance().get(Calendar.YEAR) + "-" + (QualityModel.NC_TYPE_CLAIM.equals(ncType) ? "RC-" : "NC-")
 							+ code;
 
-					Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+					Map<QName, Serializable> properties = new HashMap<>();
 					properties.put(ContentModel.PROP_NAME, ncName);
 					properties.put(QualityModel.PROP_NC_TYPE, ncType);
-					properties.put(ContentModel.PROP_DESCRIPTION, (String) task.getVariable("bpm_workflowDescription"));
-					properties.put(QualityModel.PROP_NC_PRIORITY, (Integer) task.getVariable("bpm_priority"));
-					properties.put(BeCPGModel.PROP_CODE,code);
 
-					return  nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
-							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(ncName)), QualityModel.TYPE_NC, properties).getChildRef();
+					String description = (String) task.getVariable("bpm_workflowDescription");
+					Integer priority = (Integer) task.getVariable("bpm_priority");
+					if (description != null) {
+						properties.put(ContentModel.PROP_DESCRIPTION, description);
+					}
+					if (priority != null) {
+						properties.put(QualityModel.PROP_NC_PRIORITY, priority);
+					} else {
+						properties.put(QualityModel.PROP_NC_PRIORITY, 2);
+					}
+					properties.put(BeCPGModel.PROP_CODE, code);
 
-
-				} catch (Exception e) {
-					logger.error("Failed to create nc", e);
-					throw e;
-				}
-
-			}
-
-		};
-		final NodeRef ncNodeRef  = AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getSystemUserName());
-		
-		actionRunAs = new RunAsWork<NodeRef>() {
-			@Override
-			public NodeRef doWork() throws Exception {
-				try {
+					NodeRef ncNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(ncName)), QualityModel.TYPE_NC,
+							properties).getChildRef();
 
 					NodeRef briefNodeRef = entityService.getOrCreateDocumentsFolder(ncNodeRef);
-					
-					String ncName = (String) nodeService.getProperty(ncNodeRef, ContentModel.PROP_NAME);
-					
-					Map<QName, Serializable> emailableProperties = new HashMap<QName, Serializable>();
-						emailableProperties.put(EmailServerModel.PROP_ALIAS, ncName);
-						nodeService.addAspect(briefNodeRef, EmailServerModel.ASPECT_ALIASABLE, emailableProperties);
-					
+
+					Map<QName, Serializable> emailableProperties = new HashMap<>();
+					emailableProperties.put(EmailServerModel.PROP_ALIAS, ncName);
+					nodeService.addAspect(briefNodeRef, EmailServerModel.ASPECT_ALIASABLE, emailableProperties);
 
 					NCWorkflowUtils.updateNC(ncNodeRef, new NCWorkflowUtilsTask() {
-						
+
 						public Object getVariable(String name) {
 							return task.getVariable(name);
 						}

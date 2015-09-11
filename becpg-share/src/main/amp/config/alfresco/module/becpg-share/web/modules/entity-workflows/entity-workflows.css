@@ -1,0 +1,27 @@
+.entity-workflows .workflow img {
+	float: left;
+	margin-top: 0.2em;
+	min-height: 3em;
+	padding-right: 1em;
+	line-height: 3em;
+	text-align: center;
+}
+
+.entity-workflows .workflow {
+	padding: 0.5em 0.5em 1em;
+	margin-bottom: 0.5em;
+	border-bottom: 1px dashed #ddd;
+}
+
+.entity-workflows .workflow-last {
+	border-bottom: medium none;
+	margin-bottom: 0;
+}
+
+.entity-workflows .workflow .details {
+	margin-left: 2em;
+}
+
+.entity-workflows .workflow .title {
+	margin-top: 0.3em;
+}

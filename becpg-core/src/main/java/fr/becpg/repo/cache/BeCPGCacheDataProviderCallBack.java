@@ -25,5 +25,5 @@ package fr.becpg.repo.cache;
  */
 public interface BeCPGCacheDataProviderCallBack<T> {
 	
-    public T getData();
+    T getData();
 }

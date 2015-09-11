@@ -27,5 +27,5 @@ public enum DeclarationType {
 	Detail,
 	Group,
 	DoNotDeclare, 
-	DoNotDetails;
+	DoNotDetails
 }

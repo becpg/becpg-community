@@ -48,6 +48,7 @@ public class AutoCompleteWebScript extends DeclarativeWebScript {
 	private static final String PARAM_ATTRIBUTE_NAME = "attributeName";
 	private static final String PARAM_FILTER = "filter";
 	private static final String PARAM_EXCLUDE_CLASS_NAMES = "excludeClassNames";
+	private static final String PARAM_EXCLUDE_PROPS = "excludeProps";
 	private static final String PARAM_PAGE_SIZE = "pageSize";
 	private static final String PARAM_PATH = "path";
 	private static final String PARAM_PARENT = "parent";
@@ -92,9 +93,6 @@ public class AutoCompleteWebScript extends DeclarativeWebScript {
 		if (className == null) {
 			className = req.getParameter(PARAM_CLASS_NAME);
 		}
-		String classNames = req.getParameter(PARAM_CLASS_NAMES);
-		String excludeClassNames = req.getParameter(PARAM_EXCLUDE_CLASS_NAMES);
-
 		// Pagination
 		String page = req.getParameter(PARAM_PAGE);
 		String pageSizeParam = req.getParameter(PARAM_PAGE_SIZE);
@@ -133,15 +131,16 @@ public class AutoCompleteWebScript extends DeclarativeWebScript {
 
 		logger.debug("exec webscript");
 
-		Map<String, Serializable> props = new HashMap<String, Serializable>();
+		Map<String, Serializable> props = new HashMap<>();
 		props.put(ListValueService.PROP_LOCALE, locale);
 		props.put(ListValueService.PROP_NODEREF, nodeRef);
 		props.put(ListValueService.PROP_PATH, path);
 		props.put(ListValueService.PROP_CLASS_NAME, className);
-		props.put(ListValueService.PROP_CLASS_NAMES, classNames);
+		props.put(ListValueService.PROP_CLASS_NAMES, req.getParameter(PARAM_CLASS_NAMES));
 		props.put(ListValueService.PROP_ATTRIBUTE_NAME, req.getParameter(PARAM_ATTRIBUTE_NAME));
 		props.put(ListValueService.PROP_FILTER, req.getParameter(PARAM_FILTER));
-		props.put(ListValueService.PROP_EXCLUDE_CLASS_NAMES, excludeClassNames);
+		props.put(ListValueService.PROP_EXCLUDE_CLASS_NAMES,  req.getParameter(PARAM_EXCLUDE_CLASS_NAMES));
+		props.put(ListValueService.PROP_EXCLUDE_PROPS, req.getParameter(PARAM_EXCLUDE_PROPS));
 		props.put(ListValueService.PROP_PARENT, parent);
 		props.put(ListValueService.PROP_PRODUCT_TYPE, productType);
 		props.put(ListValueService.EXTRA_PARAM, getExtraParams(req));
@@ -153,7 +152,7 @@ public class AutoCompleteWebScript extends DeclarativeWebScript {
 			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Unsupported argument 'sourcetype'. sourcetype = " + sourceType);
 		}
 
-		Map<String, Object> model = new HashMap<String, Object>();
+		Map<String, Object> model = new HashMap<>();
 		model.put(MODEL_KEY_NAME_SUGGESTIONS, suggestions);
 		model.put(MODEL_PAGE_SIZE, pageSize);
 		logger.debug("return model");
@@ -161,7 +160,7 @@ public class AutoCompleteWebScript extends DeclarativeWebScript {
 	}
 
 	private HashMap<String, String> getExtraParams(WebScriptRequest req) {
-		HashMap<String, String> ret = new HashMap<String, String>();
+		HashMap<String, String> ret = new HashMap<>();
 
 		for (String name : req.getParameterNames()) {
 			if (name.startsWith(ListValueService.EXTRA_PARAM + ".")) {

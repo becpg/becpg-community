@@ -43,8 +43,8 @@ import fr.becpg.repo.project.impl.ProjectHelper;
  */
 public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectData> {
 
-	private static Log logger = LogFactory.getLog(PlanningFormulationHandler.class);
-	private static int DEFAULT_WORK_HOURS_PER_DAY = 8;
+	private static final Log logger = LogFactory.getLog(PlanningFormulationHandler.class);
+	private static final int DEFAULT_WORK_HOURS_PER_DAY = 8;
 
 	@Override
 	public boolean process(ProjectData projectData) throws FormulateException {
@@ -91,8 +91,9 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 
 		calculateDurationAndWork(projectData, composite);
 
-		Integer projectOverdue = calculateOverdue(projectData, null);
-		projectData.setOverdue(projectOverdue);
+		int projectDuration = calculateDuration(projectData, null, false);
+		int projectRealDuration = calculateDuration(projectData, null, true);				
+		projectData.setOverdue(projectRealDuration - projectDuration);
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("End of formulation process " + composite);
@@ -104,25 +105,27 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 	private void clearDates(ProjectData projectData, boolean isPlanning) {
 
 		for (TaskListDataItem tl : projectData.getTaskList()) {
-			if (projectData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
-				tl.setStart(null);
-				tl.setEnd(null);
-			} else {
+			if(tl.getManualDate() == null){
+				if (projectData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
+					tl.setStart(null);
+					tl.setEnd(null);
+				} else {
 
-				if (hasPlannedDuration(tl)) {
-					//in retro-planning or task has prev tasks
-					if (tl.getIsGroup() || !isPlanning || ProjectHelper.getPrevTasks(projectData, tl).isEmpty() == false) {
-						ProjectHelper.setTaskStartDate(tl, null);
+					if (hasPlannedDuration(tl)) {
+						//in retro-planning or task has prev tasks
+						if (tl.getIsGroup() || !isPlanning || !ProjectHelper.getPrevTasks(projectData, tl).isEmpty()) {
+							ProjectHelper.setTaskStartDate(tl, null);
+						}
+						//in planning or task has next tasks
+						if (tl.getIsGroup() || isPlanning || !ProjectHelper.getNextTasks(projectData, tl.getNodeRef()).isEmpty()) {
+							ProjectHelper.setTaskEndDate(tl, null);
+						}
 					}
-					//in planning or task has next tasks
-					if (tl.getIsGroup() || isPlanning || ProjectHelper.getNextTasks(projectData, tl.getNodeRef()).isEmpty() == false) {
-						ProjectHelper.setTaskEndDate(tl, null);
+					else if(tl.getStart() != null && tl.getEnd() != null){
+						tl.setDuration(ProjectHelper.calculateTaskDuration(tl.getStart(), tl.getEnd()));
 					}
 				}
-				else if(tl.getStart() != null && tl.getEnd() != null){
-					tl.setDuration(ProjectHelper.calculateTaskDuration(tl.getStart(), tl.getEnd()));
-				}
-			}
+			}			
 		}
 	}
 
@@ -160,6 +163,7 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 			if (taskListDataItem.getDuration() != null) {
 				duration += taskListDataItem.getDuration();
 			}
+			taskListDataItem.setRealDuration(ProjectHelper.calculateRealDuration(taskListDataItem));
 		}
 		if (composite.isRoot()) {
 			projectData.setWork(work);
@@ -247,7 +251,7 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 	}
 
 	private void calculateRetroPlanningOfPrevTasks(ProjectData projectData, TaskListDataItem task, Date endDate) throws FormulateException {
-		List<TaskListDataItem> prevTasks = null;
+		List<TaskListDataItem> prevTasks;
 		if (task == null) {
 			prevTasks = ProjectHelper.getLastTasks(projectData);
 		} else {
@@ -294,37 +298,34 @@ public class PlanningFormulationHandler extends FormulationBaseHandler<ProjectDa
 			calculateDatesOfParent(prevTask.getParent(), prevTask);
 		}
 	}
-	
 
+	private int calculateDuration(ProjectData projectData, NodeRef taskNodeRef, boolean isRealDuration){
 
-	private Integer calculateOverdue(ProjectData projectData, NodeRef taskNodeRef) throws FormulateException {
-
-		Integer taskOverdue = 0;
-		Integer nextTaskOverdue = 0;
-		boolean initOverdue = true;
-		boolean initNextOverdue = true;
-
-		for (TaskListDataItem nextTask : ProjectHelper.getNextTasks(projectData, taskNodeRef)) {
-
-			// avoid cycle
-			checkCycle(taskNodeRef, nextTask);
-
-			nextTask.setRealDuration(ProjectHelper.calculateRealDuration(nextTask));
-			Integer o = ProjectHelper.calculateOverdue(nextTask);						
-			if (o != null && (initOverdue || o.intValue() > taskOverdue)) {
-				taskOverdue = o;
-				initOverdue = false;
+		int taskDuration = 0;
+		for (TaskListDataItem task : ProjectHelper.getNextTasks(projectData, taskNodeRef)) {			
+			Integer tempDuration = 0;
+			if(!isRealDuration){
+				tempDuration = ProjectHelper.calculateDuration(task);
 			}
-
-			o = calculateOverdue(projectData, nextTask.getNodeRef());			
-			if (o != null && (initNextOverdue || o.intValue() > nextTaskOverdue)) {
-				nextTaskOverdue = o;
-				initNextOverdue = false;
+			else{
+				tempDuration = ProjectHelper.calculateRealDuration(task);
+				if(tempDuration == null){
+					tempDuration = ProjectHelper.calculateDuration(task);
+				}
+			}	
+			if(tempDuration == null){
+				tempDuration = 0;
 			}
-		}
-		
-		return taskOverdue + nextTaskOverdue;
-	}
+			
+			tempDuration += calculateDuration(projectData, task.getNodeRef(), isRealDuration);
+			if(tempDuration != null && tempDuration > taskDuration){
+				taskDuration = tempDuration;
+			}
+			logger.debug("task " + task.getTaskName() + " duration " + taskDuration);
+		}				
+		logger.debug("final taskDuration " + taskDuration);
+		return taskDuration;
+	}	
 
 	private void checkCycle(NodeRef taskNodeRef, TaskListDataItem nextTask) throws FormulateException {
 

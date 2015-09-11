@@ -27,6 +27,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eclipse.birt.report.engine.api.DocxRenderOption;
 import org.eclipse.birt.report.engine.api.EXCELRenderOption;
 import org.eclipse.birt.report.engine.api.IRenderOption;
 import org.eclipse.birt.report.engine.api.IReportEngine;
@@ -46,14 +47,15 @@ public class BeCPGReportServiceImpl implements BeCPGReportService {
 	private static final String KEY_XML_INPUTSTREAM = "org.eclipse.datatools.enablement.oda.xml.inputStream";
 	
 
-	private static Log logger = LogFactory.getLog(BeCPGReportServiceImpl.class);
+	private final static Log logger = LogFactory.getLog(BeCPGReportServiceImpl.class);
 	
 	/** The report engine. */
-	private IReportEngine reportEngine = BirtPlatformListener.getReportEngine();
+	private final IReportEngine reportEngine = BirtPlatformListener.getReportEngine();
 
-	private TemplateCacheService templateCacheService = new TemplateCacheServiceImpl();
+	private final TemplateCacheService templateCacheService =  TemplateCacheServiceImpl.getInstance();
 	
-
+	
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public void generateReport(String templateId, String format, String lang,
@@ -73,22 +75,22 @@ public class BeCPGReportServiceImpl implements BeCPGReportService {
 			task  = reportEngine.createRunAndRenderTask(design);
 			
 			
-			IRenderOption options = null;
+			IRenderOption options;
 			
 			if(format.equals(ReportFormat.PDF.toString())){
 			
 				options = new RenderOption();
 				options.setOutputFormat(IRenderOption.OUTPUT_FORMAT_PDF);
 			}			
-			else if(format.equals(ReportFormat.DOC.toString())){
+			else if(format.equals(ReportFormat.DOCX.toString())){
 				
-				options = new RenderOption();
-				options.setOutputFormat(ReportFormat.DOC.toString());
+				options = new DocxRenderOption();
+				options.setOutputFormat(ReportFormat.DOCX.toString());
 			}
 			else{
 				// default format excel
 				options = new EXCELRenderOption();
-				options.setOutputFormat(ReportFormat.XLS.toString());
+				options.setOutputFormat(ReportFormat.XLSX.toString());
 			}
 			
 			options.setOutputStream(out);							

@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
@@ -45,8 +44,6 @@ import fr.becpg.test.BeCPGTestHelper;
 
 public class ProductValidationWorkflowTest extends AbstractWorkflowTest {
 
-	private static String PATH_PRODUCTFOLDER = "TestProductFolder";
-
 	private static final String WF_URI = "http://www.bcpg.fr/model/workflow/1.0";
 
 //	private static final QName PROP_reviewQualityApproval = QName.createQName(WF_URI, "reviewQualityApproval");
@@ -63,7 +60,7 @@ public class ProductValidationWorkflowTest extends AbstractWorkflowTest {
 	protected static final QName PROP_notifyUsers  = QName.createQName(WF_URI, "notifyUsers");
 
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(ProductValidationWorkflowTest.class);
+	private static final Log logger = LogFactory.getLog(ProductValidationWorkflowTest.class);
 
 	@Test
 	public void testWorkFlow() {
@@ -74,16 +71,10 @@ public class ProductValidationWorkflowTest extends AbstractWorkflowTest {
 
 				BeCPGTestHelper.createUsers();
 
-				NodeRef folderNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_PRODUCTFOLDER);
-				if (folderNodeRef != null) {
-					nodeService.deleteNode(folderNodeRef);
-				}
-				folderNodeRef = fileFolderService.create(repositoryHelper.getCompanyHome(), PATH_PRODUCTFOLDER, ContentModel.TYPE_FOLDER).getNodeRef();
-
 				RawMaterialData rawMaterial1 = new RawMaterialData();
 				rawMaterial1.setName("Raw material 1");
 
-				return alfrescoRepository.create(folderNodeRef, rawMaterial1).getNodeRef();
+				return alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial1).getNodeRef();
 
 			}
 		}, false, true);
@@ -111,7 +102,7 @@ public class ProductValidationWorkflowTest extends AbstractWorkflowTest {
 			public String execute() throws Throwable {
 
 				// Fill a map of default properties to start the workflow with
-				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				Map<QName, Serializable> properties = new HashMap<>();
 				Date dueDate = Calendar.getInstance().getTime();
 				properties.put(WorkflowModel.PROP_WORKFLOW_DUE_DATE, dueDate);
 				properties.put(WorkflowModel.PROP_WORKFLOW_PRIORITY, 2);
@@ -124,10 +115,10 @@ public class ProductValidationWorkflowTest extends AbstractWorkflowTest {
 				ChildAssociationRef childAssoc = nodeService.getPrimaryParent(productNodeRef);
 			     nodeService.addChild((NodeRef)workflowPackage, productNodeRef, WorkflowModel.ASSOC_PACKAGE_CONTAINS, childAssoc.getQName());	
 
-				List<NodeRef> assignees = new ArrayList<NodeRef>();
+				List<NodeRef> assignees = new ArrayList<>();
 				assignees.add(personService.getPerson(BeCPGTestHelper.USER_ONE));
 				properties.put(PROP_pvRDApprovalActor, (Serializable) assignees);
-				assignees = new ArrayList<NodeRef>();
+				assignees = new ArrayList<>();
 				assignees.add(personService.getPerson(BeCPGTestHelper.USER_TWO));
 				properties.put(PROP_pvCallerActor, (Serializable) assignees);
 
@@ -153,7 +144,7 @@ public class ProductValidationWorkflowTest extends AbstractWorkflowTest {
 		logger.info(task.getPath().getNode().getName());
 		assertEquals("doProductValidationRDTask", task.getPath().getNode().getName());
 
-		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+		Map<QName, Serializable> properties = new HashMap<>();
 		properties.put(PROP_reviewRDApproval, "Rejected");
 		properties.put(PROP_reviewRDComment, "OK comment");
 
@@ -163,7 +154,7 @@ public class ProductValidationWorkflowTest extends AbstractWorkflowTest {
 		logger.info(task.getPath().getNode().getName());
 		assertEquals("rejectProductTask", task.getPath().getNode().getName());
 
-		properties = new HashMap<QName, Serializable>();
+		properties = new HashMap<>();
 		properties.put(PROP_pvTransmitterComment, "OK comment");
 
 		task = submitTask(workflowInstanceId, "bcpgwf:rejectProductTask", null, properties);
@@ -172,7 +163,7 @@ public class ProductValidationWorkflowTest extends AbstractWorkflowTest {
 		logger.info(task.getPath().getNode().getName());
 		assertEquals("doProductValidationRDTask", task.getPath().getNode().getName());
 
-		properties = new HashMap<QName, Serializable>();
+		properties = new HashMap<>();
 		properties.put(PROP_reviewRDApproval, "Approved");
 		properties.put(PROP_reviewRDComment, "OK comment");
 
@@ -183,7 +174,7 @@ public class ProductValidationWorkflowTest extends AbstractWorkflowTest {
 		logger.info(task.getPath().getNode().getName());
 		assertEquals("doProductValidationCallerTask", task.getPath().getNode().getName());
 
-		properties = new HashMap<QName, Serializable>();
+		properties = new HashMap<>();
 		properties.put(PROP_reviewCallerApproval, "Approved");
 
 		task = submitTask(workflowInstanceId, "bcpgwf:doProductValidationCallerTask", null, properties);

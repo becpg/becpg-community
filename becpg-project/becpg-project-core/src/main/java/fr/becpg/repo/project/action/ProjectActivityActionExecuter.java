@@ -42,13 +42,15 @@ import fr.becpg.repo.project.data.projectList.ActivityEvent;
  * @author matthieu
  * 
  */
+// Can be removed in next release
+@Deprecated
 public class ProjectActivityActionExecuter extends ActionExecuterAbstractBase {
 
 	public static final String NAME = "project-activity";
 	
 	public static final String PARAM_ACTIVITY_EVENT = "activityEvent";
 
-	private Log logger = LogFactory.getLog(ProjectActivityActionExecuter.class);
+	private final Log logger = LogFactory.getLog(ProjectActivityActionExecuter.class);
 
 	private ProjectActivityService projectActivityService;
 	
@@ -71,6 +73,8 @@ public class ProjectActivityActionExecuter extends ActionExecuterAbstractBase {
 	 */
 	@Override
 	public void executeImpl(Action ruleAction, NodeRef actionedUponNodeRef) {
+		
+		
 		if (nodeService.exists(actionedUponNodeRef) && !nodeService.hasAspect(actionedUponNodeRef, ContentModel.ASPECT_WORKING_COPY)
 				&& !nodeService.hasAspect(actionedUponNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
 			QName type = nodeService.getType(actionedUponNodeRef);

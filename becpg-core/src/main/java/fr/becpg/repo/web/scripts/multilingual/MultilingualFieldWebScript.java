@@ -50,7 +50,7 @@ import org.springframework.util.StopWatch;
  */
 public class MultilingualFieldWebScript extends AbstractWebScript {
 
-	private static Log logger = LogFactory.getLog(MultilingualFieldWebScript.class);
+	private static final Log logger = LogFactory.getLog(MultilingualFieldWebScript.class);
 
 	private static final String PARAM_NODEREF = "nodeRef";
 
@@ -103,26 +103,9 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 			if (dataType.isMatch(DataTypeDefinition.MLTEXT)) {
 				// Save
 				MLText mlText = null;
-
-				JSONObject json = (JSONObject) req.parseContent();
-				if (json != null) {
-					mlText = new MLText();
-					for (Iterator<String> iterator = json.keys(); iterator.hasNext();) {
-						String key = iterator.next();
-						if (!"-".equals(key)) {
-							Locale loc = new Locale(new Locale(key).getLanguage());
-							if (json.getString(key) != null && json.getString(key).length() > 0) {
-								mlText.addValue(loc, json.getString(key));
-							}
-						}
-					}
-					serviceRegistry.getNodeService().setProperty(formNodeRef, fieldQname, mlText);
-
-				}
-
+				
 				boolean wasMLAware = MLPropertyInterceptor.setMLAware(true);
 				try {
-					if (mlText == null) {
 						Serializable value = serviceRegistry.getNodeService().getProperty(formNodeRef, fieldQname);
 						if (value instanceof MLText) {
 							mlText = (MLText) value;
@@ -133,11 +116,34 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 							mlText = new MLText();
 							mlText.addValue(I18NUtil.getContentLocaleLang(), "");
 						}
-					}
+					
 				} finally {
 					MLPropertyInterceptor.setMLAware(wasMLAware);
 				}
 
+				JSONObject json = (JSONObject) req.parseContent();
+				if (json != null) {
+					for (Iterator<String> iterator = json.keys(); iterator.hasNext();) {
+						String key = iterator.next();
+						if (!"-".equals(key)) {
+							Locale loc = new Locale(new Locale(key).getLanguage());
+							if (json.getString(key) != null) {
+								if(json.getString(key).length() > 0){
+									mlText.addValue(loc, json.getString(key));
+								} else {
+									mlText.removeValue(loc);
+								}
+							}
+						}
+					}
+					if(mlText.isEmpty() ){
+						serviceRegistry.getNodeService().removeProperty(formNodeRef, fieldQname);
+					} else {
+						serviceRegistry.getNodeService().setProperty(formNodeRef, fieldQname, mlText);
+					}
+
+				}
+				
 				JSONObject ret = new JSONObject();
 
 				if (mlText != null) {

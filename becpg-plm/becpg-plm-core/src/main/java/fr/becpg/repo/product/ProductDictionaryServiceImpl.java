@@ -20,7 +20,7 @@ import fr.becpg.model.SystemState;
 public class ProductDictionaryServiceImpl implements ProductDictionaryService {
 	
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(ProductDictionaryServiceImpl.class);
+	private static final Log logger = LogFactory.getLog(ProductDictionaryServiceImpl.class);
 	
 	/** The node service. */
 	private NodeService nodeService;

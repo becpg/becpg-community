@@ -42,9 +42,9 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 public final class Thumbnail extends BaseScopableProcessorExtension {
 
 	private static final String THUMB_CACHE_KEY_PREFIX = "thumbCache_";
-	private static String ICON_THUMBNAIL_NAME = "generic-%s-thumb.png";
+	private static final String ICON_THUMBNAIL_NAME = "generic-%s-thumb.png";
 
-	private static Log logger = LogFactory.getLog(Thumbnail.class);
+	private static final Log logger = LogFactory.getLog(Thumbnail.class);
 
 	private NodeService nodeService;
 
@@ -133,7 +133,7 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 	}
 
 	public ScriptNode getReportNode(ScriptNode sourceNode) {
-		NodeRef reportNodeRef = null;
+		NodeRef reportNodeRef;
 		if (entityReportService.shouldGenerateReport(sourceNode.getNodeRef())) {
 			logger.debug("Entity report is not up to date for " + sourceNode.getNodeRef());
 			reportNodeRef = entityReportService.getSelectedReport(sourceNode.getNodeRef());

@@ -53,8 +53,8 @@
 															<br />- Password (I advice you to change it) : ${password}</p>
 															
 															<p>I advice you to use Firefox or Chrome browser.<br />
-															At this page, you will find a food product: <a href="https://inst2.becpg.fr/share/page/site/rd/entity-details?nodeRef=workspace://SpacesStore/34fed2e5-393a-4c19-b304-1188283083df">Custom Quiche 400g</a>, <a href="https://inst2.becpg.fr/share/page/site/rd/entity-data-lists?nodeRef=workspace://SpacesStore/34fed2e5-393a-4c19-b304-1188283083df&list=compoList">Composition (recipe)</a><br />
-															At this page, you will find a sample project: <a href="https://inst2.becpg.fr/share/page/site/projects/entity-data-lists?nodeRef=workspace://SpacesStore/c4926fd4-8082-4171-b75c-f666be77c2fc">Project Quiche</a><br />
+															At this page, you will find a food product: <a href="https://inst2.becpg.fr/share/page/site/rd/entity-data-lists?list=View-properties&nodeRef=workspace://SpacesStore/34fed2e5-393a-4c19-b304-1188283083df">Custom Quiche 400g</a>, <a href="https://inst2.becpg.fr/share/page/site/rd/entity-data-lists?nodeRef=workspace://SpacesStore/34fed2e5-393a-4c19-b304-1188283083df&list=compoList">Composition (recipe)</a><br />
+															At this page, you will find a sample project: <a href="https://inst2.becpg.fr/share/page/site/projects/entity-data-lists?list=View-properties&nodeRef=workspace://SpacesStore/c4926fd4-8082-4171-b75c-f666be77c2fc">Project Quiche</a><br />
 															</p>
 															<p>
 															Visit this page to get help: <a href="https://www.becpg.fr/redmine/projects/becpg-community/wiki/User-doc">documentation</a><br />

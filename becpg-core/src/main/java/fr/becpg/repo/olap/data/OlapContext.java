@@ -17,19 +17,24 @@
  ******************************************************************************/
 package fr.becpg.repo.olap.data;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.UUID;
 
-import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 
-public class OlapContext {
+public class OlapContext implements Closeable{
 
-	HttpClient session;
+	final CloseableHttpClient session;
 	
-	String currentUser;
+	final String currentUser;
 	
-	String uuid; 
+	final String authToken;
+	
+	final String uuid;
 
-	public HttpClient getSession() {
+	public CloseableHttpClient getSession() {
 		return session;
 	}
 
@@ -39,16 +44,28 @@ public class OlapContext {
 	}
 
 
+	public String getAuthToken() {
+		return authToken;
+	}
+
+
 	public String getUuid() {
 		return uuid;
 	}
 
 
-	public OlapContext(HttpClient session, String currentUser) {
+	public OlapContext(String currentUser, String authToken) {
 		super();
-		this.session = session;
+		this.session = HttpClientBuilder.create().build();
 		this.currentUser = currentUser;
+		this.authToken = authToken;
 		this.uuid = UUID.randomUUID().toString();
+	}
+
+
+	@Override
+	public void close() throws IOException {
+		session.close();
 	}
 
 }

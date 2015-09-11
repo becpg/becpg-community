@@ -53,6 +53,10 @@ import fr.becpg.repo.repository.model.StateableEntity;
 public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem, FormulatedEntity, HierarchicalEntity, StateableEntity {
 
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6572843222555593368L;
 	private NodeRef hierarchy1;
 	private NodeRef hierarchy2;
 	private Date startDate;
@@ -64,7 +68,7 @@ public class ProjectData extends BeCPGDataObject implements AspectAwareDataItem,
 	private NodeRef projectTpl;
 	private Integer completionPercent = 0;
 	private List<NodeRef> entities;
-	private List<NodeRef> legends = new ArrayList<NodeRef>();
+	private List<NodeRef> legends = new ArrayList<>();
 	private Integer overdue = 0;
 	private Integer score = 0;
 	private Date created;

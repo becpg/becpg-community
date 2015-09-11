@@ -23,13 +23,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.query.PagingRequest;
-import org.alfresco.query.PagingResults;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.model.FileFolderService;
@@ -47,7 +45,6 @@ import org.springframework.stereotype.Repository;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.TranslateHelper;
@@ -61,7 +58,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 @Repository("entityListDAO")
 public class EntityListDAOImpl implements EntityListDAO {
 
-	private static Log logger = LogFactory.getLog(EntityListDAOImpl.class);
+	private static final Log logger = LogFactory.getLog(EntityListDAOImpl.class);
 
 	@Autowired
 	private NodeService nodeService;
@@ -80,9 +77,6 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 	@Autowired
 	private AssociationService associationService;
-
-	@Autowired
-	private EntityDictionaryService entityDictionaryService;
 
 	@Override
 	public NodeRef getListContainer(NodeRef nodeRef) {
@@ -111,7 +105,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 	@Override
 	public NodeRef createListContainer(NodeRef nodeRef) {
-		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+		Map<QName, Serializable> properties = new HashMap<>();
 		properties.put(ContentModel.PROP_NAME, RepoConsts.CONTAINER_DATALISTS);
 		properties.put(ContentModel.PROP_TITLE, RepoConsts.CONTAINER_DATALISTS);
 		NodeRef ret = nodeService.createNode(nodeRef, BeCPGModel.ASSOC_ENTITYLISTS, BeCPGModel.ASSOC_ENTITYLISTS, ContentModel.TYPE_FOLDER,
@@ -130,7 +124,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 			throw new InvalidParameterException("No classDef found for :" + listQName);
 		}
 
-		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+		Map<QName, Serializable> properties = new HashMap<>();
 		properties.put(ContentModel.PROP_NAME, listQName.getLocalName());
 		properties.put(ContentModel.PROP_TITLE, classDef.getTitle(dictionaryService));
 		properties.put(ContentModel.PROP_DESCRIPTION, classDef.getDescription(dictionaryService));
@@ -156,7 +150,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 					+ " with assocQname : " + assocQname.toPrefixString(namespaceService));
 		}
 
-		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+		Map<QName, Serializable> properties = new HashMap<>();
 		properties.put(ContentModel.PROP_NAME, name);
 		properties.put(ContentModel.PROP_TITLE, entityTitle);
 		properties.put(DataListModel.PROP_DATALISTITEMTYPE, listQName.toPrefixString(namespaceService));
@@ -169,7 +163,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 	@Override
 	public List<NodeRef> getExistingListsNodeRef(NodeRef listContainerNodeRef) {
 
-		List<NodeRef> existingLists = new ArrayList<NodeRef>();
+		List<NodeRef> existingLists = new ArrayList<>();
 
 		if (listContainerNodeRef != null) {
 			List<FileInfo> nodes = fileFolderService.listFolders(listContainerNodeRef);
@@ -200,7 +194,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 	@Override
 	public List<NodeRef> getListItems(NodeRef dataListNodeRef, QName dataType) {
 
-		Map<String, Boolean> sortMap = new LinkedHashMap<String, Boolean>();
+		Map<String, Boolean> sortMap = new LinkedHashMap<>();
 		sortMap.put("@bcpg:sort", true);
 		sortMap.put("@cm:created", true);
 
@@ -212,47 +206,13 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().addSort(sortMap).parent(listNodeRef);
 
-		if (listQNameFilter != null) {
-			Collection<QName> qnames = entityDictionaryService.getSubTypes(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-			for (QName qname : qnames) {
-				if (!qname.equals(listQNameFilter)) {
-
-					if (logger.isDebugEnabled()) {
-						logger.debug("Add to ignore :" + qname);
-					}
-					queryBuilder.excludeType(qname);
-
-				}
-			}
+		if(listQNameFilter != null ){
+			queryBuilder.ofType(listQNameFilter);
+		} else {
+			queryBuilder.ofType(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 		}
-
-		List<NodeRef> ret = new LinkedList<NodeRef>();
-
-		String queryExecutionId = null;
-		int page = 0;
-		boolean nextPage = true;
-		while (nextPage) {
-			int skipOffset = (page - 1) * RepoConsts.MAX_RESULTS_1000;
-			int requestTotalCountMax = skipOffset + RepoConsts.MAX_RESULTS_1000;
-
-			PagingRequest pageRequest = new PagingRequest(skipOffset, RepoConsts.MAX_RESULTS_1000, queryExecutionId);
-			pageRequest.setRequestTotalCountMax(requestTotalCountMax);
-
-			PagingResults<FileInfo> pageOfNodeInfos = queryBuilder.childFileFolders(pageRequest);
-
-			List<FileInfo> nodeInfos = pageOfNodeInfos.getPage();
-			int size = nodeInfos.size();
-
-			for (int i = 0; i < size; i++) {
-				FileInfo nodeInfo = nodeInfos.get(i);
-				ret.add(nodeInfo.getNodeRef());
-			}
-			nextPage = pageOfNodeInfos.hasMoreItems();
-			queryExecutionId = pageOfNodeInfos.getQueryExecutionId();
-
-		}
-
-		return ret;
+	   
+		return queryBuilder.childFileFolders(new PagingRequest(5000, null)).getPage();		
 
 	}
 
@@ -319,7 +279,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 						if (listQNames == null || listQNames.contains(listQName)) {
 
-							NodeRef existingListNodeRef = null;
+							NodeRef existingListNodeRef;
 
 							if (name.startsWith(RepoConsts.WUSED_PREFIX) || name.startsWith(RepoConsts.CUSTOM_VIEW_PREFIX)) {
 								existingListNodeRef = getList(targetListContainerNodeRef, name);

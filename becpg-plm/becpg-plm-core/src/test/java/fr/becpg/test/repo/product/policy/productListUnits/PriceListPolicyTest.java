@@ -4,13 +4,10 @@
 package fr.becpg.test.repo.product.policy.productListUnits;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
@@ -30,7 +27,7 @@ import fr.becpg.test.PLMBaseTestCase;
 public class PriceListPolicyTest extends PLMBaseTestCase {
 
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(PriceListPolicyTest.class);
+	private static final Log logger = LogFactory.getLog(PriceListPolicyTest.class);
 
 	private NodeRef cost1 = null;
 	private NodeRef cost2 = null;
@@ -40,10 +37,6 @@ public class PriceListPolicyTest extends PLMBaseTestCase {
 	 */
 	@Test
 	public void testCreateProductLists() {
-
-		final Set<QName> dataLists = new HashSet<QName>();
-		dataLists.add(PLMModel.TYPE_COSTLIST);
-		dataLists.add(PLMModel.TYPE_PRICELIST);
 
 		final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
@@ -62,17 +55,17 @@ public class PriceListPolicyTest extends PLMBaseTestCase {
 				cost2 = costs.get(1);
 				nodeService.setProperty(cost2, PLMModel.PROP_COSTCURRENCY, "$");
 
-				List<CostListDataItem> costList = new ArrayList<CostListDataItem>();
+				List<CostListDataItem> costList = new ArrayList<>();
 				costList.add(new CostListDataItem(null, 12d, "", null, cost1, false));
 				costList.add(new CostListDataItem(null, 11d, "", null, cost2, false));
 				rawMaterialData.setCostList(costList);
 
-				List<PriceListDataItem> priceList = new ArrayList<PriceListDataItem>();
+				List<PriceListDataItem> priceList = new ArrayList<>();
 				priceList.add(new PriceListDataItem(null, 22d, "€/kg", 1000d, "kg", 1, null, null, cost1, null));
 				priceList.add(new PriceListDataItem(null, 23d, "€/kg", 1000d, "kg", 2, null, null, cost1, null));
 				rawMaterialData.setPriceList(priceList);
 
-				NodeRef rawMaterialNodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterialData).getNodeRef();
+				NodeRef rawMaterialNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterialData).getNodeRef();
 
 				return rawMaterialNodeRef;
 

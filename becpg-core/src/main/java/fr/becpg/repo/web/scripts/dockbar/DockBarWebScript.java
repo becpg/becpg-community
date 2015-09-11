@@ -19,10 +19,12 @@ package fr.becpg.repo.web.scripts.dockbar;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Iterator;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.ServiceRegistry;
@@ -37,6 +39,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.extensions.webscripts.AbstractWebScript;
+import org.springframework.extensions.webscripts.Cache;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
@@ -45,6 +48,7 @@ import org.springframework.util.StopWatch;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.extractors.ContentDataExtractor;
+import fr.becpg.repo.web.scripts.BrowserCacheHelper;
 import fr.becpg.repo.web.scripts.WebscriptHelper;
 
 /**
@@ -55,21 +59,19 @@ import fr.becpg.repo.web.scripts.WebscriptHelper;
  */
 public class DockBarWebScript extends AbstractWebScript {
 
-	private static Log logger = LogFactory.getLog(DockBarWebScript.class);
+	private final static Log logger = LogFactory.getLog(DockBarWebScript.class);
 
 	private static final String PARAM_ENTITY_NODEREF = "entityNodeRef";
 
 	private static final String PREF_DOCKBAR_HISTORY = "fr.becpg.DockBarHistory";
 
-	protected static final String PARAM_FIELDS = "metadataFields";
+	private final static int DOCKBAR_SIZE = 6;
 
 	private AttributeExtractorService attributeExtractorService;
 
 	private PreferenceService preferenceService;
 
 	private ServiceRegistry serviceRegistry;
-
-	private static int DOCKBAR_SIZE = 6;
 
 	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
 		this.serviceRegistry = serviceRegistry;
@@ -98,7 +100,7 @@ public class DockBarWebScript extends AbstractWebScript {
 		if (entityNodeRef != null && !entityNodeRef.isEmpty()) {
 			productNodeRef = new NodeRef(entityNodeRef);
 		}
-		List<String> metadataFields = WebscriptHelper.extractMetadataFields(req);
+		
 
 		try {
 
@@ -115,16 +117,25 @@ public class DockBarWebScript extends AbstractWebScript {
 				logger.debug("Getting :" + nodeRefs + " from history for " + username);
 			}
 
-			LinkedList<NodeRef> elements = new LinkedList<NodeRef>();
+			LinkedList<NodeRef> elements = new LinkedList<>();
 
 			if (nodeRefs != null && nodeRefs.length() > 0) {
 				String[] splitted = nodeRefs.split(",");
+				
+				boolean isFirst = true;
+				
 				for (String field : splitted) {
 					NodeRef el = new NodeRef(field);
 					if (!el.equals(productNodeRef)) {
 						elements.add(el);
+					} else if(isFirst && BrowserCacheHelper.isBrowserHasInCache(req)){
+						res.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+						if (logger.isDebugEnabled()) {
+							logger.debug("Send Not_MODIFIED status");
+						}
+						return;
 					}
-
+					isFirst = false;
 				}
 			}
 
@@ -160,9 +171,23 @@ public class DockBarWebScript extends AbstractWebScript {
 					histories.put(PREF_DOCKBAR_HISTORY, nodeRefs);
 					preferenceService.setPreferences(username, histories);
 				}
+			} else if (BrowserCacheHelper.isBrowserHasInCache(req)) {
+				res.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+				if (logger.isDebugEnabled()) {
+					logger.debug("Send Not_MODIFIED status");
+				}
+				return;
 			}
 
-			JSONObject ret = processResults(elements, metadataFields);
+			Cache cache = new Cache(getDescription().getRequiredCache());
+			cache.setIsPublic(false);
+			cache.setMustRevalidate(true);
+			cache.setNeverCache(false);
+			cache.setMaxAge(0L);
+			cache.setLastModified(new Date());
+			res.setCache(cache);
+			
+			JSONObject ret = processResults(elements, WebscriptHelper.extractMetadataFields(req));
 			ret.put("page", 1);
 			ret.put("pageSize", DOCKBAR_SIZE);
 			ret.put("fullListSize", elements.size());
@@ -175,6 +200,7 @@ public class DockBarWebScript extends AbstractWebScript {
 			throw new WebScriptException("Unable to serialize JSON", e);
 		} finally {
 			if (logger.isDebugEnabled()) {
+				assert watch != null;
 				watch.stop();
 				logger.debug("DockBarWebScript execute in " + watch.getTotalTimeSeconds() + "s");
 			}
@@ -186,9 +212,9 @@ public class DockBarWebScript extends AbstractWebScript {
 
 		JSONArray items = new JSONArray();
 
-		for (Iterator<NodeRef> iterator = results.iterator(); iterator.hasNext();) {
-			NodeRef nodeRef = (NodeRef) iterator.next();
-			if (serviceRegistry.getNodeService().exists(nodeRef) && serviceRegistry.getPermissionService().hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED) {
+		for (NodeRef nodeRef : results) {
+			if (serviceRegistry.getNodeService().exists(nodeRef)
+					&& serviceRegistry.getPermissionService().hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED) {
 				items.put(new ContentDataExtractor(metadataFields, serviceRegistry, attributeExtractorService).extract(nodeRef));
 			}
 		}

@@ -38,6 +38,10 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfQname(qname = "pjt:deliverableList")
 public class DeliverableListDataItem extends BeCPGDataObject {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6649109093908843793L;
 	private List<NodeRef> tasks;
 	private DeliverableState state = DeliverableState.Planned;
 	private String description;

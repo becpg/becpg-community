@@ -30,12 +30,12 @@ public interface NonConformityService {
 	 *            may be null
 	 * @return
 	 */
-	public NodeRef getStorageFolder(NodeRef productNodeRef);
+	NodeRef getStorageFolder(NodeRef productNodeRef);
 
 	@Deprecated
-	public void classifyNC(NodeRef ncNodeRef, NodeRef productNodeRef);
+	void classifyNC(NodeRef ncNodeRef, NodeRef productNodeRef);
 
-	public List<String> getAssociatedWorkflow(NodeRef ncNodeRef);
+	List<String> getAssociatedWorkflow(NodeRef ncNodeRef);
 	
-	public void deleteWorkflows(List<String> instanceIds);
+	void deleteWorkflows(List<String> instanceIds);
 }

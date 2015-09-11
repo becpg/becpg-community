@@ -26,109 +26,110 @@ public interface ProjectModel {
 	//
 
 	/** Project Model URI */
-	public static final String PROJECT_URI = "http://www.bcpg.fr/model/project/1.0";
+	String PROJECT_URI = "http://www.bcpg.fr/model/project/1.0";
 
 	/** Security Model Prefix */
-	public static final String PROJECT_PREFIX = "pjt";
+	String PROJECT_PREFIX = "pjt";
 		
-	public static final QName TYPE_TASK_LEGEND = QName.createQName(PROJECT_URI, "taskLegend");	
+	QName TYPE_TASK_LEGEND = QName.createQName(PROJECT_URI, "taskLegend");
 	
-	public static final QName TYPE_PROJECT = QName.createQName(PROJECT_URI, "project");		
-	public static final QName PROP_PROJECT_HIERARCHY1 = QName.createQName(PROJECT_URI, "projectHierarchy1");
-	public static final QName PROP_PROJECT_HIERARCHY2 = QName.createQName(PROJECT_URI, "projectHierarchy2");
-	public static final QName PROP_PROJECT_START_DATE = QName.createQName(PROJECT_URI, "projectStartDate");
-	public static final QName PROP_PROJECT_DUE_DATE = QName.createQName(PROJECT_URI, "projectDueDate");
-	public static final QName PROP_PROJECT_COMPLETION_DATE = QName.createQName(PROJECT_URI, "projectCompletionDate");
-	public static final QName PROP_PROJECT_PLANNING_MODE = QName.createQName(PROJECT_URI, "projectPlanningMode");
-	public static final QName PROP_PROJECT_PRIORITY = QName.createQName(PROJECT_URI, "projectPriority");
-	public static final QName PROP_PROJECT_STATE = QName.createQName(PROJECT_URI, "projectState");
-	public static final QName PROP_PROJECT_LEGENDS = QName.createQName(PROJECT_URI, "projectLegends");
-	public static final QName ASSOC_PROJECT_ENTITY = QName.createQName(PROJECT_URI, "projectEntity");	
-	public static final QName ASSOC_PROJECT_OBSERVERS = QName.createQName(PROJECT_URI, "projectObservers");
+	QName TYPE_PROJECT = QName.createQName(PROJECT_URI, "project");
+	QName PROP_PROJECT_HIERARCHY1 = QName.createQName(PROJECT_URI, "projectHierarchy1");
+	QName PROP_PROJECT_HIERARCHY2 = QName.createQName(PROJECT_URI, "projectHierarchy2");
+	QName PROP_PROJECT_START_DATE = QName.createQName(PROJECT_URI, "projectStartDate");
+	QName PROP_PROJECT_DUE_DATE = QName.createQName(PROJECT_URI, "projectDueDate");
+	QName PROP_PROJECT_COMPLETION_DATE = QName.createQName(PROJECT_URI, "projectCompletionDate");
+	QName PROP_PROJECT_PLANNING_MODE = QName.createQName(PROJECT_URI, "projectPlanningMode");
+	QName PROP_PROJECT_PRIORITY = QName.createQName(PROJECT_URI, "projectPriority");
+	QName PROP_PROJECT_STATE = QName.createQName(PROJECT_URI, "projectState");
+	QName PROP_PROJECT_LEGENDS = QName.createQName(PROJECT_URI, "projectLegends");
+	QName ASSOC_PROJECT_ENTITY = QName.createQName(PROJECT_URI, "projectEntity");
+	QName ASSOC_PROJECT_OBSERVERS = QName.createQName(PROJECT_URI, "projectObservers");
 	
-	public static final QName ASSOC_PROJECT_CUR_TASKS = QName.createQName(PROJECT_URI, "projectCurrentTasks");
-	public static final QName ASSOC_PROJECT_CUR_COMMENTS = QName.createQName(PROJECT_URI, "projectCurrentComments");
+	QName ASSOC_PROJECT_CUR_TASKS = QName.createQName(PROJECT_URI, "projectCurrentTasks");
+	QName ASSOC_PROJECT_CUR_COMMENTS = QName.createQName(PROJECT_URI, "projectCurrentComments");
 	
-	public static final QName TYPE_TASK_LIST = QName.createQName(PROJECT_URI, "taskList");
-	public static final QName PROP_TL_TASK_NAME = QName.createQName(PROJECT_URI, "tlTaskName");
-	public static final QName PROP_TL_TASK_DESCRIPTION = QName.createQName(PROJECT_URI, "tlTaskDescription");
+	QName TYPE_TASK_LIST = QName.createQName(PROJECT_URI, "taskList");
+	QName PROP_TL_TASK_NAME = QName.createQName(PROJECT_URI, "tlTaskName");
+	QName PROP_TL_TASK_DESCRIPTION = QName.createQName(PROJECT_URI, "tlTaskDescription");
 
-	public static final QName PROP_TL_IS_MILESTONE = QName.createQName(PROJECT_URI, "tlIsMilestone");
-	public static final QName PROP_TL_DURATION = QName.createQName(PROJECT_URI, "tlDuration");
-	public static final QName PROP_TL_CAPACITY = QName.createQName(PROJECT_URI, "tlCapacity");
-	public static final QName PROP_TL_WORK = QName.createQName(PROJECT_URI, "tlWork");
-	public static final QName PROP_TL_WORKFLOW_NAME = QName.createQName(PROJECT_URI, "tlWorkflowName");
-	public static final QName PROP_TL_START = QName.createQName(PROJECT_URI, "tlStart");
-	public static final QName PROP_TL_END = QName.createQName(PROJECT_URI, "tlEnd");
-	public static final QName PROP_TL_STATE = QName.createQName(PROJECT_URI, "tlState");	
-	public static final QName ASSOC_TL_PREV_TASKS = QName.createQName(PROJECT_URI, "tlPrevTasks");
-	public static final QName ASSOC_TL_REFUSED_TASK_REF = QName.createQName(PROJECT_URI, "tlRefusedTaskRef");
-	public static final QName ASSOC_TL_RESOURCES = QName.createQName(PROJECT_URI, "tlResources");
-	public static final QName ASSOC_TL_TASKLEGEND = QName.createQName(PROJECT_URI, "tlTaskLegend");
-	public static final QName ASSOC_TL_OBSERVERS = QName.createQName(PROJECT_URI, "tlObservers");
-	public static final QName PROP_TL_WORKFLOW_INSTANCE = QName.createQName(PROJECT_URI, "tlWorkflowInstance");
-	public static final QName PROP_TL_FIXED_COST = QName.createQName(PROJECT_URI, "tlFixedCost");
+	QName PROP_TL_IS_MILESTONE = QName.createQName(PROJECT_URI, "tlIsMilestone");
+	QName PROP_TL_DURATION = QName.createQName(PROJECT_URI, "tlDuration");
+	QName PROP_TL_CAPACITY = QName.createQName(PROJECT_URI, "tlCapacity");
+	QName PROP_TL_WORK = QName.createQName(PROJECT_URI, "tlWork");
+	QName PROP_TL_WORKFLOW_NAME = QName.createQName(PROJECT_URI, "tlWorkflowName");
+	QName PROP_TL_START = QName.createQName(PROJECT_URI, "tlStart");
+	QName PROP_TL_END = QName.createQName(PROJECT_URI, "tlEnd");
+	QName PROP_TL_STATE = QName.createQName(PROJECT_URI, "tlState");
+	QName ASSOC_TL_PREV_TASKS = QName.createQName(PROJECT_URI, "tlPrevTasks");
+	QName ASSOC_TL_REFUSED_TASK_REF = QName.createQName(PROJECT_URI, "tlRefusedTaskRef");
+	QName ASSOC_TL_RESOURCES = QName.createQName(PROJECT_URI, "tlResources");
+	QName ASSOC_TL_TASKLEGEND = QName.createQName(PROJECT_URI, "tlTaskLegend");
+	QName ASSOC_TL_OBSERVERS = QName.createQName(PROJECT_URI, "tlObservers");
+	QName PROP_TL_WORKFLOW_INSTANCE = QName.createQName(PROJECT_URI, "tlWorkflowInstance");
+	QName PROP_TL_FIXED_COST = QName.createQName(PROJECT_URI, "tlFixedCost");
 
-	public static final QName ASSOC_TL_RESOURCE_COST = QName.createQName(PROJECT_URI, "tlResourceCost");
+	QName ASSOC_TL_RESOURCE_COST = QName.createQName(PROJECT_URI, "tlResourceCost");
 		
-	public static final QName TYPE_DELIVERABLE_LIST = QName.createQName(PROJECT_URI, "deliverableList");
-	public static final QName PROP_DL_STATE = QName.createQName(PROJECT_URI, "dlState");
-	public static final QName PROP_DL_URL = QName.createQName(PROJECT_URI, "dlURL");
-	public static final QName PROP_DL_DESCRIPTION = QName.createQName(PROJECT_URI, "dlDescription");
-	public static final QName ASSOC_DL_TASK = QName.createQName(PROJECT_URI, "dlTask");
-	public static final QName ASSOC_DL_CONTENT = QName.createQName(PROJECT_URI, "dlContent");
+	QName TYPE_DELIVERABLE_LIST = QName.createQName(PROJECT_URI, "deliverableList");
+	QName PROP_DL_STATE = QName.createQName(PROJECT_URI, "dlState");
+	QName PROP_DL_URL = QName.createQName(PROJECT_URI, "dlURL");
+	QName PROP_DL_DESCRIPTION = QName.createQName(PROJECT_URI, "dlDescription");
+	QName ASSOC_DL_TASK = QName.createQName(PROJECT_URI, "dlTask");
+	QName ASSOC_DL_CONTENT = QName.createQName(PROJECT_URI, "dlContent");
 	
-	public static final QName TYPE_SCORE_LIST = QName.createQName(PROJECT_URI, "scoreList");
-	public static final QName PROP_SL_SCORE = QName.createQName(PROJECT_URI, "slScore");
-	public static final QName PROP_SL_WEIGHT = QName.createQName(PROJECT_URI, "slWeight");
+	QName TYPE_SCORE_LIST = QName.createQName(PROJECT_URI, "scoreList");
+	QName PROP_SL_SCORE = QName.createQName(PROJECT_URI, "slScore");
+	QName PROP_SL_WEIGHT = QName.createQName(PROJECT_URI, "slWeight");
 	
-	public static final QName ASPECT_COMPLETION_ASPECT = QName.createQName(PROJECT_URI, "completionAspect");
-	public static final QName PROP_COMPLETION_PERCENT = QName.createQName(PROJECT_URI, "completionPercent");
+	QName ASPECT_COMPLETION_ASPECT = QName.createQName(PROJECT_URI, "completionAspect");
+	QName PROP_COMPLETION_PERCENT = QName.createQName(PROJECT_URI, "completionPercent");
 	
-	public static final QName ASPECT_WORKFLOW_ASPECT = QName.createQName(PROJECT_URI, "workflowAspect");
-	public static final QName ASSOC_WORKFLOW_TASK = QName.createQName(PROJECT_URI, "workflowTask");	
+	QName ASPECT_WORKFLOW_ASPECT = QName.createQName(PROJECT_URI, "workflowAspect");
+	QName ASSOC_WORKFLOW_TASK = QName.createQName(PROJECT_URI, "workflowTask");
 
-	public static final QName TYPE_ACTIVITY_LIST  = QName.createQName(PROJECT_URI, "activityList");	
+	QName TYPE_ACTIVITY_LIST  = QName.createQName(PROJECT_URI, "activityList");
 
-	public static final QName PROP_ACTIVITYLIST_USERID = QName.createQName(PROJECT_URI, "alUserId");
+	QName PROP_ACTIVITYLIST_USERID = QName.createQName(PROJECT_URI, "alUserId");
 
-	public static final QName PROP_ACTIVITYLIST_TYPE = QName.createQName(PROJECT_URI, "alType");
+	QName PROP_ACTIVITYLIST_TYPE = QName.createQName(PROJECT_URI, "alType");
 	
-	public static final QName PROP_ACTIVITYLIST_DATA = QName.createQName(PROJECT_URI, "alData");
+	QName PROP_ACTIVITYLIST_DATA = QName.createQName(PROJECT_URI, "alData");
 
-	public static final QName ASSOC_PROJECT_MANAGER = QName.createQName(PROJECT_URI, "projectManager");
+	QName ASSOC_PROJECT_MANAGER = QName.createQName(PROJECT_URI, "projectManager");
 	
-	public static final QName TYPE_LOG_TIME_LIST  = QName.createQName(PROJECT_URI, "logTimeList");
-	public static final QName PROP_LTL_TIME  = QName.createQName(PROJECT_URI, "ltlTime");
-	public static final QName ASSOC_LTL_TASK  = QName.createQName(PROJECT_URI, "ltlTask");
+	QName TYPE_LOG_TIME_LIST  = QName.createQName(PROJECT_URI, "logTimeList");
+	QName PROP_LTL_TIME  = QName.createQName(PROJECT_URI, "ltlTime");
+	QName ASSOC_LTL_TASK  = QName.createQName(PROJECT_URI, "ltlTask");
 	
-	public static final QName TYPE_RESOURCE_COST = QName.createQName(PROJECT_URI, "resourceCost");
-	public static final QName PROP_RESOURCE_COST_VALUE = QName.createQName(PROJECT_URI, "resourceCostValue");
+	QName TYPE_RESOURCE_COST = QName.createQName(PROJECT_URI, "resourceCost");
+	QName PROP_RESOURCE_COST_VALUE = QName.createQName(PROJECT_URI, "resourceCostValue");
+	QName PROP_RESOURCE_COST_BILL_RATE = QName.createQName(PROJECT_URI, "resourceCostBillRate");
 	
 	//Budget List
-	public static final QName TYPE_BUDGET_LIST  = QName.createQName(PROJECT_URI, "budgetList");
-	public static final QName PROP_BL_ITEM  = QName.createQName(PROJECT_URI, "blItem");
-	public static final QName PROP_BL_PROFIT  = QName.createQName(PROJECT_URI, "blProfit");
-	public static final QName PROP_BL_BUDGEDTED_EXPENSE = QName.createQName(PROJECT_URI, "blBudgetedExpense");
-	public static final QName PROP_BL_BUDGEDTED_INVOICE = QName.createQName(PROJECT_URI, "blBudgetedInvoice");
+	QName TYPE_BUDGET_LIST  = QName.createQName(PROJECT_URI, "budgetList");
+	QName PROP_BL_ITEM  = QName.createQName(PROJECT_URI, "blItem");
+	QName PROP_BL_PROFIT  = QName.createQName(PROJECT_URI, "blProfit");
+	QName PROP_BL_BUDGEDTED_EXPENSE = QName.createQName(PROJECT_URI, "blBudgetedExpense");
+	QName PROP_BL_BUDGEDTED_INVOICE = QName.createQName(PROJECT_URI, "blBudgetedInvoice");
 	
 	
 	//Invoice List
-	public static final QName TYPE_INVOICE_LIST  = QName.createQName(PROJECT_URI, "invoiceList");
-	public static final QName ASSOC_IL_BUDGET_REF  = QName.createQName(PROJECT_URI, "ilBudgetRef");
-	public static final QName ASSOC_IL_TASK_REF  = QName.createQName(PROJECT_URI, "ilTaskRef");
-	public static final QName ASSOC_IL_DOC_REF  = QName.createQName(PROJECT_URI, "ilDocRef");
+	QName TYPE_INVOICE_LIST  = QName.createQName(PROJECT_URI, "invoiceList");
+	QName ASSOC_IL_BUDGET_REF  = QName.createQName(PROJECT_URI, "ilBudgetRef");
+	QName ASSOC_IL_TASK_REF  = QName.createQName(PROJECT_URI, "ilTaskRef");
+	QName ASSOC_IL_DOC_REF  = QName.createQName(PROJECT_URI, "ilDocRef");
 	
 	//Expense List
-	public static final QName TYPE_EXPENSE_LIST  = QName.createQName(PROJECT_URI, "expenseList");
-	public static final QName ASSOC_EL_BUDGET_REF  = QName.createQName(PROJECT_URI, "elBudgetRef");
-	public static final QName ASSOC_EL_TASK_REF  = QName.createQName(PROJECT_URI, "elTaskRef");
-	public static final QName ASSOC_EL_DOC_REF  = QName.createQName(PROJECT_URI, "elDocRef");
+	QName TYPE_EXPENSE_LIST  = QName.createQName(PROJECT_URI, "expenseList");
+	QName ASSOC_EL_BUDGET_REF  = QName.createQName(PROJECT_URI, "elBudgetRef");
+	QName ASSOC_EL_TASK_REF  = QName.createQName(PROJECT_URI, "elTaskRef");
+	QName ASSOC_EL_DOC_REF  = QName.createQName(PROJECT_URI, "elDocRef");
 
 	//Budget Aspect
-	public static final QName ASPECT_BUDGET = QName.createQName(PROJECT_URI, "budgetAspect");
-	public static final QName PROP_BUDGET_INVOICE = QName.createQName(PROJECT_URI, "invoice");
-	public static final QName PROP_BUDGET_EXPENSE = QName.createQName(PROJECT_URI, "expense");
+	QName ASPECT_BUDGET = QName.createQName(PROJECT_URI, "budgetAspect");
+	QName PROP_BUDGET_INVOICE = QName.createQName(PROJECT_URI, "invoice");
+	QName PROP_BUDGET_EXPENSE = QName.createQName(PROJECT_URI, "expense");
 	
 	
 

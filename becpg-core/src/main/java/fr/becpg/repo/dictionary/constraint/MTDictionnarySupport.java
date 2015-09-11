@@ -4,11 +4,11 @@ public class MTDictionnarySupport {
 
 	public interface Action {
 
-		public void run();
+		void run();
 
 	}
 
-	private static ThreadLocal<Boolean> threadLocalCache = new ThreadLocal<Boolean>() {
+	private static final ThreadLocal<Boolean> threadLocalCache = new ThreadLocal<Boolean>() {
 		protected Boolean initialValue() {
 			return false;
 		}

@@ -18,19 +18,16 @@ import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityTplPlugin;
 import fr.becpg.repo.helper.AssociationService;
-import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.impl.ProjectHelper;
 import fr.becpg.repo.repository.RepositoryEntity;
 
 @Service
 public class EntityTplProjectPlugin implements EntityTplPlugin {
 
-	private static Log logger = LogFactory.getLog(EntityTplProjectPlugin.class);
+	private static final Log logger = LogFactory.getLog(EntityTplProjectPlugin.class);
 
 	@Autowired
 	private NodeService nodeService;
-	@Autowired
-	private ProjectService projectService;
 	@Autowired
 	private EntityListDAO entityListDAO;
 	@Autowired
@@ -82,7 +79,7 @@ public class EntityTplProjectPlugin implements EntityTplPlugin {
 
 	private void updateDelieverableDocument(NodeRef projectNodeRef, NodeRef listItem) {
 
-		Stack<String> stack = new Stack<String>();
+		Stack<String> stack = new Stack<>();
 		NodeRef documentNodeRef = associationService.getTargetAssoc(listItem, ProjectModel.ASSOC_DL_CONTENT);
 
 		if (documentNodeRef != null) {

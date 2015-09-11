@@ -22,7 +22,7 @@ import fr.becpg.repo.entity.EntityTplService;
 
 public class WUsedListPatch extends AbstractBeCPGPatch {
 
-	private static Log logger = LogFactory.getLog(WUsedListPatch.class);
+	private static final Log logger = LogFactory.getLog(WUsedListPatch.class);
 	private static final String MSG_SUCCESS = "patch.bcpg.plm.wusedListPatch.result";
 
 	private EntityTplService entityTplService;
@@ -51,7 +51,7 @@ public class WUsedListPatch extends AbstractBeCPGPatch {
 	@Override
 	protected String applyInternal() throws Exception {
 
-		Set<QName> productTypes = new HashSet<QName>();
+		Set<QName> productTypes = new HashSet<>();
 		productTypes.add(PLMModel.TYPE_RAWMATERIAL);
 		productTypes.add(PLMModel.TYPE_SEMIFINISHEDPRODUCT);
 		productTypes.add(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT);

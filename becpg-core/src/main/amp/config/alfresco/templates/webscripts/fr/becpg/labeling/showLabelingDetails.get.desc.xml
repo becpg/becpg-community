@@ -1,0 +1,7 @@
+<webscript>
+  <shortname>Retrieve labeling details</shortname>
+  <description>Retrieve labeling details</description>
+  <url>/becpg/labeling/showLabelingDetails?nodeRef={noderef}</url>
+  <format default="json">argument</format>
+  <authentication>user</authentication>
+</webscript>

@@ -25,25 +25,24 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.listvalue.impl.EntityListValuePlugin;
 import fr.becpg.repo.listvalue.impl.NodeRefListValueExtractor;
 
-
+@Service
 public class VariantListValuePlugin extends EntityListValuePlugin {
 
-	private static Log logger = LogFactory.getLog(VariantListValuePlugin.class);
+	private static final Log logger = LogFactory.getLog(VariantListValuePlugin.class);
 
 	private static final String SOURCE_TYPE_VARIANT_LIST = "variantList";
 	
+	@Autowired
 	private AssociationService associationService;
 	
-
-	public void setAssociationService(AssociationService associationService) {
-		this.associationService = associationService;
-	}
 
 	@Override
 	public String[] getHandleSourceTypes() {

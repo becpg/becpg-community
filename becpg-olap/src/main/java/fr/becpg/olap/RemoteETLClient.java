@@ -27,7 +27,8 @@ import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 
 import fr.becpg.olap.extractor.EntityToDBXmlVisitor;
 import fr.becpg.tools.InstanceManager;
@@ -41,7 +42,7 @@ import fr.becpg.tools.jdbc.JdbcConnectionManager.JdbcConnectionManagerCallBack;
  * 
  */
 public class RemoteETLClient {
-	private static Log logger = LogFactory.getLog(RemoteETLClient.class);
+	private static final Log logger = LogFactory.getLog(RemoteETLClient.class);
 	
 	public static void main(String[] args) throws Exception {
 
@@ -76,15 +77,11 @@ public class RemoteETLClient {
 					instanceManager.createBatch(connection,instance);
 		
 					InstanceImporter remoteETLClient = new InstanceImporter(instance.getInstanceUrl());
-
+				
 					remoteETLClient.setEntityToDBXmlVisitor(new EntityToDBXmlVisitor(connection, instance));
-					HttpClient httpClient = instanceManager.createInstanceSession(instance);
-					try {
-						remoteETLClient.loadEntities(remoteETLClient.buildQuery(instance.getLastImport()), httpClient);
-					} finally {
-						httpClient.getConnectionManager().shutdown();
-
-					}
+					try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
+						remoteETLClient.loadEntities(remoteETLClient.buildQuery(instance.getLastImport()), httpClient, instance.createHttpContext());
+					} 
 					
 					instanceManager.updateBatchAndDate(connection,instance);
 				}

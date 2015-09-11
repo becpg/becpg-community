@@ -53,7 +53,7 @@ import fr.becpg.repo.mail.BeCPGMailService;
  */
 public class BeCPGMailServiceImpl implements BeCPGMailService {
 
-	private static Log _logger = LogFactory.getLog(BeCPGMailServiceImpl.class);
+	private static final Log _logger = LogFactory.getLog(BeCPGMailServiceImpl.class);
 
 	
 	private NodeService nodeService;
@@ -107,7 +107,7 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 
 	@Override
 	public void sendMailNewUser(NodeRef personNodeRef, String userName, String password) {
-		Map<String, Object> templateModel = new HashMap<String, Object>(8, 1.0f);
+		Map<String, Object> templateModel = new HashMap<>(8, 1.0f);
 
 		templateModel.put("person", new TemplateNode(personNodeRef, serviceRegistry, null));
 		templateModel.put("username", userName);
@@ -118,7 +118,7 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 
 		String email = (String) nodeService.getProperty(personNodeRef, ContentModel.PROP_EMAIL);
 		if (!StringUtils.isEmpty(email)) {
-			List<String> emails = new ArrayList<String>(1);
+			List<String> emails = new ArrayList<>(1);
 			emails.add(email);
 			sendMail(emails, I18NUtil.getMessage("becpg.mail.newUser.title"), RepoConsts.EMAIL_NEW_USER_TEMPLATE, templateModel);
 		}
@@ -191,11 +191,14 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 		return searchFolder("app:company_home/app:dictionary/app:email_templates/.");
 	}
 
-	
 	@Override
 	public NodeRef getEmailWorkflowTemplatesFolder() {
 		return searchFolder("app:company_home/app:dictionary/app:email_templates/cm:workflownotification/.");
+	}
 
+	@Override
+	public NodeRef getEmailNotifyTemplatesFolder() {
+		return searchFolder("app:company_home/app:dictionary/app:email_templates/app:notify_email_templates/.");
 	}
 	
 	private NodeRef searchFolder(String xpath){

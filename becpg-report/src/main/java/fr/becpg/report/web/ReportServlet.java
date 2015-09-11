@@ -37,14 +37,17 @@ import fr.becpg.report.services.impl.BeCPGReportServiceImpl;
 
 public class ReportServlet extends AbstractReportServlet {
 
-	BeCPGReportService beCPGReportService = new BeCPGReportServiceImpl();
-
+	private final BeCPGReportService beCPGReportService;
+	
 	private final static int BUFFER_SIZE = 2048;
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 609805146293149060L;
+	
+	
+	public ReportServlet() {
+		beCPGReportService = new BeCPGReportServiceImpl();
+	}
+	
 	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
@@ -58,26 +61,21 @@ public class ReportServlet extends AbstractReportServlet {
 		@SuppressWarnings("unchecked")
 		Map<String,byte[]> images = (Map<String, byte[]>) session.getAttribute(ReportParams.PARAM_IMAGES);
 		if(images==null){
-			images = new HashMap<String, byte[]>();
+			images = new HashMap<>();
 		}
 		
 		if(format.equals(ReportParams.PARAM_IMAGES)){
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			InputStream in = req.getInputStream();
-			try {
+			try (ByteArrayOutputStream out = new ByteArrayOutputStream(); InputStream in = req.getInputStream()) {
 				byte[] buffer = new byte[BUFFER_SIZE];
 				int l;
 				// consume until EOF
 				while ((l = in.read(buffer)) != -1) {
-				
+
 					out.write(buffer, 0, l);
 				}
-				images.put(templateId,out.toByteArray());
-				
-				
-			} finally {
-				in.close();
-				out.close();
+				images.put(templateId, out.toByteArray());
+
+
 			}
 			
 			session.setAttribute(ReportParams.PARAM_IMAGES, images);
@@ -99,13 +97,13 @@ public class ReportServlet extends AbstractReportServlet {
 			      resp.setContentType("application/pdf");
 			      resp.addHeader("Content-Disposition", "attachment; filename=report.pdf" );
 			}			
-			else if(format.equals(ReportFormat.DOC.toString())){
-				 resp.setContentType("application/ms-word");
-			     resp.addHeader("Content-Disposition", "attachment; filename=report.doc" );
+			else if(format.equals(ReportFormat.DOCX.toString())){
+				 resp.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+			     resp.addHeader("Content-Disposition", "attachment; filename=report.docx" );
 			}
 			else{
-				 resp.setContentType("application/vnd.xls");
-			     resp.addHeader("Content-Disposition", "attachment; filename=report.xls" );
+				 resp.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+			     resp.addHeader("Content-Disposition", "attachment; filename=report.xlsx" );
 			}
 			
 		    

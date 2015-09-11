@@ -23,7 +23,12 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 public interface DataListSortPlugin {
 
-	public String getPluginId();
 
-	public List<NodeRef> sort(List<NodeRef> projectList);
+	int BEFORE = -1;
+	int EQUAL = 0;
+	int AFTER = 1;
+	
+	String getPluginId();
+
+	List<NodeRef> sort(List<NodeRef> projectList);
 }

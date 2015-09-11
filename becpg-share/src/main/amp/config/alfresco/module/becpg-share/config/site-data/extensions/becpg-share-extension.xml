@@ -1,0 +1,86 @@
+<!-- http://blogs.alfresco.com/wp/ddraper/category/alfresco-share-customization/ -->
+<extension>
+	<modules>
+		<module>
+			<id>becpg-share-extension</id>
+			<auto-deploy>true</auto-deploy>
+			<configurations>
+				<config evaluator="string-compare" condition="WebFramework"
+					replace="false">
+					<web-framework>
+						<dojo-pages>
+							<packages>
+								<package name="becpg" location="js/aikau/becpg" />
+							</packages>
+						</dojo-pages>
+					</web-framework>
+				</config>
+			</configurations>
+			<customizations>
+				<customization>
+					<targetPackageRoot>org.alfresco.components.head</targetPackageRoot>
+					<sourcePackageRoot>org.alfresco.components.custom-head
+					</sourcePackageRoot>
+				</customization>
+				<customization>
+					<targetPackageRoot>org.alfresco.components.rules
+					</targetPackageRoot>
+					<sourcePackageRoot>org.alfresco.components.custom-rules
+					</sourcePackageRoot>
+				</customization>
+				<customization>
+					<targetPackageRoot>org.alfresco.components.rules.config
+					</targetPackageRoot>
+					<sourcePackageRoot>org.alfresco.components.custom-rules.config
+					</sourcePackageRoot>
+				</customization>
+				<customization>
+					<targetPackageRoot>org.alfresco.components.rules
+					</targetPackageRoot>
+					<sourcePackageRoot>org.alfresco.components.custom-rules
+					</sourcePackageRoot>
+				</customization>
+				<customization>
+					<targetPackageRoot>org.alfresco.components.rules.config
+					</targetPackageRoot>
+					<sourcePackageRoot>org.alfresco.components.custom-rules.config
+					</sourcePackageRoot>
+				</customization>
+				<customization>
+					<targetPackageRoot>org.alfresco.components.documentlibrary
+					</targetPackageRoot>
+					<sourcePackageRoot>org.alfresco.components.custom-documentlibrary
+					</sourcePackageRoot>
+				</customization>
+				<customization>
+					<targetPackageRoot>org.alfresco.components.footer
+					</targetPackageRoot>
+					<sourcePackageRoot>org.alfresco.components.custom-footer
+					</sourcePackageRoot>
+				</customization>
+				<customization>
+					<targetPackageRoot>org.alfresco.components.data-lists
+					</targetPackageRoot>
+					<sourcePackageRoot>org.alfresco.components.custom-data-lists
+					</sourcePackageRoot>
+				</customization>
+				<customization>
+					<targetPackageRoot>org.alfresco.components.create-content
+					</targetPackageRoot>
+					<sourcePackageRoot>org.alfresco.components.custom-create-content
+					</sourcePackageRoot>
+				</customization>
+				<customization>
+					<targetPackageRoot>org.alfresco.components.dashlets
+					</targetPackageRoot>
+					<sourcePackageRoot>org.alfresco.components.custom-dashlets
+					</sourcePackageRoot>
+				</customization>
+				<!-- <customization> <targetPackageRoot>org.alfresco.components.manage-permissions</targetPackageRoot> 
+					<sourcePackageRoot>org.alfresco.components.custom-manage-permissions</sourcePackageRoot> 
+					</customization> -->
+
+			</customizations>
+		</module>
+	</modules>
+</extension>  

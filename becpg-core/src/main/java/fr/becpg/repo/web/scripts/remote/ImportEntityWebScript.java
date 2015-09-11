@@ -95,7 +95,7 @@ public class ImportEntityWebScript extends AbstractEntityWebScript implements In
 			props.put(ContentModel.PROP_OWNER, AuthenticationUtil.getFullyAuthenticatedUser());
 			JSONArray ret = new JSONArray();
 			for (final String entity : entities.split(",")) {
-				NodeRef entityNodeRef = null;
+				NodeRef entityNodeRef;
 				try {
 					entityNodeRef = entityProviderCallBack.provideNode(new NodeRef(entity), destNodeRef, props);
 				} catch (BeCPGException e) {

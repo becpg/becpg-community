@@ -13,7 +13,6 @@ import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -28,8 +27,6 @@ import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
-import fr.becpg.repo.entity.EntityListDAO;
-import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.report.search.SearchReportRenderer;
@@ -48,16 +45,8 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 	private ContentService contentService;
 
 	@Autowired
-	private PermissionService permissionService;
-
-	@Autowired
-	private EntityListDAO entityListDAO;
-
-	@Autowired
 	private AttributeExtractorService attributeExtractorService;
 
-	@Autowired
-	private AssociationService associationService;
 
 	@Autowired
 	private NamespaceService namespaceService;
@@ -129,7 +118,7 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 
 			rownum++;
 
-			Map<NodeRef, Map<String, Object>> cache = new HashMap<NodeRef, Map<String, Object>>();
+			Map<NodeRef, Map<String, Object>> cache = new HashMap<>();
 
 			ExcelReportSearchPlugin plugin = null;
 			
@@ -152,7 +141,7 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 
 	private List<AttributeExtractorStructure> extractListStruct(QName itemType, Row headerRow) {
 
-		List<String> metadataFields = new LinkedList<String>();
+		List<String> metadataFields = new LinkedList<>();
 		String currentNested = "";
 		for (int i = 1; i < headerRow.getLastCellNum(); i++) {
 			if (headerRow.getCell(i) != null) {
@@ -192,7 +181,7 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 	public boolean isApplicable(NodeRef templateNodeRef, ReportFormat reportFormat) {
 		return ReportFormat.XLSX.equals(reportFormat)
 				&& ((String) nodeService.getProperty(templateNodeRef, ContentModel.PROP_NAME))
-						.endsWith(ReportTplService.PARAM_VALUE_XLSREPORT_EXTENSION);
+						.endsWith(ReportTplService.PARAM_VALUE_XLSXREPORT_EXTENSION);
 	}
 
 }

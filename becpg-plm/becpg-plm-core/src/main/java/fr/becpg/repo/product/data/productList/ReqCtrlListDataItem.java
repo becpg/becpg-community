@@ -26,6 +26,7 @@ import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
+import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
@@ -34,10 +35,15 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 public class ReqCtrlListDataItem extends BeCPGDataObject {
 
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3851143080201225383L;
 	private RequirementType reqType;
 	private String reqMessage;
 	private Integer sort;
-	private List<NodeRef> sources = new ArrayList<NodeRef>();
+	private NodeRef charact;
+	private List<NodeRef> sources = new ArrayList<>();
 
 	@AlfProp
 	@AlfQname(qname="bcpg:rclReqType")
@@ -69,6 +75,16 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 		this.sort = sort;
 	}
 
+	@AlfSingleAssoc
+	@AlfQname(qname="bcpg:rclCharact")
+	public NodeRef getCharact() {
+		return charact;
+	}
+
+	public void setCharact(NodeRef charact) {
+		this.charact = charact;
+	}
+
 	@AlfMultiAssoc
 	@AlfQname(qname="bcpg:rclSources")
 	public List<NodeRef> getSources() {
@@ -85,11 +101,12 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 		super();
 	}
 
-	public ReqCtrlListDataItem(NodeRef nodeRef, RequirementType reqType, String reqMessage, List<NodeRef> sources){
+	public ReqCtrlListDataItem(NodeRef nodeRef, RequirementType reqType, String reqMessage, NodeRef charact, List<NodeRef> sources){
 		super();
 		this.nodeRef = nodeRef;
 		this.reqType = reqType;
 		this.reqMessage = reqMessage;
+		this.charact = charact;
 		this.sources = sources;
 	}
 

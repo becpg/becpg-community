@@ -48,15 +48,15 @@ import java.util.List;
  */
 public class CSVReader {
 
-    private BufferedReader br;
+    private final BufferedReader br;
 
     private boolean hasNext = true;
 
-    private char separator;
+    private final char separator;
 
-    private char quotechar;
+    private final char quotechar;
     
-    private int skipLines;
+    private final int skipLines;
 
     private boolean linesSkiped;
 
@@ -143,7 +143,7 @@ public class CSVReader {
      */
 	public List<String[]> readAll() throws IOException {
 
-        List<String[]> allElements = new ArrayList<String[]>();
+        List<String[]> allElements = new ArrayList<>();
         while (hasNext) {
             String[] nextLineAsTokens = readNext();
             if (nextLineAsTokens != null)
@@ -203,7 +203,7 @@ public class CSVReader {
             return null;
         }
 
-        List<String> tokensOnThisLine = new ArrayList<String>();
+        List<String> tokensOnThisLine = new ArrayList<>();
         StringBuffer sb = new StringBuffer();
         boolean inQuotes = false;
         do {
@@ -247,7 +247,7 @@ public class CSVReader {
             }
         } while (inQuotes);
         tokensOnThisLine.add(sb.toString());
-        return (String[]) tokensOnThisLine.toArray(new String[0]);
+        return tokensOnThisLine.toArray(new String[0]);
 
     }
 

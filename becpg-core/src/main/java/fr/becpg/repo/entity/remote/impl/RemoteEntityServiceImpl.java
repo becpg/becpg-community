@@ -13,7 +13,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
  * GNU Lesser General Public License for more details. 
  *  
- * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License along with beCPG. 
+ * If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.entity.remote.impl;
 
@@ -35,6 +36,7 @@ import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -62,6 +64,9 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 
 	@Autowired
 	private ServiceRegistry serviceRegistry;
+	
+	@Autowired
+	private SiteService siteService;
 
 	@Autowired
 	private NodeService nodeService;
@@ -81,12 +86,12 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	@Autowired
 	private EntityDictionaryService entityDictionaryService;
 
-	private static Log logger = LogFactory.getLog(RemoteEntityServiceImpl.class);
+	private static final Log logger = LogFactory.getLog(RemoteEntityServiceImpl.class);
 
 	@Override
 	public void getEntity(NodeRef entityNodeRef, OutputStream out, RemoteEntityFormat format) throws BeCPGException {
 		if (format.equals(RemoteEntityFormat.xml) || format.equals(RemoteEntityFormat.xml_all)) {
-			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(nodeService, namespaceService, dictionaryService, contentService);
+			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(nodeService, namespaceService, dictionaryService, contentService, siteService);
 			if (format.equals(RemoteEntityFormat.xml_all)) {
 				xmlEntityVisitor.setDumpAll(true);
 			}
@@ -103,7 +108,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 				throw new BeCPGException("Cannot export entity :" + entityNodeRef + " at format " + format, e);
 			}
 		} else {
-			throw new BeCPGException("Unknow format " + format.toString());
+			throw new BeCPGException("Unknown format " + format.toString());
 		}
 	}
 
@@ -124,11 +129,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 			try {
 				ret = xmlEntityVisitor.visit(entityNodeRef,destNodeRef, properties , in);
 
-			} catch (IOException e) {
-				throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
-			} catch (SAXException e) {
-				throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
-			} catch (ParserConfigurationException e) {
+			} catch (IOException | ParserConfigurationException | SAXException e) {
 				throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
 			} finally {
 				if (ret == null) {
@@ -137,20 +138,20 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 			}
 			return ret;
 		}
-		throw new BeCPGException("Unknow format " + format.toString());
+		throw new BeCPGException("Unknown format " + format.toString());
 	}
 
 	@Override
 	public void listEntities(List<NodeRef> entities, OutputStream result, RemoteEntityFormat format) throws BeCPGException {
 		if (format.equals(RemoteEntityFormat.xml)) {
-			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(nodeService, namespaceService, dictionaryService, contentService);
+			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(nodeService, namespaceService, dictionaryService, contentService, siteService);
 			try {
 				xmlEntityVisitor.visit(entities, result);
 			} catch (XMLStreamException e) {
 				throw new BeCPGException("Cannot list entities at format " + format, e);
 			}
 		} else {
-			throw new BeCPGException("Unknow format " + format.toString());
+			throw new BeCPGException("Unknown format " + format.toString());
 		}
 
 	}
@@ -158,14 +159,14 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	@Override
 	public void getEntityData(NodeRef entityNodeRef, OutputStream result, RemoteEntityFormat format) throws BeCPGException {
 		if (RemoteEntityFormat.xml.equals(format)) {
-			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(nodeService, namespaceService, dictionaryService, contentService);
+			XmlEntityVisitor xmlEntityVisitor = new XmlEntityVisitor(nodeService, namespaceService, dictionaryService, contentService, siteService);
 			try {
 				xmlEntityVisitor.visitData(entityNodeRef, result);
 			} catch (XMLStreamException e) {
 				throw new BeCPGException("Cannot get entity data at format " + format, e);
 			}
 		} else {
-			throw new BeCPGException("Unknow format " + format.toString());
+			throw new BeCPGException("Unknown format " + format.toString());
 		}
 
 	}
@@ -182,15 +183,11 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 			writer.setMimetype(mimetype);
 			try (OutputStream out = writer.getContentOutputStream()) {
 				xmlEntityVisitor.visitData(in, out);
-			} catch (IOException e) {
-				throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
-			} catch (SAXException e) {
-				throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
-			} catch (ParserConfigurationException e) {
+			} catch (IOException | ParserConfigurationException | SAXException e) {
 				throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
 			}
 		} else {
-			throw new BeCPGException("Unknow format " + format.toString());
+			throw new BeCPGException("Unknown format " + format.toString());
 		}
 
 	}

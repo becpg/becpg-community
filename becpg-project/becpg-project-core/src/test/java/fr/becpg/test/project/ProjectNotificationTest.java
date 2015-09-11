@@ -28,7 +28,7 @@ public class ProjectNotificationTest extends AbstractProjectTestCase {
 	@Test
 	public void testNotification() {
 
-		createProject(ProjectState.Planned, new Date(), null);
+		final NodeRef projectNodeRef = createProject(ProjectState.Planned, new Date(), null);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
@@ -36,7 +36,7 @@ public class ProjectNotificationTest extends AbstractProjectTestCase {
 
 				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 				
-				List<NodeRef> observerNodeRefs = new ArrayList<NodeRef>();
+				List<NodeRef> observerNodeRefs = new ArrayList<>();
 				observerNodeRefs.add(userOne);
 				observerNodeRefs.add(userTwo);
 				projectData.getTaskList().get(0).setObservers(observerNodeRefs);

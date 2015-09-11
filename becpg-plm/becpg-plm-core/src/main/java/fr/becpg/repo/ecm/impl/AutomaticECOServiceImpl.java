@@ -1,11 +1,7 @@
 package fr.becpg.repo.ecm.impl;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
@@ -42,7 +38,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 
 	private static final String CURRENT_ECO_PREF = "fr.becpg.ecm.currentEcmNodeRef";
 
-	private static Log logger = LogFactory.getLog(AutomaticECOService.class);
+	private static final Log logger = LogFactory.getLog(AutomaticECOService.class);
 
 	@Autowired
 	private RepoService repoService;
@@ -75,7 +71,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 	public boolean addAutomaticChangeEntry(final NodeRef entityNodeRef,final ChangeOrderData currentUserChangeOrderData) {
 
 		String productState = (String) nodeService.getProperty(entityNodeRef, PLMModel.PROP_PRODUCT_STATE);
-
+		
 		if (productState == null || productState.isEmpty() || !statesToRegister.contains(productState)) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Skipping product state : " + productState);
@@ -107,7 +103,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 				List<ReplacementListDataItem> replacementList = changeOrderData.getReplacementList();
 
 				if (replacementList == null) {
-					replacementList = new ArrayList<ReplacementListDataItem>();
+					replacementList = new ArrayList<>();
 				}
 
 				// avoid recreate same entry
@@ -120,8 +116,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 					}
 				}
 
-				replacementList.add(new ReplacementListDataItem(RevisionType.valueOf(automaticRevisionType), Arrays
-						.asList(entityNodeRef), entityNodeRef, 100));
+				replacementList.add(new ReplacementListDataItem(RevisionType.valueOf(automaticRevisionType), Collections.singletonList(entityNodeRef), entityNodeRef, 100));
 
 				if (logger.isDebugEnabled()) {
 					logger.debug("Adding nodeRef " + entityNodeRef + " to automatic change order :" + changeOrderData.getName());
@@ -157,7 +152,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 	@Override
 	public boolean applyAutomaticEco() {
 
-		boolean ret = false;
+		boolean ret;
 
 		if (shouldApplyAutomaticECO) {
 			if (logger.isDebugEnabled()) {

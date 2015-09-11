@@ -28,7 +28,7 @@ import fr.becpg.test.PLMBaseTestCase;
 public class EntityTplServiceTest extends PLMBaseTestCase {
 
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(EntityTplServiceTest.class);
+	private static final Log logger = LogFactory.getLog(EntityTplServiceTest.class);
 
 	
 	
@@ -47,7 +47,7 @@ public class EntityTplServiceTest extends PLMBaseTestCase {
 				RawMaterialData rmTplData = new RawMaterialData();
 				rmTplData.setName("Raw material Tpl");				
 				rmTplData.getAspects().add(BeCPGModel.ASPECT_ENTITY_TPL);				
-				return alfrescoRepository.create(testFolderNodeRef, rmTplData).getNodeRef();
+				return alfrescoRepository.create(getTestFolderNodeRef(), rmTplData).getNodeRef();
 
 			}
 		}, false, true);
@@ -60,7 +60,7 @@ public class EntityTplServiceTest extends PLMBaseTestCase {
 				RawMaterialData rm1Data = new RawMaterialData();
 				rm1Data.setName("Raw material 1");
 				rm1Data.setEntityTpl(rmTplData);
-				rm1Data =  (RawMaterialData) alfrescoRepository.create(testFolderNodeRef, rm1Data);
+				rm1Data =  (RawMaterialData) alfrescoRepository.create(getTestFolderNodeRef(), rm1Data);
 				
 				
 				assertTrue(rm1Data.getCostList()==null);
@@ -99,6 +99,11 @@ public class EntityTplServiceTest extends PLMBaseTestCase {
 			public NodeRef execute() throws Throwable {
 
 				RawMaterialData rm1Data = (RawMaterialData)alfrescoRepository.findOne(rm1NodeRef);
+				
+				for(CostListDataItem cost : rm1Data.getCostList()){
+					logger.debug(cost.toString());
+				}
+				
 				assertEquals(2, rm1Data.getCostList().size());
 				
 				return null;

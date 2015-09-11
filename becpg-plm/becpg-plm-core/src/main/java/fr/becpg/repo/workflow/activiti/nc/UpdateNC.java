@@ -29,6 +29,8 @@ import fr.becpg.model.QualityModel;
 public class UpdateNC extends ScriptTaskListener {
 
 
+	private static final long serialVersionUID = 7309540412175915634L;
+
 	private NodeService nodeService;
 	private TransactionService transactionService;
 

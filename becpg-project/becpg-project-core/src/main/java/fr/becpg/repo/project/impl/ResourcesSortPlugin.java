@@ -27,14 +27,16 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.model.ProjectModel;
-import fr.becpg.repo.entity.datalist.AbstractDataListSortPlugin;
+import fr.becpg.repo.entity.datalist.DataListSortPlugin;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 
-public class ResourcesSortPlugin extends AbstractDataListSortPlugin {
+@Service
+public class ResourcesSortPlugin implements DataListSortPlugin {
 
 	private static final String PLUGIN_ID = "TaskResources";
 	private static final Log logger = LogFactory.getLog(ResourcesSortPlugin.class); 
@@ -90,7 +92,7 @@ public class ResourcesSortPlugin extends AbstractDataListSortPlugin {
 						return EQUAL;
 					}
 
-					return n1.compareTo(n2);
+					return n1.compareToIgnoreCase(n2);
 
 				} else if (n1 == null && n2 != null) {
 					return AFTER;

@@ -17,6 +17,8 @@
  ******************************************************************************/
 package fr.becpg.repo.repository.model;
 
+import java.io.Serializable;
+
 
 
 /**
@@ -25,8 +27,12 @@ package fr.becpg.repo.repository.model;
  * 
  * @author matthieu
  */
-public abstract class BaseObject /* TODO implements Serializable */{    
+public abstract class BaseObject implements Serializable {    
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1281409754709493657L;
 	public abstract String toString();
     public abstract boolean equals(Object o);
     public abstract int hashCode();

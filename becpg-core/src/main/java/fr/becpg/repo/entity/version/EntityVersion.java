@@ -21,11 +21,11 @@ public class EntityVersion extends VersionImpl {
 	 */
 	private static final long serialVersionUID = -4165153505281567656L;
 
-	private NodeRef entityNodeRef;
+	private final NodeRef entityNodeRef;
 	
-	private NodeRef entityVersionNodeRef;
+	private final NodeRef entityVersionNodeRef;
 	
-	private NodeRef entityBranchFromNodeRef;
+	private final NodeRef entityBranchFromNodeRef;
 	
 	private Date createdDate = null;
 	

@@ -28,7 +28,7 @@ import fr.becpg.test.PLMBaseTestCase;
  */
 public class CopyEntityServiceTest extends PLMBaseTestCase {
 
-	private static Log logger = LogFactory.getLog(CopyEntityServiceTest.class);
+	private static final Log logger = LogFactory.getLog(CopyEntityServiceTest.class);
 	
 	@Resource
 	private EntityService entityService;
@@ -40,7 +40,7 @@ public class CopyEntityServiceTest extends PLMBaseTestCase {
 		final NodeRef productNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
-				return BeCPGPLMTestHelper.createMultiLevelProduct(testFolderNodeRef);
+				return BeCPGPLMTestHelper.createMultiLevelProduct(getTestFolderNodeRef());
 			}
 		}, false, true);
 		
@@ -53,22 +53,22 @@ public class CopyEntityServiceTest extends PLMBaseTestCase {
 				assertTrue(startEffectivity.before(new Date()));
 				
 				// First copy
-				copyProduct(testFolderNodeRef, productNodeRef, "Test Copy");
+				copyProduct(productNodeRef, "Test Copy");
 				
 				// Second copy
-				copyProduct(testFolderNodeRef, productNodeRef, "Test Copy (1)");
+				copyProduct( productNodeRef, "Test Copy (1)");
 				
 				return null;
 			}
 		}, false, true);
 	}
 	
-	private void copyProduct(final NodeRef testFolderNodeRef, final NodeRef sourceNodeRef, final String givenName){
+	private void copyProduct(final NodeRef sourceNodeRef, final String givenName){
 		
 		NodeRef productNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
-				return entityService.createOrCopyFrom(sourceNodeRef, testFolderNodeRef, PLMModel.TYPE_FINISHEDPRODUCT, givenName);
+				return entityService.createOrCopyFrom(sourceNodeRef, getTestFolderNodeRef(), PLMModel.TYPE_FINISHEDPRODUCT, givenName);
 			}
 		}, false, true);
 		
@@ -78,25 +78,25 @@ public class CopyEntityServiceTest extends PLMBaseTestCase {
 		assertTrue(startEffectivity.getTime() < startEffectivity2.getTime());
 		
 		// #276 bcpg:parent nodeRef must be different
-		ProductData sourceProductData = (ProductData) alfrescoRepository.findOne(sourceNodeRef);
-		ProductData copyProductData = (ProductData) alfrescoRepository.findOne(productNodeRef);
+		ProductData sourceProductData = alfrescoRepository.findOne(sourceNodeRef);
+		ProductData copyProductData = alfrescoRepository.findOne(productNodeRef);
 		
 		int [] arrRawMaterials = {2,4};
 		
 		for(int rawMaterial : arrRawMaterials){
 			
 			logger.debug("check rawMaterial " + rawMaterial);
-			NodeRef sourceMP1NodeRef = sourceProductData.getCompoList(EffectiveFilters.EFFECTIVE).get(rawMaterial).getProduct();
-			NodeRef copyMP1NodeRef = copyProductData.getCompoList(EffectiveFilters.EFFECTIVE).get(rawMaterial).getProduct();
+			NodeRef sourceMP1NodeRef = sourceProductData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)).get(rawMaterial).getProduct();
+			NodeRef copyMP1NodeRef = copyProductData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)).get(rawMaterial).getProduct();
 			
 			assertEquals(PLMModel.TYPE_RAWMATERIAL, nodeService.getType(sourceMP1NodeRef));
 			assertEquals(PLMModel.TYPE_RAWMATERIAL, nodeService.getType(copyMP1NodeRef));
 			assertEquals(sourceMP1NodeRef, copyMP1NodeRef);
 			
 			// source and copy have different parents
-			assertFalse(sourceProductData.getCompoList(EffectiveFilters.EFFECTIVE).get(rawMaterial).getParent().getNodeRef().equals(copyProductData.getCompoList(EffectiveFilters.EFFECTIVE).get(rawMaterial).getParent().getNodeRef()));
+			assertFalse(sourceProductData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)).get(rawMaterial).getParent().getNodeRef().equals(copyProductData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)).get(rawMaterial).getParent().getNodeRef()));
 			// check parent
-			assertEquals(copyProductData.getCompoList(EffectiveFilters.EFFECTIVE).get(rawMaterial-1).getNodeRef(), copyProductData.getCompoList(EffectiveFilters.EFFECTIVE).get(rawMaterial).getParent().getNodeRef());
+			assertEquals(copyProductData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)).get(rawMaterial-1).getNodeRef(), copyProductData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)).get(rawMaterial).getParent().getNodeRef());
 		}		
 	}
 }

@@ -32,12 +32,13 @@ import fr.becpg.repo.project.data.projectList.TaskListDataItem;
  */
 public interface ProjectWorkflowService {
 
-	public boolean isWorkflowActive(TaskListDataItem task);
-	public void cancelWorkflow(TaskListDataItem task);
-	public void startWorkflow(ProjectData projectData, TaskListDataItem taskListDataItem,
-			List<DeliverableListDataItem> nextDeliverables);	
-	public void checkWorkflowInstance(ProjectData projectData, TaskListDataItem taskListDataItem,
-			List<DeliverableListDataItem> nextDeliverables);
-	public void deleteWorkflowTask(NodeRef taskListNodeRef);
+	boolean isWorkflowActive(TaskListDataItem task);
+	void cancelWorkflow(TaskListDataItem task);
+	void startWorkflow(ProjectData projectData, TaskListDataItem taskListDataItem,
+					   List<DeliverableListDataItem> nextDeliverables);
+	void checkWorkflowInstance(ProjectData projectData, TaskListDataItem taskListDataItem,
+							   List<DeliverableListDataItem> nextDeliverables);
+	void deleteWorkflowTask(NodeRef taskListNodeRef);
+	void deleteWorkflowById(String workflowInstanceId);
 	
 }

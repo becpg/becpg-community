@@ -24,38 +24,38 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.listvalue.ListValueEntry;
 import fr.becpg.repo.listvalue.ListValuePage;
 import fr.becpg.repo.listvalue.ListValueService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
+@Service
 public class ParentValuePlugin extends EntityListValuePlugin {
 	
-	private static Log logger = LogFactory.getLog(ParentValuePlugin.class);
+	private static final Log logger = LogFactory.getLog(ParentValuePlugin.class);
 
 	private static final String SOURCE_TYPE_PARENT_VALUE = "ParentValue";
 	
+	@Autowired
 	private EntityListDAO entityListDAO;
 
+	@Autowired
 	private AssociationService associationService;
 	
-	public void setEntityListDAO(EntityListDAO entityListDAO) {
-		this.entityListDAO = entityListDAO;
-	}
-
-	public void setAssociationService(AssociationService associationService) {
-		this.associationService = associationService;
-	}
+	@Autowired
+	private AttributeExtractorService attributeExtractorService;
 
 	@Override
 	public String[] getHandleSourceTypes() {
@@ -78,14 +78,13 @@ public class ParentValuePlugin extends EntityListValuePlugin {
 
 		String queryFilter = (String) props.get(ListValueService.PROP_FILTER);
 		
-		
 		NodeRef itemId = null;
 		
 		@SuppressWarnings("unchecked")
 		Map<String, String> extras = (HashMap<String, String>) props.get(ListValueService.EXTRA_PARAM);
 		if (extras != null) {
 			if (extras.get("itemId") != null) {
-				itemId = new NodeRef((String) extras.get("itemId"));
+				itemId = new NodeRef(extras.get("itemId"));
 			}
 		}
 		
@@ -99,10 +98,10 @@ public class ParentValuePlugin extends EntityListValuePlugin {
 				}
 			if(dataListNodeRef != null){
 				if(dictionaryService.getProperty(attributeQName) != null){
-					return suggestFromProp(dataListNodeRef, itemId, type, attributeQName, query, queryFilter, pageNum, pageSize, props);
+					return suggestFromProp(dataListNodeRef, itemId, type, attributeQName, query, queryFilter, pageNum, pageSize,props);
 				}
 				else{
-					return suggestFromAssoc(dataListNodeRef, itemId, type, attributeQName, query, queryFilter, pageNum, pageSize, props);
+					return suggestFromAssoc(dataListNodeRef, itemId, type, attributeQName, query, queryFilter, pageNum, pageSize,props);
 				}
 			}
 		}		
@@ -149,9 +148,14 @@ public class ParentValuePlugin extends EntityListValuePlugin {
 		for (NodeRef dataListItemNodeRef : entityListDAO.getListItems(dataListNodeRef, datalistType)) {
 			if (!dataListItemNodeRef.equals(itemId)) {
 				NodeRef targetNode = associationService.getTargetAssoc(dataListItemNodeRef, associationQName);
+				
 				if (targetNode != null) {
-					String name = (String) nodeService.getProperty(targetNode, ContentModel.PROP_NAME);
-					result.add(new ListValueEntry(dataListItemNodeRef.toString(), name, datalistType.getLocalName()));
+					QName type = nodeService.getType(targetNode);
+					String name = attributeExtractorService.extractPropName(type,targetNode);
+					if (isQueryMatch(query, name)) {
+						String cssClass = attributeExtractorService.extractMetadata(type,targetNode);
+						result.add(new ListValueEntry(dataListItemNodeRef.toString(), name, cssClass));
+					}
 				}
 			}
 		}

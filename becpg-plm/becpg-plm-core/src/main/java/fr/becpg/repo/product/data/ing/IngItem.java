@@ -5,6 +5,7 @@ package fr.becpg.repo.product.data.ing;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -15,6 +16,13 @@ import fr.becpg.repo.repository.annotation.AlfType;
 @AlfQname(qname="bcpg:ing")
 public class IngItem extends AbstractLabelingComponent {	
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -958461714975420707L;
+
+	private String charactName;
+	
 	private String ingCEECode;
 	
 	private IngTypeItem ingType;
@@ -32,7 +40,40 @@ public class IngItem extends AbstractLabelingComponent {
 		this.ingCEECode = ingItem.ingCEECode;
 	    this.ingType = ingItem.ingType;
 	    this.subIngs = ingItem.subIngs;
+	    this.charactName = ingItem.charactName;
 	}
+	
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:charactName")
+	public String getCharactName() {
+		return charactName;
+	}
+	
+	
+	
+	public void setCharactName(String charactName) {
+		this.charactName = charactName;
+	}
+
+	@Override
+	public String getLegalName(Locale locale) {
+		String ret = null;
+		if (legalName != null) {
+			if (legalName.containsKey(locale)) {
+				ret =  legalName.get(locale);
+			} else {
+				ret =  legalName.getClosestValue(locale);
+			}
+		}
+
+		if(ret==null || ret.isEmpty()){
+			return charactName;
+		}
+		
+		return ret;
+	}
+	
 	
 	@AlfProp
 	@AlfQname(qname="bcpg:ingCEECode")
@@ -63,11 +104,17 @@ public class IngItem extends AbstractLabelingComponent {
 		this.subIngs = subIngs;
 	}
 
+	
+	@Override
+	public IngItem clone()  {
+		return new IngItem(this);
+	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
+		result = prime * result + ((charactName == null) ? 0 : charactName.hashCode());
 		result = prime * result + ((ingCEECode == null) ? 0 : ingCEECode.hashCode());
 		result = prime * result + ((ingType == null) ? 0 : ingType.hashCode());
 		result = prime * result + ((subIngs == null) ? 0 : subIngs.hashCode());
@@ -84,6 +131,11 @@ public class IngItem extends AbstractLabelingComponent {
 		if (getClass() != obj.getClass())
 			return false;
 		IngItem other = (IngItem) obj;
+		if (charactName == null) {
+			if (other.charactName != null)
+				return false;
+		} else if (!charactName.equals(other.charactName))
+			return false;
 		if (ingCEECode == null) {
 			if (other.ingCEECode != null)
 				return false;

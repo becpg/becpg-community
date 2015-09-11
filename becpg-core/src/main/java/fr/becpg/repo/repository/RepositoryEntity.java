@@ -27,13 +27,13 @@ import org.alfresco.service.namespace.QName;
 //TODO merge with BaseObject and BeCPGDataObject
 public interface RepositoryEntity {
 
-	public NodeRef getNodeRef();
-	public void setNodeRef(NodeRef nodeRef);
+	NodeRef getNodeRef();
+	void setNodeRef(NodeRef nodeRef);
 	
-	public NodeRef getParentNodeRef();
-	public void setParentNodeRef(NodeRef parentNodeRef);
-	public String getName();
-	public void setName(String name);
+	NodeRef getParentNodeRef();
+	void setParentNodeRef(NodeRef parentNodeRef);
+	String getName();
+	void setName(String name);
 	
 	
 	
@@ -41,17 +41,17 @@ public interface RepositoryEntity {
 	 * Optional Map to put extra props
 	 * @return
 	 */
-	public Map<QName, Serializable> getExtraProperties();
-	public void setExtraProperties(Map<QName, Serializable> extraProperties);
+	Map<QName, Serializable> getExtraProperties();
+	void setExtraProperties(Map<QName, Serializable> extraProperties);
 
 	/**
 	 * Test if the entity is transiant
 	 */
-	public boolean isTransient();
+	boolean isTransient();
 	
 	/**
 	 * Use to determine if changes has applied
 	 */
-	public void setDbHashCode(int hashCode);
-	public int getDbHashCode();
+	void setDbHashCode(int hashCode);
+	int getDbHashCode();
 }

@@ -19,6 +19,8 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 */
 package fr.becpg.test.repo.search;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
@@ -30,13 +32,14 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 public  class BeCPGQueryBuilderTest {
 	
+	private static final Log logger = LogFactory.getLog(BeCPGQueryBuilderTest.class);
 	
 	@Test
 	public void testQueryGeneration() {
 		
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().excludeDefaults();
 		
-		System.out.println(queryBuilder.toString());
+		logger.info(queryBuilder.toString());
 		
 		queryBuilder = BeCPGQueryBuilder.createQuery()
 		.ofType(BeCPGModel.TYPE_ENTITY_V2)

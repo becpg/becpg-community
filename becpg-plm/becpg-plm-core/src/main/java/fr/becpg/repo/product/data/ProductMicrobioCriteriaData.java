@@ -10,4 +10,9 @@ import fr.becpg.repo.repository.annotation.AlfType;
 @AlfQname(qname = "bcpg:productMicrobioCriteria")
 public class ProductMicrobioCriteriaData extends ProductData   {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7943503650856151683L;
+
 }

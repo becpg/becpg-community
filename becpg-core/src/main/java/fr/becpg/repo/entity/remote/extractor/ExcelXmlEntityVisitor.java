@@ -25,7 +25,6 @@ import java.io.Reader;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -65,12 +64,12 @@ import fr.becpg.repo.entity.remote.RemoteEntityService;
  */
 public class ExcelXmlEntityVisitor {
 
-	private NodeService nodeService;
-	private NamespaceService namespaceService;
-	private DictionaryService dictionaryService;
-	private ContentService contentService;
+	private final NodeService nodeService;
+	private final NamespaceService namespaceService;
+	private final DictionaryService dictionaryService;
+	private final ContentService contentService;
 
-	private static Log logger = LogFactory.getLog(ExcelXmlEntityVisitor.class);
+	private static final Log logger = LogFactory.getLog(ExcelXmlEntityVisitor.class);
 
 	public ExcelXmlEntityVisitor(NodeService nodeService, NamespaceService namespaceService, DictionaryService dictionaryService,
 			ContentService contentService) {
@@ -122,8 +121,7 @@ public class ExcelXmlEntityVisitor {
 		// Visit node
 		xmlw.writeStartElement(RemoteEntityService.ELEM_ENTITIES);
 
-		for (Iterator<NodeRef> iterator = entities.iterator(); iterator.hasNext();) {
-			NodeRef nodeRef = (NodeRef) iterator.next();
+		for (NodeRef nodeRef : entities) {
 			visitNode(nodeRef, null, xmlw, false, false, false);
 		}
 
@@ -172,7 +170,7 @@ public class ExcelXmlEntityVisitor {
 		xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE, RemoteEntityService.NODE_TYPE);
 
 
-		xmlw.writeAttribute(RemoteEntityService.ATTR_NAME, (String) nodeService.getProperty(nodeRef, RemoteHelper.getPropName(nodeType)));
+		xmlw.writeAttribute(RemoteEntityService.ATTR_NAME, (String) nodeService.getProperty(nodeRef, RemoteHelper.getPropName(nodeType,dictionaryService)));
 		xmlw.writeAttribute(RemoteEntityService.ATTR_NODEREF, nodeRef.toString());
 
 		if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_CODE)) {
@@ -221,7 +219,7 @@ public class ExcelXmlEntityVisitor {
 
 	private void visitAssocs(NodeRef nodeRef, XMLStreamWriter xmlw) throws XMLStreamException {
 
-		Map<QName, AssociationDefinition> assocs = new HashMap<QName, AssociationDefinition>(dictionaryService.getType(nodeService.getType(nodeRef))
+		Map<QName, AssociationDefinition> assocs = new HashMap<>(dictionaryService.getType(nodeService.getType(nodeRef))
 				.getAssociations());
 		for (QName aspect : nodeService.getAspects(nodeRef)) {
 			assocs.putAll(dictionaryService.getAspect(aspect).getAssociations());
@@ -316,27 +314,10 @@ public class ExcelXmlEntityVisitor {
 		} else if (value instanceof Date) {
 			xmlw.writeCharacters(ISO8601DateFormat.format((Date) value));
 		} else {
-			// xmlw.writeCharacters(cleanInvalidXmlChars(value.toString(),""));
 			xmlw.writeCData(value.toString());
 		}
 	}
 
-	//
-	// /**
-	// * From xml spec valid chars:<br>
-	// * #x9 | #xA | #xD | [#x20-#xD7FF] | [#xE000-#xFFFD] |
-	// [#x10000-#x10FFFF]<br>
-	// * any Unicode character, excluding the surrogate blocks, FFFE, and
-	// FFFF.<br>
-	// * @param text The String to clean
-	// * @param replacement The string to be substituted for each match
-	// * @return The resulting String
-	// */
-	// private String cleanInvalidXmlChars(String text, String replacement) {
-	// String re =
-	// "[^\\x09\\x0A\\x0D\\x20-\\xD7FF\\xE000-\\xFFFD\\x10000-x10FFFF]";
-	// return text.replaceAll(re, replacement);
-	// }
-	//
+	
 
 }

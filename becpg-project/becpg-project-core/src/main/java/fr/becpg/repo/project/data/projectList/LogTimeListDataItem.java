@@ -2,8 +2,6 @@ package fr.becpg.repo.project.data.projectList;
 
 import java.util.Date;
 
-import org.alfresco.service.cmr.repository.NodeRef;
-
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
@@ -19,10 +17,14 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfQname(qname = "pjt:logTimeList")
 public class LogTimeListDataItem extends BeCPGDataObject {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1949764030787913474L;
 	private Date date;
 	private Double time;
-	private NodeRef task;
-	
+	private TaskListDataItem task;
+	private Double invoice;
 	
 	@AlfProp
 	@AlfQname(qname = "pjt:ltlDate")
@@ -46,19 +48,29 @@ public class LogTimeListDataItem extends BeCPGDataObject {
 
 	@AlfSingleAssoc
 	@AlfQname(qname = "pjt:ltlTask")
-	public NodeRef getTask() {
+	public TaskListDataItem getTask() {
 		return task;
 	}
 
-	public void setTask(NodeRef task) {
+	public void setTask(TaskListDataItem task) {
 		this.task = task;
+	}
+	
+	@AlfProp
+	@AlfQname(qname = "pjt:invoice")
+	public Double getInvoice() {
+		return invoice;
+	}
+
+	public void setInvoice(Double invoice) {
+		this.invoice = invoice;
 	}
 	
 	public LogTimeListDataItem(){
 		super();
 	}
 	
-	public LogTimeListDataItem(Date date, Double time, NodeRef task){
+	public LogTimeListDataItem(Date date, Double time, TaskListDataItem task){
 		this.date = date;
 		this.time = time;
 		this.task = task;
@@ -69,6 +81,7 @@ public class LogTimeListDataItem extends BeCPGDataObject {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + ((date == null) ? 0 : date.hashCode());
+		result = prime * result + ((invoice == null) ? 0 : invoice.hashCode());
 		result = prime * result + ((task == null) ? 0 : task.hashCode());
 		result = prime * result + ((time == null) ? 0 : time.hashCode());
 		return result;
@@ -88,6 +101,11 @@ public class LogTimeListDataItem extends BeCPGDataObject {
 				return false;
 		} else if (!date.equals(other.date))
 			return false;
+		if (invoice == null) {
+			if (other.invoice != null)
+				return false;
+		} else if (!invoice.equals(other.invoice))
+			return false;
 		if (task == null) {
 			if (other.task != null)
 				return false;
@@ -103,9 +121,7 @@ public class LogTimeListDataItem extends BeCPGDataObject {
 
 	@Override
 	public String toString() {
-		return "LogTimeListDataItem [date=" + date + ", time=" + time + ", task=" + task + ", nodeRef=" + nodeRef
-				+ ", parentNodeRef=" + parentNodeRef + ", name=" + name + ", aspects=" + aspects + ", extraProperties="
-				+ extraProperties + ", isTransient=" + isTransient + "]";
+		return "LogTimeListDataItem [date=" + date + ", time=" + time + ", task=" + task + ", invoice=" + invoice + "]";
 	}
 
 }

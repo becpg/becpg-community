@@ -18,12 +18,19 @@ import fr.becpg.repo.repository.model.AbstractManualDataItem;
 public class IngLabelingListDataItem extends AbstractManualDataItem {
 
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3043212457177647400L;
+
 	private NodeRef grp;
 	
 	private MLText value;
 	
 	private MLText manualValue;
 	
+	private String logValue;
+
 
 	@AlfSingleAssoc
 	@AlfQname(qname="bcpg:illGrp")
@@ -60,6 +67,17 @@ public class IngLabelingListDataItem extends AbstractManualDataItem {
 		this.manualValue = manualValue;
 	}
 	
+	@AlfProp
+	@AlfQname(qname="bcpg:illLogValue")
+	public String getLogValue() {
+		return logValue;
+	}
+
+
+	public void setLogValue(String logValue) {
+		this.logValue = logValue;
+	}
+	
 	
 	
 	/**
@@ -77,7 +95,7 @@ public class IngLabelingListDataItem extends AbstractManualDataItem {
 	 * @param value the value
 	 */
 	public IngLabelingListDataItem(NodeRef nodeRef, NodeRef grp, MLText value, Boolean isManual){
-		this.nodeRef = nodeRef;;
+		this.nodeRef = nodeRef;
 		this.grp=grp;
 		this.value=value;		
 		this.isManual=isManual;
@@ -88,7 +106,7 @@ public class IngLabelingListDataItem extends AbstractManualDataItem {
 	 * @param i
 	 */
 	public IngLabelingListDataItem(IngLabelingListDataItem i){
-		this.nodeRef = i.nodeRef;;
+		this.nodeRef = i.nodeRef;
 		this.grp = i.grp;
 		this.value = i.value;		
 		this.isManual = i.isManual;

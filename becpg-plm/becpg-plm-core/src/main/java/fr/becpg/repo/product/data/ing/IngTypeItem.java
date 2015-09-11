@@ -30,20 +30,44 @@ import fr.becpg.repo.repository.annotation.AlfType;
 @AlfQname(qname = "bcpg:ingTypeItem")
 public class IngTypeItem extends AbstractLabelingComponent{
 
+	private static final long serialVersionUID = 182156222574786727L;
 
-	public static final IngTypeItem DEFAULT_GROUP = new IngTypeItem();
-	
+    public static final IngTypeItem DEFAULT_GROUP = new IngTypeItem();
 	
 	private Double decThreshold;
 	
+	private String lvValue;
+	
 	private MLText pluralLegalName;
 	
+	public IngTypeItem(){
+		super();
+	}
 
+	public IngTypeItem(IngTypeItem ingTypeItem) {
+		super(ingTypeItem);
+		this.decThreshold = ingTypeItem.decThreshold;
+		this.pluralLegalName = ingTypeItem.pluralLegalName;
+		this.lvValue = ingTypeItem.lvValue;
+	}
+
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:lvValue")
+	public String getLvValue() {
+		return lvValue;
+	}
+
+	public void setLvValue(String lvValue) {
+		this.lvValue = lvValue;
+	}
+	
 	@AlfProp
 	@AlfQname(qname = "bcpg:ingTypeDecThreshold")
 	public Double getDecThreshold() {
 		return decThreshold;
 	}
+
 
 	public void setDecThreshold(Double decThreshold) {
 		this.decThreshold = decThreshold;
@@ -78,12 +102,33 @@ public class IngTypeItem extends AbstractLabelingComponent{
 		return ret;
 	}
 	
+	
+	@Override
+	public String getLegalName(Locale locale) {
+		String ret = null;
+		if (legalName != null) {
+			if (legalName.containsKey(locale)) {
+				ret =  legalName.get(locale);
+			} else {
+				ret =  legalName.getClosestValue(locale);
+			}
+		}
+
+		if(ret==null || ret.isEmpty()){
+			return lvValue;
+		}
+		
+		return ret;
+	}
 
 	@Override
+	public IngTypeItem clone() {
+		return new IngTypeItem(this);
+	}
+	
+	@Override
 	public String toString() {
-		return "IngTypeItem [decThreshold=" + decThreshold + ", qty=" + qty + ", volumeQtyPerc=" + volumeQtyPerc + ", legalName=" + legalName
-				+ ", nodeRef=" + nodeRef + ", parentNodeRef=" + parentNodeRef + ", name=" + name + ", aspects=" + aspects + ", extraProperties="
-				+ extraProperties + ", isTransient=" + isTransient + ", hashCode()=" + hashCode() + "]";
+		return "IngTypeItem [decThreshold=" + decThreshold + ", lvValue=" + lvValue + ", pluralLegalName=" + pluralLegalName + "]";
 	}
 
 	@Override
@@ -91,6 +136,7 @@ public class IngTypeItem extends AbstractLabelingComponent{
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + ((decThreshold == null) ? 0 : decThreshold.hashCode());
+		result = prime * result + ((lvValue == null) ? 0 : lvValue.hashCode());
 		result = prime * result + ((pluralLegalName == null) ? 0 : pluralLegalName.hashCode());
 		return result;
 	}
@@ -109,6 +155,11 @@ public class IngTypeItem extends AbstractLabelingComponent{
 				return false;
 		} else if (!decThreshold.equals(other.decThreshold))
 			return false;
+		if (lvValue == null) {
+			if (other.lvValue != null)
+				return false;
+		} else if (!lvValue.equals(other.lvValue))
+			return false;
 		if (pluralLegalName == null) {
 			if (other.pluralLegalName != null)
 				return false;
@@ -117,8 +168,5 @@ public class IngTypeItem extends AbstractLabelingComponent{
 		return true;
 	}
 
-	
 
-	
-	
 }

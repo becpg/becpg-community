@@ -28,7 +28,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
  */
 public class ClaimEmailTemplatesPatch extends AbstractBeCPGPatch {
 
-	private static Log logger = LogFactory.getLog(ClaimEmailTemplatesPatch.class);
+	private static final Log logger = LogFactory.getLog(ClaimEmailTemplatesPatch.class);
 
 	private static final String MSG_SUCCESS = "patch.bcpg.plm.claimEmailTemplatesPatch";
 

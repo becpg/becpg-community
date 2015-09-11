@@ -37,13 +37,13 @@ import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtracto
  */
 public interface AttributeExtractorService {
 
-	public interface DataListCallBack {
+	interface DataListCallBack {
 		
 		List<Map<String,Object>> extractNestedField(NodeRef nodeRef, AttributeExtractorStructure field);
 
 	}
 	
-	public interface AttributeExtractorPlugin {
+	interface AttributeExtractorPlugin {
 
 		String extractPropName(QName type, NodeRef nodeRef);
 
@@ -51,40 +51,46 @@ public interface AttributeExtractorService {
 		
 		Collection<QName> getMatchingTypes();
 		
+		Integer getPriority(); 
+		
 	}
 	
 	
-	public enum AttributeExtractorMode {
-		SEARCH,JSON,XLS,CSV;
+	enum AttributeExtractorMode {
+		SEARCH,JSON,XLSX,CSV
 	}
 
-	public List<AttributeExtractorStructure> readExtractStructure(QName itemType, List<String> metadataFields);
+	List<AttributeExtractorStructure> readExtractStructure(QName itemType, List<String> metadataFields);
 	
-	public Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, List<String> metadataFields, AttributeExtractorMode mode );
+	Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, List<String> metadataFields, AttributeExtractorMode mode);
 	
-	public Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, Map<QName, Serializable> properties,  List<AttributeExtractorStructure> metadataFields, AttributeExtractorMode mode, DataListCallBack dataListCallBack);
+	Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, Map<QName, Serializable> properties, List<AttributeExtractorStructure> metadataFields, AttributeExtractorMode mode, DataListCallBack dataListCallBack);
 	
-    public String getStringValue(PropertyDefinition propertyDef, Serializable value, PropertyFormats propertyFormats);
+	Map<String, Object> extractCommonNodeData(NodeRef nodeRef);
 	
-	public String getDisplayPath(NodeRef nodeRef);
+    String getStringValue(PropertyDefinition propertyDef, Serializable value, PropertyFormats propertyFormats);
+	
+	String[] getTags(NodeRef nodeRef);
 
-	public String[] getTags(NodeRef nodeRef);
+	String extractPropertyForReport(PropertyDefinition propertyDef, Serializable value, PropertyFormats propertyFormats, boolean formatData);
 
-	public String extractSiteId(NodeRef entityNodeRef);
-
-	public String extractPropertyForReport(PropertyDefinition propertyDef, Serializable value, PropertyFormats propertyFormats, boolean formatData);
-
-	public String extractAssociationsForReport(List<AssociationRef> assocRefs, QName propertyName);
+	String extractAssociationsForReport(List<AssociationRef> assocRefs, QName propertyName);
 
 	
-	public String extractMetadata(QName type, NodeRef entityNodeRef);
+	String extractMetadata(QName type, NodeRef entityNodeRef);
 
-	public String getPersonDisplayName(String userId);
+	String getPersonDisplayName(String userId);
 
 
-	public PropertyFormats getPropertyFormats(AttributeExtractorMode mode);
+	PropertyFormats getPropertyFormats(AttributeExtractorMode mode);
 
-	public String extractPropName(NodeRef v);
+	String extractPropName(NodeRef v);
+
+	String extractPropName(QName type, NodeRef nodeRef);
+
+	String extractSiteId(NodeRef entityNodeRef);
+
+	
 	
 
 	

@@ -24,23 +24,18 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import fr.becpg.repo.designer.DesignerInitService;
-import fr.becpg.test.RepoBaseTestCase;
 
 /**
  * 
  * @author matthieu
  * 
  */
-public class DesignerInitServiceTest extends RepoBaseTestCase{
+public class DesignerInitServiceTest extends AbstractDesignerServiceTest{
 
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(DesignerInitServiceTest.class);
+	private static final Log logger = LogFactory.getLog(DesignerInitServiceTest.class);
 
-	@Autowired
-	private DesignerInitService designerInitService;
+
 
 
 

@@ -19,17 +19,15 @@ package fr.becpg.tools.jdbc;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.sql.DataSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import fr.becpg.tools.jdbc.JdbcUtils.RowMapper;
 
 /**
  * 
@@ -46,11 +44,11 @@ public class JdbcConnectionManager {
 
 	private DataSource dataSource;
 
-	private static Log logger = LogFactory.getLog(JdbcConnectionManager.class);
+	private static final Log logger = LogFactory.getLog(JdbcConnectionManager.class);
 
 	public interface JdbcConnectionManagerCallBack {
 
-		public void execute(Connection connection) throws Exception;
+		void execute(Connection connection) throws Exception;
 
 	}
 
@@ -67,11 +65,8 @@ public class JdbcConnectionManager {
 			connection.commit();
 		}
 
-	};
-
-	public interface RowMapper<T> {
-		public T mapRow(ResultSet rs, int line) throws SQLException;
 	}
+
 
 	public JdbcConnectionManager(String dbUser, String dbPassword, String dbConnectionUrl) {
 		super();
@@ -106,24 +101,11 @@ public class JdbcConnectionManager {
 
 	public <T> List<T> list(String sql, RowMapper<T> rowMapper, Object[] objects) throws SQLException {
 
-		List<T> ret = new ArrayList<T>();
-		try (Connection connection = createConnection(); PreparedStatement pst = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);) {
-			for (int i = 0; i < objects.length; i++) {
-				pst.setObject(i + 1, objects[i]);
-			}
-			try (ResultSet rs = pst.executeQuery();) {
-				if (rs != null) {
-					int line = 0;
-					while (rs.next()) {
-						ret.add(rowMapper.mapRow(rs, line));
-						line++;
-					}
-
-				}
-			}
-
-			return ret;
+		try(Connection connection = createConnection()){
+			return JdbcUtils.list(connection, sql, rowMapper, objects);
+			
 		}
+		
 	}
 
 }

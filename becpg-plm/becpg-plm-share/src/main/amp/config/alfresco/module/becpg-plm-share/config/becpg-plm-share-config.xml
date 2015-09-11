@@ -1,0 +1,287 @@
+<!-- Copyright (C) 2010-2015 beCPG. This file is part of beCPG beCPG is free 
+	software: you can redistribute it and/or modify it under the terms of the 
+	GNU Lesser General Public License as published by the Free Software Foundation, 
+	either version 3 of the License, or (at your option) any later version. beCPG 
+	is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+	without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+	PURPOSE. See the GNU Lesser General Public License for more details. You 
+	should have received a copy of the GNU Lesser General Public License along 
+	with beCPG. If not, see <http://www.gnu.org/licenses/>. -->
+<alfresco-config>
+
+	<config evaluator="string-compare" condition="Workflow">
+		<permission-workflows default="allow">
+			<permission-workflow name="activiti$claimProcess">
+				<authorities>
+					<authority type="group">GROUP_ClaimStart</authority>
+				</authorities>
+			</permission-workflow>
+		</permission-workflows>
+
+		<hidden-workflows>
+			<!-- Hide all WCM related workflows -->
+			<workflow name="jbpm$wcmwf:*" />
+			<workflow name="jbpm$wf:articleapproval" />
+			<!-- Hide publishing workflows -->
+			<workflow name="activiti$publishWebContent" />
+			<workflow name="jbpm$publishWebContent" />
+			<!-- Hide invitation workflows -->
+			<workflow name="jbpm$inwf:invitation-nominated" />
+			<workflow name="jbpm$imwf:invitation-moderated" />
+			<workflow name="activiti$activitiInvitationModerated" />
+			<workflow name="activiti$activitiInvitationNominated" />
+			<workflow name="activiti$activitiReviewPooled" />
+			<workflow name="activiti$activitiParallelGroupReview" />
+			<!-- <workflow name="activiti$activitiParallelReview" /> -->
+			<workflow name="activiti$nonConformityAdhoc" />
+			<workflow name="activiti$nonConformityProcess" />
+			<!-- <workflow name="activiti$activitiAdhoc" /> -->
+			<workflow name="activiti$activitiReview" />
+			<workflow name="activiti$projectAdhoc" />
+			<workflow name="activiti$projectNewProduct" />
+			<workflow name="jbpm$bcpgwf:adhoc" />
+			<workflow name="jbpm$wf:adhoc" />
+			<workflow name="jbpm$wf:reviewpooled" />
+			<workflow name="jbpm$wf:parallelgroupreview" />
+			<workflow name="jbpm$wf:review" />
+			<workflow name="jbpm$wf:parallelreview" />
+			<workflow name="jbpm$bcpgwf:productValidationWF" />
+			<workflow name="jbpm$npdwf:newProductDevelopmentWF" />
+		</hidden-workflows>
+	</config>
+
+
+
+	<!-- Define elements that are bulk editable -->
+	<config evaluator="string-compare" condition="bulk-edit">
+		<itemTypes>
+			<itemType name="bcpg:finishedProduct" />
+			<itemType name="bcpg:semiFinishedProduct" />
+
+			<itemType name="bcpg:rawMaterial" />
+			<itemType name="bcpg:packagingMaterial" />
+			<itemType name="bcpg:packagingKit" />
+			<itemType name="bcpg:resourceProduct" />
+			<!-- <itemType name="pjt:project" /> -->
+			<!-- <itemType name="bcpg:finishedProduct" label="Produit fini avec aspect" -->
+			<!-- formId="bulk-edit-2" editSelectedFormId ="bulk-edit" /> -->
+			<!-- <itemType name="bcpg:allergenList" /> -->
+
+			<itemType name="bcpg:supplier" />
+			<itemType name="bcpg:client" />
+			<itemType name="sec:aclGroup" />
+
+			<!-- <itemType name="cm:content" /> <itemType name="ext1:customType" /> -->
+		</itemTypes>
+	</config>
+
+	<config evaluator="string-compare" condition="wused-search">
+		<itemTypes>
+			<itemType name="bcpg:product" />
+			<itemType name="bcpg:supplier" />
+			<itemType name="bcpg:client" />
+			<itemType name="bcpg:nut" />
+			<itemType name="bcpg:allergen" />
+			<itemType name="bcpg:ing" />
+			<itemType name="bcpg:organo" />
+			<itemType name="bcpg:physicoChem" />
+		</itemTypes>
+	</config>
+
+	<config evaluator="string-compare" condition="EntityDataLists">
+		<lists>
+			<list id="compoList" index="50" view="true" />
+			<list id="packagingList" index="60" view="true" />
+			<list id="processList" index="70" view="true" />
+			<list id="resourceParamList" index="80" />
+			<list id="allergenList" index="90" />
+			<list id="costList" index="100" />
+			<list id="priceList" index="110" />
+			<list id="nutList" index="120" />
+			<list id="ingLabelingList" index="130" view="true" />
+			<list id="organoList" index="140" />
+			<list id="physicoChemList" index="150" />
+			<list id="labelClaimList" index="160" />
+		</lists>
+	</config>
+
+
+	<config evaluator="string-compare" condition="wizard">
+		<wizards>
+			<wizard id="supplier-mp">
+				<step id="step1" labelId="becpg.wizard.supplier.mp.step1.label"
+					titleId="becpg.wizard.supplier.mp.step1.title" type="form" formId="supplier-mp"
+					itemId="bcpg:rawMaterial"></step>
+				<step id="step2" labelId="becpg.wizard.supplier.mp.step2.label"
+					titleId="becpg.wizard.supplier.mp.step2.title" type="entityDataList"
+					listId="ingList" itemId="bcpg:ingList"></step>
+				<step id="step3" labelId="becpg.wizard.supplier.mp.step3.label"
+					titleId="becpg.wizard.supplier.mp.step3.title" type="entityDataList"
+					listId="nutList" itemId="bcpg:nutList"></step>
+				<step id="step4" labelId="becpg.wizard.supplier.mp.step4.label"
+					titleId="becpg.wizard.supplier.mp.step4.title" type="entityDataList"
+					listId="allergenList" itemId="bcpg:allergenList"></step>
+				<step id="step5" labelId="becpg.wizard.supplier.mp.step5.label"
+					titleId="becpg.wizard.supplier.mp.step5.title" type="entityDataList"
+					listId="physicoChemList" itemId="bcpg:physicoChemList"></step>
+				<step id="step6" labelId="becpg.wizard.supplier.mp.step6.label"
+					titleId="becpg.wizard.supplier.mp.step6.title" type="entityDataList"
+					listId="labelClaimList" itemId="bcpg:labelClaimList"></step>
+				<step id="step7" labelId="becpg.wizard.supplier.mp.step7.label"
+					titleId="becpg.wizard.supplier.mp.step7.title" type="entityDataList"
+					listId="microbioList" itemId="bcpg:microbioList"></step>
+			    <step id="step8" labelId="becpg.wizard.supplier.mp.step8.label"
+					titleId="becpg.wizard.supplier.mp.step8.title" type="entityDataList"
+					listId="organoList" itemId="bcpg:organoList"></step>
+			</wizard>
+			<wizard id="supplier">
+				<step id="step1" labelId="becpg.wizard.supplier.step1.label"
+					titleId="becpg.wizard.supplier.step1.title" type="form" formId="supplier"
+					itemId="bcpg:supplier"></step>
+				<step id="step2" labelId="becpg.wizard.supplier.step2.label"
+					titleId="becpg.wizard.supplier.step2.title" type="entityDataList"
+					listId="plant" itemId="bcpg:plant"></step>
+				<step id="step3" labelId="becpg.wizard.supplier.step3.label"
+					titleId="becpg.wizard.supplier.step3.title" type="entityDataList"
+					listId="contactList" itemId="bcpg:contactList"></step>
+			</wizard>
+			<wizard id="supplier-pack">
+				<step id="step1" labelId="becpg.wizard.supplier.pack.step1.label"
+					type="form" formId="supplierPack"
+					itemId="bcpg:packagingKit"></step>
+			</wizard>
+		</wizards>
+	</config>
+
+
+	<config>
+		<forms>
+			<dependencies>
+				<!-- Spel editor -->
+				<css src="/modules/spel-editor/spel-editor.css" />
+				<css src="/modules/spel-editor/shThemeDefault.css" />
+				<js src="/yui/editor/editor.js" />
+				<js src="/modules/spel-editor/spel-editor.js" />
+				<js src="/modules/spel-editor/shCore.js" />
+				<js src="/modules/spel-editor/shBrushJScript.js" />
+				<!-- Nutrient score -->
+				<css src="/components/form/controls/nutrient-class.css" />
+				<!-- Decision tree -->
+				<css src="/components/form/controls/decision-tree.css" />
+				<js src="/components/form/controls/decision-tree.js" />
+			</dependencies>
+			<default-controls>
+
+				<!--beCPG -->
+				<type name="association:bcpg:product"
+					template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+					<control-param name="ds">becpg/autocomplete/product</control-param>
+					<control-param name="showTooltip">true</control-param>
+					<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
+					</control-param>
+				</type>
+
+				<type name="association:bcpg:charact"
+					template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+					<control-param name="showLink">false</control-param>
+				</type>
+				<type name="association:bcpg:subsidiary"
+					template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+					<control-param name="showLink">false</control-param>
+				</type>
+				<type name="association:bcpg:plant"
+					template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+					<control-param name="showLink">false</control-param>
+				</type>
+				<type name="association:bcpg:trademark"
+					template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+					<control-param name="showLink">false</control-param>
+				</type>
+				<type name="association:bcpg:client"
+					template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+					<control-param name="showTooltip">true</control-param>
+					<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
+					</control-param>
+					<control-param name="ds">
+						becpg/autocomplete/targetassoc/associations/bcpg:client?excludeClassNames=bcpg:entityTplAspect
+					</control-param>
+				</type>
+				<type name="association:bcpg:supplier"
+					template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+					<control-param name="showTooltip">true</control-param>
+					<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
+					</control-param>
+					<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:supplier?excludeClassNames=bcpg:entityTplAspect
+					</control-param>
+				</type>
+				<type name="association:bcpg:certification"
+					template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+					<control-param name="showLink">false</control-param>
+				</type>
+				<type name="association:bcpg:approvalNumber"
+					template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+					<control-param name="showLink">false</control-param>
+				</type>
+				<type name="association:bcpg:productSpecifications"
+					template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+					<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
+					</control-param>
+					<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:productSpecifications?excludeClassNames=bcpg:entityTplAspect
+					</control-param>
+				</type>
+				<type name="association:bcpg:productMicrobioCriteriaRef"
+					template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+					<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
+					</control-param>
+					<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:productMicrobioCriteria?excludeClassNames=bcpg:entityTplAspect
+					</control-param>
+				</type>
+				<type name="association:qa:controlPoint"
+					template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+					<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
+					</control-param>
+					<control-param name="ds">becpg/autocomplete/targetassoc/associations/qa:controlPoint?excludeClassNames=bcpg:entityTplAspect
+					</control-param>
+				</type>
+				<type name="association:qa:controlStep"
+					template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+				<type name="association:qa:controlMethod"
+					template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+				<type name="association:qa:controlPlan"
+					template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+					<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
+					</control-param>
+					<control-param name="ds">becpg/autocomplete/targetassoc/associations/qa:controlPlan?excludeClassNames=bcpg:entityTplAspect
+					</control-param>
+				</type>
+				<type name="association:bcpg:productCatalog"
+					template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+				<type name="association:bcpg:labelClaim"
+					template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+				<type name="association:bcpg:storageConditionsRef"
+					template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+					<control-param name="showLink">false</control-param>
+				</type>
+				<type name="association:bcpg:precautionOfUseRef"
+					template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+					<control-param name="showLink">false</control-param>
+				</type>
+				<type name="association:pack:labelingLabelingTemplate"
+					template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+				<type name="association:pack:labelingTemplate"
+					template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+			</default-controls>
+		</forms>
+	</config>
+
+	<config evaluator="string-compare" condition="Analytics">
+		<providers>
+			<provider index="5">
+				<provider-id>beCPG</provider-id>
+				<provider-url>http://www.becpg.fr/becpg-plm-community-${project.version}.png
+				</provider-url>
+			</provider>
+		</providers>
+	</config>
+
+</alfresco-config>

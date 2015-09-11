@@ -67,15 +67,15 @@ public class ImportEntityXmlVisitor {
 
 	private EntityProviderCallBack entityProviderCallBack;
 
-	private EntityDictionaryService entityDictionaryService;
+	private final EntityDictionaryService entityDictionaryService;
 
-	private ServiceRegistry serviceRegistry;
+	private final ServiceRegistry serviceRegistry;
 
 	public void setEntityProviderCallBack(EntityProviderCallBack entityProviderCallBack) {
 		this.entityProviderCallBack = entityProviderCallBack;
 	}
 
-	private static Log logger = LogFactory.getLog(ImportEntityXmlVisitor.class);
+	private static final Log logger = LogFactory.getLog(ImportEntityXmlVisitor.class);
 
 	public ImportEntityXmlVisitor(ServiceRegistry serviceRegistry, EntityDictionaryService entityDictionaryService) {
 		super();
@@ -161,17 +161,17 @@ public class ImportEntityXmlVisitor {
 
 		private Map<QName, Serializable> properties = null;
 
-		private Map<NodeRef, NodeRef> cache = new HashMap<>();
+		private final Map<NodeRef, NodeRef> cache = new HashMap<>();
 
-		private Stack<NodeRef> curNodeRef = new Stack<NodeRef>();
+		private final Stack<NodeRef> curNodeRef = new Stack<>();
 
 		private StringBuffer currValue = new StringBuffer();
 
-		private Stack<String> typeStack = new Stack<String>();
+		private final Stack<String> typeStack = new Stack<>();
 
-		private Stack<QName> currAssoc = new Stack<QName>();
+		private final Stack<QName> currAssoc = new Stack<>();
 
-		private Stack<String> currAssocType = new Stack<String>();
+		private final Stack<String> currAssocType = new Stack<>();
 
 		private ArrayList<Serializable> multipleValues = null;
 
@@ -427,7 +427,7 @@ public class ImportEntityXmlVisitor {
 			return entityNodeRef;
 		}
 
-	};
+	}
 
 	private boolean shouldIgnoreProperty(QName currProp) {
 		if (ContentModel.PROP_VERSION_LABEL.equals(currProp) || ContentModel.PROP_VERSION_TYPE.equals(currProp)
@@ -464,11 +464,11 @@ public class ImportEntityXmlVisitor {
 		throw new SAXException("Path doesn't exist on repository :" + parentPath);
 	}
 
-	private NodeRef createNode(NodeRef parentNodeRef, QName type, String name) throws SAXException {
+	private NodeRef createNode(NodeRef parentNodeRef, QName type, String name) {
 		NodeRef ret = serviceRegistry.getNodeService().getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, name);
 
 		if (ret == null) {
-			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+			Map<QName, Serializable> properties = new HashMap<>();
 			properties.put(ContentModel.PROP_NAME, name);
 			logger.debug("Creating missing node :" + name + " at path :" + parentNodeRef);
 			ret = serviceRegistry
@@ -494,7 +494,7 @@ public class ImportEntityXmlVisitor {
 		if (existingNodeRef == null || !serviceRegistry.getNodeService().exists(existingNodeRef)) {
 			NodeRef ret = serviceRegistry.getNodeService().getChildByName(parentNodeRef, assocName, name);
 			if (ret == null) {
-				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				Map<QName, Serializable> properties = new HashMap<>();
 				properties.put(ContentModel.PROP_NAME, name);
 				return serviceRegistry
 						.getNodeService()
@@ -572,7 +572,7 @@ public class ImportEntityXmlVisitor {
 		if (code != null && code.length() > 0) {
 			beCPGQueryBuilder.andPropEquals(BeCPGModel.PROP_CODE, code);
 		} else if (name != null && name.length() > 0) {
-			beCPGQueryBuilder.andPropEquals(RemoteHelper.getPropName(type), cleanName(name));
+			beCPGQueryBuilder.andPropEquals(RemoteHelper.getPropName(type,entityDictionaryService), cleanName(name));
 		}
 
 		if (inBD) {
@@ -585,7 +585,7 @@ public class ImportEntityXmlVisitor {
 		if (!ret.isEmpty()) {
 			for (NodeRef node : ret) {
 				if (serviceRegistry.getNodeService().exists(node)
-						&& name.equals(serviceRegistry.getNodeService().getProperty(node, RemoteHelper.getPropName(type)))) {
+						&& name.equals(serviceRegistry.getNodeService().getProperty(node, RemoteHelper.getPropName(type,entityDictionaryService)))) {
 					logger.debug("Found node for query :" + beCPGQueryBuilder.toString());
 					return node;
 				}

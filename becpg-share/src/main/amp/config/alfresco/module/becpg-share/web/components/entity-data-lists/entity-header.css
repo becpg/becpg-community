@@ -1,0 +1,67 @@
+
+.node-header .node-path .entity {
+	background-image:  url(../images/filetypes/generic-entity-16.png);
+	padding-left: 20px;
+	font-size: 125%;
+}
+
+.node-header .node-action .entity-download-report span.first-child {
+   background-image: url(../documentlibrary/actions/document-download-16.png);
+   background-color: transparent;
+   background-position: 6px 4px;
+   background-repeat: no-repeat ;
+   padding-left: 6px;
+}
+
+.node-header .node-action .entity-view-documents span.first-child {
+    background-image: url(../documentlibrary/actions/entity-view-documents-16.png);
+ 
+ }
+    
+.node-header .node-action .entity-view-datalist span.first-child {
+    background-image: url(../documentlibrary/actions/entity-view-datalists-16.png);
+ 
+ }
+ 
+.node-header a.upload-logo-action:hover  span.upload-logo-span {
+   background-image: url(../images/edit-16.png);
+   background-color: transparent;
+   background-position: 6px 4px;
+   background-repeat: no-repeat ;
+   padding-left: 20px;
+}
+
+
+    
+.node-header .node-action .entity-view-datalist span.first-child ,
+.node-header .node-action .entity-view-documents span.first-child 
+ {
+    background-color: transparent;
+    background-position: 6px 4px;
+    background-repeat: no-repeat ;
+    padding-left: 16px;
+}
+
+.node-header .node-info
+{
+   float: left;
+   width: 63%;
+}
+
+.node-header .product-state
+{
+   font-size: 125%;
+}
+
+.node-header .node-action
+{
+   width: 37%;
+}
+
+.node-header .node-action div {
+  display:inline-block;
+}
+
+.node-header a.item-print  {
+	background-image:  url(../images/printer-16.png);
+}

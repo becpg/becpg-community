@@ -41,7 +41,7 @@ import fr.becpg.repo.entity.datalist.DataListSortService;
  */
 public class SortDataListWebScript extends DeclarativeWebScript {
 
-	private static Log logger = LogFactory.getLog(SortDataListWebScript.class);
+	private static final Log logger = LogFactory.getLog(SortDataListWebScript.class);
 
 	private static final String PARAM_STORE_TYPE = "store_type";
 
@@ -71,7 +71,7 @@ public class SortDataListWebScript extends DeclarativeWebScript {
 	protected Map<String, Object> executeImpl(WebScriptRequest req, Status status, Cache cache) {
 		logger.debug("call Sort webscript");
 
-		Map<String, Object> model = new HashMap<String, Object>();
+		Map<String, Object> model = new HashMap<>();
 
 		Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();
 
@@ -94,9 +94,9 @@ public class SortDataListWebScript extends DeclarativeWebScript {
 					if (!SORT_DIR_UP.equals(dir)) {
 						ArrayUtils.reverse(selectedNodeRefs);
 					}
-					
-					for (int i = 0; i < selectedNodeRefs.length; i++) {
-						dataListSortService.move(new NodeRef(selectedNodeRefs[i]), SORT_DIR_UP.equals(dir));
+
+					for (String selectedNodeRef : selectedNodeRefs) {
+						dataListSortService.move(new NodeRef(selectedNodeRef), SORT_DIR_UP.equals(dir));
 					}
 
 				} else if (selectedNodeRefs.length == 1) {

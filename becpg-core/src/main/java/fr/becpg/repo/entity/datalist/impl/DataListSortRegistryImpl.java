@@ -17,36 +17,28 @@
  ******************************************************************************/
 package fr.becpg.repo.entity.datalist.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.entity.datalist.DataListSortPlugin;
 import fr.becpg.repo.entity.datalist.DataListSortRegistry;
 
+@Service("dataListSortRegistry")
 public class DataListSortRegistryImpl implements DataListSortRegistry {
 
-	private static Log logger = LogFactory.getLog(DataListSortRegistryImpl.class);
-
-	private Map<String, DataListSortPlugin> plugins = new HashMap<String, DataListSortPlugin>();
-
-	@Override
-	public List<DataListSortPlugin> getPlugins() {
-		return new ArrayList<DataListSortPlugin>(plugins.values());
-	}
+	@Autowired(required=false)
+	DataListSortPlugin[] plugins;
 
 	@Override
 	public DataListSortPlugin getPluginById(String pluginId) {
-		return plugins.get(pluginId);
+		if (plugins != null) {
+			for (DataListSortPlugin plugin : plugins) {
+				if (plugin.getPluginId().equals(pluginId)) {
+					return plugin;
+				}
+			}
+		}
+		return null;
 	}
 
-	@Override
-	public void addPlugin(DataListSortPlugin plugin) {
-		logger.info("register plugin " + plugin.getPluginId());
-		plugins.put(plugin.getPluginId(), plugin);
-	}
 }

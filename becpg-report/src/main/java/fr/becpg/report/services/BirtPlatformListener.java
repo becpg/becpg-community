@@ -26,10 +26,10 @@ import org.eclipse.birt.report.engine.api.IReportEngineFactory;
 public class BirtPlatformListener {
 
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(BirtPlatformListener.class);
+	private static final Log logger = LogFactory.getLog(BirtPlatformListener.class);
 	
 	/** The engine config. */
-    private static EngineConfig engineConfig = new EngineConfig();
+    private static final EngineConfig engineConfig = new EngineConfig();
   	
 	  /** The report engine. */
     private static IReportEngine reportEngine;

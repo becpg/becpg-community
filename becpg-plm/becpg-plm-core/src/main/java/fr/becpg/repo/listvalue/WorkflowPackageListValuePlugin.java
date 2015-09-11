@@ -30,31 +30,27 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.workflow.WorkflowService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
-import fr.becpg.repo.listvalue.impl.AbstractBaseListValuePlugin;
 import fr.becpg.repo.listvalue.impl.NodeRefListValueExtractor;
 
-public class WorkflowPackageListValuePlugin extends AbstractBaseListValuePlugin {
+@Service
+public class WorkflowPackageListValuePlugin implements ListValuePlugin {
 
 	private static final String SOURCE_TYPE_WF_PACKAGE = "workflow";
 
+	@Autowired
+	@Qualifier("NodeService")
 	private NodeService nodeService;
 
+	@Autowired
+	@Qualifier("WorkflowService")
 	private WorkflowService workflowService;
 
+	@Autowired
 	private NamespaceService namespaceService;
-
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
-
-	public void setWorkflowService(WorkflowService workflowService) {
-		this.workflowService = workflowService;
-	}
-
-	public void setNamespaceService(NamespaceService namespaceService) {
-		this.namespaceService = namespaceService;
-	}
 
 	public String[] getHandleSourceTypes() {
 		return new String[] { SOURCE_TYPE_WF_PACKAGE };
@@ -70,7 +66,7 @@ public class WorkflowPackageListValuePlugin extends AbstractBaseListValuePlugin 
 		Map<String, String> extras = (HashMap<String, String>) props.get(ListValueService.EXTRA_PARAM);
 		if (extras != null) {
 			if (extras.get("taskId") != null && extras.get("taskId").length()>0) {
-				String taskId = (String)  extras.get("taskId");
+				String taskId = extras.get("taskId");
 				
 				  ret = workflowService.getPackageContents(taskId);
 			
@@ -78,7 +74,7 @@ public class WorkflowPackageListValuePlugin extends AbstractBaseListValuePlugin 
 						QName type = QName.createQName(className, namespaceService);
 
 						for (Iterator<NodeRef> iterator = ret.iterator(); iterator.hasNext();) {
-							NodeRef nodeRef = (NodeRef) iterator.next();
+							NodeRef nodeRef = iterator.next();
 							if (!type.equals(nodeService.getType(nodeRef))) {
 								iterator.remove();
 							}

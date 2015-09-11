@@ -27,6 +27,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.service.cmr.model.FileInfo;
@@ -39,6 +40,7 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Assert;
 import org.junit.Test;
 
 import fr.becpg.model.ClaimWorkflowModel;
@@ -53,24 +55,20 @@ public class ClaimWorkflowTest extends AbstractWorkflowTest {
 
 	@Resource
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
-	
-	
-	/** The logger. */
-	private static Log logger = LogFactory.getLog(ClaimWorkflowTest.class);
 
+	/** The logger. */
+	private static final Log logger = LogFactory.getLog(ClaimWorkflowTest.class);
 
 	private NodeRef rawMaterial1NodeRef;
-	
+
 	private String workflowInstanceId = null;
 
 	@Resource
 	private NonConformityService nonConformityService;
 
-	
 	@Test
 	public void testWorkFlow() {
 
-		authenticationComponent.setSystemUserAsCurrentUser();
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
 
@@ -79,16 +77,16 @@ public class ClaimWorkflowTest extends AbstractWorkflowTest {
 				RawMaterialData rawMaterial1 = new RawMaterialData();
 				rawMaterial1.setName("Raw material 1");
 
-				rawMaterial1NodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterial1).getNodeRef();
+				rawMaterial1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial1).getNodeRef();
 
 				RawMaterialData rawMaterial2 = new RawMaterialData();
 				rawMaterial2.setName("Raw material 2");
 
-				alfrescoRepository.create(testFolderNodeRef, rawMaterial2).getNodeRef();
-				
+				alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial2).getNodeRef();
+
 				// clean default storage folder
 				NodeRef folderNodeRef = nonConformityService.getStorageFolder(null);
-				for(FileInfo fileInfo : fileFolderService.list(folderNodeRef)){
+				for (FileInfo fileInfo : fileFolderService.list(folderNodeRef)) {
 					nodeService.deleteNode(fileInfo.getNodeRef());
 				}
 				return null;
@@ -96,33 +94,30 @@ public class ClaimWorkflowTest extends AbstractWorkflowTest {
 			}
 		}, false, true);
 
-		authenticationComponent.setCurrentUser(BeCPGPLMTestHelper.USER_ONE);
-		
 		executeClaimWF(true);
 
 		executeClaimWF(false);
-		
+
 		testDeleteNC();
+
 	}
 
-
 	private void testDeleteNC() {
-		WorkflowTask task = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<WorkflowTask>() {
+		 transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<WorkflowTask>() {
 			public WorkflowTask execute() throws Throwable {
 
 				WorkflowDefinition wfDef = workflowService.getDefinitionByName("activiti$claimProcess");
 				logger.debug("wfDefId found : " + wfDef.getId());
 
 				// Fill a map of default properties to start the workflow with
-				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				Map<QName, Serializable> properties = new HashMap<>();
 				Date dueDate = Calendar.getInstance().getTime();
 				properties.put(WorkflowModel.PROP_WORKFLOW_DUE_DATE, dueDate);
 				properties.put(WorkflowModel.PROP_WORKFLOW_PRIORITY, 2);
 				Serializable workflowPackage = workflowService.createPackage(null);
 				properties.put(WorkflowModel.ASSOC_PACKAGE, workflowPackage);
-				
+
 				properties.put(QualityModel.ASSOC_PRODUCT, rawMaterial1NodeRef);
-				
 
 				WorkflowPath path = workflowService.startWorkflow(wfDef.getId(), properties);
 				assertNotNull("The workflow path is null!", path);
@@ -139,59 +134,64 @@ public class ClaimWorkflowTest extends AbstractWorkflowTest {
 
 				List<WorkflowTask> tasks = workflowService.getTasksForWorkflowPath(path.getId());
 				assertEquals(1, tasks.size());
-				return tasks.get(0);				
+				
+				assertEquals("ncwf:claimAnalysisTask", tasks.get(0).getName());
+				
+				return tasks.get(0);
 			}
 		}, false, true);
+
 		
-		assertEquals("ncwf:claimAnalysisTask", task.getName());
-		
-	   final	NodeRef ncNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+
+		final NodeRef ncNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
-				
+
 				NodeRef pkgNodeRef = workflowService.getWorkflowById(workflowInstanceId).getWorkflowPackage();
-				List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(pkgNodeRef, WorkflowModel.ASSOC_PACKAGE_CONTAINS, RegexQNamePattern.MATCH_ALL);
+				List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(pkgNodeRef, WorkflowModel.ASSOC_PACKAGE_CONTAINS,
+						RegexQNamePattern.MATCH_ALL);
 				for (ChildAssociationRef childAssoc : childAssocs) {
 					if (QualityModel.TYPE_NC.equals(nodeService.getType(childAssoc.getChildRef()))) {
 						return childAssoc.getChildRef();
 					}
 				}
-				
+
+				return null;
+			}
+		}, false, true);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<WorkflowTask>() {
+			public WorkflowTask execute() throws Throwable {
+				nodeService.deleteNode(ncNodeRef);
 				return null;
 			}
 		}, false, true);
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<WorkflowTask>() {
 			public WorkflowTask execute() throws Throwable {
-		    nodeService.deleteNode(ncNodeRef);
-			return null;
+				Assert.assertNull(workflowService.getWorkflowById(workflowInstanceId));
+				return null;
 			}
 		}, false, true);
-		
-		
-		assertNull(workflowService.getWorkflowById(workflowInstanceId));
-		
-		
 	}
-
 
 	private void executeClaimWF(boolean shortWay) {
 
 		WorkflowTask task = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<WorkflowTask>() {
 			public WorkflowTask execute() throws Throwable {
+				AuthenticationUtil.setFullyAuthenticatedUser(BeCPGPLMTestHelper.USER_ONE);
 
 				WorkflowDefinition wfDef = workflowService.getDefinitionByName("activiti$claimProcess");
 				logger.debug("wfDefId found : " + wfDef.getId());
 
 				// Fill a map of default properties to start the workflow with
-				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				Map<QName, Serializable> properties = new HashMap<>();
 				Date dueDate = Calendar.getInstance().getTime();
 				properties.put(WorkflowModel.PROP_WORKFLOW_DUE_DATE, dueDate);
 				properties.put(WorkflowModel.PROP_WORKFLOW_PRIORITY, 2);
 				Serializable workflowPackage = workflowService.createPackage(null);
 				properties.put(WorkflowModel.ASSOC_PACKAGE, workflowPackage);
-				
+
 				properties.put(QualityModel.ASSOC_PRODUCT, rawMaterial1NodeRef);
-				
 
 				WorkflowPath path = workflowService.startWorkflow(wfDef.getId(), properties);
 				assertNotNull("The workflow path is null!", path);
@@ -208,183 +208,197 @@ public class ClaimWorkflowTest extends AbstractWorkflowTest {
 
 				List<WorkflowTask> tasks = workflowService.getTasksForWorkflowPath(path.getId());
 				assertEquals(1, tasks.size());
-				return tasks.get(0);				
+				return tasks.get(0);
 			}
 		}, false, true);
-		
+
 		assertEquals("ncwf:claimAnalysisTask", task.getName());
-		
-		//Assert NC of type Claim created
-		
+
+		// Assert NC of type Claim created
+
 		NodeRef ncNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
-				
+
 				NodeRef pkgNodeRef = workflowService.getWorkflowById(workflowInstanceId).getWorkflowPackage();
-				List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(pkgNodeRef, WorkflowModel.ASSOC_PACKAGE_CONTAINS, RegexQNamePattern.MATCH_ALL);
+				List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(pkgNodeRef, WorkflowModel.ASSOC_PACKAGE_CONTAINS,
+						RegexQNamePattern.MATCH_ALL);
 				for (ChildAssociationRef childAssoc : childAssocs) {
 					if (QualityModel.TYPE_NC.equals(nodeService.getType(childAssoc.getChildRef()))) {
 						return childAssoc.getChildRef();
 					}
 				}
-				
+
 				return null;
 			}
 		}, false, true);
 
-        assertNotNull(ncNodeRef);
+		assertNotNull(ncNodeRef);
 
-        assertEquals("Claim", (String)nodeService.getProperty(ncNodeRef,QualityModel.PROP_NC_TYPE));
-        
+		assertEquals("Claim", (String) nodeService.getProperty(ncNodeRef, QualityModel.PROP_NC_TYPE));
+
 		// checkStorageFolder(ncNodeRef);
 
+		// Back to saisie
+		Map<QName, Serializable> properties = new HashMap<>();
+		properties.put(ClaimWorkflowModel.PROP_REJECTED_STATE, "entry");
 
-        
-        // Back to saisie 
-        Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
-        properties.put(ClaimWorkflowModel.PROP_REJECTED_STATE, "entry");
-        
-        task = submitTask(workflowInstanceId, "ncwf:claimAnalysisTask", null, properties);
+		task = submitTask(workflowInstanceId, "ncwf:claimAnalysisTask", null, properties);
 		assertEquals("enteringClaimTask", task.getPath().getNode().getName());
-		
-		properties = new HashMap<QName, Serializable>();
-		
+
+		properties = new HashMap<>();
+
 		task = submitTask(workflowInstanceId, "ncwf:claimStartTask", null, properties);
 		assertEquals("analysisTask", task.getPath().getNode().getName());
-        
-		if(!shortWay){
 		
-			properties = new HashMap<QName, Serializable>();
+
+		if (!shortWay) {
+
+			properties = new HashMap<>();
 			properties.put(WorkflowModel.PROP_COMMENT, "commentaire émetteur");
-	
-			java.util.Map<QName, List<NodeRef>> assocs = new HashMap<QName, List<NodeRef>>();
-			List<NodeRef> assignees = new ArrayList<NodeRef>();
+
+			java.util.Map<QName, List<NodeRef>> assocs = new HashMap<>();
+			List<NodeRef> assignees = new ArrayList<>();
 			assignees.add(personService.getPerson(BeCPGPLMTestHelper.USER_ONE));
 			assocs.put(QualityModel.ASSOC_CLAIM_TREATEMENT_ACTOR, assignees);
-			assignees = new ArrayList<NodeRef>();
+			assignees = new ArrayList<>();
 			assignees.add(personService.getPerson(BeCPGPLMTestHelper.USER_TWO));
 			assocs.put(QualityModel.ASSOC_CLAIM_RESPONSE_ACTOR, assignees);
-			
-			
+
 			task = submitTask(workflowInstanceId, "ncwf:claimAnalysisTask", null, properties, assocs);
-			
-	
+
 			assertEquals("claimTreatmentTask", task.getPath().getNode().getName());
 			task = submitTask(workflowInstanceId, "ncwf:claimTreatmentTask", null, new HashMap<QName, Serializable>());
 			assertEquals("claimResponseTask", task.getPath().getNode().getName());
-			
-			
-			properties = new HashMap<QName, Serializable>();
-	        properties.put(ClaimWorkflowModel.PROP_REJECTED_STATE, "treatment");
+
+			properties = new HashMap<>();
+			properties.put(ClaimWorkflowModel.PROP_REJECTED_STATE, "treatment");
 			task = submitTask(workflowInstanceId, "ncwf:claimResponseTask", null, properties);
 			assertEquals("claimTreatmentTask", task.getPath().getNode().getName());
-			
+
 			properties.put(ClaimWorkflowModel.PROP_REJECTED_STATE, "analysis");
-			task =  submitTask(workflowInstanceId, "ncwf:claimTreatmentTask", null, properties);
-			//properties = new HashMap<QName, Serializable>();
-			//task =  submitTask(workflowInstanceId, "ncwf:claimClassificationTask", null, properties);
-			
-			assertNotTask(workflowInstanceId,"ncwf:claimClassificationTask");
-			
-			//assertEquals("analysisTask", task.getPath().getNode().getName());
-			properties = new HashMap<QName, Serializable>();
+			task = submitTask(workflowInstanceId, "ncwf:claimTreatmentTask", null, properties);
+			// properties = new HashMap<QName, Serializable>();
+			// task = submitTask(workflowInstanceId,
+			// "ncwf:claimClassificationTask", null, properties);
+
+			assertNotTask(workflowInstanceId, "ncwf:claimClassificationTask");
+			// assertEquals("analysisTask", task.getPath().getNode().getName());
+			properties = new HashMap<>();
 			task = submitTask(workflowInstanceId, "ncwf:claimAnalysisTask", null, properties);
 			assertEquals("claimTreatmentTask", task.getPath().getNode().getName());
-			
-			properties = new HashMap<QName, Serializable>();
+
+			properties = new HashMap<>();
 			task = submitTask(workflowInstanceId, "ncwf:claimTreatmentTask", null, properties);
 			assertEquals("claimResponseTask", task.getPath().getNode().getName());
-			
-			properties = new HashMap<QName, Serializable>();
+
+			properties = new HashMap<>();
 			task = submitTask(workflowInstanceId, "ncwf:claimResponseTask", null, properties);
 			task = submitTask(workflowInstanceId, "ncwf:claimClassificationTask", null, properties);
-		   // assertEquals("claimClosingTask", task.getPath().getNode().getName());
-			
+			// assertEquals("claimClosingTask",
+			// task.getPath().getNode().getName());
+
 			properties.put(ClaimWorkflowModel.PROP_REJECTED_STATE, "classification");
 			task = submitTask(workflowInstanceId, "ncwf:claimClosingTask", null, properties);
 			assertEquals("classificationTask", task.getPath().getNode().getName());
-			properties = new HashMap<QName, Serializable>();
+			properties = new HashMap<>();
 			task = submitTask(workflowInstanceId, "ncwf:claimClassificationTask", null, properties);
-		//	assertEquals("claimClosingTask", task.getPath().getNode().getName());
-			
+			// assertEquals("claimClosingTask",
+			// task.getPath().getNode().getName());
+
 			properties.put(ClaimWorkflowModel.PROP_REJECTED_STATE, "response");
 			task = submitTask(workflowInstanceId, "ncwf:claimClosingTask", null, properties);
 			assertEquals("claimResponseTask", task.getPath().getNode().getName());
-			properties = new HashMap<QName, Serializable>();
+			properties = new HashMap<>();
 			task = submitTask(workflowInstanceId, "ncwf:claimResponseTask", null, properties);
-			//assertEquals("claimClosingTask", task.getPath().getNode().getName());
-			
-			properties = new HashMap<QName, Serializable>();
+			// assertEquals("claimClosingTask",
+			// task.getPath().getNode().getName());
+
+			properties = new HashMap<>();
 			task = submitTask(workflowInstanceId, "ncwf:claimClosingTask", null, properties);
-			
+
 			assertFalse(workflowService.getWorkflowById(workflowInstanceId).isActive());
-		
+
 		} else {
-			properties = new HashMap<QName, Serializable>();
+			properties = new HashMap<>();
 			task = submitTask(workflowInstanceId, "ncwf:claimAnalysisTask", null, properties);
 			assertEquals("classificationTask", task.getPath().getNode().getName());
 			task = submitTask(workflowInstanceId, "ncwf:claimClassificationTask", null, properties);
-			//assertEquals("claimClosingTask", task.getPath().getNode().getName());
-			
-			properties = new HashMap<QName, Serializable>();
+			// assertEquals("claimClosingTask",
+			// task.getPath().getNode().getName());
+
+			properties = new HashMap<>();
 			task = submitTask(workflowInstanceId, "ncwf:claimClosingTask", null, properties);
-			
+
 			assertFalse(workflowService.getWorkflowById(workflowInstanceId).isActive());
-			
+
 		}
 	}
 
-
-//	private void checkWorkLog(final NodeRef ncNodeRef, final int workLogSize, final String state, final String comment) {
-//
-//		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-//			public NodeRef execute() throws Throwable {
-//
-//				NonConformityData ncData = (NonConformityData)alfrescoRepository.findOne(ncNodeRef);
-//				assertNotNull(ncData.getWorkLog());
-//				assertEquals(workLogSize, ncData.getWorkLog().size());
-//				assertEquals(state, ncData.getState());
-//				assertEquals(null, ncData.getComment());
-//				assertEquals(state, ncData.getWorkLog().get(workLogSize - 1).getState());
-//				assertEquals(comment, ncData.getWorkLog().get(workLogSize - 1).getComment());
-//				return null;
-//			}
-//		}, true, true);		
-//	}
-//
-//	private void checkStorageFolder(final NodeRef ncNodeRef) {
-//
-//		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-//			public NodeRef execute() throws Throwable {
-//
-//				/*
-//				 * We should have: Folder Product Folder NonConformities Folder
-//				 * NonConformity NC1 Node NC1
-//				 */
-//				NodeRef nonConformitiesFolderNodeRef = nodeService.getPrimaryParent(ncNodeRef).getParentRef();
-//				NodeRef productFolderNodeRef = nodeService.getPrimaryParent(nonConformitiesFolderNodeRef).getParentRef();
-//								
-//				assertEquals("Check NC moved in product", rawMaterial1NodeRef, productFolderNodeRef);
-//
-//				
-//				
-//				// remove assoc
-//				nodeService.removeAssociation(ncNodeRef, rawMaterial1NodeRef, QualityModel.ASSOC_PRODUCT);
-//
-//				nonConformitiesFolderNodeRef = nodeService.getPrimaryParent(ncNodeRef).getParentRef();
-//				assertEquals(
-//						"/{http://www.alfresco.org/model/application/1.0}company_home/{http://www.alfresco.org/model/content/1.0}Quality/{http://www.alfresco.org/model/content/1.0}NonConformities",
-//						nodeService.getPath(nonConformitiesFolderNodeRef).toString());
-//
-//				// create assoc rawMaterial 2
-//				nodeService.createAssociation(ncNodeRef, rawMaterial2NodeRef, QualityModel.ASSOC_PRODUCT);
-//
-//				nonConformitiesFolderNodeRef = nodeService.getPrimaryParent(ncNodeRef).getParentRef();
-//				productFolderNodeRef = nodeService.getPrimaryParent(nonConformitiesFolderNodeRef).getParentRef();
-//				assertEquals("Check NC moved in product", rawMaterial2NodeRef, productFolderNodeRef);
-//				
-//				return null;
-//			}
-//		}, false, true);
-//		
-//	}
+	// private void checkWorkLog(final NodeRef ncNodeRef, final int workLogSize,
+	// final String state, final String comment) {
+	//
+	// transactionService.getRetryingTransactionHelper().doInTransaction(new
+	// RetryingTransactionCallback<NodeRef>() {
+	// public NodeRef execute() throws Throwable {
+	//
+	// NonConformityData ncData =
+	// (NonConformityData)alfrescoRepository.findOne(ncNodeRef);
+	// assertNotNull(ncData.getWorkLog());
+	// assertEquals(workLogSize, ncData.getWorkLog().size());
+	// assertEquals(state, ncData.getState());
+	// assertEquals(null, ncData.getComment());
+	// assertEquals(state, ncData.getWorkLog().get(workLogSize - 1).getState());
+	// assertEquals(comment, ncData.getWorkLog().get(workLogSize -
+	// 1).getComment());
+	// return null;
+	// }
+	// }, true, true);
+	// }
+	//
+	// private void checkStorageFolder(final NodeRef ncNodeRef) {
+	//
+	// transactionService.getRetryingTransactionHelper().doInTransaction(new
+	// RetryingTransactionCallback<NodeRef>() {
+	// public NodeRef execute() throws Throwable {
+	//
+	// /*
+	// * We should have: Folder Product Folder NonConformities Folder
+	// * NonConformity NC1 Node NC1
+	// */
+	// NodeRef nonConformitiesFolderNodeRef =
+	// nodeService.getPrimaryParent(ncNodeRef).getParentRef();
+	// NodeRef productFolderNodeRef =
+	// nodeService.getPrimaryParent(nonConformitiesFolderNodeRef).getParentRef();
+	//
+	// assertEquals("Check NC moved in product", rawMaterial1NodeRef,
+	// productFolderNodeRef);
+	//
+	//
+	//
+	// // remove assoc
+	// nodeService.removeAssociation(ncNodeRef, rawMaterial1NodeRef,
+	// QualityModel.ASSOC_PRODUCT);
+	//
+	// nonConformitiesFolderNodeRef =
+	// nodeService.getPrimaryParent(ncNodeRef).getParentRef();
+	// assertEquals(
+	// "/{http://www.alfresco.org/model/application/1.0}company_home/{http://www.alfresco.org/model/content/1.0}Quality/{http://www.alfresco.org/model/content/1.0}NonConformities",
+	// nodeService.getPath(nonConformitiesFolderNodeRef).toString());
+	//
+	// // create assoc rawMaterial 2
+	// nodeService.createAssociation(ncNodeRef, rawMaterial2NodeRef,
+	// QualityModel.ASSOC_PRODUCT);
+	//
+	// nonConformitiesFolderNodeRef =
+	// nodeService.getPrimaryParent(ncNodeRef).getParentRef();
+	// productFolderNodeRef =
+	// nodeService.getPrimaryParent(nonConformitiesFolderNodeRef).getParentRef();
+	// assertEquals("Check NC moved in product", rawMaterial2NodeRef,
+	// productFolderNodeRef);
+	//
+	// return null;
+	// }
+	// }, false, true);
+	//
+	// }
 }

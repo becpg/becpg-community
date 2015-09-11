@@ -49,9 +49,9 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 public class MigrationServiceImpl implements MigrationService {
 	
-	private static int BATCH_SIZE = 50;
+	private static final int BATCH_SIZE = 50;
 	
-	private static Log logger = LogFactory.getLog(MigrationServiceImpl.class);
+	private static final Log logger = LogFactory.getLog(MigrationServiceImpl.class);
 	
 	private NodeService nodeService;
 	

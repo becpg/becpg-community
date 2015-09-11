@@ -28,9 +28,11 @@ import javax.xml.bind.annotation.XmlAccessorType;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.stereotype.Component;
 
+import fr.becpg.olap.InstanceCleaner;
 import fr.becpg.olap.InstanceImporter;
 import fr.becpg.olap.extractor.EntityToDBXmlVisitor;
 import fr.becpg.tools.InstanceManager;
@@ -47,17 +49,12 @@ import fr.becpg.tools.jdbc.JdbcConnectionManager.JdbcConnectionManagerCallBack;
 @Path("/saiku/becpg/admin")
 @XmlAccessorType(XmlAccessType.NONE)
 public class AdminSaikuRestClient {
-	
-	
 
 	private static final Log logger = LogFactory.getLog(AdminSaikuRestClient.class);
 
-	
 	InstanceManager instanceManager;
-	
+
 	JdbcConnectionManager jdbcConnectionManager;
-	
-	
 
 	public void setJdbcConnectionManager(JdbcConnectionManager jdbcConnectionManager) {
 		this.jdbcConnectionManager = jdbcConnectionManager;
@@ -66,42 +63,62 @@ public class AdminSaikuRestClient {
 	public void setInstanceManager(InstanceManager instanceManager) {
 		this.instanceManager = instanceManager;
 	}
-	
+
 	@GET
 	@Produces({ "text/plain" })
 	@Path("/import")
 	public Response launchImport() throws Exception {
 		for (final Instance instance : instanceManager.getAllInstances()) {
-			if(logger.isInfoEnabled()){
+			if (logger.isInfoEnabled()) {
 				logger.info("Start importing from instance/tenant: " + instance.getId() + "/" + instance.getInstanceName() + "/" + instance.getTenantName());
 			}
-			jdbcConnectionManager.doInTransaction( new JdbcConnectionManagerCallBack() {
+			jdbcConnectionManager.doInTransaction(new JdbcConnectionManagerCallBack() {
 
 				@Override
 				public void execute(Connection connection) throws Exception {
-	
 
-					instanceManager.createBatch(connection,instance);
+					instanceManager.createBatch(connection, instance);
 
 					InstanceImporter remoteETLClient = new InstanceImporter(instance.getInstanceUrl());
 
 					remoteETLClient.setEntityToDBXmlVisitor(new EntityToDBXmlVisitor(connection, instance));
-					HttpClient httpClient = instanceManager.createInstanceSession(instance);
-					try {
-						remoteETLClient.loadEntities(remoteETLClient.buildQuery(instance.getLastImport()), httpClient);
-					} finally {
-						httpClient.getConnectionManager().shutdown();
 
+					try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
+
+						remoteETLClient.loadEntities(remoteETLClient.buildQuery(instance.getLastImport()), httpClient, instance.createHttpContext());
 					}
-					
-					instanceManager.updateBatchAndDate(connection,instance);
+
+					instanceManager.updateBatchAndDate(connection, instance);
 				}
 			});
 
 		}
-	
+
 		return Response.ok().build();
 	}
 
+	@GET
+	@Produces({ "text/plain" })
+	@Path("/purge")
+	public Response launchPurge() throws Exception {
+		for (final Instance instance : instanceManager.getAllInstances()) {
+			if (logger.isInfoEnabled()) {
+				logger.info("Start purging nodes from instance/tenant: " + instance.getId() + "/" + instance.getInstanceName() + "/" + instance.getTenantName());
+			}
+			jdbcConnectionManager.doInTransaction(new JdbcConnectionManagerCallBack() {
+
+				@Override
+				public void execute(Connection connection) throws Exception {
+
+					InstanceCleaner instanceCleaner = new InstanceCleaner();
+
+					instanceCleaner.purgeEntities(connection, instance);
+				}
+			});
+
+		}
+
+		return Response.ok().build();
+	}
 
 }

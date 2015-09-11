@@ -17,14 +17,10 @@
  ******************************************************************************/
 package fr.becpg.repo.entity.datalist;
 
-import java.util.List;
 
 
 public interface DataListSortRegistry {
 	
-	public List<DataListSortPlugin> getPlugins();
+	DataListSortPlugin getPluginById(String pluginId);
 	
-	public DataListSortPlugin getPluginById(String pluginId);
-	
-	void addPlugin(DataListSortPlugin plugin);
 }

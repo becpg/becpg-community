@@ -40,7 +40,7 @@ public class DataListDataExtractor extends AbstractNodeDataExtractor  {
 	@Override
 	protected Map<String, Object> doExtract(NodeRef nodeRef,QName itemType, SiteInfo site) {
 	
-		Map<String, Object> ret = new HashMap<String, Object>();
+		Map<String, Object> ret = new HashMap<>();
 		
 		 ret.put(PROP_NODEREF, nodeRef.toString());
 

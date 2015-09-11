@@ -74,7 +74,7 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 		NodeRef projectNodeRef = entityListDAO.getEntity(listItemNode.getNodeRef());
 		ProjectData projectData = alfrescoRepository.findOne(projectNodeRef);
 
-		List<QName> props = new ArrayList<QName>();
+		List<QName> props = new ArrayList<>();
 
 		for (String qName : qNames) {
 			props.add(QName.createQName(qName, namespaceService));

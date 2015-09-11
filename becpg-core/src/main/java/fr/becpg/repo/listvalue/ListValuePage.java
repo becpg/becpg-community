@@ -27,10 +27,10 @@ import java.util.List;
  */
  public class ListValuePage {
         
-        private List<ListValueEntry> results;
-        private Integer pageSize;
-        private Integer page;
-        private Integer fullListSize;
+        private final List<ListValueEntry> results;
+        private final Integer pageSize;
+        private final Integer page;
+        private final Integer fullListSize;
         
         
         @SuppressWarnings("unchecked")
@@ -42,14 +42,14 @@ import java.util.List;
             this.page = pageNum;
             this.pageSize = pageSize;
             this.fullListSize = fullList.size();
-            if(!fullList.isEmpty()){
+            if(!fullList.isEmpty() && (fullListSize >= Math.min(page * pageSize, fullListSize))){
             	if(listValueExtractor == null){
             		results = (List<ListValueEntry>) fullList.subList(Math.max((page-1) * pageSize,0), Math.min(page * pageSize, fullListSize));
             	}else {
             		results = listValueExtractor.extract(fullList.subList(Math.max((page-1) * pageSize,0), Math.min(page * pageSize, fullListSize))); 
             	}
             } else {
-            	results = new ArrayList<ListValueEntry>();
+            	results = new ArrayList<>();
             }
         }
      

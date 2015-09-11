@@ -32,11 +32,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.model.ProjectModel;
-import fr.becpg.repo.entity.datalist.AbstractDataListSortPlugin;
+import fr.becpg.repo.entity.datalist.DataListSortPlugin;
 import fr.becpg.repo.hierarchy.HierarchyHelper;
 
 @Service
-public class ProjectListSortPlugin extends AbstractDataListSortPlugin {
+public class ProjectListSortPlugin implements DataListSortPlugin {
 
 	private static final String PLUGIN_ID = "ProjectList";
 	private static final Log logger = LogFactory.getLog(ProjectListSortPlugin.class);

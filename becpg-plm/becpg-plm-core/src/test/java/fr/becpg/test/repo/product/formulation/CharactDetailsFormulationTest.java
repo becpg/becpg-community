@@ -7,18 +7,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.ibm.icu.text.DecimalFormat;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
+import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.product.data.CharactDetails;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.constraints.CompoListUnit;
@@ -39,7 +40,10 @@ import fr.becpg.test.repo.product.AbstractFinishedProductTest;
  */
 public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 
-	protected static Log logger = LogFactory.getLog(CharactDetailsFormulationTest.class);
+	protected static final Log logger = LogFactory.getLog(CharactDetailsFormulationTest.class);
+	
+	@Autowired
+	private AttributeExtractorService attributeExtractorService;
 	
 	@Override
 	public void setUp() throws Exception {
@@ -57,6 +61,7 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 	 */
 	@Test
 	public void testFormulateCharactDetails() throws Exception {
+		
 
 		logger.info("testFormulateCharactDetails");
 
@@ -71,8 +76,8 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
 				finishedProduct.setUnitPrice(12.4d);
-				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				CompoListDataItem item = new CompoListDataItem(null,(CompoListDataItem) null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail,
+				List<CompoListDataItem> compoList = new ArrayList<>();
+				CompoListDataItem item = new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail,
 						localSF1NodeRef);
 				
 				compoList.add(item);
@@ -80,7 +85,7 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 						rawMaterial1NodeRef));
 				compoList.add(new CompoListDataItem(null, item, null, 2d, CompoListUnit.kg, 0d, DeclarationType.Detail,
 						rawMaterial2NodeRef));
-				item = new CompoListDataItem(null, (CompoListDataItem)null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail,
+				item = new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail,
 						localSF2NodeRef);
 				compoList.add(item);
 				compoList.add(new CompoListDataItem(null, item, null, 3d, CompoListUnit.kg, 0d, DeclarationType.Declare,
@@ -89,16 +94,17 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 						rawMaterial4NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
 
-				NodeRef finishedProductNodeRef =  alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();
+				NodeRef finishedProductNodeRef =  alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
 				/*-- Formulate product --*/
 				logger.debug("/*-- Formulate details --*/");
+				productService.formulate(finishedProductNodeRef);
 				CharactDetails ret = productService.formulateDetails(finishedProductNodeRef, PLMModel.TYPE_NUTLIST,
 						"nutList", null);
 
 				Assert.assertNotNull(ret);
 
-				System.out.println(CharactDetailsHelper.toJSONObject(ret, nodeService).toString(3));
+				logger.info(CharactDetailsHelper.toJSONObject(ret, nodeService,attributeExtractorService).toString(3));
 				return finishedProductNodeRef;
 				
 
@@ -142,7 +148,7 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 				finishedProduct.setLegalName("Legal Produit fini 1");
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
-				List<PackagingListDataItem> packagingList = new ArrayList<PackagingListDataItem>();
+				List<PackagingListDataItem> packagingList = new ArrayList<>();
 				packagingList.add(new PackagingListDataItem(null, 1d, PackagingListUnit.P, PackagingLevel.Primary, true, packagingMaterial1NodeRef));
 				packagingList.add(new PackagingListDataItem(null, 3d, PackagingListUnit.m, PackagingLevel.Primary, true, packagingMaterial2NodeRef));
 				packagingList.add(new PackagingListDataItem(null, 8d, PackagingListUnit.PP, PackagingLevel.Tertiary, true, packagingMaterial3NodeRef));
@@ -152,18 +158,18 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 				/*
 				 * Composition
 				 */				
-				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				CompoListDataItem item = new CompoListDataItem(null, (CompoListDataItem)null, null, 1d, CompoListUnit.kg, 10d, DeclarationType.Detail, localSF1NodeRef);
+				List<CompoListDataItem> compoList = new ArrayList<>();
+				CompoListDataItem item = new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 10d, DeclarationType.Detail, localSF1NodeRef);
 				
 				compoList.add(item);
 				compoList.add(new CompoListDataItem(null, item, null, 1d, CompoListUnit.kg, 5d, DeclarationType.Declare, rawMaterial1NodeRef));
 				compoList.add(new CompoListDataItem(null, item, null, 2d, CompoListUnit.kg, 10d, DeclarationType.Detail, rawMaterial2NodeRef));
-				 item = new CompoListDataItem(null, (CompoListDataItem)null, null, 1d, CompoListUnit.kg, 20d, DeclarationType.Detail, localSF2NodeRef);
+				 item = new CompoListDataItem(null, null, 1d, 0d, CompoListUnit.kg, 20d, DeclarationType.Detail, localSF2NodeRef);
 				compoList.add(item);
 				compoList.add(new CompoListDataItem(null,item, null, 3d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
 				compoList.add(new CompoListDataItem(null, item, null, 3d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
-				return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();				
+				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();				
 				
 			}},false,true);
 	   
@@ -171,12 +177,13 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 			public NodeRef execute() throws Throwable {
 
 				//formulate Details
-				List<NodeRef> costNodeRefs = new ArrayList<NodeRef>();			
+				List<NodeRef> costNodeRefs = new ArrayList<>();
+				productService.formulate(finishedProductNodeRef);
 				CharactDetails ret = productService.formulateDetails(finishedProductNodeRef, PLMModel.TYPE_COSTLIST,
 						"costList", costNodeRefs);
 				
 				Assert.assertNotNull(ret);
-				System.out.println(CharactDetailsHelper.toJSONObject(ret, nodeService).toString(3));
+				logger.info(CharactDetailsHelper.toJSONObject(ret, nodeService, attributeExtractorService).toString(3));
 				
 				//costs
 				int checks = 0;
@@ -185,8 +192,8 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 					
 					for(Map.Entry<NodeRef, Double> kv2 : kv.getValue().entrySet()){
 						
-						String trace = "cost: " + nodeService.getProperty(kv.getKey(), ContentModel.PROP_NAME) + 
-								" - source: " + nodeService.getProperty(kv2.getKey(), ContentModel.PROP_NAME) + 
+						String trace = "cost: " + nodeService.getProperty(kv.getKey(), BeCPGModel.PROP_CHARACT_NAME) + 
+								" - source: " + nodeService.getProperty(kv2.getKey(),BeCPGModel.PROP_CHARACT_NAME) + 
 								" - value: " + kv.getValue();
 						logger.debug(trace);
 						

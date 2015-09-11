@@ -24,10 +24,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.FinishedProductData;
@@ -37,6 +41,7 @@ import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.model.FormulatedCharactDataItem;
 
 /**
  * Merge ReqCtrlListDataItem to avoid duplication of items and sort them
@@ -49,9 +54,15 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 	protected static Log logger = LogFactory.getLog(MergeReqCtrlFormulationHandler.class);
 
 	private AlfrescoRepository<ProductData> alfrescoRepository;
+	
+	private NodeService nodeService;
 
 	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
+	}
+
+	public void setNodeService(NodeService nodeService) {
+		this.nodeService = nodeService;
 	}
 
 	@Override
@@ -64,16 +75,17 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 		mergeReqCtrlList(productData.getPackagingListView().getReqCtrlList());
 		mergeReqCtrlList(productData.getProcessListView().getReqCtrlList());
 
+		updateFormulatedCharactInError(productData, productData.getCompoListView().getReqCtrlList());
 		return true;
 	}
 
 	private void appendChildReq(List<ReqCtrlListDataItem> reqCtrlList, List<CompoListDataItem> compoList) {
 		for (CompoListDataItem compoListDataItem : compoList) {
 			NodeRef productNodeRef = compoListDataItem.getProduct();
-			ProductData productData = (ProductData) alfrescoRepository.findOne(productNodeRef);
+			ProductData productData = alfrescoRepository.findOne(productNodeRef);
 			if (productData instanceof SemiFinishedProductData || productData instanceof FinishedProductData) {
 				for (ReqCtrlListDataItem tmp : productData.getCompoListView().getReqCtrlList()) {
-					reqCtrlList.add(new ReqCtrlListDataItem(null, tmp.getReqType(), tmp.getReqMessage(), tmp.getSources()));
+					reqCtrlList.add(new ReqCtrlListDataItem(null, tmp.getReqType(), tmp.getReqMessage(), tmp.getCharact(), tmp.getSources()));
 				}
 			}
 		}
@@ -128,6 +140,7 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 					ReqCtrlListDataItem newReqCtrlListDataItem = newReqCtrlList.get(dbKV.getKey());
 					dbKV.getValue().setReqType(newReqCtrlListDataItem.getReqType());
 					dbKV.getValue().setSources(newReqCtrlListDataItem.getSources());
+					dbKV.getValue().setCharact(newReqCtrlListDataItem.getCharact());
 					reqCtrlList.remove(newReqCtrlListDataItem);
 				}
 			}
@@ -137,6 +150,49 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	private void updateFormulatedCharactInError(ProductData productData, List<ReqCtrlListDataItem> reqCtrlList){
+		for(ReqCtrlListDataItem r : reqCtrlList){
+			if(logger.isDebugEnabled()){
+				logger.debug("r " + r.getReqMessage() + " " + r.getCharact());
+			}			
+			if(r.getCharact() != null){
+				QName type = nodeService.getType(r.getCharact());
+				List<FormulatedCharactDataItem> simpleList = new ArrayList<>();
+				if(PLMModel.TYPE_NUT.equals(type)){
+					simpleList = (List<FormulatedCharactDataItem>)(List<?>)productData.getNutList();					
+				}
+				else if(PLMModel.TYPE_COST.equals(type)){
+					simpleList = (List<FormulatedCharactDataItem>)(List<?>)productData.getCostList();
+				}
+				for(FormulatedCharactDataItem sl : simpleList){
+					if(r.getCharact().equals(sl.getCharactNodeRef())){
+						String message = r.getReqMessage();
+						if(r.getSources() != null && !r.getSources().isEmpty()){
+							int i = 0;						
+							message += " : ";
+							for(NodeRef n : r.getSources()){
+								if(i>0){
+									message += ", ";
+								}
+								else if(i>=5){
+									message += "...";
+									break;
+								}
+								message += nodeService.getProperty(n, ContentModel.PROP_NAME);
+								i++;
+							}
+						}
+						sl.setErrorLog((sl.getErrorLog() != null ? sl.getErrorLog() + ". " : "") + message);
+						if(logger.isDebugEnabled()){
+							logger.debug("setErrorLog " + sl.getErrorLog());
+						}
+						break;
+					}
+				}
+			}
+		}
+	}
 	/**
 	 * Sort by type
 	 *

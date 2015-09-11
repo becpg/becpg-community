@@ -21,18 +21,25 @@ import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
-import fr.becpg.repo.repository.model.IManualDataItem;
+import fr.becpg.repo.repository.model.ManualDataItem;
 import fr.becpg.repo.repository.model.Synchronisable;
 
 @AlfType
 @AlfQname(qname = "bcpg:dynamicCharactList")
-public class DynamicCharactListItem extends BeCPGDataObject implements Synchronisable,IManualDataItem {
+public class DynamicCharactListItem extends BeCPGDataObject implements Synchronisable,ManualDataItem {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8824174891991469677L;
 
 	private String title;
 
 	private String formula;
 
 	private Object value;
+	
+	private Boolean multiLevelFormula;
 
 	private String groupColor;
 
@@ -132,6 +139,17 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 		}
 	}
 
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:dynamicCharactMultiLevel")
+	public Boolean getMultiLevelFormula() {
+		return multiLevelFormula;
+	}
+
+	public void setMultiLevelFormula(Boolean isMultiLevelFormula) {
+		this.multiLevelFormula = isMultiLevelFormula;
+	}
+
 	@Override
 	public boolean isSynchronisable() {
 		return !DynamicCharactSynchronisableState.Template.equals(synchronisableState);
@@ -175,6 +193,7 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 		result = prime * result + ((execOrder == null) ? 0 : execOrder.hashCode());
 		result = prime * result + ((formula == null) ? 0 : formula.hashCode());
 		result = prime * result + ((groupColor == null) ? 0 : groupColor.hashCode());
+		result = prime * result + ((multiLevelFormula == null) ? 0 : multiLevelFormula.hashCode());
 		result = prime * result + ((synchronisableState == null) ? 0 : synchronisableState.hashCode());
 		result = prime * result + ((title == null) ? 0 : title.hashCode());
 		result = prime * result + ((value == null) ? 0 : value.hashCode());
@@ -212,6 +231,11 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 				return false;
 		} else if (!groupColor.equals(other.groupColor))
 			return false;
+		if (multiLevelFormula == null) {
+			if (other.multiLevelFormula != null)
+				return false;
+		} else if (!multiLevelFormula.equals(other.multiLevelFormula))
+			return false;
 		if (synchronisableState != other.synchronisableState)
 			return false;
 		if (title == null) {
@@ -229,11 +253,9 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 
 	@Override
 	public String toString() {
-		return "DynamicCharactListItem [title=" + title + ", formula=" + formula + ", value=" + value + ", groupColor=" + groupColor
-				+ ", columnName=" + columnName + ", errorLog=" + errorLog + ", synchronisableState=" + synchronisableState + ", execOrder="
-				+ execOrder + "]";
+		return "DynamicCharactListItem [title=" + title + ", formula=" + formula + ", value=" + value + ", isMultiLevelFormula="
+				+ multiLevelFormula + ", groupColor=" + groupColor + ", columnName=" + columnName + ", errorLog=" + errorLog
+				+ ", synchronisableState=" + synchronisableState + ", execOrder=" + execOrder + "]";
 	}
-
-	
 
 }

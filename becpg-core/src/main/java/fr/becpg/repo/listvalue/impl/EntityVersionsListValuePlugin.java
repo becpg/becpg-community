@@ -13,7 +13,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
  * GNU Lesser General Public License for more details. 
  *  
- * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License along with beCPG.
+ * If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.listvalue.impl;
 
@@ -25,27 +26,28 @@ import java.util.Map;
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.listvalue.ListValuePage;
+import fr.becpg.repo.listvalue.ListValuePlugin;
 import fr.becpg.repo.listvalue.ListValueService;
 
-public class EntityVersionsListValuePlugin extends AbstractBaseListValuePlugin {
+@Service
+public class EntityVersionsListValuePlugin implements ListValuePlugin {
 
 	private static final String SOURCE_TYPE_BRANCHES = "branches";
 
+	@Autowired
 	private EntityVersionService entityVersionService;
 
+	@Autowired
+	@Qualifier("NodeService")
 	private NodeService nodeService;
 
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
-
-	public void setEntityVersionService(EntityVersionService entityVersionService) {
-		this.entityVersionService = entityVersionService;
-	}
-
+	@Override
 	public String[] getHandleSourceTypes() {
 		return new String[] { SOURCE_TYPE_BRANCHES };
 	}
@@ -60,12 +62,12 @@ public class EntityVersionsListValuePlugin extends AbstractBaseListValuePlugin {
 		}
 
 		List<NodeRef> branches = entityVersionService.getAllVersionBranches(entityNodeRef);
-		
+
 		for (Iterator<NodeRef> iterator = branches.iterator(); iterator.hasNext();) {
-			if(entityNodeRef.equals(iterator.next())){
+			if (entityNodeRef.equals(iterator.next())) {
 				iterator.remove();
 			}
-			
+
 		}
 
 		return new ListValuePage(branches, pageNum, pageSize, new NodeRefListValueExtractor(ContentModel.PROP_NAME, nodeService));

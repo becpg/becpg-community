@@ -28,7 +28,7 @@ import fr.becpg.repo.importer.ImporterException;
  */
 public interface UserImporterService {
 
-	public void importUser(NodeRef nodeRef) throws ImporterException;
+	void importUser(NodeRef nodeRef) throws ImporterException;
 
 
 }
