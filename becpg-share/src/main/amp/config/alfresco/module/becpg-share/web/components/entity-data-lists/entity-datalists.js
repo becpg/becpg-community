@@ -100,6 +100,14 @@
 							
 							showCreate : false
 						},
+						
+						views : {
+							"compoList" : "formulation-view",
+							"processList": "formulation-view",
+							"packagingList": "formulation-view",
+							"taskList":"gantt-view",
+							"ingLabelingList":"labeling-view",
+						},
 
 						/**
 						 * Fired by YUI when parent element is available for
@@ -305,11 +313,28 @@
 							 * 
 							 * @method fnOnClick
 							 */
-							var fnOnClick = function DataLists_renderDataLists_fnOnClick() {
+							var fnOnClick = function DataLists_renderDataLists_fnOnClick(listName ) {
 								return function DataLists_renderDataLists_onClick() {
-									var lis = Selector.query("li", listsContainer);
-									Dom.removeClass(lis, selectedClass);
-									Dom.addClass(this, selectedClass);
+
+									if(listName!=null && (
+											listName.indexOf("View-")<0
+											&& me.options.listId.indexOf("View-")<0
+											&& (me.views[listName] == me.views[me.options.listId])		
+									) ){
+
+										var lis = Selector.query("li", listsContainer);
+										Dom.removeClass(lis, selectedClass);
+										Dom.addClass(this, selectedClass);
+
+										me.options.listId = listName;
+										YAHOO.Bubbling.fire("activeDataListChanged", {
+											list : me.options.listId,
+											dataList : me.dataLists[me.options.listId],
+											entity : me.entity,
+											scrollTo : true
+										});
+										return false;
+									}
 									return true;
 								};
 							};
@@ -417,7 +442,7 @@
 
 											// Build the DOM elements
 											el = document.createElement("li");
-											el.onclick = fnOnClick();
+											el.onclick = fnOnClick(list.name);
 											                                   											
 											
 											

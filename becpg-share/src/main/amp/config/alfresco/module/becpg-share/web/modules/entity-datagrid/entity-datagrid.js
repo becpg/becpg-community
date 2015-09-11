@@ -2415,6 +2415,7 @@
                             {
                                 this.datalistMeta = obj.dataList;
                                 this.entity = obj.entity;
+                                this.isFilterFormLoaded = false;
 
                                 if (obj.list != null && (this.options.list == null || this.options.list.length < 1))
                                 {
