@@ -246,6 +246,11 @@
          }
          var containerRight = Dom.get(this.id + "-toolbar-buttons-right"), containerLeft = Dom
                .get(this.id + "-toolbar-buttons-left"), template = Dom.get(this.id + "-toolBar-template-button");
+         
+         //Reset
+         containerRight.innerHTML = "";
+         containerLeft.innerHTML = "";
+         this.widgets.actionButtons = {};
 
          for (var actionName in this.toolbarButtonActions) {
             var action = this.toolbarButtonActions[actionName];
