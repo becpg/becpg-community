@@ -22,6 +22,6 @@ public enum PackagingListUnit {
 	
 	kg,
 	
-	g;
-	
+	g
+
 }

@@ -46,10 +46,10 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase {
 	private static final String LOG_SEPARATOR = "\n";
 	private static final String KEY_FILES_TO_IMPORT = "keyFilesToImport";
 
-	private static Log logger = LogFactory.getLog(ImporterActionExecuter.class);
+	private static final Log logger = LogFactory.getLog(ImporterActionExecuter.class);
 
 	private ImportService importService;
-	private TransactionListener transactionListener;
+	private final TransactionListener transactionListener;
 	private ThreadPoolExecutor threadExecuter;
 
 	public void setImportService(ImportService importService) {
@@ -78,10 +78,9 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase {
 
 		AlfrescoTransactionSupport.bindResource(PARAM_DO_NOT_MOVE_NODE, doNotMoveNode);
 		// Get the set of nodes read
-		@SuppressWarnings("unchecked")
-		Set<NodeRef> nodeRefs = (Set<NodeRef>) AlfrescoTransactionSupport.getResource(KEY_FILES_TO_IMPORT);
+		Set<NodeRef> nodeRefs = AlfrescoTransactionSupport.getResource(KEY_FILES_TO_IMPORT);
 		if (nodeRefs == null) {
-			nodeRefs = new HashSet<NodeRef>(5);
+			nodeRefs = new HashSet<>(5);
 			AlfrescoTransactionSupport.bindResource(KEY_FILES_TO_IMPORT, nodeRefs);
 		}
 		nodeRefs.add(nodeRef);
@@ -119,8 +118,7 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase {
 		@Override
 		public void afterCommit() {
 
-			@SuppressWarnings("unchecked")
-			Set<NodeRef> nodeRefs = (Set<NodeRef>) AlfrescoTransactionSupport.getResource(KEY_FILES_TO_IMPORT);
+			Set<NodeRef> nodeRefs = AlfrescoTransactionSupport.getResource(KEY_FILES_TO_IMPORT);
 
 			Boolean doNotMoveNode = AlfrescoTransactionSupport.getResource(PARAM_DO_NOT_MOVE_NODE);
 
@@ -140,9 +138,9 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase {
 	 */
 	private class FileImporter implements Runnable {
 
-		private NodeRef nodeRef;
-		private String runAsUser;
-		private Boolean doNotMoveNode;
+		private final NodeRef nodeRef;
+		private final String runAsUser;
+		private final Boolean doNotMoveNode;
 
 		private FileImporter(NodeRef nodeRef, String runAsUser, Boolean doNotMoveNode) {
 			this.nodeRef = nodeRef;

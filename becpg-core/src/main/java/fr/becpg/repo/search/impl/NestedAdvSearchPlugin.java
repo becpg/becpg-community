@@ -33,23 +33,30 @@ public class NestedAdvSearchPlugin implements AdvSearchPlugin {
 
 	@Autowired
 	private AttributeExtractorService attributeExtractorService;
+	
+	private static final String NESTED_PROP = "nested_";
+	private static final String DATALIST_PROP = "dataList_";
+	private static final String PROP_SUFFIX = "prop_";
+	private static final String PROP_KEY = "_"+PROP_SUFFIX;
+	private static final String ASSOC_SUFFIX = "assoc_";
+	private static final String ASSOC_KEY = "_"+ASSOC_SUFFIX;
 
-	private static Log logger = LogFactory.getLog(AdvSearchPlugin.class);
+	private static final Log logger = LogFactory.getLog(AdvSearchPlugin.class);
 
 	public Map<String, Map<String, String>> extractNested(Map<String, String> criteriaMap) {
 		Map<String, Map<String, String>> nested = new HashMap<>();
 
 		for (String key : criteriaMap.keySet()) {
-			if (key.startsWith("nested_") && !key.contains("dataList_")) {
+			if (key.startsWith(NESTED_PROP) && !key.contains(DATALIST_PROP)) {
 				String nestedPropName = null;
 				String nestedAssoc = null;
 
-				if (key.contains("_prop_")) {
-					nestedPropName = "prop_" + key.split("_prop_")[1];
-					nestedAssoc = key.split("_prop_")[0].replace("nested_", "").replace("_", ":");
-				} else if (key.contains("_assoc_")) {
-					nestedPropName = "assoc_" + key.split("_assoc_")[1];
-					nestedAssoc = key.split("_assoc_")[0].replace("nested_", "").replace("_", ":");
+				if (key.contains(PROP_KEY)) {
+					nestedPropName = PROP_SUFFIX + key.split(PROP_KEY)[1];
+					nestedAssoc = key.split(PROP_KEY)[0].replace(NESTED_PROP, "").replace("_", ":");
+				} else if (key.contains(ASSOC_KEY)) {
+					nestedPropName = ASSOC_SUFFIX + key.split(ASSOC_KEY)[1];
+					nestedAssoc = key.split(ASSOC_KEY)[0].replace(NESTED_PROP, "").replace("_", ":");
 				}
 
 				if (nestedPropName != null) {
@@ -74,10 +81,10 @@ public class NestedAdvSearchPlugin implements AdvSearchPlugin {
 		for (String key : criteriaMap.keySet()) {
 			if (criteriaMap.get(key) != null && !criteriaMap.get(key).isEmpty()) {
 				if (!key.equals(DataListFilter.PROP_DEPTH_LEVEL)) {
-					if (!key.startsWith("assoc_") && !key.startsWith("nested_")) {
-						ret.put(key.replace("prop_", "").replace("_", ":"), criteriaMap.get(key));
+					if (!key.startsWith(ASSOC_SUFFIX) && !key.startsWith(NESTED_PROP)) {
+						ret.put(key.replace(PROP_SUFFIX, "").replace("_", ":"), criteriaMap.get(key));
 					} else if (key.endsWith("_added")) {
-						ret.put(key.replace("assoc_", "").replace("_added", "").replace("_", ":"), criteriaMap.get(key));
+						ret.put(key.replace(ASSOC_SUFFIX, "").replace("_added", "").replace("_", ":"), criteriaMap.get(key));
 					}
 				}
 			}
@@ -88,9 +95,9 @@ public class NestedAdvSearchPlugin implements AdvSearchPlugin {
 
 	@Override
 	public List<NodeRef> filter(List<NodeRef> nodes, QName datatype, Map<String, String> criteria) {
-		if(criteria!=null && ! criteria.isEmpty()){
+		if (criteria != null && !criteria.isEmpty()) {
 			Map<String, Map<String, String>> nested = extractNested(criteria);
-	
+
 			if (!nested.isEmpty()) {
 				filterWithNested(nodes, nested);
 			}
@@ -106,7 +113,6 @@ public class NestedAdvSearchPlugin implements AdvSearchPlugin {
 			watch.start();
 		}
 
-
 		for (Map.Entry<String, Map<String, String>> nestedEntry : nested.entrySet()) {
 			String assocName = nestedEntry.getKey();
 			QName assocQName = QName.createQName(assocName, namespaceService);
@@ -114,13 +120,12 @@ public class NestedAdvSearchPlugin implements AdvSearchPlugin {
 
 			if (!criteriaMap.isEmpty()) {
 				for (Iterator<NodeRef> iterator = nodes.iterator(); iterator.hasNext();) {
-					NodeRef nodeRef = (NodeRef) iterator.next();
+					NodeRef nodeRef = iterator.next();
 					if (nodeService.exists(nodeRef)) {
 
 						List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, assocQName);
 
 						boolean foundMatch = false;
-
 
 						for (AssociationRef assocRef : assocRefs) {
 							if (match(assocRef.getTargetRef(), criteriaMap)) {
@@ -150,35 +155,42 @@ public class NestedAdvSearchPlugin implements AdvSearchPlugin {
 			Map<String, Object> comp = attributeExtractorService.extractNodeData(nodeRef, nodeService.getType(nodeRef),
 					new ArrayList<>(criteriaMap.keySet()), AttributeExtractorMode.JSON);
 			for (String key : comp.keySet()) {
-				String critKey = key.replace("prop_", "").replace("assoc_", "").replace("_", ":");
+				String critKey = key.replace(PROP_SUFFIX, "").replace(ASSOC_SUFFIX, "").replace("_", ":");
 
-				
-				
-				Map<String, Object> data = (Map<String, Object>) comp.get(key);
+				Object tmp = comp.get(key);
+				if (tmp != null) {
+					Map<String, Object> data = null;
+					if (tmp instanceof ArrayList<?>) {
+						if (((ArrayList<?>) tmp).size() > 0) {
+							data = (Map<String, Object>) ((ArrayList<?>) tmp).get(0);
+						}
+					} else {
+						data = (Map<String, Object>) tmp;
+					}
 
-				if (data == null || data.get("value") == null) {
-					return false;
-				}
-				
-				if(logger.isTraceEnabled()){
-					logger.trace("Test Match on: " + critKey);
-					logger.trace("Test Match : " + data.get("value").toString().toLowerCase() + " - " + criteriaMap.get(critKey).toLowerCase());
-				}
+					if (data == null || data.get("value") == null) {
+						return false;
+					}
 
-				String compValue = criteriaMap.get(critKey).toLowerCase();
-				String value = data.get("value").toString().toLowerCase();
-				String displayValue = data.get("displayValue").toString().toLowerCase();
-				if (compValue.startsWith("\"") && compValue.endsWith("\"")) {
-					compValue = compValue.replaceAll("\"", "");
-					if (!value.equals(compValue.toLowerCase()) && !displayValue.equals(compValue)) {
+					if (logger.isTraceEnabled()) {
+						logger.trace("Test Match on: " + critKey);
+						logger.trace("Test Match : " + data.get("value").toString().toLowerCase() + " - " + criteriaMap.get(critKey).toLowerCase());
+					}
+
+					String compValue = criteriaMap.get(critKey).toLowerCase();
+					String value = data.get("value").toString().toLowerCase();
+					String displayValue = data.get("displayValue").toString().toLowerCase();
+					if (compValue.startsWith("\"") && compValue.endsWith("\"")) {
+						compValue = compValue.replaceAll("\"", "");
+						if (!value.equals(compValue.toLowerCase()) && !displayValue.equals(compValue)) {
+							return false;
+						}
+					}
+
+					if (!value.contains(compValue.toLowerCase()) && !displayValue.contains(compValue)) {
 						return false;
 					}
 				}
-
-				if (!value.contains(compValue.toLowerCase()) && !displayValue.contains(compValue)) {
-					return false;
-				}
-
 			}
 		}
 		return true;

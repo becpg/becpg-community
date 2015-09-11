@@ -70,6 +70,12 @@ public class ProjectAttributeExtractorPlugin implements AttributeExtractorPlugin
 		return type.toPrefixString(namespaceService).split(":")[1];
 	}
 
+
+	@Override
+	public Integer getPriority() {
+		return 0;
+	}
+
 	
 
 }

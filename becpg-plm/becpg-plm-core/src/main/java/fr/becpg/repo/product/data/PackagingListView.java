@@ -26,6 +26,10 @@ import fr.becpg.repo.repository.annotation.DataList;
 
 public class PackagingListView extends AbstractProductDataView {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3568794116098626931L;
 	private List<PackagingListDataItem> packagingList;
 	
 	

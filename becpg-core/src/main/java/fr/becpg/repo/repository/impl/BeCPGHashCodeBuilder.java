@@ -23,7 +23,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.alfresco.service.namespace.QName;
-import org.apache.axis.utils.IDKey;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.PropertyAccessorFactory;
 
@@ -118,6 +117,9 @@ import fr.becpg.repo.repository.model.AspectAwareDataItem;
  *          as when egal 0
  */
 public class BeCPGHashCodeBuilder {
+
+	
+
 	/**
 	 * <p>
 	 * A registry of objects used by reflection methods to detect cyclical
@@ -126,7 +128,7 @@ public class BeCPGHashCodeBuilder {
 	 * 
 	 * @since 2.3
 	 */
-	private static final ThreadLocal REGISTRY = new ThreadLocal();
+	private static final ThreadLocal<Set<Object>> REGISTRY = new ThreadLocal<>();
 
 	/*
 	 * N.B. we cannot store the actual objects in a HashSet, as that would use
@@ -156,10 +158,34 @@ public class BeCPGHashCodeBuilder {
 	 * @return Set the registry of objects being traversed
 	 * @since 2.3
 	 */
-	static Set getRegistry() {
-		return (Set) REGISTRY.get();
+	private static Set<Object> getRegistry() {
+		return REGISTRY.get();
 	}
 
+	
+	/**
+	 * Constant to use in building the hashCode.
+	 */
+	private final int iConstant;
+
+	/**
+	 * Running total of the hashCode.
+	 */
+	private int iTotal = 0;
+
+	/**
+	 * <p>
+	 * Uses two hard coded choices for the constants needed to build a
+	 * <code>hashCode</code>.
+	 * </p>
+	 */
+	private BeCPGHashCodeBuilder() {
+		iConstant = 37;
+		iTotal = 17;
+	}
+
+	
+	
 	/**
 	 * <p>
 	 * Returns <code>true</code> if the registry contains the given object. Used
@@ -172,11 +198,10 @@ public class BeCPGHashCodeBuilder {
 	 *         object.
 	 * @since 2.3
 	 */
-	static boolean isRegistered(Object value) {
-		Set registry = getRegistry();
+	private static boolean isRegistered(Object value) {
+		Set<Object> registry = getRegistry();
 		return registry != null && registry.contains(new IDKey(value));
 	}
-
 
 	private static void reflectionAppend(RepositoryEntity object, BeCPGHashCodeBuilder builder) {
 		if (isRegistered(object)) {
@@ -185,45 +210,43 @@ public class BeCPGHashCodeBuilder {
 		try {
 			register(object);
 
-				BeanWrapper beanWrapper = PropertyAccessorFactory.forBeanPropertyAccess(object);
+			BeanWrapper beanWrapper = PropertyAccessorFactory.forBeanPropertyAccess(object);
 
-				for (PropertyDescriptor pd : beanWrapper.getPropertyDescriptors()) {
-					Method readMethod = pd.getReadMethod();
-					if (readMethod != null) {
-						if (readMethod.isAnnotationPresent(AlfProp.class) || readMethod.isAnnotationPresent(AlfSingleAssoc.class)
-								|| readMethod.isAnnotationPresent(AlfMultiAssoc.class)) {
-							Object fieldValue = beanWrapper.getPropertyValue(pd.getName());
+			for (PropertyDescriptor pd : beanWrapper.getPropertyDescriptors()) {
+				Method readMethod = pd.getReadMethod();
+				if (readMethod != null) {
+					if (readMethod.isAnnotationPresent(AlfProp.class) || readMethod.isAnnotationPresent(AlfSingleAssoc.class)
+							|| readMethod.isAnnotationPresent(AlfMultiAssoc.class)) {
+						Object fieldValue = beanWrapper.getPropertyValue(pd.getName());
 
-							builder.append(fieldValue);
-						}
+						builder.append(fieldValue);
 					}
 				}
-				
-				builder.append(object.getNodeRef());
-				
-				if (object instanceof AspectAwareDataItem) {
-					if (((AspectAwareDataItem) object).getAspects() != null) {
-						for (QName aspect : ((AspectAwareDataItem) object).getAspects()) {
-							builder.append(aspect);
-						}
+			}
+
+			builder.append(object.getNodeRef());
+
+			if (object instanceof AspectAwareDataItem 
+					&& ((AspectAwareDataItem) object).getAspects() != null) {
+					for (QName aspect : ((AspectAwareDataItem) object).getAspects()) {
+						builder.append(aspect);
 					}
-				}
-				
-			
+			}
+
 		} finally {
 			unregister(object);
 		}
 	}
-	
-	public static String  printDiff(RepositoryEntity obj1, RepositoryEntity obj2){
+
+	public static String printDiff(RepositoryEntity obj1, RepositoryEntity obj2) {
 		String ret = new String();
-		
+
 		BeanWrapper beanWrapper1 = PropertyAccessorFactory.forBeanPropertyAccess(obj1);
 		BeanWrapper beanWrapper2 = PropertyAccessorFactory.forBeanPropertyAccess(obj2);
 
 		BeCPGHashCodeBuilder builder1 = new BeCPGHashCodeBuilder();
 		BeCPGHashCodeBuilder builder2 = new BeCPGHashCodeBuilder();
-		
+
 		for (PropertyDescriptor pd : beanWrapper1.getPropertyDescriptors()) {
 			Method readMethod = pd.getReadMethod();
 			if (readMethod != null) {
@@ -231,30 +254,27 @@ public class BeCPGHashCodeBuilder {
 						|| readMethod.isAnnotationPresent(AlfMultiAssoc.class)) {
 					Object fieldValue = beanWrapper1.getPropertyValue(pd.getName());
 					Object fieldValue2 = beanWrapper2.getPropertyValue(pd.getName());
-					
+
 					builder1.append(fieldValue);
 					builder2.append(fieldValue2);
-					
-					
-					
-					if(builder1.hashCode()!=builder2.hashCode()){
-						ret+= pd.getName()+" "+builder1.hashCode()+" "+builder2.hashCode()+"\n";
-						
-						if(fieldValue!=null){
-							ret+=" ----"+ fieldValue.toString()+" "+fieldValue.hashCode()+" "+fieldValue.getClass().getName()+"\n";
+
+					if (builder1.hashCode() != builder2.hashCode()) {
+						ret += pd.getName() + " " + builder1.hashCode() + " " + builder2.hashCode() + "\n";
+
+						if (fieldValue != null) {
+							ret += " ----" + fieldValue.toString() + " " + fieldValue.hashCode() + " " + fieldValue.getClass().getName() + "\n";
 						}
-						if(fieldValue2!=null){
-							ret+=" ----"+ fieldValue2.toString()+" "+fieldValue2.hashCode()+" "+fieldValue2.getClass().getName()+"\n";
+						if (fieldValue2 != null) {
+							ret += " ----" + fieldValue2.toString() + " " + fieldValue2.hashCode() + " " + fieldValue2.getClass().getName() + "\n";
 						}
 					}
-					
+
 				}
 			}
 		}
 		return ret;
 	}
-	
-	
+
 	/**
 	 * <p>
 	 * This method uses reflection to build a valid hash code.
@@ -293,10 +313,9 @@ public class BeCPGHashCodeBuilder {
 		}
 		BeCPGHashCodeBuilder builder = new BeCPGHashCodeBuilder();
 		reflectionAppend(object, builder);
-		
+
 		return builder.toHashCode();
 	}
-
 
 	/**
 	 * <p>
@@ -307,10 +326,10 @@ public class BeCPGHashCodeBuilder {
 	 * @param value
 	 *            The object to register.
 	 */
-	static void register(Object value) {
+	private static void register(Object value) {
 		synchronized (BeCPGHashCodeBuilder.class) {
 			if (getRegistry() == null) {
-				REGISTRY.set(new HashSet());
+				REGISTRY.set(new HashSet<>());
 			}
 		}
 		getRegistry().add(new IDKey(value));
@@ -328,8 +347,8 @@ public class BeCPGHashCodeBuilder {
 	 *            The object to unregister.
 	 * @since 2.3
 	 */
-	static void unregister(Object value) {
-		Set registry = getRegistry();
+	private static void unregister(Object value) {
+		Set<Object> registry = getRegistry();
 		if (registry != null) {
 			registry.remove(new IDKey(value));
 			synchronized (BeCPGHashCodeBuilder.class) {
@@ -342,26 +361,6 @@ public class BeCPGHashCodeBuilder {
 		}
 	}
 
-	/**
-	 * Constant to use in building the hashCode.
-	 */
-	private final int iConstant;
-
-	/**
-	 * Running total of the hashCode.
-	 */
-	private int iTotal = 0;
-
-	/**
-	 * <p>
-	 * Uses two hard coded choices for the constants needed to build a
-	 * <code>hashCode</code>.
-	 * </p>
-	 */
-	public BeCPGHashCodeBuilder() {
-		iConstant = 37;
-		iTotal = 17;
-	}
 
 	/**
 	 * <p>
@@ -387,7 +386,7 @@ public class BeCPGHashCodeBuilder {
 	 *            the boolean to add to the <code>hashCode</code>
 	 * @return this
 	 */
-	public BeCPGHashCodeBuilder append(boolean value) {
+	private BeCPGHashCodeBuilder append(boolean value) {
 		iTotal = iTotal * iConstant + (value ? 0 : 1);
 		return this;
 	}
@@ -401,12 +400,12 @@ public class BeCPGHashCodeBuilder {
 	 *            the array to add to the <code>hashCode</code>
 	 * @return this
 	 */
-	public BeCPGHashCodeBuilder append(boolean[] array) {
+	private BeCPGHashCodeBuilder append(boolean[] array) {
 		if (array == null) {
 			iTotal = iTotal * iConstant;
 		} else {
-			for (int i = 0; i < array.length; i++) {
-				append(array[i]);
+			for (boolean anArray : array) {
+				append(anArray);
 			}
 		}
 		return this;
@@ -423,7 +422,7 @@ public class BeCPGHashCodeBuilder {
 	 *            the byte to add to the <code>hashCode</code>
 	 * @return this
 	 */
-	public BeCPGHashCodeBuilder append(byte value) {
+	private BeCPGHashCodeBuilder append(byte value) {
 		iTotal = iTotal * iConstant + value;
 		return this;
 	}
@@ -439,12 +438,12 @@ public class BeCPGHashCodeBuilder {
 	 *            the array to add to the <code>hashCode</code>
 	 * @return this
 	 */
-	public BeCPGHashCodeBuilder append(byte[] array) {
+	private BeCPGHashCodeBuilder append(byte[] array) {
 		if (array == null) {
 			iTotal = iTotal * iConstant;
 		} else {
-			for (int i = 0; i < array.length; i++) {
-				append(array[i]);
+			for (byte anArray : array) {
+				append(anArray);
 			}
 		}
 		return this;
@@ -459,7 +458,7 @@ public class BeCPGHashCodeBuilder {
 	 *            the char to add to the <code>hashCode</code>
 	 * @return this
 	 */
-	public BeCPGHashCodeBuilder append(char value) {
+	private BeCPGHashCodeBuilder append(char value) {
 		iTotal = iTotal * iConstant + value;
 		return this;
 	}
@@ -473,12 +472,12 @@ public class BeCPGHashCodeBuilder {
 	 *            the array to add to the <code>hashCode</code>
 	 * @return this
 	 */
-	public BeCPGHashCodeBuilder append(char[] array) {
+	private BeCPGHashCodeBuilder append(char[] array) {
 		if (array == null) {
 			iTotal = iTotal * iConstant;
 		} else {
-			for (int i = 0; i < array.length; i++) {
-				append(array[i]);
+			for (char anArray : array) {
+				append(anArray);
 			}
 		}
 		return this;
@@ -493,7 +492,7 @@ public class BeCPGHashCodeBuilder {
 	 *            the double to add to the <code>hashCode</code>
 	 * @return this
 	 */
-	public BeCPGHashCodeBuilder append(double value) {
+	private BeCPGHashCodeBuilder append(double value) {
 		return append(Double.doubleToLongBits(value));
 	}
 
@@ -506,12 +505,12 @@ public class BeCPGHashCodeBuilder {
 	 *            the array to add to the <code>hashCode</code>
 	 * @return this
 	 */
-	public BeCPGHashCodeBuilder append(double[] array) {
+	private BeCPGHashCodeBuilder append(double[] array) {
 		if (array == null) {
 			iTotal = iTotal * iConstant;
 		} else {
-			for (int i = 0; i < array.length; i++) {
-				append(array[i]);
+			for (double anArray : array) {
+				append(anArray);
 			}
 		}
 		return this;
@@ -526,7 +525,7 @@ public class BeCPGHashCodeBuilder {
 	 *            the float to add to the <code>hashCode</code>
 	 * @return this
 	 */
-	public BeCPGHashCodeBuilder append(float value) {
+	private BeCPGHashCodeBuilder append(float value) {
 		iTotal = iTotal * iConstant + Float.floatToIntBits(value);
 		return this;
 	}
@@ -540,12 +539,12 @@ public class BeCPGHashCodeBuilder {
 	 *            the array to add to the <code>hashCode</code>
 	 * @return this
 	 */
-	public BeCPGHashCodeBuilder append(float[] array) {
+	private BeCPGHashCodeBuilder append(float[] array) {
 		if (array == null) {
 			iTotal = iTotal * iConstant;
 		} else {
-			for (int i = 0; i < array.length; i++) {
-				append(array[i]);
+			for (float anArray : array) {
+				append(anArray);
 			}
 		}
 		return this;
@@ -560,7 +559,7 @@ public class BeCPGHashCodeBuilder {
 	 *            the int to add to the <code>hashCode</code>
 	 * @return this
 	 */
-	public BeCPGHashCodeBuilder append(int value) {
+	private BeCPGHashCodeBuilder append(int value) {
 		iTotal = iTotal * iConstant + value;
 		return this;
 	}
@@ -574,12 +573,12 @@ public class BeCPGHashCodeBuilder {
 	 *            the array to add to the <code>hashCode</code>
 	 * @return this
 	 */
-	public BeCPGHashCodeBuilder append(int[] array) {
+	private BeCPGHashCodeBuilder append(int[] array) {
 		if (array == null) {
 			iTotal = iTotal * iConstant;
 		} else {
-			for (int i = 0; i < array.length; i++) {
-				append(array[i]);
+			for (int anArray : array) {
+				append(anArray);
 			}
 		}
 		return this;
@@ -598,7 +597,7 @@ public class BeCPGHashCodeBuilder {
 	// Long.hashCode do. Ideally we should switch to >>> at
 	// some stage. There are backwards compat issues, so
 	// that will have to wait for the time being. cf LANG-342.
-	public BeCPGHashCodeBuilder append(long value) {
+	private BeCPGHashCodeBuilder append(long value) {
 		iTotal = iTotal * iConstant + ((int) (value ^ (value >> 32)));
 		return this;
 	}
@@ -612,12 +611,12 @@ public class BeCPGHashCodeBuilder {
 	 *            the array to add to the <code>hashCode</code>
 	 * @return this
 	 */
-	public BeCPGHashCodeBuilder append(long[] array) {
+	private BeCPGHashCodeBuilder append(long[] array) {
 		if (array == null) {
 			iTotal = iTotal * iConstant;
 		} else {
-			for (int i = 0; i < array.length; i++) {
-				append(array[i]);
+			for (long anArray : array) {
+				append(anArray);
 			}
 		}
 		return this;
@@ -632,7 +631,7 @@ public class BeCPGHashCodeBuilder {
 	 *            the Object to add to the <code>hashCode</code>
 	 * @return this
 	 */
-	public BeCPGHashCodeBuilder append(Object object) {
+	private BeCPGHashCodeBuilder append(Object object) {
 		if (object == null) {
 			// beCPG avoid collision on NULL == 0 #1159
 			iTotal = iTotal * (iConstant + 12);
@@ -662,7 +661,7 @@ public class BeCPGHashCodeBuilder {
 					append((Object[]) object);
 				}
 			} else {
-				if(object instanceof RepositoryEntity){
+				if (object instanceof RepositoryEntity) {
 					iTotal = iTotal * iConstant + BeCPGHashCodeBuilder.reflectionHashCode((RepositoryEntity) object);
 				} else {
 					iTotal = iTotal * iConstant + object.hashCode();
@@ -685,8 +684,8 @@ public class BeCPGHashCodeBuilder {
 		if (array == null) {
 			iTotal = iTotal * iConstant;
 		} else {
-			for (int i = 0; i < array.length; i++) {
-				append(array[i]);
+			for (Object anArray : array) {
+				append(anArray);
 			}
 		}
 		return this;
@@ -701,7 +700,7 @@ public class BeCPGHashCodeBuilder {
 	 *            the short to add to the <code>hashCode</code>
 	 * @return this
 	 */
-	public BeCPGHashCodeBuilder append(short value) {
+	private BeCPGHashCodeBuilder append(short value) {
 		iTotal = iTotal * iConstant + value;
 		return this;
 	}
@@ -715,32 +714,18 @@ public class BeCPGHashCodeBuilder {
 	 *            the array to add to the <code>hashCode</code>
 	 * @return this
 	 */
-	public BeCPGHashCodeBuilder append(short[] array) {
+	private BeCPGHashCodeBuilder append(short[] array) {
 		if (array == null) {
 			iTotal = iTotal * iConstant;
 		} else {
-			for (int i = 0; i < array.length; i++) {
-				append(array[i]);
+			for (short anArray : array) {
+				append(anArray);
 			}
 		}
 		return this;
 	}
 
-	/**
-	 * <p>
-	 * Adds the result of super.hashCode() to this builder.
-	 * </p>
-	 * 
-	 * @param superHashCode
-	 *            the result of calling <code>super.hashCode()</code>
-	 * @return this BeCPGHashCodeBuilder, used to chain calls.
-	 * @since 2.0
-	 */
-	public BeCPGHashCodeBuilder appendSuper(int superHashCode) {
-		iTotal = iTotal * iConstant + superHashCode;
-		return this;
-	}
-
+	
 	/**
 	 * <p>
 	 * Return the computed <code>hashCode</code>.
@@ -748,21 +733,10 @@ public class BeCPGHashCodeBuilder {
 	 * 
 	 * @return <code>hashCode</code> based on the fields appended
 	 */
-	public int toHashCode() {
+	private int toHashCode() {
 		return iTotal;
 	}
 
-	/**
-	 * <p>
-	 * The computed <code>hashCode</code> from toHashCode() is returned due to
-	 * the likelyhood of bugs in mis-calling toHashCode() and the unlikelyness
-	 * of it mattering what the hashCode for BeCPGHashCodeBuilder itself is.
-	 * 
-	 * @return <code>hashCode</code> based on the fields appended
-	 * @since 2.5
-	 */
-	public int hashCode() {
-		return toHashCode();
-	}
+	
 
 }

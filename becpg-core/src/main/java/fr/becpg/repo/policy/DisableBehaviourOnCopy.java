@@ -32,11 +32,11 @@ import org.apache.commons.logging.LogFactory;
 public class DisableBehaviourOnCopy implements CopyServicePolicies.OnCopyNodePolicy,
 CopyServicePolicies.OnCopyCompletePolicy {
 
-	private QName type;
+	private final QName type;
 	
-	private BehaviourFilter policyBehaviourFilter;
+	private final BehaviourFilter policyBehaviourFilter;
 	
-	private static Log logger = LogFactory.getLog(DisableBehaviourOnCopy.class);
+	private static final Log logger = LogFactory.getLog(DisableBehaviourOnCopy.class);
 	
 	public DisableBehaviourOnCopy(QName type, BehaviourFilter policyBehaviourFilter) {
 		super();

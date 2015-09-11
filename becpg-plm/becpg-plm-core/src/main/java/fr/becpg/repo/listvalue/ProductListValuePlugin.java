@@ -18,53 +18,39 @@
 package fr.becpg.repo.listvalue;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.extensions.surf.util.I18NUtil;
+import org.springframework.stereotype.Service;
 
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
+import fr.becpg.model.SystemState;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.listvalue.impl.EntityListValuePlugin;
-import fr.becpg.repo.listvalue.impl.ListValueServiceImpl;
 import fr.becpg.repo.listvalue.impl.NodeRefListValueExtractor;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
+@Service
 public class ProductListValuePlugin extends EntityListValuePlugin {
 
-	/** The logger. */
-	private static Log logger = LogFactory.getLog(ListValueServiceImpl.class);
-
-	/** The Constant SUFFIX_ALL. */
-	protected static final String SUFFIX_ALL = "*";
-
-	/** The Constant SOURCE_TYPE_PRODUCT. */
 	private static final String SOURCE_TYPE_PRODUCT = "product";
 
-
-	/** The Constant SOURCE_TYPE_PRODUCT_REPORT. */
 	private static final String SOURCE_TYPE_PRODUCT_REPORT = "productreport";
-
-	protected static final String PARAM_VALUES_SEPARATOR = ",";
-
-	/** The product report service. */
-	private ReportTplService reportTplService;
-
-
 	
-	public void setReportTplService(ReportTplService reportTplService) {
-		this.reportTplService = reportTplService;
-	}
+	private final static Log logger = LogFactory.getLog(ProductListValuePlugin.class);
 
-
+	@Autowired
+	private ReportTplService reportTplService;
 
 	public String[] getHandleSourceTypes() {
 		return new String[] { SOURCE_TYPE_PRODUCT, SOURCE_TYPE_PRODUCT_REPORT};
@@ -75,11 +61,13 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 
 		String classNames = (String) props.get(ListValueService.PROP_CLASS_NAMES);
 		String[] arrClassNames = classNames != null ? classNames.split(PARAM_VALUES_SEPARATOR) : null;
-		String productType = (String) props.get(ListValueService.PROP_PRODUCT_TYPE);
+	
 
 		if (sourceType.equals(SOURCE_TYPE_PRODUCT)) {
-			return suggestTargetAssoc(PLMModel.TYPE_PRODUCT, query, pageNum, pageSize, arrClassNames, props);
+			return suggestProducts(query, pageNum, pageSize, arrClassNames, props);
 		} else if (sourceType.equals(SOURCE_TYPE_PRODUCT_REPORT)) {
+			String productType = (String) props.get(ListValueService.PROP_PRODUCT_TYPE);
+			
 			QName productTypeQName = QName.createQName(productType, namespaceService);
 			return suggestProductReportTemplates(productTypeQName, query, pageNum, pageSize);
 
@@ -88,47 +76,56 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 		return null;
 	}
 
-	
-	@Deprecated
-	private String prepareQueryCode(String query, QName type, String[] arrClassNames) {
-		if (Pattern.matches(RepoConsts.REGEX_NON_NEGATIVE_INTEGER_FIELD, query)) {
-			Long codeNumber = null;
-			try {
-				codeNumber = Long.parseLong(query);
-			} catch (NumberFormatException e) {
-				logger.debug(e, e);
-			}
 
-			if (codeNumber != null) {
-				List<QName> types = new ArrayList<QName>();
-				if (arrClassNames != null && arrClassNames.length > 0) {
-					for (int i = 0; i < arrClassNames.length; i++) {
-						types.add(QName.createQName(arrClassNames[i], namespaceService));
-					}
-				} else {
-					types.add(type);
-				}
-
-				StringBuffer ret = new StringBuffer();
-				for (QName typeTmp : types) {
-					if (PLMModel.TYPE_PRODUCT.equals(typeTmp)) {
-						for (QName subType : dictionaryService.getSubTypes(typeTmp, true)) {
-							if (ret.length() > 0) {
-								ret.append(" OR ");
-							}
-							ret.append(autoNumService.getPrefixedCode(subType, BeCPGModel.PROP_CODE, codeNumber));
-						}
-					} else {
-						if (ret.length() > 0) {
-							ret.append(" OR ");
-						}
-						ret.append(autoNumService.getPrefixedCode(typeTmp, BeCPGModel.PROP_CODE, codeNumber));
-					}
-				}
-				return "(" + ret.toString() + ")";
+	private ListValuePage suggestProducts(String query, Integer pageNum, Integer pageSize, String[] arrClassNames, Map<String, Serializable> props) {
+		if (logger.isDebugEnabled()) {
+			if (arrClassNames != null) {
+				logger.debug("suggestTargetAssoc with arrClassNames : " + Arrays.toString(arrClassNames));
 			}
 		}
-		return query;
+
+		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery()
+				.ofType(PLMModel.TYPE_PRODUCT)
+				.excludeDefaults()
+				.inSearchTemplate(searchTemplate)
+				.locale(I18NUtil.getContentLocale())
+				.andOperator().ftsLanguage();
+
+		StringBuilder ftsQuery = new StringBuilder();
+		
+
+		if (!isAllQuery(query)) {
+			if (query.length() > 2) {
+				ftsQuery.append(prepareQuery(query.trim() + SUFFIX_ALL));
+				ftsQuery.append(" ");
+			}
+			ftsQuery.append(query);
+			
+			ftsQuery.append(")^10 AND +(");
+		}
+		
+		ftsQuery.append("@");
+		ftsQuery.append(PLMModel.PROP_PRODUCT_STATE.toString());
+		ftsQuery.append(":");
+		ftsQuery.append(SystemState.Valid.toString());
+		ftsQuery.append("^4 or @");
+		ftsQuery.append(PLMModel.PROP_PRODUCT_STATE.toString());
+		ftsQuery.append(":");
+		ftsQuery.append(SystemState.ToValidate.toString());
+		ftsQuery.append("^2 or @");
+		ftsQuery.append(PLMModel.PROP_PRODUCT_STATE.toString());
+		ftsQuery.append(":");
+		ftsQuery.append(SystemState.Simulation.toString());
+		
+		
+		queryBuilder.andFTSQuery(ftsQuery.toString());
+
+		// filter by classNames
+		filterByClass(queryBuilder, arrClassNames);
+
+		queryBuilder.maxResults(RepoConsts.MAX_SUGGESTIONS);
+
+		return new ListValuePage(queryBuilder.list(), pageNum, pageSize, targetAssocValueExtractor);
 	}
 
 	/**

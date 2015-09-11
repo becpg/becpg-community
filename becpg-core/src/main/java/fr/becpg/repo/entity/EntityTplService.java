@@ -39,4 +39,6 @@ public interface EntityTplService {
 
 	void synchronizeEntity(NodeRef entityNodeRef, NodeRef entityTplNodeRef);
 
+	NodeRef createView(NodeRef entityTplNodeRef, QName typeQName, String name);
+
 }

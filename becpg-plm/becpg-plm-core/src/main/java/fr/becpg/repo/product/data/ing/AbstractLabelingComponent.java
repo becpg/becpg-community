@@ -26,29 +26,28 @@ import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
-public abstract class AbstractLabelingComponent extends BeCPGDataObject implements LabelingComponent, Comparable<LabelingComponent> {
+public abstract class AbstractLabelingComponent extends BeCPGDataObject implements LabelingComponent, Comparable<LabelingComponent>, Cloneable {
+
+	private static final long serialVersionUID = 270866664168102414L;
 
 	protected Double qty = 0d;
 	
-	protected Double volumeQtyPerc;
+	protected Double volume = 0d;
 
 	protected MLText legalName;
-	
 	
 	public AbstractLabelingComponent() {
 		super();
 	}
 
-
 	public AbstractLabelingComponent(AbstractLabelingComponent abstractLabelingComponent) 
 	{
 		super(abstractLabelingComponent);
 	    this.qty = abstractLabelingComponent.qty;
-	    this.volumeQtyPerc = abstractLabelingComponent.volumeQtyPerc;
+	    this.volume = abstractLabelingComponent.volume;
 	    this.legalName = abstractLabelingComponent.legalName;
 	}
-
-
+	
 	@AlfMlText
 	@AlfProp
 	@AlfQname(qname = "bcpg:legalName")
@@ -87,15 +86,18 @@ public abstract class AbstractLabelingComponent extends BeCPGDataObject implemen
 	}
 	
 	
-	public Double getVolumeQtyPerc() {
-		return volumeQtyPerc;
+	@Override
+	public Double getVolume() {
+		return volume;
 	}
 
 
-	public void setVolumeQtyPerc(Double qtyVolumePerc) {
-		this.volumeQtyPerc = qtyVolumePerc;
+	public void setVolume(Double volume) {
+		this.volume = volume;
 	}
 
+	public abstract AbstractLabelingComponent clone();
+	
 
 	@Override
 	public int hashCode() {
@@ -103,7 +105,7 @@ public abstract class AbstractLabelingComponent extends BeCPGDataObject implemen
 		int result = super.hashCode();
 		result = prime * result + ((legalName == null) ? 0 : legalName.hashCode());
 		result = prime * result + ((qty == null) ? 0 : qty.hashCode());
-		result = prime * result + ((volumeQtyPerc == null) ? 0 : volumeQtyPerc.hashCode());
+		result = prime * result + ((volume == null) ? 0 : volume.hashCode());
 		return result;
 	}
 
@@ -126,17 +128,17 @@ public abstract class AbstractLabelingComponent extends BeCPGDataObject implemen
 				return false;
 		} else if (!qty.equals(other.qty))
 			return false;
-		if (volumeQtyPerc == null) {
-			if (other.volumeQtyPerc != null)
+		if (volume == null) {
+			if (other.volume != null)
 				return false;
-		} else if (!volumeQtyPerc.equals(other.volumeQtyPerc))
+		} else if (!volume.equals(other.volume))
 			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "AbstractLabelingComponent [qty=" + qty + ", volumeQtyPerc=" + volumeQtyPerc + ", legalName=" + legalName + ", nodeRef=" + nodeRef
+		return "AbstractLabelingComponent [qty=" + qty + ", volume=" + volume + ", legalName=" + legalName + ", nodeRef=" + nodeRef
 				+ ", name=" + name + "]";
 	}
 
@@ -162,7 +164,6 @@ public abstract class AbstractLabelingComponent extends BeCPGDataObject implemen
 			return -1; // before
 		}
 		return 0;// equals
-
 	}
 
 }

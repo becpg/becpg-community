@@ -7,12 +7,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import org.alfresco.encoding.CharactersetFinder;
 import org.alfresco.encoding.GuessEncodingCharsetFinder;
@@ -38,7 +33,7 @@ public class ImportHelper{
 	/** The Constant MLTEXT_SEPARATOR. */
 	public static final String MLTEXT_SEPARATOR 		= "_";
 
-	public static String NULL_VALUE = "NULL";
+	public static final String NULL_VALUE = "NULL";
 	
 	
 	
@@ -73,7 +68,7 @@ public class ImportHelper{
 				// MLText
 				if(dataType.isMatch(DataTypeDefinition.MLTEXT)){
 					
-					MLText mlText = new MLText();					
+					MLText mlText = new MLText();
 					
 					// load translations
 					boolean first = true;
@@ -81,7 +76,7 @@ public class ImportHelper{
 											
 						// bcpg:legalName_en
 						String transColumn = importContext.getColumns().get(z_idx).getId();
-						if(transColumn != ""){
+						if(!Objects.equals(transColumn, "")){
 							
 							String transLocalName = transColumn.contains(RepoConsts.MODEL_PREFIX_SEPARATOR) ? transColumn.split(RepoConsts.MODEL_PREFIX_SEPARATOR)[1] : null;			
 							// default locale
@@ -98,7 +93,6 @@ public class ImportHelper{
 							}
 							else{
 								// the translation is finished
-								pos = z_idx;
 								break;
 							}
 						}						
@@ -210,7 +204,7 @@ public class ImportHelper{
 
 	public static Map<QName, Serializable> cleanProperties(Map<QName, Serializable> properties) {
 		for (Iterator<Map.Entry<QName, Serializable>> iterator = properties.entrySet().iterator(); iterator.hasNext();) {
-			Map.Entry<QName, Serializable> entry = (Map.Entry<QName, Serializable>) iterator.next();
+			Map.Entry<QName, Serializable> entry = iterator.next();
 			if(entry.getValue()!=null && ImportHelper.NULL_VALUE.equals(entry.getValue())){
 				 iterator.remove();
 			 }

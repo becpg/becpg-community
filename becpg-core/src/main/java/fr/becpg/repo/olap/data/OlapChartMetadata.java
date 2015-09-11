@@ -28,9 +28,9 @@ import org.json.JSONObject;
  */
 public class OlapChartMetadata {
 
-	private int colIndex;
-	private String colType;
-	private String colName;
+	private final int colIndex;
+	private final String colType;
+	private final String colName;
 	
 
 	

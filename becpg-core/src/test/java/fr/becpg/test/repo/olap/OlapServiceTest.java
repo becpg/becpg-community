@@ -17,7 +17,6 @@
  ******************************************************************************/
 package fr.becpg.test.repo.olap;
 
-import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -37,7 +36,7 @@ import fr.becpg.test.RepoBaseTestCase;
 public class OlapServiceTest extends RepoBaseTestCase {
 
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(OlapServiceTest.class);
+	private static final Log logger = LogFactory.getLog(OlapServiceTest.class);
 
 	@Resource
 	private OlapService olapService;
@@ -50,8 +49,7 @@ public class OlapServiceTest extends RepoBaseTestCase {
 			public NodeRef execute() throws Throwable {
 				try {
 					List<OlapChart> charts = olapService.retrieveOlapCharts();
-					for (Iterator<OlapChart> iterator = charts.iterator(); iterator.hasNext();) {
-						OlapChart olapChart = (OlapChart) iterator.next();
+					for (OlapChart olapChart : charts) {
 						logger.info(olapChart.toJSONObject().toString());
 						OlapChartData olapChartData = olapService.retrieveChartData(olapChart.getQueryId());
 						assertNotNull(olapChartData);

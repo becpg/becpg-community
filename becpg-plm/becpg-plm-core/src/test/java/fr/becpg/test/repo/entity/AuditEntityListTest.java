@@ -36,7 +36,7 @@ import fr.becpg.test.PLMBaseTestCase;
  */
 public class AuditEntityListTest extends PLMBaseTestCase {
 
-	private static Log logger = LogFactory.getLog(AuditEntityListTest.class);
+	private static final Log logger = LogFactory.getLog(AuditEntityListTest.class);
 
 	@Resource
 	private EntityListDAO entityListDAO;
@@ -57,7 +57,7 @@ public class AuditEntityListTest extends PLMBaseTestCase {
 				// create SF
 				SemiFinishedProductData sfData = new SemiFinishedProductData();
 				sfData.setName("SF");
-				List<AllergenListDataItem> allergenList = new ArrayList<AllergenListDataItem>();
+				List<AllergenListDataItem> allergenList = new ArrayList<>();
 				allergenList.add(new AllergenListDataItem(null,null, true, true, null, null, allergens.get(0), false));
 				allergenList.add(new AllergenListDataItem(null,null, false, true, null, null, allergens.get(1), false));
 				allergenList.add(new AllergenListDataItem(null,null, true, false, null, null, allergens.get(2), false));
@@ -65,7 +65,7 @@ public class AuditEntityListTest extends PLMBaseTestCase {
 				sfData.setAllergenList(allergenList);
 
 
-				return alfrescoRepository.create(testFolderNodeRef, sfData).getNodeRef();
+				return alfrescoRepository.create(getTestFolderNodeRef(), sfData).getNodeRef();
 
 			}
 		}, false, true);
@@ -131,7 +131,7 @@ public class AuditEntityListTest extends PLMBaseTestCase {
 				NodeRef listContainerNodeRef = entityListDAO.getListContainer(sfNodeRef);
 				NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, PLMModel.TYPE_ALLERGENLIST);
 				NodeRef allergen = allergens.get(5);
-				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				Map<QName, Serializable> properties = new HashMap<>();
 				properties.put(PLMModel.PROP_ALLERGENLIST_INVOLUNTARY, true);
 				properties.put(PLMModel.PROP_ALLERGENLIST_VOLUNTARY, false);
 				ChildAssociationRef childAssocRef = nodeService.createNode(listNodeRef, ContentModel.ASSOC_CONTAINS,

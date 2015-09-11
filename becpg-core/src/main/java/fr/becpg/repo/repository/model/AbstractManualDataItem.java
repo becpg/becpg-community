@@ -21,17 +21,21 @@ import fr.becpg.repo.repository.annotation.AlfEnforced;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 
-public abstract class AbstractManualDataItem extends BeCPGDataObject implements IManualDataItem {
+public abstract class AbstractManualDataItem extends BeCPGDataObject implements ManualDataItem, SortableDataItem {
 
 	
-	protected Boolean isManual;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4027538577640263821L;
+	protected Boolean isManual = Boolean.FALSE;
 	protected Integer sort;
 
 	@AlfProp
 	@AlfEnforced
 	@AlfQname(qname="bcpg:isManualListItem")
 	public Boolean getIsManual() {
-		return isManual;
+		return isManual!=null ? isManual : Boolean.FALSE;
 	}
 
 	public void setIsManual(Boolean isManual) {

@@ -33,7 +33,9 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
+import org.springframework.extensions.surf.util.I18NUtil;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.FinishedProductData;
@@ -44,14 +46,16 @@ import fr.becpg.repo.product.data.constraints.CompoListUnit;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementType;
+import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.product.formulation.AllergensCalculatingFormulationHandler;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
 public class FormulationWithIngRequirementsTest extends AbstractFinishedProductTest {
 
-	protected static Log logger = LogFactory.getLog(FormulationWithIngRequirementsTest.class);
+	protected static final Log logger = LogFactory.getLog(FormulationWithIngRequirementsTest.class);
 
 	@Resource
 	private AssociationService associationService;
@@ -79,10 +83,10 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 				SemiFinishedProductData semiFinishedProduct = new SemiFinishedProductData();
 				semiFinishedProduct.setName("Semi fini 1");
 				semiFinishedProduct.setUnit(ProductUnit.kg);
-				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
+				List<CompoListDataItem> compoList = new ArrayList<>();
 				compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.L, null, null, rawMaterial6NodeRef));
 				semiFinishedProduct.getCompoListView().setCompoList(compoList);
-				NodeRef semiFinishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, semiFinishedProduct).getNodeRef();
+				NodeRef semiFinishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), semiFinishedProduct).getNodeRef();
 		
 				/*-- Create finished product --*/
 				logger.info("/*-- Create finished product --*/");				 
@@ -92,9 +96,9 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);
 				finishedProduct.setDensity(1d);
-				compoList = new ArrayList<CompoListDataItem>();
+				compoList = new ArrayList<>();
 				
-				CompoListDataItem parent1 = new CompoListDataItem(null, (CompoListDataItem)null, null, 2d, CompoListUnit.kg, 10d, DeclarationType.Detail, localSF1NodeRef);
+				CompoListDataItem parent1 = new CompoListDataItem(null, null, null, 2d, CompoListUnit.kg, 10d, DeclarationType.Detail, localSF1NodeRef);
 				
 				compoList.add(parent1);
 				CompoListDataItem parent12 = new CompoListDataItem(null, parent1, null, 1d, CompoListUnit.kg, 10d, DeclarationType.Detail, localSF2NodeRef);
@@ -112,7 +116,7 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 				compoList.add(new CompoListDataItem(null, null, null, 2d, CompoListUnit.kg, null, null, semiFinishedProductNodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
 				
-				return alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();	
+				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();	
 				
 				
 			}},false,true);
@@ -121,68 +125,72 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 						public NodeRef execute() throws Throwable {					   						
 							
 							// specification1
-							Map<QName, Serializable> properties = new HashMap<QName, Serializable>();		
+							Map<QName, Serializable> properties = new HashMap<>();
 							properties.put(ContentModel.PROP_NAME, "Spec1");
-							NodeRef productSpecificationNodeRef1 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, 
+							NodeRef productSpecificationNodeRef1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, 
 											QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, 
 											(String)properties.get(ContentModel.PROP_NAME)), 
 											PLMModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
 							
 							ProductSpecificationData productSpecification1 = (ProductSpecificationData)alfrescoRepository.findOne(productSpecificationNodeRef1);
 							
-							List<NodeRef> ings = new ArrayList<NodeRef>();
-							List<NodeRef> geoOrigins = new ArrayList<NodeRef>();
-							List<NodeRef> bioOrigins = new ArrayList<NodeRef>();
+							List<NodeRef> ings = new ArrayList<>();
+							List<NodeRef> geoOrigins = new ArrayList<>();
+							List<NodeRef> bioOrigins = new ArrayList<>();
 							
-							List<ForbiddenIngListDataItem> forbiddenIngList1 = new ArrayList<ForbiddenIngListDataItem>();
+							List<ForbiddenIngListDataItem> forbiddenIngList1 = new ArrayList<>();
 							forbiddenIngList1.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "OGM interdit", null, Boolean.TRUE, null, ings, geoOrigins, bioOrigins));
 							forbiddenIngList1.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "Ionisation interdite", null, null, Boolean.TRUE, ings, geoOrigins, bioOrigins));
 							
-							ings = new ArrayList<NodeRef>();
-							geoOrigins = new ArrayList<NodeRef>();
+							ings = new ArrayList<>();
+							geoOrigins = new ArrayList<>();
 							ings.add(ing3);				
 							geoOrigins.add(geoOrigin1);
 							forbiddenIngList1.add(new ForbiddenIngListDataItem(null, RequirementType.Tolerated, "Ing3 geoOrigin1 toléré", null, null, null, ings, geoOrigins, bioOrigins));
 							
-							ings = new ArrayList<NodeRef>();
-							geoOrigins = new ArrayList<NodeRef>();
+							ings = new ArrayList<>();
+							geoOrigins = new ArrayList<>();
 							ings.add(ing3);				
 							forbiddenIngList1.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "Ing3 < 40%", 0.4d, null, null, ings, geoOrigins, bioOrigins));
 							
-							ings = new ArrayList<NodeRef>();
-							geoOrigins = new ArrayList<NodeRef>();
+							ings = new ArrayList<>();
+							geoOrigins = new ArrayList<>();
 							ings.add(ing1);
 							ings.add(ing4);
 							geoOrigins.clear();
 							forbiddenIngList1.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "Ing1 et ing4 interdits", null, null, null, ings, geoOrigins, bioOrigins));
 							
-							ings = new ArrayList<NodeRef>();
-							geoOrigins = new ArrayList<NodeRef>();
+							ings = new ArrayList<>();
+							geoOrigins = new ArrayList<>();
 							ings.add(ing3);				
 							geoOrigins.add(geoOrigin1);
 							
 							ForbiddenIngListDataItem forbiddenIngListDataItem = new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "Ing3 geoOrigin1 obligatoire", null, null, null, ings, new ArrayList<NodeRef>(), bioOrigins);
 							forbiddenIngListDataItem.setRequiredGeoOrigins(geoOrigins);
-							forbiddenIngList1.add(forbiddenIngListDataItem);
-							
-							
+							forbiddenIngList1.add(forbiddenIngListDataItem);														
 							productSpecification1.setForbiddenIngList(forbiddenIngList1);
+							
+							// allergens
+							ArrayList<AllergenListDataItem> allergenList = new ArrayList<>();
+							allergenList.add(new AllergenListDataItem(null, null, false, false, null, null, allergen1, false));
+							productSpecification1.setAllergenList(allergenList);
+							
 							alfrescoRepository.save(productSpecification1);
 							
 							// specification2
-							properties = new HashMap<QName, Serializable>();		
+							properties = new HashMap<>();
 							properties.put(ContentModel.PROP_NAME, "Spec2");
-							NodeRef productSpecificationNodeRef2 = nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS, 
+							NodeRef productSpecificationNodeRef2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, 
 											QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, 
 											(String)properties.get(ContentModel.PROP_NAME)), 
 											PLMModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
 							
 							ProductSpecificationData productSpecification2 = (ProductSpecificationData) alfrescoRepository.findOne(productSpecificationNodeRef2);
 														
-							List<ForbiddenIngListDataItem> forbiddenIngList2 = new ArrayList<ForbiddenIngListDataItem>();
+							List<ForbiddenIngListDataItem> forbiddenIngList2 = new ArrayList<>();
 							
-							ings = new ArrayList<NodeRef>();
-							geoOrigins = new ArrayList<NodeRef>();
+							ings = new ArrayList<>();
+							geoOrigins = new ArrayList<>();
 							ings.add(ing2);				
 							geoOrigins.add(geoOrigin2);
 							forbiddenIngList2.add(new ForbiddenIngListDataItem(null, RequirementType.Info, "Ing2 geoOrigin2 interdit sur charcuterie", null, null, null, ings, geoOrigins, bioOrigins));
@@ -261,10 +269,16 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 						assertTrue(reqCtrlList.getSources().contains(rawMaterial2NodeRef));
 						assertTrue(reqCtrlList.getSources().contains(rawMaterial6NodeRef));
 						checks++;
-					}										
+					}
+					else if(reqCtrlList.getReqMessage().equals(I18NUtil.getMessage(AllergensCalculatingFormulationHandler.MESSAGE_FORBIDDEN_ALLERGEN, nodeService.getProperty(allergen1, BeCPGModel.PROP_CHARACT_NAME)))){
+						
+						assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
+						assertEquals(0, reqCtrlList.getSources().size());
+						checks++;
+					}
 				}				
 				
-				assertEquals(6, checks);
+				assertEquals(7, checks);
 				
 				/*
 				 *  #257: check reqCtrlList is clear if all req are respected (we remove specification to get everything OK)

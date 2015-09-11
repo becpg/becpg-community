@@ -18,6 +18,10 @@ import fr.becpg.repo.repository.annotation.MultiLevelDataList;
 @MultiLevelDataList
 public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem implements CompositionDataItem {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8313567761346202059L;
 	private Double qty = 0d;	
 	private Double qtyResource = 0d;
 	private Double rateResource = 0d;
@@ -166,7 +170,7 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 
 
 	@Override
-	public CompositionDataItem createCopy() {
+	public CompositionDataItem clone() {
 		return new ProcessListDataItem(this);
 	}
 	
@@ -244,6 +248,16 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 		} else if (!yield.equals(other.yield))
 			return false;
 		return true;
+	}
+
+	@Override
+	public NodeRef getComponent() {
+		return getResource();
+	}
+
+	@Override
+	public void setComponent(NodeRef targetItem) {
+		setResource(targetItem);
 	}
 
 

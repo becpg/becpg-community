@@ -1,5 +1,5 @@
 /*
- * 
+ *
  */
 package fr.becpg.repo.product.formulation;
 
@@ -26,7 +26,7 @@ import fr.becpg.repo.repository.model.SimpleListDataItem;
  */
 public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleListFormulationHandler<PhysicoChemListDataItem> {
 
-	private static Log logger = LogFactory.getLog(PhysicoChemCalculatingFormulationHandler.class);
+	private static final Log logger = LogFactory.getLog(PhysicoChemCalculatingFormulationHandler.class);
 
 	@Override
 	protected Class<PhysicoChemListDataItem> getInstanceClass() {
@@ -39,7 +39,7 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 		logger.debug("Physico chemical calculating visitor");
 
 		// no compo => no formulation
-		if (!formulatedProduct.hasCompoListEl(EffectiveFilters.EFFECTIVE)) {
+		if (!formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 			logger.debug("no compo => no formulation");
 			return true;
 		}
@@ -54,26 +54,25 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 	}
 
 	@Override
-	protected QName getDataListVisited() {
-
-		return PLMModel.TYPE_PHYSICOCHEMLIST;
+	protected List<PhysicoChemListDataItem> getDataListVisited(ProductData partProduct) {
+		return partProduct.getPhysicoChemList();
 	}
 
 	@Override
 	protected boolean isCharactFormulated(SimpleListDataItem sl) {
-		if (!super.isCharactFormulated(sl)) {
+		if (!super.isCharactFormulated(sl))
 			return false;
-		}
 		Boolean isFormulated = (Boolean) nodeService.getProperty(sl.getCharactNodeRef(), PLMModel.PROP_PHYSICO_CHEM_FORMULATED);
-		return isFormulated != null ? isFormulated.booleanValue() : false;
+		return isFormulated != null ? isFormulated : false;
 	}
-	
+
 	@Override
 	protected boolean isCharactFormulatedFromVol(SimpleListDataItem sl) {
 		Boolean isFormulatedFromVol = (Boolean) nodeService.getProperty(sl.getCharactNodeRef(), PLMModel.PROP_PHYSICO_CHEM_FORMULATED_FROM_VOL);
-		return isFormulatedFromVol != null ? isFormulatedFromVol.booleanValue() : false;
+		return isFormulatedFromVol != null ? isFormulatedFromVol : false;
 	}
 
+	@Override
 	protected Map<NodeRef, List<NodeRef>> getMandatoryCharacts(ProductData formulatedProduct, QName componentType) {
 		return getMandatoryCharactsFromList(formulatedProduct.getPhysicoChemList());
 	}

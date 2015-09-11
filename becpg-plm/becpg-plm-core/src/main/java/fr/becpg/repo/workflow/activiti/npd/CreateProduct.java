@@ -193,16 +193,15 @@ public class CreateProduct extends BaseJavaDelegate {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	private void copyDataList(NodeRef productNodeRef, NodeRef sourceNodeRef, QName typeCompolist) {
 	
 		 ProductData productData  = alfrescoRepository.findOne(productNodeRef);
 		 ProductData sourceData = alfrescoRepository.findOne(sourceNodeRef);
 		 if (typeCompolist.equals(PLMModel.TYPE_PACKAGINGLIST)) {
- 			productData.getPackagingListView().setPackagingList(sourceData.getPackagingList(EffectiveFilters.FUTUR));
+ 			productData.getPackagingListView().setPackagingList(sourceData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.FUTUR)));
  		 }
 		 else if (typeCompolist.equals(PLMModel.TYPE_COMPOLIST)) {
- 			productData.getCompoListView().setCompoList(sourceData.getCompoList(EffectiveFilters.FUTUR));
+ 			productData.getCompoListView().setCompoList(sourceData.getCompoList(new EffectiveFilters<>(EffectiveFilters.FUTUR)));
  		 }
 		 alfrescoRepository.save(productData);
 

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (C) 2010-2015 beCPG. 
+   
+  This file is part of beCPG 
+   
+  beCPG is free software: you can redistribute it and/or modify 
+  it under the terms of the GNU Lesser General Public License as published by 
+  the Free Software Foundation, either version 3 of the License, or 
+  (at your option) any later version. 
+   
+  beCPG is distributed in the hope that it will be useful, 
+  but WITHOUT ANY WARRANTY; without even the implied warranty of 
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+  GNU Lesser General Public License for more details. 
+   
+  You should have received a copy of the GNU Lesser General Public License along with beCPG.
+   If not, see <http://www.gnu.org/licenses/>.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+	<!-- Todo merge that with beCPGScriptHelper -->
+	<bean id="bSearchScript" parent="baseJavaScriptExtension" class="fr.becpg.repo.jscript.Search">
+		<property name="extensionName">
+			<value>bSearch</value>
+		</property>
+		<property name="serviceRegistry">
+			<ref bean="ServiceRegistry" />
+		</property>
+		<property name="advSearchService">
+			<ref bean="AdvSearchService" />
+		</property>
+	</bean>
+
+
+
+	<bean id="thumbnailScript" parent="baseJavaScriptExtension" class="fr.becpg.repo.jscript.Thumbnail">
+		<property name="extensionName">
+			<value>bThumbnail</value>
+		</property>
+		<property name="entityService" ref="entityService" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="beCPGCacheService" ref="beCPGCacheService" />
+		<property name="serviceRegistry" ref="ServiceRegistry" />
+		<property name="entityReportService" ref="entityReportService" />
+		<property name="associationService" ref="associationService" />
+	</bean>
+
+
+	<bean id="beCPGScriptHelper" parent="baseJavaScriptExtension" class="fr.becpg.repo.jscript.BeCPGScriptHelper">
+		<property name="extensionName">
+			<value>bcpg</value>
+		</property>
+		<property name="autoNumService" ref="autoNumService"/>
+		<property name="olapService" ref="olapService"/>
+	</bean>
+
+	<!-- Override Alfresco -->
+
+	<bean id="jsonConversionComponent" class="fr.becpg.repo.jscript.app.BeCPGJSONConversionComponent" parent="baseJsonConversionComponent">
+		<property name="associationService" ref="associationService" />
+		<property name="mimetypeService" ref="MimetypeService" />
+	</bean>
+
+	<bean id="baseAssocDecorator" abstract="true" init-method="init">
+		<property name="nodeService" ref="NodeService" />
+		<property name="namespaceService" ref="NamespaceService" />
+		<property name="permissionService" ref="PermissionService" />
+		<property name="jsonConversionComponent" ref="jsonConversionComponent" />
+	</bean>
+
+</beans>

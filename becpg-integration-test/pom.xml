@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>becpg-integration-test</artifactId>
+    <packaging>jar</packaging>
+    <name>beCPG Integration tests</name>
+    <licenses>
+		<license>
+			<name>GNU LESSER GENERAL PUBLIC LICENSE</name>
+			<url>http://www.gnu.org/licenses/lgpl-3.0.en.html</url>
+			<comments>Copyright (C) 2010-2015 beCPG. 
+  
+			  beCPG is free software: you can redistribute it and/or modify 
+			  it under the terms of the GNU Lesser General Public License as published by 
+			  the Free Software Foundation, either version 3 of the License, or 
+			  (at your option) any later version. 
+			   
+			  beCPG is distributed in the hope that it will be useful, 
+			  but WITHOUT ANY WARRANTY; without even the implied warranty of 
+			  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+			  GNU Lesser General Public License for more details. 
+			 </comments>
+		</license>
+	</licenses>
+    <parent>
+		<artifactId>becpg-parent</artifactId>
+		<groupId>fr.becpg</groupId>
+		<version>2.0.3</version>
+		<relativePath>../</relativePath>
+	</parent>
+
+     <dependencies>
+
+
+		<!-- beCPG -->
+		<dependency>
+			<groupId>fr.becpg</groupId>
+			<artifactId>becpg-core</artifactId>
+			<version>${project.version}</version>
+			<type>jar</type>
+			<classifier>api</classifier>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>fr.becpg</groupId>
+			<artifactId>becpg-project-core</artifactId>
+			<version>${project.version}</version>
+			<type>jar</type>
+			<classifier>api</classifier>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>fr.becpg</groupId>
+			<artifactId>becpg-designer-core</artifactId>
+			<version>${project.version}</version>
+			<type>jar</type>
+			<classifier>api</classifier>
+			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>fr.becpg</groupId>
+			<artifactId>becpg-plm-core</artifactId>
+			<version>${project.version}</version>
+			<type>jar</type>
+			<classifier>api</classifier>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>fr.becpg</groupId>
+			<artifactId>becpg-core</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+			<type>test-jar</type>
+		</dependency>		
+		
+		<dependency> 
+			<groupId>fr.becpg</groupId>
+			<artifactId>becpg-designer-core</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+			<type>test-jar</type>
+		</dependency> 
+		
+		<dependency> 
+			<groupId>fr.becpg</groupId>
+			<artifactId>becpg-project-core</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+			<type>test-jar</type>
+		</dependency> 
+		
+		<dependency> 
+			<groupId>fr.becpg</groupId>
+			<artifactId>becpg-plm-core</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+			<type>test-jar</type>
+		</dependency> 
+		
+		<!-- alfresco -->
+		<dependency>
+			<groupId>org.alfresco</groupId>
+			<artifactId>alfresco-repository</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.alfresco</groupId>
+			<artifactId>alfresco-remote-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+
+	</dependencies>
+   
+
+    <profiles>
+        <profile>
+            <id>enable-it</id>
+
+            <properties>
+                <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+            </properties>
+
+            <build>
+                <plugins>
+                    <!-- Runs the integration tests, any class that follows naming convention "**/IT*.java", "**/*IT.java", and "**/*ITCase.java" will be considered an integration test -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <version>2.18.1</version>
+                        <executions>
+                            <execution>
+                                <id>integration-test</id>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>verify-test</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.apache.maven.surefire</groupId>
+                                <artifactId>surefire-junit47</artifactId>
+                                <version>2.18.1</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                   <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>copy-tomcat-resources</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${project.build.directory}/contexts</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>../runner/tomcat</directory>
+                                            <filtering>true</filtering>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- Run Tomcat 7 embedded with Alfresco.war context, plugin version picked up from alfresco-sdk-parent.pom pluginManagement definition, which also brings in the H2 database lib -->
+                    <plugin>
+                        <groupId>org.apache.tomcat.maven</groupId>
+                        <artifactId>tomcat7-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>start-tomcat</id>
+                                <goals>
+                                    <goal>run</goal> <!-- run un-packaged as dynamic webapp -->
+                                </goals>
+                                <phase>pre-integration-test</phase>
+                                <configuration>
+                                    <fork>true</fork>   <!-- Fork so tests can be run in parallel -->
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>stop-tomcat</id>
+                                <goals>
+                                    <goal>shutdown</goal>
+                                </goals>
+                                <phase>post-integration-test</phase>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <ignorePackaging>true</ignorePackaging>
+                            <useSeparateTomcatClassLoader>true</useSeparateTomcatClassLoader>
+                            <path>/</path>
+                            <systemProperties>
+                                <solr.solr.home>${project.parent.basedir}/solr/solr_home</solr.solr.home>
+                            </systemProperties>
+                            <webapps>
+                                <webapp>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>becpg-report</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>war</type>
+                                    <asWebapp>true</asWebapp>
+                                    <contextPath>/becpg-report</contextPath>
+                              </webapp>
+                              <webapp>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>solr</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>war</type>
+                                    <asWebapp>true</asWebapp>
+                                    <contextPath>/solr</contextPath>
+                                    <contextFile>${project.build.directory}/contexts/context-solr.xml</contextFile>
+                                </webapp> 
+                                <webapp>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>repo</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>war</type>
+                                    <asWebapp>true</asWebapp>
+                                    <contextPath>/alfresco</contextPath>
+                                    <contextFile>${project.build.directory}/contexts/context-repo.xml</contextFile>
+                                </webapp>
+                                <!--  <webapp>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>share</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>war</type>
+                                    <asWebapp>true</asWebapp>
+                                    <contextPath>/share</contextPath>
+                                    <contextFile>${project.build.directory}/contexts/context-share.xml</contextFile>
+                                </webapp> -->
+                            </webapps>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+		<profile>
+			<id>run</id>
+			<properties>
+				<skipTests>true</skipTests>
+			</properties>
+		</profile>
+    </profiles>
+ 
+</project>

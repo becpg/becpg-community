@@ -30,7 +30,7 @@ import fr.becpg.model.BeCPGModel;
  */
 public class HierarchyHelper {
 
-	public static String HIERARCHY_SUFFIX = "_Hierarchy";
+	public final static String HIERARCHY_SUFFIX = "_Hierarchy";
 	
 	public static String getHierarchyPathName(QName type) {
 		return type.getLocalName()+HIERARCHY_SUFFIX;

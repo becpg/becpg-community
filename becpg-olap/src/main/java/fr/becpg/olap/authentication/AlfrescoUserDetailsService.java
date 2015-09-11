@@ -23,7 +23,11 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.client.HttpClient;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParser;
@@ -47,7 +51,7 @@ import fr.becpg.tools.http.RetrieveUserCommand;
  */
 public class AlfrescoUserDetailsService implements UserDetailsService {
 
-	private static Log logger = LogFactory.getLog(AlfrescoUserDetailsService.class);
+	private static final Log logger = LogFactory.getLog(AlfrescoUserDetailsService.class);
 
 	InstanceManager instanceManager;
 
@@ -56,38 +60,53 @@ public class AlfrescoUserDetailsService implements UserDetailsService {
 	}
 
 	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
+	public UserDetails loadUserByUsername(String authToken) throws UsernameNotFoundException, DataAccessException {
 
 		try {
+
+			String username = UserNameHelper.extractUserName(authToken);
+
 			Instance instance = instanceManager.findInstanceByUserName(username);
 
-			HttpClient client = instanceManager.createInstanceSession(instance);
+			try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
 
-			RetrieveUserCommand retrieveUserCommand = new RetrieveUserCommand(instance.getInstanceUrl());
-			try {
+				RetrieveUserCommand retrieveUserCommand = new RetrieveUserCommand(instance.getInstanceUrl());
 
 				String presentedLogin = UserNameHelper.extractLogin(username);
+				String ticket = UserNameHelper.extractTicket(authToken);
 
-				List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-				try (InputStream in = retrieveUserCommand.runCommand(client, presentedLogin)) {
-
-					JsonFactory jsonFactory = new JsonFactory();
-					JsonParser jp = jsonFactory.createJsonParser(in);
-
-					ObjectMapper mapper = new ObjectMapper();
-
-					JsonNode rootNode = mapper.readTree(jp);
-
-					for (JsonNode node : rootNode.path("groups")) {
-						authorities.add(new GrantedAuthorityImpl(node.path("itemName").getTextValue()));
-					}
-
-					return new AlfrescoUserDetails(username, "no-password", rootNode.path("enabled").asBoolean(), authorities, instance);
-
+				if (logger.isDebugEnabled()) {
+					logger.debug("Extracting user name : " + username);
+					logger.debug("Presented Login : " + presentedLogin);
+					logger.debug("Ticket : " + ticket);
 				}
 
-			} finally {
-				client.getConnectionManager().shutdown();
+				List<GrantedAuthority> authorities = new ArrayList<>();
+				try (CloseableHttpResponse resp = retrieveUserCommand.runCommand(httpClient, HttpClientContext.create(), presentedLogin, ticket)) {
+					HttpEntity entity = resp.getEntity();
+					if (entity != null) {
+
+						try (InputStream in = entity.getContent()) {
+
+							JsonFactory jsonFactory = new JsonFactory();
+							JsonParser jp = jsonFactory.createJsonParser(in);
+
+							ObjectMapper mapper = new ObjectMapper();
+
+							JsonNode rootNode = mapper.readTree(jp);
+
+							for (JsonNode node : rootNode.path("groups")) {
+								authorities.add(new GrantedAuthorityImpl(node.path("itemName").getTextValue()));
+							}
+
+							return new AlfrescoUserDetails(username, "no-password", rootNode.path("enabled").asBoolean(), authorities, instance);
+
+						}
+					} else {
+						return null;
+					}
+				}
+
 			}
 
 		} catch (Exception e) {

@@ -18,6 +18,7 @@
 package fr.becpg.repo.entity.datalist.data;
 
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,7 +64,7 @@ public class DataListFilter {
 	
 	private Map<String, String> criteriaMap = null;
 	
-	private Map<String, Boolean> sortMap = new LinkedHashMap<String, Boolean>();
+	private Map<String, Boolean> sortMap = new LinkedHashMap<>();
 	
 	private QName dataType = null;
 	
@@ -183,7 +184,16 @@ public class DataListFilter {
 		return maxLevel;
 	}
 
-	
+	public void updateMaxDepth(int depth){
+		if(criteriaMap==null){
+			criteriaMap = new HashMap<>();
+		}
+		if(depth!=-1){
+			criteriaMap.put(PROP_DEPTH_LEVEL,Integer.toString(depth));
+		} else {
+			criteriaMap.put(PROP_DEPTH_LEVEL,"all");
+		}
+	}
 
 	public String getFilterParams() {
 		return filterParams;
@@ -296,9 +306,9 @@ public class DataListFilter {
 		if (filterId != null) {
 
 			if (filterId.equals("recentlyAdded") || filterId.equals("recentlyModified") || filterId.equals("recentlyCreatedByMe") || filterId.equals("recentlyModifiedByMe")) {
-				boolean onlySelf = (filterId.indexOf("ByMe")) > 0 ? true : false;
+				boolean onlySelf = (filterId.indexOf("ByMe")) > 0;
 				String dateField = (filterId.indexOf("Modified") > 0) ? "modified" : "created";
-				String ownerField = (dateField == "created") ? "creator" : "modifier";
+				String ownerField = ("created".equals(dateField)) ? "creator" : "modifier";
 
 				// Default to 7 days - can be overridden using "days" argument
 				int dayCount = 7;
@@ -306,7 +316,7 @@ public class DataListFilter {
 				if (filterParams != null && filterParams.startsWith("day=")) {
 					try {
 						dayCount = Integer.parseInt(filterParams.replace("day=", ""));
-					} catch (NumberFormatException e) {
+					} catch (NumberFormatException ignored) {
 
 					}
 				}

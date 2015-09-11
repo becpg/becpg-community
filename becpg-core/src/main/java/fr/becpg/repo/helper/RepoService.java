@@ -22,7 +22,7 @@ public interface RepoService {
 	 * @param paths the paths
 	 * @return the node ref
 	 */
-	public NodeRef getOrCreateFolderByPaths(NodeRef parentNodeRef, List<String> paths);
+	NodeRef getOrCreateFolderByPaths(NodeRef parentNodeRef, List<String> paths);
 	
 	/**
 	 * Creates the folder by path.
@@ -32,7 +32,7 @@ public interface RepoService {
 	 * @param name the name
 	 * @return the node ref
 	 */
-	public NodeRef getOrCreateFolderByPath(NodeRef parentNodeRef, String path, String name);
+	NodeRef getOrCreateFolderByPath(NodeRef parentNodeRef, String path, String name);
 		
 	/**
 	 * Get the folder by path
@@ -40,7 +40,7 @@ public interface RepoService {
 	 * @param path
 	 * @return
 	 */
-	public NodeRef getFolderByPath(NodeRef parentNodeRef, String path);
+	NodeRef getFolderByPath(NodeRef parentNodeRef, String path);
 	
 	/**
 	 * Get the folder by path
@@ -49,7 +49,7 @@ public interface RepoService {
 	 * @param path
 	 * @return
 	 */
-	public NodeRef getFolderByPath(String path);
+	NodeRef getFolderByPath(String path);
 	
 	
 	/**
@@ -58,7 +58,7 @@ public interface RepoService {
 	 * @param destionationNodeRef
 	 * @param name
 	 */
-	public void moveNode(NodeRef nodeRefToMove, NodeRef destionationNodeRef);
+	void moveNode(NodeRef nodeRefToMove, NodeRef destionationNodeRef);
 	
 	/**
 	 * Calculate the name in order to get an available name ie: name (1)
@@ -66,6 +66,6 @@ public interface RepoService {
 	 * @param destionationNodeRef
 	 * @param name
 	 */
-	public String getAvailableName(NodeRef folderNodeRef, String name);
+	String getAvailableName(NodeRef folderNodeRef, String name);
 	
 }

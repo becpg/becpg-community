@@ -36,7 +36,7 @@ import fr.becpg.repo.quality.QualityControlService;
 public class QualityControlPolicies extends AbstractBeCPGPolicy implements NodeServicePolicies.OnCreateAssociationPolicy,
 				NodeServicePolicies.OnUpdatePropertiesPolicy{
 
-	private static Log logger = LogFactory.getLog(QualityControlPolicies.class);
+	private static final Log logger = LogFactory.getLog(QualityControlPolicies.class);
 	
 	private QualityControlService qualityControlService;
 	
@@ -80,9 +80,10 @@ public class QualityControlPolicies extends AbstractBeCPGPolicy implements NodeS
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {						
 		
-		logger.debug("QualityControlPolicies onUpdateProperties.");
+		
 		if (isPropChanged(before, after, QualityModel.PROP_CL_VALUE) ||
 				isPropChanged(before, after, QualityModel.PROP_CL_STATE)) {
+			logger.debug("QualityControlPolicies onUpdateProperties.");
 			qualityControlService.updateControlListState(nodeRef);
 		}		
 	}

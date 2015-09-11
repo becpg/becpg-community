@@ -28,7 +28,7 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
  */
 public class DocLinkedEntitiesPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnDeleteAssociationPolicy {
 
-	private static Log logger = LogFactory.getLog(DocLinkedEntitiesPolicy.class);
+	private static final Log logger = LogFactory.getLog(DocLinkedEntitiesPolicy.class);
 
 	// File extension to use for link nodes
 	private static final String LINK_NODE_EXTENSION = ".url";
@@ -49,8 +49,8 @@ public class DocLinkedEntitiesPolicy extends AbstractBeCPGPolicy implements Node
 	private void createLink(NodeRef nodeRef, NodeRef destRef) {
 		String currentName = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
 
-		if (checkExists(currentName + LINK_NODE_EXTENSION, destRef) == false) {
-			Map<QName, Serializable> props = new HashMap<QName, Serializable>(2, 1.0f);
+		if (!checkExists(currentName + LINK_NODE_EXTENSION, destRef)) {
+			Map<QName, Serializable> props = new HashMap<>(2, 1.0f);
 
 			logger.debug("Create link :" + currentName + " under " + destRef);
 			String newName = currentName + LINK_NODE_EXTENSION;
@@ -62,7 +62,7 @@ public class DocLinkedEntitiesPolicy extends AbstractBeCPGPolicy implements Node
 					ApplicationModel.TYPE_FILELINK, props);
 
 			// apply the titled aspect - title and description
-			Map<QName, Serializable> titledProps = new HashMap<QName, Serializable>(2, 1.0f);
+			Map<QName, Serializable> titledProps = new HashMap<>(2, 1.0f);
 			titledProps.put(ContentModel.PROP_TITLE, currentName);
 			titledProps.put(ContentModel.PROP_DESCRIPTION, currentName);
 			nodeService.addAspect(childRef.getChildRef(), ContentModel.ASPECT_TITLED, titledProps);

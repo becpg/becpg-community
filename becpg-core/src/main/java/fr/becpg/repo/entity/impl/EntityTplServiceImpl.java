@@ -63,7 +63,6 @@ import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationService;
-import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
@@ -77,7 +76,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 @Service("entityTplService")
 public class EntityTplServiceImpl implements EntityTplService {
 
-	private static Log logger = LogFactory.getLog(EntityTplServiceImpl.class);
+	private static final Log logger = LogFactory.getLog(EntityTplServiceImpl.class);
 
 	@Autowired
 	private NodeService nodeService;
@@ -113,9 +112,6 @@ public class EntityTplServiceImpl implements EntityTplService {
 	private RuntimeRuleService ruleService;
 
 	@Autowired
-	private AssociationService associationService;
-
-	@Autowired
 	private EntityTplPlugin[] entityTplPlugins;
 
 	/**
@@ -132,7 +128,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 			entityTplName = typeDef.getTitle(dictionaryService);
 		}
 		// entityTpl
-		Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+		Map<QName, Serializable> properties = new HashMap<>();
 		properties.put(ContentModel.PROP_NAME, entityTplName);
 		properties.put(BeCPGModel.PROP_ENTITY_TPL_ENABLED, enabled);
 		properties.put(BeCPGModel.PROP_ENTITY_TPL_IS_DEFAULT, true);
@@ -195,10 +191,35 @@ public class EntityTplServiceImpl implements EntityTplService {
 		NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, name);
 		if (listNodeRef == null) {
 
-			Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+			Map<QName, Serializable> properties = new HashMap<>();
 			properties.put(ContentModel.PROP_NAME, name);
 			properties.put(ContentModel.PROP_TITLE, I18NUtil.getMessage("entity-datalist-wused-title"));
 			properties.put(ContentModel.PROP_DESCRIPTION, I18NUtil.getMessage("entity-datalist-wused-description"));
+			properties.put(DataListModel.PROP_DATALISTITEMTYPE, typeQName.toPrefixString(namespaceService));
+
+			listNodeRef = nodeService.createNode(listContainerNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS,
+					DataListModel.TYPE_DATALIST, properties).getChildRef();
+
+		}
+		return listNodeRef;
+	}
+	
+
+	@Override
+	public NodeRef createView(NodeRef entityTplNodeRef, QName typeQName, String name) {
+
+		NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityTplNodeRef);
+		if (listContainerNodeRef == null) {
+			listContainerNodeRef = entityListDAO.createListContainer(entityTplNodeRef);
+		}
+
+		NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, name);
+		if (listNodeRef == null) {
+
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(ContentModel.PROP_NAME, name);
+			properties.put(ContentModel.PROP_TITLE, I18NUtil.getMessage("entity-datalist-"+name.toLowerCase()+"-title"));
+			properties.put(ContentModel.PROP_DESCRIPTION, I18NUtil.getMessage("entity-datalist-"+name.toLowerCase()+"-description"));
 			properties.put(DataListModel.PROP_DATALISTITEMTYPE, typeQName.toPrefixString(namespaceService));
 
 			listNodeRef = nodeService.createNode(listContainerNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS,
@@ -377,7 +398,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 	}
 
 	private interface BatchCallBack {
-		public void run(NodeRef entityNodeRef);
+		void run(NodeRef entityNodeRef);
 	}
 
 	private void doInBatch(final List<NodeRef> entityNodeRefs, final int batchSize, final BatchCallBack batchCallBack) {
@@ -484,12 +505,12 @@ public class EntityTplServiceImpl implements EntityTplService {
 			}
 
 			// Copy rules
-			if (nodeService.hasAspect(entityTplNodeRef, RuleModel.ASPECT_RULES) == true
+			if (nodeService.hasAspect(entityTplNodeRef, RuleModel.ASPECT_RULES)
 					&& !((RuleService) ruleService).getRules(entityTplNodeRef, false).isEmpty()) {
 				boolean hasRule = false;
 
 				// Check whether the node already has rules or not
-				if (nodeService.hasAspect(entityNodeRef, RuleModel.ASPECT_RULES) == true) {
+				if (nodeService.hasAspect(entityNodeRef, RuleModel.ASPECT_RULES)) {
 
 					// Check for a linked to node
 					NodeRef linkedToNode = ((RuleService) ruleService).getLinkedToRuleNode(entityNodeRef);
@@ -497,7 +518,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 						// if the node has no rules we can delete the folder
 						// ready to link
 						List<Rule> rules = ((RuleService) ruleService).getRules(entityNodeRef, false);
-						if (rules.isEmpty() == false) {
+						if (!rules.isEmpty()) {
 							hasRule = true;
 						} else {
 							// Delete the rules system folder

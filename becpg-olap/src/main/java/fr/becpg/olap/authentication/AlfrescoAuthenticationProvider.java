@@ -17,6 +17,8 @@
  ******************************************************************************/
 package fr.becpg.olap.authentication;
 
+import java.sql.SQLException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.dao.DataAccessException;
@@ -27,9 +29,12 @@ import org.springframework.security.authentication.dao.AbstractUserDetailsAuthen
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.util.Assert;
 
 import fr.becpg.olap.http.LoginCommand;
+import fr.becpg.tools.InstanceManager;
+import fr.becpg.tools.InstanceManager.Instance;
 import fr.becpg.tools.helper.UserNameHelper;
 
 /**
@@ -39,73 +44,66 @@ import fr.becpg.tools.helper.UserNameHelper;
  */
 public class AlfrescoAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
 
-    //~ Instance fields ================================================================================================
+	private static final Log logger = LogFactory.getLog(AlfrescoAuthenticationProvider.class);
 
-	private static Log logger = LogFactory.getLog(AlfrescoAuthenticationProvider.class);
+	private UserDetailsService userDetailsService;
 
-    private UserDetailsService userDetailsService;
+	InstanceManager instanceManager;
 
-    //~ Methods ========================================================================================================
+	public void setInstanceManager(InstanceManager instanceManager) {
+		this.instanceManager = instanceManager;
+	}
 
-    protected void additionalAuthenticationChecks(UserDetails userDetails,
-            UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
-       
-        if (authentication.getCredentials() == null) {
-            throw new BadCredentialsException(messages.getMessage(
-                    "AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
-        }
+	protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
 
-        String presentedPassword = authentication.getCredentials().toString();
-        String presentedLogin = UserNameHelper.extractLogin(userDetails.getUsername());
-        if(userDetails instanceof AlfrescoUserDetails){
-	        LoginCommand loginCommand = new LoginCommand(((AlfrescoUserDetails) userDetails).getInstance().getInstanceUrl());
-	        String alfTicket = loginCommand.getAlfTicket(presentedLogin, presentedPassword);
-	        if(logger.isDebugEnabled()){
-	        	logger.debug("Retrieving alfTicket :"+alfTicket);
-	        }
-	        
-	        if (alfTicket==null || alfTicket.isEmpty()) {
-	            throw new BadCredentialsException(messages.getMessage(
-	                    "AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
-	        }
-	        
-        } else {
-        	throw new BadCredentialsException("UserDetails is not instance of AlfrescoUserDetails");
-        }
-        
-    }
+	}
 
-    protected void doAfterPropertiesSet() throws Exception {
-        Assert.notNull(this.userDetailsService, "A UserDetailsService must be set");
-    }
+	protected void doAfterPropertiesSet() throws Exception {
+		Assert.notNull(this.userDetailsService, "A UserDetailsService must be set");
+	}
 
-    protected final UserDetails retrieveUser(String username, UsernamePasswordAuthenticationToken authentication)
-            throws AuthenticationException {
-        UserDetails loadedUser;
+	protected final UserDetails retrieveUser(String username, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
 
-        try {
-            loadedUser = this.getUserDetailsService().loadUserByUsername(username);
-        }
-        catch (DataAccessException repositoryProblem) {
-            throw new AuthenticationServiceException(repositoryProblem.getMessage(), repositoryProblem);
-        }
+		if (authentication.getCredentials() == null) {
+			throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
+		}
 
-        if (loadedUser == null) {
-            throw new AuthenticationServiceException(
-                    "UserDetailsService returned null, which is an interface contract violation");
-        }
-        return loadedUser;
-    }
+		try {
+			Instance instance = instanceManager.findInstanceByUserName(username);
 
+			String presentedPassword = authentication.getCredentials().toString();
+			String presentedLogin = UserNameHelper.extractLogin(username);
 
-    public void setUserDetailsService(UserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
-    }
+			LoginCommand loginCommand = new LoginCommand(instance.getInstanceUrl());
+			String alfTicket = loginCommand.getAlfTicket(presentedLogin, presentedPassword);
+			if (logger.isDebugEnabled()) {
+				logger.debug("Retrieving alfTicket :" + alfTicket);
+			}
 
-    protected UserDetailsService getUserDetailsService() {
-        return userDetailsService;
-    }
+			if (alfTicket == null || alfTicket.isEmpty()) {
+				throw new BadCredentialsException(messages.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
+			}
 
+			UserDetails loadedUser = this.getUserDetailsService().loadUserByUsername(UserNameHelper.buildAuthToken(username,alfTicket));
 
+			if (loadedUser == null) {
+				throw new AuthenticationServiceException("UserDetailsService returned null, which is an interface contract violation");
+			}
+			return loadedUser;
+
+		} catch (SQLException e) {
+			throw new UsernameNotFoundException(e.getMessage());
+		} catch (DataAccessException repositoryProblem) {
+			throw new AuthenticationServiceException(repositoryProblem.getMessage(), repositoryProblem);
+		}
+	}
+
+	public void setUserDetailsService(UserDetailsService userDetailsService) {
+		this.userDetailsService = userDetailsService;
+	}
+
+	protected UserDetailsService getUserDetailsService() {
+		return userDetailsService;
+	}
 
 }

@@ -19,20 +19,30 @@ package fr.becpg.repo.product.data.productList;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.repo.repository.model.AbstractManualDataItem;
-import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
+import fr.becpg.repo.repository.model.AbstractManualDataItem;
 
 @AlfType
 @AlfQname(qname = "bcpg:labelClaimList")
 public class LabelClaimListDataItem extends AbstractManualDataItem {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1232488781703843974L;
+	public static final String VALUE_TRUE = "true";
+	public static final String VALUE_FALSE = "false";
+	public static final String VALUE_EMPTY = "";
+	public static final String VALUE_NA = "na";
+	
+	
 	private NodeRef labelClaim;
 	private String type;
-	private Boolean isClaimed;
+	private String labelClaimValue;
 	private Boolean isFormulated;
 	private String errorLog;
 	
@@ -56,15 +66,25 @@ public class LabelClaimListDataItem extends AbstractManualDataItem {
 	}
 	
 	@AlfProp
-	@AlfQname(qname="bcpg:lclIsClaimed")
+	@AlfQname(qname="bcpg:lclClaimValue")
+	public String getLabelClaimValue() {
+		return labelClaimValue;
+	}
+	public void setLabelClaimValue(String labelClaimValue) {
+		this.labelClaimValue = labelClaimValue;
+	}
+	
 	public Boolean getIsClaimed() {
-		return isClaimed;
+		return VALUE_TRUE.equals(labelClaimValue);
 	}
+	
 	public void setIsClaimed(Boolean isClaimed) {
-		this.isClaimed = isClaimed;
+		if(isClaimed){
+			this.labelClaimValue = VALUE_TRUE;
+		} else  {
+			this.labelClaimValue = VALUE_FALSE;
+		}
 	}
-	
-	
 	
 	@AlfProp
 	@AlfQname(qname="bcpg:lclIsFormulated")
@@ -95,17 +115,22 @@ public class LabelClaimListDataItem extends AbstractManualDataItem {
 		super();
 		this.labelClaim = labelClaim;
 		this.type = type;
-		this.isClaimed = isClaimed;
+		this.labelClaimValue = isClaimed ? VALUE_TRUE : VALUE_FALSE;
 	}
 	
+	public LabelClaimListDataItem(LabelClaimListDataItem labelClaimItem) {
+		this.labelClaim = labelClaimItem.labelClaim;
+		this.type = labelClaimItem.type;
+		this.labelClaimValue = labelClaimItem.labelClaimValue;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + ((errorLog == null) ? 0 : errorLog.hashCode());
-		result = prime * result + ((isClaimed == null) ? 0 : isClaimed.hashCode());
 		result = prime * result + ((isFormulated == null) ? 0 : isFormulated.hashCode());
 		result = prime * result + ((labelClaim == null) ? 0 : labelClaim.hashCode());
+		result = prime * result + ((labelClaimValue == null) ? 0 : labelClaimValue.hashCode());
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
 	}
@@ -123,11 +148,6 @@ public class LabelClaimListDataItem extends AbstractManualDataItem {
 				return false;
 		} else if (!errorLog.equals(other.errorLog))
 			return false;
-		if (isClaimed == null) {
-			if (other.isClaimed != null)
-				return false;
-		} else if (!isClaimed.equals(other.isClaimed))
-			return false;
 		if (isFormulated == null) {
 			if (other.isFormulated != null)
 				return false;
@@ -138,6 +158,11 @@ public class LabelClaimListDataItem extends AbstractManualDataItem {
 				return false;
 		} else if (!labelClaim.equals(other.labelClaim))
 			return false;
+		if (labelClaimValue == null) {
+			if (other.labelClaimValue != null)
+				return false;
+		} else if (!labelClaimValue.equals(other.labelClaimValue))
+			return false;
 		if (type == null) {
 			if (other.type != null)
 				return false;
@@ -145,10 +170,11 @@ public class LabelClaimListDataItem extends AbstractManualDataItem {
 			return false;
 		return true;
 	}
+	
 	@Override
 	public String toString() {
-		return "LabelClaimListDataItem [labelClaim=" + labelClaim + ", type=" + type + ", isClaimed=" + isClaimed + ", isFormulated=" + isFormulated + ", errorLog=" + errorLog
-				+ "]";
+		return "LabelClaimListDataItem [labelClaim=" + labelClaim + ", type=" + type + ", labelClaimValue=" + labelClaimValue + ", isFormulated="
+				+ isFormulated + ", errorLog=" + errorLog + "]";
 	}
 		
 

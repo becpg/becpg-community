@@ -101,8 +101,8 @@
 	                                                                        </tr>
 	                                                                        <tr>
 	                                                                           <td>
-	                                                                              <a href="${shareUrl}/page/entity-details?nodeRef=${doc.nodeRef}">
-	                                                                              ${shareUrl}/page/entity-details?nodeRef=${doc.nodeRef}</a>
+	                                                                              <a href="${shareUrl}/page/entity-data-lists?list=View-properties&nodeRef=${doc.nodeRef}">
+	                                                                              ${shareUrl}/page/entity-data-lists?list=View-properties&nodeRef=${doc.nodeRef}</a>
 	                                                                           </td>
 	                                                                        </tr>
                                                                          <#else>

@@ -20,6 +20,8 @@ public enum CompoListUnit {
 	/** The g. */
 	g,
 	
+	mg,
+	
 	/** The L. */
 	L,
 	
@@ -35,6 +37,6 @@ public enum CompoListUnit {
 	/** m2 **/
 	m2,
 	
-	Perc;
-	
+	Perc
+
 }

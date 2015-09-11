@@ -11,7 +11,8 @@ done
 
 for file in `find -name *_*.properties -not -path "*bin*"`
 do
-   mkdir -p target/properties/$(dirname ${file})
+        mkdir -p target/properties/$(dirname ${file})
 	cp $file target/properties/$(dirname ${file})/
+        echo "Copying target/properties/$(dirname ${file})/$file"
 done
 

@@ -32,7 +32,7 @@ import fr.becpg.repo.product.ProductService;
 public abstract class AbstractProductWebscript extends AbstractWebScript
 {	
 	
-		private static Log logger = LogFactory.getLog(AbstractProductWebscript.class);
+		private static final Log logger = LogFactory.getLog(AbstractProductWebscript.class);
 		
 		//request parameter names
 		protected static final String PARAM_STORE_TYPE = "store_type";

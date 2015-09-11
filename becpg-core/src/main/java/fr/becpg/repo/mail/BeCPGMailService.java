@@ -50,14 +50,18 @@ public interface BeCPGMailService {
 	 * 
 	 * @return the dictionary model mail nodeRef
 	 */
-	public NodeRef getEmailTemplatesFolder();
+	NodeRef getEmailTemplatesFolder();
 	
 	/**
 	 * 
 	 * @return the workflow model mail nodeRef
 	 */
-	public NodeRef getEmailWorkflowTemplatesFolder();
+	NodeRef getEmailWorkflowTemplatesFolder();
 
-
+	/**
+	 * 
+	 * @return the notify model mail nodeRef
+	 */
+	NodeRef getEmailNotifyTemplatesFolder();
 
 }

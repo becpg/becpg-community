@@ -36,6 +36,16 @@
 	<mapping name="bcpg:allergen">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="bcpg:allergenCode" />
+			<nodeColumnKey attribute="bcpg:charactName" />
+		</nodeColumnKeys>
+		<columns>
+
+		</columns>
+	</mapping>
+	
+	<mapping name="cm:person">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="cm:userName" />
 		</nodeColumnKeys>
 		<columns>
 
@@ -116,16 +126,25 @@
 
 	<mapping name="bcpg:labelClaim">
 		<nodeColumnKeys>
-			<nodeColumnKey attribute="cm:name" />
+			<nodeColumnKey attribute="bcpg:charactName" />
 		</nodeColumnKeys>
 		<columns>
 			<column id="labelClaimFormula" type="Formula" attribute="bcpg:labelClaimFormula" />
 		</columns>
 	</mapping>
 	
-	<mapping name="bcpg:nut">
+	<mapping name="bcpg:dynamicCharactList">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="cm:name" />
+		</nodeColumnKeys>
+		<columns>
+			<column id="bcpg:dynamicCharactFormula" type="Formula" attribute="bcpg:labelClaimFormula" />
+		</columns>
+	</mapping>
+	
+	<mapping name="bcpg:nut">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:charactName" />
 		</nodeColumnKeys>
 		<columns>
 			<column id="nutFormula" type="Formula" attribute="bcpg:nutFormula" />
@@ -134,7 +153,7 @@
 	
 	<mapping name="bcpg:ing">
 		<nodeColumnKeys>
-			<nodeColumnKey attribute="cm:name" />
+			<nodeColumnKey attribute="bcpg:charactName" />
 		</nodeColumnKeys>
 		<columns>
 			<column id="bcpg:ingTypeV2" attribute="bcpg:ingTypeV2" type="Attribute" targetClass="bcpg:ingTypeItem" />
@@ -161,7 +180,7 @@
 	
 	<mapping name="bcpg:nutrientProfile">
 		<nodeColumnKeys>
-			<nodeColumnKey attribute="cm:name" />
+			<nodeColumnKey attribute="bcpg:charactName" />
 		</nodeColumnKeys>
 		<columns>
 			<column id="nutrientProfileScoreFormula" type="Formula" attribute="bcpg:nutrientProfileScoreFormula" />

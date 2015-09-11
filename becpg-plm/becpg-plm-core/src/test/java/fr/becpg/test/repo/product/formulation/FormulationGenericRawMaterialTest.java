@@ -18,6 +18,7 @@
 package fr.becpg.test.repo.product.formulation;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -28,12 +29,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.constraints.CompoListUnit;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.product.data.productList.CostListDataItem;
+import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
 /**
@@ -43,7 +47,7 @@ import fr.becpg.test.repo.product.AbstractFinishedProductTest;
  */
 public class FormulationGenericRawMaterialTest extends AbstractFinishedProductTest {
 
-	protected static Log logger = LogFactory.getLog(FormulationGenericRawMaterialTest.class);
+	protected static final Log logger = LogFactory.getLog(FormulationGenericRawMaterialTest.class);
 
 	@Resource
 	private AssociationService associationService;
@@ -67,12 +71,20 @@ public class FormulationGenericRawMaterialTest extends AbstractFinishedProductTe
 				genRawMaterial.setName("Gen RM");
 				genRawMaterial.setUnit(ProductUnit.kg);
 				genRawMaterial.setQty(1d);				
-				List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, (CompoListDataItem) null, null, 2d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));				
+				List<CompoListDataItem> compoList = new ArrayList<>();
+				compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+				compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
+				compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial7NodeRef));
 				genRawMaterial.getCompoListView().setCompoList(compoList);
-
-				return alfrescoRepository.create(testFolderNodeRef, genRawMaterial).getNodeRef();
+				List<CostListDataItem> costList = new LinkedList<>();
+				costList.add(new CostListDataItem(null, null, null, null, cost1, null));
+				costList.add(new CostListDataItem(null, null, null, null, cost2, null));
+				genRawMaterial.setCostList(costList);
+				List<PhysicoChemListDataItem> physicoChemList = new LinkedList<>();
+				physicoChemList.add(new PhysicoChemListDataItem(null, null, null, null, null, physicoChem3));
+				genRawMaterial.setPhysicoChemList(physicoChemList);
+				
+				return alfrescoRepository.create(getTestFolderNodeRef(), genRawMaterial).getNodeRef();
 
 			}
 		}, false, true);
@@ -88,6 +100,31 @@ public class FormulationGenericRawMaterialTest extends AbstractFinishedProductTe
 				assertTrue(formulatedProduct.getSuppliers().contains(supplier1));
 				assertTrue(formulatedProduct.getSuppliers().contains(supplier2));
 
+				int checks = 0;
+				for(CostListDataItem c : formulatedProduct.getCostList()){
+					logger.info("c " + nodeService.getProperty(c.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " " + c.getValue());
+					if(c.getCost().equals(cost1)){
+						assertEquals(2d, c.getValue());
+						checks++;
+					}
+					else if(c.getCost().equals(cost2)){
+						assertEquals(2d, c.getValue());
+						checks++;
+					}
+				}
+				assertEquals(2, checks);
+				
+				checks = 0;
+				for(PhysicoChemListDataItem p : formulatedProduct.getPhysicoChemList()){
+					logger.info("p " + nodeService.getProperty(p.getPhysicoChem(), BeCPGModel.PROP_CHARACT_NAME) + " value: " + p.getValue()+ " mini: " + p.getMini()+ " maxi: " + p.getMaxi());
+					if(p.getPhysicoChem().equals(physicoChem3)){
+						assertEquals(1d, p.getValue());
+						assertEquals(0.8d, p.getMini());
+						assertEquals(2.1d, p.getMaxi());
+						checks++;
+					}
+				}
+				assertEquals(1, checks);
 				return null;
 
 			}

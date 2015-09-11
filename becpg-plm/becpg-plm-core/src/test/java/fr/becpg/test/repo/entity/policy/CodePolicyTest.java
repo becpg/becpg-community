@@ -17,6 +17,8 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
@@ -31,6 +33,8 @@ import fr.becpg.test.PLMBaseTestCase;
  */
 public class CodePolicyTest extends PLMBaseTestCase  {
 
+	private static final Log logger = LogFactory.getLog(CodePolicyTest.class);
+	
 	@Resource
 	private NodeService nodeService;
 
@@ -57,10 +61,10 @@ public class CodePolicyTest extends PLMBaseTestCase  {
 						// delete autonum value
 						autoNumService.deleteAutoNumValue(PLMModel.TYPE_SUPPLIER, BeCPGModel.PROP_CODE);
 
-						Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+						Map<QName, Serializable> properties = new HashMap<>();
 						String name = "Supplier 1";
 						properties.put(ContentModel.PROP_NAME, name);
-						return nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS,
+						return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name),
 								PLMModel.TYPE_SUPPLIER, properties).getChildRef();
 
@@ -76,10 +80,10 @@ public class CodePolicyTest extends PLMBaseTestCase  {
 						assertNotNull("Check supplier created", supplier1NodeRef);
 						code1 = (String) nodeService.getProperty(supplier1NodeRef, BeCPGModel.PROP_CODE);
 
-						Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+						Map<QName, Serializable> properties = new HashMap<>();
 						String name = "Supplier 2";
 						properties.put(ContentModel.PROP_NAME, name);
-						return nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS,
+						return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name),
 								PLMModel.TYPE_SUPPLIER, properties).getChildRef();
 
@@ -96,11 +100,11 @@ public class CodePolicyTest extends PLMBaseTestCase  {
 						code2 = (String) nodeService.getProperty(supplier2NodeRef, BeCPGModel.PROP_CODE);
 
 						// auto num defined not taken
-						Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+						Map<QName, Serializable> properties = new HashMap<>();
 						String name = "Supplier 3";
 						properties.put(ContentModel.PROP_NAME, name);
 						properties.put(BeCPGModel.PROP_CODE, "F3");
-						return nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS,
+						return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name),
 								PLMModel.TYPE_SUPPLIER, properties).getChildRef();
 
@@ -117,11 +121,11 @@ public class CodePolicyTest extends PLMBaseTestCase  {
 						code3 = (String) nodeService.getProperty(supplier3NodeRef, BeCPGModel.PROP_CODE);
 
 						// auto num defined but already taken
-						Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+						Map<QName, Serializable> properties = new HashMap<>();
 						String name = "Supplier 4";
 						properties.put(ContentModel.PROP_NAME, name);
 						properties.put(BeCPGModel.PROP_CODE, "F3");
-						return nodeService.createNode(testFolderNodeRef, ContentModel.ASSOC_CONTAINS,
+						return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name),
 								PLMModel.TYPE_SUPPLIER, properties).getChildRef();
 
@@ -138,21 +142,21 @@ public class CodePolicyTest extends PLMBaseTestCase  {
 				Pattern p = Pattern.compile(autoNumService.getAutoNumMatchPattern(PLMModel.TYPE_SUPPLIER,
 						BeCPGModel.PROP_CODE));
 				Matcher m1 = p.matcher(code1);
-				System.out.println(code1 + " " + p.toString() + " " + m1.matches());
+				logger.info(code1 + " " + p.toString() + " " + m1.matches());
 				assertTrue(m1.matches());
 				assertEquals("Check code 1", "1", m1.group(2));
 				Matcher m2 = p.matcher(code2);
-				System.out.println(code2 + " " + p.toString() + " " + m2.matches());
+				logger.info(code2 + " " + p.toString() + " " + m2.matches());
 				assertTrue(m2.matches());
 				assertEquals("Check code 2", "2", m2.group(2));
 
 				Matcher m3 = p.matcher(code3);
-				System.out.println(code3 + " " + p.toString() + " " + m3.matches());
+				logger.info(code3 + " " + p.toString() + " " + m3.matches());
 				assertTrue(m3.matches());
 				assertEquals("Check code 3", "3", m3.group(2));
 
 				Matcher m4 = p.matcher(code4);
-				System.out.println(code4 + " " + p.toString() + " " + m4.matches());
+				logger.info(code4 + " " + p.toString() + " " + m4.matches());
 				assertTrue(m4.matches());
 				assertEquals("Check code 4", "4", m4.group(2));
 

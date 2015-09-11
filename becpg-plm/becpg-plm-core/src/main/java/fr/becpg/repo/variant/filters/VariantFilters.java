@@ -17,26 +17,30 @@
  ******************************************************************************/
 package fr.becpg.repo.variant.filters;
 
+import java.util.function.Predicate;
+
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.apache.commons.collections.Predicate;
 
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.repository.filters.DataListFilter;
 import fr.becpg.repo.variant.model.VariantData;
 import fr.becpg.repo.variant.model.VariantDataItem;
 
-public class VariantFilters implements DataListFilter<ProductData> {
+public class VariantFilters<T extends VariantDataItem> implements DataListFilter<ProductData,T> {
 
 	private NodeRef variantNodeRef;
 
-	private Boolean isDefaultVariant;
+	private Boolean isDefaultVariant = true;
 
+	
+	public VariantFilters(){
+		super();
+	}
+	
 	public VariantFilters(NodeRef variantNodeRef) {
 		super();
 		this.variantNodeRef = variantNodeRef;
 	}
-
-	public static VariantFilters DEFAULT_VARIANT = new VariantFilters(true);
 
 	public VariantFilters(Boolean isDefaultVariant) {
 		super();
@@ -45,7 +49,7 @@ public class VariantFilters implements DataListFilter<ProductData> {
 	}
 
 	@Override
-	public Predicate createPredicate(final ProductData entity) {
+	public Predicate<T> createPredicate(final ProductData entity) {
 
 		if (variantNodeRef == null && entity.getVariants()!=null) {
 			for (VariantData variant : entity.getVariants()) {
@@ -56,11 +60,9 @@ public class VariantFilters implements DataListFilter<ProductData> {
 			}
 		}
 
-		return new Predicate() {
-
+		return new Predicate<T>() {
 			@Override
-			public boolean evaluate(Object obj) {
-
+			public boolean test(VariantDataItem obj) {
 				if (variantNodeRef!=null && obj instanceof VariantDataItem) {
 					VariantDataItem item = ((VariantDataItem) obj);
 

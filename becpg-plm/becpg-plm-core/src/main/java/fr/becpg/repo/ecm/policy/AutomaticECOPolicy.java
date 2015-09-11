@@ -35,7 +35,7 @@ public class AutomaticECOPolicy extends AbstractBeCPGPolicy implements NodeServi
 
 	private EntityVersionService entityVersionService;
 
-	private static Log logger = LogFactory.getLog(AutomaticECOPolicy.class);
+	private static final Log logger = LogFactory.getLog(AutomaticECOPolicy.class);
 
 	private boolean isEnable = true;
 	
@@ -71,7 +71,9 @@ public class AutomaticECOPolicy extends AbstractBeCPGPolicy implements NodeServi
 				&& !before.get(ContentModel.PROP_MODIFIED).equals(after.get(ContentModel.PROP_MODIFIED))) {
 
 			if (L2CacheSupport.isThreadLockEnable()) {
-				logger.debug("Entity is locked by ECM :" + nodeRef);
+				if(logger.isDebugEnabled()){
+					logger.debug("Entity ["+Thread.currentThread().getName()+"] is locked by ECM :" + nodeRef);
+				}
 				return;
 			}
 
@@ -102,7 +104,7 @@ public class AutomaticECOPolicy extends AbstractBeCPGPolicy implements NodeServi
 				onUpdatePropertiesBehaviour.disable();
 				try {
 					ChangeOrderData changeOrderData = automaticECOService.getCurrentUserChangeOrderData();
-					Map<String, Serializable> properties = new HashMap<String, Serializable>();
+					Map<String, Serializable> properties = new HashMap<>();
 					properties.put(VersionModel.PROP_VERSION_TYPE, VersionType.valueOf(automaticRecordVersionType));
 					properties.put(Version.PROP_DESCRIPTION, I18NUtil.getMessage("plm.ecm.apply.version.label", changeOrderData.getCode()+" - "+changeOrderData.getName()));
 

@@ -32,7 +32,6 @@ import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.ScriptService;
-import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -46,11 +45,9 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DeliverableUrl;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.ProjectRepoConsts;
-import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.AssociationService;
-import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.ProjectWorkflowService;
 import fr.becpg.repo.project.data.ProjectData;
@@ -72,7 +69,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 @Service("projectService")
 public class ProjectServiceImpl implements ProjectService {
 
-	private static Log logger = LogFactory.getLog(ProjectServiceImpl.class);
+	private static final Log logger = LogFactory.getLog(ProjectServiceImpl.class);
 
 	@Autowired
 	private AlfrescoRepository<ProjectData> alfrescoRepository;
@@ -80,8 +77,6 @@ public class ProjectServiceImpl implements ProjectService {
 	private AssociationService associationService;
 	@Autowired
 	private NodeService nodeService;
-	@Autowired
-	private RepoService repoService;
 	@Autowired
 	private SiteService siteService;
 	@Autowired
@@ -95,13 +90,10 @@ public class ProjectServiceImpl implements ProjectService {
 	@Autowired
 	private NamespaceService namespaceService;
 	@Autowired
-	private ScriptService scriptService;
+	private ScriptService scriptService;	
 
 	@Autowired
 	SysAdminParams sysAdminParams;
-
-	@Autowired
-	private EntityListDAO entityListDAO;
 
 	@Override
 	public void openDeliverable(NodeRef deliverableNodeRef) {
@@ -208,15 +200,15 @@ public class ProjectServiceImpl implements ProjectService {
 		nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_END, endDate);
 		// milestone duration is maximum 1 day or startDate is after endDate
 		Boolean isMileStone = (Boolean) nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_IS_MILESTONE);
-		if ((isMileStone != null && isMileStone.booleanValue()) || (startDate == null || startDate.after(endDate))) {
+		if ((isMileStone != null && isMileStone) || (startDate == null || startDate.after(endDate))) {
 			nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_START, endDate);
 		}
 	}
 
 	@Override
 	public List<NodeRef> updateTaskResources(NodeRef projectNodeRef, NodeRef taskRef, List<NodeRef> resources, boolean updatePermissions) {
-		List<NodeRef> toRemove = new ArrayList<NodeRef>();
-		List<NodeRef> toAdd = new ArrayList<NodeRef>();
+		List<NodeRef> toRemove = new ArrayList<>();
+		List<NodeRef> toAdd = new ArrayList<>();
 		for (NodeRef resourceNodeRef : resources) {
 			String authorityName = authorityDAO.getAuthorityName(resourceNodeRef);
 			if (isRoleAuhtority(authorityName)) {
@@ -329,10 +321,9 @@ public class ProjectServiceImpl implements ProjectService {
 
 	@Override
 	public void updateProjectPermission(NodeRef projectNodeRef, NodeRef taskListNodeRef, NodeRef resourceNodeRef, boolean allow) {
-		if (ProjectModel.TYPE_PROJECT.equals(nodeService.getType(projectNodeRef))
-				&& permissionService.hasReadPermission(projectNodeRef) == AccessStatus.ALLOWED) {
+		if (ProjectModel.TYPE_PROJECT.equals(nodeService.getType(projectNodeRef))) {
 
-			List<NodeRef> nodeRefs = new ArrayList<NodeRef>(1);
+			List<NodeRef> nodeRefs = new ArrayList<>(1);
 			nodeRefs.add(taskListNodeRef);
 
 			if (resourceNodeRef != null && nodeService.exists(resourceNodeRef)) {
@@ -348,10 +339,8 @@ public class ProjectServiceImpl implements ProjectService {
 
 					for (NodeRef n : nodeRefs) {
 						if (allow) {
-							permissionService.setPermission(n, authorityName, PermissionService.EDITOR, allow);
+							permissionService.setPermission(n, authorityName, PermissionService.EDITOR, true);
 						} else {
-							// permissionService.deletePermission(n, userName,
-							// PermissionService.EDITOR);
 							permissionService.clearPermission(n, authorityName);
 						}
 
@@ -366,7 +355,7 @@ public class ProjectServiceImpl implements ProjectService {
 	public void runScript(ProjectData project, TaskListDataItem task, NodeRef scriptNode) {
 
 		if (scriptNode != null && nodeService.exists(scriptNode)) {
-			Map<String, Object> model = new HashMap<String, Object>();
+			Map<String, Object> model = new HashMap<>();
 
 			logger.debug("Run task script " );
 
@@ -389,9 +378,18 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
-	public Long getNbProjectsByLegend(NodeRef legendNodeRef) {
-		return BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_PROJECT).andPropEquals(ProjectModel.PROP_PROJECT_STATE, ProjectState.InProgress.toString())
-				.andPropEquals(ProjectModel.PROP_PROJECT_LEGENDS, legendNodeRef.toString()).inDB().count();
+	public Long getNbProjectsByLegend(NodeRef legendNodeRef, String siteId) {
+		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_PROJECT).andPropEquals(ProjectModel.PROP_PROJECT_STATE, ProjectState.InProgress.toString());
+		if(legendNodeRef == null){
+			queryBuilder.isNull(ProjectModel.PROP_PROJECT_LEGENDS);			
+		}
+		else{
+			queryBuilder.andPropEquals(ProjectModel.PROP_PROJECT_LEGENDS, legendNodeRef.toString());
+		}
+		if(siteId != null){
+			queryBuilder.inSite(siteId, null);
+		}
+		return queryBuilder.count();
 	}
 
 }

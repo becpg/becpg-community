@@ -35,7 +35,7 @@ import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.repo.tenant.TenantUtil;
 import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
-import org.alfresco.repo.transaction.TransactionListenerAdapter;
+import org.alfresco.util.transaction.TransactionListenerAdapter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -52,7 +52,7 @@ import fr.becpg.repo.cache.BeCPGCacheService;
  */
 public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBean {
 
-	private static Log logger = LogFactory.getLog(BeCPGCacheServiceImpl.class);
+	private static final Log logger = LogFactory.getLog(BeCPGCacheServiceImpl.class);
 
 	private int maxCacheItems = 500;
 	
@@ -64,7 +64,7 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 	
 	private TenantAdminService tenantAdminService;
 
-	private Map<String, DefaultSimpleCache<String, ?>> caches = new ConcurrentHashMap<String, DefaultSimpleCache<String, ?>>();
+	private final Map<String, DefaultSimpleCache<String, ?>> caches = new ConcurrentHashMap<>();
 
 	public void setMaxCacheItems(int maxCacheItems) {
 		this.maxCacheItems = maxCacheItems;
@@ -123,9 +123,9 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 			if (!disableAllCache && ret != null) {
 				
 				if(deleteOnTxRollback  && AlfrescoTransactionSupport.isActualTransactionActive()){
-					Set<String> currentTransactionCacheKeys = (Set<String>) AlfrescoTransactionSupport.getResource(cacheName);
+					Set<String> currentTransactionCacheKeys = AlfrescoTransactionSupport.getResource(cacheName);
 					if (currentTransactionCacheKeys == null) {
-						currentTransactionCacheKeys = new LinkedHashSet<String>();
+						currentTransactionCacheKeys = new LinkedHashSet<>();
 						if (isDebugEnable) {
 							logger.debug("Bind key to transaction : "+cacheName);
 						}
@@ -138,7 +138,7 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 						@Override
 						public void afterRollback() {
 							
-							Set<String> txCacheKeys = (Set<String>) AlfrescoTransactionSupport.getResource(cacheName);
+							Set<String> txCacheKeys = AlfrescoTransactionSupport.getResource(cacheName);
 							if (txCacheKeys != null) {
 								for (String txCacheKey : txCacheKeys) {
 									if (isDebugEnable) {
@@ -240,7 +240,7 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 
 	}
 
-	public final class DefaultSimpleCache<K extends Serializable, V extends Object> implements SimpleCache<K, V> {
+	public final class DefaultSimpleCache<K extends Serializable, V> implements SimpleCache<K, V> {
 		private ConcurrentLinkedHashMap<K, AbstractMap.SimpleImmutableEntry<K, V>> map;
 
 		/**
@@ -284,7 +284,7 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 
 		@Override
 		public void put(K key, V value) {
-			AbstractMap.SimpleImmutableEntry<K, V> kvp = new AbstractMap.SimpleImmutableEntry<K, V>(key, value);
+			AbstractMap.SimpleImmutableEntry<K, V> kvp = new AbstractMap.SimpleImmutableEntry<>(key, value);
 			map.put(key, kvp);
 		}
 

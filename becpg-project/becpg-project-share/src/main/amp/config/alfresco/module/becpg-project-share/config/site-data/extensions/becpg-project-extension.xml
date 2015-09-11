@@ -1,0 +1,33 @@
+<extension>
+	<modules>
+		<module>
+			<id>becpg-project-extension</id>
+			<auto-deploy>true</auto-deploy>
+			<customizations>
+				 <customization>
+		          <targetPackageRoot>org.alfresco.share.header</targetPackageRoot>
+		          <sourcePackageRoot>org.alfresco.components.custom-menu-project</sourcePackageRoot>
+		        </customization>
+		        <customization>
+		          <targetPackageRoot>org.alfresco.share.pages</targetPackageRoot>
+		          <sourcePackageRoot>org.alfresco.components.custom-menu-project</sourcePackageRoot>
+		          <alwaysApply>
+					  <webscript>share-header</webscript>
+				   </alwaysApply>
+		        </customization>
+		        <customization>
+					<targetPackageRoot>org.alfresco.modules</targetPackageRoot>
+					<sourcePackageRoot>org.alfresco.components.custom-presets-project</sourcePackageRoot>
+				</customization>
+				 <customization>
+					<targetPackageRoot>org.alfresco.components.entity-charact-views</targetPackageRoot>
+					<sourcePackageRoot>org.alfresco.components.custom-views-project</sourcePackageRoot>
+				</customization>
+				<customization>
+					<targetPackageRoot>org.alfresco.components.entity-data-lists</targetPackageRoot>
+					<sourcePackageRoot>org.alfresco.components.custom-entity-datalists-project</sourcePackageRoot>
+				</customization>
+			</customizations>
+		</module>
+	</modules>
+</extension>  

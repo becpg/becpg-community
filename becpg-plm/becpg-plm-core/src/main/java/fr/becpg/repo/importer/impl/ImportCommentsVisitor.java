@@ -44,7 +44,7 @@ import org.alfresco.repo.forum.CommentService;
  */
 public class ImportCommentsVisitor  extends AbstractImportVisitor {
 
-	private static Log logger = LogFactory.getLog(ImportCommentsVisitor.class);
+	private static final Log logger = LogFactory.getLog(ImportCommentsVisitor.class);
 	
 	private CommentService commentService;
 	

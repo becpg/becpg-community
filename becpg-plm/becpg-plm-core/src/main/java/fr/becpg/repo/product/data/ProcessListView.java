@@ -26,6 +26,10 @@ import fr.becpg.repo.repository.annotation.DataList;
 
 public class ProcessListView extends AbstractProductDataView {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7335139813241579530L;
 	private List<ProcessListDataItem> processList;
 	
 	

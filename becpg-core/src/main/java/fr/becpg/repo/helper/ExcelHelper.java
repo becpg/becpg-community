@@ -31,7 +31,7 @@ public class ExcelHelper {
 			} else {
 				Cell cell = row.createCell(cellnum++);
 
-				Object obj = null;
+				Object obj;
 				if (prefix != null) {
 					obj = item.get(prefix + "_" + field.getFieldName());
 				} else {
@@ -62,7 +62,6 @@ public class ExcelHelper {
 			XSSFCellStyle style, int cellnum, ExcelFieldTitleProvider titleProvider) {
 		if (fields != null) {
 			for (AttributeExtractorStructure field : fields) {
-
 				if (field.isNested()) {
 
 					cellnum = appendExcelHeader(field.getChildrens(), field.getFieldName(), titleProvider.getTitle(field), headerRow, labelRow,

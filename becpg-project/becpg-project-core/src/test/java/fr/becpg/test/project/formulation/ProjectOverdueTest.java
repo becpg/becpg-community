@@ -23,14 +23,14 @@ import fr.becpg.test.project.AbstractProjectTestCase;
  * @author quere
  */
 public class ProjectOverdueTest extends AbstractProjectTestCase {	
-
+	
 	/**
 	 * Test the calculation of the project overdue
 	 */
 	@Test
 	public void testProjectOverdue() {
 
-		createProject(ProjectState.Planned, new Date(), null);
+		final NodeRef projectNodeRef = createProject(ProjectState.Planned, new Date(), null);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
@@ -57,7 +57,7 @@ public class ProjectOverdueTest extends AbstractProjectTestCase {
 				// set start date to simulate 3 days after start (task in progress)
 				startDate = ProjectHelper.calculateNextDate(new Date(), 3, false);
 				projectData.getTaskList().get(0).setStart(startDate);				
-				planningFormulationHandler.process(projectData);	
+				planningFormulationHandler.process(projectData);
 				assertEquals(1, projectData.getOverdue().intValue());
 				
 				// set start date to simulate 3 days after start (task completed in time)
@@ -100,9 +100,21 @@ public class ProjectOverdueTest extends AbstractProjectTestCase {
 				planningFormulationHandler.process(projectData);
 				
 				assertEquals(1, projectData.getOverdue().intValue());
-
+				
+				// add a parallel task
+				TaskListDataItem task = new TaskListDataItem(null, "Task in parallel", false, 2, null, null, null,null);
+				task.setStart(new Date());
+				task.setEnd(ProjectHelper.calculateNextDate(new Date(), 5, true));
+				task.setTaskState(TaskState.Completed);
+				projectData.getTaskList().add(task);
+				alfrescoRepository.save(projectData);
+				projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+				planningFormulationHandler.process(projectData);
+				assertEquals(1, projectData.getOverdue().intValue());
+								
 				return null;
 			}
-		}, false, true);		
+		}, false, true);				
+		
 	}
 }

@@ -19,8 +19,8 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 */
 package fr.becpg.repo.helper.impl;
 
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -49,7 +49,7 @@ public class LinkedValueAttributeExtractorPlugin implements AttributeExtractorPl
 	
 	@Override
 	public Collection<QName> getMatchingTypes() {
-		return Arrays.asList(BeCPGModel.TYPE_LINKED_VALUE);
+		return Collections.singletonList(BeCPGModel.TYPE_LINKED_VALUE);
 	}
 	
 
@@ -62,6 +62,12 @@ public class LinkedValueAttributeExtractorPlugin implements AttributeExtractorPl
 	@Override
 	public String extractMetadata(QName type, NodeRef nodeRef) {
 		return BeCPGModel.PROP_LKV_VALUE.toPrefixString(namespaceService).split(":")[1];
+	}
+
+
+	@Override
+	public Integer getPriority() {
+		return 0;
 	}
 
 	

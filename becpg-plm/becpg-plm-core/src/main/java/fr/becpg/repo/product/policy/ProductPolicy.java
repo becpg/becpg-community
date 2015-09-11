@@ -20,7 +20,7 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 public class ProductPolicy extends AbstractBeCPGPolicy implements 
 		CheckOutCheckInServicePolicies.OnCheckOut{
 
-	private static Log logger = LogFactory.getLog(ProductPolicy.class);
+	private static final Log logger = LogFactory.getLog(ProductPolicy.class);
 
 	@Override
 	public void doInit() {

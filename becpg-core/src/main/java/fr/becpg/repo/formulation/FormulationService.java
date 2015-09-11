@@ -22,13 +22,13 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 public interface FormulationService<T extends FormulatedEntity> {
 
-    public T formulate(NodeRef entityNodeRef, String chainId) throws FormulateException;
+     T formulate(NodeRef entityNodeRef, String chainId) throws FormulateException;
     
-    public T formulate(T repositoryEntity, String chainId) throws FormulateException;
+     T formulate(T repositoryEntity, String chainId) throws FormulateException;
 	
-    public T formulate(NodeRef entityNodeRef) throws FormulateException;
+     T formulate(NodeRef entityNodeRef) throws FormulateException;
     
-    public T formulate(T repositoryEntity) throws FormulateException;
+     T formulate(T repositoryEntity) throws FormulateException;
 
 	void registerFormulationChain(Class<T> clazz, FormulationChain<T> chain);
 	

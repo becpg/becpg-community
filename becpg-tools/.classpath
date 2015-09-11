@@ -6,14 +6,46 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" output="target/test-classes" path="src/test/java">
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
 		<attributes>
-			<attribute name="optional" value="true"/>
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7">
+	<classpathentry kind="var" path="M2_REPO/log4j/log4j/1.2.17/log4j-1.2.17.jar" sourcepath="M2_REPO/log4j/log4j/1.2.17/log4j-1.2.17-sources.jar">
 		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/log4j/log4j/1.2.17/log4j-1.2.17-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.2/commons-logging-1.2.jar" sourcepath="M2_REPO/commons-logging/commons-logging/1.2/commons-logging-1.2-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/commons-logging/commons-logging/1.2/commons-logging-1.2-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/mysql/mysql-connector-java/5.1.34/mysql-connector-java-5.1.34.jar" sourcepath="M2_REPO/mysql/mysql-connector-java/5.1.34/mysql-connector-java-5.1.34-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/httpcomponents/httpclient/4.3.3/httpclient-4.3.3.jar" sourcepath="M2_REPO/org/apache/httpcomponents/httpclient/4.3.3/httpclient-4.3.3-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/apache/httpcomponents/httpclient/4.3.3/httpclient-4.3.3-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/apache/httpcomponents/httpcore/4.3.2/httpcore-4.3.2.jar" sourcepath="M2_REPO/org/apache/httpcomponents/httpcore/4.3.2/httpcore-4.3.2-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/apache/httpcomponents/httpcore/4.3.2/httpcore-4.3.2-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/commons-codec/commons-codec/1.10/commons-codec-1.10.jar" sourcepath="M2_REPO/commons-codec/commons-codec/1.10/commons-codec-1.10-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/commons-codec/commons-codec/1.10/commons-codec-1.10-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/org/apache/httpcomponents/httpmime/4.3.3/httpmime-4.3.3.jar" sourcepath="M2_REPO/org/apache/httpcomponents/httpmime/4.3.3/httpmime-4.3.3-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/opt/java_repository/org/apache/httpcomponents/httpmime/4.3.3/httpmime-4.3.3-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/tk/skuro/alfresco/h2-support/1.6/h2-support-1.6.jar" sourcepath="M2_REPO/tk/skuro/alfresco/h2-support/1.6/h2-support-1.6-sources.jar"/>
+	<classpathentry kind="src" output="target/test-classes" path="src/test/java">
+		<attributes>
+			<attribute name="optional" value="true"/>
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>

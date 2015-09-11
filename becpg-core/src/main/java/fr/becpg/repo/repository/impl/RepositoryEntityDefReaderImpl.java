@@ -54,18 +54,19 @@ import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.annotation.DataListView;
 import fr.becpg.repo.repository.annotation.MultiLevelDataList;
+import fr.becpg.repo.repository.annotation.MultiLevelLeaf;
 import fr.becpg.repo.repository.model.BaseObject;
 
 @Repository("repositoryEntityDefReader")
 public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefReader<T> , ApplicationListener<ContextRefreshedEvent> {
 
-	private static Log logger = LogFactory.getLog(RepositoryEntityDefReaderImpl.class);
+	private static final Log logger = LogFactory.getLog(RepositoryEntityDefReaderImpl.class);
 
 	@Autowired
 	private NamespaceService namespaceService;
 
 	
-	private Map<QName, Class<T>> domainMapping = new HashMap<QName, Class<T>>();
+	private final Map<QName, Class<T>> domainMapping = new HashMap<>();
 
 	@Override
 	@SuppressWarnings("unchecked")
@@ -170,7 +171,7 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 
 	@SuppressWarnings("unchecked")
 	private <R, Z> Map<QName, R> readValueMap(Z entity, Class<? extends Annotation> annotationClass, Class<?> returnType) {
-		Map<QName, R> ret = new HashMap<QName, R>();
+		Map<QName, R> ret = new HashMap<>();
 		
 			BeanWrapper beanWrapper = PropertyAccessorFactory.forBeanPropertyAccess(entity);
 			for (PropertyDescriptor pd : beanWrapper.getPropertyDescriptors()) {
@@ -208,7 +209,7 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 
 	@Override
 	public QName getDefaultPivoAssocName(QName entityDataListQname) {
-		Class<T> entityClass = (Class<T>) getEntityClass(entityDataListQname);
+		Class<T> entityClass = getEntityClass(entityDataListQname);
 		if (entityClass == null) {
 			throw new IllegalArgumentException("Type is not registered : " + entityDataListQname);
 		}
@@ -232,11 +233,14 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 
 	@Override
 	public boolean isMultiLevelDataList(QName dataListItemType) {
-		Class<T> entityClass = (Class<T>) getEntityClass(dataListItemType);
-		if (entityClass != null) {
-			return entityClass.isAnnotationPresent(MultiLevelDataList.class);
-		}
-		return false;
+		Class<T> entityClass = getEntityClass(dataListItemType);
+		return entityClass != null && entityClass.isAnnotationPresent(MultiLevelDataList.class);
+	}
+
+	@Override
+	public boolean isMultiLevelLeaf(QName entityType) {
+		Class<T> entityClass = getEntityClass(entityType);
+		return entityClass != null && entityClass.isAnnotationPresent(MultiLevelLeaf.class);
 	}
 
 }

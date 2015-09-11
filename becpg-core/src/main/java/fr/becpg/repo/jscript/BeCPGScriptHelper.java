@@ -24,6 +24,7 @@ import org.alfresco.repo.jscript.ScriptNode;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.repo.entity.AutoNumService;
+import fr.becpg.repo.olap.OlapService;
 
 /**
  * Utility script methods
@@ -34,6 +35,12 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension{
 
 	private AutoNumService autoNumService;
 	
+	private OlapService olapService;
+	
+	public void setOlapService(OlapService olapService) {
+		this.olapService = olapService;
+	}
+
 	public void setAutoNumService(AutoNumService autoNumService) {
 		this.autoNumService = autoNumService;
 	}
@@ -49,5 +56,10 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension{
 	public String getMessage(String messageKey, Object param ){
 		return I18NUtil.getMessage(messageKey,param,  Locale.getDefault());
 	}
+	
+	public String getOlapSSOUrl(){
+		return olapService.getSSOUrl();
+	}
+	
 	
 }

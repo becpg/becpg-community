@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2014 beCPG. 
+ * Copyright (C) 2010-2015 beCPG. 
  *  
  * This file is part of beCPG 
  *  
@@ -25,7 +25,6 @@ import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
-import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.CompoListUnit;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
@@ -34,7 +33,7 @@ import fr.becpg.repo.variant.filters.VariantFilters;
 
 public class CompositionQtyCalculatingFormulationHandler extends FormulationBaseHandler<ProductData> {
 
-	private static Log logger = LogFactory.getLog(CompositionQtyCalculatingFormulationHandler.class);
+	private static final Log logger = LogFactory.getLog(CompositionQtyCalculatingFormulationHandler.class);
 
 	private NodeService nodeService;
 	
@@ -42,14 +41,14 @@ public class CompositionQtyCalculatingFormulationHandler extends FormulationBase
 		this.nodeService = nodeService;
 	}
 
-	@SuppressWarnings("unchecked")
+
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 
 		logger.debug("Composition calculating visitor");
 
 		// no compo => no formulation
-		if (!formulatedProduct.hasCompoListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT)) {
+		if (!formulatedProduct.hasCompoListEl(new VariantFilters<>())) {
 			logger.debug("no compo => no formulation");
 			return true;
 		}
@@ -63,7 +62,7 @@ public class CompositionQtyCalculatingFormulationHandler extends FormulationBase
 			}
 		}
 		Double netWeight = formulatedProduct.getNetWeight();
-		Composite<CompoListDataItem> compositeAll = CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList(EffectiveFilters.ALL));		
+		Composite<CompoListDataItem> compositeAll = CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList());		
 
 		// calculate on every item
 		visitQtyChildren(formulatedProduct, netWeight, compositeAll);
@@ -85,7 +84,7 @@ public class CompositionQtyCalculatingFormulationHandler extends FormulationBase
 				}
 
 				// Take in account yield that is defined on component
-				Double qty = null;
+				Double qty;
 				if (component.isLeaf()) {
 					qty = qtyInKg * 100 / FormulationHelper.getYield(component.getData());
 				} else {
@@ -133,6 +132,8 @@ public class CompositionQtyCalculatingFormulationHandler extends FormulationBase
 				return qty;
 			} else if (compoListUnit.equals(CompoListUnit.g)) {
 				return qty / 1000;
+			} else if (compoListUnit.equals(CompoListUnit.mg)) {
+				return qty / 1000000;
 			} else if (compoListUnit.equals(CompoListUnit.P)) {
 				return FormulationHelper.getNetWeight(compoListDataItem.getProduct(), nodeService, FormulationHelper.DEFAULT_NET_WEIGHT) * qty;
 			} else if (compoListUnit.equals(CompoListUnit.L) || compoListUnit.equals(CompoListUnit.mL)) {

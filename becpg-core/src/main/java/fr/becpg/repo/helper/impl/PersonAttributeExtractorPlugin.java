@@ -64,7 +64,7 @@ public class PersonAttributeExtractorPlugin implements AttributeExtractorPlugin 
 	@Autowired
 	TenantService tenantService;
 	
-	private static Log logger = LogFactory.getLog(PersonAttributeExtractorPlugin.class);
+	private static final Log logger = LogFactory.getLog(PersonAttributeExtractorPlugin.class);
 	 
 	
 	@Override
@@ -129,6 +129,12 @@ public class PersonAttributeExtractorPlugin implements AttributeExtractorPlugin 
 			}
 		});
 
+	}
+
+
+	@Override
+	public Integer getPriority() {
+		return 0;
 	}
 
 }

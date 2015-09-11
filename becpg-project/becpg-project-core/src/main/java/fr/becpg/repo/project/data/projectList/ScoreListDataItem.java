@@ -34,6 +34,10 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfQname(qname = "pjt:scoreList")
 public class ScoreListDataItem extends BeCPGDataObject {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6664147076602707094L;
 	private String criterion;
 	private Integer weight;
 	private Integer score;

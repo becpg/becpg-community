@@ -56,7 +56,7 @@ public class UserImportServiceTest  extends PLMBaseTestCase {
 	@Resource
 	UserImporterService userImporterService;
 
-	private static Log logger = LogFactory.getLog(UserImportServiceTest.class);
+	private static final Log logger = LogFactory.getLog(UserImportServiceTest.class);
 
 
 	

@@ -25,6 +25,7 @@ import javax.annotation.Resource;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AuthorityType;
+import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -48,15 +49,12 @@ public class SecurityServiceTest extends RepoBaseTestCase {
 
 	protected static final String USER_TWO = "philippe_secu";
 
-	
 	private String grp1;
 	private String grp2;
 	private String grp3;
-	
-	
 
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(SecurityServiceTest.class);
+	private static final Log logger = LogFactory.getLog(SecurityServiceTest.class);
 
 	@Resource
 	private AlfrescoRepository<ACLGroupData> alfrescoRepository;
@@ -65,150 +63,143 @@ public class SecurityServiceTest extends RepoBaseTestCase {
 
 	@Resource
 	SecurityListValuePlugin securityListValuePlugin;
-	
+
 	@Resource
 	NamespaceService namespaceService;
-	
-	
-	private void createUsers(){
-		
+
+	private void createUsers() {
+
 		/*
 		 * Matthieu : GRP_1, GRP_2 Philippe : GRP_3 Admin
 		 */
-		
-		grp1 = authorityService.createAuthority(
-				AuthorityType.GROUP, "GRP_1");
-		grp2 = authorityService.createAuthority(
-				AuthorityType.GROUP, "GRP_2");
-		grp3 = authorityService.createAuthority(
-				AuthorityType.GROUP, "GRP_3");
 
+		if(authorityService.authorityExists(PermissionService.GROUP_PREFIX+"GRP_1")){
+			grp1 = PermissionService.GROUP_PREFIX+"GRP_1";
+		} else {
+			grp1 = authorityService.createAuthority(AuthorityType.GROUP, "GRP_1");
+		}
+		if(authorityService.authorityExists(PermissionService.GROUP_PREFIX+"GRP_2")){
+			grp2 = PermissionService.GROUP_PREFIX+"GRP_2";
+		} else {
+			grp2 = authorityService.createAuthority(AuthorityType.GROUP, "GRP_2");
+		}
+		
+		if(authorityService.authorityExists(PermissionService.GROUP_PREFIX+"GRP_3")){
+			grp3 = PermissionService.GROUP_PREFIX+"GRP_3";
+		} else {
+			grp3 = authorityService.createAuthority(AuthorityType.GROUP, "GRP_3");
+		}
+		
+		
 		if (!authenticationDAO.userExists(USER_ONE)) {
 			BeCPGTestHelper.createUser(USER_ONE);
-			
+
 			authorityService.addAuthority(grp1, USER_ONE);
 
-		
 			authorityService.addAuthority(grp2, USER_ONE);
 		}
 
 		if (!authenticationDAO.userExists(USER_TWO)) {
 			BeCPGTestHelper.createUser(USER_TWO);
-			
+
 			authorityService.addAuthority(grp3, USER_TWO);
 		}
 	}
-	
 
-	private void createACLGroup(NodeRef testFolderNodeRef) {
+	private NodeRef createACLGroup() {
 
 		createUsers();
-		
 		ACLGroupData aclGroupData = new ACLGroupData();
 		aclGroupData.setName("Test ACL");
 		aclGroupData.setNodeType(SecurityModel.TYPE_ACL_ENTRY.toPrefixString(namespaceService));
-		
-		
-		
-		//aclGroupData.setNodeAspects(Arrays.asList(new String[]{BeCPGModel.ASPECT_CLIENTS.toString(),BeCPGModel.ASPECT_CODE.toString()}));
-		
-		
-		List<NodeRef> groups = new ArrayList<NodeRef>();
+
+		// aclGroupData.setNodeAspects(Arrays.asList(new
+		// String[]{BeCPGModel.ASPECT_CLIENTS.toString(),BeCPGModel.ASPECT_CODE.toString()}));
+
+		List<NodeRef> groups = new ArrayList<>();
 		groups.add(authorityService.getAuthorityNodeRef(grp3));
-		List<ACLEntryDataItem> acls = new ArrayList<ACLEntryDataItem>();
+		List<ACLEntryDataItem> acls = new ArrayList<>();
 
-		
-		acls.add(new ACLEntryDataItem( "cm:name",
-				PermissionModel.READ_ONLY, groups));
+		acls.add(new ACLEntryDataItem("cm:name", PermissionModel.READ_ONLY, groups));
 
-		groups = new ArrayList<NodeRef>();
+		groups = new ArrayList<>();
 		groups.add(authorityService.getAuthorityNodeRef(grp1));
 
-		acls.add(new ACLEntryDataItem("sec:propName",
-				PermissionModel.READ_WRITE, groups));
+		acls.add(new ACLEntryDataItem("sec:propName", PermissionModel.READ_WRITE, groups));
 
-		acls.add(new ACLEntryDataItem("sec:aclPermission",
-				PermissionModel.READ_ONLY, groups));
+		acls.add(new ACLEntryDataItem("sec:aclPermission", PermissionModel.READ_ONLY, groups));
 
 		aclGroupData.setAcls(acls);
-		alfrescoRepository.create(testFolderNodeRef, aclGroupData);
+		alfrescoRepository.create(getTestFolderNodeRef(), aclGroupData);
+
+		return aclGroupData.getNodeRef();
 
 	}
 
 	@Test
 	public void testComputeAccessMode() {
 
-		
-		transactionService.getRetryingTransactionHelper().doInTransaction(
-				new RetryingTransactionCallback<NodeRef>() {
-					@Override
-					public NodeRef execute() throws Throwable {
-						
-						createACLGroup(testFolderNodeRef);
+		final NodeRef aclGroupNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
 
-						securityService.refreshAcls();
+				NodeRef ret = createACLGroup();
 
-						return null;
+				securityService.refreshAcls();
 
-					}
-				}, false, true);
+				return ret;
+
+			}
+		}, false, true);
 
 		authenticationComponent.setCurrentUser(USER_TWO);
 
-		assertEquals(securityService.computeAccessMode(
-				SecurityModel.TYPE_ACL_ENTRY, "cm:name"),
-				SecurityService.READ_ACCESS);
+		assertEquals(securityService.computeAccessMode(SecurityModel.TYPE_ACL_ENTRY, "cm:name"), SecurityService.READ_ACCESS);
 
-		assertEquals(securityService.computeAccessMode(
-				SecurityModel.TYPE_ACL_ENTRY, "sec:propName"),
-				SecurityService.READ_ACCESS);
+		assertEquals(securityService.computeAccessMode(SecurityModel.TYPE_ACL_ENTRY, "sec:propName"), SecurityService.READ_ACCESS);
 
-		assertEquals(securityService.computeAccessMode(
-				SecurityModel.TYPE_ACL_ENTRY, "sec:aclPermission"),
-				SecurityService.NONE_ACCESS);
+		assertEquals(securityService.computeAccessMode(SecurityModel.TYPE_ACL_ENTRY, "sec:aclPermission"), SecurityService.NONE_ACCESS);
 
 		authenticationComponent.setCurrentUser(USER_ONE);
 
-		assertEquals(securityService.computeAccessMode(
-				SecurityModel.TYPE_ACL_ENTRY, "cm:name"),
-				SecurityService.NONE_ACCESS);
+		assertEquals(securityService.computeAccessMode(SecurityModel.TYPE_ACL_ENTRY, "cm:name"), SecurityService.NONE_ACCESS);
 
-		assertEquals(securityService.computeAccessMode(
-				SecurityModel.TYPE_ACL_ENTRY, "sec:propName"),
-				SecurityService.WRITE_ACCESS);
+		assertEquals(securityService.computeAccessMode(SecurityModel.TYPE_ACL_ENTRY, "sec:propName"), SecurityService.WRITE_ACCESS);
 
-		assertEquals(securityService.computeAccessMode(
-				SecurityModel.TYPE_ACL_ENTRY, "sec:aclPermission"),
-				SecurityService.READ_ACCESS);
+		assertEquals(securityService.computeAccessMode(SecurityModel.TYPE_ACL_ENTRY, "sec:aclPermission"), SecurityService.READ_ACCESS);
 
 		authenticationComponent.setCurrentUser("admin");
 
-		assertEquals(securityService.computeAccessMode(
-				SecurityModel.TYPE_ACL_ENTRY, "cm:name"),
-				SecurityService.WRITE_ACCESS);
+		assertEquals(securityService.computeAccessMode(SecurityModel.TYPE_ACL_ENTRY, "cm:name"), SecurityService.WRITE_ACCESS);
 
-		assertEquals(securityService.computeAccessMode(
-				SecurityModel.TYPE_ACL_ENTRY, "sec:propName"),
-				SecurityService.WRITE_ACCESS);
+		assertEquals(securityService.computeAccessMode(SecurityModel.TYPE_ACL_ENTRY, "sec:propName"), SecurityService.WRITE_ACCESS);
 
-		assertEquals(securityService.computeAccessMode(
-				SecurityModel.TYPE_ACL_ENTRY, "sec:aclPermission"),
-				SecurityService.WRITE_ACCESS);
+		assertEquals(securityService.computeAccessMode(SecurityModel.TYPE_ACL_ENTRY, "sec:aclPermission"), SecurityService.WRITE_ACCESS);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
+			@Override
+			public NodeRef execute() throws Throwable {
+
+				nodeService.deleteNode(aclGroupNodeRef);
+
+				return null;
+			}
+		}, false, true);
 
 	}
-	
+
 	@Test
-	public void testConstainst(){
-		ListValuePage types =  securityListValuePlugin.suggest("aclType", "*", 1, 25, null);
+	public void testConstainst() {
+		ListValuePage types = securityListValuePlugin.suggest("aclType", "*", 1, 25, null);
 		assertNotNull(types);
-		assertTrue(types.getFullListSize()>0);
-		
-		if(logger.isDebugEnabled()){
-			for(ListValueEntry type : types.getResults()){
-				logger.debug("Type : "+type);
+		assertTrue(types.getFullListSize() > 0);
+
+		if (logger.isDebugEnabled()) {
+			for (ListValueEntry type : types.getResults()) {
+				logger.debug("Type : " + type);
 			}
 		}
-		
+
 	}
-	
+
 }

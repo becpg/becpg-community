@@ -6,11 +6,16 @@ import fr.becpg.model.SystemState;
 import fr.becpg.repo.hierarchy.HierarchicalEntity;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
+import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.repository.model.StateableEntity;
 
+@AlfType
+@AlfQname(qname = "bcpg:supplier")
 public class SupplierData extends BeCPGDataObject implements HierarchicalEntity, StateableEntity {
 
+
+	private static final long serialVersionUID = -2554133542406623412L;
 	private String name;
 	private NodeRef hierarchy1;
 	private NodeRef hierarchy2;
@@ -65,7 +70,7 @@ public class SupplierData extends BeCPGDataObject implements HierarchicalEntity,
 
 	@Override
 	public String toString() {
-		return "ClientData [name=" + name + ", hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", state="
+		return "SupplierData [name=" + name + ", hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", state="
 				+ state + "]";
 	}
 

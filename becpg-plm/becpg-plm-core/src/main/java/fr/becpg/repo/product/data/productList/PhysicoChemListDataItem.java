@@ -5,19 +5,22 @@ package fr.becpg.repo.product.data.productList;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.model.AbstractManualDataItem;
+import fr.becpg.repo.repository.model.MinMaxValueDataItem;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
 
 @AlfType
 @AlfQname(qname = "bcpg:physicoChemList")
-public class PhysicoChemListDataItem extends AbstractManualDataItem implements SimpleListDataItem{
+public class PhysicoChemListDataItem extends AbstractManualDataItem implements SimpleListDataItem, MinMaxValueDataItem{
 			
 	
+	private static final long serialVersionUID = -3018711765028656339L;
+
 	private Double value;
 	
 	private String unit;
@@ -99,6 +102,7 @@ public class PhysicoChemListDataItem extends AbstractManualDataItem implements S
 	public void setPhysicoChem(NodeRef physicoChem) {
 		this.physicoChem = physicoChem;
 	}
+	
 	
 	/**
 	 * Instantiates a new physico chem list data item.
@@ -183,8 +187,4 @@ public class PhysicoChemListDataItem extends AbstractManualDataItem implements S
 		return "PhysicoChemListDataItem [value=" + value + ", unit=" + unit + ", mini=" + mini + ", maxi=" + maxi + ", physicoChem=" + physicoChem + ", isManual=" + isManual
 				+ ", nodeRef=" + nodeRef + ", name=" + name + "]";
 	}
-	
-
-
-	
 }

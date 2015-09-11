@@ -45,7 +45,7 @@ import fr.becpg.repo.project.ProjectService;
  */
 public class ProjectModuleInfoWebScript extends AbstractWebScript {
 
-	private static Log logger = LogFactory.getLog(ProjectModuleInfoWebScript.class);
+	private static final Log logger = LogFactory.getLog(ProjectModuleInfoWebScript.class);
 
 	private static final String PARAM_SITE = "site";
 
@@ -87,7 +87,7 @@ public class ProjectModuleInfoWebScript extends AbstractWebScript {
 				lObj.put("nodeRef", legend);
 				lObj.put("label", nodeService.getProperty(legend, ContentModel.PROP_NAME));
 				lObj.put("color", nodeService.getProperty(legend, BeCPGModel.PROP_COLOR));
-				lObj.put("nbProjects", projectService.getNbProjectsByLegend(legend));
+				lObj.put("nbProjects", projectService.getNbProjectsByLegend(legend, siteId));
 				jsonArray.put(lObj);
 			}
 

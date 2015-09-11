@@ -5,18 +5,22 @@ package fr.becpg.repo.product.data;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.apache.commons.collections.CollectionUtils;
 
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.hierarchy.HierarchicalEntity;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.TareUnit;
+import fr.becpg.repo.product.data.ing.IngTypeItem;
+import fr.becpg.repo.product.data.packaging.VariantPackagingData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
@@ -30,6 +34,7 @@ import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.data.productList.PriceListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
+import fr.becpg.repo.product.data.productList.ResourceParamListItem;
 import fr.becpg.repo.quality.data.dataList.ControlDefListDataItem;
 import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
@@ -41,11 +46,16 @@ import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.annotation.DataListView;
 import fr.becpg.repo.repository.filters.DataListFilter;
 import fr.becpg.repo.repository.model.AbstractEffectiveDataItem;
+import fr.becpg.repo.repository.model.AspectAwareDataItem;
 import fr.becpg.repo.repository.model.StateableEntity;
 import fr.becpg.repo.variant.model.VariantData;
 
-public class ProductData extends AbstractEffectiveDataItem implements FormulatedEntity, HierarchicalEntity, StateableEntity {
+public class ProductData extends AbstractEffectiveDataItem implements FormulatedEntity, HierarchicalEntity, StateableEntity, AspectAwareDataItem {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 764534088277737617L;
 	private NodeRef hierarchy1;
 	private NodeRef hierarchy2;
 	private MLText legalName;
@@ -54,7 +64,8 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private SystemState state = SystemState.Simulation;
 	private ProductUnit unit = ProductUnit.kg;
 	private ProductData entityTpl;
-
+	private List<NodeRef> plants = new ArrayList<>();
+	private VariantPackagingData defaultVariantPackagingData;
 	/*
 	 * Transformable properties
 	 */
@@ -77,12 +88,15 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private Double unitPrice;
 	private Double profitability;
 	private Long breakEven;
+	private Long projectedQty;
 
 	/*
 	 * Formulation
 	 */
 	private Date formulatedDate;
+	private Date modifiedDate;
 	private Integer reformulateCount;
+	private IngTypeItem ingType;
 	
 	
 	/*
@@ -107,6 +121,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private List<LabelClaimListDataItem> labelClaimList;
 	private List<ControlDefListDataItem> controlDefList;
 	private List<LabelingListDataItem> labelingList;
+    private List<ResourceParamListItem> resourceParamList;
 
 	/*
 	 * View
@@ -127,6 +142,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	 */
 
 	private List<ProductSpecificationData> productSpecifications;
+	private List<ClientData> clients;
 
 	@AlfMultiAssoc(isEntity = true)
 	@AlfQname(qname = "bcpg:productSpecifications")
@@ -137,6 +153,17 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 
 	public void setProductSpecifications(List<ProductSpecificationData> productSpecifications) {
 		this.productSpecifications = productSpecifications;
+	}
+
+	@AlfMultiAssoc(isEntity = true)
+	@AlfQname(qname = "bcpg:clients")
+	@AlfReadOnly
+	public List<ClientData> getClients() {
+		return clients;
+	}
+
+	public void setClients(List<ClientData> clients) {
+		this.clients = clients;
 	}
 
 	@AlfMultiAssoc(isChildAssoc = true, isEntity = true)
@@ -178,6 +205,18 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 
 	public void setFormulatedDate(Date formulatedDate) {
 		this.formulatedDate = formulatedDate;
+	}
+	
+
+	@AlfProp
+	@AlfReadOnly
+	@AlfQname(qname = "cm:modified")
+	public Date getModifiedDate() {
+		return modifiedDate;
+	}
+
+	public void setModifiedDate(Date modifiedDate) {
+		this.modifiedDate = modifiedDate;
 	}
 
 	@AlfMlText
@@ -245,6 +284,34 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		this.entityTpl = entityTpl;
 	}
 	
+	@AlfMultiAssoc
+	@AlfQname(qname="bcpg:plants")
+	public List<NodeRef> getPlants() {
+		return plants;
+	}
+
+	public void setPlants(List<NodeRef> plants) {
+		this.plants = plants;
+	}
+	
+	@AlfProp
+	@AlfQname(qname="bcpg:ingTypeV2")
+	public IngTypeItem getIngType() {
+		return ingType;
+	}
+
+	public void setIngType(IngTypeItem ingType) {
+		this.ingType = ingType;
+	}
+
+	public VariantPackagingData getDefaultVariantPackagingData() {
+		return defaultVariantPackagingData;
+	}
+
+	public void setDefaultVariantPackagingData(VariantPackagingData defaultVariantPackagingData) {
+		this.defaultVariantPackagingData = defaultVariantPackagingData;
+	}
+
 	@AlfProp
 	@AlfQname(qname = "bcpg:productQty")
 	public Double getQty() {
@@ -412,6 +479,16 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		this.breakEven = breakEven;
 	}
 
+	@AlfProp
+	@AlfQname(qname = "bcpg:projectedQty")
+	public Long getProjectedQty() {
+		return projectedQty;
+	}
+
+	public void setProjectedQty(Long projectedQty) {
+		this.projectedQty = projectedQty;
+	}
+
 	@DataList
 	@AlfQname(qname = "bcpg:allergenList")
 	public List<AllergenListDataItem> getAllergenList() {
@@ -511,6 +588,16 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	public void setControlDefList(List<ControlDefListDataItem> controlDefList) {
 		this.controlDefList = controlDefList;
 	}
+	
+    @DataList
+	@AlfQname(qname="mpm:resourceParamList")
+	public List<ResourceParamListItem> getResourceParamList() {
+		return resourceParamList;
+	}
+
+	public void setResourceParamList(List<ResourceParamListItem> resourceParamList) {
+		this.resourceParamList = resourceParamList;
+	}
 
 	@DataList
 	@AlfQname(qname = "pack:labelingList")
@@ -538,21 +625,42 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		return compoListView;
 	}
 
-	public List<CompoListDataItem> getCompoList(@SuppressWarnings("unchecked") DataListFilter<ProductData>... filters) {
-		if (compoListView != null && compoListView.getCompoList() != null) {
-			List<CompoListDataItem> ret = new ArrayList<CompoListDataItem>(compoListView.getCompoList());
-			if (filters != null) {
-				for (DataListFilter<ProductData> filter : filters) {
-					CollectionUtils.filter(ret, filter.createPredicate(this));
-				}
+	
+	private <T> List<T>  filterList(List<T> list,List<DataListFilter<ProductData, T>> filters ) {
+		if (filters != null && !filters.isEmpty()) {
+			Stream<T> stream = list.stream();
+			for (DataListFilter<ProductData, T> filter : filters) {
+				stream = stream.filter(filter.createPredicate(this));
 			}
-			return ret;
+			return stream.collect(Collectors.toList());
+		} 
+		return list;
+	}
+	
+	public List<CompoListDataItem> getCompoList(){
+		return getCompoList(Collections.emptyList());
+	}
+	
+	public List<CompoListDataItem> getCompoList(DataListFilter<ProductData, CompoListDataItem> filter) {
+		return getCompoList(Collections.singletonList(filter));
+	}
+	
+	public List<CompoListDataItem> getCompoList(List<DataListFilter<ProductData, CompoListDataItem>> filters) {
+		if (compoListView != null && compoListView.getCompoList() != null) {
+			return filterList(compoListView.getCompoList(),filters);
 		}
 		return null;
 	}
 
-   @SuppressWarnings("unchecked")
-	public boolean hasCompoListEl( DataListFilter<ProductData>... filters) {
+	public boolean hasCompoListEl(){
+		return hasCompoListEl(Collections.emptyList());
+	}
+	
+	public boolean hasCompoListEl( DataListFilter<ProductData, CompoListDataItem> filter) {
+		return hasCompoListEl(Collections.singletonList(filter));
+	}
+	
+	public boolean hasCompoListEl( List<DataListFilter<ProductData, CompoListDataItem>> filters) {
 		return compoListView != null && compoListView.getCompoList() != null && !getCompoList(filters).isEmpty();
 	}
 
@@ -566,20 +674,33 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		return processListView;
 	}
 
-	public  List<ProcessListDataItem> getProcessList(@SuppressWarnings("unchecked") DataListFilter<ProductData>... filters) {
+	
+	public  List<ProcessListDataItem> getProcessList() {
+		return getProcessList(Collections.emptyList());
+	}
+	
+	public  List<ProcessListDataItem> getProcessList(DataListFilter<ProductData,ProcessListDataItem> filter) {
+		return getProcessList(Collections.singletonList(filter));
+	}
+	
+	
+	public  List<ProcessListDataItem> getProcessList(List<DataListFilter<ProductData,ProcessListDataItem>> filters) {
 		if (processListView != null && processListView.getProcessList() != null) {
-			List<ProcessListDataItem> ret = new ArrayList<ProcessListDataItem>(processListView.getProcessList());
-			if (filters != null) {
-				for (DataListFilter<ProductData> filter : filters) {
-					CollectionUtils.filter(ret, filter.createPredicate(this));
-				}
-			}
-			return ret;
+			return filterList(processListView.getProcessList(),filters);
 		}
 		return null;
 	}
-
-	public  boolean hasProcessListEl(@SuppressWarnings("unchecked") DataListFilter<ProductData>... filters) {
+	
+	
+	public boolean hasProcessListEl(){
+		return hasCompoListEl(Collections.emptyList());
+	}
+	
+	public boolean hasProcessListEl( DataListFilter<ProductData, ProcessListDataItem> filter) {
+		return hasProcessListEl(Collections.singletonList(filter));
+	}
+	
+	public  boolean hasProcessListEl(List<DataListFilter<ProductData,ProcessListDataItem>> filters) {
 		return processListView != null && processListView.getProcessList() != null && !getProcessList(filters).isEmpty();
 	}
 
@@ -593,22 +714,31 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		return packagingListView;
 	}
 
+	public  List<PackagingListDataItem> getPackagingList() {
+		return getPackagingList(Collections.emptyList());
+	}
 	
-	public  List<PackagingListDataItem> getPackagingList(@SuppressWarnings("unchecked") DataListFilter<ProductData>... filters) {
+	public  List<PackagingListDataItem> getPackagingList(DataListFilter<ProductData,PackagingListDataItem> filter) {
+		return getPackagingList(Collections.singletonList(filter));
+	}
+	
+	
+	public List<PackagingListDataItem> getPackagingList(List<DataListFilter<ProductData,PackagingListDataItem>> filters) {
 		if (packagingListView != null && packagingListView.getPackagingList() != null) {
-			List<PackagingListDataItem> ret = new ArrayList<PackagingListDataItem>(packagingListView.getPackagingList());
-			if (filters != null) {
-				for (DataListFilter<ProductData> filter : filters) {
-					CollectionUtils.filter(ret, filter.createPredicate(this));
-				}
-			}
-			return ret;
+			return filterList(packagingListView.getPackagingList(),filters);
 		}
 		return null;
 	}
 
+	public boolean hasPackagingListEl(){
+		return hasCompoListEl(Collections.emptyList());
+	}
 	
-	public  boolean hasPackagingListEl(@SuppressWarnings("unchecked") DataListFilter<ProductData>... filters) {
+	public boolean hasPackagingListEl( DataListFilter<ProductData, PackagingListDataItem> filter) {
+		return hasPackagingListEl(Collections.singletonList(filter));
+	}
+	
+	public boolean hasPackagingListEl(List<DataListFilter<ProductData,PackagingListDataItem>> filters) {
 		return packagingListView != null && packagingListView.getPackagingList() != null && !getPackagingList(filters).isEmpty();
 	}
 

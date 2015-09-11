@@ -32,7 +32,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class Log4jHandler extends Handler {
 
-	Log logger = LogFactory.getLog(Log4jHandler.class);
+	final Log logger = LogFactory.getLog(Log4jHandler.class);
 
 	public void close() throws SecurityException {
 	}

@@ -31,8 +31,6 @@ public interface PLMModel {
 
 	QName TYPE_PRODUCTLIST_ITEM = QName.createQName(BeCPGModel.BECPG_URI, "productListItem");
 
-	QName TYPE_CHARACT = QName.createQName(BeCPGModel.BECPG_URI, "charact");
-
 	// allergenList
 	QName TYPE_ALLERGENLIST = QName.createQName(BeCPGModel.BECPG_URI, "allergenList");
 	QName PROP_ALLERGENLIST_VOLUNTARY = QName.createQName(BeCPGModel.BECPG_URI, "allergenListVoluntary");
@@ -92,6 +90,7 @@ public interface PLMModel {
 	QName TYPE_NUTLIST = QName.createQName(BeCPGModel.BECPG_URI, "nutList");
 	QName ASSOC_NUTLIST_NUT = QName.createQName(BeCPGModel.BECPG_URI, "nutListNut");
 	QName PROP_NUTLIST_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "nutListValue");
+	QName PROP_NUTLIST_FORMULATED_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "nutListFormulatedValue");
 	QName PROP_NUTLIST_UNIT = QName.createQName(BeCPGModel.BECPG_URI, "nutListUnit");
 	QName PROP_NUTLIST_MINI = QName.createQName(BeCPGModel.BECPG_URI, "nutListMini");
 	QName PROP_NUTLIST_MAXI = QName.createQName(BeCPGModel.BECPG_URI, "nutListMaxi");
@@ -159,7 +158,7 @@ public interface PLMModel {
 	// labelClaimList
 	QName TYPE_LABELCLAIMLIST = QName.createQName(BeCPGModel.BECPG_URI, "labelClaimList");
 	QName PROP_LCL_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "lclType");
-	QName PROP_LCL_IS_CLAIMED = QName.createQName(BeCPGModel.BECPG_URI, "lclIsClaimed");
+	QName PROP_LCL_CLAIM_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "lclClaimValue");
 	QName ASSOC_LCL_LABELCLAIM = QName.createQName(BeCPGModel.BECPG_URI, "lclLabelClaim");
 
 	// allergen
@@ -169,6 +168,7 @@ public interface PLMModel {
 
 	// cost
 	QName TYPE_COST = QName.createQName(BeCPGModel.BECPG_URI, "cost");
+	QName PROP_COST_FORMULA = QName.createQName(BeCPGModel.BECPG_URI, "costFormula");
 	QName PROP_COSTCURRENCY = QName.createQName(BeCPGModel.BECPG_URI, "costCurrency");
 	QName PROP_COSTFIXED = QName.createQName(BeCPGModel.BECPG_URI, "costFixed");
 
@@ -176,6 +176,8 @@ public interface PLMModel {
 	QName TYPE_ING = QName.createQName(BeCPGModel.BECPG_URI, "ing");
 	QName PROP_ING_CEECODE = QName.createQName(BeCPGModel.BECPG_URI, "ingCEECode");
 
+	QName PROP_ING_TYPE_ASPECT = QName.createQName(BeCPGModel.BECPG_URI, "ingTypeAspect");
+	
 	QName PROP_ING_TYPE_V2 = QName.createQName(BeCPGModel.BECPG_URI, "ingTypeV2");
 	QName TYPE_ING_TYPE_ITEM = QName.createQName(BeCPGModel.BECPG_URI, "ingTypeItem");
 	QName PROP_ING_TYPE_DEC_THRESHOLD = QName.createQName(BeCPGModel.BECPG_URI, "ingTypeDecThreshold");
@@ -198,6 +200,7 @@ public interface PLMModel {
 	QName PROP_NUTTYPE = QName.createQName(BeCPGModel.BECPG_URI, "nutType");
 	QName PROP_NUTUNIT = QName.createQName(BeCPGModel.BECPG_URI, "nutUnit");
 	QName PROP_NUTGDA = QName.createQName(BeCPGModel.BECPG_URI, "nutGDA");
+	QName PROP_NUTUL = QName.createQName(BeCPGModel.BECPG_URI, "nutUL");
 	QName PROP_NUT_FORMULA = QName.createQName(BeCPGModel.BECPG_URI, "nutFormula");
 
 	// organo
@@ -212,9 +215,11 @@ public interface PLMModel {
 	// supplier aspect
 	QName ASPECT_SUPPLIERS = QName.createQName(BeCPGModel.BECPG_URI, "suppliersAspect");
 	QName ASSOC_SUPPLIERS = QName.createQName(BeCPGModel.BECPG_URI, "suppliers");
+	QName PROP_SUPPLIER_STATE = QName.createQName(BeCPGModel.BECPG_URI, "supplierState");
 
 	// supplier
 	QName TYPE_SUPPLIER = QName.createQName(BeCPGModel.BECPG_URI, "supplier");
+	QName ASSOC_SUPPLIER_ACCOUNT = QName.createQName(BeCPGModel.BECPG_URI, "supplierAccountRef");
 
 	// client aspect
 	QName ASPECT_CLIENTS = QName.createQName(BeCPGModel.BECPG_URI, "clientsAspect");
@@ -306,10 +311,13 @@ public interface PLMModel {
 	QName ASPECT_INSTRUCTION = QName.createQName(BeCPGModel.BECPG_URI, "instruction");
 	QName PROP_INSTRUCTION = QName.createQName(BeCPGModel.BECPG_URI, "instruction");
 	
-	
+	@Deprecated
 	QName ASPECT_DILUENT = QName.createQName(BeCPGModel.BECPG_URI, "diluentAspect");
 	QName ASPECT_RECONSTITUTABLE = QName.createQName(BeCPGModel.BECPG_URI, "reconstitutableAspect");
 	QName PROP_RECONSTITUTION_RATE =  QName.createQName(BeCPGModel.BECPG_URI, "reconstitutionRate");
+	QName PROP_RECONSTITUTION_PRIORITY =  QName.createQName(BeCPGModel.BECPG_URI, "reconstitutionPriority");
+	QName ASSOC_DILUENT_REF =  QName.createQName(BeCPGModel.BECPG_URI, "diluentRef");
+	QName ASSOC_TARGET_RECONSTITUTION_REF =  QName.createQName(BeCPGModel.BECPG_URI, "targetReconstitutionRef");
 	
 	//Compare
 	QName ASPECT_COMPARE_WITH_DYN_COLUMN = QName.createQName(BeCPGModel.BECPG_URI, "compareWithDynColumnAspect");
@@ -322,6 +330,8 @@ public interface PLMModel {
 	QName PROP_NUTRIENT_PROFILE_SCORE_FORMULA =  QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfileScoreFormula");
 	QName PROP_NUTRIENT_PROFILE_CLASS_FORMULA =  QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfileClassFormula");
 	QName TYPE_NUTRIENT_PROFILE = QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfile");
+	
+	
 	
 	
 	

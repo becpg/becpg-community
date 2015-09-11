@@ -30,11 +30,11 @@ public class ReportServerSearchContext {
 
 	private PropertyFormats propertyFormats;
 	
-	private List<AttributeMapping> attributeColumns = new ArrayList<AttributeMapping>();
+	private List<AttributeMapping> attributeColumns = new ArrayList<>();
 	
-	private List<CharacteristicMapping> characteristicsColumns = new ArrayList<CharacteristicMapping>();
+	private List<CharacteristicMapping> characteristicsColumns = new ArrayList<>();
 	
-	private List<FileMapping> fileColumns = new ArrayList<FileMapping>();
+	private List<FileMapping> fileColumns = new ArrayList<>();
 	
 	public PropertyFormats getPropertyFormats() {
 		return propertyFormats;

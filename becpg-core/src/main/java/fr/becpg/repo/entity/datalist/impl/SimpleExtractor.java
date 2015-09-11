@@ -19,7 +19,6 @@ package fr.becpg.repo.entity.datalist.impl;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -56,9 +55,7 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 	protected DataListSortRegistry dataListSortRegistry;
 
-	protected EntityDictionaryService entityDictionaryService;
-
-	private static Log logger = LogFactory.getLog(SimpleExtractor.class);
+	private static final Log logger = LogFactory.getLog(SimpleExtractor.class);
 
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
@@ -72,10 +69,6 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 		this.associationService = associationService;
 	}
 
-	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
-		this.entityDictionaryService = entityDictionaryService;
-	}
-
 	@Override
 	public PaginatedExtractedItems extract(DataListFilter dataListFilter, List<String> metadataFields, DataListPagination pagination,
 			boolean hasWriteAccess) {
@@ -84,7 +77,7 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 		List<NodeRef> results = getListNodeRef(dataListFilter, pagination);
 
-		Map<String, Object> props = new HashMap<String, Object>();
+		Map<String, Object> props = new HashMap<>();
 		props.put(PROP_ACCESSRIGHT, hasWriteAccess);
 
 		Map<NodeRef, Map<String, Object>> cache = new HashMap<>();
@@ -96,8 +89,8 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 					ret.setComputedFields(attributeExtractorService.readExtractStructure(nodeService.getType(nodeRef), metadataFields));
 				}
 				if (RepoConsts.FORMAT_CSV.equals(dataListFilter.getFormat())
-						|| RepoConsts.FORMAT_XLS.equals(dataListFilter.getFormat())) {
-					ret.addItem(extractExport( RepoConsts.FORMAT_XLS.equals(dataListFilter.getFormat())? AttributeExtractorMode.XLS: AttributeExtractorMode.CSV ,nodeRef, ret.getComputedFields(), props, cache));
+						|| RepoConsts.FORMAT_XLSX.equals(dataListFilter.getFormat())) {
+					ret.addItem(extractExport( RepoConsts.FORMAT_XLSX.equals(dataListFilter.getFormat())? AttributeExtractorMode.XLSX: AttributeExtractorMode.CSV ,nodeRef, ret.getComputedFields(), props, cache));
 				} else {
 					ret.addItem(extractJSON(nodeRef, ret.getComputedFields(), props, cache));
 				}
@@ -111,7 +104,7 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 	protected List<NodeRef> getListNodeRef(DataListFilter dataListFilter, DataListPagination pagination) {
 
-		List<NodeRef> results = new ArrayList<NodeRef>();
+		List<NodeRef> results = new ArrayList<>();
 		
 		if (dataListFilter.isAllFilter() && entityDictionaryService.isSubClass(dataListFilter.getDataType(), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
 
@@ -121,19 +114,6 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 				logger.debug("DataType to filter :" + dataListFilter.getDataType());
 			}
 
-			Collection<QName> qnames = entityDictionaryService.getSubTypes(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-
-			for (QName qname : qnames) {
-				if (!qname.equals(dataListFilter.getDataType())) {
-
-					if (logger.isDebugEnabled()) {
-						logger.debug("Add to ignore :" + qname);
-					}
-					queryBuilder.excludeType(qname);
-
-				}
-
-			}
 
 			int skipOffset = (pagination.getPage() - 1) * pagination.getPageSize();
 			int requestTotalCountMax = skipOffset + RepoConsts.MAX_RESULTS_1000;
@@ -154,7 +134,7 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 				NodeRef listsContainerNodeRef = entityListDAO.getListContainer(new NodeRef(dataListFilter.getFilterData()));
 				if (listsContainerNodeRef != null) {
 
-					NodeRef dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, dataListFilter.getDataType());
+					NodeRef dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, dataListFilter.getDataListName());
 					if (dataListNodeRef != null) {
 						queryBuilder = dataListFilter.getSearchQuery(dataListNodeRef);
 					}
@@ -197,7 +177,7 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 					@Override
 					public List<Map<String, Object>> extractNestedField(NodeRef nodeRef, AttributeExtractorStructure field) {
-						List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();
+						List<Map<String, Object>> ret = new ArrayList<>();
 						if (field.isDataListItems()) {
 							NodeRef listContainerNodeRef = entityListDAO.getListContainer(nodeRef);
 							NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, field.getFieldQname());
@@ -215,7 +195,7 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 						} else {
 
 							if (field.getFieldDef() instanceof AssociationDefinition) {
-								List<NodeRef> assocRefs = null;
+								List<NodeRef> assocRefs;
 								if (((AssociationDefinition) field.getFieldDef()).isChild()) {
 									assocRefs = associationService.getChildAssocs(nodeRef, field.getFieldDef().getName());
 								} else {
@@ -237,7 +217,7 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 							ret.add(cache.get(itemNodeRef));
 						} else {
 							if (permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED) {
-								if (AttributeExtractorMode.CSV.equals(mode) ||AttributeExtractorMode.XLS.equals(mode) ) {
+								if (AttributeExtractorMode.CSV.equals(mode) ||AttributeExtractorMode.XLSX.equals(mode) ) {
 									ret.add(extractExport(mode, itemNodeRef, field.getChildrens(), props, cache));
 								} else {
 									ret.add(extractJSON(itemNodeRef, field.getChildrens(), props, cache));

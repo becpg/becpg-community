@@ -40,6 +40,7 @@ public abstract class AbstractBeCPGQueryBuilder {
 	private final String QUERY_COND_PROP_CONTAINS_VALUE = "%s:%s";
 	private final String QUERY_COND_PROP_ISNULL_VALUE = "ISNULL:\"%s\"";
 	private final String QUERY_COND_PATH = "PATH:\"/app:company_home/%s/*\"";
+	private final String QUERY_SUB_PATH = "PATH:\"/app:company_home/%s//*\"";
 	private final String QUERY_COND_EXACT_PATH = "PATH:\"%s\"";
 	private final String QUERY_COND_MEMBERS = "PATH:\"/app:company_home/%s/member\"";
 	private final String QUERY_COND_ID = "ID:\"%s\"";
@@ -85,6 +86,10 @@ public abstract class AbstractBeCPGQueryBuilder {
 	protected String getCondPath(String path) {
 		return String.format(QUERY_COND_PATH, encodePath(path));
 	}
+	
+	protected String getCondSubPath(String path) {
+		return String.format(QUERY_SUB_PATH, encodePath(path));
+	}
 
 	protected String getCondMembers(String path) {
 		return String.format(QUERY_COND_MEMBERS, encodePath(path));
@@ -125,6 +130,10 @@ public abstract class AbstractBeCPGQueryBuilder {
 	protected String optional(String condType) {
 		return " " + condType;
 	}
+	
+	protected String boost(String condType,Integer boostFactor) {
+		return condType+"^"+boostFactor;
+	}
 
 	protected String startGroup() {
 		return "(";
@@ -143,7 +152,7 @@ public abstract class AbstractBeCPGQueryBuilder {
 	}
 
 	protected Map<String, Boolean> getSort(QName field, boolean asc) {
-		Map<String, Boolean> sort = new HashMap<String, Boolean>();
+		Map<String, Boolean> sort = new HashMap<>();
 		sort.put(getSortProp(field), asc);
 
 		return sort;
@@ -184,7 +193,7 @@ public abstract class AbstractBeCPGQueryBuilder {
 					pathBuffer.append("/cm:");
 					pathBuffer.append(ISO9075.encode(folder));
 				} else {
-					pathBuffer.append("/" + folder);
+					pathBuffer.append("/").append(folder);
 				}
 			}
 	

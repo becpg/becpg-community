@@ -34,7 +34,7 @@ import fr.becpg.model.PLMModel;
  */
 public class IngParentLevelPatchV2 extends AbstractBeCPGPatch {
 
-	private static Log logger = LogFactory.getLog(IngParentLevelPatchV2.class);
+	private static final Log logger = LogFactory.getLog(IngParentLevelPatchV2.class);
 	private static final String MSG_SUCCESS = "patch.bcpg.plm.ingParentLevelPatchV2.result";
 
 	private NodeDAO nodeDAO;
@@ -53,14 +53,14 @@ public class IngParentLevelPatchV2 extends AbstractBeCPGPatch {
 			AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
 			BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
-				final List<NodeRef> result = new ArrayList<NodeRef>();
+				final List<NodeRef> result = new ArrayList<>();
 
-				long maxNodeId = getPatchDAO().getMaxAdmNodeID();
+				final long maxNodeId = getPatchDAO().getMaxAdmNodeID();
 
-				long minSearchNodeId = 1;
+				long minSearchNodeId = 0;
 				long maxSearchNodeId = count;
 
-				Pair<Long, QName> val = getQnameDAO().getQName(PLMModel.TYPE_INGLIST);
+				final Pair<Long, QName> val = getQnameDAO().getQName(PLMModel.TYPE_INGLIST);
 
 				public int getTotalEstimatedWorkSize() {
 					return result.size();
@@ -92,7 +92,7 @@ public class IngParentLevelPatchV2 extends AbstractBeCPGPatch {
 				}
 			};
 
-			BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<NodeRef>("IngParentLevelPatchV2",
+			BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("IngParentLevelPatchV2",
 					transactionService.getRetryingTransactionHelper(), workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 1000);
 
 			BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {

@@ -1,0 +1,142 @@
+<!--
+  Copyright (C) 2010-2015 beCPG. 
+   
+  This file is part of beCPG 
+   
+  beCPG is free software: you can redistribute it and/or modify 
+  it under the terms of the GNU Lesser General Public License as published by 
+  the Free Software Foundation, either version 3 of the License, or 
+  (at your option) any later version. 
+   
+  beCPG is distributed in the hope that it will be useful, 
+  but WITHOUT ANY WARRANTY; without even the implied warranty of 
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+  GNU Lesser General Public License for more details. 
+   
+  You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
+-->
+<alfresco-config>	
+
+	<!-- var:charact type (existing nodes) -->
+	<config evaluator="node-type" condition="var:charact">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="bcpg:charactName" />
+					<show id="cm:title" force="true" />
+					<show id="cm:description" force="true" />
+					<show id="var:charactKey" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:charactName" />
+					<field id="cm:title" />
+					<field id="cm:description">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>					
+					<show id="var:charactKey" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<config evaluator="model-type" condition="var:charact">
+		<forms>
+			<!-- Create item form -->
+			<form>
+
+				<field-visibility>
+					<show id="bcpg:charactName" />
+					<show id="cm:title" force="true" />
+					<show id="cm:description" force="true" />
+					<show id="var:charactKey" />
+
+				</field-visibility>
+
+				<appearance>
+					<field id="bcpg:charactName" />
+					<field id="cm:title" />
+					<field id="cm:description">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<show id="var:charactKey" />
+				</appearance>
+			</form>
+
+			<!-- Data Grid view -->
+			<form id="filter">
+				<field-visibility>
+					<show id="bcpg:charactName" />
+					<show id="var:charactKey" />
+				</field-visibility>
+			</form>
+
+			<form id="datagrid">
+				<field-visibility>
+					<show id="bcpg:charactName" />
+					<show id="cm:title" />
+					<show id="cm:description" />		
+					<show id="var:charactKey" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+
+	<!-- var:propertyVariantList type -->
+	<config evaluator="model-type" condition="var:propertyVariantList">
+		<forms>
+			<!-- Create item form -->
+			<form>
+				<field-visibility>
+					<show id="var:pvlPartner" />
+					<show id="var:pvlCharact" />
+					<show id="var:pvlValue" />
+				</field-visibility>
+				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
+				<appearance>			
+					<field id="var:pvlPartner">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+								<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:entityV2?classNames=bcpg:client,bcpg:supplier</control-param>
+							</control>
+					</field>
+					<field id="var:pvlCharact">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>		
+				</appearance>
+			</form>			
+		</forms>
+	</config>
+	<!-- var:propertyVariantList type (existing nodes) -->
+	<config evaluator="node-type" condition="var:propertyVariantList">
+		<forms>
+			<!-- Data List pop-up edit form -->
+			<form>
+				<field-visibility>
+					<show id="var:pvlPartner" />
+					<show id="var:pvlCharact" />
+					<show id="var:pvlValue" />
+				</field-visibility>
+				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
+				<appearance>					
+					<field id="var:pvlPartner">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+								<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:entityV2?classNames=bcpg:client,bcpg:supplier</control-param>
+							</control>
+					</field>
+					<field id="var:pvlCharact">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	
+</alfresco-config>

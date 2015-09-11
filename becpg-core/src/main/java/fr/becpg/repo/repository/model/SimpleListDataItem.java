@@ -17,24 +17,9 @@
  ******************************************************************************/
 package fr.becpg.repo.repository.model;
 
+public interface SimpleListDataItem extends ManualDataItem,
+					SimpleCharactDataItem,
+					AspectAwareDataItem,
+					SortableDataItem {
 
-
-public interface SimpleListDataItem extends IManualDataItem, SimpleCharactDataItem, AspectAwareDataItem {
-
-
-	public Double getMini();
-
-	public void setMini(Double value);
-
-	public Double getMaxi();
-
-	public void setMaxi(Double value);
-	
-	public Integer getSort();
-	
-	public void setSort(Integer sort);
-	
-	public void setUnit(String unit);
-	
-	public String getUnit();
 }

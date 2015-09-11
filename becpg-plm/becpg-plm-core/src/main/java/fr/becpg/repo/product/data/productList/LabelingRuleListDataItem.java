@@ -37,13 +37,18 @@ import fr.becpg.repo.repository.model.Synchronisable;
 @AlfQname(qname = "bcpg:labelingRuleList")
 public class LabelingRuleListDataItem extends AbstractManualDataItem implements Synchronisable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8396800984821144870L;
+
 	public static final String DEFAULT_LABELING_GROUP = "default";
 	
 	private String formula;
 	private MLText label;
 	private LabelingRuleType labelingRuleType;
-	private List<NodeRef> components = new ArrayList<NodeRef>();
-	private List<NodeRef> replacements = new ArrayList<NodeRef>();
+	private List<NodeRef> components = new ArrayList<>();
+	private List<NodeRef> replacements = new ArrayList<>();
 	private Boolean isActive = true;
 	private String group;
 

@@ -22,6 +22,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
+import org.springframework.core.io.ClassPathResource;
 
 import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.helper.TranslateHelper;
@@ -35,10 +36,10 @@ import fr.becpg.test.PLMBaseTestCase;
  */
 public class ImporterActionExecuterTest  extends PLMBaseTestCase {
 	
-	private static String FILENAME_IMPORT_CSV = "import.csv";
+	private static final String FILENAME_IMPORT_CSV = "import.csv";
 	
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(ImporterActionExecuterTest.class);
+	private static final Log logger = LogFactory.getLog(ImporterActionExecuterTest.class);
 
 	@Resource
 	private Repository repository;
@@ -71,7 +72,7 @@ public class ImporterActionExecuterTest  extends PLMBaseTestCase {
  		    	}
  		    	
  		    	//Create file to import
- 		    	Map<QName, Serializable> properties = new HashMap<QName, Serializable>();		
+ 		    	Map<QName, Serializable> properties = new HashMap<>();
  		    	properties.put(ContentModel.PROP_NAME, FILENAME_IMPORT_CSV);
  		    	
  		    	NodeRef importNodeRef = nodeService.getChildByName(importToTreatFolder, ContentModel.ASSOC_CONTAINS, (String)properties.get(ContentModel.PROP_NAME));    	
@@ -82,7 +83,7 @@ public class ImporterActionExecuterTest  extends PLMBaseTestCase {
  		    	
  		    	ContentWriter writer = contentService.getWriter(contentNodeRef, ContentModel.PROP_CONTENT, true);
  		    	logger.debug("import.csv");
- 		    	InputStream in = ClassLoader.getSystemResourceAsStream("beCPG/import/Import.csv");			
+ 		    	InputStream in = (new ClassPathResource("beCPG/import/Import.csv")).getInputStream();			
  		    	
  		    	String mimetype = mimetypeService.guessMimetype(FILENAME_IMPORT_CSV); 		    	
  		    	ContentCharsetFinder charsetFinder = mimetypeService.getContentCharsetFinder();
@@ -123,7 +124,7 @@ public class ImporterActionExecuterTest  extends PLMBaseTestCase {
  		    	}
  		    	
  		    	//Create file to import
- 		    	Map<QName, Serializable> properties = new HashMap<QName, Serializable>();		
+ 		    	Map<QName, Serializable> properties = new HashMap<>();
  		    	properties.put(ContentModel.PROP_NAME, "import.csv");
  		    	
  		    	NodeRef importNodeRef = nodeService.getChildByName(importToTreatFolder, ContentModel.ASSOC_CONTAINS, (String)properties.get(ContentModel.PROP_NAME));    	
@@ -134,7 +135,7 @@ public class ImporterActionExecuterTest  extends PLMBaseTestCase {
  		    	
  		    	ContentWriter writer = contentService.getWriter(contentNodeRef, ContentModel.PROP_CONTENT, true);
  		    	logger.debug("Import-with-IntegrityException.csv");
- 		    	InputStream in = ClassLoader.getSystemResourceAsStream("beCPG/import/Import-with-IntegrityException.csv");
+ 		    	InputStream in = (new ClassPathResource("beCPG/import/Import-with-IntegrityException.csv")).getInputStream();
  		    	
  		    	String mimetype = mimetypeService.guessMimetype(FILENAME_IMPORT_CSV);
  		    	ContentCharsetFinder charsetFinder = mimetypeService.getContentCharsetFinder();

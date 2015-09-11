@@ -30,10 +30,8 @@ import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.PackagingListUnit;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
-import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
-import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.ResourceParamDataItem;
@@ -48,7 +46,7 @@ import fr.becpg.repo.report.entity.EntityReportData;
 public class DefaultProductReportExtractorTest extends AbstractFinishedProductTest {
 
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(DefaultProductReportExtractorTest.class);
+	private static final Log logger = LogFactory.getLog(DefaultProductReportExtractorTest.class);
 
 	@Resource
 	private ProductReportExtractorPlugin defaultProductReportExtractor; 
@@ -70,7 +68,6 @@ public class DefaultProductReportExtractorTest extends AbstractFinishedProductTe
 		logger.debug("testReport()");
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			@SuppressWarnings("unchecked")
 			public NodeRef execute() throws Throwable {
 				
 				/*-- Create finished product --*/
@@ -83,7 +80,7 @@ public class DefaultProductReportExtractorTest extends AbstractFinishedProductTe
 				finishedProduct.setUnit(ProductUnit.kg);
 				finishedProduct.setQty(2d);		
 				finishedProduct.setNetWeight(2d);
-				List<PackagingListDataItem> packagingList = new ArrayList<PackagingListDataItem>();
+				List<PackagingListDataItem> packagingList = new ArrayList<>();
 				packagingList.add(new PackagingListDataItem(null, 1d, PackagingListUnit.P, PackagingLevel.Primary, true, packagingMaterial1NodeRef));
 				packagingList.add(new PackagingListDataItem(null, 3d, PackagingListUnit.m, PackagingLevel.Primary, true, packagingMaterial2NodeRef));
 				packagingList.add(new PackagingListDataItem(null, 8d, PackagingListUnit.PP, PackagingLevel.Tertiary, true, packagingMaterial3NodeRef));
@@ -100,15 +97,15 @@ public class DefaultProductReportExtractorTest extends AbstractFinishedProductTe
 				compoList.add(new CompoListDataItem(null, null, 0.5d, 0.5d, CompoListUnit.kg, 3d, DeclarationType.Declare, rawMaterial2NodeRef));
 				compoList.add(new CompoListDataItem(null, null, 0.5d, 0.5d, CompoListUnit.kg, 3d, DeclarationType.Declare, rawMaterial3NodeRef));
 				finishedProduct.getCompoListView().setCompoList(compoList);
-				NodeRef finishedProductNodeRef = alfrescoRepository.create(testFolderNodeRef, finishedProduct).getNodeRef();	
+				NodeRef finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();	
 				
 				// ProductSpecification
 				ProductSpecificationData psd = new ProductSpecificationData();
 				psd.setName("PSD");			
-				List<ResourceParamDataItem> resourceParamList = new ArrayList<>();
-				resourceParamList.add(new ResourceParamDataItem("name", "title", "descr"));
-				psd.setResourceParamList(resourceParamList);
-				NodeRef psdNodeRef = alfrescoRepository.create(testFolderNodeRef, psd).getNodeRef();
+				List<ResourceParamDataItem> resourceParams = new ArrayList<>();
+				resourceParams.add(new ResourceParamDataItem("name", "title", "descr"));
+				psd.setResourceParams(resourceParams);
+				NodeRef psdNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), psd).getNodeRef();
 				
 				// assoc is readonly
 				ArrayList<NodeRef> psdNodeRefs = new ArrayList<>();
@@ -117,7 +114,7 @@ public class DefaultProductReportExtractorTest extends AbstractFinishedProductTe
 				
 				// add labelingTemplate aspect
 				ProductData finishedProductData = alfrescoRepository.findOne(finishedProductNodeRef);
-				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				Map<QName, Serializable> properties = new HashMap<>();
 				properties.put(PackModel.PROP_LABELING_POSITION, "Côté de la boîte");
 				nodeService.addAspect(finishedProductData.getPackagingList().get(0).getNodeRef(), PackModel.ASPECT_LABELING, properties);				
 				associationService.update(finishedProductData.getPackagingList().get(0).getNodeRef(), PackModel.ASSOC_LABELING_TEMPLATE, labelingTemplateNodeRef);

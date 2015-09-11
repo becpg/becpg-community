@@ -26,14 +26,13 @@ import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.QualityModel;
 import fr.becpg.repo.quality.data.NonConformityData;
 import fr.becpg.repo.quality.data.dataList.WorkLogDataItem;
-import fr.becpg.repo.report.entity.EntityReportExtractorPlugin.EntityReportExtractorPriority;
 import fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.RepositoryEntity;
 
 @Service
 public class NonConformityReportExtractorPlugin extends DefaultEntityReportExtractor {

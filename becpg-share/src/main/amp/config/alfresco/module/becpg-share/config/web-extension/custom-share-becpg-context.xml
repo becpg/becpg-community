@@ -1,0 +1,117 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- 
+
+Copyright (C) 2010-2015 beCPG. 
+ 
+This file is part of beCPG 
+ 
+beCPG is free software: you can redistribute it and/or modify 
+it under the terms of the GNU Lesser General Public License as published by 
+the Free Software Foundation, either version 3 of the License, or 
+(at your option) any later version. 
+ 
+beCPG is distributed in the hope that it will be useful, 
+but WITHOUT ANY WARRANTY; without even the implied warranty of 
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+GNU Lesser General Public License for more details. 
+ 
+You should have received a copy of the GNU Lesser General Public License 
+along with beCPG. If not, see <http://www.gnu.org/licenses/>.
+
+ -->
+<!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN//EN' 'http://www.springframework.org/dtd/spring-beans.dtd'>
+<beans>	
+   <!-- Provide becpg form config -->
+	<bean id="becpg-001-ClientConfig" class="org.springframework.extensions.config.ConfigBootstrap" init-method="register">
+		<property name="configService" ref="web.config" />
+		<property name="configs">
+			<list>
+				<value>classpath:alfresco/becpg-share-config.xml</value>
+				<value>classpath:alfresco/forms/becpg-form-config.xml</value>
+				<value>classpath:alfresco/forms/becpg-security-form-config.xml</value>
+				<value>classpath:alfresco/forms/becpg-report-form-config.xml</value>
+				<value>classpath:alfresco/forms/becpg-bulkedit-form-config.xml</value>
+			</list>
+		</property>
+	</bean>
+	 <bean id="becpgResourceBundle" class="org.springframework.extensions.surf.util.ResourceBundleBootstrapComponent">
+		<property name="resourceBundles">
+			<list>
+				<value>alfresco.messages.becpg-share</value>
+				<value>alfresco.messages.becpg-controls</value>
+				<value>alfresco.messages.becpg-model</value>
+			</list>
+		</property>
+	</bean> 
+    <!-- Action group resolver -->
+	<bean id="becpg.resolver.doclib.actionGroup" class="fr.becpg.web.resolver.doclib.BeCPGDoclistActionGroupResolver" />
+	<!-- evaluators -->
+	<bean id="evaluator.component.becpg.params.equal" class="fr.becpg.web.extensibility.UrlParamsEvaluator" />
+	<bean id="evaluator.component.becpg.custom.view" class="fr.becpg.web.extensibility.CustomViewEvaluator" />
+	<bean id="evaluator.becpg.doclib.action.entity" parent="evaluator.doclib.action.hasAspect">
+		<property name="aspects">
+			<list>
+				<value>bcpg:entityListsAspect</value>
+			</list>
+		</property>
+	</bean>
+	<bean id="evaluator.becpg.doclib.action.generateReport" parent="evaluator.doclib.action.hasAspect">
+		<property name="aspects">
+			<list>
+				<value>rep:reportEntityAspect</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="evaluator.becpg.doclib.action.entity.isSystemEntity" parent="evaluator.doclib.action.nodeType">
+		<property name="types">
+			<list>
+				<value>bcpg:systemEntity</value>
+			</list>
+		</property>
+	</bean>
+	<bean id="evaluator.becpg.doclib.action.entity.isWorkingCopy" parent="evaluator.doclib.action.chainedMatchAll">
+		<property name="evaluators">
+			<list>
+				<ref bean="evaluator.doclib.action.isWorkingCopy" />
+				<ref bean="evaluator.becpg.doclib.action.entity" />
+			</list>
+		</property>
+	</bean>
+	<bean id="evaluator.becpg.doclib.action.reportTpl" parent="evaluator.doclib.action.nodeType">
+		<property name="types">
+			<list>
+				<value>rep:reportTpl</value>
+			</list>
+		</property>
+	</bean>
+	<bean id="evaluator.becpg.doclib.action.entityTpl" parent="evaluator.doclib.action.hasAspect">
+		<property name="aspects">
+			<list>
+				<value>bcpg:entityTplAspect</value>
+			</list>
+		</property>
+	</bean>
+	
+	
+	<bean id="evaluator.becpg.doclib.action.entity.isBranch" parent="evaluator.doclib.action.hasAspect">
+		<property name="aspects">
+			<list>
+				<value>bcpg:entityBranchAspect</value>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- WebScripts -->
+	
+	<bean id="webscript.org.alfresco.modules.entity-datagrid.forms.filterForm.get" class="fr.becpg.web.scripts.forms.FilterFormUIGet" parent="webscript">
+      <property name="configService" ref="web.config" />
+   </bean>
+   
+   
+   <!-- Interceptors -->
+   
+    <bean id="userDashboardInterceptor" class="fr.becpg.web.site.ExternalUserDashboardInterceptor" parent="abstractWebFrameworkInterceptor" />
+   
+   
+</beans>

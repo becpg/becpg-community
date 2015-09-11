@@ -26,7 +26,7 @@ import fr.becpg.repo.entity.EntityListDAO;
 @Service
 public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
-	private static Log logger = LogFactory.getLog(AdvSearchPlugin.class);
+	private static final Log logger = LogFactory.getLog(AdvSearchPlugin.class);
 
 	@Autowired
 	private NodeService nodeService;
@@ -116,7 +116,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 								// remove nodes that don't respect the
 								// assoc_ criteria
-								List<NodeRef> nodesToKeep = new ArrayList<NodeRef>();
+								List<NodeRef> nodesToKeep = new ArrayList<>();
 
 								for (AssociationRef assocRef : assocRefs) {
 
@@ -161,7 +161,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 				if (nodeService.exists(nodeRef)) {
 
 					List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, PLMModel.ASSOC_PACKAGINGLIST_PRODUCT);
-					packagingListItems = new ArrayList<NodeRef>(assocRefs.size());
+					packagingListItems = new ArrayList<>(assocRefs.size());
 
 					for (AssociationRef assocRef : assocRefs) {
 
@@ -178,7 +178,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 		if (packagingListItems != null) {
 
-			List<NodeRef> productNodeRefs = new ArrayList<NodeRef>();
+			List<NodeRef> productNodeRefs = new ArrayList<>();
 			for (NodeRef packagingListItem : packagingListItems) {
 
 				if (isWorkSpaceProtocol(packagingListItem)) {
@@ -235,7 +235,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 				if (nodeService.exists(nodeRef)) {
 
 					List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, PLMModel.ASSOC_INGLIST_ING);
-					ingListItems = new ArrayList<NodeRef>(assocRefs.size());
+					ingListItems = new ArrayList<>(assocRefs.size());
 
 					for (AssociationRef assocRef : assocRefs) {
 
@@ -250,7 +250,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 			// criteria on geo origin, we query as an OR operator
 			if (key.equals(CRITERIA_GEO_ORIGIN) && !propValue.isEmpty()) {
 
-				List<NodeRef> ingListGeoOrigins = new ArrayList<NodeRef>();
+				List<NodeRef> ingListGeoOrigins = new ArrayList<>();
 
 				String[] arrValues = propValue.split(RepoConsts.MULTI_VALUES_SEPARATOR);
 				for (String strNodeRef : arrValues) {
@@ -281,7 +281,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 			// criteria on bio origin, we query as an OR operator
 			if (key.equals(CRITERIA_BIO_ORIGIN) && !propValue.isEmpty()) {
 
-				List<NodeRef> ingListBioOrigins = new ArrayList<NodeRef>();
+				List<NodeRef> ingListBioOrigins = new ArrayList<>();
 
 				String[] arrValues = propValue.split(RepoConsts.MULTI_VALUES_SEPARATOR);
 				for (String strNodeRef : arrValues) {
@@ -313,7 +313,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		// determine the product WUsed of the ing list items
 		if (ingListItems != null) {
 
-			List<NodeRef> productNodeRefs = new ArrayList<NodeRef>();
+			List<NodeRef> productNodeRefs = new ArrayList<>();
 			for (NodeRef ingListItem : ingListItems) {
 
 				if (isWorkSpaceProtocol(ingListItem)) {
@@ -367,7 +367,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 				if (nodeService.exists(nodeRef)) {
 
 					List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, PackModel.ASSOC_LL_LABEL);
-					labelingListItems = new ArrayList<NodeRef>(assocRefs.size());
+					labelingListItems = new ArrayList<>(assocRefs.size());
 
 					for (AssociationRef assocRef : assocRefs) {
 
@@ -393,7 +393,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 		if (labelingListItems != null) {
 
-			List<NodeRef> productNodeRefs = new ArrayList<NodeRef>();
+			List<NodeRef> productNodeRefs = new ArrayList<>();
 			for (NodeRef labelingListItem : labelingListItems) {
 
 				if (isWorkSpaceProtocol(labelingListItem)) {
@@ -449,14 +449,14 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 				if (nodeService.exists(nodeRef)) {
 
 					List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, PLMModel.ASSOC_LCL_LABELCLAIM);
-					labelClaimListItems = new ArrayList<NodeRef>(assocRefs.size());
+					labelClaimListItems = new ArrayList<>(assocRefs.size());
 
 					for (AssociationRef assocRef : assocRefs) {
 
 						NodeRef n = assocRef.getSourceRef();
 						if (isWorkSpaceProtocol(n)) {
 
-							Boolean isClaimed = (Boolean) nodeService.getProperty(n, PLMModel.PROP_LCL_IS_CLAIMED);
+							Boolean isClaimed = "true".equals(nodeService.getProperty(n, PLMModel.PROP_LCL_CLAIM_VALUE));
 							if (isClaimed) {
 								labelClaimListItems.add(n);
 							}
@@ -469,7 +469,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 		// determine the product WUsed of the ing list items
 		if (labelClaimListItems != null) {
-			List<NodeRef> productNodeRefs = new ArrayList<NodeRef>();
+			List<NodeRef> productNodeRefs = new ArrayList<>();
 			for (NodeRef labelClaimListItem : labelClaimListItems) {
 
 				if (isWorkSpaceProtocol(labelClaimListItem)) {

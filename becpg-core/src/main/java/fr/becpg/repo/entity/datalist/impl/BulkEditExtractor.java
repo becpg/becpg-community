@@ -17,7 +17,6 @@
  ******************************************************************************/
 package fr.becpg.repo.entity.datalist.impl;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -39,11 +38,11 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 public class BulkEditExtractor extends SimpleExtractor {
 
-	private String BULK_EDIT_NAME = "bulk-edit";
+	private final String BULK_EDIT_NAME = "bulk-edit";
 
 	private NamespaceService namespaceService;
 	
-	private Log logger = LogFactory.getLog(BulkEditExtractor.class);
+	private final Log logger = LogFactory.getLog(BulkEditExtractor.class);
 
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
@@ -77,7 +76,7 @@ public class BulkEditExtractor extends SimpleExtractor {
 			return dataListFilter.getEntityNodeRefs();
 		}
 		
-		List<NodeRef> results = new ArrayList<NodeRef>();
+		List<NodeRef> results;
 
 		if(logger.isDebugEnabled()){
 			logger.debug("Getting bulk-edit results for :"+dataListFilter.toString());

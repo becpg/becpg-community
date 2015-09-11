@@ -24,6 +24,11 @@ import fr.becpg.repo.repository.annotation.AlfQname;
 
 public abstract class AbstractEffectiveDataItem extends BeCPGDataObject implements EffectiveDataItem {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4228655692015575076L;
+
 	protected Date startEffectivity;
 	
 	protected Date endEffectivity;
@@ -31,20 +36,24 @@ public abstract class AbstractEffectiveDataItem extends BeCPGDataObject implemen
 	
 	@AlfProp
 	@AlfQname(qname="bcpg:startEffectivity")
+	@Override
 	public Date getStartEffectivity() {
 		return startEffectivity;
 	}
-
+	
+	@Override
 	public void setStartEffectivity(Date startEffectivity) {
 		this.startEffectivity = startEffectivity;
 	}
 
 	@AlfProp
 	@AlfQname(qname="bcpg:endEffectivity")
+	@Override
 	public Date getEndEffectivity() {
 		return endEffectivity;
 	}
-
+	
+	@Override
 	public void setEndEffectivity(Date endEffectivity) {
 		this.endEffectivity = endEffectivity;
 	}

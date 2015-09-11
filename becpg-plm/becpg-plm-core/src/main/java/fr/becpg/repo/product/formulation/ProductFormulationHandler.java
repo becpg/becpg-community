@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2015 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2015 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.product.formulation;
@@ -26,19 +26,18 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.ProductService;
-import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.PackagingKitData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ResourceProductData;
@@ -53,13 +52,13 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
 public class ProductFormulationHandler extends FormulationBaseHandler<ProductData> {
-	
+
 	private static final String MESSAGE_MISSING_UNIT = "message.formulate.missing.unit";
 	private static final String MESSAGE_MISSING_DENSITY = "message.formulate.missing.density";
 	private static final String MESSAGE_WRONG_UNIT = "message.formulate.wrong.unit";
 	private static final String MESSAGE_MISSING_TARE = "message.formulate.missing.tare";
 
-	protected static Log logger = LogFactory.getLog(ProductFormulationHandler.class);
+	protected static final Log logger = LogFactory.getLog(ProductFormulationHandler.class);
 
 	private NodeService nodeService;
 
@@ -85,29 +84,27 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		this.formulateChildren = formulateChildren;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean process(ProductData productData) throws FormulateException {
 
-		if ((productData.hasCompoListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT))
-				|| (productData.hasPackagingListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT))
-				|| (productData.hasProcessListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT))) {
+		if (!productData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) && ((productData.hasCompoListEl(new VariantFilters<>()))
+				|| (productData.hasPackagingListEl(new VariantFilters<>())) || (productData.hasProcessListEl(new VariantFilters<>())))) {
 
-			if (productData.hasCompoListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT)) {
+			if (productData.hasCompoListEl(new VariantFilters<>())) {
 				if (productData.getCompoListView().getReqCtrlList() != null) {
 					clearReqCltrlList(productData.getCompoListView().getReqCtrlList());
 				} else {
 					productData.getCompoListView().setReqCtrlList(new LinkedList<ReqCtrlListDataItem>());
 				}
 			}
-			if (productData.hasPackagingListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT)) {
+			if (productData.hasPackagingListEl(new VariantFilters<>())) {
 				if (productData.getPackagingListView().getReqCtrlList() != null) {
 					clearReqCltrlList(productData.getPackagingListView().getReqCtrlList());
 				} else {
 					productData.getPackagingListView().setReqCtrlList(new LinkedList<ReqCtrlListDataItem>());
 				}
 			}
-			if (productData.hasProcessListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT)) {
+			if (productData.hasProcessListEl(new VariantFilters<>())) {
 				if (productData.getProcessListView().getReqCtrlList() != null) {
 					clearReqCltrlList(productData.getProcessListView().getReqCtrlList());
 				} else {
@@ -136,14 +133,19 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 			productData.getProcessListView().getReqCtrlList().clear();
 		}
 
-		// Skip formulation
+		if (productData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
+			logger.debug("Entity tpl found skipping formulation");
+			// Skip formulation
+			return false;
+		}
+
 		return true;
 	}
 
 	private void clearReqCltrlList(List<ReqCtrlListDataItem> reqCtrlList) {
 		if (reqCtrlList != null) {
 			for (Iterator<ReqCtrlListDataItem> iterator = reqCtrlList.iterator(); iterator.hasNext();) {
-				ReqCtrlListDataItem reqCtrlListDataItem = (ReqCtrlListDataItem) iterator.next();
+				ReqCtrlListDataItem reqCtrlListDataItem = iterator.next();
 				if (reqCtrlListDataItem.getNodeRef() == null) {
 					iterator.remove();
 				}
@@ -152,7 +154,6 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 
 	}
 
-	@SuppressWarnings("unchecked")
 	private boolean checkShouldFormulateComponents(boolean isRoot, ProductData productData, Set<NodeRef> checkedProducts) throws FormulateException {
 		boolean isFormulated = false;
 
@@ -164,48 +165,48 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 			checkedProducts.add(productData.getNodeRef());
 
 			Set<CompositionDataItem> compositionDataItems = new HashSet<>();
-			compositionDataItems.addAll(productData.getCompoList());
-			compositionDataItems.addAll(productData.getPackagingList());
-
-			if (!compositionDataItems.isEmpty()) {
-
-				boolean shouldFormulate = false;
-				for (CompositionDataItem c : compositionDataItems) {
-					ProductData p = alfrescoRepository.findOne(c.getProduct());
-					// recursive
-					if (checkShouldFormulateComponents(false, p, checkedProducts)) {
-						shouldFormulate = true;
-					}
-
-					// check modified date on component
-					Date modified = (Date) nodeService.getProperty(c.getProduct(), ContentModel.PROP_MODIFIED);
-					if (modified == null || productData.getFormulatedDate() == null || modified.getTime() > productData.getFormulatedDate().getTime()) {
-						shouldFormulate = true;
-					}
-				}
-
-				if (!isRoot && (shouldFormulate || productService.shouldFormulate(productData.getNodeRef()))) {
-
-					if (logger.isDebugEnabled()) {
-						logger.debug("auto-formulate: " + productData.getName());
-					}
-					productService.formulate(productData);
-					alfrescoRepository.save(productData);
-					isFormulated = true;
-				}
+			if (productData.getCompoList() != null) {
+				compositionDataItems.addAll(productData.getCompoList());
+			}
+			if (productData.getPackagingList() != null) {
+				compositionDataItems.addAll(productData.getPackagingList());
+			}
+			if (productData.getProcessList() != null) {
+				compositionDataItems.addAll(productData.getProcessList());
 			}
 
+			boolean shouldFormulate = false;
+			if (!compositionDataItems.isEmpty()) {
+				for (CompositionDataItem c : compositionDataItems) {
+					if (c.getComponent() != null) {
+						ProductData p = alfrescoRepository.findOne(c.getComponent());
+						// recursive
+						if (checkShouldFormulateComponents(false, p, checkedProducts)) {
+							shouldFormulate = true;
+						}
+					}
+				}
+			}
+			// check modified date on component
+			Date modified = productData.getModifiedDate();
+			Date formulatedDate = productData.getFormulatedDate();
+			if (!isRoot && (shouldFormulate || (modified == null || formulatedDate == null || modified.getTime() > formulatedDate.getTime()))) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("auto-formulate: " + productData.getName());
+				}
+				productService.formulate(productData);
+				alfrescoRepository.save(productData);
+				isFormulated = true;
+			}
 		}
-
 		return isFormulated;
 	}
 
-	@SuppressWarnings("unchecked")
 	private void checkMissingProperties(ProductData formulatedProduct) {
 
 		checkFormulatedProduct(formulatedProduct);
 
-		if (formulatedProduct.hasCompoListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT)) {
+		if (formulatedProduct.hasCompoListEl(new VariantFilters<>())) {
 			for (CompoListDataItem c : formulatedProduct.getCompoList()) {
 				if (c.getCompoListUnit() == null) {
 					addMessingReq(formulatedProduct.getCompoListView().getReqCtrlList(), null, MESSAGE_WRONG_UNIT);
@@ -214,7 +215,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 				}
 			}
 		}
-		if (formulatedProduct.hasPackagingListEl(EffectiveFilters.ALL, VariantFilters.DEFAULT_VARIANT)) {
+		if (formulatedProduct.hasPackagingListEl(new VariantFilters<>())) {
 			for (PackagingListDataItem p : formulatedProduct.getPackagingList()) {
 				if (p.getPackagingListUnit() == null) {
 					addMessingReq(formulatedProduct.getCompoListView().getReqCtrlList(), null, MESSAGE_WRONG_UNIT);
@@ -229,7 +230,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 	private void checkFormulatedProduct(ProductData formulatedProduct) {
 
 		NodeRef productNodeRef = formulatedProduct.getNodeRef();
-		List<ReqCtrlListDataItem> reqCtrlList = null;
+		List<ReqCtrlListDataItem> reqCtrlList;
 		if (formulatedProduct instanceof PackagingKitData) {
 			reqCtrlList = formulatedProduct.getPackagingListView().getReqCtrlList();
 
@@ -249,16 +250,17 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		if (!PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.isMatch(nodeService.getType(productNodeRef))) {
 
 			ProductUnit productUnit = FormulationHelper.getProductUnit(productNodeRef, nodeService);
-			if (c != null) {			
+			if (c != null) {
 				boolean shouldUseLiter = FormulationHelper.isProductUnitLiter(productUnit);
 				boolean useLiter = FormulationHelper.isCompoUnitLiter(c.getCompoListUnit());
+				Double density = FormulationHelper.getDensity(productNodeRef, nodeService);
 
-				if (shouldUseLiter && !useLiter || !shouldUseLiter && useLiter) {
+				if (density == null && (shouldUseLiter && !useLiter || !shouldUseLiter && useLiter)) {
 					addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_WRONG_UNIT);
+					addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_MISSING_DENSITY);
 				}
 				Double overrunPerc = c.getOverrunPerc();
 				if (FormulationHelper.isProductUnitLiter(productUnit) || overrunPerc != null) {
-					Double density = FormulationHelper.getDensity(productNodeRef, nodeService);
 					if (density == null || density.equals(0d)) {
 						addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_MISSING_DENSITY);
 					}
@@ -299,10 +301,10 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 
 	private void addMessingReq(List<ReqCtrlListDataItem> reqCtrlListDataItem, NodeRef sourceNodeRef, String reqMsg) {
 		String message = I18NUtil.getMessage(reqMsg);
-		ArrayList<NodeRef> sources = new ArrayList<NodeRef>(1);
+		ArrayList<NodeRef> sources = new ArrayList<>(1);
 		if (sourceNodeRef != null) {
 			sources.add(sourceNodeRef);
 		}
-		reqCtrlListDataItem.add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, sources));
+		reqCtrlListDataItem.add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, null, sources));
 	}
 }

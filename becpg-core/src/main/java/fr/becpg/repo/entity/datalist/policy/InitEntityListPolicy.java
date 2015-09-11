@@ -30,7 +30,7 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 public class InitEntityListPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy  {
 	
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(InitEntityListPolicy.class);
+	private static final Log logger = LogFactory.getLog(InitEntityListPolicy.class);
 	
 	
 	/** The namespace service. */

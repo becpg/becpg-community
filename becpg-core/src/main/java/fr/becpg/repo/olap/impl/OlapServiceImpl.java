@@ -33,9 +33,13 @@ import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.util.URIUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.ws.commons.util.Base64;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.RepoService;
@@ -46,30 +50,44 @@ import fr.becpg.repo.olap.data.OlapChartData;
 import fr.becpg.repo.olap.data.OlapChartMetadata;
 import fr.becpg.repo.olap.data.OlapContext;
 
+@Service("olapService")
 public class OlapServiceImpl implements OlapService {
 
+	private static final String ROW_HEADER = "ROW_HEADER_HEADER";
+
+	private static final Log logger = LogFactory.getLog(OlapServiceImpl.class);
+
+	@Value("${becpg.instance.name}")
 	private String instanceName;
 
-	private String olapServerUrl;
+	@Value("${becpg.olap.url.public}")
+	private String olapPublicUrl;
 
+	@Value("${becpg.olap.url.internal}")
+	private String olapServerUrl;
+	
+	@Value("${becpg.olap.enabled}")
+	private Boolean enabled;
+
+	@Autowired
 	private FileFolderService fileFolderService;
 
+	@Autowired
 	private ContentService contentService;
 
+	@Autowired
 	private RepoService repoService;
 
+	@Autowired
 	private AuthenticationService authenticationService;
-	
+
+	@Autowired
 	private TenantService tenantService;
-
-	private static String ROW_HEADER = "ROW_HEADER_HEADER";
-
-	private static Log logger = LogFactory.getLog(OlapServiceImpl.class);
 
 	public void setInstanceName(String instanceName) {
 		this.instanceName = instanceName;
 	}
-	
+
 	public void setTenantService(TenantService tenantService) {
 		this.tenantService = tenantService;
 	}
@@ -89,16 +107,14 @@ public class OlapServiceImpl implements OlapService {
 	public void setContentService(ContentService contentService) {
 		this.contentService = contentService;
 	}
-	
-	
 
 	public void setRepoService(RepoService repoService) {
 		this.repoService = repoService;
 	}
 
 	@Override
-	public List<OlapChart> retrieveOlapCharts()  {
-		List<OlapChart> olapCharts = new ArrayList<OlapChart>();
+	public List<OlapChart> retrieveOlapCharts() {
+		List<OlapChart> olapCharts = new ArrayList<>();
 
 		for (FileInfo fileInfo : fileFolderService.list(getOlapQueriesFolder())) {
 
@@ -123,18 +139,16 @@ public class OlapServiceImpl implements OlapService {
 
 	@Override
 	public NodeRef getOlapQueriesFolder() {
-		return repoService.getFolderByPath("/"+RepoConsts.PATH_SYSTEM +"/" + RepoConsts.PATH_OLAP_QUERIES);
+		return repoService.getFolderByPath("/" + RepoConsts.PATH_SYSTEM + "/" + RepoConsts.PATH_OLAP_QUERIES);
 	}
 
 	@Override
-	public List<OlapChart> retrieveOlapChartsFromSaiku() {
+	public List<OlapChart> retrieveOlapChartsFromSaiku() throws IOException, JSONException {
 
-		List<OlapChart> olapCharts = new ArrayList<OlapChart>();
-		try {
+		List<OlapChart> olapCharts = new ArrayList<>();
+		try (OlapContext olapContext = new OlapContext(getCurrentOlapUserName(), getCurrentAuthToken())) {
 
-			OlapContext olapContext = OlapUtils.createOlapContext(getCurrentOlapUserName());
-
-			JSONArray jsonArray = OlapUtils.readJsonArrayFromUrl(buildRepositoryUrl(olapContext), olapContext);
+			JSONArray jsonArray = new JSONArray(OlapUtils.readJsonFromUrl(buildRepositoryUrl(olapContext), olapContext));
 
 			if (jsonArray != null) {
 
@@ -144,7 +158,7 @@ public class OlapServiceImpl implements OlapService {
 
 						OlapChart chart = new OlapChart(queryName);
 
-						JSONObject json = OlapUtils.readJsonObjectFromUrl(buildQueryUrl(queryName, olapContext), olapContext);
+						JSONObject json = new JSONObject(OlapUtils.readJsonFromUrl(buildQueryUrl(queryName, olapContext), olapContext));
 
 						chart.load(json.getString("xml"));
 						olapCharts.add(chart);
@@ -155,8 +169,6 @@ public class OlapServiceImpl implements OlapService {
 				}
 
 			}
-		} catch (Exception e) {
-			logger.error(e, e);
 		}
 
 		return olapCharts;
@@ -187,51 +199,74 @@ public class OlapServiceImpl implements OlapService {
 	@Override
 	public OlapChartData retrieveChartData(String olapQueryId) throws IOException, JSONException {
 
-		OlapContext olapContext = OlapUtils.createOlapContext(getCurrentOlapUserName());
+		try (OlapContext olapContext = new OlapContext(getCurrentOlapUserName(), getCurrentAuthToken())) {
 
-		OlapChart chart = getOlapChart(olapQueryId);
+			OlapChart chart = getOlapChart(olapQueryId);
 
-		OlapChartData ret = new OlapChartData();
-		if (chart != null) {
+			OlapChartData ret = new OlapChartData();
+			if (chart != null) {
 
-			OlapUtils.sendCreateQueryPostRequest(olapContext, buildCreateQueryUrl(olapQueryId, olapContext), chart.getXml());
-			JSONArray jsonArray = OlapUtils.readJsonObjectFromUrl(buildDataUrl(olapQueryId, olapContext), olapContext).getJSONArray("cellset");
+				OlapUtils.sendCreateQueryPostRequest(olapContext, buildCreateQueryUrl(olapQueryId, olapContext), chart.getXml());
 
-			if (jsonArray != null) {
+				String data = OlapUtils.readJsonFromUrl(buildDataUrl(olapQueryId, olapContext), olapContext);
 
-				int lowest_level = 0;
-				for (int row = 0; row < jsonArray.length(); row++) {
-					JSONArray cur = jsonArray.getJSONArray(row);
-					if (ROW_HEADER.equals(cur.getJSONObject(0).getString("type"))) {
-						for (int field = 0; field < cur.length(); field++) {
-							if (ROW_HEADER.equals(cur.getJSONObject(field).getString("type"))) {
-								ret.shiftMetadata();
-								lowest_level = field;
+				if (data != null && data.length() > 0) {
+
+					JSONArray jsonArray = (new JSONObject(data)).getJSONArray("cellset");
+
+					if (jsonArray != null) {
+
+						int lowest_level = 0;
+						for (int row = 0; row < jsonArray.length(); row++) {
+							JSONArray cur = jsonArray.getJSONArray(row);
+							if (ROW_HEADER.equals(cur.getJSONObject(0).getString("type"))) {
+								for (int field = 0; field < cur.length(); field++) {
+									if (ROW_HEADER.equals(cur.getJSONObject(field).getString("type"))) {
+										ret.shiftMetadata();
+										lowest_level = field;
+									}
+									ret.addMetadata(new OlapChartMetadata(field, retrieveDataType(jsonArray.getJSONArray(row + 1).getJSONObject(field).getString("value")), cur.getJSONObject(field)
+											.getString("value")));
+								}
+							} else if (cur.getJSONObject(0).getString("value") != null) {
+								List<Object> record = new ArrayList<>();
+								for (int col = lowest_level; col < cur.length(); col++) {
+									String value = cur.getJSONObject(col).getString("value");
+									record.add(OlapUtils.convert(value));
+								}
+								ret.getResultsets().add(record);
 							}
-							ret.addMetadata(new OlapChartMetadata(field, retrieveDataType(jsonArray.getJSONArray(row + 1).getJSONObject(field).getString("value")), cur
-									.getJSONObject(field).getString("value")));
 						}
-					} else if (cur.getJSONObject(0).getString("value") != null) {
-						List<Object> record = new ArrayList<Object>();
-						for (int col = lowest_level; col < cur.length(); col++) {
-							String value = cur.getJSONObject(col).getString("value");
-							record.add(OlapUtils.convert(value));
-						}
-						ret.getResultsets().add(record);
 					}
+				} else {
+					logger.error("No data return by saiku for "+buildDataUrl(olapQueryId, olapContext));
 				}
 			}
+			return ret;
 		}
-		return ret;
 	}
 
-	@Override
-	public String getCurrentOlapUserName() {
+	private String getCurrentAuthToken() {
+		String currentUserName = getCurrentOlapUserName();
+		currentUserName += "#" + authenticationService.getCurrentTicket();
+
+		return Base64.encode(currentUserName.getBytes());
+	}
+
+	private String getCurrentOlapUserName() {
 		String currentUserName = (instanceName != null ? instanceName : "default") + "$" + authenticationService.getCurrentUserName();
 		if (!currentUserName.contains("@") || !tenantService.isEnabled()) {
 			currentUserName += "@default";
 		}
 		return currentUserName;
+	}
+
+	@Override
+	public String getSSOUrl() {
+		if(enabled){
+			return olapPublicUrl + "?ticket=" + getCurrentAuthToken();
+		} 
+		return null;
 	}
 
 	private OlapChart getOlapChart(String olapQueryId) throws JSONException, IOException {
@@ -249,8 +284,7 @@ public class OlapServiceImpl implements OlapService {
 	}
 
 	private String buildDataUrl(String olapQueryId, OlapContext context) throws URIException {
-		return olapServerUrl + "/rest/saiku/" + URIUtil.encodeWithinPath(context.getCurrentUser(), "UTF-8") + "/query/" + URIUtil.encodeWithinPath(olapQueryId, "UTF-8")
-				+ "/result/cheat";
+		return olapServerUrl + "/rest/saiku/" + URIUtil.encodeWithinPath(context.getCurrentUser(), "UTF-8") + "/query/" + URIUtil.encodeWithinPath(olapQueryId, "UTF-8") + "/result/cheat";
 	}
 
 	private String buildCreateQueryUrl(String olapQueryId, OlapContext context) throws URIException {

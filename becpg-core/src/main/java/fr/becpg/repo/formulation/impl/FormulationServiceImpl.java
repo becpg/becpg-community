@@ -21,6 +21,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -46,9 +47,9 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 
 	AlfrescoRepository<T> alfrescoRepository;
 	
-	private Map<Class<T>,Map<String,FormulationChain<T>> > formulationChains = new HashMap<>();
+	private final Map<Class<T>,Map<String,FormulationChain<T>> > formulationChains = new HashMap<>();
 
-	private static Log logger = LogFactory.getLog(FormulationServiceImpl.class);
+	private static final Log logger = LogFactory.getLog(FormulationServiceImpl.class);
 	
 
 	public void setAlfrescoRepository(AlfrescoRepository<T> alfrescoRepository) {
@@ -98,16 +99,18 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 		entity = formulate(entity,chainId);
 		
 		if(logger.isDebugEnabled()){
-        	watch.stop();
+			assert watch != null;
+			watch.stop();
         	logger.debug("Formulate : "+this.getClass().getName()+" takes " + watch.getTotalTimeSeconds() + " seconds");
         	watch = new StopWatch();
 			watch.start();
         }
-
+		
 		alfrescoRepository.save(entity);
 		
 		if(logger.isDebugEnabled()){
-        	watch.stop();
+			assert watch != null;
+			watch.stop();
         	logger.debug("Save : "+this.getClass().getName()+" takes " + watch.getTotalTimeSeconds() + " seconds");
         }
 
@@ -140,6 +143,10 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 				if(chain.shouldUpdateFormulatedDate()){
 					repositoryEntity.setFormulatedDate(Calendar.getInstance().getTime());
 				}
+				
+				//Warning only on integrity check for formulation
+				IntegrityChecker.setWarnInTransaction();
+				
 			} else {
 				logger.error("No formulation chain define for :"+repositoryEntity.getClass().getName());
 			}

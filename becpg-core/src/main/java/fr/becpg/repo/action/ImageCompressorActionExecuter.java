@@ -37,7 +37,7 @@ public class ImageCompressorActionExecuter extends ActionExecuterAbstractBase{
 	public static final String PARAM_CONVERT_COMMAND = "convert-command";
 	
 	/** The logger. */
-	private static Log logger = LogFactory.getLog(ImageCompressorActionExecuter.class);	
+	private static final Log logger = LogFactory.getLog(ImageCompressorActionExecuter.class);
 	
 	private ContentService contentService;
 	private ContentTransformer imageMagickContentTransformer;

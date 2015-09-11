@@ -1,0 +1,233 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+  Copyright (C) 2010-2015 beCPG. 
+   
+  This file is part of beCPG 
+   
+  beCPG is free software: you can redistribute it and/or modify 
+  it under the terms of the GNU Lesser General Public License as published by 
+  the Free Software Foundation, either version 3 of the License, or 
+  (at your option) any later version. 
+   
+  beCPG is distributed in the hope that it will be useful, 
+  but WITHOUT ANY WARRANTY; without even the implied warranty of 
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+  GNU Lesser General Public License for more details. 
+   
+  You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
+-->
+<!DOCTYPE beans PUBLIC '-//SPRING//DTD BEAN 2.0//EN' 'http://www.springframework.org/dtd/spring-beans-2.0.dtd'>
+
+<beans>
+
+
+	<!-- Formulation details visitors -->
+
+	<bean id="simpleCharactDetailsVisitor"
+		class="fr.becpg.repo.product.formulation.details.SimpleCharactDetailsVisitor">
+		<property name="alfrescoRepository" ref="alfrescoRepository" />
+		<property name="nodeService" ref="nodeService" />		
+	</bean>
+
+	<bean id="costCharactDetailsVisitor"
+		class="fr.becpg.repo.product.formulation.details.CostCharactDetailsVisitor">
+		<property name="alfrescoRepository" ref="alfrescoRepository" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="packagingHelper" ref="packagingHelper" />
+	</bean>
+
+
+	<bean id="charactDetailsVisitorFactory" class="fr.becpg.repo.product.CharactDetailsVisitorFactoryImpl">
+		<property name="visitorRegistry">
+			<map>
+				<entry key="nutList">
+					<ref bean="simpleCharactDetailsVisitor" />
+				</entry>
+				<entry key="ingList">
+					<ref bean="simpleCharactDetailsVisitor" />
+				</entry>
+				<entry key="costList">
+					<ref bean="costCharactDetailsVisitor" />
+				</entry>
+				<entry key="physicoChemList">
+					<ref bean="simpleCharactDetailsVisitor" />
+				</entry>	
+				<entry key="allergenList">
+					<ref bean="simpleCharactDetailsVisitor" />
+				</entry>				
+			</map>
+		</property>
+	</bean>
+
+	<!-- Formulation visitors -->
+
+	<bean id="formulaService" class="fr.becpg.repo.product.formulation.FormulaService">
+		<property name="alfrescoRepository" ref="alfrescoRepository" />
+		<property name="namespaceService" ref="namespaceService"/>
+		<property name="securityMethodBeforeAdvice" ref="securityMethodBeforeAdvice"/>
+		<property name="nodeService" ref="nodeService" />
+	</bean>
+
+
+	<bean id="abstractSimpleFormulationHandler"
+		class="fr.becpg.repo.product.formulation.AbstractSimpleListFormulationHandler" abstract="true">
+		<property name="alfrescoRepository" ref="alfrescoRepository" />
+		<property name="entityListDAO" ref="entityListDAO" />
+		<property name="nodeService" ref="nodeService" />
+	</bean>
+
+
+	<bean id="productFormulationChain" class="fr.becpg.repo.formulation.FormulationChain"
+		init-method="init">
+		<property name="handlers">
+			<list>
+				<bean class="fr.becpg.repo.product.formulation.ProductFormulationHandler">
+					<property name="nodeService" ref="nodeService" />
+					<property name="productService" ref="productService"/>
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+					<property name="formulateChildren" value="true" />
+				</bean>
+				<bean	class="fr.becpg.repo.product.formulation.CompositionQtyCalculatingFormulationHandler">
+					<property name="nodeService" ref="nodeService" />
+				</bean>
+				<bean class="fr.becpg.repo.product.formulation.FormulaFormulationHandler" >
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+					<property name="namespaceService" ref="namespaceService"/>
+					<property name="formulaService" ref="formulaService"/>
+					<property name="nodeService" ref="nodeService" />
+					<property name="execOrder" value="Pre"/>
+				</bean>
+				<bean	class="fr.becpg.repo.product.formulation.CompositionCalculatingFormulationHandler">
+					<property name="nodeService" ref="nodeService" />
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+				</bean>
+				<bean class="fr.becpg.repo.product.formulation.ProcessCalculatingFormulationHandler">
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+					<property name="packagingHelper" ref="packagingHelper" />
+				</bean>
+				<bean class="fr.becpg.repo.product.formulation.AllergensCalculatingFormulationHandler">
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+					<property name="nodeService" ref="nodeService" />
+				</bean>
+				<bean parent="abstractSimpleFormulationHandler"
+					class="fr.becpg.repo.product.formulation.NutsCalculatingFormulationHandler">
+					<property name="formulaService" ref="formulaService"/>
+				</bean>
+				<bean parent="abstractSimpleFormulationHandler"
+					class="fr.becpg.repo.product.formulation.CostsCalculatingFormulationHandler">
+					<property name="entityTplService" ref="entityTplService" />
+					<property name="formulaService" ref="formulaService"/>
+					<property name="packagingHelper" ref="packagingHelper" />
+					<property name="alfrescoRepositoryProductData" ref="alfrescoRepository" />
+				</bean>
+				<bean class="fr.becpg.repo.product.formulation.IngsCalculatingFormulationHandler" >
+					<property name="nodeService" ref="nodeService" />
+					<property name="alfrescoRepository" ref="alfrescoRepository" />					
+				</bean>
+				<bean class="fr.becpg.repo.product.formulation.labeling.LabelingFormulationHandler">
+				   <property name="nodeService" ref="nodeService" />
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+					<property name="mlNodeService" ref="mlAwareNodeService" />
+					<property name="associationService" ref="associationService"/>
+				</bean>
+				<bean parent="abstractSimpleFormulationHandler"
+					class="fr.becpg.repo.product.formulation.PhysicoChemCalculatingFormulationHandler">
+				</bean>
+				<bean class="fr.becpg.repo.product.formulation.TareFormulationHandler">
+					<property name="nodeService" ref="nodeService" />
+				</bean>
+				<bean class="fr.becpg.repo.product.formulation.LabelClaimFormulationHandler" >
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+					<property name="formulaService" ref="formulaService"/>
+					<property name="nodeService" ref="nodeService" />
+				</bean>
+				<bean class="fr.becpg.repo.product.formulation.FormulaFormulationHandler" >
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+					<property name="namespaceService" ref="namespaceService"/>
+					<property name="formulaService" ref="formulaService"/>
+					<property name="nodeService" ref="nodeService" />
+					<property name="execOrder" value="Post"/>
+				</bean>
+				<bean class="fr.becpg.repo.product.formulation.MergeReqCtrlFormulationHandler" >
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+					<property name="nodeService" ref="nodeService" />
+				</bean>
+				<bean class="fr.becpg.repo.product.formulation.CompareFormulationHandler" >
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+					<property name="namespaceService" ref="namespaceService"/>
+					<property name="productService" ref="productService"/>
+					<property name="associationService" ref="associationService" />
+					<property name="nodeService" ref="nodeService" />
+					<property name="attributeExtractorService" ref="attributeExtractorService"/>
+				</bean>
+			</list>
+		</property>
+		<property name="formulationService" ref="formulationService" />
+		<property name="contextClass" value="fr.becpg.repo.product.data.ProductData" />
+	</bean>
+
+
+  <bean id="fastProductFormulationChain" class="fr.becpg.repo.formulation.FormulationChain"
+		init-method="init">
+		<property name="handlers">
+			<list>
+				<bean class="fr.becpg.repo.product.formulation.ProductFormulationHandler">
+					<property name="nodeService" ref="nodeService" />
+					<property name="productService" ref="productService"/>
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+				</bean>
+				<bean class="fr.becpg.repo.product.formulation.CompositionQtyCalculatingFormulationHandler">
+					<property name="nodeService" ref="nodeService" />
+				</bean>
+				<bean class="fr.becpg.repo.product.formulation.FormulaFormulationHandler" >
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+					<property name="namespaceService" ref="namespaceService"/>
+					<property name="formulaService" ref="formulaService"/>
+					<property name="nodeService" ref="nodeService" />
+					<property name="execOrder" value="Pre"/>
+				</bean>
+				<bean class="fr.becpg.repo.product.formulation.CompositionCalculatingFormulationHandler">
+					<property name="nodeService" ref="nodeService" />
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+				</bean>
+				<bean parent="abstractSimpleFormulationHandler"
+					class="fr.becpg.repo.product.formulation.NutsCalculatingFormulationHandler">
+					<property name="transientFormulation" value="true"/>
+					<property name="formulaService" ref="formulaService"/>
+				</bean>
+				<bean parent="abstractSimpleFormulationHandler"
+					class="fr.becpg.repo.product.formulation.CostsCalculatingFormulationHandler">
+					<property name="formulaService" ref="formulaService"/>
+					<property name="entityTplService" ref="entityTplService" />
+					<property name="packagingHelper" ref="packagingHelper" />
+					<property name="alfrescoRepositoryProductData" ref="alfrescoRepository" />
+					<property name="transientFormulation" value="true"/>
+				</bean>
+				<bean class="fr.becpg.repo.product.formulation.FormulaFormulationHandler" >
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+					<property name="namespaceService" ref="namespaceService"/>
+					<property name="formulaService" ref="formulaService"/>
+					<property name="nodeService" ref="nodeService" />
+					<property name="execOrder" value="Post"/>
+				</bean>
+				<bean class="fr.becpg.repo.product.formulation.MergeReqCtrlFormulationHandler" >
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+					<property name="nodeService" ref="nodeService" />
+				</bean>
+				<bean class="fr.becpg.repo.product.formulation.CompareFormulationHandler" >
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+					<property name="namespaceService" ref="namespaceService"/>
+					<property name="productService" ref="productService"/>
+					<property name="associationService" ref="associationService" />
+					<property name="nodeService" ref="nodeService" />
+					<property name="attributeExtractorService" ref="attributeExtractorService"/>
+				</bean>
+			</list>
+		</property>
+		<property name="formulationService" ref="formulationService" />
+		<property name="chainId" value="fastProductFormulationChain"/>
+		<property name="contextClass" value="fr.becpg.repo.product.data.ProductData" />
+		<property name="updateFormulatedDate" value="false"/>
+	</bean>
+
+</beans>

@@ -9,6 +9,8 @@ public enum ProcessListUnit {
 	
 	kg,
 	
-	L;
+	L,
 	
+	Box
+
 }

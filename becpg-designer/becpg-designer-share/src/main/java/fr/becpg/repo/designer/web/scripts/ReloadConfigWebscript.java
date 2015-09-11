@@ -50,7 +50,7 @@ public class ReloadConfigWebscript  extends DeclarativeWebScript {
 	
 	protected Map<String, Object> executeImpl(WebScriptRequest req,
 	         Status status) {
-	      Map<String, Object> model = new HashMap<String, Object>();
+	      Map<String, Object> model = new HashMap<>();
 	      
 	      logger.debug("Reload configService");
 	      configService.reset();

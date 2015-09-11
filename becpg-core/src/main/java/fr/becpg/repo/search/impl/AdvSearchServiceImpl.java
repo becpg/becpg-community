@@ -21,8 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -33,7 +31,6 @@ import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.search.AdvSearchPlugin;
 import fr.becpg.repo.search.AdvSearchService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -49,22 +46,15 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 @Service("advSearchService")
 public class AdvSearchServiceImpl implements AdvSearchService {
 
-	private static Log logger = LogFactory.getLog(AdvSearchServiceImpl.class);
-
-	@Autowired
-	private NodeService nodeService;
+	private static final Log logger = LogFactory.getLog(AdvSearchServiceImpl.class);
 
 	@Autowired
 	private NamespaceService namespaceService;
 
-	@Autowired
-	private PermissionService permissionService;
 
 	@Autowired(required = false)
 	private AdvSearchPlugin[] advSearchPlugins;
 
-	@Autowired
-	private HierarchyService hierarchyService;
 
 	@Override
 	public List<NodeRef> queryAdvSearch(QName datatype, BeCPGQueryBuilder beCPGQueryBuilder, Map<String, String> criteria, int maxResults) {
@@ -157,7 +147,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 								// no need to add the term
 								if (!propValue.isEmpty()) {
 
-									String from = "", to = "";
+									String from, to;
 									int sepindex = propValue.indexOf("|");
 									if (propName.endsWith("-date-range")) {
 										// date range found
@@ -272,15 +262,17 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder
 					.createQuery()
-					.inPath(RepoConsts.PATH_SYSTEM + "/" + RepoConsts.PATH_PRODUCT_HIERARCHY + "/"
+					.inSubPath(RepoConsts.PATH_SYSTEM + "/" + RepoConsts.PATH_PRODUCT_HIERARCHY + "/"
 							+ BeCPGModel.ASSOC_ENTITYLISTS.toPrefixString(namespaceService)).inType(BeCPGModel.TYPE_LINKED_VALUE)
-					.andPropEquals(BeCPGModel.PROP_LKV_VALUE, hierachyName);
+					.andPropQuery(BeCPGModel.PROP_LKV_VALUE, hierachyName);
 
 			if (propName.endsWith("productHierarchy1")) {
 				queryBuilder.andPropEquals(BeCPGModel.PROP_DEPTH_LEVEL, "1");
 			}
 			nodes = queryBuilder.list();
 		}
+		
+		
 		String ret = "";
 		if (nodes != null && !nodes.isEmpty()) {
 			for (NodeRef node : nodes) {

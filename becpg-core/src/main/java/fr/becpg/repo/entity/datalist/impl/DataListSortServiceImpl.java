@@ -45,7 +45,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 @Service("dataListSortService")
 public class DataListSortServiceImpl implements DataListSortService {
 
-	private static Log logger = LogFactory.getLog(DataListSortServiceImpl.class);	
+	private static final Log logger = LogFactory.getLog(DataListSortServiceImpl.class);
 
 	@Autowired
 	private NodeService nodeService;
@@ -62,7 +62,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 		int sort = RepoConsts.SORT_DEFAULT_STEP - RepoConsts.SORT_INSERTING_STEP;
 		int level = RepoConsts.DEFAULT_LEVEL;
 
-		HashSet<NodeRef> pendingNodeRefs = new HashSet<NodeRef>(nodeRefs);
+		HashSet<NodeRef> pendingNodeRefs = new HashSet<>(nodeRefs);
 
 		for (NodeRef nodeRef : nodeRefs) {
 
@@ -198,7 +198,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 		}
 
 		// calculate next sort
-		Integer nextSort = RepoConsts.SORT_DEFAULT_STEP;
+		Integer nextSort;
 		if (sort == null) {
 			nextSort = RepoConsts.SORT_DEFAULT_STEP;
 		} else {
@@ -349,12 +349,12 @@ public class DataListSortServiceImpl implements DataListSortService {
 		if (level != null) {
 			queryBuilder.andPropEquals(BeCPGModel.PROP_DEPTH_LEVEL, level.toString());
 		}
-
+		
 		NodeRef parentLevel = (NodeRef) nodeService.getProperty(nodeRef, BeCPGModel.PROP_PARENT_LEVEL);
 		if(parentLevel != null){
 			queryBuilder.andPropEquals(BeCPGModel.PROP_PARENT_LEVEL, parentLevel.toString());
 		}
-		
+
 		return queryBuilder.inDB().singleValue();
 	}
 
@@ -434,6 +434,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 
 		// look for the right destNode (before or after sibling)
 		NodeRef destNodeRef = getNextSiblingNode(dataType, listContainer, nodeRef, moveUp);
+		logger.debug("destNodeRef " + destNodeRef);
 
 		if (destNodeRef == null) {			
 			if(getSortedNode(dataType, listContainer, sort, nodeRef) != null){
@@ -473,20 +474,23 @@ public class DataListSortServiceImpl implements DataListSortService {
 			List<NodeRef> destChildren = queryBuilder.inDB().list();
 
 			// udpate sort of nodeRef and children
+			logger.debug("udpate sort of nodeRef and children");
 			int newSort = destSort;
 			for (NodeRef listItem : children) {
 				newSort++;
 				setProperty(listItem, BeCPGModel.PROP_SORT, newSort);
-			}
-
+			}			
+			
 			// update sort of destNodeRef and children
+			logger.debug("update sort of destNodeRef and children");
 			newSort = sort;
 			for (NodeRef listItem : destChildren) {
 				newSort++;
 				setProperty(listItem, BeCPGModel.PROP_SORT, newSort);
 			}
-
+			
 			// swap parent
+			logger.debug("swap parent");
 			setProperty(nodeRef, BeCPGModel.PROP_SORT, moveUp ? destSort : newSort+1);
 			setProperty(destNodeRef, BeCPGModel.PROP_SORT, sort);
 		}

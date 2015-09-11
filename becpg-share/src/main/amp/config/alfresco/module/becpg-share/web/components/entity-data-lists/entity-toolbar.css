@@ -1,0 +1,151 @@
+.datalist-toolbar .right div {
+	float:left;
+}
+
+.datalist-toolbar .right .action-set div {
+	float:none;
+}
+
+.datalist-toolbar .entity-view-details span.first-child
+{
+   background: url(../documentlibrary/actions/entity-view-details-16.png) no-repeat 12px 4px;
+   padding-left: 24px;
+}
+
+.datalist-toolbar .entity-view-documents span.first-child
+{
+   background: url(../documentlibrary/actions/entity-view-documents-16.png) no-repeat 12px 4px;
+   padding-left: 24px;
+}
+
+
+.datalist-toolbar .entity-add-aspect span.first-child  {
+	background:  url("../documentlibrary/actions/document-manage-aspects-16.png") no-repeat 12px 4px;
+	padding-left: 24px;
+}
+
+
+.datalist-toolbar .eco-calculate-wused span.first-child
+{
+   background: url(images/eco-calculate-wused-16.png) no-repeat 12px 4px;
+   padding-left: 24px;
+}
+
+.datalist-toolbar .eco-do-simulation span.first-child
+{
+   background: url(images/eco-do-simulation-16.png) no-repeat 12px 4px;
+   padding-left: 24px;
+}
+
+.datalist-toolbar .eco-apply span.first-child
+{
+   background: url(images/eco-apply-16.png) no-repeat 12px 4px;
+   padding-left: 24px;
+}
+
+
+.datalist-toolbar .export-csv span.first-child
+{
+	background: url(../images/filetypes/xls-file-16.png) no-repeat 12px 4px;
+   padding-left: 12px;
+}
+
+
+.datalist-toolbar div.flat-button .ganttCkeckbox  span.yui-checkbox-button button
+{
+   background: url("../project/images/gantt-16.png") no-repeat 4px 4px;
+}
+
+
+.datalist-toolbar div.flat-button  .ganttCkeckbox span.yui-checkbox-button.yui-checkbox-button-checked button
+{
+   background: url("../project/images/planning-16.png") no-repeat 4px 4px;
+}
+
+
+
+
+.datalist-toolbar .formulate span.first-child
+{
+   background: url(images/formulate-16.png) no-repeat 12px 4px;
+   padding-left: 24px;
+}
+
+
+.datalist-toolbar .product-metadata span.first-child
+{
+   background: url(../documentlibrary/actions/entity-view-details-16.png) no-repeat 12px 4px;
+   padding-left: 24px;
+}
+
+.datalist-toolbar .entity-edit-metadata span.first-child
+{
+   background: url(../documentlibrary/actions/folder-edit-metadata-16.png) no-repeat 12px 4px;
+   padding-left: 24px;
+}
+
+.datalist-toolbar .entity-print-metadata span.first-child
+{
+   background: url(../images/printer-16.png) no-repeat 12px 4px;
+   padding-left: 24px;
+}
+
+.datalist-toolbar .entity-refresh-reports span.first-child
+{
+   background: url(../documentlibrary/actions/entity-refresh-reports-16.png) no-repeat 12px 4px;
+   padding-left: 24px;
+}
+
+.datalist-toolbar .full-screen span.first-child
+{
+   background: url(../images/fullscreen-enter.png) no-repeat 5px 4px;
+}
+
+
+.datalist-toolbar div.flat-button  span.yui-checkbox-button-checked {
+	 background: none repeat scroll 0 0 transparent;
+}
+
+
+.datalist-toolbar div.flat-button .stateCkeckbox  span.yui-checkbox-button button
+{
+   background: url(../images/job-running-16.png) no-repeat 4px 4px;
+}
+
+
+.datalist-toolbar div.flat-button  .stateCkeckbox span.yui-checkbox-button.yui-checkbox-button-checked button
+{
+   background: url(../images/job-success-16.png) no-repeat 4px 4px;
+}
+
+
+.datalist-toolbar .onActionUp
+{
+   background-image: url(../images/up-arrow-16.png);
+}
+
+.datalist-toolbar .onActionDown
+{
+   background-image: url(../images/down-arrow-16.png);
+}
+
+
+.datalist-toolbar .onActionShowDetails
+{
+   background-image: url(../images/show-details-16.png);
+}
+
+
+.datalist-toolbar .onActionShowWused {
+	background-image: url(../images/wused-16.png);
+}
+
+.datalist-toolbar .onActionBulkEdit {
+	background-image:  url("../../components/images/edit-inline-16.png");
+}
+
+.datalist-toolbar .onActionSelectColor  {
+	background-image:  url("../../components/images/select-color-16.png") ;
+}
+
+

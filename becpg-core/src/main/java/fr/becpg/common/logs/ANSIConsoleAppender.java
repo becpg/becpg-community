@@ -29,14 +29,11 @@ public class ANSIConsoleAppender extends ConsoleAppender
 {
     private static final int NORMAL = 0;
     private static final int BRIGHT = 1;
-//    private static final int FOREGROUND_BLACK = 30;
     private static final int FOREGROUND_RED = 31;
     private static final int FOREGROUND_GREEN = 32;
     private static final int FOREGROUND_YELLOW = 33;
     private static final int FOREGROUND_BLUE = 34;
-//    private static final int FOREGROUND_MAGENTA = 35;
     private static final int FOREGROUND_CYAN = 36;
-//    private static final int FOREGROUND_WHITE = 37;   
  
     private static final String PREFIX = "\u001b[";
     private static final String SUFFIX = "m";

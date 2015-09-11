@@ -33,6 +33,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.extensions.surf.util.I18NUtil;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.admin.InitVisitor;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
@@ -44,7 +45,7 @@ import fr.becpg.repo.helper.TranslateHelper;
  */
 public abstract class AbstractInitVisitorImpl implements InitVisitor {		
 	
-	protected static Log logger = LogFactory.getLog(AbstractInitVisitorImpl.class);
+	protected static final Log logger = LogFactory.getLog(AbstractInitVisitorImpl.class);
 	
 
 	private static final String LOCALIZATION_PFX_GROUP = "becpg.group";
@@ -63,9 +64,10 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 
 	@Autowired
 	protected ActionService actionService;
-
+	
 	@Autowired
 	protected AuthorityService authorityService;
+
 		
 	/**
 	 * Visit folder.
@@ -85,7 +87,7 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 		NodeRef folderNodeRef = repoService.getFolderByPath(parentNodeRef, folderPath);		
 	    if(folderNodeRef == null){
 
-	    	logger.debug("Create folder, path: " + folderPath + " - translatedName: " + folderName);	    		    	
+	    	logger.info("Create folder, path: " + folderPath + " - translatedName: " + folderName);	    		    	
 	    	//logger.debug("QName: " + QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, folderPath));
 	    	
 	    	folderNodeRef = repoService.getOrCreateFolderByPath(parentNodeRef, folderPath, folderName);
@@ -147,7 +149,7 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 	protected void createRuleSpecialiseType(NodeRef nodeRef, boolean applyToChildren, QName type){
 		
 	    // Action : apply type
-	    Map<String,Serializable> params = new HashMap<String, Serializable>();
+	    Map<String,Serializable> params = new HashMap<>();
   	  	params.put(SpecialiseTypeActionExecuter.PARAM_TYPE_NAME, type);
 	    CompositeAction compositeAction = actionService.createCompositeAction();
 	    Action myAction= actionService.createAction(SpecialiseTypeActionExecuter.NAME, params);
@@ -175,7 +177,7 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 
 		// action
 		CompositeAction compositeAction = actionService.createCompositeAction();
-		Map<String, Serializable> params = new HashMap<String, Serializable>();
+		Map<String, Serializable> params = new HashMap<>();
 		params.put(AddFeaturesActionExecuter.PARAM_ASPECT_NAME, aspect);
 		Action action = actionService.createAction(AddFeaturesActionExecuter.NAME, params);
 		compositeAction.addAction(action);
@@ -204,10 +206,9 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 
 	}
 	
-
 	protected void createGroups(String[] groups) {
 
-		Set<String> zones = new HashSet<String>();
+		Set<String> zones = new HashSet<>();
 		zones.add(AuthorityService.ZONE_APP_DEFAULT);
 		zones.add(AuthorityService.ZONE_APP_SHARE);
 		zones.add(AuthorityService.ZONE_AUTH_ALFRESCO);
@@ -222,7 +223,7 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 				authorityService.createAuthority(AuthorityType.GROUP, group, groupName, zones);
 			} else {
 				Set<String> zonesAdded = authorityService.getAuthorityZones(PermissionService.GROUP_PREFIX + group);
-				Set<String> zonesToAdd = new HashSet<String>();
+				Set<String> zonesToAdd = new HashSet<>();
 				for (String zone : zones)
 					if (!zonesAdded.contains(zone)) {
 						zonesToAdd.add(zone);
@@ -238,6 +239,9 @@ public abstract class AbstractInitVisitorImpl implements InitVisitor {
 		
 	}
 	
-
-
+	protected void addSystemFolderAspect(NodeRef nodeRef){
+		if (!nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_SYSTEM_FOLDER)) {
+			nodeService.addAspect(nodeRef, BeCPGModel.ASPECT_SYSTEM_FOLDER, null);
+		}
+	}
 }

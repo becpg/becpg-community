@@ -18,30 +18,19 @@
 package fr.becpg.repo.project.admin;
 
 import java.io.IOException;
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.action.evaluator.IsSubTypeEvaluator;
-import org.alfresco.service.cmr.action.Action;
-import org.alfresco.service.cmr.action.ActionCondition;
-import org.alfresco.service.cmr.action.CompositeAction;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.rule.Rule;
-import org.alfresco.service.cmr.rule.RuleType;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
@@ -54,8 +43,6 @@ import fr.becpg.repo.entity.EntitySystemService;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.ContentHelper;
 import fr.becpg.repo.helper.TranslateHelper;
-import fr.becpg.repo.project.action.ProjectActivityActionExecuter;
-import fr.becpg.repo.project.data.projectList.ActivityEvent;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -71,8 +58,6 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 	private static final String EXPORT_PROJECTS_REPORT_XMLFILE_PATH = "beCPG/birt/project/ExportSearchQuery.xml";
 
 	public static final String EMAIL_TEMPLATES = "./app:dictionary/app:email_templates";
-
-	private static final String LOCALIZATION_PFX_GROUP = "becpg.project.group";
 
 	@Autowired
 	private EntitySystemService entitySystemService;
@@ -107,12 +92,10 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 
 		visitReports(systemNodeRef);
 
-		createSystemGroups(new String[]{ ProjectGroup.ProjectRoles.toString(), createRoleGroup(ContentModel.PROP_CREATOR),
-			createRoleGroup(ProjectModel.ASSOC_PROJECT_MANAGER) });
+		createSystemGroups(new String[] { ProjectGroup.ProjectRoles.toString(), createRoleGroup(ContentModel.PROP_CREATOR), createRoleGroup(ProjectModel.ASSOC_PROJECT_MANAGER) });
 
 		// MailTemplates
-		NodeRef emailsProject = visitFolder(BeCPGQueryBuilder.createQuery().selectNodeByPath(companyHome, EMAIL_TEMPLATES),
-				ProjectRepoConsts.PATH_EMAILS_PROJECT);
+		NodeRef emailsProject = visitFolder(BeCPGQueryBuilder.createQuery().selectNodeByPath(companyHome, EMAIL_TEMPLATES), ProjectRepoConsts.PATH_EMAILS_PROJECT);
 		contentHelper.addFilesResources(emailsProject, "classpath*:beCPG/mails/project/*.ftl");
 	}
 
@@ -126,7 +109,7 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 		NodeRef entityTplsNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_ENTITY_TEMPLATES);
 
 		// visit supplier
-		Set<QName> dataLists = new LinkedHashSet<QName>();
+		Set<QName> dataLists = new LinkedHashSet<>();
 		dataLists.add(ProjectModel.TYPE_TASK_LIST);
 		dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
 		dataLists.add(ProjectModel.TYPE_SCORE_LIST);
@@ -136,79 +119,11 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 		dataLists.add(ProjectModel.TYPE_INVOICE_LIST);
 		dataLists.add(ProjectModel.TYPE_EXPENSE_LIST);
 
-		NodeRef entityTplNodeRef = entityTplService.createEntityTpl(entityTplsNodeRef, ProjectModel.TYPE_PROJECT,null, true, dataLists, null);
+		NodeRef entityTplNodeRef = entityTplService.createEntityTpl(entityTplsNodeRef, ProjectModel.TYPE_PROJECT, null, true, dataLists, null);
 
-		try {
+		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 
-			if (ruleService.getRules(entityTplNodeRef).isEmpty()) {
-
-				ActionCondition typeCondition = actionService.createActionCondition(IsSubTypeEvaluator.NAME);
-				typeCondition.setParameterValue(IsSubTypeEvaluator.PARAM_TYPE, BeCPGModel.TYPE_ENTITYLIST_ITEM);
-				typeCondition.setInvertCondition(true);
-
-				Map<String, Serializable> params = new HashMap<String, Serializable>();
-				params.put(ProjectActivityActionExecuter.PARAM_ACTIVITY_EVENT, ActivityEvent.Create.toString());
-				CompositeAction compositeAction = actionService.createCompositeAction();
-				Action myAction = actionService.createAction(ProjectActivityActionExecuter.NAME, params);
-				compositeAction.addAction(myAction);
-				compositeAction.addActionCondition(typeCondition);
-
-				// Create Rule
-				Rule rule = new Rule();
-				rule.setTitle(I18NUtil.getMessage("project.activity.rule.inbound.title"));
-				rule.setDescription(I18NUtil.getMessage("project.activity.rule.inbound.description"));
-				rule.applyToChildren(true);
-				rule.setExecuteAsynchronously(false);
-				rule.setRuleDisabled(false);
-				rule.setRuleType(RuleType.INBOUND);
-				rule.setAction(compositeAction);
-				ruleService.saveRule(entityTplNodeRef, rule);
-
-				params.put(ProjectActivityActionExecuter.PARAM_ACTIVITY_EVENT, ActivityEvent.Update.toString());
-				compositeAction = actionService.createCompositeAction();
-				myAction = actionService.createAction(ProjectActivityActionExecuter.NAME, params);
-				typeCondition = actionService.createActionCondition(IsSubTypeEvaluator.NAME);
-				typeCondition.setParameterValue(IsSubTypeEvaluator.PARAM_TYPE, BeCPGModel.TYPE_ENTITYLIST_ITEM);
-				typeCondition.setInvertCondition(true);
-				compositeAction.addAction(myAction);
-				compositeAction.addActionCondition(typeCondition);
-
-				// Update Rule
-				rule = new Rule();
-				rule.setTitle(I18NUtil.getMessage("project.activity.rule.update.title"));
-				rule.setDescription(I18NUtil.getMessage("project.activity.rule.update.description"));
-				rule.applyToChildren(true);
-				rule.setExecuteAsynchronously(false);
-				rule.setRuleDisabled(false);
-				rule.setRuleType(RuleType.UPDATE);
-				rule.setAction(compositeAction);
-				ruleService.saveRule(entityTplNodeRef, rule);
-
-				params.put(ProjectActivityActionExecuter.PARAM_ACTIVITY_EVENT, ActivityEvent.Delete.toString());
-				compositeAction = actionService.createCompositeAction();
-				myAction = actionService.createAction(ProjectActivityActionExecuter.NAME, params);
-				typeCondition = actionService.createActionCondition(IsSubTypeEvaluator.NAME);
-				typeCondition.setParameterValue(IsSubTypeEvaluator.PARAM_TYPE, BeCPGModel.TYPE_ENTITYLIST_ITEM);
-				typeCondition.setInvertCondition(true);
-				compositeAction.addAction(myAction);
-				compositeAction.addActionCondition(typeCondition);
-
-				// Delete Rule
-				rule = new Rule();
-				rule.setTitle(I18NUtil.getMessage("project.activity.rule.outbound.title"));
-				rule.setDescription(I18NUtil.getMessage("project.activity.rule.outbound.description"));
-				rule.applyToChildren(true);
-				rule.setExecuteAsynchronously(false);
-				rule.setRuleDisabled(false);
-				rule.setRuleType(RuleType.OUTBOUND);
-				rule.setAction(compositeAction);
-				ruleService.saveRule(entityTplNodeRef, rule);
-
-			}
-		} catch (Exception e) {
-			// TODO unit tests
-			logger.error(e, e);
-		}
+	
 
 	}
 
@@ -221,7 +136,7 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 	 */
 	private NodeRef visitSystemProjectListValuesEntity(NodeRef parentNodeRef, String path) {
 
-		Map<String, QName> entityLists = new LinkedHashMap<String, QName>();
+		Map<String, QName> entityLists = new LinkedHashMap<>();
 
 		entityLists.put(ProjectRepoConsts.PATH_TASK_LEGENDS, ProjectModel.TYPE_TASK_LEGEND);
 		entityLists.put(ProjectRepoConsts.PATH_PROJECT_HIERARCHY, BeCPGModel.TYPE_LINKED_VALUE);
@@ -248,8 +163,8 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 		// export search products
 		try {
 			NodeRef exportSearchProductsNodeRef = visitFolder(exportSearchNodeRef, PATH_REPORTS_EXPORT_SEARCH_PROJECTS);
-			reportTplService.createTplRptDesign(exportSearchProductsNodeRef, TranslateHelper.getTranslatedPath(PATH_REPORTS_EXPORT_SEARCH_PROJECTS),
-					EXPORT_PROJECTS_REPORT_RPTFILE_PATH, ReportType.ExportSearch, ReportFormat.PDF, ProjectModel.TYPE_PROJECT, false, true, false);
+			reportTplService.createTplRptDesign(exportSearchProductsNodeRef, TranslateHelper.getTranslatedPath(PATH_REPORTS_EXPORT_SEARCH_PROJECTS), EXPORT_PROJECTS_REPORT_RPTFILE_PATH,
+					ReportType.ExportSearch, ReportFormat.PDF, ProjectModel.TYPE_PROJECT, false, true, false);
 
 			reportTplService.createTplRessource(exportSearchProductsNodeRef, EXPORT_PROJECTS_REPORT_XMLFILE_PATH, false);
 		} catch (IOException e) {
@@ -260,19 +175,15 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 
 	private void createSystemGroups(String[] groups) {
 
-          createGroups(groups);
-	
+		createGroups(groups);
 
 		// Group hierarchy
-		Set<String> authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP, PermissionService.GROUP_PREFIX
-				+ ProjectGroup.ProjectRoles.toString(), true);
+		Set<String> authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP, PermissionService.GROUP_PREFIX + ProjectGroup.ProjectRoles.toString(), true);
 		if (!authorities.contains(PermissionService.GROUP_PREFIX + createRoleGroup(ContentModel.PROP_CREATOR))) {
-			authorityService.addAuthority(PermissionService.GROUP_PREFIX + ProjectGroup.ProjectRoles.toString(), PermissionService.GROUP_PREFIX
-					+ createRoleGroup(ContentModel.PROP_CREATOR));
+			authorityService.addAuthority(PermissionService.GROUP_PREFIX + ProjectGroup.ProjectRoles.toString(), PermissionService.GROUP_PREFIX + createRoleGroup(ContentModel.PROP_CREATOR));
 		}
 		if (!authorities.contains(PermissionService.GROUP_PREFIX + createRoleGroup(ProjectModel.ASSOC_PROJECT_MANAGER))) {
-			authorityService.addAuthority(PermissionService.GROUP_PREFIX + ProjectGroup.ProjectRoles.toString(), PermissionService.GROUP_PREFIX
-					+ createRoleGroup(ProjectModel.ASSOC_PROJECT_MANAGER));
+			authorityService.addAuthority(PermissionService.GROUP_PREFIX + ProjectGroup.ProjectRoles.toString(), PermissionService.GROUP_PREFIX + createRoleGroup(ProjectModel.ASSOC_PROJECT_MANAGER));
 		}
 	}
 

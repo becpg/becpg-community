@@ -41,6 +41,10 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @AlfQname(qname = "ecm:changeOrder")
 public class ChangeOrderData extends BeCPGDataObject {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4704853499333377270L;
 	private String code;
 	private ECOState ecoState;
 	private ChangeOrderType ecoType;
@@ -144,7 +148,7 @@ public class ChangeOrderData extends BeCPGDataObject {
 
 	public Map<NodeRef, ChangeUnitDataItem> getChangeUnitMap() {
 
-		Map<NodeRef, ChangeUnitDataItem> changeUnitMap = new LinkedHashMap<NodeRef, ChangeUnitDataItem>();
+		Map<NodeRef, ChangeUnitDataItem> changeUnitMap = new LinkedHashMap<>();
 
 		if(changeUnitList!=null){
 			for (ChangeUnitDataItem dataItem : changeUnitList) {

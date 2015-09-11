@@ -1,0 +1,50 @@
+.project-list .simple-doclist  .thumbnail {
+	width : 90px;
+	height : 90px;
+}
+
+.project-list .simple-doclist h3.filename {
+	 padding :0px;
+}
+
+.project-list .simple-doclist .detail {
+	 margin-left: 7px;
+}
+.project-list .task-resources li {
+	display: inline;
+	padding:5px;
+}
+
+.project-list .task-resources img {
+	margin:5px;
+}
+
+.project-list div.project-manager {
+	float:right;
+}
+
+.project-list .simple-doclist .detail span.project-date {
+	color:  #1155CC;
+    font-style: italic;
+}
+
+.project-list .simple-doclist .detail span.hierachy {	
+	 padding:0px;
+}
+
+.project-list .simple-doclist .detail a:hover{
+	text-decoration: none;
+}
+
+.project-list .simple-doclist h3 a:hover{
+	text-decoration: none;
+}
+
+.project-list .simple-doclist .detail span.item-social a:hover{
+	text-decoration: underline;
+}
+
+.project-list img.priority {
+	margin-right:5px;
+}
+

@@ -35,10 +35,10 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class BPMN2XmlParser {
 
-	private static Log logger = LogFactory.getLog(BPMN2XmlParser.class);
+	private static final Log logger = LogFactory.getLog(BPMN2XmlParser.class);
 	
-	private List<String> startTasks = new ArrayList<String>();
-	private List<String> userTasks = new ArrayList<String>();
+	private final List<String> startTasks = new ArrayList<>();
+	private final List<String> userTasks = new ArrayList<>();
 	private String processId = null;
 
 	public void parse(InputStream in) throws IOException, SAXException, ParserConfigurationException {

@@ -17,7 +17,7 @@ public interface AutoNumService {
 	 * @param propertyName the property name
 	 * @return the auto num value
 	 */
-	public String getAutoNumValue(QName className, QName propertyName);
+	String getAutoNumValue(QName className, QName propertyName);
 	
 	/**
 	 * Decrease auto num value.
@@ -26,7 +26,7 @@ public interface AutoNumService {
 	 * @param propertyName the property name
 	 * @return the Long
 	 */
-	public String decreaseAutoNumValue(QName className, QName propertyName);
+	String decreaseAutoNumValue(QName className, QName propertyName);
 	
 	/**
 	 * Creates the or update auto num value.
@@ -36,7 +36,7 @@ public interface AutoNumService {
 	 * @param code the value
 	 * @return the prefixed code value
 	 */
-	public String createOrUpdateAutoNumValue(QName className, QName propertyName, String code);
+	String createOrUpdateAutoNumValue(QName className, QName propertyName, String code);
 	
 	/**
 	 * Delete auto num value.
@@ -44,7 +44,7 @@ public interface AutoNumService {
 	 * @param className the class name
 	 * @param propertyName the property name
 	 */
-	public void deleteAutoNumValue(QName className, QName propertyName);
+	void deleteAutoNumValue(QName className, QName propertyName);
 	
 	
 	/**
@@ -53,7 +53,7 @@ public interface AutoNumService {
 	 * @param propertyName
 	 * @return
 	 */
-	public String getAutoNumMatchPattern(QName type, QName propertyName);
+	String getAutoNumMatchPattern(QName type, QName propertyName);
 	
 	
 	/**
@@ -63,8 +63,8 @@ public interface AutoNumService {
 	 * @param autoNum
 	 * @return 
 	 */
-	public String getPrefixedCode(QName type, QName propertyName, Long autoNum);
+	String getPrefixedCode(QName type, QName propertyName, Long autoNum);
 
 	
-	public String getOrCreateBeCPGCode(NodeRef nodeRef);
+	String getOrCreateBeCPGCode(NodeRef nodeRef);
 }

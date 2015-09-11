@@ -63,16 +63,16 @@ public class FormCheckInWebScript extends DeclarativeWebScript {
 	@Override
 	protected Map<String, Object> executeImpl(WebScriptRequest req, Status status, Cache cache) {
 
-		NodeRef nodeRef = null;
+		NodeRef nodeRef;
 		NodeRef branchToNodeRef = null;
-		String description = "";
+		String description;
 		VersionType versionType;
 
 		JSONObject json = (JSONObject) req.parseContent();
 		try {
 			nodeRef = new NodeRef((String) json.get(PARAM_NODEREF));
 			description = (String) json.get(PARAM_DESCRIPTION);
-			versionType = ((String) json.get(PARAM_MAJOR_VERSION)).equals(VALUE_TRUE) ? VersionType.MAJOR : VersionType.MINOR;
+			versionType = json.get(PARAM_MAJOR_VERSION).equals(VALUE_TRUE) ? VersionType.MAJOR : VersionType.MINOR;
 			
 			if(json.has(PARAM_BRANCH_TO_NODEREF)){
 				branchToNodeRef = new NodeRef((String) json.get(PARAM_BRANCH_TO_NODEREF));
@@ -92,12 +92,12 @@ public class FormCheckInWebScript extends DeclarativeWebScript {
 		}
 
 		// Calculate new version
-		Map<String, Serializable> properties = new HashMap<String, Serializable>();
+		Map<String, Serializable> properties = new HashMap<>();
 		properties.put(VersionModel.PROP_VERSION_TYPE, versionType);
 		properties.put(Version.PROP_DESCRIPTION, description);
 		NodeRef newEntityNodeRef = checkOutCheckInService.checkin(nodeRef, properties);
 
-		Map<String, Object> model = new HashMap<String, Object>();
+		Map<String, Object> model = new HashMap<>();
 		model.put(MODEL_KEY_NAME_NODEREF, newEntityNodeRef);
 		return model;
 	}

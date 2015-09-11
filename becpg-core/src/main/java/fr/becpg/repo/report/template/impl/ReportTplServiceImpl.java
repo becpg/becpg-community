@@ -22,10 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.content.encoding.ContentCharsetFinder;
@@ -54,7 +51,7 @@ import fr.becpg.report.client.ReportFormat;
 @Service("reportTplService")
 public class ReportTplServiceImpl implements ReportTplService {
 
-	private static Log logger = LogFactory.getLog(ReportTplServiceImpl.class);
+	private static final Log logger = LogFactory.getLog(ReportTplServiceImpl.class);
 
 	@Autowired
 	private NodeService nodeService;
@@ -76,7 +73,7 @@ public class ReportTplServiceImpl implements ReportTplService {
 	 */
 	@Override
 	public List<NodeRef> getSystemReportTemplates(ReportType reportType, QName nodeType) {
-		return getReportTpls(reportType, nodeType, true, null).list();
+		return getReportTpls(reportType, nodeType, true, null);
 	}
 
 	/**
@@ -84,7 +81,9 @@ public class ReportTplServiceImpl implements ReportTplService {
 	 */
 	@Override
 	public NodeRef getSystemReportTemplate(ReportType reportType, QName nodeType, String tplName) {
-		return getReportTpls(reportType, nodeType, true, tplName).singleValue();
+		List<NodeRef> ret = getReportTpls(reportType, nodeType, true, tplName);
+
+		return ret != null && !ret.isEmpty() ? ret.get(0) : null;
 	}
 
 	/**
@@ -101,7 +100,7 @@ public class ReportTplServiceImpl implements ReportTplService {
 	 */
 	@Override
 	public List<NodeRef> getUserReportTemplates(ReportType reportType, QName nodeType, String tplName) {
-		return getReportTpls(reportType, nodeType, false, tplName).list();
+		return getReportTpls(reportType, nodeType, false, tplName);
 	}
 
 	/**
@@ -117,7 +116,9 @@ public class ReportTplServiceImpl implements ReportTplService {
 	 */
 	@Override
 	public NodeRef getUserReportTemplate(ReportType reportType, QName nodeType, String tplName) {
-		return getReportTpls(reportType, nodeType, false, tplName).singleValue();
+		List<NodeRef> ret = getReportTpls(reportType, nodeType, false, tplName);
+
+		return ret != null && !ret.isEmpty() ? ret.get(0) : null;
 	}
 
 	/**
@@ -143,15 +144,20 @@ public class ReportTplServiceImpl implements ReportTplService {
 		InputStream in = null;
 		if (resource.exists()) {
 			try {
-				in = new BufferedInputStream(resource.getInputStream());
-				String tplFullName = tplName + "." + RepoConsts.REPORT_EXTENSION_BIRT;
+				in = new BufferedInputStream(resource.getInputStream());				
+				String extension = RepoConsts.REPORT_EXTENSION_BIRT;
+				int i = tplFilePath.lastIndexOf('.');
+				if (i > 0) {
+				    extension = tplFilePath.substring(i+1);
+				}				
+				String tplFullName = tplName + "." + extension;
 				reportTplNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, tplFullName);
 
-				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				Map<QName, Serializable> properties = new HashMap<>();
 				properties.put(ContentModel.PROP_NAME, tplFullName);
 				properties.put(ReportModel.PROP_REPORT_TPL_TYPE, reportType);
 				properties.put(ReportModel.PROP_REPORT_TPL_FORMAT, reportFormat);
-				properties.put(ReportModel.PROP_REPORT_TPL_CLASS_NAME, nodeType);
+				properties.put(ReportModel.PROP_REPORT_TPL_CLASS_NAME, nodeType != null ? nodeType.toString() : null);
 				properties.put(ReportModel.PROP_REPORT_TPL_IS_SYSTEM, isSystemTpl);
 				properties.put(ReportModel.PROP_REPORT_TPL_IS_DEFAULT, isDefaultTpl);
 
@@ -185,6 +191,8 @@ public class ReportTplServiceImpl implements ReportTplService {
 			} finally {
 				IOUtils.closeQuietly(in);
 			}
+		} else {
+			logger.error("Path doesn't exists: " + tplFilePath);
 		}
 
 		return reportTplNodeRef;
@@ -210,7 +218,7 @@ public class ReportTplServiceImpl implements ReportTplService {
 
 				if (xmlReportTplNodeRef == null || overrideRessource) {
 
-					Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+					Map<QName, Serializable> properties = new HashMap<>();
 					properties.put(ContentModel.PROP_NAME, resource.getFilename());
 					NodeRef fileNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
 							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
@@ -239,7 +247,7 @@ public class ReportTplServiceImpl implements ReportTplService {
 	@Override
 	public List<NodeRef> cleanDefaultTpls(List<NodeRef> tplsNodeRef) {
 
-		List<NodeRef> defaultTplsNodeRef = new ArrayList<NodeRef>();
+		List<NodeRef> defaultTplsNodeRef = new ArrayList<>();
 		NodeRef userDefaultTplNodeRef = null;
 
 		for (NodeRef tplNodeRef : tplsNodeRef) {
@@ -282,7 +290,7 @@ public class ReportTplServiceImpl implements ReportTplService {
 		String dbReportFormat = (String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
 		if (dbReportFormat == null) {
 			if (ReportType.ExportSearch.equals(reportType)) {
-				reportFormat = ReportFormat.XLS;
+				reportFormat = ReportFormat.XLSX;
 			} else {
 				reportFormat = ReportFormat.PDF;
 			}
@@ -293,18 +301,34 @@ public class ReportTplServiceImpl implements ReportTplService {
 		return reportFormat;
 	}
 
-	private BeCPGQueryBuilder getReportTpls(ReportType reportType, QName nodeType, boolean isSystem, String tplName) {
+	private List<NodeRef> getReportTpls(ReportType reportType, QName nodeType, Boolean isSystem, String tplName) {
 
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(ReportModel.TYPE_REPORT_TPL)
-				.andPropEquals(ReportModel.PROP_REPORT_TPL_TYPE, reportType.toString())
-				.andPropQuery(ReportModel.PROP_REPORT_TPL_IS_SYSTEM, Boolean.valueOf(isSystem).toString())
-				.excludeProp(ReportModel.PROP_REPORT_TPL_IS_DISABLED, Boolean.TRUE.toString())
-				.andPropEquals(ReportModel.PROP_REPORT_TPL_CLASS_NAME, nodeType != null ? nodeType.toString() : null);
+				.andPropEquals(ReportModel.PROP_REPORT_TPL_TYPE, reportType.toString());
 
-		if (tplName != null && tplName != "*") {
+		
+		//Full text
+		if (tplName != null && !Objects.equals(tplName, "*")) {
 			queryBuilder.andPropQuery(ContentModel.PROP_NAME, tplName);
+		} else {
+			queryBuilder.inDB();
 		}
-		return queryBuilder;
+		
+		//TODO DB query not supporting boolean, CMIS not supporting qname
+		
+		List<NodeRef> ret = new LinkedList<>();
+		for(NodeRef rTplNodeRef : queryBuilder.list()){
+			
+			QName classType = (QName)nodeService.getProperty(rTplNodeRef, ReportModel.PROP_REPORT_TPL_CLASS_NAME);
+			
+			if(   ((classType == null &&  nodeType == null) || (classType!=null && classType.equals(nodeType)))
+					&& isSystem.equals(nodeService.getProperty(rTplNodeRef, ReportModel.PROP_REPORT_TPL_IS_SYSTEM))
+					&& ! Boolean.TRUE.equals(nodeService.getProperty(rTplNodeRef, ReportModel.PROP_REPORT_TPL_IS_DISABLED)) ){
+				ret.add(rTplNodeRef);
+			}
+		}
+		
+		return ret;
 	}
 
 	@Override

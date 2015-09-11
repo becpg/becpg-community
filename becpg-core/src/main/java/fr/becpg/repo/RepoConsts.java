@@ -77,7 +77,7 @@ public class RepoConsts {
 	/*-- Report --*/
 	public static final String REPORT_EXTENSION_BIRT = "rptdesign";
 	public static final String REPORT_EXTENSION_PDF = ".PDF";
-	public static final String REPORT_EXTENSION_XLSX = ".XLS";
+	public static final String REPORT_EXTENSION_XLSX = ".XLSX";
 	public static final String EXTENSION_LOG = ".log";
 	
 	// FORMAT
@@ -98,7 +98,7 @@ public class RepoConsts {
 	public static final String PERMISSION_COLLABORATOR = "Collaborator";
 
 	// Configuration
-	public static int DEFAULT_LEVEL = 1;
+	public static final int DEFAULT_LEVEL = 1;
 	public static final int MAX_DEPTH_LEVEL = 256;
 	
 	/*
@@ -126,7 +126,9 @@ public class RepoConsts {
 	
 	//View
 	public final static String CUSTOM_VIEW_PREFIX = "View";
-	
+
+	public static final String VIEW_PROPERTIES = CUSTOM_VIEW_PREFIX+"-properties";
+	public static final String VIEW_REPORTS = CUSTOM_VIEW_PREFIX+"-reports";
 	
 	//Version
 	public static final String VERSION_NAME_DELIMITER = " v";
@@ -139,7 +141,7 @@ public class RepoConsts {
 	
 	//Formats
 	public static final String FORMAT_CSV = "csv";
-	public static final String FORMAT_XLS = "xls";
+	public static final String FORMAT_XLSX = "xlsx";
 
 	
 }

@@ -19,42 +19,44 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  */
 package fr.becpg.repo.helper;
 
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.PLMModel;
-import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorPlugin;
 
 /**
  * @author matthieu
  * 
  */
 @Service
-public class LabelClaimExtractorPlugin implements AttributeExtractorPlugin {
+public class LabelClaimExtractorPlugin extends CharactAttributeExtractorPlugin {
 
-	@Autowired
-	private NodeService nodeService;
 
 	@Override
 	public Collection<QName> getMatchingTypes() {
-		return Arrays.asList(PLMModel.TYPE_LABEL_CLAIM);
+		return Collections.singletonList(PLMModel.TYPE_LABEL_CLAIM);
 	}
 
 	@Override
 	public String extractMetadata(QName type, NodeRef nodeRef) {
-		return (String) nodeService.getProperty(nodeRef, ContentModel.PROP_DESCRIPTION);
+		 MLText tmp = (MLText) mlNodeService.getProperty(nodeRef, ContentModel.PROP_DESCRIPTION);
+	     if(tmp!=null){
+	    	return tmp.getClosestValue(I18NUtil.getContentLocale());
+	     }
+		return null;
+		
 	}
 
 	@Override
-	public String extractPropName(QName type, NodeRef nodeRef) {
-		return (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
+	public Integer getPriority() {
+		return 1;
 	}
 
 }

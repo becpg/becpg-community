@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2015 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2015 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG.
  *  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
@@ -20,6 +20,7 @@ package fr.becpg.repo.web.scripts.entity;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -27,6 +28,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
@@ -34,6 +38,8 @@ import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.repository.Path;
+import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -56,56 +62,43 @@ import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.policy.BeCPGPolicyHelper;
 import fr.becpg.repo.security.SecurityService;
+import fr.becpg.repo.web.scripts.BrowserCacheHelper;
 
 /**
  * The Class ProductListsWebScript.
- * 
+ *
  * @author querephi
  */
 public class EntityListsWebScript extends DeclarativeWebScript {
 
-	// request parameter names
-	/** The Constant PARAM_STORE_TYPE. */
 	private static final String PARAM_STORE_TYPE = "store_type";
 
-	/** The Constant PARAM_STORE_ID. */
 	private static final String PARAM_STORE_ID = "store_id";
 
-	/** The Constant PARAM_ACL_MODE. */
 	private static final String PARAM_ACL_MODE = "aclMode";
 
-	/** The Constant PARAM_ID. */
 	private static final String PARAM_ID = "id";
-	// model key names
-	/** The Constant MODEL_KEY_NAME_PRODUCT. */
+
 	private static final String MODEL_KEY_NAME_ENTITY = "entity";
 
-	/** The Constant MODEL_KEY_NAME_CONTAINER. */
 	private static final String MODEL_KEY_NAME_CONTAINER = "container";
 
-	/** The Constant MODEL_KEY_NAME_LISTS. */
 	private static final String MODEL_KEY_NAME_LISTS = "lists";
 
-	/** The Constant MODEL_HAS_WRITE_PERMISSION. */
 	private static final String MODEL_HAS_WRITE_PERMISSION = "hasWritePermission";
 
-	/** the Constant MODEL_KEY_ACL_TYPE **/
+	private static final String MODEL_HAS_CHANGE_STATE_PERMISSION = "hasChangeStatePermission";
+
 	private static final String MODEL_KEY_ACL_TYPE = "aclType";
 
-	/** The Constant MODEL_WUSED_LIST. */
-	private static final String MODEL_WUSED_LIST = "wUsedList";
-	
 	private static final String MODEL_PROP_KEY_LIST_TYPES = "listTypes";
 
 	private static final String MODEL_KEY_NAME_ENTITY_PATH = "entityPath";
 
-	/** The logger. */
-	private static Log logger = LogFactory.getLog(EntityListsWebScript.class);
+	private static final Log logger = LogFactory.getLog(EntityListsWebScript.class);
 
-	/** The node service. */
 	private NodeService nodeService;
 
-	/** The security service. */
 	private SecurityService securityService;
 
 	private EntityListDAO entityListDAO;
@@ -115,15 +108,15 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 	private NamespaceService namespaceService;
 
 	private TransactionService transactionService;
-	
+
 	private DictionaryService dictionaryService;
-	
+
 	private AuthorityService authorityService;
-	
+
 	private PermissionService permissionService;
-	
-	private AssociationService associationService;	
-	
+
+	private AssociationService associationService;
+
 	public void setPermissionService(PermissionService permissionService) {
 		this.permissionService = permissionService;
 	}
@@ -166,9 +159,9 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 
 	/**
 	 * Suggest values according to query
-	 * 
+	 *
 	 * url : /becpg/entitylists/node/{store_type}/{store_id}/{id}.
-	 * 
+	 *
 	 * @param req
 	 *            the req
 	 * @param status
@@ -188,20 +181,27 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 
 		logger.debug("entityListsWebScript executeImpl()");
 
-		List<NodeRef> listsNodeRef = new ArrayList<NodeRef>();
+		List<NodeRef> listsNodeRef = new ArrayList<>();
 		final NodeRef nodeRef = new NodeRef(storeType, storeId, nodeId);
 		NodeRef listContainerNodeRef = null;
 		QName nodeType = nodeService.getType(nodeRef);
-		boolean hasWritePermission = authorityService.isAdminAuthority(AuthenticationUtil.getFullyAuthenticatedUser());//admin can delete entity lists
+		boolean hasChangeStatePermission = false;
+		boolean hasWritePermission = false;// admin
+																														// can
+																														// delete
+																														// entity
+																														// lists
 		boolean skipFilter = false;
-		String wUsedList = null;
 
-		Map<String, Object> model = new HashMap<String, Object>();
+		Date lastModified = null;
+
+		Map<String, Object> model = new HashMap<>();
+
 		// We get datalist for a given aclGroup
 		if (aclMode != null && SecurityModel.TYPE_ACL_GROUP.equals(nodeType)) {
 			logger.debug("We want to get datalist for current ACL entity");
 			String aclType = (String) nodeService.getProperty(nodeRef, SecurityModel.PROP_ACL_GROUP_NODE_TYPE);
-			QName aclTypeQname = QName.createQName( aclType, namespaceService);
+			QName aclTypeQname = QName.createQName(aclType, namespaceService);
 			model.put(MODEL_KEY_ACL_TYPE, aclType);
 
 			NodeRef templateNodeRef = entityTplService.getEntityTpl(aclTypeQname);
@@ -216,84 +216,90 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 			skipFilter = true;
 		}
 		// We get datalist for entityTpl
-		else if ((nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITYLISTS) && nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_TPL)) || 
-				BeCPGModel.TYPE_SYSTEM_ENTITY.equals(nodeType)) {
+		else if ((nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITYLISTS) && nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_TPL))
+				|| BeCPGModel.TYPE_SYSTEM_ENTITY.equals(nodeType)) {
 
 			listContainerNodeRef = entityListDAO.getListContainer(nodeRef);
 			if (listContainerNodeRef == null) {
 				listContainerNodeRef = entityListDAO.createListContainer(nodeRef);
 			}
-	
+
 			// Add types that can be added
-	        Set<ClassDefinition> classDefinitions = new HashSet<ClassDefinition>();
-			Collection <QName> entityListTypes = dictionaryService.getSubTypes(BeCPGModel.TYPE_ENTITYLIST_ITEM, true);
-			
-	        for(QName entityListType: entityListTypes)
-		    {	
-	        	if(!BeCPGModel.TYPE_ENTITYLIST_ITEM.equals(entityListType)){
-	        		classDefinitions.add(dictionaryService.getClass(entityListType));
-	        	}
-		    }
-	    	
-	    	model.put(MODEL_PROP_KEY_LIST_TYPES, classDefinitions);
-	    	
+			Set<ClassDefinition> classDefinitions = new HashSet<>();
+			Collection<QName> entityListTypes = dictionaryService.getSubTypes(BeCPGModel.TYPE_ENTITYLIST_ITEM, true);
+
+			for (QName entityListType : entityListTypes) {
+				if (!BeCPGModel.TYPE_ENTITYLIST_ITEM.equals(entityListType)) {
+					classDefinitions.add(dictionaryService.getClass(entityListType));
+				}
+			}
+
+			model.put(MODEL_PROP_KEY_LIST_TYPES, classDefinitions);
+
 			hasWritePermission = true;
 			skipFilter = true;
 		}
 		// We get datalist for entity
 		else {
-			
-			NodeRef entityTplNodeRef = null;
-			if(nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_TPL_REF)){
+
+			NodeRef entityTplNodeRef;
+			if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_TPL_REF)) {
 				entityTplNodeRef = associationService.getTargetAssoc(nodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
-			}
-			else{
+			} else {
 				entityTplNodeRef = entityTplService.getEntityTpl(nodeType);
 			}
-						
+
+			Date propModified = (Date) nodeService.getProperty(nodeRef, ContentModel.PROP_MODIFIED);
+			lastModified = (Date) nodeService.getProperty(entityTplNodeRef, ContentModel.PROP_MODIFIED);
+			if (lastModified == null || (propModified != null && lastModified.getTime() < propModified.getTime())) {
+				lastModified = propModified;
+			}
+
+			if (lastModified != null && BrowserCacheHelper.shouldReturnNotModified(req, lastModified)) {
+				status.setCode(HttpServletResponse.SC_NOT_MODIFIED);
+				status.setRedirect(true);
+
+				if (logger.isDebugEnabled()) {
+					logger.debug("Send Not_MODIFIED status");
+				}
+				return model;
+			}
+
 			if (entityTplNodeRef != null) {
-				
+
 				final NodeRef templateNodeRef = entityTplNodeRef;
 				// Redmine #59 : copy missing datalists as admin, otherwise, if
 				// a datalist is added in product template, users cannot see
 				// datalists of valid products
-				RunAsWork<Object> actionRunAs = new RunAsWork<Object>() {
-					@Override
-					public Object doWork() throws Exception {
-						RetryingTransactionCallback<Object> actionCallback = new RetryingTransactionCallback<Object>() {
-							@Override
-							public Object execute() {
+				RunAsWork<Object> actionRunAs = () -> {
+					RetryingTransactionCallback<Object> actionCallback = () -> {
 
-								StopWatch watch = null;
-								if (logger.isDebugEnabled()) {
-									watch = new StopWatch();
-									watch.start();
-								}
-								try {
-									BeCPGPolicyHelper.enableCopyBehaviourForTransaction();
-										
-									entityListDAO.copyDataLists(templateNodeRef, nodeRef, false);
+						StopWatch watch = null;
+						if (logger.isDebugEnabled()) {
+							watch = new StopWatch();
+							watch.start();
+						}
+						try {
+							BeCPGPolicyHelper.enableCopyBehaviourForTransaction();
 
-								} finally {
-									BeCPGPolicyHelper.disableCopyBehaviourForTransaction();
-								}
-								
-								if (logger.isDebugEnabled()) {
-									watch.stop();
-									logger.debug("copyDataLists executed in  "
-											+ watch.getTotalTimeSeconds() + " seconds - templateNodeRef "
-											+  templateNodeRef);
-								}
-								
-								return null;
-							}
-						};
-						return transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback);
-					}
+							entityListDAO.copyDataLists(templateNodeRef, nodeRef, false);
+
+						} finally {
+							BeCPGPolicyHelper.disableCopyBehaviourForTransaction();
+						}
+
+						if (logger.isDebugEnabled()) {
+							watch.stop();
+							logger.debug(
+									"copyDataLists executed in  " + watch.getTotalTimeSeconds() + " seconds - templateNodeRef " + templateNodeRef);
+						}
+
+						return null;
+					};
+					return transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback);
 				};
 				AuthenticationUtil.runAs(actionRunAs, AuthenticationUtil.getAdminUserName());
 
-				
 			}
 
 			listContainerNodeRef = entityListDAO.getListContainer(nodeRef);
@@ -308,29 +314,44 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 		if (!skipFilter) {
 			Iterator<NodeRef> it = listsNodeRef.iterator();
 			while (it.hasNext()) {
-				NodeRef temp = (NodeRef) it.next();
+				NodeRef temp = it.next();
 				String dataListType = (String) nodeService.getProperty(temp, DataListModel.PROP_DATALISTITEMTYPE);
 				int access_mode = securityService.computeAccessMode(nodeType, dataListType);
 
-				if( SecurityService.NONE_ACCESS == access_mode){
+				if (SecurityService.NONE_ACCESS == access_mode) {
 					if (logger.isTraceEnabled()) {
 						logger.trace("Don't display dataList:" + dataListType);
 					}
 					it.remove();
+				} else if (SecurityService.WRITE_ACCESS == access_mode
+						&& permissionService.hasPermission(temp, PermissionService.WRITE) == AccessStatus.ALLOWED) {
+					hasChangeStatePermission = true;
 				}
 			}
 		}
-		
-		String path = nodeService.getPath(nodeRef).toPrefixString(namespaceService);
-		String displayPath = this.nodeService.getPath(nodeRef).toDisplayPath(nodeService, permissionService);
 
-		String retPath = SiteHelper.extractDisplayPath(path,displayPath);
+		if (lastModified == null) {
+			lastModified = new Date();
+		}
+
+		cache.setIsPublic(false);
+		cache.setMustRevalidate(true);
+		cache.setNeverCache(false);
+		cache.setMaxAge(0L);
+		cache.setLastModified(lastModified);
+
+		Path path = nodeService.getPath(nodeRef);
+
+		String stringPath = path.toPrefixString(namespaceService);
+		String displayPath = path.toDisplayPath(nodeService, permissionService);
+
+		String retPath = SiteHelper.extractDisplayPath(stringPath, displayPath);
 
 		model.put(MODEL_KEY_NAME_ENTITY_PATH, retPath);
 		model.put(MODEL_KEY_NAME_ENTITY, nodeRef);
 		model.put(MODEL_KEY_NAME_CONTAINER, listContainerNodeRef);
-		model.put(MODEL_HAS_WRITE_PERMISSION, hasWritePermission);
-		model.put(MODEL_WUSED_LIST, wUsedList);
+		model.put(MODEL_HAS_WRITE_PERMISSION, hasWritePermission || authorityService.isAdminAuthority(AuthenticationUtil.getFullyAuthenticatedUser()));
+		model.put(MODEL_HAS_CHANGE_STATE_PERMISSION, hasChangeStatePermission);
 		model.put(MODEL_KEY_NAME_LISTS, listsNodeRef);
 
 		return model;

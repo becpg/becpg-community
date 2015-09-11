@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2015 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2015 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.product.formulation;
@@ -20,6 +20,7 @@ package fr.becpg.repo.product.formulation;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -40,14 +41,13 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import com.google.gdata.util.common.base.Pair;
 
-import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
-import fr.becpg.repo.helper.CompareHelper;
+import fr.becpg.repo.helper.JsonFormulaHelper;
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.AbstractProductDataView;
 import fr.becpg.repo.product.data.ProductData;
@@ -62,13 +62,13 @@ import fr.becpg.repo.repository.L2CacheSupport.Action;
 
 /**
  * Compare product with each other
- * 
+ *
  * @author matthieu
- * 
+ *
  */
 public class CompareFormulationHandler extends FormulationBaseHandler<ProductData> {
 
-	private static Log logger = LogFactory.getLog(CompareFormulationHandler.class);
+	private static final Log logger = LogFactory.getLog(CompareFormulationHandler.class);
 
 	private AssociationService associationService;
 
@@ -109,11 +109,8 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 	@Override
 	public boolean process(final ProductData productData) throws FormulateException {
 
-		
-		
-		if (!L2CacheSupport.isCacheOnlyEnable()
-				&& (productData.getAspects().contains(BeCPGModel.ASPECT_COMPARE_WITH) ||( productData.getNodeRef()!=null && nodeService.hasAspect(productData.getNodeRef(),
-						BeCPGModel.ASPECT_COMPARE_WITH)))) {
+		if (!L2CacheSupport.isCacheOnlyEnable() && (productData.getAspects().contains(BeCPGModel.ASPECT_COMPARE_WITH)
+				|| (productData.getNodeRef() != null && nodeService.hasAspect(productData.getNodeRef(), BeCPGModel.ASPECT_COMPARE_WITH)))) {
 			L2CacheSupport.doInCacheContext(new Action() {
 
 				@Override
@@ -135,31 +132,34 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 								addCompareValueColumn(PLMModel.PROP_COMPARE_WITH_DYN_COLUMN, view, toCompareWith, dynamicColumnToTreat, true);
 
 								for (DynamicCharactListItem dynamicCharactListItem : view.getDynamicCharactList()) {
-									DynamicCharactListItem toCompareDynamicCharactListItem = getMatchingCharact(dynamicCharactListItem,
-											getMatchingView(toCompareWith, view).getDynamicCharactList());
-									if (toCompareDynamicCharactListItem != null) {
+									if (!Boolean.TRUE.equals(dynamicCharactListItem.getMultiLevelFormula())) {
 
-										if (logger.isDebugEnabled()) {
-											logger.debug(" - Found matching charact to compare: ");
-											logger.debug(" - " + toCompareDynamicCharactListItem.toString());
-										}
+										DynamicCharactListItem toCompareDynamicCharactListItem = getMatchingCharact(dynamicCharactListItem,
+												getMatchingView(toCompareWith, view).getDynamicCharactList());
+										if (toCompareDynamicCharactListItem != null) {
 
-										// DynamicColumns
-										if (dynamicCharactListItem.getColumnName() != null && !dynamicCharactListItem.getColumnName().isEmpty()) {
-											QName columnName = QName.createQName(dynamicCharactListItem.getColumnName().replaceFirst("_", ":"),
-													namespaceService);
-
-											addCompareValueColumn(columnName, view, toCompareWith, dynamicColumnToTreat, false);
-
-											// DynamicCharacts
-										} else {
-											JSONArray values = dynamicCharactToTreat.get(dynamicCharactListItem);
-											if (values == null) {
-												values = new JSONArray();
-												values.put(getJSONValue(toCompareWith, dynamicCharactListItem.getValue(),null));
+											if (logger.isDebugEnabled()) {
+												logger.debug(" - Found matching charact to compare: ");
+												logger.debug(" - " + toCompareDynamicCharactListItem.toString());
 											}
-											values.put(getJSONValue(toCompareWith, toCompareDynamicCharactListItem.getValue(),null));
-											dynamicCharactToTreat.put(dynamicCharactListItem, values);
+
+											// DynamicColumns
+											if (dynamicCharactListItem.getColumnName() != null && !dynamicCharactListItem.getColumnName().isEmpty()) {
+												QName columnName = QName.createQName(dynamicCharactListItem.getColumnName().replaceFirst("_", ":"),
+														namespaceService);
+
+												addCompareValueColumn(columnName, view, toCompareWith, dynamicColumnToTreat, false);
+
+												// DynamicCharacts
+											} else {
+												JSONArray values = dynamicCharactToTreat.get(dynamicCharactListItem);
+												if (values == null) {
+													values = new JSONArray();
+													values.put(getJSONValue(toCompareWith, dynamicCharactListItem.getValue(), null));
+												}
+												values.put(getJSONValue(toCompareWith, toCompareDynamicCharactListItem.getValue(), null));
+												dynamicCharactToTreat.put(dynamicCharactListItem, values);
+											}
 										}
 									}
 								}
@@ -170,7 +170,7 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 							for (Map.Entry<DynamicCharactListItem, JSONArray> entry : dynamicCharactToTreat.entrySet()) {
 
 								JSONObject jsonObject = new JSONObject();
-								jsonObject.put(CompareHelper.JSON_COMP_ITEMS, entry.getValue());
+								jsonObject.put(JsonFormulaHelper.JSON_COMP_ITEMS, entry.getValue());
 
 								entry.getKey().setValue(jsonObject.toString());
 							}
@@ -178,7 +178,7 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 							for (Map.Entry<Pair<CompositionDataItem, QName>, JSONArray> entry : dynamicColumnToTreat.entrySet()) {
 
 								JSONObject jsonObject = new JSONObject();
-								jsonObject.put(CompareHelper.JSON_COMP_ITEMS, entry.getValue());
+								jsonObject.put(JsonFormulaHelper.JSON_COMP_ITEMS, entry.getValue());
 
 								entry.getKey().getFirst().getExtraProperties().put(entry.getKey().getSecond(), jsonObject.toString());
 							}
@@ -194,8 +194,8 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 					int pos = 0;
 					Set<CompositionDataItem> cache = new HashSet<>();
 					for (CompositionDataItem dataListItem : view.getMainDataList()) {
-						CompositionDataItem toCompareWithCompositionDataItem = getMatchingCompositionDataItem(dataListItem,
-								isQty ? null : columnName, getMatchingView(toCompareWith, view).getMainDataList(), cache, pos);
+						CompositionDataItem toCompareWithCompositionDataItem = getMatchingCompositionDataItem(dataListItem, isQty ? null : columnName,
+								getMatchingView(toCompareWith, view).getMainDataList(), cache, pos);
 						if (toCompareWithCompositionDataItem != null) {
 							JSONArray values = dynamicColumnToTreat.get(new Pair<>(dataListItem, columnName));
 							if (values == null) {
@@ -211,47 +211,34 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 				}
 
 			}, true);
-		} else {
-			// //TODO remove aspect
-			// for (AbstractProductDataView view : productData.getViews()) {
-			// for (CompositionDataItem dataListItem : view.getMainDataList()) {
-			//
-			// }
-			// }
-
 		}
 		return true;
 	}
-
-
 
 	private JSONObject getJSONValue(ProductData toCompareWith, CompositionDataItem dataListItem, QName columnName, boolean isQty)
 			throws JSONException {
 
 		Object value = getValue(dataListItem, columnName, isQty);
-		
-		if (isQty) {
-			
-			return getJSONValue(toCompareWith,value, dataListItem.getNodeRef());
-			
-		} else {
-			return getJSONValue(toCompareWith,value, null);
-		}
+
+		if (isQty)
+			return getJSONValue(toCompareWith, value, dataListItem.getNodeRef());
+		else
+			return getJSONValue(toCompareWith, value, null);
 
 	}
 
 	private JSONObject getJSONValue(ProductData toCompareWith, Object value, NodeRef itemNodeRef) throws JSONException {
 		JSONObject jsonObject = new JSONObject();
-		
-		jsonObject.put(CompareHelper.JSON_COMP_ITEM_NODEREF, toCompareWith.getNodeRef());
-		jsonObject.put("name", toCompareWith.getName());	
-			
+
+		jsonObject.put(JsonFormulaHelper.JSON_NODEREF, toCompareWith.getNodeRef());
+		jsonObject.put("name", toCompareWith.getName());
+
 		if (itemNodeRef != null) {
 			jsonObject.put("itemNodeRef", itemNodeRef);
 		}
 
-		jsonObject.put(CompareHelper.JSON_COMP_VALUE, value);
-		jsonObject.put("displayValue", formatValue(value));
+		jsonObject.put(JsonFormulaHelper.JSON_VALUE, value);
+		jsonObject.put(JsonFormulaHelper.JSON_DISPLAY_VALUE, JsonFormulaHelper.formatValue(value));
 		jsonObject.put("itemType", nodeService.getType(toCompareWith.getNodeRef()).toPrefixString(namespaceService));
 		String siteId = attributeExtractorService.extractSiteId(toCompareWith.getNodeRef());
 		if (siteId != null) {
@@ -263,28 +250,17 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 
 	private Object getValue(CompositionDataItem dataListItem, QName columnName, boolean isQty) {
 		if (isQty) {
-			if (dataListItem instanceof CompoListDataItem) {
+			if (dataListItem instanceof CompoListDataItem)
 				return ((CompoListDataItem) dataListItem).getQtySubFormula();
-			}
 			return dataListItem.getQty();
 		}
 		return dataListItem.getExtraProperties().get(columnName);
 	}
 
-	private Object formatValue(Object v) {
-		PropertyFormats propertyFormats = new PropertyFormats(true);
-		
-		if (v != null && (v instanceof Double || v instanceof Float)) {
-			return propertyFormats.formatDecimal(v);
-		}
-		return v;
-	}
-
 	private AbstractProductDataView getMatchingView(ProductData productData, AbstractProductDataView view) {
 		for (AbstractProductDataView tmp : productData.getViews()) {
-			if (tmp.getClass().getName().equals(view.getClass().getName())) {
+			if (tmp.getClass().getName().equals(view.getClass().getName()))
 				return tmp;
-			}
 		}
 		throw new IllegalStateException("No Matching view");
 	}
@@ -300,7 +276,7 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 			// Skip if already match
 			if (!cache.contains(tmp)) {
 				// Same NodeRef Same Pos
-				if (Objects.equals(tmp.getProduct(), dataListItem.getProduct())) {
+				if (Objects.equals(tmp.getComponent(), dataListItem.getComponent())) {
 					// We break as no better match
 					if (tmpPos == currentPos) {
 						ret = tmp;
@@ -311,7 +287,7 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 					}
 				}
 
-				if (approxMatch(dataListItem.getProduct(), tmp.getProduct()) && Math.abs(tmpPos - currentPos) < posDiff) {
+				if (approxMatch(dataListItem.getComponent(), tmp.getComponent()) && Math.abs(tmpPos - currentPos) < posDiff) {
 					posDiff = Math.abs(tmpPos - currentPos);
 					ret = tmp;
 				}
@@ -337,18 +313,18 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 
 		return (copiedFromRef != null && copiedFromRef.equals(toCompareProductNoRef))
 				|| (copiedFromComp != null && copiedFromComp.equals(refProductNodeRef))
-				|| nodeService.getProperty(refProductNodeRef, ContentModel.PROP_NAME).equals(
-						nodeService.getProperty(toCompareProductNoRef, ContentModel.PROP_NAME));
+				|| nodeService.getProperty(refProductNodeRef, ContentModel.PROP_NAME)
+						.equals(nodeService.getProperty(toCompareProductNoRef, ContentModel.PROP_NAME));
 	}
 
-	private DynamicCharactListItem getMatchingCharact(DynamicCharactListItem dynamicCharactListItem, List<DynamicCharactListItem> dynamicCharactList) {
+	private DynamicCharactListItem getMatchingCharact(DynamicCharactListItem dynamicCharactListItem,
+			List<DynamicCharactListItem> dynamicCharactList) {
 		for (DynamicCharactListItem tmp : dynamicCharactList) {
-			if (Objects.equals(tmp.getFormula(), dynamicCharactListItem.getFormula())) {
+			if (dynamicCharactListItem.getFormula() != null && Objects.equals(tmp.getFormula(), dynamicCharactListItem.getFormula())) {
 				if (!Objects.equals(tmp.getValue(), dynamicCharactListItem.getValue())
-						|| (dynamicCharactListItem.getColumnName() != null && !dynamicCharactListItem.getColumnName().isEmpty() && Objects.equals(
-								dynamicCharactListItem.getColumnName(), tmp.getColumnName()))) {
+						|| (dynamicCharactListItem.getColumnName() != null && !dynamicCharactListItem.getColumnName().isEmpty()
+								&& Objects.equals(dynamicCharactListItem.getColumnName(), tmp.getColumnName())))
 					return tmp;
-				}
 			}
 		}
 		return null;
@@ -357,7 +333,7 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 	private List<ProductData> getComparableProductDatas(ProductData productData) {
 
 		List<NodeRef> compareWithEntities = associationService.getTargetAssocs(productData.getNodeRef(), BeCPGModel.ASSOC_COMPARE_WITH_ENTITIES);
-		List<ProductData> ret = new ArrayList<>();
+		List<ProductData> ret = new LinkedList<>();
 		if (compareWithEntities != null && !compareWithEntities.isEmpty()) {
 
 			for (NodeRef entityNodeRef : compareWithEntities) {
@@ -369,7 +345,7 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 					String message = I18NUtil.getMessage("message.formulate.comparewith.formulate.entity.error", Locale.getDefault(),
 							tmpData.getName());
 					productData.getCompoListView().getReqCtrlList()
-							.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, new ArrayList<NodeRef>()));
+							.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, null, new ArrayList<NodeRef>()));
 				}
 			}
 

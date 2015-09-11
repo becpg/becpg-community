@@ -44,7 +44,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 		NodeServicePolicies.OnCreateChildAssociationPolicy, NodeServicePolicies.OnDeleteAssociationPolicy, NodeServicePolicies.OnDeleteChildAssociationPolicy,
 		NodeServicePolicies.OnDeleteNodePolicy, CheckOutCheckInServicePolicies.OnCheckIn {
 
-	private static Log logger = LogFactory.getLog(AssociationServiceImpl.class);
+	private static final Log logger = LogFactory.getLog(AssociationServiceImpl.class);
 
 	private BeCPGCacheService beCPGCacheService;
 
@@ -56,7 +56,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 	public void update(NodeRef nodeRef, QName qName, List<NodeRef> assocNodeRefs) {
 
 		List<AssociationRef> dbAssocNodeRefs = getTargetAssocsImpl(nodeRef, qName, false);
-		List<NodeRef> dbTargetNodeRefs = new ArrayList<NodeRef>();
+		List<NodeRef> dbTargetNodeRefs = new ArrayList<>();
 
 		if (dbAssocNodeRefs != null) {
 			// remove from db
@@ -166,7 +166,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 	@Override
 	public List<NodeRef> getTargetAssocs(NodeRef nodeRef, QName qName, boolean fromCache) {
 		List<AssociationRef> assocRefs = getTargetAssocsImpl(nodeRef, qName, fromCache);
-		List<NodeRef> listItems = new LinkedList<NodeRef>();
+		List<NodeRef> listItems = new LinkedList<>();
 		for (AssociationRef assocRef : assocRefs) {
 			listItems.add(assocRef.getTargetRef());
 		}
@@ -182,7 +182,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 	@Override
 	public List<NodeRef> getSourcesAssocs(NodeRef nodeRef, QNamePattern qName) {
 		List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, qName);
-		List<NodeRef> listItems = new LinkedList<NodeRef>();
+		List<NodeRef> listItems = new LinkedList<>();
 		for (AssociationRef assocRef : assocRefs) {
 			listItems.add(assocRef.getSourceRef());
 		}
@@ -199,7 +199,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 	@Override
 	public List<NodeRef> getChildAssocs(NodeRef nodeRef, QName qName) {
 		List<ChildAssociationRef> assocRefs = getChildAssocsImpl(nodeRef, qName);
-		List<NodeRef> listItems = new LinkedList<NodeRef>();
+		List<NodeRef> listItems = new LinkedList<>();
 		for (ChildAssociationRef assocRef : assocRefs) {
 			listItems.add(assocRef.getChildRef());
 		}

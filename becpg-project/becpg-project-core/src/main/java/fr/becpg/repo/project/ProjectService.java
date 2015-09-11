@@ -38,13 +38,13 @@ public interface ProjectService {
 	 * 
 	 * @param deliverableNodeRef
 	 */
-	public void openDeliverable(NodeRef deliverableNodeRef);
+	void openDeliverable(NodeRef deliverableNodeRef);
 	
 	/**
 	 * Reopen a task in progress
 	 * @param taskNodeRef
 	 */
-	public void reopenTask(NodeRef taskNodeRef);
+	void reopenTask(NodeRef taskNodeRef);
 
 	
 	/**
@@ -52,14 +52,14 @@ public interface ProjectService {
 	 * 
 	 * @return
 	 */
-	public List<NodeRef> getTaskLegendList();
+	List<NodeRef> getTaskLegendList();
 	
 	/**
 	 * Get the number of inProgress project for this legend
 	 * 
 	 * @return
 	 */
-	public Long getNbProjectsByLegend(NodeRef legendNodeRef);
+	Long getNbProjectsByLegend(NodeRef legendNodeRef, String siteId);
 
 	/**
 	 * Get the projects container
@@ -67,14 +67,14 @@ public interface ProjectService {
 	 * @param siteId
 	 * @return
 	 */
-	public NodeRef getProjectsContainer(String siteId);
+	NodeRef getProjectsContainer(String siteId);
 
 	/**
 	 * Cancel a project
 	 * 
 	 * @param projectNodeRef
 	 */
-	public void cancel(NodeRef projectNodeRef);
+	void cancel(NodeRef projectNodeRef);
 
 	/**
 	 * Formulate a project
@@ -82,17 +82,17 @@ public interface ProjectService {
 	 * @param projectNodeRef
 	 * @throws FormulateException 
 	 */
-	public void formulate(NodeRef projectNodeRef) throws FormulateException;
+	void formulate(NodeRef projectNodeRef) throws FormulateException;
 	/**
 	 * 
 	 * @param taskListNodeRef
 	 */
-	public void deleteTask(NodeRef taskListNodeRef);
+	void deleteTask(NodeRef taskListNodeRef);
 	/**
 	 * 
 	 * @param taskListNodeRef
 	 */
-	public void submitTask(NodeRef taskListNodeRef);
+	void submitTask(NodeRef taskListNodeRef);
 	
 	/**
 	 * @param projectNodeRef
@@ -100,7 +100,7 @@ public interface ProjectService {
 	 * @param resourceNodeRef
 	 * @param allow
 	 */
-	public void updateProjectPermission(NodeRef projectNodeRef, NodeRef taskListNodeRef, NodeRef resourceNodeRef, boolean allow);
+	void updateProjectPermission(NodeRef projectNodeRef, NodeRef taskListNodeRef, NodeRef resourceNodeRef, boolean allow);
 	
 	
 	/**
@@ -111,7 +111,7 @@ public interface ProjectService {
 	 * @param updatePermissions
 	 * @return 
 	 */
-	public List<NodeRef> updateTaskResources(NodeRef projectNodeRef, NodeRef taskNodeRefs, List<NodeRef> resources, boolean updatePermissions);
+	List<NodeRef> updateTaskResources(NodeRef projectNodeRef, NodeRef taskNodeRefs, List<NodeRef> resources, boolean updatePermissions);
 
 	/**
 	 * 
@@ -119,7 +119,7 @@ public interface ProjectService {
 	 * @param url
 	 * @return
 	 */
-	public String getDeliverableUrl(NodeRef projectNodeRef, String url);
+	String getDeliverableUrl(NodeRef projectNodeRef, String url);
 
 	
 	/**
@@ -127,7 +127,7 @@ public interface ProjectService {
 	 * @param taskNodeRef
 	 * @return 
 	 */
-	public NodeRef refusedTask(NodeRef taskNodeRef);
+	NodeRef refusedTask(NodeRef taskNodeRef);
 
 	
 	/**
@@ -136,7 +136,7 @@ public interface ProjectService {
 	 * @param taskNodeRef
 	 * @param stringScript
 	 */
-	public void runScript(ProjectData project, TaskListDataItem task, NodeRef scriptNode);
+	void runScript(ProjectData project, TaskListDataItem task, NodeRef scriptNode);
 
 
 

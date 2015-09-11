@@ -20,6 +20,7 @@ package fr.becpg.repo.designer.admin;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.action.evaluator.CompareMimeTypeEvaluator;
@@ -79,7 +80,7 @@ public class DesignerInitVisitor extends AbstractInitVisitorImpl  {
 	
 	@Override
 	protected void visitRules(NodeRef nodeRef, String folderName) {
-		if (folderName == PATH_CONFIGS) {
+		if (Objects.equals(folderName, PATH_CONFIGS)) {
 			addAspectRule(nodeRef, "Add config aspect", "Add model config to xml file", DesignerModel.ASPECT_CONFIG);
 			addAspectRule(getModelNodeRef(nodeRef), "Add model aspect", "Add model aspect to xml file", DesignerModel.ASPECT_MODEL);
 		}
@@ -94,7 +95,7 @@ public class DesignerInitVisitor extends AbstractInitVisitorImpl  {
 
 	@Override
 	protected void visitFiles(NodeRef folderNodeRef, String folderName) {
-		if (folderName == PATH_CONFIGS) {
+		if (Objects.equals(folderName, PATH_CONFIGS)) {
 			contentHelper.addFilesResources(folderNodeRef, "classpath:beCPG/designer/extCustomForm.xml");
 			contentHelper.addFilesResources(getModelNodeRef(folderNodeRef), "classpath:beCPG/designer/extCustomModel.xml");
 		}
@@ -107,7 +108,7 @@ public class DesignerInitVisitor extends AbstractInitVisitorImpl  {
 
 		// action
 		CompositeAction compositeAction = actionService.createCompositeAction();
-		Map<String, Serializable> params = new HashMap<String, Serializable>();
+		Map<String, Serializable> params = new HashMap<>();
 		params.put(AddFeaturesActionExecuter.PARAM_ASPECT_NAME, aspectModel);
 		Action action = actionService.createAction(AddFeaturesActionExecuter.NAME, params);
 		compositeAction.addAction(action);

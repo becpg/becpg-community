@@ -48,11 +48,11 @@ public class ProductListPoliciesTest extends PLMBaseTestCase {
 
 				RawMaterialData rawMaterialData = new RawMaterialData();
 				rawMaterialData.setName("RM");
-				NodeRef rawMaterialNodeRef = alfrescoRepository.create(testFolderNodeRef, rawMaterialData).getNodeRef();
+				NodeRef rawMaterialNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterialData).getNodeRef();
 
 				NodeRef containerListNodeRef = entityListDAO.getListContainer(rawMaterialNodeRef);
 
-				Map<QName, Serializable> properties = new HashMap<QName, Serializable>();
+				Map<QName, Serializable> properties = new HashMap<>();
 				properties.put(ContentModel.PROP_NAME, GUID.generate());
 				properties.put(DataListModel.PROP_DATALISTITEMTYPE, BeCPGModel.BECPG_PREFIX + ":" + PLMModel.TYPE_COSTLIST.getLocalName());
 				NodeRef costListCreatedNodeRef = nodeService.createNode(containerListNodeRef, ContentModel.ASSOC_CONTAINS,
