@@ -829,14 +829,12 @@
 					<field id="bcpg:storageConditionsRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="style">null</control-param>
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
 					<field id="bcpg:precautionOfUseRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="style">null</control-param>
 						</control>
 					</field>
 					<field id="bcpg:preparationTips" set="consumer">
