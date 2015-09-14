@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<template-instance>
+   <template-type>org/alfresco/user-delegation</template-type>
+   <components>
+
+      <!-- Title -->
+      <component>
+         <region-id>title</region-id>
+         <url>/components/title/profile-title</url>
+      </component>
+
+      <!-- Toolbar  -->
+      <component>
+         <region-id>toolbar</region-id>
+         <url>/components/profile/userprofile-toolbar</url>
+      </component>
+      
+      <!-- User's delegation manager -->
+       <component>
+         <region-id>user-delegation-mgr</region-id>
+         <url>/components/profile/user-delegation-mgr</url>
+      </component>
+      
+
+      <!-- User's delegation -->   
+      <component>
+         <region-id>user-delegation</region-id>
+         <url>/components/form</url>
+         <properties>
+            <itemKind>node</itemKind>
+            <itemId>{nodeRef}</itemId>
+            <formId>user-delegation</formId>
+            <mode>edit</mode>
+            <submitType>json</submitType>
+            <showCaption>true</showCaption>
+            <showCancelButton>true</showCancelButton>
+         </properties>
+      </component>
+      
+      
+      
+   </components>
+</template-instance>

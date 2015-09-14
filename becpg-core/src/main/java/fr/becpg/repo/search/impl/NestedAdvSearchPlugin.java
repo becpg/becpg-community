@@ -2,9 +2,11 @@ package fr.becpg.repo.search.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -194,6 +196,11 @@ public class NestedAdvSearchPlugin implements AdvSearchPlugin {
 			}
 		}
 		return true;
+	}
+
+	@Override
+	public Set<String> getIgnoredFields(QName datatype) {
+		return new HashSet<>();
 	}
 
 }
