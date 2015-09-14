@@ -130,6 +130,18 @@
 					<show id="pack:llPosition" />
 					<show id="pack:llType" />
 				</field-visibility>
+				<appearance>
+					<field id="pack:llPosition">
+					  <control template="/org/alfresco/components/form/controls/selectmany.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+					<field id="pack:llType">
+					   <control template="/org/alfresco/components/form/controls/selectmany.ftl">
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+				</appearance>
 			</form>
 
 			<form id="datagrid">
