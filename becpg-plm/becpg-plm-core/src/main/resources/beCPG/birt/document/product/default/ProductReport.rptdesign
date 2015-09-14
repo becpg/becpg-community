@@ -8419,7 +8419,7 @@ BirtMath.round(dataSetRow["alcooléthanol"], 1) + " %"
                                         </cell>
                                         <cell id="5790">
                                             <label id="2659">
-                                                <text-property name="text" key="noDeclIonizarion">Produit non soumis aux obligations d'étiquetage de la directive 2000/13/CE</text-property>
+                                                <text-property name="text" key="noDeclIonizarion">Produit non soumis aux obligations d'étiquetage de la directive 1169/2011</text-property>
                                             </label>
                                         </cell>
                                     </row>
