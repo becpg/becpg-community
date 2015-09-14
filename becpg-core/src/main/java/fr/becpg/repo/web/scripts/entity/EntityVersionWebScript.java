@@ -8,8 +8,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import javax.servlet.http.HttpServletResponse;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.repository.InvalidNodeRefException;
@@ -25,7 +23,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.extensions.webscripts.AbstractWebScript;
-import org.springframework.extensions.webscripts.Cache;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
@@ -34,7 +31,6 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.version.EntityVersion;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.AttributeExtractorService;
-import fr.becpg.repo.web.scripts.BrowserCacheHelper;
 
 /**
  * The Class VersionHistoryWebScript.
@@ -88,27 +84,27 @@ public class EntityVersionWebScript extends AbstractWebScript {
 
 		NodeRef nodeRef = new NodeRef(req.getParameter(PARAM_NODEREF));
 
-		Date lastModified = (Date) nodeService.getProperty(nodeRef, ContentModel.PROP_MODIFIED);
-
-		if (lastModified != null && BrowserCacheHelper.shouldReturnNotModified(req, lastModified)) {
-			res.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-			if (logger.isDebugEnabled()) {
-				logger.debug("Send Not_MODIFIED status");
-			}
-			return;
-		}
-
-		if (lastModified == null) {
-			lastModified = new Date();
-		}
-
-		Cache cache = new Cache(getDescription().getRequiredCache());
-		cache.setIsPublic(false);
-		cache.setMustRevalidate(true);
-		cache.setNeverCache(false);
-		cache.setMaxAge(0L);
-		cache.setLastModified(lastModified);
-		res.setCache(cache);
+//		Date lastModified = (Date) nodeService.getProperty(nodeRef, ContentModel.PROP_MODIFIED);
+//
+//		if (lastModified != null && BrowserCacheHelper.shouldReturnNotModified(req, lastModified)) {
+//			res.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+//			if (logger.isDebugEnabled()) {
+//				logger.debug("Send Not_MODIFIED status");
+//			}
+//			return;
+//		}
+//
+//		if (lastModified == null) {
+//			lastModified = new Date();
+//		}
+//
+//		Cache cache = new Cache(getDescription().getRequiredCache());
+//		cache.setIsPublic(false);
+//		cache.setMustRevalidate(true);
+//		cache.setNeverCache(false);
+//		cache.setMaxAge(0L);
+//		cache.setLastModified(lastModified);
+//		res.setCache(cache);
 		
 		String mode = req.getParameter(PARAM_MODE);
 		SimpleDateFormat displayFormat = new SimpleDateFormat(DISPLAY_FORMAT);
