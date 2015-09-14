@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<page>
+   <title>Change Delegation Settings for a User</title>
+   <title-id>page.userDelegation.title</title-id>
+   <description>Change Delegation Settings section on Profile page for a User</description>
+   <description-id>page.userDelegation.description</description-id>
+   <template-instance>user-delegation</template-instance>
+   <authentication>user</authentication>
+</page>

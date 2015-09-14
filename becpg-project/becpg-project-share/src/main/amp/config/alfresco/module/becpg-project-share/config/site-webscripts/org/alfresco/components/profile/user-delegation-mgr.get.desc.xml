@@ -1,0 +1,5 @@
+<webscript>
+  <shortname>user-delegation-mgr</shortname>
+  <description>User Delegation Manager Component</description>
+  <url>/components/profile/user-delegation-mgr</url>
+</webscript>

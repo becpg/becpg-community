@@ -21,8 +21,7 @@
 
 	<!-- Introduction of new namespaces defined by this model -->
 	<namespaces>
-		<namespace uri="http://www.bcpg.fr/model/project/1.0"
-			prefix="pjt" />
+		<namespace uri="http://www.bcpg.fr/model/project/1.0" prefix="pjt" />
 	</namespaces>
 
 	<constraints>

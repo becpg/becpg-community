@@ -23,13 +23,16 @@ import java.util.List;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DeliverableUrl;
+import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.project.ProjectActivityService;
 import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.ProjectWorkflowService;
@@ -53,6 +56,15 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 	private ProjectService projectService;
 	
 	private ProjectActivityService projectActivityService;
+	
+	private AssociationService associationService;
+	
+	private NodeService nodeService; 
+	
+	private Date delegationStart;
+	
+	private Date delegationEnd;
+	
 
 	public void setProjectWorkflowService(ProjectWorkflowService projectWorkflowService) {
 		this.projectWorkflowService = projectWorkflowService;
@@ -64,6 +76,14 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 
 	public void setProjectActivityService(ProjectActivityService projectActivityService) {
 		this.projectActivityService = projectActivityService;
+	}
+	
+	public void setNodeService(NodeService nodeService) {
+		this.nodeService = nodeService;
+	}
+	
+	public void setAssociationService(AssociationService associationService) {
+		this.associationService = associationService;
 	}
 
 	@Override
@@ -126,8 +146,7 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 
 			projectData.setCompletionPercent(ProjectHelper.geProjectCompletionPercent(projectData));
 
-			calculateProjectLegendsAndCurrTasks(projectData);
-			
+			calculateProjectLegendsAndCurrTasks(projectData);			
 			
 		}
 
@@ -271,13 +290,48 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 	
 						// check workflow instance (task may be reopened) and
 						// workflow properties
-						projectWorkflowService.checkWorkflowInstance(projectData, nextTask, nextDeliverables);
+						projectWorkflowService.checkWorkflowInstance(projectData, nextTask, nextDeliverables);						
+						
+						List<NodeRef> resources = nextTask.getResources();
+						NodeRef reassignResource;
 	
 						if (nextTask.getResources() != null && !nextTask.getResources().isEmpty()) {
-	
+							
+							for (NodeRef resource : nextTask.getResources()){							
+								reassignResource = getReassignResource(resource);
+								
+								//check delegation
+								if(reassignResource!=null){										
+									
+									delegationStart=(Date)nodeService.getProperty(resource, ProjectModel.PROP_QNAME_DELEGATION_START);
+									delegationEnd=(Date)nodeService.getProperty(resource, ProjectModel.PROP_QNAME_DELEGATION_END);								
+									
+									if (delegationStart!=null && (nextTask.getStart().after(delegationStart)
+											||nextTask.getStart().equals(delegationStart))) {	
+										
+										if(delegationEnd != null && (nextTask.getStart().before(delegationEnd)
+												||nextTask.getStart().equals(delegationEnd))){												
+											
+											//reassign new tasks
+											resources.remove(resource);
+											resources.add(reassignResource);
+										}
+									}
+											
+									else {
+										if((boolean) nodeService.getProperty(resource, ProjectModel.PROP_QNAME_REASSIGN_TASK)){
+											//reassign current tasks
+											resources.remove(resource);
+											resources.add(reassignResource);
+											projectWorkflowService.checkWorkflowInstance(projectData, nextTask, nextDeliverables);
+										}										
+									}	
+								}
+							}
+							
 							nextTask.setResources(projectService.updateTaskResources(projectData.getNodeRef(), nextTask.getNodeRef(),
-									nextTask.getResources(), true));
-	
+										resources, true));								
+							
 							// workflow (task may have been set as InProgress with
 							// UI)
 							if ((nextTask.getWorkflowInstance() == null || nextTask.getWorkflowInstance().isEmpty())
@@ -305,6 +359,33 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 		
 		return reformulate;
 	}
+
+
+	private NodeRef getReassignResource(NodeRef resource) {	
+		
+		if(resource != null && nodeService.getProperty(resource, ProjectModel.PROP_QNAME_DELEGATION_STATE)!=null
+					&&(boolean)nodeService.getProperty(resource, ProjectModel.PROP_QNAME_DELEGATION_STATE)==true){
+			
+			delegationStart=(Date)nodeService.getProperty(resource, ProjectModel.PROP_QNAME_DELEGATION_START);
+			delegationEnd=(Date)nodeService.getProperty(resource, ProjectModel.PROP_QNAME_DELEGATION_END);
+			
+			if (delegationStart!=null && delegationEnd !=null &&
+					(delegationStart.before(new Date())||delegationStart.equals(new Date()))
+					&&(delegationEnd.after(new Date())||delegationEnd.equals(new Date()))){
+				
+				NodeRef reassignResource = getReassignResource(associationService.getTargetAssoc(resource, ProjectModel.PROP_QNAME_REASSIGN_RESOURCE));
+				
+				if(reassignResource != null){
+					return reassignResource;
+				}
+				else {
+					return associationService.getTargetAssoc(resource, ProjectModel.PROP_QNAME_REASSIGN_RESOURCE);
+				}
+			}
+		}
+		return null;
+	}
+
 
 	private void visitGroup(ProjectData projectData, TaskListDataItem parent) {
 
