@@ -17,8 +17,10 @@
  ******************************************************************************/
 package fr.becpg.repo.search.impl;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
@@ -51,10 +53,8 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	@Autowired
 	private NamespaceService namespaceService;
 
-
 	@Autowired(required = false)
 	private AdvSearchPlugin[] advSearchPlugins;
-
 
 	@Override
 	public List<NodeRef> queryAdvSearch(QName datatype, BeCPGQueryBuilder beCPGQueryBuilder, Map<String, String> criteria, int maxResults) {
@@ -64,8 +64,17 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		} else if (maxResults > RepoConsts.MAX_RESULTS_1000) {
 			maxResults = RepoConsts.MAX_RESULTS_UNLIMITED;
 		}
-
-		addCriteriaMap(beCPGQueryBuilder, criteria);
+		
+		Set<String> ignoredFields =  new HashSet<>();
+		
+		if (advSearchPlugins != null) {
+			for (AdvSearchPlugin advSearchPlugin : advSearchPlugins) {
+				ignoredFields.addAll( advSearchPlugin.getIgnoredFields(datatype));
+			}
+		}
+		
+		
+		addCriteriaMap(beCPGQueryBuilder, criteria, ignoredFields);
 
 		List<NodeRef> nodes = beCPGQueryBuilder.maxResults(maxResults).ofType(datatype).ftsLanguage().list();
 
@@ -79,12 +88,11 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 				nodes = advSearchPlugin.filter(nodes, datatype, criteria);
 				if (logger.isDebugEnabled()) {
 					watch.stop();
-					logger.debug("query filter " + advSearchPlugin.getClass().getName() + " executed in  " + watch.getTotalTimeSeconds()
-							+ " seconds ");
+					logger.debug(
+							"query filter " + advSearchPlugin.getClass().getName() + " executed in  " + watch.getTotalTimeSeconds() + " seconds ");
 				}
 			}
 		}
-
 
 		return nodes;
 	}
@@ -116,7 +124,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		return beCPGQueryBuilder;
 	}
 
-	private void addCriteriaMap(BeCPGQueryBuilder queryBuilder, Map<String, String> criteriaMap) {
+	private void addCriteriaMap(BeCPGQueryBuilder queryBuilder, Map<String, String> criteriaMap, Set<String> ignoredFields) {
 		if (criteriaMap != null && !criteriaMap.isEmpty()) {
 
 			for (Map.Entry<String, String> criterion : criteriaMap.entrySet()) {
@@ -124,7 +132,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 				String key = criterion.getKey();
 				String propValue = criterion.getValue();
 
-				if (!propValue.isEmpty()) {
+				if (!propValue.isEmpty() && !ignoredFields.contains(key)) {
 					// properties
 					if (key.startsWith("prop_")) {
 
@@ -194,7 +202,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 									queryBuilder.andBetween(QName.createQName(propName, namespaceService), "0", propValue);
 
 								}
-							} else if (!propName.contains("llPosition")) {
+							} else {
 								// beCPG - bug fix : pb with operator -,
 								// AND, OR
 								// poivre AND -noir
@@ -204,15 +212,15 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 								// propName + ":\"" + propValue + "\"";
 
 								queryBuilder.andPropQuery(QName.createQName(propName, namespaceService), cleanValue(propValue));
-								// TODO
-							} else {
-								// pseudo cm:content property - e.g.
-								// mimetype,size
-								// or encoding
-								queryBuilder.andFTSQuery("cm:content." + propName + ":\"" + propValue + "\"");
-
 							}
+						} else {
+							// pseudo cm:content property - e.g.
+							// mimetype,size
+							// or encoding
+							queryBuilder.andFTSQuery("cm:content." + propName + ":\"" + propValue + "\"");
+
 						}
+
 					}
 
 				}
@@ -232,7 +240,6 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		return escapeValue(cleanQuery);
 	}
 
-	
 	protected String escapeValue(String value) {
 		StringBuilder buf = new StringBuilder();
 		for (int i = 0; i < value.length(); i++) {
@@ -244,8 +251,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		}
 		return buf.toString();
 	}
-	
-	
+
 	private String getHierarchyQuery(String propName, String hierachyName) {
 		List<NodeRef> nodes = null;
 
@@ -258,21 +264,20 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		if (!NodeRef.isNodeRef(hierachyName)) {
 
 			// TODO use HierarchyService, not generic
-			// " +PATH:\"/app:company_home/%s//*\" +TYPE:\"bcpg:linkedValue\" +@bcpg\\:lkvValue:\"%s\" ";
+			// " +PATH:\"/app:company_home/%s//*\" +TYPE:\"bcpg:linkedValue\"
+			// +@bcpg\\:lkvValue:\"%s\" ";
 
-			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder
-					.createQuery()
+			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery()
 					.inSubPath(RepoConsts.PATH_SYSTEM + "/" + RepoConsts.PATH_PRODUCT_HIERARCHY + "/"
-							+ BeCPGModel.ASSOC_ENTITYLISTS.toPrefixString(namespaceService)).inType(BeCPGModel.TYPE_LINKED_VALUE)
-					.andPropQuery(BeCPGModel.PROP_LKV_VALUE, hierachyName);
+							+ BeCPGModel.ASSOC_ENTITYLISTS.toPrefixString(namespaceService))
+					.inType(BeCPGModel.TYPE_LINKED_VALUE).andPropQuery(BeCPGModel.PROP_LKV_VALUE, hierachyName);
 
 			if (propName.endsWith("productHierarchy1")) {
 				queryBuilder.andPropEquals(BeCPGModel.PROP_DEPTH_LEVEL, "1");
 			}
 			nodes = queryBuilder.list();
 		}
-		
-		
+
 		String ret = "";
 		if (nodes != null && !nodes.isEmpty()) {
 			for (NodeRef node : nodes) {

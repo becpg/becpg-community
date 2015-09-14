@@ -1,10 +1,11 @@
 package fr.becpg.repo.search;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -21,6 +22,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 
 @Service
@@ -35,7 +37,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 	private NamespaceService namespaceService;
 
 	@Autowired
-	private DictionaryService dictionaryService;
+	private EntityDictionaryService entityDictionaryService;
 
 	@Autowired
 	private EntityListDAO entityListDAO;
@@ -62,7 +64,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		if (isAssocSearch) {
 			nodes = filterByAssociations(nodes, criteria);
 
-			if (datatype != null && dictionaryService.isSubClass(datatype, PLMModel.TYPE_PRODUCT)) {
+			if (datatype != null && entityDictionaryService.isSubClass(datatype, PLMModel.TYPE_PRODUCT)) {
 				nodes = getSearchNodesByIngListCriteria(nodes, criteria);
 				nodes = getSearchNodesByLabelingCriteria(nodes, criteria);
 				nodes = getSearchNodesByLabelClaim(nodes, criteria);
@@ -73,6 +75,15 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		return nodes;
 	}
 
+	@Override
+	public Set<String> getIgnoredFields(QName datatype) {
+		Set<String> ret  = new HashSet<>();
+		if (datatype != null && entityDictionaryService.isSubClass(datatype, PLMModel.TYPE_PRODUCT)) {
+			ret.add(CRITERIA_PACK_LABEL_POSITION);
+		}
+		return ret;
+	}
+	
 	/**
 	 * Take in account criteria on associations (ie :
 	 * assoc_bcpg_supplierAssoc_added)
@@ -517,5 +528,8 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		}
 		return false;
 	}
+
+
+
 
 }
