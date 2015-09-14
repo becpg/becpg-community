@@ -250,7 +250,7 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 			}
 
 			Date propModified = (Date) nodeService.getProperty(nodeRef, ContentModel.PROP_MODIFIED);
-			lastModified = (Date) nodeService.getProperty(entityTplNodeRef, ContentModel.PROP_MODIFIED);
+			lastModified = entityTplNodeRef != null ? (Date) nodeService.getProperty(entityTplNodeRef, ContentModel.PROP_MODIFIED) : null;
 			if (lastModified == null || (propModified != null && lastModified.getTime() < propModified.getTime())) {
 				lastModified = propModified;
 			}

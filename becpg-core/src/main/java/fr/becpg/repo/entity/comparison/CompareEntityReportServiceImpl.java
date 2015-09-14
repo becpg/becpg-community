@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
 import fr.becpg.report.client.ReportFormat;
 import fr.becpg.report.client.ReportParams;
@@ -102,6 +103,9 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 	
 	@Autowired
 	private AssociationService associationService;
+	
+	@Autowired
+	private AttributeExtractorService attributeExtractorService;
 
 	@Override
 	@Deprecated
@@ -169,7 +173,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 
 		// compareResult
 		for (CompareResultDataItem c : compareResult) {
-
+			
 			Element cmpRowElt = cmpRowsElt.addElement(TAG_COMPARISON_ROW);
 			if (c.getEntityList() != null) {
 				TypeDefinition typeDef = dictionaryService.getType(c.getEntityList());
@@ -180,14 +184,14 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 			if (c.getCharactPath() != null) {
 				for (NodeRef nodeRef : c.getCharactPath()) {
 
-					charactPath += (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
+					charactPath += attributeExtractorService.extractPropName(nodeRef);
 
 					if (!charactPath.isEmpty())
 						charactPath += CHARACT_PATH_SEPARATOR;
 				}
 			}
 
-			cmpRowElt.addAttribute(ATTR_CHARACTERISTIC, c.getCharacteristic() == null ? "" : charactPath + nodeService.getProperty(c.getCharacteristic(), ContentModel.PROP_NAME));
+			cmpRowElt.addAttribute(ATTR_CHARACTERISTIC, c.getCharacteristic() == null ? "" : charactPath + attributeExtractorService.extractPropName(c.getCharacteristic()));
 			cmpRowElt.addAttribute(ATTR_PROPERTY, getClassAttributeTitle(c.getProperty()));
 			cmpRowElt.addAttribute(ATTR_PROPERTY_QNAME, c.getProperty().toPrefixString(namespaceService));
 			cmpRowElt.addAttribute(ATTR_IS_DIFFERENT, Boolean.toString(c.isDifferent()));
