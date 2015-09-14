@@ -137,9 +137,6 @@ public interface ProjectService {
 	 * @param stringScript
 	 */
 	void runScript(ProjectData project, TaskListDataItem task, NodeRef scriptNode);
-
-
-
 	
 
 }
