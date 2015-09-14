@@ -111,7 +111,7 @@ public class DockBarWebScript extends AbstractWebScript {
 			String username = AuthenticationUtil.getFullyAuthenticatedUser();
 
 			Map<String, Serializable> histories = preferenceService.getPreferences(username);
-
+			
 			String nodeRefs = (String) histories.get(PREF_DOCKBAR_HISTORY);
 			if (logger.isDebugEnabled()) {
 				logger.debug("Getting :" + nodeRefs + " from history for " + username);
@@ -171,13 +171,7 @@ public class DockBarWebScript extends AbstractWebScript {
 					histories.put(PREF_DOCKBAR_HISTORY, nodeRefs);
 					preferenceService.setPreferences(username, histories);
 				}
-			} else if (BrowserCacheHelper.isBrowserHasInCache(req)) {
-				res.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-				if (logger.isDebugEnabled()) {
-					logger.debug("Send Not_MODIFIED status");
-				}
-				return;
-			}
+			} 
 
 			Cache cache = new Cache(getDescription().getRequiredCache());
 			cache.setIsPublic(false);

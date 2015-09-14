@@ -132,6 +132,7 @@ public class CharactNamePatch extends AbstractBeCPGPatch {
 					String charactName = (String) nodeService.getProperty(dataListNodeRef, BeCPGModel.PROP_CHARACT_NAME);
 					Boolean isDeleted = (Boolean) nodeService.getProperty(dataListNodeRef, BeCPGModel.PROP_IS_DELETED);
 					if (name != null && (charactName == null || charactName.isEmpty())) {
+						
 						nodeService.setProperty(dataListNodeRef, ContentModel.PROP_NAME, "patched-"+ name.replaceAll("\\?", "").replace(" ","_"));
 						nodeService.setProperty(dataListNodeRef, BeCPGModel.PROP_CHARACT_NAME, name);
 						nodeService.setProperty(dataListNodeRef, BeCPGModel.PROP_IS_DELETED, isDeleted != null ? isDeleted : false);
