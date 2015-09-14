@@ -52,8 +52,12 @@ else if (args["user"] != null)
    if(olapSSOUrl!=null){
        model.capabilities["olapSSOUrl_"+olapSSOUrl] = true;
    }
-   
-   
+    
+  var personNodeRef = object.nodeRef;
+  if(personNodeRef!=null){
+      model.capabilities["personNodeRef_"+personNodeRef] = true;
+  }
+      
    model.immutableProperties = people.getImmutableProperties(userId);
 }
 

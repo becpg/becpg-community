@@ -66,6 +66,7 @@
 .project-list a.active-comments {
 	cursor: pointer;
 	margin-left: 5px;
+	margin-bottom: -3px;
 	display: inline-table;
 	font-color:white;
 	font-weight:bold;	
@@ -81,4 +82,5 @@
     text-align: center;
 	
 }
+
  
