@@ -83,6 +83,12 @@
 		</columns>
 	</mapping>
 
+   <mapping name="bcpg:ingTypeItem">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:lvValue" />
+		</nodeColumnKeys>
+	</mapping>
+
 	<mapping name="bcpg:listValue">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="bcpg:lvValue" />
