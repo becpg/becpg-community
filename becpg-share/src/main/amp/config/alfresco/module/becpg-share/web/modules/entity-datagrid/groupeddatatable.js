@@ -108,13 +108,15 @@
 
             // var groupBy = this.get("groupBy");  // this returns null but I expect it to work
             var groupBy = this.configs.groupBy;
-            var groupName = record.getData("itemData")[groupBy].value;
-           
+            
+            var groupName = "";
+            
             if(this.configs.groupFormater){
             	groupName = this.configs.groupFormater.call(this,null,record);
+            } else if(record.getData("itemData")[groupBy] !=null){
+            	groupName = record.getData("itemData")[groupBy].value;
             }
-            
-            
+
             if (groupName !== this.currentGroupName) {
                 this.groups.push({ name: groupName, row: tr, record: record, group: null });
                 Dom.addClass(tr, "group-first-row");
