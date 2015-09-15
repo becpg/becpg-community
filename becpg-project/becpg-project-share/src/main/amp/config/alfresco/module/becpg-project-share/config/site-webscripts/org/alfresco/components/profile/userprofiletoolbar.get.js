@@ -106,9 +106,9 @@ function addLink(id, href, msgId, msgArgs)
 }
 
 function getPersonNodeRef(user){
-    for(var i  in user.capabilities){
-       if(i.indexOf("personNodeRef_") == 0){
-           return "workspace://SpacesStore/"+i.substring(14);
+    for(var capability  in user.capabilities){
+       if(capability.indexOf("personNodeRef_") == 0){
+           return capability.substring(14);
        }
     }
     return null;
