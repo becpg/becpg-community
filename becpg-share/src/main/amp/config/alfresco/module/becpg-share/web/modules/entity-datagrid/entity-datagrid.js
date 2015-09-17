@@ -888,8 +888,7 @@
 	                                                itemId : this.options.itemType != null ? this.options.itemType
 	                                                        : this.datalistMeta.itemType,
 	                                                formId : "filter",
-	                                                list : listName,
-	                                                submitType : "json"
+	                                                list : listName
 	                                            });
 	
 	                            Alfresco.util.Ajax.request(
@@ -993,11 +992,15 @@
                         onBeforeFormRuntimeInit : function ExtDataGrid_onBeforeFormRuntimeInit(layer, args)
                         {
                             // Get filter form runtime
+                        	
 
                             if (this.formsFilterRuntime == null && args[1].eventGroup == this.id + "-filterForm-form")
                             {
+                            	var me = this;
                                 this.formsFilterRuntime = args[1].runtime;
                                 this.formsFilterRuntime.validations = [];
+                                this.formsFilterRuntime.ajaxSubmit = true;
+                                this.formsFilterRuntime._submitInvoked = function (){me.onFilterFormSubmit(); return false;};
                             }
 
                         },
@@ -2415,7 +2418,31 @@
                             {
                                 this.datalistMeta = obj.dataList;
                                 this.entity = obj.entity;
+                                this.currentPage = 1;
                                 this.isFilterFormLoaded = false;
+                                this.showingMoreActions = false;
+                                if (this.options.usePagination)
+                                {
+                                	this.currentPage = 1;
+                                }
+                                
+                                if(this.currentFilter!=null && this.currentFilter.filterId!="all"){
+	                                this.currentFilter =
+	                                {
+	                                    filterId : "all",
+	                                    filterData : ""
+	                                };
+	                                
+	                                var objNav = {};
+                                    objNav[this.scopeId + "filter"] = "all";
+                                    YAHOO.util.History.multiNavigate(objNav);
+                                }
+                                
+                                this.selectedItems = {};
+                                this.afterDataGridUpdate = [];
+                                this.extraAfterDataGridUpdate = [];
+                                this.formsFilterRuntime = null;
+                                
 
                                 if (obj.list != null && (this.options.list == null || this.options.list.length < 1))
                                 {
@@ -2515,7 +2542,6 @@
                                         this.currentPage = 1;
                                     }
                                     objNav[this.scopeId + "filter"] = strFilter;
-
                                     YAHOO.util.History.multiNavigate(objNav);
                                 }
                             }
