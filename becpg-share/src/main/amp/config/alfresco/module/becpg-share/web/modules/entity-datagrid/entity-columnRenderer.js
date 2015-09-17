@@ -537,12 +537,16 @@
                            oDisplayValue = Alfresco.util.formatDate(oNewValue, scope
                                    .msg("date-format.defaultDateOnly"));
                            oNewValue = Alfresco.util.formatDate(oNewValue, "yyyy-mm-dd'T'HH:MM:ss");
-                       }
-                       if (oSelf instanceof YAHOO.widget.RadioCellEditor) {
+                       } else if (oSelf instanceof YAHOO.widget.RadioCellEditor) {
                           
                           oNewValue = "true" === oNewValue;
                           oDisplayValue = oNewValue ? scope.msg("data.boolean.true") : scope.msg("data.boolean.false");
                           
+                       } else if (oSelf instanceof YAHOO.widget.DropdownCellEditor ) { 
+                    	   
+                    	   var allOptions = oSelf.dropdown.options;
+                    	   oDisplayValue = allOptions[allOptions.selectedIndex].label;
+                    	   
                        }
                        
 
