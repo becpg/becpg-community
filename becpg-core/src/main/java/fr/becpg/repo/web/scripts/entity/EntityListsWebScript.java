@@ -56,6 +56,7 @@ import org.springframework.util.StopWatch;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.model.SecurityModel;
+import fr.becpg.model.SystemGroup;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.AssociationService;
@@ -312,6 +313,9 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 
 		// filter list with perms
 		if (!skipFilter) {
+			
+			boolean isExtrenalUser = isCurrentUserExternal();
+			
 			Iterator<NodeRef> it = listsNodeRef.iterator();
 			while (it.hasNext()) {
 				NodeRef temp = it.next();
@@ -323,8 +327,9 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 						logger.trace("Don't display dataList:" + dataListType);
 					}
 					it.remove();
-				} else if (SecurityService.WRITE_ACCESS == access_mode
-						&& permissionService.hasPermission(temp, PermissionService.WRITE) == AccessStatus.ALLOWED) {
+				} else if (!isExtrenalUser && SecurityService.WRITE_ACCESS == access_mode
+						&& permissionService.hasPermission(temp, PermissionService.WRITE) == AccessStatus.ALLOWED
+						 ) {
 					hasChangeStatePermission = true;
 				}
 			}
@@ -355,6 +360,15 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 		model.put(MODEL_KEY_NAME_LISTS, listsNodeRef);
 
 		return model;
+	}
+	
+	private boolean isCurrentUserExternal() {
+		for (String currAuth : authorityService.getAuthorities()) {
+			if((PermissionService.GROUP_PREFIX+SystemGroup.ExternalUser.toString()).equals(currAuth)){
+				return true;
+			}
+		}
+		return false;
 	}
 
 }
