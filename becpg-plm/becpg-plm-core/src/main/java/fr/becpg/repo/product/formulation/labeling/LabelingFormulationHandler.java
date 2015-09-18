@@ -1137,6 +1137,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	@SuppressWarnings("unchecked")
 	private JSONObject createJsonLog(AbstractLabelingComponent component, Double totalQty, Double totalVol) {
 
+		
 		JSONObject tree = new JSONObject();
 		if (component != null) {
 			if (component.getNodeRef() != null && nodeService.exists(component.getNodeRef())) {
@@ -1174,7 +1175,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				for (IngItem childComponent : ((IngItem)component).getSubIngs()) {
 					children.add(createJsonLog(childComponent,  ((IngItem)component).getQty(),  ((IngItem)component).getVolume()));
 				}
-				tree.put("decl", I18NUtil.getMessage("listconstraint.bcpg_declarationTypes.Details"));
+				tree.put("leaf", true);
+				tree.put("decl", I18NUtil.getMessage("listconstraint.bcpg_declarationTypes.DoNotDetails"));
 				tree.put("children", children);
 			} else {
 				tree.put("leaf", true);

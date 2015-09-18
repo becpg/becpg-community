@@ -521,38 +521,46 @@ public class LabelingFormulaContext {
 		StringBuffer ret = new StringBuffer();
 		boolean appendEOF = false;
 		for (Map.Entry<IngTypeItem, List<AbstractLabelingComponent>> kv : getSortedIngListByType(compositeLabeling).entrySet()) {
-			if (ret.length() > 0) {
-				if (appendEOF) {
-					ret.append("<br/>");
-				} else {
-					ret.append(defaultSeparator);
-				}
-			}
-
-			if (IngTypeItem.DEFAULT_GROUP.equals(kv.getKey())) {
-				appendEOF = true;
-			} else {
-				appendEOF = false;
-			}
-
+		
+			StringBuilder toAppend = new StringBuilder();
+			
 			if (kv.getKey() != null && getIngName(kv.getKey(), false) != null) {
 
 				Double qtyPerc = computeQtyPerc(compositeLabeling, kv.getKey());
 				kv.getKey().setQty(qtyPerc);
 
-				ret.append(getIngTextFormat(kv.getKey()).format(new Object[] { getIngName(kv.getKey(), kv.getValue().size() > 1),
+				toAppend.append(getIngTextFormat(kv.getKey()).format(new Object[] { getIngName(kv.getKey(), kv.getValue().size() > 1),
 						kv.getKey().getQty(), renderLabelingComponent(compositeLabeling, kv.getValue(), ingTypeDefaultSeparator) }));
 
 			} else {
-				ret.append(renderLabelingComponent(compositeLabeling, kv.getValue(), defaultSeparator));
+				toAppend.append(renderLabelingComponent(compositeLabeling, kv.getValue(), defaultSeparator));
 			}
+			
+			if(toAppend!=null && !toAppend.toString().isEmpty()){
+				if (ret.length() > 0) {
+					if (appendEOF) {
+						ret.append("<br/>");
+					} else {
+						ret.append(defaultSeparator);
+					}
+				}
+				if (IngTypeItem.DEFAULT_GROUP.equals(kv.getKey())) {
+					appendEOF = true;
+				} else {
+					appendEOF = false;
+				}
+				
+				ret.append(toAppend);
+				
+			}
+			
 		}
 		return cleanLabel(ret);
 	}
 
-	private StringBuffer renderLabelingComponent(CompositeLabeling parent, List<AbstractLabelingComponent> subComponents, String separator) {
+	private StringBuilder renderLabelingComponent(CompositeLabeling parent, List<AbstractLabelingComponent> subComponents, String separator) {
 
-		StringBuffer ret = new StringBuffer();
+		StringBuilder ret = new StringBuilder();
 
 		boolean appendEOF = false;
 		for (AbstractLabelingComponent component : subComponents) {
@@ -570,20 +578,8 @@ public class LabelingFormulaContext {
 
 			if (qtyPerc == null || qtyPerc != 0d) {
 
-				if (ret.length() > 0) {
-					if (appendEOF) {
-						ret.append("<br/>");
-					} else {
-						ret.append(separator);
-					}
-				}
-
-				if (isGroup(component)) {
-					appendEOF = true;
-				} else {
-					appendEOF = false;
-				}
-
+				String toAppend = new String();
+				
 				if (component instanceof IngItem) {
 					IngItem ingItem = (IngItem) component;
 
@@ -595,16 +591,34 @@ public class LabelingFormulaContext {
 						subIngBuff.append(getIngName(subIngItem, false));
 					}
 
-					ret.append(getIngTextFormat(component).format(new Object[] { ingName, qtyPerc, subIngBuff.toString() }));
+					toAppend = getIngTextFormat(component).format(new Object[] { ingName, qtyPerc, subIngBuff.toString() });
 
 				} else if (component instanceof CompositeLabeling) {
 
-					ret.append(
-							getIngTextFormat(component).format(new Object[] { ingName, qtyPerc, renderCompositeIng((CompositeLabeling) component) }));
+					toAppend =  getIngTextFormat(component).format(new Object[] { ingName, qtyPerc, renderCompositeIng((CompositeLabeling) component) });
 
 				} else {
 					logger.error("Unsupported ing type. Name: " + component.getName());
 				}
+				
+				if(toAppend!=null && !toAppend.isEmpty()){
+					if (ret.length() > 0) {
+						if (appendEOF) {
+							ret.append("<br/>");
+						} else {
+							ret.append(separator);
+						}
+					}
+	
+					if (isGroup(component)) {
+						appendEOF = true;
+					} else {
+						appendEOF = false;
+					}
+					
+					ret.append(toAppend);
+				}
+				
 
 			} else {
 				logger.debug("Removing ing with qty of 0: " + ingName);
