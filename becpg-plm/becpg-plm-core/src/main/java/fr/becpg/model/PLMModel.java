@@ -38,6 +38,7 @@ public interface PLMModel {
 	QName PROP_ALLERGENLIST_INVOLUNTARY = QName.createQName(BeCPGModel.BECPG_URI, "allergenListInVoluntary");
 	QName ASSOC_ALLERGENLIST_VOLUNTARY_SOURCES = QName.createQName(BeCPGModel.BECPG_URI, "allergenListVolSources");
 	QName ASSOC_ALLERGENLIST_INVOLUNTARY_SOURCES = QName.createQName(BeCPGModel.BECPG_URI, "allergenListInVolSources");
+	QName PROP_ALLERGEN_DECISION_TREE = QName.createQName(BeCPGModel.BECPG_URI, "allergenListDecisionTree");
 
 	// compoList
 	QName TYPE_COMPOLIST = QName.createQName(BeCPGModel.BECPG_URI, "compoList");
