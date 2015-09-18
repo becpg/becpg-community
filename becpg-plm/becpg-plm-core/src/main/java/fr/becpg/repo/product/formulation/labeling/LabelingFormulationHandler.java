@@ -1174,6 +1174,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				for (IngItem childComponent : ((IngItem)component).getSubIngs()) {
 					children.add(createJsonLog(childComponent,  ((IngItem)component).getQty(),  ((IngItem)component).getVolume()));
 				}
+				tree.put("decl", I18NUtil.getMessage("listconstraint.bcpg_declarationTypes.Details"));
 				tree.put("children", children);
 			} else {
 				tree.put("leaf", true);
