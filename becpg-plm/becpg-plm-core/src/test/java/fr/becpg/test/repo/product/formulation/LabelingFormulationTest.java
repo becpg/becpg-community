@@ -413,7 +413,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 //			        └──[ing2 french - 4.0 ( vol : 4.0) ]
 
 		
-		checkILL(finishedProductNodeRef1, labelingRuleList, "Epaississant french: ing5 french (ing1 french, ing4 french), Epices french: ing6 french 45,5%",Locale.FRENCH);
+		checkILL(finishedProductNodeRef1, labelingRuleList, "ing5 french 54,5% (ing1 french 70%, ing4 french 30%), Epices french: ing6 french 45,5%",Locale.FRENCH);
 
 
 		/**   Partial Reconstitution **/
@@ -1015,7 +1015,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		checkILL(
 				finishedProductNodeRef1,
 				labelingRuleList,
-				"Pâte french 50% (Legal Raw material 7 66,7% (Epaississant french: ing5 french (ing1 french, ing4 french)), ing2 french, ing1 french), Garniture french 50% (ing3 french, ing4 french)",
+				"Pâte french 50% (Legal Raw material 7 66,7% (ing5 french 100% (ing1 french, ing4 french)), ing2 french, ing1 french), Garniture french 50% (ing3 french, ing4 french)",
 				Locale.FRENCH);
 
 		// MultiLevel
