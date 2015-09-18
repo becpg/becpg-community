@@ -723,7 +723,7 @@ if (beCPG.module.EntityDataGridRenderers) {
     });
 	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-      propertyName : "bcpg:instruction",
+      propertyName : [ "bcpg:instruction","bcpg:lclComments"],
       renderer : function(oRecord, data, label, scope) {
          if(data.value != null){
          	return data.value;
