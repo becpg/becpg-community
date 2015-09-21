@@ -140,8 +140,11 @@
          var dialogDiv = YAHOO.util.Dom.getFirstChild(containerDiv);
 
          // Create the panel from the HTML returned in the server reponse
-         this.widgets.panel = Alfresco.util.createYUIPanel(dialogDiv);
-
+         this.widgets.panel = Alfresco.util.createYUIPanel(dialogDiv, {
+				draggable : true,
+				width : "45em"
+			});
+         
          // Update
          this.update();
 

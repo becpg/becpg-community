@@ -144,6 +144,11 @@
                                 oAC.page = 1;
                                 oAC.maxResultsDisplayed = 15;
                                 oAC.forceSelection = false;
+                                
+                                if(Dom.get(me.fieldHtmlId).hasFocus){
+                                	oAC._onTextboxFocus(this,oAC);
+                                }
+                                
 
                                 if (me.options.multipleSelectMode)
                                 {
