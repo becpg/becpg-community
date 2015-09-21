@@ -1,7 +1,22 @@
 <#assign el=args.htmlid?html>
 <#assign siteId=args.siteId!"">
 <#if siteId != ""><#assign targetLinkTemplate='${url.context}/page/site/${siteId}/entity-data-lists?list=View-properties&nodeRef={nodeRef}'><#else><#assign targetLinkTemplate='${url.context}/page/entity-data-lists?list=View-properties&nodeRef={nodeRef}'></#if>
+<script type="text/javascript">//<![CDATA[
 
+(function()
+{
+
+ new beCPG.component.AutoCompletePicker('${el}-entities', '${el}-entities-field', true).setOptions(
+   {
+ 		mode: "edit",
+      multipleSelectMode: true, 
+ 		targetLinkTemplate: "${targetLinkTemplate}" ,
+ 		dsStr: "becpg/autocomplete/product?classNames=bcpg:rawMaterial,bcpg:finishedProduct,bcpg:localSemiFinishedProduct,bcpg:semiFinishedProduct"
+  });
+
+})();
+
+//]]></script>
 <div id="${el}-dialog" class="change-type">
    <div id="${el}-dialogTitle" class="hd">${msg("title")}</div>
    <div class="bd">
@@ -15,7 +30,7 @@
 							 <div id="${el}-entities-field-autocomplete" class="ac-body" >
 										 <span id="${el}-entities-field-toggle-autocomplete" class="ac-toogle"></span>
 										 <span id="${el}-entities-basket" class="viewmode-value current-values"></span>										
-										 <input id="${el}-entities-field" type="text" name="-" tabindex="0"  class="yui-ac-input multi-assoc" />
+										 <input id="${el}-entities-field" onfocus="this.hasFocus=true" onblur="this.hasFocus=false" type="text" name="-" tabindex="0"  class="yui-ac-input multi-assoc" />
 										 <span class="clear" ></span>
 								</div>			
 								<div id="${el}-entities-field-container"></div>
@@ -41,19 +56,3 @@
    </div>
 </div>
 
-<script type="text/javascript">//<![CDATA[
-
-(function()
-{
-
- new beCPG.component.AutoCompletePicker('${el}-entities', '${el}-entities-field', true).setOptions(
-   {
- 		mode: "edit",
-      multipleSelectMode: true, 
- 		targetLinkTemplate: "${targetLinkTemplate}" ,
- 		dsStr: "becpg/autocomplete/product?classNames=bcpg:rawMaterial,bcpg:finishedProduct,bcpg:localSemiFinishedProduct,bcpg:semiFinishedProduct"
-  });
-
-})();
-
-//]]></script>

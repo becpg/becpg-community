@@ -426,7 +426,7 @@
                                     html += '</div>';
 								
                                  var containerDiv = document.createElement("div");     
-                                      containerDiv.className = "datagrid";
+                                       containerDiv.className = "detailsDialog";
                                        containerDiv.innerHTML = html;
 							
                                 this.widgets.labelingDetailsPanel = Alfresco.util.createYUIPanel(containerDiv, {
