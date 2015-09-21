@@ -24,7 +24,7 @@
  */
 (function() {
 	
-	  var	$isValueSet = Alfresco.util.isValueSet;
+	var $isValueSet = Alfresco.util.isValueSet;
 
 	YAHOO.Bubbling.fire("registerAction", {
 	   actionName : "onActionCheckOutEntity",

@@ -300,7 +300,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	}
 
 	protected QName getPropNameOfType(QName type) {
-		return ContentModel.PROP_NAME;
+		return null;
 	}
 
 	protected String generateKeyAttribute(String attributeName) {
