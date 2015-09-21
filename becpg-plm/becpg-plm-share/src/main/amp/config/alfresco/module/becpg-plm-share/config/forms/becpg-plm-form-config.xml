@@ -3945,6 +3945,9 @@
 					<show id="bcpg:allergenRegulatoryThreshold"/>
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:charactName">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
 					<field id="bcpg:allergenType">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">Major|data.allergentype.major,Minor|data.allergentype.minor
@@ -4030,6 +4033,11 @@
 					<show id="bcpg:costCurrency" />
 					<show id="bcpg:costFixed" />
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:charactName">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+				</appearance>
 			</form>
 
 			<form id="datagrid">
@@ -4114,6 +4122,9 @@
 					<show id="bcpg:ingTypeV2"  force="true"/>
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:charactName">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
 					<field id="bcpg:ingTypeV2">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ingTypeItem
@@ -4185,6 +4196,11 @@
 				<field-visibility>
 					<show id="bcpg:charactName" />
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:charactName">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+				</appearance>
 			</form>
 
 			<form id="datagrid">
@@ -4267,6 +4283,9 @@
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:charactName">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
 					<field id="bcpg:nutGroup">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
@@ -4358,6 +4377,11 @@
 				<field-visibility>
 					<show id="bcpg:charactName" />
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:charactName">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+				</appearance>
 			</form>
 
 			<form id="datagrid">
@@ -4420,6 +4444,11 @@
 				<field-visibility>
 					<show id="bcpg:charactName" />
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:charactName">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+				</appearance>
 			</form>
 
 			<form id="datagrid">
@@ -4489,6 +4518,11 @@
 					<show id="bcpg:charactName" />
 					<show id="bcpg:physicoChemUnit" />
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:charactName">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+				</appearance>
 			</form>
 
 			<form id="datagrid">
@@ -4556,6 +4590,11 @@
 					<show id="bcpg:charactName" />
 					<show id="bcpg:geoOriginISOCode" />
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:charactName">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+				</appearance>
 			</form>
 
 			<form id="datagrid">
@@ -4621,6 +4660,11 @@
 					<show id="bcpg:charactName" />
 					<show id="bcpg:bioOriginType" />
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:charactName">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+				</appearance>
 			</form>
 
 			<form id="datagrid">
@@ -4696,6 +4740,8 @@
 			<form id="filter">
 				<field-visibility>
 					<show id="cm:name" />
+					<show id="bcpg:plantCertifications" />
+					<show id="bcpg:plantApprovalNumbers" />
 				</field-visibility>
 			</form>
 
@@ -4819,6 +4865,7 @@
 			<form id="filter">
 				<field-visibility>
 					<show id="cm:name" />
+					<show id="cm:title" force="true" />
 				</field-visibility>
 			</form>
 
@@ -4876,6 +4923,7 @@
 			<form id="filter">
 				<field-visibility>
 					<show id="cm:name" />
+					<show id="cm:title" force="true" />
 				</field-visibility>
 			</form>
 
@@ -4932,8 +4980,14 @@
 			<!-- Data Grid view -->
 			<form id="filter">
 				<field-visibility>
-					<show id="bcpg:charactName" />
+					<show id="bcpg:charactName" force="true" />
+					<show id="cm:title" force="true"/>
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:charactName">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>					
+				</appearance>
 			</form>
 
 			<form id="datagrid">
@@ -5007,6 +5061,14 @@
 					<show id="bcpg:legalName" />
 					<show id="bcpg:labelClaimType" />					
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:charactName">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:legalName">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+				</appearance>
 			</form>
 
 			<form id="datagrid">
@@ -7296,7 +7358,16 @@
 			<form id="filter">
 				<field-visibility>
 					<show id="bcpg:charactName" />
+					<show id="bcpg:storageConditionsTemperature" />
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:charactName">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:storageConditionsTemperature">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+				</appearance>
 			</form>
 
 			<form id="datagrid">
@@ -7352,6 +7423,11 @@
 				<field-visibility>
 					<show id="bcpg:charactName" />
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:charactName">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+				</appearance>
 			</form>
 
 			<form id="datagrid">

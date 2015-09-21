@@ -73,6 +73,14 @@
 					<show id="cm:title" />					
 					<show id="bcpg:code" />
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:charactName">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="cm:title">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+				</appearance>
 			</form>
 
 			<form id="datagrid">
@@ -138,6 +146,14 @@
 					<show id="bcpg:charactName" />
 					<show id="cm:title" />
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:charactName">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="cm:title">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+				</appearance>
 			</form>
 
 			<form id="datagrid">
