@@ -72,6 +72,11 @@
 					<show id="bcpg:charactName" />
 					<show id="var:charactKey" />
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:charactName">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+				</appearance>
 			</form>
 
 			<form id="datagrid">
