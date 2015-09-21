@@ -749,11 +749,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	protected QName getPropNameOfType(QName type) {
 		if (type != null && type.equals(PLMModel.TYPE_CERTIFICATION)) {
 			return ContentModel.PROP_TITLE;
-		} if(dictionaryService.isSubClass(type, BeCPGModel.TYPE_CHARACT)){
-		    return BeCPGModel.PROP_CHARACT_NAME;
-		}	else {
-			return ContentModel.PROP_NAME;
-		}
+		} 
+		return null;
+		
 	}
 
 	@Override

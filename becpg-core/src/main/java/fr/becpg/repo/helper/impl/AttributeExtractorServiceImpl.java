@@ -112,20 +112,19 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	}
 
 	private AttributeExtractorPlugin getAttributeExtractorPlugin(QName type, NodeRef nodeRef) {
-        if(pluginsCache.isEmpty()){
-        	
-        	Arrays.sort(attributeExtractorPlugins, (a,b) -> Integer.compare(a.getPriority(), b.getPriority()));
-        	
-        	for (AttributeExtractorPlugin plugin : attributeExtractorPlugins) {
-    			for (QName plugType : plugin.getMatchingTypes()) {
-    				pluginsCache.put(plugType, plugin);
-    			}
-    		}
-        }
-		
+		if (pluginsCache.isEmpty()) {
+
+			Arrays.sort(attributeExtractorPlugins, (a, b) -> Integer.compare(a.getPriority(), b.getPriority()));
+
+			for (AttributeExtractorPlugin plugin : attributeExtractorPlugins) {
+				for (QName plugType : plugin.getMatchingTypes()) {
+					pluginsCache.put(plugType, plugin);
+				}
+			}
+		}
+
 		return pluginsCache.get(type);
 	}
-
 
 	public class AttributeExtractorStructure {
 
@@ -291,8 +290,8 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 							value = "";
 						}
 
-						value += constraintName != null ? TranslateHelper.getConstraint(constraintName, tempValue,
-								propertyFormats.isUseDefaultLocale()) : tempValue;
+						value += constraintName != null
+								? TranslateHelper.getConstraint(constraintName, tempValue, propertyFormats.isUseDefaultLocale()) : tempValue;
 					}
 
 				}
@@ -380,8 +379,8 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 					ClassAttributeDefinition propDef = entityDictionaryService.getPropDef(fieldQname);
 					if (hasReadAccess(itemType, dlField)) {
 						if (isAssoc(propDef)) {
-							ret.add(new AttributeExtractorStructure("dt_" + dlField.replaceFirst(":", "_"), ((AssociationDefinition) propDef)
-									.getTargetClass().getName(), propDef, dLFields));
+							ret.add(new AttributeExtractorStructure("dt_" + dlField.replaceFirst(":", "_"),
+									((AssociationDefinition) propDef).getTargetClass().getName(), propDef, dLFields));
 						}
 					}
 
@@ -556,13 +555,13 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		}
 		return null;
 	}
-	
+
 	@Override
-	public Map<String, Object> extractCommonNodeData(NodeRef nodeRef){
+	public Map<String, Object> extractCommonNodeData(NodeRef nodeRef) {
 		Map<String, Object> tmp = new HashMap<>(5);
 
 		QName type = nodeService.getType(nodeRef);
-		
+
 		tmp.put("metadata", extractMetadata(type, nodeRef));
 		if (nodeService.hasAspect(nodeRef, ContentModel.ASPECT_VERSIONABLE)) {
 			tmp.put("version", nodeService.getProperty(nodeRef, ContentModel.PROP_VERSION_LABEL));
@@ -571,16 +570,15 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		tmp.put("displayValue", extractPropName(type, nodeRef));
 		tmp.put("value", nodeRef.toString());
 		tmp.put("siteId", extractSiteId(nodeRef));
-		
+
 		return tmp;
 	}
-	
+
 	@Override
 	public String extractSiteId(NodeRef entityNodeRef) {
 		String path = nodeService.getPath(entityNodeRef).toPrefixString(namespaceService);
 		return SiteHelper.extractSiteId(path);
 	}
-	
 
 	private Object formatValue(Object value) {
 		if (value != null) {
@@ -608,7 +606,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	}
 
 	@Override
-	public  String extractPropName(QName type, NodeRef nodeRef) {
+	public String extractPropName(QName type, NodeRef nodeRef) {
 		String value;
 
 		if (permissionService.hasReadPermission(nodeRef) == AccessStatus.ALLOWED) {
@@ -642,7 +640,6 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		return metadata;
 	}
 
-
 	@Override
 	public String[] getTags(NodeRef nodeRef) {
 		String[] result;
@@ -660,7 +657,6 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		return securityService.computeAccessMode(nodeType, propName) != SecurityService.NONE_ACCESS;
 
 	}
-
 
 	@Override
 	public String extractPropertyForReport(PropertyDefinition propertyDef, Serializable value, PropertyFormats propertyFormats, boolean formatData) {
@@ -707,18 +703,20 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			}
 
 			NodeRef targetNodeRef = assocRef.getTargetRef();
-			QName targetQName = nodeService.getType(targetNodeRef);
 
-			if (targetQName.equals(ContentModel.TYPE_PERSON)) {
-				values.append(extractPropName(targetNodeRef));
+			String value = null;
+
+			if (propertyName != null) {
+				value = (String) nodeService.getProperty(targetNodeRef, propertyName);
+
 			} else {
-				String value = (String) nodeService.getProperty(targetNodeRef, propertyName);
-				// propertyName can be empty
-				if (value == null || value.isEmpty()) {
-					value = (String) nodeService.getProperty(targetNodeRef, ContentModel.PROP_NAME);
-				}
-				values.append(value);
+				value = extractPropName(targetNodeRef);
 			}
+
+			if (value == null || value.isEmpty()) {
+				value = (String) nodeService.getProperty(targetNodeRef, ContentModel.PROP_NAME);
+			}
+			values.append(value);
 
 			first = false;
 		}
@@ -730,5 +728,4 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		return personAttributeExtractorPlugin.getPersonDisplayName(userId);
 	}
 
-	
 }
