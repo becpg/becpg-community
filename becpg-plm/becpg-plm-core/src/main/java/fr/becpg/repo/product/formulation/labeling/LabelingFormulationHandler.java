@@ -21,8 +21,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
@@ -49,6 +47,7 @@ import fr.becpg.repo.product.data.ing.AbstractLabelingComponent;
 import fr.becpg.repo.product.data.ing.CompositeLabeling;
 import fr.becpg.repo.product.data.ing.DeclarationFilter;
 import fr.becpg.repo.product.data.ing.IngItem;
+import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
@@ -112,7 +111,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 			logger.debug("Calculate Ingredient Labeling for group : " + labelingRuleListsGroup.getKey());
 
-			LabelingFormulaContext labelingFormulaContext = new LabelingFormulaContext(mlNodeService, alfrescoRepository);
+			LabelingFormulaContext labelingFormulaContext = new LabelingFormulaContext(mlNodeService, associationService, alfrescoRepository);
 
 			ExpressionParser parser = new SpelExpressionParser();
 			StandardEvaluationContext dataContext = new StandardEvaluationContext(labelingFormulaContext);
@@ -202,14 +201,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						}
 
 						// Create logs
-						String log = "";
-
-						if (labelingRuleListDataItem.getFormula().replace(" ", "").contains("render(false)")) {
-							log = createJsonLog(mergeCompositeLabeling, null, null).toString();
-						} else {
-							log = createJsonLog(compositeLabeling, null, null).toString();
-						}
-
+						String log = labelingFormulaContext.createJsonLog(labelingRuleListDataItem.getFormula().replace(" ", "").contains("render(false)"));
+					
 						retainNodes.add(getOrCreateILLDataItem(formulatedProduct, labelingRuleListDataItem.getNodeRef(), label, log));
 					}
 				}
@@ -824,7 +817,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					if (!isMultiLevel && productData.getIngList() != null && !productData.getIngList().isEmpty()) {
 
 						Composite<IngListDataItem> compositeIngList = CompositeHelper.getHierarchicalCompoList(productData.getIngList());
-						loadIngList(productData.getNodeRef(), compositeIngList, qty, volume, labelingFormulaContext, compoListDataItem, compositeLabeling, errors);
+						loadIngList(productData, compositeIngList, qty, volume, labelingFormulaContext, compoListDataItem, compositeLabeling, errors);
 
 					}
 
@@ -969,7 +962,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	}
 
-	private void loadIngList(NodeRef productNodeRef, Composite<IngListDataItem> compositeIngList, Double qty, Double volume, LabelingFormulaContext labelingFormulaContext,
+	private void loadIngList(ProductData product, Composite<IngListDataItem> compositeIngList, Double qty, Double volume, LabelingFormulaContext labelingFormulaContext,
 			CompoListDataItem compoListDataItem, CompositeLabeling compositeLabeling, Map<String, ReqCtrlListDataItem> errors) {
 
 		for (Composite<IngListDataItem> ingListItem : compositeIngList.getChildren()) {
@@ -984,10 +977,21 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 				if (ingLabelItem == null) {
 					ingLabelItem = (IngItem) alfrescoRepository.findOne(ingNodeRef);
+					
+					
 					if (!ingListItem.isLeaf()) {
 						//Only one level of subIngs
-						for(Composite<IngListDataItem> subIngListItem :ingListItem.getChildren()){
-							((IngItem)ingLabelItem).getSubIngs().add((IngItem) alfrescoRepository.findOne(subIngListItem.getData().getIng()));
+						for(Composite<IngListDataItem> subIngListItem : ingListItem.getChildren()){
+							
+							IngItem subIngItem = (IngItem) alfrescoRepository.findOne(subIngListItem.getData().getIng());
+							if(subIngListItem.getData().getQtyPerc()!=null){
+								subIngItem.setQty(subIngListItem.getData().getQtyPerc()/100);
+								subIngItem.setVolume(subIngListItem.getData().getQtyPerc()/100);
+							}
+							
+							
+							((IngItem)ingLabelItem).getSubIngs().add(subIngItem);
+							
 						}
 					}
 					
@@ -1001,6 +1005,14 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					logger.trace("- Update ing value: " + ingLabelItem.getLegalName(I18NUtil.getContentLocaleLang()));
 					isNew = false;
 				}
+				
+				if(product.getAllergenList()!=null){
+					for(AllergenListDataItem allergenListDataItem : product.getAllergenList()){
+						if(allergenListDataItem.getVoluntary() && allergenListDataItem.getVoluntarySources().contains(ingNodeRef)){
+							ingLabelItem.getAllergens().add(allergenListDataItem.getAllergen());
+						}
+					}	
+				}
 
 				Double qtyPerc = ingListItem.getData().getQtyPerc();
 
@@ -1009,14 +1021,14 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					String message = I18NUtil.getMessage("message.formulate.labelRule.error.nullIng", getName(ingLabelItem));
 					ReqCtrlListDataItem error = errors.get(message);
 					if (error != null) {
-						if (!error.getSources().contains(productNodeRef)) {
-							error.getSources().add(productNodeRef);
+						if (!error.getSources().contains(product.getNodeRef())) {
+							error.getSources().add(product.getNodeRef());
 						}
 					} else {
 						if (logger.isDebugEnabled()) {
 							logger.debug("Store error for future qtyPerc is null " + getName(ingLabelItem));
 						}
-						error = createError(ingLabelItem, productNodeRef);
+						error = createError(ingLabelItem, product.getNodeRef());
 						errors.put(message, error);
 					}
 					if (ingLabelItem.getQty() != null && !isNew) {
@@ -1049,8 +1061,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						ReqCtrlListDataItem error = errors.get(message);
 						if (error != null) {
 							if (qty == null) {
-								if (!error.getSources().contains(productNodeRef)) {
-									error.getSources().add(productNodeRef);
+								if (!error.getSources().contains(product.getNodeRef())) {
+									error.getSources().add(product.getNodeRef());
 								}
 							}
 							if (!Objects.equals(ingLabelItem.getQty(), qty)) {
@@ -1063,7 +1075,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							if (logger.isDebugEnabled()) {
 								logger.debug("Store error for future");
 							}
-							errors.put(message, createError(ingLabelItem, productNodeRef));
+							errors.put(message, createError(ingLabelItem, product.getNodeRef()));
 						}
 
 						if (qty == null) {
@@ -1134,57 +1146,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	}
 
 
-	@SuppressWarnings("unchecked")
-	private JSONObject createJsonLog(AbstractLabelingComponent component, Double totalQty, Double totalVol) {
-
-		
-		JSONObject tree = new JSONObject();
-		if (component != null) {
-			if (component.getNodeRef() != null && nodeService.exists(component.getNodeRef())) {
-				tree.put("nodeRef", component.getNodeRef().toString());
-				tree.put("cssClass", nodeService.getType(component.getNodeRef()).getLocalName());
-			}
-
-			tree.put("name", getName(component));
-			tree.put("legal", component.getLegalName(I18NUtil.getContentLocaleLang()));
-			if (component.getVolume() != null && totalVol != null && totalVol > 0) {
-				tree.put("vol", component.getVolume() / totalVol * 100);
-			} else {
-				tree.put("vol", 0);
-			}
-			if (component.getQty() != null && totalQty != null && totalQty > 0) {
-				tree.put("qte", component.getQty() / totalQty * 100);
-			} else {
-				tree.put("qte", 0);
-			}
-
-			if (component instanceof CompositeLabeling) {
-				CompositeLabeling composite = (CompositeLabeling) component;
-
-				if (composite.getDeclarationType() != null) {
-					tree.put("decl", I18NUtil.getMessage("listconstraint.bcpg_declarationTypes." + composite.getDeclarationType().toString()));
-				}
-
-				JSONArray children = new JSONArray();
-				for (AbstractLabelingComponent childComponent : composite.getIngList().values()) {
-					children.add(createJsonLog(childComponent, composite.getQtyTotal(), composite.getVolumeTotal()));
-				}
-				tree.put("children", children);
-			} else if(component instanceof IngItem && !((IngItem)component).getSubIngs().isEmpty()){
-				JSONArray children = new JSONArray();
-				for (IngItem childComponent : ((IngItem)component).getSubIngs()) {
-					children.add(createJsonLog(childComponent,  ((IngItem)component).getQty(),  ((IngItem)component).getVolume()));
-				}
-				tree.put("leaf", true);
-				tree.put("decl", I18NUtil.getMessage("listconstraint.bcpg_declarationTypes.DoNotDetails"));
-				tree.put("children", children);
-			} else {
-				tree.put("leaf", true);
-				tree.put("decl", I18NUtil.getMessage("listconstraint.bcpg_declarationTypes.DoNotDetails"));
-			}
-		}
-
-		return tree;
-	}
+	
 
 }

@@ -383,14 +383,25 @@
 			        if(tree.nodeRef){
         			    html += '<span class="'+tree.cssClass+'">';
         			    
-        			    if(tree.leaf){
-        			        html += this.msg("label.labeling-details.tree.item.nodec",tree.legal, beCPG.util.sigFigs(tree.qte,3), beCPG.util.sigFigs(tree.vol,3));
+        			    if(tree.cssClass == "ingType"){
+        			    	html+= tree.legal+ ':';
         			    } else {
-        			        html += '<a href=' + beCPG.util.entityURL(tree.siteId, tree.nodeRef) + '>' 
-        			        + this.msg("label.labeling-details.tree.item",tree.legal, beCPG.util.sigFigs(tree.qte,3), beCPG.util.sigFigs(tree.vol,3), tree.decl) +'</a>';
+	        			    if(!tree.decl){
+	        			        html += this.msg("label.labeling-details.tree.item.nodec",tree.legal, beCPG.util.sigFigs(tree.qte,3), beCPG.util.sigFigs(tree.vol,3));
+	        			    } else {
+	        			        html += '<a href=' + beCPG.util.entityURL(tree.siteId, tree.nodeRef) + '>' 
+	        			        + this.msg("label.labeling-details.tree.item",tree.legal, beCPG.util.sigFigs(tree.qte,3), beCPG.util.sigFigs(tree.vol,3), tree.decl) +'</a>';
+	        			    }
         			    }
-        			    
+
         			    html += '</span>';
+        			    if(tree.allergens){
+	    			         for(var i = 0; i < tree.allergens.length ; i++){
+	    			              html+=     '&nbsp;<span class="allergen">';
+	    			              html+= tree.allergens[i];
+	    			              html+=     '</span>';
+	    			          }
+        			    }
 			        } else {
 			            html += '<span class="packagingMaterial">'; 
                         html +=  this.msg("label.labeling-details.tree.item",tree.legal, beCPG.util.sigFigs(tree.vol,3), beCPG.util.sigFigs(tree.qte,3), tree.decl);
@@ -399,7 +410,7 @@
 			    }
 			    if(tree.children){    
 			        html+= '<ul>';
-			            for(var i = tree.children.length - 1;  i>=0; --i){
+			            for(var i = 0; i< tree.children.length ; i++){
 			                html+=     '<li>';
 			                html+= onActionShowLabelingDetails_formatTree.call(this, tree.children[i]);
 			                html+=     '</li>';
