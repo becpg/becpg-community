@@ -12,6 +12,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
+import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 
 //TODO voir pour faire mieux avec les heritages Composite<LabelingComponent>
 public class CompositeLabeling extends AbstractLabelingComponent {
@@ -55,6 +56,13 @@ public class CompositeLabeling extends AbstractLabelingComponent {
 		this.nodeRef = productData.getNodeRef();
 		this.legalName = productData.getLegalName();
 		this.ingType = productData.getIngType();
+		
+		for(AllergenListDataItem allergenListDataItem : productData.getAllergenList()){
+			if(allergenListDataItem.getVoluntary() ){
+				getAllergens().add(allergenListDataItem.getAllergen());
+			}
+		}
+		
 	}
 
 	

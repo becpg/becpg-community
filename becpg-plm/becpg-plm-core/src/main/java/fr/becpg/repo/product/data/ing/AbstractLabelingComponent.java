@@ -17,9 +17,12 @@
  ******************************************************************************/
 package fr.becpg.repo.product.data.ing;
 
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 
 import org.alfresco.service.cmr.repository.MLText;
+import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfProp;
@@ -36,6 +39,9 @@ public abstract class AbstractLabelingComponent extends BeCPGDataObject implemen
 
 	protected MLText legalName;
 	
+	
+	private Set<NodeRef> allergens = new HashSet<NodeRef>();
+	
 	public AbstractLabelingComponent() {
 		super();
 	}
@@ -46,6 +52,7 @@ public abstract class AbstractLabelingComponent extends BeCPGDataObject implemen
 	    this.qty = abstractLabelingComponent.qty;
 	    this.volume = abstractLabelingComponent.volume;
 	    this.legalName = abstractLabelingComponent.legalName;
+	    this.allergens = abstractLabelingComponent.allergens;
 	}
 	
 	@AlfMlText
@@ -94,6 +101,15 @@ public abstract class AbstractLabelingComponent extends BeCPGDataObject implemen
 
 	public void setVolume(Double volume) {
 		this.volume = volume;
+	}
+
+	@Override
+	public Set<NodeRef> getAllergens() {
+		return allergens;
+	}
+
+	public void setAllergens(Set<NodeRef> allergens) {
+		this.allergens = allergens;
 	}
 
 	public abstract AbstractLabelingComponent clone();
