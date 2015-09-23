@@ -443,9 +443,24 @@
 					
 					<!-- consumer -->
 					<field id="bcpg:useByDate" set="consumer" />
-					<field id="bcpg:bestBeforeDate" set="consumer" />
-					<field id="bcpg:periodAfterOpening" set="consumer" />					
-					<field id="bcpg:contractDate" set="consumer" />
+					<field id="bcpg:bestBeforeDate" set="consumer" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">d</control-param>
+						</control>
+					</field>
+					<field id="bcpg:periodAfterOpening" set="consumer" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">d</control-param>
+						</control>
+					</field>					
+					<field id="bcpg:contractDate" set="consumer" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">d</control-param>
+						</control>
+					</field>
 					<field id="bcpg:storageConditionsRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -480,7 +495,12 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:netWeight" set="formulation" />
+					<field id="bcpg:netWeight" set="formulation" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">kg</control-param>
+						</control>
+					</field>
 					<field id="bcpg:productDensity" set="formulation" read-only="true" />
 					<field id="bcpg:servingSize" set="formulation" />
 					<field id="bcpg:numberOfServings" set="formulation" />
@@ -614,7 +634,12 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:netWeight" />
+					<field id="bcpg:netWeight" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">kg</control-param>
+						</control>
+					</field>
 					<field id="bcpg:productSpecifications">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -821,9 +846,24 @@
 
 					<!-- consumer -->
 					<field id="bcpg:useByDate" set="consumer" />
-					<field id="bcpg:bestBeforeDate" set="consumer" />
-					<field id="bcpg:periodAfterOpening" set="consumer" />
-					<field id="bcpg:contractDate" set="consumer" />
+					<field id="bcpg:bestBeforeDate" set="consumer" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">d</control-param>
+						</control>
+					</field>
+					<field id="bcpg:periodAfterOpening" set="consumer" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">d</control-param>
+						</control>
+					</field>
+					<field id="bcpg:contractDate" set="consumer" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">d</control-param>
+						</control>
+					</field>
 					<field id="bcpg:storageConditionsRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -855,7 +895,12 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:netWeight" set="formulation" />
+					<field id="bcpg:netWeight" set="formulation" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">kg</control-param>
+						</control>
+					</field>
 					<field id="bcpg:productDensity" set="formulation" read-only="true"/>
 					<field id="bcpg:servingSize" set="formulation" />
 					<field id="bcpg:numberOfServings" set="formulation" />
@@ -914,7 +959,12 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:netWeight" />
+					<field id="bcpg:netWeight" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">kg</control-param>
+						</control>
+					</field>
 					<field id="bcpg:entityTplRef">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -2412,7 +2462,12 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:netWeight" set="consumer" />
+					<field id="bcpg:netWeight" set="consumer" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">kg</control-param>
+						</control>
+					</field>
 					<field id="bcpg:productDensity" set="consumer" />
 					<field id="bcpg:reconstitutionRate" set="consumer" />
 					<field id="bcpg:reconstitutionPriority" set="consumer" />
@@ -2436,9 +2491,24 @@
 						</control>
 					</field>
 					<field id="bcpg:useByDate" set="consumer" />
-					<field id="bcpg:bestBeforeDate" set="consumer" />
-					<field id="bcpg:periodAfterOpening" set="consumer" />
-					<field id="bcpg:contractDate" set="consumer" />
+					<field id="bcpg:bestBeforeDate" set="consumer" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">d</control-param>
+						</control>
+					</field>
+					<field id="bcpg:periodAfterOpening" set="consumer" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">d</control-param>
+						</control>
+					</field>
+					<field id="bcpg:contractDate" set="consumer" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">d</control-param>
+						</control>
+					</field>
 					<field id="bcpg:storageConditionsRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -2604,9 +2674,24 @@
 						</control>
 					</field>
 					<field id="bcpg:useByDate" set="consumer" />
-					<field id="bcpg:bestBeforeDate" set="consumer" />
-					<field id="bcpg:periodAfterOpening" set="consumer" />
-					<field id="bcpg:contractDate" set="consumer" />
+					<field id="bcpg:bestBeforeDate" set="consumer" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">d</control-param>
+						</control>
+					</field>
+					<field id="bcpg:periodAfterOpening" set="consumer" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">d</control-param>
+						</control>
+					</field>
+					<field id="bcpg:contractDate" set="consumer" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">d</control-param>
+						</control>
+					</field>
 					<field id="bcpg:storageConditionsRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -2703,6 +2788,13 @@
 						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
 							<control-param name="options">kg,g,L,mL,P
 							</control-param>
+						</control>
+					</field>
+					
+					<field id="bcpg:netWeight">
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">kg</control-param>
 						</control>
 					</field>
 					<field id="bcpg:entityTplRef" set="mainInfo">
@@ -2845,7 +2937,12 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:netWeight" set="consumer" />
+					<field id="bcpg:netWeight" set="consumer" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">kg</control-param>
+						</control>
+					</field>
 					<field id="bcpg:productDensity" set="consumer" />
 					<field id="bcpg:reconstitutionRate" set="consumer" />
 					<field id="bcpg:reconstitutionPriority" set="consumer" />
@@ -2868,9 +2965,24 @@
 						</control>
 					</field>
 					<field id="bcpg:useByDate" set="consumer" />
-					<field id="bcpg:bestBeforeDate" set="consumer" />
-					<field id="bcpg:periodAfterOpening" set="consumer" />
-					<field id="bcpg:contractDate" set="consumer" />
+					<field id="bcpg:bestBeforeDate" set="consumer" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">d</control-param>
+						</control>
+					</field>
+					<field id="bcpg:periodAfterOpening" set="consumer" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">d</control-param>
+						</control>
+					</field>
+					<field id="bcpg:contractDate" set="consumer" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">d</control-param>
+						</control>
+					</field>
 					<field id="bcpg:storageConditionsRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -3191,7 +3303,12 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:netWeight" set="formulation" />
+					<field id="bcpg:netWeight" set="formulation" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">kg</control-param>
+						</control>
+					</field>
 					<field id="bcpg:productDensity" set="formulation"  read-only="true"/>
 					<field id="bcpg:servingSize" set="formulation" />
 					<field id="bcpg:productSpecifications" set="formulation">
@@ -3205,9 +3322,24 @@
 
 					<!-- consumer -->
 					<field id="bcpg:useByDate" set="consumer" />
-					<field id="bcpg:bestBeforeDate" set="consumer" />
-					<field id="bcpg:periodAfterOpening" set="consumer" />
-					<field id="bcpg:contractDate" set="consumer" />
+					<field id="bcpg:bestBeforeDate" set="consumer" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">d</control-param>
+						</control>
+					</field>
+					<field id="bcpg:periodAfterOpening" set="consumer" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">d</control-param>
+						</control>
+					</field>
+					<field id="bcpg:contractDate" set="consumer" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">d</control-param>
+						</control>
+					</field>
 					<field id="bcpg:storageConditionsRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -3299,7 +3431,12 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:netWeight" />
+					<field id="bcpg:netWeight" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">kg</control-param>
+						</control>
+					</field>
 					<field id="bcpg:productDensity" read-only="true" />
 					<field id="bcpg:productSpecifications">
 						<control
@@ -3478,9 +3615,24 @@
 
 					<!-- consumer -->
 					<field id="bcpg:useByDate" set="consumer" />
-					<field id="bcpg:bestBeforeDate" set="consumer" />
-					<field id="bcpg:periodAfterOpening" set="consumer" />
-					<field id="bcpg:contractDate" set="consumer" />
+					<field id="bcpg:bestBeforeDate" set="consumer" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">d</control-param>
+						</control>
+					</field>
+					<field id="bcpg:periodAfterOpening" set="consumer" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">d</control-param>
+						</control>
+					</field>
+					<field id="bcpg:contractDate" set="consumer" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">d</control-param>
+						</control>
+					</field>
 					<field id="bcpg:storageConditionsRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -3515,7 +3667,12 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:netWeight" set="formulation" />
+					<field id="bcpg:netWeight" set="formulation" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">kg</control-param>
+						</control>
+					</field>
 					<field id="bcpg:productDensity" set="formulation" read-only="true"/>
 					<field id="bcpg:servingSize" set="formulation" />
 					<field id="bcpg:productSpecifications" set="formulation">
@@ -3563,7 +3720,12 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:netWeight" />
+					<field id="bcpg:netWeight" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">kg</control-param>
+						</control>
+					</field>
 					<field id="bcpg:productDensity" />
 					<field id="bcpg:productSpecifications">
 						<control
@@ -5727,6 +5889,12 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 						</control>
 					</field>
+					<field id="bcpg:allergenListQtyPerc">
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">perc</control-param>
+						</control>
+					</field>
 					<field id="bcpg:allergenListVoluntary" >
 						<control
 							template="/org/alfresco/components/form/controls/allergen-voluntary.ftl">
@@ -5822,6 +5990,12 @@
 					<field id="bcpg:allergenListAllergen">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:allergenListQtyPerc">
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">perc</control-param>
+						</control>
 					</field>
 					<field id="bcpg:allergenListVoluntary" >
 						<control
