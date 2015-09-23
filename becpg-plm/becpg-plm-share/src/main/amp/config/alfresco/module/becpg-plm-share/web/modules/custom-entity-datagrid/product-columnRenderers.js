@@ -27,7 +27,6 @@ if (beCPG.module.EntityDataGridRenderers) {
 			var url = beCPG.util.entityURL(data.siteId, data.value), version = "";
 
 			if (label == "mpm:plProduct" || label == "bcpg:compoListProduct" || label == "bcpg:packagingListProduct" || label == "mpm:plResource") {
-
 				// datalist
 				if (data.metadata.indexOf("finishedProduct") != -1 || data.metadata.indexOf("semiFinishedProduct") != -1) {
 					url = beCPG.util.entityURL(data.siteId, data.value,null,null,"compoList");
