@@ -1,0 +1,230 @@
+<?xml version="1.0"?>
+<entity>
+  <legalName prefix="bcpg"><![CDATA[Farine de blé tendre T65 ]]></legalName>
+  <productState prefix="bcpg"><![CDATA[Simulation]]></productState>  
+  <supplyDelay prefix="ersn"><![CDATA[5]]></supplyDelay>
+  <creator prefix="cm"><![CDATA[admin]]><email prefix="cm"><![CDATA[adminbecpg@europesnacks.com]]></email><homeFolder prefix="cm"><![CDATA[Espace racine]]></homeFolder><name prefix="cm"><![CDATA[3ee1bc93-9b32-40b4-8d5b-0b88b690e711]]></name><userName prefix="cm"><![CDATA[admin]]></userName><homeFolderProvider prefix="cm"><![CDATA[bootstrapHomeFolderProvider]]></homeFolderProvider><owner prefix="cm"><![CDATA[admin]]></owner><sizeQuota prefix="cm"><![CDATA[-1]]></sizeQuota><lastName prefix="cm"><![CDATA[]]></lastName><preferenceValues prefix="cm"><![CDATA[contentUrl=store://2015/9/15/9/34/4bc9aa30-70ca-4747-b5db-46d2a09a34d5.bin|mimetype=text/plain|size=2998|encoding=UTF-8|locale=fr_|id=33971]]></preferenceValues><organizationId prefix="cm"><![CDATA[]]></organizationId><emailFeedDisabled prefix="cm"><![CDATA[true]]></emailFeedDisabled><sizeCurrent prefix="cm"><![CDATA[0]]></sizeCurrent><locale prefix="sys"><![CDATA[fr_FR]]></locale><firstName prefix="cm"><![CDATA[Administrator]]></firstName></creator>
+  <startEffectivity prefix="bcpg"><![CDATA[2015-05-22T05:38:44.067Z]]></startEffectivity>
+  <productComments prefix="bcpg"><![CDATA[]]></productComments>
+  <productUnit prefix="bcpg"><![CDATA[kg]]></productUnit>
+  <code prefix="bcpg"><![CDATA[MP549]]></code>
+  <productDensity prefix="bcpg"><![CDATA[0.6]]></productDensity>
+  <ingTypeV2 prefix="bcpg"></ingTypeV2>
+  <useByDate prefix="bcpg"><![CDATA[]]></useByDate>
+  <netWeightUnit prefix="bcpg"><![CDATA[kg]]></netWeightUnit>
+  <productHierarchy2 prefix="bcpg"><![CDATA[Farines ble]]></productHierarchy2>
+  <eanCode prefix="bcpg"><![CDATA[]]></eanCode>
+  <unitTotalCost prefix="bcpg"><![CDATA[0.307]]></unitTotalCost>
+  <contractDate prefix="bcpg"><![CDATA[]]></contractDate>
+  <created prefix="cm"><![CDATA[2015-05-22T05:38:32.750Z]]></created>
+  <packagingDescription prefix="bcpg"><![CDATA[VRAC]]></packagingDescription>
+  <description prefix="cm"><![CDATA[]]></description>
+  <bestBeforeDate prefix="bcpg"><![CDATA[180]]></bestBeforeDate>
+  <commentCount prefix="fm"><![CDATA[0]]></commentCount>
+  <periodAfterOpening prefix="bcpg"><![CDATA[]]></periodAfterOpening>
+  <name prefix="cm"><![CDATA[Farine ble 3 - EVELIA]]></name>
+  <erpCode prefix="bcpg"><![CDATA[I301 - EVELIA]]></erpCode>
+  <productHierarchy1 prefix="bcpg"><![CDATA[Ingredients]]></productHierarchy1>
+  <title prefix="cm"><![CDATA[FARINE BLE BISCUITIER VRAC]]></title>
+  <formulatedDate prefix="bcpg"><![CDATA[2015-09-10T09:47:57.213Z]]></formulatedDate>
+  <locale prefix="sys"><![CDATA[fr_FR]]></locale>
+  <preparationTips prefix="bcpg"><![CDATA[]]></preparationTips>
+  <modifier prefix="cm"><![CDATA[pgallioz]]></modifier>
+  <modified prefix="cm"><![CDATA[2015-09-15T07:09:13.745Z]]></modified>
+  <certificateDate prefix="bcpg"><![CDATA[]]></certificateDate>
+  <entityTplRef prefix="bcpg"><![CDATA[Matière première]]></entityTplRef>
+  <supplierPlants prefix="bcpg"><![CDATA[FR-49600 Andrézé]]></supplierPlants>
+  <suppliers>
+  	<supplier>
+      <supplierHierarchy1 prefix="bcpg"/>
+      <created prefix="cm">2015-04-24T08:42:34.891Z</created>
+      <locationCity prefix="bcpg">Paris</locationCity>
+      <description prefix="cm"/>
+      <creator prefix="cm">admin</creator>
+      <name prefix="cm">EVELIA</name>
+      <supplierEmail prefix="bcpg">none</supplierEmail>
+      <locationAddress1 prefix="bcpg">Adress1</locationAddress1>
+      <erpCode prefix="bcpg">none</erpCode>
+      <startEffectivity prefix="bcpg">2015-04-24T08:42:34.976Z</startEffectivity>
+      <code prefix="bcpg">F167</code>
+      <title prefix="cm">none</title>
+      <locationCountry prefix="bcpg">France</locationCountry>
+      <locationZip prefix="bcpg">75000</locationZip>
+      <supplierHierarchy2 prefix="bcpg"/>
+      <supplierState prefix="bcpg">Simulation</supplierState>
+      <locationAddress3 prefix="bcpg"></locationAddress3>
+      <locationAddress2 prefix="bcpg"></locationAddress2>
+      <locale prefix="sys">fr</locale>
+      <modifier prefix="cm">admin</modifier>
+      <modified prefix="cm">2015-09-16T08:35:02.522Z</modified>
+      <supplierTel prefix="bcpg">none</supplierTel>
+      <supplierFax prefix="bcpg">none</supplierFax>
+      <entityTplRef prefix="bcpg">Fournisseur</entityTplRef>
+      <supplierAccountRef prefix="bcpg">EVELIA </supplierAccountRef>
+    </supplier>  
+  </suppliers>
+  <storageConditions>
+    <storageConditionsMode prefix="bcpg"><![CDATA[]]></storageConditionsMode>
+    <created prefix="cm"><![CDATA[2015-04-01T15:48:39.820Z]]></created>
+    <charactName prefix="bcpg"><![CDATA[Ambiant]]></charactName>
+    <description prefix="cm"><![CDATA[Avant ouverture : à conserver à l’abri de la lumière, de la chaleur et de l’humidité. Après ouverture : à conserver dans un récipient hermétique, à l’abri de la lumière, de la chaleur et de l’humidité et à consommer rapidement.]]></description>
+    <storageConditionsTemperature prefix="bcpg"><![CDATA[Ambiante]]></storageConditionsTemperature>
+    <creator prefix="cm"><![CDATA[cvillechien]]></creator>
+    <isDeleted prefix="bcpg"><![CDATA[false]]></isDeleted>
+    <name prefix="cm"><![CDATA[patched-Ambiant]]></name>
+    <locale prefix="sys"><![CDATA[fr]]></locale>
+    <modifier prefix="cm"><![CDATA[admin]]></modifier>
+    <modified prefix="cm"><![CDATA[2015-09-03T12:08:16.194Z]]></modified>
+    <sort prefix="bcpg"><![CDATA[100]]></sort>
+  </storageConditions>
+  <aspects><![CDATA[formulatedEntityAspect, consumerAspect, erpCodeAspect, referenceable, contractDateAspect, discussable, rawMaterialsAspect, titled, auditable, productAspect, effectivityAspect, productMicrobioCriteriaAspect, certificateDateAspect, legalNameAspect, conditioningAspect, localized, entityTplRefAspect, codeAspect, entityListsAspect, reportEntityAspect, suppliersAspect, ingTypeAspect, profitabilityAspect, eanAspect, commentsRollup]]></aspects>
+  <itemType><![CDATA[rawMaterial]]></itemType>
+  <images/>
+  <dataLists>
+    <costLists>
+      <costList isManualListItem="false" name="Co&#xFB;t MP" locale="fr_FR" costListValue="0.307" costListUnit="&#x20AC;/kg" sort="128" depthLevel="1" costListIsFormulated="true" costListCost="Co&#xFB;t MP" legalName=""/>
+    </costLists>
+    <allergenLists allergenListVoluntary="gluten" allergenListInVoluntary="">
+      <allergenList allergenListQtyPerc="100.0" allergenListVoluntary="true" allergenListDecisionTree="" name="C&#xE9;r&#xE9;ales contenant du gluten et produits &#xE0; base de ces c&#xE9;r&#xE9;ales" locale="fr_FR" allergenListInVoluntary="false" sort="100" original="C&#xE9;r&#xE9;ales contenant du gluten et produits &#xE0; base de ces c&#xE9;r&#xE9;ales" allergenListVolSources="Bl&#xE9;" allergenListAllergen="C&#xE9;r&#xE9;ales contenant du gluten, &#xE0; savoir bl&#xE9;, seigle, orge, avoine, &#xE9;peautre, kamut ou leurs souches hybrid&#xE9;es, et produits &#xE0; base de ces c&#xE9;r&#xE9;ales" legalName="gluten" variantIds="" isDefaultVariant="true"/>
+      <allergenList allergenListQtyPerc="" allergenListVoluntary="false" allergenListDecisionTree="[{&quot;qid&quot;:&quot;q1&quot;,&quot;cid&quot;:&quot;no&quot;},{&quot;qid&quot;:&quot;q2&quot;,&quot;cid&quot;:&quot;no&quot;}]" name="Crustac&#xE9;s et produits &#xE0; base de crustac&#xE9;s" locale="fr_FR" allergenListInVoluntary="false" sort="200" original="Crustac&#xE9;s et produits &#xE0; base de crustac&#xE9;s" allergenListAllergen="Crustac&#xE9;s et produits &#xE0; base de crustac&#xE9;s" legalName="Crustac&#xE9;s " variantIds="" isDefaultVariant="true"/>
+      <allergenList allergenListQtyPerc="" allergenListVoluntary="false" allergenListDecisionTree="[{&quot;qid&quot;:&quot;q1&quot;,&quot;cid&quot;:&quot;no&quot;},{&quot;qid&quot;:&quot;q2&quot;,&quot;cid&quot;:&quot;yes&quot;,&quot;comment&quot;:&quot;produits de n&#xE9;goce emball&#xE9;s destin&#xE9;s &#xE0; la revente&quot;},{&quot;qid&quot;:&quot;q3&quot;,&quot;cid&quot;:&quot;no&quot;}]" name="Oeuf et produit &#xE0; base d'oeuf" locale="fr_FR" allergenListInVoluntary="false" sort="300" original="Oeuf et produit &#xE0; base d'oeuf" allergenListAllergen="Oeufs et produits &#xE0; base d'oeufs" legalName="Oeufs " variantIds="" isDefaultVariant="true"/>
+      <allergenList allergenListQtyPerc="" allergenListVoluntary="false" allergenListDecisionTree="[{&quot;qid&quot;:&quot;q1&quot;,&quot;cid&quot;:&quot;no&quot;},{&quot;qid&quot;:&quot;q2&quot;,&quot;cid&quot;:&quot;no&quot;}]" name="Poisson et produit &#xE0; base de poisson" locale="fr_FR" allergenListInVoluntary="false" sort="400" original="Poisson et produit &#xE0; base de poisson" allergenListAllergen="Poissons et produits &#xE0; base de poissons" legalName="Poissons et produits &#xE0; base de poissons" variantIds="" isDefaultVariant="true"/>
+      <allergenList allergenListQtyPerc="" allergenListVoluntary="false" allergenListDecisionTree="[{&quot;qid&quot;:&quot;q1&quot;,&quot;cid&quot;:&quot;no&quot;},{&quot;qid&quot;:&quot;q2&quot;,&quot;cid&quot;:&quot;no&quot;}]" name="Arachides et produits &#xE0; base d'arachide" locale="fr_FR" allergenListInVoluntary="false" sort="500" original="Arachides et produits &#xE0; base d'arachide" allergenListAllergen="Arachides et produits &#xE0; base d'arachides" legalName="Arachides " variantIds="" isDefaultVariant="true"/>
+      <allergenList allergenListQtyPerc="" allergenListVoluntary="false" allergenListDecisionTree="[{&quot;qid&quot;:&quot;q1&quot;,&quot;cid&quot;:&quot;no&quot;},{&quot;qid&quot;:&quot;q2&quot;,&quot;cid&quot;:&quot;yes&quot;,&quot;comment&quot;:&quot;pr&#xE9;sent dans produits de n&#xE9;goce emball&#xE9;s destin&#xE9;s &#xE0; la revente&quot;},{&quot;qid&quot;:&quot;q3&quot;,&quot;cid&quot;:&quot;no&quot;}]" name="Soja et produits &#xE0; base de soja" locale="fr_FR" allergenListInVoluntary="false" sort="600" original="Soja et produits &#xE0; base de soja" allergenListAllergen="Soja et produits &#xE0; base de soja" legalName="Soja " variantIds="" isDefaultVariant="true"/>
+      <allergenList allergenListQtyPerc="" allergenListVoluntary="false" allergenListDecisionTree="[{&quot;qid&quot;:&quot;q1&quot;,&quot;cid&quot;:&quot;no&quot;},{&quot;qid&quot;:&quot;q2&quot;,&quot;cid&quot;:&quot;yes&quot;,&quot;comment&quot;:&quot;pr&#xE9;sent dans produits de n&#xE9;goce emball&#xE9;s destin&#xE9;s &#xE0; la revente&quot;},{&quot;qid&quot;:&quot;q3&quot;,&quot;cid&quot;:&quot;no&quot;}]" name="Lait et produit &#xE0; base de (dont lactose)" locale="fr_FR" allergenListInVoluntary="false" sort="700" original="Lait et produit &#xE0; base de (dont lactose)" allergenListAllergen="Lait et produits &#xE0; base de lait (y compris le lactose)" legalName="Lait " variantIds="" isDefaultVariant="true"/>
+      <allergenList allergenListQtyPerc="" allergenListVoluntary="false" allergenListDecisionTree="[{&quot;qid&quot;:&quot;q1&quot;,&quot;cid&quot;:&quot;no&quot;},{&quot;qid&quot;:&quot;q2&quot;,&quot;cid&quot;:&quot;yes&quot;,&quot;comment&quot;:&quot;pr&#xE9;sent dans produits de n&#xE9;goce emball&#xE9;s destin&#xE9;s &#xE0; la revente&quot;},{&quot;qid&quot;:&quot;q3&quot;,&quot;cid&quot;:&quot;no&quot;}]" name="Fruits &#xE0; Coque (noix noisettes)" locale="fr_FR" allergenListInVoluntary="false" sort="800" original="Fruits &#xE0; Coque (noix noisettes)" allergenListAllergen="Fruits &#xE0; coque (amandes, noisettes, noix, noix de cajou, noix de p&#xE9;can, noix du Br&#xE9;sil, pistaches, noix de Macadamia ou de Queensland) et produits &#xE0; base de ces fruits" legalName="Fruits &#xE0; coque" variantIds="" isDefaultVariant="true"/>
+      <allergenList allergenListQtyPerc="" allergenListVoluntary="false" allergenListDecisionTree="[{&quot;qid&quot;:&quot;q1&quot;,&quot;cid&quot;:&quot;no&quot;},{&quot;qid&quot;:&quot;q2&quot;,&quot;cid&quot;:&quot;yes&quot;,&quot;comment&quot;:&quot;pr&#xE9;sent dans produits de n&#xE9;goce emball&#xE9;s destin&#xE9;s &#xE0; la revente&quot;},{&quot;qid&quot;:&quot;q3&quot;,&quot;cid&quot;:&quot;no&quot;}]" name="C&#xE9;leri et produits &#xE0; base de c&#xE9;leri" locale="fr_FR" allergenListInVoluntary="false" sort="801" original="C&#xE9;leri et produits &#xE0; base de c&#xE9;leri" allergenListAllergen="C&#xE9;leri et produits &#xE0; base de c&#xE9;leri" legalName="C&#xE9;leri " variantIds="" isDefaultVariant="true"/>
+      <allergenList allergenListQtyPerc="" allergenListVoluntary="false" allergenListDecisionTree="[{&quot;qid&quot;:&quot;q1&quot;,&quot;cid&quot;:&quot;no&quot;},{&quot;qid&quot;:&quot;q2&quot;,&quot;cid&quot;:&quot;no&quot;}]" name="Moutarde et produits &#xE0; base de moutarde" locale="fr_FR" allergenListInVoluntary="false" sort="802" original="Moutarde et produits &#xE0; base de moutarde" allergenListAllergen="Moutarde et produits &#xE0; base de moutarde" legalName="Moutarde " variantIds="" isDefaultVariant="true"/>
+      <allergenList allergenListQtyPerc="" allergenListVoluntary="false" allergenListDecisionTree="[{&quot;qid&quot;:&quot;q1&quot;,&quot;cid&quot;:&quot;no&quot;},{&quot;qid&quot;:&quot;q2&quot;,&quot;cid&quot;:&quot;yes&quot;,&quot;comment&quot;:&quot;pr&#xE9;sent dans produits de n&#xE9;goce emball&#xE9;s destin&#xE9;s &#xE0; la revente&quot;},{&quot;qid&quot;:&quot;q3&quot;,&quot;cid&quot;:&quot;no&quot;}]" name="Graines de s&#xE9;same et produits &#xE0; base de graines de s&#xE9;same" locale="fr_FR" allergenListInVoluntary="false" sort="803" original="Graines de s&#xE9;same et produits &#xE0; base de graines de s&#xE9;same" allergenListAllergen="Graines de s&#xE9;same et produits &#xE0; base de graines de s&#xE9;same" legalName="Graines de s&#xE9;same " variantIds="" isDefaultVariant="true"/>
+      <allergenList allergenListQtyPerc="" allergenListVoluntary="false" allergenListDecisionTree="[{&quot;qid&quot;:&quot;q1&quot;,&quot;cid&quot;:&quot;no&quot;},{&quot;qid&quot;:&quot;q2&quot;,&quot;cid&quot;:&quot;yes&quot;,&quot;comment&quot;:&quot;pr&#xE9;sent dans produits de n&#xE9;goce emball&#xE9;s destin&#xE9;s &#xE0; la revente&quot;},{&quot;qid&quot;:&quot;q3&quot;,&quot;cid&quot;:&quot;no&quot;}]" name="Anhydride sulfureux et sulfites" locale="fr_FR" allergenListInVoluntary="false" sort="900" original="Anhydride sulfureux et sulfites" allergenListAllergen="Anhydride sulfureux et sulfites" legalName="Sulfites" variantIds="" isDefaultVariant="true"/>
+      <allergenList allergenListQtyPerc="" allergenListVoluntary="false" allergenListDecisionTree="[{&quot;qid&quot;:&quot;q1&quot;,&quot;cid&quot;:&quot;no&quot;},{&quot;qid&quot;:&quot;q2&quot;,&quot;cid&quot;:&quot;yes&quot;,&quot;comment&quot;:&quot;pr&#xE9;sent dans produits de n&#xE9;goce emball&#xE9;s destin&#xE9;s &#xE0; la revente&quot;},{&quot;qid&quot;:&quot;q3&quot;,&quot;cid&quot;:&quot;no&quot;}]" name="Lupin  et produits &#xE0; base de lupin" locale="fr_FR" allergenListInVoluntary="false" sort="1300" original="Lupin  et produits &#xE0; base de lupin" allergenListAllergen="Lupin  et produits &#xE0; base de lupin" legalName="Lupin" variantIds="" isDefaultVariant="true"/>
+      <allergenList allergenListQtyPerc="" allergenListVoluntary="false" allergenListDecisionTree="[{&quot;qid&quot;:&quot;q1&quot;,&quot;cid&quot;:&quot;no&quot;},{&quot;qid&quot;:&quot;q2&quot;,&quot;cid&quot;:&quot;no&quot;}]" name="Mollusque  et produits &#xE0; base de mollusque" locale="fr_FR" allergenListInVoluntary="false" sort="1400" original="Mollusque  et produits &#xE0; base de mollusque" allergenListAllergen="Mollusques  et produits &#xE0; base de mollusques" legalName="Mollusques " variantIds="" isDefaultVariant="true"/>
+    </allergenLists>
+    <labelClaimLists>
+      <labelClaimList lclType="Certification" lclIsFormulated="false" name="58906f32-f77e-4d0b-89c1-e52c10a494d1" lclComments="" isManualListItem="false" locale="fr" sort="100" lclClaimValue="false" certificateDate="" lclLabelClaim="Casherisable" original="58906f32-f77e-4d0b-89c1-e52c10a494d1" legalName="Casherisable"/>
+      <labelClaimList lclType="Certification" lclIsFormulated="false" name="a3aa4aa7-a016-4eaa-a481-cc7b36e06275" lclComments="" isManualListItem="false" locale="fr_FR" sort="200" lclClaimValue="false" certificateDate="" lclLabelClaim="Casher" original="a3aa4aa7-a016-4eaa-a481-cc7b36e06275" legalName="Produit casher"/>
+      <labelClaimList lclType="Certification" lclIsFormulated="false" name="422ac338-7668-43d9-b6c5-2c6d31ceabc9" lclComments="" isManualListItem="false" locale="fr" sort="201" lclClaimValue="false" certificateDate="" lclLabelClaim="Halalisable" original="422ac338-7668-43d9-b6c5-2c6d31ceabc9" legalName="Halalisable"/>
+      <labelClaimList lclType="Certification" lclIsFormulated="false" name="8b687d56-be2e-428b-a2d4-4907a0a82beb" lclComments="" isManualListItem="false" locale="fr_FR" sort="300" lclClaimValue="false" certificateDate="" lclLabelClaim="Halal" original="8b687d56-be2e-428b-a2d4-4907a0a82beb" legalName="Produit halal"/>
+      <labelClaimList lclType="Sant&#xE9;" lclIsFormulated="false" name="6ddb5933-cb59-4e55-9143-9acff94ea0d4" lclComments="" isManualListItem="false" locale="fr" sort="301" lclClaimValue="true" certificateDate="" lclLabelClaim="Ovo-v&#xE9;g&#xE9;tarien" original="6ddb5933-cb59-4e55-9143-9acff94ea0d4" legalName=""/>
+      <labelClaimList lclType="Sant&#xE9;" lclIsFormulated="false" name="f2a332f0-5494-40d6-9abf-57e2b75dad57" lclComments="" isManualListItem="false" locale="fr" sort="302" lclClaimValue="true" certificateDate="" lclLabelClaim="Lacto-v&#xE9;g&#xE9;tarien" original="f2a332f0-5494-40d6-9abf-57e2b75dad57" legalName=""/>
+      <labelClaimList lclType="Sant&#xE9;" lclIsFormulated="false" name="7c09db0f-f0ab-4102-b474-e49bbe2e1ac3" lclComments="" isManualListItem="false" locale="fr" sort="400" lclClaimValue="true" certificateDate="" lclLabelClaim="Ovo-lacto-v&#xE9;g&#xE9;tarien" original="7c09db0f-f0ab-4102-b474-e49bbe2e1ac3" legalName=""/>
+      <labelClaimList lclType="Sant&#xE9;" lclIsFormulated="false" name="bcd24cf3-5dfc-4291-9ef5-baf558c60e83" lclComments="" isManualListItem="false" locale="fr" sort="500" lclClaimValue="true" certificateDate="" lclLabelClaim="V&#xE9;g&#xE9;talien" original="bcd24cf3-5dfc-4291-9ef5-baf558c60e83" legalName=""/>
+      <labelClaimList lclType="Sant&#xE9;" lclIsFormulated="false" name="03fedc86-2efe-4974-8a0a-5ec7f6a9be20" lclComments="" isManualListItem="false" locale="fr" sort="501" lclClaimValue="false" certificateDate="" lclLabelClaim="Sans gluten" original="03fedc86-2efe-4974-8a0a-5ec7f6a9be20" legalName=""/>
+      <labelClaimList lclType="Environnementale" lclIsFormulated="false" name="925fbfee-4cce-4282-aa18-3e5dbde56123" lclComments="" isManualListItem="false" locale="fr" sort="600" lclClaimValue="true" certificateDate="" lclLabelClaim="Sans palme" original="925fbfee-4cce-4282-aa18-3e5dbde56123" legalName=""/>
+      <labelClaimList lclType="Certification" lclIsFormulated="false" name="79c16855-c623-432b-b970-22ebfd1a66e7" lclComments="" isManualListItem="false" locale="fr" sort="601" lclClaimValue="false" certificateDate="" lclLabelClaim="Bio" original="79c16855-c623-432b-b970-22ebfd1a66e7" legalName="Produit issu de l'agriculture biologique"/>
+    </labelClaimLists>
+    <physicoChemLists>
+      <physicoChemList pclUnit="%" pclMini="" pclValue="15.0" pclTextCriteria="" name="9d144d15-75b9-4dd1-95f6-7a68ed2e11a6" pclMaxi="15.0" locale="fr" sort="101" original="9d144d15-75b9-4dd1-95f6-7a68ed2e11a6" pclPhysicoChem="Humidit&#xE9;" legalName=""/>
+      <physicoChemList pclUnit="%" pclMini="85.0" pclValue="85.0" pclTextCriteria="" name="6d56b0e7-6d52-447f-9f70-9cc8d7351a26" pclMaxi="" locale="fr_FR" sort="102" original="6d56b0e7-6d52-447f-9f70-9cc8d7351a26" pclPhysicoChem="Mati&#xE8;re s&#xE8;che" legalName=""/>
+      <physicoChemList commentCount="1" name="048af8cb-def7-44ef-b454-44a39fd57d83" pclMaxi="" pclUnit="%" pclMini="" pclValue="" pclTextCriteria="" locale="fr" sort="200" original="048af8cb-def7-44ef-b454-44a39fd57d83" pclPhysicoChem="Taux de sel (NaCl) obtenu par le dosage des ions chlorures" legalName=""/>
+    </physicoChemLists>
+    <controlDefLists/>
+    <ingLists>
+      <ingList parentLevel="" ingListQtyPerc="100.0" ingListQtyMaxi="" ingListIsIonized="false" commentCount="1" name="84696f54-263b-4fb9-a8be-0c4e4fc85e3f" ingListIsProcessingAid="false" ingListIsGMO="false" ingListIsSupport="false" ingListQtyMini="" locale="fr_FR" ingListFunctionality="" sort="100" depthLevel="1" ingListIng="Farine de bl&#xE9; tendre" ingListGeoOrigin="France" ingListGeoTransfo="France" ingListBioOrigin="Blé" legalName="farine de bl&#xE9; tendre"/>
+    </ingLists>
+    <rawMaterials/>
+    <ingLabelingLists/>
+    <nutLists energiekj="1439.6999999999998" energiekcal="339.59999999999997" matièresgrasses="1.2" acidesgrassaturés="0.2" acidesgrasmonoinsaturés="" acidesgraspolyinsaturés="" acidesgrastrans="" cholestérol="" glucidesassimilables="68.8" sucres="1.8" polyols="" amidon="" fibresalimentaires="4.2" glucidestotaux="73.0" protéines="11.3" sodium="0.0" sel="0.0" vitaminea="" vitaminec="" calcium="" fer="" potassium="">
+      <nutList color="#FFFFF" nutListGroup="Groupe 1" name="Energie kJ" nutListIsFormulated="true" nutListMini="0.0" nutListFormulatedValue="1439.6999999999998" nutListUnit="kJ/100g" isManualListItem="false" locale="fr_FR" sort="100" depthLevel="1" nutListMaxi="0.0" nutListNut="Energie kJ" original="Energie kJ" legalName="Energie" nutListValue="1439.6999999999998">
+        <description prefix="cm"><![CDATA[]]></description>
+      </nutList>
+      <nutList color="#FFFFF" nutListGroup="Groupe 1" name="Energie kcal" nutListIsFormulated="true" nutListMini="0.0" nutListFormulatedValue="339.59999999999997" nutListUnit="kcal/100g" isManualListItem="false" locale="fr_FR" sort="200" depthLevel="1" nutListMaxi="0.0" nutListNut="Energie kcal" original="Energie kcal" legalName="Energie" nutListValue="339.59999999999997">
+        <description prefix="cm"><![CDATA[]]></description>
+      </nutList>
+      <nutList color="#f4cccc" nutListGroup="Groupe 1" parentLevel="" nutListValue="1.2" name="Lipides" nutListIsFormulated="false" nutListMini="" nutListLossPerc="" nutListUnit="g/100g" nutListMethod="Litt&#xE9;rature" isManualListItem="false" locale="fr_FR" sort="300" depthLevel="1" nutListMaxi="" nutListNut="Mati&#xE8;res grasses" original="Lipides" legalName="Mati&#xE8;res grasses">
+        <description prefix="cm"><![CDATA[< 10 g ± 1,5 g
+10 à 40 g ± 20 %
+> 40 g ± 8g]]></description>
+      </nutList>
+      <nutList color="#f4cccc" nutListGroup="Groupe 2" parentLevel="Lipides" nutListValue="0.2" name="AG satur&#xE9;s" nutListIsFormulated="false" nutListMini="" nutListLossPerc="" nutListUnit="g/100g" nutListMethod="Litt&#xE9;rature" isManualListItem="false" locale="fr_FR" sort="400" depthLevel="2" nutListMaxi="" nutListNut="Acides gras satur&#xE9;s" original="AG satur&#xE9;s" legalName="dont acides gras satur&#xE9;s">
+        <description prefix="cm"><![CDATA[< 4 g ± 0,8 g
+>=  4 g ± 20 %]]></description>
+      </nutList>
+      <nutList color="#FFFFF" nutListGroup="Autre" parentLevel="Lipides" nutListValue="" name="34923163-ec80-4107-9a01-28d18a23847f" nutListIsFormulated="false" nutListMini="" nutListUnit="g/100g" nutListMethod="" isManualListItem="false" locale="fr" sort="500" depthLevel="2" nutListMaxi="" nutListNut="Acides gras mono-insatur&#xE9;s" original="34923163-ec80-4107-9a01-28d18a23847f" legalName="dont acides gras mono-insatur&#xE9;s">
+        <description prefix="cm"><![CDATA[]]></description>
+      </nutList>
+      <nutList color="#FFFFF" nutListGroup="Autre" parentLevel="Lipides" nutListValue="" name="e15b8e4d-f64a-41b5-b9db-db24cfde052a" nutListIsFormulated="false" nutListMini="" nutListUnit="g/100g" nutListMethod="" isManualListItem="false" locale="fr" sort="600" depthLevel="2" nutListMaxi="" nutListNut="Acides gras poly-insatur&#xE9;s" original="e15b8e4d-f64a-41b5-b9db-db24cfde052a" legalName="dont acides gras poly-insatur&#xE9;s">
+        <description prefix="cm"><![CDATA[]]></description>
+      </nutList>
+      <nutList nutListGroup="Canada" parentLevel="Lipides" name="5a2a03f4-be74-4a1c-9fd2-8d13153cea47" nutListIsFormulated="false" nutListUnit="g/100g" nutListMethod="" isManualListItem="false" locale="fr" sort="700" depthLevel="2" nutListNut="Acides gras trans" original="5a2a03f4-be74-4a1c-9fd2-8d13153cea47" legalName="Dont acides gras trans" nutListValue="">
+        <description prefix="cm"><![CDATA[]]></description>
+      </nutList>
+      <nutList nutListGroup="Canada, USA" parentLevel="Lipides" name="0308a617-bdd2-411e-b6b8-db56ece5b56e" nutListIsFormulated="false" nutListUnit="mg/100g" nutListMethod="" isManualListItem="false" locale="fr" sort="800" depthLevel="2" nutListNut="Cholest&#xE9;rol" original="0308a617-bdd2-411e-b6b8-db56ece5b56e" legalName="Cholest&#xE9;rol" nutListValue="">
+        <description prefix="cm"><![CDATA[]]></description>
+      </nutList>
+      <nutList color="#f4cccc" nutListGroup="Groupe 1" parentLevel="" nutListValue="68.8" name="Glucides" nutListIsFormulated="false" nutListMini="" nutListLossPerc="" nutListUnit="g/100g" nutListMethod="Litt&#xE9;rature" isManualListItem="false" locale="fr_FR" sort="900" depthLevel="1" nutListMaxi="" nutListNut="Glucides assimilables" original="Glucides" legalName="Glucides">
+        <description prefix="cm"><![CDATA[< 10 g ± 2 g
+10 à 40 g ± 20 %
+> 40 g ± 8 g]]></description>
+      </nutList>
+      <nutList color="#f4cccc" nutListGroup="Groupe 2" parentLevel="Glucides" nutListValue="1.8" name="Sucres" nutListIsFormulated="false" nutListMini="" nutListLossPerc="" nutListUnit="g/100g" nutListMethod="Litt&#xE9;rature" isManualListItem="false" locale="fr_FR" sort="1000" depthLevel="2" nutListMaxi="" nutListNut="Sucres" original="Sucres" legalName="dont sucres">
+        <description prefix="cm"><![CDATA[< 10 g ± 2 g
+10 à 40 g ± 20 %
+> 40 g ± 8 g]]></description>
+      </nutList>
+      <nutList nutListGroup="Canada" parentLevel="Glucides" name="b0b4a4d8-9362-451b-a72a-ac7dab70a4c8" nutListIsFormulated="false" nutListUnit="g/100g" nutListMethod="" isManualListItem="false" locale="fr" sort="1100" depthLevel="2" nutListNut="Polyols" original="b0b4a4d8-9362-451b-a72a-ac7dab70a4c8" legalName="dont polyols" nutListValue="">
+        <description prefix="cm"><![CDATA[]]></description>
+      </nutList>
+      <nutList nutListGroup="Autre" parentLevel="Glucides" nutListValue="" name="Amidon" nutListIsFormulated="false" nutListMini="" nutListUnit="g/100g" nutListMethod="" isManualListItem="false" locale="fr_FR" sort="1200" depthLevel="2" nutListMaxi="" nutListNut="Amidon" original="Amidon" legalName="dont amidon">
+        <description prefix="cm"><![CDATA[]]></description>
+      </nutList>
+      <nutList nutListGroup="Groupe 2" parentLevel="" nutListValue="4.2" name="281edd96-aeda-4cf9-ac34-a0c81673aa23" nutListIsFormulated="false" nutListMini="" nutListLossPerc="" nutListUnit="g/100g" nutListMethod="Litt&#xE9;rature" isManualListItem="false" locale="fr" sort="1301" depthLevel="1" nutListMaxi="" nutListNut="Fibres alimentaires" original="281edd96-aeda-4cf9-ac34-a0c81673aa23" legalName="Fibres alimentaires">
+        <description prefix="cm"><![CDATA[< 10 g ± 2 g
+10 à 40 g ± 20 %
+> 40 g ± 8 g]]></description>
+      </nutList>
+      <nutList nutListGroup="Canada, USA" parentLevel="" nutListValue="73.0" name="d09849c2-9a51-4cca-9b5b-faec34c799e2" nutListIsFormulated="true" nutListMini="0.0" nutListFormulatedValue="73.0" nutListUnit="g/100g" nutListMethod="Calcul manuel" isManualListItem="false" locale="fr" sort="1302" depthLevel="1" nutListMaxi="0.0" nutListNut="Glucides totaux" original="d09849c2-9a51-4cca-9b5b-faec34c799e2" legalName="Glucides totaux = Glucides assimilables + Fibres">
+        <description prefix="cm"><![CDATA[Glucides totaux = Glucides assimilables + Fibres]]></description>
+      </nutList>
+      <nutList color="#f4cccc" nutListGroup="Groupe 1" parentLevel="" nutListValue="11.3" name="Prot&#xE9;ines" nutListIsFormulated="false" nutListMini="" nutListLossPerc="" nutListUnit="g/100g" nutListMethod="Litt&#xE9;rature" isManualListItem="false" locale="fr_FR" sort="1400" depthLevel="1" nutListMaxi="" nutListNut="Prot&#xE9;ines" original="Prot&#xE9;ines" legalName="Prot&#xE9;ines">
+        <description prefix="cm"><![CDATA[< 10 g ± 2 g
+10 à 40 g ± 20 %
+> 40 g ± 8 g]]></description>
+      </nutList>
+      <nutList color="#f4cccc" nutListGroup="Groupe 2" parentLevel="" nutListValue="0.0" name="Sodium" nutListIsFormulated="false" nutListMini="" nutListLossPerc="" nutListUnit="mg/100g" nutListMethod="Litt&#xE9;rature" isManualListItem="false" locale="fr_FR" sort="1500" depthLevel="1" nutListMaxi="" nutListNut="Sodium" original="Sodium" legalName="Sodium">
+        <description prefix="cm"><![CDATA[< 0,5 g ± 0,15
+>= 0,5 g ± 20 %]]></description>
+      </nutList>
+      <nutList nutListGroup="Groupe 2" name="Sel" nutListIsFormulated="true" nutListMini="0.0" nutListFormulatedValue="0.0" nutListUnit="g/100g" isManualListItem="false" locale="fr_FR" sort="1600" depthLevel="1" nutListMaxi="0.0" nutListNut="Sel" legalName="Sel" nutListValue="0.0">
+        <description prefix="cm"><![CDATA[< 1,25 g ± 0,375
+>=  1,25 g ± 20 %]]></description>
+      </nutList>
+      <nutList nutListGroup="Canada, USA" parentLevel="" name="88c4e534-4f24-4964-828c-50a0906f2f7c" nutListIsFormulated="false" nutListUnit="mg/100g" nutListMethod="" isManualListItem="false" locale="fr" sort="1900" depthLevel="1" nutListNut="Vitamine A" original="88c4e534-4f24-4964-828c-50a0906f2f7c" legalName="Vitamine A" nutListValue="">
+        <description prefix="cm"><![CDATA[]]></description>
+      </nutList>
+      <nutList nutListGroup="Canada, USA" parentLevel="" name="32621925-bba4-4b59-9346-41f3ecd2c07e" nutListIsFormulated="false" nutListUnit="mg/100g" nutListMethod="" isManualListItem="false" locale="fr" sort="2000" depthLevel="1" nutListNut="Vitamine C" original="32621925-bba4-4b59-9346-41f3ecd2c07e" legalName="Vitamine C" nutListValue="">
+        <description prefix="cm"><![CDATA[]]></description>
+      </nutList>
+      <nutList nutListGroup="Canada, USA" parentLevel="" name="371e9dcd-0d63-4fee-bdb3-084421a25cf9" nutListIsFormulated="false" nutListUnit="mg/100g" nutListMethod="" isManualListItem="false" locale="fr" sort="2002" depthLevel="1" nutListNut="Calcium" original="371e9dcd-0d63-4fee-bdb3-084421a25cf9" legalName="Calcium" nutListValue="">
+        <description prefix="cm"><![CDATA[]]></description>
+      </nutList>
+      <nutList nutListGroup="USA" parentLevel="" name="acf0cfd4-bd09-40bc-837b-42dcecad16da" nutListIsFormulated="false" nutListUnit="mg/100g" nutListMethod="" isManualListItem="false" locale="fr" sort="2100" depthLevel="1" nutListNut="Fer" original="acf0cfd4-bd09-40bc-837b-42dcecad16da" legalName="Fer" nutListValue="">
+        <description prefix="cm"><![CDATA[]]></description>
+      </nutList>
+      <nutList nutListGroup="Canada" parentLevel="" name="8126e56a-0b2c-416c-abbb-a70fa3902fbf" nutListIsFormulated="false" nutListUnit="mg/100g" nutListMethod="" isManualListItem="false" locale="fr" sort="2101" depthLevel="1" nutListNut="Potassium" original="8126e56a-0b2c-416c-abbb-a70fa3902fbf" legalName="Potassium" nutListValue="">
+        <description prefix="cm"><![CDATA[]]></description>
+      </nutList>
+    </nutLists>
+    <organoLists>
+      <organoList name="f2cf2d1b-339c-47c3-8d49-4cce06350472" organoListValue="pulv&#xE9;rulent" locale="fr" sort="100" organoListOrgano="Aspect" original="f2cf2d1b-339c-47c3-8d49-4cce06350472" legalName="Aspect"/>
+      <organoList name="9bbbcfd2-cfc1-4151-8ade-d767b9a3f51f" organoListValue="homog&#xE8;ne, de blanc &#xE0; jaun&#xE2;tre" locale="fr" sort="200" organoListOrgano="Couleur" original="9bbbcfd2-cfc1-4151-8ade-d767b9a3f51f" legalName="Couleur"/>
+      <organoList name="735838ab-e50b-4823-b08d-0657b0dd7d94" organoListValue="sans odeur particuli&#xE8;re" locale="fr" sort="300" organoListOrgano="Odeur" original="735838ab-e50b-4823-b08d-0657b0dd7d94" legalName="Odeur"/>
+      <organoList name="b7cf11ef-d66f-4298-a54b-647cc50d999a" organoListValue="sans trace d'acidit&#xE9;" locale="fr_FR" sort="301" organoListOrgano="Go&#xFB;t" original="b7cf11ef-d66f-4298-a54b-647cc50d999a" legalName="Go&#xFB;t"/>
+      <organoList name="42b124c8-4fd6-4200-8216-bc365b38197b" organoListValue="neutre" locale="fr" sort="400" organoListOrgano="Saveur" original="42b124c8-4fd6-4200-8216-bc365b38197b" legalName="Saveur"/>
+      <organoList name="5d79ec71-0112-4ecf-aa20-28c85e0f31cc" organoListValue="homog&#xE8;ne et fluide" locale="fr_FR" sort="600" organoListOrgano="Texture" original="5d79ec71-0112-4ecf-aa20-28c85e0f31cc" legalName="Texture"/>
+    </organoLists>
+    <microbioLists>
+      <microbioList commentCount="1" name="f842c70e-c69f-43a6-9934-522062974b66" mblValue="" mblUnit="UFC/g" mblMaxi="10.0" mblTextCriteria="recherche E COLI" locale="fr" sort="101" mblControlStep="" mblMicrobio="Ent&#xE9;robact&#xE9;riac&#xE9;s" original="f842c70e-c69f-43a6-9934-522062974b66" legalName="Ent&#xE9;robact&#xE9;riac&#xE9;s"/>
+      <microbioList mblMaxi="100000.0" mblTextCriteria="" name="7c3c3fe9-7214-45fe-aac2-3a8747322135" locale="fr" mblValue="" sort="102" mblUnit="UFC/g" mblControlStep="" mblMicrobio="Flore m&#xE9;sophile a&#xE9;robie totale" original="7c3c3fe9-7214-45fe-aac2-3a8747322135" legalName="Flore m&#xE9;sophile a&#xE9;robie totale"/>
+      <microbioList mblMaxi="10000.0" mblTextCriteria="" name="336b91a2-b663-444f-b4a1-f66aaab6230f" locale="fr" mblValue="" sort="300" mblUnit="UFC/g" mblControlStep="" mblMicrobio="Levures" original="336b91a2-b663-444f-b4a1-f66aaab6230f" legalName="Levures"/>
+      <microbioList mblMaxi="10000.0" mblTextCriteria="" name="de3c56c0-462f-49af-80b2-8e5ef14faa28" locale="fr" mblValue="" sort="400" mblUnit="UFC/g" mblControlStep="" mblMicrobio="Moisissures" original="de3c56c0-462f-49af-80b2-8e5ef14faa28" legalName="Moisissures"/>
+      <microbioList mblMaxi="0.0" mblTextCriteria="absence dans 25 g" name="5fb5d3dd-f6ce-4d1a-b000-48178c6442c0" locale="fr" mblValue="" sort="401" mblUnit="UFC/25g" mblControlStep="" mblMicrobio="Salmonella" original="5fb5d3dd-f6ce-4d1a-b000-48178c6442c0" legalName="Salmonella"/>
+      <microbioList mblMaxi="" mblTextCriteria="" name="cc7f41f9-dd0e-4205-8298-6767b144429a" locale="fr" mblValue="" sort="500" mblUnit="UFC/g" mblControlStep="" mblMicrobio="Listeria spp" original="cc7f41f9-dd0e-4205-8298-6767b144429a" legalName="Listeria spp"/>
+      <microbioList mblMaxi="10.0" mblTextCriteria="" name="53ef07a8-2e15-4178-bb63-e8bdcbc32510" locale="fr" mblValue="" sort="600" mblUnit="UFC/g" mblControlStep="" mblMicrobio="Staphylococcus aureus" original="53ef07a8-2e15-4178-bb63-e8bdcbc32510" legalName="Staphylococcus aureus"/>
+      <microbioList mblMaxi="" mblTextCriteria="" name="6a8cee8e-2b5d-47f4-9bbb-12e9db8371d7" locale="fr" mblValue="" sort="700" mblUnit="UFC/g" mblControlStep="" mblMicrobio="Bacillus cereus" original="6a8cee8e-2b5d-47f4-9bbb-12e9db8371d7" legalName="Bacillus cereus"/>
+      <microbioList commentCount="1" name="df3b1f58-bcba-44b2-804f-324babf4bc7a" mblValue="" mblUnit="" mblMaxi="" mblTextCriteria="" locale="fr_FR" sort="701" mblControlStep="" mblMicrobio="Escherichia coli" legalName="Escherichia coli"/>
+    </microbioLists>
+  </dataLists>
+  <variants/>
+  <versions/>
+</entity>
