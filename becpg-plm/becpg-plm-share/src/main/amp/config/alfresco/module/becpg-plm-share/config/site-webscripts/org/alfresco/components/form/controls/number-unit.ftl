@@ -9,11 +9,13 @@
 </#if>
 <#assign currValue=field.value>
  <#if unit=="perc">
-  	<#assign currUnits="ppm,pp,perc">
+  	<#assign currUnits="perc,pp,ppm">
    <#elseif unit=="kg">
 	<#assign currUnits="mg,g,kg">
    <#elseif unit=="d">
 	<#assign currUnits="d,mo">
+   <#elseif unit=="-">
+	<#assign currUnits="-,mega,milli,micro">
  </#if>
 
 <#if field.value?is_number>
@@ -38,10 +40,21 @@
 			<#assign currUnit="mo">
 			<#assign currValue=field.value/30 >
 		</#if>
+    <#elseif unit=="-">
+		 <#if field.value &lt; 0.001  >
+			<#assign currUnit="micro">
+			<#assign currValue=field.value*1000000>
+	     <#elseif field.value &lt; 1  >
+			<#assign currUnit="milli" >
+			<#assign currValue=field.value*1000 >
+		 <#elseif field.value &gt;= 1000000  >
+			<#assign currUnit="mega" >
+			<#assign currValue=field.value/1000000 >
+		 </#if>
     </#if>
 </#if>
 
-<#assign currLabel = field.label?replace("\\(.*\\)","("+msg("becpg.forms.unit."+currUnit)+")","r")>
+<#assign currLabel = field.label?replace("\\(.*\\)","("+msg("becpg.forms.unit."+currUnit?replace("-","empty"))+")","r")>
 
 <div class="form-field">
 	<#if field.dataKeyName?? && field.dataType??>
@@ -65,7 +78,7 @@
 	             <#if field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true")>disabled="true"</#if> />
 	        <select id="${fieldHtmlId}-unit" name="-" tabindex="0" class="number-unit">
 	               <#list currUnits?split(",") as nameValue>
-	                  <option value="${nameValue?html}"<#if nameValue == currUnit?string> selected="selected"</#if>>${msg("becpg.forms.unit."+nameValue)}</option>
+	                  <option value="${nameValue?html}"<#if nameValue == currUnit?string> selected="selected"</#if>>${msg("becpg.forms.unit."+nameValue?replace("-","empty"))}</option>
 	               </#list>
 	        </select>
 	        <input  id="${fieldHtmlId}-val"  name="${field.name}" type="hidden"  <#if field.value?is_number>value="${field.value?c}"<#else>value="${field.value?html}"</#if>> 
@@ -86,10 +99,12 @@
 				         	   val = val / 10000;
 				         	  } else if(unit == "pp"){
 				         	   val = val / 10;		         	   
-				         	  } else if(unit == "g"){
+				         	  } else if(unit == "g" || unit == "milli"){
 				         	    val = val / 1000;
-				         	  } else if(unit == "mg"){
+				         	  } else if(unit == "mg" || unit == "micro"){
 				         	    val = val / 1000000;
+				         	  } else if(unit == "mega"){
+				         	    val = val * 1000000;
 				         	  }
 				         	}
 				         	

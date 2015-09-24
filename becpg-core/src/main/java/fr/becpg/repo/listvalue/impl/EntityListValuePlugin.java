@@ -51,6 +51,7 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.hierarchy.HierarchyService;
+import fr.becpg.repo.listvalue.ListValueExtractor;
 import fr.becpg.repo.listvalue.ListValuePage;
 import fr.becpg.repo.listvalue.ListValuePlugin;
 import fr.becpg.repo.listvalue.ListValueService;
@@ -210,8 +211,12 @@ public class EntityListValuePlugin implements ListValuePlugin {
 			ret = queryBuilder.list();
 		}
 
-		return new ListValuePage(ret, pageNum, pageSize, targetAssocValueExtractor);
+		return new ListValuePage(ret, pageNum, pageSize, getTargetAssocValueExtractor());
 
+	}
+
+	protected ListValueExtractor<NodeRef> getTargetAssocValueExtractor() {
+		return targetAssocValueExtractor;
 	}
 
 	/**
