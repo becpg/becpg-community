@@ -4053,6 +4053,12 @@
 						</control>
 					</field>
 					<field id="bcpg:allergenCode" />
+					<field id="bcpg:allergenRegulatoryThreshold">
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">perc</control-param>
+						</control>
+					</field>
 					<field id="bcpg:allergenSubset">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -4090,6 +4096,12 @@
 						</control>
 					</field>
 					<field id="bcpg:allergenCode" />
+					<field id="bcpg:allergenRegulatoryThreshold">
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">perc</control-param>
+						</control>
+					</field>
 					<field id="bcpg:allergenSubset">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -6437,6 +6449,13 @@
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
+					<field id="bcpg:ingListQtyPerc">
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">perc</control-param>
+						</control>
+					</field>
+					
 					<field id="bcpg:ingListGeoOrigin">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
@@ -6504,9 +6523,16 @@
 				</field-visibility>
 
 				<appearance>
+				
 					<field id="bcpg:ingListIng">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:ingListQtyPerc">
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">perc</control-param>
+						</control>
 					</field>
 					<field id="bcpg:ingListGeoOrigin">
 						<control
@@ -6895,6 +6921,12 @@
 					</field>
 					<field id="bcpg:filReqMessage">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="bcpg:filQtyPercMaxi">
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">perc</control-param>
+						</control>
 					</field>
 					<field id="bcpg:filIsGMO">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">

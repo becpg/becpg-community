@@ -9,7 +9,7 @@
 </#if>
 <#assign currValue=field.value>
  <#if unit=="perc">
-  	<#assign currUnits="ppm,perc">
+  	<#assign currUnits="ppm,pp,perc">
    <#elseif unit=="kg">
 	<#assign currUnits="mg,g,kg">
    <#elseif unit=="d">
@@ -21,7 +21,10 @@
      <#if field.value &lt; 0.1  >
 		<#assign currUnit="ppm">
 		<#assign currValue=field.value*10000>
-     </#if>
+     <#elseif field.value &lt; 1  >
+		<#assign currUnit="pp" >
+		<#assign currValue=field.value*10 >
+	 </#if>
    <#elseif unit=="kg">
 	  <#if field.value &lt; 0.001  >
 		<#assign currUnit="mg">
@@ -53,42 +56,46 @@
 	   <#else>
 	      <label id="${fieldHtmlId}-label"  for="${fieldHtmlId}">${currLabel?html}:<#if field.mandatory><span class="mandatory-indicator">${msg("form.required.fields.marker")}</span></#if></label>
 	      <input id="${fieldHtmlId}" type="text" name="-" tabindex="0"
-	             class="number<#if field.control.params.styleClass??> ${field.control.params.styleClass}</#if>"
+	             class="number number-unit<#if field.control.params.styleClass??> ${field.control.params.styleClass}</#if>"
 	             <#if field.control.params.style??>style="${field.control.params.style}"</#if>	
 	             <#if field.value?is_number>value="${currValue?c}"<#else>value="${currValue?html}"</#if>
 	             <#if field.description??>title="${field.description}"</#if>
 	             <#if field.control.params.maxLength??>maxlength="${field.control.params.maxLength}"</#if> 
 	             <#if field.control.params.size??>size="${field.control.params.size}"</#if> 
 	             <#if field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true")>disabled="true"</#if> />
-	      <input  id="${fieldHtmlId}-val"  name="${field.name}" type="hidden"  <#if field.value?is_number>value="${field.value?c}"<#else>value="${field.value?html}"</#if>>       
-	      <select id="${fieldHtmlId}-unit" name="-" tabindex="0" >
+	        <select id="${fieldHtmlId}-unit" name="-" tabindex="0" class="number-unit">
 	               <#list currUnits?split(",") as nameValue>
 	                  <option value="${nameValue?html}"<#if nameValue == currUnit?string> selected="selected"</#if>>${msg("becpg.forms.unit."+nameValue)}</option>
 	               </#list>
 	        </select>
+	        <input  id="${fieldHtmlId}-val"  name="${field.name}" type="hidden"  <#if field.value?is_number>value="${field.value?c}"<#else>value="${field.value?html}"</#if>> 
 	        <script type="text/javascript">//<![CDATA[
 			(function()
 			{
 	         	YAHOO.Bubbling.on("beforeFormRuntimeInit", function (layer, args) {	
 	         	
 	         			var updateVal = function (){
-	         				var unit  = YAHOO.util.Dom.get("${fieldHtmlId}-unit").value;
+	         			
+	         				var sel =  YAHOO.util.Dom.get("${fieldHtmlId}-unit");
+	         				var unit  = sel.value;
 				         	var val = YAHOO.util.Dom.get("${fieldHtmlId}").value;
-				         	if(val!=null){
+				         	if(val!=null && val!=""){
 				         	  if(unit == "mo"){
 				         	    val = val * 30;
 				         	  } else if(unit == "ppm"){
 				         	   val = val / 10000;
+				         	  } else if(unit == "pp"){
+				         	   val = val / 10;		         	   
 				         	  } else if(unit == "g"){
 				         	    val = val / 1000;
 				         	  } else if(unit == "mg"){
 				         	    val = val / 1000000;
 				         	  }
 				         	}
-				    
+				         	
 				         	YAHOO.util.Dom.get("${fieldHtmlId}-val").value = val;
 				         	YAHOO.util.Dom.get("${fieldHtmlId}-label").innerHTML =
-				         	    YAHOO.util.Dom.get("${fieldHtmlId}-label").innerHTML.replace(/\(.*\)/g,"("+unit+")");
+				         	    YAHOO.util.Dom.get("${fieldHtmlId}-label").innerHTML.replace(/\(.*\)/g,"("+sel.options[sel.selectedIndex].innerHTML+")");
 				         	
 	         			};
 	         	

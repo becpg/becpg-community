@@ -43,6 +43,15 @@
 	width: 30em !important;
 }
 
+
+.yui-dialog .form-container .form-field input.number-unit {
+	width: 26em !important;
+}
+
+.yui-dialog .form-container  .form-field select.number-unit {
+	width: 4em !important;
+}
+
 .yui-dialog .form-container .form-field textarea {
 	width: 95% !important;
 }

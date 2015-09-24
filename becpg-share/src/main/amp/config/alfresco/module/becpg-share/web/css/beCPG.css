@@ -36,6 +36,15 @@
 	width: 27em !important;
 }
 
+
+.form-container .yui-g .form-field input.number-unit {
+	width: 23em !important;
+}
+
+.form-container .yui-g .form-field select.number-unit {
+	width: 4em !important;
+}
+
 /* 1-2 Column Tabbed Set */
 .form-container .yui-navset .set {
 	padding-bottom: 0em;
@@ -50,6 +59,15 @@
 	width: 26em !important;
 }
 
+.form-container .yui-navset .form-field input.number-unit {
+	width: 22em !important;
+}
+
+.form-container .yui-navset .form-field select.number-unit {
+	width: 4em !important;
+}
+
+
 /* 3 Column set */
 .form-container .yui-gb .form-field input[type="text"], .form-container .yui-gb .form-field input[type="file"],
 	.form-container .yui-gb .form-field input[type="password"],
@@ -58,6 +76,16 @@
 	{
 	width: 16em !important;
 }
+
+
+.form-container .yui-gb .form-field input.number-unit {
+	width: 12em !important;
+}
+
+.form-container .yui-gb .form-field select.number-unit {
+	width: 4em !important;
+}
+
 
 .form-container .yui-g .form-field input[type="checkbox"],
 	.form-container .yui-navset .form-field input[type="checkbox"],
