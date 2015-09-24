@@ -94,6 +94,7 @@
 			<list id="packagingList" index="60" view="true" />
 			<list id="processList" index="70" view="true" />
 			<list id="resourceParamList" index="80" />
+			<list id="ingList" index="85" />
 			<list id="allergenList" index="90" />
 			<list id="costList" index="100" />
 			<list id="priceList" index="110" />

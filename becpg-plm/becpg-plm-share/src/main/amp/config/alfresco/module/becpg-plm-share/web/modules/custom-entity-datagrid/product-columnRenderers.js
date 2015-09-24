@@ -222,16 +222,29 @@ if (beCPG.module.EntityDataGridRenderers) {
       propertyName : "bcpg:nutListValue",
       renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
           var ret = "";
+          
+          function exp(val){
+        	  if(val < 0.000001){
+        		  return beCPG.util.sigFigs(val*1000000,3).toLocaleString()+"×10<sup>-6</sup>";
+        	  } else if(val < 0.01){
+        		  return beCPG.util.sigFigs(val*1000,3).toLocaleString()+"×10<sup>-3</sup>";
+        	  } else if(val >= 1000000){
+        		  return beCPG.util.sigFigs(val/1000000,3).toLocaleString()+"×10<sup>6</sup>";
+        	  }
+        	  return beCPG.util.sigFigs(val,3).toLocaleString();
+          }
+          
           if (data.value != null) {
-              ret+=Alfresco.util.encodeHTML(data.value.toLocaleString());
+        	  ret+=exp(data.value);
+        	  
           }
           
           var formulatedValue = oRecord.getData("itemData")["prop_bcpg_nutListFormulatedValue"];
           if(formulatedValue!=null && formulatedValue.value!=null ){
               if(ret.length>0){
-                  ret+= '&nbsp;&nbsp;(' + Alfresco.util.encodeHTML(beCPG.util.sigFigs(formulatedValue.value,3).toLocaleString()) + ')';
+                  ret+= '&nbsp;&nbsp;(' + exp(formulatedValue.value) + ')';
               } else {
-                ret+= Alfresco.util.encodeHTML(beCPG.util.sigFigs(formulatedValue.value,3).toLocaleString()) ;
+                ret+= exp(formulatedValue.value) ;
               }
           }
           

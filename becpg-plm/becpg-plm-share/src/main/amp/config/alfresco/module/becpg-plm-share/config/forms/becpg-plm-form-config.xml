@@ -5934,18 +5934,18 @@
 						</control>
 					</field>
 					<field id="bcpg:allergenListInVoluntary" />
+					
+					
 					<field id="bcpg:allergenListVolSources">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:product,bcpg:ing&#38;excludeClassNames=bcpg:entityTplAspect
-							</control-param>
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:ingList&#38;attributeName=bcpg:ingListIng</control-param>
 						</control>
 					</field>
 					<field id="bcpg:allergenListInVolSources">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:product,bcpg:ing&#38;excludeClassNames=bcpg:entityTplAspect
-							</control-param>
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:ingList&#38;attributeName=bcpg:ingListIng</control-param>
 						</control>
 					</field>
 					<!-- <field id="bcpg:allergenListPlants"/> -->
@@ -6039,15 +6039,13 @@
 					<field id="bcpg:allergenListVolSources">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:product,bcpg:ing&#38;excludeClassNames=bcpg:entityTplAspect
-							</control-param>
+							<control-param name="ds">becpg/autocomplete/DataListCharact?className=bcpg:ingList&#38;attributeName=bcpg:ingListIng</control-param>
 						</control>
 					</field>
 					<field id="bcpg:allergenListInVolSources">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:product,bcpg:ing&#38;excludeClassNames=bcpg:entityTplAspect
-							</control-param>
+							<control-param name="ds">becpg/autocomplete/DataListCharact?className=bcpg:ingList&#38;attributeName=bcpg:ingListIng</control-param>
 						</control>
 					</field>
 					<!-- <field id="bcpg:allergenListPlants"/> -->
@@ -6081,14 +6079,14 @@
 					</field>
 					<field id="bcpg:parentLevel">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:costList&#38;attributeName=bcpg:costListCost
+							<control-param name="ds">becpg/autocomplete/DataListCharact?className=bcpg:costList&#38;attributeName=bcpg:costListCost
 							</control-param>
 						</control>
 					</field>
 					<field id="bcpg:costListComponent">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial,bcpg:packagingMaterial</control-param>
+							<control-param name="ds">becpg/autocomplete/DataListCharact?classNames=bcpg:rawMaterial,bcpg:packagingMaterial</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -6646,7 +6644,15 @@
 				<appearance>
 					<field id="bcpg:nutListNut">
 						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+							<control-param name="ds">becpg/autocomplete/nut</control-param>
+						</control>	
+					</field>
+					<field id="bcpg:nutListValue">
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">-</control-param>
+						</control>
 					</field>
 					<field id="bcpg:parentLevel">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
@@ -6739,6 +6745,7 @@
 				<field-visibility>
 					<show id="bcpg:nutListNut" />
 					<show id="bcpg:nutListValue" />
+					<show id="bcpg:nutListUnit"  />
 					<show id="bcpg:nutListMini" />
 					<show id="bcpg:nutListMaxi" />
 					<show id="bcpg:nutListLossPerc" />
@@ -6749,12 +6756,21 @@
 				<appearance>
 					<field id="bcpg:nutListNut">
 						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+							<control-param name="ds">becpg/autocomplete/nut</control-param>
+						</control>
 					</field>
+					<field id="bcpg:nutListValue">
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">-</control-param>
+						</control>
+					</field>
+					<field id="bcpg:nutListUnit" read-only="true"/>
+					
 					<field id="bcpg:parentLevel">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:nutList&#38;attributeName=bcpg:nutListNut
-							</control-param>
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:nutList&#38;attributeName=bcpg:nutListNut</control-param>
 							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
 					</field>

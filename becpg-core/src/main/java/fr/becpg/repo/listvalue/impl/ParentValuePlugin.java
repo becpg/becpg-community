@@ -47,6 +47,7 @@ public class ParentValuePlugin extends EntityListValuePlugin {
 	private static final Log logger = LogFactory.getLog(ParentValuePlugin.class);
 
 	private static final String SOURCE_TYPE_PARENT_VALUE = "ParentValue";
+	private static final String SOURCE_TYPE_DATA_LIST_CHARACT = "DataListCharact";
 	
 	@Autowired
 	private EntityListDAO entityListDAO;
@@ -59,7 +60,7 @@ public class ParentValuePlugin extends EntityListValuePlugin {
 
 	@Override
 	public String[] getHandleSourceTypes() {
-		return new String[] { SOURCE_TYPE_PARENT_VALUE };
+		return new String[] { SOURCE_TYPE_PARENT_VALUE, SOURCE_TYPE_DATA_LIST_CHARACT };
 	}
 
 	@Override
@@ -98,17 +99,17 @@ public class ParentValuePlugin extends EntityListValuePlugin {
 				}
 			if(dataListNodeRef != null){
 				if(dictionaryService.getProperty(attributeQName) != null){
-					return suggestFromProp(dataListNodeRef, itemId, type, attributeQName, query, queryFilter, pageNum, pageSize,props);
+					return suggestFromProp(sourceType, dataListNodeRef, itemId, type, attributeQName, query, queryFilter, pageNum, pageSize,props);
 				}
 				else{
-					return suggestFromAssoc(dataListNodeRef, itemId, type, attributeQName, query, queryFilter, pageNum, pageSize,props);
+					return suggestFromAssoc(sourceType, dataListNodeRef, itemId, type, attributeQName, query, queryFilter, pageNum, pageSize,props);
 				}
 			}
 		}		
 		return new ListValuePage(new ArrayList<>(), pageNum, pageSize, null); 
 	}
 
-	private ListValuePage suggestFromProp(NodeRef dataListNodeRef, NodeRef itemId, QName datalistType, QName propertyQName, String query, String queryFilter,
+	private ListValuePage suggestFromProp(String sourceType, NodeRef dataListNodeRef, NodeRef itemId, QName datalistType, QName propertyQName, String query, String queryFilter,
 			Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
 		
 
@@ -141,7 +142,7 @@ public class ParentValuePlugin extends EntityListValuePlugin {
 		return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(propertyQName, nodeService));
 	}
 	
-	private ListValuePage suggestFromAssoc(NodeRef dataListNodeRef, NodeRef itemId, QName datalistType, QName associationQName, String query, String queryFilter,
+	private ListValuePage suggestFromAssoc(String sourceType , NodeRef dataListNodeRef, NodeRef itemId, QName datalistType, QName associationQName, String query, String queryFilter,
 			Integer pageNum, Integer pageSize, Map<String, Serializable> props){
 		
 		List<ListValueEntry> result = new ArrayList<>();				
@@ -154,7 +155,12 @@ public class ParentValuePlugin extends EntityListValuePlugin {
 					String name = attributeExtractorService.extractPropName(type,targetNode);
 					if (isQueryMatch(query, name)) {
 						String cssClass = attributeExtractorService.extractMetadata(type,targetNode);
-						result.add(new ListValueEntry(dataListItemNodeRef.toString(), name, cssClass));
+						if(SOURCE_TYPE_DATA_LIST_CHARACT.equals(sourceType)){
+							result.add(new ListValueEntry(targetNode.toString(), name, cssClass));
+						} else {
+							result.add(new ListValueEntry(dataListItemNodeRef.toString(), name, cssClass));
+						}
+					
 					}
 				}
 			}
