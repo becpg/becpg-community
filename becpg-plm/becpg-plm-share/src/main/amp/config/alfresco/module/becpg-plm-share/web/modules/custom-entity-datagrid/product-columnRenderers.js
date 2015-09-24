@@ -261,17 +261,19 @@ if (beCPG.module.EntityDataGridRenderers) {
   });
 	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-      propertyName : ["bcpg:allergenListQtyPerc", "bcpg:filQtyPercMaxi", "bcpg:allergenRegulatoryThreshold"],
+      propertyName : ["bcpg:allergenListQtyPerc", "bcpg:filQtyPercMaxi", "bcpg:allergenRegulatoryThreshold", "bcpg:ingListQtyPerc"],
       renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
       	if(data.value != null){
       		var unit, qty;
       		if(data.value < 0.1){
       			qty = data.value * 10000;
       			unit = " ppm";
-      		}
-      		else{
+      		} else if(data.value < 1){
+      			qty = data.value * 10;
+      			unit = " ‰";
+      		} else{
       			qty = data.value;
-      			unit = "";
+      			unit = " %";
       		}
       		return Alfresco.util.encodeHTML(beCPG.util.sigFigs(qty,3).toLocaleString() + unit);
       	}      
