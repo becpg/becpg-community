@@ -33,6 +33,7 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.listvalue.impl.EntityListValuePlugin;
+import fr.becpg.repo.repository.annotation.InternalField;
 
 @Service
 public class SpelEditorListValuePlugin extends EntityListValuePlugin {
@@ -45,8 +46,7 @@ public class SpelEditorListValuePlugin extends EntityListValuePlugin {
 		return new String[] { SOURCE_TYPE_SPELEDITOR };
 	}
 
-	public ListValuePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize,
-			Map<String, Serializable> props) {
+	public ListValuePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
 
 		String className = (String) props.get(ListValueService.PROP_CLASS_NAME);
 
@@ -59,15 +59,15 @@ public class SpelEditorListValuePlugin extends EntityListValuePlugin {
 			Class<?> c = Class.forName(className);
 			BeanWrapper beanWrapper = new BeanWrapperImpl(c);
 			List<ListValueEntry> ret = new ArrayList<>();
-			
+
 			for (PropertyDescriptor pd : beanWrapper.getPropertyDescriptors()) {
-				if(pd.getReadMethod()!=null && pd.getWriteMethod()!=null){
-					ret.add(new ListValueEntry(pd.getName(), pd.getName(), pd.getPropertyType()
-							.getSimpleName()));
+				if (pd.getReadMethod() != null && pd.getWriteMethod() != null) {
+					if (!pd.getReadMethod().isAnnotationPresent(InternalField.class)) {
+						ret.add(new ListValueEntry(pd.getName(), pd.getName(), pd.getPropertyType().getSimpleName()));
+					}
 				}
 			}
-			
-			
+
 			return new ListValuePage(ret, pageNum, pageSize, null);
 
 		} catch (ClassNotFoundException e) {
@@ -78,8 +78,8 @@ public class SpelEditorListValuePlugin extends EntityListValuePlugin {
 
 		if (type.equals(PLMModel.TYPE_DYNAMICCHARACTLIST)) {
 
-			return suggestDatalistItem(new NodeRef((String) props.get(ListValueService.PROP_NODEREF)), type,
-					PLMModel.PROP_DYNAMICCHARACT_TITLE, query, pageNum, pageSize);
+			return suggestDatalistItem(new NodeRef((String) props.get(ListValueService.PROP_NODEREF)), type, PLMModel.PROP_DYNAMICCHARACT_TITLE,
+					query, pageNum, pageSize);
 		}
 
 		return suggestTargetAssoc(type, query, pageNum, pageSize, null, props);

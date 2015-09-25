@@ -21,6 +21,7 @@ import java.util.Date;
 
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
+import fr.becpg.repo.repository.annotation.InternalField;
 
 public abstract class AbstractEffectiveDataItem extends BeCPGDataObject implements EffectiveDataItem {
 
@@ -36,6 +37,7 @@ public abstract class AbstractEffectiveDataItem extends BeCPGDataObject implemen
 	
 	@AlfProp
 	@AlfQname(qname="bcpg:startEffectivity")
+	@InternalField
 	@Override
 	public Date getStartEffectivity() {
 		return startEffectivity;
@@ -48,6 +50,7 @@ public abstract class AbstractEffectiveDataItem extends BeCPGDataObject implemen
 
 	@AlfProp
 	@AlfQname(qname="bcpg:endEffectivity")
+	@InternalField
 	@Override
 	public Date getEndEffectivity() {
 		return endEffectivity;

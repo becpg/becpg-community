@@ -10,6 +10,7 @@ import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
+import fr.becpg.repo.repository.annotation.InternalField;
 import fr.becpg.repo.repository.model.AbstractManualDataItem;
 import fr.becpg.repo.repository.model.FormulatedCharactDataItem;
 import fr.becpg.repo.repository.model.MinMaxValueDataItem;
@@ -63,6 +64,7 @@ public class NutListDataItem extends AbstractManualDataItem  implements SimpleLi
 
 	
 	@AlfProp
+	@InternalField
 	@AlfQname(qname="bcpg:nutListValue")
 	public Double getManualValue() {
 		return manualValue;
@@ -75,6 +77,7 @@ public class NutListDataItem extends AbstractManualDataItem  implements SimpleLi
 
 
 	@AlfProp
+	@InternalField
 	@AlfQname(qname="bcpg:nutListFormulatedValue")
 	public Double getFormulatedValue() {
 		return formulatedValue;
@@ -170,6 +173,7 @@ public class NutListDataItem extends AbstractManualDataItem  implements SimpleLi
 	}
 
 	@AlfSingleAssoc
+	@InternalField
 	@AlfQname(qname="bcpg:nutListNut")
 	@DataListIdentifierAttr
 	public NodeRef getNut() {
@@ -177,6 +181,7 @@ public class NutListDataItem extends AbstractManualDataItem  implements SimpleLi
 	}
 
 	@Override
+	@InternalField
 	public NodeRef getCharactNodeRef() {
 		return getNut();
 	}
@@ -198,6 +203,7 @@ public class NutListDataItem extends AbstractManualDataItem  implements SimpleLi
 	
 	
 	@AlfProp
+	@InternalField
 	@AlfQname(qname="bcpg:nutListIsFormulated")
 	public Boolean getIsFormulated() {
 		return isFormulated;
@@ -209,6 +215,7 @@ public class NutListDataItem extends AbstractManualDataItem  implements SimpleLi
 	}
 
 	@AlfProp
+	@InternalField
 	@AlfQname(qname="bcpg:nutListFormulaErrorLog")
 	@Override
 	public String getErrorLog() {

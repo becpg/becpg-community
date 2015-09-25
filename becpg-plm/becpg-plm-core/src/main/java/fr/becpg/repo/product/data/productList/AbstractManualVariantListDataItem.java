@@ -23,6 +23,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
+import fr.becpg.repo.repository.annotation.InternalField;
 import fr.becpg.repo.repository.model.AbstractManualDataItem;
 import fr.becpg.repo.variant.model.VariantDataItem;
 
@@ -36,6 +37,7 @@ public abstract class AbstractManualVariantListDataItem extends AbstractManualDa
 	private List<NodeRef> variants;
 
 	@AlfProp
+	@InternalField
 	@AlfQname(qname="bcpg:variantIds")
 	public List<NodeRef> getVariants() {
 		return variants;

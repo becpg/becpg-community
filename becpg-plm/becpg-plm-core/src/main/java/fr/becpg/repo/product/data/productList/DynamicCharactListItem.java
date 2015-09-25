@@ -20,6 +20,7 @@ package fr.becpg.repo.product.data.productList;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.repository.annotation.InternalField;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.repository.model.ManualDataItem;
 import fr.becpg.repo.repository.model.Synchronisable;
@@ -64,6 +65,7 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 	
 
 	@AlfProp
+	@InternalField
 	@AlfQname(qname = "bcpg:dynamicCharactErrorLog")
 	public String getErrorLog() {
 		return errorLog;
@@ -94,6 +96,7 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 	}
 
 	@AlfProp
+	@InternalField
 	@AlfQname(qname = "bcpg:dynamicCharactGroupColor")
 	public String getGroupColor() {
 		return groupColor;
@@ -104,6 +107,7 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 	}
 
 	@AlfProp
+	@InternalField
 	@AlfQname(qname = "bcpg:dynamicCharactColumn")
 	public String getColumnName() {
 		return columnName;
@@ -115,6 +119,7 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 	
 
 	@AlfProp
+	@InternalField
 	@AlfQname(qname = "bcpg:dynamicCharactSynchronisableState")
 	public DynamicCharactSynchronisableState getSynchronisableState() {
 		return synchronisableState;
@@ -126,6 +131,7 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 
 
 	@AlfProp
+	@InternalField
 	@AlfQname(qname = "bcpg:dynamicCharactExecOrder")
 	public DynamicCharactExecOrder getExecOrder() {
 		return execOrder;
@@ -141,6 +147,7 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 
 	
 	@AlfProp
+	@InternalField
 	@AlfQname(qname = "bcpg:dynamicCharactMultiLevel")
 	public Boolean getMultiLevelFormula() {
 		return multiLevelFormula;
@@ -158,6 +165,7 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 	
 
 	@Override
+	@InternalField
 	public Boolean getIsManual() {
 		return DynamicCharactSynchronisableState.Manual.equals(synchronisableState);
 	}
