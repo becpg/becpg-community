@@ -96,7 +96,7 @@
             url = Alfresco.util.isValueSet(siteId) ? "/documentlibrary" : "/repository";
         }
 
-        if (isFullPath)
+        if (isFullPath && !Alfresco.constants.PAGECONTEXT == "mine")
         {
             url += '?path=' + encodeURIComponent(path + '/' + name);
         }

@@ -74,7 +74,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 				for (CompoListDataItem compoItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 
 					NodeRef part = compoItem.getProduct();
-					if (!visitedProducts.contains(part)) {
+					if (!visitedProducts.contains(part) && compoItem.getQtySubFormula()!=null && compoItem.getQtySubFormula()>0) {
 						ProductData partProduct = alfrescoRepository.findOne(part);
 						if (partProduct.getLabelClaimList() != null) {
 							for (LabelClaimListDataItem labelClaim : partProduct.getLabelClaimList()) {

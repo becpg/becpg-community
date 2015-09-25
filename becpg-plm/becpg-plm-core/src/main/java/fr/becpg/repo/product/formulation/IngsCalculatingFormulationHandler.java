@@ -139,20 +139,22 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		if (compoList != null) {
 			for (CompoListDataItem compoItem : compoList) {
 
-				ProductData componentProductData = (ProductData) alfrescoRepository.findOne(compoItem.getProduct());
-				visitILOfPart(formulatedProduct, compoItem, componentProductData, retainNodes, totalQtyIngMap, totalQtyVolMap, reqCtrlMap);
-
-				QName type = nodeService.getType(compoItem.getProduct());
-				if (type != null && (type.isMatch(PLMModel.TYPE_RAWMATERIAL) || type.isMatch(PLMModel.TYPE_SEMIFINISHEDPRODUCT) || type.isMatch(PLMModel.TYPE_FINISHEDPRODUCT))
-						&& compoItem.getDeclType() != DeclarationType.Omit) {
-					Double qty = FormulationHelper.getQtyInKg(compoItem);
-					if (qty != null) {
-						totalQtyUsed += qty * FormulationHelper.getYield(compoItem) / 100;
-					}
-
-					Double vol = compoItem.getVolume();
-					if (vol != null) {
-						totalVolumeUsed += vol / 100;
+				if(compoItem.getQtySubFormula()!=null && compoItem.getQtySubFormula()>0){
+					ProductData componentProductData = (ProductData) alfrescoRepository.findOne(compoItem.getProduct());
+					visitILOfPart(formulatedProduct, compoItem, componentProductData, retainNodes, totalQtyIngMap, totalQtyVolMap, reqCtrlMap);
+	
+					QName type = nodeService.getType(compoItem.getProduct());
+					if (type != null && (type.isMatch(PLMModel.TYPE_RAWMATERIAL) || type.isMatch(PLMModel.TYPE_SEMIFINISHEDPRODUCT) || type.isMatch(PLMModel.TYPE_FINISHEDPRODUCT))
+							&& compoItem.getDeclType() != DeclarationType.Omit) {
+						Double qty = FormulationHelper.getQtyInKg(compoItem);
+						if (qty != null) {
+							totalQtyUsed += qty * FormulationHelper.getYield(compoItem) / 100;
+						}
+	
+						Double vol = compoItem.getVolume();
+						if (vol != null) {
+							totalVolumeUsed += vol / 100;
+						}
 					}
 				}
 
