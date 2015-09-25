@@ -577,24 +577,31 @@
 	<config condition="pjt:taskList" evaluator="node-type">
 		<forms>
 			<form>
+				<edit-form template="tab-edit" />
 				<field-visibility>
 					<show id="pjt:tlTaskName" />
 					<show id="pjt:tlTaskDescription" />
+					<show id="pjt:tlTaskLegend" />
+					
+					<show id="pjt:tlState" />
+					
 					<show id="pjt:tlPrevTasks" />
 					<show id="bcpg:parentLevel" force="true" />
 					<show id="pjt:tlRefusedTaskRef" />
+					
 					<show id="pjt:tlResources" />
 					<show id="pjt:tlObservers" />
-					<show id="pjt:tlTaskLegend" />
 					<show id="pjt:tlWorkflowName" />
+					
 					<show id="pjt:tlIsMilestone" />
 					<show id="pjt:tlDuration" />
-					<show id="pjt:tlWork" />
+					
 					<show id="pjt:completionPercent" />
-					<show id="pjt:tlState" />
 					<show id="pjt:tlManualDate" />
 					<show id="pjt:tlStart" />
 					<show id="pjt:tlEnd" />
+					
+					<show id="pjt:tlWork" />
 					<show id="pjt:tlResourceCost" />
 					<show id="pjt:tlBudgetRef" />
 
@@ -609,22 +616,28 @@
 							<control-param name="rows">10</control-param>
 						</control>
 					</field>
+					
+					<field id="pjt:tlTaskLegend" set="mainInfo">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+						</control>
+					</field>
+					<field id="pjt:tlState" set="mainInfo" />
+					<field id="bcpg:parentLevel" set="mainInfo" label-id="becpg.forms.field.projects.taskList.parentLevel" >
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
+							</control-param>
+							<control-param name="urlParamsToPass">itemId</control-param>
+							<control-param name="parent">bcpg_parentLevel</control-param>
+							<control-param name="parentMode">true</control-param>
+						</control>
+					</field>
 					<field id="pjt:tlPrevTasks" set="mainInfo">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
 							</control-param>
 							<control-param name="urlParamsToPass">itemId</control-param>
-						</control>
-					</field>
-					<field id="bcpg:parentLevel" set="mainInfo">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
-							</control-param>
-							<control-param name="urlParamsToPass">itemId</control-param>
-							<control-param name="parent">bcpg_parentLevel
-							</control-param>
-							<control-param name="parentMode">true</control-param>
 						</control>
 					</field>
 					<field id="pjt:tlRefusedTaskRef" set="mainInfo">
@@ -635,107 +648,86 @@
 							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
 					</field>
-					<field id="pjt:tlResources" set="mainInfo" />
-					<field id="pjt:tlObservers" set="mainInfo" />
+				
+					
+					<set id="resources" appearance="bordered-panel" label-id="becpg.forms.set.resources.label"
+						template="/org/alfresco/components/form/1-column-set.ftl" />
+						
+					<field id="pjt:tlResources" set="resources" />
+					<field id="pjt:tlObservers" set="resources" />
 
-					<set id="mainInfo2" parent="mainInfo"
-						template="/org/alfresco/components/form/2-column-set.ftl" />
-					<field id="pjt:tlTaskLegend" set="mainInfo2">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="style">width:180px</control-param>
-						</control>
-					</field>
-					<field id="pjt:tlWorkflowName" set="mainInfo2">
+					<field id="pjt:tlWorkflowName" set="resources">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">,activiti$projectAdhoc|data.workflow.projectadhoc,activiti$projectNewProduct|data.workflow.projectnewproduct
 							</control-param>
 						</control>
 					</field>
 
+
 					<set id="planning" appearance="bordered-panel" label-id="becpg.forms.set.planning.label"
 						template="/org/alfresco/components/form/2-column-set.ftl" />
 
 					<field id="pjt:tlIsMilestone" set="planning" />
 					<field id="pjt:tlDuration" set="planning" />
-					<field id="pjt:tlWork" set="planning" />
-					<field id="pjt:tlCapacity" read-only="true" set="planning" />
-					<field id="pjt:tlState" set="planning" />
+					
 					<field id="pjt:tlManualDate" set="planning" />
 					<field id="pjt:tlStart" set="planning" />
 					<field id="pjt:tlEnd" set="planning" />
-					<field id="pjt:tlResourceCost" set="planning">
+					<field id="pjt:completionPercent" set="planning" />
+					
+					<set id="budget" appearance="bordered-panel" label-id="becpg.forms.set.budget.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+				
+					<field id="pjt:tlWork" set="budget" />
+					<field id="pjt:tlResourceCost" set="budget">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 						</control>
 					</field>
-					<field id="pjt:tlBudgetRef" set="planning">
+					
+					<field id="pjt:tlBudgetRef" set="budget">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:budgetList&amp;attributeName=pjt:blItem
 							</control-param>
 						</control>
 					</field>
-					<field id="pjt:completionPercent" set="planning" />
+					
 				</appearance>
 			</form>
-			<form id="simple-form">
-				<field-visibility>
-					<show id="pjt:tlTaskName" />
-					<show id="pjt:tlPrevTasks" />
-					<show id="bcpg:parentLevel" force="true" />
-					<show id="pjt:tlResources" />
-					<show id="pjt:tlTaskLegend" />
-					<show id="pjt:tlState" />
-					<show id="pjt:tlIsMilestone" />
-					<show id="pjt:tlDuration" />
-					<show id="pjt:completionPercent" />
-					<show id="pjt:tlManualDate" />
-					<show id="pjt:tlStart" />
-					<show id="pjt:tlEnd" />
-				</field-visibility>
-				<appearance>
-					<field id="pjt:tlPrevTasks">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
-							</control-param>
-							<control-param name="urlParamsToPass">itemId</control-param>
-						</control>
-					</field>
-					<field id="bcpg:parentLevel">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
-							</control-param>
-							<control-param name="urlParamsToPass">itemId</control-param>
-							<control-param name="parent">bcpg_parentLevel
-							</control-param>
-							<control-param name="parentMode">true</control-param>
-						</control>
-					</field>
-				</appearance>
-			</form>
+			
 		</forms>
 	</config>
 	<config condition="pjt:taskList" evaluator="model-type">
 		<forms>
 			<form>
+				<edit-form template="tab-edit" />
 				<field-visibility>
 					<show id="pjt:tlTaskName" />
 					<show id="pjt:tlTaskDescription" />
+					<show id="pjt:tlTaskLegend" />
+					
+					<show id="pjt:tlState" />
+					
 					<show id="pjt:tlPrevTasks" />
 					<show id="bcpg:parentLevel" force="true" />
+					<show id="pjt:tlRefusedTaskRef" />
+					
 					<show id="pjt:tlResources" />
-					<show id="pjt:tlTaskLegend" />
+					<show id="pjt:tlObservers" />
+					<show id="pjt:tlWorkflowName" />
+					
 					<show id="pjt:tlIsMilestone" />
 					<show id="pjt:tlDuration" />
-					<show id="pjt:tlWork" />
-					<show id="pjt:tlResourceCost" />
-					<show id="pjt:tlBudgetRef" />
+					
+					<show id="pjt:completionPercent" />
 					<show id="pjt:tlManualDate" />
 					<show id="pjt:tlStart" />
 					<show id="pjt:tlEnd" />
-
+					
+					<show id="pjt:tlWork" />
+					<show id="pjt:tlResourceCost" />
+					<show id="pjt:tlBudgetRef" />
 
 				</field-visibility>
 				<appearance>
@@ -748,118 +740,83 @@
 							<control-param name="rows">10</control-param>
 						</control>
 					</field>
+					
+					<field id="pjt:tlTaskLegend" set="mainInfo">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+						</control>
+					</field>
+					<field id="pjt:tlState" set="mainInfo" />
+					<field id="bcpg:parentLevel" set="mainInfo" label-id="becpg.forms.field.projects.taskList.parentLevel" >
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
+							</control-param>
+							<control-param name="urlParamsToPass">itemId</control-param>
+							<control-param name="parent">bcpg_parentLevel</control-param>
+							<control-param name="parentMode">true</control-param>
+						</control>
+					</field>
 					<field id="pjt:tlPrevTasks" set="mainInfo">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
 							</control-param>
+							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
 					</field>
-					<field id="bcpg:parentLevel" set="mainInfo">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+					<field id="pjt:tlRefusedTaskRef" set="mainInfo">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
 							</control-param>
-							<control-param name="parent">bcpg_parentLevel
-							</control-param>
-							<control-param name="parentMode">true</control-param>
+							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
 					</field>
-					<field id="pjt:tlResources" set="mainInfo" />
-					<field id="pjt:tlTaskLegend" set="mainInfo" />
+				
+					
+					<set id="resources" appearance="bordered-panel" label-id="becpg.forms.set.resources.label"
+						template="/org/alfresco/components/form/1-column-set.ftl" />
+						
+					<field id="pjt:tlResources" set="resources" />
+					<field id="pjt:tlObservers" set="resources" />
+
+					<field id="pjt:tlWorkflowName" set="resources">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">,activiti$projectAdhoc|data.workflow.projectadhoc,activiti$projectNewProduct|data.workflow.projectnewproduct</control-param>
+							<control-param name="defaultValueContextProperty">activiti$projectAdhoc</control-param>
+						</control>
+					</field>
+
 
 					<set id="planning" appearance="bordered-panel" label-id="becpg.forms.set.planning.label"
 						template="/org/alfresco/components/form/2-column-set.ftl" />
+
 					<field id="pjt:tlIsMilestone" set="planning" />
 					<field id="pjt:tlDuration" set="planning" />
-					<field id="pjt:tlWork" set="planning" />
-					<field id="pjt:tlResourceCost" set="planning">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-						</control>
-					</field>
-					<field id="pjt:tlBudgetRef" set="planning">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-								<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:budgetList&amp;attributeName=pjt:blItem</control-param>
-						</control>
-					</field>
+					
 					<field id="pjt:tlManualDate" set="planning" />
 					<field id="pjt:tlStart" set="planning" />
 					<field id="pjt:tlEnd" set="planning" />
-				</appearance>
-			</form>
-			<form id="create">
-				<field-visibility>
-					<show id="pjt:tlTaskName" />
-					<show id="pjt:tlTaskDescription" />
-					<show id="pjt:tlPrevTasks" />
-					<show id="bcpg:parentLevel" force="true" />
-					<show id="pjt:tlRefusedTaskRef" />
-					<show id="pjt:tlResources" />
-					<show id="pjt:tlObservers" />
-					<show id="pjt:tlTaskLegend" />
-					<show id="pjt:tlWorkflowName" />
-
-					<show id="pjt:tlIsMilestone" />
-					<show id="pjt:tlDuration" />
-					<show id="pjt:tlWork" />
-					<show id="pjt:completionPercent" />
-					<show id="pjt:tlState" />
-					<show id="pjt:tlManualDate" />
-					<show id="pjt:tlStart" />
-					<show id="pjt:tlEnd" />
-					<show id="pjt:tlResourceCost" />
-					<show id="pjt:tlBudgetRef" />
-				</field-visibility>
-				<appearance>
-
-					<field id="pjt:tlPrevTasks">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
-							</control-param>
-						</control>
-					</field>
-					<field id="bcpg:parentLevel">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
-							</control-param>
-							<control-param name="parent">bcpg_parentLevel
-							</control-param>
-							<control-param name="parentMode">true</control-param>
-						</control>
-					</field>
-					<field id="pjt:tlRefusedTaskRef">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
-							</control-param>
-						</control>
-					</field>
-
-					<field id="pjt:tlTaskLegend">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="style">width:180px</control-param>
-						</control>
-					</field>
-					<field id="pjt:tlWorkflowName">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">,activiti$projectAdhoc|data.workflow.projectadhoc,activiti$projectNewProduct|data.workflow.projectnewproduct
-							</control-param>
-						</control>
-					</field>
-
-					<field id="pjt:tlResourceCost">
+					<field id="pjt:completionPercent" set="planning" />
+					
+					<set id="budget" appearance="bordered-panel" label-id="becpg.forms.set.budget.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+				
+					<field id="pjt:tlWork" set="budget" />
+					<field id="pjt:tlResourceCost" set="budget">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 						</control>
 					</field>
-					<field id="pjt:tlBudgetRef">
+					
+					<field id="pjt:tlBudgetRef" set="budget">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:budgetList&amp;attributeName=pjt:blItem
+							</control-param>
 						</control>
 					</field>
+					
 				</appearance>
 			</form>
 			<!-- Data Grid view -->

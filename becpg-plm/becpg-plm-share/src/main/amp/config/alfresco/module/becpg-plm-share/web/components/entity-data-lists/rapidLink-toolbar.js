@@ -110,16 +110,6 @@
                               });
                      }
 
-                     rapidLinkPickerMenu.push({
-                        text : '<span class="simulation" title="' + this
-                              .msg("action.rapid-link.simulation.description") + '" >' + this
-                              .msg("action.rapid-link.simulation") + '</span>',
-                        onclick : {
-                           fn : this.onClickCreateSimulation,
-                           scope : this
-                        }
-                     });
-
                      this.widgets.rapidLinkToolbar = new YAHOO.widget.Button({
                         type : "split",
                         label : this.msg("button.rapid-link"),
@@ -226,34 +216,7 @@
                      this.modules.entityImporter.show();
                   },
 
-                  onClickCreateSimulation : function RapidLinkToolbar_onClickCreateSimulation(p_sType, p_aArgs, p_oItem) {
-                     Alfresco.util.PopupManager.displayMessage({
-                        text : this.msg("message.rapid-link.simulation.please-wait")
-                     });
-
-                     Alfresco.util.Ajax
-                           .request({
-                              method : Alfresco.util.Ajax.POST,
-                              url : Alfresco.constants.PROXY_URI + "becpg/entity/simulation/create?entityNodeRef=" + this.options.entity.nodeRef,
-                              successCallback : {
-                                 fn : function(resp) {
-                                    if (resp.json) {
-                                       window.location.href = beCPG.util.entityURL(this.options.siteId,
-                                             resp.json.persistedObject, this.options.entity.type);
-                                    }
-                                 },
-                                 scope : this
-                              },
-                              failureCallback : {
-                                 fn : function(resp) {
-                                    Alfresco.util.PopupManager.displayMessage({
-                                       text : this.msg("message.rapid-link.simulation.failure")
-                                    });
-                                 },
-                                 scope : this
-                              }
-                           });
-                  },
+                
                   addToDataList : function RapidLinkToolbar_addToDataList(nodeRef, msgKey) {
 
                      var instance = this, dataObj = null,

@@ -13,7 +13,7 @@
 
       <div id="${formId}-container" class="form-container">
 
-         <#if form.showCaption?exists && form.showCaption>
+         <#if form.showCaption?exists && form.showCaption && (!form.editTemplate?exists ||  form.editTemplate!= "tab-edit")>
             <div id="${formId}-caption" class="caption"><span class="mandatory-indicator">*</span>${msg("form.required.fields")}</div>
          </#if>
       
@@ -28,7 +28,7 @@
 	      </#if>
 
             <div id="${formId}-fields" class="form-fields">
-
+			<#if !form.editTemplate?exists ||  form.editTemplate!= "tab-edit">
                <#list form.structure as item>
                   <#if item.kind == "set">
                   	<#if fields??>
@@ -46,7 +46,9 @@
 					      	</#if> 
 		              </#if>
                </#list>
-
+			<#else>	
+				<@formLib.renderTabbedForm form=form formId=formId/>
+			</#if>
             </div>
 
             <div class="bdft">

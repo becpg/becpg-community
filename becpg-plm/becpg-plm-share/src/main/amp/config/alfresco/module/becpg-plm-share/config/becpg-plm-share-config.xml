@@ -92,17 +92,17 @@
 		<lists>
 			<list id="compoList" index="50" view="true" />
 			<list id="packagingList" index="60" view="true" />
-			<list id="processList" index="70" view="true" />
-			<list id="resourceParamList" index="80" />
-			<list id="ingList" index="85" />
-			<list id="allergenList" index="90" />
-			<list id="costList" index="100" />
-			<list id="priceList" index="110" />
-			<list id="nutList" index="120" />
-			<list id="ingLabelingList" index="130" view="true" />
-			<list id="organoList" index="140" />
-			<list id="physicoChemList" index="150" />
-			<list id="labelClaimList" index="160" />
+			<list id="processList" index="80" view="true" />
+			<list id="resourceParamList" index="90" />
+			<list id="ingList" index="100" />
+			<list id="allergenList" index="110" />
+			<list id="costList" index="120" />
+			<list id="priceList" index="130" />
+			<list id="nutList" index="140" />
+			<list id="ingLabelingList" index="150" view="true" />
+			<list id="organoList" index="160" />
+			<list id="physicoChemList" index="170" />
+			<list id="labelClaimList" index="180" />
 		</lists>
 	</config>
 
