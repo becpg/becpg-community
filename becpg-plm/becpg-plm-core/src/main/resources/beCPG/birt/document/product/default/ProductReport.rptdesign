@@ -7867,7 +7867,7 @@ dataSetRow["nutListUnit"]
                                                 <property name="name">servingSize</property>
                                                 <text-property name="displayName">100mL</text-property>
                                                 <expression name="expression" type="javascript">if(dataSetRow["servingSize"] !=null) {
-"(" + dataSetRow["servingSize"] + (dataSetRow["productUnit"] == "L" || dataSetRow["productUnit"] == " mL" ? "mL)" : " g)")
+"(" + dataSetRow["servingSize"] + (dataSetRow["productUnit"] == "L" || dataSetRow["productUnit"] == "mL" ? "mL)" : " g)")
 }else{
 ""
 }</expression>
