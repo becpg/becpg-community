@@ -79,6 +79,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	public static final String PRODUCT_REPORT_CLIENT_NAME = "path.productreportclienttemplate";
 	public static final String PRODUCT_REPORT_PRODUCTION_PATH = "beCPG/birt/document/product/default/ProductReport_Prod.rptdesign";
 	public static final String PRODUCT_REPORT_PRODUCTION_NAME = "path.productreportproductiontemplate";
+	public static final String PRODUCT_REPORT_RAWMATERIAL_PATH = "beCPG/birt/document/product/default/RawMaterialReport.rptdesign";
+	public static final String PRODUCT_REPORT_SUPPLIER_NAME = "path.rawmaterialreporttemplate";
 	private static final String NC_REPORT_PATH = "beCPG/birt/document/nonconformity/NCReport.rptdesign";
 	private static final String ECO_REPORT_PATH = "beCPG/birt/document/ecm/ECOReport.rptdesign";
 	private static final String EXPORT_PRODUCTS_REPORT_RPTFILE_PATH = "beCPG/birt/exportsearch/product/ExportSearch.rptdesign";
@@ -672,17 +674,18 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		// product report templates
 		NodeRef productReportTplsNodeRef = visitFolder(reportsNodeRef, PlmRepoConsts.PATH_PRODUCT_REPORTTEMPLATES);
 		String productReportClientName = I18NUtil.getMessage(PRODUCT_REPORT_CLIENT_NAME, Locale.getDefault());
+		String productReportSupplierName = I18NUtil.getMessage(PRODUCT_REPORT_SUPPLIER_NAME, Locale.getDefault());
 		String productReportProductionName = I18NUtil.getMessage(PRODUCT_REPORT_PRODUCTION_NAME, Locale.getDefault());
 
 		try {
 
 			QName[] productTypes = { PLMModel.TYPE_FINISHEDPRODUCT, PLMModel.TYPE_RAWMATERIAL, PLMModel.TYPE_SEMIFINISHEDPRODUCT,
 					PLMModel.TYPE_PACKAGINGMATERIAL };
-			String[] defaultReport = { PRODUCT_REPORT_CLIENT_PATH, PRODUCT_REPORT_CLIENT_PATH, PRODUCT_REPORT_PRODUCTION_PATH,
+			String[] defaultReport = { PRODUCT_REPORT_CLIENT_PATH, PRODUCT_REPORT_RAWMATERIAL_PATH, PRODUCT_REPORT_PRODUCTION_PATH,
 					PRODUCT_REPORT_CLIENT_PATH };
-			String[] defaultReportName = { productReportClientName, productReportClientName, productReportProductionName, productReportClientName };
+			String[] defaultReportName = { productReportClientName, productReportSupplierName, productReportProductionName, productReportClientName };
 			String[] otherReport = { PRODUCT_REPORT_PRODUCTION_PATH, null, null, null };
-			String[] otherReportName = { productReportProductionName, null, null, null };
+			String[] otherReportName = { productReportProductionName, null, null, null };			
 
 			int i = 0;
 
