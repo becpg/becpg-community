@@ -7,29 +7,26 @@
 </#if>
 
 
-
 <div id="${el}-dialog">
    <div id="${el}-dialogTitle" class="hd">${msg("title")}</div>
    <div class="bd">
 
       <div id="${formId}-container" class="form-container">
 
-         <#if form.showCaption?exists && form.showCaption>
+         <#if form.showCaption?exists && form.showCaption && ( !form.editTemplate?exists || form.editTemplate != "tab-edit")>
             <div id="${formId}-caption" class="caption"><span class="mandatory-indicator">*</span>${msg("form.required.fields")}</div>
          </#if>
       
          <form id="${formId}" method="${form.method}" accept-charset="utf-8" enctype="${form.enctype}" action="${form.submissionUrl}">
-   
          <#if form.destination??>
             <input id="${formId}-destination" name="alf_destination" type="hidden" value="${form.destination}" />
          </#if>
-         
-          <#if args.association??>
+         <#if args.association??>
 	         <input id="${formId}-association" name="alf_association" type="hidden" value="${args.association}" />
-	      </#if>
-   
-            <div id="${formId}-fields" class="form-fields">
+	     </#if>
 
+  		 	<div id="${formId}-fields" class="form-fields">
+   			<#if  !form.editTemplate?exists ||  form.editTemplate!= "tab-edit">
                <#list form.structure as item>
                   <#if item.kind == "set">
                   	<#if fields??>
@@ -47,7 +44,9 @@
 		         	 </#if> 
                   </#if>
                </#list>
-
+			<#else>	
+				<@formLib.renderTabbedForm form=form formId=formId/>
+			</#if>
             </div>
 
             <div class="bdft">

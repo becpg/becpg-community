@@ -215,13 +215,16 @@
 							    if(this.options.sortOptions!=null && this.options.sortOptions.length>0){
 							        
                                     lists.sort(function (listId1, listId2){
-                                        var val1=500, val2 = 500;
+                                        var val1 = 500, val2 = 500;
                                         for(var z in me.options.sortOptions){
                                             if(listId1.name.indexOf(me.options.sortOptions[z].id)>-1){
                                                 val1 = me.options.sortOptions[z].sortIndex;
                                             }
                                             if(listId2.name.indexOf(me.options.sortOptions[z].id)>-1){
                                                 val2 = me.options.sortOptions[z].sortIndex;
+                                            }
+                                            if(val1!=500 && val1!=500){
+                                            	break;
                                             }
                                         }
                                         return val1 - val2;

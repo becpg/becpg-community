@@ -40,7 +40,7 @@ function getSortOptions()
                     sortOptions.push(
                     {
                         id : listId,
-                        sortIndex : sortIndex,
+                        sortIndex : parseInt(sortIndex),
                         isView : view == "true"
                     });
                 }

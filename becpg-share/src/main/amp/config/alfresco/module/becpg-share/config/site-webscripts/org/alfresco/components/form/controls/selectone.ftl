@@ -25,7 +25,7 @@
 <#if field.control.params.isSearch?? && form.mode == "edit" || form.mode == "create" >
 	<#if field.control.params.defaultValue ??>
 		<#assign fieldValue=field.control.params.defaultValue>
-	<#else>
+	<#elseif field.control.params.isSearch?? >
 		<#assign fieldValue="" />
 	</#if>
 </#if>

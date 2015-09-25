@@ -34,19 +34,5 @@
 				</customization>
 			</customizations>
 		</module>
-		<!-- <module>
-		   <id>becpg-contextual-help</id>
-		   <components>
-                <component>
-                    <region-id>footer</region-id>
-                    <scope>global</scope>
-                    <sub-components>
-                        <sub-component id="becpg-contextual-help" index="25">
-                            <url>/components/contextual-help/contextual-help</url>
-                        </sub-component>
-                    </sub-components>
-                </component>
-            </components>
-		</module> -->
 	</modules>
 </extension>  
