@@ -383,8 +383,8 @@
 				</property>
 				<property name="pjt:tlDuration">
 					<type>d:int</type>
-					<default>1</default>
 					<mandatory>true</mandatory>
+					<default>1</default>
 					<index enabled="false" />
 				</property>
 				<property name="pjt:tlRealDuration">
