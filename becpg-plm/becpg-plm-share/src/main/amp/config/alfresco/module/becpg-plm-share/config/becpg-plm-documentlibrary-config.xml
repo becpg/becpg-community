@@ -22,6 +22,7 @@
 				<aspect name="pack:pmIntSizeAspect" />
 				<aspect name="pack:pmCoilAspect" />
 				<aspect name="pack:pmPrintAspect" />
+				<aspect name="bcpg:entityVariantAspect" />
 				
 			</visible>
 			<!-- Aspects that a user can add. Same as "visible" if left empty -->
