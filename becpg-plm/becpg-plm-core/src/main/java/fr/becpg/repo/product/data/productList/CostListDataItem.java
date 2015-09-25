@@ -15,6 +15,7 @@ import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
+import fr.becpg.repo.repository.annotation.InternalField;
 import fr.becpg.repo.repository.model.AbstractManualDataItem;
 import fr.becpg.repo.repository.model.ForecastValueDataItem;
 import fr.becpg.repo.repository.model.FormulatedCharactDataItem;
@@ -104,12 +105,14 @@ MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ForecastValue
 
 	@AlfSingleAssoc
 	@AlfQname(qname="bcpg:costListCost")
+	@InternalField
 	@DataListIdentifierAttr
 	public NodeRef getCost() {
 		return cost;
 	}
 	
 	@Override
+	@InternalField
 	public NodeRef getCharactNodeRef() {
 		return getCost();
 	}
@@ -138,7 +141,7 @@ MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ForecastValue
 	
 	//////////////////////////////////////
 	
-	
+	@InternalField
 	public Double getMini() {
 		// TODO Auto-generated method stub
 		return null;
@@ -150,6 +153,7 @@ MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ForecastValue
 	}
 	
 	@AlfProp
+	@InternalField
 	@AlfQname(qname="bcpg:costListIsFormulated")
 	public Boolean getIsFormulated() {
 		return isFormulated;
@@ -161,6 +165,7 @@ MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ForecastValue
 	}
 
 	@AlfProp
+	@InternalField
 	@AlfQname(qname="bcpg:costListFormulaErrorLog")
 	@Override
 	public String getErrorLog() {
@@ -173,6 +178,7 @@ MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ForecastValue
 	}
 
 	@AlfMultiAssoc
+	@InternalField
 	@AlfQname(qname="bcpg:plants")
 	public List<NodeRef> getPlants() {
 		return plants;
@@ -307,6 +313,7 @@ MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ForecastValue
 
 	@Override
 	@AlfProp
+	@InternalField
 	@AlfQname(qname = "bcpg:depthLevel")
 	public Integer getDepthLevel() {
 		return depthLevel;
@@ -318,6 +325,7 @@ MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ForecastValue
 
 	@Override
 	@AlfProp
+	@InternalField
 	@AlfQname(qname = "bcpg:parentLevel")
 	public CostListDataItem getParent() {
 		return this.parent;
@@ -329,6 +337,7 @@ MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ForecastValue
 	}
 
 	@AlfSingleAssoc
+	@InternalField
 	@AlfQname(qname="bcpg:costListComponent")
 	public NodeRef getComponentNodeRef() {
 		return componentNodeRef;

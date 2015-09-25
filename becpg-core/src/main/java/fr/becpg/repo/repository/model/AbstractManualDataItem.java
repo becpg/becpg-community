@@ -20,6 +20,7 @@ package fr.becpg.repo.repository.model;
 import fr.becpg.repo.repository.annotation.AlfEnforced;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
+import fr.becpg.repo.repository.annotation.InternalField;
 
 public abstract class AbstractManualDataItem extends BeCPGDataObject implements ManualDataItem, SortableDataItem {
 
@@ -33,6 +34,7 @@ public abstract class AbstractManualDataItem extends BeCPGDataObject implements 
 
 	@AlfProp
 	@AlfEnforced
+	@InternalField
 	@AlfQname(qname="bcpg:isManualListItem")
 	public Boolean getIsManual() {
 		return isManual!=null ? isManual : Boolean.FALSE;
@@ -43,6 +45,7 @@ public abstract class AbstractManualDataItem extends BeCPGDataObject implements 
 	}
 
 	@AlfProp
+	@InternalField
 	@AlfQname(qname="bcpg:sort")
 	public Integer getSort() {
 		return sort;

@@ -29,6 +29,7 @@ import org.alfresco.service.namespace.QName;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
+import fr.becpg.repo.repository.annotation.InternalField;
 
 public  abstract class  BeCPGDataObject  extends BaseObject implements RepositoryEntity {
 
@@ -51,7 +52,7 @@ public  abstract class  BeCPGDataObject  extends BaseObject implements Repositor
 	
 	private transient int dbHashCode;
 	
-
+	@InternalField
 	public int getDbHashCode() {
 		return dbHashCode;
 	}
@@ -82,7 +83,7 @@ public  abstract class  BeCPGDataObject  extends BaseObject implements Repositor
 	    this.dbHashCode = beCPGDataObject.dbHashCode;
 	}
 
-	
+	@InternalField
 	public NodeRef getNodeRef() {
 		return nodeRef;
 	}
@@ -101,6 +102,7 @@ public  abstract class  BeCPGDataObject  extends BaseObject implements Repositor
 		this.name = name;
 	}
 
+	@InternalField
 	public NodeRef getParentNodeRef() {
 		return parentNodeRef;
 	}
@@ -109,7 +111,7 @@ public  abstract class  BeCPGDataObject  extends BaseObject implements Repositor
 		this.parentNodeRef = parentNodeRef;
 	}
 
-	
+	@InternalField
 	public Set<QName> getAspects() {
 		return aspects;
 	}
@@ -118,6 +120,7 @@ public  abstract class  BeCPGDataObject  extends BaseObject implements Repositor
 		this.aspects = aspects;
 	}
 
+	@InternalField
 	public Map<QName, Serializable> getExtraProperties() {
 		return extraProperties;
 	}
@@ -126,6 +129,7 @@ public  abstract class  BeCPGDataObject  extends BaseObject implements Repositor
 		this.extraProperties = extraProperties;
 	}
 
+	@InternalField
 	public boolean isTransient() {
 		return isTransient;
 	}

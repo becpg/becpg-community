@@ -7,6 +7,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.product.data.constraints.ProcessListUnit;
 import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
+import fr.becpg.repo.repository.annotation.InternalField;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
@@ -251,6 +252,7 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 	}
 
 	@Override
+	@InternalField
 	public NodeRef getComponent() {
 		return getResource();
 	}

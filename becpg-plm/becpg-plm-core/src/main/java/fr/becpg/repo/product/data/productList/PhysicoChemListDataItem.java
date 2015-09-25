@@ -10,6 +10,7 @@ import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
+import fr.becpg.repo.repository.annotation.InternalField;
 import fr.becpg.repo.repository.model.AbstractManualDataItem;
 import fr.becpg.repo.repository.model.MinMaxValueDataItem;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
@@ -79,13 +80,14 @@ public class PhysicoChemListDataItem extends AbstractManualDataItem implements S
 	@AlfSingleAssoc
 	@DataListIdentifierAttr
 	@AlfQname(qname="bcpg:pclPhysicoChem")
+	@InternalField
 	public NodeRef getPhysicoChem() {
 		return physicoChem;
 	}
 	
 	@Override
+	@InternalField
 	public NodeRef getCharactNodeRef() {
-	
 		return getPhysicoChem();
 	}
 	

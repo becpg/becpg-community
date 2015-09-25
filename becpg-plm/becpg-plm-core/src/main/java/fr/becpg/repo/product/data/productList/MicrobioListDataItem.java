@@ -6,6 +6,7 @@ package fr.becpg.repo.product.data.productList;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
+import fr.becpg.repo.repository.annotation.InternalField;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
@@ -77,6 +78,7 @@ public class MicrobioListDataItem extends BeCPGDataObject {
 
 	@AlfSingleAssoc
 	@DataListIdentifierAttr
+	@InternalField
 	@AlfQname(qname="bcpg:mblMicrobio")
 	public NodeRef getMicrobio() {
 		return microbio;

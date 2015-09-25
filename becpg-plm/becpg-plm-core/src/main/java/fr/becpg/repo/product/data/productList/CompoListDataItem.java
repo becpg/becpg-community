@@ -9,6 +9,7 @@ import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
 import fr.becpg.repo.product.data.constraints.CompoListUnit;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
+import fr.becpg.repo.repository.annotation.InternalField;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
@@ -53,6 +54,7 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 	
 	@AlfProp
 	@AlfQname(qname="bcpg:parentLevel")
+	@InternalField
 	public CompoListDataItem getParent() {
 		return parent;
 	}
@@ -63,6 +65,7 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 
 	@AlfProp
 	@AlfQname(qname="bcpg:depthLevel")
+	@InternalField
 	public Integer getDepthLevel() {
 		return depthLevel;
 	}
@@ -162,6 +165,7 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 	@AlfSingleAssoc
 	@DataListIdentifierAttr
 	@AlfQname(qname="bcpg:compoListProduct")
+	@InternalField
 	public NodeRef getProduct() {
 		return product;
 	}
@@ -311,6 +315,7 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 	}
 
 	@Override
+	@InternalField
 	public NodeRef getComponent() {
 		return getProduct();
 	}

@@ -24,6 +24,7 @@ import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
+import fr.becpg.repo.repository.annotation.InternalField;
 import fr.becpg.repo.repository.model.AbstractManualDataItem;
 
 @AlfType
@@ -48,6 +49,7 @@ public class LabelClaimListDataItem extends AbstractManualDataItem {
 	
 	@AlfSingleAssoc
 	@AlfQname(qname="bcpg:lclLabelClaim")
+	@InternalField
 	@DataListIdentifierAttr
 	public NodeRef getLabelClaim() {
 		return labelClaim;
@@ -87,6 +89,7 @@ public class LabelClaimListDataItem extends AbstractManualDataItem {
 	}
 	
 	@AlfProp
+	@InternalField
 	@AlfQname(qname="bcpg:lclIsFormulated")
 	public Boolean getIsFormulated() {
 		return isFormulated;
@@ -97,6 +100,7 @@ public class LabelClaimListDataItem extends AbstractManualDataItem {
 	}
 	
 	@AlfProp
+	@InternalField
 	@AlfQname(qname="bcpg:lclFormulaErrorLog")
 	public String getErrorLog() {
 		return errorLog;

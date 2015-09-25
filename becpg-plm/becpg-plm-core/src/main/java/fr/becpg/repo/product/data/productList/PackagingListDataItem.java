@@ -13,6 +13,7 @@ import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
+import fr.becpg.repo.repository.annotation.InternalField;
 import fr.becpg.repo.repository.annotation.MultiLevelDataList;
 
 @AlfType
@@ -90,6 +91,7 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 
 	@AlfSingleAssoc
 	@DataListIdentifierAttr
+	@InternalField
 	@AlfQname(qname = "bcpg:packagingListProduct")
 	public NodeRef getProduct() {
 		return product;
@@ -195,6 +197,7 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 	}
 
 	@Override
+	@InternalField
 	public NodeRef getComponent() {
 		return getProduct();
 	}

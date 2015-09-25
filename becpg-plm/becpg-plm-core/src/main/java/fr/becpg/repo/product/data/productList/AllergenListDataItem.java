@@ -10,6 +10,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.repository.annotation.AlfEnforced;
 import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
+import fr.becpg.repo.repository.annotation.InternalField;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -42,6 +43,7 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 	}
 
 	@Override
+	@InternalField
 	public NodeRef getCharactNodeRef() {
 		return allergen;
 	}
@@ -53,6 +55,7 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 	
 	
 	@AlfProp
+	@InternalField
 	@AlfQname(qname="bcpg:allergenListQtyPerc")
 	public Double getQtyPerc() {
 		return qtyPerc;
@@ -90,6 +93,7 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 	
 
 	@AlfMultiAssoc
+	@InternalField
 	@AlfQname(qname="bcpg:allergenListVolSources")
 	public List<NodeRef> getVoluntarySources() {
 		return voluntarySources;
@@ -102,6 +106,7 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 	
 
 	@AlfMultiAssoc
+	@InternalField
 	@AlfQname(qname="bcpg:allergenListInVolSources")
 	public List<NodeRef> getInVoluntarySources() {
 		return inVoluntarySources;
@@ -114,6 +119,7 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 	
 
 	@AlfSingleAssoc
+	@InternalField
 	@AlfQname(qname="bcpg:allergenListAllergen")
 	@DataListIdentifierAttr
 	public NodeRef getAllergen() {

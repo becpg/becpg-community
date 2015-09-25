@@ -30,6 +30,7 @@ import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
+import fr.becpg.repo.repository.annotation.InternalField;
 import fr.becpg.repo.repository.model.AbstractManualDataItem;
 import fr.becpg.repo.repository.model.AspectAwareDataItem;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
@@ -208,6 +209,7 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	@AlfSingleAssoc
 	@DataListIdentifierAttr
 	@AlfQname(qname="bcpg:ingListIng")
+	@InternalField
 	public NodeRef getIng() {
 		return ing;
 	}
@@ -220,6 +222,7 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	//////////////////////////////
 	
 	@Override
+	@InternalField
 	public NodeRef getCharactNodeRef() {
 		return ing;
 	}
@@ -244,6 +247,7 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	
 	@Override
 	@AlfProp
+	@InternalField
 	@AlfQname(qname="bcpg:depthLevel")
 	public Integer getDepthLevel() {
 		return depthLevel;
@@ -255,6 +259,7 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 
 	@Override
 	@AlfProp
+	@InternalField
 	@AlfQname(qname="bcpg:parentLevel")
 	public IngListDataItem getParent() {
 		return this.parent;
