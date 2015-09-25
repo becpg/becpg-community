@@ -466,12 +466,12 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 			// % (ing3 50,00 %)
 			
 
-			checkILL("Garniture french 50% (ing3 french 100%)",
-					"Pâte french 50% (Legal Raw material 2 66,7% (ing2 french 75%, ing1 french), ing2 french 22,2%, ing1 french)",
+			checkILL("garniture french 50% (ing3 french 100%)",
+					"pâte french 50% (legal Raw material 2 66,7% (ing2 french 75%, ing1 french), ing2 french 22,2%, ing1 french)",
 					illDataItem.getValue().getValue(Locale.FRENCH));
 
-			checkILL("Garniture english 50% (ing3 english 100%)",
-					"Pâte english 50% (Legal Raw material 2 66,7% (ing2 english 75%, ing1 english), ing2 english 22,2%, ing1 english)",
+			checkILL("garniture english 50% (ing3 english 100%)",
+					"pâte english 50% (legal Raw material 2 66,7% (ing2 english 75%, ing1 english), ing2 english 22,2%, ing1 english)",
 					illDataItem.getValue().getValue(Locale.ENGLISH));
 
 			checks++;
