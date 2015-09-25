@@ -73,7 +73,7 @@
 			<column id="Fibres alimentaires" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Fibres alimentaires" type="Characteristic" />
 			<column id="Sucres" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Sucres" type="Characteristic" />
 			<column id="Calcium" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Calcium" type="Characteristic" />
-			<column id="Fer total" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Fer total" type="Characteristic" />
+			<column id="Fer" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Fer" type="Characteristic" />
 			<column id="Magnésium" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Magnésium" type="Characteristic" />
 			<column id="Phosphore" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Phosphore" type="Characteristic" />
 			<column id="Potassium" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" charactNodeRef="" charactName="Potassium" type="Characteristic" />

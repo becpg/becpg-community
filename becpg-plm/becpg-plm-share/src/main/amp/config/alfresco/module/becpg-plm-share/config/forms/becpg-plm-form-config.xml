@@ -730,7 +730,6 @@
 					<show id="cm:description" force="true" />
 					<show id="bcpg:packagingDescription" force="true" />
 					<show id="bcpg:entityTplRef" force="true" />
-					<show id="bcpg:code" force="true" />
 					<show id="bcpg:productState" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:eanCode" />
@@ -756,7 +755,6 @@
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:netWeight" force="true" />
-					<show id="bcpg:productDensity" />
 					<show id="bcpg:servingSize" force="true" />
 					<show id="bcpg:numberOfServings" force="true" />
 					<show id="bcpg:productSpecifications" />
@@ -764,11 +762,8 @@
 
 					<!-- Profitability -->
 					<show id="bcpg:unitPrice" force="true" />
-					<show id="bcpg:unitTotalCost" force="true" />
 					<show id="bcpg:priceCurrency" force="true" />
-					<show id="bcpg:breakEven" force="true" />
 					<show id="bcpg:projectedQty" force="true" />
-					<show id="bcpg:profitability" force="true" />
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" />
@@ -825,7 +820,6 @@
 						</control>
 					</field>
 					<field id="bcpg:productState" set="mainInfo" />
-					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
 					<field id="bcpg:eanCode" set="mainInfo" />
 					<field id="bcpg:eanCodeLevel2" set="mainInfo" />
@@ -895,13 +889,13 @@
 							</control-param>
 						</control>
 					</field>
+
 					<field id="bcpg:netWeight" set="formulation" >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">kg</control-param>
 						</control>
-					</field>
-					<field id="bcpg:productDensity" set="formulation" read-only="true"/>
+					</field>					
 					<field id="bcpg:servingSize" set="formulation" />
 					<field id="bcpg:numberOfServings" set="formulation" />
 					<field id="bcpg:productSpecifications" set="formulation">
@@ -915,11 +909,8 @@
 
 					<!-- profitability -->
 					<field id="bcpg:unitPrice" set="profitability" />
-					<field id="bcpg:unitTotalCost" read-only="true" set="profitability" />
 					<field id="bcpg:priceCurrency" set="profitability" />
-					<field id="bcpg:breakEven" read-only="true" set="profitability" />
 					<field id="bcpg:projectedQty" set="profitability" />
-					<field id="bcpg:profitability" read-only="true" set="profitability" />
 
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
@@ -3528,7 +3519,6 @@
 					<show id="bcpg:packagingDescription" force="true" />
 					<show id="bcpg:entityTplRef" force="true" />
 					<show id="bcpg:productState" />
-					<show id="bcpg:code" force="true" />
 					<show id="bcpg:erpCode" force="true" />
 
 					<!-- Consumer -->
@@ -3545,7 +3535,6 @@
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:netWeight" force="true" />
-					<show id="bcpg:productDensity" />
 					<show id="bcpg:servingSize" force="true" />
 					<show id="bcpg:productSpecifications" />
 
@@ -3601,7 +3590,6 @@
 						</control>
 					</field>
 					<field id="bcpg:productState" set="mainInfo" />
-					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
 					<field id="bcpg:entityTplRef" set="mainInfo">
 						<control
@@ -3667,13 +3655,14 @@
 							</control-param>
 						</control>
 					</field>
+
 					<field id="bcpg:netWeight" set="formulation" >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">kg</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productDensity" set="formulation" read-only="true"/>
+			
 					<field id="bcpg:servingSize" set="formulation" />
 					<field id="bcpg:productSpecifications" set="formulation">
 						<control
@@ -6270,6 +6259,7 @@
 				</field-visibility>
 
 				<appearance>
+					<field id="bcpg:illGrp" read-only="true" />
 					<field id="bcpg:illValue">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
@@ -6307,6 +6297,7 @@
 				</field-visibility>
 
 				<appearance>
+					<field id="bcpg:illGrp" read-only="true" />
 					<field id="bcpg:illValue">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
