@@ -117,7 +117,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 				qtyUsed = qty * FormulationHelper.getYield(compoItem) / 100;
 			}
 
-			if (!visitedProducts.contains(part)) {
+			if (!visitedProducts.contains(part) && compoItem.getQtySubFormula()!=null && compoItem.getQtySubFormula()>0) {
 				List<ReqCtrlListDataItem> ret = visitPart(compoItem, part, formulatedProduct.getAllergenList(),
 						retainNodes, qtyUsed, isGenericRawMaterial, errors);
 				for (ReqCtrlListDataItem error : ret) {
