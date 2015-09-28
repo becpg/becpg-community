@@ -302,44 +302,19 @@
 			</parameter>
 		</constraint>
 		<constraint name="bcpg:microbioUnit" type="LIST">
-			<parameter name="allowedValues">
+			<parameter name="path">
 				<list>
-					<value></value>
-					<value>UFC/cm²</value>
-					<value>UFC/25cm²</value>					
-					<value>UFC/0,1g</value>
-					<value>UFC/g</value>
-					<value>UFC/5g</value>
-					<value>UFC/10g</value>
-					<value>UFC/25g</value>
-					<value>UFC/50g</value>
-					<value>UFG/g</value>					
-					<value>UFC/5mL</value>
-					<value>UFG/L</value>
-					<value>/0,1g</value>
-					<value>/g</value>
-					<value>/1g</value>
-					<value>/5g</value>
-					<value>/10g</value>
-					<value>/25g</value>
-					<value>/50g</value>
-					<value>/100g</value>
-					<value>/125g</value>
-					<value>/250g</value>
-					<value>/750g</value>
-					<value>/1500g</value>
-					<value>/100cm²</value>
-					<value>/100cm² n=50 c=2</value>
-					<value>mL/g</value>
-					<value>µg/g</value>
-					<value>mg/g</value>
-					<value>µg/L</value>
-					<value>g/2,2L</value>
-					<value>g/15g</value>
-					<value>g/100g</value>
-					<value>UB</value>
-					<value>ppm</value>
+					<value>/System/Lists/bcpg:entityLists/MicrobioUnits</value>
 				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>bcpg:lvValue</value>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
 			</parameter>
 		</constraint>		
 		<constraint name="bcpg:packagingListUnit" type="LIST">
