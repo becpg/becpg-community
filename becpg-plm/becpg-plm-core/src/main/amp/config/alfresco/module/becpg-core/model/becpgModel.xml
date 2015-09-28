@@ -301,7 +301,7 @@
 				</list>
 			</parameter>
 		</constraint>
-		<constraint name="bcpg:microbioUnit" type="LIST">
+		<constraint name="bcpg:microbioUnit" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">>
 			<parameter name="path">
 				<list>
 					<value>/System/Lists/bcpg:entityLists/MicrobioUnits</value>
