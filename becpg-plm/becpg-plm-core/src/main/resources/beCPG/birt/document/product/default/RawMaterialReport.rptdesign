@@ -6160,7 +6160,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                                     <property name="rowSpan">1</property>
                                     <label id="7069">
                                         <property name="style">becpg-chapter-header</property>
-                                        <text-property name="text" key="ingredientsList"></text-property>
+                                        <text-property name="text" key="ingredientsList">LISTE D'INGREDIENTS</text-property>
                                     </label>
                                 </cell>
                             </row>
@@ -7600,7 +7600,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                                         <property name="paddingLeft">0pt</property>
                                         <property name="paddingBottom">0pt</property>
                                         <property name="paddingRight">0pt</property>
-                                        <text-property name="text" key="chapterNut"></text-property>
+                                        <text-property name="text" key="chapterNut">CARACTERISTIQUES NUTRITIONNELLES</text-property>
                                     </label>
                                 </cell>
                             </row>
@@ -8061,7 +8061,7 @@ decisionTree
                                     <property name="rowSpan">1</property>
                                     <label id="6734">
                                         <property name="style">becpg-chapter-header</property>
-                                        <text-property name="text" key="allergens"></text-property>
+                                        <text-property name="text" key="allergens">ALLERGENES</text-property>
                                     </label>
                                 </cell>
                             </row>
@@ -8988,7 +8988,7 @@ decisionTree
                                     <property name="rowSpan">1</property>
                                     <label id="6822">
                                         <property name="style">becpg-chapter-header</property>
-                                        <text-property name="text" key="physicoChem"></text-property>
+                                        <text-property name="text" key="physicoChem">PHYSICO-CHIMIE</text-property>
                                     </label>
                                 </cell>
                             </row>
@@ -9590,7 +9590,7 @@ decisionTree
                                     <property name="rowSpan">1</property>
                                     <label id="6858">
                                         <property name="style">becpg-chapter-header</property>
-                                        <text-property name="text" key="labelClaimsTitle"></text-property>
+                                        <text-property name="text" key="labelClaimsTitle">ALLEGATIONS</text-property>
                                     </label>
                                 </cell>
                             </row>
@@ -10320,7 +10320,7 @@ false
                                     <property name="marginBottom">0pt</property>
                                     <property name="textAlign">center</property>
                                     <property name="display">block</property>
-                                    <text-property name="text" key="chapterMicrobio"></text-property>
+                                    <text-property name="text" key="chapterMicrobio">CARACTERISTIQUES MICROBIOLOGIQUES</text-property>
                                 </label>
                             </cell>
                         </row>
@@ -10859,7 +10859,7 @@ else{
                                         <property name="borderTopStyle">none</property>
                                         <property name="textAlign">center</property>
                                         <structure name="toc"/>
-                                        <text-property name="text" key="chapterOrgano"></text-property>
+                                        <text-property name="text" key="chapterOrgano">CARACTERISTIQUES ORGANOLEPTIQUES</text-property>
                                     </label>
                                 </cell>
                             </row>
