@@ -90,8 +90,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	private static final String EXPORT_RAWMATERIAL_INGLIST_XLSX_PATH = "beCPG/birt/exportsearch/product/ExportRawMaterialIngList.xlsx";
 	private static final String EXPORT_INGLABELING_XLSX_PATH = "beCPG/birt/exportsearch/product/Export ingLabellingList.xlsx";
 	
-	private static final String PRODUCT_REPORT_RM_FR_RESOURCE ="beCPG/birt/document/product/default/RawMaterialReport_fr.properties";
-	private static final String PRODUCT_REPORT_RM_EN_RESOURCE ="beCPG/birt/document/product/default/RawMaterialReport_en.properties";
+	private static final String PRODUCT_REPORT_FR_RESOURCE ="beCPG/birt/document/product/default/ProductReport_fr.properties";
+	private static final String PRODUCT_REPORT_EN_RESOURCE ="beCPG/birt/document/product/default/ProductReport_en.properties";
 	
 	@Autowired
 	private PermissionService permissionService;
@@ -690,7 +690,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			String[] defaultReportName = { productReportClientName, productReportSupplierName, productReportProductionName, productReportClientName };
 			String[] otherReport = { PRODUCT_REPORT_PRODUCTION_PATH, null, null, null };
 			String[] otherReportName = { productReportProductionName, null, null, null };
-			String[] rmReportResource = {PRODUCT_REPORT_RM_FR_RESOURCE,PRODUCT_REPORT_RM_EN_RESOURCE};
+			String[] productReportResource = {PRODUCT_REPORT_FR_RESOURCE,PRODUCT_REPORT_EN_RESOURCE};
 
 			int i = 0;
 
@@ -706,9 +706,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 					if (defaultReport[i] != null && defaultReportName[i] != null) {
 						reportTplService.createTplRptDesign(folderNodeRef, defaultReportName[i], defaultReport[i], ReportType.Document,
 								ReportFormat.PDF, productType, true, true, false);
-						if (defaultReportName[i].equals(productReportSupplierName)){
-							for (int j=0;j<rmReportResource.length;j++){
-								reportTplService.createTplRessource(folderNodeRef, rmReportResource[j], false);
+						if (defaultReportName[i].equals(productReportSupplierName)||defaultReportName[i].equals(productReportClientName)){
+							for (int j=0;j<productReportResource.length;j++){
+								reportTplService.createTplRessource(productReportTplsNodeRef, productReportResource[j], true);
 							}
 						}
 					}
