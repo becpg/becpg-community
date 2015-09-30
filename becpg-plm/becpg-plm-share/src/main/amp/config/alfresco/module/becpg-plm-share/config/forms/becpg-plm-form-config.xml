@@ -387,7 +387,7 @@
 					<field id="cm:title" set="mainInfo" label-id="becpg.forms.field.tradeName">
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
-					<field id="bcpg:legalName" set="mainInfo" />
+					<field id="bcpg:legalName" help-id="becpg.forms.help.legalName" set="mainInfo" />
 					<field id="bcpg:productComments" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">2</control-param>
@@ -403,13 +403,13 @@
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productHierarchy1" set="mainInfo">
+					<field id="bcpg:productHierarchy1" help-id="becpg.forms.help.productHierarchy1" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/finishedProduct_Hierarchy
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productHierarchy2" set="mainInfo">
+					<field id="bcpg:productHierarchy2" help-id="becpg.forms.help.productHierarchy2" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/finishedProduct_Hierarchy
 							</control-param>
@@ -420,9 +420,9 @@
 					<field id="bcpg:productState" set="mainInfo" />
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
-					<field id="bcpg:eanCode" set="mainInfo" />
-					<field id="bcpg:eanCodeLevel2" set="mainInfo" />
-					<field id="bcpg:eanCodeLevel3" set="mainInfo" />
+					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo" />
+					<field id="bcpg:eanCodeLevel2" help-id="becpg.forms.help.eanCodeLevel2" set="mainInfo" />
+					<field id="bcpg:eanCodeLevel3" help-id="becpg.forms.help.eanCodeLevel3" set="mainInfo" />
 					<field id="bcpg:subsidiaryRef" set="mainInfo" />
 					<field id="bcpg:plants" set="mainInfo" />
 					<field id="bcpg:trademarkRef" set="mainInfo" />
@@ -442,45 +442,45 @@
 					</field>
 					
 					<!-- consumer -->
-					<field id="bcpg:useByDate" set="consumer" />
-					<field id="bcpg:bestBeforeDate" set="consumer" >
+					<field id="bcpg:useByDate" help-id="becpg.forms.help.useByDate" set="consumer" />
+					<field id="bcpg:bestBeforeDate" help-id="becpg.forms.help.bestBeforeDate" set="consumer" >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">d</control-param>
 						</control>
 					</field>
-					<field id="bcpg:periodAfterOpening" set="consumer" >
+					<field id="bcpg:periodAfterOpening" help-id="becpg.forms.help.periodAfterOpening" set="consumer" >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">d</control-param>
 						</control>
 					</field>					
-					<field id="bcpg:contractDate" set="consumer" >
+					<field id="bcpg:contractDate" help-id="becpg.forms.help.contractDate" set="consumer" >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">d</control-param>
 						</control>
 					</field>
-					<field id="bcpg:storageConditionsRef" set="consumer">
+					<field id="bcpg:storageConditionsRef" help-id="becpg.forms.help.storageConditionsRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="style">null</control-param>
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
-					<field id="bcpg:precautionOfUseRef" set="consumer">
+					<field id="bcpg:precautionOfUseRef" help-id="becpg.forms.help.precautionOfUseRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="style">null</control-param>
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
-					<field id="bcpg:preparationTips" set="consumer">
+					<field id="bcpg:preparationTips" help-id="becpg.forms.help.preparationTips" set="consumer">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productMicrobioCriteriaRef" set="consumer">
+					<field id="bcpg:productMicrobioCriteriaRef" help-id="becpg.forms.help.productMicrobioCriteriaRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
@@ -488,23 +488,23 @@
 					</field>
 
 					<!-- formulation -->
-					<field id="bcpg:productQty" set="formulation" />
+					<field id="bcpg:productQty" help-id="becpg.forms.help.productQty" set="formulation" />
 					<field id="bcpg:productUnit" set="formulation">
 						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
 							<control-param name="options">kg,g,L,mL,P|becpg.forms.field.productUnit
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:netWeight" set="formulation" >
+					<field id="bcpg:netWeight" help-id="becpg.forms.help.netWeight" set="formulation" >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">kg</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productDensity" set="formulation" read-only="true" />
-					<field id="bcpg:servingSize" set="formulation" />
-					<field id="bcpg:numberOfServings" set="formulation" />
-					<field id="bcpg:productSpecifications" set="formulation">
+					<field id="bcpg:servingSize" help-id="becpg.forms.help.servingSize" set="formulation" />
+					<field id="bcpg:numberOfServings" help-id="becpg.forms.help.numberOfServings" set="formulation" />
+					<field id="bcpg:productSpecifications" help-id="becpg.forms.help.productSpecifications" set="formulation">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
@@ -514,7 +514,7 @@
 					</field>
 
 					<!-- profitability -->
-					<field id="bcpg:unitPrice" set="profitability" />
+					<field id="bcpg:unitPrice" help-id="becpg.forms.help.unitPrice" set="profitability" />
 					<field id="bcpg:unitTotalCost" read-only="true" set="profitability" />
 					<field id="bcpg:priceCurrency" set="profitability" />
 					<field id="bcpg:breakEven" read-only="true" set="profitability" />
@@ -789,7 +789,7 @@
 					<field id="cm:title" set="mainInfo" label-id="becpg.forms.field.tradeName">
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
-					<field id="bcpg:legalName" set="mainInfo" />
+					<field id="bcpg:legalName" help-id="becpg.forms.help.legalName" set="mainInfo" />
 					<field id="bcpg:productComments" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">2</control-param>
@@ -805,13 +805,13 @@
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productHierarchy1" set="mainInfo">
+					<field id="bcpg:productHierarchy1" help-id="becpg.forms.help.productHierarchy1" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/finishedProduct_Hierarchy
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productHierarchy2" set="mainInfo">
+					<field id="bcpg:productHierarchy2" help-id="becpg.forms.help.productHierarchy2" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/finishedProduct_Hierarchy
 							</control-param>
@@ -821,9 +821,9 @@
 					</field>
 					<field id="bcpg:productState" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
-					<field id="bcpg:eanCode" set="mainInfo" />
-					<field id="bcpg:eanCodeLevel2" set="mainInfo" />
-					<field id="bcpg:eanCodeLevel3" set="mainInfo" />
+					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo" />
+					<field id="bcpg:eanCodeLevel2" help-id="becpg.forms.help.eanCodeLevel2" set="mainInfo" />
+					<field id="bcpg:eanCodeLevel3" help-id="becpg.forms.help.eanCodeLevel3" set="mainInfo" />
 					<field id="bcpg:subsidiaryRef" force="true" set="mainInfo" />
 					<field id="bcpg:trademarkRef" force="true" set="mainInfo" />
 					<field id="bcpg:plants" force="true" set="mainInfo" />
@@ -839,42 +839,42 @@
 					</field>
 
 					<!-- consumer -->
-					<field id="bcpg:useByDate" set="consumer" />
-					<field id="bcpg:bestBeforeDate" set="consumer" >
+					<field id="bcpg:useByDate" help-id="becpg.forms.help.useByDate" set="consumer" />
+					<field id="bcpg:bestBeforeDate" help-id="becpg.forms.help.bestBeforeDate" set="consumer" >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">d</control-param>
 						</control>
 					</field>
-					<field id="bcpg:periodAfterOpening" set="consumer" >
+					<field id="bcpg:periodAfterOpening" help-id="becpg.forms.help.periodAfterOpening" set="consumer" >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">d</control-param>
 						</control>
 					</field>
-					<field id="bcpg:contractDate" set="consumer" >
+					<field id="bcpg:contractDate" help-id="becpg.forms.help.contractDate" set="consumer" >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">d</control-param>
 						</control>
 					</field>
-					<field id="bcpg:storageConditionsRef" set="consumer">
+					<field id="bcpg:storageConditionsRef" help-id="becpg.forms.help.storageConditionsRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
-					<field id="bcpg:precautionOfUseRef" set="consumer">
+					<field id="bcpg:precautionOfUseRef" help-id="becpg.forms.help.precautionOfUseRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 						</control>
 					</field>
-					<field id="bcpg:preparationTips" set="consumer">
+					<field id="bcpg:preparationTips" help-id="becpg.forms.help.preparationTips" set="consumer">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productMicrobioCriteriaRef" set="consumer">
+					<field id="bcpg:productMicrobioCriteriaRef" help-id="becpg.forms.help.productMicrobioCriteriaRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
@@ -882,7 +882,7 @@
 					</field>
 
 					<!-- formulation -->
-					<field id="bcpg:productQty" set="formulation" />
+					<field id="bcpg:productQty" help-id="becpg.forms.help.productQty" set="formulation" />
 					<field id="bcpg:productUnit" set="formulation">
 						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
 							<control-param name="options">kg,g,L,mL,P|becpg.forms.field.productUnit
@@ -890,7 +890,7 @@
 						</control>
 					</field>
 
-					<field id="bcpg:netWeight" set="formulation" >
+					<field id="bcpg:netWeight" help-id="becpg.forms.help.netWeight" set="formulation" >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">kg</control-param>
@@ -908,7 +908,7 @@
 					</field>
 
 					<!-- profitability -->
-					<field id="bcpg:unitPrice" set="profitability" />
+					<field id="bcpg:unitPrice" help-id="becpg.forms.help.unitPrice" set="profitability" />
 					<field id="bcpg:priceCurrency" set="profitability" />
 					<field id="bcpg:projectedQty" set="profitability" />
 
@@ -1012,7 +1012,7 @@
 					<field id="cm:title" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
-					<field id="bcpg:legalName" set="mainInfo" />
+					<field id="bcpg:legalName" help-id="becpg.forms.help.legalName" set="mainInfo" />
 					<field id="cm:description" set="mainInfo">
 						<control>
 							<control-param name="activateLinks">true</control-param>
@@ -1023,13 +1023,13 @@
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productHierarchy1" set="mainInfo">
+					<field id="bcpg:productHierarchy1" help-id="becpg.forms.help.productHierarchy1" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/localSemiFinishedProduct_Hierarchy
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productHierarchy2" set="mainInfo">
+					<field id="bcpg:productHierarchy2" help-id="becpg.forms.help.productHierarchy2" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/localSemiFinishedProduct_Hierarchy
 							</control-param>
@@ -1145,7 +1145,7 @@
 					<field id="cm:title" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
-					<field id="bcpg:legalName" set="mainInfo" />
+					<field id="bcpg:legalName" help-id="becpg.forms.help.legalName" set="mainInfo" />
 					<field id="cm:description" set="mainInfo">
 						<control>
 							<control-param name="activateLinks">true</control-param>
@@ -1156,13 +1156,13 @@
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productHierarchy1" set="mainInfo">
+					<field id="bcpg:productHierarchy1" help-id="becpg.forms.help.productHierarchy1" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/localSemiFinishedProduct_Hierarchy
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productHierarchy2" set="mainInfo">
+					<field id="bcpg:productHierarchy2" help-id="becpg.forms.help.productHierarchy2" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/localSemiFinishedProduct_Hierarchy
 							</control-param>
@@ -1264,7 +1264,7 @@
 					<field id="cm:title" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
-					<field id="bcpg:legalName" set="mainInfo" />
+					<field id="bcpg:legalName" help-id="becpg.forms.help.legalName" set="mainInfo" />
 					<field id="cm:description" set="mainInfo">
 						<control>
 							<control-param name="activateLinks">true</control-param>
@@ -1275,13 +1275,13 @@
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productHierarchy1" set="mainInfo">
+					<field id="bcpg:productHierarchy1" help-id="becpg.forms.help.productHierarchy1" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingKit_Hierarchy
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productHierarchy2" set="mainInfo">
+					<field id="bcpg:productHierarchy2" help-id="becpg.forms.help.productHierarchy2" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingKit_Hierarchy
 							</control-param>
@@ -1427,7 +1427,7 @@
 					<field id="cm:title" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
-					<field id="bcpg:legalName" set="mainInfo" />
+					<field id="bcpg:legalName" help-id="becpg.forms.help.legalName" set="mainInfo" />
 					<field id="cm:description" set="mainInfo">
 						<control>
 							<control-param name="activateLinks">true</control-param>
@@ -1438,13 +1438,13 @@
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productHierarchy1" set="mainInfo">
+					<field id="bcpg:productHierarchy1" help-id="becpg.forms.help.productHierarchy1" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingKit_Hierarchy
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productHierarchy2" set="mainInfo">
+					<field id="bcpg:productHierarchy2" help-id="becpg.forms.help.productHierarchy2" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingKit_Hierarchy
 							</control-param>
@@ -1658,7 +1658,7 @@
 					<field id="cm:title" set="mainInfo" label-id="becpg.forms.field.tradeName">
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
-					<field id="bcpg:legalName" set="mainInfo" />
+					<field id="bcpg:legalName" help-id="becpg.forms.help.legalName" set="mainInfo" />
 					<field id="cm:description" set="mainInfo">
 						<control>
 							<control-param name="activateLinks">true</control-param>
@@ -1669,13 +1669,13 @@
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productHierarchy1" set="mainInfo">
+					<field id="bcpg:productHierarchy1" help-id="becpg.forms.help.productHierarchy1" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productHierarchy2" set="mainInfo">
+					<field id="bcpg:productHierarchy2" help-id="becpg.forms.help.productHierarchy2" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy
 							</control-param>
@@ -1687,7 +1687,7 @@
 					<field id="bcpg:productUnit" set="mainInfo" />
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
-					<field id="bcpg:eanCode" set="mainInfo" />
+					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo" />
 					<field id="bcpg:certificateDate" set="mainInfo" />
 					<field id="bcpg:suppliers" set="mainInfo" />
 					<field id="bcpg:plants" set="mainInfo" />
@@ -1875,7 +1875,7 @@
 					<field id="cm:title" set="mainInfo" label-id="becpg.forms.field.tradeName">
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
-					<field id="bcpg:legalName" set="mainInfo" />
+					<field id="bcpg:legalName" help-id="becpg.forms.help.legalName" set="mainInfo" />
 					<field id="cm:description" set="mainInfo">
 						<control>
 							<control-param name="activateLinks">true</control-param>
@@ -1886,7 +1886,7 @@
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>					
-					<field id="bcpg:eanCode" set="mainInfo" />
+					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo" />
 					<field id="bcpg:certificateDate" set="mainInfo" />				
 					<field id="bcpg:plants" set="mainInfo" />
 
@@ -2113,7 +2113,7 @@
 					<field id="cm:title" set="mainInfo" label-id="becpg.forms.field.tradeName">
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
-					<field id="bcpg:legalName" set="mainInfo" />
+					<field id="bcpg:legalName" help-id="becpg.forms.help.legalName" set="mainInfo" />
 					<field id="cm:description" set="mainInfo">
 						<control>
 							<control-param name="activateLinks">true</control-param>
@@ -2124,13 +2124,13 @@
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productHierarchy1" set="mainInfo">
+					<field id="bcpg:productHierarchy1" help-id="becpg.forms.help.productHierarchy1" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productHierarchy2" set="mainInfo">
+					<field id="bcpg:productHierarchy2" help-id="becpg.forms.help.productHierarchy2" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy
 							</control-param>
@@ -2142,7 +2142,7 @@
 					<field id="bcpg:productUnit" set="mainInfo" />
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
-					<field id="bcpg:eanCode" set="mainInfo" />
+					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo" />
 					<field id="bcpg:suppliers" set="mainInfo" />
 					<field id="bcpg:plants" set="mainInfo" />
 					<field id="bcpg:certificateDate" set="mainInfo" />
@@ -2388,7 +2388,7 @@
 					<field id="cm:title" set="mainInfo" label-id="becpg.forms.field.tradeName">
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
-					<field id="bcpg:legalName" set="mainInfo" />
+					<field id="bcpg:legalName" help-id="becpg.forms.help.legalName" set="mainInfo" />
 					<field id="cm:description" set="mainInfo">
 						<control>
 							<control-param name="activateLinks">true</control-param>
@@ -2404,13 +2404,13 @@
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productHierarchy1" set="mainInfo">
+					<field id="bcpg:productHierarchy1" help-id="becpg.forms.help.productHierarchy1" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/rawMaterial_Hierarchy
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productHierarchy2" set="mainInfo">
+					<field id="bcpg:productHierarchy2" help-id="becpg.forms.help.productHierarchy2" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/rawMaterial_Hierarchy
 							</control-param>
@@ -2420,7 +2420,7 @@
 					</field>
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
-					<field id="bcpg:eanCode" set="mainInfo" />
+					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo" />
 					<field id="bcpg:productState" set="mainInfo" />
 					<field id="bcpg:suppliers" set="mainInfo" />
 					<field id="bcpg:plants" set="mainInfo" />
@@ -2481,45 +2481,45 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:useByDate" set="consumer" />
-					<field id="bcpg:bestBeforeDate" set="consumer" >
+					<field id="bcpg:useByDate" help-id="becpg.forms.help.useByDate" set="consumer" />
+					<field id="bcpg:bestBeforeDate" help-id="becpg.forms.help.bestBeforeDate" set="consumer" >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">d</control-param>
 						</control>
 					</field>
-					<field id="bcpg:periodAfterOpening" set="consumer" >
+					<field id="bcpg:periodAfterOpening" help-id="becpg.forms.help.periodAfterOpening" set="consumer" >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">d</control-param>
 						</control>
 					</field>
-					<field id="bcpg:contractDate" set="consumer" >
+					<field id="bcpg:contractDate" help-id="becpg.forms.help.contractDate" set="consumer" >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">d</control-param>
 						</control>
 					</field>
-					<field id="bcpg:storageConditionsRef" set="consumer">
+					<field id="bcpg:storageConditionsRef" help-id="becpg.forms.help.storageConditionsRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="style">null</control-param>
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
-					<field id="bcpg:precautionOfUseRef" set="consumer">
+					<field id="bcpg:precautionOfUseRef" help-id="becpg.forms.help.precautionOfUseRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="style">null</control-param>
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
-					<field id="bcpg:preparationTips" set="consumer">
+					<field id="bcpg:preparationTips" help-id="becpg.forms.help.preparationTips" set="consumer">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productMicrobioCriteriaRef" set="consumer">
+					<field id="bcpg:productMicrobioCriteriaRef" help-id="becpg.forms.help.productMicrobioCriteriaRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
@@ -2630,7 +2630,7 @@
 					<field id="cm:title" set="mainInfo" label-id="becpg.forms.field.tradeName">
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
-					<field id="bcpg:legalName" set="mainInfo" />
+					<field id="bcpg:legalName" help-id="becpg.forms.help.legalName" set="mainInfo" />
 					<field id="cm:description" set="mainInfo">
 						<control>
 							<control-param name="activateLinks">true</control-param>
@@ -2646,7 +2646,7 @@
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
-					<field id="bcpg:eanCode" set="mainInfo" />
+					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo" />
 					<field id="bcpg:supplierPlants" set="mainInfo" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -2664,40 +2664,40 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:useByDate" set="consumer" />
-					<field id="bcpg:bestBeforeDate" set="consumer" >
+					<field id="bcpg:useByDate" help-id="becpg.forms.help.useByDate" set="consumer" />
+					<field id="bcpg:bestBeforeDate" help-id="becpg.forms.help.bestBeforeDate" set="consumer" >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">d</control-param>
 						</control>
 					</field>
-					<field id="bcpg:periodAfterOpening" set="consumer" >
+					<field id="bcpg:periodAfterOpening" help-id="becpg.forms.help.periodAfterOpening" set="consumer" >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">d</control-param>
 						</control>
 					</field>
-					<field id="bcpg:contractDate" set="consumer" >
+					<field id="bcpg:contractDate" help-id="becpg.forms.help.contractDate" set="consumer" >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">d</control-param>
 						</control>
 					</field>
-					<field id="bcpg:storageConditionsRef" set="consumer">
+					<field id="bcpg:storageConditionsRef" help-id="becpg.forms.help.storageConditionsRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="style">null</control-param>
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
-					<field id="bcpg:precautionOfUseRef" set="consumer">
+					<field id="bcpg:precautionOfUseRef" help-id="becpg.forms.help.precautionOfUseRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="style">null</control-param>
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
-					<field id="bcpg:preparationTips" set="consumer">
+					<field id="bcpg:preparationTips" help-id="becpg.forms.help.preparationTips" set="consumer">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">2</control-param>
 						</control>
@@ -2867,7 +2867,7 @@
 					<field id="cm:title" set="mainInfo" label-id="becpg.forms.field.tradeName">
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
-					<field id="bcpg:legalName" set="mainInfo" />
+					<field id="bcpg:legalName" help-id="becpg.forms.help.legalName" set="mainInfo" />
 					<field id="cm:description" set="mainInfo">
 						<control>
 							<control-param name="activateLinks">true</control-param>
@@ -2883,13 +2883,13 @@
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productHierarchy1" set="mainInfo">
+					<field id="bcpg:productHierarchy1" help-id="becpg.forms.help.productHierarchy1" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/rawMaterial_Hierarchy
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productHierarchy2" set="mainInfo">
+					<field id="bcpg:productHierarchy2" help-id="becpg.forms.help.productHierarchy2" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/rawMaterial_Hierarchy
 							</control-param>
@@ -2899,7 +2899,7 @@
 					</field>
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
-					<field id="bcpg:eanCode" set="mainInfo" />
+					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo" />
 					<field id="bcpg:productState" set="mainInfo" />
 					<field id="bcpg:suppliers" set="mainInfo" />
 					<field id="bcpg:plants" set="mainInfo" />
@@ -2955,40 +2955,40 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:useByDate" set="consumer" />
-					<field id="bcpg:bestBeforeDate" set="consumer" >
+					<field id="bcpg:useByDate" help-id="becpg.forms.help.useByDate" set="consumer" />
+					<field id="bcpg:bestBeforeDate" help-id="becpg.forms.help.bestBeforeDate" set="consumer" >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">d</control-param>
 						</control>
 					</field>
-					<field id="bcpg:periodAfterOpening" set="consumer" >
+					<field id="bcpg:periodAfterOpening" help-id="becpg.forms.help.periodAfterOpening" set="consumer" >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">d</control-param>
 						</control>
 					</field>
-					<field id="bcpg:contractDate" set="consumer" >
+					<field id="bcpg:contractDate" help-id="becpg.forms.help.contractDate" set="consumer" >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">d</control-param>
 						</control>
 					</field>
-					<field id="bcpg:storageConditionsRef" set="consumer">
+					<field id="bcpg:storageConditionsRef" help-id="becpg.forms.help.storageConditionsRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="style">null</control-param>
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
-					<field id="bcpg:precautionOfUseRef" set="consumer">
+					<field id="bcpg:precautionOfUseRef" help-id="becpg.forms.help.precautionOfUseRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="style">null</control-param>
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
-					<field id="bcpg:preparationTips" set="consumer">
+					<field id="bcpg:preparationTips" help-id="becpg.forms.help.preparationTips" set="consumer">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">2</control-param>
 						</control>
@@ -3239,7 +3239,7 @@
 					<field id="cm:title" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
-					<field id="bcpg:legalName" set="mainInfo" />
+					<field id="bcpg:legalName" help-id="becpg.forms.help.legalName" set="mainInfo" />
 					<field id="cm:description" set="mainInfo">
 						<control>
 							<control-param name="activateLinks">true</control-param>
@@ -3255,13 +3255,13 @@
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productHierarchy1" set="mainInfo">
+					<field id="bcpg:productHierarchy1" help-id="becpg.forms.help.productHierarchy1" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/semiFinishedProduct_Hierarchy
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productHierarchy2" set="mainInfo">
+					<field id="bcpg:productHierarchy2" help-id="becpg.forms.help.productHierarchy2" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/semiFinishedProduct_Hierarchy
 							</control-param>
@@ -3287,14 +3287,14 @@
 					</field>
 
 					<!-- formulation -->
-					<field id="bcpg:productQty" set="formulation" />
+					<field id="bcpg:productQty" help-id="becpg.forms.help.productQty" set="formulation" />
 					<field id="bcpg:productUnit" set="formulation">
 						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
 							<control-param name="options">kg,g,L,mL,P|becpg.forms.field.productUnit
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:netWeight" set="formulation" >
+					<field id="bcpg:netWeight" help-id="becpg.forms.help.netWeight" set="formulation" >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">kg</control-param>
@@ -3312,45 +3312,45 @@
 					</field>
 
 					<!-- consumer -->
-					<field id="bcpg:useByDate" set="consumer" />
-					<field id="bcpg:bestBeforeDate" set="consumer" >
+					<field id="bcpg:useByDate" help-id="becpg.forms.help.useByDate" set="consumer" />
+					<field id="bcpg:bestBeforeDate" help-id="becpg.forms.help.bestBeforeDate" set="consumer" >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">d</control-param>
 						</control>
 					</field>
-					<field id="bcpg:periodAfterOpening" set="consumer" >
+					<field id="bcpg:periodAfterOpening" help-id="becpg.forms.help.periodAfterOpening" set="consumer" >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">d</control-param>
 						</control>
 					</field>
-					<field id="bcpg:contractDate" set="consumer" >
+					<field id="bcpg:contractDate" help-id="becpg.forms.help.contractDate" set="consumer" >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">d</control-param>
 						</control>
 					</field>
-					<field id="bcpg:storageConditionsRef" set="consumer">
+					<field id="bcpg:storageConditionsRef" help-id="becpg.forms.help.storageConditionsRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="style">null</control-param>
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
-					<field id="bcpg:precautionOfUseRef" set="consumer">
+					<field id="bcpg:precautionOfUseRef" help-id="becpg.forms.help.precautionOfUseRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="style">null</control-param>
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
-					<field id="bcpg:preparationTips" set="consumer">
+					<field id="bcpg:preparationTips" help-id="becpg.forms.help.preparationTips" set="consumer">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productMicrobioCriteriaRef" set="consumer">
+					<field id="bcpg:productMicrobioCriteriaRef" help-id="becpg.forms.help.productMicrobioCriteriaRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
@@ -3559,7 +3559,7 @@
 					<field id="cm:title" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
-					<field id="bcpg:legalName" set="mainInfo" />
+					<field id="bcpg:legalName" help-id="becpg.forms.help.legalName" set="mainInfo" />
 					<field id="cm:description" set="mainInfo">
 						<control>
 							<control-param name="activateLinks">true</control-param>
@@ -3575,13 +3575,13 @@
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productHierarchy1" set="mainInfo">
+					<field id="bcpg:productHierarchy1" help-id="becpg.forms.help.productHierarchy1" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/semiFinishedProduct_Hierarchy
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productHierarchy2" set="mainInfo">
+					<field id="bcpg:productHierarchy2" help-id="becpg.forms.help.productHierarchy2" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/semiFinishedProduct_Hierarchy
 							</control-param>
@@ -3602,45 +3602,45 @@
 					</field>
 
 					<!-- consumer -->
-					<field id="bcpg:useByDate" set="consumer" />
-					<field id="bcpg:bestBeforeDate" set="consumer" >
+					<field id="bcpg:useByDate" help-id="becpg.forms.help.useByDate" set="consumer" />
+					<field id="bcpg:bestBeforeDate" help-id="becpg.forms.help.bestBeforeDate" set="consumer" >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">d</control-param>
 						</control>
 					</field>
-					<field id="bcpg:periodAfterOpening" set="consumer" >
+					<field id="bcpg:periodAfterOpening" help-id="becpg.forms.help.periodAfterOpening" set="consumer" >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">d</control-param>
 						</control>
 					</field>
-					<field id="bcpg:contractDate" set="consumer" >
+					<field id="bcpg:contractDate" help-id="becpg.forms.help.contractDate" set="consumer" >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">d</control-param>
 						</control>
 					</field>
-					<field id="bcpg:storageConditionsRef" set="consumer">
+					<field id="bcpg:storageConditionsRef" help-id="becpg.forms.help.storageConditionsRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="style">null</control-param>
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
-					<field id="bcpg:precautionOfUseRef" set="consumer">
+					<field id="bcpg:precautionOfUseRef" help-id="becpg.forms.help.precautionOfUseRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="style">null</control-param>
 							<control-param name="showTooltip">false</control-param>
 						</control>
 					</field>
-					<field id="bcpg:preparationTips" set="consumer">
+					<field id="bcpg:preparationTips" help-id="becpg.forms.help.preparationTips" set="consumer">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productMicrobioCriteriaRef" set="consumer">
+					<field id="bcpg:productMicrobioCriteriaRef" help-id="becpg.forms.help.productMicrobioCriteriaRef" set="consumer">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
@@ -3648,7 +3648,7 @@
 					</field>
 
 					<!-- formulation -->
-					<field id="bcpg:productQty" set="formulation" />
+					<field id="bcpg:productQty" help-id="becpg.forms.help.productQty" set="formulation" />
 					<field id="bcpg:productUnit" set="formulation">
 						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
 							<control-param name="options">kg,g,L,mL,P|becpg.forms.field.productUnit
@@ -3656,7 +3656,7 @@
 						</control>
 					</field>
 
-					<field id="bcpg:netWeight" set="formulation" >
+					<field id="bcpg:netWeight" help-id="becpg.forms.help.netWeight" set="formulation" >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">kg</control-param>
@@ -3783,7 +3783,7 @@
 					<field id="cm:title" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
-					<field id="bcpg:legalName" set="mainInfo" />
+					<field id="bcpg:legalName" help-id="becpg.forms.help.legalName" set="mainInfo" />
 					<field id="cm:description" set="mainInfo">
 						<control>
 							<control-param name="activateLinks">true</control-param>
@@ -3794,13 +3794,13 @@
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productHierarchy1" set="mainInfo">
+					<field id="bcpg:productHierarchy1" help-id="becpg.forms.help.productHierarchy1" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/resourceProduct_Hierarchy
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productHierarchy2" set="mainInfo">
+					<field id="bcpg:productHierarchy2" help-id="becpg.forms.help.productHierarchy2" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/resourceProduct_Hierarchy
 							</control-param>
@@ -3816,7 +3816,7 @@
 					</field>
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
-					<field id="bcpg:eanCode" set="mainInfo" />
+					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo" />
 					<field id="bcpg:suppliers" set="mainInfo" />
 					<field id="bcpg:entityTplRef" set="mainInfo">
 						<control
@@ -3939,7 +3939,7 @@
 					<field id="cm:title" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
-					<field id="bcpg:legalName" set="mainInfo" />
+					<field id="bcpg:legalName" help-id="becpg.forms.help.legalName" set="mainInfo" />
 					<field id="cm:description" set="mainInfo">
 						<control>
 							<control-param name="activateLinks">true</control-param>
@@ -3950,13 +3950,13 @@
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productHierarchy1" set="mainInfo">
+					<field id="bcpg:productHierarchy1" help-id="becpg.forms.help.productHierarchy1" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/resourceProduct_Hierarchy
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productHierarchy2" set="mainInfo">
+					<field id="bcpg:productHierarchy2" help-id="becpg.forms.help.productHierarchy2" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/resourceProduct_Hierarchy
 							</control-param>
@@ -3972,7 +3972,7 @@
 					</field>
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
-					<field id="bcpg:eanCode" set="mainInfo" />
+					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo" />
 					<field id="bcpg:suppliers" set="mainInfo" />
 					<field id="bcpg:entityTplRef" set="mainInfo">
 						<control
@@ -5528,19 +5528,23 @@
 				</field-visibility>
 
 				<appearance>
-					<field id="bcpg:compoListProduct">
+					<field id="bcpg:compoListProduct" help-id="becpg.forms.help.compoListProduct">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial%5E4,bcpg:finishedProduct,bcpg:localSemiFinishedProduct%5E2,bcpg:semiFinishedProduct%5E2</control-param>
 						</control>
 					</field>
-					<field id="bcpg:parentLevel">
+					<field id="bcpg:compoListQtySubFormula" help-id="becpg.forms.help.compoListQtySubFormula"/>
+					<field id="bcpg:compoListYieldPerc" help-id="becpg.forms.help.compoListYieldPerc" />
+					<field id="bcpg:compoListLossPerc" help-id="becpg.forms.help.compoListLossPerc" />
+					<field id="bcpg:parentLevel" help-id="becpg.forms.help.parentLevel" >
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/compoListParentLevel
 							</control-param>
+							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
 					</field>
-					<field id="bcpg:variantIds">
+					<field id="bcpg:variantIds" help-id="becpg.forms.help.variantIds" >
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/variantList
 							</control-param>
@@ -5671,20 +5675,23 @@
 				</field-visibility>
 
 				<appearance>
-					<field id="bcpg:compoListProduct">
+					<field id="bcpg:compoListProduct" help-id="becpg.forms.help.compoListProduct">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial%5E4,bcpg:finishedProduct,bcpg:localSemiFinishedProduct%5E2,bcpg:semiFinishedProduct%5E2</control-param>
 						</control>
 					</field>
-					<field id="bcpg:parentLevel">
+					<field id="bcpg:compoListQtySubFormula" help-id="becpg.forms.help.compoListQtySubFormula"/>
+					<field id="bcpg:compoListYieldPerc" help-id="becpg.forms.help.compoListYieldPerc" />
+					<field id="bcpg:compoListLossPerc" help-id="becpg.forms.help.compoListLossPerc" />
+					<field id="bcpg:parentLevel" help-id="becpg.forms.help.parentLevel" >
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/compoListParentLevel
 							</control-param>
 							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
 					</field>
-					<field id="bcpg:variantIds">
+					<field id="bcpg:variantIds" help-id="becpg.forms.help.variantIds" >
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/variantList
 							</control-param>
@@ -5717,19 +5724,22 @@
 				</field-visibility>
 
 				<appearance>
-					<field id="bcpg:packagingListProduct">
+					<field id="bcpg:packagingListProduct" help-id="becpg.forms.help.packagingListProduct">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:packagingMaterial,bcpg:packagingKit</control-param>
 						</control>
 					</field>
+					<field id="bcpg:packagingListQty" help-id="becpg.forms.help.packagingListQty"/>
+					<field id="bcpg:packagingListLossPerc" help-id="becpg.forms.help.packagingListLossPerc"/>
 					<field id="bcpg:packagingListPkgLevel">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">,Primary|data.bcpg_packaginglistpkglevel.primary,Secondary|data.bcpg_packaginglistpkglevel.secondary,Tertiary|data.bcpg_packaginglistpkglevel.tertiary
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:variantIds">
+					<field id="bcpg:packagingListIsMaster" help-id="becpg.forms.help.packagingListIsMaster"/>
+					<field id="bcpg:variantIds" help-id="becpg.forms.help.variantIds">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/variantList
 							</control-param>
@@ -5840,19 +5850,22 @@
 				</field-visibility>
 
 				<appearance>
-					<field id="bcpg:packagingListProduct">
+					<field id="bcpg:packagingListProduct" help-id="becpg.forms.help.packagingListProduct">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:packagingMaterial,bcpg:packagingKit</control-param>
 						</control>
 					</field>
+					<field id="bcpg:packagingListQty" help-id="becpg.forms.help.packagingListQty"/>
+					<field id="bcpg:packagingListLossPerc" help-id="becpg.forms.help.packagingListLossPerc"/>
 					<field id="bcpg:packagingListPkgLevel">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">,Primary|data.bcpg_packaginglistpkglevel.primary,Secondary|data.bcpg_packaginglistpkglevel.secondary,Tertiary|data.bcpg_packaginglistpkglevel.tertiary
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:variantIds">
+					<field id="bcpg:packagingListIsMaster" help-id="becpg.forms.help.packagingListIsMaster"/>
+					<field id="bcpg:variantIds" help-id="becpg.forms.help.variantIds">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/variantList
 							</control-param>
