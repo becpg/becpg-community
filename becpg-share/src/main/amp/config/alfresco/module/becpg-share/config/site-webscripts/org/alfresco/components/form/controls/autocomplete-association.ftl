@@ -90,8 +90,7 @@
 				             <#if field.control.params.maxLength??>maxlength="${field.control.params.maxLength}"</#if> 
 				             <#if field.control.params.size??>size="${field.control.params.size}"</#if> 
 				             <#if field.disabled>disabled="true"</#if> 
-				             class="yui-ac-input<#if field.endpointMany> multi-assoc</#if>" <#if !field.endpointMany>value="${field.value}" </#if> />
-				       <span class="clear" ></span>
+				             class="yui-ac-input<#if field.endpointMany> multi-assoc</#if>" <#if !field.endpointMany>value="${field.value}" </#if> />				      
 			        </div>			
 			      <div id="${fieldHtmlId}-container"></div>
 			 	
@@ -99,6 +98,7 @@
 		       <input type="hidden" id="${controlId}-orig" name="-" value="${field.value?html}" />
 		       <input type="hidden" id="${controlId}-added" name="${field.name}_added" />
 		        
+			<@formLib.renderFieldHelp field=field />
 			</div>
       </div>
    </#if>

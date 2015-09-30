@@ -95,9 +95,12 @@
 		            <#if field.control.params.size?exists>size="${field.control.params.size}"</#if> 
 		            <#if field.disabled>disabled="true"</#if> 
 		             class="yui-ac-input"  />
-         	</#if>
-         <span class="clear" ></span>
+         	</#if>         	
          </div>
+         
+         <@formLib.renderFieldHelp field=field />
+	
+	
          <div id="${fieldHtmlId}-container"></div>
          <#if field.repeating ||  field.dataType == 'noderef' || field.control.params.parentMode?exists>
         	<input type="hidden" id="${fieldHtmlId}-added" name="${field.name}" <#if field.value?is_number>value="${field.value?c}"<#else>value="${field.value?html}"</#if> />

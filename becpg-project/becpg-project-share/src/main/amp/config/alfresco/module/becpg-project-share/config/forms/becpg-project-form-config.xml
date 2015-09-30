@@ -103,13 +103,13 @@
 					<field id="cm:title" set="mainInfo" />
 					<field id="cm:description" set="mainInfo" />
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
-					<field id="pjt:projectHierarchy1" set="mainInfo">
+					<field id="pjt:projectHierarchy1" help-id="becpg.forms.help.projectHierarchy1" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProjectLists/bcpg:entityLists/project_Hierarchy
 							</control-param>
 						</control>
 					</field>
-					<field id="pjt:projectHierarchy2" set="mainInfo">
+					<field id="pjt:projectHierarchy2" help-id="becpg.forms.help.projectHierarchy2" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProjectLists/bcpg:entityLists/project_Hierarchy
 							</control-param>
@@ -117,11 +117,11 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="pjt:projectOrigin" set="mainInfo" />
-					<field id="pjt:projectSponsor" set="mainInfo" />
-					<field id="pjt:projectManager" set="mainInfo" />
-					<field id="pjt:projectObservers" set="mainInfo" />
-					<field id="bcpg:entityTplRef" set="mainInfo">
+					<field id="pjt:projectOrigin" help-id="becpg.forms.help.projectOrigin" set="mainInfo" />
+					<field id="pjt:projectSponsor" help-id="becpg.forms.help.projectSponsor" set="mainInfo" />
+					<field id="pjt:projectManager" help-id="becpg.forms.help.projectManager" set="mainInfo" />
+					<field id="pjt:projectObservers" help-id="becpg.forms.help.projectObservers" set="mainInfo" />
+					<field id="bcpg:entityTplRef" help-id="becpg.forms.help.entityTplRef" set="mainInfo">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pjt:project?classNames=pjt:project,bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
@@ -130,12 +130,12 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="pjt:projectEntity" set="mainInfo" />
-					<field id="pjt:projectPriority" set="mainInfo">
+					<field id="pjt:projectEntity" help-id="becpg.forms.help.projectEntity" set="mainInfo" />
+					<field id="pjt:projectPriority" help-id="becpg.forms.help.projectPriority" set="mainInfo">
 						<control
 							template="/org/alfresco/components/form/controls/workflow/priority.ftl" />
 					</field>
-					<field id="pjt:projectState" set="mainInfo">
+					<field id="pjt:projectState" help-id="becpg.forms.help.projectState" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">Planned|data.taskstate.planned,InProgress|data.taskstate.inprogress,OnHold|data.taskstate.onhold,Cancelled|data.taskstate.cancelled,Completed|data.taskstate.completed
 							</control-param>
@@ -147,7 +147,7 @@
 
 					<field id="pjt:projectStartDate" set="planning" />
 					<field id="pjt:projectDueDate" set="planning" />
-					<field id="pjt:projectPlanningMode" set="planning" />
+					<field id="pjt:projectPlanningMode" help-id="becpg.forms.help.projectPlanningMode"  set="planning" />
 					<field id="pjt:projectCompletionDate" set="planning" />
 					<field id="pjt:completionPercent" set="planning" />
 					<field id="pjt:projectOverdue" set="planning" />
@@ -617,13 +617,13 @@
 						</control>
 					</field>
 					
-					<field id="pjt:tlTaskLegend" set="mainInfo">
+					<field id="pjt:tlTaskLegend" help-id="becpg.forms.help.tlTaskLegend" set="mainInfo">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 						</control>
 					</field>
 					<field id="pjt:tlState" set="mainInfo" />
-					<field id="bcpg:parentLevel" set="mainInfo" label-id="becpg.forms.field.projects.taskList.parentLevel" >
+					<field id="bcpg:parentLevel" help-id="becpg.forms.help.parentLevel" set="mainInfo" label-id="becpg.forms.field.projects.taskList.parentLevel" >
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
 							</control-param>
@@ -632,7 +632,7 @@
 							<control-param name="parentMode">true</control-param>
 						</control>
 					</field>
-					<field id="pjt:tlPrevTasks" set="mainInfo">
+					<field id="pjt:tlPrevTasks" help-id="becpg.forms.help.tlPrevTasks" set="mainInfo">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
@@ -640,7 +640,7 @@
 							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
 					</field>
-					<field id="pjt:tlRefusedTaskRef" set="mainInfo">
+					<field id="pjt:tlRefusedTaskRef" help-id="becpg.forms.help.tlRefusedTaskRef" set="mainInfo">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
@@ -653,10 +653,10 @@
 					<set id="resources" appearance="bordered-panel" label-id="becpg.forms.set.resources.label"
 						template="/org/alfresco/components/form/1-column-set.ftl" />
 						
-					<field id="pjt:tlResources" set="resources" />
-					<field id="pjt:tlObservers" set="resources" />
+					<field id="pjt:tlResources" help-id="becpg.forms.help.tlResources" set="resources" />
+					<field id="pjt:tlObservers" help-id="becpg.forms.help.tlObservers"  set="resources" />
 
-					<field id="pjt:tlWorkflowName" set="resources">
+					<field id="pjt:tlWorkflowName" help-id="becpg.forms.help.tlWorkflowName" set="resources">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">,activiti$projectAdhoc|data.workflow.projectadhoc,activiti$projectNewProduct|data.workflow.projectnewproduct
 							</control-param>
@@ -667,10 +667,10 @@
 					<set id="planning" appearance="bordered-panel" label-id="becpg.forms.set.planning.label"
 						template="/org/alfresco/components/form/2-column-set.ftl" />
 
-					<field id="pjt:tlIsMilestone" set="planning" />
-					<field id="pjt:tlDuration" set="planning" />
+					<field id="pjt:tlIsMilestone" help-id="becpg.forms.help.tlIsMilestone" set="planning" />
+					<field id="pjt:tlDuration" help-id="becpg.forms.help.tlDuration" set="planning" />
 					
-					<field id="pjt:tlManualDate" set="planning" />
+					<field id="pjt:tlManualDate" help-id="becpg.forms.help.tlManualDate" set="planning" />
 					<field id="pjt:tlStart" set="planning" />
 					<field id="pjt:tlEnd" set="planning" />
 					<field id="pjt:completionPercent" set="planning" />
@@ -678,14 +678,14 @@
 					<set id="budget" appearance="bordered-panel" label-id="becpg.forms.set.budget.label"
 						template="/org/alfresco/components/form/2-column-set.ftl" />
 				
-					<field id="pjt:tlWork" set="budget" />
-					<field id="pjt:tlResourceCost" set="budget">
+					<field id="pjt:tlWork" help-id="becpg.forms.help.tlWork" set="budget" />
+					<field id="pjt:tlResourceCost" help-id="becpg.forms.help.tlResourceCost" set="budget">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 						</control>
 					</field>
 					
-					<field id="pjt:tlBudgetRef" set="budget">
+					<field id="pjt:tlBudgetRef" help-id="becpg.forms.help.tlBudgetRef" set="budget">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:budgetList&amp;attributeName=pjt:blItem
