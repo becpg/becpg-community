@@ -86,6 +86,7 @@
 					<property name="productService" ref="productService"/>
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="formulateChildren" value="true" />
+					<property name="lockService" ref="lockService" />
 				</bean>
 				<bean	class="fr.becpg.repo.product.formulation.CompositionQtyCalculatingFormulationHandler">
 					<property name="nodeService" ref="nodeService" />
@@ -175,6 +176,7 @@
 					<property name="nodeService" ref="nodeService" />
 					<property name="productService" ref="productService"/>
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
+					<property name="lockService" ref="lockService" />
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.CompositionQtyCalculatingFormulationHandler">
 					<property name="nodeService" ref="nodeService" />

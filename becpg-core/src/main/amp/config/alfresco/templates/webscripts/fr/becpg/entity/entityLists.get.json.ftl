@@ -6,7 +6,7 @@
    </#if>
    "permissions":
    {
-      "create": ${hasWritePermission?string}
+      "create": <#if hasWritePermission && !entity.isLocked>true<#else>false</#if>
    },
    <#if listTypes??>
    "listTypes" : [<#list listTypes as classdef>
@@ -35,9 +35,9 @@
 	   "state"  :"${list.properties["bcpg:entityDataListState"]!"ToValidate"}",
 	   "permissions":
 	   {
-	      "edit": ${hasWritePermission?string},
-	      "delete": ${hasWritePermission?string},
-	      "changeState": ${hasChangeStatePermission?string}
+	      "edit": <#if hasWritePermission && !entity.isLocked>true<#else>false</#if>,
+	      "delete": <#if hasWritePermission && !entity.isLocked>true<#else>false</#if>,
+	      "changeState": <#if hasChangeStatePermission && !entity.isLocked>true<#else>false</#if>
 	   }
 	}<#if list_has_next>,</#if>
    </#list>
@@ -48,9 +48,9 @@
          "name": "${entity.name}",
          "userAccess":
          {
-            "create": ${entity.hasPermission("CreateChildren")?string},
-            "edit": ${entity.hasPermission("Write")?string},
-            "delete": ${entity.hasPermission("Delete")?string}
+            "create": <#if entity.hasPermission("CreateChildren") && !entity.isLocked>true<#else>false</#if>,
+            "edit": <#if entity.hasPermission("Write") && !entity.isLocked>true<#else>false</#if>,
+            "delete":<#if entity.hasPermission("Delete") && !entity.isLocked>true<#else>false</#if>
          },
          "aspects": 
          [
