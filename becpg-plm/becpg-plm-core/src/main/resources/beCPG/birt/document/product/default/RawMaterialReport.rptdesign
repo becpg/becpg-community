@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
     <property name="author">beCPG</property>
-    <property name="createdBy">Eclipse BIRT Designer Version 4.4.2.v201410272105 Build &lt;4.4.2.v20150217-1805></property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.5.0.v201506092134 Build &lt;@BUILD@></property>
     <list-property name="userProperties">
         <structure>
             <property name="name">Data Cube.OrganoList.x</property>
@@ -17,8 +17,7 @@
     <property name="Data Cube.OrganoList.x">135</property>
     <property name="Data Cube.OrganoList.y">80</property>
     <simple-property-list name="includeResource">
-        <value>becpg-plm/becpg-plm-core/src/main/resources/beCPG/birt/document/product/default/RawMaterialReport_fr</value>
-        <value>becpg-plm/becpg-plm-core/src/main/resources/beCPG/birt/document/product/default/RawMaterialReport_en</value>
+        <value>./ProductReport</value>
     </simple-property-list>
     <property name="units">in</property>
     <property name="iconFile">/templates/dual_column_chart_listing.gif</property>
@@ -27,7 +26,7 @@
     <property name="imageDPI">112</property>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="452">
-            <property name="FILELIST">becpg-plm/becpg-plm-core/src/main/resources/beCPG/birt/document/product/default/datasource-rawmaterial.xml</property>
+            <property name="FILELIST">src/main/resources/beCPG/birt/document/product/default/datasource-rawmaterial.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>

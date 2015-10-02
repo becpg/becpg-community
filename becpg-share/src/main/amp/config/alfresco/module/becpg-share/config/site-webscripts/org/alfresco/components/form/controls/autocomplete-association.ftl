@@ -79,7 +79,7 @@
    <#else>
       <label for="${controlId}">${field.label?html}:<#if field.endpointMandatory><span class="mandatory-indicator">${msg("form.required.fields.marker")}</span></#if></label>     
       <div id="${controlId}" class="object-finder">        
-			<div class="yui-ac" >
+			<div class="yui-ac" style="display:inline-block;" >
 					 <div id="${fieldHtmlId}-autocomplete" class="ac-body" <#if style??>style="${style}"</#if>>
 					 <span id="${fieldHtmlId}-toggle-autocomplete" class="ac-toogle"></span>
 					  <#if field.endpointMany>
@@ -90,16 +90,17 @@
 				             <#if field.control.params.maxLength??>maxlength="${field.control.params.maxLength}"</#if> 
 				             <#if field.control.params.size??>size="${field.control.params.size}"</#if> 
 				             <#if field.disabled>disabled="true"</#if> 
-				             class="yui-ac-input<#if field.endpointMany> multi-assoc</#if>" <#if !field.endpointMany>value="${field.value}" </#if> />				      
-			        </div>			
+				             class="yui-ac-input<#if field.endpointMany> multi-assoc</#if>" <#if !field.endpointMany>value="${field.value}" </#if> />
+				        <span class="clear" ></span>				      
+			      </div>			
 			      <div id="${fieldHtmlId}-container"></div>
 			 	
-			  	 <input type="hidden" id="${controlId}-removed" name="${field.name}_removed" />
-		       <input type="hidden" id="${controlId}-orig" name="-" value="${field.value?html}" />
-		       <input type="hidden" id="${controlId}-added" name="${field.name}_added" />
-		        
-			<@formLib.renderFieldHelp field=field />
+			  	<input type="hidden" id="${controlId}-removed" name="${field.name}_removed" />
+		        <input type="hidden" id="${controlId}-orig" name="-" value="${field.value?html}" />
+		        <input type="hidden" id="${controlId}-added" name="${field.name}_added" />
 			</div>
+			 <@formLib.renderFieldHelp field=field />
       </div>
+     
    </#if>
 </div>

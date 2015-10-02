@@ -18,6 +18,7 @@
    <@markup id="bd">
 	   <div id="bd">
 	     <@region id="document-metadata" scope="template"/>
+		 <@region id="comments" scope="template"/>
 	   </div>
 	   <script type="text/javascript">
 	   	  setTimeout(function() {

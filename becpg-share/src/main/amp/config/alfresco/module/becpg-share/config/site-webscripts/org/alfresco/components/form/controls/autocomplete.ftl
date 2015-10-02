@@ -74,7 +74,7 @@
       </div>
    <#else>
       <label for="${fieldHtmlId}">${field.label?html}:<#if field.mandatory!false><span class="mandatory-indicator">${msg("form.required.fields.marker")}</span></#if></label>
-      <div  class="yui-ac">
+      <div  class="yui-ac" style="display:inline-block;">
         <div id="${fieldHtmlId}-autocomplete" class="ac-body" <#if style??>style="${style}"</#if>>
         <span id="${fieldHtmlId}-toggle-autocomplete" class="ac-toogle" ></span>
 	         <#if field.repeating || field.dataType == 'noderef' || field.control.params.parentMode?exists >
@@ -95,10 +95,10 @@
 		            <#if field.control.params.size?exists>size="${field.control.params.size}"</#if> 
 		            <#if field.disabled>disabled="true"</#if> 
 		             class="yui-ac-input"  />
-         	</#if>         	
+         	</#if> 
+         	 <span class="clear" ></span>        	
          </div>
          
-         <@formLib.renderFieldHelp field=field />
 	
 	
          <div id="${fieldHtmlId}-container"></div>
@@ -106,5 +106,6 @@
         	<input type="hidden" id="${fieldHtmlId}-added" name="${field.name}" <#if field.value?is_number>value="${field.value?c}"<#else>value="${field.value?html}"</#if> />
          </#if>
       </div>
+      <@formLib.renderFieldHelp field=field />
    </#if>
 </div>
