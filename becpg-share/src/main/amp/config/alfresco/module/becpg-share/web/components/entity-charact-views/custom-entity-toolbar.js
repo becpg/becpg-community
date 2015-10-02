@@ -36,9 +36,9 @@
                         })[0];
 
                         var PAGE_SIZE = 5000;
-
+                        
                         document.location.href = dt._getDataUrl(PAGE_SIZE) + "&format=xlsx&metadata=" + encodeURIComponent(YAHOO.lang.JSON
-                              .stringify(dt._buildDataGridParams()));
+                              .stringify(dt._buildDataGridParams({"filter":dt.currentFilter})));
 
                      }
                   });

@@ -464,7 +464,7 @@ define(["dojo/_base/declare",
                                  id: this.id + "_ADVANCED_SEARCH",
                                  i18nScope: "org.alfresco.SearchBox",
                                  label: "header.becpg.adv.search.label",
-                                 targetUrl: (currSite ? "site/" + currSite + "/" : "") + "search"
+                                 targetUrl: (currSite ? "site/" + currSite + "/" : "") + "advsearch"
                               }
                            },
                            {
