@@ -21,12 +21,19 @@
   
    <components>
 
-      <!-- Document Metadata -->
       <component>
          <region-id>document-metadata</region-id>
          <url>/components/document-details/document-metadata</url>
          <properties>
             <nodeRef>{nodeRef}</nodeRef>
+         </properties>
+      </component>
+       <component>
+         <region-id>comments</region-id>
+         <url>/components/comments/list</url>
+         <properties>
+            <nodeRef>{nodeRef}</nodeRef>
+            <activityType>document</activityType>
          </properties>
       </component>
    </components>
