@@ -20,7 +20,6 @@ package fr.becpg.repo.web.scripts.entity;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -28,9 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletResponse;
-
-import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
@@ -63,7 +59,6 @@ import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.policy.BeCPGPolicyHelper;
 import fr.becpg.repo.security.SecurityService;
-import fr.becpg.repo.web.scripts.BrowserCacheHelper;
 
 /**
  * The Class ProductListsWebScript.
@@ -194,7 +189,7 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 																														// lists
 		boolean skipFilter = false;
 
-		Date lastModified = null;
+	//	Date lastModified = null;
 
 		Map<String, Object> model = new HashMap<>();
 
@@ -250,21 +245,23 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 				entityTplNodeRef = entityTplService.getEntityTpl(nodeType);
 			}
 
-			Date propModified = (Date) nodeService.getProperty(nodeRef, ContentModel.PROP_MODIFIED);
-			lastModified = entityTplNodeRef != null ? (Date) nodeService.getProperty(entityTplNodeRef, ContentModel.PROP_MODIFIED) : null;
-			if (lastModified == null || (propModified != null && lastModified.getTime() < propModified.getTime())) {
-				lastModified = propModified;
-			}
-
-			if (lastModified != null && BrowserCacheHelper.shouldReturnNotModified(req, lastModified)) {
-				status.setCode(HttpServletResponse.SC_NOT_MODIFIED);
-				status.setRedirect(true);
-
-				if (logger.isDebugEnabled()) {
-					logger.debug("Send Not_MODIFIED status");
-				}
-				return model;
-			}
+//         #1763  Do not work on permissions changed or when node is locked			
+//			
+//			Date propModified = (Date) nodeService.getProperty(nodeRef, ContentModel.PROP_MODIFIED);
+//			lastModified = entityTplNodeRef != null ? (Date) nodeService.getProperty(entityTplNodeRef, ContentModel.PROP_MODIFIED) : null;
+//			if (lastModified == null || (propModified != null && lastModified.getTime() < propModified.getTime())) {
+//				lastModified = propModified;
+//			}
+//
+//			if (lastModified != null && BrowserCacheHelper.shouldReturnNotModified(req, lastModified)) {
+//				status.setCode(HttpServletResponse.SC_NOT_MODIFIED);
+//				status.setRedirect(true);
+//
+//				if (logger.isDebugEnabled()) {
+//					logger.debug("Send Not_MODIFIED status");
+//				}
+//				return model;
+//			}
 
 			if (entityTplNodeRef != null) {
 
@@ -335,15 +332,15 @@ public class EntityListsWebScript extends DeclarativeWebScript {
 			}
 		}
 
-		if (lastModified == null) {
-			lastModified = new Date();
-		}
-
-		cache.setIsPublic(false);
-		cache.setMustRevalidate(true);
-		cache.setNeverCache(false);
-		cache.setMaxAge(0L);
-		cache.setLastModified(lastModified);
+//		if (lastModified == null) {
+//			lastModified = new Date();
+//		}
+//
+//		cache.setIsPublic(false);
+//		cache.setMustRevalidate(true);
+//		cache.setNeverCache(false);
+//		cache.setMaxAge(0L);
+//		cache.setLastModified(lastModified);
 
 		Path path = nodeService.getPath(nodeRef);
 

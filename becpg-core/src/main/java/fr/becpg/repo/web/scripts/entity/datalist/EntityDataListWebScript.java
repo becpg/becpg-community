@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
+import org.alfresco.service.cmr.lock.LockService;
+import org.alfresco.service.cmr.lock.LockStatus;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AccessStatus;
@@ -126,6 +128,8 @@ public class EntityDataListWebScript extends AbstractWebScript {
 
 	private SecurityService securityService;
 
+	private LockService lockService;
+	
 	private NamespaceService namespaceService;
 
 	private PermissionService permissionService;
@@ -169,6 +173,10 @@ public class EntityDataListWebScript extends AbstractWebScript {
 	
 	public void setAuthorityService(AuthorityService authorityService) {
 		this.authorityService = authorityService;
+	}
+	
+	public void setLockService(LockService lockService) {
+		this.lockService = lockService;
 	}
 
 	/**
@@ -332,6 +340,7 @@ public class EntityDataListWebScript extends AbstractWebScript {
 			boolean hasWriteAccess = !dataListFilter.isVersionFilter();
 			if (hasWriteAccess && !entityNodeRefsList.isEmpty()) {
 				hasWriteAccess = !nodeService.hasAspect(entityNodeRefsList.get(0), ContentModel.ASPECT_CHECKED_OUT)
+						&& lockService.getLockStatus(entityNodeRefsList.get(0)) == LockStatus.NO_LOCK 
 						&& securityService.computeAccessMode(nodeService.getType(entityNodeRefsList.get(0)), itemType) == SecurityService.WRITE_ACCESS
 						&& isExternalUserAllowed(dataListFilter);
 			}

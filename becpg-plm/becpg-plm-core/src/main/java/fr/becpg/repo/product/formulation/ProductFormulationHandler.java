@@ -26,6 +26,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.alfresco.service.cmr.lock.LockService;
+import org.alfresco.service.cmr.lock.LockStatus;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
@@ -66,10 +68,16 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 
 	private AlfrescoRepository<ProductData> alfrescoRepository;
 
+	private LockService lockService;
+
 	private boolean formulateChildren = false;
 
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
+	}
+
+	public void setLockService(LockService lockService) {
+		this.lockService = lockService;
 	}
 
 	public void setProductService(ProductService productService) {
@@ -83,6 +91,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 	public void setFormulateChildren(boolean formulateChildren) {
 		this.formulateChildren = formulateChildren;
 	}
+	
 
 	@Override
 	public boolean process(ProductData productData) throws FormulateException {
@@ -164,39 +173,42 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		if (!checkedProducts.contains(productData.getNodeRef())) {
 			checkedProducts.add(productData.getNodeRef());
 
-			Set<CompositionDataItem> compositionDataItems = new HashSet<>();
-			if (productData.getCompoList() != null) {
-				compositionDataItems.addAll(productData.getCompoList());
-			}
-			if (productData.getPackagingList() != null) {
-				compositionDataItems.addAll(productData.getPackagingList());
-			}
-			if (productData.getProcessList() != null) {
-				compositionDataItems.addAll(productData.getProcessList());
-			}
+			if (lockService.getLockStatus(productData.getNodeRef()) == LockStatus.NO_LOCK) {
 
-			boolean shouldFormulate = false;
-			if (!compositionDataItems.isEmpty()) {
-				for (CompositionDataItem c : compositionDataItems) {
-					if (c.getComponent() != null) {
-						ProductData p = alfrescoRepository.findOne(c.getComponent());
-						// recursive
-						if (checkShouldFormulateComponents(false, p, checkedProducts)) {
-							shouldFormulate = true;
+				Set<CompositionDataItem> compositionDataItems = new HashSet<>();
+				if (productData.getCompoList() != null) {
+					compositionDataItems.addAll(productData.getCompoList());
+				}
+				if (productData.getPackagingList() != null) {
+					compositionDataItems.addAll(productData.getPackagingList());
+				}
+				if (productData.getProcessList() != null) {
+					compositionDataItems.addAll(productData.getProcessList());
+				}
+
+				boolean shouldFormulate = false;
+				if (!compositionDataItems.isEmpty()) {
+					for (CompositionDataItem c : compositionDataItems) {
+						if (c.getComponent() != null) {
+							ProductData p = alfrescoRepository.findOne(c.getComponent());
+							// recursive
+							if (checkShouldFormulateComponents(false, p, checkedProducts)) {
+								shouldFormulate = true;
+							}
 						}
 					}
 				}
-			}
-			// check modified date on component
-			Date modified = productData.getModifiedDate();
-			Date formulatedDate = productData.getFormulatedDate();
-			if (!isRoot && (shouldFormulate || (modified == null || formulatedDate == null || modified.getTime() > formulatedDate.getTime()))) {
-				if (logger.isDebugEnabled()) {
-					logger.debug("auto-formulate: " + productData.getName());
+				// check modified date on component
+				Date modified = productData.getModifiedDate();
+				Date formulatedDate = productData.getFormulatedDate();
+				if (!isRoot && (shouldFormulate || (modified == null || formulatedDate == null || modified.getTime() > formulatedDate.getTime()))) {
+					if (logger.isDebugEnabled()) {
+						logger.debug("auto-formulate: " + productData.getName());
+					}
+					productService.formulate(productData);
+					alfrescoRepository.save(productData);
+					isFormulated = true;
 				}
-				productService.formulate(productData);
-				alfrescoRepository.save(productData);
-				isFormulated = true;
 			}
 		}
 		return isFormulated;
