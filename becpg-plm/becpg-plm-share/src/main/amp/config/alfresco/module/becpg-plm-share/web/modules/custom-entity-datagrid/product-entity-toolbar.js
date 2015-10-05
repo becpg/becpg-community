@@ -221,8 +221,10 @@ YAHOO.Bubbling
                                  },
                                  scope : this
                               }
+                           
+                          
                            });
-
+                           YAHOO.Bubbling.unsubscribe("beforeFormRuntimeInit", onBeforeFormRuntimeInit, me);
                         };
 
                         if (Dom.hasClass("alf-hd", "hidden")) {

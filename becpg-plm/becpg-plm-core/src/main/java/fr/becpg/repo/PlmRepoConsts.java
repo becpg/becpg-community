@@ -41,6 +41,8 @@ public class PlmRepoConsts {
 	public static final String PATH_LABELING_TEMPLATES = "LabelingTemplates";
 	public static final String PATH_LABELING_POSITIONS = "LabelingPositions";
 	
+	public static final String PATH_MICROBIO_UNITS = "MicrobioUnits";
+	
 	public static final String PATH_PM_MATERIALS = "pmMaterials";
 	public static final String PATH_PM_PRINT_TYPES = "pmPrintTypes";
 	public static final String PATH_PM_PRINT_VANISHS = "pmPrintVarnishs";
@@ -107,6 +109,7 @@ public class PlmRepoConsts {
 	public static final String PATH_ECO = "ECO";
 	
 	public static final String PATH_PRODUCT_HIERARCHY = "/app:company_home/cm:System/cm:ProductHierarchy/bcpg:entityLists/";
+	
 	
 	
 	
