@@ -76,70 +76,7 @@
 							<#if showOnlyLocation == "true" && item.version?? && item.version?length &gt; 0 ><span class="document-version">${item.version}</span></#if>
                   </div>
                </#if>
-               <#if showOnlyLocation == "false">
-                  <#assign idx=node.type?index_of(":")+1 />
-                  <a id="${el}-uploadLogo-button" class="upload-logo-action" title="${msg("actions.entity.upload-logo")}" href="#">
-               	  	<img src="${thumbnailUrl}"  title="${displayName}" class="node-thumbnail" width="48" />
-               	  	<span class="upload-logo-span" >&nbsp;</span>
-               	  </a>
-                  <h1 class="thin dark">
-                     ${displayName}<span id="document-version" class="document-version">${item.version}</span>
-                  </h1>
-                  <!-- Modified & Social -->
-                  <div>
-                     <span class="item-modifier">
-                     <#assign modifyUser = node.properties["cm:modifier"]>
-                     <#assign modifyDate = node.properties["cm:modified"]>
-                     <#assign modifierLink = userProfileLink(modifyUser.userName, modifyUser.displayName, 'class="theme-color-1"') >
-                     ${msg(modifyLabel, modifierLink, "<span id='${el}-modifyDate'>${modifyDate.iso8601}</span>")}
-                     </span>
-                     <#if showFavourite == "true">
-                     <span id="${el}-favourite" class="item item-separator"></span>
-                     </#if>
-                     <#if showLikes == "true">
-                     <span id="${el}-like" class="item item-separator"></span>
-                     </#if>
-                     <#if showComments == "true">
-                     <span class="item item-separator item-social">
-                        <a href="#" name="@commentNode" rel="${item.nodeRef?html}" class="theme-color-1 comment<#if commentCount??> hasComments</#if> ${el}" title="${msg("comment.document.tip")}" tabindex="0">${msg("comment.document.label")}</a><#if commentCount??><span class="comment-count">${commentCount}</span></#if>
-                     </span>
-                     </#if>
-                     <#if showQuickShare == "true">
-                     <span id="${el}-quickshare" class="item item-separator"></span>
-                     </#if>
-					 <span class="item item-separator item-social">
-						<a  href="#"  id="${el}-print-button" class="item-print" rel="${item.nodeRef?html}" >${msg("print.label")}</a>
-					 </span>
-                  </div>
-                  </#if>
                </div>
-               <#if showOnlyLocation == "false">
-               <div class="node-action">
-              
-               	<#if reports?? && reports?size &gt; 0 >
-	                  <input id="${el}-entityReportPicker-button" type="button" name="${el}-entityReportPicker-button" value="${msg("picker.report.choose")}" ></input>
-					      <select id="${el}-entityReportPicker-select"  name="${el}-entityReportPicker-select">      
-					      	<option value="properties">${msg("picker.report.properties")}</option>
-					      	<#list reports as report>
-					      		<option value="${report.nodeRef}">${report.templateName?replace(".rptdesign", "")}</option>
-					      	</#list>
-					      </select>
-		               
-		               <div class="entity-download-report">
-					   		<a id="${el}-downloadEntityReport-button" title="${msg("actions.entity.download-report")}"  href="#" >&nbsp;</a>
-					   	</div>
-				   	</#if>
-				   	
-	               
-	               <div class="entity-view-datalist" >
-			   			<a id="${el}-viewEntityDatalist-button" title="${msg("actions.entity.view-datalists")}"  href="#" >${msg("actions.entity.view-datalists.short")}</a>
-				   	</div>
-				   	<div class="entity-view-documents">
-				   		<a id="${el}-viewEntityDocuments-button" title="${msg("actions.entity.view-documents")}"  href="#" >${msg("actions.entity.view-documents.short")}</a>
-				   	</div>
-	               
-              </div>
-              </#if>
             <div class="clear"></div>
          </div>
          

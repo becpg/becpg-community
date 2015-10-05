@@ -782,11 +782,15 @@
 								MAX(IF(prop.prop_name = "bcpg:nutListGroup",prop.string_value,NULL)) as nutGroup,
 								MAX(IF(prop.prop_name = "bcpg:nutListValue",prop.double_value,NULL)) as nutValue,
 								MAX(IF(prop.prop_name = "bcpg:nutListFormulatedValue",prop.double_value,NULL)) as nutFormulatedValue,
+								entity.is_last_version as isLastVersion,
 								datalist.entity_fact_id as entity_fact_id
 							from
 									becpg_datalist AS datalist LEFT JOIN becpg_property AS prop ON prop.datalist_id = datalist.id
-							where datalist.datalist_name = "nutList" and datalist.item_type = "bcpg:nutList" and datalist.instance_id = ${instanceId}
+									                LEFT JOIN becpg_entity AS entity ON datalist.entity_fact_id = entity.id
+							where datalist.datalist_name = "nutList" and datalist.item_type = "bcpg:nutList" and datalist.instance_id = ${instanceId} 
+							      and  entity.is_last_version = true
 							group by datalist.id
+
 			</SQL>
 		</View>
 
@@ -846,8 +850,7 @@
 			<Hierarchy name="nutrientPerGroup" caption="${msg("jsolap.nutrientPerGroup.title")}" hasAll="true" allMemberCaption="${msg("jsolap.nutrient.caption")}" primaryKey="entity_fact_id">
 				<Level approxRowCount="3" name="nutGroup" caption="${msg("jsolap.nutrientGroup.title")}" column="nutGroup" type="String"   >
 				</Level>
-				<Level approxRowCount="20" name="nutNodeRef" caption="${msg("jsolap.nutrient.title")}" column="nutNodeRef"  nameColumn="nutName" type="String"   >
-				</Level>
+				<Level  name="nutNodeRef" caption="${msg("jsolap.nutrient.title")}" column="nutNodeRef"  nameColumn="nutName" type="String"   ></Level>
 			</Hierarchy>	
 		</Dimension>	
 		<Measure name="nutValue" caption="${msg("jsolap.nutritionalValues.title")}" column="nutValue" datatype="Numeric" aggregator="avg" visible="true"></Measure>	
