@@ -51,7 +51,7 @@
                         <nodeRef>{nodeRef}</nodeRef>
                         <rootPage>documentlibrary</rootPage>
                         <rootLabelId>path.documents</rootLabelId>
-                       <showOnlyLocation>true</showOnlyLocation>
+                        <showOnlyLocation>true</showOnlyLocation>
                      </properties>
                   </evaluation>
                   

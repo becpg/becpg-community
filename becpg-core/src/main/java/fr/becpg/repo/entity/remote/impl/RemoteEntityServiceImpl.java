@@ -42,6 +42,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
 
@@ -63,6 +64,7 @@ import fr.becpg.repo.entity.remote.extractor.XmlEntityVisitor;
 public class RemoteEntityServiceImpl implements RemoteEntityService {
 
 	@Autowired
+	@Qualifier("ServiceRegistry")
 	private ServiceRegistry serviceRegistry;
 	
 	@Autowired

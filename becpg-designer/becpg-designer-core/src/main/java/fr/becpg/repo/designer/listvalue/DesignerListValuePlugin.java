@@ -33,6 +33,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.designer.DesignerModel;
@@ -63,6 +64,7 @@ public class DesignerListValuePlugin implements ListValuePlugin {
 	private final static Log logger = LogFactory.getLog(ListValuePlugin.class);
 	
 	@Autowired
+	@Qualifier("ServiceRegistry")
 	private ServiceRegistry serviceRegistry;
 	@Autowired
 	private DesignerService designerService;
