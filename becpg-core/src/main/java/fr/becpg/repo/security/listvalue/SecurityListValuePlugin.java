@@ -27,6 +27,7 @@ import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
@@ -48,6 +49,7 @@ public class SecurityListValuePlugin implements ListValuePlugin {
 	private static final String SEPARATOR = "|";
 
 	@Autowired
+	@Qualifier("ServiceRegistry")
 	private ServiceRegistry serviceRegistry;
 
 	@Override
