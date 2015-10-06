@@ -98,7 +98,7 @@
 			      <div class="section">
 			        <#list systemFolders as item>
 						<div class="action">				
-							${msg("label.systemFolder.access")}<a href="${url.context}/page/repository#filter=path|${item.path?split("/")?last?url}%2F${item.name?url}"><span class="systemFolder">${item.name}</span></a>
+							${msg("label.systemFolder.access")}<a href="${url.context}/page/repository#filter=path|${item.urlPath?url}"><span class="systemFolder">${item.name}</span></a>
 				    		<#if item.title?? && item.title?length &gt; 0 ><span>(${item.title})</span></#if>
 				    		<#if item.description??  && item.description?length &gt; 0 ><p>${item.description}</p></#if>
 				    	</div>

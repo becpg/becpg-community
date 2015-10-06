@@ -23,12 +23,21 @@
 function main()
 {
     
-  
-   
    var json = remote.call("/becpg/admin/repository/system-entities");
    if (json.status == 200) {
        var obj = eval('(' + json + ')');
        if (obj) {
+    	   
+    	   model.systemFolders = new Array();
+    	   
+    	   if( obj.systemFolders){
+	    	   for(var i = 0;i< obj.systemFolders.length; i++){
+	    		   var systemFolder = obj.systemFolders[i];
+	    		   systemFolder.urlPath = systemFolder.path.split("/").slice(2).join("/")+"/"+systemFolder.name;
+	    		   model.systemFolders.push(systemFolder);
+	    	   }
+    	   }
+    	   
           model.systemEntities = obj.systemEntities;
           model.systemFolders = obj.systemFolders;
           model.systemInfo = obj.systemInfo;

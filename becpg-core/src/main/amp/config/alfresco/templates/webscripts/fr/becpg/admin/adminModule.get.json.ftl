@@ -15,7 +15,7 @@
 	      <#list users as item>
 	      {
 	      <#attempt>
-	     		<#assign currentPerson = people.getPerson(item)>
+	     	 <#assign currentPerson = people.getPerson(item)>
 	         "username" : "${item}",
 	         "fullName" : "${currentPerson.properties["cm:firstName"]} ${currentPerson.properties["cm:lastName"]}",
 	         "email" : "${currentPerson.properties["cm:email"]}"
@@ -36,7 +36,7 @@
 	         "nodeRef" : "${item.nodeRef}",
 	         "name" : "${item.name}",
 	         "title" : "${item.properties.title!""}",
-				"description": "${item.properties.description!""}"
+			  "description": "${item.properties.description!""}"
 	      }<#if item_has_next>,</#if>
 	     </#list>
 	   ]
@@ -49,7 +49,7 @@
 	         "nodeRef" : "${item.nodeRef}",
 	         "name" : "${item.name}",
 	         "title" : "${item.properties.title!""}",
-				"description": "${item.properties.description!""}",
+			 "description": "${item.properties.description!""}",
 	         "path": "${item.displayPath}"
 	      }<#if item_has_next>,</#if>
 	     </#list>
