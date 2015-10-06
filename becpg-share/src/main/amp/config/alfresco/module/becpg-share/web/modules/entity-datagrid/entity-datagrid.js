@@ -2416,6 +2416,13 @@
                             var obj = args[1];
                             if ((obj !== null) && (obj.dataList !== null))
                             {
+                            	if( this.datalistMeta!=null && this.datalistMeta.name!=null){
+                            		Dom.removeClass(this.id+"-body",this.datalistMeta.name);
+                            		if(obj.dataList.name!=null){
+                            			Dom.addClass(this.id+"-body",obj.dataList.name);
+                            		}
+                            	}
+                            	
                                 this.datalistMeta = obj.dataList;
                                 this.entity = obj.entity;
                                 this.currentPage = 1;
