@@ -24,6 +24,10 @@ import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
@@ -43,6 +47,8 @@ public class ActivityListExtractor extends SimpleExtractor {
 
 	private static final String ACTIVITY_LIST = "activityList";
 
+	private static Log logger = LogFactory.getLog(ActivityListExtractor.class);
+	
 	private ProjectActivityService projectActivityService;
 	
 	public void setProjectActivityService(ProjectActivityService projectActivityService) {
@@ -73,18 +79,33 @@ public class ActivityListExtractor extends SimpleExtractor {
 			AttributeExtractorMode mode, Map<QName, Serializable> properties, Map<String, Object> props, Map<NodeRef, Map<String, Object>> cache) {
 		Map<String, Object> ret = super.doExtract(nodeRef, itemType, metadataFields, mode, properties, props, cache);
 		if(ProjectModel.TYPE_ACTIVITY_LIST.equals(itemType)){
-			postLookupActivity(ret,properties);
+			postLookupActivity(ret,properties, mode);
 		}
 
 		return ret;
 
 	}
 	
-	protected void postLookupActivity(Map<String, Object> ret, Map<QName, Serializable> properties) {
+	protected void postLookupActivity(Map<String, Object> ret, Map<QName, Serializable> properties, AttributeExtractorMode mode) {
 		ret.put("prop_pjt_alUserId", extractPerson((String) properties.get(ProjectModel.PROP_ACTIVITYLIST_USERID)));
-		ret.put("prop_pjt_alData", projectActivityService.postActivityLookUp(
+		
+		JSONObject postLookup = projectActivityService.postActivityLookUp(
 				ActivityType.valueOf((String) properties.get(ProjectModel.PROP_ACTIVITYLIST_TYPE)),
-				(String)properties.get(ProjectModel.PROP_ACTIVITYLIST_DATA)));
+				(String)properties.get(ProjectModel.PROP_ACTIVITYLIST_DATA));
+		
+		if(AttributeExtractorMode.JSON.equals(mode)){
+		 ret.put("prop_pjt_alData", postLookup);
+		} else {
+			 try {
+				 if(postLookup.has("content")){
+					 ret.put("prop_pjt_alData", postLookup.get("content"));
+				 } else {
+					 ret.put("prop_pjt_alData", "");
+				 }
+			} catch (JSONException e) {
+				logger.error(e,e);
+			}
+		}
 		
 	}
 
