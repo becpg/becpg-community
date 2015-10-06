@@ -5564,6 +5564,7 @@ row["illValue"]
                 <structure>
                     <property name="columnName">legalName</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">legalName</text-property>
                 </structure>
             </list-property>
@@ -5632,7 +5633,7 @@ row["illValue"]
                     <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/labelClaimLists/labelClaimList]#:#{lclType;STRING;/@lclType},{lclLabelClaim;STRING;/@lclLabelClaim},{lclIsClaimed;STRING;/@lclIsClaimed},{legalName;STRING;/@legalName}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/labelClaimLists/labelClaimList]#:#{lclType;STRING;/@lclType},{lclLabelClaim;STRING;/@lclLabelClaim},{lclIsClaimed;STRING;/@lclClaimValue},{legalName;STRING;/@legalName}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>

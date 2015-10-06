@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
     <property name="author">beCPG</property>
-    <property name="createdBy">Eclipse BIRT Designer Version 4.5.0.v201506092134 Build &lt;@BUILD@></property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.4.2.v201410272105 Build &lt;4.4.2.v20150217-1805></property>
     <list-property name="userProperties">
         <structure>
             <property name="name">Data Cube.OrganoList.x</property>
@@ -1888,7 +1888,6 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                 <structure>
                     <property name="columnName">certificateDate</property>
                     <property name="analysis">dimension</property>
-                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">certificateDate</text-property>
                 </structure>
                 <structure>
@@ -1921,7 +1920,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                     <structure>
                         <property name="position">3</property>
                         <property name="name">certificateDate</property>
-                        <property name="dataType">string</property>
+                        <property name="dataType">date</property>
                     </structure>
                     <structure>
                         <property name="position">4</property>
@@ -1955,8 +1954,8 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                     <property name="position">3</property>
                     <property name="name">certificateDate</property>
                     <property name="nativeName">certificateDate</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="dataType">date</property>
+                    <property name="nativeDataType">91</property>
                 </structure>
                 <structure>
                     <property name="position">4</property>
@@ -1973,7 +1972,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                     <property name="nativeDataType">12</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/labelClaimLists/labelClaimList]#:#{lclType;STRING;/@lclType},{lclLabelClaim;STRING;/@lclLabelClaim},{certificateDate;STRING;/@certificateDate},{lclComments;STRING;/@lclComments},{lclClaimValue;STRING;/@lclClaimValue}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/labelClaimLists/labelClaimList]#:#{lclType;STRING;/@lclType},{lclLabelClaim;STRING;/@lclLabelClaim},{certificateDate;DATE;/@certificateDate},{lclComments;STRING;/@lclComments},{lclClaimValue;STRING;/@lclClaimValue}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -2015,6 +2014,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
         <design:resultColumnDefinitions>
           <design:attributes>
             <design:identifier>
+              <design:name></design:name>
               <design:position>3</design:position>
             </design:identifier>
             <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
@@ -5902,17 +5902,17 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                                 </label>
                             </cell>
                             <cell id="6203">
-                                <data id="6219">
-                                    <property name="dataSet">Entity</property>
+                                <data id="7253">
+                                    <property name="dataSet">Product</property>
                                     <list-property name="boundDataColumns">
                                         <structure>
-                                            <property name="name">storageConditions</property>
-                                            <text-property name="displayName">storageConditions</text-property>
-                                            <expression name="expression" type="javascript">dataSetRow["storageConditions"]</expression>
+                                            <property name="name">storageConditionsDescription</property>
+                                            <text-property name="displayName">storageConditionsDescription</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["storageConditionsDescription"]</expression>
                                             <property name="dataType">string</property>
                                         </structure>
                                     </list-property>
-                                    <property name="resultSetColumn">storageConditions</property>
+                                    <property name="resultSetColumn">storageConditionsDescription</property>
                                 </data>
                             </cell>
                         </row>
@@ -9543,7 +9543,8 @@ decisionTree
                                 <property name="name">certificateDate</property>
                                 <text-property name="displayName">certificateDate</text-property>
                                 <expression name="expression" type="javascript">dataSetRow["certificateDate"]</expression>
-                                <property name="dataType">string</property>
+                                <property name="dataType">date</property>
+                                <property name="allowExport">true</property>
                             </structure>
                             <structure>
                                 <property name="name">lclComments</property>
@@ -9554,8 +9555,9 @@ decisionTree
                             <structure>
                                 <property name="name">lclClaimValue</property>
                                 <text-property name="displayName">lclClaimValue</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["lclClaimValue"]</expression>
+                                <expression name="expression" type="javascript">reportContext.getMessage(dataSetRow["lclClaimValue"], reportContext.getLocale())</expression>
                                 <property name="dataType">string</property>
+                                <property name="allowExport">true</property>
                             </structure>
                         </list-property>
                         <column id="6849">
@@ -9574,22 +9576,13 @@ decisionTree
                             <property name="width">2.3229166666666665in</property>
                         </column>
                         <header>
-                            <row id="6971">
-                                <cell id="6972">
-                                    <label id="6991"/>
-                                </cell>
-                                <cell id="6973"/>
-                                <cell id="6974"/>
-                                <cell id="6975"/>
-                                <cell id="7211"/>
-                            </row>
                             <row id="6853">
                                 <cell id="6854">
                                     <property name="colSpan">5</property>
                                     <property name="rowSpan">1</property>
                                     <label id="6858">
                                         <property name="style">becpg-chapter-header</property>
-                                        <text-property name="text" key="labelClaimsTitle">ALLEGATIONS</text-property>
+                                        <text-property name="text" key="labelClaimsTitle"></text-property>
                                     </label>
                                 </cell>
                             </row>
@@ -10067,69 +10060,8 @@ decisionTree
                                     <property name="borderRightWidth">1px</property>
                                     <property name="borderTopStyle">solid</property>
                                     <property name="borderTopWidth">1px</property>
-                                    <data id="7222">
-                                        <property name="backgroundAttachment">scroll</property>
-                                        <property name="backgroundPositionX">0%</property>
-                                        <property name="backgroundPositionY">0%</property>
-                                        <property name="backgroundRepeat">repeat</property>
-                                        <property name="fontFamily">"arial"</property>
-                                        <property name="fontSize">10pt</property>
-                                        <property name="fontWeight">normal</property>
-                                        <property name="fontStyle">normal</property>
-                                        <property name="fontVariant">normal</property>
-                                        <property name="color">black</property>
-                                        <property name="textLineThrough">none</property>
-                                        <property name="textOverline">none</property>
-                                        <property name="textUnderline">none</property>
-                                        <property name="borderBottomColor">black</property>
-                                        <property name="borderBottomStyle">none</property>
-                                        <property name="borderBottomWidth">medium</property>
-                                        <property name="borderLeftColor">black</property>
-                                        <property name="borderLeftStyle">none</property>
-                                        <property name="borderLeftWidth">medium</property>
-                                        <property name="borderRightColor">black</property>
-                                        <property name="borderRightStyle">none</property>
-                                        <property name="borderRightWidth">medium</property>
-                                        <property name="borderTopColor">black</property>
-                                        <property name="borderTopStyle">none</property>
-                                        <property name="borderTopWidth">medium</property>
-                                        <property name="marginTop">0pt</property>
-                                        <property name="marginLeft">0pt</property>
-                                        <property name="marginBottom">0pt</property>
-                                        <property name="marginRight">0pt</property>
-                                        <property name="paddingTop">1pt</property>
-                                        <property name="paddingLeft">1pt</property>
-                                        <property name="paddingBottom">1pt</property>
-                                        <property name="paddingRight">1pt</property>
-                                        <structure name="numberFormat">
-                                            <property name="category">General Number</property>
-                                            <property name="pattern">General Number</property>
-                                        </structure>
+                                    <data id="7239">
                                         <property name="textAlign">center</property>
-                                        <property name="letterSpacing">normal</property>
-                                        <property name="lineHeight">normal</property>
-                                        <property name="orphans">2</property>
-                                        <property name="textTransform">none</property>
-                                        <property name="whiteSpace">normal</property>
-                                        <property name="widows">2</property>
-                                        <property name="wordSpacing">normal</property>
-                                        <property name="display">block</property>
-                                        <property name="pageBreakAfter">auto</property>
-                                        <property name="pageBreakBefore">auto</property>
-                                        <property name="pageBreakInside">avoid</property>
-                                        <property name="showIfBlank">false</property>
-                                        <property name="canShrink">false</property>
-                                        <property name="overflow">hidden</property>
-                                        <property name="dataSet">labelClaimList</property>
-                                        <list-property name="boundDataColumns">
-                                            <structure>
-                                                <property name="name">lclClaimValue</property>
-                                                <text-property name="displayName">lclClaimValue</text-property>
-                                                <expression name="expression" type="javascript">reportContext.getMessage(dataSetRow["lclClaimValue"], reportContext.getLocale())</expression>
-                                                <property name="dataType">string</property>
-                                                <property name="allowExport">true</property>
-                                            </structure>
-                                        </list-property>
                                         <property name="resultSetColumn">lclClaimValue</property>
                                     </data>
                                 </cell>
@@ -10207,61 +10139,10 @@ decisionTree
                                     <property name="borderRightWidth">1px</property>
                                     <property name="borderTopStyle">solid</property>
                                     <property name="borderTopWidth">1px</property>
-                                    <data id="7219">
-                                        <property name="backgroundAttachment">scroll</property>
-                                        <property name="backgroundPositionX">0%</property>
-                                        <property name="backgroundPositionY">0%</property>
-                                        <property name="backgroundRepeat">repeat</property>
-                                        <property name="fontFamily">"arial"</property>
-                                        <property name="fontSize">10pt</property>
-                                        <property name="fontWeight">normal</property>
-                                        <property name="fontStyle">normal</property>
-                                        <property name="fontVariant">normal</property>
-                                        <property name="color">black</property>
-                                        <property name="textLineThrough">none</property>
-                                        <property name="textOverline">none</property>
-                                        <property name="textUnderline">none</property>
-                                        <property name="borderBottomColor">black</property>
-                                        <property name="borderBottomStyle">none</property>
-                                        <property name="borderBottomWidth">medium</property>
-                                        <property name="borderLeftColor">black</property>
-                                        <property name="borderLeftStyle">none</property>
-                                        <property name="borderLeftWidth">medium</property>
-                                        <property name="borderRightColor">black</property>
-                                        <property name="borderRightStyle">none</property>
-                                        <property name="borderRightWidth">medium</property>
-                                        <property name="borderTopColor">black</property>
-                                        <property name="borderTopStyle">none</property>
-                                        <property name="borderTopWidth">medium</property>
-                                        <property name="marginTop">0pt</property>
-                                        <property name="marginLeft">0pt</property>
-                                        <property name="marginBottom">0pt</property>
-                                        <property name="marginRight">0pt</property>
-                                        <property name="paddingTop">1pt</property>
-                                        <property name="paddingLeft">1pt</property>
-                                        <property name="paddingBottom">1pt</property>
-                                        <property name="paddingRight">1pt</property>
-                                        <structure name="numberFormat">
-                                            <property name="category">General Number</property>
-                                            <property name="pattern">General Number</property>
-                                        </structure>
-                                        <property name="textAlign">center</property>
-                                        <property name="letterSpacing">normal</property>
-                                        <property name="lineHeight">normal</property>
-                                        <property name="orphans">2</property>
-                                        <property name="textTransform">none</property>
-                                        <property name="whiteSpace">normal</property>
-                                        <property name="widows">2</property>
-                                        <property name="wordSpacing">normal</property>
-                                        <property name="display">block</property>
-                                        <property name="pageBreakAfter">auto</property>
-                                        <property name="pageBreakBefore">auto</property>
-                                        <property name="pageBreakInside">avoid</property>
-                                        <property name="showIfBlank">false</property>
-                                        <property name="canShrink">false</property>
-                                        <property name="overflow">hidden</property>
-                                        <property name="resultSetColumn">lclComments</property>
-                                    </data>
+                                    <text id="7252">
+                                        <property name="contentType">html</property>
+                                        <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["lclComments"].replace("<p>","").replace("</p>","")</VALUE-OF>]]></text-property>
+                                    </text>
                                 </cell>
                             </row>
                         </detail>
@@ -11015,6 +10896,10 @@ else{
                 <cell id="7113"/>
             </row>
         </grid>
+        <text id="3173">
+            <property name="contentType">html</property>
+            <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["lclComments"].replace("<p>","").replace("</p>","")</VALUE-OF>]]></text-property>
+        </text>
     </body>
     <list-property name="images">
         <structure>
