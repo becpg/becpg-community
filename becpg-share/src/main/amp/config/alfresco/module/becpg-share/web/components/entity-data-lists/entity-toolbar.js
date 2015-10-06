@@ -360,7 +360,7 @@
                 {
                    try
                    {
-                      this[eventTarget.id].call(this, this.recordData, eventTarget);
+                      this[eventTarget.id].call(this, this.recordData, eventTarget.element);
                       Event.preventDefault(domEvent);
                    }
                    catch (e)
@@ -372,6 +372,31 @@
              return true;
           
           
+      },
+      getAction: function dlA_getAction(record, owner, resolve)
+      {
+         var actionId = owner.className.split(" ")[0],
+            action = Alfresco.util.findInArray(record.actions, actionId, "id") || {};
+
+         if (resolve === false)
+         {
+            // Return action without resolved parameters
+            return action;
+         }
+         else
+         {
+            // Resolve action's parameters before returning them
+            action = Alfresco.util.deepCopy(action);
+            var params = action.params || {};
+            for (var key in params)
+            {
+               params[key] = YAHOO.lang.substitute(params[key], record, function getActionParams_substitute(p_key, p_value, p_meta)
+               {
+                  return Alfresco.util.findValueByDotNotation(record, p_key);
+               });
+            }
+            return action;
+         }
       },
       
       /**
