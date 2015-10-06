@@ -298,7 +298,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 										if (ProjectModel.TYPE_ACTIVITY_LIST.equals(field.getFieldQname())) {
 											Map<String, Object> tmp2 = doExtract(itemNodeRef, itemType, field.getChildrens(), mode, properties,
 													props, cache);
-											postLookupActivity(tmp2, properties);
+											postLookupActivity(tmp2, properties, mode);
 											tmp.put(PROP_NODEDATA, tmp2);
 										} else {
 											tmp.put(PROP_NODEDATA,
