@@ -63,12 +63,6 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 
 		if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 
-			for (LabelClaimListDataItem labelClaimListDataItem : productData.getLabelClaimList()) {
-				if((labelClaimListDataItem.getIsManual() == null || !labelClaimListDataItem.getIsManual())){
-					labelClaimListDataItem.setLabelClaimValue(null);
-				}
-
-			}
 				Set<NodeRef> visitedProducts = new HashSet<>();
 
 				for (CompoListDataItem compoItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
