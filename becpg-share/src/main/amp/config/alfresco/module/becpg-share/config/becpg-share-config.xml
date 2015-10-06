@@ -259,8 +259,8 @@
 				<action index="110" id="folder-download" />
 				<action index="114" id="entity-view-original" />
 				<action index="115" id="entity-view-working-copy" />
-				<action index="120" id="document-approve" icon="folder-approve" />
-				<action index="130" id="document-reject" icon="folder-reject" />
+				<action index="120" id="document-approve" icon="document-approve" />
+				<action index="130" id="document-reject" icon="document-reject" />
 				<action index="140" id="document-locate" icon="document-locate" label="actions.folder.locate" />
 				<action index="150" id="document-copy-to" icon="folder-copy-to" label="actions.folder.copy-to" />
 				<action index="160" id="document-move-to" icon="folder-move-to" label="actions.folder.move-to" />
@@ -285,8 +285,8 @@
 				<action index="106" id="entity-view-working-copy" />
 				<!-- <action index="108" id="entity-refresh-reports" /> -->
 				
-				<action index="114" id="document-approve" icon="folder-approve" />
-				<action index="120" id="document-reject" icon="folder-reject" />
+				<action index="114" id="document-approve" icon="document-approve" />
+				<action index="120" id="document-reject" icon="document-reject" />
 				<action index="130" id="document-copy-to" icon="folder-copy-to" label="actions.folder.copy-to" />
 				<action index="140" id="document-move-to" icon="folder-move-to" label="actions.folder.move-to" />
 				<action index="150" id="folder-manage-rules" />
