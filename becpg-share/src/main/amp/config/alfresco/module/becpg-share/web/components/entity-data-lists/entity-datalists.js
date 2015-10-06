@@ -106,7 +106,7 @@
 							"processList": "formulation-view",
 							"packagingList": "formulation-view",
 							"taskList":"gantt-view",
-							"ingLabelingList":"labeling-view",
+							"ingLabelingList":"labeling-view"
 						},
 
 						/**

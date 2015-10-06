@@ -13,10 +13,8 @@
 			   if (data.version && data.version !== "") {
 				   version = '<span class="document-version">' + data.version + '</span>';
 			   }
-
 			   return '<span class="' + data.metadata + '" ><a href="' + url + '">' + $html(data.displayValue)
 			         + '</a></span>' + version;
-
 		   }
 
 		});				
@@ -48,7 +46,6 @@
 	                   var alData = data["itemData"]["prop_pjt_alData"] ? data["itemData"]["prop_pjt_alData"] : null;
 	                   var html = "";
 	                   if(alData!=null && alData.title){
-	                      
 	                       html += '<div class="project-activity-details">';
 	                       html += '   <div class="icon" title="' +  user.displayValue + '">' + Alfresco.Share.userAvatar(user.value,32) + '</div>';
 	                       html += '   <div class="details">';
