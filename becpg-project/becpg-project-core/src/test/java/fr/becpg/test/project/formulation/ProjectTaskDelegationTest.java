@@ -3,7 +3,7 @@ package fr.becpg.test.project.formulation;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,7 +15,6 @@ import org.junit.Test;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
-import fr.becpg.repo.project.data.projectList.TaskState;
 import fr.becpg.test.BeCPGTestHelper;
 import fr.becpg.test.project.AbstractProjectTestCase;
 
@@ -39,41 +38,57 @@ public class ProjectTaskDelegationTest extends AbstractProjectTestCase {
 				ProjectData projectData = new ProjectData(null, "Deleg", null, null,
 						null, null, null, null, null, null, null, 0, null);
 				
-				projectData.setParentNodeRef(getTestFolderNodeRef());			
+				projectData.setParentNodeRef(getTestFolderNodeRef());	
+				
+				Calendar now = Calendar.getInstance();
+				
+				
 				
 				//simple delegation
 				userThree = BeCPGTestHelper.createUser(USER_THREE);	
+				userFour = BeCPGTestHelper.createUser(USER_FOUR);	
+				
 				nodeService.setProperty(userThree, ProjectModel.PROP_QNAME_DELEGATION_STATE,true);
-				nodeService.setProperty(userThree, ProjectModel.PROP_QNAME_DELEGATION_START, new SimpleDateFormat("dd/MM/yyyy").parse("09/09/2015"));
-				nodeService.setProperty(userThree, ProjectModel.PROP_QNAME_DELEGATION_END, new SimpleDateFormat("dd/MM/yyyy").parse("30/09/2015"));
+				nodeService.setProperty(userThree, ProjectModel.PROP_QNAME_DELEGATION_START, now.getTime());
+				
 				nodeService.setProperty(userThree, ProjectModel.PROP_QNAME_REASSIGN_TASK,true);
 				associationService.update(userThree,ProjectModel.PROP_QNAME_REASSIGN_RESOURCE,userOne);		
 				
-				assigneesThree = new ArrayList<>();
-				assigneesThree.add(userThree);	
 				
 				//multiple delegation
-				userFour = BeCPGTestHelper.createUser(USER_FOUR);	
-
 				nodeService.setProperty(userFour, ProjectModel.PROP_QNAME_DELEGATION_STATE,true);
-				nodeService.setProperty(userFour, ProjectModel.PROP_QNAME_DELEGATION_START, new SimpleDateFormat("dd/MM/yyyy").parse("09/09/2015"));
-				nodeService.setProperty(userFour, ProjectModel.PROP_QNAME_DELEGATION_END, new SimpleDateFormat("dd/MM/yyyy").parse("30/09/2015"));
+				nodeService.setProperty(userFour, ProjectModel.PROP_QNAME_DELEGATION_START,now.getTime());
 				nodeService.setProperty(userFour, ProjectModel.PROP_QNAME_REASSIGN_TASK,true);
 				associationService.update(userFour,ProjectModel.PROP_QNAME_REASSIGN_RESOURCE,userThree);		
+				
+				
+				now.add(Calendar.MONTH, 1);
+				
+				nodeService.setProperty(userThree, ProjectModel.PROP_QNAME_DELEGATION_END, now.getTime());
+				nodeService.setProperty(userFour, ProjectModel.PROP_QNAME_DELEGATION_END, now.getTime());
+			
+				
+				assigneesThree = new ArrayList<>();
+				assigneesThree.add(userThree);	
 				
 				assigneesFour = new ArrayList<>();
 				assigneesFour.add(userFour);
 				
 				List<TaskListDataItem> taskList = new LinkedList<>();				
 				taskList.add(new TaskListDataItem(null, "task5", false, 2, null, assigneesThree, taskLegends.get(1), "activiti$projectAdhoc"));
-				//taskList.add(new TaskListDataItem(null, "task5", false, 2, new SimpleDateFormat("dd/MM/yyyy").parse("08/09/2015"), new SimpleDateFormat("dd/MM/yyyy").parse("09/12/2015"), TaskState.Planned, 0, prevTasks, resources, taskLegend, workflowName, workflowInstance, plannedExpense, expense));
 				taskList.add(new TaskListDataItem(null, "task6", false, 2, null, assigneesFour, taskLegends.get(1), "activiti$projectAdhoc"));
 				projectData.setTaskList(taskList);
 				
-				projectData.getTaskList().get(0).setStart(new SimpleDateFormat("dd/MM/yyyy").parse("08/09/2015"));
-				projectData.getTaskList().get(0).setEnd(new SimpleDateFormat("dd/MM/yyyy").parse("09/12/2015"));
-				projectData.getTaskList().get(1).setStart(new SimpleDateFormat("dd/MM/yyyy").parse("08/09/2015"));
-				projectData.getTaskList().get(1).setEnd(new SimpleDateFormat("dd/MM/yyyy").parse("09/12/2015"));
+				now = Calendar.getInstance();
+				now.add(Calendar.DAY_OF_MONTH, -1);
+				
+				projectData.getTaskList().get(0).setStart(now.getTime());
+				projectData.getTaskList().get(1).setStart(now.getTime());
+				
+				now.add(Calendar.MONTH, 6);
+				
+				projectData.getTaskList().get(0).setEnd(now.getTime());
+				projectData.getTaskList().get(1).setEnd(now.getTime());
 				
 				projectData = (ProjectData) alfrescoRepository.save(projectData);
 				NodeRef projectNodeRef = projectData.getNodeRef();
