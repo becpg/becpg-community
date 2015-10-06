@@ -130,8 +130,16 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					} else if (LabelingRuleType.Locale.equals(type)) {
 						labelingFormulaContext.addLocale(labelingRuleListDataItem.getFormula());
 					} else if (LabelingRuleType.Prefs.equals(type)) {
+						try {
 						Expression exp = parser.parseExpression(SpelHelper.formatFormula(labelingRuleListDataItem.getFormula()));
 						exp.getValue(dataContext, String.class);
+						} catch(Exception e){
+							String message = I18NUtil.getMessage("message.formulate.labelRule.error", labelingRuleListDataItem.getName(), e.getLocalizedMessage());
+							formulatedProduct.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, null, new ArrayList<NodeRef>()));
+							if (logger.isDebugEnabled()) {
+								logger.info("Error in formula :" + SpelHelper.formatFormula(labelingRuleListDataItem.getFormula()), e);
+							}
+						}
 					} else if (!LabelingRuleType.Render.equals(type)) {
 						labelingFormulaContext.addRule(labelingRuleListDataItem.getNodeRef(), labelingRuleListDataItem.getName(), labelingRuleListDataItem.getComponents(),
 								labelingRuleListDataItem.getReplacements(), labelingRuleListDataItem.getLabel(), labelingRuleListDataItem.getFormula(), type);
