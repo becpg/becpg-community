@@ -10,7 +10,7 @@ function getActivityParameters(nodeRef, defaultValue)
          return (
          {
             itemTitle: metadata.properties[cm + 'name'],
-            page: 'entity-datalist',
+            page: 'entity-data-lists',
             pageParams:
             {
                nodeRef: metadata.nodeRef,
