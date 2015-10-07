@@ -37,4 +37,6 @@ public interface ProjectActivityService {
 
 	void postContentActivity(NodeRef actionedUponNodeRef, ActivityEvent activityAction);
 
+	boolean isInProject(NodeRef nodeRef);
+
 }

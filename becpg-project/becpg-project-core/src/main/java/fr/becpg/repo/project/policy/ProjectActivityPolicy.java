@@ -1,8 +1,6 @@
 package fr.becpg.repo.project.policy;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -17,8 +15,6 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.project.data.projectList.ActivityEvent;
 
 public class ProjectActivityPolicy extends ProjectPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.BeforeDeleteNodePolicy, NodeServicePolicies.OnCreateNodePolicy,
@@ -26,17 +22,11 @@ public class ProjectActivityPolicy extends ProjectPolicy implements NodeServiceP
 
 	private static final Log logger = LogFactory.getLog(ProjectListPolicy.class);
 
-	private static Integer MAX_DEPTH_LEVEL = 6;
-
 	protected static final String KEY_QUEUE_UPDATED = "ProjectActivity_updated";
 	protected static final String KEY_QUEUE_DELETED = "ProjectActivity_deleted";
 	protected static final String KEY_QUEUE_CREATED = "ProjectActivity_created";
 
-	private static final Set<QName> IGNORE_PARENT_ASSOC_TYPES = new HashSet<QName>(7);
-	static {
-		IGNORE_PARENT_ASSOC_TYPES.add(ContentModel.ASSOC_MEMBER);
-		IGNORE_PARENT_ASSOC_TYPES.add(ContentModel.ASSOC_IN_ZONE);
-	}
+	
 
 	/**
 	 * Inits the.
@@ -111,7 +101,7 @@ public class ProjectActivityPolicy extends ProjectPolicy implements NodeServiceP
 	}
 
 	private void registerActivity(NodeRef actionedUponNodeRef, ActivityEvent activityEvent) {
-		if (isInProject(actionedUponNodeRef, null)) {
+		if (projectActivityService.isInProject(actionedUponNodeRef)) {
 			try {
 			policyBehaviourFilter.disableBehaviour(ContentModel.TYPE_CONTENT);
 				QName type = nodeService.getType(actionedUponNodeRef);
@@ -131,40 +121,6 @@ public class ProjectActivityPolicy extends ProjectPolicy implements NodeServiceP
 		}
 	}
 
-	private boolean isInProject(NodeRef nodeRef, Set<NodeRef> visitedNodeRefs) {
-		if (nodeService.exists(nodeRef) && !nodeService.hasAspect(nodeRef, ContentModel.ASPECT_WORKING_COPY) && !nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
-
-			if (ProjectModel.TYPE_PROJECT.equals(nodeService.getType(nodeRef))) {
-				return true;
-			}
-
-			// Create the visited nodes set if it has not already been created
-			if (visitedNodeRefs == null) {
-				visitedNodeRefs = new HashSet<NodeRef>();
-			}
-
-			// This check prevents stack over flow when we have a cyclic node
-			// graph
-			if (visitedNodeRefs.contains(nodeRef) == false && visitedNodeRefs.size() < MAX_DEPTH_LEVEL) {
-				visitedNodeRefs.add(nodeRef);
-
-				List<ChildAssociationRef> parents = nodeService.getParentAssocs(nodeRef);
-				for (ChildAssociationRef parent : parents) {
-					// We are not interested in following potentially massive
-					// person group membership trees!
-					if (IGNORE_PARENT_ASSOC_TYPES.contains(parent.getTypeQName())) {
-						continue;
-					}
-
-					if (isInProject(parent.getParentRef(), visitedNodeRefs)) {
-						return true;
-					}
-
-				}
-
-			}
-		}
-		return false;
-	}
+	
 
 }
