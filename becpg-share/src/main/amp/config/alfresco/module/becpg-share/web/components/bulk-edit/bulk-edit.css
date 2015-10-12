@@ -8,16 +8,20 @@
 	 margin-left: 1em;
 	 padding: 10px;
 	 height: 11em;
-	 overflow-x: auto;
 }
 
 .bulk-edit .bulk-edit-props-container  li {
     line-height: 2em;
+	 width: 20em;
+	 overflow-x: auto;
+	 white-space: nowrap;
+     overflow: hidden;
+     text-overflow: ellipsis;
   }
 
-  .bulk-edit .bulk-edit-props-container   li.reset {
+ .bulk-edit .bulk-edit-props-container   li.reset {
     margin-top: -10em;
-  }
+ }
 
  .bulk-edit .bulk-edit-props-container  li.column-0 { margin-left: 0em; }
  .bulk-edit .bulk-edit-props-container  li.column-1 { margin-left: 20em; }
