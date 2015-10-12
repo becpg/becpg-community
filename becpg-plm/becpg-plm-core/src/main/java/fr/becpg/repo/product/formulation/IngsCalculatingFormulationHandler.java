@@ -580,7 +580,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				for (ProductSpecificationData productSpecificationData : productSpecicationDataList) {
 
 					for (ForbiddenIngListDataItem fil : productSpecificationData.getForbiddenIngList()) {
-						if (!RequirementType.Authorized.equals(fil.getReqType())) {
+						if (RequirementType.Authorized.equals(fil.getReqType())) {
 							if (checkRuleMatchIng(ingListDataItem, fil)) {
 								autorized = true;
 								break;
