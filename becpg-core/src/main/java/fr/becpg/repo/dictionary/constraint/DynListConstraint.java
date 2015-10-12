@@ -237,10 +237,8 @@ public class DynListConstraint extends ListOfValuesConstraint {
 
 		});
 	}
-
-	@Override
-	public String getDisplayLabel(String constraintAllowableValue, MessageLookup messageLookup) {
-
+	
+	public String getDisplayLabel(String constraintAllowableValue){
 		if (!allowedValues.get(TenantUtil.getCurrentDomain()).containsKey(constraintAllowableValue)) {
 			return null;
 		}
@@ -251,6 +249,12 @@ public class DynListConstraint extends ListOfValuesConstraint {
 		}
 
 		return constraintAllowableValue;
+	}
+	
+
+	@Override
+	public String getDisplayLabel(String constraintAllowableValue, MessageLookup messageLookup) {
+		return getDisplayLabel(constraintAllowableValue);
 	}
 
 }
