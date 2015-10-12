@@ -343,6 +343,7 @@
 			<parameter name="allowedValues">
 				<list>
 					<value></value>
+					<value>Authorized</value>
 					<value>Forbidden</value>
 					<value>Tolerated</value>
 					<value>Info</value>
