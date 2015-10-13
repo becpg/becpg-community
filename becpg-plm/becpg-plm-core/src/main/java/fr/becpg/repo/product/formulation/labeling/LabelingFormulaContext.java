@@ -328,7 +328,7 @@ public class LabelingFormulaContext {
 
 	private String createAllergenAwareLabel(String ingLegalName, Set<NodeRef> allergens) {
 
-		if (Pattern.matches("<b>|<u>|<i>|[A-Z]{3}", ingLegalName)) {
+		if (Pattern.compile("<b>|<u>|<i>|[A-Z]{3}").matcher(ingLegalName).find()) {
 			return ingLegalName;
 		}
 
