@@ -51,6 +51,11 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 		logger.debug("Nuts calculating visitor");
 
+
+		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
+			return true;
+		}
+		
 		// no compo => no formulation
 		if ((formulatedProduct.getNutList() == null) && !alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_NUTLIST)) {
 			logger.debug("no compo => no formulation");

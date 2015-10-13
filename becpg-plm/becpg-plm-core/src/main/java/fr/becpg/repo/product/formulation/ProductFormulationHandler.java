@@ -96,8 +96,8 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 	@Override
 	public boolean process(ProductData productData) throws FormulateException {
 
-		if (!productData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) && ((productData.hasCompoListEl(new VariantFilters<>()))
-				|| (productData.hasPackagingListEl(new VariantFilters<>())) || (productData.hasProcessListEl(new VariantFilters<>())))) {
+		if ((productData.hasCompoListEl(new VariantFilters<>()))
+				|| (productData.hasPackagingListEl(new VariantFilters<>())) || (productData.hasProcessListEl(new VariantFilters<>()))) {
 
 			if (productData.hasCompoListEl(new VariantFilters<>())) {
 				if (productData.getCompoListView().getReqCtrlList() != null) {
@@ -142,11 +142,6 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 			productData.getProcessListView().getReqCtrlList().clear();
 		}
 
-		if (productData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
-			logger.debug("Entity tpl found skipping formulation");
-			// Skip formulation
-			return false;
-		}
 
 		return true;
 	}

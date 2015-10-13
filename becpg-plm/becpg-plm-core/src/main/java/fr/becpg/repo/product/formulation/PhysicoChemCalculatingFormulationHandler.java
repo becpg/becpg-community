@@ -12,6 +12,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.data.EffectiveFilters;
@@ -38,6 +39,11 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 		logger.debug("Physico chemical calculating visitor");
 
+
+		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
+			return true;
+		}
+		
 		// no compo => no formulation
 		if (!formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 			logger.debug("no compo => no formulation");
