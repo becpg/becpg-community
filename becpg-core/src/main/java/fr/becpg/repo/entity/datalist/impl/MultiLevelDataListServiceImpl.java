@@ -1,23 +1,25 @@
 /*******************************************************************************
- * Copyright (C) 2010-2015 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2015 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.entity.datalist.impl;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -42,7 +44,7 @@ import fr.becpg.repo.search.AdvSearchService;
 
 /**
  * Extract MultiLevelDataList at corresponding level
- * 
+ *
  * @author matthieu
  */
 @Service("multiLevelDataListService")
@@ -76,7 +78,7 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 			watch.start();
 		}
 		try {
-			return getMultiLevelListData(dataListFilter, dataListFilter.getEntityNodeRef(), 0, dataListFilter.getMaxDepth());
+			return getMultiLevelListData(dataListFilter, dataListFilter.getEntityNodeRef(), 0, dataListFilter.getMaxDepth(), new HashSet<NodeRef>());
 		} finally {
 			if (logger.isDebugEnabled()) {
 				watch.stop();
@@ -85,36 +87,50 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 		}
 	}
 
-	public MultiLevelListData getMultiLevelListData(DataListFilter dataListFilter, NodeRef entityNodeRef, int currDepth, int maxDepthLevel) {
+	private MultiLevelListData getMultiLevelListData(DataListFilter dataListFilter, NodeRef entityNodeRef, int currDepth, int maxDepthLevel,
+			Set<NodeRef> visitedNodeRefs) {
+
+		// Create the visited nodes set if it has not already been created
+		if (visitedNodeRefs == null) {
+			visitedNodeRefs = new HashSet<NodeRef>();
+		}
+
 		MultiLevelListData ret = new MultiLevelListData(entityNodeRef, currDepth);
-		if (maxDepthLevel < 0 || currDepth < maxDepthLevel) {
-			logger.debug("getMultiLevelListData depth :" + currDepth + " max " + maxDepthLevel);
-			if (currDepth == 0 || !entityDictionaryService.isMultiLevelLeaf(nodeService.getType(entityNodeRef))) {
-				NodeRef listsContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
-				if (listsContainerNodeRef != null) {
 
-					NodeRef dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, dataListFilter.getDataType());
-					if (dataListNodeRef != null) {
+		// This check prevents stack over flow when we have a cyclic node
+		if (!visitedNodeRefs.contains(entityNodeRef)) {
+			visitedNodeRefs.add(entityNodeRef);
+			if ((maxDepthLevel < 0) || (currDepth < maxDepthLevel)) {
+				logger.debug("getMultiLevelListData depth :" + currDepth + " max " + maxDepthLevel);
+				if ((currDepth == 0) || !entityDictionaryService.isMultiLevelLeaf(nodeService.getType(entityNodeRef))) {
+					NodeRef listsContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
+					if (listsContainerNodeRef != null) {
 
-						List<NodeRef> childRefs = getListNodeRef(dataListNodeRef, dataListFilter);
-						// Adv search already filter by perm
+						NodeRef dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, dataListFilter.getDataType());
+						if (dataListNodeRef != null) {
 
-						for (NodeRef childRef : childRefs) {
-							entityNodeRef = getEntityNodeRef(childRef);
-							if (entityNodeRef != null) {
-								Integer depthLevel = (Integer) nodeService.getProperty(childRef, BeCPGModel.PROP_DEPTH_LEVEL);
-								if (logger.isDebugEnabled()) {
-									logger.debug("Append level:" + depthLevel + " at currLevel " + currDepth + " for "
-											+ nodeService.getProperty(entityNodeRef, org.alfresco.model.ContentModel.PROP_NAME));
+							List<NodeRef> childRefs = getListNodeRef(dataListNodeRef, dataListFilter);
+							// Adv search already filter by perm
+
+							for (NodeRef childRef : childRefs) {
+								entityNodeRef = getEntityNodeRef(childRef);
+								if (entityNodeRef != null) {
+									Integer depthLevel = (Integer) nodeService.getProperty(childRef, BeCPGModel.PROP_DEPTH_LEVEL);
+									if (logger.isDebugEnabled()) {
+										logger.debug("Append level:" + depthLevel + " at currLevel " + currDepth + " for "
+												+ nodeService.getProperty(entityNodeRef, org.alfresco.model.ContentModel.PROP_NAME));
+									}
+									MultiLevelListData tmp = getMultiLevelListData(dataListFilter, entityNodeRef,
+											currDepth + (depthLevel != null ? depthLevel : 1), maxDepthLevel, visitedNodeRefs);
+									ret.getTree().put(childRef, tmp);
 								}
-
-								MultiLevelListData tmp = getMultiLevelListData(dataListFilter, entityNodeRef, currDepth + (depthLevel != null ? depthLevel : 1), maxDepthLevel);
-								ret.getTree().put(childRef, tmp);
 							}
 						}
 					}
 				}
 			}
+		} else {
+		  logger.warn("Detected cycle for: "+entityNodeRef);
 		}
 		return ret;
 	}
@@ -123,7 +139,8 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 		if (dataListFilter.isAllFilter() && entityDictionaryService.isSubClass(dataListFilter.getDataType(), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
 			return entityListDAO.getListItems(dataListNodeRef, dataListFilter.getDataType(), dataListFilter.getSortMap());
 		} else {
-			return advSearchService.queryAdvSearch(dataListFilter.getDataType(), dataListFilter.getSearchQuery(dataListNodeRef), dataListFilter.getCriteriaMap(), RepoConsts.MAX_RESULTS_UNLIMITED);
+			return advSearchService.queryAdvSearch(dataListFilter.getDataType(), dataListFilter.getSearchQuery(dataListNodeRef),
+					dataListFilter.getCriteriaMap(), RepoConsts.MAX_RESULTS_UNLIMITED);
 		}
 	}
 
@@ -131,7 +148,7 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 		QName pivotAssoc = entityDictionaryService.getDefaultPivotAssoc(nodeService.getType(listItemNodeRef));
 		if (pivotAssoc != null) {
 			NodeRef part = associationService.getTargetAssoc(listItemNodeRef, pivotAssoc);
-			if (part != null && permissionService.hasPermission(part, PermissionService.READ) == AccessStatus.ALLOWED) {
+			if ((part != null) && (permissionService.hasPermission(part, PermissionService.READ) == AccessStatus.ALLOWED)) {
 				return part;
 			}
 		}

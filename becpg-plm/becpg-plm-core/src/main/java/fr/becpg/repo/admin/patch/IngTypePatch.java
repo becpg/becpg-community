@@ -90,7 +90,7 @@ public class IngTypePatch extends AbstractBeCPGPatch {
 			}
 		};
 
-		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("CharactNamePatch", transactionService.getRetryingTransactionHelper(),
+		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("IngTypePatch", transactionService.getRetryingTransactionHelper(),
 				workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 500);
 
 		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
