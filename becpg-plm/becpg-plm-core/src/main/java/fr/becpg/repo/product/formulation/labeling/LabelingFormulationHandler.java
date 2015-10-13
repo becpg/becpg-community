@@ -40,6 +40,7 @@ import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
+import fr.becpg.repo.product.data.constraints.AllergenType;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.LabelingRuleType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
@@ -1017,7 +1018,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				if(product.getAllergenList()!=null){
 					for(AllergenListDataItem allergenListDataItem : product.getAllergenList()){
 						if(allergenListDataItem.getVoluntary() && allergenListDataItem.getVoluntarySources().contains(ingNodeRef)){
-							ingLabelItem.getAllergens().add(allergenListDataItem.getAllergen());
+							if(AllergenType.Major.equals(nodeService.getProperty(allergenListDataItem.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE))){
+								ingLabelItem.getAllergens().add(allergenListDataItem.getAllergen());
+							}
 						}
 					}	
 				}

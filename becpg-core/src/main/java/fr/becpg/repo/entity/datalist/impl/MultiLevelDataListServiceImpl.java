@@ -130,7 +130,7 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 				}
 			}
 		} else {
-		  logger.warn("Detected cycle for: "+entityNodeRef);
+		  logger.debug("Detected cycle for: "+entityNodeRef);
 		}
 		return ret;
 	}
