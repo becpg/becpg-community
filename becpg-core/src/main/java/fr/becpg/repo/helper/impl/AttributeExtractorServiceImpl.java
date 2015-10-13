@@ -56,6 +56,7 @@ import fr.becpg.config.format.CSVPropertyFormats;
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
@@ -262,12 +263,18 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		} else if (dataType.equals(DataTypeDefinition.TEXT.toString())) {
 
 			String constraintName = null;
+			DynListConstraint dynListConstraint = null;
+			
 			if (!propertyDef.getConstraints().isEmpty()) {
 
 				for (ConstraintDefinition constraint : propertyDef.getConstraints()) {
 					if ("LIST".equals(constraint.getConstraint().getType())) {
 						constraintName = constraint.getRef().toPrefixString(namespaceService).replace(":", "_");
 						break;
+					} else if( constraint.getConstraint() instanceof  DynListConstraint){
+						 dynListConstraint = (DynListConstraint) constraint.getConstraint();
+						 break;
+						
 					}
 				}
 
@@ -290,14 +297,22 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 							value = "";
 						}
 
-						value += constraintName != null
-								? TranslateHelper.getConstraint(constraintName, tempValue, propertyFormats.isUseDefaultLocale()) : tempValue;
+						if(dynListConstraint!=null){
+							value += dynListConstraint.getDisplayLabel(tempValue);
+						} else {
+							value += constraintName != null
+									? TranslateHelper.getConstraint(constraintName, tempValue, propertyFormats.isUseDefaultLocale()) : tempValue;
+						}
 					}
 
 				}
 			} else {
-				value = constraintName != null ? TranslateHelper.getConstraint(constraintName, v.toString(), propertyFormats.isUseDefaultLocale())
-						: v.toString();
+				if(dynListConstraint!=null){
+					value += dynListConstraint.getDisplayLabel(v.toString());
+				} else {
+					value = constraintName != null ? TranslateHelper.getConstraint(constraintName, v.toString(), propertyFormats.isUseDefaultLocale())
+							: v.toString();
+				}
 			}
 
 		} else if (dataType.equals(DataTypeDefinition.DATE.toString())) {
@@ -670,6 +685,19 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				if (propertyDef.getConstraints().isEmpty()) {
 					return getStringValue(propertyDef, value, propertyFormats);
 				} else {
+					DynListConstraint dynListConstraint = null;
+					for (ConstraintDefinition constraint : propertyDef.getConstraints()) {
+						if( constraint.getConstraint() instanceof  DynListConstraint){
+							 dynListConstraint = (DynListConstraint) constraint.getConstraint();
+							 break;
+							
+						}
+					}
+					
+					if(dynListConstraint!=null){
+					 return	dynListConstraint.getDisplayLabel(value.toString());
+					}
+					
 					return value.toString();
 				}
 			} else if (value instanceof Date) {
