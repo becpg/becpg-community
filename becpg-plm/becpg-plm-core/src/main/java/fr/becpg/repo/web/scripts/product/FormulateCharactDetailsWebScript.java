@@ -55,6 +55,8 @@ public class FormulateCharactDetailsWebScript extends AbstractProductWebscript {
 	
 	private static final String PARAM_ENTITY_NODEREF = "entityNodeRef";
 	
+	private static final String PARAM_ITEM_LEVEL = "level";
+	
 	private NodeService nodeService;
 	
 	private NamespaceService namespaceService;
@@ -84,6 +86,18 @@ public class FormulateCharactDetailsWebScript extends AbstractProductWebscript {
 		QName dataType = QName.createQName(itemType, namespaceService);
 		
 		String dataListItems = req.getParameter(PARAM_DATALISTITEMS);
+		String itemLevel = req.getParameter(PARAM_ITEM_LEVEL);
+		
+		Integer level = null;
+		
+		if(itemLevel!=null){
+			if("All".equals(itemLevel)){
+				level = -1;
+			} else {
+				level = Integer.parseInt(itemLevel);
+			}
+		}
+		
 		List<NodeRef> elements = new ArrayList<>();
 		if(dataListItems!=null && dataListItems.length()>0){
 			
@@ -103,7 +117,7 @@ public class FormulateCharactDetailsWebScript extends AbstractProductWebscript {
 		
 		try {
 			
-			CharactDetails ret =  productService.formulateDetails(productNodeRef, dataType, dataListName, elements);
+			CharactDetails ret =  productService.formulateDetails(productNodeRef, dataType, dataListName, elements, level);
 			
 			if("csv".equals(req.getFormat()) ){
 				res.setContentType("application/vnd.ms-excel");

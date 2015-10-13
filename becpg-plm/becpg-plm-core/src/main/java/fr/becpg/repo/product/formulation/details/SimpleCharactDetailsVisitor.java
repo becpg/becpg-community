@@ -65,7 +65,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 	}
 
 	@Override
-	public CharactDetails visit(ProductData productData, List<NodeRef> dataListItems) throws FormulateException {
+	public CharactDetails visit(ProductData productData, List<NodeRef> dataListItems, Integer level) throws FormulateException {
 
 		CharactDetails ret = new CharactDetails(extractCharacts(dataListItems));
 		Double netQty = FormulationHelper.getNetQtyInLorKg(productData,FormulationHelper.DEFAULT_NET_WEIGHT);
@@ -79,6 +79,12 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 				}
 
 				visitPart(compoListDataItem.getProduct(), ret, qtyUsed, netQty);
+				
+				
+//				if(level>0 && alfrescoRepository2.findOne(compoListDataItem.getProduct())!=null ){
+//						visit(alfrescoRepository2.findOne(compoListDataItem.getProduct()), ret, Integer.toString(lvl-1));
+//				 }
+				
 			}
 		}		
 
@@ -128,6 +134,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 					logger.debug("Add new charact detail. Charact: " + 
 							nodeService.getProperty(simpleCharact.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME) + 
 							" - entityNodeRef: " + nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_CHARACT_NAME) + 
+							" - netQty: " + netQty +
 							" - qty: " + qtyUsed +
 							" - value: " + value);
 				}

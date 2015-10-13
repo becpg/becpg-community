@@ -103,12 +103,12 @@ public class ProductServiceImpl implements ProductService {
     }    
 
 	@Override
-	public CharactDetails formulateDetails(NodeRef productNodeRef, QName datatType, String dataListName, List<NodeRef> elements) throws FormulateException {
+	public CharactDetails formulateDetails(NodeRef productNodeRef, QName datatType, String dataListName, List<NodeRef> elements, Integer level) throws FormulateException {
 
     	ProductData productData = alfrescoRepository.findOne(productNodeRef);
     	        	
     	CharactDetailsVisitor visitor  = charactDetailsVisitorFactory.getCharactDetailsVisitor(datatType, dataListName);		
-		return visitor.visit(productData, elements);		
+		return visitor.visit(productData, elements, level);		
 	}
 
 	@Override

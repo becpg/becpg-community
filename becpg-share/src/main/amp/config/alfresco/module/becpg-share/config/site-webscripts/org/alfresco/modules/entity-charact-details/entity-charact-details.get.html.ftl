@@ -12,6 +12,14 @@
 		      	<option value="pieChart">${msg("picker.chart.type.pie")}</option>
 		      	<option value="chartData">${msg("picker.chart.type.data")}</option>
 		      </select>
+		      <input id="${el}-level-button" type="button" value="${msg('button.level')}"></input>
+		       <select id="${el}-levelbuttonselect"> 
+	                <option value="0"></option> 
+	                <option value="1">1</option> 
+	                <option value="2">2</option>
+	                <option value="3">3</option>         
+	                <option value="All">${msg('button.level.all')}</option>                  
+	           </select> 
 		       <div class="export-csv">
 		            <span id="${el}-export-csv" class="yui-button yui-push-button">
 		               <span class="first-child">
@@ -26,6 +34,7 @@
 		               </span>
 		            </span>
 		        </div>
+		       
 	   </div>
 		<div class="body">
 			<div id="${el}-chartContainer" class="yui-content">
