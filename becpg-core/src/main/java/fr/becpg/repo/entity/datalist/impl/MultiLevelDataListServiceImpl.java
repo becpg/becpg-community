@@ -98,8 +98,7 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 		MultiLevelListData ret = new MultiLevelListData(entityNodeRef, currDepth);
 
 		// This check prevents stack over flow when we have a cyclic node
-		// graph
-		if (!visitedNodeRefs.contains(visitedNodeRefs)) {
+		if (!visitedNodeRefs.contains(entityNodeRef)) {
 			visitedNodeRefs.add(entityNodeRef);
 			if ((maxDepthLevel < 0) || (currDepth < maxDepthLevel)) {
 				logger.debug("getMultiLevelListData depth :" + currDepth + " max " + maxDepthLevel);
@@ -121,7 +120,6 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 										logger.debug("Append level:" + depthLevel + " at currLevel " + currDepth + " for "
 												+ nodeService.getProperty(entityNodeRef, org.alfresco.model.ContentModel.PROP_NAME));
 									}
-
 									MultiLevelListData tmp = getMultiLevelListData(dataListFilter, entityNodeRef,
 											currDepth + (depthLevel != null ? depthLevel : 1), maxDepthLevel, visitedNodeRefs);
 									ret.getTree().put(childRef, tmp);
@@ -131,6 +129,8 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 					}
 				}
 			}
+		} else {
+		  logger.warn("Detected cycle for: "+entityNodeRef);
 		}
 		return ret;
 	}
