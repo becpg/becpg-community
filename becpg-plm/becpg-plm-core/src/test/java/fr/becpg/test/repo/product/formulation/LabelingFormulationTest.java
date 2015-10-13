@@ -524,7 +524,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 						Map<QName, Serializable> props = new HashMap<>();
 						props.put(PLMModel.PROP_ING_TYPE_V2, ingType2);
-						nodeService.addAspect(rawMaterial7NodeRef, PLMModel.PROP_ING_TYPE_ASPECT, props);
+						nodeService.addAspect(rawMaterial7NodeRef, PLMModel.ASPECT_ING_TYPE, props);
 
 						finishedProduct.getCompoListView().setCompoList(compoList);
 						return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
@@ -549,7 +549,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
-				nodeService.removeAspect(rawMaterial7NodeRef, PLMModel.PROP_ING_TYPE_ASPECT);
+				nodeService.removeAspect(rawMaterial7NodeRef, PLMModel.ASPECT_ING_TYPE);
 				return null;
 			}
 		}, false, true);
