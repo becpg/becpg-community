@@ -85,7 +85,8 @@
         <property name="targetSchema" value="10170"/>
         <property name="requiresTransaction"><value>true</value></property>
         <property name="applyToTenants"><value>true</value></property>
-         <property name="patchDAO">
+        <property name="integrityChecker" ref="integrityChecker"/>
+        <property name="patchDAO">
             <ref bean="patchDAO"/>
         </property>
         <property name="nodeDAO">
