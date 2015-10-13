@@ -60,12 +60,10 @@ public class ProductServiceImpl implements ProductService {
 	@Autowired
 	private CharactDetailsVisitorFactory charactDetailsVisitorFactory;
 	
-
     public void setFormulationService(FormulationService<ProductData> formulationService) {
 		this.formulationService = formulationService;
 	}
 
-   
 	@Override
     public void formulate(NodeRef productNodeRef) throws FormulateException {
 		formulate(productNodeRef,false);
