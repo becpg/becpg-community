@@ -1,6 +1,7 @@
 package fr.becpg.repo.product.formulation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
@@ -27,6 +28,7 @@ import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.spel.SpelHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.variant.filters.VariantFilters;
 
 /**
  * 
@@ -58,6 +60,10 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 	@Override
 	public boolean process(ProductData productData) throws FormulateException {
 
+		if (productData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
+			return true;
+		}
+		
 		ExpressionParser parser = new SpelExpressionParser();
 		StandardEvaluationContext context = formulaService.createEvaluationContext(productData);
 
