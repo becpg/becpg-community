@@ -17,7 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.product.data;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -31,7 +31,7 @@ public class CharactDetails {
 
 	Map<NodeRef,String> computedCharacts = null;
 	
-	final Map<NodeRef,Map<NodeRef,Double>> data = new HashMap<>();
+	final Map<NodeRef,Map<NodeRef,Double>> data = new LinkedHashMap<>();
 	
 	public CharactDetails(Map<NodeRef,String> computedCharacts) {
 		super();
@@ -41,7 +41,7 @@ public class CharactDetails {
 	public void addKeyValue(NodeRef charactNodeRef, NodeRef key, Double value) {
 		Map<NodeRef,Double> tmp = data.get(charactNodeRef);
 		if(tmp==null){
-			tmp = new HashMap<>();
+			tmp = new LinkedHashMap<>();
 		}		
 		double v = (value != null ? value : 0d) + (tmp.get(key) != null ? tmp.get(key) : 0d);
 		tmp.put(key, v != 0d ? v : null);		

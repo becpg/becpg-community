@@ -100,7 +100,7 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 				logger.debug("/*-- Formulate details --*/");
 				productService.formulate(finishedProductNodeRef);
 				CharactDetails ret = productService.formulateDetails(finishedProductNodeRef, PLMModel.TYPE_NUTLIST,
-						"nutList", null);
+						"nutList", null, null);
 
 				Assert.assertNotNull(ret);
 
@@ -180,7 +180,7 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 				List<NodeRef> costNodeRefs = new ArrayList<>();
 				productService.formulate(finishedProductNodeRef);
 				CharactDetails ret = productService.formulateDetails(finishedProductNodeRef, PLMModel.TYPE_COSTLIST,
-						"costList", costNodeRefs);
+						"costList", costNodeRefs, null);
 				
 				Assert.assertNotNull(ret);
 				logger.info(CharactDetailsHelper.toJSONObject(ret, nodeService, attributeExtractorService).toString(3));

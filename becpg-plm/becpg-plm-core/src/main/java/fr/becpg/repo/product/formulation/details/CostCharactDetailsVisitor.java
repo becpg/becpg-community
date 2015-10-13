@@ -56,7 +56,7 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 	}
 
 	@Override
-	public CharactDetails visit(ProductData formulatedProduct, List<NodeRef> dataListItems) throws FormulateException {
+	public CharactDetails visit(ProductData formulatedProduct, List<NodeRef> dataListItems, Integer level) throws FormulateException {
 
 		CharactDetails ret = new CharactDetails(extractCharacts(dataListItems));
 
