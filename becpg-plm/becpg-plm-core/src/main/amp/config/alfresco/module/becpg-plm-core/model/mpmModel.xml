@@ -162,7 +162,6 @@
 			<properties>
 				<property name="mpm:rplParamType">
 					<type>d:text</type>
-					<index enabled="false"/>
 					<constraints>
 						<constraint ref="mpm:resourceParamTypes" />
 					</constraints>

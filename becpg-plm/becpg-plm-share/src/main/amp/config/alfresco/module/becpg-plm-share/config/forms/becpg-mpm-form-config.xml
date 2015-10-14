@@ -343,6 +343,31 @@
 					<show id="mpm:rplParamValue" />		
 				</field-visibility>
 			</form>
+			<form id="filter">
+				<field-visibility>
+					<show id="mpm:rplParamType" />								
+					<show id="mpm:rplResourceRef" />
+					<show id="mpm:rplStepRef" />
+				</field-visibility>
+				<appearance>
+				<field id="mpm:rplParamType" >	
+					<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
+					<field id="mpm:rplResourceRef">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+						</control>
+					</field>
+					<field id="mpm:rplStepRef">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+						</control>
+					</field>
+				</appearance>
+			</form>
 		</forms>
 	</config>
 	<!-- mpm:processList type (existing nodes) -->
@@ -374,6 +399,7 @@
 					</field>
 				</appearance>
 			</form>
+			
 		</forms>
 	</config>
 	
