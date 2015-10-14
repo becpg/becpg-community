@@ -58,6 +58,10 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 	@Override
 	public boolean process(ProductData productData) throws FormulateException {
 
+		if (productData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
+			return true;
+		}
+		
 		ExpressionParser parser = new SpelExpressionParser();
 		StandardEvaluationContext context = formulaService.createEvaluationContext(productData);
 

@@ -71,6 +71,10 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 		logger.debug("Calculate ingredient list");
 
+		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
+			return true;
+		}
+		
 		// no compo, nor ingList on formulated product => no formulation
 		if (!formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))
 				|| (!alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_INGLIST)

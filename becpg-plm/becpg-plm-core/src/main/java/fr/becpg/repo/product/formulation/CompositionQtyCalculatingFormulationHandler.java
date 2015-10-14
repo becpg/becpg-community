@@ -21,6 +21,7 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.formulation.FormulateException;
@@ -46,6 +47,10 @@ public class CompositionQtyCalculatingFormulationHandler extends FormulationBase
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 
 		logger.debug("Composition calculating visitor");
+		
+		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
+			return true;
+		}
 
 		// no compo => no formulation
 		if (!formulatedProduct.hasCompoListEl(new VariantFilters<>())) {

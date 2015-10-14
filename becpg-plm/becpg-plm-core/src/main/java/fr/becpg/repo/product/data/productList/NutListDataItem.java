@@ -365,8 +365,9 @@ public class NutListDataItem extends AbstractManualDataItem  implements SimpleLi
 
 	@Override
 	public String toString() {
-		return "NutListDataItem [manualValue=" + manualValue + ", formulatedValue=" + formulatedValue + ", unit=" + unit + ", mini=" + mini
-				+ ", maxi=" + maxi + ", valuePerServing=" + valuePerServing + ", gdaPerc=" + gdaPerc + ", group=" + group + ", method=" + method
-				+ ", nut=" + nut + ", isFormulated=" + isFormulated + ", errorLog=" + errorLog + "]";
+		return "NutListDataItem [ parentNodeRef="
+				+ parentNodeRef + ", nodeRef=" + nodeRef + ", name=" + name + ", isManual=" + isManual + ", sort=" + sort + ", manualValue=" + manualValue + ", formulatedValue=" + formulatedValue + ", unit=" + unit + ", mini=" + mini
+				+ ", maxi=" + maxi + ", valuePerServing=" + valuePerServing + ", gdaPerc=" + gdaPerc + ", lossPerc=" + lossPerc + ", group=" + group
+				+ ", method=" + method + ", nut=" + nut + ", isFormulated=" + isFormulated + ", errorLog=" + errorLog +"]";
 	}	
 }
