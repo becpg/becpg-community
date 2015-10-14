@@ -65,6 +65,10 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 
 		logger.debug("Start AllergensCalculatingVisitor");
+		
+		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
+			return true;
+		}
 
 		// no compo, nor allergenList on formulated product => no formulation
 		if (!formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))

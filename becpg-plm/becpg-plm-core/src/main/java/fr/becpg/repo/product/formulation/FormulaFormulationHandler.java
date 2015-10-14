@@ -40,6 +40,7 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
@@ -108,6 +109,10 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 	@Override
 	public boolean process(ProductData productData) throws FormulateException {
 
+		if (productData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
+			return true;
+		}
+		
 		if (DynamicCharactExecOrder.Pre.equals(execOrder)) {
 			copyTemplateDynamicCharactLists(productData);
 		}

@@ -178,7 +178,7 @@ public interface PLMModel {
 	QName TYPE_ING = QName.createQName(BeCPGModel.BECPG_URI, "ing");
 	QName PROP_ING_CEECODE = QName.createQName(BeCPGModel.BECPG_URI, "ingCEECode");
 
-	QName PROP_ING_TYPE_ASPECT = QName.createQName(BeCPGModel.BECPG_URI, "ingTypeAspect");
+	QName ASPECT_ING_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "ingTypeAspect");
 	
 	QName PROP_ING_TYPE_V2 = QName.createQName(BeCPGModel.BECPG_URI, "ingTypeV2");
 	QName TYPE_ING_TYPE_ITEM = QName.createQName(BeCPGModel.BECPG_URI, "ingTypeItem");

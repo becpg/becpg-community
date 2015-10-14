@@ -288,8 +288,8 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		checkILL(
 				finishedProductNodeRef1,
 				labelingRuleList,
-				"<b>legal Finished product 1 (33,3%):</b> pâte french 50% (legal Raw material 12 66,7% (ing2 french 75%, ing1 french 25%), ing2 french 22,2%, ing1 french 11,1%), garniture french 50% (ing3 french 83,3%, ing4 french 16,7%)<br/><b>legal Finished product 1 (16,7%):</b> pâte french 50% (legal Raw material 12 66,7% (ing2 french 75%, ing1 french 25%), ing2 french 22,2%, ing1 french 11,1%), garniture french 50% (ing3 french 83,3%, ing4 french 16,7%)<br/>garniture french 50% (legal Raw material 13 50% (ing3 french 100%), ing3 french 33,3%, ing4 french 16,7%)",
-				Locale.FRENCH);
+				"<b>legal Finished product 1 (33,3%):</b> pâte french 50% (legal Raw material 12 66,7% (ing2 french 75%, ing1 french 25%), ing2 french 22,2%, ing1 french 11,1%), garniture french 50% (ing3 french 83,3%, ing4 french 16,7%)<br/><b>legal Finished product 1 (16,7%):</b> pâte french 50% (legal Raw material 12 66,7% (ing2 french 75%, ing1 french 25%), ing2 french 22,2%, ing1 french 11,1%), garniture french 50% (ing3 french 83,3%, ing4 french 16,7%)<br/>garniture french 50% (legal Raw material 13 50% (ing3 french 100%), ing3 french 33,3%, ing4 french 16,7%)"
+				 ,Locale.FRENCH);
 
 		labelingRuleList = new ArrayList<>();
 
@@ -524,7 +524,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 						Map<QName, Serializable> props = new HashMap<>();
 						props.put(PLMModel.PROP_ING_TYPE_V2, ingType2);
-						nodeService.addAspect(rawMaterial7NodeRef, PLMModel.PROP_ING_TYPE_ASPECT, props);
+						nodeService.addAspect(rawMaterial7NodeRef, PLMModel.ASPECT_ING_TYPE, props);
 
 						finishedProduct.getCompoListView().setCompoList(compoList);
 						return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
@@ -549,7 +549,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {
-				nodeService.removeAspect(rawMaterial7NodeRef, PLMModel.PROP_ING_TYPE_ASPECT);
+				nodeService.removeAspect(rawMaterial7NodeRef, PLMModel.ASPECT_ING_TYPE);
 				return null;
 			}
 		}, false, true);
@@ -721,7 +721,8 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 		checkILL(
 				finishedProductNodeRef1,
 				labelingRuleList,
-				"pâte french 50% (legal Raw material 12 66,7% (ing2 french 75%, ing1 french 25%), legal Raw material 11 33,3%), garniture french 50% (ing3 french 83,3%, ing4 french 16,7%)",
+				"pâte french 50% (legal Raw material 12 66,7% (ing2 french 75%, ing1 french 25%), legal Raw material 11), garniture french 50% (ing3 french 83,3%, ing4 french 16,7%)",
+							
 				Locale.FRENCH);
 
 		// Rename

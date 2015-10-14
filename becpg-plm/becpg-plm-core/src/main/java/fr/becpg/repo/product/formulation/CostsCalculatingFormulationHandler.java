@@ -75,6 +75,11 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 		logger.debug("Cost calculating visitor");
+		
+
+		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
+			return true;
+		}
 
 		// no formulation
 		if ((formulatedProduct.getCostList() == null) && !alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_COSTLIST)) {

@@ -247,7 +247,10 @@ public class LabelingFormulaContext {
 			if (((CompositeLabeling) lblComponent).isGroup()) {
 				return new MessageFormat(groupDefaultFormat);
 			}
-			return new MessageFormat(detailsDefaultFormat);
+			if(DeclarationType.Detail.equals(((CompositeLabeling) lblComponent).getDeclarationType())){
+				return new MessageFormat(detailsDefaultFormat);
+			}
+			return new MessageFormat(ingDefaultFormat);
 		} else if (lblComponent instanceof IngTypeItem) {
 			if (((((IngTypeItem) lblComponent)).getDecThreshold() != null)
 					&& ((((IngTypeItem) lblComponent)).getQty() <= ((((IngTypeItem) lblComponent)).getDecThreshold() / 100))) {
@@ -299,7 +302,7 @@ public class LabelingFormulaContext {
 		return lblComponent.getName();
 	}
 
-	private String getLegalIngName(AbstractLabelingComponent lblComponent, boolean plural) {
+	public String getLegalIngName(AbstractLabelingComponent lblComponent, boolean plural) {
 		if (renameRules.containsKey(lblComponent.getNodeRef())) {
 			return renameRules.get(lblComponent.getNodeRef()).getValue(I18NUtil.getLocale());
 		}
@@ -328,7 +331,7 @@ public class LabelingFormulaContext {
 
 	private String createAllergenAwareLabel(String ingLegalName, Set<NodeRef> allergens) {
 
-		if (Pattern.matches("<b>|<u>|<i>|[A-Z]{3}", ingLegalName)) {
+		if (Pattern.compile("<b>|<u>|<i>|[A-Z]{3}").matcher(ingLegalName).find()) {
 			return ingLegalName;
 		}
 
