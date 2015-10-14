@@ -751,7 +751,6 @@
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
 							</control-param>
-							<control-param name="urlParamsToPass">itemId</control-param>
 							<control-param name="parent">bcpg_parentLevel</control-param>
 							<control-param name="parentMode">true</control-param>
 						</control>
@@ -761,7 +760,6 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
 							</control-param>
-							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
 					</field>
 					<field id="pjt:tlRefusedTaskRef" set="mainInfo">
@@ -769,7 +767,6 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=pjt:taskList&#38;attributeName=pjt:tlTaskName
 							</control-param>
-							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
 					</field>
 				
