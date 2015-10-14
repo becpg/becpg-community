@@ -31,6 +31,7 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.model.PLMModel;
+import fr.becpg.model.PLMWorkflowModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.version.EntityVersionService;
@@ -126,6 +127,9 @@ public class SimulationWebScript extends AbstractWebScript {
 		NodeRef simulationNodeRef =  entityVersionService.createBranch(entityNodeRef, parentRef);
 		
 		nodeService.setProperty(simulationNodeRef, PLMModel.PROP_PRODUCT_STATE, SystemState.Simulation);
+		if (nodeService.hasAspect(simulationNodeRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT)) {
+			nodeService.removeAspect(simulationNodeRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT);
+		}
 		
 		return simulationNodeRef;
 	}
