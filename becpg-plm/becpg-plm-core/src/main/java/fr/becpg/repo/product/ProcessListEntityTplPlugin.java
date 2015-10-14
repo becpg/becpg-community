@@ -101,6 +101,7 @@ public class ProcessListEntityTplPlugin implements EntityTplPlugin {
 						}
 					}
 				}
+				tplDataListItem.setName(null);
 				tplDataListItem.setNodeRef(null);
 				tplDataListItem.setParentNodeRef(null);
 				dataListItems.add(tplDataListItem);
