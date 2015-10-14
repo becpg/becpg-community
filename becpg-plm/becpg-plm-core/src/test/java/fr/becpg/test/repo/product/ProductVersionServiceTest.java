@@ -378,7 +378,7 @@ public class ProductVersionServiceTest extends PLMBaseTestCase {
 				newRawMaterialNodeRef = checkOutCheckInService.checkin(workingCopyNodeRef, versionProperties);
 
 				assertNotNull("Check new version exists", newRawMaterialNodeRef);
-				assertEquals("Check state new version", SystemState.Simulation.toString(),
+				assertEquals("Check state new version", SystemState.Valid.toString(),
 						nodeService.getProperty(newRawMaterialNodeRef, PLMModel.PROP_PRODUCT_STATE));
 
 				VersionHistory versionHistory = versionService.getVersionHistory(newRawMaterialNodeRef);
