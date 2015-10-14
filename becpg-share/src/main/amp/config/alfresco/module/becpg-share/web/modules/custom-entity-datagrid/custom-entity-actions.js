@@ -395,6 +395,9 @@
         			    }
 
         			    html += '</span>';
+        			    if(tree.cssClass != "ingType" && tree.legal!=tree.name){
+        			    	html += '<p>&nbsp;&nbsp;<i>('+tree.name+')</i></p>';
+        			    }
         			    if(tree.allergens){
 	    			         for(var i = 0; i < tree.allergens.length ; i++){
 	    			              html+=     '&nbsp;<span class="allergen">';
