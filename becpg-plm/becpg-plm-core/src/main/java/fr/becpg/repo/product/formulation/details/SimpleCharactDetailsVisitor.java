@@ -84,12 +84,12 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 
 		Double netQty = FormulationHelper.getNetQtyInLorKg(productData, FormulationHelper.DEFAULT_NET_WEIGHT);
 
-		visitRecur(productData, ret, 0, level, netQty);
+		visitRecur(productData, ret, 0, level, netQty,  netQty);
 
 		return ret;
 	}
 
-	public CharactDetails visitRecur(ProductData subProductData, CharactDetails ret, Integer currLevel, Integer maxLevel, Double netQty)
+	public CharactDetails visitRecur(ProductData subProductData, CharactDetails ret, Integer currLevel, Integer maxLevel, Double subQuantity , Double netQty)
 			throws FormulateException {
 
 		if (subProductData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
@@ -97,7 +97,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 			for (CompoListDataItem compoListDataItem : subProductData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 
 				Double qty = FormulationHelper.getQtyInKg(compoListDataItem)
-						/ FormulationHelper.getNetQtyInLorKg(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT) * netQty;
+						/ FormulationHelper.getNetQtyInLorKg(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT) * subQuantity;
 				Double qtyUsed = null;
 				if (qty != null) {
 					qtyUsed = qty * FormulationHelper.getYield(compoListDataItem) / 100;
@@ -107,7 +107,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 
 				if (((maxLevel < 0) || (currLevel < maxLevel)) && !entityDictionaryService.isMultiLevelLeaf(nodeService.getType(compoListDataItem.getProduct()))) {
 
-					visitRecur((ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct()), ret, currLevel+1, maxLevel, qty);
+					visitRecur((ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct()), ret, currLevel+1, maxLevel, qty, netQty);
 				}
 
 			}

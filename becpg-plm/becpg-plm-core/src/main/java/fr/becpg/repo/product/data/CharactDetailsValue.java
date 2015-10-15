@@ -12,6 +12,7 @@ public class CharactDetailsValue {
 
 	public CharactDetailsValue(NodeRef parentNodeRef, NodeRef keyNodeRef, Double value, Integer level, String unit) {
 		super();
+		this.parentNodeRef = parentNodeRef;
 		this.keyNodeRef = keyNodeRef;
 		this.value = value;
 		this.level = level;
