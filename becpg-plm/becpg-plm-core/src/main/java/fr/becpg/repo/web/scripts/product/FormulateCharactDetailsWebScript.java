@@ -21,6 +21,7 @@ package fr.becpg.repo.web.scripts.product;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -28,6 +29,13 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.JSONException;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
@@ -36,6 +44,9 @@ import org.springframework.util.StopWatch;
 
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.helper.ExcelHelper;
+import fr.becpg.repo.helper.ExcelHelper.ExcelFieldTitleProvider;
+import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.product.data.CharactDetails;
 
 /**
@@ -94,7 +105,7 @@ public class FormulateCharactDetailsWebScript extends AbstractProductWebscript {
 			if("All".equals(itemLevel)){
 				level = -1;
 			} else {
-				level = Integer.parseInt(itemLevel);
+				level = Integer.parseInt(itemLevel)-1;
 			}
 		}
 		
@@ -121,13 +132,12 @@ public class FormulateCharactDetailsWebScript extends AbstractProductWebscript {
 			
 			if("csv".equals(req.getFormat()) ){
 				res.setContentType("application/vnd.ms-excel");
-				res.setContentEncoding("ISO-8859-1");
-				CharactDetailsHelper.writeCSV(ret,nodeService,attributeExtractorService,res.getWriter());
-			} else {
+				res.setHeader("Content-disposition", "attachment; filename=export.xlsx");
+				CharactDetailsHelper.writeXLS(ret,nodeService,attributeExtractorService,res.getOutputStream());
+			}	else {
 				res.setContentType("application/json");
 				res.setContentEncoding("UTF-8");
 				res.getWriter().write(CharactDetailsHelper.toJSONObject(ret,nodeService,attributeExtractorService).toString(3));
-
 			}
 	
 		} catch (FormulateException e) {

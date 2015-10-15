@@ -18,6 +18,7 @@
 package fr.becpg.repo.product.data;
 
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -33,7 +34,7 @@ public class CharactDetails {
 
 	List<NodeRef> computedCharacts = null;
 	
-	final Map<NodeRef, Map<NodeRef, CharactDetailsValue>> data = new LinkedHashMap<>();
+	final Map<NodeRef, List<CharactDetailsValue>> data = new LinkedHashMap<>();
 
 	public CharactDetails(List<NodeRef> computedCharacts ) {
 		super();
@@ -41,17 +42,24 @@ public class CharactDetails {
 	}
 
 	public void addKeyValue(NodeRef charactNodeRef, CharactDetailsValue value) {
-		Map<NodeRef, CharactDetailsValue> tmp = data.get(charactNodeRef);
+		List<CharactDetailsValue> tmp = data.get(charactNodeRef);
 		if(tmp == null){
-			tmp = new LinkedHashMap<>();
+			tmp = new LinkedList<>();
+		}
+		boolean match = false;
+		for(CharactDetailsValue existingValue : tmp){
+			if(existingValue.equals(value)){
+				existingValue.add(value.getValue());
+				match = true;
+				break;
+			}
+			
 		}
 		
-		if (tmp.containsKey(value.getKeyNodeRef())) {
-			tmp.get(value.getKeyNodeRef()).add(value.getValue());
-		} else {
-			tmp.put(value.getKeyNodeRef(), value);
+		if(!match){
+			tmp.add(value);
 		}
-
+		
 		data.put(charactNodeRef, tmp);
 	}
 
@@ -59,18 +67,13 @@ public class CharactDetails {
 		return computedCharacts==null || computedCharacts.isEmpty() || computedCharacts.contains(charactNodeRef);
 	}
 
-	public Map<NodeRef, Map<NodeRef, CharactDetailsValue>> getData() {
+	public Map<NodeRef, List<CharactDetailsValue>> getData() {
 		return data;
 	}
 
 	@Override
 	public String toString() {
 		return "CharactDetails [ data=" + data + "]";
-	}
-
-	public void initCharact(NodeRef charactNodeRef) {
-		data.put(charactNodeRef, new LinkedHashMap<>());
-		
 	}
 
 }

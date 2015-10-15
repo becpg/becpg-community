@@ -408,10 +408,18 @@
                             {
                                 key : "cssClass"
                             });
+                            myFieldDefs.push(
+                             {
+                                 key : "level"
+                             });
 
                             this.columnDefs[0].formatter = function (elCell, oRecord, oColumn, oData) {
-                                if(oRecord.getData("cssClass")){
-                                    elCell.innerHTML = '<span class="'+ oRecord.getData("cssClass") + '">'+oData+'</span>';
+                            	
+                            	
+                            	if(oRecord.getData("cssClass")){
+                            		var padding = oRecord.getData("level") * 25;
+                            		
+                                    elCell.innerHTML = '<span class="'+ oRecord.getData("cssClass") + '" style="margin-left:' + padding + 'px;">'+oData+'</span>';
                                 } else {
                                     elCell.innerHTML = '<b>'+oData+'</b>';
                                 }
