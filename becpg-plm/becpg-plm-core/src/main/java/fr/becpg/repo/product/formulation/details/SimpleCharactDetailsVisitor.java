@@ -18,9 +18,7 @@
 package fr.becpg.repo.product.formulation.details;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -30,6 +28,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.CharactDetailsVisitor;
 import fr.becpg.repo.product.data.CharactDetails;
@@ -52,7 +51,14 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 
 	protected NodeService nodeService;
 
+	protected EntityDictionaryService entityDictionaryService;
+	
 	protected QName dataListType;
+
+
+	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
+		this.entityDictionaryService = entityDictionaryService;
+	}
 
 	public void setAlfrescoRepository(AlfrescoRepository<? extends RepositoryEntity> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
@@ -97,11 +103,11 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 					qtyUsed = qty * FormulationHelper.getYield(compoListDataItem) / 100;
 				}
 
-				visitPart(compoListDataItem.getProduct(), ret, qtyUsed, netQty, currLevel);
+				visitPart(subProductData.getNodeRef(), compoListDataItem.getProduct(), ret, qtyUsed, netQty, currLevel);
 
-				if ((maxLevel < 0) || (currLevel < maxLevel)) {
+				if (((maxLevel < 0) || (currLevel < maxLevel)) && !entityDictionaryService.isMultiLevelLeaf(nodeService.getType(compoListDataItem.getProduct()))) {
 
-					visitRecur((ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct()), ret, currLevel++, maxLevel, qty);
+					visitRecur((ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct()), ret, currLevel+1, maxLevel, qty);
 				}
 
 			}
@@ -128,7 +134,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 		return ret;
 	}
 
-	protected void visitPart(NodeRef entityNodeRef, CharactDetails charactDetails, Double qtyUsed, Double netQty, Integer currLevel) throws FormulateException {
+	protected void visitPart(NodeRef parent, NodeRef entityNodeRef, CharactDetails charactDetails, Double qtyUsed, Double netQty, Integer currLevel) throws FormulateException {
 
 		if (entityNodeRef == null) {
 			return;
@@ -158,7 +164,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 					unit =  ((UnitAwareDataItem) simpleCharact).getUnit();
 				} 
 				
-				charactDetails.addKeyValue(simpleCharact.getCharactNodeRef(),new CharactDetailsValue(entityNodeRef, value, currLevel, unit));
+				charactDetails.addKeyValue(simpleCharact.getCharactNodeRef(),new CharactDetailsValue(parent, entityNodeRef, value, currLevel, unit));
 			}
 		}
 	}

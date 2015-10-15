@@ -17,21 +17,27 @@
  ******************************************************************************/
 package fr.becpg.repo.web.scripts.product;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.csv.writer.CSVConfig;
 import org.apache.commons.csv.writer.CSVField;
 import org.apache.commons.csv.writer.CSVWriter;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -60,24 +66,19 @@ public class CharactDetailsHelper {
 		metadata.put("colName", getYAxisLabel());
 		metadatas.put(metadata);
 
-		SortedSet<NodeRef> compEls = new TreeSet<>(new Comparator<NodeRef>() {
-			@Override
-			public int compare(NodeRef o1, NodeRef o2) {
-				return attributeExtractorService.extractPropName(o1).compareTo(attributeExtractorService.extractPropName(o2));
-			}
-		});
+		List<CharactDetailsValue> compEls = new LinkedList<>();
 
 		int idx = 0;
-		for (Map.Entry<NodeRef, Map<NodeRef, CharactDetailsValue>> entry : charactDetails.getData().entrySet()) {
+		for (Map.Entry<NodeRef, List<CharactDetailsValue>> entry : charactDetails.getData().entrySet()) {
 			metadata = new JSONObject();
 			metadata.put("colIndex", idx++);
 			metadata.put("colType", "Double");
 			metadata.put("colName", attributeExtractorService.extractPropName(entry.getKey()));
 			String colUnit = "";
 
-			for (Map.Entry<NodeRef, CharactDetailsValue> value : entry.getValue().entrySet()) {
-				compEls.add(value.getKey());
-				colUnit = value.getValue().getUnit();
+			for (CharactDetailsValue value : entry.getValue()) {
+				compEls.add(value);
+				colUnit = value.getUnit();
 			}
 			
 			metadata.put("colUnit", colUnit);
@@ -89,10 +90,10 @@ public class CharactDetailsHelper {
 		List<List<Object>> resultsets = new LinkedList<>();
 		List<Object> totals = new LinkedList<>();
 		totals.add(I18NUtil.getMessage("entity.datalist.item.details.totals"));
-		for (NodeRef compoEl : compEls) {
+		for (CharactDetailsValue charactDetailsValue : compEls) {
 			List<Object> tmp = new ArrayList<>();
-			tmp.add(attributeExtractorService.extractPropName(compoEl));
-			for (Map.Entry<NodeRef, Map<NodeRef, CharactDetailsValue>> entry : charactDetails.getData().entrySet()) {
+			tmp.add(attributeExtractorService.extractPropName(charactDetailsValue.getKeyNodeRef()));
+			for (Map.Entry<NodeRef,List<CharactDetailsValue>> entry : charactDetails.getData().entrySet()) {
 				Double total = 0d;
 
 				if (totals.size() > tmp.size()) {
@@ -101,18 +102,23 @@ public class CharactDetailsHelper {
 					totals.add(0d);
 				}
 
-				if (entry.getValue().containsKey(compoEl)) {
-					tmp.add(entry.getValue().get(compoEl).getValue());
-					total += entry.getValue().get(compoEl).getValue()!=null ? entry.getValue().get(compoEl).getValue() : 0d;
+				if (entry.getValue().contains(charactDetailsValue)) {
+					Double value = entry.getValue().get(entry.getValue().indexOf(charactDetailsValue)).getValue();
+					
+					tmp.add(value);
+					if(entry.getValue().get(entry.getValue().indexOf(charactDetailsValue)).getLevel()==0){
+						total += value!=null ? value : 0d;
+					}
 				} else {
 					tmp.add(0d);
 				}
 				
 				totals.set(tmp.size()-1,total);
 			}
-			tmp.add(compoEl);
-			tmp.add(nodeService.getType(compoEl));
-			tmp.add(nodeService.getType(compoEl).getLocalName());
+			tmp.add(charactDetailsValue.getKeyNodeRef());
+			tmp.add(nodeService.getType(charactDetailsValue.getKeyNodeRef()));
+			tmp.add(nodeService.getType(charactDetailsValue.getKeyNodeRef()).getLocalName());
+			tmp.add(charactDetailsValue.getLevel());
 			resultsets.add(tmp);
 		}
 		resultsets.add(totals);
@@ -122,62 +128,72 @@ public class CharactDetailsHelper {
 
 	}
 
-	public static void writeCSV(CharactDetails charactDetails, final NodeService nodeService, final AttributeExtractorService attributeExtractorService, Writer writer) {
-
-		PropertyFormats propertyFormats = new PropertyFormats(false);
-
-		CSVConfig csvConfig = new CSVConfig();
-		csvConfig.setDelimiter(';');
-		csvConfig.setValueDelimiter('"');
-		csvConfig.setIgnoreValueDelimiter(false);
-		csvConfig.addField(new CSVField(getYAxisLabel()));
-
-		SortedSet<NodeRef> compEls = new TreeSet<>(new Comparator<NodeRef>() {
-			@Override
-			public int compare(NodeRef o1, NodeRef o2) {
-				return attributeExtractorService.extractPropName(o1).compareTo(attributeExtractorService.extractPropName(o2));
-			}
-
-		});
-
-		Map<String, String> rowHeader = new HashMap<>();
-		rowHeader.put(getYAxisLabel(), getYAxisLabel());
-		for (Map.Entry<NodeRef, Map<NodeRef, CharactDetailsValue>> entry : charactDetails.getData().entrySet()) {
-
-			CSVField field = new CSVField(entry.getKey().toString());
-			String colUnit = "";
-			for (Map.Entry<NodeRef, CharactDetailsValue> value : entry.getValue().entrySet()) {
-				compEls.add(value.getKey());
-				colUnit = value.getValue().getUnit();
-			}
-			rowHeader.put(entry.getKey().toString(), attributeExtractorService.extractPropName(entry.getKey())+" ("+colUnit+")");
-			csvConfig.addField(field);
-
-		}
-
-		CSVWriter csvWriter = new CSVWriter(csvConfig);
-
-		csvWriter.setWriter(writer);
-		csvWriter.writeRecord(rowHeader);
-		
-
-		for (NodeRef compoEl : compEls) {
-			Map<String, String> tmp = new HashMap<>();
-			tmp.put(getYAxisLabel(), attributeExtractorService.extractPropName(compoEl));
-			for (Map.Entry<NodeRef, Map<NodeRef, CharactDetailsValue>> entry : charactDetails.getData().entrySet()) {
-				if (entry.getValue().containsKey(compoEl) && entry.getValue().get(compoEl) != null) {
-					tmp.put(entry.getKey().toString(), propertyFormats.formatDecimal(entry.getValue().get(compoEl).getValue()));
-				} else {
-					tmp.put(entry.getKey().toString(), "");
-				}
-			}
-			csvWriter.writeRecord(tmp);
-		}
-
-	}
 
 	private static String getYAxisLabel() {
 		return I18NUtil.getMessage("entity.datalist.item.details.yaxis.label");
+	}
+
+	public static void writeXLS(CharactDetails charactDetails, NodeService nodeService, AttributeExtractorService attributeExtractorService,
+			OutputStream outputStream) throws IOException {
+		XSSFWorkbook workbook = new XSSFWorkbook();
+		XSSFSheet sheet = workbook.createSheet();
+		sheet.setColumnHidden(0, true);
+		int rownum = 0;
+		int cellnum = 0;
+		Row row = sheet.createRow(rownum++);
+		XSSFCellStyle style = workbook.createCellStyle();
+
+		XSSFColor green = new XSSFColor(new java.awt.Color(0, 102, 0));
+
+		style.setFillForegroundColor(green);
+		style.setFillPattern(CellStyle.SOLID_FOREGROUND);
+		
+		Cell cell = row.createCell(cellnum++);
+		cell.setCellValue(getYAxisLabel());
+		cell.setCellStyle(style);
+		List<CharactDetailsValue> compEls = new LinkedList<>();
+
+		for (Map.Entry<NodeRef,List<CharactDetailsValue>> entry : charactDetails.getData().entrySet()) {
+
+			String colUnit = "";
+			for (CharactDetailsValue value : entry.getValue()) {
+				compEls.add(value);
+				colUnit = value.getUnit();
+			}
+			cell = row.createCell(cellnum++);
+			cell.setCellValue(attributeExtractorService.extractPropName(entry.getKey())+" ("+colUnit+")");
+			cell.setCellStyle(style);
+
+		}
+		
+		
+		for (CharactDetailsValue charactDetailsValue : compEls) {
+			cellnum = 0;
+			String prefix = "";
+			if(charactDetailsValue.getLevel()>0){
+				prefix = "+";
+				for(int i = 0;i< charactDetailsValue.getLevel();i++){
+					prefix += "-";
+				}
+				prefix += ">";
+			}
+			
+			row = sheet.createRow(rownum++);
+			cell = row.createCell(cellnum++);
+			cell.setCellValue(prefix+attributeExtractorService.extractPropName(charactDetailsValue.getKeyNodeRef()));
+			for (Map.Entry<NodeRef,List<CharactDetailsValue>> entry : charactDetails.getData().entrySet()) {
+				cell = row.createCell(cellnum++);
+				if (entry.getValue().contains(charactDetailsValue) && entry.getValue().get(entry.getValue().indexOf(charactDetailsValue)) != null
+						&& entry.getValue().get(entry.getValue().indexOf(charactDetailsValue)).getValue()!=null) {
+					cell.setCellValue(entry.getValue().get(entry.getValue().indexOf(charactDetailsValue)).getValue());
+				}
+			}
+		}
+
+		
+		
+		workbook.write(outputStream);
+		
 	}
 
 }

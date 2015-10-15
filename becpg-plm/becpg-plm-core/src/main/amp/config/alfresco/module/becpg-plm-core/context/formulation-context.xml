@@ -27,6 +27,7 @@
 		class="fr.becpg.repo.product.formulation.details.SimpleCharactDetailsVisitor">
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
 		<property name="nodeService" ref="nodeService" />		
+		<property name="entityDictionaryService" ref="entityDictionaryService" />	
 	</bean>
 
 	<bean id="costCharactDetailsVisitor"
@@ -34,6 +35,7 @@
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
 		<property name="nodeService" ref="nodeService" />
 		<property name="packagingHelper" ref="packagingHelper" />
+		<property name="entityDictionaryService" ref="entityDictionaryService" />	
 	</bean>
 
 
