@@ -40,6 +40,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.product.data.CharactDetails;
+import fr.becpg.repo.product.data.CharactDetailsValue;
 
 /**
  * 
@@ -67,17 +68,20 @@ public class CharactDetailsHelper {
 		});
 
 		int idx = 0;
-		for (Map.Entry<NodeRef, Map<NodeRef, Double>> entry : charactDetails.getData().entrySet()) {
+		for (Map.Entry<NodeRef, Map<NodeRef, CharactDetailsValue>> entry : charactDetails.getData().entrySet()) {
 			metadata = new JSONObject();
 			metadata.put("colIndex", idx++);
 			metadata.put("colType", "Double");
 			metadata.put("colName", attributeExtractorService.extractPropName(entry.getKey()));
-			metadata.put("colUnit", charactDetails.getUnit(entry.getKey()));
-			metadatas.put(metadata);
+			String colUnit = "";
 
-			for (Map.Entry<NodeRef, Double> value : entry.getValue().entrySet()) {
+			for (Map.Entry<NodeRef, CharactDetailsValue> value : entry.getValue().entrySet()) {
 				compEls.add(value.getKey());
+				colUnit = value.getValue().getUnit();
 			}
+			
+			metadata.put("colUnit", colUnit);
+			metadatas.put(metadata);
 		}
 
 		// Entity nut 1, nut2, nut3
@@ -88,7 +92,7 @@ public class CharactDetailsHelper {
 		for (NodeRef compoEl : compEls) {
 			List<Object> tmp = new ArrayList<>();
 			tmp.add(attributeExtractorService.extractPropName(compoEl));
-			for (Map.Entry<NodeRef, Map<NodeRef, Double>> entry : charactDetails.getData().entrySet()) {
+			for (Map.Entry<NodeRef, Map<NodeRef, CharactDetailsValue>> entry : charactDetails.getData().entrySet()) {
 				Double total = 0d;
 
 				if (totals.size() > tmp.size()) {
@@ -98,8 +102,8 @@ public class CharactDetailsHelper {
 				}
 
 				if (entry.getValue().containsKey(compoEl)) {
-					tmp.add(entry.getValue().get(compoEl));
-					total += entry.getValue().get(compoEl)!=null ? entry.getValue().get(compoEl) : 0d;
+					tmp.add(entry.getValue().get(compoEl).getValue());
+					total += entry.getValue().get(compoEl).getValue()!=null ? entry.getValue().get(compoEl).getValue() : 0d;
 				} else {
 					tmp.add(0d);
 				}
@@ -138,13 +142,15 @@ public class CharactDetailsHelper {
 
 		Map<String, String> rowHeader = new HashMap<>();
 		rowHeader.put(getYAxisLabel(), getYAxisLabel());
-		for (Map.Entry<NodeRef, Map<NodeRef, Double>> entry : charactDetails.getData().entrySet()) {
+		for (Map.Entry<NodeRef, Map<NodeRef, CharactDetailsValue>> entry : charactDetails.getData().entrySet()) {
 
 			CSVField field = new CSVField(entry.getKey().toString());
-			for (Map.Entry<NodeRef, Double> value : entry.getValue().entrySet()) {
+			String colUnit = "";
+			for (Map.Entry<NodeRef, CharactDetailsValue> value : entry.getValue().entrySet()) {
 				compEls.add(value.getKey());
+				colUnit = value.getValue().getUnit();
 			}
-			rowHeader.put(entry.getKey().toString(), attributeExtractorService.extractPropName(entry.getKey())+" ("+charactDetails.getUnit(entry.getKey())+")");
+			rowHeader.put(entry.getKey().toString(), attributeExtractorService.extractPropName(entry.getKey())+" ("+colUnit+")");
 			csvConfig.addField(field);
 
 		}
@@ -158,9 +164,9 @@ public class CharactDetailsHelper {
 		for (NodeRef compoEl : compEls) {
 			Map<String, String> tmp = new HashMap<>();
 			tmp.put(getYAxisLabel(), attributeExtractorService.extractPropName(compoEl));
-			for (Map.Entry<NodeRef, Map<NodeRef, Double>> entry : charactDetails.getData().entrySet()) {
+			for (Map.Entry<NodeRef, Map<NodeRef, CharactDetailsValue>> entry : charactDetails.getData().entrySet()) {
 				if (entry.getValue().containsKey(compoEl) && entry.getValue().get(compoEl) != null) {
-					tmp.put(entry.getKey().toString(), propertyFormats.formatDecimal(entry.getValue().get(compoEl)));
+					tmp.put(entry.getKey().toString(), propertyFormats.formatDecimal(entry.getValue().get(compoEl).getValue()));
 				} else {
 					tmp.put(entry.getKey().toString(), "");
 				}
