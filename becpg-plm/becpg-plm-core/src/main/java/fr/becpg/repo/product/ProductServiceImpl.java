@@ -23,8 +23,12 @@ import java.util.List;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.security.AccessStatus;
+import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -56,6 +60,9 @@ public class ProductServiceImpl implements ProductService {
 	
 	@Autowired
 	private BehaviourFilter policyBehaviourFilter;
+	
+	@Autowired
+	private PermissionService permissionService;
 
 	@Autowired
 	private CharactDetailsVisitorFactory charactDetailsVisitorFactory;
@@ -72,25 +79,35 @@ public class ProductServiceImpl implements ProductService {
    
 	@Override
 	public void formulate(NodeRef productNodeRef, boolean fast) throws FormulateException {
-		
-		try {
-			// disable on all product since components can be formulated
-			policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
-			// disable policy to have modified date < formulated date, better way ?
-			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
-			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-			
-			if(fast){
-				formulationService.formulate(productNodeRef,"fastProductFormulationChain");
-			}  else {
-				formulationService.formulate(productNodeRef);
+		if(permissionService.hasPermission(productNodeRef, PermissionService.WRITE) == AccessStatus.ALLOWED){
+			try {
+				// disable on all product since components can be formulated
+				policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+				// disable policy to have modified date < formulated date, better way ?
+				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+				
+				
+				AuthenticationUtil.runAsSystem(new RunAsWork<Boolean>() {
+					public Boolean doWork() throws Exception {
+						if(fast){
+							formulationService.formulate(productNodeRef,"fastProductFormulationChain");
+						}  else {
+							formulationService.formulate(productNodeRef);
+						}
+						return true;
+					}
+				});
+				
+				
+				
+			} finally {
+				policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 			}
-			
-			
-		} finally {
-			policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
-			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
-			policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+		} else {
+			throw new FormulateException("Sorry you don't have write access");
 		}
 		
 	}
