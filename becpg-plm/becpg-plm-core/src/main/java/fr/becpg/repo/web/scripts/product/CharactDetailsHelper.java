@@ -137,7 +137,6 @@ public class CharactDetailsHelper {
 			OutputStream outputStream) throws IOException {
 		XSSFWorkbook workbook = new XSSFWorkbook();
 		XSSFSheet sheet = workbook.createSheet();
-		sheet.setColumnHidden(0, true);
 		int rownum = 0;
 		int cellnum = 0;
 		Row row = sheet.createRow(rownum++);
@@ -171,9 +170,9 @@ public class CharactDetailsHelper {
 			cellnum = 0;
 			String prefix = "";
 			if(charactDetailsValue.getLevel()>0){
-				prefix = "+";
+				prefix = "└";
 				for(int i = 0;i< charactDetailsValue.getLevel();i++){
-					prefix += "-";
+					prefix += "──";
 				}
 				prefix += ">";
 			}

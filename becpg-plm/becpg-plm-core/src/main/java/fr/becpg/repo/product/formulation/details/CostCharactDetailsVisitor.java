@@ -67,13 +67,13 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 
 		Double netQty = FormulationHelper.getNetQtyForCost(formulatedProduct);
 
-		visitRecur(formulatedProduct,ret,0, level,netQty);
+		visitRecur(formulatedProduct,ret,0, level, netQty,  netQty);
 
 		return ret;
 	}
 	
 	
-	public CharactDetails visitRecur(ProductData formulatedProduct, CharactDetails ret, Integer currLevel, Integer maxLevel, Double netQty)
+	public CharactDetails visitRecur(ProductData formulatedProduct, CharactDetails ret, Integer currLevel, Integer maxLevel, Double subQuantity , Double netQty)
 			throws FormulateException {
 		
 		
@@ -88,7 +88,7 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 		if (formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 			Composite<CompoListDataItem> composite = CompositeHelper.getHierarchicalCompoList(
 					formulatedProduct.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())));
-			visitCompoListChildren(formulatedProduct, composite, ret, CostsCalculatingFormulationHandler.DEFAULT_LOSS_RATIO, netQty , currLevel, maxLevel);
+			visitCompoListChildren(formulatedProduct, composite, ret, CostsCalculatingFormulationHandler.DEFAULT_LOSS_RATIO, subQuantity, netQty , currLevel, maxLevel);
 		}
 
 		if (formulatedProduct.hasPackagingListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
@@ -99,7 +99,8 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 
 			for (PackagingListDataItem packagingListDataItem : formulatedProduct
 					.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
-				Double qty = FormulationHelper.getQtyForCostByPackagingLevel(formulatedProduct, packagingListDataItem, nodeService);
+				Double qty = FormulationHelper.getQtyForCostByPackagingLevel(formulatedProduct, packagingListDataItem, nodeService)
+						/ FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT) * subQuantity;
 
 				visitPart(formulatedProduct.getNodeRef(), packagingListDataItem.getProduct(), ret, qty, netQty, currLevel);
 				
@@ -120,7 +121,8 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 			for (ProcessListDataItem processListDataItem : formulatedProduct
 					.getProcessList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 
-				Double qty = FormulationHelper.getQty(formulatedProduct, processListDataItem);
+				Double qty = FormulationHelper.getQty(formulatedProduct, processListDataItem)
+						/ FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT) * subQuantity;
 				if (processListDataItem.getResource() != null && qty != null) {
 					if (ProcessListUnit.P.equals(processListDataItem.getUnit())) {
 						netQty = FormulationHelper.QTY_FOR_PIECE;
@@ -221,7 +223,7 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 	}
 
 	private void visitCompoListChildren(ProductData productData, Composite<CompoListDataItem> composite, CharactDetails ret,
-			Double parentLossRatio, Double netQty, Integer  currLevel, Integer maxLevel) throws FormulateException {
+			Double parentLossRatio, Double subQty, Double netQty, Integer  currLevel, Integer maxLevel) throws FormulateException {
 
 		for (Composite<CompoListDataItem> component : composite.getChildren()) {
 
@@ -236,18 +238,18 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 
 				// calculate children
 				Composite<CompoListDataItem> c = component;
-				visitCompoListChildren(productData, c, ret, newLossPerc, netQty, currLevel, maxLevel);
+				visitCompoListChildren(productData, c, ret, newLossPerc, subQty, netQty, currLevel, maxLevel);
 			} else {
 				CompoListDataItem compoListDataItem = component.getData();
 
 				Double qty = FormulationHelper.getQtyForCost(compoListDataItem, parentLossRatio,
 						ProductUnit.getUnit((String) nodeService.getProperty(compoListDataItem.getProduct(), PLMModel.PROP_PRODUCT_UNIT)))
-						/ FormulationHelper.getNetQtyInLorKg(productData, FormulationHelper.DEFAULT_NET_WEIGHT) * netQty;
+						/ FormulationHelper.getNetQtyInLorKg(productData, FormulationHelper.DEFAULT_NET_WEIGHT) * subQty;
 			
 				visitPart(productData.getNodeRef(), compoListDataItem.getProduct(), ret, qty, netQty, currLevel);
 				
 				if (((maxLevel < 0) || (currLevel < maxLevel)) && !entityDictionaryService.isMultiLevelLeaf(nodeService.getType(compoListDataItem.getProduct()))) {
-					visitRecur((ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct()), ret, currLevel+1, maxLevel, qty);
+					visitRecur((ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct()), ret, currLevel+1, maxLevel, qty, netQty);
 				}
 				
 

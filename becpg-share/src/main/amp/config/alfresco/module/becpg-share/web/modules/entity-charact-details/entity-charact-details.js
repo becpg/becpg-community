@@ -105,7 +105,7 @@
                             {
                             	
                             	if(menuItem.value != "chartData"){
-                            		scope.options.level = '0';
+                            		scope.options.level = '1';
                             	    scope.widgets.levelMenu.set("label", scope.msg("button.level"));
                             	    scope.widgets.levelMenu.set("disabled", true);
                             	} 
@@ -330,7 +330,7 @@
                         {
                             return Alfresco.constants.PROXY_URI + "becpg/charact/formulate" + (format != null && format.length > 0 ? "." + format : "") + "?entityNodeRef=" + this.options.entityNodeRef + "&itemType=" + this.options.itemType + "&dataListName=" 
                             + this.options.dataListName + "&dataListItems=" + this.options.dataListItems
-                            + "&level="+(this.options.level!=null? this.options.level : "0");
+                            + "&level="+(this.options.level!=null? this.options.level : "1");
                         },
                         /**
                          * 
