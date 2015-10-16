@@ -304,12 +304,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 				dataListNodeRef = entityListDAO.createList(listContainerNodeRef, dataListContainerType);
 			}
 
-			if (isLazyList && ((LazyLoadingDataList<? extends RepositoryEntity>) dataList).isLoaded()) {
-
-				for (RepositoryEntity dataListItem : dataList) {
-					dataListItem.setParentNodeRef(dataListNodeRef);
-					save((T) dataListItem);
-				}
+			if (isLazyList && ((LazyLoadingDataList<? extends RepositoryEntity>) dataList).isLoaded()) {				
 
 				if (logger.isDebugEnabled()) {
 					if (!((LazyLoadingDataList<? extends RepositoryEntity>) dataList).getDeletedNodes().isEmpty()) {
@@ -325,6 +320,11 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 				}
 
 				((LazyLoadingDataList<? extends RepositoryEntity>) dataList).getDeletedNodes().clear();
+				
+				for (RepositoryEntity dataListItem : dataList) {
+					dataListItem.setParentNodeRef(dataListNodeRef);
+					save((T) dataListItem);
+				}
 
 			} else {
 
