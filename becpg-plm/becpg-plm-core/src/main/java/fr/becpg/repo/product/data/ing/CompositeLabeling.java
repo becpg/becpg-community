@@ -8,9 +8,12 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.springframework.extensions.surf.util.I18NUtil;
 
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.constraints.AllergenType;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 
@@ -51,15 +54,18 @@ public class CompositeLabeling extends AbstractLabelingComponent {
 	}
 	
 
-	public CompositeLabeling(ProductData productData) {
+	public CompositeLabeling(ProductData productData, NodeService nodeService) {
 		this.name = productData.getName();
 		this.nodeRef = productData.getNodeRef();
 		this.legalName = productData.getLegalName();
 		this.ingType = productData.getIngType();
 		
 		for(AllergenListDataItem allergenListDataItem : productData.getAllergenList()){
+			
 			if(allergenListDataItem.getVoluntary() ){
-				getAllergens().add(allergenListDataItem.getAllergen());
+				if (AllergenType.Major.toString().equals(nodeService.getProperty(allergenListDataItem.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE))) {
+					getAllergens().add(allergenListDataItem.getAllergen());
+				}
 			}
 		}
 		
