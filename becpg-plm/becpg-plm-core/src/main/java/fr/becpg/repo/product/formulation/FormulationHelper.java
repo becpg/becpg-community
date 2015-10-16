@@ -387,7 +387,7 @@ public class FormulationHelper {
 		return getNetVolume(qty, compoListDataItem, nodeService);
 	}
 
-	public static Double calculateValue(Double totalValue, Double qtyUsed, Double value, Double netWeight) {
+	public static Double calculateValue(Double totalValue, Double qtyUsed, Double value, Double netWeight, String unit) {
 
 		if (totalValue == null && value == null) {
 			return null;
@@ -398,11 +398,14 @@ public class FormulationHelper {
 		value = value*qtyUsed;
 		if(netWeight!=null && netWeight!=0d){
 			value = value / netWeight;
-		}
+		}					
 		
-		totalValue += value;
-	
-		
+		totalValue += value;		
+		if(unit != null && unit.equals("%")){
+			if(totalValue > 100d){
+				totalValue = 100d;
+			}			
+		}		
 		return totalValue;
 	}
 
