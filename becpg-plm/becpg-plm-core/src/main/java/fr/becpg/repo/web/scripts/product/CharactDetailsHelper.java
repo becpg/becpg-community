@@ -31,11 +31,13 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.csv.writer.CSVConfig;
 import org.apache.commons.csv.writer.CSVField;
 import org.apache.commons.csv.writer.CSVWriter;
+import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.JSONArray;
@@ -146,6 +148,9 @@ public class CharactDetailsHelper {
 
 		style.setFillForegroundColor(green);
 		style.setFillPattern(CellStyle.SOLID_FOREGROUND);
+		XSSFFont font = workbook.createFont();
+		font.setColor(HSSFColor.WHITE.index);
+		style.setFont(font);
 		
 		Cell cell = row.createCell(cellnum++);
 		cell.setCellValue(getYAxisLabel());
