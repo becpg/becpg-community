@@ -395,7 +395,7 @@
         			    }
 
         			    html += '</span>';
-        			    if(tree.cssClass != "ingType" && tree.legal!=tree.name){
+        			    if(tree.cssClass != "ingType" && (tree.legal!=null && tree.legal.toLowerCase()!=tree.name.toLowerCase())){
         			    	html += '<p>&nbsp;&nbsp;<i>('+tree.name+')</i></p>';
         			    }
         			    if(tree.allergens){
