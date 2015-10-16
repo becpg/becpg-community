@@ -3758,6 +3758,10 @@
 					<show id="bcpg:eanCode" />
 					<show id="bcpg:suppliers" />
 					<show id="bcpg:entityTplRef" force="true" />
+					
+					<!-- Model -->
+					<show id="bcpg:entityTplEnabled" />
+					<show id="bcpg:entityTplIsDefault" />
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" />
@@ -3773,10 +3777,13 @@
 				<appearance>
 					<set id="mainInfo" appearance="bordered-panel"
 						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					
+					<set id="template" appearance="bordered-panel" label-id="becpg.forms.set.template.label" />
 					<set id="categories" appearance="bordered-panel"
 						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
 						template="/org/alfresco/components/form/2-column-set.ftl" />
+						
 
 					<!-- Main info -->
 					<field id="cm:name" set="mainInfo" />
@@ -3827,6 +3834,9 @@
 							</control-param>
 						</control>
 					</field>
+					
+					<field id="bcpg:entityTplEnabled" set="template" />
+					<field id="bcpg:entityTplIsDefault" set="template" />
 
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
