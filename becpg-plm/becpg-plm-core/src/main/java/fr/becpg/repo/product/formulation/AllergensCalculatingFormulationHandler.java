@@ -154,6 +154,8 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 				}
 			}
 		}
+		
+		
 
 		// process
 		if (formulatedProduct.hasProcessListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
