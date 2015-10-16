@@ -4,11 +4,13 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.alfresco.service.cmr.dictionary.DictionaryService;
+import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.extensions.webscripts.WebScriptResponse;
@@ -56,6 +58,10 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 
 		style.setFillForegroundColor(green);
 		style.setFillPattern(CellStyle.SOLID_FOREGROUND);
+		XSSFFont font = workbook.createFont();
+		font.setColor(HSSFColor.WHITE.index);
+		style.setFont(font);
+
 		int cellnum = 0;
 		cell = headerRow.createCell(cellnum);
 		headerRow.setZeroHeight(true);
@@ -63,17 +69,18 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 		cell = labelRow.createCell(cellnum++);
 		cell.setCellValue("#");
 
-		ExcelHelper.appendExcelHeader(extractedItems.getComputedFields(), null, null, headerRow, labelRow, style, cellnum, new ExcelFieldTitleProvider() {
-			
-			@Override
-			public String getTitle(AttributeExtractorStructure field) {
-				return field.getFieldDef().getTitle(dictionaryService);
-			}
-		});
+		ExcelHelper.appendExcelHeader(extractedItems.getComputedFields(), null, null, headerRow, labelRow, style, cellnum,
+				new ExcelFieldTitleProvider() {
+
+					@Override
+					public String getTitle(AttributeExtractorStructure field) {
+						return field.getFieldDef().getTitle(dictionaryService);
+					}
+				});
 
 		for (Map<String, Object> item : extractedItems.getPageItems()) {
 			Row row = sheet.createRow(rownum++);
-			
+
 			cell = row.createCell(0);
 			cell.setCellValue("VALUES");
 
