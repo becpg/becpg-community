@@ -2220,6 +2220,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				List<PhysicoChemListDataItem> physicoChemList = new ArrayList<>();
 				physicoChemList.add(new PhysicoChemListDataItem(null, null, null, null, null, physicoChem3));
 				physicoChemList.add(new PhysicoChemListDataItem(null, null, null, null, null, physicoChem4));
+				physicoChemList.add(new PhysicoChemListDataItem(null, null, "%", null, null, physicoChem5));
 				finishedProduct.setPhysicoChemList(physicoChemList);		
 								
 				NodeRef finishedProductNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
@@ -2238,7 +2239,8 @@ public class FormulationTest extends AbstractFinishedProductTest {
 				int checks=0;
 				assertNotNull("physicoChem is null", formulatedProduct.getPhysicoChemList());
 				for(PhysicoChemListDataItem pcListDataItem : formulatedProduct.getPhysicoChemList()){
-					String trace = "physicoChem: " + nodeService.getProperty(pcListDataItem.getPhysicoChem(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + pcListDataItem.getValue() + " - unit: " + pcListDataItem.getUnit();
+					String trace = "physicoChem: " + nodeService.getProperty(pcListDataItem.getPhysicoChem(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + pcListDataItem.getValue() + " - unit: " + pcListDataItem.getUnit() +
+							" - mini " + pcListDataItem.getMini() + " - maxi " + pcListDataItem.getMaxi();
 					logger.info(trace);
 					if(pcListDataItem.getPhysicoChem().equals(physicoChem3)){
 						assertEquals(3d, pcListDataItem.getValue());
@@ -2252,8 +2254,15 @@ public class FormulationTest extends AbstractFinishedProductTest {
 						assertEquals(6.2d, pcListDataItem.getMaxi());
 						checks++;
 					}
+					// #1787: check physico in % cannot be over 100%
+					if(pcListDataItem.getPhysicoChem().equals(physicoChem5)){
+						assertEquals(100d, pcListDataItem.getValue());
+						assertEquals(100d, pcListDataItem.getMini());
+						assertEquals(100d, pcListDataItem.getMaxi());
+						checks++;
+					}
 				}
-				assertEquals(2, checks);
+				assertEquals(3, checks);
 				
 				
 				return null;

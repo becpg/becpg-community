@@ -14,10 +14,11 @@ import fr.becpg.repo.repository.annotation.InternalField;
 import fr.becpg.repo.repository.model.AbstractManualDataItem;
 import fr.becpg.repo.repository.model.MinMaxValueDataItem;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
+import fr.becpg.repo.repository.model.UnitAwareDataItem;
 
 @AlfType
 @AlfQname(qname = "bcpg:physicoChemList")
-public class PhysicoChemListDataItem extends AbstractManualDataItem implements SimpleListDataItem, MinMaxValueDataItem{
+public class PhysicoChemListDataItem extends AbstractManualDataItem implements SimpleListDataItem, MinMaxValueDataItem, UnitAwareDataItem{
 			
 	
 	private static final long serialVersionUID = -3018711765028656339L;
