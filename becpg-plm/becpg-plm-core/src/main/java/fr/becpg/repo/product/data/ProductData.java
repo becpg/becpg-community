@@ -74,6 +74,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private Double yield;
 	private Double yieldVolume;
 	private Double netWeight;
+	private Double netVolume;
 	private Double servingSize;
 	private Double recipeQtyUsed;
 	private Double recipeVolumeUsed;
@@ -377,6 +378,16 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 
 	public void setNetWeight(Double netWeight) {
 		this.netWeight = netWeight;
+	}
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:netVolume")
+	public Double getNetVolume() {
+		return netVolume;
+	}
+
+	public void setNetVolume(Double netVolume) {
+		this.netVolume = netVolume;
 	}
 
 	@AlfProp
@@ -782,7 +793,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	public String toString() {
 		return "ProductData [hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", legalName=" + legalName + ", title=" + title
 				+ ", erpCode=" + erpCode + ", state=" + state + ", unit=" + unit + ", qty=" + qty + ", density=" + density + ", yield=" + yield
-				+ ", yieldVolume=" + yieldVolume + ", netWeight=" + netWeight + ", servingSize=" + servingSize + ", recipeQtyUsed=" + recipeQtyUsed
+				+ ", yieldVolume=" + yieldVolume + ", netWeight=" + netWeight + ", netVolume=" + netVolume + ", servingSize=" + servingSize + ", recipeQtyUsed=" + recipeQtyUsed
 				+ ", tare=" + tare + ", tareUnit=" + tareUnit + ", unitTotalCost=" + unitTotalCost + ", unitPrice=" + unitPrice + ", profitability="
 				+ profitability + ", breakEven=" + breakEven + ", allergenList=" + allergenList + "]";
 	}
@@ -799,6 +810,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		result = prime * result + ((ingList == null) ? 0 : ingList.hashCode());
 		result = prime * result + ((legalName == null) ? 0 : legalName.hashCode());
 		result = prime * result + ((netWeight == null) ? 0 : netWeight.hashCode());
+		result = prime * result + ((netVolume == null) ? 0 : netVolume.hashCode());
 		result = prime * result + ((nutList == null) ? 0 : nutList.hashCode());
 		result = prime * result + ((profitability == null) ? 0 : profitability.hashCode());
 		result = prime * result + ((qty == null) ? 0 : qty.hashCode());
@@ -865,6 +877,11 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 			if (other.netWeight != null)
 				return false;
 		} else if (!netWeight.equals(other.netWeight))
+			return false;
+		if (netVolume == null) {
+			if (other.netVolume != null)
+				return false;
+		} else if (!netVolume.equals(other.netVolume))
 			return false;
 		if (nutList == null) {
 			if (other.nutList != null)

@@ -340,6 +340,11 @@ public class FormulationHelper {
 	}
 
 	public static Double getNetVolume(ProductData formulatedProduct) {
+		if(formulatedProduct.getNetVolume()!=null && formulatedProduct.getNetVolume()>0){
+			return formulatedProduct.getNetVolume();
+		}
+		
+		
 		Double qty = formulatedProduct.getQty();
 		if (qty == null) {
 			return null;
