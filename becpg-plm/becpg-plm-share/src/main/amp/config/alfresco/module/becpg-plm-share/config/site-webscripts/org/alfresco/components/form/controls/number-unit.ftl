@@ -12,6 +12,8 @@
   	<#assign currUnits="perc,pp,ppm">
    <#elseif unit=="kg">
 	<#assign currUnits="mg,g,kg">
+   <#elseif unit=="L">
+	<#assign currUnits="mL,L">
    <#elseif unit=="d">
 	<#assign currUnits="d,mo">
    <#elseif unit=="-">
@@ -35,6 +37,11 @@
 		<#assign currUnit="g" >
 		<#assign currValue=field.value*1000 >
 	 </#if>
+   <#elseif unit=="L">
+	  <#if field.value &lt; 1  >
+		<#assign currUnit="mL" >
+		<#assign currValue=field.value*1000 >
+  	 </#if>
    <#elseif unit=="d">
 		<#if field.value/30 &gt; 1  >
 			<#assign currUnit="mo">
@@ -99,7 +106,7 @@
 				         	   val = val / 10000;
 				         	  } else if(unit == "pp"){
 				         	   val = val / 10;		         	   
-				         	  } else if(unit == "g" || unit == "milli"){
+				         	  } else if(unit == "g" || unit == "milli" || unit == "mL"){
 				         	    val = val / 1000;
 				         	  } else if(unit == "mg" || unit == "micro"){
 				         	    val = val / 1000000;
