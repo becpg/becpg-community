@@ -5,11 +5,13 @@ package fr.becpg.repo.product.formulation;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.util.ArrayList;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
@@ -22,10 +24,12 @@ import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.PackagingListUnit;
 import fr.becpg.repo.product.data.constraints.ProcessListUnit;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
+import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.constraints.TareUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
+import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 
 /**
  * The Class FormulationHelper.
@@ -45,6 +49,8 @@ public class FormulationHelper {
 	public static final Double DEFAULT_YIELD = 100d;
 
 	public static final Double DEFAULT_OVERRUN = 0d;
+	
+	public static final String MISSING_NUMBER_OF_PRODUCT_PER_BOX = "message.formulate.missing.numberOfProductPerBox";
 
 	private static final Log logger = LogFactory.getLog(FormulationHelper.class);
 
@@ -151,7 +157,11 @@ public class FormulationHelper {
 				if (formulatedProduct.getDefaultVariantPackagingData() != null && formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() != null) {
 					productQtyToTransform = productQtyToTransform / formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes();
 				} else {
-					throw new FormulateException("Number of product per boxes is not defined on product " + formulatedProduct.getNodeRef());
+					String message = I18NUtil.getMessage(MISSING_NUMBER_OF_PRODUCT_PER_BOX);
+					formulatedProduct.getProcessListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, 
+							RequirementType.Forbidden, 
+							message, 
+							null, new ArrayList<NodeRef>()));
 				}
 			}
 
@@ -392,7 +402,7 @@ public class FormulationHelper {
 		return getNetVolume(qty, compoListDataItem, nodeService);
 	}
 
-	public static Double calculateValue(Double totalValue, Double qtyUsed, Double value, Double netWeight) {
+	public static Double calculateValue(Double totalValue, Double qtyUsed, Double value, Double netWeight, String unit) {
 
 		if (totalValue == null && value == null) {
 			return null;
@@ -403,11 +413,14 @@ public class FormulationHelper {
 		value = value*qtyUsed;
 		if(netWeight!=null && netWeight!=0d){
 			value = value / netWeight;
-		}
+		}					
 		
-		totalValue += value;
-	
-		
+		totalValue += value;		
+		if(unit != null && unit.equals("%")){
+			if(totalValue > 100d){
+				totalValue = 100d;
+			}			
+		}		
 		return totalValue;
 	}
 

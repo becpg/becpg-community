@@ -42,6 +42,7 @@ import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.formulation.CostsCalculatingFormulationHandler;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.product.formulation.PackagingHelper;
+import fr.becpg.repo.repository.model.UnitAwareDataItem;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
 @Service
@@ -181,7 +182,11 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 						}
 					}
 
-					Double value = FormulationHelper.calculateValue(0d, qtyUsed, templateCostList.getValue(), netQty);
+					String unit = null;
+					if(templateCostList instanceof UnitAwareDataItem){
+						unit = ((UnitAwareDataItem)templateCostList).getUnit();
+					}
+					Double value = FormulationHelper.calculateValue(0d, qtyUsed, templateCostList.getValue(), netQty, unit);
 
 					ret.addKeyValue(templateCostList.getCharactNodeRef(), entityNodeRef, value);
 
