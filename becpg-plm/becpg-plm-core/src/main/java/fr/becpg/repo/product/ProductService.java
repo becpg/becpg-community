@@ -47,7 +47,7 @@ public interface ProductService {
     ProductData formulate(ProductData productData) throws FormulateException;
      
     
-	CharactDetails formulateDetails(NodeRef productNodeRef, QName dataType, String dataListName, List<NodeRef> elements) throws FormulateException;
+	CharactDetails formulateDetails(NodeRef productNodeRef, QName dataType, String dataListName, List<NodeRef> elements, Integer level) throws FormulateException;
 
 
 	boolean shouldFormulate(NodeRef product);

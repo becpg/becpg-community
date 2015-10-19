@@ -21,6 +21,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.product.data.CharactDetails;
+import fr.becpg.repo.product.data.CharactDetailsValue;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.constraints.CompoListUnit;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
@@ -100,7 +101,7 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 				logger.debug("/*-- Formulate details --*/");
 				productService.formulate(finishedProductNodeRef);
 				CharactDetails ret = productService.formulateDetails(finishedProductNodeRef, PLMModel.TYPE_NUTLIST,
-						"nutList", null);
+						"nutList", null, null);
 
 				Assert.assertNotNull(ret);
 
@@ -180,7 +181,7 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 				List<NodeRef> costNodeRefs = new ArrayList<>();
 				productService.formulate(finishedProductNodeRef);
 				CharactDetails ret = productService.formulateDetails(finishedProductNodeRef, PLMModel.TYPE_COSTLIST,
-						"costList", costNodeRefs);
+						"costList", costNodeRefs, null);
 				
 				Assert.assertNotNull(ret);
 				logger.info(CharactDetailsHelper.toJSONObject(ret, nodeService, attributeExtractorService).toString(3));
@@ -188,31 +189,31 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 				//costs
 				int checks = 0;
 				DecimalFormat df = new DecimalFormat("0.####");
-				for(Map.Entry<NodeRef, Map<NodeRef, Double>> kv : ret.getData().entrySet()){
+				for(Map.Entry<NodeRef, List< CharactDetailsValue>> kv : ret.getData().entrySet()){
 					
-					for(Map.Entry<NodeRef, Double> kv2 : kv.getValue().entrySet()){
+					for( CharactDetailsValue kv2 : kv.getValue()){
 						
 						String trace = "cost: " + nodeService.getProperty(kv.getKey(), BeCPGModel.PROP_CHARACT_NAME) + 
-								" - source: " + nodeService.getProperty(kv2.getKey(),BeCPGModel.PROP_CHARACT_NAME) + 
+								" - source: " + nodeService.getProperty(kv2.getKeyNodeRef(),BeCPGModel.PROP_CHARACT_NAME) + 
 								" - value: " + kv.getValue();
 						logger.debug(trace);
 						
 						//cost1
 						if(kv.getKey().equals(cost1)){
 							
-							if(kv2.getKey().equals(rawMaterial1NodeRef)){
+							if(kv2.getKeyNodeRef().equals(rawMaterial1NodeRef)){
 							
 								checks++;
 								assertEquals("cost.getValue() == 1.7325, actual values: " + trace, df.format(1.7325d), df.format(kv2.getValue()));
 								//assertEquals("cost.getPercentage() == 36.5314, actual values: " + trace, df.format(36.5314), df.format(kv2.getPercentage()));
 							}
-							else if(kv2.getKey().equals(rawMaterial2NodeRef)){
+							else if(kv2.getKeyNodeRef().equals(rawMaterial2NodeRef)){
 								
 								checks++;
 								assertEquals("cost.getValue() == 1.21, actual values: " + trace, df.format(1.21d), df.format(kv2.getValue()));
 								//assertEquals("cost.getPercentage() == 25.5140, actual values: " + trace, df.format(25.5140), df.format(kv2.getPercentage()));
 							}
-							else if(kv2.getKey().equals(rawMaterial3NodeRef)){
+							else if(kv2.getKeyNodeRef().equals(rawMaterial3NodeRef)){
 								
 								checks++;
 								assertEquals("cost.getValue() == 1.8, actual values: " + trace, df.format(1.8d), df.format(kv2.getValue()));
@@ -226,25 +227,25 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 						//cost2
 						else if(kv.getKey().equals(cost2)){
 							
-							if(kv2.getKey().equals(rawMaterial1NodeRef)){
+							if(kv2.getKeyNodeRef().equals(rawMaterial1NodeRef)){
 							
 								checks++;
 								assertEquals("cost.getValue() == 1.155, actual values: " + trace, df.format(1.155d), df.format(kv2.getValue()));
 								//assertEquals("cost.getPercentage() == 16.0976, actual values: " + trace, df.format(16.0976), df.format(kv2.getPercentage()));
 							}
-							else if(kv2.getKey().equals(rawMaterial2NodeRef)){
+							else if(kv2.getKeyNodeRef().equals(rawMaterial2NodeRef)){
 								
 								checks++;
 								assertEquals("cost.getValue() == 2.42, actual values: " + trace, df.format(2.42d), df.format(kv2.getValue()));
 								//assertEquals("cost.getPercentage() == 33.7282, actual values: " + trace, df.format(33.7282), df.format(kv2.getPercentage()));
 							}
-							else if(kv2.getKey().equals(rawMaterial3NodeRef)){
+							else if(kv2.getKeyNodeRef().equals(rawMaterial3NodeRef)){
 								
 								checks++;
 								assertEquals("cost.getValue() == 3.6, actual values: " + trace, df.format(3.6d), df.format(kv2.getValue()));
 								//assertEquals("cost.getPercentage() == 50.1742, actual values: " + trace, df.format(50.1742), df.format(kv2.getPercentage()));
 							}
-							else if(kv2.getKey().equals(rawMaterial4NodeRef)){								
+							else if(kv2.getKeyNodeRef().equals(rawMaterial4NodeRef)){								
 								checks++;
 							}
 							else{
@@ -255,19 +256,19 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 						//pkgCost1
 						else if(kv.getKey().equals(pkgCost1)){
 							
-							if(kv2.getKey().equals(packagingMaterial1NodeRef)){
+							if(kv2.getKeyNodeRef().equals(packagingMaterial1NodeRef)){
 								
 								checks++;
 								assertEquals("cost.getValue() == 1.5, actual values: " + trace, df.format(1.5d), df.format(kv2.getValue()));
 								//assertEquals("cost.getPercentage() == 48.9796, actual values: " + trace, df.format(48.9796), df.format(kv2.getPercentage()));
 							}						
-							else if(kv2.getKey().equals(packagingMaterial2NodeRef)){
+							else if(kv2.getKeyNodeRef().equals(packagingMaterial2NodeRef)){
 								
 								checks++;
 								assertEquals("cost.getValue() == 1.5, actual values: " + trace, df.format(1.5d), df.format(kv2.getValue()));
 								//assertEquals("cost.getPercentage() == 48.9796, actual values: " + trace, df.format(48.9796), df.format(kv2.getPercentage()));
 							}						
-							else if(kv2.getKey().equals(packagingMaterial3NodeRef)){
+							else if(kv2.getKeyNodeRef().equals(packagingMaterial3NodeRef)){
 								
 								checks++;
 								assertEquals("cost.getValue() == 0.0625, actual values: " + trace, df.format(0.0625d), df.format(kv2.getValue()));
@@ -281,19 +282,19 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 						//pkgCost2
 						else if(kv.getKey().equals(pkgCost2)){
 							
-							if(kv2.getKey().equals(packagingMaterial1NodeRef)){
+							if(kv2.getKeyNodeRef().equals(packagingMaterial1NodeRef)){
 								
 								checks++;
 								assertEquals("cost.getValue() == 1, actual values: " + trace, df.format(1d), df.format(kv2.getValue()));
 								//assertEquals("cost.getPercentage() == 24.2424, actual values: " + trace, df.format(24.2424), df.format(kv2.getPercentage()));
 							}
-							else if(kv2.getKey().equals(packagingMaterial2NodeRef)){
+							else if(kv2.getKeyNodeRef().equals(packagingMaterial2NodeRef)){
 								
 								checks++;
 								assertEquals("cost.getValue() == 3, actual values: " + trace, df.format(3d), df.format(kv2.getValue()));
 								//assertEquals("cost.getPercentage() == 72.7273, actual values: " + trace, df.format(72.7273), df.format(kv2.getPercentage()));
 							}						
-							else if(kv2.getKey().equals(packagingMaterial3NodeRef)){
+							else if(kv2.getKeyNodeRef().equals(packagingMaterial3NodeRef)){
 								
 								checks++;
 								assertEquals("cost.getValue() == 0.125, actual values: " + trace, df.format(0.125d), df.format(kv2.getValue()));

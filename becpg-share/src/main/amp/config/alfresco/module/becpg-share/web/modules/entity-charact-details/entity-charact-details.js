@@ -103,6 +103,13 @@
                             var scope = this;
                             if (menuItem)
                             {
+                            	
+                            	if(menuItem.value != "chartData"){
+                            		scope.options.level = '1';
+                            	    scope.widgets.levelMenu.set("label", scope.msg("button.level"));
+                            	    scope.widgets.levelMenu.set("disabled", true);
+                            	} 
+                            	
                                 scope.widgets.chartTypePicker.value = menuItem.value;
                                 scope.preferencesService.set(scope.getPreference(PREF_CHART_TYPE), scope.widgets.chartTypePicker.value,
                                 {
@@ -170,6 +177,21 @@
                             {
                                 disabled : true,
                                 value : "back"
+                            });
+
+                            this.widgets.levelMenu = new YAHOO.widget.Button(me.id + "-level-button",{
+                            	type : "split",
+                            	menu : me.id + "-levelbuttonselect",
+                            	lazyloadmenu : false,
+                            	disabled : true
+                            });
+                            this.widgets.levelMenu.getMenu().subscribe("click", function(p_sType, p_aArgs){
+                            	var levelItem = p_aArgs[1];
+                            	if(levelItem){
+                            		me.widgets.levelMenu.set("label", levelItem.cfg.getProperty("text"));
+                            		me.options.level = levelItem.value;
+                            		me.loadChartData();
+                            	}
                             });
 
 
@@ -279,6 +301,11 @@
                             if (this.options.entityNodeRef != null && this.options.entityNodeRef.length > 0)
                             {
 
+
+                            	
+                            	
+                            	
+                            	
                                 Alfresco.util.Ajax.request(
                                 {
                                     url : this._buildDetailsUrl("json"),
@@ -301,7 +328,9 @@
 
                         _buildDetailsUrl : function EntityCharactDetails__buildUrl(format)
                         {
-                            return Alfresco.constants.PROXY_URI + "becpg/charact/formulate" + (format != null && format.length > 0 ? "." + format : "") + "?entityNodeRef=" + this.options.entityNodeRef + "&itemType=" + this.options.itemType + "&dataListName=" + this.options.dataListName + "&dataListItems=" + this.options.dataListItems;
+                            return Alfresco.constants.PROXY_URI + "becpg/charact/formulate" + (format != null && format.length > 0 ? "." + format : "") + "?entityNodeRef=" + this.options.entityNodeRef + "&itemType=" + this.options.itemType + "&dataListName=" 
+                            + this.options.dataListName + "&dataListItems=" + this.options.dataListItems
+                            + "&level="+(this.options.level!=null? this.options.level : "1");
                         },
                         /**
                          * 
@@ -379,10 +408,18 @@
                             {
                                 key : "cssClass"
                             });
+                            myFieldDefs.push(
+                             {
+                                 key : "level"
+                             });
 
                             this.columnDefs[0].formatter = function (elCell, oRecord, oColumn, oData) {
-                                if(oRecord.getData("cssClass")){
-                                    elCell.innerHTML = '<span class="'+ oRecord.getData("cssClass") + '">'+oData+'</span>';
+                            	
+                            	
+                            	if(oRecord.getData("cssClass")){
+                            		var padding = oRecord.getData("level") * 25;
+                            		
+                                    elCell.innerHTML = '<span class="'+ oRecord.getData("cssClass") + '" style="margin-left:' + padding + 'px;">'+oData+'</span>';
                                 } else {
                                     elCell.innerHTML = '<b>'+oData+'</b>';
                                 }
@@ -412,6 +449,7 @@
 
                             if (this.dataSource != null)
                             {
+                            	
                                 if (this.widgets.chartTypePicker.value == "lineChart")
                                 {
                                     this.widgets.dataTable = null;
@@ -486,6 +524,8 @@
                                 }
                                 else if (this.widgets.chartTypePicker.value == "chartData")
                                 {
+                                	this.widgets.levelMenu.set("disabled", false);
+                                	
                                     this.widgets.chart = null;
                                     this.widgets.dataTable = new YAHOO.widget.DataTable(this.id + "-chart", this.columnDefs, this.dataSource);
                                 }

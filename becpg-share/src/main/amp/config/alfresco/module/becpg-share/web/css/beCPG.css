@@ -252,7 +252,8 @@ span.reqTypeTolerated {
     padding-left: 20px;
     background-repeat: no-repeat
 }
-span.reqTypeInfo {
+span.reqTypeInfo,
+span.reqTypeAuthorized {
     background-image: url("../../components/images/states/info-16.png") !important;
     padding-left: 20px;
     background-repeat: no-repeat

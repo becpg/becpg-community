@@ -28,7 +28,7 @@ import fr.becpg.repo.product.data.CharactDetails;
 
 public interface CharactDetailsVisitor {
 
-	CharactDetails visit(ProductData productData, List<NodeRef> elements) throws FormulateException;
+	CharactDetails visit(ProductData productData, List<NodeRef> elements, Integer level) throws FormulateException;
 
 	void setDataListType(QName dataType);
 

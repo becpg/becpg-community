@@ -50,7 +50,7 @@
 					+ encodeURIComponent(this.options.itemType != null ? this.options.itemType : this.datalistMeta.itemType) + "&dataListName="
 					+ encodeURIComponent(this.datalistMeta.name) + "&dataListItems=" + nodeRefs.join(",");
 
-			this._showPanel(url, this.id);
+			this._showPanel(url, this.id, null ,"60em");
 
 		},
 		
@@ -332,7 +332,7 @@
 					+ (item.siteId ? "&site=" + item.siteId : "")
 					+ (this.options.entityNodeRef ? "&entityNodeRef=" + this.options.entityNodeRef : "");
 
-			this._showPanel(url, this.id + "_comments", item.nodeRef);
+			this._showPanel(url, this.id + "_comments", item.nodeRef,"50em");
 
 		},
 
@@ -560,7 +560,7 @@
 			});
 		},
 
-		_showPanel : function EntityDataGrid__showPanel(url, htmlid, itemNodeRef) {
+		_showPanel : function EntityDataGrid__showPanel(url, htmlid, itemNodeRef, vWidth) {
 
 			var me = this;
 
@@ -583,14 +583,16 @@
 						var panelDiv = Dom.getFirstChild(containerDiv);
 						this.widgets.panel = Alfresco.util.createYUIPanel(panelDiv, {
 							draggable : true,
-							width : "50em"
+							width : vWidth
 						});
 
-						this.widgets.panel.subscribe("hide", function() {
-							YAHOO.Bubbling.fire(me.scopeId + "dataItemUpdated", {
-								nodeRef : itemNodeRef
+						if(itemNodeRef!=null){
+							this.widgets.panel.subscribe("hide", function() {
+								YAHOO.Bubbling.fire(me.scopeId + "dataItemUpdated", {
+									nodeRef : itemNodeRef
+								});
 							});
-						});
+						}
 
 						this.widgets.panel.show();
 

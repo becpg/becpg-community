@@ -19,6 +19,7 @@ package fr.becpg.repo.product.data.constraints;
 
 public enum RequirementType {
 
+	Authorized,
 	Forbidden,
 	Tolerated,
 	Info
