@@ -6973,8 +6973,7 @@
 				<appearance>
 					<field id="bcpg:filReqType">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">Forbidden|data.reqtype.forbidden,Tolerated|data.reqtype.tolerated,Info|data.reqtype.info
-							</control-param>
+							<control-param name="options">Forbidden|data.reqtype.forbidden,Tolerated|data.reqtype.tolerated,Info|data.reqtype.info,Authorized|data.reqtype.authorized</control-param>
 						</control>
 					</field>
 					<field id="bcpg:filReqMessage">
@@ -7057,8 +7056,7 @@
 				<appearance>
 					<field id="bcpg:filReqType">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">Forbidden|data.reqtype.forbidden,Tolerated|data.reqtype.tolerated,Info|data.reqtype.info
-							</control-param>
+							<control-param name="options">Forbidden|data.reqtype.forbidden,Tolerated|data.reqtype.tolerated,Info|data.reqtype.info,Authorized|data.reqtype.authorized</control-param>
 						</control>
 					</field>
 					<field id="bcpg:filReqMessage">
