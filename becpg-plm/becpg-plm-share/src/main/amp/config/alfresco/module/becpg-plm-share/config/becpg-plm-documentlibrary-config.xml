@@ -227,9 +227,6 @@
 		
 			<action id="entity-branch" type="javascript" label="actions.document.branch-entity">
 				<param name="function">onActionBranchEntity</param>
-				<permissions>
-					<permission allow="true">Write</permission>
-				</permissions>
 				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isSystemEntity</evaluator>
 				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isWorkingCopy</evaluator>
 				<evaluator negate="true">evaluator.doclib.action.notEditable</evaluator>
