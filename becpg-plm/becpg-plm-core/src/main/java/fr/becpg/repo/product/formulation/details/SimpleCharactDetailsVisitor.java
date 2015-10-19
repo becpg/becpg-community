@@ -149,8 +149,14 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 
 		for (SimpleCharactDataItem simpleCharact : simpleCharactDataList) {
 			if (simpleCharact != null && charactDetails.hasElement(simpleCharact.getCharactNodeRef())) {
+				
+				String unit = null;
+				
+				if (simpleCharact instanceof UnitAwareDataItem) {
+					unit =  ((UnitAwareDataItem) simpleCharact).getUnit();
+				} 
 
-				Double value = FormulationHelper.calculateValue(0d, qtyUsed, simpleCharact.getValue(), netQty);
+				Double value = FormulationHelper.calculateValue(0d, qtyUsed, simpleCharact.getValue(), netQty, unit);
 
 				if (logger.isDebugEnabled()) {
 					logger.debug("Add new charact detail. Charact: "
@@ -158,11 +164,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 							+ nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_CHARACT_NAME) + " - netQty: " + netQty + " - qty: " + qtyUsed
 							+ " - value: " + value);
 				}
-				String unit = null;
 				
-				if (simpleCharact instanceof UnitAwareDataItem) {
-					unit =  ((UnitAwareDataItem) simpleCharact).getUnit();
-				} 
 				
 				charactDetails.addKeyValue(simpleCharact.getCharactNodeRef(),new CharactDetailsValue(parent, entityNodeRef, value, currLevel, unit));
 			}
