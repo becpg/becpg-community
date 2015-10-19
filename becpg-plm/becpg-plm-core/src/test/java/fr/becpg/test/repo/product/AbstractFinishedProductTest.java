@@ -201,6 +201,8 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
     
     protected NodeRef physicoChem4;
     
+    protected NodeRef physicoChem5;
+    
     protected NodeRef supplier1;
     
     protected NodeRef supplier2;
@@ -400,6 +402,11 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					properties.put(BeCPGModel.PROP_CHARACT_NAME, "physicoChem4");			 					 				
 					properties.put(PLMModel.PROP_PHYSICO_CHEM_FORMULATED, true);
 					physicoChem4 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), PLMModel.TYPE_PHYSICO_CHEM, properties).getChildRef();			
+					properties.clear();
+					properties.put(BeCPGModel.PROP_CHARACT_NAME, "physicoChem5");			 					 				
+					properties.put(PLMModel.PROP_PHYSICO_CHEM_FORMULATED, true);
+					properties.put(PLMModel.PROP_PHYSICO_CHEM_UNIT, "%");
+					physicoChem5 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), PLMModel.TYPE_PHYSICO_CHEM, properties).getChildRef();
 					
 					//Suppliers
 					properties.put(ContentModel.PROP_NAME, "supplier1");			 					 				
@@ -465,6 +472,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					physicoChemList.add(new PhysicoChemListDataItem(null, 2d, "-", null, 2.1d, physicoChem2));
 					physicoChemList.add(new PhysicoChemListDataItem(null, 1d, "-", null, 2.1d, physicoChem3));
 					physicoChemList.add(new PhysicoChemListDataItem(null, 2d, "-", 1.5d, 2.2d, physicoChem4));
+					physicoChemList.add(new PhysicoChemListDataItem(null, 100d, "%", 100d, 100d, physicoChem5));
 					rawMaterial1.setPhysicoChemList(physicoChemList);
 					rawMaterial1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial1).getNodeRef();
 					
@@ -513,6 +521,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					physicoChemList.add(new PhysicoChemListDataItem(null, 2d, "-", null, 2.2d, physicoChem2));
 					physicoChemList.add(new PhysicoChemListDataItem(null, 1d, "-", 0.8d, 1.1d, physicoChem3));
 					physicoChemList.add(new PhysicoChemListDataItem(null, 2d, "-", 0.8d, 2.1d, physicoChem4));
+					physicoChemList.add(new PhysicoChemListDataItem(null, 100d, "%", 100d, 100d, physicoChem5));
 					rawMaterial2.setPhysicoChemList(physicoChemList);
 					rawMaterial2.setIngList(ingList);	
 					
@@ -558,6 +567,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					physicoChemList.add(new PhysicoChemListDataItem(null, 2d, "-", null, null, physicoChem2));
 					physicoChemList.add(new PhysicoChemListDataItem(null, 1d, "-", null, null, physicoChem3));
 					physicoChemList.add(new PhysicoChemListDataItem(null, 2d, "-", null, null, physicoChem4));
+					physicoChemList.add(new PhysicoChemListDataItem(null, 99d, "%", 98d, 100d, physicoChem5));
 					rawMaterial3.setPhysicoChemList(physicoChemList);
 					rawMaterial3.setIngList(ingList);		
 					rawMaterial3NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial3).getNodeRef();
