@@ -86,12 +86,23 @@
          <script type="text/javascript">
 			function productUnitToogleVisible(){
 				var val = Dom.get("${fieldHtmlId}").value;
-				if(val == "kg" || val == "g"){
-						    YAHOO.util.Dom.addClass(YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_netWeight").parentNode,"hidden");
-						    YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_netWeight").value = "";
-						 } else {
-			         		YAHOO.util.Dom.removeClass(YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_netWeight").parentNode,"hidden");
+						if(YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_netWeight")!=null){
+								if(val == "kg" || val == "g"){
+								    YAHOO.util.Dom.addClass(YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_netWeight").parentNode,"hidden");
+								    YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_netWeight").value = "";
+								 } else {
+					         		YAHOO.util.Dom.removeClass(YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_netWeight").parentNode,"hidden");
+					         	}
 			         	}
+			         	if(YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_netVolume")!=null){
+				         	if(val != "P"){
+							    YAHOO.util.Dom.addClass(YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_netVolume").parentNode,"hidden");
+							    YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_netVolume").value = "";
+							 } else {
+				         		YAHOO.util.Dom.removeClass(YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_netVolume").parentNode,"hidden");
+				         	}
+			         	}
+			         	
 			}
          	YAHOO.Bubbling.on("beforeFormRuntimeInit", function (layer, args)
      			 {	

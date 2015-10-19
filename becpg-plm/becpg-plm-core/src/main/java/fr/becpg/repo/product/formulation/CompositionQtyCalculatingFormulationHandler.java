@@ -64,6 +64,10 @@ public class CompositionQtyCalculatingFormulationHandler extends FormulationBase
 				formulatedProduct.setNetWeight(formulatedProduct.getQty() / 1000);
 			} else if (ProductUnit.kg.equals(formulatedProduct.getUnit())) {
 				formulatedProduct.setNetWeight(formulatedProduct.getQty());
+			} else if (ProductUnit.mL.equals(formulatedProduct.getUnit())) {
+				formulatedProduct.setNetVolume(formulatedProduct.getQty() / 1000);
+			} else if(ProductUnit.L.equals(formulatedProduct.getUnit())){
+				formulatedProduct.setNetVolume(formulatedProduct.getQty());
 			}
 		}
 		Double netWeight = formulatedProduct.getNetWeight();

@@ -67,6 +67,7 @@
 			</parameter>
 		</constraint>
 
+        <!-- Deprecated -->
 		<constraint name="bcpg:netWeightUnits" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -2499,19 +2500,11 @@
 				</property>
 				<property name="bcpg:netWeight">
 					<type>d:double</type>
+					<index enabled="false"/>
 				</property>
-				<property name="bcpg:netWeightUnit">
-					<type>d:text</type>
-					<mandatory>true</mandatory>
-					<default>kg</default>
-					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>false</tokenised>
-					</index>
-					<constraints>
-						<constraint ref="bcpg:netWeightUnits" />
-					</constraints>
+				<property name="bcpg:netVolume">
+					<type>d:double</type>
+					<index enabled="false"/>
 				</property>
 				<property name="bcpg:servingSize">
 					<type>d:double</type>
@@ -2524,6 +2517,21 @@
 				</property>
 				<property name="bcpg:packagingDescription">
 					<type>d:mltext</type>
+				</property>
+				
+				<!-- Deprecated -->
+				<property name="bcpg:netWeightUnit">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<default>kg</default>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>false</tokenised>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:netWeightUnits" />
+					</constraints>
 				</property>
 			</properties>
 			<associations>
