@@ -52,6 +52,7 @@ import fr.becpg.repo.repository.model.ForecastValueDataItem;
 import fr.becpg.repo.repository.model.FormulatedCharactDataItem;
 import fr.becpg.repo.repository.model.MinMaxValueDataItem;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
+import fr.becpg.repo.repository.model.UnitAwareDataItem;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
 public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListDataItem> extends FormulationBaseHandler<ProductData> {
@@ -283,14 +284,19 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		} else {
 			formulatedValue = newSimpleListDataItem.getValue();
 		}
+		
+		String unit = null;
+		if(slDataItem instanceof UnitAwareDataItem){
+			unit = ((UnitAwareDataItem)slDataItem).getUnit();
+		}
 
 		Double newValue = formulatedValue != null ? formulatedValue : 0d;
 		Double value = slDataItem.getValue();
 		if (value != null) {
-			newSimpleListDataItem.setValue(FormulationHelper.calculateValue(formulatedValue, qtyUsed, value, netQty));
+			newSimpleListDataItem.setValue(FormulationHelper.calculateValue(formulatedValue, qtyUsed, value, netQty, unit));
 		} else {
 			value = 0d;
-		}
+		}		
 		if (slDataItem instanceof MinMaxValueDataItem) {
 			if (isGenericRawMaterial) {
 				if (((MinMaxValueDataItem) slDataItem).getMini() != null
@@ -309,19 +315,19 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 				Double miniValue = ((MinMaxValueDataItem) slDataItem).getMini() != null ? ((MinMaxValueDataItem) slDataItem).getMini() : value;
 				Double maxiValue = ((MinMaxValueDataItem) slDataItem).getMaxi() != null ? ((MinMaxValueDataItem) slDataItem).getMaxi() : value;
 				if (miniValue < value || newMini < newValue || ((MinMaxValueDataItem) newSimpleListDataItem).getMini() != null) {
-					((MinMaxValueDataItem) newSimpleListDataItem).setMini(FormulationHelper.calculateValue(newMini, qtyUsed, miniValue, netQty));
+					((MinMaxValueDataItem) newSimpleListDataItem).setMini(FormulationHelper.calculateValue(newMini, qtyUsed, miniValue, netQty, unit));
 				}
 				if (maxiValue > value || newMaxi > newValue || ((MinMaxValueDataItem) newSimpleListDataItem).getMaxi() != null) {
-					((MinMaxValueDataItem) newSimpleListDataItem).setMaxi(FormulationHelper.calculateValue(newMaxi, qtyUsed, maxiValue, netQty));
+					((MinMaxValueDataItem) newSimpleListDataItem).setMaxi(FormulationHelper.calculateValue(newMaxi, qtyUsed, maxiValue, netQty, unit));
 				}
 			}
 		}
 
 		if (newSimpleListDataItem instanceof ForecastValueDataItem) {
 			((ForecastValueDataItem) newSimpleListDataItem).setPreviousValue(FormulationHelper.calculateValue(((ForecastValueDataItem) newSimpleListDataItem).getPreviousValue(), qtyUsed,
-					((ForecastValueDataItem) slDataItem).getPreviousValue(), netQty));
+					((ForecastValueDataItem) slDataItem).getPreviousValue(), netQty, unit));
 			((ForecastValueDataItem) newSimpleListDataItem).setFutureValue(FormulationHelper.calculateValue(((ForecastValueDataItem) newSimpleListDataItem).getFutureValue(), qtyUsed,
-					((ForecastValueDataItem) slDataItem).getFutureValue(), netQty));
+					((ForecastValueDataItem) slDataItem).getFutureValue(), netQty, unit));
 		}
 
 		if (logger.isDebugEnabled()) {

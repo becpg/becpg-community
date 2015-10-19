@@ -17,12 +17,15 @@
  ******************************************************************************/
 package fr.becpg.repo.product.formulation;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
+import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
@@ -30,7 +33,9 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ResourceProductData;
 import fr.becpg.repo.product.data.constraints.ProcessListUnit;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
+import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
+import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.productList.ResourceParamListItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.variant.filters.VariantFilters;
@@ -145,7 +150,11 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 						p.setRateProduct(p.getRateResource() * formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes());
 					}
 					else{
-						throw new FormulateException("Number of product per boxes is not defined on product " + formulatedProduct.getNodeRef());
+						String message = I18NUtil.getMessage(FormulationHelper.MISSING_NUMBER_OF_PRODUCT_PER_BOX);
+						formulatedProduct.getProcessListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, 
+								RequirementType.Forbidden, 
+								message, 
+								null, new ArrayList<NodeRef>()));
 					}					
 				}
 				else {

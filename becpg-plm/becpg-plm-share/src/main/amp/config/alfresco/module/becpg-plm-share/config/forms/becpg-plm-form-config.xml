@@ -270,6 +270,7 @@
 					<show id="bcpg:netWeight" force="true" />
 					<show id="bcpg:productDensity" />
 					<show id="bcpg:servingSize" force="true" />
+					<show id="bcpg:netVolume" force="true" />
 					<show id="bcpg:numberOfServings" force="true" />
 					<show id="bcpg:productSpecifications" />
 
@@ -501,8 +502,15 @@
 							<control-param name="unit">kg</control-param>
 						</control>
 					</field>
+				
 					<field id="bcpg:productDensity" set="formulation" read-only="true" />
 					<field id="bcpg:servingSize" help-id="becpg.forms.help.servingSize" set="formulation" />
+					<field id="bcpg:netVolume" help-id="becpg.forms.help.netVolume" set="formulation" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">L</control-param>
+						</control>
+					</field>
 					<field id="bcpg:numberOfServings" help-id="becpg.forms.help.numberOfServings" set="formulation" />
 					<field id="bcpg:productSpecifications" help-id="becpg.forms.help.productSpecifications" set="formulation">
 						<control
@@ -621,6 +629,7 @@
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:netWeight" force="true" />
+					<show id="bcpg:netVolume" force="true" />
 					<show id="bcpg:servingSize" force="true" />
 					<show id="bcpg:productSpecifications" />
 					<show id="bcpg:compareWithEntities" force="true" />
@@ -634,10 +643,16 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:netWeight" >
+					<field id="bcpg:netWeight" help-id="becpg.forms.help.netWeight" >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">kg</control-param>
+						</control>
+					</field>
+					<field id="bcpg:netVolume" help-id="becpg.forms.help.netVolume" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">L</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productSpecifications">
@@ -757,6 +772,7 @@
 					<show id="bcpg:netWeight" force="true" />
 					<show id="bcpg:servingSize" force="true" />
 					<show id="bcpg:numberOfServings" force="true" />
+					<show id="bcpg:netVolume" force="true" />
 					<show id="bcpg:productSpecifications" />
 					
 
@@ -895,9 +911,15 @@
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">kg</control-param>
 						</control>
-					</field>					
+					</field>				
 					<field id="bcpg:servingSize" set="formulation" />
 					<field id="bcpg:numberOfServings" set="formulation" />
+					<field id="bcpg:netVolume" help-id="becpg.forms.help.netVolume" set="formulation" >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">L</control-param>
+						</control>
+					</field>			
 					<field id="bcpg:productSpecifications" set="formulation">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -939,6 +961,7 @@
 					<show id="bcpg:productQty" />
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:netWeight" force="true" />
+					<show id="bcpg:netVolume" force="true" />
 					<show id="bcpg:servingSize" force="true" />
 					<show id="bcpg:entityTplRef" force="true" />
 				</field-visibility>
@@ -950,10 +973,16 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:netWeight" >
+					<field id="bcpg:netWeight" help-id="becpg.forms.help.netWeight">
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">kg</control-param>
+						</control>
+					</field>
+					<field id="bcpg:netVolume" help-id="becpg.forms.help.netVolume">
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">L</control-param>
 						</control>
 					</field>
 					<field id="bcpg:entityTplRef">
@@ -2782,7 +2811,7 @@
 						</control>
 					</field>
 					
-					<field id="bcpg:netWeight">
+					<field id="bcpg:netWeight" >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">kg</control-param>
@@ -3422,7 +3451,7 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:netWeight" >
+					<field id="bcpg:netWeight" help-id="becpg.forms.help.netWeight">
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">kg</control-param>
@@ -3662,7 +3691,6 @@
 							<control-param name="unit">kg</control-param>
 						</control>
 					</field>
-			
 					<field id="bcpg:servingSize" set="formulation" />
 					<field id="bcpg:productSpecifications" set="formulation">
 						<control
@@ -3709,7 +3737,7 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:netWeight" >
+					<field id="bcpg:netWeight"  help-id="becpg.forms.help.netWeight">
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">kg</control-param>
