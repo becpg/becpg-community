@@ -36,6 +36,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.datalist.DataListSortPlugin;
@@ -287,14 +288,22 @@ public class ProjectListExtractor extends ActivityListExtractor {
 
 								for (NodeRef itemNodeRef : assocRefs) {
 
-									if (permissionService.hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED) {
+									if (permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED) {
 
-										Map<String, Object> tmp = new HashMap<>(3);
+										Map<String, Object> tmp = new HashMap<>(4);
+										
+										
+										Map<String, Map<String, Boolean>> permissions = new HashMap<>(1);
+										Map<String, Boolean> userAccess = new HashMap<>(1);
+
+										permissions.put("userAccess", userAccess);
+										userAccess.put("edit", permissionService.hasPermission(itemNodeRef, "Write") == AccessStatus.ALLOWED);
 
 										QName itemType = nodeService.getType(itemNodeRef);
 										Map<QName, Serializable> properties = nodeService.getProperties(itemNodeRef);
 										tmp.put(PROP_TYPE, itemType.toPrefixString(services.getNamespaceService()));
 										tmp.put(PROP_NODE, itemNodeRef);
+										tmp.put(PROP_PERMISSIONS, permissions);
 										if (ProjectModel.TYPE_ACTIVITY_LIST.equals(field.getFieldQname())) {
 											Map<String, Object> tmp2 = doExtract(itemNodeRef, itemType, field.getChildrens(), mode, properties,
 													props, cache);
@@ -316,13 +325,22 @@ public class ProjectListExtractor extends ActivityListExtractor {
 									List<NodeRef> results = entityListDAO.getListItems(listNodeRef, field.getFieldQname());
 
 									for (NodeRef itemNodeRef : results) {
-										if (permissionService.hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED) {
+										if (permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED) {
 
+											
+											Map<String, Map<String, Boolean>> permissions = new HashMap<>(1);
+											Map<String, Boolean> userAccess = new HashMap<>(1);
+
+											permissions.put("userAccess", userAccess);
+											userAccess.put("edit", permissionService.hasPermission(itemNodeRef, "Write") == AccessStatus.ALLOWED);
+
+											
 											Map<String, Object> tmp = new HashMap<>(3);
 											QName itemType = nodeService.getType(itemNodeRef);
 											Map<QName, Serializable> properties = nodeService.getProperties(itemNodeRef);
 											tmp.put(PROP_TYPE, itemType.toPrefixString(services.getNamespaceService()));
 											tmp.put(PROP_NODE, itemNodeRef);
+											tmp.put(PROP_PERMISSIONS, permissions);
 											tmp.put(PROP_NODEDATA,
 													doExtract(itemNodeRef, itemType, field.getChildrens(), mode, properties, props, cache));
 											ret.add(tmp);
