@@ -1052,7 +1052,6 @@
 								and prop2.boolean_value = true
 								and datalist.instance_id = ${instanceId}
 							group by datalist.id
-
 					</SQL>
 				</View>
 				<Level approxRowCount="100" name="name" caption="${msg("jsolap.allergenInVoluntary.title")}" column="nodeRef"  nameColumn="name" type="String"   >
