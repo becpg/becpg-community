@@ -202,10 +202,14 @@
       getTaskTitle : function PL_getTaskTitle(task, entityNodeRef, start, large) {
 
           var ret = '<span class="task-status task-status-' + task["itemData"]["prop_pjt_tlState"].value + '">', duration ='';
-
-          ret += '<span class="node-' + task.nodeRef + '|' + entityNodeRef + '"><a href="" class="theme-color-1 ' + TASK_EVENTCLASS + '" title="' + this
-          .msg("link.title.task-edit") + '" >' + task["itemData"]["prop_pjt_tlTaskName"].displayValue;
-
+          
+          if(task.permissions.userAccess.edit){
+	          ret += '<span class="node-' + task.nodeRef + '|' + entityNodeRef + '"><a href="" class="theme-color-1 ' + TASK_EVENTCLASS + '" title="' + this
+	          .msg("link.title.task-edit") + '" >' + task["itemData"]["prop_pjt_tlTaskName"].displayValue;
+          } else {
+        	  ret += '<span class="node-' + task.nodeRef + '|' + entityNodeRef + '">' + task["itemData"]["prop_pjt_tlTaskName"].displayValue;
+          }
+          
           if( task["itemData"]["prop_pjt_tlState"].value == "InProgress"){
               if(task["itemData"]["prop_pjt_completionPercent"] && 
                       task["itemData"]["prop_pjt_completionPercent"].value != null)  {
@@ -226,7 +230,11 @@
              ret +=' ('+duration+')';
          }
 
-          ret += '</a></span>';
+         if(task.permissions.userAccess.edit){
+        	 ret += '</a>';
+         }
+         
+          ret += '</span>';
 
           ret += '<span class="node-' + task.nodeRef + '|' + entityNodeRef + '">';
           ret += '<a class="task-comments '+COMMENT_EVENTCLASS+'" title="' + this.msg("link.title.comment-task") + '" href="" >';
@@ -256,9 +264,12 @@
              ret += '<span class="doc-url"><a title="' + this.msg("link.title.open-link") + '" href="' + url  + '"><img src="' + Alfresco.constants.URL_RESCONTEXT + 'components/images/link-16.png" /></a></span>';
          }
          
-
-         ret += '<span class="node-' + deliverable.nodeRef + '|' + entityNodeRef + '"><a class="theme-color-1 ' + TASK_EVENTCLASS + '" title="' + this
-               .msg("link.title.deliverable-edit") + '" >' + deliverable["itemData"]["prop_pjt_dlDescription"].displayValue + '</a></span>';
+         if(deliverable.permissions.userAccess.edit){
+	         ret += '<span class="node-' + deliverable.nodeRef + '|' + entityNodeRef + '"><a class="theme-color-1 ' + TASK_EVENTCLASS + '" title="' + this
+	               .msg("link.title.deliverable-edit") + '" >' + deliverable["itemData"]["prop_pjt_dlDescription"].displayValue + '</a></span>';
+         } else {
+        	  ret += '<span class="node-' + deliverable.nodeRef + '|' + entityNodeRef + '">' + deliverable["itemData"]["prop_pjt_dlDescription"].displayValue + '</span>';
+         }
 
          ret += '<span class="node-' + deliverable.nodeRef + '|' + entityNodeRef + '">';
          ret += '<a class="task-comments '+COMMENT_EVENTCLASS+'" title="' + this.msg("link.title.comment-task") + '" href="" >';
