@@ -487,6 +487,8 @@ public class ECOServiceImpl implements ECOService {
 						}
 						if(replacementListDataItem.getTargetItem()!=null){
 							targetItems.add(new Pair<NodeRef, Integer>(replacementListDataItem.getTargetItem(), replacementListDataItem.getQtyPerc()));
+						} else {
+							toDelete.addAll(items.stream().filter(c -> sourceItem.equals(c.getComponent())).collect(Collectors.toSet()));
 						}
 						replacements.put(sourceItem, targetItems);
 
