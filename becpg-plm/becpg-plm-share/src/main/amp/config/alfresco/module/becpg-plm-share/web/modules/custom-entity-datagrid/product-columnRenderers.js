@@ -121,7 +121,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 		propertyName : [ "bcpg:rclReqType", "bcpg:filReqType", "ecm:culReqType" ],
 		renderer : function(oRecord, data, label, scope) {
 
-			if(data.value!=null){
+			if(data.value!=null && data.value.length>0){
 			    return '<span class="reqType'+data.value+'">' + Alfresco.util.encodeHTML( scope.msg("data.reqtype."+ data.value.toLowerCase())) + '</span>';
 			}
 			
