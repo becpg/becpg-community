@@ -381,9 +381,11 @@ if (beCPG.module.EntityDataGridRenderers) {
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : "bcpg:labelClaim",
 		renderer : function(oRecord, data, label, scope) {
-			var isFormulated = oRecord.getData("itemData")["prop_bcpg_lclIsFormulated"].value;
+			var isFormulated = oRecord.getData("itemData")["prop_bcpg_lclIsFormulated"]!=null 
+						? oRecord.getData("itemData")["prop_bcpg_lclIsFormulated"].value : false;
 			if (isFormulated) {
-				var error = oRecord.getData("itemData")["prop_bcpg_lclFormulaErrorLog"].value;
+				var error = oRecord.getData("itemData")["prop_bcpg_lclFormulaErrorLog"]!=null ?
+						oRecord.getData("itemData")["prop_bcpg_lclFormulaErrorLog"].value : null;
 				if (error == null) {
 					return '<span class="lcl-formulated"  title="' + Alfresco.util.encodeHTML(data.metadata) + '">'
 							+ Alfresco.util.encodeHTML(data.displayValue) + '</span>';

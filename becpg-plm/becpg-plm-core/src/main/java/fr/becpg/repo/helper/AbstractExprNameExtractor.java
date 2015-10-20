@@ -49,7 +49,7 @@ public abstract class AbstractExprNameExtractor implements AttributeExtractorPlu
 				replacement = extractPropText(nodeRef, propQname);
 			}
 
-			patternMatcher.appendReplacement(sb, replacement != null ? replacement : "");
+			patternMatcher.appendReplacement(sb, replacement != null ? replacement.replace("$", "") : "");
 
 		}
 		patternMatcher.appendTail(sb);
