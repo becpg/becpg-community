@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.bcpg.fr/model/workflow/1.0">
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.bcpg.fr/model/workflow/1.0">
   <process id="productValidationWF" name="Product Validation" isExecutable="true">
     <startEvent id="initiateProductValidation" name="Start Task" activiti:formKey="bcpgwf:initiateProductValidationTask"></startEvent>
     <sequenceFlow id="initiate" sourceRef="initiateProductValidation" targetRef="startGateway">
-     <extensionElements>
+      <extensionElements>
         <activiti:executionListener event="start" class="org.alfresco.repo.workflow.activiti.listener.ScriptExecutionListener">
           <activiti:field name="script">
-            <activiti:string>
-                   execution.setVariable('bpm_comment',bcpgwf_pvTransmitterComment);
+            <activiti:string><![CDATA[execution.setVariable('bpm_comment',bcpgwf_pvTransmitterComment);
 	               execution.setVariable('bcpgwf_reviewRDApproval',null);
 	               execution.setVariable('bcpgwf_reviewProductionApproval',null);
 	               execution.setVariable('bcpgwf_reviewQualityApproval',null);
@@ -23,10 +22,13 @@
 	               if(execution.getVariable('bcpgwf_notifyUsers')==null){
 	               	execution.setVariable('bcpgwf_notifyUsers',null);
 	               }
-	            </activiti:string>
+                      if(execution.getVariable('bcpgwf_pvCallerActor')==null){
+			execution.setVariable('bcpgwf_pvCallerActor',execution.getVariable('initiator')) ;
+                       }
+]]></activiti:string>
           </activiti:field>
         </activiti:executionListener>
-      </extensionElements>  
+      </extensionElements>
     </sequenceFlow>
     <inclusiveGateway id="startGateway" name="Exclusive Gateway"></inclusiveGateway>
     <sequenceFlow id="doProductValidationCaller1" sourceRef="startGateway" targetRef="doProductValidationCallerTask">
@@ -45,8 +47,7 @@
       <extensionElements>
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
-            <activiti:string>
-            &lt;import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js"&gt;
+            <activiti:string><![CDATA[<import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js">
             if (typeof bpm_workflowDueDate != 'undefined') task.dueDate = bpm_workflowDueDate;
                if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority;
                if (bcpgwf_notifyAssignee)
@@ -57,14 +58,14 @@
 							"/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:product-validation-notify-task-email.ftl",
 							bpm_package.children);
 						
-		          }</activiti:string>
+		          }]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
         <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
-            <activiti:string>task.setVariableLocal('bpm_comment',task.getVariable('bcpgwf_reviewQualityComment'));
+            <activiti:string><![CDATA[task.setVariableLocal('bpm_comment',task.getVariable('bcpgwf_reviewQualityComment'));
                execution.setVariable('bcpgwf_reviewQualityComment',task.getVariable('bcpgwf_reviewQualityComment'));
-            	execution.setVariable('bcpgwf_reviewQualityApproval',task.getVariable('bcpgwf_reviewQualityApproval'));</activiti:string>
+            	execution.setVariable('bcpgwf_reviewQualityApproval',task.getVariable('bcpgwf_reviewQualityApproval'));]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
       </extensionElements>
@@ -73,8 +74,7 @@
       <extensionElements>
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
-            <activiti:string>
-            &lt;import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js"&gt;
+            <activiti:string><![CDATA[<import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js">
             if (typeof bpm_workflowDueDate != 'undefined') task.dueDate = bpm_workflowDueDate;
                if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority;
                if (bcpgwf_notifyAssignee)
@@ -84,14 +84,14 @@
 								bcpg.getMessage('productValidationWF.mail.notify.message'), 
 								"/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:product-validation-notify-task-email.ftl",
 								bpm_package.children);							
-		          }</activiti:string>
+		          }]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
         <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
-            <activiti:string>task.setVariableLocal('bpm_comment',task.getVariable('bcpgwf_reviewProductionComment'));
+            <activiti:string><![CDATA[task.setVariableLocal('bpm_comment',task.getVariable('bcpgwf_reviewProductionComment'));
             				execution.setVariable('bcpgwf_reviewProductionComment',task.getVariable('bcpgwf_reviewProductionComment'));
-            				execution.setVariable('bcpgwf_reviewProductionApproval',task.getVariable('bcpgwf_reviewProductionApproval'));</activiti:string>
+            				execution.setVariable('bcpgwf_reviewProductionApproval',task.getVariable('bcpgwf_reviewProductionApproval'));]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
       </extensionElements>
@@ -100,8 +100,7 @@
       <extensionElements>
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
-            <activiti:string>
-            &lt;import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js"&gt;
+            <activiti:string><![CDATA[<import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js">
             if (typeof bpm_workflowDueDate != 'undefined') task.dueDate = bpm_workflowDueDate;
                if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority;
                if (bcpgwf_notifyAssignee) {
@@ -110,16 +109,14 @@
 								bcpg.getMessage('productValidationWF.mail.notify.message'), 
 								"/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:product-validation-notify-task-email.ftl",
 								bpm_package.children);							
-		          }</activiti:string>
+		          }]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
         <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
-            <activiti:string>
-             task.setVariableLocal('bpm_comment',task.getVariable('bcpgwf_reviewRDComment'));
+            <activiti:string><![CDATA[task.setVariableLocal('bpm_comment',task.getVariable('bcpgwf_reviewRDComment'));
              execution.setVariable('bcpgwf_reviewRDComment',task.getVariable('bcpgwf_reviewRDComment'));
-             execution.setVariable('bcpgwf_reviewRDApproval',task.getVariable('bcpgwf_reviewRDApproval'));
-           </activiti:string>
+             execution.setVariable('bcpgwf_reviewRDApproval',task.getVariable('bcpgwf_reviewRDApproval'));]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
       </extensionElements>
@@ -138,8 +135,7 @@
       <extensionElements>
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
-            <activiti:string>
-            	&lt;import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js"&gt;
+            <activiti:string><![CDATA[<import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js">
             	if (typeof bpm_workflowDueDate != 'undefined') task.dueDate = bpm_workflowDueDate;
                if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority;
                if (bcpgwf_notifyAssignee)
@@ -149,16 +145,15 @@
 								bcpg.getMessage('productValidationWF.mail.notify.message'), 
 								"/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:product-validation-notify-task-email.ftl",
 								bpm_package.children);
-		          }</activiti:string>
+		          }]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
         <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
-            <activiti:string>
-             		task.setVariableLocal('bpm_comment',task.getVariable('bcpgwf_reviewCallerComment'));
+            <activiti:string><![CDATA[task.setVariableLocal('bpm_comment',task.getVariable('bcpgwf_reviewCallerComment'));
             		execution.setVariable('bcpgwf_reviewCallerComment',task.getVariable('bcpgwf_reviewCallerComment'));
             		execution.setVariable('bcpgwf_reviewRDComment',task.getVariable('bcpgwf_reviewRDComment'));
-            		execution.setVariable('bcpgwf_reviewCallerApproval',task.getVariable('bcpgwf_reviewCallerApproval'));</activiti:string>
+            		execution.setVariable('bcpgwf_reviewCallerApproval',task.getVariable('bcpgwf_reviewCallerApproval'));]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
       </extensionElements>
@@ -172,8 +167,7 @@
       <extensionElements>
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
-            <activiti:string>
-            &lt;import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js"&gt;
+            <activiti:string><![CDATA[<import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js">
             if (typeof bpm_workflowDueDate != 'undefined') task.dueDate = bpm_workflowDueDate;
             if (typeof bpm_workflowPriority != 'undefined') task.priority = bpm_workflowPriority;
             if (bcpgwf_notifyMe){
@@ -182,12 +176,12 @@
 								bcpg.getMessage('productValidationWF.mail.rejected.message'), 
 								"/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:product-validation-rejected-task-email.ftl",
 								bpm_package.children);
-				 }</activiti:string>
+				 }]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
         <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
-            <activiti:string>task.setVariableLocal('bpm_comment',task.getVariable('bcpgwf_pvTransmitterComment'));</activiti:string>
+            <activiti:string><![CDATA[task.setVariableLocal('bpm_comment',task.getVariable('bcpgwf_pvTransmitterComment'));]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
       </extensionElements>
@@ -201,10 +195,11 @@
     <userTask id="approveProductTask" name="Approve Product  Task" activiti:assignee="${initiator.properties.userName}" activiti:formKey="bcpgwf:approveProductTask">
       <extensionElements>
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
-        	 <activiti:field name="runAs"><activiti:string>admin</activiti:string></activiti:field>
+          <activiti:field name="runAs">
+            <activiti:string><![CDATA[admin]]></activiti:string>
+          </activiti:field>
           <activiti:field name="script">
-            <activiti:string>
-            	&lt;import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js"&gt;
+            <activiti:string><![CDATA[<import resource="classpath:alfresco/module/${pom.artifactId}/workflow/process-utils.js">
             	if (bcpgwf_notifyMe) {
             				sendMail(initiator, null,
 									bcpg.getMessage('productValidationWF.mail.approved.subject', bpm_workflowDescription),
@@ -214,7 +209,7 @@
 			             }
 			             if (bcpgwf_notifyUsers != null)
 			             {
-			             	for (var i = 0; i &lt; bcpgwf_notifyUsers.size(); i++){
+			             	for (var i = 0; i < bcpgwf_notifyUsers.size(); i++){
 			            		sendMail(bcpgwf_notifyUsers.get(i), null,
 										bcpg.getMessage('productValidationWF.mail.approved.subject', bpm_workflowDescription),
 										bcpg.getMessage('productValidationWF.mail.approved.message'), 
@@ -223,7 +218,7 @@
 				           	 }
 			             }
 			             
-			            for (var i = 0; i &lt; bpm_package.children.length; i++)
+			            for (var i = 0; i < bpm_package.children.length; i++)
 		             {    
 		             		var product = bpm_package.children[i];   
 		             		
@@ -232,7 +227,7 @@
 		             			             		
 			             		var assocNames =  ["bcpgwf:pvCallerActor","bcpgwf:pvRDApprovalActor","bcpgwf:pvQualityApprovalActor","bcpgwf:pvProductionApprovalActor","bcpgwf:pvTransmitterActor"];
 				             	var assocActors = [bcpgwf_pvCallerActor,bcpgwf_pvRDApprovalActor,bcpgwf_pvQualityApprovalActor,bcpgwf_pvProductionApprovalActor, initiator];
-									for (var j = 0; j &lt; assocNames.length; j++)
+									for (var j = 0; j < assocNames.length; j++)
 									{
 										var assocName = assocNames[j];
 										var assocActor = assocActors[j];
@@ -241,7 +236,7 @@
 										var targetNodes = product.assocs[assocName];
 										if(targetNodes != null)
 										{
-											for (var k = 0; k &lt; targetNodes.length; k++)
+											for (var k = 0; k < targetNodes.length; k++)
 											{
 											   product.removeAssociation(targetNodes[k], assocName); 
 											}
@@ -258,12 +253,12 @@
 									product.save();
 								
 		             		}
-		             }</activiti:string>
+		             }]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
         <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
-            <activiti:string>task.setVariableLocal('bpm_comment',task.getVariable('bcpgwf_pvTransmitterComment'));</activiti:string>
+            <activiti:string><![CDATA[task.setVariableLocal('bpm_comment',task.getVariable('bcpgwf_pvTransmitterComment'));]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
       </extensionElements>
@@ -273,113 +268,113 @@
   </process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_productValidationWF">
     <bpmndi:BPMNPlane bpmnElement="productValidationWF" id="BPMNPlane_productValidationWF">
-      <bpmndi:BPMNShape bpmnElement="doProductValidationQualityTask" id="BPMNShape_doProductValidationQualityTask">
-        <omgdc:Bounds height="55.0" width="105.0" x="240.0" y="40.0"></omgdc:Bounds>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="doProductValidationProductionTask" id="BPMNShape_doProductValidationProductionTask">
-        <omgdc:Bounds height="55.0" width="105.0" x="240.0" y="133.0"></omgdc:Bounds>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="doProductValidationRDTask" id="BPMNShape_doProductValidationRDTask">
-        <omgdc:Bounds height="55.0" width="105.0" x="240.0" y="234.0"></omgdc:Bounds>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="doProductValidationCallerTask" id="BPMNShape_doProductValidationCallerTask">
-        <omgdc:Bounds height="55.0" width="105.0" x="510.0" y="133.0"></omgdc:Bounds>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
-        <omgdc:Bounds height="35.0" width="35.0" x="1046.0" y="143.0"></omgdc:Bounds>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="approveProductTask" id="BPMNShape_approveProductTask">
-        <omgdc:Bounds height="55.0" width="105.0" x="900.0" y="133.0"></omgdc:Bounds>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="rejectProductTask" id="BPMNShape_rejectProductTask">
-        <omgdc:Bounds height="55.0" width="105.0" x="545.0" y="360.0"></omgdc:Bounds>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="testParallelValidation" id="BPMNShape_testParallelValidation">
-        <omgdc:Bounds height="40.0" width="40.0" x="410.0" y="140.0"></omgdc:Bounds>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="testCallerValidation" id="BPMNShape_testCallerValidation">
-        <omgdc:Bounds height="40.0" width="40.0" x="666.0" y="140.0"></omgdc:Bounds>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="initiateProductValidation" id="BPMNShape_initiateProductValidation">
-        <omgdc:Bounds height="35.0" width="35.0" x="-40.0" y="143.0"></omgdc:Bounds>
+        <omgdc:Bounds height="35.0" width="35.0" x="1.0" y="143.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="startGateway" id="BPMNShape_startGateway">
-        <omgdc:Bounds height="40.0" width="40.0" x="140.0" y="140.0"></omgdc:Bounds>
+        <omgdc:Bounds height="40.0" width="40.0" x="181.0" y="140.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="doProductValidationQualityTask" id="BPMNShape_doProductValidationQualityTask">
+        <omgdc:Bounds height="55.0" width="105.0" x="281.0" y="40.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="doProductValidationProductionTask" id="BPMNShape_doProductValidationProductionTask">
+        <omgdc:Bounds height="55.0" width="105.0" x="281.0" y="133.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="doProductValidationRDTask" id="BPMNShape_doProductValidationRDTask">
+        <omgdc:Bounds height="55.0" width="105.0" x="281.0" y="234.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="testParallelValidation" id="BPMNShape_testParallelValidation">
+        <omgdc:Bounds height="40.0" width="40.0" x="451.0" y="140.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="doProductValidationCallerTask" id="BPMNShape_doProductValidationCallerTask">
+        <omgdc:Bounds height="55.0" width="105.0" x="551.0" y="133.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="testCallerValidation" id="BPMNShape_testCallerValidation">
+        <omgdc:Bounds height="40.0" width="40.0" x="707.0" y="140.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="rejectProductTask" id="BPMNShape_rejectProductTask">
+        <omgdc:Bounds height="55.0" width="105.0" x="586.0" y="360.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="alfrescoScripttask1" id="BPMNShape_alfrescoScripttask1">
-        <omgdc:Bounds height="55.0" width="105.0" x="755.0" y="133.0"></omgdc:Bounds>
+        <omgdc:Bounds height="55.0" width="105.0" x="796.0" y="133.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="approveProductTask" id="BPMNShape_approveProductTask">
+        <omgdc:Bounds height="55.0" width="105.0" x="941.0" y="133.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="1087.0" y="143.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge bpmnElement="initiate" id="BPMNEdge_initiate">
-        <omgdi:waypoint x="-5.0" y="160.0"></omgdi:waypoint>
-        <omgdi:waypoint x="140.0" y="160.0"></omgdi:waypoint>
+        <omgdi:waypoint x="36.0" y="160.0"></omgdi:waypoint>
+        <omgdi:waypoint x="181.0" y="160.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="doProductValidationCaller1" id="BPMNEdge_doProductValidationCaller1">
-        <omgdi:waypoint x="160.0" y="140.0"></omgdi:waypoint>
-        <omgdi:waypoint x="160.0" y="8.0"></omgdi:waypoint>
-        <omgdi:waypoint x="562.0" y="8.0"></omgdi:waypoint>
-        <omgdi:waypoint x="562.0" y="133.0"></omgdi:waypoint>
+        <omgdi:waypoint x="201.0" y="140.0"></omgdi:waypoint>
+        <omgdi:waypoint x="201.0" y="8.0"></omgdi:waypoint>
+        <omgdi:waypoint x="603.0" y="8.0"></omgdi:waypoint>
+        <omgdi:waypoint x="603.0" y="133.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="doProductValidationRD" id="BPMNEdge_doProductValidationRD">
-        <omgdi:waypoint x="160.0" y="180.0"></omgdi:waypoint>
-        <omgdi:waypoint x="159.0" y="261.0"></omgdi:waypoint>
-        <omgdi:waypoint x="240.0" y="261.0"></omgdi:waypoint>
+        <omgdi:waypoint x="201.0" y="180.0"></omgdi:waypoint>
+        <omgdi:waypoint x="200.0" y="261.0"></omgdi:waypoint>
+        <omgdi:waypoint x="281.0" y="261.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="doProductValidationProduction" id="BPMNEdge_doProductValidationProduction">
-        <omgdi:waypoint x="180.0" y="160.0"></omgdi:waypoint>
-        <omgdi:waypoint x="240.0" y="160.0"></omgdi:waypoint>
+        <omgdi:waypoint x="221.0" y="160.0"></omgdi:waypoint>
+        <omgdi:waypoint x="281.0" y="160.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="doProductValidationQuality" id="BPMNEdge_doProductValidationQuality">
-        <omgdi:waypoint x="160.0" y="140.0"></omgdi:waypoint>
-        <omgdi:waypoint x="160.0" y="67.0"></omgdi:waypoint>
-        <omgdi:waypoint x="240.0" y="67.0"></omgdi:waypoint>
+        <omgdi:waypoint x="201.0" y="140.0"></omgdi:waypoint>
+        <omgdi:waypoint x="201.0" y="67.0"></omgdi:waypoint>
+        <omgdi:waypoint x="281.0" y="67.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="endDoProductValidationQuality" id="BPMNEdge_endDoProductValidationQuality">
-        <omgdi:waypoint x="345.0" y="67.0"></omgdi:waypoint>
-        <omgdi:waypoint x="430.0" y="67.0"></omgdi:waypoint>
-        <omgdi:waypoint x="430.0" y="140.0"></omgdi:waypoint>
+        <omgdi:waypoint x="386.0" y="67.0"></omgdi:waypoint>
+        <omgdi:waypoint x="471.0" y="67.0"></omgdi:waypoint>
+        <omgdi:waypoint x="471.0" y="140.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="endDoProductValidationProduction" id="BPMNEdge_endDoProductValidationProduction">
-        <omgdi:waypoint x="345.0" y="160.0"></omgdi:waypoint>
-        <omgdi:waypoint x="410.0" y="160.0"></omgdi:waypoint>
+        <omgdi:waypoint x="386.0" y="160.0"></omgdi:waypoint>
+        <omgdi:waypoint x="451.0" y="160.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="endDoProductValidationRD" id="BPMNEdge_endDoProductValidationRD">
-        <omgdi:waypoint x="345.0" y="261.0"></omgdi:waypoint>
-        <omgdi:waypoint x="430.0" y="261.0"></omgdi:waypoint>
-        <omgdi:waypoint x="430.0" y="180.0"></omgdi:waypoint>
+        <omgdi:waypoint x="386.0" y="261.0"></omgdi:waypoint>
+        <omgdi:waypoint x="471.0" y="261.0"></omgdi:waypoint>
+        <omgdi:waypoint x="471.0" y="180.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="rejectedParallelValidation" id="BPMNEdge_rejectedParallelValidation">
-        <omgdi:waypoint x="430.0" y="180.0"></omgdi:waypoint>
-        <omgdi:waypoint x="597.0" y="360.0"></omgdi:waypoint>
+        <omgdi:waypoint x="471.0" y="180.0"></omgdi:waypoint>
+        <omgdi:waypoint x="638.0" y="360.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="doProductValidationCaller2" id="BPMNEdge_doProductValidationCaller2">
-        <omgdi:waypoint x="450.0" y="160.0"></omgdi:waypoint>
-        <omgdi:waypoint x="510.0" y="160.0"></omgdi:waypoint>
+        <omgdi:waypoint x="491.0" y="160.0"></omgdi:waypoint>
+        <omgdi:waypoint x="551.0" y="160.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="doTestCallerValidation" id="BPMNEdge_doTestCallerValidation">
-        <omgdi:waypoint x="615.0" y="160.0"></omgdi:waypoint>
-        <omgdi:waypoint x="666.0" y="160.0"></omgdi:waypoint>
+        <omgdi:waypoint x="656.0" y="160.0"></omgdi:waypoint>
+        <omgdi:waypoint x="707.0" y="160.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="rejectedCallerValidation" id="BPMNEdge_rejectedCallerValidation">
-        <omgdi:waypoint x="686.0" y="180.0"></omgdi:waypoint>
-        <omgdi:waypoint x="686.0" y="387.0"></omgdi:waypoint>
-        <omgdi:waypoint x="650.0" y="387.0"></omgdi:waypoint>
+        <omgdi:waypoint x="727.0" y="180.0"></omgdi:waypoint>
+        <omgdi:waypoint x="727.0" y="387.0"></omgdi:waypoint>
+        <omgdi:waypoint x="691.0" y="387.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="restartValidation" id="BPMNEdge_restartValidation">
-        <omgdi:waypoint x="545.0" y="387.0"></omgdi:waypoint>
-        <omgdi:waypoint x="160.0" y="387.0"></omgdi:waypoint>
-        <omgdi:waypoint x="160.0" y="180.0"></omgdi:waypoint>
+        <omgdi:waypoint x="586.0" y="387.0"></omgdi:waypoint>
+        <omgdi:waypoint x="201.0" y="387.0"></omgdi:waypoint>
+        <omgdi:waypoint x="201.0" y="180.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="approvedCallerValidation" id="BPMNEdge_approvedCallerValidation">
-        <omgdi:waypoint x="706.0" y="160.0"></omgdi:waypoint>
-        <omgdi:waypoint x="755.0" y="160.0"></omgdi:waypoint>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="endValidation" id="BPMNEdge_endValidation">
-        <omgdi:waypoint x="1005.0" y="160.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1046.0" y="160.0"></omgdi:waypoint>
+        <omgdi:waypoint x="747.0" y="160.0"></omgdi:waypoint>
+        <omgdi:waypoint x="796.0" y="160.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
-        <omgdi:waypoint x="860.0" y="160.0"></omgdi:waypoint>
-        <omgdi:waypoint x="900.0" y="160.0"></omgdi:waypoint>
+        <omgdi:waypoint x="901.0" y="160.0"></omgdi:waypoint>
+        <omgdi:waypoint x="941.0" y="160.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="endValidation" id="BPMNEdge_endValidation">
+        <omgdi:waypoint x="1046.0" y="160.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1087.0" y="160.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
