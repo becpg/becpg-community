@@ -1,4 +1,4 @@
-package fr.becpg.repo.helper;
+package fr.becpg.repo.helper.impl;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.extensions.surf.util.I18NUtil;
 
+import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.AttributeExtractorService.AttributeExtractorPlugin;
 
 public abstract class AbstractExprNameExtractor implements AttributeExtractorPlugin{
