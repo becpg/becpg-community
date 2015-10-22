@@ -63,12 +63,12 @@ import fr.becpg.report.client.ReportFormat;
 /**
  * Initialize the folders of the repository (create folder, rules, WF and system
  * contents).
- * 
+ *
  * @author Quere
- * 
+ *
  *         Init repository : - directories - System/Lists/* - System/LinkedLists
  *         - Products - Import
- * 
+ *
  *         - rules - specialize type - import - document generation - WF -
  *         validation folder -
  */
@@ -88,11 +88,11 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	private static final String EXPORT_NC_REPORT_RPTFILE_PATH = "beCPG/birt/exportsearch/nonconformity/NonConformitySynthesis.rptdesign";
 	private static final String EXPORT_NC_REPORT_XMLFILE_PATH = "beCPG/birt/exportsearch/nonconformity/ExportSearchQuery.xml";
 	private static final String EXPORT_RAWMATERIAL_INGLIST_XLSX_PATH = "beCPG/birt/exportsearch/product/ExportRawMaterialIngList.xlsx";
-	private static final String EXPORT_INGLABELING_XLSX_PATH = "beCPG/birt/exportsearch/product/Export ingLabellingList.xlsx";
-	
-	private static final String PRODUCT_REPORT_FR_RESOURCE ="beCPG/birt/document/product/default/ProductReport_fr.properties";
-	private static final String PRODUCT_REPORT_EN_RESOURCE ="beCPG/birt/document/product/default/ProductReport_en.properties";
-	
+	private static final String EXPORT_INGLABELING_XLSX_PATH = "beCPG/birt/exportsearch/product/ExportIngLabellingList.xlsx";
+
+	private static final String PRODUCT_REPORT_FR_RESOURCE = "beCPG/birt/document/product/default/ProductReport_fr.properties";
+	private static final String PRODUCT_REPORT_EN_RESOURCE = "beCPG/birt/document/product/default/ProductReport_en.properties";
+
 	@Autowired
 	private PermissionService permissionService;
 
@@ -119,7 +119,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 	/**
 	 * Initialize the repository with system folders.
-	 * 
+	 *
 	 * @param companyHome
 	 *            the company home
 	 * @param locale
@@ -322,7 +322,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		// specialise type
 		if (specialiseType != null) {
 			createRuleSpecialiseType(nodeRef, applyToChildren, specialiseType);
-		}		
+		}
 	}
 
 	/**
@@ -332,8 +332,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	protected void visitPermissions(NodeRef nodeRef, String folderName) {
 
 		if (Objects.equals(folderName, PlmRepoConsts.PATH_EXCHANGE)) {
-			permissionService
-					.setPermission(nodeRef, PermissionService.GROUP_PREFIX + SystemGroup.SystemMgr.toString(), PermissionService.WRITE, true);
+			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + SystemGroup.SystemMgr.toString(), PermissionService.WRITE,
+					true);
 		}
 
 		else if (Objects.equals(folderName, PlmRepoConsts.PATH_QUALITY)) {
@@ -344,17 +344,17 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + NCGroup.ClaimStart, PermissionService.WRITE, true);
 
-			permissionService
-					.setPermission(nodeRef, PermissionService.GROUP_PREFIX + NCGroup.ClaimAnalysis.toString(), PermissionService.WRITE, true);
+			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + NCGroup.ClaimAnalysis.toString(), PermissionService.WRITE,
+					true);
 
-			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + NCGroup.ClaimClassification.toString(),
-					PermissionService.WRITE, true);
+			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + NCGroup.ClaimClassification.toString(), PermissionService.WRITE,
+					true);
 
 			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + NCGroup.ClaimTreatment.toString(), PermissionService.WRITE,
 					true);
 
-			permissionService
-					.setPermission(nodeRef, PermissionService.GROUP_PREFIX + NCGroup.ClaimResponse.toString(), PermissionService.WRITE, true);
+			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + NCGroup.ClaimResponse.toString(), PermissionService.WRITE,
+					true);
 
 			permissionService.setPermission(nodeRef, PermissionService.GROUP_PREFIX + NCGroup.ClaimClosing.toString(), PermissionService.WRITE, true);
 		}
@@ -362,7 +362,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 	/**
 	 * Create the entity templates
-	 * 
+	 *
 	 * @param productTplsNodeRef
 	 */
 	private void visitEntityTpls(NodeRef systemNodeRef) {
@@ -403,7 +403,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 	/**
 	 * Create system charact file
-	 * 
+	 *
 	 * @param systemNodeRef
 	 * @param pathCharacts
 	 * @return
@@ -458,7 +458,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 	/**
 	 * Create dyn List values
-	 * 
+	 *
 	 * @param parentNodeRef
 	 * @param path
 	 * @return
@@ -477,7 +477,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_MICROBIO_CONTROL_STEPS, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_MICROBIO_UNITS, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_RESOURCE_PARAM_TYPES, BeCPGModel.TYPE_LIST_VALUE);
-		
+
 		entityLists.put(PlmRepoConsts.PATH_PM_MATERIALS, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_PM_PRINT_TYPES, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_PM_PRINT_VANISHS, BeCPGModel.TYPE_LIST_VALUE);
@@ -504,7 +504,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 	/**
 	 * Create product tpls
-	 * 
+	 *
 	 * @param entityTplsNodeRef
 	 */
 	private void visitProductTpls(NodeRef entityTplsNodeRef) {
@@ -530,7 +530,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			// datalists
 			Set<QName> dataLists = new LinkedHashSet<>();
 			QName wusedQName = null;
-			
+
 			if (productType.equals(PLMModel.TYPE_RAWMATERIAL)) {
 
 				dataLists.add(PLMModel.TYPE_ALLERGENLIST);
@@ -560,7 +560,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
 				dataLists.add(MPMModel.TYPE_RESOURCEPARAMLIST);
 				dataLists.add(PLMModel.TYPE_ALLERGENLIST);
-				wusedQName = MPMModel.TYPE_PROCESSLIST;			
+				wusedQName = MPMModel.TYPE_PROCESSLIST;
 
 			} else if (productType.equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT)) {
 
@@ -599,7 +599,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 				dataLists.add(PLMModel.TYPE_PACKAGINGLIST);
 				dataLists.add(PLMModel.TYPE_COSTLIST);
-				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);				
+				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
 
 				wusedQName = PLMModel.TYPE_PACKAGINGLIST;
 
@@ -623,52 +623,53 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		// visit productMicrobioCriteria
 		Set<QName> dataLists = new LinkedHashSet<>();
 		dataLists.add(PLMModel.TYPE_MICROBIOLIST);
-		NodeRef entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, PLMModel.TYPE_PRODUCT_MICROBIO_CRITERIA, null, true, dataLists, null);
+		NodeRef entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, PLMModel.TYPE_PRODUCT_MICROBIO_CRITERIA, null, true,
+				dataLists, null);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 
 		// visit productSpecification
 		dataLists.clear();
 		dataLists.add(PLMModel.TYPE_FORBIDDENINGLIST);
 		dataLists.add(PLMModel.TYPE_LABELING_RULE_LIST);
-		 entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, PLMModel.TYPE_PRODUCT_SPECIFICATION, null, true, dataLists, null);
-		 entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
+		entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, PLMModel.TYPE_PRODUCT_SPECIFICATION, null, true, dataLists, null);
+		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 
 		// visit controlPlan
 		Set<String> subFolders = new HashSet<>();
 		dataLists.clear();
 		dataLists.add(QualityModel.TYPE_SAMPLINGDEF_LIST);
-		 entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_CONTROL_PLAN, null, true, dataLists, subFolders);
-		 entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
+		entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_CONTROL_PLAN, null, true, dataLists, subFolders);
+		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 
 		// visit qualityControl
 		dataLists.clear();
 		dataLists.add(QualityModel.TYPE_SAMPLING_LIST);
-		 entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_QUALITY_CONTROL, null, true, dataLists, null);
-		 entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
+		entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_QUALITY_CONTROL, null, true, dataLists, null);
+		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 
 		// visit controlPoint
 		dataLists.clear();
 		dataLists.add(QualityModel.TYPE_CONTROLDEF_LIST);
-		 entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_CONTROL_POINT, null, true, dataLists, null);
-		 entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
+		entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_CONTROL_POINT, null, true, dataLists, null);
+		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 
 		// visit workItemAnalysis
 		dataLists.clear();
 		dataLists.add(QualityModel.TYPE_CONTROL_LIST);
-		 entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_WORK_ITEM_ANALYSIS, null, true, dataLists, null);
-		 entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
+		entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_WORK_ITEM_ANALYSIS, null, true, dataLists, null);
+		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 
 		// visit NC
 		subFolders = new HashSet<>();
 		dataLists.clear();
 		dataLists.add(QualityModel.TYPE_WORK_LOG);
-		 entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_NC, null, true, dataLists, subFolders);
-		 entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
+		entityTplNodeRef = entityTplService.createEntityTpl(qualityTplsNodeRef, QualityModel.TYPE_NC, null, true, dataLists, subFolders);
+		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 	}
 
 	/**
 	 * Create the reports templates
-	 * 
+	 *
 	 * @param productReportTplsNodeRef
 	 */
 	private void visitReports(NodeRef systemNodeRef) {
@@ -691,7 +692,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			String[] defaultReportName = { productReportClientName, productReportSupplierName, productReportProductionName, productReportClientName };
 			String[] otherReport = { PRODUCT_REPORT_PRODUCTION_PATH, null, null, null };
 			String[] otherReportName = { productReportProductionName, null, null, null };
-			String[] productReportResource = {PRODUCT_REPORT_FR_RESOURCE,PRODUCT_REPORT_EN_RESOURCE};
+			String[] productReportResource = { PRODUCT_REPORT_FR_RESOURCE, PRODUCT_REPORT_EN_RESOURCE };
 
 			int i = 0;
 
@@ -704,17 +705,17 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 					NodeRef folderNodeRef = repoService.getOrCreateFolderByPath(productReportTplsNodeRef, classDef.getTitle(dictionaryService),
 							classDef.getTitle(dictionaryService));
 
-					if (defaultReport[i] != null && defaultReportName[i] != null) {
+					if ((defaultReport[i] != null) && (defaultReportName[i] != null)) {
 						reportTplService.createTplRptDesign(folderNodeRef, defaultReportName[i], defaultReport[i], ReportType.Document,
 								ReportFormat.PDF, productType, true, true, false);
-						if (defaultReportName[i].equals(productReportSupplierName)||defaultReportName[i].equals(productReportClientName)){
-							for (int j=0;j<productReportResource.length;j++){
-								reportTplService.createTplRessource(productReportTplsNodeRef, productReportResource[j], true);
+						if (defaultReportName[i].equals(productReportSupplierName) || defaultReportName[i].equals(productReportClientName)) {
+							for (String element : productReportResource) {
+								reportTplService.createTplRessource(productReportTplsNodeRef, element, true);
 							}
 						}
 					}
 
-					if (otherReport[i] != null && otherReportName[i] != null) {
+					if ((otherReport[i] != null) && (otherReportName[i] != null)) {
 						reportTplService.createTplRptDesign(folderNodeRef, otherReportName[i], otherReport[i], ReportType.Document, ReportFormat.PDF,
 								productType, true, false, false);
 					}
@@ -764,14 +765,14 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 					ReportType.ExportSearch, ReportFormat.XLSX, PLMModel.TYPE_PRODUCT, false, false, false);
 
 			reportTplService.createTplRessource(exportSearchProductsNodeRef, EXPORT_PRODUCTS_REPORT_XMLFILE_PATH, false);
-			
+
 			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
-					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_RAWMATERIAL_INGLIST), EXPORT_RAWMATERIAL_INGLIST_XLSX_PATH,
-					ReportType.ExportSearch, ReportFormat.XLSX, PLMModel.TYPE_RAWMATERIAL, false, false, false);
+					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_RAWMATERIAL_INGLIST),
+					EXPORT_RAWMATERIAL_INGLIST_XLSX_PATH, ReportType.ExportSearch, ReportFormat.XLSX, PLMModel.TYPE_RAWMATERIAL, false, false, false);
 			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
 					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_INGLABELING), EXPORT_INGLABELING_XLSX_PATH,
 					ReportType.ExportSearch, ReportFormat.XLSX, PLMModel.TYPE_PRODUCT, false, false, false);
-			
+
 		} catch (IOException e) {
 			logger.error("Failed to create export search report tpl.", e);
 		}
@@ -792,7 +793,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 	/**
 	 * Create system groups.
-	 * 
+	 *
 	 * @param locale
 	 *            the locale
 	 */
@@ -802,55 +803,64 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				PLMGroup.QualityUser.toString(), PLMGroup.QualityMgr.toString(), PLMGroup.Purchasing.toString(), PLMGroup.PurchasingUser.toString(),
 				PLMGroup.PurchasingMgr.toString(), PLMGroup.Production.toString(), PLMGroup.ProductionUser.toString(),
 				PLMGroup.ProductionMgr.toString(), PLMGroup.ReferencingMgr.toString(), PLMGroup.Trade.toString(), PLMGroup.TradeUser.toString(),
-				PLMGroup.TradeMgr.toString(), NCGroup.ClaimStart.toString(), NCGroup.ClaimAnalysis.toString(),
-				NCGroup.ClaimClassification.toString(), NCGroup.ClaimTreatment.toString(), NCGroup.ClaimResponse.toString(),
-				NCGroup.ClaimClosing.toString() };
+				PLMGroup.TradeMgr.toString(), NCGroup.ClaimStart.toString(), NCGroup.ClaimAnalysis.toString(), NCGroup.ClaimClassification.toString(),
+				NCGroup.ClaimTreatment.toString(), NCGroup.ClaimResponse.toString(), NCGroup.ClaimClosing.toString() };
 
 		createGroups(groups);
 
 		// Group hierarchy
 		Set<String> authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP,
 				PermissionService.GROUP_PREFIX + PLMGroup.RD.toString(), true);
-		if (!authorities.contains(PermissionService.GROUP_PREFIX + PLMGroup.RDMgr.toString()))
+		if (!authorities.contains(PermissionService.GROUP_PREFIX + PLMGroup.RDMgr.toString())) {
 			authorityService.addAuthority(PermissionService.GROUP_PREFIX + PLMGroup.RD.toString(),
 					PermissionService.GROUP_PREFIX + PLMGroup.RDMgr.toString());
-		if (!authorities.contains(PermissionService.GROUP_PREFIX + PLMGroup.RDUser.toString()))
+		}
+		if (!authorities.contains(PermissionService.GROUP_PREFIX + PLMGroup.RDUser.toString())) {
 			authorityService.addAuthority(PermissionService.GROUP_PREFIX + PLMGroup.RD.toString(),
 					PermissionService.GROUP_PREFIX + PLMGroup.RDUser.toString());
+		}
 
 		authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP, PermissionService.GROUP_PREFIX + PLMGroup.Quality.toString(),
 				true);
-		if (!authorities.contains(PermissionService.GROUP_PREFIX + PLMGroup.QualityMgr.toString()))
-			authorityService.addAuthority(PermissionService.GROUP_PREFIX + PLMGroup.Quality.toString(), PermissionService.GROUP_PREFIX
-					+ PLMGroup.QualityMgr.toString());
-		if (!authorities.contains(PermissionService.GROUP_PREFIX + PLMGroup.QualityUser.toString()))
-			authorityService.addAuthority(PermissionService.GROUP_PREFIX + PLMGroup.Quality.toString(), PermissionService.GROUP_PREFIX
-					+ PLMGroup.QualityUser.toString());
+		if (!authorities.contains(PermissionService.GROUP_PREFIX + PLMGroup.QualityMgr.toString())) {
+			authorityService.addAuthority(PermissionService.GROUP_PREFIX + PLMGroup.Quality.toString(),
+					PermissionService.GROUP_PREFIX + PLMGroup.QualityMgr.toString());
+		}
+		if (!authorities.contains(PermissionService.GROUP_PREFIX + PLMGroup.QualityUser.toString())) {
+			authorityService.addAuthority(PermissionService.GROUP_PREFIX + PLMGroup.Quality.toString(),
+					PermissionService.GROUP_PREFIX + PLMGroup.QualityUser.toString());
+		}
 
 		authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP, PermissionService.GROUP_PREFIX + PLMGroup.Purchasing.toString(),
 				true);
-		if (!authorities.contains(PermissionService.GROUP_PREFIX + PLMGroup.PurchasingMgr.toString()))
-			authorityService.addAuthority(PermissionService.GROUP_PREFIX + PLMGroup.Purchasing.toString(), PermissionService.GROUP_PREFIX
-					+ PLMGroup.PurchasingMgr.toString());
-		if (!authorities.contains(PermissionService.GROUP_PREFIX + PLMGroup.PurchasingUser.toString()))
-			authorityService.addAuthority(PermissionService.GROUP_PREFIX + PLMGroup.Purchasing.toString(), PermissionService.GROUP_PREFIX
-					+ PLMGroup.PurchasingUser.toString());
+		if (!authorities.contains(PermissionService.GROUP_PREFIX + PLMGroup.PurchasingMgr.toString())) {
+			authorityService.addAuthority(PermissionService.GROUP_PREFIX + PLMGroup.Purchasing.toString(),
+					PermissionService.GROUP_PREFIX + PLMGroup.PurchasingMgr.toString());
+		}
+		if (!authorities.contains(PermissionService.GROUP_PREFIX + PLMGroup.PurchasingUser.toString())) {
+			authorityService.addAuthority(PermissionService.GROUP_PREFIX + PLMGroup.Purchasing.toString(),
+					PermissionService.GROUP_PREFIX + PLMGroup.PurchasingUser.toString());
+		}
 
 		authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP, PermissionService.GROUP_PREFIX + PLMGroup.Production.toString(),
 				true);
-		if (!authorities.contains(PermissionService.GROUP_PREFIX + PLMGroup.ProductionMgr.toString()))
-			authorityService.addAuthority(PermissionService.GROUP_PREFIX + PLMGroup.Production.toString(), PermissionService.GROUP_PREFIX
-					+ PLMGroup.ProductionMgr.toString());
-		if (!authorities.contains(PermissionService.GROUP_PREFIX + PLMGroup.ProductionUser.toString()))
-			authorityService.addAuthority(PermissionService.GROUP_PREFIX + PLMGroup.Production.toString(), PermissionService.GROUP_PREFIX
-					+ PLMGroup.ProductionUser.toString());
+		if (!authorities.contains(PermissionService.GROUP_PREFIX + PLMGroup.ProductionMgr.toString())) {
+			authorityService.addAuthority(PermissionService.GROUP_PREFIX + PLMGroup.Production.toString(),
+					PermissionService.GROUP_PREFIX + PLMGroup.ProductionMgr.toString());
+		}
+		if (!authorities.contains(PermissionService.GROUP_PREFIX + PLMGroup.ProductionUser.toString())) {
+			authorityService.addAuthority(PermissionService.GROUP_PREFIX + PLMGroup.Production.toString(),
+					PermissionService.GROUP_PREFIX + PLMGroup.ProductionUser.toString());
+		}
 
 		authorities = authorityService.getContainedAuthorities(AuthorityType.GROUP, PermissionService.GROUP_PREFIX + PLMGroup.Trade.toString(), true);
-		if (!authorities.contains(PermissionService.GROUP_PREFIX + PLMGroup.TradeMgr.toString()))
-			authorityService.addAuthority(PermissionService.GROUP_PREFIX + PLMGroup.Trade.toString(), PermissionService.GROUP_PREFIX
-					+ PLMGroup.TradeMgr.toString());
-		if (!authorities.contains(PermissionService.GROUP_PREFIX + PLMGroup.TradeUser.toString()))
-			authorityService.addAuthority(PermissionService.GROUP_PREFIX + PLMGroup.Trade.toString(), PermissionService.GROUP_PREFIX
-					+ PLMGroup.TradeUser.toString());
+		if (!authorities.contains(PermissionService.GROUP_PREFIX + PLMGroup.TradeMgr.toString())) {
+			authorityService.addAuthority(PermissionService.GROUP_PREFIX + PLMGroup.Trade.toString(),
+					PermissionService.GROUP_PREFIX + PLMGroup.TradeMgr.toString());
+		}
+		if (!authorities.contains(PermissionService.GROUP_PREFIX + PLMGroup.TradeUser.toString())) {
+			authorityService.addAuthority(PermissionService.GROUP_PREFIX + PLMGroup.Trade.toString(),
+					PermissionService.GROUP_PREFIX + PLMGroup.TradeUser.toString());
+		}
 	}
 }
