@@ -485,12 +485,16 @@ public class ECOServiceImpl implements ECOService {
 						if (targetItems == null) {
 							targetItems = new ArrayList<>();
 						}
-						targetItems.add(new Pair<NodeRef, Integer>(replacementListDataItem.getTargetItem(), replacementListDataItem.getQtyPerc()));
+						if(replacementListDataItem.getTargetItem()!=null){
+							targetItems.add(new Pair<NodeRef, Integer>(replacementListDataItem.getTargetItem(), replacementListDataItem.getQtyPerc()));
+						} else {
+							toDelete.addAll(items.stream().filter(c -> sourceItem.equals(c.getComponent())).collect(Collectors.toSet()));
+						}
 						replacements.put(sourceItem, targetItems);
 
 						first = false;
 					} else {
-						if (targetItems == null) {
+						if (targetItems == null || targetItems.isEmpty()) {
 							toDelete.addAll(items.stream().filter(c -> sourceItem.equals(c.getComponent())).collect(Collectors.toSet()));
 						} else {
 							logger.warn("Cannot delete target item: " + sourceItem + " used in another rule");
@@ -511,18 +515,13 @@ public class ECOServiceImpl implements ECOService {
 
 					if (first) {
 						for (T component : components) {
-							
-							
 							updateComponent(component, target.getFirst(), target.getSecond());
-							
-			
 						}
 						first = false;
 					} else {
 						T newCompoListDataItem = (T) components.iterator().next().clone();
 						newCompoListDataItem.setNodeRef(null);
 						updateComponent(newCompoListDataItem, target.getFirst(), target.getSecond());
-
 						items.add(newCompoListDataItem);
 					}
 

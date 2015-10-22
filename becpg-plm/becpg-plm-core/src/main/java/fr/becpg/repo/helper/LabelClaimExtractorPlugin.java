@@ -30,6 +30,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.PLMModel;
+import fr.becpg.repo.helper.impl.CharactAttributeExtractorPlugin;
 
 /**
  * @author matthieu

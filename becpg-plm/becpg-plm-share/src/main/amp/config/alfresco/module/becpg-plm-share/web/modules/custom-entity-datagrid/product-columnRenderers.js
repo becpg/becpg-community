@@ -21,7 +21,8 @@ if (beCPG.module.EntityDataGridRenderers) {
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : [ "bcpg:product", "bcpg:supplier", "bcpg:client", "bcpg:entity", "bcpg:resourceProduct",
 				"cm:content_bcpg:costDetailsListSource", "bcpg:product_bcpg:packagingListProduct", "bcpg:product_bcpg:compoListProduct",
-				"ecm:wulSourceItems", "ecm:rlSourceItems", "ecm:rlTargetItem", "ecm:culSourceItem", "ecm:culTargetItem", "ecm:cclSourceItem" ],
+				"ecm:wulSourceItems", "ecm:rlSourceItems", "ecm:rlTargetItem", "ecm:culSourceItem", "ecm:culTargetItem", "ecm:cclSourceItem"
+				,"cm:cmobject_bcpg:lrComponents" ],
 		renderer : function(oRecord, data, label, scope, z, zz, elCell, oColumn) {
 
 			var url = beCPG.util.entityURL(data.siteId, data.value), version = "";
@@ -121,7 +122,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 		propertyName : [ "bcpg:rclReqType", "bcpg:filReqType", "ecm:culReqType" ],
 		renderer : function(oRecord, data, label, scope) {
 
-			if(data.value!=null){
+			if(data.value!=null && data.value.length>0){
 			    return '<span class="reqType'+data.value+'">' + Alfresco.util.encodeHTML( scope.msg("data.reqtype."+ data.value.toLowerCase())) + '</span>';
 			}
 			
@@ -381,9 +382,11 @@ if (beCPG.module.EntityDataGridRenderers) {
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : "bcpg:labelClaim",
 		renderer : function(oRecord, data, label, scope) {
-			var isFormulated = oRecord.getData("itemData")["prop_bcpg_lclIsFormulated"].value;
+			var isFormulated = oRecord.getData("itemData")["prop_bcpg_lclIsFormulated"]!=null 
+						? oRecord.getData("itemData")["prop_bcpg_lclIsFormulated"].value : false;
 			if (isFormulated) {
-				var error = oRecord.getData("itemData")["prop_bcpg_lclFormulaErrorLog"].value;
+				var error = oRecord.getData("itemData")["prop_bcpg_lclFormulaErrorLog"]!=null ?
+						oRecord.getData("itemData")["prop_bcpg_lclFormulaErrorLog"].value : null;
 				if (error == null) {
 					return '<span class="lcl-formulated"  title="' + Alfresco.util.encodeHTML(data.metadata) + '">'
 							+ Alfresco.util.encodeHTML(data.displayValue) + '</span>';

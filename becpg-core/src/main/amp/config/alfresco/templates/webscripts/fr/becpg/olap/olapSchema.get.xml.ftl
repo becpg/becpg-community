@@ -430,6 +430,7 @@
 								entity.entity_id as entity_noderef,
 								entity.entity_name as name,
 								entity.is_last_version as isLastVersion,
+								MAX(IF(prop.prop_name = "pjt:projectState",prop.string_value,NULL)) as projectState,
 								MAX(IF(prop.prop_name = "pjt:projectHierarchy1",prop.string_value,NULL)) as projectHierarchy1,
 								MAX(IF(prop.prop_name = "pjt:projectHierarchy2",prop.string_value,NULL)) as projectHierarchy2,
 								MAX(IF(prop.prop_name = "pjt:projectManager",prop.string_value,NULL)) as projectManager,
@@ -441,7 +442,19 @@
 							group by id
 							]]>
 						</SQL>
-					</View>		
+					</View>	
+			     <Level approxRowCount="5" name="projectState" caption="${msg("jsolap.state.title")}" column="projectState" type="String"   >
+				     <NameExpression>
+						  <SQL dialect="generic" >
+						  <![CDATA[CASE WHEN projectState='Planned' THEN 'Plannifié'
+		                            WHEN projectState='InProgress' THEN 'En cours'
+		                            WHEN projectState='OnHold' THEN 'En attente'
+		                            WHEN projectState='Cancelled' THEN 'Annulé'
+		                            WHEN projectState='Completed' THEN 'Terminé'
+		                            ELSE 'Vide'
+		                           END]]></SQL>
+	                </NameExpression>
+				</Level>	
 				<Level name="projectHierarchy1" caption="${msg("jsolap.family.title")}" column="projectHierarchy1" type="String"   >
 				</Level>
 				<Level name="projectHierarchy2" caption="${msg("jsolap.subFamily.title")}" column="projectHierarchy2" type="String"   >
@@ -1052,7 +1065,6 @@
 								and prop2.boolean_value = true
 								and datalist.instance_id = ${instanceId}
 							group by datalist.id
-
 					</SQL>
 				</View>
 				<Level approxRowCount="100" name="name" caption="${msg("jsolap.allergenInVoluntary.title")}" column="nodeRef"  nameColumn="name" type="String"   >

@@ -126,7 +126,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 			entitiesCmpElt.add(renderStructComparisonAsXmlData(structCompareResults));
 
 			if (logger.isDebugEnabled()) {
-				logger.debug("comparison XML " + entitiesCmpElt);
+				logger.debug("comparison XML " + entitiesCmpElt.asXML());
 			}
 
 			try {
@@ -304,14 +304,15 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 	private String getClassAttributeTitle(QName qName) {
 
 		String title = "";
-
+		
 		PropertyDefinition propertyDef = dictionaryService.getProperty(qName);
 		if (propertyDef != null) {
 			title = propertyDef.getTitle(dictionaryService);
 		} else {
 			AssociationDefinition assocDef = dictionaryService.getAssociation(qName);
-			if (assocDef != null)
+			if (assocDef != null){
 				title = assocDef.getTitle(dictionaryService);
+			}
 		}
 
 		return title;

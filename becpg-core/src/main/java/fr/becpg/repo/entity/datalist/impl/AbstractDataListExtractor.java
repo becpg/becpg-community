@@ -161,7 +161,7 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 				ret.put(PROP_COLOR, properties.get(BeCPGModel.PROP_COLOR));
 			}
 
-			Map<String, Object> permissions = new HashMap<>(1);
+			Map<String, Map<String, Boolean>> permissions = new HashMap<>(1);
 			Map<String, Boolean> userAccess = new HashMap<>(5);
 
 			boolean accessRight = (Boolean) (props.get(PROP_ACCESSRIGHT) != null ? props.get(PROP_ACCESSRIGHT) : false);

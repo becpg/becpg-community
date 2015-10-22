@@ -288,17 +288,27 @@
 					<value>mg/kg</value>
 					<value>g/kg</value>
 					<value>meqO2/kg</value>
+					<value>meq/kg</value>
 					<value>g/L</value>
+					<value>µg/L</value> 
 					<value>g/mL</value>
+					<value>mosm/L</value>
+					<value>mol/L</value>
 					<value>mPa.s</value>
 					<value>Pa.s</value>
 					<value>s</value>
 					<value>min</value>
 					<value>°B</value>
-					<value>mosm/L</value>
-					<value>meq/kg</value>
-					<value>mol/L</value>
-					<value>/25g</value>		
+					<value>/25g</value>
+					<value>/100g</value>
+					<value>g/100g</value>
+					<value>g/2,2L</value>
+					<value>g/15g</value>	
+					<value>ppm</value>
+					<value>µg/g</value>
+					<value>mg/g</value>
+					<value>mL/g</value>
+					<value>UB</value>
 				</list>
 			</parameter>
 		</constraint>

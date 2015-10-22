@@ -1,4 +1,4 @@
-package fr.becpg.repo.helper;
+package fr.becpg.repo.helper.impl;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -49,7 +49,7 @@ public abstract class AbstractExprNameExtractor implements AttributeExtractorPlu
 				replacement = extractPropText(nodeRef, propQname);
 			}
 
-			patternMatcher.appendReplacement(sb, replacement != null ? replacement : "");
+			patternMatcher.appendReplacement(sb, replacement != null ? replacement.replace("$", "") : "");
 
 		}
 		patternMatcher.appendTail(sb);
