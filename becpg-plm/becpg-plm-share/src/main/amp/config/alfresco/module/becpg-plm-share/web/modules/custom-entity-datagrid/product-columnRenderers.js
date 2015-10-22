@@ -21,7 +21,8 @@ if (beCPG.module.EntityDataGridRenderers) {
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : [ "bcpg:product", "bcpg:supplier", "bcpg:client", "bcpg:entity", "bcpg:resourceProduct",
 				"cm:content_bcpg:costDetailsListSource", "bcpg:product_bcpg:packagingListProduct", "bcpg:product_bcpg:compoListProduct",
-				"ecm:wulSourceItems", "ecm:rlSourceItems", "ecm:rlTargetItem", "ecm:culSourceItem", "ecm:culTargetItem", "ecm:cclSourceItem" ],
+				"ecm:wulSourceItems", "ecm:rlSourceItems", "ecm:rlTargetItem", "ecm:culSourceItem", "ecm:culTargetItem", "ecm:cclSourceItem"
+				,"cm:cmobject_bcpg:lrComponents" ],
 		renderer : function(oRecord, data, label, scope, z, zz, elCell, oColumn) {
 
 			var url = beCPG.util.entityURL(data.siteId, data.value), version = "";

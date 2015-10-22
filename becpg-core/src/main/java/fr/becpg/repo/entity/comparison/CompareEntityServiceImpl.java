@@ -424,7 +424,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		Map<QName, Serializable> properties2 = nodeRef2 == null ? new TreeMap<QName, Serializable>() : nodeService.getProperties(nodeRef2);
 
 		for (QName propertyQName : properties1.keySet()) {
-
+			
 			if (isCompareableProperty(propertyQName, isDataList)) {
 
 				Serializable oValue1 = properties1.get(propertyQName);
@@ -664,7 +664,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				isCompareable = false;
 			}
 		}
-
+		
 		return isCompareable;
 	}
 

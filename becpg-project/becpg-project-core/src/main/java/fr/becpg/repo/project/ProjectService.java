@@ -102,16 +102,6 @@ public interface ProjectService {
 	 */
 	void updateProjectPermission(NodeRef projectNodeRef, NodeRef taskListNodeRef, NodeRef resourceNodeRef, boolean allow);
 	
-	
-	/**
-	 * 
-	 * @param projectNodeRef
-	 * @param taskNodeRefs
-	 * @param resources
-	 * @param updatePermissions
-	 * @return 
-	 */
-	List<NodeRef> updateTaskResources(NodeRef projectNodeRef, NodeRef taskNodeRefs, List<NodeRef> resources, boolean updatePermissions);
 
 	/**
 	 * 
@@ -137,6 +127,10 @@ public interface ProjectService {
 	 * @param stringScript
 	 */
 	void runScript(ProjectData project, TaskListDataItem task, NodeRef scriptNode);
+
+	List<NodeRef> extractResources(NodeRef projectNodeRef, List<NodeRef> resources);
+
+	NodeRef getReassignedResource(NodeRef resource);
 	
 
 }

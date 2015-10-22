@@ -111,7 +111,6 @@ public class ProjectServiceImpl implements ProjectService {
 	public void reopenTask(NodeRef taskNodeRef) {
 
 		logger.debug("open Task " + taskNodeRef);
-
 		List<AssociationRef> sourceAssocs = nodeService.getSourceAssocs(taskNodeRef, ProjectModel.ASSOC_DL_TASK);
 		for (AssociationRef sourceAssoc : sourceAssocs) {
 			String dlState = (String) nodeService.getProperty(sourceAssoc.getSourceRef(), ProjectModel.PROP_DL_STATE);
@@ -204,16 +203,16 @@ public class ProjectServiceImpl implements ProjectService {
 			nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_START, endDate);
 		}
 	}
-
+	
+	
 	@Override
-	public List<NodeRef> updateTaskResources(NodeRef projectNodeRef, NodeRef taskRef, List<NodeRef> resources, boolean updatePermissions) {
-		List<NodeRef> toRemove = new ArrayList<>();
-		List<NodeRef> toAdd = new ArrayList<>();
+	public List<NodeRef> extractResources(NodeRef projectNodeRef, List<NodeRef> resources ){
+		List<NodeRef> ret = new ArrayList<>();
+		
 		for (NodeRef resourceNodeRef : resources) {
 			String authorityName = authorityDAO.getAuthorityName(resourceNodeRef);
 			if (isRoleAuhtority(authorityName)) {
 				logger.debug("Found project role : " + authorityName);
-				toRemove.add(resourceNodeRef);
 				QName propName = extractRolePropName(authorityName);
 				if (propName != null) {
 					Object user = nodeService.getProperty(projectNodeRef, propName);
@@ -226,13 +225,13 @@ public class ProjectServiceImpl implements ProjectService {
 								if (logger.isDebugEnabled()) {
 									logger.debug("Adding user :" + authorityDAO.getAuthorityName(userNodeRef));
 								}
-								toAdd.add(userNodeRef);
+								ret.add(userNodeRef);
 							}
 						} else if (user instanceof NodeRef) {
 							if (logger.isDebugEnabled()) {
 								logger.debug("Adding user :" + authorityDAO.getAuthorityName((NodeRef) user));
 							}
-							toAdd.add((NodeRef) user);
+							ret.add((NodeRef) user);
 						}
 					} else {
 						logger.debug("Try getting assoc: " + propName);
@@ -242,26 +241,47 @@ public class ProjectServiceImpl implements ProjectService {
 								if (logger.isDebugEnabled()) {
 									logger.debug("Adding user :" + authorityDAO.getAuthorityName(assoc.getTargetRef()));
 								}
-								toAdd.add(assoc.getTargetRef());
+								ret.add(assoc.getTargetRef());
 							}
 						}
 					}
 				}
-
+			} else {
+				ret.add(resourceNodeRef);
+				
 			}
 		}
+		
+		return ret;
+		
+	}
+	
+	
 
-		for (NodeRef resourceNodeRef : toAdd) {
-			resources.add(resourceNodeRef);
-			if (updatePermissions) {
-				updateProjectPermission(projectNodeRef, taskRef, resourceNodeRef, true);
+	@Override
+   public NodeRef getReassignedResource(NodeRef resource) {	
+		
+		if(resource != null && nodeService.getProperty(resource, ProjectModel.PROP_QNAME_DELEGATION_STATE)!=null
+					&&(boolean)nodeService.getProperty(resource, ProjectModel.PROP_QNAME_DELEGATION_STATE)==true){
+			
+			Date delegationStart=(Date)nodeService.getProperty(resource, ProjectModel.PROP_QNAME_DELEGATION_START);
+			Date delegationEnd=(Date)nodeService.getProperty(resource, ProjectModel.PROP_QNAME_DELEGATION_END);
+			
+			if (delegationStart!=null && delegationEnd !=null &&
+					(delegationStart.before(new Date())||delegationStart.equals(new Date()))
+					&&(delegationEnd.after(new Date())||delegationEnd.equals(new Date()))){
+				
+				NodeRef reassignResource = getReassignedResource(associationService.getTargetAssoc(resource, ProjectModel.PROP_QNAME_REASSIGN_RESOURCE));
+				
+				if(reassignResource != null){
+					return reassignResource;
+				}
+				else {
+					return associationService.getTargetAssoc(resource, ProjectModel.PROP_QNAME_REASSIGN_RESOURCE);
+				}
 			}
 		}
-
-		resources.removeAll(toRemove);
-
-		return resources;
-
+		return null;
 	}
 
 	@Override
