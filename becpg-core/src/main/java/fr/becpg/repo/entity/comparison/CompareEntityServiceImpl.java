@@ -424,7 +424,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		Map<QName, Serializable> properties2 = nodeRef2 == null ? new TreeMap<QName, Serializable>() : nodeService.getProperties(nodeRef2);
 
 		for (QName propertyQName : properties1.keySet()) {
-
+			
 			if (isCompareableProperty(propertyQName, isDataList)) {
 
 				Serializable oValue1 = properties1.get(propertyQName);
@@ -548,9 +548,9 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 			for (NodeRef nodeRef : nodeRefs1) {
 
 				if (strValue1 == null) {
-					strValue1 = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
+					strValue1 = attributeExtractorService.extractPropName(nodeRef);
 				} else {
-					strValue1 += RepoConsts.LABEL_SEPARATOR + nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
+					strValue1 += RepoConsts.LABEL_SEPARATOR + attributeExtractorService.extractPropName(nodeRef);
 				}
 			}
 		}
@@ -559,9 +559,9 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 			for (NodeRef nodeRef : nodeRefs2) {
 
 				if (strValue2 == null) {
-					strValue2 = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
+					strValue2 = attributeExtractorService.extractPropName(nodeRef);
 				} else {
-					strValue2 += RepoConsts.LABEL_SEPARATOR + nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
+					strValue2 += RepoConsts.LABEL_SEPARATOR + attributeExtractorService.extractPropName(nodeRef);
 				}
 			}
 		}
@@ -579,6 +579,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		// some system properties are not found (versionDescription,
 		// frozenModifier, etc...)
 		if (propertyDef == null) {
+			logger.info("Property Def doesn't exists for: "+propertyQName);
 			return;
 		}
 
@@ -663,7 +664,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				isCompareable = false;
 			}
 		}
-
+		
 		return isCompareable;
 	}
 

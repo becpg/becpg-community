@@ -182,26 +182,30 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 				for (AllergenListDataItem dataItem : allergenList) {
 
-					String allergen = (String) nodeService.getProperty(dataItem.getAllergen(), BeCPGModel.PROP_LEGAL_NAME);
+					// #1815: takes in account major
+					String allergenType = (String)nodeService.getProperty(dataItem.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE);
+					if(allergenType != null && allergenType.equals("Major")){
+						String allergen = (String) nodeService.getProperty(dataItem.getAllergen(), BeCPGModel.PROP_LEGAL_NAME);
 
-					if (allergen == null || allergen.isEmpty()) {
-						allergen = (String) nodeService.getProperty(dataItem.getAllergen(), BeCPGModel.PROP_CHARACT_NAME);
-					}
+						if (allergen == null || allergen.isEmpty()) {
+							allergen = (String) nodeService.getProperty(dataItem.getAllergen(), BeCPGModel.PROP_CHARACT_NAME);
+						}
 
-					// concat allergens
-					if (dataItem.getVoluntary()) {
-						if (volAllergens.isEmpty()) {
-							volAllergens = allergen;
-						} else {
-							volAllergens += RepoConsts.LABEL_SEPARATOR + allergen;
+						// concat allergens
+						if (dataItem.getVoluntary()) {
+							if (volAllergens.isEmpty()) {
+								volAllergens = allergen;
+							} else {
+								volAllergens += RepoConsts.LABEL_SEPARATOR + allergen;
+							}
+						} else if (dataItem.getInVoluntary()) {
+							if (inVolAllergens.isEmpty()) {
+								inVolAllergens = allergen;
+							} else {
+								inVolAllergens += RepoConsts.LABEL_SEPARATOR + allergen;
+							}
 						}
-					} else if (dataItem.getInVoluntary()) {
-						if (inVolAllergens.isEmpty()) {
-							inVolAllergens = allergen;
-						} else {
-							inVolAllergens += RepoConsts.LABEL_SEPARATOR + allergen;
-						}
-					}
+					}					
 				}
 
 				allergenListElt.addAttribute(PLMModel.PROP_ALLERGENLIST_VOLUNTARY.getLocalName(), volAllergens);

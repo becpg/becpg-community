@@ -434,4 +434,21 @@
         <property name="ruleService" ref="ruleService"/>
 	</bean>
 	
+	<bean id="patch.bcpg.plm.redeployProductValidationProcess" class="fr.becpg.repo.admin.patch.PLMWorkflowPatch" parent="basePatch" >
+        <property name="id"><value>patch.bcpg.plm.redeployProductValidationProcess</value></property>
+        <property name="description"><value>patch.bcpg.plm.redeployProductValidationProcess.description</value></property>
+        <property name="fixesFromSchema" value="0"/>
+        <property name="fixesToSchema" value="8010" />
+        <property name="targetSchema" value="10170"/>
+        <property name="workflowDefinitions">
+            <list>		
+					<props>
+						<prop key="engineId">activiti</prop>
+						<prop key="location">alfresco/module/${pom.artifactId}/workflow/product-validation.bpmn</prop>
+						<prop key="mimetype">text/xml</prop>
+					</props>
+            </list>
+        </property>
+    </bean>
+	
 </beans>

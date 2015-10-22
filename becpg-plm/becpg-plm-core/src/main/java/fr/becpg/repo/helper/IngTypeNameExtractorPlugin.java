@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
+import fr.becpg.repo.helper.impl.AbstractExprNameExtractor;
 
 /**
  * @author matthieu

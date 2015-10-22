@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2015 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2015 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.project.formulation;
@@ -32,7 +32,6 @@ import fr.becpg.model.DeliverableUrl;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
-import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.project.ProjectActivityService;
 import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.ProjectWorkflowService;
@@ -54,17 +53,10 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 	private ProjectWorkflowService projectWorkflowService;
 
 	private ProjectService projectService;
-	
+
 	private ProjectActivityService projectActivityService;
-	
-	private AssociationService associationService;
-	
-	private NodeService nodeService; 
-	
-	private Date delegationStart;
-	
-	private Date delegationEnd;
-	
+
+	private NodeService nodeService;
 
 	public void setProjectWorkflowService(ProjectWorkflowService projectWorkflowService) {
 		this.projectWorkflowService = projectWorkflowService;
@@ -77,34 +69,31 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 	public void setProjectActivityService(ProjectActivityService projectActivityService) {
 		this.projectActivityService = projectActivityService;
 	}
-	
+
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
-	
-	public void setAssociationService(AssociationService associationService) {
-		this.associationService = associationService;
-	}
+
 
 	@Override
 	public boolean process(ProjectData projectData) throws FormulateException {
-		
-		if (projectData.getAspects().contains(ContentModel.ASPECT_CHECKED_OUT) || 
-				projectData.getAspects().contains(ContentModel.ASPECT_WORKING_COPY) ||
-				projectData.getAspects().contains(BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
+
+		if (projectData.getAspects().contains(ContentModel.ASPECT_CHECKED_OUT) || projectData.getAspects().contains(ContentModel.ASPECT_WORKING_COPY)
+				|| projectData.getAspects().contains(BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
 			for (TaskListDataItem task : projectData.getTaskList()) {
 				if (TaskState.InProgress.equals(task.getTaskState()) && projectWorkflowService.isWorkflowActive(task)) {
 					logger.debug("Cancel workflow of project " + projectData.getName() + " for task " + task.getTaskName());
 					projectWorkflowService.cancelWorkflow(task);
 				}
 			}
-		}		
+		}
 		// we don't want tasks of project template start
-		else if (!projectData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) && !projectData.getAspects().contains(BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
+		else if (!projectData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)
+				&& !projectData.getAspects().contains(BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
 
 			// start project if startdate is before now and startdate != created
 			// otherwise ProjectMgr will start it manually
-			if (ProjectState.Planned.equals(projectData.getProjectState()) && projectData.getStartDate() != null
+			if (ProjectState.Planned.equals(projectData.getProjectState()) && (projectData.getStartDate() != null)
 					&& projectData.getStartDate().before(new Date())) {
 				projectData.setProjectState(ProjectState.InProgress);
 			}
@@ -112,17 +101,17 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 			// even if project is not in Progress, we visit it because a task
 			// can start the project (manual task or task that has startdate <
 			// NOW)
-			 if(visitTask(projectData, null)){
-				 
-				 if(projectData.getReformulateCount()==null){
-					 projectData.setReformulateCount(1);
-				 } else {
-					 if( projectData.getReformulateCount()<3){
-						 projectData.setReformulateCount(projectData.getReformulateCount()+1);
-					 }
-				 }
-				 
-			 }
+			if (visitTask(projectData, null)) {
+
+				if (projectData.getReformulateCount() == null) {
+					projectData.setReformulateCount(1);
+				} else {
+					if (projectData.getReformulateCount() < 3) {
+						projectData.setReformulateCount(projectData.getReformulateCount() + 1);
+					}
+				}
+
+			}
 
 			boolean allTaskPlanned = true;
 			for (TaskListDataItem task : projectData.getTaskList()) {
@@ -146,8 +135,8 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 
 			projectData.setCompletionPercent(ProjectHelper.geProjectCompletionPercent(projectData));
 
-			calculateProjectLegendsAndCurrTasks(projectData);			
-			
+			calculateProjectLegendsAndCurrTasks(projectData);
+
 		}
 
 		return true;
@@ -155,22 +144,21 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 
 	private boolean visitTask(ProjectData projectData, TaskListDataItem taskListDataItem) {
 
-		
-		logger.debug("Enter visit task : " +(taskListDataItem!=null ? taskListDataItem.getTaskName() : "Project root"));
-		
+		logger.debug("Enter visit task : " + (taskListDataItem != null ? taskListDataItem.getTaskName() : "Project root"));
+
 		boolean reformulate = false;
-		
+
 		NodeRef taskListNodeRef = taskListDataItem != null ? taskListDataItem.getNodeRef() : null;
 
 		// add next tasks
 		List<TaskListDataItem> nextTasks = ProjectHelper.getNextTasks(projectData, taskListNodeRef);
-		
+
 		if (!nextTasks.isEmpty()) {
 			for (TaskListDataItem nextTask : nextTasks) {
 
 				// cancel active workflow if task is not anymore InProgress
-				logger.debug("Visit task : " + nextTask.getTaskName()+" - state - " + nextTask.getTaskState());
-				
+				logger.debug("Visit task : " + nextTask.getTaskName() + " - state - " + nextTask.getTaskState());
+
 				if (!TaskState.InProgress.equals(nextTask.getTaskState()) && projectWorkflowService.isWorkflowActive(nextTask)) {
 					projectWorkflowService.cancelWorkflow(nextTask);
 				}
@@ -179,9 +167,9 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 
 					// no previous task
 					if (nextTask.getPrevTasks().isEmpty()) {
-						if (nextTask.getStart()!=null &&  nextTask.getStart().before(new Date())) {
+						if ((nextTask.getStart() != null) && nextTask.getStart().before(new Date())) {
 							logger.debug("Start first task.");
-							ProjectHelper.setTaskState(nextTask,TaskState.InProgress, projectActivityService);
+							ProjectHelper.setTaskState(nextTask, TaskState.InProgress, projectActivityService);
 
 						}
 					} else {
@@ -189,12 +177,12 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 						if (ProjectHelper.areTasksDone(projectData, nextTask.getPrevTasks())) {
 							if (nextTask.getManualDate() == null) {
 								logger.debug("Start task since previous are done");
-								ProjectHelper.setTaskState(nextTask,TaskState.InProgress, projectActivityService);
+								ProjectHelper.setTaskState(nextTask, TaskState.InProgress, projectActivityService);
 							}
 							// manual date -> we wait the date
-							else if (nextTask.getStart()!=null && nextTask.getStart().before(new Date())) {
+							else if ((nextTask.getStart() != null) && nextTask.getStart().before(new Date())) {
 								logger.debug("Start task since we are after planned startDate. start planned: " + nextTask.getStart());
-								ProjectHelper.setTaskState(nextTask,TaskState.InProgress, projectActivityService);
+								ProjectHelper.setTaskState(nextTask, TaskState.InProgress, projectActivityService);
 							}
 						}
 					}
@@ -202,29 +190,28 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 				} else if (TaskState.Completed.equals(nextTask.getTaskState())) {
 
 					nextTask.setCompletionPercent(COMPLETED);
-					
+
 					List<DeliverableListDataItem> nextDeliverables = ProjectHelper.getDeliverables(projectData, nextTask.getNodeRef());
 
 					for (DeliverableListDataItem nextDeliverable : nextDeliverables) {
-						
+
 						// set Planned dl InProgress
 						if (DeliverableState.InProgress.equals(nextDeliverable.getState())) {
-							if(DeliverableScriptOrder.Post.equals(nextDeliverable.getScriptOrder())){
+							if (DeliverableScriptOrder.Post.equals(nextDeliverable.getScriptOrder())) {
 								projectService.runScript(projectData, nextTask, nextDeliverable.getContent());
-							} 
+							}
 							nextDeliverable.setState(DeliverableState.Completed);
 						}
-						
+
 					}
-					
+
 					// Status can change during script execution
 					if (!TaskState.Completed.equals(nextTask.getTaskState())) {
-						logger.debug("Task "+nextTask.getTaskName()+" reopen by script "+nextTask.getTaskState());
+						logger.debug("Task " + nextTask.getTaskName() + " reopen by script " + nextTask.getTaskState());
 						reformulate = true;
 					}
-					
-					
-				} else if (TaskState.Refused.equals(nextTask.getTaskState()) && nextTask.getRefusedTask() != null) {
+
+				} else if (TaskState.Refused.equals(nextTask.getTaskState()) && (nextTask.getRefusedTask() != null)) {
 					boolean shouldRefused = true;
 					logger.debug("Enter refused task");
 					// Check if all brothers are closed
@@ -237,11 +224,11 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 					}
 
 					if (shouldRefused) {
-						logger.debug("Reopen path : "+nextTask.getRefusedTask().getTaskName());
-						
+						logger.debug("Reopen path : " + nextTask.getRefusedTask().getTaskName());
+
 						ProjectHelper.reOpenPath(projectData, nextTask, nextTask.getRefusedTask(), projectActivityService);
-						
-						//Revisit tasks 
+
+						// Revisit tasks
 						reformulate = true;
 					}
 
@@ -264,85 +251,87 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 						if (DeliverableState.Planned.equals(nextDeliverable.getState())) {
 							nextDeliverable.setState(DeliverableState.InProgress);
 							nextDeliverable.setUrl(projectService.getDeliverableUrl(projectData.getNodeRef(), nextDeliverable.getUrl()));
-							if(nextDeliverable.getUrl()!=null && nextDeliverable.getUrl().startsWith(DeliverableUrl.CONTENT_URL_PREFIX)
-									&& NodeRef.isNodeRef(nextDeliverable.getUrl().substring(DeliverableUrl.CONTENT_URL_PREFIX.length()))){
-								nextDeliverable.setContent(new NodeRef(nextDeliverable.getUrl().substring(DeliverableUrl.CONTENT_URL_PREFIX.length())));
+							if ((nextDeliverable.getUrl() != null) && nextDeliverable.getUrl().startsWith(DeliverableUrl.CONTENT_URL_PREFIX)
+									&& NodeRef.isNodeRef(nextDeliverable.getUrl().substring(DeliverableUrl.CONTENT_URL_PREFIX.length()))) {
+								nextDeliverable
+										.setContent(new NodeRef(nextDeliverable.getUrl().substring(DeliverableUrl.CONTENT_URL_PREFIX.length())));
 								nextDeliverable.setUrl(null);
 							}
 
 						}
-						
-						if( DeliverableState.InProgress.equals(nextDeliverable.getState()) 
-								&& DeliverableScriptOrder.Pre.equals(nextDeliverable.getScriptOrder())){
+
+						if (DeliverableState.InProgress.equals(nextDeliverable.getState())
+								&& DeliverableScriptOrder.Pre.equals(nextDeliverable.getScriptOrder())) {
 							projectService.runScript(projectData, nextTask, nextDeliverable.getContent());
 							nextDeliverable.setState(DeliverableState.Completed);
-						} 
-						
+						}
+
 					}
-					
-					//Status can change during script execution
+
+					// Status can change during script execution
 					if (TaskState.InProgress.equals(nextTask.getTaskState())) {
-						
-						if( !nextTask.getIsGroup()){
+
+						if (!nextTask.getIsGroup()) {
 							logger.debug("set completion percent to value " + taskCompletionPercent + " - noderef: " + nextTask.getNodeRef());
 							nextTask.setCompletionPercent(taskCompletionPercent == 0 ? null : taskCompletionPercent);
 						}
-	
+
 						// check workflow instance (task may be reopened) and
 						// workflow properties
-						projectWorkflowService.checkWorkflowInstance(projectData, nextTask, nextDeliverables);						
-						
-						List<NodeRef> resources = nextTask.getResources();
-						NodeRef reassignResource;
-	
-						if (nextTask.getResources() != null && !nextTask.getResources().isEmpty()) {
-							
-							for (NodeRef resource : nextTask.getResources()){							
-								reassignResource = getReassignResource(resource);
-								
-								//check delegation
-								if(reassignResource!=null){										
-									
-									delegationStart=(Date)nodeService.getProperty(resource, ProjectModel.PROP_QNAME_DELEGATION_START);
-									delegationEnd=(Date)nodeService.getProperty(resource, ProjectModel.PROP_QNAME_DELEGATION_END);								
-									
-									if (delegationStart!=null && (nextTask.getStart().after(delegationStart)
-											||nextTask.getStart().equals(delegationStart))) {	
-										
-										if(delegationEnd != null && (nextTask.getStart().before(delegationEnd)
-												||nextTask.getStart().equals(delegationEnd))){												
-											
-											//reassign new tasks
-											resources.remove(resource);
-											resources.add(reassignResource);
+						projectWorkflowService.checkWorkflowInstance(projectData, nextTask, nextDeliverables);
+
+						if ((nextTask.getResources() != null) && !nextTask.getResources().isEmpty()) {
+
+							List<NodeRef> resources = new ArrayList<>();
+
+							for (NodeRef resource : projectService.extractResources(projectData.getNodeRef(), nextTask.getResources())) {
+								NodeRef reassignResource = projectService.getReassignedResource(resource);
+								NodeRef toAdd = resource;
+								// check delegation
+								if (reassignResource != null) {
+
+									Date delegationStart = (Date) nodeService.getProperty(resource, ProjectModel.PROP_QNAME_DELEGATION_START);
+									Date delegationEnd = (Date) nodeService.getProperty(resource, ProjectModel.PROP_QNAME_DELEGATION_END);
+
+									if ((delegationStart != null)
+											&& (nextTask.getStart().after(delegationStart) || nextTask.getStart().equals(delegationStart))) {
+
+										if ((delegationEnd != null)
+												&& (nextTask.getStart().before(delegationEnd) || nextTask.getStart().equals(delegationEnd))) {
+
+											// reassign new tasks
+											toAdd = reassignResource;
 										}
 									}
-											
+
 									else {
-										if((boolean) nodeService.getProperty(resource, ProjectModel.PROP_QNAME_REASSIGN_TASK)){
-											//reassign current tasks
-											resources.remove(resource);
-											resources.add(reassignResource);
+										if ((boolean) nodeService.getProperty(resource, ProjectModel.PROP_QNAME_REASSIGN_TASK)) {
+											// reassign current tasks
+											toAdd = reassignResource;
 											projectWorkflowService.checkWorkflowInstance(projectData, nextTask, nextDeliverables);
-										}										
-									}	
+										}
+									}
 								}
+
+								projectService.updateProjectPermission(projectData.getNodeRef(), nextTask.getNodeRef(), toAdd, true);
+
+								resources.add(toAdd);
 							}
-							
-							nextTask.setResources(projectService.updateTaskResources(projectData.getNodeRef(), nextTask.getNodeRef(),
-										resources, true));								
-							
-							// workflow (task may have been set as InProgress with
+
+							nextTask.setResources(resources);
+
+							// workflow (task may have been set as InProgress
+							// with
 							// UI)
-							if ((nextTask.getWorkflowInstance() == null || nextTask.getWorkflowInstance().isEmpty())
-									&& nextTask.getWorkflowName() != null && !nextTask.getWorkflowName().isEmpty()) {
-	
+							if (((nextTask.getWorkflowInstance() == null) || nextTask.getWorkflowInstance().isEmpty())
+									&& (nextTask.getWorkflowName() != null) && !nextTask.getWorkflowName().isEmpty()) {
+
 								// start workflow
 								projectWorkflowService.startWorkflow(projectData, nextTask, nextDeliverables);
 							}
 						}
 					} else {
-						logger.debug("Task "+nextTask.getTaskName()+" reopen by script "+nextTask.getTaskState());
+						logger.debug("Task " + nextTask.getTaskName() + " reopen by script " + nextTask.getTaskState());
 						reformulate = true;
 					}
 				}
@@ -356,36 +345,9 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 				visitGroup(projectData, nextTask.getParent());
 			}
 		}
-		
+
 		return reformulate;
 	}
-
-
-	private NodeRef getReassignResource(NodeRef resource) {	
-		
-		if(resource != null && nodeService.getProperty(resource, ProjectModel.PROP_QNAME_DELEGATION_STATE)!=null
-					&&(boolean)nodeService.getProperty(resource, ProjectModel.PROP_QNAME_DELEGATION_STATE)==true){
-			
-			delegationStart=(Date)nodeService.getProperty(resource, ProjectModel.PROP_QNAME_DELEGATION_START);
-			delegationEnd=(Date)nodeService.getProperty(resource, ProjectModel.PROP_QNAME_DELEGATION_END);
-			
-			if (delegationStart!=null && delegationEnd !=null &&
-					(delegationStart.before(new Date())||delegationStart.equals(new Date()))
-					&&(delegationEnd.after(new Date())||delegationEnd.equals(new Date()))){
-				
-				NodeRef reassignResource = getReassignResource(associationService.getTargetAssoc(resource, ProjectModel.PROP_QNAME_REASSIGN_RESOURCE));
-				
-				if(reassignResource != null){
-					return reassignResource;
-				}
-				else {
-					return associationService.getTargetAssoc(resource, ProjectModel.PROP_QNAME_REASSIGN_RESOURCE);
-				}
-			}
-		}
-		return null;
-	}
-
 
 	private void visitGroup(ProjectData projectData, TaskListDataItem parent) {
 
@@ -396,7 +358,7 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 			int completionPerc = 0;
 			List<TaskListDataItem> tasks = ProjectHelper.getChildrenTasks(projectData, parent);
 			for (TaskListDataItem c : tasks) {
-				completionPerc += (c.getCompletionPercent()!=null?c.getCompletionPercent():0);
+				completionPerc += (c.getCompletionPercent() != null ? c.getCompletionPercent() : 0);
 				if (TaskState.InProgress.equals(c.getTaskState())) {
 					hasTaskInProgress = true;
 				} else if (TaskState.Completed.equals(c.getTaskState())) {
@@ -404,23 +366,21 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 				}
 			}
 			if (hasTaskInProgress) {
-				ProjectHelper.setTaskState(parent,TaskState.InProgress, projectActivityService);
+				ProjectHelper.setTaskState(parent, TaskState.InProgress, projectActivityService);
 			} else if (allTasksPlanned) {
-				ProjectHelper.setTaskState(parent,TaskState.Planned, projectActivityService);
+				ProjectHelper.setTaskState(parent, TaskState.Planned, projectActivityService);
 			} else {
-				ProjectHelper.setTaskState(parent,TaskState.Completed, projectActivityService);
+				ProjectHelper.setTaskState(parent, TaskState.Completed, projectActivityService);
 			}
-			parent.setCompletionPercent(completionPerc/tasks.size());
-			
+			parent.setCompletionPercent(completionPerc / tasks.size());
+
 		}
 	}
-
-	
 
 	private void calculateProjectLegendsAndCurrTasks(ProjectData projectData) {
 
 		List<NodeRef> currLegends = new ArrayList<>();
- 		List<NodeRef> currTasks = new ArrayList<>();
+		List<NodeRef> currTasks = new ArrayList<>();
 
 		for (TaskListDataItem tl : projectData.getTaskList()) {
 			if (TaskState.InProgress.equals(tl.getTaskState())) {
@@ -428,12 +388,11 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 					currLegends.add(tl.getTaskLegend());
 				}
 				currTasks.add(tl.getNodeRef());
-			} 
+			}
 		}
-		
+
 		projectData.setCurrTasks(currTasks);
 		projectData.setLegends(currLegends);
-		
-		
+
 	}
 }
