@@ -32,7 +32,6 @@ import fr.becpg.model.DeliverableUrl;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
-import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.project.ProjectActivityService;
 import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.ProjectWorkflowService;
@@ -75,8 +74,6 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 		this.nodeService = nodeService;
 	}
 
-	public void setAssociationService(AssociationService associationService) {
-	}
 
 	@Override
 	public boolean process(ProjectData projectData) throws FormulateException {
