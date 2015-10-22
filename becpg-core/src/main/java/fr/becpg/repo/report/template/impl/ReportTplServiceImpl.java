@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2015 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2015 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.report.template.impl;
@@ -22,7 +22,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.content.encoding.ContentCharsetFinder;
@@ -69,7 +74,8 @@ public class ReportTplServiceImpl implements ReportTplService {
 	 *            the product node ref
 	 * @return the system report templates
 	 * @param:productNodeRef
-	 * @param:tplName the name of the template or starting by
+	 * @param:tplName the
+	 *                    name of the template or starting by
 	 */
 	@Override
 	public List<NodeRef> getSystemReportTemplates(ReportType reportType, QName nodeType) {
@@ -83,7 +89,7 @@ public class ReportTplServiceImpl implements ReportTplService {
 	public NodeRef getSystemReportTemplate(ReportType reportType, QName nodeType, String tplName) {
 		List<NodeRef> ret = getReportTpls(reportType, nodeType, true, tplName);
 
-		return ret != null && !ret.isEmpty() ? ret.get(0) : null;
+		return (ret != null) && !ret.isEmpty() ? ret.get(0) : null;
 	}
 
 	/**
@@ -96,7 +102,8 @@ public class ReportTplServiceImpl implements ReportTplService {
 	 *            the tpl name
 	 * @return the user report templates
 	 * @param:productType
-	 * @param:tplName the name of the template or starting by
+	 * @param:tplName the
+	 *                    name of the template or starting by
 	 */
 	@Override
 	public List<NodeRef> getUserReportTemplates(ReportType reportType, QName nodeType, String tplName) {
@@ -112,18 +119,19 @@ public class ReportTplServiceImpl implements ReportTplService {
 	 *            the tpl name
 	 * @return the user report templates
 	 * @param:productType
-	 * @param:tplName the name of the template or starting by
+	 * @param:tplName the
+	 *                    name of the template or starting by
 	 */
 	@Override
 	public NodeRef getUserReportTemplate(ReportType reportType, QName nodeType, String tplName) {
 		List<NodeRef> ret = getReportTpls(reportType, nodeType, false, tplName);
 
-		return ret != null && !ret.isEmpty() ? ret.get(0) : null;
+		return (ret != null) && !ret.isEmpty() ? ret.get(0) : null;
 	}
 
 	/**
 	 * Create the rptdesign node for the report
-	 * 
+	 *
 	 * @param parentNodeRef
 	 * @param tplName
 	 * @param tplFilePath
@@ -144,12 +152,12 @@ public class ReportTplServiceImpl implements ReportTplService {
 		InputStream in = null;
 		if (resource.exists()) {
 			try {
-				in = new BufferedInputStream(resource.getInputStream());				
+				in = new BufferedInputStream(resource.getInputStream());
 				String extension = RepoConsts.REPORT_EXTENSION_BIRT;
 				int i = tplFilePath.lastIndexOf('.');
 				if (i > 0) {
-				    extension = tplFilePath.substring(i+1);
-				}				
+					extension = tplFilePath.substring(i + 1);
+				}
 				String tplFullName = tplName + "." + extension;
 				reportTplNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, tplFullName);
 
@@ -200,7 +208,7 @@ public class ReportTplServiceImpl implements ReportTplService {
 
 	/**
 	 * Create a ressource for the report
-	 * 
+	 *
 	 * @param parentNodeRef
 	 * @param xmlFilePath
 	 * @param overrideRessource
@@ -214,15 +222,17 @@ public class ReportTplServiceImpl implements ReportTplService {
 		if (resource.exists()) {
 			try {
 				in = new BufferedInputStream(resource.getInputStream());
-				NodeRef xmlReportTplNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, resource.getFilename());
+				NodeRef fileNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, resource.getFilename());
 
-				if (xmlReportTplNodeRef == null || overrideRessource) {
+				if ((fileNodeRef == null) || overrideRessource) {
 
 					Map<QName, Serializable> properties = new HashMap<>();
 					properties.put(ContentModel.PROP_NAME, resource.getFilename());
-					NodeRef fileNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
-							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
-							ContentModel.TYPE_CONTENT, properties).getChildRef();
+					if (fileNodeRef == null) {
+						fileNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
+								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
+								ContentModel.TYPE_CONTENT, properties).getChildRef();
+					}
 
 					ContentWriter writer = contentService.getWriter(fileNodeRef, ContentModel.PROP_CONTENT, true);
 
@@ -257,7 +267,7 @@ public class ReportTplServiceImpl implements ReportTplService {
 
 			if (isDefault) {
 
-				if (!isSystem && userDefaultTplNodeRef == null) {
+				if (!isSystem && (userDefaultTplNodeRef == null)) {
 					userDefaultTplNodeRef = tplNodeRef;
 				} else {
 					defaultTplsNodeRef.add(tplNodeRef);
@@ -266,7 +276,7 @@ public class ReportTplServiceImpl implements ReportTplService {
 		}
 
 		// no user default tpl, take the first system default
-		if (userDefaultTplNodeRef == null && !defaultTplsNodeRef.isEmpty()) {
+		if ((userDefaultTplNodeRef == null) && !defaultTplsNodeRef.isEmpty()) {
 			userDefaultTplNodeRef = defaultTplsNodeRef.get(0);
 			defaultTplsNodeRef.remove(0);
 		}
@@ -306,28 +316,27 @@ public class ReportTplServiceImpl implements ReportTplService {
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(ReportModel.TYPE_REPORT_TPL)
 				.andPropEquals(ReportModel.PROP_REPORT_TPL_TYPE, reportType.toString());
 
-		
-		//Full text
-		if (tplName != null && !Objects.equals(tplName, "*")) {
+		// Full text
+		if ((tplName != null) && !Objects.equals(tplName, "*")) {
 			queryBuilder.andPropQuery(ContentModel.PROP_NAME, tplName);
 		} else {
 			queryBuilder.inDB();
 		}
-		
-		//TODO DB query not supporting boolean, CMIS not supporting qname
-		
+
+		// TODO DB query not supporting boolean, CMIS not supporting qname
+
 		List<NodeRef> ret = new LinkedList<>();
-		for(NodeRef rTplNodeRef : queryBuilder.list()){
-			
-			QName classType = (QName)nodeService.getProperty(rTplNodeRef, ReportModel.PROP_REPORT_TPL_CLASS_NAME);
-			
-			if(   ((classType == null &&  nodeType == null) || (classType!=null && classType.equals(nodeType)))
+		for (NodeRef rTplNodeRef : queryBuilder.list()) {
+
+			QName classType = (QName) nodeService.getProperty(rTplNodeRef, ReportModel.PROP_REPORT_TPL_CLASS_NAME);
+
+			if ((((classType == null) && (nodeType == null)) || ((classType != null) && classType.equals(nodeType)))
 					&& isSystem.equals(nodeService.getProperty(rTplNodeRef, ReportModel.PROP_REPORT_TPL_IS_SYSTEM))
-					&& ! Boolean.TRUE.equals(nodeService.getProperty(rTplNodeRef, ReportModel.PROP_REPORT_TPL_IS_DISABLED)) ){
+					&& !Boolean.TRUE.equals(nodeService.getProperty(rTplNodeRef, ReportModel.PROP_REPORT_TPL_IS_DISABLED))) {
 				ret.add(rTplNodeRef);
 			}
 		}
-		
+
 		return ret;
 	}
 

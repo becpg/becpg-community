@@ -96,7 +96,6 @@
 					<property name="projectService" ref="projectService" />
 					<property name="projectActivityService" ref="projectActivityService" />
 					<property name="nodeService" ref="nodeService"/>
-					<property name="associationService" ref="associationService"/>
 				</bean>
 			</list>
 		</property>
