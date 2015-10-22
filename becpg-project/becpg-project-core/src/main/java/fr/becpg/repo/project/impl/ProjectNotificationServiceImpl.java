@@ -37,9 +37,9 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * Class used to manage notification
- * 
+ *
  * @author quere
- * 
+ *
  */
 @Service("projectNotificationService")
 public class ProjectNotificationServiceImpl implements ProjectNotificationService {
@@ -62,10 +62,9 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 
 	@Autowired
 	private ProjectService projectService;
-	
+
 	@Autowired
 	private NodeService nodeService;
-
 
 	@Autowired
 	private AssociationService associationService;
@@ -78,7 +77,7 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 
 	@Autowired
 	private Repository repositoryHelper;
-	
+
 	@Autowired
 	private AuthorityService authorityService;
 
@@ -87,9 +86,8 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 
 		String beforeStateMsg = I18NUtil.getMessage(PREFIX_LOCALIZATION_TASK_NAME + beforeState);
 		String afterStateMsg = I18NUtil.getMessage(PREFIX_LOCALIZATION_TASK_NAME + afterState);
-		
-		
-		String subject = createSubject(projectNodeRef,taskNodeRef, afterStateMsg);
+
+		String subject = createSubject(projectNodeRef, taskNodeRef, afterStateMsg);
 
 		Map<String, Serializable> templateArgs = new HashMap<>(7);
 		templateArgs.put(ARG_ACTIVITY_TYPE, ActivityType.State);
@@ -103,20 +101,18 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 	}
 
 	private String createSubject(NodeRef projectNodeRef, NodeRef taskNodeRef, String afterStateMsg) {
-		String code =  (String) nodeService.getProperty(projectNodeRef, BeCPGModel.PROP_CODE);
-		String taskName = taskNodeRef!=null ? (String)nodeService.getProperty(taskNodeRef, ProjectModel.PROP_TL_TASK_NAME) : null;
-		
-		
-		return  "[" + nodeService.getProperty(projectNodeRef, ContentModel.PROP_NAME) + (code!=null ? " - "
-				+ code  : "")+ "]"
-				+ (taskName!=null ? " "+taskName :"" ) + (afterStateMsg!=null? " (" + afterStateMsg + ")" : "");
+		String code = (String) nodeService.getProperty(projectNodeRef, BeCPGModel.PROP_CODE);
+		String taskName = taskNodeRef != null ? (String) nodeService.getProperty(taskNodeRef, ProjectModel.PROP_TL_TASK_NAME) : null;
+
+		return "[" + nodeService.getProperty(projectNodeRef, ContentModel.PROP_NAME) + (code != null ? " - " + code : "") + "]"
+				+ (taskName != null ? " " + taskName : "") + (afterStateMsg != null ? " (" + afterStateMsg + ")" : "");
 	}
 
 	@Override
 	public void notifyComment(NodeRef commentNodeRef, ActivityEvent activityEvent, NodeRef projectNodeRef, NodeRef taskNodeRef,
 			NodeRef deliverableNodeRef) {
 
-		String subject = createSubject(projectNodeRef, taskNodeRef,null);
+		String subject = createSubject(projectNodeRef, taskNodeRef, null);
 
 		Map<String, Serializable> templateArgs = new HashMap<>(7);
 		templateArgs.put(ARG_ACTIVITY_TYPE, ActivityType.Comment);
@@ -124,7 +120,7 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 		templateArgs.put(ARG_PROJECT, projectNodeRef);
 		if (taskNodeRef != null) {
 			templateArgs.put(ARG_TASK_TITLE, nodeService.getProperty(taskNodeRef, ProjectModel.PROP_TL_TASK_NAME));
-			templateArgs.put(ARG_TASK_DESCRIPTION, nodeService.getProperty(taskNodeRef,ProjectModel.PROP_TL_TASK_DESCRIPTION));
+			templateArgs.put(ARG_TASK_DESCRIPTION, nodeService.getProperty(taskNodeRef, ProjectModel.PROP_TL_TASK_DESCRIPTION));
 		}
 		if (deliverableNodeRef != null) {
 			templateArgs.put(ARG_DELIVERABLE_TITLE, nodeService.getProperty(deliverableNodeRef, ProjectModel.PROP_DL_DESCRIPTION));
@@ -138,7 +134,6 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 
 		NodeRef templateNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(), MAIL_TEMPLATE);
 
-		
 		if (templateNodeRef == null) {
 			logger.warn("Template not found.");
 		} else {
@@ -146,7 +141,7 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 			Set<String> authorities = new HashSet<>();
 			List<NodeRef> observerNodeRefs = new ArrayList<>();
 			// Set the notification recipients
-			if(taskNodeRef!=null){
+			if (taskNodeRef != null) {
 				observerNodeRefs.addAll(associationService.getTargetAssocs(taskNodeRef, ProjectModel.ASSOC_TL_OBSERVERS));
 			}
 
@@ -154,18 +149,18 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 				observerNodeRefs.addAll(associationService.getTargetAssocs(projectNodeRef, ProjectModel.ASSOC_PROJECT_OBSERVERS));
 			}
 			if (!observerNodeRefs.isEmpty()) {
-				
-				if(taskNodeRef!=null){
-					observerNodeRefs  = projectService.updateTaskResources(projectNodeRef, taskNodeRef, observerNodeRefs, false);
+
+				if (taskNodeRef != null) {
+					observerNodeRefs = projectService.extractResources(projectNodeRef, observerNodeRefs);
 				}
 
 				for (NodeRef observerNodeRef : observerNodeRefs) {
 					String authorityName;
 					QName type = nodeService.getType(observerNodeRef);
 					if (type.equals(ContentModel.TYPE_AUTHORITY_CONTAINER)) {
-					    authorityName  = (String) nodeService.getProperty(observerNodeRef, ContentModel.PROP_AUTHORITY_NAME);
-						for( String userAuth : authorityService.getContainedAuthorities(AuthorityType.USER, authorityName, false)){
-							if(!userAuth.equals(AuthenticationUtil.getFullyAuthenticatedUser())){
+						authorityName = (String) nodeService.getProperty(observerNodeRef, ContentModel.PROP_AUTHORITY_NAME);
+						for (String userAuth : authorityService.getContainedAuthorities(AuthorityType.USER, authorityName, false)) {
+							if (!userAuth.equals(AuthenticationUtil.getFullyAuthenticatedUser())) {
 								authorities.add(userAuth);
 							}
 						}
@@ -174,30 +169,27 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 						if (logger.isDebugEnabled()) {
 							logger.debug("authorityName : " + authorityName);
 						}
-						if(!authorityName.equals(AuthenticationUtil.getFullyAuthenticatedUser())){
+						if (!authorityName.equals(AuthenticationUtil.getFullyAuthenticatedUser())) {
 							authorities.add(authorityName);
 						}
 					}
-					
+
 				}
 
 				try {
-					if(!authorities.isEmpty()){
+					if (!authorities.isEmpty()) {
 						Action mailAction = actionService.createAction(MailActionExecuter.NAME);
 						mailAction.setParameterValue(MailActionExecuter.PARAM_SUBJECT, subject);
 						mailAction.setParameterValue(MailActionExecuter.PARAM_TO_MANY, new ArrayList<>(authorities));
 						mailAction.setParameterValue(MailActionExecuter.PARAM_TEMPLATE, fileFolderService.getLocalizedSibling(templateNodeRef));
-	
+
 						Map<String, Serializable> templateModel = new HashMap<>();
 						templateModel.put("args", (Serializable) templateArgs);
 						mailAction.setParameterValue(MailActionExecuter.PARAM_TEMPLATE_MODEL, (Serializable) templateModel);
-												
-						AuthenticationUtil.runAsSystem(new AuthenticationUtil.RunAsWork<Object>() {
-							@Override
-							public NodeRef doWork() throws Exception {
-								actionService.executeAction(mailAction, null);
-								return null;
-							}
+
+						AuthenticationUtil.runAsSystem(() -> {
+							actionService.executeAction(mailAction, null);
+							return null;
 						});
 					}
 				} catch (Exception e) {
