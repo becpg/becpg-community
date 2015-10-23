@@ -55,6 +55,9 @@ public class MultiLevelExtractor extends SimpleExtractor {
 	public static final String PROP_ROOT_ENTITYNODEREF = "rootEntityNodeRef";
 
 	private static final String PREF_DEPTH_PREFIX = "fr.becpg.MultiLevelExtractor.";
+	
+	public static final String PROP_IS_MULTI_LEVEL = "isMultiLevel";
+	
 
 	MultiLevelDataListService multiLevelDataListService;
 
@@ -69,25 +72,24 @@ public class MultiLevelExtractor extends SimpleExtractor {
 	}
 
 	@Override
-	public PaginatedExtractedItems extract(DataListFilter dataListFilter, List<String> metadataFields, DataListPagination pagination,
-			boolean hasWriteAccess) {
+	public PaginatedExtractedItems extract(DataListFilter dataListFilter, List<String> metadataFields) {
 
 		if (!dataListFilter.isDepthDefined()) {
 			int depth = getDepthUserPref(dataListFilter);
 			if (depth == 0 ) {
-				return super.extract(dataListFilter, metadataFields, pagination, hasWriteAccess);
+				return super.extract(dataListFilter, metadataFields);
 			}
 			dataListFilter.updateMaxDepth(depth);
 		} else {
 			updateDepthUserPref(dataListFilter);
 			if(dataListFilter.getMaxDepth() == 0){
 				dataListFilter.updateMaxDepth(-1);
-				return super.extract(dataListFilter, metadataFields, pagination, hasWriteAccess);
+				return super.extract(dataListFilter, metadataFields);
 			}
 		}
 
-		int pageSize = pagination.getPageSize();
-		int startIndex = (pagination.getPage() - 1) * pagination.getPageSize();
+		int pageSize = dataListFilter.getPagination().getPageSize();
+		int startIndex = (dataListFilter.getPagination().getPage() - 1) * dataListFilter.getPagination().getPageSize();
 
 		PaginatedExtractedItems ret = new PaginatedExtractedItems(pageSize);
 
@@ -159,9 +161,9 @@ public class MultiLevelExtractor extends SimpleExtractor {
 
 			if (extraProps.get(PROP_ROOT_ENTITYNODEREF) != null) {
 				if (!extraProps.get(PROP_ROOT_ENTITYNODEREF).equals(entityListDAO.getEntity(nodeRef))) {
-					tmp.put("isMultiLevel", true);
+					tmp.put(PROP_IS_MULTI_LEVEL, true);
 					if(extraProps.get(PROP_PATH) != null){
-						tmp.put("path", extraProps.get(PROP_PATH));
+						tmp.put(PROP_PATH, extraProps.get(PROP_PATH));
 					}
 				}
 			}
@@ -178,12 +180,21 @@ public class MultiLevelExtractor extends SimpleExtractor {
 			if (extraProps.get(PROP_DEPTH) != null) {
 				tmp.put("prop_bcpg_depthLevel", extraProps.get(PROP_DEPTH).toString());
 			}
+			
+			if (extraProps.get(PROP_ROOT_ENTITYNODEREF) != null) {
+				if (!extraProps.get(PROP_ROOT_ENTITYNODEREF).equals(entityListDAO.getEntity(nodeRef))) {
+					tmp.put(PROP_IS_MULTI_LEVEL, true);
+					if(extraProps.get(PROP_PATH) != null){
+						tmp.put(PROP_PATH, extraProps.get(PROP_PATH));
+					}
+				}
+			}
 
 			if (extraProps.get(PROP_ENTITYNODEREF) != null && extraProps.get(PROP_REVERSE_ASSOC) != null) {
 				NodeRef entityNodeRef = (NodeRef) extraProps.get(PROP_ENTITYNODEREF);
 				String assocName = (String) extraProps.get(PROP_REVERSE_ASSOC);
 
-				tmp.put("assoc_" + assocName.replaceFirst(":", "_"), nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
+				tmp.put("assoc_" + assocName.replaceFirst(":", "_"), attributeExtractorService.extractPropName(entityNodeRef));
 			}
 		}
 

@@ -85,19 +85,18 @@ public class ProjectListExtractor extends ActivityListExtractor {
 	}
 
 	@Override
-	public PaginatedExtractedItems extract(DataListFilter dataListFilter, List<String> metadataFields, DataListPagination pagination,
-			boolean hasWriteAccess) {
+	public PaginatedExtractedItems extract(DataListFilter dataListFilter, List<String> metadataFields) {
 
-		PaginatedExtractedItems ret = new PaginatedExtractedItems(pagination.getPageSize());
+		PaginatedExtractedItems ret = new PaginatedExtractedItems(dataListFilter.getPagination().getPageSize());
 
 		List<NodeRef> favorites = getFavorites();
 
-		List<NodeRef> results = getListNodeRef(dataListFilter, pagination, favorites);
+		List<NodeRef> results = getListNodeRef(dataListFilter, dataListFilter.getPagination(), favorites);
 
 		Map<String, Object> props = new HashMap<>();
-		props.put(PROP_ACCESSRIGHT, hasWriteAccess);
+		props.put(PROP_ACCESSRIGHT, dataListFilter.hasWriteAccess());
 		props.put(FILTER_DATA, dataListFilter);
-		props.put(PAGINATION, pagination);
+		props.put(PAGINATION, dataListFilter.getPagination());
 
 		Map<NodeRef, Map<String, Object>> cache = new HashMap<>();
 
@@ -127,7 +126,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 			}
 		}
 
-		ret.setFullListSize(pagination.getFullListSize());
+		ret.setFullListSize(dataListFilter.getPagination().getFullListSize());
 
 		return ret;
 	}

@@ -47,6 +47,7 @@ import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.DataListPagination;
 import fr.becpg.repo.entity.datalist.impl.AbstractDataListExtractor;
 import fr.becpg.repo.entity.datalist.impl.CSVDataListOutputWriter;
+import fr.becpg.repo.entity.datalist.impl.DataListOutputWriterFactory;
 import fr.becpg.repo.entity.datalist.impl.ExcelDataListOutputWriter;
 import fr.becpg.repo.helper.JSONHelper;
 import fr.becpg.repo.security.SecurityService;
@@ -122,8 +123,6 @@ public class EntityDataListWebScript extends AbstractWebScript {
 
 	protected static final String PARAM_QUERY_EXECUTION_ID = "queryExecutionId";
 
-	/** Services **/
-
 	private NodeService nodeService;
 
 	private SecurityService securityService;
@@ -132,18 +131,16 @@ public class EntityDataListWebScript extends AbstractWebScript {
 	
 	private NamespaceService namespaceService;
 
-	private PermissionService permissionService;
-
 	private DataListExtractorFactory dataListExtractorFactory;
 
-	private DataListSortService dataListSortService;
-	
-	private DictionaryService dictionaryService;
-	
 	private AuthorityService authorityService;
+	
+	private DataListOutputWriterFactory datalistOutputWriterFactory; 
+	
+	
 
-	public void setDictionaryService(DictionaryService dictionaryService) {
-		this.dictionaryService = dictionaryService;
+	public void setDatalistOutputWriterFactory(DataListOutputWriterFactory datalistOutputWriterFactory) {
+		this.datalistOutputWriterFactory = datalistOutputWriterFactory;
 	}
 
 	public void setNodeService(NodeService nodeService) {
@@ -158,19 +155,11 @@ public class EntityDataListWebScript extends AbstractWebScript {
 		this.namespaceService = namespaceService;
 	}
 
-	public void setPermissionService(PermissionService permissionService) {
-		this.permissionService = permissionService;
-	}
-
 	public void setDataListExtractorFactory(DataListExtractorFactory dataListExtractorFactory) {
 		this.dataListExtractorFactory = dataListExtractorFactory;
 	}
 
-	public void setDataListSortService(DataListSortService dataListSortService) {
-		this.dataListSortService = dataListSortService;
-	}
 
-	
 	public void setAuthorityService(AuthorityService authorityService) {
 		this.authorityService = authorityService;
 	}
@@ -197,11 +186,11 @@ public class EntityDataListWebScript extends AbstractWebScript {
 			logger.debug("EntityDataListWebScript executeImpl()");
 		}
 
-		DataListPagination pagination = new DataListPagination();
+		
 		DataListFilter dataListFilter = new DataListFilter();
-		pagination.setMaxResults(getNumParameter(req, PARAM_MAX_RESULTS));
-		pagination.setPageSize(getNumParameter(req, PARAM_PAGE_SIZE));
-		pagination.setQueryExecutionId(req.getParameter(PARAM_QUERY_EXECUTION_ID));
+		dataListFilter.getPagination().setMaxResults(getNumParameter(req, PARAM_MAX_RESULTS));
+		dataListFilter.getPagination().setPageSize(getNumParameter(req, PARAM_PAGE_SIZE));
+		dataListFilter.getPagination().setQueryExecutionId(req.getParameter(PARAM_QUERY_EXECUTION_ID));
 
 		String itemType = req.getParameter(PARAM_ITEMTYPE);
 		dataListFilter.setDataListName(req.getParameter(PARAM_DATA_LIST_NAME));
@@ -300,7 +289,7 @@ public class EntityDataListWebScript extends AbstractWebScript {
 				if (page == null && json != null && json.has(PARAM_PAGE)) {
 					page = (Integer) json.get(PARAM_PAGE);
 				}
-				pagination.setPage(page);
+				dataListFilter.getPagination().setPage(page);
 			}
 
 			if (json != null && json.has(PARAM_SORT)) {
@@ -330,7 +319,7 @@ public class EntityDataListWebScript extends AbstractWebScript {
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("Filter:" + dataListFilter.toString());
-				logger.debug("Pagination:" + pagination.toString());
+				logger.debug("Pagination:" + dataListFilter.getPagination().toString());
 				logger.debug("MetadataFields:" + metadataFields.toString());
 				logger.debug("SearchQuery:" + dataListFilter.getSearchQuery());
 			}
@@ -339,11 +328,16 @@ public class EntityDataListWebScript extends AbstractWebScript {
 
 			boolean hasWriteAccess = !dataListFilter.isVersionFilter();
 			if (hasWriteAccess && !entityNodeRefsList.isEmpty()) {
-				hasWriteAccess = !nodeService.hasAspect(entityNodeRefsList.get(0), ContentModel.ASPECT_CHECKED_OUT)
+				hasWriteAccess = 
+						extractor.hasWriteAccess()
+						&& !nodeService.hasAspect(entityNodeRefsList.get(0), ContentModel.ASPECT_CHECKED_OUT)
 						&& lockService.getLockStatus(entityNodeRefsList.get(0)) == LockStatus.NO_LOCK 
 						&& securityService.computeAccessMode(nodeService.getType(entityNodeRefsList.get(0)), itemType) == SecurityService.WRITE_ACCESS
 						&& isExternalUserAllowed(dataListFilter);
+				
 			}
+			
+			dataListFilter.setHasWriteAccess(hasWriteAccess);
 
 			// TODO : #546
 			Date lastModified = extractor.computeLastModified(dataListFilter);
@@ -364,74 +358,20 @@ public class EntityDataListWebScript extends AbstractWebScript {
 			cache.setLastModified(lastModified);
 			res.setCache(cache);
 
-			PaginatedExtractedItems extractedItems = extractor.extract(dataListFilter, metadataFields, pagination, hasWriteAccess);
-
-			if (RepoConsts.FORMAT_CSV.equals(dataListFilter.getFormat())) {
-				
-				DataListOutputWriter outputWriter = new CSVDataListOutputWriter(dictionaryService);
-				outputWriter.write(res,extractedItems);
-
-			} else if (RepoConsts.FORMAT_XLSX.equals(dataListFilter.getFormat())) {
-				DataListOutputWriter outputWriter = new ExcelDataListOutputWriter(dictionaryService,dataListFilter);
-				outputWriter.write(res, extractedItems);
-			} else {
+			PaginatedExtractedItems extractedItems = extractor.extract(dataListFilter, metadataFields);
 			
+			datalistOutputWriterFactory.write(res,dataListFilter, extractedItems);
 			
-
-				JSONObject ret = new JSONObject();
-				if (!dataListFilter.isSimpleItem()) {
-					ret.put("startIndex", pagination.getPage());
-					ret.put("pageSize", pagination.getPageSize());
-					ret.put("totalRecords", extractedItems.getFullListSize());
-					if (pagination.getQueryExecutionId() != null) {
-						ret.put(PARAM_QUERY_EXECUTION_ID, pagination.getQueryExecutionId());
-					}
-
-				}
-
-				JSONObject metadata = new JSONObject();
-
-				JSONObject parent = new JSONObject();
-
-				parent.put("nodeRef", dataListFilter.getParentNodeRef());
-
-				JSONObject permissions = new JSONObject();
-				JSONObject userAccess = new JSONObject();
-
-				userAccess
-						.put("create",
-								(((dataListFilter.getSiteId()!=null && !dataListFilter.getSiteId().isEmpty()) || dataListFilter.getParentNodeRef() != null) 
-										&& extractor.hasWriteAccess() && hasWriteAccess 
-										&& permissionService.hasPermission(dataListFilter.getParentNodeRef(), "CreateChildren") == AccessStatus.ALLOWED));
-
-				permissions.put("userAccess", userAccess);
-
-				parent.put("permissions", permissions);
-
-				metadata.put("parent", parent);
-				
-				ret.put("metadata", metadata);
-				if (dataListFilter.isSimpleItem() &&  !extractedItems.getPageItems().isEmpty()) {
-					Map<String, Object> item = extractedItems.getPageItems().get(0);
-					ret.put("item", new JSONObject(item));
-					ret.put("lastSiblingNodeRef", dataListSortService.getLastChild((NodeRef) item.get(AbstractDataListExtractor.PROP_NODE)));
-				} else {
-					ret.put("items", processResults(extractedItems));
-				}
-
-				res.setContentType("application/json");
-				res.setContentEncoding("UTF-8");
-				ret.write(res.getWriter());
-			}
 
 		} catch (JSONException e) {
-			throw new WebScriptException("Unable to serialize JSON", e);
+			throw new WebScriptException("Unable to parse JSON", e);
 		} finally {
 			if (logger.isDebugEnabled()) {
 				watch.stop();
 				logger.debug("EntityDataListWebScript execute in " + watch.getTotalTimeSeconds() + "s");
 			}
 		}
+			
 
 	}
 
@@ -458,17 +398,6 @@ public class EntityDataListWebScript extends AbstractWebScript {
 		return false;
 	}
 
-	private JSONArray processResults(PaginatedExtractedItems extractedItems) {
-
-		JSONArray items = new JSONArray();
-
-		for (Map<String, Object> item : extractedItems.getPageItems()) {
-			items.put(new JSONObject(item));
-		}
-
-		return items;
-
-	}
 
 
 	protected Integer getNumParameter(WebScriptRequest req, String paramName) {
