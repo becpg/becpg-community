@@ -92,10 +92,8 @@
 		<property name="securityService" ref="securityService" />
 		<property name="nodeService" ref="NodeService" />
 		<property name="dataListExtractorFactory" ref="dataListExtractorFactory" />
+		<property name="datalistOutputWriterFactory" ref="datalistOutputWriterFactory" />
 		<property name="namespaceService" ref="NamespaceService" />
-		<property name="permissionService" ref="PermissionService" />
-		<property name="dataListSortService" ref="dataListSortService" />
-		<property name="dictionaryService" ref="dictionaryService" />
 		<property name="authorityService" ref="authorityService"/>
 		<property name="lockService" ref="lockService" />
 	</bean>

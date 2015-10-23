@@ -137,8 +137,9 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 		}
 		try {
 
-			if (cache.containsKey(nodeRef))
+			if (cache.containsKey(nodeRef)) {
 				return cache.get(nodeRef);
+			}
 
 			QName itemType = nodeService.getType(nodeRef);
 			Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
@@ -228,8 +229,9 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 		}
 		try {
 
-			if (cache.containsKey(nodeRef))
+			if (cache.containsKey(nodeRef)) {
 				return cache.get(nodeRef);
+			}
 
 			QName itemType = nodeService.getType(nodeRef);
 			Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
@@ -256,14 +258,16 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 	}
 
 	protected String convertDateValue(Serializable value, AttributeExtractorMode mode) {
-		if (value instanceof Date)
+		if (value instanceof Date) {
 			return formatDate((Date) value, mode);
+		}
 		return null;
 	}
 
 	protected String formatDate(Date date, AttributeExtractorMode mode) {
-		if (date != null)
+		if (date != null) {
 			return attributeExtractorService.getPropertyFormats(mode).formatDate(date);
+		}
 		return null;
 	}
 

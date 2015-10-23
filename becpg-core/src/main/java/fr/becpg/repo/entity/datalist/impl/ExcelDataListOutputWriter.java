@@ -1,9 +1,10 @@
 package fr.becpg.repo.entity.datalist.impl;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -13,7 +14,9 @@ import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.extensions.webscripts.WebScriptResponse;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.entity.datalist.DataListOutputWriter;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
@@ -22,20 +25,15 @@ import fr.becpg.repo.helper.ExcelHelper;
 import fr.becpg.repo.helper.ExcelHelper.ExcelFieldTitleProvider;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 
+@Service
 public class ExcelDataListOutputWriter implements DataListOutputWriter {
 
-	private final DictionaryService dictionaryService;
-
-	private final DataListFilter dataListFilter;
-
-	public ExcelDataListOutputWriter(DictionaryService dictionaryService, DataListFilter dataListFilter) {
-		super();
-		this.dictionaryService = dictionaryService;
-		this.dataListFilter = dataListFilter;
-	}
+	@Autowired
+	private ExcelDataListOutputPlugin[] plugins;
 
 	@Override
-	public void write(WebScriptResponse res, PaginatedExtractedItems extractedItems) throws IOException {
+	public void write(WebScriptResponse res, DataListFilter dataListFilter, PaginatedExtractedItems extractedItems) throws IOException {
+
 		res.setContentType("application/vnd.ms-excel");
 		res.setHeader("Content-disposition", "attachment; filename=export.xlsx");
 
@@ -69,22 +67,21 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 		cell = labelRow.createCell(cellnum++);
 		cell.setCellValue("#");
 
-		ExcelHelper.appendExcelHeader(extractedItems.getComputedFields(), null, null, headerRow, labelRow, style, cellnum,
-				new ExcelFieldTitleProvider() {
+		ExcelDataListOutputPlugin plugin = getPlugin(dataListFilter);
+		ExcelFieldTitleProvider titleProvider = plugin.getExcelFieldTitleProvider(dataListFilter);
 
-					@Override
-					public String getTitle(AttributeExtractorStructure field) {
-						return field.getFieldDef().getTitle(dictionaryService);
-					}
-				});
+		List<AttributeExtractorStructure> fields = extractedItems.getComputedFields().stream()
+				.filter(field -> titleProvider.isAllowed(field)).collect(Collectors.toList());
 
-		for (Map<String, Object> item : extractedItems.getPageItems()) {
+		ExcelHelper.appendExcelHeader(fields, null, null, headerRow, labelRow, style, cellnum, titleProvider);
+
+		for (Map<String, Object> item : plugin.decorate(extractedItems.getPageItems())) {
 			Row row = sheet.createRow(rownum++);
 
 			cell = row.createCell(0);
 			cell.setCellValue("VALUES");
 
-			ExcelHelper.appendExcelField(extractedItems.getComputedFields(), null, item, row, 1);
+			ExcelHelper.appendExcelField(fields, null, item, row, 1);
 
 		}
 
@@ -92,4 +89,17 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 
 	}
 
+	private ExcelDataListOutputPlugin getPlugin(DataListFilter dataListFilter) {
+		ExcelDataListOutputPlugin ret = null;
+
+		for (ExcelDataListOutputPlugin plugin : plugins) {
+			if (plugin.applyTo(dataListFilter)) {
+				ret = plugin;
+			} else if (plugin.isDefault() && (ret == null)) {
+				ret = plugin;
+			}
+		}
+		return ret;
+
+	}
 }
