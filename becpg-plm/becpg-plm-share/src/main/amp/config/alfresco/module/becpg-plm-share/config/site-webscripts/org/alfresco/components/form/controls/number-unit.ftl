@@ -22,7 +22,9 @@
 
 <#if field.value?is_number>
    <#if unit=="perc">
-     <#if field.value &lt; 0.1  >
+	 <#if field.value == 0  >
+        <#assign currUnit="perc">
+     <#elseif field.value &lt; 0.1  >
 		<#assign currUnit="ppm">
 		<#assign currValue=field.value*10000>
      <#elseif field.value &lt; 1  >
@@ -30,7 +32,9 @@
 		<#assign currValue=field.value*10 >
 	 </#if>
    <#elseif unit=="kg">
-	  <#if field.value &lt; 0.001  >
+	  <#if field.value == 0  >
+        <#assign currUnit="kg">
+     <#elseif field.value &lt; 0.001  >
 		<#assign currUnit="mg">
 		<#assign currValue=field.value*1000000>
      <#elseif field.value &lt; 1  >
@@ -38,17 +42,23 @@
 		<#assign currValue=field.value*1000 >
 	 </#if>
    <#elseif unit=="L">
-	  <#if field.value &lt; 1  >
+	  <#if field.value == 0  >
+        <#assign currUnit="L">
+     <#elseif field.value &lt; 1  >
 		<#assign currUnit="mL" >
 		<#assign currValue=field.value*1000 >
   	 </#if>
    <#elseif unit=="d">
-		<#if field.value/30 &gt; 1  >
+		<#if field.value == 0  >
+       		 <#assign currUnit="d">
+     	<#elseif field.value/30 &gt; 1  >
 			<#assign currUnit="mo">
 			<#assign currValue=field.value/30 >
 		</#if>
     <#elseif unit=="-">
-		 <#if field.value &lt; 0.001  >
+		 <#if field.value == 0  >
+       		 <#assign currUnit="-">
+     	 <#elseif field.value &lt; 0.001  >
 			<#assign currUnit="micro">
 			<#assign currValue=field.value*1000000>
 	     <#elseif field.value &lt; 1  >
@@ -99,7 +109,7 @@
 	         				var sel =  YAHOO.util.Dom.get("${fieldHtmlId}-unit");
 	         				var unit  = sel.value;
 				         	var val = YAHOO.util.Dom.get("${fieldHtmlId}").value;
-				         	if(val!=null && val!=""){
+				         	if(val!=null && val!="" && val!=0){
 				         	  if(unit == "mo"){
 				         	    val = val * 30;
 				         	  } else if(unit == "ppm"){
