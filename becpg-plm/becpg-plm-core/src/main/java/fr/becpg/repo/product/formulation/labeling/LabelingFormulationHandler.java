@@ -186,7 +186,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			if (!compositeLabeling.getIngList().isEmpty()) {
 
 				CompositeLabeling mergeCompositeLabeling = mergeCompositeLabeling(compositeLabeling, labelingFormulaContext);
-
+				
 				// Store results
 				labelingFormulaContext.setCompositeLabeling(compositeLabeling);
 
@@ -350,7 +350,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			if (labelingFormulaContext.isGroup(component)) {
 				CompositeLabeling compositeLabeling = (CompositeLabeling) component;
 				for (AbstractLabelingComponent subComponent : compositeLabeling.getIngList().values()) {
-					AbstractLabelingComponent toMerged = merged.get(subComponent.getNodeRef());
+					
 					Double qty = labelingFormulaContext.computeQtyPerc(compositeLabeling, subComponent);
 					if ((compositeLabeling.getQty() != null) && (qty != null)) {
 						qty = qty * compositeLabeling.getQty();
@@ -360,6 +360,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					if ((compositeLabeling.getQty() != null) && (volume != null)) {
 						volume = volume * compositeLabeling.getVolume();
 					}
+					
+					AbstractLabelingComponent toMerged = merged.get(subComponent.getNodeRef());
 
 					if (toMerged == null) {
 						AbstractLabelingComponent clonedSubComponent = subComponent.clone();
@@ -367,13 +369,17 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						clonedSubComponent.setVolume(volume);
 						merged.add(clonedSubComponent);
 					} else {
+						
+						
 						if ((qty != null) && (toMerged.getQty() != null)) {
 							toMerged.setQty(toMerged.getQty() + qty);
 						}
 						if ((volume != null) && (toMerged.getVolume() != null)) {
 							toMerged.setVolume(toMerged.getVolume() + volume);
 						}
-						toMerged.getAllergens().addAll(compositeLabeling.getAllergens());
+						
+						toMerged.getAllergens().addAll(subComponent.getAllergens());
+						
 						// TODO else add warning
 					}
 				}
