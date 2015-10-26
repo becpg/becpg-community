@@ -91,8 +91,9 @@ public interface ProjectService {
 	/**
 	 * 
 	 * @param taskListNodeRef
+	 * @param taskComment 
 	 */
-	void submitTask(NodeRef taskListNodeRef);
+	void submitTask(NodeRef taskListNodeRef, String taskComment);
 	
 	/**
 	 * @param projectNodeRef
@@ -115,9 +116,10 @@ public interface ProjectService {
 	/**
 	 * Refused a project Task
 	 * @param taskNodeRef
+	 * @param taskComment 
 	 * @return 
 	 */
-	NodeRef refusedTask(NodeRef taskNodeRef);
+	NodeRef refusedTask(NodeRef taskNodeRef, String taskComment);
 
 	
 	/**

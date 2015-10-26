@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.admin.SysAdminParams;
+import org.alfresco.repo.forum.CommentService;
 import org.alfresco.repo.security.authority.AuthorityDAO;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -91,6 +92,8 @@ public class ProjectServiceImpl implements ProjectService {
 	private NamespaceService namespaceService;
 	@Autowired
 	private ScriptService scriptService;	
+	@Autowired
+	private CommentService commentService;
 
 	@Autowired
 	SysAdminParams sysAdminParams;
@@ -189,8 +192,13 @@ public class ProjectServiceImpl implements ProjectService {
 	
 
 	@Override
-	public void submitTask(NodeRef nodeRef) {
+	public void submitTask(NodeRef nodeRef, String taskComment) {
 
+
+		if (taskComment != null && !taskComment.isEmpty()) {
+			commentService.createComment(nodeRef, "", taskComment, false);
+		}
+		
 		Date startDate = (Date) nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_START);
 		Date endDate = ProjectHelper.removeTime(new Date());
 
@@ -390,10 +398,17 @@ public class ProjectServiceImpl implements ProjectService {
 	}
 
 	@Override
-	public NodeRef refusedTask(NodeRef nodeRef) {
+	public NodeRef refusedTask(NodeRef nodeRef, String taskComment) {
+		
+		NodeRef taskNodeRef = associationService.getTargetAssoc(nodeRef, ProjectModel.ASSOC_TL_REFUSED_TASK_REF);
+				
+		if (taskNodeRef!=null && taskComment != null && !taskComment.isEmpty()) {
+			commentService.createComment(taskNodeRef, "", taskComment, false);
+		}
+		
 		nodeService.setProperty(nodeRef, ProjectModel.PROP_TL_STATE, TaskState.Refused.toString());
 
-		return associationService.getTargetAssoc(nodeRef, ProjectModel.ASSOC_TL_REFUSED_TASK_REF);
+		return taskNodeRef;
 
 	}
 
