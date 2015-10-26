@@ -112,7 +112,7 @@ public class ProjectMultiLevelPlanningTest extends AbstractProjectTestCase {
 				assertEquals(today, projectData.getTaskList().get(1).getStart());
 
 				// submit task
-				projectService.submitTask(projectData.getTaskList().get(1).getNodeRef());
+				projectService.submitTask(projectData.getTaskList().get(1).getNodeRef(), "test 1");
 
 				return null;
 			}
@@ -132,7 +132,7 @@ public class ProjectMultiLevelPlanningTest extends AbstractProjectTestCase {
 
 				// submit task
 				logger.debug("submit task 3");
-				projectService.submitTask(projectData.getTaskList().get(2).getNodeRef());
+				projectService.submitTask(projectData.getTaskList().get(2).getNodeRef(), "test 2");
 
 				return null;
 			}
@@ -155,7 +155,7 @@ public class ProjectMultiLevelPlanningTest extends AbstractProjectTestCase {
 
 				// submit task
 				logger.debug("submit task");
-				projectService.submitTask(projectData.getTaskList().get(4).getNodeRef());
+				projectService.submitTask(projectData.getTaskList().get(4).getNodeRef(),"test 4");
 
 				return null;
 			}
@@ -176,7 +176,7 @@ public class ProjectMultiLevelPlanningTest extends AbstractProjectTestCase {
 
 				// submit task
 				logger.debug("submit task");
-				projectService.submitTask(projectData.getTaskList().get(5).getNodeRef());
+				projectService.submitTask(projectData.getTaskList().get(5).getNodeRef(), "test 3");
 
 				return null;
 			}

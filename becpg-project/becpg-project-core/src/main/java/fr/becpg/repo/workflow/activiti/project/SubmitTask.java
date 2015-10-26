@@ -1,7 +1,6 @@
 package fr.becpg.repo.workflow.activiti.project;
 
 import org.activiti.engine.delegate.DelegateTask;
-import org.alfresco.repo.forum.CommentService;
 import org.alfresco.repo.workflow.activiti.ActivitiScriptNode;
 import org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -14,9 +13,9 @@ import fr.becpg.util.ApplicationContextHelper;
 
 /**
  * Submit a workflow task
- * 
+ *
  * @author quere
- * 
+ *
  */
 public class SubmitTask extends ScriptTaskListener {
 
@@ -28,14 +27,11 @@ public class SubmitTask extends ScriptTaskListener {
 
 	private ProjectService projectService;
 
-	private CommentService commentService;
-
 	@Override
 	public void notify(final DelegateTask task) {
 
 		nodeService = getServiceRegistry().getNodeService();
 		projectService = (ProjectService) ApplicationContextHelper.getApplicationContext().getBean("projectService");
-		commentService = (CommentService) ApplicationContextHelper.getApplicationContext().getBean("commentService");
 
 		ActivitiScriptNode taskNode = (ActivitiScriptNode) task.getVariable("pjt_workflowTask");
 		if (taskNode != null) {
@@ -43,20 +39,16 @@ public class SubmitTask extends ScriptTaskListener {
 			logger.debug("taskNode exist " + taskNode.getNodeRef());
 			NodeRef taskNodeRef = taskNode.getNodeRef();
 
-			
 			if (nodeService.exists(taskNodeRef)) {
 
+				String taskComment = (String) task.getVariable("bpm_comment");
+
 				String transition = (String) task.getVariable("pjt_worflowTransition");
-				if (transition != null && "refused".equals(transition)) {
-					taskNodeRef = projectService.refusedTask(taskNodeRef);
+				if ((transition != null) && "refused".equals(transition)) {
+					projectService.refusedTask(taskNodeRef, taskComment);
 				} else {
-					projectService.submitTask(taskNodeRef);
+					projectService.submitTask(taskNodeRef, taskComment);
 				}
-			}
-			
-			String taskComment = (String) task.getVariable("bpm_comment");
-			if (taskComment != null && !taskComment.isEmpty()) {
-				commentService.createComment(taskNodeRef, "", taskComment, false);
 			}
 
 		}
