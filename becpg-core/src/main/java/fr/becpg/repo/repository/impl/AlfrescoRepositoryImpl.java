@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -91,13 +92,14 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 	@Override
 	public T save(T entity) {
 
-		if (entity.isTransient())
+		if (entity.isTransient()) {
 			return entity;
+		}
 
 		if (!L2CacheSupport.isCacheOnlyEnable()) {
 
-			if (entity.getNodeRef() == null || (entity.getExtraProperties() != null && entity.getExtraProperties().size() > 0)
-					|| createCollisionSafeHashCode(entity) != entity.getDbHashCode()) {
+			if ((entity.getNodeRef() == null) || ((entity.getExtraProperties() != null) && (entity.getExtraProperties().size() > 0))
+					|| (createCollisionSafeHashCode(entity) != entity.getDbHashCode())) {
 
 				Map<QName, Serializable> properties = extractProperties(entity);
 
@@ -133,15 +135,6 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 							logger.trace(" HashDiff :"
 									+ BeCPGHashCodeBuilder.printDiff(entity, findOne(entity.getNodeRef(), new HashMap<NodeRef, RepositoryEntity>())));
 						}
-					}
-
-					for (Iterator<Map.Entry<QName, Serializable>> iterator = properties.entrySet().iterator(); iterator.hasNext();) {
-						Map.Entry<QName, Serializable> prop = iterator.next();
-						if (prop.getValue() == null && !repositoryEntityDefReader.isEnforced(entity.getClass(), prop.getKey())) {
-							iterator.remove();
-							nodeService.removeProperty(entity.getNodeRef(), prop.getKey());
-						}
-
 					}
 
 					nodeService.addProperties(entity.getNodeRef(), properties);
@@ -196,7 +189,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		Map<QName, Serializable> properties = repositoryEntityDefReader.getProperties(entity);
 
 		for (Map.Entry<QName, T> prop : repositoryEntityDefReader.getEntityProperties(entity).entrySet()) {
-			if (prop.getValue() == null || !prop.getValue().isTransient()) {
+			if ((prop.getValue() == null) || !prop.getValue().isTransient()) {
 				properties.put(prop.getKey(), getOrCreateNodeRef(prop, entity));
 			}
 		}
@@ -220,7 +213,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		// TODO manage child assocs
 
 		for (Map.Entry<QName, T> association : repositoryEntityDefReader.getSingleEntityAssociations(entity).entrySet()) {
-			if (association.getValue() == null || !association.getValue().isTransient()) {
+			if ((association.getValue() == null) || !association.getValue().isTransient()) {
 				associationService.update(entity.getNodeRef(), association.getKey(), getOrCreateNodeRef(association, entity));
 			}
 		}
@@ -248,7 +241,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 	private void saveDataLists(T entity) {
 
 		Map<QName, List<? extends RepositoryEntity>> datalists = repositoryEntityDefReader.getDataLists(entity);
-		if (datalists != null && !datalists.isEmpty()) {
+		if ((datalists != null) && !datalists.isEmpty()) {
 			// Container
 			NodeRef listContainerNodeRef = getOrCreateDataListContainer(entity);
 
@@ -264,7 +257,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		for (Map.Entry<QName, ?> dataListViewEntry : datalistViews.entrySet()) {
 
 			Map<QName, List<? extends RepositoryEntity>> datalists = repositoryEntityDefReader.getDataLists(dataListViewEntry.getValue());
-			if (datalists != null && !datalists.isEmpty()) {
+			if ((datalists != null) && !datalists.isEmpty()) {
 				NodeRef listContainerNodeRef = getOrCreateDataListContainer(entity);
 
 				for (Map.Entry<QName, List<? extends RepositoryEntity>> dataListEntry : datalists.entrySet()) {
@@ -290,12 +283,12 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 	@SuppressWarnings("unchecked")
 	public void saveDataList(NodeRef listContainerNodeRef, QName dataListContainerType, QName dataListType,
 			List<? extends RepositoryEntity> dataList) {
-		if (dataList != null && listContainerNodeRef != null) {
+		if ((dataList != null) && (listContainerNodeRef != null)) {
 			NodeRef dataListNodeRef = entityListDAO.getList(listContainerNodeRef, dataListContainerType);
 
 			boolean isLazyList = dataList instanceof LazyLoadingDataList;
 
-			if (dataListNodeRef == null && (!isLazyList || ((LazyLoadingDataList<? extends RepositoryEntity>) dataList).isLoaded())
+			if ((dataListNodeRef == null) && (!isLazyList || ((LazyLoadingDataList<? extends RepositoryEntity>) dataList).isLoaded())
 					&& !dataList.isEmpty()) {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Create dataList of type : " + dataListContainerType);
@@ -304,7 +297,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 				dataListNodeRef = entityListDAO.createList(listContainerNodeRef, dataListContainerType);
 			}
 
-			if (isLazyList && ((LazyLoadingDataList<? extends RepositoryEntity>) dataList).isLoaded()) {				
+			if (isLazyList && ((LazyLoadingDataList<? extends RepositoryEntity>) dataList).isLoaded()) {
 
 				if (logger.isDebugEnabled()) {
 					if (!((LazyLoadingDataList<? extends RepositoryEntity>) dataList).getDeletedNodes().isEmpty()) {
@@ -313,14 +306,14 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 				}
 
 				for (RepositoryEntity dataListItem : ((LazyLoadingDataList<? extends RepositoryEntity>) dataList).getDeletedNodes()) {
-					if (dataListItem != null && dataListItem.getNodeRef() != null && !dataListItem.isTransient()) {
+					if ((dataListItem != null) && (dataListItem.getNodeRef() != null) && !dataListItem.isTransient()) {
 						nodeService.addAspect(dataListItem.getNodeRef(), ContentModel.ASPECT_TEMPORARY, null);
 						nodeService.deleteNode(dataListItem.getNodeRef());
 					}
 				}
 
 				((LazyLoadingDataList<? extends RepositoryEntity>) dataList).getDeletedNodes().clear();
-				
+
 				for (RepositoryEntity dataListItem : dataList) {
 					dataListItem.setParentNodeRef(dataListNodeRef);
 					save((T) dataListItem);
@@ -356,8 +349,9 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 	@Override
 	public T findOne(NodeRef id) {
-		if (id == null)
+		if (id == null) {
 			throw new IllegalArgumentException("NodeRef cannot be null ");
+		}
 
 		return findOne(id, L2CacheSupport.getCurrentThreadCache());
 
@@ -376,8 +370,9 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		QName type = nodeService.getType(id);
 
 		Class<T> entityClass = repositoryEntityDefReader.getEntityClass(type);
-		if (entityClass == null)
+		if (entityClass == null) {
 			throw new IllegalArgumentException("Type is not registered : " + type);
+		}
 
 		try {
 
@@ -497,7 +492,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 				assocRefs = associationService.getChildAssocs(entity.getNodeRef(), repositoryEntityDefReader.readQName(readMethod));
 			}
 
-			if (assocRefs != null && readMethod.getAnnotation(AlfMultiAssoc.class).isEntity()) {
+			if ((assocRefs != null) && readMethod.getAnnotation(AlfMultiAssoc.class).isEntity()) {
 				List<RepositoryEntity> entities = new LinkedList<>();
 				for (NodeRef nodeRef : assocRefs) {
 					entities.add(findOne(nodeRef, caches));
@@ -519,7 +514,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 				assocRef = associationService.getChildAssoc(entity.getNodeRef(), repositoryEntityDefReader.readQName(readMethod));
 			}
 
-			if (assocRef != null
+			if ((assocRef != null)
 					&& (pd.getPropertyType().isAnnotationPresent(AlfType.class) || readMethod.getAnnotation(AlfSingleAssoc.class).isEntity())) {
 				PropertyUtils.setProperty(entity, pd.getName(), findOne(assocRef, caches));
 			} else {
@@ -537,13 +532,13 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 		QName qname = repositoryEntityDefReader.readQName(readMethod);
 		Object prop = properties.get(qname);
 
-		if (prop != null && Enum.class.isAssignableFrom(pd.getPropertyType())) {
+		if ((prop != null) && Enum.class.isAssignableFrom(pd.getPropertyType())) {
 			if (((String) prop).isEmpty()) {
 				PropertyUtils.setProperty(entity, pd.getName(), null);
 			} else {
 				PropertyUtils.setProperty(entity, pd.getName(), Enum.valueOf((Class<Enum>) pd.getPropertyType(), (String) prop));
 			}
-		} else if (prop != null && pd.getPropertyType().isAnnotationPresent(AlfType.class)) {
+		} else if ((prop != null) && pd.getPropertyType().isAnnotationPresent(AlfType.class)) {
 			PropertyUtils.setProperty(entity, pd.getName(), findOne((NodeRef) prop, caches));
 		} else if (readMethod.isAnnotationPresent(AlfMlText.class)) {
 			PropertyUtils.setProperty(entity, pd.getName(), mlNodeService.getProperty(entity.getNodeRef(), qname));
@@ -565,17 +560,9 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 			NodeRef dataListNodeRef = entityListDAO.getList(listContainerNodeRef, datalistContainerQname);
 
 			if (dataListNodeRef != null) {
-				LinkedList<T> dataList = new LinkedList<>();
-				List<NodeRef> listItemNodeRefs = entityListDAO.getListItems(dataListNodeRef, datalistQname);
-				for (NodeRef listItemNodeRef : listItemNodeRefs) {
-					T item = findOne(listItemNodeRef, caches);
-					if (logger.isDebugEnabled()) {
-						logger.debug("Load item :" + item.toString());
-					}
-
-					dataList.add(item);
-				}
-				return dataList;
+				return entityListDAO.getListItems(dataListNodeRef, datalistQname).stream().map(el -> {
+					return findOne(el, caches);
+				}).collect(Collectors.toList());
 
 			}
 		}
@@ -626,14 +613,15 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 	@Override
 	public boolean hasDataList(RepositoryEntity entity, QName datalistContainerQname) {
 
-		if (entity.getNodeRef() != null)
+		if (entity.getNodeRef() != null) {
 			return hasDataList(entity.getNodeRef(), datalistContainerQname);
-		else {
+		} else {
 			Map<QName, List<? extends RepositoryEntity>> datalists = repositoryEntityDefReader.getDataLists(entity);
-			if (datalists != null && !datalists.isEmpty()) {
+			if ((datalists != null) && !datalists.isEmpty()) {
 				for (Map.Entry<QName, List<? extends RepositoryEntity>> dataListEntry : datalists.entrySet()) {
-					if (dataListEntry.getKey().equals(datalistContainerQname))
-						return dataListEntry.getValue() != null && !dataListEntry.getValue().isEmpty();
+					if (dataListEntry.getKey().equals(datalistContainerQname)) {
+						return (dataListEntry.getValue() != null) && !dataListEntry.getValue().isEmpty();
+					}
 				}
 			}
 		}
@@ -649,8 +637,9 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 			if (listContainerNodeRef != null) {
 				NodeRef dataListNodeRef = entityListDAO.getList(listContainerNodeRef, datalistContainerQname);
 
-				if (dataListNodeRef != null)
+				if (dataListNodeRef != null) {
 					return true;
+				}
 			}
 		}
 		return false;

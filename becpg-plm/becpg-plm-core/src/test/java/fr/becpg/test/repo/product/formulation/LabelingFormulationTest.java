@@ -214,6 +214,8 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 	}
 
+	
+	
 	@Test
 	public void testMultiLevelSFGroup() throws Exception {
 
@@ -503,6 +505,39 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 	}
 
 	@Test
+	public void testRenderAllergens() throws Exception {
+	
+		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(
+				new RetryingTransactionCallback<NodeRef>() {
+					public NodeRef execute() throws Throwable {
+						logger.debug("/*-- Create finished product --*/");
+						FinishedProductData finishedProduct = new FinishedProductData();
+						finishedProduct.setName("Produit fini 2");
+						finishedProduct.setLegalName("Legal Produit fini 2");
+						finishedProduct.setUnit(ProductUnit.kg);
+						finishedProduct.setQty(4d);
+						finishedProduct.setDensity(1d);
+						List<CompoListDataItem> compoList = new ArrayList<>();
+
+						compoList.add(new CompoListDataItem(null, null, null, 3d, CompoListUnit.kg, 0d,
+								DeclarationType.Declare, rawMaterial7NodeRef));
+						compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare,
+								rawMaterial1NodeRef));
+
+						finishedProduct.getCompoListView().setCompoList(compoList);
+						return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+					}
+				}, false, true);
+
+		// Declare
+		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
+		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "renderAllergens()", LabelingRuleType.Render));
+
+		checkILL(finishedProductNodeRef, labelingRuleList, "allergen1",Locale.FRENCH);
+	
+	}
+
+	@Test
 	public void testRawMaterialIngType() throws Exception {
 
 		final NodeRef finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(
@@ -554,7 +589,7 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 			}
 		}, false, true);
 	}
-
+	
 	
 	/**
 	 * Test ingredients calculating.
