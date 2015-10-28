@@ -92,6 +92,8 @@ public class LabelingFormulaContext {
 	private List<ReqCtrlListDataItem> errors = new ArrayList<>();
 
 	private List<ReconstituableDataItem> reconstituableDataItems = new ArrayList<>();
+	
+	private Set<NodeRef> allergens = new HashSet<>();
 
 	public List<ReqCtrlListDataItem> getErrors() {
 		return errors;
@@ -99,6 +101,10 @@ public class LabelingFormulaContext {
 
 	public void setErrors(List<ReqCtrlListDataItem> errors) {
 		this.errors = errors;
+	}
+
+	public Set<NodeRef> getAllergens() {
+		return allergens;
 	}
 
 	public List<ReconstituableDataItem> getReconstituableDataItems() {
@@ -620,6 +626,23 @@ public class LabelingFormulaContext {
 		return cleanLabel(ret);
 	}
 
+	public String renderAllergens(){
+		StringBuffer ret = new StringBuffer();
+
+		if (logger.isDebugEnabled()) {
+			logger.debug(" Render Allergens list ");
+		}
+		
+		for(NodeRef allergen: allergens){
+			if (ret.length() > 0) {
+				ret.append(defaultSeparator);
+			}
+			ret.append(getAllergenName(allergen));
+		}
+		
+		return ret.toString();
+	}
+	
 	private String renderCompositeIng(CompositeLabeling compositeLabeling) {
 		StringBuffer ret = new StringBuffer();
 		boolean appendEOF = false;

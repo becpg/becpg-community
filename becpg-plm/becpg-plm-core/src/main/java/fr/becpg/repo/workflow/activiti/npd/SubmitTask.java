@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.activiti.engine.delegate.DelegateTask;
-import org.alfresco.repo.forum.CommentService;
 import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.repo.workflow.activiti.ActivitiScriptNode;
 import org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener;
@@ -23,9 +22,9 @@ import fr.becpg.util.ApplicationContextHelper;
 
 /**
  * Submit a workflow task
- * 
+ *
  * @author quere
- * 
+ *
  */
 public class SubmitTask extends ScriptTaskListener {
 
@@ -37,14 +36,11 @@ public class SubmitTask extends ScriptTaskListener {
 
 	private ProjectService projectService;
 
-	private CommentService commentService;
-
 	@Override
 	public void notify(final DelegateTask task) {
 
 		nodeService = getServiceRegistry().getNodeService();
 		projectService = (ProjectService) ApplicationContextHelper.getApplicationContext().getBean("projectService");
-		commentService = (CommentService) ApplicationContextHelper.getApplicationContext().getBean("commentService");
 
 		/**
 		 * update task
@@ -61,10 +57,12 @@ public class SubmitTask extends ScriptTaskListener {
 			taskNodeRef = taskNode.getNodeRef();
 		}
 
-		if (action == null || action.equals("submitTask")) {
+		String taskComment = (String) task.getVariable("bpm_comment");
+
+		if ((action == null) || action.equals("submitTask")) {
 			if (taskNodeRef != null) {
 				if (nodeService.exists(taskNodeRef)) {
-					projectService.submitTask(taskNodeRef);
+					projectService.submitTask(taskNodeRef, taskComment);
 				}
 			}
 
@@ -77,21 +75,13 @@ public class SubmitTask extends ScriptTaskListener {
 			}
 
 		} else if (action.equals("refused")) {
-
-			taskNodeRef = projectService.refusedTask(taskNodeRef);
-		}
-
-		if (taskNodeRef != null) {
-			String taskComment = (String) task.getVariable("bpm_comment");
-			if (taskComment != null && !taskComment.isEmpty()) {
-				commentService.createComment(taskNodeRef, "", taskComment, false);
-			}
+			projectService.refusedTask(taskNodeRef, taskComment);
 		}
 
 	}
 
 	private void updateSelectedNodes(final NodeRef pkgNodeRef, final List<ActivitiScriptNode> selectedNodes) {
-		if (selectedNodes != null && !selectedNodes.isEmpty()) {
+		if ((selectedNodes != null) && !selectedNodes.isEmpty()) {
 
 			NodeRef projectNodeRef = null;
 

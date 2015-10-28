@@ -205,17 +205,23 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 	 */
 	public CompoListDataItem(CompoListDataItem c){
 		super();
-		this.nodeRef=c.nodeRef;
-		this.depthLevel=c.depthLevel;
-		this.qty=c.qty;
-		this.qtySubFormula=c.qtySubFormula;
-		this.compoListUnit=c.compoListUnit;
-		this.lossPerc=c.lossPerc;
-		this.declType=c.declType;
-		this.product=c.product;
+		this.nodeRef = c.nodeRef;
+		this.depthLevel = c.depthLevel;
+		this.qty = c.qty;
+		this.qtySubFormula = c.qtySubFormula;
+		this.compoListUnit = c.compoListUnit;
+		this.lossPerc = c.lossPerc;
+		this.yieldPerc = c.yieldPerc;
+		this.declType = c.declType;
+		this.overrunPerc = c.overrunPerc;
+		this.volume = c.volume;
+		this.product = c.product;
 		this.parent = c.parent;
 	}
 	
+	
+	
+
 
 	public static DeclarationType parseDeclarationType(String declType) {
 		

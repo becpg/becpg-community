@@ -24,9 +24,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 /**
  * 
  * @author matthieu
@@ -36,8 +33,6 @@ public class LazyLoadingDataList<E> implements List<E>  {
 
 	
 	List<E> backedList = null;
-
-	private static final Log logger = LogFactory.getLog(LazyLoadingDataList.class);
 	
 	public interface DataProvider<E> {
 		List<E> getData();
@@ -68,7 +63,6 @@ public class LazyLoadingDataList<E> implements List<E>  {
 	
 	private List<E> getList() {
 		if(backedList==null){
-			logger.debug("Lazy load list :"+dataProvider.getFieldName());
 			backedList  = dataProvider.getData();
 			loaded = true;
 		} 

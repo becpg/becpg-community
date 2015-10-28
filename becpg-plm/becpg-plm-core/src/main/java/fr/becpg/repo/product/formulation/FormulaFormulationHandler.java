@@ -1,19 +1,19 @@
 /*******************************************************************************
- * Copyright (C) 2010-2015 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
- * You should have received a copy of the GNU Lesser General Public License along with beCPG. 
+ * Copyright (C) 2010-2015 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with beCPG.
  * If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.product.formulation;
@@ -28,6 +28,7 @@ import java.util.Set;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.util.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
@@ -65,9 +66,9 @@ import fr.becpg.repo.security.BeCPGAccessDeniedException;
 
 /**
  * Use Spring EL to parse formula and compute value
- * 
+ *
  * @author matthieu
- * 
+ *
  */
 public class FormulaFormulationHandler extends FormulationBaseHandler<ProductData> {
 
@@ -112,7 +113,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 		if (productData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
 			return true;
 		}
-		
+
 		if (DynamicCharactExecOrder.Pre.equals(execOrder)) {
 			copyTemplateDynamicCharactLists(productData);
 		}
@@ -134,7 +135,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 	private void computeNutrientProfile(ProductData productData, ExpressionParser parser, StandardEvaluationContext context) {
 		if (productData.getNutrientProfile() != null) {
 			String scoreformula = (String) nodeService.getProperty(productData.getNutrientProfile(), PLMModel.PROP_NUTRIENT_PROFILE_SCORE_FORMULA);
-			if (scoreformula != null && scoreformula.length() > 0) {
+			if ((scoreformula != null) && (scoreformula.length() > 0)) {
 				try {
 					productData.setNutrientScore(null);
 					productData.setNutrientClass(null);
@@ -144,7 +145,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 						productData.setNutrientScore(Double.valueOf(ret.toString()));
 						String classformula = (String) nodeService.getProperty(productData.getNutrientProfile(),
 								PLMModel.PROP_NUTRIENT_PROFILE_CLASS_FORMULA);
-						if (classformula != null && classformula.length() > 0) {
+						if ((classformula != null) && (classformula.length() > 0)) {
 							exp = parser.parseExpression(SpelHelper.formatFormula(classformula));
 							productData.setNutrientClass((String) exp.getValue(context));
 						}
@@ -153,8 +154,8 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 								I18NUtil.getMessage("message.formulate.formula.incorrect.type.double", Locale.getDefault()), Locale.getDefault()));
 					}
 				} catch (Exception e) {
-					productData.setNutrientClass(I18NUtil.getMessage("message.formulate.formula.incorrect.nutrientProfile", e.getLocalizedMessage(),
-							Locale.getDefault()));
+					productData.setNutrientClass(
+							I18NUtil.getMessage("message.formulate.formula.incorrect.nutrientProfile", e.getLocalizedMessage(), Locale.getDefault()));
 					if (logger.isDebugEnabled()) {
 						logger.debug("Error in formula :" + SpelHelper.formatFormula(scoreformula), e);
 					}
@@ -164,8 +165,6 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 		}
 
 	}
-
-	
 
 	private void computeFormula(ProductData productData, ExpressionParser parser, EvaluationContext context, AbstractProductDataView view) {
 
@@ -179,31 +178,31 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 			for (DynamicCharactListItem dynamicCharactListItem : view.getDynamicCharactList()) {
 				if (execOrder.equals(dynamicCharactListItem.getExecOrder())) {
 					try {
-						if(dynamicCharactListItem.getFormula()!=null && !dynamicCharactListItem.getFormula().isEmpty()){
+						if ((dynamicCharactListItem.getFormula() != null) && !dynamicCharactListItem.getFormula().isEmpty()) {
 							String formula = SpelHelper.formatFormula(dynamicCharactListItem.getFormula());
 							logger.debug("Parse formula : " + formula + " (" + dynamicCharactListItem.getName() + ")");
 							Expression exp = parser.parseExpression(formula);
-	
-							if (dynamicCharactListItem.getColumnName() != null && !dynamicCharactListItem.getColumnName().isEmpty()) {
+
+							if ((dynamicCharactListItem.getColumnName() != null) && !dynamicCharactListItem.getColumnName().isEmpty()) {
 								QName columnName = QName.createQName(dynamicCharactListItem.getColumnName().replaceFirst("_", ":"), namespaceService);
 								if (nullDynColumnNames.contains(columnName)) {
 									nullDynColumnNames.remove(columnName);
 								}
 								for (CompositionDataItem dataListItem : view.getMainDataList()) {
-									StandardEvaluationContext dataContext = new StandardEvaluationContext(new FormulaFormulationContext(
-											alfrescoRepository, productData, dataListItem));
+									StandardEvaluationContext dataContext = new StandardEvaluationContext(
+											new FormulaFormulationContext(alfrescoRepository, productData, dataListItem));
 									formulaService.registerCustomFunctions(dataContext);
 									Object value = exp.getValue(dataContext);
-									
+
 									if (!L2CacheSupport.isCacheOnlyEnable()
-											&& (dynamicCharactListItem.getMultiLevelFormula() != null && Boolean.TRUE.equals(dynamicCharactListItem
-													.getMultiLevelFormula()))
-											&& (view instanceof CompoListView || view instanceof PackagingListView)
-											&& (dataListItem.getComponent() != null && 
-											(PLMModel.TYPE_SEMIFINISHEDPRODUCT.equals(nodeService.getType(dataListItem.getComponent())) || 
-													PLMModel.TYPE_FINISHEDPRODUCT.equals(nodeService.getType(dataListItem.getComponent())) || 
-													PLMModel.TYPE_PACKAGINGKIT.equals(nodeService.getType(dataListItem.getComponent()))))) {
-	
+											&& ((dynamicCharactListItem.getMultiLevelFormula() != null)
+													&& Boolean.TRUE.equals(dynamicCharactListItem.getMultiLevelFormula()))
+											&& ((view instanceof CompoListView) || (view instanceof PackagingListView))
+											&& ((dataListItem.getComponent() != null) && (PLMModel.TYPE_SEMIFINISHEDPRODUCT
+													.equals(nodeService.getType(dataListItem.getComponent()))
+													|| PLMModel.TYPE_FINISHEDPRODUCT.equals(nodeService.getType(dataListItem.getComponent()))
+													|| PLMModel.TYPE_PACKAGINGKIT.equals(nodeService.getType(dataListItem.getComponent()))))) {
+
 										JSONObject jsonTree = extractJSONTree(productData, dataListItem, value, exp);
 										dataListItem.getExtraProperties().put(columnName, jsonTree.toString());
 										if (logger.isDebugEnabled()) {
@@ -224,7 +223,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 						}
 						dynamicCharactListItem.setErrorLog(null);
 					} catch (Exception e) {
-						if (e.getCause() != null && e.getCause().getCause() instanceof BeCPGAccessDeniedException) {
+						if ((e.getCause() != null) && (e.getCause().getCause() instanceof BeCPGAccessDeniedException)) {
 							dynamicCharactListItem.setValue("#AccessDenied");
 						} else {
 							dynamicCharactListItem.setValue("#Error");
@@ -238,7 +237,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 					}
 				} else {
 
-					if (dynamicCharactListItem.getColumnName() != null && !dynamicCharactListItem.getColumnName().isEmpty()) {
+					if ((dynamicCharactListItem.getColumnName() != null) && !dynamicCharactListItem.getColumnName().isEmpty()) {
 						QName columnName = QName.createQName(dynamicCharactListItem.getColumnName().replaceFirst("_", ":"), namespaceService);
 						if (nullDynColumnNames.contains(columnName)) {
 							nullDynColumnNames.remove(columnName);
@@ -262,13 +261,12 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 		JSONObject jsonObject = new JSONObject();
 
 		JSONArray subList = new JSONArray();
-			
-		String path = "/"+dataListItem.getNodeRef().getId();
-		
-		
-		extractJSONSubList(productData, dataListItem, exp, path , subList);
 
-		if (subList.length()>0) {
+		String path = "/" + dataListItem.getNodeRef().getId();
+
+		extractJSONSubList(productData, dataListItem, exp, path, subList);
+
+		if (subList.length() > 0) {
 			jsonObject.put(JsonFormulaHelper.JSON_SUB_VALUES, subList);
 		}
 
@@ -278,73 +276,82 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 		return jsonObject;
 	}
 
-	private void extractJSONSubList(ProductData productData, CompositionDataItem dataListItem, Expression exp, String path, JSONArray subList) throws JSONException {
+	private void extractJSONSubList(ProductData productData, CompositionDataItem dataListItem, Expression exp, String path, JSONArray subList)
+			throws JSONException {
 		ProductData subProductData = alfrescoRepository.findOne(dataListItem.getComponent());
-		List<CompositionDataItem> compositeList = new ArrayList<CompositionDataItem>();
-		if(subProductData instanceof FinishedProductData || subProductData instanceof SemiFinishedProductData){			
+		List<Pair<CompositionDataItem, Double>> compositeList = new ArrayList<>();
+		if ((subProductData instanceof FinishedProductData) || (subProductData instanceof SemiFinishedProductData)) {
 			for (CompositionDataItem subDataListItem : subProductData.getCompoListView().getCompoList()) {
+				Pair<CompositionDataItem, Double> pair = new Pair<>(subDataListItem, subDataListItem.getQty());
 				if (FormulationHelper.getNetWeight(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT) != 0) {
-				 	subDataListItem.setQty(dataListItem.getQty() * subDataListItem.getQty() / FormulationHelper.getNetWeight(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT));
+					subDataListItem.setQty((dataListItem.getQty() * subDataListItem.getQty())
+							/ FormulationHelper.getNetWeight(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT));
 				}
-				compositeList.add(subDataListItem);
+				compositeList.add(pair);
 			}
-		}
-		else if(subProductData instanceof PackagingKitData){
+		} else if (subProductData instanceof PackagingKitData) {
 			for (CompositionDataItem subDataListItem : subProductData.getPackagingListView().getPackagingList()) {
 				Double listQty = dataListItem.getQty();
 				Double subListQty = subDataListItem.getQty();
-				if(subDataListItem instanceof PackagingListDataItem && 
-						((PackagingListDataItem)subDataListItem).getPackagingListUnit() != null && 
-						PackagingListUnit.PP.equals(((PackagingListDataItem)subDataListItem).getPackagingListUnit())){
-					subListQty = 1/subListQty;
+				Pair<CompositionDataItem, Double> pair = new Pair<>(subDataListItem, subDataListItem.getQty());
+
+				if ((subDataListItem instanceof PackagingListDataItem) && (((PackagingListDataItem) subDataListItem).getPackagingListUnit() != null)
+						&& PackagingListUnit.PP.equals(((PackagingListDataItem) subDataListItem).getPackagingListUnit())) {
+					subListQty = 1 / subListQty;
 				}
-				if(dataListItem instanceof PackagingListDataItem && 
-						((PackagingListDataItem)dataListItem).getPackagingListUnit() != null && 
-						PackagingListUnit.PP.equals(((PackagingListDataItem)dataListItem).getPackagingListUnit())){
-					listQty = 1/listQty;
+				if ((dataListItem instanceof PackagingListDataItem) && (((PackagingListDataItem) dataListItem).getPackagingListUnit() != null)
+						&& PackagingListUnit.PP.equals(((PackagingListDataItem) dataListItem).getPackagingListUnit())) {
+					listQty = 1 / listQty;
 				}
 				subDataListItem.setQty(listQty * subListQty);
-				compositeList.add(subDataListItem);
+				compositeList.add(pair);
 			}
-		}	
-		for (CompositionDataItem subDataListItem : compositeList) {
-			JSONObject subObject = new JSONObject();
-			StandardEvaluationContext dataContext = new StandardEvaluationContext(new FormulaFormulationContext(alfrescoRepository, productData,
-					subDataListItem));
-			
-			String subPath = path+"/"+subDataListItem.getNodeRef().getId();						
-			
-			formulaService.registerCustomFunctions(dataContext);
-			Object subValue = exp.getValue(dataContext);
-			subObject.put(JsonFormulaHelper.JSON_VALUE, subValue);
-			subObject.put(JsonFormulaHelper.JSON_DISPLAY_VALUE, JsonFormulaHelper.formatValue(subValue));
-			subObject.put(JsonFormulaHelper.JSON_PATH, subPath);
-			subList.put(subObject);
-			
-			if (PLMModel.TYPE_SEMIFINISHEDPRODUCT.equals(nodeService.getType(dataListItem.getComponent())) 
-					|| PLMModel.TYPE_FINISHEDPRODUCT.equals(nodeService.getType(dataListItem.getComponent()))
-					|| PLMModel.TYPE_PACKAGINGKIT.equals(nodeService.getType(dataListItem.getComponent()))) {
-				extractJSONSubList(productData, subDataListItem, exp, subPath, subList);
-			} 
+		}
+		for (Pair<CompositionDataItem, Double> pair : compositeList) {
+			try {
+				JSONObject subObject = new JSONObject();
+				
+				
+				StandardEvaluationContext dataContext = new StandardEvaluationContext(
+						new FormulaFormulationContext(alfrescoRepository, productData, pair.getFirst()));
+	
+				String subPath = path + "/" + pair.getFirst().getNodeRef().getId();
+	
+				formulaService.registerCustomFunctions(dataContext);
+				Object subValue = exp.getValue(dataContext);
+				subObject.put(JsonFormulaHelper.JSON_VALUE, subValue);
+				subObject.put(JsonFormulaHelper.JSON_DISPLAY_VALUE, JsonFormulaHelper.formatValue(subValue));
+				subObject.put(JsonFormulaHelper.JSON_PATH, subPath);
+				subList.put(subObject);
+	
+				if (PLMModel.TYPE_SEMIFINISHEDPRODUCT.equals(nodeService.getType(dataListItem.getComponent()))
+						|| PLMModel.TYPE_FINISHEDPRODUCT.equals(nodeService.getType(dataListItem.getComponent()))
+						|| PLMModel.TYPE_PACKAGINGKIT.equals(nodeService.getType(dataListItem.getComponent()))) {
+					extractJSONSubList(productData, pair.getFirst(), exp, subPath, subList);
+				}
+			} finally {
+				// Reset QTY
+				pair.getFirst().setQty(pair.getSecond());
+			}
 		}
 	}
 
 	/**
 	 * Copy missing item from template
-	 * 
+	 *
 	 * @param formulatedProduct
 	 * @param simpleListDataList
 	 */
 	private void copyTemplateDynamicCharactLists(ProductData formulatedProduct) {
-		if (formulatedProduct.getEntityTpl() != null && !formulatedProduct.getEntityTpl().equals(formulatedProduct)) {
+		if ((formulatedProduct.getEntityTpl() != null) && !formulatedProduct.getEntityTpl().equals(formulatedProduct)) {
 			ProductData templateProductData = formulatedProduct.getEntityTpl();
 
-			copyTemplateDynamicCharactList(templateProductData.getCompoListView().getDynamicCharactList(), formulatedProduct.getCompoListView()
-					.getDynamicCharactList());
-			copyTemplateDynamicCharactList(templateProductData.getPackagingListView().getDynamicCharactList(), formulatedProduct
-					.getPackagingListView().getDynamicCharactList());
-			copyTemplateDynamicCharactList(templateProductData.getProcessListView().getDynamicCharactList(), formulatedProduct.getProcessListView()
-					.getDynamicCharactList());
+			copyTemplateDynamicCharactList(templateProductData.getCompoListView().getDynamicCharactList(),
+					formulatedProduct.getCompoListView().getDynamicCharactList());
+			copyTemplateDynamicCharactList(templateProductData.getPackagingListView().getDynamicCharactList(),
+					formulatedProduct.getPackagingListView().getDynamicCharactList());
+			copyTemplateDynamicCharactList(templateProductData.getProcessListView().getDynamicCharactList(),
+					formulatedProduct.getProcessListView().getDynamicCharactList());
 		}
 	}
 
@@ -361,7 +368,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 						}
 						// update formula
 						if (sourceItem.getTitle().equals(targetItem.getTitle())) {
-							if (targetItem.getIsManual() == null || !targetItem.getIsManual()) {
+							if ((targetItem.getIsManual() == null) || !targetItem.getIsManual()) {
 								targetItem.setFormula(sourceItem.getFormula());
 								targetItem.setColumnName(sourceItem.getColumnName());
 								targetItem.setGroupColor(sourceItem.getGroupColor());
