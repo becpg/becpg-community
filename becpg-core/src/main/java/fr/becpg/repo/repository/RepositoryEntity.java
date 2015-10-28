@@ -42,6 +42,8 @@ public interface RepositoryEntity {
 	 * @return
 	 */
 	Map<QName, Serializable> getExtraProperties();
+	
+	
 	void setExtraProperties(Map<QName, Serializable> extraProperties);
 
 	/**

@@ -7,7 +7,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.PackagingListUnit;
-import fr.becpg.repo.repository.annotation.AlfEnforced;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
@@ -80,7 +79,6 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 
 	@AlfProp
 	@AlfQname(qname = "bcpg:packagingListIsMaster")
-	@AlfEnforced
 	public Boolean getIsMaster() {
 		return isMaster;
 	}

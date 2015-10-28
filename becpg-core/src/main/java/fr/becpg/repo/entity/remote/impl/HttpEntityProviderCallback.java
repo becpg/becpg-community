@@ -3,6 +3,10 @@ package fr.becpg.repo.entity.remote.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -18,8 +22,11 @@ import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.conn.ssl.SSLContextBuilder;
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.common.BeCPGException;
 import fr.becpg.repo.entity.remote.EntityProviderCallBack;
@@ -67,8 +74,8 @@ public class HttpEntityProviderCallback implements EntityProviderCallBack {
 			try (InputStream entityStream = responseEntity.getContent()) {
 				return remoteEntityService.createOrUpdateEntity(nodeRef, destNodeRef, properties, entityStream, RemoteEntityFormat.xml, this);
 			}
-			
-		} catch (IOException e) {
+
+		} catch (IOException | KeyManagementException | NoSuchAlgorithmException | KeyStoreException e) {
 			throw new BeCPGException(e);
 		}
 
@@ -91,22 +98,32 @@ public class HttpEntityProviderCallback implements EntityProviderCallBack {
 			try (InputStream dataStream = responseEntity.getContent()) {
 				remoteEntityService.addOrUpdateEntityData(destNodeRef, dataStream, RemoteEntityFormat.xml);
 			}
-		} catch (IOException e) {
+		} catch (IOException | KeyManagementException | NoSuchAlgorithmException | KeyStoreException e) {
 			throw new BeCPGException(e);
 		}
 
 	}
-	
-	private HttpResponse getResponse(HttpGet entityUrl) throws ClientProtocolException, IOException{
-		HttpClient httpClient = HttpClientBuilder.create().build();
+
+	private HttpResponse getResponse(HttpGet entityUrl)
+			throws ClientProtocolException, IOException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+
+		HttpClientBuilder cb = HttpClientBuilder.create();
+
 		HttpClientContext httpContext = HttpClientContext.create();
+
+		SSLContextBuilder sslcb = new SSLContextBuilder();
+		sslcb.loadTrustMaterial(KeyStore.getInstance(KeyStore.getDefaultType()), new TrustSelfSignedStrategy());
+		cb.setSslcontext(sslcb.build());
+
+		HttpClient httpClient = cb.build();
 		
-		
+		entityUrl.addHeader("Accept-Language", I18NUtil.getLocale().getLanguage());
+
 		UsernamePasswordCredentials creds = new UsernamePasswordCredentials(remoteUser, remotePwd);
 		CredentialsProvider credsProvider = new BasicCredentialsProvider();
 		credsProvider.setCredentials(new AuthScope(AuthScope.ANY_HOST, AuthScope.ANY_PORT), creds);
 		httpContext.setCredentialsProvider(credsProvider);
-		
+
 		return httpClient.execute(entityUrl, httpContext);
 	}
 

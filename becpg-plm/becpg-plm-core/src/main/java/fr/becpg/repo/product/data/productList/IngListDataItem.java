@@ -23,7 +23,6 @@ import java.util.List;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
-import fr.becpg.repo.repository.annotation.AlfEnforced;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -152,7 +151,6 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	}
 
 	@AlfProp
-	@AlfEnforced
 	@AlfQname(qname="bcpg:ingListIsGMO")
 	public Boolean getIsGMO() {
 		return isGMO;
@@ -166,7 +164,6 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	
 	
 	@AlfProp
-	@AlfEnforced
 	@AlfQname(qname="bcpg:ingListIsProcessingAid")
 	public Boolean getIsProcessingAid() {
 		return isProcessingAid;
@@ -178,7 +175,6 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	}
 	
 	@AlfProp
-	@AlfEnforced
 	@AlfQname(qname="bcpg:ingListIsSupport")
 	public Boolean getIsSupport() {
 		return isSupport;
@@ -192,7 +188,6 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	
 
 	@AlfProp
-	@AlfEnforced
 	@AlfQname(qname="bcpg:ingListIsIonized")
 	public Boolean getIsIonized() {
 		return isIonized;

@@ -24,7 +24,6 @@ import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.product.data.constraints.LabelingRuleType;
-import fr.becpg.repo.repository.annotation.AlfEnforced;
 import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
@@ -75,7 +74,6 @@ public class LabelingRuleListDataItem extends AbstractManualDataItem implements 
 	
 	
 	@AlfProp
-	@AlfEnforced
 	@AlfQname(qname="bcpg:lrIsActive")
 	public Boolean getIsActive() {
 		return isActive;

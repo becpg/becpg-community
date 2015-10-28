@@ -43,7 +43,6 @@ import org.springframework.stereotype.Repository;
 
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.RepositoryEntityDefReader;
-import fr.becpg.repo.repository.annotation.AlfEnforced;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -135,22 +134,6 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 		return readValueMap(entity, DataListIdentifierAttr.class, Serializable.class);
 	}
 
-	@Override
-	public boolean isEnforced(Class<? extends RepositoryEntity> clazz, QName propName) {
-		BeanWrapper beanWrapper = new BeanWrapperImpl(clazz);
-
-		for (PropertyDescriptor pd : beanWrapper.getPropertyDescriptors()) {
-			Method readMethod = pd.getReadMethod();
-			if (readMethod != null) {
-				if (readMethod.isAnnotationPresent(AlfEnforced.class) && readMethod.isAnnotationPresent(AlfQname.class) && !readMethod.isAnnotationPresent(AlfReadOnly.class)
-						&& propName.equals(readQName(readMethod))) {
-					return true;
-				}
-			}
-		}
-
-		return false;
-	}
 
 	@Override
 	public QName getType(Class<? extends RepositoryEntity> clazz) {

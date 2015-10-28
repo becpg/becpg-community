@@ -182,15 +182,18 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			if (logger.isDebugEnabled()) {
 				logger.debug("\n" + compositeLabeling.toString());
 			}
+			
 
 			if (!compositeLabeling.getIngList().isEmpty()) {
 
 				CompositeLabeling mergeCompositeLabeling = mergeCompositeLabeling(compositeLabeling, labelingFormulaContext);
-
+				
 				// Store results
 				labelingFormulaContext.setCompositeLabeling(compositeLabeling);
 
 				labelingFormulaContext.setMergedLblCompositeContext(mergeCompositeLabeling);
+				
+				extractAllergens(labelingFormulaContext,formulatedProduct); 
 
 				for (LabelingRuleListDataItem labelingRuleListDataItem : labelingRuleLists) {
 					if (LabelingRuleType.Render.equals(labelingRuleListDataItem.getLabelingRuleType())
@@ -252,6 +255,17 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 
 		return true;
+	}
+
+	private void extractAllergens(LabelingFormulaContext labelingFormulaContext, ProductData productData) {
+		for(AllergenListDataItem allergenListDataItem : productData.getAllergenList()){
+			if(allergenListDataItem.getVoluntary() ){
+				if (AllergenType.Major.toString().equals(nodeService.getProperty(allergenListDataItem.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE))) {
+					labelingFormulaContext.getAllergens().add(allergenListDataItem.getAllergen());
+				}
+			}
+		}
+		
 	}
 
 	private void aggregateLegalName(CompositeLabeling parent, LabelingFormulaContext labelingFormulaContext, boolean multiLevel) {
@@ -350,7 +364,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			if (labelingFormulaContext.isGroup(component)) {
 				CompositeLabeling compositeLabeling = (CompositeLabeling) component;
 				for (AbstractLabelingComponent subComponent : compositeLabeling.getIngList().values()) {
-					AbstractLabelingComponent toMerged = merged.get(subComponent.getNodeRef());
+					
 					Double qty = labelingFormulaContext.computeQtyPerc(compositeLabeling, subComponent);
 					if ((compositeLabeling.getQty() != null) && (qty != null)) {
 						qty = qty * compositeLabeling.getQty();
@@ -360,6 +374,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					if ((compositeLabeling.getQty() != null) && (volume != null)) {
 						volume = volume * compositeLabeling.getVolume();
 					}
+					
+					AbstractLabelingComponent toMerged = merged.get(subComponent.getNodeRef());
 
 					if (toMerged == null) {
 						AbstractLabelingComponent clonedSubComponent = subComponent.clone();
@@ -367,13 +383,17 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						clonedSubComponent.setVolume(volume);
 						merged.add(clonedSubComponent);
 					} else {
+						
+						
 						if ((qty != null) && (toMerged.getQty() != null)) {
 							toMerged.setQty(toMerged.getQty() + qty);
 						}
 						if ((volume != null) && (toMerged.getVolume() != null)) {
 							toMerged.setVolume(toMerged.getVolume() + volume);
 						}
-						toMerged.getAllergens().addAll(compositeLabeling.getAllergens());
+						
+						toMerged.getAllergens().addAll(subComponent.getAllergens());
+						
 						// TODO else add warning
 					}
 				}
@@ -510,7 +530,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 										RepositoryEntity replacement = alfrescoRepository.findOne(aggregateRule.getReplacement());
 										if (replacement instanceof IngItem) {
-											current = (IngItem) replacement;
+											current = new IngItem((IngItem) replacement);
 											current.setQty(0d);
 											current.setVolume(0d);
 
@@ -1029,7 +1049,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 						IngItem targetLabelItem = (IngItem) parent.get(reconstituableData.getTargetIngNodeRef());
 						if (targetLabelItem == null) {
-							targetLabelItem = (IngItem) alfrescoRepository.findOne(reconstituableData.getTargetIngNodeRef());
+							targetLabelItem = new IngItem((IngItem) alfrescoRepository.findOne(reconstituableData.getTargetIngNodeRef()));
 							targetLabelItem.setQty(0d);
 							targetLabelItem.setVolume(0d);
 							parent.add(targetLabelItem);
@@ -1107,13 +1127,13 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				boolean isNew = true;
 
 				if (ingLabelItem == null) {
-					ingLabelItem = (IngItem) alfrescoRepository.findOne(ingNodeRef);
+					ingLabelItem = new IngItem((IngItem) alfrescoRepository.findOne(ingNodeRef));
 
 					if (!ingListItem.isLeaf()) {
 						// Only one level of subIngs
 						for (Composite<IngListDataItem> subIngListItem : ingListItem.getChildren()) {
 
-							IngItem subIngItem = (IngItem) alfrescoRepository.findOne(subIngListItem.getData().getIng());
+							IngItem subIngItem = new IngItem((IngItem) alfrescoRepository.findOne(subIngListItem.getData().getIng()));
 							if (subIngListItem.getData().getQtyPerc() != null) {
 								subIngItem.setQty(subIngListItem.getData().getQtyPerc() / 100);
 								subIngItem.setVolume(subIngListItem.getData().getQtyPerc() / 100);

@@ -20,11 +20,8 @@ package fr.becpg.repo.product.formulation;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import org.alfresco.service.cmr.lock.LockService;
 import org.alfresco.service.cmr.lock.LockStatus;
@@ -33,6 +30,7 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
+import org.springframework.util.StopWatch;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
@@ -90,13 +88,12 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 	public void setFormulateChildren(boolean formulateChildren) {
 		this.formulateChildren = formulateChildren;
 	}
-	
 
 	@Override
 	public boolean process(ProductData productData) throws FormulateException {
 
-		if ((productData.hasCompoListEl(new VariantFilters<>()))
-				|| (productData.hasPackagingListEl(new VariantFilters<>())) || (productData.hasProcessListEl(new VariantFilters<>()))) {
+		if ((productData.hasCompoListEl(new VariantFilters<>())) || (productData.hasPackagingListEl(new VariantFilters<>()))
+				|| (productData.hasProcessListEl(new VariantFilters<>()))) {
 
 			if (productData.hasCompoListEl(new VariantFilters<>())) {
 				if (productData.getCompoListView().getReqCtrlList() != null) {
@@ -121,7 +118,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 			}
 
 			if (formulateChildren) {
-				checkShouldFormulateComponents(true, productData, new HashSet<NodeRef>());
+				checkShouldFormulateComponents(true, productData);
 			}
 
 			checkMissingProperties(productData);
@@ -131,78 +128,96 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		}
 
 		// Reset
-		if (productData.getCompoListView() != null && productData.getCompoListView().getReqCtrlList() != null) {
+		if ((productData.getCompoListView() != null) && (productData.getCompoListView().getReqCtrlList() != null)) {
 			productData.getCompoListView().getReqCtrlList().clear();
 		}
-		if (productData.getPackagingListView() != null && productData.getPackagingListView().getReqCtrlList() != null) {
+		if ((productData.getPackagingListView() != null) && (productData.getPackagingListView().getReqCtrlList() != null)) {
 			productData.getPackagingListView().getReqCtrlList().clear();
 		}
-		if (productData.getProcessListView() != null && productData.getProcessListView().getReqCtrlList() != null) {
+		if ((productData.getProcessListView() != null) && (productData.getProcessListView().getReqCtrlList() != null)) {
 			productData.getProcessListView().getReqCtrlList().clear();
 		}
-
 
 		return true;
 	}
 
 	private void clearReqCltrlList(List<ReqCtrlListDataItem> reqCtrlList) {
 		if (reqCtrlList != null) {
-			for (Iterator<ReqCtrlListDataItem> iterator = reqCtrlList.iterator(); iterator.hasNext();) {
-				ReqCtrlListDataItem reqCtrlListDataItem = iterator.next();
-				if (reqCtrlListDataItem.getNodeRef() == null) {
-					iterator.remove();
-				}
-			}
+			reqCtrlList.removeIf(r -> r.getNodeRef() == null);
 		}
-
 	}
 
-	private boolean checkShouldFormulateComponents(boolean isRoot, ProductData productData, Set<NodeRef> checkedProducts) throws FormulateException {
+	private boolean checkShouldFormulateComponents(boolean isRoot, ProductData productData) throws FormulateException {
 		boolean isFormulated = false;
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("checkShouldFormulateComponents: " + productData.getName());
-		}
+		if (!productData.getIsUpToDate()) {
 
-		if (!checkedProducts.contains(productData.getNodeRef())) {
-			checkedProducts.add(productData.getNodeRef());
+			// Avoid recheck
+			productData.setIsUpToDate(true);
+
+			if (logger.isDebugEnabled()) {
+				logger.debug("checkShouldFormulateComponents: " + productData.getName());
+			}
 
 			if (lockService.getLockStatus(productData.getNodeRef()) == LockStatus.NO_LOCK) {
 
-				Set<CompositionDataItem> compositionDataItems = new HashSet<>();
-				if (productData.getCompoList() != null) {
-					compositionDataItems.addAll(productData.getCompoList());
-				}
-				if (productData.getPackagingList() != null) {
-					compositionDataItems.addAll(productData.getPackagingList());
-				}
-				if (productData.getProcessList() != null) {
-					compositionDataItems.addAll(productData.getProcessList());
-				}
-
 				boolean shouldFormulate = false;
-				if (!compositionDataItems.isEmpty()) {
-					for (CompositionDataItem c : compositionDataItems) {
-						if (c.getComponent() != null) {
-							ProductData p = alfrescoRepository.findOne(c.getComponent());
-							// recursive
-							if (checkShouldFormulateComponents(false, p, checkedProducts)) {
-								shouldFormulate = true;
-							}
+
+				if (productData.getCompoList() != null) {
+					for (CompositionDataItem c : productData.getCompoList()) {
+						if (checkShouldFormulateComponents(false, alfrescoRepository.findOne(c.getComponent()))) {
+							shouldFormulate = true;
 						}
 					}
 				}
-				// check modified date on component
-				Date modified = productData.getModifiedDate();
-				Date formulatedDate = productData.getFormulatedDate();
-				if (!isRoot && (shouldFormulate || (modified == null || formulatedDate == null || modified.getTime() > formulatedDate.getTime()))) {
-					if (logger.isDebugEnabled()) {
-						logger.debug("auto-formulate: " + productData.getName());
+				if (productData.getPackagingList() != null) {
+					for (CompositionDataItem c : productData.getPackagingList()) {
+						if (checkShouldFormulateComponents(false, alfrescoRepository.findOne(c.getComponent()))) {
+							shouldFormulate = true;
+						}
 					}
-					productService.formulate(productData);
-					alfrescoRepository.save(productData);
-					isFormulated = true;
 				}
+				if (productData.getProcessList() != null) {
+					for (CompositionDataItem c : productData.getProcessList()) {
+						if (checkShouldFormulateComponents(false, alfrescoRepository.findOne(c.getComponent()))) {
+							shouldFormulate = true;
+						}
+					}
+				}
+
+				if (!isRoot) {
+
+					// Check modified date on component and template
+					Date tplModified = productData.getEntityTpl() != null ? productData.getEntityTpl().getModifiedDate() : null;
+					Date modified = productData.getModifiedDate();
+					if (tplModified != null) {
+						if ((modified == null) || (tplModified.getTime() > modified.getTime())) {
+							modified = tplModified;
+						}
+					}
+
+					Date formulatedDate = productData.getFormulatedDate();
+					if (shouldFormulate || ((modified == null) || (formulatedDate == null) || (modified.getTime() > formulatedDate.getTime()))) {
+
+						StopWatch watch = null;
+						if (logger.isDebugEnabled()) {
+							watch = new StopWatch();
+							watch.start();
+							logger.debug("auto-formulate: " + productData.getName());
+						}
+
+						productService.formulate(productData);
+						alfrescoRepository.save(productData);
+
+						if (logger.isDebugEnabled()) {
+							assert watch != null;
+							watch.stop();
+							logger.debug("auto-formulate : " + this.getClass().getName() + " takes " + watch.getTotalTimeSeconds() + " seconds");
+						}
+						isFormulated = true;
+					}
+				}
+
 			}
 		}
 		return isFormulated;
@@ -261,13 +276,13 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 				boolean useLiter = FormulationHelper.isCompoUnitLiter(c.getCompoListUnit());
 				Double density = FormulationHelper.getDensity(productNodeRef, nodeService);
 
-				if (density == null && (shouldUseLiter && !useLiter || !shouldUseLiter && useLiter)) {
+				if ((density == null) && ((shouldUseLiter && !useLiter) || (!shouldUseLiter && useLiter))) {
 					addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_WRONG_UNIT);
 					addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_MISSING_DENSITY);
 				}
 				Double overrunPerc = c.getOverrunPerc();
-				if (FormulationHelper.isProductUnitLiter(productUnit) || overrunPerc != null) {
-					if (density == null || density.equals(0d)) {
+				if (FormulationHelper.isProductUnitLiter(productUnit) || (overrunPerc != null)) {
+					if ((density == null) || density.equals(0d)) {
 						addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_MISSING_DENSITY);
 					}
 				}

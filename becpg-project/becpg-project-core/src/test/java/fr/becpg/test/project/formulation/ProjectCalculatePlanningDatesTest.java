@@ -110,7 +110,7 @@ public class ProjectCalculatePlanningDatesTest extends AbstractProjectTestCase {
 				assertEquals(today, projectData.getTaskList().get(0).getStart());
 
 				// submit 1st task
-				projectService.submitTask(projectData.getTaskList().get(0).getNodeRef());
+				projectService.submitTask(projectData.getTaskList().get(0).getNodeRef(),"test 1");
 
 				return null;
 			}
@@ -130,7 +130,7 @@ public class ProjectCalculatePlanningDatesTest extends AbstractProjectTestCase {
 
 				// submit 2nd task
 				logger.debug("submit 2nd task");
-				projectService.submitTask(projectData.getTaskList().get(1).getNodeRef());
+				projectService.submitTask(projectData.getTaskList().get(1).getNodeRef(),"test 2");
 
 				return null;
 			}
@@ -151,7 +151,7 @@ public class ProjectCalculatePlanningDatesTest extends AbstractProjectTestCase {
 
 				// submit 3rd task
 				logger.debug("submit 3rd task");
-				projectService.submitTask(projectData.getTaskList().get(2).getNodeRef());
+				projectService.submitTask(projectData.getTaskList().get(2).getNodeRef(),"test 3");
 
 				return null;
 			}
@@ -172,7 +172,7 @@ public class ProjectCalculatePlanningDatesTest extends AbstractProjectTestCase {
 
 				// submit 4th task
 				logger.debug("submit 4th task");
-				projectService.submitTask(projectData.getTaskList().get(3).getNodeRef());
+				projectService.submitTask(projectData.getTaskList().get(3).getNodeRef(),"test 4");
 
 				return null;
 			}

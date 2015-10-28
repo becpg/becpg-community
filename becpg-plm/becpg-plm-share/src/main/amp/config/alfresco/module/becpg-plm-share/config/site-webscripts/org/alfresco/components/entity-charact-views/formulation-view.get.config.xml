@@ -14,7 +14,7 @@
       <action type="action-link" id="onActionDelete" permission="delete" label="actions.delete-row" />
       <action type="action-link" id="onActionShowComments" permission="edit" label="actions.comment" />
       <action type="action-link" id="onActionSimulate" list="compoList" permission="edit" label="actions.simulate" />
-      <action type="action-link" id="onAddLabelingAspect" list="packagingList" permission="edit" label="actions.add-labelingAspect" />
-       <action type="action-link" id="onActionSelectColor"  permission="edit" label="actions.select-color" />
+      <action type="action-link" id="onAddLabelingAspect" permission="edit" label="actions.add-labelingAspect" />
+      <action type="action-link" id="onActionSelectColor"  permission="edit" label="actions.select-color" />
    </actionSetDataGrid>
 </formulation-view>
