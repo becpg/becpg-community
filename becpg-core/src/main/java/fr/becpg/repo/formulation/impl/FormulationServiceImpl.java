@@ -136,7 +136,7 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 				int i=0;
 				do {
 					if(logger.isDebugEnabled()){
-						logger.debug("Execute formulation chain  - "+i);
+						logger.debug("Execute formulation chain  - "+i+" for "+repositoryEntity.getName());
 					}
 					chain.executeChain(repositoryEntity);
 				} while(repositoryEntity.getReformulateCount() != null && i++ < repositoryEntity.getReformulateCount()) ;

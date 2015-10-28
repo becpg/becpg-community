@@ -98,6 +98,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private Date modifiedDate;
 	private Integer reformulateCount;
 	private IngTypeItem ingType;
+	private Boolean isUpToDate = false;
 	
 	
 	/*
@@ -208,6 +209,13 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		this.formulatedDate = formulatedDate;
 	}
 	
+	public Boolean getIsUpToDate() {
+		return isUpToDate;
+	}
+
+	public void setIsUpToDate(Boolean isUpToDate) {
+		this.isUpToDate = isUpToDate;
+	}
 
 	@AlfProp
 	@AlfReadOnly

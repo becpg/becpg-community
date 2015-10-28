@@ -36,8 +36,9 @@ public class L2CacheSupport {
 	}
 
 	public static <T> Map<NodeRef, RepositoryEntity> getCurrentThreadCache() {
-		if (threadLocalCache.get().isThreadCacheEnable)
+		if (threadLocalCache.get().isThreadCacheEnable) {
 			return threadLocalCache.get().cache;
+		}
 		return new HashMap<>();
 	}
 

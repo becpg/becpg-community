@@ -42,7 +42,6 @@ public interface RepositoryEntityDefReader<T> {
     
 	QName getType(Class<? extends RepositoryEntity> clazz);
 	QName readQName(Method method);
-	boolean isEnforced(Class<? extends RepositoryEntity> clazz, QName propName);
 	Class<T> getEntityClass(QName type);
 	
 	QName getDefaultPivoAssocName(QName dataListItemType);

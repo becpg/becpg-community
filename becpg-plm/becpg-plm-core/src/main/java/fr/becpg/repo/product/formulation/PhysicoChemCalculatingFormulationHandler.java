@@ -39,11 +39,10 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 		logger.debug("Physico chemical calculating visitor");
 
-
 		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
 			return true;
 		}
-		
+
 		// no compo => no formulation
 		if (!formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 			logger.debug("no compo => no formulation");
@@ -66,8 +65,9 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 
 	@Override
 	protected boolean isCharactFormulated(SimpleListDataItem sl) {
-		if (!super.isCharactFormulated(sl))
+		if (!super.isCharactFormulated(sl)) {
 			return false;
+		}
 		Boolean isFormulated = (Boolean) nodeService.getProperty(sl.getCharactNodeRef(), PLMModel.PROP_PHYSICO_CHEM_FORMULATED);
 		return isFormulated != null ? isFormulated : false;
 	}

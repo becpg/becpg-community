@@ -51,11 +51,10 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 		logger.debug("Nuts calculating visitor");
 
-
 		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
 			return true;
 		}
-		
+
 		// no compo => no formulation
 		if ((formulatedProduct.getNutList() == null) && !alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_NUTLIST)) {
 			logger.debug("no compo => no formulation");
@@ -75,30 +74,30 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 		if (formulatedProduct.getNutList() != null) {
 
 			computeFormulatedList(formulatedProduct, formulatedProduct.getNutList(), PLMModel.PROP_NUT_FORMULA, "message.formulate.nutList.error");
-
-			for (NutListDataItem n : formulatedProduct.getNutList()) {
+			
+			formulatedProduct.getNutList().forEach(n -> {
 
 				n.setGroup((String) nodeService.getProperty(n.getNut(), PLMModel.PROP_NUTGROUP));
 				n.setUnit(calculateUnit(formulatedProduct.getUnit(), (String) nodeService.getProperty(n.getNut(), PLMModel.PROP_NUTUNIT)));
 
 				if (n.getLossPerc() != null) {
 					if (n.getValue() != null) {
-						n.setValue(n.getValue() * (100 - n.getLossPerc()) / 100);
+						n.setValue((n.getValue() * (100 - n.getLossPerc())) / 100);
 					}
 					if (n.getMini() != null) {
-						n.setMini(n.getMini() * (100 - n.getLossPerc()) / 100);
+						n.setMini((n.getMini() * (100 - n.getLossPerc())) / 100);
 					}
 					if (n.getMaxi() != null) {
-						n.setMaxi(n.getMaxi() * (100 - n.getLossPerc()) / 100);
+						n.setMaxi((n.getMaxi() * (100 - n.getLossPerc())) / 100);
 					}
 				}
 
-				if (formulatedProduct.getServingSize() != null && n.getValue() != null) {
-					double valuePerserving = n.getValue() * formulatedProduct.getServingSize() / 100;
+				if ((formulatedProduct.getServingSize() != null) && (n.getValue() != null)) {
+					Double valuePerserving = (n.getValue() * formulatedProduct.getServingSize()) / 100;
 					n.setValuePerServing(valuePerserving);
 					Double gda = (Double) nodeService.getProperty(n.getNut(), PLMModel.PROP_NUTGDA);
-					if (gda != null && gda != 0d) {
-						n.setGdaPerc(100 * n.getValuePerServing() / gda);
+					if ((gda != null) && (gda != 0d)) {
+						n.setGdaPerc((100 * n.getValuePerServing()) / gda);
 					}
 					Double ul = (Double) nodeService.getProperty(n.getNut(), PLMModel.PROP_NUTUL);
 					if (ul != null) {
@@ -123,11 +122,15 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 				if (transientFormulation) {
 					n.setTransient(true);
 				}
-			}
+			});
+
 		}
 
 		return true;
 	}
+
+	
+	
 
 	/**
 	 * Calculate the nutListUnit
@@ -148,10 +151,11 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 	 * @return
 	 */
 	public static String calculateSuffixUnit(ProductUnit productUnit) {
-		if (ProductUnit.L.equals(productUnit) || ProductUnit.mL.equals(productUnit))
+		if (ProductUnit.L.equals(productUnit) || ProductUnit.mL.equals(productUnit)) {
 			return UNIT_PER100ML;
-		else
+		} else {
 			return UNIT_PER100G;
+		}
 	}
 
 	@Override
@@ -164,7 +168,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 		Map<NodeRef, List<NodeRef>> mandatoryCharacts = new HashMap<>();
 		for (Map.Entry<NodeRef, List<NodeRef>> kv : getMandatoryCharactsFromList(formulatedProduct.getNutList()).entrySet()) {
 			String formula = (String) nodeService.getProperty(kv.getKey(), PLMModel.PROP_NUT_FORMULA);
-			if (formula == null || formula.isEmpty()) {
+			if ((formula == null) || formula.isEmpty()) {
 				mandatoryCharacts.put(kv.getKey(), kv.getValue());
 			}
 		}
