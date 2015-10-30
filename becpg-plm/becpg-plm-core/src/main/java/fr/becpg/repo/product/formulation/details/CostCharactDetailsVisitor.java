@@ -125,7 +125,7 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 				Double qty = FormulationHelper.getQty(formulatedProduct, processListDataItem)
 						/ FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT) * subQuantity;
 				if (processListDataItem.getResource() != null && qty != null) {
-					if (ProcessListUnit.P.equals(processListDataItem.getUnit())) {
+					if (ProcessListUnit.P.equals(processListDataItem.getUnit()) && ProductUnit.P.equals(formulatedProduct.getUnit())) {
 						netQty = FormulationHelper.QTY_FOR_PIECE;
 					}
 

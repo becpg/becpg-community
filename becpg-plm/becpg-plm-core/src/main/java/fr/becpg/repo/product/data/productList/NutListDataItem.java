@@ -232,6 +232,7 @@ public class NutListDataItem extends AbstractManualDataItem  implements SimpleLi
 	 */
 	public NutListDataItem()
 	{
+		super();
 	}
 	
 	/**
@@ -255,21 +256,33 @@ public class NutListDataItem extends AbstractManualDataItem  implements SimpleLi
 		setIsManual(isManual);
 	}
 	
+	
 	/**
 	 * Copy constructor
 	 * @param n
 	 */
-	public NutListDataItem(NutListDataItem n){
+	public NutListDataItem(NutListDataItem n) {
+		super(n);
+		this.manualValue = n.manualValue;
+		this.formulatedValue = n.formulatedValue;
+		this.unit = n.unit;
+		this.mini = n.mini;
+		this.maxi = n.maxi;
+		this.valuePerServing = n.valuePerServing;
+		this.gdaPerc = n.gdaPerc;
+		this.lossPerc = n.lossPerc;
+		this.group = n.group;
+		this.method = n.method;
+		this.nut = n.nut;
+		this.isFormulated = n.isFormulated;
+		this.errorLog = n.errorLog;
+	}
 
-		setNodeRef(n.getNodeRef());
-		setValue(n.getValue());
-		setUnit(n.getUnit());
-		setMini(n.getMini());
-		setMaxi(n.getMaxi());
-		setGroup(n.getGroup());
-		setNut(n.getNut());
-		setIsManual(n.getIsManual());
-    }
+
+	@Override
+	public NutListDataItem clone() {
+		return new NutListDataItem(this);
+	}
 	
 
 	@Override

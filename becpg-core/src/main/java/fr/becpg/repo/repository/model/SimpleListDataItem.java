@@ -20,6 +20,8 @@ package fr.becpg.repo.repository.model;
 public interface SimpleListDataItem extends ManualDataItem,
 					SimpleCharactDataItem,
 					AspectAwareDataItem,
-					SortableDataItem {
+					SortableDataItem, Cloneable {
 
+	SimpleListDataItem clone();
+	
 }
