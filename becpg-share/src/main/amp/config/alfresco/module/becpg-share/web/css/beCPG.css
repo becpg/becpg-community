@@ -583,6 +583,7 @@ span.packagingList {
     padding-left: 20px;
     background-repeat: no-repeat
 }
+span.resourceParamList,
 span.processList {
     background-image: url("../../components/images/filetypes/generic-resourceProduct-16.png") !important;
     padding-left: 20px;
