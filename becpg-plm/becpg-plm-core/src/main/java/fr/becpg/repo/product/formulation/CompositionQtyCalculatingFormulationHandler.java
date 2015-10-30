@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2015 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2015 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.product.formulation;
@@ -37,17 +37,16 @@ public class CompositionQtyCalculatingFormulationHandler extends FormulationBase
 	private static final Log logger = LogFactory.getLog(CompositionQtyCalculatingFormulationHandler.class);
 
 	private NodeService nodeService;
-	
+
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
-
 
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 
 		logger.debug("Composition calculating visitor");
-		
+
 		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
 			return true;
 		}
@@ -59,19 +58,27 @@ public class CompositionQtyCalculatingFormulationHandler extends FormulationBase
 		}
 
 		// Take in account net weight
-		if (formulatedProduct.getQty() != null && formulatedProduct.getUnit() != null) {
-			if (ProductUnit.g.equals(formulatedProduct.getUnit())) {
-				formulatedProduct.setNetWeight(formulatedProduct.getQty() / 1000);
-			} else if (ProductUnit.kg.equals(formulatedProduct.getUnit())) {
-				formulatedProduct.setNetWeight(formulatedProduct.getQty());
-			} else if (ProductUnit.mL.equals(formulatedProduct.getUnit())) {
-				formulatedProduct.setNetVolume(formulatedProduct.getQty() / 1000);
-			} else if(ProductUnit.L.equals(formulatedProduct.getUnit())){
-				formulatedProduct.setNetVolume(formulatedProduct.getQty());
+
+		if (formulatedProduct.getUnit() != null) {
+			Double qty = null;
+
+			if ((formulatedProduct.getQty() != null)
+					&& (ProductUnit.g.equals(formulatedProduct.getUnit()) || ProductUnit.mL.equals(formulatedProduct.getUnit()))) {
+				qty = formulatedProduct.getQty() / 1000;
+			} else {
+				qty = formulatedProduct.getQty();
 			}
+			
+			
+			if (ProductUnit.g.equals(formulatedProduct.getUnit()) || ProductUnit.kg.equals(formulatedProduct.getUnit())) {
+				formulatedProduct.setNetWeight(qty);
+			} else if (ProductUnit.mL.equals(formulatedProduct.getUnit()) || ProductUnit.L.equals(formulatedProduct.getUnit())) {
+				formulatedProduct.setNetVolume(qty);
+			}
+
 		}
 		Double netWeight = formulatedProduct.getNetWeight();
-		Composite<CompoListDataItem> compositeAll = CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList());		
+		Composite<CompoListDataItem> compositeAll = CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList());
 
 		// calculate on every item
 		visitQtyChildren(formulatedProduct, netWeight, compositeAll);
@@ -88,14 +95,14 @@ public class CompositionQtyCalculatingFormulationHandler extends FormulationBase
 			if (qtyInKg != null) {
 
 				// take in account percentage
-				if (CompoListUnit.Perc.equals(component.getData().getCompoListUnit()) && parentQty != null && !parentQty.equals(0d)) {
-					qtyInKg = qtyInKg * parentQty / 100;
+				if (CompoListUnit.Perc.equals(component.getData().getCompoListUnit()) && (parentQty != null) && !parentQty.equals(0d)) {
+					qtyInKg = (qtyInKg * parentQty) / 100;
 				}
 
 				// Take in account yield that is defined on component
 				Double qty;
 				if (component.isLeaf()) {
-					qty = qtyInKg * 100 / FormulationHelper.getYield(component.getData());
+					qty = (qtyInKg * 100) / FormulationHelper.getYield(component.getData());
 				} else {
 					qty = qtyInKg;
 				}
@@ -106,7 +113,7 @@ public class CompositionQtyCalculatingFormulationHandler extends FormulationBase
 			if (!component.isLeaf()) {
 
 				// take in account percentage
-				if (CompoListUnit.Perc.equals(component.getData().getCompoListUnit()) && parentQty != null && !parentQty.equals(0d)) {
+				if (CompoListUnit.Perc.equals(component.getData().getCompoListUnit()) && (parentQty != null) && !parentQty.equals(0d)) {
 
 					visitQtyChildren(formulatedProduct, parentQty, component);
 
@@ -122,7 +129,7 @@ public class CompositionQtyCalculatingFormulationHandler extends FormulationBase
 					}
 					if (isUnitPerc) {
 						component.getData().setQtySubFormula(compositePerc);
-						component.getData().setQty(compositePerc * parentQty / 100);
+						component.getData().setQty((compositePerc * parentQty) / 100);
 					}
 				} else {
 					visitQtyChildren(formulatedProduct, component.getData().getQty(), component);
@@ -131,11 +138,10 @@ public class CompositionQtyCalculatingFormulationHandler extends FormulationBase
 		}
 	}
 
-
 	private Double calculateQtyInKg(CompoListDataItem compoListDataItem) {
 		Double qty = compoListDataItem.getQtySubFormula();
 		CompoListUnit compoListUnit = compoListDataItem.getCompoListUnit();
-		if (qty != null && compoListUnit != null) {
+		if ((qty != null) && (compoListUnit != null)) {
 
 			if (compoListUnit.equals(CompoListUnit.kg)) {
 				return qty;
@@ -157,7 +163,7 @@ public class CompositionQtyCalculatingFormulationHandler extends FormulationBase
 				}
 
 				Double density = FormulationHelper.getDensity(compoListDataItem.getProduct(), nodeService);
-				if (density == null || density.equals(0d)) {
+				if ((density == null) || density.equals(0d)) {
 					if (logger.isDebugEnabled()) {
 						logger.debug("Cannot calculate qty since density is null or equals to 0");
 					}
@@ -171,7 +177,7 @@ public class CompositionQtyCalculatingFormulationHandler extends FormulationBase
 				if (productQty == null) {
 					productQty = 1d;
 				}
-				return FormulationHelper.getNetWeight(compoListDataItem.getProduct(), nodeService, FormulationHelper.DEFAULT_NET_WEIGHT) * qty
+				return (FormulationHelper.getNetWeight(compoListDataItem.getProduct(), nodeService, FormulationHelper.DEFAULT_NET_WEIGHT) * qty)
 						/ productQty;
 			}
 			return qty;

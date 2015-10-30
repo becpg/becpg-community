@@ -107,11 +107,22 @@ public class PhysicoChemListDataItem extends AbstractManualDataItem implements S
 	}
 	
 	
+	public PhysicoChemListDataItem() {
+		super();
+	}
+	
 	/**
-	 * Instantiates a new physico chem list data item.
+	 * Copy constructor
+	 * @param p 
 	 */
-	public PhysicoChemListDataItem(){
+	public PhysicoChemListDataItem(PhysicoChemListDataItem p){
+		super(p);
 		
+		this.value = p.value;
+		this.unit = p.unit;
+		this.mini = p.mini;
+		this.maxi = p.maxi;
+		this.physicoChem = p.physicoChem;
 	}
 	
 	/**
@@ -131,6 +142,11 @@ public class PhysicoChemListDataItem extends AbstractManualDataItem implements S
 		this.mini = mini;
 		this.maxi = maxi;
 		this.physicoChem = physicoChem;
+	}
+	
+	@Override
+	public PhysicoChemListDataItem clone() {
+		return new PhysicoChemListDataItem(this);
 	}
 
 

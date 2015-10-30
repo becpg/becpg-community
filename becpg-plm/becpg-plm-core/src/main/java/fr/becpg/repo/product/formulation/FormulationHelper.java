@@ -195,6 +195,8 @@ public class FormulationHelper {
 		return density != null ? density : DEFAULT_DENSITY;
 	}
 
+	@Deprecated
+	//Do not use nodeService use productData
 	public static ProductUnit getProductUnit(NodeRef nodeRef, NodeService nodeService) {
 		String strProductUnit = (String) nodeService.getProperty(nodeRef, PLMModel.PROP_PRODUCT_UNIT);
 		return strProductUnit != null ? ProductUnit.valueOf(strProductUnit) : null;
