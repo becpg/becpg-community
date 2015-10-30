@@ -482,6 +482,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 						}
 					}
 					if (!isFound) {
+						@SuppressWarnings("unchecked")
 						T toAdd = (T) tsl.clone();
 						toAdd.setName(null);
 						toAdd.setNodeRef(null);

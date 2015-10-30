@@ -6,7 +6,6 @@ import java.util.Map;
 
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.helper.ExcelHelper.ExcelFieldTitleProvider;
-import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 
 public interface ExcelDataListOutputPlugin {
 
