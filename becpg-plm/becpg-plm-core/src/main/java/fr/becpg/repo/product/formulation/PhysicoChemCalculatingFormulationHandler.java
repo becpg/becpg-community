@@ -21,8 +21,6 @@ import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
 
 /**
- * The Class PhysicoChemCalculatingVisitor.
- *
  * @author querephi
  */
 public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleListFormulationHandler<PhysicoChemListDataItem> {
@@ -37,24 +35,26 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
-		logger.debug("Physico chemical calculating visitor");
 
-		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
-			return true;
+		if (accept(formulatedProduct)) {
+			logger.debug("Physico chemical calculating visitor");
+
+			if (formulatedProduct.getPhysicoChemList() == null) {
+				formulatedProduct.setPhysicoChemList(new LinkedList<PhysicoChemListDataItem>());
+			}
+
+			formulateSimpleList(formulatedProduct, formulatedProduct.getPhysicoChemList());
+
 		}
+		return true;
+	}
 
-		// no compo => no formulation
-		if (!formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-			logger.debug("no compo => no formulation");
-			return true;
+	@Override
+	protected boolean accept(ProductData formulatedProduct) {
+		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)
+				|| !formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+			return false;
 		}
-
-		if (formulatedProduct.getPhysicoChemList() == null) {
-			formulatedProduct.setPhysicoChemList(new LinkedList<PhysicoChemListDataItem>());
-		}
-
-		formulateSimpleList(formulatedProduct, formulatedProduct.getPhysicoChemList());
-
 		return true;
 	}
 

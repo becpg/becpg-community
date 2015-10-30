@@ -24,12 +24,19 @@ import fr.becpg.repo.repository.annotation.InternalField;
 public abstract class AbstractManualDataItem extends BeCPGDataObject implements ManualDataItem, SortableDataItem {
 
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 4027538577640263821L;
 	protected Boolean isManual = Boolean.FALSE;
 	protected Integer sort;
+
+	public AbstractManualDataItem(){
+		super();
+	}
+	
+	public AbstractManualDataItem(AbstractManualDataItem a) {
+		super(a);
+		this.isManual = a.isManual;
+		this.sort = a.sort;
+	}
 
 	@AlfProp
 	@InternalField
