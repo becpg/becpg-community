@@ -447,7 +447,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					//allergenList
 					List<AllergenListDataItem> allergenList = new ArrayList<>();
 					allergenList.add(new AllergenListDataItem(null, 20d, true, false, null, null, allergen1, false));
-					allergenList.add(new AllergenListDataItem(null,100d, false, false, null, null, allergen2, false));
+					allergenList.add(new AllergenListDataItem(null,5d, false, false, null, null, allergen2, false));
 					allergenList.add(new AllergenListDataItem(null,null, false, false, null, null, allergen3, false));
 					allergenList.add(new AllergenListDataItem(null,null, false, false, null, null, allergen4, false));
 					rawMaterial1.setAllergenList(allergenList);
@@ -548,8 +548,8 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					rawMaterial3.setNutList(nutList);
 					//allergenList
 					allergenList = new ArrayList<>();
-					allergenList.add(new AllergenListDataItem(null,100d, false, false, null, null, allergen1, false));
-					allergenList.add(new AllergenListDataItem(null,100d, false, false, null, null, allergen2, false));
+					allergenList.add(new AllergenListDataItem(null,15d, false, false, null, null, allergen1, false));
+					allergenList.add(new AllergenListDataItem(null,15d, false, false, null, null, allergen2, false));
 					allergenList.add(new AllergenListDataItem(null,null, true, true, null, null, allergen3, false));
 					allergenList.add(new AllergenListDataItem(null,null, false, false, null, null, allergen4, false));
 					rawMaterial3.setAllergenList(allergenList);

@@ -233,14 +233,26 @@ MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ForecastValue
 	 * @param c
 	 */
 	public CostListDataItem(CostListDataItem c){
-		super();
-		this.nodeRef = c.nodeRef;		
-		this.value = c.value;
-		this.unit =  c.unit;
-		this.maxi = c.maxi;
-		this.cost = c.cost;
-		this.isManual = c.isManual;
-		
+		super(c);	
+		this.value =c.value;	
+		this.unit = c.unit;		
+		this.previousValue = c.previousValue;
+		this.futureValue = c.futureValue;
+		this.valuePerProduct = c.valuePerProduct;
+		this.maxi = c.maxi;	
+		this.cost = c.cost;	
+		this.isFormulated = c.isFormulated;	
+		this.errorLog = c.errorLog;	
+		this.plants = c.plants;
+		this.depthLevel = c.depthLevel;
+		this.parent = c.parent;
+		this.componentNodeRef = c.componentNodeRef;
+		this.simulatedValue = c.simulatedValue;	
+	}
+	
+	@Override
+	public CostListDataItem clone() {
+		return new CostListDataItem(this);
 	}
 
 

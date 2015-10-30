@@ -7329,11 +7329,13 @@
 					<show id="bcpg:dynamicCharactColumn" />
 					<show id="bcpg:dynamicCharactErrorLog" />
 					<show id="bcpg:dynamicCharactValue" />
+					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:dynamicCharactGroupColor" label="hidden" />
 					<field id="bcpg:dynamicCharactColumn" label="hidden" />
 					<field id="bcpg:dynamicCharactErrorLog" label="hidden" />
+					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
 			</form>
 

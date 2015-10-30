@@ -760,11 +760,18 @@
                               template : "processListView.processList.^[plResource.toString() == '{item1}']?.{item2}"
                            },
                            {
-                              name : "packagingList",
-                              type : "bcpg:packagingMaterial,bcpg:packagingKit",
-                              subType : "fr.becpg.repo.product.data.productList.PackagingListDataItem",
-                              template : "packagingListView.packagingList.^[product.toString() == '{item1}']?.{item2}"
-                           }, {
+                              name : "resourceParamList",
+                              type : "mpm:resourceParam",
+                              subType : "fr.becpg.repo.product.data.productList.ResourceParamListItem",
+                              template : "resourceParamList.^[param.toString() == '{item1}']?.{item2}"
+                           }, 
+                           {
+                               name : "packagingList",
+                               type : "bcpg:packagingMaterial,bcpg:packagingKit",
+                               subType : "fr.becpg.repo.product.data.productList.PackagingListDataItem",
+                               template : "packagingListView.packagingList.^[product.toString() == '{item1}']?.{item2}"
+                            },
+                           {
                               name : "variables",
                               type : "bcpg:dynamicCharactList",
                               template : "{currentList}View.dynamicCharactList.^[title == '{name1}']?.value"

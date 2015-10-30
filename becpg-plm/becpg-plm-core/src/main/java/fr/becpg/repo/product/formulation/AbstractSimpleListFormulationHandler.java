@@ -41,6 +41,7 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.EffectiveFilters;
+import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.constraints.RequirementType;
@@ -48,6 +49,7 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.spel.SpelHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.model.ForecastValueDataItem;
 import fr.becpg.repo.repository.model.FormulatedCharactDataItem;
 import fr.becpg.repo.repository.model.MinMaxValueDataItem;
@@ -62,15 +64,13 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 	private static final Log logger = LogFactory.getLog(AbstractSimpleListFormulationHandler.class);
 
-	protected AlfrescoRepository<T> alfrescoRepository;
+	protected AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
 	protected EntityListDAO entityListDAO;
 
 	protected NodeService nodeService;
 
 	protected boolean transientFormulation = false;
-	
-	protected boolean addMandatoryCharactError = true;
 
 	protected FormulaService formulaService;
 
@@ -82,7 +82,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		this.transientFormulation = transientFormulation;
 	}
 
-	public void setAlfrescoRepository(AlfrescoRepository<T> alfrescoRepository) {
+	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
@@ -100,6 +100,8 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 	protected abstract Class<T> getInstanceClass();
 
+	protected abstract boolean accept(ProductData productData);
+
 	protected abstract List<T> getDataListVisited(ProductData partProduct);
 
 	protected abstract Map<NodeRef, List<NodeRef>> getMandatoryCharacts(ProductData formulatedProduct, QName componentType);
@@ -116,6 +118,16 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 	protected void formulateSimpleList(ProductData formulatedProduct, List<T> simpleListDataList) throws FormulateException {
 		logger.debug("formulateSimpleList");
+
+		cleanSimpleList(simpleListDataList);
+
+		synchronizeTemplate(formulatedProduct, simpleListDataList);
+
+		visitChildren(formulatedProduct, simpleListDataList);
+
+	}
+
+	protected void cleanSimpleList(List<T> simpleListDataList) {
 
 		if (simpleListDataList != null) {
 			simpleListDataList.forEach(sl -> {
@@ -139,18 +151,12 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 				}
 			});
 		}
-
-		synchronizeTemplate(formulatedProduct, simpleListDataList);
-
-		visitChildren(formulatedProduct, simpleListDataList);
-
-		
 	}
 
 	protected void visitChildren(ProductData formulatedProduct, List<T> simpleListDataList) throws FormulateException {
 
 		Map<NodeRef, Double> totalQtiesValue = new HashMap<>();
-		
+
 		boolean isGenericRawMaterial = formulatedProduct instanceof RawMaterialData;
 
 		Double netQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
@@ -169,9 +175,8 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 							isGenericRawMaterial);
 				}
 			}
-			if(addMandatoryCharactError){
-				addReqCtrlList(formulatedProduct.getCompoListView().getReqCtrlList(), mandatoryCharacts);
-			}
+			addReqCtrlList(formulatedProduct.getCompoListView().getReqCtrlList(), mandatoryCharacts);
+
 		}
 
 		// Case Generic MP
@@ -219,48 +224,36 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 			Map<NodeRef, List<NodeRef>> mandatoryCharacts, Map<NodeRef, Double> totalQtiesValue, boolean isGenericRawMaterial)
 					throws FormulateException {
 
-		if (!PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.equals(nodeService.getType(componentNodeRef))) {
+		ProductData partProduct = (ProductData) alfrescoRepository.findOne(componentNodeRef);
 
-			ProductData partProduct = (ProductData) alfrescoRepository.findOne(componentNodeRef);
+		if (!(partProduct instanceof LocalSemiFinishedProductData)) {
 
 			List<T> componentSimpleListDataList = getDataListVisited(partProduct);
 
 			if ((componentSimpleListDataList == null) || componentSimpleListDataList.isEmpty()) {
 
 				logger.debug("simpleListDataList  is null or empty");
-				for (NodeRef charactNodeRef : mandatoryCharacts.keySet()) {
+
+				mandatoryCharacts.keySet().forEach(charactNodeRef -> {
 					addMissingMandatoryCharact(mandatoryCharacts, charactNodeRef, componentNodeRef);
-				}
-				return;
+				});
 			} else {
 
-				for (SimpleListDataItem newSimpleListDataItem : simpleListDataList) {
+				simpleListDataList.forEach(newSimpleListDataItem -> {
 					if ((newSimpleListDataItem.getCharactNodeRef() != null) && isCharactFormulated(newSimpleListDataItem)) {
 
 						// calculate charact from qty or vol ?
 						Double qtyUsed = isCharactFormulatedFromVol(newSimpleListDataItem)
-								|| FormulationHelper.isProductUnitLiter(FormulationHelper.getProductUnit(componentNodeRef, nodeService)) ? volUsed
-										: weightUsed;
+								|| FormulationHelper.isProductUnitLiter(partProduct.getUnit()) ? volUsed : weightUsed;
 
 						// look for charact in component
-						SimpleListDataItem slDataItem = null;
-						for (SimpleListDataItem s : componentSimpleListDataList) {
-							if ((newSimpleListDataItem.getCharactNodeRef() != null) && (s.getCharactNodeRef() != null)
-									&& newSimpleListDataItem.getCharactNodeRef().equals(s.getCharactNodeRef())) {
-								slDataItem = s;
-								break;
-							}
-						}
+						SimpleListDataItem slDataItem = componentSimpleListDataList.stream()
+								.filter(s -> newSimpleListDataItem.getCharactNodeRef().equals(s.getCharactNodeRef())).findFirst().orElse(null);
 
 						// is it a mandatory charact ?
 						if ((slDataItem == null) || (slDataItem.getValue() == null)) {
-
-							if (slDataItem instanceof MinMaxValueDataItem) {
-								if ((((MinMaxValueDataItem) slDataItem).getMaxi() == null)
-										&& (((MinMaxValueDataItem) slDataItem).getMini() == null)) {
-									addMissingMandatoryCharact(mandatoryCharacts, newSimpleListDataItem.getCharactNodeRef(), componentNodeRef);
-								}
-							} else {
+							if (!(slDataItem instanceof MinMaxValueDataItem) || ((((MinMaxValueDataItem) slDataItem).getMaxi() == null)
+									&& (((MinMaxValueDataItem) slDataItem).getMini() == null))) {
 								addMissingMandatoryCharact(mandatoryCharacts, newSimpleListDataItem.getCharactNodeRef(), componentNodeRef);
 							}
 						}
@@ -279,14 +272,15 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 							}
 						}
 					}
-				}
+				});
+
 			}
 		}
 	}
 
 	protected void calculate(SimpleListDataItem newSimpleListDataItem, SimpleListDataItem slDataItem, Double qtyUsed, Double netQty,
 			boolean isGenericRawMaterial) {
-		
+
 		Double formulatedValue = 0d;
 		if (newSimpleListDataItem instanceof FormulatedCharactDataItem) {
 			formulatedValue = ((FormulatedCharactDataItem) newSimpleListDataItem).getFormulatedValue();
@@ -488,9 +482,10 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 						}
 					}
 					if (!isFound) {
-						tsl.setName(null);
-						tsl.setNodeRef(null);
-						tsl.setParentNodeRef(null);
+						T toAdd = (T) tsl.clone();
+						toAdd.setName(null);
+						toAdd.setNodeRef(null);
+						toAdd.setParentNodeRef(null);
 						simpleListDataList.add(tsl);
 					}
 

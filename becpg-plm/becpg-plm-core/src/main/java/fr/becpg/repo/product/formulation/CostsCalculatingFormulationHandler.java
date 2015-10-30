@@ -75,56 +75,50 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
-		logger.debug("Cost calculating visitor");
 
-		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
-			return true;
-		}
+		if (accept(formulatedProduct)) {
+			logger.debug("Cost calculating visitor");
 
-		// no formulation
-		if ((formulatedProduct.getCostList() == null) && !alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_COSTLIST)) {
-			logger.debug("no formulation");
-			return true;
-		}
+			if (formulatedProduct.getCostList() == null) {
+				formulatedProduct.setCostList(new LinkedList<CostListDataItem>());
+			}
 
-		if (formulatedProduct.getCostList() == null) {
-			formulatedProduct.setCostList(new LinkedList<CostListDataItem>());
-		}
+			if (formulatedProduct.getDefaultVariantPackagingData() == null) {
+				formulatedProduct.setDefaultVariantPackagingData(packagingHelper.getDefaultVariantPackagingData(formulatedProduct));
+			}
 
-		if (formulatedProduct.getDefaultVariantPackagingData() == null) {
-			formulatedProduct.setDefaultVariantPackagingData(packagingHelper.getDefaultVariantPackagingData(formulatedProduct));
-		}
+			if (formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))
+					|| formulatedProduct.hasPackagingListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))
+					|| formulatedProduct.hasProcessListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 
-		if (formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))
-				|| formulatedProduct.hasPackagingListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))
-				|| formulatedProduct.hasProcessListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-			formulateSimpleList(formulatedProduct, formulatedProduct.getCostList());
+				formulateSimpleList(formulatedProduct, formulatedProduct.getCostList());
 
-			// simulation: take in account cost of components defined on
-			// formulated product
-			calculateSimulationCosts(formulatedProduct);
-		}
+				// simulation: take in account cost of components defined on
+				// formulated product
+				calculateSimulationCosts(formulatedProduct);
+			}
 
-		if (formulatedProduct.getCostList() != null) {
+			if (formulatedProduct.getCostList() != null) {
 
-			computeFormulatedList(formulatedProduct, formulatedProduct.getCostList(), PLMModel.PROP_COST_FORMULA, "message.formulate.costList.error");
+				computeFormulatedList(formulatedProduct, formulatedProduct.getCostList(), PLMModel.PROP_COST_FORMULA,
+						"message.formulate.costList.error");
 
-			for (CostListDataItem c : formulatedProduct.getCostList()) {
-				c.setUnit(calculateUnit(formulatedProduct.getUnit(), (String) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTCURRENCY),
-						(Boolean) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTFIXED)));
+				for (CostListDataItem c : formulatedProduct.getCostList()) {
+					c.setUnit(calculateUnit(formulatedProduct.getUnit(), (String) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTCURRENCY),
+							(Boolean) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTFIXED)));
 
-				if (transientFormulation) {
-					c.setTransient(true);
+					if (transientFormulation) {
+						c.setTransient(true);
+					}
 				}
 			}
+
+			Composite<CostListDataItem> composite = CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCostList());
+			calculateParentCost(formulatedProduct, composite);
+
+			// profitability
+			calculateProfitability(formulatedProduct);
 		}
-
-		Composite<CostListDataItem> composite = CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCostList());
-		calculateParentCost(formulatedProduct, composite);
-
-		// profitability
-		calculateProfitability(formulatedProduct);
-
 		return true;
 	}
 
@@ -174,8 +168,9 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 					.getProcessList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 
 				Double qty = FormulationHelper.getQty(formulatedProduct, processListDataItem);
+
 				if ((processListDataItem.getResource() != null) && (qty != null)) {
-					if (ProcessListUnit.P.equals(processListDataItem.getUnit())) {
+					if (ProcessListUnit.P.equals(processListDataItem.getUnit()) && ProductUnit.P.equals(formulatedProduct.getUnit())) {
 						netQty = FormulationHelper.QTY_FOR_PIECE;
 					}
 
@@ -370,10 +365,13 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				}
 			}
 			if (addCost) {
-				templateCostList.setNodeRef(null);
-				templateCostList.setParentNodeRef(null);
-				copyTemplateCost(formulatedProduct, templateCostList, templateCostList);
-				simpleListDataList.add(templateCostList);
+				CostListDataItem costListDataItem = new CostListDataItem(templateCostList);
+				costListDataItem.setNodeRef(null);
+				costListDataItem.setParentNodeRef(null);
+				
+				
+				copyTemplateCost(formulatedProduct, templateCostList, costListDataItem);
+				simpleListDataList.add(costListDataItem);
 			}
 		};
 
@@ -588,5 +586,15 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				}
 			}
 		}
+	}
+
+	@Override
+	protected boolean accept(ProductData formulatedProduct) {
+
+		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)
+				|| (formulatedProduct.getCostList() == null && !alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_COSTLIST))) {
+			return false;
+		}
+		return true;
 	}
 }
