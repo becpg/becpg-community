@@ -69,15 +69,14 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 	}
 
 	@Override
-	public PaginatedExtractedItems extract(DataListFilter dataListFilter, List<String> metadataFields, DataListPagination pagination,
-			boolean hasWriteAccess) {
+	public PaginatedExtractedItems extract(DataListFilter dataListFilter, List<String> metadataFields) {
 
-		PaginatedExtractedItems ret = new PaginatedExtractedItems(pagination.getPageSize());
+		PaginatedExtractedItems ret = new PaginatedExtractedItems(dataListFilter.getPagination().getPageSize());
 
-		List<NodeRef> results = getListNodeRef(dataListFilter, pagination);
+		List<NodeRef> results = getListNodeRef(dataListFilter, dataListFilter.getPagination());
 
 		Map<String, Object> props = new HashMap<>();
-		props.put(PROP_ACCESSRIGHT, hasWriteAccess);
+		props.put(PROP_ACCESSRIGHT, dataListFilter.hasWriteAccess());
 
 		Map<NodeRef, Map<String, Object>> cache = new HashMap<>();
 
@@ -96,7 +95,7 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 			}
 		}
 
-		ret.setFullListSize(pagination.getFullListSize());
+		ret.setFullListSize(dataListFilter.getPagination().getFullListSize());
 
 		return ret;
 	}

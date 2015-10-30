@@ -21,7 +21,8 @@ public class ExcelHelper {
 	public interface ExcelFieldTitleProvider {
 
 		String getTitle(AttributeExtractorStructure field);
-
+		
+		boolean isAllowed(AttributeExtractorStructure field);
 	}
 
 	public static int appendExcelField(List<AttributeExtractorStructure> computedFields, String prefix, Map<String, Object> item, Row row, int cellnum) {

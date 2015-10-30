@@ -21,7 +21,6 @@ import java.util.Date;
 import java.util.List;
 
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
-import fr.becpg.repo.entity.datalist.data.DataListPagination;
 
 /**
  * Used to extract datalist datas
@@ -30,7 +29,7 @@ import fr.becpg.repo.entity.datalist.data.DataListPagination;
  */
 public interface DataListExtractor {
 
-	PaginatedExtractedItems extract(DataListFilter dataListFilter, List<String> metadataFields, DataListPagination pagination, boolean hasWriteAccess);
+	PaginatedExtractedItems extract(DataListFilter dataListFilter, List<String> metadataFields);
 
 	boolean applyTo(DataListFilter dataListFilter);
 
