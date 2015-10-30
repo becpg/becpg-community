@@ -74,10 +74,9 @@ public class WUsedExtractor extends MultiLevelExtractor {
 	}
 
 	@Override
-	public PaginatedExtractedItems extract(DataListFilter dataListFilter, List<String> metadataFields, DataListPagination pagination,
-			boolean hasWriteAccess) {
+	public PaginatedExtractedItems extract(DataListFilter dataListFilter, List<String> metadataFields) {
 
-		PaginatedExtractedItems ret = new PaginatedExtractedItems(pagination.getPageSize());
+		PaginatedExtractedItems ret = new PaginatedExtractedItems(dataListFilter.getPagination().getPageSize());
 
 		QName associationName;
 
@@ -99,8 +98,8 @@ public class WUsedExtractor extends MultiLevelExtractor {
 		props.put(PROP_ACCESSRIGHT, true); // TODO
 		props.put(PROP_REVERSE_ASSOC, assocName);
 
-		int pageSize = pagination.getPageSize();
-		int startIndex = (pagination.getPage() - 1) * pagination.getPageSize();
+		int pageSize = dataListFilter.getPagination().getPageSize();
+		int startIndex = (dataListFilter.getPagination().getPage() - 1) * dataListFilter.getPagination().getPageSize();
 
 		MultiLevelListData wUsedData = wUsedListService.getWUsedEntity(getWusedNodeRefs(dataListFilter), getWUsedOperator(dataListFilter),
 				getWUsedFilter(dataListFilter, associationName), associationName, dataListFilter.getMaxDepth());
