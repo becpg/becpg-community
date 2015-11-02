@@ -309,6 +309,7 @@
 					<value>mg/g</value>
 					<value>mL/g</value>
 					<value>UB</value>
+					<value>cps</value>
 				</list>
 			</parameter>
 		</constraint>

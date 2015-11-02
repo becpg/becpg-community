@@ -6105,7 +6105,7 @@
 					<show id="bcpg:costListUnit" />
 					<show id="bcpg:costListPreviousValue" />
 					<show id="bcpg:costListFutureValue" />
-					<show id="bcpg:parentLevel" />
+					<show id="bcpg:parentLevel" force="true" />
 					<show id="bcpg:plants" force="true" />
 					<show id="bcpg:costListComponent" />
 					<show id="bcpg:costListSimulatedValue" />
@@ -6185,6 +6185,7 @@
 					<show id="bcpg:costListPreviousValue" />
 					<show id="bcpg:costListFutureValue" />
 					<show id="bcpg:costListUnit" />
+					<show id="bcpg:parentLevel" force="true" />
 					<show id="bcpg:plants" force="true" />
 					<show id="bcpg:costListComponent" />
 					<show id="bcpg:costListSimulatedValue" />
