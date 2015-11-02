@@ -36,7 +36,6 @@ import fr.becpg.repo.entity.datalist.DataListExtractor;
 import fr.becpg.repo.entity.datalist.DataListExtractorFactory;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
-import fr.becpg.repo.entity.datalist.data.DataListPagination;
 import fr.becpg.repo.hierarchy.HierarchyHelper;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -100,9 +99,11 @@ public class ProjectListSortTest extends AbstractProjectTestCase {
 				dataListFilter.setDataType(ProjectModel.TYPE_PROJECT);
 				dataListFilter.setSortId("ProjectList");
 
-				DataListPagination pagination = new DataListPagination();
-				pagination.setMaxResults(-1);
-				pagination.setPageSize(25);
+				
+				dataListFilter.getPagination().setMaxResults(-1);
+				dataListFilter.getPagination().setPageSize(25);
+				dataListFilter.setHasWriteAccess(true);
+				
 
 				List<String> metadataFields = new LinkedList<>();
 				metadataFields.add("cm:name");
@@ -112,7 +113,7 @@ public class ProjectListSortTest extends AbstractProjectTestCase {
 				metadataFields.add("pjt:projectHierarchy2");
 
 				DataListExtractor extractor = dataListExtractorFactory.getExtractor(dataListFilter);
-				PaginatedExtractedItems extractedItems = extractor.extract(dataListFilter, metadataFields, pagination, true);
+				PaginatedExtractedItems extractedItems = extractor.extract(dataListFilter, metadataFields);
 
 				assertEquals(25, extractedItems.getPageItems().size());
 
