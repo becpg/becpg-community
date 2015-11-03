@@ -1,23 +1,24 @@
 /*******************************************************************************
- * Copyright (C) 2010-2015 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2015 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.report.entity.impl;
 
 import java.io.ByteArrayInputStream;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -67,7 +68,6 @@ import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
 import fr.becpg.repo.repository.L2CacheSupport;
-import fr.becpg.repo.repository.L2CacheSupport.Action;
 import fr.becpg.report.client.ReportException;
 import fr.becpg.report.client.ReportFormat;
 import fr.becpg.report.client.ReportParams;
@@ -118,48 +118,39 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	@Autowired
 	private TransactionService transactionService;
-	
+
 	@Autowired
 	private EntityReportExtractorPlugin[] entityExtractors;
-	
+
 	@Autowired
 	private EntityService entityService;
 
-
 	@Override
 	public void generateReport(final NodeRef entityNodeRef) {
-		L2CacheSupport.doInCacheContext(new Action() {
-			public void run() {
+		L2CacheSupport.doInCacheContext(() -> {
 
-				RunAsWork<Object> actionRunAs = new RunAsWork<Object>() {
-					@Override
-					public Object doWork() throws Exception {
-						RetryingTransactionCallback<Object> actionCallback = new RetryingTransactionCallback<Object>() {
-							@Override
-							public Object execute() {
-								if (nodeService.exists(entityNodeRef)) {
-									try {
-										policyBehaviourFilter.disableBehaviour(entityNodeRef);
-										if (logger.isDebugEnabled()) {
-											logger.debug("Generate report: " + entityNodeRef + " - "
-													+ nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
-										}
-
-										generateReportImpl(entityNodeRef);
-
-									} finally {
-										policyBehaviourFilter.enableBehaviour(entityNodeRef);
-									}
-								}
-								return null;
+			RunAsWork<Object> actionRunAs = () -> {
+				RetryingTransactionCallback<Object> actionCallback = () -> {
+					if (nodeService.exists(entityNodeRef)) {
+						try {
+							policyBehaviourFilter.disableBehaviour(entityNodeRef);
+							if (logger.isDebugEnabled()) {
+								logger.debug(
+										"Generate report: " + entityNodeRef + " - " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
 							}
-						};
-						return transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, false, false);
+
+							generateReportImpl(entityNodeRef);
+
+						} finally {
+							policyBehaviourFilter.enableBehaviour(entityNodeRef);
+						}
 					}
+					return null;
 				};
-				AuthenticationUtil.runAsSystem(actionRunAs);
-			}
-		}, false, true);
+				return transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, false, false);
+			};
+			AuthenticationUtil.runAsSystem(actionRunAs);
+		} , false, true);
 	}
 
 	private void generateReportImpl(NodeRef entityNodeRef) {
@@ -199,15 +190,15 @@ public class EntityReportServiceImpl implements EntityReportService {
 		QName type = nodeService.getType(entityNodeRef);
 
 		EntityReportExtractorPlugin ret = null;
-		for(EntityReportExtractorPlugin entityReportExtractorPlugin : entityExtractors ){
+		for (EntityReportExtractorPlugin entityReportExtractorPlugin : entityExtractors) {
 			EntityReportExtractorPriority priority = entityReportExtractorPlugin.getMatchPriority(type);
-			if(!EntityReportExtractorPriority.NONE.equals(priority)){
-				if(ret == null || priority.isHigherPriority(ret.getMatchPriority(type))){
+			if (!EntityReportExtractorPriority.NONE.equals(priority)) {
+				if ((ret == null) || priority.isHigherPriority(ret.getMatchPriority(type))) {
 					ret = entityReportExtractorPlugin;
-				}				
+				}
 			}
 		}
-		
+
 		return ret;
 	}
 
@@ -217,7 +208,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 				nodeService.getProperty(tplNodeRef, ContentModel.PROP_NAME));
 
 		String extension = (String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
-		if (documentName.endsWith(RepoConsts.REPORT_EXTENSION_BIRT) && extension != null) {
+		if (documentName.endsWith(RepoConsts.REPORT_EXTENSION_BIRT) && (extension != null)) {
 			documentName = documentName.replace(RepoConsts.REPORT_EXTENSION_BIRT, extension.toLowerCase());
 		}
 
@@ -246,7 +237,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	/**
 	 * Method that generates reports.
-	 * 
+	 *
 	 * @param entityNodeRef
 	 *            the node ref
 	 * @param tplsNodeRef
@@ -307,9 +298,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 								logger.debug("beCPGReportEngine createReport: " + entityNodeRef);
 
-								beCPGReportEngine.createReport(tplNodeRef,
-										new ByteArrayInputStream(reportData.getXmlDataSource().asXML().getBytes()), writer.getContentOutputStream(),
-										params);
+								beCPGReportEngine.createReport(tplNodeRef, new ByteArrayInputStream(reportData.getXmlDataSource().asXML().getBytes()),
+										writer.getContentOutputStream(), params);
 
 								nodeService.setProperty(documentNodeRef, ContentModel.PROP_MODIFIED, new Date());
 
@@ -384,7 +374,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	/**
 	 * Get the report templates to generate.
-	 * 
+	 *
 	 * @param nodeRef
 	 *            the product node ref
 	 * @return the report tpls to generate
@@ -414,6 +404,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 		return tplsToReturnNodeRef;
 	}
 
+	@Override
 	public void setPermissions(NodeRef tplNodeRef, NodeRef documentNodeRef) {
 
 		Set<AccessPermission> tplAccessPermissions = permissionService.getAllSetPermissions(tplNodeRef);
@@ -448,7 +439,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 			Date modified = (Date) nodeService.getProperty(entityNodeRef, ContentModel.PROP_MODIFIED);
 			Date generatedReportDate = (Date) nodeService.getProperty(entityNodeRef, ReportModel.PROP_REPORT_ENTITY_GENERATED);
 
-			if (modified == null || generatedReportDate == null || modified.getTime() > generatedReportDate.getTime()) {
+			if ((modified == null) || (generatedReportDate == null) || (modified.getTime() > generatedReportDate.getTime())) {
 				return true;
 			}
 
@@ -456,7 +447,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 			for (NodeRef tplNodeRef : tplsNodeRef) {
 				modified = (Date) nodeService.getProperty(tplNodeRef, ContentModel.PROP_MODIFIED);
-				if (modified == null || generatedReportDate == null || modified.getTime() > generatedReportDate.getTime()) {
+				if ((modified == null) || (generatedReportDate == null) || (modified.getTime() > generatedReportDate.getTime())) {
 					return true;
 				}
 			}
@@ -496,7 +487,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 					if (nodeService.hasAspect(reportNodeRef, ReportModel.ASPECT_REPORT_LOCALES)) {
 						@SuppressWarnings("unchecked")
 						List<String> langs = (List<String>) nodeService.getProperty(reportNodeRef, ReportModel.PROP_REPORT_LOCALES);
-						if (langs != null && !langs.isEmpty()) {
+						if ((langs != null) && !langs.isEmpty()) {
 							templateName += " - " + langs.get(0);
 							isDefault = false;
 						}
@@ -505,9 +496,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 					if (isDefault) {
 						ret = reportNodeRef;
 					}
-					
 
-					if (templateName.equalsIgnoreCase(reportName)) {	
+					if (templateName.equalsIgnoreCase(reportName)) {
 						return reportNodeRef;
 					}
 				}
@@ -533,4 +523,34 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 		return reportName;
 	}
+
+	@Override
+	public void generateReport(NodeRef entityNodeRef, NodeRef documentNodeRef, ReportFormat reportFormat, OutputStream outputStream)
+			throws ReportException {
+		EntityReportData reportData = retrieveExtractor(entityNodeRef).extract(entityNodeRef);
+
+		NodeRef templateNodeRef = associationService.getTargetAssoc(documentNodeRef, ReportModel.ASSOC_REPORT_TPL);
+
+		String lang = (String) nodeService.getProperty(documentNodeRef, ReportModel.PROP_REPORT_LOCALES);
+		if ((lang == null) || lang.isEmpty()) {
+			lang = I18NUtil.getLocale().getLanguage();
+		}
+
+		if (reportData.getXmlDataSource() == null) {
+			throw new IllegalArgumentException("nodeElt is null");
+		}
+
+		Map<String, Object> params = new HashMap<>();
+
+		params.put(ReportParams.PARAM_IMAGES, reportData.getDataObjects());
+		params.put(ReportParams.PARAM_FORMAT, reportFormat);
+		params.put(ReportParams.PARAM_LANG, lang);
+		params.put(ReportParams.PARAM_ASSOCIATED_TPL_FILES,
+				associationService.getTargetAssocs(templateNodeRef, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES));
+
+		beCPGReportEngine.createReport(templateNodeRef, new ByteArrayInputStream(reportData.getXmlDataSource().asXML().getBytes()), outputStream,
+				params);
+
+	}
+
 }
