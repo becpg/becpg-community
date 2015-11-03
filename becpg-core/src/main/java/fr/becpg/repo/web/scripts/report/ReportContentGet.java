@@ -28,6 +28,8 @@ import org.alfresco.repo.web.scripts.content.ContentGet;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.output.CountingOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.webscripts.WebScriptException;
@@ -35,6 +37,8 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.repo.report.entity.EntityReportService;
+import fr.becpg.report.client.ReportException;
+import fr.becpg.report.client.ReportFormat;
 
 /**
  * 
@@ -104,21 +108,41 @@ public class ReportContentGet extends ContentGet {
 		// determine attachment
 		boolean attach = Boolean.valueOf(req.getParameter("a"));
 
-		// render content
-		QName propertyQName = ContentModel.PROP_CONTENT;
-		String contentPart = templateArgs.get(PARAM_PROPERTY);
-		if (contentPart.length() > 0 && contentPart.charAt(0) == ';') {
-			if (contentPart.length() < 2) {
-				throw new WebScriptException(HttpServletResponse.SC_BAD_REQUEST, "Content property malformed");
-			}
-			String propertyName = contentPart.substring(1);
-			if (propertyName.length() > 0) {
-				propertyQName = QName.createQName(propertyName, namespaceService);
-			}
-		}
+		String format = req.getParameter("format");
 
-		// Stream the content
-		streamContentLocal(req, res, nodeRef, attach, propertyQName, null);
+		if (format != null && attach) {
+
+			ReportFormat reportFormat = ReportFormat.valueOf(format.toUpperCase());
+
+			try {
+				entityReportService.generateReport(entityNodeRef, nodeRef, reportFormat, res.getOutputStream());
+			} catch (ReportException e) {
+				throw new WebScriptException(e.getMessage(), e);
+			}
+			
+			res.setContentType(mimetypeService.guessMimetype(reportFormat.toString()));
+			
+			try (CountingOutputStream c = new CountingOutputStream(res.getOutputStream())) {
+				res.setHeader("Content-Length", Long.toString(c.getByteCount()));
+			}
+		} else {
+
+			// render content
+			QName propertyQName = ContentModel.PROP_CONTENT;
+			String contentPart = templateArgs.get(PARAM_PROPERTY);
+			if (contentPart.length() > 0 && contentPart.charAt(0) == ';') {
+				if (contentPart.length() < 2) {
+					throw new WebScriptException(HttpServletResponse.SC_BAD_REQUEST, "Content property malformed");
+				}
+				String propertyName = contentPart.substring(1);
+				if (propertyName.length() > 0) {
+					propertyQName = QName.createQName(propertyName, namespaceService);
+				}
+			}
+
+			// Stream the content
+			streamContentLocal(req, res, nodeRef, attach, propertyQName, null);
+		}
 
 	}
 
