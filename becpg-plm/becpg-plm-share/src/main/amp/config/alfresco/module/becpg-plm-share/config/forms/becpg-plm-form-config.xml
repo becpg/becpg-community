@@ -5985,7 +5985,7 @@
 					<field id="bcpg:allergenListInVolSources">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:ingList&#38;attributeName=bcpg:ingListIng</control-param>
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:product,bcpg:ing&#38;excludeClassNames=bcpg:entityTplAspect</control-param>
 						</control>
 					</field>
 					<!-- <field id="bcpg:allergenListPlants"/> -->
@@ -6085,7 +6085,7 @@
 					<field id="bcpg:allergenListInVolSources">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/DataListCharact?className=bcpg:ingList&#38;attributeName=bcpg:ingListIng</control-param>
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:product,bcpg:ing&#38;excludeClassNames=bcpg:entityTplAspect</control-param>
 						</control>
 					</field>
 					<!-- <field id="bcpg:allergenListPlants"/> -->
