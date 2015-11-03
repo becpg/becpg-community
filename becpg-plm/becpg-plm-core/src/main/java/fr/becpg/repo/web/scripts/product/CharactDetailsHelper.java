@@ -73,7 +73,9 @@ public class CharactDetailsHelper {
 			String colUnit = "";
 
 			for (CharactDetailsValue value : entry.getValue()) {
-				compEls.add(value);
+				if(!compEls.contains(value)){
+					compEls.add(value);
+				}
 				colUnit = value.getUnit();
 			}
 			
@@ -155,7 +157,9 @@ public class CharactDetailsHelper {
 
 			String colUnit = "";
 			for (CharactDetailsValue value : entry.getValue()) {
-				compEls.add(value);
+				if(!compEls.contains(value)){
+					compEls.add(value);
+				}
 				colUnit = value.getUnit();
 			}
 			cell = row.createCell(cellnum++);
