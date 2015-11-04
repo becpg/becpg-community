@@ -526,7 +526,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	@Override
 	public void generateReport(NodeRef entityNodeRef, NodeRef documentNodeRef, ReportFormat reportFormat, OutputStream outputStream)
-			throws ReportException {
+			{
+
 		EntityReportData reportData = retrieveExtractor(entityNodeRef).extract(entityNodeRef);
 
 		NodeRef templateNodeRef = associationService.getTargetAssoc(documentNodeRef, ReportModel.ASSOC_REPORT_TPL);
@@ -540,16 +541,26 @@ public class EntityReportServiceImpl implements EntityReportService {
 			throw new IllegalArgumentException("nodeElt is null");
 		}
 
-		Map<String, Object> params = new HashMap<>();
+		if (templateNodeRef == null) {
+			throw new IllegalArgumentException("templateNodeRef is null");
+		}
 
-		params.put(ReportParams.PARAM_IMAGES, reportData.getDataObjects());
-		params.put(ReportParams.PARAM_FORMAT, reportFormat);
-		params.put(ReportParams.PARAM_LANG, lang);
-		params.put(ReportParams.PARAM_ASSOCIATED_TPL_FILES,
-				associationService.getTargetAssocs(templateNodeRef, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES));
+		try {
 
-		beCPGReportEngine.createReport(templateNodeRef, new ByteArrayInputStream(reportData.getXmlDataSource().asXML().getBytes()), outputStream,
-				params);
+			Map<String, Object> params = new HashMap<>();
+
+			params.put(ReportParams.PARAM_IMAGES, reportData.getDataObjects());
+			params.put(ReportParams.PARAM_FORMAT, reportFormat);
+			params.put(ReportParams.PARAM_LANG, lang);
+			params.put(ReportParams.PARAM_ASSOCIATED_TPL_FILES,
+					associationService.getTargetAssocs(templateNodeRef, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES));
+
+			beCPGReportEngine.createReport(templateNodeRef, new ByteArrayInputStream(reportData.getXmlDataSource().asXML().getBytes()), outputStream,
+					params);
+
+		} catch (ReportException e) {
+			logger.error("Failed to execute report for template : " + templateNodeRef, e);
+		}
 
 	}
 

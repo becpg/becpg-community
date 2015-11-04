@@ -21,7 +21,6 @@ import java.io.OutputStream;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.report.client.ReportException;
 import fr.becpg.report.client.ReportFormat;
 
 public interface EntityReportService {
@@ -38,5 +37,5 @@ public interface EntityReportService {
 
 	String getSelectedReportName(NodeRef entityNodeRef);
 
-	void generateReport(NodeRef entityNodeRef, NodeRef documentNodeRef, ReportFormat reportFormat, OutputStream outputStream) throws ReportException;
+	void generateReport(NodeRef entityNodeRef, NodeRef documentNodeRef, ReportFormat reportFormat, OutputStream outputStream);
 }
