@@ -252,12 +252,11 @@
 			   if (items.length > 0) {
 				   var recordFound = me._findPrevItemByParameter(items[0].nodeRef, "nodeRef");
 
-				   if (recordFound != null) {
-
-					   me._sort(items, recordFound, "up");
-
+				   if (recordFound == null) {
+					   recordFound = items[0];
 				   }
 
+				   me._sort(items, recordFound, "up");				   
 			   }
 
 		   }
@@ -279,11 +278,12 @@
 			   if (items.length > 0) {
 				   var recordFound = me._findNextItemByParameter(items[items.length - 1].nodeRef, "nodeRef");
 
-				   if (recordFound != null) {
-
-					   me._sort(items, recordFound, "down");
-
+				   if (recordFound == null) {
+					   recordFound = items[items.length - 1];
 				   }
+
+				  me._sort(items, recordFound, "down");
+
 
 			   }
 

@@ -6,6 +6,7 @@ package fr.becpg.repo.entity.impl;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
@@ -45,7 +46,7 @@ public class AutoNumServiceImpl implements AutoNumService {
 
 	private static final String DEFAULT_PREFIX = "";
 
-	private static final String DEFAULT_PATTERN = "(^[A-Z]+)(\\d+$)";
+	private static final Pattern DEFAULT_PATTERN = java.util.regex.Pattern.compile("(^[A-Z]+)(\\d+$)");
 
 	private static final Log logger = LogFactory.getLog(AutoNumServiceImpl.class);
 
@@ -100,79 +101,8 @@ public class AutoNumServiceImpl implements AutoNumService {
 			autoNumValue = createAutoNum(className, propertyName, autoNumValue, prefix);
 		}
 
-		return prefix + autoNumValue;
+		return formatCode(prefix,autoNumValue);
 	}
-
-	/**
-	 * Decrease the AutoNum value and update db.
-	 * 
-	 * @param className
-	 *            the class name
-	 * @param propertyName
-	 *            the property name
-	 * @return the Long
-	 */
-	@Override
-	public String decreaseAutoNumValue(QName className, QName propertyName) {
-
-		Long autoNumValue = DEFAULT_AUTO_NUM;
-		NodeRef autoNumNodeRef = getAutoNumNodeRef(className, propertyName);
-		String prefix = DEFAULT_PREFIX;
-
-		// get value store in db
-		if (autoNumNodeRef != null) {
-			Long v = (Long) nodeService.getProperty(autoNumNodeRef, BeCPGModel.PROP_AUTO_NUM_VALUE);
-			prefix = getPrefix(autoNumNodeRef, DEFAULT_PREFIX);
-			if (v != null) {
-				autoNumValue = v;
-				autoNumValue--;
-			}
-
-			// update autonum node in db
-			nodeService.setProperty(autoNumNodeRef, BeCPGModel.PROP_AUTO_NUM_VALUE, autoNumValue);
-		}
-
-		return formatCode(prefix, autoNumValue);
-	}
-
-	/**
-	 * Store AutoNum value in db.
-	 * 
-	 * @param className
-	 *            the class name
-	 * @param propertyName
-	 *            the property name
-	 * @param autoNumValue
-	 *            the auto num value
-	 */
-	@Override
-	public String createOrUpdateAutoNumValue(QName className, QName propertyName, String autoNumCode) {
-
-		Long autoNumValue = DEFAULT_AUTO_NUM;
-
-		String prefix = getDefaultPrefix(className, propertyName);
-		java.util.regex.Matcher ma = java.util.regex.Pattern.compile(DEFAULT_PATTERN).matcher(autoNumCode);
-		if (ma.matches()) {
-			prefix = ma.group(1);
-			autoNumCode = ma.group(2);
-		}
-		try {
-			autoNumValue = Long.parseLong(autoNumCode);
-		} catch (NumberFormatException e) {
-			logger.warn("cannot parse autoNum : " + autoNumCode, e);
-		}
-
-		NodeRef autoNumNodeRef = getAutoNumNodeRef(className, propertyName);
-
-		if (autoNumNodeRef != null && nodeService.exists(autoNumNodeRef)) {
-			nodeService.setProperty(autoNumNodeRef, BeCPGModel.PROP_AUTO_NUM_VALUE, autoNumValue);
-		} else {
-			createAutoNum(className, propertyName, autoNumValue, prefix);
-		}
-		return formatCode(prefix, autoNumValue);
-	}
-
-	
 
 
 	/**
@@ -238,9 +168,7 @@ public class AutoNumServiceImpl implements AutoNumService {
 	
 	@Override
 	public String getOrCreateBeCPGCode(NodeRef nodeRef) {
-		// check code is already taken. If yes : this object is
-		// a copy of an
-		// existing node
+		// check code is already taken. If yes : this object is a copy of an existing node
 		String code = (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE);
 		boolean generateCode = true;
 		QName typeQName = nodeService.getType(nodeRef);
@@ -254,6 +182,11 @@ public class AutoNumServiceImpl implements AutoNumService {
 					.andNotID(nodeRef)
 					.inDB()
 					.singleValue()!=null;
+			
+			if(generateCode){
+				
+			}
+			
 		}
 
 		// generate a new code
@@ -265,9 +198,52 @@ public class AutoNumServiceImpl implements AutoNumService {
 			createOrUpdateAutoNumValue(typeQName, BeCPGModel.PROP_CODE, code);
 		}
 		
-		
 		return code;
 	}
+	
+	
+	/**
+	 * Store AutoNum value in db.
+	 * 
+	 * @param className
+	 *            the class name
+	 * @param propertyName
+	 *            the property name
+	 * @param autoNumValue
+	 *            the auto num value
+	 */
+	private String createOrUpdateAutoNumValue(QName className, QName propertyName, String autoNumCode) {
+
+		Long autoNumValue = DEFAULT_AUTO_NUM;
+
+		String prefix = getDefaultPrefix(className, propertyName);
+		java.util.regex.Matcher ma = DEFAULT_PATTERN.matcher(autoNumCode);
+		if (ma.matches()) {
+			prefix = ma.group(1);
+			autoNumCode = ma.group(2);
+		}
+		try {
+			autoNumValue = Long.parseLong(autoNumCode);
+		} catch (NumberFormatException e) {
+			logger.warn("cannot parse autoNum : " + autoNumCode, e);
+		}
+
+		NodeRef autoNumNodeRef = getAutoNumNodeRef(className, propertyName);
+		
+		
+
+		if (autoNumNodeRef != null && nodeService.exists(autoNumNodeRef)) {
+			Long oldValue = (Long) nodeService.getProperty(autoNumNodeRef, BeCPGModel.PROP_AUTO_NUM_VALUE);
+			if(oldValue==null || oldValue < autoNumValue) {
+				nodeService.setProperty(autoNumNodeRef, BeCPGModel.PROP_AUTO_NUM_VALUE, autoNumValue);
+			}
+		} else {
+			createAutoNum(className, propertyName, autoNumValue, prefix);
+		}
+		return formatCode(prefix, autoNumValue);
+	}
+
+	
 	
 	/**
 	 * get AutoNum value from db.
