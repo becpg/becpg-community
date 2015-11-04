@@ -25,11 +25,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.web.scripts.content.ContentGet;
+import org.alfresco.repo.webdav.WebDAVHelper;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.output.CountingOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.webscripts.WebScriptException;
@@ -37,13 +37,12 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.repo.report.entity.EntityReportService;
-import fr.becpg.report.client.ReportException;
 import fr.becpg.report.client.ReportFormat;
 
 /**
- * 
+ *
  * GET web script to get stream report content from the repository
- * 
+ *
  * @author matthieu
  * @since 1.5.c
  */
@@ -60,6 +59,7 @@ public class ReportContentGet extends ContentGet {
 
 	private NamespaceService namespaceService;
 
+	@Override
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
 	}
@@ -72,7 +72,7 @@ public class ReportContentGet extends ContentGet {
 	public void execute(final WebScriptRequest req, final WebScriptResponse res) throws IOException {
 		String entityNodeRefParam = req.getParameter(PARAM_ENTITY_NODEREF);
 		NodeRef entityNodeRef = null;
-		if (entityNodeRefParam != null && !entityNodeRefParam.isEmpty()) {
+		if ((entityNodeRefParam != null) && !entityNodeRefParam.isEmpty()) {
 			entityNodeRef = new NodeRef(entityNodeRefParam);
 		}
 
@@ -84,7 +84,7 @@ public class ReportContentGet extends ContentGet {
 			String storeType = templateArgs.get(PARAM_STORE_TYPE);
 			String storeId = templateArgs.get(PARAM_STORE_ID);
 			String nodeId = templateArgs.get(PARAM_ID);
-			if (storeType != null && storeId != null && nodeId != null) {
+			if ((storeType != null) && (storeId != null) && (nodeId != null)) {
 				nodeRef = new NodeRef(storeType, storeId, nodeId);
 			}
 		}
@@ -110,27 +110,30 @@ public class ReportContentGet extends ContentGet {
 
 		String format = req.getParameter("format");
 
-		if (format != null && attach) {
+		if ((format != null) && attach) {
 
 			ReportFormat reportFormat = ReportFormat.valueOf(format.toUpperCase());
 
-			try {
-				entityReportService.generateReport(entityNodeRef, nodeRef, reportFormat, res.getOutputStream());
-			} catch (ReportException e) {
-				throw new WebScriptException(e.getMessage(), e);
-			}
+			String name = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
+		
+			String mimeType = mimetypeService.getMimetype(format);
+
+			name = FilenameUtils.removeExtension(name) + FilenameUtils.EXTENSION_SEPARATOR_STR + mimetypeService.getExtension(mimeType);
 			
-			res.setContentType(mimetypeService.guessMimetype(reportFormat.toString()));
-			
-			try (CountingOutputStream c = new CountingOutputStream(res.getOutputStream())) {
-				res.setHeader("Content-Length", Long.toString(c.getByteCount()));
-			}
+			logger.debug("Rendering report at format :" + reportFormat.toString() + " mimetype: " + mimeType + " name " + name);
+
+			entityReportService.generateReport(entityNodeRef, nodeRef, reportFormat, res.getOutputStream());
+
+			res.setContentType(mimeType);
+			res.setHeader("Content-Disposition", "attachment; filename=\"" + WebDAVHelper.encodeURL(name));
+
+			return;
 		} else {
 
 			// render content
 			QName propertyQName = ContentModel.PROP_CONTENT;
 			String contentPart = templateArgs.get(PARAM_PROPERTY);
-			if (contentPart.length() > 0 && contentPart.charAt(0) == ';') {
+			if ((contentPart.length() > 0) && (contentPart.charAt(0) == ';')) {
 				if (contentPart.length() < 2) {
 					throw new WebScriptException(HttpServletResponse.SC_BAD_REQUEST, "Content property malformed");
 				}
