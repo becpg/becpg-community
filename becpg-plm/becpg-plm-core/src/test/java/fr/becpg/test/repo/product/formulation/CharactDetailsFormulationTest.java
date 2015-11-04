@@ -195,7 +195,7 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 						
 						String trace = "cost: " + nodeService.getProperty(kv.getKey(), BeCPGModel.PROP_CHARACT_NAME) + 
 								" - source: " + nodeService.getProperty(kv2.getKeyNodeRef(),BeCPGModel.PROP_CHARACT_NAME) + 
-								" - value: " + kv.getValue();
+								" - value: " + kv2.getValue();
 						logger.debug(trace);
 						
 						//cost1
@@ -311,7 +311,7 @@ public class CharactDetailsFormulationTest extends AbstractFinishedProductTest {
 					
 				}
 				
-				assertEquals("Verify checks done", 13, checks);
+				assertEquals("Verify checks done", 12, checks);
 							
 				return null;
 

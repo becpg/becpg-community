@@ -100,7 +100,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 				Double qtyUsed = FormulationHelper.isProductUnitLiter(partProduct.getUnit()) ? vol : weight;
 
-				if (qtyUsed != null) {
+				if (qtyUsed != null && qtyUsed > 0) {
 					if (! (partProduct instanceof LocalSemiFinishedProductData)) {
 						visitPart(compoItem, partProduct, formulatedProduct.getAllergenList(), retainNodes, qtyUsed, netQty, isGenericRawMaterial, errors)
 								.forEach(error -> {

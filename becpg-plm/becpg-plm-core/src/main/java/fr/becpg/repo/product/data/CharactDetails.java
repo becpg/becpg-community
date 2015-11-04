@@ -40,7 +40,7 @@ public class CharactDetails {
 		super();
 		this.computedCharacts = computedCharacts;
 	}
-
+	
 	public void addKeyValue(NodeRef charactNodeRef, CharactDetailsValue value) {
 		List<CharactDetailsValue> tmp = data.get(charactNodeRef);
 		if(tmp == null){
