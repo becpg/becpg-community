@@ -10,6 +10,8 @@ import org.alfresco.service.namespace.QName;
  */
 public interface AutoNumService {
 
+
+	String getOrCreateBeCPGCode(NodeRef nodeRef);
 	/**
 	 * Gets the auto num value.
 	 *
@@ -18,26 +20,7 @@ public interface AutoNumService {
 	 * @return the auto num value
 	 */
 	String getAutoNumValue(QName className, QName propertyName);
-	
-	/**
-	 * Decrease auto num value.
-	 *
-	 * @param className the class name
-	 * @param propertyName the property name
-	 * @return the Long
-	 */
-	String decreaseAutoNumValue(QName className, QName propertyName);
-	
-	/**
-	 * Creates the or update auto num value.
-	 *
-	 * @param className the class name
-	 * @param propertyName the property name
-	 * @param code the value
-	 * @return the prefixed code value
-	 */
-	String createOrUpdateAutoNumValue(QName className, QName propertyName, String code);
-	
+
 	/**
 	 * Delete auto num value.
 	 *
@@ -66,5 +49,4 @@ public interface AutoNumService {
 	String getPrefixedCode(QName type, QName propertyName, Long autoNum);
 
 	
-	String getOrCreateBeCPGCode(NodeRef nodeRef);
 }
