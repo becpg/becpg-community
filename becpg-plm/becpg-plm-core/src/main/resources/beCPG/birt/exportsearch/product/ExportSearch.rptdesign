@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
-    <property name="createdBy">Eclipse BIRT Designer Version 4.2.2.v201301221637 Build &lt;4.2.2.v20130206-1509></property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.4.2.v201410272105 Build &lt;4.4.2.v20150217-1805></property>
     <property name="units">in</property>
     <property name="iconFile">/templates/blank_report.gif</property>
     <property name="bidiLayoutOrientation">ltr</property>
@@ -343,24 +343,25 @@
             <property name="paddingBottom">3pt</property>
         </style>
         <style name="beCPG-Table-Header" id="1553">
+            <property name="backgroundColor">#EEEEEE</property>
             <property name="fontWeight">bold</property>
-            <property name="color">#339966</property>
+            <property name="color">#000000</property>
         </style>
         <style name="beCPG-table-row-header" id="1554">
             <property name="fontWeight">bold</property>
             <property name="color">#808080</property>
         </style>
         <style name="beCPG-Table-border" id="1557">
-            <property name="borderBottomColor">#339966</property>
+            <property name="borderBottomColor">#000000</property>
             <property name="borderBottomStyle">solid</property>
             <property name="borderBottomWidth">thin</property>
-            <property name="borderLeftColor">#339966</property>
+            <property name="borderLeftColor">#000000</property>
             <property name="borderLeftStyle">solid</property>
             <property name="borderLeftWidth">thin</property>
-            <property name="borderRightColor">#339966</property>
+            <property name="borderRightColor">#000000</property>
             <property name="borderRightStyle">solid</property>
             <property name="borderRightWidth">thin</property>
-            <property name="borderTopColor">#339966</property>
+            <property name="borderTopColor">#000000</property>
             <property name="borderTopStyle">solid</property>
             <property name="borderTopWidth">thin</property>
         </style>
@@ -462,32 +463,32 @@
                 <property name="width">0.5877862595419847in</property>
             </column>
             <column id="1908">
-                <property name="width">0.8320610687022901in</property>
                 <property name="style">beCPG-table-col</property>
+                <property name="width">0.8320610687022901in</property>
             </column>
             <column id="1909">
-                <property name="width">1.16793893129771in</property>
                 <property name="style">beCPG-table-col</property>
+                <property name="width">1.16793893129771in</property>
             </column>
             <column id="1910">
-                <property name="width">0.8625954198473282in</property>
                 <property name="style">beCPG-table-col</property>
+                <property name="width">0.8625954198473282in</property>
             </column>
             <column id="1911">
-                <property name="width">0.8625954198473282in</property>
                 <property name="style">beCPG-table-col</property>
+                <property name="width">0.8625954198473282in</property>
             </column>
             <column id="1917">
-                <property name="width">0.8625954198473282in</property>
                 <property name="style">beCPG-table-col</property>
+                <property name="width">0.8625954198473282in</property>
             </column>
             <column id="2050">
-                <property name="width">0.8625954198473282in</property>
                 <property name="style">beCPG-table-col</property>
+                <property name="width">0.8625954198473282in</property>
             </column>
             <column id="2038">
-                <property name="width">0.8549618320610687in</property>
                 <property name="style">beCPG-table-col</property>
+                <property name="width">0.8549618320610687in</property>
             </column>
             <header>
                 <row id="1885">
@@ -589,7 +590,7 @@ true
                                 <structure>
                                     <property name="name">thumbnail</property>
                                     <text-property name="displayName">thumbnail</text-property>
-                                    <expression name="expression" type="javascript">reportContext.getAppContext().get("node" + row._outer["id"] + "-thumbnail");</expression>
+                                    <expression name="expression" type="javascript">reportContext.getAppContext().get(row._outer["id"] + "-thumbnail");</expression>
                                     <property name="dataType">blob</property>
                                     <property name="allowExport">true</property>
                                 </structure>
@@ -682,7 +683,7 @@ true
                 9Y4iWru9G9fZn2hd92y8+9tkd/3tAiVVjjki7q0HQfzFkRwViOFE67UGolHrbcSTbOEx13mbp3Cgw/eh
                 trBmRzlAMBj4RHzOp4TBw85x0LOEHQYlQpVQVJQIVUJRUSJUCUVFiVAlFBUlQpVQVPw/ROKj2ROf1SwA
                 AAAASUVORK5CYII=
-            </property>
+</property>
         </structure>
     </list-property>
 </report>
