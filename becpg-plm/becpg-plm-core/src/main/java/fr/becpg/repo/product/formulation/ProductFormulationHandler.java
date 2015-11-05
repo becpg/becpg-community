@@ -165,21 +165,21 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 
 				if (productData.getCompoList() != null) {
 					for (CompositionDataItem c : productData.getCompoList()) {
-						if (c.getComponent()!=null && checkShouldFormulateComponents(false, alfrescoRepository.findOne(c.getComponent()))) {
+						if (c.getComponent() != null && checkShouldFormulateComponents(false, alfrescoRepository.findOne(c.getComponent()))) {
 							shouldFormulate = true;
 						}
 					}
 				}
 				if (productData.getPackagingList() != null) {
 					for (CompositionDataItem c : productData.getPackagingList()) {
-						if (c.getComponent()!=null && checkShouldFormulateComponents(false, alfrescoRepository.findOne(c.getComponent()))) {
+						if (c.getComponent() != null && checkShouldFormulateComponents(false, alfrescoRepository.findOne(c.getComponent()))) {
 							shouldFormulate = true;
 						}
 					}
 				}
 				if (productData.getProcessList() != null) {
 					for (CompositionDataItem c : productData.getProcessList()) {
-						if (c.getComponent()!=null && checkShouldFormulateComponents(false, alfrescoRepository.findOne(c.getComponent()))) {
+						if (c.getComponent() != null && checkShouldFormulateComponents(false, alfrescoRepository.findOne(c.getComponent()))) {
 							shouldFormulate = true;
 						}
 					}
