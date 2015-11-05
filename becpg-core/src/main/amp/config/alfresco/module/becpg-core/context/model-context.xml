@@ -45,6 +45,7 @@
 	<!-- dynListConstraint -->
 	<bean id="dynListConstraint" class="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 		<property name="serviceRegistry" ref="ServiceRegistry" />
+		<property name="beCPGCacheService" ref="beCPGCacheService" />
 	</bean>
 	
 </beans>
