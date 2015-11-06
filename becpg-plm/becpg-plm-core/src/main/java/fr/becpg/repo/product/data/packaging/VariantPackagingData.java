@@ -50,6 +50,13 @@ public class VariantPackagingData {
 	public Integer getPalletNumberOnGround() {
 		return palletNumberOnGround;
 	}
+	
+	public Integer getProductPerPallet(){
+		if(this.productPerBoxes != null && this.boxesPerPallet != null){
+			return this.productPerBoxes * this.boxesPerPallet;
+		}
+		return null;
+	}
 
 	public void setPalletNumberOnGround(Integer palletNumberOnGround) {
 		this.palletNumberOnGround = palletNumberOnGround;
