@@ -936,7 +936,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 					
 					
 					NutListDataItem nutListDataItem = new NutListDataItem();
-					nutListDataItem.setNut(nut4);
+					nutListDataItem.setNut(nut5);
 					nutListDataItem.setIsManual(false);
 					rmData1.getNutList().add(nutListDataItem);
 					
