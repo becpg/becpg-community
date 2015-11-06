@@ -469,10 +469,12 @@
                   onVersionsGraphClick : function EntityVersions_onVersionsGraphClick(nodeRef) {
 
                      beCPG.module.getVersionsGraphInstance().show({
-                        nodeRef : nodeRef
+                        nodeRef : nodeRef                        
                      });
 
                   }
+                  
+
 
                });
 })();

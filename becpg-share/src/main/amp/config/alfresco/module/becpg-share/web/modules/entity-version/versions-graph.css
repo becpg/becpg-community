@@ -34,3 +34,9 @@
    background: url(../../components/documentlibrary/actions/compare-16.png) no-repeat;
    padding-left:20px;
 }
+
+.versions-graph a.download
+{
+   background: url(../../components/documentlibrary/actions/document-download-16.png) no-repeat;
+   padding-left:20px;
+}
