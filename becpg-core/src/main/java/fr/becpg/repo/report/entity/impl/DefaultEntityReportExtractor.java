@@ -28,6 +28,7 @@ import java.util.Map;
 
 import org.alfresco.model.ApplicationModel;
 import org.alfresco.model.ContentModel;
+import org.alfresco.model.ForumModel;
 import org.alfresco.repo.version.Version2Model;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
@@ -35,6 +36,9 @@ import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.AssociationRef;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
+import org.alfresco.service.cmr.repository.ContentReader;
+import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.PersonService;
@@ -90,6 +94,8 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	protected static final String PRODUCT_IMG_ID = "Img%d";
 	protected static final String ATTR_IMAGE_ID = "id";
 	protected static final String AVATAR_IMG_ID = "avatar";
+	private static final String TAG_COMMENTS = "comments";
+	private static final String TAG_COMMENT = "comment";
 
 	/** The Constant VALUE_NULL. */
 	protected static final String VALUE_NULL = "";
@@ -97,10 +103,11 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	private static final String REGEX_REMOVE_CHAR = "[^\\p{L}\\p{N}]";
 
 	protected static final ArrayList<QName> hiddenNodeAttributes = new ArrayList<>(Arrays.asList(ContentModel.PROP_NODE_REF,
-			ContentModel.PROP_NODE_DBID, ContentModel.PROP_NODE_UUID, ContentModel.PROP_STORE_IDENTIFIER, ContentModel.PROP_STORE_NAME,
+			ContentModel.PROP_NODE_UUID, ContentModel.PROP_STORE_IDENTIFIER, ContentModel.PROP_STORE_NAME,
 			ContentModel.PROP_STORE_PROTOCOL, ContentModel.PROP_CONTENT));
 
 	protected static final ArrayList<QName> hiddenDataListItemAttributes = new ArrayList<>(Arrays.asList(ContentModel.PROP_CREATED, ContentModel.PROP_CREATOR, ContentModel.PROP_MODIFIED, ContentModel.PROP_MODIFIER));
+	private static final QName FORUM_TO_TOPIC_ASSOC_QNAME = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "Comments");
 
 	@Autowired
 	protected DictionaryService dictionaryService;
@@ -131,6 +138,9 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	@Autowired
 	protected RepositoryEntityDefReader<RepositoryEntity> repositoryEntityDefReader;
+	
+	@Autowired
+	protected ContentService contentService;
 
 	@Override
 	public EntityReportData extract(NodeRef entityNodeRef) {
@@ -213,6 +223,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	protected void loadNodeAttributes(NodeRef nodeRef, Element nodeElt, boolean useCData) {
 		loadAttributes(nodeRef, nodeElt, useCData, hiddenNodeAttributes);
+		loadComments(nodeRef, nodeElt);
 	}
 
 	protected void loadDataListItemAttributes(BeCPGDataObject dataListItem, Element nodeElt) {
@@ -231,6 +242,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				break;
 			}
 		}
+		loadComments(dataListItem.getNodeRef(), nodeElt);
 	}
 
 	/**
@@ -288,6 +300,32 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 							getPropNameOfType(associationDef.getTargetClass().getName())));
 				}
 			}
+		}
+	}
+	
+	protected void loadComments(NodeRef nodeRef, Element nodeElt){
+		if (nodeService.hasAspect(nodeRef, ForumModel.ASPECT_DISCUSSABLE)) {
+			List<ChildAssociationRef> assocs = nodeService.getChildAssocs(nodeRef, ForumModel.ASSOC_DISCUSSION, ForumModel.ASSOC_DISCUSSION, true);
+	        if (!assocs.isEmpty()){
+	            NodeRef forumFolder = assocs.get(0).getChildRef();
+	            List<ChildAssociationRef> topics = nodeService.getChildAssocs(forumFolder, ContentModel.ASSOC_CONTAINS,
+						FORUM_TO_TOPIC_ASSOC_QNAME, true);
+	            if (!topics.isEmpty()) {
+					NodeRef firstTopicNodeRef = topics.get(0).getChildRef();
+					List<ChildAssociationRef> posts = nodeService.getChildAssocs(firstTopicNodeRef);
+					if(!posts.isEmpty()){
+						Element commentsElt = (Element) nodeElt.addElement(TAG_COMMENTS);
+						for(ChildAssociationRef post : posts){        	            		
+    	            		Element commentElt = (Element) commentsElt.addElement(TAG_COMMENT);
+    	            		loadAttributes(post.getChildRef(), commentElt, true, hiddenNodeAttributes);	            		
+    	            		ContentReader reader = contentService.getReader(post.getChildRef(), ContentModel.PROP_CONTENT);	            		
+    	            		if(reader != null){
+    	            			addData(commentElt, true, ContentModel.PROP_CONTENT, reader.getContentString());
+    	            		}	            		
+    		            }
+					}				
+				}	            
+	        }
 		}
 	}
 

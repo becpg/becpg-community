@@ -402,12 +402,10 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 						calculateValues(templateCostList, costList, false, FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d));
 						isCalculated = true;
 					} else if (templateCostList.getUnit().endsWith("Pal")) {
-						if ((formulatedProduct.getDefaultVariantPackagingData() != null)
-								&& (formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() != null)
-								&& (formulatedProduct.getDefaultVariantPackagingData().getBoxesPerPallet() != null)) {
+						if (formulatedProduct.getDefaultVariantPackagingData() != null
+								&& formulatedProduct.getDefaultVariantPackagingData().getProductPerPallet() != null) {
 							calculateValues(templateCostList, costList, true,
-									(double) formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes()
-											* formulatedProduct.getDefaultVariantPackagingData().getBoxesPerPallet());
+									(double) formulatedProduct.getDefaultVariantPackagingData().getProductPerPallet());
 						}
 						isCalculated = true;
 					}
@@ -417,12 +415,10 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 						calculateValues(templateCostList, costList, true, FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d));
 						isCalculated = true;
 					} else if (templateCostList.getUnit().endsWith("Pal")) {
-						if ((formulatedProduct.getDefaultVariantPackagingData() != null)
-								&& (formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() != null)
-								&& (formulatedProduct.getDefaultVariantPackagingData().getBoxesPerPallet() != null)) {
+						if (formulatedProduct.getDefaultVariantPackagingData() != null
+								&& formulatedProduct.getDefaultVariantPackagingData().getProductPerPallet() != null) {
 							calculateValues(templateCostList, costList, true,
-									(double) formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes()
-											* formulatedProduct.getDefaultVariantPackagingData().getBoxesPerPallet()
+									(double) formulatedProduct.getDefaultVariantPackagingData().getProductPerPallet()
 											* FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d));
 						}
 						isCalculated = true;
