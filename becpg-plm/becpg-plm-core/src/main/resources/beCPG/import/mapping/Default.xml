@@ -157,6 +157,13 @@
 		</columns>
 	</mapping>
 	
+	<mapping name="bcpg:allergen">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:allergenCode" />
+			<nodeColumnKey attribute="bcpg:charactName" />
+		</nodeColumnKeys>
+	</mapping>
+	
 	<mapping name="bcpg:ing">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="bcpg:charactName" />

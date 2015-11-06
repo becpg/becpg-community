@@ -9,7 +9,11 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.content.MimetypeMap;
@@ -52,7 +56,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * Import service.
- * 
+ *
  * @author querephi
  */
 
@@ -148,60 +152,54 @@ public class ImportServiceImpl implements ImportService {
 
 	/**
 	 * Import a text file
-	 * 
+	 *
 	 * @throws ParseException
 	 * @throws IOException
 	 */
 	@Override
-	public List<String> importText(final NodeRef nodeRef, boolean doUpdate, boolean requiresNewTransaction) throws
-			Exception {
+	public List<String> importText(final NodeRef nodeRef, boolean doUpdate, boolean requiresNewTransaction) throws Exception {
 
 		logger.debug("start import");
 
 		// prepare context
-		ImportContext importContext = serviceRegistry.getTransactionService().getRetryingTransactionHelper()
-				.doInTransaction(new RetryingTransactionCallback<ImportContext>() {
+		ImportContext importContext = serviceRegistry.getTransactionService().getRetryingTransactionHelper().doInTransaction(() -> {
 
-					@Override
-					public ImportContext execute() throws Exception {
+			ImportContext importContext1 = new ImportContext();
+			InputStream is = null;
+			try {
 
-						ImportContext importContext = new ImportContext();
-						InputStream is = null;
-						try {
+				ContentReader reader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
+				is = reader.getContentInputStream();
 
-							ContentReader reader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
-							is = reader.getContentInputStream();
+				if (logger.isDebugEnabled()) {
+					logger.debug("Reading Import File");
+				}
+				Charset charset = ImportHelper.guestCharset(is, reader.getEncoding());
+				String fileName = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
+				String mimeType = mimetypeService.guessMimetype(fileName);
 
-							if (logger.isDebugEnabled()) {
-								logger.debug("Reading Import File");
-							}
-							Charset charset = ImportHelper.guestCharset(is, reader.getEncoding());
-							String fileName = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
-							String mimeType = mimetypeService.guessMimetype(fileName);
+				if (logger.isDebugEnabled()) {
+					logger.debug("reader.getEncoding() : " + reader.getEncoding());
+					logger.debug("finder.getEncoding() : " + charset);
+					logger.debug("MimeType :" + mimeType);
+				}
 
-							if (logger.isDebugEnabled()) {
-								logger.debug("reader.getEncoding() : " + reader.getEncoding());
-								logger.debug("finder.getEncoding() : " + charset);
-								logger.debug("MimeType :" + mimeType);
-							}
+				importContext1.setImportFileName(fileName);
 
-							importContext.setImportFileName(fileName);
+				ImportFileReader imporFileReader;
+				if (MimetypeMap.MIMETYPE_EXCEL.equals(mimeType) || MimetypeMap.MIMETYPE_OPENXML_SPREADSHEET.equals(mimeType)) {
+					imporFileReader = new ImportExcelFileReader(is, importContext1.getPropertyFormats());
+				} else {
+					imporFileReader = new ImportCSVFileReader(is, charset, SEPARATOR);
+				}
 
-							ImportFileReader imporFileReader;
-							if (MimetypeMap.MIMETYPE_EXCEL.equals(mimeType) || MimetypeMap.MIMETYPE_OPENXML_SPREADSHEET.equals(mimeType)) {
-								imporFileReader = new ImportExcelFileReader(is, importContext.getPropertyFormats());
-							} else {
-								imporFileReader = new ImportCSVFileReader(is, charset, SEPARATOR);
-							}
+				importContext1.setImportFileReader(imporFileReader);
 
-							importContext.setImportFileReader(imporFileReader);
-
-						} finally {
-							IOUtils.closeQuietly(is);
-						}
-						return importContext;
-					}
-				}, true, requiresNewTransaction);
+			} finally {
+				IOUtils.closeQuietly(is);
+			}
+			return importContext1;
+		} , true, requiresNewTransaction);
 
 		importContext.setDoUpdate(doUpdate);
 
@@ -227,33 +225,24 @@ public class ImportServiceImpl implements ImportService {
 
 			// use transaction
 			importContext = serviceRegistry.getTransactionService().getRetryingTransactionHelper()
-					.doInTransaction(new RetryingTransactionCallback<ImportContext>() {
-						public ImportContext execute() throws Exception {
-
-							return importInBatch(finalImportContext, finalLastIndex);
-						}
-					}, false, requiresNewTransaction);
+					.doInTransaction(() -> importInBatch(finalImportContext, finalLastIndex), false, requiresNewTransaction);
 
 		}
 
-		if (importContext.getLog().size() > 0 && importContext.getImportFileReader() instanceof ImportExcelFileReader) {
+		if ((importContext.getLog().size() > 0) && (importContext.getImportFileReader() instanceof ImportExcelFileReader)) {
 
 			final ImportContext finalImportContext = importContext;
 
-			importContext = serviceRegistry.getTransactionService().getRetryingTransactionHelper()
-					.doInTransaction(new RetryingTransactionCallback<ImportContext>() {
-						public ImportContext execute() throws Exception {
-							serviceRegistry.getRuleService().disableRules();
-							try {
+			importContext = serviceRegistry.getTransactionService().getRetryingTransactionHelper().doInTransaction(() -> {
+				serviceRegistry.getRuleService().disableRules();
+				try {
 
-								finalImportContext.getImportFileReader().writeErrorInFile(
-										contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true));
-								return finalImportContext;
-							} finally {
-								serviceRegistry.getRuleService().enableRules();
-							}
-						}
-					}, false, requiresNewTransaction);
+					finalImportContext.getImportFileReader().writeErrorInFile(contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true));
+					return finalImportContext;
+				} finally {
+					serviceRegistry.getRuleService().enableRules();
+				}
+			} , false, requiresNewTransaction);
 		}
 
 		return importContext.getLog();
@@ -262,58 +251,55 @@ public class ImportServiceImpl implements ImportService {
 	@Override
 	public void moveImportedFile(final NodeRef nodeRef, final boolean hasFailed, final String titleLog, final String fileLog) {
 
-		RetryingTransactionCallback<Object> actionCallback = new RetryingTransactionCallback<Object>() {
-			@Override
-			public Object execute() throws Exception {
-				if (nodeService.exists(nodeRef)) {
+		RetryingTransactionCallback<Object> actionCallback = () -> {
+			if (nodeService.exists(nodeRef)) {
 
-					// delete files that have the same name before moving it in
-					// the succeeded or failed folder
-					String csvFileName = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
+				// delete files that have the same name before moving it in
+				// the succeeded or failed folder
+				String csvFileName = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
 
-					// failed
-					NodeRef failedFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(),
-							FULL_PATH_IMPORT_FAILED_FOLDER);
+				// failed
+				NodeRef failedFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(),
+						FULL_PATH_IMPORT_FAILED_FOLDER);
 
-					if (failedFolder != null) {
-						NodeRef csvNodeRef = nodeService.getChildByName(failedFolder, ContentModel.ASSOC_CONTAINS, csvFileName);
-						if (csvNodeRef != null) {
-							nodeService.deleteNode(csvNodeRef);
-						}
+				if (failedFolder != null) {
+					NodeRef csvNodeRef = nodeService.getChildByName(failedFolder, ContentModel.ASSOC_CONTAINS, csvFileName);
+					if (csvNodeRef != null) {
+						nodeService.deleteNode(csvNodeRef);
 					}
-
-					// succeeded
-					NodeRef succeededFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(),
-							FULL_PATH_IMPORT_SUCCEEDED_FOLDER);
-
-					if (succeededFolder != null) {
-						NodeRef targetNodeRef = nodeService.getChildByName(succeededFolder, ContentModel.ASSOC_CONTAINS, csvFileName);
-						if (targetNodeRef != null) {
-							nodeService.deleteNode(targetNodeRef);
-						}
-					}
-
-					// log
-					if (fileLog != null && !fileLog.isEmpty()) {
-						NodeRef logFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(),
-								FULL_PATH_IMPORT_LOG_FOLDER);
-						if (logFolder != null) {
-							String logFileName = csvFileName.substring(0, csvFileName.length() - 4) + RepoConsts.EXTENSION_LOG;
-							createLogFile(logFolder, logFileName, fileLog);
-						}
-					}
-
-					// move nodeRef in the right folder
-					NodeRef parentNodeRef = hasFailed ? failedFolder : succeededFolder;
-					if (parentNodeRef != null) {
-						nodeService.moveNode(nodeRef, parentNodeRef, ContentModel.ASSOC_CONTAINS, nodeService.getType(nodeRef));
-					}
-
-					nodeService.setProperty(nodeRef, ContentModel.PROP_TITLE, titleLog);
 				}
 
-				return null;
+				// succeeded
+				NodeRef succeededFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(),
+						FULL_PATH_IMPORT_SUCCEEDED_FOLDER);
+
+				if (succeededFolder != null) {
+					NodeRef targetNodeRef = nodeService.getChildByName(succeededFolder, ContentModel.ASSOC_CONTAINS, csvFileName);
+					if (targetNodeRef != null) {
+						nodeService.deleteNode(targetNodeRef);
+					}
+				}
+
+				// log
+				if ((fileLog != null) && !fileLog.isEmpty()) {
+					NodeRef logFolder = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(),
+							FULL_PATH_IMPORT_LOG_FOLDER);
+					if (logFolder != null) {
+						String logFileName = csvFileName.substring(0, csvFileName.length() - 4) + RepoConsts.EXTENSION_LOG;
+						createLogFile(logFolder, logFileName, fileLog);
+					}
+				}
+
+				// move nodeRef in the right folder
+				NodeRef parentNodeRef = hasFailed ? failedFolder : succeededFolder;
+				if (parentNodeRef != null) {
+					nodeService.moveNode(nodeRef, parentNodeRef, ContentModel.ASSOC_CONTAINS, nodeService.getType(nodeRef));
+				}
+
+				nodeService.setProperty(nodeRef, ContentModel.PROP_TITLE, titleLog);
 			}
+
+			return null;
 		};
 		serviceRegistry.getTransactionService().getRetryingTransactionHelper().doInTransaction(actionCallback, false, true);
 	}
@@ -327,7 +313,7 @@ public class ImportServiceImpl implements ImportService {
 
 	/**
 	 * Import a batch of lines
-	 * 
+	 *
 	 * @param importContext
 	 * @param lastIndex
 	 * @return
@@ -338,7 +324,7 @@ public class ImportServiceImpl implements ImportService {
 		Element mappingElt = null;
 		String[] arrStr;
 
-		while (importContext.getImportIndex() < lastIndex && (arrStr = importContext.nextLine()) != null) {
+		while ((importContext.getImportIndex() < lastIndex) && ((arrStr = importContext.nextLine()) != null)) {
 
 			String prefix = PropertiesHelper.cleanValue(arrStr[COLUMN_PREFIX]);
 
@@ -349,8 +335,9 @@ public class ImportServiceImpl implements ImportService {
 				String pathValue = arrStr[COLUMN_PATH];
 				importContext.setPath(cleanPath(pathValue));
 
-				if (pathValue.isEmpty())
+				if (pathValue.isEmpty()) {
 					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_PATH, importContext.getImportIndex()));
+				}
 
 				if (pathValue.startsWith(PATH_SITES) || pathValue.startsWith(RepoConsts.PATH_SEPARATOR + PATH_SITES)) {
 					importContext.setSiteDocLib(true);
@@ -398,8 +385,9 @@ public class ImportServiceImpl implements ImportService {
 				importContext.setType(null);
 
 				String typeValue = arrStr[COLUMN_TYPE];
-				if (typeValue.isEmpty())
+				if (typeValue.isEmpty()) {
 					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_TYPE, importContext.getImportIndex()));
+				}
 
 				QName type = QName.createQName(typeValue, serviceRegistry.getNamespaceService());
 				importContext.setType(type);
@@ -409,8 +397,9 @@ public class ImportServiceImpl implements ImportService {
 				importContext.setEntityType(null);
 
 				String typeValue = arrStr[COLUMN_ENTITY_TYPE];
-				if (typeValue.isEmpty())
+				if (typeValue.isEmpty()) {
 					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_ENTITY_TYPE, importContext.getImportIndex()));
+				}
 
 				QName entityType = QName.createQName(typeValue, serviceRegistry.getNamespaceService());
 				importContext.setEntityType(entityType);
@@ -447,8 +436,9 @@ public class ImportServiceImpl implements ImportService {
 			} else if (prefix.equals(PFX_MAPPING)) {
 
 				String mappingValue = arrStr[COLUMN_MAPPING];
-				if (mappingValue.isEmpty())
+				if (mappingValue.isEmpty()) {
 					throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, PFX_MAPPING, importContext.getImportIndex()));
+				}
 
 				mappingElt = loadMapping(mappingValue);
 				importContext = importNodeVisitor.loadClassMapping(mappingElt, importContext);
@@ -527,7 +517,7 @@ public class ImportServiceImpl implements ImportService {
 
 	/**
 	 * Load the mapping definition file.
-	 * 
+	 *
 	 * @param name
 	 *            the name
 	 * @return the element
@@ -536,9 +526,10 @@ public class ImportServiceImpl implements ImportService {
 	private Element loadMapping(String name) throws ImporterException {
 
 		Element mappingElt = null;
-		
-		NodeRef mappingNodeRef = BeCPGQueryBuilder.createQuery().parent( BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(), FULL_PATH_IMPORT_MAPPING))
-				.andPropEquals(ContentModel.PROP_NAME, name+".xml").inDB().singleValue();
+
+		NodeRef mappingNodeRef = BeCPGQueryBuilder.createQuery()
+				.parent(BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(), FULL_PATH_IMPORT_MAPPING))
+				.andPropEquals(ContentModel.PROP_NAME, name + ".xml").inDB().singleValue();
 
 		if (mappingNodeRef == null) {
 			String msg = I18NUtil.getMessage(MSG_ERROR_MAPPING_NOT_FOUND, name);
@@ -591,23 +582,20 @@ public class ImportServiceImpl implements ImportService {
 	@Override
 	public void writeLogInFileTitle(final NodeRef nodeRef, final String log, final boolean hasFailed) {
 
-		RetryingTransactionCallback<Object> actionCallback = new RetryingTransactionCallback<Object>() {
-			@Override
-			public Object execute() throws Exception {
-				if (nodeService.exists(nodeRef)) {
-					serviceRegistry.getRuleService().disableRules();
-					try {
-						if (hasFailed) {
-							nodeService.setProperty(nodeRef, ContentModel.PROP_TITLE, log);
-						} else {
-							nodeService.setProperty(nodeRef, ContentModel.PROP_TITLE, "");
-						}
-					} finally {
-						serviceRegistry.getRuleService().enableRules();
+		RetryingTransactionCallback<Object> actionCallback = () -> {
+			if (nodeService.exists(nodeRef)) {
+				serviceRegistry.getRuleService().disableRules();
+				try {
+					if (hasFailed) {
+						nodeService.setProperty(nodeRef, ContentModel.PROP_TITLE, log);
+					} else {
+						nodeService.setProperty(nodeRef, ContentModel.PROP_TITLE, "");
 					}
+				} finally {
+					serviceRegistry.getRuleService().enableRules();
 				}
-				return null;
 			}
+			return null;
 		};
 		serviceRegistry.getTransactionService().getRetryingTransactionHelper().doInTransaction(actionCallback, false, true);
 	}

@@ -16,12 +16,12 @@ import org.alfresco.repo.action.executer.ActionExecuterAbstractBase;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
-import org.alfresco.repo.transaction.TransactionListener;
-import org.alfresco.repo.transaction.TransactionListenerAdapter;
 import org.alfresco.service.cmr.action.Action;
 import org.alfresco.service.cmr.action.ParameterDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.util.transaction.TransactionListenerAdapter;
+import org.alfresco.util.transaction.TransactionSupportUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -49,7 +49,7 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase {
 	private static final Log logger = LogFactory.getLog(ImporterActionExecuter.class);
 
 	private ImportService importService;
-	private final TransactionListener transactionListener;
+	private final TransactionListenerAdapter transactionListener;
 	private ThreadPoolExecutor threadExecuter;
 
 	public void setImportService(ImportService importService) {
@@ -63,7 +63,6 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase {
 	public void setThreadExecuter(ThreadPoolExecutor threadExecuter) {
 		this.threadExecuter = threadExecuter;
 	}
-	
 
 	/**
 	 * Execute when a file is uploaded
@@ -76,12 +75,12 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase {
 		// Bind the listener to the transaction
 		AlfrescoTransactionSupport.bindListener(transactionListener);
 
-		AlfrescoTransactionSupport.bindResource(PARAM_DO_NOT_MOVE_NODE, doNotMoveNode);
+		TransactionSupportUtil.bindResource(PARAM_DO_NOT_MOVE_NODE, doNotMoveNode);
 		// Get the set of nodes read
-		Set<NodeRef> nodeRefs = AlfrescoTransactionSupport.getResource(KEY_FILES_TO_IMPORT);
+		Set<NodeRef> nodeRefs = TransactionSupportUtil.getResource(KEY_FILES_TO_IMPORT);
 		if (nodeRefs == null) {
 			nodeRefs = new HashSet<>(5);
-			AlfrescoTransactionSupport.bindResource(KEY_FILES_TO_IMPORT, nodeRefs);
+			TransactionSupportUtil.bindResource(KEY_FILES_TO_IMPORT, nodeRefs);
 		}
 		nodeRefs.add(nodeRef);
 
@@ -89,8 +88,8 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase {
 
 	@Override
 	protected void addParameterDefinitions(List<ParameterDefinition> paramList) {
-		paramList.add(new ParameterDefinitionImpl(PARAM_DO_NOT_MOVE_NODE, DataTypeDefinition.BOOLEAN, false,
-				getParamDisplayLabel(PARAM_DO_NOT_MOVE_NODE)));
+		paramList.add(
+				new ParameterDefinitionImpl(PARAM_DO_NOT_MOVE_NODE, DataTypeDefinition.BOOLEAN, false, getParamDisplayLabel(PARAM_DO_NOT_MOVE_NODE)));
 
 	}
 
@@ -99,10 +98,9 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase {
 	 * events. The class that is interested in processing a
 	 * productReportServiceTransaction event implements this interface, and the
 	 * object created with that class is registered with a component using the
-	 * component's
-	 * <code>addProductReportServiceTransactionListener<code> method. When
-	 * the productReportServiceTransaction event occurs, that object's appropriate
-	 * method is invoked.
+	 * component's <code>addProductReportServiceTransactionListener
+	 * <code> method. When the productReportServiceTransaction event occurs,
+	 * that object's appropriate method is invoked.
 	 *
 	 * @see ProductReportServiceTransactionEvent
 	 */
@@ -110,7 +108,7 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see
 		 * org.alfresco.repo.transaction.TransactionListenerAdapter#afterCommit
 		 * ()
@@ -118,9 +116,9 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase {
 		@Override
 		public void afterCommit() {
 
-			Set<NodeRef> nodeRefs = AlfrescoTransactionSupport.getResource(KEY_FILES_TO_IMPORT);
+			Set<NodeRef> nodeRefs = TransactionSupportUtil.getResource(KEY_FILES_TO_IMPORT);
 
-			Boolean doNotMoveNode = AlfrescoTransactionSupport.getResource(PARAM_DO_NOT_MOVE_NODE);
+			Boolean doNotMoveNode = TransactionSupportUtil.getResource(PARAM_DO_NOT_MOVE_NODE);
 
 			if (nodeRefs != null) {
 				for (NodeRef nodeRef : nodeRefs) {
@@ -150,72 +148,68 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase {
 
 		@Override
 		public void run() {
-			RunAsWork<Object> actionRunAs = new RunAsWork<Object>() {
-				@Override
-				public Object doWork() throws Exception {
-					// import file
-					String startlog = LOG_STARTING_DATE + Calendar.getInstance().getTime();
-					String endlog;
-					String unhandledLog = null;
-					String first50ErrorsLog = ""; // log stored in title, first
-													// 50 errors
-					String after50ErrorsLog = ""; // log store in
-					boolean hasFailed = false;
+			RunAsWork<Object> actionRunAs = () -> {
+				// import file
+				String startlog = LOG_STARTING_DATE + Calendar.getInstance().getTime();
+				String endlog;
+				String unhandledLog = null;
+				String first50ErrorsLog = ""; // log stored in title, first
+												// 50 errors
+				String after50ErrorsLog = ""; // log store in
+				boolean hasFailed = false;
 
-					
-						try {
+				try {
 
-							/*
-							 * need a new transaction, otherwise impossible to
-							 * do another action like create a content do it in
-							 * several transaction to avoid timeout connection
-							 */
-							List<String> errors = importService.importText(nodeRef, true, true);
+					/*
+					 * need a new transaction, otherwise impossible to do
+					 * another action like create a content do it in several
+					 * transaction to avoid timeout connection
+					 */
+					List<String> errors = importService.importText(nodeRef, true, true);
 
-							if (errors != null && !errors.isEmpty()) {
-								int limit = 0;
-								for (String error : errors) {
-									if (limit <= ERROR_LOGS_LIMIT) {
-										first50ErrorsLog += LOG_SEPARATOR;
-										first50ErrorsLog += error;
-									} else {
-										after50ErrorsLog += LOG_ERROR;
-										after50ErrorsLog += error;
-									}
-									limit++;
-								}
-
-								hasFailed = true;
+					if ((errors != null) && !errors.isEmpty()) {
+						int limit = 0;
+						for (String error : errors) {
+							if (limit <= ERROR_LOGS_LIMIT) {
+								first50ErrorsLog += LOG_SEPARATOR;
+								first50ErrorsLog += error;
+							} else {
+								after50ErrorsLog += LOG_ERROR;
+								after50ErrorsLog += error;
 							}
-
-						} catch (Exception e) {
-							hasFailed = true;
-							logger.error("Failed to import file text", e);
-
-							// set printStackTrance in description
-							StringWriter sw = new StringWriter();
-							PrintWriter pw = new PrintWriter(sw);
-							e.printStackTrace(pw);
-							String stackTrace = sw.toString();
-							unhandledLog = LOG_ERROR + stackTrace;
-						} finally {
-							endlog = LOG_ENDING_DATE + Calendar.getInstance().getTime().toString();
+							limit++;
 						}
 
-						String log = startlog + LOG_SEPARATOR + (unhandledLog != null ? unhandledLog + LOG_SEPARATOR : "") + first50ErrorsLog
-								+ LOG_SEPARATOR + (after50ErrorsLog.isEmpty() ? "" : LOG_ERROR_MAX_REACHED + LOG_SEPARATOR) + endlog;
+						hasFailed = true;
+					}
 
-						String allLog = startlog + LOG_SEPARATOR + (unhandledLog != null ? unhandledLog + LOG_SEPARATOR : "") + first50ErrorsLog
-								+ LOG_SEPARATOR + after50ErrorsLog + LOG_SEPARATOR + endlog;
+				} catch (Exception e) {
+					hasFailed = true;
+					logger.error("Failed to import file text", e);
 
-						// set log, stackTrace and move file
-						if (doNotMoveNode == null || Boolean.FALSE.equals(doNotMoveNode)) {
-							importService.moveImportedFile(nodeRef, hasFailed, log, allLog);
-						} else {
-							importService.writeLogInFileTitle(nodeRef, log, hasFailed);
-						}
-					return null;
+					// set printStackTrance in description
+					StringWriter sw = new StringWriter();
+					PrintWriter pw = new PrintWriter(sw);
+					e.printStackTrace(pw);
+					String stackTrace = sw.toString();
+					unhandledLog = LOG_ERROR + stackTrace;
+				} finally {
+					endlog = LOG_ENDING_DATE + Calendar.getInstance().getTime().toString();
 				}
+
+				String log = startlog + LOG_SEPARATOR + (unhandledLog != null ? unhandledLog + LOG_SEPARATOR : "") + first50ErrorsLog + LOG_SEPARATOR
+						+ (after50ErrorsLog.isEmpty() ? "" : LOG_ERROR_MAX_REACHED + LOG_SEPARATOR) + endlog;
+
+				String allLog = startlog + LOG_SEPARATOR + (unhandledLog != null ? unhandledLog + LOG_SEPARATOR : "") + first50ErrorsLog
+						+ LOG_SEPARATOR + after50ErrorsLog + LOG_SEPARATOR + endlog;
+
+				// set log, stackTrace and move file
+				if ((doNotMoveNode == null) || Boolean.FALSE.equals(doNotMoveNode)) {
+					importService.moveImportedFile(nodeRef, hasFailed, log, allLog);
+				} else {
+					importService.writeLogInFileTitle(nodeRef, log, hasFailed);
+				}
+				return null;
 			};
 			AuthenticationUtil.runAs(actionRunAs, runAsUser);
 		}

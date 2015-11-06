@@ -174,8 +174,8 @@
 			<form>
 				<field-visibility>
 					<show id="mpm:plStep" />
-					<show id="mpm:plProduct" />	
-					<show id="mpm:plQty" />										
+					<!-- <show id="mpm:plProduct" />	
+					<show id="mpm:plQty" />	 -->									
 					<show id="mpm:plResource" />
 					<show id="mpm:plQtyResource" />
 					<show id="mpm:plRateResource" />
@@ -189,10 +189,10 @@
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
-					<field id="mpm:plProduct">
+					<!-- <field id="mpm:plProduct">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
-					</field>
+					</field> -->
 					<field id="mpm:plResource">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
@@ -215,8 +215,8 @@
 				<field-visibility>
 					<show id="bcpg:variantIds" force="true"/>
 					<show id="mpm:plStep" />
-					<show id="mpm:plProduct" />	
-					<show id="mpm:plQty" />										
+					<!-- <show id="mpm:plProduct" />	
+					<show id="mpm:plQty" />	 -->									
 					<show id="mpm:plResource" />
 					<show id="mpm:plQtyResource" />
 					<show id="mpm:plRateResource" />
@@ -243,7 +243,7 @@
 			<form id="filter">
 				<field-visibility>
 					<show id="bcpg:depthLevel" force="true"/>
-					<show id="mpm:plProduct" />
+					<show id="mpm:plStep" />
 					<show id="mpm:plResource" />
 				</field-visibility>
 				<appearance>
@@ -252,6 +252,14 @@
 							<control-param name="options">0|,All|data.level.all
 							</control-param>
 						</control>
+					</field>
+					<field id="mpm:plStep">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="mpm:plResource">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 				</appearance>
 			</form>
@@ -264,8 +272,8 @@
 			<form>
 				<field-visibility>
 					<show id="mpm:plStep" />
-					<show id="mpm:plProduct" />	
-					<show id="mpm:plQty" />										
+					<!-- <show id="mpm:plProduct" />	
+					<show id="mpm:plQty" />		 -->								
 					<show id="mpm:plResource" />
 					<show id="mpm:plQtyResource" />
 					<show id="mpm:plRateResource" />
@@ -279,10 +287,10 @@
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
-					<field id="mpm:plProduct">
+				<!-- 	<field id="mpm:plProduct">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
-					</field>
+					</field> -->
 					<field id="mpm:plResource">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />

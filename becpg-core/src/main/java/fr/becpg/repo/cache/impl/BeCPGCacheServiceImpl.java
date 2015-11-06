@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2015 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2015 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.cache.impl;
@@ -36,6 +36,7 @@ import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.repo.tenant.TenantUtil;
 import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
 import org.alfresco.util.transaction.TransactionListenerAdapter;
+import org.alfresco.util.transaction.TransactionSupportUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -46,7 +47,7 @@ import fr.becpg.repo.cache.BeCPGCacheDataProviderCallBack;
 import fr.becpg.repo.cache.BeCPGCacheService;
 
 /**
- * 
+ *
  * @author matthieu
  *
  */
@@ -55,13 +56,13 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 	private static final Log logger = LogFactory.getLog(BeCPGCacheServiceImpl.class);
 
 	private int maxCacheItems = 500;
-	
-	Map<String,Integer> cacheSizes = new HashMap<>(10);
+
+	Map<String, Integer> cacheSizes = new HashMap<>(10);
 
 	private boolean isDebugEnable = false;
-	
+
 	private boolean disableAllCache = false;
-	
+
 	private TenantAdminService tenantAdminService;
 
 	private final Map<String, DefaultSimpleCache<String, ?>> caches = new ConcurrentHashMap<>();
@@ -71,7 +72,7 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 	}
 
 	public Map<String, DefaultSimpleCache<String, ?>> getCaches() {
-		return  Collections.unmodifiableMap(caches);
+		return Collections.unmodifiableMap(caches);
 	}
 
 	@Override
@@ -79,7 +80,6 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 		isDebugEnable = logger.isDebugEnabled();
 
 	}
-	
 
 	public void setDisableAllCache(boolean disableAllCache) {
 		this.disableAllCache = disableAllCache;
@@ -93,67 +93,65 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 		this.cacheSizes = cacheSizes;
 	}
 
-
 	@Override
 	public <T> T getFromCache(String cacheName, String cacheKey, BeCPGCacheDataProviderCallBack<T> cacheDataProviderCallBack) {
 		return getFromCache(cacheName, cacheKey, cacheDataProviderCallBack, false);
 	}
-	
-	
+
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T> T getFromCache(final String cacheName, String cacheKey, BeCPGCacheDataProviderCallBack<T> cacheDataProviderCallBack, boolean deleteOnTxRollback) {
-	
+	public <T> T getFromCache(final String cacheName, String cacheKey, BeCPGCacheDataProviderCallBack<T> cacheDataProviderCallBack,
+			boolean deleteOnTxRollback) {
+
 		cacheKey = computeCacheKey(cacheKey);
-		SimpleCache<String, T> cache = (DefaultSimpleCache<String,T>) getCache(cacheName);
+		SimpleCache<String, T> cache = (DefaultSimpleCache<String, T>) getCache(cacheName);
 		T ret = null;
 		try {
-			ret = disableAllCache? null : cache.get(cacheKey);
+			ret = disableAllCache ? null : cache.get(cacheKey);
 		} catch (Exception e) {
 			logger.error("Cannot get " + cacheKey + " from cache " + cacheName, e);
 		}
 
-	
 		if (ret == null) {
 			if (isDebugEnable) {
 				logger.debug("Cache miss " + cacheKey);
 			}
 
 			ret = cacheDataProviderCallBack.getData();
-			if (!disableAllCache && ret != null) {
-				
-				if(deleteOnTxRollback  && AlfrescoTransactionSupport.isActualTransactionActive()){
-					Set<String> currentTransactionCacheKeys = AlfrescoTransactionSupport.getResource(cacheName);
+			if (!disableAllCache && (ret != null)) {
+
+				if (deleteOnTxRollback && TransactionSupportUtil.isActualTransactionActive()) {
+					Set<String> currentTransactionCacheKeys = TransactionSupportUtil.getResource(cacheName);
 					if (currentTransactionCacheKeys == null) {
 						currentTransactionCacheKeys = new LinkedHashSet<>();
 						if (isDebugEnable) {
-							logger.debug("Bind key to transaction : "+cacheName);
+							logger.debug("Bind key to transaction : " + cacheName);
 						}
-						AlfrescoTransactionSupport.bindResource(cacheName, currentTransactionCacheKeys);
+						TransactionSupportUtil.bindResource(cacheName, currentTransactionCacheKeys);
 					}
 					currentTransactionCacheKeys.add(cacheKey);
-					
-					AlfrescoTransactionSupport.bindListener( new TransactionListenerAdapter() {
-	
+
+					AlfrescoTransactionSupport.bindListener(new TransactionListenerAdapter() {
+
 						@Override
 						public void afterRollback() {
-							
-							Set<String> txCacheKeys = AlfrescoTransactionSupport.getResource(cacheName);
+
+							Set<String> txCacheKeys = TransactionSupportUtil.getResource(cacheName);
 							if (txCacheKeys != null) {
 								for (String txCacheKey : txCacheKeys) {
 									if (isDebugEnable) {
-										logger.debug("Remove tx assoc   "+cacheName+" "+txCacheKey);
+										logger.debug("Remove tx assoc   " + cacheName + " " + txCacheKey);
 									}
 									removeFromCache(cacheName, txCacheKey);
 								}
-								
+
 							}
-							
+
 						}
 					});
 				}
-				
-				cache.put(cacheKey,ret);
+
+				cache.put(cacheKey, ret);
 			}
 		} else if (isDebugEnable) {
 			logger.debug("Cache Hit " + cacheKey);
@@ -166,28 +164,32 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 	public void removeFromCache(String cacheName, String cacheKey) {
 		cacheKey = computeCacheKey(cacheKey);
 		SimpleCache<String, ?> cache = getCache(cacheName);
-		if(isDebugEnable && cache.get(cacheKey)==null){
-			logger.debug("Cache "+cacheKey+" object doesn't exists");
+		if (isDebugEnable && (cache.get(cacheKey) == null)) {
+			logger.debug("Cache " + cacheKey + " object doesn't exists");
 		}
 		cache.remove(cacheKey);
 
-
 	}
-	
+
 	@Override
 	public Collection<String> getCacheKeys(String cacheName) {
 		SimpleCache<String, ?> cache = getCache(cacheName);
 		return cache.getKeys();
 	}
-	
 
 	@Override
+	public void clearCache(String cacheName) {
+		logger.debug("Clear specific cache: "+cacheName);
+		SimpleCache<String, ?> cache = getCache(cacheName);
+		cache.clear();
+	}
+	
+	@Override
 	public void clearAllCaches() {
-		logger.info("Clear all cache");
+		logger.debug("Clear all cache");
 		for (SimpleCache<String, ?> cache : caches.values()) {
 			cache.clear();
 		}
-
 	}
 
 	private String computeCacheKey(String cacheKey) {
@@ -202,20 +204,20 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private DefaultSimpleCache<String, ?> getCache(String cacheName) {
 		DefaultSimpleCache<String, ?> cache = caches.get(cacheName);
-		
+
 		if (cache == null) {
 			Integer cacheSize = cacheSizes.get(cacheName);
-			if(cacheSize == null){
+			if (cacheSize == null) {
 				cacheSize = maxCacheItems;
 			}
-			
-			if(tenantAdminService.isEnabled()){
+
+			if (tenantAdminService.isEnabled()) {
 				cacheSize *= tenantAdminService.getAllTenants().size();
 			}
-			
+
 			cache = new DefaultSimpleCache(cacheSize, cacheName);
-			
-			caches.put(cacheName,cache );
+
+			caches.put(cacheName, cache);
 		}
 		return cache;
 	}
@@ -245,7 +247,7 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 
 		/**
 		 * Construct a cache using the specified capacity and name.
-		 * 
+		 *
 		 * @param maxItems
 		 *            The cache capacity.
 		 */
@@ -306,6 +308,5 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 	}
 
 	
-
 
 }
