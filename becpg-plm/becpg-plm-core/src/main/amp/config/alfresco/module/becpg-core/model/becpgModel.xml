@@ -1927,7 +1927,6 @@
 					<type>d:text</type>
 					<index enabled="false" />
 				</property>
-				
 			</properties>
 			<associations>
 				<association name="bcpg:lclLabelClaim">

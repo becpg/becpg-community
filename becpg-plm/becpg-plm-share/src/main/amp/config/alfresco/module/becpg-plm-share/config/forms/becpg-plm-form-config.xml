@@ -5277,7 +5277,6 @@
 					<show id="bcpg:charactName" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:labelClaimType" />
-					<show id ="bcpg:lclComments" force="true" />
 				</field-visibility>
 			</form>
 		</forms>
