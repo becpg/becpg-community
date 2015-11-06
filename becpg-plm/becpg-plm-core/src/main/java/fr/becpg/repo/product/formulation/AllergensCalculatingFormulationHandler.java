@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.DoubleStream;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -100,10 +101,10 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 				Double qtyUsed = FormulationHelper.isProductUnitLiter(partProduct.getUnit()) ? vol : weight;
 
-				if (qtyUsed != null && qtyUsed > 0) {
-					if (! (partProduct instanceof LocalSemiFinishedProductData)) {
-						visitPart(compoItem, partProduct, formulatedProduct.getAllergenList(), retainNodes, qtyUsed, netQty, isGenericRawMaterial, errors)
-								.forEach(error -> {
+				if ((qtyUsed != null) && (qtyUsed > 0)) {
+					if (!(partProduct instanceof LocalSemiFinishedProductData)) {
+						visitPart(compoItem, partProduct, formulatedProduct.getAllergenList(), retainNodes, qtyUsed, netQty, isGenericRawMaterial,
+								errors).forEach(error -> {
 									if (!rclCtrlMap.containsKey(error.getReqMessage())) {
 										rclCtrlMap.put(error.getReqMessage(), error);
 									}
@@ -115,8 +116,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 			formulatedProduct.getAllergenList().forEach(allergenListDataItem -> {
 				if (allergenListDataItem.getVoluntary() || allergenListDataItem.getInVoluntary()) {
-					Double regulatoryThreshold = (Double) nodeService.getProperty(allergenListDataItem.getAllergen(),
-							PLMModel.PROP_ALLERGEN_REGULATORY_THRESHOLD);
+					Double regulatoryThreshold = getRegulatoryThreshold(formulatedProduct, allergenListDataItem.getAllergen());
 					if ((regulatoryThreshold != null) && (allergenListDataItem.getQtyPerc() != null)
 							&& (regulatoryThreshold >= allergenListDataItem.getQtyPerc())) {
 						allergenListDataItem.setVoluntary(false);
@@ -149,6 +149,22 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 	}
 
+	private Double getRegulatoryThreshold(ProductData formulatedProduct, NodeRef allergen) {
+		Double ret = null;
+
+		for (ProductSpecificationData productSpecification : formulatedProduct.getProductSpecifications()) {
+			if ((productSpecification.getAllergenList() != null) && !productSpecification.getAllergenList().isEmpty()) {
+				AllergenListDataItem temp = productSpecification.getAllergenList().stream().filter(al -> al.getAllergen().equals(allergen)).findFirst().orElse(null);
+				if(temp!=null && temp.getQtyPerc()!=null){
+					ret = temp.getQtyPerc();
+				}
+				
+			}
+		}
+
+		return ret != null ? ret : (Double) nodeService.getProperty(allergen, PLMModel.PROP_ALLERGEN_REGULATORY_THRESHOLD);
+	}
+
 	private boolean accept(ProductData formulatedProduct) {
 		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
 			return false;
@@ -177,8 +193,6 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 	private List<ReqCtrlListDataItem> visitPart(VariantDataItem variantDataItem, ProductData partProduct, List<AllergenListDataItem> allergenList,
 			List<AllergenListDataItem> retainNodes, Double qtyUsed, Double netQty, Boolean isRawMaterial, Map<String, ReqCtrlListDataItem> errors) {
 
-	
-		
 		List<ReqCtrlListDataItem> ret = new ArrayList<>();
 
 		for (AllergenListDataItem allergenListDataItem : partProduct.getAllergenList()) {
@@ -376,38 +390,36 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 	private void checkAllergensOfFormulatedProduct(ProductData formulatedProduct, List<ProductSpecificationData> productSpecicationDataList) {
 
 		for (ProductSpecificationData productSpecification : productSpecicationDataList) {
+			if ((productSpecification.getAllergenList() != null) && !productSpecification.getAllergenList().isEmpty()) {
+				productSpecification.getAllergenList().forEach(al -> {
+					formulatedProduct.getAllergenList().forEach(allergenListDataItem -> {
 
-			for (AllergenListDataItem allergenListDataItem : formulatedProduct.getAllergenList()) {
+						if ((allergenListDataItem.getInVoluntary() || allergenListDataItem.getVoluntary())
+								&& allergenListDataItem.getAllergen().equals(al.getAllergen())) {
 
-				if (allergenListDataItem.getInVoluntary() || allergenListDataItem.getVoluntary()) {
-					if (logger.isDebugEnabled()) {
-						logger.debug(
-								"### allergène présent " + nodeService.getProperty(allergenListDataItem.getAllergen(), BeCPGModel.PROP_CHARACT_NAME));
-					}
-
-					for (AllergenListDataItem al : productSpecification.getAllergenList()) {
-
-						boolean isAllergenAllowed = false;
-						if (allergenListDataItem.getAllergen().equals(al.getAllergen())) {
-							if (al.getVoluntary()) {
+							boolean isAllergenAllowed = false;
+							if (al.getVoluntary() && allergenListDataItem.getVoluntary()) {
 								isAllergenAllowed = true;
-							} else if (al.getInVoluntary()) {
+							} else if (al.getInVoluntary() && allergenListDataItem.getInVoluntary()) {
 								isAllergenAllowed = true;
 							}
+
+							if (logger.isDebugEnabled()) {
+								logger.debug("### allergène présent " + nodeService.getProperty(al.getAllergen(), BeCPGModel.PROP_CHARACT_NAME)
+										+ " is Allowed " + isAllergenAllowed);
+							}
+							if (!isAllergenAllowed) {
+								String message = I18NUtil.getMessage(MESSAGE_FORBIDDEN_ALLERGEN,
+										nodeService.getProperty(allergenListDataItem.getAllergen(), BeCPGModel.PROP_CHARACT_NAME));
+								formulatedProduct.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden,
+										message, allergenListDataItem.getAllergen(), new ArrayList<NodeRef>()));
+							}
 						}
-						if (logger.isDebugEnabled()) {
-							logger.debug("### allergène présent " + nodeService.getProperty(al.getAllergen(), BeCPGModel.PROP_CHARACT_NAME)
-									+ " is Allowed " + isAllergenAllowed);
-						}
-						if (!isAllergenAllowed) {
-							String message = I18NUtil.getMessage(MESSAGE_FORBIDDEN_ALLERGEN,
-									nodeService.getProperty(allergenListDataItem.getAllergen(), BeCPGModel.PROP_CHARACT_NAME));
-							formulatedProduct.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden,
-									message, allergenListDataItem.getAllergen(), new ArrayList<NodeRef>()));
-						}
-					}
-				}
+					});
+				});
+
 			}
+
 		}
 	}
 }
