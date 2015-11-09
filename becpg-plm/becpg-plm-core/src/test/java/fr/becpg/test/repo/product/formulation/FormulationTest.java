@@ -924,19 +924,19 @@ public class FormulationTest extends AbstractFinishedProductTest {
 					assertNotNull("check costList", rmData1.getCostList());
 					assertEquals("check costList", 2, rmData1.getCostList().size());
 					assertNotNull("check nutList", rmData1.getNutList());
-					assertEquals("check nutList", 3, rmData1.getNutList().size());
+					assertEquals("check nutList", 4, rmData1.getNutList().size());
 				
 					Map<QName,Serializable> properties = new HashMap<>();
-					properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut4");
+					properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut5");
 					properties.put(PLMModel.PROP_NUTUNIT, "kcal");
 					properties.put(PLMModel.PROP_NUTGROUP, GROUP2);
 					properties.put(PLMModel.PROP_NUTGDA, 2000d);
 					properties.put(PLMModel.PROP_NUT_FORMULA, "10d+50");
-					NodeRef nut4 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), PLMModel.TYPE_NUT, properties).getChildRef();			
+					NodeRef nut5 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), PLMModel.TYPE_NUT, properties).getChildRef();			
 					
 					
 					NutListDataItem nutListDataItem = new NutListDataItem();
-					nutListDataItem.setNut(nut4);
+					nutListDataItem.setNut(nut5);
 					nutListDataItem.setIsManual(false);
 					rmData1.getNutList().add(nutListDataItem);
 					
@@ -955,7 +955,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 					
 					int assertCount =0;
 					for(NutListDataItem nutListEl : rmData1.getNutList()){
-						if(nutListEl.getNut().equals(nut4)){
+						if(nutListEl.getNut().equals(nut5)){
 							assertEquals(nutListEl.getValue(), 60d);
 							assertCount++;
 						}
@@ -965,7 +965,7 @@ public class FormulationTest extends AbstractFinishedProductTest {
 						}
 					}
 					assertEquals( 2, assertCount);
-					assertEquals("check nutList", 4, rmData1.getNutList().size());
+					assertEquals("check nutList", 5, rmData1.getNutList().size());
 					assertNotNull("check allergenList", rmData1.getAllergenList());
 					assertEquals("check allergenList", 4, rmData1.getAllergenList().size());
 					assertNotNull("check ingList", rmData1.getIngList());
