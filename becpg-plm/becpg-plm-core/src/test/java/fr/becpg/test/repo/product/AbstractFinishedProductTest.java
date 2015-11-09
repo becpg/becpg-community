@@ -148,6 +148,9 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
     /** The nut3. */
     protected NodeRef nut3;
     
+    /** The nut4. */
+    protected NodeRef nut4;
+    
     /** The allergen1. */
     protected NodeRef allergen1;
     
@@ -280,6 +283,14 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					properties.put(PLMModel.PROP_NUTGDA, 5d);
 					properties.put(PLMModel.PROP_NUTUL, 5d);
 					nut3 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), PLMModel.TYPE_NUT, properties).getChildRef();			
+					
+					properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut4");
+					properties.put(PLMModel.PROP_NUTUNIT, "kcal");
+					properties.put(PLMModel.PROP_NUTGROUP, GROUP2);
+					properties.put(PLMModel.PROP_NUTGDA, 5d);
+					properties.put(PLMModel.PROP_NUTUL, 5d);
+					nut4 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String)properties.get(BeCPGModel.PROP_CHARACT_NAME)), PLMModel.TYPE_NUT, properties).getChildRef();			
+				
 					
 					//Allergens
 					properties.clear();
@@ -443,6 +454,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase{
 					nutList.add(new NutListDataItem(null, 1d, "g/100g", 0.8d, 2.1d, "Groupe 1", nut1, false));
 					nutList.add(new NutListDataItem(null, 2d, "g/100g", 1.5d, 2.2d, "Groupe 1", nut2, false));
 					nutList.add(new NutListDataItem(null, 4d, "g/100g", 0.8d, 2.1d, "Groupe 1", nut3, false));
+					nutList.add(new NutListDataItem(null, 3d, "g/100g", 0.8d, 2.1d, "Groupe 1", nut4, false));
 					rawMaterial1.setNutList(nutList);
 					//allergenList
 					List<AllergenListDataItem> allergenList = new ArrayList<>();

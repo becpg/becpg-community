@@ -21,6 +21,7 @@ import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementType;
@@ -44,11 +45,11 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 
 	public static final String MESSAGE_MAXIMAL_DAILY_VALUE = "message.formulate.nut.maximalDailyValue";
 
+	public static final String MESSAGE_NUT_NOT_IN_RANGE = "message.formulate.nut.notInRangeValue";
+
 	private static final Log logger = LogFactory.getLog(NutsCalculatingFormulationHandler.class);
 
 	private boolean propagateModeEnable = false;
-	
-	
 
 	public void setPropagateModeEnable(boolean propagateModeEnable) {
 		this.propagateModeEnable = propagateModeEnable;
@@ -92,7 +93,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 					Double netQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
 
 					for (CompoListDataItem compoItem : formulatedProduct.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-						
+
 						NodeRef part = compoItem.getProduct();
 						Double weight = FormulationHelper.getQtyInKg(compoItem);
 						Double vol = FormulationHelper.getNetVolume(compoItem, nodeService);
@@ -102,8 +103,9 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 						Double qtyUsed = FormulationHelper.isProductUnitLiter(partProduct.getUnit()) ? vol : weight;
 
 						if (qtyUsed != null) {
-							if (! (partProduct instanceof LocalSemiFinishedProductData)) {
-								visitPart(partProduct, formulatedProduct.getNutList(), retainNodes, qtyUsed, netQty, isGenericRawMaterial, totalQtiesValue);
+							if (!(partProduct instanceof LocalSemiFinishedProductData)) {
+								visitPart(partProduct, formulatedProduct.getNutList(), retainNodes, qtyUsed, netQty, isGenericRawMaterial,
+										totalQtiesValue);
 							}
 						}
 					}
@@ -115,11 +117,11 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 							String message = I18NUtil.getMessage(MESSAGE_UNDEFINED_CHARACT,
 									nodeService.getProperty(mandatoryCharact.getKey(), BeCPGModel.PROP_CHARACT_NAME));
 
-							formulatedProduct.getCompoListView().getReqCtrlList().add(
-									new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, mandatoryCharact.getKey(), mandatoryCharact.getValue()));
+							formulatedProduct.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated,
+									message, mandatoryCharact.getKey(), mandatoryCharact.getValue()));
 						}
 					}
-					
+
 					if (isGenericRawMaterial) {
 						formulateGenericRawMaterial(formulatedProduct.getNutList(), totalQtiesValue, netQty);
 					}
@@ -181,13 +183,61 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 					}
 				});
 
+				checkNutrientsOfFormulatedProduct(formulatedProduct, formulatedProduct.getProductSpecifications());
+
 			}
 		}
 		return true;
 	}
 
-	private List<ReqCtrlListDataItem> visitPart(ProductData partProduct, List<NutListDataItem> nutList, List<NutListDataItem> retainNodes, Double qtyUsed
-			, Double netQty, Boolean isGenericRawMaterial, Map<NodeRef, Double> totalQtiesValue) {
+	private void checkNutrientsOfFormulatedProduct(ProductData formulatedProduct, List<ProductSpecificationData> productSpecifications) {
+		
+		for (ProductSpecificationData productSpecification : productSpecifications) {
+			if ((productSpecification.getNutList() != null) && !productSpecification.getNutList().isEmpty()) {
+				productSpecification.getNutList().forEach(nutListSpecDataItem -> {
+				
+					formulatedProduct.getNutList().forEach(nutListDataItem -> {
+
+						boolean isNutAllowed = true;
+
+						if (nutListDataItem.getNut().equals(nutListSpecDataItem.getNut())) {
+
+							if ((nutListSpecDataItem.getValue() != null) && !nutListSpecDataItem.getValue().equals(nutListDataItem.getValue())) {
+								isNutAllowed = false;
+								
+								
+							}
+
+							if (nutListSpecDataItem.getMini() != null) {
+								if (nutListDataItem.getValue() == null || nutListDataItem.getValue() < nutListSpecDataItem.getMini()) {
+									isNutAllowed = false;
+								}
+							}
+
+							if (nutListSpecDataItem.getMaxi() != null) {
+								if (nutListDataItem.getValue() == null || nutListDataItem.getValue() > nutListSpecDataItem.getMaxi()) {
+									isNutAllowed = false;
+								}
+							}
+						}
+
+						
+						
+						if (!isNutAllowed) {
+							String message = I18NUtil.getMessage(MESSAGE_NUT_NOT_IN_RANGE,
+									nodeService.getProperty(nutListSpecDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME));
+							formulatedProduct.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden,
+									message, nutListSpecDataItem.getNut(), new ArrayList<NodeRef>()));
+						}
+					});
+				});
+			}
+		}
+
+	}
+
+	private List<ReqCtrlListDataItem> visitPart(ProductData partProduct, List<NutListDataItem> nutList, List<NutListDataItem> retainNodes,
+			Double qtyUsed, Double netQty, Boolean isGenericRawMaterial, Map<NodeRef, Double> totalQtiesValue) {
 
 		List<ReqCtrlListDataItem> ret = new ArrayList<>();
 
