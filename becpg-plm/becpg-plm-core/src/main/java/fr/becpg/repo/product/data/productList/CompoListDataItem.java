@@ -316,7 +316,7 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem  imp
 	}
 
 	@Override
-	public CompositionDataItem clone() {
+	public CompoListDataItem clone() {
 		return new CompoListDataItem(this);
 	}
 
