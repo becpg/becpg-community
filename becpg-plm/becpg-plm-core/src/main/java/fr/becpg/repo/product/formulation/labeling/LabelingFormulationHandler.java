@@ -96,7 +96,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
-
+		
+		//TODO Skip on first reformulate (ie formulateCount > 0 )
+		
 		// no compo => no formulation
 		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)
 				|| !formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
@@ -112,7 +114,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 		for (Map.Entry<String, List<LabelingRuleListDataItem>> labelingRuleListsGroup : labelingRuleListsByGroup.entrySet()) {
 
-			logger.debug("Calculate Ingredient Labeling for group : " + labelingRuleListsGroup.getKey());
+			logger.debug("Calculate Ingredient Labeling for group : " + labelingRuleListsGroup.getKey()+" - "+formulatedProduct.getName());
 
 			LabelingFormulaContext labelingFormulaContext = new LabelingFormulaContext(mlNodeService, associationService, alfrescoRepository);
 
@@ -904,8 +906,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							&& ((productData instanceof SemiFinishedProductData) || (productData instanceof FinishedProductData))) {
 						Composite<CompoListDataItem> sfComposite = CompositeHelper
 								.getHierarchicalCompoList(productData.getCompoList(new VariantFilters<>()));
+						
 						for (Composite<CompoListDataItem> sfChild : sfComposite.getChildren()) {
-							sfChild.getData().setParent(compoListDataItem);
+							CompoListDataItem clone = sfChild.getData().clone();
+							clone.setParent(compoListDataItem);
+							sfChild.setData(clone);
 							composite.addChild(sfChild);
 						}
 						isMultiLevel = true;
