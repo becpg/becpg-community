@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
-    <property name="createdBy">Eclipse BIRT Designer Version 4.3.2.v20140211-1400 Build &lt;4.3.2.v20140225-1404></property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.4.2.v201410272105 Build &lt;4.4.2.v20150217-1805></property>
     <simple-property-list name="includeResource">
         <value>src/main/resources/beCPG/birt/CompareEntities-messages</value>
     </simple-property-list>
@@ -24,7 +24,7 @@
     </parameters>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="1347">
-            <property name="FILELIST">/opt/becpg/workspace/becpg/becpg-core/src/main/resources/beCPG/birt/system/CompareEntities.xml</property>
+            <property name="FILELIST">/opt/becpg/workspace/becpg/becpg-core/src/main/resources/beCPG/birt/system/CompareEntities2.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -1221,12 +1221,35 @@ else{
                                 <expression name="expression" type="javascript">dataSetRow["entity4"]</expression>
                                 <property name="dataType">string</property>
                             </structure>
+                            <structure>
+                                <property name="name">propertyQName</property>
+                                <text-property name="displayName">propertyQName</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["propertyQName"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
                         </list-property>
                         <list-property name="sort">
                             <structure>
                                 <expression name="key" type="javascript">row["characteristic"]</expression>
                                 <property name="direction">asc</property>
                                 <property name="strength">-1</property>
+                            </structure>
+                        </list-property>
+                        <list-property name="filter">
+                            <structure>
+                                <property name="operator">is-true</property>
+                                <expression name="expr" type="javascript">(row["propertyQName"] != "bcpg:costListFutureValue" &amp;&amp;
+row["propertyQName"] != "bcpg:costListPreviousValue" &amp;&amp;
+row["propertyQName"] != "bcpg:costListValuePerProduct" &amp;&amp;
+row["propertyQName"] != "bcpg:nutListValuePerServing" &amp;&amp;
+row["propertyQName"] != "bcpg:nutListGDAPerc" &amp;&amp;
+row["propertyQName"] != "bcpg:nutListMini" &amp;&amp;
+row["propertyQName"] != "bcpg:nutListMaxi" &amp;&amp;
+row["propertyQName"] != "bcpg:nutListFormulaErrorLog" &amp;&amp;
+row["propertyQName"] != "bcpg:variantIds" &amp;&amp;
+row["propertyQName"] != "bcpg:nutListIsFormulated" &amp;&amp;
+row["propertyQName"] != "bcpg:costListIsFormulated")</expression>
+                                <property name="updateAggregation">true</property>
                             </structure>
                         </list-property>
                         <column id="1508"/>
