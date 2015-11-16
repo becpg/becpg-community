@@ -596,6 +596,7 @@
 					MAX(IF(prop.prop_name = "pjt:projectHierarchy2",prop.string_value,NULL)) as projectHierarchy2,
 					MAX(IF(prop.prop_name = "bcpg:code",prop.string_value,NULL)) as code,
 					MAX(IF(prop.prop_name = "cm:created",prop.date_value,NULL)) as projectDateCreated,
+					MAX(IF(prop.prop_name = "cm:creator",prop.date_value,NULL)) as projectCreator,
 					MAX(IF(prop.prop_name = "cm:modified",prop.date_value,NULL)) as projectDateModified,
 					MAX(IF(prop.prop_name = "pjt:projectState",prop.string_value,NULL)) as projectState,
 					MAX(IF(prop.prop_name = "pjt:projectStartDate",prop.date_value,NULL)) as projectStartDate,
@@ -739,6 +740,12 @@
 		<Dimension  name="projectManager" caption="${msg("jsolap.projectManager.title")}" >
 			<Hierarchy name="projectManager" caption="${msg("jsolap.projectManager.title")}" hasAll="true" allMemberCaption="${msg("jsolap.projectManager.caption")}">
 				<Level name="projectManager" caption="${msg("jsolap.projectManager.title")}" column="projectManager"  type="String"    />
+			</Hierarchy>
+		</Dimension>
+		
+		<Dimension  name="projectCreator" caption="${msg("jsolap.projectCreator.title")}" >
+			<Hierarchy name="projectCreator" caption="${msg("jsolap.projectCreator.title")}" hasAll="true" allMemberCaption="${msg("jsolap.projectCreator.caption")}">
+				<Level name="projectCreator" caption="${msg("jsolap.projectCreator.title")}" column="projectCreator"  type="String"    />
 			</Hierarchy>
 		</Dimension>
 		

@@ -2049,7 +2049,18 @@
 	</types>
 	
 	<aspects>
-
+	
+	  <!--  
+	  <aspect name="bcpg:genericPartAspect">
+			<properties>
+				<property name="bcpg:isPartOfGeneric">
+					<type>d:boolean</type>
+					<default>false</default>
+				</property>
+			</properties>
+		</aspect>
+       -->
+       
 		<aspect name="bcpg:formulatedEntityAspect">
 			<properties>
 				<property name="bcpg:formulatedDate">

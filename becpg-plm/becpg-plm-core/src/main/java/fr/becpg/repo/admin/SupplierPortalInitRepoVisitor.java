@@ -74,7 +74,7 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 			dataLists.add(ProjectModel.TYPE_DELIVERABLE_LIST);
 			dataLists.add(ProjectModel.TYPE_ACTIVITY_LIST);
 			entityTplNodeRef = entityTplService.createEntityTpl(entityTplsNodeRef, ProjectModel.TYPE_PROJECT,
-					I18NUtil.getMessage(SUPPLIER_PJT_TPL_NAME), true, dataLists, null);
+					I18NUtil.getMessage(SUPPLIER_PJT_TPL_NAME), true, false, dataLists, null);
 
 		    NodeRef qualityNodeRef = authorityService.getAuthorityNodeRef(PermissionService.GROUP_PREFIX + PLMGroup.QualityMgr.toString());
 
