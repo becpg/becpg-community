@@ -119,7 +119,7 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 		dataLists.add(ProjectModel.TYPE_INVOICE_LIST);
 		dataLists.add(ProjectModel.TYPE_EXPENSE_LIST);
 
-		NodeRef entityTplNodeRef = entityTplService.createEntityTpl(entityTplsNodeRef, ProjectModel.TYPE_PROJECT, null, true, dataLists, null);
+		NodeRef entityTplNodeRef = entityTplService.createEntityTpl(entityTplsNodeRef, ProjectModel.TYPE_PROJECT, null, true, true, dataLists, null);
 
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 

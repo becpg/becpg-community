@@ -18,14 +18,13 @@ import fr.becpg.repo.repository.annotation.MultiLevelLeaf;
 @MultiLevelLeaf
 public class RawMaterialData extends ProductData {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -2176815295417841030L;
 
 	private List<NodeRef> suppliers = new ArrayList<>();
 	
 	private List<NodeRef> supplierPlants = new ArrayList<>();
+	
+//	private Boolean isPartOfGeneric = false;
 
 	@AlfMultiAssoc
 	@AlfQname(qname="bcpg:suppliers")
@@ -46,6 +45,17 @@ public class RawMaterialData extends ProductData {
 	public void setSupplierPlants(List<NodeRef> supplierPlants) {
 		this.supplierPlants = supplierPlants;
 	}
+	
+//	@AlfProp
+//	@AlfQname(qname="bcpg:isPartOfGeneric")
+//	public Boolean getIsPartOfGeneric() {
+//		return isPartOfGeneric;
+//	}
+//
+//	public void setIsPartOfGeneric(Boolean isPartOfGeneric) {
+//		this.isPartOfGeneric = isPartOfGeneric;
+//	}
+//	
 
 	@Override
 	public int hashCode() {
@@ -55,6 +65,7 @@ public class RawMaterialData extends ProductData {
 		result = prime * result + ((suppliers == null) ? 0 : suppliers.hashCode());
 		return result;
 	}
+
 
 	@Override
 	public boolean equals(Object obj) {
@@ -78,6 +89,5 @@ public class RawMaterialData extends ProductData {
 		return true;
 	}
 
-	
-	
+
 }

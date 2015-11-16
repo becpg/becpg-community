@@ -208,30 +208,32 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		Double density = 0d;
 		int rawMaterialsWithDensity = 0;
 		for (Composite<CompoListDataItem> component : composite.getChildren()) {
-			ProductData productData = alfrescoRepository.findOne(component.getData().getProduct());
-			if (productData instanceof RawMaterialData) {
-				for (NodeRef supplierNodeRef : ((RawMaterialData) productData).getSuppliers()) {
-					if (!supplierNodeRefs.contains(supplierNodeRef)) {
-						supplierNodeRefs.add(supplierNodeRef);
+			if(component.getData().getQtySubFormula()!=null && component.getData().getQtySubFormula()>0){
+				ProductData productData = alfrescoRepository.findOne(component.getData().getProduct());
+				
+				if (productData instanceof RawMaterialData) {
+					for (NodeRef supplierNodeRef : ((RawMaterialData) productData).getSuppliers()) {
+						if (!supplierNodeRefs.contains(supplierNodeRef)) {
+							supplierNodeRefs.add(supplierNodeRef);
+						}
 					}
-				}
-				for (NodeRef plantNodeRef : productData.getPlants()) {
-					if (!plantNodeRefs.contains(plantNodeRef)) {
-						plantNodeRefs.add(plantNodeRef);
+					for (NodeRef plantNodeRef : productData.getPlants()) {
+						if (!plantNodeRefs.contains(plantNodeRef)) {
+							plantNodeRefs.add(plantNodeRef);
+						}
 					}
-				}
-				for (NodeRef supplierPlantNodeRef : ((RawMaterialData) productData).getSupplierPlants()) {
-					if (!supplierPlantNodeRefs.contains(supplierPlantNodeRef)) {
-						supplierPlantNodeRefs.add(supplierPlantNodeRef);
+					for (NodeRef supplierPlantNodeRef : ((RawMaterialData) productData).getSupplierPlants()) {
+						if (!supplierPlantNodeRefs.contains(supplierPlantNodeRef)) {
+							supplierPlantNodeRefs.add(supplierPlantNodeRef);
+						}
 					}
-				}
-
-				if (productData.getDensity() != null) {
-					density += productData.getDensity();
-					rawMaterialsWithDensity++;
+	
+					if (productData.getDensity() != null) {
+						density += productData.getDensity();
+						rawMaterialsWithDensity++;
+					}
 				}
 			}
-
 		}
 		if (density != 0d && rawMaterialsWithDensity != 0) {
 			rawMaterialData.setDensity(density / rawMaterialsWithDensity);
