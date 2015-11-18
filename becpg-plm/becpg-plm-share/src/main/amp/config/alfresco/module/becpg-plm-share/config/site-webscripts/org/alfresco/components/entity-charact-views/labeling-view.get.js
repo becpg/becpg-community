@@ -8,6 +8,7 @@ function main()
     model.widgets = [];
     model.widgets = model.widgets.concat(createDashlet("ingLabelingList-"+args.htmlid, "ingLabelingListDashlet"));
     model.widgets = model.widgets.concat(createDashlet("labelingRuleList-"+args.htmlid, "labelingRuleListDashlet",msg.get("dashlet.labelingRuleList.title"),"bcpg:labelingRuleList"));
+    model.widgets = model.widgets.concat(createDashlet("compoList-"+args.htmlid, "compoListDashlet",msg.get("dashlet.compoList.title"),"bcpg:compoList", false ,"compoList", "labeling"));
 }
 
 parseActions(page.url.args.list!=null ?page.url.args.list : null);   

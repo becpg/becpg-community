@@ -16,7 +16,7 @@
  *  You should have received a copy of the GNU Lesser General Public License along with beCPG.
  *   If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-function createDashlet(dashletId, dashletName, dashletTitle, itemType, disableResize){
+function createDashlet(dashletId, dashletName, dashletTitle, itemType, disableResize,listId,  columnFormId){
 
    var entityDataGrid = {
          id : "entityDataGrid", 
@@ -25,7 +25,7 @@ function createDashlet(dashletId, dashletName, dashletTitle, itemType, disableRe
          options : {
             entityNodeRef: page.url.args.nodeRef!=null ?page.url.args.nodeRef : "",
             siteId : (page.url.templateArgs.site != null) ? page.url.templateArgs.site : "",
-            list: page.url.args.list!=null ?page.url.args.list : "",
+            list: listId? listId : (page.url.args.list!=null ?page.url.args.list : ""),
             dataUrl : page.url.context+"/proxy/alfresco/becpg/entity/datalists/data/node/",
             itemUrl : page.url.context+"/proxy/alfresco/becpg/entity/datalists/item/node/",
             usePagination: true,
@@ -36,10 +36,32 @@ function createDashlet(dashletId, dashletName, dashletTitle, itemType, disableRe
             itemType : itemType ? itemType : null,
             saveFieldUrl : page.url.context+"/proxy/alfresco/becpg/bulkedit/save",
             hiddenColumns : ["prop_bcpg_depthLevel"],
-            initHistoryManager : false
+            initHistoryManager : false,
+            columnFormId : columnFormId ? columnFormId : null
            }
         };
          
+   
+       var dashletTitleBarActions = {
+	         id : "DashletTitleBarActions",
+	         name : "Alfresco.widget.DashletTitleBarActions",
+	         initArgs : ["\"" + dashletId + "\""],
+	         useMessages : false,
+	         options : {
+	            actions : [
+	               {
+	                  cssClass: "help",
+	                  bubbleOnClick:
+	                  {
+	                     message: itemType ? msg.get("dashlet.help."+itemType.replace(":","_")) :  msg.get("dashlet.help.composition")
+	                  },
+	                  tooltip: msg.get("dashlet.help.tooltip")
+	               }
+	            ]
+	         }
+	      };
+	      
+   
         if(!disableResize){
               var dashletResizer = {
                  id : "DashletResizer",
@@ -59,32 +81,10 @@ function createDashlet(dashletId, dashletName, dashletTitle, itemType, disableRe
                  model.dashletPrefs[dashletId] = prefs;
               }
               
+              return [entityDataGrid, dashletResizer, dashletTitleBarActions];
         }
       
-      var dashletTitleBarActions = {
-         id : "DashletTitleBarActions",
-         name : "Alfresco.widget.DashletTitleBarActions",
-         initArgs : ["\"" + dashletId + "\""],
-         useMessages : false,
-         options : {
-            actions : [
-               {
-                  cssClass: "help",
-                  bubbleOnClick:
-                  {
-                     message: itemType ? msg.get("dashlet.help."+itemType.replace(":","_")) :  msg.get("dashlet.help.composition")
-                  },
-                  tooltip: msg.get("dashlet.help.tooltip")
-               }
-            ]
-         }
-      };
-      
-    
-      if(!disableResize){
-          return [entityDataGrid, dashletResizer, dashletTitleBarActions];
-      }  
-      
+     
       return [entityDataGrid, dashletTitleBarActions];
    
 }
