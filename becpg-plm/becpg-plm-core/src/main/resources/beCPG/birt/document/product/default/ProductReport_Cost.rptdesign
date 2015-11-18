@@ -231,7 +231,13 @@
                 <structure>
                     <property name="columnName">erpCode</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">erpCode</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">versionLabel</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">versionLabel</text-property>
                 </structure>
             </list-property>
             <list-property name="parameters"/>
@@ -405,6 +411,11 @@
                     <structure>
                         <property name="position">34</property>
                         <property name="name">erpCode</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">35</property>
+                        <property name="name">versionLabel</property>
                         <property name="dataType">string</property>
                     </structure>
                 </list-property>
@@ -649,8 +660,15 @@
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
+                <structure>
+                    <property name="position">35</property>
+                    <property name="name">versionLabel</property>
+                    <property name="nativeName">versionLabel</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{productCurrency;STRING;/productCurrency},{productPrice;DOUBLE;/productPrice},{productUnit;STRING;/productUnit},{productType;STRING;/productType},{name;STRING;/name},{productState;STRING;/productState},{modified;TIMESTAMP;/modified},{productQty;DOUBLE;/productQty},{productDensity;DOUBLE;/productDensity},{description;STRING;/description},{clients;STRING;/clients},{productHierarchy1;STRING;/productHierarchy1},{productHierarchy2;STRING;/productHierarchy2},{legalName;STRING;/legalName},{useByDate;INT;/useByDate},{productComments;STRING;/productComments},{eanCode;STRING;/eanCode},{pvValidationDate;TIMESTAMP;/pvValidationDate},{pvCallerActor;STRING;/pvCallerActor},{pvTransmitterActor;STRING;/pvTransmitterActor},{pvQualityApprovalActor;STRING;/pvQualityApprovalActor},{pvProductionApprovalActor;STRING;/pvProductionApprovalActor},{pvRDApprovalActor;STRING;/pvRDApprovalActor},{itemType;STRING;/itemType},{preparationTips;STRING;/preparationTips},{packagingDescription;STRING;/packagingDescription},{numberOfServings;STRING;/numberOfServings},{precautionOfUseDescription;STRING;/precautionOfUse/description},{storageConditionsDescription;STRING;/storageConditions/description},{netWeight;DOUBLE;/netWeight},{creator;STRING;/creator},{projectedQty;INT;/projectedQty},{erpCode;STRING;/erpCode}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity]#:#{code;STRING;/code},{productCurrency;STRING;/productCurrency},{productPrice;DOUBLE;/productPrice},{productUnit;STRING;/productUnit},{productType;STRING;/productType},{name;STRING;/name},{productState;STRING;/productState},{modified;TIMESTAMP;/modified},{productQty;DOUBLE;/productQty},{productDensity;DOUBLE;/productDensity},{description;STRING;/description},{clients;STRING;/clients},{productHierarchy1;STRING;/productHierarchy1},{productHierarchy2;STRING;/productHierarchy2},{legalName;STRING;/legalName},{useByDate;INT;/useByDate},{productComments;STRING;/productComments},{eanCode;STRING;/eanCode},{pvValidationDate;TIMESTAMP;/pvValidationDate},{pvCallerActor;STRING;/pvCallerActor},{pvTransmitterActor;STRING;/pvTransmitterActor},{pvQualityApprovalActor;STRING;/pvQualityApprovalActor},{pvProductionApprovalActor;STRING;/pvProductionApprovalActor},{pvRDApprovalActor;STRING;/pvRDApprovalActor},{itemType;STRING;/itemType},{preparationTips;STRING;/preparationTips},{packagingDescription;STRING;/packagingDescription},{numberOfServings;STRING;/numberOfServings},{precautionOfUseDescription;STRING;/precautionOfUse/description},{storageConditionsDescription;STRING;/storageConditions/description},{netWeight;DOUBLE;/netWeight},{creator;STRING;/creator},{projectedQty;INT;/projectedQty},{erpCode;STRING;/erpCode},{versionLabel;STRING;/versionLabel}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -732,6 +750,11 @@
                     <expression name="expression">row["costPerProduct"] / row["netWeight"]</expression>
                     <property name="dataType">float</property>
                 </structure>
+                <structure>
+                    <property name="name">compoListProductLabel</property>
+                    <expression name="expression">row["compoListProduct"] + " " + (row["versionLabel"] == null ? "1.0" : row["versionLabel"])</expression>
+                    <property name="dataType">string</property>
+                </structure>
             </list-property>
             <list-property name="columnHints">
                 <structure>
@@ -800,6 +823,7 @@
                 <structure>
                     <property name="columnName">compoListLossPerc</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">compoListLossPerc</text-property>
                 </structure>
                 <structure>
@@ -831,6 +855,18 @@
                     <property name="analysis">measure</property>
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">compoListQtyForProduct</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">versionLabel</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">versionLabel</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">itemTypeEntity</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">itemTypeEntity</text-property>
                 </structure>
             </list-property>
             <list-property name="parameters"/>
@@ -918,13 +954,28 @@
                     </structure>
                     <structure>
                         <property name="position">17</property>
+                        <property name="name">versionLabel</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">18</property>
+                        <property name="name">itemTypeEntity</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">19</property>
                         <property name="name">costPerProduct</property>
                         <property name="dataType">float</property>
                     </structure>
                     <structure>
-                        <property name="position">18</property>
+                        <property name="position">20</property>
                         <property name="name">costPerKilo</property>
                         <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">21</property>
+                        <property name="name">compoListProductLabel</property>
+                        <property name="dataType">string</property>
                     </structure>
                 </list-property>
             </structure>
@@ -1042,8 +1093,22 @@
                     <property name="dataType">float</property>
                     <property name="nativeDataType">8</property>
                 </structure>
+                <structure>
+                    <property name="position">17</property>
+                    <property name="name">versionLabel</property>
+                    <property name="nativeName">versionLabel</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">18</property>
+                    <property name="name">itemTypeEntity</property>
+                    <property name="nativeName">itemTypeEntity</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/compoLists/compoList]#:#{depthLevel;STRING;/@depthLevel},{compoListProduct;STRING;/@compoListProduct},{compoListQtySubFormula;BIGDECIMAL;/@compoListQtySubFormula},{compoListQty;DOUBLE;/@compoListQty},{compoListUnit;STRING;/@compoListUnit},{compoListQtyAfterProcess;DOUBLE;/@compoListQtyAfterProcess},{itemType;STRING;/@itemType},{erpCode;STRING;/@erpCode},{variants;STRING;/@variants},{compoListYieldPerc;STRING;/@compoListYieldPerc},{compoListLossPerc;DOUBLE;/@compoListLossPerc},{instruction;STRING;/instruction},{unitTotalCost;DOUBLE;/@unitTotalCost},{productCompoQtyUsed;DOUBLE;../../../productCompoQtyUsed},{netWeight;DOUBLE;../../../netWeight},{compoListQtyForProduct;DOUBLE;/@compoListQtyForProduct}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/compoLists/compoList]#:#{depthLevel;STRING;/@depthLevel},{compoListProduct;STRING;/@compoListProduct},{compoListQtySubFormula;BIGDECIMAL;/@compoListQtySubFormula},{compoListQty;DOUBLE;/@compoListQty},{compoListUnit;STRING;/@compoListUnit},{compoListQtyAfterProcess;DOUBLE;/@compoListQtyAfterProcess},{itemType;STRING;/@itemType},{erpCode;STRING;/@erpCode},{variants;STRING;/@variants},{compoListYieldPerc;STRING;/@compoListYieldPerc},{compoListLossPerc;DOUBLE;/@compoListLossPerc},{instruction;STRING;/instruction},{unitTotalCost;DOUBLE;/@unitTotalCost},{productCompoQtyUsed;DOUBLE;../../../productCompoQtyUsed},{netWeight;DOUBLE;../../../netWeight},{compoListQtyForProduct;DOUBLE;/@compoListQtyForProduct},{versionLabel;STRING;/@versionLabel},{itemTypeEntity;STRING;../../../itemType}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -1387,17 +1452,26 @@
             <list-property name="computedColumns">
                 <structure>
                     <property name="name">costPerKilo</property>
-                    <expression name="expression">row["costListValuePerProduct"] / row["netWeight"]</expression>
+                    <expression name="expression">if(row["itemType"] == "finishedProduct"){
+row["costListValuePerProduct"] / row["netWeight"]
+}
+else if(row["costListUnit"].indexOf("/kg") > 0){
+row["costListValue"]
+}</expression>
                     <property name="dataType">float</property>
                 </structure>
                 <structure>
                     <property name="name">costPerBox</property>
-                    <expression name="expression">row["costListValuePerProduct"] * row["nbProductsPkgLevel2"]</expression>
+                    <expression name="expression">if(row["nbProductsPkgLevel2"] != null &amp;&amp; row["costListValuePerProduct"] != null){
+row["costListValuePerProduct"] * row["nbProductsPkgLevel2"]
+}</expression>
                     <property name="dataType">float</property>
                 </structure>
                 <structure>
                     <property name="name">costPerPallet</property>
-                    <expression name="expression">row["costListValuePerProduct"] * row["nbProductsPkgLevel3"]</expression>
+                    <expression name="expression">if(row["nbProductsPkgLevel3"] != null &amp;&amp; row["costListValuePerProduct"] != null){
+row["costListValuePerProduct"] * row["nbProductsPkgLevel3"]
+}</expression>
                     <property name="dataType">float</property>
                 </structure>
             </list-property>
@@ -1447,12 +1521,26 @@
                 <structure>
                     <property name="columnName">nbProductsPkgLevel2</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">nbProductsPkgLevel2</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">nbProductsPkgLevel3</property>
                     <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">nbProductsPkgLevel3</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">itemType</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">itemType</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">costListUnit</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">costListUnit</text-property>
                 </structure>
             </list-property>
             <list-property name="parameters"/>
@@ -1505,16 +1593,26 @@
                     </structure>
                     <structure>
                         <property name="position">10</property>
+                        <property name="name">itemType</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">costListUnit</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
                         <property name="name">costPerKilo</property>
                         <property name="dataType">float</property>
                     </structure>
                     <structure>
-                        <property name="position">11</property>
+                        <property name="position">13</property>
                         <property name="name">costPerBox</property>
                         <property name="dataType">float</property>
                     </structure>
                     <structure>
-                        <property name="position">12</property>
+                        <property name="position">14</property>
                         <property name="name">costPerPallet</property>
                         <property name="dataType">float</property>
                     </structure>
@@ -1585,8 +1683,22 @@
                     <property name="dataType">integer</property>
                     <property name="nativeDataType">4</property>
                 </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">itemType</property>
+                    <property name="nativeName">itemType</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">costListUnit</property>
+                    <property name="nativeName">costListUnit</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/costLists/costList]#:#{costListCost;STRING;/@costListCost},{costListValue;DOUBLE;/@costListValue},{productQty;DOUBLE;../../../productQty},{productUnit;STRING;../../../productUnit},{depthLevel;INT;/@depthLevel},{netWeight;DOUBLE;../../../netWeight},{costListValuePerProduct;DOUBLE;/@costListValuePerProduct},{nbProductsPkgLevel2;INT;../../packagingLists/packagingLevelMeasures/@nbProductsPkgLevel2},{nbProductsPkgLevel3;INT;../../packagingLists/packagingLevelMeasures/@nbProductsPkgLevel3}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/costLists/costList]#:#{costListCost;STRING;/@costListCost},{costListValue;DOUBLE;/@costListValue},{productQty;DOUBLE;../../../productQty},{productUnit;STRING;../../../productUnit},{depthLevel;INT;/@depthLevel},{netWeight;DOUBLE;../../../netWeight},{costListValuePerProduct;DOUBLE;/@costListValuePerProduct},{nbProductsPkgLevel2;INT;../../packagingLists/packagingLevelMeasures/@nbProductsPkgLevel2},{nbProductsPkgLevel3;INT;../../packagingLists/packagingLevelMeasures/@nbProductsPkgLevel3},{itemType;STRING;../../../itemType},{costListUnit;STRING;/@costListUnit}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -1651,6 +1763,11 @@
                     <property name="name">costPerKilo</property>
                     <expression name="expression">row["costPerProduct"] / row["netWeight"]</expression>
                     <property name="dataType">float</property>
+                </structure>
+                <structure>
+                    <property name="name">packagingListProductLabel</property>
+                    <expression name="expression">row["packagingListProduct"] + " " + (row["versionLabel"] == null ? "1.0" : row["versionLabel"])</expression>
+                    <property name="dataType">string</property>
                 </structure>
             </list-property>
             <list-property name="columnHints">
@@ -1717,18 +1834,23 @@
                 <structure>
                     <property name="columnName">itemType</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">itemType</text-property>
                 </structure>
-            </list-property>
-            <list-property name="filter">
                 <structure>
-                    <property name="operator">ne</property>
-                    <expression name="expr" type="javascript">row["itemType"]</expression>
-                    <simple-property-list name="value1">
-                        <value>"bcpg:packagingKit"</value>
-                    </simple-property-list>
+                    <property name="columnName">versionLabel</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">versionLabel</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">itemTypeEntity</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">itemTypeEntity</text-property>
                 </structure>
             </list-property>
+            <list-property name="filter"/>
             <list-property name="parameters"/>
             <structure name="cachedMetaData">
                 <list-property name="resultSet">
@@ -1789,13 +1911,28 @@
                     </structure>
                     <structure>
                         <property name="position">12</property>
+                        <property name="name">versionLabel</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">itemTypeEntity</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">14</property>
                         <property name="name">costPerProduct</property>
                         <property name="dataType">float</property>
                     </structure>
                     <structure>
-                        <property name="position">13</property>
+                        <property name="position">15</property>
                         <property name="name">costPerKilo</property>
                         <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">16</property>
+                        <property name="name">packagingListProductLabel</property>
+                        <property name="dataType">string</property>
                     </structure>
                 </list-property>
             </structure>
@@ -1878,8 +2015,22 @@
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">versionLabel</property>
+                    <property name="nativeName">versionLabel</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">itemTypeEntity</property>
+                    <property name="nativeName">itemTypeEntity</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingLists/packagingList]#:#{erpCode;STRING;/@erpCode},{packagingListProduct;STRING;/@packagingListProduct},{packagingListQty;DOUBLE;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{unitTotalCost;DOUBLE;/@unitTotalCost},{packagingListLossPerc;DOUBLE;/@packagingListLossPerc},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{packagingListQtyForProduct;DOUBLE;/@packagingListQtyForProduct},{depthLevel;INT;/@depthLevel},{netWeight;DOUBLE;../../../netWeight},{itemType;STRING;/@itemType}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingLists/packagingList]#:#{erpCode;STRING;/@erpCode},{packagingListProduct;STRING;/@packagingListProduct},{packagingListQty;DOUBLE;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{unitTotalCost;DOUBLE;/@unitTotalCost},{packagingListLossPerc;DOUBLE;/@packagingListLossPerc},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{packagingListQtyForProduct;DOUBLE;/@packagingListQtyForProduct},{depthLevel;INT;/@depthLevel},{netWeight;DOUBLE;../../../netWeight},{itemType;STRING;/@itemType},{versionLabel;STRING;/@versionLabel},{itemTypeEntity;STRING;../../../itemType}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -1993,6 +2144,11 @@
                     <expression name="expression">row["costPerProduct"] / row["netWeight"]</expression>
                     <property name="dataType">float</property>
                 </structure>
+                <structure>
+                    <property name="name">plResourceLabel</property>
+                    <expression name="expression">row["plResource"] + " " + (row["versionLabel"] == null ? "1.0" : row["versionLabel"])</expression>
+                    <property name="dataType">string</property>
+                </structure>
             </list-property>
             <list-property name="columnHints">
                 <structure>
@@ -2055,6 +2211,23 @@
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">netWeight</text-property>
                 </structure>
+                <structure>
+                    <property name="columnName">versionLabel</property>
+                    <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">versionLabel</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">depthLevel</property>
+                    <property name="analysis">measure</property>
+                    <property name="onColumnLayout">false</property>
+                    <text-property name="heading">depthLevel</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">itemTypeEntity</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">itemTypeEntity</text-property>
+                </structure>
             </list-property>
             <list-property name="parameters"/>
             <structure name="cachedMetaData">
@@ -2111,13 +2284,33 @@
                     </structure>
                     <structure>
                         <property name="position">11</property>
+                        <property name="name">versionLabel</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">depthLevel</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">itemTypeEntity</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">14</property>
                         <property name="name">costPerProduct</property>
                         <property name="dataType">float</property>
                     </structure>
                     <structure>
-                        <property name="position">12</property>
+                        <property name="position">15</property>
                         <property name="name">costPerKilo</property>
                         <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">16</property>
+                        <property name="name">plResourceLabel</property>
+                        <property name="dataType">string</property>
                     </structure>
                 </list-property>
             </structure>
@@ -2193,8 +2386,29 @@
                     <property name="dataType">float</property>
                     <property name="nativeDataType">8</property>
                 </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">versionLabel</property>
+                    <property name="nativeName">versionLabel</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">depthLevel</property>
+                    <property name="nativeName">depthLevel</property>
+                    <property name="dataType">integer</property>
+                    <property name="nativeDataType">4</property>
+                </structure>
+                <structure>
+                    <property name="position">13</property>
+                    <property name="name">itemTypeEntity</property>
+                    <property name="nativeName">itemTypeEntity</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/processLists/processList]#:#{unitTotalCost;DOUBLE;/@unitTotalCost},{plRateProduct;DOUBLE;/@plRateProduct},{plRateResource;DOUBLE;/@plRateResource},{plRateProcess;DOUBLE;/@plRateProcess},{plQtyResource;DOUBLE;/@plQtyResource},{plUnit;STRING;/@plUnit},{plStep;STRING;/@plStep},{plResource;STRING;/@plResource},{processListQtyForProduct;DOUBLE;/@processListQtyForProduct},{netWeight;DOUBLE;../../../netWeight}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/processLists/processList]#:#{unitTotalCost;DOUBLE;/@unitTotalCost},{plRateProduct;DOUBLE;/@plRateProduct},{plRateResource;DOUBLE;/@plRateResource},{plRateProcess;DOUBLE;/@plRateProcess},{plQtyResource;DOUBLE;/@plQtyResource},{plUnit;STRING;/@plUnit},{plStep;STRING;/@plStep},{plResource;STRING;/@plResource},{processListQtyForProduct;DOUBLE;/@processListQtyForProduct},{netWeight;DOUBLE;../../../netWeight},{versionLabel;STRING;/@versionLabel},{depthLevel;INT;/@depthLevel},{itemTypeEntity;STRING;../../../itemType}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -2550,6 +2764,7 @@
             </structure>
         </style>
         <style name="becpg-col-header" id="1479">
+            <property name="fontSize">8pt</property>
             <property name="fontWeight">bold</property>
             <property name="textAlign">center</property>
         </style>
@@ -2608,6 +2823,7 @@
             <property name="textAlign">center</property>
         </style>
         <style name="becpg-data" id="3015">
+            <property name="fontSize">8pt</property>
             <property name="textAlign">center</property>
         </style>
     </styles>
@@ -2661,8 +2877,7 @@
                                 <property name="fontSize">14pt</property>
                                 <property name="fontWeight">bold</property>
                                 <property name="textAlign">center</property>
-                                <text-property name="text">Fiche Technique 
-Prix de revient</text-property>
+                                <text-property name="text">Prix de revient</text-property>
                             </label>
                             <data id="3383">
                                 <property name="dataSet">Product</property>
@@ -2787,6 +3002,41 @@ Prix de revient</text-property>
                                                 </structure>
                                             </list-property>
                                             <property name="resultSetColumn">code</property>
+                                        </data>
+                                    </cell>
+                                </row>
+                                <row id="7020">
+                                    <cell id="7021">
+                                        <property name="borderBottomColor">#FFFFFF</property>
+                                        <property name="borderLeftColor">#FFFFFF</property>
+                                        <property name="borderRightColor">#FFFFFF</property>
+                                        <property name="borderTopColor">#FFFFFF</property>
+                                        <label id="7023">
+                                            <text-property name="text">Version</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="7022">
+                                        <property name="borderBottomColor">#FFFFFF</property>
+                                        <property name="borderLeftColor">#FFFFFF</property>
+                                        <property name="borderRightColor">#FFFFFF</property>
+                                        <property name="borderTopColor">#FFFFFF</property>
+                                        <data id="7024">
+                                            <property name="dataSet">Product</property>
+                                            <list-property name="boundDataColumns">
+                                                <structure>
+                                                    <property name="name">versionLabel</property>
+                                                    <text-property name="displayName">versionLabel</text-property>
+                                                    <expression name="expression" type="javascript">if(dataSetRow["versionLabel"] == null){
+"1.0"
+}
+else{
+dataSetRow["versionLabel"]
+}</expression>
+                                                    <property name="dataType">string</property>
+                                                    <property name="allowExport">true</property>
+                                                </structure>
+                                            </list-property>
+                                            <property name="resultSetColumn">versionLabel</property>
                                         </data>
                                     </cell>
                                 </row>
@@ -2990,7 +3240,7 @@ Prix de revient</text-property>
             <row id="3211">
                 <cell id="3212">
                     <label id="3214">
-                        <text-property name="text">Poids UVC</text-property>
+                        <text-property name="text">Poids net (kg)</text-property>
                     </label>
                 </cell>
                 <cell id="3213">
@@ -3173,6 +3423,12 @@ Prix de revient</text-property>
                     <expression name="filterExpr" type="javascript">dataSetRow["depthLevel"]==1</expression>
                     <property name="allowExport">true</property>
                 </structure>
+                <structure>
+                    <property name="name">itemType</property>
+                    <text-property name="displayName">itemType</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["itemType"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
             </list-property>
             <list-property name="filter">
                 <structure>
@@ -3186,14 +3442,33 @@ Prix de revient</text-property>
             </column>
             <column id="3482">
                 <property name="style">becpg-col-border</property>
+                <property name="width">15%</property>
             </column>
             <column id="3491">
+                <list-property name="visibility">
+                    <structure>
+                        <property name="format">all</property>
+                        <expression name="valueExpr" type="javascript">row["itemType"] != "finishedProduct"</expression>
+                    </structure>
+                </list-property>
                 <property name="style">becpg-col-border</property>
             </column>
             <column id="3682">
+                <list-property name="visibility">
+                    <structure>
+                        <property name="format">all</property>
+                        <expression name="valueExpr" type="javascript">row["itemType"] != "finishedProduct"</expression>
+                    </structure>
+                </list-property>
                 <property name="style">becpg-col-border</property>
             </column>
             <column id="3678">
+                <list-property name="visibility">
+                    <structure>
+                        <property name="format">all</property>
+                        <expression name="valueExpr" type="javascript">row["itemType"] != "finishedProduct"</expression>
+                    </structure>
+                </list-property>
                 <property name="style">becpg-col-border</property>
             </column>
             <header>
@@ -3213,7 +3488,9 @@ Prix de revient</text-property>
                     <cell id="6956">
                         <property name="colSpan">5</property>
                         <property name="rowSpan">1</property>
-                        <label id="3502"/>
+                        <label id="3502">
+                            <text-property name="text"> </text-property>
+                        </label>
                     </cell>
                 </row>
                 <row id="3493">
@@ -3225,9 +3502,11 @@ Prix de revient</text-property>
                         <property name="borderTopWidth">thin</property>
                     </cell>
                     <cell id="3495">
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">thin</property>
                         <property name="borderTopStyle">solid</property>
                         <property name="borderTopWidth">thin</property>
-                        <label id="3497">
+                        <label id="7083">
                             <text-property name="text">€/kg</text-property>
                         </label>
                     </cell>
@@ -3261,6 +3540,7 @@ Prix de revient</text-property>
                     <property name="style">becpg-row-border</property>
                     <cell id="3476">
                         <text id="6871">
+                            <property name="fontSize">8pt</property>
                             <property name="contentType">html</property>
                             <text-property name="content"><![CDATA[<div style="font-size: 1px; display: inline; float: left; width: <VALUE-OF>(row["depthLevel"]-1)*20</VALUE-OF>px;">&amp;nbsp;</div><VALUE-OF>row["costListCost"]</VALUE-OF>]]></text-property>
                         </text>
@@ -3313,7 +3593,8 @@ Prix de revient</text-property>
                     <property name="fontWeight">bold</property>
                     <cell id="3479">
                         <label id="3488">
-                            <property name="style">becpg-row-header</property>
+                            <property name="fontSize">8pt</property>
+                            <property name="fontStyle">italic</property>
                             <text-property name="text">Coût total</text-property>
                         </label>
                     </cell>
@@ -3339,6 +3620,7 @@ Prix de revient</text-property>
                     </cell>
                     <cell id="3681">
                         <data id="3689">
+                            <property name="style">becpg-data</property>
                             <structure name="numberFormat">
                                 <property name="category">Custom</property>
                                 <property name="pattern">#0.0000</property>
@@ -3349,6 +3631,7 @@ Prix de revient</text-property>
                     </cell>
                     <cell id="3677">
                         <data id="3690">
+                            <property name="style">becpg-data</property>
                             <structure name="numberFormat">
                                 <property name="category">Custom</property>
                                 <property name="pattern">#0.0000</property>
@@ -3461,6 +3744,51 @@ Prix de revient</text-property>
                     <expression name="expression" type="javascript">dataSetRow["costPerKilo"]</expression>
                     <property name="dataType">float</property>
                 </structure>
+                <structure>
+                    <property name="name">compoListProductLabel</property>
+                    <text-property name="displayName">compoListProductLabel</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["compoListProductLabel"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">Aggregation</property>
+                    <text-property name="displayName">totalCostPerProduct</text-property>
+                    <property name="dataType">float</property>
+                    <property name="aggregateFunction">SUM</property>
+                    <list-property name="arguments">
+                        <structure>
+                            <property name="name">Expression</property>
+                            <expression name="value" type="javascript">row["costPerProduct"]</expression>
+                        </structure>
+                    </list-property>
+                    <expression name="filterExpr" type="javascript">dataSetRow["depthLevel"]==1</expression>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">Aggregation_1</property>
+                    <property name="dataType">float</property>
+                    <property name="aggregateFunction">SUM</property>
+                    <list-property name="arguments">
+                        <structure>
+                            <property name="name">Expression</property>
+                            <expression name="value" type="javascript">row["costPerKilo"]</expression>
+                        </structure>
+                    </list-property>
+                    <expression name="filterExpr" type="javascript">dataSetRow["depthLevel"]==1</expression>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">itemType</property>
+                    <text-property name="displayName">itemType</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["itemType"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">itemTypeEntity</property>
+                    <text-property name="displayName">itemTypeEntity</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["itemTypeEntity"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
             </list-property>
             <column id="2910">
                 <property name="style">becpg-col-border</property>
@@ -3468,23 +3796,23 @@ Prix de revient</text-property>
             </column>
             <column id="2906">
                 <property name="style">becpg-col-border</property>
-                <property name="width">2.4198473282442747in</property>
+                <property name="width">2.8854166666666665in</property>
             </column>
             <column id="3567">
                 <property name="style">becpg-col-border</property>
-                <property name="width">0.5801526717557252in</property>
+                <property name="width">0.4895833333333333in</property>
             </column>
             <column id="3570">
                 <property name="style">becpg-col-border</property>
-                <property name="width">0.5801526717557252in</property>
+                <property name="width">0.5208333333333334in</property>
             </column>
             <column id="2969">
                 <property name="style">becpg-col-border</property>
-                <property name="width">0.5801526717557252in</property>
+                <property name="width">0.4583333333333333in</property>
             </column>
             <column id="3290">
                 <property name="style">becpg-col-border</property>
-                <property name="width">0.5038167938931297in</property>
+                <property name="width">0.3958333333333333in</property>
             </column>
             <column id="3329">
                 <property name="style">becpg-col-border</property>
@@ -3495,6 +3823,12 @@ Prix de revient</text-property>
                 <property name="width">0.5267175572519084in</property>
             </column>
             <column id="3464">
+                <list-property name="visibility">
+                    <structure>
+                        <property name="format">all</property>
+                        <expression name="valueExpr" type="javascript">row["itemTypeEntity"] != "finishedProduct"</expression>
+                    </structure>
+                </list-property>
                 <property name="style">becpg-col-border</property>
                 <property name="width">0.5267175572519084in</property>
             </column>
@@ -3567,17 +3901,19 @@ matière
                         </label>
                     </cell>
                     <cell id="3330">
-                        <label id="3465">
-                            <text-property name="text">Coût 
-€/UV</text-property>
-                        </label>
-                    </cell>
-                    <cell id="3462">
                         <property name="borderRightStyle">solid</property>
                         <property name="borderRightWidth">thin</property>
                         <label id="3340">
                             <text-property name="text">Coût 
 €/kg</text-property>
+                        </label>
+                    </cell>
+                    <cell id="3462">
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">thin</property>
+                        <label id="3465">
+                            <text-property name="text">Coût 
+€/UV</text-property>
                         </label>
                     </cell>
                 </row>
@@ -3587,19 +3923,25 @@ matière
                     <property name="style">becpg-row-border</property>
                     <cell id="2908">
                         <data id="2946">
+                            <property name="style">becpg-data</property>
                             <property name="textAlign">center</property>
                             <property name="resultSetColumn">erpCode</property>
                         </data>
                     </cell>
                     <cell id="2892">
                         <text id="3300">
+                            <property name="fontSize">8pt</property>
                             <property name="contentType">html</property>
-                            <text-property name="content"><![CDATA[<div style="font-size: 1px; display: inline; float: left; width: <VALUE-OF>(row["depthLevel"]-1)*20</VALUE-OF>px;">&amp;nbsp;</div><VALUE-OF>row["compoListProduct"]</VALUE-OF>]]></text-property>
+                            <text-property name="content"><![CDATA[<div style="font-size: 1px; display: inline; float: left; width: <VALUE-OF>(row["depthLevel"]-1)*20</VALUE-OF>px;">&amp;nbsp;</div><VALUE-OF>row["compoListProductLabel"]</VALUE-OF>]]></text-property>
                         </text>
                     </cell>
                     <cell id="3566">
                         <data id="3572">
                             <property name="style">becpg-data</property>
+                            <structure name="numberFormat">
+                                <property name="category">Custom</property>
+                                <property name="pattern">#0.####</property>
+                            </structure>
                             <property name="resultSetColumn">compoListQtySubFormula</property>
                         </data>
                     </cell>
@@ -3640,16 +3982,6 @@ matière
                         </data>
                     </cell>
                     <cell id="3331">
-                        <data id="3647">
-                            <property name="style">becpg-data</property>
-                            <structure name="numberFormat">
-                                <property name="category">Custom</property>
-                                <property name="pattern">#0.0000</property>
-                            </structure>
-                            <property name="resultSetColumn">costPerProduct</property>
-                        </data>
-                    </cell>
-                    <cell id="3463">
                         <data id="3648">
                             <property name="style">becpg-data</property>
                             <structure name="numberFormat">
@@ -3659,12 +3991,63 @@ matière
                             <property name="resultSetColumn">costPerKilo</property>
                         </data>
                     </cell>
+                    <cell id="3463">
+                        <data id="3647">
+                            <property name="style">becpg-data</property>
+                            <structure name="numberFormat">
+                                <property name="category">Custom</property>
+                                <property name="pattern">#0.0000</property>
+                            </structure>
+                            <property name="resultSetColumn">costPerProduct</property>
+                        </data>
+                    </cell>
                 </row>
             </detail>
+            <footer>
+                <row id="7028">
+                    <property name="style">becpg-row-border</property>
+                    <cell id="7029">
+                        <property name="colSpan">2</property>
+                        <property name="rowSpan">1</property>
+                        <label id="7040">
+                            <property name="style">becpg-row-header</property>
+                            <property name="fontSize">8pt</property>
+                            <text-property name="text">Coût total</text-property>
+                        </label>
+                    </cell>
+                    <cell id="7031"/>
+                    <cell id="7032"/>
+                    <cell id="7033"/>
+                    <cell id="7034"/>
+                    <cell id="7035"/>
+                    <cell id="7036">
+                        <data id="7041">
+                            <property name="style">becpg-data</property>
+                            <property name="fontWeight">bold</property>
+                            <structure name="numberFormat">
+                                <property name="category">Custom</property>
+                                <property name="pattern">#0.0000</property>
+                            </structure>
+                            <property name="resultSetColumn">Aggregation_1</property>
+                        </data>
+                    </cell>
+                    <cell id="7037">
+                        <data id="7039">
+                            <property name="style">becpg-data</property>
+                            <property name="fontWeight">bold</property>
+                            <structure name="numberFormat">
+                                <property name="category">Custom</property>
+                                <property name="pattern">#0.0000</property>
+                            </structure>
+                            <property name="resultSetColumn">Aggregation</property>
+                        </data>
+                    </cell>
+                </row>
+            </footer>
         </table>
         <label id="3174"/>
         <table id="3506">
-            <property name="width">100%</property>
+            <property name="width">6.885416666666667in</property>
             <property name="dataSet">packList</property>
             <list-property name="boundDataColumns">
                 <structure>
@@ -3727,33 +4110,83 @@ matière
                     <expression name="expression" type="javascript">dataSetRow["costPerKilo"]</expression>
                     <property name="dataType">float</property>
                 </structure>
+                <structure>
+                    <property name="name">packagingListProductLabel</property>
+                    <text-property name="displayName">packagingListProductLabel</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["packagingListProductLabel"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">Aggregation</property>
+                    <property name="dataType">float</property>
+                    <property name="aggregateFunction">SUM</property>
+                    <list-property name="arguments">
+                        <structure>
+                            <property name="name">Expression</property>
+                            <expression name="value" type="javascript">row["costPerProduct"]</expression>
+                        </structure>
+                    </list-property>
+                    <expression name="filterExpr" type="javascript">dataSetRow["depthLevel"]==1</expression>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">Aggregation_1</property>
+                    <property name="dataType">float</property>
+                    <property name="aggregateFunction">SUM</property>
+                    <list-property name="arguments">
+                        <structure>
+                            <property name="name">Expression</property>
+                            <expression name="value" type="javascript">row["costPerKilo"]</expression>
+                        </structure>
+                    </list-property>
+                    <expression name="filterExpr" type="javascript">dataSetRow["depthLevel"]==1</expression>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">depthLevel</property>
+                    <text-property name="displayName">depthLevel</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["depthLevel"]</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">itemType</property>
+                    <text-property name="displayName">itemType</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["itemType"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">itemTypeEntity</property>
+                    <text-property name="displayName">itemTypeEntity</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["itemTypeEntity"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
             </list-property>
             <column id="3528">
                 <property name="width">0.48854961832061067in</property>
             </column>
             <column id="3529">
                 <property name="style">becpg-col-border</property>
-                <property name="width">1.816793893129771in</property>
+                <property name="width">2.5208333333333335in</property>
             </column>
             <column id="3530">
                 <property name="style">becpg-col-border</property>
-                <property name="width">0.5416666666666666in</property>
+                <property name="width">0.4375in</property>
             </column>
             <column id="3531">
                 <property name="style">becpg-col-border</property>
-                <property name="width">0.5416666666666666in</property>
+                <property name="width">0.4479166666666667in</property>
             </column>
             <column id="3582">
                 <property name="style">becpg-col-border</property>
-                <property name="width">0.6979166666666666in</property>
+                <property name="width">0.5520833333333334in</property>
             </column>
             <column id="3644">
                 <property name="style">becpg-col-border</property>
-                <property name="width">0.5416666666666666in</property>
+                <property name="width">0.3958333333333333in</property>
             </column>
             <column id="3577">
                 <property name="style">becpg-col-border</property>
-                <property name="width">0.6041666666666666in</property>
+                <property name="width">0.3854166666666667in</property>
             </column>
             <column id="3532">
                 <property name="style">becpg-col-border</property>
@@ -3764,7 +4197,14 @@ matière
                 <property name="width">0.5833333333333334in</property>
             </column>
             <column id="3657">
+                <list-property name="visibility">
+                    <structure>
+                        <property name="format">all</property>
+                        <expression name="valueExpr" type="javascript">row["itemTypeEntity"] != "finishedProduct"</expression>
+                    </structure>
+                </list-property>
                 <property name="style">becpg-col-border</property>
+                <property name="width">0.5729166666666666in</property>
             </column>
             <header>
                 <row id="6903">
@@ -3839,17 +4279,19 @@ matière
                         </label>
                     </cell>
                     <cell id="3513">
-                        <label id="3546">
-                            <text-property name="text">Coût
-€/UVC</text-property>
-                        </label>
-                    </cell>
-                    <cell id="3655">
                         <property name="borderRightStyle">solid</property>
                         <property name="borderRightWidth">thin</property>
                         <label id="3658">
                             <text-property name="text">Coût 
 €/kg</text-property>
+                        </label>
+                    </cell>
+                    <cell id="3655">
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">thin</property>
+                        <label id="3546">
+                            <text-property name="text">Coût
+€/UVC</text-property>
                         </label>
                     </cell>
                 </row>
@@ -3864,13 +4306,19 @@ matière
                         </data>
                     </cell>
                     <cell id="3516">
-                        <data id="3539">
-                            <property name="resultSetColumn">packagingListProduct</property>
-                        </data>
+                        <text id="7072">
+                            <property name="fontSize">8pt</property>
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<div style="font-size: 1px; display: inline; float: left; width: <VALUE-OF>(row["depthLevel"]-1)*20</VALUE-OF>px;">&amp;nbsp;</div><VALUE-OF>row["packagingListProductLabel"]</VALUE-OF>]]></text-property>
+                        </text>
                     </cell>
                     <cell id="3517">
                         <data id="3541">
                             <property name="style">becpg-data</property>
+                            <structure name="numberFormat">
+                                <property name="category">Custom</property>
+                                <property name="pattern">#0.####</property>
+                            </structure>
                             <property name="resultSetColumn">packagingListQty</property>
                         </data>
                     </cell>
@@ -3891,7 +4339,7 @@ matière
                             <property name="style">becpg-data</property>
                             <structure name="numberFormat">
                                 <property name="category">Custom</property>
-                                <property name="pattern">#0.##</property>
+                                <property name="pattern">#0.0000</property>
                             </structure>
                             <property name="resultSetColumn">packagingListQtyForProduct</property>
                         </data>
@@ -3913,16 +4361,6 @@ matière
                         </data>
                     </cell>
                     <cell id="3520">
-                        <data id="3585">
-                            <property name="style">becpg-data</property>
-                            <structure name="numberFormat">
-                                <property name="category">Custom</property>
-                                <property name="pattern">#0.0000</property>
-                            </structure>
-                            <property name="resultSetColumn">costPerProduct</property>
-                        </data>
-                    </cell>
-                    <cell id="3656">
                         <data id="3659">
                             <property name="style">becpg-data</property>
                             <structure name="numberFormat">
@@ -3932,13 +4370,72 @@ matière
                             <property name="resultSetColumn">costPerKilo</property>
                         </data>
                     </cell>
+                    <cell id="3656">
+                        <data id="3585">
+                            <property name="style">becpg-data</property>
+                            <structure name="numberFormat">
+                                <property name="category">Custom</property>
+                                <property name="pattern">#0.0000</property>
+                            </structure>
+                            <property name="resultSetColumn">costPerProduct</property>
+                        </data>
+                    </cell>
                 </row>
             </detail>
+            <footer>
+                <row id="7042">
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">thin</property>
+                    <property name="borderLeftStyle">solid</property>
+                    <property name="borderLeftWidth">thin</property>
+                    <property name="borderRightStyle">solid</property>
+                    <property name="borderRightWidth">thin</property>
+                    <property name="borderTopStyle">solid</property>
+                    <property name="borderTopWidth">thin</property>
+                    <cell id="7043">
+                        <property name="colSpan">2</property>
+                        <property name="rowSpan">1</property>
+                        <label id="7053">
+                            <property name="style">becpg-row-header</property>
+                            <property name="fontSize">8pt</property>
+                            <text-property name="text">Coût total</text-property>
+                        </label>
+                    </cell>
+                    <cell id="7045"/>
+                    <cell id="7046"/>
+                    <cell id="7047"/>
+                    <cell id="7048"/>
+                    <cell id="7049"/>
+                    <cell id="7050"/>
+                    <cell id="7051">
+                        <data id="7055">
+                            <property name="style">becpg-data</property>
+                            <property name="fontWeight">bold</property>
+                            <structure name="numberFormat">
+                                <property name="category">Custom</property>
+                                <property name="pattern">#0.0000</property>
+                            </structure>
+                            <property name="resultSetColumn">Aggregation_1</property>
+                        </data>
+                    </cell>
+                    <cell id="7052">
+                        <data id="7054">
+                            <property name="style">becpg-data</property>
+                            <property name="fontWeight">bold</property>
+                            <structure name="numberFormat">
+                                <property name="category">Custom</property>
+                                <property name="pattern">#0.0000</property>
+                            </structure>
+                            <property name="resultSetColumn">Aggregation</property>
+                        </data>
+                    </cell>
+                </row>
+            </footer>
         </table>
         <label id="3587"/>
         <table id="3590">
             <property name="pageBreakInside">avoid</property>
-            <property name="width">100%</property>
+            <property name="width">6.885416666666667in</property>
             <property name="dataSet">processList</property>
             <list-property name="boundDataColumns">
                 <structure>
@@ -3995,25 +4492,69 @@ matière
                     <expression name="expression" type="javascript">dataSetRow["costPerKilo"]</expression>
                     <property name="dataType">float</property>
                 </structure>
+                <structure>
+                    <property name="name">plResourceLabel</property>
+                    <text-property name="displayName">plResourceLabel</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["plResourceLabel"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">Aggregation</property>
+                    <property name="dataType">float</property>
+                    <property name="aggregateFunction">SUM</property>
+                    <list-property name="arguments">
+                        <structure>
+                            <property name="name">Expression</property>
+                            <expression name="value" type="javascript">row["costPerProduct"]</expression>
+                        </structure>
+                    </list-property>
+                    <expression name="filterExpr" type="javascript">dataSetRow["depthLevel"]==1</expression>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">Aggregation_1</property>
+                    <property name="dataType">float</property>
+                    <property name="aggregateFunction">SUM</property>
+                    <list-property name="arguments">
+                        <structure>
+                            <property name="name">Expression</property>
+                            <expression name="value" type="javascript">row["costPerKilo"]</expression>
+                        </structure>
+                    </list-property>
+                    <expression name="filterExpr" type="javascript">dataSetRow["depthLevel"]==1</expression>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">depthLevel</property>
+                    <text-property name="displayName">depthLevel</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["depthLevel"]</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">itemTypeEntity</property>
+                    <text-property name="displayName">itemTypeEntity</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["itemTypeEntity"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
             </list-property>
             <column id="3621">
                 <property name="width">0.7708333333333334in</property>
             </column>
             <column id="3622">
                 <property name="style">becpg-col-border</property>
-                <property name="width">1.4895833333333333in</property>
+                <property name="width">2in</property>
             </column>
             <column id="3623">
                 <property name="style">becpg-col-border</property>
-                <property name="width">0.6354166666666666in</property>
+                <property name="width">0.5208333333333334in</property>
             </column>
             <column id="3624">
                 <property name="style">becpg-col-border</property>
-                <property name="width">0.625in</property>
+                <property name="width">0.6354166666666666in</property>
             </column>
             <column id="3625">
                 <property name="style">becpg-col-border</property>
-                <property name="width">0.7604166666666666in</property>
+                <property name="width">0.5833333333333334in</property>
             </column>
             <column id="3627">
                 <property name="style">becpg-col-border</property>
@@ -4024,6 +4565,12 @@ matière
                 <property name="width">0.7604166666666666in</property>
             </column>
             <column id="3629">
+                <list-property name="visibility">
+                    <structure>
+                        <property name="format">all</property>
+                        <expression name="valueExpr" type="javascript">row["itemTypeEntity"] != "finishedProduct"</expression>
+                    </structure>
+                </list-property>
                 <property name="style">becpg-col-border</property>
                 <property name="width">0.7604166666666666in</property>
             </column>
@@ -4091,17 +4638,19 @@ horaire</text-property>
                         </label>
                     </cell>
                     <cell id="6983">
-                        <label id="3651">
-                            <text-property name="text">Coût 
-€/UV</text-property>
-                        </label>
-                    </cell>
-                    <cell id="6984">
                         <property name="borderRightStyle">solid</property>
                         <property name="borderRightWidth">thin</property>
                         <label id="3653">
                             <text-property name="text">Coût 
 €/kg</text-property>
+                        </label>
+                    </cell>
+                    <cell id="6984">
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">thin</property>
+                        <label id="3651">
+                            <text-property name="text">Coût 
+€/UV</text-property>
                         </label>
                     </cell>
                 </row>
@@ -4111,13 +4660,16 @@ horaire</text-property>
                     <property name="style">becpg-row-border</property>
                     <cell id="3602">
                         <data id="3631">
+                            <property name="style">becpg-data</property>
                             <property name="resultSetColumn">plStep</property>
                         </data>
                     </cell>
                     <cell id="3603">
-                        <data id="3633">
-                            <property name="resultSetColumn">plResource</property>
-                        </data>
+                        <text id="7073">
+                            <property name="fontSize">8pt</property>
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<div style="font-size: 1px; display: inline; float: left; width: <VALUE-OF>(row["depthLevel"]-1)*20</VALUE-OF>px;">&amp;nbsp;</div><VALUE-OF>row["plResourceLabel"]</VALUE-OF>]]></text-property>
+                        </text>
                     </cell>
                     <cell id="3604">
                         <data id="3637">
@@ -4152,16 +4704,6 @@ horaire</text-property>
                         </data>
                     </cell>
                     <cell id="3609">
-                        <data id="3652">
-                            <property name="style">becpg-data</property>
-                            <structure name="numberFormat">
-                                <property name="category">Custom</property>
-                                <property name="pattern">#0.0000</property>
-                            </structure>
-                            <property name="resultSetColumn">costPerProduct</property>
-                        </data>
-                    </cell>
-                    <cell id="3610">
                         <data id="3654">
                             <property name="style">becpg-data</property>
                             <structure name="numberFormat">
@@ -4171,8 +4713,65 @@ horaire</text-property>
                             <property name="resultSetColumn">costPerKilo</property>
                         </data>
                     </cell>
+                    <cell id="3610">
+                        <data id="3652">
+                            <property name="style">becpg-data</property>
+                            <structure name="numberFormat">
+                                <property name="category">Custom</property>
+                                <property name="pattern">#0.0000</property>
+                            </structure>
+                            <property name="resultSetColumn">costPerProduct</property>
+                        </data>
+                    </cell>
                 </row>
             </detail>
+            <footer>
+                <row id="7056">
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">thin</property>
+                    <property name="borderLeftStyle">solid</property>
+                    <property name="borderLeftWidth">thin</property>
+                    <property name="borderRightStyle">solid</property>
+                    <property name="borderRightWidth">thin</property>
+                    <property name="borderTopStyle">solid</property>
+                    <property name="borderTopWidth">thin</property>
+                    <cell id="7057">
+                        <property name="colSpan">2</property>
+                        <property name="rowSpan">1</property>
+                        <label id="7065">
+                            <property name="style">becpg-row-header</property>
+                            <property name="fontSize">8pt</property>
+                            <text-property name="text">Coût total</text-property>
+                        </label>
+                    </cell>
+                    <cell id="7059"/>
+                    <cell id="7060"/>
+                    <cell id="7061"/>
+                    <cell id="7062"/>
+                    <cell id="7063">
+                        <data id="7071">
+                            <property name="style">becpg-data</property>
+                            <property name="fontWeight">bold</property>
+                            <structure name="numberFormat">
+                                <property name="category">Custom</property>
+                                <property name="pattern">#0.0000</property>
+                            </structure>
+                            <property name="resultSetColumn">Aggregation_1</property>
+                        </data>
+                    </cell>
+                    <cell id="7064">
+                        <data id="7069">
+                            <property name="style">becpg-data</property>
+                            <property name="fontWeight">bold</property>
+                            <structure name="numberFormat">
+                                <property name="category">Custom</property>
+                                <property name="pattern">#0.0000</property>
+                            </structure>
+                            <property name="resultSetColumn">Aggregation</property>
+                        </data>
+                    </cell>
+                </row>
+            </footer>
         </table>
     </body>
     <list-property name="images">
