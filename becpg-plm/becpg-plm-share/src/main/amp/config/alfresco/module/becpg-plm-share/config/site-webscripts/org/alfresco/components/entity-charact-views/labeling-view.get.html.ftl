@@ -25,7 +25,7 @@
   		  (function() {
 		      var dataGridModuleCount = 1;
 		      YAHOO.Bubbling.on("dataGridReady", function(layer, args) {
-		         if (dataGridModuleCount == 2) {
+		         if (dataGridModuleCount == 3) {
 		            try {
 		               YAHOO.util.History.initialize("yui-history-field", "yui-history-iframe");
 		            } catch (e2) {
@@ -52,12 +52,23 @@
 			<input id="yui-history-field" type="hidden" ></input>
 			<div id="main-view-${el}" class="labeling-view">
 					<@dataGridDashlet  dashletName="ingLabelingListDashlet" dashletId="ingLabelingList-${el}" />
-					<@dataGridDashlet  dashletName="labelingRuleListDashlet"
+					<div class="yui-g">
+						<div  class="yui-u first labelingRuleList" >
+							<@dataGridDashlet  dashletName="labelingRuleListDashlet"
 								dashletId="labelingRuleList-${el}" 
 								itemType="bcpg:labelingRuleList"
 								dashletTitle=msg("dashlet.labelingRuleList.title")  
 								  />
-				
+						</div>
+						<div class="yui-u compoList">
+						  <@dataGridDashlet  dashletName="compoListDashlet"
+								dashletId="compoList-${el}" 
+								itemType="bcpg:compoList"
+								dashletTitle=msg("dashlet.compoList.title")  
+								  />
+						</div>
+						
+					</div>
 			</div>
  	</@>
  </@>

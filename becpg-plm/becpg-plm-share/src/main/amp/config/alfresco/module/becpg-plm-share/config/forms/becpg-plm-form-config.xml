@@ -5647,7 +5647,6 @@
 					<show id="bcpg:compoListQty" />
 					<show id="bcpg:compoListYieldPerc" />
 					<show id="bcpg:compoListLossPerc" />
-					<show id="bcpg:compoListDeclType" />
 					<show id="bcpg:dynamicCharactColumn1" force="true" />
 					<show id="bcpg:dynamicCharactColumn2" force="true" />
 					<show id="bcpg:dynamicCharactColumn3" force="true" />
@@ -5678,6 +5677,17 @@
 					<field id="bcpg:dynamicCharactColumn10" label="hidden"></field>
 					<field id="bcpg:instruction" label="hidden"></field>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
+				</appearance>
+			</form>
+			<form id="labeling">
+				<field-visibility>
+					<show id="bcpg:variantIds" force="true" />
+					<show id="bcpg:depthLevel" />
+					<show id="bcpg:compoListProduct" />
+					<show id="bcpg:compoListDeclType" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:variantIds" label="hidden"></field>
 				</appearance>
 			</form>
 			<form id="datagridWUsed">
