@@ -26,18 +26,20 @@
 			
 			var val = YAHOO.util.Dom.get("${fieldHtmlId}-entry").checked;
 			YAHOO.util.Dom.get("${fieldHtmlId}").value=val;
-			if(val){
-				YAHOO.util.Dom.addClass(YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_allergenListDecisionTree-cntrl").parentNode,"hidden");
-				YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_allergenListDecisionTree").value = "";
-			    YAHOO.util.Dom.addClass(YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_allergenListInVoluntary").parentNode,"hidden");
-				YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_allergenListInVoluntary").value = false;
-				YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_allergenListInVoluntary-entry").checked = false;
-			} else {
-			 if(YAHOO.util.Dom.hasClass(YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_allergenListDecisionTree-cntrl").parentNode,"hidden")){
-			   YAHOO.util.Dom.removeClass(YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_allergenListDecisionTree-cntrl").parentNode,"hidden");
- 			   YAHOO.util.Dom.removeClass(YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_allergenListInVoluntary").parentNode,"hidden");
- 			   YAHOO.Bubbling.fire("refreshDecisionTree");	
- 			  }
+			if(YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_allergenListDecisionTree")){
+				if(val){
+					YAHOO.util.Dom.addClass(YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_allergenListDecisionTree-cntrl").parentNode,"hidden");
+					YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_allergenListDecisionTree").value = "";
+				    YAHOO.util.Dom.addClass(YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_allergenListInVoluntary").parentNode,"hidden");
+					YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_allergenListInVoluntary").value = false;
+					YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_allergenListInVoluntary-entry").checked = false;
+				} else {
+				 if(YAHOO.util.Dom.hasClass(YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_allergenListDecisionTree-cntrl").parentNode,"hidden")){
+				   YAHOO.util.Dom.removeClass(YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_allergenListDecisionTree-cntrl").parentNode,"hidden");
+	 			   YAHOO.util.Dom.removeClass(YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_allergenListInVoluntary").parentNode,"hidden");
+	 			   YAHOO.Bubbling.fire("refreshDecisionTree");	
+	 			  }
+				}
 			}	
 			
            }
