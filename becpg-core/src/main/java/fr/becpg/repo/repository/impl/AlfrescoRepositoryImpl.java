@@ -288,8 +288,8 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 			boolean isLazyList = dataList instanceof LazyLoadingDataList;
 
-			if ((dataListNodeRef == null) && (!isLazyList || ((LazyLoadingDataList<? extends RepositoryEntity>) dataList).isLoaded())
-					&& !dataList.isEmpty()) {
+			if ((dataListNodeRef == null) && !dataList.isEmpty()
+					&& (!isLazyList || ((LazyLoadingDataList<? extends RepositoryEntity>) dataList).isLoaded())) {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Create dataList of type : " + dataListContainerType);
 				}
@@ -297,42 +297,45 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 				dataListNodeRef = entityListDAO.createList(listContainerNodeRef, dataListContainerType);
 			}
 
-			if (isLazyList && ((LazyLoadingDataList<? extends RepositoryEntity>) dataList).isLoaded()) {
+			if (dataListNodeRef != null) {
 
-				if (logger.isDebugEnabled()) {
-					if (!((LazyLoadingDataList<? extends RepositoryEntity>) dataList).getDeletedNodes().isEmpty()) {
-						logger.debug("Nodes to delete :" + ((LazyLoadingDataList<? extends RepositoryEntity>) dataList).getDeletedNodes().size());
-					}
-				}
-
-				for (RepositoryEntity dataListItem : ((LazyLoadingDataList<? extends RepositoryEntity>) dataList).getDeletedNodes()) {
-					if ((dataListItem != null) && (dataListItem.getNodeRef() != null) && !dataListItem.isTransient()) {
-						nodeService.addAspect(dataListItem.getNodeRef(), ContentModel.ASPECT_TEMPORARY, null);
-						nodeService.deleteNode(dataListItem.getNodeRef());
-					}
-				}
-
-				((LazyLoadingDataList<? extends RepositoryEntity>) dataList).getDeletedNodes().clear();
-
-				for (RepositoryEntity dataListItem : dataList) {
-					dataListItem.setParentNodeRef(dataListNodeRef);
-					save((T) dataListItem);
-				}
-
-			} else {
-
-				// Case we create entity
-				for (RepositoryEntity dataListItem : dataList) {
-
-					dataListItem.setParentNodeRef(dataListNodeRef);
-					save((T) dataListItem);
+				if (isLazyList && ((LazyLoadingDataList<? extends RepositoryEntity>) dataList).isLoaded()) {
 
 					if (logger.isDebugEnabled()) {
-						logger.debug("Save dataList item: " + dataListItem.toString());
+						if (!((LazyLoadingDataList<? extends RepositoryEntity>) dataList).getDeletedNodes().isEmpty()) {
+							logger.debug("Nodes to delete :" + ((LazyLoadingDataList<? extends RepositoryEntity>) dataList).getDeletedNodes().size());
+						}
+					}
+
+					for (RepositoryEntity dataListItem : ((LazyLoadingDataList<? extends RepositoryEntity>) dataList).getDeletedNodes()) {
+						if ((dataListItem != null) && (dataListItem.getNodeRef() != null) && !dataListItem.isTransient()) {
+							nodeService.addAspect(dataListItem.getNodeRef(), ContentModel.ASPECT_TEMPORARY, null);
+							nodeService.deleteNode(dataListItem.getNodeRef());
+						}
+					}
+
+					((LazyLoadingDataList<? extends RepositoryEntity>) dataList).getDeletedNodes().clear();
+
+					for (RepositoryEntity dataListItem : dataList) {
+						dataListItem.setParentNodeRef(dataListNodeRef);
+						save((T) dataListItem);
+					}
+
+				} else {
+
+					// Case we create entity
+					for (RepositoryEntity dataListItem : dataList) {
+
+						dataListItem.setParentNodeRef(dataListNodeRef);
+						save((T) dataListItem);
+
+						if (logger.isDebugEnabled()) {
+							logger.debug("Save dataList item: " + dataListItem.toString());
+						}
 					}
 				}
-			}
 
+			}
 		}
 
 	}
