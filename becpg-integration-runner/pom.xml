@@ -100,6 +100,11 @@
 
 
 	</dependencies>
+	
+	<properties>
+	<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+	
+	</properties>
 
 	<build>
 		<plugins>
@@ -257,22 +262,15 @@
 					            <include>**/*Test.java</include>
 					          </includes>
 					        </configuration>
-						<executions>
-							<execution>
-								<id>integration-test</id>
-								<phase>integration-test</phase>
-								<goals>
-									<goal>integration-test</goal>
-								</goals>
-							</execution>
-							<execution>
-								<id>verify-test</id>
-								<phase>verify</phase>
-								<goals>
-									<goal>verify</goal>
-								</goals>
-							</execution>
-						</executions>
+						 <executions>
+				            <execution>
+				              <id>integration-test</id>
+				              <goals>
+				                <goal>integration-test</goal>
+				                <goal>verify</goal>
+				              </goals>
+				            </execution>
+				          </executions>
 					</plugin>
 
 				</plugins>
