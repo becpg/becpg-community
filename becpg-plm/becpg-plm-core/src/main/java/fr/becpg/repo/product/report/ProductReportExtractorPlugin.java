@@ -36,6 +36,7 @@ import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ResourceProductData;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
+import fr.becpg.repo.product.data.constraints.PackagingListUnit;
 import fr.becpg.repo.product.data.packaging.PackagingData;
 import fr.becpg.repo.product.data.packaging.VariantPackagingData;
 import fr.becpg.repo.product.data.productList.AbstractManualVariantListDataItem;
@@ -661,18 +662,20 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			extractTargetAssoc(dataItem.getNodeRef(), dictionaryService.getAssociation(PackModel.ASSOC_LABELING_TEMPLATE), partElt);
 		}
 		
-		partElt.addAttribute(BeCPGModel.PROP_DEPTH_LEVEL.getLocalName(), Integer.toString(level));
-		if(dataItem.getPkgLevel() != null){
+		partElt.addAttribute(BeCPGModel.PROP_DEPTH_LEVEL.getLocalName(), Integer.toString(level));		
+		if(dataItem.getPkgLevel() != null && dataItem.getQty() != null && dataItem.getPackagingListUnit() != null){
+			double qty = dataItem.getPackagingListUnit().equals(PackagingListUnit.PP) ? 1 : dataItem.getQty();
 			if(dataItem.getPkgLevel().equals(PackagingLevel.Primary) && dataItem.getQty() != null){
-				partElt.addAttribute(ATTR_PACKAGING_QTY_FOR_PRODUCT, Double.toString(dataItem.getQty()));
+				partElt.addAttribute(ATTR_PACKAGING_QTY_FOR_PRODUCT, Double.toString(qty));
 			}
 			else if(dataItem.getPkgLevel().equals(PackagingLevel.Secondary) && dataItem.getQty() != null &&
 					defaultVariantPackagingData.getProductPerBoxes() != null && defaultVariantPackagingData.getProductPerBoxes() != 0){
-				partElt.addAttribute(ATTR_PACKAGING_QTY_FOR_PRODUCT, Double.toString(dataItem.getQty() / defaultVariantPackagingData.getProductPerBoxes()));
+				partElt.addAttribute(ATTR_PACKAGING_QTY_FOR_PRODUCT, 
+						Double.toString(qty / defaultVariantPackagingData.getProductPerBoxes()));
 			}
 			else if(dataItem.getPkgLevel().equals(PackagingLevel.Tertiary) && dataItem.getQty() != null &&
 					defaultVariantPackagingData.getProductPerPallet() != null && defaultVariantPackagingData.getProductPerPallet() != 0){
-				partElt.addAttribute(ATTR_PACKAGING_QTY_FOR_PRODUCT, Double.toString(dataItem.getQty() / defaultVariantPackagingData.getProductPerPallet()));
+				partElt.addAttribute(ATTR_PACKAGING_QTY_FOR_PRODUCT, Double.toString(qty / defaultVariantPackagingData.getProductPerPallet()));
 			}
 		}
 		return partElt;
