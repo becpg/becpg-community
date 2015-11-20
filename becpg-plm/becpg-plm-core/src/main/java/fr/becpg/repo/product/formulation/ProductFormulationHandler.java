@@ -159,7 +159,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 				logger.debug("checkShouldFormulateComponents: " + productData.getName());
 			}
 
-			if (lockService.getLockStatus(productData.getNodeRef()) == LockStatus.NO_LOCK) {
+			if (productData.getNodeRef() == null || lockService.getLockStatus(productData.getNodeRef()) == LockStatus.NO_LOCK) {
 
 				boolean shouldFormulate = false;
 

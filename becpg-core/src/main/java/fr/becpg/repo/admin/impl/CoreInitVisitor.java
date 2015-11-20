@@ -231,9 +231,6 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 
 		} catch (IOException e) {
 			logger.error("Failed to create compare entity report tpl.", e);
-		} catch (AssociationExistsException e) {
-			// TODO junit tests errors
-			logger.error(e, e);
 		}
 
 	}

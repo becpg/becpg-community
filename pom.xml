@@ -214,11 +214,10 @@
 		<module>becpg-project/becpg-project-share</module>
 		<module>becpg-designer/becpg-designer-share</module>
 		<module>becpg-plm/becpg-plm-share</module>
-		<module>becpg-integration-test</module>
 		<module>repo</module>
 		<module>solr-config</module>
 	    <module>share</module> 
-	    <module>runner</module>
+	    <module>becpg-integration-runner</module>
 	</modules>
 
 	<dependencies>
