@@ -415,7 +415,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 							Expression exp = parser.parseExpression(formula);
 							Object ret = exp.getValue(context);
-							if (ret instanceof Double) {
+							if (ret == null || ret instanceof Double || ret instanceof Integer) {
 								formulatedCharactDataItem.setValue((Double) ret);
 
 								if (formula.contains(".value") && (formulatedCharactDataItem instanceof MinMaxValueDataItem)) {
