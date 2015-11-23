@@ -283,10 +283,10 @@ if (beCPG.module.EntityDataGridRenderers) {
       		var unit, qty;
       		if(data.value == 0){
       			return "0";
-      		} else if(data.value < 0.1){
+      		} else if(data.value < 0.01){
       			qty = data.value * 10000;
       			unit = " ppm";
-      		} else if(data.value < 1){
+      		} else if(data.value < 0.1){
       			qty = data.value * 10;
       			unit = " ‰";
       		} else{
