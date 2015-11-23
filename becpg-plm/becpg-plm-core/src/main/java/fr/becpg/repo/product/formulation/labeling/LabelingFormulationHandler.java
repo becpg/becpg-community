@@ -333,17 +333,30 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	}
 
 	private void merge(AbstractLabelingComponent prev, AbstractLabelingComponent component) {
-		prev.setQty(prev.getQty() + component.getQty());
-		prev.setVolume(prev.getVolume() + component.getVolume());
+		if ((prev != null) && (component != null)) {
+			if ((prev.getQty() != null) && (component.getQty() != null)) {
+				prev.setQty(prev.getQty() + component.getQty());
+			} else {
+				prev.setQty(null);
+			}
+			if ((prev.getVolume() != null) && (component.getVolume() != null)) {
+				prev.setVolume(prev.getVolume() + component.getVolume());
+			} else {
+				prev.setVolume(null);
+			}
 
-		if ((prev instanceof CompositeLabeling) && (component instanceof CompositeLabeling)) {
-			((CompositeLabeling) prev).setQtyTotal(((CompositeLabeling) prev).getQtyTotal() + ((CompositeLabeling) component).getQtyTotal());
-			((CompositeLabeling) prev).setVolumeTotal(((CompositeLabeling) prev).getVolumeTotal() + ((CompositeLabeling) component).getVolumeTotal());
+			if ((prev instanceof CompositeLabeling) && (component instanceof CompositeLabeling)) {
+				if ((((CompositeLabeling) prev).getQtyTotal() != null) && (((CompositeLabeling) component).getQtyTotal() != null)) {
+					((CompositeLabeling) prev).setQtyTotal(((CompositeLabeling) prev).getQtyTotal() + ((CompositeLabeling) component).getQtyTotal());
+				}
+				if ((((CompositeLabeling) prev).getVolumeTotal() != null) && (((CompositeLabeling) component).getVolumeTotal() != null)) {
+					((CompositeLabeling) prev)
+							.setVolumeTotal(((CompositeLabeling) prev).getVolumeTotal() + ((CompositeLabeling) component).getVolumeTotal());
+				}
+			}
 
+			prev.getAllergens().addAll(component.getAllergens());
 		}
-
-		prev.getAllergens().addAll(component.getAllergens());
-
 		// TODO merge childs
 
 	}

@@ -227,11 +227,11 @@ if (beCPG.module.EntityDataGridRenderers) {
           function exp(val){
         	  if(val == 0){
         		  return "0";
-        	  } else if(val < 0.000001){
+        	  }  else if(Math.abs(val) < 0.000001){
         		  return beCPG.util.sigFigs(val*1000000,3).toLocaleString()+"×10<sup>-6</sup>";
-        	  } else if(val < 0.01){
+        	  } else if(Math.abs(val) < 0.01){
         		  return beCPG.util.sigFigs(val*1000,3).toLocaleString()+"×10<sup>-3</sup>";
-        	  } else if(val >= 1000000){
+        	  } else if(Math.abs(val) >= 1000000){
         		  return beCPG.util.sigFigs(val/1000000,3).toLocaleString()+"×10<sup>6</sup>";
         	  }
         	  return beCPG.util.sigFigs(val,3).toLocaleString();
