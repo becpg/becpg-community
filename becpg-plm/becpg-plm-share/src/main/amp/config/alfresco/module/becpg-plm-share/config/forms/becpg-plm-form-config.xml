@@ -5578,7 +5578,6 @@
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/compoListParentLevel
 							</control-param>
-							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
 					</field>
 					<field id="bcpg:variantIds" help-id="becpg.forms.help.variantIds" >
@@ -5684,6 +5683,8 @@
 					<show id="bcpg:variantIds" force="true" />
 					<show id="bcpg:depthLevel" />
 					<show id="bcpg:compoListProduct" />
+					<show id="bcpg:compoListQtySubFormula" />
+					<show id="bcpg:compoListUnit" />
 					<show id="bcpg:compoListDeclType" />
 				</field-visibility>
 				<appearance>
