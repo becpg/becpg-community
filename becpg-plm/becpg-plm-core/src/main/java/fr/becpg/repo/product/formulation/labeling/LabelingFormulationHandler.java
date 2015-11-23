@@ -96,9 +96,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	@Override
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
-		
-		//TODO Skip on first reformulate (ie formulateCount > 0 )
-		
+
+		// TODO Skip on first reformulate (ie formulateCount > 0 )
+
 		// no compo => no formulation
 		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)
 				|| !formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
@@ -114,7 +114,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 		for (Map.Entry<String, List<LabelingRuleListDataItem>> labelingRuleListsGroup : labelingRuleListsByGroup.entrySet()) {
 
-			logger.debug("Calculate Ingredient Labeling for group : " + labelingRuleListsGroup.getKey()+" - "+formulatedProduct.getName());
+			logger.debug("Calculate Ingredient Labeling for group : " + labelingRuleListsGroup.getKey() + " - " + formulatedProduct.getName());
 
 			LabelingFormulaContext labelingFormulaContext = new LabelingFormulaContext(mlNodeService, associationService, alfrescoRepository);
 
@@ -184,18 +184,17 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			if (logger.isDebugEnabled()) {
 				logger.debug("\n" + compositeLabeling.toString());
 			}
-			
 
 			if (!compositeLabeling.getIngList().isEmpty()) {
 
 				CompositeLabeling mergeCompositeLabeling = mergeCompositeLabeling(compositeLabeling, labelingFormulaContext);
-				
+
 				// Store results
 				labelingFormulaContext.setCompositeLabeling(compositeLabeling);
 
 				labelingFormulaContext.setMergedLblCompositeContext(mergeCompositeLabeling);
-				
-				extractAllergens(labelingFormulaContext,formulatedProduct); 
+
+				extractAllergens(labelingFormulaContext, formulatedProduct);
 
 				for (LabelingRuleListDataItem labelingRuleListDataItem : labelingRuleLists) {
 					if (LabelingRuleType.Render.equals(labelingRuleListDataItem.getLabelingRuleType())
@@ -260,14 +259,14 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	}
 
 	private void extractAllergens(LabelingFormulaContext labelingFormulaContext, ProductData productData) {
-		for(AllergenListDataItem allergenListDataItem : productData.getAllergenList()){
-			if(allergenListDataItem.getVoluntary() ){
+		for (AllergenListDataItem allergenListDataItem : productData.getAllergenList()) {
+			if (allergenListDataItem.getVoluntary()) {
 				if (AllergenType.Major.toString().equals(nodeService.getProperty(allergenListDataItem.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE))) {
 					labelingFormulaContext.getAllergens().add(allergenListDataItem.getAllergen());
 				}
 			}
 		}
-		
+
 	}
 
 	private void aggregateLegalName(CompositeLabeling parent, LabelingFormulaContext labelingFormulaContext, boolean multiLevel) {
@@ -283,10 +282,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			tmp.add(component);
 
 			componentsByName.put(name, tmp);
-			
-		   if(multiLevel && component instanceof CompositeLabeling ){
-			   aggregateLegalName((CompositeLabeling) component,labelingFormulaContext, multiLevel);
-		   }
+
+			if (multiLevel && (component instanceof CompositeLabeling)) {
+				aggregateLegalName((CompositeLabeling) component, labelingFormulaContext, multiLevel);
+			}
 		}
 
 		for (List<AbstractLabelingComponent> toAggregate : componentsByName.values()) {
@@ -340,11 +339,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		if ((prev instanceof CompositeLabeling) && (component instanceof CompositeLabeling)) {
 			((CompositeLabeling) prev).setQtyTotal(((CompositeLabeling) prev).getQtyTotal() + ((CompositeLabeling) component).getQtyTotal());
 			((CompositeLabeling) prev).setVolumeTotal(((CompositeLabeling) prev).getVolumeTotal() + ((CompositeLabeling) component).getVolumeTotal());
-			
+
 		}
 
 		prev.getAllergens().addAll(component.getAllergens());
-		
+
 		// TODO merge childs
 
 	}
@@ -366,7 +365,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			if (labelingFormulaContext.isGroup(component)) {
 				CompositeLabeling compositeLabeling = (CompositeLabeling) component;
 				for (AbstractLabelingComponent subComponent : compositeLabeling.getIngList().values()) {
-					
+
 					Double qty = labelingFormulaContext.computeQtyPerc(compositeLabeling, subComponent);
 					if ((compositeLabeling.getQty() != null) && (qty != null)) {
 						qty = qty * compositeLabeling.getQty();
@@ -376,7 +375,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					if ((compositeLabeling.getQty() != null) && (volume != null)) {
 						volume = volume * compositeLabeling.getVolume();
 					}
-					
+
 					AbstractLabelingComponent toMerged = merged.get(subComponent.getNodeRef());
 
 					if (toMerged == null) {
@@ -385,17 +384,16 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						clonedSubComponent.setVolume(volume);
 						merged.add(clonedSubComponent);
 					} else {
-						
-						
+
 						if ((qty != null) && (toMerged.getQty() != null)) {
 							toMerged.setQty(toMerged.getQty() + qty);
 						}
 						if ((volume != null) && (toMerged.getVolume() != null)) {
 							toMerged.setVolume(toMerged.getVolume() + volume);
 						}
-						
+
 						toMerged.getAllergens().addAll(subComponent.getAllergens());
-						
+
 						// TODO else add warning
 					}
 				}
@@ -404,8 +402,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 		// Level 1 only
 		applyAggregateRules(merged, labelingFormulaContext, false);
-		
-		aggregateLegalName(merged,labelingFormulaContext, false);
+
+		aggregateLegalName(merged, labelingFormulaContext, false);
 
 		return merged;
 
@@ -558,7 +556,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 										if (volume != null) {
 											current.setVolume(current.getVolume() + volume);
 										}
-										
+
 										current.getAllergens().addAll(allergens);
 
 									}
@@ -601,7 +599,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 												subVolume = (childComponent.getVolume() * volume) / ((CompositeLabeling) component).getVolumeTotal();
 											}
 
-											error = appendToAggregate(childComponent, compositeLabeling, aggregateRule, subQty, subVolume, childComponent.getAllergens());
+											error = appendToAggregate(childComponent, compositeLabeling, aggregateRule, subQty, subVolume,
+													childComponent.getAllergens());
 										}
 
 									} else {
@@ -691,7 +690,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					}
 					current.setVolume(current.getVolume() + volume);
 				}
-				
+
 				current.getAllergens().addAll(allergens);
 
 			}
@@ -776,7 +775,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 				current.setVolume(current.getVolume() - ((volumeTotalToremove * current.getVolume()) / current.getVolumeTotal()));
 				current.setVolumeTotal(current.getVolumeTotal() - volumeTotalToremove);
-				
+
 			}
 
 		} else {
@@ -888,7 +887,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				boolean isMultiLevel = false;
 
 				if (parent == null) {
-					parent = new CompositeLabeling(productData,nodeService);
+					parent = new CompositeLabeling(productData, nodeService);
 					parent.setQty(qty);
 					parent.setVolume(volume);
 					if (logger.isTraceEnabled()) {
@@ -906,7 +905,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							&& ((productData instanceof SemiFinishedProductData) || (productData instanceof FinishedProductData))) {
 						Composite<CompoListDataItem> sfComposite = CompositeHelper
 								.getHierarchicalCompoList(productData.getCompoList(new VariantFilters<>()));
-						
+
 						for (Composite<CompoListDataItem> sfChild : sfComposite.getChildren()) {
 							CompoListDataItem clone = sfChild.getData().clone();
 							clone.setParent(compoListDataItem);
@@ -942,7 +941,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 									compositeLabeling.setVolumeTotal(qty + compositeLabeling.getVolumeTotal());
 								}
 							}
-							
 
 						} else {
 							compositeLabeling = new CompositeLabeling(productData, nodeService);
@@ -1033,11 +1031,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			reconstituableDataItems.stream().sorted((e1, e2) -> Integer.compare(e2.getPriority(), e1.getPriority())).forEach(reconstituableData -> {
 
 				AbstractLabelingComponent productLabelItem = parent.get(reconstituableData.getProductNodeRef());
-				if (productLabelItem != null && productLabelItem.getQty()!=null) {
+				if ((productLabelItem != null) && (productLabelItem.getQty() != null)) {
 
 					AbstractLabelingComponent ingLabelItem = parent.get(reconstituableData.getDiluentIngNodeRef());
 
-					if (ingLabelItem != null && ingLabelItem.getQty()!=null ) {
+					if ((ingLabelItem != null) && (ingLabelItem.getQty() != null)) {
 
 						Double diluentQty = (reconstituableData.getRate() * productLabelItem.getQty()) - productLabelItem.getQty();
 						Double diluentVolume = (reconstituableData.getRate() * productLabelItem.getVolume()) - productLabelItem.getVolume();
@@ -1138,13 +1136,39 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						// Only one level of subIngs
 						for (Composite<IngListDataItem> subIngListItem : ingListItem.getChildren()) {
 
-							IngItem subIngItem = new IngItem((IngItem) alfrescoRepository.findOne(subIngListItem.getData().getIng()));
-							if (subIngListItem.getData().getQtyPerc() != null) {
-								subIngItem.setQty(subIngListItem.getData().getQtyPerc() / 100);
-								subIngItem.setVolume(subIngListItem.getData().getQtyPerc() / 100);
-							}
+							DeclarationType subIngItemDeclarationType = getDeclarationType(compoListDataItem, subIngListItem.getData(),
+									labelingFormulaContext);
+							if (!DeclarationType.Omit.equals(subIngItemDeclarationType)
+									&& !DeclarationType.DoNotDeclare.equals(subIngItemDeclarationType)) {
 
-							ingLabelItem.getSubIngs().add(subIngItem);
+								IngItem subIngItem = new IngItem((IngItem) alfrescoRepository.findOne(subIngListItem.getData().getIng()));
+
+								if (subIngListItem.getData().getQtyPerc() != null) {
+									subIngItem.setQty(subIngListItem.getData().getQtyPerc() / 100);
+									subIngItem.setVolume(subIngListItem.getData().getQtyPerc() / 100);
+								}
+
+								if (ingLabelItem.getSubIngs().stream().filter(i -> labelingFormulaContext.getLegalIngName(i, false)
+										.equals(labelingFormulaContext.getLegalIngName(subIngItem, false))).count() < 1) {
+									logger.trace("Adding subIng: " + subIngItem.getCharactName());
+									ingLabelItem.getSubIngs().add(subIngItem);
+								} else {
+									logger.trace("Merge subIng: " + subIngItem.getCharactName());
+									ingLabelItem.getSubIngs().stream().filter(i -> labelingFormulaContext.getLegalIngName(i, false)
+											.equals(labelingFormulaContext.getLegalIngName(subIngItem, false)))
+
+											.forEach(i -> {
+												if ((i.getQty() != null) && (subIngItem.getQty() != null)) {
+													i.setQty(i.getQty() + subIngItem.getQty());
+												}
+												if ((i.getVolume() != null) && (subIngItem.getVolume() != null)) {
+													i.setVolume(i.getVolume() + subIngItem.getVolume());
+												}
+
+											});
+
+								}
+							}
 
 						}
 					}
@@ -1163,7 +1187,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				if (product.getAllergenList() != null) {
 					for (AllergenListDataItem allergenListDataItem : product.getAllergenList()) {
 						if (allergenListDataItem.getVoluntary() && allergenListDataItem.getVoluntarySources().contains(ingNodeRef)) {
-							if (AllergenType.Major.toString().equals(nodeService.getProperty(allergenListDataItem.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE))) {
+							if (AllergenType.Major.toString()
+									.equals(nodeService.getProperty(allergenListDataItem.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE))) {
 								ingLabelItem.getAllergens().add(allergenListDataItem.getAllergen());
 							}
 						}
