@@ -128,7 +128,8 @@
 					}
 				}
 
-				 html = "<ul style=\"width:" + ((colCount + 1) * 20) + "em;\">" + html + "</ul>";
+				 html = "<span>"+this.msg("label.select-prop.title")
+				 	+"</span><br/><br/><ul style=\"width:" + ((colCount + 1) * 20) + "em;\">" + html + "</ul>";
 				
 			    containerEl.innerHTML = html;
 
