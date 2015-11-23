@@ -8171,7 +8171,6 @@ else{
                                 </cell>
                             </row>
                             <row id="5431">
-                                <property name="height">0.21875in</property>
                                 <cell id="5432"/>
                                 <cell id="5433"/>
                             </row>
@@ -8204,7 +8203,6 @@ else{
                         <property name="pageBreakAfter">avoid</property>
                         <property name="pageBreakBefore">avoid</property>
                         <property name="pageBreakInside">avoid</property>
-                        <property name="height">2.4166666666666665in</property>
                         <column id="5870"/>
                         <row id="5871">
                             <cell id="5872">
