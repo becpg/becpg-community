@@ -212,7 +212,7 @@ public class ECOServiceImpl implements ECOService {
 
 				for (ReplacementListDataItem replacementListDataItem : ecoData.getReplacementList()) {
 
-					if (replacementListDataItem.getSourceItems() != null && replacementListDataItem.getSourceItems().size() > 0) {
+					if (replacementListDataItem.getSourceItems() != null && !replacementListDataItem.getSourceItems().isEmpty()) {
 
 						List<NodeRef> sourceList = new ArrayList<>(replacementListDataItem.getSourceItems());
 
@@ -285,7 +285,7 @@ public class ECOServiceImpl implements ECOService {
 
 	private ChangeUnitDataItem getOrCreateChangeUnitDataItem(ChangeOrderData ecoData, WUsedListDataItem data) {
 
-		if (data.getSourceItems().size() > 0) {
+		if (data.getSourceItems()!=null && !data.getSourceItems().isEmpty()) {
 
 			ChangeUnitDataItem changeUnitDataItem = ecoData.getChangeUnitMap().get(data.getSourceItems().get(0));
 
@@ -412,7 +412,7 @@ public class ECOServiceImpl implements ECOService {
 					try {
 						RunAsWork<Object> actionRunAs = () -> transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, isSimulation, true);
 						AuthenticationUtil.runAsSystem(actionRunAs);
-					} catch (Throwable e) {
+					} catch (Exception e) {
 
 						changeUnitDataItem.setTreated(false);
 						changeUnitDataItem.setErrorMsg(e.getMessage());

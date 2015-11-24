@@ -24,10 +24,10 @@
    <#if unit=="perc">
 	 <#if field.value == 0  >
         <#assign currUnit="perc">
-     <#elseif field.value?abs &lt; 0.1  >
+     <#elseif field.value?abs &lt; 0.01  >
 		<#assign currUnit="ppm">
 		<#assign currValue=field.value*10000>
-     <#elseif field.value?abs &lt; 1  >
+     <#elseif field.value?abs &lt; 0.1  >
 		<#assign currUnit="pp" >
 		<#assign currValue=field.value*10 >
 	 </#if>
@@ -51,7 +51,7 @@
    <#elseif unit=="d">
 		<#if field.value == 0  >
        		 <#assign currUnit="d">
-     	<#elseif field.value/30 &gt; 1  >
+     	<#elseif field.value/30 &gt; 1 && field.value%30 == 0>
 			<#assign currUnit="mo">
 			<#assign currValue=field.value/30 >
 		</#if>
