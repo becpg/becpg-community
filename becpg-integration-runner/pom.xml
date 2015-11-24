@@ -99,6 +99,15 @@
 			<scope>provided</scope>
 			<type>test-jar</type>
 		</dependency>
+		
+		<!-- solr4 -->
+		 <dependency>
+                    <groupId>${alfresco.groupId}</groupId>
+                    <artifactId>alfresco-solr4</artifactId>
+                    <version>${alfresco.version}</version>
+                    <classifier>config</classifier>
+                    <type>zip</type>
+         </dependency>
 
 
 	</dependencies>
@@ -134,6 +143,89 @@
 
 			<build>
 				<plugins>
+				
+					 <!-- Run goal unpack and unzip the content of the downloaded default solr-config.zip file into the
+                         alfresco-maven-sdk2-test/alf_data_dev/solr4/config directory
+                         (The solr-config.zip is brought in via the dependency section) -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>unpack-alfresco-config</id>
+                                <goals>
+                                    <goal>unpack</goal>
+                                </goals>
+                                <phase>generate-resources</phase>
+                                <configuration>
+                                    <outputDirectory>${alfresco.solr.home.dir}</outputDirectory>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>${alfresco.groupId}</groupId>
+                                            <artifactId>alfresco-solr4</artifactId>
+                                            <version>${alfresco.version}</version>
+                                            <classifier>config</classifier>
+                                            <type>zip</type>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- For windows paths, convert single \ to / for the ${alfresco.solr.data.dir} path,
+                         by default it will be c:\bla\, we need forward slash or double backslash. -->
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>regexp-property</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>regex-property</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <name>solrDataDir</name>
+                            <value>${alfresco.solr.data.dir}</value>
+                            <regex>\\</regex>
+                            <replacement>/</replacement>
+                            <failIfNoMatch>false</failIfNoMatch>
+                        </configuration>
+                    </plugin>
+
+
+                    <!-- Run the goal replace and update configuration files for the
+                         Solr cores to reflect our build structure -->
+                    <plugin>
+                        <groupId>com.google.code.maven-replacer-plugin</groupId>
+                        <artifactId>replacer</artifactId>
+                        <executions>
+                            <execution>
+                                <id>setup-solr-config</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>replace</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <regex>false</regex>
+                            <includes>
+                                <include>${alfresco.solr.home.dir}/archive-SpacesStore/conf/solrcore.properties</include>
+                                <include>${alfresco.solr.home.dir}/workspace-SpacesStore/conf/solrcore.properties</include>
+                            </includes>
+                            <replacements>
+                                <replacement>
+                                    <token>@@ALFRESCO_SOLR4_DATA_DIR@@</token>
+                                    <value>${solrDataDir}/index</value>
+                                </replacement>
+                            </replacements>
+                        </configuration>
+                    </plugin>
+				
 					<!-- Copy and filter webapp context files - output dir is runner/target/contexts -->
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
