@@ -105,7 +105,7 @@ public class PLMUndeployWorkflowPatch extends AbstractPatch implements Applicati
 
 			}, false, false);
 
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			logger.error(e, e);
 		}
 
@@ -130,7 +130,7 @@ public class PLMUndeployWorkflowPatch extends AbstractPatch implements Applicati
 
 				}, false, false);
 
-			} catch (Throwable e) {
+			} catch (Exception e) {
 				logger.error(e, e);
 			}
 		}
