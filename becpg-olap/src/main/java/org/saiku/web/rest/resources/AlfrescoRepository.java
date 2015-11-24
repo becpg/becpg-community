@@ -255,13 +255,14 @@ public class AlfrescoRepository {
 
 									try (InputStreamReader reader = new InputStreamReader(entity.getContent())) {
 
-										BufferedReader br = new BufferedReader(reader);
-										String chunk, content = "";
-										while ((chunk = br.readLine()) != null) {
-											content += chunk + "\n";
+										try(BufferedReader br = new BufferedReader(reader)){
+											String chunk, content = "";
+											while ((chunk = br.readLine()) != null) {
+												content += chunk + "\n";
+											}
+											byte[] doc = content.getBytes("UTF-8");
+											return Response.ok(doc, MediaType.TEXT_PLAIN).header("content-length", doc.length).build();
 										}
-										byte[] doc = content.getBytes("UTF-8");
-										return Response.ok(doc, MediaType.TEXT_PLAIN).header("content-length", doc.length).build();
 
 									}
 								}

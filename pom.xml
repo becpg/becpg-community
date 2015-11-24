@@ -74,7 +74,7 @@
 
 	<properties>
 	    <app.log.root.level>WARN</app.log.root.level>
-        <alfresco.data.location>${project.basedir}/alf_data_dev</alfresco.data.location>
+        <alfresco.data.location>/tmp/alf_data_dev</alfresco.data.location>
         <env>local</env>
 		<alfresco.version>5.0.d</alfresco.version>
 		<app.testing.jvm.args>-Xms256m -Xmx1524m -Duser.language=fr</app.testing.jvm.args>
@@ -214,7 +214,6 @@
 		<module>becpg-designer/becpg-designer-share</module>
 		<module>becpg-plm/becpg-plm-share</module>
 		<module>repo</module>
-		<module>solr-config</module>
 	    <module>share</module> 
 	    <module>becpg-integration-runner</module>
 	</modules>

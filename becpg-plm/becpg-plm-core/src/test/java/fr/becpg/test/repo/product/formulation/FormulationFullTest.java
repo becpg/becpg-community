@@ -174,9 +174,9 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 				List<LabelClaimListDataItem> labelClaimListDataItems = new ArrayList<>();
 
 				nodeService.setProperty(labelClaims.get(0), PLMModel.PROP_LABEL_CLAIM_FORMULA, "((nutList.?[nut.toString() == '" + nut1
-						+ "'][0].value < 40 and unit != T(fr.becpg.repo.product.data.ProductUnit).L and unit != T(fr.becpg.repo.product.data.ProductUnit).mL )"
+						+ "'][0].value < 40 and unit != T(fr.becpg.repo.product.data.constraints.ProductUnit).L and unit != T(fr.becpg.repo.product.data.constraints.ProductUnit).mL )"
 						+ " or (nutList.?[nut.toString() == '" + nut1
-						+ "'][0].value < 20 and (unit == T(fr.becpg.repo.product.data.ProductUnit).L or unit== T(fr.becpg.repo.product.data.ProductUnit).mL )))"
+						+ "'][0].value < 20 and (unit == T(fr.becpg.repo.product.data.constraints.ProductUnit).L or unit== T(fr.becpg.repo.product.data.constraints.ProductUnit).mL )))"
 						+ " and (nutList.?[nut.toString() == '" + nut1 + "'][0].value > 4 )");
 				nodeService.setProperty(labelClaims.get(1), PLMModel.PROP_LABEL_CLAIM_FORMULA, "nutList.?[nut.toString() == '" + nut1 + "'][0].value <= 4");
 
