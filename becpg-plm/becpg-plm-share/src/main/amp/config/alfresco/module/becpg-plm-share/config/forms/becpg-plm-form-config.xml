@@ -617,9 +617,6 @@
 					<show id="bcpg:eanCodeLevel2" force="true" />
 					<show id="bcpg:eanCodeLevel3" force="true" />
 
-					<show id="bcpg:certificateDate" force="true" />
-
-					<show id="bcpg:suppliers" force="true" />
 					<show id="bcpg:clients" force="true" />
 
 					<!-- modified -->
@@ -630,9 +627,24 @@
 					<show id="bcpg:ingListIng" force="true" />
 					<show id="bcpg:ingListGeoOrigin" force="true" />
 					<show id="bcpg:ingListBioOrigin" force="true" />
+				
+					<!-- Costs -->
+					<show id="bcpg:costListCost" force="true" />
+					<show id="bcpg:costListValue" force="true" />
+					
+					<!-- Nuts -->
+					<show id="bcpg:nutListNut" force="true" />
+					<show id="bcpg:nutListValue" force="true" />
+					
+					<!-- Physico -->
+					<show id="bcpg:pclPhysicoChem" force="true" />
+					<show id="bcpg:pclValue" force="true" />
 					
 					<!-- Packaging -->
 					<show id="bcpg:packagingListProduct" force="true" />
+					
+					<!-- Allergen -->
+					<show id="bcpg:allergenListAllergen" force="true" />
 					
 					<!-- Claim -->
 					<show id="bcpg:lclLabelClaim" force="true" />
@@ -640,30 +652,39 @@
 				</field-visibility>
 				<appearance>
 					<set id="product-criteria" appearance="bordered-panel"
-						label-id="becpg.forms.set.product-criteria.label" />
-					<!-- <set id="npd" appearance="bordered-panel" label-id="becpg.forms.set.npd.label" 
-						template="/org/alfresco/components/form/2-column-set.ftl" /> -->
-					<set id="categories" appearance="bordered-panel"
-						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+						label-id="becpg.forms.set.product-criteria.label"  />
+					<set parent="product-criteria" id="2-col-product-criteria"  template="/org/alfresco/components/form/2-column-set.ftl" />	
+					<set parent="product-criteria" id="3-col-product-criteria" template="/org/alfresco/components/form/3-column-set.ftl"  />
+					<set parent="product-criteria" id="1-col-product-criteria"  />
 					<set id="ings-criteria" appearance="bordered-panel"
-						label-id="becpg.forms.set.ings-criteria.label" />
-					<set id="packaging-criteria" appearance="bordered-panel"
-						label-id="becpg.forms.set.packaging.label" />
-					<set id="labelClaim-criteria" appearance="bordered-panel"
-						label-id="becpg.forms.set.claim.label" />		
+						label-id="becpg.forms.set.ings-criteria.label" template="/org/alfresco/components/form/3-column-set.ftl"/>
+					<set id="costs-criteria" appearance="bordered-panel"
+						label-id="becpg.forms.set.costs-criteria.label"  />
+						
+					<set id="nuts-criteria" appearance="bordered-panel"
+						label-id="becpg.forms.set.nuts-criteria.label" />	
+							
+					<set id="physicoChems-criteria" appearance="bordered-panel"
+						label-id="becpg.forms.set.physicoChems-criteria.label" />		
+	
 
-					<field id="cm:name" set="product-criteria" />
-					<field id="cm:description" set="product-criteria" />
+					<field id="cm:name" set="2-col-product-criteria" />
+					<field id="cm:description" set="2-col-product-criteria" >
+						<control
+							template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
 
-					<!-- bcpg:productAspect -->
-					<field id="bcpg:legalName" set="product-criteria" />
-					<field id="bcpg:productHierarchy1" help-id="becpg.forms.help.productHierarchy1" set="product-criteria">
+					<field id="bcpg:legalName" set="2-col-product-criteria" >
+						<control
+							template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:productHierarchy1" help-id="becpg.forms.help.productHierarchy1" set="2-col-product-criteria">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/finishedProduct_Hierarchy
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productHierarchy2" help-id="becpg.forms.help.productHierarchy2" set="product-criteria">
+					<field id="bcpg:productHierarchy2" help-id="becpg.forms.help.productHierarchy2" set="2-col-product-criteria">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/finishedProduct_Hierarchy
 							</control-param>
@@ -671,40 +692,54 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productState" set="product-criteria">
+					<field id="bcpg:productState" set="2-col-product-criteria">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="isSearch">true</control-param>
 							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
-					<field id="bcpg:code" set="product-criteria" />
+					<field id="bcpg:code" set="2-col-product-criteria" />
 
-					<field id="bcpg:erpCode" set="product-criteria" />
+					<field id="bcpg:erpCode" set="2-col-product-criteria" />
 
-					<!-- bcpg:eanAspect -->
-					<field id="bcpg:eanCode" set="product-criteria" />
-					<field id="bcpg:eanCodeLevel2" set="product-criteria" />
-					<field id="bcpg:eanCodeLevel3" set="product-criteria" />
+					<field id="bcpg:eanCode" set="2-col-product-criteria" />
+					<field id="bcpg:eanCodeLevel2" set="2-col-product-criteria" />
+					<field id="bcpg:eanCodeLevel3" set="2-col-product-criteria" />
 					
-					<field id="bcpg:certificateDate" set="product-criteria" />
-
-					<field id="bcpg:suppliers" set="product-criteria">
+					<field id="bcpg:clients" set="2-col-product-criteria">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 
-					<field id="bcpg:clients" set="product-criteria">
+					<field id="bcpg:packagingListProduct" set="3-col-product-criteria">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:packagingMaterial,bcpg:packagingKit
+							</control-param>
+						</control>
+					</field>
+					
+					<field id="bcpg:allergenListAllergen" set="3-col-product-criteria">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
+
+					<field id="bcpg:lclLabelClaim" set="3-col-product-criteria">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+
 
 					<!-- modified -->
-					<field id="cm:modifier" set="product-criteria">
+					<field id="cm:modifier" set="1-col-product-criteria">
 						<control>
 							<control-param name="forceEditable">true</control-param>
 						</control>
 					</field>
-					<field id="cm:modified" set="product-criteria">
+					
+					
+					
+					<field id="cm:modified" set="1-col-product-criteria">
 						<control template="/org/alfresco/components/form/controls/daterange.ftl" />
 					</field>
 
@@ -721,20 +756,37 @@
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
-					
-					<field id="bcpg:packagingListProduct" set="packaging-criteria">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:packagingMaterial,bcpg:packagingKit
-							</control-param>
-						</control>
-					</field>
 
-					<field id="bcpg:lclLabelClaim" set="labelClaim-criteria">
+					
+					<field id="bcpg:costListCost" set="costs-criteria">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 					
+					<field id="bcpg:costListValue" set="costs-criteria">
+						<control
+							template="/org/alfresco/components/form/controls/numberrange.ftl" />
+					</field>
+					
+					<field id="bcpg:nutListNut" set="nuts-criteria">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					
+					<field id="bcpg:nutListValue" set="nuts-criteria">
+						<control
+							template="/org/alfresco/components/form/controls/numberrange.ftl" />
+					</field>
+					
+					<field id="bcpg:pclPhysicoChem" set="physicoChems-criteria">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					
+					<field id="bcpg:pclValue" set="physicoChems-criteria">
+						<control
+							template="/org/alfresco/components/form/controls/numberrange.ftl" />
+					</field>
 					
 				</appearance>
 			</form>
@@ -2251,6 +2303,7 @@
 					<show id="cm:description" />
 				</field-visibility>
 			</form>
+			
 			<form id="search">
 				<field-visibility>
 					<show id="bcpg:productHierarchy1" />
@@ -3085,22 +3138,17 @@
 			</form>
 			<form id="search">
 				<field-visibility>
-					<show id="cm:name" />
-					<show id="cm:description" />
+					<show id="cm:name" force="true"/>
+					<show id="cm:description" force="true"/>
 
 					<!-- bcpg:productAspect -->
-					<show id="bcpg:legalName" />
-					<show id="bcpg:productHierarchy1" />
-					<show id="bcpg:productHierarchy2" />
-					<show id="bcpg:productState" />
+					<show id="bcpg:legalName" force="true"/>
+					<show id="bcpg:productHierarchy1" force="true"/>
+					<show id="bcpg:productHierarchy2" force="true"/>
+					<show id="bcpg:productState" force="true"/>
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
-
-					<!-- bcpg:eanAspect -->
-					<show id="bcpg:eanCode" force="true" />
-
 					<show id="bcpg:certificateDate" force="true" />
-
 					<show id="bcpg:suppliers" force="true" />
 
 					<!-- modified -->
@@ -3111,56 +3159,103 @@
 					<show id="bcpg:ingListIng" force="true" />
 					<show id="bcpg:ingListGeoOrigin" force="true" />
 					<show id="bcpg:ingListBioOrigin" force="true" />
+				
+					<!-- Costs -->
+					<show id="bcpg:costListCost" force="true" />
+					<show id="bcpg:costListValue" force="true" />
 					
+					<!-- Nuts -->
+					<show id="bcpg:nutListNut" force="true" />
+					<show id="bcpg:nutListValue" force="true" />
+					
+					<!-- Physico -->
+					<show id="bcpg:pclPhysicoChem" force="true" />
+					<show id="bcpg:pclValue" force="true" />
+					
+					<!-- Allergen -->
+					<show id="bcpg:allergenListAllergen" force="true" />
+					
+					<!-- Claim -->
+					<show id="bcpg:lclLabelClaim" force="true" />
 
 				</field-visibility>
 				<appearance>
 					<set id="product-criteria" appearance="bordered-panel"
-						label-id="becpg.forms.set.product-criteria.label" />
-					<!-- <set id="npd" appearance="bordered-panel" label-id="becpg.forms.set.npd.label" 
-						template="/org/alfresco/components/form/2-column-set.ftl" /> -->
-					<set id="categories" appearance="bordered-panel"
-						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+						label-id="becpg.forms.set.product-criteria.label"  />
+					<set parent="product-criteria" id="2-col-product-criteria"  template="/org/alfresco/components/form/2-column-set.ftl" />	
+					<set parent="product-criteria" id="3-col-product-criteria" template="/org/alfresco/components/form/3-column-set.ftl"  />
+					<set parent="product-criteria" id="1-col-product-criteria"  />
 					<set id="ings-criteria" appearance="bordered-panel"
-						label-id="becpg.forms.set.ings-criteria.label" />
+						label-id="becpg.forms.set.ings-criteria.label" template="/org/alfresco/components/form/3-column-set.ftl"/>
+					<set id="costs-criteria" appearance="bordered-panel"
+						label-id="becpg.forms.set.costs-criteria.label"  />
+						
+					<set id="nuts-criteria" appearance="bordered-panel"
+						label-id="becpg.forms.set.nuts-criteria.label" />	
+							
+					<set id="physicoChems-criteria" appearance="bordered-panel"
+						label-id="becpg.forms.set.physicoChems-criteria.label" />		
+	
 
-					<field id="cm:name" set="product-criteria" />
-					<field id="cm:description" set="product-criteria" />
+					<field id="cm:name" set="2-col-product-criteria" />
+					<field id="cm:description" set="2-col-product-criteria" >
+						<control
+							template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
 
-					<!-- bcpg:productAspect -->
-					<field id="bcpg:legalName" set="product-criteria" />
-					<field id="bcpg:productHierarchy1" set="product-criteria">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					<field id="bcpg:legalName" set="2-col-product-criteria" >
+						<control
+							template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
-					<field id="bcpg:productHierarchy2" set="product-criteria">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					<field id="bcpg:productHierarchy1" help-id="becpg.forms.help.productHierarchy1" set="2-col-product-criteria">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/rawMaterial_Hierarchy
+							</control-param>
+						</control>
 					</field>
-					<field id="bcpg:productState" set="product-criteria">
+					<field id="bcpg:productHierarchy2" help-id="becpg.forms.help.productHierarchy2" set="2-col-product-criteria">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/rawMaterial_Hierarchy
+							</control-param>
+							<control-param name="parent">bcpg_productHierarchy1
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productState" set="2-col-product-criteria">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="isSearch">true</control-param>
 							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
-					<field id="bcpg:code" set="product-criteria" />
+					<field id="bcpg:code" set="2-col-product-criteria" />
 
-					<field id="bcpg:erpCode" set="product-criteria" />
+					<field id="bcpg:erpCode" set="2-col-product-criteria" />
 
-					<!-- bcpg:eanAspect -->
-					<field id="bcpg:eanCode" set="product-criteria" />
-					<field id="bcpg:certificateDate" set="product-criteria" />
+					<field id="bcpg:certificateDate" set="2-col-product-criteria" />
+					
+					<field id="bcpg:suppliers" set="3-col-product-criteria">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
 
-					<field id="bcpg:suppliers" set="product-criteria">
+					<field id="bcpg:allergenListAllergen" set="3-col-product-criteria">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+
+					<field id="bcpg:lclLabelClaim" set="3-col-product-criteria">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 
 					<!-- modified -->
-					<field id="cm:modifier" set="product-criteria">
+					<field id="cm:modifier" set="1-col-product-criteria">
 						<control>
 							<control-param name="forceEditable">true</control-param>
 						</control>
 					</field>
-					<field id="cm:modified" set="product-criteria">
+			
+					<field id="cm:modified" set="1-col-product-criteria">
 						<control template="/org/alfresco/components/form/controls/daterange.ftl" />
 					</field>
 
@@ -3178,8 +3273,40 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 
+					
+					<field id="bcpg:costListCost" set="costs-criteria">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					
+					<field id="bcpg:costListValue" set="costs-criteria">
+						<control
+							template="/org/alfresco/components/form/controls/numberrange.ftl" />
+					</field>
+					
+					<field id="bcpg:nutListNut" set="nuts-criteria">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					
+					<field id="bcpg:nutListValue" set="nuts-criteria">
+						<control
+							template="/org/alfresco/components/form/controls/numberrange.ftl" />
+					</field>
+					
+					<field id="bcpg:pclPhysicoChem" set="physicoChems-criteria">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					
+					<field id="bcpg:pclValue" set="physicoChems-criteria">
+						<control
+							template="/org/alfresco/components/form/controls/numberrange.ftl" />
+					</field>
+					
 				</appearance>
 			</form>
+			
 		</forms>
 	</config>
 
@@ -3540,26 +3667,16 @@
 		<forms>
 			<form id="search">
 				<field-visibility>
-					<show id="cm:name" />
-					<show id="cm:description" />
+					<show id="cm:name" force="true"/>
+					<show id="cm:description" force="true"/>
 
 					<!-- bcpg:productAspect -->
-					<show id="bcpg:legalName" />
-					<show id="bcpg:productHierarchy1" />
-					<show id="bcpg:productHierarchy2" />
-					<show id="bcpg:productState" />
+					<show id="bcpg:legalName" force="true"/>
+					<show id="bcpg:productHierarchy1" force="true"/>
+					<show id="bcpg:productHierarchy2" force="true"/>
+					<show id="bcpg:productState" force="true"/>
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
-
-					<!-- bcpg:eanAspect -->
-					<show id="bcpg:eanCode" force="true" />
-					<show id="bcpg:eanCodeLevel2" force="true" />
-					<show id="bcpg:eanCodeLevel3" force="true" />
-
-					<show id="bcpg:certificateDate" force="true" />
-
-					<show id="bcpg:suppliers" force="true" />
-					<show id="bcpg:clients" force="true" />
 
 					<!-- modified -->
 					<show id="cm:modified" />
@@ -3569,9 +3686,24 @@
 					<show id="bcpg:ingListIng" force="true" />
 					<show id="bcpg:ingListGeoOrigin" force="true" />
 					<show id="bcpg:ingListBioOrigin" force="true" />
+				
+					<!-- Costs -->
+					<show id="bcpg:costListCost" force="true" />
+					<show id="bcpg:costListValue" force="true" />
+					
+					<!-- Nuts -->
+					<show id="bcpg:nutListNut" force="true" />
+					<show id="bcpg:nutListValue" force="true" />
+					
+					<!-- Physico -->
+					<show id="bcpg:pclPhysicoChem" force="true" />
+					<show id="bcpg:pclValue" force="true" />
 					
 					<!-- Packaging -->
 					<show id="bcpg:packagingListProduct" force="true" />
+					
+					<!-- Allergen -->
+					<show id="bcpg:allergenListAllergen" force="true" />
 					
 					<!-- Claim -->
 					<show id="bcpg:lclLabelClaim" force="true" />
@@ -3579,30 +3711,39 @@
 				</field-visibility>
 				<appearance>
 					<set id="product-criteria" appearance="bordered-panel"
-						label-id="becpg.forms.set.product-criteria.label" />
-					<!-- <set id="npd" appearance="bordered-panel" label-id="becpg.forms.set.npd.label" 
-						template="/org/alfresco/components/form/2-column-set.ftl" /> -->
-					<set id="categories" appearance="bordered-panel"
-						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+						label-id="becpg.forms.set.product-criteria.label"  />
+					<set parent="product-criteria" id="2-col-product-criteria"  template="/org/alfresco/components/form/2-column-set.ftl" />	
+					<set parent="product-criteria" id="3-col-product-criteria" template="/org/alfresco/components/form/3-column-set.ftl"  />
+					<set parent="product-criteria" id="1-col-product-criteria"  />
 					<set id="ings-criteria" appearance="bordered-panel"
-						label-id="becpg.forms.set.ings-criteria.label" />
-					<set id="packaging-criteria" appearance="bordered-panel"
-						label-id="becpg.forms.set.packaging.label" />
-					<set id="labelClaim-criteria" appearance="bordered-panel"
-						label-id="becpg.forms.set.claim.label" />		
+						label-id="becpg.forms.set.ings-criteria.label" template="/org/alfresco/components/form/3-column-set.ftl"/>
+					<set id="costs-criteria" appearance="bordered-panel"
+						label-id="becpg.forms.set.costs-criteria.label"  />
+						
+					<set id="nuts-criteria" appearance="bordered-panel"
+						label-id="becpg.forms.set.nuts-criteria.label" />	
+							
+					<set id="physicoChems-criteria" appearance="bordered-panel"
+						label-id="becpg.forms.set.physicoChems-criteria.label" />		
+	
 
-					<field id="cm:name" set="product-criteria" />
-					<field id="cm:description" set="product-criteria" />
+					<field id="cm:name" set="2-col-product-criteria" />
+					<field id="cm:description" set="2-col-product-criteria" >
+						<control
+							template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
 
-					<!-- bcpg:productAspect -->
-					<field id="bcpg:legalName" set="product-criteria" />
-					<field id="bcpg:productHierarchy1" help-id="becpg.forms.help.productHierarchy1" set="product-criteria">
+					<field id="bcpg:legalName" set="2-col-product-criteria" >
+						<control
+							template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:productHierarchy1" help-id="becpg.forms.help.productHierarchy1" set="2-col-product-criteria">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/semiFinishedProduct_Hierarchy
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productHierarchy2" help-id="becpg.forms.help.productHierarchy2" set="product-criteria">
+					<field id="bcpg:productHierarchy2" help-id="becpg.forms.help.productHierarchy2" set="2-col-product-criteria">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/semiFinishedProduct_Hierarchy
 							</control-param>
@@ -3610,40 +3751,45 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productState" set="product-criteria">
+					<field id="bcpg:productState" set="2-col-product-criteria">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="isSearch">true</control-param>
 							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
-					<field id="bcpg:code" set="product-criteria" />
+					<field id="bcpg:code" set="2-col-product-criteria" />
 
-					<field id="bcpg:erpCode" set="product-criteria" />
+					<field id="bcpg:erpCode" set="2-col-product-criteria" />
 
-					<!-- bcpg:eanAspect -->
-					<field id="bcpg:eanCode" set="product-criteria" />
-					<field id="bcpg:eanCodeLevel2" set="product-criteria" />
-					<field id="bcpg:eanCodeLevel3" set="product-criteria" />
+					<field id="bcpg:packagingListProduct" set="3-col-product-criteria">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:packagingMaterial,bcpg:packagingKit
+							</control-param>
+						</control>
+					</field>
 					
-					<field id="bcpg:certificateDate" set="product-criteria" />
-
-					<field id="bcpg:suppliers" set="product-criteria">
+					<field id="bcpg:allergenListAllergen" set="3-col-product-criteria">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 
-					<field id="bcpg:clients" set="product-criteria">
+					<field id="bcpg:lclLabelClaim" set="3-col-product-criteria">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
+
 
 					<!-- modified -->
-					<field id="cm:modifier" set="product-criteria">
+					<field id="cm:modifier" set="1-col-product-criteria">
 						<control>
 							<control-param name="forceEditable">true</control-param>
 						</control>
 					</field>
-					<field id="cm:modified" set="product-criteria">
+					
+					
+					
+					<field id="cm:modified" set="1-col-product-criteria">
 						<control template="/org/alfresco/components/form/controls/daterange.ftl" />
 					</field>
 
@@ -3660,19 +3806,38 @@
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
-					
-					<field id="bcpg:packagingListProduct" set="packaging-criteria">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:packagingMaterial,bcpg:packagingKit
-							</control-param>
-						</control>
-					</field>
 
-					<field id="bcpg:lclLabelClaim" set="labelClaim-criteria">
+					
+					<field id="bcpg:costListCost" set="costs-criteria">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
+					
+					<field id="bcpg:costListValue" set="costs-criteria">
+						<control
+							template="/org/alfresco/components/form/controls/numberrange.ftl" />
+					</field>
+					
+					<field id="bcpg:nutListNut" set="nuts-criteria">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					
+					<field id="bcpg:nutListValue" set="nuts-criteria">
+						<control
+							template="/org/alfresco/components/form/controls/numberrange.ftl" />
+					</field>
+					
+					<field id="bcpg:pclPhysicoChem" set="physicoChems-criteria">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					
+					<field id="bcpg:pclValue" set="physicoChems-criteria">
+						<control
+							template="/org/alfresco/components/form/controls/numberrange.ftl" />
+					</field>
+					
 					
 					
 				</appearance>
