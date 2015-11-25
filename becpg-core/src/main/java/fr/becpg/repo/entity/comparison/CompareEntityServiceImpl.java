@@ -277,6 +277,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		Map<String, String> criteriaMap = new HashMap<>();
 		dataListFilter.setCriteriaMap(criteriaMap);
 		dataListFilter.setEntityNodeRefs(Collections.singletonList(entityNodeRef));
+		dataListFilter.updateMaxDepth(-1);
 		return multiLevelDataListService.getMultiLevelListData(dataListFilter);
 	}
 
@@ -287,7 +288,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 			// TODO generic should be able to combine several properties (ie:
 			// EAN, Funtion,...)
-			String pivot = (String) nodeService.getProperty(entry.getValue().getEntityNodeRef(), BeCPGModel.PROP_LEGAL_NAME);
+			String pivot = (String) nodeService.getProperty(entry.getValue().getEntityNodeRef(), BeCPGModel.PROP_LEGAL_NAME);			
 			if (pivot == null) {
 				pivot = entry.getValue().getEntityNodeRef().toString();
 			}
@@ -310,16 +311,16 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 	}
 
 	private void structCompareCompositeDataLists(QName entityListType, QName pivotProperty, List<StructCompareResultDataItem> strucComparisonList,
-			CompositeComparableItem compositeItem1, CompositeComparableItem compositeItem2) {
-
+			CompositeComparableItem compositeItem1, CompositeComparableItem compositeItem2) {		
+		
 		if (compositeItem1 != null) {
 			for (String key : compositeItem1.getItemList().keySet()) {
 
 				AbstractComparableItem c1 = compositeItem1.get(key);
 				AbstractComparableItem c2 = compositeItem2 == null ? null : compositeItem2.get(key);
 				NodeRef nodeRef1 = c1.getNodeRef();
-				NodeRef nodeRef2 = c2 == null ? null : c2.getNodeRef();
-
+				NodeRef nodeRef2 = c2 == null ? null : c2.getNodeRef();				
+				
 				StructCompareOperator operator = StructCompareOperator.Equal;
 
 				Map<String, CompareResultDataItem> comparisonMap = new TreeMap<>();
@@ -353,7 +354,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				if (nodeRef2 == null) {
 					operator = StructCompareOperator.Removed;
 				}
-
+				
 				// we display only changes
 				if (!StructCompareOperator.Equal.equals(operator)) {
 
