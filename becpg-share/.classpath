@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="**/*.java" including="**" kind="src" output="target/test-classes" path="src/test/properties/local"/>
 	<classpathentry kind="src" output="target/classes" path="src/main/java">
 		<attributes>
 			<attribute name="optional" value="true"/>
@@ -651,12 +650,6 @@
 	<classpathentry kind="var" path="M2_REPO/org/alfresco/aikau/1.0.8.1/aikau-1.0.8.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/alfresco/alfresco-web-framework-commons/5.0.d/alfresco-web-framework-commons-5.0.d-classes.jar"/>
 	<classpathentry kind="var" path="M2_REPO/tk/skuro/alfresco/h2-support/1.6/h2-support-1.6.jar" sourcepath="M2_REPO/tk/skuro/alfresco/h2-support/1.6/h2-support-1.6-sources.jar"/>
-	<classpathentry kind="src" output="target/test-classes" path="src/test/java">
-		<attributes>
-			<attribute name="optional" value="true"/>
-			<attribute name="maven.pomderived" value="true"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>

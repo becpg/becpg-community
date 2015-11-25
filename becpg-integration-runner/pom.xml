@@ -113,8 +113,7 @@
 	</dependencies>
 	
 	<properties>
-	<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-	
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
 
 	<build>
@@ -170,6 +169,51 @@
                                     </artifactItems>
                                 </configuration>
                             </execution>
+                            <execution>
+								<id>prepare-regression-test-resources</id>
+								<phase>pre-integration-test</phase>
+								<goals>
+									<goal>unpack</goal>
+								</goals>
+								<configuration>
+									<artifactItems>
+										<artifactItem>
+											<groupId>fr.becpg</groupId>
+							                 <artifactId>becpg-core</artifactId>
+							                 <version>${project.version}</version>
+							                 <type>test-jar</type>
+											<outputDirectory>${project.build.directory}/test-classes</outputDirectory>
+											<excludes>**/*alfresco-global.properties,**/*log4j.properties,**/*becpgModel.xml</excludes>
+										</artifactItem>
+										<artifactItem>
+											 <groupId>fr.becpg</groupId>
+							                 <artifactId>becpg-designer-core</artifactId>
+							                 <version>${project.version}</version>
+							                 <type>test-jar</type>
+											<outputDirectory>${project.build.directory}/test-classes</outputDirectory>
+											<excludes>**/*alfresco-global.properties,**/*log4j.properties</excludes>
+										</artifactItem>
+										<artifactItem>
+											<groupId>fr.becpg</groupId>
+							                <artifactId>becpg-project-core</artifactId>
+							                <version>${project.version}</version>
+							                <type>test-jar</type>
+											<outputDirectory>${project.build.directory}/test-classes</outputDirectory>
+											<includes>**/*.class,**/*.xml</includes>
+											<excludes>**/*alfresco-global.properties,**/*log4j.properties</excludes>
+										</artifactItem>
+										<artifactItem>
+											<groupId>fr.becpg</groupId>
+							                <artifactId>becpg-plm-core</artifactId>
+							                <version>${project.version}</version>
+							                <type>test-jar</type>
+											<outputDirectory>${project.build.directory}/test-classes</outputDirectory>
+											<includes>**/*.class,**/*.xml</includes>
+											<excludes>**/*alfresco-global.properties,**/*log4j.properties</excludes>
+										</artifactItem>
+									</artifactItems>
+								</configuration>
+							</execution>
                         </executions>
                     </plugin>
 
@@ -348,57 +392,7 @@
 			</properties>
 			<build>
 				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-dependency-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>prepare-regression-test-resources</id>
-								<phase>pre-integration-test</phase>
-								<goals>
-									<goal>unpack</goal>
-								</goals>
-								<configuration>
-									<artifactItems>
-										<artifactItem>
-											<groupId>fr.becpg</groupId>
-							                 <artifactId>becpg-core</artifactId>
-							                 <version>${project.version}</version>
-							                 <type>test-jar</type>
-											<outputDirectory>${project.build.directory}/test-classes</outputDirectory>
-											<excludes>**/*alfresco-global.properties,**/*log4j.properties,**/*becpgModel.xml</excludes>
-										</artifactItem>
-										<artifactItem>
-											 <groupId>fr.becpg</groupId>
-							                 <artifactId>becpg-designer-core</artifactId>
-							                 <version>${project.version}</version>
-							                 <type>test-jar</type>
-											<outputDirectory>${project.build.directory}/test-classes</outputDirectory>
-											<excludes>**/*alfresco-global.properties,**/*log4j.properties</excludes>
-										</artifactItem>
-										<artifactItem>
-											<groupId>fr.becpg</groupId>
-							                <artifactId>becpg-project-core</artifactId>
-							                <version>${project.version}</version>
-							                <type>test-jar</type>
-											<outputDirectory>${project.build.directory}/test-classes</outputDirectory>
-											<includes>**/*.class,**/*.xml</includes>
-											<excludes>**/*alfresco-global.properties,**/*log4j.properties</excludes>
-										</artifactItem>
-										<artifactItem>
-											<groupId>fr.becpg</groupId>
-							                <artifactId>becpg-plm-core</artifactId>
-							                <version>${project.version}</version>
-							                <type>test-jar</type>
-											<outputDirectory>${project.build.directory}/test-classes</outputDirectory>
-											<includes>**/*.class,**/*.xml</includes>
-											<excludes>**/*alfresco-global.properties,**/*log4j.properties</excludes>
-										</artifactItem>
-									</artifactItems>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
+					
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-failsafe-plugin</artifactId>
