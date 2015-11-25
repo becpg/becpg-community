@@ -46,7 +46,9 @@
                                           <div style="font-size: 14px; margin: 12px 0px 24px 0px; padding-top: 10px; border-top: 1px solid #aaaaaa;">
                                              <p>Bonjour,</p>
            
-                                             <p><b>${args.workflowTitle}</b></p>
+                                             <#if args.workflowTitle??>
+	                                         	 <p><b>"${args.workflowTitle}"</b></p>
+	                                         </#if>
                                              
                                              <#if (args.workflowDescription)??>                                             
                                              	<p>${args.workflowDescription}</p>                                             
