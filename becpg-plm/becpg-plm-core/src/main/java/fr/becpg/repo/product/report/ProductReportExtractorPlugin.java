@@ -323,8 +323,6 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	private void loadProcessListItem(ProcessListDataItem dataItem, Element processListElt, NodeRef defaultVariantNodeRef, int level, Double parentRateProduct) {
 
-		Element dataListsElt;
-
 		Element partElt = processListElt.addElement(MPMModel.TYPE_PROCESSLIST.getLocalName());
 		loadProductData(dataItem.getComponent(), partElt);
 		loadDataListItemAttributes(dataItem, partElt);
@@ -337,14 +335,11 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			}
 		}		
 		if (dataItem.getResource() != null && nodeService.exists(dataItem.getResource())) {
-			dataListsElt = loadResourceParams(dataItem.getResource(), partElt);
-
-			if(dataListsElt!=null){
-				ProductData productData = alfrescoRepository.findOne(dataItem.getResource());
-				if (productData.hasProcessListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-					for (ProcessListDataItem subDataItem : productData.getProcessList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-						loadProcessListItem(subDataItem, dataListsElt, defaultVariantNodeRef, level + 1, dataItem.getRateProduct());
-					}
+			loadResourceParams(dataItem.getResource(), partElt);
+			ProductData productData = alfrescoRepository.findOne(dataItem.getResource());
+			if (productData.hasProcessListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+				for (ProcessListDataItem subDataItem : productData.getProcessList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+					loadProcessListItem(subDataItem, processListElt, defaultVariantNodeRef, level + 1, dataItem.getRateProduct());
 				}
 			}
 		}
@@ -353,13 +348,12 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	}
 
-	private Element loadResourceParams(NodeRef entityNodeRef, Element partElt) {
-		Element dataListsElt = null;
+	private void loadResourceParams(NodeRef entityNodeRef, Element partElt) {
 		ResourceProductData productData = (ResourceProductData) alfrescoRepository.findOne(entityNodeRef);
 
 		if (productData.getResourceParamList() != null && !productData.getResourceParamList().isEmpty()) {
 
-			dataListsElt = partElt.addElement(TAG_DATALISTS);
+			Element dataListsElt = partElt.addElement(TAG_DATALISTS);
 			Element resourceListsElt = dataListsElt.addElement(MPMModel.TYPE_RESOURCEPARAMLIST.getLocalName() + "s");
 
 			for (ResourceParamListItem resourceParamListItem : productData.getResourceParamList()) {
@@ -370,8 +364,6 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 			}
 		}
-
-		return dataListsElt;
 	}
 
 	private void loadNutLists(ProductData productData, Element dataListsElt) {

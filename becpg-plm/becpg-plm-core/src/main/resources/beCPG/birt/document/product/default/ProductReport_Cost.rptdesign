@@ -2226,6 +2226,7 @@ row["costListValuePerProduct"] * row["nbProductsPkgLevel3"]
                 <structure>
                     <property name="columnName">itemTypeEntity</property>
                     <property name="analysis">dimension</property>
+                    <property name="onColumnLayout">false</property>
                     <text-property name="heading">itemTypeEntity</text-property>
                 </structure>
             </list-property>
@@ -3322,6 +3323,19 @@ dataSetRow["versionLabel"]
                 </cell>
             </row>
         </grid>
+        <data id="7085">
+            <property name="dataSet">Product</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">itemType</property>
+                    <text-property name="displayName">itemType</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["itemType"].indexOf("bcpg:finishedProduct")</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+            </list-property>
+            <property name="resultSetColumn">itemType</property>
+        </data>
         <label id="1768"/>
         <table id="3471">
             <property name="width">100%</property>
@@ -3413,7 +3427,7 @@ dataSetRow["versionLabel"]
                 <structure>
                     <property name="name">Aggregation_costPerPallet</property>
                     <property name="dataType">float</property>
-                    <property name="aggregateFunction">AVE</property>
+                    <property name="aggregateFunction">SUM</property>
                     <list-property name="arguments">
                         <structure>
                             <property name="name">Expression</property>
@@ -3448,7 +3462,7 @@ dataSetRow["versionLabel"]
                 <list-property name="visibility">
                     <structure>
                         <property name="format">all</property>
-                        <expression name="valueExpr" type="javascript">row["itemType"] != "finishedProduct"</expression>
+                        <expression name="valueExpr" type="javascript">row["itemTypeEntity"].indexOf("finishedProduct") == -1</expression>
                     </structure>
                 </list-property>
                 <property name="style">becpg-col-border</property>
@@ -3457,7 +3471,7 @@ dataSetRow["versionLabel"]
                 <list-property name="visibility">
                     <structure>
                         <property name="format">all</property>
-                        <expression name="valueExpr" type="javascript">row["itemType"] != "finishedProduct"</expression>
+                        <expression name="valueExpr" type="javascript">row["itemTypeEntity"].indexOf("finishedProduct") == -1</expression>
                     </structure>
                 </list-property>
                 <property name="style">becpg-col-border</property>
@@ -3466,7 +3480,7 @@ dataSetRow["versionLabel"]
                 <list-property name="visibility">
                     <structure>
                         <property name="format">all</property>
-                        <expression name="valueExpr" type="javascript">row["itemType"] != "finishedProduct"</expression>
+                        <expression name="valueExpr" type="javascript">row["itemTypeEntity"].indexOf("finishedProduct") == -1</expression>
                     </structure>
                 </list-property>
                 <property name="style">becpg-col-border</property>
@@ -3826,7 +3840,7 @@ dataSetRow["versionLabel"]
                 <list-property name="visibility">
                     <structure>
                         <property name="format">all</property>
-                        <expression name="valueExpr" type="javascript">row["itemTypeEntity"] != "finishedProduct"</expression>
+                        <expression name="valueExpr" type="javascript">row["itemTypeEntity"].indexOf("finishedProduct") == -1</expression>
                     </structure>
                 </list-property>
                 <property name="style">becpg-col-border</property>
@@ -4200,7 +4214,7 @@ matière
                 <list-property name="visibility">
                     <structure>
                         <property name="format">all</property>
-                        <expression name="valueExpr" type="javascript">row["itemTypeEntity"] != "finishedProduct"</expression>
+                        <expression name="valueExpr" type="javascript">row["itemTypeEntity"].indexOf("finishedProduct") == -1</expression>
                     </structure>
                 </list-property>
                 <property name="style">becpg-col-border</property>
@@ -4568,7 +4582,7 @@ matière
                 <list-property name="visibility">
                     <structure>
                         <property name="format">all</property>
-                        <expression name="valueExpr" type="javascript">row["itemTypeEntity"] != "finishedProduct"</expression>
+                        <expression name="valueExpr" type="javascript">row["itemTypeEntity"].indexOf("finishedProduct") == -1</expression>
                     </structure>
                 </list-property>
                 <property name="style">becpg-col-border</property>
@@ -4661,6 +4675,7 @@ horaire</text-property>
                     <cell id="3602">
                         <data id="3631">
                             <property name="style">becpg-data</property>
+                            <property name="textAlign">left</property>
                             <property name="resultSetColumn">plStep</property>
                         </data>
                     </cell>
