@@ -44,6 +44,20 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 	private static final String CRITERIA_ING = "assoc_bcpg_ingListIng_added";
 
+	private static final String CRITERIA_PHYSICO = "assoc_bcpg_pclPhysicoChem_added";
+
+	private static final String CRITERIA_PHYSICO_RANGE = "prop_bcpg_pclValue-range";
+
+	private static final String CRITERIA_ALLERGEN = "assoc_bcpg_allergenListAllergen_added";
+
+	private static final String CRITERIA_COST = "assoc_bcpg_costListCost_added";
+
+	private static final String CRITERIA_COST_RANGE = "prop_bcpg_costListValue-range";
+
+	private static final String CRITERIA_NUTS = "assoc_bcpg_nutListNut_added";
+
+	private static final String CRITERIA_NUTS_RANGE = "prop_bcpg_nutListValue-range";
+
 	private static final String CRITERIA_GEO_ORIGIN = "assoc_bcpg_ingListGeoOrigin_added";
 
 	private static final String CRITERIA_BIO_ORIGIN = "assoc_bcpg_ingListBioOrigin_added";
@@ -64,11 +78,21 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		if (isAssocSearch) {
 			nodes = filterByAssociations(nodes, criteria);
 
-			if (datatype != null && entityDictionaryService.isSubClass(datatype, PLMModel.TYPE_PRODUCT)) {
+			if ((datatype != null) && entityDictionaryService.isSubClass(datatype, PLMModel.TYPE_PRODUCT)) {
 				nodes = getSearchNodesByIngListCriteria(nodes, criteria);
 				nodes = getSearchNodesByLabelingCriteria(nodes, criteria);
-				nodes = getSearchNodesByLabelClaim(nodes, criteria);
-				nodes = getSearchNodesByPackagingListProduct(nodes, criteria);
+				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_LABEL_CLAIM, PLMModel.ASSOC_LCL_LABELCLAIM,
+						PLMModel.PROP_LCL_CLAIM_VALUE, "true");
+				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_PACKAGING_LIST_PRODUCT, PLMModel.ASSOC_PACKAGINGLIST_PRODUCT, null,
+						null);
+				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_ALLERGEN, PLMModel.ASSOC_ALLERGENLIST_ALLERGEN,
+						PLMModel.PROP_ALLERGENLIST_VOLUNTARY, "true");
+				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_COST, PLMModel.ASSOC_COSTLIST_COST, PLMModel.PROP_COSTLIST_VALUE,
+						criteria.get(CRITERIA_COST_RANGE));
+				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_NUTS, PLMModel.ASSOC_NUTLIST_NUT, PLMModel.PROP_NUTLIST_VALUE,
+						criteria.get(CRITERIA_NUTS_RANGE));
+				nodes = getSearchNodesByListCriteria(nodes, criteria, CRITERIA_PHYSICO, PLMModel.ASSOC_PHYSICOCHEMLIST_PHYSICOCHEM,
+						PLMModel.PROP_PHYSICOCHEMLIST_VALUE, criteria.get(CRITERIA_PHYSICO_RANGE));
 			}
 		}
 
@@ -77,17 +101,20 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 	@Override
 	public Set<String> getIgnoredFields(QName datatype) {
-		Set<String> ret  = new HashSet<>();
-		if (datatype != null && entityDictionaryService.isSubClass(datatype, PLMModel.TYPE_PRODUCT)) {
+		Set<String> ret = new HashSet<>();
+		if ((datatype != null) && entityDictionaryService.isSubClass(datatype, PLMModel.TYPE_PRODUCT)) {
 			ret.add(CRITERIA_PACK_LABEL_POSITION);
+			ret.add(CRITERIA_COST_RANGE);
+			ret.add(CRITERIA_PHYSICO_RANGE);
+			ret.add(CRITERIA_NUTS_RANGE);
 		}
 		return ret;
 	}
-	
+
 	/**
 	 * Take in account criteria on associations (ie :
 	 * assoc_bcpg_supplierAssoc_added)
-	 * 
+	 *
 	 * @return filtered list of nodes by associations
 	 */
 	private List<NodeRef> filterByAssociations(List<NodeRef> nodes, Map<String, String> criteria) {
@@ -110,7 +137,9 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 				if (assocName.endsWith("_added")) {
 					// TODO : should be generic
 					if (!key.equals(CRITERIA_ING) && !key.equals(CRITERIA_GEO_ORIGIN) && !key.equals(CRITERIA_BIO_ORIGIN)
-							&& !key.equals(CRITERIA_PACK_LABEL) && !key.equals(CRITERIA_LABEL_CLAIM) && !key.equals(CRITERIA_PACKAGING_LIST_PRODUCT)) {
+							&& !key.equals(CRITERIA_PACK_LABEL) && !key.equals(CRITERIA_LABEL_CLAIM) && !key.equals(CRITERIA_PACKAGING_LIST_PRODUCT)
+							&& !key.equals(CRITERIA_ALLERGEN) && !key.equals(CRITERIA_COST) && !key.equals(CRITERIA_PHYSICO)
+							&& !key.equals(CRITERIA_NUTS)) {
 
 						assocName = assocName.substring(0, assocName.length() - 6);
 						assocName = assocName.replace("_", ":");
@@ -151,76 +180,9 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		return nodes;
 	}
 
-	private List<NodeRef> getSearchNodesByPackagingListProduct(List<NodeRef> nodes, Map<String, String> criteria) {
-		List<NodeRef> packagingListItems = null;
-
-		StopWatch watch = null;
-		if (logger.isDebugEnabled()) {
-			watch = new StopWatch();
-			watch.start();
-		}
-
-		if (criteria.containsKey(CRITERIA_PACKAGING_LIST_PRODUCT)) {
-
-			String propValue = criteria.get(CRITERIA_PACKAGING_LIST_PRODUCT);
-
-			// criteria on label
-			if (!propValue.isEmpty()) {
-
-				NodeRef nodeRef = new NodeRef(propValue);
-
-				if (nodeService.exists(nodeRef)) {
-
-					List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, PLMModel.ASSOC_PACKAGINGLIST_PRODUCT);
-					packagingListItems = new ArrayList<>(assocRefs.size());
-
-					for (AssociationRef assocRef : assocRefs) {
-
-						NodeRef n = assocRef.getSourceRef();
-						if (isWorkSpaceProtocol(n)) {
-
-							packagingListItems.add(n);
-						}
-					}
-				}
-			}
-
-		}
-
-		if (packagingListItems != null) {
-
-			List<NodeRef> productNodeRefs = new ArrayList<>();
-			for (NodeRef packagingListItem : packagingListItems) {
-
-				if (isWorkSpaceProtocol(packagingListItem)) {
-
-					NodeRef rootNodeRef = entityListDAO.getEntity(packagingListItem);
-
-					// we don't display history version
-					if (rootNodeRef != null && !nodeService.hasAspect(rootNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
-						productNodeRefs.add(rootNodeRef);
-					}
-
-				}
-			}
-
-			if (productNodeRefs != null) {
-				nodes.retainAll(productNodeRefs);
-			}
-
-		}
-
-		if (logger.isDebugEnabled()) {
-			watch.stop();
-			logger.debug("getSearchNodesByPackagingListProduct executed in  " + watch.getTotalTimeSeconds() + " seconds ");
-		}
-
-		return nodes;
-	}
-
 	/**
 	 * Take in account criteria on ing list criteria
-	 * 
+	 *
 	 * @return
 	 */
 	private List<NodeRef> getSearchNodesByIngListCriteria(List<NodeRef> nodes, Map<String, String> criteria) {
@@ -332,7 +294,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 					NodeRef rootNodeRef = entityListDAO.getEntity(ingListItem);
 
 					// we don't display history version
-					if (rootNodeRef != null && !nodeService.hasAspect(rootNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
+					if ((rootNodeRef != null) && !nodeService.hasAspect(rootNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
 						productNodeRefs.add(rootNodeRef);
 					}
 				}
@@ -353,7 +315,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 	/**
 	 * Take in account criteria on ing list criteria
-	 * 
+	 *
 	 * @return
 	 */
 	private List<NodeRef> getSearchNodesByLabelingCriteria(List<NodeRef> nodes, Map<String, String> criteria) {
@@ -387,8 +349,8 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 							if (criteria.containsKey(CRITERIA_PACK_LABEL_POSITION) && !criteria.get(CRITERIA_PACK_LABEL_POSITION).isEmpty()) {
 
-								if (criteria.get(CRITERIA_PACK_LABEL_POSITION).equals(
-										"\"" + nodeService.getProperty(n, PackModel.PROP_LL_POSITION) + "\"")) {
+								if (criteria.get(CRITERIA_PACK_LABEL_POSITION)
+										.equals("\"" + nodeService.getProperty(n, PackModel.PROP_LL_POSITION) + "\"")) {
 									labelingListItems.add(n);
 								}
 							} else {
@@ -412,7 +374,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 					NodeRef rootNodeRef = entityListDAO.getEntity(labelingListItem);
 
 					// we don't display history version
-					if (rootNodeRef != null && !nodeService.hasAspect(rootNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
+					if ((rootNodeRef != null) && !nodeService.hasAspect(rootNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
 						productNodeRefs.add(rootNodeRef);
 					}
 
@@ -435,10 +397,11 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 	/**
 	 * Take in account criteria on label claim list criteria
-	 * 
+	 *
 	 * @return
 	 */
-	private List<NodeRef> getSearchNodesByLabelClaim(List<NodeRef> nodes, Map<String, String> criteria) {
+	private List<NodeRef> getSearchNodesByListCriteria(List<NodeRef> nodes, Map<String, String> criteria, String criteriaAssocString,
+			QName criteriaAssoc, QName criteriaAssocValue, String criteriaValue) {
 
 		List<NodeRef> labelClaimListItems = null;
 
@@ -448,9 +411,9 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 			watch.start();
 		}
 
-		if (criteria.containsKey(CRITERIA_LABEL_CLAIM)) {
+		if (criteria.containsKey(criteriaAssocString)) {
 
-			String propValue = criteria.get(CRITERIA_LABEL_CLAIM);
+			String propValue = criteria.get(criteriaAssocString);
 
 			// criteria on label
 			if (!propValue.isEmpty()) {
@@ -459,16 +422,44 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 				if (nodeService.exists(nodeRef)) {
 
-					List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, PLMModel.ASSOC_LCL_LABELCLAIM);
+					List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, criteriaAssoc);
 					labelClaimListItems = new ArrayList<>(assocRefs.size());
 
 					for (AssociationRef assocRef : assocRefs) {
 
 						NodeRef n = assocRef.getSourceRef();
 						if (isWorkSpaceProtocol(n)) {
+							if ((criteriaAssocValue != null) && (criteriaValue != null) && !criteriaValue.isEmpty()) {
+								Object value = nodeService.getProperty(n, criteriaAssocValue);
+								if( PLMModel.PROP_NUTLIST_VALUE.equals(criteriaAssocValue) && value==null){
+									value = nodeService.getProperty(n, PLMModel.PROP_NUTLIST_FORMULATED_VALUE);
+								}
+								
+								if (value != null) {
+									if (value instanceof String) {
+										if (criteriaValue.equals(value)) {
+											labelClaimListItems.add(n);
+										}
 
-							Boolean isClaimed = "true".equals(nodeService.getProperty(n, PLMModel.PROP_LCL_CLAIM_VALUE));
-							if (isClaimed) {
+									} else if (value instanceof Boolean) {
+										if (Boolean.valueOf(criteriaValue).equals(value)) {
+											labelClaimListItems.add(n);
+										}
+
+									} else if (value instanceof Double) {
+										String[] splitted = criteriaValue.split("\\|");
+										if (splitted.length == 2) {
+											if(logger.isDebugEnabled()){
+												logger.info("filter by range: "+splitted[0]+" "+splitted[1]);
+											}
+											if ((splitted[0].isEmpty() || (((Double) value) >= Double.valueOf(splitted[0])))
+													&& (splitted[1].isEmpty() || (((Double) value) <= Double.valueOf(splitted[1])))) {
+												labelClaimListItems.add(n);
+											}
+										}
+									}
+								}
+							} else {
 								labelClaimListItems.add(n);
 							}
 						}
@@ -488,7 +479,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 					NodeRef rootNodeRef = entityListDAO.getEntity(labelClaimListItem);
 
 					// we don't display history version
-					if (rootNodeRef != null && !nodeService.hasAspect(rootNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
+					if ((rootNodeRef != null) && !nodeService.hasAspect(rootNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
 						productNodeRefs.add(rootNodeRef);
 					}
 
@@ -528,8 +519,5 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		}
 		return false;
 	}
-
-
-
 
 }
