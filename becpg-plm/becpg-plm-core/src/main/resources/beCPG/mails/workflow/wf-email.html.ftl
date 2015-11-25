@@ -57,8 +57,10 @@
                                                    You have been assigned the following task:
                                                 </#if>
                                              </p>
-                                             
-                                             <p><b>"${args.workflowTitle}"</b></p>
+                                            
+                                             <#if args.workflowTitle??>
+                                            	 <p><b>"${args.workflowTitle}"</b></p>
+                                             </#if>
                                              
                                              <#if (args.workflowDescription)??>                                             
                                              	<p>${args.workflowDescription}</p>                                             
