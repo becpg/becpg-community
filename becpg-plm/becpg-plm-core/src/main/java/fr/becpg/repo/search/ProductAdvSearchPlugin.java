@@ -431,10 +431,10 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 						if (isWorkSpaceProtocol(n)) {
 							if ((criteriaAssocValue != null) && (criteriaValue != null) && !criteriaValue.isEmpty()) {
 								Object value = nodeService.getProperty(n, criteriaAssocValue);
-								if( PLMModel.PROP_NUTLIST_VALUE.equals(criteriaAssocValue) && value==null){
+								if (PLMModel.PROP_NUTLIST_VALUE.equals(criteriaAssocValue) && (value == null)) {
 									value = nodeService.getProperty(n, PLMModel.PROP_NUTLIST_FORMULATED_VALUE);
 								}
-								
+
 								if (value != null) {
 									if (value instanceof String) {
 										if (criteriaValue.equals(value)) {
@@ -449,11 +449,15 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 									} else if (value instanceof Double) {
 										String[] splitted = criteriaValue.split("\\|");
 										if (splitted.length == 2) {
-											if(logger.isDebugEnabled()){
-												logger.info("filter by range: "+splitted[0]+" "+splitted[1]);
+											if (logger.isDebugEnabled()) {
+												logger.debug("filter by range: " + splitted[0] + " " + splitted[1]);
 											}
 											if ((splitted[0].isEmpty() || (((Double) value) >= Double.valueOf(splitted[0])))
 													&& (splitted[1].isEmpty() || (((Double) value) <= Double.valueOf(splitted[1])))) {
+												labelClaimListItems.add(n);
+											}
+										} else if (splitted.length == 1) {
+											if ((splitted[0].isEmpty() || (((Double) value) >= Double.valueOf(splitted[0])))) {
 												labelClaimListItems.add(n);
 											}
 										}

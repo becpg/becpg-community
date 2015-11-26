@@ -28,7 +28,8 @@
                  <#if mlField.locale != locale>
 	         	<div class="form-field">
       				<label for="${el}-${mlField.locale}">${mlField.label!""?html}:&nbsp;
-      						<span class="locale-icon"><img  title="${mlField.locale}" tabindex="0" src="${url.context}/res/components/images/flags/${mlField.locale}.png"><span>
+      						<span class="locale-icon"><img class="icon16_11" title="${mlField.locale}" tabindex="0" src="${url.context}/res/components/images/flags/${mlField.locale}.png"><span>&nbsp;&nbsp;
+      						<span class="translate-icon" onClick="suggestTranslate('${el}-${mlField.locale}','${mlField.locale}');" ><img class="icon16" title="${msg("translate.suggest")}" tabindex="0" src="${url.context}/res/components/images/translate-16.png"><span>
       				</label>
 	      			<#if args.textarea??>
 	      				<textarea rows="2" cols="60" title="${mlField.description!""?html}" tabindex="0"
@@ -53,6 +54,21 @@
 </div>
 <script type="text/javascript">//<![CDATA[
 
+var suggestTranslate = function(fieldHtmlId, targetLocale){
+ 	Alfresco.util.Ajax.request({
+				method : Alfresco.util.Ajax.GET,
+				url : Alfresco.constants.PROXY_URI + "becpg/form/multilingual/field/${field}?suggest=true&nodeRef=${nodeRef}&target="+targetLocale,
+				successCallback : {
+					fn : function(resp) {
+						if(resp.json && resp.json.translatedText){
+							document.getElementById(fieldHtmlId).innerHTML = resp.json.translatedText;
+						}
+					},
+					scope : this
+				}
+		});
+ }; 		
+
 var addFormFieldForLocale = function(){
   	
   	  	var select = document.getElementById("${el}-locale-picker");
@@ -64,7 +80,10 @@ var addFormFieldForLocale = function(){
    
 	   	 varHtml +="<div class=\"form-field\"><label for=\"${el}-"+lc
 	   	         +"\">${label?js_string}:&nbsp;<span class=\"locale-icon\">"
-	   	         +"<img  tabindex=\"0\" src=\"${url.context}/res/components/images/flags/"+lc+".png\"/></span></label>";
+	   	         +"<img class=\"icon16_11\" tabindex=\"0\" src=\"${url.context}/res/components/images/flags/"+lc+".png\"/></span>&nbsp;&nbsp;"
+	   	         +"<span class=\"translate-icon\" onClick=\"suggestTranslate('${el}-"+lc+"','"+lc+"');\" >"
+	   	         +"<img class=\"icon16\" title=\"${msg("translate.suggest")}\" tabindex=\"0\" src=\"${url.context}/res/components/images/translate-16.png\">"
+	   	         +"<span></label>";
 	   	 <#if args.textarea??>
 	   	 varHtml+="<textarea rows=\"2\" cols=\"60\" title=\"${description?js_string}\" tabindex=\"0\"	 name=\""+lc+"\" id=\"${el}-"+lc+"\"></textarea>";
 	   	 <#else>
@@ -72,7 +91,11 @@ var addFormFieldForLocale = function(){
 	  	 </#if>
 	  	 varHtml +="</div>";
 	  	 container.innerHTML += varHtml;
-  		}
+ };
+  		
+
+  		
+  		
 	     			    
 };
 

@@ -40,6 +40,7 @@
 
 	<bean id="webscript.fr.becpg.form.multilingualField.get" class="fr.becpg.repo.web.scripts.multilingual.MultilingualFieldWebScript" parent="webscript">
 		<property name="serviceRegistry" ref="ServiceRegistry" />
+		<property name="googleApiKey" value="${beCPG.translate.googleAPIKey}" />
 	</bean>
 
 	<bean id="webscript.fr.becpg.form.multilingualField.post" class="fr.becpg.repo.web.scripts.multilingual.MultilingualFieldWebScript" parent="webscript">
