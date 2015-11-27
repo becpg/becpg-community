@@ -227,7 +227,7 @@
 </#macro>
 
 <#macro renderLocaleImage field textarea=false>
-  <#if field.transitory != true && field.dataType == "mltext" && form.mode == "edit">
+  <#if field.transitory != true && field.dataType == "mltext" && form.mode == "edit" && form.arguments.itemKind == "node">
     <#assign localeshort = locale?substring(0,2)?lower_case >
     <#if form.arguments.itemId??>
 	    <span class="locale-icon">
@@ -243,6 +243,7 @@
 		                  actionUrl : Alfresco.constants.PROXY_URI + "becpg/form/multilingual/field/"+fieldId+"?nodeRef=${form.arguments.itemId}",
 		                  validateOnSubmit : false,
 		                  destroyOnHide : true,
+		                  width: "33em",
 		                  successMessage : "${msg("message.save.success")}"
 		               }).show();
 		
