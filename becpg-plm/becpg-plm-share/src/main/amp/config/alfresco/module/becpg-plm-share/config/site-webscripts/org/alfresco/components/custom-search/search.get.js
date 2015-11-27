@@ -40,7 +40,7 @@ function customSearchMain()
 
     model.exportSearchTpls = getExportSearchTpls(datatype);
     
-    if(datatype!=null && datatype.indexOf("Product")>0){
+    if(datatype!=null && (datatype.indexOf("Product")>0 || datatype.indexOf("Material")>0)){
     	
     	model.exportSearchTpls = model.exportSearchTpls.concat(getExportSearchTpls("bcpg:product"));
     }

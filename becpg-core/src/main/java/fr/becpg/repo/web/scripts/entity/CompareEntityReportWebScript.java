@@ -117,7 +117,7 @@ public class CompareEntityReportWebScript extends AbstractWebScript {
 			}
 		}
 
-		NodeRef entity1NodeRef = entityNodeRef;
+		NodeRef entity1NodeRef = null;
 
 		String fileName = templateArgs.get(PARAM_FILE_NAME);
 		if (fileName == null) {
@@ -128,7 +128,7 @@ public class CompareEntityReportWebScript extends AbstractWebScript {
 		if (versionLabel != null) {
 			VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
 			Version version = versionHistory.getVersion(versionLabel);
-			entityNodeRef = entityVersionService.getEntityVersion(version);
+			entity1NodeRef = entityVersionService.getEntityVersion(version);
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("entityNodeRef: " + entityNodeRef + " - versionLabel: " + versionLabel + " - entityVersionNodeRef: " + entityNodeRef);
@@ -137,22 +137,24 @@ public class CompareEntityReportWebScript extends AbstractWebScript {
 			entityNodeRefs.add(entityNodeRef);
 
 		}
-
-		String entities = req.getParameter(PARAM_ENTITIES);
-		if (entities != null && !entities.isEmpty()) {
-			for (String entity : entities.split(",")) {
-				entityNodeRefs.add(new NodeRef(entity));
+		else{
+			entity1NodeRef = entityNodeRef;
+			String entities = req.getParameter(PARAM_ENTITIES);
+			if (entities != null && !entities.isEmpty()) {
+				for (String entity : entities.split(",")) {
+					entityNodeRefs.add(new NodeRef(entity));
+				}
 			}
-		}
 
-		if (entityNodeRefs.isEmpty()) {
-			for (int i = 1; i <= MAX_ENTITIES; i++) {
-				String entity = req.getParameter(PARAM_ENTITY + i);
-				if (entity != null) {
-					if (entity1NodeRef == null) {
-						entity1NodeRef = new NodeRef(entity);
-					} else {
-						entityNodeRefs.add(new NodeRef(entity));
+			if (entityNodeRefs.isEmpty()) {
+				for (int i = 1; i <= MAX_ENTITIES; i++) {
+					String entity = req.getParameter(PARAM_ENTITY + i);
+					if (entity != null) {
+						if (entity1NodeRef == null) {
+							entity1NodeRef = new NodeRef(entity);
+						} else {
+							entityNodeRefs.add(new NodeRef(entity));
+						}
 					}
 				}
 			}
@@ -174,7 +176,10 @@ public class CompareEntityReportWebScript extends AbstractWebScript {
 				templateNodeRef = reportTplService.getUserReportTemplate(ReportType.Compare, null,
 						TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_COMPARE_ENTITIES));
 			}
-
+			if(logger.isDebugEnabled()){
+				logger.debug("entity1NodeRef : " + entity1NodeRef);
+				logger.debug("entityNodeRefs : " + entityNodeRefs);
+			}			
 			compareEntityReportService.getComparisonReport(entity1NodeRef, entityNodeRefs, templateNodeRef, res.getOutputStream());
 
 			// set mimetype for the content and the character encoding + length
