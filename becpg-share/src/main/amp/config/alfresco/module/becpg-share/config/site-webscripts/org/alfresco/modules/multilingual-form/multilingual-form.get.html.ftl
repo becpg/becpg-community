@@ -61,6 +61,7 @@ var suggestTranslate = function(fieldHtmlId, targetLocale){
 				successCallback : {
 					fn : function(resp) {
 						if(resp.json && resp.json.translatedText){
+						     document.getElementById(fieldHtmlId).value = resp.json.translatedText;
 							document.getElementById(fieldHtmlId).innerHTML = resp.json.translatedText;
 						}
 					},
