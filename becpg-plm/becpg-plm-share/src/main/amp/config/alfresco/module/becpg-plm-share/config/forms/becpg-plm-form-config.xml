@@ -2325,7 +2325,7 @@
 				</field-visibility>
 				<appearance>
 					<set id="product-criteria" appearance="bordered-panel"
-						label-id="becpg.forms.set.product-criteria.label" />
+						label-id="becpg.forms.set.product-criteria.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="labeling-criteria" appearance="bordered-panel"
 						label-id="becpg.forms.set.mentions.label" />
 					<set id="labelClaim-criteria" appearance="bordered-panel"
