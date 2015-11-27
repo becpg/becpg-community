@@ -739,7 +739,10 @@ if (beCPG.module.EntityDataGridRenderers) {
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
         propertyName : "bcpg:packagingListQty",
         renderer : function(oRecord, data, label, scope) {
-            return data.value;
+        	if (data.value != null) {
+        		return data.value;
+        	}
+        	return "";
         }
     });
 	
@@ -749,9 +752,7 @@ if (beCPG.module.EntityDataGridRenderers) {
          if(data.value != null){
          	return data.value;
          }
-         else{
-         	return "";
-         }
+         return "";
       }
   });	
 
