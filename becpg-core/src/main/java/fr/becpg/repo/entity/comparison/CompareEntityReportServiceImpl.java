@@ -125,8 +125,8 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 			entitiesCmpElt.add(renderComparisonAsXmlData(entity1, entities, compareResult));
 			entitiesCmpElt.add(renderStructComparisonAsXmlData(structCompareResults));
 
-			if (logger.isDebugEnabled()) {
-				logger.debug("comparison XML " + entitiesCmpElt.asXML());
+			if (logger.isTraceEnabled()) {
+				logger.trace("comparison XML " + entitiesCmpElt.asXML());
 			}
 
 			try {
