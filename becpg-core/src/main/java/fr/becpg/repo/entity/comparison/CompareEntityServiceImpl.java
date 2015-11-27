@@ -255,6 +255,10 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		MultiLevelListData listData1 = loadCompositeDataList(entity1NodeRef, datalistType);
 		MultiLevelListData listData2 = loadCompositeDataList(entity2NodeRef, datalistType);
 
+		if(logger.isDebugEnabled()){
+			logger.debug("listData1 " + listData1);
+			logger.debug("listData2 " + listData2);
+		}
 		CompositeComparableItem compositeItem1 = new CompositeComparableItem(0, null, null);
 		loadComparableItems(compositeItem1, listData1);
 
@@ -274,8 +278,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 	private MultiLevelListData loadCompositeDataList(NodeRef entityNodeRef, QName datalistType) {
 		DataListFilter dataListFilter = new DataListFilter();
 		dataListFilter.setDataType(datalistType);
-		Map<String, String> criteriaMap = new HashMap<>();
-		dataListFilter.setCriteriaMap(criteriaMap);
+		dataListFilter.setFilterId(DataListFilter.ALL_FILTER);
 		dataListFilter.setEntityNodeRefs(Collections.singletonList(entityNodeRef));
 		dataListFilter.updateMaxDepth(-1);
 		return multiLevelDataListService.getMultiLevelListData(dataListFilter);
@@ -327,9 +330,9 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				compareNode(entityListType, null, null, nodeRef1, nodeRef2, 2, 1, true, comparisonMap);
 
 				if (logger.isDebugEnabled()) {
-					logger.debug("structCompareCompositeDataLists: nodeRef1: " + nodeRef1 + " - nodeRef2: " + nodeRef2 + " comparisonMap: "
-							+ comparisonMap);
-				}
+					logger.debug("structCompareCompositeDataLists: nodeRef1: " + nodeRef1 + " - nodeRef2: " + nodeRef2 + " pivotProperty: " + pivotProperty);
+					logger.trace(" comparisonMap: " + comparisonMap);
+				}				
 
 				// get Properties
 				Map<QName, String> properties1 = new TreeMap<>();
@@ -337,15 +340,16 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				for (CompareResultDataItem c : comparisonMap.values()) {
 
 					if (c.isDifferent()) {
-						properties1.put(c.getProperty(), c.getValues().get(0));
-						properties2.put(c.getProperty(), c.getValues().get(1));
-
 						if (operator.equals(StructCompareOperator.Equal)) {
 							operator = StructCompareOperator.Modified;
 						}
-						// replaced ?
 						if (pivotProperty.getLocalName().equals(c.getProperty().getLocalName())) {
 							operator = StructCompareOperator.Replaced;
+						}
+						else{
+							// we don't include pivot in properties
+							properties1.put(c.getProperty(), c.getValues().get(0));
+							properties2.put(c.getProperty(), c.getValues().get(1));
 						}
 					}
 				}
@@ -397,7 +401,8 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 					}
 
 					if (logger.isDebugEnabled()) {
-						logger.debug("structCompareCompositeDataLists: c2.getNodeRef(): " + c2.getNodeRef() + " comparisonMap: " + comparisonMap);
+						logger.debug("structCompareCompositeDataLists: c2.getNodeRef(): " + c2.getNodeRef() + " pivotProperty: " + pivotProperty);
+						logger.trace(" comparisonMap: " + comparisonMap);
 					}
 
 					StructCompareResultDataItem structComparison = new StructCompareResultDataItem(entityListType, c2.getDepthLevel(),
