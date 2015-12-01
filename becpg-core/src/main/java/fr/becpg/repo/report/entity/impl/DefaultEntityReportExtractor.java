@@ -75,10 +75,8 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	private static final Log logger = LogFactory.getLog(DefaultEntityReportExtractor.class);
 
-	/** The Constant TAG_ENTITY. */
 	protected static final String TAG_ENTITY = "entity";
 
-	/** The Constant TAG_DATALISTS. */
 	protected static final String TAG_DATALISTS = "dataLists";
 	protected static final String TAG_ATTRIBUTES = "attributes";
 	protected static final String TAG_ATTRIBUTE = "attribute";
@@ -97,7 +95,6 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	private static final String TAG_COMMENTS = "comments";
 	private static final String TAG_COMMENT = "comment";
 
-	/** The Constant VALUE_NULL. */
 	protected static final String VALUE_NULL = "";
 
 	private static final String REGEX_REMOVE_CHAR = "[^\\p{L}\\p{N}]";
