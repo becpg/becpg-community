@@ -599,7 +599,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			loadProductData(dataItem.getComponent(), partElt, images);
 			loadDataListItemAttributes(dataItem, partElt, images);
 			partElt.addAttribute(ATTR_COMPOLIST_QTY_FOR_PRODUCT, Double.toString(compoListQty));
-			if (level == 1) {
+			if (level == 1 || extractInMultiLevel) {
 				dataListsElt = partElt.addElement(TAG_DATALISTS);
 				ProductData productData = alfrescoRepository.findOne(dataItem.getProduct());
 				loadNutLists(productData, dataListsElt, images);
