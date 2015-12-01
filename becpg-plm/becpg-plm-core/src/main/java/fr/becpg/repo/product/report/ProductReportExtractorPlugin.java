@@ -599,20 +599,18 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			loadProductData(dataItem.getComponent(), partElt, images);
 			loadDataListItemAttributes(dataItem, partElt, images);
 			partElt.addAttribute(ATTR_COMPOLIST_QTY_FOR_PRODUCT, Double.toString(compoListQty));
-			if (level == 1 || extractInMultiLevel) {
-				dataListsElt = partElt.addElement(TAG_DATALISTS);
-				ProductData productData = alfrescoRepository.findOne(dataItem.getProduct());
-				loadNutLists(productData, dataListsElt, images);
-				loadOrganoLists(productData, dataListsElt, images);
-				extractVariants(dataItem.getVariants(), partElt, defaultVariantNodeRef);
-			}
+			dataListsElt = partElt.addElement(TAG_DATALISTS);
+			ProductData productData = alfrescoRepository.findOne(dataItem.getProduct());
+			loadNutLists(productData, dataListsElt, images);
+			loadOrganoLists(productData, dataListsElt, images);
+			extractVariants(dataItem.getVariants(), partElt, defaultVariantNodeRef);
+			
 			Integer depthLevel = dataItem.getDepthLevel();
 			if (depthLevel != null) {
 				partElt.addAttribute(BeCPGModel.PROP_DEPTH_LEVEL.getLocalName(), "" + (depthLevel * level));
 			}
 
 			if (nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT) && extractInMultiLevel) {
-				ProductData productData = alfrescoRepository.findOne(dataItem.getProduct());
 				if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 					for (CompoListDataItem subDataItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 						loadCompoListItem(subDataItem, compoListElt, defaultVariantNodeRef, level + 1,
