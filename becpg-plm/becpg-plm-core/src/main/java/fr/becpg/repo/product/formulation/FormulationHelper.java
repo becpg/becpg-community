@@ -554,11 +554,11 @@ public class FormulationHelper {
 						qty = qty / formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes();
 					}
 				} else if (packagingLevel.equals(PackagingLevel.Tertiary)) {
-					if (formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() != null && formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() != 0d
-							&& formulatedProduct.getDefaultVariantPackagingData().getBoxesPerPallet() != null && formulatedProduct.getDefaultVariantPackagingData().getBoxesPerPallet() != 0d) {
+					if (formulatedProduct.getDefaultVariantPackagingData().getProductPerPallet() != null
+							&& formulatedProduct.getDefaultVariantPackagingData().getProductPerPallet() != 0d) {
 						logger.debug("qty : " + qty + " product per boxes " + formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() + " boxes per pallet "
 								+ formulatedProduct.getDefaultVariantPackagingData().getBoxesPerPallet());
-						qty = qty / (formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() * formulatedProduct.getDefaultVariantPackagingData().getBoxesPerPallet());
+						qty = qty / formulatedProduct.getDefaultVariantPackagingData().getProductPerPallet();
 					}
 				}
 			}

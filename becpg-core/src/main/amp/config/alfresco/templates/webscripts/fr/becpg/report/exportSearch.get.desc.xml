@@ -21,5 +21,5 @@
 	<url>/becpg/report/exportsearch/{store_type}/{store_id}/{id}/{reportName}?term={term?}&amp;tag={tag?}&amp;site={site?}&amp;container={container?}&amp;sort={sort?}&amp;query={query?}&amp;repo={repo?}</url>
 	<format default="json">argument</format>
 	<authentication>user</authentication>
-	<transaction allow="readwrite" buffersize="0">required</transaction>
+	<transaction allow="readonly" buffersize="0">required</transaction>
 </webscript>

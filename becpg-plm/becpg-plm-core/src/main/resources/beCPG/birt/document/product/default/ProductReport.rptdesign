@@ -7402,6 +7402,7 @@ false
         </grid>
         <label id="5868"/>
         <table id="2639">
+            <property name="style">becpg-table</property>
             <property name="display">block</property>
             <property name="width">6.78125in</property>
             <property name="dataSet">plants</property>
@@ -7481,18 +7482,50 @@ else{
             <detail>
                 <row id="2644">
                     <property name="style">becpg-row-border</property>
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">thin</property>
+                    <property name="borderLeftStyle">solid</property>
+                    <property name="borderLeftWidth">thin</property>
+                    <property name="borderRightStyle">solid</property>
+                    <property name="borderRightWidth">thin</property>
+                    <property name="borderTopStyle">solid</property>
+                    <property name="borderTopWidth">thin</property>
                     <cell id="2645">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">thin</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">thin</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
                         <data id="2661">
                             <property name="textAlign">center</property>
                             <property name="resultSetColumn">name</property>
                         </data>
                     </cell>
                     <cell id="2646">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">thin</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">thin</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
                         <data id="2663">
                             <property name="resultSetColumn">plantCertifications</property>
                         </data>
                     </cell>
                     <cell id="2647">
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">thin</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">thin</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
                         <data id="2665">
                             <property name="resultSetColumn">plantApprovalNumbers</property>
                         </data>
@@ -7510,7 +7543,6 @@ else{
             <row id="3097">
                 <cell id="3098">
                     <table id="5990">
-                        <property name="style">becpg-table</property>
                         <property name="borderBottomStyle">none</property>
                         <property name="borderLeftStyle">none</property>
                         <property name="borderRightStyle">none</property>
@@ -7544,28 +7576,30 @@ else{
                                 <text-property name="displayName">nutListValue</text-property>
                                 <expression name="expression" type="javascript">if(dataSetRow["nutListValue"] != null){
 
-	if(dataSetRow["nutListNut"] == "Energie kJ" || dataSetRow["nutListNut"] == "Energie kcal"){
+	if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.energykj", reportContext.getLocale()) || dataSetRow["nutListNut"] == reportContext.getMessage("nut.energykcal", reportContext.getLocale())){
 	BirtMath.round(dataSetRow["nutListValue"], 0)
 	}
-	else if(dataSetRow["nutListNut"] == "Lipides" &amp;&amp; dataSetRow["nutListValue"] >= 10){
+	else if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.lipids", reportContext.getLocale()) &amp;&amp; dataSetRow["nutListValue"] >= 10){
 	BirtMath.round(dataSetRow["nutListValue"], 0)
 	}
-	else if(dataSetRow["nutListNut"] == "Lipides" &amp;&amp; dataSetRow["nutListValue"] > 0.5){
+	else if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.lipids", reportContext.getLocale()) &amp;&amp; dataSetRow["nutListValue"] > 0.5){
 	BirtMath.round(dataSetRow["nutListValue"], 1)
 	}
-	else if(dataSetRow["nutListNut"] == "Lipides" &amp;&amp; dataSetRow["nutListValue"] > 0){
+	else if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.lipids", reportContext.getLocale()) &amp;&amp; dataSetRow["nutListValue"] > 0){
 	"&lt; 0,5"
 	}
-	else if(dataSetRow["nutListNut"] == "Lipides"){
+	else if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.lipids", reportContext.getLocale())){
 	"0"
 	}
-	else if((dataSetRow["nutListNut"] == "AG saturés" || dataSetRow["nutListNut"] == "AG monoinsaturés" || dataSetRow["nutListNut"] == "AG polyinsaturés") &amp;&amp; dataSetRow["nutListValue"] >= 10){
-	BirtMath.round(dataSetRow["nutListValue"], 0)
-	}
-	else if(dataSetRow["nutListNut"] == "AG saturés" || dataSetRow["nutListNut"] == "AG monoinsaturés" || dataSetRow["nutListNut"] == "AG polyinsaturés"){
-	BirtMath.round(dataSetRow["nutListValue"], 1)
-	}
-	else if(dataSetRow["nutListNut"] == "Glucides" || dataSetRow["nutListNut"] == "Sucres" || dataSetRow["nutListNut"] == "Fibres alimentaires" || dataSetRow["nutListNut"] == "Protéines"){
+	else if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.fatsat", reportContext.getLocale()) || dataSetRow["nutListNut"] == reportContext.getMessage("nut.fatmono", reportContext.getLocale()) || dataSetRow["nutListNut"] == reportContext.getMessage("nut.fatpoly", reportContext.getLocale())){
+		if(dataSetRow["nutListValue"] >= 10){
+		BirtMath.round(dataSetRow["nutListValue"], 0)
+		}
+		else{
+		BirtMath.round(dataSetRow["nutListValue"], 1)
+		}
+	}	
+	else if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.carbohydrate", reportContext.getLocale()) || dataSetRow["nutListNut"] == reportContext.getMessage("nut.sugar", reportContext.getLocale()) || dataSetRow["nutListNut"] == reportContext.getMessage("nut.fiber", reportContext.getLocale()) || dataSetRow["nutListNut"] == reportContext.getMessage("nut.proteins", reportContext.getLocale())){
 		if(dataSetRow["nutListValue"] >= 10){
 		BirtMath.round(dataSetRow["nutListValue"], 0)
 		}
@@ -7573,7 +7607,7 @@ else{
 		BirtMath.round(dataSetRow["nutListValue"], 1)
 		}
 	}
-	else if(dataSetRow["nutListNut"] == "Sodium"){
+	else if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.sodium", reportContext.getLocale())){
 		var value = dataSetRow["nutListValue"];
 		if(dataSetRow["nutListUnit"] == "mg/100g"){
 			value = value / 1000;
@@ -7592,7 +7626,7 @@ else{
 		"0"
 		}
 	}
-	else if(dataSetRow["nutListNut"] == "Sel"){
+	else if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.salt", reportContext.getLocale())){
 		if(dataSetRow["nutListValue"] >= 1){
 		BirtMath.round(dataSetRow["nutListValue"], 1)
 		}
@@ -7606,6 +7640,9 @@ else{
 		"0"
 		}
 	}
+	else if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.starch", reportContext.getLocale())){
+		BirtMath.round(dataSetRow["nutListValue"], 1)
+	}
 	else{
 	dataSetRow["nutListValue"]
 	}
@@ -7618,28 +7655,30 @@ else{
                                 <text-property name="displayName">nutListValuePerServing</text-property>
                                 <expression name="expression" type="javascript">if(dataSetRow["nutListValuePerServing"] != null){
 
-	if(dataSetRow["nutListNut"] == "Energie kJ" || dataSetRow["nutListNut"] == "Energie kcal"){
+	if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.energykj", reportContext.getLocale()) || dataSetRow["nutListNut"] == reportContext.getMessage("nut.energykcal", reportContext.getLocale())){
 	BirtMath.round(dataSetRow["nutListValuePerServing"], 0)
 	}
-	else if(dataSetRow["nutListNut"] == "Lipides" &amp;&amp; dataSetRow["nutListValuePerServing"] >= 10){
+	else if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.lipids", reportContext.getLocale()) &amp;&amp; dataSetRow["nutListValuePerServing"] >= 10){
 	BirtMath.round(dataSetRow["nutListValuePerServing"], 0)
 	}
-	else if(dataSetRow["nutListNut"] == "Lipides" &amp;&amp; dataSetRow["nutListValuePerServing"] > 0.5){
+	else if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.lipids", reportContext.getLocale()) &amp;&amp; dataSetRow["nutListValuePerServing"] > 0.5){
 	BirtMath.round(dataSetRow["nutListValuePerServing"], 1)
 	}
-	else if(dataSetRow["nutListNut"] == "Lipides" &amp;&amp; dataSetRow["nutListValuePerServing"] > 0){
+	else if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.lipids", reportContext.getLocale()) &amp;&amp; dataSetRow["nutListValuePerServing"] > 0){
 	"&lt; 0,5"
 	}
-	else if(dataSetRow["nutListNut"] == "Lipides"){
+	else if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.lipids", reportContext.getLocale())){
 	"0"
 	}
-	else if((dataSetRow["nutListNut"] == "AG saturés" || dataSetRow["nutListNut"] == "AG monoinsaturés" || dataSetRow["nutListNut"] == "AG polyinsaturés") &amp;&amp; dataSetRow["nutListValuePerServing"] >= 10){
-	BirtMath.round(dataSetRow["nutListValuePerServing"], 0)
-	}
-	else if(dataSetRow["nutListNut"] == "AG saturés" || dataSetRow["nutListNut"] == "AG monoinsaturés" || dataSetRow["nutListNut"] == "AG polyinsaturés"){
-	BirtMath.round(dataSetRow["nutListValuePerServing"], 1)
-	}
-	else if(dataSetRow["nutListNut"] == "Glucides" || dataSetRow["nutListNut"] == "Sucres" || dataSetRow["nutListNut"] == "Fibres alimentaires" || dataSetRow["nutListNut"] == "Protéines"){
+	else if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.fatsat", reportContext.getLocale()) || dataSetRow["nutListNut"] == reportContext.getMessage("nut.fatmono", reportContext.getLocale()) || dataSetRow["nutListNut"] == reportContext.getMessage("nut.fatpoly", reportContext.getLocale())){
+		if(dataSetRow["nutListValuePerServing"] >= 10){
+		BirtMath.round(dataSetRow["nutListValuePerServing"], 0)
+		}
+		else{
+		BirtMath.round(dataSetRow["nutListValuePerServing"], 1)
+		}
+	}	
+	else if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.carbohydrate", reportContext.getLocale()) || dataSetRow["nutListNut"] == reportContext.getMessage("nut.sugar", reportContext.getLocale()) || dataSetRow["nutListNut"] == reportContext.getMessage("nut.fiber", reportContext.getLocale()) || dataSetRow["nutListNut"] == reportContext.getMessage("nut.proteins", reportContext.getLocale())){
 		if(dataSetRow["nutListValuePerServing"] >= 10){
 		BirtMath.round(dataSetRow["nutListValuePerServing"], 0)
 		}
@@ -7647,7 +7686,7 @@ else{
 		BirtMath.round(dataSetRow["nutListValuePerServing"], 1)
 		}
 	}
-	else if(dataSetRow["nutListNut"] == "Sodium"){
+	else if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.sodium", reportContext.getLocale())){
 		var value = dataSetRow["nutListValuePerServing"];
 		if(dataSetRow["nutListUnit"] == "mg/100g"){
 			value = value / 1000;
@@ -7666,7 +7705,7 @@ else{
 		"0"
 		}
 	}
-	else if(dataSetRow["nutListNut"] == "Sel"){
+	else if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.salt", reportContext.getLocale())){
 		if(dataSetRow["nutListValuePerServing"] >= 1){
 		BirtMath.round(dataSetRow["nutListValuePerServing"], 1)
 		}
@@ -7679,6 +7718,9 @@ else{
 		else{
 		"0"
 		}
+	}
+	else if(dataSetRow["nutListNut"] == reportContext.getMessage("nut.starch", reportContext.getLocale())){
+		BirtMath.round(dataSetRow["nutListValuePerServing"], 1)
 	}
 	else{
 	dataSetRow["nutListValuePerServing"]
@@ -7747,6 +7789,7 @@ dataSetRow["nutListUnit"]
                         <property name="repeatHeader">false</property>
                         <property name="pageBreakInterval">1000</property>
                         <column id="5985">
+                            <property name="style">becpg-col-border</property>
                             <property name="width">1.6666666666666667in</property>
                         </column>
                         <column id="5986">
@@ -7827,6 +7870,7 @@ dataSetRow["nutListUnit"]
                             <row id="5997">
                                 <property name="style">becpg-col-header</property>
                                 <cell id="5998">
+                                    <property name="style">becpg-table</property>
                                     <property name="borderBottomStyle">solid</property>
                                     <property name="borderBottomWidth">thin</property>
                                     <property name="borderLeftStyle">solid</property>
@@ -7837,6 +7881,7 @@ dataSetRow["nutListUnit"]
                                     <property name="borderTopWidth">thin</property>
                                 </cell>
                                 <cell id="5999">
+                                    <property name="style">becpg-table</property>
                                     <property name="borderBottomStyle">solid</property>
                                     <property name="borderBottomWidth">thin</property>
                                     <property name="borderLeftStyle">solid</property>
@@ -7850,6 +7895,7 @@ dataSetRow["nutListUnit"]
                                     </label>
                                 </cell>
                                 <cell id="6001">
+                                    <property name="style">becpg-table</property>
                                     <property name="borderBottomStyle">solid</property>
                                     <property name="borderBottomWidth">thin</property>
                                     <property name="borderLeftStyle">solid</property>
@@ -7880,6 +7926,7 @@ dataSetRow["nutListUnit"]
                                     </data>
                                 </cell>
                                 <cell id="5958">
+                                    <property name="style">becpg-table</property>
                                     <property name="borderBottomStyle">solid</property>
                                     <property name="borderBottomWidth">thin</property>
                                     <property name="borderLeftStyle">solid</property>
@@ -7893,6 +7940,7 @@ dataSetRow["nutListUnit"]
                                     </label>
                                 </cell>
                                 <cell id="5960">
+                                    <property name="style">becpg-table</property>
                                     <property name="borderBottomStyle">solid</property>
                                     <property name="borderBottomWidth">thin</property>
                                     <property name="borderLeftStyle">solid</property>
@@ -7906,6 +7954,7 @@ dataSetRow["nutListUnit"]
                                     </label>
                                 </cell>
                                 <cell id="5962">
+                                    <property name="style">becpg-table</property>
                                     <property name="borderBottomStyle">solid</property>
                                     <property name="borderBottomWidth">thin</property>
                                     <property name="borderLeftStyle">solid</property>
@@ -7936,6 +7985,7 @@ dataSetRow["nutListUnit"]
                                     </data>
                                 </cell>
                                 <cell id="5965">
+                                    <property name="style">becpg-table</property>
                                     <property name="borderBottomStyle">solid</property>
                                     <property name="borderBottomWidth">thin</property>
                                     <property name="borderLeftStyle">solid</property>
@@ -7949,6 +7999,7 @@ dataSetRow["nutListUnit"]
                                     </label>
                                 </cell>
                                 <cell id="5967">
+                                    <property name="style">becpg-table</property>
                                     <property name="borderBottomStyle">solid</property>
                                     <property name="borderBottomWidth">thin</property>
                                     <property name="borderLeftStyle">solid</property>
@@ -7968,6 +8019,7 @@ dataSetRow["nutListUnit"]
                             <row id="5969">
                                 <property name="style">becpg-row-border</property>
                                 <cell id="6002">
+                                    <property name="style">becpg-table</property>
                                     <text id="6003">
                                         <property name="style">becpg-row-header</property>
                                         <property name="contentType">html</property>
@@ -7975,6 +8027,7 @@ dataSetRow["nutListUnit"]
                                     </text>
                                 </cell>
                                 <cell id="6004">
+                                    <property name="style">becpg-table</property>
                                     <data id="6005">
                                         <property name="style">becpg-data</property>
                                         <structure name="numberFormat">
@@ -7985,6 +8038,7 @@ dataSetRow["nutListUnit"]
                                     </data>
                                 </cell>
                                 <cell id="6006">
+                                    <property name="style">becpg-table</property>
                                     <data id="6007">
                                         <property name="style">becpg-data</property>
                                         <structure name="numberFormat">
@@ -7995,12 +8049,14 @@ dataSetRow["nutListUnit"]
                                     </data>
                                 </cell>
                                 <cell id="6008">
+                                    <property name="style">becpg-table</property>
                                     <data id="5977">
                                         <property name="style">becpg-data</property>
                                         <property name="resultSetColumn">nutListUnit</property>
                                     </data>
                                 </cell>
                                 <cell id="5978">
+                                    <property name="style">becpg-table</property>
                                     <data id="6009">
                                         <property name="style">becpg-data</property>
                                         <structure name="numberFormat">
@@ -8011,6 +8067,7 @@ dataSetRow["nutListUnit"]
                                     </data>
                                 </cell>
                                 <cell id="6010">
+                                    <property name="style">becpg-table</property>
                                     <data id="5981">
                                         <property name="style">becpg-data</property>
                                         <structure name="numberFormat">
@@ -8021,12 +8078,14 @@ dataSetRow["nutListUnit"]
                                     </data>
                                 </cell>
                                 <cell id="5982">
+                                    <property name="style">becpg-table</property>
                                     <data id="6011">
                                         <property name="style">becpg-data</property>
                                         <property name="resultSetColumn">GDA</property>
                                     </data>
                                 </cell>
                                 <cell id="6012">
+                                    <property name="style">becpg-table</property>
                                     <data id="6013">
                                         <property name="fontSize">8pt</property>
                                         <property name="resultSetColumn">description</property>
@@ -8087,7 +8146,6 @@ else{
                         </column>
                         <header>
                             <row id="5518">
-                                <property name="height">0.3229166666666667in</property>
                                 <cell id="5519">
                                     <property name="colSpan">2</property>
                                     <property name="rowSpan">1</property>
@@ -8113,7 +8171,6 @@ else{
                                 </cell>
                             </row>
                             <row id="5431">
-                                <property name="height">0.21875in</property>
                                 <cell id="5432"/>
                                 <cell id="5433"/>
                             </row>
@@ -8121,14 +8178,6 @@ else{
                         <detail>
                             <row id="5434">
                                 <cell id="5435">
-                                    <property name="borderBottomStyle">solid</property>
-                                    <property name="borderBottomWidth">thin</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
-                                    <property name="borderTopStyle">solid</property>
-                                    <property name="borderTopWidth">thin</property>
                                     <data id="5443">
                                         <property name="fontWeight">bold</property>
                                         <property name="fontStyle">italic</property>
@@ -8137,14 +8186,6 @@ else{
                                     </data>
                                 </cell>
                                 <cell id="5436">
-                                    <property name="borderBottomStyle">solid</property>
-                                    <property name="borderBottomWidth">thin</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
-                                    <property name="borderTopStyle">solid</property>
-                                    <property name="borderTopWidth">thin</property>
                                     <data id="5445">
                                         <property name="resultSetColumn">organoListValue</property>
                                     </data>
@@ -8162,79 +8203,24 @@ else{
                         <property name="pageBreakAfter">avoid</property>
                         <property name="pageBreakBefore">avoid</property>
                         <property name="pageBreakInside">avoid</property>
-                        <property name="height">2.4166666666666665in</property>
                         <column id="5870"/>
                         <row id="5871">
                             <cell id="5872">
-                                <table id="5851">
-                                    <property name="pageBreakAfter">avoid</property>
-                                    <property name="pageBreakBefore">avoid</property>
-                                    <property name="pageBreakInside">avoid</property>
-                                    <property name="width">6.833333333333333in</property>
-                                    <property name="dataSet">OrganoList</property>
-                                    <list-property name="boundDataColumns">
-                                        <structure>
-                                            <property name="name">organoListOrgano</property>
-                                            <text-property name="displayName">organoListOrgano</text-property>
-                                            <expression name="expression" type="javascript">dataSetRow["organoListOrgano"]</expression>
-                                            <property name="dataType">string</property>
-                                        </structure>
-                                        <structure>
-                                            <property name="name">organoListValue</property>
-                                            <text-property name="displayName">organoListValue</text-property>
-                                            <expression name="expression" type="javascript">dataSetRow["organoListValue"]</expression>
-                                            <property name="dataType">string</property>
-                                        </structure>
-                                        <structure>
-                                            <property name="name">tableCheck</property>
-                                            <text-property name="displayName">tableCheck</text-property>
-                                            <expression name="expression" type="javascript">dataSetRow["tableCheck"]</expression>
-                                            <property name="dataType">integer</property>
-                                        </structure>
-                                    </list-property>
-                                    <property name="repeatHeader">false</property>
-                                    <property name="pageBreakInterval">3000</property>
-                                    <column id="5863">
-                                        <property name="width">1in</property>
-                                    </column>
-                                    <column id="5864">
-                                        <property name="width">5.833333333333333in</property>
-                                    </column>
-                                    <header>
-                                        <row id="5852">
-                                            <property name="height">0.3229166666666667in</property>
-                                            <cell id="5853">
-                                                <property name="colSpan">2</property>
-                                                <property name="rowSpan">1</property>
-                                                <property name="style">becpg-chapter-header</property>
-                                                <property name="borderBottomStyle">solid</property>
-                                                <property name="borderBottomWidth">thin</property>
-                                                <property name="borderLeftStyle">solid</property>
-                                                <property name="borderLeftWidth">thin</property>
-                                                <property name="borderRightStyle">solid</property>
-                                                <property name="borderRightWidth">thin</property>
-                                                <property name="borderTopStyle">solid</property>
-                                                <property name="borderTopWidth">thin</property>
-                                                <label id="5854">
-                                                    <property name="style">becpg-chapter-header</property>
-                                                    <property name="borderBottomStyle">none</property>
-                                                    <property name="borderLeftStyle">none</property>
-                                                    <property name="borderRightStyle">none</property>
-                                                    <property name="borderTopStyle">none</property>
-                                                    <property name="textAlign">center</property>
-                                                    <structure name="toc"/>
-                                                    <text-property name="text" key="chapterIng">LISTE DES INGRÉDIENTS</text-property>
-                                                </label>
-                                            </cell>
-                                        </row>
-                                    </header>
-                                </table>
+                                <property name="style">becpg-chapter-header</property>
+                                <label id="5854">
+                                    <property name="borderBottomStyle">none</property>
+                                    <property name="borderLeftStyle">none</property>
+                                    <property name="borderRightStyle">none</property>
+                                    <property name="borderTopStyle">none</property>
+                                    <property name="textAlign">center</property>
+                                    <structure name="toc"/>
+                                    <text-property name="text" key="chapterIng">LISTE DES INGRÉDIENTS</text-property>
+                                </label>
                             </cell>
                         </row>
                         <row id="5873">
-                            <cell id="5874">
-                                <label id="5850"/>
-                            </cell>
+                            <property name="height">0.25in</property>
+                            <cell id="5874"/>
                         </row>
                         <row id="5875">
                             <cell id="5876">
@@ -8846,7 +8832,7 @@ dataSetRow["illValue"]
                         <property name="pageBreakAfter">avoid</property>
                         <property name="pageBreakBefore">avoid</property>
                         <property name="pageBreakInside">avoid</property>
-                        <property name="height">1.4166666666666667in</property>
+                        <property name="height">1.1354166666666667in</property>
                         <property name="dataSet">microbioList</property>
                         <list-property name="visibility">
                             <structure>
@@ -8870,10 +8856,10 @@ else{
                         <column id="2064"/>
                         <column id="2065"/>
                         <row id="3427">
-                            <property name="height">0.3125in</property>
                             <cell id="3428">
                                 <property name="colSpan">2</property>
                                 <property name="rowSpan">1</property>
+                                <property name="style">becpg-chapter-header</property>
                                 <property name="borderBottomStyle">solid</property>
                                 <property name="borderBottomWidth">thin</property>
                                 <property name="borderLeftStyle">solid</property>
@@ -8883,7 +8869,6 @@ else{
                                 <property name="borderTopStyle">solid</property>
                                 <property name="borderTopWidth">thin</property>
                                 <label id="969">
-                                    <property name="style">becpg-chapter-header</property>
                                     <property name="borderBottomStyle">none</property>
                                     <property name="borderLeftStyle">none</property>
                                     <property name="borderRightStyle">none</property>
@@ -8903,6 +8888,7 @@ else{
                         </row>
                         <row id="2066">
                             <cell id="2067">
+                                <property name="verticalAlign">top</property>
                                 <table id="2069">
                                     <property name="style">becpg-table</property>
                                     <property name="pageBreakInside">avoid</property>
@@ -8971,6 +8957,14 @@ dataSetRow["mblMaxi"]
                                     <detail>
                                         <row id="2073">
                                             <property name="style">becpg-row-border</property>
+                                            <property name="borderBottomStyle">solid</property>
+                                            <property name="borderBottomWidth">thin</property>
+                                            <property name="borderLeftStyle">solid</property>
+                                            <property name="borderLeftWidth">thin</property>
+                                            <property name="borderRightStyle">solid</property>
+                                            <property name="borderRightWidth">thin</property>
+                                            <property name="borderTopStyle">solid</property>
+                                            <property name="borderTopWidth">thin</property>
                                             <property name="height">0.3541666666666667in</property>
                                             <cell id="2074">
                                                 <data id="2094">
@@ -8989,6 +8983,7 @@ dataSetRow["mblMaxi"]
                                 </table>
                             </cell>
                             <cell id="2068">
+                                <property name="verticalAlign">top</property>
                                 <table id="2081">
                                     <property name="style">becpg-table</property>
                                     <property name="dataSet">microbioList</property>
@@ -9055,6 +9050,14 @@ dataSetRow["mblMaxi"]
                                     <detail>
                                         <row id="2085">
                                             <property name="style">becpg-row-border</property>
+                                            <property name="borderBottomStyle">solid</property>
+                                            <property name="borderBottomWidth">thin</property>
+                                            <property name="borderLeftStyle">solid</property>
+                                            <property name="borderLeftWidth">thin</property>
+                                            <property name="borderRightStyle">solid</property>
+                                            <property name="borderRightWidth">thin</property>
+                                            <property name="borderTopStyle">solid</property>
+                                            <property name="borderTopWidth">thin</property>
                                             <property name="height">0.3541666666666667in</property>
                                             <cell id="2086">
                                                 <data id="2106">
@@ -9196,10 +9199,14 @@ else{
                                 <property name="borderTopStyle">solid</property>
                                 <property name="borderTopWidth">thin</property>
                                 <cell id="1012">
-                                    <property name="borderBottomStyle">none</property>
-                                    <property name="borderLeftStyle">none</property>
-                                    <property name="borderRightStyle">none</property>
-                                    <property name="borderTopStyle">none</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">thin</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">thin</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
                                     <label id="1013">
                                         <property name="style">becpg-col-header</property>
                                         <property name="paddingLeft">5pt</property>
@@ -9374,6 +9381,7 @@ else{
                             </row>
                         </detail>
                     </table>
+                    <label id="5975"/>
                 </cell>
             </row>
             <row id="5970">
@@ -9409,27 +9417,10 @@ false
                         <column id="5937"/>
                         <row id="5938">
                             <cell id="5939">
-                                <label id="5975"/>
-                                <grid id="5832">
-                                    <property name="dataSet">packSecondLevel</property>
-                                    <list-property name="boundDataColumns">
-                                        <structure>
-                                            <property name="name">tableCheck</property>
-                                            <text-property name="displayName">tableCheck</text-property>
-                                            <expression name="expression" type="javascript">dataSetRow["tableCheck"]</expression>
-                                            <property name="dataType">integer</property>
-                                        </structure>
-                                    </list-property>
-                                    <column id="5833"/>
-                                    <row id="5834">
-                                        <cell id="5835">
-                                            <property name="style">becpg-chapter-header</property>
-                                            <label id="5836">
-                                                <text-property name="text" key="chapterPack">CONDITIONNEMENT</text-property>
-                                            </label>
-                                        </cell>
-                                    </row>
-                                </grid>
+                                <property name="style">becpg-chapter-header</property>
+                                <label id="5836">
+                                    <text-property name="text" key="chapterPack">CONDITIONNEMENT</text-property>
+                                </label>
                             </cell>
                         </row>
                         <row id="5940">
@@ -9480,6 +9471,14 @@ false
                             <cell id="5947">
                                 <grid id="2314">
                                     <property name="style">becpg-table</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">thin</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">thin</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
                                     <property name="pageBreakInside">avoid</property>
                                     <property name="height">1.75in</property>
                                     <property name="width">100%</property>
@@ -9864,6 +9863,14 @@ false
                                         <property name="style">becpg-col-border</property>
                                     </column>
                                     <row id="2723">
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">thin</property>
+                                        <property name="borderLeftStyle">solid</property>
+                                        <property name="borderLeftWidth">thin</property>
+                                        <property name="borderRightStyle">solid</property>
+                                        <property name="borderRightWidth">thin</property>
+                                        <property name="borderTopStyle">solid</property>
+                                        <property name="borderTopWidth">thin</property>
                                         <cell id="2724">
                                             <property name="colSpan">6</property>
                                             <property name="rowSpan">1</property>
@@ -9885,6 +9892,14 @@ false
                                     </row>
                                     <row id="2730">
                                         <property name="style">becpg-row-border</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">thin</property>
+                                        <property name="borderLeftStyle">solid</property>
+                                        <property name="borderLeftWidth">thin</property>
+                                        <property name="borderRightStyle">solid</property>
+                                        <property name="borderRightWidth">thin</property>
+                                        <property name="borderTopStyle">solid</property>
+                                        <property name="borderTopWidth">thin</property>
                                         <property name="textAlign">center</property>
                                         <cell id="2731">
                                             <label id="2446">
@@ -9923,6 +9938,14 @@ en m</text-property>
                                     </row>
                                     <row id="2737">
                                         <property name="style">becpg-row-border</property>
+                                        <property name="borderBottomStyle">solid</property>
+                                        <property name="borderBottomWidth">thin</property>
+                                        <property name="borderLeftStyle">solid</property>
+                                        <property name="borderLeftWidth">thin</property>
+                                        <property name="borderRightStyle">solid</property>
+                                        <property name="borderRightWidth">thin</property>
+                                        <property name="borderTopStyle">solid</property>
+                                        <property name="borderTopWidth">thin</property>
                                         <property name="textAlign">center</property>
                                         <cell id="2738">
                                             <data id="2747">
@@ -10022,7 +10045,14 @@ en m</text-property>
                         <row id="5954">
                             <cell id="5955">
                                 <table id="3137">
-                                    <property name="style">becpg-table</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">thin</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">thin</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
                                     <property name="masterPage">Simple MasterPage</property>
                                     <property name="pageBreakAfter">avoid</property>
                                     <property name="pageBreakBefore">avoid</property>
@@ -10097,6 +10127,14 @@ else{
                                             <property name="style">becpg-col-header</property>
                                             <property name="textAlign">center</property>
                                             <cell id="3140">
+                                                <property name="borderBottomStyle">solid</property>
+                                                <property name="borderBottomWidth">thin</property>
+                                                <property name="borderLeftStyle">solid</property>
+                                                <property name="borderLeftWidth">thin</property>
+                                                <property name="borderRightStyle">solid</property>
+                                                <property name="borderRightWidth">thin</property>
+                                                <property name="borderTopStyle">solid</property>
+                                                <property name="borderTopWidth">thin</property>
                                                 <label id="3155">
                                                     <text-property name="text" key="labelingTemplates">Marquages</text-property>
                                                 </label>
@@ -10105,8 +10143,23 @@ else{
                                     </header>
                                     <detail>
                                         <row id="3165">
-                                            <property name="style">becpg-row-border</property>
+                                            <property name="borderBottomStyle">solid</property>
+                                            <property name="borderBottomWidth">thin</property>
+                                            <property name="borderLeftStyle">solid</property>
+                                            <property name="borderLeftWidth">thin</property>
+                                            <property name="borderRightStyle">solid</property>
+                                            <property name="borderRightWidth">thin</property>
+                                            <property name="borderTopStyle">solid</property>
+                                            <property name="borderTopWidth">thin</property>
                                             <cell id="3167">
+                                                <property name="borderBottomStyle">solid</property>
+                                                <property name="borderBottomWidth">thin</property>
+                                                <property name="borderLeftStyle">solid</property>
+                                                <property name="borderLeftWidth">thin</property>
+                                                <property name="borderRightStyle">solid</property>
+                                                <property name="borderRightWidth">thin</property>
+                                                <property name="borderTopStyle">solid</property>
+                                                <property name="borderTopWidth">thin</property>
                                                 <grid id="3175">
                                                     <column id="3176"/>
                                                     <column id="3177"/>
@@ -10128,9 +10181,16 @@ else{
                                             </cell>
                                         </row>
                                         <row id="3142">
-                                            <property name="style">becpg-row-border</property>
                                             <property name="textAlign">center</property>
                                             <cell id="3144">
+                                                <property name="borderBottomStyle">solid</property>
+                                                <property name="borderBottomWidth">thin</property>
+                                                <property name="borderLeftStyle">solid</property>
+                                                <property name="borderLeftWidth">thin</property>
+                                                <property name="borderRightStyle">solid</property>
+                                                <property name="borderRightWidth">thin</property>
+                                                <property name="borderTopStyle">solid</property>
+                                                <property name="borderTopWidth">thin</property>
                                                 <text id="3173">
                                                     <property name="contentType">html</property>
                                                     <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["description"]</VALUE-OF>]]></text-property>

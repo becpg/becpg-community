@@ -34,6 +34,10 @@
 		<property name="autoNumService" ref="autoNumService" />
 	</bean>
 	
+	<bean id="dynListPolicy" class="fr.becpg.repo.dictionary.constraint.DynListPolicy" parent="abstractBeCPGPolicy">
+		<property name="beCPGCacheService" ref="beCPGCacheService" />
+	</bean>
+	
 	
 	<bean id="emailAliasablePolicy" class="fr.becpg.repo.entity.policy.EmailAliasablePolicy" parent="abstractBeCPGPolicy" />
 	
@@ -70,8 +74,6 @@
 	<bean id="sortableListPolicy" class="fr.becpg.repo.entity.datalist.policy.SortableListPolicy" parent="abstractBeCPGPolicy">
 		<property name="dataListSortService" ref="dataListSortService" />
 	</bean>
-
-
 
 
 </beans>

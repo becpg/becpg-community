@@ -309,6 +309,7 @@
 					<value>mg/g</value>
 					<value>mL/g</value>
 					<value>UB</value>
+					<value>cps</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -1926,7 +1927,6 @@
 					<type>d:text</type>
 					<index enabled="false" />
 				</property>
-				
 			</properties>
 			<associations>
 				<association name="bcpg:lclLabelClaim">
@@ -2049,7 +2049,18 @@
 	</types>
 	
 	<aspects>
-
+	
+	  <!--  
+	  <aspect name="bcpg:genericPartAspect">
+			<properties>
+				<property name="bcpg:isPartOfGeneric">
+					<type>d:boolean</type>
+					<default>false</default>
+				</property>
+			</properties>
+		</aspect>
+       -->
+       
 		<aspect name="bcpg:formulatedEntityAspect">
 			<properties>
 				<property name="bcpg:formulatedDate">

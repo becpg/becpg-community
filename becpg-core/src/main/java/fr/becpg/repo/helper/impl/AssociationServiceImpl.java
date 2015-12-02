@@ -77,6 +77,7 @@ public class AssociationServiceImpl extends AbstractBeCPGPolicy implements Assoc
 		if (assocNodeRefs != null) {
 			for (NodeRef n : assocNodeRefs) {
 				if (!dbTargetNodeRefs.contains(n) && nodeService.exists(n)) {
+					dbTargetNodeRefs.add(n);
 					nodeService.createAssociation(nodeRef, n, qName);
 				}
 			}

@@ -272,7 +272,7 @@
 		<aspect name="pack:pmThicknessAspect">
 			<properties>
 				<property name="pack:pmThickness">
-					<type>d:int</type>
+					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
 						<atomic>false</atomic>

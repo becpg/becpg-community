@@ -120,7 +120,9 @@
     </physicoChemLists>
     <controlDefLists/>
     <ingLists>
-      <ingList parentLevel="" ingListQtyPerc="100.0" ingListQtyMaxi="" ingListIsIonized="false" commentCount="1" name="84696f54-263b-4fb9-a8be-0c4e4fc85e3f" ingListIsProcessingAid="false" ingListIsGMO="false" ingListIsSupport="false" ingListQtyMini="" locale="fr_FR" ingListFunctionality="" sort="100" depthLevel="1" ingListIng="Farine de bl&#xE9; tendre" ingListGeoOrigin="France" ingListGeoTransfo="France" ingListBioOrigin="Blé" legalName="farine de bl&#xE9; tendre"/>
+      <ingList parentLevel="" ingListQtyPerc="100.0" ingListQtyMaxi="" ingListIsIonized="false" commentCount="1" name="84696f54-263b-4fb9-a8be-0c4e4fc85e3f" ingListIsProcessingAid="false" ingListIsGMO="false" ingListIsSupport="false" ingListQtyMini="" locale="fr_FR" ingListFunctionality="" sort="100" depthLevel="1" ingListIng="Farine de bl&#xE9; tendre" ingListGeoOrigin="France" ingListGeoTransfo="France" ingListBioOrigin="Blé" legalName="farine de bl&#xE9; tendre">
+      	<comments><comment><created prefix="cm">2014-04-08T09:32:30.147Z</created><title prefix="cm"></title><creator prefix="cm">admin</creator><name prefix="cm">comment-1396949550146</name><node-dbid prefix="sys">823472</node-dbid><locale prefix="sys">fr_FR</locale><modifier prefix="cm">admin</modifier><modified prefix="cm">2014-04-08T09:32:30.147Z</modified><content prefix="cm"><p>test</p></content></comment><comment><created prefix="cm">2015-11-04T13:54:09.661Z</created><title prefix="cm"></title><creator prefix="cm">utilisateur.rd</creator><name prefix="cm">8ec388a5-9def-45c5-9b9e-e01433c08e91</name><node-dbid prefix="sys">1165073</node-dbid><locale prefix="sys">en</locale><modifier prefix="cm">admin</modifier><modified prefix="cm">2015-11-04T14:21:58.264Z</modified><content prefix="cm"><p>Test Commentaire....</p></content></comment></comments>
+      </ingList>
     </ingLists>
     <rawMaterials/>
     <ingLabelingLists/>

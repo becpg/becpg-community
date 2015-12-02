@@ -145,6 +145,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 			return;
 		}
 
+		@SuppressWarnings("unchecked")
 		List<SimpleCharactDataItem> simpleCharactDataList = (List<SimpleCharactDataItem>) alfrescoRepository.loadDataList(entityNodeRef, dataListType, dataListType);
 
 		for (SimpleCharactDataItem simpleCharact : simpleCharactDataList) {
@@ -158,15 +159,17 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 
 				Double value = FormulationHelper.calculateValue(0d, qtyUsed, simpleCharact.getValue(), netQty, unit);
 
-				if (logger.isDebugEnabled()) {
-					logger.debug("Add new charact detail. Charact: "
-							+ nodeService.getProperty(simpleCharact.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME) + " - entityNodeRef: "
-							+ nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_CHARACT_NAME) + " - netQty: " + netQty + " - qty: " + qtyUsed
-							+ " - value: " + value);
+				if(value!=null && value!= 0d){
+					if (logger.isDebugEnabled()) {
+						logger.debug("Add new charact detail. Charact: "
+								+ nodeService.getProperty(simpleCharact.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME) + " - entityNodeRef: "
+								+ nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_CHARACT_NAME) + " - netQty: " + netQty + " - qty: " + qtyUsed
+								+ " - value: " + value);
+					}
+					
+					
+					charactDetails.addKeyValue(simpleCharact.getCharactNodeRef(),new CharactDetailsValue(parent, entityNodeRef, value, currLevel, unit));
 				}
-				
-				
-				charactDetails.addKeyValue(simpleCharact.getCharactNodeRef(),new CharactDetailsValue(parent, entityNodeRef, value, currLevel, unit));
 			}
 		}
 	}

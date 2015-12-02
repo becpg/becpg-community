@@ -231,9 +231,6 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 
 		} catch (IOException e) {
 			logger.error("Failed to create compare entity report tpl.", e);
-		} catch (AssociationExistsException e) {
-			// TODO junit tests errors
-			logger.error(e, e);
 		}
 
 	}
@@ -245,7 +242,7 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 		// visit acls
 		Set<QName> dataLists = new LinkedHashSet<>();
 		dataLists.add(SecurityModel.TYPE_ACL_ENTRY);
-		NodeRef entityTplNodeRef = entityTplService.createEntityTpl(entityTplsNodeRef, SecurityModel.TYPE_ACL_GROUP, null, true, dataLists, null);
+		NodeRef entityTplNodeRef = entityTplService.createEntityTpl(entityTplsNodeRef, SecurityModel.TYPE_ACL_GROUP, null, true, true, dataLists, null);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 	}
 

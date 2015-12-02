@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>org.alfresco.maven</groupId>
 		<artifactId>alfresco-sdk-parent</artifactId>
-		<version>2.1.0</version>
+		<version>2.1.1</version>
 	</parent>
 	<description>BeCPG Parent Project</description>
 	<organization>
@@ -74,10 +74,12 @@
 
 	<properties>
 	    <app.log.root.level>WARN</app.log.root.level>
-        <alfresco.data.location>${project.basedir}/alf_data_dev</alfresco.data.location>
+        <alfresco.data.location>/tmp/alf_data_dev</alfresco.data.location>
         <env>local</env>
 		<alfresco.version>5.0.d</alfresco.version>
 		<app.testing.jvm.args>-Xms256m -Xmx1524m -Duser.language=fr</app.testing.jvm.args>
+		<argLine>-Xms256m -Xmx1524m -Duser.language=fr</argLine>
+		
 		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
 		<birt.version>4.4.2</birt.version>
 		<sonar.language>java</sonar.language>
@@ -85,9 +87,6 @@
 		<springloaded.version>1.2.1.RELEASE</springloaded.version>
 		<alfresco.db.url>jdbc:h2:${alfresco.data.location}/h2_data/${alfresco.db.name};${alfresco.db.params}</alfresco.db.url>
 
-		<!-- <alfresco.client.war>alfresco</alfresco.client.war>
-		<alfresco.client.war.groupId>org.alfresco</alfresco.client.war.groupId> -->
-		<!-- <alfresco.data.location>target/alf_data_dev</alfresco.data.location> -->
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -214,11 +213,9 @@
 		<module>becpg-project/becpg-project-share</module>
 		<module>becpg-designer/becpg-designer-share</module>
 		<module>becpg-plm/becpg-plm-share</module>
-		<module>becpg-integration-test</module>
 		<module>repo</module>
-		<module>solr</module>
 	    <module>share</module> 
-	    <module>runner</module>
+	    <module>becpg-integration-runner</module>
 	</modules>
 
 	<dependencies>

@@ -31,7 +31,7 @@
 		                 <button type="button">${msg('button.new-list')}</button>
 		             </span>
 		         </span>
-				<#else>	
+				<#elseif itemType??>	
 					<span class="entity ${itemType?replace(":","-")}">${msg("type."+itemType?replace(":","_"))}</span>
             	</#if>
 		      </div>

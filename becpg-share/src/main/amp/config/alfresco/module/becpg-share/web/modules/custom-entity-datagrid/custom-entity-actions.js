@@ -92,7 +92,6 @@
 
 				if (!assocName) {
 					me._setupPropsPicker(nodeRefs);
-
 				} else {
 					window.location = Alfresco.constants.URL_PAGECONTEXT + "bulk-edit?nodeRefs=" + nodeRefs.join() + "&a=true&r=true";
 				}
@@ -129,7 +128,8 @@
 					}
 				}
 
-				 html = "<ul style=\"width:" + ((colCount + 1) * 20) + "em;\">" + html + "</ul>";
+				 html = "<span>"+this.msg("label.select-prop.title")
+				 	+"</span><br/><br/><ul style=\"width:" + ((colCount + 1) * 20) + "em;\">" + html + "</ul>";
 				
 			    containerEl.innerHTML = html;
 
@@ -139,7 +139,7 @@
 				
 	            this.widgets.okBkButton = Alfresco.util.createYUIButton(this, "bulk-edit-ok", function (){
 	            	this.widgets.wUsedPanel.hide();
-	            	this._onEditSelected(nodeRefs, containerEl);
+					this._onEditSelected(nodeRefs, containerEl);
 	            });
 
 			}
@@ -262,11 +262,17 @@
 			html += '        <div class="form-field">';
 			html += '            <select  id="'+this.id+'-wused-selected-picker">';
 			html += '                  <option value="">' + this.msg(popupKind + ".picker.choose") + '</option>';
-			html += '                  <option value="selectlines">' + this.msg(popupKind + ".picker.selectedlines") + '</option>';
+			if(popupKind == "bulk-edit") {
+				html += '                  <option value="selectlines">' + this.msg(popupKind + ".picker.selectedlines") + '</option>';
+			}
 			for ( var key in items[0].itemData) {
 				if (key.indexOf("assoc_") > -1 && this.datalistColumns[key].label != "hidden") {
-					showPopup = true;
-					html += "<option value='" + key + "'>" + this.datalistColumns[key].label + "</option>";
+					if(popupKind != "bulk-edit" || key == "assoc_bcpg_compoListProduct"
+						|| key == "assoc_bcpg_packagingListProduct" 
+						|| key == "assoc_mpm_plResource"){
+						showPopup = true;
+						html += "<option value='" + key + "'>" + this.datalistColumns[key].label + "</option>";
+					}
 				}
 			}
 			html += '            </select>';
@@ -277,15 +283,13 @@
 			html += '</div>';
 			html += '</form></div>';
 			
-
-		
-			if (popupKind == "bulk-edit" || (showPopup && this.datalistMeta.name.indexOf("WUsed") != 0)) {
+		   if (popupKind == "bulk-edit" || (showPopup && this.datalistMeta.name.indexOf("WUsed") != 0)) {
 				var containerDiv = document.createElement("div");
 				containerDiv.innerHTML = html;
 
 				this.widgets.wUsedPanel = Alfresco.util.createYUIPanel(containerDiv, {
 					draggable : true,
-					width : "25em"
+					width : "33em"
 				});
 
 				this.widgets.wUsedPanel.show();
@@ -314,8 +318,6 @@
 					}
 					callBack.call(this, val, val2);
 				} else {
-					
-					
 					callBack.call(this);
 				}
 			}

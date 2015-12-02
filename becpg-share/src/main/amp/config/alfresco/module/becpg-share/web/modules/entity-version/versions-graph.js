@@ -10,6 +10,8 @@
     */
    var Dom = YAHOO.util.Dom, KeyListener = YAHOO.util.KeyListener;
 
+   var DOWNLOAD_EVENTCLASS = Alfresco.util.generateDomId(null, "download");
+   
    /**
     * Alfresco Slingshot aliases
     */
@@ -90,7 +92,7 @@
          if (this.options.nodeRef === undefined) {
             throw new Error("A nodeRef, must be provided");
          }
-
+         
          // Check if the dialog has been showed before
          if (this.widgets.panel) {
             // It'll need updating, probably.
@@ -148,6 +150,23 @@
          // Update
          this.update();
 
+          YAHOO.Bubbling.addDefaultAction(DOWNLOAD_EVENTCLASS, function (layer, args) {
+          	
+         	 var anchor = args[1].anchor,
+              name = anchor.getAttribute("name") || anchor.name,
+              rel = anchor.getAttribute("rel"),
+              downloadDialog = Alfresco.getArchiveAndDownloadInstance(), config = {
+                  nodesToArchive : [ {
+                     "nodeRef" : rel
+                  } ],
+                  archiveName : encodeURIComponent(name)
+               };
+         	 
+              downloadDialog.show(config);
+               
+               return true;
+           });
+         
          // Show panel
          this._showPanel();
 
@@ -246,9 +265,11 @@
          html += '   <span class="' + doc.metadata + (current ? " current" : "") + '" ><a href="' + beCPG.util
                .entityURL(doc.siteId, doc.nodeRef, doc.itemType) + '">' + $html(doc.name) + '</a>';
          if(current){
-             html += '      <a href="' + compareURL + '" class="compare" title="' + Alfresco.util.message("label.compare") + '">&nbsp;</a>';
+             html += '   <a href="' + compareURL + '" class="compare" title="' + Alfresco.util.message("label.compare") + '">&nbsp;</a>';
+             html += '   <a href="#" name="'+$html(doc.name)+'" rel="' + doc.nodeRef + '" class="'+DOWNLOAD_EVENTCLASS+' download" title="'
+             + Alfresco.util.message("label.download") + '">&nbsp;</a>';
          } 
-         
+        
          html += '</span><div class="version-details">';
          html += ((doc.description || "").length > 0) ? $html(doc.description, true)
                : '<span class="faded">(' + Alfresco.util.message("label.noComment", beCPG.module
@@ -389,6 +410,7 @@
          }
 
       },
+
       /**
        * Prepares the gui and shows the panel.
        * 

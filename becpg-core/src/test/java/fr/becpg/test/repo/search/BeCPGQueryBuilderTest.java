@@ -64,7 +64,7 @@ public  class BeCPGQueryBuilderTest {
 
 		
 	
-		System.out.println(queryBuilder.toString());
+		logger.info(queryBuilder.toString());
 		
 //		BeCPGQueryBuilder.createQuery()
 //		.parent(listContainer)

@@ -24,47 +24,47 @@
    <#if unit=="perc">
 	 <#if field.value == 0  >
         <#assign currUnit="perc">
-     <#elseif field.value &lt; 0.1  >
+     <#elseif field.value?abs &lt; 0.01  >
 		<#assign currUnit="ppm">
 		<#assign currValue=field.value*10000>
-     <#elseif field.value &lt; 1  >
+     <#elseif field.value?abs &lt; 0.1  >
 		<#assign currUnit="pp" >
 		<#assign currValue=field.value*10 >
 	 </#if>
    <#elseif unit=="kg">
 	  <#if field.value == 0  >
         <#assign currUnit="kg">
-     <#elseif field.value &lt; 0.001  >
+     <#elseif field.value?abs &lt; 0.001  >
 		<#assign currUnit="mg">
 		<#assign currValue=field.value*1000000>
-     <#elseif field.value &lt; 1  >
+     <#elseif field.value?abs &lt; 1  >
 		<#assign currUnit="g" >
 		<#assign currValue=field.value*1000 >
 	 </#if>
    <#elseif unit=="L">
 	  <#if field.value == 0  >
         <#assign currUnit="L">
-     <#elseif field.value &lt; 1  >
+     <#elseif field.value?abs &lt; 1  >
 		<#assign currUnit="mL" >
 		<#assign currValue=field.value*1000 >
   	 </#if>
    <#elseif unit=="d">
 		<#if field.value == 0  >
        		 <#assign currUnit="d">
-     	<#elseif field.value/30 &gt; 1  >
+     	<#elseif field.value/30 &gt; 1 && field.value%30 == 0>
 			<#assign currUnit="mo">
 			<#assign currValue=field.value/30 >
 		</#if>
     <#elseif unit=="-">
 		 <#if field.value == 0  >
        		 <#assign currUnit="-">
-     	 <#elseif field.value &lt; 0.001  >
+     	 <#elseif field.value?abs &lt; 0.001  >
 			<#assign currUnit="micro">
 			<#assign currValue=field.value*1000000>
-	     <#elseif field.value &lt; 1  >
+	     <#elseif field.value?abs &lt; 1  >
 			<#assign currUnit="milli" >
 			<#assign currValue=field.value*1000 >
-		 <#elseif field.value &gt;= 1000000  >
+		 <#elseif field.value?abs &gt;= 1000000  >
 			<#assign currUnit="mega" >
 			<#assign currValue=field.value/1000000 >
 		 </#if>
@@ -128,12 +128,18 @@
 				         	YAHOO.util.Dom.get("${fieldHtmlId}-val").value = val;
 				         	YAHOO.util.Dom.get("${fieldHtmlId}-label").innerHTML =
 				         	    YAHOO.util.Dom.get("${fieldHtmlId}-label").innerHTML.replace(/\(.*\)/g,"("+sel.options[sel.selectedIndex].innerHTML+")");
-				         	
+				         	return true;
 	         			};
 	         	
 			         	YAHOO.util.Event.addListener("${fieldHtmlId}-unit", "change", updateVal);
 			         	YAHOO.util.Event.addListener("${fieldHtmlId}", "change", updateVal);
 			         	
+			         	YAHOO.util.Event.addListener("${fieldHtmlId}", "keypress", function(e){
+						          if (e.keyCode == 13){
+						           updateVal();
+						         }
+						 });
+
 	         	}, this);
 	         	})();
 			//]]></script>
