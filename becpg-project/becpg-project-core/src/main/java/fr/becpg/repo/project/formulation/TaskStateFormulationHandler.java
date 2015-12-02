@@ -92,9 +92,9 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 				&& !projectData.getAspects().contains(BeCPGModel.ASPECT_COMPOSITE_VERSION)
 				&& !ProjectState.Cancelled.equals(projectData.getProjectState())) {
 
-			if( projectData.getProjectState() == null){
-				projectData.setProjectState(ProjectState.Planned);
-			}
+//			if( projectData.getProjectState() == null){
+//				projectData.setProjectState(ProjectState.Planned);
+//			}
 			
 			// start project if startdate is before now and startdate != created
 			// otherwise ProjectMgr will start it manually
