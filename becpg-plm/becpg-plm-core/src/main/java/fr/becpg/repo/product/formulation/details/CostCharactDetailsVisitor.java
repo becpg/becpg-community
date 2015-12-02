@@ -185,11 +185,9 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 
 								} else if (templateCostList.getUnit().endsWith("Pal")) {
 									if (formulatedProduct.getDefaultVariantPackagingData() != null
-											&& formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() != null
-											&& formulatedProduct.getDefaultVariantPackagingData().getBoxesPerPallet() != null) {
+											&& formulatedProduct.getDefaultVariantPackagingData().getProductPerPallet() != null) {
 
-										netQty = ((double) formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes()
-												* formulatedProduct.getDefaultVariantPackagingData().getBoxesPerPallet());
+										netQty = (double) formulatedProduct.getDefaultVariantPackagingData().getProductPerPallet();
 
 									}
 								}
@@ -200,11 +198,9 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 
 								} else if (templateCostList.getUnit().endsWith("Pal")) {
 									if (formulatedProduct.getDefaultVariantPackagingData() != null
-											&& formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() != null
-											&& formulatedProduct.getDefaultVariantPackagingData().getBoxesPerPallet() != null) {
+											&& formulatedProduct.getDefaultVariantPackagingData().getProductPerPallet() != null) {
 
-										netQty = ((double) formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes()
-														* formulatedProduct.getDefaultVariantPackagingData().getBoxesPerPallet()
+										netQty = ((double) formulatedProduct.getDefaultVariantPackagingData().getProductPerPallet()
 														* FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d));
 
 									}

@@ -6,4 +6,4 @@ springloadedfile=/opt/java_repository/org/springframework/springloaded/1.2.1.REL
 if [ ! -f $springloadedfile ]; then
 mvn validate -Psetup
 fi
-MAVEN_OPTS="-javaagent:$springloadedfile -noverify -Xms256m -Xmx2G -XX:PermSize=300m" mvn test-compile install -Prun
+MAVEN_OPTS="-javaagent:$springloadedfile -noverify -Xms256m -Xmx2G" mvn test-compile install -Prun -DskitTests=true

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
-    <property name="createdBy">Eclipse BIRT Designer Version 4.3.2.v20140211-1400 Build &lt;4.3.2.v20140225-1404></property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.4.2.v201410272105 Build &lt;4.4.2.v20150217-1805></property>
     <simple-property-list name="includeResource">
         <value>src/main/resources/beCPG/birt/CompareEntities-messages</value>
     </simple-property-list>
@@ -24,7 +24,7 @@
     </parameters>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="1347">
-            <property name="FILELIST">/opt/becpg/workspace/becpg/becpg-core/src/main/resources/beCPG/birt/system/CompareEntities.xml</property>
+            <property name="FILELIST">/opt/becpg/workspace/becpg/becpg-core/src/main/resources/beCPG/birt/system/CompareEntities2.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -462,6 +462,20 @@
                     <property name="dataType">integer</property>
                     <property name="aggregateFunction">COUNT</property>
                 </structure>
+                <structure>
+                    <property name="name">displayProperties1</property>
+                    <expression name="expression">if(row["operator"]=="Modified" || row["operator"]=="Replaced"){
+row["properties1"]
+}</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">displayProperties2</property>
+                    <expression name="expression">if(row["operator"]=="Modified" || row["operator"]=="Replaced"){
+row["properties2"]
+}</expression>
+                    <property name="dataType">string</property>
+                </structure>
             </list-property>
             <list-property name="columnHints">
                 <structure>
@@ -573,6 +587,16 @@
                         <property name="position">9</property>
                         <property name="name">tableCheck</property>
                         <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">displayProperties1</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">displayProperties2</property>
+                        <property name="dataType">string</property>
                     </structure>
                 </list-property>
             </structure>
@@ -740,7 +764,7 @@
     </data-sets>
     <styles>
         <style name="report" id="4">
-            <property name="fontFamily">"Arial"</property>
+            <property name="fontFamily">sans-serif</property>
             <property name="fontSize">10pt</property>
         </style>
         <style name="crosstab-cell" id="5">
@@ -772,11 +796,16 @@
             <property name="borderTopWidth">1pt</property>
         </style>
         <style name="beCPG-Group" id="1551">
-            <property name="backgroundColor">#EEEEEE</property>
+            <property name="backgroundColor">#3EA1E6</property>
+            <property name="fontFamily">sans-serif</property>
             <property name="fontSize">11pt</property>
             <property name="fontWeight">bold</property>
-            <property name="color">#000000</property>
+            <property name="color">#FFFFFF</property>
             <property name="textLineThrough">none</property>
+            <property name="borderBottomColor">#3EA1E6</property>
+            <property name="borderLeftColor">#3EA1E6</property>
+            <property name="borderRightColor">#3EA1E6</property>
+            <property name="borderTopColor">#3EA1E6</property>
             <property name="marginTop">5pt</property>
             <property name="marginBottom">5pt</property>
             <property name="paddingTop">3pt</property>
@@ -784,39 +813,47 @@
         </style>
         <style name="beCPG-Table-Header" id="1553">
             <property name="fontWeight">bold</property>
-            <property name="color">#4D4D4D</property>
+            <property name="color">black</property>
         </style>
         <style name="beCPG-table-row-header" id="1554">
             <property name="fontWeight">bold</property>
             <property name="fontStyle">italic</property>
-            <property name="color">#4D4D4D</property>
+            <property name="color">black</property>
         </style>
         <style name="beCPG-Table-border" id="1557">
-            <property name="borderBottomColor">#000000</property>
+            <property name="fontFamily">sans-serif</property>
+            <property name="borderBottomColor">#3EA1E6</property>
             <property name="borderBottomStyle">solid</property>
             <property name="borderBottomWidth">thin</property>
-            <property name="borderLeftColor">#000000</property>
+            <property name="borderLeftColor">#3EA1E6</property>
             <property name="borderLeftStyle">solid</property>
             <property name="borderLeftWidth">thin</property>
-            <property name="borderRightColor">#000000</property>
+            <property name="borderRightColor">#3EA1E6</property>
             <property name="borderRightStyle">solid</property>
             <property name="borderRightWidth">thin</property>
-            <property name="borderTopColor">#000000</property>
+            <property name="borderTopColor">#3EA1E6</property>
             <property name="borderTopStyle">solid</property>
             <property name="borderTopWidth">thin</property>
         </style>
         <style name="beCPG-table-row" id="1558">
-            <property name="borderTopColor">#CCCCCC</property>
-            <property name="borderTopStyle">solid</property>
-            <property name="borderTopWidth">thin</property>
+            <property name="fontFamily">sans-serif</property>
+            <property name="borderTopColor">black</property>
+            <property name="borderTopStyle">none</property>
+            <property name="borderTopWidth">medium</property>
         </style>
         <style name="beCPG-table-cell" id="1559">
+            <property name="fontFamily">sans-serif</property>
             <property name="fontSize">9pt</property>
             <property name="textOverline">none</property>
+            <property name="paddingTop">2pt</property>
+            <property name="paddingLeft">2pt</property>
+            <property name="paddingBottom">2pt</property>
+            <property name="paddingRight">2pt</property>
             <property name="whiteSpace">normal</property>
             <property name="display">inline</property>
         </style>
         <style name="beCPG-table-col" id="1583">
+            <property name="fontFamily">sans-serif</property>
             <property name="borderLeftColor">#CCCCCC</property>
             <property name="borderLeftStyle">solid</property>
             <property name="borderLeftWidth">thin</property>
@@ -825,10 +862,11 @@
     <page-setup>
         <simple-master-page name="Simple MasterPage" id="2">
             <property name="orientation">landscape</property>
+            <property name="headerHeight">0.6in</property>
             <page-header>
                 <grid id="1308">
                     <property name="height">1in</property>
-                    <property name="width">8.598214285714286in</property>
+                    <property name="width">8.59375in</property>
                     <list-property name="boundDataColumns">
                         <structure>
                             <property name="name">Column Binding</property>
@@ -838,10 +876,10 @@
                         </structure>
                     </list-property>
                     <column id="1309">
-                        <property name="width">2.0625in</property>
+                        <property name="width">0.78125in</property>
                     </column>
                     <column id="1310">
-                        <property name="width">5.25in</property>
+                        <property name="width">6.53125in</property>
                     </column>
                     <column id="1311">
                         <property name="width">1.2857142857142858in</property>
@@ -849,20 +887,20 @@
                     <row id="1312">
                         <property name="height">0.7678571428571429in</property>
                         <cell id="1313">
-                            <image id="1593">
-                                <property name="height">0.5267857142857143in</property>
-                                <property name="width">1.9375in</property>
+                            <image id="3576">
+                                <property name="height">0.5416666666666666in</property>
+                                <property name="width">0.5729166666666666in</property>
                                 <property name="source">embed</property>
-                                <property name="imageName">logo_small.jpg</property>
+                                <property name="imageName">beCPG_100x100.png</property>
                             </image>
                         </cell>
                         <cell id="1314">
+                            <property name="textAlign">left</property>
                             <label id="773">
-                                <property name="fontFamily">"arial"</property>
-                                <property name="fontSize">18pt</property>
+                                <property name="fontSize">24pt</property>
                                 <property name="fontWeight">bold</property>
-                                <property name="color">#999999</property>
-                                <property name="textAlign">center</property>
+                                <property name="color">#7E8D9D</property>
+                                <property name="textAlign">left</property>
                                 <text-property name="text" key="label.title">Comparaison produits</text-property>
                             </label>
                         </cell>
@@ -879,720 +917,1092 @@
         </simple-master-page>
     </page-setup>
     <body>
-        <grid id="1803">
+        <label id="1587">
+            <property name="fontStyle">italic</property>
+            <property name="color">#FF0000</property>
+            <property name="paddingTop">2pt</property>
+            <property name="paddingLeft">2pt</property>
+            <property name="paddingBottom">3pt</property>
+            <property name="paddingRight">2pt</property>
+            <text-property name="text" key="label.introduction">Seules les informations différentes sont affichées.</text-property>
+        </label>
+        <table id="1483">
+            <property name="style">beCPG-Table-border</property>
+            <property name="dataSet">ComparisonDataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">entityList</property>
+                    <text-property name="displayName">entityList</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["entityList"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">characteristic</property>
+                    <text-property name="displayName">characteristic</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["characteristic"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">property</property>
+                    <text-property name="displayName">property</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["property"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">value1</property>
+                    <text-property name="displayName">value1</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["value1"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">value2</property>
+                    <text-property name="displayName">value2</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["value2"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">value3</property>
+                    <text-property name="displayName">value3</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["value3"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">value4</property>
+                    <text-property name="displayName">value4</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["value4"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">entity1</property>
+                    <text-property name="displayName">entity1</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["entity1"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">entity2</property>
+                    <text-property name="displayName">entity2</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["entity2"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">entity3</property>
+                    <text-property name="displayName">entity3</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["entity3"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">entity4</property>
+                    <text-property name="displayName">entity4</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["entity4"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">propertyQName</property>
+                    <text-property name="displayName">propertyQName</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["propertyQName"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">Aggregation</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">RUNNINGCOUNT</property>
+                    <list-property name="arguments">
+                        <structure>
+                            <property name="name">Expression</property>
+                            <expression name="value" type="javascript">row["characteristic"]</expression>
+                        </structure>
+                    </list-property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">Column Binding</property>
+                    <expression name="expression" type="javascript">row["Aggregation"]</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+            </list-property>
+            <list-property name="sort">
+                <structure>
+                    <expression name="key" type="javascript">row["characteristic"]</expression>
+                    <property name="direction">asc</property>
+                    <property name="strength">-1</property>
+                </structure>
+            </list-property>
+            <list-property name="filter">
+                <structure>
+                    <property name="operator">is-null</property>
+                    <expression name="expr" type="javascript">row["entityList"]</expression>
+                    <property name="updateAggregation">true</property>
+                </structure>
+            </list-property>
+            <column id="1509">
+                <property name="width">30%</property>
+            </column>
+            <column id="3355"/>
+            <column id="3364"/>
+            <column id="3374">
+                <list-property name="visibility">
+                    <structure>
+                        <property name="format">all</property>
+                        <expression name="valueExpr" type="javascript">row["entity3"]==null</expression>
+                    </structure>
+                </list-property>
+            </column>
+            <column id="3369">
+                <list-property name="visibility">
+                    <structure>
+                        <property name="format">all</property>
+                        <expression name="valueExpr" type="javascript">row["entity4"]==null</expression>
+                    </structure>
+                </list-property>
+            </column>
+            <header>
+                <row id="3491">
+                    <property name="style">beCPG-Group</property>
+                    <cell id="3492">
+                        <label id="1541">
+                            <property name="paddingTop">1pt</property>
+                            <property name="paddingLeft">2pt</property>
+                            <property name="paddingBottom">2pt</property>
+                            <property name="paddingRight">2pt</property>
+                            <property name="textAlign">left</property>
+                            <text-property name="text" key="label.property">Propriétés produit</text-property>
+                        </label>
+                    </cell>
+                    <cell id="3493">
+                        <data id="3347">
+                            <property name="paddingTop">1pt</property>
+                            <property name="paddingLeft">2pt</property>
+                            <property name="paddingBottom">2pt</property>
+                            <property name="paddingRight">2pt</property>
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">entity1</property>
+                        </data>
+                    </cell>
+                    <cell id="3494">
+                        <property name="textAlign">left</property>
+                        <data id="3348">
+                            <property name="fontSize">10pt</property>
+                            <property name="paddingTop">1pt</property>
+                            <property name="paddingLeft">2pt</property>
+                            <property name="paddingBottom">2pt</property>
+                            <property name="paddingRight">2pt</property>
+                            <property name="resultSetColumn">entity2</property>
+                        </data>
+                    </cell>
+                    <cell id="3495">
+                        <property name="paddingTop">2pt</property>
+                        <property name="paddingLeft">2pt</property>
+                        <property name="paddingBottom">2pt</property>
+                        <property name="paddingRight">2pt</property>
+                        <data id="3349">
+                            <property name="fontSize">10pt</property>
+                            <property name="paddingLeft">2pt</property>
+                            <property name="paddingBottom">2pt</property>
+                            <property name="paddingRight">2pt</property>
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">entity3</property>
+                        </data>
+                    </cell>
+                    <cell id="3496">
+                        <property name="paddingLeft">2pt</property>
+                        <property name="paddingBottom">2pt</property>
+                        <property name="paddingRight">2pt</property>
+                        <data id="3350">
+                            <property name="fontSize">10pt</property>
+                            <property name="textAlign">left</property>
+                            <property name="resultSetColumn">entity4</property>
+                        </data>
+                    </cell>
+                </row>
+            </header>
+            <group id="1515">
+                <property name="groupName">ProductList</property>
+                <property name="interval">none</property>
+                <property name="sortDirection">asc</property>
+                <expression name="keyExpr" type="javascript">row["entityList"]</expression>
+                <structure name="toc">
+                    <expression name="expressionValue" type="javascript">row["entityList"]</expression>
+                </structure>
+                <property name="repeatHeader">true</property>
+                <property name="hideDetail">false</property>
+                <property name="pageBreakAfter">auto</property>
+                <property name="pageBreakBefore">auto</property>
+                <property name="pageBreakInside">auto</property>
+            </group>
+            <detail>
+                <row id="3303">
+                    <list-property name="highlightRules">
+                        <structure/>
+                    </list-property>
+                    <cell id="3305">
+                        <property name="colSpan">1</property>
+                        <property name="rowSpan">1</property>
+                        <property name="borderBottomStyle">none</property>
+                        <property name="borderLeftStyle">none</property>
+                        <property name="borderRightStyle">none</property>
+                        <property name="borderTopStyle">none</property>
+                        <property name="paddingTop">1pt</property>
+                        <property name="paddingLeft">1pt</property>
+                        <property name="paddingBottom">1pt</property>
+                        <property name="paddingRight">1pt</property>
+                        <list-property name="highlightRules">
+                            <structure>
+                                <property name="operator">eq</property>
+                                <expression name="testExpr" type="javascript">row["Aggregation"]%2</expression>
+                                <simple-property-list name="value1">
+                                    <value type="javascript">0</value>
+                                </simple-property-list>
+                            </structure>
+                            <structure>
+                                <property name="operator">eq</property>
+                                <property name="backgroundColor">#F2F7FA</property>
+                                <expression name="testExpr" type="javascript">row["Aggregation"]%2</expression>
+                                <simple-property-list name="value1">
+                                    <value type="javascript">1</value>
+                                </simple-property-list>
+                            </structure>
+                        </list-property>
+                        <data id="3336">
+                            <property name="fontSize">9pt</property>
+                            <property name="paddingTop">2pt</property>
+                            <property name="paddingLeft">2pt</property>
+                            <property name="paddingBottom">2pt</property>
+                            <property name="paddingRight">2pt</property>
+                            <property name="resultSetColumn">property</property>
+                        </data>
+                    </cell>
+                    <cell id="3383">
+                        <property name="borderBottomStyle">none</property>
+                        <property name="borderLeftColor">#3EA1E6</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">thin</property>
+                        <property name="borderRightColor">#3EA1E6</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">thin</property>
+                        <property name="borderTopStyle">none</property>
+                        <property name="paddingTop">1pt</property>
+                        <property name="paddingLeft">1pt</property>
+                        <property name="paddingBottom">1pt</property>
+                        <property name="paddingRight">1pt</property>
+                        <list-property name="highlightRules">
+                            <structure>
+                                <property name="operator">eq</property>
+                                <property name="backgroundColor">#FFFFFF</property>
+                                <expression name="testExpr" type="javascript">row["Aggregation"]%2</expression>
+                                <simple-property-list name="value1">
+                                    <value type="javascript">0</value>
+                                </simple-property-list>
+                            </structure>
+                            <structure>
+                                <property name="operator">eq</property>
+                                <property name="backgroundColor">#78BDEE</property>
+                                <expression name="testExpr" type="javascript">row["Aggregation"]%2</expression>
+                                <simple-property-list name="value1">
+                                    <value type="javascript">1</value>
+                                </simple-property-list>
+                            </structure>
+                        </list-property>
+                        <data id="3431">
+                            <property name="fontSize">9pt</property>
+                            <property name="paddingTop">2pt</property>
+                            <property name="paddingLeft">2pt</property>
+                            <property name="paddingBottom">2pt</property>
+                            <property name="paddingRight">2pt</property>
+                            <property name="resultSetColumn">value1</property>
+                        </data>
+                    </cell>
+                    <cell id="3384">
+                        <property name="borderBottomStyle">none</property>
+                        <property name="borderLeftStyle">none</property>
+                        <property name="borderRightStyle">none</property>
+                        <property name="borderTopStyle">none</property>
+                        <property name="paddingTop">1pt</property>
+                        <property name="paddingLeft">1pt</property>
+                        <property name="paddingBottom">1pt</property>
+                        <property name="paddingRight">1pt</property>
+                        <list-property name="highlightRules">
+                            <structure>
+                                <property name="operator">eq</property>
+                                <property name="backgroundColor">#FFFFFF</property>
+                                <expression name="testExpr" type="javascript">row["Aggregation"]%2</expression>
+                                <simple-property-list name="value1">
+                                    <value type="javascript">0</value>
+                                </simple-property-list>
+                            </structure>
+                            <structure>
+                                <property name="operator">eq</property>
+                                <property name="backgroundColor">orange</property>
+                                <expression name="testExpr" type="javascript">row["Aggregation"]%2</expression>
+                                <simple-property-list name="value1">
+                                    <value type="javascript">1</value>
+                                </simple-property-list>
+                            </structure>
+                        </list-property>
+                        <data id="3432">
+                            <property name="fontSize">9pt</property>
+                            <property name="paddingTop">2pt</property>
+                            <property name="paddingLeft">2pt</property>
+                            <property name="paddingBottom">2pt</property>
+                            <property name="paddingRight">2pt</property>
+                            <property name="resultSetColumn">value2</property>
+                        </data>
+                    </cell>
+                    <cell id="3385">
+                        <property name="borderBottomStyle">none</property>
+                        <property name="borderLeftColor">#3EA1E6</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">thin</property>
+                        <property name="borderRightColor">#3EA1E6</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">thin</property>
+                        <property name="borderTopStyle">none</property>
+                        <property name="paddingTop">1pt</property>
+                        <property name="paddingLeft">1pt</property>
+                        <property name="paddingBottom">1pt</property>
+                        <property name="paddingRight">1pt</property>
+                        <list-property name="highlightRules">
+                            <structure>
+                                <property name="operator">eq</property>
+                                <property name="backgroundColor">#FFFFFF</property>
+                                <expression name="testExpr" type="javascript">row["Aggregation"]%2</expression>
+                                <simple-property-list name="value1">
+                                    <value type="javascript">0</value>
+                                </simple-property-list>
+                            </structure>
+                            <structure>
+                                <property name="operator">eq</property>
+                                <property name="backgroundColor">#78BDEE</property>
+                                <expression name="testExpr" type="javascript">row["Aggregation"]%2</expression>
+                                <simple-property-list name="value1">
+                                    <value type="javascript">1</value>
+                                </simple-property-list>
+                            </structure>
+                        </list-property>
+                        <data id="3433">
+                            <property name="fontSize">9pt</property>
+                            <property name="paddingTop">2pt</property>
+                            <property name="paddingLeft">2pt</property>
+                            <property name="paddingBottom">2pt</property>
+                            <property name="paddingRight">2pt</property>
+                            <property name="resultSetColumn">value3</property>
+                        </data>
+                    </cell>
+                    <cell id="3386">
+                        <property name="borderBottomStyle">none</property>
+                        <property name="borderLeftStyle">none</property>
+                        <property name="borderRightStyle">none</property>
+                        <property name="borderTopStyle">none</property>
+                        <property name="paddingTop">1pt</property>
+                        <property name="paddingLeft">1pt</property>
+                        <property name="paddingBottom">1pt</property>
+                        <property name="paddingRight">1pt</property>
+                        <list-property name="highlightRules">
+                            <structure>
+                                <property name="operator">eq</property>
+                                <property name="backgroundColor">#FFFFFF</property>
+                                <expression name="testExpr" type="javascript">row["Aggregation"]%2</expression>
+                                <simple-property-list name="value1">
+                                    <value type="javascript">0</value>
+                                </simple-property-list>
+                            </structure>
+                            <structure>
+                                <property name="operator">eq</property>
+                                <property name="backgroundColor">#FFA500</property>
+                                <expression name="testExpr" type="javascript">row["Aggregation"]%2</expression>
+                                <simple-property-list name="value1">
+                                    <value type="javascript">1</value>
+                                </simple-property-list>
+                            </structure>
+                        </list-property>
+                        <data id="3434">
+                            <property name="fontSize">9pt</property>
+                            <property name="paddingTop">2pt</property>
+                            <property name="paddingLeft">2pt</property>
+                            <property name="paddingBottom">2pt</property>
+                            <property name="paddingRight">2pt</property>
+                            <property name="resultSetColumn">value4</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+        </table>
+        <table id="3437">
+            <property name="style">beCPG-Table-border</property>
+            <property name="dataSet">ComparisonDataSet</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">entityList</property>
+                    <text-property name="displayName">entityList</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["entityList"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">characteristic</property>
+                    <text-property name="displayName">characteristic</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["characteristic"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">property</property>
+                    <text-property name="displayName">property</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["property"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">value1</property>
+                    <text-property name="displayName">value1</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["value1"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">value2</property>
+                    <text-property name="displayName">value2</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["value2"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">value3</property>
+                    <text-property name="displayName">value3</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["value3"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">value4</property>
+                    <text-property name="displayName">value4</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["value4"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">entity1</property>
+                    <text-property name="displayName">entity1</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["entity1"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">entity2</property>
+                    <text-property name="displayName">entity2</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["entity2"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">entity3</property>
+                    <text-property name="displayName">entity3</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["entity3"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">entity4</property>
+                    <text-property name="displayName">entity4</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["entity4"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">propertyQName</property>
+                    <text-property name="displayName">propertyQName</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["propertyQName"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">previousCharact</property>
+                    <expression name="expression" type="javascript">var previousCharact = -1;
+if (reportContext.getGlobalVariable("previousCharact") != null)
+{
+   previousCharact = reportContext.getGlobalVariable("previousCharact");
+}
+
+reportContext.setGlobalVariable("previousCharact", row["characteristic"]);
+
+previousCharact;</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">previousList</property>
+                    <expression name="expression" type="javascript">var previousList = -1;
+if (reportContext.getGlobalVariable("previousList") != null)
+{
+   previousList = reportContext.getGlobalVariable("previousList");
+}
+
+reportContext.setGlobalVariable("previousList", row["entityList"]);
+
+previousList;</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">color</property>
+                    <expression name="expression" type="javascript">var color = 1;
+if (reportContext.getGlobalVariable("color") != null)
+{
+   color = reportContext.getGlobalVariable("color");
+}
+
+if(row["entityList"]!=row["previousList"]){
+  color = 1;
+}
+ else if(row["characteristic"]!=row["previousCharact"]){
+	if(color==1){
+  		color = 0;
+  	}
+ 	else{
+  		color = 1;
+  	}
+}
+
+reportContext.setGlobalVariable("color", color);
+
+color;</expression>
+                    <property name="dataType">boolean</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">hideCharact</property>
+                    <expression name="expression" type="javascript">row["characteristic"]==row["previousCharact"]</expression>
+                    <property name="dataType">boolean</property>
+                    <property name="allowExport">true</property>
+                </structure>
+            </list-property>
+            <list-property name="sort">
+                <structure>
+                    <expression name="key" type="javascript">row["characteristic"]</expression>
+                    <property name="direction">asc</property>
+                    <property name="strength">-1</property>
+                </structure>
+            </list-property>
+            <list-property name="filter">
+                <structure>
+                    <property name="operator">is-not-null</property>
+                    <expression name="expr" type="javascript">row["entityList"]</expression>
+                    <property name="updateAggregation">true</property>
+                </structure>
+            </list-property>
+            <column id="3485">
+                <property name="suppressDuplicates">false</property>
+                <property name="width">15%</property>
+            </column>
+            <column id="3486">
+                <property name="width">15%</property>
+            </column>
+            <column id="3487"/>
+            <column id="3488"/>
+            <column id="3489">
+                <list-property name="visibility">
+                    <structure>
+                        <property name="format">all</property>
+                        <expression name="valueExpr" type="javascript">row["entity3"]==null</expression>
+                    </structure>
+                </list-property>
+            </column>
+            <column id="3490">
+                <list-property name="visibility">
+                    <structure>
+                        <property name="format">all</property>
+                        <expression name="valueExpr" type="javascript">row["entity4"]==null</expression>
+                    </structure>
+                </list-property>
+            </column>
+            <group id="3438">
+                <property name="groupName">ProductList</property>
+                <property name="interval">none</property>
+                <property name="sortDirection">asc</property>
+                <expression name="keyExpr" type="javascript">row["entityList"]</expression>
+                <structure name="toc">
+                    <expression name="expressionValue" type="javascript">row["entityList"]</expression>
+                </structure>
+                <property name="repeatHeader">true</property>
+                <property name="hideDetail">false</property>
+                <property name="pageBreakAfter">auto</property>
+                <property name="pageBreakBefore">auto</property>
+                <property name="pageBreakInside">auto</property>
+                <header>
+                    <row id="3439">
+                        <property name="style">beCPG-Group</property>
+                        <cell id="3440">
+                            <property name="colSpan">1</property>
+                            <property name="rowSpan">1</property>
+                            <property name="paddingLeft">2pt</property>
+                            <property name="paddingBottom">2pt</property>
+                            <property name="paddingRight">2pt</property>
+                            <data id="3441">
+                                <property name="fontSize">10pt</property>
+                                <property name="paddingTop">1pt</property>
+                                <property name="paddingLeft">2pt</property>
+                                <property name="paddingBottom">2pt</property>
+                                <property name="paddingRight">2pt</property>
+                                <property name="whiteSpace">nowrap</property>
+                                <property name="resultSetColumn">entityList</property>
+                            </data>
+                        </cell>
+                        <cell id="3442">
+                            <label id="3443">
+                                <property name="fontSize">10pt</property>
+                                <property name="paddingTop">1pt</property>
+                                <property name="paddingLeft">2pt</property>
+                                <property name="paddingBottom">2pt</property>
+                                <property name="paddingRight">2pt</property>
+                                <text-property name="text" key="label.property">Propriétés</text-property>
+                            </label>
+                        </cell>
+                        <cell id="3444">
+                            <property name="textAlign">left</property>
+                            <data id="3445">
+                                <property name="fontSize">10pt</property>
+                                <property name="paddingTop">1pt</property>
+                                <property name="paddingLeft">2pt</property>
+                                <property name="paddingBottom">2pt</property>
+                                <property name="paddingRight">2pt</property>
+                                <property name="textAlign">left</property>
+                                <property name="resultSetColumn">entity1</property>
+                            </data>
+                        </cell>
+                        <cell id="3446">
+                            <property name="textAlign">center</property>
+                            <data id="3447">
+                                <property name="fontSize">10pt</property>
+                                <property name="paddingTop">2pt</property>
+                                <property name="paddingLeft">2pt</property>
+                                <property name="paddingBottom">2pt</property>
+                                <property name="paddingRight">2pt</property>
+                                <property name="textAlign">left</property>
+                                <property name="resultSetColumn">entity2</property>
+                            </data>
+                        </cell>
+                        <cell id="3448">
+                            <property name="textAlign">center</property>
+                            <data id="3449">
+                                <property name="fontSize">10pt</property>
+                                <property name="paddingTop">1pt</property>
+                                <property name="paddingLeft">2pt</property>
+                                <property name="paddingBottom">2pt</property>
+                                <property name="paddingRight">2pt</property>
+                                <property name="textAlign">left</property>
+                                <property name="resultSetColumn">entity3</property>
+                            </data>
+                        </cell>
+                        <cell id="3450">
+                            <property name="textAlign">left</property>
+                            <data id="3451">
+                                <property name="fontSize">10pt</property>
+                                <property name="paddingLeft">2pt</property>
+                                <property name="paddingBottom">2pt</property>
+                                <property name="paddingRight">2pt</property>
+                                <property name="resultSetColumn">entity4</property>
+                            </data>
+                        </cell>
+                    </row>
+                </header>
+            </group>
+            <group id="3548">
+                <property name="groupName">NewTableGroup2</property>
+                <expression name="keyExpr" type="javascript">row["characteristic"]</expression>
+                <structure name="toc">
+                    <expression name="expressionValue" type="javascript">row["characteristic"]</expression>
+                </structure>
+                <property name="hideDetail">false</property>
+            </group>
+            <detail>
+                <row id="3568">
+                    <cell id="3569">
+                        <list-property name="highlightRules">
+                            <structure>
+                                <property name="operator">is-false</property>
+                                <expression name="testExpr" type="javascript">row["color"]</expression>
+                            </structure>
+                            <structure>
+                                <property name="operator">is-true</property>
+                                <property name="backgroundColor">#F2F7FA</property>
+                                <expression name="testExpr" type="javascript">row["color"]</expression>
+                            </structure>
+                        </list-property>
+                        <data id="3454">
+                            <property name="style">beCPG-table-row-header</property>
+                            <property name="fontSize">9pt</property>
+                            <property name="color">black</property>
+                            <property name="paddingTop">2pt</property>
+                            <property name="paddingLeft">2pt</property>
+                            <property name="paddingBottom">2pt</property>
+                            <property name="paddingRight">2pt</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["hideCharact"]</expression>
+                                </structure>
+                            </list-property>
+                            <property name="resultSetColumn">characteristic</property>
+                        </data>
+                    </cell>
+                    <cell id="3570">
+                        <property name="paddingTop">1pt</property>
+                        <property name="paddingLeft">1pt</property>
+                        <property name="paddingBottom">1pt</property>
+                        <property name="paddingRight">1pt</property>
+                        <list-property name="highlightRules">
+                            <structure>
+                                <property name="operator">is-false</property>
+                                <expression name="testExpr" type="javascript">row["color"]</expression>
+                            </structure>
+                            <structure>
+                                <property name="operator">is-true</property>
+                                <property name="backgroundColor">#F2F7FA</property>
+                                <expression name="testExpr" type="javascript">row["color"]</expression>
+                            </structure>
+                        </list-property>
+                        <data id="3459">
+                            <property name="fontSize">9pt</property>
+                            <property name="paddingTop">2pt</property>
+                            <property name="paddingLeft">2pt</property>
+                            <property name="paddingBottom">2pt</property>
+                            <property name="paddingRight">2pt</property>
+                            <property name="resultSetColumn">property</property>
+                        </data>
+                    </cell>
+                    <cell id="3571">
+                        <property name="borderLeftColor">#3EA1E6</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">thin</property>
+                        <property name="borderRightColor">#3EA1E6</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">thin</property>
+                        <property name="paddingTop">1pt</property>
+                        <property name="paddingLeft">1pt</property>
+                        <property name="paddingBottom">1pt</property>
+                        <property name="paddingRight">1pt</property>
+                        <list-property name="highlightRules">
+                            <structure>
+                                <property name="operator">is-false</property>
+                                <property name="backgroundColor">#FFFFFF</property>
+                                <expression name="testExpr" type="javascript">row["color"]</expression>
+                            </structure>
+                            <structure>
+                                <property name="operator">is-true</property>
+                                <property name="backgroundColor">#78BDEE</property>
+                                <expression name="testExpr" type="javascript">row["color"]</expression>
+                            </structure>
+                        </list-property>
+                        <data id="3465">
+                            <property name="fontSize">9pt</property>
+                            <property name="paddingTop">2pt</property>
+                            <property name="paddingLeft">2pt</property>
+                            <property name="paddingBottom">2pt</property>
+                            <property name="paddingRight">2pt</property>
+                            <property name="resultSetColumn">value1</property>
+                        </data>
+                    </cell>
+                    <cell id="3572">
+                        <property name="paddingTop">1pt</property>
+                        <property name="paddingLeft">1pt</property>
+                        <property name="paddingBottom">1pt</property>
+                        <property name="paddingRight">1pt</property>
+                        <list-property name="highlightRules">
+                            <structure>
+                                <property name="operator">is-false</property>
+                                <property name="backgroundColor">#FFFFFF</property>
+                                <expression name="testExpr" type="javascript">row["color"]</expression>
+                            </structure>
+                            <structure>
+                                <property name="operator">is-true</property>
+                                <property name="backgroundColor">orange</property>
+                                <expression name="testExpr" type="javascript">row["color"]</expression>
+                            </structure>
+                        </list-property>
+                        <data id="3471">
+                            <property name="fontSize">9pt</property>
+                            <property name="paddingTop">2pt</property>
+                            <property name="paddingLeft">2pt</property>
+                            <property name="paddingBottom">2pt</property>
+                            <property name="paddingRight">2pt</property>
+                            <property name="resultSetColumn">value2</property>
+                        </data>
+                    </cell>
+                    <cell id="3573">
+                        <property name="borderLeftColor">#3EA1E6</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">thin</property>
+                        <property name="borderRightColor">#3EA1E6</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">thin</property>
+                        <property name="paddingTop">1pt</property>
+                        <property name="paddingLeft">1pt</property>
+                        <property name="paddingBottom">1pt</property>
+                        <property name="paddingRight">1pt</property>
+                        <list-property name="highlightRules">
+                            <structure>
+                                <property name="operator">is-false</property>
+                                <property name="backgroundColor">#FFFFFF</property>
+                                <expression name="testExpr" type="javascript">row["color"]</expression>
+                            </structure>
+                            <structure>
+                                <property name="operator">is-true</property>
+                                <property name="backgroundColor">#78BDEE</property>
+                                <expression name="testExpr" type="javascript">row["color"]</expression>
+                            </structure>
+                        </list-property>
+                        <data id="3477">
+                            <property name="fontSize">9pt</property>
+                            <property name="paddingTop">2pt</property>
+                            <property name="paddingLeft">2pt</property>
+                            <property name="paddingBottom">2pt</property>
+                            <property name="paddingRight">2pt</property>
+                            <property name="resultSetColumn">value3</property>
+                        </data>
+                    </cell>
+                    <cell id="3574">
+                        <list-property name="highlightRules">
+                            <structure>
+                                <property name="operator">is-false</property>
+                                <property name="backgroundColor">#FFFFFF</property>
+                                <expression name="testExpr" type="javascript">row["color"]</expression>
+                            </structure>
+                            <structure>
+                                <property name="operator">is-true</property>
+                                <property name="backgroundColor">#FFA500</property>
+                                <expression name="testExpr" type="javascript">row["color"]</expression>
+                            </structure>
+                        </list-property>
+                        <data id="3483">
+                            <property name="fontSize">9pt</property>
+                            <property name="paddingTop">2pt</property>
+                            <property name="paddingLeft">2pt</property>
+                            <property name="paddingBottom">2pt</property>
+                            <property name="paddingRight">2pt</property>
+                            <property name="resultSetColumn">value4</property>
+                        </data>
+                    </cell>
+                </row>
+            </detail>
+        </table>
+        <label id="3580"/>
+        <table id="1678">
+            <property name="style">beCPG-Table-border</property>
+            <property name="width">100%</property>
+            <property name="dataSet">StructComparison</property>
             <list-property name="visibility">
                 <structure>
                     <property name="format">all</property>
-                    <expression name="valueExpr" type="javascript">params["structComparisonHide"].value</expression>
-                </structure>
-            </list-property>
-            <column id="1804"/>
-            <row id="1809">
-                <cell id="1810">
-                    <label id="1677"/>
-                </cell>
-            </row>
-            <row id="1807">
-                <cell id="1808">
-                    <table id="1678">
-                        <property name="style">beCPG-Table-border</property>
-                        <property name="width">10.447916666666666in</property>
-                        <property name="dataSet">StructComparison</property>
-                        <list-property name="visibility">
-                            <structure>
-                                <property name="format">all</property>
-                                <expression name="valueExpr" type="javascript">if (row["tableCheck"] == null){
+                    <expression name="valueExpr" type="javascript">if (row["tableCheck"] == null){
 	true
 }
 else{
 	false
 }</expression>
-                            </structure>
-                        </list-property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">comparison</property>
-                                <text-property name="displayName">comparison</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["comparison"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">entityList</property>
-                                <text-property name="displayName">entityList</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["entityList"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">depthLevel</property>
-                                <text-property name="displayName">depthLevel</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["depthLevel"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">operator</property>
-                                <text-property name="displayName">operator</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["operator"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">item1</property>
-                                <text-property name="displayName">item1</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["item1"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">item2</property>
-                                <text-property name="displayName">item2</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["item2"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">properties1</property>
-                                <text-property name="displayName">properties1</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["properties1"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">properties2</property>
-                                <text-property name="displayName">properties2</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["properties2"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">tableCheck</property>
-                                <text-property name="displayName">tableCheck</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["tableCheck"]</expression>
-                                <property name="dataType">integer</property>
-                            </structure>
-                        </list-property>
-                        <column id="1697">
-                            <property name="width">0.2916666666666667in</property>
-                        </column>
-                        <column id="1699">
-                            <property name="style">beCPG-table-col</property>
-                            <property name="width">5.053571428571429in</property>
-                        </column>
-                        <column id="1700">
-                            <property name="style">beCPG-table-col</property>
-                            <property name="width">4.857142857142857in</property>
-                        </column>
-                        <group id="1721">
-                            <property name="groupName">NewTableGroup1</property>
-                            <expression name="keyExpr" type="javascript">row["comparison"]</expression>
-                            <structure name="toc">
-                                <expression name="expressionValue" type="javascript">row["comparison"]</expression>
-                            </structure>
-                            <property name="hideDetail">false</property>
-                            <header>
-                                <row id="1722">
-                                    <property name="style">beCPG-table-row</property>
-                                    <cell id="1723">
-                                        <property name="colSpan">3</property>
-                                        <property name="rowSpan">1</property>
-                                        <data id="1734">
-                                            <property name="fontSize">12pt</property>
-                                            <structure name="stringFormat">
-                                                <property name="category">></property>
-                                                <property name="pattern">></property>
-                                            </structure>
-                                            <property name="textAlign">center</property>
-                                            <property name="resultSetColumn">comparison</property>
-                                        </data>
-                                    </cell>
-                                </row>
-                            </header>
-                            <footer>
-                                <row id="1728">
-                                    <cell id="1729"/>
-                                    <cell id="1731"/>
-                                    <cell id="1732"/>
-                                </row>
-                            </footer>
-                        </group>
-                        <group id="1749">
-                            <property name="groupName">NewTableGroup2</property>
-                            <expression name="keyExpr" type="javascript">row["entityList"]</expression>
-                            <structure name="toc">
-                                <expression name="expressionValue" type="javascript">row["entityList"]</expression>
-                            </structure>
-                            <property name="hideDetail">false</property>
-                            <header>
-                                <row id="1750">
-                                    <cell id="1751">
-                                        <property name="colSpan">3</property>
-                                        <property name="rowSpan">1</property>
-                                        <data id="1762">
-                                            <property name="style">beCPG-Group</property>
-                                            <property name="backgroundColor">#EEEEEE</property>
-                                            <property name="color">#000000</property>
-                                            <property name="resultSetColumn">entityList</property>
-                                        </data>
-                                    </cell>
-                                </row>
-                            </header>
-                            <footer>
-                                <row id="1756">
-                                    <cell id="1757"/>
-                                    <cell id="1759"/>
-                                    <cell id="1760"/>
-                                </row>
-                            </footer>
-                        </group>
-                        <detail>
-                            <row id="1685">
-                                <property name="style">beCPG-table-row</property>
-                                <cell id="1686">
-                                    <property name="textAlign">center</property>
-                                    <image id="1771">
-                                        <property name="height">16px</property>
-                                        <property name="width">16px</property>
-                                        <list-property name="visibility">
-                                            <structure>
-                                                <property name="format">all</property>
-                                                <expression name="valueExpr" type="javascript">row["operator"]!="Modified"</expression>
-                                            </structure>
-                                        </list-property>
-                                        <property name="source">embed</property>
-                                        <property name="imageName">Modified.png</property>
-                                    </image>
-                                    <image id="1825">
-                                        <property name="height">16px</property>
-                                        <property name="width">16px</property>
-                                        <list-property name="visibility">
-                                            <structure>
-                                                <property name="format">all</property>
-                                                <expression name="valueExpr" type="javascript">row["operator"]!="Removed"</expression>
-                                            </structure>
-                                        </list-property>
-                                        <property name="source">embed</property>
-                                        <property name="imageName">Removed.png</property>
-                                    </image>
-                                    <image id="1824">
-                                        <property name="height">16px</property>
-                                        <property name="width">16px</property>
-                                        <list-property name="visibility">
-                                            <structure>
-                                                <property name="format">all</property>
-                                                <expression name="valueExpr" type="javascript">row["operator"]!="Added"</expression>
-                                            </structure>
-                                        </list-property>
-                                        <property name="source">embed</property>
-                                        <property name="imageName">Added.png</property>
-                                    </image>
-                                    <image id="1823">
-                                        <property name="height">16px</property>
-                                        <property name="width">16px</property>
-                                        <list-property name="visibility">
-                                            <structure>
-                                                <property name="format">all</property>
-                                                <expression name="valueExpr" type="javascript">row["operator"]!="Replaced"</expression>
-                                            </structure>
-                                        </list-property>
-                                        <property name="source">embed</property>
-                                        <property name="imageName">Replaced.png</property>
-                                    </image>
-                                    <image id="1826">
-                                        <property name="height">16px</property>
-                                        <property name="width">16px</property>
-                                        <list-property name="visibility">
-                                            <structure>
-                                                <property name="format">all</property>
-                                                <expression name="valueExpr" type="javascript">row["operator"]!="Equal"</expression>
-                                            </structure>
-                                        </list-property>
-                                        <property name="source">embed</property>
-                                        <property name="imageName">Equal.png</property>
-                                    </image>
-                                </cell>
-                                <cell id="1688">
-                                    <text id="3300">
-                                        <property name="style">beCPG-table-row-header</property>
-                                        <property name="fontWeight">normal</property>
-                                        <property name="fontStyle">normal</property>
-                                        <property name="contentType">html</property>
-                                        <text-property name="content"><![CDATA[<div style="font-size: 1px; display: inline; float: left; width: <VALUE-OF>(row["depthLevel"]-1)*20</VALUE-OF>px;">&amp;nbsp;</div><B><I><VALUE-OF>row["item1"]</VALUE-OF>&amp;nbsp;&amp;nbsp;</I></B><VALUE-OF>row["properties1"]</VALUE-OF>]]></text-property>
-                                    </text>
-                                </cell>
-                                <cell id="1689">
-                                    <text id="3302">
-                                        <property name="style">beCPG-table-row-header</property>
-                                        <property name="fontWeight">normal</property>
-                                        <property name="fontStyle">normal</property>
-                                        <property name="contentType">html</property>
-                                        <text-property name="content"><![CDATA[<div style="font-size: 1px; display: inline; float: left; width: <VALUE-OF>(row["depthLevel"]-1)*20</VALUE-OF>px;">&amp;nbsp;</div><B><I><VALUE-OF>row["item2"]</VALUE-OF>&amp;nbsp;&amp;nbsp;</I></B><VALUE-OF>row["properties2"]</VALUE-OF>]]></text-property>
-                                    </text>
-                                </cell>
-                            </row>
-                        </detail>
-                        <footer>
-                            <row id="1691">
-                                <cell id="1692"/>
-                                <cell id="1694"/>
-                                <cell id="1695"/>
-                            </row>
-                        </footer>
-                    </table>
-                </cell>
-            </row>
-        </grid>
-        <grid id="1812">
-            <property name="pageBreakBefore">auto</property>
-            <column id="1813"/>
-            <row id="1814">
-                <cell id="1815">
-                    <label id="1820"/>
-                    <label id="1587">
-                        <property name="fontStyle">italic</property>
-                        <property name="color">#FF0000</property>
-                        <text-property name="text" key="label.introduction">Seules les informations différentes sont affichées.</text-property>
-                    </label>
-                    <label id="1588"/>
-                </cell>
-            </row>
-            <row id="1816">
-                <cell id="1817">
-                    <table id="1483">
-                        <property name="style">beCPG-Table-border</property>
-                        <property name="dataSet">ComparisonDataSet</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">entityList</property>
-                                <text-property name="displayName">entityList</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["entityList"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">characteristic</property>
-                                <text-property name="displayName">characteristic</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["characteristic"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">property</property>
-                                <text-property name="displayName">property</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["property"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">value1</property>
-                                <text-property name="displayName">value1</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["value1"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">value2</property>
-                                <text-property name="displayName">value2</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["value2"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">value3</property>
-                                <text-property name="displayName">value3</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["value3"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">value4</property>
-                                <text-property name="displayName">value4</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["value4"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">entity1</property>
-                                <text-property name="displayName">entity1</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["entity1"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">entity2</property>
-                                <text-property name="displayName">entity2</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["entity2"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">entity3</property>
-                                <text-property name="displayName">entity3</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["entity3"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                            <structure>
-                                <property name="name">entity4</property>
-                                <text-property name="displayName">entity4</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["entity4"]</expression>
-                                <property name="dataType">string</property>
-                            </structure>
-                        </list-property>
-                        <list-property name="sort">
-                            <structure>
-                                <expression name="key" type="javascript">row["characteristic"]</expression>
-                                <property name="direction">asc</property>
-                                <property name="strength">-1</property>
-                            </structure>
-                        </list-property>
-                        <column id="1508"/>
-                        <column id="1509">
-                            <property name="style">beCPG-table-col</property>
-                        </column>
-                        <column id="1511">
-                            <property name="style">beCPG-table-col</property>
-                        </column>
-                        <column id="1512">
-                            <property name="style">beCPG-table-col</property>
-                        </column>
-                        <column id="1513">
+                </structure>
+            </list-property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">comparison</property>
+                    <text-property name="displayName">comparison</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["comparison"]</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">entityList</property>
+                    <text-property name="displayName">entityList</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["entityList"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">depthLevel</property>
+                    <text-property name="displayName">depthLevel</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["depthLevel"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">operator</property>
+                    <text-property name="displayName">operator</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["operator"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">item1</property>
+                    <text-property name="displayName">item1</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["item1"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">item2</property>
+                    <text-property name="displayName">item2</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["item2"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">properties1</property>
+                    <text-property name="displayName">properties1</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["properties1"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">properties2</property>
+                    <text-property name="displayName">properties2</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["properties2"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">tableCheck</property>
+                    <text-property name="displayName">tableCheck</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["tableCheck"]</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">displayProperties1</property>
+                    <text-property name="displayName">displayProperties1</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["displayProperties1"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">displayProperties2</property>
+                    <text-property name="displayName">displayProperties2</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["displayProperties2"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <column id="1697">
+                <property name="width">0.2916666666666667in</property>
+            </column>
+            <column id="1699">
+                <property name="style">beCPG-table-col</property>
+                <property name="width">5.053571428571429in</property>
+            </column>
+            <column id="1700">
+                <property name="style">beCPG-table-col</property>
+                <property name="width">4.857142857142857in</property>
+            </column>
+            <group id="1721">
+                <property name="groupName">NewTableGroup1</property>
+                <expression name="keyExpr" type="javascript">row["comparison"]</expression>
+                <structure name="toc">
+                    <expression name="expressionValue" type="javascript">row["comparison"]</expression>
+                </structure>
+                <property name="hideDetail">false</property>
+            </group>
+            <group id="1749">
+                <property name="groupName">NewTableGroup2</property>
+                <expression name="keyExpr" type="javascript">row["entityList"]</expression>
+                <structure name="toc">
+                    <expression name="expressionValue" type="javascript">row["entityList"]</expression>
+                </structure>
+                <property name="hideDetail">false</property>
+                <header>
+                    <row id="1750">
+                        <property name="style">beCPG-Group</property>
+                        <cell id="1751">
+                            <property name="colSpan">3</property>
+                            <property name="rowSpan">1</property>
+                            <data id="1734">
+                                <property name="fontSize">10pt</property>
+                                <property name="paddingTop">2pt</property>
+                                <property name="paddingLeft">2pt</property>
+                                <property name="paddingBottom">2pt</property>
+                                <property name="paddingRight">2pt</property>
+                                <structure name="stringFormat">
+                                    <property name="category">Unformatted</property>
+                                </structure>
+                                <property name="textAlign">center</property>
+                                <property name="display">block</property>
+                                <property name="resultSetColumn">comparison</property>
+                            </data>
+                        </cell>
+                    </row>
+                </header>
+            </group>
+            <detail>
+                <row id="1685">
+                    <property name="style">beCPG-table-row</property>
+                    <cell id="1686">
+                        <property name="textAlign">center</property>
+                        <image id="1771">
+                            <property name="height">16px</property>
+                            <property name="width">16px</property>
                             <list-property name="visibility">
                                 <structure>
                                     <property name="format">all</property>
-                                    <expression name="valueExpr" type="javascript">row["entity3"]=="" || row["entity3"]== null</expression>
+                                    <expression name="valueExpr" type="javascript">row["operator"]!="Modified"</expression>
                                 </structure>
                             </list-property>
-                            <property name="style">beCPG-table-col</property>
-                        </column>
-                        <column id="1514">
+                            <property name="source">embed</property>
+                            <property name="imageName">Modified.png</property>
+                        </image>
+                        <image id="1825">
+                            <property name="height">16px</property>
+                            <property name="width">16px</property>
                             <list-property name="visibility">
                                 <structure>
                                     <property name="format">all</property>
-                                    <expression name="valueExpr" type="javascript">row["entity4"]=="" || row["entity4"]==null</expression>
+                                    <expression name="valueExpr" type="javascript">row["operator"]!="Removed"</expression>
                                 </structure>
                             </list-property>
-                            <property name="style">beCPG-table-col</property>
-                        </column>
-                        <header>
-                            <row id="1484">
-                                <property name="style">beCPG-Table-Header</property>
-                                <cell id="1485">
-                                    <label id="1537">
-                                        <text-property name="text" key="label.characteristic">Caractéristique</text-property>
-                                    </label>
-                                </cell>
-                                <cell id="1486">
-                                    <label id="1541">
-                                        <text-property name="text" key="label.property">Propriété</text-property>
-                                    </label>
-                                </cell>
-                                <cell id="1488">
-                                    <data id="1560">
-                                        <property name="whiteSpace">normal</property>
-                                        <property name="resultSetColumn">entity1</property>
-                                    </data>
-                                </cell>
-                                <cell id="1489">
-                                    <data id="1561">
-                                        <property name="whiteSpace">normal</property>
-                                        <property name="resultSetColumn">entity2</property>
-                                    </data>
-                                </cell>
-                                <cell id="1490">
-                                    <data id="1562">
-                                        <property name="whiteSpace">normal</property>
-                                        <property name="resultSetColumn">entity3</property>
-                                    </data>
-                                </cell>
-                                <cell id="1491">
-                                    <data id="1563">
-                                        <property name="whiteSpace">normal</property>
-                                        <property name="resultSetColumn">entity4</property>
-                                    </data>
-                                </cell>
-                            </row>
-                        </header>
-                        <group id="1515">
-                            <property name="groupName">ProductList</property>
-                            <property name="interval">none</property>
-                            <property name="sortDirection">asc</property>
-                            <expression name="keyExpr" type="javascript">row["entityList"]</expression>
-                            <structure name="toc">
-                                <expression name="expressionValue" type="javascript">row["entityList"]</expression>
-                            </structure>
-                            <property name="repeatHeader">true</property>
-                            <property name="hideDetail">false</property>
-                            <property name="pageBreakAfter">auto</property>
-                            <property name="pageBreakBefore">auto</property>
-                            <property name="pageBreakInside">auto</property>
-                            <header>
-                                <row id="1516">
-                                    <property name="style">beCPG-Group</property>
-                                    <cell id="1517">
-                                        <property name="colSpan">6</property>
-                                        <property name="rowSpan">1</property>
-                                        <data id="1540">
-                                            <property name="whiteSpace">nowrap</property>
-                                            <property name="resultSetColumn">entityList</property>
-                                        </data>
-                                    </cell>
-                                </row>
-                            </header>
-                        </group>
-                        <detail>
-                            <row id="1492">
-                                <property name="style">beCPG-table-row</property>
-                                <cell id="1493">
-                                    <data id="1538">
-                                        <property name="style">beCPG-table-row-header</property>
-                                        <property name="resultSetColumn">characteristic</property>
-                                    </data>
-                                </cell>
-                                <cell id="1494">
-                                    <data id="1542">
-                                        <property name="style">beCPG-table-cell</property>
-                                        <property name="whiteSpace">nowrap</property>
-                                        <property name="resultSetColumn">property</property>
-                                    </data>
-                                </cell>
-                                <cell id="1496">
-                                    <text-data id="1650">
-                                        <list-property name="visibility">
-                                            <structure>
-                                                <property name="format">all</property>
-                                                <expression name="valueExpr" type="javascript">row["value1"] == null</expression>
-                                            </structure>
-                                        </list-property>
-                                        <expression name="valueExpr">row["value1"]</expression>
-                                        <property name="contentType">html</property>
-                                    </text-data>
-                                </cell>
-                                <cell id="1497">
-                                    <text-data id="1647">
-                                        <list-property name="visibility">
-                                            <structure>
-                                                <property name="format">all</property>
-                                                <expression name="valueExpr" type="javascript">row["value2"] == null</expression>
-                                            </structure>
-                                        </list-property>
-                                        <expression name="valueExpr">row["value2"]</expression>
-                                        <property name="contentType">html</property>
-                                    </text-data>
-                                </cell>
-                                <cell id="1498">
-                                    <text-data id="1648">
-                                        <list-property name="visibility">
-                                            <structure>
-                                                <property name="format">all</property>
-                                                <expression name="valueExpr" type="javascript">row["value3"] == null</expression>
-                                            </structure>
-                                        </list-property>
-                                        <expression name="valueExpr">row["value3"]</expression>
-                                        <property name="contentType">html</property>
-                                    </text-data>
-                                </cell>
-                                <cell id="1499">
-                                    <text-data id="1649">
-                                        <list-property name="visibility">
-                                            <structure>
-                                                <property name="format">all</property>
-                                                <expression name="valueExpr" type="javascript">row["value4"] == null</expression>
-                                            </structure>
-                                        </list-property>
-                                        <expression name="valueExpr">row["value4"]</expression>
-                                        <property name="contentType">html</property>
-                                    </text-data>
-                                </cell>
-                            </row>
-                        </detail>
-                    </table>
-                </cell>
-            </row>
-            <row id="1818">
-                <cell id="1819">
-                    <label id="1616"/>
-                </cell>
-            </row>
-        </grid>
+                            <property name="source">embed</property>
+                            <property name="imageName">Removed.png</property>
+                        </image>
+                        <image id="1824">
+                            <property name="height">16px</property>
+                            <property name="width">16px</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["operator"]!="Added"</expression>
+                                </structure>
+                            </list-property>
+                            <property name="source">embed</property>
+                            <property name="imageName">Added.png</property>
+                        </image>
+                        <image id="1823">
+                            <property name="height">16px</property>
+                            <property name="width">16px</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["operator"]!="Replaced"</expression>
+                                </structure>
+                            </list-property>
+                            <property name="source">embed</property>
+                            <property name="imageName">Replaced.png</property>
+                        </image>
+                        <image id="1826">
+                            <property name="height">16px</property>
+                            <property name="width">16px</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr" type="javascript">row["operator"]!="Equal"</expression>
+                                </structure>
+                            </list-property>
+                            <property name="source">embed</property>
+                            <property name="imageName">Equal.png</property>
+                        </image>
+                    </cell>
+                    <cell id="1688">
+                        <text id="3300">
+                            <property name="style">beCPG-table-row-header</property>
+                            <property name="fontSize">9pt</property>
+                            <property name="fontWeight">normal</property>
+                            <property name="fontStyle">normal</property>
+                            <property name="color">black</property>
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<div style="font-size: 1px; display: inline; float: left; width: <VALUE-OF>(row["depthLevel"]-1)*20</VALUE-OF>px;">&amp;nbsp;</div><B><I><VALUE-OF>row["item1"]</VALUE-OF>&amp;nbsp;&amp;nbsp;</I></B><VALUE-OF>row["displayProperties1"]</VALUE-OF>]]></text-property>
+                        </text>
+                    </cell>
+                    <cell id="1689">
+                        <property name="borderLeftColor">#3EA1E6</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">thin</property>
+                        <text id="3302">
+                            <property name="style">beCPG-table-row-header</property>
+                            <property name="fontSize">9pt</property>
+                            <property name="fontWeight">normal</property>
+                            <property name="fontStyle">normal</property>
+                            <property name="color">black</property>
+                            <property name="contentType">html</property>
+                            <text-property name="content"><![CDATA[<div style="font-size: 1px; display: inline; float: left; width: <VALUE-OF>(row["depthLevel"]-1)*20</VALUE-OF>px;">&amp;nbsp;</div><B><I><VALUE-OF>row["item2"]</VALUE-OF>&amp;nbsp;&amp;nbsp;</I></B><VALUE-OF>row["displayProperties2"]</VALUE-OF>]]></text-property>
+                        </text>
+                    </cell>
+                </row>
+            </detail>
+        </table>
     </body>
     <list-property name="images">
-        <structure>
-            <property name="name">logo_small.jpg</property>
-            <property name="data">
-                /9j/4AAQSkZJRgABAQEAIwAjAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEB
-                AQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEB
-                AQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAARCABPAPIDASIAAhEBAxEB/8QA
-                HgABAAMBAQADAQEAAAAAAAAAAAgJCgcGBAULAgP/xABBEAAABwACAQMCAwUEBQ0BAAABAgMEBQYHAAgJ
-                ERITCiEUFbcWMThBeBciMjkjUVh1thgZJCgzN0JSU2Nxd5TW/8QAHAEAAgMBAQEBAAAAAAAAAAAAAAYC
-                BQcEAwgB/8QANREAAgIBAwMDAwMCAwkAAAAAAQIDBAUABhEHEiETFDFBUWEVIiMyUhYkgTY3QmJ0dZKz
-                tP/aAAwDAQACEQMRAD8A38ccccNGnHHHDRpxxxw0accccNGnHHHDRpxxxw0acc49q/YXBcIYpyO2bTlW
-                SM1kzKtldHv9WpgvSl9wekelYJRgtIKmMUxE0WSa6yqgfGkmc/oXkD7D5tvFnWXCjaS7fUpyomJgMavV
-                PULa3ESj6D8buqUWaaKgI/4RSWOBg+5REPvysuZrDY9+y/lsZRf+y5fq1n+/9M0qH4/Gqe/uHAYp/Tye
-                cw+OkHzHfydKm/8A42J42+o+n11ajxyrmr+ajxc290m0ie4OftFVTEIU9og9Bo7UBOPoAqPbpTq+yRKA
-                /wCM6rghEw+6higAjyfGY7Zje1xR53HNZzXV4ZMCirK5xeazdmCHvH0KVw6rcnJItz+71KKax01CnASG
-                KBwEA/aeYxGRbtx+Vxt5uOe2neq2W4HkniGVzxx5+NSoZ/BZVuzF5rE5J+Ce2hkqdxuB8ntrzSHgfU8a
-                6dxxyIHYPv1086p26JofYbeadllvna43t0TBWFKcO8fVt3JysM2lkRjIiQQBsrKQkqzKB1iK/KyV9UwJ
-                7DH6rVypRiNi7ar04AyqZrU8VeIMx4VTJKyIGY+FBbknwOddd2/Rx0BtZC5UoVlZUaxdsQ1YA7nhFMs7
-                xxhnPhVLcsfABOpf8crI/wCeX8YP+2LmH/57d/8AzXPlsPMV4x5F2gyb9yMlTWcHBNM79xYItoUw/uFe
-                Qk4Jowak/wBarlyimH8zhysG5duEgDP4QkngAZWiSSfgAev5J1UDd+02IA3Rt0kkAAZvGkknjgACzySe
-                Rxx9xqyzjnMcu2zG9vhTWPGdXzjWIFMSlWmM4u1busc3UP6+iLp1XZKRSauAEpinbuTJLkOQ5DplOQxQ
-                6dy3ilimjWWGSOWJxykkTrJG4+6uhKsPyCRq+hmhsRpNBLHPDIO6OWGRZY3U/DJIhZWB+6kjTjjjnpr0
-                045wveOznXzrDWS2/sDsNCyaCWBf8vVuE+zj5GbVbFA67WtwJTqz1mfJEEDnj6/GSb4Cep/w/tARCkDX
-                /qbOhlGduo3MKhuG3OUTCDeZh6tFUWoOygIh7ivr1NRdvRE32MQqtEKAlERMYhg9g0OW3Pt7Bnty2YoU
-                pOA3oSzq1kqfIYVY++wVP9wiK+R586Ws3vLau2z2ZzPY3HTcBvbTWUa4VI5DLTi9S0ykEcMsJXyPPka0
-                Z8cyJvvquqsm5Esb0gsDtn7xAq77sDHR7kU/5HFq3x6TSKcf5pg8MUP/AFR50+h/VR9cJNyinpnWDaqa
-                2OIFWc0qy0jQzICIgHv/AA80vmplUy+vuOJFAVAoD7EVDehBX4+qGw5XEa7ghDE8cyU8lEn+sktNIwPy
-                X4+vxpWi6y9NJpBEm6a4YnjmWhl4I/8AWWfHxxAefkuB8+fB1qd45Wz1j8uXj/7Zvo+v5h2ArkReZJRJ
-                u0zvTUXWa3F2+X9PijYdrak2MTapA4D6g1p8xYVPQpxH/sz+2ybjjQyWPykAs429Uv1yePWqWIrEYPHP
-                azRMwVx9Ubhh8EA6fsblsXmawuYnI0slVJ49ejZhtRBuOexnhdwjgf1I3DqfDKD40444526sNOOOOGjU
-                QO9/Yyy9UOr+g7rUYGDss/T3dMbsoaxmflh3RbLdq9V3RnQxjpm9AzdpMLOG/wATggfiEkvkA6fvIbv+
-                TW95oWV5nfpFq1YyF4z6mW9+yZCqLNm8stcjZp01aCudVcWrdd6dJuKyiivxEJ8hzn9TDX15l/8ALu2/
-                /eeUfq5R+dnp3ZXBOu/WDrpI7Xq9MztOQw3LFY1lPSqYTksklRoEiy0PXGZXc/LooH9CLqxsY6TROJSq
-                mIYxQE0am9xyFGZeRrpHsFhbVSh9iqO9sL5cjSOi59Ofo68m8VP8SLKKNeoatoyj1wp6Ebs49Vy5cGMU
-                EElBOX1mvw0acc5BsO/4r1/g0bFs+m1DOYt2ZUkeayy6DR9LKoFA66EJDkFWYnHCJBA6reIYPV0yCBjp
-                gUQHkdKL5MuiOjTret1jsnRgl3a5WrRGyt7LRWrpyob2JN20peYKuRS6y6ggm3SSenO4VMRJAqihyFMa
-                NTq45/JTFOUpyGKchygYhyiBimKYAEpimARAxTAICAgIgICAgPpzy18vFVzKkW/RrzMNa9S6HWZy4Wyd
-                eiYGkPXK3GOZeZknAJlOoZNnHtHC5k0iKKqez40kzqGKQYu6xqzuyoiKzu7EKqqoJZmY8AKoBJJIAAJO
-                ou6RI8kjrHHGrPI7sFREQFmd2YgKqqCWYkAAEk8DXLuynZ3Eeo2Uzmy75eY2j0mEAEElXIi5mLDMKpKq
-                Ma1VIND3SNisckCKotIuORVUKgi5kHh2kWyfPm2OPsJ5rvIT5FNPX6+eOzPr1mFZmjum0Y0zxqnJ7pYY
-                UFiNj2G3aAiYYnJ4dL5Grl07rUhBo1k66iMpokszORUIe6rpnZzz5+QeDoNQWfV+ghIy6Oc1mQOs4qeG
-                YtGOm37Q3+ys2qxGzuzyTMjB7ZHoLld2O0vYGlxT5COSrjNluW6VdGcA6G5LH5Zh1WQZrKoM1rvfpNFu
-                4vWkT7dESKzttmipFVWD5VHB4uDai3ga+g4Vaw0e0TVXMvjaZLcHUq9bgwt6xgNm0p2rT5SuCmTzMqcG
-                SOq54aCEqQeAVCRyK1gTvJ7WL5/jy+6OruRvVtvZG1tfp/jrLU7OZqAx5jPzJwZIqch7XqwMjKeAVEcM
-                qNbWzJJ7OHMLhH0yW46k6DRO7PZotZsU+qSTnqxR03Wp394u4KArksumWmQaQrWbR9oEXVjoy+sFR9BS
-                lVSk9TWZVX6aPxwwDRNCac9gbw5KUoKvrFp0UwUUOAf3zFRp9LrDdMhh9faT4zmIT0KKhzAJzaDOONdD
-                ppsuhGFGFguyHzJYyTSXppnPy7+sxhVmPlhDFEnPJCgk6eMZ0h6e4yML/h6tkZj5lt5d5clYnc+Wkk9w
-                7QK7HywhghTnkhASec89w+mc8ddhZqpV6X7C0F4JB+B5AaPAyqaav7yCu1t9HsQLo+voCiSazZQ5PUCO
-                EjiCgVh7Z9Nl2qwSSHUeivZgbjZIAVX0PDPnsjhmsMhL6im0q17g511W5OTOJUzC5k5LPGnoJg9/uTIC
-                21Tjn5f6abMvL+3Dx4+YEGK1i5JKM8LjyHjETegWUjkerDIAfIHOo5PpB0+ySftwMOLsLwYbuGllxtmv
-                IDyssQgf2zOpHK+tXmUHz28+dY7fHb5X/KHROyML0i7V9cdR7E2hN22YyLZertqhvtAgQVTbDbpibkSw
-                VIt1HbJmI5NZ7q+hUZRNylIf2nOEFWqDqKn1SX8c+Jfy/wCqdVf1g2n/AFc3ag0aA7O/Bq3B8o3TaKPQ
-                RTB2doioqsk1O4AvzGbpLLrKpoicUyKLKqFKBlDiOEr6pL+OfEv6Tqr+sG08Rd/YXIYLp5fp3s9dzq/q
-                tA05b0cazVawmISBpgzzWXHy8s0hHhViiiQFTm3U/b2T230ryVDI7lyG5UGbxjUZslFEtinTE5EdZ7Ct
-                JPccfLzzykeFWGGBAVazLrT9Or0H1zrjgGrWmw9iUrPp2J5VoVjSiNDqTSKSnrpRIGyS6cY0Xzd4u2jy
-                SEk4KybrO3SqLYEk1HK5ymVN1Wa+mE8fcgzVSitB7SQLwU1AbvG9/wA6fpkWEo/Edw1kcjXBdEh/QVEU
-                V2iihPcUrhIwgoW5Doz/AATdPP6Wevn6S1HkpuPVDYWzZsfSeTbuMZ5adZ5H9DhmZ4UZmLKwIYkkkgg8
-                kn6nWk4zplsCxisdJNtTDvJNj6byye27Xd5K8bO5dWDBmYkkgg8kn5OsPHZX6f8A7mdLHa3YHoVuNq1B
-                zTU1pQsZTTyeYdgYNgiQV3g10sBMLxt+RTRbiZ7GxMhDTksB0o+Np00cxyGm94gPPFN7Tc611N7uuGDD
-                V5t62q+YbQnHt4Brd7F7haNqTpUSgVtHQt3k3ZSsoCdimUdFWGRURgpCLjp47V5YNVPMG31KfVqo4J2y
-                y3sBm7BKqB2Ur1mnrQzhynYJm1bNZaBSsNxZC2FJNi+sMXbag8kfwZUlV7EylLA4VVkZp0sKZuXBTdN0
-                XdW0Z7EGMhs10zW3p7Es2PsQWJUgWaH1mkkil9V0i7yZJIzKrxOsaSQy5/u7bc/SSNd67Fs2a2HguVo9
-                w7Vs2p7GLs1rc8ddbFb13lkgm9aSOHvZpZImmSSF0hjkrzbyeZifLZ58onrfM2brd03VgrnuMUo7hb9r
-                TxFtO0nKJYgGQcwNajzirH3PQotUTlkjPwcVOpyKJIyTZ2WWTmISF+D3W8t11zfw59XdGrVgPH9nu4eZ
-                MKaxske4OjI189UikIPb9Ni1CgCjWWTkSoRcIdFVN1Czt0YzDNwspAGBWIX07/i6rOmJF79dga+hZIWI
-                sr+N68VGdbleRUpZK6+M2n9clmrgFEJQtenkHMBTEHQLIoWaMn55w2K+h649LZ7i3XlM7kcbtLZsvtru
-                ToV8nksuw/dicZahisIUCklLL15onLghlM9aKB1mn9WC43XvfMblyuI2P0/se0yGYxlXMZfOsOWweHuV
-                4bUZjAJMduSrYhkaQEOhsVIa0iT2BPW491J8HnczyHz6PZ3vxrF9zes3UW8umtdFHVm3+9w6wgs1FhD2
-                E5o3M60duscsCawNl12LYiARmfDBOGL0+lDCPCr41sCYskojrPUNJmmxE/xNp3Eqmtykkul6e144iLYD
-                ulR7j7AIlr9ThWvvAFAbAoInG1LjjLgun22sIgkNGPK5Fz32MplkW7bnnby8q+uHjr9zE8CFVfg8SSSv
-                3OzdtrpZtDbkYkOOizWVcmS1mc3GmRvWLDHukmX3AkirFmJIFdEcg/yyzOWkbikd1r65w7QrCIwHFIti
-                QnxkZR2V0Vi0In9v7hWzaBSRKT7B/dAgF+wfbnHtM8dnRHX2TlnoPUbr9MHdEORWVZZhVq1ZSlU/xg3t
-                lWj4WzsxMP8Ae9zSXQMBwA4CBgAQmZxxplxmNnjMU2PozREcGKWpBJGR9ijxlSPxxp1mw+JsxGCxi8dP
-                AR2mGalWliK/HaY3iZCOPoRxrLH3D+mMw+5xsrZumGgzOO3AiazhjmukSUndMvklC+4UY1laFk32g1L3
-                iYffJSbnQSG+NJEI5sB1XRZIeFfrp5X8BRs9Z7k6HHtcCrYSNaouWXmXaanooyEYqLNpN0e8Q0+4LTs8
-                ICRSx0VOyllQfsURShabV0XSFhW0GccWauwdvY/NQ5zFxWsTPGHEtTG2pKuOt93HaLNROVMaHyIIWhgZ
-                uDLFJx5T6fTLauL3DX3HhYLmDsxBxPRxFyWlir/d/QLlGP8AjMUR/ctaAwVnbgzQycaccccdNaDpxxxw
-                0aq68y/+Xdt/+88o/Vyj8iV46PGPQ7rmdM7MdwY91tejaLWK7LUuqXp6/laxSs7SiGbajNXsM5VKhNv3
-                FaSYqt42VI5r9fhVYyIj4ZB4yXeKy18y/wDl3bf/ALzyj9XKPzv/AEC2Smbf1Ewu0U2RbOyweeVOiWeP
-                TXKq7rtxpdei4KwQkin6EVQWSctSvWYrpImfQ76MlESC1ftznNGuf7f4velW10+QrYYfRcvmFGiqcJdM
-                jrMNQJ6Cf/GJGz8UK6zYRE8RI3p80fYY+TaOExP6FRc/C6RgZ1E7j6H1Pr/cDq92ll3F5t3Smlyd7z+w
-                uHaoyV7zpAI1rXoEz9+qu6+B87s1BGprvzunjGJuSUO8OmhX2iPL9znImQyihikIQpjnOcwFIQhQExjG
-                MYQApSgAiYwiAAACIj6BzKdp9VlO83Y3ymaxiqC9golU68RmeV+ahiqOEbvaKTNZdOFZQa7YBSmk7Ajj
-                9wPDg0O4/GsVq6oUDJyTYTmjUs+jXSBv3Ibj3u72C41q3au5eSea5rLOXyFFqVHbSLxvDrKwiTspXEcu
-                JHB6vV1VlYFnBKoy8qhNTs0q4jea+RiodT7Xa4bpJ1G6oZFbe1VpesUpGdziqxdJZY1HtzJunL+yzNKL
-                BN3UwRgYziRY2FdzBwEUcZSyoruDRkY8+lzHyKX++dU+sHTjpNW5Wb7TTeZxWfWywLRx2cNjcLTiHqju
-                0qSDhE8ceQfRUe3sKM4cV4uux8g2dOgdWVdrDJ2+dHOjND6a0h4VJ2N52i7+klrGuSpFXE1Z5dwsL51H
-                Rrl6ZZ8yrLZ+oqui3VWM9l3ommZtVw/USI0NGuh9Muvc91e680TG7No87p03XGqqj6dl3Ci7CNWe/Gqe
-                s1FNymD9pTYExTNYFtIqrugSFZYCx7ZZtER1Xv1HWwy2XeNqdrcM6VaLbjrmd5I/WbmMRwEICNh0yVRK
-                qQxTpt5BHNyRL4AESuGUi4ZKlMi7UKN3lTvlHvrZ+8o1yqlzaRcg5iZN1VLDEWJvHSrJZVs8jXy8Q8eJ
-                tH7Vwgsg5ZuDJuEFkVU1EynTMAUMfUvZvLXbx0R1qi26iyORdgc3vU+qmmJwbQEvC3XMxUVEB/0aRrDf
-                66QVPQQA4kIIABxMCnvtp02buRq3d6oxNsErz3CExlbBBHkcVzKSR8DnSP1Le0mwN3NU7hMMHeBKc9wg
-                aIrbI48gCqZiSPgAnxxqOH0tWEwUL187Adj3LJE9tv2qI5LHPVUyncMqdntagLM4TYrD6mQbzlivKpZN
-                Egl/FK1eKUWAwNW4l1Q8zJ/S6atC2Hp7tePg7SG05nvDq1OmAHD5U6npVNrSMA8MmI+4QXn6TckDHKHs
-                AGyRR9DmETabOcfTZKybH297UL2NTd5CvHmy1iY2ixHywseop58jjt+nGuDpGlSPpztUUwnptQd5SnHm
-                29qwbpY/Vxb9ZW58grx4AADjjjjxrR9OOOOGjTmEL6pL+OfEv6Tqr+sG083e8whfVJfxz4l/SdVf1g2n
-                mWdY/wDYi1/1+P8A/frFuvv+7q5/3PFf/QdbF+jP8E3Tz+lnr5+ktR5KbmOzr/8AUx45jWD4nkEh1d0y
-                bf5Tkeb5s+mWV7qzVnLvKNTYasOZNo2Xi1Fm7Z+tFndoILHOqikqRNQ5jlER6FOfVZZkgzVPW+m97k5A
-                EziihOa9X4JmZX0H4wVdsKRYlypib095iMjmKHr7SmHnVR6mbHgoU45c/CrxVK8ciCpkXZXSFFdeEpty
-                QwI/bzyR451243rB04rYvHxTbnrpJBQqRSoKOVkZZI68aOvEdByxVgR+3u5IPHOtaIiAAIiIAAB6iI/Y
-                AAP3iI/yAOfn++fft1A93u6Wc4d19UPpUBh7R1ltff1Qn50S+bHoNhjU7Sxph4864TrBJxFVCoxy7RMx
-                ZOwRcwpGqPoxeMeOOgap5I/Lr5cUpHGur2LWWg5VYQPF2GOxOPmmqUjGOgO1cxmlb9ZnEVDRcM7BRdo9
-                YtH1EiZhmZWNl2UskKqal0/iV8F9R6TSsV2A7DycBqHZVFt8tVjYhNdzQcZO8aqIPFYJw+SbrWq7KN11
-                Wq1qdMGTGFIos1rbEypRsT9azmUyHU5Itv7bpXK+3JLMMuX3FervXglhgkWVYaEUnDTsHVJAviVpViEi
-                QQB5mUNyZnJ9Y0g2vtHH3qu1JbdefO7ryNWSpWmgrSrMlfGwzBXsMJESUIQJnnSFZY61YSTvmu81Wez/
-                AF7t/SHqbLvAcE699GMvjJVNA3uYKaLbbff5bSJSP9oikZq/mGbNqgqT3HVbRjcVllVAES7u+h+fw2W9
-                KuqFDgW6DdhX+vmTJqC3KUpHsq/pMNKz8scCCJBcTc6+kph2cn9xR0+WOUAKYADKj9U7hUvGbR1v7JtG
-                SylduGbymMzL5FM4tY+xUSxy9yhEnyvp8aTufiL3LhHE9fe4QqkiPp7WnqOi3w/djoLsz48+t9qjX6Lq
-                wUGhQmLX9mVUFHsbc8oimFTcmkiAIgi6sUKyhLmiQB9Bj7KyOBU/cKSctk14MV1J3li5F9OYUaQxoc8s
-                cbAlYJHGx/rCwPTBC+eIm8fxt2z6d1q+G6udQMPKvpTjHY4YlZTy7YmrHTWOOJ24MgWtJQBC8niFiR/E
-                3bZlxxxzbNfRGnHHHDRpxzmG3Kqt8Y11dBVRFdHML8qiskcyaqSqdUljpqpKEEp01EzlA5DkEDFMAGKI
-                CADzDv8ATdaHf7R5EJGMst5uFijg69aW5CPnbNNSzIHKU/QipOAaP3rhAF0yqKFTVBP5CFUOBTABjeqj
-                nd1phM7tzCNRaw24Z5YFsiwIhVMTwJ3NEYXMwb1+eBJHx28cnnkIm5N7x7d3JtLbrY57bbqszVktraWF
-                aRhkrR97QmCU2O73APaJIeOzjk93I3r8cccbtPenHHHDRqH3fLrpaO13V3QsLps5AVyxXB3S3DGXswyJ
-                YVqWtXevWd2V2MUykHwGXaQ67dv8LRUPxKqQKCml71C1ttPFV2M63rxN66F9mUcpuUjV6yz0zO7mL+Zz
-                C0WmKiWreZlo1w+g7QVVg+k/zN3FMLLTZF9EDJOSxk7DtFisWshdE7P7vd9Zyak53QKlVLzS+8Voz9Om
-                W3aLxWoLU8dV6pdzpWqaBc5GAxmWR/ZO4Os8SvdLiKwx1apK2qrs69MXGv6RRLnC0f7R/wB8djudXl7b
-                h2LZY+b5j1YzftJscJsW2yefOiNdIS1FRpmtEm4TNbfHnWhAxq+hKancWcDSln6EFFxbB8Re5SlANGo2
-                z3UDy0dlGalA7I9tM1zvIpIv4O1x2QRYDY7JGqAKbxgsnEU2lneMJJt727tlJ28kSoRf1dwL9Mp2w2yd
-                butuV9VMshskyOGUjK/GqKvpGRfqkd2C0z7siRJGy2WSIigD+XfggimYyaLdmyZt2kZFs2MWyZs0IAXH
-                yc2uCgLVN/2KU6oRBtaxfDs3uV+12WUgbFetN6b1bujZ3c1XKjls1bkoupUqwOc7oleqTS233btiRr9G
-                rlZrZbW2mI6x/CrfpN+yal3HXc4aZJoc/HOHthzpnaC3D9mBGSepRbV9Mkiocicy7hUo6SnoJNs6JVZp
-                6/q5JuxlhwsEmaNVa7R4utCpuxTPY7x77Wh1x0mxmeq2iiSzVRbM51eQcC+f/h0kYqxNGEU8fkTfqVOY
-                qFmryMkKbyIJBJM2rQnh5fq55j91YGz/AGjttlGbZvJJGj7VJZfGETt01GreiLsiAV6h0x6sk7bGXSdR
-                5bjWo94iqds8bLIKCmSXiXcLcVs227ss0x/JXfW7LIztUpFM1tjskfuEw96tv9HrTtxKV5vlM1R4st7u
-                uYWCJGuFtyk9ntecRk7PmlrOE/nld8mn3s3ea7AVDr/W+u9A/bpklmzraKRJbVKubXRoq+MIq02i2s3s
-                Vlq1fbZ7kdDn4JaXu9mWi2Wna+/cYbmDKVkIt5dQNGpX9TupeTdOsubZllce4MVw4LK2y2S5kV7LdLCK
-                CbdWXmnSKSKRE0kiA3i4pmkjHRTQBTbImcLvXbvoe8YvSuxWM6bhmiszPaVqdNm6bPERBIHjRvMM1EEJ
-                aMUWTVTbzMG9/DTMK8FM4spZgzdlKJ0S8hV/y09qWnazc47Hclede7n21snUCGfv9tmIXaGFnqO0WzBZ
-                a/yFM/sxlanIRzq/0W0Hb51F3A1viqalFWqdkGUmpaKfTo7x/kN7L1epZfRHuR5jo/ZTSLb2bewdLR1q
-                ZSQu0NmXYa05pTM0zRxHYlW3s3a1GzVVK0XSeqtdz7IcupT/AGLWbOP5gEKt5yxRzxSwTIssM0bxSxuA
-                ySRyKUdHU+CrqSrA+CCRrynghswzVrEaTQWIpIJ4pAGSWGVDHJG6nwyOjMrA+CCQdZUML0Xf/Ax5GpmA
-                02BkZqpoiep6JFRyZm0VsWHzkkVzB6FRFHipWS0k0OxQsNdFV0mpHzsdNUScexh1rEmj+gdiG45V2OzC
-                q7Hi1ziL5nlyj038LPQ6/vKBhAAdxkm0OBHkNOxTj3sZqClEGsrESCKzKQaoOEjphFrvL4+MM8iuMxtJ
-                3KCQgbxExxpGiaXT3KUlZcyssi0bmfkgZl2wiwtFSeOUkUJmClmDGPsrJs1fA0g5xrEycRkDm8O8svgb
-                0advmXryF46/vJD8XOWmuREndsCvEW1OUjVXVKUmsWVzWwFaA3aHmnK9fkmqh3EVVr7MR4ulHGL1VzPS
-                yzZganbzWxbNh7MNiqvrXsE0hHeLEXILQDgCRyVhkIE6SRWHlry/PlJc90VuXKz0b24em1yzJbr2qSmx
-                ktsvKR6i2YSQXreAJXLJBKQtlJYbUk9WffzxzMh1n+p36r3uPjors5m99wa1imilI2KrNFNQzVVQoexd
-                8Q0Um0v8UVc/oulEp1CyC1SMZA829USKq4tIq3mE8ZVwapPInuVkDRFYhTkJaX8zRnRQOHqALMbrDV96
-                3OH/AIk126ZyD9jlKP25omP3rtPKRLLU3BiyGAPpWLcVOwvP99a20M68HxyY+OfgnWq4rqHsjMwpNR3R
-                hj3gH0bN2GjbXnjw9S61eyvBPBJi458AnVk/HKzrj5j/ABjUdmq+me42VP0kSCcyVPPY9BeHAPUPakwo
-                kDY3ipxH7ARNAw/f1H0L9+VLdn/qhMDqTGRhep+P3DXbP7FUWVy00gZ9nbRYfd8MghCNXL+82VuQSl+W
-                Let6EsoU/qSUTEglNHJb42liomlt5/GkqCfRrWY7tliPgLXqGebz8AlAvPywAJEcv1G2NhIXmvbnxBKg
-                n29O5FkLbEDwFqUWsT/uPgM0apz8sACRqa5hC+qS/jnxL+k6q/rBtPJV+O+2eejuD2Zh+0spe5HLsMlT
-                Mm1gbbFV3sPg03RAc/iywuZ4ci6hZuzPRROoWKv0G9hZBdVI6E3q5jqOWz2Kn1SX8c+Jev8AsnVX9YNp
-                /wDnmab/ANwruTp7fvRYvKY2sMrQSs+TgSA3YfW5SzXVZXYxMPBLAL3HhHk4YrkHU/dS7u6V5LJQ4bM4
-                moubxkdN8vWjrHI1/XJS3VRZpHaFhwGZlCBj2xyS9rFdR3S/qD1Mn+nfU+ener3XabnJvrThMvMzMvie
-                ayUrLysll1WeSMnJyLysrPH8g/eLLOnr10sq5dOVVV11VFVDGGVcV1I6pQK4OoPrJ17hnICAg4isXzeO
-                XAQ/cILM60ip6h/Ifd6h/LnnejP8E3Tz+lnr5+ktR5Kbmt4vHY/9Px7+xp93sqp7vbQ93Jgj5Pd2c8n6
-                nnk63PDYvGfpWKf9Ood/6dRbv9nX7u41ouT3enzyfqeeTr/Bq1asWyDNk2bs2bVIiDZo1RTbtmyCRQIk
-                iggiUiSKSZAApE0yFIQoAUpQAADn+/HHLoAAcAcAeAB8AfbTCAAOAOAPAA+APtqIPerp1n/evrVfevN/
-                OEaWwIozFLtqbUjx9Q9BhSrq1a3sEDHSMt+CXXXj5dkm4anmK3JzcJ+Lakkzrp4f+oHaHs34Ie490x7f
-                KRNPc1sD2OZa3nzJb5WNor6K7hGs7Pj0q8FnGSb9uzO7PGLKKM2NjjTyNQs35HOsEHlW/Q+5DXun0M63
-                99c3/s832nBIuIwrxWlX+BURitCz2SeJkItIVSwmbufjRcCkgeRgpVrKVqYM2aGlod4qzZKts/3js+zl
-                rNLcGAtrjd0Ykf5Sy3iC7ACxNO3wG/YQ8io5R0KSywTI0UgaLLt/bCt5y5j907XuriN54Mf5K244rZCu
-                C5NC9wr/ALCJJUjkZJIzHNNXsRvDKrwdc6+djsU7T5pC65g2gwOiUabTIBJGHc/9NiZD4UlnEFZYdcEp
-                WtWJgVZP8fBTbRlJNQUSUO3+FZFVTt3MLujeIPyr+MjRZLYeg+i2rVqomf3jJ5CqmyvruHaqHcNYjR8M
-                mlZKKv6CKpvahHQiGhM3SxQkFIiHVUK3Q6jm31MPa7F3xaJ3C6kQdks0SVNrJOIxxacEvSQFMJDvZ2qW
-                eBuMa4kDGKf3oR8fUmJzl9qaLb2m9a2r1KjxvbT3viMhtrIJwj2faz28TZYDgyVLFcTuVYgnsRbCIPHu
-                HIbiop9XosSUodRcFlNo5NOI5LfsrF7B3HUcGWlaqLYkKOwJCItmOMePdyEHjajxzLZH/VRdYlWfvles
-                u8spD2ev4WPmM+k2fyf+T8c5m4hf2fv/ANJ+Xe7/ANr7/bkOifVYVxNqo3yXp1NyD9UhyoyWiawxiWrR
-                X7gkdSCrVOmlpIgj6e9IliizB9wKsb7Dy0l6n7Fij9Q5+BxxyFiq35ZD+OxKhYE/8wAH1IAOrqbrJ01h
-                iMrboruOOQkNLJzSt9gI46TOCfj9wUD/AIiACRqe3P8A7kti/wDqzQf+EpfmEv6Z7/Mdkf6dNP8A+IM/
-                512xaX54vMGX9kq9SrRjmB2Q50ZAsDCzGB4u6hnRfYqM/ebM5dXnS4gEDJBIV+Jl7i0XOIOEaqUwgBL6
-                /FR4Wc78dck616031/q3YyfqzuqyM9GkdwOe1GBlnEc/loKqQKiov5tZy8jGZHVpsxyru27RAYuu1kyr
-                9N4oSzX9+bu2tmMTh8hUwe3rEs82UysYpR3FleCQinCxeWYcQAIydwYv/L6AXlkOefJ9TN9bLz2DwOUo
-                7c2rams2Mzmohj4r6zSVpCMfXYvNOOKwWNk7gzSfzisF5a7/AI445tuvorTjjjho1yCtdfsPps24slTy
-                agVufd3yT09xMQlXiY2RV0KZhbZXZW3mdNWySoTkhDX28snTwpgOsW52tYwC4sMus78NfemfU/UmdUj9
-                F675FdWFIhVazV2Njo8HKM4yrLvUZNaqC1ctDoPqopKtmsuesSRHkCaYaM5YY/8AMWjZylJjjho1xid6
-                6YRZ6VYs5sGSUKXo1sk61N2GsPa5HLRUlO0uBqVYps+dAUfVCfqUDQqTG1icamQla+jU68aJdtFolkoj
-                9lmOGY5i7UrLJszpedNQgo2tGSqMBHwgLwkTPW21MmTozJFI7v22i+3WyOXLoyzt/P2ufmX7hzIyjxyr
-                1Xjho1HB50/6tSN3uGkv8Ayh5etAi7TD3KzOKXCqyVgZ3mC/Ze8HfHO1FIZC61kCVy3zCSSUvZ4FJGHn
-                Hz+PQSbk+70HrH141e7VvSNKxfOLxe6ilEt4G1WWqxUrMNWlemVbHW2Tly5bnGUYViyLr2WsMJYHzOt2
-                RdawQaDCYVUem7pxw0ajk86g9XJDVC7e+wHKHetksLK3o6A4pcKrZG1yYEYIt7ozfHaiLO5i1ioyPc25
-                qVGxvoqOYxL2TcRrRBqn8zQeqXWzVoCEq2j4hm1ygK3L2udgIycq0a7RiJK+yDyUvh2JxRKsg1vT2Qeq
-                3WNIqEbbSulkLC0kW5xS5IHjho15SoUSl5+weRdGqsBUYt/IfmjuMrkWzh49WQ/L4+KByDFgkg1TOSMi
-                o1gmCSRCJtGLVBMpU0SFD1CiaayZ0lSEVSVIZNRNQpTpqJnKJTkOQwCU5DlESmKYBKYoiAgIDz++OGjV
-                a+7+ILxydinr2Yv/AFcocZZHyijhxZ81NMZPMrvVfX5JB+OdSVbjpt8oIiZVefj5YVjj8ixVFAKYK+p7
-                6Yjx4zDwzqPvHaeqoGEwhHQOj504ZkAR9QKU9nx6xyAgUPsX3vjm9P8AEJh+/NFvHFq7s3auRkMtzb+J
-                llY8vKKcMUrk+eZJIVjdz+XZjpQyGwNk5WVp7+1sJPO57nnGPghmkY/LSywJFJK35kZj9OeNZ2619Mf4
-                7IJ6R1KWzs/c0CnKc0dZdKorVkoUogIpHUp+UVSQAh/T0MKb8igAI+xQg+ghZH1+8WPj+6xvGMxknWHO
-                mVmjjlWY3G4NpHS7exdlEphfRdi0V/aJKDdmMX1+SBWjCplMZJEiSJhTGwHjkqO0Nr4yRZqOAxUEyHlJ
-                hTheZCDyCk0qvIh5APKMNTxuw9mYeVZ8dtjC1rCENHYFCCSxGR8GOeZJJoz+UdefrpyvLtz4temXePQY
-                DUOxuez1tuVZprOhREhFaBdamghWWM3O2FsyUj63NRrJdUkrZJdcXiyB3RyOCInVFJBEhLDeOW97H0cn
-                XNTI0616szK7V7cMdiEuh5RjHKrIWU+VJHIPxq9yWLxuYqtSy1CnkqbOkjVb1eK1XZ4z3RuYpldCyN5U
-                leQfjXkM+o1bzChUjNKczVj6hnlQrVGqrBd25frsa3UoZlAQbNZ+9VWePVW0ZHtUVHbtZVy5OQVl1VFT
-                nOPr+OOdSIsaLGiqiIqoiKAqqqgKqqB4CqAAAPAA4GuyNEiRIo0WOONFSNEAVERAFVFUcBVVQAoAAAAA
-                8acccclqenHHHDRpzyVvoNE0KO/J79SqleIn1MP5Xb65D2WO9TAAGH8FNM3rb1MAABh+L7gAevr6Bz1v
-                HIuiOpR1V0YcMrqGVh9ipBBH4I1F0SRGjkRZEYcMjqHRh9mVgQR+CCNQ+f8Aj16Dybkz2Q6SdSnbs6gq
-                quVuumQmWXUH953Cn7IAZwI/z+cVPX+fOoULrF1rypyi8y/r1h2bvGwgLd1QsmoVPcoCA+oCivXoCOVS
-                EBABASHKID9w+/O48c5I8bjoX9WLH0opAeRJHVgRwfv3rGG5/POuCLEYmCT1YcXjoZQeRLFSrRyA/fvS
-                INz+eedOOOOdurHTjjjho1//2Q==
-</property>
-        </structure>
         <structure>
             <property name="name">Modified.png</property>
             <property name="type">image/png</property>
@@ -1646,6 +2056,172 @@ else{
                 iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMA
                 AAsTAAALEwEAmpwYAAAAB3RJTUUH3gIKDxkqunpDCAAAACFJREFUOMtjYBhowDhz5sz/lBjARKkLBt6A
                 UTCaDgYHAAA8+gWjN0rv7AAAAABJRU5ErkJggg==
+</property>
+        </structure>
+        <structure>
+            <property name="name">beCPG_100x100.png</property>
+            <property name="type">image/png</property>
+            <property name="data">
+                iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMA
+                AAsTAAALEwEAmpwYAAAAB3RJTUUH3wsZCggKUObLngAAGG1JREFUeNrtXXtQFFe6/53uHh4D+ECQxyaK
+                Gh8YBEQI6pogwZDCsMa4gY1Go5JNid5y9262knW3krjXVK27SWpTuZsotxYfG9GESHQB33HVBMVXroAg
+                MCAKuiqo4CCveXT3uX/MdDszzBNmEL18FmXPnO5zvnO+872/00MopRQOgFJKCSHEU+2PG/RnvkxfBrP8
+                rr9r7cym8MSiuYJDX9ul752dI3EHh3z22We0q6uLJCYmIiUlZYhDBpJDrIFer4der4cgCBiC/gEzGMTL
+                kMjqB0E8IXoehjizHNMRDn1tl753do5DHPKoc8gQDDId0hfx4uiRIZH1ADhnWUm6jxBiZipL45h+Z4t7
+                7U1moMWWlXnYxcHVdsv1cnaOnDOUM7WrbdjYZt9ZNg9GT95yTHdGI6xdOzvHIR0yGHWINVajRjBlO2v3
+                mXj8klii1iwLR9eW31nDw7Ldmgiw1Wbrfns42LPI7OFgj4tszUu65iwVjjUlZI3dLD5L7cRUZFnr1951
+                X9pdVa7uwMEVnGwpdVufh/yQIU99yOwdUuqPEAyYH2LUQ/JnQRAgiiJYlgXDMETyUwZKehl3LDXBhbAs
+                SxmGgbV5DFo/xAb72fVDANCuri5SUVGBmpoatLa2QqfTyQTx8fFBaGgoiYqKQlRUFFiW9Sgxurq6UF5e
+                Tmtra0lbWxu0Wq2EC/Hx8UFYWBimTp2KqKgocBznstiyWC/qithyOUFlzeL65JNPaFdXF5k1axZSU1PN
+                nu3o6EBRURGtra0lDMPAdAdaePFEEAQwDIPExES88MILZovhDrh//z6Ki4tRU1MDIzcQSxxMOZhhGDzz
+                zDNITU0Fy7ID4hhyntyJZ8+exb59+8CyLDiOA6UUOp0OXl5e8Pb2BiEEgiBAq9WC53l4eXkBAM6cOYML
+                Fy7g9ddfR0REhFtwOXPmDPbv3w+O46BQKGRcvL29oVAowDAMRFGEVquFXq+XcTl37hwuXLiAxYsXY8KE
+                CZ7XIZ7qeO/evbhw4QI4jpNFU0JCAmJjYxEUFGS2+7VaLW7evInz58+jqqoKLMuC53ls2bIFCxYsQEJC
+                Qr9w2bNnD8rKyuRNwbIs4uPjMX36dKdwEQQB27dvx/z58zFr1izP6jZ35NQtRdbu3btRWVkpL+ysWbOQ
+                lpbmVDFEV1cXCgoK0NDQID/fH6J88803uHTpEhiGAc/zmDlzJtLS0myJzl647N69G1euXJFxSU9PR2Ji
+                Yr/Wy61mrz0CsiyLY8eOycSglCIrKwvz58+n9vAz7dPPzw/Lly9HamoqeJ4Hx3EoLCzE1atXXZ7c0aNH
+                UVVVBYZhQCnFypUr8dJLL0mfHTqGfn5+WLFiBWJiYkAppRzH4fDhwzatyEHnGF67dg3Hjx+XibFmzRqM
+                GzeuT33OmTMHCxcuBM/zUCgU2LFjB3Q6ndN4NjY24sSJEzIu2dnZGD9+vMuO4Y0bN1BRUQFCCBFFEatX
+                r7bK6W5zDKkDMPEPHLY3NTVRlmWpXq+nS5cuxejRo+XbaB9gxowZ9Nlnn6WCIFBRFGlBQQG1g4oZTvn5
+                +VShUFCe5+mSJUtoaGioy+Or1Wqam5tLGYaher2erly5kgYHBzszPux9tgeck5RzOh9CKUViYiKeeuop
+                eWP0J9eQmpoKlUqFtrY2VFdXo7m5GaGhoXaRLS0tRXd3NwghSEhIwKRJk3r5R47yIRqNBps3b5ZN4Fdf
+                fZVGREQQG36WXbPXlRCR22NZLMsiPT3drX1mZGRAr9dDoVDgxIkTDvsrKSkBwzB2cbEnsiilyMnJgU6n
+                gyAISElJQWxs7KMXy6KU4tlnn4W7Y4WhoaGyD1BdXQ2e523e29DQgM7OThkXZ6wpS8jNzYVarYYoioiL
+                i8PcuXMHLJblVitLEIQ+mafOWCCJiYlyZaRKpbJ5n6kfEx8f73L4PT8/Hzdu3AAAjB8/HgsXLoSkAx+5
+                8Pvo0aPh5+fnkfD75MmTZaeuoaHB5n1NTU0ghCAkJAT+/v4uhd8PHz6MS5cugRCCoKAgLF++XNY9j2T4
+                3dSsdDewLIuwsDAAwK1bt2ze19LSAgAYO3asS/2fO3cOJSUlYFkWSqUSq1ateijhd7eKLIVC0Vfd4xQ7
+                jxo1CgDQ1tZmtb2jowMAIIoiQkJCnB5TpVKhuLiYKhQKsCyL1atX95rLgIqsR6XIISAgQDJJzcYxDXUA
+                oKIo0oCAAKeKHG7evImdO3dSlmUhiiJ966234O/v/+gUOZgSyYof0qciB3v5FtNrKThoOY4Eer1evt8y
+                p2JNhre3tyM3NxcsyxKj40ckzrKGoys6z5GecVuRw8PMqdszdwHIIXMprG8PdDodycnJAaUUPM9j0aJF
+                xF54fcBKSfEIQUdHBwgh8Pb2ttru5+cHSikIIbh//75dfyknJwcajQaCICApKQlxcXGDYo5uVequBP/6
+                otTv3r0LAAgMDLTa7u/vL5moaG5utkoIANi6dSvu3btHRVFETEwM5s2b93geR7hy5YrHdg7P82hubgal
+                FOHh4Xa9ekIIrl27Zk18YPfu3bh+/ToAICIiAj//+c/xEMrCBsYxvHPnDjo7Oz2iQ2pra2XdYAxcWoWI
+                iAhQSnH79u1eYuvo0aOorKwEIQSBgYFkxYoV/Xb8HrpjaI/1GIbBmTNnPCKyzpw5I5UMYfLkyTbvi4qK
+                giAI4DjODJcff/xRzo/4+PggOzubWkZ/HzuRxTAMTp065dAacjVgeePGDTQ2NsoLbi9gGBERgeHDh4MQ
+                gtOnT0MQBNTX16OwsFAuZrDm+D2WIktawMLCQrf1SQhBQUEBFAoFeJ5HcnKyw/6SkpIgiiIopcjLy8PO
+                nTvBcRwEQcBbb72FYcOG/f8oJZVMzvLyclRXV7ulzwMHDqCtrQ2UUkRHRyMoKMjhMwkJCdKio7GxEYQQ
+                8DyPZcuWOUxu2YOioiJ89dVXslEwKDjEHkyYMEEuTPj666/7jfjZs2dx+vRpMAwDhUKBRYsWOf3s4sWL
+                odfr5Y0yZ84cTJw4sc+4/PDDD/jxxx9RV1eHLVu29NnEH1ClHhYWhrS0NPA8D5ZlkZubK1tHrvZ57Ngx
+                7Nu3DxzHged5LF++3KUS0/DwcKSmpkIQBBBCUFpaasa1rhxHOHLkCL777jsq5VmysrLkqMCgVuqiKGL2
+                7NlyMolhGOTl5WHv3r3QarVO9XHv3j3k5ubixIkTMjEyMjLwxBNPuIzPc889h7i4OIiiCIZhsGvXLuzZ
+                swc6nc6prGZraytycnJw8uRJcBwHvV6PjIwMjBkzxmMiyyOhk/T0dLAsi9LSUigUClRUVKCiogIxMTGI
+                jo7G2LFjzaoFNRoNLl++jPLycqhUKkhhcEEQkJmZiWnTpvUZl4ULF4LjOJw9exYKhQKVlZWoqKhAbGys
+                GS4SgXp6enD58mWUlZWhrq7ODJdf/OIX/cLFKQPHE5WLEly8eBF79uwxjQaD53kIggClUgmO46DVaqHR
+                aODl5SWbs6Iows/PD2+88Ua/lLApVFRUYO/evbLlZoqLr68vOI6DTqeDVquVzWMJF39/fyxdulROkPV3
+                vTzOIYIgyOc9TCE6OhqTJk3CwYMHUVZWZhiQ42QTVIrI+vj4yP0oFAokJSW5vbAgJiYGkyZNwqFDh3rh
+                IoqirKSlwKUncfE4h3R0dFBKKfHy8pIX17ILvV5PKisrUVdXh5aWFty/f1+ueB85ciRCQ0MRGRmJyMhI
+                j09ar9fj4sWLqK+vR3NzMzo7O+WK95EjRyIsLAxTpkzpMy794RAy9Io/98PQK/7cMGZ/Y1kweXWItRiZ
+                s3N0WYdYLv6p66eguq2CqlWF1p5WdOo7EaAIQIhfCKYETUHCkwmYPGpynxatXduO+tZ6QzQWBBRU/t98
+                VzGIDI6ED+czoES91XELJ5tO4nLrZVzvuI52bTtYwmKEzwhMDpyMicETkTIuBSxhnd60fVLqxapibD63
+                GQfrDxr2BQOTw2AWe0YA/H39sWTaEmQnZGN62HTnvePGH7Bg+wKAtejfrLxCcoKAyNBILJ62GL+e9WsM
+                8x7mXmVrXNAmdRM2n9+ML8u/xC31LXPcGAv8RMP8Z4+bjTenv4msGVnu1SH5Vfl4+9DbuHn/pgER8yUi
+                dtmZgoAHEscm4ouXvsCM8BkOkdtftx/peemWYzkWHCLwftL72JCywW0Eae5sxtr9a1FQWWDYxsQhFuZ3
+                iIBSocT7Se9j3bPr+keQez336M92/YycajxlzlOCYegnRz5JY0bHkOG+w+Gr8EWXrgt3Ou/gQvMFtHW2
+                ASwoGBME9cAbcW9g2yvbwBDGOYJQALyDheDMFyAyOBKnf3kaw32G94sYn5Z+ircPv22ucY3c7+3ljbjQ
+                OIwZPgZKbyUEUUCnppPWttaS6pZqA76sOV6h/qEoWlKEhJ8kuE6Q0uuleH7781Qras0WdNbYWVj9zGos
+                nLIQAd4BNjnkxv0byL+UT784+wW50nblAXIUCPELQUlWCSaOmuiQIDHBMShfU25T15TfKkdBdQE2nd8E
+                kYoyNqN8R6H+V/UY4TMCBMQFRqMQqYj0vHQcunzoATFEIMA7AGsS1mBJ9BJEh0Tb5ZBD9Yew5cIWFFQV
+                mIs3Hvhw3od4L+k95wlSpCrCy3kvA5xxAAGICYuhWxduJXFhca6YeRQAKawtxKriVWjpanmAGAWOrzhO
+                50bMJVYJsiMd4IDo4GhUrKlwuJDd+m68/u3r+Gf1P2Xijxs+Dlf+84pd07TX+RBeg7icONTcrTHgSkEJ
+                CPkk9RO8Pfttu6au5Tl1AORO1x26dv9akn8xH1A8IEpGdAa+yfjGsdl75PIRvLzj5QdigAc+evEjlK8u
+                hykxnDQxAQAvT3kZze80Y038GoP4ATBp1CTEh8e7rdBAqVBi72t78cfkP8pjXFVfRXZRtvNBUioielM0
+                alqNxBCB2JBY3P3dXavEcGbuQcogfJ35Nb5/63sM8xomGyQZUzN6U9YSau7UUHwAij8a/z6AeOraKZvH
+                sERRFO0d07LW/k3VNzQhJ4EKouG4mjXYp9pH8b4Bh+gvol0+kra6eDXFeuMc3gO93HrZqeeStyU/eO4D
+                0Mz8TJfGdbQeXbouGrMphn7X8F2vNsba7kjelmwmM8uyyzD7ydluNSMzns7AuVXn5DoqT8Cm9E0YM3yM
+                rPDXH1vv8Jk/l/wZx68elznjtWmvIT8z3614KRVKlK8ux7zx86x76qZ6JLs4mzZ3NRu0Gg96YOkBxIbF
+                EmuHGE1sdGLJbJb32CxeNjkPasm1sna1eIGmK2+U+/TFTyVrkO6q2mUTH0opbVI30d8f+b1hVSjoc2Of
+                w1evfgVb+Nmaq60ElTPF1ozJgqK+tR5/P/93YlRi5Fezf0XSJqbJSkoC02dMOiP27rF3bfqM6XdGOUss
+                LThrz9hqWzR1EbwUXgABoSIlPzT9YBOHZXuWEUln+nv5kwPLDvTGx3KiDooYTNst77e2JmYi653v3pGV
+                +CjlKHyW9tljEeybO3aurEQvtVyyek/5rXKUXCmRDZitC7bCT+E34LjKBGnraUPhpUIZoU0vbRqwQKDd
+                Pt0w2oTACbJn0NjeaHXMP/3wJyqZo1NDpiIjKsOlebs7p053VOyQ7e1A/0BkRmU6fWDH1P52VYc4OrBj
+                JEm/3kpq3OkUAO3R91hzAunumt0GfSUA6+euh2kEc8AP7AAgeRfzpBAFWR6z3EwsOjqwY6pjrMlPR9cO
+                XpDW77eSqrVquR9/r94HQQ/UHSAQQcGCMCyDzKhMs3EH/MAOpRRVLVWGFh2weNpiuDJhN0RSbffphtHq
+                7tZJ3I8JIyf0GvNow1FIsba0CWl9mrdbKxeb2pug0WgM33gDT49++nHK3kGyrCACMWExve6paqmS/Y7k
+                cckPFV8GAC63XZZ3YrhfOJQK5YBm9zyp1Ldc2CJf+3r7Ij48vteYta21ssdjK9A5oEr9VuctWb0H+QX1
+                XbwMMpElUAHvHHlHcvSQNT3L6pgtXS2GkSgwduTYhy+y7mvuyxMf4TPisRFXr3z1CtQ6tcxp65Oth070
+                Or18jxz4e5gii2VZWTToBX3fxcsgEFlSV8v2LEOxqljWHR8+/yGClcHWx2TkEA14kX/4Imu493DZ6lZr
+                1S6/OGAw+SFN7U10Rs4MmleRRyVR9dMnf4r3kt6z6TP4evlSo3ikao3afuytn34IALq1bCsi/zuSPv35
+                0/Q3B3/T2w8ZN2IcgbHo8E7nHZd/HaG/fohdeWxM8+lFPVp7WmF07IhpdLqtpw3lzeXYXbUbB1QHDPEo
+                IzGeDn4aJ7JO9O7W5MOYYWOI6p7K4Mnfa0TCTxI8+usIbT1tqG2tJWCAqNFRZvdxAAwhaqNSv9txF2qN
+                etDpkprWGgRtDLIt1qTctUlC7aUpL6FoSZHdvD0ATAycCNU9FcAAZc1lvcImA65DwgPCMdz3QSFA6fVS
+                mxm8h6pDWBt/HB7k6gUg0DsQuzJ3Yd/r+2wSw3TMmWNmAiIoCPD91e8HRodQ6/pRxnbO2DmGCw74R9k/
+                MOgqPymAHgAai78eAzeE+4Xjlcmv4NvXvkXrula70QZLSBmXIi9OaVMpOrQdA3N23coSy4UzWXFZ2F+z
+                H1AA39Z8ix6+B76c76Chx7TR03BxzUVoBfODPwxhwDGcSxUlljDzyZkY4TvCYCJzwObzm/HunHcfnsgC
+                DAUIcim+KODjkx8PKgaRFtyb9Tb7UzCKfhFDgjenvynroo0lGweO620RhCUs1iauNZQ/MsD64+txT3Pv
+                4XvqniKwxZjrnltHYHyBkFqj7pV/d7unTqyLLLOc+n8l/xcUrEK2yRfsWiDR0Jmcep/9ELs5dTfkQ6z0
+                2QuHIGUQXZO4hkq1yhtObKC1d2ttPtvXnLo8F2r4JzmAVnPqSoUSf5v/N2Is2SQnG0+SD459AEKIMzl1
+                DMacutU+reNDPk37lMhpWxZk7ra56NH3uDWnLs/FUNBPJHFr8wVmq+JXYe74ubKZ+eHxD/H5uc89IjYk
+                r3iwgBfrhcLFhXKBXUt3C6b/z3SH4SS3KnVrhVwHlx2kwT7BBvbiQNcWrcWG7zfYfO86YP/d5lZECV35
+                z5U0+KNgqrqrstcvNSkDcuq97/2FlPEp9P3k9ykEw9iquyo6+fPJVK1ROz2+vfUAQPWCvtfc5EI5YgV8
+                OB9y8T8uEl/G18BiHLD+X+vJC1++QLr0XcQWy9oBub1R3Uim/G0K2V62nfCUJ5GfR5JT105Zf0hi7Acq
+                kHgaAJANz28gS2OXEuP5IHJVfZWEfRxG9tftd7YPm4j+9fRfyR+O/oGAMfStE3Rm87IZUwj1D0XDbxow
+                wmuELL6OXjmKkRtHYmPJRghUcIkV73TdwariVRj/1/FQtRnCFNKRgcGYodyxaAey47Nl8aURNUjfkY6U
+                f6Sg8naly/396+q/MPXzqfjtwd/KisKf88dfUv9irnMkVrH2I1YA0M13k+RtyTj/7/PU5IQQYQlLM6My
+                SWZUJmY+MROh/qGWVgZpVDfSE40nyJflX9LjDccBVnYZKPQgK2aswLZXtskGimUhxYH6AyR9Rzo1Vr8T
+                qfrdXsGBrTbL4gxHv2AgtW8+txlritdQ41EC4wF30KjQKCyfvhxpT6Vh4qiJxIv1Mj2SQbv0XeTS7Uso
+                UhXRHeU7yLV71yg4WfiSyOBIWpJVglHKUWbjOfs75vSjkx+R3x35Xe/TTAaLjHpz3sRH4QOlQolufTd6
+                dD3Q8TqrB1ZG+o5E3qI8zJ803+6gpudDnD2O4Amovl2NRfmLoLqt6nUoCKIhn+TL+ULprYRIRXRru6lG
+                0BCRF3uftuKBdUnrsHHeRtueuqMXKQMg7855l95ed5u+GfsmBQ9DMA5yYI9oqRbt2nZ6q/MWbde1Ux10
+                hpNTrFF96UEDvALwcerHaF3XSiViOPRD6MD4Ifbap46eSmvX1tK8V/PwhP8TgM6okBlQsKACEdDJd9Lb
+                3bdxt+cuuoVuiESUzoEYZqADfXXyq/TKb6/QjfM22sSnL+fUabe+m+ys2Imvq77GmRtn0N3RTcGCmBnR
+                xt0TEhiCpLFJNCsui7z41IvO9C/D4YbDWPTVInhxXogMikTpL0vdGmHu6w/cn/33WWz93604cvUIGu80
+                SgdfDcf2JPuJByG+BPHh8TQjMoOsjFtJg5RBnv9hSZGKUGvUtK61jrT1tKFT1wl/L3+E+IdgUuAkBHgH
+                mGYsXCKInJIlcEu8yl0EMYVufTeut1/H9fvXabumnbAMixE+I+jEURNJsDIYkm5x9mUCQ29y8ETMcLD8
+                bJ5HElQeXDR3JKD6nKByF0GGYIDyIQ8zVD70A/dDHPL4cMiQDhlkOmRIZHlWZP0f6As+ACI8aZgAAAAA
+                SUVORK5CYII=
+</property>
+        </structure>
+        <structure>
+            <property name="name">beCPG_50x50.png</property>
+            <property name="type">image/png</property>
+            <property name="data">
+                iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMA
+                AAsTAAALEwEAmpwYAAAAB3RJTUUH3wsZCgkl4izHhgAAColJREFUaN7VWn9QVNUe/5y7u67CLumCOLJG
+                /kBfApsSLlPG9GZS0JnSeliWzkucSaWpESYHBZ/OezNP5U1W77nVA31GhZOVijx9tRXMlBkgKA6EuWrk
+                D34sCBQBu+i6wN7v+wPuevfuvbAr1tT3n3vvOef7Ped7zvf3uYyICCIgImKMMXETADZC/68Co83LjUag
+                srISb7/9Nn7rMCojHMdBrVb/fhmRitxYx42EKyfeSt80DFJaarlGQR5FfcKEYIz5EJaMCwoEXCkNpW+x
+                nkjnVEsVSEx4uM+LLDAhxhmL8svMJUtTWLSwnuENZYqipUCYCRIgIhaQqI32rkRLuuuScUyOJqd01BLz
+                6yUgPVLpYsTfgbwHwpBSu7g/aB2RMCcwGLSaCGsR+SmxHvrpiFTkAtYRsUwKp8EYQ1dXF3311Vfs0qVL
+                cLlcUKlUMBqNLCkpCQ8++GDAjFRWVqK2tpY6OjoYz/PQ6XQsNjYWixcvhk6nkz0N8Xqk/epgPOmXX36J
+                0tJSGAwGmM1m6PV6DAwM0NWrV9nhw4fxzTff4OWXX4ZGo1FkoK+vD2+99RYcDgfi4uIwb948qFQq6u7u
+                ZrW1taiursaKFSvIbDYzBf2C2ABBpMgjhihVVVVks9nYjBkzUFZWhieffBILFy70W2BXVxf2798PAMjN
+                zZVlwuVyYffu3QgLC0NGRgZCQkL8xlitVlRWVuKZZ55BQkJC4CEKSUDsJ4Tnjz/+SGVlZZSeno6FCxf6
+                jBfGGQwG2rx5M/E8Tx988AGJfJcwjvbv3096vZ5eeeUVmjBhAsk4Rbpy5QpFREQgISGBpM5PPFYKHJOA
+                2EYLz/7+fpaYmMhiY2O9yiiAMI4xxlQqFUtPT2d1dXWss7PTh+6FCxeY3W5nGRkZTCzj4mdhYSHr6+tj
+                WVlZYrJMzlpJgQtEMV0uFx5//PGAlNhoNGLOnDmoqqryaT99+jTMZjNCQ0Nl8Y4ePYqmpiZkZWWB47ig
+                nWtAGJMnT1ZcgBzEx8fj8uXLPm0NDQ2YO3eu7Pivv/4aNTU1yMzMRGhoKO4kUFD07CLZZMNMyHpjOWMR
+                GRmJzs5OLw7P83C5XBQVFSXFofPnz+PTTz+ljIwMREREyAaTSkFjQJ5dtOCgPbtGo4HH4/HiDAwMgDHG
+                hHRAwLHb7ayoqAirVq1iM2bMUPTcUj2Raw9eGAMAh8PhI4parRYA0NPT4/UFPT09yM/Px6JFi5CYmPjL
+                J1YA0NLSEhTRxsZG3HfffX5G4Nq1awAAt9sNi8UCk8mEpUuX/nqJlUqlQn19fcCJVU1NDeLj433aTCYT
+                Tp06BQCwWCyYMmUKVq1addcSK26kpEcc4B0/fhxygaFUR0pKSqBWq5GUlOQz7rHHHoPD4cDOnTuh0Wjw
+                4osvQhTDMYlosra2NsWIWs7Dc4H6hpCQEFgslhFN48mTJ1FVVYU1a9b49Wk0GqSlpcHlciE5OVmRxq1b
+                t1BQUICDBw/efdHieR6ZmZlwOp3YsWMHzp496xPSNzc3o7CwEFarFStXroTYAonBbDYjOTkZxcXF+Oij
+                j9De3u41w/39/aioqEBeXh44jqNNmzYFJVqjBo3l5eVUW1vLsrKy4PF48PHHH1N9fT0jIowfPx5utxsc
+                x2HixIlYvXo1oqOjR909m82GkpIS9PX1DYXgarVgovHwww/jqaeeCrquxYIt0A3vHrPZbOjt7YVWq0V0
+                dDSMRmPQlqaxsRGtra0YGBhAeHg44uLiFMOTsTBCAFhLbws1dDUw16AL0/TTMH/qfMXKI4Hg7HeCG5ZY
+                AoGIEKYNu+Pig63DhiZHE3GMw2zDbDbLMIukubsiI4M0yLaUboHltAXUTwQmQvKAUuemsl0pu7AgaoHP
+                wuwOO+79673ABEk8wAHPznsWe5ftxcQJE0c9qSs/X0H2F9k49t2xIXwmkgwO2GDegNeXvA69Vq/MSNmV
+                MlpStITBA5iMJjwX/xzFTY5j49Tj0NLbgpONJ+nDbz9k4IGn5z+NIyuPeHHbnG0w5hmxLH4ZEqcOeWsP
+                eXC67TTKLpYBHHDmpTNYELXAZ2/EkP1FNt44+QbAgOXxy7F41mLMnDQTPPHU8FMDO3bpGCouVwAM2Pun
+                vcgwZ/haASKiA3UHCFvBG/5hoJrWGp6IiOd5XpLD8B7eQ6uLVxP+Anrh+Ave/lZHKyEHtK9mn1/i09zb
+                TJPyJhG2gTqcHSSmLTxTilII20HJhcl8X3/f7QmHQfi8+vNVfrZlNiEbdOLaiSErRkTEE0/VLdWEraBZ
+                e2b5LFzKiPjb+r3VZ7GtjlZCrjwjRERdN7sI20GpRal+fZmfZRK2g9YfXy+LK7OhVHq59HYWKbxo/66l
+                0B2hiqcgR0g61t5rJ+SAFxgR9wnvG60bCVvgQ+u79u945IJSilIUacu9i9s4ANhTtQdutxvFzxUzhXIl
+                U6onSUMZsTWRS1NTZ6UCHFhNa42XRuZnmQwq4PM/f37HBToOAPJr8mHQG7A0ZqlfYjVK+dLX64J8indy
+                hYPQcUNJ2o3+GyAi8pAHJy6doJceegkqTjW2xOqHth+wxrTGa8XEgZkSQ7K7DgaxOZI7EVunDQDY7PDZ
+                YIwx6/dWQAW2InbF2BKr5t5mAEBMRMxduiMbuXt35W7o9DoYw4YigYs/XQQImD91/pimVTvcDoBB0fve
+                TVh/fD1aulvwXtp7tys0/S6AB+4Zf8/YEqvwkHCAgJ5bPVC6dAlYR4ZFV5B1ADTID6KiuQKPvPMIvXP2
+                HSyfuxxrE9Z6cfTj9QADdd3sCvg2jIjo2/ZvwbYz+uT7T4ZOZKpuKsCACx0XMFLcI1cRl7VaHNi6knVY
+                d2TdbQvGAeDBti3ahp2Ld/pYNlOkCVCBnbGfwRN/eCJgq0VEwCAYT/ztIrZ5uhnv1r+LguUFAUebiuMI
+                WHb/MjwQ+YD3MjV6UjTWJqyFmlP74abGpDLwoEPnDzGBEaUbK+k9kW9MTkTv171P2AYqqisa0ZMredhA
+                QpSRIO3DNMJWUI+rR3GMdN7atlpCDujYxWO3HWL6/HREhkUi/b/p5Ox3jllHgrmGA4D8ZfkEAI+++2jA
+                OiK1kd5q/Kl1pwiDQMy/YujGwA2/irc0wARAr1W+5q3eD91Qegn74Si9ExFN0U3Bm8vfpHNt5yjlQAoF
+                gq9Va33nEhMsbyonbAXP/sbo4LmD3lOVnnJzbzMl7UsaCvL+tz7goHE02GjdSNgGmv7P6VTfXq8oWuVN
+                5RT5aiQhF3Su/dzQdYhUkRq6GthD/3mIum92M+04LZ5/4HnMNMwkjUqD7pvdzPqDFfXN9QAD8pbkYesf
+                t3ozxlZnK6btmkb7nt7HNizY4Hfnp2T5xN8H6g4gvTgdADAzcial3Z/GJodOBgC67rzODl04hOs/Xydd
+                iI5Vr6+muMg45pePDIW4Q4FlwZkC3vRvE2ELCDkg5IJHNki3S8dnWjPJ6XbKR7+bwOefyQ8qepUqsnvQ
+                zeeU5lD4q+E8sofnzgGPzaAYSwy/p3KPH15AxYfOm53s1sAtTLtnGjhw0mLELw52hx0c4yhKHxV88SGY
+                vxJ+zT8flKxnQCXT0f4nudOdlotiA/kJ4Y5Lpr8H+D+N2kFUavPArQAAAABJRU5ErkJggg==
 </property>
         </structure>
     </list-property>

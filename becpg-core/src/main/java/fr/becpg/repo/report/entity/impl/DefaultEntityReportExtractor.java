@@ -28,6 +28,7 @@ import java.util.Map;
 
 import org.alfresco.model.ApplicationModel;
 import org.alfresco.model.ContentModel;
+import org.alfresco.model.ForumModel;
 import org.alfresco.repo.version.Version2Model;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
@@ -35,6 +36,9 @@ import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.AssociationRef;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
+import org.alfresco.service.cmr.repository.ContentReader;
+import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.PersonService;
@@ -71,10 +75,8 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	private static final Log logger = LogFactory.getLog(DefaultEntityReportExtractor.class);
 
-	/** The Constant TAG_ENTITY. */
 	protected static final String TAG_ENTITY = "entity";
 
-	/** The Constant TAG_DATALISTS. */
 	protected static final String TAG_DATALISTS = "dataLists";
 	protected static final String TAG_ATTRIBUTES = "attributes";
 	protected static final String TAG_ATTRIBUTE = "attribute";
@@ -90,17 +92,19 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	protected static final String PRODUCT_IMG_ID = "Img%d";
 	protected static final String ATTR_IMAGE_ID = "id";
 	protected static final String AVATAR_IMG_ID = "avatar";
+	private static final String TAG_COMMENTS = "comments";
+	private static final String TAG_COMMENT = "comment";
 
-	/** The Constant VALUE_NULL. */
 	protected static final String VALUE_NULL = "";
 
 	private static final String REGEX_REMOVE_CHAR = "[^\\p{L}\\p{N}]";
 
 	protected static final ArrayList<QName> hiddenNodeAttributes = new ArrayList<>(Arrays.asList(ContentModel.PROP_NODE_REF,
-			ContentModel.PROP_NODE_DBID, ContentModel.PROP_NODE_UUID, ContentModel.PROP_STORE_IDENTIFIER, ContentModel.PROP_STORE_NAME,
+			ContentModel.PROP_NODE_UUID, ContentModel.PROP_STORE_IDENTIFIER, ContentModel.PROP_STORE_NAME,
 			ContentModel.PROP_STORE_PROTOCOL, ContentModel.PROP_CONTENT));
 
 	protected static final ArrayList<QName> hiddenDataListItemAttributes = new ArrayList<>(Arrays.asList(ContentModel.PROP_CREATED, ContentModel.PROP_CREATOR, ContentModel.PROP_MODIFIED, ContentModel.PROP_MODIFIER));
+	private static final QName FORUM_TO_TOPIC_ASSOC_QNAME = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "Comments");
 
 	@Autowired
 	protected DictionaryService dictionaryService;
@@ -131,6 +135,9 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	@Autowired
 	protected RepositoryEntityDefReader<RepositoryEntity> repositoryEntityDefReader;
+	
+	@Autowired
+	protected ContentService contentService;
 
 	@Override
 	public EntityReportData extract(NodeRef entityNodeRef) {
@@ -141,8 +148,12 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		Element entityElt = document.addElement(TAG_ENTITY);
 		Map<String, byte[]> images = new HashMap<>();
 
+		// load images
+		Element imgsElt = entityElt.addElement(TAG_IMAGES);
+		extractEntityImages(entityNodeRef, imgsElt, images);
+		
 		// add attributes at <product/> tag
-		loadNodeAttributes(entityNodeRef, entityElt, true);
+		loadNodeAttributes(entityNodeRef, entityElt, true, images);
 
 		Element aspectsElt = entityElt.addElement(ATTR_ASPECTS);
 		aspectsElt.addCDATA(extractAspects(entityNodeRef));
@@ -150,10 +161,6 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		Element itemTypeElt = entityElt.addElement(ATTR_ITEM_TYPE);
 		itemTypeElt.addCDATA(nodeService.getType(entityNodeRef).getPrefixString());
 
-		// load images
-		Element imgsElt = entityElt.addElement(TAG_IMAGES);
-		extractEntityImages(entityNodeRef, imgsElt, images);
-		
 		loadCreator(entityNodeRef, entityElt, imgsElt, images);
 
 		// render data lists
@@ -200,7 +207,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	}
 
 	// render target assocs (plants...special cases)
-	protected boolean loadTargetAssoc(NodeRef entityNodeRef, AssociationDefinition assocDef, Element entityElt) {
+	protected boolean loadTargetAssoc(NodeRef entityNodeRef, AssociationDefinition assocDef, Element entityElt, Map<String, byte[]> images) {
 		return false;
 	}
 
@@ -211,15 +218,16 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	protected void loadDataLists(NodeRef entityNodeRef, Element dataListsElt, Map<String, byte[]> images) {
 	}
 
-	protected void loadNodeAttributes(NodeRef nodeRef, Element nodeElt, boolean useCData) {
-		loadAttributes(nodeRef, nodeElt, useCData, hiddenNodeAttributes);
+	protected void loadNodeAttributes(NodeRef nodeRef, Element nodeElt, boolean useCData, Map<String, byte[]> images) {
+		loadAttributes(nodeRef, nodeElt, useCData, hiddenNodeAttributes,images);
+		loadComments(nodeRef, nodeElt,images);
 	}
 
-	protected void loadDataListItemAttributes(BeCPGDataObject dataListItem, Element nodeElt) {
+	protected void loadDataListItemAttributes(BeCPGDataObject dataListItem, Element nodeElt, Map<String, byte[]> images) {
 		List<QName> hiddentAttributes = new ArrayList<>();
 		hiddentAttributes.addAll(hiddenNodeAttributes);
 		hiddentAttributes.addAll(hiddenDataListItemAttributes);
-		loadAttributes(dataListItem.getNodeRef(), nodeElt, false, hiddentAttributes);
+		loadAttributes(dataListItem.getNodeRef(), nodeElt, false, hiddentAttributes, images);
 
 		// look for charact
 		Map<QName, Serializable> identAttr = repositoryEntityDefReader.getIdentifierAttributes(dataListItem);
@@ -231,6 +239,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				break;
 			}
 		}
+		loadComments(dataListItem.getNodeRef(), nodeElt,images);
 	}
 
 	/**
@@ -242,7 +251,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	 *            the elt
 	 * @return the element
 	 */
-	protected void loadAttributes(NodeRef nodeRef, Element nodeElt, boolean useCData, List<QName> hiddenAttributes) {
+	protected void loadAttributes(NodeRef nodeRef, Element nodeElt, boolean useCData, List<QName> hiddenAttributes, Map<String, byte[]> images) {
 
 		PropertyFormats propertyFormats = new PropertyFormats(true);
 
@@ -283,11 +292,37 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				if (associationDef == null) {
 					logger.error("This association doesn't exist. Name: " + tempValue.getKey());
 					continue;
-				} else if (!loadTargetAssoc(nodeRef, associationDef, nodeElt)) {
+				} else if (!loadTargetAssoc(nodeRef, associationDef, nodeElt, images)) {
 					addData(nodeElt, useCData, associationDef.getName(), attributeExtractorService.extractAssociationsForReport(tempValue.getValue(),
 							getPropNameOfType(associationDef.getTargetClass().getName())));
 				}
 			}
+		}
+	}
+	
+	protected void loadComments(NodeRef nodeRef, Element nodeElt , Map<String, byte[]> images){
+		if (nodeService.hasAspect(nodeRef, ForumModel.ASPECT_DISCUSSABLE)) {
+			List<ChildAssociationRef> assocs = nodeService.getChildAssocs(nodeRef, ForumModel.ASSOC_DISCUSSION, ForumModel.ASSOC_DISCUSSION, true);
+	        if (!assocs.isEmpty()){
+	            NodeRef forumFolder = assocs.get(0).getChildRef();
+	            List<ChildAssociationRef> topics = nodeService.getChildAssocs(forumFolder, ContentModel.ASSOC_CONTAINS,
+						FORUM_TO_TOPIC_ASSOC_QNAME, true);
+	            if (!topics.isEmpty()) {
+					NodeRef firstTopicNodeRef = topics.get(0).getChildRef();
+					List<ChildAssociationRef> posts = nodeService.getChildAssocs(firstTopicNodeRef);
+					if(!posts.isEmpty()){
+						Element commentsElt = (Element) nodeElt.addElement(TAG_COMMENTS);
+						for(ChildAssociationRef post : posts){        	            		
+    	            		Element commentElt = (Element) commentsElt.addElement(TAG_COMMENT);
+    	            		loadAttributes(post.getChildRef(), commentElt, true, hiddenNodeAttributes, images);	            		
+    	            		ContentReader reader = contentService.getReader(post.getChildRef(), ContentModel.PROP_CONTENT);	            		
+    	            		if(reader != null){
+    	            			addData(commentElt, true, ContentModel.PROP_CONTENT, reader.getContentString());
+    	            		}	            		
+    		            }
+					}				
+				}	            
+	        }
 		}
 	}
 
@@ -353,7 +388,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	/**
 	 * Extract target(s) association
 	 */
-	protected void extractTargetAssoc(NodeRef entityNodeRef, AssociationDefinition assocDef, Element entityElt) {
+	protected void extractTargetAssoc(NodeRef entityNodeRef, AssociationDefinition assocDef, Element entityElt, Map<String, byte[]> images) {
 
 		Element rootElt = assocDef.isTargetMany() ? entityElt.addElement(assocDef.getName().getLocalName()) : entityElt;
 		List<NodeRef> nodeRefs = associationService.getTargetAssocs(entityNodeRef, assocDef.getName());
@@ -362,7 +397,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 			QName qName = nodeService.getType(nodeRef);
 			Element nodeElt = rootElt.addElement(qName.getLocalName());
-			loadNodeAttributes(nodeRef, nodeElt, true);
+			loadNodeAttributes(nodeRef, nodeElt, true, images);
 		}
 	}
 
@@ -408,7 +443,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		if(creator != null){					
 			Element creatorElt = (Element) entityElt.selectSingleNode(ContentModel.PROP_CREATOR.getLocalName());
 			NodeRef creatorNodeRef = personService.getPerson(creator);
-			loadNodeAttributes(creatorNodeRef, creatorElt, true);
+			loadNodeAttributes(creatorNodeRef, creatorElt, true, images);
 			// extract avatar			
 			List<AssociationRef> avatorAssocs = nodeService.getTargetAssocs(creatorNodeRef, ContentModel.ASSOC_AVATAR);
 			if(!avatorAssocs.isEmpty()){

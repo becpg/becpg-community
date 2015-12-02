@@ -27,8 +27,7 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 
 import fr.becpg.repo.admin.InitVisitorService;
 import fr.becpg.repo.cache.BeCPGCacheService;
-import fr.becpg.repo.dictionary.constraint.MTDictionnarySupport;
-import fr.becpg.repo.dictionary.constraint.MTDictionnarySupport.Action;
+import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.entity.EntitySystemService;
 import fr.becpg.repo.security.SecurityService;
 
@@ -145,12 +144,8 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 				break;
 			case ACTION_RELOAD_MODEL:
 				logger.debug("Reload models");
-				MTDictionnarySupport.doInResetContext(new Action() {
-					@Override
-					public void run() {
-						dictionaryDAO.reset();
-					}
-				});
+				beCPGCacheService.clearCache(DynListConstraint.DYN_LIST_CACHE_NAME);
+				dictionaryDAO.reset();
 				break;
 			case ACTION_GET_SYSTEM_ENTITIES:
 				logger.debug("Get system entities");

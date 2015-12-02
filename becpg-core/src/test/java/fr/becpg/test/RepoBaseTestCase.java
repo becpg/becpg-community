@@ -299,7 +299,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 	private Long getLastSolrIndex() throws Exception {
 
 		HttpClient httpclient = HttpClients.createDefault();
-		HttpGet httpget = new HttpGet("http://localhost:8080/solr/admin/cores?action=SUMMARY&wt=xml");
+		HttpGet httpget = new HttpGet("http://localhost:8080/solr4/admin/cores?action=SUMMARY&wt=xml");
 		HttpResponse httpResponse = httpclient.execute(httpget);
 		assertEquals("HTTP Response Status is not OK(200)", HttpStatus.SC_OK, httpResponse.getStatusLine().getStatusCode());
 		HttpEntity entity = httpResponse.getEntity();

@@ -159,27 +159,27 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 				logger.debug("checkShouldFormulateComponents: " + productData.getName());
 			}
 
-			if (lockService.getLockStatus(productData.getNodeRef()) == LockStatus.NO_LOCK) {
+			if (productData.getNodeRef() == null || lockService.getLockStatus(productData.getNodeRef()) == LockStatus.NO_LOCK) {
 
 				boolean shouldFormulate = false;
 
 				if (productData.getCompoList() != null) {
 					for (CompositionDataItem c : productData.getCompoList()) {
-						if (checkShouldFormulateComponents(false, alfrescoRepository.findOne(c.getComponent()))) {
+						if (c.getComponent() != null && checkShouldFormulateComponents(false, alfrescoRepository.findOne(c.getComponent()))) {
 							shouldFormulate = true;
 						}
 					}
 				}
 				if (productData.getPackagingList() != null) {
 					for (CompositionDataItem c : productData.getPackagingList()) {
-						if (checkShouldFormulateComponents(false, alfrescoRepository.findOne(c.getComponent()))) {
+						if (c.getComponent() != null && checkShouldFormulateComponents(false, alfrescoRepository.findOne(c.getComponent()))) {
 							shouldFormulate = true;
 						}
 					}
 				}
 				if (productData.getProcessList() != null) {
 					for (CompositionDataItem c : productData.getProcessList()) {
-						if (checkShouldFormulateComponents(false, alfrescoRepository.findOne(c.getComponent()))) {
+						if (c.getComponent() != null && checkShouldFormulateComponents(false, alfrescoRepository.findOne(c.getComponent()))) {
 							shouldFormulate = true;
 						}
 					}

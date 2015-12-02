@@ -37,5 +37,7 @@ public interface BeCPGCacheService {
 
 	<T> T getFromCache(String cacheName, String cacheKey, BeCPGCacheDataProviderCallBack<T> cacheDataProviderCallBack, boolean deleteOnTxRollback);
 
+	void clearCache(String cacheName);
+
 	
 }

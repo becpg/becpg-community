@@ -44,7 +44,7 @@ public class TestWebscriptExecuters {
 		httpClient = new HttpClient();
 		httpClient.getParams().setBooleanParameter(HttpClientParams.PREEMPTIVE_AUTHENTICATION, true);
 		httpClient.getState()
-				.setCredentials(new AuthScope(AuthScope.ANY_HOST, AuthScope.ANY_PORT), new UsernamePasswordCredentials("admin", "admin"));
+				.setCredentials(new AuthScope(AuthScope.ANY_HOST, AuthScope.ANY_PORT), new UsernamePasswordCredentials("admin", "becpg"));
 	}
 
 	

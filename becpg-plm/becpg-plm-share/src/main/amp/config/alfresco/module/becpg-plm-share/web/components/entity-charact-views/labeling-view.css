@@ -29,7 +29,52 @@
 	height: 28px;
 	margin: 0px;
 	padding: 0px;
+	border-bottom: none;
 }
+
+ .yui-skin-lightTheme .labeling-view .yui-dt table,
+  .labeling-view .yui-dt-col-actions{
+	border-collapse: collapse;
+	border-right:none;
+}
+
+.labeling-view .datagrid .yui-dt-col-actions  {
+    border-right:none;
+}
+
+
+/* Compo List */
+
+
+.compoList .dashlet .title {
+    display: none;
+}
+
+
+.compoList .datagrid .body .grid table {
+	border: none;
+}
+
+.compoList .datagrid .body  .yui-dt thead {
+	display: none;
+}
+
+
+.compoList .datagrid .datagrid-bar .new-row,
+.compoList .datagrid .datagrid-bar .selected-items,
+.compoList .datagrid td.yui-dt-first,
+.compoList .datagrid td.yui-dt-last
+ {
+	display: none;
+}
+
+.compoList .datagrid  .yui-dt-message .yui-dt-last {
+	display: block;
+	border-top: 1px solid #CCCCCC;
+	border-right: 0px;
+}
+
+
 
 /**
  Bar

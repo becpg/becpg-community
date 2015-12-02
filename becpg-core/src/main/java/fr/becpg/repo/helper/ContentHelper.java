@@ -75,8 +75,6 @@ public class ContentHelper {
 			for (Resource res : resolver.getResources(pattern)) {
 
 				String fileName = res.getFilename();
-				logger.debug("add file " + fileName);
-
 				Map<QName, Serializable> properties = new HashMap<>();
 				properties.put(ContentModel.PROP_NAME, fileName);
 
@@ -87,6 +85,8 @@ public class ContentHelper {
 							ContentModel.TYPE_CONTENT, properties).getChildRef();
 					forceUpdate = true;
 				}
+				
+				logger.debug("add file " + fileName+" "+nodeRef);
 				
 				ret.add(nodeRef);
 

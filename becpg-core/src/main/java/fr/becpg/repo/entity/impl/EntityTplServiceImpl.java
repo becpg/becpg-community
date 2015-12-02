@@ -124,7 +124,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 	 * @param entityType
 	 */
 	@Override
-	public NodeRef createEntityTpl(NodeRef parentNodeRef, QName entityType, String entityTplName, boolean enabled, Set<QName> entityLists,
+	public NodeRef createEntityTpl(NodeRef parentNodeRef, QName entityType, String entityTplName, boolean enabled, boolean isDefault, Set<QName> entityLists,
 			Set<String> subFolders) {
 
 		TypeDefinition typeDef = dictionaryService.getType(entityType);
@@ -135,7 +135,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 		Map<QName, Serializable> properties = new HashMap<>();
 		properties.put(ContentModel.PROP_NAME, entityTplName);
 		properties.put(BeCPGModel.PROP_ENTITY_TPL_ENABLED, enabled);
-		properties.put(BeCPGModel.PROP_ENTITY_TPL_IS_DEFAULT, true);
+		properties.put(BeCPGModel.PROP_ENTITY_TPL_IS_DEFAULT, isDefault);
 
 		NodeRef entityTplNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, entityTplName);
 		if (entityTplNodeRef == null) {

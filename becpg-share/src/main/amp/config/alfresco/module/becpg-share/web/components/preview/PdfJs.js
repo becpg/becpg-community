@@ -518,10 +518,28 @@
          var downloadMenu = [
             { text: this.wp.msg("link.download"), value: "", onclick: { fn: this.onDownloadClick, scope: this } },
          ];
-         if (this.attributes.src)
+         
+         
+         //beCPG
+         if (Alfresco.constants.PAGEID === "entity-data-lists" || window.location.pathname.match("/entity-data-lists$") )
          {
+        	if(this.attributes.src){
+        		downloadMenu.push({ text: this.wp.msg("link.downloadPdf"), value: "", onclick: { fn: this.onDownloadbPDFClick, scope: this } });
+        		if(this.wp.getContentUrl().indexOf(".docx")>0){
+        			downloadMenu.push({ text: this.wp.msg("link.downloadXlsx"), value: "", onclick: { fn: this.onDownloadXLSXClick, scope: this } });
+        		} else {
+        			downloadMenu.push({ text: this.wp.msg("link.downloadDocx"), value: "", onclick: { fn: this.onDownloadDOCXClick, scope: this } });
+        		}
+        		
+        	} else {
+        		downloadMenu.push({ text: this.wp.msg("link.downloadXlsx"), value: "", onclick: { fn: this.onDownloadXLSXClick, scope: this } });
+        		downloadMenu.push({ text: this.wp.msg("link.downloadDocx"), value: "", onclick: { fn: this.onDownloadDOCXClick, scope: this } });
+        	}
+         } else if (this.attributes.src) {
             downloadMenu.push({ text: this.wp.msg("link.downloadPdf"), value: "", onclick: { fn: this.onDownloadPDFClick, scope: this } });
          }
+         
+         
          this.widgets.downloadButton = new YAHOO.widget.Button(this.wp.id + "-download", {
             type : "menu",
             menu : downloadMenu
@@ -529,7 +547,7 @@
          // Maximise button should show on the document details and document list pages
          //#beCPG
          if (Alfresco.constants.PAGEID === "document-details" || Alfresco.constants.PAGEID === "documentlibrary"  || Alfresco.constants.PAGEID === "entity-data-lists" ||
-             window.location.pathname.match("/document-details$"))
+             window.location.pathname.match("/document-details$") || window.location.pathname.match("/entity-data-lists$"))
          {
             // TODO: Full Screen doesn't work in IE10 or IE11 - also the range of mimetypes isn't complete
             //       I am unsure if this is the best solution or if generally Maximize is better
@@ -1685,7 +1703,36 @@
       {
          window.location.href = this.wp.getThumbnailUrl(this.attributes.src) + "&a=true";
       },
-
+      /**
+       * beCPG Download XLS click handler (for thumbnailed content only)
+       * 
+       * @method onDownloadXLSXClick
+       */
+      onDownloadXLSXClick : function PdfJs_onDownloadXLSXClick(p_obj)
+      {
+    	  window.location.href = this.getDownloadAtFormat(p_obj,"xlsx").replace("docx","xlsx").replace("pdf","xlsx");
+      },
+      
+      /**
+       * beCPG Download Docx click handler (for thumbnailed content only)
+       * 
+       * @method onDownloadDOCXClick
+       */
+      onDownloadDOCXClick : function PdfJs_onDownloadDOCXClick(p_obj)
+      {
+    	  window.location.href = this.getDownloadAtFormat(p_obj,"docx").replace("pdf","docx").replace("xlsx","docx");
+      },
+      
+      onDownloadbPDFClick : function PdfJs_onDownloadDOCXClick(p_obj)
+      {
+    	  window.location.href = this.getDownloadAtFormat(p_obj,"pdf").replace("docx","pdf").replace("xlsx","pdf");
+      },
+      
+      getDownloadAtFormat : function PdfJs_onDownloadDOCXClick(p_obj, format)
+      {
+    	  return this.wp.getContentUrl(true).replace("/api/","/becpg/report/")+"&entityNodeRef="+YAHOO.util.History.getQueryStringParameter('nodeRef')+"&format="+format;
+      },
+      
       /**
        * Maximize/Minimize button clicked
        * 

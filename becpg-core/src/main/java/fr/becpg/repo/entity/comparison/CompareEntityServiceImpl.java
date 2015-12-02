@@ -255,6 +255,10 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 		MultiLevelListData listData1 = loadCompositeDataList(entity1NodeRef, datalistType);
 		MultiLevelListData listData2 = loadCompositeDataList(entity2NodeRef, datalistType);
 
+		if(logger.isDebugEnabled()){
+			logger.debug("listData1 " + listData1);
+			logger.debug("listData2 " + listData2);
+		}
 		CompositeComparableItem compositeItem1 = new CompositeComparableItem(0, null, null);
 		loadComparableItems(compositeItem1, listData1);
 
@@ -274,9 +278,9 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 	private MultiLevelListData loadCompositeDataList(NodeRef entityNodeRef, QName datalistType) {
 		DataListFilter dataListFilter = new DataListFilter();
 		dataListFilter.setDataType(datalistType);
-		Map<String, String> criteriaMap = new HashMap<>();
-		dataListFilter.setCriteriaMap(criteriaMap);
+		dataListFilter.setFilterId(DataListFilter.ALL_FILTER);
 		dataListFilter.setEntityNodeRefs(Collections.singletonList(entityNodeRef));
+		dataListFilter.updateMaxDepth(-1);
 		return multiLevelDataListService.getMultiLevelListData(dataListFilter);
 	}
 
@@ -287,7 +291,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 
 			// TODO generic should be able to combine several properties (ie:
 			// EAN, Funtion,...)
-			String pivot = (String) nodeService.getProperty(entry.getValue().getEntityNodeRef(), BeCPGModel.PROP_LEGAL_NAME);
+			String pivot = (String) nodeService.getProperty(entry.getValue().getEntityNodeRef(), BeCPGModel.PROP_LEGAL_NAME);			
 			if (pivot == null) {
 				pivot = entry.getValue().getEntityNodeRef().toString();
 			}
@@ -310,25 +314,25 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 	}
 
 	private void structCompareCompositeDataLists(QName entityListType, QName pivotProperty, List<StructCompareResultDataItem> strucComparisonList,
-			CompositeComparableItem compositeItem1, CompositeComparableItem compositeItem2) {
-
+			CompositeComparableItem compositeItem1, CompositeComparableItem compositeItem2) {		
+		
 		if (compositeItem1 != null) {
 			for (String key : compositeItem1.getItemList().keySet()) {
 
 				AbstractComparableItem c1 = compositeItem1.get(key);
 				AbstractComparableItem c2 = compositeItem2 == null ? null : compositeItem2.get(key);
 				NodeRef nodeRef1 = c1.getNodeRef();
-				NodeRef nodeRef2 = c2 == null ? null : c2.getNodeRef();
-
+				NodeRef nodeRef2 = c2 == null ? null : c2.getNodeRef();				
+				
 				StructCompareOperator operator = StructCompareOperator.Equal;
 
 				Map<String, CompareResultDataItem> comparisonMap = new TreeMap<>();
 				compareNode(entityListType, null, null, nodeRef1, nodeRef2, 2, 1, true, comparisonMap);
 
 				if (logger.isDebugEnabled()) {
-					logger.debug("structCompareCompositeDataLists: nodeRef1: " + nodeRef1 + " - nodeRef2: " + nodeRef2 + " comparisonMap: "
-							+ comparisonMap);
-				}
+					logger.debug("structCompareCompositeDataLists: nodeRef1: " + nodeRef1 + " - nodeRef2: " + nodeRef2 + " pivotProperty: " + pivotProperty);
+					logger.trace(" comparisonMap: " + comparisonMap);
+				}				
 
 				// get Properties
 				Map<QName, String> properties1 = new TreeMap<>();
@@ -336,15 +340,16 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				for (CompareResultDataItem c : comparisonMap.values()) {
 
 					if (c.isDifferent()) {
-						properties1.put(c.getProperty(), c.getValues().get(0));
-						properties2.put(c.getProperty(), c.getValues().get(1));
-
 						if (operator.equals(StructCompareOperator.Equal)) {
 							operator = StructCompareOperator.Modified;
 						}
-						// replaced ?
 						if (pivotProperty.getLocalName().equals(c.getProperty().getLocalName())) {
 							operator = StructCompareOperator.Replaced;
+						}
+						else{
+							// we don't include pivot in properties
+							properties1.put(c.getProperty(), c.getValues().get(0));
+							properties2.put(c.getProperty(), c.getValues().get(1));
 						}
 					}
 				}
@@ -353,7 +358,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				if (nodeRef2 == null) {
 					operator = StructCompareOperator.Removed;
 				}
-
+				
 				// we display only changes
 				if (!StructCompareOperator.Equal.equals(operator)) {
 
@@ -396,7 +401,8 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 					}
 
 					if (logger.isDebugEnabled()) {
-						logger.debug("structCompareCompositeDataLists: c2.getNodeRef(): " + c2.getNodeRef() + " comparisonMap: " + comparisonMap);
+						logger.debug("structCompareCompositeDataLists: c2.getNodeRef(): " + c2.getNodeRef() + " pivotProperty: " + pivotProperty);
+						logger.trace(" comparisonMap: " + comparisonMap);
 					}
 
 					StructCompareResultDataItem structComparison = new StructCompareResultDataItem(entityListType, c2.getDepthLevel(),
