@@ -1125,9 +1125,11 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		if (doQuery) {
 			logger.debug("findNodeByKeyOrCode: " + queryBuilder.toString());
 
+			//TODO Refactor used to lookup for parent in the same list
 			if (dictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM) && !dictionaryService.isSubClass(type, BeCPGModel.TYPE_CHARACT)
 					&& !dictionaryService.isSubClass(type, BeCPGModel.TYPE_LINKED_VALUE)
-					&& !dictionaryService.isSubClass(type, BeCPGModel.TYPE_LIST_VALUE) && !dictionaryService.isSubClass(type, PLMModel.TYPE_PLANT)) {
+					&& !dictionaryService.isSubClass(type, BeCPGModel.TYPE_LIST_VALUE) && !dictionaryService.isSubClass(type, PLMModel.TYPE_PLANT)
+					&& !dictionaryService.isSubClass(type, PLMModel.TYPE_TRADEMARK)) {
 				for (NodeRef tmpNodeRef : queryBuilder.inDB().ftsLanguage().list()) {
 					if (nodeService.getPrimaryParent(tmpNodeRef).getParentRef().equals(importContext.getParentNodeRef())
 							&& !nodeService.hasAspect(tmpNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)
