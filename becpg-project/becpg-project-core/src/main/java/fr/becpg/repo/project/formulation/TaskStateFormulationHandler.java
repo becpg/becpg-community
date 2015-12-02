@@ -89,11 +89,16 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 		}
 		// we don't want tasks of project template start
 		else if (!projectData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)
-				&& !projectData.getAspects().contains(BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
+				&& !projectData.getAspects().contains(BeCPGModel.ASPECT_COMPOSITE_VERSION)
+				&& !ProjectState.Cancelled.equals(projectData.getProjectState())) {
 
+			if( projectData.getProjectState() == null){
+				projectData.setProjectState(ProjectState.Planned);
+			}
+			
 			// start project if startdate is before now and startdate != created
 			// otherwise ProjectMgr will start it manually
-			if (ProjectState.Planned.equals(projectData.getProjectState()) && (projectData.getStartDate() != null)
+			if ((ProjectState.Planned.equals(projectData.getProjectState())) && (projectData.getStartDate() != null)
 					&& projectData.getStartDate().before(new Date())) {
 				projectData.setProjectState(ProjectState.InProgress);
 			}
