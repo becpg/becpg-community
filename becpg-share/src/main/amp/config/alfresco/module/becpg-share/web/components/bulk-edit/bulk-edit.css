@@ -8,12 +8,12 @@
 	 margin-left: 1em;
 	 padding: 10px;
 	 height: 11em;
+	 overflow: auto;
 }
 
 .bulk-edit .bulk-edit-props-container  li {
     line-height: 2em;
 	 width: 20em;
-	 overflow-x: auto;
 	 white-space: nowrap;
      overflow: hidden;
      text-overflow: ellipsis;
@@ -37,6 +37,10 @@
  .bulk-edit .bulk-edit-props-container  li.column-11 { margin-left: 220em; }
  .bulk-edit .bulk-edit-props-container  li.column-12 { margin-left: 240em; }
  .bulk-edit .bulk-edit-props-container  li.column-13 { margin-left: 260em; }
+ .bulk-edit .bulk-edit-props-container  li.column-14 { margin-left: 280em; }
+ .bulk-edit .bulk-edit-props-container  li.column-15 { margin-left: 300em; }
+ .bulk-edit .bulk-edit-props-container  li.column-16 { margin-left: 320em; }
+ .bulk-edit .bulk-edit-props-container  li.column-17 { margin-left: 340em; }
          
  
 
