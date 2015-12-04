@@ -92,6 +92,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	protected static final String PRODUCT_IMG_ID = "Img%d";
 	protected static final String ATTR_IMAGE_ID = "id";
 	protected static final String AVATAR_IMG_ID = "avatar";
+	protected static final String REPORT_LOGO_ID = "report_logo";
 	private static final String TAG_COMMENTS = "comments";
 	private static final String TAG_COMMENT = "comment";
 
@@ -183,7 +184,14 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
 		if (imagesFolderNodeRef != null) {
 			for (FileInfo fileInfo : fileFolderService.listFiles(imagesFolderNodeRef)) {
-				extractImage(fileInfo.getNodeRef(), String.format(PRODUCT_IMG_ID, cnt), imgsElt, images);
+				
+				String imgId = String.format(PRODUCT_IMG_ID, cnt);
+				
+				if(fileInfo.getName().startsWith(REPORT_LOGO_ID) ){
+					imgId = REPORT_LOGO_ID;
+				}
+				
+				extractImage(fileInfo.getNodeRef(), imgId, imgsElt, images);
 				cnt++;
 			}
 		}				
