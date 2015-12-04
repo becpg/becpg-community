@@ -45,6 +45,10 @@ public class RepoConsts {
 	public static final String PATH_REPORTS	= "Reports";
 	public static final String PATH_REPORTS_COMPARE_ENTITIES = "CompareProducts";
 	public static final String PATH_REPORTS_EXPORT_SEARCH = "ExportSearch";
+	
+
+	public static final String PATH_REPORT_PARAMS = "ReportParams";
+	
 	// olap
 	public static final String PATH_OLAP_QUERIES = "OlapQueries";
 	
@@ -142,6 +146,7 @@ public class RepoConsts {
 	//Formats
 	public static final String FORMAT_CSV = "csv";
 	public static final String FORMAT_XLSX = "xlsx";
+
 
 	
 }

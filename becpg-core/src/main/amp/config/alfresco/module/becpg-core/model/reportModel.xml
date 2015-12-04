@@ -39,7 +39,24 @@
 					<value>DOCX</value>
 				</list>
 			</parameter>
-		</constraint>					
+		</constraint>	
+		<constraint name="rep:reportParams" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/Lists/bcpg:entityLists/ReportParams</value>
+				</list>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>bcpg:lvValue</value>
+			</parameter>
+		</constraint>
+						
 	</constraints>
 
 	<types>
@@ -157,6 +174,19 @@
 				</property>
 			</properties>
 		</aspect>
+		
+		<aspect name="rep:reportParametersAspect">
+			<properties>
+				<property name="rep:reportParameters">
+					<type>d:text</type>
+					<multiple>true</multiple>
+					<constraints>
+						<constraint ref="rep:reportParams" />
+					</constraints>					
+				</property>
+			</properties>
+		</aspect>
+		
 		
 		<!-- applied to a node when a user can select reports to generate -->
 		<aspect name="rep:reportTplsAspect">

@@ -116,6 +116,7 @@
 					<show id="bcpg:entityTplRef" force="true" />
 					<show id="rep:reportTpls" />
 					<show id="rep:reportLocales" />
+					<show id="rep:reportParameters" />
 					
 					<!-- Nutrient profiling score -->
 					<show id="bcpg:nutrientProfilingScore"  for-mode="view"/>
@@ -309,6 +310,7 @@
 					<field id="rep:reportLocales" set="mainInfo" >
 						<control template="/org/alfresco/components/form/controls/mtlangue.ftl"/>
 					</field>
+					<field id="rep:reportParameters" set="mainInfo" />
 					
 					<!-- consumer -->
 					<field id="bcpg:useByDate" help-id="becpg.forms.help.useByDate" set="consumer" />
@@ -1309,6 +1311,7 @@
 					<show id="bcpg:entityTplRef" force="true" />
 					<show id="rep:reportTpls" />
 					<show id="rep:reportLocales" />
+					<show id="rep:reportParameters" />
 
 					<!-- pallet -->
 					<show id="pack:palletLayers" />
@@ -1392,6 +1395,7 @@
 					<field id="rep:reportLocales" set="mainInfo" >
 						<control template="/org/alfresco/components/form/controls/mtlangue.ftl"/>
 					</field>
+					<field id="rep:reportParameters" set="mainInfo" />
 
 					<!-- pallet -->
 					<field id="pack:palletLayers" set="pallet" />
@@ -1673,6 +1677,7 @@
 					<show id="bcpg:entityTplRef" force="true" />
 					<show id="rep:reportTpls" />
 					<show id="rep:reportLocales" />
+					<show id="rep:reportParameters" />
 
 					<!-- Tare -->
 					<show id="pack:tare" force="true" />
@@ -1790,7 +1795,7 @@
 					<field id="rep:reportLocales" set="mainInfo" >
 						<control template="/org/alfresco/components/form/controls/mtlangue.ftl"/>
 					</field>
-
+					<field id="rep:reportParameters" set="mainInfo" />
 
 					<!-- tare -->
 					<field id="pack:tare" set="tare" />
@@ -2402,7 +2407,9 @@
 					<show id="bcpg:supplierPlants" force="true" />
 					<show id="rep:reportTpls" />
 					<show id="rep:reportLocales" />
+					<show id="rep:reportParameters" />
 					<show id="bcpg:entityTplRef" force="true" />
+					
 
 					<!-- Consumer -->
 					
@@ -2530,6 +2537,7 @@
 					<field id="rep:reportLocales" set="mainInfo" >
 						<control template="/org/alfresco/components/form/controls/mtlangue.ftl"/>
 					</field>
+					<field id="rep:reportParameters" set="mainInfo" />
 
 					<!-- consumer -->
 					
@@ -3332,6 +3340,7 @@
 					<show id="bcpg:entityTplRef" force="true" />
 					<show id="rep:reportTpls" />
 					<show id="rep:reportLocales" />
+					<show id="rep:reportParameters" />
 					
 
 					<!-- formulation -->
@@ -3446,6 +3455,7 @@
 					<field id="rep:reportLocales" set="mainInfo" >
 						<control template="/org/alfresco/components/form/controls/mtlangue.ftl"/>
 					</field>
+					<field id="rep:reportParameters" set="mainInfo" />
 
 					<!-- formulation -->
 					<field id="bcpg:productQty" help-id="becpg.forms.help.productQty" set="formulation" />
