@@ -51,6 +51,21 @@
                </field>
             </appearance>
          </form>
+         <form id="reports-parameters">
+	         	<field-visibility>
+	         		<show id="rep:reportLocales" force="true" />
+	               <show id="rep:reportParameters" force="true" />
+	               <show id="rep:reportTpls" force="true" />
+	              
+	            </field-visibility>
+	            <appearance>
+					<field id="rep:reportLocales" >
+						<control template="/org/alfresco/components/form/controls/mtlangue.ftl"/>
+					</field>
+					<field id="rep:reportParameters" />
+					<field id="rep:reportTpls" />
+				</appearance>		
+	       </form>
       </forms>
    </config>
    

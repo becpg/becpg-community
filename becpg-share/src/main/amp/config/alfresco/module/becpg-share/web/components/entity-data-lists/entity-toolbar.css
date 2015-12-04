@@ -90,6 +90,12 @@
    padding-left: 24px;
 }
 
+.datalist-toolbar .entity-reports-parameters span.first-child
+{
+   background: url(../documentlibrary/actions/entity-reports-parameters-16.png) no-repeat 12px 4px;
+   padding-left: 24px;
+}
+
 .datalist-toolbar .entity-refresh-reports span.first-child
 {
    background: url(../documentlibrary/actions/entity-refresh-reports-16.png) no-repeat 12px 4px;

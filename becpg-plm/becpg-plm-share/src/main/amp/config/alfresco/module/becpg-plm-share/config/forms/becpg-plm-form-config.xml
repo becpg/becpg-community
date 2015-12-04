@@ -114,9 +114,6 @@
 					<show id="bcpg:clients" />
 					<show id="bcpg:suppliers" />
 					<show id="bcpg:entityTplRef" force="true" />
-					<show id="rep:reportTpls" />
-					<show id="rep:reportLocales" />
-					<show id="rep:reportParameters" />
 					
 					<!-- Nutrient profiling score -->
 					<show id="bcpg:nutrientProfilingScore"  for-mode="view"/>
@@ -306,11 +303,6 @@
 							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
 						</control>
 					</field>
-					<field id="rep:reportTpls" set="mainInfo" />
-					<field id="rep:reportLocales" set="mainInfo" >
-						<control template="/org/alfresco/components/form/controls/mtlangue.ftl"/>
-					</field>
-					<field id="rep:reportParameters" set="mainInfo" />
 					
 					<!-- consumer -->
 					<field id="bcpg:useByDate" help-id="becpg.forms.help.useByDate" set="consumer" />
@@ -552,7 +544,21 @@
 					</field>
 				</appearance>
 			</form>
-
+			<form id="reports-parameters">
+	         	<field-visibility>
+	         		<show id="rep:reportLocales" force="true" />
+	               <show id="rep:reportParameters" force="true" />
+	               <show id="rep:reportTpls" force="true" />
+	              
+	            </field-visibility>
+	            <appearance>
+					<field id="rep:reportLocales" >
+						<control template="/org/alfresco/components/form/controls/mtlangue.ftl"/>
+					</field>
+					<field id="rep:reportParameters" />
+					<field id="rep:reportTpls" />
+				</appearance>		
+	         </form>
 			<!-- Document Library pop-up Edit Metadata form -->
 			<form id="doclib-simple-metadata">
 				<field-visibility>
@@ -1309,9 +1315,6 @@
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:entityTplRef" force="true" />
-					<show id="rep:reportTpls" />
-					<show id="rep:reportLocales" />
-					<show id="rep:reportParameters" />
 
 					<!-- pallet -->
 					<show id="pack:palletLayers" />
@@ -1391,11 +1394,7 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="rep:reportTpls" set="mainInfo" />
-					<field id="rep:reportLocales" set="mainInfo" >
-						<control template="/org/alfresco/components/form/controls/mtlangue.ftl"/>
-					</field>
-					<field id="rep:reportParameters" set="mainInfo" />
+					
 
 					<!-- pallet -->
 					<field id="pack:palletLayers" set="pallet" />
@@ -1476,6 +1475,21 @@
 					</field>
 				</appearance>
 			</form>
+			<form id="reports-parameters">
+	         	<field-visibility>
+	         		<show id="rep:reportLocales" force="true" />
+	               <show id="rep:reportParameters" force="true" />
+	               <show id="rep:reportTpls" force="true" />
+	              
+	            </field-visibility>
+	            <appearance>
+					<field id="rep:reportLocales" >
+						<control template="/org/alfresco/components/form/controls/mtlangue.ftl"/>
+					</field>
+					<field id="rep:reportParameters" />
+					<field id="rep:reportTpls" />
+				</appearance>		
+	         </form>
 		</forms>
 	</config>
 
@@ -1675,10 +1689,7 @@
 					<show id="bcpg:suppliers" />
 					<show id="bcpg:plants" force="true" />
 					<show id="bcpg:entityTplRef" force="true" />
-					<show id="rep:reportTpls" />
-					<show id="rep:reportLocales" />
-					<show id="rep:reportParameters" />
-
+					
 					<!-- Tare -->
 					<show id="pack:tare" force="true" />
 					<show id="pack:tareUnit" force="true" />
@@ -1895,7 +1906,21 @@
 					</field>
 				</appearance>
 			</form>
-			
+			<form id="reports-parameters">
+	         	<field-visibility>
+	         		<show id="rep:reportLocales" force="true" />
+	               <show id="rep:reportParameters" force="true" />
+	               <show id="rep:reportTpls" force="true" />
+	              
+	            </field-visibility>
+	            <appearance>
+					<field id="rep:reportLocales" >
+						<control template="/org/alfresco/components/form/controls/mtlangue.ftl"/>
+					</field>
+					<field id="rep:reportParameters" />
+					<field id="rep:reportTpls" />
+				</appearance>		
+	         </form>
 			<form id="supplier-pack">
 				<field-visibility>
 
@@ -2405,9 +2430,6 @@
 					<show id="bcpg:suppliers" />
 					<show id="bcpg:plants" force="true" />
 					<show id="bcpg:supplierPlants" force="true" />
-					<show id="rep:reportTpls" />
-					<show id="rep:reportLocales" />
-					<show id="rep:reportParameters" />
 					<show id="bcpg:entityTplRef" force="true" />
 					
 
@@ -2533,11 +2555,6 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="rep:reportTpls" set="mainInfo" />
-					<field id="rep:reportLocales" set="mainInfo" >
-						<control template="/org/alfresco/components/form/controls/mtlangue.ftl"/>
-					</field>
-					<field id="rep:reportParameters" set="mainInfo" />
 
 					<!-- consumer -->
 					
@@ -2672,6 +2689,21 @@
 					<field id="cm:modified" set="audit" />
 				</appearance>
 			</form>
+			<form id="reports-parameters">
+	         	<field-visibility>
+	         		<show id="rep:reportLocales" force="true" />
+	               <show id="rep:reportParameters" force="true" />
+	               <show id="rep:reportTpls" force="true" />
+	              
+	            </field-visibility>
+	            <appearance>
+					<field id="rep:reportLocales" >
+						<control template="/org/alfresco/components/form/controls/mtlangue.ftl"/>
+					</field>
+					<field id="rep:reportParameters" />
+					<field id="rep:reportTpls" />
+				</appearance>		
+	         </form>
 			<form id="supplier-mp">
 				<field-visibility>
 
@@ -3338,9 +3370,6 @@
 					<show id="bcpg:productState" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:entityTplRef" force="true" />
-					<show id="rep:reportTpls" />
-					<show id="rep:reportLocales" />
-					<show id="rep:reportParameters" />
 					
 
 					<!-- formulation -->
@@ -3573,6 +3602,21 @@
 					<field id="cm:modified" set="audit" />
 				</appearance>
 			</form>
+			<form id="reports-parameters">
+	         	<field-visibility>
+	         		<show id="rep:reportLocales" force="true" />
+	               <show id="rep:reportParameters" force="true" />
+	               <show id="rep:reportTpls" force="true" />
+	              
+	            </field-visibility>
+	            <appearance>
+					<field id="rep:reportLocales" >
+						<control template="/org/alfresco/components/form/controls/mtlangue.ftl"/>
+					</field>
+					<field id="rep:reportParameters" />
+					<field id="rep:reportTpls" />
+				</appearance>		
+	         </form>
 			<form id="formulation">
 				<field-visibility>
 					<show id="cm:name" />
