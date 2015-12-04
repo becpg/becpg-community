@@ -90,6 +90,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	private static final String ATTR_PACKAGING_QTY_FOR_PRODUCT = "packagingListQtyForProduct";
 	private static final String ATTR_PROCESS_QTY_FOR_PRODUCT = "processListQtyForProduct";
 	private static final String TAG_PACKAGING_LEVEL_MEASURES = "packagingLevelMeasures";
+	
+	
 
 	@Value("${beCPG.product.report.multiLevel}")
 	private Boolean extractInMultiLevel = false;
