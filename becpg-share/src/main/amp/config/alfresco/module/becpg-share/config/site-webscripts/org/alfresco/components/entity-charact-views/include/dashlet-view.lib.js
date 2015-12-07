@@ -16,7 +16,7 @@
  *  You should have received a copy of the GNU Lesser General Public License along with beCPG.
  *   If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-function createDashlet(dashletId, dashletName, dashletTitle, itemType, disableResize,listId,  columnFormId){
+function createDashlet(dashletId, dashletName, dashletTitle, itemType, disableResize,listId,  columnFormId, extraDataParams){
 
    var entityDataGrid = {
          id : "entityDataGrid", 
@@ -37,7 +37,8 @@ function createDashlet(dashletId, dashletName, dashletTitle, itemType, disableRe
             saveFieldUrl : page.url.context+"/proxy/alfresco/becpg/bulkedit/save",
             hiddenColumns : ["prop_bcpg_depthLevel"],
             initHistoryManager : false,
-            columnFormId : columnFormId ? columnFormId : null
+            columnFormId : columnFormId ? columnFormId : null, 
+            extraDataParams : extraDataParams ? extraDataParams : "&repo=true"
            }
         };
          
