@@ -5256,6 +5256,7 @@
 					<show id="bcpg:locationZip" />
 					<show id="bcpg:locationCity" />
 					<show id="bcpg:locationCountry" />
+					<show id="bcpg:plantPackerCode" />
 					<show id="bcpg:plantCertifications" />
 					<show id="bcpg:plantApprovalNumbers" />
 				</field-visibility>
@@ -5287,6 +5288,7 @@
 					<show id="bcpg:locationZip" />
 					<show id="bcpg:locationCity" />
 					<show id="bcpg:locationCountry" />
+					<show id="bcpg:plantPackerCode" />
 					<show id="bcpg:plantCertifications" />
 					<show id="bcpg:plantApprovalNumbers" />
 				</field-visibility>
@@ -5320,6 +5322,7 @@
 					<show id="bcpg:locationZip" />
 					<show id="bcpg:locationCity" />
 					<show id="bcpg:locationCountry" />
+					<show id="bcpg:plantPackerCode" />
 					<show id="bcpg:plantCertifications" />
 					<show id="bcpg:plantApprovalNumbers" />
 				</field-visibility>

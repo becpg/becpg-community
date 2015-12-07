@@ -952,6 +952,9 @@
 				<property name="bcpg:plantTel">
 					<type>d:text</type>
 				</property>
+				<property name="bcpg:plantPackerCode">
+					<type>d:text</type>
+				</property>
 			</properties>
 			<associations>
 				<association name="bcpg:plantCertifications">
@@ -1635,7 +1638,7 @@
 			<parent>bcpg:productListItem</parent>
 			<properties>
 				<property name="bcpg:organoListValue">
-					<type>d:text</type>
+					<type>d:mltext</type>
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
@@ -2531,7 +2534,7 @@
 					<type>d:double</type>
 				</property>
 				<property name="bcpg:numberOfServings">
-					<type>d:text</type>
+					<type>d:mltext</type>
 				</property>
 				<property name="bcpg:preparationTips">
 					<type>d:mltext</type>
