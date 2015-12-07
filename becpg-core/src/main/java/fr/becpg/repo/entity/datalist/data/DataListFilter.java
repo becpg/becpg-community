@@ -69,6 +69,8 @@ public class DataListFilter {
 	private QName dataType = null;
 
 	private boolean isRepo = true;
+	
+	private boolean guessContainer = false; 
 
 	private String siteId = null;
 
@@ -133,6 +135,15 @@ public class DataListFilter {
 
 	public void setParentNodeRef(NodeRef parentNodeRef) {
 		this.parentNodeRef = parentNodeRef;
+	}
+	
+	
+	public boolean isGuessContainer() {
+		return guessContainer;
+	}
+
+	public void setGuessContainer(boolean guessContainer) {
+		this.guessContainer = guessContainer;
 	}
 
 	public boolean isRepo() {
