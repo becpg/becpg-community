@@ -2534,7 +2534,7 @@
 					<type>d:text</type>
 				</property>
 				<property name="bcpg:preparationTips">
-					<type>d:text</type>
+					<type>d:mltext</type>
 				</property>
 				<property name="bcpg:packagingDescription">
 					<type>d:mltext</type>
