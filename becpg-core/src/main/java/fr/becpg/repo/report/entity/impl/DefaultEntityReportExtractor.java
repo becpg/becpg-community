@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.alfresco.model.ApplicationModel;
@@ -54,6 +55,7 @@ import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.config.format.PropertyFormats;
@@ -92,6 +94,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	protected static final String PRODUCT_IMG_ID = "Img%d";
 	protected static final String ATTR_IMAGE_ID = "id";
 	protected static final String AVATAR_IMG_ID = "avatar";
+	protected static final String REPORT_LOGO_ID = "report_logo";
 	private static final String TAG_COMMENTS = "comments";
 	private static final String TAG_COMMENT = "comment";
 
@@ -183,7 +186,15 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
 		if (imagesFolderNodeRef != null) {
 			for (FileInfo fileInfo : fileFolderService.listFiles(imagesFolderNodeRef)) {
-				extractImage(fileInfo.getNodeRef(), String.format(PRODUCT_IMG_ID, cnt), imgsElt, images);
+				
+				String imgId = String.format(PRODUCT_IMG_ID, cnt);
+				
+				if(fileInfo.getName().startsWith(REPORT_LOGO_ID) || 
+						fileInfo.getName().startsWith(I18NUtil.getMessage("report.logo.fileName.prefix",Locale.getDefault())) ){
+					imgId = REPORT_LOGO_ID;
+				}
+				
+				extractImage(fileInfo.getNodeRef(), imgId, imgsElt, images);
 				cnt++;
 			}
 		}				

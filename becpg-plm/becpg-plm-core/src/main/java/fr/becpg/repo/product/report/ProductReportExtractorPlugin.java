@@ -90,6 +90,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	private static final String ATTR_PACKAGING_QTY_FOR_PRODUCT = "packagingListQtyForProduct";
 	private static final String ATTR_PROCESS_QTY_FOR_PRODUCT = "processListQtyForProduct";
 	private static final String TAG_PACKAGING_LEVEL_MEASURES = "packagingLevelMeasures";
+	
+	
 
 	@Value("${beCPG.product.report.multiLevel}")
 	private Boolean extractInMultiLevel = false;
@@ -387,6 +389,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					nutListsElt.addAttribute(generateKeyAttribute(nut), value != null ? value : "");
 					NodeRef nutNodeRef = dataListItem.getNut();
 					addCDATA(nutListElt, ContentModel.PROP_DESCRIPTION, (String) nodeService.getProperty(nutNodeRef, ContentModel.PROP_DESCRIPTION));
+					addCDATA(nutListElt, PLMModel.PROP_NUTGDA, nodeService.getProperty(nutNodeRef, PLMModel.PROP_NUTGDA)!=null ?
+							((Double) nodeService.getProperty(nutNodeRef, PLMModel.PROP_NUTGDA)).toString(): "");
 				}
 			}
 		}

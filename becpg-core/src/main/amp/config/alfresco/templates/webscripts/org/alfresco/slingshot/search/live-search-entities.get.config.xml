@@ -1,0 +1,4 @@
+<search>
+   <default-operator>AND</default-operator>
+   <default-query-template>%(cm:name bcpg:erpCode bcpg:code bcpg:legalName)</default-query-template>
+</search>

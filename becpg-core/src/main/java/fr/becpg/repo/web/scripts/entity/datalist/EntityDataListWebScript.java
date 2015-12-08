@@ -122,6 +122,8 @@ public class EntityDataListWebScript extends AbstractWebScript {
 	protected static final String PARAM_MAX_RESULTS = "maxResults";
 
 	protected static final String PARAM_QUERY_EXECUTION_ID = "queryExecutionId";
+	
+    protected static final String PARAM_GUESS_CONTAINER = "guessContainer";
 
 	private NodeService nodeService;
 
@@ -215,6 +217,14 @@ public class EntityDataListWebScript extends AbstractWebScript {
 			isRepo = false;
 		}
 		dataListFilter.setRepo(isRepo);
+		
+		
+		String guessContainer = req.getParameter(PARAM_GUESS_CONTAINER);
+
+		if ("true".equals(guessContainer)) {
+			dataListFilter.setGuessContainer(true);
+		}
+		
 
 		Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();
 		if (templateArgs != null) {

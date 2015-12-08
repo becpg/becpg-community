@@ -98,7 +98,7 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 		MultiLevelListData ret = new MultiLevelListData(entityNodeRef, currDepth);
 
 		// This check prevents stack over flow when we have a cyclic node
-		if (!visitedNodeRefs.contains(entityNodeRef)) {
+		if (!visitedNodeRefs.contains(entityNodeRef) || currDepth < 100) {
 			visitedNodeRefs.add(entityNodeRef);
 			if ((maxDepthLevel < 0) || (currDepth < maxDepthLevel)) {
 				logger.debug("getMultiLevelListData depth :" + currDepth + " max " + maxDepthLevel);

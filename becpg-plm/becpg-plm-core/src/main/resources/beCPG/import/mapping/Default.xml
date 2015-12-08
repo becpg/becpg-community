@@ -184,6 +184,15 @@
 			<column id="bcpg:lrComponents" type="Attribute" attribute="bcpg:lrComponents" targetClass="bcpg:ing" />
 		</columns>
 	</mapping>
+	
+	<mapping name="bcpg:forbiddenIngList">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:erpCode" />
+		</nodeColumnKeys>
+		<dataListColumnKeys>
+			<dataListColumnKey attribute="bcpg:filIngs" />
+		</dataListColumnKeys>
+	</mapping>
 
 	<mapping name="bcpg:productSpecification">
 		<nodeColumnKeys>
