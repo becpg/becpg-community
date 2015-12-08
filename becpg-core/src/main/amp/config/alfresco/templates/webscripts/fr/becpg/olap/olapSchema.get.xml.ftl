@@ -596,7 +596,7 @@
 					MAX(IF(prop.prop_name = "pjt:projectHierarchy2",prop.string_value,NULL)) as projectHierarchy2,
 					MAX(IF(prop.prop_name = "bcpg:code",prop.string_value,NULL)) as code,
 					MAX(IF(prop.prop_name = "cm:created",prop.date_value,NULL)) as projectDateCreated,
-					MAX(IF(prop.prop_name = "cm:creator",prop.date_value,NULL)) as projectCreator,
+					MAX(IF(prop.prop_name = "cm:creator",prop.string_value,NULL)) as projectCreator,
 					MAX(IF(prop.prop_name = "cm:modified",prop.date_value,NULL)) as projectDateModified,
 					MAX(IF(prop.prop_name = "pjt:projectState",prop.string_value,NULL)) as projectState,
 					MAX(IF(prop.prop_name = "pjt:projectStartDate",prop.date_value,NULL)) as projectStartDate,
