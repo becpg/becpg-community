@@ -89,11 +89,16 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 		}
 		// we don't want tasks of project template start
 		else if (!projectData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)
-				&& !projectData.getAspects().contains(BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
+				&& !projectData.getAspects().contains(BeCPGModel.ASPECT_COMPOSITE_VERSION)
+				&& !ProjectState.Cancelled.equals(projectData.getProjectState())) {
 
+//			if( projectData.getProjectState() == null){
+//				projectData.setProjectState(ProjectState.Planned);
+//			}
+			
 			// start project if startdate is before now and startdate != created
 			// otherwise ProjectMgr will start it manually
-			if (ProjectState.Planned.equals(projectData.getProjectState()) && (projectData.getStartDate() != null)
+			if ((ProjectState.Planned.equals(projectData.getProjectState())) && (projectData.getStartDate() != null)
 					&& projectData.getStartDate().before(new Date())) {
 				projectData.setProjectState(ProjectState.InProgress);
 			}
@@ -156,6 +161,8 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 		if (!nextTasks.isEmpty()) {
 			for (TaskListDataItem nextTask : nextTasks) {
 
+				TaskState currentTaskState = nextTask.getTaskState();
+				
 				// cancel active workflow if task is not anymore InProgress
 				logger.debug("Visit task : " + nextTask.getTaskName() + " - state - " + nextTask.getTaskState());
 
@@ -169,20 +176,20 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 					if (nextTask.getPrevTasks().isEmpty()) {
 						if ((nextTask.getStart() != null) && nextTask.getStart().before(new Date())) {
 							logger.debug("Start first task.");
-							ProjectHelper.setTaskState(nextTask, TaskState.InProgress, projectActivityService);
-
+							nextTask.setTaskState(TaskState.InProgress);
+							
 						}
 					} else {
 						// previous task are done
 						if (ProjectHelper.areTasksDone(projectData, nextTask.getPrevTasks())) {
 							if (nextTask.getManualDate() == null) {
 								logger.debug("Start task since previous are done");
-								ProjectHelper.setTaskState(nextTask, TaskState.InProgress, projectActivityService);
+								nextTask.setTaskState(TaskState.InProgress);
 							}
 							// manual date -> we wait the date
 							else if ((nextTask.getStart() != null) && nextTask.getStart().before(new Date())) {
 								logger.debug("Start task since we are after planned startDate. start planned: " + nextTask.getStart());
-								ProjectHelper.setTaskState(nextTask, TaskState.InProgress, projectActivityService);
+								nextTask.setTaskState(TaskState.InProgress);
 							}
 						}
 					}
@@ -270,6 +277,11 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 
 					// Status can change during script execution
 					if (TaskState.InProgress.equals(nextTask.getTaskState())) {
+						
+						
+						if(!TaskState.InProgress.equals(currentTaskState)){
+							projectActivityService.postTaskStateChangeActivity(nextTask.getNodeRef(), nextTask.getTaskState().toString(), TaskState.InProgress.toString());
+						}
 
 						if (!nextTask.getIsGroup()) {
 							logger.debug("set completion percent to value " + taskCompletionPercent + " - noderef: " + nextTask.getNodeRef());

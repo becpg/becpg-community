@@ -122,6 +122,41 @@
 
     });
    
+   YAHOO.Bubbling.fire("registerToolbarButtonAction", {
+       actionName : "entity-reports-parameters",
+       evaluate : function(asset, entity) {
+           return asset.name !== null && asset.name.indexOf("View-reports") == 0  && entity.userAccess.edit;
+       },
+       fn : function(instance) {
+    	   var templateUrl = YAHOO.lang
+           .substitute(
+                 Alfresco.constants.URL_SERVICECONTEXT + "components/form?popup=true&formId=reports-parameters&itemKind=node&itemId={itemId}&mode=edit&submitType=json&showCancelButton=true",
+                 {
+                    itemId : this.options.entityNodeRef
+                 });
+
+	     var editProductMetadata = new Alfresco.module.SimpleDialog(this.id + "-editReportMetadata");
+	
+	     editProductMetadata.setOptions(
+	           {
+	              width : "33em",
+	              successMessage : this.msg("message.details.success"),
+	              failureMessage : this.msg("message.details.failure"),
+	              templateUrl : templateUrl,
+	              destroyOnHide : true,
+	              doBeforeDialogShow : {
+	                 fn : function(p_form, p_dialog) {
+	                    Alfresco.util.populateHTML([ p_dialog.id + "-dialogTitle",
+	                          this.msg("label.entity-reports-parameters.title") ]);
+	                 },
+	                 scope : this
+	              }
+	
+	           }).show();
+	       }
+
+    });
+   
    
 
 })();
