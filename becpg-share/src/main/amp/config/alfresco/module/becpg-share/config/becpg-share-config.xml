@@ -76,6 +76,7 @@
 		<lists>
 		   <list id="View-properties" index="0" view="true" />
 		   <list id="View-reports" index="10" view="true"/>
+		   <list id="View-documents" index="15" view="true" />
 		   <list id="aclEntry" index="200" />
 		   <list id="WUsed" index="1000" view="true"/>
 		</lists>

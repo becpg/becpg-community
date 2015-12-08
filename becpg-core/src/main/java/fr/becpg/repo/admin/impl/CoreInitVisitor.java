@@ -20,7 +20,12 @@ package fr.becpg.repo.admin.impl;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.action.evaluator.ComparePropertyValueEvaluator;
@@ -33,7 +38,6 @@ import org.alfresco.service.cmr.action.Action;
 import org.alfresco.service.cmr.action.ActionCondition;
 import org.alfresco.service.cmr.action.CompositeAction;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
-import org.alfresco.service.cmr.repository.AssociationExistsException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.rule.Rule;
 import org.alfresco.service.cmr.rule.RuleType;
