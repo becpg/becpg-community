@@ -27,7 +27,8 @@
                      actionName : "export-csv",
                      right : true,
                      evaluate : function(asset, entity) {
-                        return asset.name !== null && !asset.name.indexOf("View-properties") == 0 && !asset.name.indexOf("View-reports") == 0;
+                        return asset.name !== null && !asset.name.indexOf("View-properties") == 0 && !asset.name.indexOf("View-reports") == 0
+                        && !asset.name.indexOf("View-documents") == 0 ;
                      },
                      fn : function(instance) {
 

@@ -3,6 +3,7 @@
    margin-left: -20px;
    min-height: 2em;
    padding: 4px 1em;
+   visibility: visible;
 }
 
 .datalists .left
@@ -94,6 +95,11 @@
 .datalists li a span.state.dl-View-reports
 {
     background: url("../documentlibrary/actions/entity-view-documents-16.png") no-repeat;
+}
+
+.datalists li a span.state.dl-View-documents
+{
+    background: url("../documentlibrary/actions/folder-copy-to-16.png") no-repeat;
 }
 
 .datalists li a span.state.Valid.dl-View-reports {
