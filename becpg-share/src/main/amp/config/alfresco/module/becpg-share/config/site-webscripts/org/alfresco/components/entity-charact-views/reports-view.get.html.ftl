@@ -7,8 +7,13 @@
    
    <@markup id="js" >
       <#include "../preview/include/web-preview-js-dependencies.lib.ftl" />
+	  <@inlineScript group="web-preview">
+		    beCPG.constants.SHOW_DOWNLOAD_LINKS = ${showAdditionalDownloadLinks?string};
+	  </@>
       <@script src="${url.context}/res/components/entity-charact-views/reports-view.js" group="web-preview"/>
    </@>
+
+
 
    <@markup id="widgets">
       <#if node??>

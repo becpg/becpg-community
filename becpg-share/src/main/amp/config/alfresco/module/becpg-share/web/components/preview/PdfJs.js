@@ -521,7 +521,8 @@
          
          
          //beCPG
-         if (Alfresco.constants.PAGEID === "entity-data-lists" || window.location.pathname.match("/entity-data-lists$") )
+         if (beCPG.constants.SHOW_DOWNLOAD_LINKS 
+        		 && (Alfresco.constants.PAGEID === "entity-data-lists" || window.location.pathname.match("/entity-data-lists$")) )
          {
         	if(this.attributes.src){
         		downloadMenu.push({ text: this.wp.msg("link.downloadPdf"), value: "", onclick: { fn: this.onDownloadbPDFClick, scope: this } });
