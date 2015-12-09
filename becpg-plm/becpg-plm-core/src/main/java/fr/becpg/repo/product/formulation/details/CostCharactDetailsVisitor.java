@@ -101,7 +101,7 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 			for (PackagingListDataItem packagingListDataItem : formulatedProduct
 					.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 				Double qty = FormulationHelper.getQtyForCostByPackagingLevel(formulatedProduct, packagingListDataItem, nodeService)
-						/ FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT) * subQuantity;
+						/ FormulationHelper.getNetQtyForCost(formulatedProduct) * subQuantity;
 
 				visitPart(formulatedProduct.getNodeRef(), packagingListDataItem.getProduct(), ret, qty, netQty, currLevel);
 				
@@ -123,7 +123,7 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 					.getProcessList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 
 				Double qty = FormulationHelper.getQty(formulatedProduct, processListDataItem)
-						/ FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT) * subQuantity;
+						/ FormulationHelper.getNetQtyForCost(formulatedProduct) * subQuantity;
 				if (processListDataItem.getResource() != null && qty != null) {
 					if (ProcessListUnit.P.equals(processListDataItem.getUnit()) && ProductUnit.P.equals(formulatedProduct.getUnit())) {
 						netQty = FormulationHelper.QTY_FOR_PIECE;
