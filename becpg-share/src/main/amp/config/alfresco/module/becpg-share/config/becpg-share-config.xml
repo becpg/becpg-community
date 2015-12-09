@@ -29,6 +29,11 @@
 	</config>
 
 
+   <config evaluator="string-compare" condition="reports">
+       <showAdditionalDownloadLinks>true</showAdditionalDownloadLinks>	
+   </config>
+
+
 	<config>
 		<forms>
 			<dependencies>

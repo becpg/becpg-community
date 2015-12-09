@@ -75,6 +75,13 @@ beCPG.util = beCPG.util || {};
 beCPG.custom = beCPG.custom || {};
 
 /**
+ * beCPG top-level util namespace.
+ * @namespace beCPG
+ * @class beCPG.constants
+ */
+beCPG.constants = beCPG.constants || {};
+
+/**
  * Utility method for arrays
  */
 beCPG.util.contains = function(array, obj) {
