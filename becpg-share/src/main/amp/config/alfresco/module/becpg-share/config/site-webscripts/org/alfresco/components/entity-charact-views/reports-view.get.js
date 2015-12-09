@@ -65,6 +65,10 @@ function main()
    AlfrescoUtil.param("proxy", "alfresco");
    AlfrescoUtil.param('currVersionNodeRef',null);
    
+   var showAdditionalDownloadLinks = config.scoped["reports"]["showAdditionalDownloadLinks"].value;
+   
+   model.showAdditionalDownloadLinks = showAdditionalDownloadLinks!=null && showAdditionalDownloadLinks == "true";
+   
    var nodeDetails = AlfrescoUtil.getNodeDetails(model.nodeRef, model.site);
    
    if(nodeDetails){
