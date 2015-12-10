@@ -417,6 +417,11 @@
                             var me = this, displayPaths = paths.concat();
 
                             displayPaths[0] = Alfresco.util.message("node.root", this.currentFilter.filterOwner);
+                            
+                            //beCPG
+                            if(displayPaths[0] == "node.root"){
+                            	 displayPaths[0] = this.msg("node.root");
+                            }
 
                             var fnCrumbIconClick = function DLTB__fnCrumbIconClick(e, path)
                             {
