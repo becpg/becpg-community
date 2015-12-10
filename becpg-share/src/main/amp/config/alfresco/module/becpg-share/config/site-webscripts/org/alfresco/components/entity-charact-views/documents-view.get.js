@@ -9,10 +9,10 @@ function widgets()
  
    var docListToolbar = {
       id: "DocListToolbar", 
-      name: "Alfresco.DocListToolbar",
+      name: "beCPG.custom.DocListToolbar",
       assignTo: "docListToolbar",
       options: {
-         siteId: "",
+         siteId: (page.url.templateArgs.site != null) ? page.url.templateArgs.site : "",
     	 rootNode : page.url.args.nodeRef!=null ?page.url.args.nodeRef : "null",
          hideNavBar: false,
          repositoryBrowsing: false,
@@ -25,10 +25,11 @@ function widgets()
    
    var documentList = {
       id : "DocumentList", 
-      name : "Alfresco.DocumentList",
+      name : "beCPG.custom.DocumentList",
       options : {
-         syncMode : model.syncMode != null ? model.syncMode : "",         
-         siteId : "",
+         syncMode : model.syncMode != null ? model.syncMode : "",        
+         disableSiteMode : true,		 
+         siteId : (page.url.templateArgs.site != null) ? page.url.templateArgs.site : "",
          containerId : template.properties.container != null ? template.properties.container : "documentLibrary",
          rootNode : page.url.args.nodeRef!=null ?page.url.args.nodeRef : "null",
          usePagination : true,
