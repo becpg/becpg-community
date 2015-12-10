@@ -1161,14 +1161,17 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 									subIngItem.setVolume(subIngListItem.getData().getQtyPerc() / 100);
 								}
 
-								if (ingLabelItem.getSubIngs().stream().filter(i -> labelingFormulaContext.getLegalIngName(i, false)
-										.equals(labelingFormulaContext.getLegalIngName(subIngItem, false))).count() < 1) {
+								if (ingLabelItem.getSubIngs().stream()
+										.filter(i -> (labelingFormulaContext.getLegalIngName(i, false) != null) && labelingFormulaContext
+												.getLegalIngName(i, false).equals(labelingFormulaContext.getLegalIngName(subIngItem, false)))
+										.count() < 1) {
 									logger.trace("Adding subIng: " + subIngItem.getCharactName());
 									ingLabelItem.getSubIngs().add(subIngItem);
 								} else {
 									logger.trace("Merge subIng: " + subIngItem.getCharactName());
-									ingLabelItem.getSubIngs().stream().filter(i -> labelingFormulaContext.getLegalIngName(i, false)
-											.equals(labelingFormulaContext.getLegalIngName(subIngItem, false)))
+									ingLabelItem.getSubIngs().stream()
+											.filter(i -> (labelingFormulaContext.getLegalIngName(i, false) != null) && labelingFormulaContext
+													.getLegalIngName(i, false).equals(labelingFormulaContext.getLegalIngName(subIngItem, false)))
 
 											.forEach(i -> {
 												if ((i.getQty() != null) && (subIngItem.getQty() != null)) {
@@ -1179,7 +1182,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 												}
 
 											});
-
 								}
 							}
 
