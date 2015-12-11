@@ -27,7 +27,7 @@
 	/**
 	 * YUI Library aliases
 	 */
-	var Dom = YAHOO.util.Dom, Bubbling = YAHOO.Bubbling;
+	var Dom = YAHOO.util.Dom, Bubbling = YAHOO.Bubbling, Event = YAHOO.util.Event;
 
 	/**
 	 * Alfresco Slingshot aliases
@@ -445,8 +445,7 @@
 
 											// Build the DOM elements
 											el = document.createElement("li");
-											el.onclick = fnOnClick(list.name);
-											                                   											
+											el.onclick =  fnOnClick(list.name);                                 											
 											
 											
 											elLink = document.createElement("a");
@@ -458,7 +457,7 @@
 												var elEdit = document.createElement("span");
 												elEdit.className = "edit";
 												elEdit.title = this.msg("label.edit-list");
-												elEdit.onclick = fnEditOnClick(list.name, true);
+												Event.addListener(elEdit, "click",  fnEditOnClick(list.name, true));
 												elLink.appendChild(elEdit);
 											}
 											
@@ -466,7 +465,7 @@
 												var elDelete = document.createElement("span");
 												elDelete.className = "delete";
 												elDelete.title = this.msg("label.delete-list");
-												elDelete.onclick = fnDeleteOnClick(list.name, true);
+												Event.addListener(elDelete, "click",  fnDeleteOnClick(list.name, true));
 												elLink.appendChild(elDelete);
 											}
 											
@@ -474,7 +473,7 @@
 											elState.className = "state";											
 											if(permissions["changeState"] && list.name.indexOf("WUsed")<0){
 												elState.title = this.msg("button.datalist-state.description");
-												elState.onclick = fnChangeStateOnClick(list, true);
+												Event.addListener(elState, "click",  fnChangeStateOnClick(list, true));
 											}											
 
 											if(list.name.indexOf("WUsed")>-1){
