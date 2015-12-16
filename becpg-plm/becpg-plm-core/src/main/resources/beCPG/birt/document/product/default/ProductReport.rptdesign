@@ -3427,24 +3427,18 @@ row["illValue"]
                 </structure>
                 <structure>
                     <property name="columnName">length</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
+                    <property name="analysis">dimension</property>
                     <text-property name="heading">length</text-property>
-                    <property name="analysisColumn">length</property>
                 </structure>
                 <structure>
                     <property name="columnName">width</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
+                    <property name="analysis">dimension</property>
                     <text-property name="heading">width</text-property>
-                    <property name="analysisColumn">width</property>
                 </structure>
                 <structure>
                     <property name="columnName">height</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
+                    <property name="analysis">dimension</property>
                     <text-property name="heading">height</text-property>
-                    <property name="analysisColumn">height</property>
                 </structure>
                 <structure>
                     <property name="columnName">productHeight</property>
@@ -3624,21 +3618,21 @@ row["illValue"]
                     <property name="name">length</property>
                     <property name="nativeName">length</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="nativeDataType">8</property>
                 </structure>
                 <structure>
                     <property name="position">10</property>
                     <property name="name">width</property>
                     <property name="nativeName">width</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="nativeDataType">8</property>
                 </structure>
                 <structure>
                     <property name="position">11</property>
                     <property name="name">height</property>
                     <property name="nativeName">height</property>
                     <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="nativeDataType">8</property>
                 </structure>
                 <structure>
                     <property name="position">12</property>
@@ -3662,7 +3656,7 @@ row["illValue"]
                     <property name="nativeDataType">8</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingLists//packagingList]#:#{itemType;STRING;/@itemType},{packagingListProduct;STRING;/@packagingListProduct},{legalName;STRING;/@legalName},{packagingListQty;STRING;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{tare;DOUBLE;/@tare},{packagingListIsMaster;STRING;/@packagingListIsMaster},{length;STRING;@length},{width;STRING;@width},{height;STRING;@height},{productHeight;DOUBLE;../../../height},{productLength;DOUBLE;../../../length},{productWidth;DOUBLE;../../../width}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingLists//packagingList]#:#{itemType;STRING;/@itemType},{packagingListProduct;STRING;/@packagingListProduct},{legalName;STRING;/@legalName},{packagingListQty;STRING;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{tare;DOUBLE;/@tare},{packagingListIsMaster;STRING;/@packagingListIsMaster},{length;DOUBLE;@length},{width;DOUBLE;@width},{height;DOUBLE;@height},{productHeight;DOUBLE;../../../height},{productLength;DOUBLE;../../../length},{productWidth;DOUBLE;../../../width}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -4327,20 +4321,17 @@ row["illValue"]
                 </structure>
                 <structure>
                     <property name="columnName">length</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
+                    <property name="analysis">measure</property>
                     <text-property name="heading">length</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">width</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
+                    <property name="analysis">measure</property>
                     <text-property name="heading">width</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">height</property>
-                    <property name="analysis">attribute</property>
-                    <property name="onColumnLayout">false</property>
+                    <property name="analysis">measure</property>
                     <text-property name="heading">height</text-property>
                 </structure>
             </list-property>
@@ -4413,17 +4404,17 @@ row["illValue"]
                     <structure>
                         <property name="position">9</property>
                         <property name="name">length</property>
-                        <property name="dataType">string</property>
+                        <property name="dataType">float</property>
                     </structure>
                     <structure>
                         <property name="position">10</property>
                         <property name="name">width</property>
-                        <property name="dataType">string</property>
+                        <property name="dataType">float</property>
                     </structure>
                     <structure>
                         <property name="position">11</property>
                         <property name="name">height</property>
-                        <property name="dataType">string</property>
+                        <property name="dataType">float</property>
                     </structure>
                     <structure>
                         <property name="position">12</property>
@@ -4494,25 +4485,25 @@ row["illValue"]
                     <property name="position">9</property>
                     <property name="name">length</property>
                     <property name="nativeName">length</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
                 </structure>
                 <structure>
                     <property name="position">10</property>
                     <property name="name">width</property>
                     <property name="nativeName">width</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
                 </structure>
                 <structure>
                     <property name="position">11</property>
                     <property name="name">height</property>
                     <property name="nativeName">height</property>
-                    <property name="dataType">string</property>
-                    <property name="nativeDataType">12</property>
+                    <property name="dataType">float</property>
+                    <property name="nativeDataType">8</property>
                 </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingLists//packagingList]#:#{itemType;STRING;/@itemType},{packagingListProduct;STRING;/@packagingListProduct},{legalName;STRING;/@legalName},{packagingListQty;STRING;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{tare;STRING;/@tare},{packagingListIsMaster;STRING;/@packagingListIsMaster},{length;STRING;@length},{width;STRING;@width},{height;STRING;@height}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/packagingLists//packagingList]#:#{itemType;STRING;/@itemType},{packagingListProduct;STRING;/@packagingListProduct},{legalName;STRING;/@legalName},{packagingListQty;STRING;/@packagingListQty},{packagingListUnit;STRING;/@packagingListUnit},{packagingListPkgLevel;STRING;/@packagingListPkgLevel},{tare;STRING;/@tare},{packagingListIsMaster;STRING;/@packagingListIsMaster},{length;DOUBLE;@length},{width;DOUBLE;@width},{height;DOUBLE;@height}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
