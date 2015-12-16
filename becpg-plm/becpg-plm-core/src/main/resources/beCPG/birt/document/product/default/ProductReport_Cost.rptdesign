@@ -2230,6 +2230,15 @@ row["costListValuePerProduct"] * row["nbProductsPkgLevel3"]
                     <text-property name="heading">itemTypeEntity</text-property>
                 </structure>
             </list-property>
+            <list-property name="filter">
+                <structure>
+                    <property name="operator">gt</property>
+                    <expression name="expr" type="javascript">row["processListQtyForProduct"]</expression>
+                    <simple-property-list name="value1">
+                        <value>0</value>
+                    </simple-property-list>
+                </structure>
+            </list-property>
             <list-property name="parameters"/>
             <structure name="cachedMetaData">
                 <list-property name="resultSet">
@@ -3323,19 +3332,6 @@ dataSetRow["versionLabel"]
                 </cell>
             </row>
         </grid>
-        <data id="7085">
-            <property name="dataSet">Product</property>
-            <list-property name="boundDataColumns">
-                <structure>
-                    <property name="name">itemType</property>
-                    <text-property name="displayName">itemType</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["itemType"].indexOf("bcpg:finishedProduct")</expression>
-                    <property name="dataType">string</property>
-                    <property name="allowExport">true</property>
-                </structure>
-            </list-property>
-            <property name="resultSetColumn">itemType</property>
-        </data>
         <label id="1768"/>
         <table id="3471">
             <property name="width">100%</property>
@@ -3660,7 +3656,7 @@ dataSetRow["versionLabel"]
         <label id="3503"/>
         <table id="2890">
             <property name="pageBreakInside">avoid</property>
-            <property name="width">100%</property>
+            <property name="width">6.885416666666667in</property>
             <property name="dataSet">CompoList</property>
             <list-property name="boundDataColumns">
                 <structure>
@@ -3803,6 +3799,19 @@ dataSetRow["versionLabel"]
                     <expression name="expression" type="javascript">dataSetRow["itemTypeEntity"]</expression>
                     <property name="dataType">string</property>
                 </structure>
+                <structure>
+                    <property name="name">aggregationQtyForProduct</property>
+                    <property name="dataType">float</property>
+                    <property name="aggregateFunction">SUM</property>
+                    <list-property name="arguments">
+                        <structure>
+                            <property name="name">Expression</property>
+                            <expression name="value" type="javascript">row["compoListQtyForProduct"]</expression>
+                        </structure>
+                    </list-property>
+                    <expression name="filterExpr" type="javascript">dataSetRow["depthLevel"]==1</expression>
+                    <property name="allowExport">true</property>
+                </structure>
             </list-property>
             <column id="2910">
                 <property name="style">becpg-col-border</property>
@@ -3824,17 +3833,21 @@ dataSetRow["versionLabel"]
                 <property name="style">becpg-col-border</property>
                 <property name="width">0.4583333333333333in</property>
             </column>
+            <column id="7092">
+                <property name="style">becpg-col-border</property>
+                <property name="width">0.3125in</property>
+            </column>
             <column id="3290">
                 <property name="style">becpg-col-border</property>
-                <property name="width">0.3958333333333333in</property>
+                <property name="width">0.40625in</property>
             </column>
             <column id="3329">
                 <property name="style">becpg-col-border</property>
-                <property name="width">0.5648854961832062in</property>
+                <property name="width">0.4375in</property>
             </column>
             <column id="3332">
                 <property name="style">becpg-col-border</property>
-                <property name="width">0.5267175572519084in</property>
+                <property name="width">0.4270833333333333in</property>
             </column>
             <column id="3464">
                 <list-property name="visibility">
@@ -3844,13 +3857,13 @@ dataSetRow["versionLabel"]
                     </structure>
                 </list-property>
                 <property name="style">becpg-col-border</property>
-                <property name="width">0.5267175572519084in</property>
+                <property name="width">0.4791666666666667in</property>
             </column>
             <header>
                 <row id="6882">
                     <property name="style">becpg-col-header</property>
                     <cell id="6883">
-                        <property name="colSpan">9</property>
+                        <property name="colSpan">10</property>
                         <property name="rowSpan">1</property>
                         <property name="borderBottomStyle">none</property>
                         <property name="borderLeftStyle">none</property>
@@ -3866,7 +3879,7 @@ dataSetRow["versionLabel"]
                     <property name="borderBottomStyle">solid</property>
                     <property name="borderBottomWidth">thin</property>
                     <cell id="6893">
-                        <property name="colSpan">9</property>
+                        <property name="colSpan">10</property>
                         <property name="rowSpan">1</property>
                         <property name="borderBottomStyle">none</property>
                         <property name="borderLeftStyle">none</property>
@@ -3900,6 +3913,11 @@ dataSetRow["versionLabel"]
                     <cell id="2966">
                         <label id="2917">
                             <text-property name="text">Qté g/UV</text-property>
+                        </label>
+                    </cell>
+                    <cell id="7089">
+                        <label id="7094">
+                            <text-property name="text">% Rdt</text-property>
                         </label>
                     </cell>
                     <cell id="3288">
@@ -3975,6 +3993,16 @@ matière
                             <property name="resultSetColumn">compoListQtyForProduct</property>
                         </data>
                     </cell>
+                    <cell id="7090">
+                        <data id="7093">
+                            <property name="style">becpg-data</property>
+                            <structure name="numberFormat">
+                                <property name="category">Custom</property>
+                                <property name="pattern">#0.##</property>
+                            </structure>
+                            <property name="resultSetColumn">compoListYieldPerc</property>
+                        </data>
+                    </cell>
                     <cell id="3289">
                         <data id="3294">
                             <property name="style">becpg-data</property>
@@ -4031,7 +4059,18 @@ matière
                     </cell>
                     <cell id="7031"/>
                     <cell id="7032"/>
-                    <cell id="7033"/>
+                    <cell id="7033">
+                        <data id="7086">
+                            <property name="style">becpg-data</property>
+                            <property name="fontWeight">bold</property>
+                            <structure name="numberFormat">
+                                <property name="category">Custom</property>
+                                <property name="pattern">#0.##</property>
+                            </structure>
+                            <property name="resultSetColumn">aggregationQtyForProduct</property>
+                        </data>
+                    </cell>
+                    <cell id="7091"/>
                     <cell id="7034"/>
                     <cell id="7035"/>
                     <cell id="7036">
@@ -4103,8 +4142,18 @@ matière
                 <structure>
                     <property name="name">packagingListPkgLevel</property>
                     <text-property name="displayName">packagingListPkgLevel</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["packagingListPkgLevel"]</expression>
+                    <expression name="expression" type="javascript">if (dataSetRow["packagingListPkgLevel"]=="Primary"){
+"Primaire"
+}else if (dataSetRow["packagingListPkgLevel"]=="Secondary"){
+"Secondaire"
+}else if (dataSetRow["packagingListPkgLevel"]=="Tertiary"){
+"Tertiaire"
+}
+ else {
+dataSetRow["packagingListPkgLevel"]
+}</expression>
                     <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
                 </structure>
                 <structure>
                     <property name="name">costPerProduct</property>
