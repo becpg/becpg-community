@@ -151,6 +151,16 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		Element entityElt = document.addElement(TAG_ENTITY);
 		Map<String, byte[]> images = new HashMap<>();
 
+		extractEntity(entityNodeRef, entityElt, images);
+
+		ret.setXmlDataSource(entityElt);
+		ret.setDataObjects(images);
+
+		return ret;
+	}
+	
+	protected void extractEntity(NodeRef entityNodeRef, Element entityElt, Map<String, byte[]> images) {
+		
 		// load images
 		Element imgsElt = entityElt.addElement(TAG_IMAGES);
 		extractEntityImages(entityNodeRef, imgsElt, images);
@@ -172,11 +182,6 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 		// render versions
 		loadVersions(entityNodeRef, entityElt);
-
-		ret.setXmlDataSource(entityElt);
-		ret.setDataObjects(images);
-
-		return ret;
 	}
 
 	protected void extractEntityImages(NodeRef entityNodeRef, Element imgsElt, Map<String, byte[]> images) {
