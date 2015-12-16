@@ -1,5 +1,6 @@
 package fr.becpg.repo.project.report;
 
+import java.util.List;
 import java.util.Map;
 
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
@@ -18,8 +19,13 @@ public class ProjectReportExtractor extends DefaultEntityReportExtractor {
 	protected boolean loadTargetAssoc(NodeRef entityNodeRef, AssociationDefinition assocDef, Element entityElt, Map<String, byte[]> images) {
 
 		if (assocDef != null && assocDef.getName() != null) {
-			if (assocDef.getName().equals(ProjectModel.ASSOC_PROJECT_ENTITY)) {
-				extractTargetAssoc(entityNodeRef, assocDef, entityElt,images);
+			if (assocDef.getName().equals(ProjectModel.ASSOC_PROJECT_ENTITY)) {				
+				List<NodeRef> nodeRefs = associationService.getTargetAssocs(entityNodeRef, assocDef.getName());
+				for (NodeRef nodeRef : nodeRefs) {
+					QName qName = nodeService.getType(nodeRef);
+					Element nodeElt = entityElt.addElement(qName.getLocalName());
+					extractEntity(entityNodeRef, nodeElt,images);
+				}				
 				return true;
 			}
 		}
