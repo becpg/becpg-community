@@ -1939,7 +1939,7 @@
 					</source>
 					<target>
 						<class>bcpg:labelClaim</class>
-						<mandatory>false</mandatory>
+						<mandatory>true</mandatory>
 						<many>false</many>
 					</target>
 				</association>
