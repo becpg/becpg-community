@@ -32,6 +32,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.model.ForumModel;
 import org.alfresco.repo.version.Version2Model;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
+import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.model.FileFolderService;
@@ -40,6 +41,7 @@ import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.PersonService;
@@ -55,6 +57,8 @@ import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
@@ -109,6 +113,10 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	protected static final ArrayList<QName> hiddenDataListItemAttributes = new ArrayList<>(Arrays.asList(ContentModel.PROP_CREATED, ContentModel.PROP_CREATOR, ContentModel.PROP_MODIFIED, ContentModel.PROP_MODIFIER));
 	private static final QName FORUM_TO_TOPIC_ASSOC_QNAME = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "Comments");
 
+	
+	@Value("${beCPG.entity.report.mltext.fields}")
+	private String mlTextFields;
+	
 	@Autowired
 	protected DictionaryService dictionaryService;
 
@@ -120,6 +128,10 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	@Autowired
 	protected NodeService nodeService;
+	
+	@Autowired
+	@Qualifier("mlAwareNodeService")
+	protected NodeService mlNodeService;
 
 	@Autowired
 	protected EntityService entityService;
@@ -159,7 +171,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		return ret;
 	}
 	
-	protected void extractEntity(NodeRef entityNodeRef, Element entityElt, Map<String, byte[]> images) {
+	public void extractEntity(NodeRef entityNodeRef, Element entityElt, Map<String, byte[]> images) {
 		
 		// load images
 		Element imgsElt = entityElt.addElement(TAG_IMAGES);
@@ -251,7 +263,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			if (kv.getValue() instanceof NodeRef && nodeService.hasAspect((NodeRef) kv.getValue(), BeCPGModel.ASPECT_LEGAL_NAME)) {
 				nodeElt.addAttribute(BeCPGModel.PROP_LEGAL_NAME.getLocalName(),
 						(String) nodeService.getProperty((NodeRef) kv.getValue(), BeCPGModel.PROP_LEGAL_NAME));
-				addCDATA(nodeElt, ContentModel.PROP_DESCRIPTION, (String)nodeService.getProperty((NodeRef) kv.getValue(), ContentModel.PROP_DESCRIPTION));
+				addCDATA(nodeElt, ContentModel.PROP_DESCRIPTION, (String)nodeService.getProperty((NodeRef) kv.getValue(), ContentModel.PROP_DESCRIPTION),null);
 				break;
 			}
 		}
@@ -285,7 +297,21 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 						continue;
 					}
 					addData(nodeElt, useCData, propertyDef.getName(),
-							attributeExtractorService.extractPropertyForReport(propertyDef, property.getValue(), propertyFormats, false));
+							attributeExtractorService.extractPropertyForReport(propertyDef, property.getValue(), propertyFormats, false),null);
+					
+					
+					if(mlTextFields!=null && !mlTextFields.isEmpty() && 
+							DataTypeDefinition.MLTEXT.equals(propertyDef.getDataType().getName()) && mlTextFields.contains(propertyDef.getName().toPrefixString(namespaceService))){
+						MLText mlValues = (MLText) mlNodeService.getProperty(nodeRef, propertyDef.getName());
+						
+						for (Map.Entry<Locale, String> mlEntry : mlValues.entrySet()) {
+							
+							addData(nodeElt, useCData, propertyDef.getName(),
+									mlEntry.getValue(), mlEntry.getKey().getLanguage());
+						}
+						
+					}
+					
 				}
 			}
 
@@ -310,7 +336,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 					continue;
 				} else if (!loadTargetAssoc(nodeRef, associationDef, nodeElt, images)) {
 					addData(nodeElt, useCData, associationDef.getName(), attributeExtractorService.extractAssociationsForReport(tempValue.getValue(),
-							getPropNameOfType(associationDef.getTargetClass().getName())));
+							getPropNameOfType(associationDef.getTargetClass().getName())),null);
 				}
 			}
 		}
@@ -333,7 +359,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
     	            		loadAttributes(post.getChildRef(), commentElt, true, hiddenNodeAttributes, images);	            		
     	            		ContentReader reader = contentService.getReader(post.getChildRef(), ContentModel.PROP_CONTENT);	            		
     	            		if(reader != null){
-    	            			addData(commentElt, true, ContentModel.PROP_CONTENT, reader.getContentString());
+    	            			addData(commentElt, true, ContentModel.PROP_CONTENT, reader.getContentString(),null);
     	            		}	            		
     		            }
 					}				
@@ -342,11 +368,16 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		}
 	}
 
-	protected void addData(Element nodeElt, boolean useCData, QName qName, String value) {
-		if (useCData || isMultiLinesAttribute(qName)) {
-			addCDATA(nodeElt, qName, value);
+	protected void addData(Element nodeElt, boolean useCData, QName propertyQName, String value, String suffix) {
+		if (useCData || isMultiLinesAttribute(propertyQName)) {
+			addCDATA(nodeElt, propertyQName, value,suffix );
 		} else {
-			nodeElt.addAttribute(qName.getLocalName(), value);
+			String localName = propertyQName.getLocalName();
+			if(suffix!=null && !suffix.isEmpty()){
+				localName+="_"+suffix;
+			}
+			nodeElt.addAttribute(localName, value);
+		
 		}
 	}
 
@@ -417,8 +448,12 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		}
 	}
 
-	protected void addCDATA(Element nodeElt, QName propertyQName, String eltValue) {
-		Element cDATAElt = nodeElt.addElement(propertyQName.getLocalName());
+	protected void addCDATA(Element nodeElt, QName propertyQName, String eltValue, String suffix) {
+		String localName = propertyQName.getLocalName();
+		if(suffix!=null && !suffix.isEmpty()){
+			localName+="_"+suffix;
+		}
+		Element cDATAElt = nodeElt.addElement(localName);
 		cDATAElt.addCDATA(eltValue);
 
 		Collection<String> prefixes = namespaceService.getPrefixes(propertyQName.getNamespaceURI());

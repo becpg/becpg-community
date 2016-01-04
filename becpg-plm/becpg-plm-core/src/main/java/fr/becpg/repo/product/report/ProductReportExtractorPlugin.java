@@ -163,6 +163,13 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 								CompositionDataItem compositionDataItem = (CompositionDataItem) dataListItem;
 								loadProductData(compositionDataItem.getComponent(), nodeElt, images);
 							}
+							
+							if (dataListItem instanceof AllergenListDataItem) {
+								String allergenType = (String) nodeService.getProperty(((AllergenListDataItem) dataListItem).getAllergen(), PLMModel.PROP_ALLERGEN_TYPE);
+								if (allergenType != null) {
+									nodeElt.addAttribute("allergenType", allergenType);
+								}
+							}
 
 							loadDataListItemAttributes(dataListItem, nodeElt, images);
 
@@ -262,11 +269,11 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 								Element ingLabelingElt = ingListElt.addElement(PLMModel.TYPE_INGLABELINGLIST.getLocalName());
 								ingLabelingElt.addAttribute(ATTR_LANGUAGE, locale.getDisplayLanguage());
-								addCDATA(ingLabelingElt, PLMModel.ASSOC_ILL_GRP, grpName);
+								addCDATA(ingLabelingElt, PLMModel.ASSOC_ILL_GRP, grpName,null);
 								addCDATA(ingLabelingElt, PLMModel.PROP_ILL_VALUE,
-										dataItem.getValue() != null ? dataItem.getValue().getValue(locale) : VALUE_NULL);
+										dataItem.getValue() != null ? dataItem.getValue().getValue(locale) : VALUE_NULL,null);
 								addCDATA(ingLabelingElt, PLMModel.PROP_ILL_MANUAL_VALUE,
-										dataItem.getManualValue() != null ? dataItem.getManualValue().getValue(locale) : VALUE_NULL);
+										dataItem.getManualValue() != null ? dataItem.getManualValue().getValue(locale) : VALUE_NULL,null);
 
 								if (logger.isDebugEnabled()) {
 									logger.debug("ingLabelingElt: " + ingLabelingElt.asXML());
@@ -394,9 +401,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 					nutListsElt.addAttribute(generateKeyAttribute(nut), value != null ? value : "");
 					NodeRef nutNodeRef = dataListItem.getNut();
-					addCDATA(nutListElt, ContentModel.PROP_DESCRIPTION, (String) nodeService.getProperty(nutNodeRef, ContentModel.PROP_DESCRIPTION));
+					addCDATA(nutListElt, ContentModel.PROP_DESCRIPTION, (String) nodeService.getProperty(nutNodeRef, ContentModel.PROP_DESCRIPTION),null);
 					addCDATA(nutListElt, PLMModel.PROP_NUTGDA, nodeService.getProperty(nutNodeRef, PLMModel.PROP_NUTGDA)!=null ?
-							((Double) nodeService.getProperty(nutNodeRef, PLMModel.PROP_NUTGDA)).toString(): "");
+							((Double) nodeService.getProperty(nutNodeRef, PLMModel.PROP_NUTGDA)).toString(): "",null);
 				}
 			}
 		}
@@ -431,7 +438,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		for (Map.Entry<NodeRef, Double> entry : sortedRawMaterials) {
 			Element rawMaterialElt = rawMaterialsElt.addElement(PLMModel.TYPE_RAWMATERIAL.getLocalName());
 			loadAttributes(entry.getKey(), rawMaterialElt, true, null, images);
-			addCDATA(rawMaterialElt, PLMModel.PROP_COMPOLIST_QTY, toString((100 * entry.getValue()) / totalQty));
+			addCDATA(rawMaterialElt, PLMModel.PROP_COMPOLIST_QTY, toString((100 * entry.getValue()) / totalQty),null);
 			if (FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT) != 0d) {
 				Element cDATAElt = rawMaterialElt.addElement(ATTR_COMPOLIST_QTY_FOR_PRODUCT);
 				cDATAElt.addCDATA(
