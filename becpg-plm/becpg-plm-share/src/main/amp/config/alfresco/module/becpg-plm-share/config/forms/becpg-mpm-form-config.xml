@@ -346,8 +346,8 @@
 				<field-visibility>
 					<show id="mpm:rplStepRef" />
 					<show id="mpm:rplResourceRef" />
+					<show id="mpm:rplParamType" />
 					<show id="mpm:rplParamRef" />
-					<show id="mpm:rplParamType" />	
 					<show id="mpm:rplParamValue" />		
 				</field-visibility>
 			</form>

@@ -293,7 +293,9 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 	 * @return
 	 */
 	public static String calculateUnit(ProductUnit productUnit, String nutUnit) {
-
+		if(nutUnit!=null && nutUnit.contains("/")){
+			return nutUnit;
+		}
 		return nutUnit += calculateSuffixUnit(productUnit);
 	}
 
