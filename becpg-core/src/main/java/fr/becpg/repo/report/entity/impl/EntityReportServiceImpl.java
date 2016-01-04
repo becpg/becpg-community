@@ -186,7 +186,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 		return reportData.getXmlDataSource().asXML();
 	}
 
-	private EntityReportExtractorPlugin retrieveExtractor(NodeRef entityNodeRef) {
+	@Override
+	public  EntityReportExtractorPlugin retrieveExtractor(NodeRef entityNodeRef) {
 		QName type = nodeService.getType(entityNodeRef);
 
 		EntityReportExtractorPlugin ret = null;
