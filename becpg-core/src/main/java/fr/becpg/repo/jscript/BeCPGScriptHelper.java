@@ -21,6 +21,7 @@ import java.util.Locale;
 
 import org.alfresco.repo.jscript.BaseScopableProcessorExtension;
 import org.alfresco.repo.jscript.ScriptNode;
+import org.alfresco.service.cmr.quickshare.QuickShareService;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.repo.entity.AutoNumService;
@@ -37,6 +38,8 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension{
 	
 	private OlapService olapService;
 	
+	private QuickShareService quickShareService;
+	
 	public void setOlapService(OlapService olapService) {
 		this.olapService = olapService;
 	}
@@ -44,10 +47,19 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension{
 	public void setAutoNumService(AutoNumService autoNumService) {
 		this.autoNumService = autoNumService;
 	}
+	
+	public void setQuickShareService(QuickShareService quickShareService) {
+		this.quickShareService = quickShareService;
+	}
 
 	public String getOrCreateBeCPGCode(ScriptNode sourceNode) {
 		return autoNumService.getOrCreateBeCPGCode(sourceNode.getNodeRef());
 	}
+	
+	public void shareContent(ScriptNode sourceNode){
+		quickShareService.shareContent(sourceNode.getNodeRef());
+	}
+	
 	
 	public String getMessage(String messageKey){
 		return I18NUtil.getMessage(messageKey,  Locale.getDefault());
