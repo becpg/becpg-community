@@ -8,7 +8,7 @@
    <@viewRenderererCssDeps/>
    <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/documentlibrary/custom-documentlist.css" group="documentlibrary"/>
    <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/documentlibrary/custom-toolbar.css" group="documentlibrary"/>
-   
+   <@link rel="stylesheet" type="text/css" href="${url.context}/res/components/entity-charact-views/documents-view.css" group="documentlibrary"/>
 </@>
 
 <@markup id="js">
