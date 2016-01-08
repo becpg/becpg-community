@@ -94,6 +94,88 @@
                             }
                             // End beCPG
                         },
+                        
+                        /**
+                         * Build URI parameter string for doclist JSON data webscript
+                         *
+                         * @method _buildDocListParams
+                         * @param p_obj.page {string} Page number
+                         * @param p_obj.pageSize {string} Number of items per page
+                         * @param p_obj.path {string} Path to query
+                         * @param p_obj.type {string} Filetype to filter: "all", "documents", "folders"
+                         * @param p_obj.site {string} Current site
+                         * @param p_obj.container {string} Current container
+                         * @param p_obj.filter {string} Current filter
+                         */
+                        _buildDocListParams: function DL__buildDocListParams(p_obj)
+                        {
+                           // Essential defaults
+                           var siteMode = $isValueSet(this.options.siteId),
+                              obj =
+                              {
+                                 path: this.currentPath,
+                                 type: this.options.showFolders ? "all" : "documents",
+                                 site: this.options.siteId,
+                                 container: this.options.containerId,
+                                 filter: this.currentFilter
+                              };
+                           
+                           if(this.options.disableSiteMode){
+                        	   siteMode = false;
+                           }
+                           
+
+                           // Pagination in use?
+                           if (this.options.usePagination)
+                           {
+                              obj.page = this.widgets.paginator.getCurrentPage() || this.currentPage;
+                              obj.pageSize = this.widgets.paginator.getRowsPerPage();
+                           }
+
+                           // Passed-in overrides
+                           if (typeof p_obj === "object")
+                           {
+                              obj = YAHOO.lang.merge(obj, p_obj);
+                           }
+
+                           // Build the URI stem
+                           var isSharedFiles = ("alfresco://company/shared" == this.options.rootNode);
+                           var uriPart = siteMode ? "site/{site}/{container}" : isSharedFiles ? "node/alfresco/company/shared" : "node/alfresco/user/home",
+                              params = YAHOO.lang.substitute("{type}/" + uriPart + (obj.filter.filterId === "path" ? "{path}" : ""),
+                              {
+                                 type: encodeURIComponent(obj.type),
+                                 site: encodeURIComponent(obj.site),
+                                 container: encodeURIComponent(obj.container),
+                                 path: $combine("/", Alfresco.util.encodeURIPath(obj.path))
+                              });
+
+                           // Filter parameters
+                           params += "?filter=" + encodeURIComponent(obj.filter.filterId);
+                           if (obj.filter.filterData && obj.filter.filterId !== "path")
+                           {
+                              params += "&filterData=" + encodeURIComponent(obj.filter.filterData);
+                           }
+
+                           // Paging parameters
+                           if (this.options.usePagination)
+                           {
+                              params += "&size=" + obj.pageSize  + "&pos=" + obj.page;
+                           }
+
+                           // Sort parameters
+                           params += "&sortAsc=" + this.options.sortAscending + "&sortField=" + encodeURIComponent(this.options.sortField);
+
+                           if (!siteMode)
+                           {
+                              // Repository mode (don't resolve Site-based folders)
+                              params += "&libraryRoot=" + encodeURIComponent(this.options.rootNode.toString());
+                           }
+
+                           // View mode and No-cache
+                           params += "&view=" + this.actionsView + "&noCache=" + new Date().getTime();
+
+                           return params;
+                        },
 
                         /**
                          * Like/Unlike event handler
