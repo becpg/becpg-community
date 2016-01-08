@@ -115,6 +115,7 @@
 					<value>µg</value>
 					<value>IU</value>
 					<value>mcg_DFE</value>
+					<value>/20</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -138,6 +139,7 @@
 					<value>µg/100mL</value>
 					<value>IU/100mL</value>
 					<value>mcg_DFE/100mL</value>
+					<value>/20</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -281,6 +283,7 @@
 					<value>°C</value>
 					<value>K</value>
 					<value>°Cent</value>
+					<value>°D</value>
 					<value>J</value>
 					<value>eV</value>
 					<value>pg/kg</value>
@@ -299,12 +302,14 @@
 					<value>s</value>
 					<value>min</value>
 					<value>°B</value>
+					<value>/0,2g</value>
 					<value>/25g</value>
 					<value>/100g</value>
 					<value>g/100g</value>
 					<value>g/2,2L</value>
 					<value>g/15g</value>	
 					<value>ppm</value>
+					<value>ppb</value>
 					<value>µg/g</value>
 					<value>mg/g</value>
 					<value>mL/g</value>
@@ -1638,7 +1643,7 @@
 			<parent>bcpg:productListItem</parent>
 			<properties>
 				<property name="bcpg:organoListValue">
-					<type>d:text</type>
+					<type>d:mltext</type>
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
@@ -1939,7 +1944,7 @@
 					</source>
 					<target>
 						<class>bcpg:labelClaim</class>
-						<mandatory>false</mandatory>
+						<mandatory>true</mandatory>
 						<many>false</many>
 					</target>
 				</association>
@@ -2534,10 +2539,10 @@
 					<type>d:double</type>
 				</property>
 				<property name="bcpg:numberOfServings">
-					<type>d:text</type>
+					<type>d:mltext</type>
 				</property>
 				<property name="bcpg:preparationTips">
-					<type>d:text</type>
+					<type>d:mltext</type>
 				</property>
 				<property name="bcpg:packagingDescription">
 					<type>d:mltext</type>

@@ -38,4 +38,6 @@ public interface EntityReportService {
 	String getSelectedReportName(NodeRef entityNodeRef);
 
 	void generateReport(NodeRef entityNodeRef, NodeRef documentNodeRef, ReportFormat reportFormat, OutputStream outputStream);
+
+	EntityReportExtractorPlugin retrieveExtractor(NodeRef entityNodeRef);
 }

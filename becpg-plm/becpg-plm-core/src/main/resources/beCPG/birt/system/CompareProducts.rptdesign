@@ -1477,6 +1477,24 @@ color;</expression>
                     <expression name="expr" type="javascript">row["entityList"]</expression>
                     <property name="updateAggregation">true</property>
                 </structure>
+                <structure>
+                    <property name="operator">is-true</property>
+                    <expression name="expr" type="javascript">(row["propertyQName"] == "bcpg:costListValue" || 
+row["propertyQName"] == "bcpg:nutListValue" ||
+row["propertyQName"] == "bcpg:nutListFormulatedValue" ||
+row["propertyQName"] == "bcpg:ingListQtyPerc" ||
+row["propertyQName"] == "bcpg:lclClaimValue" ||
+row["propertyQName"] == "bcpg:pclValue" ||
+row["propertyQName"] == "bcpg:organoListValue" ||
+row["propertyQName"] == "bcpg:allergenListVoluntary" ||
+row["propertyQName"] == "bcpg:allergenListInVoluntary" ||
+row["propertyQName"] == "bcpg:illValue" ||
+row["propertyQName"] == "bcpg:illManualValue" ||
+row["propertyQName"] == "bcpg:mblValue" ||
+row["propertyQName"] == "bcpg:mblMaxi" ||
+row["propertyQName"] == "bcpg:microbioUnit")</expression>
+                    <property name="updateAggregation">true</property>
+                </structure>
             </list-property>
             <column id="3485">
                 <property name="suppressDuplicates">false</property>
