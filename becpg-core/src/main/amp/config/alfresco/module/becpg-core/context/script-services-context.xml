@@ -57,6 +57,7 @@
 		</property>
 		<property name="autoNumService" ref="autoNumService"/>
 		<property name="olapService" ref="olapService"/>
+		<property name="quickShareService" ref="quickShareService"/>
 	</bean>
 
 	<!-- Override Alfresco -->
