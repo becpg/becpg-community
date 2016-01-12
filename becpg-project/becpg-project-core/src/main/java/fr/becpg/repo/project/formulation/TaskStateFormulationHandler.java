@@ -79,18 +79,17 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 	public boolean process(ProjectData projectData) throws FormulateException {
 
 		if (projectData.getAspects().contains(ContentModel.ASPECT_CHECKED_OUT) || projectData.getAspects().contains(ContentModel.ASPECT_WORKING_COPY)
-				|| projectData.getAspects().contains(BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
+				|| projectData.getAspects().contains(BeCPGModel.ASPECT_COMPOSITE_VERSION) || ProjectState.Cancelled.equals(projectData.getProjectState())) {
 			for (TaskListDataItem task : projectData.getTaskList()) {
 				if (TaskState.InProgress.equals(task.getTaskState()) && projectWorkflowService.isWorkflowActive(task)) {
 					logger.debug("Cancel workflow of project " + projectData.getName() + " for task " + task.getTaskName());
 					projectWorkflowService.cancelWorkflow(task);
 				}
+				task.setIsExcludeFromSearch(true);
 			}
 		}
 		// we don't want tasks of project template start
-		else if (!projectData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)
-				&& !projectData.getAspects().contains(BeCPGModel.ASPECT_COMPOSITE_VERSION)
-				&& !ProjectState.Cancelled.equals(projectData.getProjectState())) {
+		else if (!projectData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
 
 //			if( projectData.getProjectState() == null){
 //				projectData.setProjectState(ProjectState.Planned);
@@ -155,11 +154,17 @@ public class TaskStateFormulationHandler extends FormulationBaseHandler<ProjectD
 
 		NodeRef taskListNodeRef = taskListDataItem != null ? taskListDataItem.getNodeRef() : null;
 
+		if(taskListDataItem!=null) {
+			taskListDataItem.setIsExcludeFromSearch(false);
+		}
+		
 		// add next tasks
 		List<TaskListDataItem> nextTasks = ProjectHelper.getNextTasks(projectData, taskListNodeRef);
 
 		if (!nextTasks.isEmpty()) {
 			for (TaskListDataItem nextTask : nextTasks) {
+				
+				nextTask.setIsExcludeFromSearch(false);
 
 				TaskState currentTaskState = nextTask.getTaskState();
 				

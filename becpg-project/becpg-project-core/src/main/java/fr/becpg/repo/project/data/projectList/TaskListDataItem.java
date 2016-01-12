@@ -47,6 +47,7 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	private String taskName;
 	private Boolean isMilestone;
 	private Boolean isGroup;
+	private Boolean isExcludeFromSearch;
 	private Integer duration;
 	private Integer realDuration;
 	private Integer capacity;
@@ -71,6 +72,7 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	private Double expense;	
 	private Double invoice;
 	private ResourceCost resourceCost;
+	
 
 	@AlfProp
 	@AlfQname(qname = "pjt:tlTaskName")
@@ -100,6 +102,17 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 
 	public void setIsGroup(Boolean isGroup) {
 		this.isGroup = isGroup;
+	}
+	
+	
+	@AlfProp
+	@AlfQname(qname = "pjt:tlIsExcludeFromSearch")
+	public Boolean getIsExcludeFromSearch() {
+		return isExcludeFromSearch;
+	}
+
+	public void setIsExcludeFromSearch(Boolean isExcludeFromSearch) {
+		this.isExcludeFromSearch = isExcludeFromSearch;
 	}
 
 	@AlfProp

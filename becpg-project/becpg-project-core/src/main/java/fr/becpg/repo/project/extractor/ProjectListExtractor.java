@@ -174,6 +174,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 				if (VIEW_MY_TASKS.equals(dataListFilter.getFilterId()) || VIEW_TASKS.equals(dataListFilter.getFilterId())) {
 					dataType = ProjectModel.TYPE_TASK_LIST;
 					beCPGQueryBuilder.ofType(dataType);
+					beCPGQueryBuilder.excludeProp(ProjectModel.PROP_TL_IS_EXCLUDE_FROM_SEARCH, Boolean.TRUE.toString());
 				}
 
 				if (VIEW_RESOURCES.equals(dataListFilter.getExtraParams())) {

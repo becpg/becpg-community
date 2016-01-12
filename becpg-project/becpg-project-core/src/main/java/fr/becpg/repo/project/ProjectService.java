@@ -70,13 +70,6 @@ public interface ProjectService {
 	NodeRef getProjectsContainer(String siteId);
 
 	/**
-	 * Cancel a project
-	 * 
-	 * @param projectNodeRef
-	 */
-	void cancel(NodeRef projectNodeRef);
-
-	/**
 	 * Formulate a project
 	 * 
 	 * @param projectNodeRef
