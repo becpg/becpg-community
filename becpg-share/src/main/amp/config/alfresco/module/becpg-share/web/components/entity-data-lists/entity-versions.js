@@ -26,6 +26,8 @@
    beCPG.component.EntityVersions = function EntityVersions_constructor(htmlId) {
       beCPG.component.EntityVersions.superclass.constructor.call(this, "beCPG.component.EntityVersions", htmlId, [
             "datasource", "datatable", "paginator", "history", "animation" ]);
+      
+      YAHOO.Bubbling.on("metadataRefresh", this.doRefresh, this);
 
       return this;
    };
@@ -472,9 +474,18 @@
                         nodeRef : nodeRef                        
                      });
 
-                  }
+                  },
                   
-
+                  /**
+                   * Refresh component in response to metadataRefresh event
+                   *
+                   * @method doRefresh
+                   */
+                  doRefresh: function DocumentVersions_doRefresh()
+                  {
+                     YAHOO.Bubbling.unsubscribe("metadataRefresh", this.doRefresh, this);
+                     this.refresh('components/entity-data-lists/entity-versions?nodeRef={nodeRef}' + (this.options.siteId ? '&site={siteId}' :  '')+(this.options.list ? '&list={list}' :  ''));
+                  }
 
                });
 })();

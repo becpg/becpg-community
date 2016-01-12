@@ -409,7 +409,16 @@ YAHOO.Bubbling
                         editProductMetadata.setOptions(
                               {
                                  width : "33em",
-                                 successMessage : this.msg("message.details.success"),
+                                 onSuccess : {
+                                	  fn : function() {
+                                		  YAHOO.Bubbling.fire("metadataRefresh");
+                                		  Alfresco.util.PopupManager.displayMessage(
+                                	               {
+                                	                  text: this.msg("message.details.success")
+                                	               });
+                                       },
+                                       scope : this
+                                 },
                                  failureMessage : this.msg("message.details.failure"),
                                  templateUrl : templateUrl,
                                  destroyOnHide : true,
