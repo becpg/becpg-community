@@ -14,6 +14,7 @@ function widgets()
       options: {
          siteId: (page.url.templateArgs.site != null) ? page.url.templateArgs.site : "",
     	 rootNode : page.url.args.nodeRef!=null ?page.url.args.nodeRef : "null",
+    	 disableSiteMode : true,
          hideNavBar: false,
          repositoryBrowsing: false,
          useTitle: false,

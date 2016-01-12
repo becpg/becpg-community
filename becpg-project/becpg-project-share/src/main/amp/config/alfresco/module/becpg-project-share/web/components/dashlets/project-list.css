@@ -141,7 +141,7 @@ Details
 
 .project-list .simple-doclist .detail span.project {	
 	font-weight: bold;
-	 padding:10px;
+	margin-left: 5px;
 }
 
 .project-list .simple-doclist .detail a:hover{
