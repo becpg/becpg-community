@@ -381,6 +381,9 @@
 				<property name="pjt:tlIsGroup">
 					<type>d:boolean</type>
 				</property>
+				<property name="pjt:tlIsExcludeFromSearch">
+					<type>d:boolean</type>
+				</property>
 				<property name="pjt:tlDuration">
 					<type>d:int</type>
 					<mandatory>true</mandatory>

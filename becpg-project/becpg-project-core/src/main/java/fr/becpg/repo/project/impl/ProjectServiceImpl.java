@@ -50,7 +50,6 @@ import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.project.ProjectService;
-import fr.becpg.repo.project.ProjectWorkflowService;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.ProjectState;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
@@ -82,8 +81,6 @@ public class ProjectServiceImpl implements ProjectService {
 	private SiteService siteService;
 	@Autowired
 	private FormulationService<ProjectData> formulationService;
-	@Autowired
-	private ProjectWorkflowService projectWorkflowService;
 	@Autowired
 	private AuthorityDAO authorityDAO;
 	@Autowired
@@ -138,22 +135,6 @@ public class ProjectServiceImpl implements ProjectService {
 		return null;
 	}
 
-	@Override
-	public void cancel(NodeRef projectNodeRef) {
-
-		logger.debug("cancel project: " + projectNodeRef + " exists ? " + nodeService.exists(projectNodeRef));
-		if (nodeService.exists(projectNodeRef)) {
-			ProjectData projectData = alfrescoRepository.findOne(projectNodeRef);
-
-			for (TaskListDataItem taskListDataItem : projectData.getTaskList()) {
-				if (projectWorkflowService.isWorkflowActive(taskListDataItem)) {
-					projectWorkflowService.cancelWorkflow(taskListDataItem);
-				}
-			}
-
-			alfrescoRepository.save(projectData);
-		}
-	}
 
 	@Override
 	public void formulate(NodeRef projectNodeRef) throws FormulateException {
