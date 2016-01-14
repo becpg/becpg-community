@@ -1889,6 +1889,10 @@ row["properties2"]
                             </structure>
                         </list-property>
                         <data id="3624">
+                            <property name="paddingTop">2pt</property>
+                            <property name="paddingLeft">2pt</property>
+                            <property name="paddingBottom">2pt</property>
+                            <property name="paddingRight">2pt</property>
                             <property name="display">inline</property>
                             <property name="resultSetColumn">characteristic</property>
                         </data>
@@ -2027,6 +2031,7 @@ row["properties2"]
         <label id="3621"/>
         <table id="3437">
             <property name="style">beCPG-Table-border</property>
+            <property name="width">10.447916666666666in</property>
             <property name="dataSet">ComparisonDataSet</property>
             <list-property name="boundDataColumns">
                 <structure>
@@ -2194,7 +2199,11 @@ row["propertyQName"] == "bcpg:microbioUnit")</expression>
                     <property name="updateAggregation">true</property>
                 </structure>
             </list-property>
-            <column id="3485">
+            <column id="3776">
+                <property name="suppressDuplicates">false</property>
+                <property name="width">0in</property>
+            </column>
+            <column id="3771">
                 <property name="suppressDuplicates">false</property>
                 <property name="width">15%</property>
             </column>
@@ -2235,19 +2244,20 @@ row["propertyQName"] == "bcpg:microbioUnit")</expression>
                 <header>
                     <row id="3439">
                         <property name="style">beCPG-Group</property>
-                        <cell id="3440">
-                            <property name="colSpan">1</property>
-                            <property name="rowSpan">1</property>
+                        <cell id="3774">
                             <property name="paddingLeft">2pt</property>
                             <property name="paddingBottom">2pt</property>
                             <property name="paddingRight">2pt</property>
-                            <data id="3441">
+                        </cell>
+                        <cell id="3769">
+                            <property name="paddingLeft">2pt</property>
+                            <property name="paddingBottom">2pt</property>
+                            <property name="paddingRight">2pt</property>
+                            <data id="3772">
                                 <property name="fontSize">10pt</property>
-                                <property name="paddingTop">1pt</property>
                                 <property name="paddingLeft">2pt</property>
                                 <property name="paddingBottom">2pt</property>
                                 <property name="paddingRight">2pt</property>
-                                <property name="whiteSpace">nowrap</property>
                                 <property name="resultSetColumn">entityList</property>
                             </data>
                         </cell>
@@ -2320,8 +2330,7 @@ row["propertyQName"] == "bcpg:microbioUnit")</expression>
             </group>
             <detail>
                 <row id="3568">
-                    <cell id="3569">
-                        <property name="verticalAlign">top</property>
+                    <cell id="3775">
                         <list-property name="highlightRules">
                             <structure>
                                 <property name="operator">is-false</property>
@@ -2333,21 +2342,24 @@ row["propertyQName"] == "bcpg:microbioUnit")</expression>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
-                        <data id="3454">
-                            <property name="style">beCPG-table-row-header</property>
-                            <property name="fontSize">9pt</property>
-                            <property name="color">black</property>
+                    </cell>
+                    <cell id="3770">
+                        <list-property name="highlightRules">
+                            <structure>
+                                <property name="operator">is-false</property>
+                                <expression name="testExpr" type="javascript">row["color"]</expression>
+                            </structure>
+                            <structure>
+                                <property name="operator">is-true</property>
+                                <property name="backgroundColor">#F2F7FA</property>
+                                <expression name="testExpr" type="javascript">row["color"]</expression>
+                            </structure>
+                        </list-property>
+                        <data id="3773">
                             <property name="paddingTop">2pt</property>
                             <property name="paddingLeft">2pt</property>
                             <property name="paddingBottom">2pt</property>
                             <property name="paddingRight">2pt</property>
-                            <property name="display">inline</property>
-                            <list-property name="visibility">
-                                <structure>
-                                    <property name="format">all</property>
-                                    <expression name="valueExpr" type="javascript">row["hideCharact"]</expression>
-                                </structure>
-                            </list-property>
                             <property name="resultSetColumn">characteristic</property>
                         </data>
                     </cell>
