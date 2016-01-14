@@ -29,7 +29,7 @@ public class CompareResultDataItem {
 	private QName property;
 	
 	/** The values. */
-	private List<String> values;
+	private String[] values;
 	
 	private boolean isDifferent;
 
@@ -106,24 +106,14 @@ public class CompareResultDataItem {
 		this.property = property;
 	}
 	
-	/**
-	 * Gets the values.
-	 *
-	 * @return the values
-	 */
-	public List<String> getValues() {
+	public String[] getValues() {
 		return values;
 	}
-	
-	/**
-	 * Sets the values.
-	 *
-	 * @param values the new values
-	 */
-	public void setValues(List<String> values) {
+
+	public void setValues(String[] values) {
 		this.values = values;
 	}
-	
+
 	public boolean isDifferent() {
 		return isDifferent;
 	}
@@ -141,7 +131,7 @@ public class CompareResultDataItem {
 	 * @param property the property
 	 * @param values the values
 	 */
-	public CompareResultDataItem(QName entityList, List<NodeRef> charactPath, NodeRef characteristic, QName property, List<String> values){
+	public CompareResultDataItem(QName entityList, List<NodeRef> charactPath, NodeRef characteristic, QName property, String[] values){
 		setProductList(entityList);
 		setCharactPath(charactPath);
 		setCharacteristic(characteristic);
