@@ -1793,6 +1793,45 @@ row["properties2"]
                     <expression name="expression" type="javascript">dataSetRow["isDifferent"]</expression>
                     <property name="dataType">boolean</property>
                 </structure>
+                <structure>
+                    <property name="name">color</property>
+                    <text-property name="displayName">color</text-property>
+                    <expression name="expression" type="javascript">var color = 1;
+if (reportContext.getGlobalVariable("color") != null)
+{
+   color = reportContext.getGlobalVariable("color");
+}
+
+if(row["characteristic"]!=row["previousCharact"]){
+	if(color==1){
+  		color = 0;
+  	}
+ 	else{
+  		color = 1;
+  	}
+}
+
+reportContext.setGlobalVariable("color", color);
+
+color;</expression>
+                    <property name="dataType">boolean</property>
+                    <property name="allowExport">true</property>
+                </structure>
+                <structure>
+                    <property name="name">previousCharact</property>
+                    <text-property name="displayName">previousCharact</text-property>
+                    <expression name="expression" type="javascript">var previousCharact = -1;
+if (reportContext.getGlobalVariable("previousCharact") != null)
+{
+   previousCharact = reportContext.getGlobalVariable("previousCharact");
+}
+
+reportContext.setGlobalVariable("previousCharact", row["characteristic"]);
+
+previousCharact;</expression>
+                    <property name="dataType">string</property>
+                    <property name="allowExport">true</property>
+                </structure>
             </list-property>
             <column id="3610">
                 <property name="suppressDuplicates">false</property>
@@ -2199,10 +2238,6 @@ row["propertyQName"] == "bcpg:microbioUnit")</expression>
                     <property name="updateAggregation">true</property>
                 </structure>
             </list-property>
-            <column id="3776">
-                <property name="suppressDuplicates">false</property>
-                <property name="width">0in</property>
-            </column>
             <column id="3771">
                 <property name="suppressDuplicates">false</property>
                 <property name="width">15%</property>
@@ -2244,11 +2279,6 @@ row["propertyQName"] == "bcpg:microbioUnit")</expression>
                 <header>
                     <row id="3439">
                         <property name="style">beCPG-Group</property>
-                        <cell id="3774">
-                            <property name="paddingLeft">2pt</property>
-                            <property name="paddingBottom">2pt</property>
-                            <property name="paddingRight">2pt</property>
-                        </cell>
                         <cell id="3769">
                             <property name="paddingLeft">2pt</property>
                             <property name="paddingBottom">2pt</property>
@@ -2330,19 +2360,6 @@ row["propertyQName"] == "bcpg:microbioUnit")</expression>
             </group>
             <detail>
                 <row id="3568">
-                    <cell id="3775">
-                        <list-property name="highlightRules">
-                            <structure>
-                                <property name="operator">is-false</property>
-                                <expression name="testExpr" type="javascript">row["color"]</expression>
-                            </structure>
-                            <structure>
-                                <property name="operator">is-true</property>
-                                <property name="backgroundColor">#F2F7FA</property>
-                                <expression name="testExpr" type="javascript">row["color"]</expression>
-                            </structure>
-                        </list-property>
-                    </cell>
                     <cell id="3770">
                         <list-property name="highlightRules">
                             <structure>
