@@ -20,4 +20,12 @@ public interface CompareEntityReportService {
 	 * @param out the output stream
 	 */
 	void getComparisonReport(NodeRef entity1, List<NodeRef> entities, NodeRef templateNodeRef, OutputStream out);
+
+	/**
+	 * Guess report name based on template name
+	 * @param templateNodeRef
+	 * @param string
+	 * @return
+	 */
+	String getReportFileName(NodeRef templateNodeRef, String defaultName);
 }

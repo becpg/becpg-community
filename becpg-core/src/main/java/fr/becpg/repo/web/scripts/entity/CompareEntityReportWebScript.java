@@ -20,7 +20,7 @@ package fr.becpg.repo.web.scripts.entity;
 
 import java.io.IOException;
 import java.net.SocketException;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -102,7 +102,7 @@ public class CompareEntityReportWebScript extends AbstractWebScript {
 
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
-		List<NodeRef> entityNodeRefs = new ArrayList<>();
+		List<NodeRef> entityNodeRefs = new LinkedList<>();
 
 		NodeRef entityNodeRef = null;
 		NodeRef templateNodeRef;
@@ -119,10 +119,6 @@ public class CompareEntityReportWebScript extends AbstractWebScript {
 
 		NodeRef entity1NodeRef = null;
 
-		String fileName = templateArgs.get(PARAM_FILE_NAME);
-		if (fileName == null) {
-			fileName = "compare.pdf";
-		}
 
 		String versionLabel = templateArgs.get(PARAM_VERSION_LABEL);
 		if (versionLabel != null) {
@@ -169,6 +165,9 @@ public class CompareEntityReportWebScript extends AbstractWebScript {
 		// should allow large files
 		// to be streamed directly to the browser response stream.
 		try {
+			
+			 //Ensure not comparing itselfs
+             entityNodeRefs.remove(entity1NodeRef);
 
 			if (req.getParameter(PARAM_TPL_NODEREF) != null) {
 				templateNodeRef = new NodeRef(req.getParameter(PARAM_TPL_NODEREF));
@@ -176,6 +175,11 @@ public class CompareEntityReportWebScript extends AbstractWebScript {
 				templateNodeRef = reportTplService.getUserReportTemplate(ReportType.Compare, null,
 						TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_COMPARE_ENTITIES));
 			}
+			
+
+			String fileName = compareEntityReportService.getReportFileName(templateNodeRef, templateArgs.get(PARAM_FILE_NAME));
+			
+			
 			if(logger.isDebugEnabled()){
 				logger.debug("entity1NodeRef : " + entity1NodeRef);
 				logger.debug("entityNodeRefs : " + entityNodeRefs);
