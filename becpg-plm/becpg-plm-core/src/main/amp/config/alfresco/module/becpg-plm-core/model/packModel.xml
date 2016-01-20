@@ -196,10 +196,13 @@
 					<type>d:int</type>
 				</property>
 				<property name="pack:palletNumberOnGround">
-					<title>Number of pallets on ground</title>
+					<title>Stacking capacity</title>
 					<type>d:int</type>
 				</property>
-
+				<property name="pack:palletStackingMaxWeight">
+					<title>Pallet stacking max weight</title>
+					<type>d:double</type>
+				</property>
 			</properties>
 		</aspect>
 

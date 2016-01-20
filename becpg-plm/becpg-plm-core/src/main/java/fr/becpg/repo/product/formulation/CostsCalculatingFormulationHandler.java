@@ -245,7 +245,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	public static String calculateSuffixUnit(ProductUnit productUnit) {
 		if ((productUnit == null) || productUnit.equals(ProductUnit.kg) || productUnit.equals(ProductUnit.g)) {
 			return UNIT_SEPARATOR + ProductUnit.kg;
-		} else if (productUnit.equals(ProductUnit.L) || productUnit.equals(ProductUnit.mL)) {
+		} else if (productUnit.equals(ProductUnit.L) || productUnit.equals(ProductUnit.mL) || productUnit.equals(ProductUnit.cL)) {
 			return UNIT_SEPARATOR + ProductUnit.L;
 		} else {
 			return UNIT_SEPARATOR + productUnit.toString();

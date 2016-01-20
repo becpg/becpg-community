@@ -80,10 +80,11 @@
 				<field-visibility>
 					<show id="bcpg:lkvValue" />
 					<show id="bcpg:parentLevel" />
-					<show id="bcpg:erpCode" force="true" />					
+					<show id="bcpg:code" />					
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
 				<appearance>
+				   
 					<field id="bcpg:parentLevel" >
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/allLinkedvalue</control-param>
@@ -118,6 +119,7 @@
 			<!-- Data Grid view -->
 			<form id="filter">
 				<field-visibility>
+				    <show id="bcpg:code" />
 					<show id="bcpg:lkvValue" />
 					<show id="bcpg:parentLevel" />
 					<show id="bcpg:isDeleted" />
@@ -127,9 +129,9 @@
 			<form id="datagrid">
 				<field-visibility>
 					<show id="bcpg:depthLevel" />
+					<show id="bcpg:code" />
 					<show id="bcpg:lkvValue" />
 					<show id="bcpg:parentLevel" />
-					<show id="bcpg:code" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
 				<appearance>
@@ -149,8 +151,12 @@
 		<forms>
 			<form>
 				<field-visibility>
+					<show id="bcpg:lvCode"  />
 					<show id="bcpg:lvValue" />
 				</field-visibility>
+				<appearance>
+				  <field id="bcpg:lvCode" read-only="true"/>
+				</appearance>
 			</form>
 		</forms>
 	</config>
@@ -160,6 +166,7 @@
 			<!-- Create item form -->
 			<form>
 				<field-visibility>
+				    <show id="bcpg:lvCode"  />
 					<show id="bcpg:lvValue" />
 				</field-visibility>
 			</form>
@@ -167,14 +174,19 @@
 			<!-- Data Grid view -->
 			<form id="filter">
 				<field-visibility>
+				 	<show id="bcpg:lvCode"  />
 					<show id="bcpg:lvValue" />
 				</field-visibility>
 			</form>
 
 			<form id="datagrid">
 				<field-visibility>
+				    <show id="bcpg:lvCode"  />
 					<show id="bcpg:lvValue" />
 				</field-visibility>
+				<appearance>
+				  <field id="bcpg:lvCode" read-only="true"/>
+				</appearance>
 			</form>
 		</forms>
 	</config>
