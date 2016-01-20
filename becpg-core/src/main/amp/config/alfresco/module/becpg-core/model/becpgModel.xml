@@ -51,6 +51,9 @@
 		<type name="bcpg:listValue">
 			<parent>bcpg:entityListItem</parent>
 			<properties>
+				<property name="bcpg:lvCode">
+					<type>d:text</type>
+				</property>
 				<property name="bcpg:lvValue">
 					<type>d:mltext</type>
 					<mandatory>true</mandatory>

@@ -59,7 +59,7 @@
 			<itemType name="bcpg:semiFinishedProduct" />
 
 			<itemType name="bcpg:rawMaterial" />
-			<itemType name="bcpg:packagingMaterial" />
+			<itemType name="bcpg:packagingMaterial" editSelectedFormId="bulk-edit" />
 			<itemType name="bcpg:packagingKit" />
 			<itemType name="bcpg:resourceProduct" />
 			<!-- <itemType name="pjt:project" /> -->

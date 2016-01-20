@@ -65,6 +65,9 @@ public class CompositionQtyCalculatingFormulationHandler extends FormulationBase
 			if ((formulatedProduct.getQty() != null)
 					&& (ProductUnit.g.equals(formulatedProduct.getUnit()) || ProductUnit.mL.equals(formulatedProduct.getUnit()))) {
 				qty = formulatedProduct.getQty() / 1000;
+			} else if ((formulatedProduct.getQty() != null)
+					&& ProductUnit.cL.equals(formulatedProduct.getUnit())) {
+				qty = formulatedProduct.getQty() / 100;
 			} else {
 				qty = formulatedProduct.getQty();
 			}

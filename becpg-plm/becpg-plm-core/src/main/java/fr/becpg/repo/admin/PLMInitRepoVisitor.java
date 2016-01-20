@@ -34,6 +34,7 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ECMModel;
+import fr.becpg.model.GS1Model;
 import fr.becpg.model.MPMModel;
 import fr.becpg.model.NCGroup;
 import fr.becpg.model.PLMGroup;
@@ -424,6 +425,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_SUBSIDIARIES, PLMModel.TYPE_SUBSIDIARY);
 		entityLists.put(PlmRepoConsts.PATH_TRADEMARKS, PLMModel.TYPE_TRADEMARK);
 		entityLists.put(PlmRepoConsts.PATH_PLANTS, PLMModel.TYPE_PLANT);
+		entityLists.put(PlmRepoConsts.PATH_CUSTOMSCODES, PLMModel.TYPE_CUSTOMSCODE);
 		entityLists.put(PlmRepoConsts.PATH_CERTIFICATIONS, PLMModel.TYPE_CERTIFICATION);
 		entityLists.put(PlmRepoConsts.PATH_APPROVALNUMBERS, PLMModel.TYPE_APPROVAL_NUMBER);
 		entityLists.put(PlmRepoConsts.PATH_LABELCLAIMS, PLMModel.TYPE_LABEL_CLAIM);
@@ -452,6 +454,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(HierarchyHelper.getHierarchyPathName(PLMModel.TYPE_RESOURCEPRODUCT), BeCPGModel.TYPE_LINKED_VALUE);
 		entityLists.put(HierarchyHelper.getHierarchyPathName(PLMModel.TYPE_CLIENT), BeCPGModel.TYPE_LINKED_VALUE);
 		entityLists.put(HierarchyHelper.getHierarchyPathName(PLMModel.TYPE_SUPPLIER), BeCPGModel.TYPE_LINKED_VALUE);
+		entityLists.put(PlmRepoConsts.PATH_GS1_HIERARCHY, BeCPGModel.TYPE_LINKED_VALUE);
 
 		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
 	}
@@ -468,6 +471,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		Map<String, QName> entityLists = new LinkedHashMap<>();
 
 		entityLists.put(PlmRepoConsts.PATH_ING_TYPES, PLMModel.TYPE_ING_TYPE_ITEM);
+		entityLists.put(PlmRepoConsts.PATH_TRADEMARK_TYPES,  BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_NUT_GROUPS, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_NUT_TYPES, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_NUT_FACTS_METHODS, BeCPGModel.TYPE_LIST_VALUE);
