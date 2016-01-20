@@ -3481,11 +3481,14 @@ Après décongélation, à conserver au réfrigérateur et à consommer dans la 
         <productComments prefix="bcpg"><![CDATA[]]></productComments>
         <description prefix="cm"><![CDATA[]]></description>
       </processList>
+      <processList plRateResource="" variantIds="" plQtyResource="" name="9a82539d-0527-40c7-9dae-77f8ae9eff9e" node-dbid="1186032" locale="fr" sort="301" plUnit="P" plStep="Modifications - Conclusions" isDefaultVariant="true" depthLevel="1">
+      <instruction prefix="bcpg"><![CDATA[Mettre plus de lardons et moins de creme fraiche.]]></instruction>
+      <description prefix="cm"></description></processList>
       <dynamicCharactLists>
         <dynamicCharactList dynamicCharactTitle="Co&#xFB;t Prod (&#x20AC;/UVC)" dynamicCharactValue="0.08342575757575757"/>
         <dynamicCharactList dynamicCharactTitle="Taux horaire" dynamicCharactValue=""/>
       </dynamicCharactLists>
-    </processLists>
+    </processLists>    
     <ingLabelingLists>
       <ingLabelingList language="fran&#xE7;ais">
         <illGrp prefix="bcpg"><![CDATA[Étiquetage 2]]></illGrp>

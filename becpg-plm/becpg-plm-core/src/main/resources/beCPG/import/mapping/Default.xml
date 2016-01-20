@@ -191,6 +191,7 @@
 		</nodeColumnKeys>
 		<dataListColumnKeys>
 			<dataListColumnKey attribute="bcpg:filIngs" />
+			<dataListColumnKey attribute="bcpg:filReqType" />
 		</dataListColumnKeys>
 	</mapping>
 
