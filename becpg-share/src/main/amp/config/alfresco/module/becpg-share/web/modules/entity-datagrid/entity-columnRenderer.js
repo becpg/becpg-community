@@ -415,6 +415,35 @@
                        });
                    }
                    break;
+               case "any":
+                   editor = new YAHOO.widget.TextboxCellEditor({
+                       validator : function(oData) {
+                          if(!oData || oData.length<1){
+                             if(column.mandatory){
+                                return undefined;
+                             }
+                             return null;
+                          }
+                          
+                          //Convert to number
+                          try {
+                               var number = eval(oData.replace(/,/g, '.').replace(/[^-()\d/*+.]/g, ''));
+                         
+	                          // Validate
+	                          if(YAHOO.lang.isNumber(number)) {
+	                              return number;
+	                          }
+                          } catch(e){
+                              return oData;
+                          }
+                                
+                          return oData;
+                          
+                      },
+                       disableBtns:true
+                   });
+                   break;
+                   
                default:
                    return null;
                }
