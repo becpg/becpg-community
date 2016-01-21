@@ -92,6 +92,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	private static final String ATTR_PACKAGING_QTY_FOR_PRODUCT = "packagingListQtyForProduct";
 	private static final String ATTR_PROCESS_QTY_FOR_PRODUCT = "processListQtyForProduct";
 	private static final String TAG_PACKAGING_LEVEL_MEASURES = "packagingLevelMeasures";
+	private static final String ATTR_NODEREF = "NodeRef";
 	private static final String ATTR_PARENT_NODEREF = "parentNodeRef";
 	
 	
@@ -627,7 +628,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			Integer depthLevel = dataItem.getDepthLevel();
 			if (depthLevel != null) {
 				partElt.addAttribute(BeCPGModel.PROP_DEPTH_LEVEL.getLocalName(), "" + (depthLevel * level));
-				partElt.addAttribute(ContentModel.PROP_NODE_REF.getLocalName(), dataItem.getNodeRef().toString());
+				partElt.addAttribute(ATTR_PARENT_NODEREF, dataItem.getNodeRef().toString());
 				if(parentDataItem != null){
 					partElt.addAttribute(ATTR_PARENT_NODEREF, parentDataItem.getNodeRef().toString());
 				}
