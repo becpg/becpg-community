@@ -36,6 +36,7 @@ public interface BeCPGModel {
 	// listValue
 	QName TYPE_LIST_VALUE = QName.createQName(BECPG_URI, "listValue");
 	QName PROP_LV_VALUE = QName.createQName(BECPG_URI, "lvValue");
+	QName PROP_LV_CODE = QName.createQName(BECPG_URI, "lvCode");
 	
 	// entity
 	QName TYPE_ENTITY_V2 = QName.createQName(BECPG_URI, "entityV2");

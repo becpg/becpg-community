@@ -145,6 +145,18 @@
 					<title>Submission Url</title>
 					<type>d:text</type>
 				</property>
+				<property name="dsg:editFormTemplate">
+					<title>Edit form template path</title>
+					<type>d:text</type>
+				</property>
+				<property name="dsg:viewFormTemplate">
+					<title>View form template path</title>
+					<type>d:text</type>
+				</property>
+				<property name="dsg:createFormTemplate">
+					<title>Create form template path</title>
+					<type>d:text</type>
+				</property>
 			</properties>
 			<overrides>
 				<property name="dsg:id">

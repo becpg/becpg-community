@@ -196,9 +196,24 @@ public class FormModelVisitor {
 			if (assoc.getTypeQName().equals(DesignerModel.ASSOC_DSG_FIELDS)) {
 				visitFieldXml(assoc.getChildRef(), formEl, fieldVisibility, appearance, "");
 			}
-
 		}
-
+		
+		String editFormTemplate = (String) nodeService.getProperty(formNodeRef, DesignerModel.PROP_DSG_EDITFORMTEMPLATE);
+		if(editFormTemplate!=null && !editFormTemplate.isEmpty()){
+			Element formTemplateEl = DOMUtils.createElement(formEl, "edit-form");
+			formTemplateEl.setAttribute("template", editFormTemplate);
+		}
+		
+		String viewFormTemplate = (String) nodeService.getProperty(formNodeRef, DesignerModel.PROP_DSG_VIEWFORMTEMPLATE);
+		if(viewFormTemplate!=null && !viewFormTemplate.isEmpty()){
+			Element formTemplateEl = DOMUtils.createElement(formEl, "view-form");
+			formTemplateEl.setAttribute("template", viewFormTemplate);
+		}
+		String createFormTemplate = (String) nodeService.getProperty(formNodeRef, DesignerModel.PROP_DSG_CREATEFORMTEMPLATE);
+		if(createFormTemplate!=null && !createFormTemplate.isEmpty()){
+			Element formTemplateEl = DOMUtils.createElement(formEl, "create-form");
+			formTemplateEl.setAttribute("template", createFormTemplate);
+		}
 	}
 
 	private void appendAtt(Element el, String attrName, NodeRef nodeRef, QName qname) {
@@ -382,10 +397,11 @@ public class FormModelVisitor {
 			nodeService.setProperty(formNodeRef,BeCPGModel.PROP_SORT,i*100);
 			int sortOrder = visitFormSets(formNodeRef, elem, "");
 			visitFormFields(formNodeRef, elem, "",sortOrder);
-
+            visitFormTemplates(formNodeRef, elem);
 		}
 
 	}
+
 
 	private int visitFormSets(NodeRef nodeRef, Element parentEl, String parent) {
 		logger.debug("visitFormSets with parent : " + parent);
@@ -426,6 +442,29 @@ public class FormModelVisitor {
 
 		visitFormFields(nodeRef, fields, hides, false, setId, sortOrder);
 
+	}
+	
+	
+
+	private void visitFormTemplates(NodeRef formNodeRef, Element parentEl) {
+		NodeList editForms = parentEl.getElementsByTagName("edit-form");
+		if(editForms!=null && editForms.getLength()>0){
+			Element elem = (Element) editForms.item(0);
+			nodeService.setProperty(formNodeRef, DesignerModel.PROP_DSG_EDITFORMTEMPLATE, elem.getAttribute("template"));
+		}
+		
+		NodeList viewForms = parentEl.getElementsByTagName("view-form");
+		if(viewForms!=null && viewForms.getLength()>0){
+			Element elem = (Element) editForms.item(0);
+			nodeService.setProperty(formNodeRef, DesignerModel.PROP_DSG_VIEWFORMTEMPLATE, elem.getAttribute("template"));
+		}
+		
+		NodeList createForms = parentEl.getElementsByTagName("create-form");
+		if(createForms!=null && createForms.getLength()>0){
+			Element elem = (Element) editForms.item(0);
+			nodeService.setProperty(formNodeRef, DesignerModel.PROP_DSG_CREATEFORMTEMPLATE, elem.getAttribute("template"));
+		}
+		
 	}
 
 	private int visitFormFields(NodeRef nodeRef, NodeList fields, NodeList shows, boolean show, String setId, int sortOrder) {
