@@ -292,6 +292,8 @@ public interface PLMModel {
 
 	// trademark
 	QName TYPE_TRADEMARK = QName.createQName(BeCPGModel.BECPG_URI, "trademark");
+	QName PROP_TRADEMARK_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "trademarkType");
+	
 
 	// certification
 	QName TYPE_CERTIFICATION = QName.createQName(BeCPGModel.BECPG_URI, "certification");
@@ -336,6 +338,11 @@ public interface PLMModel {
 	QName PROP_NUTRIENT_PROFILE_CLASS_FORMULA =  QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfileClassFormula");
 	QName TYPE_NUTRIENT_PROFILE = QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfile");
 	
+	//Custom codes
+	QName TYPE_CUSTOMSCODE = QName.createQName(BeCPGModel.BECPG_URI, "customsCode");
+	QName PROP_CUSTOMSCODE_CODE = QName.createQName(BeCPGModel.BECPG_URI, "cstsCode");
+	QName ASPECT_CUSTOMSCODE = QName.createQName(BeCPGModel.BECPG_URI, "customsCodeAspect");
+	QName ASSOC_CUSTOMSCODE = QName.createQName(BeCPGModel.BECPG_URI, "customsCodeRef");
 	
 	
 	

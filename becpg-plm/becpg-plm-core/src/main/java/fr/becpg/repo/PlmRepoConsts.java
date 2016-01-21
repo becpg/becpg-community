@@ -14,6 +14,7 @@ public class PlmRepoConsts {
 	/*-- Path query --*/			
 
 	public static final String PATH_ING_TYPES = "ingTypeItem";
+	public static final String PATH_TRADEMARK_TYPES = "TrademarkTypes";
 	public static final String PATH_NUT_GROUPS = "NutGroups";
 	public static final String PATH_NUT_TYPES = "NutTypes";
 	public static final String PATH_NUT_FACTS_METHODS = "NutFactsMethods";
@@ -30,6 +31,7 @@ public class PlmRepoConsts {
 	public static final String PATH_SUBSIDIARIES = "Subsidiaries";	
 	public static final String PATH_TRADEMARKS = "Trademarks";	
 	public static final String PATH_PLANTS = "Plants";	
+	public static final String PATH_CUSTOMSCODES = "CustomsCodes";
 	public static final String PATH_CERTIFICATIONS = "Certifications";
 	public static final String PATH_APPROVALNUMBERS = "ApprovalNumbers";
 	public static final String PATH_PROCESSSTEPS = "ProcessSteps";
@@ -46,7 +48,7 @@ public class PlmRepoConsts {
 	public static final String PATH_PM_MATERIALS = "pmMaterials";
 	public static final String PATH_PM_PRINT_TYPES = "pmPrintTypes";
 	public static final String PATH_PM_PRINT_VANISHS = "pmPrintVarnishs";
-	
+	public static final String PATH_GS1_HIERARCHY = "gs1_Hierarchy";
 	
 	public static final String PATH_LABEL = "Labels";
 	public static final String PATH_LABEL_TYPES = "LabelTypes";	
@@ -109,6 +111,9 @@ public class PlmRepoConsts {
 	public static final String PATH_ECO = "ECO";
 	
 	public static final String PATH_PRODUCT_HIERARCHY = "/app:company_home/cm:System/cm:ProductHierarchy/bcpg:entityLists/";
+	
+	
+	
 	
 	
 	

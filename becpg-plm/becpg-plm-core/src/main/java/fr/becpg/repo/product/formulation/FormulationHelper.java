@@ -203,7 +203,7 @@ public class FormulationHelper {
 	}
 
 	public static boolean isProductUnitLiter(ProductUnit unit) {
-		return unit != null && (unit.equals(ProductUnit.L) || unit.equals(ProductUnit.mL));
+		return unit != null && (unit.equals(ProductUnit.L) || unit.equals(ProductUnit.mL) || unit.equals(ProductUnit.cL));
 	}
 
 	public static boolean isProductUnitKg(ProductUnit unit) {
@@ -248,6 +248,8 @@ public class FormulationHelper {
 					if (FormulationHelper.isProductUnitKg(productUnit) || FormulationHelper.isProductUnitLiter(productUnit)) {
 						if (productUnit.equals(ProductUnit.g) || productUnit.equals(ProductUnit.mL)) {
 							qty = qty / 1000;
+						} else if (productUnit.equals(ProductUnit.cL)) {
+							qty = qty / 100;
 						}
 						if (FormulationHelper.isProductUnitLiter(productUnit)) {
 							Double density = FormulationHelper.getDensity(nodeRef, nodeService);
@@ -279,6 +281,8 @@ public class FormulationHelper {
 				if (qty != null && FormulationHelper.isProductUnitKg(productUnit) || FormulationHelper.isProductUnitLiter(productUnit)) {
 					if (productUnit.equals(ProductUnit.g) || productUnit.equals(ProductUnit.mL)) {
 						qty = qty / 1000;
+					} else if (productUnit.equals(ProductUnit.cL)) {
+						qty = qty / 100;
 					}
 					if (FormulationHelper.isProductUnitLiter(productUnit)) {
 						Double density = productData.getDensity();
@@ -309,6 +313,8 @@ public class FormulationHelper {
 			if (FormulationHelper.isProductUnitKg(productUnit) || FormulationHelper.isProductUnitLiter(productUnit)) {
 				if (productUnit.equals(ProductUnit.g) || productUnit.equals(ProductUnit.mL)) {
 					qty = qty / 1000;
+				} else if (productUnit.equals(ProductUnit.cL)) {
+					qty = qty / 100;
 				}
 				return qty;
 			} else if (FormulationHelper.isProductUnitP(productUnit)) {
@@ -340,11 +346,13 @@ public class FormulationHelper {
 			return null;
 		} else {
 			ProductUnit productUnit = getProductUnit(nodeRef, nodeService);
-			if (productUnit != null && (productUnit.equals(ProductUnit.mL) || productUnit.equals(ProductUnit.L))) {
+			if (productUnit != null && (productUnit.equals(ProductUnit.mL) || productUnit.equals(ProductUnit.L) || productUnit.equals(ProductUnit.cL))) {
 				if (productUnit.equals(ProductUnit.mL)) {
 					return qty / 1000;
 				} else if (productUnit.equals(ProductUnit.L)) {
 					return qty;
+				} else if (productUnit.equals(ProductUnit.cL)) {
+					return qty / 100;
 				}
 			}
 			return null;
@@ -362,11 +370,13 @@ public class FormulationHelper {
 			return null;
 		} else {
 			ProductUnit productUnit = formulatedProduct.getUnit();
-			if (productUnit != null && (productUnit.equals(ProductUnit.mL) || productUnit.equals(ProductUnit.L))) {
+			if (productUnit != null && (productUnit.equals(ProductUnit.mL) || productUnit.equals(ProductUnit.L) || productUnit.equals(ProductUnit.cL))) {
 				if (productUnit.equals(ProductUnit.mL)) {
 					return qty / 1000;
 				} else if (productUnit.equals(ProductUnit.L)) {
 					return qty;
+				}  else if (productUnit.equals(ProductUnit.cL)) {
+					return qty/100;
 				}
 			}
 			return null;
