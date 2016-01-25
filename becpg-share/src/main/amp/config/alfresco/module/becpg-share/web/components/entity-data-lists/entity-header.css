@@ -1,3 +1,11 @@
+.node-header {
+	padding-top: 1px !important;
+}
+
+.node-header .node-path {
+	clear:both;
+	width:100%;
+}
 
 .node-header .node-path .entity {
 	background-image:  url(../images/filetypes/generic-entity-16.png);
@@ -65,3 +73,38 @@
 .node-header a.item-print  {
 	background-image:  url(../images/printer-16.png);
 }
+
+.node-header .node-bcpath ul.bcpath {
+	 display: block;
+}
+
+
+.node-header .node-bcpath .bcpath li {
+	display: block;
+    color: #666;
+    text-decoration: none;
+    padding: 6px 17px 7px 20px;
+    margin-left: -13px;
+    top: -2px;
+    float: left;
+    position: relative;
+}
+.node-header .node-bcpath .bcpath li   { 
+    background-image: url('../images/bg-crumbs.png');
+    background-repeat: no-repeat;
+    background-position: 100% 0;
+}
+
+.node-header .node-bcpath .bcpath li:hover   { 
+    color: #333;
+    background-position: 100% -48px;
+    cursor: pointer;
+}
+ 
+
+
+
+
+
+
+
