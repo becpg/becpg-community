@@ -64,19 +64,14 @@
 	          				pathBreadCrumbs = { currentNode : null, path : []};
 	          			} 
 	          			
-	          			
-	          			
 	          			var printBreadCumbsPath = function(path){
 
          		    		 YAHOO.util.Dom.removeClass(me.id+"-bcpath","hidden");
          		    		 var html = '<ul class="bcpath">';
-         		    		 for(var i = 0 ; i<path.length;i++){
-         		    			
+         		    		 for(var i = 0 ; i<path.length;i++){		
          		    			var type = path[i].type,  url = beCPG.util.entityURL(path[i].siteId, path[i].nodeRef, type, null, path[i].listId)+"&bcPath=true";
-         		    			 
          		    			 html += '<li style="z-index:'+(20-i)+'"><span class="' +type.split(':')[1] + '" ><a href="' + url + '">'
 	    						+ Alfresco.util.encodeHTML(path[i].name) + '</a></li>';
-         		    			 
          		    		 }
          		    		 html += "</ul>";
          		    		 YAHOO.util.Dom.get(me.id+"-bcpath").innerHTML = html;
@@ -121,13 +116,9 @@
 	          		  sessionStorage.pathBreadCrumbs = JSON.stringify(pathBreadCrumbs);
 	          		    
                 	} catch(e){
-                		alert(e);
-                		delete sessionStorage.pathBreadCrumbs;
+                	  delete sessionStorage.pathBreadCrumbs;
                 	}
                 	
-                	
-          			
-
                      // MNT-9081 fix, redirect user to the correct location, if requested site is not the actual site
                      // where document is located
                      if (this.options.siteId != this.options.actualSiteId) {
