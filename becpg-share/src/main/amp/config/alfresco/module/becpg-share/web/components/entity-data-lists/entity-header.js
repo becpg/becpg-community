@@ -51,6 +51,82 @@
                    * @method onReady
                    */
                   onReady : function NodeHeader_onReady() {
+                	  
+                   var me = this;
+                	  
+                	  
+                	try {
+                		var pathBreadCrumbs = null;
+	                	if(sessionStorage.pathBreadCrumbs!=null){
+	                		pathBreadCrumbs = JSON.parse(sessionStorage.pathBreadCrumbs);
+	                	}
+	          			if(pathBreadCrumbs == null){
+	          				pathBreadCrumbs = { currentNode : null, path : []};
+	          			} 
+	          			
+	          			
+	          			
+	          			var printBreadCumbsPath = function(path){
+
+         		    		 YAHOO.util.Dom.removeClass(me.id+"-bcpath","hidden");
+         		    		 var html = '<ul class="bcpath">';
+         		    		 for(var i = 0 ; i<path.length;i++){
+         		    			
+         		    			var type = path[i].type,  url = beCPG.util.entityURL(path[i].siteId, path[i].nodeRef, type, null, path[i].listId)+"&bcPath=true";
+         		    			 
+         		    			 html += '<li style="z-index:'+(20-i)+'"><span class="' +type.split(':')[1] + '" ><a href="' + url + '">'
+	    						+ Alfresco.util.encodeHTML(path[i].name) + '</a></li>';
+         		    			 
+         		    		 }
+         		    		 html += "</ul>";
+         		    		 YAHOO.util.Dom.get(me.id+"-bcpath").innerHTML = html;
+	          			};
+	          			
+	          		    if(this.options.showRelativePath){
+	          		    	if(pathBreadCrumbs.currentNode != null && pathBreadCrumbs.currentNode.nodeRef != this.options.nodeRef) {
+	          		    		 var isInPath = false; 
+	          		    		 for(var i = 0 ; i<pathBreadCrumbs.path.length;i++){
+	          		    			 if(pathBreadCrumbs.path[i].nodeRef == this.options.nodeRef){
+	          		    				pathBreadCrumbs.path = pathBreadCrumbs.path.slice(0,i);
+	          		    				isInPath = true;
+	          		    				break;
+	          		    			 }
+	          		    			 
+	          		    		 }
+	          		    		if(!isInPath){
+	          		    			pathBreadCrumbs.path.push( pathBreadCrumbs.currentNode);
+	          		    		}	
+	          		    		pathBreadCrumbs.currentNode = {siteId : this.options.siteId,
+	          		    				nodeRef : this.options.nodeRef,
+	          		    				name:this.options.itemName,
+	          		    				type:this.options.itemType,
+	          		    				listId : this.options.listId};
+	          					
+	          		    		printBreadCumbsPath(pathBreadCrumbs.path);
+	          		    		 
+	          		    		 
+	          		    	} else if(pathBreadCrumbs.currentNode!=null){
+	          		    		printBreadCumbsPath(pathBreadCrumbs.path);
+	          		    	}
+	          			} else if(pathBreadCrumbs.currentNode==null ||  pathBreadCrumbs.currentNode.nodeRef != this.options.nodeRef){
+	          				//Reset
+	          				pathBreadCrumbs = { currentNode :{siteId : this.options.siteId,
+	          					nodeRef : this.options.nodeRef,
+	          					name:this.options.itemName,
+	          					type:this.options.itemType,
+      		    				listId : this.options.listId}, path : []};
+	          			} else if(pathBreadCrumbs.path!=null && pathBreadCrumbs.path.length>0){
+	          				printBreadCumbsPath(pathBreadCrumbs.path);
+	          			}
+	          		  sessionStorage.pathBreadCrumbs = JSON.stringify(pathBreadCrumbs);
+	          		    
+                	} catch(e){
+                		alert(e);
+                		delete sessionStorage.pathBreadCrumbs;
+                	}
+                	
+                	
+          			
 
                      // MNT-9081 fix, redirect user to the correct location, if requested site is not the actual site
                      // where document is located
