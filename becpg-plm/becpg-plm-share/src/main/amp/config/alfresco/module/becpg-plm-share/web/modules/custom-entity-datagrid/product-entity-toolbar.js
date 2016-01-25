@@ -303,38 +303,17 @@ YAHOO.Bubbling
                               lock : false
                            };
 
-                           YAHOO.Bubbling
-                                 .on(
-                                       "dirtyDataTable",
-                                       function() {
-                                          if (!me.fullScreen.lock) {
-                                             me.fullScreen.lock = true;
-                                             Alfresco.util.Ajax
-                                                   .request({
-                                                      method : Alfresco.util.Ajax.GET,
-                                                      url : Alfresco.constants.PROXY_URI + "becpg/product/formulate/node/" + me.options.entityNodeRef
-                                                            .replace(":/", "") + "?fast=true",
-                                                      successCallback : {
-                                                         fn : function(response) {
-                                                            YAHOO.Bubbling.fire("refreshDataGrids", {
-                                                               updateOnly : true,
-                                                               callback : function() {
-                                                                  me.fullScreen.lock = false;
-                                                               }
-                                                            });
-                                                         },
-                                                         scope : this
-                                                      }
-                                                   });
-                                          }
-                                       }, this);
-
+                          
                            Dom.setStyle("alf-content", "margin-left", null);
 
                         }
 
                      }
                   });
+      
+      
+   
+      
 
       YAHOO.Bubbling
             .fire(
@@ -346,10 +325,15 @@ YAHOO.Bubbling
                      },
                      fn : function(instance) {
 
+                    	 
                         Alfresco.util.PopupManager.displayMessage({
                            text : this.msg("message.formulate.please-wait")
                         });
 
+                    	var formulateButton = YAHOO.util.Selector.query('div.formulate');
+    					
+    					Dom.addClass(formulateButton, "loading");
+                        
                         Alfresco.util.Ajax
                               .request({
                                  method : Alfresco.util.Ajax.GET,
@@ -363,7 +347,7 @@ YAHOO.Bubbling
                                        });
 
                                        YAHOO.Bubbling.fire("refreshDataGrids");
-
+                                       Dom.removeClass(formulateButton, "loading");
                                     },
                                     scope : this
                                  },
@@ -384,9 +368,13 @@ YAHOO.Bubbling
                                  }
 
                               });
+
                      }
                   });
 
+      
+     
+      
       YAHOO.Bubbling
             .fire(
                   "registerToolbarButtonAction",
