@@ -623,6 +623,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			ProductData productData = alfrescoRepository.findOne(dataItem.getProduct());
 			loadNutLists(productData, dataListsElt, images);
 			loadOrganoLists(productData, dataListsElt, images);
+			loadDynamicCharactList(productData.getCompoListView().getDynamicCharactList(), dataListsElt);
 			extractVariants(dataItem.getVariants(), partElt, defaultVariantNodeRef);
 			
 			Integer depthLevel = dataItem.getDepthLevel();
@@ -795,6 +796,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	protected QName getPropNameOfType(QName type) {
 		if ((type != null) && type.equals(PLMModel.TYPE_CERTIFICATION)) {
 			return ContentModel.PROP_TITLE;
+		}
+		else if(dictionaryService.isSubClass(type, PLMModel.TYPE_PRODUCT)){
+			return ContentModel.PROP_NAME;
 		}
 		return null;
 
