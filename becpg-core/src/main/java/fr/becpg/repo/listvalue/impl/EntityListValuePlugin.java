@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.alfresco.repo.dictionary.DictionaryDAO;
@@ -56,12 +57,14 @@ import fr.becpg.repo.listvalue.ListValuePage;
 import fr.becpg.repo.listvalue.ListValuePlugin;
 import fr.becpg.repo.listvalue.ListValueService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
-import fr.becpg.repo.search.lucene.analysis.FrenchSnowballAnalyserThatRemovesAccents;
+import fr.becpg.repo.search.lucene.analysis.AbstractBeCPGAnalyzer;
+import fr.becpg.repo.search.lucene.analysis.EnglishBeCPGAnalyser;
+import fr.becpg.repo.search.lucene.analysis.FrenchBeCPGAnalyser;
 
 @Service
 public class EntityListValuePlugin implements ListValuePlugin {
 
-	private static final Log logger = LogFactory.getLog(ListValueServiceImpl.class);
+	private static final Log logger = LogFactory.getLog(EntityListValuePlugin.class);
 	private static final String SUFFIX_SPACE = " ";
 	private static final String SUFFIX_DOUBLE_QUOTE = "\"";
 	private static final String SUFFIX_SIMPLE_QUOTE = "'";
@@ -332,8 +335,8 @@ public class EntityListValuePlugin implements ListValuePlugin {
 
 				reader = new StringReader(query.trim());
 
-				if (analyzer instanceof FrenchSnowballAnalyserThatRemovesAccents) {
-					source = ((FrenchSnowballAnalyserThatRemovesAccents) analyzer).tokenStream(null, reader, true);
+				if (analyzer instanceof AbstractBeCPGAnalyzer) {
+					source = ((AbstractBeCPGAnalyzer) analyzer).tokenStream(null, reader, true);
 				} else {
 					source = analyzer.tokenStream(null, reader);
 				}
@@ -375,12 +378,15 @@ public class EntityListValuePlugin implements ListValuePlugin {
 	protected Analyzer getTextAnalyzer() {
 		if (luceneAnaLyzer == null) {
 			DataTypeDefinition def = dictionaryDAO.getDataType(DataTypeDefinition.TEXT);
-
 			try {
-				return (Analyzer) Class.forName(def.resolveAnalyserClassName()).newInstance();
+				return (Analyzer) Class.forName(def.resolveAnalyserClassName(Locale.getDefault())).newInstance();
 			} catch (Exception e) {
 				logger.error(e, e);
-				return new fr.becpg.repo.search.lucene.analysis.FrenchSnowballAnalyserThatRemovesAccents();
+				if(Locale.FRENCH.equals(Locale.getDefault())){
+					return new FrenchBeCPGAnalyser();
+				} else {
+					return new EnglishBeCPGAnalyser();
+				}
 			}
 		}
 		return luceneAnaLyzer;
