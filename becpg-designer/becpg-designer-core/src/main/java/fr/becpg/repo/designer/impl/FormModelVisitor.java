@@ -140,7 +140,6 @@ public class FormModelVisitor {
 		Element config = DOMUtils.createDoc("alfresco-config");
 
 		List<ChildAssociationRef> configEls = nodeService.getChildAssocs(nodeRef);
-		
 		DesignerHelper.sort(configEls,nodeService);
 		for (ChildAssociationRef assoc : configEls) {
 			if (assoc.getTypeQName().equals(DesignerModel.ASSOC_DSG_CONFIG_ELEMENTS)) {
@@ -266,7 +265,7 @@ public class FormModelVisitor {
 		field.setAttribute("mandatory", nodeService.getProperty(fieldNodeRef, DesignerModel.PROP_DSG_MANDATORY).toString());
 
 		List<ChildAssociationRef> assocs = nodeService.getChildAssocs(fieldNodeRef);
-
+		DesignerHelper.sort(assocs,nodeService);
 		for (ChildAssociationRef assoc : assocs) {
 			if (assoc.getTypeQName().equals(DesignerModel.ASSOC_DSG_CONTROLS)) {
 				visitControlXml(assoc.getChildRef(), field);
@@ -290,7 +289,7 @@ public class FormModelVisitor {
 		}
 
 		List<ChildAssociationRef> assocs = nodeService.getChildAssocs(setNodeRef);
-
+		DesignerHelper.sort(assocs,nodeService);
 		for (ChildAssociationRef assoc : assocs) {
 			if (assoc.getTypeQName().equals(DesignerModel.ASSOC_DSG_SETS)) {
 				visitSetXml(assoc.getChildRef(), formEl, fieldVisibility, appearance, (String) nodeService.getProperty(setNodeRef, DesignerModel.PROP_DSG_ID));
@@ -307,7 +306,7 @@ public class FormModelVisitor {
 		Element control = DOMUtils.createElement(field, "control");
 		appendAtt(control, "template", controlRef, DesignerModel.PROP_DSG_TEMPLATEPATH);
 		List<ChildAssociationRef> assocs = nodeService.getChildAssocs(controlRef);
-
+		DesignerHelper.sort(assocs,nodeService);
 		for (ChildAssociationRef assoc : assocs) {
 			if (assoc.getTypeQName().equals(DesignerModel.ASSOC_DSG_PARAMETERS)) {
 				visitParameterXml(assoc.getChildRef(), control);
@@ -596,7 +595,7 @@ public class FormModelVisitor {
 	public NodeRef visitM2Properties(NodeRef formNodeRef, NodeRef typeNodeRef) {
 
 		List<ChildAssociationRef> assocs = nodeService.getChildAssocs(typeNodeRef);
-
+		DesignerHelper.sort(assocs,nodeService);
 		for (ChildAssociationRef assoc : assocs) {
 			if (assoc.getTypeQName().equals(DesignerModel.ASSOC_M2_PROPERTIES) || assoc.getTypeQName().equals(DesignerModel.ASSOC_M2_PROPERTY_OVERRIDES)
 					|| assoc.getTypeQName().equals(DesignerModel.ASSOC_M2_ASSOCIATIONS)) {

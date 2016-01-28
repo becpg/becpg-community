@@ -44,10 +44,6 @@
                     {
                         entityLinkCustomClass : null,
                         
-                        options : {
-                        	disableSiteMode: false
-                        },
-
                         onReady : function CustomDLTB_onReady()
                         {
                             if (Dom.get(this.id + "-tb-body") != null)
@@ -444,7 +440,7 @@
 
                               this.fileUpload.uploader.widgets.panel.hideEvent.subscribe(function()
                               {
-                                 balloon.hide()
+                                 balloon.hide();
                               });
                            }
                         },

@@ -7,7 +7,7 @@
          "name": "${col.name}",
          "formsName": "<#if col.type == "association">assoc<#else>prop</#if>_${col.name?replace(":", "_")}",
          <#if col.label??>
-         "label": "${msg(col.label)}",
+         "label": "${jsonUtils.encodeJSONString(msg(col.label))}",
          <#else>
          "label": "",
          </#if>

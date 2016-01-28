@@ -77,6 +77,11 @@ public class FormulationHelper {
 				if (CompoListUnit.mL.equals(compoListUnit)) {
 					qtySubFormuala = qtySubFormuala / 1000;
 				}
+				
+				if (CompoListUnit.cL.equals(compoListUnit)) {
+					qtySubFormuala = qtySubFormuala / 100;
+				}
+				
 				return FormulationHelper.getQtyWithLossAndYield(qtySubFormuala, lossPerc, yieldPerc);
 			} else if (compoListUnit.toString().equals(productUnit.toString())) {
 				// compoListUnit is P
@@ -215,7 +220,7 @@ public class FormulationHelper {
 	}
 
 	public static boolean isCompoUnitLiter(CompoListUnit unit) {
-		return unit != null && (unit.equals(CompoListUnit.L) || unit.equals(CompoListUnit.mL));
+		return unit != null && (unit.equals(CompoListUnit.L) || unit.equals(CompoListUnit.mL) || unit.equals(CompoListUnit.cL));
 	}
 
 	public static boolean isCompoUnitKg(CompoListUnit unit) {

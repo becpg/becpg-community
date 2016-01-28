@@ -226,7 +226,7 @@
                     <mandatory>false</mandatory>
                 </property>
                 <property name="gs1:height">
-                    <title>Hauteur</title>
+                    <title>Hauteur (mm)</title>
                     <type>d:float</type>
                     <mandatory>false</mandatory>
                     <index enabled="true">
@@ -236,7 +236,7 @@
                     </index>
                 </property>
                 <property name="gs1:width">
-                    <title>Largeur</title>
+                    <title>Largeur (mm)</title>
                     <type>d:float</type>
                     <mandatory>false</mandatory>
                     <index enabled="true">
@@ -246,7 +246,7 @@
                     </index>
                 </property>
                 <property name="gs1:depth">
-                    <title>Profondeur</title>
+                    <title>Profondeur (mm)</title>
                     <type>d:float</type>
                     <mandatory>false</mandatory>
                     <index enabled="true">
@@ -256,7 +256,7 @@
                     </index>
                 </property>
                 <property name="gs1:weight">
-                    <title>Poids brut</title>
+                    <title>Poids brut (kg)</title>
                     <type>d:float</type>
                     <mandatory>false</mandatory>
                     <index enabled="true">
