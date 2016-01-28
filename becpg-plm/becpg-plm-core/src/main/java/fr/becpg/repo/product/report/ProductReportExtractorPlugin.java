@@ -92,7 +92,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	private static final String ATTR_PACKAGING_QTY_FOR_PRODUCT = "packagingListQtyForProduct";
 	private static final String ATTR_PROCESS_QTY_FOR_PRODUCT = "processListQtyForProduct";
 	private static final String TAG_PACKAGING_LEVEL_MEASURES = "packagingLevelMeasures";
-	private static final String ATTR_NODEREF = "NodeRef";
+	private static final String ATTR_NODEREF = "nodeRef";
 	private static final String ATTR_PARENT_NODEREF = "parentNodeRef";
 	
 	
@@ -623,12 +623,13 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			ProductData productData = alfrescoRepository.findOne(dataItem.getProduct());
 			loadNutLists(productData, dataListsElt, images);
 			loadOrganoLists(productData, dataListsElt, images);
+			loadDynamicCharactList(productData.getCompoListView().getDynamicCharactList(), dataListsElt);
 			extractVariants(dataItem.getVariants(), partElt, defaultVariantNodeRef);
 			
 			Integer depthLevel = dataItem.getDepthLevel();
 			if (depthLevel != null) {
 				partElt.addAttribute(BeCPGModel.PROP_DEPTH_LEVEL.getLocalName(), "" + (depthLevel * level));
-				partElt.addAttribute(ATTR_PARENT_NODEREF, dataItem.getNodeRef().toString());
+				partElt.addAttribute(ATTR_NODEREF, dataItem.getNodeRef().toString());
 				if(parentDataItem != null){
 					partElt.addAttribute(ATTR_PARENT_NODEREF, parentDataItem.getNodeRef().toString());
 				}
@@ -795,6 +796,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	protected QName getPropNameOfType(QName type) {
 		if ((type != null) && type.equals(PLMModel.TYPE_CERTIFICATION)) {
 			return ContentModel.PROP_TITLE;
+		}
+		else if(dictionaryService.isSubClass(type, PLMModel.TYPE_PRODUCT)){
+			return ContentModel.PROP_NAME;
 		}
 		return null;
 
