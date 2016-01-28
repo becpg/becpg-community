@@ -227,16 +227,26 @@
 					<show id="bcpg:dynamicCharactColumn3" force="true" />
 					<show id="bcpg:dynamicCharactColumn4" force="true" />
 					<show id="bcpg:dynamicCharactColumn5" force="true"/>
+					<show id="bcpg:dynamicCharactColumn6" force="true" />
+					<show id="bcpg:dynamicCharactColumn7" force="true" />
+					<show id="bcpg:dynamicCharactColumn8" force="true" />
+					<show id="bcpg:dynamicCharactColumn9" force="true" />
+					<show id="bcpg:dynamicCharactColumn10" force="true" />
 					<show id="bcpg:instruction" force="true"/>
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden" ></field>
 					<field id="mpm:plRateProduct" read-only="true" ></field>
-					<field id="bcpg:dynamicCharactColumn1" label="hidden" ></field>
-					<field id="bcpg:dynamicCharactColumn2" label="hidden" ></field>
-					<field id="bcpg:dynamicCharactColumn3" label="hidden" ></field>
-					<field id="bcpg:dynamicCharactColumn4" label="hidden" ></field>
-					<field id="bcpg:dynamicCharactColumn5" label="hidden" ></field>
+					<field id="bcpg:dynamicCharactColumn1" read-only="true" label="hidden" ></field>
+					<field id="bcpg:dynamicCharactColumn2" read-only="true" label="hidden" ></field>
+					<field id="bcpg:dynamicCharactColumn3" read-only="true" label="hidden" ></field>
+					<field id="bcpg:dynamicCharactColumn4" read-only="true" label="hidden" ></field>
+					<field id="bcpg:dynamicCharactColumn5" read-only="true" label="hidden" ></field>
+					<field id="bcpg:dynamicCharactColumn6" read-only="true" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn7" read-only="true" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn8" read-only="true" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn9" read-only="true" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn10" read-only="true" label="hidden"></field>
 					<field id="bcpg:instruction" label="hidden" ></field>
 				</appearance>
 			</form>
