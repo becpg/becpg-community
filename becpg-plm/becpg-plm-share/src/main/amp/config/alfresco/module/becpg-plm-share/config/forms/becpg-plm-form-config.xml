@@ -6066,16 +6066,16 @@
 					<field id="bcpg:compareWithDynColumn" label="hidden" read-only="true"/>
 					<field id="bcpg:compoListQty" read-only="true"></field>
 					<field id="bcpg:compoListVolume" read-only="true"></field>
-					<field id="bcpg:dynamicCharactColumn1" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn2" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn3" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn4" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn5" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn6" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn7" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn8" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn9" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn10" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn1" read-only="true" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn2" read-only="true" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn3" read-only="true" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn4" read-only="true" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn5" read-only="true" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn6" read-only="true" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn7" read-only="true" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn8" read-only="true" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn9" read-only="true" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn10" read-only="true" label="hidden"></field>
 					<field id="bcpg:instruction" label="hidden"></field>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
@@ -6230,16 +6230,16 @@
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden"></field>
 					<field id="pack:labelingPosition" label="hidden" />
-					<field id="bcpg:dynamicCharactColumn1" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn2" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn3" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn4" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn5" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn6" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn7" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn8" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn9" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn10" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn1" read-only="true" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn2" read-only="true" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn3" read-only="true" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn4" read-only="true" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn5" read-only="true" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn6" read-only="true" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn7" read-only="true" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn8" read-only="true" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn9" read-only="true" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn10" read-only="true" label="hidden"></field>
 					<field id="bcpg:instruction" label="hidden"></field>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>

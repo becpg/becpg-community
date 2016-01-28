@@ -154,10 +154,14 @@ public class CompositionQtyCalculatingFormulationHandler extends FormulationBase
 				return qty / 1000000;
 			} else if (compoListUnit.equals(CompoListUnit.P)) {
 				return FormulationHelper.getNetWeight(compoListDataItem.getProduct(), nodeService, FormulationHelper.DEFAULT_NET_WEIGHT) * qty;
-			} else if (compoListUnit.equals(CompoListUnit.L) || compoListUnit.equals(CompoListUnit.mL)) {
+			} else if (compoListUnit.equals(CompoListUnit.L) || compoListUnit.equals(CompoListUnit.mL) || compoListUnit.equals(CompoListUnit.cL)) {
 
 				if (compoListUnit.equals(CompoListUnit.mL)) {
 					qty = qty / 1000;
+				}
+				
+				if (compoListUnit.equals(CompoListUnit.cL)) {
+					qty = qty / 100;
 				}
 
 				Double overrun = compoListDataItem.getOverrunPerc();

@@ -21,6 +21,7 @@ package fr.becpg.repo.hierarchy.impl;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
@@ -36,6 +37,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
@@ -144,7 +146,8 @@ public class HierarchyServiceImpl implements HierarchyService {
 		NodeRef listContainerNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(),
 				BeCPGQueryBuilder.encodePath(path));
 
-		BeCPGQueryBuilder ret = BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_LINKED_VALUE).parent(listContainerNodeRef).maxResults(RepoConsts.MAX_SUGGESTIONS);
+		BeCPGQueryBuilder ret = BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_LINKED_VALUE).parent(listContainerNodeRef)
+				.maxResults(RepoConsts.MAX_SUGGESTIONS);
 
 		if (parentNodeRef != null) {
 			ret.andPropEquals(BeCPGModel.PROP_PARENT_LEVEL, parentNodeRef.toString());
@@ -154,7 +157,7 @@ public class HierarchyServiceImpl implements HierarchyService {
 
 		// value == * -> return all
 		if (!isAllQuery(value)) {
-			if(value.contains(SUFFIX_ALL)){
+			if (value.contains(SUFFIX_ALL)) {
 				ret.andPropQuery(property, value);
 			} else {
 				ret.andPropEquals(property, value).inDB();
@@ -182,46 +185,55 @@ public class HierarchyServiceImpl implements HierarchyService {
 			@Override
 			public Void doWork() throws Exception {
 
-				RepositoryEntity entity = alfrescoRepository.findOne(entityNodeRef);
+				Locale currentLocal = I18NUtil.getLocale();
 
-				if (entity instanceof HierarchicalEntity) {
+				try {
+					I18NUtil.setLocale(Locale.getDefault());
 
-					NodeRef hierarchyNodeRef = ((HierarchicalEntity) entity).getHierarchy2();
-					if (hierarchyNodeRef == null) {
-						hierarchyNodeRef = ((HierarchicalEntity) entity).getHierarchy1();
-					}
+					RepositoryEntity entity = alfrescoRepository.findOne(entityNodeRef);
 
-					QName type = nodeService.getType(entityNodeRef);
-					ClassDefinition classDef = dictionaryService.getClass(type);
+					if (entity instanceof HierarchicalEntity) {
 
-					NodeRef destinationNodeRef = repoService.getOrCreateFolderByPath(containerNodeRef, type.getLocalName(),
-							classDef.getTitle(dictionaryService));
+						NodeRef hierarchyNodeRef = ((HierarchicalEntity) entity).getHierarchy2();
+						if (hierarchyNodeRef == null) {
+							hierarchyNodeRef = ((HierarchicalEntity) entity).getHierarchy1();
+						}
 
-					if (hierarchyNodeRef != null) {
-						destinationNodeRef = getOrCreateHierachyFolder(hierarchyNodeRef, destinationNodeRef);
-					} else {
-						logger.warn("Cannot classify entity since it doesn't have a hierarchy.");
-					}
+						QName type = nodeService.getType(entityNodeRef);
+						ClassDefinition classDef = dictionaryService.getClass(type);
 
-					if (destinationNodeRef != null) {
-						if( destinationNodeRef != entityNodeRef){
-							// classify
-							if(!ContentModel.TYPE_FOLDER.equals(nodeService.getType(destinationNodeRef))){
-								logger.warn("Incorrect destination node type:"+nodeService.getType(destinationNodeRef));
+						NodeRef destinationNodeRef = repoService.getOrCreateFolderByPath(containerNodeRef, type.getLocalName(),
+								classDef.getTitle(dictionaryService));
+
+						if (hierarchyNodeRef != null) {
+							destinationNodeRef = getOrCreateHierachyFolder(hierarchyNodeRef, destinationNodeRef);
+						} else {
+							logger.warn("Cannot classify entity since it doesn't have a hierarchy.");
+						}
+
+						if (destinationNodeRef != null) {
+							if (destinationNodeRef != entityNodeRef) {
+								// classify
+								if (!ContentModel.TYPE_FOLDER.equals(nodeService.getType(destinationNodeRef))) {
+									logger.warn("Incorrect destination node type:" + nodeService.getType(destinationNodeRef));
+								} else {
+									repoService.moveNode(entityNodeRef, destinationNodeRef);
+								}
 							} else {
-								repoService.moveNode(entityNodeRef, destinationNodeRef);
+								logger.warn("Failed to classify entity. entityNodeRef: " + entityNodeRef + " cannot classify into itselfs");
 							}
 						} else {
-							logger.warn("Failed to classify entity. entityNodeRef: " + entityNodeRef+" cannot classify into itselfs");
+							logger.warn("Failed to classify entity. entityNodeRef: " + entityNodeRef);
 						}
-					} else {
-						logger.warn("Failed to classify entity. entityNodeRef: " + entityNodeRef);
-					}
 
-				} else {
-					logger.warn("Cannot classify entity since is not implemented HierarchicalEntity");
+					} else {
+						logger.warn("Cannot classify entity since is not implemented HierarchicalEntity");
+					}
+					return null;
+
+				} finally {
+					I18NUtil.setLocale(currentLocal);
 				}
-				return null;
 			}
 
 		});
@@ -233,10 +245,11 @@ public class HierarchyServiceImpl implements HierarchyService {
 
 		NodeRef parent = HierarchyHelper.getParentHierachy(hierarchyNodeRef, nodeService);
 		if (parent != null) {
-			if(!parent.equals(hierarchyNodeRef)){
+			if (!parent.equals(hierarchyNodeRef)) {
 				parentNodeRef = getOrCreateHierachyFolder(parent, parentNodeRef);
 			} else {
-				logger.warn("Warning hierarchy cycle for :"+HierarchyHelper.getHierachyName(hierarchyNodeRef, nodeService)+" "+hierarchyNodeRef);
+				logger.warn(
+						"Warning hierarchy cycle for :" + HierarchyHelper.getHierachyName(hierarchyNodeRef, nodeService) + " " + hierarchyNodeRef);
 			}
 		}
 		String name = HierarchyHelper.getHierachyName(hierarchyNodeRef, nodeService);
