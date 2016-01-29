@@ -89,7 +89,7 @@ public class CompositeLabeling extends AbstractLabelingComponent {
 	}
 
 	public boolean isGroup() {
-		return DeclarationType.Group.equals(declarationType);
+		return DeclarationType.Group.equals(declarationType) ||  DeclarationType.Kit.equals(declarationType);
 	}
 
 	public Double getQtyTotal() {
