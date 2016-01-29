@@ -26,6 +26,7 @@ public enum DeclarationType {
 	Omit,
 	Detail,
 	Group,
+	Kit,
 	DoNotDeclare, 
 	DoNotDetails
 }

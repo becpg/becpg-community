@@ -379,16 +379,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				CompositeLabeling compositeLabeling = (CompositeLabeling) component;
 				for (AbstractLabelingComponent subComponent : compositeLabeling.getIngList().values()) {
 
-					Double qty = labelingFormulaContext.computeQtyPerc(compositeLabeling, subComponent);
-					if ((compositeLabeling.getQty() != null) && (qty != null)) {
-						qty = qty * compositeLabeling.getQty();
-					}
-
-					Double volume = labelingFormulaContext.computeVolumePerc(compositeLabeling, subComponent);
-					if ((compositeLabeling.getQty() != null) && (volume != null)) {
-						volume = volume * compositeLabeling.getVolume();
-					}
-
+					Double qty = labelingFormulaContext.computeQtyPerc(compositeLabeling, subComponent,compositeLabeling.getQty() != null? compositeLabeling.getQty():1d);
+					Double volume = labelingFormulaContext.computeVolumePerc(compositeLabeling, subComponent,compositeLabeling.getVolume()!=null ? compositeLabeling.getVolume() :1d);
+			
 					AbstractLabelingComponent toMerged = merged.get(subComponent.getNodeRef());
 
 					if (toMerged == null) {

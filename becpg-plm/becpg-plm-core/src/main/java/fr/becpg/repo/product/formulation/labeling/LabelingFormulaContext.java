@@ -164,6 +164,7 @@ public class LabelingFormulaContext {
 
 	private String ingDefaultFormat = "{0}";
 	private String groupDefaultFormat = "<b>{0} ({1,number,0.#%}):</b> {2}";
+	private String groupListDefaultFormat = "<b>{0} {1,number,0.#%}</b>";
 	private String detailsDefaultFormat = "{0} ({2})";
 	private String ingTypeDefaultFormat = "{0}: {2}";
 	private String ingTypeDecThresholdFormat = "{0}";
@@ -192,6 +193,10 @@ public class LabelingFormulaContext {
 
 	public void setGroupDefaultFormat(String groupDefaultFormat) {
 		this.groupDefaultFormat = groupDefaultFormat;
+	}
+	
+	public void setGroupListDefaultFormat(String groupListDefaultFormat) {
+		this.groupListDefaultFormat = groupListDefaultFormat;
 	}
 
 	public void setDetailsDefaultFormat(String detailsDefaultFormat) {
@@ -314,7 +319,7 @@ public class LabelingFormulaContext {
 		}
 
 		if (plural && (lblComponent instanceof IngTypeItem)) {
-			return StringUtils.uncapitalize(((IngTypeItem) lblComponent).getPluralLegalName(I18NUtil.getLocale()));
+			return uncapitalize(((IngTypeItem) lblComponent).getPluralLegalName(I18NUtil.getLocale()));
 		}
 
 		if (showIngCEECode && (lblComponent instanceof IngItem)) {
@@ -326,13 +331,20 @@ public class LabelingFormulaContext {
 		if (!lblComponent.getAllergens().isEmpty()) {
 			if (((lblComponent instanceof CompositeLabeling) && ((CompositeLabeling) lblComponent).getIngList().isEmpty())
 					|| (lblComponent instanceof IngItem)) {
-				return createAllergenAwareLabel(StringUtils.uncapitalize(lblComponent.getLegalName(I18NUtil.getLocale())),
+				return createAllergenAwareLabel(uncapitalize(lblComponent.getLegalName(I18NUtil.getLocale())),
 						lblComponent.getAllergens());
 			}
 
 		}
 
-		return StringUtils.uncapitalize(lblComponent.getLegalName(I18NUtil.getLocale()));
+		return uncapitalize(lblComponent.getLegalName(I18NUtil.getLocale()));
+	}
+
+	private String uncapitalize(String legalName) {
+		if (legalName==null || legalName.isEmpty() || Pattern.compile("^([A-Z]{2}|[A-Z][1-9]).*$").matcher(legalName).find()) {
+			return legalName;
+		}
+		return StringUtils.uncapitalize(legalName);
 	}
 
 	private String createAllergenAwareLabel(String ingLegalName, Set<NodeRef> allergens) {
@@ -343,7 +355,7 @@ public class LabelingFormulaContext {
 
 		StringBuilder ret = new StringBuilder();
 		for (NodeRef allergen : allergens) {
-			String allergenName = StringUtils.uncapitalize(getAllergenName(allergen));
+			String allergenName = uncapitalize(getAllergenName(allergen));
 			if (allergenName != null && !allergenName.isEmpty()) {
 				if (ret.length() > 0) {
 					ret.append(defaultSeparator);
@@ -353,7 +365,7 @@ public class LabelingFormulaContext {
 						return ma.replaceAll(allergenReplacementPattern);
 					} else {
 						for (NodeRef subAllergen : associationService.getTargetAssocs(allergen, PLMModel.ASSOC_ALLERGENSUBSETS)) {
-							String subAllergenName = StringUtils.uncapitalize(getAllergenName(subAllergen));
+							String subAllergenName = uncapitalize(getAllergenName(subAllergen));
 							if (subAllergenName != null && !subAllergenName.isEmpty()) {
 								ma = Pattern.compile("\\b(" + Pattern.quote(subAllergenName) + "(s?))\\b").matcher(ingLegalName);
 								if (ma.find() && ma.group(1) != null) {
@@ -587,14 +599,14 @@ public class LabelingFormulaContext {
 		}
 
 		if (showGroup) {
-			return renderCompositeIng(lblCompositeContext);
+			return renderCompositeIng(lblCompositeContext,1d);
 		} else {
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("Merged labeling :" + mergedLblCompositeContext.toString());
 			}
 
-			return renderCompositeIng(mergedLblCompositeContext);
+			return renderCompositeIng(mergedLblCompositeContext,1d);
 		}
 
 	}
@@ -613,13 +625,13 @@ public class LabelingFormulaContext {
 
 			String ingName = getLegalIngName(component, false);
 
-			Double qtyPerc = computeQtyPerc(lblCompositeContext, component);
+			Double qtyPerc = computeQtyPerc(lblCompositeContext, component, 1d);
 
 			if (isGroup(component)) {
 				if (ret.length() > 0) {
 					ret.append(groupDefaultSeparator);
 				}
-				ret.append(new MessageFormat("<b>{0} {1,number,0.#%}</b>").format(new Object[] { ingName, qtyPerc }));
+				ret.append(new MessageFormat(groupListDefaultFormat).format(new Object[] { ingName, qtyPerc }));
 			}
 		}
 
@@ -643,7 +655,7 @@ public class LabelingFormulaContext {
 		return ret.toString();
 	}
 	
-	private String renderCompositeIng(CompositeLabeling compositeLabeling) {
+	private String renderCompositeIng(CompositeLabeling compositeLabeling, double ratio) {
 		StringBuffer ret = new StringBuffer();
 		boolean appendEOF = false;
 		for (Map.Entry<IngTypeItem, List<AbstractLabelingComponent>> kv : getSortedIngListByType(compositeLabeling).entrySet()) {
@@ -652,15 +664,15 @@ public class LabelingFormulaContext {
 
 			if ((kv.getKey() != null) && (getLegalIngName(kv.getKey(), false) != null)) {
 
-				Double qtyPerc = computeQtyPerc(compositeLabeling, kv.getKey());
+				Double qtyPerc = computeQtyPerc(compositeLabeling, kv.getKey(),ratio);
 				kv.getKey().setQty(qtyPerc);
 
 				toAppend.append(getIngTextFormat(kv.getKey()).format(new Object[] { getLegalIngName(kv.getKey(), kv.getValue().size() > 1),
 						(useVolume ? kv.getKey().getVolume() : kv.getKey().getQty()),
-						renderLabelingComponent(compositeLabeling, kv.getValue(), ingTypeDefaultSeparator) }));
+						renderLabelingComponent(compositeLabeling, kv.getValue(), ingTypeDefaultSeparator, ratio) }));
 
 			} else {
-				toAppend.append(renderLabelingComponent(compositeLabeling, kv.getValue(), defaultSeparator));
+				toAppend.append(renderLabelingComponent(compositeLabeling, kv.getValue(), defaultSeparator,ratio));
 			}
 
 			if ((toAppend != null) && !toAppend.toString().isEmpty()) {
@@ -685,15 +697,15 @@ public class LabelingFormulaContext {
 		return cleanLabel(ret);
 	}
 
-	private StringBuilder renderLabelingComponent(CompositeLabeling parent, List<AbstractLabelingComponent> subComponents, String separator) {
+	private StringBuilder renderLabelingComponent(CompositeLabeling parent, List<AbstractLabelingComponent> subComponents, String separator, double ratio) {
 
 		StringBuilder ret = new StringBuilder();
 
 		boolean appendEOF = false;
 		for (AbstractLabelingComponent component : subComponents) {
 
-			Double qtyPerc = computeQtyPerc(parent, component);
-			Double volumePerc = computeVolumePerc(parent, component);
+			Double qtyPerc = computeQtyPerc(parent, component, ratio);
+			Double volumePerc = computeVolumePerc(parent, component, ratio);
 
 			String ingName = getLegalIngName(component, false);
 
@@ -725,7 +737,7 @@ public class LabelingFormulaContext {
 				} else if (component instanceof CompositeLabeling) {
 
 					toAppend = getIngTextFormat(component)
-							.format(new Object[] { ingName, qtyPerc, renderCompositeIng((CompositeLabeling) component) });
+							.format(new Object[] { ingName, qtyPerc, renderCompositeIng((CompositeLabeling) component, DeclarationType.Kit.equals(((CompositeLabeling) component).getDeclarationType())? 1d : qtyPerc) });
 
 				} else {
 					logger.error("Unsupported ing type. Name: " + component.getName());
@@ -865,18 +877,18 @@ public class LabelingFormulaContext {
 		return (component instanceof CompositeLabeling) && ((CompositeLabeling) component).isGroup();
 	}
 
-	public Double computeQtyPerc(CompositeLabeling parent, AbstractLabelingComponent component) {
+	public Double computeQtyPerc(CompositeLabeling parent, AbstractLabelingComponent component, double ratio) {
 		Double qty = component.getQty();
 		if ((parent.getQtyTotal() != null) && (parent.getQtyTotal() > 0) && (qty != null)) {
-			qty = qty / parent.getQtyTotal();
+			qty = qty / parent.getQtyTotal() * ratio;
 		}
 		return qty;
 	}
 
-	public Double computeVolumePerc(CompositeLabeling parent, AbstractLabelingComponent component) {
+	public Double computeVolumePerc(CompositeLabeling parent, AbstractLabelingComponent component, double ratio) {
 		Double volume = component.getVolume();
 		if ((parent.getVolumeTotal() != null) && (parent.getVolumeTotal() > 0) && (volume != null)) {
-			volume = volume / parent.getVolumeTotal();
+			volume = volume / parent.getVolumeTotal() * ratio;
 		}
 		return volume;
 	}
