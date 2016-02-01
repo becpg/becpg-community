@@ -51,7 +51,71 @@
     * Augment prototype with main class implementation, ensuring overwrite is enabled
     */
    YAHOO.lang.augmentObject(beCPG.widget.DashletResizer.prototype, {
-      
+	      /**
+	       * Fired by YUI when parent element is available for scripting.
+	       * Template initialisation, including instantiation of YUI widgets and event listener binding.
+	       *
+	       * @method onReady
+	       */
+	      onReady: function DashletResizer_onReady()
+	      {
+	         // Have permission to resize?
+	    	 // beCPG always allowed to resize 
+//	         if (!Alfresco.constants.DASHLET_RESIZE)
+//	         {
+//	            return;
+//	         }
+
+	         // Find dashlet div
+	         this.dashlet = Selector.query("div.dashlet", Dom.get(this.id), true);
+	         if (!this.dashlet)
+	         {
+	            return;
+	         }
+	         Dom.addClass(this.dashlet, "resizable");
+
+	         // Find dashlet body div?
+	         this.dashletBody = Selector.query("div.body", this.dashlet, true);
+	         if (!this.dashletBody)
+	         {
+	            return;
+	         }
+
+	         // Difference in height between dashlet and dashletBody for resize events
+	         var origHeight = Dom.getStyle(this.dashlet, "height");
+	         if (origHeight == "auto")
+	         {
+	            origHeight = this.dashlet.offsetHeight - parseInt(Dom.getStyle(this.dashlet, "padding-bottom"), 10);
+	         }
+	         else
+	         {
+	            origHeight = parseInt(origHeight, 10);
+	         }
+	         this.heightDelta = origHeight - parseInt(Dom.getStyle(this.dashletBody, "height"), 10);
+
+	         // Create and attach Vertical Resizer
+	         this.widgets.resizer = new YAHOO.util.Resize(this.dashlet,
+	         {
+	            handles: ["b"],
+	            minHeight: this.options.minDashletHeight,
+	            maxHeight: this.options.maxDashletHeight
+	         });
+
+	         // During resize event handler
+	         this.widgets.resizer.on("resize", function()
+	         {
+	            this.onResize();
+	         }, this, true);
+
+	         // End resize event handler
+	         this.widgets.resizer.on("endResize", function(eventTarget)
+	         {
+	            this.onEndResize(eventTarget.height);
+	         }, this, true);
+
+	         // Clear the fixed-pixel width the dashlet has been given
+	         Dom.setStyle(this.dashlet, "width", "");
+	      },
       /**
        * Fired by end resize event listener.
        *

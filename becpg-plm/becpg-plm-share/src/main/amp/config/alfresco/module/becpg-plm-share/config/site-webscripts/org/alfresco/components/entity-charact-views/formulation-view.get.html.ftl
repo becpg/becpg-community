@@ -24,10 +24,7 @@
 </@markup>
 
 <@markup id="widgets">
-   	    <@inlineScript group="entity-datalists">
-		    Alfresco.constants.DASHLET_RESIZE = true && YAHOO.env.ua.mobile === null;
-		</@>
-  		<@createWidgets group="entity-datalists"/>
+  	<@createWidgets group="entity-datalists"/>
 </@>
 
 
