@@ -140,6 +140,8 @@ public class EntityToDBXmlVisitor {
 	private static final Log logger = LogFactory.getLog(EntityToDBXmlVisitor.class);
 
 	private static final List<String> ignoredProperties = new ArrayList<>();
+	
+	private static final List<String> ignoredLists = new ArrayList<>();
 
 	static {
 		ignoredProperties.add("cm:name");
@@ -152,6 +154,23 @@ public class EntityToDBXmlVisitor {
 		ignoredProperties.add("cm:contains");
 		ignoredProperties.add("bcpg:sort");
 		ignoredProperties.add("rep:reports");
+		ignoredProperties.add("bcpg:isManualListItem");
+		ignoredProperties.add("bcpg:depthLevel");
+	}
+	
+	static {
+		
+		ignoredLists.add("mpm:resourceParamList");
+		ignoredLists.add("ecm:replacementList");
+		ignoredLists.add("mpm:processList");
+		ignoredLists.add("bcpg:dynamicCharactList");
+		ignoredLists.add("ecm:changeUnitList");
+		ignoredLists.add("bcpg:contactList");
+		ignoredLists.add("bcpg:organoList");
+		ignoredLists.add("bcpg:microbioList");
+		ignoredLists.add("bcpg:physicoChemList");
+		ignoredLists.add("bcpg:ingLabelingList");
+		ignoredLists.add("pjt:activityList");
 	}
 
 	public void visit(InputStream in) throws IOException, SAXException, ParserConfigurationException, DOMException, ParseException, SQLException {
@@ -182,8 +201,9 @@ public class EntityToDBXmlVisitor {
 				Element dataListItem = ((Element) dataListItems.item(j));
 				String dataListItemNodeRef = dataListItem.getAttribute(ATTR_NODEREF);
 
-				createDBDataListItem(dbId, dataListItemNodeRef, dataListname, dataListItem.getNodeName(), readProperties(dataListItem));
-
+				if(!ignoredLists.contains( dataListItem.getNodeName())){
+					createDBDataListItem(dbId, dataListItemNodeRef, dataListname, dataListItem.getNodeName(), readProperties(dataListItem));
+				}
 			}
 
 		}
@@ -201,6 +221,7 @@ public class EntityToDBXmlVisitor {
 		// TODO look if already exist aka same nodeRef same date modification or
 		// creation
 
+		
 		JdbcUtils.update(connection, "update  `becpg_datalist` set is_last_version = ? where  datalist_id = ? and instance_id = ?", new Object[] { false, dataListItemNodeRef,
 				instance.getId() });
 
