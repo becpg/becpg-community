@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2015 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2015 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.entity.impl;
@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
@@ -40,6 +41,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Repository;
 
 import fr.becpg.model.BeCPGModel;
@@ -51,9 +53,9 @@ import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
- * 
+ *
  * @author querephi
- * 
+ *
  */
 @Repository("entityListDAO")
 public class EntityListDAOImpl implements EntityListDAO {
@@ -108,8 +110,8 @@ public class EntityListDAOImpl implements EntityListDAO {
 		Map<QName, Serializable> properties = new HashMap<>();
 		properties.put(ContentModel.PROP_NAME, RepoConsts.CONTAINER_DATALISTS);
 		properties.put(ContentModel.PROP_TITLE, RepoConsts.CONTAINER_DATALISTS);
-		NodeRef ret = nodeService.createNode(nodeRef, BeCPGModel.ASSOC_ENTITYLISTS, BeCPGModel.ASSOC_ENTITYLISTS, ContentModel.TYPE_FOLDER,
-				properties).getChildRef();
+		NodeRef ret = nodeService
+				.createNode(nodeRef, BeCPGModel.ASSOC_ENTITYLISTS, BeCPGModel.ASSOC_ENTITYLISTS, ContentModel.TYPE_FOLDER, properties).getChildRef();
 		nodeService.addAspect(ret, BeCPGModel.ASPECT_HIDDEN_FOLDER, new HashMap<QName, Serializable>());
 		return ret;
 	}
@@ -117,47 +119,53 @@ public class EntityListDAOImpl implements EntityListDAO {
 	@Override
 	public NodeRef createList(NodeRef listContainerNodeRef, QName listQName) {
 
-		ClassDefinition classDef = dictionaryService.getClass(listQName);
+		Locale currentLocal = I18NUtil.getLocale();
 
-		if (classDef == null) {
-			logger.error("No classDef found for :" + listQName);
-			throw new InvalidParameterException("No classDef found for :" + listQName);
+		try {
+			I18NUtil.setLocale(Locale.getDefault());
+
+			ClassDefinition classDef = dictionaryService.getClass(listQName);
+
+			if (classDef == null) {
+				logger.error("No classDef found for :" + listQName);
+				throw new InvalidParameterException("No classDef found for :" + listQName);
+			}
+
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(ContentModel.PROP_NAME, listQName.getLocalName());
+			properties.put(ContentModel.PROP_TITLE, classDef.getTitle(dictionaryService));
+			properties.put(ContentModel.PROP_DESCRIPTION, classDef.getDescription(dictionaryService));
+			properties.put(DataListModel.PROP_DATALISTITEMTYPE, listQName.toPrefixString(namespaceService));
+
+			return nodeService.createNode(listContainerNodeRef, ContentModel.ASSOC_CONTAINS, listQName, DataListModel.TYPE_DATALIST, properties)
+					.getChildRef();
+		} finally {
+			I18NUtil.setLocale(currentLocal);
 		}
-
-		Map<QName, Serializable> properties = new HashMap<>();
-		properties.put(ContentModel.PROP_NAME, listQName.getLocalName());
-		properties.put(ContentModel.PROP_TITLE, classDef.getTitle(dictionaryService));
-		properties.put(ContentModel.PROP_DESCRIPTION, classDef.getDescription(dictionaryService));
-		properties.put(DataListModel.PROP_DATALISTITEMTYPE, listQName.toPrefixString(namespaceService));
-
-		return nodeService.createNode(listContainerNodeRef, ContentModel.ASSOC_CONTAINS, listQName, DataListModel.TYPE_DATALIST, properties)
-				.getChildRef();
-
 	}
 
 	@Override
 	public NodeRef createList(NodeRef listContainerNodeRef, String name, QName listQName) {
 
-		String entityTitle = TranslateHelper.getTranslatedPath(name);
-		if (entityTitle == null) {
-			entityTitle = name;
-		}
+			String entityTitle = TranslateHelper.getTranslatedPath(name);
+			if (entityTitle == null) {
+				entityTitle = name;
+			}
 
-		QName assocQname = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name));
+			QName assocQname = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name));
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("Create data list with name:" + name + " of type " + listQName.getLocalName() + " title " + entityTitle
-					+ " with assocQname : " + assocQname.toPrefixString(namespaceService));
-		}
+			if (logger.isDebugEnabled()) {
+				logger.debug("Create data list with name:" + name + " of type " + listQName.getLocalName() + " title " + entityTitle
+						+ " with assocQname : " + assocQname.toPrefixString(namespaceService));
+			}
 
-		Map<QName, Serializable> properties = new HashMap<>();
-		properties.put(ContentModel.PROP_NAME, name);
-		properties.put(ContentModel.PROP_TITLE, entityTitle);
-		properties.put(DataListModel.PROP_DATALISTITEMTYPE, listQName.toPrefixString(namespaceService));
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(ContentModel.PROP_NAME, name);
+			properties.put(ContentModel.PROP_TITLE, entityTitle);
+			properties.put(DataListModel.PROP_DATALISTITEMTYPE, listQName.toPrefixString(namespaceService));
 
-		return nodeService.createNode(listContainerNodeRef, ContentModel.ASSOC_CONTAINS, assocQname, DataListModel.TYPE_DATALIST, properties)
-				.getChildRef();
-
+			return nodeService.createNode(listContainerNodeRef, ContentModel.ASSOC_CONTAINS, assocQname, DataListModel.TYPE_DATALIST, properties)
+					.getChildRef();
 	}
 
 	@Override
@@ -173,12 +181,12 @@ public class EntityListDAOImpl implements EntityListDAO {
 				NodeRef listNodeRef = node.getNodeRef();
 				String dataListType = (String) nodeService.getProperty(listNodeRef, DataListModel.PROP_DATALISTITEMTYPE);
 
-				if (dataListType != null && !dataListType.isEmpty()) {
+				if ((dataListType != null) && !dataListType.isEmpty()) {
 
 					QName dataListTypeQName = QName.createQName(dataListType, namespaceService);
 
-					if (BeCPGModel.TYPE_ENTITYLIST_ITEM.equals(dataListTypeQName) 
-							|| dictionaryService.isSubClass(dataListTypeQName, BeCPGModel.TYPE_ENTITYLIST_ITEM)  ) {
+					if (BeCPGModel.TYPE_ENTITYLIST_ITEM.equals(dataListTypeQName)
+							|| dictionaryService.isSubClass(dataListTypeQName, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
 
 						existingLists.add(listNodeRef);
 					} else {
@@ -206,25 +214,25 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().addSort(sortMap).parent(listNodeRef);
 
-		if(listQNameFilter != null ){
+		if (listQNameFilter != null) {
 			queryBuilder.ofType(listQNameFilter);
 		} else {
 			queryBuilder.ofType(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 		}
-	   
-		return queryBuilder.childFileFolders(new PagingRequest(5000, null)).getPage();		
+
+		return queryBuilder.childFileFolders(new PagingRequest(5000, null)).getPage();
 
 	}
 
 	@Override
 	public NodeRef getListItem(NodeRef listContainerNodeRef, QName assocQName, NodeRef nodeRef) {
 
-		if (listContainerNodeRef != null && assocQName != null && nodeRef != null) {
+		if ((listContainerNodeRef != null) && (assocQName != null) && (nodeRef != null)) {
 
 			for (NodeRef listItemNodeRef : getListItems(listContainerNodeRef, null)) {
 
 				NodeRef assocRef = associationService.getTargetAssoc(listItemNodeRef, assocQName);
-				if (assocRef != null && nodeRef.equals(assocRef)) {
+				if ((assocRef != null) && nodeRef.equals(assocRef)) {
 					return listItemNodeRef;
 				}
 
@@ -277,7 +285,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 						String name = (String) nodeService.getProperty(sourceListNodeRef, ContentModel.PROP_NAME);
 						QName listQName = QName.createQName(dataListType, namespaceService);
 
-						if (listQNames == null || listQNames.contains(listQName)) {
+						if ((listQNames == null) || listQNames.contains(listQName)) {
 
 							NodeRef existingListNodeRef;
 
