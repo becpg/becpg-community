@@ -172,7 +172,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			if (logger.isTraceEnabled()) {
 				logger.trace(" Before aggregate legalName \n " + compositeLabeling.toString());
 			}
-
+			
 			aggregateLegalName(compositeLabeling, labelingFormulaContext, true);
 
 			if (logger.isTraceEnabled()) {
