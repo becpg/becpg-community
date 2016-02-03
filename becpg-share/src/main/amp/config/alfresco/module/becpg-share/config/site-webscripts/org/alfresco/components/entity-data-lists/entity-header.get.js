@@ -6,6 +6,7 @@ function main()
    AlfrescoUtil.param("nodeRef");
    AlfrescoUtil.param("site", null);
    AlfrescoUtil.param("bcPath", null);
+   AlfrescoUtil.param("bcList", null);
    AlfrescoUtil.param("list", null);
    AlfrescoUtil.param("rootPage", "documentlibrary");
    AlfrescoUtil.param("rootLabelId", "path.documents");
@@ -62,6 +63,7 @@ function main()
             showComments : (model.showComments == "true"),
             showDownload : (model.showDownload == "true"),
             showRelativePath : (model.bcPath == "true"),
+            listFrom : model.bcList,
             showPath : (model.showPath == "true"),
             displayName : (model.item.displayName != null) ? model.item.displayName : model.item.fileName,
             likes : likes,

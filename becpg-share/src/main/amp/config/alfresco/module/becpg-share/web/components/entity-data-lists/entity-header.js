@@ -89,6 +89,9 @@
 	          		    			 
 	          		    		 }
 	          		    		if(!isInPath){
+	          		    			if(this.options.listFrom!=null){
+	          		    				pathBreadCrumbs.currentNode.listId = this.options.listFrom;
+	          		    			}
 	          		    			pathBreadCrumbs.path.push( pathBreadCrumbs.currentNode);
 	          		    		}	
 	          		    		pathBreadCrumbs.currentNode = {siteId : this.options.siteId,
