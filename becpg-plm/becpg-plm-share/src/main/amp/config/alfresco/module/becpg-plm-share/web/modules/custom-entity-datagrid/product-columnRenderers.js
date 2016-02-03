@@ -40,7 +40,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 					version = '<span class="document-version">' + data.version + '</span>';
 				}
 				if(url!=null){
-					url+="&bcPath=true";
+					url+="&bcPath=true&bcList="+scope.datalistMeta.name;
 				}
 			}
 			
