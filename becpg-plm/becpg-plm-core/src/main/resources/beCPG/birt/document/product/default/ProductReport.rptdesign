@@ -8297,7 +8297,7 @@ else{
                                                     </structure>
                                                 </list-property>
                                                 <property name="contentType">html</property>
-                                                <text-property name="content"><![CDATA[<U><VALUE-OF >reportContext.getMessage("contains", reportContext.getLocale())</VALUE-OF></U> <VALUE-OF >row["allergenListVoluntary"]</VALUE-OF>]]></text-property>
+                                                <text-property name="content"><![CDATA[<U><VALUE-OF >reportContext.getMessage("contains", reportContext.getLocale())</VALUE-OF></U> <VALUE-OF >row["allergenListVoluntary"]!=""?row["allergenListVoluntary"]:reportContext.getMessage("noAllergen", reportContext.getLocale())</VALUE-OF>]]></text-property>
                                             </text>
                                             <label id="3221"/>
                                             <text id="3220">
