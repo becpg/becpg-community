@@ -267,11 +267,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 		String path = "/" + dataListItem.getNodeRef().getId();
 
 		extractJSONSubList(productData, dataListItem, exp, path, subList);
-
-		if (subList.length() > 0) {
-			jsonObject.put(JsonFormulaHelper.JSON_SUB_VALUES, subList);
-		}
-
+		jsonObject.put(JsonFormulaHelper.JSON_SUB_VALUES, subList);
 		jsonObject.put(JsonFormulaHelper.JSON_VALUE, value);
 		jsonObject.put(JsonFormulaHelper.JSON_DISPLAY_VALUE, JsonFormulaHelper.formatValue(value));
 
