@@ -1654,7 +1654,9 @@
 			<form id="formulation">
 				<field-visibility>
 					<show id="cm:name" />
-					<show id="cm:description" />
+					<show id="cm:title" force="true" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:productUnit" />
 				</field-visibility>
 			</form>
 			<form id="bulk-edit">
@@ -2318,7 +2320,9 @@
 			<form id="formulation">
 				<field-visibility>
 					<show id="cm:name" />
-					<show id="cm:description" />
+					<show id="cm:title" force="true" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:productUnit" />
 				</field-visibility>
 			</form>
 			
