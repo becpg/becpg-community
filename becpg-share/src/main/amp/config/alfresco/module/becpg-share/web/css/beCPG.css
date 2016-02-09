@@ -423,9 +423,9 @@ span.semiFinishedProduct-Refused,
 span.semiFinishedProduct-Simulation,
 span.semiFinishedProduct-Valid,
 span.semiFinishedProduct-ToValidate {
-    padding-left: 20px;
+    padding-left: 25px;
     background-repeat: no-repeat;
-    background-position: 10px 6px, 0 0
+    background-position: 14px 6px, 0 0
 }
 
 
