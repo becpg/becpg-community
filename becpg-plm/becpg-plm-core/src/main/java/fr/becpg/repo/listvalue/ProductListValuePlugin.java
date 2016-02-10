@@ -96,7 +96,7 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 
 		if (!isAllQuery(query)) {
 			if (query.length() > 2) {
-				ftsQuery.append(prepareQuery(query.trim() + SUFFIX_ALL));
+				ftsQuery.append(prepareQuery(query.trim()));
 				ftsQuery.append(" ");
 			}
 			ftsQuery.append(query);

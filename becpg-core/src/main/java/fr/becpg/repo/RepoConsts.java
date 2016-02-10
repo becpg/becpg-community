@@ -133,6 +133,7 @@ public class RepoConsts {
 
 	public static final String VIEW_PROPERTIES = CUSTOM_VIEW_PREFIX+"-properties";
 	public static final String VIEW_REPORTS = CUSTOM_VIEW_PREFIX+"-reports";
+	public static final String VIEW_DOCUMENTS = CUSTOM_VIEW_PREFIX+"-documents";
 	
 	//Version
 	public static final String VERSION_NAME_DELIMITER = " v";
@@ -146,6 +147,7 @@ public class RepoConsts {
 	//Formats
 	public static final String FORMAT_CSV = "csv";
 	public static final String FORMAT_XLSX = "xlsx";
+
 
 
 	

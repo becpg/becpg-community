@@ -57,6 +57,7 @@
 					<value>kg</value>
 					<value>g</value>
 					<value>L</value>
+					<value>cL</value>
 					<value>mL</value>
 					<value>P</value>
 					<value>m</value>
@@ -95,6 +96,19 @@
 			<parameter name="path">
 				<list>
 					<value>/System/Lists/bcpg:entityLists/NutTypes</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>bcpg:lvValue</value>
+			</parameter>
+		</constraint>
+		<constraint name="bcpg:trademarkTypes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/Lists/bcpg:entityLists/TrademarkTypes</value>
 				</list>
 			</parameter>
 			<parameter name="constraintType">
@@ -173,6 +187,7 @@
 					<value>Declare</value>
 					<value>DoNotDetails</value>
 					<value>Detail</value>
+					<value>Kit</value>
 					<value>Group</value>
 					<value>Omit</value>
 					<value>DoNotDeclare</value>					
@@ -226,6 +241,7 @@
 					<value>mg</value>
 					<value>L</value>
 					<value>mL</value>
+					<value>cL</value>
 					<value>P</value>
 					<value>m</value>
 					<value>m2</value>
@@ -460,6 +476,9 @@
 		<type name="bcpg:listValue">
 			<parent>bcpg:entityListItem</parent>
 			<properties>
+				<property name="bcpg:lvCode">
+					<type>d:text</type>
+				</property>
 				<property name="bcpg:lvValue">
 					<type>d:mltext</type>
 					<mandatory>true</mandatory>
@@ -994,8 +1013,27 @@
 			<parent>bcpg:entityListItem</parent>
 		</type>
 		
+		
 		<type name="bcpg:trademark">
 			<parent>bcpg:entityListItem</parent>
+			<properties>
+			  <property name="bcpg:trademarkType">
+			 	    <type>d:text</type>
+					<constraints>
+						<constraint ref="bcpg:trademarkTypes" />
+					</constraints>
+			  </property>
+			</properties>
+		</type>
+		
+		<type name="bcpg:customsCode">
+			<parent>bcpg:charact</parent>
+			<properties>
+			   <property name="bcpg:cstsCode">
+			   	   <type>d:text</type>
+				   <mandatory>true</mandatory>
+				</property>
+			</properties>
 		</type>
 		
 		<type name="bcpg:certification">
@@ -2358,6 +2396,22 @@
 					<default>false</default>
 				</property>
 			</properties>
+		</aspect>
+		
+		<aspect name="bcpg:customsCodeAspect">
+			<associations>
+				<association name="bcpg:customsCodeRef">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:customsCode</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
 		</aspect>
 
 		<aspect name="bcpg:entityTplRefAspect">

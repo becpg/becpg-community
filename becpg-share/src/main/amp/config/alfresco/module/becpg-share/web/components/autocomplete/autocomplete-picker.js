@@ -108,7 +108,7 @@
                             if (me.options.mode != "view" && !this.options.readOnly)
                             {
 
-                                var oDS = null, oAC = null, bToggler = null, previewTooltips = [], initialValue = "";
+                                var oDS = null, oAC = null, bToggler = null, previewTooltips = [], previewTooltipsData = {}, initialValue = "";
 
                                 // Use an XHRDataSource
                                 if (this.options.isLocalProxy)
@@ -237,8 +237,7 @@
 
                                 };
 
-                                oAC
-                                        .setHeader("<div class='ac-header' ><span>" + me.msg("autocomplete.header.msg") + "</span></div>");
+                                oAC.setHeader("<div class='ac-header' ><span>" + me.msg("autocomplete.header.msg") + "</span></div>");
 
                                 if (me.options.showToolTip)
                                 {
@@ -253,13 +252,40 @@
                                     previewTooltip.contextTriggerEvent
                                             .subscribe(function(type, args)
                                             {
-                                                var context = args[0];
-                                                var nodeRef = context.id.split('ac-choice-' + me.fieldHtmlId + '-')[1]
-                                                        .replace(":/", "");
-                                                this.cfg
-                                                        .setProperty(
-                                                                "text",
-                                                                '<img src="' + Alfresco.constants.PROXY_URI_RELATIVE + "api/node/" + nodeRef + "/content/thumbnails/doclib?c=queue&ph=true" + '" />');
+                                            	  var context = args[0];
+                                                  var nodeRef = context.id.split('ac-choice-' + me.fieldHtmlId + '-')[1]
+                                                          .replace(":/", "");
+                                                  
+                                                  var metadatas = previewTooltipsData[context.id], title = "", description = "", width=108;
+                                                  if(metadatas!=null){
+                                                	  for(var i =0; i< metadatas.length; i++){
+                                                		  if(metadatas[i].key == "title"){
+                                                			  title = metadatas[i].value;
+                                                		  }
+                                                		  if(metadatas[i].key == "description"){
+                                                			  description = metadatas[i].value;
+                                                		  }
+                                                	  }
+                                                	  
+                                                  }
+                                                  var html = "<table><tr><td>"
+                                                    	+'<img src="' + Alfresco.constants.PROXY_URI_RELATIVE + "api/node/"
+                                                    	+ nodeRef + "/content/thumbnails/doclib?c=queue&ph=true" + '" />'
+                                                    	+"</td><td>";
+                                                  if(title!=null && title.length>0){
+                                                	  width = 350;
+                                                	  html +="<h3>"+title+"</h3>";
+                                                  }
+                                                  if(description!=null && description.length>0){
+                                                	  width = 350;
+                                                	  html +="<p>"+description+"</p>";
+                                                  }
+                                                  
+                                                   html += "</td></table>";
+                                                    
+                                                  this.cfg.setProperty("text",html);
+                                                  this.cfg.setProperty("width",width+"px");
+                                              
                                             });
                                 }
 
@@ -268,6 +294,7 @@
                                     if (me.options.showToolTip)
                                     {
                                         previewTooltips.push("ac-choice-" + me.fieldHtmlId + "-" + oResultData[0]);
+                                        previewTooltipsData["ac-choice-" + me.fieldHtmlId + "-" + oResultData[0]] = oResultData[3];
                                     }
                                     return "<span id='ac-choice-" + me.fieldHtmlId + "-" + oResultData[0] + "' class='" + oResultData[2] + "'  ><span class='ctn-fav'></span>" + oResultData[1] + "</span>";
                                 };
@@ -302,6 +329,7 @@
                                     }
                                     oAC.page = 1;
                                     previewTooltips = [];
+                                    previewTooltipsData = {};
                                     Event.preventDefault(e);
                                     Event.stopPropagation(e);
                                 });
@@ -315,6 +343,7 @@
                                     Dom.removeClass(bToggler, "openToggle");
                                     oAC.page = 1;
                                     previewTooltips = [];
+                                    previewTooltipsData = {};
                                 });
 
                                 oAC.doBeforeLoadData = function(sQuery, oResponse, oPayload)
@@ -356,6 +385,7 @@
                                         {
                                             oAC.page = state.page;
                                             previewTooltips = [];
+                                            previewTooltipsData = {};
                                             setTimeout(function()
                                             { // For IE
                                                 var input = oAC.getInputEl().value;

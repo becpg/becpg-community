@@ -267,15 +267,15 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			
 			if (!propertyDef.getConstraints().isEmpty()) {
 
-				for (ConstraintDefinition constraint : propertyDef.getConstraints()) {
-					if ("LIST".equals(constraint.getConstraint().getType())) {
-						constraintName = constraint.getRef().toPrefixString(namespaceService).replace(":", "_");
-						break;
-					} else if( constraint.getConstraint() instanceof  DynListConstraint){
+				for (ConstraintDefinition constraint : propertyDef.getConstraints()) {					
+					if( constraint.getConstraint() instanceof  DynListConstraint){
 						 dynListConstraint = (DynListConstraint) constraint.getConstraint();
 						 break;
 						
-					}
+					} else if ("LIST".equals(constraint.getConstraint().getType())) {
+						constraintName = constraint.getRef().toPrefixString(namespaceService).replace(":", "_");
+						break;
+					} 
 				}
 
 			}
@@ -308,7 +308,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				}
 			} else {
 				if(dynListConstraint!=null){
-					value += dynListConstraint.getDisplayLabel(v.toString());
+					value = dynListConstraint.getDisplayLabel(v.toString());
 				} else {
 					value = constraintName != null ? TranslateHelper.getConstraint(constraintName, v.toString(), propertyFormats.isUseDefaultLocale())
 							: v.toString();

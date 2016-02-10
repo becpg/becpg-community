@@ -306,7 +306,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 	 * @return
 	 */
 	public static String calculateSuffixUnit(ProductUnit productUnit) {
-		if (ProductUnit.L.equals(productUnit) || ProductUnit.mL.equals(productUnit)) {
+		if (ProductUnit.L.equals(productUnit) || ProductUnit.mL.equals(productUnit) || ProductUnit.cL.equals(productUnit)) {
 			return UNIT_PER100ML;
 		} else {
 			return UNIT_PER100G;

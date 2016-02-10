@@ -27,6 +27,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.ReportModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
@@ -35,7 +36,7 @@ import fr.becpg.report.client.ReportParams;
 
 /**
  * The Class CompareEntityReportServiceImpl.
- * 
+ *
  * @author querephi
  */
 @Service("compareEntityReportService")
@@ -55,7 +56,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 	private static final String ATTR_PROPERTY = "property";
 
 	private static final String ATTR_PROPERTY_QNAME = "propertyQName";
-	
+
 	private static final String ATTR_IS_DIFFERENT = "isDifferent";
 
 	private static final String ATTR_VALUE = "value";
@@ -100,23 +101,24 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 
 	@Autowired
 	private NamespaceService namespaceService;
-	
+
 	@Autowired
 	private AssociationService associationService;
-	
+
 	@Autowired
 	private AttributeExtractorService attributeExtractorService;
 
 	@Override
 	@Deprecated
 	// TOO manage multi list comparaison
-	public void getComparisonReport(NodeRef entity1, List<NodeRef> entities, NodeRef templateNodeRef,  OutputStream out) {
+	public void getComparisonReport(NodeRef entity1, List<NodeRef> entities, NodeRef templateNodeRef, OutputStream out) {
 
 		if (templateNodeRef != null) {
+			String reportFormat = (String) nodeService.getProperty(templateNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
 
 			List<CompareResultDataItem> compareResult = new ArrayList<>();
 			Map<String, List<StructCompareResultDataItem>> structCompareResults = new HashMap<>();
-			
+
 			compareEntityService.compare(entity1, entities, compareResult, structCompareResults);
 
 			// Prepare data source
@@ -131,11 +133,11 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 
 			try {
 				Map<String, Object> params = new HashMap<>();
-				params.put(ReportParams.PARAM_FORMAT, ReportFormat.PDF);
+				params.put(ReportParams.PARAM_FORMAT, ReportFormat.valueOf(reportFormat));
 				params.put(ReportParams.PARAM_LANG, I18NUtil.getLocale().getLanguage());
 				params.put(ReportParams.PARAM_ASSOCIATED_TPL_FILES,
 						associationService.getTargetAssocs(templateNodeRef, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES));
-				beCPGReportEngine.createReport(templateNodeRef,new ByteArrayInputStream(entitiesCmpElt.asXML().getBytes()) , out, params);
+				beCPGReportEngine.createReport(templateNodeRef, new ByteArrayInputStream(entitiesCmpElt.asXML().getBytes()), out, params);
 
 			} catch (Exception e) {
 				logger.error("Failed to run comparison report: ", e);
@@ -144,9 +146,28 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 
 	}
 
+	@Override
+	public String getReportFileName(NodeRef tplNodeRef, String defaultName) {
+		String documentName = defaultName;
+		if (documentName == null) {
+			documentName = (String) nodeService.getProperty(tplNodeRef, ContentModel.PROP_NAME);
+		}
+
+		String extension = (String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
+		if ((extension != null)) {
+			if (documentName.endsWith(RepoConsts.REPORT_EXTENSION_BIRT)) {
+				documentName = documentName.replace(RepoConsts.REPORT_EXTENSION_BIRT, extension.toLowerCase());
+			} else if (!documentName.endsWith(extension.toLowerCase())) {
+				documentName +="."+extension.toLowerCase();
+			}
+		}
+
+		return documentName;
+	}
+
 	/**
 	 * Render the comparison as xml data.
-	 * 
+	 *
 	 * @param entity1NodeRef
 	 *            the entity1 node ref
 	 * @param entitiesNodeRef
@@ -173,7 +194,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 
 		// compareResult
 		for (CompareResultDataItem c : compareResult) {
-			
+
 			Element cmpRowElt = cmpRowsElt.addElement(TAG_COMPARISON_ROW);
 			if (c.getEntityList() != null) {
 				TypeDefinition typeDef = dictionaryService.getType(c.getEntityList());
@@ -186,12 +207,14 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 
 					charactPath += attributeExtractorService.extractPropName(nodeRef);
 
-					if (!charactPath.isEmpty())
+					if (!charactPath.isEmpty()) {
 						charactPath += CHARACT_PATH_SEPARATOR;
+					}
 				}
 			}
 
-			cmpRowElt.addAttribute(ATTR_CHARACTERISTIC, c.getCharacteristic() == null ? "" : charactPath + attributeExtractorService.extractPropName(c.getCharacteristic()));
+			cmpRowElt.addAttribute(ATTR_CHARACTERISTIC,
+					c.getCharacteristic() == null ? "" : charactPath + attributeExtractorService.extractPropName(c.getCharacteristic()));
 			cmpRowElt.addAttribute(ATTR_PROPERTY, getClassAttributeTitle(c.getProperty()));
 			cmpRowElt.addAttribute(ATTR_PROPERTY_QNAME, c.getProperty().toPrefixString(namespaceService));
 			cmpRowElt.addAttribute(ATTR_IS_DIFFERENT, Boolean.toString(c.isDifferent()));
@@ -211,7 +234,7 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 
 	/**
 	 * Render the comparison as xml data.
-	 * 
+	 *
 	 * @param structCompareResults
 	 *            the struct compare results
 	 * @param pivotProperty
@@ -250,8 +273,9 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 
 					// props
 					for (QName property : c.getProperties1().keySet()) {
-						if (!properties1.isEmpty())
+						if (!properties1.isEmpty()) {
 							properties1 += PROPERTY_SEPARATOR;
+						}
 
 						String value = c.getProperties1().get(property);
 						properties1 += getClassAttributeTitle(property) + PROPERTY_VALUE_SEPARATOR + value;
@@ -267,8 +291,9 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 
 					// props
 					for (QName property : c.getProperties2().keySet()) {
-						if (!properties2.isEmpty())
+						if (!properties2.isEmpty()) {
 							properties2 += PROPERTY_SEPARATOR;
+						}
 
 						String value = c.getProperties2().get(property);
 						properties2 += getClassAttributeTitle(property) + PROPERTY_VALUE_SEPARATOR + value;
@@ -294,27 +319,23 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 		return structCmpRowsElt;
 	}
 
-	/**
-	 * Get the title of a property of association.
-	 * 
-	 * @param qName
-	 *            the q name
-	 * @return the class attribute title
-	 */
+	
 	private String getClassAttributeTitle(QName qName) {
 
 		String title = "";
-		
+
 		PropertyDefinition propertyDef = dictionaryService.getProperty(qName);
 		if (propertyDef != null) {
 			title = propertyDef.getTitle(dictionaryService);
 		} else {
 			AssociationDefinition assocDef = dictionaryService.getAssociation(qName);
-			if (assocDef != null){
+			if (assocDef != null) {
 				title = assocDef.getTitle(dictionaryService);
 			}
 		}
 
 		return title;
 	}
+
+	
 }

@@ -248,7 +248,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 		logger.info("###FixSortableList. parentNodeRef: " + listContainer + "");
 
 		List<NodeRef> listItems = BeCPGQueryBuilder.createQuery().parent(listContainer).ofType(dataType).isNotNull(BeCPGModel.PROP_SORT)
-				.addSort(BeCPGModel.PROP_SORT, true).inDB().list();
+				.addSort(BeCPGModel.PROP_SORT, true).inDB().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list();
 		int newSort = RepoConsts.SORT_DEFAULT_STEP;
 
 		for (NodeRef listItem : listItems) {

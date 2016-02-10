@@ -119,6 +119,12 @@ public class DesignerModel {
 	public static final QName PROP_DSG_CONFIGREPLACE = QName.createQName(DESIGNER_URI, "configReplace");
 
 	public static final QName PROP_DSG_SUBMISSION_URL = QName.createQName(DESIGNER_URI, "submissionUrl");
+	
+	public static final QName PROP_DSG_CREATEFORMTEMPLATE = QName.createQName(DESIGNER_URI, "createFormTemplate");
+	
+	public static final QName PROP_DSG_EDITFORMTEMPLATE = QName.createQName(DESIGNER_URI, "editFormTemplate");
+	
+	public static final QName PROP_DSG_VIEWFORMTEMPLATE = QName.createQName(DESIGNER_URI, "viewFormTemplate");
 
 	public static final QName PROP_DSG_LABEL = QName.createQName(DESIGNER_URI, "label");
 
@@ -189,5 +195,6 @@ public class DesignerModel {
 	public static final QName ASSOC_DSG_FORMS = QName.createQName(DESIGNER_URI, "forms");
 
 	public static final QName ASSOC_DSG_CONFIG = QName.createQName(DESIGNER_URI, "config");
+
 
 }

@@ -65,6 +65,9 @@ public class CompositionQtyCalculatingFormulationHandler extends FormulationBase
 			if ((formulatedProduct.getQty() != null)
 					&& (ProductUnit.g.equals(formulatedProduct.getUnit()) || ProductUnit.mL.equals(formulatedProduct.getUnit()))) {
 				qty = formulatedProduct.getQty() / 1000;
+			} else if ((formulatedProduct.getQty() != null)
+					&& ProductUnit.cL.equals(formulatedProduct.getUnit())) {
+				qty = formulatedProduct.getQty() / 100;
 			} else {
 				qty = formulatedProduct.getQty();
 			}
@@ -151,10 +154,14 @@ public class CompositionQtyCalculatingFormulationHandler extends FormulationBase
 				return qty / 1000000;
 			} else if (compoListUnit.equals(CompoListUnit.P)) {
 				return FormulationHelper.getNetWeight(compoListDataItem.getProduct(), nodeService, FormulationHelper.DEFAULT_NET_WEIGHT) * qty;
-			} else if (compoListUnit.equals(CompoListUnit.L) || compoListUnit.equals(CompoListUnit.mL)) {
+			} else if (compoListUnit.equals(CompoListUnit.L) || compoListUnit.equals(CompoListUnit.mL) || compoListUnit.equals(CompoListUnit.cL)) {
 
 				if (compoListUnit.equals(CompoListUnit.mL)) {
 					qty = qty / 1000;
+				}
+				
+				if (compoListUnit.equals(CompoListUnit.cL)) {
+					qty = qty / 100;
 				}
 
 				Double overrun = compoListDataItem.getOverrunPerc();

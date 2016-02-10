@@ -2132,7 +2132,7 @@
                             <structure>
                                 <property name="name">productQty</property>
                                 <text-property name="displayName">productQty</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["productQty"] + " " + dataSetRow["productUnit"] + (dataSetRow["productUnit"] != "kg" &amp;&amp; dataSetRow["productUnit"] != "g"  ? " - " + BirtMath.round(dataSetRow["netWeight"], 2) + " kg" : "")</expression>
+                                <expression name="expression" type="javascript">(dataSetRow["productQty"]==null ?"":dataSetRow["productQty"]) + " " + dataSetRow["productUnit"] + (dataSetRow["productUnit"] != "kg" &amp;&amp; dataSetRow["productUnit"] != "g"  ? " - " + BirtMath.round(dataSetRow["netWeight"], 2) + " kg" : "")</expression>
                                 <property name="dataType">string</property>
                                 <property name="allowExport">true</property>
                             </structure>
@@ -2656,6 +2656,14 @@ true
 }</expression>
                                 <property name="updateAggregation">true</property>
                             </structure>
+                            <structure>
+                                <property name="operator">ne</property>
+                                <expression name="expr" type="javascript">row["plStep"]</expression>
+                                <simple-property-list name="value1">
+                                    <value>"Modifications - Conclusions"</value>
+                                </simple-property-list>
+                                <property name="updateAggregation">true</property>
+                            </structure>
                         </list-property>
                         <column id="3354">
                             <property name="width">1.3435114503816794in</property>
@@ -2750,7 +2758,62 @@ true
                                     <property name="style">becpg-row-header</property>
                                     <text-property name="text">Modifications - Conclusions :</text-property>
                                 </label>
-                                <label id="2558"/>
+                                <table id="3475">
+                                    <property name="borderBottomStyle">none</property>
+                                    <property name="borderLeftStyle">none</property>
+                                    <property name="borderRightStyle">none</property>
+                                    <property name="borderTopStyle">none</property>
+                                    <property name="width">100%</property>
+                                    <property name="dataSet">processList</property>
+                                    <list-property name="boundDataColumns">
+                                        <structure>
+                                            <property name="name">instruction</property>
+                                            <text-property name="displayName">instruction</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["instruction"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">plStep</property>
+                                            <text-property name="displayName">plStep</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["plStep"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                    </list-property>
+                                    <list-property name="filter">
+                                        <structure>
+                                            <property name="operator">is-true</property>
+                                            <expression name="expr" type="javascript">if(row["instruction"] == null || row["instruction"] == ""){
+false
+}
+else{
+true
+}</expression>
+                                            <property name="updateAggregation">true</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="operator">eq</property>
+                                            <expression name="expr" type="javascript">row["plStep"]</expression>
+                                            <simple-property-list name="value1">
+                                                <value>"Modifications - Conclusions"</value>
+                                            </simple-property-list>
+                                            <property name="updateAggregation">true</property>
+                                        </structure>
+                                    </list-property>
+                                    <column id="3482">
+                                        <property name="width">5.488549618320611in</property>
+                                    </column>
+                                    <detail>
+                                        <row id="3476">
+                                            <cell id="3479">
+                                                <text id="3480">
+                                                    <property name="fontSize">9pt</property>
+                                                    <property name="contentType">html</property>
+                                                    <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["instruction"].replace("<p>","").replace("</p>","")</VALUE-OF>]]></text-property>
+                                                </text>
+                                            </cell>
+                                        </row>
+                                    </detail>
+                                </table>
                             </cell>
                             <cell id="3437">
                                 <table id="3438">
@@ -2846,11 +2909,6 @@ true
             </row>
         </grid>
         <label id="3174"/>
-        <text id="3173">
-            <property name="fontSize">9pt</property>
-            <property name="contentType">html</property>
-            <text-property name="content"><![CDATA[<VALUE-OF format="HTML">row["instruction"]</VALUE-OF>]]></text-property>
-        </text>
     </body>
     <list-property name="images">
         <structure>

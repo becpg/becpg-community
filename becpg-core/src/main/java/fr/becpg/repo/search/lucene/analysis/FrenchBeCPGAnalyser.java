@@ -18,10 +18,8 @@
 package fr.becpg.repo.search.lucene.analysis;
 
 import java.io.Reader;
-import java.util.Set;
 
 import org.alfresco.repo.search.impl.lucene.analysis.AlfrescoStandardFilter;
-import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.LowerCaseFilter;
 import org.apache.lucene.analysis.StopFilter;
 import org.apache.lucene.analysis.TokenStream;
@@ -31,11 +29,12 @@ import org.apache.lucene.analysis.standard.StandardTokenizer;
 /**
  * 
  * @author "Matthieu Laborie <matthieu.laborie@becpg.fr>"
+ * 
  * http://snowball.tartarus.org/algorithms/french/stemmer.html
+ * 
  */
-public class FrenchSnowballAnalyserThatRemovesAccents extends Analyzer
+public class FrenchBeCPGAnalyser extends AbstractBeCPGAnalyzer
 {
-	 private final Set<?> stopSet;
 	
     /**
      * An array containing some common English words that are usually not useful for searching.
@@ -43,25 +42,13 @@ public class FrenchSnowballAnalyserThatRemovesAccents extends Analyzer
     public static final String[] STOP_WORDS = FrenchStopWords.STOP_WORDS;
     
     /** Builds an analyzer. */
-    public FrenchSnowballAnalyserThatRemovesAccents()
+    public FrenchBeCPGAnalyser()
     {
-        this(STOP_WORDS);
+        super(STOP_WORDS);
     }
 
-    /** Builds an analyzer with the given stop words. */
-    public FrenchSnowballAnalyserThatRemovesAccents(String[] stopWords)
-    {
-        stopSet = StopFilter.makeStopSet(stopWords);
-    }
-    
-    
-    
-    @Override
-    public TokenStream tokenStream(String fieldName, Reader reader)
-    {
-       return tokenStream(fieldName, reader,false);
-    }
-    
+
+  
     public TokenStream tokenStream(String fieldName, Reader reader, boolean disableStopWords)
     {
         TokenStream result = new StandardTokenizer(reader);
