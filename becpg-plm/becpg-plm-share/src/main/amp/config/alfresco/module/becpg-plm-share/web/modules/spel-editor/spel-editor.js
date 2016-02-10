@@ -436,9 +436,17 @@
                         Event.preventDefault(e);
                      }
 
+                     this.widgets.editor.filter_safari = function(html){
+                    	 //bugfix chrome
+                    	 return html;
+                     };
+                     
                      this.widgets.editor.saveHTML();
 
+                     
                      this.options.currentValue = this._cleanHtml(Dom.get(this.id + "-editor-textarea").value);
+                     
+                     
                      
                      Dom.get(this.currentValueHtmlId).value = this.options.currentValue;
                      YAHOO.Bubbling.fire("mandatoryControlValueUpdated", Dom.get(this.currentValueHtmlId));
@@ -462,7 +470,7 @@
                            ret = ret
                                  .replace(
                                        "== '" + item.nodeRef,
-                                       "== '<div id='" + item.nodeRef + "' class='spel-editor-nodeRef' >" + $html(item.name) + "</div>");
+                                       "== '<div id=\"" + item.nodeRef + "\" class='spel-editor-nodeRef' >" + $html(item.name) + "</div>");
 
                         }
                      }

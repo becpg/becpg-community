@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2010-2011 beCPG. All rights reserved.
+ *  Copyright (C) 2010-2016 beCPG. All rights reserved.
  */
 package fr.becpg.repo.dictionary.constraint;
 
@@ -44,7 +44,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 
 	public static final String DYN_LIST_CACHE_NAME = "DynListConstraintCache";
 	public static final String UNDIFINED_CONSTRAINT_VALUE = "-";
-	
+
 	private static final String ERR_NO_VALUES = "d_dictionary.constraint.list_of_values.no_values";
 	private static final String ERR_NON_STRING = "d_dictionary.constraint.string_length.non_string";
 	private static final String ERR_INVALID_VALUE = "d_dictionary.constraint.list_of_values.invalid_value";
@@ -59,6 +59,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 
 	private String constraintType = null;
 	private String constraintProp = null;
+	private String constraintCode = null;
 
 	private String level = null;
 	private String levelProp = null;
@@ -91,6 +92,10 @@ public class DynListConstraint extends ListOfValuesConstraint {
 
 	public void setConstraintProp(String constraintProp) {
 		this.constraintProp = constraintProp;
+	}
+
+	public void setConstraintCode(String constraintCode) {
+		this.constraintCode = constraintCode;
 	}
 
 	public void setLevel(String level) {
@@ -179,6 +184,12 @@ public class DynListConstraint extends ListOfValuesConstraint {
 						NamespaceService namespaceService = serviceRegistry.getNamespaceService();
 						QName constraintTypeQname = QName.createQName(constraintType, namespaceService);
 						QName constraintPropQname = QName.createQName(constraintProp, namespaceService);
+						QName constraintCodeQname = null;
+						if (constraintCode != null) {
+							constraintCodeQname = QName.createQName(constraintCode, namespaceService);
+						} else if (BeCPGModel.TYPE_LIST_VALUE.equals(constraintTypeQname)) {
+							constraintCodeQname = BeCPGModel.PROP_LV_CODE;
+						}
 
 						for (String path : paths) {
 							boolean wasMLAware = MLPropertyInterceptor.setMLAware(true);
@@ -208,9 +219,18 @@ public class DynListConstraint extends ListOfValuesConstraint {
 									if (serviceRegistry.getNodeService().exists(nodeRef)
 											&& serviceRegistry.getNodeService().getType(nodeRef).equals(constraintTypeQname)) {
 										MLText mlText = (MLText) serviceRegistry.getNodeService().getProperty(nodeRef, constraintPropQname);
-
 										if (mlText != null) {
-											allowedValues.put(mlText.getClosestValue(Locale.getDefault()), mlText);
+											String key = null;
+
+											if (constraintCodeQname != null) {
+												key = (String) serviceRegistry.getNodeService().getProperty(nodeRef, constraintCodeQname);
+
+											}
+											if ((key == null) || key.isEmpty()) {
+												key = mlText.getClosestValue(Locale.getDefault());
+											}
+
+											allowedValues.put(key, mlText);
 										}
 									} else {
 										logger.warn("Node doesn't exist : " + nodeRef);
@@ -227,7 +247,6 @@ public class DynListConstraint extends ListOfValuesConstraint {
 								MLPropertyInterceptor.setMLAware(wasMLAware);
 							}
 						}
-
 						return null;
 
 					});

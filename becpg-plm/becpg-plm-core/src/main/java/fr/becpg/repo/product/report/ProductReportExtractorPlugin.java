@@ -92,6 +92,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	private static final String ATTR_PACKAGING_QTY_FOR_PRODUCT = "packagingListQtyForProduct";
 	private static final String ATTR_PROCESS_QTY_FOR_PRODUCT = "processListQtyForProduct";
 	private static final String TAG_PACKAGING_LEVEL_MEASURES = "packagingLevelMeasures";
+	private static final String ATTR_NODEREF = "nodeRef";
+	private static final String ATTR_PARENT_NODEREF = "parentNodeRef";
 	
 	
 
@@ -599,7 +601,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			Element compoListElt = dataListsElt.addElement(PLMModel.TYPE_COMPOLIST.getLocalName() + "s");
 
 			for (CompoListDataItem dataItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-				loadCompoListItem(dataItem, compoListElt, defaultVariantNodeRef, 1, dataItem.getQty() != null ? dataItem.getQty() : 0d, images);
+				loadCompoListItem(null, dataItem, compoListElt, defaultVariantNodeRef, 1, dataItem.getQty() != null ? dataItem.getQty() : 0d, images);
 			}
 
 			loadDynamicCharactList(productData.getCompoListView().getDynamicCharactList(), compoListElt);
@@ -608,7 +610,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	}
 
-	private void loadCompoListItem(CompoListDataItem dataItem, Element compoListElt, NodeRef defaultVariantNodeRef, int level, double compoListQty,
+	private void loadCompoListItem(CompoListDataItem parentDataItem, CompoListDataItem dataItem, Element compoListElt, NodeRef defaultVariantNodeRef, int level, double compoListQty,
 			Map<String, byte[]> images) {
 		if ((dataItem.getProduct() != null) && nodeService.exists(dataItem.getProduct())) {
 			Element dataListsElt = null;
@@ -621,17 +623,22 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			ProductData productData = alfrescoRepository.findOne(dataItem.getProduct());
 			loadNutLists(productData, dataListsElt, images);
 			loadOrganoLists(productData, dataListsElt, images);
+			loadDynamicCharactList(productData.getCompoListView().getDynamicCharactList(), dataListsElt);
 			extractVariants(dataItem.getVariants(), partElt, defaultVariantNodeRef);
 			
 			Integer depthLevel = dataItem.getDepthLevel();
 			if (depthLevel != null) {
 				partElt.addAttribute(BeCPGModel.PROP_DEPTH_LEVEL.getLocalName(), "" + (depthLevel * level));
+				partElt.addAttribute(ATTR_NODEREF, dataItem.getNodeRef().toString());
+				if(parentDataItem != null){
+					partElt.addAttribute(ATTR_PARENT_NODEREF, parentDataItem.getNodeRef().toString());
+				}
 			}
 
 			if (nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT) && extractInMultiLevel) {
 				if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 					for (CompoListDataItem subDataItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-						loadCompoListItem(subDataItem, compoListElt, defaultVariantNodeRef, level + 1,
+						loadCompoListItem(dataItem, subDataItem, compoListElt, defaultVariantNodeRef, level + 1,
 								(productData.getRecipeQtyUsed() != null) && (productData.getRecipeQtyUsed() != 0d) && (subDataItem.getQty() != null)
 										? (compoListQty * subDataItem.getQty()) / productData.getRecipeQtyUsed() : 0d,
 								images);
@@ -789,6 +796,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	protected QName getPropNameOfType(QName type) {
 		if ((type != null) && type.equals(PLMModel.TYPE_CERTIFICATION)) {
 			return ContentModel.PROP_TITLE;
+		}
+		else if(dictionaryService.isSubClass(type, PLMModel.TYPE_PRODUCT)){
+			return ContentModel.PROP_NAME;
 		}
 		return null;
 

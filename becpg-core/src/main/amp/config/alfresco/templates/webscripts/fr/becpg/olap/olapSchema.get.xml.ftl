@@ -353,7 +353,7 @@
 					datalist.entity_fact_id as entity_fact_id,
 					datalist.is_last_version as isLastVersion,					
 					MAX(IF(prop.prop_name = "pjt:tlTaskName",prop.string_value,NULL)) as tlTaskName,
-					MAX(IF(prop.prop_name = "pjt:tlDuration",prop.long_value,NULL)) as tlDuration,
+					MAX(IF(prop.prop_name = "pjt:tlRealDuration",prop.long_value,NULL)) as tlDuration,
 					MAX(IF(prop.prop_name = "pjt:tlStart",prop.date_value,NULL)) as tlStart,
 					MAX(IF(prop.prop_name = "pjt:tlEnd",prop.date_value,NULL)) as tlEnd,
 					MAX(IF(prop.prop_name = "pjt:tlState",prop.string_value,NULL)) as tlState,

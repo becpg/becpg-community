@@ -123,6 +123,8 @@ public class CompositionLexer {
 			return CompoListUnit.L;
 		case "ml":
 			return CompoListUnit.mL;
+		case "cl":
+			return CompoListUnit.mL;	
 		case "p":
 			return CompoListUnit.P;
 		case "m":

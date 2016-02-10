@@ -68,6 +68,7 @@
                   </#if>
                </#if>
                <div class="node-info">
+               <div id="${el}-bcpath" class="node-bcpath hidden"></div>
                <#if showPath == "true">
                   <!-- Path-->
                   <div class="node-path">

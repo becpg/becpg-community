@@ -43,7 +43,7 @@
                     Alfresco.DocListToolbar,
                     {
                         entityLinkCustomClass : null,
-
+                        
                         onReady : function CustomDLTB_onReady()
                         {
                             if (Dom.get(this.id + "-tb-body") != null)
@@ -389,6 +389,60 @@
 
                                 }
                             }
+                        },
+                        /**
+                         * File Upload button click handler
+                         *
+                         * @method onFileUpload
+                         * @param e {object} DomEvent
+                         * @param p_obj {object|array} Object passed back from addListener method or args from Bubbling event
+                         */
+                        onFileUpload: function DLTB_onFileUpload(e, p_obj)
+                        {
+                           if (this.fileUpload === null)
+                           {
+                              this.fileUpload = Alfresco.getFileUploadInstance();
+                           }
+                           
+                           // Show uploader for multiple files
+                           var multiUploadConfig =
+                           {
+                             
+                              filter: [],
+                              mode: this.fileUpload.MODE_MULTI_UPLOAD,
+                              thumbnails: "doclib",
+                              onFileUploadComplete:
+                              {
+                                 fn: this.onFileUploadComplete,
+                                 scope: this
+                              }
+                           };
+                           
+                           if(this.options.disableSiteMode){
+                        	   multiUploadConfig.destination = this.doclistMetadata.parent.nodeRef;
+                           } else {
+                        	   multiUploadConfig.siteId =  this.options.siteId;
+                        	   multiUploadConfig.containerId =  this.options.containerId;                  
+                        	   multiUploadConfig.uploadDirectory =  this.currentPath;
+                           }
+                           
+                           
+                           this.fileUpload.show(multiUploadConfig);
+
+                           if (YAHOO.lang.isArray(p_obj) && p_obj[1].tooltip)
+                           {
+                              var balloon = Alfresco.util.createBalloon(this.fileUpload.uploader.id + "-dialog",
+                              {
+                                 html: p_obj[1].tooltip,
+                                 width: "30em"
+                              });
+                              balloon.show();
+
+                              this.fileUpload.uploader.widgets.panel.hideEvent.subscribe(function()
+                              {
+                                 balloon.hide();
+                              });
+                           }
                         },
                         /**
                          * Generates the HTML mark-up for the breadcrumb from

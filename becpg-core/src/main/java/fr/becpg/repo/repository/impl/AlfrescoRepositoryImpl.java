@@ -130,7 +130,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 				} else {
 					if (logger.isDebugEnabled()) {
-						logger.debug("Update instanceOf :" + entity.getClass().getName());
+						logger.debug("Update instanceOf :" + entity.getClass().getName() + " " + entity.getName());
 						if (logger.isTraceEnabled()) {
 							logger.trace(" HashDiff :"
 									+ BeCPGHashCodeBuilder.printDiff(entity, findOne(entity.getNodeRef(), new HashMap<NodeRef, RepositoryEntity>())));
@@ -284,6 +284,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 	public void saveDataList(NodeRef listContainerNodeRef, QName dataListContainerType, QName dataListType,
 			List<? extends RepositoryEntity> dataList) {
 		if ((dataList != null) && (listContainerNodeRef != null)) {
+			
 			NodeRef dataListNodeRef = entityListDAO.getList(listContainerNodeRef, dataListContainerType);
 
 			boolean isLazyList = dataList instanceof LazyLoadingDataList;
@@ -295,6 +296,12 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 				}
 
 				dataListNodeRef = entityListDAO.createList(listContainerNodeRef, dataListContainerType);
+			} else {
+
+				if (logger.isDebugEnabled()) {
+					logger.debug("Save dataList of type : " + dataListContainerType);
+				}
+				
 			}
 
 			if (dataListNodeRef != null) {
@@ -315,24 +322,14 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 					}
 
 					((LazyLoadingDataList<? extends RepositoryEntity>) dataList).getDeletedNodes().clear();
-
-					for (RepositoryEntity dataListItem : dataList) {
-						dataListItem.setParentNodeRef(dataListNodeRef);
-						save((T) dataListItem);
+				}
+				for (RepositoryEntity dataListItem : dataList) {
+					dataListItem.setParentNodeRef(dataListNodeRef);
+					
+					if (logger.isTraceEnabled()) {
+						logger.trace("Save dataList item: " + dataListItem.toString());
 					}
-
-				} else {
-
-					// Case we create entity
-					for (RepositoryEntity dataListItem : dataList) {
-
-						dataListItem.setParentNodeRef(dataListNodeRef);
-						save((T) dataListItem);
-
-						if (logger.isDebugEnabled()) {
-							logger.debug("Save dataList item: " + dataListItem.toString());
-						}
-					}
+					save((T) dataListItem);
 				}
 
 			}
@@ -413,9 +410,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 						PropertyUtils.setProperty(entity, pd.getName(), createDataList(entity, pd, datalistQname, datalistQname, caches));
 					}
-
 				}
-
 			}
 
 			loadAspects(entity);

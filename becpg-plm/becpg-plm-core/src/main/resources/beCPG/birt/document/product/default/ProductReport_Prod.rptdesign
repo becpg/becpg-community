@@ -5732,6 +5732,7 @@ value = value + "x" + BirtMath.round(dataSetRow["height"],0);
                             <property name="borderRightColor">#FFFFFF</property>
                             <property name="borderTopColor">#FFFFFF</property>
                             <grid id="777">
+                                <property name="fontSize">8pt</property>
                                 <property name="borderTopStyle">none</property>
                                 <property name="width">3.2442748091603053in</property>
                                 <column id="778">
@@ -5875,6 +5876,37 @@ value = value + "x" + BirtMath.round(dataSetRow["height"],0);
                                                 </structure>
                                             </list-property>
                                             <property name="resultSetColumn">code</property>
+                                        </data>
+                                    </cell>
+                                </row>
+                                <row id="6041">
+                                    <cell id="6042">
+                                        <property name="borderBottomColor">#FFFFFF</property>
+                                        <property name="borderLeftColor">#FFFFFF</property>
+                                        <property name="borderRightColor">#FFFFFF</property>
+                                        <property name="borderTopColor">#FFFFFF</property>
+                                        <label id="7257">
+                                            <property name="fontSize">8pt</property>
+                                            <text-property name="text" key="erpCode">Code ERP</text-property>
+                                        </label>
+                                    </cell>
+                                    <cell id="6043">
+                                        <property name="borderBottomColor">#FFFFFF</property>
+                                        <property name="borderLeftColor">#FFFFFF</property>
+                                        <property name="borderRightColor">#FFFFFF</property>
+                                        <property name="borderTopColor">#FFFFFF</property>
+                                        <data id="7258">
+                                            <property name="fontSize">8pt</property>
+                                            <property name="dataSet">Product</property>
+                                            <list-property name="boundDataColumns">
+                                                <structure>
+                                                    <property name="name">erpCode</property>
+                                                    <text-property name="displayName">erpCode</text-property>
+                                                    <expression name="expression" type="javascript">dataSetRow["erpCode"]</expression>
+                                                    <property name="dataType">string</property>
+                                                </structure>
+                                            </list-property>
+                                            <property name="resultSetColumn">erpCode</property>
                                         </data>
                                     </cell>
                                 </row>

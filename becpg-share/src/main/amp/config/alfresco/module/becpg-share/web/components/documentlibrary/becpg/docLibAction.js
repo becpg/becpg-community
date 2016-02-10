@@ -130,8 +130,16 @@
           {
              actionName : "onActionBranchEntity",
              fn : function onActionBranchEntity(p_record) {
-                 var  nodeRef = new Alfresco.util.NodeRef(p_record.nodeRef), recordSiteName = $isValueSet(p_record.location.site) ? p_record.location.site.name : null;
-                
+                 var  nodeRef = new Alfresco.util.NodeRef(p_record.nodeRef), recordSiteName = $isValueSet(p_record.location.site) ? p_record.location.site.name : null,
+                		 displayName = p_record.displayName;
+                 
+                 Alfresco.util.PopupManager.displayMessage({
+       		      displayTime : 0,
+       		      effect : null,
+       		      text : this.msg("message.branch-entity.inprogress", displayName)
+       		    });
+                 
+                 
                  Alfresco.util.Ajax
                  .request({
                     method : Alfresco.util.Ajax.POST,
@@ -244,7 +252,7 @@
 	   YAHOO.Bubbling.fire("registerAction", {
 	       actionName : "onActionCompareEntity",
 	       fn : function onActionCompareEntity(p_record) {
-	            var actionUrl = Alfresco.constants.PROXY_URI + 'becpg/entity/compare/' + p_record.nodeRef.replace(":/", "") + "/compare.pdf";
+	            var actionUrl = Alfresco.constants.PROXY_URI + 'becpg/entity/compare/' + p_record.nodeRef.replace(":/", "") + "/";
 
 	            // Always create a new instance
 	            this.modules.entityCompare = new Alfresco.module.SimpleDialog(this.id + "-entityCompare").setOptions({
@@ -258,7 +266,8 @@
 	                     this.modules.entityCompare.form.setAJAXSubmit(false);
 	                     this.modules.entityCompare.hide();
 	                     var reportSelect = YAHOO.util.Dom.get(this.id + "-entityCompare-reportTemplate");
-	                     window.location.href=actionUrl+"?entities="+YAHOO.util.Dom.get(this.id + "-entityCompare-entities-added").value
+	                     var fileName = reportSelect.options[reportSelect.selectedIndex].getAttribute("fileName");
+	                     window.location.href=actionUrl+fileName+"?entities="+YAHOO.util.Dom.get(this.id + "-entityCompare-entities-added").value
 	                     +"&tplNodeRef="+reportSelect.value;
 	                  },
 	                  scope : this

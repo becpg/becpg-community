@@ -218,9 +218,11 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 								dynamicCharactListItem.setValue(exp.getValue(context));
 								logger.debug("Value :" + dynamicCharactListItem.getValue());
 							}
-						} else {
-							dynamicCharactListItem.setValue(null);
 						}
+// #1939 Do not reset as the user can modify the value						
+//						} else {
+//							dynamicCharactListItem.setValue(null);
+//						}
 						dynamicCharactListItem.setErrorLog(null);
 					} catch (Exception e) {
 						if ((e.getCause() != null) && (e.getCause().getCause() instanceof BeCPGAccessDeniedException)) {
@@ -265,11 +267,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 		String path = "/" + dataListItem.getNodeRef().getId();
 
 		extractJSONSubList(productData, dataListItem, exp, path, subList);
-
-		if (subList.length() > 0) {
-			jsonObject.put(JsonFormulaHelper.JSON_SUB_VALUES, subList);
-		}
-
+		jsonObject.put(JsonFormulaHelper.JSON_SUB_VALUES, subList);
 		jsonObject.put(JsonFormulaHelper.JSON_VALUE, value);
 		jsonObject.put(JsonFormulaHelper.JSON_DISPLAY_VALUE, JsonFormulaHelper.formatValue(value));
 

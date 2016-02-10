@@ -140,7 +140,6 @@ public class FormModelVisitor {
 		Element config = DOMUtils.createDoc("alfresco-config");
 
 		List<ChildAssociationRef> configEls = nodeService.getChildAssocs(nodeRef);
-		
 		DesignerHelper.sort(configEls,nodeService);
 		for (ChildAssociationRef assoc : configEls) {
 			if (assoc.getTypeQName().equals(DesignerModel.ASSOC_DSG_CONFIG_ELEMENTS)) {
@@ -196,9 +195,24 @@ public class FormModelVisitor {
 			if (assoc.getTypeQName().equals(DesignerModel.ASSOC_DSG_FIELDS)) {
 				visitFieldXml(assoc.getChildRef(), formEl, fieldVisibility, appearance, "");
 			}
-
 		}
-
+		
+		String editFormTemplate = (String) nodeService.getProperty(formNodeRef, DesignerModel.PROP_DSG_EDITFORMTEMPLATE);
+		if(editFormTemplate!=null && !editFormTemplate.isEmpty()){
+			Element formTemplateEl = DOMUtils.createElement(formEl, "edit-form");
+			formTemplateEl.setAttribute("template", editFormTemplate);
+		}
+		
+		String viewFormTemplate = (String) nodeService.getProperty(formNodeRef, DesignerModel.PROP_DSG_VIEWFORMTEMPLATE);
+		if(viewFormTemplate!=null && !viewFormTemplate.isEmpty()){
+			Element formTemplateEl = DOMUtils.createElement(formEl, "view-form");
+			formTemplateEl.setAttribute("template", viewFormTemplate);
+		}
+		String createFormTemplate = (String) nodeService.getProperty(formNodeRef, DesignerModel.PROP_DSG_CREATEFORMTEMPLATE);
+		if(createFormTemplate!=null && !createFormTemplate.isEmpty()){
+			Element formTemplateEl = DOMUtils.createElement(formEl, "create-form");
+			formTemplateEl.setAttribute("template", createFormTemplate);
+		}
 	}
 
 	private void appendAtt(Element el, String attrName, NodeRef nodeRef, QName qname) {
@@ -251,7 +265,7 @@ public class FormModelVisitor {
 		field.setAttribute("mandatory", nodeService.getProperty(fieldNodeRef, DesignerModel.PROP_DSG_MANDATORY).toString());
 
 		List<ChildAssociationRef> assocs = nodeService.getChildAssocs(fieldNodeRef);
-
+		DesignerHelper.sort(assocs,nodeService);
 		for (ChildAssociationRef assoc : assocs) {
 			if (assoc.getTypeQName().equals(DesignerModel.ASSOC_DSG_CONTROLS)) {
 				visitControlXml(assoc.getChildRef(), field);
@@ -275,7 +289,7 @@ public class FormModelVisitor {
 		}
 
 		List<ChildAssociationRef> assocs = nodeService.getChildAssocs(setNodeRef);
-
+		DesignerHelper.sort(assocs,nodeService);
 		for (ChildAssociationRef assoc : assocs) {
 			if (assoc.getTypeQName().equals(DesignerModel.ASSOC_DSG_SETS)) {
 				visitSetXml(assoc.getChildRef(), formEl, fieldVisibility, appearance, (String) nodeService.getProperty(setNodeRef, DesignerModel.PROP_DSG_ID));
@@ -292,7 +306,7 @@ public class FormModelVisitor {
 		Element control = DOMUtils.createElement(field, "control");
 		appendAtt(control, "template", controlRef, DesignerModel.PROP_DSG_TEMPLATEPATH);
 		List<ChildAssociationRef> assocs = nodeService.getChildAssocs(controlRef);
-
+		DesignerHelper.sort(assocs,nodeService);
 		for (ChildAssociationRef assoc : assocs) {
 			if (assoc.getTypeQName().equals(DesignerModel.ASSOC_DSG_PARAMETERS)) {
 				visitParameterXml(assoc.getChildRef(), control);
@@ -382,10 +396,11 @@ public class FormModelVisitor {
 			nodeService.setProperty(formNodeRef,BeCPGModel.PROP_SORT,i*100);
 			int sortOrder = visitFormSets(formNodeRef, elem, "");
 			visitFormFields(formNodeRef, elem, "",sortOrder);
-
+            visitFormTemplates(formNodeRef, elem);
 		}
 
 	}
+
 
 	private int visitFormSets(NodeRef nodeRef, Element parentEl, String parent) {
 		logger.debug("visitFormSets with parent : " + parent);
@@ -426,6 +441,29 @@ public class FormModelVisitor {
 
 		visitFormFields(nodeRef, fields, hides, false, setId, sortOrder);
 
+	}
+	
+	
+
+	private void visitFormTemplates(NodeRef formNodeRef, Element parentEl) {
+		NodeList editForms = parentEl.getElementsByTagName("edit-form");
+		if(editForms!=null && editForms.getLength()>0){
+			Element elem = (Element) editForms.item(0);
+			nodeService.setProperty(formNodeRef, DesignerModel.PROP_DSG_EDITFORMTEMPLATE, elem.getAttribute("template"));
+		}
+		
+		NodeList viewForms = parentEl.getElementsByTagName("view-form");
+		if(viewForms!=null && viewForms.getLength()>0){
+			Element elem = (Element) editForms.item(0);
+			nodeService.setProperty(formNodeRef, DesignerModel.PROP_DSG_VIEWFORMTEMPLATE, elem.getAttribute("template"));
+		}
+		
+		NodeList createForms = parentEl.getElementsByTagName("create-form");
+		if(createForms!=null && createForms.getLength()>0){
+			Element elem = (Element) editForms.item(0);
+			nodeService.setProperty(formNodeRef, DesignerModel.PROP_DSG_CREATEFORMTEMPLATE, elem.getAttribute("template"));
+		}
+		
 	}
 
 	private int visitFormFields(NodeRef nodeRef, NodeList fields, NodeList shows, boolean show, String setId, int sortOrder) {
@@ -557,7 +595,7 @@ public class FormModelVisitor {
 	public NodeRef visitM2Properties(NodeRef formNodeRef, NodeRef typeNodeRef) {
 
 		List<ChildAssociationRef> assocs = nodeService.getChildAssocs(typeNodeRef);
-
+		DesignerHelper.sort(assocs,nodeService);
 		for (ChildAssociationRef assoc : assocs) {
 			if (assoc.getTypeQName().equals(DesignerModel.ASSOC_M2_PROPERTIES) || assoc.getTypeQName().equals(DesignerModel.ASSOC_M2_PROPERTY_OVERRIDES)
 					|| assoc.getTypeQName().equals(DesignerModel.ASSOC_M2_ASSOCIATIONS)) {

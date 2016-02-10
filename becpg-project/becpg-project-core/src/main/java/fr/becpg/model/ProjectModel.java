@@ -54,6 +54,7 @@ public interface ProjectModel {
 	QName PROP_TL_TASK_DESCRIPTION = QName.createQName(PROJECT_URI, "tlTaskDescription");
 
 	QName PROP_TL_IS_MILESTONE = QName.createQName(PROJECT_URI, "tlIsMilestone");
+	QName PROP_TL_IS_EXCLUDE_FROM_SEARCH = QName.createQName(PROJECT_URI, "tlIsExcludeFromSearch");
 	QName PROP_TL_DURATION = QName.createQName(PROJECT_URI, "tlDuration");
 	QName PROP_TL_CAPACITY = QName.createQName(PROJECT_URI, "tlCapacity");
 	QName PROP_TL_WORK = QName.createQName(PROJECT_URI, "tlWork");

@@ -392,23 +392,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				if ((declType == null) || !declType.equals(DeclarationType.DoNotDetails)) {
 					// req not respected
 					String message = I18NUtil.getMessage(MESSAGE_MISSING_INGLIST);
-
-					ReqCtrlListDataItem reqCtrl = null;
-					for (ReqCtrlListDataItem r : reqCtrlMap.values()) {
-						if (message.equals(r.getReqMessage())) {
-							reqCtrl = r;
-							break;
-						}
-					}
-
-					if (reqCtrl == null) {
-						reqCtrl = new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, null, new ArrayList<NodeRef>());
-						reqCtrlMap.put(null, reqCtrl);
-					}
-
-					if (!reqCtrl.getSources().contains(productNodeRef)) {
-						reqCtrl.getSources().add(productNodeRef);
-					}
+					addReqCtrl(reqCtrlMap, RequirementType.Tolerated, message, productNodeRef);									
 				}
 			} else {
 
@@ -587,6 +571,9 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 						if (RequirementType.Authorized.equals(fil.getReqType())) {
 							if (checkRuleMatchIng(ingListDataItem, fil)) {
 								autorized = true;
+								if(fil.getReqMessage()!= null && fil.getReqMessage()!=""){
+									addReqCtrl(reqCtrlMap, RequirementType.Authorized, fil.getReqMessage(), ingListDataItem.getIng());
+								}
 								break;
 							}
 						}
@@ -600,23 +587,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 				if (!autorized) {
 					String message = I18NUtil.getMessage(MESSAGE_NOTAUTHORIZED_ING);
-
-					ReqCtrlListDataItem reqCtrl = null;
-					for (ReqCtrlListDataItem r : reqCtrlMap.values()) {
-						if (message.equals(r.getReqMessage())) {
-							reqCtrl = r;
-							break;
-						}
-					}
-
-					if (reqCtrl == null) {
-						reqCtrl = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, null, new ArrayList<NodeRef>());
-						reqCtrlMap.put(null, reqCtrl);
-					}
-
-					if (!reqCtrl.getSources().contains(ingListDataItem.getIng())) {
-						reqCtrl.getSources().add(ingListDataItem.getIng());
-					}
+					addReqCtrl(reqCtrlMap, RequirementType.Forbidden, message, ingListDataItem.getIng());					
 				}
 
 			}
@@ -709,5 +680,24 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			ingList = ingList.getParent();
 		}
 		return ingList;
+	}
+	
+	private void addReqCtrl(Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap, RequirementType requirementType, String message, NodeRef sourceNodeRef){
+		ReqCtrlListDataItem reqCtrl = null;
+		for (ReqCtrlListDataItem r : reqCtrlMap.values()) {
+			if (message.equals(r.getReqMessage())) {
+				reqCtrl = r;
+				break;
+			}
+		}
+
+		if (reqCtrl == null) {
+			reqCtrl = new ReqCtrlListDataItem(null, requirementType, message, null, new ArrayList<NodeRef>());
+			reqCtrlMap.put(null, reqCtrl);
+		}
+
+		if (!reqCtrl.getSources().contains(sourceNodeRef)) {
+			reqCtrl.getSources().add(sourceNodeRef);
+		}
 	}
 }

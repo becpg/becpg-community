@@ -176,6 +176,155 @@
 
                            return params;
                         },
+                        /**
+                         * Fired when an object is dropped onto the DocumentList DOM element.
+                         * Checks that files are present for upload, determines the target (either the current document list or
+                         * a specific folder rendered in the document list and then calls on the DNDUpload singleton component
+                         * to perform the upload.
+                         *
+                         * @param e {object} HTML5 drag and drop event
+                         * @method onDocumentListDrop
+                         */
+                        onDocumentListDrop: function DL_onDocumentListDrop(e)
+                        {
+                           try
+                           {
+                              // Only perform a file upload if the user has *actually* dropped some files!
+                              if (e.dataTransfer.files !== undefined && e.dataTransfer.files !== null && e.dataTransfer.files.length > 0)
+                              {
+                                 // We need to get the upload progress dialog widget so that we can display it.
+                                 // The function called has been added to file-upload.js and ensures the dialog is a singleton.
+                                 var progressDialog = Alfresco.getDNDUploadProgressInstance();
+
+                                 var continueWithUpload = false;
+
+                                 // Check that at least one file with some data has been dropped...
+                                 var zeroByteFiles = "", i, j;
+
+                                 j = e.dataTransfer.files.length;
+                                 for (i = 0; i < j; i++)
+                                 {
+                                    if (e.dataTransfer.files[i].size > 0)
+                                    {
+                                       continueWithUpload = true;
+                                    }
+                                    else
+                                    {
+                                       zeroByteFiles += '"' + e.dataTransfer.files[i].fileName + '", ';
+                                    }
+                                 }
+
+                                 if (!continueWithUpload)
+                                 {
+                                    zeroByteFiles = zeroByteFiles.substring(0, zeroByteFiles.lastIndexOf(", "));
+                                    Alfresco.util.PopupManager.displayMessage(
+                                    {
+                                       text: progressDialog.msg("message.zeroByteFiles", zeroByteFiles)
+                                    });
+                                 }
+
+                                 // Perform some checks on based on the browser and selected files to ensure that we will
+                                 // support the upload request.
+                                 if (continueWithUpload && progressDialog.uploadMethod === progressDialog.INMEMORY_UPLOAD)
+                                 {
+                                    // Add up the total size of all selected files to see if they exceed the maximum allowed.
+                                    // If the user has requested to upload too large a file or too many files in one operation
+                                    // then generate an error dialog and abort the upload...
+                                    var totalRequestedUploadSize = 0;
+
+                                    j = e.dataTransfer.files.length;
+                                    for (i = 0; i < j; i++)
+                                    {
+                                       totalRequestedUploadSize += e.dataTransfer.files[i].size;
+                                    }
+                                    if (totalRequestedUploadSize > progressDialog.getInMemoryLimit())
+                                    {
+                                       continueWithUpload = false;
+                                       Alfresco.util.PopupManager.displayPrompt(
+                                       {
+                                           text: progressDialog.msg("inmemory.uploadsize.exceeded", Alfresco.util.formatFileSize(progressDialog.getInMemoryLimit()))
+                                       });
+                                    }
+                                 }
+
+                                 // If all tests are passed...
+                                 if (continueWithUpload)
+                                 {
+                                    // Initialise the target directory as the current path represented by the current rendering of the DocumentList.
+                                    // If we determine that the user has actually dropped some files onto the a folder icon (which we're about to check
+                                    // for) then we'll change this value to be that of the folder targeted...
+                                    var directory = this.currentPath,
+                                       directoryName = directory.substring(directory.lastIndexOf("/") + 1),
+                                       destination = this.doclistMetadata.parent ? this.doclistMetadata.parent.nodeRef : null;
+
+                                    // Providing that the drop target a <TR> (or a child node of a <TR>) in the DocumentList data table then a record
+                                    // will be returned from this call. If nothing is returned then we cannot proceed with the file upload operation.
+                                    var oRecord = this.widgets.dataTable.getRecord(e.target);
+                                    if (oRecord !== null)
+                                    {
+                                       // Dropped onto a folder icon?
+                                       var oColumn = this.widgets.dataTable.getColumn(e.target),
+                                          record = oRecord.getData();
+
+                                       if (e.target.tagName == "IMG" || e.target.className == "droppable")
+                                       {
+                                          var location = record.location;
+                                          directoryName = location.file;
+                                          // Site mode
+                                          directory = $combine(location.path, location.file);
+                                          // Repository mode
+                                          destination = record.nodeRef;
+                                       }
+                                       // else: The file(s) were not not dropped onto a folder icon, so we will just upload to the current path
+                                    }
+                                    // else: If a record is not returned, then it means that we dropped into an empty folder.
+
+                                    // Remove all the highlighting
+                                    Dom.removeClass(this.widgets.dataTable.getTrEl(e.target), "dndFolderHighlight");
+                                    Dom.removeClass(this.widgets.dataTable.getContainerEl(), "dndDocListHighlight");
+
+                                    // Show uploader for multiple files
+                                    var multiUploadConfig =
+                                    {
+                                       files: e.dataTransfer.files,
+                                       uploadDirectoryName: directoryName,
+                                       filter: [],
+                                       mode: progressDialog.MODE_MULTI_UPLOAD,
+                                       thumbnails: "doclib",
+                                       onFileUploadComplete:
+                                       {
+                                          fn: this.onFileUploadComplete,
+                                          scope: this
+                                       }
+                                    };
+
+                                    // Extra parameters depending on current mode
+                                    if ($isValueSet(this.options.siteId) && !this.options.disableSiteMode)
+                                    {
+                                       multiUploadConfig.siteId = this.options.siteId;
+                                       multiUploadConfig.containerId = this.options.containerId;
+                                       multiUploadConfig.uploadDirectory = directory;
+                                    }
+                                    else
+                                    {
+                                       multiUploadConfig.destination = destination;
+                                    }
+
+                                    progressDialog.show(multiUploadConfig);
+                                 }
+                              }
+                              else
+                              {
+                                 Alfresco.logger.debug("DL_onDocumentListDrop: A drop event was detected, but no files were present for upload: ", e.dataTransfer);
+                              }
+                           }
+                           catch(exception)
+                           {
+                              Alfresco.logger.error("DL_onDocumentListDrop: The following error occurred when files were dropped onto the Document List: ", exception);
+                           }
+                           e.stopPropagation();
+                           e.preventDefault();
+                        },
 
                         /**
                          * Like/Unlike event handler

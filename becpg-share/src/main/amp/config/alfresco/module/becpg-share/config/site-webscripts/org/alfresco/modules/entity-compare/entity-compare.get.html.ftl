@@ -9,7 +9,7 @@
  new beCPG.component.AutoCompletePicker('${el}-entities', '${el}-entities-field', true).setOptions(
    {
  		mode: "edit",
-      multipleSelectMode: true, 
+        multipleSelectMode: true, 
  		targetLinkTemplate: "${targetLinkTemplate}" ,
  		dsStr: "becpg/autocomplete/product?classNames=bcpg:rawMaterial,bcpg:finishedProduct,bcpg:localSemiFinishedProduct,bcpg:semiFinishedProduct"
   });

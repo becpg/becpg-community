@@ -1,5 +1,5 @@
 /*
- * 
+ *
  */
 package fr.becpg.repo.product.data.constraints;
 
@@ -8,34 +8,11 @@ package fr.becpg.repo.product.data.constraints;
  *
  * @author querephi
  */
-public enum ProductUnit  {
+public enum ProductUnit {
 
-	/** The kg. */
-	kg,
-	
-	/** The L. */
-	L,
-	
-	/** The P. */
-	P,
-	
-	/** The m. */
-	m,
-	
-	/** The m2. */
-	m2,
-	
-	m3,
-	
-	h,
-	
-	g,
-	
-	mL;
-	
+	kg,L,P,m,m2,m3,h,g,cL,mL;
 
-		
-	public static ProductUnit getUnit(String productUnit){
-		return (productUnit != null && !productUnit.isEmpty()) ? ProductUnit.valueOf(productUnit) : ProductUnit.kg;
+	public static ProductUnit getUnit(String productUnit) {
+		return ((productUnit != null) && !productUnit.isEmpty()) ? ProductUnit.valueOf(productUnit) : ProductUnit.kg;
 	}
 }

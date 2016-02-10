@@ -108,6 +108,7 @@
 					<show id="bcpg:eanCode" />
 					<show id="bcpg:eanCodeLevel2"  />
 					<show id="bcpg:eanCodeLevel3" />
+					<show id="bcpg:customsCodeRef" />
 					<show id="bcpg:subsidiaryRef" force="true" />
 					<show id="bcpg:trademarkRef" force="true" />
 					<show id="bcpg:plants" force="true" />
@@ -173,6 +174,13 @@
 
 
 					<!-- GS1 -->
+					
+					<show id="gs1:productHierarchy1" for-mode="edit" />
+                    <show id="gs1:productHierarchy2" for-mode="edit" />
+                    <show id="gs1:productHierarchy3" for-mode="edit" />
+                    <show id="gs1:productHierarchy4" for-mode="edit" />
+                    <show id="gs1:productHierarchy5" for-mode="edit" />
+					
 					<show id="gs1:height" for-mode="edit" />
 					<show id="gs1:width" for-mode="edit" />
 					<show id="gs1:depth" for-mode="edit" />
@@ -216,8 +224,6 @@
 					<set id="profitability" appearance="bordered-panel"
 						label-id="becpg.forms.set.rentability.label" template="/org/alfresco/components/form/3-column-set.ftl"
 						parent="mainTab" />
-					<set id="npd" appearance="bordered-panel" label-id="becpg.forms.set.npd.label"
-						template="/org/alfresco/components/form/2-column-set.ftl" parent="mainTab" />
 					<set id="dimension" appearance="bordered-panel"
 						label-id="becpg.forms.set.pack.size.label" template="/org/alfresco/components/form/2-column-set.ftl"
 						parent="mainTab" />
@@ -225,7 +231,6 @@
 						template="/org/alfresco/components/form/2-column-set.ftl" parent="mainTab" />					
 				
 					<set id="categories" appearance="bordered-panel"
-					
 						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl"
 						parent="mainTab" />
 					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
@@ -235,6 +240,9 @@
 						parent="mainTab" />
 
 					<set id="publicationTab" label-id="becpg.forms.set.publication.label" />
+				    <set appearance="bordered-panel" id="hierarchyPanel"
+						label-id="becpg.forms.set.hierarchyPanel.label" parent="publicationTab"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set appearance="bordered-panel" id="mesuresPanel"
 						label-id="becpg.forms.set.measures.label" parent="publicationTab"
 						template="/org/alfresco/components/form/2-column-set.ftl" />
@@ -290,6 +298,11 @@
 					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo" />
 					<field id="bcpg:eanCodeLevel2" help-id="becpg.forms.help.eanCodeLevel2" set="mainInfo" />
 					<field id="bcpg:eanCodeLevel3" help-id="becpg.forms.help.eanCodeLevel3" set="mainInfo" />
+					<field id="bcpg:customsCodeRef" set="mainInfo" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+						</control>
+					</field>
 					<field id="bcpg:subsidiaryRef" set="mainInfo" />
 					<field id="bcpg:plants" set="mainInfo" />
 					<field id="bcpg:trademarkRef" set="mainInfo" />
@@ -354,7 +367,7 @@
 					<field id="bcpg:productQty" help-id="becpg.forms.help.productQty" set="formulation" />
 					<field id="bcpg:productUnit" set="formulation">
 						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
-							<control-param name="options">kg,g,L,mL,P|becpg.forms.field.productUnit
+							<control-param name="options">kg,g,L,cL,mL,P|becpg.forms.field.productUnit
 							</control-param>
 						</control>
 					</field>
@@ -453,36 +466,66 @@
 
 					<!-- GS1 -->
 
+					<field id="gs1:productHierarchy1" set="hierarchyPanel" >
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/gs1_Hierarchy</control-param>
+						</control>
+					</field>
+                    <field id="gs1:productHierarchy2"  set="hierarchyPanel" >
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/gs1_Hierarchy</control-param>
+							<control-param name="parent">gs1_productHierarchy1</control-param>
+						</control>
+					</field>
+                    <field id="gs1:productHierarchy3" set="hierarchyPanel" >
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/gs1_Hierarchy</control-param>
+							<control-param name="parent">gs1_productHierarchy2</control-param>
+						</control>
+					</field>
+                    <field id="gs1:productHierarchy4" set="hierarchyPanel" >
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/gs1_Hierarchy</control-param>
+							<control-param name="parent">gs1_productHierarchy3</control-param>
+						</control>
+					</field>
+                    <field id="gs1:productHierarchy5" set="hierarchyPanel" >
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/gs1_Hierarchy</control-param>
+							<control-param name="parent">gs1_productHierarchy4</control-param>
+						</control>
+					</field>
 
-					<field id="gs1:height" set="mesuresPanel" />
-					<field id="gs1:width" set="mesuresPanel" />
-					<field id="gs1:depth" set="mesuresPanel" />
-					<field id="gs1:weight" set="mesuresPanel" />
+					<field id="gs1:height" help-id="becpg.forms.help.gs1.height" set="mesuresPanel" />
+					<field id="gs1:width"  help-id="becpg.forms.help.gs1.width" set="mesuresPanel" />
+					<field id="gs1:depth"  help-id="becpg.forms.help.gs1.depth" set="mesuresPanel" />
+					<field id="gs1:weight" help-id="becpg.forms.help.gs1.weight" set="mesuresPanel" />
+					
+				
+					<field id="gs1:isTradeItemABaseUnit" help-id="becpg.forms.help.gs1.isTradeItemABaseUnit" set="indicateursPanel" />
+					<field id="gs1:isTradeItemAConsumerUnit" help-id="becpg.forms.help.gs1.isTradeItemAConsumerUnit" set="indicateursPanel" />
+					<field id="gs1:isTradeItemADespatchUnit" help-id="becpg.forms.help.gs1.isTradeItemADespatchUnit" set="indicateursPanel" />
+					<field id="gs1:isTradeItemAnInvoiceUnit" help-id="becpg.forms.help.gs1.isTradeItemAnInvoiceUnit" set="indicateursPanel" />
+					<field id="gs1:isTradeItemAnOrderableUnit" help-id="becpg.forms.help.gs1.isTradeItemAnOrderableUnit" set="indicateursPanel" />
+					<field id="gs1:isTradeItemAVariableUnit" help-id="becpg.forms.help.gs1.isTradeItemAVariableUnit" set="indicateursPanel" />
+					<field id="gs1:isTradeItemAFullDisplayStand" help-id="becpg.forms.help.gs1.isTradeItemAFullDisplayStand" set="indicateursPanel" />
+					<field id="gs1:isTradeItemAReturnableItem" help-id="becpg.forms.help.gs1.isTradeItemAReturnableItem" set="indicateursPanel" />
+					<field id="gs1:isTradeItemAService" help-id="becpg.forms.help.gs1.isTradeItemAService" set="indicateursPanel" />
+					<field id="gs1:isTradeItemABulkItem" help-id="becpg.forms.help.gs1.isTradeItemABulkItem" set="indicateursPanel" />
+					<field id="gs1:isTradeItemAModel" help-id="becpg.forms.help.gs1.isTradeItemAModel" set="indicateursPanel" />
+					<field id="gs1:isTradeItemADivisibleItem" help-id="becpg.forms.help.gs1.isTradeItemADivisibleItem" set="indicateursPanel" />
+					<field id="gs1:isTradeItemAPromotionalItem" help-id="becpg.forms.help.gs1.isTradeItemAPromotionalItem" set="indicateursPanel" />
+					<field id="gs1:isTradeItemACutToOrderItem" help-id="becpg.forms.help.gs1.isTradeItemACutToOrderItem" set="indicateursPanel" />
+					<field id="gs1:isPackagingMarkedReturnable" help-id="becpg.forms.help.gs1.isPackagingMarkedReturnable" set="indicateursPanel" />
 
-					<field id="gs1:isTradeItemABaseUnit" set="indicateursPanel" />
-					<field id="gs1:isTradeItemAConsumerUnit" set="indicateursPanel" />
-					<field id="gs1:isTradeItemADespatchUnit" set="indicateursPanel" />
-					<field id="gs1:isTradeItemAnInvoiceUnit" set="indicateursPanel" />
-					<field id="gs1:isTradeItemAnOrderableUnit" set="indicateursPanel" />
-					<field id="gs1:isTradeItemAVariableUnit" set="indicateursPanel" />
-					<field id="gs1:isTradeItemAFullDisplayStand" set="indicateursPanel" />
-					<field id="gs1:isTradeItemAReturnableItem" set="indicateursPanel" />
-					<field id="gs1:isTradeItemAService" set="indicateursPanel" />
-					<field id="gs1:isTradeItemABulkItem" set="indicateursPanel" />
-					<field id="gs1:isTradeItemAModel" set="indicateursPanel" />
-					<field id="gs1:isTradeItemADivisibleItem" set="indicateursPanel" />
-					<field id="gs1:isTradeItemAPromotionalItem" set="indicateursPanel" />
-					<field id="gs1:isTradeItemACutToOrderItem" set="indicateursPanel" />
-					<field id="gs1:isPackagingMarkedReturnable" set="indicateursPanel" />
 
+					<field id="gs1:effectiveDate" help-id="becpg.forms.help.gs1.effectiveDate"  set="datesPanel" />
+					<field id="gs1:startAvailabilityDateTime" help-id="becpg.forms.help.gs1.startAvailabilityDateTime"  set="datesPanel" />
+					<field id="gs1:lastChangeDateTime" help-id="becpg.forms.help.gs1.lastChangeDateTime"  set="datesPanel" />
+					<field id="gs1:publicationDate" help-id="becpg.forms.help.gs1.publicationDate"  set="datesPanel" />
 
-					<field id="gs1:effectiveDate" set="datesPanel" />
-					<field id="gs1:startAvailabilityDateTime" set="datesPanel" />
-					<field id="gs1:lastChangeDateTime" set="datesPanel" />
-					<field id="gs1:publicationDate" set="datesPanel" />
-
-					<field id="gs1:packagingTypeCode" set="packagingPanel" />
-					<field id="gs1:palletTypeCode" set="packagingPanel" />
+					<field id="gs1:packagingTypeCode" help-id="becpg.forms.help.gs1.packagingTypeCode"  set="packagingPanel" />
+					<field id="gs1:palletTypeCode" help-id="becpg.forms.help.gs1.palletTypeCode"  set="packagingPanel" />
 
 				</appearance>
 			</form>
@@ -504,7 +547,7 @@
 					<field id="bcpg:productQty" />
 					<field id="bcpg:productUnit">
 						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
-							<control-param name="options">kg,g,L,mL,P|becpg.forms.field.productUnit
+							<control-param name="options">kg,g,L,cL,mL,P|becpg.forms.field.productUnit
 							</control-param>
 						</control>
 					</field>
@@ -627,6 +670,7 @@
 					<show id="bcpg:eanCode" force="true" />
 					<show id="bcpg:eanCodeLevel2" force="true" />
 					<show id="bcpg:eanCodeLevel3" force="true" />
+					<show id="bcpg:customsCodeRef"  />
 
 					<show id="bcpg:clients" force="true" />
 
@@ -716,6 +760,11 @@
 					<field id="bcpg:eanCode" set="2-col-product-criteria" />
 					<field id="bcpg:eanCodeLevel2" set="2-col-product-criteria" />
 					<field id="bcpg:eanCodeLevel3" set="2-col-product-criteria" />
+					<field id="bcpg:customsCodeRef" set="2-col-product-criteria" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+						</control>
+					</field>
 					
 					<field id="bcpg:clients" set="2-col-product-criteria">
 						<control
@@ -819,6 +868,7 @@
 					<show id="bcpg:eanCode" />
 					<show id="bcpg:eanCodeLevel2" />
 					<show id="bcpg:eanCodeLevel3" />
+					<show id="bcpg:customsCodeRef" force="true" />
 					<show id="bcpg:subsidiaryRef" force="true" />
 					<show id="bcpg:plants" force="true" />
 					<show id="bcpg:trademarkRef" force="true" />
@@ -909,6 +959,12 @@
 					<field id="bcpg:eanCode" help-id="becpg.forms.help.eanCode" set="mainInfo" />
 					<field id="bcpg:eanCodeLevel2" help-id="becpg.forms.help.eanCodeLevel2" set="mainInfo" />
 					<field id="bcpg:eanCodeLevel3" help-id="becpg.forms.help.eanCodeLevel3" set="mainInfo" />
+					
+					<field id="bcpg:customsCodeRef" set="mainInfo" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+						</control>
+					</field>
 					<field id="bcpg:subsidiaryRef" force="true" set="mainInfo" />
 					<field id="bcpg:trademarkRef" force="true" set="mainInfo" />
 					<field id="bcpg:plants" force="true" set="mainInfo" />
@@ -970,7 +1026,7 @@
 					<field id="bcpg:productQty" help-id="becpg.forms.help.productQty" set="formulation" />
 					<field id="bcpg:productUnit" set="formulation">
 						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
-							<control-param name="options">kg,g,L,mL,P|becpg.forms.field.productUnit
+							<control-param name="options">kg,g,L,cL,mL,P|becpg.forms.field.productUnit
 							</control-param>
 						</control>
 					</field>
@@ -1041,7 +1097,7 @@
 					<field id="bcpg:productQty" />
 					<field id="bcpg:productUnit">
 						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
-							<control-param name="options">kg,g,L,mL,P|becpg.forms.field.productUnit
+							<control-param name="options">kg,g,L,cL,mL,P|becpg.forms.field.productUnit
 							</control-param>
 						</control>
 					</field>
@@ -1329,6 +1385,7 @@
 					<show id="pack:palletBoxesPerPallet" />
 					<show id="pack:palletHeight" />
 					<show id="pack:palletNumberOnGround" />
+					<show id="pack:palletStackingMaxWeight" />
 			
 					<!-- Tare -->
 					<show id="pack:tare" force="true" />
@@ -1408,7 +1465,8 @@
 					<field id="pack:palletBoxesPerPallet" set="pallet" />
 					<field id="pack:palletBoxesPerLastLayer" set="pallet" />
 					<field id="pack:palletHeight" set="pallet" />
-					<field id="pack:palletNumberOnGround" set="pallet" />					
+					<field id="pack:palletNumberOnGround" set="pallet" />
+					<field id="pack:palletStackingMaxWeight" set="pallet" />					
 
 					<!-- tare -->
 					<field id="pack:tare" set="tare" />
@@ -1596,7 +1654,9 @@
 			<form id="formulation">
 				<field-visibility>
 					<show id="cm:name" />
-					<show id="cm:description" />
+					<show id="cm:title" force="true" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:productUnit" />
 				</field-visibility>
 			</form>
 			<form id="bulk-edit">
@@ -1623,6 +1683,7 @@
 					<show id="pack:palletBoxesPerPallet" force="true" />
 					<show id="pack:palletHeight" force="true" />
 					<show id="pack:palletNumberOnGround" force="true" />
+					<show id="pack:palletStackingMaxWeight" force="true"/>
 					
 					<!-- Tare -->
 					<show id="pack:tare" force="true" />
@@ -2057,6 +2118,7 @@
 				<field-visibility>
 
 					<!-- mainInfo -->
+					<show id="bcpg:code" force="true"/>
 					<show id="cm:name" force="true"/>
 					<show id="cm:title" force="true" />
 					<show id="bcpg:legalName" force="true"/>
@@ -2077,6 +2139,8 @@
 					<show id="pack:palletBoxesPerPallet" force="true" />
 					<show id="pack:palletHeight" force="true" />
 					<show id="pack:palletNumberOnGround" force="true" />
+					<show id="pack:palletStackingMaxWeight" force="true"/>
+					
 					
 					<!-- Tare -->
 					<show id="pack:tare" force="true" />
@@ -2111,9 +2175,6 @@
 					<show id="pack:pmPrintVarnish" force="true" />			
 					
 
-					<!-- tags and categories -->
-					<show id="cm:taggable" />
-					<show id="cm:categories" />
 
 				</field-visibility>
 				<appearance>
@@ -2133,19 +2194,13 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="cm:taggable">
-						<control>
-							<control-param name="compactMode">true</control-param>
-							<control-param name="params">aspect=cm:taggable
+					<field id="bcpg:entityTplRef" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:packagingMaterial?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
 							</control-param>
-							<control-param name="createNewItemUri">/api/tag/workspace/SpacesStore
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
-							<control-param name="createNewItemIcon">tag</control-param>
-						</control>
-					</field>
-					<field id="cm:categories">
-						<control>
-							<control-param name="compactMode">true</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -2171,38 +2226,10 @@
 					<show id="bcpg:suppliers" />
 					<show id="bcpg:plants" force="true" />
 					<show id="bcpg:certificateDate" force="true" />
-
+					
 					<!-- Tare -->
 					<show id="pack:tare" force="true" />
 					<show id="pack:tareUnit" force="true" />
-
-					<!-- Dimension -->
-					<show id="pack:length" force="true" />
-					<show id="pack:width" force="true" />
-					<show id="pack:height" force="true" />
-					
-					<!-- internal dimension -->	
-					<show id="pack:pmIntLength" force="true" />
-					<show id="pack:pmIntWidth" force="true" />
-					<show id="pack:pmIntHeight" force="true" />
-					
-					<!-- thickness -->	
-					<show id="pack:pmThickness" force="true" />
-					<show id="pack:pmPaperWeight" force="true" />
-					
-					<!-- material -->	
-					<show id="pack:pmMaterial" force="true"/>
-					<show id="pack:pmAdditionnalMaterial" force="true"/>
-					
-					<!-- coil -->
-					<show id="pack:pmCoreDiameter" force="true"/>
-					<show id="pack:pmCoilDiameter" force="true"/>
-					
-					<!-- print -->
-					<show id="pack:pmPrintNbColors" force="true"/>	
-					<show id="pack:pmPrintColor" force="true"/>
-					<show id="pack:pmPrintType" force="true"/>
-					<show id="pack:pmPrintVarnish" force="true"/>			
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" />
@@ -2214,18 +2241,6 @@
 						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 				   <set id="tare" appearance="bordered-panel" label-id="becpg.forms.set.tare.label"
 						template="/org/alfresco/components/form/2-column-set.ftl" />
-						<set id="dimension" appearance="bordered-panel"
-						label-id="becpg.forms.set.pack.size.label" template="/org/alfresco/components/form/2-column-set.ftl" />
-					<set id="internalDimension" appearance="bordered-panel"
-						label-id="becpg.forms.set.pack.intSize.label" template="/org/alfresco/components/form/2-column-set.ftl" />
-					<set id="thickness" appearance="bordered-panel"
-						label-id="becpg.forms.set.pack.thickness.label" template="/org/alfresco/components/form/2-column-set.ftl" />
-					<set id="material" appearance="bordered-panel"
-						label-id="becpg.forms.set.pack.material.label" template="/org/alfresco/components/form/2-column-set.ftl" />
-					<set id="coil" appearance="bordered-panel"
-						label-id="becpg.forms.set.pack.coil.label" template="/org/alfresco/components/form/2-column-set.ftl" />
-					<set id="print" appearance="bordered-panel"
-						label-id="becpg.forms.set.pack.print.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="categories" appearance="bordered-panel"
 						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					
@@ -2282,37 +2297,6 @@
 					<field id="pack:tare" set="tare" />
 					<field id="pack:tareUnit" set="tare" />
 					
-					<!-- tare -->
-					<field id="pack:tare" set="tare" />
-					<field id="pack:tareUnit" set="tare" />
-
-					<!-- Dimension -->
-					<field id="pack:length" set="dimension" />
-					<field id="pack:width" set="dimension" />
-					<field id="pack:height" set="dimension" />
-					
-					<!-- internal dimension -->	
-					<field id="pack:pmIntLength" set="internalDimension"/>
-					<field id="pack:pmIntWidth" set="internalDimension"/>
-					<field id="pack:pmIntHeight" set="internalDimension"/>
-					
-					<!-- thickness -->	
-					<field id="pack:pmThickness" set="thickness"/>
-					<field id="pack:pmPaperWeight" set="thickness"/>
-					
-					<!-- material -->	
-					<field id="pack:pmMaterial" set="material"/>
-					<field id="pack:pmAdditionnalMaterial" set="material"/>
-					
-					<!-- coil -->
-					<field id="pack:pmCoreDiameter" set="coil"/>
-					<field id="pack:pmCoilDiameter" set="coil"/>
-					
-					<!-- print -->
-					<field id="pack:pmPrintNbColors" set="print"/>	
-					<field id="pack:pmPrintColor" set="print"/>
-					<field id="pack:pmPrintType" set="print"/>
-					<field id="pack:pmPrintVarnish" set="print"/>
 
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
@@ -2336,7 +2320,9 @@
 			<form id="formulation">
 				<field-visibility>
 					<show id="cm:name" />
-					<show id="cm:description" />
+					<show id="cm:title" force="true" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:productUnit" />
 				</field-visibility>
 			</form>
 			
@@ -2468,6 +2454,7 @@
 					<show id="pack:palletBoxesPerPallet" />
 					<show id="pack:palletHeight" />
 					<show id="pack:palletNumberOnGround" />
+					<show id="pack:palletStackingMaxWeight" />
 
 					<!-- Tare -->
 					<show id="pack:tare" />
@@ -2567,7 +2554,7 @@
 					<!-- <field id="bcpg:productQty" set="consumer" /> -->
 					<field id="bcpg:productUnit"  set="consumer">
 						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
-							<control-param name="options">kg,g,L,mL,P|becpg.forms.field.productUnit
+							<control-param name="options">kg,g,L,cL,mL,P|becpg.forms.field.productUnit
 							</control-param>
 						</control>
 					</field>
@@ -2652,6 +2639,7 @@
 					<field id="pack:palletBoxesPerLastLayer" set="pallet" />
 					<field id="pack:palletHeight" set="pallet" />
 					<field id="pack:palletNumberOnGround" set="pallet" />
+					<field id="pack:palletStackingMaxWeight" set="pallet"/>
 					
 
 					<!-- tare -->
@@ -2741,6 +2729,7 @@
 					<show id="pack:palletBoxesPerPallet" />
 					<show id="pack:palletHeight" />
 					<show id="pack:palletNumberOnGround" />
+					<show id="pack:palletStackingMaxWeight" />
 
 					<!-- Tare -->
 					<show id="pack:tare" />
@@ -2844,6 +2833,7 @@
 					<field id="pack:palletBoxesPerLastLayer" set="pallet" />
 					<field id="pack:palletHeight" set="pallet" />
 					<field id="pack:palletNumberOnGround" set="pallet" />
+					<field id="pack:palletStackingMaxWeight" set="pallet"/>
 					
 
 					<!-- tare -->
@@ -2910,7 +2900,7 @@
 				<appearance>
 					<field id="bcpg:productUnit">
 						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
-							<control-param name="options">kg,g,L,mL,P|becpg.forms.field.productUnit
+							<control-param name="options">kg,g,L,cL,mL,P|becpg.forms.field.productUnit
 							</control-param>
 						</control>
 					</field>
@@ -3057,7 +3047,7 @@
 					<!-- <field id="bcpg:productQty" set="consumer" /> -->
 					<field id="bcpg:productUnit"  set="consumer">
 						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
-							<control-param name="options">kg,g,L,mL,P|becpg.forms.field.productUnit
+							<control-param name="options">kg,g,L,cL,mL,P|becpg.forms.field.productUnit
 							</control-param>
 						</control>
 					</field>
@@ -3167,7 +3157,7 @@
 				<appearance>
 					<field id="bcpg:productUnit">
 						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
-							<control-param name="options">kg,g,L,mL,P|becpg.forms.field.productUnit
+							<control-param name="options">kg,g,L,cL,mL,P|becpg.forms.field.productUnit
 							</control-param>
 						</control>
 					</field>
@@ -3496,7 +3486,7 @@
 					<field id="bcpg:productQty" help-id="becpg.forms.help.productQty" set="formulation" />
 					<field id="bcpg:productUnit" set="formulation">
 						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
-							<control-param name="options">kg,g,L,mL,P|becpg.forms.field.productUnit
+							<control-param name="options">kg,g,L,cL,mL,P|becpg.forms.field.productUnit
 							</control-param>
 						</control>
 					</field>
@@ -3639,7 +3629,7 @@
 					<field id="bcpg:productQty" />
 					<field id="bcpg:productUnit">
 						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
-							<control-param name="options">kg,g,L,mL,P|becpg.forms.field.productUnit
+							<control-param name="options">kg,g,L,cL,mL,P|becpg.forms.field.productUnit
 							</control-param>
 						</control>
 					</field>
@@ -4048,7 +4038,7 @@
 					<field id="bcpg:productQty" help-id="becpg.forms.help.productQty" set="formulation" />
 					<field id="bcpg:productUnit" set="formulation">
 						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
-							<control-param name="options">kg,g,L,mL,P|becpg.forms.field.productUnit
+							<control-param name="options">kg,g,L,cL,mL,P|becpg.forms.field.productUnit
 							</control-param>
 						</control>
 					</field>
@@ -4101,7 +4091,7 @@
 					<field id="bcpg:productQty" />
 					<field id="bcpg:productUnit">
 						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
-							<control-param name="options">kg,g,L,mL,P|becpg.forms.field.productUnit
+							<control-param name="options">kg,g,L,cL,mL,P|becpg.forms.field.productUnit
 							</control-param>
 						</control>
 					</field>
@@ -5399,8 +5389,10 @@
 			<form>
 				<field-visibility>
 					<show id="cm:name" />
+					<show id="bcpg:trademarkType"  />
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
+					
 				</field-visibility>
 				<appearance>
 					<field id="cm:description">
@@ -5419,9 +5411,12 @@
 			<form>
 
 				<field-visibility>
+					
 					<show id="cm:name" />
+					<show id="bcpg:trademarkType"  />
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
+					
 				</field-visibility>
 
 				<appearance>
@@ -5437,6 +5432,7 @@
 			<form id="filter">
 				<field-visibility>
 					<show id="cm:name" />
+					<show id="bcpg:trademarkType"  />
 					<show id="cm:title" force="true" />
 				</field-visibility>
 			</form>
@@ -5444,6 +5440,7 @@
 			<form id="datagrid">
 				<field-visibility>
 					<show id="cm:name" />
+					<show id="bcpg:trademarkType"  />
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
 				</field-visibility>
@@ -5652,6 +5649,44 @@
 			</form>
 		</forms>
 	</config>
+	
+	
+	<config evaluator="node-type" condition="bcpg:customsCode">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="bcpg:cstsCode"/>
+					<show id="bcpg:charactName" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+
+	<config evaluator="model-type" condition="bcpg:customsCode">
+		<forms>
+			<form>
+				<field-visibility>
+				    <show id="bcpg:cstsCode"/>
+					<show id="bcpg:charactName" />
+				</field-visibility>
+			</form>
+
+			<form id="filter">
+				<field-visibility>
+					<show id="bcpg:cstsCode"/>
+					<show id="bcpg:charactName" />				
+				</field-visibility>
+			</form>
+
+			<form id="datagrid">
+				<field-visibility>
+					 <show id="bcpg:cstsCode"/>
+					<show id="bcpg:charactName" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	
 	
 	<config evaluator="model-type" condition="pjt:project">
 	   <forms>
@@ -6035,16 +6070,16 @@
 					<field id="bcpg:compareWithDynColumn" label="hidden" read-only="true"/>
 					<field id="bcpg:compoListQty" read-only="true"></field>
 					<field id="bcpg:compoListVolume" read-only="true"></field>
-					<field id="bcpg:dynamicCharactColumn1" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn2" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn3" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn4" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn5" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn6" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn7" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn8" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn9" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn10" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn1" read-only="true" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn2" read-only="true" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn3" read-only="true" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn4" read-only="true" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn5" read-only="true" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn6" read-only="true" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn7" read-only="true" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn8" read-only="true" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn9" read-only="true" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn10" read-only="true" label="hidden"></field>
 					<field id="bcpg:instruction" label="hidden"></field>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
@@ -6199,16 +6234,16 @@
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden"></field>
 					<field id="pack:labelingPosition" label="hidden" />
-					<field id="bcpg:dynamicCharactColumn1" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn2" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn3" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn4" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn5" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn6" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn7" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn8" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn9" label="hidden"></field>
-					<field id="bcpg:dynamicCharactColumn10" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn1" read-only="true" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn2" read-only="true" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn3" read-only="true" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn4" read-only="true" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn5" read-only="true" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn6" read-only="true" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn7" read-only="true" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn8" read-only="true" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn9" read-only="true" label="hidden"></field>
+					<field id="bcpg:dynamicCharactColumn10" read-only="true" label="hidden"></field>
 					<field id="bcpg:instruction" label="hidden"></field>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
