@@ -130,8 +130,16 @@
           {
              actionName : "onActionBranchEntity",
              fn : function onActionBranchEntity(p_record) {
-                 var  nodeRef = new Alfresco.util.NodeRef(p_record.nodeRef), recordSiteName = $isValueSet(p_record.location.site) ? p_record.location.site.name : null;
-                
+                 var  nodeRef = new Alfresco.util.NodeRef(p_record.nodeRef), recordSiteName = $isValueSet(p_record.location.site) ? p_record.location.site.name : null,
+                		 displayName = p_record.displayName;
+                 
+                 Alfresco.util.PopupManager.displayMessage({
+       		      displayTime : 0,
+       		      effect : null,
+       		      text : this.msg("message.branch-entity.inprogress", displayName)
+       		    });
+                 
+                 
                  Alfresco.util.Ajax
                  .request({
                     method : Alfresco.util.Ajax.POST,
