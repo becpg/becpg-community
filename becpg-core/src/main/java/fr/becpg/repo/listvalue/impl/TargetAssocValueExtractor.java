@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.favourites.FavouritesService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -75,6 +76,10 @@ public class TargetAssocValueExtractor implements ListValueExtractor<NodeRef> {
 				
 				if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_COLOR)) {
 					props.put("color", (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_COLOR));
+				}
+				if (nodeService.hasAspect(nodeRef, ContentModel.ASPECT_TITLED)) {
+					props.put("title", (String) nodeService.getProperty(nodeRef, ContentModel.PROP_TITLE));
+					props.put("description", (String) nodeService.getProperty(nodeRef, ContentModel.PROP_DESCRIPTION));
 				}
 
 				ListValueEntry entry = new ListValueEntry(nodeRef.toString(), name, cssClass, props);
