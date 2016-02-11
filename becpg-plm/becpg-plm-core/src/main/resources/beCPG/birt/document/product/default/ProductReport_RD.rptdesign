@@ -2315,6 +2315,12 @@ BirtMath.round(dataSetRow["compoListQty"] * 1000000, 2)+ " mg";
                     <property name="dataType">float</property>
                     <property name="allowExport">true</property>
                 </structure>
+                <structure>
+                    <property name="name">itemType</property>
+                    <text-property name="displayName">itemType</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["itemType"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
             </list-property>
             <column id="2910">
                 <property name="style">becpg-col-border</property>
@@ -2384,6 +2390,13 @@ BirtMath.round(dataSetRow["compoListQty"] * 1000000, 2)+ " mg";
             <detail>
                 <row id="2891">
                     <property name="style">becpg-row-border</property>
+                    <list-property name="highlightRules">
+                        <structure>
+                            <property name="operator">is-true</property>
+                            <property name="fontWeight">bold</property>
+                            <expression name="testExpr" type="javascript">row["itemType"]=="bcpg:semiFinishedProduct" || row["itemType"]=="bcpg:localSemiFinishedProduct"</expression>
+                        </structure>
+                    </list-property>
                     <cell id="2908">
                         <data id="2946">
                             <property name="fontSize">9pt</property>

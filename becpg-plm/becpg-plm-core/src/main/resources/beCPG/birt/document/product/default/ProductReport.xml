@@ -2331,7 +2331,7 @@ Après décongélation, à conserver au réfrigérateur et à consommer dans la 
         <startEffectivity prefix="bcpg"><![CDATA[2012-09-08T08:49:15.360Z]]></startEffectivity>
         <nutrientProfilingClass prefix="bcpg"><![CDATA[B]]></nutrientProfilingClass>
         <productCompoVolumeUsed prefix="bcpg"><![CDATA[]]></productCompoVolumeUsed>
-        <netWeight prefix="bcpg"><![CDATA[]]></netWeight>
+        <netWeight prefix="bcpg">0.9125544<![CDATA[]]></netWeight>
         <productComments prefix="bcpg"><![CDATA[]]></productComments>
         <productUnit prefix="bcpg"><![CDATA[kg]]></productUnit>
         <code prefix="bcpg"><![CDATA[MP1013]]></code>
