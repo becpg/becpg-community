@@ -858,6 +858,10 @@
 					<type>d:boolean</type>
 					<default>false</default>
 				</property>
+				<property name="bcpg:physicoChemFormula">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
 			</properties>
 		</type>
 
@@ -1729,6 +1733,14 @@
 				<property name="bcpg:pclTextCriteria">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:physicoChemIsFormulated">
+					<type>d:boolean</type>
+					<default>false</default>
+				</property>
+				<property name="bcpg:physicoChemFormulaErrorLog">
+					<type>d:text</type>
 					<index enabled="false" />
 				</property>
 			</properties>

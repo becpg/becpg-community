@@ -248,6 +248,7 @@ span.cost-formulated-error,
 span.dynaError,
 span.lcl-formulated-error,
 span.nut-formulated-error,
+span.physicoChem-formulated-error,
 span.reqTypeTolerated {
     background-image: url("../../components/images/states/warning-16.png") !important;
     padding-left: 20px;
@@ -262,7 +263,8 @@ span.reqTypeAuthorized {
 
 span.cost-formulated,
 span.lcl-formulated,
-span.nut-formulated {
+span.nut-formulated,
+span.physicoChem-formulated {
     background-image: url("../../components/images/lcl-formulated-16.png") !important;
     padding-left: 20px;
     background-repeat: no-repeat
