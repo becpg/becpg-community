@@ -5030,6 +5030,7 @@
 					<show id="bcpg:physicoChemUnit" />
 					<show id="bcpg:physicoChemFormulated" />
 					<show id="bcpg:physicoChemFormulatedFromVol" />
+					<show id="bcpg:physicoChemFormula" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:charactName" />
@@ -5039,6 +5040,11 @@
 						</control>
 					</field>
 					<field id="bcpg:physicoChemUnit" />
+					<field id="bcpg:physicoChemFormula">
+						<control template="/org/alfresco/components/form/controls/spel-editor.ftl">
+							<control-param name="rows">10</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 		</forms>
@@ -5056,6 +5062,7 @@
 					<show id="bcpg:physicoChemUnit" />
 					<show id="bcpg:physicoChemFormulated" />
 					<show id="bcpg:physicoChemFormulatedFromVol" />
+					<show id="bcpg:physicoChemFormula" />
 				</field-visibility>
 
 				<appearance>
@@ -5068,6 +5075,11 @@
 					</field>
 					<field id="bcpg:legalName" />
 					<field id="bcpg:physicoChemUnit" />
+					<field id="bcpg:physicoChemFormula">
+						<control template="/org/alfresco/components/form/controls/spel-editor.ftl">
+							<control-param name="rows">10</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 
@@ -7336,10 +7348,14 @@
 					<show id="bcpg:pclMaxi" />
 					<show id="bcpg:pclTextCriteria" />
 					<show id="fm:commentCount" force="true" />
+					<show id="bcpg:physicoChemIsFormulated" />
+					<show id="bcpg:physicoChemFormulaErrorLog" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden"></field>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
+					<field id="bcpg:physicoChemIsFormulated" label="hidden"/>
+					<field id="bcpg:physicoChemFormulaErrorLog" label="hidden"/>
 				</appearance>
 			</form>
 		</forms>
