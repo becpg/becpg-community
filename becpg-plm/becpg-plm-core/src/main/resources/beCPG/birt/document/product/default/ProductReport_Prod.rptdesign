@@ -1158,6 +1158,11 @@
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">instruction</text-property>
                 </structure>
+                <structure>
+                    <property name="columnName">itemType</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">itemType</text-property>
+                </structure>
             </list-property>
             <list-property name="parameters"/>
             <structure name="cachedMetaData">
@@ -1214,11 +1219,16 @@
                     </structure>
                     <structure>
                         <property name="position">11</property>
+                        <property name="name">itemType</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
                         <property name="name">tableCheck</property>
                         <property name="dataType">integer</property>
                     </structure>
                     <structure>
-                        <property name="position">12</property>
+                        <property name="position">13</property>
                         <property name="name">count variant</property>
                         <property name="dataType">integer</property>
                     </structure>
@@ -1296,8 +1306,15 @@
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
                 </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">itemType</property>
+                    <property name="nativeName">itemType</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/compoLists/compoList]#:#{depthLevel;INT;/@depthLevel},{compoListProduct;STRING;/@compoListProduct},{compoListQtySubFormula;DOUBLE;/@compoListQtySubFormula},{compoListQty;DOUBLE;/@compoListQty},{compoListUnit;STRING;/@compoListUnit},{erpCode;STRING;/@erpCode},{suppliers;STRING;/@suppliers},{variants;STRING;/@variants},{isDefaultVariant;STRING;/@isDefaultVariant},{instruction;STRING;/instruction}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/compoLists/compoList]#:#{depthLevel;INT;/@depthLevel},{compoListProduct;STRING;/@compoListProduct},{compoListQtySubFormula;DOUBLE;/@compoListQtySubFormula},{compoListQty;DOUBLE;/@compoListQty},{compoListUnit;STRING;/@compoListUnit},{erpCode;STRING;/@erpCode},{suppliers;STRING;/@suppliers},{variants;STRING;/@variants},{isDefaultVariant;STRING;/@isDefaultVariant},{instruction;STRING;/instruction},{itemType;STRING;/@itemType}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -6487,6 +6504,12 @@ BirtMath.round(dataSetRow["compoListQty"] * 1000000, 2)+ " mg";
                                 <expression name="expression" type="javascript">dataSetRow["count variant"]</expression>
                                 <property name="dataType">integer</property>
                             </structure>
+                            <structure>
+                                <property name="name">itemType</property>
+                                <text-property name="displayName">itemType</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["itemType"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
                         </list-property>
                         <structure name="toc"/>
                         <column id="2910">
@@ -6548,6 +6571,13 @@ BirtMath.round(dataSetRow["compoListQty"] * 1000000, 2)+ " mg";
                         <detail>
                             <row id="2891">
                                 <property name="style">becpg-row-border</property>
+                                <list-property name="highlightRules">
+                                    <structure>
+                                        <property name="operator">is-true</property>
+                                        <property name="fontWeight">bold</property>
+                                        <expression name="testExpr" type="javascript">row["itemType"]=="bcpg:semiFinishedProduct" || row["itemType"]=="bcpg:localSemiFinishedProduct"</expression>
+                                    </structure>
+                                </list-property>
                                 <cell id="2908">
                                     <data id="2946">
                                         <property name="textAlign">center</property>
@@ -7040,22 +7070,23 @@ else{
                                 </data>
                             </cell>
                             <cell id="2365">
-                                <data id="2684">
-                                    <structure name="numberFormat">
-                                        <property name="category">Fixed</property>
-                                        <property name="pattern">###0.00{RoundingMode=HALF_UP}</property>
-                                    </structure>
+                                <data id="7261">
                                     <property name="dataSet">Product</property>
                                     <list-property name="boundDataColumns">
                                         <structure>
-                                            <property name="name">productQty</property>
-                                            <text-property name="displayName">productQty</text-property>
-                                            <expression name="expression" type="javascript">dataSetRow["productQty"] * dataSetRow["productDensity"]</expression>
-                                            <property name="dataType">string</property>
+                                            <property name="name">netWeight</property>
+                                            <text-property name="displayName">netWeight</text-property>
+                                            <expression name="expression" type="javascript">if(dataSetRow["netWeight"] != null){
+dataSetRow["netWeight"] 
+}
+else{
+dataSetRow["productCompoQtyUsed"]
+}</expression>
+                                            <property name="dataType">float</property>
                                             <property name="allowExport">true</property>
                                         </structure>
                                     </list-property>
-                                    <property name="resultSetColumn">productQty</property>
+                                    <property name="resultSetColumn">netWeight</property>
                                 </data>
                             </cell>
                             <cell id="2366">
@@ -7697,6 +7728,14 @@ false
 else{
 true
 }</expression>
+                                <property name="updateAggregation">true</property>
+                            </structure>
+                            <structure>
+                                <property name="operator">ne</property>
+                                <expression name="expr" type="javascript">row["plStep"]</expression>
+                                <simple-property-list name="value1">
+                                    <value>"Modifications - Conclusions"</value>
+                                </simple-property-list>
                                 <property name="updateAggregation">true</property>
                             </structure>
                         </list-property>
@@ -8565,6 +8604,24 @@ false
                 </cell>
             </row>
         </grid>
+        <data id="3239">
+            <property name="dataSet">Product</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">netWeight</property>
+                    <text-property name="displayName">netWeight</text-property>
+                    <expression name="expression" type="javascript">if(dataSetRow["netWeight"] != null){
+dataSetRow["netWeight"] 
+}
+else{
+dataSetRow["productCompoQtyUsed"]
+}</expression>
+                    <property name="dataType">float</property>
+                    <property name="allowExport">true</property>
+                </structure>
+            </list-property>
+            <property name="resultSetColumn">netWeight</property>
+        </data>
     </body>
     <list-property name="images">
         <structure>

@@ -44,6 +44,13 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 			}
 
 			formulateSimpleList(formulatedProduct, formulatedProduct.getPhysicoChemList());
+			
+			computeFormulatedList(formulatedProduct, formulatedProduct.getPhysicoChemList(), PLMModel.PROP_PHYSICO_CHEM_FORMULA,
+					"message.formulate.physicoChemList.error");
+			
+			formulatedProduct.getPhysicoChemList().forEach(n -> {
+				n.setUnit( (String) nodeService.getProperty(n.getPhysicoChem(), PLMModel.PROP_PHYSICO_CHEM_UNIT));
+			});
 
 		}
 		return true;

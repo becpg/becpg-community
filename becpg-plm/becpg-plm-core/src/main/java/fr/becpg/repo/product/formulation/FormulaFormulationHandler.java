@@ -370,6 +370,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 								targetItem.setFormula(sourceItem.getFormula());
 								targetItem.setColumnName(sourceItem.getColumnName());
 								targetItem.setGroupColor(sourceItem.getGroupColor());
+								targetItem.setColor(sourceItem.getColor());
 								targetItem.setSynchronisableState(sourceItem.getSynchronisableState());
 								targetItem.setExecOrder(sourceItem.getExecOrder());
 								targetItem.setMultiLevelFormula(sourceItem.getMultiLevelFormula());

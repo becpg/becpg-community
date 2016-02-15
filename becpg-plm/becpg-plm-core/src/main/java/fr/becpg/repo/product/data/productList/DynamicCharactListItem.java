@@ -27,7 +27,7 @@ import fr.becpg.repo.repository.model.Synchronisable;
 
 @AlfType
 @AlfQname(qname = "bcpg:dynamicCharactList")
-public class DynamicCharactListItem extends BeCPGDataObject implements Synchronisable,ManualDataItem {
+public class DynamicCharactListItem extends BeCPGDataObject implements Synchronisable,ManualDataItem, ColoredDataListItem {
 
 	/**
 	 * 
@@ -48,6 +48,8 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 	
 	private String errorLog;
 	
+	private String color;
+	
 	private DynamicCharactSynchronisableState synchronisableState = DynamicCharactSynchronisableState.Synchronized;
 
 	private DynamicCharactExecOrder execOrder = DynamicCharactExecOrder.Post;
@@ -62,7 +64,16 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 	public void setTitle(String title) {
 		this.title = title;
 	}
-	
+
+	@AlfProp
+	@AlfQname(qname = "bcpg:color")
+	public String getColor() {
+		return color;
+	}
+
+	public void setColor(String color) {
+		this.color = color;
+	}
 
 	@AlfProp
 	@InternalField
@@ -196,6 +207,7 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
+		result = prime * result + ((color == null) ? 0 : color.hashCode());
 		result = prime * result + ((columnName == null) ? 0 : columnName.hashCode());
 		result = prime * result + ((errorLog == null) ? 0 : errorLog.hashCode());
 		result = prime * result + ((execOrder == null) ? 0 : execOrder.hashCode());
@@ -217,6 +229,11 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 		if (getClass() != obj.getClass())
 			return false;
 		DynamicCharactListItem other = (DynamicCharactListItem) obj;
+		if (color == null) {
+			if (other.color != null)
+				return false;
+		} else if (!color.equals(other.color))
+			return false;
 		if (columnName == null) {
 			if (other.columnName != null)
 				return false;
