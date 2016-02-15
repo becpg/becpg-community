@@ -15,7 +15,8 @@ var formulationView = {
    name : "beCPG.component.FormulationView",
    options : {
       siteId : (page.url.templateArgs.site != null) ? page.url.templateArgs.site : "",
-      entityNodeRef : (page.url.args.nodeRef != null) ? page.url.args.nodeRef : ""
+      entityNodeRef : (page.url.args.nodeRef != null) ? page.url.args.nodeRef : "",
+      list : (page.url.args.list != null) ? page.url.args.list : ""
    }
 };
 
@@ -26,6 +27,5 @@ model.widgets = model.widgets.concat(createDashlet("dynamicCharactList-"+args.ht
 model.widgets = model.widgets.concat(createDashlet("constraintsList-"+args.htmlid, "constraintsListDashlet",msg.get("dashlet.constraintsList.title"),"bcpg:reqCtrlList",true));
 
 }
-
 
 main();

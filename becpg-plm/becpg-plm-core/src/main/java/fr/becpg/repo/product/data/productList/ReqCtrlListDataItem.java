@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
@@ -44,6 +45,7 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 	private Integer sort;
 	private NodeRef charact;
 	private List<NodeRef> sources = new ArrayList<>();
+	private RequirementDataType reqDataType;
 
 	@AlfProp
 	@AlfQname(qname="bcpg:rclReqType")
@@ -94,13 +96,22 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 	public void setSources(List<NodeRef> sources) {
 		this.sources = sources;
 	}
-	
-	
-	
+
+	@AlfProp
+	@AlfQname(qname="bcpg:rclDataType")
+	public RequirementDataType getReqDataType() {
+		return reqDataType;
+	}
+
+	public void setReqDataType(RequirementDataType reqDataType) {
+		this.reqDataType = reqDataType != null ? reqDataType : RequirementDataType.Nutriment;
+	}
+
 	public ReqCtrlListDataItem() {
 		super();
 	}
 
+	
 	public ReqCtrlListDataItem(NodeRef nodeRef, RequirementType reqType, String reqMessage, NodeRef charact, List<NodeRef> sources){
 		super();
 		this.nodeRef = nodeRef;
@@ -108,15 +119,29 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 		this.reqMessage = reqMessage;
 		this.charact = charact;
 		this.sources = sources;
+		this.reqDataType = RequirementDataType.Nutriment;
+	}
+	
+	
+	public ReqCtrlListDataItem(NodeRef nodeRef, RequirementType reqType, String reqMessage, NodeRef charact, List<NodeRef> sources, RequirementDataType reqDataType){
+		super();
+		this.nodeRef = nodeRef;
+		this.reqType = reqType;
+		this.reqMessage = reqMessage;
+		this.charact = charact;
+		this.sources = sources;
+		this.reqDataType = reqDataType != null ? reqDataType : RequirementDataType.Nutriment;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((nodeRef == null) ? 0 : nodeRef.hashCode());
+		int result = super.hashCode();
+		result = prime * result + ((charact == null) ? 0 : charact.hashCode());
+		result = prime * result + ((reqDataType == null) ? 0 : reqDataType.hashCode());
 		result = prime * result + ((reqMessage == null) ? 0 : reqMessage.hashCode());
 		result = prime * result + ((reqType == null) ? 0 : reqType.hashCode());
+		result = prime * result + ((sort == null) ? 0 : sort.hashCode());
 		result = prime * result + ((sources == null) ? 0 : sources.hashCode());
 		return result;
 	}
@@ -125,15 +150,17 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!super.equals(obj))
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
 		ReqCtrlListDataItem other = (ReqCtrlListDataItem) obj;
-		if (nodeRef == null) {
-			if (other.nodeRef != null)
+		if (charact == null) {
+			if (other.charact != null)
 				return false;
-		} else if (!nodeRef.equals(other.nodeRef))
+		} else if (!charact.equals(other.charact))
+			return false;
+		if (reqDataType != other.reqDataType)
 			return false;
 		if (reqMessage == null) {
 			if (other.reqMessage != null)
@@ -141,6 +168,11 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 		} else if (!reqMessage.equals(other.reqMessage))
 			return false;
 		if (reqType != other.reqType)
+			return false;
+		if (sort == null) {
+			if (other.sort != null)
+				return false;
+		} else if (!sort.equals(other.sort))
 			return false;
 		if (sources == null) {
 			if (other.sources != null)
@@ -152,7 +184,7 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 
 	@Override
 	public String toString() {
-		return "ReqCtrlListDataItem [nodeRef=" + nodeRef + ", reqType=" + reqType + ", reqMessage=" + reqMessage + ", sources=" + sources + "]";
+		return "ReqCtrlListDataItem [nodeRef=" + nodeRef + ", reqType=" + reqType + ", reqMessage=" + reqMessage + ", sources=" + sources + ", reqDataType="+reqDataType+"]";
 	}
 	
 	

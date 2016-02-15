@@ -21,6 +21,7 @@ import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
@@ -162,7 +163,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 							}
 						}
 					}
-				}
+				} 
 
 				if (labelClaimListDataItem.getErrorLog() != null) {
 
@@ -170,7 +171,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 							nodeService.getProperty(labelClaimListDataItem.getLabelClaim(), BeCPGModel.PROP_CHARACT_NAME),
 							labelClaimListDataItem.getErrorLog());
 					productData.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message,
-							labelClaimListDataItem.getLabelClaim(), new ArrayList<NodeRef>()));
+							labelClaimListDataItem.getLabelClaim(), new ArrayList<NodeRef>(), RequirementDataType.Labelling));
 				}
 
 			}

@@ -57,10 +57,14 @@
 						</div>
 					   <div class="yui-u ">
 					   		<div class="constraintsList">
-							   <@dataGridDashlet dashletName="constraintsListDashlet"
+					   		
+					   		<div id="constraintsList-${el}-scores" class="formulation-view"></div>
+					   		
+					   		   <@dataGridDashlet dashletName="constraintsListDashlet"
 							   	dashletId="constraintsList-${el}" 
 							   	dashletTitle=msg("dashlet.constraintsList.title")
-							   	itemType="bcpg:reqCtrlList"  hideTitle="true" />
+							   	itemType="bcpg:reqCtrlList"  hideTitle="false" />
+							  
 							</div>
 					   </div>
 					</div>

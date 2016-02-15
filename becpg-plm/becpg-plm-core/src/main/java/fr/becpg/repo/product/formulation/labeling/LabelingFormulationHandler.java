@@ -44,6 +44,7 @@ import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.AllergenType;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.LabelingRuleType;
+import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.ing.AbstractLabelingComponent;
 import fr.becpg.repo.product.data.ing.CompositeLabeling;
@@ -142,7 +143,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							String message = I18NUtil.getMessage("message.formulate.labelRule.error", labelingRuleListDataItem.getName(),
 									e.getLocalizedMessage());
 							formulatedProduct.getCompoListView().getReqCtrlList()
-									.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, null, new ArrayList<NodeRef>()));
+									.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, null, new ArrayList<NodeRef>(), RequirementDataType.Labelling));
 							if (logger.isDebugEnabled()) {
 								logger.info("Error in formula :" + SpelHelper.formatFormula(labelingRuleListDataItem.getFormula()), e);
 							}
@@ -219,7 +220,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 								String message = I18NUtil.getMessage("message.formulate.labelRule.error", labelingRuleListDataItem.getName(),
 										e.getLocalizedMessage());
 								formulatedProduct.getCompoListView().getReqCtrlList()
-										.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, null, new ArrayList<NodeRef>()));
+										.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, null, new ArrayList<NodeRef>(), RequirementDataType.Labelling));
 
 								if (logger.isDebugEnabled()) {
 									logger.info("Error in formula :" + SpelHelper.formatFormula(labelingRuleListDataItem.getFormula()), e);
@@ -719,7 +720,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				current.setVolume(null);
 				String message = I18NUtil.getMessage("message.formulate.labelRule.error.nullIng", getName(current));
 
-				return new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, null, new ArrayList<NodeRef>());
+				return new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, null, new ArrayList<NodeRef>(), RequirementDataType.Labelling);
 			}
 		}
 
@@ -1287,7 +1288,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		if (productNodeRef != null) {
 			sourceNodeRefs.add(productNodeRef);
 		}
-		return new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, null, sourceNodeRefs);
+		return new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, null, sourceNodeRefs, RequirementDataType.Labelling);
 
 	}
 
