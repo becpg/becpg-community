@@ -12,13 +12,14 @@ import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.annotation.InternalField;
 import fr.becpg.repo.repository.model.AbstractManualDataItem;
+import fr.becpg.repo.repository.model.FormulatedCharactDataItem;
 import fr.becpg.repo.repository.model.MinMaxValueDataItem;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
 import fr.becpg.repo.repository.model.UnitAwareDataItem;
 
 @AlfType
 @AlfQname(qname = "bcpg:physicoChemList")
-public class PhysicoChemListDataItem extends AbstractManualDataItem implements SimpleListDataItem, MinMaxValueDataItem, UnitAwareDataItem{
+public class PhysicoChemListDataItem extends AbstractManualDataItem implements SimpleListDataItem, MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem{
 			
 	
 	private static final long serialVersionUID = -3018711765028656339L;
@@ -33,7 +34,13 @@ public class PhysicoChemListDataItem extends AbstractManualDataItem implements S
 	
 	private NodeRef physicoChem;
 	
+	private Boolean isFormulated;
+	
+	private String errorLog;
+			
 
+
+	
 	
 	@AlfProp
 	@AlfQname(qname="bcpg:pclValue")
@@ -96,6 +103,39 @@ public class PhysicoChemListDataItem extends AbstractManualDataItem implements S
 	public void setCharactNodeRef(NodeRef nodeRef) {
 		setPhysicoChem(nodeRef);		
 	}
+	
+	
+	@AlfProp
+	@InternalField
+	@AlfQname(qname="bcpg:physicoChemIsFormulated")
+	public Boolean getIsFormulated() {
+		return isFormulated;
+	}
+
+
+	public void setIsFormulated(Boolean isFormulated) {
+		this.isFormulated = isFormulated;
+	}
+
+	@AlfProp
+	@InternalField
+	@AlfQname(qname="bcpg:physicoChemFormulaErrorLog")
+	@Override
+	public String getErrorLog() {
+		return errorLog;
+	}
+
+	@Override
+	public void setErrorLog(String errorLog) {
+		this.errorLog = errorLog;
+	}
+
+	@Override
+	public Double getFormulatedValue() {
+		return getValue();
+	}
+	
+	
 	
 	/**
 	 * Sets the physico chem.
@@ -206,4 +246,8 @@ public class PhysicoChemListDataItem extends AbstractManualDataItem implements S
 		return "PhysicoChemListDataItem [value=" + value + ", unit=" + unit + ", mini=" + mini + ", maxi=" + maxi + ", physicoChem=" + physicoChem + ", isManual=" + isManual
 				+ ", nodeRef=" + nodeRef + ", name=" + name + "]";
 	}
+
+
+	
+	
 }

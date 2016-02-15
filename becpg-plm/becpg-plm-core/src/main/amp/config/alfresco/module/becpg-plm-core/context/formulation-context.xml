@@ -136,6 +136,7 @@
 				</bean>
 				<bean parent="abstractSimpleFormulationHandler"
 					class="fr.becpg.repo.product.formulation.PhysicoChemCalculatingFormulationHandler">
+					<property name="formulaService" ref="formulaService"/>
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.TareFormulationHandler">
 					<property name="nodeService" ref="nodeService" />
