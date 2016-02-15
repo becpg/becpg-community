@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2015 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2015 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.product.formulation;
@@ -37,6 +37,7 @@ import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
+import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
@@ -45,7 +46,7 @@ import fr.becpg.repo.repository.model.FormulatedCharactDataItem;
 
 /**
  * Merge ReqCtrlListDataItem to avoid duplication of items and sort them
- * 
+ *
  * @author quere
  *
  */
@@ -54,7 +55,7 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 	protected static Log logger = LogFactory.getLog(MergeReqCtrlFormulationHandler.class);
 
 	private AlfrescoRepository<ProductData> alfrescoRepository;
-	
+
 	private NodeService nodeService;
 
 	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
@@ -76,6 +77,7 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 		mergeReqCtrlList(productData.getProcessListView().getReqCtrlList());
 
 		updateFormulatedCharactInError(productData, productData.getCompoListView().getReqCtrlList());
+
 		return true;
 	}
 
@@ -83,9 +85,10 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 		for (CompoListDataItem compoListDataItem : compoList) {
 			NodeRef productNodeRef = compoListDataItem.getProduct();
 			ProductData productData = alfrescoRepository.findOne(productNodeRef);
-			if (productData instanceof SemiFinishedProductData || productData instanceof FinishedProductData) {
+			if ((productData instanceof SemiFinishedProductData) || (productData instanceof FinishedProductData)) {
 				for (ReqCtrlListDataItem tmp : productData.getCompoListView().getReqCtrlList()) {
-					reqCtrlList.add(new ReqCtrlListDataItem(null, tmp.getReqType(), tmp.getReqMessage(), tmp.getCharact(), tmp.getSources()));
+					reqCtrlList.add(new ReqCtrlListDataItem(null, tmp.getReqType(), tmp.getReqMessage(), tmp.getCharact(), tmp.getSources(),
+							tmp.getReqDataType() != null ? tmp.getReqDataType() : RequirementDataType.Nutriment));
 				}
 			}
 		}
@@ -141,6 +144,7 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 					dbKV.getValue().setReqType(newReqCtrlListDataItem.getReqType());
 					dbKV.getValue().setSources(newReqCtrlListDataItem.getSources());
 					dbKV.getValue().setCharact(newReqCtrlListDataItem.getCharact());
+					dbKV.getValue().setReqDataType(newReqCtrlListDataItem.getReqDataType());
 					reqCtrlList.remove(newReqCtrlListDataItem);
 				}
 			}
@@ -151,31 +155,29 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 	}
 
 	@SuppressWarnings("unchecked")
-	private void updateFormulatedCharactInError(ProductData productData, List<ReqCtrlListDataItem> reqCtrlList){
-		for(ReqCtrlListDataItem r : reqCtrlList){
-			if(logger.isDebugEnabled()){
+	private void updateFormulatedCharactInError(ProductData productData, List<ReqCtrlListDataItem> reqCtrlList) {
+		for (ReqCtrlListDataItem r : reqCtrlList) {
+			if (logger.isDebugEnabled()) {
 				logger.debug("r " + r.getReqMessage() + " " + r.getCharact());
-			}			
-			if(r.getCharact() != null){
+			}
+			if (r.getCharact() != null) {
 				QName type = nodeService.getType(r.getCharact());
 				List<FormulatedCharactDataItem> simpleList = new ArrayList<>();
-				if(PLMModel.TYPE_NUT.equals(type)){
-					simpleList = (List<FormulatedCharactDataItem>)(List<?>)productData.getNutList();					
+				if (PLMModel.TYPE_NUT.equals(type)) {
+					simpleList = (List<FormulatedCharactDataItem>) (List<?>) productData.getNutList();
+				} else if (PLMModel.TYPE_COST.equals(type)) {
+					simpleList = (List<FormulatedCharactDataItem>) (List<?>) productData.getCostList();
 				}
-				else if(PLMModel.TYPE_COST.equals(type)){
-					simpleList = (List<FormulatedCharactDataItem>)(List<?>)productData.getCostList();
-				}
-				for(FormulatedCharactDataItem sl : simpleList){
-					if(r.getCharact().equals(sl.getCharactNodeRef())){
+				for (FormulatedCharactDataItem sl : simpleList) {
+					if (r.getCharact().equals(sl.getCharactNodeRef())) {
 						String message = r.getReqMessage();
-						if(r.getSources() != null && !r.getSources().isEmpty()){
-							int i = 0;						
+						if ((r.getSources() != null) && !r.getSources().isEmpty()) {
+							int i = 0;
 							message += " : ";
-							for(NodeRef n : r.getSources()){
-								if(i>0){
+							for (NodeRef n : r.getSources()) {
+								if (i > 0) {
 									message += ", ";
-								}
-								else if(i>=5){
+								} else if (i >= 5) {
 									message += "...";
 									break;
 								}
@@ -184,7 +186,7 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 							}
 						}
 						sl.setErrorLog((sl.getErrorLog() != null ? sl.getErrorLog() + ". " : "") + message);
-						if(logger.isDebugEnabled()){
+						if (logger.isDebugEnabled()) {
 							logger.debug("setErrorLog " + sl.getErrorLog());
 						}
 						break;
@@ -193,6 +195,7 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 			}
 		}
 	}
+
 	/**
 	 * Sort by type
 	 *
@@ -208,7 +211,7 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 			@Override
 			public int compare(ReqCtrlListDataItem r1, ReqCtrlListDataItem r2) {
 
-				if (r1.getReqType() != null && r1.getReqType() != null) {
+				if ((r1.getReqType() != null) && (r1.getReqType() != null)) {
 					if (r1.getReqType().equals(r2.getReqType())) {
 						return EQUAL;
 					} else if (r1.getReqType().equals(RequirementType.Forbidden)) {

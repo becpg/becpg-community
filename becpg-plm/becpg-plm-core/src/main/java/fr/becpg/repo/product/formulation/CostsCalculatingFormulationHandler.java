@@ -31,6 +31,7 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.constraints.ProcessListUnit;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
+import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
@@ -54,7 +55,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	private PackagingHelper packagingHelper;
 
 	private AlfrescoRepository<ProductData> alfrescoRepositoryProductData;
-
+ 
 	public void setEntityTplService(EntityTplService entityTplService) {
 		this.entityTplService = entityTplService;
 	}
@@ -138,7 +139,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 					formulatedProduct.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())));
 			visitCompoListChildren(formulatedProduct, composite, costList, DEFAULT_LOSS_RATIO, netQty, mandatoryCharacts1);
 
-			addReqCtrlList(formulatedProduct.getCompoListView().getReqCtrlList(), mandatoryCharacts1);
+			addReqCtrlList(formulatedProduct.getCompoListView().getReqCtrlList(), mandatoryCharacts1, getDataType());
 
 		}
 
@@ -156,7 +157,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				visitPart(packagingListDataItem.getProduct(), costList, qty, null, netQty, mandatoryCharacts2, null, false);
 			}
 
-			addReqCtrlList(formulatedProduct.getPackagingListView().getReqCtrlList(), mandatoryCharacts2);
+			addReqCtrlList(formulatedProduct.getPackagingListView().getReqCtrlList(), mandatoryCharacts2,getDataType());
 		}
 
 		if (formulatedProduct.hasProcessListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
@@ -178,7 +179,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				}
 			}
 
-			addReqCtrlList(formulatedProduct.getProcessListView().getReqCtrlList(), mandatoryCharacts3);
+			addReqCtrlList(formulatedProduct.getProcessListView().getReqCtrlList(), mandatoryCharacts3,getDataType());
 		}
 
 	}
@@ -296,7 +297,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 		}
 
 		if ((formulatedProduct.getUnitPrice() != null) && (formulatedProduct.getUnitTotalCost() != null)) {
-
+ 
 			// profitability
 			Double profit = formulatedProduct.getUnitPrice() - formulatedProduct.getUnitTotalCost();
 			Double profitability = (100 * profit) / formulatedProduct.getUnitPrice();
@@ -592,5 +593,10 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	protected RequirementDataType getDataType() {
+		return RequirementDataType.Cost;
 	}
 }

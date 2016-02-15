@@ -383,6 +383,22 @@
 				</list>
 			</parameter>
 		</constraint>
+		<constraint name="bcpg:reqDataTypes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>Packaging</value>
+					<value>Labelling</value>
+					<value>Nutriment</value>
+					<value>Ingredient</value>
+					<value>Allergen</value>
+					<value>Composition</value>
+					<value>Specification</value>
+					<value>Cost</value>
+					<value>Formulation</value>
+					<value>Completion</value>
+				</list>
+			</parameter>
+		</constraint>
 		<constraint name="bcpg:nullableBoolean" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -1871,6 +1887,18 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
+				<property name="bcpg:rclDataType">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>false</tokenised>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:reqDataTypes" />
+					</constraints>
+				</property>
 			</properties>
 			<associations>
 				<association name="bcpg:rclCharact">
@@ -2508,6 +2536,9 @@
 					<constraints>
 						<constraint ref="bcpg:systemState" />
 					</constraints>
+				</property>
+				<property name="bcpg:completionPercent">
+					<type>d:double</type>
 				</property>
 			</properties>
 		</aspect>
