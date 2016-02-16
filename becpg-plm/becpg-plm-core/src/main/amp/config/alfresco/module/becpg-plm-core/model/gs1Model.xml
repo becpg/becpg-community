@@ -265,6 +265,46 @@
                         <tokenised>TRUE</tokenised>
                     </index>
                 </property>
+                <property name="gs1:secondaryWeight">
+                    <title>Poids brut colis(kg)</title>
+                    <type>d:double</type>
+                    <mandatory>false</mandatory>
+                    <index enabled="true">
+                        <atomic>false</atomic>
+                        <stored>false</stored>
+                        <tokenised>TRUE</tokenised>
+                    </index>
+                </property>
+                <property name="gs1:tertiaryWeight">
+                    <title>Poids brut palette (kg)</title>
+                    <type>d:double</type>
+                    <mandatory>false</mandatory>
+                    <index enabled="true">
+                        <atomic>false</atomic>
+                        <stored>false</stored>
+                        <tokenised>TRUE</tokenised>
+                    </index>
+                </property>
+                 <property name="gs1:secondaryNetWeight">
+                    <title>Poids net colis(kg)</title>
+                    <type>d:double</type>
+                    <mandatory>false</mandatory>
+                    <index enabled="true">
+                        <atomic>false</atomic>
+                        <stored>false</stored>
+                        <tokenised>TRUE</tokenised>
+                    </index>
+                </property>
+                <property name="gs1:tertiaryNetWeight">
+                    <title>Poids net palette (kg)</title>
+                    <type>d:double</type>
+                    <mandatory>false</mandatory>
+                    <index enabled="true">
+                        <atomic>false</atomic>
+                        <stored>false</stored>
+                        <tokenised>TRUE</tokenised>
+                    </index>
+                </property>
             </properties>
             <associations/>
             <overrides/>
