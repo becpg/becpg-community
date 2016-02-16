@@ -32,4 +32,5 @@
   <transaction allow="readwrite">required</transaction>
   <format default="">argument</format>
   <authentication>user</authentication>
+  <lifecycle>limited_support</lifecycle>
 </webscript>

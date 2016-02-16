@@ -1692,7 +1692,7 @@
        */
       onDownloadClick : function PdfJs_onDownloadClick(p_obj)
       {
-          window.location.href = this.wp.getContentUrl(true).replace("api/node","slingshot/node");
+         window.open(this.wp.getContentUrl(true).replace("api/node","slingshot/node"), "_blank");
       },
 
       /**
@@ -1702,7 +1702,7 @@
        */
       onDownloadPDFClick : function PdfJs_onDownloadPDFClick(p_obj)
       {
-         window.location.href = this.wp.getThumbnailUrl(this.attributes.src) + "&a=true";
+         window.open(this.wp.getThumbnailUrl(this.attributes.src) + "&a=true", "_blank");
       },
       /**
        * beCPG Download XLS click handler (for thumbnailed content only)
@@ -1711,7 +1711,7 @@
        */
       onDownloadXLSXClick : function PdfJs_onDownloadXLSXClick(p_obj)
       {
-    	  window.location.href = this.getDownloadAtFormat(p_obj,"xlsx").replace("docx","xlsx").replace("pdf","xlsx");
+    	 window.open(this.getDownloadAtFormat(p_obj,"xlsx").replace("docx","xlsx").replace("pdf","xlsx"), "_blank");
       },
       
       /**
@@ -1721,12 +1721,12 @@
        */
       onDownloadDOCXClick : function PdfJs_onDownloadDOCXClick(p_obj)
       {
-    	  window.location.href = this.getDownloadAtFormat(p_obj,"docx").replace("pdf","docx").replace("xlsx","docx");
+    	  window.open(this.getDownloadAtFormat(p_obj,"docx").replace("pdf","docx").replace("xlsx","docx"), "_blank");
       },
       
       onDownloadbPDFClick : function PdfJs_onDownloadDOCXClick(p_obj)
       {
-    	  window.location.href = this.getDownloadAtFormat(p_obj,"pdf").replace("docx","pdf").replace("xlsx","pdf");
+    	  window.open(this.getDownloadAtFormat(p_obj,"pdf").replace("docx","pdf").replace("xlsx","pdf"), "_blank");
       },
       
       getDownloadAtFormat : function PdfJs_onDownloadDOCXClick(p_obj, format)

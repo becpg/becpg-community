@@ -23,7 +23,7 @@
 
 	<!-- Registration of new models -->
 	<bean id="bcpg.dictionaryBootstrap" parent="dictionaryModelBootstrap"
-		depends-on="resourceBundles">
+		depends-on="datalistModelBootstrap">
 		<property name="models">
 			<list>
 				<value>alfresco/module/${artifactId}/model/reportModel.xml</value>

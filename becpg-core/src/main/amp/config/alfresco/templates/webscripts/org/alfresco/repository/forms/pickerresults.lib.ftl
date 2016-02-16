@@ -13,6 +13,16 @@
 		<#if node.properties.modified??>${indent}"modified": "${xmldate(node.properties.modified)}",</#if>
 		<#if node.properties.modifier??>${indent}"modifier": "${node.properties.modifier}",</#if>
 		${indent}"displayPath": "${node.displayPath!""}",
+		<#if node.aspects??>
+        ${indent}"aspects": 
+        ${indent}[
+           <#list node.aspects as aspect>
+                 "${shortQName(aspect)}"
+              <#if aspect_has_next>,</#if>
+           </#list>
+        
+           ${indent}],
+       </#if>
 		${indent}"nodeRef": "${node.nodeRef}"
 	${indent}},
 	</#escape>
