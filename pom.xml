@@ -219,61 +219,15 @@
 	</modules>
 
 	<dependencies>
-
-		<!-- Test -->
-		<!-- <dependency>
-			<groupId>${alfresco.groupId}</groupId>
-			<artifactId>alfresco-repository</artifactId>
-			<version>${alfresco.version}</version>
-			<classifier>tests</classifier>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>${alfresco.groupId}</groupId>
-			<artifactId>alfresco-data-model</artifactId>
-			<version>${alfresco.version}</version>
-		   <classifier>tests</classifier> 
-			<scope>test</scope>
-		</dependency>
-
+	    <!-- Tests -->
 		<dependency>
 			<groupId>org.alfresco</groupId>
-			<artifactId>alfresco-remote-api</artifactId>
+			<artifactId>alfresco-repository</artifactId>
 			<version>${alfresco.version}</version>
+			<classifier>h2scripts</classifier>
 			<scope>test</scope>
-			<classifier>tests</classifier>
-			<exclusions>
-				<exclusion>
-					<artifactId>mail</artifactId>
-					<groupId>javax.mail</groupId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 
-
-		<dependency>
-			<groupId>org.springframework.extensions.surf</groupId>
-			<artifactId>spring-webscripts</artifactId>
-			<version>${alfresco.version}</version>
-			<classifier>tests</classifier>
-			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-					<artifactId>spring-surf-core-configservice</artifactId>
-					<groupId>org.springframework.extensions.surf</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency> -->
-
-		<dependency>
-			<groupId>tk.skuro.alfresco</groupId>
-			<artifactId>h2-support</artifactId>
-			<version>1.6</version>
-			<scope>test</scope>
-		</dependency>
-		
-		
 	</dependencies>
 	<!-- Invoke your build with -Prun to run the multimodule project and enable rapid dev mode in your IDE. 
          See 'run' profile in the sub modules pom.xml for further behavioral details.

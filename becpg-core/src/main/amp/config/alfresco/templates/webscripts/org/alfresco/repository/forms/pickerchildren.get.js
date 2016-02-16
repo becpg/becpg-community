@@ -270,21 +270,35 @@ function sortByName(a, b)
    return (b.properties.name.toLowerCase() > a.properties.name.toLowerCase() ? -1 : 1);
 }
 
-function findUsers(filterTerm, maxResults, results)
+function findUsers(searchTerm, maxResults, results)
 {
-   var paging = utils.createPaging(maxResults, -1);
-   
-   var personRefs = people.getPeoplePaging(filterTerm, paging, "lastName", true);
+   var personRefs = people.getPeople(searchTerm, maxResults, "lastName", true);
    
    // create person object for each result
    for each(var personRef in personRefs)
    {
-      // add to results
-      results.push(
-      {
-         item: createPersonResult(search.findNode(personRef)),
-         selectable: true
-      });
+      if (logger.isLoggingEnabled())
+         logger.log("found personRefs = " + personRefs);
+      
+      //filter out  the disabled users
+      var daname = (search.findNode(personRef)).properties.userName;
+ 
+      if(people.isAccountEnabled(daname)){
+          results.push(
+          {
+              item: createPersonResult(search.findNode(personRef)),
+              selectable: true
+          });
+      }
+      else{
+          results.push(
+	      {
+	          item: createPersonResult(search.findNode(personRef)),
+	          selectable: false
+	      });   
+          if (logger.isLoggingEnabled())
+              logger.log("User not added to results not enabled" + daname);
+      }
    }
 }
 
@@ -418,39 +432,7 @@ function findDoclib(nodeRef)
  */
 function resolveNode(reference)
 {
-   var node = null;
-   try
-   {
-      if (reference == "alfresco://company/home")
-      {
-         node = companyhome;
-      }
-      else if (reference == "alfresco://user/home")
-      {
-         node = userhome;
-      }
-      else if (reference == "alfresco://sites/home")
-      {
-         node = companyhome.childrenByXPath("st:sites")[0];
-      }
-      else if (reference == "alfresco://company/shared")
-      {
-         node = companyhome.childrenByXPath("app:shared")[0];
-      }
-      else if (reference.indexOf("://") > 0)
-      {
-         node = search.findNode(reference);
-      }
-      else if (reference.substring(0, 1) == "/")
-      {
-         node = search.xpathSearch(reference)[0];
-      }
-   }
-   catch (e)
-   {
-      return null;
-   }
-   return node;
+   return utils.resolveNodeReference(reference);
 }
 
 main();

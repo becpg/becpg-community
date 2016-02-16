@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mime-info>
  <mime-type type="application/vnd.birt-rptdesign">
-   <_comment>My custom format which is built on top of ZIP</_comment>
+   <_comment>RPT Design format</_comment>
    <glob pattern="*.rptdesign" />
    <sub-class-of type="text/xml" />
  </mime-type>
