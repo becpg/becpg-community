@@ -105,7 +105,7 @@ public class ReqCtrlWebScript extends AbstractProductWebscript {
 			//sets key in case resDataType would be null
 			RequirementDataType key;
 			if(item.getReqDataType() == null){
-				key = RequirementDataType.Nutriment;
+				key = RequirementDataType.Nutrient;
 			} else {
 				key = item.getReqDataType();
 			}
@@ -143,14 +143,22 @@ public class ReqCtrlWebScript extends AbstractProductWebscript {
 				}
 				ret.put(dt, tmp);
 			}
-
+			/*
 			JSONObject scoresObject = new JSONObject();
-			scoresObject.put("compo", product.getComponentCompletion());
-			scoresObject.put("charact", product.getCharacteristicsCompletion());
-			scoresObject.put("total", product.getCompletionPercent());
-			scoresObject.put("specif", product.getSpecificationsRespect());
-			ret.put("scores", scoresObject);
+			scoresObject.put("compo", product.getComponentCompletion() != null ? product.getComponentCompletion() : 0d);
+			scoresObject.put("charact", product.getCharacteristicsCompletion()!= null ? product.getCharacteristicsCompletion() : 0d);
+			scoresObject.put("total", product.getCompletionPercent()!= null ? product.getCompletionPercent() : 0d);
+			scoresObject.put("specif", product.getSpecificationsRespect()!= null ? product.getSpecificationsRespect() : 0d);*/
+			JSONObject scores = new JSONObject(product.getProductScores());
+			
+			
+			ret.put("scores", scores);
 
+			if(logger.isDebugEnabled()){
+				logger.debug("ret : "+ret);
+				logger.debug("scores="+scores);
+			}
+			
 			res.setContentType("application/json");
 			res.setContentEncoding("UTF-8");
 			ret.write(res.getWriter());

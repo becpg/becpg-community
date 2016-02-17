@@ -2537,8 +2537,9 @@
 						<constraint ref="bcpg:systemState" />
 					</constraints>
 				</property>
-				<property name="bcpg:completionPercent">
-					<type>d:double</type>
+				<property name="bcpg:productScores">
+					<type>d:mltext</type>
+					<index enabled="false"></index>
 				</property>
 			</properties>
 		</aspect>

@@ -104,7 +104,7 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 	}
 
 	public void setReqDataType(RequirementDataType reqDataType) {
-		this.reqDataType = reqDataType != null ? reqDataType : RequirementDataType.Nutriment;
+		this.reqDataType = reqDataType != null ? reqDataType : RequirementDataType.Nutrient;
 	}
 
 	public ReqCtrlListDataItem() {
@@ -119,7 +119,7 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 		this.reqMessage = reqMessage;
 		this.charact = charact;
 		this.sources = sources;
-		this.reqDataType = RequirementDataType.Nutriment;
+		this.reqDataType = RequirementDataType.Nutrient;
 	}
 	
 	
@@ -130,7 +130,7 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 		this.reqMessage = reqMessage;
 		this.charact = charact;
 		this.sources = sources;
-		this.reqDataType = reqDataType != null ? reqDataType : RequirementDataType.Nutriment;
+		this.reqDataType = reqDataType != null ? reqDataType : RequirementDataType.Nutrient;
 	}
 
 	@Override

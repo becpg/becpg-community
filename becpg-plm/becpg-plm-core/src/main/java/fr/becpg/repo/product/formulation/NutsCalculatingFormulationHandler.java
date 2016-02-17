@@ -119,7 +119,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 									nodeService.getProperty(mandatoryCharact.getKey(), BeCPGModel.PROP_CHARACT_NAME));
 
 							formulatedProduct.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated,
-									message, mandatoryCharact.getKey(), mandatoryCharact.getValue(), RequirementDataType.Nutriment));
+									message, mandatoryCharact.getKey(), mandatoryCharact.getValue(), RequirementDataType.Nutrient));
 						}
 					}
 
@@ -165,7 +165,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 								String message = I18NUtil.getMessage(MESSAGE_MAXIMAL_DAILY_VALUE,
 										nodeService.getProperty(n.getNut(), BeCPGModel.PROP_CHARACT_NAME));
 								
-								ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, n.getNut(), new ArrayList<NodeRef>(), RequirementDataType.Nutriment);
+								ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, n.getNut(), new ArrayList<NodeRef>(), RequirementDataType.Nutrient);
 								rclDataItem.getSources().add(formulatedProduct.getNodeRef());
 								formulatedProduct.getCompoListView().getReqCtrlList()
 										.add(rclDataItem);
@@ -231,7 +231,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 							String message = I18NUtil.getMessage(MESSAGE_NUT_NOT_IN_RANGE,
 									nodeService.getProperty(nutListSpecDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME));
 							formulatedProduct.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden,
-									message, nutListSpecDataItem.getNut(), new ArrayList<NodeRef>(), RequirementDataType.Nutriment));
+									message, nutListSpecDataItem.getNut(), new ArrayList<NodeRef>(), RequirementDataType.Nutrient));
 						}
 					});
 				});
@@ -336,6 +336,6 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 
 	@Override
 	protected RequirementDataType getDataType() {
-		return RequirementDataType.Nutriment;
+		return RequirementDataType.Nutrient;
 	}
 }

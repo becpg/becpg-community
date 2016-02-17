@@ -149,10 +149,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	/*
 	 * Completion scores
 	 */
-	private Double completionPercent;
-	private Double componentCompletion;
-	private Double characteristicsCompletion;
-	private Double specificationsRespect;
+	private String productScores;
 
 	@AlfMultiAssoc(isEntity = true)
 	@AlfQname(qname = "bcpg:productSpecifications")
@@ -282,13 +279,13 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	}
 	
 	@AlfProp
-	@AlfQname(qname = "bcpg:completionPercent")
-	public Double getCompletionPercent() {
-		return completionPercent;
+	@AlfQname(qname = "bcpg:productScores")
+	public String getProductScores() {
+		return productScores;
 	}
 
-	public void setCompletionPercent(Double completionPercent) {
-		this.completionPercent = completionPercent;
+	public void setProductScores(String productScores) {
+		this.productScores = productScores;
 	}
 
 	@AlfProp
@@ -296,6 +293,8 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	public ProductUnit getUnit() {
 		return unit;
 	}
+
+	
 
 	public void setUnit(ProductUnit unit) {
 		this.unit = unit;
@@ -662,36 +661,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		return compoListView;
 	}
 
-	@AlfProp
-	@AlfQname(qname = "bcpg:componentCompletion")
-	public Double getComponentCompletion() {
-		return componentCompletion;
-	}
-
-	public void setComponentCompletion(Double componentCompletion) {
-		this.componentCompletion = componentCompletion;
-	}
-
-	@AlfProp
-	@AlfQname(qname = "bcpg:characteristicsCompletion")
-	public Double getCharacteristicsCompletion() {
-		return characteristicsCompletion;
-	}
-
-	public void setCharacteristicsCompletion(Double characteristicsCompletion) {
-		this.characteristicsCompletion = characteristicsCompletion;
-	}
-
-	@AlfProp
-	@AlfQname(qname = "bcpg:specificationsRespect")
-	public Double getSpecificationsRespect() {
-		return specificationsRespect;
-	}
-
-	public void setSpecificationsRespect(Double specificationsRespect) {
-		this.specificationsRespect = specificationsRespect;
-	}
-
+	
 	private <T> List<T>  filterList(List<T> list,List<DataListFilter<ProductData, T>> filters ) {
 		if (filters != null && !filters.isEmpty()) {
 			Stream<T> stream = list.stream();
@@ -846,12 +816,21 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 
 	@Override
 	public String toString() {
-		return "ProductData [hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", legalName=" + legalName + ", title=" + title
-				+ ", erpCode=" + erpCode + ", state=" + state +  ", unit=" + unit + ", qty=" + qty + ", density=" + density + ", yield=" + yield
-				+ ", yieldVolume=" + yieldVolume + ", netWeight=" + netWeight + ", netVolume=" + netVolume + ", servingSize=" + servingSize + ", recipeQtyUsed=" + recipeQtyUsed
-				+ ", tare=" + tare + ", tareUnit=" + tareUnit + ", unitTotalCost=" + unitTotalCost + ", unitPrice=" + unitPrice + ", profitability="
-				+ profitability + ", breakEven=" + breakEven + ", allergenList=" + allergenList + ", completionPercent=" + completionPercent + 
-				", componentCompletion=" + componentCompletion + ", characteristicsCompletion=" + characteristicsCompletion +"]";
+		return "ProductData [hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", legalName=" + legalName + ", title=" + title + ", erpCode="
+				+ erpCode + ", state=" + state + ", unit=" + unit + ", entityTpl=" + entityTpl + ", plants=" + plants
+				+ ", defaultVariantPackagingData=" + defaultVariantPackagingData + ", qty=" + qty + ", density=" + density + ", yield=" + yield
+				+ ", yieldVolume=" + yieldVolume + ", netWeight=" + netWeight + ", netVolume=" + netVolume + ", servingSize=" + servingSize
+				+ ", recipeQtyUsed=" + recipeQtyUsed + ", recipeVolumeUsed=" + recipeVolumeUsed + ", tare=" + tare + ", tareUnit=" + tareUnit
+				+ ", unitTotalCost=" + unitTotalCost + ", unitPrice=" + unitPrice + ", profitability=" + profitability + ", breakEven=" + breakEven
+				+ ", projectedQty=" + projectedQty + ", formulatedDate=" + formulatedDate + ", modifiedDate=" + modifiedDate + ", reformulateCount="
+				+ reformulateCount + ", ingType=" + ingType + ", isUpToDate=" + isUpToDate + ", nutrientScore=" + nutrientScore + ", nutrientClass="
+				+ nutrientClass + ", nutrientProfile=" + nutrientProfile + ", allergenList=" + allergenList + ", costList=" + costList
+				+ ", priceList=" + priceList + ", ingList=" + ingList + ", nutList=" + nutList + ", organoList=" + organoList + ", microbioList="
+				+ microbioList + ", physicoChemList=" + physicoChemList + ", labelClaimList=" + labelClaimList + ", controlDefList=" + controlDefList
+				+ ", labelingList=" + labelingList + ", resourceParamList=" + resourceParamList + ", compoListView=" + compoListView
+				+ ", processListView=" + processListView + ", packagingListView=" + packagingListView + ", labelingListView=" + labelingListView
+				+ ", variants=" + variants + ", productSpecifications=" + productSpecifications + ", clients=" + clients + ", productScores="
+				+ productScores + "]";
 	}
 
 	@Override
@@ -860,11 +839,8 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		int result = super.hashCode();
 		result = prime * result + ((allergenList == null) ? 0 : allergenList.hashCode());
 		result = prime * result + ((breakEven == null) ? 0 : breakEven.hashCode());
-		result = prime * result + ((characteristicsCompletion == null) ? 0 : characteristicsCompletion.hashCode());
 		result = prime * result + ((clients == null) ? 0 : clients.hashCode());
-		result = prime * result + ((completionPercent == null) ? 0 : completionPercent.hashCode());
 		result = prime * result + ((compoListView == null) ? 0 : compoListView.hashCode());
-		result = prime * result + ((componentCompletion == null) ? 0 : componentCompletion.hashCode());
 		result = prime * result + ((controlDefList == null) ? 0 : controlDefList.hashCode());
 		result = prime * result + ((costList == null) ? 0 : costList.hashCode());
 		result = prime * result + ((defaultVariantPackagingData == null) ? 0 : defaultVariantPackagingData.hashCode());
@@ -895,6 +871,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		result = prime * result + ((plants == null) ? 0 : plants.hashCode());
 		result = prime * result + ((priceList == null) ? 0 : priceList.hashCode());
 		result = prime * result + ((processListView == null) ? 0 : processListView.hashCode());
+		result = prime * result + ((productScores == null) ? 0 : productScores.hashCode());
 		result = prime * result + ((productSpecifications == null) ? 0 : productSpecifications.hashCode());
 		result = prime * result + ((profitability == null) ? 0 : profitability.hashCode());
 		result = prime * result + ((projectedQty == null) ? 0 : projectedQty.hashCode());
@@ -904,7 +881,6 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		result = prime * result + ((reformulateCount == null) ? 0 : reformulateCount.hashCode());
 		result = prime * result + ((resourceParamList == null) ? 0 : resourceParamList.hashCode());
 		result = prime * result + ((servingSize == null) ? 0 : servingSize.hashCode());
-		result = prime * result + ((specificationsRespect == null) ? 0 : specificationsRespect.hashCode());
 		result = prime * result + ((state == null) ? 0 : state.hashCode());
 		result = prime * result + ((tare == null) ? 0 : tare.hashCode());
 		result = prime * result + ((tareUnit == null) ? 0 : tareUnit.hashCode());
@@ -937,30 +913,15 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 				return false;
 		} else if (!breakEven.equals(other.breakEven))
 			return false;
-		if (characteristicsCompletion == null) {
-			if (other.characteristicsCompletion != null)
-				return false;
-		} else if (!characteristicsCompletion.equals(other.characteristicsCompletion))
-			return false;
 		if (clients == null) {
 			if (other.clients != null)
 				return false;
 		} else if (!clients.equals(other.clients))
 			return false;
-		if (completionPercent == null) {
-			if (other.completionPercent != null)
-				return false;
-		} else if (!completionPercent.equals(other.completionPercent))
-			return false;
 		if (compoListView == null) {
 			if (other.compoListView != null)
 				return false;
 		} else if (!compoListView.equals(other.compoListView))
-			return false;
-		if (componentCompletion == null) {
-			if (other.componentCompletion != null)
-				return false;
-		} else if (!componentCompletion.equals(other.componentCompletion))
 			return false;
 		if (controlDefList == null) {
 			if (other.controlDefList != null)
@@ -1112,6 +1073,11 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 				return false;
 		} else if (!processListView.equals(other.processListView))
 			return false;
+		if (productScores == null) {
+			if (other.productScores != null)
+				return false;
+		} else if (!productScores.equals(other.productScores))
+			return false;
 		if (productSpecifications == null) {
 			if (other.productSpecifications != null)
 				return false;
@@ -1156,11 +1122,6 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 			if (other.servingSize != null)
 				return false;
 		} else if (!servingSize.equals(other.servingSize))
-			return false;
-		if (specificationsRespect == null) {
-			if (other.specificationsRespect != null)
-				return false;
-		} else if (!specificationsRespect.equals(other.specificationsRespect))
 			return false;
 		if (state != other.state)
 			return false;

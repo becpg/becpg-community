@@ -275,7 +275,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		if (!(formulatedProduct instanceof ResourceProductData)) {
 			ProductUnit productUnit = formulatedProduct.getUnit();
 			if (productUnit == null) {
-				addMessingReq(reqCtrlList, productNodeRef, MESSAGE_MISSING_UNIT, RequirementDataType.Nutriment);
+				addMessingReq(reqCtrlList, productNodeRef, MESSAGE_MISSING_UNIT, RequirementDataType.Nutrient);
 			}
 		}
 	}
