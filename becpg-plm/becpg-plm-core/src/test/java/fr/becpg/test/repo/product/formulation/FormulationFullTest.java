@@ -141,10 +141,15 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 				//Spel method
 				dynamicCharactListItems.add(new DynamicCharactListItem(" beCPG findOne","@beCPG.findOne(nodeRef).qty"));
 				
-				dynamicCharactListItems.add(new DynamicCharactListItem(" beCPG propValue","@beCPG.propValue(nodeRef,'bcpg:productQty')"));
+				dynamicCharactListItems.add(new DynamicCharactListItem(" beCPG propValue","@beCPG.propValue(nodeRef,'bcpg:productQty')\n"));
 
 				//Formulate twice
 				dynamicCharactListItems.add(new DynamicCharactListItem("Formulate twice","reformulateCount=1"));
+				
+				//Multi Lines
+				dynamicCharactListItems.add(new DynamicCharactListItem("MTLine1","var abc=10+30;\n#a + 5;"));
+				dynamicCharactListItems.add(new DynamicCharactListItem("MTLine2","var b = costList[1].value;\n#abc + #b;"));
+				dynamicCharactListItems.add(new DynamicCharactListItem("MTLine3","#abc - #b;\n\n"));
 				
 				// DynamicColumn
 
@@ -271,9 +276,14 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 		// dynamicCharact
 		assertNotNull("DynamicCharact is null", formulatedProduct.getCompoListView().getDynamicCharactList());
 		for (DynamicCharactListItem dynamicCharactListItem : formulatedProduct.getCompoListView().getDynamicCharactList()) {
-			String trace = "Dyn charact :" + dynamicCharactListItem.getTitle() + " value " + dynamicCharactListItem.getValue();
+			String trace = "Dyn charact :" + dynamicCharactListItem.getTitle() + " value " + dynamicCharactListItem.getValue()+" "+ dynamicCharactListItem.getErrorLog();
 			logger.info(trace);
 			assertFalse("#Error".equals(dynamicCharactListItem.getValue()));
+			
+			if("MTLine1".equals(dynamicCharactListItem.getTitle())){
+				assertTrue((Integer)dynamicCharactListItem.getValue() == 45);
+			}
+			
 		}
 
 		// profitability
