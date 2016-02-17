@@ -296,19 +296,21 @@
 					<value>m3</value>
 					<value>P</value>
 					<value>%</value>
+					<value>%Vol</value>
 					<value>°C</value>
 					<value>K</value>
 					<value>°Cent</value>
 					<value>°D</value>
 					<value>J</value>
 					<value>eV</value>
-					<value>pg/kg</value>
-					<value>µg/kg</value>
-					<value>mg/kg</value>
 					<value>g/kg</value>
+					<value>mg/kg</value>
+					<value>µg/kg</value>
+					<value>pg/kg</value>
 					<value>meqO2/kg</value>
 					<value>meq/kg</value>
 					<value>g/L</value>
+					<value>mg/L</value>
 					<value>µg/L</value> 
 					<value>g/mL</value>
 					<value>mosm/L</value>
