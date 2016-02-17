@@ -314,62 +314,62 @@
 
 .search h3.finishedProduct,.search h3.finishedProduct-ToValidate
 	{
-	background:
-		url("../images/filetypes/generic-finishedProduct-16.png")
-		no-repeat;
+	background: url("../images/states/tovalidate-10.png"),
+		url("../images/filetypes/generic-finishedProduct-16.png");
+	background-repeat: no-repeat;
+	background-position: 8px 7px, 0 5px;
 	padding-left: 20px;
-	background-position: 0 5px;
 }
 
 .search h3.localSemiFinishedProduct,.search h3.localSemiFinishedProduct-ToValidate
 	{
-	background:
-		url("../images/filetypes/generic-localSemiFinishedProduct-16.png")
-		no-repeat;
+	background: url("../images/states/tovalidate-10.png"),
+		url("../images/filetypes/generic-localSemiFinishedProduct-16.png");
+	background-repeat: no-repeat;
+	background-position: 8px 7px, 0 5px;
 	padding-left: 20px;
-	background-position: 0 5px;
 }
 
 .search h3.packagingKit,.search h3.packagingKit-ToValidate {
-	background:
-		url("../images/filetypes/generic-packagingKit-16.png")
-		no-repeat;
+	background: url("../images/states/tovalidate-10.png"),
+		url("../images/filetypes/generic-packagingKit-16.png");
+	background-repeat: no-repeat;
+	background-position: 8px 7px, 0 5px;
 	padding-left: 20px;
-	background-position: 0 5px;
 }
 
 .search h3.packagingMaterial,.search h3.packagingMaterial-ToValidate
 	{
-	background:
-		url("../images/filetypes/generic-packagingMaterial-16.png")
-		no-repeat;
+	background: url("../images/states/tovalidate-10.png"),
+		url("../images/filetypes/generic-packagingMaterial-16.png");
+	background-repeat: no-repeat;
+	background-position: 8px 7px, 0 5px;
 	padding-left: 20px;
-	background-position: 0 5px;
 }
 
 .search h3.rawMaterial,.search h3.rawMaterial-ToValidate {
-	background:
-		url("../images/filetypes/generic-rawMaterial-16.png")
-		no-repeat;
+	background: url("../images/states/tovalidate-10.png"),
+		url("../images/filetypes/generic-rawMaterial-16.png");
+	background-repeat: no-repeat;
+	background-position: 8px 7px, 0 5px;
 	padding-left: 20px;
-	background-position: 0 5px;
 }
 
 .search h3.semiFinishedProduct,.search h3.semiFinishedProduct-ToValidate
 	{
-	background:
-		url("../images/filetypes/generic-semiFinishedProduct-16.png")
-		no-repeat;
+	background: url("../images/states/tovalidate-10.png"),
+		url("../images/filetypes/generic-semiFinishedProduct-16.png");
+	background-repeat: no-repeat;
+	background-position: 8px 7px, 0 5px;
 	padding-left: 20px;
-	background-position: 0 5px;
 }
 
 .search h3.resourceProduct,.search h3.resourceProduct-ToValidate
 	{
-	background:
-		url("../images/filetypes/generic-resourceProduct-16.png")
-		no-repeat;
+	background: url("../images/states/tovalidate-10.png"),
+		url("../images/filetypes/generic-resourceProduct-16.png");
+	background-repeat: no-repeat;
+	background-position: 8px 7px, 0 5px;
 	padding-left: 20px;
-	background-position: 0 5px;
 }
 
