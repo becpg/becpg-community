@@ -47,6 +47,7 @@
 					
 					   <div id="${editorId}-body" class="bd">
 					      <div class="editor-textarea yui-b">
+					          <span class="editor-hint">${msg("form.control.spel-editor.hint")}</span>
 					      	 <textarea id="${editorId}-textarea" rows="${rows}" name="-"> </textarea>
 					      </div>
 					      <div class="editor-header">
