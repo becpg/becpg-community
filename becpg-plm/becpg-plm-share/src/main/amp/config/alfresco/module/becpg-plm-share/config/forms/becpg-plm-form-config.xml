@@ -152,11 +152,7 @@
 					<!-- Dimension -->
 					<show id="pack:length" />
 					<show id="pack:width" />
-					<show id="pack:height" />
-
-					<!-- Tare -->
-					<show id="pack:tare" />
-					<show id="pack:tareUnit" />									
+					<show id="pack:height" />						
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" />
@@ -185,6 +181,11 @@
 					<show id="gs1:width" for-mode="edit" />
 					<show id="gs1:depth" for-mode="edit" />
 					<show id="gs1:weight" for-mode="edit" />
+					<show id="gs1:secondaryWeight" for-mode="edit" />
+					<show id="gs1:tertiaryWeight" for-mode="edit" />
+					<show id="gs1:secondaryNetWeight" for-mode="edit" />
+					<show id="gs1:tertiaryNetWeight" for-mode="edit" />
+					
 					<show id="gs1:isTradeItemABaseUnit" for-mode="edit" />
 					<show id="gs1:isTradeItemAConsumerUnit" for-mode="edit" />
 					<show id="gs1:isTradeItemADespatchUnit" for-mode="edit" />
@@ -226,10 +227,7 @@
 						parent="mainTab" />
 					<set id="dimension" appearance="bordered-panel"
 						label-id="becpg.forms.set.pack.size.label" template="/org/alfresco/components/form/2-column-set.ftl"
-						parent="mainTab" />
-					<set id="tare" appearance="bordered-panel" label-id="becpg.forms.set.tare.label"
-						template="/org/alfresco/components/form/2-column-set.ftl" parent="mainTab" />					
-				
+						parent="mainTab" />	
 					<set id="categories" appearance="bordered-panel"
 						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl"
 						parent="mainTab" />
@@ -411,10 +409,6 @@
 					<field id="pack:length" set="dimension" />
 					<field id="pack:width" set="dimension" />
 					<field id="pack:height" set="dimension" />
-
-					<!-- tare -->
-					<field id="pack:tare" set="tare" />
-					<field id="pack:tareUnit" set="tare" />
 					
 					<!-- Nutrient profiling score -->
 					<field id="bcpg:nutrientProfilingScore"  set="score"/>
@@ -499,7 +493,12 @@
 					<field id="gs1:height" help-id="becpg.forms.help.gs1.height" set="mesuresPanel" />
 					<field id="gs1:width"  help-id="becpg.forms.help.gs1.width" set="mesuresPanel" />
 					<field id="gs1:depth"  help-id="becpg.forms.help.gs1.depth" set="mesuresPanel" />
-					<field id="gs1:weight" help-id="becpg.forms.help.gs1.weight" set="mesuresPanel" />
+					<field id="gs1:weight" help-id="becpg.forms.help.gs1.weight" set="mesuresPanel" read-only="true" />
+					
+					<field id="gs1:secondaryWeight" set="mesuresPanel" read-only="true" />
+					<field id="gs1:tertiaryWeight" set="mesuresPanel" read-only="true"/>
+					<field id="gs1:secondaryNetWeight" set="mesuresPanel" read-only="true"/>
+					<field id="gs1:tertiaryNetWeight" set="mesuresPanel" read-only="true"/>
 					
 				
 					<field id="gs1:isTradeItemABaseUnit" help-id="becpg.forms.help.gs1.isTradeItemABaseUnit" set="indicateursPanel" />
@@ -1387,10 +1386,6 @@
 					<show id="pack:palletNumberOnGround" />
 					<show id="pack:palletStackingMaxWeight" />
 			
-					<!-- Tare -->
-					<show id="pack:tare" force="true" />
-					<show id="pack:tareUnit" force="true" />
-
 					<!-- tags and categories -->
 					<show id="cm:taggable" />
 					<show id="cm:categories" />
@@ -1406,8 +1401,6 @@
 					<set id="mainInfo" appearance="bordered-panel"
 						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="pallet" appearance="bordered-panel" label-id="becpg.forms.set.pallet.label"
-						template="/org/alfresco/components/form/2-column-set.ftl" />
-					<set id="tare" appearance="bordered-panel" label-id="becpg.forms.set.tare.label"
 						template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="categories" appearance="bordered-panel"
 						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
@@ -1467,10 +1460,6 @@
 					<field id="pack:palletHeight" set="pallet" />
 					<field id="pack:palletNumberOnGround" set="pallet" />
 					<field id="pack:palletStackingMaxWeight" set="pallet" />					
-
-					<!-- tare -->
-					<field id="pack:tare" set="tare" />
-					<field id="pack:tareUnit" set="tare" />
 
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">
@@ -3390,10 +3379,6 @@
 					<show id="pack:length" />
 					<show id="pack:width" />
 					<show id="pack:height" />
-
-					<!-- Tare -->
-					<show id="pack:tare" />
-					<show id="pack:tareUnit" />
 					
 					<!-- Nutrient profiling score -->
 					<show id="bcpg:nutrientProfilingScore"  for-mode="view"/>
@@ -3420,8 +3405,6 @@
 						template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="dimension" appearance="bordered-panel"
 						label-id="becpg.forms.set.pack.size.label" template="/org/alfresco/components/form/2-column-set.ftl" />
-					<set id="tare" appearance="bordered-panel" label-id="becpg.forms.set.tare.label"
-						template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="score" appearance="bordered-panel" label-id="becpg.forms.set.nutrient.score.label"
 						template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="categories" appearance="bordered-panel"
@@ -3558,10 +3541,7 @@
 					<field id="pack:width" set="dimension" />
 					<field id="pack:height" set="dimension" />
 
-					<!-- tare -->
-					<field id="pack:tare" set="tare" />
-					<field id="pack:tareUnit" set="tare" />
-
+				
 					<!-- Nutrient profiling score -->
 					<field id="bcpg:nutrientProfilingScore"  set="score"/>
 					<field id="bcpg:nutrientProfilingClass"  set="score">
