@@ -154,6 +154,15 @@
 		</wizards>
 	</config>
 
+	 <config evaluator="string-compare" condition="WebFramework" replace="false">
+          <web-framework>
+            <dojo-pages> 
+                <packages> 
+                    <package name="cm" location="/modules/spel-editor/"/> 
+                </packages>
+            </dojo-pages>
+          </web-framework>
+        </config>
 
 	<config>
 		<forms>
@@ -161,10 +170,13 @@
 				<!-- Spel editor -->
 				<css src="/modules/spel-editor/spel-editor.css" />
 				<css src="/modules/spel-editor/shThemeDefault.css" />
+				<css src="/modules/spel-editor/lib/codemirror.css" />
+				<css src="/modules/spel-editor/addon/hint/show-hint.css" />
 				<js src="/yui/editor/editor.js" />
-				<js src="/modules/spel-editor/spel-editor.js" />
+				<js src="/modules/spel-editor/spel-editorV2.js" />
 				<js src="/modules/spel-editor/shCore.js" />
 				<js src="/modules/spel-editor/shBrushJScript.js" />
+				
 				<!-- Nutrient score -->
 				<css src="/components/form/controls/nutrient-class.css" />
 				<!-- Decision tree -->
@@ -178,8 +190,7 @@
 					template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 					<control-param name="ds">becpg/autocomplete/product</control-param>
 					<control-param name="showTooltip">true</control-param>
-					<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
-					</control-param>
+					<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
 				</type>
 
 				<type name="association:bcpg:charact"
