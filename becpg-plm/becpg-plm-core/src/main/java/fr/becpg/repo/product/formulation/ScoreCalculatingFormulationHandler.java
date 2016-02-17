@@ -2,6 +2,7 @@ package fr.becpg.repo.product.formulation;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +15,9 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.SystemState;
@@ -58,6 +62,8 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 	 */
 	private String mandatoryFields;
 
+
+
 	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
@@ -96,7 +102,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 		}
 
 		// visits all refs and adds rclDataItem to them if required
-		
+
 		for (CompoListDataItem compo : product.getCompoList()) {
 			visitProduct(compo, childrenScores, product.getCompoListView());
 		}
@@ -113,23 +119,67 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 		}
 
 		// checks if mandatory fields are present
-		calculateMandatoryFieldsScore(product.getNodeRef(), product);
-		Integer specificationsScore = calculateSpecificationScore(product);
+		JSONObject mandatoryFieldsRet = calculateMandatoryFieldsScore(product.getNodeRef(), product);
+		Integer specificationsScore = calculateSpecificationScore(product); 
+		double componentsValidationScore = (childrenScores[1] > 0 ? childrenScores[0] / childrenScores[1] : 1d);
+
+
+		JSONObject mandatoryFieldsScores;
+		double mandatoryFieldsScore = 0d;
+		try {
+			mandatoryFieldsScores = mandatoryFieldsRet.getJSONObject("scores");
+			int i=0;
+
+			Iterator iterator = mandatoryFieldsScores.keys();
+			while(iterator.hasNext()){
+				String key = (String) iterator.next();
+				mandatoryFieldsScore+=mandatoryFieldsScores.getDouble(key);
+				logger.debug("reading key "+key+", score="+mandatoryFieldsScores.getDouble(key));
+				i++;
+			}
+
+			if(i>0){
+				mandatoryFieldsScore/=(double)i;
+			}
+		} catch (JSONException e) {
+			logger.error("unable to compute mandatory fields score from json object");
+		}
+
+		double completionPercent=0d;
+		completionPercent = ((componentsValidationScore * 100) + (mandatoryFieldsScore * 100) + specificationsScore)/3d;
 
 		// done computing scores, setting intermediate global score var to sum
 		// of those
-		double componentsValidationScore = (childrenScores[1] > 0 ? childrenScores[0] / childrenScores[1] : 1d);
-		double globalScore = (componentsValidationScore * 100) + (product.getCharacteristicsCompletion() * 100) + specificationsScore;
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Children score=" + childrenScores[0] + ", childrenSize=" + childrenScores[1] + ", completion="
 					+ (componentsValidationScore * 100) + "%");
 			logger.debug("specificationScore=" + specificationsScore + "%");
-			logger.debug("Global score=" + (globalScore / 3d));
+			logger.debug("Global score=" + (completionPercent)+"%");
 		}
 
-		product.setComponentCompletion(componentsValidationScore);
-		product.setCompletionPercent(globalScore / 3d);
+		JSONObject scores = new JSONObject();
+		JSONObject details = new JSONObject();
+
+		try {
+			details.put("mandatoryFields", mandatoryFieldsScore);
+			details.put("mandatoryFieldsDetails", mandatoryFieldsRet.getJSONObject("scores"));
+			details.put("specifications", specificationsScore);
+			details.put("componentsValidation", componentsValidationScore);
+
+			scores.put("global", completionPercent);
+			scores.put("details", details);
+			scores.put("missingFields", mandatoryFieldsRet.get("missingFields"));
+
+		} catch (JSONException e) {
+			logger.error("error putting details in scores json");
+		}
+
+		if(logger.isDebugEnabled()){
+			logger.debug("scores="+scores);
+		}
+		product.setProductScores(scores.toString());
+
 		return true;
 	}
 
@@ -143,10 +193,6 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 	 * @param view
 	 */
 	public void visitProduct(CompositionDataItem dataItem, Double[] childrenArray, AbstractProductDataView view) {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Visiting dataItem " + dataItem.getName() + ", scores are " + childrenArray[0] + " and " + childrenArray[1]);
-		}
-
 		if (dataItem.getComponent() != null) {
 
 			if (!checkProductValidity(dataItem.getComponent())) {
@@ -159,10 +205,6 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 			}
 
 			childrenArray[1] += 1;
-			if (logger.isDebugEnabled()) {
-				logger.debug(
-						"end of visit of product " + dataItem.getName() + ", childScore=" + childrenArray[0] + ", childrenSize=" + childrenArray[1]);
-			}
 		}
 
 	}
@@ -210,73 +252,151 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 	 * @param dat
 	 * @return
 	 */
-	public boolean calculateMandatoryFieldsScore(NodeRef nodeRef, ProductData dat) {
+	public JSONObject calculateMandatoryFieldsScore(NodeRef nodeRef, ProductData dat) {
+
 		int mandatoryFieldsVisited = 0;
 		int violatedMandatoryFields = 0;
+		JSONObject ret = new JSONObject();
+		JSONArray missingFieldsArray = new JSONArray();
+		QName qname; 
+		List<NodeRef> assoc; 
+		AssociationDefinition assocDesc;
+		PropertyDefinition property;
+		Map<QName, Serializable> properties;
+		JSONArray catalogs;
 
-		for (String field : mandatoryFields.split(",")) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Checking if node has field " + field + "...");
+		try {
+			if(logger.isDebugEnabled()){
+				logger.debug("mandatoryFields (should be JSON) : "+mandatoryFields);
 			}
-
-			QName qname = QName.createQName(field, namespaceService);
-			List<NodeRef> assoc = associationService.getTargetAssocs(nodeRef, qname);
-			AssociationDefinition assocDesc = dictionaryService.getAssociation(qname);
-			PropertyDefinition property = dictionaryService.getProperty(qname);
-			Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
-
-			// if we don't have any association or prop with the name, raise an
-			// rclDataItem
-			boolean hasAssoc = false;
-			boolean hasProp = false;
-
-			if (properties.containsKey(qname)) {
-				Serializable val = properties.get(qname);
-				if ((val != null) && !val.equals("")) {
-					hasProp = true;
-				}
-			}
-
-			if ((assoc != null) && !assoc.isEmpty()) {
-				hasAssoc = true;
-			}
-
-			if (!hasAssoc && !hasProp) {
-				if (logger.isDebugEnabled()) {
-					logger.debug("...no it doesn't.");
-				}
-
-				violatedMandatoryFields++;
-				String fieldMessage = "";
-
-				if (assocDesc != null) {
-					fieldMessage = (assocDesc.getTitle(dictionaryService));
-				} else if (property != null) {
-					fieldMessage = (property.getTitle(dictionaryService));
-				}
-
-				String message = I18NUtil.getMessage(MESSAGE_MANDATORY_FIELD_MISSING, (fieldMessage == null ? field : fieldMessage));
-
-				// adds rclDataItem for this mandatory field that is absent
-				ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, null, new ArrayList<NodeRef>(),
-						RequirementDataType.Completion);
-				rclDataItem.getSources().add(nodeRef);
-				dat.getCompoListView().getReqCtrlList().add(rclDataItem);
-				dat.getProcessListView().getReqCtrlList().add(rclDataItem);
-				dat.getPackagingListView().getReqCtrlList().add(rclDataItem);
-			}
-
-			mandatoryFieldsVisited++;
+			catalogs = new JSONArray(mandatoryFields);
+		} catch (JSONException e1) {
+			logger.error("unable to create catalog json object from mandatory fields");
+			return null;
 		}
 
-		double mandatoryFieldsScore = mandatoryFieldsVisited > 0
-				? (mandatoryFieldsVisited - violatedMandatoryFields) / (double) mandatoryFieldsVisited : 1d;
-		dat.setCharacteristicsCompletion(mandatoryFieldsScore);
+		//list of missing fields per catalog
+		JSONObject catalogsMissingFields = new JSONObject();
+		JSONObject catalogsScores = new JSONObject();
+
+		for(int i=0; i< catalogs.length(); i++){
+
+			mandatoryFieldsVisited = 0;
+			violatedMandatoryFields = 0;
+
+			JSONObject currentCatalog=null;
+			String id="id";
+			String label="label";
+			//JSONArray locales=null;
+			JSONArray fields=new JSONArray();
+			missingFieldsArray = new JSONArray();
+
+			try {
+				currentCatalog = catalogs.getJSONObject(i);
+				id = currentCatalog.getString("id");
+				label = currentCatalog.getString("label");
+				//locales = currentCatalog.getJSONArray("locales");
+				fields = currentCatalog.getJSONArray("fields");
+			} catch (JSONException e){
+				logger.error("unable to read a property from json : "+e.getLocalizedMessage());
+			}
+
+			if(logger.isDebugEnabled()){
+				logger.debug("read catalog, id="+id+", label="+label+", fields="+fields);
+			}
+
+			if(currentCatalog != null){
+				String field ="";
+				for (int j=0; j<fields.length(); j++) {
+					try {
+						field = fields.getString(j);
+					} catch (JSONException e) {
+						logger.error("error while parsing field of index "+j);
+					}
+
+					if (logger.isDebugEnabled()) {
+						logger.debug("Checking if node has field " + field + "...");
+					}
+
+					qname = QName.createQName(field, namespaceService);
+					assoc = associationService.getTargetAssocs(nodeRef, qname);
+					assocDesc  = dictionaryService.getAssociation(qname);
+					property = dictionaryService.getProperty(qname);
+					properties = nodeService.getProperties(nodeRef);
+
+					// if we don't have any association or prop with the name, raise an
+					// rclDataItem
+					boolean hasAssoc = false;
+					boolean hasProp = false;
+
+					if (properties.containsKey(qname)) {
+						Serializable val = properties.get(qname);
+						if ((val != null) && !val.equals("")) {
+							hasProp = true;
+						}
+					}
+
+					if ((assoc != null) && !assoc.isEmpty()) {
+						hasAssoc = true;
+					}
+
+					if (!hasAssoc && !hasProp) {
+						if (logger.isDebugEnabled()) {
+							logger.debug("...no it doesn't.");
+						}
+
+						violatedMandatoryFields++;
+						String fieldMessage = "";
+
+						if (assocDesc != null) {
+							fieldMessage = (assocDesc.getTitle(dictionaryService));
+						} else if (property != null) {
+							fieldMessage = (property.getTitle(dictionaryService));
+						}
+
+						String message = I18NUtil.getMessage(MESSAGE_MANDATORY_FIELD_MISSING, (fieldMessage == null ? field : fieldMessage), label);
+
+						// adds rclDataItem for this mandatory field that is absent
+						ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, null, new ArrayList<NodeRef>(),
+								RequirementDataType.Completion);
+						rclDataItem.getSources().add(nodeRef);
+						dat.getCompoListView().getReqCtrlList().add(rclDataItem);
+						dat.getProcessListView().getReqCtrlList().add(rclDataItem);
+						dat.getPackagingListView().getReqCtrlList().add(rclDataItem);
+						missingFieldsArray.put(field);
+						if(logger.isDebugEnabled()){
+							logger.debug("added field "+field+" to array, array="+missingFieldsArray);
+						}
+					}
+
+					mandatoryFieldsVisited++;
+				}
+
+				double currentCatalogsScore = mandatoryFieldsVisited > 0
+						? (mandatoryFieldsVisited - violatedMandatoryFields) / (double) mandatoryFieldsVisited : 1d;
+
+						try {
+							catalogsMissingFields.put(id, missingFieldsArray);
+							catalogsScores.put(id, currentCatalogsScore);
+						} catch (JSONException e) {
+							logger.error("unable to add current catalog missing fields to collection : "+e.getLocalizedMessage());
+						}
+			}
+		}
+
+		try {
+			ret.put("scores", catalogsScores);
+			ret.put("missingFields", catalogsMissingFields);
+		} catch (JSONException e) {
+			logger.error("unable to serialize scores or missing fields array");
+		}
+
 		if (logger.isDebugEnabled()) {
-			logger.debug("Mandatory fields visited=" + mandatoryFieldsVisited + ", violated=" + violatedMandatoryFields + ", mandatoryFieldsScore="
-					+ (mandatoryFieldsScore * 100) + "%");
+			logger.debug("Mandatory fields visited=" + mandatoryFieldsVisited + ", violated=" + violatedMandatoryFields + ", catalogsScores="
+					+ catalogsScores + "%");
+			logger.debug("Ret="+ret.toString());
 		}
-		return true;
+		return ret;
 	}
 
 	/**

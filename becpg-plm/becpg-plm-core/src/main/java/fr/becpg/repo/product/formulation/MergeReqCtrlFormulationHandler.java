@@ -88,7 +88,7 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Produ
 			if ((productData instanceof SemiFinishedProductData) || (productData instanceof FinishedProductData)) {
 				for (ReqCtrlListDataItem tmp : productData.getCompoListView().getReqCtrlList()) {
 					reqCtrlList.add(new ReqCtrlListDataItem(null, tmp.getReqType(), tmp.getReqMessage(), tmp.getCharact(), tmp.getSources(),
-							tmp.getReqDataType() != null ? tmp.getReqDataType() : RequirementDataType.Nutriment));
+							tmp.getReqDataType() != null ? tmp.getReqDataType() : RequirementDataType.Nutrient));
 				}
 			}
 		}

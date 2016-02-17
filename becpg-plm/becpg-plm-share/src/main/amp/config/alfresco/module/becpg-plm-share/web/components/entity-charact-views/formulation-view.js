@@ -121,15 +121,16 @@
 				
 				//put score div
 				if(object.scores !== undefined){
+					console.log("scores="+object.scores);
 					var scores = object.scores;					
-					var intScore = parseInt(scores.total);					
+					var intScore = parseInt(scores.global);					
 					var spriteIndex=(intScore/5>>0);
 					html+="<ul><li class=\"title\">"+instance.msg("label.product.scores")+"</li><li id=\"scoreLi\" class=\"score-"+spriteIndex+"\" " +
-					"title=\""+instance.msg("tooltip.components.validation")+": "+Math.ceil(scores.compo*100)+
-					"%\n"+instance.msg("tooltip.mandatory.completion")+": "+Math.ceil(scores.charact*100)+
-					"%\n"+instance.msg("tooltip.specification.respect")+": "+scores.specif+"%\">";
+					"title=\""+instance.msg("tooltip.components.validation")+": "+Math.ceil(scores.details.componentsValidation*100)+
+					"%\n"+instance.msg("tooltip.mandatory.completion")+": "+Math.ceil(scores.details.mandatoryFields*100)+
+					"%\n"+instance.msg("tooltip.specification.respect")+": "+scores.details.specifications+"%\">";
 	
-					html+="<span>"+Math.floor(scores.total)+"%</span>";
+					html+="<span>"+Math.floor(scores.global)+"%</span>";
 					html+="</li></ul>";
 				}
 	
@@ -209,7 +210,6 @@
 					responseContentType : Alfresco.util.Ajax.JSON,
 					successCallback : {
 						fn : function (response){
-							console.log(response.json);
 							YAHOO.util.Dom.get("constraintsList-"+instance.id+"-scores").innerHTML= parseJsonToHTML(response.json, instance);
 
 							var scoreDiv = YAHOO.util.Dom.get("scoreLi");
@@ -247,6 +247,7 @@
 				responseContentType : Alfresco.util.Ajax.JSON,
 				successCallback : {
 					fn : function (response){
+						console.log("response : "+JSON.stringify(response.json));
 						YAHOO.util.Dom.get("constraintsList-"+instance.id+"-scores").innerHTML= parseJsonToHTML(response.json, instance);
 
 						var scoreDiv = YAHOO.util.Dom.get("scoreLi");
