@@ -17,10 +17,19 @@
  ******************************************************************************/
 package fr.becpg.repo.product.data.spel;
 
+import java.util.regex.Pattern;
+
 public class SpelHelper {
 
-
+	public static Pattern formulaVarPattern = Pattern.compile("^var\\s+(\\w+)\\s*=(.*)$");
+	
 	public static String formatFormula(String formula) {
-		return formula.replace("&lt;", "<").replace("&gt;", ">");
+		return formula.replace("&lt;", "<").replace("&gt;", ">").replace("\n","").trim();
 	}
+
+	public static String[] formatMTFormulas(String formula) {
+		return formatFormula(formula).split(";");
+	}
+
+
 }

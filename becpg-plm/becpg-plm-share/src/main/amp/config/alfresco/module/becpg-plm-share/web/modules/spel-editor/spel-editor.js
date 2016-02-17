@@ -4,7 +4,8 @@
  * @namespace beCPG
  * @class beCPG.SpelEditor
  */
-(function() {
+(function(){
+	
    /**
     * YUI Library aliases
     */
@@ -204,168 +205,69 @@
                         Dom.addClass(this.editorId, "spel-editor");
 
                         var instance = this;
+                        require([
+                    	         "cm/lib/codemirror", "cm/addon/hint/show-hint", "cm/addon/search/searchcursor", "cm/addon/edit/matchbrackets", "cm/mode/javascript/javascript"
+                    	       ], function(CodeMirror) {	
+                        
+                        if(typeof(instance.widgets.brush) == "undefined" || instance.widgets.brush == null){
+                        	instance.widgets.brush = new CodeMirror(document.getElementById(instance.id + "-currentValueDisplay"), {
+                  				lineNumbers: true,
+                  				lineWrapping: true,
+                        		mode: "javascript",
+                        		readOnly: true
+                   			});
+                       	 
+                        	instance.widgets.brush.setSize("100%",100);
+                        }
 
-                        this._renderFormula(true, function() {
+                        if(typeof(instance.widgets.editor) == "undefined" || instance.widgets.editor == null){
+                        	instance.widgets.editor = CodeMirror.fromTextArea(document.getElementById(instance.id + "-editor-textarea"),
+                           			{
+                           			lineNumbers: true,
+   	                        		mode: "javascript",
+   	                        		extraKeys: {"Ctrl-Space": "autocomplete"},
+   	                        		lineWrapping: true,
+   	                        		matchBrackets: true
 
-                           instance.widgets.editor = new YAHOO.widget.SimpleEditor(instance.id + "-editor-textarea", {
-                              width : '100%',
-                              animate : false,
-                              dompath : false,
-                              focusAtStart : false,
-                              toolbar : {
-                                 titlebar : instance.msg("form.control.spel-editor.editor.title"),
-                                 buttons : [ {
-                                    group : 'operators',
-                                    label : instance.msg("form.control.spel-editor.editor.operators"),
-                                    buttons : [ {
-                                       type : 'push',
-                                       label : '+',
-                                       value : 'operator'
-                                    }, {
-                                       type : 'push',
-                                       label : '-',
-                                       value : 'operator'
-                                    }, {
-                                       type : 'push',
-                                       label : '/',
-                                       value : 'operator'
-                                    }, {
-                                       type : 'push',
-                                       label : '*',
-                                       value : 'operator'
-                                    }, {
-                                       type : 'push',
-                                       label : '%',
-                                       value : 'operator'
-                                    }, {
-                                       type : 'push',
-                                       label : '>',
-                                       value : 'operator'
-                                    }, {
-                                       type : 'push',
-                                       label : '<',
-                                       value : 'operator'
-                                    }, {
-                                       type : 'push',
-                                       label : '==',
-                                       value : 'operator'
-                                    }, {
-                                       type : 'push',
-                                       label : '!=',
-                                       value : 'operator'
-                                    }, {
-                                       type : 'push',
-                                       label : 'and',
-                                       value : 'operator'
-                                    }, {
-                                       type : 'push',
-                                       label : 'or',
-                                       value : 'operator'
-                                    }, {
-                                       type : 'push',
-                                       label : '=',
-                                       value : 'operator'
-                                    }
-
-                                    ]
-                                 }, {
-                                    type : 'separator'
-                                 }, {
-                                    group : 'functions',
-                                    label : instance.msg("form.control.spel-editor.editor.functions"),
-                                    buttons : [
-
-                                    {
-                                       type : 'select',
-                                       label : instance.msg("form.control.spel-editor.editor.choose"),
-                                       value : 'function',
-                                       menu : [ {
-                                          text : '$Value instanceof T($Type)'
-                                       }, {
-                                          text : '$String matches "$Regexp"'
-                                       }, {
-                                          text : 'T($type)'
-                                       }, {
-                                          text : '$false ? $trueExp : $falseExp'
-                                       }, {
-                                          text : '$list.?[$property == $value]'
-                                       }, {
-                                          text : '$list.![$property]'
-                                       } , {
-                                          text : 'sum($range,$formula)'
-                                       }, {
-                                          text : 'avg($range,$formula)'
-                                       }, {
-                                          text : 'children($compoListDataItem)'
-                                       }, {
-                                           text : '@beCPG.findOne($nodeRef)'
-                                       }, {
-                                           text : '@beCPG.propValue($nodeRef,"bcpg:productQty")'
-                                       }
-                                       
-                                       ]
-                                    }
-
-                                    ]
-
-                                 } , {
-                                    group : 'variables',
-                                    label : instance.msg("form.control.spel-editor.editor.variables"),
-                                    buttons : [
-
-                                    {
-                                       type : 'select',
-                                       label : instance.msg("form.control.spel-editor.editor.choose"),
-                                       value : 'variable',
-                                       menu : [ {
-                                          text : 'entity', value: 'entity.'
-                                       }, {
-                                          text : 'dataListItem', value: 'dataListItem.'
-                                       }, {
-                                          text : 'dataListItemEntity', value: 'dataListItemEntity.'
-                                       }, {
-                                          text : '#this', value: '#this.'
-                                       }, {
-                                          text : '#root', value: '#root.'
-                                       } ]
-                                    }
-
-                                 ]
+                           			});
+   	                        
+                           	CodeMirror.commands.autocomplete = function(cm) {
+                                   cm.showHint({hint: CodeMirror.hint.spel});
+                                 };
                                  
-                                 }]
-                              }
-                           });
-
-                           instance.widgets.editor.on('toolbarLoaded', function() {
-
-                              var me = this;
-                              this.toolbar.on('operatorClick', function(o) {
-                                 me.execCommand('inserthtml', " " + o.button.label + " ");
-
-                              });
-
-                              this.toolbar.on('functionClick', function(o) {
-                                 me.execCommand('inserthtml', " " + o.button.value + " ");
-                              });
-                              
-                              this.toolbar.on('variableClick', function(o) {
-                                 me.execCommand('inserthtml', " " + o.button.value + " ");
-                              });
-
-                           }, instance.widgets.editor, true);
-
-                           instance.widgets.editor.on('editorContentLoaded', function() {
-                              var link = this._getDoc().createElement('link');
-                              link.rel = "stylesheet";
-                              link.type = "text/css";
-                              link.href = Alfresco.constants.URL_RESCONTEXT + "/modules/spel-editor/spel-editor.css";
-                              this._getDoc().getElementsByTagName('head')[0].appendChild(link);
-                           }, instance.widgets.editor, true);
-
-                           instance.widgets.editor.render();
-
-                           instance._enableActions();
+                                CodeMirror.registerHelper("hint", "spel", function(editor, options) {
+                               	 var cur = editor.getCursor(), token = editor.getTokenAt(cur);
+                        			 var start = token.start, end = cur.ch;
+                        			 
+                        			  return {
+                        			      list: [
+                        			             'entity',
+                        			             'dataListItem',
+                        			             'dataListItemEntity', 
+                        			             '#this',
+                        			             '#root',
+                        			             '$Value instanceof T($Type)',
+                        			             '$String matches "$Regexp"',
+                        			             'T($type)',
+                        			             '$false ? $trueExp : $falseExp',
+                        			             '$list.?[$property == $value]',
+                        			             '$list.![$property]',
+                        			             'sum($range,$formula)',
+                        			             'avg($range,$formula)',
+                        			             'children($compoListDataItem)',
+                        			             '@beCPG.findOne($nodeRef)',
+                        			             '@beCPG.propValue($nodeRef,"bcpg:productQty")'],
+                        			      from: CodeMirror.Pos(cur.line, start),
+                        			      to: CodeMirror.Pos(cur.line, end)
+                        			    };
+                               	  });
+                       	 
+                        }
+                        
+                        instance._renderFormula(true);
                         });
+                        
+                       
                      }
                   },
 
@@ -436,15 +338,7 @@
                         Event.preventDefault(e);
                      }
 
-                     this.widgets.editor.filter_safari = function(html){
-                    	 //bugfix chrome
-                    	 return html;
-                     };
-                     
-                     this.widgets.editor.saveHTML();
-
-                     
-                     this.options.currentValue = this._cleanHtml(Dom.get(this.id + "-editor-textarea").value);
+                     this.options.currentValue = this.widgets.editor.getValue(); 
                      
                      
                      
@@ -454,47 +348,6 @@
                      this._renderFormula(false);
                   },
 
-                  _cleanHtml : function(html) {
-
-                     return html.replace(new RegExp("'<div id=\"", "g"), "'").replace(new RegExp("\" class=.*?div>'", "g"),
-                           "'").replace(new RegExp("&nbsp;", "g")," ").replace(new RegExp("<br>", "g")," ").trim();
-
-                  },
-
-                  _createHtml : function(text, items) {
-
-                     var item,ret = text;
-                     if (items != null && ret.indexOf("workspace://") > 0) {
-                        for ( var i = 0, il = items.length; i < il; i++) {
-                           item = items[i];
-                           ret = ret
-                                 .replace(
-                                       "== '" + item.nodeRef,
-                                       "== '<div id=\"" + item.nodeRef + "\" class='spel-editor-nodeRef' >" + $html(item.name) + "</div>");
-
-                        }
-                     }
-
-                     return ret;
-
-                  },
-                  _createBrush : function(text, items) {
-
-                     var item,ret = text;
-                     if (items != null) {
-                        for ( var i = 0, il = items.length; i < il; i++) {
-                           item = items[i];
-                           ret = ret.replace(item.nodeRef,  $html(item.name));
-
-                        }
-                     }
-
-                     for ( var i = 0; i < ret.length; i += 50) {
-                        ret += "<br/>\n";
-                     }
-
-                     return "<br/>\n" + ret;
-                  },
 
                   /**
                    * Editor Cancel button click handler
@@ -582,8 +435,12 @@
                         delete this.widgets.resizer;
                      }
                      if (this.widgets.editor) {
-                        this.widgets.editor.destroy();
+                        this.widgets.editor.toTextArea();
                         delete this.widgets.editor;
+                     }
+                     
+                     if (this.widgets.brush) {
+                    	 delete this.widgets.brush;
                      }
                   },
 
@@ -597,31 +454,49 @@
                    * @method _renderFormula
                    * @private
                    */
-                  _renderFormula : function SpelEditor__renderFormula(updateTextArea, callback) {
+                  _renderFormula : function SpelEditor__renderFormula(updateTextArea) {
 
-                     SyntaxHighlighter.config.stripBrs = true;
 
                      var items = [], instance = this, regexp = new RegExp("(workspace://SpacesStore/[a-z0-9A-Z\-]*)",
-                           "gi"), brush = new SyntaxHighlighter.brushes.JScript();
-                     brush.init({
-                        toolbar : false
-                     });
-
+                           "gi");
+                     
+                     
                      items = this.options.currentValue.match(regexp);
 
                      function itemsCallBack(response) {
-                        var items = null;
+                        var items = null,item,span;
                         if (response != null) {
                            items = response.json.data.items;
                         }
-                        Dom.get(instance.id + "-currentValueDisplay").innerHTML = brush.getHtml(instance._createBrush(
-                              instance.options.currentValue, items));
-                        if (updateTextArea) {
-                           Dom.get(instance.id + "-editor-textarea").value = instance._createHtml(
-                                 instance.options.currentValue, items);
+                        
+                        instance.widgets.brush.setValue(instance.options.currentValue);
+                        instance.widgets.editor.setValue(instance.options.currentValue);
+                        
+                        if (items != null) {
+                           for ( var i = 0, il = items.length; i < il; i++) {
+                              item = items[i];
+                              
+                              var searchCursor = instance.widgets.brush.getSearchCursor(item.nodeRef);
+                              var searchCursor2 = instance.widgets.editor.getSearchCursor(item.nodeRef);
+   
+                              while(searchCursor.findNext()){
+                           	     span = document.createElement('span');
+                           	     span.innerHTML =$html(item.name);
+                           	     span.className = "spel-editor-nodeRef";
+                           	     instance.widgets.brush.markText(searchCursor.from(), searchCursor.to(), {replacedWith:span } );
+                              }
+                              
+                              while(searchCursor2.findNext()){
+                              	 span = document.createElement('span');
+                              	 span.innerHTML =$html(item.name);
+                              	 span.className = "spel-editor-nodeRef";
+                              	 instance.widgets.editor.markText(searchCursor2.from(), searchCursor2.to(), {replacedWith:span } );
+                               }
+                              
+                           }
                         }
-                        if (callback) {
-                           callback.call();
+                        if(updateTextArea){
+                         instance._enableActions();
                         }
 
                      }
@@ -900,10 +775,17 @@
                                  currentList : me.options.currentList
                               });
 
-                              me.widgets.editor.execCommand('inserthtml', " " + me._createHtml(text, [ {
-                                 name : me.options.currentItem.name,
-                                 nodeRef : me.options.currentItem.value
-                              } ]));
+                              me.widgets.editor.replaceRange( text, me.widgets.editor.getCursor());
+                              
+                              var searchCursor = me.widgets.editor.getSearchCursor(me.options.currentItem.value);
+                              
+                              while(searchCursor.findNext()){
+                           	   var span = document.createElement('span');
+                           	   span.innerHTML =$html(me.options.currentItem.name);
+                           	   me.widgets.editor.markText(searchCursor.from(), searchCursor.to(), {replacedWith:span } );
+                              }
+                              
+                              me.widgets.editor.focus();
 
                            }
                         });
@@ -922,10 +804,17 @@
                               currentList : me.options.currentList
                            });
 
-                           me.widgets.editor.execCommand('inserthtml', " " + me._createHtml(text, [ {
-                              name : me.options.currentItem.name,
-                              nodeRef : me.options.currentItem.value
-                           } ]));
+                           me.widgets.editor.replaceRange( " " + text,  me.widgets.editor.getCursor());
+                           
+                           var searchCursor = me.widgets.editor.getSearchCursor(me.options.currentItem.value);
+                           
+                           while(searchCursor.findNext()){
+                        	   var span = document.createElement('span');
+                        	   span.innerHTML =$html(me.options.currentItem.name);
+                        	   me.widgets.editor.markText(searchCursor.from(), searchCursor.to(), {replacedWith:span } );
+                           }
+                           
+                           me.widgets.editor.focus();
 
                         });
 
@@ -1059,4 +948,6 @@
                      }
                   }
                });
+   
 })();
+   
