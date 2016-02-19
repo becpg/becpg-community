@@ -33,7 +33,8 @@
             }
             <#if constraint_has_next>,</#if>
             </#list>
-         ]
+         ],
+         disableSubmitButton: <#if args.disableSubmitButton??>${args.disableSubmitButton?js_string}<#else>false</#if>
          </#if>
       }).setMessages(
          ${messages}

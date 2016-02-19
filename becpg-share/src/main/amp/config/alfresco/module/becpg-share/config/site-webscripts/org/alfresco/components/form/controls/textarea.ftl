@@ -9,10 +9,14 @@
 	            <span class="incomplete-warning"><img class="icon16" src="${url.context}/res/components/form/images/warning-16.png" title="${msg("form.field.incomplete")}" /><span>
 	         </#if>
          <span class="viewmode-label">${field.label?html}: </span>
+         <#assign tmpFieldValue=field.value?html?replace("\n", "<br>")>
+         <#if field.control.params.saveLineBreaks?? && field.control.params.saveLineBreaks == "false">
+            <#assign tmpFieldValue=field.value?html>
+         </#if>
 	         <#if field.control.params.activateLinks?? && field.control.params.activateLinks == "true">
-	            <#assign fieldValue=field.value?html?replace("((http|ftp|https):\\/\\/[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.,@?\\^=%&:\\/~\\+#]*[\\w\\-\\@?\\^=%&\\/~\\+#])?)", "<a href=\"$1\" target=\"_blank\">$1</a>", "r")>
+            <#assign fieldValue=tmpFieldValue?replace("((http|ftp|https):\\/\\/[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.,@?\\^=%&:\\/~\\+#]*[\\w\\-\\@?\\^=%&\\/~\\+#])?)", "<a href=\"$1\" target=\"_blank\">$1</a>", "r")>
 	         <#else>
-	            <#assign fieldValue=field.value?html>
+            <#assign fieldValue=tmpFieldValue>
 	         </#if>
 	         <span  id="${fieldHtmlId}-${field.id?replace("prop_","")}" class="viewmode-value <#if field.dataType == "mltext">viewmode-mltext</#if>" ><#if fieldValue == "">${msg("form.control.novalue")}<#else>${fieldValue}</#if></span>
 	      </div>
