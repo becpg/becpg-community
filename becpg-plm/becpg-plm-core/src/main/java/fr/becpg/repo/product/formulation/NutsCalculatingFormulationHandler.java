@@ -164,11 +164,9 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 							if (valuePerserving > ul) {
 								String message = I18NUtil.getMessage(MESSAGE_MAXIMAL_DAILY_VALUE,
 										nodeService.getProperty(n.getNut(), BeCPGModel.PROP_CHARACT_NAME));
-								
-								ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, n.getNut(), new ArrayList<NodeRef>(), RequirementDataType.Nutrient);
-								rclDataItem.getSources().add(formulatedProduct.getNodeRef());
+							
 								formulatedProduct.getCompoListView().getReqCtrlList()
-										.add(rclDataItem);
+								.add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, n.getNut(), new ArrayList<NodeRef>()));
 							}
 						}
 					} else {

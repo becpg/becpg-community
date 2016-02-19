@@ -20,7 +20,7 @@
     <config replace="true">
          <flags>
             <!-- Developer debugging setting - DEBUG mode for client scripts in the browser -->
-            <client-debug>true</client-debug>
+            <client-debug>false</client-debug>
 
             <!-- LOGGING can be toggled at runtime when in DEBUG mode (Ctrl, Ctrl, Shift, Shift).
                  This flag automatically activates logging on page load. -->

@@ -10,6 +10,7 @@ import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransacti
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Test;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.AssociationService;
@@ -40,7 +41,13 @@ public class ScoreCalculatingTest extends AbstractFinishedProductTest {
 		initParts();
 	}
 
-
+	@Test
+	public void computeScore(){
+		
+		//TODO make a test..
+	}
+	
+	
 	protected NodeRef createFullProductNodeRef(final String name) {
 		return transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			public NodeRef execute() throws Throwable {

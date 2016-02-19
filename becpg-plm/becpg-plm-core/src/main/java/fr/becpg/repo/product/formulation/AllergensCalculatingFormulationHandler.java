@@ -414,8 +414,8 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 								ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Forbidden,
 										message, allergenListDataItem.getAllergen(), new ArrayList<NodeRef>(), RequirementDataType.Specification);
 								formulatedProduct.getCompoListView().getReqCtrlList().add(rclDataItem);
-								formulatedProduct.getPackagingListView().getReqCtrlList().add(rclDataItem);
-								formulatedProduct.getProcessListView().getReqCtrlList().add(rclDataItem);
+								/*formulatedProduct.getPackagingListView().getReqCtrlList().add(rclDataItem);
+								formulatedProduct.getProcessListView().getReqCtrlList().add(rclDataItem);*/
 							}
 						}
 					});

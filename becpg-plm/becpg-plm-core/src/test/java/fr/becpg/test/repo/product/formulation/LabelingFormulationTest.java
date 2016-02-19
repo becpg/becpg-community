@@ -57,6 +57,7 @@ import fr.becpg.repo.product.data.constraints.CompoListUnit;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.LabelingRuleType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
+import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
@@ -1150,8 +1151,16 @@ public class LabelingFormulationTest extends AbstractFinishedProductTest {
 
 			for (ReqCtrlListDataItem reqCtrlListDataItem : formulatedProduct.getCompoListView().getReqCtrlList()) {
 				if (RequirementType.Forbidden.equals(reqCtrlListDataItem.getReqType())) {
+					
 					String error = reqCtrlListDataItem.getReqMessage();
-					Assert.assertEquals("Incorrect label :" + error + "\n   - compare to " + errorMessage, error, errorMessage);
+					if(RequirementDataType.Validation.equals(reqCtrlListDataItem.getReqDataType())){
+						Assert.assertEquals("Composant non validé", error);
+					} else if(RequirementDataType.Completion.equals(reqCtrlListDataItem.getReqDataType())){
+						assertTrue(error.equals("Champ obligatoire 'Famille' manquant (catalogue 'Std catal.')") 
+								|| error.equals("Champ obligatoire 'Sous famille' manquant (catalogue 'Std catal.')"));
+					} else {					
+						Assert.assertEquals("Incorrect label :" + error + "\n   - compare to " + errorMessage, error, errorMessage);
+					}
 				}
 			}
 
