@@ -101,7 +101,7 @@
 }
 
 .formulation-view .dynamicCharactList .datagrid .scrollableList {
-	height: 290px;
+	max-height: 290px;
 }
 
 /* Constraints List */
@@ -218,6 +218,8 @@ div.dataTypeList {
 	padding: 0.2em;
 	margin: 0px 10px 10px;
 	margin-right: 4px;
+	/* avoids text breaking on low resolutions */
+	min-width: 251px;
 }
 
 div.dataTypeList .title {

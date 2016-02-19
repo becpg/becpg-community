@@ -212,12 +212,12 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		formulatedProduct.getCompoListView().getReqCtrlList().addAll(reqCtrlMap.values());
 
 		//Specification forbidden rcl appear on every data list
-		for( ReqCtrlListDataItem rclDataItem : reqCtrlMap.values()){
+		/*for( ReqCtrlListDataItem rclDataItem : reqCtrlMap.values()){
 			if(rclDataItem.getReqDataType()==RequirementDataType.Specification && rclDataItem.getReqType() == RequirementType.Forbidden){
 				formulatedProduct.getPackagingListView().getReqCtrlList().add(rclDataItem);
 				formulatedProduct.getProcessListView().getReqCtrlList().add(rclDataItem);
 			}
-		}
+		}*/
 	}
 
 	/**

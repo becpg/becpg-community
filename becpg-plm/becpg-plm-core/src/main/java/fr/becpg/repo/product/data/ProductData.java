@@ -277,16 +277,6 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	public void setState(SystemState state) {
 		this.state = state;
 	}
-	
-	@AlfProp
-	@AlfQname(qname = "bcpg:productScores")
-	public String getProductScores() {
-		return productScores;
-	}
-
-	public void setProductScores(String productScores) {
-		this.productScores = productScores;
-	}
 
 	@AlfProp
 	@AlfQname(qname = "bcpg:productUnit")
@@ -661,7 +651,16 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		return compoListView;
 	}
 
+	@AlfProp
+	@AlfQname(qname = "bcpg:productScores")
+	public String getProductScores(){
+		return productScores;
+	}
 	
+	public void setProductScores(String string){
+		this.productScores = string;
+	}
+
 	private <T> List<T>  filterList(List<T> list,List<DataListFilter<ProductData, T>> filters ) {
 		if (filters != null && !filters.isEmpty()) {
 			Stream<T> stream = list.stream();
@@ -816,21 +815,11 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 
 	@Override
 	public String toString() {
-		return "ProductData [hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", legalName=" + legalName + ", title=" + title + ", erpCode="
-				+ erpCode + ", state=" + state + ", unit=" + unit + ", entityTpl=" + entityTpl + ", plants=" + plants
-				+ ", defaultVariantPackagingData=" + defaultVariantPackagingData + ", qty=" + qty + ", density=" + density + ", yield=" + yield
-				+ ", yieldVolume=" + yieldVolume + ", netWeight=" + netWeight + ", netVolume=" + netVolume + ", servingSize=" + servingSize
-				+ ", recipeQtyUsed=" + recipeQtyUsed + ", recipeVolumeUsed=" + recipeVolumeUsed + ", tare=" + tare + ", tareUnit=" + tareUnit
-				+ ", unitTotalCost=" + unitTotalCost + ", unitPrice=" + unitPrice + ", profitability=" + profitability + ", breakEven=" + breakEven
-				+ ", projectedQty=" + projectedQty + ", formulatedDate=" + formulatedDate + ", modifiedDate=" + modifiedDate + ", reformulateCount="
-				+ reformulateCount + ", ingType=" + ingType + ", isUpToDate=" + isUpToDate + ", nutrientScore=" + nutrientScore + ", nutrientClass="
-				+ nutrientClass + ", nutrientProfile=" + nutrientProfile + ", allergenList=" + allergenList + ", costList=" + costList
-				+ ", priceList=" + priceList + ", ingList=" + ingList + ", nutList=" + nutList + ", organoList=" + organoList + ", microbioList="
-				+ microbioList + ", physicoChemList=" + physicoChemList + ", labelClaimList=" + labelClaimList + ", controlDefList=" + controlDefList
-				+ ", labelingList=" + labelingList + ", resourceParamList=" + resourceParamList + ", compoListView=" + compoListView
-				+ ", processListView=" + processListView + ", packagingListView=" + packagingListView + ", labelingListView=" + labelingListView
-				+ ", variants=" + variants + ", productSpecifications=" + productSpecifications + ", clients=" + clients + ", productScores="
-				+ productScores + "]";
+				return "ProductData [hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", legalName=" + legalName + ", title=" + title
+								+ ", erpCode=" + erpCode + ", state=" + state +  ", unit=" + unit + ", qty=" + qty + ", density=" + density + ", yield=" + yield
+								+ ", yieldVolume=" + yieldVolume + ", netWeight=" + netWeight + ", netVolume=" + netVolume + ", servingSize=" + servingSize + ", recipeQtyUsed=" + recipeQtyUsed
+								+ ", tare=" + tare + ", tareUnit=" + tareUnit + ", unitTotalCost=" + unitTotalCost + ", unitPrice=" + unitPrice + ", profitability="
+								+ profitability + ", breakEven=" + breakEven + ", allergenList=" + allergenList + ", productScores="+ productScores +"]";
 	}
 
 	@Override

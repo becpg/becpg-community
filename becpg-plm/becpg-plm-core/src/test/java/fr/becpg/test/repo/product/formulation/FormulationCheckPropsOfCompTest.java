@@ -66,6 +66,7 @@ public class FormulationCheckPropsOfCompTest extends AbstractFinishedProductTest
 				compoList.add(new CompoListDataItem(null, null, null, 10d, CompoListUnit.mL, 10d, DeclarationType.Detail, rawMaterial5NodeRef));
 				compoList.add(new CompoListDataItem(null, null, null, 10d, CompoListUnit.g, 10d, DeclarationType.Detail, rawMaterial6NodeRef));
 				compoList.add(new CompoListDataItem(null, null, null, 10d, CompoListUnit.g, 10d, DeclarationType.Detail, rawMaterial7NodeRef));
+				
 
 				finishedProduct.getCompoListView().setCompoList(compoList);
 				NodeRef finishedProductNodeRef1 = alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
@@ -79,15 +80,26 @@ public class FormulationCheckPropsOfCompTest extends AbstractFinishedProductTest
 				ProductData formulatedProduct1 = alfrescoRepository.findOne(finishedProductNodeRef1);
 
 				assertNotNull(formulatedProduct1.getCompoListView().getReqCtrlList());
+				logger.info("formulation raised "+formulatedProduct1.getCompoListView().getReqCtrlList().size()+" rclDataItems");
 				int checks = 0;
 				for (ReqCtrlListDataItem r : formulatedProduct1.getCompoListView().getReqCtrlList()) {
-
+					
 					logger.info("Product: " + nodeService.getProperty(r.getSources().get(0), ContentModel.PROP_NAME));
 					logger.info("Msg: " + r.getReqMessage());
+					logger.info("Sources ("+r.getSources().size()+"): "+r.getSources());
 					if (!r.getReqMessage().startsWith("Impossible")) {
 						for(NodeRef source : r.getSources()){
-						
-							if (source.equals(rawMaterial5NodeRef)) {
+							
+							if(r.getReqMessage().equals("Composant non validé")) {
+								assertTrue(source.equals(rawMaterial1NodeRef)
+										|| source.equals(rawMaterial5NodeRef)
+										|| source.equals(rawMaterial6NodeRef)
+										|| source.equals(rawMaterial7NodeRef));
+							} else if(r.getReqMessage().equals("Champ obligatoire 'Famille' manquant (catalogue 'Std catal.')") 
+								   || r.getReqMessage().equals("Champ obligatoire 'Sous famille' manquant (catalogue 'Std catal.')")) {
+									assertEquals(source, finishedProductNodeRef1);
+							
+							} else if (source.equals(rawMaterial5NodeRef)) {
 								assertEquals("L'unité utilisée n'est pas la bonne.", r.getReqMessage());
 								checks++;
 							} else if (source.equals(rawMaterial6NodeRef)) {

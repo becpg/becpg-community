@@ -2,7 +2,7 @@
 <@markup id="customSearch-css" target="css"  action="after">
    <#-- CSS Dependencies -->
   <#include "../form/form.css.ftl"/>
-  <@link href="${url.context}/res/components/search/custom-search.css" group="search"/>
+  <@link href="${url.context}/res/css/beCPG.css" group="search"/>
 </@>
 
 <@markup id="customSearch-js" target="js" action="replace">

@@ -65,10 +65,9 @@ public class ReqCtrlWebScript extends AbstractProductWebscript {
 		RequirementDataType rDataType;
 
 		Map<String, Map<String, Integer>> counts = new HashMap<String, Map<String, Integer>>();
-		//Try to match requirement type. Default is Forbidden
+		//Try to match requirement type. Default is null (no filter)
 		try {
 			rType = RequirementType.valueOf(type);
-
 		} catch(Exception e){
 			//either IllegalArgumentException or NPE
 			rType = null;
@@ -126,12 +125,11 @@ public class ReqCtrlWebScript extends AbstractProductWebscript {
 				Map<String, Integer> newMap = new HashMap<String, Integer>();
 				newMap.put(item.getReqType().toString(), Math.max(item.getSources().size(), 1));
 				counts.put(key.toString(), newMap);
-				
 			}
 		}
-		
 
-		try {
+		try {			
+			//puts each count of rclDataItems in ret, mapped with proper key 
 			JSONObject ret = new JSONObject();
 			for(String dt : counts.keySet()){				
 				Map<String, Integer> currentCount = counts.get(dt);
@@ -143,22 +141,17 @@ public class ReqCtrlWebScript extends AbstractProductWebscript {
 				}
 				ret.put(dt, tmp);
 			}
-			/*
-			JSONObject scoresObject = new JSONObject();
-			scoresObject.put("compo", product.getComponentCompletion() != null ? product.getComponentCompletion() : 0d);
-			scoresObject.put("charact", product.getCharacteristicsCompletion()!= null ? product.getCharacteristicsCompletion() : 0d);
-			scoresObject.put("total", product.getCompletionPercent()!= null ? product.getCompletionPercent() : 0d);
-			scoresObject.put("specif", product.getSpecificationsRespect()!= null ? product.getSpecificationsRespect() : 0d);*/
-			JSONObject scores = new JSONObject(product.getProductScores());
-			
-			
-			ret.put("scores", scores);
 
-			if(logger.isDebugEnabled()){
-				logger.debug("ret : "+ret);
-				logger.debug("scores="+scores);
+			//might be null if product has never been formulated, if not put it in res
+			if(product.getProductScores() != null){
+				JSONObject scores = new JSONObject(product.getProductScores());
+				ret.put("scores", scores);
+				if(logger.isDebugEnabled()){
+					logger.debug("ret : "+ret);
+					logger.debug("scores="+scores);
+				}
 			}
-			
+
 			res.setContentType("application/json");
 			res.setContentEncoding("UTF-8");
 			ret.write(res.getWriter());
