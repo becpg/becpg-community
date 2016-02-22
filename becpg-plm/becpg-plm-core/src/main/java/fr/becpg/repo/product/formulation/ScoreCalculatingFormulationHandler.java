@@ -97,9 +97,9 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 		childrenScores[0] = childScore;
 		childrenScores[1] = childrenSize;
 
-//		if (logger.isDebugEnabled()) {
-//			logger.debug("calculating score of " + product.getName() + ", state=" + product.getState());
-//		}
+		if (logger.isDebugEnabled()) {
+			logger.debug("Calculating score of " + product.getName() + ", state=" + product.getState());
+		}
 
 		// visits all refs and adds rclDataItem to them if required
 
@@ -113,11 +113,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 		for (ProcessListDataItem process : product.getProcessList()) {
 			visitProduct(process, childrenScores, product.getProcessListView());
 		}
-
-//		if (logger.isDebugEnabled()) {
-//			logger.debug("end of all visits, childScore=" + childrenScores[0] + ", childrenSize=" + childrenScores[1]);
-//		}
-
+		
 		// checks if mandatory fields are present
 		JSONObject mandatoryFieldsRet = calculateMandatoryFieldsScore(product.getNodeRef(), product);
 		Integer specificationsScore = calculateSpecificationScore(product); 
@@ -134,7 +130,6 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 			while(iterator.hasNext()){
 				String key = (String) iterator.next();
 				mandatoryFieldsScore+=mandatoryFieldsScores.getDouble(key);
-//				logger.debug("reading key "+key+", score="+mandatoryFieldsScores.getDouble(key));
 				i++;
 			}
 
@@ -151,12 +146,12 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 		// done computing scores, setting intermediate global score var to sum
 		// of those
 
-//		if (logger.isDebugEnabled()) {
-//			logger.debug("Children score=" + childrenScores[0] + ", childrenSize=" + childrenScores[1] + ", completion="
-//					+ (componentsValidationScore * 100) + "%");
-//			logger.debug("specificationScore=" + specificationsScore + "%");
-//			logger.debug("Global score=" + (completionPercent)+"%");
-//		}
+		if (logger.isDebugEnabled()) {
+			logger.debug("Children score=" + childrenScores[0] + ", childrenSize=" + childrenScores[1] + ", completion="
+					+ (componentsValidationScore * 100) + "%");
+			logger.debug("specificationScore=" + specificationsScore + "%");
+			logger.debug("Global score=" + (completionPercent)+"%");
+		}
 
 		JSONObject scores = new JSONObject();
 		JSONObject details = new JSONObject();
@@ -175,9 +170,9 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 			logger.error("error putting details in scores json");
 		}
 
-//		if(logger.isDebugEnabled()){
-//			logger.debug("scores="+scores);
-//		}
+		if(logger.isDebugEnabled()){
+			logger.debug("scores="+scores+"\n====================================================");
+		}
 		product.setProductScores(scores.toString());
 
 		return true;
@@ -195,9 +190,6 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 	public void visitProduct(CompositionDataItem dataItem, Double[] childrenArray, AbstractProductDataView view) {
 		if (dataItem.getComponent() != null) {
 			if (!checkProductValidity(dataItem.getComponent())) {
-//				if (logger.isDebugEnabled()) {
-//					logger.debug("component is not validated, childScore=" + childrenArray[0]);
-//				}
 				view.getReqCtrlList().add(createValidationRclDataItem(dataItem.getComponent()));
 			} else {
 				childrenArray[0] += 1;
@@ -263,9 +255,6 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 		JSONArray catalogs;
 
 		try {
-//			if(logger.isDebugEnabled()){
-//				logger.debug("mandatoryFields (should be JSON) : "+mandatoryFields);
-//			}
 			catalogs = new JSONArray(mandatoryFields);
 		} catch (JSONException e1) {
 			logger.error("unable to create catalog json object from mandatory fields");
@@ -284,7 +273,6 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 			JSONObject currentCatalog=null;
 			String id="id";
 			String label="label";
-			//JSONArray locales=null;
 			JSONArray fields=new JSONArray();
 			missingFieldsArray = new JSONArray();
 
@@ -292,15 +280,10 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 				currentCatalog = catalogs.getJSONObject(i);
 				id = currentCatalog.getString("id");
 				label = currentCatalog.getString("label");
-				//locales = currentCatalog.getJSONArray("locales");
 				fields = currentCatalog.getJSONArray("fields");
 			} catch (JSONException e){
 				logger.error("unable to read a property from json : "+e.getLocalizedMessage());
 			}
-
-//			if(logger.isDebugEnabled()){
-//				logger.debug("read catalog, id="+id+", label="+label+", fields="+fields);
-//			}
 
 			if(currentCatalog != null){
 				String field ="";
@@ -310,11 +293,6 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 					} catch (JSONException e) {
 						logger.error("error while parsing field of index "+j);
 					}
-
-//					if (logger.isDebugEnabled()) {
-//						logger.debug("Checking if node has field " + field + "...");
-//					}
-
 					qname = QName.createQName(field, namespaceService);
 					assoc = associationService.getTargetAssocs(nodeRef, qname);
 					assocDesc  = dictionaryService.getAssociation(qname);
@@ -338,10 +316,6 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 					}
 
 					if (!hasAssoc && !hasProp) {
-//						if (logger.isDebugEnabled()) {
-//							logger.debug("...no it doesn't.");
-//						}
-
 						violatedMandatoryFields++;
 						String fieldMessage = "";
 
@@ -372,9 +346,6 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 							dat.getPackagingListView().getReqCtrlList().add(rclDataItem);
 						}
 						missingFieldsArray.put(field);
-//						if(logger.isDebugEnabled()){
-//							logger.debug("added field "+field+" to array, array="+missingFieldsArray);
-//						}
 					}
 
 					mandatoryFieldsVisited++;
@@ -398,12 +369,6 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 		} catch (JSONException e) {
 			logger.error("unable to serialize scores or missing fields array");
 		}
-
-//		if (logger.isDebugEnabled()) {
-//			logger.debug("Mandatory fields visited=" + mandatoryFieldsVisited + ", violated=" + violatedMandatoryFields + ", catalogsScores="
-//					+ catalogsScores + "%");
-//			logger.debug("Ret="+ret.toString());
-//		}
 		return ret;
 	}
 
@@ -417,16 +382,23 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 	public Integer calculateSpecificationScore(ProductData product) {
 		int specificationScore = 100;
 
-//		if (logger.isDebugEnabled()) {
-//			logger.debug("\nChecking forbidden ctrl on " + product.getName() + "\n");
-//		}
 
-		for (ReqCtrlListDataItem ctrl : product.getCompoListView().getReqCtrlList()) {
-			if ((ctrl.getName() != null) && (ctrl.getReqDataType() == RequirementDataType.Specification)
+		List<ReqCtrlListDataItem> ctrls = new ArrayList<ReqCtrlListDataItem>();
+		ctrls.addAll(product.getCompoListView().getReqCtrlList());
+		ctrls.addAll(product.getPackagingListView().getReqCtrlList());
+		ctrls.addAll(product.getProcessListView().getReqCtrlList());
+		
+		for (ReqCtrlListDataItem ctrl : ctrls) {
+			
+			if(logger.isDebugEnabled()){
+				logger.debug("checking ctrl"+ctrl);
+			}
+			
+			if ((ctrl.getReqDataType() == RequirementDataType.Specification)
 					&& (ctrl.getReqType() == RequirementType.Forbidden)) {
-//				if (logger.isDebugEnabled()) {
-//					logger.debug(ctrl.getName() + " is forbidden, -10%");
-//				}
+				if (logger.isDebugEnabled()) {
+					logger.debug(ctrl.getName() + " is forbidden, -10%");
+				}
 				specificationScore = Math.max(specificationScore - 10, 0);
 
 			}

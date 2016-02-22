@@ -1,30 +1,37 @@
 package fr.becpg.test.repo.product.formulation;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.NamespaceService;
+import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.Test;
 
 import fr.becpg.model.PLMModel;
+import fr.becpg.model.SystemState;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.FinishedProductData;
+import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.CompoListUnit;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
-import fr.becpg.repo.product.data.constraints.LabelingRuleType;
-import fr.becpg.repo.product.data.constraints.ProductUnit;
+import fr.becpg.repo.product.data.constraints.PackagingLevel;
+import fr.becpg.repo.product.data.constraints.PackagingListUnit;
+import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
-import fr.becpg.repo.product.data.productList.CostListDataItem;
-import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
-import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
-import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
-import fr.becpg.repo.product.data.productList.NutListDataItem;
+import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
+import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
 public class ScoreCalculatingTest extends AbstractFinishedProductTest {
@@ -42,144 +49,144 @@ public class ScoreCalculatingTest extends AbstractFinishedProductTest {
 	}
 
 	@Test
-	public void computeScore(){
-		
-		//TODO make a test..
-	}
-	
-	
-	protected NodeRef createFullProductNodeRef(final String name) {
-		return transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
-			public NodeRef execute() throws Throwable {
+	public void testScore(){
 
-				/*-- Create finished product --*/
-				logger.info("/*-- Create finished product --*/");
-				FinishedProductData finishedProduct = new FinishedProductData();
-				finishedProduct.setName(name);
-				finishedProduct.setLegalName("Legal "+name);
-				finishedProduct.setUnit(ProductUnit.kg);
-				finishedProduct.setQty(2d);
-				finishedProduct.setUnitPrice(22.4d);
-				finishedProduct.setDensity(1d);
-				finishedProduct.setServingSize(50d);//50g
-				finishedProduct.setProjectedQty(10000l);
-				List<CompoListDataItem> compoList = new ArrayList<>();
-				compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF1NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(0), null, 2d, CompoListUnit.kg, 0d, DeclarationType.Detail, rawMaterial2NodeRef));
-				compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Detail, localSF2NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial3NodeRef));
-				compoList.add(new CompoListDataItem(null, compoList.get(3), null, 3d, CompoListUnit.kg, 0d, DeclarationType.Omit, rawMaterial4NodeRef));
-				finishedProduct.getCompoListView().setCompoList(compoList);
+		//create FP
+		NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-				List<CostListDataItem> costList = new ArrayList<>();
-				costList.add(new CostListDataItem(null, 4000d, "€", null, fixedCost, true));
-				costList.add(new CostListDataItem(null, null, null, null, cost1, null));
-				costList.add(new CostListDataItem(null, null, null, null, cost2, null));
-				finishedProduct.setCostList(costList);
+			FinishedProductData finishedProduct = new FinishedProductData();
 
-				List<NutListDataItem> nutList = new ArrayList<>();
-				nutList.add(new NutListDataItem(null, null, null, null, null, null, nut1, null));
-				nutList.add(new NutListDataItem(null, null, null, null, null, null, nut2, null));
-				nutList.add(new NutListDataItem(null, null, null, null, null, null, nut3, null));
-				finishedProduct.setNutList(nutList);
+			/**
+			 * Raw Material part
+			 */
+			ProductData rawMaterial1 = alfrescoRepository.findOne(rawMaterial1NodeRef);
+			rawMaterial1.setState(SystemState.Valid);
+			alfrescoRepository.save(rawMaterial1);
 
-				List<DynamicCharactListItem> dynamicCharactListItems = new ArrayList<>();
-				//Product
-				dynamicCharactListItems.add(new DynamicCharactListItem("Product qty 1", "qty"));
-				// Literal formula
-				dynamicCharactListItems.add(new DynamicCharactListItem("Literal 1", "'Hello World'"));
-				dynamicCharactListItems.add(new DynamicCharactListItem("Literal 2", "6.0221415E+23"));
-				dynamicCharactListItems.add(new DynamicCharactListItem("Literal 3", "1+1+10-(4/100)"));
-				dynamicCharactListItems.add(new DynamicCharactListItem("Literal 4", "0x7dFFFFFF"));
-				dynamicCharactListItems.add(new DynamicCharactListItem("Literal 5", "true"));
-				dynamicCharactListItems.add(new DynamicCharactListItem("Literal 6", "null"));
-				// Properties formulae
-				dynamicCharactListItems.add(new DynamicCharactListItem("Property  1", "costList[0].value"));
-				dynamicCharactListItems.add(new DynamicCharactListItem("Property  1Bis", "costList[1].value"));
-				dynamicCharactListItems.add(new DynamicCharactListItem("Property  2", "costList[0].unit"));
-				dynamicCharactListItems.add(new DynamicCharactListItem("Property  3", "costList[0].value / costList[1].value"));
-				dynamicCharactListItems.add(new DynamicCharactListItem("Property  4", "profitability"));
-				dynamicCharactListItems.add(new DynamicCharactListItem("Collection Selection  1", "costList.?[value == 4.0][0].unit"));
-				dynamicCharactListItems.add(new DynamicCharactListItem("Collection Selection  2", "costList.?[value < 5.0][0].value"));
-				dynamicCharactListItems.add(new DynamicCharactListItem("Collection Projection  1", "costList.![value]"));
-				// Variables
-				dynamicCharactListItems.add(new DynamicCharactListItem("Variable  1", "compoListView.dynamicCharactList.?[title == 'Property  1' ][0].value"));
-				// Template need Template Context
-				// dynamicCharactListItems.add(new
-				// DynamicCharactListItem("Template  1","Cost1/Cost2 : #{costList[1].value / costList[2].value}% Profitability : #{profitability}"
-				// ));
-				// Elvis
-				dynamicCharactListItems.add(new DynamicCharactListItem("Elvis  1", "null?:'Unknown'"));
-				// Boolean
-				dynamicCharactListItems.add(new DynamicCharactListItem("Boolean  1", "costList[1].value > 1"));
-				// Assignment
-				dynamicCharactListItems.add(new DynamicCharactListItem("Assignement  1", "nutList.?[nut.toString() == '" + nut1 + "' ][0].value = 4d"));
-				
-				//Spel method
-				dynamicCharactListItems.add(new DynamicCharactListItem(" beCPG findOne","@beCPG.findOne(nodeRef).qty"));
-				
-				dynamicCharactListItems.add(new DynamicCharactListItem(" beCPG propValue","@beCPG.propValue(nodeRef,'bcpg:productQty')"));
+			ProductData rawMaterial5 = alfrescoRepository.findOne(rawMaterial5NodeRef);
+			rawMaterial5.setState(SystemState.ToValidate);
+			alfrescoRepository.save(rawMaterial5);
 
-				//Formulate twice
-				dynamicCharactListItems.add(new DynamicCharactListItem("Formulate twice","reformulateCount=1"));
-				
-				// DynamicColumn
+			ProductData rawMaterial6 = alfrescoRepository.findOne(rawMaterial6NodeRef);
+			rawMaterial6.setState(SystemState.Refused);
+			alfrescoRepository.save(rawMaterial6);
 
-				DynamicCharactListItem dynCol = new DynamicCharactListItem("Col Dyn 1", "entity.costList[0].value + dataListItem.qty");
-				dynCol.setColumnName("bcpg_dynamicCharactColumn1");
-				dynamicCharactListItems.add(dynCol);
+			ProductData rawMaterial11 = alfrescoRepository.findOne(rawMaterial11NodeRef);
+			rawMaterial11.setState(SystemState.Archived);
+			alfrescoRepository.save(rawMaterial11);
 
-				dynCol = new DynamicCharactListItem(
-						"Col Dyn 2",
-						"dataListItem.parent!=null ? entity.costList[0].value + dataListItem.qty : sum(entity.compoListView.compoList.?[parent == #root.dataListItem],\"entity.costList[0].value + dataListItem.qty\" )");
+			ProductData rawMaterial12 = alfrescoRepository.findOne(rawMaterial12NodeRef);
+			rawMaterial12.setState(SystemState.Valid);
+			alfrescoRepository.save(rawMaterial12);
 
-				// "dataListItem.parent!=null ? entity.costList[0].value + dataListItem.qty : sum(children(dataListItem),\"entity.costList[0].value + dataListItem.qty\" )"
-				// "dataListItem.parent!=null ? entity.costList[0].value + dataListItem.qty : sum(entity.compoListView.compoList.?[parent == #root.dataListItem],\"entity.costList[0].value + dataListItem.qty\" )"
+			List<CompoListDataItem> compoList = new ArrayList<CompoListDataItem>();
+			compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+			compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial5NodeRef));
+			compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial6NodeRef));
+			compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial11NodeRef));
+			compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial12NodeRef));
+			finishedProduct.getCompoListView().setCompoList(compoList);
 
-				dynCol.setColumnName("bcpg_dynamicCharactColumn2");
-				dynamicCharactListItems.add(dynCol);
-				
-			    dynCol = new DynamicCharactListItem("Col Dyn 3", "entity.costList[0].value + dataListItem.qty");
-				dynCol.setColumnName("bcpg_dynamicCharactColumn3");
-				dynCol.setMultiLevelFormula(true);
-				dynamicCharactListItems.add(dynCol);
 
-				finishedProduct.getCompoListView().setDynamicCharactList(dynamicCharactListItems);
+			/**
+			 * Packaging part
+			 */
+			ProductData packaging1 = alfrescoRepository.findOne(packagingMaterial1NodeRef);
+			packaging1.setState(SystemState.Valid);
+			alfrescoRepository.save(packaging1);
 
-				// Claim List
+			ProductData packaging2 = alfrescoRepository.findOne(packagingMaterial2NodeRef);
+			packaging2.setState(SystemState.ToValidate);
+			alfrescoRepository.save(packaging2);
 
-				List<LabelClaimListDataItem> labelClaimListDataItems = new ArrayList<>();
+			ProductData packagingKit = alfrescoRepository.findOne(packagingKit1NodeRef);
+			packagingKit.setState(SystemState.Simulation);
+			alfrescoRepository.save(packagingKit);
 
-				nodeService.setProperty(labelClaims.get(0), PLMModel.PROP_LABEL_CLAIM_FORMULA, "((nutList.?[nut.toString() == '" + nut1
-						+ "'][0].value < 40 and unit != T(fr.becpg.repo.product.data.constraints.ProductUnit).L and unit != T(fr.becpg.repo.product.data.constraints.ProductUnit).mL )"
-						+ " or (nutList.?[nut.toString() == '" + nut1
-						+ "'][0].value < 20 and (unit == T(fr.becpg.repo.product.data.constraints.ProductUnit).L or unit== T(fr.becpg.repo.product.data.constraints.ProductUnit).mL )))"
-						+ " and (nutList.?[nut.toString() == '" + nut1 + "'][0].value > 4 )");
-				nodeService.setProperty(labelClaims.get(1), PLMModel.PROP_LABEL_CLAIM_FORMULA, "nutList.?[nut.toString() == '" + nut1 + "'][0].value <= 4");
+			List<PackagingListDataItem> packagingList = new ArrayList<PackagingListDataItem>();
+			packagingList.add(new PackagingListDataItem(null, 1d, PackagingListUnit.kg, PackagingLevel.Primary, false, packagingMaterial1NodeRef));
+			packagingList.add(new PackagingListDataItem(null, 1d, PackagingListUnit.kg, PackagingLevel.Primary, false, packagingMaterial2NodeRef));
+			packagingList.add(new PackagingListDataItem(null, 1d, PackagingListUnit.kg, PackagingLevel.Secondary, true, packagingKit1NodeRef));
+			finishedProduct.getPackagingListView().setPackagingList(packagingList);
 
-				labelClaimListDataItems.add(new LabelClaimListDataItem(labelClaims.get(0), "Nutritionnelle", false));
-				labelClaimListDataItems.add(new LabelClaimListDataItem(labelClaims.get(1), "Nutritionnelle", false));
+			finishedProduct.setLegalName("Finished Product 1");
 
-				finishedProduct.setLabelClaimList(labelClaimListDataItems);
 
-				List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
-				labelingRuleList.add(new LabelingRuleListDataItem("Test", "render()", LabelingRuleType.Render));
+		}, false, true);
 
-				LabelingRuleListDataItem percRule = new LabelingRuleListDataItem("%", "{0} {1,number,0.#%}", LabelingRuleType.Format);
-				percRule.setComponents(Arrays.asList(ing2, ing3, ing4));
-				labelingRuleList.add(percRule);
-				labelingRuleList.add(new LabelingRuleListDataItem("Param1", "detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
-				
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			
+			/**
+			 * Spec
+			 */
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(ContentModel.PROP_NAME, "Spec1");
+			NodeRef productSpecificationNodeRef1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, 
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, 
+							(String)properties.get(ContentModel.PROP_NAME)), 
+					PLMModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
 
-				labelingRuleList.add(new LabelingRuleListDataItem("Langue", "fr,en", LabelingRuleType.Locale));
-				
-				finishedProduct.getLabelingListView().setLabelingRuleList(labelingRuleList);
+			ProductSpecificationData specifications = (ProductSpecificationData) alfrescoRepository.findOne(productSpecificationNodeRef1);
+			List<ForbiddenIngListDataItem> forbiddenIngList2 = new ArrayList<>();
+			
+			ings = new ArrayList<>();
+			List<NodeRef> geoOrigins = new ArrayList<NodeRef>();
+			ings.add(ing2);				
+			geoOrigins.add(geoOrigin2);
+			forbiddenIngList2.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "Ing2 geoOrigin2 interdit sur charcuterie", null, null, null, ings, geoOrigins, new ArrayList<>()));
+			
+			specifications.setForbiddenIngList(forbiddenIngList2);
+			alfrescoRepository.save(specifications);
 
-				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+			nodeService.createAssociation(finishedProductNodeRef, productSpecificationNodeRef1, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
+			return null;
+			
+		}, false, true);
 
-			}
+
+		//formulate and check FP score
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			productService.formulate(finishedProductNodeRef);			
+			ProductData finishedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+
+			assertNotNull(finishedProduct.getProductScores());
+			JSONObject scoresObject = new JSONObject(finishedProduct.getProductScores());
+			logger.info("Scores JSON object="+scoresObject);
+
+			int validationScore = (int) (scoresObject.getJSONObject("details").getDouble("componentsValidation")*100);
+			int specificationsScore = scoresObject.getJSONObject("details").getInt("specifications");
+			int mandatoryFieldsScore = (int) (scoresObject.getJSONObject("details").getDouble("mandatoryFields")*100);
+			int globalScore = (int) (scoresObject.getDouble("global"));		
+			
+			logger.info("ValidationScore="+validationScore);
+			logger.info("SpecificationsScore="+specificationsScore);
+			logger.info("MandatoryFieldsScore="+mandatoryFieldsScore);
+
+			assertEquals(37, validationScore);
+			assertEquals(90, specificationsScore);
+			assertEquals(33, mandatoryFieldsScore);
+			assertEquals(53, globalScore);
+			
+
+			JSONObject missingFields = scoresObject.getJSONObject("missingFields");
+			assertNotNull(missingFields);
+			
+			assertEquals(1,missingFields.length());
+			JSONArray missingFieldsArray = missingFields.getJSONArray("std");
+			assertNotNull(missingFieldsArray);
+			assertEquals(2,missingFieldsArray.length());
+			String missingFieldsString = missingFieldsArray.toString();
+			assertTrue(missingFieldsString.contains("bcpg:productHierarchy1"));
+			assertTrue(missingFieldsString.contains("bcpg:productHierarchy2"));
+			
+			
+			return null;
 		}, false, true);
 	}
+
+
+
 }
