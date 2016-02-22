@@ -1780,7 +1780,11 @@
 				<property name="bcpg:filReqMessage">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="false" />
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>false</tokenised>
+					</index>
 				</property>
 				<property name="bcpg:filQtyPercMaxi">
 					<type>d:double</type>
