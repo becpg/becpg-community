@@ -40,10 +40,12 @@ function main()
    // Add Profile link
    addLink("profile-link", "profile", "link.info");
    //Add delegations
-   
-   if(!isExternalUser(user))
-   {	   
-	   addLink("user-delegation-link", "user-delegation?nodeRef="+getPersonNodeRef(user), "link.delegation");
+   if (model.activeUserProfile)
+   {
+	   if(!isExternalUser(user))
+	   {	   
+		   addLink("user-delegation-link", "user-delegation?nodeRef="+getPersonNodeRef(user), "link.delegation");
+	   }
    }
    // Add User Sites link
    addLink("user-sites-link", "user-sites", "link.sites");
