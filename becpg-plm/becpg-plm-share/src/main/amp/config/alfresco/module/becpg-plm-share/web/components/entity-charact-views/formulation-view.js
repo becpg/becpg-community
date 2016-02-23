@@ -139,7 +139,7 @@
 	
 				//if we have some constraints in res
 				if((Object.keys(object).length > 1 && object.scores !== undefined) || (Object.keys(object).length > 0 && object.scores === undefined)){
-					html+="<div class=\"rclFilterElt\">";
+					html+="<div class=\"rclFilterElt\"><div>";
 					for(var dataType in object){
 	
 						if(dataType !== "scores"){
@@ -155,7 +155,7 @@
 							html+="</ul></div>";
 						}
 					}
-					html+="</div></div>";
+					html+="</div></div></div>";
 				}
 				
 				html+="</div>";
