@@ -14,7 +14,8 @@
 **/
 .formulation-view  .datagrid .scrollableList {
 	padding: 0;
-	height: 208px;
+	height: auto;
+	max-height:208px;
 }
 
 .formulation-view  .datagrid {
@@ -23,6 +24,7 @@
 
 .formulation-view  .dashlet {
 	z-index: auto;
+	margin: 20px 0 0;
 }
 
 .formulation-view  .dashlet  .toolbar {
@@ -158,6 +160,12 @@
 	margin: 5px;
 }
 
+.rclFilterElt > div {
+	overflow-y: auto;
+	max-height: 62px;
+	height: auto;
+}
+
 div.dataTypeList span.req-all-all{
 	margin: 0px 5px 5px;
 }
@@ -166,7 +174,10 @@ div.dataTypeList .title {
 	margin-bottom: 5px;	
 }
 
-
+.rclReq-details ul {
+	max-height: 64px;
+	overflow-y: auto;
+}
 
 .dataTypeList .rclFilterSelected {
 /* 	border:	2px solid #446CD7 !important; */
@@ -204,7 +215,7 @@ span.req-all-all, .dataTypeList .rclFilterElt li{
 
 #scoreLi{
 	background-image: url("../../components/images/states/percent-gauges-sprite.jpg");
-	margin: 0.7em;
+	margin: 0.2em 0.5em 0.5em;
 	display:inline-block;
 }
 
