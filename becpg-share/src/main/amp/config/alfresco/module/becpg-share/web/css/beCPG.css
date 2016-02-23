@@ -286,27 +286,27 @@ span.variant-default {
 
 span.entity,
 .entity {
-    background-image: url("../../components/images/filetypes/generic-entity-16.png") !important;
+    background-image: url("../../components/images/filetypes/generic-entity-16.png") ;
     padding-left: 20px;
     background-repeat: no-repeat
 }
 
 span.dataList {
-    background-image: url("../../components/images/list-16.png") !important;
+    background-image: url("../../components/images/list-16.png") ;
     padding-left: 20px;
     background-repeat: no-repeat
 }
 
 span.linkedValue,
 span.listValue {
-    background-image: url("../../components/images/generic-file-16.png") !important;
+    background-image: url("../../components/images/generic-file-16.png");
     padding-left: 20px;
     background-repeat: no-repeat
 }
 
 span.client,
 .entity.client {
-    background-image: url("../../components/images/filetypes/generic-client-16.png") !important;
+    background-image: url("../../components/images/filetypes/generic-client-16.png") ;
     padding-left: 20px;
     background-repeat: no-repeat
 }
@@ -314,7 +314,7 @@ span.client,
 span.supplier,
 .entity.bcpg-supplier,
 .entity.supplier {
-    background-image: url("../../components/images/filetypes/generic-supplier-16.png") !important;
+    background-image: url("../../components/images/filetypes/generic-supplier-16.png");
     padding-left: 20px;
     background-repeat: no-repeat
 }
@@ -323,225 +323,219 @@ span.supplier,
 
 
 span.productCatalog {
-    background-image: url("../../components/images/filetypes/generic-productCatalog-16.png") !important;
+    background-image: url("../../components/images/filetypes/generic-productCatalog-16.png");
     padding-left: 20px;
     background-repeat: no-repeat
 }
 
 span.product,
-span.finishedProduct,
-span.finishedProduct-ToValidate,
+.finishedProduct,
+.finishedProduct-ToValidate,
 .entity.bcpg-finishedProduct,
 .entity.finishedProduct  {
-    background-image: url("../../components/images/filetypes/generic-finishedProduct-16.png") !important;
-    padding-left: 20px;
+    background-image: url("../../components/images/filetypes/generic-finishedProduct-16.png");
+    padding-left: 25px;
     background-repeat: no-repeat
 }
 
-span.localSemiFinishedProduct,
-span.localSemiFinishedProduct-ToValidate,
+.localSemiFinishedProduct,
+.localSemiFinishedProduct-ToValidate,
 .entity.bcpg-localSemiFinishedProduct,
 .entity.localSemiFinishedProduct {
-    background-image: url("../../components/images/filetypes/generic-localSemiFinishedProduct-16.png") !important;
-    padding-left: 20px;
+    background-image: url("../../components/images/filetypes/generic-localSemiFinishedProduct-16.png");
+    padding-left: 25px;
     background-repeat: no-repeat
 }
 
-span.packagingKit,
-span.packagingKit-ToValidate,
+.packagingKit,
+.packagingKit-ToValidate,
 .entity.bcpg-packagingKit,
 .entity.packagingKit {
-    background-image: url("../../components/images/filetypes/generic-packagingKit-16.png") !important;
-    padding-left: 20px;
+    background-image: url("../../components/images/filetypes/generic-packagingKit-16.png");
+    padding-left: 25px;
     background-repeat: no-repeat
 }
-span.packagingMaterial,
-span.packagingMaterial-ToValidate,
+.packagingMaterial,
+.packagingMaterial-ToValidate,
 .entity.bcpg-packagingMaterial,
 .entity.packagingMaterial {
-    background-image: url("../../components/images/filetypes/generic-packagingMaterial-16.png") !important;
-    padding-left: 20px;
+    background-image: url("../../components/images/filetypes/generic-packagingMaterial-16.png");
+    padding-left: 25px;
     background-repeat: no-repeat
 }
-span.rawMaterial,
-span.rawMaterial-ToValidate,
+.rawMaterial,
+.rawMaterial-ToValidate,
 .entity.bcpg-rawMaterial,
 .entity.rawMaterial  {
-    background-image: url("../../components/images/filetypes/generic-rawMaterial-16.png") !important;
-    padding-left: 20px;
+    background-image: url("../../components/images/filetypes/generic-rawMaterial-16.png");
+    padding-left: 25px;
     background-repeat: no-repeat
 }
 
-span.semiFinishedProduct,
-span.semiFinishedProduct-ToValidate,
+.semiFinishedProduct,
+.semiFinishedProduct-ToValidate,
 .entity.bcpg-semiFinishedProduct,
 .entity.semiFinishedProduct {
-    background-image: url("../../components/images/filetypes/generic-semiFinishedProduct-16.png") !important;
-    padding-left: 20px;
+    background-image: url("../../components/images/filetypes/generic-semiFinishedProduct-16.png");
+    padding-left: 25px;
     background-repeat: no-repeat
 }
 
-span.resourceProduct,
-span.resourceProduct-ToValidate,
+.resourceProduct,
+.resourceProduct-ToValidate,
 .entity.bcpg-resourceProduct,
 .entity.resourceProduct {
-    background-image: url("../../components/images/filetypes/generic-resourceProduct-16.png") !important;
-    padding-left: 20px;
+    background-image: url("../../components/images/filetypes/generic-resourceProduct-16.png");
+    padding-left: 25px;
     background-repeat: no-repeat
 }
 
-span.finishedProduct-Archived,
-span.finishedProduct-Refused,
-span.finishedProduct-Simulation,
-span.finishedProduct-Valid,
-span.finishedProduct-ToValidate,
-span.localSemiFinishedProduct-Archived,
-span.localSemiFinishedProduct-Refused,
-span.localSemiFinishedProduct-Simulation,
-span.localSemiFinishedProduct-Valid,
-span.localSemiFinishedProduct-ToValidate,
-span.packagingKit-Archived,
-span.packagingKit-Refused,
-span.packagingKit-Simulation,
-span.packagingKit-Valid,
-span.packagingKit-ToValidate,
-span.packagingMaterial-Archived,
-span.packagingMaterial-Refused,
-span.packagingMaterial-Simulation,
-span.packagingMaterial-Valid,
-span.packagingMaterial-ToValidate,
-span.rawMaterial-Archived,
-span.rawMaterial-Refused,
-span.rawMaterial-Simulation,
-span.rawMaterial-Valid,
-span.rawMaterial-ToValidate,
-span.resourceProduct-Archived,
-span.resourceProduct-Refused,
-span.resourceProduct-Simulation,
-span.resourceProduct-Valid,
-span.resourceProduct-ToValidate,
-span.semiFinishedProduct-Archived,
-span.semiFinishedProduct-Refused,
-span.semiFinishedProduct-Simulation,
-span.semiFinishedProduct-Valid,
-span.semiFinishedProduct-ToValidate {
+.finishedProduct-Archived,
+.finishedProduct-Refused,
+.finishedProduct-Simulation,
+.finishedProduct-Valid,
+.finishedProduct-ToValidate,
+.localSemiFinishedProduct-Archived,
+.localSemiFinishedProduct-Refused,
+.localSemiFinishedProduct-Simulation,
+.localSemiFinishedProduct-Valid,
+.localSemiFinishedProduct-ToValidate,
+.packagingKit-Archived,
+.packagingKit-Refused,
+.packagingKit-Simulation,
+.packagingKit-Valid,
+.packagingKit-ToValidate,
+.packagingMaterial-Archived,
+.packagingMaterial-Refused,
+.packagingMaterial-Simulation,
+.packagingMaterial-Valid,
+.packagingMaterial-ToValidate,
+.rawMaterial-Archived,
+.rawMaterial-Refused,
+.rawMaterial-Simulation,
+.rawMaterial-Valid,
+.rawMaterial-ToValidate,
+.resourceProduct-Archived,
+.resourceProduct-Refused,
+.resourceProduct-Simulation,
+.resourceProduct-Valid,
+.resourceProduct-ToValidate,
+.semiFinishedProduct-Archived,
+.semiFinishedProduct-Refused,
+.semiFinishedProduct-Simulation,
+.semiFinishedProduct-Valid,
+.semiFinishedProduct-ToValidate {
     padding-left: 25px;
     background-repeat: no-repeat;
-    background-position: 14px 6px, 0 0
+    background-position: 10px 8px, 0 0
 }
 
 
-span.finishedProduct-ToValidate {
+.finishedProduct-ToValidate {
     background-image: url("../../components/images/states/tovalidate-10.png") , url("../../components/images/filetypes/generic-finishedProduct-16.png") !important
 }
-span.localSemiFinishedProduct-ToValidate {
+.localSemiFinishedProduct-ToValidate {
     background-image: url("../../components/images/states/tovalidate-10.png") , url("../../components/images/filetypes/generic-localSemiFinishedProduct-16.png") !important
 }
-span.packagingKit-ToValidate {
+.packagingKit-ToValidate {
     background-image: url("../../components/images/states/tovalidate-10.png") , url("../../components/images/filetypes/generic-packagingKit-16.png") !important
 }
-span.packagingMaterial-ToValidate {
+.packagingMaterial-ToValidate {
     background-image: url("../../components/images/states/tovalidate-10.png") , url("../../components/images/filetypes/generic-packagingMaterial-16.png") !important
 }
-span.rawMaterial-ToValidate {
+.rawMaterial-ToValidate {
     background-image: url("../../components/images/states/tovalidate-10.png") , url("../../components/images/filetypes/generic-rawMaterial-16.png") !important
 }
-span.resourceProduct-ToValidate {
+.resourceProduct-ToValidate {
     background-image: url("../../components/images/states/tovalidate-10.png") , url("../../components/images/filetypes/generic-resourceProduct-16.png") !important
 }
-span.semiFinishedProduct-ToValidate {
+.semiFinishedProduct-ToValidate {
     background-image: url("../../components/images/states/tovalidate-10.png") , url("../../components/images/filetypes/generic-semiFinishedProduct-16.png") !important
 }
-
-span.finishedProduct-Valid {
+.finishedProduct-Valid {
     background-image: url("../../components/images/states/valid-10.png") , url("../../components/images/filetypes/generic-finishedProduct-16.png") !important
 }
-span.localSemiFinishedProduct-Valid {
+.localSemiFinishedProduct-Valid {
     background-image: url("../../components/images/states/valid-10.png") , url("../../components/images/filetypes/generic-localSemiFinishedProduct-16.png") !important
 }
-span.packagingKit-Valid {
+.packagingKit-Valid {
     background-image: url("../../components/images/states/valid-10.png") , url("../../components/images/filetypes/generic-packagingKit-16.png") !important
 }
-span.packagingMaterial-Valid {
+.packagingMaterial-Valid {
     background-image: url("../../components/images/states/valid-10.png") , url("../../components/images/filetypes/generic-packagingMaterial-16.png") !important
 }
-span.rawMaterial-Valid {
+.rawMaterial-Valid {
     background-image: url("../../components/images/states/valid-10.png") , url("../../components/images/filetypes/generic-rawMaterial-16.png") !important
 }
-span.semiFinishedProduct-Valid {
+.semiFinishedProduct-Valid {
     background-image: url("../../components/images/states/valid-10.png") , url("../../components/images/filetypes/generic-semiFinishedProduct-16.png") !important
 }
-span.resourceProduct-Valid {
+.resourceProduct-Valid {
     background-image: url("../../components/images/states/valid-10.png") , url("../../components/images/filetypes/generic-resourceProduct-16.png") !important
 }
-span.finishedProduct-Simulation {
+.finishedProduct-Simulation {
     background-image: url("../../components/images/states/simulation-10.png") , url("../../components/images/filetypes/generic-finishedProduct-16.png") !important
 }
-span.localSemiFinishedProduct-Simulation {
+.localSemiFinishedProduct-Simulation {
     background-image: url("../../components/images/states/simulation-10.png") , url("../../components/images/filetypes/generic-localSemiFinishedProduct-16.png") !important
 }
-span.packagingKit-Simulation {
+.packagingKit-Simulation {
     background-image: url("../../components/images/states/simulation-10.png") , url("../../components/images/filetypes/generic-packagingKit-16.png") !important
 }
-span.packagingMaterial-Simulation {
+.packagingMaterial-Simulation {
     background-image: url("../../components/images/states/simulation-10.png") , url("../../components/images/filetypes/generic-packagingMaterial-16.png") !important
 }
-span.rawMaterial-Simulation {
+.rawMaterial-Simulation {
     background-image: url("../../components/images/states/simulation-10.png") , url("../../components/images/filetypes/generic-rawMaterial-16.png") !important
 }
-span.semiFinishedProduct-Simulation {
+.semiFinishedProduct-Simulation {
     background-image: url("../../components/images/states/simulation-10.png") , url("../../components/images/filetypes/generic-semiFinishedProduct-16.png") !important
 }
-span.resourceProduct-Simulation {
+.resourceProduct-Simulation {
     background-image: url("../../components/images/states/simulation-10.png") , url("../../components/images/filetypes/generic-resourceProduct-16.png") !important
 }
-span.finishedProduct-Archived {
+.finishedProduct-Archived {
     background-image: url("../../components/images/states/archived-10.png") , url("../../components/images/filetypes/generic-finishedProduct-16.png") !important
 }
-span.localSemiFinishedProduct-Archived {
+.localSemiFinishedProduct-Archived {
     background-image: url("../../components/images/states/archived-10.png") , url("../../components/images/filetypes/generic-localSemiFinishedProduct-16.png") !important
 }
-span.packagingKit-Archived {
+.packagingKit-Archived {
     background-image: url("../../components/images/states/archived-10.png") , url("../../components/images/filetypes/generic-packagingKit-16.png") !important
 }
-span.packagingMaterial-Archived {
+.packagingMaterial-Archived {
     background-image: url("../../components/images/states/archived-10.png") , url("../../components/images/filetypes/generic-packagingMaterial-16.png") !important
 }
-span.rawMaterial-Archived {
+.rawMaterial-Archived {
     background-image: url("../../components/images/states/archived-10.png") , url("../../components/images/filetypes/generic-rawMaterial-16.png") !important
 }
-span.semiFinishedProduct-Archived {
+.semiFinishedProduct-Archived {
     background-image: url("../../components/images/states/archived-10.png") , url("../../components/images/filetypes/generic-semiFinishedProduct-16.png") !important
 }
-span.resourceProduct-Archived {
+.resourceProduct-Archived {
     background-image: url("../../components/images/states/archived-10.png") , url("../../components/images/filetypes/generic-resourceProduct-16.png") !important
 }
-span.finishedProduct-Refused {
+.finishedProduct-Refused {
     background-image: url("../../components/images/states/refused-10.png") , url("../../components/images/filetypes/generic-finishedProduct-16.png") !important
 }
-span.localSemiFinishedProduct-Refused {
+.localSemiFinishedProduct-Refused {
     background-image: url("../../components/images/states/refused-10.png") , url("../../components/images/filetypes/generic-localSemiFinishedProduct-16.png") !important
 }
-span.packagingKit-Refused {
+.packagingKit-Refused {
     background-image: url("../../components/images/states/refused-10.png") , url("../../components/images/filetypes/generic-packagingKit-16.png") !important
 }
-span.packagingMaterial-Refused {
+.packagingMaterial-Refused {
     background-image: url("../../components/images/states/refused-10.png") , url("../../components/images/filetypes/generic-packagingMaterial-16.png") !important
 }
-span.rawMaterial-Refused {
+.rawMaterial-Refused {
     background-image: url("../../components/images/states/refused-10.png") , url("../../components/images/filetypes/generic-rawMaterial-16.png") !important
 }
-span.semiFinishedProduct-Refused {
+.semiFinishedProduct-Refused {
     background-image: url("../../components/images/states/refused-10.png") , url("../../components/images/filetypes/generic-semiFinishedProduct-16.png") !important
 }
-span.resourceProduct-Refused {
+.resourceProduct-Refused {
     background-image: url("../../components/images/states/refused-10.png") , url("../../components/images/filetypes/generic-resourceProduct-16.png") !important
 }
-
-
-
-
-
 
 /** Characts **/
 
@@ -643,6 +637,7 @@ span.project,
 span.nc,
 .entity.qa-nc,
 .entity.nc
+.nc
  {
     background-image: url("../../components/images/filetypes/generic-nc-16.png") !important;
     padding-left: 20px;
