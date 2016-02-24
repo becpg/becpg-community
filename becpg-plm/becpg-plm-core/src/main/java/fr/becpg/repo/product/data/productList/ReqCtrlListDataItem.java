@@ -95,7 +95,6 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 
 	public void setSources(List<NodeRef> sources) {
 		this.sources = sources;
-//		System.out.println("setting sources of node "+nodeRef+" (msg: "+reqMessage+") to: "+sources);
 	}
 
 	@AlfProp
@@ -132,7 +131,6 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 		this.charact = charact;
 		this.sources = sources;
 		this.reqDataType = reqDataType != null ? reqDataType : RequirementDataType.Nutrient;
-//		System.out.println("new rclDataItem on node "+nodeRef+", message="+reqMessage);
 	}
 
 	@Override

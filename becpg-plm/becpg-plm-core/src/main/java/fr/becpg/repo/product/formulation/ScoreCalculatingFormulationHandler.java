@@ -62,8 +62,6 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 	 */
 	private String mandatoryFields;
 
-
-
 	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
@@ -116,15 +114,19 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 		
 		// checks if mandatory fields are present
 		JSONObject mandatoryFieldsRet = calculateMandatoryFieldsScore(product.getNodeRef(), product);
+		if(logger.isDebugEnabled()){
+			logger.debug("ret: "+mandatoryFieldsRet);
+		}
 		Integer specificationsScore = calculateSpecificationScore(product); 
 		double componentsValidationScore = (childrenScores[1] > 0 ? childrenScores[0] / childrenScores[1] : 1d);
 
 
 		JSONObject mandatoryFieldsScores;
 		double mandatoryFieldsScore = 0d;
+		int i=0;
 		try {
 			mandatoryFieldsScores = mandatoryFieldsRet.getJSONObject("scores");
-			int i=0;
+			
 
 			Iterator iterator = mandatoryFieldsScores.keys();
 			while(iterator.hasNext()){
@@ -136,10 +138,16 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 			if(i>0){
 				mandatoryFieldsScore/=(double)i;
 			}
-		} catch (JSONException e) {
+		} catch (Exception e) {
 			logger.error("unable to compute mandatory fields score from json object");
+			mandatoryFieldsScore=0d;
 		}
 
+		//there was no mandatory fields score: they are all filled
+		if(i==0){
+			mandatoryFieldsScore=1d;
+		}
+		
 		double completionPercent=0d;
 		completionPercent = ((componentsValidationScore * 100) + (mandatoryFieldsScore * 100) + specificationsScore)/3d;
 
@@ -158,14 +166,17 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 
 		try {
 			details.put("mandatoryFields", mandatoryFieldsScore);
-			details.put("mandatoryFieldsDetails", mandatoryFieldsRet.getJSONObject("scores"));
+			if(mandatoryFieldsRet != null){
+				details.put("mandatoryFieldsDetails", mandatoryFieldsRet.getJSONObject("scores"));
+			}
 			details.put("specifications", specificationsScore);
 			details.put("componentsValidation", componentsValidationScore);
 
 			scores.put("global", completionPercent);
 			scores.put("details", details);
-			scores.put("missingFields", mandatoryFieldsRet.get("missingFields"));
-
+			if(mandatoryFieldsRet != null){
+				scores.put("missingFields", mandatoryFieldsRet.get("missingFields"));
+			}
 		} catch (JSONException e) {
 			logger.error("error putting details in scores json");
 		}
@@ -253,10 +264,10 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 		PropertyDefinition property;
 		Map<QName, Serializable> properties;
 		JSONArray catalogs;
-
+		
 		try {
 			catalogs = new JSONArray(mandatoryFields);
-		} catch (JSONException e1) {
+		} catch (Exception e1) {
 			logger.error("unable to create catalog json object from mandatory fields");
 			return null;
 		}
@@ -355,8 +366,10 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 						? (mandatoryFieldsVisited - violatedMandatoryFields) / (double) mandatoryFieldsVisited : 1d;
 
 						try {
-							catalogsMissingFields.put(id, missingFieldsArray);
-							catalogsScores.put(id, currentCatalogsScore);
+							catalogsMissingFields.put(label, missingFieldsArray);
+							//catalogsMissingFields.put(arg0, arg1);
+							catalogsScores.put(label, currentCatalogsScore);
+							
 						} catch (JSONException e) {
 							logger.error("unable to add current catalog missing fields to collection : "+e.getLocalizedMessage());
 						}
@@ -388,12 +401,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 		ctrls.addAll(product.getPackagingListView().getReqCtrlList());
 		ctrls.addAll(product.getProcessListView().getReqCtrlList());
 		
-		for (ReqCtrlListDataItem ctrl : ctrls) {
-			
-			if(logger.isDebugEnabled()){
-				logger.debug("checking ctrl"+ctrl);
-			}
-			
+		for (ReqCtrlListDataItem ctrl : ctrls) {		
 			if ((ctrl.getReqDataType() == RequirementDataType.Specification)
 					&& (ctrl.getReqType() == RequirementType.Forbidden)) {
 				if (logger.isDebugEnabled()) {

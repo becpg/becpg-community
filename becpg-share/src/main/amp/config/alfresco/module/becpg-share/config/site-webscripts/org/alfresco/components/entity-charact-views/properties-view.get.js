@@ -44,7 +44,15 @@ function main()
       var count = documentDetails.item.node.properties["fm:commentCount"];
       model.commentCount = (count != undefined ? count : null);
    // Widget instantiation 
-
+      
+      var entityCatalog = {
+    	         id : "EntityCatalog", 
+    	         name : "beCPG.component.EntityCatalog",
+    	         options : {
+    	        	 entityNodeRef : model.nodeRef
+    	         }
+    	   };
+      
       var propertiesView = {
          id : "Properties", 
          name : "beCPG.component.Properties",
@@ -65,11 +73,10 @@ function main()
          }
       };
       
-      model.widgets = [propertiesView];
+      model.widgets = [propertiesView, entityCatalog];
       
    }
-   
-   
+  
 }
 
 main();
