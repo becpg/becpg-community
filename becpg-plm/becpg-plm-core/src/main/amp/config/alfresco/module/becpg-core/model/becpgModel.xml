@@ -2470,7 +2470,7 @@
 		<aspect name="bcpg:productAspect">
 			<properties>
 				<property name="bcpg:productComments">
-					<type>d:text</type>
+					<type>d:mltext</type>
 				</property>
 				<property name="bcpg:productHierarchy1">
 					<type>d:noderef</type>
