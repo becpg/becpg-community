@@ -84,6 +84,12 @@
 		</columns>
 	</mapping>
 
+	 <mapping name="bcpg:ingTypeItem">
+		<nodeColumnKeys>
+			<nodeColumnKey attribute="bcpg:lvValue" />
+		</nodeColumnKeys>
+	</mapping>
+
 	<mapping name="bcpg:rawMaterial">
 		<nodeColumnKeys>
 			<nodeColumnKey attribute="bcpg:erpCode" />
@@ -95,7 +101,7 @@
 			<column id="bcpg:productHierarchy2" type="Hierarchy"
 				attribute="bcpg:productHierarchy2" parentLevel="bcpg:productHierarchy1"
 				parentLevelAttribute="bcpg:parentLevel" />
-
+			<column id="bcpg:ingTypeV2" attribute="bcpg:ingTypeV2" type="Attribute" targetClass="bcpg:ingTypeItem" />
 			<column id="img1Path" attribute="cm:content" path="Images/product.jpg"
 						type="File" />
 			<column id="img1Name" attribute="cm:name" path="Images/product.jpg"
