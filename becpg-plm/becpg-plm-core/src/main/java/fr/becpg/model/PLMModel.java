@@ -146,6 +146,7 @@ public interface PLMModel {
 	QName PROP_RCL_REQ_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "rclReqType");
 	QName PROP_RCL_REQ_MESSAGE = QName.createQName(BeCPGModel.BECPG_URI, "rclReqMessage");
 	QName ASSOC_RCL_SOURCES = QName.createQName(BeCPGModel.BECPG_URI, "rclSources");
+	
 
 	QName TYPE_DYNAMICCHARACTLIST = QName.createQName(BeCPGModel.BECPG_URI, "dynamicCharactList");
 	QName PROP_DYNAMICCHARACT_TITLE = QName.createQName(BeCPGModel.BECPG_URI, "dynamicCharactTitle");
@@ -241,6 +242,7 @@ public interface PLMModel {
 	QName PROP_PRODUCT_QTY = QName.createQName(BeCPGModel.BECPG_URI, "productQty");
 	QName PROP_PRODUCT_DENSITY = QName.createQName(BeCPGModel.BECPG_URI, "productDensity");
 	QName PROP_PRODUCT_COMMENTS = QName.createQName(BeCPGModel.BECPG_URI, "productComments");
+	QName PROP_PRODUCT_SCORE = QName.createQName(BeCPGModel.BECPG_URI, "productScores");
 	
 	// transformation
 	QName ASPECT_TRANSFORMATION = QName.createQName(BeCPGModel.BECPG_URI, "transformationAspect");	

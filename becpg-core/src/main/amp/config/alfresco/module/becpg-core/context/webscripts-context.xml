@@ -153,6 +153,13 @@
 		<property name="nodeService" ref="nodeService" />
 		<property name="entityTplService" ref="entityTplService" />
 	</bean>
+	
+	<bean id="webscript.fr.becpg.entity.entityCatalog.get" class="fr.becpg.repo.web.scripts.entity.EntityCatalogWebScript" parent="webscript">
+		<property name="nodeService" ref="nodeService" />
+		<property name="dictionaryService" ref="dictionaryService" />
+		<property name="namespaceService" ref="namespaceService" />
+	</bean>
+	
 
 	<!-- Stream report content -->
 	<bean id="webscript.fr.becpg.report.reportContent.get" class="fr.becpg.repo.web.scripts.report.ReportContentGet" parent="webscript">

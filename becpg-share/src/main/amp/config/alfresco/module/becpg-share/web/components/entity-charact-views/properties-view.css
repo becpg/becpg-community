@@ -27,3 +27,62 @@
 .properties-view span.item-separator {
     margin-left: 0.8em;
 }
+
+.properties-view .catalog .catalog-missing-propList {
+	margin-top: 0.5em;
+	padding: 0.5em;
+	border: 1px solid #eee;
+}
+
+.properties-view .catalog .details-button {
+	float: right;
+	cursor: pointer; 
+	cursor: hand;
+}
+
+.properties-view .catalog .selected {
+	background-color: #ddd;
+}
+
+.properties-view .catalog-name {
+	margin-right: 1em;
+	float: left;
+}
+
+.properties-view .catalog {
+	margin-top: 1em;
+	margin-bottom: 0.5em;
+	border: 1px solid #eee;
+}
+
+.properties-view .catalog progress, .properties-view .catalog .score-info {
+	float: right;
+}
+
+.properties-view .catalog .missing-field {
+	background-image: url("../../components/images/states/refused-10.png");
+	padding-left: 20px;
+	background-repeat: no-repeat;
+	background-position: 6px 5px;
+}
+
+.properties-view .catalog-details h3 {
+	margin-left: 0.5em;
+}
+
+.properties-view .catalog-header {
+	overflow: auto;
+}
+
+.properties-view .score-info {
+	margin-left: 1em;
+}
+
+.properties-view .catalog-details {
+	padding: 0.5em;
+}
+
+.properties-view .catalog-missing-propList ul li {
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+}

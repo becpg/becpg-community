@@ -10,6 +10,7 @@
    <#-- JavaScript Dependencies -->
    <#include "../form/form.js.ftl"/>  
    <@script src="${url.context}/res/components/comments/comments-list.js" group="properties-view"/>
+  <@script src="${url.context}/res/components/entity-catalog/entity-catalog.js" group="properties-view"/>
    <@script src="${url.context}/res/components/entity-charact-views/properties-view.js" group="properties-view"/>
    
 
@@ -82,6 +83,10 @@
 				               <div class="clear"></div>
 				            </div>
 				        </div>
+				        
+				        <div id="${el}-entity-catalog">
+				        </div> 
+				        
 		            </div>
 		      </div>
 		     </div> 
