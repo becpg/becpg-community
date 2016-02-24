@@ -405,14 +405,14 @@
 
                                 var metadata = oRecord.getData("metadata");
 
-                                var desc = '<h3 class="itemname' + (metadata ? (' ' + metadata) : '') + '"><a href="' + url + '" class="theme-color-1">' + $html(displayName) + '</a>';
+                                var desc = '<span class="itemname ' + (metadata ? (' ' + metadata) : '') + '"><a href="' + url + '" class="theme-color-1">' + $html(displayName) + '</a>';
                                 // add title (if any) to displayname area
                                 var title = oRecord.getData("title");
                                 if (title && title !== displayName)
                                 {
                                     desc += '<span class="title">(' + $html(title) + ')</span>';
                                 }
-                                desc += '</h3>';
+                                desc += '</span>';
 
                                 // description (if any)
                                 var txt = oRecord.getData("description");
