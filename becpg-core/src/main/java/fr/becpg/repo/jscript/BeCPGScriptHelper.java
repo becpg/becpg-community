@@ -21,14 +21,11 @@ import java.util.Locale;
 
 import org.alfresco.repo.jscript.BaseScopableProcessorExtension;
 import org.alfresco.repo.jscript.ScriptNode;
-import org.alfresco.repo.policy.BehaviourFilter;
-import org.alfresco.repo.policy.PolicyComponent;
 import org.alfresco.service.cmr.quickshare.QuickShareService;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.apache.chemistry.opencmis.commons.impl.jaxb.PolicyService;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.repo.entity.AutoNumService;
@@ -52,7 +49,6 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 	private NamespaceService namespaceService;
 	
-	private BehaviourFilter policyBehaviourFilter;
 
 	public void setOlapService(OlapService olapService) {
 		this.olapService = olapService;
@@ -82,11 +78,6 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		this.namespaceService = namespaceService;
 	}
 	
-	
-
-	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
-		this.policyBehaviourFilter = policyBehaviourFilter;
-	}
 
 	public String getMLProperty(ScriptNode sourceNode, String propQName, String locale) {
 		MLText mlText = (MLText) mlNodeService.getProperty(sourceNode.getNodeRef(), QName.createQName(propQName, namespaceService));
@@ -97,9 +88,6 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	}
 
 	public void setMLProperty(ScriptNode sourceNode, String propQName, String locale, String value) {
-		
-		try {
-			policyBehaviourFilter.disableBehaviour(sourceNode.getNodeRef());
 		
 			MLText mlText = (MLText) mlNodeService.getProperty(sourceNode.getNodeRef(), QName.createQName(propQName, namespaceService));
 			if (mlText == null) {
@@ -112,10 +100,6 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 			}
 			mlNodeService.setProperty(sourceNode.getNodeRef(), QName.createQName(propQName, namespaceService), mlText);
 		
-		} finally {
-			policyBehaviourFilter.enableBehaviour(sourceNode.getNodeRef());
-		}
-
 	}
 
 	public String getMessage(String messageKey) {
