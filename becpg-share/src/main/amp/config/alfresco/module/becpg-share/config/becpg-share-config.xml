@@ -25,6 +25,7 @@
 			<language locale="no_NO">Norwegian</language>
 			<language locale="sv_SE">Swedish</language>
 			<language locale="el_GR">Greek</language>
+			<language locale="pl_PL">Polish</language>
 		</languages>
 	</config>
 

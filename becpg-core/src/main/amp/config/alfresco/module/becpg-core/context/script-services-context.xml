@@ -60,7 +60,6 @@
 		<property name="quickShareService" ref="quickShareService"/>
 		<property name="mlNodeService" ref="mlAwareNodeService"/>
 		<property name="namespaceService" ref="namespaceService"/>
-		<property name="policyBehaviourFilter" ref="policyBehaviourFilter"/>
 	</bean>
 
 	<!-- Override Alfresco -->
