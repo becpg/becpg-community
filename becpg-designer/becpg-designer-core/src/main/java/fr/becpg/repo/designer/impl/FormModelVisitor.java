@@ -454,13 +454,13 @@ public class FormModelVisitor {
 		
 		NodeList viewForms = parentEl.getElementsByTagName("view-form");
 		if(viewForms!=null && viewForms.getLength()>0){
-			Element elem = (Element) editForms.item(0);
+			Element elem = (Element) viewForms.item(0);
 			nodeService.setProperty(formNodeRef, DesignerModel.PROP_DSG_VIEWFORMTEMPLATE, elem.getAttribute("template"));
 		}
 		
 		NodeList createForms = parentEl.getElementsByTagName("create-form");
 		if(createForms!=null && createForms.getLength()>0){
-			Element elem = (Element) editForms.item(0);
+			Element elem = (Element) createForms.item(0);
 			nodeService.setProperty(formNodeRef, DesignerModel.PROP_DSG_CREATEFORMTEMPLATE, elem.getAttribute("template"));
 		}
 		
