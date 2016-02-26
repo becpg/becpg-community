@@ -40,13 +40,15 @@ function widgets()
          simpleView : model.preferences.simpleView != null ? model.preferences.simpleView : "null",
          viewRenderers: model.viewRenderers,
          viewRendererName : model.preferences.viewRendererName != null ? model.preferences.viewRendererName : "detailed",
-         viewRendererNames : model.viewRendererNames != null ? model.viewRendererNames : ["simple", "detailed", "gallery"],
+         viewRendererNames : model.viewRendererNames != null ? model.viewRendererNames : ["simple", "detailed", "gallery", "filmstrip"],
          highlightFile : page.url.args["file"] != null ? page.url.args["file"] : "",
          replicationUrlMapping : model.replicationUrlMapping != null ? model.replicationUrlMapping : "{}",
          repositoryBrowsing : false, 
          useTitle : false,
          userIsSiteManager : model.userIsSiteManager,
-         associatedToolbar: { _alfValue: "docListToolbar", _alfType: "REFERENCE" }
+         associatedToolbar: { _alfValue: "docListToolbar", _alfType: "REFERENCE" },
+         commonComponentStyle : model.commonComponentStyle,
+         suppressComponent : model.suppressComponent
       }
    };
    if (model.repositoryUrl != null)
