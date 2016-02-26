@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (C) 2010-2015 beCPG. 
+ *  Copyright (C) 2010-2016 beCPG. 
  *   
  *  This file is part of beCPG 
  *   
@@ -52,6 +52,9 @@
         if(beCPG.util.isEntity(p_oData)){
       	  treeNode.labelStyle = "entity " + p_oData.type.replace(":", "-")+" ygtvlabel";
         }
+        
+        var customStyleClass = this._buildCustomStyleClass(p_oData);
+        treeNode.customCls = customStyleClass;
         
         return treeNode;
      }
