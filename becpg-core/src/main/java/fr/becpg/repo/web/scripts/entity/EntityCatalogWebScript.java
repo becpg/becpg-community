@@ -65,7 +65,9 @@ public class EntityCatalogWebScript extends AbstractWebScript {
 
 		NodeRef productNodeRef = new NodeRef(storeType, storeId, nodeId);
 
+		
 		if(!nodeService.exists(productNodeRef)){
+			logger.error("node does not exist");
 			return;
 		}
 
@@ -73,10 +75,7 @@ public class EntityCatalogWebScript extends AbstractWebScript {
 		Serializable property = nodeService.getProperty(productNodeRef, qname);
 
 		if(property == null){
-			if(logger.isDebugEnabled()){
-				logger.debug("productScores property was null");
-			}
-
+			logger.info("productScores property was null, returning");			
 			return;
 		}
 
@@ -87,10 +86,6 @@ public class EntityCatalogWebScript extends AbstractWebScript {
 			logger.error("unable to create json object from string: "+property+".");
 			logger.error("check on an online json parser if string is correct");
 			return;
-		}
-
-		if(logger.isDebugEnabled()){
-			logger.debug("jsonObject: "+jsonObject);
 		}
 
 		JSONObject scores=null;
@@ -128,45 +123,45 @@ public class EntityCatalogWebScript extends AbstractWebScript {
 				logger.error("unable to read missing fields array");
 				return;
 			}
-
-			if(logger.isDebugEnabled()){
-				logger.debug("fields: "+fields);
-			}
 			
 			JSONArray localizedFields = new JSONArray();
 
 			for(int i=0; i<fields.length(); i++){
 				QName fieldQname;
 				String field="";
+				String locale=null;
 				try {
+					
 					field = (String) fields.get(i);
-					if(logger.isDebugEnabled()){
-						logger.debug("current field: "+field+ "("+i+")");
-					}
+					
+					if(field.contains("_")){
+						locale = field.split("_")[1];
+						field= field.split("_")[0];
+					}					
 					
 					fieldQname = QName.createQName(field, namespaceService);
 					AssociationDefinition assocDesc = dictionaryService.getAssociation(fieldQname);
 					PropertyDefinition propertyDef = dictionaryService.getProperty(fieldQname);
 					
-					if(logger.isDebugEnabled()){
-						logger.debug("assocDesc: "+assocDesc+", propertyDef: "+propertyDef);
-					}
-					
 					if (assocDesc != null) {
-						localizedFields.put(assocDesc.getTitle(dictionaryService));
+						localizedFields.put(assocDesc.getTitle(dictionaryService)+ (locale != null ? " ("+locale+")" : ""));
 					} else if(propertyDef != null){
-						localizedFields.put(propertyDef.getTitle(dictionaryService));
-					}
+						localizedFields.put(propertyDef.getTitle(dictionaryService)+ (locale != null ? " ("+locale+")" : ""));
+					} else {
+						localizedFields.put(field + (locale != null ? "("+locale+")" : ""));
+					}					
 					
 				} catch (InvalidQNameException e) {
 					logger.error("qname "+field+" is invalid");
+					localizedFields.put(field + (locale != null ? " ("+locale+")" : ""));
 				} catch (JSONException e) {
 					logger.error("unable to get field at index "+i);
+					localizedFields.put(field + (locale != null ? " ("+locale+")" : ""));
+				} catch (NullPointerException e){
+					logger.error("NPE while trying to get field message");
+					localizedFields.put(field + (locale != null ? " ("+locale+")" : ""));
 				}
-			}
-
-			if(logger.isDebugEnabled()){
-				logger.debug("localizedFields: "+localizedFields);
+				locale = null;
 			}
 
 			try {
