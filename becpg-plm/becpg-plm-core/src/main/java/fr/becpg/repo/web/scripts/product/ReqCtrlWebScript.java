@@ -83,6 +83,9 @@ public class ReqCtrlWebScript extends AbstractProductWebscript {
 
 		//fetches correct list to find rclDataItem in
 		List<ReqCtrlListDataItem> ctrlList;
+		if(logger.isDebugEnabled()){
+			logger.debug("Called view: "+view);
+		}
 		if(view != null && view.equals("processList")){
 
 			ctrlList = product.getProcessListView().getReqCtrlList();
@@ -109,6 +112,10 @@ public class ReqCtrlWebScript extends AbstractProductWebscript {
 				key = item.getReqDataType();
 			}
 
+			if(logger.isDebugEnabled()){
+				logger.debug("ReqCtrlDataItem \""+item+"\" passed the filter.");
+			}
+			
 			//Filter passed, adding count		
 			if(counts.containsKey(key.toString())){					
 				Map<String, Integer> currentCount = counts.get(key.toString());

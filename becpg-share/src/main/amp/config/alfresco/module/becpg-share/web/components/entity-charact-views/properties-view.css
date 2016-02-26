@@ -51,8 +51,6 @@
 
 .properties-view .catalog {
 	margin-top: 1em;
-	margin-bottom: 0.5em;
-	border: 1px solid #eee;
 }
 
 .properties-view .catalog progress, .properties-view .catalog .score-info {

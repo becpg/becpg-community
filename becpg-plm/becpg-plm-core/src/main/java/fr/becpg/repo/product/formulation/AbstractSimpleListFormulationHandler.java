@@ -460,7 +460,6 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 					
 					ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Tolerated, message,
 							formulatedCharactDataItem.getCharactNodeRef(), new ArrayList<NodeRef>(), getDataType());
-					//rclDataItem.getSources().add(formulatedProduct.getNodeRef());
 					formulatedProduct.getCompoListView().getReqCtrlList().add(rclDataItem);
 				}
 

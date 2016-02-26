@@ -14,8 +14,7 @@
 **/
 .formulation-view  .datagrid .scrollableList {
 	padding: 0;
-	height: auto;
-	max-height:208px;
+	height: 328px;
 }
 
 .formulation-view  .datagrid {
@@ -38,6 +37,11 @@
 	{
 	border-collapse: collapse;
 	border-right: none;
+}
+
+div.constraintsList .scrollableList {
+	height: 260px;
+	padding: 0;
 }
 
 .formulation-view .datagrid .yui-dt-col-actions {
@@ -102,10 +106,6 @@
 	display: block;
 }
 
-.formulation-view .dynamicCharactList .datagrid .scrollableList {
-	max-height: 290px;
-}
-
 /* Constraints List */
 .constraintsList .dashlet .title {
 	background-color: transparent;
@@ -118,6 +118,7 @@
 
 .formulation-view .constraintsList .datagrid .scrollableList {
 	padding: 0;
+	height: 260px;
 }
 
 .constraintsList .datagrid .body .grid table {
@@ -180,8 +181,7 @@ div.dataTypeList .title {
 }
 
 .dataTypeList .rclFilterSelected {
-/* 	border:	2px solid #446CD7 !important; */
-background-color: #ddd;
+	background-color: #ddd;
 }
 .dataTypeList span .rclFilterSelected {
 	padding: 1px;
@@ -200,7 +200,7 @@ span.req-all-all, .dataTypeList .rclFilterElt li{
 }
 
 #scoresDiv {
-	margin: 10px 10px 10px;
+	margin: 0px 10px 5px;
 	overflow: auto;
 	margin-left: 4px;
 	margin-right: 4px;

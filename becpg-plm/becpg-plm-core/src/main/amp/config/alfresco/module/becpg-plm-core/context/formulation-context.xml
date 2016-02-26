@@ -159,6 +159,7 @@
 					<property name="nodeService" ref="nodeService" />
 					<property name="dictionaryService" ref="dictionaryService"/>
 					<property name="associationService" ref="associationService" />
+					<property name="mlNodeService" ref="mlAwareNodeService" />
 					<property name="mandatoryFields"
 						value="${beCPG.formulation.score.mandatoryFields}" />
 				</bean>
