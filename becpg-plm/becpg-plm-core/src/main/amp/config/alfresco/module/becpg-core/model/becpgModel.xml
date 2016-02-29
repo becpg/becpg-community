@@ -1780,11 +1780,6 @@
 				<property name="bcpg:filReqMessage">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>false</tokenised>
-					</index>
 				</property>
 				<property name="bcpg:filQtyPercMaxi">
 					<type>d:double</type>
@@ -2519,8 +2514,6 @@
 		</aspect>
 
 		<aspect name="bcpg:transformationAspect">
-			<properties>
-			</properties>
 			<associations>
 				<association name="bcpg:productSpecifications">
 					<source>
