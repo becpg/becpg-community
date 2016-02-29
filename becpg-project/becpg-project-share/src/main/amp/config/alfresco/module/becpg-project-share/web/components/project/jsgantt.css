@@ -62,9 +62,9 @@ td.ghead.current {
     white-space: nowrap;
 }
 
-@media screen and (min-width: 1300px) {
+@media screen and (min-width: 1400px) {
 	.projects  span.task-title a {
-		max-width: 250px;
+		max-width: 200px;
 	}
 	
 }
