@@ -52,7 +52,7 @@
 		      <div class="hidden">
 		      	<div class="search-box">
 			         <span id="${el}-search_more" class="yui-button yui-menu-button">
-			            <span class="first-child" style="background-image: url(${url.context}/res/components/images/header/search-menu.png)">
+			            <span class="first-child" >
 			               <button type="button" title="${msg("header.search.description")}" tabindex="0"></button>
 			            </span>
 			         </span>
@@ -61,7 +61,7 @@
 			      <div id="${el}-searchmenu_more" class="yuimenu yui-overlay yui-overlay-hidden">
 			         <div class="bd">
 			            <ul class="first-of-type">
-			               <li><a style="background-image: url(${url.context}/res/components/images/header/advanced-search.png); background-repeat: no-repeat;" title="${msg("header.advanced-search.description")}" href="${siteURL("advsearch")}">${msg("header.advanced-search.label")}</a></li>
+			               <li><a title="${msg("header.advanced-search.description")}" href="${siteURL("advsearch")}">${msg("header.advanced-search.label")}</a></li>
 			            </ul>
 			         </div>
 			      </div>
