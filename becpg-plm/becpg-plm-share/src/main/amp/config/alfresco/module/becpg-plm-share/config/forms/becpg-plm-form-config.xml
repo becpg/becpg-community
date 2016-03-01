@@ -79,7 +79,7 @@
 					<show id="cm:name" />
 					<show id="cm:title" force="true" />
 					<show id="cm:description" />
-					<show id="bcpg:productSpecifications" />
+					<show id="bcpg:productSpecifications" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:productSpecifications" help-id="becpg.forms.help.productSpecifications" >
@@ -92,6 +92,8 @@
 			</form>
 		</forms>
 	</config>
+	
+	
 
 	<!-- bcpg:finishedProduct type (existing nodes) -->
 	<config evaluator="node-type" condition="bcpg:finishedProduct">
