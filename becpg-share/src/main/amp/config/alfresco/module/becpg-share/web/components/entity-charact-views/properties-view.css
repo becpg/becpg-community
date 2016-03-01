@@ -30,8 +30,6 @@
 
 .properties-view .catalog .catalog-missing-propList {
 	margin-top: 0.5em;
-	padding: 0.5em;
-	border: 1px solid #eee;
 }
 
 .properties-view .catalog .details-button {
@@ -51,6 +49,7 @@
 
 .properties-view .catalog {
 	margin-top: 1em;
+	border: 1px solid #eee;
 }
 
 .properties-view .catalog progress, .properties-view .catalog .score-info {
@@ -83,4 +82,9 @@
 .properties-view .catalog-missing-propList ul li {
 	margin-top: 0.3em;
 	margin-bottom: 0.3em;
+}
+
+.properties-view .catalog img {
+	margin-left: 2px;
+	margin-right: 2px;
 }
