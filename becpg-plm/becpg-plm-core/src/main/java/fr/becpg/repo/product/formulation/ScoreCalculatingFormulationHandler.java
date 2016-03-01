@@ -2,7 +2,6 @@ package fr.becpg.repo.product.formulation;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -12,7 +11,6 @@ import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
-import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -25,7 +23,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.extensions.surf.util.I18NUtil;
 
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
@@ -127,7 +124,14 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 		}
 
 		// checks if mandatory fields are present
-		JSONObject mandatoryFieldsRet = calculateMandatoryFieldsScore(product.getNodeRef(), product);
+		JSONObject mandatoryFieldsRet = new JSONObject();
+
+		try {
+			mandatoryFieldsRet = calculateMandatoryFieldsScore(product.getNodeRef(), product);
+		} catch (JSONException e){
+			logger.error("unable to compute mandatory fields score", e);
+		}
+
 		if(logger.isDebugEnabled()){
 			logger.debug("ret: "+mandatoryFieldsRet);
 		}
@@ -135,26 +139,33 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 		double componentsValidationScore = (childrenScores[1] > 0 ? childrenScores[0] / childrenScores[1] : 1d);
 
 
-		JSONObject mandatoryFieldsScores;
+		JSONObject mandatoryFieldsScores = new JSONObject();
 		double mandatoryFieldsScore = 0d;
 		int i=0;
+
 		try {
-			mandatoryFieldsScores = mandatoryFieldsRet.getJSONObject("scores");
-
-
-			Iterator iterator = mandatoryFieldsScores.keys();
-			while(iterator.hasNext()){
-				String key = (String) iterator.next();
-				mandatoryFieldsScore+=mandatoryFieldsScores.getDouble(key);
-				i++;
+			if(mandatoryFieldsRet.has("scores")){
+				mandatoryFieldsScores = mandatoryFieldsRet.getJSONObject("scores");
+			} else {
+				mandatoryFieldsScores = null;
 			}
 
-			if(i>0){
-				mandatoryFieldsScore/=(double)i;
+			if(mandatoryFieldsScores != null){
+				Iterator<?> iterator = mandatoryFieldsScores.keys();
+				while(iterator.hasNext()){
+					String key = (String) iterator.next();
+					if(mandatoryFieldsScores.get(key) instanceof Double){
+						mandatoryFieldsScore+=mandatoryFieldsScores.getDouble(key);
+						i++;
+					}				
+				}
+
+				if(i>0){
+					mandatoryFieldsScore/=(double)i;
+				}
 			}
-		} catch (Exception e) {
-			logger.error("unable to compute mandatory fields score from json object");
-			mandatoryFieldsScore=0d;
+		} catch (JSONException e){
+			logger.error("unable to compute mandatory fields score out of json object", e);
 		}
 
 		//there was no mandatory fields score: they are all filled
@@ -180,7 +191,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 
 		try {
 			details.put("mandatoryFields", mandatoryFieldsScore);
-			if(mandatoryFieldsRet != null){
+			if(mandatoryFieldsRet != null && mandatoryFieldsRet.has("scores") && mandatoryFieldsRet.get("scores") instanceof JSONObject){
 				details.put("mandatoryFieldsDetails", mandatoryFieldsRet.getJSONObject("scores"));
 			}
 			details.put("specifications", specificationsScore);
@@ -188,11 +199,11 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 
 			scores.put("global", completionPercent);
 			scores.put("details", details);
-			if(mandatoryFieldsRet != null){
+			if(mandatoryFieldsRet != null && mandatoryFieldsRet.has("missingFields")){
 				scores.put("missingFields", mandatoryFieldsRet.get("missingFields"));
 			}
-		} catch (JSONException e) {
-			logger.error("error putting details in scores json");
+		} catch(JSONException e){
+			logger.error("unable to create scores json object properly", e);
 		}
 
 		if(logger.isDebugEnabled()){
@@ -265,11 +276,11 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 	 * @param nodeRef
 	 * @param dat
 	 * @return
+	 * @throws JSONException 
 	 */
 	@SuppressWarnings("unchecked")
-	public JSONObject calculateMandatoryFieldsScore(NodeRef nodeRef, ProductData dat) {
+	public JSONObject calculateMandatoryFieldsScore(NodeRef nodeRef, ProductData dat) throws JSONException {
 		JSONObject ret = new JSONObject();
-		JSONArray missingFieldsArray = new JSONArray();
 		QName qname; 
 		List<NodeRef> assoc; 
 		AssociationDefinition assocDesc;
@@ -290,11 +301,12 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 		boolean isPresent=false;
 
 		Map<QName, Serializable> props = nodeService.getProperties(nodeRef);
+
 		ArrayList<String> reportLocales=null;
 
 		if(props != null){
 			Serializable prop = props.get(ReportModel.PROP_REPORT_LOCALES);
-			if(prop != null){
+			if(prop != null && prop instanceof ArrayList){	
 				reportLocales = (ArrayList<String>) prop;
 			} 
 		}
@@ -306,66 +318,62 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 		 * Each localized catalog is used to check multi-language properties
 		 */
 		for(int i=0; i< catalogs.length(); i++){
-			JSONObject currentCatalog=null;
-			String id="id";
-			String label="label";
-			JSONArray fields=new JSONArray();
-			missingFieldsArray = new JSONArray();
+			JSONObject currentCatalog = null;
+			String label = null;
+			JSONArray fields = new JSONArray();
 			JSONArray catalogLocales = new JSONArray();
 
-			try {
-				currentCatalog = catalogs.getJSONObject(i);
-				id = currentCatalog.getString("id");
-				label = currentCatalog.getString("label");
-				fields = currentCatalog.getJSONArray("fields");
+			Object currentCatalogObject = catalogs.get(i);
 
-			} catch (JSONException e){
-				logger.error("unable to read a property from json : "+e.getLocalizedMessage());
+			if(currentCatalogObject instanceof JSONObject){
+				currentCatalog = (JSONObject) currentCatalogObject;
+			} else {
+				currentCatalog = new JSONObject();
 			}
 
-			try {
-				catalogLocales = currentCatalog.getJSONArray("locales");
+			if(currentCatalog.has("label") && currentCatalog.get("label") instanceof String){
+				label = currentCatalog.getString("label");
+			} else {
+				label = "label";
+			}
 
-				if(logger.isDebugEnabled()){
-					logger.debug("CatalogLocales: "+catalogLocales);
-				}
-			} catch(JSONException e){
-				logger.debug("Catalog "+label+" has no locales set");
+			if(currentCatalog.has("fields") && currentCatalog.get("fields") instanceof JSONArray){
+				fields = currentCatalog.getJSONArray("fields");
+			} else {
+				fields = new JSONArray();
+			}
+
+			if(currentCatalog.has("locales") && currentCatalog.get("locales") instanceof JSONArray){
+				catalogLocales = currentCatalog.getJSONArray("locales");
+			} else {
 				catalogLocales = new JSONArray();
 			}
 
+			if(logger.isDebugEnabled()){
+				logger.debug("CatalogLocales: "+catalogLocales);
+			}
+
+
 			//intersection of report and catalog locales
-			List<String> localesIntersection=null;
+			List<String> localesIntersection = new ArrayList<String>();
 
-			if(catalogLocales.length() == 0){
-				if(reportLocales != null){
-					localesIntersection = reportLocales;
-				} else {
-					localesIntersection = new ArrayList<String>();
-				}
-
+			if(catalogLocales.length() == 0 && reportLocales != null){
+				localesIntersection = reportLocales;
 			} else if(reportLocales == null){
-				localesIntersection = new ArrayList<String>();
-
+				Object currentLocaleObject=null;
 				for(int j=0; j<catalogLocales.length(); j++){
-					try {
-						localesIntersection.add(catalogLocales.getString(j));
-					} catch (JSONException e) {
-						continue;
+					currentLocaleObject = catalogLocales.get(j);
+
+					if(currentLocaleObject != null && currentLocaleObject instanceof String){
+						localesIntersection.add((String)currentLocaleObject);
 					}
 				}
 			} else {
 				//do intersection of both arrays
-				localesIntersection = new ArrayList<String>();
 				for(String currentLocale : reportLocales){
-
-					for(int cat=0; cat<catalogLocales.length(); cat++){
-						try {
-							if(catalogLocales.get(cat).equals(currentLocale)){
-								localesIntersection.add(currentLocale);
-							}
-						} catch(Exception e){
-							continue;
+					for(int currentLocaleIndex=0; currentLocaleIndex<catalogLocales.length(); currentLocaleIndex++){
+						if(currentLocale.equals(catalogLocales.get(currentLocaleIndex))){
+							localesIntersection.add(currentLocale);
 						}
 					}
 				}
@@ -382,99 +390,55 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 				/*
 				 * create one sub-catalog per locale
 				 */
+				boolean localeComesFromCatalog = true;
+				JSONArray currentLocales = new JSONArray();
+				String labelWithLocale = null;
 				if(localesIntersection.size() > 0){
-					for(int k=0; k<localesIntersection.size(); k++){
-
+					//one catalog for the unlocalized version, which stores common props
+					localizedCatalogs.add(createLocalizedCatalog(new JSONArray(), label));
+					
+					//k localized catalog for localized mlTexts
+					for(int k=0; k<localesIntersection.size() && localeComesFromCatalog; k++){						
 						currentLocale = localesIntersection.get(k);
-
-						//if this locale comes from catalog, create one localized version per locale
-						if(currentLocale != null && catalogLocales.length() > 0 ){
-							//						for(int cat = 0; cat<catalogLocales.length(); cat++){
-
-							JSONObject currentLocalizedCatalog = new JSONObject();
-							JSONArray currentLocalizedCatalogMissingFields = new JSONArray();
-							JSONArray currentLocales = new JSONArray();
-							for(String s : localesIntersection){
-								currentLocales.put(s);
-							}
-							String localizedLabel = label+" ("+currentLocale+")";
-
-							try {
-								currentLocalizedCatalog.put("missingFields", currentLocalizedCatalogMissingFields);
-								currentLocalizedCatalog.put("visited", 0);
-								currentLocalizedCatalog.put("violated", 0);
-								currentLocalizedCatalog.put("locales", currentLocales);
-								currentLocalizedCatalog.put("label", localizedLabel);
-								localizedCatalogs.add(currentLocalizedCatalog);
-							} catch (Exception e){
-								logger.error("unable to init localized catalog");
-							}							
-							//						}
-						} else {
-							//this locale comes from report langs, put them all in sub catalog
-
-							JSONObject currentLocalizedCatalog = new JSONObject();
-							JSONArray currentLocalizedCatalogMissingFields = new JSONArray();
-							JSONArray currentLocales = new JSONArray();
-							for(String s : localesIntersection){
-								currentLocales.put(s);
-							}
-
-							try {
-								currentLocalizedCatalog.put("missingFields", currentLocalizedCatalogMissingFields);
-								currentLocalizedCatalog.put("visited", 0);
-								currentLocalizedCatalog.put("violated", 0);
-								currentLocalizedCatalog.put("locales", currentLocales);
-								currentLocalizedCatalog.put("label", label);
-								localizedCatalogs.add(currentLocalizedCatalog);
-								break;
-							} catch (Exception e){
-								logger.error("unable to init localized catalog");
-							}	
+						for(String s : localesIntersection){
+							currentLocales.put(s);
 						}
+
+						//each subcatalog has a label
+						if(currentLocale != null && catalogLocales.length() > 0 ){
+							labelWithLocale = label+" ("+currentLocale+")";
+						} else {
+							labelWithLocale = label;
+						}
+
+						//if locale comes from report langs, only one array with all locales (=break)
+						if(catalogLocales.length() == 0){
+							localeComesFromCatalog = false;
+						}
+
+						localizedCatalogs.add(createLocalizedCatalog(currentLocales, labelWithLocale));
+						currentLocales = new JSONArray();
 					}
+					
+					
 				} else {
 					//no locales at all
-					JSONObject currentLocalizedCatalog = new JSONObject();
-					JSONArray currentLocalizedCatalogMissingFields = new JSONArray();
-					JSONArray currentLocales = new JSONArray();
-
-					try {
-						currentLocalizedCatalog.put("missingFields", currentLocalizedCatalogMissingFields);
-						currentLocalizedCatalog.put("visited", 0);
-						currentLocalizedCatalog.put("violated", 0);
-						currentLocalizedCatalog.put("locales", currentLocales);
-						currentLocalizedCatalog.put("label", label);
-						if(logger.isDebugEnabled()){
-							logger.debug("currentCatalog: "+currentLocalizedCatalog+"\n=============");
-						}
-						localizedCatalogs.add(currentLocalizedCatalog);
-						break;
-					} catch (Exception e){
-						logger.error("unable to init localized catalog");
-					}	
+					localizedCatalogs.add(createLocalizedCatalog(currentLocales, label));
 				}
 
 				String field ="";
 				for (int j=0; j<fields.length(); j++) {
 
-					try {
-						field = fields.getString(j);
-					} catch (Exception e) {
-						logger.error("error while parsing field of index "+j);
-						continue;
+					Object currentFieldObject = fields.get(j);
+					if(currentFieldObject != null && currentFieldObject instanceof String){
+						field = (String) currentFieldObject;
 					}
 
-					try {
-						//if field is localised check for unlocalized prop
-						if(field.contains("_")){
-							qname = QName.createQName(field.split("_")[0], namespaceService);
-						} else {
-							qname = QName.createQName(field, namespaceService);
-						}
-					} catch(Exception e){
-						logger.error("unable to create qname out if field: "+field+", continuing..");
-						continue;
+					//if field is localised check for unlocalized prop
+					if(field.contains("_")){
+						qname = QName.createQName(field.split("_")[0], namespaceService);
+					} else {
+						qname = QName.createQName(field, namespaceService);
 					}
 
 					PropertyDefinition currentProperty;
@@ -483,7 +447,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 					List<QName> localizedProps = new ArrayList<QName>();
 					boolean isMlText=false;
 					if(currentProperty != null){
-						isMlText = currentProperty.getDataType().getName().equals(DataTypeDefinition.MLTEXT);
+						isMlText = DataTypeDefinition.MLTEXT.equals(currentProperty.getDataType().getName());
 
 						//field is mltext, unlocalized and locales of catalog are not null
 						if(isMlText && localesIntersection != null && localesIntersection.size()>0 && !field.contains("_")){
@@ -505,7 +469,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 					}
 
 					String fieldMessage=null;
-					
+
 					//Prop is a mlText : check it using localized versions of the prop
 					if(isMlText){
 						MLText mlText = (MLText) mlNodeService.getProperty(nodeRef, qname);						
@@ -513,7 +477,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 						for(QName qname2 : localizedProps){
 							String[] splits = qname2.toString().split("_");
 							String locale = "";
-							boolean localeComesFromCatalog=false;
+							localeComesFromCatalog=false;
 
 							if(splits.length > 1){
 								locale = splits[splits.length-1];
@@ -521,19 +485,18 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 
 							if(locale != null){
 								for(String tmp :localesIntersection){
-									if(tmp.equals(locale)){
+									if(locale.equals(tmp)){
 										localeComesFromCatalog=true;
 									}
 								}
 							}
 
 							Object mlValue=null;
-
 							if(localesIntersection.isEmpty()){
 								mlValue = mlText;
 							} else {
 								if(mlText != null){
-									mlValue = mlText.getValue(Locale.forLanguageTag(locale));
+									mlValue = mlText.getValue(new Locale(locale));
 								}
 							}
 
@@ -545,38 +508,29 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 								//wether this field should be visited by every catalog or not
 								if(!localeComesFromCatalog){
 									//everybody should visit it
-									try {
-										for(JSONObject catalog : localizedCatalogs){
-											catalog.put("visited", catalog.getInt("visited")+1);
-										}
-									} catch (JSONException e) {
-										logger.error("unable to increment visited field of json object for common present field");
+									for(JSONObject catalog : localizedCatalogs){
+										catalog.put("visited", catalog.getInt("visited")+1);
 									}
 								} else {
 									//only one localized catalog should visit it
-									try {
-										for(JSONObject catalog : localizedCatalogs){
-											JSONArray currentCatalogLocales = catalog.getJSONArray("locales");
+									for(JSONObject catalog : localizedCatalogs){
+										JSONArray currentCatalogLocales = catalog.getJSONArray("locales");
 
-											for(int tmp=0; tmp<currentCatalogLocales.length(); tmp++){
-
-												if(((String)currentCatalogLocales.get(tmp)).equals(locale)){
-													catalog.put("visited", catalog.getInt("visited")+1);
-													break;
-												}
+										for(int tmp=0; tmp<currentCatalogLocales.length(); tmp++){
+											if(locale.equals(currentCatalogLocales.get(tmp))){
+												catalog.put("visited", catalog.getInt("visited")+1);
+												break;
 											}
 										}
-									} catch (Exception e) {
-										logger.error("unable to increment visited field of json object for specific present field");
-									} 
+									}
 								}
 								continue;
 							}
 
-							try {
-								fieldMessage = dictionaryService.getProperty(qname).getTitle(dictionaryService);
-							} catch(Exception e){
-								logger.error("unable to find title of property using the dictionary); qname="+qname);
+							PropertyDefinition def;
+							String title=null;
+							if( (def = dictionaryService.getProperty(qname)) != null && (title = def.getTitle(dictionaryService)) != null){
+								fieldMessage = title;
 							}
 
 							String message = I18NUtil.getMessage(
@@ -594,6 +548,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 									RequirementDataType.Completion);
 							rclDataItem.getSources().add(nodeRef);
 
+							//put rclDataItem in proper view
 							if(!dat.getCompoListView().getCompoList().isEmpty()){
 								dat.getCompoListView().getReqCtrlList().add(rclDataItem);
 							} else if(!dat.getProcessListView().getProcessList().isEmpty()){
@@ -602,43 +557,61 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 								dat.getPackagingListView().getReqCtrlList().add(rclDataItem);
 							}
 
-							try {
-								//wether this field should be visited by every catalog or not
-								logger.debug("Current localized field: "+field);
-								if(!localeComesFromCatalog){
-									//everybody should visit it
-									for(JSONObject catalog : localizedCatalogs){
-										JSONArray missingFields = catalog.getJSONArray("missingFields");
-										missingFields.put(field);
-										catalog.put("visited", catalog.getInt("visited")+1);
-										catalog.put("violated", catalog.getInt("violated")+1);
+							//wether this field should be visited by every catalog or not
+							logger.debug("Current localized field: "+field);
+							if(!localeComesFromCatalog){
+								//everybody should visit it
+								for(JSONObject catalog : localizedCatalogs){
+									logger.debug("current catalog: "+catalog);
+									JSONArray missingFields = catalog.getJSONArray("missingFields");
 
-									}
-								} else {
-									//only one localized catalog should visit it
-									for(JSONObject catalog : localizedCatalogs){
-										String currentCatalogLocale = catalog.getJSONArray("locales").getString(0);
-										if(currentCatalogLocale.equals(locale)){
-											JSONArray missingFields = catalog.getJSONArray("missingFields");
-											missingFields.put(field+"_"+locale);
+									//only common catalog should have this field as void
+									if(catalog.has("label")){	
+										String currentLabel = catalog.getString("label");
+										logger.debug("currentLabel: \""+currentLabel+"\"");
+										if(localizedCatalogs.get(0).equals(catalog)){
+											logger.debug(currentLabel+" does not match regexp : it's common catalog (putting field inside it)");
+											missingFields.put(field);
 											catalog.put("visited", catalog.getInt("visited")+1);
 											catalog.put("violated", catalog.getInt("violated")+1);
-											break;
 										}
 									}
+									
 								}
-							} catch(JSONException e){ 
-								logger.error("unable to put missing field "+field+" in missing fields array or incrementing the score");
-								e.printStackTrace();
+							} else {
+								//only one localized catalog should visit it
+								JSONObject catalog;
+								Iterator<JSONObject> it = localizedCatalogs.iterator();
+
+								boolean found = false;
+								while(it.hasNext() && !found){
+									catalog = it.next();
+									
+									logger.debug("catalog: "+catalog);
+									
+									JSONArray currentLocalesArray = catalog.getJSONArray("locales");
+									String currentCatalogLocale = null;
+									
+									if(currentLocalesArray.length()>0){
+										currentCatalogLocale = catalog.getJSONArray("locales").getString(0);
+									}
+									
+									if(locale.equals(currentCatalogLocale)){
+										JSONArray missingFields = catalog.getJSONArray("missingFields");
+										logger.debug("adding localized prop: "+field+"_"+locale+" to localized catalog: "+label);
+										missingFields.put(field+"_"+locale);
+										catalog.put("visited", catalog.getInt("visited")+1);
+										catalog.put("violated", catalog.getInt("violated")+1);
+										found=true;
+									}
+								}
 							}
 						}
 					} else {
 						//Not a ml text, regular prop/assoc
 						logger.debug("Regular prop/assoc");
-
 						assoc = associationService.getTargetAssocs(nodeRef, qname);
 						assocDesc  = dictionaryService.getAssociation(qname);
-
 						property = dictionaryService.getProperty(qname);
 						properties = nodeService.getProperties(nodeRef);
 
@@ -646,20 +619,20 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 							Serializable val = properties.get(qname);
 							if ((val != null) && !val.equals("")) {
 								isPresent=true;
-								logger.debug("it's a prop");
 							}
 						}
 
 						if ((assoc != null) && !assoc.isEmpty()) {
 							isPresent=true;
-							logger.debug("it's an assoc");
 						}
 
+						//fetch translation for prop/assoc name
 						if (assocDesc != null) {
 							fieldMessage = (assocDesc.getTitle(dictionaryService));
 						} else if (property != null) {
 							fieldMessage = (property.getTitle(dictionaryService));
 						}
+
 						//if prop is absent, raise rclDataItem
 						if (!isPresent) {
 							String message = I18NUtil.getMessage(
@@ -678,24 +651,25 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 								dat.getPackagingListView().getReqCtrlList().add(rclDataItem);
 							}
 
-							try {
-								for(JSONObject catalog : localizedCatalogs){
-									JSONArray missingFields = catalog.getJSONArray("missingFields");
-									missingFields.put(field);
-									catalog.put("violated", catalog.getInt("violated")+1);
-									catalog.put("visited", catalog.getInt("visited")+1);
+							for(JSONObject catalog : localizedCatalogs){
+								logger.debug("current catalog: "+catalog);
+								JSONArray missingFields = catalog.getJSONArray("missingFields");
+								if(catalog.has("label")){
+									String currentLabel = catalog.getString("label");
+									logger.debug("currentLabel: "+currentLabel);
+									if(!currentLabel.matches("([(][a-z]{2}[)])+")){
+										logger.debug("adding missing prop: "+field+" to generic catalog: "+label);
+										missingFields.put(field);
+										catalog.put("violated", catalog.getInt("violated")+1);
+										catalog.put("visited", catalog.getInt("visited")+1);
+									}
+									
 								}
-							} catch(JSONException e) { 
-								logger.error("unable to put missing field "+field+" in missing fields array or incrementing the score");
 							}
-							//prop is present
 						} else {
-							try {
-								for(JSONObject catalog : localizedCatalogs){
-									catalog.put("visited", catalog.getInt("visited")+1);
-								}
-							} catch(JSONException e) { 
-								logger.error("unable to put missing field "+field+" in missing fields array or incrementing the score");
+							//prop is present
+							for(JSONObject catalog : localizedCatalogs){
+								catalog.put("visited", catalog.getInt("visited")+1);
 							}
 						}
 					}
@@ -705,31 +679,23 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 					isPresent=false;
 				}
 
-				try {
-					for(JSONObject localizedCatalog : localizedCatalogs){
-						String localizedLabel = localizedCatalog.getString("label");
-						JSONArray localizedMissingFieldsArray = localizedCatalog.getJSONArray("missingFields");
+				for(JSONObject localizedCatalog : localizedCatalogs){
+					String localizedLabel = localizedCatalog.getString("label");
+					JSONArray localizedMissingFieldsArray = localizedCatalog.getJSONArray("missingFields");
 
-						int violatedMandatoryFields = localizedCatalog.getInt("violated");
-						int mandatoryFieldsVisited = localizedCatalog.getInt("visited");
+					int violatedMandatoryFields = localizedCatalog.getInt("violated");
+					int mandatoryFieldsVisited = localizedCatalog.getInt("visited");
 
+					double currentCatalogsScore = mandatoryFieldsVisited > 0
+							? (mandatoryFieldsVisited - violatedMandatoryFields) / (double) mandatoryFieldsVisited : 1d;
 
-						double currentCatalogsScore = mandatoryFieldsVisited > 0
-								? (mandatoryFieldsVisited - violatedMandatoryFields) / (double) mandatoryFieldsVisited : 1d;
+							if(logger.isDebugEnabled()){
+								logger.debug("\nCatalog "+localizedLabel+": visited="+mandatoryFieldsVisited+", violated="+violatedMandatoryFields+" -> score="+currentCatalogsScore+"\n");
+							}
 
-								if(logger.isDebugEnabled()){
-									logger.debug("\nCatalog "+localizedLabel+": visited="+mandatoryFieldsVisited+", violated="+violatedMandatoryFields+" -> score="+currentCatalogsScore+"\n");
-								}
-
-								catalogsMissingFields.put(localizedLabel, localizedMissingFieldsArray);
-								catalogsScores.put(localizedLabel, currentCatalogsScore);
-					}
-
-
-				} catch (JSONException e) {
-					logger.error("unable to add current catalog missing fields to collection : "+e.getLocalizedMessage());
+							catalogsMissingFields.put(localizedLabel, localizedMissingFieldsArray);
+							catalogsScores.put(localizedLabel, currentCatalogsScore);
 				}
-
 
 				if(logger.isDebugEnabled()){
 					logger.debug("\n\n============================ End of catalog "+label+" ============================\n\n");
@@ -738,17 +704,32 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 			}
 		}
 
-		try {
-			if(logger.isDebugEnabled()){
-				logger.debug("\n\n============================ End of catalog parsing ============================\n\n");
-			}
-
-			ret.put("scores", catalogsScores);
-			ret.put("missingFields", catalogsMissingFields);
-		} catch (JSONException e) {
-			logger.error("unable to serialize scores or missing fields array");
+		if(logger.isDebugEnabled()){
+			logger.debug("\n\n============================ End of catalog parsing ============================\n\n");
 		}
+
+		ret.put("scores", catalogsScores);
+		ret.put("missingFields", catalogsMissingFields);
+
 		return ret;
+	}
+
+	/**
+	 * Creates a sub-catalog with given parameters
+	 * @param locales the locale(s) of this catalog. might be null
+	 * @param label the name of this subcatalog (= original catalog + locale if just one locale)
+	 * @return 
+	 * @throws JSONException
+	 */
+	public JSONObject createLocalizedCatalog(JSONArray locales, String label) throws JSONException{
+		JSONObject localizedCatalog = new JSONObject();
+		localizedCatalog.put("visited", 0);
+		localizedCatalog.put("violated", 0);
+		localizedCatalog.put("missingFields", new JSONArray());
+		localizedCatalog.put("label", label);
+		localizedCatalog.put("locales", locales);
+
+		return localizedCatalog;	
 	}
 
 	/**
@@ -760,7 +741,6 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 	 */
 	public Integer calculateSpecificationScore(ProductData product) {
 		int specificationScore = 100;
-
 
 		List<ReqCtrlListDataItem> ctrls = new ArrayList<ReqCtrlListDataItem>();
 		ctrls.addAll(product.getCompoListView().getReqCtrlList());

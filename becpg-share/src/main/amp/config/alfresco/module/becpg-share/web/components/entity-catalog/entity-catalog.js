@@ -78,49 +78,41 @@
 
 					html+="<h2>"+instance.msg("label.property_completion")+"</h2>";
 
-					console.log("json: "+json+", toString: "+JSON.stringify(json));
-					//console.log("std score: "+json.std.score);
 					for(var key in json){
-						console.log("catalog: "+json[key]+", toString: "+JSON.stringify(json[key]));
-						
-						console.log("fields: "+json[key].fields);
-						
 						var score = json[key].score;
-						
-						console.log("score: "+score);
+
 						html+="<div class=\"catalog\">";
-							html+="<div class=\"catalog-header set-bordered-panel-heading\">";
-								html+="<span class=\"catalog-name\">"+instance.msg("label.catalog")+" \""+key+"\"</span>";
-								
-								//html+="<span class=\"detailsButton selected\">"+instance.msg("label.details")+"</span>";
-								html+="<span class=\"score-info\">"+Math.floor(score*100)+" % "+instance.msg("label.completed")+"</span>";
-								html+="<progress value=\""+score+"\">"							
-									//IE fix
-									html+="<div class=\"progress-bar\">";
-										html+="<span style=\"width: "+score+"%;\">"+score+"%</span>";
-									html+="</div>";					        	
-								html+="</progress>"
-																							
+						html+="<div class=\"catalog-header set-bordered-panel-heading\">";
+						html+="<span class=\"catalog-name\">"+instance.msg("label.catalog")+" \""+replaceLocaleWithFlag(key)+"\"</span>";
+						html+="<span class=\"score-info\">"+Math.floor(score*100)+" % "+instance.msg("label.completed")+"</span>";
+						html+="<progress value=\""+score+"\">"							
+						//IE fix
+						html+="<div class=\"progress-bar\">";
+						html+="<span style=\"width: "+score+"%;\">"+score+"%</span>";
+						html+="</div>";					        	
+						html+="</progress>"
+
 							html+="</div>";
-							
-								html+="<div class=\"catalog-details\">";
-								html+="<h3>"+instance.msg("label.missing_properties")+"</h3>";
-	
-								//display missing props, if any
-								if(json[key].fields !== undefined){;
-									html+="<ul class=\"catalog-missing-propList\">"
-										
+
+						html+="<div class=\"catalog-details\">";
+						html+="<h3>"+instance.msg("label.missing_properties")+"</h3>";
+
+						//display missing props, if any
+						if(json[key].fields !== undefined){
+							html+="<ul class=\"catalog-missing-propList\">"
+
+								if(json[key].fields.length > 0){
 									for(var field in json[key].fields){
-										console.log("field: "+json[key].fields[field]+", toString(): "+JSON.stringify(json[key].fields[field]));
-										html+="<li class=\"missing-field\">"+json[key].fields[field]+"</li>";								
+										html+="<li class=\"missing-field\">"+replaceLocaleWithFlag(json[key].fields[field])+"</li>";								
 									}
-									
-									html+="</ul>";
 								} else {
-									html+="<span>"+instance.msg("label.no_missing_prop")+"</span>";
+									html+="<li>"+instance.msg("label.no_missing_prop")+"</li>";
 								}
-	
-							html+="</div>";
+
+							html+="</ul>";
+						} 
+
+						html+="</div>";
 						html+="</div>";
 					}
 
@@ -128,6 +120,22 @@
 					return html;
 				} else {
 					return null;
+				}
+			}
+
+			//Replaces locale in formatted label by img markup with corresponding flag
+			// eg: "legal name (en)" would be replaced by "legal name <img>" with img tag having english flag as src
+			function replaceLocaleWithFlag(field){
+				if(/(\([a-z]{2}\))+/.test(field)){
+					var match = field.match(/(\([a-z]{2}\))+/g)[0];
+					var locale = match.substring(1,3);
+
+					var imgMarkup = "<img src=\"/share/res/components/images/flags/"+locale+".png\">";
+					var replaced = field.replace(match, imgMarkup);
+					console.log("match: "+match+", locale: "+locale+", imgMarkup: "+imgMarkup+", replaced: \""+replaced+"\"");
+					return replaced;
+				} else {
+					return field;
 				}
 			}
 
@@ -144,7 +152,7 @@
 
 						if(response.json !== undefined){
 							var html = parseJsonToHTML(response.json);
-							console.log("html: "+html);
+							//console.log("html: "+html);
 							YAHOO.util.Dom.get(this.id+"-entity-catalog").innerHTML=html;
 						}
 
