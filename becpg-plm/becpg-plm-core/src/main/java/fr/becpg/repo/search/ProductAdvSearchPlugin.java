@@ -76,7 +76,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		boolean isAssocSearch = isAssocSearch(criteria);
 
 		if (isAssocSearch) {
-			nodes = filterByAssociations(nodes, criteria);
+			nodes = filterByAssociations(nodes, datatype, criteria);
 
 			if ((datatype != null) && entityDictionaryService.isSubClass(datatype, PLMModel.TYPE_PRODUCT)) {
 				nodes = getSearchNodesByIngListCriteria(nodes, criteria);
@@ -114,10 +114,11 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 	/**
 	 * Take in account criteria on associations (ie :
 	 * assoc_bcpg_supplierAssoc_added)
+	 * @param datatype 
 	 *
 	 * @return filtered list of nodes by associations
 	 */
-	private List<NodeRef> filterByAssociations(List<NodeRef> nodes, Map<String, String> criteria) {
+	private List<NodeRef> filterByAssociations(List<NodeRef> nodes, QName datatype, Map<String, String> criteria) {
 
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
@@ -136,10 +137,11 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 				String assocName = key.substring(6);
 				if (assocName.endsWith("_added")) {
 					// TODO : should be generic
-					if (!key.equals(CRITERIA_ING) && !key.equals(CRITERIA_GEO_ORIGIN) && !key.equals(CRITERIA_BIO_ORIGIN)
+					if (!entityDictionaryService.isSubClass(datatype, PLMModel.TYPE_PRODUCT) 
+							|| ( !key.equals(CRITERIA_ING) && !key.equals(CRITERIA_GEO_ORIGIN) && !key.equals(CRITERIA_BIO_ORIGIN)
 							&& !key.equals(CRITERIA_PACK_LABEL) && !key.equals(CRITERIA_LABEL_CLAIM) && !key.equals(CRITERIA_PACKAGING_LIST_PRODUCT)
 							&& !key.equals(CRITERIA_ALLERGEN) && !key.equals(CRITERIA_COST) && !key.equals(CRITERIA_PHYSICO)
-							&& !key.equals(CRITERIA_NUTS)) {
+							&& !key.equals(CRITERIA_NUTS))) {
 
 						assocName = assocName.substring(0, assocName.length() - 6);
 						assocName = assocName.replace("_", ":");
@@ -159,7 +161,6 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 								List<NodeRef> nodesToKeep = new ArrayList<>();
 
 								for (AssociationRef assocRef : assocRefs) {
-
 									nodesToKeep.add(assocRef.getSourceRef());
 								}
 
