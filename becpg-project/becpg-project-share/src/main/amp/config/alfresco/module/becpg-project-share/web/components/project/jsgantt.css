@@ -56,10 +56,17 @@ td.ghead.current {
 .projects  span.task-title a {
     cursor: pointer;
     display: inline-block;
-    max-width: 200px;
+    max-width: 160px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+@media screen and (min-width: 1400px) {
+	.projects  span.task-title a {
+		max-width: 200px;
+	}
+	
 }
 
 .projects  span.resource-title {

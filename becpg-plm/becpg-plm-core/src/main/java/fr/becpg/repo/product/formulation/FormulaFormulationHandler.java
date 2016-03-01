@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.regex.Matcher;
 
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -179,11 +180,11 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 				if (execOrder.equals(dynamicCharactListItem.getExecOrder())) {
 					try {
 						if ((dynamicCharactListItem.getFormula() != null) && !dynamicCharactListItem.getFormula().isEmpty()) {
-							String formula = SpelHelper.formatFormula(dynamicCharactListItem.getFormula());
-							logger.debug("Parse formula : " + formula + " (" + dynamicCharactListItem.getName() + ")");
-							Expression exp = parser.parseExpression(formula);
-
 							if ((dynamicCharactListItem.getColumnName() != null) && !dynamicCharactListItem.getColumnName().isEmpty()) {
+								String formula = SpelHelper.formatFormula(dynamicCharactListItem.getFormula());
+								logger.debug("Parse formula : " + formula + " (" + dynamicCharactListItem.getName() + ")");
+								Expression exp = parser.parseExpression(formula);
+								
 								QName columnName = QName.createQName(dynamicCharactListItem.getColumnName().replaceFirst("_", ":"), namespaceService);
 								if (nullDynColumnNames.contains(columnName)) {
 									nullDynColumnNames.remove(columnName);
@@ -215,14 +216,25 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 								}
 								dynamicCharactListItem.setValue(null);
 							} else {
-								dynamicCharactListItem.setValue(exp.getValue(context));
+								
+								String[] formulas = SpelHelper.formatMTFormulas(dynamicCharactListItem.getFormula());
+								for(String formula: formulas){
+									
+									
+									Matcher varFormulaMatcher = SpelHelper.formulaVarPattern.matcher(formula);
+									if(varFormulaMatcher.matches()){
+										logger.debug("Variable formula : " + varFormulaMatcher.group(2) + " (" + varFormulaMatcher.group(1) + ")");
+										Expression exp = parser.parseExpression(varFormulaMatcher.group(2));
+										context.setVariable(varFormulaMatcher.group(1), exp.getValue(context));
+									} else {
+										logger.debug("Parse formula : " + formula + " (" + dynamicCharactListItem.getName() + ")");
+										Expression exp = parser.parseExpression(formula);
+										dynamicCharactListItem.setValue(exp.getValue(context));
+									}
+								}
 								logger.debug("Value :" + dynamicCharactListItem.getValue());
 							}
 						}
-// #1939 Do not reset as the user can modify the value						
-//						} else {
-//							dynamicCharactListItem.setValue(null);
-//						}
 						dynamicCharactListItem.setErrorLog(null);
 					} catch (Exception e) {
 						if ((e.getCause() != null) && (e.getCause().getCause() instanceof BeCPGAccessDeniedException)) {

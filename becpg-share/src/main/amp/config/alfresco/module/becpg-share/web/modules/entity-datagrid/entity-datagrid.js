@@ -2448,7 +2448,15 @@
                                 this.selectedItems = {};
                                 this.afterDataGridUpdate = [];
                                 this.extraAfterDataGridUpdate = [];
-                                this.formsFilterRuntime = null;
+                                
+                                if(this.formsFilterRuntime!=null){
+                                	this.formsFilterRuntime.reset();
+                                	this.formsFilterRuntime = null;
+                                }
+                                if(this.widgets.filterForm!=null){
+                                	this.widgets.filterForm.getMenu().hide();
+                                }
+                                
                                 
 
                                 if (obj.list != null && (this.options.list == null || this.options.list.length < 1))
