@@ -11,7 +11,7 @@
 	<artifactId>becpg-plm-share</artifactId>
 	<packaging>amp</packaging>
 	<name>beCPG PLM Share</name>
-	<description>beCPG Share PLM UI</description>
+	<description>Alfresco share module for beCPG PLM</description>
 	<licenses>
 		<license>
 			<name>GNU LESSER GENERAL PUBLIC LICENSE</name>

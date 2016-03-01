@@ -29,7 +29,11 @@
 	<#assign el = args.htmlid?html>
 	<div class="hideable toolbar-hidden DocListTree">
        <div class="bulk-edit">
-         	<a id="${el}-bulkEdit-button" name="bulkEdit" href="${url.context}/page/bulk-edit?nodeRef={nodeRef}" >${msg("button.bulkEdit")}</a>
+         	<span id="${el}-bulkEdit-button" class="yui-button yui-push-button">
+               <span class="first-child">
+                     <button name="fileUpload">${msg("button.bulkEdit")}</button>
+                </span>
+            </span>
       </div>
 	</div>
 </@>

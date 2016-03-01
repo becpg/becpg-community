@@ -11,7 +11,7 @@
 	<artifactId>becpg-project-share</artifactId>
 	<packaging>amp</packaging>
 	<name>beCPG Project Share</name>
-	<description>beCPG Project Share UI</description>
+	<description>Alfresco share module for beCPG project</description>
 	<licenses>
 		<license>
 			<name>GNU LESSER GENERAL PUBLIC LICENSE</name>

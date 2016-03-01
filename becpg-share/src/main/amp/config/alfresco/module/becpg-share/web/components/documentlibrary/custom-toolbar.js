@@ -299,19 +299,9 @@
 						},
 
 						onBulkEdit : function CustomDLTB_onBulkEdit(sType, aArgs, p_obj) {
-							var eventTarget = aArgs, anchor = eventTarget.getElementsByTagName("a")[0];
-
-							if (anchor && anchor.nodeName == "A") {
-								anchor.href = YAHOO.lang.substitute(anchor.href, {
-									nodeRef : this.doclistMetadata.parent.nodeRef
-								});
-
-								// Portlet fix: parameter might be encoded
-								if (anchor.href.indexOf("%7BnodeRef%7D") !== -1) {
-									anchor.href = anchor.href.replace("%7BnodeRef%7D", encodeURIComponent(this.doclistMetadata.parent.nodeRef));
-								}
-
-							}
+							
+							window.location.href = $siteURL("bulk-edit?nodeRef="+this.doclistMetadata.parent.nodeRef);
+							
 						},
 						/**
 						 * Document List Metadata event handler NOTE: This is a
