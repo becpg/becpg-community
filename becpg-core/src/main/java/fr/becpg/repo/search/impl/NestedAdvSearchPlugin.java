@@ -43,7 +43,7 @@ public class NestedAdvSearchPlugin implements AdvSearchPlugin {
 	private static final String ASSOC_SUFFIX = "assoc_";
 	private static final String ASSOC_KEY = "_"+ASSOC_SUFFIX;
 
-	private static final Log logger = LogFactory.getLog(AdvSearchPlugin.class);
+	private static final Log logger = LogFactory.getLog(NestedAdvSearchPlugin.class);
 
 	public Map<String, Map<String, String>> extractNested(Map<String, String> criteriaMap) {
 		Map<String, Map<String, String>> nested = new HashMap<>();

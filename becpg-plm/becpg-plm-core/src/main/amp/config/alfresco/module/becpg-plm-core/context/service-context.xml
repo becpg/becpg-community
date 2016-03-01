@@ -129,7 +129,6 @@
 		<property name="productService" ref="productService" />
 	</bean>
 	
-	<!-- Product formulate -->
 	<bean id="webscript.fr.becpg.product.reqCtrlList.get" class="fr.becpg.repo.web.scripts.product.ReqCtrlWebScript" parent="webscript">
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
 		<property name="nodeService" ref="nodeService" />
