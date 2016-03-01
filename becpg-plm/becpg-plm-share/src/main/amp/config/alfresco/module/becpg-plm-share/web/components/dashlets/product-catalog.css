@@ -62,7 +62,6 @@
    height: 20px;
    float: left;
    position: relative;
-   border-radius: 12px;
    background-color: white;
    box-shadow: 1px 1px 3px #CCC inset;
    padding: 0 2px;
@@ -87,8 +86,8 @@
 .product-catalog  div.search-box span.yui-button span.first-child button
 {
    min-height: 20px;
-   padding: 0 30px 0 0;
-   width: 36px;
+   padding: 0 20px 0 0;
+   width: 20px;
 }
 
 .product-catalog  div.search-box input[type="text"]

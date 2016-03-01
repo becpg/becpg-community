@@ -600,7 +600,8 @@
         node = record.jsNode,
         properties = node.properties,
         name = record.displayName,
-        isContainer = node.isContainer, isEntity = beCPG.util.isEntity(record),
+        isContainer = node.isContainer, 
+        isEntity = beCPG.util.isEntity(record),
         isLink = node.isLink,
         extn = name.substring(name.lastIndexOf(".")),
         imgId = node.nodeRef.nodeRef; // DD added
@@ -616,7 +617,7 @@
 	     Dom.setStyle(elCell, "width", oColumn.width + "px");
 	     Dom.setStyle(elCell.parentNode, "width", oColumn.width + "px");
 	  
-	     if (isContainer || (isLink && node.linkedNode.isContainer) && !isEntity)
+	     if ((isContainer || (isLink && node.linkedNode.isContainer)) && !isEntity)
 	     {
 	        elCell.innerHTML = '<span class="folder">' + (isLink ? '<span class="link"></span>' : '') + (scope.dragAndDropEnabled ? '<span class="droppable"></span>' : '') + Alfresco.DocumentList.generateFileFolderLinkMarkup(scope, record) + '<img id="' + imgId + '" src="' + this.getFolderIcon(record.node) + '" /></a>';
 	        containerTarget = new YAHOO.util.DDTarget(imgId); // Make the folder a target
