@@ -79,50 +79,42 @@ public class EntityCatalogWebScript extends AbstractWebScript {
 			return;
 		}
 
+		JSONArray catalogs=null;
 		JSONObject jsonObject=null;
 		try {
 			jsonObject = new JSONObject(property.toString());
+			catalogs = jsonObject.getJSONArray("catalogs");
 		} catch (JSONException e1) {
 			logger.error("unable to create json object from string: "+property+".");
 			logger.error("check on an online json parser if string is correct");
 			return;
 		}
 
-		JSONObject scores=null;
-		JSONObject missingFields=null;
-
-		try {
-			scores = jsonObject.getJSONObject("details").getJSONObject("mandatoryFieldsDetails");
-			missingFields = jsonObject.getJSONObject("missingFields");
-		} catch (JSONException e) {
-			logger.error("unable to read scores/missingFields object from json.");
-			logger.error("json was: "+jsonObject);
-			return;
-		}
-
-		JSONObject ret = new JSONObject();
+		JSONArray ret = new JSONArray();
 
 		/*
 		 * fills ret object with object
 		 * 
 		 * {
+		 * 		locales: [en, fr]
 		 * 		scores: 0.33
 		 * 		fields: ["bcpg:productHierarchy1","bcpg:productHierarchy2"]
 		 * }
 		 */
-		Iterator it = missingFields.keys();
-		while(it.hasNext()){
-
-			String currentKey = (String) it.next();
-			JSONObject currentMandatoryScore = new JSONObject();
+		for(int it=0; it<catalogs.length(); it++){
+			JSONObject currentCatalog = new JSONObject();
 			JSONArray fields=null;
+			JSONObject currentTransformedCatalog = new JSONObject();
 
 			try {
-				fields = missingFields.getJSONArray(currentKey);
+				currentCatalog = (JSONObject) catalogs.get(it);
+				fields = currentCatalog.getJSONArray("missingFields");
 			} catch (JSONException e1) {
 				logger.error("unable to read missing fields array");
 				return;
 			}
+			
+			logger.debug("currentCatalog: "+currentCatalog);
 			
 			JSONArray localizedFields = new JSONArray();
 
@@ -132,8 +124,7 @@ public class EntityCatalogWebScript extends AbstractWebScript {
 				String locale=null;
 				try {
 					
-					field = (String) fields.get(i);
-					
+					field = (String) fields.get(i);	
 					if(field.contains("_")){
 						locale = field.split("_")[1];
 						field= field.split("_")[0];
@@ -144,47 +135,42 @@ public class EntityCatalogWebScript extends AbstractWebScript {
 					PropertyDefinition propertyDef = dictionaryService.getProperty(fieldQname);
 					
 					if (assocDesc != null) {
-						localizedFields.put(assocDesc.getTitle(dictionaryService)+ (locale != null ? " ("+locale+")" : ""));
+						localizedFields.put(assocDesc.getTitle(dictionaryService)+ (locale != null ? "_"+locale : ""));
 					} else if(propertyDef != null){
-						localizedFields.put(propertyDef.getTitle(dictionaryService)+ (locale != null ? " ("+locale+")" : ""));
+						localizedFields.put(propertyDef.getTitle(dictionaryService)+ (locale != null ? "_"+locale : ""));
 					} else {
-						localizedFields.put(field + (locale != null ? "("+locale+")" : ""));
+						localizedFields.put(field + (locale != null ? "_"+locale : ""));
 					}					
 					
 				} catch (InvalidQNameException e) {
 					logger.error("qname "+field+" is invalid");
-					localizedFields.put(field + (locale != null ? " ("+locale+")" : ""));
+					localizedFields.put(field + (locale != null ? "_"+locale : ""));
 				} catch (JSONException e) {
 					logger.error("unable to get field at index "+i);
-					localizedFields.put(field + (locale != null ? " ("+locale+")" : ""));
+					localizedFields.put(field + (locale != null ? "_"+locale : ""));
 				} catch (NullPointerException e){
 					logger.error("NPE while trying to get field message");
-					localizedFields.put(field + (locale != null ? " ("+locale+")" : ""));
+					localizedFields.put(field + (locale != null ? "_"+locale : ""));
 				}
 				locale = null;
 			}
 
 			try {
-				currentMandatoryScore.put("fields", localizedFields);
-				currentMandatoryScore.put("score", scores.getDouble(currentKey));
+				currentTransformedCatalog.put("missingFields", localizedFields);
+				currentTransformedCatalog.put("score", currentCatalog.getDouble("score"));
+				currentTransformedCatalog.put("label", currentCatalog.getString("label"));
+				if(currentCatalog.has("locales")){
+					currentTransformedCatalog.put("locales", currentCatalog.getJSONArray("locales"));
+				}
 			} catch (JSONException e) {
 				if(logger.isDebugEnabled()){
-					logger.debug("unable to fetch param from missingFields object/scores object with key "+currentKey);
-					logger.debug("missingFields: "+missingFields);
-					logger.debug("scores: "+scores);
+					logger.debug("unable to fetch param from missingFields object/scores object with key "+it);
+					logger.debug("missingFields: "+catalogs);
 				}
 				continue;
 			}
 
-			try {
-				ret.put(currentKey, currentMandatoryScore);
-			} catch (JSONException e) {
-				if(logger.isDebugEnabled()){
-					logger.debug("unable to put loop score in ret jsonObject");
-					logger.debug("score: "+currentMandatoryScore);
-					logger.debug("ret: "+ret);
-				}
-			}
+			ret.put(currentTransformedCatalog);
 		}
 
 		if(logger.isDebugEnabled()){
@@ -201,10 +187,12 @@ public class EntityCatalogWebScript extends AbstractWebScript {
 		 * 
 		 * {
 		 * 	std: {
+		 * 			locales: [en, fr]
 		 * 			scores: 0.33,
 		 * 			fields: ["bcpg:productHierarchy1","bcpg:productHierarchy2"]
 		 * 	},
 		 * 	foo: {
+		 * 			----locales: []---- 
 		 * 			scores: 0.5,
 		 * 			fields: ["bcpg:legalName", "bar", "baz"]
 		 * 	}

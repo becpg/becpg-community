@@ -88,3 +88,11 @@
 	margin-left: 2px;
 	margin-right: 2px;
 }
+
+.properties-view .yui-navset > .yui-content {
+	background-color: #f5fff2;
+}
+
+.properties-view .yui-navset {
+	margin-top: 1%;
+}

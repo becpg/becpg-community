@@ -74,16 +74,18 @@
 			function parseJsonToHTML(json){
 				//displays things if there are any catalogs
 				if(json !== undefined && json != null && Object.keys(json).length > 0){
+					console.log("parsing json: "+JSON.stringify(json));
 					var html="<div>";
 
-					html+="<h2>"+instance.msg("label.property_completion")+"</h2>";
+					//html+="<h2>"+instance.msg("label.property_completion")+"</h2>";
 
 					for(var key in json){
 						var score = json[key].score;
-
+						var locales = json[key].locales;
+						var label = json[key].label;
 						html+="<div class=\"catalog\">";
 						html+="<div class=\"catalog-header set-bordered-panel-heading\">";
-						html+="<span class=\"catalog-name\">"+instance.msg("label.catalog")+" \""+replaceLocaleWithFlag(key)+"\"</span>";
+						html+="<span class=\"catalog-name\">"+instance.msg("label.catalog")+" \""+replaceLocaleWithFlag(label, locales)+"\"</span>";
 						html+="<span class=\"score-info\">"+Math.floor(score*100)+" % "+instance.msg("label.completed")+"</span>";
 						html+="<progress value=\""+score+"\">"							
 						//IE fix
@@ -98,12 +100,12 @@
 						html+="<h3>"+instance.msg("label.missing_properties")+"</h3>";
 
 						//display missing props, if any
-						if(json[key].fields !== undefined){
+						if(json[key].missingFields !== undefined){
 							html+="<ul class=\"catalog-missing-propList\">"
 
-								if(json[key].fields.length > 0){
-									for(var field in json[key].fields){
-										html+="<li class=\"missing-field\">"+replaceLocaleWithFlag(json[key].fields[field])+"</li>";								
+								if(json[key].missingFields.length > 0){
+									for(var field in json[key].missingFields){
+										html+="<li class=\"missing-field\">"+replaceLocaleWithFlag(json[key].missingFields[field])+"</li>";								
 									}
 								} else {
 									html+="<li>"+instance.msg("label.no_missing_prop")+"</li>";
@@ -124,16 +126,30 @@
 			}
 
 			//Replaces locale in formatted label by img markup with corresponding flag
-			// eg: "legal name (en)" would be replaced by "legal name <img>" with img tag having english flag as src
-			function replaceLocaleWithFlag(field){
-				if(/(\([a-z]{2}\))+/.test(field)){
-					var match = field.match(/(\([a-z]{2}\))+/g)[0];
+			// eg: "legal name_en" would be replaced by "legal name <img>" with img tag having english flag as src
+			function replaceLocaleWithFlag(field, locales){
+				console.log("replacing locale with flag: field="+field+" locales="+locales);
+				//localized field
+				if(/_([a-z]{2})+/.test(field)){
+					var match = field.match(/_([a-z]{2})+/g)[0];
 					var locale = match.substring(1,3);
 
 					var imgMarkup = "<img src=\"/share/res/components/images/flags/"+locale+".png\">";
 					var replaced = field.replace(match, imgMarkup);
-					console.log("match: "+match+", locale: "+locale+", imgMarkup: "+imgMarkup+", replaced: \""+replaced+"\"");
 					return replaced;
+				} else if(locales !== undefined){
+					//localized catalog with only one locale set
+					if(locales.length == 1){
+						
+						var locale = locales[0];
+						console.log("\tOnly one locale: "+locale);
+						var imgMarkup = "<img src=\"/share/res/components/images/flags/"+locale+".png\">";
+						var replaced = field+imgMarkup;
+						return replaced;
+					} else {
+						
+						return field;
+					}
 				} else {
 					return field;
 				}
@@ -148,7 +164,6 @@
 				responseContentType : Alfresco.util.Ajax.JSON,
 				successCallback : {
 					fn : function (response){
-						console.log("response : "+JSON.stringify(response.json));
 
 						if(response.json !== undefined){
 							var html = parseJsonToHTML(response.json);
@@ -161,7 +176,29 @@
 				},
 				failureMessage : "Could not load entity catalog",
 				execScripts : true
-			});    
+			}); 
+			
+		/*
+			var changeActiveTab = function ev_changeActiveTab(layer, args){
+				alert("toto");
+				console.log("changeActiveTab("+layer+"): toString: "+JSON.stringify(layer));
+			}
+			
+			var headerClass = Alfresco.util.generateDomId(null, "header");
+			
+			var ulHeaders = YAHOO.util.Dom.get("tab-headers");
+			var oneHeader;
+			for(var child=0; child<ulHeaders.children.length; child++){
+				
+				ulHeaders.children[child].className += " "+headerClass;
+				console.log("child: "+ulHeaders.children[child]+", toString: "+JSON.stringify(ulHeaders.children[child].outerHTML));
+				oneHeader = ulHeaders.children[child];
+			}
+			
+			YAHOO.Bubbling.addDefaultAction(headerClass, changeActiveTab);
+			
+			oneHeader.click();
+			console.log("bubbling ajouté");*/
 		}
 	});
 })();
