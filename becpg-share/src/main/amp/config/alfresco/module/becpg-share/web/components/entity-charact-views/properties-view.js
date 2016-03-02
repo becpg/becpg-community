@@ -114,6 +114,10 @@
                                 type : "folder"
                              }).display(this.options.isFavourite);
                             
+                            
+                            this.widgets.tabView = new YAHOO.widget.TabView(this.id+'-properties-tabview');
+                            
+                            
                             // Load the form
                             Alfresco.util.Ajax.request(
                             {
