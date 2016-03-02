@@ -24,16 +24,70 @@
 	</properties>
 	<components>
        
+       <!-- Mobile App Launch -->
+      <component>
+         <region-id>mobile-app</region-id>
+         <sub-components>
+            <sub-component id="default">
+               <evaluations>
+                  <!-- if User Agent matches: iPad, iPhone, iPod -->
+                  <evaluation id="useragent">
+                     <evaluators>
+                        <evaluator type="useragent.component.evaluator">
+                           <params>
+                              <useragent>iPhone|iPod|iPad</useragent>
+                           </params>
+                        </evaluator>
+                     </evaluators>
+                     <url>/components/mobile-app-support/ios-mobile</url>
+                  </evaluation>
+               </evaluations>
+            </sub-component>
+         </sub-components>
+      </component>
+       
        <!-- Title -->
       <component>
          <region-id>title</region-id>
-         <url>/components/title/collaboration-title</url>
+         <sub-components>
+            <sub-component id="default">
+               <evaluations>
+                  <!-- if in site: Site title -->
+                  <evaluation id="site">
+                     <evaluators>
+                        <evaluator type="site.component.evaluator"/>
+                     </evaluators>
+                     <url>/components/title/collaboration-title</url>
+                  </evaluation>
+                  <!-- otherwise: Repository title -->
+                  <evaluation id="repo">
+                     <url>/components/title/simple-title</url>
+                     <properties>
+                        <title>title.repository</title>
+                        <subtitle>title.browser</subtitle>
+                     </properties>
+                  </evaluation>
+               </evaluations>
+            </sub-component>
+         </sub-components>
       </component>
 
-      <!-- Navigation -->
+      <!-- Site Navigation -->
       <component>
          <region-id>navigation</region-id>
-         <url>/components/navigation/collaboration-navigation</url>
+         <sub-components>
+            <sub-component id="default">
+               <evaluations>
+                  <!-- if in site: Site navigation -->
+                  <evaluation id="site">
+                     <evaluators>
+                        <evaluator type="site.component.evaluator"/>
+                     </evaluators>
+                     <url>/components/navigation/collaboration-navigation</url>
+                  </evaluation>
+               </evaluations>
+            </sub-component>
+         </sub-components>
       </component>
 
 	<component>
@@ -87,7 +141,7 @@
                      <url>/components/entity-data-lists/entity-header</url>
                      <properties>
                         <nodeRef>{nodeRef}</nodeRef>
-                        <libraryRoot>alfresco://shared</libraryRoot>
+                        <libraryRoot>alfresco://company/shared</libraryRoot>
                         <rootPage>context/shared/sharedfiles</rootPage>
                         <rootLabelId>location.path.shared</rootLabelId>
                         <showOnlyLocation>true</showOnlyLocation>
@@ -236,10 +290,6 @@
       <component>
          <region-id>dnd-upload</region-id>
          <url>/components/upload/dnd-upload</url>
-      </component>
-       <component>
-         <region-id>archive-and-download</region-id>
-         <url>/components/download/archive</url>
       </component>
 		
 	</components>
