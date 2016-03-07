@@ -258,7 +258,9 @@ public class FormulationHelper {
 						}
 						if (FormulationHelper.isProductUnitLiter(productUnit)) {
 							Double density = FormulationHelper.getDensity(nodeRef, nodeService);
-							qty = qty * density;
+							if(density!=null){
+								qty = qty * density;
+							}
 						}
 						return qty;
 					}
@@ -291,7 +293,7 @@ public class FormulationHelper {
 					}
 					if (FormulationHelper.isProductUnitLiter(productUnit)) {
 						Double density = productData.getDensity();
-						if (density != null) {
+						if (density != null && qty !=null) {
 							qty = qty * density;
 						} else {
 							return FormulationHelper.getQtyFromComposition(productData, productUnit, defaultValue);
