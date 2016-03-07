@@ -163,7 +163,7 @@ div.constraintsList .scrollableList {
 
 .rclFilterElt > div {
 	overflow-y: auto;
-	max-height: 62px;
+	max-height: 64px;
 	height: auto;
 }
 

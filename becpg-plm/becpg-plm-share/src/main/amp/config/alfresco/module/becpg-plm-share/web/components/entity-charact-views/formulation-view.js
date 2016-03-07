@@ -234,7 +234,7 @@
 
 								var backgroundSize= Math.floor(3629*widthRatio)+"px "+Math.floor(396*widthRatio)+"px";
 								scoreDiv.childNodes[0].style.lineHeight=imgWidth+"px";
-								scoreDiv.childNodes[0].style.fontSize=2.2*widthRatio+"em";
+								scoreDiv.childNodes[0].style.fontSize=3*widthRatio+"em";
 								scoreDiv.style.backgroundSize=backgroundSize;
 							} 
 						},
@@ -277,7 +277,7 @@
 
 							var backgroundSize= Math.floor(3629*widthRatio)+"px "+Math.floor(396*widthRatio)+"px";
 							scoreDiv.childNodes[0].style.lineHeight=imgWidth+"px";
-							scoreDiv.childNodes[0].style.fontSize=2.2*widthRatio+"em";
+							scoreDiv.childNodes[0].style.fontSize=3*widthRatio+"em";
 							scoreDiv.style.backgroundSize=backgroundSize;
 
 							//move dom elts			

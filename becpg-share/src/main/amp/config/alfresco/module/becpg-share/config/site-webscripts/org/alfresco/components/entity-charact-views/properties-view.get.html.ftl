@@ -62,7 +62,7 @@
 						   		<li ><a href="#${el}-catalogs"><em>${msg("label.property_completion")}</em></a></li>
 						   	</ul>
 						   	
-						   	<div class="yui-content">
+						   	<div class="yui-content properties-tab">
 						   		<div id="tab_${el}-comments">
 							   		<div  id="${el}-body"  class="comments-list">
 				            	  				            
