@@ -823,7 +823,7 @@ span.favourite span.ctn-fav {
 }
 
 .properties-tab {
-	background-color: #f5fff2 !important;
+	background-color: unset !important;
 }
 
 .entity-catalog .yui-navset {

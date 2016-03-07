@@ -545,19 +545,15 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 							}
 
 							//wether this field should be visited by every catalog or not
-							logger.debug("Current localized field: "+field);
 							if(!localeComesFromCatalog){
 								//everybody should visit it
 								for(JSONObject catalog : localizedCatalogs){
-									logger.debug("current catalog: "+catalog);
 									JSONArray missingFields = catalog.getJSONArray("missingFields");
 
 									//only common catalog should have this field as void
 									if(catalog.has("label")){	
 										String currentLabel = catalog.getString("label");
-										logger.debug("currentLabel: \""+currentLabel+"\"");
 										if(localizedCatalogs.get(0).equals(catalog)){
-											logger.debug(currentLabel+" does not match regexp : it's common catalog (putting field inside it)");
 											missingFields.put(field);
 											catalog.put("visited", catalog.getInt("visited")+1);
 											catalog.put("violated", catalog.getInt("violated")+1);
@@ -574,8 +570,6 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 								while(it.hasNext() && !found){
 									catalog = it.next();
 
-									logger.debug("catalog: "+catalog);
-
 									JSONArray currentLocalesArray = catalog.getJSONArray("locales");
 									String currentCatalogLocale = null;
 
@@ -585,7 +579,6 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 
 									if(locale.equals(currentCatalogLocale)){
 										JSONArray missingFields = catalog.getJSONArray("missingFields");
-										logger.debug("adding localized prop: "+field+"_"+locale+" to localized catalog: "+label);
 										missingFields.put(field+"_"+locale);
 										catalog.put("visited", catalog.getInt("visited")+1);
 										catalog.put("violated", catalog.getInt("violated")+1);
@@ -596,7 +589,6 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 						}
 					} else {
 						//Not a ml text, regular prop/assoc
-						logger.debug("Regular prop/assoc");
 						assoc = associationService.getTargetAssocs(nodeRef, qname);
 						assocDesc  = dictionaryService.getAssociation(qname);
 						property = dictionaryService.getProperty(qname);
@@ -639,13 +631,10 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 							}
 
 							for(JSONObject catalog : localizedCatalogs){
-								logger.debug("current catalog: "+catalog);
 								JSONArray missingFields = catalog.getJSONArray("missingFields");
 								if(catalog.has("label")){
 									String currentLabel = catalog.getString("label");
-									logger.debug("currentLabel: "+currentLabel);
 									if(!currentLabel.matches("([(][a-z]{2}[)])+")){
-										logger.debug("adding missing prop: "+field+" to generic catalog: "+label);
 										missingFields.put(field);
 										catalog.put("violated", catalog.getInt("violated")+1);
 										catalog.put("visited", catalog.getInt("visited")+1);
@@ -725,7 +714,9 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 	 * @throws JSONException
 	 */
 	public JSONObject createLocalizedCatalog(JSONArray locales, String label, String id) throws JSONException{
-		logger.info("Creating localized catalog, label: "+label+", id: "+id+", locales: "+locales);
+		if(logger.isDebugEnabled()){
+			logger.debug("Creating localized catalog, label: "+label+", id: "+id+", locales: "+locales);
+		}
 		JSONObject localizedCatalog = new JSONObject();
 		localizedCatalog.put("visited", 0);
 		localizedCatalog.put("violated", 0);
