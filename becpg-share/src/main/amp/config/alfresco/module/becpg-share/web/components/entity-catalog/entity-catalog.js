@@ -66,7 +66,6 @@
 		 * @method onReady
 		 */
 		onReady : function EntityCatalog_onReady() {
-			console.log("started entity-catalog js");
 			var instance=this;
 			// Appel AJax entity-catalog 
 			// /becpg/entity/catalog/node/{store_type}/{store_id}/{id}
@@ -86,7 +85,6 @@
 						if(locales !== undefined && locales != null && locales.length > 0){
 							catalogId = catalogId+"_"+locales[0];
 						}
-						console.log("catalogId: "+catalogId);
 						
 						html+="<div id="+instance.id+"_catalog_"+ catalogId +" class=\"catalog "+(key==0?"first-catalog":"")+"\">";
 						html+="<div class=\"catalog-header set-bordered-panel-heading\">";
@@ -163,13 +161,8 @@
 				var i=0;
 				var step=5; //value of hue between each catalog
 				
-				console.log("====== Colorize missing fields ======");
-				console.log("id: "+id+", json: ");
-				console.log(json);
-				
 				for(var key in json){
 					var color = "hsl("+(i*(360/step))+", 50%, 80%)";
-					console.log("=== Catalog "+json[key].label+": "+color+" ===");
 					
 					if(json[key].missingFields !== undefined){
 						
@@ -185,7 +178,6 @@
 						if(json[key].missingFields.length > 0){
 							var label = YAHOO.util.Dom.get(labelId);
 							
-							console.log("labelId: "+labelId+", label: "+label);
 							if(label !== undefined && label != null){
 								label.innerHTML+= "<span class=\"catalog-color\" style=\"background-color: "+color+"\"></span>"
 							}
@@ -194,43 +186,41 @@
 						for(var field in json[key].missingFields){							
 							//try to find a prop or assoc with this field
 							var fieldCode = json[key].missingFields[field].code.replace(":", "_");
-							console.log("===== Missing field code: "+fieldCode+" =====");
+							var fieldId="";
 							
 							var found = YAHOO.util.Dom.get(id+"_assoc_"+fieldCode);
+							fieldId=id+"_assoc_"+fieldCode+"-cntrl";
+							
 							if(found === undefined || found == null){
 								found = YAHOO.util.Dom.get(id+"_prop_"+fieldCode);
+								fieldId=id+"_prop_"+fieldCode;
 							}
-							
+
 							if(found !== undefined && found != null){
 								if(found.className.contains("multi-assoc")){
 									found = found.parentNode;
 								}
-								found.style.backgroundColor = color;
 								
 								//put color tip if it's a multi-lingual prop
 								var parent = found.parentNode;
-								var spans = parent.getElementsByTagName("span");
-								
-								for(var spanIndex = 0; spanIndex < spans.length; spanIndex++){
-									var currentSpan = spans[spanIndex];									
+								var labels = document.getElementsByTagName("label");
+								for(var labelIndex = 0; labelIndex < labels.length; labelIndex++){
+									var currentLabel = labels[labelIndex];									
 									
-									if(currentSpan.className.contains("locale-icon")){
-										currentSpan.parentNode.innerHTML+= "<span class=\"catalog-color\" style=\"background-color: "+color+"\"></span>";
+									if(currentLabel.htmlFor.contains(fieldId)){
+										currentLabel.innerHTML+= "<span class=\"catalog-color\" style=\"background-color: "+color+"\"></span>";
 									}
 								}
-								
-								console.log("found assoc/prop, color "+color+" put");								
+							
 							} else {
-								console.log("can't found any prop or assoc for this field");
+								console.log("can't find any prop or assoc for this field");
 								console.log("prop id would be "+id+"_prop_"+fieldCode);
 								console.log("assoc id would be "+id+"_assoc_"+fieldCode);
 							}							
 						}
 					}
 					i++;
-					console.log("=== End of catalog "+json[key].label+" ===");
 				}
-				console.log("====== End of colorizeMissingFields ======")
 			}
 
 			//Affichage des notes et ajouts de tags dans les forms
@@ -249,21 +239,16 @@
 														
 							var insertId = this.id.replace("-mgr", "");							
 							var formId = insertId+"-form";
-							console.log("id: "+this.id+" -> "+insertId);
 							
 							var form = YAHOO.util.Dom.get(formId);
 							var pageContent = YAHOO.util.Dom.get(insertId);
 							if(form !== undefined && form != null){
 								
 								var catalogs = YAHOO.util.Dom.get(this.id+"-entity-catalog");
-								console.log(this.id+"-entity-catalog: ");
-								console.log(catalogs);
 								
 								pageContent.className+="inline-block";
 								catalogs.className+="inline-block ";
 								catalogs.className+="catalogs ";
-								console.log("form: ");
-								console.log(form);
 								YAHOO.util.Dom.insertAfter(catalogs,pageContent);
 								
 								colorizeMissingFields(response.json, insertId);

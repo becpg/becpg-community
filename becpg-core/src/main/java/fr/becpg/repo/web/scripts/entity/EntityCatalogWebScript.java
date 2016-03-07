@@ -67,15 +67,14 @@ public class EntityCatalogWebScript extends AbstractWebScript {
 
 
 		if(!nodeService.exists(productNodeRef)){
-			logger.error("node does not exist");
+			logger.error("node "+productNodeRef+" does not exist");
 			return;
 		}
 
 		QName qname = QName.createQName(BeCPGModel.BECPG_URI, "productScores");
 		Serializable property = nodeService.getProperty(productNodeRef, qname);
 
-		if(property == null){
-			logger.info("productScores property was null, returning");			
+		if(property == null){		
 			return;
 		}
 
@@ -113,8 +112,6 @@ public class EntityCatalogWebScript extends AbstractWebScript {
 				logger.error("unable to read missing fields array");
 				return;
 			}
-
-			logger.debug("currentCatalog: "+currentCatalog);
 
 			JSONArray missingFieldsArray = new JSONArray();
 
