@@ -333,6 +333,7 @@
 					<value>mL/g</value>
 					<value>UB</value>
 					<value>cps</value>
+					<value>mg KOH/g</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -576,10 +577,10 @@
 			<parent>bcpg:entityV2</parent>
 			<properties>
 				<property name="bcpg:pmcRegulation">
-					<type>d:text</type>
+					<type>d:mltext</type>
 				</property>
 				<property name="bcpg:pmcConcernedProducts">
-					<type>d:text</type>
+					<type>d:mltext</type>
 				</property>
 			</properties>
 			<mandatory-aspects>
@@ -1794,13 +1795,8 @@
 					</constraints>
 				</property>
 				<property name="bcpg:filReqMessage">
-					<type>d:text</type>
+					<type>d:mltext</type>
 					<mandatory>false</mandatory>
-					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>false</tokenised>
-					</index>
 				</property>
 				<property name="bcpg:filQtyPercMaxi">
 					<type>d:double</type>
@@ -2551,8 +2547,6 @@
 		</aspect>
 
 		<aspect name="bcpg:transformationAspect">
-			<properties>
-			</properties>
 			<associations>
 				<association name="bcpg:productSpecifications">
 					<source>

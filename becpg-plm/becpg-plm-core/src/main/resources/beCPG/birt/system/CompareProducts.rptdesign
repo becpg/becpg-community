@@ -2,7 +2,7 @@
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
     <property name="createdBy">Eclipse BIRT Designer Version 4.4.2.v201410272105 Build &lt;4.4.2.v20150217-1805></property>
     <simple-property-list name="includeResource">
-        <value>src/main/resources/beCPG/birt/CompareEntities-messages</value>
+        <value>./CompareEntities-messages</value>
     </simple-property-list>
     <property name="units">in</property>
     <property name="iconFile">/templates/blank_report.gif</property>
@@ -1964,6 +1964,10 @@ previousCharact;</expression>
                             <property name="paddingLeft">2pt</property>
                             <property name="paddingBottom">2pt</property>
                             <property name="paddingRight">2pt</property>
+                            <structure name="numberFormat">
+                                <property name="category">Fixed</property>
+                                <property name="pattern">###0.00{RoundingMode=HALF_UP}</property>
+                            </structure>
                             <property name="display">inline</property>
                             <property name="resultSetColumn">value1</property>
                         </data>
@@ -1994,6 +1998,10 @@ previousCharact;</expression>
                             <property name="paddingLeft">2pt</property>
                             <property name="paddingBottom">2pt</property>
                             <property name="paddingRight">2pt</property>
+                            <structure name="numberFormat">
+                                <property name="category">Fixed</property>
+                                <property name="pattern">###0.00{RoundingMode=HALF_UP}</property>
+                            </structure>
                             <property name="display">inline</property>
                             <property name="resultSetColumn">value2</property>
                         </data>
@@ -2030,6 +2038,10 @@ previousCharact;</expression>
                             <property name="paddingLeft">2pt</property>
                             <property name="paddingBottom">2pt</property>
                             <property name="paddingRight">2pt</property>
+                            <structure name="numberFormat">
+                                <property name="category">Fixed</property>
+                                <property name="pattern">###0.00{RoundingMode=HALF_UP}</property>
+                            </structure>
                             <property name="display">inline</property>
                             <property name="resultSetColumn">value3</property>
                         </data>
@@ -2056,6 +2068,10 @@ previousCharact;</expression>
                             <property name="paddingLeft">2pt</property>
                             <property name="paddingBottom">2pt</property>
                             <property name="paddingRight">2pt</property>
+                            <structure name="numberFormat">
+                                <property name="category">Fixed</property>
+                                <property name="pattern">###0.00{RoundingMode=HALF_UP}</property>
+                            </structure>
                             <property name="display">inline</property>
                             <property name="resultSetColumn">value4</property>
                         </data>
@@ -2224,7 +2240,6 @@ color;</expression>
                     <expression name="expr" type="javascript">(row["propertyQName"] == "bcpg:costListValue" || 
 row["propertyQName"] == "bcpg:nutListValue" ||
 row["propertyQName"] == "bcpg:nutListFormulatedValue" ||
-row["propertyQName"] == "bcpg:ingListQtyPerc" ||
 row["propertyQName"] == "bcpg:lclClaimValue" ||
 row["propertyQName"] == "bcpg:pclValue" ||
 row["propertyQName"] == "bcpg:organoListValue" ||
