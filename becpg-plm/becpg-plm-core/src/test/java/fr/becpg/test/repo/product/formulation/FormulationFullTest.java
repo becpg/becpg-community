@@ -147,7 +147,7 @@ public class FormulationFullTest extends AbstractFinishedProductTest {
 				dynamicCharactListItems.add(new DynamicCharactListItem("Formulate twice","reformulateCount=1"));
 				
 				//Multi Lines
-				dynamicCharactListItems.add(new DynamicCharactListItem("MTLine1","var abc=10+30;\n#a + 5;"));
+				dynamicCharactListItems.add(new DynamicCharactListItem("MTLine1","var abc=10+30;\n#abc + 5;"));
 				dynamicCharactListItems.add(new DynamicCharactListItem("MTLine2","var b = costList[1].value;\n#abc + #b;"));
 				dynamicCharactListItems.add(new DynamicCharactListItem("MTLine3","#abc - #b;\n\n"));
 				

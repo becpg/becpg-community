@@ -79,12 +79,21 @@
 					<show id="cm:name" />
 					<show id="cm:title" force="true" />
 					<show id="cm:description" />
+					<show id="bcpg:productSpecifications" force="true" />
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:productSpecifications" help-id="becpg.forms.help.productSpecifications" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 		</forms>
 	</config>
+	
+	
 
 	<!-- bcpg:finishedProduct type (existing nodes) -->
 	<config evaluator="node-type" condition="bcpg:finishedProduct">
@@ -4479,9 +4488,8 @@
 			<form id="filter">
 				<field-visibility>
 					<show id="bcpg:charactName" />
-					<show id="bcpg:allergenType" />
 					<show id="bcpg:allergenCode" />
-					<show id="bcpg:allergenRegulatoryThreshold"/>
+					<show id="bcpg:allergenType" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:charactName">
@@ -4489,8 +4497,9 @@
 					</field>
 					<field id="bcpg:allergenType">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">Major|data.allergentype.major,Minor|data.allergentype.minor
-							</control-param>
+							<control-param name="options">Major|data.allergentype.major,Minor|data.allergentype.minor</control-param>
+							<control-param name="isSearch">true</control-param>
+							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -4569,7 +4578,6 @@
 			<form id="filter">
 				<field-visibility>
 					<show id="bcpg:charactName" />
-					<show id="bcpg:costCurrency" />
 					<show id="bcpg:costFixed" />
 				</field-visibility>
 				<appearance>
@@ -4669,6 +4677,16 @@
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ingTypeItem
 							</control-param>
 						</control>
+					</field>
+				</appearance>
+			</form>
+			<form id="sub-datagrid-filter">
+				<field-visibility>
+					<show id="bcpg:charactName" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:charactName" label-id="becpg.forms.field.ing" >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 				</appearance>
 			</form>
@@ -5073,6 +5091,12 @@
 					<field id="bcpg:charactName">
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
+					<field id="bcpg:physicoChemUnit">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="insertBlank">true</control-param>
+						</control>	
+					</field>
 				</appearance>
 			</form>
 
@@ -5427,6 +5451,14 @@
 					<show id="bcpg:trademarkType"  />
 					<show id="cm:title" force="true" />
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:trademarkType">
+					<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="insertBlank">true</control-param>
+						</control>
+					</field>	
+				</appearance>
 			</form>
 
 			<form id="datagrid">
@@ -7428,7 +7460,60 @@
 					</field>
 				</appearance>
 			</form>
+			<form id="filter">
+				<field-visibility>
+					<show id="bcpg:filReqType" />
+					<show id="bcpg:filReqMessage" />
+					<show id="bcpg:filQtyPercMaxi" />
+					<show id="bcpg:filIsGMO" />
+					<show id="bcpg:filIsIonized" />
+					<show id="entity_bcpg:filIngs_bcpg:ing" />
+					<show id="bcpg:filIngs" />
+					<show id="bcpg:filGeoOrigins" />
+					<show id="bcpg:filRequiredGeoOrigins" />
+					<show id="bcpg:filBioOrigins" />
+				</field-visibility>
 
+				<appearance>
+					<field id="bcpg:filReqType">
+						<control template="/org/alfresco/components/form/controls/selectmany.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:filReqMessage">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:filIsGMO">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">,false|data.boolean.false,true|data.boolean.true
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:filIsIonized">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">,false|data.boolean.false,true|data.boolean.true
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:filIngs">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:filGeoOrigins">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:filRequiredGeoOrigins">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:filBioOrigins">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+				</appearance>
+			</form>
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>

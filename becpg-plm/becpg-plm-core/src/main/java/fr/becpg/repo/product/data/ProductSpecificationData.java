@@ -16,9 +16,6 @@ import fr.becpg.repo.repository.annotation.DataList;
 @AlfQname(qname = "bcpg:productSpecification")
 public class ProductSpecificationData extends ProductData   {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -3890483893356522048L;
 
 	private List<ForbiddenIngListDataItem> forbiddenIngList;
