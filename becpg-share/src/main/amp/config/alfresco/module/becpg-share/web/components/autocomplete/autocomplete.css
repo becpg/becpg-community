@@ -39,7 +39,7 @@
 
 .yui-ac .ac-body .yui-ac-input{
 	border:0px;
-	background-color: white;
+	background-color: inherit;
 	width:90%;
 	vertical-align: middle;
 	position: relative;
@@ -64,7 +64,7 @@
 	width:20px;
 	background: url(../images/collapsed.png) center center no-repeat;
 	vertical-align: middle;
-	background-color: white;
+	background-color: inherit;
 	border:0px	;
 	cursor: pointer;
 	display: block;

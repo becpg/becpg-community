@@ -166,7 +166,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 										nodeService.getProperty(n.getNut(), BeCPGModel.PROP_CHARACT_NAME));
 							
 								formulatedProduct.getCompoListView().getReqCtrlList()
-								.add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, n.getNut(), new ArrayList<NodeRef>(), RequirementDataType.Nutrient));
+								.add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, n.getNut(), new ArrayList<NodeRef>(), RequirementDataType.Specification));
 							}
 						}
 					} else {
@@ -229,7 +229,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 							String message = I18NUtil.getMessage(MESSAGE_NUT_NOT_IN_RANGE,
 									nodeService.getProperty(nutListSpecDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME));
 							formulatedProduct.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden,
-									message, nutListSpecDataItem.getNut(), new ArrayList<NodeRef>(), RequirementDataType.Nutrient));
+									message, nutListSpecDataItem.getNut(), new ArrayList<NodeRef>(), RequirementDataType.Specification));
 						}
 					});
 				});

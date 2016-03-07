@@ -120,10 +120,11 @@ public class ReqCtrlWebScript extends AbstractProductWebscript {
 			if(counts.containsKey(key.toString())){					
 				Map<String, Integer> currentCount = counts.get(key.toString());
 				if(currentCount == null){
-					continue;
+					currentCount = new HashMap<String, Integer>();
 				}
+				
 				if(currentCount.containsKey(item.getReqType().toString())){
-					currentCount.put(item.getReqType().toString(), currentCount.get(item.getReqType().toString())+item.getSources().size());
+					currentCount.put(item.getReqType().toString(), currentCount.get(item.getReqType().toString())+Math.max(item.getSources().size(),1));
 				} else {
 					currentCount.put(item.getReqType().toString(), Math.max(item.getSources().size(), 1));
 				}

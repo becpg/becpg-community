@@ -178,7 +178,6 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 
 		JSONObject scores = new JSONObject();
 		JSONObject details = new JSONObject();
-		JSONArray catalogs = new JSONArray();
 
 		try {
 			details.put("mandatoryFields", mandatoryFieldsScore);
@@ -188,11 +187,9 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 			scores.put("global", completionPercent);
 			scores.put("details", details);
 			
-			JSONObject catalogDetails = new JSONObject();
 			if(mandatoryFieldsRet != null){
 				scores.put("catalogs",mandatoryFieldsRet);
-			}
-				
+			}				
 		} catch(JSONException e){
 			logger.error("unable to create scores json object properly", e);
 		}
@@ -308,6 +305,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 		for(int i=0; i< catalogs.length(); i++){
 			JSONObject currentCatalog = null;
 			String label = null;
+			String id = null;
 			JSONArray fields = new JSONArray();
 			JSONArray catalogLocales = new JSONArray();
 
@@ -319,6 +317,12 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 				currentCatalog = new JSONObject();
 			}
 
+			if(currentCatalog.has("id") && currentCatalog.get("id") instanceof String){
+				id = currentCatalog.getString("id");
+			} else {
+				id = "id_"+i;
+			}
+			
 			if(currentCatalog.has("label") && currentCatalog.get("label") instanceof String){
 				label = currentCatalog.getString("label");
 			} else {
@@ -382,7 +386,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 				if(localesIntersection.size() > 0){
 					//one catalog for the unlocalized version, which stores common props
 					if(catalogLocales.length() > 0){
-						localizedCatalogs.add(createLocalizedCatalog(new JSONArray(), label));
+						localizedCatalogs.add(createLocalizedCatalog(new JSONArray(), label, id));
 					}
 
 					//k localized catalog for localized mlTexts
@@ -401,12 +405,12 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 							currentLocales.put(currentLocale);
 						}
 
-						localizedCatalogs.add(createLocalizedCatalog(currentLocales, label));
+						localizedCatalogs.add(createLocalizedCatalog(currentLocales, label, id));
 						currentLocales = new JSONArray();
 					}
 				} else {
 					//no locales at all
-					localizedCatalogs.add(createLocalizedCatalog(currentLocales, label));
+					localizedCatalogs.add(createLocalizedCatalog(currentLocales, label, id));
 				}
 
 				String field ="";
@@ -687,6 +691,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 		for(JSONObject localizedCatalog : catalogs){
 			
 			String localizedLabel = localizedCatalog.getString("label");
+			String id = localizedCatalog.getString("id");
 			JSONArray localizedMissingFieldsArray = localizedCatalog.getJSONArray("missingFields");
 			JSONArray localizedCatalogLocales = localizedCatalog.getJSONArray("locales");
 
@@ -707,6 +712,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 					catalogDesc.put("violated", violatedMandatoryFields);
 					catalogDesc.put("score", currentCatalogsScore);
 					catalogDesc.put("label", localizedLabel);
+					catalogDesc.put("id", id);
 					ret.put(catalogDesc);
 		}
 	}
@@ -718,13 +724,15 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 	 * @return 
 	 * @throws JSONException
 	 */
-	public JSONObject createLocalizedCatalog(JSONArray locales, String label) throws JSONException{
+	public JSONObject createLocalizedCatalog(JSONArray locales, String label, String id) throws JSONException{
+		logger.info("Creating localized catalog, label: "+label+", id: "+id+", locales: "+locales);
 		JSONObject localizedCatalog = new JSONObject();
 		localizedCatalog.put("visited", 0);
 		localizedCatalog.put("violated", 0);
 		localizedCatalog.put("missingFields", new JSONArray());
 		localizedCatalog.put("label", label);
 		localizedCatalog.put("locales", locales);
+		localizedCatalog.put("id", id);
 
 		return localizedCatalog;	
 	}
