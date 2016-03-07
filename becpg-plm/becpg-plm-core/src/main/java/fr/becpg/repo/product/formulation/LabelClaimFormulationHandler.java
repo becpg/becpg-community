@@ -2,7 +2,9 @@ package fr.becpg.repo.product.formulation;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -36,6 +38,8 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 public class LabelClaimFormulationHandler extends FormulationBaseHandler<ProductData> {
 
 	private static final Log logger = LogFactory.getLog(LabelClaimFormulationHandler.class);
+	
+	public static final String MESSAGE_UNDEFINED_CHARACT = "message.formulate.undefined.charact";
 
 	private NodeService nodeService;
 
@@ -80,7 +84,9 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 						ProductData partProduct = alfrescoRepository.findOne(part);
 						if (partProduct.getLabelClaimList() != null) {
 							for (LabelClaimListDataItem labelClaim : partProduct.getLabelClaimList()) {
-								visitPart(productData, labelClaim);
+								if(!LabelClaimListDataItem.VALUE_NA.equals(labelClaim.getLabelClaimValue())) {
+									visitPart(productData, labelClaim);
+								}
 							}
 						}
 						visitedProducts.add(part);
@@ -97,6 +103,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 
 	private void visitPart(ProductData productData, LabelClaimListDataItem subLabelClaimItem) {
 
+		
 		for (LabelClaimListDataItem labelClaimItem : productData.getLabelClaimList()) {
 
 			if (((labelClaimItem.getIsManual() == null) || !labelClaimItem.getIsManual())
@@ -113,11 +120,6 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 							labelClaimItem.setIsClaimed(false);
 						}
 						break;
-					case LabelClaimListDataItem.VALUE_NA:
-						if (!LabelClaimListDataItem.VALUE_EMPTY.equals(labelClaimItem.getLabelClaimValue())) {
-							labelClaimItem.setLabelClaimValue(LabelClaimListDataItem.VALUE_NA);
-						}
-						break;
 					case LabelClaimListDataItem.VALUE_EMPTY:
 					default:
 						labelClaimItem.setLabelClaimValue(LabelClaimListDataItem.VALUE_EMPTY);
@@ -131,7 +133,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 		}
 
 	}
-
+	
 	private void computeClaimList(ProductData productData, ExpressionParser parser, StandardEvaluationContext context) {
 		// ClaimLabel list
 		if (productData.getLabelClaimList() != null) {
