@@ -93,9 +93,11 @@
 							            </div>
 							        </div>
 							   	</div>
+							   	<#if isEntity>
 							   	<div id="tab_${el}-catlogs">
 						   			<div id="${el}-entity-catalog"></div> 
 						   		</div>
+						   		</#if>
 						   	</div>
 					   </div>
 		            </div>

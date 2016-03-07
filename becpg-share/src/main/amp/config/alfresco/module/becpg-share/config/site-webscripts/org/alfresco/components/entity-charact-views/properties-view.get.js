@@ -43,6 +43,7 @@ function main()
       activityParameters = getActivityParameters(model.nodeRef, null);
       var count = documentDetails.item.node.properties["fm:commentCount"];
       model.commentCount = (count != undefined ? count : null);
+      model.isEntity = documentDetails.item.node.aspects.indexOf("bcpg:entityListsAspect") > 0;
    // Widget instantiation 
       
       var entityCatalog = {
