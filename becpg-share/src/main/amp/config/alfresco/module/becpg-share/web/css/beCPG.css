@@ -797,6 +797,8 @@ span.favourite span.ctn-fav {
 
 .entity-catalog .catalog-details h3 {
 	margin-left: 0.5em;
+	margin-right: 0.3em;
+	display: inline;
 }
 
 .entity-catalog .catalog-header {
@@ -818,7 +820,7 @@ span.favourite span.ctn-fav {
 }
 
 .entity-catalog .catalog img {
-	margin-left: 2px;
+	margin-left: 0.2em;
 	margin-right: 2px;
 }
 
@@ -852,15 +854,28 @@ span.favourite span.ctn-fav {
 }
 
 .catalog-color {
-	width: 14px;
-	height: 14px;
+	width: 16px;
+	height: 11px;
 	display: inline-block;
-	margin-left: 0.2em;
-	margin-bottom: 0.2em;
+	margin-right: 0.2em;
+	margin-bottom: 0.3em;
 	vertical-align: middle;
-	border: 1px #ddd solid;
+	border-radius: 1px 4px 1px;
 }
 
 .no-missing-prop {
 	margin-left: 0.5em;
+}
+
+/* fixes color tip on missing field in edit metadata page */
+.form-container .form-field label {
+	display: unset;
+}
+
+.sticky-wrapper label {
+	margin-right: 0.2em;
+}
+
+img.icon16-11 {
+	margin-right: 0.2em;
 }
