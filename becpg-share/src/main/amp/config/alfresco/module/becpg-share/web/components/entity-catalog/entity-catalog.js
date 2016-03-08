@@ -162,7 +162,12 @@
 				var step=5; //value of hue between each catalog
 				
 				for(var key in json){
-					var color = "hsl("+(i*(360/step))+", 50%, 80%)";
+					var color = "hsl("+(i*360/7)+", "+(70+(i%20)*(i%2==0?1:-1))+"%, 50%)";
+					
+					var colorTipElement = document.createElement("SPAN");
+					colorTipElement.style.backgroundColor=color;
+					colorTipElement.className+="catalog-color";	
+					colorTipElement.title=instance.msg("label.catalog")+" '"+json[key].label+(json[key].locales !== undefined && json[key].locales.length == 1 ? "("+json[key].locales[0]+")'": "'");
 					
 					if(json[key].missingFields !== undefined){
 						
@@ -179,12 +184,14 @@
 							var label = YAHOO.util.Dom.get(labelId);
 							
 							if(label !== undefined && label != null){
-								label.innerHTML+= "<span class=\"catalog-color\" style=\"background-color: "+color+"\"></span>"
+								label.parentNode.insertBefore(colorTipElement.cloneNode(false), label.nextSibling);
 							}
 						}
 						
+						//put color tip next to each non validated field according to the catalog
 						for(var field in json[key].missingFields){							
 							//try to find a prop or assoc with this field
+							
 							var fieldCode = json[key].missingFields[field].code.replace(":", "_");
 							var fieldId="";
 							
@@ -201,19 +208,21 @@
 									found = found.parentNode;
 								}
 								
-								//put color tip if it's a multi-lingual prop
+								//put color tip
 								var parent = found.parentNode;
 								var labels = document.getElementsByTagName("label");
+								
+
 								for(var labelIndex = 0; labelIndex < labels.length; labelIndex++){
 									var currentLabel = labels[labelIndex];									
 									
-									if(currentLabel.htmlFor.contains(fieldId)){
-										currentLabel.innerHTML+= "<span class=\"catalog-color\" style=\"background-color: "+color+"\"></span>";
+									//checks if we're on the right label, and the catalog is not already labelled
+									if(currentLabel.htmlFor.contains(fieldId) && currentLabel.parentNode.innerHTML.indexOf(colorTipElement.style.backgroundColor) == -1){
+										currentLabel.parentNode.insertBefore(colorTipElement.cloneNode(false), currentLabel.nextSibling);										
 									}
-								}
-							
+								}							
 							} else {
-								console.log("can't find any prop or assoc for this field");
+								console.log("can't find any prop or assoc for field "+fieldCode);
 								console.log("prop id would be "+id+"_prop_"+fieldCode);
 								console.log("assoc id would be "+id+"_assoc_"+fieldCode);
 							}							

@@ -470,7 +470,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 								locale = splits[splits.length-1];
 							}
 
-							if(locale != null){
+							if(locale != null && catalogLocales.length() > 0){
 								for(String tmp :localesIntersection){
 									if(locale.equals(tmp)){
 										localeComesFromCatalog=true;
@@ -547,14 +547,20 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 							//wether this field should be visited by every catalog or not
 							if(!localeComesFromCatalog){
 								//everybody should visit it
+								if(logger.isDebugEnabled()){
+									logger.debug("Every catalog should visit field "+field);
+								}
 								for(JSONObject catalog : localizedCatalogs){
 									JSONArray missingFields = catalog.getJSONArray("missingFields");
 
 									//only common catalog should have this field as void
 									if(catalog.has("label")){	
+										if(logger.isDebugEnabled()){
+											logger.debug("This is a common catalog");
+										}
 										String currentLabel = catalog.getString("label");
 										if(localizedCatalogs.get(0).equals(catalog)){
-											missingFields.put(field);
+											missingFields.put(field+"_"+locale);
 											catalog.put("visited", catalog.getInt("visited")+1);
 											catalog.put("violated", catalog.getInt("violated")+1);
 										}
@@ -566,6 +572,10 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 								JSONObject catalog;
 								Iterator<JSONObject> it = localizedCatalogs.iterator();
 
+								if(logger.isDebugEnabled()){
+									logger.debug("Locale comes from catalog : only one catalog shall visit field "+field);
+								}
+								
 								boolean found = false;
 								while(it.hasNext() && !found){
 									catalog = it.next();
@@ -578,6 +588,9 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 									}
 
 									if(locale.equals(currentCatalogLocale)){
+										if(logger.isDebugEnabled()){
+											logger.debug("...that catalog being "+catalog.getString("id")+"_"+currentCatalogLocale);
+										}
 										JSONArray missingFields = catalog.getJSONArray("missingFields");
 										missingFields.put(field+"_"+locale);
 										catalog.put("visited", catalog.getInt("visited")+1);
