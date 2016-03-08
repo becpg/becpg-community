@@ -183,6 +183,7 @@
 							}
 						}
 						
+						//put color tip next to each non validated field according to the catalog
 						for(var field in json[key].missingFields){							
 							//try to find a prop or assoc with this field
 							var fieldCode = json[key].missingFields[field].code.replace(":", "_");
@@ -206,14 +207,16 @@
 								var labels = document.getElementsByTagName("label");
 								for(var labelIndex = 0; labelIndex < labels.length; labelIndex++){
 									var currentLabel = labels[labelIndex];									
+									var colorTipElement = document.createElement("SPAN");
+									colorTipElement.style.backgroundColor=color;
+									colorTipElement.className+="catalog-color";
 									
 									if(currentLabel.htmlFor.contains(fieldId)){
-										currentLabel.innerHTML+= "<span class=\"catalog-color\" style=\"background-color: "+color+"\"></span>";
+										currentLabel.parentNode.insertBefore(colorTipElement, currentLabel.nextSibling);
 									}
-								}
-							
+								}							
 							} else {
-								console.log("can't find any prop or assoc for this field");
+								console.log("can't find any prop or assoc for field "+fieldCode);
 								console.log("prop id would be "+id+"_prop_"+fieldCode);
 								console.log("assoc id would be "+id+"_assoc_"+fieldCode);
 							}							
