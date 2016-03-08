@@ -122,10 +122,12 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 						break;
 					case LabelClaimListDataItem.VALUE_EMPTY:
 					default:
+						//TODO add missing req
 						labelClaimItem.setLabelClaimValue(LabelClaimListDataItem.VALUE_EMPTY);
 						break;
 					}
 				} else {
+					//TODO add missing req
 					labelClaimItem.setLabelClaimValue(LabelClaimListDataItem.VALUE_EMPTY);
 				}
 
