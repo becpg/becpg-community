@@ -24,6 +24,7 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
+import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
@@ -118,7 +119,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 									nodeService.getProperty(mandatoryCharact.getKey(), BeCPGModel.PROP_CHARACT_NAME));
 
 							formulatedProduct.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated,
-									message, mandatoryCharact.getKey(), mandatoryCharact.getValue()));
+									message, mandatoryCharact.getKey(), mandatoryCharact.getValue(), RequirementDataType.Nutrient));
 						}
 					}
 
@@ -163,8 +164,9 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 							if (valuePerserving > ul) {
 								String message = I18NUtil.getMessage(MESSAGE_MAXIMAL_DAILY_VALUE,
 										nodeService.getProperty(n.getNut(), BeCPGModel.PROP_CHARACT_NAME));
+							
 								formulatedProduct.getCompoListView().getReqCtrlList()
-										.add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, n.getNut(), new ArrayList<NodeRef>()));
+								.add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, n.getNut(), new ArrayList<NodeRef>(), RequirementDataType.Specification));
 							}
 						}
 					} else {
@@ -227,7 +229,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 							String message = I18NUtil.getMessage(MESSAGE_NUT_NOT_IN_RANGE,
 									nodeService.getProperty(nutListSpecDataItem.getNut(), BeCPGModel.PROP_CHARACT_NAME));
 							formulatedProduct.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden,
-									message, nutListSpecDataItem.getNut(), new ArrayList<NodeRef>()));
+									message, nutListSpecDataItem.getNut(), new ArrayList<NodeRef>(), RequirementDataType.Specification));
 						}
 					});
 				});
@@ -328,5 +330,10 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 			}
 		}
 		return mandatoryCharacts;
+	}
+
+	@Override
+	protected RequirementDataType getDataType() {
+		return RequirementDataType.Nutrient;
 	}
 }

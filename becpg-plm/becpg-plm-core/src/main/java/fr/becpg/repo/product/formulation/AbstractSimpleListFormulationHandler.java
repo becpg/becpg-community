@@ -44,6 +44,7 @@ import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
+import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
@@ -105,6 +106,11 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	protected abstract List<T> getDataListVisited(ProductData partProduct);
 
 	protected abstract Map<NodeRef, List<NodeRef>> getMandatoryCharacts(ProductData formulatedProduct, QName componentType);
+	
+	/**
+	 * Returns the data type used to raise rclDataItems when formulating
+	 */
+	protected abstract RequirementDataType getDataType();
 
 	protected Map<NodeRef, List<NodeRef>> getMandatoryCharactsFromList(List<T> simpleListDataList) {
 		Map<NodeRef, List<NodeRef>> mandatoryCharacts = new HashMap<>(simpleListDataList.size());
@@ -175,7 +181,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 							isGenericRawMaterial);
 				}
 			}
-			addReqCtrlList(formulatedProduct.getCompoListView().getReqCtrlList(), mandatoryCharacts);
+			addReqCtrlList(formulatedProduct.getCompoListView().getReqCtrlList(), mandatoryCharacts, getDataType());
 
 		}
 
@@ -200,7 +206,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		}
 	}
 
-	protected void addReqCtrlList(List<ReqCtrlListDataItem> reqCtrlList, Map<NodeRef, List<NodeRef>> mandatoryCharacts) {
+	protected void addReqCtrlList(List<ReqCtrlListDataItem> reqCtrlList, Map<NodeRef, List<NodeRef>> mandatoryCharacts, RequirementDataType dataType) {
 
 		// ReqCtrlList
 		for (Map.Entry<NodeRef, List<NodeRef>> mandatoryCharact : mandatoryCharacts.entrySet()) {
@@ -209,7 +215,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 						nodeService.getProperty(mandatoryCharact.getKey(), BeCPGModel.PROP_CHARACT_NAME));
 
 				reqCtrlList.add(
-						new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, mandatoryCharact.getKey(), mandatoryCharact.getValue()));
+						new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, mandatoryCharact.getKey(), mandatoryCharact.getValue(), dataType));
 			}
 		}
 	}
@@ -443,16 +449,18 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 								logger.debug("Error in formula :" + SpelHelper.formatFormula(formula), e);
 							}
 						}
-					}
+					} 
 				}
-
+ 
 				if (error != null) {
 					formulatedCharactDataItem.setValue(null);
 					formulatedCharactDataItem.setErrorLog(error);
 					String message = I18NUtil.getMessage(errorKey, Locale.getDefault(),
 							nodeService.getProperty(formulatedCharactDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME), error);
-					formulatedProduct.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message,
-							formulatedCharactDataItem.getCharactNodeRef(), new ArrayList<NodeRef>()));
+					
+					ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Tolerated, message,
+							formulatedCharactDataItem.getCharactNodeRef(), new ArrayList<NodeRef>(), getDataType());
+					formulatedProduct.getCompoListView().getReqCtrlList().add(rclDataItem);
 				}
 
 			}

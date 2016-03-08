@@ -31,6 +31,7 @@ import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
+import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.ForbiddenIngListDataItem;
@@ -74,7 +75,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
 			return true;
 		}
-		
+
 		// no compo, nor ingList on formulated product => no formulation
 		if (!formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))
 				|| (!alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_INGLIST)
@@ -209,6 +210,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		sortIL(formulatedProduct.getIngList());
 
 		formulatedProduct.getCompoListView().getReqCtrlList().addAll(reqCtrlMap.values());
+
 	}
 
 	/**
@@ -420,9 +422,9 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 										ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(fil.getNodeRef());
 										if (reqCtrl == null) {
 											reqCtrl = new ReqCtrlListDataItem(null, fil.getReqType(), fil.getReqMessage(), null,
-													new ArrayList<NodeRef>());
+													new ArrayList<NodeRef>(), RequirementDataType.Specification);
 											reqCtrlMap.put(fil.getNodeRef(), reqCtrl);
-										}
+										} else reqCtrl.setReqDataType(RequirementDataType.Specification);
 
 										if (!reqCtrl.getSources().contains(productNodeRef)) {
 											reqCtrl.getSources().add(productNodeRef);
@@ -457,9 +459,9 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				return false; // check next rule
 			} else if (fil.getQtyPercMaxi() != null) {
 				return false; // check next rule (we will
-								// check
-								// in
-								// checkILOfFormulatedProduct)
+				// check
+				// in
+				// checkILOfFormulatedProduct)
 			}
 		}
 
@@ -545,8 +547,10 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 									ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(fil.getNodeRef());
 									if (reqCtrl == null) {
 										reqCtrl = new ReqCtrlListDataItem(null, fil.getReqType(), fil.getReqMessage(), ingListDataItem.getIng(),
-												new ArrayList<NodeRef>());
+												new ArrayList<NodeRef>(), RequirementDataType.Specification);
 										reqCtrlMap.put(fil.getNodeRef(), reqCtrl);
+									} else {
+										reqCtrl.setReqDataType(RequirementDataType.Specification);
 									}
 								}
 							}
@@ -578,7 +582,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 							}
 						}
 					}
-					
+
 					if(autorized){
 						break;
 					}
@@ -692,7 +696,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		}
 
 		if (reqCtrl == null) {
-			reqCtrl = new ReqCtrlListDataItem(null, requirementType, message, null, new ArrayList<NodeRef>());
+			reqCtrl = new ReqCtrlListDataItem(null, requirementType, message, null, new ArrayList<NodeRef>(), RequirementDataType.Ingredient);
 			reqCtrlMap.put(null, reqCtrl);
 		}
 

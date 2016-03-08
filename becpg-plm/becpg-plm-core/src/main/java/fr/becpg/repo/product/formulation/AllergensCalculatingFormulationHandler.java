@@ -27,6 +27,7 @@ import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.AllergenType;
+import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -297,14 +298,14 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 								List<NodeRef> sourceNodeRefs = new ArrayList<>();
 								sourceNodeRefs.add(partProduct.getNodeRef());
 
-								error = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, allergenNodeRef, sourceNodeRefs);
+								error = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, allergenNodeRef, sourceNodeRefs, RequirementDataType.Allergen);
 								errors.put(message, error);
 
 								if (regulatoryThreshold != null) {
 									if (logger.isDebugEnabled()) {
 										logger.debug("Adding allergen error " + error.toString());
 									}
-
+ 
 									ret.add(error);
 								}
 							}
@@ -410,8 +411,9 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 							if (!isAllergenAllowed) {
 								String message = I18NUtil.getMessage(MESSAGE_FORBIDDEN_ALLERGEN,
 										nodeService.getProperty(allergenListDataItem.getAllergen(), BeCPGModel.PROP_CHARACT_NAME));
-								formulatedProduct.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden,
-										message, allergenListDataItem.getAllergen(), new ArrayList<NodeRef>()));
+								ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Forbidden,
+										message, allergenListDataItem.getAllergen(), new ArrayList<NodeRef>(), RequirementDataType.Specification);
+								formulatedProduct.getCompoListView().getReqCtrlList().add(rclDataItem);
 							}
 						}
 					});

@@ -103,6 +103,9 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 				formulatedProduct.setDensity(null);
 			}
 		}
+		
+		
+		
 
 		return true;
 	}

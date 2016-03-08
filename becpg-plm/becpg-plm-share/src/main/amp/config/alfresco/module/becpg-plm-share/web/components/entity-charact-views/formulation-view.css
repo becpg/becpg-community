@@ -14,7 +14,7 @@
 **/
 .formulation-view  .datagrid .scrollableList {
 	padding: 0;
-	height: 260px;
+	height: 328px;
 }
 
 .formulation-view  .datagrid {
@@ -22,8 +22,8 @@
 }
 
 .formulation-view  .dashlet {
-	margin: 10px 0 0;
 	z-index: auto;
+	margin: 20px 0 0;
 }
 
 .formulation-view  .dashlet  .toolbar {
@@ -33,28 +33,31 @@
 	border-bottom: none;
 }
 
- .yui-skin-lightTheme .formulation-view .yui-dt table,
-  .formulation-view .yui-dt-col-actions{
+.yui-skin-lightTheme .formulation-view .yui-dt table, .formulation-view .yui-dt-col-actions
+	{
 	border-collapse: collapse;
-	border-right:none;
+	border-right: none;
 }
 
-.formulation-view .datagrid .yui-dt-col-actions  {
-    border-right:none;
+div.constraintsList .scrollableList {
+	height: 260px;
+	padding: 0;
 }
 
+.formulation-view .datagrid .yui-dt-col-actions {
+	border-right: none;
+}
 
 /**
  Bar
 */
-
 .formulation-view  .datagrid .datagrid-bar .paginator {
 	float: inherit;
 	width: inherit;
 	padding: 3px;
 }
 
-.formulation-view  .datagrid-bar .left,.datagrid-bar .left div {
+.formulation-view  .datagrid-bar .left, .datagrid-bar .left div {
 	float: left;
 }
 
@@ -62,22 +65,20 @@
 	float: right;
 }
 
-
-
 .formulation-view .datagrid-bar .left  .filterform  div,
-.formulation-view .datagrid-bar .left  .filterform  {
-    float:none;
+	.formulation-view .datagrid-bar .left  .filterform {
+	float: none;
 }
 
-
-.datalist-toolbar .onActionSimulate, .datagrid .onActionSimulate a
-	{
-	background: transparent url(../../components/documentlibrary/actions/folder-copy-to-16.png)
+.datalist-toolbar .onActionSimulate, .datagrid .onActionSimulate a {
+	background: transparent
+		url(../../components/documentlibrary/actions/folder-copy-to-16.png)
 		no-repeat 12px 4px;
 	padding-left: 22px;
 }
 
-.datalist-toolbar .onAddLabelingAspect,.datagrid .onAddLabelingAspect a {
+.datalist-toolbar .onAddLabelingAspect, .datagrid .onAddLabelingAspect a
+	{
 	background: transparent url(../images/tag-16.png) no-repeat 12px 4px;
 	padding-left: 22px;
 }
@@ -87,18 +88,17 @@
 	padding-left: 14px;
 }
 
-
 .dynamicCharactList .dashlet {
-	width:100%;
+	width: 100%;
 	border-bottom: 0px;
 }
 
- .dynamicCharactList-prop-panel {
-	padding:  0;
+.dynamicCharactList-prop-panel {
+	padding: 0;
 	border-radius: 0 0 5px 0;
 	background-color: rgb(238, 238, 238);
 	border: 1px solid #CCCCCC;
-	width:100%;
+	width: 100%;
 }
 
 .dynamicCharactList-prop-panel span {
@@ -106,24 +106,19 @@
 	display: block;
 }
 
-.formulation-view .dynamicCharactList .datagrid .scrollableList {
-	 height: 290px;
-}
-
 /* Constraints List */
-
-
 .constraintsList .dashlet .title {
-    background-color: transparent;
-    border: none;
-    color: rgb(51, 51, 51);
-    display: none;
+	background-color: transparent;
+	border: none;
+	color: rgb(51, 51, 51);
+	/*display: none;*/
 }
+
 
 
 .formulation-view .constraintsList .datagrid .scrollableList {
-    height: 346px;
-    padding: 0;
+	padding: 0;
+	height: 260px;
 }
 
 .constraintsList .datagrid .body .grid table {
@@ -134,18 +129,20 @@
 	display: none;
 }
 
-.constraintsList .datagrid .body  .grid.yui-dt .yui-dt-data  td,.datagrid.activityList .yui-dt-data td	{
+.constraintsList .datagrid .body  .grid.yui-dt .yui-dt-data  td,
+	.datagrid.activityList .yui-dt-data td {
 	border: none !important;
-	cursor : default;
+	cursor: default;
 }
 
-.constraintsList .datagrid .body  .yui-dt-data  tr,.datagrid.activityList .yui-dt-data tr.yui-dt-highlighted 	{
+.constraintsList .datagrid .body  .yui-dt-data  tr, .datagrid.activityList .yui-dt-data tr.yui-dt-highlighted
+	{
 	background-color: white;
 	border: none;
-	cursor : default;
+	cursor: default;
 }
 
-.constraintsList .datagrid .body .rclReq-details  {
+.constraintsList .datagrid .body .rclReq-details, .rclFilterElt{
 	background-color: #fff;
 	border-radius: 3px;
 	box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
@@ -154,11 +151,97 @@
 	border: 1px solid #CCCCCC;
 }
 
+/** RclFiltering **/
+.rclFilterElt ul li, .req-all-all {
+	display: inline;
+	padding: 0 2px;
+}
+
+.rclFilterElt ul {
+	margin: 5px;
+}
+
+.rclFilterElt > div {
+	overflow-y: auto;
+	max-height: 64px;
+	height: auto;
+}
+
+div.dataTypeList span.req-all-all{
+	margin: 0px 5px 5px;
+}
+
+div.dataTypeList .title {
+	margin-bottom: 5px;	
+}
+
+.rclReq-details ul {
+	max-height: 64px;
+	overflow-y: auto;
+}
+
+.dataTypeList .rclFilterSelected {
+	background-color: #ddd;
+}
+.dataTypeList span .rclFilterSelected {
+	padding: 1px;
+}
+
+.dataTypeList .title {
+	padding: 0px;
+}
+
+.rclFilterElt ul {
+	display: inline;
+}
+
+span.req-all-all, .dataTypeList .rclFilterElt li{
+	margin: 5px;
+}
+
+#scoresDiv {
+	margin: 0px 10px 5px;
+	overflow: auto;
+	margin-left: 4px;
+	margin-right: 4px;
+}
+
+#scoresDiv > ul{
+	padding: 0.2 em
+	margin-right: 10px;
+	float: left;
+	text-align: center;
+}
+
+#scoreLi{
+	background-image: url("../../components/images/states/percent-gauges-sprite.jpg");
+	margin: 0.2em 0.5em 0.5em;
+	display:inline-block;
+}
+
+#scoreLi span{
+	display: inherit;
+	text-align: center;
+}
+
+div.dataTypeList {
+	overflow: auto;
+	padding: 0.2em;
+	margin: 0px 10px 10px;
+	margin-right: 4px;
+	/* avoids text breaking on low resolutions */
+	min-width: 251px;
+}
+
+div.dataTypeList .title {
+	padding: 0.2em;
+}
+
+
 .constraintsList .datagrid .body  .icon {
 	float: left;
 	width: 5%;
 }
-
 
 .constraintsList .datagrid  .body  .rclReq-details .rclReq-title {
 	float: right;
@@ -170,7 +253,7 @@
 	clear: both;
 	list-style-type: disc;
 	margin-left: 6%;
-	padding:5px;
+	padding: 5px;
 }
 
 .constraintsList .datagrid .rclReq-details .rclReq-content ul li {
@@ -181,11 +264,9 @@
 	list-style-type: decimal;
 }
 
-.constraintsList .datagrid .datagrid-bar .new-row,
-.constraintsList .datagrid .datagrid-bar .selected-items,
-.constraintsList .datagrid td.yui-dt-first,
-.constraintsList .datagrid td.yui-dt-last
- {
+.constraintsList .datagrid .datagrid-bar .new-row, .constraintsList .datagrid .datagrid-bar .selected-items,
+	.constraintsList .datagrid td.yui-dt-first, .constraintsList .datagrid td.yui-dt-last
+	{
 	display: none;
 }
 
@@ -195,12 +276,8 @@
 	border-right: 0px;
 }
 
-
-.constraintsList .datagrid 
-
-
-/** Full screen mode */
-.full-screen .sticky-footer,.full-screen  .sticky-push {
+.constraintsList .datagrid /** Full screen mode */ 
+.full-screen .sticky-footer, .full-screen  .sticky-push {
 	height: 0px;
 }
 
@@ -255,8 +332,8 @@ div#full-screen-form {
 	height: 18px;
 }
 
-.yui-skin-lightTheme #full-screen-form   .yui-ac-container,#full-screen-form  .yui-ac-container
-	{
+.yui-skin-lightTheme #full-screen-form   .yui-ac-container,
+	#full-screen-form  .yui-ac-container {
 	width: 35em;
 }
 
@@ -285,7 +362,9 @@ div#full-screen-form {
 	padding-left: 24px;
 }
 
-#full-screen-form  form .mandatory,#full-screen-form  .form-fields .mandatory,#full-screen-form  .form-fields input.mandatory[type="text"],#full-screen-form  .form-fields .input.mandatory input[type="text"],#full-screen-form  .form-fields .input .mandatory input[type="text"]
-	{
+#full-screen-form  form .mandatory, #full-screen-form  .form-fields .mandatory,
+	#full-screen-form  .form-fields input.mandatory[type="text"],
+	#full-screen-form  .form-fields .input.mandatory input[type="text"],
+	#full-screen-form  .form-fields .input .mandatory input[type="text"] {
 	background-color: transparent;
 }
