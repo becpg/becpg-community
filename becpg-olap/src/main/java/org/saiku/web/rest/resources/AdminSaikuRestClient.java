@@ -18,6 +18,7 @@
 package org.saiku.web.rest.resources;
 
 import java.sql.Connection;
+import java.util.Calendar;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -120,5 +121,76 @@ public class AdminSaikuRestClient {
 
 		return Response.ok().build();
 	}
+	
+	@GET
+	@Produces({ "text/plain" })
+	@Path("/purge/historic/datalists")
+	public Response purgeDataListHistoric() throws Exception {
+		for (final Instance instance : instanceManager.getAllInstances()) {
+			if (logger.isInfoEnabled()) {
+				logger.info("Start purging datalists from instance/tenant: " + instance.getId() + "/" + instance.getInstanceName() + "/" + instance.getTenantName());
+			}
+			jdbcConnectionManager.doInTransaction(new JdbcConnectionManagerCallBack() {
 
+				@Override
+				public void execute(Connection connection) throws Exception {
+
+					InstanceCleaner instanceCleaner = new InstanceCleaner();
+
+					instanceCleaner.purgeDataListHistoric(connection, instance);
+				}
+			});
+			
+		}
+		return Response.ok().build();
+	}	
+	
+	@GET
+	@Produces({ "text/plain" })
+	@Path("/purge/historic/entities")
+	public Response purgeEntityHistoric() throws Exception {
+		for (final Instance instance : instanceManager.getAllInstances()) {
+			if (logger.isInfoEnabled()) {
+				logger.info("Start purging entities historic from instance/tenant: " + instance.getId() + "/" + instance.getInstanceName() + "/" + instance.getTenantName());
+			}
+			jdbcConnectionManager.doInTransaction(new JdbcConnectionManagerCallBack() {
+
+				@Override
+				public void execute(Connection connection) throws Exception {
+
+					InstanceCleaner instanceCleaner = new InstanceCleaner();
+
+					instanceCleaner.purgeEntityHistoric(connection, instance);
+				}
+			});
+			
+		}
+		return Response.ok().build();
+	}	
+	
+	@GET
+	@Produces({ "text/plain" })
+	@Path("/purge/statistics")
+	public Response purgeStatistics() throws Exception {
+		for (final Instance instance : instanceManager.getAllInstances()) {
+			if (logger.isInfoEnabled()) {
+				logger.info("Start purging statistics from instance/tenant: " + instance.getId() + "/" + instance.getInstanceName() + "/" + instance.getTenantName());
+			}
+			jdbcConnectionManager.doInTransaction(new JdbcConnectionManagerCallBack() {
+
+				@Override
+				public void execute(Connection connection) throws Exception {
+
+					InstanceCleaner instanceCleaner = new InstanceCleaner();
+
+					Calendar cal = Calendar.getInstance();
+					cal.add(Calendar.MONTH, -6);
+					
+					instanceCleaner.purgeStatistics(connection, instance,cal.getTime());
+				}
+			});
+			
+		}
+		return Response.ok().build();
+	}	
 }
