@@ -778,7 +778,13 @@ if (beCPG.module.EntityDataGridRenderers) {
       propertyName : [ "bcpg:instruction","bcpg:lclComments"],
       renderer : function(oRecord, data, label, scope) {
          if(data.value != null){
-         	return data.value;
+        	 if (oColumn.hidden) {
+					scope.widgets.dataTable.showColumn(oColumn);
+					Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
+			}
+			Dom.setStyle(elCell, "width", "16px");
+			Dom.setStyle(elCell.parentNode, "width", "16px");
+			return "<span title=\"" + data.displayValue + "\" class='instructions'>&nbsp;</span>";
          }
          return "";
       }
