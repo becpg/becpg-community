@@ -45,6 +45,7 @@ import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.CompoListUnit;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
+import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -212,9 +213,21 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 				ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
 				
 				int checks = 0;
+				logger.info("/*-- Formulation raised "+formulatedProduct.getCompoListView().getReqCtrlList().size()+" rclDataItems --*/");
 				for(ReqCtrlListDataItem reqCtrlList : formulatedProduct.getCompoListView().getReqCtrlList()){
 					logger.info("/*-- Verify reqCtrlList : "+reqCtrlList.getReqMessage()+" --*/");
-					if(reqCtrlList.getReqMessage().equals("OGM interdit")){
+					
+					/* 
+					 * #1909 added non validation rclDataItem
+					 */
+					if(reqCtrlList.getReqMessage().equals("Composant non validé")){
+						assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
+						assertEquals(RequirementDataType.Validation, reqCtrlList.getReqDataType());
+						assertEquals(10, reqCtrlList.getSources().size());
+						logger.info("check++, check="+checks);
+						checks++;
+					}
+					else if(reqCtrlList.getReqMessage().equals("OGM interdit")){
 						
 						assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
 						assertEquals(5, reqCtrlList.getSources().size());
@@ -224,6 +237,7 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 						assertTrue(reqCtrlList.getSources().contains(rawMaterial5NodeRef));
 						assertTrue(reqCtrlList.getSources().contains(rawMaterial6NodeRef));
 						checks++;
+						logger.info("check++, check="+checks);
 					}
 					else if(reqCtrlList.getReqMessage().equals("Ionisation interdite")){
 						
@@ -235,10 +249,11 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 						assertTrue(reqCtrlList.getSources().contains(rawMaterial5NodeRef));
 						assertTrue(reqCtrlList.getSources().contains(rawMaterial6NodeRef));
 						checks++;
+						logger.info("check++, check="+checks);
 					}
 					else if(reqCtrlList.getReqMessage().equals("Ing3 geoOrigin1 toléré")){
 						
-						// should not occured
+						// should not occur
 						assertTrue(false);
 						assertEquals(RequirementType.Tolerated, reqCtrlList.getReqType());
 					}
@@ -246,11 +261,13 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 						
 						assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
 						checks++;
+						logger.info("check++, check="+checks);
 					} else if(reqCtrlList.getReqMessage().equals("Ing3 < 40%")){
 						
 						assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
 						assertEquals(0, reqCtrlList.getSources().size());						
 						checks++;
+						logger.info("check++, check="+checks);
 					}
 					else if(reqCtrlList.getReqMessage().equals("Ing1 et ing4 interdits")){
 						
@@ -260,6 +277,7 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 						assertTrue(reqCtrlList.getSources().contains(rawMaterial2NodeRef));
 						assertTrue(reqCtrlList.getSources().contains(rawMaterial6NodeRef));
 						checks++;
+						logger.info("check++, check="+checks);
 					}
 					else if(reqCtrlList.getReqMessage().equals("Ing2 geoOrigin2 interdit sur charcuterie")){
 						
@@ -269,16 +287,18 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 						assertTrue(reqCtrlList.getSources().contains(rawMaterial2NodeRef));
 						assertTrue(reqCtrlList.getSources().contains(rawMaterial6NodeRef));
 						checks++;
+						logger.info("check++, check="+checks);
 					}
 					else if(reqCtrlList.getReqMessage().equals(I18NUtil.getMessage(AllergensCalculatingFormulationHandler.MESSAGE_FORBIDDEN_ALLERGEN, nodeService.getProperty(allergen1, BeCPGModel.PROP_CHARACT_NAME)))){
 						
 						assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
 						assertEquals(0, reqCtrlList.getSources().size());
 						checks++;
+						logger.info("check++, check="+checks);
 					}
 				}				
-				
-				assertEquals(7, checks);
+				logger.info("check="+checks);
+				assertEquals(8, checks);
 				
 				/*
 				 *  #257: check reqCtrlList is clear if all req are respected (we remove specification to get everything OK)
@@ -294,7 +314,8 @@ public class FormulationWithIngRequirementsTest extends AbstractFinishedProductT
 				logger.debug("/*-- Verify formulation --*/");
 				formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
 				
-				assertEquals(0, formulatedProduct.getCompoListView().getReqCtrlList().size());				
+				//3 rclDataItem remains : one for non validated product, and two for mandatory fields missing
+				assertEquals(3, formulatedProduct.getCompoListView().getReqCtrlList().size());				
 				
 				return null;
 

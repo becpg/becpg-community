@@ -51,6 +51,7 @@ import fr.becpg.repo.helper.JsonFormulaHelper;
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.AbstractProductDataView;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompositionDataItem;
@@ -348,8 +349,8 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 					logger.warn(e, e);
 					String message = I18NUtil.getMessage("message.formulate.comparewith.formulate.entity.error", Locale.getDefault(),
 							tmpData.getName());
-					productData.getCompoListView().getReqCtrlList()
-							.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, null, new ArrayList<NodeRef>()));
+					productData.getCompoListView().getReqCtrlList() 
+							.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message, null, new ArrayList<NodeRef>(), RequirementDataType.Nutrient));
 				}
 			}
 

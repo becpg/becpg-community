@@ -17,6 +17,7 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
 
@@ -88,5 +89,10 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 	@Override
 	protected Map<NodeRef, List<NodeRef>> getMandatoryCharacts(ProductData formulatedProduct, QName componentType) {
 		return getMandatoryCharactsFromList(formulatedProduct.getPhysicoChemList());
+	}
+
+	@Override
+	protected RequirementDataType getDataType() {
+		return RequirementDataType.PhysicoChem;
 	}
 }

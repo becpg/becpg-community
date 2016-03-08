@@ -10,6 +10,7 @@
    <#-- JavaScript Dependencies -->
    <#include "../form/form.js.ftl"/>  
    <@script src="${url.context}/res/components/comments/comments-list.js" group="properties-view"/>
+  <@script src="${url.context}/res/components/entity-catalog/entity-catalog.js" group="properties-view"/>
    <@script src="${url.context}/res/components/entity-charact-views/properties-view.js" group="properties-view"/>
    
 
@@ -54,34 +55,51 @@
                     			  </div>
 								</td></tr>
 					   </table>   
-						<div  id="${el}-body"  class="comments-list">
-		            	   <h2 class="thin dark">${msg("header.comments")}</h2>				            
-                           <div id="${el}-add-comment">
-				               <div id="${el}-add-form-container" class="theme-bg-color-4 hidden"></div>
-				            </div>
-				            <div class="comments-list-actions">
-				               <div class="left">
-				                  <div id="${el}-actions" class="hidden">
-				                     <button class="alfresco-button" name=".onAddCommentClick">${msg("button.addComment")}</button>
-				                  </div>
-				               </div>
-				               <div class="right">
-				                  <div id="${el}-paginator-top"></div>
-				               </div>
-				               <div class="clear"></div>
-				            </div>
-				            <hr class="hidden"/>
-				            <div id="${el}-comments-list"></div>
-				            <hr class="hidden"/>
-				            <div class="comments-list-actions">
-				               <div class="left">
-				               </div>
-				               <div class="right">
-				                  <div id="${el}-paginator-bottom"></div>
-				               </div>
-				               <div class="clear"></div>
-				            </div>
-				        </div>
+					   
+					   <div id="${el}-properties-tabview" class="yui-navset">
+						   	<ul class="yui-nav" >
+						   		<li class="selected"><a href="#${el}-comments" ><em>${msg("header.comments")}</em></a></li>
+						   		<li ><a href="#${el}-catalogs"><em>${msg("label.property_completion")}</em></a></li>
+						   	</ul>
+						   	
+						   	<div class="yui-content properties-tab">
+						   		<div id="tab_${el}-comments">
+							   		<div  id="${el}-body"  class="comments-list">
+				            	  				            
+			                           <div id="${el}-add-comment">
+							               <div id="${el}-add-form-container" class="theme-bg-color-4 hidden"></div>
+							            </div>
+							            <div class="comments-list-actions">
+							               <div class="left">
+							                  <div id="${el}-actions" class="hidden">
+							                     <button class="alfresco-button" name=".onAddCommentClick">${msg("button.addComment")}</button>
+							                  </div>
+							               </div>
+							               <div class="right">
+							                  <div id="${el}-paginator-top"></div>
+							               </div>
+							               <div class="clear"></div>
+							            </div>
+							            <hr class="hidden"/>
+							            <div id="${el}-comments-list"></div>
+							            <hr class="hidden"/>
+							            <div class="comments-list-actions">
+							               <div class="left">
+							               </div>
+							               <div class="right">
+							                  <div id="${el}-paginator-bottom"></div>
+							               </div>
+							               <div class="clear"></div>
+							            </div>
+							        </div>
+							   	</div>
+							   	<#if isEntity>
+							   	<div id="tab_${el}-catlogs">
+						   			<div id="${el}-entity-catalog"></div> 
+						   		</div>
+						   		</#if>
+						   	</div>
+					   </div>
 		            </div>
 		      </div>
 		     </div> 

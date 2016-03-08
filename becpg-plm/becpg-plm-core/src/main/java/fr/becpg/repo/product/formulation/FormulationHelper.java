@@ -24,6 +24,7 @@ import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.PackagingListUnit;
 import fr.becpg.repo.product.data.constraints.ProcessListUnit;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
+import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.constraints.TareUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -166,7 +167,7 @@ public class FormulationHelper {
 					formulatedProduct.getProcessListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, 
 							RequirementType.Forbidden, 
 							message, 
-							null, new ArrayList<NodeRef>()));
+							null, new ArrayList<NodeRef>(), RequirementDataType.Packaging));
 				}
 			}
 
@@ -258,7 +259,9 @@ public class FormulationHelper {
 						}
 						if (FormulationHelper.isProductUnitLiter(productUnit)) {
 							Double density = FormulationHelper.getDensity(nodeRef, nodeService);
-							qty = qty * density;
+							if(density!=null){
+								qty = qty * density;
+							}
 						}
 						return qty;
 					}
@@ -291,7 +294,7 @@ public class FormulationHelper {
 					}
 					if (FormulationHelper.isProductUnitLiter(productUnit)) {
 						Double density = productData.getDensity();
-						if (density != null) {
+						if (density != null && qty !=null) {
 							qty = qty * density;
 						} else {
 							return FormulationHelper.getQtyFromComposition(productData, productUnit, defaultValue);

@@ -33,6 +33,7 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ResourceProductData;
 import fr.becpg.repo.product.data.constraints.ProcessListUnit;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
+import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
@@ -154,8 +155,8 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 						formulatedProduct.getProcessListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, 
 								RequirementType.Forbidden, 
 								message, 
-								null, new ArrayList<NodeRef>()));
-					}					
+								null, new ArrayList<NodeRef>(), RequirementDataType.Packaging));
+					}					 
 				}
 				else {
 					Double productQtyToTransform = p.getQty() != null ? p.getQty() : FormulationHelper.getNetWeight(formulatedProduct, null);										

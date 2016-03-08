@@ -7608,15 +7608,10 @@
 					<show id="bcpg:rclReqType" />
 					<show id="bcpg:rclReqMessage" />
 					<show id="bcpg:rclSources" />
+					<show id="bcpg:rclDataType" />
 				</field-visibility>
 
 				<appearance>
-					<field id="bcpg:rclReqType">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">Forbidden|data.reqtype.forbidden,Tolerated|data.reqtype.tolerated,Info|data.reqtype.info
-							</control-param>
-						</control>
-					</field>
 					<field id="bcpg:rclReqMessage">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
@@ -7629,10 +7624,12 @@
 					<show id="bcpg:rclReqType" />
 					<show id="bcpg:rclReqMessage" />
 					<show id="bcpg:rclSources" />
+					<show id="bcpg:rclDataType" />
 				</field-visibility>
 				<appearance>
 					<field label="hidden" id="bcpg:rclReqType" />
-					<field label="hidden"  id="bcpg:rclSources" />
+					<field label="hidden" id="bcpg:rclDataType" />
+					<field label="hidden" id="bcpg:rclSources" />
 				</appearance>
 			</form>
 			<form id="filter">
@@ -7652,15 +7649,11 @@
 					<show id="bcpg:rclReqType" />
 					<show id="bcpg:rclReqMessage" />
 					<show id="bcpg:rclSources" />
+					<show id="bcpg:rclDataType" />
 				</field-visibility>
 
 				<appearance>
-					<field id="bcpg:rclReqType">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">Forbidden|data.reqtype.forbidden,Tolerated|data.reqtype.tolerated,Info|data.reqtype.info
-							</control-param>
-						</control>
-					</field>
+	
 					<field id="bcpg:rclReqMessage">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>

@@ -2,7 +2,9 @@ package fr.becpg.repo.product.formulation;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -21,6 +23,7 @@ import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
@@ -36,6 +39,8 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 public class LabelClaimFormulationHandler extends FormulationBaseHandler<ProductData> {
 
 	private static final Log logger = LogFactory.getLog(LabelClaimFormulationHandler.class);
+	
+	public static final String MESSAGE_UNDEFINED_CHARACT = "message.formulate.undefined.charact";
 
 	private NodeService nodeService;
 
@@ -80,7 +85,9 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 						ProductData partProduct = alfrescoRepository.findOne(part);
 						if (partProduct.getLabelClaimList() != null) {
 							for (LabelClaimListDataItem labelClaim : partProduct.getLabelClaimList()) {
-								visitPart(productData, labelClaim);
+								if(!LabelClaimListDataItem.VALUE_NA.equals(labelClaim.getLabelClaimValue())) {
+									visitPart(productData, labelClaim);
+								}
 							}
 						}
 						visitedProducts.add(part);
@@ -97,6 +104,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 
 	private void visitPart(ProductData productData, LabelClaimListDataItem subLabelClaimItem) {
 
+		
 		for (LabelClaimListDataItem labelClaimItem : productData.getLabelClaimList()) {
 
 			if (((labelClaimItem.getIsManual() == null) || !labelClaimItem.getIsManual())
@@ -113,11 +121,6 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 							labelClaimItem.setIsClaimed(false);
 						}
 						break;
-					case LabelClaimListDataItem.VALUE_NA:
-						if (!LabelClaimListDataItem.VALUE_EMPTY.equals(labelClaimItem.getLabelClaimValue())) {
-							labelClaimItem.setLabelClaimValue(LabelClaimListDataItem.VALUE_NA);
-						}
-						break;
 					case LabelClaimListDataItem.VALUE_EMPTY:
 					default:
 						labelClaimItem.setLabelClaimValue(LabelClaimListDataItem.VALUE_EMPTY);
@@ -131,7 +134,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 		}
 
 	}
-
+	
 	private void computeClaimList(ProductData productData, ExpressionParser parser, StandardEvaluationContext context) {
 		// ClaimLabel list
 		if (productData.getLabelClaimList() != null) {
@@ -162,7 +165,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 							}
 						}
 					}
-				}
+				} 
 
 				if (labelClaimListDataItem.getErrorLog() != null) {
 
@@ -170,7 +173,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 							nodeService.getProperty(labelClaimListDataItem.getLabelClaim(), BeCPGModel.PROP_CHARACT_NAME),
 							labelClaimListDataItem.getErrorLog());
 					productData.getCompoListView().getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message,
-							labelClaimListDataItem.getLabelClaim(), new ArrayList<NodeRef>()));
+							labelClaimListDataItem.getLabelClaim(), new ArrayList<NodeRef>(), RequirementDataType.Labelling));
 				}
 
 			}
