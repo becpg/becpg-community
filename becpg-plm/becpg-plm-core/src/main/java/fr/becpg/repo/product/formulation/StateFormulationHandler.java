@@ -87,6 +87,7 @@ public class StateFormulationHandler extends FormulationBaseHandler<ProductData>
 			dat.getCompoListView().getReqCtrlList().add(rclDataItem);
 		}
 		
+		//allergens must be present on toValidate state
 		if(parent.getState()==SystemState.ToValidate){
 			if(dat.getAllergenList() == null || dat.getAllergenList().isEmpty()){
 				
