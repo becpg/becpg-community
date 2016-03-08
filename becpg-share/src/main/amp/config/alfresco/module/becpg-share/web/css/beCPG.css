@@ -864,3 +864,9 @@ span.favourite span.ctn-fav {
 .no-missing-prop {
 	margin-left: 0.5em;
 }
+
+/* fixes color tip on missing field in edit metadata page */
+.form-container .form-field label {
+	float: left;
+}
+
