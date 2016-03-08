@@ -87,6 +87,11 @@
 	padding-left: 14px;
 }
 
+.datagrid .instructions {
+	background: url("../images/link-details-16.png") no-repeat scroll 0 0 transparent;
+	padding-left: 14px;
+}
+
 
 .dynamicCharactList .dashlet {
 	width:100%;
