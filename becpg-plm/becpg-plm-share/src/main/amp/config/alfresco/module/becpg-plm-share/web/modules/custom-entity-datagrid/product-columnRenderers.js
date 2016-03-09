@@ -776,9 +776,15 @@ if (beCPG.module.EntityDataGridRenderers) {
 	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
       propertyName : [ "bcpg:instruction","bcpg:lclComments"],
-      renderer : function(oRecord, data, label, scope) {
-         if(data.value != null){
-         	return data.value;
+      renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+         if(data.value != null && data.value.length>0){
+        	 if (oColumn.hidden) {
+					scope.widgets.dataTable.showColumn(oColumn);
+					Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
+			}
+			Dom.setStyle(elCell, "width", "16px");
+			Dom.setStyle(elCell.parentNode, "width", "16px");
+			return "<span title=\"" + Alfresco.util.encodeHTML(data.displayValue) + "\" class='instructions'>&nbsp;</span>";
          }
          return "";
       }
