@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -41,7 +42,19 @@ public class InstanceCleaner {
 		}
 
 	}
+	
+	public void purgeEntityHistoric(Connection connection, Instance instance) throws SQLException{
+		JdbcUtils.update(connection, "DELETE FROM `becpg_entity` where instance_id = ? AND is_last_version = ?", new Object[] { instance.getId(), false });
+	}
+	
+	public void purgeDataListHistoric(Connection connection, Instance instance) throws SQLException{
+		JdbcUtils.update(connection, "DELETE FROM `becpg_datalist` where instance_id = ? AND is_last_version = ?", new Object[] { instance.getId(), false });
+	}
 
+	public void purgeStatistics(Connection connection, Instance instance, Date date) throws SQLException{
+		JdbcUtils.update(connection, "DELETE FROM `becpg_statistics` where instance_id = ? AND statistics_date < ?", new Object[] { instance.getId(), new java.sql.Date(date.getTime()) });
+	}
+	
 	private boolean exists(String nodeRef, Instance instance, CloseableHttpClient client, HttpContext context) throws IOException {
 		CheckEntityCommand checkEntityCommand = new CheckEntityCommand(instance.getInstanceUrl());
 		try (CloseableHttpResponse resp = checkEntityCommand.runCommand(client, context, nodeRef)) {
