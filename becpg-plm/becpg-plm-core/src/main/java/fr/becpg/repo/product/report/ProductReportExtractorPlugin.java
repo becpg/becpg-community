@@ -44,6 +44,7 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CompositionDataItem;
 import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
+import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.MicrobioListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.OrganoListDataItem;
@@ -68,9 +69,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	protected static final List<QName> DATALIST_SPECIFIC_EXTRACTOR = Arrays.asList(PLMModel.TYPE_COMPOLIST, PLMModel.TYPE_PACKAGINGLIST,
 			MPMModel.TYPE_PROCESSLIST, PLMModel.TYPE_MICROBIOLIST, PLMModel.TYPE_INGLABELINGLIST, PLMModel.TYPE_NUTLIST, PLMModel.TYPE_ORGANOLIST, 
-			PLMModel.TYPE_FORBIDDENINGLIST, PLMModel.TYPE_LABELING_RULE_LIST);
-
-	protected static final List<QName> RAWMATERIAL_DATALIST = Arrays.asList(PLMModel.TYPE_INGLIST, PLMModel.TYPE_ORGANOLIST);
+			PLMModel.TYPE_INGLIST, PLMModel.TYPE_FORBIDDENINGLIST, PLMModel.TYPE_LABELING_RULE_LIST);
 
 	private static final Log logger = LogFactory.getLog(ProductReportExtractorPlugin.class);
 
@@ -150,8 +149,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			for (QName dataListQName : datalists.keySet()) {
 
 				if (alfrescoRepository.hasDataList(entityNodeRef, dataListQName)) {
-					if ((isExtractedProduct && !DATALIST_SPECIFIC_EXTRACTOR.contains(dataListQName))
-							|| (!isExtractedProduct && RAWMATERIAL_DATALIST.contains(dataListQName))) {
+					if ((isExtractedProduct && !DATALIST_SPECIFIC_EXTRACTOR.contains(dataListQName))) {
 						Element dataListElt = dataListsElt.addElement(dataListQName.getLocalName() + "s");
 
 						@SuppressWarnings({ "rawtypes" })
@@ -183,6 +181,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				}
 			}
 		}
+		// lists extracted on entity and raw materials
+		loadOrganoLists(productData, dataListsElt, images);		
+		loadIngLists(productData, dataListsElt, images);
 
 		if (isExtractedProduct) {
 
@@ -287,9 +288,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			}
 
 			// NutList
-			loadNutLists(productData, dataListsElt, images);
-
-			loadOrganoLists(productData, dataListsElt, images);
+			loadNutLists(productData, dataListsElt, images);			
 
 			// MicrobioList
 			List<MicrobioListDataItem> microbioList = null;
@@ -417,6 +416,20 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			for (OrganoListDataItem dataListItem : productData.getOrganoList()) {
 				Element organoListElt = organoListsElt.addElement(PLMModel.TYPE_ORGANOLIST.getLocalName());
 				loadDataListItemAttributes(dataListItem, organoListElt, images);
+			}
+		}
+	}
+	
+	private void loadIngLists(ProductData productData, Element dataListsElt, Map<String, byte[]> images) {
+		if ((productData.getIngList() != null) && !productData.getIngList().isEmpty()) {
+			Element ingListsElt = dataListsElt.addElement(PLMModel.TYPE_INGLIST.getLocalName() + "s");
+			for (IngListDataItem dataListItem : productData.getIngList()) {
+				Element ingListElt = ingListsElt.addElement(PLMModel.TYPE_INGLIST.getLocalName());
+				String ingCEECode = (String) nodeService.getProperty(dataListItem.getIng(), PLMModel.PROP_ING_CEECODE);
+				if (ingCEECode != null) {
+					ingListElt.addAttribute(PLMModel.PROP_ING_CEECODE.getLocalName(), ingCEECode);
+				}
+				loadDataListItemAttributes(dataListItem, ingListElt, images);
 			}
 		}
 	}
