@@ -2781,12 +2781,6 @@
 				<property name="bcpg:erpCode">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="true">
-						<atomic>true</atomic>
-						<stored>false</stored>
-						<!-- Important for SOLR sorting -->
-						<tokenised>false</tokenised>
-					</index>
 				</property>
 			</properties>
 		</aspect>

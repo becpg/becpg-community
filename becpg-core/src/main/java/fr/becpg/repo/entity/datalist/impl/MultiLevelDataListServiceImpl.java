@@ -17,6 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.entity.datalist.impl;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -123,6 +124,11 @@ public class MultiLevelDataListServiceImpl implements MultiLevelDataListService 
 									MultiLevelListData tmp = getMultiLevelListData(dataListFilter, entityNodeRef,
 											currDepth + (depthLevel != null ? depthLevel : 1), maxDepthLevel, visitedNodeRefs);
 									ret.getTree().put(childRef, tmp);
+								} else {
+									Integer depthLevel = (Integer) nodeService.getProperty(childRef, BeCPGModel.PROP_DEPTH_LEVEL);
+									
+									ret.getTree().put(childRef,new MultiLevelListData(new ArrayList<>(), 
+											currDepth + (depthLevel != null ? depthLevel : 1)));
 								}
 							}
 						}
