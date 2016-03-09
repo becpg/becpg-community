@@ -547,6 +547,7 @@
 					<show id="bcpg:netWeight" force="true" />
 					<show id="bcpg:netVolume" force="true" />
 					<show id="bcpg:servingSize" force="true" />
+					<show id="bcpg:preparationTips" force="true" />
 					<show id="bcpg:productSpecifications" />
 					<show id="bcpg:compareWithEntities" force="true" />
 					<show id="bcpg:entityTplRef" force="true" />
@@ -3610,6 +3611,7 @@
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:netWeight" force="true" />
 					<show id="bcpg:servingSize" force="true" />
+					<show id="bcpg:preparationTips" force="true" />
 					<show id="bcpg:productSpecifications" />
 					<show id="bcpg:compareWithEntities" force="true" />
 					<show id="bcpg:entityTplRef" force="true" />
@@ -6419,7 +6421,7 @@
 					<field id="bcpg:allergenListVolSources">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:ingList&#38;attributeName=bcpg:ingListIng</control-param>
+							<control-param name="ds">becpg/autocomplete/DataListCharact?className=bcpg:ingList&#38;attributeName=bcpg:ingListIng</control-param>
 						</control>
 					</field>
 					<field id="bcpg:allergenListInVolSources">

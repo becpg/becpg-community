@@ -72,7 +72,19 @@
                <#if showPath == "true">
                   <!-- Path-->
                   <div class="node-path">
-                     <@renderPaths paths />
+                  	<#list paths as path>
+				      <#if path_index != 0>
+				         <span class="separator"> &gt; </span>
+				      </#if>
+				      <span class="${path.cssClass?html}">
+				     	  <#if path_has_next>
+				          	<a href="${siteURL(path.href?html)}">${path.label?html}</a>
+				         <#else> 
+						 	${path.label?html}
+						 </#if>
+				      </span>
+				   </#list>
+                  
 		             	<#if showOnlyLocation == "true" && productState??><span class="product-state ${productState}">[${msg("status."+productState)}]</span></#if>
 						<#if showOnlyLocation == "true" && item.version?? && item.version?length &gt; 0 ><span class="document-version">${item.version}</span></#if>
                   </div>
