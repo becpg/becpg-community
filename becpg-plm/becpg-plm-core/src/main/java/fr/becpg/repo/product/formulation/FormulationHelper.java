@@ -399,13 +399,13 @@ public class FormulationHelper {
 			Double overrun = compoListDataItem.getOverrunPerc();
 			Double yield = compoListDataItem.getYieldPerc();
 			if (compoListDataItem.getOverrunPerc() == null 
-					&& !compoListDataItem.getOverrunPerc().isNaN() 
-					&& !compoListDataItem.getOverrunPerc().isInfinite()) {
+					|| compoListDataItem.getOverrunPerc().isNaN() 
+					|| compoListDataItem.getOverrunPerc().isInfinite()) {
 				overrun = FormulationHelper.DEFAULT_OVERRUN;
 			}
 			if (compoListDataItem.getYieldPerc() == null
-					&&  !compoListDataItem.getYieldPerc().isNaN()
-					&&  !compoListDataItem.getYieldPerc().isInfinite()) {
+					|| compoListDataItem.getYieldPerc().isNaN()
+					|| compoListDataItem.getYieldPerc().isInfinite()) {
 				yield = FormulationHelper.DEFAULT_YIELD;
 			}
 			Double density = FormulationHelper.getDensity(compoListDataItem.getProduct(), nodeService);
