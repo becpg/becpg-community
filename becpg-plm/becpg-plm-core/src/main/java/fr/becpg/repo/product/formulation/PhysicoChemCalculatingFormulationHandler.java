@@ -15,6 +15,7 @@ import org.apache.commons.logging.LogFactory;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulateException;
+import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
@@ -41,8 +42,11 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 			if (formulatedProduct.getPhysicoChemList() == null) {
 				formulatedProduct.setPhysicoChemList(new LinkedList<PhysicoChemListDataItem>());
 			}
-
-			formulateSimpleList(formulatedProduct, formulatedProduct.getPhysicoChemList());
+			
+			// has compo
+			if(formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))){
+				formulateSimpleList(formulatedProduct, formulatedProduct.getPhysicoChemList());
+			}
 			
 			computeFormulatedList(formulatedProduct, formulatedProduct.getPhysicoChemList(), PLMModel.PROP_PHYSICO_CHEM_FORMULA,
 					"message.formulate.physicoChemList.error");
