@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2015 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2015 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.product.formulation;
@@ -58,7 +58,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 	public boolean process(ProductData formulatedProduct) throws FormulateException {
 
 		logger.debug("Composition calculating visitor");
-		
+
 		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
 			return true;
 		}
@@ -68,26 +68,29 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 			logger.debug("no compo => no formulation");
 			return true;
 		}
-		
+
 		Double netWeight = formulatedProduct.getNetWeight();
+
 		Composite<CompoListDataItem> compositeAll = CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList());
-		Composite<CompoListDataItem> compositeDefaultVariant = CompositeHelper.getHierarchicalCompoList(formulatedProduct.getCompoList(new VariantFilters<>()));
+		Composite<CompoListDataItem> compositeDefaultVariant = CompositeHelper
+				.getHierarchicalCompoList(formulatedProduct.getCompoList(new VariantFilters<>()));
 
 		// Yield
 		visitYieldChildren(formulatedProduct, compositeDefaultVariant);
 
 		Double qtyUsed = calculateQtyUsed(compositeDefaultVariant);
 		formulatedProduct.setRecipeQtyUsed(qtyUsed);
-		if (netWeight != null && qtyUsed != null && qtyUsed != 0d) {
-			formulatedProduct.setYield(100 * netWeight / qtyUsed);
+
+		if ((netWeight != null) && (qtyUsed != null) && (qtyUsed != 0d)) {
+			formulatedProduct.setYield((100 * netWeight) / qtyUsed);
 		}
 
 		// Volume
 		Double volumeUsed = calculateVolumeFromChildren(compositeDefaultVariant);
 		formulatedProduct.setRecipeVolumeUsed(volumeUsed);
 		Double netVolume = FormulationHelper.getNetVolume(formulatedProduct);
-		if (netVolume != null && volumeUsed != 0d) {
-			formulatedProduct.setYieldVolume(100 * netVolume / volumeUsed);
+		if ((netVolume != null) && (volumeUsed != 0d)) {
+			formulatedProduct.setYieldVolume((100 * netVolume) / volumeUsed);
 		}
 
 		// generic raw material
@@ -96,10 +99,9 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		} else {
 			Double vol = netVolume != null ? netVolume : volumeUsed;
 			Double weight = netWeight != null ? netWeight : qtyUsed;
-			if (weight != null && weight != 0d && vol != null && vol != 0d) {
+			if ((weight != null) && (weight != 0d) && (vol != null) && (vol != 0d)) {
 				formulatedProduct.setDensity(weight / vol);
-			}
-			else{
+			} else {
 				formulatedProduct.setDensity(null);
 			}
 		}
@@ -115,7 +117,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 			if (!component.isLeaf()) {
 
 				// take in account percentage
-				if (component.getData().getCompoListUnit() != null && component.getData().getCompoListUnit().equals(CompoListUnit.Perc)) {
+				if ((component.getData().getCompoListUnit() != null) && component.getData().getCompoListUnit().equals(CompoListUnit.Perc)) {
 
 					visitYieldChildren(formulatedProduct, component);
 					component.getData().setYieldPerc(null);
@@ -141,7 +143,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 			if (qty != null) {
 				// water can be taken in account on Raw Material
 				if (component.isLeaf()) {
-					qtyUsed += qty * FormulationHelper.getYield(component.getData()) / 100;
+					qtyUsed += (qty * FormulationHelper.getYield(component.getData())) / 100;
 				} else {
 					qtyUsed += qty;
 				}
@@ -149,8 +151,8 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		}
 
 		// qty after process
-		if (composite.getData().getQty() != null && qtyUsed != 0) {
-			yieldPerc = composite.getData().getQty() / qtyUsed * 100;
+		if ((composite.getData().getQty() != null) && (qtyUsed != 0)) {
+			yieldPerc = (composite.getData().getQty() / qtyUsed) * 100;
 		}
 
 		if (logger.isDebugEnabled()) {
@@ -171,8 +173,10 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 				// calculate children
 				qty += calculateQtyUsed(component);
 			} else {
-				if (component.getData().getQty() != null) {
-					qty += component.getData().getQty() * FormulationHelper.getYield(component.getData()) / 100;
+				if ((component.getData().getQty() != null) && !component.getData().getQty().isNaN() && !component.getData().getQty().isInfinite()) {
+					qty += (component.getData().getQty() * FormulationHelper.getYield(component.getData())) / 100;
+				} else {
+					component.getData().setQty(0d);
 				}
 			}
 		}
@@ -196,7 +200,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 				value = FormulationHelper.getNetVolume(component.getData(), nodeService);
 				component.getData().setVolume(value);
 			}
-			volume += (value != null ? value : 0d);
+			volume += ((value != null) && !value.isNaN() && !value.isInfinite() ? value : 0d);
 		}
 		return volume;
 	}
@@ -208,9 +212,10 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 		Double density = 0d;
 		int rawMaterialsWithDensity = 0;
 		for (Composite<CompoListDataItem> component : composite.getChildren()) {
-			if(component.getData().getQtySubFormula()!=null && component.getData().getQtySubFormula()>0){
+			if ((component.getData().getQtySubFormula() != null) && !component.getData().getQtySubFormula().isNaN()
+					&& !component.getData().getQtySubFormula().isInfinite() && (component.getData().getQtySubFormula() > 0)) {
 				ProductData productData = alfrescoRepository.findOne(component.getData().getProduct());
-				
+
 				if (productData instanceof RawMaterialData) {
 					for (NodeRef supplierNodeRef : ((RawMaterialData) productData).getSuppliers()) {
 						if (!supplierNodeRefs.contains(supplierNodeRef)) {
@@ -227,15 +232,15 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 							supplierPlantNodeRefs.add(supplierPlantNodeRef);
 						}
 					}
-	
-					if (productData.getDensity() != null) {
+
+					if ((productData.getDensity() != null) && !productData.getDensity().isNaN() && !productData.getDensity().isInfinite()) {
 						density += productData.getDensity();
 						rawMaterialsWithDensity++;
 					}
 				}
 			}
 		}
-		if (density != 0d && rawMaterialsWithDensity != 0) {
+		if ((density != 0d) && (rawMaterialsWithDensity != 0)) {
 			rawMaterialData.setDensity(density / rawMaterialsWithDensity);
 		}
 
