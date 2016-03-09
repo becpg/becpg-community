@@ -293,7 +293,7 @@ public class ReportServerSearchRenderer implements SearchReportRenderer {
 						exportSearchCtx.getPropertyFormats(), false);
 
 			} else if (attribute instanceof AssociationDefinition) {
-				return attributeExtractorService.extractAssociationsForReport(nodeService.getTargetAssocs(nodeRef, attribute.getName()), ContentModel.PROP_NAME);
+				return attributeExtractorService.extractAssociationsForReport(nodeService.getTargetAssocs(nodeRef, attribute.getName()), null);
 			}
 		}
 
