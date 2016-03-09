@@ -243,7 +243,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 					if ((newSimpleListDataItem.getCharactNodeRef() != null) && isCharactFormulated(newSimpleListDataItem)) {
 
 						// calculate charact from qty or vol ?
-						Double qtyUsed = isCharactFormulatedFromVol(newSimpleListDataItem)
+						Double qtyUsed = FormulationHelper.isCharactFormulatedFromVol(nodeService, newSimpleListDataItem)
 								|| FormulationHelper.isProductUnitLiter(partProduct.getUnit()) ? volUsed : weightUsed;
 
 						// look for charact in component
@@ -375,10 +375,6 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 	protected boolean isCharactFormulated(SimpleListDataItem sl) {
 		return (sl.getIsManual() == null) || !sl.getIsManual();
-	}
-
-	protected boolean isCharactFormulatedFromVol(SimpleListDataItem sl) {
-		return false;
 	}
 
 	protected T findSimpleListDataItem(List<T> simpleList, NodeRef charactNodeRef) {

@@ -15,7 +15,6 @@ import org.apache.commons.logging.LogFactory;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulateException;
-import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
@@ -59,7 +58,7 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 	@Override
 	protected boolean accept(ProductData formulatedProduct) {
 		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)
-				|| !formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+				|| ((formulatedProduct.getPhysicoChemList() == null) && !alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_PHYSICOCHEMLIST))) {
 			return false;
 		}
 		return true;
@@ -77,12 +76,6 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 		}
 		Boolean isFormulated = (Boolean) nodeService.getProperty(sl.getCharactNodeRef(), PLMModel.PROP_PHYSICO_CHEM_FORMULATED);
 		return isFormulated != null ? isFormulated : false;
-	}
-
-	@Override
-	protected boolean isCharactFormulatedFromVol(SimpleListDataItem sl) {
-		Boolean isFormulatedFromVol = (Boolean) nodeService.getProperty(sl.getCharactNodeRef(), PLMModel.PROP_PHYSICO_CHEM_FORMULATED_FROM_VOL);
-		return isFormulatedFromVol != null ? isFormulatedFromVol : false;
 	}
 
 	@Override
