@@ -237,6 +237,10 @@
 								scoreDiv.childNodes[0].style.fontSize=3*widthRatio+"em";
 								scoreDiv.style.backgroundSize=backgroundSize;
 							} 
+							
+							var createdDiv = YAHOO.util.Dom.get("constraintsList-"+instance.id+"-scores");
+							var constraintsListGrid = YAHOO.util.Dom.get("constraintsList-"+instance.id+"-grid");
+							YAHOO.util.Dom.insertBefore(createdDiv, constraintsListGrid.parentNode);
 						},
 						scope : instance
 					},
@@ -248,7 +252,6 @@
 			//automatic refresh on formulation
 			YAHOO.Bubbling.on( "refreshDataGrids", recallWebScript, this);
 			YAHOO.Bubbling.on( "activeDataListChanged", recallWebScript, this);
-			console.log("view: "+instance.options.list);
 			
 			//init
 			Alfresco.util.Ajax.request({
@@ -280,11 +283,13 @@
 							scoreDiv.childNodes[0].style.fontSize=3*widthRatio+"em";
 							scoreDiv.style.backgroundSize=backgroundSize;
 
-							//move dom elts			
-							var createdDiv = YAHOO.util.Dom.get("constraintsList-"+instance.id+"-scores");
-							var constraintsListGrid = YAHOO.util.Dom.get("constraintsList-"+instance.id+"-grid");
-							YAHOO.util.Dom.insertBefore(createdDiv, constraintsListGrid.parentNode);
-						} 
+							
+						}
+						//move dom elts			
+						var createdDiv = YAHOO.util.Dom.get("constraintsList-"+instance.id+"-scores");
+						var constraintsListGrid = YAHOO.util.Dom.get("constraintsList-"+instance.id+"-grid");
+						YAHOO.util.Dom.insertBefore(createdDiv, constraintsListGrid.parentNode);
+						
 					},
 					scope : instance
 				},
