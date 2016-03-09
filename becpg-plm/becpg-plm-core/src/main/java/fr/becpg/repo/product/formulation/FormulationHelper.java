@@ -28,8 +28,11 @@ import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.constraints.TareUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
+import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.repository.model.SimpleCharactDataItem;
+import fr.becpg.repo.repository.model.SimpleListDataItem;
 
 /**
  * The Class FormulationHelper.
@@ -595,4 +598,11 @@ public class FormulationHelper {
 		return qty;
 	}
 
+	public static boolean isCharactFormulatedFromVol(NodeService nodeService, SimpleCharactDataItem sl) {
+		if(sl instanceof PhysicoChemListDataItem){
+			Boolean isFormulatedFromVol = (Boolean) nodeService.getProperty(sl.getCharactNodeRef(), PLMModel.PROP_PHYSICO_CHEM_FORMULATED_FROM_VOL);
+			return isFormulatedFromVol != null ? isFormulatedFromVol : false;
+		}
+		return false;
+	}
 }

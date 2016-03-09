@@ -7367,6 +7367,7 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden"></field>
+					<field id="bcpg:pclUnit" read-only="true"></field>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 					<field id="bcpg:physicoChemIsFormulated" label="hidden"/>
 					<field id="bcpg:physicoChemFormulaErrorLog" label="hidden"/>
