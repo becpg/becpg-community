@@ -88,7 +88,7 @@
 }
 
 .datagrid .instructions {
-	background: url("../images/link-details-16.png") no-repeat scroll 0 0 transparent;
+	background: url("../images/info-16.png") no-repeat scroll 0 0 transparent;
 	padding-left: 14px;
 }
 
@@ -294,3 +294,4 @@ div#full-screen-form {
 	{
 	background-color: transparent;
 }
+

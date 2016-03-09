@@ -90,6 +90,7 @@
 								if(val == "kg" || val == "g"){
 								    YAHOO.util.Dom.addClass(YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_netWeight").parentNode,"hidden");
 								    YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_netWeight").value = "";
+								    YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_netWeight-val").value = "";
 								 } else {
 					         		YAHOO.util.Dom.removeClass(YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_netWeight").parentNode,"hidden");
 					         	}
@@ -98,6 +99,7 @@
 				         	if(val != "P"){
 							    YAHOO.util.Dom.addClass(YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_netVolume").parentNode,"hidden");
 							    YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_netVolume").value = "";
+							    YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_netVolume-val").value = "";
 							 } else {
 				         		YAHOO.util.Dom.removeClass(YAHOO.util.Dom.get("${args.htmlid}_prop_bcpg_netVolume").parentNode,"hidden");
 				         	}
