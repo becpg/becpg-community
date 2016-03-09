@@ -248,7 +248,6 @@
 			//automatic refresh on formulation
 			YAHOO.Bubbling.on( "refreshDataGrids", recallWebScript, this);
 			YAHOO.Bubbling.on( "activeDataListChanged", recallWebScript, this);
-			console.log("view: "+instance.options.list);
 			
 			//init
 			Alfresco.util.Ajax.request({
