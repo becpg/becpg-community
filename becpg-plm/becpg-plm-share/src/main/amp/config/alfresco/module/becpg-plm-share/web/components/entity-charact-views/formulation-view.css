@@ -88,6 +88,11 @@ div.constraintsList .scrollableList {
 	padding-left: 14px;
 }
 
+.datagrid .instructions {
+	background: url("../images/info-16.png") no-repeat scroll 0 0 transparent;
+	padding-left: 14px;
+}
+
 .dynamicCharactList .dashlet {
 	width: 100%;
 	border-bottom: 0px;
