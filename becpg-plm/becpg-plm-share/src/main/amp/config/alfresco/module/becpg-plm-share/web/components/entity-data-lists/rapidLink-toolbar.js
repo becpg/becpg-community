@@ -77,8 +77,7 @@
                      } else if ("processList" == this.options.list) {
                         createList = [ "resourceProduct" ];
                      } else {
-                        createList = [ "finishedProduct", "rawMaterial", "localSemiFinishedProduct",
-                              "semiFinishedProduct" ];
+                        createList = [ "finishedProduct", "rawMaterial", "semiFinishedProduct" ];
                      }
 
                      

@@ -84,6 +84,33 @@
                </#list>
          </select>
          <@formLib.renderFieldHelp field=field />
+         <#if field.control.params.isStoreable?? && form.mode == "create">
+		  <script type="text/javascript">
+			if (typeof (Storage) !== "undefined") {
+				
+				YAHOO.util.Event.addListener("${fieldHtmlId}", "change", function() {
+						if (localStorage != null) {
+						 var selEl = YAHOO.util.Dom.get("${fieldHtmlId}");
+							localStorage.setItem('${fieldHtmlId}', selEl.value);
+							for(var e=0;e<selEl.options.length;e++){
+							  selEl.options[e].defaultSelected=(selEl.selectedIndex==e);
+							}
+						}
+					});
+					
+				YAHOO.util.Event.onAvailable("${fieldHtmlId}", function() {
+					if (localStorage.getItem('${fieldHtmlId}') != null) {
+					  var selEl = YAHOO.util.Dom.get("${fieldHtmlId}");
+						selEl.value = localStorage.getItem('${fieldHtmlId}');
+						for(var e=0;e<selEl.options.length;e++){
+						 selEl.options[e].defaultSelected=(selEl.selectedIndex==e);
+						}
+					}
+				 });
+				
+			 }
+			</script>
+	       </#if>  
       <#else>
          <div id="${fieldHtmlId}" class="missing-options">${msg("form.control.selectone.missing-options")}</div>
       </#if>
