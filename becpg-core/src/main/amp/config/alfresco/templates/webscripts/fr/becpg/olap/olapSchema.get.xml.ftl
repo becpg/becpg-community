@@ -23,7 +23,6 @@
 					datalist.id as id,
 					datalist.datalist_id as noderef,
 					datalist.entity_fact_id as entity_fact_id,
-					datalist.is_last_version as isLastVersion,
 					MAX(IF(prop.prop_name = "bcpg:rclReqType",prop.string_value,NULL)) as rclReqType,
 					MAX(IF(prop.prop_name = "bcpg:rclReqMessage",prop.string_value,NULL)) as rclReqMessage,
 					MAX(IF(prop.prop_name = "bcpg:rclSources",prop.prop_id,NULL)) as rclSources,
@@ -31,7 +30,7 @@
 				from
 					becpg_datalist AS datalist LEFT JOIN becpg_property AS prop ON prop.datalist_id = datalist.id
 				where
-					datalist.item_type = "bcpg:reqCtrlList" and datalist.is_last_version = true and instance_id = ${instanceId}
+					datalist.item_type = "bcpg:reqCtrlList" and instance_id = ${instanceId}
 				group by 
 					id
 				]]>
@@ -350,8 +349,7 @@
 				select
 					datalist.id as id,
 					datalist.datalist_id as noderef,
-					datalist.entity_fact_id as entity_fact_id,
-					datalist.is_last_version as isLastVersion,					
+					datalist.entity_fact_id as entity_fact_id,					
 					MAX(IF(prop.prop_name = "pjt:tlTaskName",prop.string_value,NULL)) as tlTaskName,
 					MAX(IF(prop.prop_name = "pjt:tlRealDuration",prop.long_value,NULL)) as tlDuration,
 					MAX(IF(prop.prop_name = "pjt:tlStart",prop.date_value,NULL)) as tlStart,
@@ -367,7 +365,7 @@
 				from
 					becpg_datalist AS datalist LEFT JOIN becpg_property AS prop ON prop.datalist_id = datalist.id
 				where
-					datalist.datalist_name = "taskList" and datalist.item_type = "pjt:taskList" and datalist.is_last_version = true and instance_id = ${instanceId}
+					datalist.datalist_name = "taskList" and datalist.item_type = "pjt:taskList" and instance_id = ${instanceId}
 				group by 
 					id
 				]]>
@@ -497,7 +495,6 @@
 					datalist.id as id,
 					datalist.datalist_id as noderef,
 					datalist.entity_fact_id as entity_fact_id,
-					datalist.is_last_version as isLastVersion,
 					MAX(IF(prop.prop_name = "pjt:slCriterion",prop.string_value,NULL)) as slCriterion,
 					MAX(IF(prop.prop_name = "pjt:slWeight",prop.long_value,NULL)) as slWeight,
 					MAX(IF(prop.prop_name = "pjt:slScore",prop.long_value,NULL)) as slScore,
