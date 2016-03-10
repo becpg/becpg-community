@@ -64,13 +64,6 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 		tarePrimary = tarePrimary.add(calculateTareOfPackaging(formulatedProduct));
 		formulatedProduct.setTareUnit(TareUnit.kg);
 
-		if (tarePrimary.doubleValue() < 1) {
-			logger.debug("Calculating tare in g: " + tarePrimary);
-			tarePrimary = tarePrimary.multiply(new BigDecimal(1000d));
-			formulatedProduct.setTareUnit(TareUnit.g);
-		}
-		formulatedProduct.setTare(tarePrimary.doubleValue());
-
 		if (formulatedProduct.getAspects().contains(GS1Model.ASPECT_MEASURES_ASPECT)) {
 			
 			BigDecimal netWeightPrimary = new BigDecimal(FormulationHelper.getNetWeight(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT).toString());
@@ -109,6 +102,13 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 			}
 
 		}
+		
+		if (tarePrimary.doubleValue() < 1) {
+			logger.debug("Calculating tare in g: " + tarePrimary);
+			tarePrimary = tarePrimary.multiply(new BigDecimal(1000d));
+			formulatedProduct.setTareUnit(TareUnit.g);
+		}
+		formulatedProduct.setTare(tarePrimary.doubleValue());
 
 		return true;
 	}
