@@ -83,31 +83,38 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 		}
 
 		Double netQty = FormulationHelper.getNetQtyInLorKg(productData, FormulationHelper.DEFAULT_NET_WEIGHT);
+		Double netWeight = FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT);
+		Double netVol = FormulationHelper.getNetVolume(productData) == null ? 0d : FormulationHelper.getNetVolume(productData);
 
-		visitRecur(productData, ret, 0, level, netQty,  netQty);
+		visitRecur(productData, ret, 0, level, netWeight, netQty, netVol);
 
 		return ret;
 	}
 
-	public CharactDetails visitRecur(ProductData subProductData, CharactDetails ret, Integer currLevel, Integer maxLevel, Double subQuantity , Double netQty)
+	public CharactDetails visitRecur(ProductData subProductData, CharactDetails ret, Integer currLevel, Integer maxLevel, Double subWeight, Double subVol, Double netQty)
 			throws FormulateException {
 
-		if (subProductData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+		if (subProductData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)) &&
+				FormulationHelper.getNetWeight(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT) != 0d &&
+				FormulationHelper.getNetVolume(subProductData) != null) {
 
-			for (CompoListDataItem compoListDataItem : subProductData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+			for (CompoListDataItem compoListDataItem : subProductData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {			
 
-				Double qty = FormulationHelper.getQtyInKg(compoListDataItem)
-						/ FormulationHelper.getNetQtyInLorKg(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT) * subQuantity;
-				Double qtyUsed = null;
-				if (qty != null) {
-					qtyUsed = qty * FormulationHelper.getYield(compoListDataItem) / 100;
-				}
-
-				visitPart(subProductData.getNodeRef(), compoListDataItem.getProduct(), ret, qtyUsed, netQty, currLevel);
+				Double weight = FormulationHelper.getQtyInKg(compoListDataItem)
+						/ FormulationHelper.getNetWeight(subProductData, FormulationHelper.DEFAULT_NET_WEIGHT) 
+						* subWeight;
+				Double weightUsed = weight * FormulationHelper.getYield(compoListDataItem) / 100;
+				
+				Double vol = FormulationHelper.getNetVolume(compoListDataItem, nodeService)
+						/ FormulationHelper.getNetVolume(subProductData) 
+						* subVol;
+				Double volUsed = vol * FormulationHelper.getYield(compoListDataItem) / 100;				
+				
+				visitPart(subProductData.getNodeRef(), compoListDataItem.getProduct(), ret, weightUsed, volUsed, netQty, currLevel);
 
 				if (((maxLevel < 0) || (currLevel < maxLevel)) && !entityDictionaryService.isMultiLevelLeaf(nodeService.getType(compoListDataItem.getProduct()))) {
 
-					visitRecur((ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct()), ret, currLevel+1, maxLevel, qty, netQty);
+					visitRecur((ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct()), ret, currLevel+1, maxLevel, weight, vol, netQty);
 				}
 
 			}
@@ -134,7 +141,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 		return ret;
 	}
 
-	protected void visitPart(NodeRef parent, NodeRef entityNodeRef, CharactDetails charactDetails, Double qtyUsed, Double netQty, Integer currLevel) throws FormulateException {
+	protected void visitPart(NodeRef parent, NodeRef entityNodeRef, CharactDetails charactDetails, Double weightUsed, Double volUsed, Double netQty, Integer currLevel) throws FormulateException {
 
 		if (entityNodeRef == null) {
 			return;
@@ -157,6 +164,11 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 					unit =  ((UnitAwareDataItem) simpleCharact).getUnit();
 				} 
 
+				// calculate charact from qty or vol ?
+				boolean isVol = FormulationHelper.isCharactFormulatedFromVol(nodeService, simpleCharact)
+						|| FormulationHelper.isProductUnitLiter(FormulationHelper.getProductUnit(entityNodeRef,nodeService)) ? true : false;
+				Double qtyUsed = isVol ? volUsed : weightUsed;
+				
 				Double value = FormulationHelper.calculateValue(0d, qtyUsed, simpleCharact.getValue(), netQty, unit);
 
 				if(value!=null && value!= 0d){

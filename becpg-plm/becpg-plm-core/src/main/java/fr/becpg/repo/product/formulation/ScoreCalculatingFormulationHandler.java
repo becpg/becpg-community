@@ -370,6 +370,11 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 				}
 			}
 
+			if(localesIntersection.isEmpty()){
+				//put system locale
+				localesIntersection.add(Locale.getDefault().getLanguage());
+			}
+			
 			if(logger.isDebugEnabled()){
 				logger.debug("intersectionLocales: "+localesIntersection);
 			}
