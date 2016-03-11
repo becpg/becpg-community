@@ -33,7 +33,6 @@ import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
-import fr.becpg.repo.repository.model.SimpleListDataItem;
 
 /**
  * The Class FormulationHelper.
