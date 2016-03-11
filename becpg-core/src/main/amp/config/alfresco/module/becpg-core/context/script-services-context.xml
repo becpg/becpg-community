@@ -36,8 +36,6 @@
 		</property>
 	</bean>
 
-
-
 	<bean id="thumbnailScript" parent="baseJavaScriptExtension" class="fr.becpg.repo.jscript.Thumbnail">
 		<property name="extensionName">
 			<value>bThumbnail</value>
@@ -50,7 +48,6 @@
 		<property name="associationService" ref="associationService" />
 	</bean>
 
-
 	<bean id="beCPGScriptHelper" parent="baseJavaScriptExtension" class="fr.becpg.repo.jscript.BeCPGScriptHelper">
 		<property name="extensionName">
 			<value>bcpg</value>
@@ -60,6 +57,7 @@
 		<property name="quickShareService" ref="quickShareService"/>
 		<property name="mlNodeService" ref="mlAwareNodeService"/>
 		<property name="namespaceService" ref="namespaceService"/>
+		<property name="dictionaryService" ref="dictionaryService"/>
 	</bean>
 
 	<!-- Override Alfresco -->
