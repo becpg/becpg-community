@@ -297,7 +297,7 @@ public class EntityToDBXmlVisitor {
 				new Object[] { false, nodeRef, instance.getId() });
 		
 		JdbcUtils.update(connection, "delete from  `becpg_datalist` where  entity_fact_id in (select id from becpg_entity where entity_id = ? and instance_id = ? )  ",
-				new Object[] { false, nodeRef, instance.getId() });
+				new Object[] { nodeRef, instance.getId() });
 
 		Long columnId = JdbcUtils.update(connection, "insert into `becpg_entity` "
 				+ "(`entity_id`,`entity_type`,`entity_name`,`instance_id`,`batch_id`,`is_last_version`) " + " values (?,?,?,?,?,?)",
