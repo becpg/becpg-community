@@ -107,7 +107,7 @@
 							html+="<ul class=\"catalog-missing-propList\">"
 								if(json[key].missingFields.length > 0){
 									for(var field in json[key].missingFields){
-										html+="<li class=\"missing-field\">"+replaceLocaleWithFlag(json[key].missingFields[field].localized)+"</li>";								
+											html+="<li class=\"missing-field\" id=\"missing-field_"+json[key]+"_"+json[key].missingFields[field].localized+"\">"+replaceLocaleWithFlag(json[key].missingFields[field].localized)+"</li>";	
 									}
 								} else {
 									html+="<li class=\"no-missing-prop\">"+instance.msg("label.no_missing_prop")+"</li>";
@@ -217,14 +217,37 @@
 									var currentLabel = labels[labelIndex];									
 									
 									//checks if we're on the right label, and the catalog is not already labelled
+									var hasLocaleIcon = false;
 									if(currentLabel.htmlFor.contains(fieldId) && currentLabel.parentNode.innerHTML.indexOf(colorTipElement.style.backgroundColor) == -1){
-										currentLabel.parentNode.insertBefore(colorTipElement.cloneNode(false), currentLabel.nextSibling);										
+										if(currentLabel.childNodes){
+											for(var child in currentLabel.childNodes){
+												var currentChildNode = currentLabel.childNodes[child];
+												if(currentChildNode.nodeType == Node.ELEMENT_NODE && currentChildNode.className.contains("locale-icon")){
+													hasLocaleIcon = true;
+													break;
+												}
+											}
+										}
+										
+										if(hasLocaleIcon){
+											currentLabel.parentNode.insertBefore(colorTipElement.cloneNode(false), currentLabel.nextSibling);	
+										} else {
+											currentLabel.innerHTML+=colorTipElement.outerHTML;
+										}
 									}
 								}							
 							} else {
 								console.log("can't find any prop or assoc for field "+fieldCode);
 								console.log("prop id would be "+id+"_prop_"+fieldCode);
 								console.log("assoc id would be "+id+"_assoc_"+fieldCode);
+								
+								var absentMissingFieldId = "missing-field_"+json[key]+"_"+json[key].missingFields[field].localized;
+								
+								var absentMissingFieldHTMLElement = YAHOO.util.Dom.get(absentMissingFieldId);
+								
+								if(absentMissingFieldHTMLElement !== undefined && absentMissingFieldHTMLElement != null){
+									absentMissingFieldHTMLElement.outerHTML = "";
+								}
 							}							
 						}
 					}
@@ -243,7 +266,6 @@
 
 						if(response.json !== undefined){
 							var html = parseJsonToHTML(response.json);
-							//console.log("html: "+html);
 							YAHOO.util.Dom.get(this.id+"-entity-catalog").innerHTML=html;
 														
 							var insertId = this.id.replace("-mgr", "");							
