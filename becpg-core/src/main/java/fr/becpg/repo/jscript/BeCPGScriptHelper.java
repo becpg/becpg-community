@@ -21,6 +21,9 @@ import java.util.Locale;
 
 import org.alfresco.repo.jscript.BaseScopableProcessorExtension;
 import org.alfresco.repo.jscript.ScriptNode;
+import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
+import org.alfresco.service.cmr.dictionary.DictionaryService;
+import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.quickshare.QuickShareService;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -28,12 +31,14 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.springframework.extensions.surf.util.I18NUtil;
 
+import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.entity.AutoNumService;
+import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.olap.OlapService;
 
 /**
  * Utility script methods
- * 
+ *
  * @author matthieu
  *
  */
@@ -48,7 +53,8 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	private NodeService mlNodeService;
 
 	private NamespaceService namespaceService;
-	
+
+	private DictionaryService dictionaryService;
 
 	public void setOlapService(OlapService olapService) {
 		this.olapService = olapService;
@@ -69,7 +75,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public void shareContent(ScriptNode sourceNode) {
 		quickShareService.shareContent(sourceNode.getNodeRef());
 	}
-	
+
 	public void setMlNodeService(NodeService mlNodeService) {
 		this.mlNodeService = mlNodeService;
 	}
@@ -78,6 +84,9 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		this.namespaceService = namespaceService;
 	}
 	
+	public void setDictionaryService(DictionaryService dictionaryService) {
+		this.dictionaryService = dictionaryService;
+	}
 
 	public String getMLProperty(ScriptNode sourceNode, String propQName, String locale) {
 		MLText mlText = (MLText) mlNodeService.getProperty(sourceNode.getNodeRef(), QName.createQName(propQName, namespaceService));
@@ -87,19 +96,45 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		return null;
 	}
 
+	public String getMLConstraint(String value, String propQName, String locale) {
+
+		PropertyDefinition propertyDef = dictionaryService.getProperty(QName.createQName(propQName, namespaceService));
+
+		String constraintName = null;
+		DynListConstraint dynListConstraint = null;
+
+		if (!propertyDef.getConstraints().isEmpty()) {
+			for (ConstraintDefinition constraint : propertyDef.getConstraints()) {
+				if (constraint.getConstraint() instanceof DynListConstraint) {
+					dynListConstraint = (DynListConstraint) constraint.getConstraint();
+					break;
+				} else if ("LIST".equals(constraint.getConstraint().getType())) {
+					constraintName = constraint.getRef().toPrefixString(namespaceService).replace(":", "_");
+					break;
+				}
+			}
+		}
+
+		if (dynListConstraint != null) {
+			return dynListConstraint.getDisplayLabel(value, new Locale(locale));
+		}
+
+		return constraintName != null ? TranslateHelper.getConstraint(constraintName, value, new Locale(locale)) : value;
+	}
+
 	public void setMLProperty(ScriptNode sourceNode, String propQName, String locale, String value) {
-		
-			MLText mlText = (MLText) mlNodeService.getProperty(sourceNode.getNodeRef(), QName.createQName(propQName, namespaceService));
-			if (mlText == null) {
-				mlText = new MLText();
-			}
-			if ((value != null) && !value.isEmpty()) {
-				mlText.addValue(new Locale(locale), value);
-			} else {
-				mlText.removeValue(new Locale(locale));
-			}
-			mlNodeService.setProperty(sourceNode.getNodeRef(), QName.createQName(propQName, namespaceService), mlText);
-		
+
+		MLText mlText = (MLText) mlNodeService.getProperty(sourceNode.getNodeRef(), QName.createQName(propQName, namespaceService));
+		if (mlText == null) {
+			mlText = new MLText();
+		}
+		if ((value != null) && !value.isEmpty()) {
+			mlText.addValue(new Locale(locale), value);
+		} else {
+			mlText.removeValue(new Locale(locale));
+		}
+		mlNodeService.setProperty(sourceNode.getNodeRef(), QName.createQName(propQName, namespaceService), mlText);
+
 	}
 
 	public String getMessage(String messageKey) {
