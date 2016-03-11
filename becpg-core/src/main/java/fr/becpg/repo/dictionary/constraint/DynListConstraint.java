@@ -153,10 +153,15 @@ public class DynListConstraint extends ListOfValuesConstraint {
 
 	public String getDisplayLabel(String constraintAllowableValue) {
 
+		return getDisplayLabel(constraintAllowableValue,I18NUtil.getLocale());
+	}
+	
+	public String getDisplayLabel(String constraintAllowableValue, Locale locale) {
+
 		MLText mlText = getMLAwareAllowedValues().get(constraintAllowableValue);
 
-		if ((mlText != null) && (mlText.getClosestValue(I18NUtil.getLocale()) != null) && !mlText.getClosestValue(I18NUtil.getLocale()).isEmpty()) {
-			return mlText.getClosestValue(I18NUtil.getLocale());
+		if ((mlText != null) && (mlText.getClosestValue(locale) != null) && !mlText.getClosestValue(locale).isEmpty()) {
+			return mlText.getClosestValue(locale);
 		}
 
 		return constraintAllowableValue;
