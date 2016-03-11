@@ -867,11 +867,6 @@ span.favourite span.ctn-fav {
 	margin-left: 0.5em;
 }
 
-/* fixes color tip on missing field in edit metadata page */
-.form-container .form-field label {
-	display: unset;
-}
-
 .sticky-wrapper label {
 	margin-right: 0.2em;
 }
