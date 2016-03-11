@@ -452,9 +452,19 @@ if (beCPG.module.EntityDataGridRenderers) {
                     
                     if(reqProducts){
                         for(var i in reqProducts){
-                            var product = reqProducts[i];
-                            html +='<li><span class="' + product.metadata + '" ><a href="' +
-                            beCPG.util.entityURL(product.siteId, product.value) + '">' 
+                            var product = reqProducts[i], pUrl =  beCPG.util.entityURL(product.siteId, product.value);
+                            
+                            if (product.metadata.indexOf("finishedProduct") != -1 || product.metadata.indexOf("semiFinishedProduct") != -1) {
+                            	pUrl = beCPG.util.entityURL(product.siteId, product.value,null,null,"compoList");
+            				} else if (data.metadata.indexOf("packagingKit") != -1) {
+            					pUrl = beCPG.util.entityURL(product.siteId, product.value,null,null,"packagingList");
+            				} 
+                            
+                            if(pUrl){
+                            	pUrl+="&bcPath=true&bcList="+scope.datalistMeta.name;
+            				}
+                            
+                            html +='<li><span class="' + product.metadata + '" ><a href="' + pUrl + '">' 
                             + Alfresco.util.encodeHTML(product.displayValue) + '</a></span></li>';
     
                         }
