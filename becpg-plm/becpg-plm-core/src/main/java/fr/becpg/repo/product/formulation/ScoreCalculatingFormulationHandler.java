@@ -106,15 +106,15 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 		childrenScores[0] = childScore;
 		childrenScores[1] = childrenSize;
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("Calculating score of " + product.getName() + ", state=" + product.getState());
+		if(logger.isDebugEnabled()){
+			logger.debug("===== Calculating score of product "+product.getName()+" =====");
 		}
-
+		
 		// visits all refs and adds rclDataItem to them if required
-
 		for (CompoListDataItem compo : product.getCompoList()) {
 			visitProduct(compo, childrenScores, product.getCompoListView());
 		}
+		
 		for (PackagingListDataItem packaging : product.getPackagingList()) {
 			visitProduct(packaging, childrenScores, product.getPackagingListView());
 		}
@@ -132,9 +132,6 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 			logger.error("unable to compute mandatory fields score", e);
 		}
 
-		if(logger.isDebugEnabled()){
-			logger.debug("ret: "+mandatoryFieldsRet);
-		}
 		Integer specificationsScore = calculateSpecificationScore(product); 
 		double componentsValidationScore = (childrenScores[1] > 0 ? childrenScores[0] / childrenScores[1] : 1d);
 
@@ -168,13 +165,12 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 
 		// done computing scores, setting intermediate global score var to sum
 		// of those
-
-		if (logger.isDebugEnabled()) {
-			logger.debug("Children score=" + childrenScores[0] + ", childrenSize=" + childrenScores[1] + ", completion="
-					+ (componentsValidationScore * 100) + "%");
-			logger.debug("specificationScore=" + specificationsScore + "%");
-			logger.debug("Global score=" + (completionPercent)+"%");
-		}
+//		if (logger.isDebugEnabled()) {
+//			logger.debug("Children score=" + childrenScores[0] + ", childrenSize=" + childrenScores[1] + ", completion="
+//					+ (componentsValidationScore * 100) + "%");
+//			logger.debug("specificationScore=" + specificationsScore + "%");
+//			logger.debug("Global score=" + (completionPercent)+"%");
+//		}
 
 		JSONObject scores = new JSONObject();
 		JSONObject details = new JSONObject();
@@ -194,9 +190,6 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 			logger.error("unable to create scores json object properly", e);
 		}
 
-		if(logger.isDebugEnabled()){
-			logger.debug("scores="+scores+"\n====================================================");
-		}
 		product.setProductScores(scores.toString());
 
 		return true;
@@ -220,7 +213,6 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 			}
 			childrenArray[1] += 1;
 		}
-
 	}
 
 	/**
@@ -286,7 +278,6 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 		boolean isPresent=false;
 
 		Map<QName, Serializable> props = nodeService.getProperties(nodeRef);
-
 		ArrayList<String> reportLocales=null;
 
 		if(props != null){
@@ -341,10 +332,6 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 				catalogLocales = new JSONArray();
 			}
 
-			if(logger.isDebugEnabled()){
-				logger.debug("CatalogLocales: "+catalogLocales);
-			}
-
 			//intersection of report and catalog locales
 			List<String> localesIntersection = new ArrayList<String>();
 
@@ -375,10 +362,6 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 				localesIntersection.add(Locale.getDefault().getLanguage());
 			}
 			
-			if(logger.isDebugEnabled()){
-				logger.debug("intersectionLocales: "+localesIntersection);
-			}
-
 			if(currentCatalog != null){
 				String currentLocale=null;
 				List<JSONObject> localizedCatalogs = new ArrayList<JSONObject>(localesIntersection.size());
@@ -397,8 +380,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 					//k localized catalog for localized mlTexts
 					for(int k=0; k<localesIntersection.size() && localeComesFromCatalog; k++){	
 						currentLocales = new JSONArray();
-						currentLocale = localesIntersection.get(k);
-						
+						currentLocale = localesIntersection.get(k);						
 
 						//if locale comes from report langs, only one array with all locales (=break)
 						if(catalogLocales.length() == 0){
@@ -492,10 +474,6 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 								}
 							}
 
-							if(logger.isDebugEnabled()){
-								logger.debug("mlValue: \""+mlValue+"\" for locale \""+locale+"\"");
-							}
-
 							if(mlValue != null && !mlValue.equals("")){
 								//wether this field should be visited by every catalog or not
 								if(!localeComesFromCatalog){
@@ -526,15 +504,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 							}
 
 							String message = I18NUtil.getMessage(
-									MESSAGE_MANDATORY_FIELD_MISSING_LOCALIZED,(fieldMessage == null ? field : fieldMessage), label, (locale.equals("")?locale:"("+locale+")"));
-
-							if(logger.isDebugEnabled()){
-								logger.debug("ML rclDataItem message: "+message);
-							}
-
-							if(logger.isDebugEnabled()){
-								logger.debug("Adding locale: "+locale+" to rclDataItem message");
-							}	
+									MESSAGE_MANDATORY_FIELD_MISSING_LOCALIZED,(fieldMessage == null ? field : fieldMessage), label, (locale.equals("")?locale:"("+locale+")"));	
 
 							ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, null, new ArrayList<NodeRef>(),
 									RequirementDataType.Completion);
@@ -542,27 +512,30 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 
 							//put rclDataItem in proper view
 							if(!dat.getCompoListView().getCompoList().isEmpty()){
+								if(logger.isDebugEnabled()){
+									logger.debug("\""+rclDataItem.getReqMessage()+"\" in compoLV of "+dat.getName());
+								}
 								dat.getCompoListView().getReqCtrlList().add(rclDataItem);
 							} else if(!dat.getProcessListView().getProcessList().isEmpty()){
+								if(logger.isDebugEnabled()){
+									logger.debug("\""+rclDataItem.getReqMessage()+"\" in procLV of "+dat.getName());
+								}
 								dat.getProcessListView().getReqCtrlList().add(rclDataItem);
 							} else if(!dat.getPackagingListView().getPackagingList().isEmpty()){
+								if(logger.isDebugEnabled()){
+									logger.debug("\""+rclDataItem.getReqMessage()+"\" in packLV of "+dat.getName());
+								}
 								dat.getPackagingListView().getReqCtrlList().add(rclDataItem);
 							}
 
 							//wether this field should be visited by every catalog or not
 							if(!localeComesFromCatalog){
 								//everybody should visit it
-								if(logger.isDebugEnabled()){
-									logger.debug("Every catalog should visit field "+field);
-								}
 								for(JSONObject catalog : localizedCatalogs){
 									JSONArray missingFields = catalog.getJSONArray("missingFields");
 
 									//only common catalog should have this field as void
 									if(catalog.has("label")){	
-										if(logger.isDebugEnabled()){
-											logger.debug("This is a common catalog");
-										}
 										String currentLabel = catalog.getString("label");
 										if(localizedCatalogs.get(0).equals(catalog)){
 											missingFields.put(field+"_"+locale);
@@ -577,10 +550,6 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 								JSONObject catalog;
 								Iterator<JSONObject> it = localizedCatalogs.iterator();
 
-								if(logger.isDebugEnabled()){
-									logger.debug("Locale comes from catalog : only one catalog shall visit field "+field);
-								}
-								
 								boolean found = false;
 								while(it.hasNext() && !found){
 									catalog = it.next();
@@ -593,9 +562,6 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 									}
 
 									if(locale.equals(currentCatalogLocale)){
-										if(logger.isDebugEnabled()){
-											logger.debug("...that catalog being "+catalog.getString("id")+"_"+currentCatalogLocale);
-										}
 										JSONArray missingFields = catalog.getJSONArray("missingFields");
 										missingFields.put(field+"_"+locale);
 										catalog.put("visited", catalog.getInt("visited")+1);
@@ -641,10 +607,19 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 							// puts rclDataItem in first non empty view (depends on type of product data : packaging kit/unit, process
 							// semi finished, finished product..
 							if(!dat.getCompoListView().getCompoList().isEmpty()){
+								if(logger.isDebugEnabled()){
+									logger.debug("\""+rclDataItem.getReqMessage()+"\" in compoLV of "+dat.getName());
+								}
 								dat.getCompoListView().getReqCtrlList().add(rclDataItem);
 							} else if(!dat.getProcessListView().getProcessList().isEmpty()){
+								if(logger.isDebugEnabled()){
+									logger.debug("\""+rclDataItem.getReqMessage()+"\" in procLV of "+dat.getName());
+								}
 								dat.getProcessListView().getReqCtrlList().add(rclDataItem);
 							} else if(!dat.getPackagingListView().getPackagingList().isEmpty()){
+								if(logger.isDebugEnabled()){
+									logger.debug("\""+rclDataItem.getReqMessage()+"\" in packLV of "+dat.getName());
+								}
 								dat.getPackagingListView().getReqCtrlList().add(rclDataItem);
 							}
 
@@ -666,24 +641,13 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 							}
 						}
 					}
-					if(logger.isDebugEnabled()){
-						logger.debug("============================ End of field "+field+" ============================");
-					}
 					isPresent=false;
 				}
-
 				//we can put these localized catalogs inside ret and go for another catalog
 				fillWithCatalogs(localizedCatalogs, ret);
-
-				if(logger.isDebugEnabled()){
-					logger.debug("\n\n============================ End of catalog "+label+" ============================\n\n");
-				}
 			}
 		}
 
-		if(logger.isDebugEnabled()){
-			logger.debug("\n\n============================ End of catalog parsing ============================\n\n");
-		}
 
 		return ret;
 	}
@@ -708,10 +672,6 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 			double currentCatalogsScore = mandatoryFieldsVisited > 0
 					? (mandatoryFieldsVisited - violatedMandatoryFields) / (double) mandatoryFieldsVisited : 1d;
 
-					if(logger.isDebugEnabled()){
-						logger.debug("\nCatalog "+localizedLabel+": visited="+mandatoryFieldsVisited+", violated="+violatedMandatoryFields+" -> score="+currentCatalogsScore+"\n");
-					}
-
 					JSONObject catalogDesc = new JSONObject();
 					catalogDesc.put("missingFields", localizedMissingFieldsArray);
 					catalogDesc.put("locales", localizedCatalogLocales);
@@ -732,9 +692,6 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 	 * @throws JSONException
 	 */
 	public JSONObject createLocalizedCatalog(JSONArray locales, String label, String id) throws JSONException{
-		if(logger.isDebugEnabled()){
-			logger.debug("Creating localized catalog, label: "+label+", id: "+id+", locales: "+locales);
-		}
 		JSONObject localizedCatalog = new JSONObject();
 		localizedCatalog.put("visited", 0);
 		localizedCatalog.put("violated", 0);
@@ -757,16 +714,22 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 		int specificationScore = 100;
 
 		List<ReqCtrlListDataItem> ctrls = new ArrayList<ReqCtrlListDataItem>();
-		ctrls.addAll(product.getCompoListView().getReqCtrlList());
-		ctrls.addAll(product.getPackagingListView().getReqCtrlList());
-		ctrls.addAll(product.getProcessListView().getReqCtrlList());
+		
+		if(product.getCompoListView() != null){
+			ctrls.addAll(product.getCompoListView().getReqCtrlList());
+		}
+		
+		if(product.getPackagingListView() != null){
+			ctrls.addAll(product.getPackagingListView().getReqCtrlList());
+		}
+		
+		if(product.getProcessListView() != null){
+			ctrls.addAll(product.getProcessListView().getReqCtrlList());
+		}
 
 		for (ReqCtrlListDataItem ctrl : ctrls) {		
 			if ((ctrl.getReqDataType() == RequirementDataType.Specification)
 					&& (ctrl.getReqType() == RequirementType.Forbidden)) {
-				if (logger.isDebugEnabled()) {
-					logger.debug(ctrl.getName() + " is forbidden, -10%");
-				}
 				specificationScore = Math.max(specificationScore - 10, 0);
 			}
 		}
