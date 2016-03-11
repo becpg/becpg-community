@@ -184,7 +184,13 @@
 					<show id="bcpg:instruction" force="true"/>
 				</field-visibility>
 				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
-				<appearance>					
+				<appearance>	
+					<field id="mpm:plUnit">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isStoreable">true</control-param>
+						</control>
+					</field>
+								
 					<field id="mpm:plStep">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
@@ -333,7 +339,13 @@
 					<show id="mpm:rplResourceRef" />
 					<show id="mpm:rplStepRef" />
 				</field-visibility>
-				<appearance>					
+				<appearance>	
+					<field id="mpm:rplParamType">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isStoreable">true</control-param>
+						</control>
+					</field>
+								
 					<field id="mpm:rplParamRef">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
