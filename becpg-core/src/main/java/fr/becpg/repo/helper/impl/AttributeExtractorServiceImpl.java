@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2015 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2015 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.helper.impl;
@@ -163,11 +163,11 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		}
 
 		public boolean isDataListItems() {
-			return isNested() && !isEntityField && fieldDef == null;
+			return isNested() && !isEntityField && (fieldDef == null);
 		}
 
 		public boolean isNested() {
-			return childrens != null && !childrens.isEmpty();
+			return (childrens != null) && !childrens.isEmpty();
 		}
 
 		public ClassAttributeDefinition getFieldDef() {
@@ -186,33 +186,41 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + getOuterType().hashCode();
-			result = prime * result + ((fieldName == null) ? 0 : fieldName.hashCode());
-			result = prime * result + ((fieldQname == null) ? 0 : fieldQname.hashCode());
+			result = (prime * result) + getOuterType().hashCode();
+			result = (prime * result) + ((fieldName == null) ? 0 : fieldName.hashCode());
+			result = (prime * result) + ((fieldQname == null) ? 0 : fieldQname.hashCode());
 			return result;
 		}
 
 		@Override
 		public boolean equals(Object obj) {
-			if (this == obj)
+			if (this == obj) {
 				return true;
-			if (obj == null)
+			}
+			if (obj == null) {
 				return false;
-			if (getClass() != obj.getClass())
+			}
+			if (getClass() != obj.getClass()) {
 				return false;
+			}
 			AttributeExtractorStructure other = (AttributeExtractorStructure) obj;
-			if (!getOuterType().equals(other.getOuterType()))
+			if (!getOuterType().equals(other.getOuterType())) {
 				return false;
+			}
 			if (fieldName == null) {
-				if (other.fieldName != null)
+				if (other.fieldName != null) {
 					return false;
-			} else if (!fieldName.equals(other.fieldName))
+				}
+			} else if (!fieldName.equals(other.fieldName)) {
 				return false;
+			}
 			if (fieldQname == null) {
-				if (other.fieldQname != null)
+				if (other.fieldQname != null) {
 					return false;
-			} else if (!fieldQname.equals(other.fieldQname))
+				}
+			} else if (!fieldQname.equals(other.fieldQname)) {
 				return false;
+			}
 			return true;
 		}
 
@@ -234,7 +242,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 		String value = null;
 
-		if (v == null || propertyDef == null) {
+		if ((v == null) || (propertyDef == null)) {
 			return value;
 		}
 
@@ -264,18 +272,18 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 			String constraintName = null;
 			DynListConstraint dynListConstraint = null;
-			
+
 			if (!propertyDef.getConstraints().isEmpty()) {
 
-				for (ConstraintDefinition constraint : propertyDef.getConstraints()) {					
-					if( constraint.getConstraint() instanceof  DynListConstraint){
-						 dynListConstraint = (DynListConstraint) constraint.getConstraint();
-						 break;
-						
+				for (ConstraintDefinition constraint : propertyDef.getConstraints()) {
+					if (constraint.getConstraint() instanceof DynListConstraint) {
+						dynListConstraint = (DynListConstraint) constraint.getConstraint();
+						break;
+
 					} else if ("LIST".equals(constraint.getConstraint().getType())) {
 						constraintName = constraint.getRef().toPrefixString(namespaceService).replace(":", "_");
 						break;
-					} 
+					}
 				}
 
 			}
@@ -297,7 +305,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 							value = "";
 						}
 
-						if(dynListConstraint!=null){
+						if (dynListConstraint != null) {
 							value += dynListConstraint.getDisplayLabel(tempValue);
 						} else {
 							value += constraintName != null
@@ -307,7 +315,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 				}
 			} else {
-				if(dynListConstraint!=null){
+				if (dynListConstraint != null) {
 					value = dynListConstraint.getDisplayLabel(v.toString());
 				} else {
 					value = constraintName != null ? TranslateHelper.getConstraint(constraintName, v.toString(), propertyFormats.isUseDefaultLocale())
@@ -343,7 +351,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 			value = v.toString();
 		} else if (dataType.equals(DataTypeDefinition.DOUBLE.toString()) || dataType.equals(DataTypeDefinition.FLOAT.toString())
-				|| (dataType.equals(DataTypeDefinition.ANY.toString()) && (v instanceof Double || v instanceof Float))) {
+				|| (dataType.equals(DataTypeDefinition.ANY.toString()) && ((v instanceof Double) || (v instanceof Float)))) {
 
 			value = propertyFormats.formatDecimal(v);
 
@@ -488,10 +496,13 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				if (ExcelHelper.isExcelType(value)) {
 					return value;
 				} else {
-//					if (DataTypeDefinition.ANY.toString().equals((((PropertyDefinition) attribute).getDataType()).toString())
-//							&& value instanceof String) {
-//						return JsonFormulaHelper.cleanCompareJSON((String) value);
-//					}
+					// if
+					// (DataTypeDefinition.ANY.toString().equals((((PropertyDefinition)
+					// attribute).getDataType()).toString())
+					// && value instanceof String) {
+					// return JsonFormulaHelper.cleanCompareJSON((String)
+					// value);
+					// }
 					return displayName;
 				}
 
@@ -659,7 +670,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	public String[] getTags(NodeRef nodeRef) {
 		String[] result;
 		List<String> tags = taggingService.getTags(nodeRef);
-		if (tags == null || tags.isEmpty()) {
+		if ((tags == null) || tags.isEmpty()) {
 			result = new String[0];
 		} else {
 			result = tags.toArray(new String[tags.size()]);
@@ -678,8 +689,8 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 		if (value != null) {
 
-			if (value instanceof NodeRef || value instanceof String || value instanceof List) {
-				if (DataTypeDefinition.ANY.toString().equals(propertyDef.getDataType().toString()) && value instanceof String) {
+			if ((value instanceof NodeRef) || (value instanceof String) || (value instanceof List)) {
+				if (DataTypeDefinition.ANY.toString().equals(propertyDef.getDataType().toString()) && (value instanceof String)) {
 					value = (Serializable) JsonFormulaHelper.cleanCompareJSON((String) value);
 				}
 				if (propertyDef.getConstraints().isEmpty()) {
@@ -687,17 +698,16 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				} else {
 					DynListConstraint dynListConstraint = null;
 					for (ConstraintDefinition constraint : propertyDef.getConstraints()) {
-						if( constraint.getConstraint() instanceof  DynListConstraint){
-							 dynListConstraint = (DynListConstraint) constraint.getConstraint();
-							 break;
-							
+						if (constraint.getConstraint() instanceof DynListConstraint) {
+							dynListConstraint = (DynListConstraint) constraint.getConstraint();
+							break;
 						}
 					}
-					
-					if(dynListConstraint!=null){
-					 return	dynListConstraint.getDisplayLabel(value.toString());
+
+					if (dynListConstraint != null) {
+						return dynListConstraint.getDisplayLabel(value.toString());
 					}
-					
+
 					return value.toString();
 				}
 			} else if (value instanceof Date) {
@@ -741,7 +751,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				value = extractPropName(targetNodeRef);
 			}
 
-			if (value == null || value.isEmpty()) {
+			if ((value == null) || value.isEmpty()) {
 				value = (String) nodeService.getProperty(targetNodeRef, ContentModel.PROP_NAME);
 			}
 			values.append(value);
