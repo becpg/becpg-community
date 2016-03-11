@@ -138,8 +138,6 @@
     </constraints>
     <types>
         <type name="gs1:DeliveryChannel">
-            <title>GS1 Delivery Channel</title>
-            <description>Node type used to represent GS1 delivery channels</description>
             <parent>pub:DeliveryChannel</parent>
             <properties/>
             <associations/>
@@ -149,7 +147,6 @@
             </mandatory-aspects>
         </type>
         <type name="gs1:gs1ParentType">
-            <title>GS1 Type Parent</title>
             <parent>cm:content</parent>
             <properties/>
             <associations/>
@@ -161,11 +158,8 @@
     </types>
     <aspects>
         <aspect name="gs1:DeliveryChannelAspect">
-            <title>GS1 Delivery Channel</title>
-            <description>Applied to a node that represents a GS1 delivery channel</description>
             <properties>
                 <property name="gs1:gln">
-                    <title>Global Location Number</title>
                     <type>d:text</type>
                     <mandatory>true</mandatory>
                     <index enabled="true">
@@ -175,7 +169,6 @@
                     </index>
                 </property>
                 <property name="gs1:catalogId">
-                    <title>Identifiant Catalogue</title>
                     <type>d:text</type>
                     <mandatory>true</mandatory>
                     <index enabled="true">
@@ -190,8 +183,6 @@
             <mandatory-aspects/>
         </aspect>
         <aspect name="gs1:AssetAspect">
-            <title>GS1 Asset</title>
-            <description>Applied to a node that has been published to GS1</description>
             <parent>pub:AssetAspect</parent>
             <properties/>
             <associations/>
@@ -199,34 +190,27 @@
             <mandatory-aspects/>
         </aspect>
         <aspect name="gs1:measuresAspect">
-            <title>GS1 Mesures Aspect</title>
             <properties>
             	<property name="gs1:productHierarchy1">
-                    <title>Rayon</title>
                     <type>d:noderef</type>
                     <mandatory>false</mandatory>
                 </property>
                 <property name="gs1:productHierarchy2">
-                    <title>Catégorie de produit</title>
                     <type>d:noderef</type>
                     <mandatory>false</mandatory>
                 </property>
                 <property name="gs1:productHierarchy3">
-                    <title>Brique GPC</title>
                     <type>d:noderef</type>
                     <mandatory>false</mandatory> </property>
                 <property name="gs1:productHierarchy4">
-                    <title>Classe IFLS</title>
                     <type>d:noderef</type>
                     <mandatory>false</mandatory>
                  </property>
                  <property name="gs1:productHierarchy5">
-                    <title>Segment IFLS</title>
                     <type>d:noderef</type>
                     <mandatory>false</mandatory>
                 </property>
                 <property name="gs1:height">
-                    <title>Hauteur (mm)</title>
                     <type>d:float</type>
                     <mandatory>false</mandatory>
                     <index enabled="true">
@@ -236,7 +220,6 @@
                     </index>
                 </property>
                 <property name="gs1:width">
-                    <title>Largeur (mm)</title>
                     <type>d:float</type>
                     <mandatory>false</mandatory>
                     <index enabled="true">
@@ -246,7 +229,6 @@
                     </index>
                 </property>
                 <property name="gs1:depth">
-                    <title>Profondeur (mm)</title>
                     <type>d:float</type>
                     <mandatory>false</mandatory>
                     <index enabled="true">
@@ -256,7 +238,6 @@
                     </index>
                 </property>
                 <property name="gs1:weight">
-                    <title>Poids brut (kg)</title>
                     <type>d:float</type>
                     <mandatory>false</mandatory>
                     <index enabled="true">
@@ -266,7 +247,6 @@
                     </index>
                 </property>
                 <property name="gs1:secondaryWeight">
-                    <title>Poids brut colis(kg)</title>
                     <type>d:double</type>
                     <mandatory>false</mandatory>
                     <index enabled="true">
@@ -276,7 +256,6 @@
                     </index>
                 </property>
                 <property name="gs1:tertiaryWeight">
-                    <title>Poids brut palette (kg)</title>
                     <type>d:double</type>
                     <mandatory>false</mandatory>
                     <index enabled="true">
@@ -286,7 +265,6 @@
                     </index>
                 </property>
                  <property name="gs1:secondaryNetWeight">
-                    <title>Poids net colis(kg)</title>
                     <type>d:double</type>
                     <mandatory>false</mandatory>
                     <index enabled="true">
@@ -296,7 +274,6 @@
                     </index>
                 </property>
                 <property name="gs1:tertiaryNetWeight">
-                    <title>Poids net palette (kg)</title>
                     <type>d:double</type>
                     <mandatory>false</mandatory>
                     <index enabled="true">
@@ -311,10 +288,17 @@
             <mandatory-aspects/>
         </aspect>
         <aspect name="gs1:indicatorsAspect">
-            <title>GS1 Indicateurs Aspect</title>
             <properties>
+            	<property name="gs1:isPublicated">
+                    <type>d:boolean</type>
+                    <mandatory>false</mandatory>
+                    <index enabled="true">
+                        <atomic>false</atomic>
+                        <stored>false</stored>
+                        <tokenised>TRUE</tokenised>
+                    </index>
+                </property>
                 <property name="gs1:isTradeItemABaseUnit">
-                    <title>Unité de base (oui / non)</title>
                     <type>d:boolean</type>
                     <mandatory>false</mandatory>
                     <index enabled="true">
@@ -324,7 +308,6 @@
                     </index>
                 </property>
                 <property name="gs1:isTradeItemAConsumerUnit">
-                    <title>Unité consommateur (oui / non)</title>
                     <type>d:boolean</type>
                     <mandatory>false</mandatory>
                     <index enabled="true">
@@ -334,7 +317,6 @@
                     </index>
                 </property>
                 <property name="gs1:isTradeItemADespatchUnit">
-                    <title>Unité logistique (oui / non)</title>
                     <type>d:boolean</type>
                     <mandatory>false</mandatory>
                     <index enabled="true">
@@ -344,7 +326,6 @@
                     </index>
                 </property>
                 <property name="gs1:isTradeItemAnInvoiceUnit">
-                    <title>Unité facturable (oui / non)</title>
                     <description></description>
                     <type>d:boolean</type>
                     <mandatory>false</mandatory>
@@ -355,7 +336,6 @@
                     </index>
                 </property>
                 <property name="gs1:isTradeItemAnOrderableUnit">
-                    <title>Unité commandable (oui / non)</title>
                     <type>d:boolean</type>
                     <mandatory>false</mandatory>
                     <index enabled="true">
@@ -365,7 +345,6 @@
                     </index>
                 </property>
                 <property name="gs1:isTradeItemAVariableUnit">
-                    <title>Article à mesure variable (oui / non)</title>
                     <type>d:boolean</type>
                     <mandatory>false</mandatory>
                     <index enabled="true">
@@ -375,7 +354,6 @@
                     </index>
                 </property>
                 <property name="gs1:isTradeItemAFullDisplayStand">
-                    <title>Présentoir garni (oui / non)</title>
                     <type>d:boolean</type>
                     <mandatory>false</mandatory>
                     <index enabled="true">
@@ -385,7 +363,6 @@
                     </index>
                 </property>
                 <property name="gs1:isTradeItemAReturnableItem">
-                    <title>Objet consigné (oui / non)</title>
                      <type>d:boolean</type>
                     <mandatory>false</mandatory>
                     <index enabled="true">
@@ -395,7 +372,6 @@
                     </index>
                 </property>
                 <property name="gs1:isTradeItemAService">
-                    <title>Service (oui / non)</title>
                     <type>d:boolean</type>
                     <mandatory>false</mandatory>
                     <index enabled="true">
@@ -405,7 +381,6 @@
                     </index>
                 </property>
                 <property name="gs1:isTradeItemABulkItem">
-                    <title>Vrac (oui / non)</title>
                     <type>d:boolean</type>
                     <mandatory>false</mandatory>
                     <index enabled="true">
@@ -415,7 +390,6 @@
                     </index>
                 </property>
                 <property name="gs1:isTradeItemACutToOrderItem">
-                    <title>Produit à découper (note : mesure fixe + variable) (oui / non)</title>
                     <type>d:boolean</type>
                     <mandatory>false</mandatory>
                     <index enabled="true">
@@ -425,7 +399,6 @@
                     </index>
                 </property>
                 <property name="gs1:isTradeItemAModel">
-                    <title>Modèle (oui / non)</title>
                     <type>d:boolean</type>
                     <mandatory>false</mandatory>
                     <index enabled="true">
@@ -435,7 +408,6 @@
                     </index>
                 </property>
                 <property name="gs1:isTradeItemADivisibleItem">
-                    <title>Article sécable (oui / non)</title>
                     <type>d:boolean</type>
                     <mandatory>false</mandatory>
                     <index enabled="true">
@@ -445,7 +417,6 @@
                     </index>
                 </property>
                 <property name="gs1:isTradeItemAPromotionalItem">
-                    <title>Produit promotion consommateur (oui / non)</title>
                     <type>d:boolean</type>
                     <mandatory>false</mandatory>
                     <index enabled="true">
@@ -463,7 +434,6 @@
             <title>GS1 Dates Aspect</title>
             <properties>
                 <property name="gs1:effectiveDate">
-                    <title>Date de début de validité de la fiche produit</title>
                     <type>d:date</type>
                     <mandatory>false</mandatory>
                     <index enabled="true">
@@ -473,7 +443,6 @@
                     </index>
                 </property>
                 <property name="gs1:startAvailabilityDateTime">
-                    <title>Date de début de disponibilité à la commande</title>
                     <type>d:date</type>
                     <mandatory>false</mandatory>
                     <index enabled="true">
@@ -483,7 +452,6 @@
                     </index>
                 </property>
                 <property name="gs1:lastChangeDateTime">
-                    <title>Date de dernière mise à jour</title>
                     <type>d:date</type>
                     <mandatory>false</mandatory>
                     <index enabled="true">
@@ -493,7 +461,6 @@
                     </index>
                 </property>
                 <property name="gs1:publicationDate">
-                    <title>Date de publication</title>
                     <type>d:date</type>
                     <mandatory>false</mandatory>
                     <index enabled="true">
@@ -508,10 +475,8 @@
             <mandatory-aspects/>
         </aspect>
         <aspect name="gs1:packagingAspect">
-            <title>GS1 Emballage/Conditionnement Aspect</title>
             <properties>
                 <property name="gs1:isPackagingMarkedReturnable">
-                    <title>Mention "emballage / conditionnement retournable" marquée (oui / non)</title>
                     <type>d:boolean</type>
                     <mandatory>false</mandatory>
                     <index enabled="true">
@@ -521,7 +486,6 @@
                     </index>
                 </property>
                 <property name="gs1:packagingTypeCode">
-                    <title>Type d'emballage / conditionnement (code)</title>
                     <type>d:text</type>
                     <mandatory>false</mandatory>
                     <index enabled="true">
@@ -534,7 +498,6 @@
                     </constraints>
                 </property>
                 <property name="gs1:palletTypeCode">
-                    <title>Type de support palette</title>
                     <type>d:text</type>
                     <mandatory>false</mandatory>
                     <index enabled="true">
@@ -552,7 +515,6 @@
             <mandatory-aspects/>
         </aspect>
         <aspect name="gs1:gs1Aspect">
-            <title>GS1 Aspect</title>
             <properties/>
             <associations/>
             <overrides/>
