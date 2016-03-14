@@ -130,7 +130,7 @@
 
 						html+="<ul><li class=\"title\">"+instance.msg("label.product.scores")+"</li><li id=\"scoreLi\" class=\"score-"+spriteIndex+"\" " +
 						"title=\""+instance.msg("tooltip.components.validation")+": "+Math.floor(scores.details.componentsValidation*100)+
-						"%\n"+instance.msg("tooltip.mandatory.completion")+": "+(100-Math.ceil(scores.details.mandatoryFields*100))+
+						"%\n"+instance.msg("tooltip.mandatory.completion")+": "+(Math.floor(scores.details.mandatoryFields*100))+
 						"%\n"+instance.msg("tooltip.specification.respect")+": "+scores.details.specifications+"%\">";
 
 						html+="<span>"+Math.floor(scores.global)+"%</span>";
