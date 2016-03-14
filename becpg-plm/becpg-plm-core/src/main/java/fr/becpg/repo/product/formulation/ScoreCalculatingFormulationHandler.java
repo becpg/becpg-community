@@ -148,7 +148,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 			}
 
 			if(i>0){
-				mandatoryFieldsScore/=(double)i;
+				mandatoryFieldsScore = 1d-(mandatoryFieldsScore/(double)i);
 			}
 
 		} catch (JSONException e){
