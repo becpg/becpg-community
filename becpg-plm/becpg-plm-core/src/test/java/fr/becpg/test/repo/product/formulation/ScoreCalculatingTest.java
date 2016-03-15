@@ -21,6 +21,7 @@ import org.junit.Test;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.JsonScoreHelper;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
@@ -49,9 +50,9 @@ public class ScoreCalculatingTest extends AbstractFinishedProductTest {
 	}
 
 	@Test
-	public void testScore(){
+	public void testScore() {
 
-		//create FP
+		// create FP
 		NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			FinishedProductData finishedProduct = new FinishedProductData();
@@ -87,7 +88,6 @@ public class ScoreCalculatingTest extends AbstractFinishedProductTest {
 			compoList.add(new CompoListDataItem(null, null, null, 1d, CompoListUnit.kg, 0d, DeclarationType.Declare, rawMaterial12NodeRef));
 			finishedProduct.getCompoListView().setCompoList(compoList);
 
-
 			/**
 			 * Packaging part
 			 */
@@ -111,82 +111,69 @@ public class ScoreCalculatingTest extends AbstractFinishedProductTest {
 
 			finishedProduct.setLegalName("Finished Product 1");
 
-
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
 
 		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			
+
 			/**
 			 * Spec
 			 */
 			Map<QName, Serializable> properties = new HashMap<>();
 			properties.put(ContentModel.PROP_NAME, "Spec1");
-			NodeRef productSpecificationNodeRef1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, 
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, 
-							(String)properties.get(ContentModel.PROP_NAME)), 
+			NodeRef productSpecificationNodeRef1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
 					PLMModel.TYPE_PRODUCT_SPECIFICATION, properties).getChildRef();
 
 			ProductSpecificationData specifications = (ProductSpecificationData) alfrescoRepository.findOne(productSpecificationNodeRef1);
 			List<ForbiddenIngListDataItem> forbiddenIngList2 = new ArrayList<>();
-			
+
 			ings = new ArrayList<>();
 			List<NodeRef> geoOrigins = new ArrayList<NodeRef>();
-			ings.add(ing2);				
+			ings.add(ing2);
 			geoOrigins.add(geoOrigin2);
-			forbiddenIngList2.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "Ing2 geoOrigin2 interdit sur charcuterie", null, null, null, ings, geoOrigins, new ArrayList<>()));
-			
+			forbiddenIngList2.add(new ForbiddenIngListDataItem(null, RequirementType.Forbidden, "Ing2 geoOrigin2 interdit sur charcuterie", null,
+					null, null, ings, geoOrigins, new ArrayList<>()));
+
 			specifications.setForbiddenIngList(forbiddenIngList2);
 			alfrescoRepository.save(specifications);
 
 			nodeService.createAssociation(finishedProductNodeRef, productSpecificationNodeRef1, PLMModel.ASSOC_PRODUCT_SPECIFICATIONS);
 			return null;
-			
+
 		}, false, true);
 
-
-		//formulate and check FP score
+		// formulate and check FP score
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-			productService.formulate(finishedProductNodeRef);			
+			productService.formulate(finishedProductNodeRef);
 			ProductData finishedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
 
 			assertNotNull(finishedProduct.getEntityScore());
 			JSONObject scoresObject = new JSONObject(finishedProduct.getEntityScore());
-			logger.info("Scores JSON object="+scoresObject);
+			logger.info("Scores JSON object=" + scoresObject);
 
-			int validationScore = (int) (scoresObject.getJSONObject("details").getDouble("componentsValidation")*100);
+			int validationScore = (int) (scoresObject.getJSONObject("details").getDouble("componentsValidation"));
 			int specificationsScore = scoresObject.getJSONObject("details").getInt("specifications");
-			int mandatoryFieldsScore = (int) (scoresObject.getJSONObject("details").getDouble("mandatoryFields")*100);
-			int globalScore = (int) (scoresObject.getDouble("global"));		
-			
-			logger.info("ValidationScore="+validationScore);
-			logger.info("SpecificationsScore="+specificationsScore);
-			logger.info("MandatoryFieldsScore="+mandatoryFieldsScore);
+			int mandatoryFieldsScore = (int) (scoresObject.getJSONObject("details").getDouble("mandatoryFields"));
+			int globalScore = (int) (scoresObject.getDouble("global"));
+
+			logger.info("ValidationScore=" + validationScore);
+			logger.info("SpecificationsScore=" + specificationsScore);
+			logger.info("MandatoryFieldsScore=" + mandatoryFieldsScore);
 
 			assertEquals(37, validationScore);
 			assertEquals(90, specificationsScore);
 			assertEquals(33, mandatoryFieldsScore);
 			assertEquals(53, globalScore);
-			
 
-			JSONObject missingFields = scoresObject.getJSONObject("missingFields");
-			assertNotNull(missingFields);
-			
-			assertEquals(1,missingFields.length());
-			JSONArray missingFieldsArray = missingFields.getJSONArray("std");
-			assertNotNull(missingFieldsArray);
-			assertEquals(2,missingFieldsArray.length());
-			String missingFieldsString = missingFieldsArray.toString();
-			assertTrue(missingFieldsString.contains("bcpg:productHierarchy1"));
-			assertTrue(missingFieldsString.contains("bcpg:productHierarchy2"));
-			
-			
+			JSONArray catalogs = scoresObject.getJSONArray(JsonScoreHelper.PROP_CATALOGS);
+			assertNotNull(catalogs);
+			// TODO tests catalogs
+
 			return null;
 		}, false, true);
 	}
-
-
 
 }
