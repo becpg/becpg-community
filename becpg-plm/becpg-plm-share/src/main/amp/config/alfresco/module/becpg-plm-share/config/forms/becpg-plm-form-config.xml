@@ -6012,6 +6012,17 @@
 							</control-param>
 						</control>
 					</field>
+					<field id="bcpg:compoListUnit">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isStoreable">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:compoListDeclType">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isStoreable">true</control-param>
+						</control>
+					</field>
+					
 					<field id="bcpg:variantIds" help-id="becpg.forms.help.variantIds" >
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/variantList
@@ -6041,6 +6052,16 @@
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial%5E4,bcpg:finishedProduct,bcpg:localSemiFinishedProduct%5E2,bcpg:semiFinishedProduct%5E2</control-param>
+						</control>
+					</field>
+					<field id="bcpg:compoListUnit">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isStoreable">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:compoListDeclType">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isStoreable">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:parentLevel">
@@ -6211,11 +6232,16 @@
 						</control>
 					</field>
 					<field id="bcpg:packagingListQty" help-id="becpg.forms.help.packagingListQty"/>
+					<field id="bcpg:packagingListUnit">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isStoreable">true</control-param>
+						</control>
+					</field>
 					<field id="bcpg:packagingListLossPerc" help-id="becpg.forms.help.packagingListLossPerc"/>
 					<field id="bcpg:packagingListPkgLevel">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">,Primary|data.bcpg_packaginglistpkglevel.primary,Secondary|data.bcpg_packaginglistpkglevel.secondary,Tertiary|data.bcpg_packaginglistpkglevel.tertiary
-							</control-param>
+							<control-param name="options">,Primary|data.bcpg_packaginglistpkglevel.primary,Secondary|data.bcpg_packaginglistpkglevel.secondary,Tertiary|data.bcpg_packaginglistpkglevel.tertiary</control-param>
+							<control-param name="isStoreable">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:packagingListIsMaster" help-id="becpg.forms.help.packagingListIsMaster"/>

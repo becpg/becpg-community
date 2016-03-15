@@ -134,17 +134,40 @@ public class EntityToDBXmlVisitor {
 		public String toString() {
 			return "Column [key=" + key + ", nodeRef=" + nodeRef + ", value=" + value + "]";
 		}
-
 	}
 
 	private static final Log logger = LogFactory.getLog(EntityToDBXmlVisitor.class);
 
 	private static final List<String> ignoredProperties = new ArrayList<>();
 	
+	private static final List<String> ignoredListProperties = new ArrayList<>();
+
 	private static final List<String> ignoredLists = new ArrayList<>();
 
+	private static final List<String> ignoredTypes = new ArrayList<>();
+
+	static {
+		ignoredTypes.add("ecm:changeOrder");
+		ignoredTypes.add("sec:aclGroup");
+		ignoredTypes.add("bcpg:productSpecification");
+		ignoredTypes.add("bcpg:systemEntity");
+		ignoredTypes.add("bcpg:productMicrobioCriteria");
+	}
+
+	static {
+		ignoredListProperties.add("cm:creator");
+		ignoredListProperties.add("cm:created");
+		ignoredListProperties.add("cm:modified");
+		ignoredListProperties.add("cm:modifier");
+		ignoredListProperties.add("metadata:siteName");
+		ignoredListProperties.add("metadata:siteId");
+		ignoredListProperties.add("bcpg:startEffectivity");
+		ignoredListProperties.add("bcpg:endEffectivity");
+	}
+	
 	static {
 		ignoredProperties.add("cm:name");
+		ignoredProperties.add("cm:owner");
 		ignoredProperties.add("cm:autoVersionOnUpdateProps");
 		ignoredProperties.add("cm:description");
 		ignoredProperties.add("cm:autoVersion");
@@ -156,15 +179,23 @@ public class EntityToDBXmlVisitor {
 		ignoredProperties.add("rep:reports");
 		ignoredProperties.add("bcpg:isManualListItem");
 		ignoredProperties.add("bcpg:depthLevel");
-	}
-	
-	static {
+		ignoredProperties.add("fm:commentCount");
 		
+	}
+
+	static {
 		ignoredLists.add("mpm:resourceParamList");
 		ignoredLists.add("ecm:replacementList");
 		ignoredLists.add("mpm:processList");
 		ignoredLists.add("bcpg:dynamicCharactList");
 		ignoredLists.add("ecm:changeUnitList");
+		ignoredLists.add("ecm:calculatedCharactList");
+		ignoredLists.add("ecm:wUsedList");
+		ignoredLists.add("pack:labelingList");
+		ignoredLists.add("bcpg:costList");
+		ignoredLists.add("bcpg:priceList");
+		ignoredLists.add("pjt:deliverableList");
+		ignoredLists.add("bcpg:labelingRuleList");
 		ignoredLists.add("bcpg:contactList");
 		ignoredLists.add("bcpg:organoList");
 		ignoredLists.add("bcpg:microbioList");
@@ -186,31 +217,34 @@ public class EntityToDBXmlVisitor {
 		String name = entity.getAttribute(ATTR_NAME);
 		String type = entity.getNodeName();
 
-		Long dbId = createDBEntity(nodeRef, type, name, readProperties(entity));
+		if (!ignoredTypes.contains(type)) {
+			Long dbId = createDBEntity(nodeRef, type, name, readProperties(entity));
 
-		NodeList dataLists = entity.getElementsByTagName("dl:dataList");
-		for (int i = 0; i < dataLists.getLength(); i++) {
-			Element dataList = ((Element) dataLists.item(i));
-			String dataListname = dataList.getAttribute(ATTR_NAME);
+			NodeList dataLists = entity.getElementsByTagName("dl:dataList");
+			for (int i = 0; i < dataLists.getLength(); i++) {
+				Element dataList = ((Element) dataLists.item(i));
+				String dataListname = dataList.getAttribute(ATTR_NAME);
 
-			NodeList contains = dataList.getElementsByTagName("cm:contains");
-			Element container = (Element) contains.item(0);
+				NodeList contains = dataList.getElementsByTagName("cm:contains");
+				Element container = (Element) contains.item(0);
 
-			NodeList dataListItems = container.getChildNodes();
-			for (int j = 0; j < dataListItems.getLength(); j++) {
-				Element dataListItem = ((Element) dataListItems.item(j));
-				String dataListItemNodeRef = dataListItem.getAttribute(ATTR_NODEREF);
+				NodeList dataListItems = container.getChildNodes();
+				for (int j = 0; j < dataListItems.getLength(); j++) {
+					Element dataListItem = ((Element) dataListItems.item(j));
+					String dataListItemNodeRef = dataListItem.getAttribute(ATTR_NODEREF);
 
-				if(!ignoredLists.contains( dataListItem.getNodeName())){
-					createDBDataListItem(dbId, dataListItemNodeRef, dataListname, dataListItem.getNodeName(), readProperties(dataListItem));
+					if (!ignoredLists.contains(dataListItem.getNodeName())) {
+						createDBDataListItem(dbId, dataListItemNodeRef, dataListname, dataListItem.getNodeName(), readProperties(dataListItem));
+					}
 				}
-			}
 
+			}
 		}
 
 	}
 
-	private Long createDBDataListItem(Long entityId, String dataListItemNodeRef, String dataListname, String itemType, List<Column> properties) throws SQLException {
+	private Long createDBDataListItem(Long entityId, String dataListItemNodeRef, String dataListname, String itemType, List<Column> properties)
+			throws SQLException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("Create or update datalist item : ");
 			logger.debug(" - NodeRef : " + dataListItemNodeRef);
@@ -218,23 +252,20 @@ public class EntityToDBXmlVisitor {
 			logger.debug(" - DataList name : " + dataListname);
 		}
 
-		// TODO look if already exist aka same nodeRef same date modification or
-		// creation
-
-		
-		JdbcUtils.update(connection, "update  `becpg_datalist` set is_last_version = ? where  datalist_id = ? and instance_id = ?", new Object[] { false, dataListItemNodeRef,
-				instance.getId() });
-
-		Long columnId = JdbcUtils.update(connection, "insert into `becpg_datalist` "
-				+ "(`datalist_id`,`entity_fact_id`,`datalist_name`,`item_type`,`instance_id`,`batch_id`,`is_last_version`) " + " values (?,?,?,?,?,?,?)", new Object[] {
-				dataListItemNodeRef, entityId, dataListname, itemType, instance.getId(), instance.getBatchId(), true });
+		Long columnId = JdbcUtils.update(connection,
+				"insert into `becpg_datalist` "
+						+ "(`datalist_id`,`entity_fact_id`,`datalist_name`,`item_type`,`instance_id`,`batch_id`,`is_last_version`) "
+						+ " values (?,?,?,?,?,?,?)",
+				new Object[] { dataListItemNodeRef, entityId, dataListname, itemType, instance.getId(), instance.getBatchId(), true });
 
 		for (Column column : properties) {
 			logger.debug(" --  Property :" + column.toString());
-			if (column.value != null) {
+			if (column.value != null && !ignoredListProperties.contains(column.key)) {
 
-				JdbcUtils.update(connection, "insert into `becpg_property` " + "(`datalist_id`,`prop_name`,`prop_id`,`" + getColumnTypeName(column.value) + "`,`batch_id`) "
-						+ " values (?,?,?,?,?)", new Object[] { columnId, column.key, column.nodeRef, extract(column.value), instance.getBatchId() });
+				JdbcUtils.update(connection,
+						"insert into `becpg_property` " + "(`datalist_id`,`prop_name`,`prop_id`,`" + getColumnTypeName(column.value)
+								+ "`,`batch_id`) " + " values (?,?,?,?,?)",
+						new Object[] { columnId, column.key, column.nodeRef, extract(column.value), instance.getBatchId() });
 			}
 		}
 		return columnId;
@@ -262,19 +293,23 @@ public class EntityToDBXmlVisitor {
 			logger.debug(" - Name : " + name);
 		}
 
-		// TODO look if already exist aka same nodeRef same date modification or
-		// creation
+		JdbcUtils.update(connection, "update  `becpg_entity` set is_last_version = ? where  entity_id = ? and instance_id = ?",
+				new Object[] { false, nodeRef, instance.getId() });
+		
+		JdbcUtils.update(connection, "delete from  `becpg_datalist` where  entity_fact_id in (select id from becpg_entity where entity_id = ? and instance_id = ? )  ",
+				new Object[] { nodeRef, instance.getId() });
 
-		JdbcUtils.update(connection, "update  `becpg_entity` set is_last_version = ? where  entity_id = ? and instance_id = ?", new Object[] { false, nodeRef, instance.getId() });
-
-		Long columnId = JdbcUtils.update(connection, "insert into `becpg_entity` " + "(`entity_id`,`entity_type`,`entity_name`,`instance_id`,`batch_id`,`is_last_version`) "
-				+ " values (?,?,?,?,?,?)", new Object[] { nodeRef, type, name, instance.getId(), instance.getBatchId(), true });
+		Long columnId = JdbcUtils.update(connection, "insert into `becpg_entity` "
+				+ "(`entity_id`,`entity_type`,`entity_name`,`instance_id`,`batch_id`,`is_last_version`) " + " values (?,?,?,?,?,?)",
+				new Object[] { nodeRef, type, name, instance.getId(), instance.getBatchId(), true });
 
 		for (Column column : properties) {
 			logger.debug(" --  Property :" + column.toString());
 			if (column.value != null) {
-				JdbcUtils.update(connection, "insert into `becpg_property` " + "(`entity_id`,`prop_name`,`prop_id`,`" + getColumnTypeName(column.value) + "`,`batch_id`) "
-						+ " values (?,?,?,?,?)", new Object[] { columnId, column.key, column.nodeRef, extract(column.value), instance.getBatchId() });
+				JdbcUtils.update(connection,
+						"insert into `becpg_property` " + "(`entity_id`,`prop_name`,`prop_id`,`" + getColumnTypeName(column.value) + "`,`batch_id`) "
+								+ " values (?,?,?,?,?)",
+						new Object[] { columnId, column.key, column.nodeRef, extract(column.value), instance.getBatchId() });
 			}
 		}
 		return columnId;
@@ -306,7 +341,7 @@ public class EntityToDBXmlVisitor {
 					case "d:double":
 						if (property.getTextContent() != null) {
 							Double val = Double.parseDouble(property.getTextContent());
-							if(Double.isNaN(val) || Double.isInfinite(val)){
+							if (Double.isNaN(val) || Double.isInfinite(val)) {
 								val = null;
 							}
 							ret.add(new Column(property.getNodeName(), val));
@@ -314,11 +349,11 @@ public class EntityToDBXmlVisitor {
 						break;
 					case "d:float":
 						if (property.getTextContent() != null) {
-							Float val =  Float.parseFloat(property.getTextContent());
-							if(Float.isNaN(val) || Float.isInfinite(val)){
+							Float val = Float.parseFloat(property.getTextContent());
+							if (Float.isNaN(val) || Float.isInfinite(val)) {
 								val = null;
 							}
-							ret.add(new Column(property.getNodeName(),val));
+							ret.add(new Column(property.getNodeName(), val));
 						}
 						break;
 					case "d:int":
@@ -352,7 +387,7 @@ public class EntityToDBXmlVisitor {
 
 				}
 			} else {
-				logger.error("Cannot read property "+properties.item(j).getTextContent());
+				logger.error("Cannot read property " + properties.item(j).getTextContent());
 				return new ArrayList<>();
 			}
 		}

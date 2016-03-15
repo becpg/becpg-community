@@ -57,17 +57,6 @@ public class TranslateHelper {
 		}
 	}
 
-	// public static String getTranslatedSystemState(SystemState state) {
-	//
-	// String translation = I18NUtil.getMessage(SYSTEM_STATE_MSG_PFX + state,
-	// Locale.getDefault());
-	// if(translation == null){
-	// logger.error("Failed to translate path. path: " + state);
-	// }
-	//
-	// return translation;
-	// }
-
 	public static String getTranslatedBoolean(Boolean b, boolean useDefaultLocale) {
 
 		String translation;
@@ -83,11 +72,21 @@ public class TranslateHelper {
 
 	public static String getConstraint(String constraintName, String value, boolean useDefaultLocale) {
 
-		String translation;
+		if (useDefaultLocale) {
+			return getConstraint(constraintName, value, Locale.getDefault());
+		}
+
+		return getConstraint(constraintName, value, null);
+
+	}
+
+	public static String getConstraint(String constraintName, String value, Locale locale) {
+
+		String translation = null;
 		String messageKey = String.format(LIST_CONSTRAINT_MSG_PFX, constraintName, value);
 
-		if (useDefaultLocale) {
-			translation = I18NUtil.getMessage(messageKey, Locale.getDefault());
+		if (locale != null) {
+			translation = I18NUtil.getMessage(messageKey, locale);
 		} else {
 			translation = I18NUtil.getMessage(messageKey);
 		}
@@ -100,7 +99,6 @@ public class TranslateHelper {
 		}
 
 		return translation;
-
 	}
 
 }
