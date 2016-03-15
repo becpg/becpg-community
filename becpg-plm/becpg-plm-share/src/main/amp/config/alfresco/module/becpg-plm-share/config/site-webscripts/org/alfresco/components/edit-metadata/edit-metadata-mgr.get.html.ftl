@@ -3,6 +3,9 @@
   <@script src="${url.context}/res/components/entity-catalog/entity-catalog.js" group="edit-metadata"/>
 </@>
 
+<@markup id="css">
+  <@link href="${url.context}/res/components/entity-catalog/entity-catalog.css" group="edit-metadata"/>
+</@>
 
 <@markup id="widgets">
       <@createWidgets group="edit-metadata"/>	
@@ -19,7 +22,7 @@
 <div class="form-manager">
    <h1>${msg("edit-metadata-mgr.heading", fileName?html)}</h1>
    
-   <#if isEntity>
+   <#if hasScore>
    		<#assign el=args.htmlid?html>	
    		<div id="${el}-entity-catalog"></div> 
    </#if>

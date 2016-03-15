@@ -152,8 +152,8 @@ public class ScoreCalculatingTest extends AbstractFinishedProductTest {
 			productService.formulate(finishedProductNodeRef);			
 			ProductData finishedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
 
-			assertNotNull(finishedProduct.getProductScores());
-			JSONObject scoresObject = new JSONObject(finishedProduct.getProductScores());
+			assertNotNull(finishedProduct.getEntityScore());
+			JSONObject scoresObject = new JSONObject(finishedProduct.getEntityScore());
 			logger.info("Scores JSON object="+scoresObject);
 
 			int validationScore = (int) (scoresObject.getJSONObject("details").getDouble("componentsValidation")*100);

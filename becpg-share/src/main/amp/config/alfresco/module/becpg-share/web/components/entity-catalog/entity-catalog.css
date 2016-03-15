@@ -1,0 +1,116 @@
+
+/** Entity catalog **/
+
+.entity-catalog .catalog .catalog-missing-propList {
+	margin-top: 0.5em;
+}
+
+.entity-catalog .catalog .details-button {
+	float: right;
+	cursor: pointer; 
+	cursor: hand;
+}
+
+.entity-catalog .catalog .selected {
+	background-color: #ddd;
+}
+
+.entity-catalog .catalog-name {
+	margin-right: 1em;
+	float: left;
+}
+
+.entity-catalog .catalog {
+	margin-top: 1em;
+	border: 1px solid #eee;
+}
+
+.entity-catalog .catalog progress, .entity-catalog .catalog .progress-bar, .entity-catalog .catalog .score-info {
+	float: right;
+}
+
+.entity-catalog .catalog .missing-field {
+	background-image: url("../../components/images/states/refused-10.png");
+	padding-left: 20px;
+	background-repeat: no-repeat;
+	background-position: 6px 4px;
+}
+
+.entity-catalog .catalog-details h3 {
+	margin-left: 0.5em;
+	margin-right: 0.3em;
+	display: inline;
+}
+
+.entity-catalog .catalog-header {
+	overflow: auto;
+}
+
+.entity-catalog .score-info {
+	margin-left: 1em;
+	margin-right: 1em;
+}
+
+.entity-catalog .catalog-details {
+	padding: 0.5em;
+}
+
+.entity-catalog .catalog-missing-propList ul li {
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+}
+
+.entity-catalog .catalog img {
+	margin-left: 0.2em;
+	margin-right: 2px;
+}
+
+.properties-tab {
+	background-color: unset !important;
+}
+
+.entity-catalog .yui-navset {
+	margin-top: 1%;
+}
+
+.entity-catalog .first-catalog {
+	margin-top: 0;	
+}
+
+.share-form .form-manager .entity-catalog  {
+	display: inline-block;
+}
+
+.share-form .form-container {
+	display: inline-block;
+}
+
+.inline-block {
+	display: inline-block;
+}
+
+.catalogs {
+	vertical-align: top;
+	margin-left: 2%;
+}
+
+.catalog-color {
+	width: 11px;
+	height: 11px;
+	display: inline-block;
+	border-radius: 11px;
+	margin-left: 5px;
+	margin-right: 5px;
+}
+
+.no-missing-prop {
+	margin-left: 0.5em;
+}
+
+.sticky-wrapper label {
+	margin-right: 0.2em;
+}
+
+img.icon16-11 {
+	margin-right: 0.2em;
+}

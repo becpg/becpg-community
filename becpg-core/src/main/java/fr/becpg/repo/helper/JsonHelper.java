@@ -7,7 +7,7 @@ import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class JSONHelper {
+public class JsonHelper {
 	
 	@SuppressWarnings("unchecked")
 	public static Map<String, String> extractCriteria(JSONObject jsonObject) throws JSONException {

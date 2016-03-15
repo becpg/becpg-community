@@ -486,7 +486,14 @@
 			</associations>
 		</aspect>
 		
-	
+		<aspect name="bcpg:entityScoreAspect">
+			<properties>
+				<property name="bcpg:entityScore">
+				  <type>d:text</type>
+				  <index enabled="false"/>
+				</property>
+			</properties>
+		</aspect>
 
 	</aspects>
 </model>

@@ -18,14 +18,12 @@
 package fr.becpg.repo.product;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.QName;
@@ -54,9 +52,6 @@ public class ProductServiceImpl implements ProductService {
 
 	@Autowired
 	private FormulationService<ProductData> formulationService;
-
-	@Autowired
-	private NodeService nodeService;
 
 	@Autowired
 	private BehaviourFilter policyBehaviourFilter;
@@ -127,17 +122,7 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public boolean shouldFormulate(NodeRef productNodeRef) {
-
-		if (nodeService.hasAspect(productNodeRef, BeCPGModel.ASPECT_FORMULATED_ENTITY)) {
-
-			Date modified = (Date) nodeService.getProperty(productNodeRef, ContentModel.PROP_MODIFIED);
-			Date formulated = (Date) nodeService.getProperty(productNodeRef, BeCPGModel.PROP_FORMULATED_DATE);
-
-			if ((modified == null) || (formulated == null) || (modified.getTime() > formulated.getTime())) {
-				return true;
-			}
-		}
-		return false;
+		return formulationService.shouldFormulate(productNodeRef);
 	}
 
 	@Override

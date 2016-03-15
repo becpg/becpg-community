@@ -43,16 +43,8 @@ function main()
       activityParameters = getActivityParameters(model.nodeRef, null);
       var count = documentDetails.item.node.properties["fm:commentCount"];
       model.commentCount = (count != undefined ? count : null);
-      model.isEntity = documentDetails.item.node.aspects.indexOf("bcpg:entityListsAspect") > 0;
+      model.hasScore = documentDetails.item.node.aspects.indexOf("bcpg:entityScoreAspect") > 0;
    // Widget instantiation 
-      
-      var entityCatalog = {
-    	         id : "EntityCatalog", 
-    	         name : "beCPG.component.EntityCatalog",
-    	         options : {
-    	        	 entityNodeRef : model.nodeRef
-    	         }
-    	   };
       
       var propertiesView = {
          id : "Properties", 
@@ -74,7 +66,20 @@ function main()
          }
       };
       
-      model.widgets = [propertiesView, entityCatalog];
+      model.widgets = [propertiesView];
+      
+      if(model.hasScore){
+	      var entityCatalog = {
+	 	         id : "EntityCatalog", 
+	 	         name : "beCPG.component.EntityCatalog",
+	 	         options : {
+	 	        	 entityNodeRef : model.nodeRef
+	 	         }
+	 	   };
+	      
+	    model.widgets.push(entityCatalog);  
+      }
+      
       
    }
   

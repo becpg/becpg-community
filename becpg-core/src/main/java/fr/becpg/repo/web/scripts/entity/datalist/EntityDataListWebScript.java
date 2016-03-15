@@ -40,7 +40,7 @@ import fr.becpg.repo.entity.datalist.DataListExtractorFactory;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.impl.DataListOutputWriterFactory;
-import fr.becpg.repo.helper.JSONHelper;
+import fr.becpg.repo.helper.JsonHelper;
 import fr.becpg.repo.security.SecurityService;
 import fr.becpg.repo.web.scripts.BrowserCacheHelper;
 import fr.becpg.repo.web.scripts.WebscriptHelper;
@@ -300,7 +300,7 @@ public class EntityDataListWebScript extends AbstractWebScript {
 
 			if (filterId.equals(DataListFilter.FORM_FILTER) && filterData != null) {
 				JSONObject jsonObject = new JSONObject(filterData);
-				dataListFilter.setCriteriaMap(JSONHelper.extractCriteria(jsonObject));
+				dataListFilter.setCriteriaMap(JsonHelper.extractCriteria(jsonObject));
 			}
 
 			List<String> metadataFields = new LinkedList<>();
