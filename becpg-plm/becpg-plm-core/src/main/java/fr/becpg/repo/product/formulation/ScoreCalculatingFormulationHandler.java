@@ -217,10 +217,10 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 
 				langs.sort((o1, o2) -> {
 					if (o1.equals(defaultLocale)) {
-						return 1;
+						return -1;
 					}
 					if (o2.equals(defaultLocale)) {
-						return -1;
+						return 1;
 					}
 					return 0;
 				});
@@ -234,7 +234,7 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<P
 						JSONObject catalogDesc = new JSONObject();
 						catalogDesc.put(JsonScoreHelper.PROP_MISSING_FIELDS, missingFields);
 						catalogDesc.put(JsonScoreHelper.PROP_LOCALE, lang);
-						catalogDesc.put(JsonScoreHelper.PROP_SCORE, (reqFields.length() * 100d) / missingFields.length());
+						catalogDesc.put(JsonScoreHelper.PROP_SCORE, ((reqFields.length() -missingFields.length()) * 100d) / reqFields.length());
 						catalogDesc.put(JsonScoreHelper.PROP_LABEL, catalog.getString(JsonScoreHelper.PROP_LABEL));
 						catalogDesc.put(JsonScoreHelper.PROP_ID, catalog.getString(JsonScoreHelper.PROP_ID));
 						ret.put(catalogDesc);

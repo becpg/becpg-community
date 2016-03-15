@@ -90,7 +90,7 @@
 						html+="<div class=\"catalog-header set-bordered-panel-heading\">";
 							html+="<span class=\"catalog-name\">"+instance.msg("label.catalog")+" \""+replaceLocaleWithFlag(label, locale)+"\"</span>";
 							
-							html+="<progress value=\""+score+"\">";							
+							html+="<progress value=\""+(score/100)+"\">";							
 								//IE fix
 								html+="<div class=\"progress-bar\">";
 									html+="<span style=\"width: "+score+"%;\">"+score+"%</span>";
@@ -149,16 +149,16 @@
 					var colorTipElement = document.createElement("SPAN");
 					colorTipElement.style.backgroundColor=color;
 					colorTipElement.className+="catalog-color";	
-					colorTipElement.title=instance.msg("label.catalog")+" '"+json[key].label+(json[key].locales !== undefined && json[key].locales.length == 1 ? "("+json[key].locales[0]+")'": "'");
+					colorTipElement.title=instance.msg("label.catalog")+" '"+json[key].label+(json[key].locale !== undefined && json[key].locale.length == 1 ? "("+json[key].locale+")'": "'");
 					
 					if(json[key].missingFields !== undefined){
 						
 						//put a color tip for this catalog
 						var catalogId = json[key].id;
-						var locales = json[key].locales;
+						var locale = json[key].locale;
 						
-						if(locales !== undefined && locales != null && locales.length > 0){
-							catalogId = catalogId+"_"+locales[0];
+						if(locale !== undefined && locale != null ){
+							catalogId = catalogId+"_"+locale;
 						}
 						var labelId = instance.id+"_"+catalogId+"_missingPropLabel";
 						
