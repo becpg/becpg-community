@@ -67,10 +67,7 @@
 		 */
 		onReady : function EntityCatalog_onReady() {
 			var instance=this;
-			// Appel AJax entity-catalog 
-			// /becpg/entity/catalog/node/{store_type}/{store_id}/{id}
-			// ne rien affiché si pas de catalogues
-
+			
 			function parseJsonToHTML(json){
 				//displays things if there are any catalogs
 				if(json !== undefined && json != null && Object.keys(json).length > 0){
@@ -88,7 +85,8 @@
 						
 						html+="<div id="+instance.id+"_catalog_"+ catalogId +" class=\"catalog "+(key==0?"first-catalog":"")+"\">";
 						html+="<div class=\"catalog-header set-bordered-panel-heading\">";
-							html+="<span class=\"catalog-name\">"+instance.msg("label.catalog")+" \""+replaceLocaleWithFlag(label, locale)+"\"</span>";
+							html+="<span class=\"catalog-name\">"+instance.msg("label.catalog")+" \""+label+
+							(locale!=null?"<img src=\"/share/res/components/images/flags/"+locale+".png\">":"")+"\"</span>";
 							
 							html+="<progress value=\""+(score/100)+"\">";							
 								//IE fix
@@ -105,13 +103,13 @@
 						//display missing props, if any
 						if(json[key].missingFields !== undefined){
 							html+="<ul class=\"catalog-missing-propList\">";
-								if(json[key].missingFields.length > 0){
-									for(var field in json[key].missingFields){
-											html+="<li class=\"missing-field\" id=\"missing-field_"+json[key]+"_"+json[key].missingFields[field].displayName+"\">"+replaceLocaleWithFlag(json[key].missingFields[field].displayName, json[key].missingFields[field].locale)+"</li>";	
-									}
-								} else {
-									html+="<li class=\"no-missing-prop\">"+instance.msg("label.no_missing_prop")+"</li>";
+								for(var field in json[key].missingFields){
+									html+="<li class=\"missing-field\" id=\"missing-field_"+json[key]+"_"+json[key].missingFields[field].displayName+"\">"
+											+json[key].missingFields[field].displayName+
+											(json[key].missingFields[field].locale!=null?"<img src=\"/share/res/components/images/flags/"
+													+json[key].missingFields[field].locale+".png\">":"")+"</li>";	
 								}
+								
 							html+="</ul>";
 						} 
 						html+="</div>";
@@ -120,19 +118,9 @@
 					html+="</div>";	
 					return html;
 				} else {
-					return null;
-				}
-			}
-
-			//Replaces locale in formatted label by img markup with corresponding flag
-			// eg: "legal name_en" would be replaced by "legal name <img>" with img tag having english flag as src
-			function replaceLocaleWithFlag(field, locale){
-					//displayName catalog with only one locale set
-				if(locale!=null){
-					return field+"<img src=\"/share/res/components/images/flags/"+locale+".png\">";
-					} else {
-						return field;
-				}
+					return "<span class=\"no-missing-prop\">"+instance.msg("label.no_missing_prop")+"</span>";
+				};
+				
 			}
 
 			/**
@@ -218,9 +206,6 @@
 									}
 								}							
 							} else {
-								console.log("can't find any prop or assoc for field "+fieldCode);
-								console.log("prop id would be "+id+"_prop_"+fieldCode);
-								console.log("assoc id would be "+id+"_assoc_"+fieldCode);
 								
 								var absentMissingFieldId = "missing-field_"+json[key]+"_"+json[key].missingFields[field].displayName;
 								
@@ -236,7 +221,7 @@
 				}
 			}
 
-			YAHOO.util.Dom.get(this.id+"-entity-catalog").innerHTML='<span class="wait">' + Alfresco.util.encodeHTML(this.msg("message.loading")) + '</span>';
+			YAHOO.util.Dom.get(this.id+"-entity-catalog").innerHTML='<span class="wait">' + Alfresco.util.encodeHTML(this.msg("label.loading")) + '</span>';
 			
 			//Affichage des notes et ajouts de tags dans les forms
 			Alfresco.util.Ajax.request({
