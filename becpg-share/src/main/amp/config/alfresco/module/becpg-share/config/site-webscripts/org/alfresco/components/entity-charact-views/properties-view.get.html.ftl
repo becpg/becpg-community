@@ -57,8 +57,8 @@
 					   <#if hasScore >
 							   	 <div id="${el}-properties-tabview" class="yui-navset">
 								   	<ul class="yui-nav" >
-								   		<li class="selected"><a href="#${el}-comments" ><em>${msg("header.comments")}</em></a></li>
-								   		<li ><a href="#${el}-catalogs"><em>${msg("label.property_completion")}</em></a></li>
+								   		<li ><a href="#${el}-comments" ><em>${msg("header.comments")}</em></a></li>
+								   		<li class="selected"><a href="#${el}-catalogs"><em>${msg("label.property_completion")}</em></a></li>
 								   	</ul>
 								   	
 								   	<div class="yui-content properties-tab">
