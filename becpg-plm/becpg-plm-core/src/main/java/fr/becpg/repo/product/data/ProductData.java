@@ -149,7 +149,9 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	/*
 	 * Completion scores
 	 */
-	private String productScores;
+	private String entityScore;
+	private List<String> reportLocales;
+	
 
 	@AlfMultiAssoc(isEntity = true)
 	@AlfQname(qname = "bcpg:productSpecifications")
@@ -652,13 +654,24 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	}
 
 	@AlfProp
-	@AlfQname(qname = "bcpg:productScores")
-	public String getProductScores(){
-		return productScores;
+	@AlfQname(qname = "bcpg:entityScore")
+	public String getEntityScore(){
+		return entityScore;
 	}
 	
-	public void setProductScores(String string){
-		this.productScores = string;
+	public void setEntityScore(String string){
+		this.entityScore = string;
+	}
+	
+	
+	@AlfProp
+	@AlfQname(qname = "rep:reportLocales")
+	public List<String> getReportLocales() {
+		return reportLocales;
+	}
+
+	public void setReportLocales(List<String> reportLocales) {
+		this.reportLocales = reportLocales;
 	}
 
 	private <T> List<T>  filterList(List<T> list,List<DataListFilter<ProductData, T>> filters ) {
@@ -819,48 +832,34 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 								+ ", erpCode=" + erpCode + ", state=" + state +  ", unit=" + unit + ", qty=" + qty + ", density=" + density + ", yield=" + yield
 								+ ", yieldVolume=" + yieldVolume + ", netWeight=" + netWeight + ", netVolume=" + netVolume + ", servingSize=" + servingSize + ", recipeQtyUsed=" + recipeQtyUsed
 								+ ", tare=" + tare + ", tareUnit=" + tareUnit + ", unitTotalCost=" + unitTotalCost + ", unitPrice=" + unitPrice + ", profitability="
-								+ profitability + ", breakEven=" + breakEven + ", allergenList=" + allergenList + ", productScores="+ productScores +"]";
+								+ profitability + ", breakEven=" + breakEven + ", allergenList=" + allergenList + ", productScores="+ entityScore +"]";
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + ((allergenList == null) ? 0 : allergenList.hashCode());
 		result = prime * result + ((breakEven == null) ? 0 : breakEven.hashCode());
 		result = prime * result + ((clients == null) ? 0 : clients.hashCode());
-		result = prime * result + ((compoListView == null) ? 0 : compoListView.hashCode());
-		result = prime * result + ((controlDefList == null) ? 0 : controlDefList.hashCode());
 		result = prime * result + ((costList == null) ? 0 : costList.hashCode());
 		result = prime * result + ((defaultVariantPackagingData == null) ? 0 : defaultVariantPackagingData.hashCode());
 		result = prime * result + ((density == null) ? 0 : density.hashCode());
+		result = prime * result + ((entityScore == null) ? 0 : entityScore.hashCode());
 		result = prime * result + ((entityTpl == null) ? 0 : entityTpl.hashCode());
 		result = prime * result + ((erpCode == null) ? 0 : erpCode.hashCode());
 		result = prime * result + ((formulatedDate == null) ? 0 : formulatedDate.hashCode());
 		result = prime * result + ((hierarchy1 == null) ? 0 : hierarchy1.hashCode());
 		result = prime * result + ((hierarchy2 == null) ? 0 : hierarchy2.hashCode());
-		result = prime * result + ((ingList == null) ? 0 : ingList.hashCode());
 		result = prime * result + ((ingType == null) ? 0 : ingType.hashCode());
 		result = prime * result + ((isUpToDate == null) ? 0 : isUpToDate.hashCode());
-		result = prime * result + ((labelClaimList == null) ? 0 : labelClaimList.hashCode());
-		result = prime * result + ((labelingList == null) ? 0 : labelingList.hashCode());
-		result = prime * result + ((labelingListView == null) ? 0 : labelingListView.hashCode());
 		result = prime * result + ((legalName == null) ? 0 : legalName.hashCode());
-		result = prime * result + ((microbioList == null) ? 0 : microbioList.hashCode());
 		result = prime * result + ((modifiedDate == null) ? 0 : modifiedDate.hashCode());
 		result = prime * result + ((netVolume == null) ? 0 : netVolume.hashCode());
 		result = prime * result + ((netWeight == null) ? 0 : netWeight.hashCode());
-		result = prime * result + ((nutList == null) ? 0 : nutList.hashCode());
 		result = prime * result + ((nutrientClass == null) ? 0 : nutrientClass.hashCode());
 		result = prime * result + ((nutrientProfile == null) ? 0 : nutrientProfile.hashCode());
 		result = prime * result + ((nutrientScore == null) ? 0 : nutrientScore.hashCode());
-		result = prime * result + ((organoList == null) ? 0 : organoList.hashCode());
-		result = prime * result + ((packagingListView == null) ? 0 : packagingListView.hashCode());
-		result = prime * result + ((physicoChemList == null) ? 0 : physicoChemList.hashCode());
 		result = prime * result + ((plants == null) ? 0 : plants.hashCode());
-		result = prime * result + ((priceList == null) ? 0 : priceList.hashCode());
-		result = prime * result + ((processListView == null) ? 0 : processListView.hashCode());
-		result = prime * result + ((productScores == null) ? 0 : productScores.hashCode());
 		result = prime * result + ((productSpecifications == null) ? 0 : productSpecifications.hashCode());
 		result = prime * result + ((profitability == null) ? 0 : profitability.hashCode());
 		result = prime * result + ((projectedQty == null) ? 0 : projectedQty.hashCode());
@@ -868,7 +867,7 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		result = prime * result + ((recipeQtyUsed == null) ? 0 : recipeQtyUsed.hashCode());
 		result = prime * result + ((recipeVolumeUsed == null) ? 0 : recipeVolumeUsed.hashCode());
 		result = prime * result + ((reformulateCount == null) ? 0 : reformulateCount.hashCode());
-		result = prime * result + ((resourceParamList == null) ? 0 : resourceParamList.hashCode());
+		result = prime * result + ((reportLocales == null) ? 0 : reportLocales.hashCode());
 		result = prime * result + ((servingSize == null) ? 0 : servingSize.hashCode());
 		result = prime * result + ((state == null) ? 0 : state.hashCode());
 		result = prime * result + ((tare == null) ? 0 : tare.hashCode());
@@ -892,11 +891,6 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 		if (getClass() != obj.getClass())
 			return false;
 		ProductData other = (ProductData) obj;
-		if (allergenList == null) {
-			if (other.allergenList != null)
-				return false;
-		} else if (!allergenList.equals(other.allergenList))
-			return false;
 		if (breakEven == null) {
 			if (other.breakEven != null)
 				return false;
@@ -906,16 +900,6 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 			if (other.clients != null)
 				return false;
 		} else if (!clients.equals(other.clients))
-			return false;
-		if (compoListView == null) {
-			if (other.compoListView != null)
-				return false;
-		} else if (!compoListView.equals(other.compoListView))
-			return false;
-		if (controlDefList == null) {
-			if (other.controlDefList != null)
-				return false;
-		} else if (!controlDefList.equals(other.controlDefList))
 			return false;
 		if (costList == null) {
 			if (other.costList != null)
@@ -931,6 +915,11 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 			if (other.density != null)
 				return false;
 		} else if (!density.equals(other.density))
+			return false;
+		if (entityScore == null) {
+			if (other.entityScore != null)
+				return false;
+		} else if (!entityScore.equals(other.entityScore))
 			return false;
 		if (entityTpl == null) {
 			if (other.entityTpl != null)
@@ -957,11 +946,6 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 				return false;
 		} else if (!hierarchy2.equals(other.hierarchy2))
 			return false;
-		if (ingList == null) {
-			if (other.ingList != null)
-				return false;
-		} else if (!ingList.equals(other.ingList))
-			return false;
 		if (ingType == null) {
 			if (other.ingType != null)
 				return false;
@@ -972,30 +956,10 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 				return false;
 		} else if (!isUpToDate.equals(other.isUpToDate))
 			return false;
-		if (labelClaimList == null) {
-			if (other.labelClaimList != null)
-				return false;
-		} else if (!labelClaimList.equals(other.labelClaimList))
-			return false;
-		if (labelingList == null) {
-			if (other.labelingList != null)
-				return false;
-		} else if (!labelingList.equals(other.labelingList))
-			return false;
-		if (labelingListView == null) {
-			if (other.labelingListView != null)
-				return false;
-		} else if (!labelingListView.equals(other.labelingListView))
-			return false;
 		if (legalName == null) {
 			if (other.legalName != null)
 				return false;
 		} else if (!legalName.equals(other.legalName))
-			return false;
-		if (microbioList == null) {
-			if (other.microbioList != null)
-				return false;
-		} else if (!microbioList.equals(other.microbioList))
 			return false;
 		if (modifiedDate == null) {
 			if (other.modifiedDate != null)
@@ -1012,11 +976,6 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 				return false;
 		} else if (!netWeight.equals(other.netWeight))
 			return false;
-		if (nutList == null) {
-			if (other.nutList != null)
-				return false;
-		} else if (!nutList.equals(other.nutList))
-			return false;
 		if (nutrientClass == null) {
 			if (other.nutrientClass != null)
 				return false;
@@ -1032,40 +991,10 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 				return false;
 		} else if (!nutrientScore.equals(other.nutrientScore))
 			return false;
-		if (organoList == null) {
-			if (other.organoList != null)
-				return false;
-		} else if (!organoList.equals(other.organoList))
-			return false;
-		if (packagingListView == null) {
-			if (other.packagingListView != null)
-				return false;
-		} else if (!packagingListView.equals(other.packagingListView))
-			return false;
-		if (physicoChemList == null) {
-			if (other.physicoChemList != null)
-				return false;
-		} else if (!physicoChemList.equals(other.physicoChemList))
-			return false;
 		if (plants == null) {
 			if (other.plants != null)
 				return false;
 		} else if (!plants.equals(other.plants))
-			return false;
-		if (priceList == null) {
-			if (other.priceList != null)
-				return false;
-		} else if (!priceList.equals(other.priceList))
-			return false;
-		if (processListView == null) {
-			if (other.processListView != null)
-				return false;
-		} else if (!processListView.equals(other.processListView))
-			return false;
-		if (productScores == null) {
-			if (other.productScores != null)
-				return false;
-		} else if (!productScores.equals(other.productScores))
 			return false;
 		if (productSpecifications == null) {
 			if (other.productSpecifications != null)
@@ -1102,10 +1031,10 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 				return false;
 		} else if (!reformulateCount.equals(other.reformulateCount))
 			return false;
-		if (resourceParamList == null) {
-			if (other.resourceParamList != null)
+		if (reportLocales == null) {
+			if (other.reportLocales != null)
 				return false;
-		} else if (!resourceParamList.equals(other.resourceParamList))
+		} else if (!reportLocales.equals(other.reportLocales))
 			return false;
 		if (servingSize == null) {
 			if (other.servingSize != null)
