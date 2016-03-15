@@ -34,7 +34,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 				} else if (data.metadata.indexOf("packagingKit") != -1) {
 				    url = beCPG.util.entityURL(data.siteId, data.value,null,null,"packagingList");
 				} else if (data.metadata.indexOf("localSemiFinishedProduct") != -1) {
-					url = null;//beCPG.util.entityURL(data.siteId, data.value,"folder");
+					url = null;
 				}
 				if (data.version && data.version !== "") {
 					version = '<span class="document-version">' + data.version + '</span>';
@@ -53,8 +53,8 @@ if (beCPG.module.EntityDataGridRenderers) {
 
 			if (oRecord.getData("itemData")["prop_bcpg_depthLevel"] && oRecord.getData("itemData")["prop_bcpg_depthLevel"].value) {
 				var padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 25;
-				return '<span class="' + data.metadata + '" style="margin-left:' + padding + 'px;"><a href="' + url + '">'
-						+ Alfresco.util.encodeHTML(data.displayValue) + '</a></span>' + version;
+				return '<span class="' + data.metadata + '" style="margin-left:' + padding + 'px;">'+(url!=null?'<a href="' + url + '">':'') 
+						+ Alfresco.util.encodeHTML(data.displayValue) + (url!=null?'</a>':'')+'</span>' + version;
 			}
 
 			return '<span class="' + data.metadata + '" >'+(url!=null?'<a href="' + url + '">':'') + Alfresco.util.encodeHTML(data.displayValue) + (url!=null?'</a>':'')+'</span>'
@@ -452,9 +452,19 @@ if (beCPG.module.EntityDataGridRenderers) {
                     
                     if(reqProducts){
                         for(var i in reqProducts){
-                            var product = reqProducts[i];
-                            html +='<li><span class="' + product.metadata + '" ><a href="' +
-                            beCPG.util.entityURL(product.siteId, product.value) + '">' 
+                            var product = reqProducts[i], pUrl =  beCPG.util.entityURL(product.siteId, product.value);
+                            
+                            if (product.metadata.indexOf("finishedProduct") != -1 || product.metadata.indexOf("semiFinishedProduct") != -1) {
+                            	pUrl = beCPG.util.entityURL(product.siteId, product.value,null,null,"compoList");
+            				} else if (data.metadata.indexOf("packagingKit") != -1) {
+            					pUrl = beCPG.util.entityURL(product.siteId, product.value,null,null,"packagingList");
+            				} 
+                            
+                            if(pUrl){
+                            	pUrl+="&bcPath=true&bcList="+scope.datalistMeta.name;
+            				}
+                            
+                            html +='<li><span class="' + product.metadata + '" ><a href="' + pUrl + '">' 
                             + Alfresco.util.encodeHTML(product.displayValue) + '</a></span></li>';
     
                         }
@@ -784,7 +794,10 @@ if (beCPG.module.EntityDataGridRenderers) {
 			}
 			Dom.setStyle(elCell, "width", "16px");
 			Dom.setStyle(elCell.parentNode, "width", "16px");
-			return "<span title=\"" + Alfresco.util.encodeHTML(data.displayValue) + "\" class='instructions'>&nbsp;</span>";
+			return "<span title=\"" + Alfresco.util.encodeHTML(data.displayValue.replace(/&nbsp;/gi," ")
+					.replace(/<(?:.|\n)*?>/gm, '').replace(/\n/gm," ")) 
+			+ "\" class='instructions'>&nbsp;</span>";
+			
          }
          return "";
       }
