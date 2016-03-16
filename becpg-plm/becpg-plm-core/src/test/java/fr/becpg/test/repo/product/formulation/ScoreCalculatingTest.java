@@ -4,11 +4,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -109,7 +111,7 @@ public class ScoreCalculatingTest extends AbstractFinishedProductTest {
 			packagingList.add(new PackagingListDataItem(null, 1d, PackagingListUnit.kg, PackagingLevel.Secondary, true, packagingKit1NodeRef));
 			finishedProduct.getPackagingListView().setPackagingList(packagingList);
 
-			finishedProduct.setLegalName("Finished Product 1");
+			finishedProduct.setLegalName(new MLText(Locale.FRENCH, "Produit fini 1"));
 
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
@@ -156,37 +158,36 @@ public class ScoreCalculatingTest extends AbstractFinishedProductTest {
 			JSONObject scoresObject = new JSONObject(finishedProduct.getEntityScore());
 			logger.info("Scores JSON object="+scoresObject);
 
-			int validationScore = (int) (scoresObject.getJSONObject("details").getDouble("componentsValidation")*100);
+			int validationScore = (int) (scoresObject.getJSONObject("details").getDouble("componentsValidation"));
 			int specificationsScore = scoresObject.getJSONObject("details").getInt("specifications");
-			int mandatoryFieldsScore = (int) (scoresObject.getJSONObject("details").getDouble("mandatoryFields")*100);
+			int mandatoryFieldsScore = (int) (scoresObject.getJSONObject("details").getDouble("mandatoryFields"));
 			int globalScore = (int) (scoresObject.getDouble("global"));		
 			
-			logger.info("ValidationScore="+validationScore);
-			logger.info("SpecificationsScore="+specificationsScore);
-			logger.info("MandatoryFieldsScore="+mandatoryFieldsScore);
+			logger.info("ValidationScore="+validationScore+ " (expecting 37)");
+			logger.info("SpecificationsScore="+specificationsScore+ " (expecting 90)");
+			logger.info("MandatoryFieldsScore="+mandatoryFieldsScore+ " (expecting 20)");
+			logger.info("GlobalScore="+globalScore+ " (expecting 49)");
 
 			assertEquals(37, validationScore);
 			assertEquals(90, specificationsScore);
-			assertEquals(33, mandatoryFieldsScore);
-			assertEquals(53, globalScore);
-			
+			assertEquals(20, mandatoryFieldsScore);
+			assertEquals(49, globalScore);			
 
-			JSONObject missingFields = scoresObject.getJSONObject("missingFields");
-			assertNotNull(missingFields);
-			
-			assertEquals(1,missingFields.length());
-			JSONArray missingFieldsArray = missingFields.getJSONArray("std");
+			JSONArray missingFieldsArray = scoresObject.getJSONArray("catalogs").getJSONObject(0).getJSONArray("missingFields");
 			assertNotNull(missingFieldsArray);
-			assertEquals(2,missingFieldsArray.length());
-			String missingFieldsString = missingFieldsArray.toString();
-			assertTrue(missingFieldsString.contains("bcpg:productHierarchy1"));
-			assertTrue(missingFieldsString.contains("bcpg:productHierarchy2"));
 			
+			assertEquals(4,missingFieldsArray.length());
+			logger.info("score="+scoresObject.getJSONArray("catalogs").getJSONObject(0).getDouble("score")+" (expecting 20)");
+			assertEquals(20d, scoresObject.getJSONArray("catalogs").getJSONObject(0).getDouble("score"));
+			
+			String missingFieldsString = missingFieldsArray.toString();
+			logger.info("Missing fields: "+missingFieldsString);
+			assertTrue(missingFieldsString.contains("bcpg:netWeight"));
+			assertTrue(missingFieldsString.contains("bcpg:precautionOfUseRef"));
+			assertTrue(missingFieldsString.contains("bcpg:storageConditionsRef"));
+			assertTrue(missingFieldsString.contains("bcpg:ingListGeoOrigin"));
 			
 			return null;
 		}, false, true);
 	}
-
-
-
 }
