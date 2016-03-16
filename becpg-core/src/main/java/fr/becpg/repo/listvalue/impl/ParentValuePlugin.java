@@ -1,19 +1,19 @@
 /*******************************************************************************
- * Copyright (C) 2010-2015 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
- * You should have received a copy of the GNU Lesser General Public License along with beCPG. 
+ * Copyright (C) 2010-2015 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with beCPG.
  * If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.listvalue.impl;
@@ -43,18 +43,18 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 @Service
 public class ParentValuePlugin extends EntityListValuePlugin {
-	
+
 	private static final Log logger = LogFactory.getLog(ParentValuePlugin.class);
 
 	private static final String SOURCE_TYPE_PARENT_VALUE = "ParentValue";
 	private static final String SOURCE_TYPE_DATA_LIST_CHARACT = "DataListCharact";
-	
+
 	@Autowired
 	private EntityListDAO entityListDAO;
 
 	@Autowired
 	private AssociationService associationService;
-	
+
 	@Autowired
 	private AttributeExtractorService attributeExtractorService;
 
@@ -71,16 +71,16 @@ public class ParentValuePlugin extends EntityListValuePlugin {
 
 		String className = (String) props.get(ListValueService.PROP_CLASS_NAME);
 		QName type = QName.createQName(className, namespaceService);
-		
+
 		String listName = (String) props.get(ListValueService.PROP_PATH);
 
 		String attributeName = (String) props.get(ListValueService.PROP_ATTRIBUTE_NAME);
 		QName attributeQName = QName.createQName(attributeName, namespaceService);
 
 		String queryFilter = (String) props.get(ListValueService.PROP_FILTER);
-		
+
 		NodeRef itemId = null;
-		
+
 		@SuppressWarnings("unchecked")
 		Map<String, String> extras = (HashMap<String, String>) props.get(ListValueService.EXTRA_PARAM);
 		if (extras != null) {
@@ -88,79 +88,76 @@ public class ParentValuePlugin extends EntityListValuePlugin {
 				itemId = new NodeRef(extras.get("itemId"));
 			}
 		}
-		
+
 		NodeRef listsContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
 		if (listsContainerNodeRef != null) {
 			NodeRef dataListNodeRef;
-				if(listName == null){	
-					dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, type);
+			if (listName == null) {
+				dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, type);
+			} else {
+				dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, listName);
+			}
+			if (dataListNodeRef != null) {
+				if (dictionaryService.getProperty(attributeQName) != null) {
+					return suggestFromProp(sourceType, dataListNodeRef, itemId, type, attributeQName, query, queryFilter, pageNum, pageSize, props);
 				} else {
-					dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, listName);
-				}
-			if(dataListNodeRef != null){
-				if(dictionaryService.getProperty(attributeQName) != null){
-					return suggestFromProp(sourceType, dataListNodeRef, itemId, type, attributeQName, query, queryFilter, pageNum, pageSize,props);
-				}
-				else{
-					return suggestFromAssoc(sourceType, dataListNodeRef, itemId, type, attributeQName, query, queryFilter, pageNum, pageSize,props);
+					return suggestFromAssoc(sourceType, dataListNodeRef, itemId, type, attributeQName, query, queryFilter, pageNum, pageSize, props);
 				}
 			}
-		}		
-		return new ListValuePage(new ArrayList<>(), pageNum, pageSize, null); 
+		}
+		return new ListValuePage(new ArrayList<>(), pageNum, pageSize, null);
 	}
 
-	private ListValuePage suggestFromProp(String sourceType, NodeRef dataListNodeRef, NodeRef itemId, QName datalistType, QName propertyQName, String query, String queryFilter,
-			Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
-		
+	private ListValuePage suggestFromProp(String sourceType, NodeRef dataListNodeRef, NodeRef itemId, QName datalistType, QName propertyQName,
+			String query, String queryFilter, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
 
 		BeCPGQueryBuilder beCPGQueryBuilder = BeCPGQueryBuilder.createQuery().ofType(datalistType).andPropQuery(propertyQName, prepareQuery(query))
 				.parent(dataListNodeRef);
-		
-		if(queryFilter !=null  && queryFilter.length()>0){
+
+		if ((queryFilter != null) && (queryFilter.length() > 0)) {
 			String[] splitted = queryFilter.split("\\|");
 			beCPGQueryBuilder.andPropEquals(QName.createQName(splitted[0], namespaceService), splitted[1]);
 		}
-		
-		if(props.containsKey(ListValueService.PROP_PARENT)){
+
+		if (props.containsKey(ListValueService.PROP_PARENT)) {
 			String parent = (String) props.get(ListValueService.PROP_PARENT);
-			if(parent!=null){
-				if(!parent.isEmpty() && NodeRef.isNodeRef(parent)){
+			if (parent != null) {
+				if (!parent.isEmpty() && NodeRef.isNodeRef(parent)) {
 					beCPGQueryBuilder.andPropEquals(BeCPGModel.PROP_PARENT_LEVEL, parent);
 				} else {
-					beCPGQueryBuilder.andPropEquals(BeCPGModel.PROP_DEPTH_LEVEL,String.valueOf(RepoConsts.DEFAULT_LEVEL));
+					beCPGQueryBuilder.andPropEquals(BeCPGModel.PROP_DEPTH_LEVEL, String.valueOf(RepoConsts.DEFAULT_LEVEL));
 				}
 			}
 		}
-		
-		
+
 		if (itemId != null) {
 			beCPGQueryBuilder.andNotID(itemId);
 		}
-		
+
 		logger.debug("suggestDatalistItem for query : " + beCPGQueryBuilder.toString());
 		List<NodeRef> ret = beCPGQueryBuilder.maxResults(RepoConsts.MAX_SUGGESTIONS).list();
 		return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(propertyQName, nodeService));
 	}
-	
-	private ListValuePage suggestFromAssoc(String sourceType , NodeRef dataListNodeRef, NodeRef itemId, QName datalistType, QName associationQName, String query, String queryFilter,
-			Integer pageNum, Integer pageSize, Map<String, Serializable> props){
-		
-		List<ListValueEntry> result = new ArrayList<>();				
+
+	private ListValuePage suggestFromAssoc(String sourceType, NodeRef dataListNodeRef, NodeRef itemId, QName datalistType, QName associationQName,
+			String query, String queryFilter, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
+
+		List<ListValueEntry> result = new ArrayList<>();
 		for (NodeRef dataListItemNodeRef : entityListDAO.getListItems(dataListNodeRef, datalistType)) {
 			if (!dataListItemNodeRef.equals(itemId)) {
 				NodeRef targetNode = associationService.getTargetAssoc(dataListItemNodeRef, associationQName);
-				
+
 				if (targetNode != null) {
 					QName type = nodeService.getType(targetNode);
-					String name = attributeExtractorService.extractPropName(type,targetNode);
+					String name = attributeExtractorService.extractPropName(type, targetNode);
 					if (isQueryMatch(query, name)) {
-						String cssClass = attributeExtractorService.extractMetadata(type,targetNode);
-						if(SOURCE_TYPE_DATA_LIST_CHARACT.equals(sourceType)){
+						String cssClass = attributeExtractorService.extractMetadata(type, targetNode);
+						if (SOURCE_TYPE_DATA_LIST_CHARACT.equals(sourceType)) {
 							result.add(new ListValueEntry(targetNode.toString(), name, cssClass));
 						} else {
 							result.add(new ListValueEntry(dataListItemNodeRef.toString(), name, cssClass));
 						}
-					
+
 					}
 				}
 			}
